@@ -17,13 +17,13 @@ import net.minecraft.util.IIcon;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.gates.IStatement;
 import buildcraft.api.gates.IStatementParameter;
-import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.statements.StatementIconProvider;
 import buildcraft.core.utils.StringUtils;
 
-public class TriggerParameterSignal implements ITriggerParameter {
+public class TriggerParameterSignal implements IStatementParameter {
 
 	@NetworkData
 	public boolean active = false;

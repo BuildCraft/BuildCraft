@@ -11,7 +11,7 @@ package buildcraft.transport.statements;
 import java.util.Locale;
 
 import buildcraft.api.gates.IGate;
-import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.statements.BCTrigger;
 import buildcraft.core.statements.StatementIconProvider;
@@ -42,7 +42,7 @@ public class TriggerPipeSignal extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters) {
+	public boolean isTriggerActive(IGate gate, IStatementParameter[] parameters) {
 		Pipe<?> pipe = (Pipe<?>) gate.getPipe();
 
 		if (active) {
@@ -55,7 +55,7 @@ public class TriggerPipeSignal extends BCTrigger {
 			}
 		}
 
-		for (ITriggerParameter param : parameters) {
+		for (IStatementParameter param : parameters) {
 			if (param != null) {
 				TriggerParameterSignal signal = (TriggerParameterSignal) param;
 
@@ -106,7 +106,7 @@ public class TriggerPipeSignal extends BCTrigger {
 	}
 
 	@Override
-	public ITriggerParameter createParameter(int index) {
+	public IStatementParameter createParameter(int index) {
 		return new TriggerParameterSignal();
 	}
 }

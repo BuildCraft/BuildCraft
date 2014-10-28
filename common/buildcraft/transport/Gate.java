@@ -25,14 +25,13 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.gates.IActionReceptor;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.gates.StatementManager;
-import buildcraft.api.gates.TriggerParameterItemStack;
+import buildcraft.api.gates.StatementParameterItemStack;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.GuiIds;
@@ -56,10 +55,10 @@ public final class Gate implements IGate {
 	public final BiMap<IGateExpansion, GateExpansionController> expansions = HashBiMap.create();
 
 	public ITrigger[] triggers = new ITrigger[MAX_STATEMENTS];
-	public ITriggerParameter[][] triggerParameters = new ITriggerParameter[8][MAX_PARAMETERS];
+	public IStatementParameter[][] triggerParameters = new IStatementParameter[MAX_STATEMENTS][MAX_PARAMETERS];
 
 	public IAction[] actions = new IAction[MAX_STATEMENTS];
-	public IActionParameter[][] actionParameters = new IActionParameter[8][MAX_PARAMETERS];
+	public IStatementParameter[][] actionParameters = new IStatementParameter[MAX_STATEMENTS][MAX_PARAMETERS];
 
 	public ActionActiveState[] actionsState = new ActionActiveState[MAX_STATEMENTS];
 	public ArrayList<ActionSlot> activeActions = new ArrayList<ActionSlot>();
@@ -106,19 +105,19 @@ public final class Gate implements IGate {
 		return actions[position];
 	}
 
-	public void setTriggerParameter(int trigger, int param, ITriggerParameter p) {
+	public void setTriggerParameter(int trigger, int param, IStatementParameter p) {
 		triggerParameters[trigger][param] = p;
 	}
 
-	public void setActionParameter(int action, int param, IActionParameter p) {
+	public void setActionParameter(int action, int param, IStatementParameter p) {
 		actionParameters[action][param] = p;
 	}
 
-	public ITriggerParameter getTriggerParameter(int trigger, int param) {
+	public IStatementParameter getTriggerParameter(int trigger, int param) {
 		return triggerParameters[trigger][param];
 	}
 
-	public IActionParameter getActionParameter(int action, int param) {
+	public IStatementParameter getActionParameter(int action, int param) {
 		return actionParameters[action][param];
 	}
 
@@ -203,14 +202,14 @@ public final class Gate implements IGate {
 
 			// This is for legacy trigger loading
 			if (data.hasKey("triggerParameters[" + i + "]")) {
-				triggerParameters[i][0] = new TriggerParameterItemStack();
+				triggerParameters[i][0] = new StatementParameterItemStack();
 				triggerParameters[i][0].readFromNBT(data.getCompoundTag("triggerParameters[" + i + "]"));
 			}
 
 			for (int j = 0; j < material.numTriggerParameters; ++j) {
 				if (data.hasKey("triggerParameters[" + i + "][" + j + "]")) {
 					NBTTagCompound cpt = data.getCompoundTag("triggerParameters[" + i + "][" + j + "]");
-					triggerParameters[i][j] = (ITriggerParameter) StatementManager.createParameter(cpt.getString("kind"));
+					triggerParameters[i][j] = StatementManager.createParameter(cpt.getString("kind"));
 					triggerParameters[i][j].readFromNBT(cpt);
 				}
 			}
@@ -218,7 +217,7 @@ public final class Gate implements IGate {
 			for (int j = 0; j < material.numActionParameters; ++j) {
 				if (data.hasKey("actionParameters[" + i + "][" + j + "]")) {
 					NBTTagCompound cpt = data.getCompoundTag("actionParameters[" + i + "][" + j + "]");
-					actionParameters[i][j] = (IActionParameter) StatementManager.createParameter(cpt.getString("kind"));
+					actionParameters[i][j] = StatementManager.createParameter(cpt.getString("kind"));
 					actionParameters[i][j].readFromNBT(cpt);
 				}
 			}
@@ -394,7 +393,7 @@ public final class Gate implements IGate {
 			actionsState[it] = ActionActiveState.Deactivated;
 
 			ITrigger trigger = triggers[it];
-			ITriggerParameter[] parameter = triggerParameters[it];
+			IStatementParameter[] parameter = triggerParameters[it];
 
 			if (trigger != null) {
 				if (isTriggerActive(trigger, parameter)) {
@@ -504,7 +503,7 @@ public final class Gate implements IGate {
 		return false;
 	}
 
-	public boolean isTriggerActive(ITrigger trigger, ITriggerParameter[] parameters) {
+	public boolean isTriggerActive(ITrigger trigger, IStatementParameter[] parameters) {
 		if (trigger == null) {
 			return false;
 		}
@@ -516,7 +515,7 @@ public final class Gate implements IGate {
 		// TODO: This can probably be refactored with regular triggers instead
 		// of yet another system.
 		for (GateExpansionController expansion : expansions.values()) {
-			if (expansion.isTriggerActive(trigger, parameters[0])) {
+			if (expansion.isTriggerActive(trigger, parameters)) {
 				return true;
 			}
 		}
@@ -540,12 +539,12 @@ public final class Gate implements IGate {
 	
 	public List<ITrigger> getAllValidTriggers() {
 		ArrayList<ITrigger> allTriggers = new ArrayList<ITrigger>(64);
-		allTriggers.addAll(StatementManager.getPipeTriggers(pipe.container));
+		allTriggers.addAll(StatementManager.getInternalTriggers(pipe.container));
 		
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			TileEntity tile = pipe.container.getTile(o);
 			Block block = pipe.container.getBlock(o);
-			allTriggers.addAll(StatementManager.getNeighborTriggers(o, block, tile));
+			allTriggers.addAll(StatementManager.getExternalTriggers(o, tile));
 		}
 		
 		return allTriggers;
@@ -566,12 +565,12 @@ public final class Gate implements IGate {
 	
 	public List<IAction> getAllValidActions() {
 		ArrayList<IAction> allActions = new ArrayList<IAction>(64);
-		allActions.addAll(StatementManager.getPipeActions(pipe.container));
+		allActions.addAll(StatementManager.getInternalActions(pipe.container));
 		
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			TileEntity tile = pipe.container.getTile(o);
 			Block block = pipe.container.getBlock(o);
-			allActions.addAll(StatementManager.getNeighborActions(o, block, tile));
+			allActions.addAll(StatementManager.getExternalActions(o, tile));
 		}
 		
 		return allActions;

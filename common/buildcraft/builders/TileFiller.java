@@ -19,7 +19,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.gates.IActionReceptor;
 import buildcraft.builders.statements.ActionFiller;
 import buildcraft.core.Box;
@@ -314,7 +314,7 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 	}
 
 	@Override
-	public void actionActivated(IAction action, IActionParameter[] parameters) {
+	public void actionActivated(IAction action, IStatementParameter[] parameters) {
 		if (action == BuildCraftCore.actionOn) {
 			lastMode = ActionMachineControl.Mode.On;
 		} else if (action == BuildCraftCore.actionOff) {

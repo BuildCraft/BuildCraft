@@ -12,7 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.core.IMachine;
 import buildcraft.core.utils.StringUtils;
 
@@ -32,7 +32,7 @@ public class TriggerMachine extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
+	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, IStatementParameter parameter) {
 		if (tile instanceof IMachine) {
 			IMachine machine = (IMachine) tile;
 

@@ -10,7 +10,7 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.statements.BCActionActive;
@@ -54,17 +54,17 @@ public class ActionSignalOutput extends BCActionActive {
 	}
 
 	@Override
-	public IActionParameter createParameter(int index) {
+	public IStatementParameter createParameter(int index) {
 		return new ActionParameterSignal();
 	}
 
 	@Override
-	public void actionActivate(IGate iGate, IActionParameter[] parameters) {
+	public void actionActivate(IGate iGate, IStatementParameter[] parameters) {
 		Gate gate = (Gate) iGate;
 
 		gate.broadcastSignal(color);
 
-		for (IActionParameter param : parameters) {
+		for (IStatementParameter param : parameters) {
 			if (param != null) {
 				ActionParameterSignal signal = (ActionParameterSignal) param;
 

@@ -23,7 +23,7 @@ import buildcraft.transport.statements.TriggerPipeContents;
 public class PipeTriggerProvider implements ITriggerProvider {
 
 	@Override
-	public LinkedList<ITrigger> getPipeTriggers(IPipeTile tile) {
+	public LinkedList<ITrigger> getInternalTriggers(TileEntity tile) {
 		LinkedList<ITrigger> result = new LinkedList<ITrigger>();
 		Pipe<?> pipe = null;
 		if (tile instanceof TileGenericPipe) {
@@ -46,7 +46,7 @@ public class PipeTriggerProvider implements ITriggerProvider {
 		result.add(BuildCraftCore.triggerRedstoneActive);
 		result.add(BuildCraftCore.triggerRedstoneInactive);
 
-		switch (tile.getPipeType()) {
+		switch (((TileGenericPipe) tile).getPipeType()) {
 			case ITEM:
 				result.add(TriggerPipeContents.PipeContents.empty.trigger);
 				result.add(TriggerPipeContents.PipeContents.containsItems.trigger);
@@ -74,7 +74,7 @@ public class PipeTriggerProvider implements ITriggerProvider {
 	}
 
 	@Override
-	public LinkedList<ITrigger> getNeighborTriggers(ForgeDirection side, Block block, TileEntity tile) {
+	public LinkedList<ITrigger> getExternalTriggers(ForgeDirection side, TileEntity tile) {
 		return null;
 	}
 }

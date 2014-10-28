@@ -12,9 +12,9 @@ import java.util.ArrayList;
 
 import net.minecraft.item.ItemStack;
 
-import buildcraft.api.gates.ActionParameterItemStack;
+import buildcraft.api.gates.StatementParameterItemStack;
 import buildcraft.api.gates.IStatementParameter;
-import buildcraft.api.gates.TriggerParameterItemStack;
+import buildcraft.api.gates.StatementParameterItemStack;
 
 /**
  * Returns true if the stack matches any one one of the filter stacks.
@@ -26,7 +26,7 @@ public class StatementParameterStackFilter extends ArrayStackOrListFilter {
 
 		for (IStatementParameter s : parameters) {
 			if (s != null) {
-				if (s instanceof ActionParameterItemStack || s instanceof TriggerParameterItemStack) {
+				if (s instanceof StatementParameterItemStack || s instanceof StatementParameterItemStack) {
 					tmp.add(s.getItemStack());
 				}
 			}

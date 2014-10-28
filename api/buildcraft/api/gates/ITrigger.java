@@ -11,6 +11,6 @@ package buildcraft.api.gates;
 
 public interface ITrigger extends IStatement {
 
-	boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters);
+	boolean isTriggerActive(IGate gate, IStatementParameter[] parameters);
 
 }

@@ -17,7 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IInvSlot;
-import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.utils.StringUtils;
@@ -58,7 +58,7 @@ public class TriggerInventoryLevel extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
+	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, IStatementParameter parameter) {
 		// A parameter is required
 		if (parameter == null) {
 			return false;

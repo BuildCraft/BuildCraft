@@ -29,7 +29,7 @@ import buildcraft.core.IMachine;
 public class DefaultTriggerProvider implements ITriggerProvider {
 
 	@Override
-	public LinkedList<ITrigger> getNeighborTriggers(ForgeDirection side, Block block, TileEntity tile) {
+	public LinkedList<ITrigger> getExternalTriggers(ForgeDirection side, TileEntity tile) {
 		LinkedList<ITrigger> res = new LinkedList<ITrigger>();
 
 		if (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0) {
@@ -65,16 +65,11 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 			res.add(BuildCraftCore.triggerEnergyLow);
 		}
 
-		if (block != null && block.canProvidePower()) {
-			// res.add(BuildCraftCore.triggerRedstoneActive);
-			// res.add(BuildCraftCore.triggerRedstoneInactive);
-		}
-
 		return res;
 	}
 
 	@Override
-	public LinkedList<ITrigger> getPipeTriggers(IPipeTile pipe) {
+	public LinkedList<ITrigger> getInternalTriggers(TileEntity pipe) {
 		return null;
 	}
 }

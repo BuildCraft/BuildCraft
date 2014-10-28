@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.core.statements.BCActionPassive;
 import buildcraft.core.statements.StatementParameterRedstoneGateSideOnly;
 import buildcraft.core.utils.StringUtils;
@@ -45,8 +45,8 @@ public class ActionRedstoneFaderOutput extends BCActionPassive {
 	}
 	
     @Override
-    public IActionParameter createParameter(int index) {
-		IActionParameter param = null;
+    public IStatementParameter createParameter(int index) {
+		IStatementParameter param = null;
 	
 		if (index == 0) {
 		    param = new StatementParameterRedstoneGateSideOnly();

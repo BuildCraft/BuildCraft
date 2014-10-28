@@ -18,7 +18,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.core.utils.StringUtils;
 
 public class TriggerFluidContainer extends BCTrigger {
@@ -45,7 +45,7 @@ public class TriggerFluidContainer extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
+	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, IStatementParameter parameter) {
 		if (tile instanceof IFluidHandler) {
 			IFluidHandler container = (IFluidHandler) tile;
 

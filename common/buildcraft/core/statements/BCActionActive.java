@@ -9,7 +9,7 @@
 package buildcraft.core.statements;
 
 import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.IStatementParameter;
 
 public abstract class BCActionActive extends BCStatement implements IAction {
 
@@ -18,7 +18,7 @@ public abstract class BCActionActive extends BCStatement implements IAction {
 	}
 
 	@Override
-	public IActionParameter createParameter(int index) {
+	public IStatementParameter createParameter(int index) {
 		return null;
 	}
 }

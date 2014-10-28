@@ -5,15 +5,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import buildcraft.api.core.NetworkData;
-import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.gates.IStatement;
 import buildcraft.api.gates.IStatementParameter;
-import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.utils.StringUtils;
 
 public class StatementParameterRedstoneGateSideOnly implements
-		IActionParameter, ITriggerParameter {
+		IStatementParameter {
 	@NetworkData
 	public boolean isOn = false;
 	

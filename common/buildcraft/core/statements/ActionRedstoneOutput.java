@@ -8,7 +8,7 @@
  */
 package buildcraft.core.statements;
 
-import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.core.utils.StringUtils;
 
 public class ActionRedstoneOutput extends BCActionPassive {
@@ -28,8 +28,8 @@ public class ActionRedstoneOutput extends BCActionPassive {
 	}
 	
     @Override
-    public IActionParameter createParameter(int index) {
-		IActionParameter param = null;
+    public IStatementParameter createParameter(int index) {
+		IStatementParameter param = null;
 	
 		if (index == 0) {
 		    param = new StatementParameterRedstoneGateSideOnly();

@@ -16,8 +16,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IInvSlot;
-import buildcraft.api.gates.ActionParameterItemStack;
-import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.StatementParameterItemStack;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.robots.DockingStation;
@@ -47,8 +47,8 @@ public class ActionStationAcceptItemsInv extends ActionStationInputItems {
 	}
 
 	@Override
-	public IActionParameter createParameter(int index) {
-		return new ActionParameterItemStack();
+	public IStatementParameter createParameter(int index) {
+		return new StatementParameterItemStack();
 	}
 
 	@Override

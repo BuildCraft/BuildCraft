@@ -12,7 +12,7 @@ import java.util.Locale;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.statements.BCActionActive;
@@ -68,8 +68,8 @@ public class ActionValve extends BCActionActive {
     }
 
     @Override
-    public IActionParameter createParameter(int index) {
-		IActionParameter param = null;
+    public IStatementParameter createParameter(int index) {
+		IStatementParameter param = null;
 	
 		if (index == 0) {
 		    param = new StatementParameterDirection();
@@ -79,7 +79,7 @@ public class ActionValve extends BCActionActive {
     }
 
     @Override
-    public void actionActivate(IGate gate, IActionParameter[] parameters) {
+    public void actionActivate(IGate gate, IStatementParameter[] parameters) {
 	    IPipe pipe = gate.getPipe();
 		
 	    if (pipe != null && pipe instanceof Pipe) {

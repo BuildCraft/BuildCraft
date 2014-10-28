@@ -21,10 +21,10 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.gates.IStatement;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.gates.StatementManager;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.network.RPC;
@@ -320,7 +320,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	@RPC(RPCSide.BOTH)
-	public void setTriggerParameter(int trigger, int param, ITriggerParameter parameter, boolean notifyServer) {
+	public void setTriggerParameter(int trigger, int param, IStatementParameter parameter, boolean notifyServer) {
 		if (gate == null) {
 			return;
 		}
@@ -332,7 +332,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		}
 	}
 
-	public ITriggerParameter getTriggerParameter(int trigger, int param) {
+	public IStatementParameter getTriggerParameter(int trigger, int param) {
 		if (gate == null) {
 			return null;
 		} else {
@@ -385,7 +385,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	}
 
 	@RPC(RPCSide.BOTH)
-	public void setActionParameter(int action, int param, IActionParameter parameter, boolean notifyServer) {
+	public void setActionParameter(int action, int param, IStatementParameter parameter, boolean notifyServer) {
 		if (gate == null) {
 			return;
 		}

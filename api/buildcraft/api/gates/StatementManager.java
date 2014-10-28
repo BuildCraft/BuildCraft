@@ -52,11 +52,11 @@ public final class StatementManager {
 		parameters.put(createParameter(param).getUniqueTag(), param);
 	}
 
-	public static List<ITrigger> getNeighborTriggers(ForgeDirection side, Block block, TileEntity entity) {
+	public static List<ITrigger> getExternalTriggers(ForgeDirection side, TileEntity entity) {
 		List<ITrigger> result = new LinkedList<ITrigger>();
 
 		for (ITriggerProvider provider : triggerProviders) {
-			Collection<ITrigger> toAdd = provider.getNeighborTriggers(side, block, entity);
+			Collection<ITrigger> toAdd = provider.getExternalTriggers(side, entity);
 
 			if (toAdd != null) {
 				for (ITrigger t : toAdd) {
@@ -70,11 +70,11 @@ public final class StatementManager {
 		return result;
 	}
 
-	public static List<IAction> getNeighborActions(ForgeDirection side, Block block, TileEntity entity) {
+	public static List<IAction> getExternalActions(ForgeDirection side, TileEntity entity) {
 		List<IAction> result = new LinkedList<IAction>();
 
 		for (IActionProvider provider : actionProviders) {
-			Collection<IAction> toAdd = provider.getNeighborActions(side, block, entity);
+			Collection<IAction> toAdd = provider.getExternalActions(side, entity);
 
 			if (toAdd != null) {
 				for (IAction t : toAdd) {
@@ -88,11 +88,11 @@ public final class StatementManager {
 		return result;
 	}
 
-	public static List<ITrigger> getPipeTriggers(IPipeTile pipe) {
+	public static List<ITrigger> getInternalTriggers(TileEntity tile) {
 		List<ITrigger> result = new LinkedList<ITrigger>();
 
 		for (ITriggerProvider provider : triggerProviders) {
-			Collection<ITrigger> toAdd = provider.getPipeTriggers(pipe);
+			Collection<ITrigger> toAdd = provider.getInternalTriggers(tile);
 
 			if (toAdd != null) {
 				for (ITrigger t : toAdd) {
@@ -106,11 +106,11 @@ public final class StatementManager {
 		return result;
 	}
 
-	public static List<IAction> getPipeActions(IPipeTile pipe) {
+	public static List<IAction> getInternalActions(TileEntity tile) {
 		List<IAction> result = new LinkedList<IAction>();
 
 		for (IActionProvider provider : actionProviders) {
-			Collection<IAction> toAdd = provider.getPipeActions(pipe);
+			Collection<IAction> toAdd = provider.getInternalActions(tile);
 
 			if (toAdd != null) {
 				for (IAction t : toAdd) {

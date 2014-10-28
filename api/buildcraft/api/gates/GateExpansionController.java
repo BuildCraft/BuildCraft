@@ -41,7 +41,7 @@ public abstract class GateExpansionController {
 		return false;
 	}
 
-	public boolean isTriggerActive(ITrigger trigger, ITriggerParameter parameter) {
+	public boolean isTriggerActive(ITrigger trigger, IStatementParameter[] parameters) {
 		return false;
 	}
 

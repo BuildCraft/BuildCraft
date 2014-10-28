@@ -9,8 +9,8 @@
 package buildcraft.silicon.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-import buildcraft.api.gates.ActionParameterItemStack;
-import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.StatementParameterItemStack;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.core.statements.BCActionPassive;
 import buildcraft.core.utils.StringUtils;
 
@@ -36,7 +36,7 @@ public class ActionStationAllowCraft extends BCActionPassive {
 	}
 
 	@Override
-	public IActionParameter createParameter(int index) {
-		return new ActionParameterItemStack();
+	public IStatementParameter createParameter(int index) {
+		return new StatementParameterItemStack();
 	}
 }

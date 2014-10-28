@@ -15,8 +15,8 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import buildcraft.api.gates.ActionParameterItemStack;
-import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.StatementParameterItemStack;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.robots.IDockingStation;
 import buildcraft.core.inventory.filters.ArrayFluidFilter;
 import buildcraft.core.inventory.filters.ArrayStackOrListFilter;
@@ -59,8 +59,8 @@ public class ActionRobotFilter extends BCActionPassive {
 	}
 
 	@Override
-	public IActionParameter createParameter(int index) {
-		return new ActionParameterItemStack();
+	public IStatementParameter createParameter(int index) {
+		return new StatementParameterItemStack();
 	}
 
 	public static Collection<ItemStack> getGateFilterStacks(IDockingStation station) {
@@ -68,9 +68,9 @@ public class ActionRobotFilter extends BCActionPassive {
 
 		for (ActionSlot slot : new ActionIterator(((DockingStation) station).getPipe().pipe)) {
 			if (slot.action instanceof ActionRobotFilter) {
-				for (IActionParameter p : slot.parameters) {
-					if (p != null && p instanceof ActionParameterItemStack) {
-						ActionParameterItemStack param = (ActionParameterItemStack) p;
+				for (IStatementParameter p : slot.parameters) {
+					if (p != null && p instanceof StatementParameterItemStack) {
+						StatementParameterItemStack param = (StatementParameterItemStack) p;
 						ItemStack stack = param.getItemStack();
 
 						if (stack != null) {

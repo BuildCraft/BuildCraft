@@ -20,7 +20,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.api.gates.IGate;
-import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.core.utils.StringUtils;
 
 public class TriggerEnergy extends BCTrigger {
@@ -58,7 +58,7 @@ public class TriggerEnergy extends BCTrigger {
 		return false;
 	}
 	@Override
-	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters) {
+	public boolean isTriggerActive(IGate gate, IStatementParameter[] parameters) {
 		if (gate.getPipe() instanceof IEnergyHandler) {
 			if (isValidEnergyHandler((IEnergyHandler) gate.getPipe())) {
 				return isTriggeredEnergyHandler((IEnergyHandler) gate.getPipe());
@@ -72,7 +72,7 @@ public class TriggerEnergy extends BCTrigger {
 
 
 	@Override
-	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
+	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, IStatementParameter parameter) {
 		if (tile instanceof IEnergyHandler) {
 			// Since we return false upon the trigger being invalid anyway,
 			// we can skip the isValidEnergyHandler(...) check.

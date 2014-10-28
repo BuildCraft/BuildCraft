@@ -34,14 +34,18 @@ import buildcraft.transport.TileGenericPipe;
 public class RobotsActionProvider implements IActionProvider {
 
 	@Override
-	public Collection<IAction> getPipeActions(IPipeTile pipe) {
+	public Collection<IAction> getInternalActions(TileEntity tile) {
+		if (!(tile instanceof TileGenericPipe)) {
+			return null;
+		}
+		
 		LinkedList<IAction> result = new LinkedList<IAction>();
 
 		ArrayList<DockingStation> stations = new ArrayList<DockingStation>();
 
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			if (((TileGenericPipe) pipe).getStation(dir) != null) {
-				stations.add(((TileGenericPipe) pipe).getStation(dir));
+			if (((TileGenericPipe) tile).getStation(dir) != null) {
+				stations.add(((TileGenericPipe) tile).getStation(dir));
 			}
 		}
 
@@ -55,32 +59,32 @@ public class RobotsActionProvider implements IActionProvider {
 		result.add(BuildCraftSilicon.actionRobotFilter);
 		result.add(BuildCraftSilicon.actionStationForbidRobot);
 
-		if (((TileGenericPipe) pipe).pipe.transport instanceof PipeTransportItems) {
+		if (((TileGenericPipe) tile).pipe.transport instanceof PipeTransportItems) {
 			result.add(BuildCraftSilicon.actionStationDropInPipe);
 		}
 
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			TileEntity tile = ((TileGenericPipe) pipe).getTile(dir);
-			Block block = ((TileGenericPipe) pipe).getBlock(dir);
-
-			if (tile instanceof IInventory) {
+			TileEntity sideTile = ((TileGenericPipe) tile).getTile(dir);
+			Block sideBlock = ((TileGenericPipe) tile).getBlock(dir);
+			
+			if (sideTile instanceof IInventory) {
 				result.add(BuildCraftSilicon.actionStationProvideItems);
 				result.add(BuildCraftSilicon.actionStationRequestItems);
 				result.add(BuildCraftSilicon.actionStationAcceptItems);
 			}
 
-			if (tile instanceof IFluidHandler) {
+			if (sideTile instanceof IFluidHandler) {
 				result.add(BuildCraftSilicon.actionStationAcceptFluids);
 				result.add(BuildCraftSilicon.actionStationProvideFluids);
 			}
 
-			if (tile instanceof IRequestProvider) {
+			if (sideTile instanceof IRequestProvider) {
 				result.add(BuildCraftSilicon.actionStationMachineRequestItems);
 			}
 
-			if (tile instanceof TileEntityFurnace
-					|| tile instanceof TileAssemblyTable
-					|| block instanceof BlockWorkbench) {
+			if (sideTile instanceof TileEntityFurnace
+					|| sideTile instanceof TileAssemblyTable
+					|| sideBlock instanceof BlockWorkbench) {
 				result.add(BuildCraftSilicon.actionRobotAllowCraft);
 			}
 		}
@@ -89,7 +93,7 @@ public class RobotsActionProvider implements IActionProvider {
 	}
 
 	@Override
-	public Collection<IAction> getNeighborActions(ForgeDirection side, Block block, TileEntity tile) {
+	public Collection<IAction> getExternalActions(ForgeDirection side, TileEntity tile) {
 		return null;
 	}
 

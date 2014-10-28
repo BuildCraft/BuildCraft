@@ -18,13 +18,13 @@ import buildcraft.api.transport.IPipeTile;
 public interface IActionProvider {
 
 	/**
-	 * Returns the list of actions that are available from the pipe holding the
+	 * Returns the list of actions that are available from the tile holding the
 	 * gate.
 	 */
-	Collection<IAction> getPipeActions(IPipeTile pipe);
+	Collection<IAction> getInternalActions(TileEntity tile);
 
 	/**
 	 * Returns the list of actions available to a gate next to the given block.
 	 */
-	Collection<IAction> getNeighborActions(ForgeDirection side, Block block, TileEntity tile);
+	Collection<IAction> getExternalActions(ForgeDirection side, TileEntity tile);
 }

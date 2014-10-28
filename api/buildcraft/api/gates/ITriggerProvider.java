@@ -18,13 +18,13 @@ import buildcraft.api.transport.IPipeTile;
 public interface ITriggerProvider {
 
 	/**
-	 * Returns the list of triggers that are available from the pipe holding the gate.
+	 * Returns the list of triggers that are available from the object holding the gate.
 	 */
-	Collection<ITrigger> getPipeTriggers(IPipeTile pipe);
+	Collection<ITrigger> getInternalTriggers(TileEntity tile);
 
 	/**
 	 * Returns the list of triggers available to a gate next to the given block.
 	 */
-	Collection<ITrigger> getNeighborTriggers(ForgeDirection side, Block block, TileEntity tile);
+	Collection<ITrigger> getExternalTriggers(ForgeDirection side, TileEntity tile);
 
 }

@@ -10,8 +10,8 @@ package buildcraft.silicon.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
-import buildcraft.api.gates.ActionParameterItemStack;
-import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.StatementParameterItemStack;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.ItemRobot;
 import buildcraft.core.robots.DockingStation;
@@ -47,8 +47,8 @@ public class ActionStationForbidRobot extends BCActionPassive {
 	}
 
 	@Override
-	public IActionParameter createParameter(int index) {
-		return new ActionParameterItemStack();
+	public IStatementParameter createParameter(int index) {
+		return new StatementParameterItemStack();
 	}
 
 	public static boolean isForbidden(DockingStation station, EntityRobotBase robot) {
@@ -64,9 +64,9 @@ public class ActionStationForbidRobot extends BCActionPassive {
 	}
 
 	public static boolean isForbidden(ActionSlot slot, EntityRobotBase robot) {
-		for (IActionParameter p : slot.parameters) {
+		for (IStatementParameter p : slot.parameters) {
 			if (p != null) {
-				ActionParameterItemStack actionStack = (ActionParameterItemStack) p;
+				StatementParameterItemStack actionStack = (StatementParameterItemStack) p;
 				ItemStack stack = p.getItemStack();
 
 				if (stack != null && stack.getItem() instanceof ItemRobot) {

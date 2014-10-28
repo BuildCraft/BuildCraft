@@ -18,7 +18,7 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import buildcraft.api.gates.IGate;
-import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.statements.BCTrigger;
 import buildcraft.core.utils.StringUtils;
@@ -64,9 +64,9 @@ public class TriggerPipeContents extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters) {
+	public boolean isTriggerActive(IGate gate, IStatementParameter[] parameters) {
 		Pipe<?> pipe = (Pipe<?>) gate.getPipe();
-		ITriggerParameter parameter = parameters[0];
+		IStatementParameter parameter = parameters[0];
 
 		if (pipe.transport instanceof PipeTransportItems) {
 			PipeTransportItems transportItems = (PipeTransportItems) pipe.transport;

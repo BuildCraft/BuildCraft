@@ -15,7 +15,7 @@ import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.gates.ActionParameterItemStack;
+import buildcraft.api.gates.StatementParameterItemStack;
 import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
@@ -130,7 +130,7 @@ public class AIRobotSearchStackRequest extends AIRobot {
 		for (ActionSlot s : new ActionIterator(pipe)) {
 			if (s.action instanceof ActionStationRequestItems) {
 				for (IStatementParameter p : s.parameters) {
-					ActionParameterItemStack param = (ActionParameterItemStack) p;
+					StatementParameterItemStack param = (StatementParameterItemStack) p;
 
 					if (param != null && !isBlacklisted(param.getItemStack())) {
 						StackRequest req = new StackRequest();

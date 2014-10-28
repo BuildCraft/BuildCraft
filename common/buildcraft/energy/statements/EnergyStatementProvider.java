@@ -17,12 +17,12 @@ import buildcraft.energy.TileEngine;
 public class EnergyStatementProvider implements ITriggerProvider {
 
 	@Override
-	public Collection<ITrigger> getPipeTriggers(IPipeTile pipe) {
+	public Collection<ITrigger> getInternalTriggers(TileEntity pipe) {
 		return null;
 	}
 
 	@Override
-	public Collection<ITrigger> getNeighborTriggers(ForgeDirection side, Block block, TileEntity tile) {
+	public Collection<ITrigger> getExternalTriggers(ForgeDirection side, TileEntity tile) {
 		LinkedList<ITrigger> triggers = new LinkedList<ITrigger>();
 		
 		if (tile instanceof TileEngine) {

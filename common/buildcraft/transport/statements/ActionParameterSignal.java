@@ -15,7 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import buildcraft.api.core.NetworkData;
-import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.gates.IStatement;
 import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.transport.IPipe;
@@ -24,7 +24,7 @@ import buildcraft.api.transport.PipeWire;
 import buildcraft.core.statements.StatementIconProvider;
 import buildcraft.core.utils.StringUtils;
 
-public class ActionParameterSignal implements IActionParameter {
+public class ActionParameterSignal implements IStatementParameter {
 
 	@NetworkData
 	public PipeWire color = null;

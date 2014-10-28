@@ -11,8 +11,8 @@ package buildcraft.silicon.statements;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import buildcraft.api.core.IZone;
-import buildcraft.api.gates.ActionParameterItemStack;
-import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.StatementParameterItemStack;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.core.ItemMapLocation;
 import buildcraft.core.statements.BCActionPassive;
 import buildcraft.core.utils.StringUtils;
@@ -39,7 +39,7 @@ public class ActionRobotWorkInArea extends BCActionPassive {
 			return null;
 		}
 
-		ItemStack stack = ((ActionParameterItemStack) slot.parameters[0]).getItemStack();
+		ItemStack stack = ((StatementParameterItemStack) slot.parameters[0]).getItemStack();
 
 		if (!(stack.getItem() instanceof ItemMapLocation)) {
 			return null;
@@ -59,7 +59,7 @@ public class ActionRobotWorkInArea extends BCActionPassive {
 	}
 
 	@Override
-	public IActionParameter createParameter(int index) {
-		return new ActionParameterItemStack();
+	public IStatementParameter createParameter(int index) {
+		return new StatementParameterItemStack();
 	}
 }

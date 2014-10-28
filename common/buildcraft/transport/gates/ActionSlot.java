@@ -9,9 +9,9 @@
 package buildcraft.transport.gates;
 
 import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.IStatementParameter;
 
 public class ActionSlot {
 	public IAction action;
-	public IActionParameter[] parameters;
+	public IStatementParameter[] parameters;
 }

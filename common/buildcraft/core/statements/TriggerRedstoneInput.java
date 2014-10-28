@@ -9,7 +9,7 @@
 package buildcraft.core.statements;
 
 import buildcraft.api.gates.IGate;
-import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.TileGenericPipe;
 
@@ -28,8 +28,8 @@ public class TriggerRedstoneInput extends BCTrigger {
 	}
 	
     @Override
-    public ITriggerParameter createParameter(int index) {
-		ITriggerParameter param = null;
+    public IStatementParameter createParameter(int index) {
+		IStatementParameter param = null;
 	
 		if (index == 0) {
 		    param = new StatementParameterRedstoneGateSideOnly();
@@ -44,7 +44,7 @@ public class TriggerRedstoneInput extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters) {
+	public boolean isTriggerActive(IGate gate, IStatementParameter[] parameters) {
 		TileGenericPipe tile = (TileGenericPipe) gate.getPipe().getTile();
 		int level = tile.redstoneInput;
 		if (parameters.length > 0 && parameters[0] instanceof StatementParameterRedstoneGateSideOnly &&

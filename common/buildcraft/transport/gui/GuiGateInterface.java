@@ -22,11 +22,11 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.gates.IStatement;
 import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtils;
@@ -183,7 +183,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@Override
 		public void setParameter(IStatementParameter param, boolean notifyServer) {
-			container.setTriggerParameter(statementSlot.slot, slot, (ITriggerParameter) param, notifyServer);
+			container.setTriggerParameter(statementSlot.slot, slot, (IStatementParameter) param, notifyServer);
 		}
 	}
 
@@ -199,7 +199,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@Override
 		public void setParameter(IStatementParameter param, boolean notifyServer) {
-			container.setActionParameter(statementSlot.slot, slot, (IActionParameter) param, notifyServer);
+			container.setActionParameter(statementSlot.slot, slot, (IStatementParameter) param, notifyServer);
 		}
 	}
 

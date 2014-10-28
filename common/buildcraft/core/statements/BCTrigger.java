@@ -14,8 +14,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.ITriggerParameter;
-import buildcraft.api.gates.TriggerParameterItemStack;
+import buildcraft.api.gates.IStatementParameter;
+import buildcraft.api.gates.StatementParameterItemStack;
 import buildcraft.transport.Pipe;
 
 /**
@@ -30,8 +30,8 @@ public abstract class BCTrigger extends BCStatement implements ITrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters) {
-		ITriggerParameter p = parameters[0];
+	public boolean isTriggerActive(IGate gate, IStatementParameter[] parameters) {
+		IStatementParameter p = parameters[0];
 		Pipe<?> pipe = (Pipe<?>) gate.getPipe();
 
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
@@ -43,12 +43,12 @@ public abstract class BCTrigger extends BCStatement implements ITrigger {
 		return false;
 	}
 
-	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, ITriggerParameter parameter) {
+	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, IStatementParameter parameter) {
 		return false;
 	}
 
 	@Override
-	public ITriggerParameter createParameter(int index) {
-		return new TriggerParameterItemStack();
+	public IStatementParameter createParameter(int index) {
+		return new StatementParameterItemStack();
 	}
 }

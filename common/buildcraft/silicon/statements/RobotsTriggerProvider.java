@@ -25,13 +25,17 @@ import buildcraft.transport.TileGenericPipe;
 public class RobotsTriggerProvider implements ITriggerProvider {
 
 	@Override
-	public Collection<ITrigger> getPipeTriggers(IPipeTile pipe) {
+	public Collection<ITrigger> getInternalTriggers(TileEntity tile) {
 		LinkedList<ITrigger> result = new LinkedList<ITrigger>();
+		
+		if (!(tile instanceof TileGenericPipe)) {
+			return result;
+		}
 
 		boolean stationFound = false;
 
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			if (((TileGenericPipe) pipe).getStation(dir) != null) {
+			if (((TileGenericPipe) tile).getStation(dir) != null) {
 				stationFound = true;
 				break;
 			}
@@ -47,7 +51,7 @@ public class RobotsTriggerProvider implements ITriggerProvider {
 	}
 
 	@Override
-	public Collection<ITrigger> getNeighborTriggers(ForgeDirection side, Block block, TileEntity tile) {
+	public Collection<ITrigger> getExternalTriggers(ForgeDirection side, TileEntity tile) {
 		return null;
 	}
 

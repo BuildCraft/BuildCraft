@@ -12,8 +12,8 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.BlockIndex;
-import buildcraft.api.gates.ActionParameterItemStack;
-import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.StatementParameterItemStack;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.core.ItemMapLocation;
@@ -43,7 +43,7 @@ public class ActionRobotGotoStation extends BCActionActive {
 	}
 
 	@Override
-	public void actionActivate(IGate gate, IActionParameter[] parameters) {
+	public void actionActivate(IGate gate, IStatementParameter[] parameters) {
 		Pipe<?> pipe = (Pipe<?>) gate.getPipe();
 		TileGenericPipe tile = pipe.container;
 		RobotRegistry registry = RobotRegistry.getRegistry(pipe.getWorld());
@@ -62,7 +62,7 @@ public class ActionRobotGotoStation extends BCActionActive {
 				DockingStation newStation = station;
 
 				if (parameters[0] != null) {
-					ActionParameterItemStack stackParam = (ActionParameterItemStack) parameters[0];
+					StatementParameterItemStack stackParam = (StatementParameterItemStack) parameters[0];
 					ItemStack item = stackParam.getItemStack();
 
 					if (item.getItem() instanceof ItemMapLocation) {
@@ -92,8 +92,8 @@ public class ActionRobotGotoStation extends BCActionActive {
 	}
 
 	@Override
-	public IActionParameter createParameter(int index) {
-		return new ActionParameterItemStack();
+	public IStatementParameter createParameter(int index) {
+		return new StatementParameterItemStack();
 	}
 
 }

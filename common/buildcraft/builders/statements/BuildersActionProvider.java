@@ -27,12 +27,12 @@ public class BuildersActionProvider implements IActionProvider {
 	private final HashMap<String, ActionFiller> actionMap = new HashMap<String, ActionFiller>();
 	
 	@Override
-	public Collection<IAction> getPipeActions(IPipeTile pipe) {
+	public Collection<IAction> getInternalActions(TileEntity tile) {
 		return null;
 	}
 
 	@Override
-	public Collection<IAction> getNeighborActions(ForgeDirection side, Block block, TileEntity tile) {
+	public Collection<IAction> getExternalActions(ForgeDirection side, TileEntity tile) {
 		LinkedList<IAction> actions = new LinkedList<IAction>();
 		if (tile instanceof TileFiller) {
 			for (IFillerPattern p : FillerManager.registry.getPatterns()) {

@@ -16,7 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.gates.IActionReceptor;
 import buildcraft.api.power.ILaserTarget;
 import buildcraft.core.IMachine;
@@ -220,7 +220,7 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 	}
 
 	@Override
-	public void actionActivated(IAction action, IActionParameter[] parameters) {
+	public void actionActivated(IAction action, IStatementParameter[] parameters) {
 		if (action == BuildCraftCore.actionOn) {
 			lastMode = ActionMachineControl.Mode.On;
 		} else if (action == BuildCraftCore.actionOff) {

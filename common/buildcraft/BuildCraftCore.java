@@ -63,11 +63,11 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.IWorldProperty;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
-import buildcraft.api.gates.ActionParameterItemStack;
+import buildcraft.api.gates.StatementParameterItemStack;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.StatementManager;
-import buildcraft.api.gates.TriggerParameterItemStack;
+import buildcraft.api.gates.StatementParameterItemStack;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.BuildCraftConfiguration;
@@ -344,8 +344,8 @@ public class BuildCraftCore extends BuildCraftMod {
 
 		NetworkIdRegistry.instance = new NetworkIdRegistry();
 
-		StatementManager.registerParameterClass(TriggerParameterItemStack.class);
-		StatementManager.registerParameterClass(ActionParameterItemStack.class);
+		StatementManager.registerParameterClass(StatementParameterItemStack.class);
+		StatementManager.registerParameterClass(StatementParameterItemStack.class);
 		StatementManager.registerParameterClass(StatementParameterDirection.class);
 		StatementManager.registerParameterClass(StatementParameterRedstoneGateSideOnly.class);
 		StatementManager.registerTriggerProvider(new DefaultTriggerProvider());

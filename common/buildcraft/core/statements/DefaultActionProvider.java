@@ -26,12 +26,12 @@ import buildcraft.core.IMachine;
 public class DefaultActionProvider implements IActionProvider {
 
 	@Override
-	public Collection<IAction> getPipeActions(IPipeTile pipe) {
+	public Collection<IAction> getInternalActions(TileEntity tile) {
 		return null;
 	}
 
 	@Override
-	public Collection<IAction> getNeighborActions(ForgeDirection side, Block block, TileEntity tile) {
+	public Collection<IAction> getExternalActions(ForgeDirection side, TileEntity tile) {
 		LinkedList<IAction> res = new LinkedList<IAction>();
 
 		res.add(BuildCraftCore.actionRedstone);

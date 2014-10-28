@@ -9,15 +9,13 @@
 package buildcraft.api.gates;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.transport.IPipeTile;
 
-public class TriggerParameterItemStack implements ITriggerParameter {
-
+public class StatementParameterItemStack implements IStatementParameter {
 	@NetworkData
 	protected ItemStack stack;
 
@@ -50,20 +48,13 @@ public class TriggerParameterItemStack implements ITriggerParameter {
 
 	@Override
 	public void readFromNBT(NBTTagCompound compound) {
-		// Legacy code to prevent existing gates from losing their contents
-		int itemID = compound.getInteger("itemID");
-		if (itemID != 0) {
-			stack = new ItemStack((Item) Item.itemRegistry.getObject(itemID), 1, compound.getInteger("itemDMG"));
-			return;
-		}
-
 		stack = ItemStack.loadItemStackFromNBT(compound.getCompoundTag("stack"));
 	}
 
 	@Override
 	public boolean equals(Object object) {
-		if (object instanceof TriggerParameterItemStack) {
-			TriggerParameterItemStack param = (TriggerParameterItemStack) object;
+		if (object instanceof StatementParameterItemStack) {
+			StatementParameterItemStack param = (StatementParameterItemStack) object;
 
 			return ItemStack.areItemStacksEqual(stack, param.stack)
 					&& ItemStack.areItemStackTagsEqual(stack, param.stack);
@@ -71,7 +62,7 @@ public class TriggerParameterItemStack implements ITriggerParameter {
 			return false;
 		}
 	}
-	
+
 	@Override
 	public String getDescription() {
 		if (stack != null) {
@@ -83,7 +74,7 @@ public class TriggerParameterItemStack implements ITriggerParameter {
 
 	@Override
 	public String getUniqueTag() {
-		return "buildcraft:stackTrigger";
+		return "buildcraft:stackAction";
 	}
 
 	@Override

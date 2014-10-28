@@ -13,7 +13,7 @@ import buildcraft.api.transport.IPipeTile;
 public class PipeActionProvider implements IActionProvider {
 
 	@Override
-	public Collection<IAction> getPipeActions(IPipeTile tile) {
+	public Collection<IAction> getInternalActions(TileEntity tile) {
 		LinkedList<IAction> result = new LinkedList<IAction>();
 		Pipe<?> pipe = null;
 		if (tile instanceof TileGenericPipe) {
@@ -36,7 +36,7 @@ public class PipeActionProvider implements IActionProvider {
 	}
 
 	@Override
-	public Collection<IAction> getNeighborActions(ForgeDirection side, Block block, TileEntity tile) {
+	public Collection<IAction> getExternalActions(ForgeDirection side, TileEntity tile) {
 		return null;
 	}
 

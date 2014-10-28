@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.api.gates.IGate;
-import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.core.statements.BCTrigger;
 import buildcraft.core.statements.StatementParameterRedstoneGateSideOnly;
 import buildcraft.core.utils.StringUtils;
@@ -34,7 +34,7 @@ public class TriggerRedstoneFaderInput extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(IGate gate, ITriggerParameter[] parameters) {
+	public boolean isTriggerActive(IGate gate, IStatementParameter[] parameters) {
 		TileGenericPipe tile = (TileGenericPipe) gate.getPipe().getTile();
 		int inputLevel = tile.redstoneInput;
 		if (parameters.length > 0 && parameters[0] instanceof StatementParameterRedstoneGateSideOnly &&
@@ -52,8 +52,8 @@ public class TriggerRedstoneFaderInput extends BCTrigger {
 	}
 	
     @Override
-    public ITriggerParameter createParameter(int index) {
-		ITriggerParameter param = null;
+    public IStatementParameter createParameter(int index) {
+		IStatementParameter param = null;
 	
 		if (index == 0) {
 		    param = new StatementParameterRedstoneGateSideOnly();

@@ -14,15 +14,15 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.NetworkData;
-import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.gates.IStatement;
 import buildcraft.api.gates.IStatementParameter;
-import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.utils.StringUtils;
 
-public class StatementParameterDirection implements IActionParameter, ITriggerParameter {
+public class StatementParameterDirection implements IStatementParameter {
 
     	@NetworkData
 	public ForgeDirection direction = ForgeDirection.UNKNOWN;

@@ -24,8 +24,8 @@ import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.gates.ActionParameterItemStack;
-import buildcraft.api.gates.IActionParameter;
+import buildcraft.api.gates.StatementParameterItemStack;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.TickHandlerCore;
@@ -116,9 +116,9 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 
 		for (ActionSlot slot : new ActionIterator(station.getPipe().pipe)) {
 			if (slot.action instanceof ActionRobotFilter) {
-				for (IActionParameter p : slot.parameters) {
-					if (p != null && p instanceof ActionParameterItemStack) {
-						ActionParameterItemStack param = (ActionParameterItemStack) p;
+				for (IStatementParameter p : slot.parameters) {
+					if (p != null && p instanceof StatementParameterItemStack) {
+						StatementParameterItemStack param = (StatementParameterItemStack) p;
 						ItemStack stack = param.getItemStack();
 
 						if (stack != null) {
