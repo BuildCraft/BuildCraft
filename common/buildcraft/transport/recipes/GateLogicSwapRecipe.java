@@ -44,7 +44,7 @@ public class GateLogicSwapRecipe extends IntegrationTableRecipe {
 			return null;
 		}
 
-		ItemStack output = result.crafted;
+		ItemStack output = inputA;
 
 		output.stackSize = 1;
 		ItemGate.setLogic(output, ItemGate.getLogic(output) == GateLogic.AND ? GateLogic.OR : GateLogic.AND);
