@@ -26,15 +26,16 @@ import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IActionReceptor;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.tiles.IControllable;
+import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.Box;
 import buildcraft.core.EntityLaser;
-import buildcraft.core.IMachine;
 import buildcraft.core.LaserData;
 import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.statements.ActionMachineControl;
 
-public class TileLaser extends TileBuildCraft implements IActionReceptor, IMachine {
+public class TileLaser extends TileBuildCraft implements IHasWork, IControllable {
 
 	private static final float LASER_OFFSET = 2.0F / 16.0F;
 	private static final short POWER_AVERAGING = 100;
@@ -46,7 +47,7 @@ public class TileLaser extends TileBuildCraft implements IActionReceptor, IMachi
 	private final SafeTimeTracker searchTracker = new SafeTimeTracker(100, 100);
 	private final SafeTimeTracker networkTracker = new SafeTimeTracker(20, 3);
 	private ILaserTarget laserTarget;
-	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
+	private IControllable.Mode lastMode = IControllable.Mode.Unknown;
 	private int powerIndex = 0;
 
 	@NetworkData
@@ -81,7 +82,7 @@ public class TileLaser extends TileBuildCraft implements IActionReceptor, IMachi
 		}
 
 		// If a gate disabled us, remove laser and do nothing.
-		if (lastMode == ActionMachineControl.Mode.Off) {
+		if (lastMode == IControllable.Mode.Off) {
 			removeLaser();
 			return;
 		}
@@ -280,32 +281,8 @@ public class TileLaser extends TileBuildCraft implements IActionReceptor, IMachi
 	}
 
 	@Override
-	public boolean isActive() {
+	public boolean hasWork() {
 		return isValidTable();
-	}
-
-	@Override
-	public boolean manageFluids() {
-		return false;
-	}
-
-	@Override
-	public boolean manageSolids() {
-		return false;
-	}
-
-	@Override
-	public boolean allowAction(IStatement action) {
-		return action == BuildCraftCore.actionOn || action == BuildCraftCore.actionOff;
-	}
-
-	@Override
-	public void actionActivated(IStatement action, IStatementParameter[] parameters) {
-		if (action == BuildCraftCore.actionOn) {
-			lastMode = ActionMachineControl.Mode.On;
-		} else if (action == BuildCraftCore.actionOff) {
-			lastMode = ActionMachineControl.Mode.Off;
-		}
 	}
 
 	private void pushPower(double received) {
@@ -336,5 +313,21 @@ public class TileLaser extends TileBuildCraft implements IActionReceptor, IMachi
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
 		return new Box(this).extendToEncompass(laser.tail).getBoundingBox();
+	}
+	
+	@Override
+	public Mode getControlMode() {
+		return this.lastMode;
+	}
+	
+	@Override
+	public void setControlMode(Mode mode) {
+		this.lastMode = mode;
+	}
+	
+	@Override
+	public boolean acceptsControlMode(Mode mode) {
+		return mode == IControllable.Mode.On ||
+				mode == IControllable.Mode.Off;
 	}
 }

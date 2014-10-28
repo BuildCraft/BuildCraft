@@ -21,10 +21,11 @@ import buildcraft.api.filler.FillerManager;
 import buildcraft.api.statements.IActionReceptor;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.tiles.IControllable;
+import buildcraft.api.tiles.IHasWork;
 import buildcraft.builders.statements.ActionFiller;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
-import buildcraft.core.IMachine;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.builders.TileAbstractBuilder;
@@ -36,11 +37,9 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.network.RPCSide;
-import buildcraft.core.statements.ActionMachineControl;
-import buildcraft.core.statements.ActionMachineControl.Mode;
 import buildcraft.core.utils.Utils;
 
-public class TileFiller extends TileAbstractBuilder implements IMachine, IActionReceptor {
+public class TileFiller extends TileAbstractBuilder implements IHasWork, IControllable {
 
 	private static int POWER_ACTIVATION = 500;
 
@@ -51,7 +50,7 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 
 	private final Box box = new Box();
 	private boolean done = false;
-	private ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
+	private IControllable.Mode lastMode = IControllable.Mode.Unknown;
 	private SimpleInventory inv = new SimpleInventory(27, "Filler", 64);
 
 	private NBTTagCompound initNBT = null;
@@ -291,18 +290,8 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 	}
 
 	@Override
-	public boolean isActive() {
+	public boolean hasWork() {
 		return !done && lastMode != Mode.Off;
-	}
-
-	@Override
-	public boolean manageFluids() {
-		return false;
-	}
-
-	@Override
-	public boolean manageSolids() {
-		return true;
 	}
 
 	@Override
@@ -311,25 +300,6 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 
 	@Override
 	public void closeInventory() {
-	}
-
-	@Override
-	public void actionActivated(IStatement action, IStatementParameter[] parameters) {
-		if (action == BuildCraftCore.actionOn) {
-			lastMode = ActionMachineControl.Mode.On;
-		} else if (action == BuildCraftCore.actionOff) {
-			lastMode = ActionMachineControl.Mode.Off;
-		} else if (action == BuildCraftCore.actionLoop) {
-			lastMode = ActionMachineControl.Mode.Loop;
-		} else if (action instanceof ActionFiller) {
-			ActionFiller actFill = (ActionFiller) action;
-			setPattern(actFill.pattern);
-		}
-	}
-
-	@Override
-	public boolean allowAction(IStatement action) {
-		return true;
 	}
 
 	@Override
@@ -364,6 +334,23 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 	@Override
 	public boolean isBuildingMaterialSlot(int i) {
 		return true;
+	}
+
+	@Override
+	public Mode getControlMode() {
+		return this.lastMode;
+	}
+
+	@Override
+	public void setControlMode(Mode mode) {
+		this.lastMode = mode;
+	}
+
+	@Override
+	public boolean acceptsControlMode(Mode mode) {
+		return mode == IControllable.Mode.On ||
+				mode == IControllable.Mode.Off ||
+				mode == IControllable.Mode.Loop;
 	}
 
 }

@@ -15,14 +15,11 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.tiles.IControllable;
+import buildcraft.api.tiles.IControllable.Mode;
 import buildcraft.core.utils.StringUtils;
 
 public class ActionMachineControl extends BCStatement implements IActionExternal {
-
-	public enum Mode {
-
-		Unknown, On, Off, Loop
-	};
 	public final Mode mode;
 
 	public ActionMachineControl(Mode mode) {
@@ -52,6 +49,8 @@ public class ActionMachineControl extends BCStatement implements IActionExternal
 	@Override
 	public void actionActivate(TileEntity target, ForgeDirection side,
 			IStatementContainer source, IStatementParameter[] parameters) {
-		
+		if (target instanceof IControllable) {
+			((IControllable)target).setControlMode(mode);
+		}
 	}
 }

@@ -22,8 +22,8 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.ITriggerProvider;
+import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.IMachine;
 
 public class DefaultTriggerProvider implements ITriggerProvider {
 
@@ -54,7 +54,7 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 			}
 		}
 
-		if (tile instanceof IMachine) {
+		if (tile instanceof IHasWork) {
 			res.add(BuildCraftCore.triggerMachineActive);
 			res.add(BuildCraftCore.triggerMachineInactive);
 		}

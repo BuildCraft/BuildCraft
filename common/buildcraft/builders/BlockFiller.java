@@ -74,7 +74,7 @@ public class BlockFiller extends BlockBuildCraft {
 		if (tile != null && tile instanceof TileFiller) {
 			TileFiller filler = (TileFiller) tile;
 			if (side == 1 || side == 0) {
-				if (!filler.isActive()) {
+				if (!filler.hasWork()) {
 					return textureTopOff;
 				} else {
 					return textureTopOn;

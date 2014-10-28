@@ -18,13 +18,15 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.statements.IStatement;
-import buildcraft.core.IMachine;
+import buildcraft.api.tiles.IHasWork;
+import buildcraft.api.transport.IPipeConnection;
+import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
 
-public class TileMiningWell extends TileBuildCraft implements IMachine {
+public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeConnection {
 
 	boolean isDigging = true;
 
@@ -118,22 +120,13 @@ public class TileMiningWell extends TileBuildCraft implements IMachine {
 	}
 
 	@Override
-	public boolean isActive() {
+	public boolean hasWork() {
 		return isDigging;
 	}
 
 	@Override
-	public boolean manageFluids() {
-		return false;
-	}
-
-	@Override
-	public boolean manageSolids() {
-		return true;
-	}
-
-	@Override
-	public boolean allowAction(IStatement action) {
-		return false;
+	public ConnectOverride overridePipeConnection(PipeType type,
+			ForgeDirection with) {
+		return type == PipeType.ITEM ? ConnectOverride.CONNECT : ConnectOverride.DISCONNECT;
 	}
 }

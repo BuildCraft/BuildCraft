@@ -71,6 +71,7 @@ import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.statements.StatementParameterItemStack;
+import buildcraft.api.tiles.IControllable;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.CommandBuildCraft;
@@ -99,7 +100,6 @@ import buildcraft.core.recipes.RefineryRecipeManager;
 import buildcraft.core.render.BlockHighlightHandler;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.statements.ActionMachineControl;
-import buildcraft.core.statements.ActionMachineControl.Mode;
 import buildcraft.core.statements.ActionRedstoneOutput;
 import buildcraft.core.statements.DefaultActionProvider;
 import buildcraft.core.statements.DefaultTriggerProvider;
@@ -196,10 +196,8 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static ITriggerExternal triggerFluidContainerBelow50 = new TriggerFluidContainerLevel(TriggerFluidContainerLevel.TriggerType.BELOW_50);
 	public static ITriggerExternal triggerFluidContainerBelow75 = new TriggerFluidContainerLevel(TriggerFluidContainerLevel.TriggerType.BELOW_75);
 	public static IActionInternal actionRedstone = new ActionRedstoneOutput();
-	public static IActionExternal actionOn = new ActionMachineControl(Mode.On);
-	public static IActionExternal actionOff = new ActionMachineControl(Mode.Off);
-	public static IActionExternal actionLoop = new ActionMachineControl(Mode.Loop);
-
+	public static IActionExternal[] actionControl;
+	
 	public static boolean loadDefaultRecipes = true;
 	public static boolean consumeWaterSources = false;
 
@@ -415,6 +413,13 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildCraftAPI.isFluidSource = new WorldPropertyIsFluidSource();
 		
 		ColorUtils.initialize();
+		
+		actionControl = new IActionExternal[IControllable.Mode.values().length];
+		for (IControllable.Mode mode : IControllable.Mode.values()) {
+			if (mode != IControllable.Mode.Unknown) {
+				actionControl[mode.ordinal()] = new ActionMachineControl(mode);
+			}
+		}
 	}
 
 	@Mod.EventHandler

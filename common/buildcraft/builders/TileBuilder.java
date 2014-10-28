@@ -36,9 +36,9 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.robots.StackRequest;
 import buildcraft.api.statements.IStatement;
+import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
-import buildcraft.core.IMachine;
 import buildcraft.core.LaserData;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
@@ -62,7 +62,7 @@ import buildcraft.core.network.RPCSide;
 import buildcraft.core.robots.ResourceIdRequest;
 import buildcraft.core.robots.RobotRegistry;
 
-public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluidHandler, IRequestProvider {
+public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluidHandler, IRequestProvider {
 
 	private static int POWER_ACTIVATION = 500;
 
@@ -603,18 +603,8 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 	}
 
 	@Override
-	public boolean isActive() {
+	public boolean hasWork() {
 		return !done;
-	}
-
-	@Override
-	public boolean manageFluids() {
-		return true;
-	}
-
-	@Override
-	public boolean manageSolids() {
-		return true;
 	}
 
 	public boolean isBuildingBlueprint() {
@@ -655,11 +645,6 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 	@Override
 	public boolean isBuildingMaterialSlot(int i) {
 		return i != 0;
-	}
-
-	@Override
-	public boolean allowAction(IStatement action) {
-		return false;
 	}
 
 	@Override

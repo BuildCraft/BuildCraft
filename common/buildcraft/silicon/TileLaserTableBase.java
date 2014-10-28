@@ -19,17 +19,19 @@ import buildcraft.api.power.ILaserTarget;
 import buildcraft.api.statements.IActionReceptor;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.core.IMachine;
+import buildcraft.api.tiles.IControllable;
+import buildcraft.api.tiles.IHasWork;
+import buildcraft.api.tiles.IControllable.Mode;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.statements.ActionMachineControl;
 import buildcraft.core.utils.AverageUtil;
 
-public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory, IActionReceptor, IMachine {
+public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory, IHasWork, IControllable {
 
 	public int clientRequiredEnergy = 0;
 	protected SimpleInventory inv = new SimpleInventory(getSizeInventory(), "inv", 64);
-	protected ActionMachineControl.Mode lastMode = ActionMachineControl.Mode.Unknown;
+	protected IControllable.Mode lastMode = IControllable.Mode.Unknown;
 	private int energy = 0;
 	private int recentEnergyAverage;
 	private AverageUtil recentEnergyAverageUtil = new AverageUtil(20);
@@ -200,31 +202,23 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 	}
 
 	@Override
-	public boolean isActive() {
-		return lastMode != ActionMachineControl.Mode.Off;
+	public boolean hasWork() {
+		return lastMode != IControllable.Mode.Off;
 	}
-
+	
 	@Override
-	public boolean manageFluids() {
-		return false;
+	public Mode getControlMode() {
+		return this.lastMode;
 	}
-
+	
 	@Override
-	public boolean manageSolids() {
-		return false;
+	public void setControlMode(Mode mode) {
+		this.lastMode = mode;
 	}
-
+	
 	@Override
-	public boolean allowAction(IStatement action) {
-		return action == BuildCraftCore.actionOn || action == BuildCraftCore.actionOff;
-	}
-
-	@Override
-	public void actionActivated(IStatement action, IStatementParameter[] parameters) {
-		if (action == BuildCraftCore.actionOn) {
-			lastMode = ActionMachineControl.Mode.On;
-		} else if (action == BuildCraftCore.actionOff) {
-			lastMode = ActionMachineControl.Mode.Off;
-		}
+	public boolean acceptsControlMode(Mode mode) {
+		return mode == IControllable.Mode.On ||
+				mode == IControllable.Mode.Off;
 	}
 }

@@ -13,7 +13,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerExternal;
-import buildcraft.core.IMachine;
+import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.utils.StringUtils;
 
 public class TriggerMachine extends BCStatement implements ITriggerExternal {
@@ -33,13 +33,13 @@ public class TriggerMachine extends BCStatement implements ITriggerExternal {
 
 	@Override
 	public boolean isTriggerActive(TileEntity tile, ForgeDirection side, IStatementContainer container, IStatementParameter[] parameters) {
-		if (tile instanceof IMachine) {
-			IMachine machine = (IMachine) tile;
+		if (tile instanceof IHasWork) {
+			IHasWork machine = (IHasWork) tile;
 
 			if (active) {
-				return machine.isActive();
+				return machine.hasWork();
 			} else {
-				return !machine.isActive();
+				return !machine.hasWork();
 			}
 		}
 

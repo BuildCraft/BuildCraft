@@ -17,6 +17,7 @@ import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.api.recipes.IIntegrationRecipe;
+import buildcraft.api.tiles.IControllable;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.InventoryMapper;
 import buildcraft.core.inventory.SimpleInventory;
@@ -80,7 +81,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements IFlexibl
 		}
 
 		if (getEnergy() >= craftingPreview.energyCost
-				&& lastMode != ActionMachineControl.Mode.Off) {
+				&& lastMode != IControllable.Mode.Off) {
 			setEnergy(0);
 			craftingPreview = null;
 
@@ -132,7 +133,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements IFlexibl
 
 	@Override
 	public boolean canCraft() {
-		return isActive();
+		return hasWork();
 	}
 
 	@Override
@@ -184,8 +185,8 @@ public class TileIntegrationTable extends TileLaserTableBase implements IFlexibl
 	}
 
     @Override
-    public boolean isActive() {
-		return craftingPreview != null && super.isActive();
+    public boolean hasWork() {
+		return craftingPreview != null && super.hasWork();
     }
 
 	@Override

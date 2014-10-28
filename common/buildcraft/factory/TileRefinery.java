@@ -31,7 +31,7 @@ import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.api.statements.IStatement;
-import buildcraft.core.IMachine;
+import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.SingleUseTank;
@@ -40,7 +40,7 @@ import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.recipes.RefineryRecipeManager;
 
-public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInventory, IMachine, IFlexibleCrafter {
+public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInventory, IHasWork, IFlexibleCrafter {
 
 	public static int LIQUID_PER_SLOT = FluidContainerRegistry.BUCKET_VOLUME * 4;
 
@@ -178,20 +178,10 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	}
 
 	@Override
-	public boolean isActive() {
+	public boolean hasWork() {
 		return isActive;
 	}
-
-	@Override
-	public boolean manageFluids() {
-		return true;
-	}
-
-	@Override
-	public boolean manageSolids() {
-		return true;
-	}
-
+	
 	@Override
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
@@ -283,11 +273,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 
 	public Fluid getFilter(int number) {
 		return tankManager.get(number).getAcceptedFluid();
-	}
-
-	@Override
-	public boolean allowAction(IStatement action) {
-		return false;
 	}
 
 	/* SMP GUI */

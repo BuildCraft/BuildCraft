@@ -32,9 +32,9 @@ import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.statements.IStatement;
+import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.EntityBlock;
-import buildcraft.core.IMachine;
 import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
@@ -46,7 +46,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
 
-public class TilePump extends TileBuildCraft implements IMachine, IFluidHandler {
+public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler {
 
 	public static final int REBUID_DELAY = 512;
 	public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 16;
@@ -372,7 +372,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IFluidHandler 
 	}
 
 	@Override
-	public boolean isActive() {
+	public boolean hasWork() {
 		BlockIndex next = getNextIndexToPump(false);
 
 		if (next != null) {
@@ -439,21 +439,6 @@ public class TilePump extends TileBuildCraft implements IMachine, IFluidHandler 
 		tileBuffer = null;
 		pumpLayerQueues.clear();
 		destroyTube();
-	}
-
-	@Override
-	public boolean manageFluids() {
-		return true;
-	}
-
-	@Override
-	public boolean manageSolids() {
-		return false;
-	}
-
-	@Override
-	public boolean allowAction(IStatement action) {
-		return false;
 	}
 
 	// IFluidHandler implementation.

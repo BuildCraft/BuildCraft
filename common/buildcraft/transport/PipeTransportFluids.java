@@ -24,7 +24,6 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.IMachine;
 import buildcraft.transport.network.PacketFluidUpdate;
 
 public class PipeTransportFluids extends PipeTransport implements IFluidHandler {
@@ -524,7 +523,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			}
 		}
 
-		return tile instanceof TileGenericPipe || (tile instanceof IMachine && ((IMachine) tile).manageFluids());
+		return tile instanceof TileGenericPipe;
 	}
 
 	/**

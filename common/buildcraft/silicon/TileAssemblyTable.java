@@ -26,7 +26,7 @@ import buildcraft.api.core.NetworkData;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
-import buildcraft.core.IMachine;
+import buildcraft.api.tiles.IControllable;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
@@ -39,7 +39,7 @@ import buildcraft.core.statements.ActionMachineControl;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
 
-public class TileAssemblyTable extends TileLaserTableBase implements IMachine, IInventory, IFlexibleCrafter {
+public class TileAssemblyTable extends TileLaserTableBase implements IInventory, IFlexibleCrafter {
 
 	@NetworkData
 	public String currentRecipeId = "";
@@ -85,7 +85,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 		}
 
 		if (getEnergy() >= currentRecipe.craft(this, true).energyCost
-				&& lastMode != ActionMachineControl.Mode.Off) {
+				&& lastMode != IControllable.Mode.Off) {
 			setEnergy(0);
 
 			if (currentRecipe.canBeCrafted(this)) {
@@ -288,13 +288,13 @@ public class TileAssemblyTable extends TileLaserTableBase implements IMachine, I
 	}
 
 	@Override
-	public boolean isActive() {
-		return currentRecipe != null && super.isActive();
+	public boolean hasWork() {
+		return currentRecipe != null && super.hasWork();
 	}
 
 	@Override
 	public boolean canCraft() {
-		return isActive();
+		return hasWork();
 	}
 
 	@Override

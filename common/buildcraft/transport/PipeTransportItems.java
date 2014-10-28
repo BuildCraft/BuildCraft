@@ -30,7 +30,6 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.IMachine;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.MathUtils;
@@ -487,8 +486,7 @@ public class PipeTransportItems extends PipeTransport {
 			return slots != null && slots.length > 0;
 		}
 
-		return tile instanceof TileGenericPipe || (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0)
-				|| (tile instanceof IMachine && ((IMachine) tile).manageSolids());
+		return tile instanceof TileGenericPipe || (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0);
 	}
 	
 	/**

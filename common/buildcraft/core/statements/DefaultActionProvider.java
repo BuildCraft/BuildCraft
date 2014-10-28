@@ -22,8 +22,8 @@ import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IActionProvider;
 import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.tiles.IControllable;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.IMachine;
 
 public class DefaultActionProvider implements IActionProvider {
 
@@ -43,16 +43,12 @@ public class DefaultActionProvider implements IActionProvider {
 		LinkedList<IActionExternal> res = new LinkedList<IActionExternal>();
 
 		try {
-			if (tile instanceof IMachine) {
-				IMachine machine = (IMachine) tile;
-				if (machine.allowAction(BuildCraftCore.actionOn)) {
-					res.add(BuildCraftCore.actionOn);
-				}
-				if (machine.allowAction(BuildCraftCore.actionOff)) {
-					res.add(BuildCraftCore.actionOff);
-				}
-				if (machine.allowAction(BuildCraftCore.actionLoop)) {
-					res.add(BuildCraftCore.actionLoop);
+			if (tile instanceof IControllable) {
+				for (IControllable.Mode mode : IControllable.Mode.values()) {
+					if (mode != IControllable.Mode.Unknown &&
+							((IControllable) tile).acceptsControlMode(mode)) {
+						res.add(BuildCraftCore.actionControl[mode.ordinal()]);
+					}
 				}
 			}
 		} catch (Throwable error) {

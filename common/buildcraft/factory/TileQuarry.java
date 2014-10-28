@@ -37,11 +37,11 @@ import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.statements.IStatement;
+import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.DefaultAreaProvider;
-import buildcraft.core.IMachine;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
@@ -52,7 +52,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
 
-public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedInventory {
+public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory {
 
 	private static enum Stage {
 		BUILDING,
@@ -520,7 +520,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 	}
 
 	@Override
-	public boolean isActive() {
+	public boolean hasWork() {
 		return stage != Stage.DONE;
 	}
 
@@ -667,16 +667,6 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 	}
 
 	@Override
-	public boolean manageFluids() {
-		return false;
-	}
-
-	@Override
-	public boolean manageSolids() {
-		return true;
-	}
-
-	@Override
 	public int getSizeInventory() {
 		return 1;
 	}
@@ -740,12 +730,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 	public boolean isBuildingMaterialSlot(int i) {
 		return true;
 	}
-
-	@Override
-	public boolean allowAction(IStatement action) {
-		return false;
-	}
-
+	
 	public void moveHead(double instantSpeed) {
 		int[] target = getTarget();
 		double[] head = getHead();
