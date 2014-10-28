@@ -11,14 +11,16 @@ package buildcraft.transport.statements;
 import java.util.Locale;
 
 import buildcraft.api.gates.IGate;
-import buildcraft.api.gates.IStatementParameter;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.transport.PipeWire;
-import buildcraft.core.statements.BCTrigger;
+import buildcraft.core.statements.BCStatement;
 import buildcraft.core.statements.StatementIconProvider;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
 
-public class TriggerPipeSignal extends BCTrigger {
+public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
 
 	boolean active;
 	PipeWire color;
@@ -42,8 +44,12 @@ public class TriggerPipeSignal extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(IGate gate, IStatementParameter[] parameters) {
-		Pipe<?> pipe = (Pipe<?>) gate.getPipe();
+	public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
+		if (!(container instanceof IGate)) {
+			return false;
+		}
+		
+		Pipe<?> pipe = (Pipe<?>) ((IGate) container).getPipe();
 
 		if (active) {
 			if (pipe.signalStrength[color.ordinal()] == 0) {

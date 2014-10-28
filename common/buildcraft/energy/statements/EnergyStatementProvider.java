@@ -7,23 +7,24 @@ import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftEnergy;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IActionProvider;
-import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.ITriggerProvider;
+import buildcraft.api.statements.IActionProvider;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.ITriggerExternal;
+import buildcraft.api.statements.ITriggerInternal;
+import buildcraft.api.statements.ITriggerProvider;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.energy.TileEngine;
 
 public class EnergyStatementProvider implements ITriggerProvider {
 
 	@Override
-	public Collection<ITrigger> getInternalTriggers(TileEntity pipe) {
+	public Collection<ITriggerInternal> getInternalTriggers(IStatementContainer container) {
 		return null;
 	}
 
 	@Override
-	public Collection<ITrigger> getExternalTriggers(ForgeDirection side, TileEntity tile) {
-		LinkedList<ITrigger> triggers = new LinkedList<ITrigger>();
+	public Collection<ITriggerExternal> getExternalTriggers(ForgeDirection side, TileEntity tile) {
+		LinkedList<ITriggerExternal> triggers = new LinkedList<ITriggerExternal>();
 		
 		if (tile instanceof TileEngine) {
 			triggers.add(BuildCraftEnergy.triggerBlueEngineHeat);

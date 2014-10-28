@@ -17,16 +17,10 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IStatementParameter;
-import buildcraft.api.gates.IStatement;
-import buildcraft.api.gates.IStatementParameter;
-import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.IStatementParameter;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtils;
@@ -386,7 +380,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		if (slot instanceof TriggerSlot && container.hasTriggers()) {
 			TriggerSlot triggerSlot = (TriggerSlot) slot;
 
-			ITrigger changed = null;
+			IStatement changed = null;
 
 			if (triggerSlot.getStatement() == null) {
 
@@ -397,10 +391,10 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				}
 
 			} else {
-				Iterator<ITrigger> it = container.getTriggerIterator(k != 0);
+				Iterator<IStatement> it = container.getTriggerIterator(k != 0);
 
 				for (; it.hasNext();) {
-					ITrigger trigger = it.next();
+					IStatement trigger = it.next();
 
 					if (!it.hasNext()) {
 						changed = null;
@@ -426,7 +420,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		} else if (slot instanceof ActionSlot) {
 			ActionSlot actionSlot = (ActionSlot) slot;
 
-			IAction changed = null;
+			IStatement changed = null;
 			if (actionSlot.getStatement() == null) {
 
 				if (k == 0) {
@@ -436,10 +430,10 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				}
 
 			} else {
-				Iterator<IAction> it = container.getActionIterator(k != 0);
+				Iterator<IStatement> it = container.getActionIterator(k != 0);
 
 				for (; it.hasNext();) {
-					IAction action = it.next();
+					IStatement action = it.next();
 
 					if (!it.hasNext()) {
 						changed = null;

@@ -15,13 +15,15 @@ import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.gates.IStatementParameter;
-import buildcraft.core.statements.BCTrigger;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.ITriggerExternal;
+import buildcraft.core.statements.BCStatement;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.energy.TileEngine;
 import buildcraft.energy.TileEngine.EnergyStage;
 
-public class TriggerEngineHeat extends BCTrigger {
+public class TriggerEngineHeat extends BCStatement implements ITriggerExternal {
 
 	public EnergyStage stage;
 
@@ -37,7 +39,7 @@ public class TriggerEngineHeat extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, IStatementParameter parameter) {
+	public boolean isTriggerActive(TileEntity tile, ForgeDirection side, IStatementContainer container, IStatementParameter[] parameters) {
 		if (tile instanceof TileEngine) {
 			TileEngine engine = (TileEngine) tile;
 

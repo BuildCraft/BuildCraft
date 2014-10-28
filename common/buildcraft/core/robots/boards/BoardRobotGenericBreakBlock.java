@@ -15,13 +15,12 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.core.BlockIndex;
-import buildcraft.api.gates.StatementParameterItemStack;
-import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.core.TickHandlerCore;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotBreak;
@@ -34,7 +33,7 @@ import buildcraft.core.robots.IBlockFilter;
 import buildcraft.core.robots.ResourceIdBlock;
 import buildcraft.silicon.statements.ActionRobotFilter;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.transport.gates.ActionSlot;
+import buildcraft.transport.gates.StatementSlot;
 
 public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
@@ -127,8 +126,8 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
 		DockingStation station = (DockingStation) robot.getLinkedStation();
 
-		for (ActionSlot slot : new ActionIterator(station.getPipe().pipe)) {
-			if (slot.action instanceof ActionRobotFilter) {
+		for (StatementSlot slot : new ActionIterator(station.getPipe().pipe)) {
+			if (slot.statement instanceof ActionRobotFilter) {
 				for (IStatementParameter p : slot.parameters) {
 					if (p != null && p instanceof StatementParameterItemStack) {
 						StatementParameterItemStack param = (StatementParameterItemStack) p;

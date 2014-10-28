@@ -40,6 +40,7 @@ import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipePluggable;
 import buildcraft.api.transport.IPipeTile;
@@ -1189,5 +1190,15 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		} else {
 			return 0;
 		}
+	}
+
+	@Override
+	public TileEntity getAdjacentTile(ForgeDirection dir) {
+		return getTile(dir);
+	}
+
+	@Override
+	public IPipe getPipe() {
+		return pipe;
 	}
 }

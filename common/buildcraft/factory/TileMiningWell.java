@@ -14,12 +14,10 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
-import buildcraft.api.gates.IAction;
+import buildcraft.api.statements.IStatement;
 import buildcraft.core.IMachine;
 import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
@@ -135,7 +133,7 @@ public class TileMiningWell extends TileBuildCraft implements IMachine {
 	}
 
 	@Override
-	public boolean allowAction(IAction action) {
+	public boolean allowAction(IStatement action) {
 		return false;
 	}
 }

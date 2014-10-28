@@ -31,7 +31,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.gates.IAction;
+import buildcraft.api.statements.IStatement;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.IMachine;
@@ -452,7 +452,7 @@ public class TilePump extends TileBuildCraft implements IMachine, IFluidHandler 
 	}
 
 	@Override
-	public boolean allowAction(IAction action) {
+	public boolean allowAction(IStatement action) {
 		return false;
 	}
 

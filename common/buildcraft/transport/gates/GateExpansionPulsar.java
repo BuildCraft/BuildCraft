@@ -16,9 +16,10 @@ import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
-import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IStatement;
 import buildcraft.transport.statements.ActionEnergyPulsar;
 import buildcraft.transport.statements.ActionSingleEnergyPulse;
 
@@ -61,7 +62,7 @@ public final class GateExpansionPulsar extends GateExpansionBuildcraft implement
 		}
 
 		@Override
-		public boolean resolveAction(IAction action) {
+		public boolean resolveAction(IStatement action) {
 			if (action instanceof ActionEnergyPulsar) {
 				enablePulse();
 				return true;
@@ -73,7 +74,7 @@ public final class GateExpansionPulsar extends GateExpansionBuildcraft implement
 		}
 
 		@Override
-		public void addActions(List<IAction> list) {
+		public void addActions(List<IActionInternal> list) {
 			super.addActions(list);
 			list.add(BuildCraftTransport.actionEnergyPulser);
 			list.add(BuildCraftTransport.actionSingleEnergyPulse);

@@ -9,12 +9,14 @@
 package buildcraft.silicon.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-import buildcraft.api.gates.StatementParameterItemStack;
-import buildcraft.api.gates.IStatementParameter;
-import buildcraft.core.statements.BCActionPassive;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementParameterItemStack;
+import buildcraft.core.statements.BCStatement;
 import buildcraft.core.utils.StringUtils;
 
-public class ActionStationAcceptFluids extends BCActionPassive {
+public class ActionStationAcceptFluids extends BCStatement implements IActionInternal {
 
 	public ActionStationAcceptFluids() {
 		super("buildcraft:station.accept_fluids");
@@ -38,5 +40,11 @@ public class ActionStationAcceptFluids extends BCActionPassive {
 	@Override
 	public IStatementParameter createParameter(int index) {
 		return new StatementParameterItemStack();
+	}
+
+	@Override
+	public void actionActivate(IStatementContainer source,
+			IStatementParameter[] parameters) {
+		
 	}
 }

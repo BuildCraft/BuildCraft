@@ -28,7 +28,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.Position;
-import buildcraft.api.gates.ITrigger;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IMachine;
@@ -491,11 +490,7 @@ public class PipeTransportItems extends PipeTransport {
 		return tile instanceof TileGenericPipe || (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0)
 				|| (tile instanceof IMachine && ((IMachine) tile).manageSolids());
 	}
-
-	public boolean isTriggerActive(ITrigger trigger) {
-		return false;
-	}
-
+	
 	/**
 	 * Group all items that are similar, that is to say same dmg, same id, same
 	 * nbt and no contribution controlling them

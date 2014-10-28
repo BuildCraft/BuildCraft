@@ -15,9 +15,11 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import buildcraft.api.gates.StatementParameterItemStack;
-import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.robots.IDockingStation;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.core.inventory.filters.ArrayFluidFilter;
 import buildcraft.core.inventory.filters.ArrayStackOrListFilter;
 import buildcraft.core.inventory.filters.IFluidFilter;
@@ -26,13 +28,13 @@ import buildcraft.core.inventory.filters.PassThroughFluidFilter;
 import buildcraft.core.inventory.filters.PassThroughStackFilter;
 import buildcraft.core.inventory.filters.StatementParameterStackFilter;
 import buildcraft.core.robots.DockingStation;
-import buildcraft.core.statements.BCActionPassive;
+import buildcraft.core.statements.BCStatement;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.transport.gates.ActionSlot;
+import buildcraft.transport.gates.StatementSlot;
 
-public class ActionRobotFilter extends BCActionPassive {
+public class ActionRobotFilter extends BCStatement implements IActionInternal {
 
 	public ActionRobotFilter() {
 		super("buildcraft:robot.work_filter");
@@ -66,8 +68,8 @@ public class ActionRobotFilter extends BCActionPassive {
 	public static Collection<ItemStack> getGateFilterStacks(IDockingStation station) {
 		ArrayList<ItemStack> result = new ArrayList<ItemStack>();
 
-		for (ActionSlot slot : new ActionIterator(((DockingStation) station).getPipe().pipe)) {
-			if (slot.action instanceof ActionRobotFilter) {
+		for (StatementSlot slot : new ActionIterator(((DockingStation) station).getPipe().pipe)) {
+			if (slot.statement instanceof ActionRobotFilter) {
 				for (IStatementParameter p : slot.parameters) {
 					if (p != null && p instanceof StatementParameterItemStack) {
 						StatementParameterItemStack param = (StatementParameterItemStack) p;
@@ -109,8 +111,8 @@ public class ActionRobotFilter extends BCActionPassive {
 
 		Pipe pipe = station.getPipe().pipe;
 
-		for (ActionSlot s : new ActionIterator(pipe)) {
-			if (actionClass.isAssignableFrom(s.action.getClass())) {
+		for (StatementSlot s : new ActionIterator(pipe)) {
+			if (actionClass.isAssignableFrom(s.statement.getClass())) {
 				StatementParameterStackFilter param = new StatementParameterStackFilter(s.parameters);
 
 				if (!param.hasFilter() || param.matches(filter)) {
@@ -127,8 +129,8 @@ public class ActionRobotFilter extends BCActionPassive {
 		boolean actionFound = false;
 		Pipe pipe = station.getPipe().pipe;
 
-		for (ActionSlot s : new ActionIterator(pipe)) {
-			if (actionClass.isAssignableFrom(s.action.getClass())) {
+		for (StatementSlot s : new ActionIterator(pipe)) {
+			if (actionClass.isAssignableFrom(s.statement.getClass())) {
 				StatementParameterStackFilter param = new StatementParameterStackFilter(s.parameters);
 
 				if (!param.hasFilter()) {
@@ -151,5 +153,11 @@ public class ActionRobotFilter extends BCActionPassive {
 
 		return actionFound;
 
+	}
+
+	@Override
+	public void actionActivate(IStatementContainer source,
+			IStatementParameter[] parameters) {
+		
 	}
 }

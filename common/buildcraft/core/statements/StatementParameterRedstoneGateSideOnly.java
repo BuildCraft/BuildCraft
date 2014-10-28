@@ -5,10 +5,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import buildcraft.api.core.NetworkData;
-import buildcraft.api.gates.IStatementParameter;
-import buildcraft.api.gates.IStatement;
-import buildcraft.api.gates.IStatementParameter;
-import buildcraft.api.gates.IStatementParameter;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.utils.StringUtils;
 

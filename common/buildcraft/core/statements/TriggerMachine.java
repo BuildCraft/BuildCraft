@@ -9,14 +9,14 @@
 package buildcraft.core.statements;
 
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
-import buildcraft.api.gates.IStatementParameter;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.core.IMachine;
 import buildcraft.core.utils.StringUtils;
 
-public class TriggerMachine extends BCTrigger {
+public class TriggerMachine extends BCStatement implements ITriggerExternal {
 
 	boolean active;
 
@@ -32,7 +32,7 @@ public class TriggerMachine extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, IStatementParameter parameter) {
+	public boolean isTriggerActive(TileEntity tile, ForgeDirection side, IStatementContainer container, IStatementParameter[] parameters) {
 		if (tile instanceof IMachine) {
 			IMachine machine = (IMachine) tile;
 

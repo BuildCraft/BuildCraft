@@ -27,10 +27,10 @@ import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.gates.IAction;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
+import buildcraft.api.statements.IStatement;
 import buildcraft.core.IMachine;
 import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
@@ -286,7 +286,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	}
 
 	@Override
-	public boolean allowAction(IAction action) {
+	public boolean allowAction(IStatement action) {
 		return false;
 	}
 

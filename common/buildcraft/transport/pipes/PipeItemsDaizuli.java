@@ -24,7 +24,7 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.NetworkData;
-import buildcraft.api.gates.IAction;
+import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -32,7 +32,7 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TransportConstants;
 import buildcraft.transport.TravelingItem;
-import buildcraft.transport.gates.ActionSlot;
+import buildcraft.transport.gates.StatementSlot;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.statements.ActionPipeColor;
 import buildcraft.transport.statements.ActionPipeDirection;
@@ -150,27 +150,27 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> {
 	}
 
 	@Override
-	protected void actionsActivated(Collection<ActionSlot> actions) {
+	protected void actionsActivated(Collection<StatementSlot> actions) {
 		super.actionsActivated(actions);
 
-		for (ActionSlot action : actions) {
-			if (action.action instanceof ActionPipeColor) {
-				setColor(((ActionPipeColor) action.action).color);
+		for (StatementSlot action : actions) {
+			if (action.statement instanceof ActionPipeColor) {
+				setColor(((ActionPipeColor) action.statement).color);
 				break;
 			}
 		}
 
-		for (ActionSlot action : actions) {
-			if (action.action instanceof ActionPipeDirection) {
-				logic.setFacing(((ActionPipeDirection) action.action).direction);
+		for (StatementSlot action : actions) {
+			if (action.statement instanceof ActionPipeDirection) {
+				logic.setFacing(((ActionPipeDirection) action.statement).direction);
 				break;
 			}
 		}
 	}
 
 	@Override
-	public LinkedList<IAction> getActions() {
-		LinkedList<IAction> action = super.getActions();
+	public LinkedList<IActionInternal> getActions() {
+		LinkedList<IActionInternal> action = super.getActions();
 		action.addAll(Arrays.asList(BuildCraftTransport.actionPipeColor));
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			if (container.isPipeConnected(direction)) {

@@ -9,7 +9,6 @@
 package buildcraft.transport.recipes;
 
 import net.minecraft.item.ItemStack;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.recipes.CraftingResult;

@@ -15,7 +15,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
 
-public class ActionIterator implements Iterable<ActionSlot> {
+public class ActionIterator implements Iterable<StatementSlot> {
 
 	private Pipe pipe;
 
@@ -24,15 +24,15 @@ public class ActionIterator implements Iterable<ActionSlot> {
 	}
 
 	@Override
-	public Iterator<ActionSlot> iterator() {
+	public Iterator<StatementSlot> iterator() {
 		return new It();
 	}
 
-	private class It implements Iterator<ActionSlot> {
+	private class It implements Iterator<StatementSlot> {
 
 		private ForgeDirection curDir = ForgeDirection.values()[0];
 		private int index = 0;
-		private ActionSlot next;
+		private StatementSlot next;
 
 		public It() {
 			while (!isValid()) {
@@ -58,8 +58,8 @@ public class ActionIterator implements Iterable<ActionSlot> {
 		}
 
 		@Override
-		public ActionSlot next() {
-			ActionSlot result = next;
+		public StatementSlot next() {
+			StatementSlot result = next;
 
 			while (true) {
 				if (index < Gate.MAX_STATEMENTS - 1) {
@@ -77,8 +77,8 @@ public class ActionIterator implements Iterable<ActionSlot> {
 			}
 
 			if (isValid()) {
-				next = new ActionSlot();
-				next.action = pipe.gates[curDir.ordinal()].actions[index];
+				next = new StatementSlot();
+				next.statement = pipe.gates[curDir.ordinal()].actions[index];
 				next.parameters = pipe.gates[curDir.ordinal()].actionParameters[index];
 			} else {
 				next = null;

@@ -9,16 +9,16 @@
 package buildcraft.silicon.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-
 import buildcraft.api.core.IInvSlot;
-import buildcraft.api.gates.StatementParameterItemStack;
-import buildcraft.api.gates.IStatementParameter;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TravelingItem;
-import buildcraft.transport.gates.ActionSlot;
+import buildcraft.transport.gates.StatementSlot;
 
 public class ActionStationAcceptItemsPipe extends ActionStationInputItems {
 
@@ -47,7 +47,7 @@ public class ActionStationAcceptItemsPipe extends ActionStationInputItems {
 	}
 
 	@Override
-	public boolean insert(DockingStation station, EntityRobot robot, ActionSlot actionSlot, IInvSlot invSlot,
+	public boolean insert(DockingStation station, EntityRobot robot, StatementSlot actionSlot, IInvSlot invSlot,
 			boolean doInsert) {
 		if (!super.insert(station, robot, actionSlot, invSlot, doInsert)) {
 			return false;

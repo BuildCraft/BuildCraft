@@ -11,17 +11,17 @@ package buildcraft.core.statements;
 import java.util.Locale;
 
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-
-import buildcraft.api.gates.IStatementParameter;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.core.utils.StringUtils;
 
-public class TriggerFluidContainer extends BCTrigger {
+public class TriggerFluidContainer extends BCStatement implements ITriggerExternal {
 
 	public enum State {
 
@@ -45,14 +45,14 @@ public class TriggerFluidContainer extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, IStatementParameter parameter) {
+	public boolean isTriggerActive(TileEntity tile, ForgeDirection side, IStatementContainer statementContainer, IStatementParameter[] parameters) {
 		if (tile instanceof IFluidHandler) {
 			IFluidHandler container = (IFluidHandler) tile;
 
 			FluidStack searchedFluid = null;
 
-			if (parameter != null && parameter.getItemStack() != null) {
-				searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItemStack());
+			if (parameters != null && parameters.length >= 1 && parameters[0].getItemStack() != null) {
+				searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameters[0].getItemStack());
 			}
 
 			if (searchedFluid != null) {

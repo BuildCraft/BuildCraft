@@ -32,10 +32,10 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
-import buildcraft.api.gates.IAction;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.robots.StackRequest;
+import buildcraft.api.statements.IStatement;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.IMachine;
@@ -658,7 +658,7 @@ public class TileBuilder extends TileAbstractBuilder implements IMachine, IFluid
 	}
 
 	@Override
-	public boolean allowAction(IAction action) {
+	public boolean allowAction(IStatement action) {
 		return false;
 	}
 

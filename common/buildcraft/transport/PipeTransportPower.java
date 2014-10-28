@@ -20,7 +20,6 @@ import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.gates.ITrigger;
 import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
@@ -460,10 +459,6 @@ public class PipeTransportPower extends PipeTransport {
 			nbttagcompound.setInteger("internalPower[" + i + "]", internalPower[i]);
 			nbttagcompound.setInteger("internalNextPower[" + i + "]", internalNextPower[i]);
 		}
-	}
-
-	public boolean isTriggerActive(ITrigger trigger) {
-		return false;
 	}
 
 	/**

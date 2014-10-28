@@ -11,10 +11,13 @@ package buildcraft.transport.statements;
 import java.util.Locale;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-import buildcraft.core.statements.BCTrigger;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.ITriggerInternal;
+import buildcraft.core.statements.BCStatement;
 import buildcraft.core.utils.StringUtils;
 
-public class TriggerClockTimer extends BCTrigger {
+public class TriggerClockTimer extends BCStatement implements ITriggerInternal {
 
 	public enum Time {
 
@@ -42,5 +45,11 @@ public class TriggerClockTimer extends BCTrigger {
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_timer_" + time.name().toLowerCase(Locale.ENGLISH));
+	}
+
+	@Override
+	public boolean isTriggerActive(IStatementContainer source,
+			IStatementParameter[] parameters) {
+		return false;
 	}
 }

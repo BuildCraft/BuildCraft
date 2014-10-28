@@ -8,10 +8,12 @@
  */
 package buildcraft.core.statements;
 
-import buildcraft.api.gates.IStatementParameter;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.utils.StringUtils;
 
-public class ActionRedstoneOutput extends BCActionPassive {
+public class ActionRedstoneOutput extends BCStatement implements IActionInternal {
 
 	public ActionRedstoneOutput() {
 		super("buildcraft:redstone.output", "buildcraft.redstone.output");
@@ -41,5 +43,11 @@ public class ActionRedstoneOutput extends BCActionPassive {
 	@Override
 	public int maxParameters() {
 		return 1;
+	}
+
+	@Override
+	public void actionActivate(IStatementContainer source,
+			IStatementParameter[] parameters) {
+		
 	}
 }

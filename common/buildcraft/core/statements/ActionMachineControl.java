@@ -10,9 +10,14 @@ package buildcraft.core.statements;
 
 import java.util.Locale;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.api.statements.IActionExternal;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.utils.StringUtils;
 
-public class ActionMachineControl extends BCActionPassive {
+public class ActionMachineControl extends BCStatement implements IActionExternal {
 
 	public enum Mode {
 
@@ -42,5 +47,11 @@ public class ActionMachineControl extends BCActionPassive {
 			default:
 				return StatementIconProvider.Action_MachineControl_Loop;
 		}
+	}
+
+	@Override
+	public void actionActivate(TileEntity target, ForgeDirection side,
+			IStatementContainer source, IStatementParameter[] parameters) {
+		
 	}
 }

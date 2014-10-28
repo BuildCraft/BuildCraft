@@ -36,7 +36,7 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.filler.FillerManager;
-import buildcraft.api.gates.IAction;
+import buildcraft.api.statements.IStatement;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.CoreConstants;
@@ -742,7 +742,7 @@ public class TileQuarry extends TileAbstractBuilder implements IMachine, ISidedI
 	}
 
 	@Override
-	public boolean allowAction(IAction action) {
+	public boolean allowAction(IStatement action) {
 		return false;
 	}
 

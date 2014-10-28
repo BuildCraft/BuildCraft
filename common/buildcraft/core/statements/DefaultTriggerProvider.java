@@ -13,24 +13,23 @@ import java.util.LinkedList;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-
 import cofh.api.energy.IEnergyHandler;
-
 import buildcraft.BuildCraftCore;
-import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.ITriggerProvider;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.ITriggerExternal;
+import buildcraft.api.statements.ITriggerInternal;
+import buildcraft.api.statements.ITriggerProvider;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.IMachine;
 
 public class DefaultTriggerProvider implements ITriggerProvider {
 
 	@Override
-	public LinkedList<ITrigger> getExternalTriggers(ForgeDirection side, TileEntity tile) {
-		LinkedList<ITrigger> res = new LinkedList<ITrigger>();
+	public LinkedList<ITriggerExternal> getExternalTriggers(ForgeDirection side, TileEntity tile) {
+		LinkedList<ITriggerExternal> res = new LinkedList<ITriggerExternal>();
 
 		if (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0) {
 			res.add(BuildCraftCore.triggerEmptyInventory);
@@ -61,15 +60,15 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 		}
 
 		if (tile instanceof IEnergyHandler && ((IEnergyHandler) tile).getMaxEnergyStored(side.getOpposite()) > 0) {
-			res.add(BuildCraftCore.triggerEnergyHigh);
-			res.add(BuildCraftCore.triggerEnergyLow);
+			res.add((ITriggerExternal) BuildCraftCore.triggerEnergyHigh);
+			res.add((ITriggerExternal) BuildCraftCore.triggerEnergyLow);
 		}
 
 		return res;
 	}
 
 	@Override
-	public LinkedList<ITrigger> getInternalTriggers(TileEntity pipe) {
+	public LinkedList<ITriggerInternal> getInternalTriggers(IStatementContainer container) {
 		return null;
 	}
 }

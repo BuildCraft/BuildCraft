@@ -13,10 +13,13 @@ import java.util.Locale;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.gates.IAction;
-import buildcraft.core.statements.BCActionPassive;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.core.statements.BCStatement;
 
-public class ActionPipeDirection extends BCActionPassive {
+public class ActionPipeDirection extends BCStatement implements IActionInternal {
 
 	public final ForgeDirection direction;
 
@@ -37,7 +40,14 @@ public class ActionPipeDirection extends BCActionPassive {
 	}
 
 	@Override
-	public IAction rotateLeft() {
-		return BuildCraftTransport.actionPipeDirection [direction.getRotation(ForgeDirection.UP).ordinal()];
+	public IStatement rotateLeft() {
+		return BuildCraftTransport.actionPipeDirection[direction.getRotation(ForgeDirection.UP).ordinal()];
+	}
+
+	@Override
+	public void actionActivate(IStatementContainer source,
+			IStatementParameter[] parameters) {
+		// TODO Auto-generated method stub
+		
 	}
 }

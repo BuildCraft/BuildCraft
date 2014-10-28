@@ -9,11 +9,13 @@
 package buildcraft.core.statements;
 
 import buildcraft.api.gates.IGate;
-import buildcraft.api.gates.IStatementParameter;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.TileGenericPipe;
 
-public class TriggerRedstoneInput extends BCTrigger {
+public class TriggerRedstoneInput extends BCStatement implements ITriggerInternal {
 
 	boolean active;
 
@@ -44,12 +46,16 @@ public class TriggerRedstoneInput extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(IGate gate, IStatementParameter[] parameters) {
-		TileGenericPipe tile = (TileGenericPipe) gate.getPipe().getTile();
+	public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
+		if (!(container.getTile() instanceof TileGenericPipe)) {
+			return false;
+		}
+		
+		TileGenericPipe tile = (TileGenericPipe) container.getTile();
 		int level = tile.redstoneInput;
 		if (parameters.length > 0 && parameters[0] instanceof StatementParameterRedstoneGateSideOnly &&
 				((StatementParameterRedstoneGateSideOnly) parameters[0]).isOn) {
-			level = tile.redstoneInputSide[gate.getSide().ordinal()];
+			level = tile.redstoneInputSide[((IGate) container).getSide().ordinal()];
 		}
 		
 		return active ? level > 0 : level == 0;

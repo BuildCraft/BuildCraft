@@ -20,11 +20,12 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IStatementParameter;
-import buildcraft.api.gates.IActionReceptor;
 import buildcraft.api.power.ILaserTarget;
 import buildcraft.api.power.ILaserTargetBlock;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IActionReceptor;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.Box;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.IMachine;
@@ -294,12 +295,12 @@ public class TileLaser extends TileBuildCraft implements IActionReceptor, IMachi
 	}
 
 	@Override
-	public boolean allowAction(IAction action) {
+	public boolean allowAction(IStatement action) {
 		return action == BuildCraftCore.actionOn || action == BuildCraftCore.actionOff;
 	}
 
 	@Override
-	public void actionActivated(IAction action, IStatementParameter[] parameters) {
+	public void actionActivated(IStatement action, IStatementParameter[] parameters) {
 		if (action == BuildCraftCore.actionOn) {
 			lastMode = ActionMachineControl.Mode.On;
 		} else if (action == BuildCraftCore.actionOff) {

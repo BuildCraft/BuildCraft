@@ -9,10 +9,13 @@
 package buildcraft.transport.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-import buildcraft.core.statements.BCActionPassive;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.core.statements.BCStatement;
 import buildcraft.core.utils.StringUtils;
 
-public class ActionSingleEnergyPulse extends BCActionPassive {
+public class ActionSingleEnergyPulse extends BCStatement implements IActionInternal {
 
 	public ActionSingleEnergyPulse() {
 		super("buildcraft:pulsar.single", "buildcraft.pulser.single");
@@ -26,5 +29,11 @@ public class ActionSingleEnergyPulse extends BCActionPassive {
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/action_single_pulsar");
+	}
+
+	@Override
+	public void actionActivate(IStatementContainer source,
+			IStatementParameter[] parameters) {
+		
 	}
 }

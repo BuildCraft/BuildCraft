@@ -18,23 +18,29 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.FMLLog;
 import buildcraft.BuildCraftCore;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IActionProvider;
+import buildcraft.api.statements.IActionExternal;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IActionProvider;
+import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.IMachine;
 
 public class DefaultActionProvider implements IActionProvider {
 
 	@Override
-	public Collection<IAction> getInternalActions(TileEntity tile) {
-		return null;
+	public Collection<IActionInternal> getInternalActions(IStatementContainer container) {
+		LinkedList<IActionInternal> res = new LinkedList<IActionInternal>();
+
+		if (container.getTile() instanceof IPipeTile) {
+			res.add(BuildCraftCore.actionRedstone);
+		}
+		
+		return res;
 	}
 
 	@Override
-	public Collection<IAction> getExternalActions(ForgeDirection side, TileEntity tile) {
-		LinkedList<IAction> res = new LinkedList<IAction>();
-
-		res.add(BuildCraftCore.actionRedstone);
+	public Collection<IActionExternal> getExternalActions(ForgeDirection side, TileEntity tile) {
+		LinkedList<IActionExternal> res = new LinkedList<IActionExternal>();
 
 		try {
 			if (tile instanceof IMachine) {

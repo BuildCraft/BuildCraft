@@ -12,10 +12,13 @@ import java.util.Locale;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import buildcraft.api.core.EnumColor;
-import buildcraft.core.statements.BCActionPassive;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.core.statements.BCStatement;
 import buildcraft.core.utils.StringUtils;
 
-public class ActionPipeColor extends BCActionPassive {
+public class ActionPipeColor extends BCStatement implements IActionInternal {
 
 	public final EnumColor color;
 
@@ -33,5 +36,11 @@ public class ActionPipeColor extends BCActionPassive {
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/color_" + color.name().toLowerCase(Locale.ENGLISH));
+	}
+
+	@Override
+	public void actionActivate(IStatementContainer source,
+			IStatementParameter[] parameters) {
+		
 	}
 }

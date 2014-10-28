@@ -8,7 +8,7 @@
  */
 package buildcraft.core;
 
-import buildcraft.api.gates.IAction;
+import buildcraft.api.statements.IStatement;
 
 public interface IMachine {
 
@@ -18,5 +18,5 @@ public interface IMachine {
 
 	boolean manageSolids();
 
-	boolean allowAction(IAction action);
+	boolean allowAction(IStatement action);
 }

@@ -20,12 +20,13 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.gates.IAction;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IStatement;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.TileGenericPipe;
-import buildcraft.transport.gates.ActionSlot;
+import buildcraft.transport.gates.StatementSlot;
 import buildcraft.transport.statements.ActionPipeDirection;
 
 public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
@@ -102,20 +103,20 @@ public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 	}
 
 	@Override
-	protected void actionsActivated(Collection<ActionSlot> actions) {
+	protected void actionsActivated(Collection<StatementSlot> actions) {
 		super.actionsActivated(actions);
 
-		for (ActionSlot action : actions) {
-			if (action.action instanceof ActionPipeDirection) {
-				logic.setFacing(((ActionPipeDirection) action.action).direction);
+		for (StatementSlot action : actions) {
+			if (action.statement instanceof ActionPipeDirection) {
+				logic.setFacing(((ActionPipeDirection) action.statement).direction);
 				break;
 			}
 		}
 	}
 
 	@Override
-	public LinkedList<IAction> getActions() {
-		LinkedList<IAction> action = super.getActions();
+	public LinkedList<IActionInternal> getActions() {
+		LinkedList<IActionInternal> action = super.getActions();
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			if (container.isPipeConnected(direction)) {
 				action.add(BuildCraftTransport.actionPipeDirection[direction.ordinal()]);

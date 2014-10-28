@@ -30,9 +30,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.gates.ActionState;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.ITrigger;
+import buildcraft.api.gates.IGate;
+import buildcraft.api.statements.ActionState;
+import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
@@ -40,7 +40,7 @@ import buildcraft.core.IDropControlInventory;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.utils.Utils;
-import buildcraft.transport.gates.ActionSlot;
+import buildcraft.transport.gates.StatementSlot;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.pipes.events.PipeEvent;
 import buildcraft.transport.statements.ActionValve.ValveState;
@@ -525,12 +525,8 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		return result;
 	}
 
-	public boolean isTriggerActive(ITrigger trigger) {
-		return false;
-	}
-
-	public LinkedList<IAction> getActions() {
-		LinkedList<IAction> result = new LinkedList<IAction>();
+	public LinkedList<IActionInternal> getActions() {
+		LinkedList<IActionInternal> result = new LinkedList<IActionInternal>();
 
 		for (ValveState state : ValveState.VALUES) {
 		    result.add(BuildCraftTransport.actionValve[state.ordinal()]);
@@ -552,7 +548,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		container.scheduleRenderUpdate();
 	}
 
-	protected void actionsActivated(Collection<ActionSlot> actions) {
+	protected void actionsActivated(Collection<StatementSlot> actions) {
 	}
 
 	public TileGenericPipe getContainer() {
@@ -659,10 +655,14 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public IPipeTile getTile() {
 		return container;
 	}
-
+	
 	@Override
-	public TileEntity getAdjacentTile(ForgeDirection dir) {
-		return container.getTile(dir);
+	public IGate getGate(ForgeDirection side) {
+		if (side == ForgeDirection.UNKNOWN) {
+			return null;
+		}
+		
+		return gates[side.ordinal()];
 	}
 
 	private void pushActionState(ActionState state) {

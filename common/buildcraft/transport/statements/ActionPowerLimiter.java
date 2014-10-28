@@ -11,10 +11,13 @@ package buildcraft.transport.statements;
 import java.util.Locale;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.PowerMode;
-import buildcraft.core.statements.BCActionPassive;
+import buildcraft.core.statements.BCStatement;
 
-public class ActionPowerLimiter extends BCActionPassive {
+public class ActionPowerLimiter extends BCStatement implements IActionInternal {
 
 	public final PowerMode limit;
 
@@ -32,5 +35,11 @@ public class ActionPowerLimiter extends BCActionPassive {
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_limiter_" + limit.name().toLowerCase(Locale.ENGLISH));
+	}
+
+	@Override
+	public void actionActivate(IStatementContainer source,
+			IStatementParameter[] parameters) {
+		
 	}
 }

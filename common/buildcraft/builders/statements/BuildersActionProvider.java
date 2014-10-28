@@ -17,8 +17,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IActionProvider;
+import buildcraft.api.statements.IActionExternal;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IActionProvider;
+import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.builders.TileFiller;
 import buildcraft.core.builders.patterns.FillerPattern;
@@ -27,13 +29,13 @@ public class BuildersActionProvider implements IActionProvider {
 	private final HashMap<String, ActionFiller> actionMap = new HashMap<String, ActionFiller>();
 	
 	@Override
-	public Collection<IAction> getInternalActions(TileEntity tile) {
+	public Collection<IActionInternal> getInternalActions(IStatementContainer container) {
 		return null;
 	}
 
 	@Override
-	public Collection<IAction> getExternalActions(ForgeDirection side, TileEntity tile) {
-		LinkedList<IAction> actions = new LinkedList<IAction>();
+	public Collection<IActionExternal> getExternalActions(ForgeDirection side, TileEntity tile) {
+		LinkedList<IActionExternal> actions = new LinkedList<IActionExternal>();
 		if (tile instanceof TileFiller) {
 			for (IFillerPattern p : FillerManager.registry.getPatterns()) {
 				if (p instanceof FillerPattern) {

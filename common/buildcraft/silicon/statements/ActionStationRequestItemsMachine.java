@@ -9,10 +9,13 @@
 package buildcraft.silicon.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-import buildcraft.core.statements.BCActionPassive;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.core.statements.BCStatement;
 import buildcraft.core.utils.StringUtils;
 
-public class ActionStationRequestItemsMachine extends BCActionPassive {
+public class ActionStationRequestItemsMachine extends BCStatement implements IActionInternal {
 
 	public ActionStationRequestItemsMachine() {
 		super("buildcraft:station.provide_machine_request");
@@ -26,5 +29,11 @@ public class ActionStationRequestItemsMachine extends BCActionPassive {
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/action_station_machine_request");
+	}
+
+	@Override
+	public void actionActivate(IStatementContainer source,
+			IStatementParameter[] parameters) {
+		
 	}
 }

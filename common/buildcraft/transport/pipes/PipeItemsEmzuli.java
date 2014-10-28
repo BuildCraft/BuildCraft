@@ -22,7 +22,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
-import buildcraft.api.gates.IAction;
+import buildcraft.api.statements.IActionInternal;
 import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.SimpleInventory;
@@ -30,7 +30,7 @@ import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TravelingItem;
-import buildcraft.transport.gates.ActionSlot;
+import buildcraft.transport.gates.StatementSlot;
 import buildcraft.transport.statements.ActionExtractionPreset;
 
 public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler {
@@ -138,14 +138,14 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 	}
 
 	@Override
-	protected void actionsActivated(Collection<ActionSlot> actions) {
+	protected void actionsActivated(Collection<StatementSlot> actions) {
 		super.actionsActivated(actions);
 
 		activeFlags.clear();
 
-		for (ActionSlot action : actions) {
-			if (action.action instanceof ActionExtractionPreset) {
-				setActivePreset(((ActionExtractionPreset) action.action).color);
+		for (StatementSlot action : actions) {
+			if (action.statement instanceof ActionExtractionPreset) {
+				setActivePreset(((ActionExtractionPreset) action.statement).color);
 			}
 		}
 	}
@@ -170,8 +170,8 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 	}
 
 	@Override
-	public LinkedList<IAction> getActions() {
-		LinkedList<IAction> result = super.getActions();
+	public LinkedList<IActionInternal> getActions() {
+		LinkedList<IActionInternal> result = super.getActions();
 
 		result.add(BuildCraftTransport.actionExtractionPresetRed);
 		result.add(BuildCraftTransport.actionExtractionPresetBlue);

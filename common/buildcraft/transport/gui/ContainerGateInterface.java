@@ -19,13 +19,9 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.util.ResourceLocation;
-
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IStatementParameter;
-import buildcraft.api.gates.IStatement;
-import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.IStatementParameter;
-import buildcraft.api.gates.StatementManager;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementManager;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.network.RPC;
 import buildcraft.core.network.RPCHandler;
@@ -44,16 +40,16 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	IInventory playerIInventory;
 	private final Pipe<?> pipe;
 	private Gate gate;
-	private final NavigableSet<ITrigger> potentialTriggers = new TreeSet<ITrigger>(new Comparator<ITrigger>() {
+	private final NavigableSet<IStatement> potentialTriggers = new TreeSet<IStatement>(new Comparator<IStatement>() {
 		@Override
-		public int compare(ITrigger o1, ITrigger o2) {
+		public int compare(IStatement o1, IStatement o2) {
 			return o1.getUniqueTag().compareTo(o2.getUniqueTag());
 		}
 	});
 
-	private final NavigableSet<IAction> potentialActions = new TreeSet<IAction>(new Comparator<IAction>() {
+	private final NavigableSet<IStatement> potentialActions = new TreeSet<IStatement>(new Comparator<IStatement>() {
 		@Override
-		public int compare(IAction o1, IAction o2) {
+		public int compare(IStatement o1, IStatement o2) {
 			return o1.getUniqueTag().compareTo(o2.getUniqueTag());
 		}
 	});
@@ -105,10 +101,10 @@ public class ContainerGateInterface extends BuildCraftContainer {
 			potentialActions.addAll(gate.getAllValidActions());
 
 			if (gate.material.numTriggerParameters == 0) {
-				Iterator<ITrigger> it = potentialTriggers.iterator();
+				Iterator<IStatement> it = potentialTriggers.iterator();
 
 				while (it.hasNext()) {
-					ITrigger trigger = it.next();
+					IStatement trigger = it.next();
 
 					if (trigger.minParameters() > 0) {
 						it.remove();
@@ -117,10 +113,10 @@ public class ContainerGateInterface extends BuildCraftContainer {
 			}
 
 			if (gate.material.numActionParameters == 0) {
-				Iterator<IAction> it = potentialActions.iterator();
+				Iterator<IStatement> it = potentialActions.iterator();
 
 				while (it.hasNext()) {
-					IAction action = it.next();
+					IStatement action = it.next();
 
 					if (action.minParameters() > 0) {
 						it.remove();
@@ -254,8 +250,8 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	public void selectionRequest(RPCMessageInfo info) {
 		EntityPlayer player = info.sender;
 		for (int position = 0; position < gate.material.numSlots; position++) {
-			IAction action = gate.getAction(position);
-			ITrigger trigger = gate.getTrigger(position);
+			IStatement action = gate.getAction(position);
+			IStatement trigger = gate.getTrigger(position);
 			RPCHandler.rpcPlayer(player, this, "setAction", position, action != null ? action.getUniqueTag() : null, false);
 			RPCHandler.rpcPlayer(player, this, "setTrigger", position, trigger != null ? trigger.getUniqueTag() : null, false);
 			for (int p = 0; p < 3; ++p) {
@@ -274,7 +270,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		return potentialTriggers.size() > 0;
 	}
 
-	public ITrigger getFirstTrigger() {
+	public IStatement getFirstTrigger() {
 		if (potentialTriggers.isEmpty()) {
 			return null;
 		} else {
@@ -282,7 +278,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		}
 	}
 
-	public ITrigger getLastTrigger() {
+	public IStatement getLastTrigger() {
 		if (potentialTriggers.isEmpty()) {
 			return null;
 		} else {
@@ -290,7 +286,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		}
 	}
 
-	public Iterator<ITrigger> getTriggerIterator(boolean descending) {
+	public Iterator<IStatement> getTriggerIterator(boolean descending) {
 		return descending ? potentialTriggers.descendingIterator() : potentialTriggers.iterator();
 	}
 
@@ -309,7 +305,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		}
 
 		if (tag != null) {
-			gate.setTrigger(trigger, (ITrigger) StatementManager.statements.get(tag));
+			gate.setTrigger(trigger, (IStatement) StatementManager.statements.get(tag));
 		} else {
 			gate.setTrigger(trigger, null);
 		}
@@ -347,7 +343,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		return !potentialActions.isEmpty();
 	}
 
-	public IAction getFirstAction() {
+	public IStatement getFirstAction() {
 		if (potentialActions.isEmpty()) {
 			return null;
 		} else {
@@ -355,7 +351,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		}
 	}
 
-	public IAction getLastAction() {
+	public IStatement getLastAction() {
 		if (potentialActions.isEmpty()) {
 			return null;
 		} else {
@@ -363,7 +359,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		}
 	}
 
-	public Iterator<IAction> getActionIterator(boolean descending) {
+	public Iterator<IStatement> getActionIterator(boolean descending) {
 		return descending ? potentialActions.descendingIterator() : potentialActions.iterator();
 	}
 
@@ -374,7 +370,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		}
 
 		if (tag != null) {
-			gate.setAction(action, (IAction) StatementManager.statements.get(tag));
+			gate.setAction(action, (IStatement) StatementManager.statements.get(tag));
 		} else {
 			gate.setAction(action, null);
 		}

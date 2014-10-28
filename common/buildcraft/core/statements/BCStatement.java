@@ -10,12 +10,11 @@ package buildcraft.core.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
-import buildcraft.api.gates.IStatement;
-import buildcraft.api.gates.StatementManager;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementManager;
 
 public abstract class BCStatement implements IStatement {
 
@@ -81,4 +80,8 @@ public abstract class BCStatement implements IStatement {
 		return this;
 	}
 
+	@Override
+	public IStatementParameter createParameter(int index) {
+		return null;
+	}
 }

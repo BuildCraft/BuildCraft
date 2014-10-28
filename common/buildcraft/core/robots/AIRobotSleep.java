@@ -12,7 +12,7 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.silicon.statements.ActionRobotWakeUp;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.transport.gates.ActionSlot;
+import buildcraft.transport.gates.StatementSlot;
 
 public class AIRobotSleep extends AIRobot {
 
@@ -25,8 +25,8 @@ public class AIRobotSleep extends AIRobot {
 
 	@Override
 	public void preempt(AIRobot ai) {
-		for (ActionSlot s : new ActionIterator(((DockingStation) robot.getLinkedStation()).getPipe().pipe)) {
-			if (s.action instanceof ActionRobotWakeUp) {
+		for (StatementSlot s : new ActionIterator(((DockingStation) robot.getLinkedStation()).getPipe().pipe)) {
+			if (s.statement instanceof ActionRobotWakeUp) {
 				terminate();
 			}
 		}

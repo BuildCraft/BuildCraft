@@ -11,16 +11,18 @@ package buildcraft.silicon.statements;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.gates.IGate;
-import buildcraft.api.gates.IStatementParameter;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.core.robots.AIRobotSleep;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.EntityRobot;
-import buildcraft.core.statements.BCTrigger;
+import buildcraft.core.statements.BCStatement;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;
 
-public class TriggerRobotSleep extends BCTrigger {
+public class TriggerRobotSleep extends BCStatement implements ITriggerInternal {
 
 	public TriggerRobotSleep() {
 		super("buildcraft:robot.sleep");
@@ -37,8 +39,12 @@ public class TriggerRobotSleep extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(IGate gate, IStatementParameter[] parameters) {
-		Pipe<?> pipe = (Pipe<?>) gate.getPipe();
+	public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
+		if (!(container instanceof IGate)) {
+			return false;
+		}
+		
+		Pipe<?> pipe = (Pipe<?>) ((IGate) container).getPipe();
 		TileGenericPipe tile = pipe.container;
 
 		for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {

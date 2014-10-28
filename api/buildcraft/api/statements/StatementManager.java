@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.gates;
+package buildcraft.api.statements;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,7 +17,6 @@ import java.util.Map;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.transport.IPipeTile;
 
 public final class StatementManager {
 
@@ -51,15 +50,20 @@ public final class StatementManager {
 	public static void registerParameterClass(Class<? extends IStatementParameter> param) {
 		parameters.put(createParameter(param).getUniqueTag(), param);
 	}
+	
+	@Deprecated
+	public static void registerParameterClass(String name, Class<? extends IStatementParameter> param) {
+		parameters.put(name, param);
+	}
 
-	public static List<ITrigger> getExternalTriggers(ForgeDirection side, TileEntity entity) {
-		List<ITrigger> result = new LinkedList<ITrigger>();
+	public static List<ITriggerExternal> getExternalTriggers(ForgeDirection side, TileEntity entity) {
+		List<ITriggerExternal> result = new LinkedList<ITriggerExternal>();
 
 		for (ITriggerProvider provider : triggerProviders) {
-			Collection<ITrigger> toAdd = provider.getExternalTriggers(side, entity);
+			Collection<ITriggerExternal> toAdd = provider.getExternalTriggers(side, entity);
 
 			if (toAdd != null) {
-				for (ITrigger t : toAdd) {
+				for (ITriggerExternal t : toAdd) {
 					if (!result.contains(t)) {
 						result.add(t);
 					}
@@ -70,14 +74,14 @@ public final class StatementManager {
 		return result;
 	}
 
-	public static List<IAction> getExternalActions(ForgeDirection side, TileEntity entity) {
-		List<IAction> result = new LinkedList<IAction>();
+	public static List<IActionExternal> getExternalActions(ForgeDirection side, TileEntity entity) {
+		List<IActionExternal> result = new LinkedList<IActionExternal>();
 
 		for (IActionProvider provider : actionProviders) {
-			Collection<IAction> toAdd = provider.getExternalActions(side, entity);
+			Collection<IActionExternal> toAdd = provider.getExternalActions(side, entity);
 
 			if (toAdd != null) {
-				for (IAction t : toAdd) {
+				for (IActionExternal t : toAdd) {
 					if (!result.contains(t)) {
 						result.add(t);
 					}
@@ -88,14 +92,14 @@ public final class StatementManager {
 		return result;
 	}
 
-	public static List<ITrigger> getInternalTriggers(TileEntity tile) {
-		List<ITrigger> result = new LinkedList<ITrigger>();
+	public static List<ITriggerInternal> getInternalTriggers(IStatementContainer container) {
+		List<ITriggerInternal> result = new LinkedList<ITriggerInternal>();
 
 		for (ITriggerProvider provider : triggerProviders) {
-			Collection<ITrigger> toAdd = provider.getInternalTriggers(tile);
+			Collection<ITriggerInternal> toAdd = provider.getInternalTriggers(container);
 
 			if (toAdd != null) {
-				for (ITrigger t : toAdd) {
+				for (ITriggerInternal t : toAdd) {
 					if (!result.contains(t)) {
 						result.add(t);
 					}
@@ -106,14 +110,14 @@ public final class StatementManager {
 		return result;
 	}
 
-	public static List<IAction> getInternalActions(TileEntity tile) {
-		List<IAction> result = new LinkedList<IAction>();
+	public static List<IActionInternal> getInternalActions(IStatementContainer container) {
+		List<IActionInternal> result = new LinkedList<IActionInternal>();
 
 		for (IActionProvider provider : actionProviders) {
-			Collection<IAction> toAdd = provider.getInternalActions(tile);
+			Collection<IActionInternal> toAdd = provider.getInternalActions(container);
 
 			if (toAdd != null) {
-				for (IAction t : toAdd) {
+				for (IActionInternal t : toAdd) {
 					if (!result.contains(t)) {
 						result.add(t);
 					}

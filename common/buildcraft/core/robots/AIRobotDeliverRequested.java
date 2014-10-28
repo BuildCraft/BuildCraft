@@ -21,7 +21,7 @@ import buildcraft.core.inventory.filters.ArrayStackOrListFilter;
 import buildcraft.silicon.statements.ActionStationRequestItemsMachine;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.transport.gates.ActionSlot;
+import buildcraft.transport.gates.StatementSlot;
 
 public class AIRobotDeliverRequested extends AIRobot {
 
@@ -97,8 +97,8 @@ public class AIRobotDeliverRequested extends AIRobot {
 				return false;
 			}
 
-			for (ActionSlot s : new ActionIterator(pipe)) {
-				if (s.action instanceof ActionStationRequestItemsMachine) {
+			for (StatementSlot s : new ActionIterator(pipe)) {
+				if (s.statement instanceof ActionStationRequestItemsMachine) {
 					actionFound = true;
 				}
 			}

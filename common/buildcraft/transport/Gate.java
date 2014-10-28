@@ -24,27 +24,31 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IActionReceptor;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.gates.IStatementParameter;
-import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.StatementManager;
-import buildcraft.api.gates.StatementParameterItemStack;
+import buildcraft.api.statements.IActionExternal;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IActionReceptor;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.ITriggerExternal;
+import buildcraft.api.statements.ITriggerInternal;
+import buildcraft.api.statements.StatementManager;
+import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.GuiIds;
 import buildcraft.core.statements.ActionRedstoneOutput;
 import buildcraft.core.statements.StatementParameterRedstoneGateSideOnly;
-import buildcraft.transport.gates.ActionSlot;
+import buildcraft.transport.gates.StatementSlot;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.gui.ContainerGateInterface;
 import buildcraft.transport.statements.ActionRedstoneFaderOutput;
 
-public final class Gate implements IGate {
+public final class Gate implements IGate, IStatementContainer {
 
 	public static int MAX_STATEMENTS = 8;
 	public static int MAX_PARAMETERS = 3;
@@ -54,14 +58,14 @@ public final class Gate implements IGate {
 	public final GateLogic logic;
 	public final BiMap<IGateExpansion, GateExpansionController> expansions = HashBiMap.create();
 
-	public ITrigger[] triggers = new ITrigger[MAX_STATEMENTS];
+	public IStatement[] triggers = new IStatement[MAX_STATEMENTS];
 	public IStatementParameter[][] triggerParameters = new IStatementParameter[MAX_STATEMENTS][MAX_PARAMETERS];
 
-	public IAction[] actions = new IAction[MAX_STATEMENTS];
+	public IStatement[] actions = new IStatement[MAX_STATEMENTS];
 	public IStatementParameter[][] actionParameters = new IStatementParameter[MAX_STATEMENTS][MAX_PARAMETERS];
 
 	public ActionActiveState[] actionsState = new ActionActiveState[MAX_STATEMENTS];
-	public ArrayList<ActionSlot> activeActions = new ArrayList<ActionSlot>();
+	public ArrayList<StatementSlot> activeActions = new ArrayList<StatementSlot>();
 
 	public BitSet broadcastSignal = new BitSet(PipeWire.VALUES.length);
 	public BitSet prevBroadcastSignal = new BitSet(PipeWire.VALUES.length);
@@ -89,19 +93,19 @@ public final class Gate implements IGate {
 		}
 	}
 
-	public void setTrigger(int position, ITrigger trigger) {
+	public void setTrigger(int position, IStatement trigger) {
 		triggers[position] = trigger;
 	}
 
-	public ITrigger getTrigger(int position) {
+	public IStatement getTrigger(int position) {
 		return triggers[position];
 	}
 
-	public void setAction(int position, IAction action) {
+	public void setAction(int position, IStatement action) {
 		actions[position] = action;
 	}
 
-	public IAction getAction(int position) {
+	public IStatement getAction(int position) {
 		return actions[position];
 	}
 
@@ -193,11 +197,11 @@ public final class Gate implements IGate {
 	public void readStatementsFromNBT(NBTTagCompound data) {
 		for (int i = 0; i < material.numSlots; ++i) {
 			if (data.hasKey("trigger[" + i + "]")) {
-				triggers[i] = (ITrigger) StatementManager.statements.get(data.getString("trigger[" + i + "]"));
+				triggers[i] = StatementManager.statements.get(data.getString("trigger[" + i + "]"));
 			}
 
 			if (data.hasKey("action[" + i + "]")) {
-				actions[i] = (IAction) StatementManager.statements.get(data.getString("action[" + i + "]"));
+				actions[i] = StatementManager.statements.get(data.getString("action[" + i + "]"));
 			}
 
 			// This is for legacy trigger loading
@@ -225,8 +229,8 @@ public final class Gate implements IGate {
 	}
 	
 	public boolean verifyGateStatements() {
-		List<ITrigger> triggerList = getAllValidTriggers();
-		List<IAction> actionList = getAllValidActions();
+		List<IStatement> triggerList = getAllValidTriggers();
+		List<IStatement> actionList = getAllValidActions();
 		boolean warning = false;
 		
 		for (int i = 0; i < MAX_STATEMENTS; ++i) {
@@ -392,7 +396,7 @@ public final class Gate implements IGate {
 		for (int it = 0; it < MAX_STATEMENTS; ++it) {
 			actionsState[it] = ActionActiveState.Deactivated;
 
-			ITrigger trigger = triggers[it];
+			IStatement trigger = triggers[it];
 			IStatementParameter[] parameter = triggerParameters[it];
 
 			if (trigger != null) {
@@ -402,7 +406,7 @@ public final class Gate implements IGate {
 			}
 		}
 
-		activeActions = new ArrayList<ActionSlot>();
+		activeActions = new ArrayList<StatementSlot>();
 
 		for (int it = 0; it < MAX_STATEMENTS; ++it) {
 			boolean allActive = true;
@@ -431,8 +435,8 @@ public final class Gate implements IGate {
 					}
 				}
 
-				ActionSlot slot = new ActionSlot();
-				slot.action = actions[it];
+				StatementSlot slot = new StatementSlot();
+				slot.statement = actions[it];
 				slot.parameters = actionParameters[it];
 				activeActions.add(slot);
 			}
@@ -443,10 +447,21 @@ public final class Gate implements IGate {
 		}
 
 		// Activate the actions
-		for (ActionSlot slot : activeActions) {
-			IAction action = slot.action;
-			action.actionActivate(this, slot.parameters);
-
+		for (StatementSlot slot : activeActions) {
+			IStatement action = slot.statement;
+			if (action instanceof IActionInternal) {
+				((IActionInternal) action).actionActivate(this, slot.parameters);
+			} else if (action instanceof IActionExternal) {
+				for (ForgeDirection side: ForgeDirection.VALID_DIRECTIONS) {
+					TileEntity tile = this.getPipe().getTile().getAdjacentTile(side);
+					if (tile != null) {
+						((IActionExternal) action).actionActivate(tile, side, this, slot.parameters);
+					}
+				}
+			} else {
+				continue;
+			}
+			
 			// TODO: A lot of the code below should be removed in favor
 			// of calls to actionActivate
 
@@ -494,7 +509,7 @@ public final class Gate implements IGate {
 		}
 	}
 
-	public boolean resolveAction(IAction action) {
+	public boolean resolveAction(IStatement action) {
 		for (GateExpansionController expansion : expansions.values()) {
 			if (expansion.resolveAction(action)) {
 				return true;
@@ -503,13 +518,22 @@ public final class Gate implements IGate {
 		return false;
 	}
 
-	public boolean isTriggerActive(ITrigger trigger, IStatementParameter[] parameters) {
+	public boolean isTriggerActive(IStatement trigger, IStatementParameter[] parameters) {
 		if (trigger == null) {
 			return false;
 		}
 
-		if (trigger.isTriggerActive(this, parameters)) {
-			return true;
+		if (trigger instanceof ITriggerInternal) {
+			if (((ITriggerInternal) trigger).isTriggerActive(this, parameters)) {
+				return true;
+			}
+		} else if (trigger instanceof ITriggerExternal) {
+			for (ForgeDirection side: ForgeDirection.VALID_DIRECTIONS) {
+				TileEntity tile = this.getPipe().getTile().getAdjacentTile(side);
+				if (tile != null && ((ITriggerExternal) trigger).isTriggerActive(tile, side, this, parameters)) {
+					return true;
+				}
+			}
 		}
 
 		// TODO: This can probably be refactored with regular triggers instead
@@ -524,7 +548,7 @@ public final class Gate implements IGate {
 	}
 
 	// TRIGGERS
-	public void addTriggers(List<ITrigger> list) {
+	public void addTriggers(List<ITriggerInternal> list) {
 		for (PipeWire wire : PipeWire.VALUES) {
 			if (pipe.wireSet[wire.ordinal()] && material.ordinal() >= wire.ordinal()) {
 				list.add(BuildCraftTransport.triggerPipeWireActive[wire.ordinal()]);
@@ -537,9 +561,9 @@ public final class Gate implements IGate {
 		}
 	}
 	
-	public List<ITrigger> getAllValidTriggers() {
-		ArrayList<ITrigger> allTriggers = new ArrayList<ITrigger>(64);
-		allTriggers.addAll(StatementManager.getInternalTriggers(pipe.container));
+	public List<IStatement> getAllValidTriggers() {
+		ArrayList<IStatement> allTriggers = new ArrayList<IStatement>(64);
+		allTriggers.addAll(StatementManager.getInternalTriggers(this));
 		
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			TileEntity tile = pipe.container.getTile(o);
@@ -551,7 +575,7 @@ public final class Gate implements IGate {
 	}
 
 	// ACTIONS
-	public void addActions(List<IAction> list) {
+	public void addActions(List<IActionInternal> list) {
 		for (PipeWire wire : PipeWire.VALUES) {
 			if (pipe.wireSet[wire.ordinal()] && material.ordinal() >= wire.ordinal()) {
 				list.add(BuildCraftTransport.actionPipeWire[wire.ordinal()]);
@@ -563,9 +587,9 @@ public final class Gate implements IGate {
 		}
 	}
 	
-	public List<IAction> getAllValidActions() {
-		ArrayList<IAction> allActions = new ArrayList<IAction>(64);
-		allActions.addAll(StatementManager.getInternalActions(pipe.container));
+	public List<IStatement> getAllValidActions() {
+		ArrayList<IStatement> allActions = new ArrayList<IStatement>(64);
+		allActions.addAll(StatementManager.getInternalActions(this));
 		
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			TileEntity tile = pipe.container.getTile(o);
@@ -576,7 +600,7 @@ public final class Gate implements IGate {
 		return allActions;
 	}
 	
-	@Override
+	//@Override TODO
 	public void setPulsing(boolean pulsing) {
 		if (pulsing != isPulsing) {
 			isPulsing = pulsing;
@@ -592,7 +616,6 @@ public final class Gate implements IGate {
 		broadcastSignal.set(color.ordinal());
 	}
 
-	@Override
 	public IPipe getPipe() {
 		return pipe;
 	}
@@ -600,5 +623,10 @@ public final class Gate implements IGate {
 	@Override
 	public ForgeDirection getSide() {
 		return direction;
+	}
+
+	@Override
+	public TileEntity getTile() {
+		return pipe.container;
 	}
 }

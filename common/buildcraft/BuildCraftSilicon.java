@@ -22,10 +22,10 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.boards.RedstoneBoardRegistry;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.StatementManager;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.ITriggerInternal;
+import buildcraft.api.statements.StatementManager;
 import buildcraft.builders.schematics.SchematicRotateMeta;
 import buildcraft.commander.BlockRequester;
 import buildcraft.commander.BlockZonePlan;
@@ -103,21 +103,21 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static Item redstoneCrystal;
 	public static Item robotItem;
 
-	public static ITrigger triggerRobotSleep = new TriggerRobotSleep();
+	public static ITriggerInternal triggerRobotSleep = new TriggerRobotSleep();
 
-	public static IAction actionRobotGotoStation = new ActionRobotGotoStation();
-	public static IAction actionRobotWakeUp = new ActionRobotWakeUp();
-	public static IAction actionRobotWorkInArea = new ActionRobotWorkInArea();
-	public static IAction actionRobotFilter = new ActionRobotFilter();
-	public static IAction actionRobotAllowCraft = new ActionStationAllowCraft();
-	public static IAction actionStationRequestItems = new ActionStationRequestItems();
-	public static IAction actionStationAcceptItems = new ActionStationAcceptItemsInv();
-	public static IAction actionStationProvideItems = new ActionStationProvideItems();
-	public static IAction actionStationAcceptFluids = new ActionStationAcceptFluids();
-	public static IAction actionStationProvideFluids = new ActionStationProvideFluids();
-	public static IAction actionStationForbidRobot = new ActionStationForbidRobot();
-	public static IAction actionStationDropInPipe = new ActionStationAcceptItemsPipe();
-	public static IAction actionStationMachineRequestItems = new ActionStationRequestItemsMachine();
+	public static IActionInternal actionRobotGotoStation = new ActionRobotGotoStation();
+	public static IActionInternal actionRobotWakeUp = new ActionRobotWakeUp();
+	public static IActionInternal actionRobotWorkInArea = new ActionRobotWorkInArea();
+	public static IActionInternal actionRobotFilter = new ActionRobotFilter();
+	public static IActionInternal actionRobotAllowCraft = new ActionStationAllowCraft();
+	public static IActionInternal actionStationRequestItems = new ActionStationRequestItems();
+	public static IActionInternal actionStationAcceptItems = new ActionStationAcceptItemsInv();
+	public static IActionInternal actionStationProvideItems = new ActionStationProvideItems();
+	public static IActionInternal actionStationAcceptFluids = new ActionStationAcceptFluids();
+	public static IActionInternal actionStationProvideFluids = new ActionStationProvideFluids();
+	public static IActionInternal actionStationForbidRobot = new ActionStationForbidRobot();
+	public static IActionInternal actionStationDropInPipe = new ActionStationAcceptItemsPipe();
+	public static IActionInternal actionStationMachineRequestItems = new ActionStationRequestItemsMachine();
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {

@@ -15,17 +15,20 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftCore;
-import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.ITriggerProvider;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.ITriggerExternal;
+import buildcraft.api.statements.ITriggerInternal;
+import buildcraft.api.statements.ITriggerProvider;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.transport.statements.TriggerPipeContents;
 
 public class PipeTriggerProvider implements ITriggerProvider {
 
 	@Override
-	public LinkedList<ITrigger> getInternalTriggers(TileEntity tile) {
-		LinkedList<ITrigger> result = new LinkedList<ITrigger>();
+	public LinkedList<ITriggerInternal> getInternalTriggers(IStatementContainer container) {
+		LinkedList<ITriggerInternal> result = new LinkedList<ITriggerInternal>();
 		Pipe<?> pipe = null;
+		TileEntity tile = container.getTile();
 		if (tile instanceof TileGenericPipe) {
 			pipe = ((TileGenericPipe) tile).pipe;
 		}
@@ -66,15 +69,15 @@ public class PipeTriggerProvider implements ITriggerProvider {
 		}
 
 		if (tile instanceof IEnergyHandler && ((IEnergyHandler) tile).getMaxEnergyStored(ForgeDirection.UNKNOWN) > 0) {
-			result.add(BuildCraftCore.triggerEnergyHigh);
-			result.add(BuildCraftCore.triggerEnergyLow);
+			result.add((ITriggerInternal) BuildCraftCore.triggerEnergyHigh);
+			result.add((ITriggerInternal) BuildCraftCore.triggerEnergyLow);
 		}
 
 		return result;
 	}
 
 	@Override
-	public LinkedList<ITrigger> getExternalTriggers(ForgeDirection side, TileEntity tile) {
+	public LinkedList<ITriggerExternal> getExternalTriggers(ForgeDirection side, TileEntity tile) {
 		return null;
 	}
 }

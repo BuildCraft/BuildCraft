@@ -10,15 +10,19 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import buildcraft.api.gates.IStatementParameter;
-import buildcraft.api.gates.IGate;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
-import buildcraft.core.statements.BCActionActive;
+import buildcraft.core.statements.BCStatement;
 import buildcraft.core.statements.StatementIconProvider;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Gate;
 
-public class ActionSignalOutput extends BCActionActive {
+public class ActionSignalOutput extends BCStatement implements IActionInternal {
 
 	public PipeWire color;
 
@@ -59,8 +63,8 @@ public class ActionSignalOutput extends BCActionActive {
 	}
 
 	@Override
-	public void actionActivate(IGate iGate, IStatementParameter[] parameters) {
-		Gate gate = (Gate) iGate;
+	public void actionActivate(IStatementContainer container, IStatementParameter[] parameters) {
+		Gate gate = (Gate) container;
 
 		gate.broadcastSignal(color);
 

@@ -15,8 +15,9 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.gates.IStatementParameter;
-import buildcraft.api.gates.ITrigger;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.transport.statements.TriggerClockTimer;
 import buildcraft.transport.statements.TriggerClockTimer.Time;
 
@@ -67,7 +68,7 @@ public final class GateExpansionTimer extends GateExpansionBuildcraft implements
 		}
 
 		@Override
-		public boolean isTriggerActive(ITrigger trigger, IStatementParameter[] parameters) {
+		public boolean isTriggerActive(IStatement trigger, IStatementParameter[] parameters) {
 			if (trigger instanceof TriggerClockTimer) {
 				TriggerClockTimer timerTrigger = (TriggerClockTimer) trigger;
 				return timers[timerTrigger.time.ordinal()].isActive();
@@ -76,7 +77,7 @@ public final class GateExpansionTimer extends GateExpansionBuildcraft implements
 		}
 
 		@Override
-		public void addTriggers(List<ITrigger> list) {
+		public void addTriggers(List<ITriggerInternal> list) {
 			super.addTriggers(list);
 			for (Time time : TriggerClockTimer.Time.VALUES) {
 				list.add(BuildCraftTransport.triggerTimer[time.ordinal()]);

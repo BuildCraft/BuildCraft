@@ -13,20 +13,21 @@ import java.util.LinkedList;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftSilicon;
-import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.ITriggerProvider;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.ITriggerExternal;
+import buildcraft.api.statements.ITriggerInternal;
+import buildcraft.api.statements.ITriggerProvider;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.transport.TileGenericPipe;
 
 public class RobotsTriggerProvider implements ITriggerProvider {
 
 	@Override
-	public Collection<ITrigger> getInternalTriggers(TileEntity tile) {
-		LinkedList<ITrigger> result = new LinkedList<ITrigger>();
+	public Collection<ITriggerInternal> getInternalTriggers(IStatementContainer container) {
+		LinkedList<ITriggerInternal> result = new LinkedList<ITriggerInternal>();
+		TileEntity tile = container.getTile();
 		
 		if (!(tile instanceof TileGenericPipe)) {
 			return result;
@@ -51,7 +52,7 @@ public class RobotsTriggerProvider implements ITriggerProvider {
 	}
 
 	@Override
-	public Collection<ITrigger> getExternalTriggers(ForgeDirection side, TileEntity tile) {
+	public Collection<ITriggerExternal> getExternalTriggers(ForgeDirection side, TileEntity tile) {
 		return null;
 	}
 

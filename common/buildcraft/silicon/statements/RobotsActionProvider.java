@@ -17,14 +17,14 @@ import net.minecraft.block.BlockWorkbench;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidHandler;
-
 import buildcraft.BuildCraftSilicon;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IActionProvider;
 import buildcraft.api.robots.IRequestProvider;
+import buildcraft.api.statements.IActionExternal;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IActionProvider;
+import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.silicon.TileAssemblyTable;
@@ -34,12 +34,14 @@ import buildcraft.transport.TileGenericPipe;
 public class RobotsActionProvider implements IActionProvider {
 
 	@Override
-	public Collection<IAction> getInternalActions(TileEntity tile) {
+	public Collection<IActionInternal> getInternalActions(IStatementContainer container) {
+		TileEntity tile = container.getTile();
+		
 		if (!(tile instanceof TileGenericPipe)) {
 			return null;
 		}
 		
-		LinkedList<IAction> result = new LinkedList<IAction>();
+		LinkedList<IActionInternal> result = new LinkedList<IActionInternal>();
 
 		ArrayList<DockingStation> stations = new ArrayList<DockingStation>();
 
@@ -93,7 +95,7 @@ public class RobotsActionProvider implements IActionProvider {
 	}
 
 	@Override
-	public Collection<IAction> getExternalActions(ForgeDirection side, TileEntity tile) {
+	public Collection<IActionExternal> getExternalActions(ForgeDirection side, TileEntity tile) {
 		return null;
 	}
 

@@ -12,15 +12,13 @@ import java.util.Collection;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
-import buildcraft.api.gates.StatementParameterItemStack;
-import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.robots.StackRequest;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.silicon.statements.ActionRobotFilter;
@@ -28,7 +26,7 @@ import buildcraft.silicon.statements.ActionStationRequestItems;
 import buildcraft.silicon.statements.ActionStationRequestItemsMachine;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.transport.gates.ActionSlot;
+import buildcraft.transport.gates.StatementSlot;
 
 public class AIRobotSearchStackRequest extends AIRobot {
 
@@ -127,8 +125,8 @@ public class AIRobotSearchStackRequest extends AIRobot {
 
 		Pipe pipe = station.getPipe().pipe;
 
-		for (ActionSlot s : new ActionIterator(pipe)) {
-			if (s.action instanceof ActionStationRequestItems) {
+		for (StatementSlot s : new ActionIterator(pipe)) {
+			if (s.statement instanceof ActionStationRequestItems) {
 				for (IStatementParameter p : s.parameters) {
 					StatementParameterItemStack param = (StatementParameterItemStack) p;
 

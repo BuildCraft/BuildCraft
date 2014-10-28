@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-@API(apiVersion = "2.2", owner = "BuildCraftAPI|core", provides = "BuildCraftAPI|gates")
+@API(apiVersion = "3.0", owner = "BuildCraftAPI|core", provides = "BuildCraftAPI|gates")
 package buildcraft.api.gates;
 import cpw.mods.fml.common.API;
 

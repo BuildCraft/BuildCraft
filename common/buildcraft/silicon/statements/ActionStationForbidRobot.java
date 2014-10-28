@@ -10,17 +10,19 @@ package buildcraft.silicon.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
-import buildcraft.api.gates.StatementParameterItemStack;
-import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.core.ItemRobot;
 import buildcraft.core.robots.DockingStation;
-import buildcraft.core.statements.BCActionPassive;
+import buildcraft.core.statements.BCStatement;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.transport.gates.ActionSlot;
+import buildcraft.transport.gates.StatementSlot;
 
-public class ActionStationForbidRobot extends BCActionPassive {
+public class ActionStationForbidRobot extends BCStatement implements IActionInternal {
 
 	public ActionStationForbidRobot() {
 		super("buildcraft:station.forbid_robot");
@@ -52,8 +54,8 @@ public class ActionStationForbidRobot extends BCActionPassive {
 	}
 
 	public static boolean isForbidden(DockingStation station, EntityRobotBase robot) {
-		for (ActionSlot s : new ActionIterator(station.getPipe().pipe)) {
-			if (s.action instanceof ActionStationForbidRobot) {
+		for (StatementSlot s : new ActionIterator(station.getPipe().pipe)) {
+			if (s.statement instanceof ActionStationForbidRobot) {
 				if (ActionStationForbidRobot.isForbidden(s, robot)) {
 					return true;
 				}
@@ -63,7 +65,7 @@ public class ActionStationForbidRobot extends BCActionPassive {
 		return false;
 	}
 
-	public static boolean isForbidden(ActionSlot slot, EntityRobotBase robot) {
+	public static boolean isForbidden(StatementSlot slot, EntityRobotBase robot) {
 		for (IStatementParameter p : slot.parameters) {
 			if (p != null) {
 				StatementParameterItemStack actionStack = (StatementParameterItemStack) p;
@@ -76,5 +78,11 @@ public class ActionStationForbidRobot extends BCActionPassive {
 		}
 
 		return false;
+	}
+
+	@Override
+	public void actionActivate(IStatementContainer source,
+			IStatementParameter[] parameters) {
+		
 	}
 }

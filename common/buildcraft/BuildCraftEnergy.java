@@ -46,9 +46,9 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.core.StackKey;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
-import buildcraft.api.gates.ITrigger;
-import buildcraft.api.gates.StatementManager;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
+import buildcraft.api.statements.ITriggerExternal;
+import buildcraft.api.statements.StatementManager;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
@@ -109,10 +109,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	public static Set<Integer> excessiveOilBiomeIDs = new HashSet<Integer>();
 	public static Set<Integer> excludeOilBiomeIDs = new HashSet<Integer>();
 	public static TreeMap<BlockIndex, Integer> saturationStored = new TreeMap<BlockIndex, Integer>();
-	public static ITrigger triggerBlueEngineHeat = new TriggerEngineHeat(EnergyStage.BLUE);
-	public static ITrigger triggerGreenEngineHeat = new TriggerEngineHeat(EnergyStage.GREEN);
-	public static ITrigger triggerYellowEngineHeat = new TriggerEngineHeat(EnergyStage.YELLOW);
-	public static ITrigger triggerRedEngineHeat = new TriggerEngineHeat(EnergyStage.RED);
+	public static ITriggerExternal triggerBlueEngineHeat = new TriggerEngineHeat(EnergyStage.BLUE);
+	public static ITriggerExternal triggerGreenEngineHeat = new TriggerEngineHeat(EnergyStage.GREEN);
+	public static ITriggerExternal triggerYellowEngineHeat = new TriggerEngineHeat(EnergyStage.YELLOW);
+	public static ITriggerExternal triggerRedEngineHeat = new TriggerEngineHeat(EnergyStage.RED);
 
 	private static Fluid buildcraftFluidOil;
 	private static Fluid buildcraftFluidFuel;

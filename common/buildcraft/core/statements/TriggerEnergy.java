@@ -11,19 +11,18 @@ package buildcraft.core.statements;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import cofh.api.energy.IEnergyHandler;
-
 import buildcraft.api.gates.IGate;
-import buildcraft.api.gates.IStatementParameter;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.ITriggerExternal;
+import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.core.utils.StringUtils;
 
-public class TriggerEnergy extends BCTrigger {
+public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITriggerExternal {
 
 	private boolean high;
 	private IIcon iconEnergyLow;
@@ -58,21 +57,22 @@ public class TriggerEnergy extends BCTrigger {
 		return false;
 	}
 	@Override
-	public boolean isTriggerActive(IGate gate, IStatementParameter[] parameters) {
-		if (gate.getPipe() instanceof IEnergyHandler) {
-			if (isValidEnergyHandler((IEnergyHandler) gate.getPipe())) {
-				return isTriggeredEnergyHandler((IEnergyHandler) gate.getPipe());
+	public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
+		if (container instanceof IGate) {
+			IGate gate = (IGate) container;
+			if (gate.getPipe() instanceof IEnergyHandler) {
+				if (isValidEnergyHandler((IEnergyHandler) gate.getPipe())) {
+					return isTriggeredEnergyHandler((IEnergyHandler) gate.getPipe());
+				}
 			}
 		}
-
-		// if the pipe can't set the trigger one way or the other, then look
-		// around.
-		return super.isTriggerActive(gate, parameters);
+		
+		return false;
 	}
 
 
 	@Override
-	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, IStatementParameter parameter) {
+	public boolean isTriggerActive(TileEntity tile, ForgeDirection side, IStatementContainer container, IStatementParameter[] parameters) {
 		if (tile instanceof IEnergyHandler) {
 			// Since we return false upon the trigger being invalid anyway,
 			// we can skip the isValidEnergyHandler(...) check.

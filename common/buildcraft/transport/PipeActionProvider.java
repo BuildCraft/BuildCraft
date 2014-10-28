@@ -6,18 +6,21 @@ import java.util.LinkedList;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IActionProvider;
+import buildcraft.api.gates.IGate;
+import buildcraft.api.statements.IActionExternal;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IActionProvider;
+import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.transport.IPipeTile;
 
 public class PipeActionProvider implements IActionProvider {
 
 	@Override
-	public Collection<IAction> getInternalActions(TileEntity tile) {
-		LinkedList<IAction> result = new LinkedList<IAction>();
+	public Collection<IActionInternal> getInternalActions(IStatementContainer container) {
+		LinkedList<IActionInternal> result = new LinkedList<IActionInternal>();
 		Pipe<?> pipe = null;
-		if (tile instanceof TileGenericPipe) {
-			pipe = ((TileGenericPipe) tile).pipe;
+		if (container instanceof IGate) {
+			pipe = (Pipe<?>) ((IGate) container).getPipe();
 		}
 
 		if (pipe == null) {
@@ -36,7 +39,7 @@ public class PipeActionProvider implements IActionProvider {
 	}
 
 	@Override
-	public Collection<IAction> getExternalActions(ForgeDirection side, TileEntity tile) {
+	public Collection<IActionExternal> getExternalActions(ForgeDirection side, TileEntity tile) {
 		return null;
 	}
 

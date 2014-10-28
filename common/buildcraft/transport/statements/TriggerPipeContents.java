@@ -18,9 +18,12 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import buildcraft.api.gates.IGate;
-import buildcraft.api.gates.IStatementParameter;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.statements.BCTrigger;
+import buildcraft.core.statements.BCStatement;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportFluids;
@@ -28,7 +31,7 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TravelingItem;
 
-public class TriggerPipeContents extends BCTrigger {
+public class TriggerPipeContents extends BCStatement implements ITriggerInternal {
 
 	public enum PipeContents {
 		empty,
@@ -37,7 +40,7 @@ public class TriggerPipeContents extends BCTrigger {
 		containsEnergy,
 		requestsEnergy,
 		tooMuchEnergy;
-		public BCTrigger trigger;
+		public ITriggerInternal trigger;
 	};
 	private PipeContents kind;
 
@@ -64,8 +67,12 @@ public class TriggerPipeContents extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(IGate gate, IStatementParameter[] parameters) {
-		Pipe<?> pipe = (Pipe<?>) gate.getPipe();
+	public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
+		if (!(container instanceof IGate)) {
+			return false;
+		}
+		
+		Pipe<?> pipe = (Pipe<?>) ((IGate) container).getPipe();
 		IStatementParameter parameter = parameters[0];
 
 		if (pipe.transport instanceof PipeTransportItems) {

@@ -58,7 +58,7 @@ import buildcraft.core.network.RPCSide;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.silicon.statements.ActionRobotWorkInArea;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.transport.gates.ActionSlot;
+import buildcraft.transport.gates.StatementSlot;
 
 public class EntityRobot extends EntityRobotBase implements
 		IEntityAdditionalSpawnData, IInventory, IFluidHandler {
@@ -837,8 +837,8 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	public IZone getZoneToWork() {
 		if (linkedDockingStation instanceof DockingStation) {
-			for (ActionSlot s : new ActionIterator(((DockingStation) linkedDockingStation).getPipe().pipe)) {
-				if (s.action instanceof ActionRobotWorkInArea) {
+			for (StatementSlot s : new ActionIterator(((DockingStation) linkedDockingStation).getPipe().pipe)) {
+				if (s.statement instanceof ActionRobotWorkInArea) {
 					IZone zone = ActionRobotWorkInArea.getArea(s);
 
 					if (zone != null) {

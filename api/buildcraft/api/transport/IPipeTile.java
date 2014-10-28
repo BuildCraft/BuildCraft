@@ -9,6 +9,7 @@
 package buildcraft.api.transport;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.EnumColor;
 
@@ -56,4 +57,8 @@ public interface IPipeTile {
 	 * @return true if powered
 	 */
 	boolean isWireActive(PipeWire wire);
+
+	TileEntity getAdjacentTile(ForgeDirection dir);
+	
+	IPipe getPipe();
 }

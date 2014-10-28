@@ -12,12 +12,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.tileentity.TileEntity;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
-import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.gates.ITrigger;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.ITriggerInternal;
 
 public final class GateExpansionRedstoneFader extends GateExpansionBuildcraft implements IGateExpansion {
 
@@ -39,13 +38,13 @@ public final class GateExpansionRedstoneFader extends GateExpansionBuildcraft im
 		}
 
 		@Override
-		public void addTriggers(List<ITrigger> list) {
+		public void addTriggers(List<ITriggerInternal> list) {
 			super.addTriggers(list);
 			list.addAll(Arrays.asList(BuildCraftTransport.triggerRedstoneLevel));
 		}
 
 		@Override
-		public void addActions(List<IAction> list) {
+		public void addActions(List<IActionInternal> list) {
 			super.addActions(list);
 			list.addAll(Arrays.asList(BuildCraftTransport.actionRedstoneLevel));
 		}

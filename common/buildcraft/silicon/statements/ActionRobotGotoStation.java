@@ -10,23 +10,26 @@ package buildcraft.silicon.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.BlockIndex;
-import buildcraft.api.gates.StatementParameterItemStack;
-import buildcraft.api.gates.IStatementParameter;
-import buildcraft.api.gates.IGate;
 import buildcraft.api.robots.AIRobot;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.core.ItemMapLocation;
 import buildcraft.core.robots.AIRobotGoAndLinkToDock;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.robots.RobotRegistry;
-import buildcraft.core.statements.BCActionActive;
+import buildcraft.core.statements.BCStatement;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;
 
-public class ActionRobotGotoStation extends BCActionActive {
+public class ActionRobotGotoStation extends BCStatement implements IActionInternal {
 
 	public ActionRobotGotoStation() {
 		super("buildcraft:robot.goto_station");
@@ -43,13 +46,12 @@ public class ActionRobotGotoStation extends BCActionActive {
 	}
 
 	@Override
-	public void actionActivate(IGate gate, IStatementParameter[] parameters) {
-		Pipe<?> pipe = (Pipe<?>) gate.getPipe();
-		TileGenericPipe tile = pipe.container;
+	public void actionActivate(IStatementContainer container, IStatementParameter[] parameters) {
+		Pipe<?> pipe = ((Gate) container).pipe;
 		RobotRegistry registry = RobotRegistry.getRegistry(pipe.getWorld());
 
 		for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
-			DockingStation station = tile.getStation(d);
+			DockingStation station = pipe.container.getStation(d);
 
 			if (station != null && station.robotTaking() != null) {
 				EntityRobot robot = (EntityRobot) station.robotTaking();

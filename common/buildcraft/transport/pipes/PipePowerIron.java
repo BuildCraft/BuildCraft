@@ -19,14 +19,14 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.gates.IAction;
+import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.PowerMode;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
-import buildcraft.transport.gates.ActionSlot;
+import buildcraft.transport.gates.StatementSlot;
 import buildcraft.transport.statements.ActionPowerLimiter;
 
 public class PipePowerIron extends Pipe<PipeTransportPower> {
@@ -90,20 +90,20 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 	}
 
 	@Override
-	protected void actionsActivated(Collection<ActionSlot> actions) {
+	protected void actionsActivated(Collection<StatementSlot> actions) {
 		super.actionsActivated(actions);
 
-		for (ActionSlot action : actions) {
-			if (action.action instanceof ActionPowerLimiter) {
-				setMode(((ActionPowerLimiter) action.action).limit);
+		for (StatementSlot action : actions) {
+			if (action.statement instanceof ActionPowerLimiter) {
+				setMode(((ActionPowerLimiter) action.statement).limit);
 				break;
 			}
 		}
 	}
 
 	@Override
-	public LinkedList<IAction> getActions() {
-		LinkedList<IAction> action = super.getActions();
+	public LinkedList<IActionInternal> getActions() {
+		LinkedList<IActionInternal> action = super.getActions();
 		for (PowerMode mode : PowerMode.VALUES) {
 			action.add(BuildCraftTransport.actionPowerLimiter[mode.ordinal()]);
 		}

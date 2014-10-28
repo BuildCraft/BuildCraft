@@ -6,11 +6,8 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.gates;
+package buildcraft.api.statements;
 
-
-public interface IAction extends IStatement {
-
-	void actionActivate(IGate gate, IStatementParameter[] parameters);
-
+public interface IActionReceptor {
+	void actionActivated(IStatement statement, IStatementParameter[] parameters);
 }

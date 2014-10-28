@@ -13,16 +13,16 @@ import java.util.Locale;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.core.IInvSlot;
-import buildcraft.api.gates.IStatementParameter;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.utils.StringUtils;
 
-public class TriggerInventoryLevel extends BCTrigger {
+public class TriggerInventoryLevel extends BCStatement implements ITriggerExternal {
 
 	public enum TriggerType {
 
@@ -58,14 +58,14 @@ public class TriggerInventoryLevel extends BCTrigger {
 	}
 
 	@Override
-	public boolean isTriggerActive(ForgeDirection side, TileEntity tile, IStatementParameter parameter) {
+	public boolean isTriggerActive(TileEntity tile, ForgeDirection side, IStatementContainer container, IStatementParameter[] parameters) {
 		// A parameter is required
-		if (parameter == null) {
+		if (parameters == null || parameters.length < 1 || parameters[0] == null) {
 			return false;
 		}
 
 		if (tile instanceof IInventory) {
-			ItemStack searchStack = parameter.getItemStack();
+			ItemStack searchStack = parameters[0].getItemStack();
 
 			if (searchStack == null) {
 				return false;

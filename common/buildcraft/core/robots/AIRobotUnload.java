@@ -17,7 +17,7 @@ import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.silicon.statements.ActionStationInputItems;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.transport.gates.ActionSlot;
+import buildcraft.transport.gates.StatementSlot;
 
 public class AIRobotUnload extends AIRobot {
 
@@ -55,9 +55,9 @@ public class AIRobotUnload extends AIRobot {
 				continue;
 			}
 
-			for (ActionSlot s : new ActionIterator(pipe)) {
-				if (s.action instanceof ActionStationInputItems) {
-					if (((ActionStationInputItems) s.action)
+			for (StatementSlot s : new ActionIterator(pipe)) {
+				if (s.statement instanceof ActionStationInputItems) {
+					if (((ActionStationInputItems) s.statement)
 							.insert(station, (EntityRobot) robot, s, robotSlot, true)) {
 
 						delivered = true;

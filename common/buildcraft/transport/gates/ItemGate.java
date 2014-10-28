@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Set;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,18 +24,15 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.gates.IStatement;
-import buildcraft.api.gates.StatementManager;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.StatementManager;
 import buildcraft.api.transport.IPipePluggable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.ItemBuildCraft;

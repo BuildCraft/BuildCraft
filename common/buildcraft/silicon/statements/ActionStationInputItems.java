@@ -9,22 +9,31 @@
 package buildcraft.silicon.statements;
 
 import buildcraft.api.core.IInvSlot;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.inventory.filters.StatementParameterStackFilter;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.EntityRobot;
-import buildcraft.core.statements.BCActionPassive;
-import buildcraft.transport.gates.ActionSlot;
+import buildcraft.core.statements.BCStatement;
+import buildcraft.transport.gates.StatementSlot;
 
-public abstract class ActionStationInputItems extends BCActionPassive {
+public abstract class ActionStationInputItems extends BCStatement implements IActionInternal {
 
 	public ActionStationInputItems(String name) {
 		super(name);
 	}
 
-	public boolean insert(DockingStation station, EntityRobot robot, ActionSlot actionSlot, IInvSlot invSlot,
+	public boolean insert(DockingStation station, EntityRobot robot, StatementSlot actionSlot, IInvSlot invSlot,
 			boolean doInsert) {
 		StatementParameterStackFilter param = new StatementParameterStackFilter(actionSlot.parameters);
 
 		return !param.hasFilter() || param.matches(invSlot.getStackInSlot());
+	}
+
+	@Override
+	public void actionActivate(IStatementContainer source,
+			IStatementParameter[] parameters) {
+		
 	}
 }

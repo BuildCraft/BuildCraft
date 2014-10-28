@@ -18,9 +18,9 @@ import net.minecraft.util.AxisAlignedBB;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.filler.FillerManager;
-import buildcraft.api.gates.IAction;
-import buildcraft.api.gates.IStatementParameter;
-import buildcraft.api.gates.IActionReceptor;
+import buildcraft.api.statements.IActionReceptor;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementParameter;
 import buildcraft.builders.statements.ActionFiller;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
@@ -314,7 +314,7 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 	}
 
 	@Override
-	public void actionActivated(IAction action, IStatementParameter[] parameters) {
+	public void actionActivated(IStatement action, IStatementParameter[] parameters) {
 		if (action == BuildCraftCore.actionOn) {
 			lastMode = ActionMachineControl.Mode.On;
 		} else if (action == BuildCraftCore.actionOff) {
@@ -328,7 +328,7 @@ public class TileFiller extends TileAbstractBuilder implements IMachine, IAction
 	}
 
 	@Override
-	public boolean allowAction(IAction action) {
+	public boolean allowAction(IStatement action) {
 		return true;
 	}
 

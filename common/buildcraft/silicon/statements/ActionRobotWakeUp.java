@@ -9,10 +9,13 @@
 package buildcraft.silicon.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-import buildcraft.core.statements.BCActionPassive;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.core.statements.BCStatement;
 import buildcraft.core.utils.StringUtils;
 
-public class ActionRobotWakeUp extends BCActionPassive {
+public class ActionRobotWakeUp extends BCStatement implements IActionInternal {
 
 	public ActionRobotWakeUp() {
 		super("buildcraft:robot.wakeup");
@@ -26,5 +29,12 @@ public class ActionRobotWakeUp extends BCActionPassive {
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/action_robot_wakeup");
+	}
+
+	@Override
+	public void actionActivate(IStatementContainer source,
+			IStatementParameter[] parameters) {
+		// TODO Auto-generated method stub
+		
 	}
 }

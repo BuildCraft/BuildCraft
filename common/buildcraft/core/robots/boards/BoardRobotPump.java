@@ -13,21 +13,19 @@ import java.util.ArrayList;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.gates.StatementParameterItemStack;
-import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.core.TickHandlerCore;
 import buildcraft.core.robots.AIRobotGotoBlock;
 import buildcraft.core.robots.AIRobotGotoSleep;
@@ -39,7 +37,7 @@ import buildcraft.core.robots.IBlockFilter;
 import buildcraft.core.robots.ResourceIdBlock;
 import buildcraft.silicon.statements.ActionRobotFilter;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.transport.gates.ActionSlot;
+import buildcraft.transport.gates.StatementSlot;
 
 public class BoardRobotPump extends RedstoneBoardRobot {
 
@@ -114,8 +112,8 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 
 		DockingStation station = (DockingStation) robot.getLinkedStation();
 
-		for (ActionSlot slot : new ActionIterator(station.getPipe().pipe)) {
-			if (slot.action instanceof ActionRobotFilter) {
+		for (StatementSlot slot : new ActionIterator(station.getPipe().pipe)) {
+			if (slot.statement instanceof ActionRobotFilter) {
 				for (IStatementParameter p : slot.parameters) {
 					if (p != null && p instanceof StatementParameterItemStack) {
 						StatementParameterItemStack param = (StatementParameterItemStack) p;

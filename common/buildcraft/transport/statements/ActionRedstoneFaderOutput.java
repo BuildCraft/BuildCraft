@@ -12,12 +12,14 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import buildcraft.api.gates.IStatementParameter;
-import buildcraft.core.statements.BCActionPassive;
+import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.core.statements.BCStatement;
 import buildcraft.core.statements.StatementParameterRedstoneGateSideOnly;
 import buildcraft.core.utils.StringUtils;
 
-public class ActionRedstoneFaderOutput extends BCActionPassive {
+public class ActionRedstoneFaderOutput extends BCStatement implements IActionInternal {
 
 	public final int level;
 
@@ -58,5 +60,11 @@ public class ActionRedstoneFaderOutput extends BCActionPassive {
 	@Override
 	public int maxParameters() {
 		return 1;
+	}
+
+	@Override
+	public void actionActivate(IStatementContainer source,
+			IStatementParameter[] parameters) {
+		
 	}
 }
