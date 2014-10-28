@@ -22,8 +22,7 @@ import buildcraft.api.transport.IPipeTile;
 public final class StatementManager {
 
 	public static Map<String, IStatement> statements = new HashMap<String, IStatement>();
-	public static Map<String, Class<? extends IStatementParameter>> idToParameter = new HashMap<String, Class<? extends IStatementParameter>>();
-	public static Map<Class<? extends IStatementParameter>, String> parameterToId = new HashMap<Class<? extends IStatementParameter>, String>();
+	public static Map<String, Class<? extends IStatementParameter>> parameters = new HashMap<String, Class<? extends IStatementParameter>>();
 	private static List<ITriggerProvider> triggerProviders = new LinkedList<ITriggerProvider>();
 	private static List<IActionProvider> actionProviders = new LinkedList<IActionProvider>();
 
@@ -49,9 +48,8 @@ public final class StatementManager {
 		statements.put(statement.getUniqueTag(), statement);
 	}
 
-	public static void registerParameterClass(String name, Class<? extends IStatementParameter> param) {
-		idToParameter.put(name, param);
-		parameterToId.put(param, name);
+	public static void registerParameterClass(Class<? extends IStatementParameter> param) {
+		parameters.put(createParameter(param).getUniqueTag(), param);
 	}
 
 	public static List<ITrigger> getNeighborTriggers(ForgeDirection side, Block block, TileEntity entity) {
@@ -126,13 +124,13 @@ public final class StatementManager {
 		return result;
 	}
 
-	public static String getParameterKind(IStatementParameter param) {
-		return parameterToId.get(param.getClass());
-	}
-
 	public static IStatementParameter createParameter(String kind) {
+		return createParameter(parameters.get(kind));
+	}
+	
+	private static IStatementParameter createParameter(Class<? extends IStatementParameter> param) {
 		try {
-			return idToParameter.get(kind).newInstance();
+			return param.newInstance();
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {

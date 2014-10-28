@@ -149,7 +149,7 @@ public final class Gate implements IGate {
 			for (int j = 0; j < material.numTriggerParameters; ++j) {
 				if (triggerParameters[i][j] != null) {
 					NBTTagCompound cpt = new NBTTagCompound();
-					cpt.setString("kind", StatementManager.getParameterKind(triggerParameters[i][j]));
+					cpt.setString("kind", triggerParameters[i][j].getUniqueTag());
 					triggerParameters[i][j].writeToNBT(cpt);
 					data.setTag("triggerParameters[" + i + "][" + j + "]", cpt);
 				}
@@ -158,7 +158,7 @@ public final class Gate implements IGate {
 			for (int j = 0; j < material.numActionParameters; ++j) {
 				if (actionParameters[i][j] != null) {
 					NBTTagCompound cpt = new NBTTagCompound();
-					cpt.setString("kind", StatementManager.getParameterKind(actionParameters[i][j]));
+					cpt.setString("kind", actionParameters[i][j].getUniqueTag());
 					actionParameters[i][j].writeToNBT(cpt);
 					data.setTag("actionParameters[" + i + "][" + j + "]", cpt);
 				}

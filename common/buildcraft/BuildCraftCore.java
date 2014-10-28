@@ -344,10 +344,10 @@ public class BuildCraftCore extends BuildCraftMod {
 
 		NetworkIdRegistry.instance = new NetworkIdRegistry();
 
-		StatementManager.registerParameterClass("buildcraft:stackTrigger", TriggerParameterItemStack.class);
-		StatementManager.registerParameterClass("buildcraft:stackAction", ActionParameterItemStack.class);
-		StatementManager.registerParameterClass("buildcraft:pipeActionDirection", StatementParameterDirection.class);
-		StatementManager.registerParameterClass("buildcraft:redstoneGateSideOnly", StatementParameterRedstoneGateSideOnly.class);
+		StatementManager.registerParameterClass(TriggerParameterItemStack.class);
+		StatementManager.registerParameterClass(ActionParameterItemStack.class);
+		StatementManager.registerParameterClass(StatementParameterDirection.class);
+		StatementManager.registerParameterClass(StatementParameterRedstoneGateSideOnly.class);
 		StatementManager.registerTriggerProvider(new DefaultTriggerProvider());
 		StatementManager.registerActionProvider(new DefaultActionProvider());
 

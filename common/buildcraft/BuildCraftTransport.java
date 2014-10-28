@@ -484,8 +484,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		new BptItemPipeFilters(pipeItemsDiamond);
 
-		StatementManager.registerParameterClass("buildcraft:pipeWireTrigger", TriggerParameterSignal.class);
-		StatementManager.registerParameterClass("buildcraft:pipeWireAction", ActionParameterSignal.class);
+		StatementManager.registerParameterClass(TriggerParameterSignal.class);
+		StatementManager.registerParameterClass(ActionParameterSignal.class);
 		StatementManager.registerTriggerProvider(new PipeTriggerProvider());
 		StatementManager.registerActionProvider(new PipeActionProvider());
 		
