@@ -63,7 +63,7 @@ public class ActionRobotGotoStation extends BCActionActive {
 
 				if (parameters[0] != null) {
 					ActionParameterItemStack stackParam = (ActionParameterItemStack) parameters[0];
-					ItemStack item = stackParam.getItemStackToDraw();
+					ItemStack item = stackParam.getItemStack();
 
 					if (item.getItem() instanceof ItemMapLocation) {
 						BlockIndex index = ItemMapLocation.getBlockIndex(item);

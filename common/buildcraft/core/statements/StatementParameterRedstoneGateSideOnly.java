@@ -1,11 +1,13 @@
 package buildcraft.core.statements;
 
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.gates.IStatement;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.utils.StringUtils;
@@ -15,17 +17,19 @@ public class StatementParameterRedstoneGateSideOnly implements
 	@NetworkData
 	public boolean isOn = false;
 	
+	private IIcon icon;
+	
 	public StatementParameterRedstoneGateSideOnly() {
 		
 	}
 	
 	@Override
-	public ItemStack getItemStackToDraw() {
+	public ItemStack getItemStack() {
 		return null;
 	}
 
 	@Override
-	public IIcon getIconToDraw() {
+	public IIcon getIcon() {
 		if (!isOn) {
 			return null;
 		} else {
@@ -34,7 +38,7 @@ public class StatementParameterRedstoneGateSideOnly implements
 	}
 
 	@Override
-	public void clicked(IPipeTile pipe, IStatement stmt, ItemStack stack, int mouseButton) {
+	public void onClick(Object source, IStatement stmt, ItemStack stack, int mouseButton) {
 		isOn = !isOn;
 	}
 
@@ -53,5 +57,20 @@ public class StatementParameterRedstoneGateSideOnly implements
 	@Override
 	public String getDescription() {
 		return isOn ? StringUtils.localize("gate.parameter.redstone.gateSideOnly") : "";
+	}
+
+	@Override
+	public String getUniqueTag() {
+		return "buildcraft:redstoneGateSideOnly";
+	}
+
+	@Override
+	public void registerIcons(IIconRegister iconRegister) {
+		icon = iconRegister.registerIcon("buildcraft:triggers/redstone_gate_side_only");
+	}
+
+	@Override
+	public IStatementParameter rotateLeft() {
+		return this;
 	}
 }

@@ -12,7 +12,7 @@ import java.util.Collection;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
-
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.transport.IPipeTile;
 
 public interface IActionProvider {
@@ -26,5 +26,5 @@ public interface IActionProvider {
 	/**
 	 * Returns the list of actions available to a gate next to the given block.
 	 */
-	Collection<IAction> getNeighborActions(Block block, TileEntity tile);
+	Collection<IAction> getNeighborActions(ForgeDirection side, Block block, TileEntity tile);
 }

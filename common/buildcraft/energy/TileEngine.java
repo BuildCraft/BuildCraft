@@ -22,7 +22,6 @@ import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.NetworkData;
-import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
@@ -38,7 +37,7 @@ import buildcraft.core.TileBuildCraft;
 import buildcraft.energy.gui.ContainerEngine;
 
 public abstract class TileEngine extends TileBuildCraft implements IPowerReceptor, IPowerEmitter,
-		IOverrideDefaultTriggers, IPipeConnection, IEnergyHandler {
+		IPipeConnection, IEnergyHandler {
 	// Index corresponds to metadata
 	public static final ResourceLocation[] BASE_TEXTURES = new ResourceLocation[]{
 			new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_wood.png"),
@@ -543,18 +542,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	}
 
 	public abstract int calculateCurrentOutput();
-
-	@Override
-	public LinkedList<ITrigger> getTriggers() {
-		LinkedList<ITrigger> triggers = new LinkedList<ITrigger>();
-
-		triggers.add(BuildCraftEnergy.triggerBlueEngineHeat);
-		triggers.add(BuildCraftEnergy.triggerGreenEngineHeat);
-		triggers.add(BuildCraftEnergy.triggerYellowEngineHeat);
-		triggers.add(BuildCraftEnergy.triggerRedEngineHeat);
-
-		return triggers;
-	}
 
 	@Override
 	public ConnectOverride overridePipeConnection(PipeType type, ForgeDirection with) {

@@ -67,7 +67,7 @@ public class ActionStationForbidRobot extends BCActionPassive {
 		for (IActionParameter p : slot.parameters) {
 			if (p != null) {
 				ActionParameterItemStack actionStack = (ActionParameterItemStack) p;
-				ItemStack stack = p.getItemStackToDraw();
+				ItemStack stack = p.getItemStack();
 
 				if (stack != null && stack.getItem() instanceof ItemRobot) {
 					return ItemRobot.getRobotNBT(stack) == robot.getBoard().getNBTHandler();

@@ -472,7 +472,7 @@ public final class Gate implements IGate {
 					TileEntity tile = pipe.container.getTile(side);
 					if (tile instanceof IActionReceptor) {
 						IActionReceptor recept = (IActionReceptor) tile;
-						recept.actionActivated(action);
+						recept.actionActivated(action, slot.parameters);
 					}
 				}
 			}
@@ -545,7 +545,7 @@ public final class Gate implements IGate {
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			TileEntity tile = pipe.container.getTile(o);
 			Block block = pipe.container.getBlock(o);
-			allTriggers.addAll(StatementManager.getNeighborTriggers(block, tile));
+			allTriggers.addAll(StatementManager.getNeighborTriggers(o, block, tile));
 		}
 		
 		return allTriggers;
@@ -571,7 +571,7 @@ public final class Gate implements IGate {
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			TileEntity tile = pipe.container.getTile(o);
 			Block block = pipe.container.getBlock(o);
-			allActions.addAll(StatementManager.getNeighborActions(block, tile));
+			allActions.addAll(StatementManager.getNeighborActions(o, block, tile));
 		}
 		
 		return allActions;

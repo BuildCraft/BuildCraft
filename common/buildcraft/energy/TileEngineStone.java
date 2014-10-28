@@ -162,17 +162,6 @@ public class TileEngineStone extends TileEngineWithInventory {
 	}
 
 	@Override
-	public LinkedList<ITrigger> getTriggers() {
-		LinkedList<ITrigger> triggers = super.getTriggers();
-		triggers.add(BuildCraftCore.triggerEmptyInventory);
-		triggers.add(BuildCraftCore.triggerContainsInventory);
-		triggers.add(BuildCraftCore.triggerSpaceInventory);
-		triggers.add(BuildCraftCore.triggerFullInventory);
-
-		return triggers;
-	}
-
-	@Override
 	public boolean hasCustomInventoryName() {
 		return false;
 	}

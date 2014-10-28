@@ -15,9 +15,8 @@ import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
-
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.FMLLog;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionProvider;
@@ -32,7 +31,7 @@ public class DefaultActionProvider implements IActionProvider {
 	}
 
 	@Override
-	public Collection<IAction> getNeighborActions(Block block, TileEntity tile) {
+	public Collection<IAction> getNeighborActions(ForgeDirection side, Block block, TileEntity tile) {
 		LinkedList<IAction> res = new LinkedList<IAction>();
 
 		res.add(BuildCraftCore.actionRedstone);

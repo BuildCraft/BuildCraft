@@ -10,12 +10,15 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.gates.IStatement;
+import buildcraft.api.gates.IStatementParameter;
+import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.statements.StatementIconProvider;
@@ -25,44 +28,23 @@ public class ActionParameterSignal implements IActionParameter {
 
 	@NetworkData
 	public PipeWire color = null;
-
+	private IIcon[] icons;
+	
 	public ActionParameterSignal() {
 
 	}
 
 	@Override
-	public ItemStack getItemStackToDraw() {
-		return null;
-	}
-
-	@Override
-	public IIcon getIconToDraw() {
-		int id = 0;
-
+	public IIcon getIcon() {
 		if (color == null) {
 			return null;
+		} else {
+			return icons[color.ordinal() & 3];
 		}
-
-		switch (color) {
-		case RED:
-			id = StatementIconProvider.Trigger_PipeSignal_Red_Active;
-			break;
-		case BLUE:
-			id = StatementIconProvider.Trigger_PipeSignal_Blue_Active;
-			break;
-		case GREEN:
-			id = StatementIconProvider.Trigger_PipeSignal_Green_Active;
-			break;
-		case YELLOW:
-			id = StatementIconProvider.Trigger_PipeSignal_Yellow_Active;
-			break;
-		}
-
-		return StatementIconProvider.INSTANCE.getIcon(id);
 	}
 
 	@Override
-	public void clicked(IPipeTile pipe, IStatement stmt, ItemStack stack, int mouseButton) {
+	public void onClick(Object source, IStatement stmt, ItemStack stack, int mouseButton) {
 		if (color == null) {
 			color = mouseButton == 0 ? PipeWire.RED : PipeWire.YELLOW;
 		} else if (color == (mouseButton == 0 ? PipeWire.YELLOW : PipeWire.RED)) {
@@ -100,5 +82,31 @@ public class ActionParameterSignal implements IActionParameter {
 	@Override
 	public String getDescription() {
 		return String.format(StringUtils.localize("gate.action.pipe.wire"), StringUtils.localize("color." + color.name().toLowerCase(Locale.ENGLISH)));
+	}
+
+	@Override
+	public String getUniqueTag() {
+		return "buildcraft:pipeWireAction";
+	}
+
+	@Override
+	public void registerIcons(IIconRegister iconRegister) {
+		icons = new IIcon[] {
+				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_red_active"),
+				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_blue_active"),
+				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_green_active"),
+				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_yellow_active")
+		};
+
+	}
+
+	@Override
+	public IStatementParameter rotateLeft() {
+		return this;
+	}
+
+	@Override
+	public ItemStack getItemStack() {
+		return null;
 	}
 }

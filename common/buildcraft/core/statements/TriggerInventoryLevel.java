@@ -65,7 +65,7 @@ public class TriggerInventoryLevel extends BCTrigger {
 		}
 
 		if (tile instanceof IInventory) {
-			ItemStack searchStack = parameter.getItemStackToDraw();
+			ItemStack searchStack = parameter.getItemStack();
 
 			if (searchStack == null) {
 				return false;

@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.gates.IAction;
 import buildcraft.api.gates.IActionProvider;
 import buildcraft.api.transport.IPipeTile;
@@ -35,7 +36,7 @@ public class PipeActionProvider implements IActionProvider {
 	}
 
 	@Override
-	public Collection<IAction> getNeighborActions(Block block, TileEntity tile) {
+	public Collection<IAction> getNeighborActions(ForgeDirection side, Block block, TileEntity tile) {
 		return null;
 	}
 

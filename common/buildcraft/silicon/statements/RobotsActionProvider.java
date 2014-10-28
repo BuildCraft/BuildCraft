@@ -89,7 +89,7 @@ public class RobotsActionProvider implements IActionProvider {
 	}
 
 	@Override
-	public Collection<IAction> getNeighborActions(Block block, TileEntity tile) {
+	public Collection<IAction> getNeighborActions(ForgeDirection side, Block block, TileEntity tile) {
 		return null;
 	}
 

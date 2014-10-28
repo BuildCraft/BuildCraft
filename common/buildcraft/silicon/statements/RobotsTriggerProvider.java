@@ -47,7 +47,7 @@ public class RobotsTriggerProvider implements ITriggerProvider {
 	}
 
 	@Override
-	public Collection<ITrigger> getNeighborTriggers(Block block, TileEntity tile) {
+	public Collection<ITrigger> getNeighborTriggers(ForgeDirection side, Block block, TileEntity tile) {
 		return null;
 	}
 

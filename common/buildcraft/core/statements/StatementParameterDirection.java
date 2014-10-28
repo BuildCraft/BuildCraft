@@ -8,6 +8,7 @@
  */
 package buildcraft.core.statements;
 
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
@@ -15,7 +16,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.gates.IStatement;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.gates.ITriggerParameter;
+import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.utils.StringUtils;
 
@@ -24,29 +27,33 @@ public class StatementParameterDirection implements IActionParameter, ITriggerPa
     	@NetworkData
 	public ForgeDirection direction = ForgeDirection.UNKNOWN;
 
+    private IIcon[] icons;
+    
 	public StatementParameterDirection() {
 		
 	}
 
 	@Override
-	public ItemStack getItemStackToDraw() {
+	public ItemStack getItemStack() {
 		return null;
 	}
 
 	@Override
-	public IIcon getIconToDraw() {
+	public IIcon getIcon() {
 	    if (direction == ForgeDirection.UNKNOWN) {
 	    	return null;
 	    } else {
-	    	return StatementIconProvider.INSTANCE.getIcon(StatementIconProvider.Action_Parameter_Direction_Down + direction.ordinal());
+	    	return icons[direction.ordinal()];
 	    }
 	}
 
 	@Override
-	public void clicked(IPipeTile pipe, IStatement stmt, ItemStack stack, int mouseButton) {
-	    do {
-	    	direction = ForgeDirection.getOrientation((direction.ordinal() + (mouseButton > 0 ? -1 : 1)) % 6);
-	    } while (!pipe.isPipeConnected(direction));
+	public void onClick(Object source, IStatement stmt, ItemStack stack, int mouseButton) {
+		if (source instanceof IPipe) {
+			do {
+				direction = ForgeDirection.getOrientation((direction.ordinal() + (mouseButton > 0 ? -1 : 1)) % 6);
+			} while (!((IPipe) source).getTile().isPipeConnected(direction));
+		}
 	}
 
 	@Override
@@ -79,5 +86,27 @@ public class StatementParameterDirection implements IActionParameter, ITriggerPa
 		} else {
 			return StringUtils.localize("direction." + direction.name().toLowerCase());
 		}
+	}
+
+	@Override
+	public String getUniqueTag() {
+		return "buildcraft:pipeActionDirection";
+	}
+
+	@Override
+	public void registerIcons(IIconRegister iconRegister) {
+		icons = new IIcon[] {
+				iconRegister.registerIcon("buildcraft:triggers/trigger_dir_down"),
+				iconRegister.registerIcon("buildcraft:triggers/trigger_dir_up"),
+				iconRegister.registerIcon("buildcraft:triggers/trigger_dir_north"),
+				iconRegister.registerIcon("buildcraft:triggers/trigger_dir_south"),
+				iconRegister.registerIcon("buildcraft:triggers/trigger_dir_west"),
+				iconRegister.registerIcon("buildcraft:triggers/trigger_dir_east")
+		};
+	}
+
+	@Override
+	public IStatementParameter rotateLeft() {
+		return this;
 	}
 }

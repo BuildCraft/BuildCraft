@@ -119,7 +119,7 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 				for (IActionParameter p : slot.parameters) {
 					if (p != null && p instanceof ActionParameterItemStack) {
 						ActionParameterItemStack param = (ActionParameterItemStack) p;
-						ItemStack stack = param.getItemStackToDraw();
+						ItemStack stack = param.getItemStack();
 
 						if (stack != null) {
 							FluidStack fluid = FluidContainerRegistry.getFluidForFilledItem(stack);

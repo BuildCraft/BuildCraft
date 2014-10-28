@@ -16,7 +16,7 @@ import java.util.Map;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
-
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.transport.IPipeTile;
 
 public final class StatementManager {
@@ -54,11 +54,11 @@ public final class StatementManager {
 		parameterToId.put(param, name);
 	}
 
-	public static List<ITrigger> getNeighborTriggers(Block block, TileEntity entity) {
+	public static List<ITrigger> getNeighborTriggers(ForgeDirection side, Block block, TileEntity entity) {
 		List<ITrigger> result = new LinkedList<ITrigger>();
 
 		for (ITriggerProvider provider : triggerProviders) {
-			Collection<ITrigger> toAdd = provider.getNeighborTriggers(block, entity);
+			Collection<ITrigger> toAdd = provider.getNeighborTriggers(side, block, entity);
 
 			if (toAdd != null) {
 				for (ITrigger t : toAdd) {
@@ -72,11 +72,11 @@ public final class StatementManager {
 		return result;
 	}
 
-	public static List<IAction> getNeighborActions(Block block, TileEntity entity) {
+	public static List<IAction> getNeighborActions(ForgeDirection side, Block block, TileEntity entity) {
 		List<IAction> result = new LinkedList<IAction>();
 
 		for (IActionProvider provider : actionProviders) {
-			Collection<IAction> toAdd = provider.getNeighborActions(block, entity);
+			Collection<IAction> toAdd = provider.getNeighborActions(side, block, entity);
 
 			if (toAdd != null) {
 				for (IAction t : toAdd) {

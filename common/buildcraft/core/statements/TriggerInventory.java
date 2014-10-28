@@ -52,7 +52,7 @@ public class TriggerInventory extends BCTrigger {
 		ItemStack searchedStack = null;
 
 		if (parameter != null) {
-			searchedStack = parameter.getItemStackToDraw();
+			searchedStack = parameter.getItemStack();
 		}
 
 		if (tile instanceof IInventory) {

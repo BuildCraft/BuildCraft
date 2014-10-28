@@ -46,8 +46,7 @@ public interface IStatement {
 	String getDescription();
 
 	/**
-	 * Create parameters for the trigger. As for now, there is only one kind of
-	 * trigger parameter available so this subprogram is final.
+	 * Create parameters for the trigger.
 	 */
 	IStatementParameter createParameter(int index);
 

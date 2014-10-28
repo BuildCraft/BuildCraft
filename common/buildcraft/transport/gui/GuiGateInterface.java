@@ -141,7 +141,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			IStatementParameter parameter = getParameter();
 
 			if (parameter != null) {
-				return parameter.getItemStackToDraw();
+				return parameter.getItemStack();
 			} else {
 				return null;
 			}
@@ -152,7 +152,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			IStatementParameter parameter = getParameter();
 
 			if (parameter != null) {
-				return parameter.getIconToDraw();
+				return parameter.getIcon();
 			} else {
 				return null;
 			}
@@ -474,7 +474,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				}
 
 				if (param != null) {
-					param.clicked(pipe.container, statement.getStatement(), mc.thePlayer.inventory.getItemStack(), k);
+					param.onClick(pipe.container, statement.getStatement(), mc.thePlayer.inventory.getItemStack(), k);
 					paramSlot.setParameter(param, true);
 				}
 			}

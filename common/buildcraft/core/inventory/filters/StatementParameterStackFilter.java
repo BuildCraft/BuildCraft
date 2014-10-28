@@ -27,7 +27,7 @@ public class StatementParameterStackFilter extends ArrayStackOrListFilter {
 		for (IStatementParameter s : parameters) {
 			if (s != null) {
 				if (s instanceof ActionParameterItemStack || s instanceof TriggerParameterItemStack) {
-					tmp.add(s.getItemStackToDraw());
+					tmp.add(s.getItemStack());
 				}
 			}
 		}

@@ -12,7 +12,7 @@ import java.util.Collection;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
-
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.transport.IPipeTile;
 
 public interface ITriggerProvider {
@@ -25,6 +25,6 @@ public interface ITriggerProvider {
 	/**
 	 * Returns the list of triggers available to a gate next to the given block.
 	 */
-	Collection<ITrigger> getNeighborTriggers(Block block, TileEntity tile);
+	Collection<ITrigger> getNeighborTriggers(ForgeDirection side, Block block, TileEntity tile);
 
 }

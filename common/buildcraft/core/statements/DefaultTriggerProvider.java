@@ -21,7 +21,6 @@ import net.minecraftforge.fluids.IFluidHandler;
 import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.gates.IOverrideDefaultTriggers;
 import buildcraft.api.gates.ITrigger;
 import buildcraft.api.gates.ITriggerProvider;
 import buildcraft.api.transport.IPipeTile;
@@ -30,11 +29,7 @@ import buildcraft.core.IMachine;
 public class DefaultTriggerProvider implements ITriggerProvider {
 
 	@Override
-	public LinkedList<ITrigger> getNeighborTriggers(Block block, TileEntity tile) {
-		if (tile instanceof IOverrideDefaultTriggers) {
-			return ((IOverrideDefaultTriggers) tile).getTriggers();
-		}
-
+	public LinkedList<ITrigger> getNeighborTriggers(ForgeDirection side, Block block, TileEntity tile) {
 		LinkedList<ITrigger> res = new LinkedList<ITrigger>();
 
 		if (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0) {
@@ -48,7 +43,7 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 		}
 
 		if (tile instanceof IFluidHandler) {
-			FluidTankInfo[] tanks = ((IFluidHandler) tile).getTankInfo(ForgeDirection.UNKNOWN);
+			FluidTankInfo[] tanks = ((IFluidHandler) tile).getTankInfo(side.getOpposite());
 			if (tanks != null && tanks.length > 0) {
 				res.add(BuildCraftCore.triggerEmptyFluid);
 				res.add(BuildCraftCore.triggerContainsFluid);
@@ -65,7 +60,7 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 			res.add(BuildCraftCore.triggerMachineInactive);
 		}
 
-		if (tile instanceof IEnergyHandler && ((IEnergyHandler) tile).getMaxEnergyStored(ForgeDirection.UNKNOWN) > 0) {
+		if (tile instanceof IEnergyHandler && ((IEnergyHandler) tile).getMaxEnergyStored(side.getOpposite()) > 0) {
 			res.add(BuildCraftCore.triggerEnergyHigh);
 			res.add(BuildCraftCore.triggerEnergyLow);
 		}

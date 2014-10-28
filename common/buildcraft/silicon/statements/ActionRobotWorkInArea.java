@@ -39,7 +39,7 @@ public class ActionRobotWorkInArea extends BCActionPassive {
 			return null;
 		}
 
-		ItemStack stack = ((ActionParameterItemStack) slot.parameters[0]).getItemStackToDraw();
+		ItemStack stack = ((ActionParameterItemStack) slot.parameters[0]).getItemStack();
 
 		if (!(stack.getItem() instanceof ItemMapLocation)) {
 			return null;

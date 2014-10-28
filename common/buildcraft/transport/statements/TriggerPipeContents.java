@@ -73,9 +73,9 @@ public class TriggerPipeContents extends BCTrigger {
 			if (kind == PipeContents.empty) {
 				return transportItems.items.isEmpty();
 			} else if (kind == PipeContents.containsItems) {
-				if (parameter != null && parameter.getItemStackToDraw() != null) {
+				if (parameter != null && parameter.getItemStack() != null) {
 					for (TravelingItem item : transportItems.items) {
-						if (StackHelper.isMatchingItemOrList(parameter.getItemStackToDraw(), item.getItemStack())) {
+						if (StackHelper.isMatchingItemOrList(parameter.getItemStack(), item.getItemStack())) {
 							return true;
 						}
 					}
@@ -88,8 +88,8 @@ public class TriggerPipeContents extends BCTrigger {
 
 			FluidStack searchedFluid = null;
 
-			if (parameter != null && parameter.getItemStackToDraw() != null) {
-				searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItemStackToDraw());
+			if (parameter != null && parameter.getItemStack() != null) {
+				searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItemStack());
 			}
 
 			if (kind == PipeContents.empty) {

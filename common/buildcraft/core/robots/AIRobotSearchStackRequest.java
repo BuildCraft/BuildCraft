@@ -132,10 +132,10 @@ public class AIRobotSearchStackRequest extends AIRobot {
 				for (IStatementParameter p : s.parameters) {
 					ActionParameterItemStack param = (ActionParameterItemStack) p;
 
-					if (param != null && !isBlacklisted(param.getItemStackToDraw())) {
+					if (param != null && !isBlacklisted(param.getItemStack())) {
 						StackRequest req = new StackRequest();
 						req.station = station;
-						req.stack = param.getItemStackToDraw();
+						req.stack = param.getItemStack();
 
 						return req;
 					}

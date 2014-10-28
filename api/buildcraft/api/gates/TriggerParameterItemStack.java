@@ -8,6 +8,7 @@
  */
 package buildcraft.api.gates;
 
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -21,17 +22,17 @@ public class TriggerParameterItemStack implements ITriggerParameter {
 	protected ItemStack stack;
 
 	@Override
-	public ItemStack getItemStackToDraw() {
-		return stack;
-	}
-
-	@Override
-	public IIcon getIconToDraw() {
+	public IIcon getIcon() {
 		return null;
 	}
 
 	@Override
-	public void clicked(IPipeTile pipe, IStatement stmt, ItemStack stack, int mouseButton) {
+	public ItemStack getItemStack() {
+		return stack;
+	}
+
+	@Override
+	public void onClick(Object source, IStatement stmt, ItemStack stack, int mouseButton) {
 		if (stack != null) {
 			this.stack = stack.copy();
 			this.stack.stackSize = 1;
@@ -60,11 +61,38 @@ public class TriggerParameterItemStack implements ITriggerParameter {
 	}
 
 	@Override
+	public boolean equals(Object object) {
+		if (object instanceof TriggerParameterItemStack) {
+			TriggerParameterItemStack param = (TriggerParameterItemStack) object;
+
+			return ItemStack.areItemStacksEqual(stack, param.stack)
+					&& ItemStack.areItemStackTagsEqual(stack, param.stack);
+		} else {
+			return false;
+		}
+	}
+	
+	@Override
 	public String getDescription() {
 		if (stack != null) {
 			return stack.getDisplayName();
 		} else {
 			return "";
 		}
+	}
+
+	@Override
+	public String getUniqueTag() {
+		return "buildcraft:stackTrigger";
+	}
+
+	@Override
+	public void registerIcons(IIconRegister iconRegister) {
+		
+	}
+
+	@Override
+	public IStatementParameter rotateLeft() {
+		return this;
 	}
 }

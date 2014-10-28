@@ -58,8 +58,8 @@ public class TriggerFluidContainerLevel extends BCTrigger {
 
 			FluidStack searchedFluid = null;
 
-			if (parameter != null && parameter.getItemStackToDraw() != null) {
-				searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItemStackToDraw());
+			if (parameter != null && parameter.getItemStack() != null) {
+				searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItemStack());
 			}
 
 			if (searchedFluid != null) {

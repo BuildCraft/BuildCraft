@@ -9,5 +9,5 @@
 package buildcraft.api.gates;
 
 public interface IActionReceptor {
-	void actionActivated(IAction action);
+	void actionActivated(IAction action, IActionParameter[] parameters);
 }

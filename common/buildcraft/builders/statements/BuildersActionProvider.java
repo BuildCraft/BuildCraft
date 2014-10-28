@@ -14,6 +14,7 @@ import java.util.LinkedList;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.gates.IAction;
@@ -31,7 +32,7 @@ public class BuildersActionProvider implements IActionProvider {
 	}
 
 	@Override
-	public Collection<IAction> getNeighborActions(Block block, TileEntity tile) {
+	public Collection<IAction> getNeighborActions(ForgeDirection side, Block block, TileEntity tile) {
 		LinkedList<IAction> actions = new LinkedList<IAction>();
 		if (tile instanceof TileFiller) {
 			for (IFillerPattern p : FillerManager.registry.getPatterns()) {

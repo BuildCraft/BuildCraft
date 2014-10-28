@@ -132,7 +132,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 				for (IActionParameter p : slot.parameters) {
 					if (p != null && p instanceof ActionParameterItemStack) {
 						ActionParameterItemStack param = (ActionParameterItemStack) p;
-						ItemStack stack = param.getItemStackToDraw();
+						ItemStack stack = param.getItemStack();
 
 						if (stack != null && stack.getItem() instanceof ItemBlock) {
 							blockFilter.add(((ItemBlock) stack.getItem()).field_150939_a);

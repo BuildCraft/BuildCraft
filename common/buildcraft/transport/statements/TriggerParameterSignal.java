@@ -10,11 +10,13 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.gates.IStatement;
+import buildcraft.api.gates.IStatementParameter;
 import buildcraft.api.gates.ITriggerParameter;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
@@ -29,60 +31,30 @@ public class TriggerParameterSignal implements ITriggerParameter {
 	@NetworkData
 	public PipeWire color = null;
 
+	private IIcon[] icons;
+	
 	public TriggerParameterSignal() {
 
 	}
 
 	@Override
-	public ItemStack getItemStackToDraw() {
+	public ItemStack getItemStack() {
 		return null;
 	}
 
 	@Override
-	public IIcon getIconToDraw() {
+	public IIcon getIcon() {
 		int id = 0;
 
 		if (color == null) {
 			return null;
 		}
 
-		if (active) {
-			switch (color) {
-			case RED:
-				id = StatementIconProvider.Trigger_PipeSignal_Red_Active;
-				break;
-			case BLUE:
-				id = StatementIconProvider.Trigger_PipeSignal_Blue_Active;
-				break;
-			case GREEN:
-				id = StatementIconProvider.Trigger_PipeSignal_Green_Active;
-				break;
-			case YELLOW:
-				id = StatementIconProvider.Trigger_PipeSignal_Yellow_Active;
-				break;
-			}
-		} else {
-			switch (color) {
-			case RED:
-				id = StatementIconProvider.Trigger_PipeSignal_Red_Inactive;
-				break;
-			case BLUE:
-				id = StatementIconProvider.Trigger_PipeSignal_Blue_Inactive;
-				break;
-			case GREEN:
-				id = StatementIconProvider.Trigger_PipeSignal_Green_Inactive;
-				break;
-			case YELLOW:
-				id = StatementIconProvider.Trigger_PipeSignal_Yellow_Inactive;
-				break;
-			}
-		}
-
-		return StatementIconProvider.INSTANCE.getIcon(id);
+		return icons[color.ordinal() + (active ? 4 : 0)];
 	}
 
 	@Override
-	public void clicked(IPipeTile pipe, IStatement stmt, ItemStack stack, int mouseButton) {
+	public void onClick(Object source, IStatement stmt, ItemStack stack, int mouseButton) {
 		if (mouseButton == 0) {
 			if (color == null) {
 				active = true;
@@ -132,5 +104,29 @@ public class TriggerParameterSignal implements ITriggerParameter {
 	@Override
 	public String getDescription() {
 		return String.format(StringUtils.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")), StringUtils.localize("color." + color.name().toLowerCase(Locale.ENGLISH)));
+	}
+
+	@Override
+	public String getUniqueTag() {
+		return "buildcraft:pipeWireTrigger";
+	}
+
+	@Override
+	public void registerIcons(IIconRegister iconRegister) {
+		icons = new IIcon[]{
+				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_red_inactive"),
+				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_blue_inactive"),
+				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_green_inactive"),
+				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_yellow_inactive"),
+				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_red_active"),
+				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_blue_active"),
+				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_green_active"),
+				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_yellow_active")
+		};
+	}
+
+	@Override
+	public IStatementParameter rotateLeft() {
+		return this;
 	}
 }

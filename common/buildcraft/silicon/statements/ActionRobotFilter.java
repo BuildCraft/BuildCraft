@@ -71,7 +71,7 @@ public class ActionRobotFilter extends BCActionPassive {
 				for (IActionParameter p : slot.parameters) {
 					if (p != null && p instanceof ActionParameterItemStack) {
 						ActionParameterItemStack param = (ActionParameterItemStack) p;
-						ItemStack stack = param.getItemStackToDraw();
+						ItemStack stack = param.getItemStack();
 
 						if (stack != null) {
 							result.add(stack);

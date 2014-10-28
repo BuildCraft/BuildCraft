@@ -21,6 +21,7 @@ import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.gates.IAction;
+import buildcraft.api.gates.IActionParameter;
 import buildcraft.api.gates.IActionReceptor;
 import buildcraft.api.power.ILaserTarget;
 import buildcraft.api.power.ILaserTargetBlock;
@@ -298,7 +299,7 @@ public class TileLaser extends TileBuildCraft implements IActionReceptor, IMachi
 	}
 
 	@Override
-	public void actionActivated(IAction action) {
+	public void actionActivated(IAction action, IActionParameter[] parameters) {
 		if (action == BuildCraftCore.actionOn) {
 			lastMode = ActionMachineControl.Mode.On;
 		} else if (action == BuildCraftCore.actionOff) {

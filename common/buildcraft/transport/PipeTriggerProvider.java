@@ -74,7 +74,7 @@ public class PipeTriggerProvider implements ITriggerProvider {
 	}
 
 	@Override
-	public LinkedList<ITrigger> getNeighborTriggers(Block block, TileEntity tile) {
+	public LinkedList<ITrigger> getNeighborTriggers(ForgeDirection side, Block block, TileEntity tile) {
 		return null;
 	}
 }
