@@ -51,7 +51,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 
 			FluidStack searchedFluid = null;
 
-			if (parameters != null && parameters.length >= 1 && parameters[0].getItemStack() != null) {
+			if (parameters != null && parameters.length >= 1 && parameters[0] != null && parameters[0].getItemStack() != null) {
 				searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameters[0].getItemStack());
 			}
 
