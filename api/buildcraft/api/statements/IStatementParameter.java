@@ -29,7 +29,6 @@ public interface IStatementParameter {
 	@SideOnly(Side.CLIENT)
 	IIcon getIcon();
 
-	@SideOnly(Side.CLIENT)
 	ItemStack getItemStack();
 
 	@SideOnly(Side.CLIENT)
