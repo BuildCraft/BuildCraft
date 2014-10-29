@@ -17,25 +17,22 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.events.BlockInteractionEvent;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
 
-public class BlockBlueprintLibrary extends BlockContainer {
+public class BlockBlueprintLibrary extends BlockBuildCraft {
 
 	private IIcon textureTop;
     private IIcon textureSide;
 
     public BlockBlueprintLibrary() {
-		super(Material.wood);
-		setCreativeTab(CreativeTabBuildCraft.BLOCKS.get());
-		setHardness(5F);
+		super(Material.wood, CreativeTabBuildCraft.BLOCKS);
 	}
 
 	@Override
@@ -76,13 +73,6 @@ public class BlockBlueprintLibrary extends BlockContainer {
 			return textureTop;
 		default:
 			return textureSide;
-		}
-	}
-
-	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
-		if (!world.isRemote && entityliving instanceof EntityPlayer) {
-			TileEntity tile = world.getTileEntity(i, j, k);
 		}
 	}
 
