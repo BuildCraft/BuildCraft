@@ -15,6 +15,7 @@ import net.minecraft.util.IIcon;
 import buildcraft.api.core.NetworkData;
 
 public class StatementParameterItemStack implements IStatementParameter {
+	
 	@NetworkData
 	protected ItemStack stack;
 

@@ -21,6 +21,7 @@ import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
+import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.statements.BCStatement;
 import buildcraft.core.utils.StringUtils;
@@ -146,6 +147,11 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
 		}
 
 		return false;
+	}
+	
+	@Override
+	public IStatementParameter createParameter(int index) {
+		return new StatementParameterItemStack();
 	}
 
 	@Override

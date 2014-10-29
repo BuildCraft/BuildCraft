@@ -19,6 +19,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerExternal;
+import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.core.utils.StringUtils;
 
 public class TriggerFluidContainerLevel extends BCStatement implements ITriggerExternal {
@@ -100,5 +101,10 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
 			default:
 			return StatementIconProvider.Trigger_FluidContainer_Below75;
 		}
+	}
+	
+	@Override
+	public IStatementParameter createParameter(int index) {
+		return new StatementParameterItemStack();
 	}
 }
