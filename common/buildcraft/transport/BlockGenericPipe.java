@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EffectRenderer;
@@ -661,15 +662,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			
 			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 				ForgeDirection d = ForgeDirection.getOrientation(i);
-				pipe.container.redstoneInputSide[i] = Math.max(
-						world.isBlockProvidingPowerTo(x + d.offsetX, y + d.offsetY, z + d.offsetZ, i),
-						Math.max(
-							world.getIndirectPowerLevelTo(x + d.offsetX, y + d.offsetY, z + d.offsetZ, i),
-							world.getBlock(x + d.offsetX, y + d.offsetY - 1, z + d.offsetZ).isNormalCube()
-								? world.getIndirectPowerLevelTo(x + d.offsetX, y + d.offsetY - 1, z + d.offsetZ, i)
-								: 0
-						)
-					);
+				pipe.container.redstoneInputSide[i] = getRedstoneInputToPipe(world, x, y, z, d);
 				if (pipe.container.redstoneInput < pipe.container.redstoneInputSide[i]) {
 					pipe.container.redstoneInput = pipe.container.redstoneInputSide[i];
 				}
@@ -677,6 +670,22 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		}
 	}
 	
+	private int getRedstoneInputToPipe(World world, int x, int y, int z,
+			ForgeDirection d) {
+		int i = d.ordinal();
+		int input = world.isBlockProvidingPowerTo(x + d.offsetX, y + d.offsetY, z + d.offsetZ, i);
+		if (input == 0) {
+			input = world.getIndirectPowerLevelTo(x + d.offsetX, y + d.offsetY, z + d.offsetZ, i);
+			if (input == 0) {
+				Block block = world.getBlock(x + d.offsetX, y + d.offsetY, z + d.offsetZ);
+				if (block instanceof BlockRedstoneWire) {
+					return world.getBlockMetadata(x + d.offsetX, y + d.offsetY, z + d.offsetZ);
+				}
+			}
+		}
+		return input;
+	}
+
 	@Override
 	public int onBlockPlaced(World world, int x, int y, int z, int side, float par6, float par7, float par8, int meta) {
 		super.onBlockPlaced(world, x, y, z, side, par6, par7, par8, meta);
