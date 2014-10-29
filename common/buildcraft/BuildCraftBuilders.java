@@ -235,6 +235,12 @@ public class BuildCraftBuilders extends BuildCraftMod {
 			result = result.replace("$MINECRAFT", Launch.minecraftHome.getAbsolutePath());
 		}
 
+		if ("/".equals(File.separator)) {
+			result = result.replaceAll("\\", "/");
+		} else {
+			result = result.replaceAll("/", "\\");
+		}
+		
 		return result;
 	}
 	

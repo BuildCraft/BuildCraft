@@ -784,20 +784,23 @@ public class BlockGenericPipe extends BlockBuildCraft {
 							}
 							EntityRobot robot = ((ItemRobot) currentItem.getItem())
 									.createRobot(currentItem, world);
-							robot.setUniqueRobotId(robot.getRegistry().getNextRobotId());
-							robot.getBattery().setEnergy(EntityRobotBase.MAX_ENERGY);
-
-							float px = x + 0.5F + rayTraceResult.sideHit.offsetX * 0.5F;
-							float py = y + 0.5F + rayTraceResult.sideHit.offsetY * 0.5F;
-							float pz = z + 0.5F + rayTraceResult.sideHit.offsetZ * 0.5F;
-
-							robot.setPosition(px, py, pz);
-							station.takeAsMain(robot);
-							robot.dock(robot.getLinkedStation());
-							world.spawnEntityInWorld(robot);
-
-							if (!player.capabilities.isCreativeMode) {
-								player.getCurrentEquippedItem().stackSize--;
+							
+							if (robot != null && robot.getRegistry() != null) {
+								robot.setUniqueRobotId(robot.getRegistry().getNextRobotId());
+								robot.getBattery().setEnergy(EntityRobotBase.MAX_ENERGY);
+	
+								float px = x + 0.5F + rayTraceResult.sideHit.offsetX * 0.5F;
+								float py = y + 0.5F + rayTraceResult.sideHit.offsetY * 0.5F;
+								float pz = z + 0.5F + rayTraceResult.sideHit.offsetZ * 0.5F;
+	
+								robot.setPosition(px, py, pz);
+								station.takeAsMain(robot);
+								robot.dock(robot.getLinkedStation());
+								world.spawnEntityInWorld(robot);
+	
+								if (!player.capabilities.isCreativeMode) {
+									player.getCurrentEquippedItem().stackSize--;
+								}
 							}
 						}
 

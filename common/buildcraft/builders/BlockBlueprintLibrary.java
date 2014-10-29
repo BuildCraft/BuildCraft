@@ -46,6 +46,7 @@ public class BlockBlueprintLibrary extends BlockContainer {
 		if (entityplayer.isSneaking()) {
 			return false;
 		}
+		
 		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
 		FMLCommonHandler.instance().bus().post(event);
 		if (event.isCanceled()) {
