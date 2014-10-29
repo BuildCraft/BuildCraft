@@ -97,7 +97,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
 	public void writeData(ByteBuf data) {
 		super.writeData(data);
 
-		byte[] dBytes = BitSetUtils.toByteArray(delta);
+		byte[] dBytes = BitSetUtils.toByteArray(delta, 2);
 		// System.out.printf("write %d, %d, %d = %s, %s%n", posX, posY, posZ, Arrays.toString(dBytes), delta);
 		data.writeBytes(dBytes);
 
