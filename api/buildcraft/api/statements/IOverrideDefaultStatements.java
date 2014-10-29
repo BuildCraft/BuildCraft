@@ -6,17 +6,11 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.api.gates;
+package buildcraft.api.statements;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import java.util.List;
 
-import buildcraft.api.transport.IPipe;
-
-public interface IGate {
-	@Deprecated
-	void setPulsing(boolean pulse);
-	
-	ForgeDirection getSide();
-
-	IPipe getPipe();
+public interface IOverrideDefaultStatements {
+	List<ITriggerExternal> overrideTriggers();
+	List<IActionExternal> overrideActions();
 }

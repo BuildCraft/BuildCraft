@@ -56,8 +56,17 @@ public final class StatementManager {
 	}
 
 	public static List<ITriggerExternal> getExternalTriggers(ForgeDirection side, TileEntity entity) {
-		List<ITriggerExternal> result = new LinkedList<ITriggerExternal>();
+		List<ITriggerExternal> result;
 
+		if (entity instanceof IOverrideDefaultStatements) {
+			result = ((IOverrideDefaultStatements) entity).overrideTriggers();
+			if (result != null) {
+				return result;
+			}
+		}
+		
+		result = new LinkedList<ITriggerExternal>();
+		
 		for (ITriggerProvider provider : triggerProviders) {
 			Collection<ITriggerExternal> toAdd = provider.getExternalTriggers(side, entity);
 
@@ -76,6 +85,13 @@ public final class StatementManager {
 	public static List<IActionExternal> getExternalActions(ForgeDirection side, TileEntity entity) {
 		List<IActionExternal> result = new LinkedList<IActionExternal>();
 
+		if (entity instanceof IOverrideDefaultStatements) {
+			result = ((IOverrideDefaultStatements) entity).overrideActions();
+			if (result != null) {
+				return result;
+			}
+		}
+		
 		for (IActionProvider provider : actionProviders) {
 			Collection<IActionExternal> toAdd = provider.getExternalActions(side, entity);
 
