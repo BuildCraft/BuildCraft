@@ -10,8 +10,8 @@ package buildcraft.core.network;
 
 import java.io.IOException;
 
+import buildcraft.api.core.BCLog;
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,6 +34,9 @@ public class PacketNBT extends PacketCoordinates {
 
 		try {
 			byte[] compressed = CompressedStreamTools.compress(nbttagcompound);
+			if (compressed.length > 65535) {
+				BCLog.logger.error("NBT data is too large (" + compressed.length + " > 65535)! Please report!");
+			}
 			data.writeShort(compressed.length);
 			data.writeBytes(compressed);
 		} catch (IOException e) {
@@ -46,7 +49,7 @@ public class PacketNBT extends PacketCoordinates {
 	public void readData(ByteBuf data) {
 		super.readData(data);
 
-		short length = data.readShort();
+		int length = data.readUnsignedShort();
 		byte[] compressed = new byte[length];
 		data.readBytes(compressed);
 		

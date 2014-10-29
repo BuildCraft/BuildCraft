@@ -239,7 +239,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 	@RPC (RPCSide.CLIENT)
 	public void requestSelectedBlueprint () {
-		if (isOuputConsistent()) {
+		if (isOutputConsistent()) {
 			if (selected > -1 && selected < currentPage.size()) {
 				BlueprintBase bpt = BuildCraftBuilders.clientDB
 						.load(currentPage.get(selected));
@@ -296,7 +296,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		selected = index;
 	}
 
-	private boolean isOuputConsistent () {
+	private boolean isOutputConsistent () {
 		if (selected == -1 || getStackInSlot(2) == null) {
 			return false;
 		}

@@ -32,7 +32,7 @@ public class PacketPowerUpdate extends PacketCoordinates {
 		displayPower = new short[] { 0, 0, 0, 0, 0, 0 };
 		overload = data.readBoolean();
 		for (int i = 0; i < displayPower.length; i++) {
-			displayPower[i] = data.readByte();
+			displayPower[i] = data.readUnsignedByte();
 		}
 	}
 

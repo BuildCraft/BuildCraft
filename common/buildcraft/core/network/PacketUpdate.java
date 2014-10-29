@@ -50,8 +50,6 @@ public class PacketUpdate extends BuildCraftPacket {
 
 		if (payload != null) {
 			payload.writeData(data);
-		} else {
-			data.writeByte(0);
 		}
 	}
 
@@ -62,10 +60,12 @@ public class PacketUpdate extends BuildCraftPacket {
 		posY = data.readInt();
 		posZ = data.readInt();
 
-		payload = new PacketPayload();
+		if (data.isReadable()) {
+			payload = new PacketPayload();
 
-		if (payload != null) {
-			payload.readData(data);
+			if (payload != null) {
+				payload.readData(data);
+			}
 		}
 	}
 

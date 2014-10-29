@@ -78,7 +78,7 @@ public class PacketTileState extends PacketCoordinates {
 			stateWithId.state.writeData(tmpState);
 		}
 
-		data.writeInt(tmpState.readableBytes());
+		data.writeShort((short) tmpState.readableBytes());
 		data.writeBytes(tmpState.readBytes(tmpState.readableBytes()));
 	}
 
@@ -87,7 +87,7 @@ public class PacketTileState extends PacketCoordinates {
 		super.readData(data);
 
 		state = Unpooled.buffer();
-		int length = data.readInt();
+		int length = data.readUnsignedShort();
 		state.writeBytes(data.readBytes(length));
 	}
 }
