@@ -16,16 +16,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.BuildCraftCore;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.power.ILaserTarget;
 import buildcraft.api.power.ILaserTargetBlock;
-import buildcraft.api.statements.IActionInternal;
-import buildcraft.api.statements.IActionReceptor;
-import buildcraft.api.statements.IStatement;
-import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.Box;
@@ -33,7 +28,6 @@ import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
 import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.statements.ActionMachineControl;
 
 public class TileLaser extends TileBuildCraft implements IHasWork, IControllable {
 

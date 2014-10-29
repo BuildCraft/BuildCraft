@@ -40,8 +40,8 @@ import buildcraft.core.IDropControlInventory;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.utils.Utils;
-import buildcraft.transport.gates.StatementSlot;
 import buildcraft.transport.gates.GateFactory;
+import buildcraft.transport.gates.StatementSlot;
 import buildcraft.transport.pipes.events.PipeEvent;
 import buildcraft.transport.statements.ActionValve.ValveState;
 

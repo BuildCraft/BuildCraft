@@ -1,7 +1,8 @@
 package buildcraft.api.gates;
 
-import buildcraft.api.transport.IPipe;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.api.transport.IPipe;
 
 public interface IGate {
 	@Deprecated

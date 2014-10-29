@@ -35,7 +35,6 @@ import buildcraft.api.core.Position;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.robots.StackRequest;
-import buildcraft.api.statements.IStatement;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;

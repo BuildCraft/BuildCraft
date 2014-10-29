@@ -17,9 +17,7 @@ import net.minecraft.util.IIcon;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
-import buildcraft.core.statements.StatementIconProvider;
 import buildcraft.core.utils.StringUtils;
 
 public class TriggerParameterSignal implements IStatementParameter {

@@ -13,10 +13,9 @@ import java.util.LinkedList;
 
 import org.apache.logging.log4j.Level;
 
-import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.FMLLog;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;

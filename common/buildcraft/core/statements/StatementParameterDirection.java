@@ -17,7 +17,6 @@ import buildcraft.api.core.NetworkData;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.utils.StringUtils;
 
 public class StatementParameterDirection implements IStatementParameter {

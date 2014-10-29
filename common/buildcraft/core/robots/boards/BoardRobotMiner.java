@@ -8,7 +8,6 @@
  */
 package buildcraft.core.robots.boards;
 
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;

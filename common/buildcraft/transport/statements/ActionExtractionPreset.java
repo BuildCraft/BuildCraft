@@ -15,7 +15,6 @@ import buildcraft.api.core.EnumColor;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.core.statements.BCStatement;
 import buildcraft.core.utils.StringUtils;
 

@@ -14,17 +14,12 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import buildcraft.BuildCraftCore;
 import buildcraft.api.power.ILaserTarget;
-import buildcraft.api.statements.IActionReceptor;
-import buildcraft.api.statements.IStatement;
-import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.tiles.IControllable;
-import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.tiles.IControllable.Mode;
+import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.statements.ActionMachineControl;
 import buildcraft.core.utils.AverageUtil;
 
 public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory, IHasWork, IControllable {

@@ -153,7 +153,6 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	public static final int trackedPassiveEntityId = 156;
 	public static Block springBlock;
-	public static Item scienceBookItem;
 	public static Item woodenGearItem;
 	public static Item stoneGearItem;
 	public static Item ironGearItem;
@@ -446,11 +445,6 @@ public class BuildCraftCore extends BuildCraftMod {
 	}
 
 	public void loadRecipes() {
-		if (!NONRELEASED_BLOCKS) {
-			CoreProxy.proxy.addCraftingRecipe(new ItemStack(scienceBookItem), "R ", "B ", 'R', Blocks.redstone_torch, 'B',
-					Items.book);
-		}
-
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(wrenchItem), "I I", " G ", " I ", 'I', Items.iron_ingot, 'G', stoneGearItem);
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(woodenGearItem), " S ", "S S",
 				" S ", 'S',

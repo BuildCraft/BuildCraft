@@ -9,7 +9,7 @@ public final class BitSetUtils {
 	}
 	
 	public static BitSet fromByteArray(byte[] bytes) {
-		BitSet bits = new BitSet();
+		BitSet bits = new BitSet(bytes.length * 8);
 		for (int i = 0; i < bytes.length * 8; i++) {
 			if ((bytes[bytes.length - (i >> 3) - 1] & (1 << (i & 7))) > 0) {
 				bits.set(i);
@@ -19,7 +19,8 @@ public final class BitSetUtils {
 	}
 
 	public static byte[] toByteArray(BitSet bits) {
-		byte[] bytes = new byte[(bits.length() >> 3) + (bits.length() & 7) == 0 ? 0 : 1];
+		byte[] bytes = new byte[(bits.length() + 7) >> 3];
+		System.out.println(bits.length() + " "  + bytes.length);
 		for (int i = 0; i < bits.length(); i++) {
 			if (bits.get(i)) {
 				bytes[bytes.length - (i >> 3) - 1] |= 1 << (i & 7);

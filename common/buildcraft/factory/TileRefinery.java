@@ -30,7 +30,6 @@ import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
-import buildcraft.api.statements.IStatement;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;

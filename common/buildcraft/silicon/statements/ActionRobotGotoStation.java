@@ -10,7 +10,6 @@ package buildcraft.silicon.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
@@ -27,7 +26,6 @@ import buildcraft.core.statements.BCStatement;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
-import buildcraft.transport.TileGenericPipe;
 
 public class ActionRobotGotoStation extends BCStatement implements IActionInternal {
 

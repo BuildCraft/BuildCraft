@@ -50,7 +50,7 @@ public class ActionMachineControl extends BCStatement implements IActionExternal
 	public void actionActivate(TileEntity target, ForgeDirection side,
 			IStatementContainer source, IStatementParameter[] parameters) {
 		if (target instanceof IControllable) {
-			((IControllable)target).setControlMode(mode);
+			((IControllable) target).setControlMode(mode);
 		}
 	}
 }

@@ -21,7 +21,6 @@ import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.statements.IActionInternal;
-import buildcraft.api.statements.IStatement;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;

@@ -36,7 +36,6 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.filler.FillerManager;
-import buildcraft.api.statements.IStatement;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;

@@ -46,7 +46,6 @@ import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.statements.ActionMachineControl;
 import buildcraft.core.utils.CraftingHelper;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;

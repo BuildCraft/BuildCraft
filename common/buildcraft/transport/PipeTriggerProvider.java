@@ -10,7 +10,6 @@ package buildcraft.transport;
 
 import java.util.LinkedList;
 
-import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyHandler;
@@ -19,7 +18,6 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.ITriggerProvider;
-import buildcraft.api.transport.IPipeTile;
 import buildcraft.transport.statements.TriggerPipeContents;
 
 public class PipeTriggerProvider implements ITriggerProvider {

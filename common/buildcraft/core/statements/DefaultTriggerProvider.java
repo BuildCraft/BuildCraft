@@ -10,7 +10,6 @@ package buildcraft.core.statements;
 
 import java.util.LinkedList;
 
-import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -23,7 +22,6 @@ import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.ITriggerProvider;
 import buildcraft.api.tiles.IHasWork;
-import buildcraft.api.transport.IPipeTile;
 
 public class DefaultTriggerProvider implements ITriggerProvider {
 

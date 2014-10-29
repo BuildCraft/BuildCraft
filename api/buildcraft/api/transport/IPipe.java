@@ -8,10 +8,9 @@
  */
 package buildcraft.api.transport;
 
-import buildcraft.api.gates.IGate;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.api.gates.IGate;
 
 public interface IPipe {
 

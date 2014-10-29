@@ -10,7 +10,6 @@ package buildcraft.api.statements;
 
 import java.util.Collection;
 
-import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 

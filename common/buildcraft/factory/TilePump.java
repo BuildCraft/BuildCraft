@@ -31,7 +31,6 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.statements.IStatement;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.EntityBlock;

@@ -25,7 +25,6 @@ import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IActionProvider;
 import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.transport.PipeTransportItems;

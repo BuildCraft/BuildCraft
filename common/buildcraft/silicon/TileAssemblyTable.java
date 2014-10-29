@@ -35,7 +35,6 @@ import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.robots.ResourceIdAssemblyTable;
 import buildcraft.core.robots.RobotRegistry;
-import buildcraft.core.statements.ActionMachineControl;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
 

@@ -23,7 +23,6 @@ import buildcraft.core.inventory.InventoryMapper;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.inventory.Transactor;
-import buildcraft.core.statements.ActionMachineControl;
 import buildcraft.core.utils.StringUtils;
 
 public class TileIntegrationTable extends TileLaserTableBase implements IFlexibleCrafter {

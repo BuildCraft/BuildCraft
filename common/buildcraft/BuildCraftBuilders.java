@@ -236,9 +236,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		}
 
 		if ("/".equals(File.separator)) {
-			result = result.replaceAll("\\", "/");
+			result = result.replaceAll("\\\\", "/");
 		} else {
-			result = result.replaceAll("/", "\\");
+			result = result.replaceAll("/", "\\\\");
 		}
 		
 		return result;
