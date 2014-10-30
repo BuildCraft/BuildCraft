@@ -139,7 +139,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		Full, NoDynamic
 	}
 	public static RenderMode render = RenderMode.Full;
-	public static boolean debugMode = false;
+	public static boolean debugWorldgen = false;
 	public static boolean modifyWorld = false;
 	public static boolean colorBlindMode = false;
 	public static boolean dropBrokenBlocks = true; // Set to false to prevent the filler from dropping broken blocks.

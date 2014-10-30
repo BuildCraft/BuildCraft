@@ -1,6 +1,7 @@
 package buildcraft.api.core;
 
 import net.minecraft.block.Block;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class BlockMetaPair implements Comparable<BlockMetaPair> {
 	private int id, meta;
@@ -39,5 +40,14 @@ public class BlockMetaPair implements Comparable<BlockMetaPair> {
 		} else {
 			return meta - arg.meta;
 		}
+	}
+	
+	@Override
+	public String toString() {
+		if (this.getBlock() == null) {
+			return "invalid";
+		}
+		
+		return Block.blockRegistry.getNameForObject(this.getBlock()) + ":" + (this.meta == OreDictionary.WILDCARD_VALUE ? "*" : this.meta);
 	}
 }

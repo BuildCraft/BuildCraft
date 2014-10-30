@@ -11,6 +11,7 @@ package buildcraft;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.item.EntityMinecartChest;
@@ -39,6 +40,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import buildcraft.api.blueprints.BlueprintDeployer;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.ISchematicRegistry;
@@ -47,6 +49,7 @@ import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.BlockMetaPair;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
@@ -158,6 +161,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public static BlueprintDatabase serverDB;
 	public static BlueprintDatabase clientDB;
 
+	public static boolean debugPrintSchematicList = false;
+	
 	@Mod.EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
 		String blueprintServerDir = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL,
@@ -187,6 +192,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		for (int i = 0; i < blueprintLibraryInput.length; ++i) {
 			blueprintLibraryInput[i] = JavaTools.stripSurroundingQuotes(replacePathVariables(blueprintLibraryInput[i]));
 		}
+		
+		Property printSchematicList = BuildCraftCore.mainConfiguration.get("debug", "blueprints.printSchematicList", false);
+		debugPrintSchematicList = printSchematicList.getBoolean();
 
 		if (BuildCraftCore.mainConfiguration.hasChanged()) {
 			BuildCraftCore.mainConfiguration.save();
@@ -247,6 +255,20 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		HeuristicBlockDetection.start();
+		
+		if (debugPrintSchematicList) {
+			try {
+				PrintWriter writer = new PrintWriter("SchematicDebug.txt", "UTF-8");
+				writer.println("*** REGISTERED SCHEMATICS ***");
+				SchematicRegistry reg = ((SchematicRegistry) BuilderAPI.schematicRegistry);
+				for (BlockMetaPair p : reg.schematicBlocks.keySet()) {
+					writer.println(p.toString() + " -> " + reg.schematicBlocks.get(p).clazz.getCanonicalName());
+				}
+				writer.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Mod.EventHandler

@@ -108,7 +108,7 @@ public class BlockTank extends BlockBuildCraft {
 				if (liquid != null) {
 					int qty = tank.fill(ForgeDirection.UNKNOWN, liquid, true);
 
-					if (qty != 0 && !BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode) {
+					if (qty != 0 && !BuildCraftCore.debugWorldgen && !entityplayer.capabilities.isCreativeMode) {
 						entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils.consumeItem(current));
 					}
 
@@ -124,7 +124,7 @@ public class BlockTank extends BlockBuildCraft {
 						liquid = FluidContainerRegistry.getFluidForFilledItem(filled);
 
 						if (liquid != null) {
-							if (!BuildCraftCore.debugMode && !entityplayer.capabilities.isCreativeMode) {
+							if (!BuildCraftCore.debugWorldgen && !entityplayer.capabilities.isCreativeMode) {
 								if (current.stackSize > 1) {
 									if (!entityplayer.inventory.addItemStackToInventory(filled)) {
 										return false;

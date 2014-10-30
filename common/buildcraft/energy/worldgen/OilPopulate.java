@@ -90,7 +90,7 @@ public final class OilPopulate {
 		bonus *= BuildCraftEnergy.oilWellScalar;
 		if (BuildCraftEnergy.excessiveOilBiomeIDs.contains(biome.biomeID)) {
 			bonus *= 30.0;
-		} else if (BuildCraftCore.debugMode) {
+		} else if (BuildCraftCore.debugWorldgen) {
 			bonus *= 20.0;
 		}
 		GenType type = GenType.NONE;
@@ -171,7 +171,7 @@ public final class OilPopulate {
 			}
 			generateSurfaceDeposit(world, rand, biome, wellX, groundLevel, wellZ, lakeRadius);
 
-			boolean makeSpring = type == GenType.LARGE && BuildCraftEnergy.spawnOilSprings && BuildCraftCore.springBlock != null && (BuildCraftCore.debugMode || rand.nextDouble() <= 0.25);
+			boolean makeSpring = type == GenType.LARGE && BuildCraftEnergy.spawnOilSprings && BuildCraftCore.springBlock != null && (BuildCraftCore.debugWorldgen || rand.nextDouble() <= 0.25);
 
 			// Generate Spout
 			int baseY;

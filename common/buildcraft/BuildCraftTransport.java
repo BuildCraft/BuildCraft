@@ -8,6 +8,7 @@
  */
 package buildcraft;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,6 +35,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
 import buildcraft.api.blueprints.BuilderAPI;
+import buildcraft.api.core.BlockMetaPair;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.JavaTools;
@@ -51,6 +53,7 @@ import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.PowerMode;
 import buildcraft.core.Version;
+import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
@@ -217,6 +220,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static IActionInternal actionExtractionPresetYellow = new ActionExtractionPreset(EnumColor.YELLOW);
     public static IActionInternal[] actionValve = new IActionInternal[4];
 
+    public static boolean debugPrintFacadeList = false;
+    
 	private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
 
 	public IIconProvider pipeIconProvider = new PipeIconProvider();
@@ -281,6 +286,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 			Property baseFlowRate = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.fluids.baseFlowRate", DefaultProps.PIPES_FLUIDS_BASE_FLOW_RATE);
 			pipeFluidsBaseFlowRate = baseFlowRate.getInt();
 
+			Property printFacadeList = BuildCraftCore.mainConfiguration.get("debug", "facades.printFacadeList", false);
+			debugPrintFacadeList = printFacadeList.getBoolean();
 
 			Property exclusionItemList = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "woodenPipe.item.exclusion", new String[0]);
 
@@ -505,6 +512,22 @@ public class BuildCraftTransport extends BuildCraftMod {
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		facadeItem.initialize();
+		
+		if (debugPrintFacadeList) {
+			try {
+				PrintWriter writer = new PrintWriter("FacadeDebug.txt", "UTF-8");
+				writer.println("*** REGISTERED FACADES ***");
+				for (ItemStack stack : facadeItem.allFacades) {
+					if (facadeItem.getBlocksForFacade(stack).length > 0) {
+						BlockMetaPair bmp = new BlockMetaPair(facadeItem.getBlocksForFacade(stack)[0], facadeItem.getMetaValuesForFacade(stack)[0]);
+						writer.println(bmp.toString());
+					}
+				}
+				writer.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void loadRecipes() {
