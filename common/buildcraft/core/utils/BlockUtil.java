@@ -48,11 +48,7 @@ public final class BlockUtil {
 	public static List<ItemStack> getItemStackFromBlock(WorldServer world, int i, int j, int k) {
 		Block block = world.getBlock(i, j, k);
 
-		if (block == null) {
-			return null;
-		}
-
-		if (block.isAir(world, i, j, k)) {
+		if (block == null || block.isAir(world, i, j, k)) {
 			return null;
 		}
 

@@ -267,11 +267,11 @@ public final class OilPopulate {
 	}
 
 	private boolean isReplaceableForLake(World world, BiomeGenBase biome, int x, int y, int z) {
-		Block block = world.getBlock(x, y, z);
-
-		if (block == null) {
+		if (world.isAirBlock(x, y, z)) {
 			return true;
 		}
+		
+		Block block = world.getBlock(x, y, z);
 
 		if (block == biome.fillerBlock || block == biome.topBlock) {
 			return true;
@@ -311,7 +311,7 @@ public final class OilPopulate {
 	}
 
 	private void setOilWithProba(World world, BiomeGenBase biome, Random rand, float proba, int x, int y, int z, int depth) {
-		if (rand.nextFloat() <= proba && world.getBlock(x, y - depth - 1, z) != null) {
+		if (rand.nextFloat() <= proba && !world.isAirBlock(x, y - depth - 1, z)) {
 			if (isOilAdjacent(world, x, y, z)) {
 				setOilColumnForLake(world, biome, x, y, z, depth, 3);
 			}
@@ -351,7 +351,7 @@ public final class OilPopulate {
 		for (; y > 0; --y) {
 			Block block = chunk.getBlock(trimmedX, y, trimmedZ);
 
-			if (block == null) {
+			if (block.isAir(world, x, y, z)) {
 				continue;
 			}
 
