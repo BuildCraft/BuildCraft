@@ -109,7 +109,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 			if (tips == null) {
 				continue;
 			}
-			boolean mouseOver = provider.isMouseOver(mouseX - guiLeft, mouseY - guiTop);
+			boolean mouseOver = provider.isMouseOver(mouseX, mouseY);
 			tips.onTick(mouseOver);
 			if (mouseOver && tips.isReady()) {
 				tips.refresh();
@@ -282,15 +282,15 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		if (toolTips.size() > 0) {
 			int left = this.guiLeft;
 			int top = this.guiTop;
-			int lenght = 0;
+			int length = 0;
 			int x;
 			int y;
 
 			for (ToolTipLine tip : toolTips) {
 				y = this.fontRendererObj.getStringWidth(tip.text);
 
-				if (y > lenght) {
-					lenght = y;
+				if (y > length) {
+					length = y;
 				}
 			}
 
@@ -305,17 +305,17 @@ public abstract class GuiBuildCraft extends GuiContainer {
 			this.zLevel = 300.0F;
 			itemRender.zLevel = 300.0F;
 			int var15 = -267386864;
-			this.drawGradientRect(x - 3, y - 4, x + lenght + 3, y - 3, var15, var15);
-			this.drawGradientRect(x - 3, y + var14 + 3, x + lenght + 3, y + var14 + 4, var15, var15);
-			this.drawGradientRect(x - 3, y - 3, x + lenght + 3, y + var14 + 3, var15, var15);
+			this.drawGradientRect(x - 3, y - 4, x + length + 3, y - 3, var15, var15);
+			this.drawGradientRect(x - 3, y + var14 + 3, x + length + 3, y + var14 + 4, var15, var15);
+			this.drawGradientRect(x - 3, y - 3, x + length + 3, y + var14 + 3, var15, var15);
 			this.drawGradientRect(x - 4, y - 3, x - 3, y + var14 + 3, var15, var15);
-			this.drawGradientRect(x + lenght + 3, y - 3, x + lenght + 4, y + var14 + 3, var15, var15);
+			this.drawGradientRect(x + length + 3, y - 3, x + length + 4, y + var14 + 3, var15, var15);
 			int var16 = 1347420415;
 			int var17 = (var16 & 16711422) >> 1 | var16 & -16777216;
 			this.drawGradientRect(x - 3, y - 3 + 1, x - 3 + 1, y + var14 + 3 - 1, var16, var17);
-			this.drawGradientRect(x + lenght + 2, y - 3 + 1, x + lenght + 3, y + var14 + 3 - 1, var16, var17);
-			this.drawGradientRect(x - 3, y - 3, x + lenght + 3, y - 3 + 1, var16, var16);
-			this.drawGradientRect(x - 3, y + var14 + 2, x + lenght + 3, y + var14 + 3, var17, var17);
+			this.drawGradientRect(x + length + 2, y - 3 + 1, x + length + 3, y + var14 + 3 - 1, var16, var17);
+			this.drawGradientRect(x - 3, y - 3, x + length + 3, y - 3 + 1, var16, var16);
+			this.drawGradientRect(x - 3, y + var14 + 2, x + length + 3, y + var14 + 3, var17, var17);
 
 			for (ToolTipLine tip : toolTips) {
 				String line = tip.text;

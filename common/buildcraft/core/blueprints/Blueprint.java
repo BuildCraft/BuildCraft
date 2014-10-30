@@ -12,6 +12,7 @@ import java.util.LinkedList;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -114,8 +115,12 @@ public class Blueprint extends BlueprintBase {
 		case ALL:
 			break;
 		case CREATIVE_ONLY:
-			if (buildingPermission == BuildingPermission.ALL) {
-				buildingPermission = BuildingPermission.CREATIVE_ONLY;
+			if (bptContext.readConfiguration.allowCreative) {
+				if (buildingPermission == BuildingPermission.ALL) {
+					buildingPermission = BuildingPermission.CREATIVE_ONLY;
+				}
+			} else {
+				contents[posX][posY][posZ] = null;
 			}
 			break;
 		case NONE:

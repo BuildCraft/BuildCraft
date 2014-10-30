@@ -19,14 +19,19 @@ public class BlueprintReadConfiguration {
 	@NetworkData
 	public boolean excavate = true;
 
+	@NetworkData
+	public boolean allowCreative = false;
+
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		nbttagcompound.setBoolean("rotate", rotate);
 		nbttagcompound.setBoolean("excavate", excavate);
+		nbttagcompound.setBoolean("allowCreative", allowCreative);
 	}
 
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		rotate = nbttagcompound.getBoolean("rotate");
 		excavate = nbttagcompound.getBoolean("excavate");
+		allowCreative = nbttagcompound.getBoolean("allowCreative");
 	}
 
 }

@@ -15,12 +15,14 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.TileArchitect;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.blueprints.BlueprintReadConfiguration;
 import buildcraft.core.gui.GuiBuildCraft;
+import buildcraft.core.gui.buttons.GuiBetterButton;
+import buildcraft.core.gui.tooltips.ToolTip;
+import buildcraft.core.gui.tooltips.ToolTipLine;
 import buildcraft.core.network.RPCHandler;
 import buildcraft.core.utils.StringUtils;
 
@@ -36,8 +38,9 @@ public class GuiArchitect extends GuiBuildCraft {
 
 	private TileArchitect architect;
 
-	private GuiButton optionRotate;
-	private GuiButton optionExcavate;
+	private GuiBetterButton optionRotate;
+	private GuiBetterButton optionExcavate;
+	private GuiBetterButton optionAllowCreative;
 
 	private GuiTextField textField;
 
@@ -55,12 +58,18 @@ public class GuiArchitect extends GuiBuildCraft {
 
 		Keyboard.enableRepeatEvents(true);
 
-		optionRotate = new GuiButton(0, guiLeft + 5, guiTop + 30, 77, 20, "");
+		optionRotate = new GuiBetterButton(0, guiLeft + 5, guiTop + 30, 79, "");
 		buttonList.add(optionRotate);
 
-		optionExcavate = new GuiButton(1, guiLeft + 5, guiTop + 55, 77, 20, "");
+		optionExcavate = new GuiBetterButton(1, guiLeft + 5, guiTop + 55, 79, "");
 		buttonList.add(optionExcavate);
 
+		optionAllowCreative = new GuiBetterButton(2, guiLeft + 5, guiTop + 80, 79, "");
+		optionAllowCreative.setToolTip(new ToolTip(500));
+		optionAllowCreative.getToolTip().add(new ToolTipLine(StringUtils.localize("tile.architect.tooltip.allowCreative.1")));
+		optionAllowCreative.getToolTip().add(new ToolTipLine(StringUtils.localize("tile.architect.tooltip.allowCreative.2")));
+		buttonList.add(optionAllowCreative);
+		
 		textField = new GuiTextField(this.fontRendererObj, TEXT_X, TEXT_Y, TEXT_WIDTH, TEXT_HEIGHT);
 		textField.setMaxStringLength(BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE);
 		textField.setText(architect.name);
@@ -82,6 +91,8 @@ public class GuiArchitect extends GuiBuildCraft {
 			conf.rotate = !conf.rotate;
 		} else if (button == optionExcavate) {
 			conf.excavate = !conf.excavate;
+		} else if (button == optionAllowCreative) {
+			conf.allowCreative = !conf.allowCreative;
 		}
 
 		architect.rpcSetConfiguration(conf);
@@ -102,6 +113,12 @@ public class GuiArchitect extends GuiBuildCraft {
 			optionExcavate.displayString = StringUtils.localize("tile.architect.excavate");
 		} else {
 			optionExcavate.displayString =  StringUtils.localize("tile.architect.noexcavate");
+		}
+
+		if (conf.allowCreative) {
+			optionAllowCreative.displayString = StringUtils.localize("tile.architect.allowCreative");
+		} else {
+			optionAllowCreative.displayString =  StringUtils.localize("tile.architect.noallowCreative");
 		}
 	}
 
