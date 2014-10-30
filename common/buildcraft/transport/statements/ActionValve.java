@@ -71,13 +71,7 @@ public class ActionValve extends BCStatement implements IActionInternal {
 
     @Override
     public IStatementParameter createParameter(int index) {
-		IStatementParameter param = null;
-	
-		if (index == 0) {
-		    param = new StatementParameterDirection();
-		}
-	
-		return param;
+		return new StatementParameterDirection();
     }
 
     @Override

@@ -6,6 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.utils.StringUtils;
 
@@ -14,7 +15,7 @@ public class StatementParameterRedstoneGateSideOnly implements
 	@NetworkData
 	public boolean isOn = false;
 	
-	private IIcon icon;
+	private static IIcon icon;
 	
 	public StatementParameterRedstoneGateSideOnly() {
 		
@@ -35,7 +36,7 @@ public class StatementParameterRedstoneGateSideOnly implements
 	}
 
 	@Override
-	public void onClick(Object source, IStatement stmt, ItemStack stack, int mouseButton) {
+	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, int mouseButton) {
 		isOn = !isOn;
 	}
 

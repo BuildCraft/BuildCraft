@@ -27,7 +27,7 @@ public final class HeuristicBlockDetection {
 	
 	public static void start() {
 		// Initialize craftableBlockList
-		for (Object or : CraftingManager.getInstance().getRecipeList()) {
+		/* for (Object or : CraftingManager.getInstance().getRecipeList()) {
 			if (or instanceof IRecipe) {
 				IRecipe recipe = ((IRecipe) or);
 				if (recipe.getRecipeOutput() != null && recipe.getRecipeOutput().getItem() != null &&
@@ -39,7 +39,7 @@ public final class HeuristicBlockDetection {
 					}
 				}
 			}
-		}
+		} */
 		
 		// Register fluids
 		for (Fluid f : FluidRegistry.getRegisteredFluids().values()) {
@@ -64,20 +64,6 @@ public final class HeuristicBlockDetection {
 					
 					boolean creativeOnly = false;
 					
-					if (!canCraft(block, meta)) {
-						
-						// Does it drop a different block type?
-						try {
-							if (block.getItemDropped(meta, null, 0) != Item.getItemFromBlock(block)) {
-								creativeOnly = true;
-							}
-						} catch (NullPointerException e) {
-							// The "null" for Random in getItemDropped stops blocks
-							// depending on an RNG for deciding the dropped item
-							// from being autodetected.
-						}
-					}
-				
 					try {
 						if (creativeOnly) {
 							SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlockCreative.class);

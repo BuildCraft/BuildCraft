@@ -465,7 +465,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				}
 
 				if (param != null) {
-					param.onClick(pipe.container, statement.getStatement(), mc.thePlayer.inventory.getItemStack(), k);
+					param.onClick(gate, statement.getStatement(), mc.thePlayer.inventory.getItemStack(), k);
 					paramSlot.setParameter(param, true);
 				}
 			}

@@ -22,6 +22,7 @@ import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Gate;
@@ -99,6 +100,30 @@ public class SchematicPipe extends SchematicTile {
 				IStatement a = StatementManager.statements.get(gateNBT.getString("action[" + i + "]"));
 				a = a.rotateLeft();
 				gateNBT.setString("action[" + i + "]", a.getUniqueTag());
+			}
+			
+			for (int j = 0; j < Gate.MAX_PARAMETERS; ++j) {
+				if (gateNBT.hasKey("triggerParameters[" + i + "][" + j + "]")) {
+					NBTTagCompound cpt = gateNBT.getCompoundTag("triggerParameters[" + i + "][" + j + "]");
+					IStatementParameter parameter = StatementManager.createParameter(cpt.getString("kind"));
+					parameter.readFromNBT(cpt);
+					
+					parameter = parameter.rotateLeft();
+					
+					parameter.writeToNBT(cpt);
+					gateNBT.setTag("triggerParameters[" + i + "][" + j + "]", cpt);
+				}
+				
+				if (gateNBT.hasKey("actionParameters[" + i + "][" + j + "]")) {
+					NBTTagCompound cpt = gateNBT.getCompoundTag("actionParameters[" + i + "][" + j + "]");
+					IStatementParameter parameter = StatementManager.createParameter(cpt.getString("kind"));
+					parameter.readFromNBT(cpt);
+					
+					parameter = parameter.rotateLeft();
+					
+					parameter.writeToNBT(cpt);
+					gateNBT.setTag("actionParameters[" + i + "][" + j + "]", cpt);
+				}
 			}
 		}
 

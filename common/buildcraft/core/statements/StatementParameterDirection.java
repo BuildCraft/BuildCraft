@@ -14,17 +14,20 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.NetworkData;
+import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.transport.TileGenericPipe;
 
 public class StatementParameterDirection implements IStatementParameter {
 
-    	@NetworkData
+    @NetworkData
 	public ForgeDirection direction = ForgeDirection.UNKNOWN;
 
-    private IIcon[] icons;
+    private static IIcon[] icons;
     
 	public StatementParameterDirection() {
 		
@@ -45,11 +48,11 @@ public class StatementParameterDirection implements IStatementParameter {
 	}
 
 	@Override
-	public void onClick(Object source, IStatement stmt, ItemStack stack, int mouseButton) {
-		if (source instanceof IPipe) {
+	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, int mouseButton) {
+		if (source.getTile() instanceof TileGenericPipe) {
 			do {
 				direction = ForgeDirection.getOrientation((direction.ordinal() + (mouseButton > 0 ? -1 : 1)) % 6);
-			} while (!((IPipe) source).getTile().isPipeConnected(direction));
+			} while (((TileGenericPipe) source.getTile()).isPipeConnected(direction));
 		}
 	}
 

@@ -16,6 +16,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import buildcraft.api.core.NetworkData;
 import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.utils.StringUtils;
@@ -28,7 +29,7 @@ public class TriggerParameterSignal implements IStatementParameter {
 	@NetworkData
 	public PipeWire color = null;
 
-	private IIcon[] icons;
+	private static IIcon[] icons;
 	
 	public TriggerParameterSignal() {
 
@@ -51,7 +52,7 @@ public class TriggerParameterSignal implements IStatementParameter {
 	}
 
 	@Override
-	public void onClick(Object source, IStatement stmt, ItemStack stack, int mouseButton) {
+	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, int mouseButton) {
 		if (mouseButton == 0) {
 			if (color == null) {
 				active = true;

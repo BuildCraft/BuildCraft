@@ -211,26 +211,28 @@ public class Blueprint extends BlueprintBase {
 
 						if (block != null) {
 							contents[x][y][z] = SchematicRegistry.INSTANCE.createSchematicBlock(block, cpt.getInteger("blockMeta"));
-							contents[x][y][z].readSchematicFromNBT(cpt, mapping);
-
-							if (!contents[x][y][z].doNotUse()) {
-								contents[x][y][z].idsToWorld(mapping);
-
-								switch (contents[x][y][z].getBuildingPermission()) {
-								case ALL:
-									break;
-								case CREATIVE_ONLY:
-									if (buildingPermission == BuildingPermission.ALL) {
-										buildingPermission = BuildingPermission.CREATIVE_ONLY;
+							if (contents[x][y][z] != null) {
+								contents[x][y][z].readSchematicFromNBT(cpt, mapping);
+	
+								if (!contents[x][y][z].doNotUse()) {
+									contents[x][y][z].idsToWorld(mapping);
+	
+									switch (contents[x][y][z].getBuildingPermission()) {
+									case ALL:
+										break;
+									case CREATIVE_ONLY:
+										if (buildingPermission == BuildingPermission.ALL) {
+											buildingPermission = BuildingPermission.CREATIVE_ONLY;
+										}
+										break;
+									case NONE:
+										buildingPermission = BuildingPermission.NONE;
+										break;
 									}
-									break;
-								case NONE:
-									buildingPermission = BuildingPermission.NONE;
-									break;
+								} else {
+									contents[x][y][z] = null;
+									isComplete = false;
 								}
-							} else {
-								contents[x][y][z] = null;
-								isComplete = false;
 							}
 						} else {
 							contents[x][y][z] = null;

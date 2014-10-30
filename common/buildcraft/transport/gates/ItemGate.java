@@ -396,9 +396,7 @@ public class ItemGate extends ItemBuildCraft {
 		for (IGateExpansion expansion : GateExpansions.getExpansions()) {
 			expansion.registerItemOverlay(iconRegister);
 		}
-
-		for (IStatement statement : StatementManager.statements.values()) {
-			statement.registerIcons(iconRegister);
-		}
+		
+		StatementManager.registerIcons(iconRegister);
 	}
 }
