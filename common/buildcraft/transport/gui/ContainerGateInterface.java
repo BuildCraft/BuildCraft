@@ -100,27 +100,23 @@ public class ContainerGateInterface extends BuildCraftContainer {
 			potentialTriggers.addAll(gate.getAllValidTriggers());
 			potentialActions.addAll(gate.getAllValidActions());
 
-			if (gate.material.numTriggerParameters == 0) {
-				Iterator<IStatement> it = potentialTriggers.iterator();
+			Iterator<IStatement> it = potentialTriggers.iterator();
 
-				while (it.hasNext()) {
-					IStatement trigger = it.next();
+			while (it.hasNext()) {
+				IStatement trigger = it.next();
 
-					if (trigger.minParameters() > 0) {
-						it.remove();
-					}
+				if (trigger.minParameters() > gate.material.numTriggerParameters) {
+					it.remove();
 				}
 			}
 
-			if (gate.material.numActionParameters == 0) {
-				Iterator<IStatement> it = potentialActions.iterator();
+			it = potentialActions.iterator();
 
-				while (it.hasNext()) {
-					IStatement action = it.next();
+			while (it.hasNext()) {
+				IStatement action = it.next();
 
-					if (action.minParameters() > 0) {
-						it.remove();
-					}
+				if (action.minParameters() > gate.material.numActionParameters) {
+					it.remove();
 				}
 			}
 		}

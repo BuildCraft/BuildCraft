@@ -412,7 +412,11 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			}
 
 			for (StatementParameterSlot p : triggerSlot.parameters) {
-				container.setTriggerParameter(triggerSlot.slot, p.slot, null, true);
+				IStatementParameter parameter = null;
+				if (changed != null && p.slot < changed.minParameters()) {
+					parameter = changed.createParameter(p.slot);
+				}
+				container.setTriggerParameter(triggerSlot.slot, p.slot, parameter, true);
 			}
 		} else if (slot instanceof ActionSlot) {
 			ActionSlot actionSlot = (ActionSlot) slot;
@@ -451,7 +455,11 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			}
 
 			for (StatementParameterSlot p : actionSlot.parameters) {
-				container.setActionParameter(actionSlot.slot, p.slot, null, true);
+				IStatementParameter parameter = null;
+				if (changed != null && p.slot < changed.minParameters()) {
+					parameter = changed.createParameter(p.slot);
+				}
+				container.setActionParameter(actionSlot.slot, p.slot, parameter, true);
 			}
 		} else if (slot instanceof StatementParameterSlot) {
 			StatementParameterSlot paramSlot = (StatementParameterSlot) slot;
