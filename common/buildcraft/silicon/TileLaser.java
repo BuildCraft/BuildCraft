@@ -36,7 +36,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 
 	@NetworkData
 	public LaserData laser = new LaserData();
-
+	
 	private final SafeTimeTracker laserTickTracker = new SafeTimeTracker(10);
 	private final SafeTimeTracker searchTracker = new SafeTimeTracker(100, 100);
 	private final SafeTimeTracker networkTracker = new SafeTimeTracker(20, 3);
@@ -245,10 +245,12 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 	}
 
 	protected void removeLaser() {
-		laser.isVisible = false;
-		// force sending the network update even if the network tracker
-		// refuses.
-		super.sendNetworkUpdate();
+		if (laser.isVisible) {
+			laser.isVisible = false;
+			// force sending the network update even if the network tracker
+			// refuses.
+			super.sendNetworkUpdate();
+		}
 	}
 
 	@Override
