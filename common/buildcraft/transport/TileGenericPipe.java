@@ -512,7 +512,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 					defaultState = state;
 					continue;
 				}
-				if (isWireActive(state.wire)) {
+				if (pipe != null && pipe.isWireActive(state.wire)) {
 					activeState = state;
 					break;
 				}
@@ -801,14 +801,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	}
 
 	@Override
-	public boolean isWireActive(PipeWire wire) {
-		if (pipe == null) {
-			return false;
-		}
-		return pipe.signalStrength[wire.ordinal()] > 0;
-	}
-
-	@Override
 	public boolean doDrop() {
 		if (BlockGenericPipe.isValid(pipe)) {
 			return pipe.doDrop();
@@ -945,10 +937,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 		IPipePluggable pluggable = sideProperties.pluggables[direction.ordinal()];
 		return pluggable instanceof ItemFacade.FacadePluggable ?
 				ItemFacade.getFacade(((ItemFacade.FacadePluggable) pluggable).states) : null;
-	}
-
-	public Gate getGate(ForgeDirection direction) {
-		return pipe.gates[direction.ordinal()];
 	}
 
 	public DockingStation getStation(ForgeDirection direction) {

@@ -30,7 +30,7 @@ public class StatementParameterItemStack implements IStatementParameter {
 	}
 
 	@Override
-	public void onClick(Object source, IStatement stmt, ItemStack stack, int mouseButton) {
+	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, int mouseButton) {
 		if (stack != null) {
 			this.stack = stack.copy();
 			this.stack.stackSize = 1;

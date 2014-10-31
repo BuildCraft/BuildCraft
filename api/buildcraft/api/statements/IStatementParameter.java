@@ -31,6 +31,13 @@ public interface IStatementParameter {
 
 	ItemStack getItemStack();
 
+	/**
+	 * Something that is initially unintuitive: you HAVE to
+	 * keep your icons as static variables, due to the fact
+	 * that every IStatementParameter is instantiated upon creation,
+	 * in opposition to IStatements which are singletons (due to the
+	 * fact that they, unlike Parameters, store no additional data)
+	 */
 	@SideOnly(Side.CLIENT)
 	void registerIcons(IIconRegister iconRegister);
 	
@@ -39,7 +46,7 @@ public interface IStatementParameter {
 	 */
 	String getDescription();
 
-	void onClick(Object source, IStatement stmt, ItemStack stack, int mouseButton);
+	void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, int mouseButton);
 
 	void readFromNBT(NBTTagCompound compound);
 

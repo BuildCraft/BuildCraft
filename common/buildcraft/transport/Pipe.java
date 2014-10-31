@@ -447,19 +447,14 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public void randomDisplayTick(Random random) {
 	}
 
-	// / @Override TODO: should be in IPipe
-	public boolean isWired() {
-		for (PipeWire color : PipeWire.values()) {
-			if (isWired(color)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
+	@Override
 	public boolean isWired(PipeWire color) {
 		return wireSet[color.ordinal()];
+	}
+
+	@Override
+	public boolean isWireActive(PipeWire color) {
+		return signalStrength[color.ordinal()] > 0;
 	}
 
 	@Deprecated
