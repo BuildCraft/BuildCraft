@@ -32,7 +32,7 @@ public class PacketSlotChange extends PacketCoordinates {
 	public void writeData(ByteBuf data) {
 		super.writeData(data);
 
-		data.writeInt(slot);
+		data.writeShort(slot);
 		Utils.writeStack(data, stack);		
 	}
 
@@ -40,7 +40,7 @@ public class PacketSlotChange extends PacketCoordinates {
 	public void readData(ByteBuf data) {
 		super.readData(data);
 
-		this.slot = data.readInt();
+		this.slot = data.readUnsignedShort();
 		stack = Utils.readStack(data);
 	}
 }

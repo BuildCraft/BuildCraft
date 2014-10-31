@@ -211,7 +211,7 @@ public class Blueprint extends BlueprintBase {
 							block = mapping.getBlockForId(cpt.getInteger("blockId"));
 						} catch (MappingNotFoundException e) {
 							block = null;
-							buildingPermission = BuildingPermission.CREATIVE_ONLY;
+							isComplete = false;
 						}
 
 						if (block != null) {
@@ -263,7 +263,7 @@ public class Blueprint extends BlueprintBase {
 					entity = mapping.getEntityForId(cpt.getInteger("entityId"));
 				} catch (MappingNotFoundException e) {
 					entity = null;
-					buildingPermission = BuildingPermission.CREATIVE_ONLY;
+					isComplete = false;
 				}
 
 				if (entity != null) {

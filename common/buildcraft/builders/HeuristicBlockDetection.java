@@ -53,6 +53,8 @@ public final class HeuristicBlockDetection {
 				continue;
 			}
 			
+			BitSet regularBlockMeta = new BitSet(16);
+			
 			for (int meta = 0; meta < 16; meta++) {
 				if (!SchematicRegistry.INSTANCE.isSupported(block, meta)) {
 					if (block.hasTileEntity(meta)) {
@@ -68,10 +70,20 @@ public final class HeuristicBlockDetection {
 						if (creativeOnly) {
 							SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlockCreative.class);
 						} else {
-							SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlock.class);
+							regularBlockMeta.set(meta);
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
+					}
+				}
+			}
+			
+			if (regularBlockMeta.cardinality() == 16) {
+				SchematicRegistry.INSTANCE.registerSchematicBlock(block, SchematicBlock.class);
+			} else {
+				for (int i = 0; i < 16; i++) {
+					if (regularBlockMeta.get(i)) {
+						SchematicRegistry.INSTANCE.registerSchematicBlock(block, i, SchematicBlock.class);
 					}
 				}
 			}

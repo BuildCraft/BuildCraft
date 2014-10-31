@@ -190,7 +190,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	public void engineUpdate() {
 		super.engineUpdate();
 
-		final ItemStack stack = getStackInSlot(0);
+		ItemStack stack = getStackInSlot(0);
 		if (stack != null) {
 			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(stack);
 			if (liquid == null && heat > MIN_HEAT * 2) {

@@ -676,7 +676,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		int input = world.isBlockProvidingPowerTo(x + d.offsetX, y + d.offsetY, z + d.offsetZ, i);
 		if (input == 0) {
 			input = world.getIndirectPowerLevelTo(x + d.offsetX, y + d.offsetY, z + d.offsetZ, i);
-			if (input == 0) {
+			if (input == 0 && d != ForgeDirection.DOWN) {
 				Block block = world.getBlock(x + d.offsetX, y + d.offsetY, z + d.offsetZ);
 				if (block instanceof BlockRedstoneWire) {
 					return world.getBlockMetadata(x + d.offsetX, y + d.offsetY, z + d.offsetZ);

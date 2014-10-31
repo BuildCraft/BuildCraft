@@ -21,7 +21,7 @@ public class SerializerItem extends ClassSerializer {
 			data.writeBoolean(false);
 		} else {
 			data.writeBoolean(true);
-			data.writeInt(Item.getIdFromItem(i));
+			data.writeShort(Item.getIdFromItem(i));
 		}
 	}
 
@@ -30,7 +30,7 @@ public class SerializerItem extends ClassSerializer {
 		if (!data.readBoolean()) {
 			return null;
 		} else {
-			return Item.getItemById(data.readInt());
+			return Item.getItemById(data.readUnsignedShort());
 		}
 	}
 }
