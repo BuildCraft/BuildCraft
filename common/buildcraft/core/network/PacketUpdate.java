@@ -45,7 +45,7 @@ public class PacketUpdate extends BuildCraftPacket {
 	public void writeData(ByteBuf data) {
 		data.writeByte(packetId);
 		data.writeInt(posX);
-		data.writeInt(posY);
+		data.writeShort(posY);
 		data.writeInt(posZ);
 
 		if (payload != null) {
@@ -57,7 +57,7 @@ public class PacketUpdate extends BuildCraftPacket {
 	public void readData(ByteBuf data) {
 		packetId = data.readByte();
 		posX = data.readInt();
-		posY = data.readInt();
+		posY = data.readShort();
 		posZ = data.readInt();
 
 		if (data.isReadable()) {

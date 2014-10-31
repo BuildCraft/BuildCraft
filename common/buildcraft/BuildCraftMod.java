@@ -15,38 +15,41 @@ import org.apache.logging.log4j.Level;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.Packet;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
-
 import buildcraft.api.core.BCLog;
 import buildcraft.core.network.BuildCraftPacket;
 
 public class BuildCraftMod {
 	public EnumMap<Side, FMLEmbeddedChannel> channels;
 
-	public void sendToPlayers(Packet packet, World world, int x, int y, int z, int maxDistance) {
-		try {
-			channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
-					.set(FMLOutboundHandler.OutboundTarget.ALL);
-			channels.get(Side.SERVER).writeOutbound(packet);
-		} catch (Throwable t) {
-			BCLog.logger.log(Level.WARN, "sentToPlayers crash", t);
-		}
-	}
-
 	public void sendToPlayers(BuildCraftPacket packet, World world, int x, int y, int z, int maxDistance) {
 		try {
 			channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
-					.set(FMLOutboundHandler.OutboundTarget.ALL);
+					.set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
+			channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS)
+					.set(new NetworkRegistry.TargetPoint(world.provider.dimensionId, x, y, z, maxDistance));
 			channels.get(Side.SERVER).writeOutbound(packet);
 		} catch (Throwable t) {
 			BCLog.logger.log(Level.WARN, "sentToPlayers crash", t);
 		}
 	}
 
+	public void sendToWorld(BuildCraftPacket packet, World world) {
+		try {
+			channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
+					.set(FMLOutboundHandler.OutboundTarget.DIMENSION);
+			channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS)
+					.set(world.provider.dimensionId);
+			channels.get(Side.SERVER).writeOutbound(packet);
+		} catch (Throwable t) {
+			BCLog.logger.log(Level.WARN, "sentToPlayers crash", t);
+		}
+	}
+	
 	public void sendToPlayer(EntityPlayer entityplayer, BuildCraftPacket packet) {
 		try {
 			channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)

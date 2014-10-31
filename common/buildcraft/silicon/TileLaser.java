@@ -45,8 +45,8 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 	private int powerIndex = 0;
 
 	@NetworkData
-	private double powerAverage = 0;
-	private final double[] power = new double[POWER_AVERAGING];
+	private short powerAverage = 0;
+	private final short[] power = new short[POWER_AVERAGING];
 
 	public TileLaser() {
 		super();
@@ -125,7 +125,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 		return 40;
 	}
 
-	protected void onPowerSent(double power) {
+	protected void onPowerSent(int power) {
 	}
 
 	protected boolean canFindTable() {
@@ -279,10 +279,10 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 		return isValidTable();
 	}
 
-	private void pushPower(double received) {
+	private void pushPower(int received) {
 		powerAverage -= power[powerIndex];
 		powerAverage += received;
-		power[powerIndex] = received;
+		power[powerIndex] = (short) received;
 		powerIndex++;
 
 		if (powerIndex == power.length) {

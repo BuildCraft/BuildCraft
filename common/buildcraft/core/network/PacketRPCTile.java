@@ -42,7 +42,7 @@ public class PacketRPCTile extends PacketRPC {
 
 		dimId = data.readShort();
 		x = data.readInt();
-		y = data.readInt();
+		y = data.readShort();
 		z = data.readInt();
 	}
 
@@ -54,7 +54,7 @@ public class PacketRPCTile extends PacketRPC {
 		// small. Maybe worth using a varint instead
 		data.writeShort(tile.getWorldObj().provider.dimensionId);
 		data.writeInt(tile.xCoord);
-		data.writeInt(tile.yCoord);
+		data.writeShort(tile.yCoord);
 		data.writeInt(tile.zCoord);
 	}
 

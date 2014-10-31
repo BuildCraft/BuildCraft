@@ -37,10 +37,6 @@ public class TilePacketWrapper {
 		return new PacketPayload(new PacketPayload.StreamWriter() {
 			@Override
 			public void writeData(ByteBuf data) {
-				data.writeInt(tile.xCoord);
-				data.writeInt(tile.yCoord);
-				data.writeInt(tile.zCoord);
-
 				try {
 					SerializationContext context = new SerializationContext();
 					rootMappings[0].write(data, tile, context);
@@ -65,10 +61,6 @@ public class TilePacketWrapper {
 		return new PacketPayload(new PacketPayload.StreamWriter() {
 			@Override
 			public void writeData(ByteBuf data) {
-					data.writeInt(x);
-					data.writeInt(y);
-					data.writeInt(z);
-
 					for (int i = 0; i < rootMappings.length; ++i) {
 						try {
 							SerializationContext context = new SerializationContext();
@@ -88,10 +80,6 @@ public class TilePacketWrapper {
 		try {
 			ByteBuf data = packet.stream;
 
-			data.readInt();
-			data.readInt();
-			data.readInt();
-
 			SerializationContext context = new SerializationContext();
 			rootMappings[0].read(data, tile, context);
 		} catch (Exception e) {
@@ -106,10 +94,6 @@ public class TilePacketWrapper {
 	public void fromPayload(Object[] obj, PacketPayload packet) {
 		try {
 			ByteBuf data = packet.stream;
-
-			data.readInt();
-			data.readInt();
-			data.readInt();
 
 			for (int i = 0; i < rootMappings.length; ++i) {
 				SerializationContext context = new SerializationContext();
