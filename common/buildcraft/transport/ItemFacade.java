@@ -242,8 +242,12 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 	private void registerValidFacades(Block block, Item item) {
 		Set<String> names = Sets.newHashSet();
 
-		for (int i = 0; i <= 15; i++) {
+		for (int i = 0; i < 16; i++) {
 			try {
+				if (block.hasTileEntity(i)) {
+					continue;
+				}
+				
 				ItemStack stack = new ItemStack(item, 1, i);
 
 				if (!Strings.isNullOrEmpty(stack.getUnlocalizedName())

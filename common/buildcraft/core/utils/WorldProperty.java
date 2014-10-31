@@ -8,17 +8,16 @@
  */
 package buildcraft.core.utils;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import buildcraft.api.core.IWorldProperty;
 
 public abstract class WorldProperty implements IWorldProperty {
 
-	public ArrayList<DimensionProperty> properties = new ArrayList<DimensionProperty>();
+	public HashMap<Integer, DimensionProperty> properties = new HashMap<Integer, DimensionProperty>();
 
 	@Override
 	public synchronized boolean get(World world, int x, int y, int z) {
@@ -32,15 +31,11 @@ public abstract class WorldProperty implements IWorldProperty {
 			id++;
 		}
 
-		while (properties.size() <= id) {
-			properties.add(null);
-		}
-
 		DimensionProperty result = properties.get(id);
 
 		if (result == null) {
 			result = new DimensionProperty(world, this);
-			properties.set(id, result);
+			properties.put(id, result);
 		}
 
 		return result;
@@ -48,7 +43,7 @@ public abstract class WorldProperty implements IWorldProperty {
 
 	@Override
 	public void clear() {
-		for (DimensionProperty p : properties) {
+		for (DimensionProperty p : properties.values()) {
 			if (p != null) {
 				p.clear();
 			}
