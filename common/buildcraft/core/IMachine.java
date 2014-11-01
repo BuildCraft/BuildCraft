@@ -22,6 +22,4 @@ public interface IMachine {
 	boolean manageFluids();
 
 	boolean manageSolids();
-
-	boolean allowAction(IAction action);
 }
