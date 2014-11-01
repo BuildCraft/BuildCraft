@@ -351,6 +351,12 @@ public final class Gate implements IGate, IStatementContainer {
 		int oldRedstoneOutputSide = redstoneOutputSide;
 		redstoneOutputSide = 0;
 		
+		// Open all sides - for valves
+		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			pipe.transport.allowInput(side, true);
+			pipe.transport.allowOutput(side, true);
+		}
+		
 		boolean wasActive = activeActions.size() > 0;
 
 		BitSet temp = prevBroadcastSignal;
