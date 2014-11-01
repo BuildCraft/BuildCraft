@@ -103,7 +103,6 @@ import buildcraft.core.statements.ActionMachineControl;
 import buildcraft.core.statements.ActionRedstoneOutput;
 import buildcraft.core.statements.DefaultActionProvider;
 import buildcraft.core.statements.DefaultTriggerProvider;
-import buildcraft.core.statements.StatementIconProvider;
 import buildcraft.core.statements.StatementParameterDirection;
 import buildcraft.core.statements.StatementParameterRedstoneGateSideOnly;
 import buildcraft.core.statements.TriggerEnergy;
@@ -433,7 +432,6 @@ public class BuildCraftCore extends BuildCraftMod {
 		if (event.map.getTextureType() == 1) {
 			iconProvider = new CoreIconProvider();
 			iconProvider.registerIcons(event.map);
-			StatementIconProvider.INSTANCE.registerIcons(event.map);
 			EnumColor.registerIcons(event.map);
 		} else if (event.map.getTextureType() == 0) {
 			BuildCraftCore.redLaserTexture = event.map.registerIcon("buildcraft:blockRedLaser");

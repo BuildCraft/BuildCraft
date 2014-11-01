@@ -17,7 +17,6 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.statements.BCStatement;
-import buildcraft.core.statements.StatementIconProvider;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
 

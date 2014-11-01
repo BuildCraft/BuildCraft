@@ -8,6 +8,7 @@
  */
 package buildcraft.api.gates;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -16,7 +17,7 @@ import java.util.Set;
 public final class GateExpansions {
 
 	private static final Map<String, IGateExpansion> expansions = new HashMap<String, IGateExpansion>();
-	private static byte nextID = 0;
+	private static final ArrayList<IGateExpansion> expansionIDs = new ArrayList<IGateExpansion>();
 
 	private GateExpansions() {
 	}
@@ -27,6 +28,7 @@ public final class GateExpansions {
 
 	public static void registerExpansion(String identifier, IGateExpansion expansion) {
 		expansions.put(identifier, expansion);
+		expansionIDs.add(expansion);
 	}
 
 	public static IGateExpansion getExpansion(String identifier) {
@@ -35,7 +37,17 @@ public final class GateExpansions {
 
 	public static Set<IGateExpansion> getExpansions() {
 		Set<IGateExpansion> set = new HashSet<IGateExpansion>();
-		set.addAll(expansions.values());
+		set.addAll(expansionIDs);
 		return set;
+	}
+	
+	// The code below is used by networking.
+	
+	public static IGateExpansion getExpansionByID(int id) {
+		return expansionIDs.get(id);
+	}
+	
+	public static int getExpansionID(IGateExpansion expansion) {
+		return expansionIDs.indexOf(expansion);
 	}
 }

@@ -86,14 +86,14 @@ public class ItemGate extends ItemBuildCraft {
 			}
 		}
 
-		public void writeToByteByf(ByteBuf buf) {
+		public void writeToByteBuf(ByteBuf buf) {
 			buf.writeByte(material.ordinal());
 			buf.writeByte(logic.ordinal());
 
 			final int expansionsSize = expansions.length;
 			buf.writeInt(expansionsSize);
 			for (IGateExpansion expansion : expansions) {
-				NetworkIdRegistry.write(buf, expansion.getUniqueIdentifier());
+				buf.writeShort(GateExpansions.getExpansionID(expansion));
 			}
 		}
 
@@ -104,7 +104,7 @@ public class ItemGate extends ItemBuildCraft {
 			final int expansionsSize = buf.readInt();
 			expansions = new IGateExpansion[expansionsSize];
 			for (int i = 0; i < expansionsSize; i++) {
-				expansions[i] = GateExpansions.getExpansion(NetworkIdRegistry.read(buf));
+				expansions[i] = GateExpansions.getExpansionByID(buf.readUnsignedShort());
 			}
 		}
 

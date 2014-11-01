@@ -100,7 +100,7 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 				boolean gateValid = gate != null;
 				data.writeBoolean(gateValid);
 				if (gateValid) {
-					gate.writeToByteByf(data);
+					gate.writeToByteBuf(data);
 				}
 			}
 		}
