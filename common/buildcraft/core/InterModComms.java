@@ -10,6 +10,7 @@ package buildcraft.core;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
@@ -25,10 +26,14 @@ import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
 import net.minecraftforge.fluids.FluidStack;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.gates.GateExpansions;
+import buildcraft.api.gates.IGateExpansion;
 import buildcraft.core.recipes.AssemblyRecipeManager;
+import buildcraft.core.recipes.IntegrationRecipeManager;
 import buildcraft.core.recipes.RefineryRecipeManager;
 import buildcraft.energy.worldgen.OilPopulate;
 import buildcraft.transport.ItemFacade;
+import buildcraft.transport.recipes.GateExpansionRecipe;
 
 public final class InterModComms {
 
@@ -52,6 +57,8 @@ public final class InterModComms {
 				processAssemblyRecipeAddIMC(event, m);
 			} else if (m.key.equals("add-refinery-recipe")) {
 				processRefineryRecipeAddIMC(event, m);
+			} else if (m.key.equals("add-gate-expansion-recipe")) {
+				processGateExpansionRecipeAddIMC(event, m);
 			} else if (m.key.equals("remove-assembly-recipe")) {
 				processAssemblyRecipeRemoveIMC(event, m);
 			} else if (m.key.equals("remove-refinery-recipe")) {
@@ -77,7 +84,32 @@ public final class InterModComms {
 			BCLog.logger.info(String.format("Received a refinery recipe '%s' removal request from mod %s", msg.getStringValue(), msg.getSender()));
 		}
 	}
-
+	
+	public static void processGateExpansionRecipeAddIMC(IMCEvent event, IMCMessage msg) {
+		boolean failed = false;
+		if (!msg.isNBTMessage()) {
+			failed = true;
+		} else {
+			NBTTagCompound recipe = msg.getNBTValue();
+			if (!recipe.hasKey("id") || !recipe.hasKey("expansion") || !recipe.hasKey("input")) {
+				failed = true;
+				return;
+			}
+			IGateExpansion exp = GateExpansions.getExpansion(recipe.getString("expansion"));
+			ItemStack is = ItemStack.loadItemStackFromNBT(recipe.getCompoundTag("input"));
+			if (exp == null || is == null) {
+				failed = true;
+				return;
+			}
+			IntegrationRecipeManager.INSTANCE.addRecipe(new GateExpansionRecipe(
+					recipe.getString("id"), exp, is
+				));
+		}
+		if (failed) {
+			BCLog.logger.warn("Received invalid gate expansion recipe IMC message from mod %s!", msg.getSender());
+		}
+	}
+	
 	public static void processAssemblyRecipeAddIMC(IMCEvent event, IMCMessage msg) {
 		boolean failed = false;
 		if (!msg.isNBTMessage()) {
