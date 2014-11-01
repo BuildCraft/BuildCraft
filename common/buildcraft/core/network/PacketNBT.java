@@ -10,11 +10,13 @@ package buildcraft.core.network;
 
 import java.io.IOException;
 
-import buildcraft.api.core.BCLog;
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
+
+import buildcraft.api.core.BCLog;
 
 public class PacketNBT extends PacketCoordinates {
 

@@ -3,11 +3,6 @@ package buildcraft.builders;
 import java.util.BitSet;
 
 import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -18,12 +13,12 @@ import buildcraft.builders.schematics.SchematicTileCreative;
 import buildcraft.core.blueprints.SchematicRegistry;
 
 public final class HeuristicBlockDetection {
+
+	private static BitSet craftableBlockList = new BitSet(65536);
 	
 	private HeuristicBlockDetection() {
 		
 	}
-	
-	private static BitSet craftableBlockList = new BitSet(65536);
 	
 	public static void start() {
 		// Initialize craftableBlockList

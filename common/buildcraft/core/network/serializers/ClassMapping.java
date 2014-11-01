@@ -21,16 +21,14 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
 import net.minecraftforge.fluids.FluidStack;
-
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.core.NetworkData;
+import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.network.INBTSerializable;
 import buildcraft.core.network.NetworkIdRegistry;
 
@@ -675,5 +673,6 @@ public class ClassMapping extends ClassSerializer {
 		registerSerializer(Long.class, new SerializerLong());
 		registerSerializer(BitSet.class, new SerializerBitSet());
 		registerSerializer(INBTSerializable.class, new SerializerINBTSerializable());
+		registerSerializer(IStatementParameter.class, new SerializerIStatementParameter());
 	}
 }

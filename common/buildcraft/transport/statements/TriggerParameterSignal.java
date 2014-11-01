@@ -21,19 +21,14 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.Gate;
-import buildcraft.transport.Pipe;
 
 public class TriggerParameterSignal implements IStatementParameter {
 
-	@NetworkData
-	public boolean active = false;
-
-	@NetworkData
-	public PipeWire color = null;
-
 	private static IIcon[] icons;
 	
+	public boolean active = false;
+	public PipeWire color = null;
+
 	public TriggerParameterSignal() {
 
 	}

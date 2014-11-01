@@ -13,10 +13,10 @@ import buildcraft.core.utils.StringUtils;
 
 public class StatementParameterRedstoneGateSideOnly implements
 		IStatementParameter {
-	@NetworkData
-	public boolean isOn = false;
-	
+
 	private static IIcon icon;
+	
+	public boolean isOn = false;
 	
 	public StatementParameterRedstoneGateSideOnly() {
 		

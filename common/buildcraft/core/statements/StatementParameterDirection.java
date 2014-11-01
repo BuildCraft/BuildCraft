@@ -14,21 +14,18 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.NetworkData;
-import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
-import buildcraft.api.transport.IPipe;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.TileGenericPipe;
 
 public class StatementParameterDirection implements IStatementParameter {
 
-    @NetworkData
-	public ForgeDirection direction = ForgeDirection.UNKNOWN;
-
     private static IIcon[] icons;
+    
+	public ForgeDirection direction = ForgeDirection.UNKNOWN;
     
 	public StatementParameterDirection() {
 		

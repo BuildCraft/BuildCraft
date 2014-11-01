@@ -12,11 +12,9 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
-import buildcraft.api.core.NetworkData;
 
 public class StatementParameterItemStack implements IStatementParameter {
 	
-	@NetworkData
 	protected ItemStack stack;
 
 	@Override

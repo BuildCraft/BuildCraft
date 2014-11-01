@@ -260,12 +260,12 @@ public class BuildCraftBuilders extends BuildCraftMod {
 			try {
 				PrintWriter writer = new PrintWriter("SchematicDebug.txt", "UTF-8");
 				writer.println("*** REGISTERED SCHEMATICS ***");
-				SchematicRegistry reg = ((SchematicRegistry) BuilderAPI.schematicRegistry);
+				SchematicRegistry reg = (SchematicRegistry) BuilderAPI.schematicRegistry;
 				for (BlockMetaPair p : reg.schematicBlocks.keySet()) {
 					writer.println(p.toString() + " -> " + reg.schematicBlocks.get(p).clazz.getCanonicalName());
 				}
 				writer.close();
-			} catch(Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

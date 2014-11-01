@@ -14,10 +14,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public final class StatementManager {
@@ -174,7 +174,6 @@ public final class StatementManager {
 		}
 
 		for (Class<? extends IStatementParameter> parameter : parameters.values()) {
-			System.out.println("registring parameter icons: " + parameter.getCanonicalName());
 			createParameter(parameter).registerIcons(register);
 		}
 	}

@@ -18,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
@@ -250,11 +251,13 @@ public class ContainerGateInterface extends BuildCraftContainer {
 			IStatement trigger = gate.getTrigger(position);
 			RPCHandler.rpcPlayer(player, this, "setAction", position, action != null ? action.getUniqueTag() : null, false);
 			RPCHandler.rpcPlayer(player, this, "setTrigger", position, trigger != null ? trigger.getUniqueTag() : null, false);
-			for (int p = 0; p < 3; ++p) {
+			for (int p = 0; p < gate.material.numActionParameters; ++p) {
 				RPCHandler.rpcPlayer(player, this, "setActionParameter", position, p,
 						gate.getActionParameter(position, p), false);
-				RPCHandler.rpcPlayer(player, this, "setTriggerParameter", position, p,
-						gate.getTriggerParameter(position, p), false);
+			}
+			for (int q = 0; q < gate.material.numTriggerParameters; ++q) {
+				RPCHandler.rpcPlayer(player, this, "setTriggerParameter", position, q,
+						gate.getTriggerParameter(position, q), false);
 			}
 		}
 	}
@@ -388,7 +391,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 			RPCHandler.rpcServer(this, "setActionParameter", action, param, parameter, false);
 		}
 	}
-
+	
 	/**
 	 * GATE INFORMATION *
 	 */

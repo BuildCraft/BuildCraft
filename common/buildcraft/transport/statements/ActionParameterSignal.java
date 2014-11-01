@@ -23,11 +23,11 @@ import buildcraft.api.transport.PipeWire;
 import buildcraft.core.utils.StringUtils;
 
 public class ActionParameterSignal implements IStatementParameter {
-
-	@NetworkData
-	public PipeWire color = null;
+	
 	private static IIcon[] icons;
 	
+	public PipeWire color = null;
+
 	public ActionParameterSignal() {
 
 	}
