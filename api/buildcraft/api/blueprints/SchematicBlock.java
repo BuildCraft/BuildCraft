@@ -33,6 +33,8 @@ public class SchematicBlock extends SchematicBlockBase {
 	 */
 	public ItemStack [] storedRequirements = new ItemStack [0];
 
+	private boolean doNotUse = false;
+	
 	@Override
 	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		if (block != null) {
@@ -86,7 +88,9 @@ public class SchematicBlock extends SchematicBlockBase {
 		super.readSchematicFromNBT(nbt, registry);
 
 		readBlockFromNBT(nbt, registry);
-		readRequirementsFromNBT(nbt, registry);
+		if (!doNotUse()) {
+			readRequirementsFromNBT(nbt, registry);
+		}
 	}
 
 	@Override
@@ -114,12 +118,16 @@ public class SchematicBlock extends SchematicBlockBase {
 		context.world().setBlockMetadataWithNotify(x, y, z, meta, 3);
 	}
 	
+	public boolean doNotUse() {
+		return doNotUse;
+	}
+	
 	protected void readBlockFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		try {
 			block = registry.getBlockForId(nbt.getInteger("blockId"));
 			meta = nbt.getInteger("blockMeta");
 		} catch (MappingNotFoundException e) {
-			defaultPermission = BuildingPermission.CREATIVE_ONLY;
+			doNotUse = true;
 		}
 	}
 	
@@ -128,11 +136,11 @@ public class SchematicBlock extends SchematicBlockBase {
 			NBTTagList rq = nbt.getTagList("rq", Constants.NBT.TAG_COMPOUND);
 
 			ArrayList<ItemStack> rqs = new ArrayList<ItemStack>();
-
+			int idTEST = 0;
 			for (int i = 0; i < rq.tagCount(); ++i) {
 				try {
 					NBTTagCompound sub = rq.getCompoundTagAt(i);
-
+					idTEST = sub.getInteger("id");
 					if (sub.getInteger("id") >= 0) {
 						registry.stackToWorld(sub);
 						rqs.add(ItemStack.loadItemStackFromNBT(sub));

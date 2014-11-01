@@ -277,8 +277,12 @@ public class MappingRegistry {
 		for (int i = 0; i < blocksMapping.tagCount(); ++i) {
 			NBTTagCompound sub = blocksMapping.getCompoundTagAt(i);
 			String name = sub.getString("name");
-			Block b = (Block) Block.blockRegistry.getObject(name);
-
+			Block b = null;
+			
+			if (Block.blockRegistry.containsKey(name)) {
+				b = (Block) Block.blockRegistry.getObject(name);
+			}
+			
 			if (b != null) {
 				registerBlock(b);
 			} else {
@@ -294,8 +298,12 @@ public class MappingRegistry {
 		for (int i = 0; i < itemsMapping.tagCount(); ++i) {
 			NBTTagCompound sub = itemsMapping.getCompoundTagAt(i);
 			String name = sub.getString("name");
-			Item item = (Item) Item.itemRegistry.getObject(name);
-
+			Item item = null;
+			
+			if (Item.itemRegistry.containsKey(name)) {
+				item = (Item) Item.itemRegistry.getObject(name);
+			}
+			
 			if (item != null) {
 				registerItem(item);
 			} else {

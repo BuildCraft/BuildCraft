@@ -226,9 +226,9 @@ public class Blueprint extends BlueprintBase {
 									case ALL:
 										break;
 									case CREATIVE_ONLY:
-										System.out.println("FOUND CREATIVE BUILDING PERMISSION");
-										System.out.println("- block: " + Block.blockRegistry.getNameForObject(block));
-										System.out.println("- meta: " + meta);
+										//System.out.println("FOUND CREATIVE BUILDING PERMISSION");
+										//System.out.println("- block: " + Block.blockRegistry.getNameForObject(block));
+										//System.out.println("- meta: " + meta);
 										if (buildingPermission == BuildingPermission.ALL) {
 											buildingPermission = BuildingPermission.CREATIVE_ONLY;
 										}
