@@ -10,6 +10,7 @@ package buildcraft.core.statements;
 
 import java.util.Locale;
 
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -26,7 +27,7 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
 
 	public enum TriggerType {
 
-		BELOW_25(0.25F), BELOW_50(0.5F), BELOW_75(0.75F);
+		BELOW25(0.25F), BELOW50(0.5F), BELOW75(0.75F);
 
 		public final float level;
 
@@ -90,17 +91,10 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
 		return false;
 	}
 
+
 	@Override
-	public int getIconIndex() {
-		switch (type) {
-			case BELOW_25:
-			return StatementIconProvider.Trigger_FluidContainer_Below25;
-			case BELOW_50:
-			return StatementIconProvider.Trigger_FluidContainer_Below50;
-			case BELOW_75:
-			default:
-			return StatementIconProvider.Trigger_FluidContainer_Below75;
-		}
+	public void registerIcons(IIconRegister register) {
+		icon = register.registerIcon("buildcraft:triggers/trigger_liquidcontainer_" + type.name().toLowerCase());
 	}
 	
 	@Override

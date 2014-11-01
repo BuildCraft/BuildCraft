@@ -10,6 +10,7 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
+import net.minecraft.client.renderer.texture.IIconRegister;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -32,21 +33,6 @@ public class ActionSignalOutput extends BCStatement implements IActionInternal {
 	@Override
 	public String getDescription() {
 		return String.format(StringUtils.localize("gate.action.pipe.wire"), StringUtils.localize("color." + color.name().toLowerCase(Locale.ENGLISH)));
-	}
-
-	@Override
-	public int getIconIndex() {
-		switch (color) {
-			case RED:
-				return StatementIconProvider.Trigger_PipeSignal_Red_Active;
-			case BLUE:
-				return StatementIconProvider.Trigger_PipeSignal_Blue_Active;
-			case GREEN:
-				return StatementIconProvider.Trigger_PipeSignal_Green_Active;
-			case YELLOW:
-			default:
-				return StatementIconProvider.Trigger_PipeSignal_Yellow_Active;
-		}
 	}
 
 	@Override
@@ -74,5 +60,10 @@ public class ActionSignalOutput extends BCStatement implements IActionInternal {
 				}
 			}
 		}
+	}
+	
+	@Override
+	public void registerIcons(IIconRegister register) {
+		icon = register.registerIcon("buildcraft:triggers/trigger_pipesignal_" + color.name().toLowerCase() + "_active");
 	}
 }

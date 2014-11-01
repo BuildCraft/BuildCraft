@@ -10,6 +10,7 @@ package buildcraft.core.statements;
 
 import java.util.Locale;
 
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -107,17 +108,8 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 	}
 
 	@Override
-	public int getIconIndex() {
-		switch (state) {
-			case Empty:
-			return StatementIconProvider.Trigger_FluidContainer_Empty;
-			case Contains:
-			return StatementIconProvider.Trigger_FluidContainer_Contains;
-			case Space:
-			return StatementIconProvider.Trigger_FluidContainer_Space;
-			default:
-			return StatementIconProvider.Trigger_FluidContainer_Full;
-		}
+	public void registerIcons(IIconRegister register) {
+		icon = register.registerIcon("buildcraft:triggers/trigger_liquidcontainer_" + state.name().toLowerCase());
 	}
 	
 	@Override

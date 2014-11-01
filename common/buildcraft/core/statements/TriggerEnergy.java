@@ -83,18 +83,8 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITri
 	}
 
 	@Override
-	public IIcon getIcon() {
-		if (high) {
-			return iconEnergyHigh;
-		} else {
-			return iconEnergyLow;
-		}
-	}
-
-	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister iconRegister) {
-		iconEnergyHigh = iconRegister.registerIcon("buildcraft:triggers/trigger_machine_energy_high");
-		iconEnergyLow = iconRegister.registerIcon("buildcraft:triggers/trigger_machine_energy_low");
+		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_machine_energy_" + (high ? "high" : "low"));
 	}
 }

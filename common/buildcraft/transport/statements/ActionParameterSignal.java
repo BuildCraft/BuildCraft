@@ -36,7 +36,7 @@ public class ActionParameterSignal implements IStatementParameter {
 		if (color == null) {
 			return null;
 		} else {
-			return icons[color.ordinal() & 3];
+			return icons[color.ordinal()];
 		}
 	}
 
@@ -78,6 +78,9 @@ public class ActionParameterSignal implements IStatementParameter {
 	
 	@Override
 	public String getDescription() {
+		if (color == null) {
+			return null;
+		}
 		return String.format(StringUtils.localize("gate.action.pipe.wire"), StringUtils.localize("color." + color.name().toLowerCase(Locale.ENGLISH)));
 	}
 

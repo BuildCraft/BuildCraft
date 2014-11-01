@@ -40,19 +40,11 @@ public abstract class BCStatement implements IStatement {
 	public String getUniqueTag() {
 		return uniqueTag;
 	}
-
-	public int getIconIndex() {
-		return 0;
-	}
-
+	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IIcon getIcon() {
-		if (icon != null) {
-			return icon;
-		} else {
-			return StatementIconProvider.INSTANCE.getIcon(getIconIndex());
-		}
+		return icon;
 	}
 
 	@Override

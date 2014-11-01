@@ -31,7 +31,7 @@ public class StatementParameterRedstoneGateSideOnly implements
 		if (!isOn) {
 			return null;
 		} else {
-			return StatementIconProvider.INSTANCE.getIcon(StatementIconProvider.Action_Parameter_RedstoneGateSideOnly);
+			return icon;
 		}
 	}
 

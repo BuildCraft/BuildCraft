@@ -20,6 +20,8 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.transport.Gate;
+import buildcraft.transport.Pipe;
 
 public class TriggerParameterSignal implements IStatementParameter {
 
@@ -101,6 +103,9 @@ public class TriggerParameterSignal implements IStatementParameter {
 
 	@Override
 	public String getDescription() {
+		if (color == null) {
+			return null;
+		}
 		return String.format(StringUtils.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")), StringUtils.localize("color." + color.name().toLowerCase(Locale.ENGLISH)));
 	}
 

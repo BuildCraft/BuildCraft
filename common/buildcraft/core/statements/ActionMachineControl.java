@@ -10,6 +10,9 @@ package buildcraft.core.statements;
 
 import java.util.Locale;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.statements.IActionExternal;
@@ -34,23 +37,16 @@ public class ActionMachineControl extends BCStatement implements IActionExternal
 	}
 
 	@Override
-	public int getIconIndex() {
-		switch (mode) {
-			case On:
-				return StatementIconProvider.Action_MachineControl_On;
-			case Off:
-				return StatementIconProvider.Action_MachineControl_Off;
-			case Loop:
-			default:
-				return StatementIconProvider.Action_MachineControl_Loop;
-		}
-	}
-
-	@Override
 	public void actionActivate(TileEntity target, ForgeDirection side,
 			IStatementContainer source, IStatementParameter[] parameters) {
 		if (target instanceof IControllable) {
 			((IControllable) target).setControlMode(mode);
 		}
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IIconRegister register) {
+		icon = register.registerIcon("buildcraft:triggers/action_machinecontrol_" + mode.name().toLowerCase());
 	}
 }

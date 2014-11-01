@@ -8,6 +8,7 @@
  */
 package buildcraft.core.statements;
 
+import net.minecraft.client.renderer.texture.IIconRegister;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -62,7 +63,7 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
 	}
 
 	@Override
-	public int getIconIndex() {
-		return active ? StatementIconProvider.Trigger_RedstoneInput_Active : StatementIconProvider.Trigger_RedstoneInput_Inactive;
+	public void registerIcons(IIconRegister register) {
+		icon = register.registerIcon("buildcraft:triggers/trigger_redstoneinput_" + (active ? "active" : "inactive"));
 	}
 }

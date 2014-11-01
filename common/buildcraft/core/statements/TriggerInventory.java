@@ -10,6 +10,7 @@ package buildcraft.core.statements;
 
 import java.util.Locale;
 
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -98,18 +99,10 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
 		return false;
 	}
 
+
 	@Override
-	public int getIconIndex() {
-		switch (state) {
-			case Empty:
-			return StatementIconProvider.Trigger_Inventory_Empty;
-			case Contains:
-			return StatementIconProvider.Trigger_Inventory_Contains;
-			case Space:
-			return StatementIconProvider.Trigger_Inventory_Space;
-			default:
-			return StatementIconProvider.Trigger_Inventory_Full;
-		}
+	public void registerIcons(IIconRegister register) {
+		icon = register.registerIcon("buildcraft:triggers/trigger_inventory_" + state.name().toLowerCase());
 	}
 	
 	@Override

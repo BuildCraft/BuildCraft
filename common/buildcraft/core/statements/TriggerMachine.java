@@ -8,6 +8,7 @@
  */
 package buildcraft.core.statements;
 
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.statements.IStatementContainer;
@@ -47,11 +48,7 @@ public class TriggerMachine extends BCStatement implements ITriggerExternal {
 	}
 
 	@Override
-	public int getIconIndex() {
-		if (active) {
-			return StatementIconProvider.Trigger_Machine_Active;
-		} else {
-			return StatementIconProvider.Trigger_Machine_Inactive;
-		}
+	public void registerIcons(IIconRegister register) {
+		icon = register.registerIcon("buildcraft:triggers/trigger_machine_" + (active ? "active" : "inactive"));
 	}
 }

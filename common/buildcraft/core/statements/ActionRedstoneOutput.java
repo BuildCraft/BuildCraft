@@ -8,6 +8,9 @@
  */
 package buildcraft.core.statements;
 
+import net.minecraft.client.renderer.texture.IIconRegister;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -22,11 +25,6 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
 	@Override
 	public String getDescription() {
 		return StringUtils.localize("gate.action.redstone.signal");
-	}
-
-	@Override
-	public int getIconIndex() {
-		return StatementIconProvider.Trigger_RedstoneInput_Active;
 	}
 	
     @Override
@@ -49,5 +47,11 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
 	public void actionActivate(IStatementContainer source,
 			IStatementParameter[] parameters) {
 		
+	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerIcons(IIconRegister register) {
+		icon = register.registerIcon("buildcraft:triggers/action_redstoneoutput");
 	}
 }

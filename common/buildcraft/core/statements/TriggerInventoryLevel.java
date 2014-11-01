@@ -10,6 +10,7 @@ package buildcraft.core.statements;
 
 import java.util.Locale;
 
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -27,7 +28,7 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
 
 	public enum TriggerType {
 
-		BELOW_25(0.25F), BELOW_50(0.5F), BELOW_75(0.75F);
+		BELOW25(0.25F), BELOW50(0.5F), BELOW75(0.75F);
 		public final float level;
 
 		private TriggerType(float level) {
@@ -95,15 +96,8 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
 	}
 
 	@Override
-	public int getIconIndex() {
-		switch (type) {
-			case BELOW_25:
-				return StatementIconProvider.Trigger_Inventory_Below25;
-			case BELOW_50:
-				return StatementIconProvider.Trigger_Inventory_Below50;
-			default:
-				return StatementIconProvider.Trigger_Inventory_Below75;
-		}
+	public void registerIcons(IIconRegister register) {
+		icon = register.registerIcon("buildcraft:triggers/trigger_inventory_" + type.name().toLowerCase());
 	}
 	
 	@Override

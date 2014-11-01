@@ -10,6 +10,7 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
+import net.minecraft.client.renderer.texture.IIconRegister;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -83,32 +84,8 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
 	}
 
 	@Override
-	public int getIconIndex() {
-		if (active) {
-			switch (color) {
-				case RED:
-					return StatementIconProvider.Trigger_PipeSignal_Red_Active;
-				case BLUE:
-					return StatementIconProvider.Trigger_PipeSignal_Blue_Active;
-				case GREEN:
-					return StatementIconProvider.Trigger_PipeSignal_Green_Active;
-				case YELLOW:
-					return StatementIconProvider.Trigger_PipeSignal_Yellow_Active;
-			}
-		} else {
-			switch (color) {
-				case RED:
-					return StatementIconProvider.Trigger_PipeSignal_Red_Inactive;
-				case BLUE:
-					return StatementIconProvider.Trigger_PipeSignal_Blue_Inactive;
-				case GREEN:
-					return StatementIconProvider.Trigger_PipeSignal_Green_Inactive;
-				case YELLOW:
-					return StatementIconProvider.Trigger_PipeSignal_Yellow_Inactive;
-			}
-		}
-
-		return -1;
+	public void registerIcons(IIconRegister register) {
+		icon = register.registerIcon("buildcraft:triggers/trigger_pipesignal_" + color.name().toLowerCase() + "_" + (active ? "active" : "inactive"));
 	}
 
 	@Override
