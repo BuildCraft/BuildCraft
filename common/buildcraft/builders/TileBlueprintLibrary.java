@@ -208,7 +208,11 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 		}
 
 		if (progressOut > 0 && progressOut < PROGRESS_TIME) {
-			progressOut++;
+			if (selected == -1) {
+				progressOut++;
+			} else {
+				progressOut = 1;
+			}
 		}
 
 		// On progress IN, we'll download the blueprint from the server to the

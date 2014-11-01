@@ -18,21 +18,19 @@ import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.api.blueprints.ISchematicRegistry;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.core.BlockMetaPair;
 import buildcraft.api.core.JavaTools;
 
 public final class SchematicRegistry implements ISchematicRegistry {
 
 	public static SchematicRegistry INSTANCE = new SchematicRegistry();
 	
-	public final HashMap<BlockMetaPair, SchematicConstructor> schematicBlocks =
-			new HashMap<BlockMetaPair, SchematicConstructor>();
+	public final HashMap<String, SchematicConstructor> schematicBlocks =
+			new HashMap<String, SchematicConstructor>();
 
 	public final HashMap<Class<? extends Entity>, SchematicConstructor> schematicEntities = new HashMap<Class<? extends Entity>, SchematicConstructor>();
 
@@ -91,7 +89,9 @@ public final class SchematicRegistry implements ISchematicRegistry {
 	}
 	
 	public void registerSchematicBlock(Block block, Class<? extends Schematic> clazz, Object... params) {
-		registerSchematicBlock(block, OreDictionary.WILDCARD_VALUE, clazz, params);
+		for (int i = 0; i < 16; i++) {
+			registerSchematicBlock(block, i, clazz, params);
+		}
 	}
 	
 	public void registerSchematicBlock(Block block, int meta, Class<? extends Schematic> clazz, Object... params) {
@@ -99,10 +99,11 @@ public final class SchematicRegistry implements ISchematicRegistry {
 			BCLog.logger.warn("Mod tried to register block with null name! Ignoring.");
 			return;
 		}
-		if (schematicBlocks.containsKey(new BlockMetaPair(block, meta))) {
+		if (schematicBlocks.containsKey(toStringKey(block, meta))) {
 			throw new RuntimeException("Block " + Block.blockRegistry.getNameForObject(block) + " is already associated with a schematic.");
 		}
-		schematicBlocks.put(new BlockMetaPair(block, meta), new SchematicConstructor(clazz, params));
+
+		schematicBlocks.put(toStringKey(block, meta), new SchematicConstructor(clazz, params));
 	}
 
 	public void registerSchematicEntity(
@@ -115,20 +116,11 @@ public final class SchematicRegistry implements ISchematicRegistry {
 	}
 
 	public SchematicBlock createSchematicBlock(Block block, int metadata) {
-		if (block == Blocks.air) {
+		if (block == null || block == Blocks.air || metadata < 0 || metadata >= 16) {
 			return null;
 		}
 
-		BlockMetaPair pairWildcard = new BlockMetaPair(block, OreDictionary.WILDCARD_VALUE);
-		BlockMetaPair pair = new BlockMetaPair(block, metadata);
-
-		SchematicConstructor c = null;
-		
-		if (schematicBlocks.containsKey(pair)) {
-			c = schematicBlocks.get(pair);
-		} else if (schematicBlocks.containsKey(pairWildcard)) {
-			c = schematicBlocks.get(pairWildcard);
-		}
+		SchematicConstructor c = schematicBlocks.get(toStringKey(block, metadata));
 
 		if (c == null) {
 			return null;
@@ -175,8 +167,7 @@ public final class SchematicRegistry implements ISchematicRegistry {
 	}
 
 	public boolean isSupported(Block block, int metadata) {
-		return schematicBlocks.containsKey(new BlockMetaPair(block, OreDictionary.WILDCARD_VALUE))
-				|| schematicBlocks.containsKey(new BlockMetaPair(block, metadata));
+		return schematicBlocks.containsKey(toStringKey(block, metadata));
 	}
 
 	public boolean isAllowedForBuilding(Block block, int metadata) {
@@ -205,5 +196,9 @@ public final class SchematicRegistry implements ISchematicRegistry {
 				blocksForbidden.add(strippedId);
 			}
 		}
+	}
+	
+	private String toStringKey(Block block, int meta) {
+		return Block.blockRegistry.getNameForObject(block) + ":" + meta;
 	}
 }

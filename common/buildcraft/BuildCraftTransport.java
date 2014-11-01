@@ -35,7 +35,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.RecipeSorter;
 import buildcraft.api.blueprints.BuilderAPI;
-import buildcraft.api.core.BlockMetaPair;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.JavaTools;
@@ -518,8 +517,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 				writer.println("*** REGISTERED FACADES ***");
 				for (ItemStack stack : facadeItem.allFacades) {
 					if (facadeItem.getBlocksForFacade(stack).length > 0) {
-						BlockMetaPair bmp = new BlockMetaPair(facadeItem.getBlocksForFacade(stack)[0], facadeItem.getMetaValuesForFacade(stack)[0]);
-						writer.println(bmp.toString());
+						writer.println(Block.blockRegistry.getNameForObject(facadeItem.getBlocksForFacade(stack)[0]) + ":" + facadeItem.getMetaValuesForFacade(stack)[0]);
 					}
 				}
 				writer.close();

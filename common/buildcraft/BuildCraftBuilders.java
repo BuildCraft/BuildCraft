@@ -49,7 +49,6 @@ import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.core.BlockMetaPair;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
@@ -261,8 +260,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 				PrintWriter writer = new PrintWriter("SchematicDebug.txt", "UTF-8");
 				writer.println("*** REGISTERED SCHEMATICS ***");
 				SchematicRegistry reg = (SchematicRegistry) BuilderAPI.schematicRegistry;
-				for (BlockMetaPair p : reg.schematicBlocks.keySet()) {
-					writer.println(p.toString() + " -> " + reg.schematicBlocks.get(p).clazz.getCanonicalName());
+				for (String s : reg.schematicBlocks.keySet()) {
+					writer.println(s + " -> " + reg.schematicBlocks.get(s).clazz.getCanonicalName());
 				}
 				writer.close();
 			} catch (Exception e) {

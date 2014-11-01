@@ -1,8 +1,10 @@
 package buildcraft.builders;
 
 import java.util.BitSet;
+import java.util.Iterator;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -42,13 +44,12 @@ public final class HeuristicBlockDetection {
 		}
 		
 		// Register blocks
-		for (Object o : Block.blockRegistry.getKeys()) {
-			Block block = (Block) Block.blockRegistry.getObject(o);
-			if (block == null) {
+		Iterator i = Block.blockRegistry.iterator();
+		while (i.hasNext()) {
+			Block block = (Block) i.next();
+			if (block == null || block == Blocks.air) {
 				continue;
 			}
-			
-			BitSet regularBlockMeta = new BitSet(16);
 			
 			for (int meta = 0; meta < 16; meta++) {
 				if (!SchematicRegistry.INSTANCE.isSupported(block, meta)) {
@@ -65,20 +66,10 @@ public final class HeuristicBlockDetection {
 						if (creativeOnly) {
 							SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlockCreative.class);
 						} else {
-							regularBlockMeta.set(meta);
+							SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlock.class);
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
-					}
-				}
-			}
-			
-			if (regularBlockMeta.cardinality() == 16) {
-				SchematicRegistry.INSTANCE.registerSchematicBlock(block, SchematicBlock.class);
-			} else {
-				for (int i = 0; i < 16; i++) {
-					if (regularBlockMeta.get(i)) {
-						SchematicRegistry.INSTANCE.registerSchematicBlock(block, i, SchematicBlock.class);
 					}
 				}
 			}
