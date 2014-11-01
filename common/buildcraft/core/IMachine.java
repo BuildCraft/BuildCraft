@@ -8,8 +8,6 @@
  */
 package buildcraft.core;
 
-import buildcraft.api.gates.IAction;
-
 /**
  * Left only to stop certain mods depending on it from crashing.
  * Please move to the classes contained in builcraft.api.tiles

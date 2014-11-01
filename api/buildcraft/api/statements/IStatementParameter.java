@@ -46,7 +46,7 @@ public interface IStatementParameter {
 	 */
 	String getDescription();
 
-	void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, int mouseButton);
+	void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse);
 
 	void readFromNBT(NBTTagCompound compound);
 

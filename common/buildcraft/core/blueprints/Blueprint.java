@@ -215,7 +215,8 @@ public class Blueprint extends BlueprintBase {
 						}
 
 						if (block != null) {
-							contents[x][y][z] = SchematicRegistry.INSTANCE.createSchematicBlock(block, cpt.getInteger("blockMeta"));
+							int meta = cpt.getInteger("blockMeta");
+							contents[x][y][z] = SchematicRegistry.INSTANCE.createSchematicBlock(block, meta);
 							if (contents[x][y][z] != null) {
 								contents[x][y][z].readSchematicFromNBT(cpt, mapping);
 	
@@ -226,6 +227,9 @@ public class Blueprint extends BlueprintBase {
 									case ALL:
 										break;
 									case CREATIVE_ONLY:
+										System.out.println("FOUND CREATIVE BUILDING PERMISSION");
+										System.out.println("- block: " + Block.blockRegistry.getNameForObject(block));
+										System.out.println("- meta: " + meta);
 										if (buildingPermission == BuildingPermission.ALL) {
 											buildingPermission = BuildingPermission.CREATIVE_ONLY;
 										}

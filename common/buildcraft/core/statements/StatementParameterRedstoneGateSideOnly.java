@@ -8,6 +8,7 @@ import buildcraft.api.core.NetworkData;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.core.utils.StringUtils;
 
 public class StatementParameterRedstoneGateSideOnly implements
@@ -36,7 +37,7 @@ public class StatementParameterRedstoneGateSideOnly implements
 	}
 
 	@Override
-	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, int mouseButton) {
+	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
 		isOn = !isOn;
 	}
 

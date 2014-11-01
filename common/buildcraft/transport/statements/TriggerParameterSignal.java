@@ -18,6 +18,7 @@ import buildcraft.api.core.NetworkData;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Gate;
@@ -54,8 +55,8 @@ public class TriggerParameterSignal implements IStatementParameter {
 	}
 
 	@Override
-	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, int mouseButton) {
-		if (mouseButton == 0) {
+	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+		if (mouse.getButton() == 0) {
 			if (color == null) {
 				active = true;
 				color = PipeWire.RED;

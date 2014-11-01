@@ -21,6 +21,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.utils.StringUtils;
@@ -473,7 +474,8 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				}
 
 				if (param != null) {
-					param.onClick(gate, statement.getStatement(), mc.thePlayer.inventory.getItemStack(), k);
+					param.onClick(gate, statement.getStatement(), mc.thePlayer.inventory.getItemStack(),
+							new StatementMouseClick(k, isShiftKeyDown()));
 					paramSlot.setParameter(param, true);
 				}
 			}

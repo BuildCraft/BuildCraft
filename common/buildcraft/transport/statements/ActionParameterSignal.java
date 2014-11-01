@@ -18,6 +18,7 @@ import buildcraft.api.core.NetworkData;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.utils.StringUtils;
 
@@ -41,13 +42,13 @@ public class ActionParameterSignal implements IStatementParameter {
 	}
 
 	@Override
-	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, int mouseButton) {
+	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
 		if (color == null) {
-			color = mouseButton == 0 ? PipeWire.RED : PipeWire.YELLOW;
-		} else if (color == (mouseButton == 0 ? PipeWire.YELLOW : PipeWire.RED)) {
+			color = mouse.getButton() == 0 ? PipeWire.RED : PipeWire.YELLOW;
+		} else if (color == (mouse.getButton() == 0 ? PipeWire.YELLOW : PipeWire.RED)) {
 			color = null;
 		} else {
-			color = PipeWire.values()[mouseButton == 0 ? color.ordinal() + 1 : color.ordinal() - 1];
+			color = PipeWire.values()[mouse.getButton() == 0 ? color.ordinal() + 1 : color.ordinal() - 1];
 		}
 	}
 
