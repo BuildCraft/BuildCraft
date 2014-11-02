@@ -33,12 +33,13 @@ import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.utils.Utils;
 
 public abstract class TileBuildCraft extends TileEntity implements ISynchronizedTile, IEnergyHandler {
-	protected HashSet<EntityPlayer> guiWatchers = new HashSet<EntityPlayer>();
-	
 	@SuppressWarnings("rawtypes")
 	private static Map<Class, TilePacketWrapper> updateWrappers = new HashMap<Class, TilePacketWrapper>();
 	@SuppressWarnings("rawtypes")
 	private static Map<Class, TilePacketWrapper> descriptionWrappers = new HashMap<Class, TilePacketWrapper>();
+	
+	protected HashSet<EntityPlayer> guiWatchers = new HashSet<EntityPlayer>();
+	
 	private final TilePacketWrapper descriptionPacket;
 	private final TilePacketWrapper updatePacket;
 	private boolean init = false;

@@ -22,12 +22,9 @@ import io.netty.buffer.Unpooled;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.Container;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.common.FMLCommonHandler;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.JavaTools;
