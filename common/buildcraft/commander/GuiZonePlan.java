@@ -17,14 +17,17 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.EnumColor;
 import buildcraft.core.BCDynamicTexture;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ZonePlan;
 import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
+import buildcraft.core.gui.buttons.GuiBetterButton;
+import buildcraft.core.gui.tooltips.ToolTip;
+import buildcraft.core.gui.tooltips.ToolTipLine;
 import buildcraft.core.network.RPCHandler;
+import buildcraft.core.utils.StringUtils;
 
 public class GuiZonePlan extends GuiAdvancedInterface {
 
@@ -57,7 +60,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 	private float alpha = 0.8F;
 
-	private GuiButton tool;
+	private GuiBetterButton tool;
 
 	private List inventorySlots;
 	private List savedButtonList;
@@ -130,7 +133,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	public void initGui() {
 		super.initGui();
 
-		tool = new GuiButton(0, guiLeft + 5, guiTop + 20, 20, 20, "+");
+		tool = new GuiBetterButton(0, guiLeft + 5, guiTop + 20, 20, "+");
+		tool.setToolTip(new ToolTip(500, new ToolTipLine(StringUtils.localize("tip.tool.add"))));
 		buttonList.add(tool);
 
 		savedButtonList = buttonList;
@@ -372,8 +376,12 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 		if (button == tool) {
 			if (tool.displayString.equals("+")) {
 				tool.displayString = "-";
+				tool.getToolTip().remove(0);
+				tool.getToolTip().add(new ToolTipLine(StringUtils.localize("tip.tool.remove")));
 			} else {
 				tool.displayString = "+";
+				tool.getToolTip().remove(0);
+				tool.getToolTip().add(new ToolTipLine(StringUtils.localize("tip.tool.add")));
 			}
 		}
 	}

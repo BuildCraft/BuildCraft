@@ -65,9 +65,10 @@ public class GuiArchitect extends GuiBuildCraft {
 		buttonList.add(optionExcavate);
 
 		optionAllowCreative = new GuiBetterButton(2, guiLeft + 5, guiTop + 80, 79, "");
-		optionAllowCreative.setToolTip(new ToolTip(500));
-		optionAllowCreative.getToolTip().add(new ToolTipLine(StringUtils.localize("tile.architect.tooltip.allowCreative.1")));
-		optionAllowCreative.getToolTip().add(new ToolTipLine(StringUtils.localize("tile.architect.tooltip.allowCreative.2")));
+		optionAllowCreative.setToolTip(new ToolTip(500,
+				new ToolTipLine(StringUtils.localize("tile.architect.tooltip.allowCreative.1")),
+				new ToolTipLine(StringUtils.localize("tile.architect.tooltip.allowCreative.2"))
+		));
 		buttonList.add(optionAllowCreative);
 		
 		textField = new GuiTextField(this.fontRendererObj, TEXT_X, TEXT_Y, TEXT_WIDTH, TEXT_HEIGHT);

@@ -63,8 +63,8 @@ public class GuiRequester extends GuiAdvancedInterface {
 		getContainer().gui = this;
 		getContainer().getRequestList();
 
-		xSize = 256;
-		ySize = 220;
+		xSize = 196;
+		ySize = 181;
 
 		requester = iRequester;
 		playerInventory = iPlayerInventory;

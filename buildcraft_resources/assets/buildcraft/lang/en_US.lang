@@ -276,6 +276,7 @@ tile.pathMarkerBlock.name=Path Mark
 tile.plainPipeBlock.name=Mining Pipe
 tile.pumpBlock.name=Pump
 tile.refineryBlock.name=Refinery
+tile.requester.name=Requester
 tile.spring.oil.name=Oil Spring
 tile.spring.water.name=Water Spring
 tile.tankBlock.name=Tank
@@ -325,6 +326,9 @@ tip.PipePowerWood=Power Input Pipe
 tip.PipePowerEmerald=Power Input Pipe
 tip.PipePowerIron=Selectable Limiter Pipe
 tip.PipeStructureCobblestone=Support pipe
+
+tip.tool.add=Add
+til.tool.remove=Remove
 
 achievement.woodenGearAchievement=A bit rough around the edges
 achievement.woodenGearAchievement.desc=Craft a wooden gear

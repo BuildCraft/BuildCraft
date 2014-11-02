@@ -246,6 +246,27 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'C', new ItemStack(redstoneChipset, 1, 0),
 				'G', BuildCraftCore.diamondGearItem);
 
+		// COMMANDER BLOCKS
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(zonePlanBlock, 1, 0),
+				"IRI",
+				"GMG",
+				"IDI",
+				'M', Items.map,
+				'R', Items.redstone,
+				'G', BuildCraftCore.goldGearItem,
+				'D', BuildCraftCore.diamondGearItem,
+				'I', Items.iron_ingot);
+		
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(requesterBlock, 1, 0),
+				"IPI",
+				"GCG",
+				"IRI",
+				'C', Blocks.chest,
+				'R', Items.redstone,
+				'P', Blocks.piston,
+				'G', BuildCraftCore.ironGearItem,
+				'I', Items.iron_ingot);
+		
 		// CHIPSETS
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redstoneChipset", 100000, Chipset.RED.getStack(),
 				Items.redstone);

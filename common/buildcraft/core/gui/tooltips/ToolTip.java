@@ -19,12 +19,18 @@ public class ToolTip extends ForwardingList<ToolTipLine> {
 	private final long delay;
 	private long mouseOverStart;
 
-	public ToolTip() {
+	public ToolTip(ToolTipLine... lines) {
 		this.delay = 0;
+		for (ToolTipLine line: lines) {
+			delegate.add(line);
+		}
 	}
 
-	public ToolTip(int delay) {
+	public ToolTip(int delay, ToolTipLine... lines) {
 		this.delay = delay;
+		for (ToolTipLine line: lines) {
+			delegate.add(line);
+		}
 	}
 
 	@Override
