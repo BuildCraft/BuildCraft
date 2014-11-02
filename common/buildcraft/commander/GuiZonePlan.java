@@ -134,7 +134,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 		super.initGui();
 
 		tool = new GuiBetterButton(0, guiLeft + 5, guiTop + 20, 20, "+");
-		tool.setToolTip(new ToolTip(500, new ToolTipLine(StringUtils.localize("tip.tool.add"))));
+		tool.setToolTip(new ToolTip(new ToolTipLine(StringUtils.localize("tip.tool.add"))));
 		buttonList.add(tool);
 
 		savedButtonList = buttonList;

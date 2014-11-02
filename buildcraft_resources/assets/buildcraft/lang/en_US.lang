@@ -328,7 +328,7 @@ tip.PipePowerIron=Selectable Limiter Pipe
 tip.PipeStructureCobblestone=Support pipe
 
 tip.tool.add=Add
-til.tool.remove=Remove
+tip.tool.remove=Remove
 
 achievement.woodenGearAchievement=A bit rough around the edges
 achievement.woodenGearAchievement.desc=Craft a wooden gear
