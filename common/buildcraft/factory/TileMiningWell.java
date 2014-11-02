@@ -126,6 +126,6 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 	@Override
 	public ConnectOverride overridePipeConnection(PipeType type,
 			ForgeDirection with) {
-		return type == PipeType.ITEM ? ConnectOverride.CONNECT : ConnectOverride.DISCONNECT;
+		return type == PipeType.ITEM ? ConnectOverride.CONNECT : ConnectOverride.DEFAULT;
 	}
 }
