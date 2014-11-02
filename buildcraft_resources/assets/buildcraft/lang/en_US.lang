@@ -283,12 +283,12 @@ tile.zonePlan.name=Zone Planner
 
 tile.architect.rotate=Rotate: On
 tile.architect.norotate=Rotate: Off
-tile.architect.allblocks=Blocks: All
-tile.architect.simpleblocks=Blocks: Simple
+tile.architect.allowCreative=Mode: Creative
+tile.architect.noallowCreative=Mode: Survival
+tile.architect.tooltip.allowCreative.1=Creative allows all blocks - Creative Mode only!
+tile.architect.tooltip.allowCreative.2=Survival ignores all unsupported blocks
 tile.architect.excavate=Excavate: On
 tile.architect.noexcavate=Excavate: Off
-tile.architect.supportmods=Mods: Support
-tile.architect.allmods=Mods: All
 
 tip.gate.wires=§9§oCompatible Wires:
 tip.gate.wires.redstone=Red

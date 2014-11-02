@@ -38,6 +38,7 @@ import buildcraft.api.robots.StackRequest;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
@@ -84,7 +85,8 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	private ArrayList<ItemStack> requiredToBuild;
 	private NBTTagCompound initNBT = null;
 	private boolean done = true;
-
+	private boolean isBuilding = false;
+	
 	private class PathIterator {
 
 		public Iterator<BlockIndex> currentIterator;
@@ -593,6 +595,10 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			}
 		}
 
+		if (!isBuilding && this.isBuildingBlueprint()) {
+			updateRequirements();
+		}
+		isBuilding = this.isBuildingBlueprint();
 
 		if (done) {
 			return;
@@ -685,10 +691,17 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		}
 	}
 
-	public void updateRequirements () {
+	public void updateRequirements() {
+		if (guiWatchers.size() == 0) {
+			// Nobody watching, do not update.
+			return;
+		}
+		
+		ArrayList<ItemStack> reqCopy = null;
+		ArrayList<Integer> realSize = null;
 		if (currentBuilder instanceof BptBuilderBlueprint) {
-			ArrayList<ItemStack> reqCopy = new ArrayList<ItemStack>();
-			ArrayList<Integer> realSize = new ArrayList<Integer>();
+			reqCopy = new ArrayList<ItemStack>();
+			realSize = new ArrayList<Integer>();
 
 			for (ItemStack stack : ((BptBuilderBlueprint) currentBuilder).neededItems) {
 				realSize.add(stack.stackSize);
@@ -696,12 +709,29 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 				newStack.stackSize = 0;
 				reqCopy.add(newStack);
 			}
+		}
+		
+		for (EntityPlayer p : guiWatchers) {
+			RPCHandler.rpcPlayer(p, this, "setItemRequirements", reqCopy, realSize);
+		}
+	}
+	
+	public void updateRequirements(EntityPlayer caller) {
+		ArrayList<ItemStack> reqCopy = null;
+		ArrayList<Integer> realSize = null;
+		if (currentBuilder instanceof BptBuilderBlueprint) {
+			reqCopy = new ArrayList<ItemStack>();
+			realSize = new ArrayList<Integer>();
 
-			RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "setItemRequirements", reqCopy, realSize);
-		} else {
-			RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "setItemRequirements", null, null);
+			for (ItemStack stack : ((BptBuilderBlueprint) currentBuilder).neededItems) {
+				realSize.add(stack.stackSize);
+				ItemStack newStack = stack.copy();
+				newStack.stackSize = 0;
+				reqCopy.add(newStack);
+			}
 		}
 
+		RPCHandler.rpcPlayer(caller, this, "setItemRequirements", reqCopy, realSize);
 	}
 
 	public BptBuilderBase getBlueprint () {

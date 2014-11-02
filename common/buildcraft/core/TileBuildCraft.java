@@ -10,6 +10,7 @@ package buildcraft.core;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import net.minecraft.entity.EntityLivingBase;
@@ -19,11 +20,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import cofh.api.energy.IEnergyHandler;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.core.network.BuildCraftPacket;
@@ -35,6 +33,8 @@ import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.utils.Utils;
 
 public abstract class TileBuildCraft extends TileEntity implements ISynchronizedTile, IEnergyHandler {
+	protected HashSet<EntityPlayer> guiWatchers = new HashSet<EntityPlayer>();
+	
 	@SuppressWarnings("rawtypes")
 	private static Map<Class, TilePacketWrapper> updateWrappers = new HashMap<Class, TilePacketWrapper>();
 	@SuppressWarnings("rawtypes")
@@ -61,7 +61,19 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	public String getOwner() {
 		return owner;
 	}
+	
+	public void addGuiWatcher(EntityPlayer player) {
+		if (!guiWatchers.contains(player)) {
+			guiWatchers.add(player);
+		}
+	}
 
+	public void removeGuiWatcher(EntityPlayer player) {
+		if (guiWatchers.contains(player)) {
+			guiWatchers.remove(player);
+		}
+	}
+	
 	@Override
 	public void updateEntity() {
 		if (!init && !isInvalid()) {
