@@ -53,23 +53,27 @@ public final class HeuristicBlockDetection {
 			
 			for (int meta = 0; meta < 16; meta++) {
 				if (!SchematicRegistry.INSTANCE.isSupported(block, meta)) {
-					if (block.hasTileEntity(meta)) {
-						// All tiles are registered as creative only.
-						// This is helpful for example for server admins.
-						SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicTileCreative.class);
-						continue;
-					}
-					
-					boolean creativeOnly = false;
-					
 					try {
-						if (creativeOnly) {
-							SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlockCreative.class);
-						} else {
-							SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlock.class);
+						if (block.hasTileEntity(meta)) {
+							// All tiles are registered as creative only.
+							// This is helpful for example for server admins.
+							SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicTileCreative.class);
+							continue;
+						}
+						
+						boolean creativeOnly = false;
+						
+						try {
+							if (creativeOnly) {
+								SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlockCreative.class);
+							} else {
+								SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlock.class);
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
 						}
 					} catch (Exception e) {
-						e.printStackTrace();
+						
 					}
 				}
 			}
