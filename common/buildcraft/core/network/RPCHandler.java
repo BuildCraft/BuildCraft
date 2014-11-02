@@ -153,23 +153,11 @@ public final class RPCHandler {
 				TileEntity tile = (TileEntity) object;
 
 				for (PacketRPC p : packet.breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
-					for (Object o : world.playerEntities) {
-						EntityPlayerMP player = (EntityPlayerMP) o;
-
-						if (Math.abs(player.posX - tile.xCoord) <= maxDistance
-								&& Math.abs(player.posY - tile.yCoord) <= maxDistance
-								&& Math.abs(player.posZ - tile.zCoord) <= maxDistance) {
-							BuildCraftCore.instance.sendToPlayer(player, p);
-						}
-					}
+					BuildCraftCore.instance.sendToPlayers(p, world, tile.xCoord, tile.yCoord, tile.zCoord, maxDistance);
 				}
 			} else {
-				for (Object o : world.playerEntities) {
-					EntityPlayerMP player = (EntityPlayerMP) o;
-
-					for (PacketRPC p : packet.breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
-						BuildCraftCore.instance.sendToPlayer(player, p);
-					}
+				for (PacketRPC p : packet.breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
+					BuildCraftCore.instance.sendToWorld(p, world);
 				}
 			}
 		}
@@ -179,12 +167,8 @@ public final class RPCHandler {
 		PacketRPC packet = createPacket(object, method, actuals);
 
 		if (packet != null) {
-			for (Object o : FMLCommonHandler.instance().getMinecraftServerInstance().getConfigurationManager().playerEntityList) {
-				EntityPlayerMP player = (EntityPlayerMP) o;
-
-				for (PacketRPC p : packet.breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
-					BuildCraftCore.instance.sendToPlayer(player, p);
-				}
+			for (PacketRPC p : packet.breakIntoSmallerPackets(MAX_PACKET_SIZE)) {
+				BuildCraftCore.instance.sendToAll(p);
 			}
 		}
 	}

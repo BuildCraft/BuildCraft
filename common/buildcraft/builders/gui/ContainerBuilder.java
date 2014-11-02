@@ -42,6 +42,12 @@ public class ContainerBuilder extends BuildCraftContainer {
 		for (int x = 0; x < 9; x++) {
 			addSlotToContainer(new Slot(playerInventory, x, 8 + x * 18, 198));
 		}
+
+		if (!builder.getWorldObj().isRemote) {
+			// TODO: Figure out a nicer way of fixing this bug.
+			// Refreshes the requirement list on every GUI opening.
+			builder.updateRequirements();
+		}
 	}
 
 	@Override

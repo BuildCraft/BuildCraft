@@ -65,6 +65,16 @@ public class BuildCraftMod {
 			BCLog.logger.log(Level.WARN, "sentToPlayer \"" + name + "\" crash", t);
 		}
 	}
+	
+	public void sendToAll(BuildCraftPacket packet) {
+		try {
+			channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
+					.set(FMLOutboundHandler.OutboundTarget.ALL);
+			channels.get(Side.SERVER).writeOutbound(packet);
+		} catch (Throwable t) {
+			BCLog.logger.log(Level.WARN, "sentToPlayers crash", t);
+		}
+	}
 
 	public void sendToServer(BuildCraftPacket packet) {
 		try {

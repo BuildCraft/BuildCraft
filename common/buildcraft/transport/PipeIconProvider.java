@@ -126,6 +126,7 @@ public class PipeIconProvider implements IIconProvider {
 		PipeStainedOverlay("pipeStainedOverlay"),
 		//
 		TransparentFacade("transparent_facade"),
+		Transparent("transparent"),
 		//
 		ItemBox("itemBox");
 		public static final TYPE[] VALUES = values();
