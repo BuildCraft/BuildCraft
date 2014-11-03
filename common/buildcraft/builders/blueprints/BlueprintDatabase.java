@@ -148,7 +148,9 @@ public class BlueprintDatabase {
 
 	private void loadIndex(File[] dirs) {
 		for (File dir : dirs) {
-			loadIndex(dir);
+			if (dir != null) {
+				loadIndex(dir);
+			}
 		}
 	}
 
