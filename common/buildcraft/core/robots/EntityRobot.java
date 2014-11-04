@@ -257,11 +257,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 			if (energyFX >= 100) {
 				energyFX = 0;
-				Minecraft.getMinecraft().effectRenderer.addEffect(new EntityRobotEnergyFX(
-						worldObj,
-						posX + steamDx * 0.25, posY + steamDy * 0.25, posZ + steamDz * 0.25,
-						steamDx * 0.05, steamDy * 0.05, steamDz * 0.05,
-						energySpendPerCycle * 0.075F < 1 ? 1 : energySpendPerCycle * 0.075F));
+				spawnEnergyFX();
 			}
 		}
 
@@ -316,6 +312,14 @@ public class EntityRobot extends EntityRobotBase implements
 		}
 
 		super.onEntityUpdate();
+	}
+	@SideOnly(Side.CLIENT)
+	private void spawnEnergyFX() {
+	    Minecraft.getMinecraft().effectRenderer.addEffect(new EntityRobotEnergyFX(
+                worldObj,
+                posX + steamDx * 0.25, posY + steamDy * 0.25, posZ + steamDz * 0.25,
+                steamDx * 0.05, steamDy * 0.05, steamDz * 0.05,
+                energySpendPerCycle * 0.075F < 1 ? 1 : energySpendPerCycle * 0.075F));        
 	}
 
 	public void setRegularBoundingBox() {
