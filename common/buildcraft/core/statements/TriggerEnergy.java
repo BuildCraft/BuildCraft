@@ -40,12 +40,12 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITri
 	}
 
 	private boolean isValidEnergyHandler(IEnergyHandler handler) {
-		return handler.getMaxEnergyStored(ForgeDirection.UNKNOWN) > 0;
+		return handler instanceof IEnergyHandler;
 	}
 
-	private boolean isTriggeredEnergyHandler(IEnergyHandler handler) {
-		int energyStored = handler.getEnergyStored(ForgeDirection.UNKNOWN);
-		int energyMaxStored = handler.getMaxEnergyStored(ForgeDirection.UNKNOWN);
+	private boolean isTriggeredEnergyHandler(IEnergyHandler handler, ForgeDirection side) {
+		int energyStored = handler.getEnergyStored(side);
+		int energyMaxStored = handler.getMaxEnergyStored(side);
 
 		if (energyMaxStored > 0) {
 			if (high) {
@@ -62,7 +62,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITri
 			IGate gate = (IGate) container;
 			if (gate.getPipe() instanceof IEnergyHandler) {
 				if (isValidEnergyHandler((IEnergyHandler) gate.getPipe())) {
-					return isTriggeredEnergyHandler((IEnergyHandler) gate.getPipe());
+					return isTriggeredEnergyHandler((IEnergyHandler) gate.getPipe(), ForgeDirection.UNKNOWN);
 				}
 			}
 		}
@@ -76,7 +76,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITri
 		if (tile instanceof IEnergyHandler) {
 			// Since we return false upon the trigger being invalid anyway,
 			// we can skip the isValidEnergyHandler(...) check.
-			return isTriggeredEnergyHandler((IEnergyHandler) tile);
+			return isTriggeredEnergyHandler((IEnergyHandler) tile, side.getOpposite());
 		}
 
 		return false;
