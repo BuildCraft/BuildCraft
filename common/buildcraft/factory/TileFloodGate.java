@@ -197,6 +197,9 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	}
 
 	public void queueForFilling(int x, int y, int z) {
+        if (y < 0 || y > 255) {
+            return;
+        }
 		BlockIndex index = new BlockIndex(x, y, z);
 		if (visitedBlocks.add(index)) {
 			if ((x - xCoord) * (x - xCoord) + (z - zCoord) * (z - zCoord) > 64 * 64) {
