@@ -65,7 +65,7 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 					StatementParameterItemStack stackParam = (StatementParameterItemStack) parameters[0];
 					ItemStack item = stackParam.getItemStack();
 
-					if (item.getItem() instanceof ItemMapLocation) {
+					if (item != null && item.getItem() instanceof ItemMapLocation) {
 						BlockIndex index = ItemMapLocation.getBlockIndex(item);
 
 						if (index != null) {
