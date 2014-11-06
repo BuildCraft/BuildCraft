@@ -121,7 +121,7 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 					continue;
 				}
 				if (doRemove) {
-					int stackSize = battery.useEnergy(1, stack.stackSize, false);
+					int stackSize = (int) Math.floor(battery.useEnergy(10, stack.stackSize * 10, false) / 10);
 					
 					return inventory.decrStackSize(i, stackSize);
 				} else {
