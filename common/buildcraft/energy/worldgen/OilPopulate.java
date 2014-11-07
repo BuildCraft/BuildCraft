@@ -46,17 +46,11 @@ public final class OilPopulate {
 	public final Set<Integer> excludedBiomes = new HashSet<Integer>();
 
 	private enum GenType {
-
 		LARGE, MEDIUM, LAKE, NONE
 	};
 
 	private OilPopulate() {
-//		BuildCraftCore.debugMode = true;
-		surfaceDepositBiomes.add(BiomeGenBase.desert.biomeID);
-		surfaceDepositBiomes.add(BiomeGenBase.taiga.biomeID);
-
-		excludedBiomes.add(BiomeGenBase.sky.biomeID);
-		excludedBiomes.add(BiomeGenBase.hell.biomeID);
+//		BuildCraftCore.debugWorldgen = true;
 	}
 
 	@SubscribeEvent
@@ -80,15 +74,15 @@ public final class OilPopulate {
 		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
 
 		// Do not generate oil in the End or Nether
-		if (BuildCraftEnergy.excludeOilBiomeIDs.contains(biome.biomeID)) {
+		if (excludedBiomes.contains(biome.biomeID)) {
 			return;
 		}
 
-		boolean oilBiome = BuildCraftEnergy.oilBiomeIDs.contains(biome.biomeID);
+		boolean oilBiome = surfaceDepositBiomes.contains(biome.biomeID);
 
 		double bonus = oilBiome ? 3.0 : 1.0;
 		bonus *= BuildCraftEnergy.oilWellScalar;
-		if (BuildCraftEnergy.excessiveOilBiomeIDs.contains(biome.biomeID)) {
+		if (excessiveBiomes.contains(biome.biomeID)) {
 			bonus *= 30.0;
 		} else if (BuildCraftCore.debugWorldgen) {
 			bonus *= 20.0;

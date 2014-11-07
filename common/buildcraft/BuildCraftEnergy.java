@@ -104,9 +104,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 	public static boolean canOilBurn;
 	public static double oilWellScalar = 1.0;
-	public static Set<Integer> oilBiomeIDs = new HashSet<Integer>();
-	public static Set<Integer> excessiveOilBiomeIDs = new HashSet<Integer>();
-	public static Set<Integer> excludeOilBiomeIDs = new HashSet<Integer>();
 	public static TreeMap<BlockIndex, Integer> saturationStored = new TreeMap<BlockIndex, Integer>();
 	public static ITriggerExternal triggerBlueEngineHeat = new TriggerEngineHeat(EnergyStage.BLUE);
 	public static ITriggerExternal triggerGreenEngineHeat = new TriggerEngineHeat(EnergyStage.GREEN);
@@ -126,21 +123,22 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		oilWellScalar = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "oilWellGenerationRate", 1.0, "Probability of oil well generation").getDouble(1.0);
 
 		setBiomeList(
-				oilBiomeIDs,
+				OilPopulate.INSTANCE.surfaceDepositBiomes,
 				BuildCraftCore.mainConfiguration
 						.get(Configuration.CATEGORY_GENERAL, "oil.increasedBiomeIDs",
 								new String[] {BiomeDictionary.Type.SANDY.toString(), BiomeGenBase.taiga.biomeName},
 								"IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have increased oil generation rates."));
 
 		setBiomeList(
-				excessiveOilBiomeIDs,
+				OilPopulate.INSTANCE.excessiveBiomes,
 				BuildCraftCore.mainConfiguration
 				.get(Configuration.CATEGORY_GENERAL,
 								"oil.excessiveBiomeIDs",
 								new String[] {},
 								"IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have GREATLY increased oil generation rates."));
 
-		setBiomeList(excludeOilBiomeIDs, BuildCraftCore.mainConfiguration
+		setBiomeList(OilPopulate.INSTANCE.excludedBiomes,
+                BuildCraftCore.mainConfiguration
 				.get(Configuration.CATEGORY_GENERAL, "oil.excludeBiomeIDs",
 						new String[] {BiomeGenBase.sky.biomeName, BiomeGenBase.hell.biomeName},
 						"IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that are excluded from generating oil."));
