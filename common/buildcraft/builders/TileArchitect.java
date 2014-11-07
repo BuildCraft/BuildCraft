@@ -218,7 +218,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	private void initializeComputing() {
-		if (getWorld().isRemote) {
+		if (getWorldObj().isRemote) {
 			return;
 		}
 

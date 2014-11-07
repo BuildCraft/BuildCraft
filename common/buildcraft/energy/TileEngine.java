@@ -29,7 +29,7 @@ import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.energy.gui.ContainerEngine;
 
-public abstract class TileEngine extends TileBuildCraft implements IPowerReceptor, IPowerEmitter,
+public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter,
 		IPipeConnection, IEnergyHandler {
 	// Index corresponds to metadata
 	public static final ResourceLocation[] BASE_TEXTURES = new ResourceLocation[]{
@@ -80,7 +80,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 	protected int progressPart = 0;
 	protected boolean lastPower = false;
-	protected PowerHandler powerHandler;
 
 	private boolean checkOrientation = false;
 	private TileBuffer[] tileCache;
@@ -89,14 +88,11 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 	private boolean isPumping = false; // Used for SMP synch
 
 	public TileEngine() {
-		powerHandler = new PowerHandler(this, Type.ENGINE);
-		powerHandler.configurePowerPerdition(1, 100);
 	}
 
 	@Override
 	public void initialize() {
 		if (!worldObj.isRemote) {
-			powerHandler.configure(minEnergyReceived() / 10, maxEnergyReceived() / 10, 1, getMaxEnergy() / 10);
 			checkRedstonePower();
 		}
 	}
@@ -456,16 +452,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerRecepto
 
 	/* STATE INFORMATION */
 	public abstract boolean isBurning();
-
-	@Override
-	public PowerReceiver getPowerReceiver(ForgeDirection side) {
-		return powerHandler.getPowerReceiver();
-	}
-
-	@Override
-	public void doWork(PowerHandler workProvider) {
-		
-	}
 
 	public void addEnergy(int addition) {
 		energy += addition;

@@ -411,7 +411,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 				}
 			}
 			if (dropBlueprint) {
-				InvUtils.dropItems(getWorld(), getStackInSlot(0), xCoord, yCoord, zCoord);
+				InvUtils.dropItems(getWorldObj(), getStackInSlot(0), xCoord, yCoord, zCoord);
 			}
 
 			setInventorySlotContents(0, null);
@@ -586,7 +586,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 		iterateBpt(false);
 
-		if (getWorld().getWorldInfo().getGameType() == GameType.CREATIVE) {
+		if (getWorldObj().getWorldInfo().getGameType() == GameType.CREATIVE) {
 			build();
 		} else {
 			if (getBattery().getEnergyStored() > POWER_ACTIVATION) {

@@ -53,7 +53,7 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 			double minDistance = Double.MAX_VALUE;
 
 			for (TileConstructionMarker marker : TileConstructionMarker.currentMarkers) {
-				if (marker.getWorld() == robot.worldObj && marker.needsToBuild()) {
+				if (marker.getWorldObj() == robot.worldObj && marker.needsToBuild()) {
 					double dx = robot.posX - marker.xCoord;
 					double dy = robot.posY - marker.yCoord;
 					double dz = robot.posZ - marker.zCoord;

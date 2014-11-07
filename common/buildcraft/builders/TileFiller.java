@@ -78,7 +78,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 
 		if (currentPattern != null && currentTemplate == null) {
 			currentTemplate = currentPattern
-					.getTemplateBuilder(box, getWorld());
+					.getTemplateBuilder(box, getWorldObj());
 			context = currentTemplate.getContext();
 		}
 
@@ -121,7 +121,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 		}
 
 		if (currentPattern != null && currentTemplate == null) {
-			currentTemplate = currentPattern.getTemplateBuilder(box, getWorld());
+			currentTemplate = currentPattern.getTemplateBuilder(box, getWorldObj());
 			context = currentTemplate.getContext();
 		}
 

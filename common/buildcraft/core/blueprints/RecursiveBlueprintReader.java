@@ -48,7 +48,7 @@ public class RecursiveBlueprintReader {
 		ItemStack stack = architect.getStackInSlot(0);
 
 		if (stack != null && stack.getItem() instanceof ItemBlueprint && architect.box.isInitialized()) {
-			blockScanner = new BlockScanner(architect.box, architect.getWorld(), SCANNER_ITERATION);
+			blockScanner = new BlockScanner(architect.box, architect.getWorldObj(), SCANNER_ITERATION);
 
 			if (stack.getItem() instanceof ItemBlueprintStandard) {
 				writingBlueprint = new Blueprint(architect.box.sizeX(), architect.box.sizeY(), architect.box.sizeZ());
@@ -56,7 +56,7 @@ public class RecursiveBlueprintReader {
 				writingBlueprint = new Template(architect.box.sizeX(), architect.box.sizeY(), architect.box.sizeZ());
 			}
 
-			writingContext = writingBlueprint.getContext(architect.getWorld(), architect.box);
+			writingContext = writingBlueprint.getContext(architect.getWorldObj(), architect.box);
 			writingContext.readConfiguration = architect.readConfiguration;
 
 			writingBlueprint.id.name = architect.name;
@@ -74,7 +74,7 @@ public class RecursiveBlueprintReader {
 		architect = iArchitect;
 
 		if (architect.box.isInitialized()) {
-			blockScanner = new BlockScanner(architect.box, architect.getWorld(), SCANNER_ITERATION);
+			blockScanner = new BlockScanner(architect.box, architect.getWorldObj(), SCANNER_ITERATION);
 
 			if (parentBlueprint instanceof Blueprint) {
 				writingBlueprint = new Blueprint(architect.box.sizeX(), architect.box.sizeY(), architect.box.sizeZ());
@@ -82,7 +82,7 @@ public class RecursiveBlueprintReader {
 				writingBlueprint = new Template(architect.box.sizeX(), architect.box.sizeY(), architect.box.sizeZ());
 			}
 
-			writingContext = writingBlueprint.getContext(architect.getWorld(), architect.box);
+			writingContext = writingBlueprint.getContext(architect.getWorldObj(), architect.box);
 			writingContext.readConfiguration = architect.readConfiguration;
 
 			writingBlueprint.id.name = architect.name;
@@ -99,7 +99,7 @@ public class RecursiveBlueprintReader {
 		} else if (currentSubReader == null && subIndex < architect.subBlueprints.size()) {
 			BlockIndex subBlock = architect.subBlueprints.get(subIndex);
 
-			TileEntity subTile = architect.getWorld().getTileEntity(subBlock.x, subBlock.y,
+			TileEntity subTile = architect.getWorldObj().getTileEntity(subBlock.x, subBlock.y,
 					subBlock.z);
 
 			if (subTile instanceof TileArchitect) {
@@ -116,7 +116,7 @@ public class RecursiveBlueprintReader {
 				} else if (subTile instanceof TileBuilder) {
 					TileBuilder builder = (TileBuilder) subTile;
 					blueprint = ItemBlueprint.loadBlueprint(builder.getStackInSlot(0));
-					orientation = ForgeDirection.values()[architect.getWorld().getBlockMetadata(subBlock.x, subBlock.y,
+					orientation = ForgeDirection.values()[architect.getWorldObj().getBlockMetadata(subBlock.x, subBlock.y,
 							subBlock.z)].getOpposite();
 				}
 
@@ -143,7 +143,7 @@ public class RecursiveBlueprintReader {
 								currentSubReader.architect.yCoord - architect.getBox().yMin,
 								currentSubReader.architect.zCoord - architect.getBox().zMin,
 								ForgeDirection.values()[
-								currentSubReader.architect.getWorld().getBlockMetadata(
+								currentSubReader.architect.getWorldObj().getBlockMetadata(
 										currentSubReader.architect.xCoord,
 										currentSubReader.architect.yCoord,
 										currentSubReader.architect.zCoord)].getOpposite());
@@ -171,7 +171,7 @@ public class RecursiveBlueprintReader {
 
 				writingBlueprint.translateToBlueprint(transform);
 
-				ForgeDirection o = ForgeDirection.values()[architect.getWorld().getBlockMetadata(
+				ForgeDirection o = ForgeDirection.values()[architect.getWorldObj().getBlockMetadata(
 						architect.xCoord, architect.yCoord, architect.zCoord)].getOpposite();
 
 				writingBlueprint.rotate = architect.readConfiguration.rotate;

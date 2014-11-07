@@ -46,7 +46,7 @@ public class TileEngineCreative extends TileEngine {
 
 	@Override
 	public boolean onBlockActivated(EntityPlayer player, ForgeDirection side) {
-		if (!getWorld().isRemote) {
+		if (!getWorldObj().isRemote) {
 			Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
 
 			if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, xCoord, yCoord, zCoord)) {

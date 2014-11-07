@@ -192,11 +192,6 @@ public class TileEnergyEmitter extends TileBuildCraft {
 	}
 
 	@Override
-	public World getWorld() {
-		return worldObj;
-	}
-
-	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
 		double xMin = xCoord;
 		double yMin = yCoord;

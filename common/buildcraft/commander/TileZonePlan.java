@@ -150,7 +150,7 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 
 				int color = 0;
 
-				for (int y = getWorld().getHeight() - 1; y >= 0; --y) {
+				for (int y = getWorldObj().getHeight() - 1; y >= 0; --y) {
 					if (!chunk.getBlock(cx, y, cz).isAir(worldObj, x, y, z)) {
 						color = chunk.getBlock(cx, y, cz).getMapColor(0).colorIndex;
 						break;

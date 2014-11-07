@@ -142,7 +142,7 @@ public class TilePathMarker extends TileMarker {
 			tryingToConnect = false;
 
 			sendNetworkUpdate();
-			getWorld().markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord,
+			getWorldObj().markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord,
 					xCoord, yCoord, zCoord);
 		}
 	}
