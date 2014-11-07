@@ -42,11 +42,15 @@ public class FacadeItemRenderer implements IItemRenderer {
 		FacadeType type = ((IFacadeItem) item.getItem()).getFacadeType(item);
 		FacadeState[] states = ItemFacade.getFacadeStates(item);
 		FacadeState activeState = null;
-		if (type == FacadeType.Basic) {
-			activeState = states[0];
-		} else if (type == FacadeType.Phased) {
-			activeState = states[renderState % states.length];
-		}
+        
+        if (states.length > 0) {
+            // TODO: Figure out why NEI causes states[] to be of length 0
+            if (type == FacadeType.Basic) {
+                activeState = states[0];
+            } else if (type == FacadeType.Phased) {
+                activeState = states[renderState % states.length];
+            }
+        }
 		Block block = activeState != null ? activeState.block : null;
 		int decodedMeta = activeState != null ? activeState.metadata : 0;
 
