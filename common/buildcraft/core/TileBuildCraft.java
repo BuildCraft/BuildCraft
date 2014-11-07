@@ -165,13 +165,10 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 		}
 	}
 
-	public World getWorld() {
-		return worldObj;
-	}
 
 	@Override
 	public int hashCode() {
-		return ((xCoord * 37 + yCoord) * 37 + zCoord) * 37 + worldObj.provider.dimensionId * 37;
+		return ((xCoord * 37 + yCoord) * 37 + zCoord);
 	}
 
 	@Override
