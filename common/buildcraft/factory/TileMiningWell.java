@@ -10,11 +10,14 @@ package buildcraft.factory;
 
 import java.util.List;
 
+import buildcraft.core.proxy.CoreProxy;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.tiles.IHasWork;
@@ -63,6 +66,15 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 			isDigging = false;
 			return;
 		}
+
+        BreakEvent breakEvent = new BreakEvent(xCoord, depth, zCoord, worldObj, world.getBlock(xCoord, depth, zCoord),
+                world.getBlockMetadata(xCoord, depth, zCoord), CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world).get());
+        MinecraftForge.EVENT_BUS.post(breakEvent);
+
+        if (breakEvent.isCanceled()) {
+            isDigging = false;
+            return;
+        }
 
 		boolean wasAir = world.isAirBlock(xCoord, depth, zCoord);
 

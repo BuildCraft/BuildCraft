@@ -28,6 +28,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
@@ -50,6 +51,7 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
+import net.minecraftforge.event.world.BlockEvent;
 
 public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory {
 
@@ -172,10 +174,10 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		} else if (stage == Stage.IDLE) {
 			dig();
 		} else if (stage == Stage.DIGGING) {
-			int energyToUse = 20 + Math.round(getBattery().getEnergyStored() / 500);
+			int energyToUse = 20 + (int) Math.ceil(getBattery().getEnergyStored() / 500);
 
 			if (this.consumeEnergy(energyToUse)) {
-				speed = 0.1 + energyToUse / 200F;
+				speed = 0.1 + energyToUse / 2000F;
 				moveHead(speed);
 			}
 		}
@@ -406,8 +408,12 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 		Block block = worldObj.getBlock(i, j, k);
 		int meta = worldObj.getBlockMetadata(i, j, k);
-		
-		if (isQuarriableBlock(i, j, k)) {
+
+        BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(i, j, k, worldObj, block, meta,
+                CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj).get());
+        MinecraftForge.EVENT_BUS.post(breakEvent);
+
+        if (!breakEvent.isCanceled() && isQuarriableBlock(i, j, k)) {
 			// Share this with mining well!
 
 			List<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) worldObj, i, j, k);
