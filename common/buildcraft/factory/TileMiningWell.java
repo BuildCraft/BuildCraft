@@ -10,7 +10,6 @@ package buildcraft.factory;
 
 import java.util.List;
 
-import buildcraft.core.proxy.CoreProxy;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -25,6 +24,7 @@ import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
 

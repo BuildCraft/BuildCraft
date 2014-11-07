@@ -30,6 +30,7 @@ import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.world.BlockEvent;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BuildCraftAPI;
@@ -51,7 +52,6 @@ import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
-import net.minecraftforge.event.world.BlockEvent;
 
 public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory {
 

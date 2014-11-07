@@ -19,7 +19,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftCore;
@@ -168,7 +167,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 
 	@Override
 	public int hashCode() {
-		return ((xCoord * 37 + yCoord) * 37 + zCoord);
+		return (xCoord * 37 + yCoord) * 37 + zCoord;
 	}
 
 	@Override

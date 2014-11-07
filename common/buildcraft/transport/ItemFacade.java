@@ -250,6 +250,19 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 				
 				ItemStack stack = new ItemStack(item, 1, i);
 
+                // Check if all of these functions work correctly.
+                // If an exception is filed, or null is returned, this generally means that
+                // this block is invalid.
+                // We do not use getSubBlocks() to permit for rotated combinations of a given facade.
+                // TODO: Rewrite to use getSubBlocks
+                try {
+                    if (stack.getUnlocalizedName() == null || stack.getDisplayName() == null) {
+                        continue;
+                    }
+                } catch(Throwable t) {
+                    continue;
+                }
+
 				if (!Strings.isNullOrEmpty(stack.getUnlocalizedName())
 						&& names.add(stack.getUnlocalizedName())) {
 					addFacade("buildcraft:facade{" + Block.blockRegistry.getNameForObject(block) + "#"

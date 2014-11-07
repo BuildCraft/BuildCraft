@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.world.World;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.SafeTimeTracker;

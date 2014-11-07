@@ -20,7 +20,6 @@ import buildcraft.api.power.IPowerEmitter;
 import buildcraft.api.power.IPowerReceptor;
 import buildcraft.api.power.PowerHandler;
 import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
