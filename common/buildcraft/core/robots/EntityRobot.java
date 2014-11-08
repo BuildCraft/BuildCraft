@@ -657,7 +657,7 @@ public class EntityRobot extends EntityRobotBase implements
 	public boolean isItemValidForSlot(int var1, ItemStack var2) {
 		return inv[var1] == null
 				|| (inv[var1].isItemEqual(var2) && inv[var1].isStackable() && inv[var1].stackSize
-						+ var2.stackSize <= inv[var1].getItem().getItemStackLimit());
+						+ var2.stackSize <= inv[var1].getItem().getItemStackLimit(inv[var1]));
 	}
 
 	@Override
