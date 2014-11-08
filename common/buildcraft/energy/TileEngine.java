@@ -8,6 +8,7 @@
  */
 package buildcraft.energy;
 
+import buildcraft.api.power.IEngine;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,7 +25,7 @@ import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.energy.gui.ContainerEngine;
 
-public abstract class TileEngine extends TileBuildCraft implements IPipeConnection, IEnergyHandler {
+public abstract class TileEngine extends TileBuildCraft implements IPipeConnection, IEnergyHandler, IEngine {
 	// Index corresponds to metadata
 	public static final ResourceLocation[] BASE_TEXTURES = new ResourceLocation[]{
 			new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_wood.png"),
@@ -258,14 +259,20 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 	private int getPowerToExtract() {
 		TileEntity tile = getTileBuffer(orientation).getTile();
 
-		if (tile instanceof IEnergyHandler) {
+        if (tile instanceof IEngine) {
+            IEngine engine = (IEngine) tile;
+
+            int maxEnergy = engine.receiveEnergyFromEngine(
+                    orientation.getOpposite(),
+                    this.energy, true);
+            return extractEnergy(maxEnergy, false);
+        } else if (tile instanceof IEnergyHandler) {
 			IEnergyHandler handler = (IEnergyHandler) tile;
 
-			int minEnergy = 0;
 			int maxEnergy = handler.receiveEnergy(
 					orientation.getOpposite(),
-					Math.round(this.energy), true);
-			return extractEnergy(minEnergy, maxEnergy, false);
+					this.energy, true);
+			return extractEnergy(maxEnergy, false);
 		} else {
 			return 0;
 		}
@@ -275,22 +282,28 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 		TileEntity tile = getTileBuffer(orientation).getTile();
 		if (isPoweredTile(tile, orientation)) {
 			int extracted = getPowerToExtract();
-			if (extracted > 0) {
-				setPumping(true);
-			} else {
+			if (extracted <= 0) {
 				setPumping(false);
+                return;
 			}
 
-			if (tile instanceof IEnergyHandler) {
-				IEnergyHandler handler = (IEnergyHandler) tile;
-				if (extracted > 0) {
-					int neededRF = handler.receiveEnergy(
-							orientation.getOpposite(),
-							(int) Math.round(extracted), false);
+            setPumping(true);
 
-					extractEnergy(0, neededRF, true);
-				}
-			}
+			if (tile instanceof IEngine) {
+                IEngine engine = (IEngine) tile;
+                int neededRF = engine.receiveEnergyFromEngine(
+                        orientation.getOpposite(),
+                        extracted, false);
+
+                extractEnergy(neededRF, true);
+            } else if (tile instanceof IEnergyHandler) {
+                IEnergyHandler handler = (IEnergyHandler) tile;
+                int neededRF = handler.receiveEnergy(
+                        orientation.getOpposite(),
+                        extracted, false);
+
+                extractEnergy(neededRF, true);
+            }
 		}
 	}
 
@@ -443,12 +456,8 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 		}
 	}
 
-	public int extractEnergy(int min, int energyMax, boolean doExtract) {
+	public int extractEnergy(int energyMax, boolean doExtract) {
 		int max = Math.min(energyMax, maxEnergyExtracted());
-		
-		if (max < min || energy < min) {
-			return 0;
-		}
 
 		int extracted;
 
@@ -471,10 +480,12 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 
 	public boolean isPoweredTile(TileEntity tile, ForgeDirection side) {
 		if (tile == null) {
-			return false;
+            return false;
+        } else if (tile instanceof IEngine) {
+            return ((IEngine) tile).canReceiveFromEngine(side.getOpposite());
 		} else if (tile instanceof IEnergyHandler) {
-			return ((IEnergyHandler) tile).canConnectEnergy(side.getOpposite());
-		} else {
+            return ((IEnergyHandler) tile).canConnectEnergy(side.getOpposite());
+        } else {
 			return false;
 		}
 	}
@@ -549,4 +560,24 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 	public boolean canConnectEnergy(ForgeDirection from) {
 		return from == orientation;
 	}
+
+    // IEngine
+
+    @Override
+    public boolean canReceiveFromEngine(ForgeDirection side) {
+        return side == orientation.getOpposite();
+    }
+
+    @Override
+    public int receiveEnergyFromEngine(ForgeDirection side, int amount, boolean simulate) {
+        if (canReceiveFromEngine(side)) {
+            int targetEnergy = Math.min(this.getMaxEnergy() - this.energy, amount);
+            if (!simulate) {
+                energy += targetEnergy;
+            }
+            return targetEnergy;
+        } else {
+            return 0;
+        }
+    }
 }

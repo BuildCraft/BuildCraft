@@ -18,7 +18,7 @@ public interface IFlexibleCrafter {
 
 	ItemStack getCraftingItemStack(int slotid);
 
-	ItemStack decrCraftingItemgStack(int slotid, int val);
+	ItemStack decrCraftingItemStack(int slotid, int val);
 
 	FluidStack getCraftingFluidStack(int tankid);
 
