@@ -37,9 +37,6 @@ import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipePluggable;
@@ -63,7 +60,7 @@ import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.utils.RobotStationState;
 
-public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFluidHandler,
+public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		IPipeTile, ITileBufferHolder, IEnergyHandler, IDropControlInventory,
 		ISyncedTile, ISolidSideTile, IGuiReturnHandler {
 
@@ -1114,22 +1111,6 @@ public class TileGenericPipe extends TileEntity implements IPowerReceptor, IFlui
 	public void readGuiData(ByteBuf data, EntityPlayer sender) {
 		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IGuiReturnHandler) {
 			((IGuiReturnHandler) pipe).readGuiData(data, sender);
-		}
-	}
-
-	@Override
-	public PowerReceiver getPowerReceiver(ForgeDirection side) {
-		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor) {
-			return ((IPowerReceptor) pipe).getPowerReceiver(null);
-		} else {
-			return null;
-		}
-	}
-
-	@Override
-	public void doWork(PowerHandler workProvider) {
-		if (BlockGenericPipe.isValid(pipe) && pipe instanceof IPowerReceptor) {
-			((IPowerReceptor) pipe).doWork(workProvider);
 		}
 	}
 

@@ -20,10 +20,6 @@ import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.power.IPowerEmitter;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.transport.network.PacketPowerUpdate;
@@ -93,24 +89,9 @@ public class PipeTransportPower extends PipeTransport {
 			return true;
 		}
 
-		if (tile instanceof IPowerReceptor) {
-			IPowerReceptor receptor = (IPowerReceptor) tile;
-			PowerReceiver receiver = receptor.getPowerReceiver(side.getOpposite());
-			if (receiver != null && receiver.getType().canReceiveFromPipes()) {
-				return true;
-			}
-		}
-
 		if (tile instanceof IEnergyConnection) {
 			IEnergyConnection handler = (IEnergyConnection) tile;
 			if (handler != null && handler.canConnectEnergy(side.getOpposite())) {
-				return true;
-			}
-		}
-
-		if (container.pipe instanceof PipePowerWood && tile instanceof IPowerEmitter) {
-			IPowerEmitter emitter = (IPowerEmitter) tile;
-			if (emitter.canEmitPowerFrom(side.getOpposite())) {
 				return true;
 			}
 		}
@@ -212,16 +193,6 @@ public class PipeTransportPower extends PipeTransport {
 									powerConsumed, false);
 							tilePowered = true;
 						}
-					} else {
-						PowerReceiver prov = getReceiverOnSide(ForgeDirection.VALID_DIRECTIONS[out]);
-
-						if (prov != null) {
-							// Transmit power to the legacy power framework
-
-							powerConsumed = (int) Math.ceil(prov.receiveEnergy(Type.PIPE, powerConsumed / 10.0,
-									ForgeDirection.VALID_DIRECTIONS[out].getOpposite()) * 10);
-							tilePowered = true;
-						}
 					}
 
 					if (!tilePowered) {
@@ -289,15 +260,6 @@ public class PipeTransportPower extends PipeTransport {
 						requestEnergy(dir, request);
 					}
 				}
-			} else {
-				PowerReceiver prov = getReceiverOnSide(dir);
-				if (prov != null) {
-					int request = (int) Math.floor(prov.powerRequest() * 10);
-
-					if (request > 0) {
-						requestEnergy(dir, request);
-					}
-				}
 			}
 		}
 
@@ -349,22 +311,6 @@ public class PipeTransportPower extends PipeTransport {
 			packet.overload = isOverloaded();
 			BuildCraftTransport.instance.sendToPlayers(packet, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 		}
-	}
-
-	private PowerReceiver getReceiverOnSide(ForgeDirection side) {
-		TileEntity tile = tiles[side.ordinal()];
-		if (!(tile instanceof IPowerReceptor)) {
-			return null;
-		}
-		IPowerReceptor receptor = (IPowerReceptor) tile;
-		PowerReceiver receiver = receptor.getPowerReceiver(side.getOpposite());
-		if (receiver == null) {
-			return null;
-		}
-		if (!receiver.getType().canReceiveFromPipes()) {
-			return null;
-		}
-		return receiver;
 	}
 
 	public boolean isOverloaded() {

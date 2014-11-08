@@ -18,12 +18,6 @@ import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.power.IPowerEmitter;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.PerditionCalculator;
-import buildcraft.api.power.PowerHandler.PowerReceiver;
-import buildcraft.api.power.PowerHandler.Type;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.RFBattery;
 import buildcraft.transport.IPipeTransportPowerHook;
@@ -31,7 +25,7 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 
-public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerReceptor, IPipeTransportPowerHook, IEnergyHandler {
+public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTransportPowerHook, IEnergyHandler {
 
 	public final boolean[] powerSources = new boolean[6];
 
@@ -41,16 +35,11 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 
 	private boolean full;
 	private int requestedEnergy, sources;
-	private PowerHandler powerHandler;
 
 	public PipePowerWood(Item item) {
 		super(new PipeTransportPower(), item);
 
 		battery = new RFBattery(320 * 50, 320, 0);
-
-		powerHandler = new PowerHandler(this, Type.PIPE);
-		powerHandler.configure(0, 500, 1, 1500);
-		powerHandler.setPerdition(new PerditionCalculator(PerditionCalculator.MIN_POWERLOSS));
 		transport.initFromPipe(getClass());
 	}
 
@@ -196,22 +185,9 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPowerRec
 	public boolean isPowerSource(TileEntity tile, ForgeDirection from) {
 		if (!transport.inputOpen(from)) {
 			return false;
-		} else if (tile instanceof IPowerEmitter && ((IPowerEmitter) tile).canEmitPowerFrom(from.getOpposite())) {
-			return true;
 		} else {
 			return tile instanceof IEnergyConnection && ((IEnergyConnection) tile).canConnectEnergy(from.getOpposite());
 		}
-	}
-
-	@Override
-	public PowerReceiver getPowerReceiver(ForgeDirection side) {
-		return powerHandler.getPowerReceiver();
-	}
-
-	@Override
-	public void doWork(PowerHandler workProvider) {
-		battery.addEnergy(0, (int) Math.round(this.powerHandler.getEnergyStored() * 10), true);
-		this.powerHandler.setEnergy(0.0);
 	}
 
 	@Override

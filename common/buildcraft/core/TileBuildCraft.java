@@ -22,7 +22,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftCore;
-import buildcraft.api.power.IPowerReceptor;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketPayload;
@@ -79,11 +78,6 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 		if (!init && !isInvalid()) {
 			initialize();
 			init = true;
-		}
-
-		if (this instanceof IPowerReceptor) {
-			IPowerReceptor receptor = (IPowerReceptor) this;
-			receptor.getPowerReceiver(null).update();
 		}
 	}
 

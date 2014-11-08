@@ -16,10 +16,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.api.core.NetworkData;
-import buildcraft.api.power.IPowerEmitter;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.PowerReceiver;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
@@ -28,8 +24,7 @@ import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.energy.gui.ContainerEngine;
 
-public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter,
-		IPipeConnection, IEnergyHandler {
+public abstract class TileEngine extends TileBuildCraft implements IPipeConnection, IEnergyHandler {
 	// Index corresponds to metadata
 	public static final ResourceLocation[] BASE_TEXTURES = new ResourceLocation[]{
 			new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_wood.png"),
@@ -271,12 +266,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 					orientation.getOpposite(),
 					Math.round(this.energy), true);
 			return extractEnergy(minEnergy, maxEnergy, false);
-		} else if (tile instanceof IPowerReceptor) {
-			PowerReceiver receptor = ((IPowerReceptor) tile)
-					.getPowerReceiver(orientation.getOpposite());
-
-			return extractEnergy((int) Math.floor(receptor.getMinEnergyReceived() * 10),
-					(int) Math.ceil(receptor.getMaxEnergyReceived() * 10), false);
 		} else {
 			return 0;
 		}
@@ -300,17 +289,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 							(int) Math.round(extracted), false);
 
 					extractEnergy(0, neededRF, true);
-				}
-			} else if (tile instanceof IPowerReceptor) {
-				PowerReceiver receptor = ((IPowerReceptor) tile)
-						.getPowerReceiver(orientation.getOpposite());
-
-				if (extracted > 0) {
-					double neededMJ = receptor.receiveEnergy(
-							PowerHandler.Type.ENGINE, extracted / 10.0,
-							orientation.getOpposite());
-
-					extractEnergy((int) Math.floor(receptor.getMinEnergyReceived() * 10), (int) Math.ceil(neededMJ * 10), true);
 				}
 			}
 		}
@@ -496,8 +474,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 			return false;
 		} else if (tile instanceof IEnergyHandler) {
 			return ((IEnergyHandler) tile).canConnectEnergy(side.getOpposite());
-		} else if (tile instanceof IPowerReceptor) {
-			return ((IPowerReceptor) tile).getPowerReceiver(side.getOpposite()) != null;
 		} else {
 			return false;
 		}
@@ -530,11 +506,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 		} else {
 			return ConnectOverride.DEFAULT;
 		}
-	}
-
-	@Override
-	public boolean canEmitPowerFrom(ForgeDirection side) {
-		return side == orientation;
 	}
 
 	public void checkRedstonePower() {
