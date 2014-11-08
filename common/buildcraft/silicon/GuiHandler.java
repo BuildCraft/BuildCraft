@@ -8,18 +8,12 @@
  */
 package buildcraft.silicon;
 
+import buildcraft.silicon.gui.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import cpw.mods.fml.common.network.IGuiHandler;
-
-import buildcraft.silicon.gui.ContainerAdvancedCraftingTable;
-import buildcraft.silicon.gui.ContainerAssemblyTable;
-import buildcraft.silicon.gui.ContainerIntegrationTable;
-import buildcraft.silicon.gui.GuiAdvancedCraftingTable;
-import buildcraft.silicon.gui.GuiAssemblyTable;
-import buildcraft.silicon.gui.GuiIntegrationTable;
 
 public class GuiHandler implements IGuiHandler {
 
@@ -54,7 +48,14 @@ public class GuiHandler implements IGuiHandler {
 				return new GuiIntegrationTable(player.inventory, (TileIntegrationTable) tile);
 			}
 
-		default:
+        case 3:
+            if (!(tile instanceof TileChargingTable)) {
+                return null;
+            } else {
+                return new GuiChargingTable(player.inventory, (TileChargingTable) tile);
+            }
+
+        default:
 			return null;
 		}
 	}
@@ -89,6 +90,13 @@ public class GuiHandler implements IGuiHandler {
 			} else {
 				return new ContainerIntegrationTable(player.inventory, (TileIntegrationTable) tile);
 			}
+
+        case 3:
+            if (!(tile instanceof TileChargingTable)) {
+                return null;
+            } else {
+                return new ContainerChargingTable(player.inventory, (TileChargingTable) tile);
+            }
 
 		default:
 			return null;

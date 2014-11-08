@@ -228,7 +228,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements IFlexibl
 	}
 
 	@Override
-	public ItemStack decrCraftingItemgStack(int slotid, int val) {
+	public ItemStack decrCraftingItemStack(int slotid, int val) {
 		return decrStackSize(slotid + 3, val);
 	}
 

@@ -322,7 +322,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 	}
 
 	@Override
-	public ItemStack decrCraftingItemgStack(int slotid, int val) {
+	public ItemStack decrCraftingItemStack(int slotid, int val) {
 		return decrStackSize(slotid, val);
 	}
 

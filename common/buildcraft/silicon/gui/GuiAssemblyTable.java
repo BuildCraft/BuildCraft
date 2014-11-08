@@ -95,7 +95,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		super(new ContainerAssemblyTable(playerInventory, assemblyTable), assemblyTable, TEXTURE);
 
 		this.table = assemblyTable;
-		xSize = 175;
+		xSize = 176;
 		ySize = 207;
 
 		for (int j = 0; j < 2; ++j) {

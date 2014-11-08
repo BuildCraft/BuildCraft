@@ -3,9 +3,31 @@ package buildcraft.silicon;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.utils.StringUtils;
 import cofh.api.energy.IEnergyContainerItem;
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.item.ItemStack;
 
 public class TileChargingTable extends TileLaserTableBase implements IHasWork {
+    @Override
+    public boolean canUpdate() {
+        return !FMLCommonHandler.instance().getEffectiveSide().isClient();
+    }
+
+    @Override
+    public void updateEntity() { // WARNING: run only server-side, see canUpdate()
+        super.updateEntity();
+
+        if (getEnergy() > 0) {
+            if (getRequiredEnergy() > 0) {
+                ItemStack stack = this.getStackInSlot(0);
+                IEnergyContainerItem containerItem = (IEnergyContainerItem) stack.getItem();
+                addEnergy(0 - containerItem.receiveEnergy(stack, getEnergy(), false));
+                this.setInventorySlotContents(0, stack);
+            } else {
+                addEnergy(-10);
+            }
+        }
+    }
+
     @Override
     public int getRequiredEnergy() {
         ItemStack stack = this.getStackInSlot(0);

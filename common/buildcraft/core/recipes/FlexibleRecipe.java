@@ -190,7 +190,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 						removed = stack.copy();
 						removed.stackSize = expected;
 					} else {
-						removed = crafter.decrCraftingItemgStack(slotid, expected);
+						removed = crafter.decrCraftingItemStack(slotid, expected);
 					}
 
 					expected = 0;
@@ -198,7 +198,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 					if (preview) {
 						removed = stack.copy();
 					} else {
-						removed = crafter.decrCraftingItemgStack(slotid, stack.stackSize);
+						removed = crafter.decrCraftingItemStack(slotid, stack.stackSize);
 					}
 
 					expected -= removed.stackSize;

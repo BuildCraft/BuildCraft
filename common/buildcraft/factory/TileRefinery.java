@@ -406,7 +406,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	}
 
 	@Override
-	public ItemStack decrCraftingItemgStack(int slotid, int val) {
+	public ItemStack decrCraftingItemStack(int slotid, int val) {
 		return null;
 	}
 
