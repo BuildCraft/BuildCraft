@@ -378,7 +378,10 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	@Override
 	public FluidTankInfo[] getTankInfo(ForgeDirection direction) {
-		return tankManager.getTankInfo(direction);
+        if (direction == orientation) {
+            return null;
+        }
+        return tankManager.getTankInfo(direction);
 	}
 
 	@Override

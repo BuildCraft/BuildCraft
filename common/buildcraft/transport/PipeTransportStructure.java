@@ -29,8 +29,10 @@ public class PipeTransportStructure extends PipeTransport {
 			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportStructure)) {
 				return false;
 			}
+
+            return true;
 		}
 
-		return tile instanceof TileGenericPipe;
+        return false;
 	}
 }

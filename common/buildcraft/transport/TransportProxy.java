@@ -20,9 +20,8 @@ public class TransportProxy {
 	public static int pipeModel = -1;
 
 	public void registerTileEntities() {
-		GameRegistry.registerTileEntity(TileDummyGenericPipe.class, "net.minecraft.src.buildcraft.GenericPipe");
-		GameRegistry.registerTileEntity(TileDummyGenericPipe2.class, "net.minecraft.src.buildcraft.transport.TileGenericPipe");
-		GameRegistry.registerTileEntity(TileGenericPipe.class, "net.minecraft.src.buildcraft.transport.GenericPipe");
+        // The first name here is the current TE name; the remaining names are old names used for backwards compatibility
+		GameRegistry.registerTileEntityWithAlternatives(TileGenericPipe.class, "net.minecraft.src.buildcraft.transport.GenericPipe", "net.minecraft.src.buildcraft.GenericPipe", "net.minecraft.src.buildcraft.transport.TileGenericPipe");
 		GameRegistry.registerTileEntity(TileFilteredBuffer.class, "net.minecraft.src.buildcraft.transport.TileFilteredBuffer");
 	}
 
