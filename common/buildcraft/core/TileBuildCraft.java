@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -35,7 +36,8 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	private static Map<Class, TilePacketWrapper> updateWrappers = new HashMap<Class, TilePacketWrapper>();
 	@SuppressWarnings("rawtypes")
 	private static Map<Class, TilePacketWrapper> descriptionWrappers = new HashMap<Class, TilePacketWrapper>();
-	
+
+    protected TileBuffer[] cache;
 	protected HashSet<EntityPlayer> guiWatchers = new HashSet<EntityPlayer>();
 	
 	private final TilePacketWrapper descriptionPacket;
@@ -81,10 +83,17 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 		}
 	}
 
+    @Override
+    public void validate() {
+        super.validate();
+        cache = null;
+    }
+
 	@Override
 	public void invalidate() {
 		init = false;
 		super.invalidate();
+        cache = null;
 	}
 
 	public void initialize() {
@@ -98,6 +107,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	}
 
 	public void destroy() {
+        cache = null;
 	}
 
 	public void sendNetworkUpdate() {
@@ -219,4 +229,18 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	protected void setBattery(RFBattery battery) {
 		this.battery = battery;
 	}
+
+    public Block getBlock(ForgeDirection side) {
+        if (cache == null) {
+            cache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
+        }
+        return cache[side.ordinal()].getBlock();
+    }
+
+    public TileEntity getTile(ForgeDirection side) {
+        if (cache == null) {
+            cache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
+        }
+        return cache[side.ordinal()].getTile();
+    }
 }

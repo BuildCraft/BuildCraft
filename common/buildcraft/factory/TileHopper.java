@@ -24,7 +24,6 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 
 	private final SimpleInventory inventory = new SimpleInventory(4, "Hopper", 64);
 	private boolean isEmpty;
-	private TileEntity outputTile;
 
     @Override
     public void initialize() {
@@ -61,18 +60,7 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 			return;
 		}
 
-		if (outputTile == null || outputTile.isInvalid()) {
-			Block block = worldObj.getBlock(xCoord, yCoord - 1, zCoord);
-			outputTile = null;
-			
-			if (block.hasTileEntity(worldObj.getBlockMetadata(xCoord, yCoord - 1, zCoord))) {
-				outputTile = worldObj.getTileEntity(xCoord, yCoord - 1, zCoord);
-			}
-			
-			if (outputTile == null) {
-				return;
-			}
-		}
+		TileEntity outputTile = getTile(ForgeDirection.DOWN);
 
 		ITransactor transactor = Transactor.getTransactorFor(outputTile);
 		

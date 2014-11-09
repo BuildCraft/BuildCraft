@@ -77,7 +77,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 	protected boolean lastPower = false;
 
 	private boolean checkOrientation = false;
-	private TileBuffer[] tileCache;
 
 	@NetworkData
 	private boolean isPumping = false; // Used for SMP synch
@@ -211,7 +210,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 			if (!isOrientationValid()) {
 				switchOrientation(true);
 			} else {
-				TileEntity tile = getTileBuffer(orientation).getTile();
+				TileEntity tile = getTile(orientation);
 			}
 		}
 
@@ -219,7 +218,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 		getEnergyStage();
 		engineUpdate();
 
-		TileEntity tile = getTileBuffer(orientation).getTile();
+		TileEntity tile = getTile(orientation);
 
 		if (progressPart != 0) {
 			progress += getPistonSpeed();
@@ -257,7 +256,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 	}
 
 	private int getPowerToExtract() {
-		TileEntity tile = getTileBuffer(orientation).getTile();
+		TileEntity tile = getTile(orientation);
 
         if (tile instanceof IEngine) {
             IEngine engine = (IEngine) tile;
@@ -279,7 +278,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 	}
 
 	protected void sendPower() {
-		TileEntity tile = getTileBuffer(orientation).getTile();
+		TileEntity tile = getTile(orientation);
 		if (isPoweredTile(tile, orientation)) {
 			int extracted = getPowerToExtract();
 			if (extracted <= 0) {
@@ -339,7 +338,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 	}
 
 	public boolean isOrientationValid() {
-		TileEntity tile = getTileBuffer(orientation).getTile();
+		TileEntity tile = getTile(orientation);
 
 		return isPoweredTile(tile, orientation);
 	}
@@ -356,7 +355,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 		for (int i = orientation.ordinal() + 1; i <= orientation.ordinal() + 6; ++i) {
 			ForgeDirection o = ForgeDirection.VALID_DIRECTIONS[i % 6];
 
-			TileEntity tile = getTileBuffer(o).getTile();
+			TileEntity tile = getTile(o);
 
 			if ((!pipesOnly || tile instanceof IPipeTile) && isPoweredTile(tile, o)) {
 				orientation = o;
@@ -370,25 +369,15 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 		return false;
 	}
 
-	public TileBuffer getTileBuffer(ForgeDirection side) {
-		if (tileCache == null) {
-			tileCache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
-		}
-
-		return tileCache[side.ordinal()];
-	}
-
 	@Override
 	public void invalidate() {
 		super.invalidate();
-		tileCache = null;
 		checkOrientation = true;
 	}
 
 	@Override
 	public void validate() {
 		super.validate();
-		tileCache = null;
 		checkOrientation = true;
 	}
 
@@ -526,7 +515,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 	public void onNeighborUpdate() {
 		checkRedstonePower();
 		checkOrientation = true;
-		tileCache = null;
 	}
 	// RF support
 

@@ -56,7 +56,6 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 	private double tubeY = Double.NaN;
 	private int aimY = 0;
 
-	private TileBuffer[] tileBuffer = null;
 	private SafeTimeTracker timer = new SafeTimeTracker(REBUID_DELAY);
 	private int tick = Utils.RANDOM.nextInt();
 	private int numFluidBlocksFound = 0;
@@ -157,19 +156,11 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 	}
 
 	private void pushToConsumers() {
-		if (tileBuffer == null) {
-			tileBuffer = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
+		if (cache == null) {
+			cache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
 		}
 
-		FluidUtils.pushFluidToConsumers(tank, 400, tileBuffer);
-	}
-
-	private TileEntity getTile(ForgeDirection side) {
-		if (tileBuffer == null) {
-			tileBuffer = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
-		}
-
-		return tileBuffer[side.ordinal()].getTile();
+		FluidUtils.pushFluidToConsumers(tank, 400, cache);
 	}
 
 	private void createTube() {
@@ -429,13 +420,11 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 
 	@Override
 	public void validate() {
-		tileBuffer = null;
 		super.validate();
 	}
 
 	@Override
 	public void destroy() {
-		tileBuffer = null;
 		pumpLayerQueues.clear();
 		destroyTube();
 	}

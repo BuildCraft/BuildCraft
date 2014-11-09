@@ -122,7 +122,7 @@ public class TileEngineWood extends TileEngine {
 		if (progressPart == 2 && !hasSent) {
 			hasSent = true;
 			
-			TileEntity tile = getTileBuffer(orientation).getTile();
+			TileEntity tile = getTile(orientation);
 			
 			if (tile instanceof IPipeTile && ((IPipeTile) tile).getPipeType() != PipeType.POWER) {
 				super.sendPower();

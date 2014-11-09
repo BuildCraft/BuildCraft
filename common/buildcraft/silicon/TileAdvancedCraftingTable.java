@@ -63,7 +63,6 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	private boolean craftable;
 	private boolean justCrafted;
 	private IRecipe currentRecipe;
-	private TileBuffer[] cache;
 	private InventoryCraftResult craftResult;
 	private InternalInventoryCrafting internalInventoryCrafting;
 
@@ -220,12 +219,6 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	}
 
 	@Override
-	public void invalidate() {
-		super.invalidate();
-		cache = null;
-	}
-
-	@Override
 	public void updateEntity() {
 		super.updateEntity();
 
@@ -361,10 +354,6 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	}
 
 	private void searchNeighborsForIngredients() {
-		if (cache == null) {
-			cache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
-		}
-
 		for (IInvSlot slot : InventoryIterator.getIterable(craftingSlots, ForgeDirection.UP)) {
 			ItemStack ingred = slot.getStackInSlot();
 
@@ -376,7 +365,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 
 			if (InvUtils.countItems(invInput, ForgeDirection.UP, filter) < InvUtils.countItems(craftingSlots, ForgeDirection.UP, filter)) {
 				for (ForgeDirection side : SEARCH_SIDES) {
-					TileEntity tile = cache[side.ordinal()].getTile();
+					TileEntity tile = getTile(side);
 
 					if (tile instanceof IInventory) {
 						IInventory inv = InvUtils.getInventory((IInventory) tile);

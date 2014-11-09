@@ -131,7 +131,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	}
 
 	public static TileTank getTankBelow(TileTank tile) {
-		TileEntity below = tile.getWorldObj().getTileEntity(tile.xCoord, tile.yCoord - 1, tile.zCoord);
+		TileEntity below = tile.getTile(ForgeDirection.DOWN);
 		if (below instanceof TileTank) {
 			return (TileTank) below;
 		} else {
@@ -140,7 +140,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	}
 
 	public static TileTank getTankAbove(TileTank tile) {
-		TileEntity above = tile.getWorldObj().getTileEntity(tile.xCoord, tile.yCoord + 1, tile.zCoord);
+		TileEntity above = tile.getTile(ForgeDirection.UP);
 		if (above instanceof TileTank) {
 			return (TileTank) above;
 		} else {
