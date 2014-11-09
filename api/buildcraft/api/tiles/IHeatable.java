@@ -8,6 +8,11 @@
  */
 package buildcraft.api.tiles;
 
-public interface IHasWork {
-	boolean hasWork();
+public interface IHeatable {
+    double getMinHeatValue();
+    double getIdealHeatValue();
+    double getMaxHeatValue();
+
+    double getCurrentHeatValue();
+    double setHeatValue(double value);
 }
