@@ -86,10 +86,10 @@ this repository will have to be rejected.
 
 ### Depending on BuildCraft
 
-add the following to your build.gradle file
+Add the following to your build.gradle file:
 ```
 dependencies {
-    compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
+    compile 'com.mod-buildcraft:buildcraft:6.1.78:dev'
 }
 ```
-where `6.0.8` is the desired version of BuildCraft
+Where `6.1.7` is the desired version of BuildCraft.
