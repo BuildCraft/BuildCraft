@@ -25,7 +25,12 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	private final SimpleInventory inventory = new SimpleInventory(4, "Hopper", 64);
 	private boolean isEmpty;
 	private TileEntity outputTile;
-	
+
+    @Override
+    public void initialize() {
+        inventory.addListener(this);
+    }
+
 	@Override
 	public void readFromNBT(NBTTagCompound nbtTagCompound) {
 		super.readFromNBT(nbtTagCompound);
@@ -38,8 +43,7 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 		}
 
 		inventory.readFromNBT(p);
-		
-		refreshInventoryFlags();
+		inventory.markDirty();
 	}
 
 	@Override
@@ -90,7 +94,8 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 		}
 	}
 
-	private void refreshInventoryFlags() {
+    @Override
+	public void markDirty() {
 		isEmpty = true;
 		
 		for (int internalSlot = 0; internalSlot < inventory.getSizeInventory(); internalSlot++) {
@@ -118,21 +123,18 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	@Override
 	public ItemStack decrStackSize(int slotId, int count) {
 		ItemStack output = inventory.decrStackSize(slotId, count);
-		refreshInventoryFlags();
 		return output;
 	}
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slotId) {
 		ItemStack output = inventory.getStackInSlotOnClosing(slotId);
-		refreshInventoryFlags();
 		return output;
 	}
 
 	@Override
 	public void setInventorySlotContents(int slotId, ItemStack itemStack) {
 		inventory.setInventorySlotContents(slotId, itemStack);
-		refreshInventoryFlags();
 	}
 
 	@Override

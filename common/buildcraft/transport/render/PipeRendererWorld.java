@@ -97,7 +97,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 			fakeBlock.setColor(0xFFFFFF);
 		} else if (renderPass == 1) {
 			// Fix a bug in Minecraft 1.7.2-1.7.10
-			// Remove in 1.8
+			// TODO: Remove in 1.8
 			renderblocks.renderFaceXNeg(fakeBlock, x, y, z, PipeIconProvider.TYPE.Transparent.getIcon());
 		}
 
