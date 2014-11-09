@@ -26,7 +26,7 @@ public class PipeFluidsQuartz extends Pipe<PipeTransportFluids> {
 	public PipeFluidsQuartz(Item item) {
 	    super(new PipeTransportFluids(), item);
 
-	    transport.flowRate = 2 * BuildCraftTransport.pipeFluidsBaseFlowRate;
+        transport.initFromPipe(getClass());
 	    transport.travelDelay = 8;
 	}
 
