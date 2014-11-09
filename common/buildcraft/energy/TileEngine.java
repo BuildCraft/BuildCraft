@@ -9,6 +9,8 @@
 package buildcraft.energy;
 
 import buildcraft.api.power.IEngine;
+import buildcraft.api.tiles.IHeatable;
+import buildcraft.core.utils.MathUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,7 +27,7 @@ import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.energy.gui.ContainerEngine;
 
-public abstract class TileEngine extends TileBuildCraft implements IPipeConnection, IEnergyHandler, IEngine {
+public abstract class TileEngine extends TileBuildCraft implements IPipeConnection, IEnergyHandler, IEngine, IHeatable {
 	// Index corresponds to metadata
 	public static final ResourceLocation[] BASE_TEXTURES = new ResourceLocation[]{
 			new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_wood.png"),
@@ -55,7 +57,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 	public static final ResourceLocation TRUNK_YELLOW_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_yellow.png");
 	public static final ResourceLocation TRUNK_RED_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_red.png");
 
-	public enum EnergyStage {
+    public enum EnergyStage {
 		BLUE, GREEN, YELLOW, RED, OVERHEAT;
 		public static final EnergyStage[] VALUES = values();
 	}
@@ -150,20 +152,12 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 		return energyStage;
 	}
 
-	public void updateHeatLevel() {
+	public void updateHeat() {
 		heat = (float) ((MAX_HEAT - MIN_HEAT) * getEnergyLevel()) + MIN_HEAT;
 	}
 
 	public float getHeatLevel() {
 		return (heat - MIN_HEAT) / (MAX_HEAT - MIN_HEAT);
-	}
-
-	public float getIdealHeatLevel() {
-		return heat / IDEAL_HEAT;
-	}
-
-	public float getHeat() {
-		return heat;
 	}
 
 	public float getPistonSpeed() {
@@ -214,7 +208,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 			}
 		}
 
-		updateHeatLevel();
+		updateHeat();
 		getEnergyStage();
 		engineUpdate();
 
@@ -567,5 +561,33 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
         } else {
             return 0;
         }
+    }
+
+    // IHeatable
+
+    @Override
+    public double getMinHeatValue() {
+        return MIN_HEAT;
+    }
+
+    @Override
+    public double getIdealHeatValue() {
+        return IDEAL_HEAT;
+    }
+
+    @Override
+    public double getMaxHeatValue() {
+        return MAX_HEAT;
+    }
+
+    @Override
+    public double getCurrentHeatValue() {
+        return heat;
+    }
+
+    @Override
+    public double setHeatValue(double value) {
+        heat = (float) MathUtils.clamp(value, MIN_HEAT, MAX_HEAT);
+        return heat;
     }
 }
