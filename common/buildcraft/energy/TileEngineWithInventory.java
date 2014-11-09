@@ -8,20 +8,24 @@
  */
 package buildcraft.energy;
 
+import buildcraft.core.utils.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.core.inventory.SimpleInventory;
 
-public abstract class TileEngineWithInventory extends TileEngine implements IInventory {
+public abstract class TileEngineWithInventory extends TileEngine implements IInventory, ISidedInventory {
 
 	private final SimpleInventory inv;
+    private final int[] SLOTS;
 
 	public TileEngineWithInventory(int invSize) {
 		inv = new SimpleInventory(invSize, "Engine", 64);
-	}
+        SLOTS = Utils.createSlotArray(0, invSize);
+    }
 
 	/* IINVENTORY IMPLEMENTATION */
 	@Override
@@ -88,4 +92,25 @@ public abstract class TileEngineWithInventory extends TileEngine implements IInv
 		super.writeToNBT(data);
 		inv.writeToNBT(data);
 	}
+
+    // ISidedInventory
+
+    @Override
+    public int[] getAccessibleSlotsFromSide(int side) {
+        if (side == orientation.ordinal()) {
+            return new int[0];
+        } else {
+            return SLOTS;
+        }
+    }
+
+    @Override
+    public boolean canInsertItem(int slot, ItemStack stack, int side) {
+        return side != orientation.ordinal();
+    }
+
+    @Override
+    public boolean canExtractItem(int slot, ItemStack stack, int side) {
+        return side != orientation.ordinal();
+    }
 }

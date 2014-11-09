@@ -355,13 +355,11 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	@Override
 	public boolean canDrain(ForgeDirection from, Fluid fluid) {
-		return true;
+		return from != orientation;
 	}
 
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-
-		// Handle coolant
 		if (BuildcraftFuelRegistry.coolant.getCoolant(resource.getFluid()) != null) {
 			return tankCoolant.fill(resource, doFill);
 		} else if (BuildcraftFuelRegistry.fuel.getFuel(resource.getFluid()) != null) {
@@ -373,7 +371,9 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	@Override
 	public boolean canFill(ForgeDirection from, Fluid fluid) {
-		return BuildcraftFuelRegistry.coolant.getCoolant(fluid) != null || BuildcraftFuelRegistry.fuel.getFuel(fluid) != null;
+		return from != orientation &&
+                (BuildcraftFuelRegistry.coolant.getCoolant(fluid) != null ||
+                        BuildcraftFuelRegistry.fuel.getFuel(fluid) != null);
 	}
 
 	@Override
