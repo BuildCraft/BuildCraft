@@ -24,9 +24,8 @@ import buildcraft.transport.PipeTransportFluids;
 public class PipeFluidsCobblestone extends Pipe<PipeTransportFluids> {
 
 	public PipeFluidsCobblestone(Item item) {
-	        super(new PipeTransportFluids(), item);
-
-		transport.flowRate = BuildCraftTransport.pipeFluidsBaseFlowRate;
+	    super(new PipeTransportFluids(), item);
+        transport.initFromPipe(getClass());
 		transport.travelDelay = 12;
 	}
 

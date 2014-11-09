@@ -28,7 +28,7 @@ public class PipeFluidsVoid extends Pipe<PipeTransportFluids> implements IPipeTr
 	public PipeFluidsVoid(Item item) {
 		super(new PipeTransportFluids(), item);
 
-		transport.flowRate = BuildCraftTransport.pipeFluidsBaseFlowRate;
+        transport.initFromPipe(getClass());
 		transport.travelDelay = 12;
 	}
 

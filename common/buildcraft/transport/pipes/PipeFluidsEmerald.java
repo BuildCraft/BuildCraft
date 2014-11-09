@@ -21,7 +21,7 @@ public class PipeFluidsEmerald extends PipeFluidsWood {
 		standardIconIndex = PipeIconProvider.TYPE.PipeFluidsEmerald_Standard.ordinal();
 		solidIconIndex = PipeIconProvider.TYPE.PipeAllEmerald_Solid.ordinal();
 
-		transport.flowRate = 4 * BuildCraftTransport.pipeFluidsBaseFlowRate;
+        transport.initFromPipe(getClass());
 		transport.travelDelay = 4;
 	}
 }

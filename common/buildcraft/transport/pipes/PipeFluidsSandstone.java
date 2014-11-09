@@ -31,7 +31,7 @@ public class PipeFluidsSandstone extends Pipe<PipeTransportFluids> implements IP
 	public PipeFluidsSandstone(Item item) {
 		super(new PipeTransportFluids(), item);
 
-		transport.flowRate = BuildCraftTransport.pipeFluidsBaseFlowRate;
+        transport.initFromPipe(getClass());
 		transport.travelDelay = 12;
 	}
 

@@ -51,8 +51,8 @@ public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 	public PipeFluidsIron(Item item) {
 		super(new PipeTransportFluids(), item);
 
-		transport.flowRate = BuildCraftTransport.pipeFluidsBaseFlowRate;
-		transport.travelDelay = 12;
+        transport.initFromPipe(getClass());
+		transport.travelDelay = 8;
 	}
 
 	@Override

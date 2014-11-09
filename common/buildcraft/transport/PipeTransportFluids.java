@@ -9,7 +9,10 @@
 package buildcraft.transport;
 
 import java.util.BitSet;
+import java.util.HashMap;
+import java.util.Map;
 
+import buildcraft.transport.pipes.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -27,6 +30,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.transport.network.PacketFluidUpdate;
 
 public class PipeTransportFluids extends PipeTransport implements IFluidHandler {
+    public static final Map<Class<? extends Pipe<?>>, Integer> fluidCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
 
 	public class PipeSection extends FluidTank {
 
@@ -153,7 +157,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	private final SafeTimeTracker tracker = new SafeTimeTracker(BuildCraftCore.updateFactor);
 	private int clientSyncCounter = 0;
 
-        public PipeTransportFluids() {
+    public PipeTransportFluids() {
 		for (ForgeDirection direction : orientations) {
 			internalTanks[direction.ordinal()] = new PipeSection(getCapacity());
 			if (direction != ForgeDirection.UNKNOWN) {
@@ -161,6 +165,10 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			}
 		}
 	}
+
+    public void initFromPipe(Class<? extends Pipe> pipeClass) {
+        flowRate = fluidCapacities.get(pipeClass);
+    }
 
 	@Override
 	public PipeType getPipeType() {
@@ -580,4 +588,16 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
 		return new FluidTankInfo[]{new FluidTankInfo(internalTanks[from.ordinal()])};
 	}
+
+    static {
+        fluidCapacities.put(PipeFluidsCobblestone.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+        fluidCapacities.put(PipeFluidsEmerald.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+        fluidCapacities.put(PipeFluidsGold.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+        fluidCapacities.put(PipeFluidsIron.class, 2 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+        fluidCapacities.put(PipeFluidsQuartz.class, 2 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+        fluidCapacities.put(PipeFluidsSandstone.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+        fluidCapacities.put(PipeFluidsStone.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+        fluidCapacities.put(PipeFluidsVoid.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+        fluidCapacities.put(PipeFluidsWood.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+    }
 }

@@ -26,7 +26,7 @@ public class PipeFluidsStone extends Pipe<PipeTransportFluids> {
 	public PipeFluidsStone(Item item) {
 	        super(new PipeTransportFluids(), item);
 
-		transport.flowRate = BuildCraftTransport.pipeFluidsBaseFlowRate;
+        transport.initFromPipe(getClass());
 		transport.travelDelay = 12;
 	}
 

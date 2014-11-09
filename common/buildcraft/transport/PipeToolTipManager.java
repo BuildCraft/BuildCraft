@@ -27,6 +27,10 @@ public final class PipeToolTipManager {
 		for (Map.Entry<Class<? extends Pipe<?>>, Integer> pipe : PipeTransportPower.powerCapacities.entrySet()) {
 			PipeToolTipManager.addToolTip(pipe.getKey(), String.format("%d RF/t", pipe.getValue()));
 		}
+
+        for (Map.Entry<Class<? extends Pipe<?>>, Integer> pipe : PipeTransportFluids.fluidCapacities.entrySet()) {
+            PipeToolTipManager.addToolTip(pipe.getKey(), String.format("%d mB/t", pipe.getValue()));
+        }
 	}
 
 	/**
@@ -47,8 +51,8 @@ public final class PipeToolTipManager {
 		   if (localized != null) {
 			   List<String> lines = StringUtils.newLineSplitter.splitToList(localized);
 			   tips.addAll(lines);
-			   }
-			}
+		   }
+	    }
 		String tip = toolTips.get(pipe);
 		if (tip != null) {
 			tips.add(tip);
