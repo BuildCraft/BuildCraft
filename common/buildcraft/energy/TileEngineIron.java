@@ -183,7 +183,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	}
 
 	@Override
-	public void updateHeatLevel() {
+	public void updateHeat() {
 	}
 
 	@Override
