@@ -311,6 +311,10 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	@Deprecated
 	public BptBuilderBase instanciateBluePrintBuilder(int x, int y, int z, ForgeDirection o) {
 		BlueprintBase bpt = instanciateBlueprint();
+        if (bpt == null) {
+            return null;
+        }
+        
 		bpt = bpt.adjustToWorld(worldObj, x, y, z, o);
 
 		if (getStackInSlot(0).getItem() instanceof ItemBlueprintStandard) {
