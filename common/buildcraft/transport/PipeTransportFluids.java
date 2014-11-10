@@ -12,7 +12,6 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 
-import buildcraft.transport.pipes.*;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -28,6 +27,15 @@ import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.transport.network.PacketFluidUpdate;
+import buildcraft.transport.pipes.PipeFluidsCobblestone;
+import buildcraft.transport.pipes.PipeFluidsEmerald;
+import buildcraft.transport.pipes.PipeFluidsGold;
+import buildcraft.transport.pipes.PipeFluidsIron;
+import buildcraft.transport.pipes.PipeFluidsQuartz;
+import buildcraft.transport.pipes.PipeFluidsSandstone;
+import buildcraft.transport.pipes.PipeFluidsStone;
+import buildcraft.transport.pipes.PipeFluidsVoid;
+import buildcraft.transport.pipes.PipeFluidsWood;
 
 public class PipeTransportFluids extends PipeTransport implements IFluidHandler {
     public static final Map<Class<? extends Pipe<?>>, Integer> fluidCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();

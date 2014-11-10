@@ -17,9 +17,6 @@ import net.minecraft.world.IWorldAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.core.TickHandlerCore;
-
 public class DimensionProperty implements IWorldAccess {
 
 	private LongHashMap chunkMapping = new LongHashMap();
@@ -53,28 +50,19 @@ public class DimensionProperty implements IWorldAccess {
 	}
 
 	private void load(Chunk chunk, ChunkProperty property) {
-		synchronized (TickHandlerCore.startSynchronousComputation) {
-			try {
-				if (Thread.currentThread() != BuildCraftCore.instance.serverThread) {
-					TickHandlerCore.startSynchronousComputation.wait();
-				}
+		synchronized (world) {
+            for (int x = 0; x < 16; ++x) {
+                for (int y = 0; y < worldHeight; ++y) {
+                    for (int z = 0; z < 16; ++z) {
+                        Block block = chunk.getBlock(x, y, z);
+                        int meta = chunk.getBlockMetadata(x, y, z);
 
-				for (int x = 0; x < 16; ++x) {
-					for (int y = 0; y < worldHeight; ++y) {
-						for (int z = 0; z < 16; ++z) {
-							Block block = chunk.getBlock(x, y, z);
-							int meta = chunk.getBlockMetadata(x, y, z);
-
-							boolean prop = worldProperty.
-									get(world, block, meta, chunk.xPosition * 16 + x, y, chunk.zPosition * 16 + z);
-							property.set(x, y, z, prop);
-						}
-					}
-				}
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+                        boolean prop = worldProperty.
+                                get(world, block, meta, chunk.xPosition * 16 + x, y, chunk.zPosition * 16 + z);
+                        property.set(x, y, z, prop);
+                    }
+                }
+            }
 		}
 	}
 

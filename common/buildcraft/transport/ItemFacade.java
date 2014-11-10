@@ -259,7 +259,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
                     if (stack.getUnlocalizedName() == null || stack.getDisplayName() == null) {
                         continue;
                     }
-                } catch(Throwable t) {
+                } catch (Throwable t) {
                     continue;
                 }
 

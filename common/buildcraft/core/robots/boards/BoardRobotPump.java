@@ -26,7 +26,6 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
-import buildcraft.core.TickHandlerCore;
 import buildcraft.core.robots.AIRobotGotoBlock;
 import buildcraft.core.robots.AIRobotGotoSleep;
 import buildcraft.core.robots.AIRobotGotoStationAndUnloadFluids;
@@ -137,25 +136,20 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 			return true;
 		}
 
-		synchronized (TickHandlerCore.startSynchronousComputation) {
-			try {
-				TickHandlerCore.startSynchronousComputation.wait();
-
-				Block block = world.getBlock(x, y, z);
-				Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
-
-				for (Fluid f : fluidFilter) {
-					if (f.getID() == fluid.getID()) {
-						return true;
-					}
-				}
-
-				return false;
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				return false;
-			}
+        Block block;
+		synchronized (world) {
+			block = world.getBlock(x, y, z);
 		}
+
+        Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
+
+        for (Fluid f : fluidFilter) {
+            if (f.getID() == fluid.getID()) {
+                return true;
+            }
+        }
+
+        return false;
 	}
 
 }

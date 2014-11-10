@@ -198,7 +198,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive,
 			boolean simulate) {
-		if (powerSources[from.ordinal()]) {
+		if (from.ordinal() < 6 && powerSources[from.ordinal()]) {
 			return battery.receiveEnergy(maxReceive, simulate);
 		} else {
 			return 0;
