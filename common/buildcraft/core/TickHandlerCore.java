@@ -12,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ChatComponentTranslation;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.core.proxy.CoreProxy;
@@ -23,7 +24,7 @@ public class TickHandlerCore {
 	private boolean nagged;
 
 	@SubscribeEvent
-	public void synchonizationControl(PlayerTickEvent evt) {
+	public void synchronizationControl(ServerTickEvent evt) {
 		synchronized (startSynchronousComputation) {
 			startSynchronousComputation.notify();
 		}
