@@ -89,7 +89,7 @@ this repository will have to be rejected.
 Add the following to your build.gradle file:
 ```
 dependencies {
-    compile 'com.mod-buildcraft:buildcraft:6.1.78:dev'
+    compile 'com.mod-buildcraft:buildcraft:6.1.8:dev'
 }
 ```
-Where `6.1.7` is the desired version of BuildCraft.
+Where `6.1.8` is the desired version of BuildCraft.

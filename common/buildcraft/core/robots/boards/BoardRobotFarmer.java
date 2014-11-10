@@ -19,7 +19,6 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.TickHandlerCore;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.robots.AIRobotFetchAndEquipItemStack;
 import buildcraft.core.robots.AIRobotGotoBlock;

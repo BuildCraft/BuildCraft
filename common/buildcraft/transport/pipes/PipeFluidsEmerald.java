@@ -10,7 +10,6 @@ package buildcraft.transport.pipes;
 
 import net.minecraft.item.Item;
 
-import buildcraft.BuildCraftTransport;
 import buildcraft.transport.PipeIconProvider;
 
 public class PipeFluidsEmerald extends PipeFluidsWood {

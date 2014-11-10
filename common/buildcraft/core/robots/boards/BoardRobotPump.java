@@ -26,7 +26,6 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
-import buildcraft.core.TickHandlerCore;
 import buildcraft.core.robots.AIRobotGotoBlock;
 import buildcraft.core.robots.AIRobotGotoSleep;
 import buildcraft.core.robots.AIRobotGotoStationAndUnloadFluids;

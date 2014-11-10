@@ -25,7 +25,6 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.TickHandlerCore;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.ArrayStackOrListFilter;
 import buildcraft.core.inventory.filters.CompositeFilter;

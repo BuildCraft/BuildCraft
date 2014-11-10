@@ -17,9 +17,6 @@ import net.minecraft.world.IWorldAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.core.TickHandlerCore;
-
 public class DimensionProperty implements IWorldAccess {
 
 	private LongHashMap chunkMapping = new LongHashMap();
