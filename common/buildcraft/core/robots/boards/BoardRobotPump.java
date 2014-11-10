@@ -137,25 +137,20 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 			return true;
 		}
 
-		synchronized (TickHandlerCore.startSynchronousComputation) {
-			try {
-				TickHandlerCore.startSynchronousComputation.wait();
-
-				Block block = world.getBlock(x, y, z);
-				Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
-
-				for (Fluid f : fluidFilter) {
-					if (f.getID() == fluid.getID()) {
-						return true;
-					}
-				}
-
-				return false;
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				return false;
-			}
+        Block block;
+		synchronized (world) {
+			block = world.getBlock(x, y, z);
 		}
+
+        Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
+
+        for (Fluid f : fluidFilter) {
+            if (f.getID() == fluid.getID()) {
+                return true;
+            }
+        }
+
+        return false;
 	}
 
 }

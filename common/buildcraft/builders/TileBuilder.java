@@ -314,7 +314,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
         if (bpt == null) {
             return null;
         }
-        
+
 		bpt = bpt.adjustToWorld(worldObj, x, y, z, o);
 
 		if (getStackInSlot(0).getItem() instanceof ItemBlueprintStandard) {

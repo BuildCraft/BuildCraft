@@ -19,16 +19,7 @@ import buildcraft.core.proxy.CoreProxy;
 
 public class TickHandlerCore {
 
-	public static Integer startSynchronousComputation = new Integer(0);
-
 	private boolean nagged;
-
-	@SubscribeEvent
-	public void synchronizationControl(ServerTickEvent evt) {
-		synchronized (startSynchronousComputation) {
-			startSynchronousComputation.notify();
-		}
-	}
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent

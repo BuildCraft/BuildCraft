@@ -146,15 +146,8 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 	}
 
 	private boolean isAirAbove(World world, int x, int y, int z) {
-		synchronized (TickHandlerCore.startSynchronousComputation) {
-			try {
-				TickHandlerCore.startSynchronousComputation.wait();
-
-				return world.isAirBlock(x, y + 1, z);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				return false;
-			}
+		synchronized (world) {
+			return world.isAirBlock(x, y + 1, z);
 		}
 	}
 

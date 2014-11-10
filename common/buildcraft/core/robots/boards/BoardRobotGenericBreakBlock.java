@@ -148,25 +148,20 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 			return true;
 		}
 
-		synchronized (TickHandlerCore.startSynchronousComputation) {
-			try {
-				TickHandlerCore.startSynchronousComputation.wait();
-
-				Block block = world.getBlock(x, y, z);
-				int meta = world.getBlockMetadata(x, y, z);
-
-				for (int i = 0; i < blockFilter.size(); ++i) {
-					if (blockFilter.get(i) == block && metaFilter.get(i) == meta) {
-						return true;
-					}
-				}
-
-				return false;
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				return false;
-			}
+        Block block;
+        int meta;
+		synchronized (world) {
+            block = world.getBlock(x, y, z);
+            meta = world.getBlockMetadata(x, y, z);
 		}
+
+        for (int i = 0; i < blockFilter.size(); ++i) {
+            if (blockFilter.get(i) == block && metaFilter.get(i) == meta) {
+                return true;
+            }
+        }
+
+        return false;
 	}
 
 	@Override
