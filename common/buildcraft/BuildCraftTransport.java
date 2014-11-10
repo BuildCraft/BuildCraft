@@ -580,7 +580,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			addGateRecipe("Gold", 400000, GateMaterial.GOLD, Chipset.GOLD, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
 			addGateRecipe("Diamond", 800000, GateMaterial.DIAMOND, Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE,
 					PipeWire.GREEN, PipeWire.YELLOW);
-			addGateRecipe("Emerald", 1200000, GateMaterial.EMERALD, Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE,
+			addGateRecipe("Emerald", 1200000, GateMaterial.EMERALD, Chipset.EMERALD, PipeWire.RED, PipeWire.BLUE,
 					PipeWire.GREEN, PipeWire.YELLOW);
 
 

@@ -276,14 +276,14 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				Items.redstone, Items.gold_ingot);
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:diamondChipset", 800000,
 				Chipset.DIAMOND.getStack(), Items.redstone, Items.diamond);
+        BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:emeraldChipset", 1200000,
+                Chipset.EMERALD.getStack(), Items.redstone, Items.emerald);
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:pulsatingChipset", 400000,
 				Chipset.PULSATING.getStack(2), Items.redstone, Items.ender_pearl);
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:quartzChipset", 600000, Chipset.QUARTZ.getStack(),
 				Items.redstone, Items.quartz);
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:compChipset", 600000, Chipset.COMP.getStack(),
 				Items.redstone, Items.comparator);
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:emeraldChipset", 1200000,
-				Chipset.EMERALD.getStack(), Items.redstone, Items.emerald);
 
 		// ROBOTS AND BOARDS
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redstoneCrystal", 10000000, new ItemStack(
