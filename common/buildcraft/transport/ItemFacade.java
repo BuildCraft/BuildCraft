@@ -288,19 +288,21 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 			return true;
 		}
 
-		for (String blacklistedBlock : BuildCraftTransport.facadeBlacklist) {
-			if (blockName.equals(JavaTools.stripSurroundingQuotes(blacklistedBlock))) {
-				return true;
-			}
-		}
-
+        // Blocks blacklisted by mods should always be treated as blacklisted
 		for (String blacklistedBlock : blacklistedFacades) {
 			if (blockName.equals(blacklistedBlock)) {
 				return true;
 			}
 		}
 
-		return false;
+        // Blocks blacklisted by config should depend on the config settings
+        for (String blacklistedBlock : BuildCraftTransport.facadeBlacklist) {
+            if (blockName.equals(JavaTools.stripSurroundingQuotes(blacklistedBlock))) {
+                return true ^ BuildCraftTransport.facadeTreatBlacklistAsWhitelist;
+            }
+        }
+
+		return false ^ BuildCraftTransport.facadeTreatBlacklistAsWhitelist;
 	}
 
 	private static boolean isBlockValidForFacade(Block block) {

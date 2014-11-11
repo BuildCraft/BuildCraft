@@ -150,7 +150,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static BuildCraftTransport instance;
 
 	public static float pipeDurability;
-        public static int pipeFluidsBaseFlowRate;
+    public static int pipeFluidsBaseFlowRate;
+    public static boolean facadeTreatBlacklistAsWhitelist;
 
 	public static BlockGenericPipe genericPipeBlock;
 	public static BlockFilteredBuffer filteredBufferBlock;
@@ -351,6 +352,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 			facadeBlacklistProp.comment = "Blocks listed here will not have facades created. The format is modid:blockname.\nFor mods with a | character, the value needs to be surrounded with quotes.";
 			facadeBlacklist = facadeBlacklistProp.getStringList();
+
+            Property facadeAsWhitelist = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "facade.treatBlacklistAsWhitelist", false);
+            facadeTreatBlacklistAsWhitelist = facadeAsWhitelist.getBoolean();
 
 			pipeWaterproof = new ItemBuildCraft();
 
