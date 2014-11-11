@@ -226,9 +226,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 						"ipi",
 						"igi",
 						"iPi",
-						'p', Items.redstone,
-						'i', Items.iron_ingot,
-						'g', BuildCraftCore.ironGearItem,
+						'p', "dustRedstone",
+						'i', "ingotIron",
+						'g', "gearIron",
 						'P', Items.iron_pickaxe);
 			}
 
@@ -238,10 +238,10 @@ public class BuildCraftFactory extends BuildCraftMod {
 						"ipi",
 						"gig",
 						"dDd",
-						'i', BuildCraftCore.ironGearItem,
-						'p', Items.redstone,
-						'g', BuildCraftCore.goldGearItem,
-						'd', BuildCraftCore.diamondGearItem,
+						'i', "gearIron",
+						'p', "dustRedstone",
+						'g', "gearGold",
+						'd', "gearDiamond",
 						'D', Items.diamond_pickaxe);
 			}
 
@@ -249,7 +249,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 				CoreProxy.proxy.addCraftingRecipe(new ItemStack(pumpBlock),
 						"T",
 						"W",
-						'T', tankBlock != null ? tankBlock : Blocks.glass,
+						'T', tankBlock != null ? tankBlock : "blockGlass",
 						'W', miningWellBlock);
 			}
 		}
@@ -260,10 +260,10 @@ public class BuildCraftFactory extends BuildCraftMod {
 						"iri",
 						"iTi",
 						"gpg",
-						'r', Items.redstone,
-						'i', Items.iron_ingot,
-						'T', tankBlock != null ? tankBlock : Blocks.glass,
-						'g', BuildCraftCore.ironGearItem,
+						'r', "dustRedstone",
+						'i', "ingotIron",
+						'T', tankBlock != null ? tankBlock : "blockGlass",
+						'g', "gearIron",
 						'p', BuildCraftTransport.pipeFluidsGold);
 			}
 		}
@@ -274,7 +274,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 					"gwg",
 					" g ",
 					'w', Blocks.crafting_table,
-					'g', BuildCraftCore.woodenGearItem);
+					'g', "gearWood");
 		}
 
 
@@ -283,15 +283,15 @@ public class BuildCraftFactory extends BuildCraftMod {
 					"ggg",
 					"g g",
 					"ggg",
-					'g', Blocks.glass);
+					'g', "blockGlass");
 		}
 
 		if (refineryBlock != null) {
 			CoreProxy.proxy.addCraftingRecipe(new ItemStack(refineryBlock),
 					"RTR",
 					"TGT",
-					'T', tankBlock != null ? tankBlock : Blocks.glass,
-					'G', BuildCraftCore.diamondGearItem,
+					'T', tankBlock != null ? tankBlock : "blockGlass",
+					'G', "gearDiamond",
 					'R', Blocks.redstone_torch);
 		}
 
@@ -300,9 +300,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 					"ICI",
 					"IGI",
 					" I ",
-					'I', Items.iron_ingot,
+					'I', "ingotIron",
 					'C', Blocks.chest,
-					'G', BuildCraftCore.stoneGearItem);
+					'G', "gearStone");
 		}
 
 		if (floodGateBlock != null) {
@@ -310,9 +310,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 					"IGI",
 					"FTF",
 					"IFI",
-					'I', Items.iron_ingot,
-					'T', tankBlock != null ? tankBlock : Blocks.glass,
-					'G', BuildCraftCore.ironGearItem,
+					'I', "ingotIron",
+					'T', tankBlock != null ? tankBlock : "blockGlass",
+					'G', "gearIron",
 					'F', new ItemStack(Blocks.iron_bars));
 		}
 	}

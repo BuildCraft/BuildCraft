@@ -216,17 +216,17 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				"DDR",
 				"ORR",
 				'O', Blocks.obsidian,
-				'R', Items.redstone,
-				'D', Items.diamond);
+				'R', "dustRedstone",
+				'D', "gemDiamond");
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 0),
 				"ORO",
 				"ODO",
 				"OGO",
 				'O', Blocks.obsidian,
-				'R', Items.redstone,
-				'D', Items.diamond,
-				'G', BuildCraftCore.diamondGearItem);
+				'R', "dustRedstone",
+				'D', "gemDiamond",
+				'G', "gearDiamond");
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 1),
 				"OWO",
@@ -242,9 +242,9 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				"OCO",
 				"OGO",
 				'O', Blocks.obsidian,
-				'R', Items.redstone,
+				'R', "dustRedstone",
 				'C', new ItemStack(redstoneChipset, 1, 0),
-				'G', BuildCraftCore.diamondGearItem);
+				'G', "gearDiamond");
 
 		// COMMANDER BLOCKS
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(zonePlanBlock, 1, 0),
@@ -252,38 +252,38 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				"GMG",
 				"IDI",
 				'M', Items.map,
-				'R', Items.redstone,
-				'G', BuildCraftCore.goldGearItem,
-				'D', BuildCraftCore.diamondGearItem,
-				'I', Items.iron_ingot);
+				'R', "dustRedstone",
+				'G', "gearGold",
+				'D', "gearDiamond",
+				'I', "ingotIron");
 		
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(requesterBlock, 1, 0),
 				"IPI",
 				"GCG",
 				"IRI",
 				'C', Blocks.chest,
-				'R', Items.redstone,
+				'R', "dustRedstone",
 				'P', Blocks.piston,
-				'G', BuildCraftCore.ironGearItem,
-				'I', Items.iron_ingot);
+				'G', "gearIron",
+				'I', "ingotIron");
 		
 		// CHIPSETS
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redstoneChipset", 100000, Chipset.RED.getStack(),
-				Items.redstone);
+				"dustRedstone");
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:ironChipset", 200000, Chipset.IRON.getStack(),
-				Items.redstone, Items.iron_ingot);
+				"dustRedstone", "ingotIron");
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:goldChipset", 400000, Chipset.GOLD.getStack(),
-				Items.redstone, Items.gold_ingot);
+				"dustRedstone", "ingotGold");
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:diamondChipset", 800000,
-				Chipset.DIAMOND.getStack(), Items.redstone, Items.diamond);
+				Chipset.DIAMOND.getStack(), "dustRedstone", "gemDiamond");
         BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:emeraldChipset", 1200000,
-                Chipset.EMERALD.getStack(), Items.redstone, Items.emerald);
+                Chipset.EMERALD.getStack(), "dustRedstone", "gemEmerald");
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:pulsatingChipset", 400000,
-				Chipset.PULSATING.getStack(2), Items.redstone, Items.ender_pearl);
+				Chipset.PULSATING.getStack(2), "dustRedstone", Items.ender_pearl);
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:quartzChipset", 600000, Chipset.QUARTZ.getStack(),
-				Items.redstone, Items.quartz);
+				"dustRedstone", "gemQuartz");
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:compChipset", 600000, Chipset.COMP.getStack(),
-				Items.redstone, Items.comparator);
+				"dustRedstone", Items.comparator);
 
 		// ROBOTS AND BOARDS
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redstoneCrystal", 10000000, new ItemStack(
@@ -294,14 +294,14 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				"PPP",
 				"PRP",
 				"PPP",
-				'R', Items.redstone,
+				'R', "dustRedstone",
 				'P', Items.paper);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(robotItem),
 				"PPP",
 				"PRP",
 				"C C",
-				'P', Items.iron_ingot,
+				'P', "ingotIron",
 				'R', redstoneCrystal,
 				'C', Chipset.DIAMOND.getStack());
 
