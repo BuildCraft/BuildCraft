@@ -165,7 +165,7 @@ public class PipeTransportPower extends PipeTransport {
 		init();
 
         for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-            if (tiles[side.ordinal()].isInvalid()) {
+            if (tiles[side.ordinal()] != null && tiles[side.ordinal()].isInvalid()) {
                 updateTile(side);
             }
         }
