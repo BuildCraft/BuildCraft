@@ -375,20 +375,20 @@ public class BuildCraftTransport extends BuildCraftMod {
 			CoreProxy.proxy.registerBlock(genericPipeBlock.setBlockName("pipeBlock"), ItemBlock.class);
 
 			pipeItemsWood = buildPipe(PipeItemsWood.class, "Wooden Transport Pipe", CreativeTabBuildCraft.PIPES, "plankWood", Blocks.glass, "plankWood");
-			pipeItemsEmerald = buildPipe(PipeItemsEmerald.class, "Emerald Transport Pipe", CreativeTabBuildCraft.PIPES, Items.emerald, Blocks.glass, Items.emerald);
+			pipeItemsEmerald = buildPipe(PipeItemsEmerald.class, "Emerald Transport Pipe", CreativeTabBuildCraft.PIPES, "gemEmerald", Blocks.glass, "gemEmerald");
 			pipeItemsCobblestone = buildPipe(PipeItemsCobblestone.class, "Cobblestone Transport Pipe", CreativeTabBuildCraft.PIPES, "cobblestone", Blocks.glass, "cobblestone");
 			pipeItemsStone = buildPipe(PipeItemsStone.class, "Stone Transport Pipe", CreativeTabBuildCraft.PIPES, "stone", Blocks.glass, "stone");
-			pipeItemsQuartz = buildPipe(PipeItemsQuartz.class, "Quartz Transport Pipe", CreativeTabBuildCraft.PIPES, Blocks.quartz_block, Blocks.glass, Blocks.quartz_block);
-			pipeItemsIron = buildPipe(PipeItemsIron.class, "Iron Transport Pipe", CreativeTabBuildCraft.PIPES, Items.iron_ingot, Blocks.glass, Items.iron_ingot);
-			pipeItemsGold = buildPipe(PipeItemsGold.class, "Golden Transport Pipe", CreativeTabBuildCraft.PIPES, Items.gold_ingot, Blocks.glass, Items.gold_ingot);
-			pipeItemsDiamond = buildPipe(PipeItemsDiamond.class, "Diamond Transport Pipe", CreativeTabBuildCraft.PIPES, Items.diamond, Blocks.glass, Items.diamond);
+			pipeItemsQuartz = buildPipe(PipeItemsQuartz.class, "Quartz Transport Pipe", CreativeTabBuildCraft.PIPES, "blockQuartz", Blocks.glass, "blockQuartz");
+			pipeItemsIron = buildPipe(PipeItemsIron.class, "Iron Transport Pipe", CreativeTabBuildCraft.PIPES, "ingotIron", Blocks.glass, "ingotIron");
+			pipeItemsGold = buildPipe(PipeItemsGold.class, "Golden Transport Pipe", CreativeTabBuildCraft.PIPES, "ingotGold", Blocks.glass, "ingotGold");
+			pipeItemsDiamond = buildPipe(PipeItemsDiamond.class, "Diamond Transport Pipe", CreativeTabBuildCraft.PIPES, "gemDiamond", Blocks.glass, "gemDiamond");
 			pipeItemsObsidian = buildPipe(PipeItemsObsidian.class, "Obsidian Transport Pipe", CreativeTabBuildCraft.PIPES, Blocks.obsidian, Blocks.glass, Blocks.obsidian);
-			pipeItemsLapis = buildPipe(PipeItemsLapis.class, "Lapis Transport Pipe", CreativeTabBuildCraft.PIPES, Blocks.lapis_block, Blocks.glass, Blocks.lapis_block);
-			pipeItemsDaizuli = buildPipe(PipeItemsDaizuli.class, "Daizuli Transport Pipe", CreativeTabBuildCraft.PIPES, Blocks.lapis_block, Blocks.glass, Items.diamond);
+			pipeItemsLapis = buildPipe(PipeItemsLapis.class, "Lapis Transport Pipe", CreativeTabBuildCraft.PIPES, "blockLapis", Blocks.glass, "blockLapis");
+			pipeItemsDaizuli = buildPipe(PipeItemsDaizuli.class, "Daizuli Transport Pipe", CreativeTabBuildCraft.PIPES, "blockLapis", Blocks.glass, "gemDiamond");
 			pipeItemsSandstone = buildPipe(PipeItemsSandstone.class, "Sandstone Transport Pipe", CreativeTabBuildCraft.PIPES, Blocks.sandstone, Blocks.glass, Blocks.sandstone);
-			pipeItemsVoid = buildPipe(PipeItemsVoid.class, "Void Transport Pipe", CreativeTabBuildCraft.PIPES, "dyeBlack", Blocks.glass, Items.redstone);
-			pipeItemsEmzuli = buildPipe(PipeItemsEmzuli.class, "Emzuli Transport Pipe", CreativeTabBuildCraft.PIPES, Blocks.lapis_block, Blocks.glass, Items.emerald);
-			pipeItemsStripes = buildPipe(PipeItemsStripes.class, "Stripes Transport Pipe", CreativeTabBuildCraft.PIPES, BuildCraftCore.goldGearItem, Blocks.glass, BuildCraftCore.goldGearItem);
+			pipeItemsVoid = buildPipe(PipeItemsVoid.class, "Void Transport Pipe", CreativeTabBuildCraft.PIPES, "dyeBlack", Blocks.glass, "dustRedstone");
+			pipeItemsEmzuli = buildPipe(PipeItemsEmzuli.class, "Emzuli Transport Pipe", CreativeTabBuildCraft.PIPES, "blockLapis", Blocks.glass, "gemEmerald");
+			pipeItemsStripes = buildPipe(PipeItemsStripes.class, "Stripes Transport Pipe", CreativeTabBuildCraft.PIPES, "gearGold", Blocks.glass, "gearGold");
 
 			pipeFluidsWood = buildPipe(PipeFluidsWood.class, "Wooden Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsWood);
 			pipeFluidsCobblestone = buildPipe(PipeFluidsCobblestone.class, "Cobblestone Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsCobblestone);
@@ -400,14 +400,14 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipeFluidsSandstone = buildPipe(PipeFluidsSandstone.class, "Sandstone Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsSandstone);
 			pipeFluidsVoid = buildPipe(PipeFluidsVoid.class, "Void Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsVoid);
 
-			pipePowerWood = buildPipe(PipePowerWood.class, "Wooden Kinesis Pipe", CreativeTabBuildCraft.PIPES, Items.redstone, pipeItemsWood);
-			pipePowerCobblestone = buildPipe(PipePowerCobblestone.class, "Cobblestone Kinesis Pipe", CreativeTabBuildCraft.PIPES, Items.redstone, pipeItemsCobblestone);
-			pipePowerStone = buildPipe(PipePowerStone.class, "Stone Kinesis Pipe", CreativeTabBuildCraft.PIPES, Items.redstone, pipeItemsStone);
-			pipePowerQuartz = buildPipe(PipePowerQuartz.class, "Quartz Kinesis Pipe", CreativeTabBuildCraft.PIPES, Items.redstone, pipeItemsQuartz);
-			pipePowerIron = buildPipe(PipePowerIron.class, "Iron Kinesis Pipe", CreativeTabBuildCraft.PIPES, Items.redstone, pipeItemsIron);
-			pipePowerGold = buildPipe(PipePowerGold.class, "Golden Kinesis Pipe", CreativeTabBuildCraft.PIPES, Items.redstone, pipeItemsGold);
-			pipePowerDiamond = buildPipe(PipePowerDiamond.class, "Diamond Kinesis Pipe", CreativeTabBuildCraft.PIPES, Items.redstone, pipeItemsDiamond);
-			pipePowerEmerald = buildPipe(PipePowerEmerald.class, "Emerald Kinesis Pipe", CreativeTabBuildCraft.PIPES, Items.redstone, pipeItemsEmerald);
+			pipePowerWood = buildPipe(PipePowerWood.class, "Wooden Kinesis Pipe", CreativeTabBuildCraft.PIPES, "dustRedstone", pipeItemsWood);
+			pipePowerCobblestone = buildPipe(PipePowerCobblestone.class, "Cobblestone Kinesis Pipe", CreativeTabBuildCraft.PIPES, "dustRedstone", pipeItemsCobblestone);
+			pipePowerStone = buildPipe(PipePowerStone.class, "Stone Kinesis Pipe", CreativeTabBuildCraft.PIPES, "dustRedstone", pipeItemsStone);
+			pipePowerQuartz = buildPipe(PipePowerQuartz.class, "Quartz Kinesis Pipe", CreativeTabBuildCraft.PIPES, "dustRedstone", pipeItemsQuartz);
+			pipePowerIron = buildPipe(PipePowerIron.class, "Iron Kinesis Pipe", CreativeTabBuildCraft.PIPES, "dustRedstone", pipeItemsIron);
+			pipePowerGold = buildPipe(PipePowerGold.class, "Golden Kinesis Pipe", CreativeTabBuildCraft.PIPES, "dustRedstone", pipeItemsGold);
+			pipePowerDiamond = buildPipe(PipePowerDiamond.class, "Diamond Kinesis Pipe", CreativeTabBuildCraft.PIPES, "dustRedstone", pipeItemsDiamond);
+			pipePowerEmerald = buildPipe(PipePowerEmerald.class, "Emerald Kinesis Pipe", CreativeTabBuildCraft.PIPES, "dustRedstone", pipeItemsEmerald);
 			
 			pipeStructureCobblestone = buildPipe(PipeStructureCobblestone.class, "Cobblestone Structure Pipe", CreativeTabBuildCraft.PIPES, Blocks.gravel, pipeItemsCobblestone);
 
@@ -559,7 +559,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 				new ItemStack(pipeStructureCobblestone));
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(robotStationItem), "   ", " I ", "ICI",
-				'I', Items.iron_ingot,
+				'I', "ingotIron",
 				'C', Chipset.GOLD.getStack());
 
 		if (Loader.isModLoaded("BuildCraft|Silicon")) {
@@ -567,13 +567,13 @@ public class BuildCraftTransport extends BuildCraftMod {
 					
 			// PIPE WIRE
 			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redWire", 5000, PipeWire.RED.getStack(8),
-					OreDictionary.getOres("dyeRed"), Items.redstone, Items.iron_ingot);
+					"dyeRed", "dustRedstone", "ingotIron");
 			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:blueWire", 5000, PipeWire.BLUE.getStack(8),
-					OreDictionary.getOres("dyeBlue"), Items.redstone, Items.iron_ingot);
+					"dyeBlue", "dustRedstone", "ingotIron");
 			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:greenWire", 5000, PipeWire.GREEN.getStack(8),
-					OreDictionary.getOres("dyeGreen"), Items.redstone, Items.iron_ingot);
+					"dyeGreen", "dustRedstone", "ingotIron");
 			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:yellowWire", 5000, PipeWire.YELLOW.getStack(8),
-					OreDictionary.getOres("dyeYellow"), Items.redstone, Items.iron_ingot);			
+					"dyeYellow", "dustRedstone", "ingotIron");			
 
 			// GATES
 			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:simpleGate", 100000,

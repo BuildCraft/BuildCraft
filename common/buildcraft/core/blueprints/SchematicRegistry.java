@@ -84,7 +84,7 @@ public final class SchematicRegistry implements ISchematicRegistry {
 				}
 				return c;
 			}
-			throw new IllegalArgumentException("Could not find matching constructor for class " + clazz);
+			throw new IllegalArgumentException("Builder: Could not find matching constructor for class " + clazz);
 		}
 	}
 	
@@ -96,11 +96,11 @@ public final class SchematicRegistry implements ISchematicRegistry {
 	
 	public void registerSchematicBlock(Block block, int meta, Class<? extends Schematic> clazz, Object... params) {
 		if (block == null || Block.blockRegistry.getNameForObject(block) == null || "null".equals(Block.blockRegistry.getNameForObject(block))) {
-			BCLog.logger.warn("Mod tried to register block with null name! Ignoring.");
+			BCLog.logger.warn("Builder: Mod tried to register block schematic with a null name! Ignoring.");
 			return;
 		}
 		if (schematicBlocks.containsKey(toStringKey(block, meta))) {
-			throw new RuntimeException("Block " + Block.blockRegistry.getNameForObject(block) + " is already associated with a schematic.");
+			throw new RuntimeException("Builder: Block " + Block.blockRegistry.getNameForObject(block) + " is already associated with a schematic.");
 		}
 
 		schematicBlocks.put(toStringKey(block, meta), new SchematicConstructor(clazz, params));
@@ -110,7 +110,7 @@ public final class SchematicRegistry implements ISchematicRegistry {
 			Class<? extends Entity> entityClass,
 			Class<? extends SchematicEntity> schematicClass, Object... params) {
 		if (schematicEntities.containsKey(entityClass)) {
-			throw new RuntimeException("Entity " + entityClass.getName() + " is already associated with a schematic.");
+			throw new RuntimeException("Builder: Entity " + entityClass.getName() + " is already associated with a schematic.");
 		}
 		schematicEntities.put(entityClass, new SchematicConstructor(schematicClass, params));
 	}

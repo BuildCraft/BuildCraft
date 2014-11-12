@@ -443,25 +443,25 @@ public class BuildCraftCore extends BuildCraftMod {
 	}
 
 	public void loadRecipes() {
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(wrenchItem), "I I", " G ", " I ", 'I', Items.iron_ingot, 'G', stoneGearItem);
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(wrenchItem), "I I", " G ", " I ", 'I', "ingotIron", 'G', "gearStone");
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(woodenGearItem), " S ", "S S",
 				" S ", 'S',
 				"stickWood");
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(stoneGearItem), " I ", "IGI",
 				" I ", 'I',
 				"cobblestone", 'G',
-				woodenGearItem);
+				"gearWood");
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(ironGearItem), " I ", "IGI",
 				" I ", 'I',
-				Items.iron_ingot, 'G', stoneGearItem);
+				"ingotIron", 'G', "gearStone");
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(goldGearItem), " I ", "IGI",
 				" I ", 'I',
-				Items.gold_ingot, 'G', ironGearItem);
+				"ingotGold", 'G', "gearIron");
 		CoreProxy.proxy.addCraftingRecipe(
-				new ItemStack(diamondGearItem), " I ", "IGI", " I ", 'I', Items.diamond, 'G', goldGearItem);
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(mapLocationItem), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y', new ItemStack(Items.dye, 1, 11));
+				new ItemStack(diamondGearItem), " I ", "IGI", " I ", 'I', "gemDiamond", 'G', "gearGold");
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(mapLocationItem), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y', "dyeYellow");
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(listItem), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y',
-				new ItemStack(Items.dye, 1, 2));
+				"dyeGreen");
 	}
 
 	@Mod.EventHandler

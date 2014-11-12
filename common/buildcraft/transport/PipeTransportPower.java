@@ -102,27 +102,29 @@ public class PipeTransportPower extends PipeTransport {
 	@Override
 	public void onNeighborBlockChange(int blockId) {
 		super.onNeighborBlockChange(blockId);
-		updateTiles();
+        for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+            updateTile(side);
+        }
 	}
 
-	private void updateTiles() {
-		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-			TileEntity tile = container.getTile(side);
-			if (container.isPipeConnected(side)) {
-				tiles[side.ordinal()] = tile;
-			} else {
-				tiles[side.ordinal()] = null;
-				internalPower[side.ordinal()] = 0;
-				internalNextPower[side.ordinal()] = 0;
-				displayPower[side.ordinal()] = 0;
-			}
-		}
-	}
+    private void updateTile(ForgeDirection side) {
+        TileEntity tile = container.getTile(side);
+        if (tile != null && container.isPipeConnected(side)) {
+            tiles[side.ordinal()] = tile;
+        } else {
+            tiles[side.ordinal()] = null;
+            internalPower[side.ordinal()] = 0;
+            internalNextPower[side.ordinal()] = 0;
+            displayPower[side.ordinal()] = 0;
+        }
+    }
 
 	private void init() {
 		if (needsInit) {
 			needsInit = false;
-			updateTiles();
+            for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+                updateTile(side);
+            }
 		}
 	}
 
@@ -142,6 +144,12 @@ public class PipeTransportPower extends PipeTransport {
 		step();
 
 		init();
+
+        for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+            if (tiles[side.ordinal()] != null && tiles[side.ordinal()].isInvalid()) {
+                updateTile(side);
+            }
+        }
 
 		// Send the power to nearby pipes who requested it
 

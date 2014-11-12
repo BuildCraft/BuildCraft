@@ -16,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
@@ -77,6 +78,8 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 				inputFluids.add((FluidStack) i);
 			} else if (i instanceof List) {
 				inputItemsWithAlternatives.add((List) i);
+			} else if (i instanceof String) {
+				inputItemsWithAlternatives.add(OreDictionary.getOres((String) i));
 			} else {
 				throw new IllegalArgumentException("An unknown object passed to recipe " + iid + " as input! (" + i.getClass() + ")");
 			}
