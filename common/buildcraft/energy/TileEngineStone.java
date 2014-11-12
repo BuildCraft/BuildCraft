@@ -9,6 +9,7 @@
 package buildcraft.energy;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -31,6 +32,7 @@ public class TileEngineStone extends TileEngineWithInventory {
 	final double eLimit = (MAX_OUTPUT - MIN_OUTPUT) / ki;
 	int burnTime = 0;
 	int totalBurnTime = 0;
+    ItemStack burnItem;
 	double esum = 0;
 
 	public TileEngineStone() {
@@ -81,6 +83,7 @@ public class TileEngineStone extends TileEngineWithInventory {
 			burnTime = totalBurnTime = getItemBurnTime(getStackInSlot(0));
 
 			if (burnTime > 0) {
+                burnItem = getStackInSlot(0);
 				setInventorySlotContents(0, InvUtils.consumeItem(getStackInSlot(0)));
 			}
 		}
@@ -93,9 +96,11 @@ public class TileEngineStone extends TileEngineWithInventory {
 	private int getItemBurnTime(ItemStack itemstack) {
 		if (itemstack == null) {
 			return 0;
-		} else {
-			return TileEntityFurnace.getItemBurnTime(itemstack);
-		}
+		} else if (itemstack.getItem() == Items.paper) {
+            return 400;
+        } else {
+            return TileEntityFurnace.getItemBurnTime(itemstack);
+        }
 	}
 
 	/* SAVING & LOADING */
@@ -150,6 +155,10 @@ public class TileEngineStone extends TileEngineWithInventory {
 
 	@Override
 	public int calculateCurrentOutput() {
+        if (burnItem != null && burnItem.getItem() == Items.paper) {
+            return 1;
+        }
+
 		double e = TARGET_OUTPUT * getMaxEnergy() - energy;
 		esum = MathUtils.clamp(esum + e, -eLimit, eLimit);
 		return (int) Math.round(MathUtils.clamp(e * kp + esum * ki, MIN_OUTPUT, MAX_OUTPUT));
