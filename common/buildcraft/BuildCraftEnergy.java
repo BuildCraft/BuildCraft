@@ -354,14 +354,14 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 	public static void loadRecipes() {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 0),
-				"www", " g ", "GpG", 'w', "plankWood", 'g', Blocks.glass, 'G',
-				BuildCraftCore.woodenGearItem, 'p', Blocks.piston);
+				"www", " g ", "GpG", 'w', "plankWood", 'g', "blockGlass", 'G',
+				"gearWood", 'p', Blocks.piston);
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 1),
 				"www", " g ", "GpG", 'w', "cobblestone",
-				'g', Blocks.glass, 'G', BuildCraftCore.stoneGearItem, 'p', Blocks.piston);
+				'g', "blockGlass", 'G', "gearStone", 'p', Blocks.piston);
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 2),
-				"www", " g ", "GpG", 'w', Items.iron_ingot,
-				'g', Blocks.glass, 'G', BuildCraftCore.ironGearItem, 'p', Blocks.piston);
+				"www", " g ", "GpG", 'w', "ingotIron",
+				'g', "blockGlass", 'G', "gearIron", 'p', Blocks.piston);
 	}
 
 	private int findUnusedBiomeID(String biomeName) {
