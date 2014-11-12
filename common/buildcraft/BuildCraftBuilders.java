@@ -523,7 +523,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 	public static void loadRecipes() {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem, 1), "ppp", "pip", "ppp", 'i',
-			new ItemStack(Items.dye, 1, 0), 'p', Items.paper);
+			"dyeBlack", 'p', Items.paper);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), "ppp", "pip", "ppp", 'i',
 			new ItemStack(Items.dye, 1, 4), 'p', Items.paper);
@@ -532,19 +532,19 @@ public class BuildCraftBuilders extends BuildCraftMod {
 			new ItemStack(Items.dye, 1, 4), 'r', Blocks.redstone_torch);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pathMarkerBlock, 1), "l ", "r ", 'l',
-			new ItemStack(Items.dye, 1, 2), 'r', Blocks.redstone_torch);
+			"dyeGreen", 'r', Blocks.redstone_torch);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock, 1), "btb", "ycy", "gCg", 'b',
-			new ItemStack(Items.dye, 1, 0), 't', markerBlock, 'y', new ItemStack(Items.dye, 1, 11),
-			'c', Blocks.crafting_table, 'g', BuildCraftCore.goldGearItem, 'C', Blocks.chest);
+			"dyeBlack", 't', markerBlock, 'y', "dyeYellow",
+			'c', Blocks.crafting_table, 'g', "gearGold", 'C', Blocks.chest);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), "btb", "ycy", "gCg", 'b',
-			new ItemStack(Items.dye, 1, 0), 't', markerBlock, 'y', new ItemStack(Items.dye, 1, 11),
-			'c', Blocks.crafting_table, 'g', BuildCraftCore.diamondGearItem, 'C', Blocks.chest);
+			"dyeBlack", 't', markerBlock, 'y', "dyeYellow",
+			'c', Blocks.crafting_table, 'g', "gearDiamond", 'C', Blocks.chest);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), "btb", "ycy", "gCg", 'b',
-			new ItemStack(Items.dye, 1, 0), 't', markerBlock, 'y', new ItemStack(Items.dye, 1, 11),
-			'c', Blocks.crafting_table, 'g', BuildCraftCore.diamondGearItem, 'C',
+			"dyeBlack", 't', markerBlock, 'y', "dyeYellow",
+			'c', Blocks.crafting_table, 'g', "gearDiamond", 'C',
 			new ItemStack(blueprintItem, 1));
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), "bbb", "bBb", "bbb", 'b',
