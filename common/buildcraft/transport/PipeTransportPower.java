@@ -29,6 +29,7 @@ import buildcraft.transport.pipes.PipePowerEmerald;
 import buildcraft.transport.pipes.PipePowerGold;
 import buildcraft.transport.pipes.PipePowerIron;
 import buildcraft.transport.pipes.PipePowerQuartz;
+import buildcraft.transport.pipes.PipePowerSandstone;
 import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
 
@@ -500,6 +501,7 @@ public class PipeTransportPower extends PipeTransport {
 		powerCapacities.put(PipePowerCobblestone.class, 80);
 		powerCapacities.put(PipePowerStone.class, 160);
 		powerCapacities.put(PipePowerWood.class, 320);
+        powerCapacities.put(PipePowerSandstone.class, 320);
 		powerCapacities.put(PipePowerQuartz.class, 640);
 		powerCapacities.put(PipePowerIron.class, 1280);
 		powerCapacities.put(PipePowerGold.class, 2560);
