@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -76,14 +77,14 @@ public class ItemList extends ItemBuildCraft {
 				stacks[slot].stackSize = 1;
 			}
 
-			if (slot == 0) {
+			if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && slot == 0) {
 				relatedItems.clear();
 				ores.clear();
 
 				if (stack == null) {
 					isOre = false;
 				} else {
-					setLists();
+					setClientPreviewLists();
 				}
 			}
 		}
@@ -149,7 +150,7 @@ public class ItemList extends ItemBuildCraft {
 			return false;
 		}
 
-		private void setLists() {
+		private void setClientPreviewLists() {
 			Item baseItem = stacks [0].getItem();
 
 			int[] oreIds = OreDictionary.getOreIDs(stacks[0]);
