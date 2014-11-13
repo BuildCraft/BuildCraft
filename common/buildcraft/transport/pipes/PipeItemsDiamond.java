@@ -46,6 +46,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
 		super(new PipeTransportItems(), item);
 	}
 
+	@Override
 	public IInventory getFilters() {
 		return filters;
 	}

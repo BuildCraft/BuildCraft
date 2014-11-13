@@ -26,12 +26,61 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidContainerItem;
 
 public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDiamondPipe {
 
-    private SimpleInventory filters = new SimpleInventory(54, "Filters", 1);
+	private class FilterInventory extends SimpleInventory {
+		public boolean[] filteredDirections = new boolean[6];
+		public Fluid[] fluids = new Fluid[54];
+
+		public FilterInventory(int size, String invName, int invStackLimit) {
+			super(size, invName, invStackLimit);
+		}
+
+		@Override
+		public boolean isItemValidForSlot(int slot, ItemStack stack) {
+			return stack == null || stack.getItem() instanceof IFluidContainerItem
+					|| FluidContainerRegistry.isFilledContainer(stack);
+		}
+
+		@Override
+		public void markDirty() {
+			// calculate fluid cache
+			for (int i = 0; i < 6; i++) {
+				filteredDirections[i] = false;
+			}
+
+			for (int i = 0; i < 54; i++) {
+				fluids[i] = null;
+				ItemStack stack = getStackInSlot(i);
+				if (stack != null) {
+					if (stack.getItem() instanceof IFluidContainerItem) {
+						IFluidContainerItem ctr = (IFluidContainerItem) stack.getItem();
+						if (ctr.getFluid(stack) != null) {
+							fluids[i] = ctr.getFluid(stack).getFluid();
+							filteredDirections[i / 9] = true;
+						}
+					} else if (FluidContainerRegistry.isFilledContainer(stack) &&
+							FluidContainerRegistry.getFluidForFilledItem(stack) != null) {
+						fluids[i] = FluidContainerRegistry.getFluidForFilledItem(stack).getFluid();
+						filteredDirections[i / 9] = true;
+					}
+				}
+				if (fluids[i] != null) {
+					System.out.println("fluid at " + i + " is " + fluids[i].getName());
+				}
+			}
+		}
+	}
+
+    private FilterInventory filters = new FilterInventory(54, "Filters", 1);
 
 	public PipeFluidsDiamond(Item item) {
 	    super(new PipeTransportFluids(), item);
@@ -40,6 +89,7 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
 		transport.travelDelay = 4;
 	}
 
+    @Override
     public IInventory getFilters() {
         return filters;
     }
@@ -92,11 +142,48 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
         return true;
     }
 
+	@Override
+	public boolean outputOpen(ForgeDirection to) {
+		if (!super.outputOpen(to))
+			return false;
+
+		// get center tank, from which outputs are checked; ignore if has no fluid
+		FluidTankInfo[] tanks = transport.getTankInfo(ForgeDirection.UNKNOWN);
+		if (tanks == null || tanks[0] == null || tanks[0].fluid == null || tanks[0].fluid.amount == 0)
+			return true;
+
+		Fluid fluidInTank = tanks[0].fluid.getFluid();
+		boolean[] validFilter = new boolean[6];
+		boolean isFiltered = false;
+		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			if (container.isPipeConnected(dir) && filters.filteredDirections[dir.ordinal()]) {
+				for (int slot = dir.ordinal() * 9; slot < dir.ordinal() * 9 + 9; ++slot) {
+					if (filters.fluids[slot] != null && filters.fluids[slot].getID() == fluidInTank.getID()) {
+						validFilter[dir.ordinal()] = true;
+						isFiltered = true;
+						break;
+					}
+				}
+			}
+		}
+		// the direction is filtered and liquids match
+		if (filters.filteredDirections[to.ordinal()] && validFilter[to.ordinal()])
+			return true;
+
+		// we haven't found a filter for this liquid and the direction is free
+		if (!isFiltered && !filters.filteredDirections[to.ordinal()])
+			return true;
+
+		// we have a filter for the liquid, but not a valid direction
+		return false;
+	}
+
     /* SAVING & LOADING */
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
         filters.readFromNBT(nbt);
+	    filters.markDirty();
     }
 
     @Override

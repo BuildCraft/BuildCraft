@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import buildcraft.transport.pipes.PipeFluidsDiamond;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -192,6 +193,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item pipeFluidsVoid;
 	public static Item pipeFluidsSandstone;
 	public static Item pipeFluidsEmerald;
+	public static Item pipeFluidsDiamond;
 	public static Item pipePowerWood;
 	public static Item pipePowerCobblestone;
 	public static Item pipePowerStone;
@@ -402,6 +404,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipeFluidsIron = buildPipe(PipeFluidsIron.class, "Iron Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsIron);
 			pipeFluidsGold = buildPipe(PipeFluidsGold.class, "Golden Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsGold);
 			pipeFluidsEmerald = buildPipe(PipeFluidsEmerald.class, "Emerald Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsEmerald);
+			pipeFluidsDiamond = buildPipe(PipeFluidsDiamond.class, "Diamond Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsDiamond);
 			pipeFluidsSandstone = buildPipe(PipeFluidsSandstone.class, "Sandstone Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsSandstone);
 			pipeFluidsVoid = buildPipe(PipeFluidsVoid.class, "Void Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsVoid);
 
