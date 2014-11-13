@@ -99,6 +99,15 @@ public class PipeIconProvider implements IIconProvider {
 		PipeFluidsSandstone("pipeFluidsSandstone"),
 		PipeFluidsStone("pipeFluidsStone"),
 		PipeFluidsVoid("pipeFluidsVoid"),
+        //
+        PipeFluidsDiamond_Item("pipFluidsDiamond_item"),
+        PipeFluidsDiamond_Center("pipFluidsDiamond_center"),
+        PipeFluidsDiamond_Down("pipeFluidsDiamond_down"),
+        PipeFluidsDiamond_Up("pipeFluidsDiamond_up"),
+        PipeFluidsDiamond_North("pipeFluidsDiamond_north"),
+        PipeFluidsDiamond_South("pipeFluidsDiamond_south"),
+        PipeFluidsDiamond_West("pipeFluidsDiamond_west", "pipeFluidsDiamond_west_cb"),
+        PipeFluidsDiamond_East("pipeFluidsDiamond_east"),
 		//
 		PipePowerDiamond("pipePowerDiamond"),
 		PipePowerGold("pipePowerGold"),

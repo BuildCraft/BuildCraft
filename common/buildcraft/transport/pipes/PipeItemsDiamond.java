@@ -10,6 +10,7 @@ package buildcraft.transport.pipes;
 
 import java.util.LinkedList;
 
+import buildcraft.transport.IDiamondPipe;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.block.Block;
@@ -37,7 +38,7 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.pipes.events.PipeEventItem;
 
-public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IClientState {
+public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamondPipe {
 
 	private SimpleInventory filters = new SimpleInventory(54, "Filters", 1);
 

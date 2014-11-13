@@ -60,7 +60,7 @@ public class GuiHandler implements IGuiHandler {
 
 			switch (id) {
 				case GuiIds.PIPE_DIAMOND:
-					return new ContainerDiamondPipe(player.inventory, (PipeItemsDiamond) pipe.pipe);
+					return new ContainerDiamondPipe(player.inventory, (IDiamondPipe) pipe.pipe);
 
 				case GuiIds.PIPE_EMERALD_ITEM:
 					return new ContainerEmeraldPipe(player.inventory, (PipeItemsEmerald) pipe.pipe);
@@ -106,7 +106,7 @@ public class GuiHandler implements IGuiHandler {
 
 			switch (id) {
 				case GuiIds.PIPE_DIAMOND:
-					return new GuiDiamondPipe(player.inventory, (PipeItemsDiamond) pipe.pipe);
+					return new GuiDiamondPipe(player.inventory, (IDiamondPipe) pipe.pipe);
 
 				case GuiIds.PIPE_EMERALD_ITEM:
 					return new GuiEmeraldPipe(player.inventory, (PipeItemsEmerald) pipe.pipe);

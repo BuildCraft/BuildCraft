@@ -8,6 +8,7 @@
  */
 package buildcraft.transport.gui;
 
+import buildcraft.transport.IDiamondPipe;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.inventory.IInventory;
@@ -33,7 +34,7 @@ public class GuiDiamondPipe extends GuiBuildCraft {
 		}
 	}
 
-	public GuiDiamondPipe(IInventory playerInventory, PipeItemsDiamond pipe) {
+	public GuiDiamondPipe(IInventory playerInventory, IDiamondPipe pipe) {
 		super(new ContainerDiamondPipe(playerInventory, pipe), pipe.getFilters(), TEXTURE);
 		this.playerInventory = playerInventory;
 		this.filterInventory = pipe.getFilters();
