@@ -50,7 +50,7 @@ import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BlockUtil;
+import buildcraft.core.utils.BlockUtils;
 import buildcraft.core.utils.Utils;
 
 public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory {
@@ -240,7 +240,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		if (!columnVisitListIsUpdated) { // nextTarget may not be accurate, at least search the target column for changes
 			for (int y = nextTarget[1] + 1; y < yCoord + 3; y++) {
 				Block block = worldObj.getBlock(nextTarget[0], y, nextTarget[2]);
-				if (BlockUtil.isAnObstructingBlock(block, worldObj, nextTarget[0], y, nextTarget[2])
+				if (BlockUtils.isAnObstructingBlock(block, worldObj, nextTarget[0], y, nextTarget[2])
 						|| !BuildCraftAPI.isSoftBlock(worldObj, nextTarget[0], y, nextTarget[2])) {
 					createColumnVisitList();
 					columnVisitListIsUpdated = true;
@@ -311,7 +311,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 						Block block = worldObj.getBlock(bx, by, bz);
 
-						if (!BlockUtil.canChangeBlock(block, worldObj, bx, by, bz)) {
+						if (!BlockUtils.canChangeBlock(block, worldObj, bx, by, bz)) {
 							blockedColumns[searchX][searchZ] = true;
 						} else if (!BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz)) {
 							visitList.add(new int[]{bx, by, bz});
@@ -416,7 +416,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         if (!breakEvent.isCanceled() && isQuarriableBlock(i, j, k)) {
 			// Share this with mining well!
 
-			List<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) worldObj, i, j, k);
+			List<ItemStack> stacks = BlockUtils.getItemStackFromBlock((WorldServer) worldObj, i, j, k);
 
 			if (stacks != null) {
 				for (ItemStack s : stacks) {
@@ -495,7 +495,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 	private boolean isQuarriableBlock(int bx, int by, int bz) {
 		Block block = worldObj.getBlock(bx, by, bz);
-		return BlockUtil.canChangeBlock(block, worldObj, bx, by, bz)
+		return BlockUtils.canChangeBlock(block, worldObj, bx, by, bz)
 				&& !BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz);
 	}
 

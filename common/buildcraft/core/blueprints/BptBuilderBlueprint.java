@@ -51,7 +51,7 @@ import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.inventory.InventoryCopy;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.utils.BlockUtil;
+import buildcraft.core.utils.BlockUtils;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
 
@@ -349,7 +349,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 
 			try {
-				if (BlockUtil.isUnbreakableBlock(world, slot.x, slot.y, slot.z)) {
+				if (BlockUtils.isUnbreakableBlock(world, slot.x, slot.y, slot.z)) {
 					// if the block can't be broken, just forget this iterator
 					iterator.remove();
 

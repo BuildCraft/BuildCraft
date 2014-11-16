@@ -28,7 +28,7 @@ import buildcraft.api.transport.IStripesHandler.StripesHandlerType;
 import buildcraft.api.transport.IStripesPipe;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BlockUtil;
+import buildcraft.core.utils.BlockUtils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.ItemPipe;
 import buildcraft.transport.Pipe;
@@ -250,7 +250,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 					container.zCoord, o);
 			p.moveForwards(1.0);
 
-			if (!BlockUtil.isUnbreakableBlock(getWorld(), (int) p.x, (int) p.y, (int) p.z)) {
+			if (!BlockUtils.isUnbreakableBlock(getWorld(), (int) p.x, (int) p.y, (int) p.z)) {
 				Block block = getWorld().getBlock((int) p.x, (int) p.y, (int) p.z);
 				int metadata = getWorld().getBlockMetadata((int) p.x, (int) p.y, (int) p.z);
 				

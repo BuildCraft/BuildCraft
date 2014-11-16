@@ -31,7 +31,7 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.TankUtils;
 import buildcraft.core.fluids.Tank;
-import buildcraft.core.utils.BlockUtil;
+import buildcraft.core.utils.BlockUtils;
 import buildcraft.core.utils.Utils;
 
 public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
@@ -207,7 +207,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 			}
 
 			Block block = worldObj.getBlock(x, y, z);
-			if (BlockUtil.getFluid(block) == tank.getFluidType()) {
+			if (BlockUtils.getFluid(block) == tank.getFluidType()) {
 				fluidsFound.add(index);
 			}
 			if (canPlaceFluidAt(block, x, y, z)) {
@@ -217,7 +217,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	}
 
 	private boolean canPlaceFluidAt(Block block, int x, int y, int z) {
-		return BuildCraftAPI.isSoftBlock(worldObj, x, y, z) && !BlockUtil.isFullFluidBlock(block, worldObj, x, y, z);
+		return BuildCraftAPI.isSoftBlock(worldObj, x, y, z) && !BlockUtils.isFullFluidBlock(block, worldObj, x, y, z);
 	}
 
 	public void onNeighborBlockChange(Block block) {

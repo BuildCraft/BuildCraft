@@ -24,7 +24,7 @@ import buildcraft.core.builders.BuildingSlotBlock.Mode;
 import buildcraft.core.builders.BuildingSlotIterator;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.inventory.InventoryIterator;
-import buildcraft.core.utils.BlockUtil;
+import buildcraft.core.utils.BlockUtils;
 
 public class BptBuilderTemplate extends BptBuilderBase {
 
@@ -160,7 +160,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 				return null;
 			}
 
-			if (BlockUtil.isUnbreakableBlock(world, slot.x, slot.y, slot.z)) {
+			if (BlockUtils.isUnbreakableBlock(world, slot.x, slot.y, slot.z)) {
 				iterator.remove();
 				if (slot.mode == Mode.ClearIfInvalid) {
 					clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));

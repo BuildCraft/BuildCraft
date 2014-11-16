@@ -25,7 +25,7 @@ import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BlockUtil;
+import buildcraft.core.utils.BlockUtils;
 import buildcraft.core.utils.Utils;
 
 public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeConnection {
@@ -62,7 +62,7 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 			depth = depth - 1;
 		}
 
-		if (depth < 1 || depth < yCoord - BuildCraftFactory.miningDepth || !BlockUtil.canChangeBlock(world, xCoord, depth, zCoord)) {
+		if (depth < 1 || depth < yCoord - BuildCraftFactory.miningDepth || !BlockUtils.canChangeBlock(world, xCoord, depth, zCoord)) {
 			isDigging = false;
 			return;
 		}
@@ -78,7 +78,7 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 
 		boolean wasAir = world.isAirBlock(xCoord, depth, zCoord);
 
-		List<ItemStack> stacks = BlockUtil.getItemStackFromBlock((WorldServer) worldObj, xCoord, depth, zCoord);
+		List<ItemStack> stacks = BlockUtils.getItemStackFromBlock((WorldServer) worldObj, xCoord, depth, zCoord);
 
 		world.setBlock(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock);
 

@@ -31,7 +31,7 @@ import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.inventory.Transactor;
-import buildcraft.core.utils.BlockUtil;
+import buildcraft.core.utils.BlockUtils;
 import buildcraft.core.utils.MathUtils;
 import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
 import buildcraft.transport.network.PacketPipeTransportTraveler;
@@ -139,7 +139,7 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	private void destroyPipe() {
-		BlockUtil.explodeBlock(container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord);
+		BlockUtils.explodeBlock(container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord);
 		container.getWorldObj().setBlockToAir(container.xCoord, container.yCoord, container.zCoord);
 	}
 

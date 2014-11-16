@@ -20,7 +20,7 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BlockUtil;
+import buildcraft.core.utils.BlockUtils;
 
 public class AIRobotBreak extends AIRobot {
 
@@ -74,19 +74,19 @@ public class AIRobotBreak extends AIRobot {
 							CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj).get());
 			}
 
-			BlockUtil.breakBlock((WorldServer) robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z, 6000);
+			if (BlockUtils.breakBlock((WorldServer) robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z, 6000)) {
+				robot.worldObj.playAuxSFXAtEntity(null, 2001,
+						blockToBreak.x, blockToBreak.y, blockToBreak.z,
+						Block.getIdFromBlock(block) + (meta << 12));
 
-			robot.worldObj.playAuxSFXAtEntity(null, 2001,
-					blockToBreak.x, blockToBreak.y, blockToBreak.z,
-					Block.getIdFromBlock(block) + (meta << 12));
+				if (robot.getHeldItem() != null) {
+					robot.getHeldItem().getItem()
+							.onBlockDestroyed(robot.getHeldItem(), robot.worldObj, block, blockToBreak.x,
+									blockToBreak.y, blockToBreak.z, robot);
 
-			if (robot.getHeldItem() != null) {
-				robot.getHeldItem().getItem()
-						.onBlockDestroyed(robot.getHeldItem(), robot.worldObj, block, blockToBreak.x,
-					blockToBreak.y, blockToBreak.z, robot);
-
-				if (robot.getHeldItem().getItemDamage() >= robot.getHeldItem().getMaxDamage()) {
-					robot.setItemInUse(null);
+					if (robot.getHeldItem().getItemDamage() >= robot.getHeldItem().getMaxDamage()) {
+						robot.setItemInUse(null);
+					}
 				}
 			}
 

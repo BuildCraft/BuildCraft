@@ -26,7 +26,9 @@ import net.minecraft.world.WorldServer;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
+import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -37,12 +39,12 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.proxy.CoreProxy;
 
-public final class BlockUtil {
+public final class BlockUtils {
 
 	/**
 	 * Deactivate constructor
 	 */
-	private BlockUtil() {
+	private BlockUtils() {
 	}
 
 	public static List<ItemStack> getItemStackFromBlock(WorldServer world, int i, int j, int k) {
@@ -68,11 +70,19 @@ public final class BlockUtil {
 		return returnList;
 	}
 
-	public static void breakBlock(WorldServer world, int x, int y, int z) {
-		breakBlock(world, x, y, z, BuildCraftCore.itemLifespan);
+	public static boolean breakBlock(WorldServer world, int x, int y, int z) {
+		return breakBlock(world, x, y, z, BuildCraftCore.itemLifespan);
 	}
 
-	public static void breakBlock(WorldServer world, int x, int y, int z, int forcedLifespan) {
+	public static boolean breakBlock(WorldServer world, int x, int y, int z, int forcedLifespan) {
+		BreakEvent breakEvent = new BreakEvent(x, y, z, world, world.getBlock(x, y, z),
+				world.getBlockMetadata(x, y, z), CoreProxy.proxy.getBuildCraftPlayer(world).get());
+		MinecraftForge.EVENT_BUS.post(breakEvent);
+
+		if (breakEvent.isCanceled()) {
+			return false;
+		}
+
 		if (!world.isAirBlock(x, y, z) && BuildCraftCore.dropBrokenBlocks && !world.isRemote && world.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
 			List<ItemStack> items = getItemStackFromBlock(world, x, y, z);
 
@@ -82,6 +92,8 @@ public final class BlockUtil {
 		}
 
 		world.setBlockToAir(x, y, z);
+
+		return true;
 	}
 
 	public static void dropItem(WorldServer world, int x, int y, int z, int forcedLifespan, ItemStack stack) {

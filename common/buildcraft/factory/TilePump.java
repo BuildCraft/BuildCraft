@@ -41,7 +41,7 @@ import buildcraft.core.fluids.SingleUseTank;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BlockUtil;
+import buildcraft.core.utils.BlockUtils;
 import buildcraft.core.utils.Utils;
 
 public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler {
@@ -105,13 +105,13 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 
 		BlockIndex index = getNextIndexToPump(false);
 
-		FluidStack fluidToPump = index != null ? BlockUtil.drainBlock(worldObj, index.x, index.y, index.z, false) : null;
+		FluidStack fluidToPump = index != null ? BlockUtils.drainBlock(worldObj, index.x, index.y, index.z, false) : null;
 		if (fluidToPump != null) {
 			if (isFluidAllowed(fluidToPump.getFluid()) && tank.fill(fluidToPump, false) == fluidToPump.amount) {
 				if (getBattery().useEnergy(100, 100, false) > 0) {
 					if (fluidToPump.getFluid() != FluidRegistry.WATER || BuildCraftCore.consumeWaterSources || numFluidBlocksFound < 9) {
 						index = getNextIndexToPump(true);
-						BlockUtil.drainBlock(worldObj, index.x, index.y, index.z, true);
+						BlockUtils.drainBlock(worldObj, index.x, index.y, index.z, true);
 					}
 
 					tank.fill(fluidToPump, true);
@@ -241,7 +241,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 		int x = xCoord;
 		int y = aimY;
 		int z = zCoord;
-		Fluid pumpingFluid = BlockUtil.getFluid(worldObj.getBlock(x, y, z));
+		Fluid pumpingFluid = BlockUtils.getFluid(worldObj.getBlock(x, y, z));
 
 		if (pumpingFluid == null) {
 			return;
@@ -290,7 +290,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 
 			Block block = worldObj.getBlock(x, y, z);
 
-			if (BlockUtil.getFluid(block) == pumpingFluid) {
+			if (BlockUtils.getFluid(block) == pumpingFluid) {
 				fluidsFound.add(index);
 			}
 
@@ -302,7 +302,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 	}
 
 	private boolean isPumpableFluid(int x, int y, int z) {
-		Fluid fluid = BlockUtil.getFluid(worldObj.getBlock(x, y, z));
+		Fluid fluid = BlockUtils.getFluid(worldObj.getBlock(x, y, z));
 
 		if (fluid == null) {
 			return false;
@@ -318,7 +318,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 			return false;
 		}
 
-		FluidStack fluidStack = BlockUtil.drainBlock(block, worldObj, x, y, z, false);
+		FluidStack fluidStack = BlockUtils.drainBlock(block, worldObj, x, y, z, false);
 
 		if (fluidStack == null || fluidStack.amount <= 0) {
 			return false;
