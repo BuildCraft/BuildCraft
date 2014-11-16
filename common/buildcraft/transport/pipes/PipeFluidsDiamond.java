@@ -72,7 +72,6 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
 	    super(new PipeTransportFluids(), item);
 
         transport.initFromPipe(getClass());
-		transport.travelDelay = 4;
 	}
 
     @Override

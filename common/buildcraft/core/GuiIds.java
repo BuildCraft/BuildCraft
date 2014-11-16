@@ -36,8 +36,6 @@ public final class GuiIds {
 
 	public static final int FILTERED_BUFFER = 60;
 
-	public static final int SCIENCE_BOOK = 70;
-
 	/**
 	 * Deactivate constructor
 	 */

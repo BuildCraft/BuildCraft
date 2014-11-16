@@ -38,7 +38,6 @@ public class PipeFluidsEmerald extends PipeFluidsWood implements IClientState {
 		solidIconIndex = PipeIconProvider.TYPE.PipeAllEmerald_Solid.ordinal();
 
         transport.initFromPipe(getClass());
-		transport.travelDelay = 4;
 	}
 
 	public IInventory getFilters() {

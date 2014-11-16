@@ -27,7 +27,6 @@ public class PipeFluidsQuartz extends Pipe<PipeTransportFluids> {
 	    super(new PipeTransportFluids(), item);
 
         transport.initFromPipe(getClass());
-	    transport.travelDelay = 8;
 	}
 
 	@Override

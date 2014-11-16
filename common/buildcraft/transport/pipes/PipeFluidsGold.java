@@ -27,7 +27,6 @@ public class PipeFluidsGold extends Pipe<PipeTransportFluids> {
 	    super(new PipeTransportFluids(), item);
 
         transport.initFromPipe(getClass());
-		transport.travelDelay = 4;
 	}
 
 	@Override

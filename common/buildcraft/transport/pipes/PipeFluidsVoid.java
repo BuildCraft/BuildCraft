@@ -29,7 +29,6 @@ public class PipeFluidsVoid extends Pipe<PipeTransportFluids> implements IPipeTr
 		super(new PipeTransportFluids(), item);
 
         transport.initFromPipe(getClass());
-		transport.travelDelay = 12;
 	}
 
 	@Override

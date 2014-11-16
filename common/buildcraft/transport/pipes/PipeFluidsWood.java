@@ -64,7 +64,6 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 	        super(new PipeTransportFluids(), item);
 
         transport.initFromPipe(getClass());
-		transport.travelDelay = 12;
 	}
 
 	@Override

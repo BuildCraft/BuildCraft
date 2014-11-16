@@ -12,6 +12,7 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 
+import buildcraft.core.utils.MathUtils;
 import buildcraft.transport.pipes.PipeFluidsDiamond;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -176,7 +177,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	}
 
     public void initFromPipe(Class<? extends Pipe> pipeClass) {
-        flowRate = fluidCapacities.get(pipeClass);
+	    flowRate = fluidCapacities.get(pipeClass);
+	    travelDelay = MathUtils.clamp(Math.round(16 / (flowRate / 10)), 1, 12);
     }
 
 	@Override

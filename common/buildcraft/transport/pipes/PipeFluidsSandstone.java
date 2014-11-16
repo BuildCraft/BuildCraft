@@ -32,7 +32,6 @@ public class PipeFluidsSandstone extends Pipe<PipeTransportFluids> implements IP
 		super(new PipeTransportFluids(), item);
 
         transport.initFromPipe(getClass());
-		transport.travelDelay = 12;
 	}
 
 	@Override
