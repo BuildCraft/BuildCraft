@@ -19,15 +19,18 @@ import cpw.mods.fml.common.network.IGuiHandler;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.GuiIds;
 import buildcraft.transport.gui.ContainerDiamondPipe;
+import buildcraft.transport.gui.ContainerEmeraldFluidPipe;
 import buildcraft.transport.gui.ContainerEmeraldPipe;
 import buildcraft.transport.gui.ContainerEmzuliPipe;
 import buildcraft.transport.gui.ContainerFilteredBuffer;
 import buildcraft.transport.gui.ContainerGateInterface;
 import buildcraft.transport.gui.GuiDiamondPipe;
+import buildcraft.transport.gui.GuiEmeraldFluidPipe;
 import buildcraft.transport.gui.GuiEmeraldPipe;
 import buildcraft.transport.gui.GuiEmzuliPipe;
 import buildcraft.transport.gui.GuiFilteredBuffer;
 import buildcraft.transport.gui.GuiGateInterface;
+import buildcraft.transport.pipes.PipeFluidsEmerald;
 import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
 import buildcraft.transport.pipes.PipeItemsEmzuli;
@@ -67,6 +70,9 @@ public class GuiHandler implements IGuiHandler {
 
 				case GuiIds.PIPE_LOGEMERALD_ITEM:
 					return new ContainerEmzuliPipe(player.inventory, (PipeItemsEmzuli) pipe.pipe);
+
+				case GuiIds.PIPE_EMERALD_FLUID:
+					return new ContainerEmeraldFluidPipe(player.inventory, (PipeFluidsEmerald) pipe.pipe);
 
 				case GuiIds.GATES:
 					return new ContainerGateInterface(player.inventory, pipe.pipe);
@@ -113,6 +119,9 @@ public class GuiHandler implements IGuiHandler {
 
 				case GuiIds.PIPE_LOGEMERALD_ITEM:
 					return new GuiEmzuliPipe(player.inventory, (PipeItemsEmzuli) pipe.pipe);
+
+				case GuiIds.PIPE_EMERALD_FLUID:
+					return new GuiEmeraldFluidPipe(player.inventory, (PipeFluidsEmerald) pipe.pipe);
 
 				case GuiIds.GATES:
 					return new GuiGateInterface(player.inventory, pipe.pipe);

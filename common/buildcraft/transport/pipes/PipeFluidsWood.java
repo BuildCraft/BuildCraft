@@ -16,6 +16,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
@@ -94,20 +95,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 			TileEntity tile = container.getTile(side);
 
 			if (tile instanceof IFluidHandler) {
-				IFluidHandler fluidHandler = (IFluidHandler) tile;
-
-				int flowRate = transport.flowRate;
-
-				FluidStack extracted = fluidHandler.drain(side.getOpposite(), liquidToExtract > flowRate ? flowRate : liquidToExtract, false);
-
-				int inserted = 0;
-				if (extracted != null) {
-					inserted = transport.fill(side, extracted, true);
-
-					fluidHandler.drain(side.getOpposite(), inserted, true);
-				}
-
-				liquidToExtract -= inserted;
+				liquidToExtract -= extractFluid((IFluidHandler) tile, side);
 			}
 		}
 
@@ -131,7 +119,21 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 			}
 		}
 	}
-	
+
+	public int extractFluid(IFluidHandler fluidHandler, ForgeDirection side) {
+		int flowRate = transport.flowRate;
+		FluidStack extracted = fluidHandler.drain(side.getOpposite(), liquidToExtract > flowRate ? flowRate : liquidToExtract, false);
+
+		int inserted = 0;
+
+		if (extracted != null) {
+			inserted = transport.fill(side, extracted, true);
+
+			fluidHandler.drain(side.getOpposite(), inserted, true);
+		}
+		return inserted;
+	}
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {

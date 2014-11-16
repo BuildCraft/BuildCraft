@@ -32,6 +32,7 @@ public final class GuiIds {
 	public static final int GATES = 51;
 	public static final int PIPE_EMERALD_ITEM = 52;
 	public static final int PIPE_LOGEMERALD_ITEM = 53;
+	public static final int PIPE_EMERALD_FLUID = 54;
 
 	public static final int FILTERED_BUFFER = 60;
 

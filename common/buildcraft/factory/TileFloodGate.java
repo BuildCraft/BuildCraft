@@ -29,7 +29,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.fluids.FluidUtils;
+import buildcraft.core.fluids.TankUtils;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.utils.BlockUtil;
 import buildcraft.core.utils.Utils;
@@ -108,7 +108,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 
 		if (canPlaceFluidAt(block, x, y, z)) {
 			boolean placed;
-			Block b = FluidUtils.getFluidBlock(fluid, true);
+			Block b = TankUtils.getFluidBlock(fluid, true);
 
 			if (b instanceof BlockFluidBase) {
 				BlockFluidBase blockFluid = (BlockFluidBase) b;

@@ -32,7 +32,7 @@ import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
-import buildcraft.core.fluids.FluidUtils;
+import buildcraft.core.fluids.TankUtils;
 import buildcraft.core.utils.Utils;
 
 public class BlockBuilder extends BlockBuildCraft {
@@ -116,7 +116,7 @@ public class BlockBuilder extends BlockBuildCraft {
 			}
 
 			return true;
-		} else if (builder != null && FluidUtils.handleRightClick(builder, ForgeDirection.UNKNOWN, entityplayer, true, false)) {
+		} else if (builder != null && TankUtils.handleRightClick(builder, ForgeDirection.UNKNOWN, entityplayer, true, false)) {
 			return true;
 		} else {
 			if (!world.isRemote) {

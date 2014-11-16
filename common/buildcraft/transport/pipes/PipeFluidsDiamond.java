@@ -13,6 +13,7 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.IClientState;
+import buildcraft.core.utils.FluidUtils;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.IDiamondPipe;
@@ -46,8 +47,7 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
 
 		@Override
 		public boolean isItemValidForSlot(int slot, ItemStack stack) {
-			return stack == null || stack.getItem() instanceof IFluidContainerItem
-					|| FluidContainerRegistry.isFilledContainer(stack);
+			return stack == null || FluidUtils.isFluidContainer(stack);
 		}
 
 		@Override
@@ -58,23 +58,9 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
 			}
 
 			for (int i = 0; i < 54; i++) {
-				fluids[i] = null;
-				ItemStack stack = getStackInSlot(i);
-				if (stack != null) {
-					if (stack.getItem() instanceof IFluidContainerItem) {
-						IFluidContainerItem ctr = (IFluidContainerItem) stack.getItem();
-						if (ctr.getFluid(stack) != null) {
-							fluids[i] = ctr.getFluid(stack).getFluid();
-							filteredDirections[i / 9] = true;
-						}
-					} else if (FluidContainerRegistry.isFilledContainer(stack) &&
-							FluidContainerRegistry.getFluidForFilledItem(stack) != null) {
-						fluids[i] = FluidContainerRegistry.getFluidForFilledItem(stack).getFluid();
-						filteredDirections[i / 9] = true;
-					}
-				}
+				fluids[i] = FluidUtils.getFluidFromItemStack(getStackInSlot(i));
 				if (fluids[i] != null) {
-					System.out.println("fluid at " + i + " is " + fluids[i].getName());
+					filteredDirections[i / 9] = true;
 				}
 			}
 		}

@@ -33,7 +33,7 @@ import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
-import buildcraft.core.fluids.FluidUtils;
+import buildcraft.core.fluids.TankUtils;
 import buildcraft.core.utils.Utils;
 
 public class BlockRefinery extends BlockBuildCraft {
@@ -126,7 +126,7 @@ public class BlockRefinery extends BlockBuildCraft {
 
 		if (current != null && current.getItem() != Items.bucket) {
 			if (!world.isRemote) {
-				if (FluidUtils.handleRightClick((TileRefinery) tile, ForgeDirection.getOrientation(side), player, true, false)) {
+				if (TankUtils.handleRightClick((TileRefinery) tile, ForgeDirection.getOrientation(side), player, true, false)) {
 					return true;
 				}
 			} else if (FluidContainerRegistry.isContainer(current)) {

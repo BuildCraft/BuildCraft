@@ -19,7 +19,6 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -37,7 +36,7 @@ import buildcraft.core.EntityBlock;
 import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.fluids.FluidUtils;
+import buildcraft.core.fluids.TankUtils;
 import buildcraft.core.fluids.SingleUseTank;
 import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
@@ -160,7 +159,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 			cache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
 		}
 
-		FluidUtils.pushFluidToConsumers(tank, 400, cache);
+		TankUtils.pushFluidToConsumers(tank, 400, cache);
 	}
 
 	private void createTube() {

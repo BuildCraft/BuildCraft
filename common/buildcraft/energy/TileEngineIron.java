@@ -28,7 +28,7 @@ import buildcraft.api.fuels.IFuel;
 import buildcraft.api.fuels.ISolidCoolant;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
-import buildcraft.core.fluids.FluidUtils;
+import buildcraft.core.fluids.TankUtils;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.fluids.TankManager;
 import buildcraft.core.inventory.InvUtils;
@@ -76,7 +76,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 				return false;
 			}
 			if (!worldObj.isRemote) {
-				if (FluidUtils.handleRightClick(this, side, player, true, true)) {
+				if (TankUtils.handleRightClick(this, side, player, true, true)) {
 					return true;
 				}
 			} else {

@@ -25,12 +25,12 @@ import net.minecraftforge.fluids.IFluidTank;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.inventory.InvUtils;
 
-public final class FluidUtils {
+public final class TankUtils {
 
 	/**
 	 * Deactivate constructor
 	 */
-	private FluidUtils() {
+	private TankUtils() {
 	}
 
 	public static boolean handleRightClick(IFluidHandler tank, ForgeDirection side, EntityPlayer player, boolean fill, boolean drain) {
