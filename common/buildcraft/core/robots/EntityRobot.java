@@ -159,6 +159,7 @@ public class EntityRobot extends EntityRobotBase implements
 		preventEntitySpawning = false;
 		noClip = true;
 		isImmuneToFire = true;
+		this.func_110163_bv(); // persistenceRequired = true
 
 		dataWatcher.addObject(12, Float.valueOf(0));
 		dataWatcher.addObject(13, Float.valueOf(0));
@@ -536,6 +537,9 @@ public class EntityRobot extends EntityRobotBase implements
 		} else {
 			tank = null;
 		}
+
+		// Restore robot persistence on pre-6.1.9 robots
+		this.func_110163_bv();
     }
 
 	@Override

@@ -64,7 +64,7 @@ public final class InterModComms {
 			} else if (m.key.equals("remove-refinery-recipe")) {
 				processRefineryRecipeRemoveIMC(event, m);
 			} else {
-				BCLog.logger.warn("Received an IMC message with unknown key ('%s') from %s!", new Object[]{m.key, m.getSender()});
+				BCLog.logger.warn(String.format("Received an IMC message with unknown key ('%s') from %s!", new Object[]{m.key, m.getSender()}));
 			}
 		}
 	}
