@@ -40,6 +40,11 @@ public class AIRobotPumpBlock extends AIRobot {
 	}
 
 	@Override
+	public void preempt(AIRobot ai) {
+		super.preempt(ai);
+	}
+
+	@Override
 	public void update() {
 		if (waited < 40) {
 			waited++;
