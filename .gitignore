@@ -4,6 +4,8 @@
 .metadata
 org.*
 bin
+#Forge-specific eclipse path
+eclipse
 
 #idea
 *.iml

@@ -36,12 +36,14 @@ public class BlockMarker extends BlockBuildCraft {
 		super(Material.circuits);
 
 		setLightLevel(0.5F);
+		setHardness(0.0F);
 		setCreativeTab(CreativeTabBuildCraft.ITEMS.get());
 	}
 
 	public static boolean canPlaceTorch(World world, int x, int y, int z, ForgeDirection side) {
 		Block block = world.getBlock(x, y, z);
-		return block != null && (block.renderAsNormalBlock() && block.isOpaqueCube() || block.isSideSolid(world, x, y, z, side));
+		return block != null
+				&& (block.renderAsNormalBlock() && block.isOpaqueCube() || block.isSideSolid(world, x, y, z, side));
 	}
 
 	private AxisAlignedBB getBoundingBox(int meta) {
@@ -50,18 +52,18 @@ public class BlockMarker extends BlockBuildCraft {
 
 		ForgeDirection dir = ForgeDirection.getOrientation(meta);
 		switch (dir) {
-			case DOWN:
-				return AxisAlignedBB.getBoundingBox(0.5F - w, 1F - h, 0.5F - w, 0.5F + w, 1F, 0.5F + w);
-			case UP:
-				return AxisAlignedBB.getBoundingBox(0.5F - w, 0F, 0.5F - w, 0.5F + w, h, 0.5F + w);
-			case SOUTH:
-				return AxisAlignedBB.getBoundingBox(0.5F - w, 0.5F - w, 0F, 0.5F + w, 0.5F + w, h);
-			case NORTH:
-				return AxisAlignedBB.getBoundingBox(0.5F - w, 0.5F - w, 1 - h, 0.5F + w, 0.5F + w, 1);
-			case EAST:
-				return AxisAlignedBB.getBoundingBox(0F, 0.5F - w, 0.5F - w, h, 0.5F + w, 0.5F + w);
-			default:
-				return AxisAlignedBB.getBoundingBox(1 - h, 0.5F - w, 0.5F - w, 1F, 0.5F + w, 0.5F + w);
+		case DOWN:
+			return AxisAlignedBB.getBoundingBox(0.5F - w, 1F - h, 0.5F - w, 0.5F + w, 1F, 0.5F + w);
+		case UP:
+			return AxisAlignedBB.getBoundingBox(0.5F - w, 0F, 0.5F - w, 0.5F + w, h, 0.5F + w);
+		case SOUTH:
+			return AxisAlignedBB.getBoundingBox(0.5F - w, 0.5F - w, 0F, 0.5F + w, 0.5F + w, h);
+		case NORTH:
+			return AxisAlignedBB.getBoundingBox(0.5F - w, 0.5F - w, 1 - h, 0.5F + w, 0.5F + w, 1);
+		case EAST:
+			return AxisAlignedBB.getBoundingBox(0F, 0.5F - w, 0.5F - w, h, 0.5F + w, 0.5F + w);
+		default:
+			return AxisAlignedBB.getBoundingBox(1 - h, 0.5F - w, 0.5F - w, 1F, 0.5F + w, 0.5F + w);
 		}
 	}
 
@@ -77,7 +79,8 @@ public class BlockMarker extends BlockBuildCraft {
 	public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
 		int meta = world.getBlockMetadata(x, y, z);
 		AxisAlignedBB bb = getBoundingBox(meta);
-		setBlockBounds((float) bb.minX, (float) bb.minY, (float) bb.minZ, (float) bb.maxX, (float) bb.maxY, (float) bb.maxZ);
+		setBlockBounds((float) bb.minX, (float) bb.minY, (float) bb.minZ, (float) bb.maxX, (float) bb.maxY,
+				(float) bb.maxZ);
 	}
 
 	@Override
@@ -95,7 +98,8 @@ public class BlockMarker extends BlockBuildCraft {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7,
+			float par8, float par9) {
 		if (entityplayer.inventory.getCurrentItem() != null
 				&& entityplayer.inventory.getCurrentItem().getItem() instanceof ItemMapLocation) {
 			return false;
