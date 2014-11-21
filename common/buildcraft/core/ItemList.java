@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -24,6 +23,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -138,7 +138,6 @@ public class ItemList extends ItemBuildCraft {
 			int[] oreIds = OreDictionary.getOreIDs(base);
 			int[] matchesIds = OreDictionary.getOreIDs(matched);
 
-
 			for (int stackId : oreIds) {
 				for (int matchId : matchesIds) {
 					if (stackId == matchId) {
@@ -151,7 +150,7 @@ public class ItemList extends ItemBuildCraft {
 		}
 
 		private void setClientPreviewLists() {
-			Item baseItem = stacks [0].getItem();
+			Item baseItem = stacks[0].getItem();
 
 			int[] oreIds = OreDictionary.getOreIDs(stacks[0]);
 
@@ -171,7 +170,8 @@ public class ItemList extends ItemBuildCraft {
 					for (Object ol : list) {
 						ItemStack stack = (ItemStack) ol;
 
-						if (classMatch && relatedItems.size() <= 7 && !StackHelper.isMatchingItemOrList(stacks[0], stack)) {
+						if (classMatch && relatedItems.size() <= 7
+								&& !StackHelper.isMatchingItemOrList(stacks[0], stack)) {
 							relatedItems.add(stack);
 						}
 
