@@ -27,6 +27,7 @@ import buildcraft.builders.blueprints.BlueprintId.Kind;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.inventory.SimpleInventory;
+import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.Utils;
@@ -227,20 +228,19 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 			final BlueprintBase bpt = ItemBlueprint.loadBlueprint(getStackInSlot(1));
 
 			if (bpt != null && uploadingPlayer != null) {
-				BuildCraftCore.instance.sendToPlayer(uploadingPlayer, new PacketCommand(this, "downloadBlueprintToClient") {
-					@Override
-					public void writeData(ByteBuf data) {
-						super.writeData(data);
+				BuildCraftCore.instance.sendToPlayer(uploadingPlayer, new PacketCommand(this, "downloadBlueprintToClient",
+						new CommandWriter() {
+					public void write(ByteBuf data) {
 						bpt.id.writeData(data);
 						Utils.writeByteArray(data, bpt.getData());
 					}
-				});
+				}));
 				uploadingPlayer = null;
 			}
 		}
 
 		if (progressOut == 100 && getStackInSlot(3) == null) {
-			BuildCraftCore.instance.sendToPlayer(downloadingPlayer, new PacketCommand(this, "requestSelectedBlueprint"));
+			BuildCraftCore.instance.sendToPlayer(downloadingPlayer, new PacketCommand(this, "requestSelectedBlueprint", null));
 			progressOut = 0;
 		}
 	}
@@ -259,16 +259,15 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 						final BlueprintBase bpt = BuildCraftBuilders.clientDB
 								.load(currentPage.get(selected));
 
-						BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadBlueprintToServer") {
-							@Override
-							public void writeData(ByteBuf data) {
-								super.writeData(data);
+						BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadBlueprintToServer",
+								new CommandWriter() {
+							public void write(ByteBuf data) {
 								bpt.id.writeData(data);
 								Utils.writeByteArray(data, bpt.getData());
 							}
-						});
+						}));
 					} else {
-						BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadNothingToServer"));
+						BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadNothingToServer", null));
 					}
 				}
 			} else if (command.equals("downloadBlueprintToClient")) {

@@ -15,6 +15,7 @@ public class PacketCommand extends BuildCraftPacket {
 	public String command;
 	public Object target;
 	public CommandTarget handler;
+	private CommandWriter writer;
 
 	static {
 		targets = new ArrayList<CommandTarget>();
@@ -26,11 +27,14 @@ public class PacketCommand extends BuildCraftPacket {
 	public PacketCommand() {
 	}
 
-	public PacketCommand(Object target, String command) {
+	public PacketCommand(Object target, String command, CommandWriter writer) {
 		super();
 
 		this.target = target;
 		this.command = command;
+		this.writer = writer;
+
+		this.isChunkDataPacket = true;
 
 		// Find the valid handler
 		for (CommandTarget c : targets) {
@@ -42,9 +46,7 @@ public class PacketCommand extends BuildCraftPacket {
 	}
 
 	public void handle(EntityPlayer player) {
-		System.out.println("Handling packet '" + command + "'");
 		if (handler != null) {
-			System.out.println("2");
 			ICommandReceiver receiver = (ICommandReceiver) handler.handle(player, stream, player.worldObj);
 			if (receiver != null) {
 				receiver.receiveCommand(command, FMLCommonHandler.instance().getEffectiveSide(), player, stream);
@@ -57,6 +59,9 @@ public class PacketCommand extends BuildCraftPacket {
 		Utils.writeUTF(data, command);
 		data.writeByte(targets.indexOf(handler));
 		handler.write(data, target);
+		if (writer != null) {
+			writer.write(data);
+		}
 	}
 
 	@Override

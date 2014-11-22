@@ -52,6 +52,7 @@ import buildcraft.api.robots.IDockingStation;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
 import buildcraft.core.RFBattery;
+import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.NBTUtils;
@@ -201,7 +202,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 	protected void init() {
 		if (worldObj.isRemote) {
-			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "requestInitialization"));
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "requestInitialization", null));
 		}
 	}
 
@@ -645,14 +646,12 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	public void updateClientSlot(final int slot) {
-		BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "clientSetInventory") {
-			@Override
-			public void writeData(ByteBuf data) {
-				super.writeData(data);
+		BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "clientSetInventory", new CommandWriter() {
+			public void write(ByteBuf data) {
 				data.writeShort(slot);
 				Utils.writeStack(data, inv[slot]);
 			}
-		}, worldObj);
+		}), worldObj);
 	}
 
 	@Override
@@ -683,26 +682,22 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	public void setItemInUse(ItemStack stack) {
 		itemInUse = stack;
-		BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "clientSetItemInUse") {
-			@Override
-			public void writeData(ByteBuf data) {
-				super.writeData(data);
+		BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "clientSetItemInUse", new CommandWriter() {
+			public void write(ByteBuf data) {
 				Utils.writeStack(data, itemInUse);
 			}
-		}, worldObj);
+		}), worldObj);
 	}
 
 	private void setSteamDirection(final int x, final int y, final int z) {
 		if (!worldObj.isRemote) {
-			BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "setSteamDirection") {
-				@Override
-				public void writeData(ByteBuf data) {
-					super.writeData(data);
+			BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "setSteamDirection", new CommandWriter() {
+				public void write(ByteBuf data) {
 					data.writeInt(x);
 					data.writeShort(y);
 					data.writeInt(z);
 				}
-			}, worldObj);
+			}), worldObj);
 		} else {
 			Vec3 v = Vec3.createVectorHelper(x, y, z);
 			v.normalize();
@@ -738,25 +733,21 @@ public class EntityRobot extends EntityRobotBase implements
 		} else if (side.isServer()) {
 			EntityPlayer p = (EntityPlayer) sender;
 			if (command.equals("requestInitialization")) {
-				BuildCraftCore.instance.sendToPlayer(p, new PacketCommand(this, "initialize") {
-					@Override
-					public void writeData(ByteBuf data) {
-						super.writeData(data);
+				BuildCraftCore.instance.sendToPlayer(p, new PacketCommand(this, "initialize", new CommandWriter() {
+					public void write(ByteBuf data) {
 						Utils.writeStack(data, itemInUse);
 						data.writeBoolean(itemActive);
 					}
-				});
+				}));
 
 				for (int i = 0; i < inv.length; ++i) {
 					final int j = i;
-					BuildCraftCore.instance.sendToPlayer(p, new PacketCommand(this, "clientSetInventory") {
-						@Override
-						public void writeData(ByteBuf data) {
-							super.writeData(data);
+					BuildCraftCore.instance.sendToPlayer(p, new PacketCommand(this, "clientSetInventory", new CommandWriter() {
+						public void write(ByteBuf data) {
 							data.writeShort(j);
 							Utils.writeStack(data, inv[j]);
 						}
-					});
+					}));
 				}
 
 				if (currentDockingStation != null) {
@@ -816,13 +807,11 @@ public class EntityRobot extends EntityRobotBase implements
 	public void setItemActive(final boolean isActive) {
 		if (isActive != itemActive) {
 			itemActive = isActive;
-			BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "setItemActive") {
-				@Override
-				public void writeData(ByteBuf data) {
-					super.writeData(data);
+			BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "setItemActive", new CommandWriter() {
+				public void write(ByteBuf data) {
 					data.writeBoolean(isActive);
 				}
-			}, worldObj);
+			}), worldObj);
 		}
 	}
 

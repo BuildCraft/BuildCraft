@@ -111,13 +111,20 @@ public class ZoneChunk implements ISerializable {
 
 	@Override
 	public void readData(ByteBuf stream) {
-		property = BitSetUtils.fromByteArray(Utils.readByteArray(stream));
+		if (stream.readBoolean()) {
+			property = BitSetUtils.fromByteArray(Utils.readByteArray(stream));
+		}
 		fullSet = stream.readBoolean();
 	}
 
 	@Override
 	public void writeData(ByteBuf stream) {
-		Utils.writeByteArray(stream, BitSetUtils.toByteArray(property));
+		if (property != null) {
+			stream.writeBoolean(true);
+			Utils.writeByteArray(stream, BitSetUtils.toByteArray(property));
+		} else {
+			stream.writeBoolean(false);
+		}
 		stream.writeBoolean(fullSet);
 	}
 }

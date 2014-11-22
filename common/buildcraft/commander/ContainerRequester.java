@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import cpw.mods.fml.relauncher.Side;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.gui.BuildCraftContainer;
+import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.Utils;
@@ -58,7 +59,7 @@ public class ContainerRequester extends BuildCraftContainer implements ICommandR
 	}
 
 	public void getRequestList() {
-		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "getRequestList"));
+		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "getRequestList", null));
 	}
 
 	@Override
@@ -70,15 +71,14 @@ public class ContainerRequester extends BuildCraftContainer implements ICommandR
 				stacks[i] = requester.getRequest(i);
 			}
 
-			BuildCraftCore.instance.sendToPlayer((EntityPlayer) sender, new PacketCommand(this, "receiveRequestList") {
-				@Override
-				public void writeData(ByteBuf data) {
-					super.writeData(data);
+			BuildCraftCore.instance.sendToPlayer((EntityPlayer) sender, new PacketCommand(this, "receiveRequestList",
+					new CommandWriter() {
+				public void write(ByteBuf data) {
 					for (ItemStack s : stacks) {
 						Utils.writeStack(data, s);
 					}
 				}
-			});
+			}));
 		} else if (side.isClient() && command.equals("receiveRequestList")) {
 			requests = new ItemStack[TileRequester.NB_ITEMS];
 			for (int i = 0; i < TileRequester.NB_ITEMS; i++) {

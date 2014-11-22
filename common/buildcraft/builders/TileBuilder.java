@@ -57,6 +57,7 @@ import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.PacketCommand;
 import buildcraft.core.robots.ResourceIdRequest;
 import buildcraft.core.robots.RobotRegistry;
@@ -327,23 +328,25 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 	public void iterateBpt(boolean forceIterate) {
 		if (getStackInSlot(0) == null || !(getStackInSlot(0).getItem() instanceof ItemBlueprint)) {
-			if (currentBuilder != null) {
-				currentBuilder = null;
-			}
-
 			if (box.isInitialized()) {
-				box.reset();
+				if (currentBuilder != null) {
+					currentBuilder = null;
+				}
+
+				if (box.isInitialized()) {
+					box.reset();
+				}
+
+				if (currentPathIterator != null) {
+					currentPathIterator = null;
+				}
+
+				updateRequirements();
+
+				sendNetworkUpdate();
+
+				return;
 			}
-
-			if (currentPathIterator != null) {
-				currentPathIterator = null;
-			}
-
-			updateRequirements();
-
-			sendNetworkUpdate();
-
-			return;
 		}
 
 		if (currentBuilder == null || (currentBuilder.isDone(this) || forceIterate)) {
@@ -377,10 +380,14 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 				} else {
 					done = false;
 				}
+
+				updateRequirements();
 			} else {
 				if (currentBuilder != null && currentBuilder.isDone(this)) {
 					currentBuilder.postProcessing(worldObj);
 					currentBuilder = recursiveBuilder.nextBuilder();
+
+					updateRequirements();
 				} else {
 					BlueprintBase bpt = instanciateBlueprint();
 
@@ -389,6 +396,8 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 								ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite());
 
 						currentBuilder = recursiveBuilder.nextBuilder();
+
+						updateRequirements();
 					}
 				}
 
@@ -400,11 +409,9 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 					done = false;
 				}
 			}
-
-			updateRequirements();
 		}
 
-		if (done) {
+		if (done && getStackInSlot(0) != null) {
 			boolean dropBlueprint = true;
 			for (int i = 1; i < getSizeInventory(); ++i) {
 				if (getStackInSlot(i) == null) {
@@ -438,7 +445,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 		if (!worldObj.isRemote) {
 			if (i == 0) {
-				BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "clearItemRequirements"), worldObj);
+				BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "clearItemRequirements", null), worldObj);
 				iterateBpt(false);
 			}
 		}
@@ -651,17 +658,20 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	}
 
 	private BuildCraftPacket getItemRequirementsPacket(final ArrayList<ItemStack> items) {
-		return new PacketCommand(this, "setItemRequirements") {
-			@Override
-			public void writeData(ByteBuf data) {
-				super.writeData(data);
-				data.writeShort(items.size());
-				for (ItemStack rb: items) {
-					Utils.writeStack(data, rb);
-					data.writeShort(rb.stackSize);
+		if (items != null) {
+			return new PacketCommand(this, "setItemRequirements", new CommandWriter() {
+				public void write(ByteBuf data) {
+					data.writeShort(items.size());
+					if (items != null)
+						for (ItemStack rb : items) {
+							Utils.writeStack(data, rb);
+							data.writeShort(rb.stackSize);
+						}
 				}
-			}
-		};
+			});
+		} else {
+			return new PacketCommand(this, "clearItemRequirements", null);
+		}
 	}
 
 	@Override

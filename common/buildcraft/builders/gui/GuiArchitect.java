@@ -25,6 +25,7 @@ import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.gui.buttons.GuiBetterButton;
 import buildcraft.core.gui.tooltips.ToolTip;
 import buildcraft.core.gui.tooltips.ToolTipLine;
+import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
@@ -165,13 +166,11 @@ public class GuiArchitect extends GuiBuildCraft {
 			} else {
 				textField.textboxKeyTyped(c, i);
 				final String text = textField.getText();
-				BuildCraftCore.instance.sendToServer(new PacketCommand(architect, "setName") {
-					@Override
-					public void writeData(ByteBuf data) {
-						super.writeData(data);
+				BuildCraftCore.instance.sendToServer(new PacketCommand(architect, "setName", new CommandWriter() {
+					public void write(ByteBuf data) {
 						Utils.writeUTF(data, text);
 					}
-				});
+				}));
 			}
 		} else {
 			super.keyTyped(c, i);

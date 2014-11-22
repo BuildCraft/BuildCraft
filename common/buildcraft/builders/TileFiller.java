@@ -27,6 +27,7 @@ import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.builders.patterns.PatternFill;
 import buildcraft.core.inventory.SimpleInventory;
+import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.Utils;
@@ -284,13 +285,11 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	}
 
 	public void rpcSetPatternFromString (final String name) {
-		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "set") {
-			@Override
-			public void writeData(ByteBuf data) {
-				super.writeData(data);
+		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "set", new CommandWriter() {
+			public void write(ByteBuf data) {
 				Utils.writeUTF(data, name);
 			}
-		});
+		}));
 	}
 
 	@Override

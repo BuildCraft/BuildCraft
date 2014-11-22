@@ -29,6 +29,7 @@ import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.api.tiles.IControllable;
+import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
 import buildcraft.core.recipes.AssemblyRecipeManager;
@@ -285,14 +286,12 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 	}
 
 	public void rpcSelectRecipe(final String id, final boolean select) {
-		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "select") {
-			@Override
-			public void writeData(ByteBuf data) {
-				super.writeData(data);
+		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "select", new CommandWriter() {
+			public void write(ByteBuf data) {
 				Utils.writeUTF(data, id);
 				data.writeBoolean(select);
 			}
-		});
+		}));
 	}
 
 	@Override

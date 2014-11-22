@@ -28,6 +28,7 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.Utils;
@@ -129,20 +130,20 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 		}
 	}
 
-	private static <T extends IStatement> String[] statementsToStrings(Collection<T> statements) {
+	private static String[] statementsToStrings(Collection<IStatement> statements) {
 		final int size = statements.size();
 		String[] array = new String[size];
 		int pos = 0;
-		for (T statement : statements) {
+		for (IStatement statement : statements) {
 			array[pos++] = statement.getUniqueTag();
 		}
 		return array;
 	}
 
-	private static <T extends IStatement> void stringsToStatements(Collection<T> statements, String[] strings) {
+	private static void stringsToStatements(Collection<IStatement> statements, String[] strings) {
 		statements.clear();
 		for (String id : strings) {
-			statements.add((T) StatementManager.statements.get(id));
+			statements.add(StatementManager.statements.get(id));
 		}
 	}
 
@@ -169,12 +170,12 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 	public void synchronize() {
 		if (!isNetInitialized && pipe.container.getWorldObj().isRemote) {
 			isNetInitialized = true;
-			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "initRequest"));
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "initRequest", null));
 		}
 
 		if (!isSynchronized && pipe.container.getWorldObj().isRemote && gate != null) {
 			isSynchronized = true;
-			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "selectionRequest"));
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "selectionRequest", null));
 		}
 	}
 
@@ -259,34 +260,6 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 		}
 	}
 
-	public void setTrigger(int trigger, String tag, boolean notifyServer) {
-		if (gate == null) {
-			return;
-		}
-
-		IStatement statement = null;
-		if (tag != null) {
-			gate.setTrigger(trigger, (IStatement) StatementManager.statements.get(tag));
-		}
-		gate.setTrigger(trigger, statement);
-
-		if (pipe.container.getWorldObj().isRemote && notifyServer) {
-			BuildCraftCore.instance.sendToServer(getStatementPacket("setTrigger", trigger, statement));
-		}
-	}
-
-	public void setTriggerParameter(int trigger, int param, IStatementParameter parameter, boolean notifyServer) {
-		if (gate == null) {
-			return;
-		}
-
-		gate.setTriggerParameter(trigger, param, parameter);
-
-		if (pipe.container.getWorldObj().isRemote && notifyServer) {
-			BuildCraftCore.instance.sendToServer(getStatementParameterPacket("setTriggerParameter", trigger, param, parameter));
-		}
-	}
-
 	public IStatementParameter getTriggerParameter(int trigger, int param) {
 		if (gate == null) {
 			return null;
@@ -325,14 +298,12 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 	// PACKET GENERATION
 	public BuildCraftPacket getStatementPacket(final String name, final int slot, final IStatement statement) {
 		final String statementKind = statement != null ? statement.getUniqueTag() : null;
-		return new PacketCommand(this, name) {
-			@Override
-			public void writeData(ByteBuf data) {
-				super.writeData(data);
+		return new PacketCommand(this, name, new CommandWriter() {
+			public void write(ByteBuf data) {
 				data.writeByte(slot);
 				Utils.writeUTF(data, statementKind);
 			}
-		};
+		});
 	}
 
 	public BuildCraftPacket getStatementParameterPacket(final String name, final int slot,
@@ -342,20 +313,19 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 		if (parameter != null) {
 			parameter.writeToNBT(parameterNBT);
 		}
-		return new PacketCommand(this, name) {
-			@Override
-			public void writeData(ByteBuf data) {
-				super.writeData(data);
+		return new PacketCommand(this, name, new CommandWriter() {
+			public void write(ByteBuf data) {
 				data.writeByte(slot);
 				data.writeByte(paramSlot);
 				Utils.writeUTF(data, parameterName);
 				Utils.writeNBT(data, parameterNBT);
 			}
-		};
+		});
 	}
 
 	public void setGate(int direction) {
 		this.gate = pipe.gates[direction];
+		init();
 	}
 
 	@Override
@@ -363,15 +333,12 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 		if (side.isServer()) {
 			EntityPlayer player = (EntityPlayer) sender;
 			if (command.equals("initRequest")) {
-				BuildCraftCore.instance.sendToPlayer(player, new PacketCommand(this, "init") {
-					@Override
-					public void writeData(ByteBuf data) {
-						super.writeData(data);
+				final String[] triggerStrings = statementsToStrings(potentialTriggers);
+				final String[] actionStrings = statementsToStrings(potentialActions);
+
+				BuildCraftCore.instance.sendToPlayer(player, new PacketCommand(this, "init", new CommandWriter() {
+					public void write(ByteBuf data) {
 						data.writeByte(gate.getDirection().ordinal());
-
-						String[] triggerStrings = statementsToStrings(potentialTriggers);
-						String[] actionStrings = statementsToStrings(potentialActions);
-
 						data.writeShort(triggerStrings.length);
 						data.writeShort(actionStrings.length);
 						for (String trigger : triggerStrings) {
@@ -381,7 +348,7 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 							Utils.writeUTF(data, action);
 						}
 					}
-				});
+				}));
 			} else if (command.equals("selectionRequest")) {
 				for (int position = 0; position < gate.material.numSlots; position++) {
 					IStatement action = gate.getAction(position);
@@ -400,9 +367,9 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 			}
 		} else if (side.isClient()) {
 			if (command.equals("init")) {
-				setGate(stream.readUnsignedByte());
-				String[] triggerStrings = new String[stream.readUnsignedShort()];
-				String[] actionStrings = new String[stream.readUnsignedShort()];
+				setGate(stream.readByte());
+				String[] triggerStrings = new String[stream.readShort()];
+				String[] actionStrings = new String[stream.readShort()];
 				for (int i = 0; i < triggerStrings.length; i++) {
 					triggerStrings[i] = Utils.readUTF(stream);
 				}
@@ -424,7 +391,10 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 			int param = stream.readUnsignedByte();
 			String parameterName = Utils.readUTF(stream);
 			NBTTagCompound parameterData = Utils.readNBT(stream);
-			IStatementParameter parameter = StatementManager.createParameter(parameterName);
+			IStatementParameter parameter = null;
+			if (parameterName != null && parameterName.length() > 0) {
+				parameter = StatementManager.createParameter(parameterName);
+			}
 
 			if (parameter != null) {
 				parameter.readFromNBT(parameterData);
@@ -444,13 +414,30 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 
 		IStatement statement = null;
 
-		if (tag != null) {
+		if (tag != null && tag.length() > 0) {
 			statement = (IStatement) StatementManager.statements.get(tag);
 		}
 		gate.setAction(action, statement);
 
 		if (pipe.container.getWorldObj().isRemote && notifyServer) {
 			BuildCraftCore.instance.sendToServer(getStatementPacket("setAction", action, statement));
+		}
+	}
+
+	public void setTrigger(int trigger, String tag, boolean notifyServer) {
+		if (gate == null) {
+			return;
+		}
+
+		IStatement statement = null;
+
+		if (tag != null && tag.length() > 0) {
+			statement = (IStatement) StatementManager.statements.get(tag);
+		}
+		gate.setTrigger(trigger, statement);
+
+		if (pipe.container.getWorldObj().isRemote && notifyServer) {
+			BuildCraftCore.instance.sendToServer(getStatementPacket("setTrigger", trigger, statement));
 		}
 	}
 
@@ -463,6 +450,18 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 
 		if (pipe.container.getWorldObj().isRemote && notifyServer) {
 			BuildCraftCore.instance.sendToServer(getStatementParameterPacket("setActionParameter", action, param, parameter));
+		}
+	}
+
+	public void setTriggerParameter(int trigger, int param, IStatementParameter parameter, boolean notifyServer) {
+		if (gate == null) {
+			return;
+		}
+
+		gate.setTriggerParameter(trigger, param, parameter);
+
+		if (pipe.container.getWorldObj().isRemote && notifyServer) {
+			BuildCraftCore.instance.sendToServer(getStatementParameterPacket("setTriggerParameter", trigger, param, parameter));
 		}
 	}
 	

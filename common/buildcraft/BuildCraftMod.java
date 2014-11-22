@@ -35,7 +35,7 @@ public class BuildCraftMod {
 					.set(new NetworkRegistry.TargetPoint(world.provider.dimensionId, x, y, z, maxDistance));
 			channels.get(Side.SERVER).writeOutbound(packet);
 		} catch (Throwable t) {
-			BCLog.logger.log(Level.WARN, "sentToPlayers crash", t);
+			BCLog.logger.log(Level.WARN, "sendToPlayers crash", t);
 		}
 	}
 
@@ -55,7 +55,7 @@ public class BuildCraftMod {
 					.set(world.provider.dimensionId);
 			channels.get(Side.SERVER).writeOutbound(packet);
 		} catch (Throwable t) {
-			BCLog.logger.log(Level.WARN, "sentToPlayers crash", t);
+			BCLog.logger.log(Level.WARN, "sendToWorld crash", t);
 		}
 	}
 	
@@ -72,7 +72,7 @@ public class BuildCraftMod {
 				name = "<no name>";
 			}
 
-			BCLog.logger.log(Level.WARN, "sentToPlayer \"" + name + "\" crash", t);
+			BCLog.logger.log(Level.WARN, "sendToPlayer \"" + name + "\" crash", t);
 		}
 	}
 	
@@ -82,7 +82,7 @@ public class BuildCraftMod {
 					.set(FMLOutboundHandler.OutboundTarget.ALL);
 			channels.get(Side.SERVER).writeOutbound(packet);
 		} catch (Throwable t) {
-			BCLog.logger.log(Level.WARN, "sentToPlayers crash", t);
+			BCLog.logger.log(Level.WARN, "sendToAll crash", t);
 		}
 	}
 
@@ -91,7 +91,7 @@ public class BuildCraftMod {
 			channels.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.TOSERVER);
 			channels.get(Side.CLIENT).writeOutbound(packet);
 		} catch (Throwable t) {
-			BCLog.logger.log(Level.WARN, "sentToServer crash", t);
+			BCLog.logger.log(Level.WARN, "sendToServer crash", t);
 		}
 	}
 }

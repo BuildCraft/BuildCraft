@@ -27,6 +27,7 @@ import buildcraft.core.Box.Kind;
 import buildcraft.core.IBoxesProvider;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.Utils;
@@ -84,15 +85,13 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
 	}
 
 	private BuildCraftPacket createXYZPacket(String name, final int x, final int y, final int z) {
-		return new PacketCommand(this, name) {
-			@Override
-			public void writeData(ByteBuf data) {
-				super.writeData(data);
+		return new PacketCommand(this, name, new CommandWriter() {
+			public void write(ByteBuf data) {
 				data.writeInt(x);
 				data.writeShort(y);
 				data.writeInt(z);
 			}
-		};
+		});
 	}
 
 	@Override
@@ -215,14 +214,12 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
 	}
 
 	public void rpcStartFiller (final String fillerTag, final Box box) {
-		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "startFiller") {
-			@Override
-			public void writeData(ByteBuf data) {
-				super.writeData(data);
+		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "startFiller", new CommandWriter() {
+			public void write(ByteBuf data) {
 				Utils.writeUTF(data, fillerTag);
 				box.writeData(data);
 			}
-		});
+		}));
 	}
 
 	public void destroyUrbanistEntity() {

@@ -20,6 +20,7 @@ import buildcraft.core.BCDynamicTexture;
 import buildcraft.core.ZonePlan;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.slots.SlotOutput;
+import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
 
@@ -57,24 +58,20 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
 	}
 
 	public void loadArea(final int index) {
-		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "loadArea") {
-			@Override
-			public void writeData(ByteBuf data) {
-				super.writeData(data);
+		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "loadArea", new CommandWriter() {
+			public void write(ByteBuf data) {
 				data.writeByte(index);
 			}
-		});
+		}));
 	}
 
 	public void saveArea(final int index) {
-		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "loadArea") {
-			@Override
-			public void writeData(ByteBuf data) {
-				super.writeData(data);
+		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "saveArea", new CommandWriter() {
+			public void write(ByteBuf data) {
 				data.writeByte(index);
 				currentAreaSelection.writeData(data);
 			}
-		});
+		}));
 	}
 
 	@Override
@@ -93,13 +90,11 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
 		} else if (side.isServer()) {
 			if (command.equals("loadArea")) {
 				final int index = stream.readUnsignedByte();
-				BuildCraftCore.instance.sendToPlayer((EntityPlayer) sender, new PacketCommand(this, "areaLoaded") {
-					@Override
-					public void writeData(ByteBuf data) {
-						super.writeData(data);
+				BuildCraftCore.instance.sendToPlayer((EntityPlayer) sender, new PacketCommand(this, "areaLoaded", new CommandWriter() {
+					public void write(ByteBuf data) {
 						map.selectArea(index).writeData(data);
 					}
-				});
+				}));
 			} else if (command.equals("saveArea")) {
 				final int index = stream.readUnsignedByte();
 				ZonePlan plan = new ZonePlan();
@@ -154,15 +149,13 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
 			}
 		}
 
-		BuildCraftCore.instance.sendToPlayer(player, new PacketCommand(this, "receiveImage") {
-			@Override
-			public void writeData(ByteBuf data) {
-				super.writeData(data);
+		BuildCraftCore.instance.sendToPlayer(player, new PacketCommand(this, "receiveImage", new CommandWriter() {
+			public void write(ByteBuf data) {
 				data.writeShort(mapTexture.colorMap.length);
 				for (int i = 0; i < mapTexture.colorMap.length; i++) {
 					data.writeInt(mapTexture.colorMap[i]);
 				}
 			}
-		});
+		}));
 	}
 }

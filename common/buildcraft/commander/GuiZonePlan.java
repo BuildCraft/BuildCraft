@@ -28,6 +28,7 @@ import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.gui.buttons.GuiBetterButton;
 import buildcraft.core.gui.tooltips.ToolTip;
 import buildcraft.core.gui.tooltips.ToolTipLine;
+import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.StringUtils;
 
@@ -143,17 +144,15 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	}
 
 	private void uploadMap() {
-		BuildCraftCore.instance.sendToServer(new PacketCommand(getContainer(), "computeMap") {
-			@Override
-			public void writeData(ByteBuf data) {
-				super.writeData(data);
+		BuildCraftCore.instance.sendToServer(new PacketCommand(getContainer(), "computeMap", new CommandWriter() {
+			public void write(ByteBuf data) {
 				data.writeInt(cx);
 				data.writeInt(cz);
 				data.writeShort(getContainer().mapTexture.width);
 				data.writeShort(getContainer().mapTexture.height);
 				data.writeByte(zoomLevel);
 			}
-		});
+		}));
 	}
 
 	@Override

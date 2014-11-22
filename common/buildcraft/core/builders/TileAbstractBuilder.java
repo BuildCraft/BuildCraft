@@ -25,6 +25,7 @@ import buildcraft.core.LaserData;
 import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
 
@@ -54,24 +55,21 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 		super.initialize();
 
 		if (worldObj.isRemote) {
-			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadBuildersInAction"));
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadBuildersInAction", null));
 		}
 	}
 
 	private BuildCraftPacket createLaunchItemPacket(final BuildingItem i) {
-		return new PacketCommand(this, "launchItem") {
-			@Override
-			public void writeData(ByteBuf data) {
-				super.writeData(data);
+		return new PacketCommand(this, "launchItem", new CommandWriter() {
+			public void write(ByteBuf data) {
 				i.writeData(data);
 			}
-		};
+		});
 	}
 
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
 		if (side.isServer() && command.equals("uploadBuildersInAction")) {
-			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadBuildersInAction"));
 			for (BuildingItem i : buildersInAction) {
 				BuildCraftCore.instance.sendToPlayer((EntityPlayer) sender, createLaunchItemPacket(i));
 			}

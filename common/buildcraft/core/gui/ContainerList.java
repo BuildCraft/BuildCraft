@@ -16,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import cpw.mods.fml.relauncher.Side;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.ItemList;
+import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.Utils;
@@ -53,15 +54,13 @@ public class ContainerList extends BuildCraftContainer implements ICommandReceiv
 		ItemList.saveLine(player.getCurrentEquippedItem(), lines[lineIndex], lineIndex);
 
 		if (player.worldObj.isRemote) {
-			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "switchButton") {
-				@Override
-				public void writeData(ByteBuf data) {
-					super.writeData(data);
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "switchButton", new CommandWriter() {
+				public void write(ByteBuf data) {
 					data.writeByte(lineIndex);
 					data.writeByte(slotIndex);
 					Utils.writeStack(data, stack);
 				}
-			});
+			}));
 		}
 	}
 
@@ -77,14 +76,12 @@ public class ContainerList extends BuildCraftContainer implements ICommandReceiv
 		ItemList.saveLine(player.getCurrentEquippedItem(), lines[lineIndex], lineIndex);
 
 		if (player.worldObj.isRemote) {
-			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "switchButton") {
-				@Override
-				public void writeData(ByteBuf data) {
-					super.writeData(data);
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "switchButton", new CommandWriter() {
+				public void write(ByteBuf data) {
 					data.writeByte(lineIndex);
 					data.writeByte(button);
 				}
-			});
+			}));
 		}
 	}
 
@@ -92,13 +89,11 @@ public class ContainerList extends BuildCraftContainer implements ICommandReceiv
 		ItemList.saveLabel(player.getCurrentEquippedItem(), text);
 
 		if (player.worldObj.isRemote) {
-			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setLabel") {
-				@Override
-				public void writeData(ByteBuf data) {
-					super.writeData(data);
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setLabel", new CommandWriter() {
+				public void write(ByteBuf data) {
 					Utils.writeUTF(data, text);
 				}
-			});
+			}));
 		}
 	}
 

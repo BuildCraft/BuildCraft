@@ -34,6 +34,7 @@ import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.builders.BuildingItem;
 import buildcraft.core.builders.IBuildingItemsProvider;
 import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.Utils;
@@ -60,18 +61,16 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 		box.kind = Kind.BLUE_STRIPES;
 
 		if (worldObj.isRemote) {
-			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadBuildersInAction"));
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadBuildersInAction", null));
 		}
 	}
 
 	private BuildCraftPacket createLaunchItemPacket(final BuildingItem i) {
-		return new PacketCommand(this, "launchItem") {
-			@Override
-			public void writeData(ByteBuf data) {
-				super.writeData(data);
+		return new PacketCommand(this, "launchItem", new CommandWriter() {
+			public void write(ByteBuf data) {
 				i.writeData(data);
 			}
-		};
+		});
 	}
 
 	@Override
@@ -202,7 +201,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
 		if (side.isServer() && command.equals("uploadBuildersInAction")) {
-			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadBuildersInAction"));
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadBuildersInAction", null));
 			for (BuildingItem i : buildersInAction) {
 				BuildCraftCore.instance.sendToPlayer((EntityPlayer) sender, createLaunchItemPacket(i));
 			}

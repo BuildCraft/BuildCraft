@@ -22,6 +22,7 @@ import buildcraft.api.robots.StackRequest;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
 import buildcraft.core.robots.ResourceIdRequest;
@@ -40,14 +41,12 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
 
 	public void setRequest(final int index, final ItemStack stack) {
 		if (worldObj.isRemote) {
-			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setRequest") {
-				@Override
-				public void writeData(ByteBuf data) {
-					super.writeData(data);
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setRequest", new CommandWriter() {
+				public void write(ByteBuf data) {
 					data.writeByte(index);
 					Utils.writeStack(data, stack);
 				}
-			});
+			}));
 		} else {
 			requests.setInventorySlotContents(index, stack);
 		}

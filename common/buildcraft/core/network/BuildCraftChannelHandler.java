@@ -44,6 +44,6 @@ public class BuildCraftChannelHandler extends FMLIndexedMessageToMessageCodec<Bu
 
     @Override
     public void decodeInto(ChannelHandlerContext ctx, ByteBuf data, BuildCraftPacket packet) {
-        packet.readData(data);
+		packet.readData(data);
     }
 }

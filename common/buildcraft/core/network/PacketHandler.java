@@ -45,7 +45,7 @@ public class PacketHandler extends SimpleChannelInboundHandler<BuildCraftPacket>
 	}
 
 	@Override
-	protected  void channelRead0(ChannelHandlerContext ctx, BuildCraftPacket packet) {
+	protected void channelRead0(ChannelHandlerContext ctx, BuildCraftPacket packet) {
 		try {
 			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
 			EntityPlayer player = CoreProxy.proxy.getPlayerFromNetHandler(netHandler);
@@ -57,6 +57,7 @@ public class PacketHandler extends SimpleChannelInboundHandler<BuildCraftPacket>
 					onTileUpdate(player, (PacketTileUpdate) packet);
 					break;
 				}
+
 				case PacketIds.COMMAND: {
 					((PacketCommand) packet).handle(player);
 					break;

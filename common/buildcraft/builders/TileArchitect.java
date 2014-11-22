@@ -36,6 +36,7 @@ import buildcraft.core.blueprints.BlueprintReadConfiguration;
 import buildcraft.core.blueprints.RecursiveBlueprintReader;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.Utils;
@@ -280,12 +281,11 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	public BuildCraftPacket getPacketSetName() {
-		return new PacketCommand(this, "setName") {
-			@Override
-			public void writeData(ByteBuf data) {
+		return new PacketCommand(this, "setName", new CommandWriter() {
+			public void write(ByteBuf data) {
 				Utils.writeUTF(data, name);
 			}
-		};
+		});
 	}
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
@@ -305,13 +305,11 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	public void rpcSetConfiguration (BlueprintReadConfiguration conf) {
 		readConfiguration = conf;
 
-		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setReadConfiguration"){
-			@Override
-			public void writeData(ByteBuf data) {
-				super.writeData(data);
+		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setReadConfiguration", new CommandWriter() {
+			public void write(ByteBuf data) {
 				readConfiguration.writeData(data);
 			}
-		});
+		}));
 	}
 
 	public void addSubBlueprint(TileEntity sub) {
