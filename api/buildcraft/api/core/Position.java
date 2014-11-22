@@ -8,17 +8,15 @@
  */
 package buildcraft.api.core;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-public class Position {
+public class Position implements ISerializable {
 
-	@NetworkData
 	public double x, y, z;
-
-	@NetworkData
 	public ForgeDirection orientation;
 
 	public Position() {
@@ -177,5 +175,21 @@ public class Position {
 		double sqrDis = dx * dx + dy * dy + dz * dz;
 
 		return !(sqrDis > f * f);
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		x = stream.readDouble();
+		y = stream.readDouble();
+		z = stream.readDouble();
+		orientation = ForgeDirection.getOrientation(stream.readByte());
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		stream.writeDouble(x);
+		stream.writeDouble(y);
+		stream.writeDouble(z);
+		stream.writeByte(orientation.ordinal());
 	}
 }

@@ -37,6 +37,7 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
@@ -51,17 +52,16 @@ import buildcraft.api.robots.IDockingStation;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
 import buildcraft.core.RFBattery;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCMessageInfo;
-import buildcraft.core.network.RPCSide;
+import buildcraft.core.network.ICommandReceiver;
+import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.NBTUtils;
+import buildcraft.core.utils.Utils;
 import buildcraft.silicon.statements.ActionRobotWorkInArea;
 import buildcraft.transport.gates.ActionIterator;
 import buildcraft.transport.gates.StatementSlot;
 
 public class EntityRobot extends EntityRobotBase implements
-		IEntityAdditionalSpawnData, IInventory, IFluidHandler {
+		IEntityAdditionalSpawnData, IInventory, IFluidHandler, ICommandReceiver {
 
 	public static final ResourceLocation ROBOT_BASE = new ResourceLocation("buildcraft",
 			DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_base.png");
@@ -201,7 +201,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 	protected void init() {
 		if (worldObj.isRemote) {
-			RPCHandler.rpcServer(this, "requestInitialization");
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "requestInitialization"));
 		}
 	}
 
@@ -608,7 +608,7 @@ public class EntityRobot extends EntityRobotBase implements
 			inv[var1] = null;
 		}
 
-		RPCHandler.rpcBroadcastAllPlayers(this, "rpcClientSetInventory", var1, inv[var1]);
+		updateClientSlot(var1);
 
 		return result;
 	}
@@ -622,7 +622,7 @@ public class EntityRobot extends EntityRobotBase implements
 	public void setInventorySlotContents(int var1, ItemStack var2) {
 		inv[var1] = var2;
 
-		RPCHandler.rpcBroadcastAllPlayers(this, "rpcClientSetInventory", var1, inv[var1]);
+		updateClientSlot(var1);
 	}
 
 	@Override
@@ -642,6 +642,17 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public void markDirty() {
+	}
+
+	public void updateClientSlot(final int slot) {
+		BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "clientSetInventory") {
+			@Override
+			public void writeData(ByteBuf data) {
+				super.writeData(data);
+				data.writeShort(slot);
+				Utils.writeStack(data, inv[slot]);
+			}
+		}, worldObj);
 	}
 
 	@Override
@@ -672,41 +683,92 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	public void setItemInUse(ItemStack stack) {
 		itemInUse = stack;
-		RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "clientSetItemInUse", stack);
+		BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "clientSetItemInUse") {
+			@Override
+			public void writeData(ByteBuf data) {
+				super.writeData(data);
+				Utils.writeStack(data, itemInUse);
+			}
+		}, worldObj);
 	}
 
-	@RPC(RPCSide.CLIENT)
-	private void clientSetItemInUse(ItemStack stack) {
-		itemInUse = stack;
-	}
-
-	@RPC(RPCSide.CLIENT)
-	private void rpcClientSetInventory(int i, ItemStack stack) {
-		inv[i] = stack;
-	}
-
-	@RPC(RPCSide.SERVER)
-	public void requestInitialization(RPCMessageInfo info) {
-		RPCHandler.rpcPlayer(info.sender, this, "rpcInitialize", itemInUse, itemActive);
-
-		for (int i = 0; i < inv.length; ++i) {
-			RPCHandler.rpcPlayer(info.sender, this, "rpcClientSetInventory", i, inv[i]);
-		}
-
-		if (currentDockingStation != null) {
-			setSteamDirection(
-					currentDockingStation.side.offsetX,
-					currentDockingStation.side.offsetY,
-					currentDockingStation.side.offsetZ);
+	private void setSteamDirection(final int x, final int y, final int z) {
+		if (!worldObj.isRemote) {
+			BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "setSteamDirection") {
+				@Override
+				public void writeData(ByteBuf data) {
+					super.writeData(data);
+					data.writeInt(x);
+					data.writeShort(y);
+					data.writeInt(z);
+				}
+			}, worldObj);
 		} else {
-			setSteamDirection(0, -1, 0);
+			Vec3 v = Vec3.createVectorHelper(x, y, z);
+			v.normalize();
+
+			steamDx = (int) v.xCoord;
+			steamDy = (int) v.yCoord;
+			steamDz = (int) v.zCoord;
 		}
 	}
 
-	@RPC(RPCSide.CLIENT)
-	private void rpcInitialize(ItemStack stack, boolean active) {
-		itemInUse = stack;
-		itemActive = active;
+	@Override
+	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
+		if (side.isClient()) {
+			if (command.equals("clientSetItemInUse")) {
+				itemInUse = Utils.readStack(stream);
+			} else if (command.equals("clientSetInventory")) {
+				int slot = stream.readUnsignedShort();
+				inv[slot] = Utils.readStack(stream);
+			} else if (command.equals("initialize")) {
+				itemInUse = Utils.readStack(stream);
+				itemActive = stream.readBoolean();
+			} else if (command.equals("setItemActive")) {
+				itemActive = stream.readBoolean();
+				itemActiveStage = 0;
+				lastUpdateTime = new Date().getTime();
+
+				if (!itemActive) {
+					setSteamDirection(0, -1, 0);
+				}
+			} else if (command.equals("setSteamDirection")) {
+				setSteamDirection(stream.readInt(), stream.readShort(), stream.readInt());
+			}
+		} else if (side.isServer()) {
+			EntityPlayer p = (EntityPlayer) sender;
+			if (command.equals("requestInitialization")) {
+				BuildCraftCore.instance.sendToPlayer(p, new PacketCommand(this, "initialize") {
+					@Override
+					public void writeData(ByteBuf data) {
+						super.writeData(data);
+						Utils.writeStack(data, itemInUse);
+						data.writeBoolean(itemActive);
+					}
+				});
+
+				for (int i = 0; i < inv.length; ++i) {
+					final int j = i;
+					BuildCraftCore.instance.sendToPlayer(p, new PacketCommand(this, "clientSetInventory") {
+						@Override
+						public void writeData(ByteBuf data) {
+							super.writeData(data);
+							data.writeShort(j);
+							Utils.writeStack(data, inv[j]);
+						}
+					});
+				}
+
+				if (currentDockingStation != null) {
+					setSteamDirection(
+							currentDockingStation.side.offsetX,
+							currentDockingStation.side.offsetY,
+							currentDockingStation.side.offsetZ);
+				} else {
+					setSteamDirection(0, -1, 0);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -751,35 +813,16 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public void setItemActive(boolean isActive) {
+	public void setItemActive(final boolean isActive) {
 		if (isActive != itemActive) {
 			itemActive = isActive;
-			RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "rpcSetItemActive", isActive);
-		}
-	}
-
-	@RPC(RPCSide.CLIENT)
-	private void rpcSetItemActive(boolean isActive) {
-		itemActive = isActive;
-		itemActiveStage = 0;
-		lastUpdateTime = new Date().getTime();
-
-		if (!isActive) {
-			setSteamDirection(0, -1, 0);
-		}
-	}
-
-	@RPC(RPCSide.CLIENT)
-	private void setSteamDirection(int x, int y, int z) {
-		if (!worldObj.isRemote) {
-			RPCHandler.rpcBroadcastAllPlayers(this, "setSteamDirection", x, y, z);
-		} else {
-			Vec3 v = Vec3.createVectorHelper(x, y, z);
-			v.normalize();
-
-			steamDx = (int) v.xCoord;
-			steamDy = (int) v.yCoord;
-			steamDz = (int) v.zCoord;
+			BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "setItemActive") {
+				@Override
+				public void writeData(ByteBuf data) {
+					super.writeData(data);
+					data.writeBoolean(isActive);
+				}
+			}, worldObj);
 		}
 	}
 

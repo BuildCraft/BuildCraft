@@ -15,6 +15,7 @@ import java.util.Set;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -35,7 +36,6 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.tiles.IHasWork;
@@ -65,23 +65,14 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	public EntityMechanicalArm arm;
 	public EntityPlayer placedBy;
 
-	@NetworkData
 	protected Box box = new Box();
-	@NetworkData
 	private int targetX, targetY, targetZ;
-	@NetworkData
 	private double headPosX, headPosY, headPosZ;
-	@NetworkData
 	private double speed = 0.03;
-	@NetworkData
 	private Stage stage = Stage.BUILDING;
-	@NetworkData
 	private boolean isAlive;
-	@NetworkData
 	private boolean movingHorizontally;
-	@NetworkData
 	private boolean movingVertically;
-	@NetworkData
 	private double headTrajectory;
 
 	private SafeTimeTracker updateTracker = new SafeTimeTracker(10);
@@ -632,8 +623,41 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	}
 
 	@Override
-	public void postPacketHandling(PacketUpdate packet) {
-		super.postPacketHandling(packet);
+	public void writeData(ByteBuf stream) {
+		super.writeData(stream);
+		box.writeData(stream);
+		stream.writeInt(targetX);
+		stream.writeShort(targetY);
+		stream.writeInt(targetZ);
+		stream.writeDouble(headPosX);
+		stream.writeDouble(headPosY);
+		stream.writeDouble(headPosZ);
+		stream.writeFloat((float) speed);
+		stream.writeFloat((float) headTrajectory);
+		int flags = stage.ordinal();
+		flags |= (isAlive ? 0x08 : 0);
+		flags |= (movingHorizontally ? 0x10 : 0);
+		flags |= (movingVertically ? 0x20 : 0);
+		stream.writeByte(flags);
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		super.readData(stream);
+		box.readData(stream);
+		targetX = stream.readInt();
+		targetY = stream.readUnsignedShort();
+		targetZ = stream.readInt();
+		headPosX = stream.readDouble();
+		headPosY = stream.readDouble();
+		headPosZ = stream.readDouble();
+		speed = stream.readFloat();
+		headTrajectory = stream.readFloat();
+		int flags = stream.readUnsignedByte();
+		stage = Stage.values()[flags & 0x07];
+		isAlive = (flags & 0x08) != 0;
+		movingHorizontally = (flags & 0x10) != 0;
+		movingVertically = (flags & 0x20) != 0;
 
 		if (isAlive) {
 			createUtilsIfNeeded();

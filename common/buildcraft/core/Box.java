@@ -21,12 +21,11 @@ import net.minecraft.util.AxisAlignedBB;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
-import buildcraft.api.core.NetworkData;
+import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.Position;
 import buildcraft.core.utils.Utils;
 
-public class Box implements IBox {
-
+public class Box implements IBox, ISerializable {
 	public enum Kind {
 		LASER_RED,
 		LASER_YELLOW,
@@ -36,16 +35,9 @@ public class Box implements IBox {
 		BLUE_STRIPES,
 	}
 
-	@NetworkData
 	public Kind kind = Kind.LASER_RED;
-
-	@NetworkData
 	public int xMin, yMin, zMin, xMax, yMax, zMax;
-
-	@NetworkData
 	public boolean initialized;
-
-	@NetworkData
 	public boolean isVisible = true;
 
 	public LaserData[] lasersData;
@@ -250,30 +242,6 @@ public class Box implements IBox {
 		lasersData = Utils.createLaserDataBox(xMin, yMin, zMin, xMax, yMax, zMax);
 	}
 
-	public void writeToStream(ByteBuf stream) {
-		stream.writeBoolean(initialized);
-
-		stream.writeInt(xMin);
-		stream.writeInt(yMin);
-		stream.writeInt(zMin);
-
-		stream.writeInt(xMax);
-		stream.writeInt(yMax);
-		stream.writeInt(zMax);
-	}
-
-	public void readFromStream(ByteBuf stream) {
-		initialized = stream.readBoolean();
-
-		xMin = stream.readInt();
-		yMin = stream.readInt();
-		zMin = stream.readInt();
-
-		xMax = stream.readInt();
-		yMax = stream.readInt();
-		zMax = stream.readInt();
-	}
-
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		nbttagcompound.setByte("kind", (byte) kind.ordinal());
 
@@ -402,4 +370,32 @@ public class Box implements IBox {
 		return new BlockIndex(x, y, z);
 
 	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		kind = Kind.values()[stream.readByte()];
+		xMin = stream.readInt();
+		yMin = stream.readShort();
+		zMin = stream.readInt();
+		xMax = stream.readInt();
+		yMax = stream.readShort();
+		zMax = stream.readInt();
+
+		byte flags = stream.readByte();
+		initialized = (flags & 1) != 0;
+		isVisible = (flags & 2) != 0;
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		stream.writeByte(kind.ordinal());
+		stream.writeInt(xMin);
+		stream.writeShort(yMin);
+		stream.writeInt(zMin);
+		stream.writeInt(xMax);
+		stream.writeShort(yMax);
+		stream.writeInt(zMax);
+		stream.writeByte((initialized ? 1 : 0) | (isVisible ? 2 : 0));
+	}
+
 }

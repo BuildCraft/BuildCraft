@@ -14,25 +14,29 @@ import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import cpw.mods.fml.relauncher.Side;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.core.gui.BuildCraftContainer;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCMessageInfo;
-import buildcraft.core.network.RPCSide;
+import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.ICommandReceiver;
+import buildcraft.core.network.PacketCommand;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.ActionActiveState;
 import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.GateDefinition;
 
-public class ContainerGateInterface extends BuildCraftContainer {
+public class ContainerGateInterface extends BuildCraftContainer implements ICommandReceiver {
 
 	public ActionActiveState[] actionsState = new ActionActiveState[8];
 	public GuiGateInterface gateCallback;
@@ -165,12 +169,12 @@ public class ContainerGateInterface extends BuildCraftContainer {
 	public void synchronize() {
 		if (!isNetInitialized && pipe.container.getWorldObj().isRemote) {
 			isNetInitialized = true;
-			RPCHandler.rpcServer(this, "initRequest");
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "initRequest"));
 		}
 
 		if (!isSynchronized && pipe.container.getWorldObj().isRemote && gate != null) {
 			isSynchronized = true;
-			RPCHandler.rpcServer(this, "selectionRequest");
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "selectionRequest"));
 		}
 	}
 
@@ -221,47 +225,6 @@ public class ContainerGateInterface extends BuildCraftContainer {
 
 
 	/**
-	 * Sends gate info to the client
-	 */
-	@RPC(RPCSide.SERVER)
-	public void initRequest(RPCMessageInfo info) {
-		EntityPlayer player = info.sender;
-		RPCHandler.rpcPlayer(player, this, "setGate", gate.getDirection().ordinal());
-		RPCHandler.rpcPlayer(player, this, "setPotential", statementsToStrings(potentialActions), statementsToStrings(potentialTriggers));
-	}
-
-	@RPC(RPCSide.CLIENT)
-	public void setPotential(String[] potentialActions, String[] potentialTriggers) {
-		stringsToStatements(this.potentialActions, potentialActions);
-		stringsToStatements(this.potentialTriggers, potentialTriggers);
-	}
-
-	@RPC(RPCSide.CLIENT)
-	public void setGate(int direction) {
-		this.gate = pipe.gates[direction];
-		init();
-	}
-
-	@RPC(RPCSide.SERVER)
-	public void selectionRequest(RPCMessageInfo info) {
-		EntityPlayer player = info.sender;
-		for (int position = 0; position < gate.material.numSlots; position++) {
-			IStatement action = gate.getAction(position);
-			IStatement trigger = gate.getTrigger(position);
-			RPCHandler.rpcPlayer(player, this, "setAction", position, action != null ? action.getUniqueTag() : null, false);
-			RPCHandler.rpcPlayer(player, this, "setTrigger", position, trigger != null ? trigger.getUniqueTag() : null, false);
-			for (int p = 0; p < gate.material.numActionParameters; ++p) {
-				RPCHandler.rpcPlayer(player, this, "setActionParameter", position, p,
-						gate.getActionParameter(position, p), false);
-			}
-			for (int q = 0; q < gate.material.numTriggerParameters; ++q) {
-				RPCHandler.rpcPlayer(player, this, "setTriggerParameter", position, q,
-						gate.getTriggerParameter(position, q), false);
-			}
-		}
-	}
-
-	/**
 	 * TRIGGERS *
 	 */
 	public boolean hasTriggers() {
@@ -296,24 +259,22 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		}
 	}
 
-	@RPC(RPCSide.BOTH)
 	public void setTrigger(int trigger, String tag, boolean notifyServer) {
 		if (gate == null) {
 			return;
 		}
 
+		IStatement statement = null;
 		if (tag != null) {
 			gate.setTrigger(trigger, (IStatement) StatementManager.statements.get(tag));
-		} else {
-			gate.setTrigger(trigger, null);
 		}
+		gate.setTrigger(trigger, statement);
 
 		if (pipe.container.getWorldObj().isRemote && notifyServer) {
-			RPCHandler.rpcServer(this, "setTrigger", trigger, tag, false);
+			BuildCraftCore.instance.sendToServer(getStatementPacket("setTrigger", trigger, statement));
 		}
 	}
 
-	@RPC(RPCSide.BOTH)
 	public void setTriggerParameter(int trigger, int param, IStatementParameter parameter, boolean notifyServer) {
 		if (gate == null) {
 			return;
@@ -322,7 +283,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		gate.setTriggerParameter(trigger, param, parameter);
 
 		if (pipe.container.getWorldObj().isRemote && notifyServer) {
-			RPCHandler.rpcServer(this, "setTriggerParameter", trigger, param, parameter, false);
+			BuildCraftCore.instance.sendToServer(getStatementParameterPacket("setTriggerParameter", trigger, param, parameter));
 		}
 	}
 
@@ -361,24 +322,138 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		return descending ? potentialActions.descendingIterator() : potentialActions.iterator();
 	}
 
-	@RPC(RPCSide.BOTH)
+	// PACKET GENERATION
+	public BuildCraftPacket getStatementPacket(final String name, final int slot, final IStatement statement) {
+		final String statementKind = statement != null ? statement.getUniqueTag() : null;
+		return new PacketCommand(this, name) {
+			@Override
+			public void writeData(ByteBuf data) {
+				super.writeData(data);
+				data.writeByte(slot);
+				Utils.writeUTF(data, statementKind);
+			}
+		};
+	}
+
+	public BuildCraftPacket getStatementParameterPacket(final String name, final int slot,
+			final int paramSlot, final IStatementParameter parameter) {
+		final String parameterName = parameter != null ? parameter.getUniqueTag() : null;
+		final NBTTagCompound parameterNBT = new NBTTagCompound();
+		if (parameter != null) {
+			parameter.writeToNBT(parameterNBT);
+		}
+		return new PacketCommand(this, name) {
+			@Override
+			public void writeData(ByteBuf data) {
+				super.writeData(data);
+				data.writeByte(slot);
+				data.writeByte(paramSlot);
+				Utils.writeUTF(data, parameterName);
+				Utils.writeNBT(data, parameterNBT);
+			}
+		};
+	}
+
+	public void setGate(int direction) {
+		this.gate = pipe.gates[direction];
+	}
+
+	@Override
+	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
+		if (side.isServer()) {
+			EntityPlayer player = (EntityPlayer) sender;
+			if (command.equals("initRequest")) {
+				BuildCraftCore.instance.sendToPlayer(player, new PacketCommand(this, "init") {
+					@Override
+					public void writeData(ByteBuf data) {
+						super.writeData(data);
+						data.writeByte(gate.getDirection().ordinal());
+
+						String[] triggerStrings = statementsToStrings(potentialTriggers);
+						String[] actionStrings = statementsToStrings(potentialActions);
+
+						data.writeShort(triggerStrings.length);
+						data.writeShort(actionStrings.length);
+						for (String trigger : triggerStrings) {
+							Utils.writeUTF(data, trigger);
+						}
+						for (String action : actionStrings) {
+							Utils.writeUTF(data, action);
+						}
+					}
+				});
+			} else if (command.equals("selectionRequest")) {
+				for (int position = 0; position < gate.material.numSlots; position++) {
+					IStatement action = gate.getAction(position);
+					IStatement trigger = gate.getTrigger(position);
+					BuildCraftCore.instance.sendToPlayer(player, getStatementPacket("setAction", position, action));
+					BuildCraftCore.instance.sendToPlayer(player, getStatementPacket("setTrigger", position, trigger));
+					for (int p = 0; p < gate.material.numActionParameters; ++p) {
+						BuildCraftCore.instance.sendToPlayer(player, getStatementParameterPacket(
+								"setActionParameter", position, p, gate.getActionParameter(position, p)));
+					}
+					for (int q = 0; q < gate.material.numTriggerParameters; ++q) {
+						BuildCraftCore.instance.sendToPlayer(player, getStatementParameterPacket(
+								"setTriggerParameter", position, q, gate.getTriggerParameter(position, q)));
+					}
+				}
+			}
+		} else if (side.isClient()) {
+			if (command.equals("init")) {
+				setGate(stream.readUnsignedByte());
+				String[] triggerStrings = new String[stream.readUnsignedShort()];
+				String[] actionStrings = new String[stream.readUnsignedShort()];
+				for (int i = 0; i < triggerStrings.length; i++) {
+					triggerStrings[i] = Utils.readUTF(stream);
+				}
+				for (int i = 0; i < actionStrings.length; i++) {
+					actionStrings[i] = Utils.readUTF(stream);
+				}
+
+				stringsToStatements(this.potentialTriggers, triggerStrings);
+				stringsToStatements(this.potentialActions, actionStrings);
+			}
+		}
+
+		if (command.equals("setAction")) {
+			setAction(stream.readUnsignedByte(), Utils.readUTF(stream), false);
+		} else if (command.equals("setTrigger")) {
+			setTrigger(stream.readUnsignedByte(), Utils.readUTF(stream), false);
+		} else if (command.equals("setActionParameter") || command.equals("setTriggerParameter")) {
+			int slot = stream.readUnsignedByte();
+			int param = stream.readUnsignedByte();
+			String parameterName = Utils.readUTF(stream);
+			NBTTagCompound parameterData = Utils.readNBT(stream);
+			IStatementParameter parameter = StatementManager.createParameter(parameterName);
+
+			if (parameter != null) {
+				parameter.readFromNBT(parameterData);
+				if (command.equals("setActionParameter")) {
+					setActionParameter(slot, param, parameter, false);
+				} else {
+					setTriggerParameter(slot, param, parameter, false);
+				}
+			}
+		}
+	}
+
 	public void setAction(int action, String tag, boolean notifyServer) {
 		if (gate == null) {
 			return;
 		}
 
+		IStatement statement = null;
+
 		if (tag != null) {
-			gate.setAction(action, (IStatement) StatementManager.statements.get(tag));
-		} else {
-			gate.setAction(action, null);
+			statement = (IStatement) StatementManager.statements.get(tag);
 		}
+		gate.setAction(action, statement);
 
 		if (pipe.container.getWorldObj().isRemote && notifyServer) {
-			RPCHandler.rpcServer(this, "setAction", action, tag, false);
+			BuildCraftCore.instance.sendToServer(getStatementPacket("setAction", action, statement));
 		}
 	}
 
-	@RPC(RPCSide.BOTH)
 	public void setActionParameter(int action, int param, IStatementParameter parameter, boolean notifyServer) {
 		if (gate == null) {
 			return;
@@ -387,7 +462,7 @@ public class ContainerGateInterface extends BuildCraftContainer {
 		gate.setActionParameter(action, param, parameter);
 
 		if (pipe.container.getWorldObj().isRemote && notifyServer) {
-			RPCHandler.rpcServer(this, "setActionParameter", action, param, parameter, false);
+			BuildCraftCore.instance.sendToServer(getStatementParameterPacket("setActionParameter", action, param, parameter));
 		}
 	}
 	

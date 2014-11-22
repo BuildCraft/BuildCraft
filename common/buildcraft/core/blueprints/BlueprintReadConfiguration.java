@@ -8,18 +8,13 @@
  */
 package buildcraft.core.blueprints;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
-import buildcraft.api.core.NetworkData;
+import buildcraft.api.core.ISerializable;
 
-public class BlueprintReadConfiguration {
-
-	@NetworkData
+public class BlueprintReadConfiguration implements ISerializable {
 	public boolean rotate = true;
-
-	@NetworkData
 	public boolean excavate = true;
-
-	@NetworkData
 	public boolean allowCreative = false;
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
@@ -34,4 +29,20 @@ public class BlueprintReadConfiguration {
 		allowCreative = nbttagcompound.getBoolean("allowCreative");
 	}
 
+	@Override
+	public void readData(ByteBuf stream) {
+		int flags = stream.readUnsignedByte();
+		rotate = (flags & 1) != 0;
+		excavate = (flags & 2) != 0;
+		allowCreative = (flags & 4) != 0;
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		stream.writeByte(
+				(rotate ? 1 : 0) |
+				(excavate ? 2 : 0) |
+				(allowCreative ? 4 : 0)
+		);
+	}
 }

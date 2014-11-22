@@ -8,14 +8,24 @@
  */
 package buildcraft.core;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
-import buildcraft.api.core.NetworkData;
+import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.Position;
+import buildcraft.core.utils.Utils;
 
-public class StackAtPosition {
-	@NetworkData
+public class StackAtPosition implements ISerializable {
 	public ItemStack stack;
 	public Position pos;
 	public boolean display;
 
+	@Override
+	public void readData(ByteBuf stream) {
+		stack = Utils.readStack(stream);
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		Utils.writeStack(stream, stack);
+	}
 }

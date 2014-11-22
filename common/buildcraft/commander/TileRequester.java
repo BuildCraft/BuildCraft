@@ -8,25 +8,27 @@
  */
 package buildcraft.commander;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import cpw.mods.fml.relauncher.Side;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.robots.StackRequest;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCSide;
+import buildcraft.core.network.ICommandReceiver;
+import buildcraft.core.network.PacketCommand;
 import buildcraft.core.robots.ResourceIdRequest;
 import buildcraft.core.robots.RobotRegistry;
+import buildcraft.core.utils.Utils;
 
-public class TileRequester extends TileBuildCraft implements IInventory, IRequestProvider {
-
+public class TileRequester extends TileBuildCraft implements IInventory, IRequestProvider, ICommandReceiver {
 	public static final int NB_ITEMS = 20;
 
 	private SimpleInventory inv = new SimpleInventory(NB_ITEMS, "items", 64);
@@ -36,14 +38,26 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
 
 	}
 
-	@RPC(RPCSide.SERVER)
-	public void setRequest(int index, ItemStack stack) {
+	public void setRequest(final int index, final ItemStack stack) {
 		if (worldObj.isRemote) {
-			RPCHandler.rpcServer(this, "setRequest", index, stack);
-			return;
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setRequest") {
+				@Override
+				public void writeData(ByteBuf data) {
+					super.writeData(data);
+					data.writeByte(index);
+					Utils.writeStack(data, stack);
+				}
+			});
+		} else {
+			requests.setInventorySlotContents(index, stack);
 		}
+	}
 
-		requests.setInventorySlotContents(index, stack);
+	@Override
+	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
+		if (side.isServer() && command.equals("setRequest")) {
+			setRequest(stream.readUnsignedByte(), Utils.readStack(stream));
+		}
 	}
 
 	public ItemStack getRequest(int index) {

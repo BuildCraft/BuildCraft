@@ -8,6 +8,7 @@
  */
 package buildcraft.transport.pipes;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
@@ -25,16 +26,15 @@ import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.core.NetworkData;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.RFBattery;
+import buildcraft.core.network.IClientState;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 
-public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergyHandler {
-	@NetworkData
+public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergyHandler, IClientState {
 	public int liquidToExtract;
 
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeFluidsWood_Standard.ordinal();
@@ -185,5 +185,15 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 	@Override
 	public int getMaxEnergyStored(ForgeDirection from) {
 		return battery.getMaxEnergyStored();
+	}
+
+	@Override
+	public void writeData(ByteBuf data) {
+		data.writeInt(liquidToExtract);
+	}
+
+	@Override
+	public void readData(ByteBuf data) {
+		liquidToExtract = data.readInt();
 	}
 }

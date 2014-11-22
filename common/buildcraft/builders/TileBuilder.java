@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,6 +21,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.WorldSettings.GameType;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -28,9 +30,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftBuilders;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IInvSlot;
-import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
@@ -54,18 +56,16 @@ import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.inventory.Transactor;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCMessageInfo;
-import buildcraft.core.network.RPCSide;
+import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.PacketCommand;
 import buildcraft.core.robots.ResourceIdRequest;
 import buildcraft.core.robots.RobotRegistry;
+import buildcraft.core.utils.Utils;
 
 public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluidHandler, IRequestProvider {
 
 	private static int POWER_ACTIVATION = 500;
 
-	@NetworkData
 	public Box box = new Box();
 	public PathIterator currentPathIterator;
 	public Tank[] fluidTanks = new Tank[] {
@@ -74,7 +74,6 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			new Tank("fluid3", FluidContainerRegistry.BUCKET_VOLUME * 8, this),
 			new Tank("fluid4", FluidContainerRegistry.BUCKET_VOLUME * 8, this)
 	};
-	@NetworkData
 	public TankManager<Tank> fluidTank = new TankManager<Tank>(fluidTanks);
 
 	private SimpleInventory inv = new SimpleInventory(28, "Builder", 64);
@@ -439,8 +438,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 		if (!worldObj.isRemote) {
 			if (i == 0) {
-				RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "setItemRequirements",
-						null, null);
+				BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "clearItemRequirements"), worldObj);
 				iterateBpt(false);
 			}
 		}
@@ -623,31 +621,47 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		return requiredToBuild;
 	}
 
-	@RPC (RPCSide.CLIENT)
-	public void setItemRequirements(ArrayList<ItemStack> rq, ArrayList<Integer> realSizes) {
-		// Item stack serialized are represented through bytes, so 0-255. In
-		// order to get the real amounts, we need to pass the real sizes of the
-		// stacks as a separate list.
-
-		requiredToBuild = rq;
-
-		if (rq != null && rq.size() > 0) {
-			Iterator<ItemStack> itStack = rq.iterator();
-			Iterator<Integer> size = realSizes.iterator();
-
-			while (true) {
-				ItemStack stack = itStack.next();
-				stack.stackSize = size.next();
-
-				if (stack.stackSize > 999) {
-					stack.stackSize = 999;
+	@Override
+	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
+		if (side.isClient()) {
+			if (command.equals("clearItemRequirements")) {
+				requiredToBuild = null;
+			} else if (command.equals("setItemRequirements")) {
+				int size = stream.readUnsignedShort();
+				requiredToBuild = new ArrayList<ItemStack>();
+				for (int i = 0; i < size; i++) {
+					ItemStack stack = Utils.readStack(stream);
+					stack.stackSize = Math.min(999, stream.readUnsignedShort());
+					requiredToBuild.add(stack);
 				}
-
-				if (!itStack.hasNext()) {
-					break;
+			}
+		} else if (side.isServer()) {
+			EntityPlayer player = (EntityPlayer) sender;
+			if (command.equals("eraseFluidTank")) {
+				int id = stream.readInt();
+				if (id < 0 || id >= fluidTanks.length) {
+					return;
+				}
+				if (isUseableByPlayer(player) && player.getDistanceSq(xCoord, yCoord, zCoord) <= 64) {
+					fluidTanks[id].setFluid(null);
+					sendNetworkUpdate();
 				}
 			}
 		}
+	}
+
+	private BuildCraftPacket getItemRequirementsPacket(final ArrayList<ItemStack> items) {
+		return new PacketCommand(this, "setItemRequirements") {
+			@Override
+			public void writeData(ByteBuf data) {
+				super.writeData(data);
+				data.writeShort(items.size());
+				for (ItemStack rb: items) {
+					Utils.writeStack(data, rb);
+					data.writeShort(rb.stackSize);
+				}
+			}
+		};
 	}
 
 	@Override
@@ -695,46 +709,23 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	}
 
 	public void updateRequirements() {
-		if (guiWatchers.size() == 0) {
-			// Nobody watching, do not update.
-			return;
-		}
-		
 		ArrayList<ItemStack> reqCopy = null;
-		ArrayList<Integer> realSize = null;
 		if (currentBuilder instanceof BptBuilderBlueprint) {
-			reqCopy = new ArrayList<ItemStack>();
-			realSize = new ArrayList<Integer>();
-
-			for (ItemStack stack : ((BptBuilderBlueprint) currentBuilder).neededItems) {
-				realSize.add(stack.stackSize);
-				ItemStack newStack = stack.copy();
-				newStack.stackSize = 0;
-				reqCopy.add(newStack);
-			}
+			reqCopy = ((BptBuilderBlueprint) currentBuilder).neededItems;
 		}
-		
+
 		for (EntityPlayer p : guiWatchers) {
-			RPCHandler.rpcPlayer(p, this, "setItemRequirements", reqCopy, realSize);
+			BuildCraftCore.instance.sendToPlayer(p, getItemRequirementsPacket(reqCopy));
 		}
 	}
 	
 	public void updateRequirements(EntityPlayer caller) {
 		ArrayList<ItemStack> reqCopy = null;
-		ArrayList<Integer> realSize = null;
 		if (currentBuilder instanceof BptBuilderBlueprint) {
-			reqCopy = new ArrayList<ItemStack>();
-			realSize = new ArrayList<Integer>();
-
-			for (ItemStack stack : ((BptBuilderBlueprint) currentBuilder).neededItems) {
-				realSize.add(stack.stackSize);
-				ItemStack newStack = stack.copy();
-				newStack.stackSize = 0;
-				reqCopy.add(newStack);
-			}
+			reqCopy = ((BptBuilderBlueprint) currentBuilder).neededItems;
 		}
 
-		RPCHandler.rpcPlayer(caller, this, "setItemRequirements", reqCopy, realSize);
+		BuildCraftCore.instance.sendToPlayer(caller, getItemRequirementsPacket(reqCopy));
 	}
 
 	public BptBuilderBase getBlueprint () {
@@ -812,17 +803,6 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	@Override
 	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
 		return fluidTank.getTankInfo(from);
-	}
-
-	@RPC(RPCSide.SERVER)
-	public void eraseFluidTank(int id, RPCMessageInfo info) {
-		if (id < 0 || id >= fluidTanks.length) {
-			return;
-		}
-		if (isUseableByPlayer(info.sender) && info.sender.getDistanceSq(xCoord, yCoord, zCoord) <= 64) {
-			fluidTanks[id].setFluid(null);
-			sendNetworkUpdate();
-		}
 	}
 
 	@Override
@@ -935,5 +915,19 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		}
 
 		return left;
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		super.writeData(stream);
+		box.writeData(stream);
+		fluidTank.writeData(stream);
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		super.readData(stream);
+		box.readData(stream);
+		fluidTank.readData(stream);
 	}
 }

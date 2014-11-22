@@ -9,24 +9,22 @@
 package buildcraft.core.network;
 
 import io.netty.buffer.ByteBuf;
+import buildcraft.api.core.ISerializable;
 
-import net.minecraft.entity.player.EntityPlayer;
+public class PacketWrapper implements ISerializable {
+	private final ISerializable wrapped;
 
-public class PacketRPCGui extends PacketRPC {
-	public PacketRPCGui() {
-	}
-
-	public PacketRPCGui(ByteBuf bytes) {
-		contents = bytes;
+	public PacketWrapper(ISerializable wrapped) {
+		this.wrapped = wrapped;
 	}
 
 	@Override
-	public void call (EntityPlayer sender) {
-		super.call(sender);
+	public void readData(ByteBuf stream) {
+		wrapped.readData(stream);
+	}
 
-		RPCMessageInfo info = new RPCMessageInfo();
-		info.sender = sender;
-
-		RPCHandler.receiveRPC(sender.openContainer, info, contents);
+	@Override
+	public void writeData(ByteBuf stream) {
+		wrapped.writeData(stream);
 	}
 }

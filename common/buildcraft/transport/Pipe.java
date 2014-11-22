@@ -38,7 +38,6 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.StatementSlot;
@@ -46,9 +45,6 @@ import buildcraft.transport.pipes.events.PipeEvent;
 import buildcraft.transport.statements.ActionValve.ValveState;
 
 public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory, IPipe {
-
-	@SuppressWarnings("rawtypes")
-	private static Map<Class, TilePacketWrapper> networkWrappers = new HashMap<Class, TilePacketWrapper>();
 	private static Map<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>> eventHandlers = new HashMap<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>>();
 
 	public int[] signalStrength = new int[]{0, 0, 0, 0};
@@ -66,11 +62,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public Pipe(T transport, Item item) {
 		this.transport = transport;
 		this.item = item;
-
-		if (!networkWrappers.containsKey(this.getClass())) {
-			networkWrappers
-					.put(this.getClass(), new TilePacketWrapper(new Class[]{TileGenericPipe.class, this.transport.getClass()}));
-		}
 	}
 
 	public void setTile(TileEntity tile) {

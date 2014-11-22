@@ -11,17 +11,16 @@ package buildcraft.core;
 import java.util.BitSet;
 import java.util.Random;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.core.BlockIndex;
-import buildcraft.api.core.NetworkData;
+import buildcraft.api.core.ISerializable;
 import buildcraft.core.utils.BitSetUtils;
+import buildcraft.core.utils.Utils;
 
-public class ZoneChunk {
+public class ZoneChunk implements ISerializable {
 
-	@NetworkData
 	public BitSet property;
-
-	@NetworkData
 	private boolean fullSet = false;
 
 	public ZoneChunk() {
@@ -108,5 +107,17 @@ public class ZoneChunk {
 
 	public boolean isEmpty() {
 		return !fullSet && property.isEmpty();
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		property = BitSetUtils.fromByteArray(Utils.readByteArray(stream));
+		fullSet = stream.readBoolean();
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		Utils.writeByteArray(stream, BitSetUtils.toByteArray(property));
+		stream.writeBoolean(fullSet);
 	}
 }

@@ -18,14 +18,14 @@ import net.minecraft.inventory.Slot;
 import net.minecraftforge.fluids.Fluid;
 
 import buildcraft.BuildCraftFactory;
+import buildcraft.api.core.ISerializable;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.network.Serializable;
 import buildcraft.factory.TileRefinery;
 
 public class ContainerRefinery extends BuildCraftContainer {
-
 	public TileRefinery refinery;
 
 	public ContainerRefinery(InventoryPlayer inventory, TileRefinery refinery) {
@@ -55,13 +55,13 @@ public class ContainerRefinery extends BuildCraftContainer {
 		refinery.setFilter(slot, filter);
 
 		if (refinery.getWorldObj().isRemote) {
-			PacketPayload payload = new PacketPayload(new PacketPayload.StreamWriter() {
+			ISerializable payload = new Serializable() {
 				@Override
 				public void writeData(ByteBuf data) {
 					data.writeByte(slot);
 					data.writeShort(filter != null ? filter.getID() : -1);
 				}
-			});
+			};
 			BuildCraftFactory.instance.sendToServer(new PacketUpdate(PacketIds.REFINERY_FILTER_SET, refinery.xCoord, refinery.yCoord, refinery.zCoord, payload));
 		}
 	}

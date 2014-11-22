@@ -32,7 +32,7 @@ public abstract class PacketCoordinates extends BuildCraftPacket {
 	public void writeData(ByteBuf data) {
 		data.writeByte(id);
 		data.writeInt(posX);
-		data.writeInt(posY);
+		data.writeShort(posY);
 		data.writeInt(posZ);
 	}
 
@@ -40,7 +40,7 @@ public abstract class PacketCoordinates extends BuildCraftPacket {
 	public void readData(ByteBuf data) {
 		id = data.readByte ();
 		posX = data.readInt();
-		posY = data.readInt();
+		posY = data.readShort();
 		posZ = data.readInt();
 	}
 

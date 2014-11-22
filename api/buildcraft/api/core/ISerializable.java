@@ -8,12 +8,12 @@
  */
 package buildcraft.api.core;
 
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+import java.io.IOException;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Inherited
-public @interface NetworkData {
+import io.netty.buffer.ByteBuf;
+import net.minecraft.network.Packet;
 
+public interface ISerializable {
+	void readData(ByteBuf stream);
+	void writeData(ByteBuf stream);
 }

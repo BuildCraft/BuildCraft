@@ -13,10 +13,12 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.EnumColor;
 import buildcraft.core.BCDynamicTexture;
 import buildcraft.core.DefaultProps;
@@ -26,7 +28,7 @@ import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.gui.buttons.GuiBetterButton;
 import buildcraft.core.gui.tooltips.ToolTip;
 import buildcraft.core.gui.tooltips.ToolTipLine;
-import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.StringUtils;
 
 public class GuiZonePlan extends GuiAdvancedInterface {
@@ -141,9 +143,17 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	}
 
 	private void uploadMap() {
-		RPCHandler.rpcServer(getContainer(), "computeMap", cx, cz, getContainer().mapTexture.width,
-				getContainer().mapTexture.height,
-				zoomLevel);
+		BuildCraftCore.instance.sendToServer(new PacketCommand(getContainer(), "computeMap") {
+			@Override
+			public void writeData(ByteBuf data) {
+				super.writeData(data);
+				data.writeInt(cx);
+				data.writeInt(cz);
+				data.writeShort(getContainer().mapTexture.width);
+				data.writeShort(getContainer().mapTexture.height);
+				data.writeByte(zoomLevel);
+			}
+		});
 	}
 
 	@Override

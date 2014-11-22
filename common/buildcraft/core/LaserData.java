@@ -8,18 +8,15 @@
  */
 package buildcraft.core;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 
-import buildcraft.api.core.NetworkData;
+import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.Position;
 
-public class LaserData {
-	@NetworkData
+public class LaserData implements ISerializable {
 	public Position head = new Position(0, 0, 0);
-	@NetworkData
 	public Position tail = new Position(0, 0, 0);
-
-	@NetworkData
 	public boolean isVisible = true;
 
 	public double renderSize = 1.0 / 16.0;
@@ -77,5 +74,19 @@ public class LaserData {
 		head.readFromNBT(nbt.getCompoundTag("head"));
 		tail.readFromNBT(nbt.getCompoundTag("tail"));
 		isVisible = nbt.getBoolean("isVisible");
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		head.readData(stream);
+		tail.readData(stream);
+		isVisible = stream.readBoolean();
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		head.writeData(stream);
+		tail.writeData(stream);
+		stream.writeBoolean(isVisible);
 	}
 }

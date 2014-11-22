@@ -12,19 +12,21 @@ import java.util.Collection;
 
 import org.lwjgl.opengl.GL11;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.builders.TileBuilder;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.gui.ItemSlot;
-import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.StringUtils;
 
 public class GuiBuilder extends GuiAdvancedInterface {
@@ -131,7 +133,13 @@ public class GuiBuilder extends GuiAdvancedInterface {
 			if (super.mousePressed(mc, x, y)) {
 				selectedButton = this;
 				clicked = true;
-				RPCHandler.rpcServer(builder, "eraseFluidTank", id);
+				BuildCraftCore.instance.sendToServer(new PacketCommand(builder, "eraseFluidTank") {
+					@Override
+					public void writeData(ByteBuf data) {
+						super.writeData(data);
+						data.writeInt(id);
+					}
+				});
 				return true;
 			} else {
 				return false;

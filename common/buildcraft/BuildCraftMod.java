@@ -13,6 +13,7 @@ import java.util.EnumMap;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
@@ -20,6 +21,7 @@ import cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import buildcraft.api.core.BCLog;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.network.BuildCraftPacket;
 
 public class BuildCraftMod {
@@ -35,6 +37,14 @@ public class BuildCraftMod {
 		} catch (Throwable t) {
 			BCLog.logger.log(Level.WARN, "sentToPlayers crash", t);
 		}
+	}
+
+	public void sendToPlayersNear(BuildCraftPacket packet, TileEntity tileEntity, int maxDistance) {
+		sendToPlayers(packet, tileEntity.getWorldObj(), tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, maxDistance);
+	}
+
+	public void sendToPlayersNear(BuildCraftPacket packet, TileEntity tileEntity) {
+		sendToPlayersNear(packet, tileEntity, DefaultProps.NETWORK_UPDATE_RANGE);
 	}
 
 	public void sendToWorld(BuildCraftPacket packet, World world) {

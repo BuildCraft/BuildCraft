@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -23,9 +24,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.core.NetworkData;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.network.IClientState;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
@@ -37,11 +38,10 @@ import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.statements.ActionPipeColor;
 import buildcraft.transport.statements.ActionPipeDirection;
 
-public class PipeItemsDaizuli extends Pipe<PipeTransportItems> {
+public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements IClientState {
 
 	private int standardIconIndex = PipeIconProvider.TYPE.PipeItemsDaizuli_Black.ordinal();
 	private int solidIconIndex = PipeIconProvider.TYPE.PipeAllDaizuli_Solid.ordinal();
-	@NetworkData
 	private int color = EnumColor.BLACK.ordinal();
 	private PipeLogicIron logic = new PipeLogicIron(this) {
 		@Override
@@ -190,5 +190,15 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> {
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
 		color = data.getByte("color");
+	}
+
+	@Override
+	public void writeData(ByteBuf data) {
+		data.writeByte(color);
+	}
+
+	@Override
+	public void readData(ByteBuf data) {
+		color = data.readByte();
 	}
 }

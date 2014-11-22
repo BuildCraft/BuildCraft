@@ -8,15 +8,13 @@
  */
 package buildcraft.builders.urbanism;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
-import buildcraft.api.core.NetworkData;
+import buildcraft.api.core.ISerializable;
 import buildcraft.core.Box;
 
-public class AnchoredBox {
-	@NetworkData
+public class AnchoredBox implements ISerializable {
 	public Box box = new Box();
-
-	@NetworkData
 	public int x1, y1, z1;
 
 	public void setP2 (int x2, int y2, int z2) {
@@ -37,5 +35,21 @@ public class AnchoredBox {
 		z1 = nbt.getInteger("anchorZ");
 
 		box.initialize(nbt);
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		box.readData(stream);
+		x1 = stream.readInt();
+		y1 = stream.readShort();
+		z1 = stream.readInt();
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		box.writeData(stream);
+		stream.writeInt(x1);
+		stream.writeShort(y1);
+		stream.writeInt(z1);
 	}
 }

@@ -11,6 +11,7 @@ package buildcraft.builders;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -19,11 +20,12 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 
+import cpw.mods.fml.relauncher.Side;
 import net.minecraftforge.common.util.Constants;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
@@ -33,22 +35,19 @@ import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BlueprintReadConfiguration;
 import buildcraft.core.blueprints.RecursiveBlueprintReader;
 import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCSide;
+import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.ICommandReceiver;
+import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.Utils;
 
-public class TileArchitect extends TileBuildCraft implements IInventory, IBoxProvider {
+public class TileArchitect extends TileBuildCraft implements IInventory, IBoxProvider, ICommandReceiver {
 
 	public String currentAuthorName = "";
-	@NetworkData
+
 	public Box box = new Box();
-	@NetworkData
 	public String name = "";
-	@NetworkData
 	public BlueprintReadConfiguration readConfiguration = new BlueprintReadConfiguration();
 
-	@NetworkData
 	public LinkedList<LaserData> subLasers = new LinkedList<LaserData>();
 
 	public ArrayList<BlockIndex> subBlueprints = new ArrayList<BlockIndex>();
@@ -92,17 +91,6 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 				}
 			}
 		}
-	}
-
-	@RPC (RPCSide.SERVER)
-	public void handleClientSetName(String nameSet) {
-		name = nameSet;
-		RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "setName", name);
-	}
-
-	@RPC
-	public void setName (String name) {
-		this.name = name;
 	}
 
 	@Override
@@ -212,6 +200,30 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	@Override
+	public void writeData(ByteBuf stream) {
+		box.writeData(stream);
+		Utils.writeUTF(stream, name);
+		readConfiguration.writeData(stream);
+		stream.writeShort(subLasers.size());
+		for (LaserData ld: subLasers) {
+			ld.writeData(stream);
+		}
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		box.readData(stream);
+		name = Utils.readUTF(stream);
+		readConfiguration.readData(stream);
+		int size = stream.readUnsignedShort();
+		subLasers.clear();
+		for (int i = 0; i < size; i++) {
+			LaserData ld = new LaserData();
+			ld.readData(stream);
+			subLasers.add(ld);
+		}
+	}
+	@Override
 	public void invalidate() {
 		super.invalidate();
 		destroy();
@@ -267,15 +279,39 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		return completeBox.getBoundingBox();
 	}
 
-	@RPC (RPCSide.SERVER)
-	private void setReadConfiguration (BlueprintReadConfiguration conf) {
-		readConfiguration = conf;
-		sendNetworkUpdate();
+	public BuildCraftPacket getPacketSetName() {
+		return new PacketCommand(this, "setName") {
+			@Override
+			public void writeData(ByteBuf data) {
+				Utils.writeUTF(data, name);
+			}
+		};
+	}
+	@Override
+	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
+		if (command.equals("setName")) {
+			this.name = Utils.readUTF(stream);
+			if (side.isServer()) {
+				BuildCraftCore.instance.sendToPlayersNear(getPacketSetName(), this);
+			}
+		} else if (side.isServer()) {
+			if (command.equals("setReadConfiguration")) {
+				readConfiguration.readData(stream);
+				sendNetworkUpdate();
+			}
+		}
 	}
 
 	public void rpcSetConfiguration (BlueprintReadConfiguration conf) {
 		readConfiguration = conf;
-		RPCHandler.rpcServer(this, "setReadConfiguration", conf);
+
+		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setReadConfiguration"){
+			@Override
+			public void writeData(ByteBuf data) {
+				super.writeData(data);
+				readConfiguration.writeData(data);
+			}
+		});
 	}
 
 	public void addSubBlueprint(TileEntity sub) {

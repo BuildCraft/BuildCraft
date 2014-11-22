@@ -11,14 +11,18 @@ package buildcraft.builders;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.core.NetworkData;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.Position;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.IBoxProvider;
 import buildcraft.core.LaserData;
 import buildcraft.core.TileBuildCraft;
@@ -29,24 +33,19 @@ import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.builders.BuildingItem;
 import buildcraft.core.builders.IBuildingItemsProvider;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCMessageInfo;
-import buildcraft.core.network.RPCSide;
+import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.ICommandReceiver;
+import buildcraft.core.network.PacketCommand;
+import buildcraft.core.utils.Utils;
 
-public class TileConstructionMarker extends TileBuildCraft implements IBuildingItemsProvider, IBoxProvider {
+public class TileConstructionMarker extends TileBuildCraft implements IBuildingItemsProvider, IBoxProvider, ICommandReceiver {
 
 	public static HashSet<TileConstructionMarker> currentMarkers = new HashSet<TileConstructionMarker>();
 
 	public ForgeDirection direction = ForgeDirection.UNKNOWN;
 
-	@NetworkData
 	public LaserData laser;
-
-	@NetworkData
 	public ItemStack itemBlueprint;
-
-	@NetworkData
 	public Box box = new Box();
 
 	public BptBuilderBase bluePrintBuilder;
@@ -56,12 +55,23 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	private NBTTagCompound initNBT;
 
 	@Override
-	public void initialize() {
+	public void initialize () {
+		super.initialize();
 		box.kind = Kind.BLUE_STRIPES;
 
 		if (worldObj.isRemote) {
-			RPCHandler.rpcServer(this, "uploadBuildersInAction");
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadBuildersInAction"));
 		}
+	}
+
+	private BuildCraftPacket createLaunchItemPacket(final BuildingItem i) {
+		return new PacketCommand(this, "launchItem") {
+			@Override
+			public void writeData(ByteBuf data) {
+				super.writeData(data);
+				i.writeData(data);
+			}
+		};
 	}
 
 	@Override
@@ -186,12 +196,21 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	@Override
 	public void addAndLaunchBuildingItem(BuildingItem item) {
 		buildersInAction.add(item);
-		RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "launchItem", item);
+		BuildCraftCore.instance.sendToPlayersNear(createLaunchItemPacket(item), this);
 	}
 
-	@RPC(RPCSide.CLIENT)
-	private void launchItem(BuildingItem item) {
-		buildersInAction.add(item);
+	@Override
+	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
+		if (side.isServer() && command.equals("uploadBuildersInAction")) {
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadBuildersInAction"));
+			for (BuildingItem i : buildersInAction) {
+				BuildCraftCore.instance.sendToPlayer((EntityPlayer) sender, createLaunchItemPacket(i));
+			}
+		} else if (side.isClient() && command.equals("launchItem")) {
+			BuildingItem item = new BuildingItem();
+			item.readData(stream);
+			buildersInAction.add(item);
+		}
 	}
 
 	@Override
@@ -206,10 +225,32 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 		return renderBox.expand(50).getBoundingBox();
 	}
 
-	@RPC(RPCSide.SERVER)
-	private void uploadBuildersInAction(RPCMessageInfo info) {
-		for (BuildingItem i : buildersInAction) {
-			RPCHandler.rpcPlayer(info.sender, this, "launchItem", i);
+	@Override
+	public void writeData(ByteBuf stream) {
+		box.writeData(stream);
+		stream.writeByte((laser != null ? 1 : 0) | (itemBlueprint != null ? 2 : 0));
+		if (laser != null) {
+			laser.writeData(stream);
+		}
+		if (itemBlueprint != null) {
+			Utils.writeStack(stream, itemBlueprint);
+		}
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		box.readData(stream);
+		int flags = stream.readUnsignedByte();
+		if ((flags & 1) != 0) {
+			laser = new LaserData();
+			laser.readData(stream);
+		} else {
+			laser = null;
+		}
+		if ((flags & 2) != 0) {
+			itemBlueprint = Utils.readStack(stream);
+		} else {
+			itemBlueprint = null;
 		}
 	}
 }

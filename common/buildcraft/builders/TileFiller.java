@@ -8,13 +8,13 @@
  */
 package buildcraft.builders;
 
-import java.io.IOException;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+import cpw.mods.fml.relauncher.Side;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.tiles.IControllable;
@@ -27,14 +27,11 @@ import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.builders.patterns.PatternFill;
 import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCSide;
+import buildcraft.core.network.ICommandReceiver;
+import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.Utils;
 
-public class TileFiller extends TileAbstractBuilder implements IHasWork, IControllable {
+public class TileFiller extends TileAbstractBuilder implements IHasWork, IControllable, ICommandReceiver {
 
 	private static int POWER_ACTIVATION = 500;
 
@@ -253,35 +250,19 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	}
 
 	@Override
-	public PacketPayload getPacketPayload() {
-		PacketPayload payload = new PacketPayload(new PacketPayload.StreamWriter() {
-			@Override
-			public void writeData(ByteBuf data) {
-				box.writeToStream(data);
-				data.writeBoolean(done);
-				Utils.writeUTF(data, currentPattern.getUniqueTag());
-			}
-		});
-
-		return payload;
+	public void writeData(ByteBuf data) {
+		box.writeData(data);
+		data.writeBoolean(done);
+		Utils.writeUTF(data, currentPattern.getUniqueTag());
 	}
 
-	public void handlePacketPayload(ByteBuf data) {
-		box.readFromStream(data);
+	@Override
+	public void readData(ByteBuf data) {
+		box.readData(data);
 		done = data.readBoolean();
 		setPattern((FillerPattern) FillerManager.registry.getPattern(Utils.readUTF(data)));
 
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-	}
-
-	@Override
-	public void handleDescriptionPacket(PacketUpdate packet) throws IOException {
-		handlePacketPayload(packet.payload.stream);
-	}
-
-	@Override
-	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		handlePacketPayload(packet.payload.stream);
 	}
 
 	@Override
@@ -302,13 +283,22 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 		return true;
 	}
 
-	public void rpcSetPatternFromString (String name) {
-		RPCHandler.rpcServer(this, "setPatternFromString", name);
+	public void rpcSetPatternFromString (final String name) {
+		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "set") {
+			@Override
+			public void writeData(ByteBuf data) {
+				super.writeData(data);
+				Utils.writeUTF(data, name);
+			}
+		});
 	}
 
-	@RPC (RPCSide.SERVER)
-	public void setPatternFromString (String name) {
-		setPattern((FillerPattern) FillerManager.registry.getPattern(name));
+	@Override
+	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
+		if (side.isServer() && command.equals("set")) {
+			String name = Utils.readUTF(stream);
+			setPattern((FillerPattern) FillerManager.registry.getPattern(name));
+		}
 	}
 
 	@Override

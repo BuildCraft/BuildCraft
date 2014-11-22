@@ -11,18 +11,13 @@ package buildcraft.transport.utils;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.api.core.ISerializable;
 
-import buildcraft.api.core.NetworkData;
-import buildcraft.core.network.serializers.ClassMapping;
-import buildcraft.core.network.serializers.SerializationContext;
-
-public class RobotStationMatrix {
-
+public class RobotStationMatrix implements ISerializable {
 
 	// TODO: All these matrixes should be passed by RPC, instead of having a
 	// single state carrying everything
 
-	@NetworkData
 	private RobotStationState[] states = new RobotStationState[6];
 
 	private boolean dirty = false;
@@ -56,22 +51,17 @@ public class RobotStationMatrix {
 		dirty = false;
 	}
 
+	@Override
 	public void writeData(ByteBuf data) {
-		try {
-			SerializationContext context = new SerializationContext();
-			ClassMapping.get(this.getClass()).write(data, this, context);
-		} catch (Exception e) {
-			e.printStackTrace();
+		for (int i = 0; i < states.length; i++) {
+			data.writeByte(states[i].ordinal());
 		}
 	}
 
+	@Override
 	public void readData(ByteBuf data) {
-		try {
-			SerializationContext context = new SerializationContext();
-			ClassMapping.get(this.getClass()).read(data, this, context);
-			dirty = true;
-		} catch (Exception e) {
-			e.printStackTrace();
+		for (int i = 0; i < states.length; i++) {
+			states[i] = RobotStationState.values()[data.readUnsignedByte()];
 		}
 	}
 }

@@ -8,20 +8,18 @@
  */
 package buildcraft.energy;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.core.NetworkData;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.PowerMode;
 import buildcraft.core.utils.StringUtils;
 
 public class TileEngineCreative extends TileEngine {
-
-	@NetworkData
 	private PowerMode powerMode = PowerMode.M2;
 
 	@Override
@@ -77,6 +75,18 @@ public class TileEngineCreative extends TileEngine {
 		super.writeToNBT(data);
 
 		data.setByte("mode", (byte) powerMode.ordinal());
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		super.readData(stream);
+		powerMode = PowerMode.fromId(stream.readUnsignedByte());
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		super.writeData(stream);
+		stream.writeByte(powerMode.ordinal());
 	}
 
 	@Override

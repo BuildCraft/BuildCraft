@@ -12,18 +12,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BlockIndex;
+import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.IZone;
-import buildcraft.api.core.NetworkData;
 
-public class ZonePlan implements IZone {
-
-	@NetworkData
+public class ZonePlan implements IZone, ISerializable {
 	private HashMap<ChunkIndex, ZoneChunk> chunkMapping = new HashMap<ChunkIndex, ZoneChunk>();
 
 	public boolean get(int x, int z) {
@@ -143,5 +142,27 @@ public class ZonePlan implements IZone {
 		}
 
 		return null;
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		chunkMapping.clear();
+		int size = stream.readInt();
+		for (int i = 0; i < size; i++) {
+			ChunkIndex key = new ChunkIndex();
+			ZoneChunk value = new ZoneChunk();
+			key.readData(stream);
+			value.readData(stream);
+			chunkMapping.put(key, value);
+		}
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		stream.writeInt(chunkMapping.size());
+		for (Map.Entry<ChunkIndex, ZoneChunk> e : chunkMapping.entrySet()) {
+			e.getKey().writeData(stream);
+			e.getValue().writeData(stream);
+		}
 	}
 }

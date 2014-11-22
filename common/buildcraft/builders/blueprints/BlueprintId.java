@@ -14,24 +14,20 @@ import java.util.Arrays;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.BuildCraftBuilders;
-import buildcraft.api.core.NetworkData;
+import buildcraft.api.core.ISerializable;
+import buildcraft.core.utils.Utils;
 
-public final class BlueprintId implements Comparable<BlueprintId> {
-
+public final class BlueprintId implements Comparable<BlueprintId>, ISerializable {
 	public enum Kind {
 		Template, Blueprint
 	};
 
-	@NetworkData
 	public byte[] uniqueId;
-
-	@NetworkData
 	public String name = "";
-
-	@NetworkData
 	public Kind kind = Kind.Blueprint;
 
 	public String completeId;
@@ -139,5 +135,19 @@ public final class BlueprintId implements Comparable<BlueprintId> {
 		}
 
 		return result;
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		uniqueId = Utils.readByteArray(stream);
+		name = Utils.readUTF(stream);
+		kind = Kind.values()[stream.readUnsignedByte()];
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		Utils.writeByteArray(stream, uniqueId);
+		Utils.writeUTF(stream, name);
+		stream.writeByte(kind.ordinal());
 	}
 }

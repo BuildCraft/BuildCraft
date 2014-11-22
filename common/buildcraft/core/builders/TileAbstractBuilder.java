@@ -11,22 +11,25 @@ package buildcraft.core.builders;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
+import cpw.mods.fml.relauncher.Side;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.ITileBuilder;
-import buildcraft.api.core.NetworkData;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.IBoxProvider;
 import buildcraft.core.LaserData;
 import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCMessageInfo;
-import buildcraft.core.network.RPCSide;
+import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.ICommandReceiver;
+import buildcraft.core.network.PacketCommand;
 
 public abstract class TileAbstractBuilder extends TileBuildCraft implements ITileBuilder, IInventory, IBoxProvider,
-		IBuildingItemsProvider {
+		IBuildingItemsProvider, ICommandReceiver {
 
 	/**
 	 * Computes the maximum amount of energy required to build a full chest,
@@ -35,7 +38,6 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 	 */
 	private static final int FULL_CHEST_ENERGY = 9 * 3 * 64 * BuilderAPI.BUILD_ENERGY + 10000;
 
-	@NetworkData
 	public LinkedList<LaserData> pathLasers = new LinkedList<LaserData> ();
 
 	public ArrayList<BuildingItem> buildersInAction = new ArrayList<BuildingItem>();
@@ -52,14 +54,31 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 		super.initialize();
 
 		if (worldObj.isRemote) {
-			RPCHandler.rpcServer(this, "uploadBuildersInAction");
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadBuildersInAction"));
 		}
 	}
 
-	@RPC (RPCSide.SERVER)
-	private void uploadBuildersInAction (RPCMessageInfo info) {
-		for (BuildingItem i : buildersInAction) {
-			RPCHandler.rpcPlayer(info.sender, this, "launchItem", i);
+	private BuildCraftPacket createLaunchItemPacket(final BuildingItem i) {
+		return new PacketCommand(this, "launchItem") {
+			@Override
+			public void writeData(ByteBuf data) {
+				super.writeData(data);
+				i.writeData(data);
+			}
+		};
+	}
+
+	@Override
+	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
+		if (side.isServer() && command.equals("uploadBuildersInAction")) {
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadBuildersInAction"));
+			for (BuildingItem i : buildersInAction) {
+				BuildCraftCore.instance.sendToPlayer((EntityPlayer) sender, createLaunchItemPacket(i));
+			}
+		} else if (side.isClient() && command.equals("launchItem")) {
+			BuildingItem item = new BuildingItem();
+			item.readData(stream);
+			buildersInAction.add(item);
 		}
 	}
 
@@ -115,15 +134,10 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 		return pathLasers;
 	}
 
-	@RPC (RPCSide.CLIENT)
-	public void launchItem (BuildingItem item) {
-		buildersInAction.add(item);
-	}
-
 	@Override
 	public void addAndLaunchBuildingItem(BuildingItem item) {
 		buildersInAction.add(item);
-		RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "launchItem", item);
+		BuildCraftCore.instance.sendToPlayersNear(createLaunchItemPacket(item), this);
 	}
 
 	public final int energyAvailable() {
@@ -145,6 +159,25 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 
 		rfPrev = getBattery().getEnergyStored();
 		rfUnchangedCycles = 0;
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		int size = stream.readUnsignedShort();
+		pathLasers.clear();
+		for (int i = 0; i < size; i++) {
+			LaserData ld = new LaserData();
+			ld.readData(stream);
+			pathLasers.add(ld);
+		}
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		stream.writeShort(pathLasers.size());
+		for (LaserData ld : pathLasers) {
+			ld.writeData(stream);
+		}
 	}
 
 	@Override

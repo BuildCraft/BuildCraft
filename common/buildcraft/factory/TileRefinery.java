@@ -25,7 +25,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
@@ -35,9 +34,9 @@ import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.SingleUseTank;
 import buildcraft.core.fluids.TankManager;
-import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.recipes.RefineryRecipeManager;
+import buildcraft.core.utils.Utils;
 
 public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInventory, IHasWork, IFlexibleCrafter {
 
@@ -58,7 +57,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	private SafeTimeTracker updateNetworkTime = new SafeTimeTracker(BuildCraftCore.updateFactor);
 	private boolean isActive;
 
-	@NetworkData
 	private String currentRecipeId = "";
 
 	public TileRefinery() {
@@ -350,23 +348,23 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	}
 
 	// Network
-	@Override
-	public PacketPayload getPacketPayload() {
-		PacketPayload payload = new PacketPayload(new PacketPayload.StreamWriter() {
-			@Override
-			public void writeData(ByteBuf data) {
-				data.writeFloat(animationSpeed);
-				tankManager.writeData(data);
-			}
-		});
-		return payload;
+	public void writeData(ByteBuf stream) {
+		stream.writeFloat(animationSpeed);
+		Utils.writeUTF(stream, currentRecipeId);
+		tankManager.writeData(stream);
 	}
 
 	@Override
-	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		ByteBuf stream = packet.payload.stream;
+	public void readData(ByteBuf stream) {
 		animationSpeed = stream.readFloat();
+		currentRecipeId = Utils.readUTF(stream);
 		tankManager.readData(stream);
+
+		currentRecipe = RefineryRecipeManager.INSTANCE.getRecipe(currentRecipeId);
+
+		if (currentRecipe != null) {
+			craftingResult = currentRecipe.craft(this, true);
+		}
 	}
 
 	@Override
@@ -382,17 +380,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	@Override
 	public boolean hasCustomInventoryName() {
 		return false;
-	}
-
-	@Override
-	public void postPacketHandling(PacketUpdate packet) {
-		super.postPacketHandling(packet);
-
-		currentRecipe = RefineryRecipeManager.INSTANCE.getRecipe(currentRecipeId);
-
-		if (currentRecipe != null) {
-			craftingResult = currentRecipe.craft(this, true);
-		}
 	}
 
 	@Override

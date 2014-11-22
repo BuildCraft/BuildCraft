@@ -8,11 +8,9 @@
  */
 package buildcraft.core;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,41 +21,19 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.ISerializable;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.ISynchronizedTile;
-import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketTileUpdate;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.utils.Utils;
 
-public abstract class TileBuildCraft extends TileEntity implements ISynchronizedTile, IEnergyHandler {
-	@SuppressWarnings("rawtypes")
-	private static Map<Class, TilePacketWrapper> updateWrappers = new HashMap<Class, TilePacketWrapper>();
-	@SuppressWarnings("rawtypes")
-	private static Map<Class, TilePacketWrapper> descriptionWrappers = new HashMap<Class, TilePacketWrapper>();
-
+public abstract class TileBuildCraft extends TileEntity implements IEnergyHandler, ISynchronizedTile, ISerializable {
     protected TileBuffer[] cache;
 	protected HashSet<EntityPlayer> guiWatchers = new HashSet<EntityPlayer>();
-	
-	private final TilePacketWrapper descriptionPacket;
-	private final TilePacketWrapper updatePacket;
+
 	private boolean init = false;
 	private String owner = "[BuildCraft]";
 	private RFBattery battery;
-
-	public TileBuildCraft() {
-		if (!updateWrappers.containsKey(this.getClass())) {
-			updateWrappers.put(this.getClass(), new TilePacketWrapper(this.getClass()));
-		}
-
-		if (!descriptionWrappers.containsKey(this.getClass())) {
-			descriptionWrappers.put(this.getClass(), new TilePacketWrapper(this.getClass()));
-		}
-
-		updatePacket = updateWrappers.get(this.getClass());
-		descriptionPacket = descriptionWrappers.get(this.getClass());
-	}
 
 	public String getOwner() {
 		return owner;
@@ -83,6 +59,10 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 		}
 	}
 
+	public void initialize() {
+
+	}
+
     @Override
     public void validate() {
         super.validate();
@@ -94,10 +74,6 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 		init = false;
 		super.invalidate();
         cache = null;
-	}
-
-	public void initialize() {
-		Utils.handleBufferedDescription(this);
 	}
 
 	public void onBlockPlacedBy(EntityLivingBase entity, ItemStack stack) {
@@ -112,38 +88,30 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 
 	public void sendNetworkUpdate() {
 		if (worldObj != null && !worldObj.isRemote) {
-			BuildCraftCore.instance.sendToPlayers(getUpdatePacket(), worldObj,
+			BuildCraftCore.instance.sendToPlayers(getPacketUpdate(), worldObj,
 					xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE);
 		}
 	}
 
-	@Override
-	public Packet getDescriptionPacket() {
-		return Utils.toPacket(getUpdatePacket(), 0);
+	public void writeData(ByteBuf stream) {
+
 	}
 
-	@Override
-	public PacketPayload getPacketPayload() {
-		return updatePacket.toPayload(this);
+	public void readData(ByteBuf stream) {
+
 	}
 
-	@Override
-	public BuildCraftPacket getUpdatePacket() {
+	public BuildCraftPacket getPacketUpdate() {
 		return new PacketTileUpdate(this);
 	}
 
-	@Override
-	public void handleDescriptionPacket(PacketUpdate packet) throws IOException {
-		descriptionPacket.fromPayload(this, packet.payload);
+	public BuildCraftPacket getPacketDescription() {
+		return getPacketUpdate();
 	}
 
 	@Override
-	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		updatePacket.fromPayload(this, packet.payload);
-	}
-
-	@Override
-	public void postPacketHandling(PacketUpdate packet) {
+	public Packet getDescriptionPacket() {
+		return Utils.toPacket(getPacketDescription(), 0);
 	}
 
 	@Override

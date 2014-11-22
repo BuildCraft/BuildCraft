@@ -29,8 +29,6 @@ import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.fluids.TankManager;
-import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketUpdate;
 
 public class TileTank extends TileBuildCraft implements IFluidHandler {
 
@@ -65,19 +63,12 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 
 	/* NETWORK */
 	@Override
-	public PacketPayload getPacketPayload() {
-		PacketPayload payload = new PacketPayload(new PacketPayload.StreamWriter() {
-			@Override
-			public void writeData(ByteBuf data) {
+	public void writeData(ByteBuf data) {
 				tankManager.writeData(data);
 			}
-		});
-		return payload;
-	}
 
 	@Override
-	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		ByteBuf stream = packet.payload.stream;
+	public void readData(ByteBuf stream) {
 		tankManager.readData(stream);
 	}
 

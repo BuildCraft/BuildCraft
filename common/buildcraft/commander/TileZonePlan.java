@@ -8,13 +8,13 @@
  */
 package buildcraft.commander;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.chunk.Chunk;
 
-import buildcraft.api.core.NetworkData;
 import buildcraft.core.ItemMapLocation;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.ZonePlan;
@@ -29,8 +29,7 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 	public int chunkStartX, chunkStartZ;
 	public byte[] colors = new byte[RESOLUTION * RESOLUTION];
 
-	@NetworkData
-	public int progress = 0;
+	public short progress = 0;
 
 	private boolean scan = false;
 	private int chunkIt = 0;
@@ -210,7 +209,17 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 		}
 	}
 
-	public Object selectArea(int index) {
+	@Override
+	public void writeData(ByteBuf stream) {
+		stream.writeShort(progress);
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		progress = stream.readShort();
+	}
+
+	public ZonePlan selectArea(int index) {
 		if (selectedAreas[index] == null) {
 			selectedAreas[index] = new ZonePlan();
 		}

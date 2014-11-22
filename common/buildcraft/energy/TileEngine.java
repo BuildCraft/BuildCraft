@@ -8,6 +8,7 @@
  */
 package buildcraft.energy;
 
+import io.netty.buffer.ByteBuf;
 import buildcraft.api.power.IEngine;
 import buildcraft.api.tiles.IHeatable;
 import buildcraft.core.utils.MathUtils;
@@ -18,7 +19,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyHandler;
-import buildcraft.api.core.NetworkData;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
@@ -70,9 +70,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 	public float progress;
 	public int energy;
 	public float heat = MIN_HEAT;
-	@NetworkData
 	public EnergyStage energyStage = EnergyStage.BLUE;
-	@NetworkData
 	public ForgeDirection orientation = ForgeDirection.UP;
 
 	protected int progressPart = 0;
@@ -80,7 +78,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 
 	private boolean checkOrientation = false;
 
-	@NetworkData
 	private boolean isPumping = false; // Used for SMP synch
 
 	public TileEngine() {
@@ -393,6 +390,20 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 		data.setFloat("progress", progress);
 		data.setInteger("energy", energy);
 		data.setFloat("heat", heat);
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		int flags = stream.readUnsignedByte();
+		energyStage = EnergyStage.values()[flags & 0x07];
+		isPumping = (flags & 0x08) != 0;
+		orientation = ForgeDirection.getOrientation(stream.readByte());
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		stream.writeByte(energyStage.ordinal() | (isPumping ? 8 : 0));
+		stream.writeByte(orientation.ordinal());
 	}
 
 	public void getGUINetworkData(int id, int value) {

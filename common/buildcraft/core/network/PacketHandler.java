@@ -19,8 +19,10 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 
+import buildcraft.api.core.ISerializable;
 import buildcraft.core.proxy.CoreProxy;
 
 @Sharable
@@ -34,13 +36,12 @@ public class PacketHandler extends SimpleChannelInboundHandler<BuildCraftPacket>
 
 		TileEntity entity = packet.getTarget(world);
 
-		if (!(entity instanceof ISynchronizedTile)) {
+		if (!(entity instanceof ISerializable)) {
 			return;
 		}
 
-		ISynchronizedTile tile = (ISynchronizedTile) entity;
-		tile.handleUpdatePacket(packet);
-		tile.postPacketHandling(packet);
+		ISerializable tile = (ISerializable) entity;
+		tile.readData(packet.stream);
 	}
 
 	@Override
@@ -52,72 +53,40 @@ public class PacketHandler extends SimpleChannelInboundHandler<BuildCraftPacket>
 			int packetID = packet.getID();
 
 			switch (packetID) {
-			case PacketIds.TILE_UPDATE: {
-				onTileUpdate(player, (PacketTileUpdate) packet);
-				break;
-			}
-
-			case PacketIds.STATE_UPDATE: {
-				PacketTileState pkt = (PacketTileState) packet;
-				World world = player.worldObj;
-
-				TileEntity tile = world.getTileEntity(pkt.posX, pkt.posY, pkt.posZ);
-
-				if (tile instanceof ISyncedTile) {
-					pkt.applyStates((ISyncedTile) tile);
+				case PacketIds.TILE_UPDATE: {
+					onTileUpdate(player, (PacketTileUpdate) packet);
+					break;
+				}
+				case PacketIds.COMMAND: {
+					((PacketCommand) packet).handle(player);
+					break;
 				}
 
-				break;
-			}
+				case PacketIds.STATE_UPDATE: {
+					PacketTileState pkt = (PacketTileState) packet;
+					World world = player.worldObj;
 
-			case PacketIds.GUI_RETURN: {
-				// action will have happened already at read time
-				break;
-			}
+					TileEntity tile = world.getTileEntity(pkt.posX, pkt.posY, pkt.posZ);
 
-			case PacketIds.GUI_WIDGET: {
-				// action will have happened already at read time
-				break;
-			}
+					if (tile instanceof ISyncedTile) {
+						pkt.applyStates((ISyncedTile) tile);
+					}
 
-			case PacketIds.RPC: {
-				((PacketRPC) packet).call(player);
+					break;
+				}
 
-				break;
-			}
+				case PacketIds.GUI_RETURN: {
+					// action will have happened already at read time
+					break;
+				}
 
-				case PacketIds.RPC_PIPE: {
-				// TODO: RPC pipes are not used right now. Ressurect this
-				// code if needed later.
-				/*
-				 * PacketRPCPipe rpc = new PacketRPCPipe(); rpc.sender = player;
-				 *
-				 * int dimId = data.readShort(); World world = null;
-				 *
-				 * if (!rpc.sender.worldObj.isRemote) { // if this is a server,
-				 * then get the world
-				 *
-				 * world = DimensionManager.getProvider(dimId).worldObj; } else
-				 * if (rpc.sender.worldObj.provider.dimensionId == dimId) { //
-				 * if the player is on this world, then synchronize things
-				 *
-				 * world = rpc.sender.worldObj; }
-				 *
-				 * if (world != null) { int x = data.readInt(); int y =
-				 * data.readInt(); int z = data.readInt();
-				 *
-				 * TileEntity tile = world.getTileEntity(x, y, z);
-				 *
-				 * if (tile instanceof TileGenericPipe) { rpc.setPipe
-				 * (((TileGenericPipe) tile).pipe); rpc.readData(data); } }
-				 */
-				break;
-
+				case PacketIds.GUI_WIDGET: {
+					// action will have happened already at read time
+					break;
 				}
 			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			}
 	}
 }

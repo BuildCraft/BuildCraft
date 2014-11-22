@@ -8,6 +8,7 @@
  */
 package buildcraft.builders;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -15,7 +16,7 @@ import net.minecraft.world.World;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.core.NetworkData;
+import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.Position;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.LaserKind;
@@ -27,9 +28,8 @@ import buildcraft.core.utils.Utils;
 public class TileMarker extends TileBuildCraft implements IAreaProvider {
 	private static int maxSize = 64;
 
-	public static class TileWrapper {
+	public static class TileWrapper implements ISerializable {
 
-		@NetworkData
 		public int x, y, z;
 		private TileMarker marker;
 
@@ -69,24 +69,66 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 			y = Integer.MAX_VALUE;
 			z = Integer.MAX_VALUE;
 		}
+
+		@Override
+		public void readData(ByteBuf stream) {
+			x = stream.readInt();
+			if (isSet()) {
+				y = stream.readShort();
+				z = stream.readInt();
+			}
+		}
+
+		@Override
+		public void writeData(ByteBuf stream) {
+			stream.writeInt(x);
+			if (isSet()) {
+				// Only X is used for checking if a vector is set, so we can save space on the Y coordinate.
+				stream.writeShort(y);
+				stream.writeInt(z);
+			}
+		}
 	}
 
-	public static class Origin {
-		@NetworkData
+	public static class Origin implements ISerializable {
 		public TileWrapper vectO = new TileWrapper();
-		@NetworkData
 		public TileWrapper[] vect = {new TileWrapper(), new TileWrapper(), new TileWrapper()};
-		@NetworkData
 		public int xMin, yMin, zMin, xMax, yMax, zMax;
 
 		public boolean isSet() {
 			return vectO.isSet();
 		}
+
+		@Override
+		public void writeData(ByteBuf stream) {
+			vectO.writeData(stream);
+			for (TileWrapper tw : vect) {
+				tw.writeData(stream);
+			}
+			stream.writeInt(xMin);
+			stream.writeShort(yMin);
+			stream.writeInt(zMin);
+			stream.writeInt(xMax);
+			stream.writeShort(yMax);
+			stream.writeInt(zMax);
+		}
+
+		@Override
+		public void readData(ByteBuf stream) {
+			vectO.readData(stream);
+			for (TileWrapper tw : vect) {
+				tw.readData(stream);
+			}
+			xMin = stream.readInt();
+			yMin = stream.readShort();
+			zMin = stream.readInt();
+			xMax = stream.readInt();
+			yMax = stream.readShort();
+			zMax = stream.readInt();
+		}
 	}
 
-	@NetworkData
 	public Origin origin = new Origin();
-	@NetworkData
 	public boolean showSignals = false;
 
 	private Position initVectO;
@@ -465,8 +507,15 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 	}
 
 	@Override
-	public void postPacketHandling(PacketUpdate packet) {
-		super.postPacketHandling(packet);
+	public void writeData(ByteBuf stream) {
+		origin.writeData(stream);
+		stream.writeBoolean(showSignals);
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		origin.readData(stream);
+		showSignals = stream.readBoolean();
 
 		switchSignals();
 

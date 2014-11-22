@@ -8,20 +8,18 @@
  */
 package buildcraft.builders;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeSet;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import buildcraft.api.core.BlockIndex;
-import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.core.LaserData;
-import buildcraft.core.network.PacketUpdate;
 
 public class TilePathMarker extends TileMarker {
 
@@ -36,10 +34,7 @@ public class TilePathMarker extends TileMarker {
 	public boolean loadLink0 = false;
 	public boolean loadLink1 = false;
 
-	@NetworkData
 	public LaserData[] lasers = new LaserData[2];
-
-	@NetworkData
 	public boolean tryingToConnect = false;
 
 	public TilePathMarker[] links = new TilePathMarker[2];
@@ -296,13 +291,38 @@ public class TilePathMarker extends TileMarker {
 	}
 
 	@Override
-	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
+	public void readData(ByteBuf data) {
 		boolean previousState = tryingToConnect;
 
-		super.handleUpdatePacket(packet);
+		int flags = data.readUnsignedByte();
+		if ((flags & 1) != 0) {
+			lasers[0] = new LaserData();
+			lasers[0].readData(data);
+		} else {
+			lasers[0] = null;
+		}
+		if ((flags & 2) != 0) {
+			lasers[1] = new LaserData();
+			lasers[1].readData(data);
+		} else {
+			lasers[1] = null;
+		}
+		tryingToConnect = (flags & 4) != 0;
 
 		if (previousState != tryingToConnect) {
 			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		}
+	}
+
+	@Override
+	public void writeData(ByteBuf data) {
+		int flags = (lasers[0] != null ? 1 : 0) | (lasers[1] != null ? 2 : 0) | (tryingToConnect ? 4 : 0);
+		data.writeByte(flags);
+		if (lasers[0] != null) {
+			lasers[0].writeData(data);
+		}
+		if (lasers[1] != null) {
+			lasers[1].writeData(data);
 		}
 	}
 }

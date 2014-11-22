@@ -11,12 +11,12 @@ package buildcraft.silicon;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.power.ILaserTarget;
@@ -34,7 +34,6 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 	private static final float LASER_OFFSET = 2.0F / 16.0F;
 	private static final short POWER_AVERAGING = 100;
 
-	@NetworkData
 	public LaserData laser = new LaserData();
 	
 	private final SafeTimeTracker laserTickTracker = new SafeTimeTracker(10);
@@ -44,7 +43,6 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 	private IControllable.Mode lastMode = IControllable.Mode.Unknown;
 	private int powerIndex = 0;
 
-	@NetworkData
 	private short powerAverage = 0;
 	private final short[] power = new short[POWER_AVERAGING];
 
@@ -268,6 +266,19 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 	@Override
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		laser = new LaserData();
+		laser.readData(stream);
+		powerAverage = stream.readShort();
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		laser.writeData(stream);
+		stream.writeShort(powerAverage);
 	}
 
 	@Override

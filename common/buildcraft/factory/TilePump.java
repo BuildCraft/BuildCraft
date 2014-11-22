@@ -38,8 +38,6 @@ import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.TankUtils;
 import buildcraft.core.fluids.SingleUseTank;
-import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtils;
 import buildcraft.core.utils.Utils;
@@ -372,33 +370,19 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 	}
 
 	@Override
-	public PacketPayload getPacketPayload() {
-		PacketPayload payload = new PacketPayload(new PacketPayload.StreamWriter() {
-			@Override
-			public void writeData(ByteBuf buf) {
-				buf.writeInt(aimY);
-				buf.writeFloat((float) tubeY);
-				buf.writeBoolean(powered);
-			}
-		});
-
-		return payload;
+	public void writeData(ByteBuf buf) {
+		buf.writeShort(aimY);
+		buf.writeFloat((float) tubeY);
+		buf.writeBoolean(powered);
 	}
 
 	@Override
-	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		PacketPayload payload = packet.payload;
-		ByteBuf data = payload.stream;
-		aimY = data.readInt();
+	public void readData(ByteBuf data) {
+		aimY = data.readShort();
 		tubeY = data.readFloat();
 		powered = data.readBoolean();
 
 		setTubePosition();
-	}
-
-	@Override
-	public void handleDescriptionPacket(PacketUpdate packet) throws IOException {
-		handleUpdatePacket(packet);
 	}
 
 	private void setTubePosition() {

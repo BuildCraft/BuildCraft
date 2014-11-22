@@ -22,6 +22,7 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
@@ -35,8 +36,6 @@ import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipeTile;
@@ -52,8 +51,6 @@ import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.network.BuildCraftPacket;
-import buildcraft.core.network.ISynchronizedTile;
-import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.TileEngine;
 
@@ -333,24 +330,6 @@ public final class Utils {
 		return lasers;
 	}
 
-	public static void handleBufferedDescription(ISynchronizedTile tileSynch) {
-		TileEntity tile = (TileEntity) tileSynch;
-		BlockIndex index = new BlockIndex(tile.xCoord, tile.yCoord, tile.zCoord);
-
-		if (BuildCraftCore.bufferedDescriptions.containsKey(index)) {
-
-			PacketUpdate payload = BuildCraftCore.bufferedDescriptions.get(index);
-			BuildCraftCore.bufferedDescriptions.remove(index);
-
-			try {
-				tileSynch.handleDescriptionPacket(payload);
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-			tileSynch.postPacketHandling(payload);
-		}
-	}
-
 	public static void preDestroyBlock(World world, int i, int j, int k) {
 		TileEntity tile = world.getTileEntity(i, j, k);
 
@@ -484,24 +463,46 @@ public final class Utils {
 	}
 
 	public static void writeStack (ByteBuf data, ItemStack stack) {
-		if (stack == null) {
-			data.writeBoolean(false);
+		if (stack == null || stack.getItem() == null || stack.stackSize < 0) {
+			data.writeByte(0);
 		} else {
-			data.writeBoolean(true);
-			NBTTagCompound nbt = new NBTTagCompound();
-			stack.writeToNBT(nbt);
-			Utils.writeNBT(data, nbt);
+			// ItemStacks generally shouldn't have a stackSize above 64,
+			// so we use this "trick" to save bandwidth by storing it in the first byte.
+			data.writeByte((MathUtils.clamp(stack.stackSize + 1, 0, 64) & 0x7F) | (stack.hasTagCompound() ? 128 : 0));
+			data.writeShort(Item.getIdFromItem(stack.getItem()));
+			data.writeShort(stack.getItemDamage());
+			if (stack.hasTagCompound()) {
+				Utils.writeNBT(data, stack.getTagCompound());
+			}
 		}
 	}
 
-
 	public static ItemStack readStack(ByteBuf data) {
-		if (!data.readBoolean()) {
+		int flags = data.readUnsignedByte();
+		if (flags == 0) {
 			return null;
 		} else {
-			NBTTagCompound nbt = readNBT(data);
-			return ItemStack.loadItemStackFromNBT(nbt);
+			boolean hasCompound = (flags & 0x80) != 0;
+			int stackSize = (flags & 0x7F) - 1;
+			int itemId = data.readUnsignedShort();
+			int itemDamage = data.readShort();
+			ItemStack stack = new ItemStack(Item.getItemById(itemId), stackSize, itemDamage);
+			if (hasCompound) {
+				stack.setTagCompound(Utils.readNBT(data));
+			}
+			return stack;
 		}
+	}
+
+	public static void writeByteArray(ByteBuf stream, byte[] data) {
+		stream.writeInt(data.length);
+		stream.writeBytes(data);
+	}
+
+	public static byte[] readByteArray(ByteBuf stream) {
+		byte[] data = new byte[stream.readInt()];
+		stream.readBytes(data, 0, data.length);
+		return data;
 	}
 
 	/**

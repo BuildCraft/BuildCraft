@@ -75,7 +75,7 @@ public class PacketHandlerFactory extends SimpleChannelInboundHandler<BuildCraft
 			return;
 		}
 
-		ByteBuf stream = packet.payload.stream;
+		ByteBuf stream = packet.stream;
 
 		tile.setFilter(stream.readByte(), FluidRegistry.getFluid(stream.readShort()));
 	}

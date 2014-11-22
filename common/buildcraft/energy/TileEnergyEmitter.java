@@ -18,13 +18,9 @@ import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.LaserData;
 import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCMessageInfo;
-import buildcraft.core.network.RPCSide;
 
 public class TileEnergyEmitter extends TileBuildCraft {
-	public Map<BlockIndex, Target> targets = new TreeMap<BlockIndex, Target>();
+/*	public Map<BlockIndex, Target> targets = new TreeMap<BlockIndex, Target>();
 
 	public int rfAcc = 0;
 	public int accumulated = 0;
@@ -226,5 +222,5 @@ public class TileEnergyEmitter extends TileBuildCraft {
 		}
 
 		return AxisAlignedBB.getBoundingBox(xMin, yMin, zMin, xMax, yMax, zMax);
-	}
+	}*/
 }

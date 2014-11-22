@@ -8,21 +8,22 @@
  */
 package buildcraft.commander;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 
+import cpw.mods.fml.relauncher.Side;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.BCDynamicTexture;
 import buildcraft.core.ZonePlan;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.slots.SlotOutput;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCMessageInfo;
-import buildcraft.core.network.RPCSide;
+import buildcraft.core.network.ICommandReceiver;
+import buildcraft.core.network.PacketCommand;
 
-public class ContainerZonePlan extends BuildCraftContainer {
+public class ContainerZonePlan extends BuildCraftContainer implements ICommandReceiver {
 
 	public BCDynamicTexture mapTexture;
 	public ZonePlan currentAreaSelection;
@@ -55,32 +56,64 @@ public class ContainerZonePlan extends BuildCraftContainer {
 		return true;
 	}
 
-	public void loadArea(int index) {
-		RPCHandler.rpcServer(this, "rpcLoadArea", index);
+	public void loadArea(final int index) {
+		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "loadArea") {
+			@Override
+			public void writeData(ByteBuf data) {
+				super.writeData(data);
+				data.writeByte(index);
+			}
+		});
 	}
 
-	public void saveArea(int index) {
-		RPCHandler.rpcServer(this, "rpcSaveArea", index, currentAreaSelection);
+	public void saveArea(final int index) {
+		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "loadArea") {
+			@Override
+			public void writeData(ByteBuf data) {
+				super.writeData(data);
+				data.writeByte(index);
+				currentAreaSelection.writeData(data);
+			}
+		});
 	}
 
-	@RPC(RPCSide.SERVER)
-	private void rpcLoadArea(int index, RPCMessageInfo info) {
-		RPCHandler.rpcPlayer(info.sender, this, "rpcAreaLoaded", map.selectArea(index));
+	@Override
+	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
+		if (side.isClient()) {
+			if (command.equals("areaLoaded")) {
+				currentAreaSelection = new ZonePlan();
+				currentAreaSelection.readData(stream);
+				gui.refreshSelectedArea();
+			} else if (command.equals("receiveImage")) {
+				int size = stream.readUnsignedShort();
+				for (int i = 0; i < size; ++i) {
+					mapTexture.colorMap[i] = stream.readInt();
+				}
+			}
+		} else if (side.isServer()) {
+			if (command.equals("loadArea")) {
+				final int index = stream.readUnsignedByte();
+				BuildCraftCore.instance.sendToPlayer((EntityPlayer) sender, new PacketCommand(this, "areaLoaded") {
+					@Override
+					public void writeData(ByteBuf data) {
+						super.writeData(data);
+						map.selectArea(index).writeData(data);
+					}
+				});
+			} else if (command.equals("saveArea")) {
+				final int index = stream.readUnsignedByte();
+				ZonePlan plan = new ZonePlan();
+				plan.readData(stream);
+				map.setArea(index, plan);
+			} else if (command.equals("computeMap")) {
+				computeMap(stream.readInt(), stream.readInt(),
+						stream.readUnsignedShort(), stream.readUnsignedShort(),
+						stream.readUnsignedByte(), (EntityPlayer) sender);
+			}
+		}
 	}
 
-	@RPC(RPCSide.SERVER)
-	private void rpcSaveArea(int index, ZonePlan area) {
-		map.setArea(index, area);
-	}
-
-	@RPC(RPCSide.CLIENT)
-	private void rpcAreaLoaded(ZonePlan areaSelection) {
-		currentAreaSelection = areaSelection;
-		gui.refreshSelectedArea();
-	}
-
-	@RPC(RPCSide.SERVER)
-	private void computeMap(int cx, int cz, int width, int height, int blocksPerPixel, RPCMessageInfo info) {
+	private void computeMap(int cx, int cz, int width, int height, int blocksPerPixel, EntityPlayer player) {
 		mapTexture = new BCDynamicTexture(width, height);
 
 		int startX = cx - width * blocksPerPixel / 2;
@@ -121,13 +154,15 @@ public class ContainerZonePlan extends BuildCraftContainer {
 			}
 		}
 
-		RPCHandler.rpcPlayer(info.sender, this, "receiveImage", mapTexture.colorMap);
-	}
-
-	@RPC(RPCSide.CLIENT)
-	private void receiveImage(int[] colors) {
-		for (int i = 0; i < colors.length; ++i) {
-			mapTexture.colorMap[i] = colors[i];
-		}
+		BuildCraftCore.instance.sendToPlayer(player, new PacketCommand(this, "receiveImage") {
+			@Override
+			public void writeData(ByteBuf data) {
+				super.writeData(data);
+				data.writeShort(mapTexture.colorMap.length);
+				for (int i = 0; i < mapTexture.colorMap.length; i++) {
+					data.writeInt(mapTexture.colorMap[i]);
+				}
+			}
+		});
 	}
 }
