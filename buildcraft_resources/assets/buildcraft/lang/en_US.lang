@@ -115,6 +115,7 @@ gate.trigger.engine.blue=Engine Blue
 gate.trigger.engine.green=Engine Green
 gate.trigger.engine.yellow=Engine Yellow
 gate.trigger.engine.red=Engine Red
+gate.trigger.engine.overheat=Engine Overheat
 gate.trigger.fluid.empty=Tank Empty
 gate.trigger.fluid.contains=Fluid in Tank
 gate.trigger.fluid.space=Space for Fluid

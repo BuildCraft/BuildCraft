@@ -15,8 +15,14 @@ import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.transport.Gate;
 
 public class ActionRedstoneOutput extends BCStatement implements IActionInternal {
+
+	public ActionRedstoneOutput(String s) {
+		// Used by fader output
+		super(s);
+	}
 
 	public ActionRedstoneOutput() {
 		super("buildcraft:redstone.output", "buildcraft.redstone.output");
@@ -43,10 +49,24 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
 		return 1;
 	}
 
+	protected boolean isSideOnly(IStatementParameter[] parameters) {
+		if (parameters != null && parameters.length >= 1 && parameters[0] instanceof StatementParameterRedstoneGateSideOnly) {
+			return ((StatementParameterRedstoneGateSideOnly) parameters[0]).isOn;
+		}
+
+		return false;
+	}
+
 	@Override
 	public void actionActivate(IStatementContainer source,
 			IStatementParameter[] parameters) {
-		
+		if (source instanceof Gate) {
+			((Gate) source).setRedstoneOutput(isSideOnly(parameters), getSignalLevel());
+		}
+	}
+
+	protected int getSignalLevel() {
+		return 15;
 	}
 	
 	@Override

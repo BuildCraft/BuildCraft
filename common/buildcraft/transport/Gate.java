@@ -346,7 +346,15 @@ public final class Gate implements IGate, IStatementContainer {
 	public int getSidedRedstoneOutput() {
 		return redstoneOutputSide;
 	}
-	
+
+	public void setRedstoneOutput(boolean sideOnly, int value) {
+		redstoneOutputSide = value;
+
+		if (!sideOnly) {
+			redstoneOutput = value;
+		}
+	}
+
 	public void startResolution() {
 		for (GateExpansionController expansion : expansions.values()) {
 			expansion.startResolution();
@@ -465,33 +473,17 @@ public final class Gate implements IGate, IStatementContainer {
 			} else {
 				continue;
 			}
-			
-			// TODO: A lot of the code below should be removed in favor
-			// of calls to actionActivate
 
 			// Custom gate actions take precedence over defaults.
 			if (resolveAction(action)) {
 				continue;
 			}
 
-			if (action instanceof ActionRedstoneOutput || action instanceof ActionRedstoneFaderOutput) {
-				if (slot.parameters != null && slot.parameters.length >= 1 &&
-						slot.parameters[0] instanceof StatementParameterRedstoneGateSideOnly &&
-						((StatementParameterRedstoneGateSideOnly) slot.parameters[0]).isOn) {
-					redstoneOutputSide = (action instanceof ActionRedstoneFaderOutput) ? ((ActionRedstoneFaderOutput) action).level : 15;
-				} else {
-					redstoneOutput = (action instanceof ActionRedstoneFaderOutput) ? ((ActionRedstoneFaderOutput) action).level : 15;
-					if (redstoneOutput > redstoneOutputSide) {
-						redstoneOutputSide = redstoneOutput;
-					}
-				}
-			} else {
-				for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-					TileEntity tile = pipe.container.getTile(side);
-					if (tile instanceof IActionReceptor) {
-						IActionReceptor recept = (IActionReceptor) tile;
-						recept.actionActivated(action, slot.parameters);
-					}
+			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+				TileEntity tile = pipe.container.getTile(side);
+				if (tile instanceof IActionReceptor) {
+					IActionReceptor recept = (IActionReceptor) tile;
+					recept.actionActivated(action, slot.parameters);
 				}
 			}
 		}
