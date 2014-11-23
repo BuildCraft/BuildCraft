@@ -14,6 +14,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.client.IItemRenderer;
@@ -53,9 +54,10 @@ public class FacadeItemRenderer implements IItemRenderer {
         }
 		Block block = activeState != null ? activeState.block : null;
 		int decodedMeta = activeState != null ? activeState.metadata : 0;
+		ItemStack decodedStack = new ItemStack(block, 1, decodedMeta);
 
 		try {
-			int color = item.getItem().getColorFromItemStack(new ItemStack(block, 1, decodedMeta), 0);
+			int color = decodedStack.getItem().getColorFromItemStack(decodedStack, 0);
 			RenderUtils.setGLColorFromInt(color);
 		} catch (Throwable error) {
 		}

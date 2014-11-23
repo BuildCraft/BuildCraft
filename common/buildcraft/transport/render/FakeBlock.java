@@ -17,6 +17,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.transport.BlockGenericPipe;
 
 
 /*
@@ -40,6 +41,10 @@ public final class FakeBlock extends Block implements ITextureStates {
 	
 	@Override
 	public int colorMultiplier(IBlockAccess blockAccess, int x, int y, int z) {
+		// TODO: Move this somewhere else?
+		if (BlockGenericPipe.facadeRenderColor >= 0) {
+			return BlockGenericPipe.facadeRenderColor;
+		}
 		return colorMultiplier;
 	}
 	
