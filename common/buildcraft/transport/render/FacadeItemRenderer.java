@@ -112,6 +112,8 @@ public class FacadeItemRenderer implements IItemRenderer {
 
 		GL11.glPopMatrix();
 
+		RenderUtils.setGLColorFromInt(0xFFFFFF);
+
 		// Render StructurePipe
 		block = BuildCraftTransport.genericPipeBlock;
 		IIcon textureID = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal()); // Structure pipe

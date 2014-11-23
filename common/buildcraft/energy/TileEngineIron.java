@@ -141,6 +141,12 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	}
 
 	@Override
+	public void overheat() {
+		// Evaporate all remaining coolant as a form of penalty.
+		tankCoolant.setFluid(null);
+	}
+
+	@Override
 	public void burn() {
 		FluidStack fuel = this.tankFuel.getFluid();
 		if (currentFuel == null && fuel != null) {

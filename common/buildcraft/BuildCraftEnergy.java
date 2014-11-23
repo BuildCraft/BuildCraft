@@ -102,12 +102,13 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	public static Item fuel;
 
 	public static boolean canOilBurn;
+	public static boolean canEnginesExplode;
 	public static double oilWellScalar = 1.0;
-	public static TreeMap<BlockIndex, Integer> saturationStored = new TreeMap<BlockIndex, Integer>();
 	public static ITriggerExternal triggerBlueEngineHeat = new TriggerEngineHeat(EnergyStage.BLUE);
 	public static ITriggerExternal triggerGreenEngineHeat = new TriggerEngineHeat(EnergyStage.GREEN);
 	public static ITriggerExternal triggerYellowEngineHeat = new TriggerEngineHeat(EnergyStage.YELLOW);
 	public static ITriggerExternal triggerRedEngineHeat = new TriggerEngineHeat(EnergyStage.RED);
+	public static ITriggerExternal triggerEngineOverheat = new TriggerEngineHeat(EnergyStage.OVERHEAT);
 
 	private static Fluid buildcraftFluidOil;
 	private static Fluid buildcraftFluidFuel;
@@ -120,6 +121,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		int oilOceanBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "biomeOilOcean", DefaultProps.BIOME_OIL_OCEAN).getInt(DefaultProps.BIOME_OIL_OCEAN);
 		canOilBurn = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "burnOil", true, "Can oil burn?").getBoolean(true);
 		oilWellScalar = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "oilWellGenerationRate", 1.0, "Probability of oil well generation").getDouble(1.0);
+		canEnginesExplode = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "enginesExplode", false, "Do engines explode upon overheat?").getBoolean(false);
 
 		setBiomeList(
 				OilPopulate.INSTANCE.surfaceDepositBiomes,

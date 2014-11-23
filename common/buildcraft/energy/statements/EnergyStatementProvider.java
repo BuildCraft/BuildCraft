@@ -36,6 +36,7 @@ public class EnergyStatementProvider implements ITriggerProvider {
 			triggers.add(BuildCraftEnergy.triggerGreenEngineHeat);
 			triggers.add(BuildCraftEnergy.triggerYellowEngineHeat);
 			triggers.add(BuildCraftEnergy.triggerRedEngineHeat);
+			triggers.add(BuildCraftEnergy.triggerEngineOverheat);
 		}
 		
 		return triggers;

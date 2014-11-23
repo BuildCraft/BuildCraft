@@ -17,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyHandler;
+import buildcraft.BuildCraftEnergy;
 import buildcraft.api.power.IEngine;
 import buildcraft.api.tiles.IHeatable;
 import buildcraft.api.tools.IToolWrench;
@@ -172,6 +173,10 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 
 	public void overheat() {
 		this.isPumping = false;
+		if (BuildCraftEnergy.canEnginesExplode) {
+			worldObj.createExplosion(null, xCoord, yCoord, zCoord, 3, true);
+			worldObj.setBlockToAir(xCoord, yCoord, zCoord);
+		}
 	}
 
 	public void updateHeat() {
