@@ -296,7 +296,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
-		if (side.isServer() && command.equals("select")) {
+		if (side.isServer() && "select".equals(command)) {
 			String id = Utils.readUTF(stream);
 			boolean select = stream.readBoolean();
 

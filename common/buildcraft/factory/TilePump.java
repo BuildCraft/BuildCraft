@@ -8,7 +8,6 @@
  */
 package buildcraft.factory;
 
-import java.io.IOException;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -36,8 +35,8 @@ import buildcraft.core.EntityBlock;
 import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.fluids.TankUtils;
 import buildcraft.core.fluids.SingleUseTank;
+import buildcraft.core.fluids.TankUtils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtils;
 import buildcraft.core.utils.Utils;

@@ -64,7 +64,7 @@ public class ContainerRequester extends BuildCraftContainer implements ICommandR
 
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
-		if (side.isServer() && command.equals("getRequestList")) {
+		if (side.isServer() && "getRequestList".equals(command)) {
 			final ItemStack[] stacks = new ItemStack[TileRequester.NB_ITEMS];
 
 			for (int i = 0; i < TileRequester.NB_ITEMS; ++i) {
@@ -79,7 +79,7 @@ public class ContainerRequester extends BuildCraftContainer implements ICommandR
 					}
 				}
 			}));
-		} else if (side.isClient() && command.equals("receiveRequestList")) {
+		} else if (side.isClient() && "receiveRequestList".equals(command)) {
 			requests = new ItemStack[TileRequester.NB_ITEMS];
 			for (int i = 0; i < TileRequester.NB_ITEMS; i++) {
 				requests[i] = Utils.readStack(stream);

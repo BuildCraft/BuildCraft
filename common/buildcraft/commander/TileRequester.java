@@ -54,7 +54,7 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
 
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
-		if (side.isServer() && command.equals("setRequest")) {
+		if (side.isServer() && "setRequest".equals(command)) {
 			setRequest(stream.readUnsignedByte(), Utils.readStack(stream));
 		}
 	}

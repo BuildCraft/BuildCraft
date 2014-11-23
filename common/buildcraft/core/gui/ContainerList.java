@@ -100,11 +100,11 @@ public class ContainerList extends BuildCraftContainer implements ICommandReceiv
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
 		if (side.isServer()) {
-			if (command.equals("setLabel")) {
+			if ("setLabel".equals(command)) {
 				setLabel(Utils.readUTF(stream));
-			} else if (command.equals("switchButton")) {
+			} else if ("switchButton".equals(command)) {
 				switchButton(stream.readUnsignedByte(), stream.readUnsignedByte());
-			} else if (command.equals("setStack")) {
+			} else if ("setStack".equals(command)) {
 				setStack(stream.readUnsignedByte(), stream.readUnsignedByte(), Utils.readStack(stream));
 			}
 		}

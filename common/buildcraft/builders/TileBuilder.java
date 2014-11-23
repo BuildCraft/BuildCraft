@@ -630,10 +630,11 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
+		super.receiveCommand(command, side, sender, stream);
 		if (side.isClient()) {
-			if (command.equals("clearItemRequirements")) {
+			if ("clearItemRequirements".equals(command)) {
 				requiredToBuild = null;
-			} else if (command.equals("setItemRequirements")) {
+			} else if ("setItemRequirements".equals(command)) {
 				int size = stream.readUnsignedShort();
 				requiredToBuild = new ArrayList<ItemStack>();
 				for (int i = 0; i < size; i++) {
@@ -644,7 +645,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			}
 		} else if (side.isServer()) {
 			EntityPlayer player = (EntityPlayer) sender;
-			if (command.equals("eraseFluidTank")) {
+			if ("eraseFluidTank".equals(command)) {
 				int id = stream.readInt();
 				if (id < 0 || id >= fluidTanks.length) {
 					return;
@@ -662,11 +663,12 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			return new PacketCommand(this, "setItemRequirements", new CommandWriter() {
 				public void write(ByteBuf data) {
 					data.writeShort(items.size());
-					if (items != null)
+					if (items != null) {
 						for (ItemStack rb : items) {
 							Utils.writeStack(data, rb);
 							data.writeShort(rb.stackSize);
 						}
+					}
 				}
 			});
 		} else {

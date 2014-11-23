@@ -8,7 +8,7 @@
  */
 package buildcraft.energy;
 
-import java.util.Map;
+/* import java.util.Map;
 import java.util.TreeMap;
 
 import net.minecraft.util.AxisAlignedBB;
@@ -16,7 +16,7 @@ import net.minecraft.util.AxisAlignedBB;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.LaserData;
-import buildcraft.core.RFBattery;
+import buildcraft.core.RFBattery; */
 import buildcraft.core.TileBuildCraft;
 
 public class TileEnergyEmitter extends TileBuildCraft {

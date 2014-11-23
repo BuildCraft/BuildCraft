@@ -8,10 +8,7 @@
  */
 package buildcraft.api.core;
 
-import java.io.IOException;
-
 import io.netty.buffer.ByteBuf;
-import net.minecraft.network.Packet;
 
 public interface ISerializable {
 	void readData(ByteBuf stream);

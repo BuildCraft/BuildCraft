@@ -97,9 +97,9 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
 		// Non-XYZ commands go here
-		if (side.isClient() && command.equals("setFrameKind")) {
+		if (side.isClient() && "setFrameKind".equals(command)) {
 			setFrameKind(stream.readInt(), stream.readInt());
-		} else if (side.isServer() && command.equals("startFiller")) {
+		} else if (side.isServer() && "startFiller".equals(command)) {
 			String fillerTag = Utils.readUTF(stream);
 			Box box = new Box();
 			box.readData(stream);
@@ -111,13 +111,13 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
 			int y = stream.readInt();
 			int z = stream.readInt();
 
-			if (side.isServer() && command.equals("setBlock")) {
+			if (side.isServer() && "setBlock".equals(command)) {
 				worldObj.setBlock(x, y, z, Blocks.brick_block);
-			} else if (side.isServer() && command.equals("eraseBlock")) {
+			} else if (side.isServer() && "eraseBlock".equals(command)) {
 				// tasks.add(new UrbanistTaskErase(this, x, y, z));
-			} else if (command.equals("createFrame")) {
+			} else if ("createFrame".equals(command)) {
 				createFrame(x, y, z);
-			} else if (command.equals("moveFrame")) {
+			} else if ("moveFrame".equals(command)) {
 				moveFrame(x, y, z);
 			}
 		}

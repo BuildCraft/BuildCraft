@@ -9,9 +9,6 @@
 package buildcraft.energy;
 
 import io.netty.buffer.ByteBuf;
-import buildcraft.api.power.IEngine;
-import buildcraft.api.tiles.IHeatable;
-import buildcraft.core.utils.MathUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,12 +16,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyHandler;
+import buildcraft.api.power.IEngine;
+import buildcraft.api.tiles.IHeatable;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
+import buildcraft.core.utils.MathUtils;
 import buildcraft.energy.gui.ContainerEngine;
 
 public abstract class TileEngine extends TileBuildCraft implements IPipeConnection, IEnergyHandler, IEngine, IHeatable {

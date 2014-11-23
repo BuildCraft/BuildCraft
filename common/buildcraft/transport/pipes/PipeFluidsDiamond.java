@@ -8,20 +8,6 @@
  */
 package buildcraft.transport.pipes;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
-import buildcraft.core.GuiIds;
-import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.network.IClientState;
-import buildcraft.core.utils.FluidUtils;
-import buildcraft.core.utils.Utils;
-import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.IDiamondPipe;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeTransportFluids;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,11 +15,22 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidContainerItem;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.IIconProvider;
+import buildcraft.core.GuiIds;
+import buildcraft.core.inventory.SimpleInventory;
+import buildcraft.core.utils.FluidUtils;
+import buildcraft.core.utils.Utils;
+import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.IDiamondPipe;
+import buildcraft.transport.Pipe;
+import buildcraft.transport.PipeIconProvider;
+import buildcraft.transport.PipeTransportFluids;
 
 public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDiamondPipe {
 
@@ -129,13 +126,15 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
 
 	@Override
 	public boolean outputOpen(ForgeDirection to) {
-		if (!super.outputOpen(to))
+		if (!super.outputOpen(to)) {
 			return false;
+		}
 
 		// get center tank, from which outputs are checked; ignore if has no fluid
 		FluidTankInfo[] tanks = transport.getTankInfo(ForgeDirection.UNKNOWN);
-		if (tanks == null || tanks[0] == null || tanks[0].fluid == null || tanks[0].fluid.amount == 0)
+		if (tanks == null || tanks[0] == null || tanks[0].fluid == null || tanks[0].fluid.amount == 0) {
 			return true;
+		}
 
 		Fluid fluidInTank = tanks[0].fluid.getFluid();
 		boolean[] validFilter = new boolean[6];
@@ -152,12 +151,14 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
 			}
 		}
 		// the direction is filtered and liquids match
-		if (filters.filteredDirections[to.ordinal()] && validFilter[to.ordinal()])
+		if (filters.filteredDirections[to.ordinal()] && validFilter[to.ordinal()]) {
 			return true;
+		}
 
 		// we haven't found a filter for this liquid and the direction is free
-		if (!isFiltered && !filters.filteredDirections[to.ordinal()])
+		if (!isFiltered && !filters.filteredDirections[to.ordinal()]) {
 			return true;
+		}
 
 		// we have a filter for the liquid, but not a valid direction
 		return false;

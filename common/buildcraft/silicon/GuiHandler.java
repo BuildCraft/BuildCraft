@@ -8,12 +8,19 @@
  */
 package buildcraft.silicon;
 
-import buildcraft.silicon.gui.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import cpw.mods.fml.common.network.IGuiHandler;
+import buildcraft.silicon.gui.ContainerAdvancedCraftingTable;
+import buildcraft.silicon.gui.ContainerAssemblyTable;
+import buildcraft.silicon.gui.ContainerChargingTable;
+import buildcraft.silicon.gui.ContainerIntegrationTable;
+import buildcraft.silicon.gui.GuiAdvancedCraftingTable;
+import buildcraft.silicon.gui.GuiAssemblyTable;
+import buildcraft.silicon.gui.GuiChargingTable;
+import buildcraft.silicon.gui.GuiIntegrationTable;
 
 public class GuiHandler implements IGuiHandler {
 

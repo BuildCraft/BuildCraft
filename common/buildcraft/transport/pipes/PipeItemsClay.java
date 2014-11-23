@@ -8,6 +8,7 @@
  */
 package buildcraft.transport.pipes;
 
+import java.util.LinkedList;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.relauncher.Side;
@@ -20,8 +21,6 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.pipes.events.PipeEventItem;
-
-import java.util.LinkedList;
 
 public class PipeItemsClay extends Pipe<PipeTransportItems> {
 
@@ -50,10 +49,11 @@ public class PipeItemsClay extends Pipe<PipeTransportItems> {
             if (!event.item.blacklist.contains(o) && container.pipe.outputOpen(o)) {
                 if (container.isPipeConnected(o)) {
                     TileEntity entity = container.getTile(o);
-                    if (entity instanceof IPipeTile)
+                    if (entity instanceof IPipeTile) {
                         pipesList.add(o);
-                    else
+                    } else {
                         nonPipesList.add(o);
+                    }
                 }
             }
         }

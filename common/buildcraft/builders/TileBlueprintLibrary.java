@@ -253,7 +253,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
 		if (side.isClient()) {
-			if (command.equals("requestSelectedBlueprint")) {
+			if ("requestSelectedBlueprint".equals(command)) {
 				if (isOutputConsistent()) {
 					if (selected > -1 && selected < currentPage.size()) {
 						final BlueprintBase bpt = BuildCraftBuilders.clientDB
@@ -270,7 +270,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 						BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadNothingToServer", null));
 					}
 				}
-			} else if (command.equals("downloadBlueprintToClient")) {
+			} else if ("downloadBlueprintToClient".equals(command)) {
 				BlueprintId id = new BlueprintId();
 				id.readData(stream);
 				byte[] data = Utils.readByteArray(stream);
@@ -288,12 +288,12 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 				}
 			}
 		} else if (side.isServer()) {
-			if (command.equals("uploadNothingToServer")) {
+			if ("uploadNothingToServer".equals(command)) {
 				setInventorySlotContents(3, getStackInSlot(2));
 				setInventorySlotContents(2, null);
 
 				downloadingPlayer = null;
-			} else if (command.equals("uploadBlueprintToServer")) {
+			} else if ("uploadBlueprintToServer".equals(command)) {
 				BlueprintId id = new BlueprintId();
 				id.readData(stream);
 				byte[] data = Utils.readByteArray(stream);
@@ -306,7 +306,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 
 					setInventorySlotContents(3, bpt.getStack());
 					setInventorySlotContents(2, null);
-				} catch(Exception e) {
+				} catch (IOException e) {
 					e.printStackTrace();
 				}
 

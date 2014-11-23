@@ -332,7 +332,7 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
 		if (side.isServer()) {
 			EntityPlayer player = (EntityPlayer) sender;
-			if (command.equals("initRequest")) {
+			if ("initRequest".equals(command)) {
 				final String[] triggerStrings = statementsToStrings(potentialTriggers);
 				final String[] actionStrings = statementsToStrings(potentialActions);
 
@@ -349,7 +349,7 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 						}
 					}
 				}));
-			} else if (command.equals("selectionRequest")) {
+			} else if ("selectionRequest".equals(command)) {
 				for (int position = 0; position < gate.material.numSlots; position++) {
 					IStatement action = gate.getAction(position);
 					IStatement trigger = gate.getTrigger(position);
@@ -366,7 +366,7 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 				}
 			}
 		} else if (side.isClient()) {
-			if (command.equals("init")) {
+			if ("init".equals(command)) {
 				setGate(stream.readByte());
 				String[] triggerStrings = new String[stream.readShort()];
 				String[] actionStrings = new String[stream.readShort()];
@@ -382,11 +382,11 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 			}
 		}
 
-		if (command.equals("setAction")) {
+		if ("setAction".equals(command)) {
 			setAction(stream.readUnsignedByte(), Utils.readUTF(stream), false);
-		} else if (command.equals("setTrigger")) {
+		} else if ("setTrigger".equals(command)) {
 			setTrigger(stream.readUnsignedByte(), Utils.readUTF(stream), false);
-		} else if (command.equals("setActionParameter") || command.equals("setTriggerParameter")) {
+		} else if ("setActionParameter".equals(command) || "setTriggerParameter".equals(command)) {
 			int slot = stream.readUnsignedByte();
 			int param = stream.readUnsignedByte();
 			String parameterName = Utils.readUTF(stream);
@@ -398,7 +398,7 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 
 			if (parameter != null) {
 				parameter.readFromNBT(parameterData);
-				if (command.equals("setActionParameter")) {
+				if ("setActionParameter".equals(command)) {
 					setActionParameter(slot, param, parameter, false);
 				} else {
 					setTriggerParameter(slot, param, parameter, false);

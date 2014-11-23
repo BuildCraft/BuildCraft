@@ -289,13 +289,13 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
-		if (command.equals("setName")) {
+		if ("setName".equals(command)) {
 			this.name = Utils.readUTF(stream);
 			if (side.isServer()) {
 				BuildCraftCore.instance.sendToPlayersNear(getPacketSetName(), this);
 			}
 		} else if (side.isServer()) {
-			if (command.equals("setReadConfiguration")) {
+			if ("setReadConfiguration".equals(command)) {
 				readConfiguration.readData(stream);
 				sendNetworkUpdate();
 			}

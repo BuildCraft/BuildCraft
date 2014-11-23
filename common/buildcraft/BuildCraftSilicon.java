@@ -8,7 +8,6 @@
  */
 package buildcraft;
 
-import buildcraft.silicon.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -57,7 +56,19 @@ import buildcraft.core.robots.boards.BoardRobotPickerNBT;
 import buildcraft.core.robots.boards.BoardRobotPlanterNBT;
 import buildcraft.core.robots.boards.BoardRobotPumpNBT;
 import buildcraft.core.robots.boards.BoardRobotShovelmanNBT;
+import buildcraft.silicon.BlockLaser;
+import buildcraft.silicon.BlockLaserTable;
+import buildcraft.silicon.GuiHandler;
+import buildcraft.silicon.ItemLaserTable;
+import buildcraft.silicon.ItemRedstoneBoard;
+import buildcraft.silicon.ItemRedstoneChipset;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
+import buildcraft.silicon.SiliconProxy;
+import buildcraft.silicon.TileAdvancedCraftingTable;
+import buildcraft.silicon.TileAssemblyTable;
+import buildcraft.silicon.TileChargingTable;
+import buildcraft.silicon.TileIntegrationTable;
+import buildcraft.silicon.TileLaser;
 import buildcraft.silicon.boards.BoardRecipe;
 import buildcraft.silicon.boards.ImplRedstoneBoardRegistry;
 import buildcraft.silicon.network.PacketHandlerSilicon;

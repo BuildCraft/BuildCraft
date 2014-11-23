@@ -77,30 +77,30 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
 		if (side.isClient()) {
-			if (command.equals("areaLoaded")) {
+			if ("areaLoaded".equals(command)) {
 				currentAreaSelection = new ZonePlan();
 				currentAreaSelection.readData(stream);
 				gui.refreshSelectedArea();
-			} else if (command.equals("receiveImage")) {
+			} else if ("receiveImage".equals(command)) {
 				int size = stream.readUnsignedShort();
 				for (int i = 0; i < size; ++i) {
 					mapTexture.colorMap[i] = stream.readInt();
 				}
 			}
 		} else if (side.isServer()) {
-			if (command.equals("loadArea")) {
+			if ("loadArea".equals(command)) {
 				final int index = stream.readUnsignedByte();
 				BuildCraftCore.instance.sendToPlayer((EntityPlayer) sender, new PacketCommand(this, "areaLoaded", new CommandWriter() {
 					public void write(ByteBuf data) {
 						map.selectArea(index).writeData(data);
 					}
 				}));
-			} else if (command.equals("saveArea")) {
+			} else if ("saveArea".equals(command)) {
 				final int index = stream.readUnsignedByte();
 				ZonePlan plan = new ZonePlan();
 				plan.readData(stream);
 				map.setArea(index, plan);
-			} else if (command.equals("computeMap")) {
+			} else if ("computeMap".equals(command)) {
 				computeMap(stream.readInt(), stream.readInt(),
 						stream.readUnsignedShort(), stream.readUnsignedShort(),
 						stream.readUnsignedByte(), (EntityPlayer) sender);

@@ -8,7 +8,6 @@
  */
 package buildcraft.transport.gui;
 
-import buildcraft.transport.IDiamondPipe;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.inventory.IInventory;
@@ -18,7 +17,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.pipes.PipeItemsDiamond;
+import buildcraft.transport.IDiamondPipe;
 
 public class GuiDiamondPipe extends GuiBuildCraft {
 

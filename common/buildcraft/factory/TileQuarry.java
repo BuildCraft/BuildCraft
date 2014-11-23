@@ -634,9 +634,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		stream.writeFloat((float) speed);
 		stream.writeFloat((float) headTrajectory);
 		int flags = stage.ordinal();
-		flags |= (isAlive ? 0x08 : 0);
-		flags |= (movingHorizontally ? 0x10 : 0);
-		flags |= (movingVertically ? 0x20 : 0);
+		flags |= isAlive ? 0x08 : 0;
+		flags |= movingHorizontally ? 0x10 : 0;
+		flags |= movingVertically ? 0x20 : 0;
 		stream.writeByte(flags);
 	}
 

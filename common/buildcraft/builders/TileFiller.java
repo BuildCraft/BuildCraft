@@ -285,7 +285,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	}
 
 	public void rpcSetPatternFromString (final String name) {
-		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "set", new CommandWriter() {
+		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setPattern", new CommandWriter() {
 			public void write(ByteBuf data) {
 				Utils.writeUTF(data, name);
 			}
@@ -294,7 +294,8 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
-		if (side.isServer() && command.equals("set")) {
+		super.receiveCommand(command, side, sender, stream);
+		if (side.isServer() && "setPattern".equals(command)) {
 			String name = Utils.readUTF(stream);
 			setPattern((FillerPattern) FillerManager.registry.getPattern(name));
 		}

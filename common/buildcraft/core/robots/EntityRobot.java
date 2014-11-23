@@ -711,15 +711,15 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
 		if (side.isClient()) {
-			if (command.equals("clientSetItemInUse")) {
+			if ("clientSetItemInUse".equals(command)) {
 				itemInUse = Utils.readStack(stream);
-			} else if (command.equals("clientSetInventory")) {
+			} else if ("clientSetInventory".equals(command)) {
 				int slot = stream.readUnsignedShort();
 				inv[slot] = Utils.readStack(stream);
-			} else if (command.equals("initialize")) {
+			} else if ("initialize".equals(command)) {
 				itemInUse = Utils.readStack(stream);
 				itemActive = stream.readBoolean();
-			} else if (command.equals("setItemActive")) {
+			} else if ("setItemActive".equals(command)) {
 				itemActive = stream.readBoolean();
 				itemActiveStage = 0;
 				lastUpdateTime = new Date().getTime();
@@ -727,12 +727,12 @@ public class EntityRobot extends EntityRobotBase implements
 				if (!itemActive) {
 					setSteamDirection(0, -1, 0);
 				}
-			} else if (command.equals("setSteamDirection")) {
+			} else if ("setSteamDirection".equals(command)) {
 				setSteamDirection(stream.readInt(), stream.readShort(), stream.readInt());
 			}
 		} else if (side.isServer()) {
 			EntityPlayer p = (EntityPlayer) sender;
-			if (command.equals("requestInitialization")) {
+			if ("requestInitialization".equals(command)) {
 				BuildCraftCore.instance.sendToPlayer(p, new PacketCommand(this, "initialize", new CommandWriter() {
 					public void write(ByteBuf data) {
 						Utils.writeStack(data, itemInUse);

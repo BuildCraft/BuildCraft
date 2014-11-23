@@ -10,7 +10,6 @@ package buildcraft.transport.pipes;
 
 import java.util.LinkedList;
 
-import buildcraft.transport.IDiamondPipe;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.block.Block;
@@ -30,9 +29,9 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.network.IClientState;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.IDiamondPipe;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;

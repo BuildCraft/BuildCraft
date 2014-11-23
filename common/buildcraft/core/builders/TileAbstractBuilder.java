@@ -19,7 +19,6 @@ import cpw.mods.fml.relauncher.Side;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.ITileBuilder;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.IBoxProvider;
 import buildcraft.core.LaserData;
 import buildcraft.core.RFBattery;
@@ -69,11 +68,11 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
-		if (side.isServer() && command.equals("uploadBuildersInAction")) {
+		if (side.isServer() && "uploadBuildersInAction".equals(command)) {
 			for (BuildingItem i : buildersInAction) {
 				BuildCraftCore.instance.sendToPlayer((EntityPlayer) sender, createLaunchItemPacket(i));
 			}
-		} else if (side.isClient() && command.equals("launchItem")) {
+		} else if (side.isClient() && "launchItem".equals(command)) {
 			BuildingItem item = new BuildingItem();
 			item.readData(stream);
 			buildersInAction.add(item);

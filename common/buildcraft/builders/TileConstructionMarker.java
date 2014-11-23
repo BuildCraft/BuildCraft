@@ -22,7 +22,6 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.core.Position;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.IBoxProvider;
 import buildcraft.core.LaserData;
 import buildcraft.core.TileBuildCraft;
@@ -200,12 +199,12 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
-		if (side.isServer() && command.equals("uploadBuildersInAction")) {
+		if (side.isServer() && "uploadBuildersInAction".equals(command)) {
 			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadBuildersInAction", null));
 			for (BuildingItem i : buildersInAction) {
 				BuildCraftCore.instance.sendToPlayer((EntityPlayer) sender, createLaunchItemPacket(i));
 			}
-		} else if (side.isClient() && command.equals("launchItem")) {
+		} else if (side.isClient() && "launchItem".equals(command)) {
 			BuildingItem item = new BuildingItem();
 			item.readData(stream);
 			buildersInAction.add(item);

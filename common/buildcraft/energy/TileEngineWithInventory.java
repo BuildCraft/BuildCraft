@@ -8,7 +8,6 @@
  */
 package buildcraft.energy;
 
-import buildcraft.core.utils.Utils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -16,15 +15,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.core.inventory.SimpleInventory;
+import buildcraft.core.utils.Utils;
 
 public abstract class TileEngineWithInventory extends TileEngine implements IInventory, ISidedInventory {
 
 	private final SimpleInventory inv;
-    private final int[] SLOTS;
+    private final int[] defaultSlotArray;
 
 	public TileEngineWithInventory(int invSize) {
 		inv = new SimpleInventory(invSize, "Engine", 64);
-        SLOTS = Utils.createSlotArray(0, invSize);
+        defaultSlotArray = Utils.createSlotArray(0, invSize);
     }
 
 	/* IINVENTORY IMPLEMENTATION */
@@ -100,7 +100,7 @@ public abstract class TileEngineWithInventory extends TileEngine implements IInv
         if (side == orientation.ordinal()) {
             return new int[0];
         } else {
-            return SLOTS;
+            return defaultSlotArray;
         }
     }
 

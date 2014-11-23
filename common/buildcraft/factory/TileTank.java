@@ -8,8 +8,6 @@
  */
 package buildcraft.factory;
 
-import java.io.IOException;
-
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTTagCompound;
