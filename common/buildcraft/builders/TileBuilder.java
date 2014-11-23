@@ -317,13 +317,14 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 		bpt = bpt.adjustToWorld(worldObj, x, y, z, o);
 
-		if (getStackInSlot(0).getItem() instanceof ItemBlueprintStandard) {
-			return new BptBuilderBlueprint((Blueprint) bpt, worldObj, x, y, z);
-		} else if (getStackInSlot(0).getItem() instanceof ItemBlueprintTemplate) {
-			return new BptBuilderTemplate(bpt, worldObj, x, y, z);
-		} else {
-			return null;
+		if (bpt != null) {
+			if (getStackInSlot(0).getItem() instanceof ItemBlueprintStandard) {
+				return new BptBuilderBlueprint((Blueprint) bpt, worldObj, x, y, z);
+			} else if (getStackInSlot(0).getItem() instanceof ItemBlueprintTemplate) {
+				return new BptBuilderTemplate(bpt, worldObj, x, y, z);
+			}
 		}
+		return null;
 	}
 
 	public void iterateBpt(boolean forceIterate) {
