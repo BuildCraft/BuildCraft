@@ -142,6 +142,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	@Override
 	public void overheat() {
+		super.overheat();
 		// Evaporate all remaining coolant as a form of penalty.
 		tankCoolant.setFluid(null);
 	}
