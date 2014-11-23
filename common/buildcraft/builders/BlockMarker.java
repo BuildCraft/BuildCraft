@@ -36,6 +36,7 @@ public class BlockMarker extends BlockBuildCraft {
 		super(Material.circuits);
 
 		setLightLevel(0.5F);
+		setHardness(0.0F);
 		setCreativeTab(CreativeTabBuildCraft.ITEMS.get());
 	}
 
