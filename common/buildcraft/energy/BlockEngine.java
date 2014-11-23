@@ -232,20 +232,31 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	public void randomDisplayTick(World world, int i, int j, int k, Random random) {
 		TileEntity tile = world.getTileEntity(i, j, k);
 
-		if (tile instanceof TileEngine && !((TileEngine) tile).isBurning()) {
+		if (!(tile instanceof TileEngine)) {
 			return;
 		}
 
-		float f = i + 0.5F;
-		float f1 = j + 0.0F + (random.nextFloat() * 6F) / 16F;
-		float f2 = k + 0.5F;
-		float f3 = 0.52F;
-		float f4 = random.nextFloat() * 0.6F - 0.3F;
+		if (((TileEngine) tile).getEnergyStage() == TileEngine.EnergyStage.OVERHEAT) {
+			for (int f = 0; f < 16; f++) {
+				world.spawnParticle("smoke", i + 0.4F + (random.nextFloat() * 0.2F),
+						j + (random.nextFloat() * 0.5F),
+						k + 0.4F + (random.nextFloat() * 0.2F),
+						random.nextFloat() * 0.04F - 0.02F,
+						random.nextFloat() * 0.05F + 0.02F,
+						random.nextFloat() * 0.04F - 0.02F);
+			}
+		} else if (((TileEngine) tile).isBurning()) {
+			float f = i + 0.5F;
+			float f1 = j + 0.0F + (random.nextFloat() * 6F) / 16F;
+			float f2 = k + 0.5F;
+			float f3 = 0.52F;
+			float f4 = random.nextFloat() * 0.6F - 0.3F;
 
-		world.spawnParticle("reddust", f - f3, f1, f2 + f4, 0.0D, 0.0D, 0.0D);
-		world.spawnParticle("reddust", f + f3, f1, f2 + f4, 0.0D, 0.0D, 0.0D);
-		world.spawnParticle("reddust", f + f4, f1, f2 - f3, 0.0D, 0.0D, 0.0D);
-		world.spawnParticle("reddust", f + f4, f1, f2 + f3, 0.0D, 0.0D, 0.0D);
+			world.spawnParticle("reddust", f - f3, f1, f2 + f4, 0.0D, 0.0D, 0.0D);
+			world.spawnParticle("reddust", f + f3, f1, f2 + f4, 0.0D, 0.0D, 0.0D);
+			world.spawnParticle("reddust", f + f4, f1, f2 - f3, 0.0D, 0.0D, 0.0D);
+			world.spawnParticle("reddust", f + f4, f1, f2 + f3, 0.0D, 0.0D, 0.0D);
+		}
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes"})

@@ -127,9 +127,4 @@ public class TileEngineCreative extends TileEngine {
 	public int calculateCurrentOutput() {
 		return powerMode.maxPower;
 	}
-
-	@Override
-	public float explosionRange() {
-		return 0;
-	}
 }

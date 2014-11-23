@@ -29,8 +29,8 @@ public class TileEngineWood extends TileEngine {
 	}
 
 	@Override
-	public float explosionRange() {
-		return 1;
+	public ResourceLocation getTrunkTexture(EnergyStage stage) {
+		return super.getTrunkTexture(stage == EnergyStage.RED && progress < 0.5 ? EnergyStage.YELLOW : stage);
 	}
 
 	@Override
@@ -46,9 +46,9 @@ public class TileEngineWood extends TileEngine {
 	@Override
 	protected EnergyStage computeEnergyStage() {
 		double energyLevel = getEnergyLevel();
-		if (energyLevel < 0.25f) {
+		if (energyLevel < 0.33f) {
 			return EnergyStage.BLUE;
-		} else if (energyLevel < 0.5f) {
+		} else if (energyLevel < 0.66f) {
 			return EnergyStage.GREEN;
 		} else if (energyLevel < 0.75f) {
 			return EnergyStage.YELLOW;

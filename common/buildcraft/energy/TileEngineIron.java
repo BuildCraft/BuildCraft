@@ -70,6 +70,10 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	@Override
 	public boolean onBlockActivated(EntityPlayer player, ForgeDirection side) {
+		if (super.onBlockActivated(player, side)) {
+			return true;
+		}
+
 		ItemStack current = player.getCurrentEquippedItem();
 		if (current != null) {
 			if (current.getItem() instanceof IItemPipe) {
@@ -89,11 +93,6 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 			player.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_IRON, worldObj, xCoord, yCoord, zCoord);
 		}
 		return true;
-	}
-
-	@Override
-	public float explosionRange() {
-		return 4;
 	}
 
 	@Override
@@ -133,6 +132,10 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	@Override
 	public boolean isBurning() {
+		if (getEnergyStage() == EnergyStage.OVERHEAT) {
+			return false;
+		}
+
 		FluidStack fuel = tankFuel.getFluid();
 		return fuel != null && fuel.amount > 0 && penaltyCooling == 0 && isRedstonePowered;
 	}

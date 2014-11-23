@@ -11,6 +11,7 @@ package buildcraft.energy;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -18,6 +19,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.api.power.IEngine;
 import buildcraft.api.tiles.IHeatable;
+import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
@@ -55,6 +57,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 	public static final ResourceLocation TRUNK_GREEN_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_green.png");
 	public static final ResourceLocation TRUNK_YELLOW_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_yellow.png");
 	public static final ResourceLocation TRUNK_RED_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_red.png");
+	public static final ResourceLocation TRUNK_OVERHEAT_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_overheat.png");
 
     public enum EnergyStage {
 		BLUE, GREEN, YELLOW, RED, OVERHEAT;
@@ -103,12 +106,28 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 				return TRUNK_YELLOW_TEXTURE;
 			case RED:
 				return TRUNK_RED_TEXTURE;
+			case OVERHEAT:
+				return TRUNK_OVERHEAT_TEXTURE;
 			default:
 				return TRUNK_RED_TEXTURE;
 		}
 	}
 
 	public boolean onBlockActivated(EntityPlayer player, ForgeDirection side) {
+		if (!player.worldObj.isRemote && player.getCurrentEquippedItem() != null &&
+				player.getCurrentEquippedItem().getItem() instanceof IToolWrench) {
+			IToolWrench wrench = (IToolWrench) player.getCurrentEquippedItem().getItem();
+			if (wrench.canWrench(player, xCoord, yCoord, zCoord)) {
+				if (getEnergyStage() == EnergyStage.OVERHEAT) {
+					energyStage = computeEnergyStage();
+					sendNetworkUpdate();
+				}
+				checkOrientation = true;
+
+				wrench.wrenchUsed(player, xCoord, yCoord, zCoord);
+				return true;
+			}
+		}
 		return false;
 	}
 
@@ -141,11 +160,18 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 
 			if (energyStage != newStage) {
 				energyStage = newStage;
+				if (energyStage == EnergyStage.OVERHEAT) {
+					overheat();
+				}
 				sendNetworkUpdate();
 			}
 		}
 
 		return energyStage;
+	}
+
+	public void overheat() {
+		this.isPumping = false;
 	}
 
 	public void updateHeat() {
@@ -206,6 +232,12 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 
 		updateHeat();
 		getEnergyStage();
+
+		if (getEnergyStage() == EnergyStage.OVERHEAT) {
+			this.energy = Math.max(this.energy - 50, 0);
+			return;
+		}
+
 		engineUpdate();
 
 		TileEntity tile = getTile(orientation);
@@ -437,12 +469,11 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 	public abstract boolean isBurning();
 
 	public void addEnergy(int addition) {
-		energy += addition;
-
 		if (getEnergyStage() == EnergyStage.OVERHEAT) {
-			worldObj.createExplosion(null, xCoord, yCoord, zCoord, explosionRange(), true);
-			worldObj.setBlockToAir(xCoord, yCoord, zCoord);
+			return;
 		}
+
+		energy += addition;
 
 		if (energy > getMaxEnergy()) {
 			energy = getMaxEnergy();
@@ -492,8 +523,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 	public abstract int maxEnergyReceived();
 
 	public abstract int maxEnergyExtracted();
-
-	public abstract float explosionRange();
 
 	public int getEnergyStored() {
 		return energy;

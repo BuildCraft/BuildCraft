@@ -51,6 +51,9 @@ public class TileEngineStone extends TileEngineWithInventory {
 
 	@Override
 	public boolean onBlockActivated(EntityPlayer player, ForgeDirection side) {
+		if (super.onBlockActivated(player, side)) {
+			return true;
+		}
 		if (!worldObj.isRemote) {
 			player.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_STONE, worldObj, xCoord, yCoord, zCoord);
 		}
@@ -58,13 +61,14 @@ public class TileEngineStone extends TileEngineWithInventory {
 	}
 
 	@Override
-	public float explosionRange() {
-		return 2;
+	public boolean isBurning() {
+		return burnTime > 0;
 	}
 
 	@Override
-	public boolean isBurning() {
-		return burnTime > 0;
+	public void overheat() {
+		super.overheat();
+		burnTime = 0;
 	}
 
 	@Override
