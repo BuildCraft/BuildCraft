@@ -221,6 +221,6 @@ public class TileEnergyEmitter extends TileBuildCraft {
 			}
 		}
 
-		return AxisAlignedBB.getBoundingBox(xMin, yMin, zMin, xMax, yMax, zMax);
+		return AxisAlignedBB.fromBounds(xMin, yMin, zMin, xMax, yMax, zMax);
 	}*/
 }

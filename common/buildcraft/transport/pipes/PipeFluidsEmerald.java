@@ -15,7 +15,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
@@ -45,7 +45,7 @@ public class PipeFluidsEmerald extends PipeFluidsWood implements IClientState {
 	}
 
 	@Override
-	public int extractFluid(IFluidHandler fluidHandler, ForgeDirection side) {
+	public int extractFluid(IFluidHandler fluidHandler, EnumFacing side) {
 		Fluid targetFluid = FluidUtils.getFluidFromItemStack(filters.getStackInSlot(0));
 		if (targetFluid == null) {
 			return super.extractFluid(fluidHandler, side);
@@ -74,8 +74,8 @@ public class PipeFluidsEmerald extends PipeFluidsWood implements IClientState {
 			return true;
 		}
 
-		if (!container.getWorldObj().isRemote) {
-			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_FLUID, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord);
+		if (!container.getWorld().isRemote) {
+			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_FLUID, container.getWorld(), container.xCoord, container.yCoord, container.zCoord);
 		}
 
 		return true;

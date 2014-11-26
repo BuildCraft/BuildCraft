@@ -8,7 +8,7 @@
  */
 package buildcraft.core.robots;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -53,7 +53,7 @@ public class AIRobotPumpBlock extends AIRobot {
 					blockToPump.z));
 
 			if (fluid != null) {
-				pumped = robot.fill(ForgeDirection.UNKNOWN,
+				pumped = robot.fill(EnumFacing.UNKNOWN,
 						new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME), true);
 
 				if (pumped > 0) {

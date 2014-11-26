@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.CoreConstants;
@@ -82,7 +82,7 @@ public final class FacadeRenderHelper {
 		zOffsets[5] = 0;
 	}
 
-	private static void setRenderBounds(RenderBlocks renderblocks, float[][] rotated, ForgeDirection side) {
+	private static void setRenderBounds(RenderBlocks renderblocks, float[][] rotated, EnumFacing side) {
 		renderblocks.setRenderBounds(
 				rotated[0][0] + xOffsets[side.ordinal()],
 				rotated[1][0] + yOffsets[side.ordinal()],
@@ -98,7 +98,7 @@ public final class FacadeRenderHelper {
 
 		//block_statemachine.setRenderAllSides();
 		
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing direction : EnumFacing.values()) {
 			Block renderBlock = state.facadeMatrix.getFacadeBlock(direction);
 
 			if (renderBlock != null) {
@@ -106,7 +106,7 @@ public final class FacadeRenderHelper {
 				if (renderBlock.canRenderInPass(PipeRendererWorld.renderPass)) {
 					int renderMeta = state.facadeMatrix.getFacadeMetaId(direction);
 
-					for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+					for (EnumFacing side : EnumFacing.values()) {
 						textures[side.ordinal()] = renderBlock.getIcon(side.ordinal(), renderMeta);
 						if (side == direction || side == direction.getOpposite()) {
 							blockStateMachine.setRenderSide(side, true);
@@ -192,7 +192,7 @@ public final class FacadeRenderHelper {
 
 		// Always render connectors in pass 0
 		if (PipeRendererWorld.renderPass == 0) {
-			for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+			for (EnumFacing direction : EnumFacing.values()) {
 				if (state.facadeMatrix.getFacadeBlock(direction) != null && !state.pipeConnectionMatrix.isConnected(direction)) {
 					float[][] rotated = MatrixTranformations.deepClone(zeroStateSupport);
 					MatrixTranformations.transform(rotated, direction);

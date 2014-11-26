@@ -22,7 +22,7 @@ import net.minecraft.nbt.NBTTagString;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.CraftingResult;
@@ -99,7 +99,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 				}
 
 				if (remaining != null && remaining.stackSize > 0) {
-					remaining.stackSize -= Utils.addToRandomPipeAround(worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN, remaining);
+					remaining.stackSize -= Utils.addToRandomPipeAround(worldObj, xCoord, yCoord, zCoord, EnumFacing.UNKNOWN, remaining);
 				}
 
 				if (remaining != null && remaining.stackSize > 0) {

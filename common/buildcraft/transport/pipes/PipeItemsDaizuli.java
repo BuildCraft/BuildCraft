@@ -20,7 +20,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
@@ -105,8 +105,8 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements IClien
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
-		if (direction == ForgeDirection.UNKNOWN) {
+	public int getIconIndex(EnumFacing direction) {
+		if (direction == EnumFacing.UNKNOWN) {
 			return standardIconIndex + color;
 		}
 		if (container != null && container.getBlockMetadata() == direction.ordinal()) {
@@ -127,7 +127,7 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements IClien
 	}
 
 	public void eventHandler(PipeEventItem.FindDest event) {
-		ForgeDirection output = ForgeDirection.getOrientation(container.getBlockMetadata());
+		EnumFacing output = EnumFacing.getOrientation(container.getBlockMetadata());
 		if (event.item.color == getColor() && event.destinations.contains(output)) {
 			event.destinations.clear();
 			event.destinations.add(output);
@@ -172,7 +172,7 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements IClien
 	public LinkedList<IActionInternal> getActions() {
 		LinkedList<IActionInternal> action = super.getActions();
 		action.addAll(Arrays.asList(BuildCraftTransport.actionPipeColor));
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing direction : EnumFacing.values()) {
 			if (container.isPipeConnected(direction)) {
 				action.add(BuildCraftTransport.actionPipeDirection[direction.ordinal()]);
 			}

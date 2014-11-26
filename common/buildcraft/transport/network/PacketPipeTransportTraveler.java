@@ -12,7 +12,7 @@ import io.netty.buffer.ByteBuf;
 
 import net.minecraft.util.MathHelper;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.core.EnumColor;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
@@ -27,8 +27,8 @@ public class PacketPipeTransportTraveler extends BuildCraftPacket {
 	private TravelingItem item;
 	private boolean forceStackRefresh;
 	private int entityId;
-	private ForgeDirection input;
-	private ForgeDirection output;
+	private EnumFacing input;
+	private EnumFacing output;
 	private EnumColor color;
 	private float itemX;
 	private float itemY;
@@ -73,8 +73,8 @@ public class PacketPipeTransportTraveler extends BuildCraftPacket {
 
 		this.entityId = data.readShort();
 
-		this.input = ForgeDirection.getOrientation(data.readByte());
-		this.output = ForgeDirection.getOrientation(data.readByte());
+		this.input = EnumFacing.getOrientation(data.readByte());
+		this.output = EnumFacing.getOrientation(data.readByte());
 
 		byte c = data.readByte();
 		if (c != -1) {
@@ -90,11 +90,11 @@ public class PacketPipeTransportTraveler extends BuildCraftPacket {
 		return entityId;
 	}
 
-	public ForgeDirection getInputOrientation() {
+	public EnumFacing getInputOrientation() {
 		return input;
 	}
 
-	public ForgeDirection getOutputOrientation() {
+	public EnumFacing getOutputOrientation() {
 		return output;
 	}
 

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -54,7 +54,7 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 
 	@Override
 	public void update() {
-		FluidStack tank = robot.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid;
+		FluidStack tank = robot.getTankInfo(EnumFacing.UNKNOWN)[0].fluid;
 
 		if (tank != null && tank.amount > 0) {
 			startDelegateAI(new AIRobotGotoStationAndUnloadFluids(robot, robot.getZoneToWork()));

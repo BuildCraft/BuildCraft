@@ -18,7 +18,7 @@ import net.minecraft.world.IBlockAccess;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.core.BlockMultiTexture;
 
@@ -32,7 +32,7 @@ public class RenderBlockMultiTexture implements ISimpleBlockRenderingHandler {
 
 	@Override
 	public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer) {
-		renderer.uvRotateTop = BlockMultiTexture.getUVTopForFront(ForgeDirection.EAST.ordinal());
+		renderer.uvRotateTop = BlockMultiTexture.getUVTopForFront(EnumFacing.EAST.ordinal());
 
 		Tessellator tessellator = Tessellator.instance;
 		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);

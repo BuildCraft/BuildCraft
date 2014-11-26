@@ -295,7 +295,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
 			box.extendToEncompass(b.box);
 		}
 
-		return box.getBoundingBox();
+		return box.fromBounds();
 	}
 
 	@Override

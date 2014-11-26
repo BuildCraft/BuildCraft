@@ -17,7 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import cpw.mods.fml.relauncher.Side;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.Position;
 import buildcraft.core.Box;
@@ -42,7 +42,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 
 	public static HashSet<TileConstructionMarker> currentMarkers = new HashSet<TileConstructionMarker>();
 
-	public ForgeDirection direction = ForgeDirection.UNKNOWN;
+	public EnumFacing direction = EnumFacing.UNKNOWN;
 
 	public LaserData laser;
 	public ItemStack itemBlueprint;
@@ -103,12 +103,12 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 			sendNetworkUpdate();
 		}
 
-		if (laser == null && direction != ForgeDirection.UNKNOWN) {
+		if (laser == null && direction != EnumFacing.UNKNOWN) {
 			laser = new LaserData();
 			laser.head = new Position(xCoord + 0.5F, yCoord + 0.5F, zCoord + 0.5F);
-			laser.tail = new Position(xCoord + 0.5F + direction.offsetX * 0.5F,
-					yCoord + 0.5F + direction.offsetY * 0.5F,
-					zCoord + 0.5F + direction.offsetZ * 0.5F);
+			laser.tail = new Position(xCoord + 0.5F + direction.getFrontOffsetX() * 0.5F,
+					yCoord + 0.5F + direction.getFrontOffsetY() * 0.5F,
+					zCoord + 0.5F + direction.getFrontOffsetZ() * 0.5F);
 			laser.isVisible = true;
 			sendNetworkUpdate();
 		}
@@ -149,7 +149,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
-		direction = ForgeDirection.getOrientation(nbt.getByte("direction"));
+		direction = EnumFacing.getOrientation(nbt.getByte("direction"));
 
 		if (nbt.hasKey("itemBlueprint")) {
 			itemBlueprint = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("itemBlueprint"));
@@ -220,7 +220,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	public AxisAlignedBB getRenderBoundingBox() {
 		Box renderBox = new Box(this).extendToEncompass(box);
 
-		return renderBox.expand(50).getBoundingBox();
+		return renderBox.expand(50).fromBounds();
 	}
 
 	@Override

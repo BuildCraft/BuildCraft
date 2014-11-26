@@ -30,7 +30,7 @@ import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.event.world.BlockEvent;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
@@ -434,7 +434,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 		// Collect any lost items laying around
 		double[] head = getHead();
-		AxisAlignedBB axis = AxisAlignedBB.getBoundingBox(head[0] - 2, head[1] - 2, head[2] - 2, head[0] + 3, head[1] + 3, head[2] + 3);
+		AxisAlignedBB axis = AxisAlignedBB.fromBounds(head[0] - 2, head[1] - 2, head[2] - 2, head[0] + 3, head[1] + 3, head[2] + 3);
 		List result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
 		for (int ii = 0; ii < result.size(); ii++) {
 			if (result.get(ii) instanceof EntityItem) {
@@ -461,7 +461,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 		// Second, try to add to adjacent pipes
 		if (stack.stackSize > 0) {
-			stack.stackSize -= Utils.addToRandomPipeAround(worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN, stack);
+			stack.stackSize -= Utils.addToRandomPipeAround(worldObj, xCoord, yCoord, zCoord, EnumFacing.UNKNOWN, stack);
 		}
 
 		// Lastly, throw the object away
@@ -584,7 +584,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		if (useDefault) {
 			int xMin, zMin;
 
-			ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite();
+			EnumFacing o = EnumFacing.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite();
 
 			switch (o) {
 			case EAST:
@@ -674,7 +674,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	public void initialize() {
 		super.initialize();
 
-		if (!this.getWorldObj().isRemote && !box.initialized) {
+		if (!this.getWorld().isRemote && !box.initialized) {
 			setBoundaries(false);
 		}
 
@@ -867,7 +867,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
-		return new Box (this).extendToEncompass(box).expand(50).getBoundingBox();
+		return new Box (this).extendToEncompass(box).expand(50).fromBounds();
 	}
 
 	@Override

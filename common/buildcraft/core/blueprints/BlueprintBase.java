@@ -8,6 +8,7 @@
  */
 package buildcraft.core.blueprints;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -19,7 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
@@ -50,7 +51,7 @@ public abstract class BlueprintBase {
 
 	private ComputeDataThread computeData;
 	private byte [] data;
-	private ForgeDirection mainDir = ForgeDirection.EAST;
+	private EnumFacing mainDir = EnumFacing.EAST;
 
 	public BlueprintBase() {
 	}
@@ -119,9 +120,9 @@ public abstract class BlueprintBase {
 		newAnchorZ = anchorX;
 
 		for (NBTTagCompound sub : subBlueprintsNBT) {
-			ForgeDirection dir = ForgeDirection.values()[sub.getByte("dir")];
+			EnumFacing dir = EnumFacing.values()[sub.getByte("dir")];
 
-			dir = dir.getRotation(ForgeDirection.UP);
+			dir = dir.rotateYCCW();
 
 			Position pos = new Position(sub.getInteger("x"), sub.getInteger("y"), sub.getInteger("z"));
 			Position np = context.rotatePositionLeft(pos);
@@ -144,7 +145,7 @@ public abstract class BlueprintBase {
 		sizeX = sizeZ;
 		sizeZ = tmp;
 
-		mainDir = mainDir.getRotation(ForgeDirection.UP);
+		mainDir = mainDir.rotateYCCW();
 	}
 
 	public void writeToNBT(NBTTagCompound nbt) {
@@ -254,7 +255,7 @@ public abstract class BlueprintBase {
 		return new BptContext(world, box, mapping);
 	}
 
-	public void addSubBlueprint(BlueprintBase bpt, int x, int y, int z, ForgeDirection dir) {
+	public void addSubBlueprint(BlueprintBase bpt, int x, int y, int z, EnumFacing dir) {
 		NBTTagCompound nbt = new NBTTagCompound();
 
 		nbt.setInteger("x", x);
@@ -275,9 +276,12 @@ public abstract class BlueprintBase {
 		@Override
 		public void run () {
 			try {
-				BlueprintBase.this.setData(CompressedStreamTools.compress(nbt));
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				CompressedStreamTools.writeCompressed(nbt, out);
+				out.flush();
+				BlueprintBase.this.setData(out.toByteArray());
+				out.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -301,7 +305,7 @@ public abstract class BlueprintBase {
 		return null;
 	}
 
-	public static BlueprintBase instantiate(ItemStack stack, World world, int x, int y, int z, ForgeDirection o) {
+	public static BlueprintBase instantiate(ItemStack stack, World world, int x, int y, int z, EnumFacing o) {
 		BlueprintBase bpt = ItemBlueprint.loadBlueprint(stack);
 
 		if (bpt == null) {
@@ -311,7 +315,7 @@ public abstract class BlueprintBase {
 		return bpt.adjustToWorld(world, x, y, z, o);
 	}
 
-	public BlueprintBase adjustToWorld(World world, int x, int y, int z, ForgeDirection o) {
+	public BlueprintBase adjustToWorld(World world, int x, int y, int z, EnumFacing o) {
 		if (buildingPermission == BuildingPermission.NONE
 				|| (buildingPermission == BuildingPermission.CREATIVE_ONLY && world
 						.getWorldInfo().getGameType() != GameType.CREATIVE)) {
@@ -321,14 +325,14 @@ public abstract class BlueprintBase {
 		BptContext context = getContext(world, getBoxForPos(x, y, z));
 
 		if (rotate) {
-			if (o == ForgeDirection.EAST) {
+			if (o == EnumFacing.EAST) {
 				// Do nothing
-			} else if (o == ForgeDirection.SOUTH) {
+			} else if (o == EnumFacing.SOUTH) {
 				rotateLeft(context);
-			} else if (o == ForgeDirection.WEST) {
+			} else if (o == EnumFacing.WEST) {
 				rotateLeft(context);
 				rotateLeft(context);
-			} else if (o == ForgeDirection.NORTH) {
+			} else if (o == EnumFacing.NORTH) {
 				rotateLeft(context);
 				rotateLeft(context);
 				rotateLeft(context);

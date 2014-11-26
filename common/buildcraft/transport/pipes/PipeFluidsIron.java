@@ -16,7 +16,7 @@ import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
@@ -78,7 +78,7 @@ public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 	}
 
 	@Override
-	public boolean outputOpen(ForgeDirection to) {
+	public boolean outputOpen(EnumFacing to) {
 		return super.outputOpen(to) && logic.outputOpen(to);
 	}
 
@@ -89,8 +89,8 @@ public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
-		if (direction == ForgeDirection.UNKNOWN) {
+	public int getIconIndex(EnumFacing direction) {
+		if (direction == EnumFacing.UNKNOWN) {
 			return standardIconIndex;
 		}
 		if (container != null && container.getBlockMetadata() == direction.ordinal()) {
@@ -115,7 +115,7 @@ public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 	@Override
 	public LinkedList<IActionInternal> getActions() {
 		LinkedList<IActionInternal> action = super.getActions();
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing direction : EnumFacing.values()) {
 			if (container.isPipeConnected(direction)) {
 				action.add(BuildCraftTransport.actionPipeDirection[direction.ordinal()]);
 			}

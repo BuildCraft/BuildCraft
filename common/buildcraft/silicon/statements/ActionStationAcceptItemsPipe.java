@@ -57,9 +57,9 @@ public class ActionStationAcceptItemsPipe extends ActionStationInputItems {
 		}
 
 		if (station.getPipe().pipe.transport instanceof PipeTransportItems) {
-			float cx = station.x() + 0.5F + 0.2F * station.side().offsetX;
-			float cy = station.y() + 0.5F + 0.2F * station.side().offsetY;
-			float cz = station.z() + 0.5F + 0.2F * station.side().offsetZ;
+			float cx = station.x() + 0.5F + 0.2F * station.side().getFrontOffsetX();
+			float cy = station.y() + 0.5F + 0.2F * station.side().getFrontOffsetY();
+			float cz = station.z() + 0.5F + 0.2F * station.side().getFrontOffsetZ();
 
 			TravelingItem item = TravelingItem.make(cx, cy, cz, invSlot.getStackInSlot());
 

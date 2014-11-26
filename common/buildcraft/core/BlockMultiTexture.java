@@ -16,7 +16,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.core.render.IconFlipped;
 import buildcraft.core.render.RenderBlockMultiTexture;
@@ -74,11 +74,11 @@ public abstract class BlockMultiTexture extends BlockBuildCraft {
 	}
 
 	public String getIconPostfix(int side, int front) {
-		ForgeDirection forgeSide = ForgeDirection.getOrientation(side);
-		ForgeDirection forgeFront = ForgeDirection.getOrientation(front);
-		ForgeDirection forgeBack = forgeFront.getOpposite();
-		ForgeDirection forgeLeft = forgeFront.getRotation(ForgeDirection.UP).getOpposite();
-		ForgeDirection forgeRight = forgeFront.getRotation(ForgeDirection.UP);
+		EnumFacing forgeSide = EnumFacing.getOrientation(side);
+		EnumFacing forgeFront = EnumFacing.getOrientation(front);
+		EnumFacing forgeBack = forgeFront.getOpposite();
+		EnumFacing forgeLeft = forgeFront.getRotation(EnumFacing.UP).getOpposite();
+		EnumFacing forgeRight = forgeFront.getRotation(EnumFacing.UP);
 
 		// This would be a switch statement if it could be... :(
 		if (forgeSide == forgeFront) {
@@ -89,9 +89,9 @@ public abstract class BlockMultiTexture extends BlockBuildCraft {
 			return "rightSide";
 		} else if (forgeSide == forgeBack) {
 			return "back";
-		} else if (forgeSide == ForgeDirection.UP) {
+		} else if (forgeSide == EnumFacing.UP) {
 			return "top";
-		} else if (forgeSide == ForgeDirection.DOWN) {
+		} else if (forgeSide == EnumFacing.DOWN) {
 			return "bottom";
 		}
 
@@ -100,7 +100,7 @@ public abstract class BlockMultiTexture extends BlockBuildCraft {
 	}
 
 	private String getIconName(int side) {
-		return getIconName(side, ForgeDirection.WEST.ordinal());
+		return getIconName(side, EnumFacing.WEST.ordinal());
 	}
 
 	private String getIconName(int side, int front) {
@@ -114,7 +114,7 @@ public abstract class BlockMultiTexture extends BlockBuildCraft {
 
 	@Override
 	public void registerBlockIcons(IIconRegister register) {
-		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+		for (int i = 0; i < EnumFacing.values().length; i++) {
 			String name = getIconName(i);
 			iconMap.put(name, register.registerIcon("buildcraft:" + name));
 		}
@@ -122,9 +122,9 @@ public abstract class BlockMultiTexture extends BlockBuildCraft {
 
 	@Override
 	public IIcon getIcon(int side, int meta) {
-		IconFlipped icon = new IconFlipped(iconMap.get(getIconName(side, ForgeDirection.SOUTH.ordinal())));
-		icon.flipU(shouldFlipU(side, ForgeDirection.SOUTH.ordinal()));
-		icon.flipV(shouldFlipV(side, ForgeDirection.SOUTH.ordinal()));
+		IconFlipped icon = new IconFlipped(iconMap.get(getIconName(side, EnumFacing.SOUTH.ordinal())));
+		icon.flipU(shouldFlipU(side, EnumFacing.SOUTH.ordinal()));
+		icon.flipV(shouldFlipV(side, EnumFacing.SOUTH.ordinal()));
 		return icon;
 	}
 

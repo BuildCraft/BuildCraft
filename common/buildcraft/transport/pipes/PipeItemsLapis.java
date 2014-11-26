@@ -16,7 +16,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
@@ -44,7 +44,7 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
+	public int getIconIndex(EnumFacing direction) {
 		if (container == null) {
 			return PipeIconProvider.TYPE.PipeItemsLapis_Black.ordinal();
 		}
@@ -74,7 +74,7 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 
 	public void setColor(EnumColor color) {
 		if (color.ordinal() != container.getBlockMetadata()) {
-			container.getWorldObj().setBlockMetadataWithNotify(container.xCoord, container.yCoord, container.zCoord, color.ordinal(), 3);
+			container.getWorld().setBlockMetadataWithNotify(container.xCoord, container.yCoord, container.zCoord, color.ordinal(), 3);
 			container.scheduleRenderUpdate();
 		}
 	}

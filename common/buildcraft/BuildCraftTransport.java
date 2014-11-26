@@ -31,7 +31,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.oredict.RecipeSorter;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.EnumColor;
@@ -465,7 +465,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 				actionPipeColor[color.ordinal()] = new ActionPipeColor(color);
 			}
 
-			for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+			for (EnumFacing direction : EnumFacing.values()) {
 				actionPipeDirection[direction.ordinal()] = new ActionPipeDirection(direction);
 			}
 

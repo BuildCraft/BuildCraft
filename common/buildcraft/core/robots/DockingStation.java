@@ -9,17 +9,18 @@
 package buildcraft.core.robots;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.TileGenericPipe;
 
 public class DockingStation implements IDockingStation {
-	public ForgeDirection side;
+	public EnumFacing side;
 	public World world;
 
 	private long robotTakingId = EntityRobotBase.NULL_ROBOT_ID;
@@ -27,16 +28,16 @@ public class DockingStation implements IDockingStation {
 
 	private boolean linkIsMain = false;
 
-	private BlockIndex index;
+	private BlockPos index;
 	private TileGenericPipe pipe;
 
-	public DockingStation(BlockIndex iIndex, ForgeDirection iSide) {
+	public DockingStation(BlockPos iIndex, EnumFacing iSide) {
 		index = iIndex;
 		side = iSide;
 	}
 
-	public DockingStation(TileGenericPipe iPipe, ForgeDirection iSide) {
-		index = new BlockIndex(iPipe);
+	public DockingStation(TileGenericPipe iPipe, EnumFacing iSide) {
+		index = new BlockPos(iPipe.getPos());
 		pipe = iPipe;
 		side = iSide;
 		world = iPipe.getWorld();
@@ -51,7 +52,7 @@ public class DockingStation implements IDockingStation {
 
 	public TileGenericPipe getPipe() {
 		if (pipe == null) {
-			pipe = (TileGenericPipe) world.getTileEntity(index.x, index.y, index.z);
+			pipe = (TileGenericPipe) world.getTileEntity(index);
 		}
 
 		if (pipe == null || pipe.isInvalid()) {
@@ -64,22 +65,12 @@ public class DockingStation implements IDockingStation {
 	}
 
 	@Override
-	public int x() {
-		return index.x;
+	public BlockPos pos() {
+		return index;
 	}
 
 	@Override
-	public int y() {
-		return index.y;
-	}
-
-	@Override
-	public int z() {
-		return index.z;
-	}
-
-	@Override
-	public ForgeDirection side() {
+	public EnumFacing side() {
 		return side;
 	}
 
@@ -157,7 +148,7 @@ public class DockingStation implements IDockingStation {
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
 		NBTTagCompound indexNBT = new NBTTagCompound();
-		index.writeTo(indexNBT);
+		Utils.writeBlockPos(indexNBT, index);
 		nbt.setTag("index", indexNBT);
 		nbt.setByte("side", (byte) side.ordinal());
 		nbt.setBoolean("isMain", linkIsMain);
@@ -166,8 +157,8 @@ public class DockingStation implements IDockingStation {
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
-		index = new BlockIndex (nbt.getCompoundTag("index"));
-		side = ForgeDirection.values()[nbt.getByte("side")];
+		index = Utils.readBlockPos(nbt.getCompoundTag("index"));
+		side = EnumFacing.values()[nbt.getByte("side")];
 		linkIsMain = nbt.getBoolean("isMain");
 		robotTakingId = nbt.getLong("robotId");
 	}
@@ -183,13 +174,8 @@ public class DockingStation implements IDockingStation {
 	}
 
 	@Override
-	public BlockIndex index() {
-		return index;
-	}
-
-	@Override
 	public String toString () {
-		return "{" + index.x + ", " + index.y + ", " + index.z + ", " + side + " :" + robotTakingId + "}";
+		return "{" + index.getX() + ", " + index.getY() + ", " + index.getZ() + ", " + side + " :" + robotTakingId + "}";
 	}
 
 	public boolean linkIsDocked() {

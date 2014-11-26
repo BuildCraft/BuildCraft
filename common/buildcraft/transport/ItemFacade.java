@@ -16,6 +16,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,11 +27,12 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.core.Position;
@@ -195,20 +197,18 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 	}
 
 	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer player, World worldObj, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+	public boolean onItemUse(ItemStack stack, EntityPlayer player, World worldObj, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (worldObj.isRemote) {
 			return false;
 		}
-		Position pos = new Position(x, y, z, ForgeDirection.getOrientation(side));
-		pos.moveForwards(1.0);
 
-		TileEntity tile = worldObj.getTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+		TileEntity tile = worldObj.getTileEntity(pos.offset(side));
 		if (!(tile instanceof TileGenericPipe)) {
 			return false;
 		}
 		TileGenericPipe pipeTile = (TileGenericPipe) tile;
 
-		if (pipeTile.addFacade(ForgeDirection.getOrientation(side).getOpposite(), getFacadeStates(stack))) {
+		if (pipeTile.addFacade(side.getOpposite(), getFacadeStates(stack))) {
 			stack.stackSize--;
 
 			return true;
@@ -242,13 +242,13 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 	private void registerValidFacades(Block block, Item item) {
 		Set<String> names = Sets.newHashSet();
 
-		for (int i = 0; i < 16; i++) {
+		for (IBlockState state: block.getBlockState().getValidStates()) {
 			try {
-				if (block.hasTileEntity(i)) {
+				if (block.hasTileEntity(state)) {
 					continue;
 				}
 				
-				ItemStack stack = new ItemStack(item, 1, i);
+				ItemStack stack = new ItemStack(item, 1, state);
 
                 // Check if all of these functions work correctly.
                 // If an exception is filed, or null is returned, this generally means that
@@ -282,7 +282,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 	}
 
 	private static boolean isBlockBlacklisted(Block block) {
-		String blockName = Block.blockRegistry.getNameForObject(block);
+		String blockName = (String) Block.blockRegistry.getNameForObject(block);
 
 		if (blockName == null) {
 			return true;
@@ -410,7 +410,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 	}
 
 	@Override
-	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
+	public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player) {
 		// Simply send shift click to the pipe / mod block.
 		return true;
 	}
@@ -469,17 +469,17 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 		}
 
 		@Override
-		public void onAttachedPipe(IPipeTile pipe, ForgeDirection direction) {
+		public void onAttachedPipe(IPipeTile pipe, EnumFacing direction) {
 
 		}
 
 		@Override
-		public void onDetachedPipe(IPipeTile pipe, ForgeDirection direction) {
+		public void onDetachedPipe(IPipeTile pipe, EnumFacing direction) {
 
 		}
 
 		@Override
-		public boolean blocking(IPipeTile pipe, ForgeDirection direction) {
+		public boolean blocking(IPipeTile pipe, EnumFacing direction) {
 			return false;
 		}
 
@@ -489,7 +489,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 		}
 
 		@Override
-		public void validate(IPipeTile pipe, ForgeDirection direction) {
+		public void validate(IPipeTile pipe, EnumFacing direction) {
 
 		}
 	}

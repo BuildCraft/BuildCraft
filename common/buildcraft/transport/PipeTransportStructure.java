@@ -10,7 +10,7 @@ package buildcraft.transport;
 
 import net.minecraft.tileentity.TileEntity;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.IPipeTile.PipeType;
 
@@ -22,7 +22,7 @@ public class PipeTransportStructure extends PipeTransport {
 	}
 
 	@Override
-	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
+	public boolean canPipeConnect(TileEntity tile, EnumFacing side) {
 		if (tile instanceof TileGenericPipe) {
 			Pipe<?> pipe2 = ((TileGenericPipe) tile).pipe;
 

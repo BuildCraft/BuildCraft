@@ -18,7 +18,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
@@ -48,13 +48,13 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 	public void updateEntity() {
 		super.updateEntity();
 
-		if (container.getWorldObj().isRemote) {
+		if (container.getWorld().isRemote) {
 			return;
 		}
 	}
 
 	public void eventHandler(PipeEventItem.DropItem event) {
-		if (container.getWorldObj().isRemote) {
+		if (container.getWorld().isRemote) {
 			return;
 		}
 		
@@ -167,7 +167,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 	}
 	
 	@Override
-	public void dropItem(ItemStack itemStack, ForgeDirection direction) {
+	public void dropItem(ItemStack itemStack, EnumFacing direction) {
 		Position p = new Position(container.xCoord, container.yCoord,
 				container.zCoord, direction);
 		p.moveForwards(1.0);
@@ -178,7 +178,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 	}
 	
 	@Override
-	public void sendItem(ItemStack itemStack, ForgeDirection direction) {
+	public void sendItem(ItemStack itemStack, EnumFacing direction) {
 		TravelingItem newItem = TravelingItem.make(
 				container.xCoord + 0.5,
 				container.yCoord + TransportUtils.getPipeFloorOf(itemStack),
@@ -212,12 +212,12 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
+	public int getIconIndex(EnumFacing direction) {
 		return PipeIconProvider.TYPE.Stripes.ordinal();
 	}
 
 	@Override
-	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
+	public boolean canPipeConnect(TileEntity tile, EnumFacing side) {
 		if (tile instanceof TileGenericPipe) {
 			TileGenericPipe tilePipe = (TileGenericPipe) tile;
 
@@ -230,12 +230,12 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 	}
 
 	@Override
-	public boolean canConnectEnergy(ForgeDirection from) {
+	public boolean canConnectEnergy(EnumFacing from) {
 		return true;
 	}
 
 	@Override
-	public int receiveEnergy(ForgeDirection from, int maxReceive,
+	public int receiveEnergy(EnumFacing from, int maxReceive,
 			boolean simulate) {
 		if (maxReceive == 0) {
 			return 0;
@@ -243,9 +243,9 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 			return maxReceive;
 		}
 
-		ForgeDirection o = getOpenOrientation();
+		EnumFacing o = getOpenOrientation();
 
-		if (o != ForgeDirection.UNKNOWN) {
+		if (o != EnumFacing.UNKNOWN) {
 			Position p = new Position(container.xCoord, container.yCoord,
 					container.zCoord, o);
 			p.moveForwards(1.0);
@@ -289,18 +289,18 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 	}
 
 	@Override
-	public int extractEnergy(ForgeDirection from, int maxExtract,
+	public int extractEnergy(EnumFacing from, int maxExtract,
 			boolean simulate) {
 		return 0;
 	}
 
 	@Override
-	public int getEnergyStored(ForgeDirection from) {
+	public int getEnergyStored(EnumFacing from) {
 		return 0;
 	}
 
 	@Override
-	public int getMaxEnergyStored(ForgeDirection from) {
+	public int getMaxEnergyStored(EnumFacing from) {
 		return 10;
 	}
 }

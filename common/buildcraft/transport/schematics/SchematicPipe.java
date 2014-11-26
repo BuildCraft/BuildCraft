@@ -15,7 +15,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
@@ -76,7 +76,7 @@ public class SchematicPipe extends SchematicTile {
 			}
 
 			for (int i = 0; i < 6; ++i) {
-				int newI = ForgeDirection.values()[i].getRotation(ForgeDirection.UP).ordinal();
+				int newI = EnumFacing.values()[i].getRotation(EnumFacing.UP).ordinal();
 
 				if (gatesNBT[i] != null) {
 					rotateGateLeft(gatesNBT[i]);
@@ -129,8 +129,8 @@ public class SchematicPipe extends SchematicTile {
 
 		if (gateNBT.hasKey("direction")) {
 			gateNBT.setInteger("direction",
-					ForgeDirection.values()[gateNBT.getInteger("direction")].
-							getRotation(ForgeDirection.UP).ordinal());
+					EnumFacing.values()[gateNBT.getInteger("direction")].
+							getRotation(EnumFacing.UP).ordinal());
 		}
 	}
 
@@ -158,7 +158,7 @@ public class SchematicPipe extends SchematicTile {
 
 			tileNBT.removeTag("travelingEntities");
 
-			for (ForgeDirection direction : ForgeDirection.values()) {
+			for (EnumFacing direction : EnumFacing.values()) {
 				tileNBT.removeTag("tank[" + direction.ordinal() + "]");
 				tileNBT.removeTag("transferState[" + direction.ordinal() + "]");
 			}

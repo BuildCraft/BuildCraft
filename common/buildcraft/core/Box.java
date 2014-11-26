@@ -292,7 +292,7 @@ public class Box implements IBox, ISerializable {
 	}
 
 	public AxisAlignedBB getBoundingBox() {
-		return AxisAlignedBB.getBoundingBox(xMin, yMin, zMin,
+		return AxisAlignedBB.fromBounds(xMin, yMin, zMin,
 				xMax, yMax, zMax);
 	}
 

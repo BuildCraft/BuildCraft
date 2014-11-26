@@ -25,7 +25,7 @@ import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.tools.IToolWrench;
@@ -51,7 +51,7 @@ public class BlockQuarry extends BlockBuildCraft {
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
 
-		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
+		EnumFacing orientation = Utils.get2dOrientation(entityliving);
 
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
 		if (entityliving instanceof EntityPlayer) {
@@ -103,9 +103,9 @@ public class BlockQuarry extends BlockBuildCraft {
 		if ((meta & 8) == 0) {
 			world.setBlockMetadataWithNotify(i, j, k, meta | 8, 0);
 
-			ForgeDirection[] dirs = ForgeDirection.VALID_DIRECTIONS;
+			EnumFacing[] dirs = EnumFacing.values();
 
-			for (ForgeDirection dir : dirs) {
+			for (EnumFacing dir : dirs) {
 				switch (dir) {
 				case UP:
 						searchFrames(world, i, j + 1, k);
@@ -186,7 +186,7 @@ public class BlockQuarry extends BlockBuildCraft {
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, EnumFacing side) {
 		return false;
 	}
 

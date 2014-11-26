@@ -12,35 +12,35 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public class Position implements ISerializable {
 
 	public double x, y, z;
-	public ForgeDirection orientation;
+	public EnumFacing orientation;
 
 	public Position() {
 		x = 0;
 		y = 0;
 		z = 0;
-		orientation = ForgeDirection.UNKNOWN;
+		orientation = EnumFacing.UNKNOWN;
 	}
 
 	public Position(double ci, double cj, double ck) {
 		x = ci;
 		y = cj;
 		z = ck;
-		orientation = ForgeDirection.UNKNOWN;
+		orientation = EnumFacing.UNKNOWN;
 	}
 
-	public Position(double ci, double cj, double ck, ForgeDirection corientation) {
+	public Position(double ci, double cj, double ck, EnumFacing corientation) {
 		x = ci;
 		y = cj;
 		z = ck;
 		orientation = corientation;
 
 		if (orientation == null) {
-			orientation = ForgeDirection.UNKNOWN;
+			orientation = EnumFacing.UNKNOWN;
 		}
 	}
 
@@ -59,14 +59,14 @@ public class Position implements ISerializable {
 		x = tile.xCoord;
 		y = tile.yCoord;
 		z = tile.zCoord;
-		orientation = ForgeDirection.UNKNOWN;
+		orientation = EnumFacing.UNKNOWN;
 	}
 
 	public Position(BlockIndex index) {
 		x = index.x;
 		y = index.y;
 		z = index.z;
-		orientation = ForgeDirection.UNKNOWN;
+		orientation = EnumFacing.UNKNOWN;
 	}
 
 	public void moveRight(double step) {
@@ -138,7 +138,7 @@ public class Position implements ISerializable {
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		if (orientation == null) {
-			orientation = ForgeDirection.UNKNOWN;
+			orientation = EnumFacing.UNKNOWN;
 		}
 
 		nbttagcompound.setDouble("i", x);
@@ -151,7 +151,7 @@ public class Position implements ISerializable {
 		x = nbttagcompound.getDouble("i");
 		y = nbttagcompound.getDouble("j");
 		z = nbttagcompound.getDouble("k");
-		orientation = ForgeDirection.values() [nbttagcompound.getByte("orientation")];
+		orientation = EnumFacing.values() [nbttagcompound.getByte("orientation")];
 	}
 
 	@Override
@@ -182,7 +182,7 @@ public class Position implements ISerializable {
 		x = stream.readDouble();
 		y = stream.readDouble();
 		z = stream.readDouble();
-		orientation = ForgeDirection.getOrientation(stream.readByte());
+		orientation = EnumFacing.getOrientation(stream.readByte());
 	}
 
 	@Override

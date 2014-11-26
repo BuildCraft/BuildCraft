@@ -19,7 +19,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.tools.IToolWrench;
 
@@ -59,7 +59,7 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 			return false;
 		}
 
-		if (block.rotateBlock(world, x, y, z, ForgeDirection.getOrientation(side))) {
+		if (block.rotateBlock(world, x, y, z, EnumFacing.getOrientation(side))) {
 			player.swingItem();
 			return !world.isRemote;
 		}

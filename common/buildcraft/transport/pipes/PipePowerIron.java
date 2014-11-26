@@ -16,7 +16,7 @@ import net.minecraft.item.Item;
 import net.minecraft.util.ChatComponentText;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.statements.IActionInternal;
@@ -37,7 +37,7 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
+	public int getIconIndex(EnumFacing direction) {
 		if (container == null) {
 			return PipeIconProvider.TYPE.PipePowerIronM128.ordinal();
 		}
@@ -78,7 +78,7 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 
 	public void setMode(PowerMode mode) {
 		if (mode.ordinal() != container.getBlockMetadata()) {
-			container.getWorldObj().setBlockMetadataWithNotify(container.xCoord, container.yCoord, container.zCoord, mode.ordinal(), 3);
+			container.getWorld().setBlockMetadataWithNotify(container.xCoord, container.yCoord, container.zCoord, mode.ordinal(), 3);
 			container.scheduleRenderUpdate();
 		}
 	}

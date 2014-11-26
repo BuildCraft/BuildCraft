@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.core.Box;
 
@@ -25,12 +25,12 @@ public class RecursiveBlueprintBuilder {
 	private int nextSubBlueprint = 0;
 	private ArrayList<NBTTagCompound> subBlueprints = new ArrayList<NBTTagCompound>();
 	private int x, y, z;
-	private ForgeDirection dir;
+	private EnumFacing dir;
 	private World world;
 	private Box box = new Box();
 
 	public RecursiveBlueprintBuilder(BlueprintBase iBlueprint, World iWorld, int iX, int iY, int iZ,
-			ForgeDirection iDir) {
+			EnumFacing iDir) {
 		blueprint = iBlueprint;
 		subBlueprints = iBlueprint.subBlueprintsNBT;
 		world = iWorld;
@@ -83,7 +83,7 @@ public class RecursiveBlueprintBuilder {
 		int ny = box.yMin + nbt.getInteger("y");
 		int nz = box.zMin + nbt.getInteger("z");
 
-		ForgeDirection nbtDir = ForgeDirection.values()[nbt.getByte("dir")];
+		EnumFacing nbtDir = EnumFacing.values()[nbt.getByte("dir")];
 
 		current = new RecursiveBlueprintBuilder(bpt, world, nx, ny, nz, nbtDir);
 		nextSubBlueprint++;

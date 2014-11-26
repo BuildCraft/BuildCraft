@@ -19,7 +19,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.statements.IActionInternal;
@@ -60,8 +60,8 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 			return true;
 		}
 
-		if (!container.getWorldObj().isRemote) {
-			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_LOGEMERALD_ITEM, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord);
+		if (!container.getWorld().isRemote) {
+			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_LOGEMERALD_ITEM, container.getWorld(), container.xCoord, container.yCoord, container.zCoord);
 		}
 
 		return true;
@@ -83,7 +83,7 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 	 * on the position of the pipe.
 	 */
 	@Override
-	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, ForgeDirection from) {
+	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, EnumFacing from) {
 
 		if (activeFlags.isEmpty()) {
 			return null;
@@ -106,7 +106,7 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 	}
 
 	@Override
-	public ItemStack checkExtractGeneric(net.minecraft.inventory.ISidedInventory inventory, boolean doRemove, ForgeDirection from) {
+	public ItemStack checkExtractGeneric(net.minecraft.inventory.ISidedInventory inventory, boolean doRemove, EnumFacing from) {
 		for (int i : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
 			ItemStack stack = inventory.getStackInSlot(i);
 			if (stack != null && stack.stackSize > 0) {

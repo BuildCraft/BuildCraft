@@ -13,7 +13,7 @@ import net.minecraft.block.BlockFurnace;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IInvSlot;
@@ -105,7 +105,7 @@ public class AIRobotCraftFurnace extends AIRobotCraftGeneric {
 
 						if (stack != null) {
 							ITransactor transactor = Transactor.getTransactorFor(robot);
-							transactor.add(stack, ForgeDirection.UNKNOWN, true);
+							transactor.add(stack, EnumFacing.UNKNOWN, true);
 							crafted = true;
 						}
 					}
@@ -167,7 +167,7 @@ public class AIRobotCraftFurnace extends AIRobotCraftGeneric {
 				return false;
 			}
 
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			for (EnumFacing dir : EnumFacing.values()) {
 				if (getUsableFurnace(new BlockIndex(station.x(), station.y(), station.z())) != null) {
 					return true;
 				}
@@ -188,10 +188,10 @@ public class AIRobotCraftFurnace extends AIRobotCraftGeneric {
 	private TileEntityFurnace getUsableFurnace(BlockIndex b) {
 		// reserve that furnace if found from the block reserve system
 
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			BlockIndex index = new BlockIndex (b.x + dir.offsetX, b.y
-					+ dir.offsetY, b.z
-					+ dir.offsetZ);
+		for (EnumFacing dir : EnumFacing.values()) {
+			BlockIndex index = new BlockIndex (b.x + dir.getFrontOffsetX(), b.y
+					+ dir.getFrontOffsetY(), b.z
+					+ dir.getFrontOffsetZ());
 
 			if (robot.getRegistry().isTaken(new ResourceIdBlock(index))) {
 				continue;

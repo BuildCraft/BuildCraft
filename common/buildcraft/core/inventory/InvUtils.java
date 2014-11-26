@@ -16,10 +16,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.IInvSlot;
 import buildcraft.core.inventory.filters.IStackFilter;
@@ -32,7 +33,7 @@ public final class InvUtils {
 	private InvUtils() {
 	}
 
-	public static int countItems(IInventory inv, ForgeDirection side, IStackFilter filter) {
+	public static int countItems(IInventory inv, EnumFacing side, IStackFilter filter) {
 		int count = 0;
 		for (IInvSlot slot : InventoryIterator.getIterable(inv, side)) {
 			ItemStack stack = slot.getStackInSlot();
@@ -43,7 +44,7 @@ public final class InvUtils {
 		return count;
 	}
 
-	public static boolean containsItem(IInventory inv, ForgeDirection side, IStackFilter filter) {
+	public static boolean containsItem(IInventory inv, EnumFacing side, IStackFilter filter) {
 		for (IInvSlot slot : InventoryIterator.getIterable(inv, side)) {
 			ItemStack stack = slot.getStackInSlot();
 			if (stack != null && filter.matches(stack)) {
@@ -60,7 +61,7 @@ public final class InvUtils {
 	 * @param dest The IInventory
 	 * @return true if room for stack
 	 */
-	public static boolean isRoomForStack(ItemStack stack, ForgeDirection side, IInventory dest) {
+	public static boolean isRoomForStack(ItemStack stack, EnumFacing side, IInventory dest) {
 		if (stack == null || dest == null) {
 			return false;
 		}
@@ -77,7 +78,7 @@ public final class InvUtils {
 	 *            an IStackFilter to match against
 	 * @return null if nothing was moved, the stack moved otherwise
 	 */
-	public static ItemStack moveOneItem(IInventory source, ForgeDirection output, IInventory dest, ForgeDirection intput, IStackFilter filter) {
+	public static ItemStack moveOneItem(IInventory source, EnumFacing output, IInventory dest, EnumFacing intput, IStackFilter filter) {
 		ITransactor imSource = Transactor.getTransactorFor(source);
 		ItemStack stack = imSource.remove(filter, output, false);
 		if (stack != null) {
@@ -92,7 +93,7 @@ public final class InvUtils {
 	}
 
 	/* STACK DROPS */
-	public static void dropItems(World world, ItemStack stack, int i, int j, int k) {
+	public static void dropItems(World world, ItemStack stack, BlockPos pos) {
 		if (stack == null || stack.stackSize <= 0) {
 			return;
 		}
@@ -101,18 +102,18 @@ public final class InvUtils {
 		double d = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
 		double d1 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
 		double d2 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
-		EntityItem entityitem = new EntityItem(world, i + d, j + d1, k + d2, stack);
-		entityitem.delayBeforeCanPickup = 10;
+		EntityItem entityitem = new EntityItem(world, pos.getX() + d, pos.getY() + d1, pos.getZ() + d2, stack);
+		entityitem.setDefaultPickupDelay();
 
 		world.spawnEntityInWorld(entityitem);
 	}
 
-	public static void dropItems(World world, IInventory inv, int i, int j, int k) {
+	public static void dropItems(World world, IInventory inv, BlockPos pos) {
 		for (int slot = 0; slot < inv.getSizeInventory(); ++slot) {
 			ItemStack items = inv.getStackInSlot(slot);
 
 			if (items != null && items.stackSize > 0) {
-				dropItems(world, inv.getStackInSlot(slot).copy(), i, j, k);
+				dropItems(world, inv.getStackInSlot(slot).copy(), pos);
 			}
 		}
 	}
@@ -240,7 +241,7 @@ public final class InvUtils {
 			}
 
 			if (adjacent != null) {
-				return new InventoryLargeChest("", inv, adjacent);
+				return new InventoryLargeChest("", chest, adjacent);
 			}
 			return inv;
 		}

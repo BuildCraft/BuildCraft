@@ -17,7 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidTankInfo;
 import buildcraft.BuildCraftTransport;
@@ -83,7 +83,7 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
 	}
 
 	@Override
-    public int getIconIndex(ForgeDirection direction) {
+    public int getIconIndex(EnumFacing direction) {
         switch (direction) {
             case UNKNOWN:
                 return PipeIconProvider.TYPE.PipeFluidsDiamond_Center.ordinal();
@@ -117,21 +117,21 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
             }
         }
 
-        if (!container.getWorldObj().isRemote) {
-            entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord);
+        if (!container.getWorld().isRemote) {
+            entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.getWorld(), container.xCoord, container.yCoord, container.zCoord);
         }
 
         return true;
     }
 
 	@Override
-	public boolean outputOpen(ForgeDirection to) {
+	public boolean outputOpen(EnumFacing to) {
 		if (!super.outputOpen(to)) {
 			return false;
 		}
 
 		// get center tank, from which outputs are checked; ignore if has no fluid
-		FluidTankInfo[] tanks = transport.getTankInfo(ForgeDirection.UNKNOWN);
+		FluidTankInfo[] tanks = transport.getTankInfo(EnumFacing.UNKNOWN);
 		if (tanks == null || tanks[0] == null || tanks[0].fluid == null || tanks[0].fluid.amount == 0) {
 			return true;
 		}
@@ -139,7 +139,7 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
 		Fluid fluidInTank = tanks[0].fluid.getFluid();
 		boolean[] validFilter = new boolean[6];
 		boolean isFiltered = false;
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing dir : EnumFacing.values()) {
 			if (container.isPipeConnected(dir) && filters.filteredDirections[dir.ordinal()]) {
 				for (int slot = dir.ordinal() * 9; slot < dir.ordinal() * 9 + 9; ++slot) {
 					if (filters.fluids[slot] != null && filters.fluids[slot].getID() == fluidInTank.getID()) {

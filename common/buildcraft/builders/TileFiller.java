@@ -313,7 +313,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
-		return new Box (this).extendToEncompass(box).expand(50).getBoundingBox();
+		return new Box (this).extendToEncompass(box).expand(50).fromBounds();
 	}
 
 	@Override

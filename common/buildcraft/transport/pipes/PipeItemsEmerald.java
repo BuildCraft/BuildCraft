@@ -18,7 +18,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.GuiIds;
@@ -88,15 +88,15 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 			return true;
 		}
 
-		if (!container.getWorldObj().isRemote) {
-			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_ITEM, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord);
+		if (!container.getWorld().isRemote) {
+			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_ITEM, container.getWorld(), container.xCoord, container.yCoord, container.zCoord);
 		}
 
 		return true;
 	}
 
 	@Override
-	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, ForgeDirection from) {
+	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, EnumFacing from) {
 		if (inventory == null) {
 			return null;
 		}
@@ -111,7 +111,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 		return checkExtractFiltered(sidedInventory, doRemove, from);
 	}
 
-	private ItemStack[] checkExtractFiltered(ISidedInventory inventory, boolean doRemove, ForgeDirection from) {
+	private ItemStack[] checkExtractFiltered(ISidedInventory inventory, boolean doRemove, EnumFacing from) {
 		for (int k : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
 			ItemStack stack = inventory.getStackInSlot(k);
 
@@ -142,7 +142,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 		return null;
 	}
 
-	private ItemStack[] checkExtractRoundRobin(ISidedInventory inventory, boolean doRemove, ForgeDirection from) {
+	private ItemStack[] checkExtractRoundRobin(ISidedInventory inventory, boolean doRemove, EnumFacing from) {
 		for (int i : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
 			ItemStack stack = inventory.getStackInSlot(i);
 

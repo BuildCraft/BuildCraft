@@ -12,7 +12,7 @@ import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.blueprints.IBuilderContext;
@@ -32,7 +32,7 @@ public class SchematicRefinery extends SchematicTile {
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
-		meta = ForgeDirection.values()[meta].getRotation(ForgeDirection.UP).ordinal();
+		meta = EnumFacing.values()[meta].getRotation(EnumFacing.UP).ordinal();
 	}
 
 	@Override

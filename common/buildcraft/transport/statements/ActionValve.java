@@ -11,7 +11,7 @@ package buildcraft.transport.statements;
 import java.util.Locale;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -81,14 +81,14 @@ public class ActionValve extends BCStatement implements IActionInternal {
 	    if (pipe != null && pipe instanceof Pipe) {
 			PipeTransport transport = ((Pipe) pipe).transport;
 			if (parameters[0] != null && parameters[0] instanceof StatementParameterDirection) {
-				ForgeDirection side = ((StatementParameterDirection) parameters[0]).direction;
+				EnumFacing side = ((StatementParameterDirection) parameters[0]).direction;
 		
-				if (side != ForgeDirection.UNKNOWN) {
+				if (side != null) {
 				    transport.allowInput(side, state.inputOpen);
 				    transport.allowOutput(side, state.outputOpen);
 				}
 		    } else {
-		    	for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+		    	for (EnumFacing side : EnumFacing.values()) {
 				    transport.allowInput(side, state.inputOpen);
 				    transport.allowOutput(side, state.outputOpen);
 		    	}

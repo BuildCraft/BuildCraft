@@ -54,7 +54,7 @@ public class ContainerRefinery extends BuildCraftContainer {
 
 		refinery.setFilter(slot, filter);
 
-		if (refinery.getWorldObj().isRemote) {
+		if (refinery.getWorld().isRemote) {
 			ISerializable payload = new Serializable() {
 				@Override
 				public void writeData(ByteBuf data) {

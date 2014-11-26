@@ -8,6 +8,8 @@
  */
 package buildcraft.core.utils;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -27,15 +29,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+import net.minecraft.util.EnumFacing;
 
-import net.minecraftforge.common.util.ForgeDirection;
-
+import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipeTile;
@@ -57,7 +60,7 @@ import buildcraft.energy.TileEngine;
 public final class Utils {
 
 	public static final Random RANDOM = new Random();
-	private static final List<ForgeDirection> directions = new ArrayList<ForgeDirection>(Arrays.asList(ForgeDirection.VALID_DIRECTIONS));
+	private static final List<EnumFacing> directions = new ArrayList<EnumFacing>(Arrays.asList(EnumFacing.values()));
 
 	/**
 	 * Deactivate constructor
@@ -72,18 +75,15 @@ public final class Utils {
 	 *
 	 * @param stack
 	 * @param world
-	 * @param x
-	 * @param y
-	 * @param z
+	 * @param sourcePos
 	 * @return amount used
 	 */
-	public static int addToRandomInventoryAround(World world, int x, int y, int z, ItemStack stack) {
+	public static int addToRandomInventoryAround(World world, BlockPos sourcePos, ItemStack stack) {
 		Collections.shuffle(directions);
-		for (ForgeDirection orientation : directions) {
-			Position pos = new Position(x, y, z, orientation);
-			pos.moveForwards(1.0);
+		for (EnumFacing orientation : directions) {
+			BlockPos pos = sourcePos.offset(orientation);
 
-			TileEntity tileInventory = world.getTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+			TileEntity tileInventory = world.getTileEntity(pos);
 			ITransactor transactor = Transactor.getTransactorFor(tileInventory);
 			if (transactor != null && !(tileInventory instanceof TileEngine) && transactor.add(stack, orientation.getOpposite(), false).stackSize > 0) {
 				return transactor.add(stack, orientation.getOpposite(), true).stackSize;
@@ -97,9 +97,9 @@ public final class Utils {
 	 * Returns the cardinal direction of the entity depending on its
 	 * rotationYaw
 	 */
-	public static ForgeDirection get2dOrientation(EntityLivingBase entityliving) {
-		ForgeDirection[] orientationTable = { ForgeDirection.SOUTH,
-				ForgeDirection.WEST, ForgeDirection.NORTH, ForgeDirection.EAST };
+	public static EnumFacing get2dOrientation(EntityLivingBase entityliving) {
+		EnumFacing[] orientationTable = { EnumFacing.SOUTH,
+				EnumFacing.WEST, EnumFacing.NORTH, EnumFacing.EAST };
 		int orientationIndex = MathHelper.floor_double((entityliving.rotationYaw + 45.0) / 90.0) & 3;
 		return orientationTable[orientationIndex];
 	}
@@ -109,31 +109,31 @@ public final class Utils {
 	 * should probably be removed following the same principles
 	 */
 	@Deprecated
-	private static ForgeDirection get2dOrientation(Position pos1, Position pos2) {
+	private static EnumFacing get2dOrientation(Position pos1, Position pos2) {
 		double dX = pos1.x - pos2.x;
 		double dZ = pos1.z - pos2.z;
 		double angle = Math.atan2(dZ, dX) / Math.PI * 180 + 180;
 
 		if (angle < 45 || angle > 315) {
-			return ForgeDirection.EAST;
+			return EnumFacing.EAST;
 		} else if (angle < 135) {
-			return ForgeDirection.SOUTH;
+			return EnumFacing.SOUTH;
 		} else if (angle < 225) {
-			return ForgeDirection.WEST;
+			return EnumFacing.WEST;
 		} else {
-			return ForgeDirection.NORTH;
+			return EnumFacing.NORTH;
 		}
 	}
 
-	public static ForgeDirection get3dOrientation(Position pos1, Position pos2) {
+	public static EnumFacing get3dOrientation(Position pos1, Position pos2) {
 		double dX = pos1.x - pos2.x;
 		double dY = pos1.y - pos2.y;
 		double angle = Math.atan2(dY, dX) / Math.PI * 180 + 180;
 
 		if (angle > 45 && angle < 135) {
-			return ForgeDirection.UP;
+			return EnumFacing.UP;
 		} else if (angle > 225 && angle < 315) {
-			return ForgeDirection.DOWN;
+			return EnumFacing.DOWN;
 		} else {
 			return get2dOrientation(pos1, pos2);
 		}
@@ -146,20 +146,17 @@ public final class Utils {
 	 * isn't used again so that entities doesn't go backwards. Returns true if
 	 * successful, false otherwise.
 	 */
-	public static int addToRandomPipeAround(World world, int x, int y, int z, ForgeDirection from, ItemStack stack) {
+	public static int addToRandomPipeAround(World world, BlockPos sourcePos, EnumFacing from, ItemStack stack) {
 		List<IPipeTile> possiblePipes = new ArrayList<IPipeTile>();
-		List<ForgeDirection> pipeDirections = new ArrayList<ForgeDirection>();
+		List<EnumFacing> pipeDirections = new ArrayList<EnumFacing>();
 
-		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing side : EnumFacing.values()) {
 			if (from.getOpposite() == side) {
 				continue;
 			}
 
-			Position pos = new Position(x, y, z, side);
-
-			pos.moveForwards(1.0);
-
-			TileEntity tile = world.getTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+			BlockPos pos = sourcePos.offset(side);
+			TileEntity tile = world.getTileEntity(pos);
 
 			if (tile instanceof IPipeTile) {
 				IPipeTile pipe = (IPipeTile) tile;
@@ -185,21 +182,17 @@ public final class Utils {
 		return 0;
 	}
 
-	public static TileEntity getTile(World world, Position pos, ForgeDirection step) {
-		Position tmp = new Position(pos);
-		tmp.orientation = step;
-		tmp.moveForwards(1.0);
-
-		return world.getTileEntity((int) tmp.x, (int) tmp.y, (int) tmp.z);
+	public static TileEntity getTile(World world, BlockPos sourcePos, EnumFacing step) {
+		return world.getTileEntity(sourcePos.offset(step));
 	}
 
-	public static IAreaProvider getNearbyAreaProvider(World world, int i, int j, int k) {
-		TileEntity a1 = world.getTileEntity(i + 1, j, k);
-		TileEntity a2 = world.getTileEntity(i - 1, j, k);
-		TileEntity a3 = world.getTileEntity(i, j, k + 1);
-		TileEntity a4 = world.getTileEntity(i, j, k - 1);
-		TileEntity a5 = world.getTileEntity(i, j + 1, k);
-		TileEntity a6 = world.getTileEntity(i, j - 1, k);
+	public static IAreaProvider getNearbyAreaProvider(World world, BlockPos pos) {
+		TileEntity a1 = world.getTileEntity(pos.offset(EnumFacing.EAST));
+		TileEntity a2 = world.getTileEntity(pos.offset(EnumFacing.WEST));
+		TileEntity a3 = world.getTileEntity(pos.offset(EnumFacing.SOUTH));
+		TileEntity a4 = world.getTileEntity(pos.offset(EnumFacing.NORTH));
+		TileEntity a5 = world.getTileEntity(pos.offset(EnumFacing.UP));
+		TileEntity a6 = world.getTileEntity(pos.offset(EnumFacing.DOWN));
 
 		if (a1 instanceof IAreaProvider) {
 			return (IAreaProvider) a1;
@@ -330,12 +323,12 @@ public final class Utils {
 		return lasers;
 	}
 
-	public static void preDestroyBlock(World world, int i, int j, int k) {
-		TileEntity tile = world.getTileEntity(i, j, k);
+	public static void preDestroyBlock(World world, BlockPos pos) {
+		TileEntity tile = world.getTileEntity(pos);
 
 		if (tile instanceof IInventory && !world.isRemote) {
 			if (!(tile instanceof IDropControlInventory) || ((IDropControlInventory) tile).doDrop()) {
-				InvUtils.dropItems(world, (IInventory) tile, i, j, k);
+				InvUtils.dropItems(world, (IInventory) tile, pos);
 				InvUtils.wipeInventory((IInventory) tile);
 			}
 		}
@@ -354,20 +347,23 @@ public final class Utils {
 			return false;
 		}
 
-		ForgeDirection o = ForgeDirection.UNKNOWN;
+		BlockPos pos1 = tile1.getPos();
+		BlockPos pos2 = tile2.getPos();
 
-		if (tile1.xCoord - 1 == tile2.xCoord) {
-			o = ForgeDirection.WEST;
-		} else if (tile1.xCoord + 1 == tile2.xCoord) {
-			o = ForgeDirection.EAST;
-		} else if (tile1.yCoord - 1 == tile2.yCoord) {
-			o = ForgeDirection.DOWN;
-		} else if (tile1.yCoord + 1 == tile2.yCoord) {
-			o = ForgeDirection.UP;
-		} else if (tile1.zCoord - 1 == tile2.zCoord) {
-			o = ForgeDirection.NORTH;
-		} else if (tile1.zCoord + 1 == tile2.zCoord) {
-			o = ForgeDirection.SOUTH;
+		EnumFacing o = null;
+
+		if (pos1.getX() - 1 == pos2.getX()) {
+			o = EnumFacing.WEST;
+		} else if (pos1.getX() + 1 == pos2.getX()) {
+			o = EnumFacing.EAST;
+		} else if (pos1.getY() - 1 == pos2.getY()) {
+			o = EnumFacing.DOWN;
+		} else if (pos1.getY() + 1 == pos2.getY()) {
+			o = EnumFacing.UP;
+		} else if (pos1.getZ() - 1 == pos2.getZ()) {
+			o = EnumFacing.NORTH;
+		} else if (pos1.getZ() + 1 == pos2.getZ()) {
+			o = EnumFacing.SOUTH;
 		}
 
 		if (tile1 instanceof IPipeTile && !((IPipeTile) tile1).isPipeConnected(o)) {
@@ -381,20 +377,20 @@ public final class Utils {
 		return true;
 	}
 
-	public static boolean checkLegacyPipesConnections(IBlockAccess blockAccess, int x1, int y1, int z1, int x2, int y2, int z2) {
+	public static boolean checkLegacyPipesConnections(IBlockAccess blockAccess, BlockPos pos1, BlockPos pos2) {
 
-		Block b1 = blockAccess.getBlock(x1, y1, z1);
-		Block b2 = blockAccess.getBlock(x2, y2, z2);
+		Block b1 = blockAccess.getBlockState(pos1).getBlock();
+		Block b2 = blockAccess.getBlockState(pos2).getBlock();
 
 		if (!(b1 instanceof IFramePipeConnection) && !(b2 instanceof IFramePipeConnection)) {
 			return false;
 		}
 
-		if (b1 instanceof IFramePipeConnection && !((IFramePipeConnection) b1).isPipeConnected(blockAccess, x1, y1, z1, x2, y2, z2)) {
+		if (b1 instanceof IFramePipeConnection && !((IFramePipeConnection) b1).isPipeConnected(blockAccess, pos1, pos2)) {
 			return false;
 		}
 
-		if (b2 instanceof IFramePipeConnection && !((IFramePipeConnection) b2).isPipeConnected(blockAccess, x2, y2, z2, x1, y1, z1)) {
+		if (b2 instanceof IFramePipeConnection && !((IFramePipeConnection) b2).isPipeConnected(blockAccess, pos2, pos1)) {
 			return false;
 		}
 
@@ -442,9 +438,13 @@ public final class Utils {
 
 	public static void writeNBT (ByteBuf data, NBTTagCompound nbt) {
 		try {
-			byte[] compressed = CompressedStreamTools.compress(nbt);
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			CompressedStreamTools.writeCompressed(nbt, out);
+			out.flush();
+			byte[] compressed = out.toByteArray();
 			data.writeInt(compressed.length);
 			data.writeBytes(compressed);
+			out.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -455,7 +455,7 @@ public final class Utils {
 			int length = data.readInt();
 			byte[] compressed = new byte[length];
 			data.readBytes(compressed);
-			return CompressedStreamTools.func_152457_a(compressed, NBTSizeTracker.field_152451_a);
+			return CompressedStreamTools.readCompressed(new ByteArrayInputStream(compressed));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
@@ -505,6 +505,25 @@ public final class Utils {
 		return data;
 	}
 
+	public static void writeBlockPos(ByteBuf stream, BlockPos pos) {
+		stream.writeInt(pos.getX());
+		stream.writeShort(pos.getY());
+		stream.writeInt(pos.getZ());
+	}
+
+	public static BlockPos readBlockPos(ByteBuf stream) {
+		return new BlockPos(stream.readInt(), stream.readShort(), stream.readInt());
+	}
+
+	public static void writeBlockPos(NBTTagCompound compound, BlockPos pos) {
+		compound.setInteger("x", pos.getX());
+		compound.setShort("y", (short) pos.getY());
+		compound.setInteger("z", pos.getZ());
+	}
+
+	public static BlockPos readBlockPos(NBTTagCompound compound) {
+		return new BlockPos(compound.getInteger("x"), compound.getShort("y"), compound.getInteger("z"));
+	}
 	/**
 	 * This subprogram transforms a packet into a FML packet to be send in the
 	 * minecraft default packet mechanism. This always use BC-CORE as a
@@ -521,6 +540,6 @@ public final class Utils {
 		buf.writeByte((byte) discriminator);
 		packet.writeData(buf);
 
-		return new FMLProxyPacket(buf, DefaultProps.NET_CHANNEL_NAME + "-CORE");
+		return new FMLProxyPacket(new PacketBuffer(buf), DefaultProps.NET_CHANNEL_NAME + "-CORE");
 	}
 }

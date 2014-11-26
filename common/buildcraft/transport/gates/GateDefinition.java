@@ -14,9 +14,8 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.StringUtils;
 
@@ -40,7 +39,7 @@ public final class GateDefinition {
 		IRON("gate_interface_2.png", 164, 2, 0, 0),
 		GOLD("gate_interface_3.png", 200, 4, 1, 0),
 		DIAMOND("gate_interface_4.png", 200, 8, 1, 0),
-		EMERALD("gate_interface_5.png", 200, 4, 3, 3);
+		EMERALD("gate_interface_5.png", 200, 4, 3, 3), ;
 		public static final GateMaterial[] VALUES = values();
 		public final ResourceLocation guiFile;
 		public final int guiHeight;

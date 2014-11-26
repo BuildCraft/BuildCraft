@@ -17,8 +17,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
+import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.ISerializable;
@@ -27,7 +28,7 @@ import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketTileUpdate;
 import buildcraft.core.utils.Utils;
 
-public abstract class TileBuildCraft extends TileEntity implements IEnergyHandler, ISynchronizedTile, ISerializable {
+public abstract class TileBuildCraft extends TileEntity implements IEnergyHandler, ISynchronizedTile, ISerializable, IUpdatePlayerListBox {
     protected TileBuffer[] cache;
 	protected HashSet<EntityPlayer> guiWatchers = new HashSet<EntityPlayer>();
 
@@ -52,7 +53,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 	}
 	
 	@Override
-	public void updateEntity() {
+	public void update() {
 		if (!init && !isInvalid()) {
 			initialize();
 			init = true;
@@ -78,7 +79,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 
 	public void onBlockPlacedBy(EntityLivingBase entity, ItemStack stack) {
 		if (entity instanceof EntityPlayer) {
-			owner = ((EntityPlayer) entity).getDisplayName();
+			owner = ((EntityPlayer) entity).getDisplayNameString();
 		}
 	}
 
@@ -89,7 +90,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 	public void sendNetworkUpdate() {
 		if (worldObj != null && !worldObj.isRemote) {
 			BuildCraftCore.instance.sendToPlayers(getPacketUpdate(), worldObj,
-					xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE);
+					pos.getX(), pos.getY(), pos.getZ(), DefaultProps.NETWORK_UPDATE_RANGE);
 		}
 	}
 
@@ -139,7 +140,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 
 	@Override
 	public int hashCode() {
-		return (xCoord * 37 + yCoord) * 37 + zCoord;
+		return pos.hashCode();
 	}
 
 	@Override
@@ -148,12 +149,12 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 	}
 
 	@Override
-	public boolean canConnectEnergy(ForgeDirection from) {
+	public boolean canConnectEnergy(EnumFacing from) {
 		return battery != null;
 	}
 
 	@Override
-	public int receiveEnergy(ForgeDirection from, int maxReceive,
+	public int receiveEnergy(EnumFacing from, int maxReceive,
 			boolean simulate) {
 		if (battery != null && this.canConnectEnergy(from)) {
 			return battery.receiveEnergy(maxReceive, simulate);
@@ -163,7 +164,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 	}
 
 	@Override
-	public int extractEnergy(ForgeDirection from, int maxExtract,
+	public int extractEnergy(EnumFacing from, int maxExtract,
 			boolean simulate) {
 		if (battery != null && this.canConnectEnergy(from)) {
 			return battery.extractEnergy(maxExtract, simulate);
@@ -173,7 +174,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 	}
 
 	@Override
-	public int getEnergyStored(ForgeDirection from) {
+	public int getEnergyStored(EnumFacing from) {
 		if (battery != null && this.canConnectEnergy(from)) {
 			return battery.getEnergyStored();
 		} else {
@@ -182,7 +183,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 	}
 
 	@Override
-	public int getMaxEnergyStored(ForgeDirection from) {
+	public int getMaxEnergyStored(EnumFacing from) {
 		if (battery != null && this.canConnectEnergy(from)) {
 			return battery.getMaxEnergyStored();
 		} else {
@@ -198,16 +199,16 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 		this.battery = battery;
 	}
 
-    public Block getBlock(ForgeDirection side) {
+    public Block getBlock(EnumFacing side) {
         if (cache == null) {
-            cache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
+            cache = TileBuffer.makeBuffer(worldObj, pos, false);
         }
         return cache[side.ordinal()].getBlock();
     }
 
-    public TileEntity getTile(ForgeDirection side) {
+    public TileEntity getTile(EnumFacing side) {
         if (cache == null) {
-            cache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
+            cache = TileBuffer.makeBuffer(worldObj, pos, false);
         }
         return cache[side.ordinal()].getTile();
     }

@@ -14,7 +14,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.core.CoreConstants;
@@ -54,7 +54,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				resetToCenterDimensions(dim);
 				
 				if (renderPass == 0) {
-					fakeBlock.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.UNKNOWN)));
+					fakeBlock.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(EnumFacing.UNKNOWN)));
 				} else {
 					fakeBlock.getTextureState().set(PipeIconProvider.TYPE.PipeStainedOverlay.getIcon());
 				}
@@ -86,7 +86,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				
 				// render sub block
 				if (renderPass == 0) {
-					fakeBlock.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.VALID_DIRECTIONS[dir])));
+					fakeBlock.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(EnumFacing.values()[dir])));
 				} else {
 					fakeBlock.getTextureState().set(PipeIconProvider.TYPE.PipeStainedOverlay.getIcon());
 				}
@@ -170,7 +170,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 		blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal())); // Structure Pipe
 
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing direction : EnumFacing.values()) {
 			if (state.plugMatrix.isConnected(direction)) {
 				float[][] rotated = MatrixTranformations.deepClone(zeroState);
 				MatrixTranformations.transform(rotated, direction);
@@ -192,7 +192,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 		blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal())); // Structure Pipe
 
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing direction : EnumFacing.values()) {
 			if (state.plugMatrix.isConnected(direction)) {
 				float[][] rotated = MatrixTranformations.deepClone(zeroState);
 				MatrixTranformations.transform(rotated, direction);
@@ -220,7 +220,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		zeroState[2][0] = zStart + zFightOffset;
 		zeroState[2][1] = zEnd - zFightOffset;
 
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing direction : EnumFacing.values()) {
 			if (state.robotStationMatrix.isConnected(direction)) {
 				switch (state.robotStationMatrix.getState(direction)) {
 				case None:
@@ -292,7 +292,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		zeroState[2][0] = 0.25F + zFightOffset;
 		zeroState[2][1] = 0.75F - zFightOffset;
 
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing direction : EnumFacing.values()) {
 			if (state.robotStationMatrix.isConnected(direction)) {
 				switch (state.robotStationMatrix.getState(direction)) {
 				case None:

@@ -23,7 +23,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.WorldSettings.GameType;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -94,9 +94,9 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		public BlockIndex to;
 		public double lastDistance;
 		AxisAlignedBB oldBoundingBox = null;
-		ForgeDirection o = null;
+		EnumFacing o = null;
 
-		public PathIterator(BlockIndex from, Iterator<BlockIndex> it, ForgeDirection initialDir) {
+		public PathIterator(BlockIndex from, Iterator<BlockIndex> it, EnumFacing initialDir) {
 			this.to = it.next();
 
 			currentIterator = it;
@@ -122,15 +122,15 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 				o = initialDir;
 			} else if (Math.abs(dx) > Math.abs(dz)) {
 				if (dx > 0) {
-					o = ForgeDirection.EAST;
+					o = EnumFacing.EAST;
 				} else {
-					o = ForgeDirection.WEST;
+					o = EnumFacing.WEST;
 				}
 			} else {
 				if (dz > 0) {
-					o = ForgeDirection.SOUTH;
+					o = EnumFacing.SOUTH;
 				} else {
-					o = ForgeDirection.NORTH;
+					o = EnumFacing.NORTH;
 				}
 			}
 		}
@@ -152,7 +152,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 					return null;
 				}
 
-				AxisAlignedBB boundingBox = bpt.getBoundingBox();
+				AxisAlignedBB boundingBox = bpt.fromBounds();
 
 				if (oldBoundingBox == null || !collision(oldBoundingBox, boundingBox)) {
 
@@ -309,7 +309,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	}
 
 	@Deprecated
-	public BptBuilderBase instanciateBluePrintBuilder(int x, int y, int z, ForgeDirection o) {
+	public BptBuilderBase instanciateBluePrintBuilder(int x, int y, int z, EnumFacing o) {
 		BlueprintBase bpt = instanciateBlueprint();
         if (bpt == null) {
             return null;
@@ -356,7 +356,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 					Iterator<BlockIndex> it = path.iterator();
 					BlockIndex start = it.next();
 					currentPathIterator = new PathIterator(start, it,
-							ForgeDirection.values()[worldObj.getBlockMetadata(
+							EnumFacing.values()[worldObj.getBlockMetadata(
 									xCoord, yCoord, zCoord)].getOpposite());
 				}
 
@@ -394,7 +394,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 					if (bpt != null) {
 						recursiveBuilder = new RecursiveBlueprintBuilder(bpt, worldObj, xCoord, yCoord, zCoord,
-								ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite());
+								EnumFacing.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite());
 
 						currentBuilder = recursiveBuilder.nextBuilder();
 
@@ -710,7 +710,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			renderBox = renderBox.extendToEncompass(l.tail);
 		}
 
-		return renderBox.expand(50).getBoundingBox();
+		return renderBox.expand(50).fromBounds();
 	}
 
 	public void build () {
@@ -750,17 +750,17 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	}
 
 	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
 		return false;
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
 		return null;
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
 		return null;
 	}
 
@@ -774,7 +774,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	}
 
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		Fluid fluid = resource.getFluid();
 		Tank emptyTank = null;
 		for (Tank tank : fluidTanks) {
@@ -800,7 +800,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	}
 
 	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
+	public boolean canFill(EnumFacing from, Fluid fluid) {
 		boolean emptyAvailable = false;
 		for (Tank tank : fluidTanks) {
 			Fluid type = tank.getFluidType();
@@ -814,7 +814,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+	public FluidTankInfo[] getTankInfo(EnumFacing from) {
 		return fluidTank.getTankInfo(from);
 	}
 
@@ -901,7 +901,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			}
 
 			ITransactor t = Transactor.getTransactorFor(this);
-			ItemStack added = t.add(toAdd, ForgeDirection.UNKNOWN, true);
+			ItemStack added = t.add(toAdd, EnumFacing.UNKNOWN, true);
 
 			if (added.stackSize >= stack.stackSize) {
 				return null;

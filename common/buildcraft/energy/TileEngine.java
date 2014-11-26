@@ -15,7 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.power.IEngine;
@@ -74,7 +74,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 	public int energy;
 	public float heat = MIN_HEAT;
 	public EnergyStage energyStage = EnergyStage.BLUE;
-	public ForgeDirection orientation = ForgeDirection.UP;
+	public EnumFacing orientation = EnumFacing.UP;
 
 	protected int progressPart = 0;
 	protected boolean lastPower = false;
@@ -114,7 +114,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 		}
 	}
 
-	public boolean onBlockActivated(EntityPlayer player, ForgeDirection side) {
+	public boolean onBlockActivated(EntityPlayer player, EnumFacing side) {
 		if (!player.worldObj.isRemote && player.getCurrentEquippedItem() != null &&
 				player.getCurrentEquippedItem().getItem() instanceof IToolWrench) {
 			IToolWrench wrench = (IToolWrench) player.getCurrentEquippedItem().getItem();
@@ -380,7 +380,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 
 	private boolean switchOrientationDo(boolean pipesOnly) {
 		for (int i = orientation.ordinal() + 1; i <= orientation.ordinal() + 6; ++i) {
-			ForgeDirection o = ForgeDirection.VALID_DIRECTIONS[i % 6];
+			EnumFacing o = EnumFacing.values()[i % 6];
 
 			TileEntity tile = getTile(o);
 
@@ -412,7 +412,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
 
-		orientation = ForgeDirection.getOrientation(data.getByte("orientation"));
+		orientation = EnumFacing.getOrientation(data.getByte("orientation"));
 		progress = data.getFloat("progress");
 		energy = data.getInteger("energy");
 		heat = data.getFloat("heat");
@@ -433,7 +433,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 		int flags = stream.readUnsignedByte();
 		energyStage = EnergyStage.values()[flags & 0x07];
 		isPumping = (flags & 0x08) != 0;
-		orientation = ForgeDirection.getOrientation(stream.readByte());
+		orientation = EnumFacing.getOrientation(stream.readByte());
 	}
 
 	@Override
@@ -507,7 +507,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 		return extracted;
 	}
 
-	public boolean isPoweredTile(TileEntity tile, ForgeDirection side) {
+	public boolean isPoweredTile(TileEntity tile, EnumFacing side) {
 		if (tile == null) {
             return false;
         } else if (tile instanceof IEngine) {
@@ -536,7 +536,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 	public abstract int calculateCurrentOutput();
 
 	@Override
-	public ConnectOverride overridePipeConnection(PipeType type, ForgeDirection with) {
+	public ConnectOverride overridePipeConnection(PipeType type, EnumFacing with) {
 		if (type == PipeType.POWER) {
 			return ConnectOverride.DEFAULT;
 		} else if (with == orientation) {
@@ -557,19 +557,19 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 	// RF support
 
 	@Override
-	public int receiveEnergy(ForgeDirection from, int maxReceive,
+	public int receiveEnergy(EnumFacing from, int maxReceive,
 			boolean simulate) {
 		return 0;
 	}
 
 	@Override
-	public int extractEnergy(ForgeDirection from, int maxExtract,
+	public int extractEnergy(EnumFacing from, int maxExtract,
 			boolean simulate) {
 		return 0;
 	}
 
 	@Override
-	public int getEnergyStored(ForgeDirection from) {
+	public int getEnergyStored(EnumFacing from) {
 		if (!(from == orientation)) {
 			return 0;
 		}
@@ -578,24 +578,24 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 	}
 
 	@Override
-	public int getMaxEnergyStored(ForgeDirection from) {
+	public int getMaxEnergyStored(EnumFacing from) {
 		return this.getMaxEnergy();
 	}
 
 	@Override
-	public boolean canConnectEnergy(ForgeDirection from) {
+	public boolean canConnectEnergy(EnumFacing from) {
 		return from == orientation;
 	}
 
     // IEngine
 
     @Override
-    public boolean canReceiveFromEngine(ForgeDirection side) {
+    public boolean canReceiveFromEngine(EnumFacing side) {
         return side == orientation.getOpposite();
     }
 
     @Override
-    public int receiveEnergyFromEngine(ForgeDirection side, int amount, boolean simulate) {
+    public int receiveEnergyFromEngine(EnumFacing side, int amount, boolean simulate) {
         if (canReceiveFromEngine(side)) {
             int targetEnergy = Math.min(this.getMaxEnergy() - this.energy, amount);
             if (!simulate) {

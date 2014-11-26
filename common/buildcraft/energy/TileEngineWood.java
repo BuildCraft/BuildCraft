@@ -10,7 +10,7 @@ package buildcraft.energy;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
 
@@ -87,7 +87,7 @@ public class TileEngineWood extends TileEngine {
 	}
 
 	@Override
-	public ConnectOverride overridePipeConnection(PipeType type, ForgeDirection with) {
+	public ConnectOverride overridePipeConnection(PipeType type, EnumFacing with) {
 		return ConnectOverride.DISCONNECT;
 	}
 
@@ -113,7 +113,7 @@ public class TileEngineWood extends TileEngine {
 
 	// TODO: HACK
 	@Override
-	public boolean canConnectEnergy(ForgeDirection from) {
+	public boolean canConnectEnergy(EnumFacing from) {
 		return false;
 	}
 

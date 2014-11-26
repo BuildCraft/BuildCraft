@@ -21,7 +21,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.events.BlockInteractionEvent;
@@ -40,7 +40,7 @@ public class BlockMarker extends BlockBuildCraft {
 		setCreativeTab(CreativeTabBuildCraft.ITEMS.get());
 	}
 
-	public static boolean canPlaceTorch(World world, int x, int y, int z, ForgeDirection side) {
+	public static boolean canPlaceTorch(World world, int x, int y, int z, EnumFacing side) {
 		Block block = world.getBlock(x, y, z);
 		return block != null && (block.renderAsNormalBlock() && block.isOpaqueCube() || block.isSideSolid(world, x, y, z, side));
 	}
@@ -49,20 +49,20 @@ public class BlockMarker extends BlockBuildCraft {
 		double w = 0.15;
 		double h = 0.65;
 
-		ForgeDirection dir = ForgeDirection.getOrientation(meta);
+		EnumFacing dir = EnumFacing.getOrientation(meta);
 		switch (dir) {
 			case DOWN:
-				return AxisAlignedBB.getBoundingBox(0.5F - w, 1F - h, 0.5F - w, 0.5F + w, 1F, 0.5F + w);
+				return AxisAlignedBB.fromBounds(0.5F - w, 1F - h, 0.5F - w, 0.5F + w, 1F, 0.5F + w);
 			case UP:
-				return AxisAlignedBB.getBoundingBox(0.5F - w, 0F, 0.5F - w, 0.5F + w, h, 0.5F + w);
+				return AxisAlignedBB.fromBounds(0.5F - w, 0F, 0.5F - w, 0.5F + w, h, 0.5F + w);
 			case SOUTH:
-				return AxisAlignedBB.getBoundingBox(0.5F - w, 0.5F - w, 0F, 0.5F + w, 0.5F + w, h);
+				return AxisAlignedBB.fromBounds(0.5F - w, 0.5F - w, 0F, 0.5F + w, 0.5F + w, h);
 			case NORTH:
-				return AxisAlignedBB.getBoundingBox(0.5F - w, 0.5F - w, 1 - h, 0.5F + w, 0.5F + w, 1);
+				return AxisAlignedBB.fromBounds(0.5F - w, 0.5F - w, 1 - h, 0.5F + w, 0.5F + w, 1);
 			case EAST:
-				return AxisAlignedBB.getBoundingBox(0F, 0.5F - w, 0.5F - w, h, 0.5F + w, 0.5F + w);
+				return AxisAlignedBB.fromBounds(0F, 0.5F - w, 0.5F - w, h, 0.5F + w, 0.5F + w);
 			default:
-				return AxisAlignedBB.getBoundingBox(1 - h, 0.5F - w, 0.5F - w, 1F, 0.5F + w, 0.5F + w);
+				return AxisAlignedBB.fromBounds(1 - h, 0.5F - w, 0.5F - w, 1F, 0.5F + w, 0.5F + w);
 		}
 	}
 
@@ -147,8 +147,8 @@ public class BlockMarker extends BlockBuildCraft {
 
 	@Override
 	public boolean canPlaceBlockOnSide(World world, int x, int y, int z, int side) {
-		ForgeDirection dir = ForgeDirection.getOrientation(side);
-		return canPlaceTorch(world, x - dir.offsetX, y - dir.offsetY, z - dir.offsetZ, dir);
+		EnumFacing dir = EnumFacing.getOrientation(side);
+		return canPlaceTorch(world, x - dir.getFrontOffsetX(), y - dir.getFrontOffsetY(), z - dir.getFrontOffsetZ(), dir);
 	}
 
 	@Override

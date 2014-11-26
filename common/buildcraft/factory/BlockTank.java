@@ -21,7 +21,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -106,7 +106,7 @@ public class BlockTank extends BlockBuildCraft {
 				TileTank tank = (TileTank) tile;
 				// Handle filled containers
 				if (liquid != null) {
-					int qty = tank.fill(ForgeDirection.UNKNOWN, liquid, true);
+					int qty = tank.fill(EnumFacing.UNKNOWN, liquid, true);
 
 					if (qty != 0 && !BuildCraftCore.debugWorldgen && !entityplayer.capabilities.isCreativeMode) {
 						entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils.consumeItem(current));
@@ -116,7 +116,7 @@ public class BlockTank extends BlockBuildCraft {
 
 					// Handle empty containers
 				} else {
-					FluidStack available = tank.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid;
+					FluidStack available = tank.getTankInfo(EnumFacing.UNKNOWN)[0].fluid;
 
 					if (available != null) {
 						ItemStack filled = FluidContainerRegistry.fillFluidContainer(available, current);
@@ -137,7 +137,7 @@ public class BlockTank extends BlockBuildCraft {
 								}
 							}
 
-							tank.drain(ForgeDirection.UNKNOWN, liquid.amount, true);
+							tank.drain(EnumFacing.UNKNOWN, liquid.amount, true);
 
 							return true;
 						}

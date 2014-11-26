@@ -21,7 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -46,7 +46,7 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
 	}
 
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		for (Tank tank : tanks) {
 			int used = tank.fill(resource, doFill);
 			if (used > 0) {
@@ -57,7 +57,7 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
 		if (resource == null) {
 			return null;
 		}
@@ -74,7 +74,7 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
 		for (Tank tank : tanks) {
 			FluidStack drained = tank.drain(maxDrain, doDrain);
 			if (drained != null && drained.amount > 0) {
@@ -85,17 +85,17 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
 	}
 
 	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
+	public boolean canFill(EnumFacing from, Fluid fluid) {
 		return true;
 	}
 
 	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
 		return true;
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+	public FluidTankInfo[] getTankInfo(EnumFacing from) {
 		FluidTankInfo[] info = new FluidTankInfo[size()];
 		for (int i = 0; i < size(); i++) {
 			info[i] = get(i).getInfo();

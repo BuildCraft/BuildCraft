@@ -14,7 +14,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.EnumSkyBlock;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -120,7 +120,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	}
 
 	public static TileTank getTankBelow(TileTank tile) {
-		TileEntity below = tile.getTile(ForgeDirection.DOWN);
+		TileEntity below = tile.getTile(EnumFacing.DOWN);
 		if (below instanceof TileTank) {
 			return (TileTank) below;
 		} else {
@@ -129,7 +129,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	}
 
 	public static TileTank getTankAbove(TileTank tile) {
-		TileEntity above = tile.getTile(ForgeDirection.UP);
+		TileEntity above = tile.getTile(EnumFacing.UP);
 		if (above instanceof TileTank) {
 			return (TileTank) above;
 		} else {
@@ -154,7 +154,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 
 	/* ITANKCONTAINER */
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		if (resource == null) {
 			return 0;
 		}
@@ -182,14 +182,14 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, int maxEmpty, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, int maxEmpty, boolean doDrain) {
 		TileTank bottom = getBottomTank();
 		bottom.hasUpdate = true;
 		return bottom.tank.drain(maxEmpty, doDrain);
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
 		if (resource == null) {
 			return null;
 		}
@@ -201,7 +201,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection direction) {
+	public FluidTankInfo[] getTankInfo(EnumFacing direction) {
 		FluidTank compositeTank = new FluidTank(tank.getCapacity());
 
 		TileTank tile = getBottomTank();
@@ -236,13 +236,13 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	}
 
 	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
+	public boolean canFill(EnumFacing from, Fluid fluid) {
 		Fluid tankFluid = getBottomTank().tank.getFluidType();
 		return tankFluid == null || tankFluid == fluid;
 	}
 
 	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
 		Fluid tankFluid = getBottomTank().tank.getFluidType();
 		return tankFluid != null && tankFluid == fluid;
 	}

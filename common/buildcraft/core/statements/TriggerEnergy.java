@@ -13,7 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
@@ -43,7 +43,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITri
 		return handler instanceof IEnergyHandler;
 	}
 
-	private boolean isTriggeredEnergyHandler(IEnergyHandler handler, ForgeDirection side) {
+	private boolean isTriggeredEnergyHandler(IEnergyHandler handler, EnumFacing side) {
 		int energyStored = handler.getEnergyStored(side);
 		int energyMaxStored = handler.getMaxEnergyStored(side);
 
@@ -62,7 +62,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITri
 			IGate gate = (IGate) container;
 			if (gate.getPipe() instanceof IEnergyHandler) {
 				if (isValidEnergyHandler((IEnergyHandler) gate.getPipe())) {
-					return isTriggeredEnergyHandler((IEnergyHandler) gate.getPipe(), ForgeDirection.UNKNOWN);
+					return isTriggeredEnergyHandler((IEnergyHandler) gate.getPipe(), EnumFacing.UNKNOWN);
 				}
 			}
 		}
@@ -72,7 +72,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITri
 
 
 	@Override
-	public boolean isTriggerActive(TileEntity tile, ForgeDirection side, IStatementContainer container, IStatementParameter[] parameters) {
+	public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer container, IStatementParameter[] parameters) {
 		if (tile instanceof IEnergyHandler) {
 			// Since we return false upon the trigger being invalid anyway,
 			// we can skip the isValidEnergyHandler(...) check.

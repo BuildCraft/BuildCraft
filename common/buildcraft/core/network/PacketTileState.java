@@ -14,6 +14,7 @@ import java.util.List;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import net.minecraft.util.BlockPos;
 
 public class PacketTileState extends PacketCoordinates {
 
@@ -40,11 +41,10 @@ public class PacketTileState extends PacketCoordinates {
 	/**
 	 * Constructor for outgoing packets
 	 *
-	 * @param x
-	 *            , y, z - the coordinates the tile to sync
+	 * @param x, y, z - the coordinates the tile to sync
 	 */
-	public PacketTileState(int x, int y, int z) {
-		super(PacketIds.STATE_UPDATE, x, y, z);
+	public PacketTileState(BlockPos pos) {
+		super(PacketIds.STATE_UPDATE, pos);
 		isChunkDataPacket = true;
 	}
 

@@ -8,7 +8,7 @@
  */
 package buildcraft.api.power;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 /**
  * Engines should implement this interface if they want to support
@@ -16,6 +16,6 @@ import net.minecraftforge.common.util.ForgeDirection;
  * without using receiveEnergy() (which has other issues).
  */
 public interface IEngine {
-    boolean canReceiveFromEngine(ForgeDirection side);
-    int receiveEnergyFromEngine(ForgeDirection side, int energy, boolean simulate);
+    boolean canReceiveFromEngine(EnumFacing side);
+    int receiveEnergyFromEngine(EnumFacing side, int energy, boolean simulate);
 }

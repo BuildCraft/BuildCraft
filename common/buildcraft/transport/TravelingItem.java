@@ -20,11 +20,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
+import net.minecraft.util.EnumFacing;
 
-import net.minecraftforge.common.util.ForgeDirection;
-
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.Position;
@@ -37,14 +36,14 @@ public class TravelingItem {
 	public static final InsertionHandler DEFAULT_INSERTION_HANDLER = new InsertionHandler();
 	private static int maxId = 0;
 
-	public final EnumSet<ForgeDirection> blacklist = EnumSet.noneOf(ForgeDirection.class);
+	public final EnumSet<EnumFacing> blacklist = EnumSet.noneOf(EnumFacing.class);
 
 	public double xCoord, yCoord, zCoord;
 	public final int id;
 	public boolean toCenter = true;
 	public EnumColor color;
-	public ForgeDirection input = ForgeDirection.UNKNOWN;
-	public ForgeDirection output = ForgeDirection.UNKNOWN;
+	public EnumFacing input;
+	public EnumFacing output;
 
 	protected float speed = 0.01F;
 
@@ -160,8 +159,8 @@ public class TravelingItem {
 	public void reset() {
 		toCenter = true;
 		blacklist.clear();
-		input = ForgeDirection.UNKNOWN;
-		output = ForgeDirection.UNKNOWN;
+		input = null;
+		output = null;
 	}
 
 	/* SAVING & LOADING */
@@ -172,8 +171,8 @@ public class TravelingItem {
 		setItemStack(ItemStack.loadItemStackFromNBT(data.getCompoundTag("Item")));
 
 		toCenter = data.getBoolean("toCenter");
-		input = ForgeDirection.getOrientation(data.getByte("input"));
-		output = ForgeDirection.getOrientation(data.getByte("output"));
+		input = EnumFacing.getFront(data.getByte("input"));
+		output = EnumFacing.getFront(data.getByte("output"));
 
 		byte c = data.getByte("color");
 		if (c != -1) {
@@ -206,7 +205,7 @@ public class TravelingItem {
 	}
 
 	public EntityItem toEntityItem() {
-		if (container != null && !container.getWorldObj().isRemote) {
+		if (container != null && !container.getWorld().isRemote) {
 			if (getItemStack().stackSize <= 0) {
 				return null;
 			}
@@ -215,29 +214,17 @@ public class TravelingItem {
 			motion.moveForwards(0.1 + getSpeed() * 2F);
 
 			ItemStack stack = getItemStack();
-			EntityItem entity = new EntityItem(container.getWorldObj(), xCoord, yCoord, zCoord, getItemStack());
+			EntityItem entity = new EntityItem(container.getWorld(), xCoord, yCoord, zCoord, getItemStack());
 			entity.lifespan = BuildCraftCore.itemLifespan;
-			entity.delayBeforeCanPickup = 10;
+			entity.setDefaultPickupDelay();
 
-			float f3 = 0.00F + container.getWorldObj().rand.nextFloat() * 0.04F - 0.02F;
-			entity.motionX = (float) container.getWorldObj().rand.nextGaussian() * f3 + motion.x;
-			entity.motionY = (float) container.getWorldObj().rand.nextGaussian() * f3 + motion.y;
-			entity.motionZ = (float) container.getWorldObj().rand.nextGaussian() * f3 + +motion.z;
+			float f3 = 0.00F + container.getWorld().rand.nextFloat() * 0.04F - 0.02F;
+			entity.motionX = (float) container.getWorld().rand.nextGaussian() * f3 + motion.x;
+			entity.motionY = (float) container.getWorld().rand.nextGaussian() * f3 + motion.y;
+			entity.motionZ = (float) container.getWorld().rand.nextGaussian() * f3 + +motion.z;
 			return entity;
 		}
 		return null;
-	}
-
-	public float getEntityBrightness(float f) {
-		int i = MathHelper.floor_double(xCoord);
-		int j = MathHelper.floor_double(zCoord);
-		if (container != null && container.getWorldObj().blockExists(i, 128 / 2, j)) {
-			double d = 0.66000000000000003D;
-			int k = MathHelper.floor_double(yCoord + d);
-			return container.getWorldObj().getLightBrightness(i, k, j);
-		} else {
-			return 0.0F;
-		}
 	}
 
 	public boolean isCorrupted() {

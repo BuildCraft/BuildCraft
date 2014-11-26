@@ -277,7 +277,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 			completeBox.extendToEncompass(d.tail);
 		}
 
-		return completeBox.getBoundingBox();
+		return completeBox.fromBounds();
 	}
 
 	public BuildCraftPacket getPacketSetName() {

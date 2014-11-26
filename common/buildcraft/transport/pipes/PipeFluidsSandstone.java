@@ -14,7 +14,7 @@ import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.BuildCraftTransport;
@@ -41,12 +41,12 @@ public class PipeFluidsSandstone extends Pipe<PipeTransportFluids> implements IP
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
+	public int getIconIndex(EnumFacing direction) {
 		return PipeIconProvider.TYPE.PipeFluidsSandstone.ordinal();
 	}
 
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		if (!(container.getTile(from) instanceof TileGenericPipe)) {
 			return 0;
 		} else {
@@ -55,12 +55,12 @@ public class PipeFluidsSandstone extends Pipe<PipeTransportFluids> implements IP
 	}
 
 	@Override
-	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
+	public boolean canPipeConnect(TileEntity tile, EnumFacing side) {
 		return (tile instanceof TileGenericPipe) && super.canPipeConnect(tile, side);
 	}
 
 	@Override
-	public boolean ignoreConnectionOverrides(ForgeDirection with) {
+	public boolean ignoreConnectionOverrides(EnumFacing with) {
 		return true;
 	}
 }

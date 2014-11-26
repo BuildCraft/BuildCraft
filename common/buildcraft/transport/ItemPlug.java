@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipePluggable;
@@ -73,17 +73,17 @@ public class ItemPlug extends ItemBuildCraft {
 		}
 
 		@Override
-		public void onAttachedPipe(IPipeTile pipe, ForgeDirection direction) {
+		public void onAttachedPipe(IPipeTile pipe, EnumFacing direction) {
 
 		}
 
 		@Override
-		public void onDetachedPipe(IPipeTile pipe, ForgeDirection direction) {
+		public void onDetachedPipe(IPipeTile pipe, EnumFacing direction) {
 
 		}
 
 		@Override
-		public boolean blocking(IPipeTile pipe, ForgeDirection direction) {
+		public boolean blocking(IPipeTile pipe, EnumFacing direction) {
 			return true;
 		}
 
@@ -93,7 +93,7 @@ public class ItemPlug extends ItemBuildCraft {
 		}
 
 		@Override
-		public void validate(IPipeTile pipe, ForgeDirection direction) {
+		public void validate(IPipeTile pipe, EnumFacing direction) {
 
 		}
 	}

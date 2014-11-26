@@ -16,7 +16,7 @@ import net.minecraft.world.IBlockAccess;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.transport.BlockGenericPipe;
 
 
@@ -61,7 +61,7 @@ public final class FakeBlock extends Block implements ITextureStates {
 		return textureState.isSided() ? textureState.getTextureArray()[side] : textureState.getTexture();
 	}
 	@Override
-	public void setRenderSide(ForgeDirection side, boolean render) {
+	public void setRenderSide(EnumFacing side, boolean render) {
 		if (render) {
 			renderMask |= 1 << side.ordinal();
 		} else {

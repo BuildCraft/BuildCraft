@@ -14,16 +14,17 @@ import java.util.LinkedList;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.BlockFluidBase;
 
 public class SchematicBlock extends SchematicBlockBase {
 
-	public Block block = null;
-	public int meta = 0;
+	public IBlockState state = null;
 	public BuildingPermission defaultPermission = BuildingPermission.ALL;
 
 	/**
@@ -49,20 +50,20 @@ public class SchematicBlock extends SchematicBlockBase {
 	}
 
 	@Override
-	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
-		return block == context.world().getBlock(x, y, z) && meta == context.world().getBlockMetadata(x, y, z);
+	public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
+		return state == context.world().getBlockState(pos);
 	}
 
 	@Override
-	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
-		super.placeInWorld(context, x, y, z, stacks);
+	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+		super.placeInWorld(context, pos, stacks);
 
-		this.setBlockInWorld(context, x, y, z);
+		this.setBlockInWorld(context, pos);
 	}
 
 	@Override
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
-		super.storeRequirements(context, x, y, z);
+	public void storeRequirements(IBuilderContext context, BlockPos pos) {
+		super.storeRequirements(context, pos);
 
 		if (block != null) {
 			ArrayList<ItemStack> req = block.getDrops(context.world(), x,
@@ -112,10 +113,10 @@ public class SchematicBlock extends SchematicBlockBase {
 	}
 	
 	// Utility functions
-	protected void setBlockInWorld(IBuilderContext context, int x, int y, int z) {
+	protected void setBlockInWorld(IBuilderContext context, BlockPos pos) {
 		// Meta needs to be specified twice, depending on the block behavior
-		context.world().setBlock(x, y, z, block, meta, 3);
-		context.world().setBlockMetadataWithNotify(x, y, z, meta, 3);
+		context.world().setBlock(pos, block, meta, 3);
+		context.world().setBlockMetadataWithNotify(pos, meta, 3);
 	}
 	
 	public boolean doNotUse() {

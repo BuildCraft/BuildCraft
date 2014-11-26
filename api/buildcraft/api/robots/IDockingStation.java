@@ -10,19 +10,16 @@ package buildcraft.api.robots;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.BlockIndex;
 
 public interface IDockingStation {
 
-	int x();
+	BlockPos pos();
 
-	int y();
-
-	int z();
-
-	ForgeDirection side();
+	EnumFacing side();
 
 	EntityRobotBase robotTaking();
 
@@ -35,8 +32,6 @@ public interface IDockingStation {
 	void writeToNBT(NBTTagCompound nbt);
 
 	void readFromNBT(NBTTagCompound nbt);
-
-	BlockIndex index();
 
 	boolean take(EntityRobotBase robot);
 }

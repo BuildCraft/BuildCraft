@@ -25,7 +25,7 @@ import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 import net.minecraftforge.common.util.EnumHelper;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType;
 import net.minecraftforge.event.terraingen.TerrainGen;
@@ -317,7 +317,7 @@ public final class OilPopulate {
 			if (!world.isAirBlock(x, y + 2, z)) {
 				return;
 			}
-			if (isReplaceableFluid(world, x, y, z) || world.isSideSolid(x, y - 1, z, ForgeDirection.UP)) {
+			if (isReplaceableFluid(world, x, y, z) || world.isSideSolid(x, y - 1, z, EnumFacing.UP)) {
 				world.setBlock(x, y, z, BuildCraftEnergy.blockOil, 0, update);
 			} else {
 				return;
@@ -327,7 +327,7 @@ public final class OilPopulate {
 			}
 
 			for (int d = 1; d <= depth - 1; d++) {
-				if (isReplaceableFluid(world, x, y - d, z) || !world.isSideSolid(x, y - d - 1, z, ForgeDirection.UP)) {
+				if (isReplaceableFluid(world, x, y - d, z) || !world.isSideSolid(x, y - d - 1, z, EnumFacing.UP)) {
 					return;
 				}
 				world.setBlock(x, y - d, z, BuildCraftEnergy.blockOil, 0, 2);

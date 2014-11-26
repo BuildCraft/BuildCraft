@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
@@ -46,7 +46,7 @@ public class SchematicSign extends SchematicTile {
 			}
 			meta = (int) (angle / 360.0 * 16.0);
 		} else {
-			meta = ForgeDirection.values()[meta].getRotation(ForgeDirection.UP).ordinal();
+			meta = EnumFacing.values()[meta].getRotation(EnumFacing.UP).ordinal();
 		}
 	}
 }

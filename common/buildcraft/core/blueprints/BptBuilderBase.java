@@ -19,6 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import buildcraft.BuildCraftBuilders;
@@ -26,7 +27,6 @@ import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
 import buildcraft.core.Box;
@@ -35,14 +35,15 @@ import buildcraft.core.builders.BuildingSlot;
 import buildcraft.core.builders.BuildingSlotBlock;
 import buildcraft.core.builders.IBuildingItemsProvider;
 import buildcraft.core.builders.TileAbstractBuilder;
+import buildcraft.core.utils.Utils;
 
 public abstract class BptBuilderBase implements IAreaProvider {
 
 	public BlueprintBase blueprint;
 	public BptContext context;
 	protected boolean done;
-	protected TreeSet<BlockIndex> clearedLocations = new TreeSet<BlockIndex>();
-	protected TreeSet<BlockIndex> builtLocations = new TreeSet<BlockIndex>();
+	protected TreeSet<BlockPos> clearedLocations = new TreeSet<BlockPos>();
+	protected TreeSet<BlockPos> builtLocations = new TreeSet<BlockPos>();
 	protected int x, y, z;
 	protected boolean initialized = false;
 
@@ -156,7 +157,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 	}
 
 	public AxisAlignedBB getBoundingBox() {
-		return AxisAlignedBB.getBoundingBox(xMin(), yMin(), zMin(), xMax(), yMax(), zMax());
+		return AxisAlignedBB.fromBounds(xMin(), yMin(), zMin(), xMax(), yMax(), zMax());
 	}
 
 	public void postProcessing(World world) {
@@ -222,9 +223,9 @@ public abstract class BptBuilderBase implements IAreaProvider {
 	public void saveBuildStateToNBT(NBTTagCompound nbt, IBuildingItemsProvider builder) {
 		NBTTagList clearList = new NBTTagList();
 
-		for (BlockIndex loc : clearedLocations) {
+		for (BlockPos loc : clearedLocations) {
 			NBTTagCompound cpt = new NBTTagCompound();
-			loc.writeTo(cpt);
+			Utils.writeBlockPos(cpt, loc);
 			clearList.appendTag(cpt);
 		}
 
@@ -232,9 +233,9 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 		NBTTagList builtList = new NBTTagList();
 
-		for (BlockIndex loc : builtLocations) {
+		for (BlockPos loc : builtLocations) {
 			NBTTagCompound cpt = new NBTTagCompound();
-			loc.writeTo(cpt);
+			Utils.writeBlockPos(cpt, loc);
 			builtList.appendTag(cpt);
 		}
 
@@ -257,7 +258,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		for (int i = 0; i < clearList.tagCount(); ++i) {
 			NBTTagCompound cpt = clearList.getCompoundTagAt(i);
 
-			clearedLocations.add (new BlockIndex(cpt));
+			clearedLocations.add(Utils.readBlockPos(cpt));
 		}
 
 		NBTTagList builtList = nbt.getTagList("builtList", Constants.NBT.TAG_COMPOUND);
@@ -265,7 +266,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		for (int i = 0; i < builtList.tagCount(); ++i) {
 			NBTTagCompound cpt = builtList.getCompoundTagAt(i);
 
-			builtLocations.add (new BlockIndex(cpt));
+			builtLocations.add(Utils.readBlockPos(cpt));
 		}
 
 		NBTTagList buildingList = nbt

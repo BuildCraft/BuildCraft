@@ -11,7 +11,7 @@ package buildcraft.core.robots;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
@@ -66,10 +66,10 @@ public class AIRobotGotoStationToLoad extends AIRobot {
 				return false;
 			}
 
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
-						+ dir.offsetY, station.z()
-						+ dir.offsetZ);
+			for (EnumFacing dir : EnumFacing.values()) {
+				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.getFrontOffsetX(), station.y()
+						+ dir.getFrontOffsetY(), station.z()
+						+ dir.getFrontOffsetZ());
 
 				if (nearbyTile != null && nearbyTile instanceof IInventory) {
 					ITransactor trans = Transactor.getTransactorFor(nearbyTile);

@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Level;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -19,16 +20,17 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
@@ -71,7 +73,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	public Pipe pipe;
 	public int redstoneInput;
-	public int[] redstoneInputSide = new int[ForgeDirection.VALID_DIRECTIONS.length];
+	public int[] redstoneInputSide = new int[EnumFacing.values().length];
 	public int glassColor = -1;
 	
 	protected boolean deletePipe = false;
@@ -86,12 +88,12 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	
 	public static class CoreState implements IClientState {
 		public int pipeId = -1;
-		public ItemGate.GatePluggable[] gates = new ItemGate.GatePluggable[ForgeDirection.VALID_DIRECTIONS.length];
+		public ItemGate.GatePluggable[] gates = new ItemGate.GatePluggable[EnumFacing.values().length];
 
 		@Override
 		public void writeData(ByteBuf data) {
 			data.writeInt(pipeId);
-			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+			for (int i = 0; i < EnumFacing.values().length; i++) {
 				ItemGate.GatePluggable gate = gates[i];
 
 				boolean gateValid = gate != null;
@@ -105,7 +107,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		@Override
 		public void readData(ByteBuf data) {
 			pipeId = data.readInt();
-			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+			for (int i = 0; i < EnumFacing.values().length; i++) {
 				if (data.readBoolean()) {
 					ItemGate.GatePluggable gate = gates[i];
 					if (gate == null) {
@@ -120,10 +122,10 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	public static class SideProperties {
-		IPipePluggable[] pluggables = new IPipePluggable[ForgeDirection.VALID_DIRECTIONS.length];
+		IPipePluggable[] pluggables = new IPipePluggable[EnumFacing.values().length];
 
 		public void writeToNBT(NBTTagCompound nbt) {
-			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+			for (int i = 0; i < EnumFacing.values().length; i++) {
 				IPipePluggable pluggable = pluggables[i];
 				final String key = "pluggable[" + i + "]";
 				if (pluggable == null) {
@@ -138,7 +140,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		}
 
 		public void readFromNBT(NBTTagCompound nbt) {
-			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+			for (int i = 0; i < EnumFacing.values().length; i++) {
 				final String key = "pluggable[" + i + "]";
 				if (!nbt.hasKey(key)) {
 					continue;
@@ -160,7 +162,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			}
 
 			// Migration code
-			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+			for (int i = 0; i < EnumFacing.values().length; i++) {
 				IPipePluggable pluggable = null;
 				if (nbt.hasKey("facadeState[" + i + "]")) {
 					pluggable = new ItemFacade.FacadePluggable(FacadeState.readArray(nbt.getTagList("facadeState[" + i + "]", Constants.NBT.TAG_COMPOUND)));
@@ -208,14 +210,14 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		}
 
 		public void rotateLeft() {
-			IPipePluggable[] newPluggables = new IPipePluggable[ForgeDirection.VALID_DIRECTIONS.length];
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				newPluggables[dir.getRotation(ForgeDirection.UP).ordinal()] = pluggables[dir.ordinal()];
+			IPipePluggable[] newPluggables = new IPipePluggable[EnumFacing.values().length];
+			for (EnumFacing dir : EnumFacing.values()) {
+				newPluggables[dir.rotateYCCW().ordinal()] = pluggables[dir.ordinal()];
 			}
 			pluggables = newPluggables;
 		}
 
-		public boolean dropItem(TileGenericPipe pipe, ForgeDirection direction) {
+		public boolean dropItem(TileGenericPipe pipe, EnumFacing direction) {
 			boolean result = false;
 			IPipePluggable pluggable = pluggables[direction.ordinal()];
 			if (pluggable != null) {
@@ -223,7 +225,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				ItemStack[] stacks = pluggable.getDropItems(pipe);
 				if (stacks != null) {
 					for (ItemStack stack : stacks) {
-						InvUtils.dropItems(pipe.worldObj, stack, pipe.xCoord, pipe.yCoord, pipe.zCoord);
+						InvUtils.dropItems(pipe.worldObj, stack, pipe.getPos());
 					}
 				}
 				result = true;
@@ -242,7 +244,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		}
 
 		public void validate(TileGenericPipe pipe) {
-			for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
+			for (EnumFacing d : EnumFacing.values()) {
 				IPipePluggable p = pluggables[d.ordinal()];
 
 				if (p != null) {
@@ -264,7 +266,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		if (glassColor >= 0) {
 			nbt.setByte("stainedColor", (byte) glassColor);
 		}
-		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+		for (int i = 0; i < EnumFacing.values().length; i++) {
 			final String key = "redstoneInputSide[" + i + "]";
 			nbt.setByte(key, (byte) redstoneInputSide[i]);
 		}
@@ -287,7 +289,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		
 		redstoneInput = 0;
 		
-		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+		for (int i = 0; i < EnumFacing.values().length; i++) {
 			final String key = "redstoneInputSide[" + i + "]";
 			if (nbt.hasKey(key)) {
 				redstoneInputSide[i] = nbt.getByte(key);
@@ -307,7 +309,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		if (pipe != null) {
 			pipe.readFromNBT(nbt);
 		} else {
-			BCLog.logger.log(Level.WARN, "Pipe failed to load from NBT at {0},{1},{2}", new Object[]{xCoord, yCoord, zCoord});
+			BCLog.logger.log(Level.WARN, "Pipe failed to load from NBT at {0}", new Object[]{getPos().toString()});
 			deletePipe = true;
 		}
 
@@ -344,27 +346,26 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	protected void notifyBlockChanged() {
-		worldObj.notifyBlockOfNeighborChange(xCoord, yCoord, zCoord, getBlock());
+		worldObj.notifyBlockOfStateChange(getPos(), getBlock());
 		scheduleRenderUpdate();
 		sendUpdateToClient();
 		BlockGenericPipe.updateNeighbourSignalState(pipe);
 	}
 
-	@Override
-	public void updateEntity() {
+	public void update() {
 		if (attachPluggables) {
 			attachPluggables = false;
 			// Attach callback
-			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+			for (int i = 0; i < EnumFacing.values().length; i++) {
 				if (sideProperties.pluggables[i] != null) {
-					sideProperties.pluggables[i].onAttachedPipe(this, ForgeDirection.getOrientation(i));
+					sideProperties.pluggables[i].onAttachedPipe(this, EnumFacing.getFront(i));
 				}
 			}
 		}
 
 		if (!worldObj.isRemote) {
 			if (deletePipe) {
-				worldObj.setBlockToAir(xCoord, yCoord, zCoord);
+				worldObj.setBlockToAir(pos);
 			}
 
 			if (pipe == null) {
@@ -412,7 +413,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				for (Object o : world.playerEntities) {
 					EntityPlayerMP player = (EntityPlayerMP) o;
 
-					if (world.getPlayerManager().isPlayerWatchingChunk (player, xCoord >> 4, zCoord >> 4)) {
+					if (world.getPlayerManager().isPlayerWatchingChunk (player, pos.getX() >> 4, pos.getZ() >> 4)) {
 						BuildCraftCore.instance.sendToPlayer(player, updatePacket);
 					}
 				}
@@ -443,13 +444,13 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		renderState.glassColor = (byte) glassColor;
 		
 		// Pipe connections;
-		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing o : EnumFacing.values()) {
 			renderState.pipeConnectionMatrix.setConnected(o, this.pipeConnectionsBuffer[o.ordinal()]);
 		}
 
 		// Pipe Textures
-		for (int i = 0; i < 7; i++) {
-			ForgeDirection o = ForgeDirection.getOrientation(i);
+		for (int i = 0; i < 6; i++) {
+			EnumFacing o = EnumFacing.getFront(i);
 			renderState.textureMatrix.setIconIndex(o, pipe.getIconIndex(o));
 		}
 
@@ -457,7 +458,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		for (PipeWire color : PipeWire.values()) {
 			renderState.wireMatrix.setWire(color, pipe.wireSet[color.ordinal()]);
 
-			for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+			for (EnumFacing direction : EnumFacing.values()) {
 				renderState.wireMatrix.setWireConnected(color, direction, pipe.isWireConnectedTo(this.getTile(direction), color));
 			}
 
@@ -483,7 +484,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		}
 
 		// Gate Textures and movement
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing direction : EnumFacing.values()) {
 			final Gate gate = pipe.gates[direction.ordinal()];
 			renderState.gateMatrix.setIsGateExists(gate != null, direction);
 			renderState.gateMatrix.setIsGateLit(gate != null && gate.isGateActive(), direction);
@@ -491,7 +492,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		}
 
 		// Facades
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing direction : EnumFacing.values()) {
 			IPipePluggable pluggable = sideProperties.pluggables[direction.ordinal()];
 			if (!(pluggable instanceof ItemFacade.FacadePluggable)) {
 				renderState.facadeMatrix.setFacade(direction, null, 0, true);
@@ -524,7 +525,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		}
 
 		//Plugs
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing direction : EnumFacing.values()) {
 			IPipePluggable pluggable = sideProperties.pluggables[direction.ordinal()];
 			renderState.plugMatrix.setConnected(direction, pluggable instanceof ItemPlug.PlugPluggable);
 
@@ -559,14 +560,14 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		this.blockType = getBlockType();
 
 		if (pipe == null) {
-			BCLog.logger.log(Level.WARN, "Pipe failed to initialize at {0},{1},{2}, deleting", new Object[]{xCoord, yCoord, zCoord});
-			worldObj.setBlockToAir(xCoord, yCoord, zCoord);
+			BCLog.logger.log(Level.WARN, "Pipe failed to initialize at {0}, deleting", new Object[]{getPos().toString()});
+			worldObj.setBlockToAir(getPos());
 			return;
 		}
 
 		this.pipe = pipe;
 
-		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing o : EnumFacing.values()) {
 			TileEntity tile = getTile(o);
 
 			if (tile instanceof ITileBufferHolder) {
@@ -608,14 +609,14 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	/* IPIPEENTRY */
 	@Override
-	public int injectItem(ItemStack payload, boolean doAdd, ForgeDirection from, EnumColor color) {
+	public int injectItem(ItemStack payload, boolean doAdd, EnumFacing from, EnumColor color) {
 		if (!pipe.inputOpen(from)) {
 			return 0;
 		}
 
 		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof PipeTransportItems && isPipeConnected(from)) {
 			if (doAdd) {
-				Position itemPos = new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5, from.getOpposite());
+				Position itemPos = new Position(getPos().getX() + 0.5, getPos().getY() + 0.5, getPos().getZ() + 0.5, from.getOpposite());
 				itemPos.moveBackwards(0.4);
 
 				TravelingItem pipedItem = TravelingItem.make(itemPos.x, itemPos.y, itemPos.z, payload);
@@ -629,7 +630,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	@Override
-	public int injectItem(ItemStack payload, boolean doAdd, ForgeDirection from) {
+	public int injectItem(ItemStack payload, boolean doAdd, EnumFacing from) {
 		return injectItem(payload, doAdd, from, null);
 	}
 
@@ -647,7 +648,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		bindPipe();
 		updateCoreState();
 
-		PacketTileState packet = new PacketTileState(this.xCoord, this.yCoord, this.zCoord);
+		PacketTileState packet = new PacketTileState(pos);
 
 		if (pipe != null && pipe.transport != null) {
 			pipe.transport.sendDescriptionPacket();
@@ -673,19 +674,19 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	@Override
-	public void blockRemoved(ForgeDirection from) {
+	public void blockRemoved(EnumFacing from) {
 
 	}
 
 	public TileBuffer[] getTileCache() {
 		if (tileBuffer == null && pipe != null) {
-			tileBuffer = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, pipe.transport.delveIntoUnloadedChunks());
+			tileBuffer = TileBuffer.makeBuffer(worldObj, pos, pipe.transport.delveIntoUnloadedChunks());
 		}
 		return tileBuffer;
 	}
 
 	@Override
-	public void blockCreated(ForgeDirection from, Block block, TileEntity tile) {
+	public void blockCreated(EnumFacing from, IBlockState block, TileEntity tile) {
 		TileBuffer[] cache = getTileCache();
 		if (cache != null) {
 			cache[from.getOpposite().ordinal()].set(block, tile);
@@ -693,7 +694,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	@Override
-	public Block getBlock(ForgeDirection to) {
+	public Block getBlock(EnumFacing to) {
 		TileBuffer[] cache = getTileCache();
 		if (cache != null) {
 			return cache[to.ordinal()].getBlock();
@@ -703,7 +704,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	@Override
-	public TileEntity getTile(ForgeDirection to) {
+	public TileEntity getTile(EnumFacing to) {
 		TileBuffer[] cache = getTileCache();
 		if (cache != null) {
 			return cache[to.ordinal()].getTile();
@@ -712,7 +713,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		}
 	}
 	
-	protected boolean canPipeConnect_internal(TileEntity with, ForgeDirection side) {
+	protected boolean canPipeConnect_internal(TileEntity with, EnumFacing side) {
 		if (!(pipe instanceof IPipeConnectionForced) || !((IPipeConnectionForced) pipe).ignoreConnectionOverrides(side)) {
 			if (with instanceof IPipeConnection) {
 				IPipeConnection.ConnectOverride override = ((IPipeConnection) with).overridePipeConnection(pipe.transport.getPipeType(), side.getOpposite());
@@ -754,7 +755,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	 * @param side - The orientation to get to the other tile ('with')
 	 * @return true if pipes are considered connected
 	 */
-	protected boolean canPipeConnect(TileEntity with, ForgeDirection side) {
+	protected boolean canPipeConnect(TileEntity with, EnumFacing side) {
 		if (with == null) {
 			return false;
 		}
@@ -770,7 +771,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		return canPipeConnect_internal(with, side);
 	}
 
-	protected boolean hasBlockingPluggable(ForgeDirection side) {
+	protected boolean hasBlockingPluggable(EnumFacing side) {
 		IPipePluggable pluggable = sideProperties.pluggables[side.ordinal()];
 		return pluggable != null && pluggable.blocking(this, side);
 	}
@@ -781,7 +782,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			return;
 		}
 
-		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing side : EnumFacing.values()) {
 			TileBuffer t = cache[side.ordinal()];
 			t.refresh();
 
@@ -790,7 +791,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	@Override
-	public boolean isPipeConnected(ForgeDirection with) {
+	public boolean isPipeConnected(EnumFacing with) {
 		if (worldObj.isRemote) {
 			return renderState.pipeConnectionMatrix.isConnected(with);
 		}
@@ -817,7 +818,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	 * ITankContainer implementation *
 	 */
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof IFluidHandler && !hasPlug(from) && !hasRobotStation(from)) {
 			return ((IFluidHandler) pipe.transport).fill(from, resource, doFill);
 		} else {
@@ -826,7 +827,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
 		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof IFluidHandler && !hasPlug(from) && !hasRobotStation(from)) {
 			return ((IFluidHandler) pipe.transport).drain(from, maxDrain, doDrain);
 		} else {
@@ -835,7 +836,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
 		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof IFluidHandler && !hasPlug(from) && !hasRobotStation(from)) {
 			return ((IFluidHandler) pipe.transport).drain(from, resource, doDrain);
 		} else {
@@ -844,7 +845,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
+	public boolean canFill(EnumFacing from, Fluid fluid) {
 		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof IFluidHandler && !hasPlug(from) && !hasRobotStation(from)) {
 			return ((IFluidHandler) pipe.transport).canFill(from, fluid);
 		} else {
@@ -853,7 +854,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
 		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof IFluidHandler && !hasPlug(from) && !hasRobotStation(from)) {
 			return ((IFluidHandler) pipe.transport).canDrain(from, fluid);
 		} else {
@@ -862,7 +863,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+	public FluidTankInfo[] getTankInfo(EnumFacing from) {
 		return null;
 	}
 
@@ -870,45 +871,45 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		refreshRenderState = true;
 	}
 
-	public boolean addFacade(ForgeDirection direction, FacadeState[] states) {
+	public boolean addFacade(EnumFacing direction, FacadeState[] states) {
 		return setPluggable(direction, new ItemFacade.FacadePluggable(states));
 	}
 
-	public boolean addPlug(ForgeDirection direction) {
+	public boolean addPlug(EnumFacing direction) {
 		return setPluggable(direction, new ItemPlug.PlugPluggable());
 	}
 
-	public boolean addRobotStation(ForgeDirection direction) {
+	public boolean addRobotStation(EnumFacing direction) {
 		return setPluggable(direction, new ItemRobotStation.RobotStationPluggable());
 	}
 
-	public boolean addGate(ForgeDirection direction, Gate gate) {
+	public boolean addGate(EnumFacing direction, Gate gate) {
 		gate.setDirection(direction);
 		pipe.gates[direction.ordinal()] = gate;
 		return setPluggable(direction, new ItemGate.GatePluggable(gate));
 	}
 
-	public boolean hasFacade(ForgeDirection direction) {
-		if (direction == null || direction == ForgeDirection.UNKNOWN) {
+	public boolean hasFacade(EnumFacing direction) {
+		if (direction == null || direction == null) {
 			return false;
-		} else if (this.getWorldObj().isRemote) {
+		} else if (this.getWorld().isRemote) {
 			return renderState.facadeMatrix.getFacadeBlock(direction) != null;
 		} else {
 			return sideProperties.pluggables[direction.ordinal()] instanceof ItemFacade.FacadePluggable;
 		}
 	}
 
-	public boolean hasGate(ForgeDirection direction) {
-		if (direction == null || direction == ForgeDirection.UNKNOWN) {
+	public boolean hasGate(EnumFacing direction) {
+		if (direction == null || direction == null) {
 			return false;
-		} else if (this.getWorldObj().isRemote) {
+		} else if (this.getWorld().isRemote) {
 			return renderState.gateMatrix.isGateExists(direction);
 		} else {
 			return sideProperties.pluggables[direction.ordinal()] instanceof ItemGate.GatePluggable;
 		}
 	}
 
-	public boolean setPluggable(ForgeDirection direction, IPipePluggable pluggable) {
+	public boolean setPluggable(EnumFacing direction, IPipePluggable pluggable) {
 		if (worldObj != null && worldObj.isRemote || pluggable == null) {
 			return false;
 		}
@@ -920,38 +921,29 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	private void updateCoreState() {
-		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+		for (int i = 0; i < EnumFacing.values().length; i++) {
 			IPipePluggable pluggable = sideProperties.pluggables[i];
 			coreState.gates[i] = pluggable instanceof ItemGate.GatePluggable ? (ItemGate.GatePluggable) pluggable : null;
 		}
 	}
 
-	public boolean hasEnabledFacade(ForgeDirection direction) {
+	public boolean hasEnabledFacade(EnumFacing direction) {
 		return hasFacade(direction) && !renderState.facadeMatrix.getFacadeTransparent(direction);
 	}
 
-	public ItemStack getFacade(ForgeDirection direction) {
+	public ItemStack getFacade(EnumFacing direction) {
 		IPipePluggable pluggable = sideProperties.pluggables[direction.ordinal()];
 		return pluggable instanceof ItemFacade.FacadePluggable ?
 				ItemFacade.getFacade(((ItemFacade.FacadePluggable) pluggable).states) : null;
 	}
 
-	public DockingStation getStation(ForgeDirection direction) {
+	public DockingStation getStation(EnumFacing direction) {
 		IPipePluggable pluggable = sideProperties.pluggables[direction.ordinal()];
 		return pluggable instanceof ItemRobotStation.RobotStationPluggable ?
 				((ItemRobotStation.RobotStationPluggable) pluggable).getStation() : null;
 	}
 
-	// Legacy
-	public void setGate(Gate gate, int direction) {
-		if (sideProperties.pluggables[direction] == null) {
-			gate.setDirection(ForgeDirection.getOrientation(direction));
-			pipe.gates[direction] = gate;
-			sideProperties.pluggables[direction] = new ItemGate.GatePluggable(gate);
-		}
-	}
-
-	public boolean dropSideItems(ForgeDirection direction) {
+	public boolean dropSideItems(EnumFacing direction) {
 		return sideProperties.dropItem(this, direction);
 	}
 
@@ -992,7 +984,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 					break;
 				}
 
-				for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+				for (int i = 0; i < EnumFacing.values().length; i++) {
 					final ItemGate.GatePluggable gatePluggable = coreState.gates[i];
 					if (gatePluggable == null) {
 						pipe.gates[i] = null;
@@ -1000,18 +992,18 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 					}
 					Gate gate = pipe.gates[i];
 					if (gate == null || gate.logic != gatePluggable.logic || gate.material != gatePluggable.material) {
-						pipe.gates[i] = GateFactory.makeGate(pipe, gatePluggable.material, gatePluggable.logic, ForgeDirection.getOrientation(i));
+						pipe.gates[i] = GateFactory.makeGate(pipe, gatePluggable.material, gatePluggable.logic, EnumFacing.getFront(i));
 					}
 				}
 
 				syncGateExpansions();
 
-				worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+				worldObj.markBlockRangeForRenderUpdate(pos, pos);
 				break;
 
 			case 1: {
 				if (renderState.needsRenderUpdate()) {
-					worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+					worldObj.markBlockRangeForRenderUpdate(pos, pos);
 					renderState.clean();
 				}
 				break;
@@ -1021,7 +1013,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	private void syncGateExpansions() {
 		resyncGateExpansions = false;
-		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+		for (int i = 0; i < EnumFacing.values().length; i++) {
 			Gate gate = pipe.gates[i];
 			ItemGate.GatePluggable gatePluggable = coreState.gates[i];
 			if (gate != null && gatePluggable.expansions.length > 0) {
@@ -1045,12 +1037,12 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	@Override
-	public boolean shouldRefresh(Block oldBlock, Block newBlock, int oldMeta, int newMeta, World world, int x, int y, int z) {
-		return oldBlock != newBlock;
+	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
+		return oldState != newState;
 	}
 
 	@Override
-	public boolean isSolidOnSide(ForgeDirection side) {
+	public boolean isSolidOnSide(EnumFacing side) {
 		if (hasFacade(side)) {
 			return true;
 		}
@@ -1063,8 +1055,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		return false;
 	}
 
-	public boolean hasPlug(ForgeDirection side) {
-		if (side == null || side == ForgeDirection.UNKNOWN) {
+	public boolean hasPlug(EnumFacing side) {
+		if (side == null) {
 			return false;
 		}
 
@@ -1075,8 +1067,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		return sideProperties.pluggables[side.ordinal()] instanceof ItemPlug.PlugPluggable;
 	}
 
-	public boolean hasRobotStation(ForgeDirection side) {
-		if (side == null || side == ForgeDirection.UNKNOWN) {
+	public boolean hasRobotStation(EnumFacing side) {
+		if (side == null) {
 			return false;
 		}
 
@@ -1097,7 +1089,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	public boolean isUseableByPlayer(EntityPlayer player) {
-		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
+		return worldObj.getTileEntity(pos) == this;
 	}
 
 	@Override
@@ -1115,7 +1107,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	@Override
-	public boolean canConnectEnergy(ForgeDirection from) {
+	public boolean canConnectEnergy(EnumFacing from) {
 		if (pipe instanceof IEnergyHandler) {
 			return ((IEnergyHandler) pipe).canConnectEnergy(from);
 		} else {
@@ -1124,7 +1116,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	@Override
-	public int receiveEnergy(ForgeDirection from, int maxReceive,
+	public int receiveEnergy(EnumFacing from, int maxReceive,
 			boolean simulate) {
 		if (pipe instanceof IEnergyHandler) {
 			return ((IEnergyHandler) pipe).receiveEnergy(from, maxReceive, simulate);
@@ -1134,7 +1126,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	@Override
-	public int extractEnergy(ForgeDirection from, int maxExtract,
+	public int extractEnergy(EnumFacing from, int maxExtract,
 			boolean simulate) {
 		if (pipe instanceof IEnergyHandler) {
 			return ((IEnergyHandler) pipe).extractEnergy(from, maxExtract, simulate);
@@ -1144,7 +1136,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	@Override
-	public int getEnergyStored(ForgeDirection from) {
+	public int getEnergyStored(EnumFacing from) {
 		if (pipe instanceof IEnergyHandler) {
 			return ((IEnergyHandler) pipe).getEnergyStored(from);
 		} else {
@@ -1153,7 +1145,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	@Override
-	public int getMaxEnergyStored(ForgeDirection from) {
+	public int getMaxEnergyStored(EnumFacing from) {
 		if (pipe instanceof IEnergyHandler) {
 			return ((IEnergyHandler) pipe).getMaxEnergyStored(from);
 		} else {
@@ -1162,7 +1154,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	@Override
-	public TileEntity getAdjacentTile(ForgeDirection dir) {
+	public TileEntity getAdjacentTile(EnumFacing dir) {
 		return getTile(dir);
 	}
 

@@ -23,7 +23,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 
 import buildcraft.BuildCraftCore;
@@ -75,28 +75,28 @@ public class BlockRefinery extends BlockBuildCraft {
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
 
-		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
+		EnumFacing orientation = Utils.get2dOrientation(entityliving);
 
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
 	}
 
 	@Override
-	public boolean rotateBlock(World world, int x, int y, int z, ForgeDirection axis) {
+	public boolean rotateBlock(World world, int x, int y, int z, EnumFacing axis) {
 		int meta = world.getBlockMetadata(x, y, z);
 
-		switch (ForgeDirection.getOrientation(meta)) {
+		switch (EnumFacing.getOrientation(meta)) {
 			case WEST:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.SOUTH.ordinal(), 3);
+				world.setBlockMetadataWithNotify(x, y, z, EnumFacing.SOUTH.ordinal(), 3);
 				break;
 			case EAST:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.NORTH.ordinal(), 3);
+				world.setBlockMetadataWithNotify(x, y, z, EnumFacing.NORTH.ordinal(), 3);
 				break;
 			case NORTH:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.WEST.ordinal(), 3);
+				world.setBlockMetadataWithNotify(x, y, z, EnumFacing.WEST.ordinal(), 3);
 				break;
 			case SOUTH:
 			default:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.EAST.ordinal(), 3);
+				world.setBlockMetadataWithNotify(x, y, z, EnumFacing.EAST.ordinal(), 3);
 				break;
 		}
 		world.markBlockForUpdate(x, y, z);
@@ -126,7 +126,7 @@ public class BlockRefinery extends BlockBuildCraft {
 
 		if (current != null && current.getItem() != Items.bucket) {
 			if (!world.isRemote) {
-				if (TankUtils.handleRightClick((TileRefinery) tile, ForgeDirection.getOrientation(side), player, true, false)) {
+				if (TankUtils.handleRightClick((TileRefinery) tile, EnumFacing.getOrientation(side), player, true, false)) {
 					return true;
 				}
 			} else if (FluidContainerRegistry.isContainer(current)) {

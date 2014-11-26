@@ -10,7 +10,7 @@ package buildcraft.transport.utils;
 
 import io.netty.buffer.ByteBuf;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.core.ISerializable;
 
 public class RobotStationMatrix implements ISerializable {
@@ -28,18 +28,18 @@ public class RobotStationMatrix implements ISerializable {
 		}
 	}
 
-	public boolean isConnected(ForgeDirection direction) {
+	public boolean isConnected(EnumFacing direction) {
 		return states[direction.ordinal()] != RobotStationState.None;
 	}
 
-	public void setState(ForgeDirection direction, RobotStationState value) {
+	public void setState(EnumFacing direction, RobotStationState value) {
 		if (states[direction.ordinal()] != value) {
 			states[direction.ordinal()] = value;
 			dirty = true;
 		}
 	}
 
-	public RobotStationState getState(ForgeDirection direction) {
+	public RobotStationState getState(EnumFacing direction) {
 		return states[direction.ordinal()];
 	}
 

@@ -13,7 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
@@ -50,8 +50,8 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
-		if (direction != ForgeDirection.UNKNOWN && powerSources[direction.ordinal()]) {
+	public int getIconIndex(EnumFacing direction) {
+		if (direction != EnumFacing.UNKNOWN && powerSources[direction.ordinal()]) {
 			return solidIconIndex;
 		} else {
 			return standardIconIndex;
@@ -64,7 +64,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 
 		sources = 0;
 
-		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing o : EnumFacing.values()) {
 			boolean oldPowerSource = powerSources[o.ordinal()];
 					
 			if (!container.isPipeConnected(o)) {
@@ -82,7 +82,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 			}
 		}
 		
-		if (container.getWorldObj().isRemote) {
+		if (container.getWorld().isRemote) {
 			// We only do the isRemote check now to get a list
 			// of power sources for client-side rendering.
 			return;
@@ -116,7 +116,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 		energyToRemove /= sources;
 
 		if (battery.getEnergyStored() > 0) {
-			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+			for (EnumFacing o : EnumFacing.values()) {
 				if (!powerSources[o.ordinal()]) {
 					continue;
 				}
@@ -152,7 +152,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 		battery.writeToNBT(batteryNBT);
 		data.setTag("battery", batteryNBT);
 
-		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+		for (int i = 0; i < EnumFacing.values().length; i++) {
 			data.setBoolean("powerSources[" + i + "]", powerSources[i]);
 		}
 	}
@@ -162,18 +162,18 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 		super.readFromNBT(data);
 		battery.readFromNBT(data.getCompoundTag("battery"));
 
-		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+		for (int i = 0; i < EnumFacing.values().length; i++) {
 			powerSources[i] = data.getBoolean("powerSources[" + i + "]");
 		}
 	}
 
 	@Override
-	public int receiveEnergy(ForgeDirection from, int val) {
+	public int receiveEnergy(EnumFacing from, int val) {
 		return -1;
 	}
 
 	@Override
-	public int requestEnergy(ForgeDirection from, int amount) {
+	public int requestEnergy(EnumFacing from, int amount) {
 		if (container.getTile(from) instanceof IPipeTile) {
 			requestedEnergy += amount;
 			return amount;
@@ -182,7 +182,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 		}
 	}
 
-	public boolean isPowerSource(TileEntity tile, ForgeDirection from) {
+	public boolean isPowerSource(TileEntity tile, EnumFacing from) {
 		if (!transport.inputOpen(from)) {
 			return false;
 		} else {
@@ -191,12 +191,12 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 	}
 
 	@Override
-	public boolean canConnectEnergy(ForgeDirection from) {
+	public boolean canConnectEnergy(EnumFacing from) {
 		return true;
 	}
 
 	@Override
-	public int receiveEnergy(ForgeDirection from, int maxReceive,
+	public int receiveEnergy(EnumFacing from, int maxReceive,
 			boolean simulate) {
 		if (from.ordinal() < 6 && powerSources[from.ordinal()]) {
 			return battery.receiveEnergy(maxReceive, simulate);
@@ -206,18 +206,18 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 	}
 
 	@Override
-	public int extractEnergy(ForgeDirection from, int maxExtract,
+	public int extractEnergy(EnumFacing from, int maxExtract,
 			boolean simulate) {
 		return 0;
 	}
 
 	@Override
-	public int getEnergyStored(ForgeDirection from) {
+	public int getEnergyStored(EnumFacing from) {
 		return battery.getEnergyStored();
 	}
 
 	@Override
-	public int getMaxEnergyStored(ForgeDirection from) {
+	public int getMaxEnergyStored(EnumFacing from) {
 		return battery.getMaxEnergyStored();
 	}
 }

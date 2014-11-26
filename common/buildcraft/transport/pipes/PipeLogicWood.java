@@ -12,7 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.TileBuffer;
@@ -28,10 +28,10 @@ public abstract class PipeLogicWood {
 
 	private void switchSource() {
 		int meta = pipe.container.getBlockMetadata();
-		ForgeDirection newFacing = null;
+		EnumFacing newFacing = null;
 
 		for (int i = meta + 1; i <= meta + 6; ++i) {
-			ForgeDirection facing = ForgeDirection.getOrientation(i % 6);
+			EnumFacing facing = EnumFacing.getOrientation(i % 6);
 			if (isValidFacing(facing)) {
 				newFacing = facing;
 				break;
@@ -39,7 +39,7 @@ public abstract class PipeLogicWood {
 		}
 
 		if (newFacing != null && newFacing.ordinal() != meta) {
-			pipe.container.getWorldObj().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, newFacing.ordinal(), 3);
+			pipe.container.getWorld().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, newFacing.ordinal(), 3);
 			pipe.container.scheduleRenderUpdate();
 		}
 	}
@@ -50,14 +50,14 @@ public abstract class PipeLogicWood {
 		if (meta > 5) {
 			switchSource();
 		} else {
-			ForgeDirection facing = ForgeDirection.getOrientation(meta);
+			EnumFacing facing = EnumFacing.getOrientation(meta);
 			if (!isValidFacing(facing)) {
 				switchSource();
 			}
 		}
 	}
 
-	private boolean isValidFacing(ForgeDirection side) {
+	private boolean isValidFacing(EnumFacing side) {
 		TileBuffer[] tileBuffer = pipe.container.getTileCache();
 		if (tileBuffer == null) {
 			return true;
@@ -74,7 +74,7 @@ public abstract class PipeLogicWood {
 	protected abstract boolean isValidConnectingTile(TileEntity tile);
 
 	public void initialize() {
-		if (!pipe.container.getWorldObj().isRemote) {
+		if (!pipe.container.getWorld().isRemote) {
 			switchSourceIfNeeded();
 		}
 	}
@@ -91,7 +91,7 @@ public abstract class PipeLogicWood {
 	}
 
 	public void onNeighborBlockChange(int blockId) {
-		if (!pipe.container.getWorldObj().isRemote) {
+		if (!pipe.container.getWorld().isRemote) {
 			switchSourceIfNeeded();
 		}
 	}

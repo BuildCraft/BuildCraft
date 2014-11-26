@@ -5,7 +5,7 @@ import net.minecraft.item.Item;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
@@ -32,8 +32,8 @@ public class PipePowerEmerald extends PipePowerWood {
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
-		if (direction != ForgeDirection.UNKNOWN && powerSources[direction.ordinal()]) {
+	public int getIconIndex(EnumFacing direction) {
+		if (direction != EnumFacing.UNKNOWN && powerSources[direction.ordinal()]) {
 			return solidIconIndex;
 		} else {
 			return standardIconIndex;

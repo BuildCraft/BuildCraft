@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.ITriggerExternal;
@@ -33,7 +33,7 @@ public class RobotsTriggerProvider implements ITriggerProvider {
 
 		boolean stationFound = false;
 
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing dir : EnumFacing.values()) {
 			if (((TileGenericPipe) tile).getStation(dir) != null) {
 				stationFound = true;
 				break;
@@ -50,7 +50,7 @@ public class RobotsTriggerProvider implements ITriggerProvider {
 	}
 
 	@Override
-	public Collection<ITriggerExternal> getExternalTriggers(ForgeDirection side, TileEntity tile) {
+	public Collection<ITriggerExternal> getExternalTriggers(EnumFacing side, TileEntity tile) {
 		return null;
 	}
 

@@ -14,7 +14,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -33,7 +33,7 @@ public final class TankUtils {
 	private TankUtils() {
 	}
 
-	public static boolean handleRightClick(IFluidHandler tank, ForgeDirection side, EntityPlayer player, boolean fill, boolean drain) {
+	public static boolean handleRightClick(IFluidHandler tank, EnumFacing side, EntityPlayer player, boolean fill, boolean drain) {
 		if (player == null || tank == null) {
 			return false;
 		}
@@ -95,7 +95,7 @@ public final class TankUtils {
 
 	public static void pushFluidToConsumers(IFluidTank tank, int flowCap, TileBuffer[] tileBuffer) {
 		int amountToPush = flowCap;
-		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing side : EnumFacing.values()) {
 			FluidStack fluidStack = tank.drain(amountToPush, false);
 			if (fluidStack != null && fluidStack.amount > 0) {
 				TileEntity tile = tileBuffer[side.ordinal()].getTile();

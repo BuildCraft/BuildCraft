@@ -31,7 +31,7 @@ import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -80,10 +80,10 @@ public class EntityRobot extends EntityRobotBase implements
 	public LaserData laser = new LaserData();
 	public IDockingStation linkedDockingStation;
 	public BlockIndex linkedDockingStationIndex;
-	public ForgeDirection linkedDockingStationSide;
+	public EnumFacing linkedDockingStationSide;
 
 	public BlockIndex currentDockingStationIndex;
-	public ForgeDirection currentDockingStationSide;
+	public EnumFacing currentDockingStationSide;
 
 	public boolean isDocked = false;
 
@@ -267,9 +267,9 @@ public class EntityRobot extends EntityRobotBase implements
 			motionX = 0;
 			motionY = 0;
 			motionZ = 0;
-			posX = currentDockingStation.x() + 0.5F + currentDockingStation.side().offsetX * 0.5F;
-			posY = currentDockingStation.y() + 0.5F + currentDockingStation.side().offsetY * 0.5F;
-			posZ = currentDockingStation.z() + 0.5F + currentDockingStation.side().offsetZ * 0.5F;
+			posX = currentDockingStation.x() + 0.5F + currentDockingStation.side().getFrontOffsetX() * 0.5F;
+			posY = currentDockingStation.y() + 0.5F + currentDockingStation.side().getFrontOffsetY() * 0.5F;
+			posZ = currentDockingStation.z() + 0.5F + currentDockingStation.side().getFrontOffsetZ() * 0.5F;
 		}
 
 		if (!worldObj.isRemote) {
@@ -492,12 +492,12 @@ public class EntityRobot extends EntityRobotBase implements
 
 		NBTTagCompound linkedStationNBT = nbt.getCompoundTag("linkedStation");
 		linkedDockingStationIndex = new BlockIndex(linkedStationNBT.getCompoundTag("index"));
-		linkedDockingStationSide = ForgeDirection.values()[linkedStationNBT.getByte("side")];
+		linkedDockingStationSide = EnumFacing.values()[linkedStationNBT.getByte("side")];
 
 		if (nbt.hasKey("currentStation")) {
 			NBTTagCompound currentStationNBT = nbt.getCompoundTag("currentStation");
 			currentDockingStationIndex = new BlockIndex(currentStationNBT.getCompoundTag("index"));
-			currentDockingStationSide = ForgeDirection.values()[currentStationNBT.getByte("side")];
+			currentDockingStationSide = EnumFacing.values()[currentStationNBT.getByte("side")];
 
 		}
 
@@ -548,9 +548,9 @@ public class EntityRobot extends EntityRobotBase implements
 		currentDockingStation = (DockingStation) station;
 
 		setSteamDirection(
-				currentDockingStation.side.offsetX,
-				currentDockingStation.side.offsetY,
-				currentDockingStation.side.offsetZ);
+				currentDockingStation.side.getFrontOffsetX(),
+				currentDockingStation.side.getFrontOffsetY(),
+				currentDockingStation.side.getFrontOffsetZ());
 
 		currentDockingStationIndex = currentDockingStation.index();
 		currentDockingStationSide = currentDockingStation.side();
@@ -752,9 +752,9 @@ public class EntityRobot extends EntityRobotBase implements
 
 				if (currentDockingStation != null) {
 					setSteamDirection(
-							currentDockingStation.side.offsetX,
-							currentDockingStation.side.offsetY,
-							currentDockingStation.side.offsetZ);
+							currentDockingStation.side.getFrontOffsetX(),
+							currentDockingStation.side.getFrontOffsetY(),
+							currentDockingStation.side.getFrontOffsetZ());
 				} else {
 					setSteamDirection(0, -1, 0);
 				}
@@ -995,7 +995,7 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		int result = 0;
 
 		if (tank == null) {
@@ -1024,7 +1024,7 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
 		if (tank != null && tank.fluidID == resource.fluidID) {
 			return drain(from, resource.amount, doDrain);
 		} else {
@@ -1033,7 +1033,7 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
 		FluidStack result = null;
 
 		if (tank == null) {
@@ -1061,7 +1061,7 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
+	public boolean canFill(EnumFacing from, Fluid fluid) {
 		return tank == null
 				|| tank.amount == 0
 				|| (tank.amount < maxFluid
@@ -1069,14 +1069,14 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
 		return tank != null
 				&& tank.amount != 0
 				&& tank.fluidID == fluid.getID();
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+	public FluidTankInfo[] getTankInfo(EnumFacing from) {
 		return new FluidTankInfo[] {new FluidTankInfo(tank, maxFluid)};
 	}
 }

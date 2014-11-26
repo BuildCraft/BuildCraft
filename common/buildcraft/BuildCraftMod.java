@@ -14,12 +14,12 @@ import org.apache.logging.log4j.Level;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.network.FMLEmbeddedChannel;
-import cpw.mods.fml.common.network.FMLOutboundHandler;
-import cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
+import net.minecraftforge.fml.common.network.FMLOutboundHandler;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.network.BuildCraftPacket;
@@ -32,15 +32,19 @@ public class BuildCraftMod {
 			channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
 					.set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
 			channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS)
-					.set(new NetworkRegistry.TargetPoint(world.provider.dimensionId, x, y, z, maxDistance));
+					.set(new NetworkRegistry.TargetPoint(world.provider.getDimensionId(), x, y, z, maxDistance));
 			channels.get(Side.SERVER).writeOutbound(packet);
 		} catch (Throwable t) {
 			BCLog.logger.log(Level.WARN, "sendToPlayers crash", t);
 		}
 	}
 
+	public void sendToPlayers(BuildCraftPacket packet, World world, BlockPos pos, int maxDistance) {
+		sendToPlayers(packet, world, pos.getX(), pos.getY(), pos.getZ(), maxDistance);
+	}
+
 	public void sendToPlayersNear(BuildCraftPacket packet, TileEntity tileEntity, int maxDistance) {
-		sendToPlayers(packet, tileEntity.getWorldObj(), tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, maxDistance);
+		sendToPlayers(packet, tileEntity.getWorld(), tileEntity.getPos(), maxDistance);
 	}
 
 	public void sendToPlayersNear(BuildCraftPacket packet, TileEntity tileEntity) {
@@ -52,7 +56,7 @@ public class BuildCraftMod {
 			channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
 					.set(FMLOutboundHandler.OutboundTarget.DIMENSION);
 			channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS)
-					.set(world.provider.dimensionId);
+					.set(world.provider.getDimensionId());
 			channels.get(Side.SERVER).writeOutbound(packet);
 		} catch (Throwable t) {
 			BCLog.logger.log(Level.WARN, "sendToWorld crash", t);
@@ -66,7 +70,7 @@ public class BuildCraftMod {
 			channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(entityplayer);
 			channels.get(Side.SERVER).writeOutbound(packet);
 		} catch (Throwable t) {
-			String name = entityplayer.getDisplayName();
+			String name = entityplayer.getDisplayNameString();
 
 			if (name == null) {
 				name = "<no name>";
@@ -88,7 +92,7 @@ public class BuildCraftMod {
 
 	public void sendToServer(BuildCraftPacket packet) {
 		try {
-			channels.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.TOSERVER);
+			channels.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.TOSERVER);
 			channels.get(Side.CLIENT).writeOutbound(packet);
 		} catch (Throwable t) {
 			BCLog.logger.log(Level.WARN, "sendToServer crash", t);

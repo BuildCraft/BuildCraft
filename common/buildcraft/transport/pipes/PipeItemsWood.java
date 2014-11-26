@@ -18,7 +18,7 @@ import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import cofh.api.energy.IEnergyHandler;
 
@@ -52,7 +52,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 			if (!(tile instanceof IInventory)) {
 				return false;
 			}
-			if (!PipeManager.canExtractItems(pipe, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord)) {
+			if (!PipeManager.canExtractItems(pipe, tile.getWorld(), tile.xCoord, tile.yCoord, tile.zCoord)) {
 				return false;
 			}
 			return true;
@@ -87,8 +87,8 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
-		if (direction == ForgeDirection.UNKNOWN) {
+	public int getIconIndex(EnumFacing direction) {
+		if (direction == EnumFacing.UNKNOWN) {
 			return standardIconIndex;
 		} else {
 			int metadata = container.getBlockMetadata();
@@ -105,7 +105,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 	public void updateEntity () {
 		super.updateEntity();
 
-		if (container.getWorldObj().isRemote) {
+		if (container.getWorld().isRemote) {
 			return;
 		}
 
@@ -136,11 +136,11 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 			return;
 		}
 
-		ForgeDirection side = ForgeDirection.getOrientation(meta);
+		EnumFacing side = EnumFacing.getOrientation(meta);
 		TileEntity tile = container.getTile(side);
 
 		if (tile instanceof IInventory) {
-			if (!PipeManager.canExtractItems(this, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord)) {
+			if (!PipeManager.canExtractItems(this, tile.getWorld(), tile.xCoord, tile.yCoord, tile.zCoord)) {
 				return;
 			}
 
@@ -180,7 +180,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 	 * inventory, null if none. On certain cases, the extractable slot depends
 	 * on the position of the pipe.
 	 */
-	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, ForgeDirection from) {
+	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, EnumFacing from) {
 		IInventory inv = InvUtils.getInventory(inventory);
 		ItemStack result = checkExtractGeneric(inv, doRemove, from);
 
@@ -191,11 +191,11 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 		return null;
 	}
 
-	public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, ForgeDirection from) {
+	public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, EnumFacing from) {
 		return checkExtractGeneric(InventoryWrapper.getWrappedInventory(inventory), doRemove, from);
 	}
 
-	public ItemStack checkExtractGeneric(ISidedInventory inventory, boolean doRemove, ForgeDirection from) {
+	public ItemStack checkExtractGeneric(ISidedInventory inventory, boolean doRemove, EnumFacing from) {
 		if (inventory == null) {
 			return null;
 		}
@@ -218,29 +218,29 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 	}
 
 	@Override
-	public boolean canConnectEnergy(ForgeDirection from) {
+	public boolean canConnectEnergy(EnumFacing from) {
 		return true;
 	}
 
 	@Override
-	public int receiveEnergy(ForgeDirection from, int maxReceive,
+	public int receiveEnergy(EnumFacing from, int maxReceive,
 			boolean simulate) {
 		return battery.receiveEnergy(maxReceive, simulate);
 	}
 
 	@Override
-	public int extractEnergy(ForgeDirection from, int maxExtract,
+	public int extractEnergy(EnumFacing from, int maxExtract,
 			boolean simulate) {
 		return 0;
 	}
 
 	@Override
-	public int getEnergyStored(ForgeDirection from) {
+	public int getEnergyStored(EnumFacing from) {
 		return battery.getEnergyStored();
 	}
 
 	@Override
-	public int getMaxEnergyStored(ForgeDirection from) {
+	public int getMaxEnergyStored(EnumFacing from) {
 		return battery.getMaxEnergyStored();
 	}
 }

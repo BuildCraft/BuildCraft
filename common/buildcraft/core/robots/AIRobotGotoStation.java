@@ -10,7 +10,7 @@ package buildcraft.core.robots;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
@@ -20,7 +20,7 @@ import buildcraft.api.robots.IDockingStation;
 public class AIRobotGotoStation extends AIRobot {
 
 	private BlockIndex stationIndex;
-	private ForgeDirection stationSide;
+	private EnumFacing stationSide;
 	private boolean docked = false;
 
 	public AIRobotGotoStation(EntityRobotBase iRobot) {
@@ -45,9 +45,9 @@ public class AIRobotGotoStation extends AIRobot {
 		} else {
 			if (station.take(robot)) {
 				startDelegateAI(new AIRobotGotoBlock(robot,
-						station.x() + station.side().offsetX,
-						station.y() + station.side().offsetY,
-						station.z() + station.side().offsetZ));
+						station.x() + station.side().getFrontOffsetX(),
+						station.y() + station.side().getFrontOffsetY(),
+						station.z() + station.side().getFrontOffsetZ()));
 			} else {
 				terminate();
 			}
@@ -64,9 +64,9 @@ public class AIRobotGotoStation extends AIRobot {
 			terminate();
 		} else if (ai instanceof AIRobotGotoBlock) {
 			startDelegateAI(new AIRobotStraightMoveTo(robot,
-					stationIndex.x + 0.5F + stationSide.offsetX * 0.5F,
-					stationIndex.y + 0.5F + stationSide.offsetY * 0.5F,
-					stationIndex.z + 0.5F + stationSide.offsetZ * 0.5F));
+					stationIndex.x + 0.5F + stationSide.getFrontOffsetX() * 0.5F,
+					stationIndex.y + 0.5F + stationSide.getFrontOffsetY() * 0.5F,
+					stationIndex.z + 0.5F + stationSide.getFrontOffsetZ() * 0.5F));
 		} else {
 			docked = true;
 			robot.dock(station);
@@ -95,6 +95,6 @@ public class AIRobotGotoStation extends AIRobot {
 	@Override
 	public void loadSelfFromNBT(NBTTagCompound nbt) {
 		stationIndex = new BlockIndex(nbt.getCompoundTag("stationIndex"));
-		stationSide = ForgeDirection.values()[nbt.getByte("stationSide")];
+		stationSide = EnumFacing.values()[nbt.getByte("stationSide")];
 	}
 }

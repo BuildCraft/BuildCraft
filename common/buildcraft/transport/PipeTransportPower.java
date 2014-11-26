@@ -14,7 +14,7 @@ import java.util.Map;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftCore;
@@ -81,7 +81,7 @@ public class PipeTransportPower extends PipeTransport {
 	}
 
 	@Override
-	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
+	public boolean canPipeConnect(TileEntity tile, EnumFacing side) {
 		if (tile instanceof TileGenericPipe) {
 			Pipe<?> pipe2 = ((TileGenericPipe) tile).pipe;
 			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportPower)) {
@@ -103,12 +103,12 @@ public class PipeTransportPower extends PipeTransport {
 	@Override
 	public void onNeighborBlockChange(int blockId) {
 		super.onNeighborBlockChange(blockId);
-        for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+        for (EnumFacing side : EnumFacing.values()) {
             updateTile(side);
         }
 	}
 
-    private void updateTile(ForgeDirection side) {
+    private void updateTile(EnumFacing side) {
         TileEntity tile = container.getTile(side);
         if (tile != null && container.isPipeConnected(side)) {
             tiles[side.ordinal()] = tile;
@@ -123,7 +123,7 @@ public class PipeTransportPower extends PipeTransport {
 	private void init() {
 		if (needsInit) {
 			needsInit = false;
-            for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+            for (EnumFacing side : EnumFacing.values()) {
                 updateTile(side);
             }
 		}
@@ -131,7 +131,7 @@ public class PipeTransportPower extends PipeTransport {
 
 	@Override
 	public void updateEntity() {
-		if (container.getWorldObj().isRemote) {
+		if (container.getWorld().isRemote) {
 			// updating movement stage. We're only carrying the movement on half
 			// the things. This is purely for animation purpose.
 
@@ -146,7 +146,7 @@ public class PipeTransportPower extends PipeTransport {
 
 		init();
 
-        for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+        for (EnumFacing side : EnumFacing.values()) {
             if (tiles[side.ordinal()] != null && tiles[side.ordinal()].isInvalid()) {
                 updateTile(side);
             }
@@ -189,16 +189,16 @@ public class PipeTransportPower extends PipeTransport {
 						TileGenericPipe nearbyTile = (TileGenericPipe) tiles[out];
 						PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
 						powerConsumed = nearbyTransport.receiveEnergy(
-								ForgeDirection.VALID_DIRECTIONS[out].getOpposite(),
+								EnumFacing.values()[out].getOpposite(),
 								powerConsumed);
 						tilePowered = true;
 					} else if (tiles[out] instanceof IEnergyHandler) {
 						IEnergyHandler handler = (IEnergyHandler) tiles[out];
 
-						if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[out].getOpposite())) {
+						if (handler.canConnectEnergy(EnumFacing.values()[out].getOpposite())) {
 							// Transmit power to an RF energy handler
 
-							powerConsumed = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[out].getOpposite(),
+							powerConsumed = handler.receiveEnergy(EnumFacing.values()[out].getOpposite(),
 									powerConsumed, false);
 							tilePowered = true;
 						}
@@ -249,7 +249,7 @@ public class PipeTransportPower extends PipeTransport {
 
 		// Compute the tiles requesting energy that are not power pipes
 
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing dir : EnumFacing.values()) {
 		    if (!outputOpen(dir)) {
 			    continue;
 			}
@@ -279,7 +279,7 @@ public class PipeTransportPower extends PipeTransport {
 		for (int i = 0; i < 6; ++i) {
 			transferQuery[i] = 0;
 
-			if (!inputOpen(ForgeDirection.getOrientation(i))) {
+			if (!inputOpen(EnumFacing.getFront(i))) {
 			    continue;
 			}
 
@@ -307,18 +307,18 @@ public class PipeTransportPower extends PipeTransport {
 						}
 
 						PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
-						nearbyTransport.requestEnergy(ForgeDirection.VALID_DIRECTIONS[i].getOpposite(), transferQuery[i]);
+						nearbyTransport.requestEnergy(EnumFacing.values()[i].getOpposite(), transferQuery[i]);
 					}
 				}
 			}
 		}
 
-		if (tracker.markTimeIfDelay(container.getWorldObj())) {
-			PacketPowerUpdate packet = new PacketPowerUpdate(container.xCoord, container.yCoord, container.zCoord);
+		if (tracker.markTimeIfDelay(container.getWorld())) {
+			PacketPowerUpdate packet = new PacketPowerUpdate(container.getPos());
 
 			packet.displayPower = displayPower;
 			packet.overload = isOverloaded();
-			BuildCraftTransport.instance.sendToPlayers(packet, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
+			BuildCraftTransport.instance.sendToPlayersNear(packet, container, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 		}
 	}
 
@@ -327,9 +327,9 @@ public class PipeTransportPower extends PipeTransport {
 	}
 
 	private void step() {
-		if (container != null && container.getWorldObj() != null
-				&& currentDate != container.getWorldObj().getTotalWorldTime()) {
-			currentDate = container.getWorldObj().getTotalWorldTime();
+		if (container != null && container.getWorld() != null
+				&& currentDate != container.getWorld().getTotalWorldTime()) {
+			currentDate = container.getWorld().getTotalWorldTime();
 
 			powerQuery = nextPowerQuery;
 			nextPowerQuery = new int[6];
@@ -349,7 +349,7 @@ public class PipeTransportPower extends PipeTransport {
 	 * All power input MUST go through designated input pipes, such as Wooden
 	 * Power Pipes or a subclass thereof.
 	 */
-	public int receiveEnergy(ForgeDirection from, int valI) {
+	public int receiveEnergy(EnumFacing from, int valI) {
 		int val = valI;
 		step();
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
@@ -376,7 +376,7 @@ public class PipeTransportPower extends PipeTransport {
 		return val;
 	}
 
-	public void requestEnergy(ForgeDirection from, int amount) {
+	public void requestEnergy(EnumFacing from, int amount) {
 		step();
 		
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
@@ -388,7 +388,7 @@ public class PipeTransportPower extends PipeTransport {
 
 	@Override
 	public void initialize() {
-		currentDate = container.getWorldObj().getTotalWorldTime();
+		currentDate = container.getWorld().getTotalWorldTime();
 	}
 
 	@Override
@@ -474,7 +474,7 @@ public class PipeTransportPower extends PipeTransport {
 		return amount;
 	}
 
-	public int consumePower(ForgeDirection dir, int max) {
+	public int consumePower(EnumFacing dir, int max) {
 		int result;
 
 		if (externalPower[dir.ordinal()] < max) {

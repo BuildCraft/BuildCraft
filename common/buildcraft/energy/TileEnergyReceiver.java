@@ -12,7 +12,7 @@ import java.util.LinkedList;
 
 import net.minecraft.tileentity.TileEntity;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import cofh.api.energy.IEnergyHandler;
 
@@ -37,7 +37,7 @@ public class TileEnergyReceiver extends TileBuildCraft implements IPipeConnectio
 		knownReceivers.remove(this);
 	}
 
-	public TileBuffer getTileBuffer(ForgeDirection side) {
+	public TileBuffer getTileBuffer(EnumFacing side) {
 		if (tileCache == null) {
 			tileCache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
 		}
@@ -45,7 +45,7 @@ public class TileEnergyReceiver extends TileBuildCraft implements IPipeConnectio
 		return tileCache[side.ordinal()];
 	}
 
-	public boolean isPoweredTile(TileEntity tile, ForgeDirection side) {
+	public boolean isPoweredTile(TileEntity tile, EnumFacing side) {
 		if (tile instanceof IEnergyHandler) {
 			return ((IEnergyHandler) tile).canConnectEnergy(side.getOpposite());
 		}
@@ -54,7 +54,7 @@ public class TileEnergyReceiver extends TileBuildCraft implements IPipeConnectio
 	}
 
 	private void sendPower() {
-		for (ForgeDirection s : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing s : EnumFacing.values()) {
 			TileEntity tile = getTileBuffer(s).getTile();
 
 			if (tile instanceof IEnergyHandler) {
@@ -66,7 +66,7 @@ public class TileEnergyReceiver extends TileBuildCraft implements IPipeConnectio
 
 	@Override
 	public ConnectOverride overridePipeConnection(PipeType type,
-			ForgeDirection with) {
+			EnumFacing with) {
 		return type == PipeType.POWER ? ConnectOverride.CONNECT : ConnectOverride.DISCONNECT;
 	}
 

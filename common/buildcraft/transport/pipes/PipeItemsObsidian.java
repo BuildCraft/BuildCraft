@@ -23,7 +23,7 @@ import net.minecraft.util.AxisAlignedBB;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import cofh.api.energy.IEnergyHandler;
 
@@ -62,7 +62,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
+	public int getIconIndex(EnumFacing direction) {
 		return PipeIconProvider.TYPE.PipeItemsObsidian.ordinal();
 	}
 
@@ -79,8 +79,8 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 		}
 	}
 
-	private AxisAlignedBB getSuckingBox(ForgeDirection orientation, int distance) {
-		if (orientation == ForgeDirection.UNKNOWN) {
+	private AxisAlignedBB getSuckingBox(EnumFacing orientation, int distance) {
+		if (orientation == EnumFacing.UNKNOWN) {
 			return null;
 		}
 		Position p1 = new Position(container.xCoord, container.yCoord, container.zCoord, orientation);
@@ -142,7 +142,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 		Position min = p1.min(p2);
 		Position max = p1.max(p2);
 
-		return AxisAlignedBB.getBoundingBox(min.x, min.y, min.z, max.x, max.y, max.z);
+		return AxisAlignedBB.fromBounds(min.x, min.y, min.z, max.x, max.y, max.z);
 	}
 
 	@Override
@@ -167,7 +167,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 			return false;
 		}
 
-		List<Entity> discoveredEntities = container.getWorldObj().getEntitiesWithinAABB(Entity.class, box);
+		List<Entity> discoveredEntities = container.getWorld().getEntitiesWithinAABB(Entity.class, box);
 
 		for (Entity entity : discoveredEntities) {
 			if (canSuck(entity, distance)) {
@@ -179,14 +179,14 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 				EntityMinecartChest cart = (EntityMinecartChest) entity;
 				if (!cart.isDead) {
 					ITransactor trans = Transactor.getTransactorFor(cart);
-					ForgeDirection openOrientation = getOpenOrientation();
+					EnumFacing openOrientation = getOpenOrientation();
 					ItemStack stack = trans.remove(StackFilter.ALL, openOrientation, false);
 
 					if (stack != null && battery.useEnergy(10, 10, false) > 0) {
 						trans.remove(StackFilter.ALL, openOrientation, true);
-						EntityItem entityitem = new EntityItem(container.getWorldObj(), cart.posX, cart.posY + 0.3F, cart.posZ, stack);
+						EntityItem entityitem = new EntityItem(container.getWorld(), cart.posX, cart.posY + 0.3F, cart.posZ, stack);
 						entityitem.delayBeforeCanPickup = 10;
-						container.getWorldObj().spawnEntityInWorld(entityitem);
+						container.getWorld().spawnEntityInWorld(entityitem);
 						pullItemIntoPipe(entityitem, 1);
 
 						return true;
@@ -199,14 +199,14 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 	}
 
 	public void pullItemIntoPipe(Entity entity, int distance) {
-		if (container.getWorldObj().isRemote) {
+		if (container.getWorld().isRemote) {
 			return;
 		}
 
-		ForgeDirection orientation = getOpenOrientation().getOpposite();
+		EnumFacing orientation = getOpenOrientation().getOpposite();
 
-		if (orientation != ForgeDirection.UNKNOWN) {
-			container.getWorldObj().playSoundAtEntity(entity, "random.pop", 0.2F, ((container.getWorldObj().rand.nextFloat() - container.getWorldObj().rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+		if (orientation != EnumFacing.UNKNOWN) {
+			container.getWorld().playSoundAtEntity(entity, "random.pop", 0.2F, ((container.getWorld().rand.nextFloat() - container.getWorld().rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
 
 			ItemStack stack = null;
 
@@ -220,7 +220,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 					return;
 				}
 				
-				CoreProxy.proxy.obsidianPipePickup(container.getWorldObj(), item, this.container);
+				CoreProxy.proxy.obsidianPipePickup(container.getWorld(), item, this.container);
 
 				int energyUsed = Math.min(10 * contained.stackSize * distance, battery.getEnergyStored());
 
@@ -291,29 +291,29 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 	}
 
 	@Override
-	public boolean canConnectEnergy(ForgeDirection from) {
+	public boolean canConnectEnergy(EnumFacing from) {
 		return true;
 	}
 
 	@Override
-	public int receiveEnergy(ForgeDirection from, int maxReceive,
+	public int receiveEnergy(EnumFacing from, int maxReceive,
 			boolean simulate) {
 		return battery.receiveEnergy(maxReceive, simulate);
 	}
 
 	@Override
-	public int extractEnergy(ForgeDirection from, int maxExtract,
+	public int extractEnergy(EnumFacing from, int maxExtract,
 			boolean simulate) {
 		return 0;
 	}
 
 	@Override
-	public int getEnergyStored(ForgeDirection from) {
+	public int getEnergyStored(EnumFacing from) {
 		return battery.getEnergyStored();
 	}
 
 	@Override
-	public int getMaxEnergyStored(ForgeDirection from) {
+	public int getMaxEnergyStored(EnumFacing from) {
 		return battery.getMaxEnergyStored();
 	}
 }

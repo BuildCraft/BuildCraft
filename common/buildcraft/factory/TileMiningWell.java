@@ -15,7 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
@@ -97,7 +97,7 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 				continue;
 			}
 
-			stack.stackSize -= Utils.addToRandomPipeAround(worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN, stack);
+			stack.stackSize -= Utils.addToRandomPipeAround(worldObj, xCoord, yCoord, zCoord, EnumFacing.UNKNOWN, stack);
 			if (stack.stackSize <= 0) {
 				continue;
 			}
@@ -137,7 +137,7 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 
 	@Override
 	public ConnectOverride overridePipeConnection(PipeType type,
-			ForgeDirection with) {
+			EnumFacing with) {
 		return type == PipeType.ITEM ? ConnectOverride.CONNECT : ConnectOverride.DEFAULT;
 	}
 }

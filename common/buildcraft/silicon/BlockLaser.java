@@ -25,7 +25,7 @@ import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CreativeTabBuildCraft;
@@ -34,12 +34,12 @@ import buildcraft.core.ICustomHighlight;
 public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 
 	private static final AxisAlignedBB[][] boxes = {
-			{AxisAlignedBB.getBoundingBox(0.0, 0.75, 0.0, 1.0, 1.0, 1.0), AxisAlignedBB.getBoundingBox(0.3125, 0.1875, 0.3125, 0.6875, 0.75, 0.6875)}, // -Y
-			{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.0, 1.0, 0.25, 1.0), AxisAlignedBB.getBoundingBox(0.3125, 0.25, 0.3125, 0.6875, 0.8125, 0.6875)}, // +Y
-			{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.75, 1.0, 1.0, 1.0), AxisAlignedBB.getBoundingBox(0.3125, 0.3125, 0.1875, 0.6875, 0.6875, 0.75)}, // -Z
-			{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.0, 1.0, 1.0, 0.25), AxisAlignedBB.getBoundingBox(0.3125, 0.3125, 0.25, 0.6875, 0.6875, 0.8125)}, // +Z
-			{AxisAlignedBB.getBoundingBox(0.75, 0.0, 0.0, 1.0, 1.0, 1.0), AxisAlignedBB.getBoundingBox(0.1875, 0.3125, 0.3125, 0.75, 0.6875, 0.6875)}, // -X
-			{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.0, 0.25, 1.0, 1.0), AxisAlignedBB.getBoundingBox(0.25, 0.3125, 0.3125, 0.8125, 0.6875, 0.6875)} // +X
+			{AxisAlignedBB.fromBounds(0.0, 0.75, 0.0, 1.0, 1.0, 1.0), AxisAlignedBB.fromBounds(0.3125, 0.1875, 0.3125, 0.6875, 0.75, 0.6875)}, // -Y
+			{AxisAlignedBB.fromBounds(0.0, 0.0, 0.0, 1.0, 0.25, 1.0), AxisAlignedBB.fromBounds(0.3125, 0.25, 0.3125, 0.6875, 0.8125, 0.6875)}, // +Y
+			{AxisAlignedBB.fromBounds(0.0, 0.0, 0.75, 1.0, 1.0, 1.0), AxisAlignedBB.fromBounds(0.3125, 0.3125, 0.1875, 0.6875, 0.6875, 0.75)}, // -Z
+			{AxisAlignedBB.fromBounds(0.0, 0.0, 0.0, 1.0, 1.0, 0.25), AxisAlignedBB.fromBounds(0.3125, 0.3125, 0.25, 0.6875, 0.6875, 0.8125)}, // +Z
+			{AxisAlignedBB.fromBounds(0.75, 0.0, 0.0, 1.0, 1.0, 1.0), AxisAlignedBB.fromBounds(0.1875, 0.3125, 0.3125, 0.75, 0.6875, 0.6875)}, // -X
+			{AxisAlignedBB.fromBounds(0.0, 0.0, 0.0, 0.25, 1.0, 1.0), AxisAlignedBB.fromBounds(0.25, 0.3125, 0.3125, 0.8125, 0.6875, 0.6875)} // +X
 	};
 
 	@SideOnly(Side.CLIENT)
@@ -153,7 +153,7 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, EnumFacing side) {
 		return false;
 	}
 }

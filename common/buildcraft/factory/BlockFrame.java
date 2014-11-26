@@ -26,7 +26,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.IFramePipeConnection;
@@ -45,10 +45,10 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 			return;
 		}
 		
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			Block nBlock = world.getBlock(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
+		for (EnumFacing dir : EnumFacing.values()) {
+			Block nBlock = world.getBlock(x + dir.getFrontOffsetX(), y + dir.getFrontOffsetY(), z + dir.getFrontOffsetZ());
 			if (nBlock == this) {
-				world.setBlockToAir(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
+				world.setBlockToAir(x + dir.getFrontOffsetX(), y + dir.getFrontOffsetY(), z + dir.getFrontOffsetZ());
 			}
 		}
 	}
@@ -105,7 +105,7 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 			zMax = 1.0F;
 		}
 
-		return AxisAlignedBB.getBoundingBox((double) i + xMin, (double) j + yMin, (double) k + zMin, (double) i + xMax, (double) j + yMax, (double) k + zMax);
+		return AxisAlignedBB.fromBounds((double) i + xMin, (double) j + yMin, (double) k + zMin, (double) i + xMax, (double) j + yMax, (double) k + zMax);
 	}
 
 	@Override

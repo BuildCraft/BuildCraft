@@ -13,7 +13,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
@@ -80,7 +80,7 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
 					aiFind.blockFound.z));
 		} else if (ai instanceof AIRobotGotoBlock) {
 			ITransactor t = Transactor.getTransactorFor(robot);
-			ItemStack stack = t.remove(TNT_FILTER, ForgeDirection.UNKNOWN, true);
+			ItemStack stack = t.remove(TNT_FILTER, EnumFacing.UNKNOWN, true);
 
 			if (stack != null && stack.stackSize > 0) {
 				EntityTNTPrimed tnt = new EntityTNTPrimed(robot.worldObj, robot.posX + 0.25, robot.posY - 1,

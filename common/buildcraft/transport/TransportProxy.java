@@ -8,9 +8,8 @@
  */
 package buildcraft.transport;
 
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.registry.GameRegistry;
-
+import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import buildcraft.BuildCraftTransport;
 
 public class TransportProxy {

@@ -23,7 +23,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.core.BlockIndex;
@@ -62,7 +62,7 @@ public class ItemMapLocation extends ItemBuildCraft {
 				int x = cpt.getInteger("x");
 				int y = cpt.getInteger("y");
 				int z = cpt.getInteger("z");
-				ForgeDirection side = ForgeDirection.values()[cpt.getByte("side")];
+				EnumFacing side = EnumFacing.values()[cpt.getByte("side")];
 
 				list.add(StringUtils.localize("{" + x + ", " + y + ", " + z + ", " + side + "}"));
 				break;
@@ -212,13 +212,13 @@ public class ItemMapLocation extends ItemBuildCraft {
 		}
 	}
 
-	public static ForgeDirection getSide(ItemStack item) {
+	public static EnumFacing getSide(ItemStack item) {
 		NBTTagCompound cpt = NBTUtils.getItemData(item);
 
 		if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
-			return ForgeDirection.values()[cpt.getByte("side")];
+			return EnumFacing.values()[cpt.getByte("side")];
 		} else {
-			return ForgeDirection.UNKNOWN;
+			return EnumFacing.UNKNOWN;
 		}
 	}
 

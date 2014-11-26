@@ -87,7 +87,7 @@ public class TilePathMarker extends TileMarker {
 		double nearestDistance = 0, distance;
 
 		for (TilePathMarker t : availableMarkers) {
-			if (t == this || t == this.links[0] || t == this.links[1] || t.getWorldObj().provider.dimensionId != this.getWorldObj().provider.dimensionId) {
+			if (t == this || t == this.links[0] || t == this.links[1] || t.getWorld().provider.dimensionId != this.getWorld().provider.dimensionId) {
 				continue;
 			}
 
@@ -284,7 +284,7 @@ public class TilePathMarker extends TileMarker {
 	public static void clearAvailableMarkersList(World w) {
 		for (Iterator<TilePathMarker> it = availableMarkers.iterator(); it.hasNext();) {
 			TilePathMarker t = it.next();
-			if (t.getWorldObj().provider.dimensionId != w.provider.dimensionId) {
+			if (t.getWorld().provider.dimensionId != w.provider.dimensionId) {
 				it.remove();
 			}
 		}

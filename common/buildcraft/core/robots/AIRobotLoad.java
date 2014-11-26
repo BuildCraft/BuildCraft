@@ -12,7 +12,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.robots.AIRobot;
@@ -67,10 +67,10 @@ public class AIRobotLoad extends AIRobot {
 		if (robot.getDockingStation() != null) {
 			DockingStation station = (DockingStation) robot.getDockingStation();
 
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX,
+			for (EnumFacing dir : EnumFacing.values()) {
+				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.getFrontOffsetX(),
 						station.y()
-								+ dir.offsetY, station.z() + dir.offsetZ);
+								+ dir.getFrontOffsetY(), station.z() + dir.getFrontOffsetZ());
 
 				if (nearbyTile != null && nearbyTile instanceof IInventory) {
 					IInventory tileInventory = (IInventory) nearbyTile;
@@ -87,7 +87,7 @@ public class AIRobotLoad extends AIRobot {
 
 								if (quantity == -1) {
 
-									ItemStack added = t.add(slot.getStackInSlot(), ForgeDirection.UNKNOWN, true);
+									ItemStack added = t.add(slot.getStackInSlot(), EnumFacing.UNKNOWN, true);
 									slot.decreaseStackInSlot(added.stackSize);
 									return;
 								} else {
@@ -97,7 +97,7 @@ public class AIRobotLoad extends AIRobot {
 										toAdd.stackSize = quantity;
 									}
 
-									ItemStack added = t.add(toAdd, ForgeDirection.UNKNOWN, true);
+									ItemStack added = t.add(toAdd, EnumFacing.UNKNOWN, true);
 									slot.decreaseStackInSlot(added.stackSize);
 									return;
 								}

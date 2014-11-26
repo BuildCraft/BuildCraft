@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Level;
 
 import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.common.FMLLog;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
@@ -38,7 +38,7 @@ public class DefaultActionProvider implements IActionProvider {
 	}
 
 	@Override
-	public Collection<IActionExternal> getExternalActions(ForgeDirection side, TileEntity tile) {
+	public Collection<IActionExternal> getExternalActions(EnumFacing side, TileEntity tile) {
 		LinkedList<IActionExternal> res = new LinkedList<IActionExternal>();
 
 		try {

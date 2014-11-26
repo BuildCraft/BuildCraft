@@ -12,7 +12,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
@@ -54,10 +54,10 @@ public class AIRobotFetchAndEquipItemStack extends AIRobot {
 
 			ItemStack itemFound = null;
 
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX,
+			for (EnumFacing dir : EnumFacing.values()) {
+				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.getFrontOffsetX(),
 						station.y()
-								+ dir.offsetY, station.z() + dir.offsetZ);
+								+ dir.getFrontOffsetY(), station.z() + dir.getFrontOffsetZ());
 
 				if (nearbyTile != null && nearbyTile instanceof IInventory) {
 					ITransactor trans = Transactor.getTransactorFor(nearbyTile);

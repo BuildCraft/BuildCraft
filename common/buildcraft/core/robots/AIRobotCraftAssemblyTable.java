@@ -14,7 +14,7 @@ import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IInvSlot;
@@ -79,7 +79,7 @@ public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 
 				for (IInvSlot s : InventoryIterator.getIterable(robot)) {
 					if (s.getStackInSlot() != null) {
-						ItemStack added = trans.add(s.getStackInSlot(), ForgeDirection.UNKNOWN, true);
+						ItemStack added = trans.add(s.getStackInSlot(), EnumFacing.UNKNOWN, true);
 
 						if (added.stackSize == 0) {
 							terminate();
@@ -150,7 +150,7 @@ public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 	public ItemStack receiveItem(ItemStack stack) {
 		if (StackHelper.isMatchingItem(stack, expectedResult.crafted)) {
 			ITransactor robotTransactor = Transactor.getTransactorFor(robot);
-			ItemStack added = robotTransactor.add(stack, ForgeDirection.UNKNOWN, true);
+			ItemStack added = robotTransactor.add(stack, EnumFacing.UNKNOWN, true);
 
 			stack.stackSize -= added.stackSize;
 
@@ -214,7 +214,7 @@ public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 				return false;
 			}
 
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			for (EnumFacing dir : EnumFacing.values()) {
 				if (getUsableAssemblyTable(new BlockIndex(station.x(), station.y(), station.z())) != null) {
 					return true;
 				}
@@ -226,10 +226,10 @@ public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 
 	private TileAssemblyTable getUsableAssemblyTable(BlockIndex b) {
 
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			BlockIndex index = new BlockIndex (b.x + dir.offsetX, b.y
-					+ dir.offsetY, b.z
-					+ dir.offsetZ);
+		for (EnumFacing dir : EnumFacing.values()) {
+			BlockIndex index = new BlockIndex (b.x + dir.getFrontOffsetX(), b.y
+					+ dir.getFrontOffsetY(), b.z
+					+ dir.getFrontOffsetZ());
 
 			if (robot.getRegistry().isTaken(new ResourceIdBlock(index))) {
 				continue;

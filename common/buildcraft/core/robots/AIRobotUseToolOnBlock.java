@@ -11,7 +11,7 @@ package buildcraft.core.robots;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldServer;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
@@ -57,7 +57,7 @@ public class AIRobotUseToolOnBlock extends AIRobot {
 			}
 
 			stack.getItem().onItemUse(stack, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj).get(),
-					robot.worldObj, useToBlock.x, useToBlock.y, useToBlock.z, ForgeDirection.UP.ordinal(), 0, 0, 0);
+					robot.worldObj, useToBlock.x, useToBlock.y, useToBlock.z, EnumFacing.UP.ordinal(), 0, 0, 0);
 
 			terminate();
 		}

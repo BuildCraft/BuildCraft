@@ -10,7 +10,7 @@ package buildcraft.silicon.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.statements.IActionInternal;
@@ -48,7 +48,7 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 		Pipe<?> pipe = ((Gate) container).pipe;
 		RobotRegistry registry = RobotRegistry.getRegistry(pipe.getWorld());
 
-		for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing d : EnumFacing.values()) {
 			DockingStation station = pipe.container.getStation(d);
 
 			if (station != null && station.robotTaking() != null) {
@@ -69,7 +69,7 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 						BlockIndex index = ItemMapLocation.getBlockIndex(item);
 
 						if (index != null) {
-							ForgeDirection side = ItemMapLocation.getSide(item);
+							EnumFacing side = ItemMapLocation.getSide(item);
 							DockingStation paramStation = (DockingStation)
 									registry.getStation(index.x,
 									index.y, index.z, side);

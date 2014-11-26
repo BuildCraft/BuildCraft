@@ -12,19 +12,19 @@ import io.netty.buffer.ByteBuf;
 
 import net.minecraft.block.Block;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public class FacadeMatrix {
 
-	private final Block[] blocks = new Block[ForgeDirection.VALID_DIRECTIONS.length];
-	private final int[] blockMetas = new int[ForgeDirection.VALID_DIRECTIONS.length];
-	private final boolean[] transparent = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
+	private final Block[] blocks = new Block[EnumFacing.values().length];
+	private final int[] blockMetas = new int[EnumFacing.values().length];
+	private final boolean[] transparent = new boolean[EnumFacing.values().length];
 	private boolean dirty = false;
 
 	public FacadeMatrix() {
 	}
 
-	public void setFacade(ForgeDirection direction, Block block, int blockMeta, boolean trans) {
+	public void setFacade(EnumFacing direction, Block block, int blockMeta, boolean trans) {
 		if (blocks[direction.ordinal()] != block || blockMetas[direction.ordinal()] != blockMeta || transparent[direction.ordinal()] != trans) {
 			blocks[direction.ordinal()] = block;
 			blockMetas[direction.ordinal()] = blockMeta;
@@ -33,15 +33,15 @@ public class FacadeMatrix {
 		}
 	}
 
-	public Block getFacadeBlock(ForgeDirection direction) {
+	public Block getFacadeBlock(EnumFacing direction) {
 		return blocks[direction.ordinal()];
 	}
 
-	public int getFacadeMetaId(ForgeDirection direction) {
+	public int getFacadeMetaId(EnumFacing direction) {
 		return blockMetas[direction.ordinal()];
 	}
 
-	public boolean getFacadeTransparent(ForgeDirection direction) {
+	public boolean getFacadeTransparent(EnumFacing direction) {
 		return transparent[direction.ordinal()];
 	}
 
@@ -54,7 +54,7 @@ public class FacadeMatrix {
 	}
 
 	public void writeData(ByteBuf data) {
-		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+		for (int i = 0; i < EnumFacing.values().length; i++) {
 			if (blocks [i] == null) {
 				data.writeShort(0);
 			} else {
@@ -66,7 +66,7 @@ public class FacadeMatrix {
 	}
 
 	public void readData(ByteBuf data) {
-		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+		for (int i = 0; i < EnumFacing.values().length; i++) {
 			short id = data.readShort();
 			
 			Block block;

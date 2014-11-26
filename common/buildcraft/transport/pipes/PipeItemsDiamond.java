@@ -22,7 +22,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
@@ -57,7 +57,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
+	public int getIconIndex(EnumFacing direction) {
 		switch (direction) {
 			case UNKNOWN:
 				return PipeIconProvider.TYPE.PipeItemsDiamond_Center.ordinal();
@@ -91,19 +91,19 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
 			}
 		}
 
-		if (!container.getWorldObj().isRemote) {
-			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord);
+		if (!container.getWorld().isRemote) {
+			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.getWorld(), container.xCoord, container.yCoord, container.zCoord);
 		}
 
 		return true;
 	}
 
 	public void eventHandler(PipeEventItem.FindDest event) {
-		LinkedList<ForgeDirection> filteredOrientations = new LinkedList<ForgeDirection>();
-		LinkedList<ForgeDirection> defaultOrientations = new LinkedList<ForgeDirection>();
+		LinkedList<EnumFacing> filteredOrientations = new LinkedList<EnumFacing>();
+		LinkedList<EnumFacing> defaultOrientations = new LinkedList<EnumFacing>();
 
 		// Filtered outputs
-		for (ForgeDirection dir : event.destinations) {
+		for (EnumFacing dir : event.destinations) {
 			boolean foundFilter = false;
 
 			// NB: if there's several of the same match, the probability

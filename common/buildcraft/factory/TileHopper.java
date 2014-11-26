@@ -13,7 +13,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.SimpleInventory;
@@ -59,7 +59,7 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 			return;
 		}
 
-		TileEntity outputTile = getTile(ForgeDirection.DOWN);
+		TileEntity outputTile = getTile(EnumFacing.DOWN);
 
 		ITransactor transactor = Transactor.getTransactorFor(outputTile);
 		
@@ -74,7 +74,7 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 			}
 			
 			ItemStack clonedStack = stackInSlot.copy().splitStack(1);
-			if (transactor.add(clonedStack, ForgeDirection.UP, true).stackSize > 0) {
+			if (transactor.add(clonedStack, EnumFacing.UP, true).stackSize > 0) {
 				inventory.decrStackSize(internalSlot, 1);
 				return;
 			}

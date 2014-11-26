@@ -11,11 +11,13 @@ package buildcraft.core.blueprints;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BuildingPermission;
@@ -71,12 +73,12 @@ public class Blueprint extends BlueprintBase {
 	}
 
 	@Override
-	public void readFromWorld(IBuilderContext context, TileEntity anchorTile, int x, int y, int z) {
+	public void readFromWorld(IBuilderContext context, TileEntity anchorTile, BlockPos pos) {
 		BptContext bptContext = (BptContext) context;
-		Block block = anchorTile.getWorldObj().getBlock(x, y, z);
-		int meta = anchorTile.getWorldObj().getBlockMetadata(x, y, z);
+		IBlockState blockState = anchorTile.getWorld().getBlockState(pos);
+		Block block = blockState.getBlock();
 		
-		if (context.world().isAirBlock(x, y, z)) {
+		if (context.world().isAirBlock(pos)) {
 			// Although no schematic will be returned for the block "air" by
 			// the registry, there can be other blocks considered as air. This
 			// will make sure that they don't get recorded.
@@ -89,20 +91,19 @@ public class Blueprint extends BlueprintBase {
 			return;
 		}
 
-		int posX = (int) (x - context.surroundingBox().pMin().x);
-		int posY = (int) (y - context.surroundingBox().pMin().y);
-		int posZ = (int) (z - context.surroundingBox().pMin().z);
+		int posX = (int) (pos.getX() - context.surroundingBox().pMin().x);
+		int posY = (int) (pos.getY() - context.surroundingBox().pMin().y);
+		int posZ = (int) (pos.getZ() - context.surroundingBox().pMin().z);
 
-		slot.block = block;
-		slot.meta = meta;
+		slot.state = blockState;
 
 		if (!SchematicRegistry.INSTANCE.isSupported(block, meta)) {
 			return;
 		}
 
 		try {
-			slot.initializeFromObjectAt(context, x, y, z);
-			slot.storeRequirements(context, x, y, z);
+			slot.initializeFromObjectAt(context, pos);
+			slot.storeRequirements(context, pos);
 			contents[posX][posY][posZ] = slot;
 		} catch (Throwable t) {
 			// Defensive code against errors in implementers

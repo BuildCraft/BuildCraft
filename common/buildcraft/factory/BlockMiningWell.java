@@ -20,7 +20,7 @@ import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftFactory;
 import buildcraft.core.BlockBuildCraft;
@@ -52,7 +52,7 @@ public class BlockMiningWell extends BlockBuildCraft {
 			return textureBack;
 		} else if (i == j) {
 			return textureFront;
-		} else if (j >= 0 && j < 6 && ForgeDirection.values()[j].getOpposite().ordinal() == i) {
+		} else if (j >= 0 && j < 6 && EnumFacing.values()[j].getOpposite().ordinal() == i) {
 			return textureBack;
 		} else {
 			return textureSides;
@@ -62,7 +62,7 @@ public class BlockMiningWell extends BlockBuildCraft {
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
-		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
+		EnumFacing orientation = Utils.get2dOrientation(entityliving);
 		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
 	}
 

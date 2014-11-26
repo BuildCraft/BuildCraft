@@ -11,7 +11,7 @@ package buildcraft.api.blueprints;
 import java.io.File;
 
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 /**
  * This class is provided as a utility class for third-party mods that would
@@ -34,7 +34,7 @@ public abstract class BlueprintDeployer {
 	 * {x, y, z} facing the direction dir.
 	 */
 	public abstract void deployBlueprint(World world, int x, int y, int z,
-			ForgeDirection dir, File file);
+			EnumFacing dir, File file);
 			
 	/**
 	*Deploy the contents of the byte array as if the builder was located at
@@ -42,6 +42,6 @@ public abstract class BlueprintDeployer {
 	*/
 	
 	public abstract void deployBlueprintFromFileStream(World world, int x, int y,
-	int z, ForgeDirection dir, byte [] data);
+	int z, EnumFacing dir, byte [] data);
 
 }

@@ -10,18 +10,18 @@ package buildcraft.transport.utils;
 
 import io.netty.buffer.ByteBuf;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public class ConnectionMatrix {
 	private int mask = 0;
 	private boolean dirty = false;
 
-	public boolean isConnected(ForgeDirection direction) {
+	public boolean isConnected(EnumFacing direction) {
 		// test if the direction.ordinal()'th bit of mask is set
 		return (mask & (1 << direction.ordinal())) != 0;
 	}
 
-	public void setConnected(ForgeDirection direction, boolean value) {
+	public void setConnected(EnumFacing direction, boolean value) {
 		if (isConnected(direction) != value) {
 			// invert the direction.ordinal()'th bit of mask
 			mask ^= 1 << direction.ordinal();
@@ -32,7 +32,7 @@ public class ConnectionMatrix {
 	/**
 	 * Return a mask representing the connectivity for all sides.
 	 *
-	 * @return mask in ForgeDirection order, least significant bit = first entry
+	 * @return mask in EnumFacing order, least significant bit = first entry
 	 */
 	public int getMask() {
 		return mask;

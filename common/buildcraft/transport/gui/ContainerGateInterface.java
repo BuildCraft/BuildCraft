@@ -101,7 +101,7 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 
 		// Do not attempt to create a list of potential actions and triggers on
 		// the client.
-		if (!pipe.container.getWorldObj().isRemote) {
+		if (!pipe.container.getWorld().isRemote) {
 			potentialTriggers.addAll(gate.getAllValidTriggers());
 			potentialActions.addAll(gate.getAllValidActions());
 
@@ -168,12 +168,12 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 	 * (re-)requests the current selection on the gate if needed.
 	 */
 	public void synchronize() {
-		if (!isNetInitialized && pipe.container.getWorldObj().isRemote) {
+		if (!isNetInitialized && pipe.container.getWorld().isRemote) {
 			isNetInitialized = true;
 			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "initRequest", null));
 		}
 
-		if (!isSynchronized && pipe.container.getWorldObj().isRemote && gate != null) {
+		if (!isSynchronized && pipe.container.getWorld().isRemote && gate != null) {
 			isSynchronized = true;
 			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "selectionRequest", null));
 		}
@@ -419,7 +419,7 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 		}
 		gate.setAction(action, statement);
 
-		if (pipe.container.getWorldObj().isRemote && notifyServer) {
+		if (pipe.container.getWorld().isRemote && notifyServer) {
 			BuildCraftCore.instance.sendToServer(getStatementPacket("setAction", action, statement));
 		}
 	}
@@ -436,7 +436,7 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 		}
 		gate.setTrigger(trigger, statement);
 
-		if (pipe.container.getWorldObj().isRemote && notifyServer) {
+		if (pipe.container.getWorld().isRemote && notifyServer) {
 			BuildCraftCore.instance.sendToServer(getStatementPacket("setTrigger", trigger, statement));
 		}
 	}
@@ -448,7 +448,7 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 
 		gate.setActionParameter(action, param, parameter);
 
-		if (pipe.container.getWorldObj().isRemote && notifyServer) {
+		if (pipe.container.getWorld().isRemote && notifyServer) {
 			BuildCraftCore.instance.sendToServer(getStatementParameterPacket("setActionParameter", action, param, parameter));
 		}
 	}
@@ -460,7 +460,7 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 
 		gate.setTriggerParameter(trigger, param, parameter);
 
-		if (pipe.container.getWorldObj().isRemote && notifyServer) {
+		if (pipe.container.getWorld().isRemote && notifyServer) {
 			BuildCraftCore.instance.sendToServer(getStatementParameterPacket("setTriggerParameter", trigger, param, parameter));
 		}
 	}

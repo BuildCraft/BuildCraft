@@ -20,7 +20,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
@@ -210,7 +210,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	@Override
-	public synchronized IDockingStation getStation(int x, int y, int z, ForgeDirection side) {
+	public synchronized IDockingStation getStation(int x, int y, int z, EnumFacing side) {
 		StationIndex index = new StationIndex(side, x, y, z);
 
 		if (stations.containsKey(index)) {

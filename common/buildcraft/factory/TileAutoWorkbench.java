@@ -22,7 +22,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldServer;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.IInvSlot;
 import buildcraft.core.TileBuildCraft;
@@ -147,7 +147,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	}
 
 	public IRecipe findRecipe() {
-		for (IInvSlot slot : InventoryIterator.getIterable(craftMatrix, ForgeDirection.UP)) {
+		for (IInvSlot slot : InventoryIterator.getIterable(craftMatrix, EnumFacing.UP)) {
 			ItemStack stack = slot.getStackInSlot();
 			if (stack == null) {
 				continue;
@@ -198,12 +198,12 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	 * Evenly redistributes items between all the slots.
 	 */
 	private void balanceSlots() {
-		for (IInvSlot slotA : InventoryIterator.getIterable(craftMatrix, ForgeDirection.UP)) {
+		for (IInvSlot slotA : InventoryIterator.getIterable(craftMatrix, EnumFacing.UP)) {
 			ItemStack stackA = slotA.getStackInSlot();
 			if (stackA == null) {
 				continue;
 			}
-			for (IInvSlot slotB : InventoryIterator.getIterable(craftMatrix, ForgeDirection.UP)) {
+			for (IInvSlot slotB : InventoryIterator.getIterable(craftMatrix, EnumFacing.UP)) {
 				if (slotA.getIndex() == slotB.getIndex()) {
 					continue;
 				}
@@ -250,7 +250,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		resultInv.setInventorySlotContents(SLOT_RESULT, result);
 
 		// clean fake player inventory (crafting handler support)
-		for (IInvSlot slot : InventoryIterator.getIterable(getInternalPlayer().get().inventory, ForgeDirection.UP)) {
+		for (IInvSlot slot : InventoryIterator.getIterable(getInternalPlayer().get().inventory, EnumFacing.UP)) {
 			ItemStack stack = slot.getStackInSlot();
 			if (stack != null) {
 				slot.setStackInSlot(null);
@@ -309,7 +309,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	 */
 	public boolean isLast() {
 		int minStackSize = 64;
-		for (IInvSlot slot : InventoryIterator.getIterable(craftMatrix, ForgeDirection.UP)) {
+		for (IInvSlot slot : InventoryIterator.getIterable(craftMatrix, EnumFacing.UP)) {
 			ItemStack stack = slot.getStackInSlot();
 			if (stack != null && stack.stackSize < minStackSize) {
 				minStackSize = stack.stackSize;
