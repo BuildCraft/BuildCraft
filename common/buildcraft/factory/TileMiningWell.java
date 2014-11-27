@@ -19,6 +19,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
+import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile.PipeType;
@@ -29,12 +30,12 @@ import buildcraft.core.utils.BlockUtils;
 import buildcraft.core.utils.Utils;
 
 public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeConnection {
-
 	boolean isDigging = true;
+	private BlockMiner miner;
 
 	public TileMiningWell() {
 		super();
-		this.setBattery(new RFBattery(10000, BuildCraftFactory.MINING_RF_COST_PER_BLOCK, 0));
+		this.setBattery(new RFBattery(2 * 64 * BuilderAPI.BREAK_ENERGY, BuilderAPI.BREAK_ENERGY, 0));
 	}
 
 	/**
@@ -47,84 +48,53 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 			return;
 		}
 
-		int miningCost = (int) Math.ceil(BuildCraftFactory.MINING_RF_COST_PER_BLOCK
-				* BuildCraftFactory.miningMultiplier);
-
-		if (getBattery().useEnergy(miningCost, miningCost, false) == 0) {
+		if (getBattery().getEnergyStored() == 0) {
 			return;
 		}
 
-		World world = worldObj;
+		if (miner == null) {
+			World world = worldObj;
 
-		int depth = yCoord - 1;
+			int depth = yCoord - 1;
 
-		while (world.getBlock(xCoord, depth, zCoord) == BuildCraftFactory.plainPipeBlock) {
-			depth = depth - 1;
-		}
-
-		if (depth < 1 || depth < yCoord - BuildCraftFactory.miningDepth || !BlockUtils.canChangeBlock(world, xCoord, depth, zCoord)) {
-			isDigging = false;
-			return;
-		}
-
-        BreakEvent breakEvent = new BreakEvent(xCoord, depth, zCoord, worldObj, world.getBlock(xCoord, depth, zCoord),
-                world.getBlockMetadata(xCoord, depth, zCoord), CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world).get());
-        MinecraftForge.EVENT_BUS.post(breakEvent);
-
-        if (breakEvent.isCanceled()) {
-            isDigging = false;
-            return;
-        }
-
-		boolean wasAir = world.isAirBlock(xCoord, depth, zCoord);
-
-		List<ItemStack> stacks = BlockUtils.getItemStackFromBlock((WorldServer) worldObj, xCoord, depth, zCoord);
-
-		world.setBlock(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock);
-
-		if (wasAir) {
-			return;
-		}
-
-		if (stacks == null || stacks.isEmpty()) {
-			return;
-		}
-
-		for (ItemStack stack : stacks) {
-
-			stack.stackSize -= Utils.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, stack);
-			if (stack.stackSize <= 0) {
-				continue;
+			while (world.getBlock(xCoord, depth, zCoord) == BuildCraftFactory.plainPipeBlock) {
+				depth = depth - 1;
 			}
 
-			stack.stackSize -= Utils.addToRandomPipeAround(worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN, stack);
-			if (stack.stackSize <= 0) {
-				continue;
+			if (depth < 1 || depth < yCoord - BuildCraftFactory.miningDepth || !BlockUtils.canChangeBlock(world, xCoord, depth, zCoord)) {
+				isDigging = false;
+				// Drain energy, because at 0 energy this will stop doing calculations.
+				getBattery().useEnergy(0, 10, false);
+				return;
 			}
 
-			// Throw the object away.
-			// TODO: factorize that code
+			if (world.isAirBlock(xCoord, depth, zCoord)) {
+				if (getBattery().getEnergyStored() >= BuilderAPI.BUILD_ENERGY) {
+					getBattery().useEnergy(BuilderAPI.BUILD_ENERGY, BuilderAPI.BUILD_ENERGY, false);
+					world.setBlock(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock);
+				}
+			} else {
+				miner = new BlockMiner(world, this, xCoord, depth, zCoord);
+			}
+		} else {
+			int usedEnergy = miner.acceptEnergy(getBattery().getEnergyStored());
+			getBattery().useEnergy(usedEnergy, usedEnergy, false);
 
-			float f = world.rand.nextFloat() * 0.8F + 0.1F;
-			float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
-			float f2 = world.rand.nextFloat() * 0.8F + 0.1F;
-
-			EntityItem entityitem = new EntityItem(world, xCoord + f, yCoord + f1 + 0.5F, zCoord + f2, stack);
-
-			entityitem.lifespan = BuildCraftCore.itemLifespan;
-			entityitem.delayBeforeCanPickup = 10;
-
-			float f3 = 0.05F;
-			entityitem.motionX = (float) world.rand.nextGaussian() * f3;
-			entityitem.motionY = (float) world.rand.nextGaussian() * f3 + 1.0F;
-			entityitem.motionZ = (float) world.rand.nextGaussian() * f3;
-			world.spawnEntityInWorld(entityitem);
+			if (miner.hasMined()) {
+				if (miner.hasFailed()) {
+					isDigging = false;
+				}
+				miner = null;
+			}
 		}
 	}
 
 	@Override
 	public void invalidate() {
 		super.invalidate();
+		if (miner != null) {
+			miner.invalidate();
+		}
 		if (worldObj != null && yCoord > 2) {
 			BuildCraftFactory.miningWellBlock.removePipes(worldObj, xCoord, yCoord, zCoord);
 		}

@@ -105,13 +105,9 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyReceiv
 		return new PacketTileUpdate(this);
 	}
 
-	public BuildCraftPacket getPacketDescription() {
-		return getPacketUpdate();
-	}
-
 	@Override
 	public Packet getDescriptionPacket() {
-		return Utils.toPacket(getPacketDescription(), 0);
+		return Utils.toPacket(getPacketUpdate(), 0);
 	}
 
 	@Override

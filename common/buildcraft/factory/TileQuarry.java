@@ -57,6 +57,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	private static enum Stage {
 		BUILDING,
 		DIGGING,
+		MOVING,
 		IDLE,
 		DONE
 	}
@@ -86,6 +87,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	private boolean frameProducer = true;
 
 	private NBTTagCompound initNBT = null;
+
+	private BlockMiner miner;
 
 	public TileQuarry () {
 		box.kind = Kind.STRIPES;
@@ -161,13 +164,26 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 			} else {
 				stage = Stage.IDLE;
 			}
-		} else if (stage == Stage.IDLE) {
-			dig();
 		} else if (stage == Stage.DIGGING) {
+			dig();
+		} else if (stage == Stage.IDLE) {
+			idling();
+		} else if (stage == Stage.MOVING) {
 			int energyToUse = 20 + (int) Math.ceil(getBattery().getEnergyStored() / 500);
 
 			if (this.consumeEnergy(energyToUse)) {
 				speed = 0.1 + energyToUse / 2000F;
+
+				// If it's raining or snowing above the head, slow down.
+				if (worldObj.isRaining()) {
+					int headBPX = (int) Math.floor(headPosX);
+					int headBPY = (int) Math.floor(headPosY);
+					int headBPZ = (int) Math.floor(headPosZ);
+					if (worldObj.getHeightValue(headBPX, headBPZ) < headBPY) {
+						speed *= 0.675;
+					}
+				}
+
 				moveHead(speed);
 			}
 		}
@@ -180,12 +196,45 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	}
 
 	protected void dig() {
-		int rf = (int) Math.ceil(BuildCraftFactory.MINING_RF_COST_PER_BLOCK * BuildCraftFactory.miningMultiplier);
-
-		if (!consumeEnergy(rf)) {
+		if (worldObj.isRemote) {
 			return;
 		}
 
+		if (miner == null) {
+			// Hmm.
+			stage = Stage.IDLE;
+			return;
+		}
+
+		int rfTaken = miner.acceptEnergy(getBattery().getEnergyStored());
+		getBattery().useEnergy(rfTaken, rfTaken, false);
+
+		if (miner.hasMined()) {
+			// Collect any lost items laying around
+			double[] head = getHead();
+			AxisAlignedBB axis = AxisAlignedBB.getBoundingBox(head[0] - 2, head[1] - 2, head[2] - 2, head[0] + 3, head[1] + 3, head[2] + 3);
+			List result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
+			for (int ii = 0; ii < result.size(); ii++) {
+				if (result.get(ii) instanceof EntityItem) {
+					EntityItem entity = (EntityItem) result.get(ii);
+					if (entity.isDead) {
+						continue;
+					}
+
+					ItemStack mineable = entity.getEntityItem();
+					if (mineable.stackSize <= 0) {
+						continue;
+					}
+					CoreProxy.proxy.removeEntity(entity);
+					miner.mineStack(mineable);
+				}
+			}
+
+			stage = Stage.IDLE;
+			miner = null;
+		}
+	}
+	protected void idling() {
 		if (!findTarget(true)) {
 			// I believe the issue is box going null becuase of bad chunkloader positioning
 			if (arm != null && box != null) {
@@ -194,7 +243,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 			stage = Stage.DONE;
 		} else {
-			stage = Stage.DIGGING;
+			stage = Stage.MOVING;
 		}
 
 		movingHorizontally = true;
@@ -392,94 +441,11 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 			return;
 		}
 
-		int i = targetX;
-		int j = targetY - 1;
-		int k = targetZ;
-
-		Block block = worldObj.getBlock(i, j, k);
-		int meta = worldObj.getBlockMetadata(i, j, k);
-
-        BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(i, j, k, worldObj, block, meta,
-                CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj).get());
-        MinecraftForge.EVENT_BUS.post(breakEvent);
-
-        if (!breakEvent.isCanceled() && isQuarriableBlock(i, j, k)) {
-			// Share this with mining well!
-
-			List<ItemStack> stacks = BlockUtils.getItemStackFromBlock((WorldServer) worldObj, i, j, k);
-
-			if (stacks != null) {
-				for (ItemStack s : stacks) {
-					if (s != null) {
-						mineStack(s);
-					}
-				}
-			}
-
-			worldObj.playAuxSFXAtEntity(
-					null,
-					2001,
-					i,
-					j,
-					k,
-					Block.getIdFromBlock(block)
-							+ (meta << 12));
-			
-			if (block.hasTileEntity(meta)) {
-				worldObj.removeTileEntity(i, j, k);
-			}
-			
-			worldObj.setBlockToAir(i, j, k);
-		}
-
-		// Collect any lost items laying around
-		double[] head = getHead();
-		AxisAlignedBB axis = AxisAlignedBB.getBoundingBox(head[0] - 2, head[1] - 2, head[2] - 2, head[0] + 3, head[1] + 3, head[2] + 3);
-		List result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
-		for (int ii = 0; ii < result.size(); ii++) {
-			if (result.get(ii) instanceof EntityItem) {
-				EntityItem entity = (EntityItem) result.get(ii);
-				if (entity.isDead) {
-					continue;
-				}
-
-				ItemStack mineable = entity.getEntityItem();
-				if (mineable.stackSize <= 0) {
-					continue;
-				}
-				CoreProxy.proxy.removeEntity(entity);
-				mineStack(mineable);
-			}
-		}
-
-		stage = Stage.IDLE;
-	}
-
-	private void mineStack(ItemStack stack) {
-		// First, try to add to a nearby chest
-		stack.stackSize -= Utils.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, stack);
-
-		// Second, try to add to adjacent pipes
-		if (stack.stackSize > 0) {
-			stack.stackSize -= Utils.addToRandomPipeAround(worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN, stack);
-		}
-
-		// Lastly, throw the object away
-		if (stack.stackSize > 0) {
-			float f = worldObj.rand.nextFloat() * 0.8F + 0.1F;
-			float f1 = worldObj.rand.nextFloat() * 0.8F + 0.1F;
-			float f2 = worldObj.rand.nextFloat() * 0.8F + 0.1F;
-
-			EntityItem entityitem = new EntityItem(worldObj, xCoord + f, yCoord + f1 + 0.5F, zCoord + f2, stack);
-
-			entityitem.lifespan = BuildCraftCore.itemLifespan;
-			entityitem.delayBeforeCanPickup = 10;
-
-			float f3 = 0.05F;
-			entityitem.motionX = (float) worldObj.rand.nextGaussian() * f3;
-			entityitem.motionY = (float) worldObj.rand.nextGaussian() * f3 + 1.0F;
-			entityitem.motionZ = (float) worldObj.rand.nextGaussian() * f3;
-			worldObj.spawnEntityInWorld(entityitem);
+		if (isQuarriableBlock(targetX, targetY - 1, targetZ)) {
+			miner = new BlockMiner(worldObj, this, targetX, targetY - 1, targetZ);
+			stage = Stage.DIGGING;
+		} else {
+			stage = Stage.IDLE;
 		}
 	}
 
@@ -504,7 +470,6 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 	@Override
 	public void destroy() {
-
 		if (arm != null) {
 			arm.setDead();
 		}
@@ -512,6 +477,10 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		arm = null;
 
 		frameProducer = false;
+
+		if (miner != null) {
+			miner.invalidate();
+		}
 	}
 
 	@Override

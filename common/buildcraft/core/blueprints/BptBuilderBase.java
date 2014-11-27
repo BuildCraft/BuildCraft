@@ -35,6 +35,7 @@ import buildcraft.core.builders.BuildingSlot;
 import buildcraft.core.builders.BuildingSlotBlock;
 import buildcraft.core.builders.IBuildingItemsProvider;
 import buildcraft.core.builders.TileAbstractBuilder;
+import buildcraft.core.utils.BlockUtils;
 
 public abstract class BptBuilderBase implements IAreaProvider {
 
@@ -181,34 +182,22 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		return done && builder.getBuilders().size() == 0;
 	}
 
-	private int getHardness(BuildingSlotBlock slot) {
-		int hardness = (int) context
-				.world()
-				.getBlock(slot.x, slot.y, slot.z)
-				.getBlockHardness(context.world(), slot.x, slot.y,
-						slot.z) + 1;
-
-		hardness *= 2;
-
-		return hardness;
+	private int getBlockBreakEnergy(BuildingSlotBlock slot) {
+		return BlockUtils.computeBlockBreakEnergy(context.world(), slot.x, slot.y, slot.z);
 	}
 
 	protected final boolean canDestroy(TileAbstractBuilder builder, IBuilderContext context, BuildingSlotBlock slot) {
 		LinkedList<ItemStack> result = new LinkedList<ItemStack>();
 
-		int hardness = getHardness(slot);
-
-		return builder.energyAvailable() >= hardness * BuilderAPI.BREAK_ENERGY;
+		return builder.energyAvailable() >= getBlockBreakEnergy(slot);
 	}
 
 	public void consumeEnergyToDestroy(TileAbstractBuilder builder, BuildingSlotBlock slot) {
-		int hardness = getHardness(slot);
-
-		builder.consumeEnergy(hardness * BuilderAPI.BREAK_ENERGY);
+		builder.consumeEnergy(getBlockBreakEnergy(slot));
 	}
 
 	public void createDestroyItems(BuildingSlotBlock slot) {
-		int hardness = getHardness(slot);
+		int hardness = (int) Math.ceil(getBlockBreakEnergy(slot) / BuilderAPI.BREAK_ENERGY);
 
 		for (int i = 0; i < hardness; ++i) {
 			slot.addStackConsumed(new ItemStack(BuildCraftBuilders.buildToolBlock));

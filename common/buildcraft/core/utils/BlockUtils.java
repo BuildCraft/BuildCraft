@@ -37,6 +37,8 @@ import net.minecraftforge.fluids.IFluidBlock;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
+import buildcraft.BuildCraftFactory;
+import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.core.proxy.CoreProxy;
 
 public final class BlockUtils {
@@ -214,5 +216,9 @@ public final class BlockUtils {
 				((EntityPlayerMP) player).playerNetServerHandler.sendPacket(new S27PacketExplosion(x + .5, y + .5, z + .5, 3f, explosion.affectedBlockPositions, null));
 			}
 		}
+	}
+
+	public static int computeBlockBreakEnergy(World world, int x, int y, int z) {
+		return (int) Math.floor(BuilderAPI.BREAK_ENERGY * BuildCraftFactory.miningMultiplier * ((world.getBlock(x, y, z).getBlockHardness(world, x, y, z) + 1) * 2));
 	}
 }
