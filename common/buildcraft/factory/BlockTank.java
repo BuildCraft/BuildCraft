@@ -24,6 +24,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidContainerItem;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.events.BlockInteractionEvent;
@@ -98,49 +99,63 @@ public class BlockTank extends BlockBuildCraft {
 		}
 
 		if (current != null) {
-			FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(current);
-
 			TileEntity tile = world.getTileEntity(i, j, k);
 
 			if (tile instanceof TileTank) {
 				TileTank tank = (TileTank) tile;
-				// Handle filled containers
-				if (liquid != null) {
-					int qty = tank.fill(ForgeDirection.UNKNOWN, liquid, true);
+				// Handle FluidContainerRegistry
+				if (FluidContainerRegistry.isContainer(current)) {
+					FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(current);
+					// Handle filled containers
+					if (liquid != null) {
+						int qty = tank.fill(ForgeDirection.UNKNOWN, liquid, true);
 
-					if (qty != 0 && !BuildCraftCore.debugWorldgen && !entityplayer.capabilities.isCreativeMode) {
-						entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils.consumeItem(current));
-					}
+						if (qty != 0 && !BuildCraftCore.debugWorldgen && !entityplayer.capabilities.isCreativeMode) {
+							entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils.consumeItem(current));
+							entityplayer.inventory.addItemStackToInventory(FluidContainerRegistry.drainFluidContainer(current));
+						}
 
-					return true;
+						return true;
 
-					// Handle empty containers
-				} else {
-					FluidStack available = tank.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid;
+						// Handle empty containers
+					} else {
+						FluidStack available = tank.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid;
 
-					if (available != null) {
-						ItemStack filled = FluidContainerRegistry.fillFluidContainer(available, current);
+						if (available != null) {
+							ItemStack filled = FluidContainerRegistry.fillFluidContainer(available, current);
 
-						liquid = FluidContainerRegistry.getFluidForFilledItem(filled);
+							liquid = FluidContainerRegistry.getFluidForFilledItem(filled);
 
-						if (liquid != null) {
-							if (!BuildCraftCore.debugWorldgen && !entityplayer.capabilities.isCreativeMode) {
-								if (current.stackSize > 1) {
-									if (!entityplayer.inventory.addItemStackToInventory(filled)) {
-										return false;
+							if (liquid != null) {
+								if (!BuildCraftCore.debugWorldgen && !entityplayer.capabilities.isCreativeMode) {
+									if (current.stackSize > 1) {
+										if (!entityplayer.inventory.addItemStackToInventory(filled)) {
+											return false;
+										} else {
+											entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils.consumeItem(current));
+										}
 									} else {
 										entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils.consumeItem(current));
+										entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, filled);
 									}
-								} else {
-									entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils.consumeItem(current));
-									entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, filled);
 								}
+
+								tank.drain(ForgeDirection.UNKNOWN, liquid.amount, true);
+
+								return true;
 							}
-
-							tank.drain(ForgeDirection.UNKNOWN, liquid.amount, true);
-
-							return true;
 						}
+					}
+				} else if (current.getItem() instanceof IFluidContainerItem) {
+					IFluidContainerItem container = (IFluidContainerItem) current.getItem();
+					FluidStack liquid = container.getFluid(current);
+					if (liquid != null && liquid.amount > 0) {
+						int qty = tank.fill(ForgeDirection.UNKNOWN, liquid, false);
+						tank.fill(ForgeDirection.UNKNOWN, container.drain(current, qty, true), true);
+					} else {
+						liquid = tank.drain(ForgeDirection.UNKNOWN, 1000, false);
+						int qtyToFill = container.fill(current, liquid, true);
+						tank.drain(ForgeDirection.UNKNOWN, qtyToFill, true);
 					}
 				}
 			}

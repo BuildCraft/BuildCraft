@@ -20,6 +20,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyReceiver;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.network.BuildCraftPacket;
@@ -27,7 +28,7 @@ import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketTileUpdate;
 import buildcraft.core.utils.Utils;
 
-public abstract class TileBuildCraft extends TileEntity implements IEnergyHandler, ISynchronizedTile, ISerializable {
+public abstract class TileBuildCraft extends TileEntity implements IEnergyReceiver, ISynchronizedTile, ISerializable {
     protected TileBuffer[] cache;
 	protected HashSet<EntityPlayer> guiWatchers = new HashSet<EntityPlayer>();
 
@@ -162,7 +163,9 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 		}
 	}
 
-	@Override
+	/**
+	 * If you want to use this, implement IEnergyProvider.
+	 */
 	public int extractEnergy(ForgeDirection from, int maxExtract,
 			boolean simulate) {
 		if (battery != null && this.canConnectEnergy(from)) {

@@ -16,6 +16,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.transport.IPipeTile;
@@ -186,7 +188,13 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 		if (!transport.inputOpen(from)) {
 			return false;
 		} else {
-			return tile instanceof IEnergyConnection && ((IEnergyConnection) tile).canConnectEnergy(from.getOpposite());
+			if (tile instanceof IEnergyConnection && ((IEnergyConnection) tile).canConnectEnergy(from.getOpposite())) {
+				// Disregard tiles which are consumers but NOT providers
+				return !(tile instanceof IEnergyReceiver && !(tile instanceof IEnergyProvider));
+			} else {
+				// Disregard tiles which can't connect either, I guess.
+				return false;
+			}
 		}
 	}
 

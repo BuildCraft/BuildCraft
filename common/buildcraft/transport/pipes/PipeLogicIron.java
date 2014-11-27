@@ -103,6 +103,10 @@ public abstract class PipeLogicIron {
 		return false;
 	}
 
+	public ForgeDirection getOutputDirection() {
+		return ForgeDirection.getOrientation(pipe.container.getBlockMetadata());
+	}
+
 	public boolean outputOpen(ForgeDirection to) {
 		return to.ordinal() == pipe.container.getBlockMetadata();
 	}
