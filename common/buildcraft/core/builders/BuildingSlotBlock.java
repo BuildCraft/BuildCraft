@@ -8,7 +8,9 @@
  */
 package buildcraft.core.builders;
 
+import java.util.Arrays;
 import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,9 +20,11 @@ import net.minecraftforge.common.util.Constants;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
+import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.blueprints.SchematicMask;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.Position;
 
 public class BuildingSlotBlock extends BuildingSlot {
@@ -66,6 +70,24 @@ public class BuildingSlotBlock extends BuildingSlot {
 
 				if (e != null) {
 					e.updateEntity();
+				}
+
+				// This is slightly hackish, but it's a very important way to verify
+				// the stored requirements.
+
+				if (getSchematic() instanceof SchematicBlock) {
+					SchematicBlock sb = (SchematicBlock) getSchematic();
+					// Copy the old array of stored requirements.
+					List<ItemStack> oldRequirements = Arrays.asList(sb.storedRequirements);
+					sb.storedRequirements = new ItemStack[0];
+					sb.storeRequirements(context, x, y, z);
+					for (ItemStack s : sb.storedRequirements) {
+						if (!oldRequirements.contains(s)) {
+							BCLog.logger.warn("Blueprint has MISMATCHING REQUIREMENTS! Potential corrupted/hacked blueprint! Removed mismatched block.");
+							context.world().setBlockToAir(x, y, z);
+							return;
+						}
+					}
 				}
 			} catch (Throwable t) {
 				t.printStackTrace();
