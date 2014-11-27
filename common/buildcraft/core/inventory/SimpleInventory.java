@@ -16,6 +16,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
 
 import net.minecraftforge.common.util.Constants;
 
@@ -73,7 +75,7 @@ public class SimpleInventory implements IInventory, INBTTagable {
 	}
 
 	@Override
-	public String getInventoryName() {
+	public String getName() {
 		return name;
 	}
 
@@ -88,11 +90,13 @@ public class SimpleInventory implements IInventory, INBTTagable {
 	}
 
 	@Override
-	public void openInventory() {
+	public void openInventory(EntityPlayer playerIn) {
+
 	}
 
 	@Override
-	public void closeInventory() {
+	public void closeInventory(EntityPlayer playerIn) {
+
 	}
 
 	@Override
@@ -166,8 +170,23 @@ public class SimpleInventory implements IInventory, INBTTagable {
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
-		return false;
+	public int getField(int id) {
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) {
+
+	}
+
+	@Override
+	public int getFieldCount() {
+		return 0;
+	}
+
+	@Override
+	public void clear() {
+
 	}
 
 	@Override
@@ -175,5 +194,15 @@ public class SimpleInventory implements IInventory, INBTTagable {
 		for (TileEntity handler : listener) {
 			handler.markDirty();
 		}
+	}
+
+	@Override
+	public boolean hasCustomName() {
+		return false;
+	}
+
+	@Override
+	public IChatComponent getDisplayName() {
+		return new ChatComponentText(getName());
 	}
 }

@@ -8,7 +8,7 @@
  */
 package buildcraft.energy.worldgen;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import net.minecraftforge.event.terraingen.WorldTypeEvent;
 

@@ -24,7 +24,7 @@ public final class InventoryIterator {
 	}
 
 	public static Iterable<IInvSlot> getIterable(IInventory inv) {
-		return getIterable(inv, EnumFacing.UNKNOWN);
+		return getIterable(inv, null);
 	}
 
 	/**

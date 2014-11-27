@@ -11,7 +11,7 @@ package buildcraft.core.network;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
-import cpw.mods.fml.common.network.FMLIndexedMessageToMessageCodec;
+import net.minecraftforge.fml.common.network.FMLIndexedMessageToMessageCodec;
 
 import buildcraft.transport.network.PacketFluidUpdate;
 import buildcraft.transport.network.PacketPipeTransportItemStack;

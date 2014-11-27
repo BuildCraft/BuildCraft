@@ -1,7 +1,7 @@
 package buildcraft.silicon;
 
 import net.minecraft.item.ItemStack;
-import cpw.mods.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import cofh.api.energy.IEnergyContainerItem;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.utils.StringUtils;

@@ -17,7 +17,7 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import cpw.mods.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;

@@ -8,4 +8,4 @@
  */
 @API(apiVersion = "1.0", owner = "BuildCraftAPI|core", provides = "BuildCraftAPI|facades")
 package buildcraft.api.facades;
-import cpw.mods.fml.common.API;
+import net.minecraftforge.fml.common.API;

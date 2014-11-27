@@ -12,8 +12,8 @@ import java.lang.reflect.Method;
 
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.EntityBlock;

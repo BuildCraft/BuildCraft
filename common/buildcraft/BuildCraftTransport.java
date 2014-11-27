@@ -19,16 +19,17 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.Loader;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
+import net.minecraftforge.fml.common.event.FMLInterModComms.IMCEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraft.util.EnumFacing;
@@ -248,17 +249,17 @@ public class BuildCraftTransport extends BuildCraftMod {
 		}
 
 		@Override
-		public boolean canExtractItems(Object extractor, World world, int i, int j, int k) {
-			return testStrings(items, world, i, j, k);
+		public boolean canExtractItems(Object extractor, World world, BlockPos pos) {
+			return testStrings(items, world, pos);
 		}
 
 		@Override
-		public boolean canExtractFluids(Object extractor, World world, int i, int j, int k) {
-			return testStrings(liquids, world, i, j, k);
+		public boolean canExtractFluids(Object extractor, World world, BlockPos pos) {
+			return testStrings(liquids, world, pos);
 		}
 
-		private boolean testStrings(String[] excludedBlocks, World world, int i, int j, int k) {
-			Block block = world.getBlock(i, j, k);
+		private boolean testStrings(String[] excludedBlocks, World world, BlockPos pos) {
+			Block block = world.getBlockState(pos).getBlock();
 			if (block == null) {
 				return false;
 			}
@@ -329,30 +330,30 @@ public class BuildCraftTransport extends BuildCraftMod {
 			groupItemsTrigger = groupItemsTriggerProp.getInt();
 
 			Property facadeBlacklistProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "facade.blacklist", new String[] {
-					Block.blockRegistry.getNameForObject(Blocks.bedrock),
-					Block.blockRegistry.getNameForObject(Blocks.command_block),
-					Block.blockRegistry.getNameForObject(Blocks.end_portal_frame),
-					Block.blockRegistry.getNameForObject(Blocks.grass),
-					Block.blockRegistry.getNameForObject(Blocks.leaves),
-					Block.blockRegistry.getNameForObject(Blocks.leaves2),
-					Block.blockRegistry.getNameForObject(Blocks.lit_pumpkin),
-					Block.blockRegistry.getNameForObject(Blocks.lit_redstone_lamp),
-					Block.blockRegistry.getNameForObject(Blocks.mob_spawner),
-					Block.blockRegistry.getNameForObject(Blocks.monster_egg),
-					Block.blockRegistry.getNameForObject(Blocks.redstone_lamp),
-					Block.blockRegistry.getNameForObject(Blocks.double_stone_slab),
-					Block.blockRegistry.getNameForObject(Blocks.double_wooden_slab),
-					Block.blockRegistry.getNameForObject(Blocks.sponge),
-					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftBuilders.architectBlock)),
-					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftBuilders.builderBlock)),
-					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftBuilders.fillerBlock)),
-					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftBuilders.libraryBlock)),
-					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftFactory.autoWorkbenchBlock)),
-					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftFactory.floodGateBlock)),
-					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftFactory.miningWellBlock)),
-					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftFactory.pumpBlock)),
-					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftFactory.quarryBlock)),
-					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftTransport.filteredBufferBlock)),
+					(String) Block.blockRegistry.getNameForObject(Blocks.bedrock),
+					(String) Block.blockRegistry.getNameForObject(Blocks.command_block),
+					(String) Block.blockRegistry.getNameForObject(Blocks.end_portal_frame),
+					(String) Block.blockRegistry.getNameForObject(Blocks.grass),
+					(String) Block.blockRegistry.getNameForObject(Blocks.leaves),
+					(String) Block.blockRegistry.getNameForObject(Blocks.leaves2),
+					(String) Block.blockRegistry.getNameForObject(Blocks.lit_pumpkin),
+					(String) Block.blockRegistry.getNameForObject(Blocks.lit_redstone_lamp),
+					(String) Block.blockRegistry.getNameForObject(Blocks.mob_spawner),
+					(String) Block.blockRegistry.getNameForObject(Blocks.monster_egg),
+					(String) Block.blockRegistry.getNameForObject(Blocks.redstone_lamp),
+					(String) Block.blockRegistry.getNameForObject(Blocks.double_stone_slab),
+					(String) Block.blockRegistry.getNameForObject(Blocks.double_wooden_slab),
+					(String) Block.blockRegistry.getNameForObject(Blocks.sponge),
+					JavaTools.surroundWithQuotes((String) Block.blockRegistry.getNameForObject(BuildCraftBuilders.architectBlock)),
+					JavaTools.surroundWithQuotes((String) Block.blockRegistry.getNameForObject(BuildCraftBuilders.builderBlock)),
+					JavaTools.surroundWithQuotes((String) Block.blockRegistry.getNameForObject(BuildCraftBuilders.fillerBlock)),
+					JavaTools.surroundWithQuotes((String) Block.blockRegistry.getNameForObject(BuildCraftBuilders.libraryBlock)),
+					JavaTools.surroundWithQuotes((String) Block.blockRegistry.getNameForObject(BuildCraftFactory.autoWorkbenchBlock)),
+					JavaTools.surroundWithQuotes((String) Block.blockRegistry.getNameForObject(BuildCraftFactory.floodGateBlock)),
+					JavaTools.surroundWithQuotes((String) Block.blockRegistry.getNameForObject(BuildCraftFactory.miningWellBlock)),
+					JavaTools.surroundWithQuotes((String) Block.blockRegistry.getNameForObject(BuildCraftFactory.pumpBlock)),
+					JavaTools.surroundWithQuotes((String) Block.blockRegistry.getNameForObject(BuildCraftFactory.quarryBlock)),
+					JavaTools.surroundWithQuotes((String) Block.blockRegistry.getNameForObject(BuildCraftTransport.filteredBufferBlock)),
 			});
 
 			facadeBlacklistProp.comment = "Blocks listed here will not have facades created. The format is modid:blockname.\nFor mods with a | character, the value needs to be surrounded with quotes.";

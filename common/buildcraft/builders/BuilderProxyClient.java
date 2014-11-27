@@ -8,8 +8,8 @@
  */
 package buildcraft.builders;
 
-import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import buildcraft.builders.urbanism.TileUrbanist;
 import buildcraft.core.render.RenderBlockMultiTexture;
 import buildcraft.core.render.RenderBoxProvider;

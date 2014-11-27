@@ -19,7 +19,7 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import cpw.mods.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.proxy.CoreProxy;

@@ -12,6 +12,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IChatComponent;
 
 public abstract class InventoryWrapper implements ISidedInventory {
 
@@ -27,14 +29,40 @@ public abstract class InventoryWrapper implements ISidedInventory {
 	@Override public ItemStack decrStackSize(int slotIndex, int amount) { return inventory.decrStackSize(slotIndex, amount); }
 	@Override public ItemStack getStackInSlotOnClosing(int slotIndex) { return inventory.getStackInSlotOnClosing(slotIndex); }
 	@Override public void setInventorySlotContents(int slotIndex, ItemStack itemstack) { inventory.setInventorySlotContents(slotIndex, itemstack); }
-	@Override public String getInventoryName() { return inventory.getInventoryName(); }
+	@Override public String getName() { return inventory.getName(); }
 	@Override public int getInventoryStackLimit() { return inventory.getInventoryStackLimit(); }
 	@Override public void markDirty() { inventory.markDirty(); }
 	@Override public boolean isUseableByPlayer(EntityPlayer entityplayer) { return inventory.isUseableByPlayer(entityplayer); }
-	@Override public void openInventory() { inventory.openInventory(); }
-	@Override public void closeInventory() { inventory.closeInventory(); }
+	@Override public void openInventory(EntityPlayer playerIn) { inventory.openInventory(playerIn); }
+	@Override public void closeInventory(EntityPlayer playerIn) { inventory.closeInventory(playerIn); }
 	@Override public boolean isItemValidForSlot(int slotIndex, ItemStack itemstack) { return inventory.isItemValidForSlot(slotIndex, itemstack); }
-	@Override public boolean hasCustomInventoryName() { return inventory.hasCustomInventoryName(); };
+
+	@Override
+	public int getField(int id) {
+		return inventory.getField(id);
+	}
+
+	@Override
+	public void setField(int id, int value) {
+		inventory.setField(id, value);
+	}
+
+	@Override
+	public int getFieldCount() {
+		return inventory.getFieldCount();
+	}
+
+	@Override
+	public void clear() {
+		inventory.clear();
+	}
+
+	@Override public boolean hasCustomName() { return inventory.hasCustomName(); }
+
+	@Override
+	public IChatComponent getDisplayName() {
+		return inventory.getDisplayName();
+	}
 
 	/* STATIC HELPER */
 	public static ISidedInventory getWrappedInventory(Object inventory) {

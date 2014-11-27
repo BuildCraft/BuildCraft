@@ -10,11 +10,12 @@ package buildcraft.transport.render;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.minecraft.util.EnumFacing;
 import buildcraft.transport.BlockGenericPipe;
@@ -40,7 +41,7 @@ public final class FakeBlock extends Block implements ITextureStates {
 	}	
 	
 	@Override
-	public int colorMultiplier(IBlockAccess blockAccess, int x, int y, int z) {
+	public int colorMultiplier(IBlockAccess blockAccess, BlockPos pos, int renderPass) {
 		// TODO: Move this somewhere else?
 		if (BlockGenericPipe.facadeRenderColor >= 0) {
 			return BlockGenericPipe.facadeRenderColor;

@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.tileentity.TileEntity;
-import cpw.mods.fml.common.FMLLog;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.statements.IActionExternal;

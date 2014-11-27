@@ -17,16 +17,17 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
@@ -106,7 +107,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 				int quarryX = ticket.getModData().getInteger("quarryX");
 				int quarryY = ticket.getModData().getInteger("quarryY");
 				int quarryZ = ticket.getModData().getInteger("quarryZ");
-				TileQuarry tq = (TileQuarry) world.getTileEntity(quarryX, quarryY, quarryZ);
+				TileQuarry tq = (TileQuarry) world.getTileEntity(new BlockPos(quarryX, quarryY, quarryZ));
 				tq.forceChunkLoading(ticket);
 
 			}
@@ -120,7 +121,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 				int quarryY = ticket.getModData().getInteger("quarryY");
 				int quarryZ = ticket.getModData().getInteger("quarryZ");
 
-				Block block = world.getBlock(quarryX, quarryY, quarryZ);
+				Block block = world.getBlockState(new BlockPos(quarryX, quarryY, quarryZ)).getBlock();
 				if (block == quarryBlock) {
 					validTickets.add(ticket);
 				}

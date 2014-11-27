@@ -25,18 +25,18 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.Launch;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStoppingEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
+import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -306,7 +306,12 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(Blocks.skull, SchematicSkull.class);
 
 		schemes.registerSchematicBlock(Blocks.ladder, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
-		schemes.registerSchematicBlock(Blocks.fence_gate, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, true);
+		schemes.registerSchematicBlock(Blocks.acacia_fence_gate, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, true);
+		schemes.registerSchematicBlock(Blocks.birch_fence_gate, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, true);
+		schemes.registerSchematicBlock(Blocks.dark_oak_fence_gate, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, true);
+		schemes.registerSchematicBlock(Blocks.jungle_fence_gate, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, true);
+		schemes.registerSchematicBlock(Blocks.oak_fence_gate, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, true);
+		schemes.registerSchematicBlock(Blocks.spruce_fence_gate, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, true);
 		schemes.registerSchematicBlock(Blocks.log, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
 		schemes.registerSchematicBlock(Blocks.log2, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
 		schemes.registerSchematicBlock(Blocks.hay_block, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
@@ -375,7 +380,12 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(Blocks.acacia_stairs, SchematicStairs.class);
 		schemes.registerSchematicBlock(Blocks.dark_oak_stairs, SchematicStairs.class);
 
-		schemes.registerSchematicBlock(Blocks.wooden_door, SchematicDoor.class, new ItemStack(Items.wooden_door));
+		schemes.registerSchematicBlock(Blocks.acacia_door, SchematicDoor.class, new ItemStack(Items.acacia_door));
+		schemes.registerSchematicBlock(Blocks.birch_door, SchematicDoor.class, new ItemStack(Items.birch_door));
+		schemes.registerSchematicBlock(Blocks.dark_oak_door, SchematicDoor.class, new ItemStack(Items.dark_oak_door));
+		schemes.registerSchematicBlock(Blocks.jungle_door, SchematicDoor.class, new ItemStack(Items.jungle_door));
+		schemes.registerSchematicBlock(Blocks.oak_door, SchematicDoor.class, new ItemStack(Items.oak_door));
+		schemes.registerSchematicBlock(Blocks.spruce_door, SchematicDoor.class, new ItemStack(Items.spruce_door));
 		schemes.registerSchematicBlock(Blocks.iron_door, SchematicDoor.class, new ItemStack(Items.iron_door));
 
 		schemes.registerSchematicBlock(Blocks.bed, SchematicBed.class);
@@ -402,7 +412,12 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(Blocks.wooden_slab, SchematicStandalone.class);
 		schemes.registerSchematicBlock(Blocks.double_wooden_slab, SchematicStandalone.class);
 		schemes.registerSchematicBlock(Blocks.stained_glass, SchematicStandalone.class);
-		schemes.registerSchematicBlock(Blocks.fence, SchematicStandalone.class);
+		schemes.registerSchematicBlock(Blocks.acacia_fence, SchematicStandalone.class);
+		schemes.registerSchematicBlock(Blocks.birch_fence, SchematicStandalone.class);
+		schemes.registerSchematicBlock(Blocks.dark_oak_fence, SchematicStandalone.class);
+		schemes.registerSchematicBlock(Blocks.jungle_fence, SchematicStandalone.class);
+		schemes.registerSchematicBlock(Blocks.oak_fence, SchematicStandalone.class);
+		schemes.registerSchematicBlock(Blocks.spruce_fence, SchematicStandalone.class);
 		schemes.registerSchematicBlock(Blocks.daylight_detector, SchematicStandalone.class);
 		schemes.registerSchematicBlock(Blocks.iron_bars, SchematicStandalone.class);
 

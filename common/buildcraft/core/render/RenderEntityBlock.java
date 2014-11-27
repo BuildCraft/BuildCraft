@@ -15,6 +15,7 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.Entity;
@@ -198,7 +199,8 @@ public final class RenderEntityBlock extends Render {
 		float lightEastWest = 0.8F;
 		float lightNorthSouth = 0.6F;
 
-		Tessellator tessellator = Tessellator.instance;
+		Tessellator tessellator = Tessellator.getInstance();
+		WorldRenderer renderer = tessellator.getWorldRenderer();
 
 		boolean realDoLight = doLight;
 
@@ -207,7 +209,7 @@ public final class RenderEntityBlock extends Render {
 		}
 
 		if (doTessellating) {
-			tessellator.startDrawingQuads();
+			renderer.startDrawingQuads();
 		}
 
 		float light = 0;
@@ -224,8 +226,8 @@ public final class RenderEntityBlock extends Render {
 			} else {
 				brightness = info.brightness;
 			}
-			tessellator.setBrightness(brightness);
-			tessellator.setColorOpaque_F(lightBottom * light, lightBottom * light, lightBottom * light);
+			renderer.setBrightness(brightness);
+			renderer.setColorOpaque_F(lightBottom * light, lightBottom * light, lightBottom * light);
 		} else {
 //			tessellator.setColorOpaque_F(1.0F, 1.0F, 1.0F);
 			if (info.brightness >= 0) {
