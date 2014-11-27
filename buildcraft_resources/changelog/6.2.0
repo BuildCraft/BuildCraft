@@ -1,0 +1,40 @@
+Additions:
+  * Pipe improvements!
+    * Clay Transport Pipes - insertion pipes, now in official BC!
+    * Diamond Liquid Pipes - sort liquids.
+    * Emerald Liquid Pipes can now filter liquids as an option.
+    * Sandstone Kinesis Pipes, which offer more throughput but do not connect to machines.
+    * Rebalanced liquid pipe capacities.
+  * Charging Table - charge RF items with lasers!
+  * Engines do not explode anymore! They now overheat - hit with a wrench to fix! (Explosions can be restored via config)
+  * Huge networking code improvements!
+    * Major rewrite of networking - instead of 3 networking subsystems, we now only use one.
+    * Small improvements in packet size.
+  * Quarry changes!
+    * Quarries and Mining Wells now dynamically calculate the energy required to break a block based on its hardness.
+    * They also render a fancy block breaking animation when breaking a block.
+    * Quarry arms move slower in rain, unless the rain is covered by a roof.
+  * Stirling engines can now burn paper at 1 RF/t.
+  * Engine centipedes are back! You can now connect engines to each other.
+  * Improved error messages for Schematics (CovertJaguar)
+  * OreDictionary support for almost all BuildCraft recipes (ganymedes01)
+  * Robot Miners respect BlockBreakEvents now (useful for MCPC+/Cauldron)
+  * Updated RF API to latest version (discerns between Providers and Receivers)
+  * New APIs for modders:
+    * IEngine - send energy between engines!
+    * IHeatable - control the heat of a block!
+
+Bugfixes:
+  * [#2236] Tanks consume water bottles and don't support IFluidContainerItem (asie)
+  * [#2225] Crash with blueprints (asie)
+  * [#2222] Add support for Blocks that use a color multiplier for rendering (nulano, asie)
+  * [#2218] Can't dismantle Landmarks (Gyro)
+  * [#2213] Message for receiving an invalid IMC is not formatted (asie)
+  * [#2210] Crash when changing dimensions with robots (asie)
+  * [#2208] Server-side crash when opening BuildCraft list (asie)
+  * [#2199] Pipes call interface methods on invalid tiles (asie)
+  * Fix builder packet spams (asie)
+  * Fix gate powering causing crashes (asie)
+  * Fluid pipe multipliers now respect fixing the travel delay as well (asie)
+  * **Important severe blueprint bugfix! Server admins - this is SERIOUS! Update!**
+

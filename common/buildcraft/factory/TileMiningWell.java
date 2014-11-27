@@ -8,16 +8,8 @@
  */
 package buildcraft.factory;
 
-import java.util.List;
-
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.event.world.BlockEvent.BreakEvent;
-import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.tiles.IHasWork;
@@ -25,9 +17,7 @@ import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtils;
-import buildcraft.core.utils.Utils;
 
 public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeConnection {
 	boolean isDigging = true;
