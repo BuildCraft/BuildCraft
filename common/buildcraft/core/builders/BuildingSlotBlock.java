@@ -17,6 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.Constants;
+import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
@@ -26,6 +27,7 @@ import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.Position;
+import buildcraft.core.inventory.StackHelper;
 
 public class BuildingSlotBlock extends BuildingSlot {
 
@@ -59,6 +61,38 @@ public class BuildingSlotBlock extends BuildingSlot {
 			try {
 				getSchematic().placeInWorld(context, x, y, z, stackConsumed);
 
+				// This is slightly hackish, but it's a very important way to verify
+				// the stored requirements.
+
+				if (!context.world().isAirBlock(x, y, z) &&
+						getSchematic().getBuildingPermission() == BuildingPermission.ALL &&
+						getSchematic() instanceof SchematicBlock) {
+					SchematicBlock sb = (SchematicBlock) getSchematic();
+					// Copy the old array of stored requirements.
+					ItemStack[] oldRequirementsArray = sb.storedRequirements;
+					List<ItemStack> oldRequirements = Arrays.asList(oldRequirementsArray);
+					sb.storedRequirements = new ItemStack[0];
+					sb.storeRequirements(context, x, y, z);
+					for (ItemStack s : sb.storedRequirements) {
+						boolean contains = false;
+						for (ItemStack ss : oldRequirements) {
+							if (StackHelper.isMatchingItem(s, ss)) {
+								contains = true;
+								break;
+							}
+						}
+						if (!contains) {
+							BCLog.logger.warn("Blueprint has MISMATCHING REQUIREMENTS! Potential corrupted/hacked blueprint! Removed mismatched block.");
+							BCLog.logger.warn("Location: " + x + ", " + y + ", " + z + " - ItemStack: " + s.toString());
+							context.world().removeTileEntity(x, y, z);
+							context.world().setBlockToAir(x, y, z);
+							return;
+						}
+					}
+					// Restore the stored requirements.
+					sb.storedRequirements = oldRequirementsArray;
+				}
+
 				// Once the schematic has been written, we're going to issue
 				// calls
 				// to various functions, in particular updating the tile entity.
@@ -70,24 +104,6 @@ public class BuildingSlotBlock extends BuildingSlot {
 
 				if (e != null) {
 					e.updateEntity();
-				}
-
-				// This is slightly hackish, but it's a very important way to verify
-				// the stored requirements.
-
-				if (getSchematic() instanceof SchematicBlock) {
-					SchematicBlock sb = (SchematicBlock) getSchematic();
-					// Copy the old array of stored requirements.
-					List<ItemStack> oldRequirements = Arrays.asList(sb.storedRequirements);
-					sb.storedRequirements = new ItemStack[0];
-					sb.storeRequirements(context, x, y, z);
-					for (ItemStack s : sb.storedRequirements) {
-						if (!oldRequirements.contains(s)) {
-							BCLog.logger.warn("Blueprint has MISMATCHING REQUIREMENTS! Potential corrupted/hacked blueprint! Removed mismatched block.");
-							context.world().setBlockToAir(x, y, z);
-							return;
-						}
-					}
 				}
 			} catch (Throwable t) {
 				t.printStackTrace();

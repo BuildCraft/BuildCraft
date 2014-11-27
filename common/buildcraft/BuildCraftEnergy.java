@@ -9,7 +9,6 @@
 package buildcraft;
 
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.apache.logging.log4j.Level;
 
@@ -41,7 +40,6 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.core.StackKey;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;

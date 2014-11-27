@@ -13,13 +13,8 @@ import net.minecraft.util.IIcon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.api.statements.IActionInternal;
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.statements.ActionRedstoneOutput;
-import buildcraft.core.statements.BCStatement;
-import buildcraft.core.statements.StatementParameterRedstoneGateSideOnly;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.Gate;
 
 public class ActionRedstoneFaderOutput extends ActionRedstoneOutput implements IActionInternal {
 

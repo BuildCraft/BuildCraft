@@ -19,7 +19,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
-import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyReceiver;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.ISerializable;

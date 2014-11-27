@@ -39,14 +39,11 @@ import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.GuiIds;
-import buildcraft.core.statements.ActionRedstoneOutput;
-import buildcraft.core.statements.StatementParameterRedstoneGateSideOnly;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.gates.StatementSlot;
 import buildcraft.transport.gui.ContainerGateInterface;
-import buildcraft.transport.statements.ActionRedstoneFaderOutput;
 import buildcraft.transport.statements.ActionValve;
 
 public final class Gate implements IGate, IStatementContainer {

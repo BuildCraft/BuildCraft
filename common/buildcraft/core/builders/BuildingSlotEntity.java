@@ -8,9 +8,7 @@
  */
 package buildcraft.core.builders;
 
-import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,7 +18,6 @@ import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.SchematicFactory;
-import buildcraft.api.core.BCLog;
 import buildcraft.api.core.Position;
 
 public class BuildingSlotEntity extends BuildingSlot {
