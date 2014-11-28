@@ -92,6 +92,11 @@ public final class Gate implements IGate, IStatementContainer {
 	}
 
 	public void setTrigger(int position, IStatement trigger) {
+		if (trigger != triggers[position]) {
+			for (int i = 0; i < triggerParameters[position].length; i++) {
+				triggerParameters[position][i] = null;
+			}
+		}
 		triggers[position] = trigger;
 	}
 
@@ -100,12 +105,18 @@ public final class Gate implements IGate, IStatementContainer {
 	}
 
 	public void setAction(int position, IStatement action) {
-		// HUGE HACK! TODO - Remove in 6.2 API rewrite by adding
+		// HUGE HACK! TODO - Remove in 6.3 API rewrite by adding
 		// ways for actions to fix their state on removal.
 		if (actions[position] instanceof ActionValve && pipe != null && pipe.transport != null) {
 			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 				pipe.transport.allowInput(side, true);
 				pipe.transport.allowOutput(side, true);
+			}
+		}
+
+		if (action != actions[position]) {
+			for (int i = 0; i < actionParameters[position].length; i++) {
+				actionParameters[position][i] = null;
 			}
 		}
 		actions[position] = action;
