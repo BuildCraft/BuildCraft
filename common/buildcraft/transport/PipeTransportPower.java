@@ -21,8 +21,11 @@ import cofh.api.energy.IEnergyReceiver;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.power.IEngine;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.TileBuildCraft;
+import buildcraft.energy.TileEngine;
 import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.PipePowerCobblestone;
 import buildcraft.transport.pipes.PipePowerDiamond;
@@ -92,14 +95,12 @@ public class PipeTransportPower extends PipeTransport {
 		}
 
 		if (container.pipe instanceof PipePowerWood) {
-			if (tile instanceof IEnergyConnection && ((IEnergyConnection) tile).canConnectEnergy(side.getOpposite())) {
-				// Disregard tiles which are consumers but NOT providers
-				return !(tile instanceof IEnergyReceiver && !(tile instanceof IEnergyProvider));
-			} else {
-				// Disregard tiles which can't connect either, I guess.
+			return isPowerSource(tile, side);
+		} else {
+			if (tile instanceof IEngine) {
+				// Disregard engines for this.
 				return false;
 			}
-		} else {
 			if (tile instanceof IEnergyReceiver) {
 				IEnergyReceiver handler = (IEnergyReceiver) tile;
 				if (handler != null && handler.canConnectEnergy(side.getOpposite())) {
@@ -109,6 +110,21 @@ public class PipeTransportPower extends PipeTransport {
 		}
 
 		return false;
+	}
+
+	public boolean isPowerSource(TileEntity tile, ForgeDirection side) {
+		if (tile instanceof IEnergyConnection && ((IEnergyConnection) tile).canConnectEnergy(side.getOpposite())) {
+			// TODO: Remove this hack! It's only done until Ender IO/MFR move to the new RF API
+			if (tile instanceof TileBuildCraft && !(tile instanceof IEngine)) {
+				// Disregard non-engine BC tiles
+				return false;
+			}
+			// Disregard tiles which are consumers but NOT providers
+			return (tile instanceof IEngine) || !(tile instanceof IEnergyReceiver && !(tile instanceof IEnergyProvider));
+		} else {
+			// Disregard tiles which can't connect either, I guess.
+			return false;
+		}
 	}
 
 	@Override

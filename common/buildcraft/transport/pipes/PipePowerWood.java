@@ -74,7 +74,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 			} else {
 				TileEntity tile = container.getTile(o);
 			
-				if (powerSources[o.ordinal()] = isPowerSource(tile, o)) {
+				if (powerSources[o.ordinal()] = transport.isPowerSource(tile, o)) {
 					sources++;
 				}
 			}
@@ -181,20 +181,6 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 			return amount;
 		} else {
 			return 0;
-		}
-	}
-
-	public boolean isPowerSource(TileEntity tile, ForgeDirection from) {
-		if (!transport.inputOpen(from)) {
-			return false;
-		} else {
-			if (tile instanceof IEnergyConnection && ((IEnergyConnection) tile).canConnectEnergy(from.getOpposite())) {
-				// Disregard tiles which are consumers but NOT providers
-				return !(tile instanceof IEnergyReceiver && !(tile instanceof IEnergyProvider));
-			} else {
-				// Disregard tiles which can't connect either, I guess.
-				return false;
-			}
 		}
 	}
 
