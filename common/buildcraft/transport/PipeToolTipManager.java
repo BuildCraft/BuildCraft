@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.client.gui.GuiScreen;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -39,23 +40,30 @@ public final class PipeToolTipManager {
 	private PipeToolTipManager() {
 	}
 
+	private static void addTipToList(String tipTag, List<String> tips) {
+		if (StringUtils.canLocalize(tipTag)) {
+			String localized = StringUtils.localize(tipTag);
+			if (localized != null) {
+				List<String> lines = StringUtils.newLineSplitter.splitToList(localized);
+				tips.addAll(lines);
+			}
+		}
+	}
 	public static void addToolTip(Class<? extends Pipe<?>> pipe, String toolTip) {
 		toolTips.put(pipe, toolTip);
 	}
 
-	public static List<String> getToolTip(Class<? extends Pipe> pipe) {
+	public static List<String> getToolTip(Class<? extends Pipe> pipe, boolean advanced) {
 		List<String> tips = new ArrayList<String>();
-		String tipTag = "tip." + pipe.getSimpleName();
-		if (StringUtils.canLocalize(tipTag)) {
-		   String localized = StringUtils.localize(tipTag);
-		   if (localized != null) {
-			   List<String> lines = StringUtils.newLineSplitter.splitToList(localized);
-			   tips.addAll(lines);
-		   }
-	    }
+		addTipToList("tip." + pipe.getSimpleName(), tips);
+
 		String tip = toolTips.get(pipe);
 		if (tip != null) {
 			tips.add(tip);
+		}
+
+		if (GuiScreen.isShiftKeyDown()) {
+			addTipToList("tip.shift." + pipe.getSimpleName(), tips);
 		}
 		return tips;
 	}
