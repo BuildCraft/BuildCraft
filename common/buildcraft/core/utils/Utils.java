@@ -21,6 +21,7 @@ import io.netty.buffer.Unpooled;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -34,6 +35,7 @@ import net.minecraft.world.World;
 
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IAreaProvider;
@@ -343,6 +345,20 @@ public final class Utils {
 		if (tile instanceof TileBuildCraft) {
 			((TileBuildCraft) tile).destroy();
 		}
+	}
+
+	public static boolean isFakePlayer(EntityPlayer player) {
+		if (player instanceof FakePlayer) {
+			return true;
+		}
+
+		// Tip donated by skyboy - addedToChunk must be set to false by a fake player
+		// or it becomes a chunk-loading entity.
+		if (!player.addedToChunk) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public static boolean checkPipesConnections(TileEntity tile1, TileEntity tile2) {

@@ -15,8 +15,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
-import cofh.api.energy.IEnergyProvider;
-import cofh.api.energy.IEnergyReceiver;
+import cofh.api.energy.IEnergyConnection;
+import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.power.IEngine;
 import buildcraft.api.tiles.IHeatable;
@@ -27,9 +27,10 @@ import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.utils.MathUtils;
+import buildcraft.core.utils.Utils;
 import buildcraft.energy.gui.ContainerEngine;
 
-public abstract class TileEngine extends TileBuildCraft implements IPipeConnection, IEnergyProvider, IEngine, IHeatable {
+public abstract class TileEngine extends TileBuildCraft implements IPipeConnection, IEnergyHandler, IEngine, IHeatable {
 	// Index corresponds to metadata
 	public static final ResourceLocation[] BASE_TEXTURES = new ResourceLocation[]{
 			new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_wood.png"),
@@ -119,7 +120,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 				player.getCurrentEquippedItem().getItem() instanceof IToolWrench) {
 			IToolWrench wrench = (IToolWrench) player.getCurrentEquippedItem().getItem();
 			if (wrench.canWrench(player, xCoord, yCoord, zCoord)) {
-				if (getEnergyStage() == EnergyStage.OVERHEAT) {
+				if (getEnergyStage() == EnergyStage.OVERHEAT && !Utils.isFakePlayer(player)) {
 					energyStage = computeEnergyStage();
 					sendNetworkUpdate();
 				}
@@ -290,8 +291,8 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
                     orientation.getOpposite(),
                     this.energy, true);
             return extractEnergy(maxEnergy, false);
-        } else if (tile instanceof IEnergyReceiver) {
-			IEnergyReceiver handler = (IEnergyReceiver) tile;
+        } else if (tile instanceof IEnergyHandler) {
+			IEnergyHandler handler = (IEnergyHandler) tile;
 
 			int maxEnergy = handler.receiveEnergy(
 					orientation.getOpposite(),
@@ -320,8 +321,8 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
                         extracted, false);
 
                 extractEnergy(neededRF, true);
-            } else if (tile instanceof IEnergyReceiver) {
-                IEnergyReceiver handler = (IEnergyReceiver) tile;
+            } else if (tile instanceof IEnergyHandler) {
+                IEnergyHandler handler = (IEnergyHandler) tile;
                 int neededRF = handler.receiveEnergy(
                         orientation.getOpposite(),
                         extracted, false);
@@ -510,8 +511,8 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
             return false;
         } else if (tile instanceof IEngine) {
             return ((IEngine) tile).canReceiveFromEngine(side.getOpposite());
-		} else if (tile instanceof IEnergyReceiver) {
-            return ((IEnergyReceiver) tile).canConnectEnergy(side.getOpposite());
+		} else if (tile instanceof IEnergyHandler) {
+            return ((IEnergyConnection) tile).canConnectEnergy(side.getOpposite());
         } else {
 			return false;
 		}
