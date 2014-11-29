@@ -1104,10 +1104,6 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return item;
 	}
 
-	public static boolean isPipeRegistered(int key) {
-		return pipes.containsKey(key);
-	}
-
 	public static Pipe<?> createPipe(Item key) {
 
 		try {

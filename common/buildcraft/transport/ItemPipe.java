@@ -88,7 +88,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 			Pipe<?> pipe = BlockGenericPipe.createPipe(this);
 
 			if (pipe == null) {
-				BCLog.logger.log(Level.WARN, "Pipe failed to create during placement at {0},{1},{2}", new Object[]{i, j, k});
+				BCLog.logger.log(Level.WARN, "Pipe failed to create during placement at {0},{1},{2}", i, j, k);
 				return true;
 			}
 			

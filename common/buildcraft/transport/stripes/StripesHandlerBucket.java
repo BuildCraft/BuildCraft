@@ -36,8 +36,6 @@ public class StripesHandlerBucket implements IStripesHandler {
 		Block block = world.getBlock(x, y, z);
 		if (block == Blocks.air) {
 			Block underblock = world.getBlock(x, y - 1, z);
-			
-			boolean rollback = false;
 
 			if (((ItemBucket) stack.getItem()).tryPlaceContainedLiquid(world, x, y - 1, z)) {
 				stack.stackSize = 0;

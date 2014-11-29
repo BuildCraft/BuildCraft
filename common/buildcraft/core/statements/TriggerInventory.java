@@ -30,7 +30,8 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
 	public enum State {
 
 		Empty, Contains, Space, Full
-	};
+	}
+
 	public State state;
 
 	public TriggerInventory(State state) {

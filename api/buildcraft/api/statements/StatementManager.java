@@ -92,6 +92,8 @@ public final class StatementManager {
 			result = ((IOverrideDefaultStatements) entity).overrideActions();
 			if (result != null) {
 				return result;
+			} else {
+				result = new LinkedList<IActionExternal>();
 			}
 		}
 		

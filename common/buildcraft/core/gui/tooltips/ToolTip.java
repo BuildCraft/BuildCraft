@@ -9,6 +9,7 @@
 package buildcraft.core.gui.tooltips;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.ForwardingList;
@@ -21,16 +22,12 @@ public class ToolTip extends ForwardingList<ToolTipLine> {
 
 	public ToolTip(ToolTipLine... lines) {
 		this.delay = 0;
-		for (ToolTipLine line: lines) {
-			delegate.add(line);
-		}
+		Collections.addAll(delegate, lines);
 	}
 
 	public ToolTip(int delay, ToolTipLine... lines) {
 		this.delay = delay;
-		for (ToolTipLine line: lines) {
-			delegate.add(line);
-		}
+		Collections.addAll(delegate, lines);
 	}
 
 	@Override

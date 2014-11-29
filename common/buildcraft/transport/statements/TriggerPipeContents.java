@@ -41,7 +41,8 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
 		requestsEnergy,
 		tooMuchEnergy;
 		public ITriggerInternal trigger;
-	};
+	}
+
 	private PipeContents kind;
 
 	public TriggerPipeContents(PipeContents kind) {

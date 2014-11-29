@@ -25,8 +25,6 @@ import buildcraft.core.utils.StringUtils;
 public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITriggerExternal {
 
 	private boolean high;
-	private IIcon iconEnergyLow;
-	private IIcon iconEnergyHigh;
 
 	public TriggerEnergy(boolean high) {
 		super("buildcraft:energyStored" + (high ? "high" : "low"));
@@ -40,7 +38,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITri
 	}
 
 	private boolean isValidEnergyHandler(IEnergyHandler handler) {
-		return handler instanceof IEnergyHandler;
+		return handler != null;
 	}
 
 	private boolean isTriggeredEnergyHandler(IEnergyHandler handler, ForgeDirection side) {

@@ -527,7 +527,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			try {
 				PrintWriter writer = new PrintWriter("FacadeDebug.txt", "UTF-8");
 				writer.println("*** REGISTERED FACADES ***");
-				for (ItemStack stack : facadeItem.allFacades) {
+				for (ItemStack stack : ItemFacade.allFacades) {
 					if (facadeItem.getBlocksForFacade(stack).length > 0) {
 						writer.println(Block.blockRegistry.getNameForObject(facadeItem.getBlocksForFacade(stack)[0]) + ":" + facadeItem.getMetaValuesForFacade(stack)[0]);
 					}

@@ -34,7 +34,7 @@ public abstract class InventoryWrapper implements ISidedInventory {
 	@Override public void openInventory() { inventory.openInventory(); }
 	@Override public void closeInventory() { inventory.closeInventory(); }
 	@Override public boolean isItemValidForSlot(int slotIndex, ItemStack itemstack) { return inventory.isItemValidForSlot(slotIndex, itemstack); }
-	@Override public boolean hasCustomInventoryName() { return inventory.hasCustomInventoryName(); };
+	@Override public boolean hasCustomInventoryName() { return inventory.hasCustomInventoryName(); }
 
 	/* STATIC HELPER */
 	public static ISidedInventory getWrappedInventory(Object inventory) {

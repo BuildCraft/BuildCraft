@@ -97,5 +97,5 @@ public class ActionIterator implements Iterable<StatementSlot> {
 					&& pipe.gates[curDir.ordinal()] != null
 					&& index < pipe.gates[curDir.ordinal()].activeActions.size();
 		}
-	};
+	}
 }

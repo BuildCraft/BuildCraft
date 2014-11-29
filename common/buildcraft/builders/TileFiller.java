@@ -68,7 +68,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 			box.initialize(a);
 
 			if (a instanceof TileMarker) {
-				((TileMarker) a).removeFromWorld();
+				a.removeFromWorld();
 			}
 
 			sendNetworkUpdate();

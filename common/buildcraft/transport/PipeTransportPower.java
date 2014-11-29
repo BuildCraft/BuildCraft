@@ -102,7 +102,7 @@ public class PipeTransportPower extends PipeTransport {
 			}
 			if (tile instanceof IEnergyReceiver) {
 				IEnergyConnection handler = (IEnergyConnection) tile;
-				if (handler != null && handler.canConnectEnergy(side.getOpposite())) {
+				if (handler.canConnectEnergy(side.getOpposite())) {
 					return true;
 				}
 			}

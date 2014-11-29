@@ -52,7 +52,8 @@ public final class CraftingHelper {
             }
         }
 
-		if (itemNum == 2 && item1.getItem() == item2.getItem()
+		if (itemNum == 2 && item1 != null && item2 != null
+                && item1.getItem() == item2.getItem()
 				&& item1.stackSize == 1 && item2.stackSize == 1
 				&& item1.getItem().isRepairable()) {
             Item itemBase = item1.getItem();

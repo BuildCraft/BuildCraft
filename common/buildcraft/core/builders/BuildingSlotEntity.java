@@ -8,6 +8,7 @@
  */
 package buildcraft.core.builders;
 
+import java.util.Collections;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
@@ -49,9 +50,7 @@ public class BuildingSlotEntity extends BuildingSlot {
 	public LinkedList<ItemStack> getRequirements (IBuilderContext context) {
 		LinkedList<ItemStack> results = new LinkedList<ItemStack>();
 
-		for (ItemStack s : schematic.storedRequirements) {
-			results.add(s);
-		}
+		Collections.addAll(results, schematic.storedRequirements);
 
 		return results;
 	}

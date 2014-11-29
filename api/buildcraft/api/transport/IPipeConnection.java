@@ -17,7 +17,7 @@ public interface IPipeConnection {
 	enum ConnectOverride {
 
 		CONNECT, DISCONNECT, DEFAULT
-	};
+	}
 
 	/**
 	 * Allows you to override pipe connection logic.

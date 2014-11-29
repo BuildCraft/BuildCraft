@@ -9,6 +9,7 @@
 package buildcraft.api.blueprints;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
@@ -39,9 +40,7 @@ public class SchematicBlock extends SchematicBlockBase {
 	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		if (block != null) {
 			if (storedRequirements.length != 0) {
-				for (ItemStack s : storedRequirements) {
-					requirements.add(s);
-				}
+				Collections.addAll(requirements, storedRequirements);
 			} else {
 				requirements.add(new ItemStack(block, 1, meta));
 			}
@@ -136,11 +135,9 @@ public class SchematicBlock extends SchematicBlockBase {
 			NBTTagList rq = nbt.getTagList("rq", Constants.NBT.TAG_COMPOUND);
 
 			ArrayList<ItemStack> rqs = new ArrayList<ItemStack>();
-			int idTEST = 0;
 			for (int i = 0; i < rq.tagCount(); ++i) {
 				try {
 					NBTTagCompound sub = rq.getCompoundTagAt(i);
-					idTEST = sub.getInteger("id");
 					if (sub.getInteger("id") >= 0) {
 						registry.stackToWorld(sub);
 						rqs.add(ItemStack.loadItemStackFromNBT(sub));

@@ -95,19 +95,12 @@ public class BlueprintDatabase {
 		File blueprintFile = getBlueprintFile(id, outputDir);
 
 		if (!blueprintFile.exists()) {
-			OutputStream gzOs = null;
 			try {
 				FileOutputStream f = new FileOutputStream(blueprintFile);
 				f.write(blueprint.getData());
 				f.close();
 			} catch (IOException ex) {
 				BCLog.logger.error(String.format("Failed to save Blueprint file: %s %s", blueprintFile.getName(), ex.getMessage()));
-			} finally {
-				try {
-					if (gzOs != null) {
-						gzOs.close();
-					}
-				} catch (IOException e) { }
 			}
 		}
 

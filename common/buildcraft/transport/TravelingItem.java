@@ -214,7 +214,6 @@ public class TravelingItem {
 			Position motion = new Position(0, 0, 0, output);
 			motion.moveForwards(0.1 + getSpeed() * 2F);
 
-			ItemStack stack = getItemStack();
 			EntityItem entity = new EntityItem(container.getWorldObj(), xCoord, yCoord, zCoord, getItemStack());
 			entity.lifespan = BuildCraftCore.itemLifespan;
 			entity.delayBeforeCanPickup = 10;

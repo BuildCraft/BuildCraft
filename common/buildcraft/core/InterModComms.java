@@ -206,7 +206,7 @@ public final class InterModComms {
 					BuildCraftTransport.facadeItem.addFacade(
 							"buildcraft:facade{" + Block.blockRegistry.getNameForObject(block) + "}",
 							modItemStack);
-				} else {
+				} else if (block != null) {
 					logRedundantAddFacadeMessage(m, block.toString());
 				}
 			}

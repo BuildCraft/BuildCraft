@@ -63,9 +63,7 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 		double[][] ret = new double[d.length][d[0].length];
 
 		for (int i = 0; i < d.length; ++i) {
-			for (int j = 0; j < d[0].length; ++j) {
-				ret[i][j] = d[i][j];
-			}
+			System.arraycopy(d[i], 0, ret[i], 0, d[0].length);
 		}
 
 		return ret;

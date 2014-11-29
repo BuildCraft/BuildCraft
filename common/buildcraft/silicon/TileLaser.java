@@ -69,7 +69,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 
 		laser.iterateTexture();
 
-		if (!!worldObj.isRemote) {
+		if (worldObj.isRemote) {
 			return;
 		}
 

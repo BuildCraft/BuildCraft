@@ -17,7 +17,7 @@ public interface IPipeTile {
 
 	public enum PipeType {
 
-		ITEM, FLUID, POWER, STRUCTURE;
+		ITEM, FLUID, POWER, STRUCTURE
 	}
 
 	PipeType getPipeType();

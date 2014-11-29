@@ -34,7 +34,8 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
 		private TriggerType(float level) {
 			this.level = level;
 		}
-	};
+	}
+
 	public TriggerType type;
 
 	public TriggerInventoryLevel(TriggerType type) {

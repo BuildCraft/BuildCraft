@@ -307,7 +307,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		if (pipe != null) {
 			pipe.readFromNBT(nbt);
 		} else {
-			BCLog.logger.log(Level.WARN, "Pipe failed to load from NBT at {0},{1},{2}", new Object[]{xCoord, yCoord, zCoord});
+			BCLog.logger.log(Level.WARN, "Pipe failed to load from NBT at {0},{1},{2}", xCoord, yCoord, zCoord);
 			deletePipe = true;
 		}
 
@@ -559,7 +559,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		this.blockType = getBlockType();
 
 		if (pipe == null) {
-			BCLog.logger.log(Level.WARN, "Pipe failed to initialize at {0},{1},{2}, deleting", new Object[]{xCoord, yCoord, zCoord});
+			BCLog.logger.log(Level.WARN, "Pipe failed to initialize at {0},{1},{2}, deleting", xCoord, yCoord, zCoord);
 			worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 			return;
 		}

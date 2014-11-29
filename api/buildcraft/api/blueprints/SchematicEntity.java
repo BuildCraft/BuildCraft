@@ -9,6 +9,7 @@
 package buildcraft.api.blueprints;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 
 import net.minecraft.entity.Entity;
@@ -43,9 +44,7 @@ public class SchematicEntity extends Schematic {
 
 	@Override
 	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		for (ItemStack s : storedRequirements) {
-			requirements.add(s);
-		}
+		Collections.addAll(requirements, storedRequirements);
 	}
 
 	public void writeToWorld(IBuilderContext context) {
@@ -114,8 +113,6 @@ public class SchematicEntity extends Schematic {
 	@Override
 	public void writeSchematicToNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		super.writeSchematicToNBT(nbt, registry);
-
-		NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
 
 		nbt.setInteger("entityId", registry.getIdForEntity(entity));
 		nbt.setTag("entity", entityNBT);

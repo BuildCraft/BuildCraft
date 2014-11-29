@@ -178,7 +178,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@Override
 		public void setParameter(IStatementParameter param, boolean notifyServer) {
-			container.setTriggerParameter(statementSlot.slot, slot, (IStatementParameter) param, notifyServer);
+			container.setTriggerParameter(statementSlot.slot, slot, param, notifyServer);
 		}
 	}
 
@@ -194,7 +194,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@Override
 		public void setParameter(IStatementParameter param, boolean notifyServer) {
-			container.setActionParameter(statementSlot.slot, slot, (IStatementParameter) param, notifyServer);
+			container.setActionParameter(statementSlot.slot, slot, param, notifyServer);
 		}
 	}
 

@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class JavaTools {
@@ -56,9 +57,7 @@ public class JavaTools {
 	    Class<?> current = clas;
 
 	    while (current != null && current != Object.class) {
-	    	for (Field f : current.getDeclaredFields()) {
-	    		result.add(f);
-	    	}
+			Collections.addAll(result, current.getDeclaredFields());
 
 	        current = current.getSuperclass();
 	    }
@@ -72,9 +71,7 @@ public class JavaTools {
 	    Class<?> current = clas;
 
 	    while (current != null && current != Object.class) {
-	    	for (Method m : current.getDeclaredMethods()) {
-	    		result.add(m);
-	    	}
+			Collections.addAll(result, current.getDeclaredMethods());
 
 	        current = current.getSuperclass();
 	    }

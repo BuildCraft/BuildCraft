@@ -230,8 +230,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 
 			if (!isOrientationValid()) {
 				switchOrientation(true);
-			} else {
-				TileEntity tile = getTile(orientation);
 			}
 		}
 

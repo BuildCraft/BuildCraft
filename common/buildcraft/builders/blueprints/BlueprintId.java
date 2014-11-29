@@ -24,7 +24,7 @@ import buildcraft.core.utils.Utils;
 public final class BlueprintId implements Comparable<BlueprintId>, ISerializable {
 	public enum Kind {
 		Template, Blueprint
-	};
+	}
 
 	public byte[] uniqueId;
 	public String name = "";

@@ -36,7 +36,7 @@ public class BuildingSlotBlock extends BuildingSlot {
 
 	public enum Mode {
 		ClearIfInvalid, Build
-	};
+	}
 
 	public Mode mode = Mode.Build;
 

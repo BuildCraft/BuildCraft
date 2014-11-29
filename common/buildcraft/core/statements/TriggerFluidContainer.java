@@ -28,7 +28,8 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 	public enum State {
 
 		Empty, Contains, Space, Full
-	};
+	}
+
 	public State state;
 
 	public TriggerFluidContainer(State state) {

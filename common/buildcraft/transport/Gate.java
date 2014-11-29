@@ -571,7 +571,6 @@ public final class Gate implements IGate, IStatementContainer {
 		
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			TileEntity tile = pipe.container.getTile(o);
-			Block block = pipe.container.getBlock(o);
 			allTriggers.addAll(StatementManager.getExternalTriggers(o, tile));
 		}
 		
@@ -597,7 +596,6 @@ public final class Gate implements IGate, IStatementContainer {
 		
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			TileEntity tile = pipe.container.getTile(o);
-			Block block = pipe.container.getBlock(o);
 			allActions.addAll(StatementManager.getExternalActions(o, tile));
 		}
 		

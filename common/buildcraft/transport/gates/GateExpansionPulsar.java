@@ -51,7 +51,7 @@ public final class GateExpansionPulsar extends GateExpansionBuildcraft implement
 			// one single moment would do the work at the same time. This
 			// spreads a bit work load. Note, this is not a problem for
 			// existing gates since tick is stored in NBT
-			tick = (int) Math.random() * PULSE_PERIOD;
+			tick = (int) (Math.random() * PULSE_PERIOD);
 		}
 
 		@Override

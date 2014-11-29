@@ -47,7 +47,7 @@ public final class OilPopulate {
 
 	private enum GenType {
 		LARGE, MEDIUM, LAKE, NONE
-	};
+	}
 
 	private OilPopulate() {
 //		BuildCraftCore.debugWorldgen = true;
