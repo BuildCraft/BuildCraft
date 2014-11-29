@@ -25,7 +25,6 @@ import buildcraft.api.power.IEngine;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.energy.TileEngine;
 import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.PipePowerCobblestone;
 import buildcraft.transport.pipes.PipePowerDiamond;
@@ -102,7 +101,7 @@ public class PipeTransportPower extends PipeTransport {
 				return false;
 			}
 			if (tile instanceof IEnergyReceiver) {
-				IEnergyReceiver handler = (IEnergyReceiver) tile;
+				IEnergyConnection handler = (IEnergyConnection) tile;
 				if (handler != null && handler.canConnectEnergy(side.getOpposite())) {
 					return true;
 				}
