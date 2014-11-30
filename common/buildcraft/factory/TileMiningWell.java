@@ -12,6 +12,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.blueprints.BuilderAPI;
+import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile.PipeType;
@@ -19,7 +20,7 @@ import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.utils.BlockUtils;
 
-public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeConnection {
+public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeConnection, IControllable {
 	boolean isDigging = true;
 	private BlockMiner miner;
 
@@ -35,6 +36,15 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 	@Override
 	public void updateEntity () {
 		if (worldObj.isRemote) {
+			return;
+		}
+
+		if (mode == Mode.Off) {
+			if (miner != null) {
+				miner.invalidate();
+				miner = null;
+			}
+			isDigging = false;
 			return;
 		}
 
@@ -69,6 +79,8 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 		}
 
 		if (miner != null) {
+			isDigging = true;
+
 			int usedEnergy = miner.acceptEnergy(getBattery().getEnergyStored());
 			getBattery().useEnergy(usedEnergy, usedEnergy, false);
 
@@ -101,5 +113,10 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 	public ConnectOverride overridePipeConnection(PipeType type,
 			ForgeDirection with) {
 		return type == PipeType.ITEM ? ConnectOverride.CONNECT : ConnectOverride.DEFAULT;
+	}
+
+	@Override
+	public boolean acceptsControlMode(Mode mode) {
+		return mode == Mode.Off || mode == Mode.On;
 	}
 }

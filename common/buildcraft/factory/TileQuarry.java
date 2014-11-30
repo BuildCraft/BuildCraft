@@ -34,6 +34,7 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.filler.FillerManager;
+import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
@@ -48,7 +49,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtils;
 import buildcraft.core.utils.Utils;
 
-public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory {
+public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory, IControllable {
 
 	private static enum Stage {
 		BUILDING,
@@ -151,6 +152,10 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		}
 
 		if (stage == Stage.DONE) {
+			return;
+		}
+
+		if (mode == Mode.Off && stage != Stage.MOVING) {
 			return;
 		}
 
@@ -481,7 +486,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 	@Override
 	public boolean hasWork() {
-		return stage != Stage.DONE;
+		return mode != Mode.Off && stage != Stage.DONE;
 	}
 
 	private void setBoundaries(boolean useDefaultI) {
@@ -853,5 +858,10 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	@Override
 	public boolean canExtractItem(int p1, ItemStack p2, int p3) {
 		return false;
+	}
+
+	@Override
+	public boolean acceptsControlMode(Mode mode) {
+		return mode == Mode.Off || mode == Mode.On;
 	}
 }

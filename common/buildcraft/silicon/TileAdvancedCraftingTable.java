@@ -233,7 +233,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 		if (worldObj.isRemote) {
 			return;
 		}
-		if (lastMode ==  IControllable.Mode.Off) {
+		if (mode ==  IControllable.Mode.Off) {
 			return;
 		}
 		updateRecipe();
@@ -440,7 +440,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 
 	@Override
 	public boolean canCraft() {
-		return craftable && !justCrafted && lastMode != IControllable.Mode.Off;
+		return craftable && !justCrafted && mode != IControllable.Mode.Off;
 	}
 
 	@Override

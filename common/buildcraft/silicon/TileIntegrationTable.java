@@ -80,7 +80,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements IFlexibl
 		}
 
 		if (getEnergy() >= craftingPreview.energyCost
-				&& lastMode != IControllable.Mode.Off) {
+				&& mode != IControllable.Mode.Off) {
 			setEnergy(0);
 			craftingPreview = null;
 

@@ -17,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.common.FMLLog;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IActionProvider;
@@ -51,7 +52,7 @@ public class DefaultActionProvider implements IActionProvider {
 				}
 			}
 		} catch (Throwable error) {
-			FMLLog.log("Buildcraft", Level.FATAL, "Outdated API detected, please update your mods!");
+			BCLog.logger.error("Outdated API detected, please update your mods!");
 		}
 
 		return res;

@@ -37,6 +37,7 @@ import buildcraft.api.core.Position;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.robots.StackRequest;
+import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
@@ -63,7 +64,7 @@ import buildcraft.core.robots.ResourceIdRequest;
 import buildcraft.core.robots.RobotRegistry;
 import buildcraft.core.utils.Utils;
 
-public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluidHandler, IRequestProvider {
+public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluidHandler, IRequestProvider, IControllable {
 
 	private static int POWER_ACTIVATION = 500;
 
@@ -85,7 +86,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	private NBTTagCompound initNBT = null;
 	private boolean done = true;
 	private boolean isBuilding = false;
-	
+
 	private class PathIterator {
 
 		public Iterator<BlockIndex> currentIterator;
@@ -596,10 +597,12 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 		iterateBpt(false);
 
-		if (getWorldObj().getWorldInfo().getGameType() == GameType.CREATIVE) {
-			build();
-		} else if (getBattery().getEnergyStored() > POWER_ACTIVATION) {
-			build();
+		if (mode != Mode.Off) {
+			if (getWorldObj().getWorldInfo().getGameType() == GameType.CREATIVE) {
+				build();
+			} else if (getBattery().getEnergyStored() > POWER_ACTIVATION) {
+				build();
+			}
 		}
 
 		if (!isBuilding && this.isBuildingBlueprint()) {
@@ -926,6 +929,11 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		}
 
 		return left;
+	}
+
+	@Override
+	public boolean acceptsControlMode(Mode mode) {
+		return mode == Mode.Off || mode == Mode.On;
 	}
 
 	@Override

@@ -26,7 +26,6 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 
 	public int clientRequiredEnergy = 0;
 	protected SimpleInventory inv = new SimpleInventory(getSizeInventory(), "inv", 64);
-	protected IControllable.Mode lastMode = IControllable.Mode.Unknown;
 	private int energy = 0;
 	private int recentEnergyAverage;
 	private AverageUtil recentEnergyAverageUtil = new AverageUtil(20);
@@ -198,17 +197,7 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 
 	@Override
 	public boolean hasWork() {
-		return lastMode != IControllable.Mode.Off;
-	}
-	
-	@Override
-	public Mode getControlMode() {
-		return this.lastMode;
-	}
-	
-	@Override
-	public void setControlMode(Mode mode) {
-		this.lastMode = mode;
+		return mode != IControllable.Mode.Off;
 	}
 	
 	@Override

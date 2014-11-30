@@ -43,7 +43,6 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 
 	private final Box box = new Box();
 	private boolean done = false;
-	private IControllable.Mode lastMode = IControllable.Mode.Unknown;
 	private SimpleInventory inv = new SimpleInventory(27, "Filler", 64);
 
 	private NBTTagCompound initNBT = null;
@@ -96,7 +95,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 			return;
 		}
 
-		if (lastMode == Mode.Off) {
+		if (mode == Mode.Off) {
 			return;
 		}
 
@@ -111,7 +110,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 		boolean oldDone = done;
 
 		if (done) {
-			if (lastMode == Mode.Loop) {
+			if (mode == Mode.Loop) {
 				done = false;
 			} else {
 				return;
@@ -186,7 +185,6 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 		}
 
 		done = nbt.getBoolean("done");
-		lastMode = Mode.values()[nbt.getByte("lastMode")];
 
 		// The rest of load has to be done upon initialize.
 		initNBT = (NBTTagCompound) nbt.getCompoundTag("bpt").copy();
@@ -207,7 +205,6 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 		nbt.setTag("box", boxStore);
 
 		nbt.setBoolean("done", done);
-		nbt.setByte("lastMode", (byte) lastMode.ordinal());
 
 		NBTTagCompound bptNBT = new NBTTagCompound();
 
@@ -268,7 +265,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 
 	@Override
 	public boolean hasWork() {
-		return !done && lastMode != Mode.Off;
+		return !done && mode != Mode.Off;
 	}
 
 	@Override
@@ -319,16 +316,6 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	@Override
 	public boolean isBuildingMaterialSlot(int i) {
 		return true;
-	}
-
-	@Override
-	public Mode getControlMode() {
-		return this.lastMode;
-	}
-
-	@Override
-	public void setControlMode(Mode mode) {
-		this.lastMode = mode;
 	}
 
 	@Override

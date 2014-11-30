@@ -80,7 +80,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		}
 
 		if (getEnergy() >= currentRecipe.craft(this, true).energyCost
-				&& lastMode != IControllable.Mode.Off) {
+				&& mode != IControllable.Mode.Off) {
 			setEnergy(0);
 
 			if (currentRecipe.canBeCrafted(this)) {

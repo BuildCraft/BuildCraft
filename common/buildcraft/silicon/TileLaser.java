@@ -40,7 +40,6 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 	private final SafeTimeTracker searchTracker = new SafeTimeTracker(100, 100);
 	private final SafeTimeTracker networkTracker = new SafeTimeTracker(20, 3);
 	private ILaserTarget laserTarget;
-	private IControllable.Mode lastMode = IControllable.Mode.Unknown;
 	private int powerIndex = 0;
 
 	private short powerAverage = 0;
@@ -74,7 +73,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 		}
 
 		// If a gate disabled us, remove laser and do nothing.
-		if (lastMode == IControllable.Mode.Off) {
+		if (mode == IControllable.Mode.Off) {
 			removeLaser();
 			return;
 		}
@@ -320,16 +319,6 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
 		return new Box(this).extendToEncompass(laser.tail).getBoundingBox();
-	}
-	
-	@Override
-	public Mode getControlMode() {
-		return this.lastMode;
-	}
-	
-	@Override
-	public void setControlMode(Mode mode) {
-		this.lastMode = mode;
 	}
 	
 	@Override

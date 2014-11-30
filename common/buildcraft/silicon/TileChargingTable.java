@@ -12,11 +12,12 @@ public class TileChargingTable extends TileLaserTableBase implements IHasWork {
         return !FMLCommonHandler.instance().getEffectiveSide().isClient();
     }
 
+    // WARNING: run only server-side, see canUpdate()!
     @Override
-    public void updateEntity() { // WARNING: run only server-side, see canUpdate()
+    public void updateEntity() {
         super.updateEntity();
 
-        if (getEnergy() > 0) {
+        if (getEnergy() > 0 && mode != Mode.Off) {
             if (getRequiredEnergy() > 0) {
                 ItemStack stack = this.getStackInSlot(0);
                 IEnergyContainerItem containerItem = (IEnergyContainerItem) stack.getItem();

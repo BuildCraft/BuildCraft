@@ -22,15 +22,24 @@ import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.ISerializable;
+import buildcraft.api.tiles.IControllable;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketTileUpdate;
 import buildcraft.core.utils.Utils;
 
 // TODO: Move back to IEnergyReceiver when EIO updates
+
+/**
+ * For future maintainers: This class intentionally does not implement
+ * just every interface out there. For some of them (such as IControllable),
+ * we expect the tiles supporting it to implement it - but TileBuildCraft
+ * provides all the underlying functionality to stop code repetition.
+ */
 public abstract class TileBuildCraft extends TileEntity implements IEnergyHandler, ISynchronizedTile, ISerializable {
     protected TileBuffer[] cache;
 	protected HashSet<EntityPlayer> guiWatchers = new HashSet<EntityPlayer>();
+	protected IControllable.Mode mode;
 
 	private boolean init = false;
 	private String owner = "[BuildCraft]";
@@ -120,6 +129,9 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 			battery.writeToNBT(batteryNBT);
 			nbt.setTag("battery", batteryNBT);
 		}
+		if (mode != null) {
+			nbt.setByte("lastMode", (byte) mode.ordinal());
+		}
 	}
 
 	@Override
@@ -130,6 +142,9 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 		}
 		if (battery != null) {
 			battery.readFromNBT(nbt.getCompoundTag("battery"));
+		}
+		if (nbt.hasKey("lastMode")) {
+			mode = IControllable.Mode.values()[nbt.getByte("lastMode")];
 		}
 	}
 
@@ -210,4 +225,12 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
         }
         return cache[side.ordinal()].getTile();
     }
+
+	public IControllable.Mode getControlMode() {
+		return mode;
+	}
+
+	public void setControlMode(IControllable.Mode mode) {
+		this.mode = mode;
+	}
 }
