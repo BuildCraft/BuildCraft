@@ -53,6 +53,7 @@ public class BlockBuilder extends BlockBuildCraft {
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public IIcon getIcon(int i, int j) {
 		if (j == 0 && i == 3) {
 			return blockTextureFront;
