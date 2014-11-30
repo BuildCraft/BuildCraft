@@ -11,7 +11,6 @@ package buildcraft.api.core;
 import net.minecraft.world.World;
 
 public interface IWorldProperty {
-
 	boolean get(World world, int x, int y, int z);
 
 	void clear();

@@ -16,6 +16,21 @@ import net.minecraftforge.common.util.ForgeDirection;
  * without using receiveEnergy() (which has other issues).
  */
 public interface IEngine {
+    /**
+     * Returns true if the engine wants to receive power from
+     * another engine on this side.
+     * @param side
+     * @return
+     */
     boolean canReceiveFromEngine(ForgeDirection side);
+
+    /**
+     * Receives energy from an engine.
+     * See {@link cofh.api.energy.IEnergyHandler#receiveEnergy(ForgeDirection, int, boolean)}
+     * @param side The side the engine is receiving energy from.
+     * @param energy The amount of energy given to the engine.
+     * @param simulate True if the energy should not actually be added.
+     * @return The amount of energy used by the engine.
+     */
     int receiveEnergyFromEngine(ForgeDirection side, int energy, boolean simulate);
 }

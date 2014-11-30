@@ -8,6 +8,12 @@
  */
 package buildcraft.api.power;
 
+/**
+ * This interface should be defined by any Tile which wants
+ * to receive energy from BuildCraft lasers.
+ *
+ * The respective Block MUST implement ILaserTargetBlock!
+ */
 public interface ILaserTarget {
 
 	/**
@@ -33,9 +39,21 @@ public interface ILaserTarget {
 	 */
 	boolean isInvalidTarget();
 
+	/**
+	 * Get the X coordinate of the laser stream.
+	 * @return
+	 */
 	double getXCoord();
 
+	/**
+	 * Get the Y coordinate of the laser stream.
+	 * @return
+	 */
 	double getYCoord();
 
+	/**
+	 * Get the Z coordinate of the laser stream.
+	 * @return
+	 */
 	double getZCoord();
 }
