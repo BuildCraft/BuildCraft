@@ -119,7 +119,7 @@ public class PipeTransportPower extends PipeTransport {
 			return false;
 		}
 
-		return (tile instanceof IEnergyConnection && ((IEnergyConnection) tile).canConnectEnergy(side.getOpposite()));
+		return tile instanceof IEnergyConnection && ((IEnergyConnection) tile).canConnectEnergy(side.getOpposite());
 		// TODO: Look into this code again when the new RF API is out.
 		/*
 		if (tile instanceof IEnergyConnection && ((IEnergyConnection) tile).canConnectEnergy(side.getOpposite())) {
