@@ -15,7 +15,7 @@ package buildcraft.api.tiles;
  */
 public interface IControllable {
 	public enum Mode {
-		Unknown, On, Off, Loop
+		Unknown, On, Off, Mode, Loop
 	}
 
 	/**
