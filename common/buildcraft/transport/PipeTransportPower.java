@@ -111,8 +111,18 @@ public class PipeTransportPower extends PipeTransport {
 	}
 
 	public boolean isPowerSource(TileEntity tile, ForgeDirection side) {
+		if (tile instanceof TileBuildCraft && !(tile instanceof IEngine)) {
+			// Disregard non-engine BC tiles.
+			// While this, of course, does nothing to work with other mods,
+			// it at least makes it work nicely with BC's built-in blocks while
+			// the new RF api isn't out.
+			return false;
+		}
+
+		return (tile instanceof IEnergyConnection && ((IEnergyConnection) tile).canConnectEnergy(side.getOpposite()));
+		// TODO: Look into this code again when the new RF API is out.
+		/*
 		if (tile instanceof IEnergyConnection && ((IEnergyConnection) tile).canConnectEnergy(side.getOpposite())) {
-			// TODO: Remove this hack! It's only done until Ender IO/MFR move to the new RF API
 			if (tile instanceof TileBuildCraft && !(tile instanceof IEngine)) {
 				// Disregard non-engine BC tiles
 				return false;
@@ -122,7 +132,7 @@ public class PipeTransportPower extends PipeTransport {
 		} else {
 			// Disregard tiles which can't connect either, I guess.
 			return false;
-		}
+		}*/
 	}
 
 	@Override
