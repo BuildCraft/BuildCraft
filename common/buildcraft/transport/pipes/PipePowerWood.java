@@ -127,22 +127,6 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 		requestedEnergy = 0;
 	}
 
-	public boolean requestsPower() {
-		if (full) {
-			boolean request = battery.getEnergyStored() < battery.getMaxEnergyStored() / 2;
-
-			if (request) {
-				full = false;
-			}
-
-			return request;
-		}
-
-		full = battery.getEnergyStored() >= battery.getMaxEnergyStored() - 100;
-
-		return !full;
-	}
-
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);

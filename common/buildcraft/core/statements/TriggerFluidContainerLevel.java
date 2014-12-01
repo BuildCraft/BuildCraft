@@ -74,6 +74,9 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
 			}
 
 			for (FluidTankInfo c : liquids) {
+				if (c == null) {
+					continue;
+				}
 				if (c.fluid == null) {
 					if (searchedFluid == null) {
 						return true;

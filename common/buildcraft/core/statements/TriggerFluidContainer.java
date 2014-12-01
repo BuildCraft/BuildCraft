@@ -70,14 +70,14 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 			switch (state) {
 				case Empty:
 					for (FluidTankInfo c : liquids) {
-						if (c.fluid != null && c.fluid.amount > 0 && (searchedFluid == null || searchedFluid.isFluidEqual(c.fluid))) {
+						if (c != null && c.fluid != null && c.fluid.amount > 0 && (searchedFluid == null || searchedFluid.isFluidEqual(c.fluid))) {
 							return false;
 						}
 					}
 					return true;
 				case Contains:
 					for (FluidTankInfo c : liquids) {
-						if (c.fluid != null && c.fluid.amount > 0 && (searchedFluid == null || searchedFluid.isFluidEqual(c.fluid))) {
+						if (c != null && c.fluid != null && c.fluid.amount > 0 && (searchedFluid == null || searchedFluid.isFluidEqual(c.fluid))) {
 							return true;
 						}
 					}
@@ -85,7 +85,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 				case Space:
 					if (searchedFluid == null) {
 						for (FluidTankInfo c : liquids) {
-							if (c.fluid == null || c.fluid.amount < c.capacity) {
+							if (c != null && (c.fluid == null || c.fluid.amount < c.capacity)) {
 								return true;
 							}
 						}
@@ -95,7 +95,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 				case Full:
 					if (searchedFluid == null) {
 						for (FluidTankInfo c : liquids) {
-							if (c.fluid == null || c.fluid.amount < c.capacity) {
+							if (c != null && (c.fluid == null || c.fluid.amount < c.capacity)) {
 								return false;
 							}
 						}

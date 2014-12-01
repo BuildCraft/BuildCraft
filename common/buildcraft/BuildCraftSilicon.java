@@ -249,6 +249,15 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'C', new ItemStack(redstoneChipset, 1, 0),
 				'G', "gearDiamond");
 
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 3),
+				"ORO",
+				"OCO",
+				"OGO",
+				'O', Blocks.obsidian,
+				'R', "dustRedstone",
+				'C', new ItemStack(redstoneChipset, 1, 0),
+				'G', "gearGold");
+
 		// COMMANDER BLOCKS
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(zonePlanBlock, 1, 0),
 				"IRI",
