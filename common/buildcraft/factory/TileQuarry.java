@@ -66,7 +66,6 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	private double headPosX, headPosY, headPosZ;
 	private double speed = 0.03;
 	private Stage stage = Stage.BUILDING;
-	private boolean isAlive;
 	private boolean movingHorizontally;
 	private boolean movingVertically;
 	private double headTrajectory;
@@ -134,6 +133,18 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		this.arm = arm;
 	}
 
+	public boolean areChunksLoaded() {
+		if (BuildCraftFactory.quarryLoadsChunks) {
+			// Small optimization
+			return true;
+		}
+
+		// Each chunk covers the full height, so we only check one of them per height.
+		return worldObj.blockExists(box.xMin, box.yMax, box.zMin)
+				&& worldObj.blockExists(box.xMax, box.yMax, box.zMin)
+				&& worldObj.blockExists(box.xMin, box.yMax, box.zMax)
+				&& worldObj.blockExists(box.xMax, box.yMax, box.zMax);
+	}
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
@@ -146,11 +157,11 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 			return;
 		}
 
-		if (!isAlive) {
+		if (stage == Stage.DONE) {
 			return;
 		}
 
-		if (stage == Stage.DONE) {
+		if (!areChunksLoaded()) {
 			return;
 		}
 
@@ -453,7 +464,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 	@Override
 	public void invalidate() {
-		ForgeChunkManager.releaseTicket(chunkTicket);
+		if (chunkTicket != null) {
+			ForgeChunkManager.releaseTicket(chunkTicket);
+		}
 
 		super.invalidate();
 		destroy();
@@ -487,25 +500,15 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	private void setBoundaries(boolean useDefaultI) {
 		boolean useDefault = useDefaultI;
 
-		if (chunkTicket == null) {
+		if (BuildCraftFactory.quarryLoadsChunks && chunkTicket == null) {
 			chunkTicket = ForgeChunkManager.requestTicket(BuildCraftFactory.instance, worldObj, Type.NORMAL);
 		}
-		if (chunkTicket == null) {
-			isAlive = false;
-
-			if (placedBy != null && !worldObj.isRemote) {
-				placedBy.addChatMessage(new ChatComponentText(
-						String.format(
-								"[BUILDCRAFT] The quarry at %d, %d, %d will not work because there are no more chunkloaders available",
-								xCoord, yCoord, zCoord)));
-			}
-			sendNetworkUpdate();
-			return;
+		if (chunkTicket != null) {
+			chunkTicket.getModData().setInteger("quarryX", xCoord);
+			chunkTicket.getModData().setInteger("quarryY", yCoord);
+			chunkTicket.getModData().setInteger("quarryZ", zCoord);
+			ForgeChunkManager.forceChunk(chunkTicket, new ChunkCoordIntPair(xCoord >> 4, zCoord >> 4));
 		}
-		chunkTicket.getModData().setInteger("quarryX", xCoord);
-		chunkTicket.getModData().setInteger("quarryY", yCoord);
-		chunkTicket.getModData().setInteger("quarryZ", zCoord);
-		ForgeChunkManager.forceChunk(chunkTicket, new ChunkCoordIntPair(xCoord >> 4, zCoord >> 4));
 
 		IAreaProvider a = null;
 
@@ -522,17 +525,19 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		int xSize = a.xMax() - a.xMin() + 1;
 		int zSize = a.zMax() - a.zMin() + 1;
 
-		if (xSize < 3 || zSize < 3 || ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth()) {
-			if (placedBy != null) {
-				placedBy.addChatMessage(new ChatComponentText(
-						String.format(
-								"Quarry size is outside of chunkloading bounds or too small %d %d (%d)",
-								xSize, zSize,
-								chunkTicket.getMaxChunkListDepth())));
-			}
+		if (chunkTicket != null) {
+			if (xSize < 3 || zSize < 3 || ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth()) {
+				if (placedBy != null) {
+					placedBy.addChatMessage(new ChatComponentText(
+							String.format(
+									"Quarry size is outside of chunkloading bounds or too small %d %d (%d)",
+									xSize, zSize,
+									chunkTicket.getMaxChunkListDepth())));
+				}
 
-			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
-			useDefault = true;
+				a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
+				useDefault = true;
+			}
 		}
 
 		xSize = a.xMax() - a.xMin() + 1;
@@ -575,7 +580,11 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		}
 
 		a.removeFromWorld();
-		forceChunkLoading(chunkTicket);
+		if (chunkTicket != null) {
+			forceChunkLoading(chunkTicket);
+		}
+
+		sendNetworkUpdate();
 	}
 
 	private void initializeBlueprintBuilder() {
@@ -599,7 +608,6 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		stream.writeFloat((float) speed);
 		stream.writeFloat((float) headTrajectory);
 		int flags = stage.ordinal();
-		flags |= isAlive ? 0x08 : 0;
 		flags |= movingHorizontally ? 0x10 : 0;
 		flags |= movingVertically ? 0x20 : 0;
 		stream.writeByte(flags);
@@ -619,16 +627,11 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		headTrajectory = stream.readFloat();
 		int flags = stream.readUnsignedByte();
 		stage = Stage.values()[flags & 0x07];
-		isAlive = (flags & 0x08) != 0;
 		movingHorizontally = (flags & 0x10) != 0;
 		movingVertically = (flags & 0x20) != 0;
 
-		if (isAlive) {
-			createUtilsIfNeeded();
-		} else {
-			box.reset();
-			return;
-		}
+		createUtilsIfNeeded();
+
 		if (arm != null) {
 			arm.setHead(headPosX, headPosY, headPosZ);
 			arm.updatePosition();
@@ -802,7 +805,6 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		}
 
 		Set<ChunkCoordIntPair> chunks = Sets.newHashSet();
-		isAlive = true;
 		ChunkCoordIntPair quarryChunk = new ChunkCoordIntPair(xCoord >> 4, zCoord >> 4);
 		chunks.add(quarryChunk);
 		ForgeChunkManager.forceChunk(ticket, quarryChunk);
@@ -821,8 +823,6 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 							"[BUILDCRAFT] The quarry at %d %d %d will keep %d chunks loaded",
 							xCoord, yCoord, zCoord, chunks.size())));
 		}
-
-		sendNetworkUpdate();
 	}
 
 	@Override
