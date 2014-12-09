@@ -39,6 +39,7 @@ import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.DefaultAreaProvider;
+import buildcraft.core.IDropControlInventory;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
@@ -48,7 +49,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtils;
 import buildcraft.core.utils.Utils;
 
-public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory {
+public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory, IDropControlInventory {
 
 	private static enum Stage {
 		BUILDING,
@@ -842,16 +843,21 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 	@Override
 	public int[] getAccessibleSlotsFromSide(int side) {
-		return new int[] {0};
+		return new int[] {};
 	}
 
 	@Override
 	public boolean canInsertItem(int p1, ItemStack p2, int p3) {
-		return true;
+		return false;
 	}
 
 	@Override
 	public boolean canExtractItem(int p1, ItemStack p2, int p3) {
+		return false;
+	}
+
+	@Override
+	public boolean doDrop() {
 		return false;
 	}
 }
