@@ -35,6 +35,8 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.tiles.IHasWork;
+import buildcraft.api.transport.IPipeConnection;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.CoreConstants;
@@ -49,7 +51,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtils;
 import buildcraft.core.utils.Utils;
 
-public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory, IDropControlInventory {
+public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory, IDropControlInventory, IPipeConnection {
 
 	private static enum Stage {
 		BUILDING,
@@ -859,5 +861,10 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	@Override
 	public boolean doDrop() {
 		return false;
+	}
+
+	@Override
+	public ConnectOverride overridePipeConnection(IPipeTile.PipeType type, ForgeDirection with) {
+		return type == IPipeTile.PipeType.ITEM ? ConnectOverride.CONNECT : ConnectOverride.DEFAULT;
 	}
 }
