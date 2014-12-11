@@ -154,16 +154,27 @@ public class BlockTank extends BlockBuildCraft {
 						}
 					}
 				} else if (current.getItem() instanceof IFluidContainerItem) {
-					IFluidContainerItem container = (IFluidContainerItem) current.getItem();
-					FluidStack liquid = container.getFluid(current);
-					if (liquid != null && liquid.amount > 0) {
-						int qty = tank.fill(ForgeDirection.UNKNOWN, liquid, false);
-						tank.fill(ForgeDirection.UNKNOWN, container.drain(current, qty, true), true);
-					} else {
-						liquid = tank.drain(ForgeDirection.UNKNOWN, 1000, false);
-						int qtyToFill = container.fill(current, liquid, true);
-						tank.drain(ForgeDirection.UNKNOWN, qtyToFill, true);
+					if (!world.isRemote) {
+						IFluidContainerItem container = (IFluidContainerItem) current.getItem();
+						FluidStack liquid = container.getFluid(current);
+						FluidStack tankLiquid = tank.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid;
+						boolean mustDrain = (liquid == null || liquid.amount == 0);
+						boolean mustFill = (tankLiquid == null || tankLiquid.amount == 0);
+						if (mustDrain && mustFill) {
+							// Both are empty, do nothing
+						} else if (mustDrain || !entityplayer.isSneaking()) {
+							liquid = tank.drain(ForgeDirection.UNKNOWN, 1000, false);
+							int qtyToFill = container.fill(current, liquid, true);
+							tank.drain(ForgeDirection.UNKNOWN, qtyToFill, true);
+						} else if (mustFill || entityplayer.isSneaking()) {
+							if (liquid != null && liquid.amount > 0) {
+								int qty = tank.fill(ForgeDirection.UNKNOWN, liquid, false);
+								tank.fill(ForgeDirection.UNKNOWN, container.drain(current, qty, true), true);
+							}
+						}
 					}
+
+					return true;
 				}
 			}
 		}
