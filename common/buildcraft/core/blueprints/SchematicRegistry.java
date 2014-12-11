@@ -96,7 +96,7 @@ public final class SchematicRegistry implements ISchematicRegistry {
 	
 	public void registerSchematicBlock(Block block, int meta, Class<? extends Schematic> clazz, Object... params) {
 		if (block == null || Block.blockRegistry.getNameForObject(block) == null || "null".equals(Block.blockRegistry.getNameForObject(block))) {
-			BCLog.logger.warn("Builder: Mod tried to register block schematic with a null name! Ignoring.");
+			BCLog.logger.warn("Builder: Mod tried to register block '" + (block != null ? block.getClass().getName() : "null") + "' schematic with a null name! Ignoring.");
 			return;
 		}
 		if (schematicBlocks.containsKey(toStringKey(block, meta))) {
