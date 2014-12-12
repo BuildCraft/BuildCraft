@@ -26,6 +26,7 @@ import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.api.transport.IPipeColorable;
 import buildcraft.core.network.IClientState;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -38,7 +39,7 @@ import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.statements.ActionPipeColor;
 import buildcraft.transport.statements.ActionPipeDirection;
 
-public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements IClientState {
+public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements IClientState, IPipeColorable {
 
 	private int standardIconIndex = PipeIconProvider.TYPE.PipeItemsDaizuli_Black.ordinal();
 	private int solidIconIndex = PipeIconProvider.TYPE.PipeAllDaizuli_Solid.ordinal();
@@ -69,10 +70,12 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements IClien
 		transport.allowBouncing = true;
 	}
 
+	@Override
 	public EnumColor getColor() {
 		return EnumColor.fromId(color);
 	}
 
+	@Override
 	public void setColor(EnumColor c) {
 		if (color != c.ordinal()) {
 			this.color = c.ordinal();

@@ -22,6 +22,7 @@ import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.api.transport.IPipeColorable;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
@@ -31,7 +32,7 @@ import buildcraft.transport.gates.StatementSlot;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.statements.ActionPipeColor;
 
-public class PipeItemsLapis extends Pipe<PipeTransportItems> {
+public class PipeItemsLapis extends Pipe<PipeTransportItems> implements IPipeColorable {
 
 	public PipeItemsLapis(Item item) {
 		super(new PipeTransportItems(), item);
@@ -68,10 +69,12 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 		return false;
 	}
 
+	@Override
 	public EnumColor getColor() {
 		return EnumColor.fromId(container.getBlockMetadata());
 	}
 
+	@Override
 	public void setColor(EnumColor color) {
 		if (color.ordinal() != container.getBlockMetadata()) {
 			container.getWorldObj().setBlockMetadataWithNotify(container.xCoord, container.yCoord, container.zCoord, color.ordinal(), 3);
