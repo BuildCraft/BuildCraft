@@ -116,7 +116,7 @@ public final class SchematicRegistry implements ISchematicRegistry {
 	}
 
 	public SchematicBlock createSchematicBlock(Block block, int metadata) {
-		if (block == null || block == Blocks.air || metadata < 0 || metadata >= 16) {
+		if (block == null || metadata < 0 || metadata >= 16) {
 			return null;
 		}
 

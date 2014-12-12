@@ -63,7 +63,7 @@ public final class HeuristicBlockDetection {
 							if (creativeOnly) {
 								SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlockCreative.class);
 							} else {
-								if (block instanceof IFluidBlock) {
+							    if (block instanceof IFluidBlock) {
 									IFluidBlock fblock = (IFluidBlock) block;
 									if (fblock.getFluid() != null) {
 										SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicFluid.class, new FluidStack(fblock.getFluid(), 1000));

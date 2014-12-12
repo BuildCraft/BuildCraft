@@ -76,6 +76,7 @@ import buildcraft.builders.TileFiller;
 import buildcraft.builders.TileMarker;
 import buildcraft.builders.TilePathMarker;
 import buildcraft.builders.blueprints.BlueprintDatabase;
+import buildcraft.builders.schematics.SchematicAir;
 import buildcraft.builders.schematics.SchematicBed;
 import buildcraft.builders.schematics.SchematicBlockCreative;
 import buildcraft.builders.schematics.SchematicCactus;
@@ -280,6 +281,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		// Standard blocks
 		ISchematicRegistry schemes = BuilderAPI.schematicRegistry;
+		schemes.registerSchematicBlock(Blocks.air, SchematicAir.class);
+
 		schemes.registerSchematicBlock(Blocks.snow, SchematicIgnore.class);
 		schemes.registerSchematicBlock(Blocks.tallgrass, SchematicIgnore.class);
 		schemes.registerSchematicBlock(Blocks.double_plant, SchematicIgnore.class);
