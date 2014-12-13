@@ -11,19 +11,12 @@ package buildcraft.transport.pipes;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-<<<<<<< HEAD
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.util.EnumFacing;
 import cofh.api.energy.IEnergyConnection;
-=======
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
->>>>>>> 9883e790c47a3d7eaaa29be953519363a7655314
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.RFBattery;
 import buildcraft.transport.IPipeTransportPowerHook;
@@ -57,7 +50,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 
 	@Override
 	public int getIconIndex(EnumFacing direction) {
-		if (direction != EnumFacing.UNKNOWN && powerSources[direction.ordinal()]) {
+		if (direction != null && powerSources[direction.ordinal()]) {
 			return solidIconIndex;
 		} else {
 			return standardIconIndex;
@@ -172,17 +165,6 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 		}
 	}
 
-<<<<<<< HEAD
-	public boolean isPowerSource(TileEntity tile, EnumFacing from) {
-		if (!transport.inputOpen(from)) {
-			return false;
-		} else {
-			return tile instanceof IEnergyConnection && ((IEnergyConnection) tile).canConnectEnergy(from.getOpposite());
-		}
-	}
-
-=======
->>>>>>> 9883e790c47a3d7eaaa29be953519363a7655314
 	@Override
 	public boolean canConnectEnergy(EnumFacing from) {
 		return true;

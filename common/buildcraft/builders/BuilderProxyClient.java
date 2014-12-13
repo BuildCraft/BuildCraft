@@ -26,7 +26,7 @@ public class BuilderProxyClient extends BuilderProxy {
 	public void registerBlockRenderers() {
 		super.registerBlockRenderers();
 
-		RenderingRegistry.registerBlockHandler(new RenderBlockMultiTexture());
+		//RenderingRegistry.registerBlockHandler(new RenderBlockMultiTexture());
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileUrbanist.class, new RenderBoxProvider());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect.class, new RenderArchitect());

@@ -42,6 +42,7 @@ import buildcraft.core.Version;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.ConfigUtils;
+import buildcraft.core.utils.Utils;
 import buildcraft.factory.BlockAutoWorkbench;
 import buildcraft.factory.BlockFloodGate;
 import buildcraft.factory.BlockFrame;
@@ -106,14 +107,12 @@ public class BuildCraftFactory extends BuildCraftMod {
 		@Override
 		public void ticketsLoaded(List<Ticket> tickets, World world) {
 			for (Ticket ticket : tickets) {
-				int quarryX = ticket.getModData().getInteger("quarryX");
-				int quarryY = ticket.getModData().getInteger("quarryY");
-				int quarryZ = ticket.getModData().getInteger("quarryZ");
+				BlockPos quarryPos = Utils.readBlockPos(ticket.getModData());
 
-				if (world.blockExists(quarryX, quarryY, quarryZ)) {
-					Block block = world.getBlock(quarryX, quarryY, quarryZ);
+				if (world.isBlockLoaded(quarryPos)) {
+					Block block = world.getBlockState(quarryPos).getBlock();
 					if (block == quarryBlock) {
-						TileQuarry tq = (TileQuarry) world.getTileEntity(quarryX, quarryY, quarryZ);
+						TileQuarry tq = (TileQuarry) world.getTileEntity(quarryPos);
 						tq.forceChunkLoading(ticket);
 					}
 				}
@@ -124,21 +123,13 @@ public class BuildCraftFactory extends BuildCraftMod {
 		public List<Ticket> ticketsLoaded(List<Ticket> tickets, World world, int maxTicketCount) {
 			List<Ticket> validTickets = Lists.newArrayList();
 			for (Ticket ticket : tickets) {
-				int quarryX = ticket.getModData().getInteger("quarryX");
-				int quarryY = ticket.getModData().getInteger("quarryY");
-				int quarryZ = ticket.getModData().getInteger("quarryZ");
+				BlockPos quarryPos = Utils.readBlockPos(ticket.getModData());
 
-<<<<<<< HEAD
-				Block block = world.getBlockState(new BlockPos(quarryX, quarryY, quarryZ)).getBlock();
-				if (block == quarryBlock) {
-					validTickets.add(ticket);
-=======
-				if (world.blockExists(quarryX, quarryY, quarryZ)) {
-					Block block = world.getBlock(quarryX, quarryY, quarryZ);
+				if (world.isBlockLoaded(quarryPos)) {
+					Block block = world.getBlockState(quarryPos).getBlock();
 					if (block == quarryBlock) {
 						validTickets.add(ticket);
 					}
->>>>>>> 9883e790c47a3d7eaaa29be953519363a7655314
 				}
 			}
 			return validTickets;
@@ -198,34 +189,34 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 
 		miningWellBlock = new BlockMiningWell();
-		CoreProxy.proxy.registerBlock(miningWellBlock.setBlockName("miningWellBlock"));
+		CoreProxy.proxy.registerBlock(miningWellBlock.setUnlocalizedName("miningWellBlock"));
 
 		plainPipeBlock = new BlockPlainPipe();
-		CoreProxy.proxy.registerBlock(plainPipeBlock.setBlockName("plainPipeBlock"));
+		CoreProxy.proxy.registerBlock(plainPipeBlock.setUnlocalizedName("plainPipeBlock"));
 
 		autoWorkbenchBlock = new BlockAutoWorkbench();
-		CoreProxy.proxy.registerBlock(autoWorkbenchBlock.setBlockName("autoWorkbenchBlock"));
+		CoreProxy.proxy.registerBlock(autoWorkbenchBlock.setUnlocalizedName("autoWorkbenchBlock"));
 
 		frameBlock = new BlockFrame();
-		CoreProxy.proxy.registerBlock(frameBlock.setBlockName("frameBlock"));
+		CoreProxy.proxy.registerBlock(frameBlock.setUnlocalizedName("frameBlock"));
 
 		quarryBlock = new BlockQuarry();
-		CoreProxy.proxy.registerBlock(quarryBlock.setBlockName("machineBlock"));
+		CoreProxy.proxy.registerBlock(quarryBlock.setUnlocalizedName("machineBlock"));
 
 		tankBlock = new BlockTank();
-		CoreProxy.proxy.registerBlock(tankBlock.setBlockName("tankBlock"));
+		CoreProxy.proxy.registerBlock(tankBlock.setUnlocalizedName("tankBlock"));
 
 		pumpBlock = new BlockPump();
-		CoreProxy.proxy.registerBlock(pumpBlock.setBlockName("pumpBlock"));
+		CoreProxy.proxy.registerBlock(pumpBlock.setUnlocalizedName("pumpBlock"));
 
 		floodGateBlock = new BlockFloodGate();
-		CoreProxy.proxy.registerBlock(floodGateBlock.setBlockName("floodGateBlock"));
+		CoreProxy.proxy.registerBlock(floodGateBlock.setUnlocalizedName("floodGateBlock"));
 
 		refineryBlock = new BlockRefinery();
-		CoreProxy.proxy.registerBlock(refineryBlock.setBlockName("refineryBlock"));
+		CoreProxy.proxy.registerBlock(refineryBlock.setUnlocalizedName("refineryBlock"));
 
 		hopperBlock = new BlockHopper();
-		CoreProxy.proxy.registerBlock(hopperBlock.setBlockName("blockHopper"));
+		CoreProxy.proxy.registerBlock(hopperBlock.setUnlocalizedName("blockHopper"));
 
 
 		FactoryProxy.proxy.initializeEntityRenders();

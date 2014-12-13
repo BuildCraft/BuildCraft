@@ -18,6 +18,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -55,12 +56,12 @@ public class PacketHandlerFactory extends SimpleChannelInboundHandler<BuildCraft
 
 	}
 
-	private TileRefinery getRefinery(World world, int x, int y, int z) {
-		if (!world.blockExists(x, y, z)) {
+	private TileRefinery getRefinery(World world, BlockPos pos) {
+		if (!world.isBlockLoaded(pos)) {
 			return null;
 		}
 
-		TileEntity tile = world.getTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(pos);
 		if (!(tile instanceof TileRefinery)) {
 			return null;
 		}
@@ -70,7 +71,7 @@ public class PacketHandlerFactory extends SimpleChannelInboundHandler<BuildCraft
 
 	private void onRefinerySelect(EntityPlayer playerEntity, PacketUpdate packet) throws IOException {
 
-		TileRefinery tile = getRefinery(playerEntity.worldObj, packet.posX, packet.posY, packet.posZ);
+		TileRefinery tile = getRefinery(playerEntity.worldObj, packet.pos);
 		if (tile == null || packet.payload == null) {
 			return;
 		}

@@ -8,13 +8,12 @@
  */
 package buildcraft.api.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IIcon;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import buildcraft.api.core.SheetIcon;
 
 public interface IStatementParameter {
 	
@@ -27,20 +26,10 @@ public interface IStatementParameter {
 	String getUniqueTag();
 	
 	@SideOnly(Side.CLIENT)
-	IIcon getIcon();
+	SheetIcon getIcon();
 
 	ItemStack getItemStack();
 
-	/**
-	 * Something that is initially unintuitive: you HAVE to
-	 * keep your icons as static variables, due to the fact
-	 * that every IStatementParameter is instantiated upon creation,
-	 * in opposition to IStatements which are singletons (due to the
-	 * fact that they, unlike Parameters, store no additional data)
-	 */
-	@SideOnly(Side.CLIENT)
-	void registerIcons(IIconRegister iconRegister);
-	
 	/**
 	 * Return the parameter description in the UI
 	 */

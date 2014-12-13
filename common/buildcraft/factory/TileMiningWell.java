@@ -8,6 +8,7 @@
  */
 package buildcraft.factory;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftFactory;
@@ -33,7 +34,9 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 	 * bedrock, lava or goes below 0, it's considered done.
 	 */
 	@Override
-	public void updateEntity () {
+	public void update() {
+		super.update();
+
 		if (worldObj.isRemote) {
 			return;
 		}
@@ -43,28 +46,27 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 		}
 
 		if (miner == null) {
+			BlockPos loc = pos.offsetDown();
 			World world = worldObj;
 
-			int depth = yCoord - 1;
-
-			while (world.getBlock(xCoord, depth, zCoord) == BuildCraftFactory.plainPipeBlock) {
-				depth = depth - 1;
+			while (world.getBlockState(pos).getBlock() == BuildCraftFactory.plainPipeBlock) {
+				pos = pos.offsetDown();
 			}
 
-			if (depth < 1 || depth < yCoord - BuildCraftFactory.miningDepth || !BlockUtils.canChangeBlock(world, xCoord, depth, zCoord)) {
+			if (loc.getY() < 1 || loc.getY() < pos.getY() - BuildCraftFactory.miningDepth || !BlockUtils.canChangeBlock(world, pos)) {
 				isDigging = false;
 				// Drain energy, because at 0 energy this will stop doing calculations.
 				getBattery().useEnergy(0, 10, false);
 				return;
 			}
 
-			if (world.isAirBlock(xCoord, depth, zCoord)) {
+			if (world.isAirBlock(pos)) {
 				if (getBattery().getEnergyStored() >= BuilderAPI.BUILD_ENERGY) {
 					getBattery().useEnergy(BuilderAPI.BUILD_ENERGY, BuilderAPI.BUILD_ENERGY, false);
-					world.setBlock(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock);
+					world.setBlockState(loc, BuildCraftFactory.plainPipeBlock.getDefaultState());
 				}
 			} else {
-				miner = new BlockMiner(world, this, xCoord, depth, zCoord);
+				miner = new BlockMiner(world, this, loc);
 			}
 		}
 
@@ -87,8 +89,8 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 		if (miner != null) {
 			miner.invalidate();
 		}
-		if (worldObj != null && yCoord > 2) {
-			BuildCraftFactory.miningWellBlock.removePipes(worldObj, xCoord, yCoord, zCoord);
+		if (worldObj != null && pos.getY() > 2) {
+			BuildCraftFactory.miningWellBlock.removePipes(worldObj, pos);
 		}
 	}
 

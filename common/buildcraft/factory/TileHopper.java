@@ -52,8 +52,8 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 		if (worldObj.isRemote || isEmpty ||
 				worldObj.getTotalWorldTime() % 2 != 0) {
 			return;
@@ -125,26 +125,18 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public String getInventoryName() {
-		return inventory.getInventoryName();
-	}
-
-	@Override
 	public int getInventoryStackLimit() {
 		return inventory.getInventoryStackLimit();
 	}
 
 	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityPlayer) {
-		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this && entityPlayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D) <= 64.0D;
+	public void openInventory(EntityPlayer playerIn) {
+
 	}
 
 	@Override
-	public void openInventory() {
-	}
+	public void closeInventory(EntityPlayer playerIn) {
 
-	@Override
-	public void closeInventory() {
 	}
 
 	@Override
@@ -153,7 +145,7 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
-		return false;
+	public String getName() {
+		return inventory.getName();
 	}
 }

@@ -11,6 +11,7 @@ package buildcraft.api.blueprints;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
@@ -22,6 +23,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.BlockFluidBase;
+import buildcraft.core.utils.Utils;
 
 public class SchematicBlock extends SchematicBlockBase {
 
@@ -39,11 +41,11 @@ public class SchematicBlock extends SchematicBlockBase {
 	
 	@Override
 	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		if (block != null) {
+		if (state != null) {
 			if (storedRequirements.length != 0) {
 				Collections.addAll(requirements, storedRequirements);
 			} else {
-				requirements.add(new ItemStack(block, 1, meta));
+				requirements.add(Utils.getItemStack(state));
 			}
 		}
 	}
@@ -64,9 +66,8 @@ public class SchematicBlock extends SchematicBlockBase {
 	public void storeRequirements(IBuilderContext context, BlockPos pos) {
 		super.storeRequirements(context, pos);
 
-		if (block != null) {
-			ArrayList<ItemStack> req = block.getDrops(context.world(), x,
-					y, z, context.world().getBlockMetadata(x, y, z), 0);
+		if (state != null) {
+			List<ItemStack> req = state.getBlock().getDrops(context.world(), pos, state, 0);
 
 			if (req != null) {
 				storedRequirements = new ItemStack [req.size()];
@@ -95,6 +96,7 @@ public class SchematicBlock extends SchematicBlockBase {
 
 	@Override
 	public BuildingStage getBuildStage () {
+		Block block = state.getBlock();
 		if (block instanceof BlockFalling) {
 			return BuildingStage.SUPPORTED;
 		} else if (block instanceof BlockFluidBase || block instanceof BlockLiquid) {
@@ -113,9 +115,7 @@ public class SchematicBlock extends SchematicBlockBase {
 	
 	// Utility functions
 	protected void setBlockInWorld(IBuilderContext context, BlockPos pos) {
-		// Meta needs to be specified twice, depending on the block behavior
-		context.world().setBlock(pos, block, meta, 3);
-		context.world().setBlockMetadataWithNotify(pos, meta, 3);
+		context.world().setBlockState(pos, state, 3);
 	}
 	
 	public boolean doNotUse() {
@@ -124,8 +124,8 @@ public class SchematicBlock extends SchematicBlockBase {
 	
 	protected void readBlockFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		try {
-			block = registry.getBlockForId(nbt.getInteger("blockId"));
-			meta = nbt.getInteger("blockMeta");
+			Block block = registry.getBlockForId(nbt.getInteger("blockId"));
+			state = block.getStateFromMeta(nbt.getInteger("blockMeta"));
 		} catch (MappingNotFoundException e) {
 			doNotUse = true;
 		}
@@ -160,8 +160,8 @@ public class SchematicBlock extends SchematicBlockBase {
 	}
 	
 	protected void writeBlockToNBT(NBTTagCompound nbt, MappingRegistry registry) {
-		nbt.setInteger("blockId", registry.getIdForBlock(block));
-		nbt.setInteger("blockMeta", meta);
+		nbt.setInteger("blockId", registry.getIdForBlock(state.getBlock()));
+		nbt.setInteger("blockMeta", state.getBlock().getMetaFromState(state));
 	}
 	
 	protected void writeRequirementsToNBT(NBTTagCompound nbt, MappingRegistry registry) {

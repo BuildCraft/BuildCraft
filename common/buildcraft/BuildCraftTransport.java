@@ -317,7 +317,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			}
 
 			filteredBufferBlock = new BlockFilteredBuffer();
-			CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));
+			CoreProxy.proxy.registerBlock(filteredBufferBlock.setUnlocalizedName("filteredBufferBlock"));
 
 			PipeManager.registerExtractionHandler(new ExtractionHandler(excludedItemBlocks, excludedFluidBlocks));
 
@@ -369,7 +369,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 			genericPipeBlock = BCCompatHooks.createPipeBlock();
 
-			CoreProxy.proxy.registerBlock(genericPipeBlock.setBlockName("pipeBlock"), ItemBlock.class);
+			CoreProxy.proxy.registerBlock(genericPipeBlock.setUnlocalizedName("pipeBlock"), ItemBlock.class);
 
 			pipeItemsWood = buildPipe(PipeItemsWood.class, "Wooden Transport Pipe", CreativeTabBuildCraft.PIPES, "plankWood", Blocks.glass, "plankWood");
 			pipeItemsEmerald = buildPipe(PipeItemsEmerald.class, "Emerald Transport Pipe", CreativeTabBuildCraft.PIPES, "gemEmerald", Blocks.glass, "gemEmerald");

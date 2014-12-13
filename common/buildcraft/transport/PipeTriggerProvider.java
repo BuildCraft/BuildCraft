@@ -66,7 +66,7 @@ public class PipeTriggerProvider implements ITriggerProvider {
 				break;
 		}
 
-		if (tile instanceof IEnergyHandler && ((IEnergyHandler) tile).getMaxEnergyStored(EnumFacing.UNKNOWN) > 0) {
+		if (tile instanceof IEnergyHandler && ((IEnergyHandler) tile).getMaxEnergyStored(null) > 0) {
 			result.add((ITriggerInternal) BuildCraftCore.triggerEnergyHigh);
 			result.add((ITriggerInternal) BuildCraftCore.triggerEnergyLow);
 		}

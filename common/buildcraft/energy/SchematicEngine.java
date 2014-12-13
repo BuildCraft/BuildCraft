@@ -10,6 +10,9 @@ package buildcraft.energy;
 
 import java.util.LinkedList;
 
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 
 import net.minecraft.util.EnumFacing;

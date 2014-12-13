@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Level;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.common.network.IGuiHandler;
@@ -39,11 +40,13 @@ public class GuiHandler implements IGuiHandler {
 	@Override
 	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 		try {
-			if (!world.blockExists(x, y, z)) {
+			BlockPos pos = new BlockPos(x, y, z);
+
+			if (!world.isBlockLoaded(pos)) {
 				return null;
 			}
 
-			TileEntity tile = world.getTileEntity(x, y, z);
+			TileEntity tile = world.getTileEntity(pos);
 
 			if (tile instanceof TileFilteredBuffer) {
 				TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;
@@ -88,11 +91,13 @@ public class GuiHandler implements IGuiHandler {
 	@Override
 	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 		try {
-			if (!world.blockExists(x, y, z)) {
+			BlockPos pos = new BlockPos(x, y, z);
+
+			if (!world.isBlockLoaded(pos)) {
 				return null;
 			}
 
-			TileEntity tile = world.getTileEntity(x, y, z);
+			TileEntity tile = world.getTileEntity(pos);
 
 			if (tile instanceof TileFilteredBuffer) {
 				TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;

@@ -11,6 +11,7 @@ package buildcraft.api.transport;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public abstract class PipeManager {
@@ -29,9 +30,9 @@ public abstract class PipeManager {
 	/**
 	 * param extractor can be null
 	 */
-	public static boolean canExtractItems(Object extractor, World world, int i, int j, int k) {
+	public static boolean canExtractItems(Object extractor, World world, BlockPos pos) {
 		for (IExtractionHandler handler : extractionHandlers) {
-			if (!handler.canExtractItems(extractor, world, i, j, k)) {
+			if (!handler.canExtractItems(extractor, world, pos)) {
 				return false;
 			}
 		}
@@ -42,9 +43,9 @@ public abstract class PipeManager {
 	/**
 	 * param extractor can be null
 	 */
-	public static boolean canExtractFluids(Object extractor, World world, int i, int j, int k) {
+	public static boolean canExtractFluids(Object extractor, World world, BlockPos pos) {
 		for (IExtractionHandler handler : extractionHandlers) {
-			if (!handler.canExtractFluids(extractor, world, i, j, k)) {
+			if (!handler.canExtractFluids(extractor, world, pos)) {
 				return false;
 			}
 		}

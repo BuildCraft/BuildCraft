@@ -22,6 +22,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -38,6 +39,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.util.EnumFacing;
 
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
@@ -555,5 +557,13 @@ public final class Utils {
 		packet.writeData(buf);
 
 		return new FMLProxyPacket(new PacketBuffer(buf), DefaultProps.NET_CHANNEL_NAME + "-CORE");
+	}
+
+	public static ItemStack getItemStack(IBlockState state, int quantity) {
+		return new ItemStack(state.getBlock(), quantity, state.getBlock().damageDropped(state));
+	}
+
+	public static ItemStack getItemStack(IBlockState state) {
+		return getItemStack(state, 1);
 	}
 }

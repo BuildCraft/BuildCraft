@@ -14,7 +14,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -162,21 +161,5 @@ public final class StatementManager {
 		}
 
 		return null;
-	}
-	
-	/**
-	 * Generally, this function should be called by every mod implementing
-	 * the Statements API ***as a container*** (that is, adding its own gates)
-	 * on the client side from a given Item of choice.
-	 */
-	@SideOnly(Side.CLIENT)
-	public static void registerIcons(IIconRegister register) {
-		for (IStatement statement : statements.values()) {
-			statement.registerIcons(register);
-		}
-
-		for (Class<? extends IStatementParameter> parameter : parameters.values()) {
-			createParameter(parameter).registerIcons(register);
-		}
 	}
 }

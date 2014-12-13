@@ -62,7 +62,7 @@ public class ContainerRefinery extends BuildCraftContainer {
 					data.writeShort(filter != null ? filter.getID() : -1);
 				}
 			};
-			BuildCraftFactory.instance.sendToServer(new PacketUpdate(PacketIds.REFINERY_FILTER_SET, refinery.xCoord, refinery.yCoord, refinery.zCoord, payload));
+			BuildCraftFactory.instance.sendToServer(new PacketUpdate(PacketIds.REFINERY_FILTER_SET, refinery.getPos(), payload));
 		}
 	}
 

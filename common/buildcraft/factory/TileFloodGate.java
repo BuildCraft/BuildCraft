@@ -17,6 +17,7 @@ import java.util.TreeMap;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
@@ -26,7 +27,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.Tank;
@@ -38,9 +38,9 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 
 	public static final int[] REBUILD_DELAY = new int[8];
 	public static final int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 2;
-	private final TreeMap<Integer, Deque<BlockIndex>> pumpLayerQueues = new TreeMap<Integer, Deque<BlockIndex>>();
-	private final Set<BlockIndex> visitedBlocks = new HashSet<BlockIndex>();
-	private Deque<BlockIndex> fluidsFound = new LinkedList<BlockIndex>();
+	private final TreeMap<Integer, Deque<BlockPos>> pumpLayerQueues = new TreeMap<Integer, Deque<BlockPos>>();
+	private final Set<BlockPos> visitedBlocks = new HashSet<BlockPos>();
+	private Deque<BlockPos> fluidsFound = new LinkedList<BlockPos>();
 	private final Tank tank = new Tank("tank", MAX_LIQUID, this);
 	private int rebuildDelay;
 	private int tick = Utils.RANDOM.nextInt();
@@ -61,8 +61,8 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		if (worldObj.isRemote) {
 			return;
@@ -81,7 +81,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 					return;
 				}
 
-				if (fluid == FluidRegistry.WATER && worldObj.provider.dimensionId == -1) {
+				if (fluid == FluidRegistry.WATER && worldObj.provider.getDimensionId() == -1) {
 					tank.drain(FluidContainerRegistry.BUCKET_VOLUME, true);
 					return;
 				}
@@ -93,9 +93,9 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 					}
 					rebuildQueue();
 				}
-				BlockIndex index = getNextIndexToFill(true);
+				BlockPos index = getNextIndexToFill(true);
 
-				if (index != null && placeFluid(index.x, index.y, index.z, fluid)) {
+				if (index != null && placeFluid(index, fluid)) {
 					tank.drain(FluidContainerRegistry.BUCKET_VOLUME, true);
 					rebuildDelay = 0;
 				}
@@ -103,22 +103,22 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		}
 	}
 
-	private boolean placeFluid(int x, int y, int z, Fluid fluid) {
-		Block block = worldObj.getBlock(x, y, z);
+	private boolean placeFluid(BlockPos pos, Fluid fluid) {
+		Block block = worldObj.getBlockState(pos).getBlock();
 
-		if (canPlaceFluidAt(block, x, y, z)) {
+		if (canPlaceFluidAt(block, pos)) {
 			boolean placed;
 			Block b = TankUtils.getFluidBlock(fluid, true);
 
 			if (b instanceof BlockFluidBase) {
 				BlockFluidBase blockFluid = (BlockFluidBase) b;
-				placed = worldObj.setBlock(x, y, z, b, blockFluid.getMaxRenderHeightMeta(), 3);
+				placed = worldObj.setBlockState(pos, b.getDefaultState(), 3);
 			} else {
-				placed = worldObj.setBlock(x, y, z, b);
+				placed = worldObj.setBlockState(pos, b.getDefaultState());
 			}
 
 			if (placed) {
-				queueAdjacent(x, y, z);
+				queueAdjacent(pos);
 				expandQueue();
 			}
 
@@ -128,19 +128,19 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		return false;
 	}
 
-	private BlockIndex getNextIndexToFill(boolean remove) {
+	private BlockPos getNextIndexToFill(boolean remove) {
 		if (pumpLayerQueues.isEmpty()) {
 			return null;
 		}
 
-		Deque<BlockIndex> bottomLayer = pumpLayerQueues.firstEntry().getValue();
+		Deque<BlockPos> bottomLayer = pumpLayerQueues.firstEntry().getValue();
 
 		if (bottomLayer != null) {
 			if (bottomLayer.isEmpty()) {
 				pumpLayerQueues.pollFirstEntry();
 			}
 			if (remove) {
-				BlockIndex index = bottomLayer.pollFirst();
+				BlockPos index = bottomLayer.pollFirst();
 				return index;
 			}
 			return bottomLayer.peekFirst();
@@ -149,10 +149,10 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		return null;
 	}
 
-	private Deque<BlockIndex> getLayerQueue(int layer) {
-		Deque<BlockIndex> pumpQueue = pumpLayerQueues.get(layer);
+	private Deque<BlockPos> getLayerQueue(int layer) {
+		Deque<BlockPos> pumpQueue = pumpLayerQueues.get(layer);
 		if (pumpQueue == null) {
-			pumpQueue = new LinkedList<BlockIndex>();
+			pumpQueue = new LinkedList<BlockPos>();
 			pumpLayerQueues.put(layer, pumpQueue);
 		}
 		return pumpQueue;
@@ -166,7 +166,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		visitedBlocks.clear();
 		fluidsFound.clear();
 
-		queueAdjacent(xCoord, yCoord, zCoord);
+		queueAdjacent(pos);
 
 		expandQueue();
 	}
@@ -176,52 +176,52 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 			return;
 		}
 		while (!fluidsFound.isEmpty()) {
-			Deque<BlockIndex> fluidsToExpand = fluidsFound;
-			fluidsFound = new LinkedList<BlockIndex>();
+			Deque<BlockPos> fluidsToExpand = fluidsFound;
+			fluidsFound = new LinkedList<BlockPos>();
 
-			for (BlockIndex index : fluidsToExpand) {
-				queueAdjacent(index.x, index.y, index.z);
+			for (BlockPos index : fluidsToExpand) {
+				queueAdjacent(index);
 			}
 		}
 	}
 
-	public void queueAdjacent(int x, int y, int z) {
+	public void queueAdjacent(BlockPos pos) {
 		if (tank.getFluidType() == null) {
 			return;
 		}
-		queueForFilling(x, y - 1, z);
-		queueForFilling(x + 1, y, z);
-		queueForFilling(x - 1, y, z);
-		queueForFilling(x, y, z + 1);
-		queueForFilling(x, y, z - 1);
+		queueForFilling(pos.offsetDown());
+		queueForFilling(pos.offsetEast());
+		queueForFilling(pos.offsetNorth());
+		queueForFilling(pos.offsetSouth());
+		queueForFilling(pos.offsetWest());
 	}
 
-	public void queueForFilling(int x, int y, int z) {
-        if (y < 0 || y > 255) {
+	public void queueForFilling(BlockPos pos) {
+        if (pos.getY() < 0 || pos.getY() > 255) {
             return;
         }
-		BlockIndex index = new BlockIndex(x, y, z);
-		if (visitedBlocks.add(index)) {
-			if ((x - xCoord) * (x - xCoord) + (z - zCoord) * (z - zCoord) > 64 * 64) {
+
+		if (visitedBlocks.add(pos)) {
+			if (pos.distanceSq(this.pos) > 64) {
 				return;
 			}
 
-			Block block = worldObj.getBlock(x, y, z);
+			Block block = worldObj.getBlockState(pos).getBlock();
 			if (BlockUtils.getFluid(block) == tank.getFluidType()) {
-				fluidsFound.add(index);
+				fluidsFound.add(pos);
 			}
-			if (canPlaceFluidAt(block, x, y, z)) {
-				getLayerQueue(y).addLast(index);
+			if (canPlaceFluidAt(block, pos)) {
+				getLayerQueue(pos.getY()).addLast(pos);
 			}
 		}
 	}
 
-	private boolean canPlaceFluidAt(Block block, int x, int y, int z) {
-		return BuildCraftAPI.isSoftBlock(worldObj, x, y, z) && !BlockUtils.isFullFluidBlock(block, worldObj, x, y, z);
+	private boolean canPlaceFluidAt(Block block, BlockPos pos) {
+		return BuildCraftAPI.isSoftBlock(worldObj, pos) && !BlockUtils.isFullFluidBlock(block, worldObj, pos);
 	}
 
 	public void onNeighborBlockChange(Block block) {
-		boolean p = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+		boolean p = worldObj.isBlockPowered(pos);
 		if (powered != p) {
 			powered = p;
 			if (!p) {

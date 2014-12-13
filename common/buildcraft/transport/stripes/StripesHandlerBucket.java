@@ -6,6 +6,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
@@ -30,14 +31,16 @@ public class StripesHandlerBucket implements IStripesHandler {
 	}
 
 	@Override
-	public boolean handle(World world, int x, int y, int z,
+	public boolean handle(World world, BlockPos pos,
 			EnumFacing direction, ItemStack stack, EntityPlayer player,
 			IStripesPipe pipe) {
-		Block block = world.getBlock(x, y, z);
-		if (block == Blocks.air) {
-			Block underblock = world.getBlock(x, y - 1, z);
+		BlockPos underPos = pos.offsetDown();
+		Block block = world.getBlockState(pos).getBlock();
 
-			if (((ItemBucket) stack.getItem()).tryPlaceContainedLiquid(world, x, y - 1, z)) {
+		if (block == Blocks.air) {
+			Block underblock = world.getBlockState(pos).getBlock();
+
+			if (((ItemBucket) stack.getItem()).func_180616_a(world, underPos)) {
 				stack.stackSize = 0;
 				pipe.sendItem(emptyBucket, direction.getOpposite());
 				
@@ -60,7 +63,7 @@ public class StripesHandlerBucket implements IStripesHandler {
 				}
 
 				if (filledBucket != null) {
-					world.setBlockToAir(x, y - 1, z);
+					world.setBlockToAir(underPos);
 
 					stack.stackSize = 0;
 					pipe.sendItem(filledBucket, direction.getOpposite());

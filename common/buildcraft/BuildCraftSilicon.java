@@ -125,19 +125,19 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		BuildCraftCore.mainConfiguration.save();
 
 		laserBlock = new BlockLaser();
-		laserBlock.setBlockName("laserBlock");
+		laserBlock.setUnlocalizedName("laserBlock");
 		CoreProxy.proxy.registerBlock(laserBlock);
 
 		assemblyTableBlock = new BlockLaserTable();
-		assemblyTableBlock.setBlockName("laserTableBlock");
+		assemblyTableBlock.setUnlocalizedName("laserTableBlock");
 		CoreProxy.proxy.registerBlock(assemblyTableBlock, ItemLaserTable.class);
 
 		zonePlanBlock = new BlockZonePlan();
-		zonePlanBlock.setBlockName("zonePlan");
+		zonePlanBlock.setUnlocalizedName("zonePlan");
 		CoreProxy.proxy.registerBlock(zonePlanBlock);
 
 		requesterBlock = new BlockRequester();
-		requesterBlock.setBlockName("requester");
+		requesterBlock.setUnlocalizedName("requester");
 		CoreProxy.proxy.registerBlock(requesterBlock);
 
 		redstoneChipset = new ItemRedstoneChipset();

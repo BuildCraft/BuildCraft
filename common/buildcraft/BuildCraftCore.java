@@ -290,7 +290,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
 			if (BuildCraftCore.modifyWorld) {
 				BlockSpring.EnumSpring.WATER.canGen = BuildCraftCore.mainConfiguration.get("worldgen", "waterSpring", true).getBoolean(true);
-				springBlock = new BlockSpring().setBlockName("eternalSpring");
+				springBlock = new BlockSpring().setUnlocalizedName("eternalSpring");
 				CoreProxy.proxy.registerBlock(springBlock, ItemSpring.class);
 			}
 

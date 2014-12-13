@@ -10,10 +10,12 @@ package buildcraft.factory;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
@@ -67,18 +69,19 @@ public class BlockMiningWell extends BlockBuildCraft {
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-		super.breakBlock(world, x, y, z, block, meta);
-		removePipes(world, x, y, z);
+	public void breakBlock(World world, BlockPos pos, IBlockState state) {
+		super.breakBlock(world, pos, state);
+		removePipes(world, pos);
 	}
 
-	public void removePipes(World world, int x, int y, int z) {
-		for (int depth = y - 1; depth > 0; depth--) {
-			Block pipe = world.getBlock(x, depth, z);
+	public void removePipes(World world, BlockPos pos) {
+		for (int depth = pos.getY() - 1; depth > 0; depth--) {
+			BlockPos t = new BlockPos(pos.getX(), depth, pos.getZ());
+			Block pipe = world.getBlockState(t).getBlock();
 			if (pipe != BuildCraftFactory.plainPipeBlock) {
 				break;
 			}
-			world.setBlockToAir(x, depth, z);
+			world.setBlockToAir(t);
 		}
 	}
 

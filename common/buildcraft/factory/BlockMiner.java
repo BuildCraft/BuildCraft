@@ -5,6 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
@@ -19,17 +20,16 @@ import buildcraft.core.utils.Utils;
 public class BlockMiner {
 	protected final World world;
 	protected final TileEntity owner;
-	protected final int x, y, z, minerId;
+	protected final BlockPos pos;
+	protected final int minerId;
 
 	private boolean hasMined, hasFailed;
 	private int energyRequired, energyAccepted;
 
-	public BlockMiner(World world, TileEntity owner, int x, int y, int z) {
+	public BlockMiner(World world, TileEntity owner, BlockPos pos) {
 		this.world = world;
 		this.owner = owner;
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.pos = pos;
 		this.minerId = world.rand.nextInt();
 	}
 
@@ -43,11 +43,11 @@ public class BlockMiner {
 
 	public void mineStack(ItemStack stack) {
 		// First, try to add to a nearby chest
-		stack.stackSize -= Utils.addToRandomInventoryAround(owner.getWorldObj(), owner.xCoord, owner.yCoord, owner.zCoord, stack);
+		stack.stackSize -= Utils.addToRandomInventoryAround(owner.getWorld(), owner.getPos(), stack);
 
 		// Second, try to add to adjacent pipes
 		if (stack.stackSize > 0) {
-			stack.stackSize -= Utils.addToRandomPipeAround(owner.getWorldObj(), owner.xCoord, owner.yCoord, owner.zCoord, ForgeDirection.UNKNOWN, stack);
+			stack.stackSize -= Utils.addToRandomPipeAround(owner.getWorld(), owner.getPos(), null, stack);
 		}
 
 		// Lastly, throw the object away
@@ -56,16 +56,16 @@ public class BlockMiner {
 			float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
 			float f2 = world.rand.nextFloat() * 0.8F + 0.1F;
 
-			EntityItem entityitem = new EntityItem(owner.getWorldObj(), owner.xCoord + f, owner.yCoord + f1 + 0.5F, owner.zCoord + f2, stack);
+			EntityItem entityitem = new EntityItem(owner.getWorld(), owner.getPos().getX() + f, owner.getPos().getY() + f1 + 0.5F, owner.getPos().getZ() + f2, stack);
 
 			entityitem.lifespan = BuildCraftCore.itemLifespan;
-			entityitem.delayBeforeCanPickup = 10;
+			entityitem.setDefaultPickupDelay();
 
 			float f3 = 0.05F;
 			entityitem.motionX = (float) world.rand.nextGaussian() * f3;
 			entityitem.motionY = (float) world.rand.nextGaussian() * f3 + 1.0F;
 			entityitem.motionZ = (float) world.rand.nextGaussian() * f3;
-			owner.getWorldObj().spawnEntityInWorld(entityitem);
+			owner.getWorld().spawnEntityInWorld(entityitem);
 		}
 	}
 
@@ -74,7 +74,7 @@ public class BlockMiner {
 	}
 	
 	public int acceptEnergy(int offeredAmount) {
-		energyRequired = BlockUtils.computeBlockBreakEnergy(world, x, y, z);
+		energyRequired = BlockUtils.computeBlockBreakEnergy(world, pos);
 
 		int usedAmount = MathUtils.clamp(offeredAmount, 0, Math.max(0, energyRequired - energyAccepted));
 		energyAccepted += usedAmount;

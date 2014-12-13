@@ -162,15 +162,11 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 		}
 	}
 
-<<<<<<< HEAD
-	@Override
-	public int extractEnergy(EnumFacing from, int maxExtract,
-=======
 	/**
 	 * If you want to use this, implement IEnergyProvider.
 	 */
-	public int extractEnergy(ForgeDirection from, int maxExtract,
->>>>>>> 9883e790c47a3d7eaaa29be953519363a7655314
+	@Override
+	public int extractEnergy(EnumFacing from, int maxExtract,
 			boolean simulate) {
 		if (battery != null && this.canConnectEnergy(from)) {
 			return battery.extractEnergy(maxExtract, simulate);

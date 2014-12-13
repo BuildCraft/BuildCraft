@@ -185,7 +185,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		if (fluidOil.getBlock() == null) {
 			blockOil = new BlockBuildcraftFluid(fluidOil, Material.water, MapColor.blackColor).setFlammable(canOilBurn).setFlammability(0);
-			blockOil.setBlockName("blockOil").setLightOpacity(8);
+			blockOil.setUnlocalizedName("blockOil").setLightOpacity(8);
 			CoreProxy.proxy.registerBlock(blockOil);
 			fluidOil.setBlock(blockOil);
 		} else {
@@ -200,7 +200,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		if (fluidFuel.getBlock() == null) {
 			blockFuel = new BlockBuildcraftFluid(fluidFuel, Material.water, MapColor.yellowColor).setFlammable(true).setFlammability(5).setParticleColor(0.7F, 0.7F, 0.0F);
-			blockFuel.setBlockName("blockFuel").setLightOpacity(3);
+			blockFuel.setUnlocalizedName("blockFuel").setLightOpacity(3);
 			CoreProxy.proxy.registerBlock(blockFuel);
 			fluidFuel.setBlock(blockFuel);
 		} else {
@@ -210,7 +210,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		if (fluidRedPlasma.getBlock() == null) {
 			blockRedPlasma = new BlockBuildcraftFluid(fluidRedPlasma, Material.water, MapColor.redColor).setFlammable(
 					false).setParticleColor(0.9F, 0, 0);
-			blockRedPlasma.setBlockName("blockRedPlasma");
+			blockRedPlasma.setUnlocalizedName("blockRedPlasma");
 			CoreProxy.proxy.registerBlock(blockRedPlasma);
 			fluidRedPlasma.setBlock(blockRedPlasma);
 		} else {
@@ -261,11 +261,11 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		if (!BuildCraftCore.NONRELEASED_BLOCKS) {
 			emitterBlock = new BlockEnergyEmitter();
-			CoreProxy.proxy.registerBlock(emitterBlock.setBlockName("energyEmitterBlock"));
+			CoreProxy.proxy.registerBlock(emitterBlock.setUnlocalizedName("energyEmitterBlock"));
 			CoreProxy.proxy.registerTileEntity(TileEnergyEmitter.class, "net.minecraft.src.builders.TileEnergyEmitter");
 
 			receiverBlock = new BlockEnergyReceiver();
-			CoreProxy.proxy.registerBlock(receiverBlock.setBlockName("energyReceiverBlock"));
+			CoreProxy.proxy.registerBlock(receiverBlock.setUnlocalizedName("energyReceiverBlock"));
 			CoreProxy.proxy.registerTileEntity(TileEnergyReceiver.class, "net.minecraft.src.builders.TileEnergyReceiver");
 		}
 

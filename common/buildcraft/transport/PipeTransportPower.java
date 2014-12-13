@@ -110,7 +110,7 @@ public class PipeTransportPower extends PipeTransport {
 		return false;
 	}
 
-	public boolean isPowerSource(TileEntity tile, ForgeDirection side) {
+	public boolean isPowerSource(TileEntity tile, EnumFacing side) {
 		if (tile instanceof TileBuildCraft && !(tile instanceof IEngine)) {
 			// Disregard non-engine BC tiles.
 			// While this, of course, does nothing to work with other mods,

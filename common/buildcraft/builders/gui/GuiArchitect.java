@@ -8,6 +8,7 @@
  */
 package buildcraft.builders.gui;
 
+import java.io.IOException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -75,7 +76,7 @@ public class GuiArchitect extends GuiBuildCraft {
 		));
 		buttonList.add(optionAllowCreative);
 		
-		textField = new GuiTextField(this.fontRendererObj, TEXT_X, TEXT_Y, TEXT_WIDTH, TEXT_HEIGHT);
+		textField = new GuiTextField(0, this.fontRendererObj, TEXT_X, TEXT_Y, TEXT_WIDTH, TEXT_HEIGHT);
 		textField.setMaxStringLength(BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE);
 		textField.setText(architect.name);
 		textField.setFocused(true);
@@ -159,7 +160,7 @@ public class GuiArchitect extends GuiBuildCraft {
 	}
 
 	@Override
-	protected void keyTyped(char c, int i) {
+	protected void keyTyped(char c, int i) throws IOException {
 		if (textField.isFocused()) {
 			if (c == 13 || c == 27) {
 				textField.setFocused(false);

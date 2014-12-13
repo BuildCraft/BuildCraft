@@ -18,6 +18,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -48,7 +49,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 	public SingleUseTank tank = new SingleUseTank("tank", MAX_LIQUID, this);
 
 	private EntityBlock tube;
-	private TreeMap<Integer, Deque<BlockIndex>> pumpLayerQueues = new TreeMap<Integer, Deque<BlockIndex>>();
+	private TreeMap<Integer, Deque<BlockPos> pumpLayerQueues = new TreeMap<Integer, Deque<BlockPos>>();
 	private double tubeY = Double.NaN;
 	private int aimY = 0;
 

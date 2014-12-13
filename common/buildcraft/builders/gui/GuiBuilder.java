@@ -153,11 +153,10 @@ public class GuiBuilder extends GuiAdvancedInterface {
 
 		@Override
 		public void drawButton(Minecraft mc, int x, int y) {
-			// hovered
-			this.field_146123_n = x >= this.xPosition && y >= this.yPosition && x < this.xPosition + this.width && y < this.yPosition + this.height;
+			this.hovered = x >= this.xPosition && y >= this.yPosition && x < this.xPosition + this.width && y < this.yPosition + this.height;
 
 			mc.renderEngine.bindTexture(FOREGROUND_TEXTURE);
-			drawTexturedModalRect(xPosition, yPosition, 0, (clicked ? 1 : this.field_146123_n ? 2 : 0) * 18, 18, 18);
+			drawTexturedModalRect(xPosition, yPosition, 0, (clicked ? 1 : this.hovered ? 2 : 0) * 18, 18, 18);
 			mouseDragged(mc, x, y);
 		}
 	}

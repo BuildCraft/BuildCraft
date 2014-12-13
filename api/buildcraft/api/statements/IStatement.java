@@ -8,11 +8,9 @@
  */
 package buildcraft.api.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import buildcraft.api.core.SheetIcon;
 
 public interface IStatement {
 
@@ -25,10 +23,7 @@ public interface IStatement {
 	String getUniqueTag();
 
 	@SideOnly(Side.CLIENT)
-	IIcon getIcon();
-
-	@SideOnly(Side.CLIENT)
-	void registerIcons(IIconRegister iconRegister);
+	SheetIcon getIcon();
 
 	/**
 	 * Return the maximum number of parameter this trigger can have, 0 if none.

@@ -9,8 +9,10 @@
 package buildcraft.builders;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -33,9 +35,9 @@ public class BlockPathMarker extends BlockMarker {
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
-		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, block, par6);
+	public void breakBlock(World world, BlockPos pos, IBlockState state) {
+		Utils.preDestroyBlock(world, pos);
+		super.breakBlock(world, pos, state);
 	}
 
 	@Override

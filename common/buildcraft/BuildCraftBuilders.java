@@ -470,34 +470,34 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		CoreProxy.proxy.registerItem(blueprintItem);
 
 		buildToolBlock = new BlockBuildTool ();
-		buildToolBlock.setBlockName("buildToolBlock");
+		buildToolBlock.setUnlocalizedName("buildToolBlock");
 		CoreProxy.proxy.registerBlock(buildToolBlock);
 
 		markerBlock = new BlockMarker();
-		CoreProxy.proxy.registerBlock(markerBlock.setBlockName("markerBlock"));
+		CoreProxy.proxy.registerBlock(markerBlock.setUnlocalizedName("markerBlock"));
 
 		pathMarkerBlock = new BlockPathMarker();
-		CoreProxy.proxy.registerBlock(pathMarkerBlock.setBlockName("pathMarkerBlock"));
+		CoreProxy.proxy.registerBlock(pathMarkerBlock.setUnlocalizedName("pathMarkerBlock"));
 
 		constructionMarkerBlock = new BlockConstructionMarker();
-		CoreProxy.proxy.registerBlock(constructionMarkerBlock.setBlockName("constructionMarkerBlock"),
+		CoreProxy.proxy.registerBlock(constructionMarkerBlock.setUnlocalizedName("constructionMarkerBlock"),
 				ItemConstructionMarker.class);
 
 		fillerBlock = new BlockFiller();
-		CoreProxy.proxy.registerBlock(fillerBlock.setBlockName("fillerBlock"));
+		CoreProxy.proxy.registerBlock(fillerBlock.setUnlocalizedName("fillerBlock"));
 
 		builderBlock = new BlockBuilder();
-		CoreProxy.proxy.registerBlock(builderBlock.setBlockName("builderBlock"));
+		CoreProxy.proxy.registerBlock(builderBlock.setUnlocalizedName("builderBlock"));
 
 		architectBlock = new BlockArchitect();
-		CoreProxy.proxy.registerBlock(architectBlock.setBlockName("architectBlock"));
+		CoreProxy.proxy.registerBlock(architectBlock.setUnlocalizedName("architectBlock"));
 
 		libraryBlock = new BlockBlueprintLibrary();
-		CoreProxy.proxy.registerBlock(libraryBlock.setBlockName("libraryBlock"));
+		CoreProxy.proxy.registerBlock(libraryBlock.setUnlocalizedName("libraryBlock"));
 
 		if (!BuildCraftCore.NONRELEASED_BLOCKS) {
 			urbanistBlock = new BlockUrbanist ();
-			CoreProxy.proxy.registerBlock(urbanistBlock.setBlockName("urbanistBlock"));
+			CoreProxy.proxy.registerBlock(urbanistBlock.setUnlocalizedName("urbanistBlock"));
 			CoreProxy.proxy.registerTileEntity(TileUrbanist.class, "net.minecraft.src.builders.TileUrbanist");
 		}
 

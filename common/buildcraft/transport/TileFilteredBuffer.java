@@ -55,7 +55,7 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory {
 
 	@Override
 	public String getName() {
-		return inventoryStorage.getInventoryName();
+		return inventoryStorage.getName();
 	}
 
 	@Override

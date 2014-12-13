@@ -8,19 +8,13 @@
  */
 package buildcraft.api.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IIcon;
+import buildcraft.api.core.SheetIcon;
 
 public class StatementParameterItemStack implements IStatementParameter {
 	
 	protected ItemStack stack;
-
-	@Override
-	public IIcon getIcon() {
-		return null;
-	}
 
 	@Override
 	public ItemStack getItemStack() {
@@ -76,8 +70,8 @@ public class StatementParameterItemStack implements IStatementParameter {
 	}
 
 	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		
+	public SheetIcon getIcon() {
+		return null;
 	}
 
 	@Override

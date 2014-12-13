@@ -10,14 +10,14 @@ package buildcraft.api.robots;
 
 import net.minecraft.nbt.NBTTagCompound;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-
-import buildcraft.api.core.BlockIndex;
+import buildcraft.core.utils.Utils;
 
 public abstract class ResourceId {
 
-	public BlockIndex index = new BlockIndex();
-	public EnumFacing side = EnumFacing.UNKNOWN;
+	public BlockPos index;
+	public EnumFacing side;
 	public int localId = 0;
 
 	protected ResourceId() {
@@ -43,7 +43,7 @@ public abstract class ResourceId {
 
 	public void writeToNBT(NBTTagCompound nbt) {
 		NBTTagCompound indexNBT = new NBTTagCompound();
-		index.writeTo(indexNBT);
+		Utils.writeBlockPos(nbt, index);
 		nbt.setTag("index", indexNBT);
 		nbt.setByte("side", (byte) side.ordinal());
 		nbt.setInteger("localId", localId);
@@ -51,7 +51,7 @@ public abstract class ResourceId {
 	}
 
 	protected void readFromNBT(NBTTagCompound nbt) {
-		index = new BlockIndex(nbt.getCompoundTag("index"));
+		index = Utils.readBlockPos(nbt.getCompoundTag("index"));
 		side = EnumFacing.values()[nbt.getByte("side")];
 		localId = nbt.getInteger("localId");
 	}
