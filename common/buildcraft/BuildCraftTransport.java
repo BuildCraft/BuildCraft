@@ -366,17 +366,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipeWaterproof.setUnlocalizedName("pipeWaterproof");
 			CoreProxy.proxy.registerItem(pipeWaterproof);
 
-			if (Loader.isModLoaded("BuildCraft|Compat")) {
-				try {
-					genericPipeBlock = (BlockGenericPipe) this.getClass().getClassLoader().loadClass("buildcraft.transport.BlockGenericPipeCompat").newInstance();
-				} catch (Exception e) {
-					e.printStackTrace();
-					genericPipeBlock = new BlockGenericPipe();
-				}
-			} else {
-				genericPipeBlock = new BlockGenericPipe();
-			}
-			
+			genericPipeBlock = BCCompatHooks.createPipeBlock();
+
 			CoreProxy.proxy.registerBlock(genericPipeBlock.setBlockName("pipeBlock"), ItemBlock.class);
 
 			pipeItemsWood = buildPipe(PipeItemsWood.class, "Wooden Transport Pipe", CreativeTabBuildCraft.PIPES, "plankWood", Blocks.glass, "plankWood");
