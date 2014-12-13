@@ -9,13 +9,14 @@
 package buildcraft.api.core;
 
 import java.util.Random;
+import net.minecraft.util.BlockPos;
 
 public interface IZone {
 
-	double distanceTo(BlockIndex index);
+	double distanceTo(BlockPos pos);
 
 	boolean contains(double x, double y, double z);
 
-	BlockIndex getRandomBlockIndex(Random rand);
+	BlockPos getRandomBlockIndex(Random rand);
 
 }

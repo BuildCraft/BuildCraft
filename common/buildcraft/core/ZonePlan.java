@@ -15,10 +15,10 @@ import java.util.Random;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.BlockPos;
 
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.IZone;
 
@@ -93,15 +93,15 @@ public class ZonePlan implements IZone, ISerializable {
 	}
 
 	@Override
-	public double distanceTo(BlockIndex index) {
+	public double distanceTo(BlockPos pos) {
 		double maxSqrDistance = Double.MAX_VALUE;
 
 		for (Map.Entry<ChunkIndex, ZoneChunk> e : chunkMapping.entrySet()) {
 			double cx = e.getKey().x << 4 + 8;
 			double cz = e.getKey().x << 4 + 8;
 
-			double dx = cx - index.x;
-			double dz = cz - index.z;
+			double dx = cx - pos.getX();
+			double dz = cz - pos.getZ();
 
 			double sqrDistance = dx * dx + dz * dz;
 
@@ -122,7 +122,7 @@ public class ZonePlan implements IZone, ISerializable {
 	}
 
 	@Override
-	public BlockIndex getRandomBlockIndex(Random rand) {
+	public BlockPos getRandomBlockIndex(Random rand) {
 		if (chunkMapping.size() == 0) {
 			return null;
 		}
@@ -131,11 +131,8 @@ public class ZonePlan implements IZone, ISerializable {
 
 		for (Map.Entry<ChunkIndex, ZoneChunk> e : chunkMapping.entrySet()) {
 			if (chunkId == 0) {
-				BlockIndex i = e.getValue().getRandomBlockIndex(rand);
-				i.x = (e.getKey().x << 4) + i.x;
-				i.z = (e.getKey().z << 4) + i.z;
-
-				return i;
+				BlockPos i = e.getValue().getRandomBlockIndex(rand);
+				return i.add((e.getKey().x << 4), 0, (e.getKey().z << 4));
 			}
 
 			chunkId--;

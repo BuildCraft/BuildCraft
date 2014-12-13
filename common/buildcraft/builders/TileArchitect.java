@@ -19,12 +19,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
 import buildcraft.core.Box;
@@ -51,7 +51,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 	public LinkedList<LaserData> subLasers = new LinkedList<LaserData>();
 
-	public ArrayList<BlockIndex> subBlueprints = new ArrayList<BlockIndex>();
+	public ArrayList<BlockPos> subBlueprints = new ArrayList<BlockPos>();
 
 	private SimpleInventory inv = new SimpleInventory(2, "Architect", 1);
 
@@ -62,8 +62,8 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		if (!worldObj.isRemote) {
 			if (reader != null) {
@@ -82,8 +82,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 		if (!worldObj.isRemote) {
 			if (!box.isInitialized()) {
-				IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord,
-						yCoord, zCoord);
+				IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, pos);
 
 				if (a != null) {
 					box.initialize(a);
@@ -130,18 +129,18 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	@Override
-	public String getInventoryName() {
-		return "Template";
-	}
-
-	@Override
 	public int getInventoryStackLimit() {
 		return 1;
 	}
 
 	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
+	public void openInventory(EntityPlayer playerIn) {
+
+	}
+
+	@Override
+	public void closeInventory(EntityPlayer playerIn) {
+
 	}
 
 	@Override
@@ -164,7 +163,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		NBTTagList subBptList = nbt.getTagList("subBlueprints", Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < subBptList.tagCount(); ++i) {
-			BlockIndex index = new BlockIndex(subBptList.getCompoundTagAt(i));
+			BlockPos index = Utils.readBlockPos(subBptList.getCompoundTagAt(i));
 
 			addSubBlueprint(index);
 		}
@@ -191,9 +190,9 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 		NBTTagList subBptList = new NBTTagList();
 
-		for (BlockIndex b : subBlueprints) {
+		for (BlockPos b : subBlueprints) {
 			NBTTagCompound subBpt = new NBTTagCompound();
-			b.writeTo(subBpt);
+			Utils.writeBlockPos(subBpt, b);
 			subBptList.appendTag(subBpt);
 		}
 
@@ -231,7 +230,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	private void initializeComputing() {
-		if (getWorldObj().isRemote) {
+		if (worldObj.isRemote) {
 			return;
 		}
 
@@ -244,19 +243,6 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		} else {
 			return 0;
 		}
-	}
-
-	@Override
-	public void openInventory() {
-	}
-
-	@Override
-	public void closeInventory() {
-	}
-
-	@Override
-	public boolean hasCustomInventoryName() {
-		return true;
 	}
 
 	@Override
@@ -277,7 +263,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 			completeBox.extendToEncompass(d.tail);
 		}
 
-		return completeBox.fromBounds();
+		return completeBox.getBoundingBox();
 	}
 
 	public BuildCraftPacket getPacketSetName() {
@@ -313,12 +299,12 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	public void addSubBlueprint(TileEntity sub) {
-		addSubBlueprint(new BlockIndex(sub));
+		addSubBlueprint(sub.getPos());
 
 		sendNetworkUpdate();
 	}
 
-	private void addSubBlueprint(BlockIndex index) {
+	private void addSubBlueprint(BlockPos index) {
 		subBlueprints.add(index);
 
 		LaserData laser = new LaserData(new Position(index), new Position(this));
@@ -332,5 +318,10 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		laser.tail.z += 0.5F;
 
 		subLasers.add(laser);
+	}
+
+	@Override
+	public String getName() {
+		return "Template";
 	}
 }

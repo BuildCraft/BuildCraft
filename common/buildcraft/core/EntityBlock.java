@@ -11,15 +11,12 @@ package buildcraft.core;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class EntityBlock extends Entity {
 
-	@SideOnly(Side.CLIENT)
-	public IIcon texture;
 	public float shadowSize = 0;
 	public float rotationX = 0;
 	public float rotationY = 0;

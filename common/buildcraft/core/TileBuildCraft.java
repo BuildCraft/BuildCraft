@@ -14,12 +14,15 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IChatComponent;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.ISerializable;
@@ -212,4 +215,38 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
         }
         return cache[side.ordinal()].getTile();
     }
+
+	// Helpers for overriding
+
+	public boolean hasCustomName() {
+		return true;
+	}
+
+	public IChatComponent getDisplayName() {
+		if (this instanceof IInventory) {
+			return new ChatComponentText(((IInventory) this).getName());
+		} else {
+			return null;
+		}
+	}
+
+	public int getField(int id) {
+		return 0;
+	}
+
+	public void setField(int id, int value) {
+
+	}
+
+	public int getFieldCount() {
+		return 0;
+	}
+
+	public void clear() {
+
+	}
+
+	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+		return worldObj.getTileEntity(pos) == this;
+	}
 }

@@ -172,11 +172,6 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 	}
 
 	@Override
-	public String getInventoryName() {
-		return "";
-	}
-
-	@Override
 	public int getInventoryStackLimit() {
 		return 1;
 	}
@@ -187,21 +182,18 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 	}
 
 	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
+	public void openInventory(EntityPlayer playerIn) {
+
 	}
 
 	@Override
-	public void openInventory() {
+	public void closeInventory(EntityPlayer playerIn) {
+
 	}
 
 	@Override
-	public void closeInventory() {
-	}
-
-	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		if (worldObj.isRemote) {
 			return;
@@ -328,5 +320,10 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 				&& currentPage.get(selected).kind == Kind.Blueprint) ||
 				(getStackInSlot(2).getItem() instanceof ItemBlueprintTemplate
 				&& currentPage.get(selected).kind == Kind.Template);
+	}
+
+	@Override
+	public String getName() {
+		return "Blueprint Library";
 	}
 }

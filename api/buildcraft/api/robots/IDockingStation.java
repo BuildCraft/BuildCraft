@@ -13,8 +13,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.core.BlockIndex;
-
 public interface IDockingStation {
 
 	BlockPos pos();

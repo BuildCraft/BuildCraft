@@ -110,7 +110,7 @@ public class CoreProxy implements ICoreProxy {
 
 	@SuppressWarnings("unchecked")
 	public void addCraftingRecipe(ItemStack result, Object... recipe) {
-		String name = Item.itemRegistry.getNameForObject(result.getItem());
+		String name = (String) Item.itemRegistry.getNameForObject(result.getItem());
 
 		if (BuildCraftCore.recipesBlacklist.contains(name)) {
 			return;
@@ -120,7 +120,7 @@ public class CoreProxy implements ICoreProxy {
 	}
 
 	public void addShapelessRecipe(ItemStack result, Object... recipe) {
-		String name = Item.itemRegistry.getNameForObject(result.getItem());
+		String name = (String) Item.itemRegistry.getNameForObject(result.getItem());
 
 		if (BuildCraftCore.recipesBlacklist.contains(name)) {
 			return;

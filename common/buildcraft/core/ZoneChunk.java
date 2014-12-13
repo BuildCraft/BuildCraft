@@ -13,7 +13,7 @@ import java.util.Random;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.utils.BitSetUtils;
 import buildcraft.core.utils.Utils;
@@ -82,7 +82,7 @@ public class ZoneChunk implements ISerializable {
 		}
 	}
 
-	public BlockIndex getRandomBlockIndex(Random rand) {
+	public BlockPos getRandomBlockIndex(Random rand) {
 		int x, z;
 
 		if (fullSet) {
@@ -102,7 +102,7 @@ public class ZoneChunk implements ISerializable {
 			x = bitPosition - 16 * z;
 		}
 
-		return new BlockIndex(x, 0, z);
+		return new BlockPos(x, 0, z);
 	}
 
 	public boolean isEmpty() {
