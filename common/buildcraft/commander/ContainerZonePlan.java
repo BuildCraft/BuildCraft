@@ -8,6 +8,11 @@
  */
 package buildcraft.commander;
 
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.IntBuffer;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.entity.player.EntityPlayer;
@@ -82,9 +87,10 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
 				currentAreaSelection.readData(stream);
 				gui.refreshSelectedArea();
 			} else if ("receiveImage".equals(command)) {
-				int size = stream.readUnsignedShort();
+				int size = stream.readUnsignedMedium();
+
 				for (int i = 0; i < size; ++i) {
-					mapTexture.colorMap[i] = stream.readInt();
+					mapTexture.colorMap[i] = 0xFF000000 | MapColor.mapColorArray[stream.readUnsignedByte()].colorValue;
 				}
 			}
 		} else if (side.isServer()) {
@@ -109,52 +115,28 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
 	}
 
 	private void computeMap(int cx, int cz, int width, int height, int blocksPerPixel, EntityPlayer player) {
-		mapTexture = new BCDynamicTexture(width, height);
+		final byte[] textureData = new byte[width * height];
 
 		int startX = cx - width * blocksPerPixel / 2;
 		int startZ = cz - height * blocksPerPixel / 2;
 
 		for (int i = 0; i < width; ++i) {
 			for (int j = 0; j < height; ++j) {
-				double r = 0;
-				double g = 0;
-				double b = 0;
+				int x = startX + i * blocksPerPixel;
+				int z = startZ + j * blocksPerPixel;
+				int ix = x - (map.chunkStartX << 4);
+				int iz = z - (map.chunkStartZ << 4);
 
-				for (int stepi = 0; stepi < blocksPerPixel; ++stepi) {
-					for (int stepj = 0; stepj < blocksPerPixel; ++stepj) {
-						int x = startX + i * blocksPerPixel + stepi;
-						int z = startZ + j * blocksPerPixel + stepj;
-						int ix = x - (map.chunkStartX << 4);
-						int iz = z - (map.chunkStartZ << 4);
-
-						if (ix > 0 && ix < TileZonePlan.RESOLUTION && iz > 0 && iz < TileZonePlan.RESOLUTION) {
-							int color = MapColor.mapColorArray[map.colors[ix + iz * TileZonePlan.RESOLUTION]].colorValue;
-
-							r += (color >> 16) & 255;
-							g += (color >> 8) & 255;
-							b += color & 255;
-						}
-					}
+				if (ix >= 0 && iz >= 0 && ix < TileZonePlan.RESOLUTION && iz < TileZonePlan.RESOLUTION) {
+					textureData[i + j * width] = map.colors[ix + iz * TileZonePlan.RESOLUTION];
 				}
-
-				r /= blocksPerPixel * blocksPerPixel;
-				g /= blocksPerPixel * blocksPerPixel;
-				b /= blocksPerPixel * blocksPerPixel;
-
-				r /= 255F;
-				g /= 255F;
-				b /= 255F;
-
-				mapTexture.setColor(i, j, r, g, b, 1);
 			}
 		}
 
 		BuildCraftCore.instance.sendToPlayer(player, new PacketCommand(this, "receiveImage", new CommandWriter() {
 			public void write(ByteBuf data) {
-				data.writeShort(mapTexture.colorMap.length);
-				for (int i = 0; i < mapTexture.colorMap.length; i++) {
-					data.writeInt(mapTexture.colorMap[i]);
-				}
+				data.writeMedium(textureData.length);
+				data.writeBytes(textureData);
 			}
 		}));
 	}

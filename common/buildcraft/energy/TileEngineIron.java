@@ -194,6 +194,9 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	@Override
 	public void updateHeat() {
+		if (energyStage == EnergyStage.OVERHEAT && heat > MIN_HEAT) {
+			heat -= COOLDOWN_RATE;
+		}
 	}
 
 	@Override

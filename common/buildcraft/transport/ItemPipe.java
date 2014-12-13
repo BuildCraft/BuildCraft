@@ -95,11 +95,11 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, block, 0, entityplayer)) {
 				block.onBlockPlacedBy(world, i, j, k, entityplayer, itemstack);
 
-				if (!world.isRemote && itemstack.getItemDamage() >= 1) {
+				if (!world.isRemote) {
 					TileEntity tile = world.getTileEntity(i, j, k);
-					((TileGenericPipe) tile).glassColor = (itemstack.getItemDamage() - 1) & 15;
+					((TileGenericPipe) tile).initializeFromItemMetadata(itemstack.getItemDamage());
 				}
-				
+
 				// TODO: Fix sound
 				//world.playSoundEffect(i + 0.5F, j + 0.5F, k + 0.5F,
 				//		block.stepSound.getPlaceSound(),

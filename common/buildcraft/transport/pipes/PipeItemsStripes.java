@@ -133,10 +133,10 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 			}
 			
 			BuildCraftTransport.pipeItemsStripes.onItemUse(new ItemStack(
-					BuildCraftTransport.pipeItemsStripes, 1, this.container.glassColor), player, getWorld(), (int) p.x,
+					BuildCraftTransport.pipeItemsStripes, 1, this.container.getItemMetadata()), player, getWorld(), (int) p.x,
 					(int) p.y, (int) p.z, 1, 0, 0, 0
 				);
-			this.container.glassColor = stack.getItemDamage() - 1;
+			this.container.initializeFromItemMetadata(stack.getItemDamage() - 1);
 			
 			if (stack.stackSize > 0) {
 				TileEntity targetTile = getWorld().getTileEntity((int) p.x, (int) p.y, (int) p.z);

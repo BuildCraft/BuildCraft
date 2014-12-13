@@ -209,6 +209,11 @@ public class ItemList extends ItemBuildCraft {
 		}
 	}
 
+	public ItemList() {
+		super();
+		setMaxStackSize(1);
+	}
+
 	@Override
 	public IIcon getIconIndex(ItemStack stack) {
 		if (NBTUtils.getItemData(stack).hasKey("written")) {

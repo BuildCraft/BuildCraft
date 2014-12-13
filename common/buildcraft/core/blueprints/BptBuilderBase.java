@@ -62,17 +62,21 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		context = bluePrint.getContext(world, box);
 	}
 
-	protected abstract void initialize ();
+	public void initialize() {
+		if (!initialized) {
+			internalInit();
+			initialized = true;
+		}
+	}
+
+	protected abstract void internalInit();
 
 	protected abstract BuildingSlot reserveNextBlock(World world);
 
 	protected abstract BuildingSlot getNextBlock(World world, TileAbstractBuilder inv);
 
 	public boolean buildNextSlot(World world, TileAbstractBuilder builder, double x, double y, double z) {
-		if (!initialized) {
-			initialize();
-			initialized = true;
-		}
+		initialize();
 
 		if (world.getTotalWorldTime() < nextBuildDate) {
 			return false;
@@ -90,11 +94,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 	public boolean buildSlot(World world, IBuildingItemsProvider builder, BuildingSlot slot, double x, double y,
 			double z) {
-
-		if (!initialized) {
-			initialize();
-			initialized = true;
-		}
+		initialize();
 
 		if (slot != null) {
 			slot.built = true;
@@ -113,10 +113,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 	}
 
 	public BuildingSlot reserveNextSlot(World world) {
-		if (!initialized) {
-			initialize();
-			initialized = true;
-		}
+		initialize();
 
 		return reserveNextBlock(world);
 	}

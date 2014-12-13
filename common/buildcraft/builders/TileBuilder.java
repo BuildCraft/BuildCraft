@@ -725,6 +725,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	public void updateRequirements() {
 		ArrayList<ItemStack> reqCopy = null;
 		if (currentBuilder instanceof BptBuilderBlueprint) {
+			currentBuilder.initialize();
 			reqCopy = ((BptBuilderBlueprint) currentBuilder).neededItems;
 		}
 
@@ -736,6 +737,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	public void updateRequirements(EntityPlayer caller) {
 		ArrayList<ItemStack> reqCopy = null;
 		if (currentBuilder instanceof BptBuilderBlueprint) {
+			currentBuilder.initialize();
 			reqCopy = ((BptBuilderBlueprint) currentBuilder).neededItems;
 		}
 

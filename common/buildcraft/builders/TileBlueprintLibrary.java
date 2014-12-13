@@ -58,13 +58,18 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 
 	}
 
+	public void refresh() {
+		if (worldObj.isRemote) {
+			BuildCraftBuilders.clientDB.refresh();
+			setCurrentPage(BuildCraftBuilders.clientDB.getPage(pageId));
+		}
+	}
+
 	@Override
 	public void initialize() {
 		super.initialize();
 
-		if (worldObj.isRemote) {
-			setCurrentPage(BuildCraftBuilders.clientDB.getPage (pageId));
-		}
+		refresh();
 	}
 
 	public void setCurrentPage(ArrayList<BlueprintId> newPage) {

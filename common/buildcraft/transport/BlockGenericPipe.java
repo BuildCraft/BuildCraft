@@ -762,6 +762,11 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				if (addOrStripWire(player, pipe, PipeWire.YELLOW)) {
 					return true;
 				}
+			} else if (currentItem.getItem() == Items.water_bucket) {
+				if (!world.isRemote) {
+					pipe.container.setColor(-1);
+				}
+				return true;
 			} else if (currentItem.getItem() instanceof ItemGate) {
 				if (addOrStripGate(world, x, y, z, player, ForgeDirection.getOrientation(side), pipe)) {
 					return true;
@@ -1301,6 +1306,17 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		}
 
 		return super.colorMultiplier(world, x, y, z);
+	}
+
+	@Override
+	public boolean recolourBlock(World world, int x, int y, int z, ForgeDirection side, int colour) {
+		TileGenericPipe pipeTile = (TileGenericPipe) world.getTileEntity(x, y, z);
+		if (!pipeTile.hasPlug(side)) {
+			pipeTile.setColor(colour);
+			return true;
+		}
+
+		return false;
 	}
 
 	public static void updateNeighbourSignalState(Pipe<?> pipe) {
