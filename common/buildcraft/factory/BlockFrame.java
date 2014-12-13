@@ -44,14 +44,19 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 		if (world.isRemote) {
 			return;
 		}
-		
-		for (EnumFacing dir : EnumFacing.values()) {
-			Block nBlock = world.getBlock(x + dir.getFrontOffsetX(), y + dir.getFrontOffsetY(), z + dir.getFrontOffsetZ());
+
+		removeNeighboringFrames(world, x, y, z);
+	}
+
+	protected void removeNeighboringFrames(World world, int x, int y, int z) {
+		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			Block nBlock = world.getBlock(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
 			if (nBlock == this) {
 				world.setBlockToAir(x + dir.getFrontOffsetX(), y + dir.getFrontOffsetY(), z + dir.getFrontOffsetZ());
 			}
 		}
 	}
+
 	@Override
 	public boolean isOpaqueCube() {
 		return false;

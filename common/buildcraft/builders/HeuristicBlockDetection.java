@@ -8,6 +8,7 @@ import net.minecraft.init.Blocks;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidBlock;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicFluid;
 import buildcraft.builders.schematics.SchematicBlockCreative;
@@ -37,12 +38,7 @@ public final class HeuristicBlockDetection {
 				}
 			}
 		} */
-		
-		// Register fluids
-		for (Fluid f : FluidRegistry.getRegisteredFluids().values()) {
-			SchematicRegistry.INSTANCE.registerSchematicBlock(f.getBlock(), SchematicFluid.class, new FluidStack(f, 1000));
-		}
-		
+
 		// Register blocks
 		Iterator i = Block.blockRegistry.iterator();
 		while (i.hasNext()) {
@@ -67,7 +63,14 @@ public final class HeuristicBlockDetection {
 							if (creativeOnly) {
 								SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlockCreative.class);
 							} else {
-								SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlock.class);
+							    if (block instanceof IFluidBlock) {
+									IFluidBlock fblock = (IFluidBlock) block;
+									if (fblock.getFluid() != null) {
+										SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicFluid.class, new FluidStack(fblock.getFluid(), 1000));
+									}
+								} else {
+									SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlock.class);
+								}
 							}
 						} catch (Exception e) {
 							e.printStackTrace();

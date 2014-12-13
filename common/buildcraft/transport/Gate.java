@@ -15,7 +15,6 @@ import java.util.List;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,14 +38,11 @@ import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.GuiIds;
-import buildcraft.core.statements.ActionRedstoneOutput;
-import buildcraft.core.statements.StatementParameterRedstoneGateSideOnly;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.gates.StatementSlot;
 import buildcraft.transport.gui.ContainerGateInterface;
-import buildcraft.transport.statements.ActionRedstoneFaderOutput;
 import buildcraft.transport.statements.ActionValve;
 
 public final class Gate implements IGate, IStatementContainer {
@@ -95,6 +91,11 @@ public final class Gate implements IGate, IStatementContainer {
 	}
 
 	public void setTrigger(int position, IStatement trigger) {
+		if (trigger != triggers[position]) {
+			for (int i = 0; i < triggerParameters[position].length; i++) {
+				triggerParameters[position][i] = null;
+			}
+		}
 		triggers[position] = trigger;
 	}
 
@@ -103,12 +104,18 @@ public final class Gate implements IGate, IStatementContainer {
 	}
 
 	public void setAction(int position, IStatement action) {
-		// HUGE HACK! TODO - Remove in 6.2 API rewrite by adding
+		// HUGE HACK! TODO - Remove in 6.3 API rewrite by adding
 		// ways for actions to fix their state on removal.
 		if (actions[position] instanceof ActionValve && pipe != null && pipe.transport != null) {
 			for (EnumFacing side : EnumFacing.values()) {
 				pipe.transport.allowInput(side, true);
 				pipe.transport.allowOutput(side, true);
+			}
+		}
+
+		if (action != actions[position]) {
+			for (int i = 0; i < actionParameters[position].length; i++) {
+				actionParameters[position][i] = null;
 			}
 		}
 		actions[position] = action;
@@ -563,7 +570,6 @@ public final class Gate implements IGate, IStatementContainer {
 		
 		for (EnumFacing o : EnumFacing.values()) {
 			TileEntity tile = pipe.container.getTile(o);
-			Block block = pipe.container.getBlock(o);
 			allTriggers.addAll(StatementManager.getExternalTriggers(o, tile));
 		}
 		
@@ -589,7 +595,6 @@ public final class Gate implements IGate, IStatementContainer {
 		
 		for (EnumFacing o : EnumFacing.values()) {
 			TileEntity tile = pipe.container.getTile(o);
-			Block block = pipe.container.getBlock(o);
 			allActions.addAll(StatementManager.getExternalActions(o, tile));
 		}
 		

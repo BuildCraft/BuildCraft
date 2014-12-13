@@ -31,7 +31,7 @@ public abstract class PipeLogicWood {
 		EnumFacing newFacing = null;
 
 		for (int i = meta + 1; i <= meta + 6; ++i) {
-			EnumFacing facing = EnumFacing.getOrientation(i % 6);
+			EnumFacing facing = EnumFacing.getFront(i % 6);
 			if (isValidFacing(facing)) {
 				newFacing = facing;
 				break;
@@ -50,7 +50,7 @@ public abstract class PipeLogicWood {
 		if (meta > 5) {
 			switchSource();
 		} else {
-			EnumFacing facing = EnumFacing.getOrientation(meta);
+			EnumFacing facing = EnumFacing.getFront(meta);
 			if (!isValidFacing(facing)) {
 				switchSource();
 			}
@@ -81,9 +81,9 @@ public abstract class PipeLogicWood {
 
 	public boolean blockActivated(EntityPlayer entityplayer) {
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord)) {
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pipe.container.getPos())) {
 			switchSource();
-			((IToolWrench) equipped).wrenchUsed(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+			((IToolWrench) equipped).wrenchUsed(entityplayer, pipe.container.getPos());
 			return true;
 		}
 

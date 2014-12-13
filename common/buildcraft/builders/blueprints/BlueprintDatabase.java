@@ -14,7 +14,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Set;
@@ -36,7 +35,7 @@ public class BlueprintDatabase {
 	private File outputDir;
 	private File[] inputDirs;
 
-	private Set<BlueprintId> blueprintIds = new TreeSet<BlueprintId>();
+	private Set<BlueprintId> blueprintIds;
 	private BlueprintId [] pages = new BlueprintId [0];
 
 	/**
@@ -57,6 +56,11 @@ public class BlueprintDatabase {
 			inputDirs[i] = new File(inputPaths[i]);
 		}
 
+		refresh();
+	}
+
+	public void refresh() {
+		blueprintIds = new TreeSet<BlueprintId>();
 		loadIndex(inputDirs);
 	}
 
@@ -95,19 +99,12 @@ public class BlueprintDatabase {
 		File blueprintFile = getBlueprintFile(id, outputDir);
 
 		if (!blueprintFile.exists()) {
-			OutputStream gzOs = null;
 			try {
 				FileOutputStream f = new FileOutputStream(blueprintFile);
 				f.write(blueprint.getData());
 				f.close();
 			} catch (IOException ex) {
 				BCLog.logger.error(String.format("Failed to save Blueprint file: %s %s", blueprintFile.getName(), ex.getMessage()));
-			} finally {
-				try {
-					if (gzOs != null) {
-						gzOs.close();
-					}
-				} catch (IOException e) { }
 			}
 		}
 
@@ -195,7 +192,7 @@ public class BlueprintDatabase {
 				}
 			}
 
-			pages = blueprintIds.toArray(pages);
+			pages = blueprintIds.toArray(new BlueprintId[blueprintIds.size()]);
 		}
 	}
 

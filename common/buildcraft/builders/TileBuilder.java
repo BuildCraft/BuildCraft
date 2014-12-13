@@ -598,10 +598,8 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 		if (getWorldObj().getWorldInfo().getGameType() == GameType.CREATIVE) {
 			build();
-		} else {
-			if (getBattery().getEnergyStored() > POWER_ACTIVATION) {
-				build();
-			}
+		} else if (getBattery().getEnergyStored() > POWER_ACTIVATION) {
+			build();
 		}
 
 		if (!isBuilding && this.isBuildingBlueprint()) {
@@ -724,6 +722,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	public void updateRequirements() {
 		ArrayList<ItemStack> reqCopy = null;
 		if (currentBuilder instanceof BptBuilderBlueprint) {
+			currentBuilder.initialize();
 			reqCopy = ((BptBuilderBlueprint) currentBuilder).neededItems;
 		}
 
@@ -735,6 +734,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	public void updateRequirements(EntityPlayer caller) {
 		ArrayList<ItemStack> reqCopy = null;
 		if (currentBuilder instanceof BptBuilderBlueprint) {
+			currentBuilder.initialize();
 			reqCopy = ((BptBuilderBlueprint) currentBuilder).neededItems;
 		}
 

@@ -9,7 +9,6 @@
 package buildcraft;
 
 import java.util.Set;
-import java.util.TreeMap;
 
 import org.apache.logging.log4j.Level;
 

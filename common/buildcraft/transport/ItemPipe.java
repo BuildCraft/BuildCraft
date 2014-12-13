@@ -88,18 +88,18 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 			Pipe<?> pipe = BlockGenericPipe.createPipe(this);
 
 			if (pipe == null) {
-				BCLog.logger.log(Level.WARN, "Pipe failed to create during placement at {0},{1},{2}", new Object[]{i, j, k});
+				BCLog.logger.log(Level.WARN, "Pipe failed to create during placement at {0},{1},{2}", i, j, k);
 				return true;
 			}
 			
 			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, block, 0, entityplayer)) {
 				block.onBlockPlacedBy(world, i, j, k, entityplayer, itemstack);
 
-				if (!world.isRemote && itemstack.getItemDamage() >= 1) {
+				if (!world.isRemote) {
 					TileEntity tile = world.getTileEntity(i, j, k);
-					((TileGenericPipe) tile).glassColor = (itemstack.getItemDamage() - 1) & 15;
+					((TileGenericPipe) tile).initializeFromItemMetadata(itemstack.getItemDamage());
 				}
-				
+
 				// TODO: Fix sound
 				//world.playSoundEffect(i + 0.5F, j + 0.5F, k + 0.5F,
 				//		block.stepSound.getPlaceSound(),
@@ -155,7 +155,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 			list.add(ColorUtils.getFormattingTooltip(color) + EnumChatFormatting.ITALIC + StringUtils.localize("color." + ColorUtils.getName(color)));
 		}
 		Class<? extends Pipe> pipe = BlockGenericPipe.pipes.get(this);
-		List<String> toolTip = PipeToolTipManager.getToolTip(pipe);
+		List<String> toolTip = PipeToolTipManager.getToolTip(pipe, advanced);
 		list.addAll(toolTip);
 	}
 }

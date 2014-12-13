@@ -75,7 +75,6 @@ public class BuildCraftFactory extends BuildCraftMod {
 	@Mod.Instance("BuildCraft|Factory")
 	public static BuildCraftFactory instance;
 
-	public static final int MINING_RF_COST_PER_BLOCK = 640;
 	public static BlockQuarry quarryBlock;
 	public static BlockMiningWell miningWellBlock;
 	public static BlockAutoWorkbench autoWorkbenchBlock;
@@ -87,6 +86,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 	public static BlockRefinery refineryBlock;
 	public static BlockHopper hopperBlock;
 
+	public static boolean quarryLoadsChunks = true;
 	public static boolean allowMining = true;
 	public static boolean quarryOneTimeUse = false;
 	public static float miningMultiplier = 1;
@@ -96,7 +96,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		FactoryProxy.proxy.initializeNEIIntegration();
-		ForgeChunkManager.setForcedChunkLoadingCallback(instance, new QuarryChunkloadCallback());
+		if (quarryLoadsChunks) {
+			ForgeChunkManager.setForcedChunkLoadingCallback(instance, new QuarryChunkloadCallback());
+		}
 	}
 
 	public class QuarryChunkloadCallback implements ForgeChunkManager.OrderedLoadingCallback {
@@ -107,9 +109,14 @@ public class BuildCraftFactory extends BuildCraftMod {
 				int quarryX = ticket.getModData().getInteger("quarryX");
 				int quarryY = ticket.getModData().getInteger("quarryY");
 				int quarryZ = ticket.getModData().getInteger("quarryZ");
-				TileQuarry tq = (TileQuarry) world.getTileEntity(new BlockPos(quarryX, quarryY, quarryZ));
-				tq.forceChunkLoading(ticket);
 
+				if (world.blockExists(quarryX, quarryY, quarryZ)) {
+					Block block = world.getBlock(quarryX, quarryY, quarryZ);
+					if (block == quarryBlock) {
+						TileQuarry tq = (TileQuarry) world.getTileEntity(quarryX, quarryY, quarryZ);
+						tq.forceChunkLoading(ticket);
+					}
+				}
 			}
 		}
 
@@ -121,9 +128,17 @@ public class BuildCraftFactory extends BuildCraftMod {
 				int quarryY = ticket.getModData().getInteger("quarryY");
 				int quarryZ = ticket.getModData().getInteger("quarryZ");
 
+<<<<<<< HEAD
 				Block block = world.getBlockState(new BlockPos(quarryX, quarryY, quarryZ)).getBlock();
 				if (block == quarryBlock) {
 					validTickets.add(ticket);
+=======
+				if (world.blockExists(quarryX, quarryY, quarryZ)) {
+					Block block = world.getBlock(quarryX, quarryY, quarryZ);
+					if (block == quarryBlock) {
+						validTickets.add(ticket);
+					}
+>>>>>>> 9883e790c47a3d7eaaa29be953519363a7655314
 				}
 			}
 			return validTickets;
@@ -168,6 +183,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 		quarryOneTimeUse = genCat.get("quarry.one.time.use", false, "Quarry cannot be picked back up after placement");
 		miningMultiplier = genCat.get("mining.cost.multipler", 1F, 1F, 10F, "cost multiplier for mining operations, range (1.0 - 10.0)\nhigh values may render engines incapable of powering machines directly");
 		miningDepth = genCat.get("mining.depth", 2, 256, 256, "how far below the machine can mining machines dig, range (2 - 256), default 256");
+		quarryLoadsChunks = genCat.get("quarry.loads.chunks", true, "Quarry loads chunks required for mining");
 
 		Property pumpList = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pumping.controlList", DefaultProps.PUMP_DIMENSION_LIST);
 		pumpList.comment = "Allows admins to whitelist or blacklist pumping of specific fluids in specific dimensions.\n"

@@ -10,6 +10,8 @@ package buildcraft.transport;
 
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+
+import buildcraft.BCCompatHooks;
 import buildcraft.BuildCraftTransport;
 
 public class TransportProxy {
@@ -20,7 +22,7 @@ public class TransportProxy {
 
 	public void registerTileEntities() {
         // The first name here is the current TE name; the remaining names are old names used for backwards compatibility
-		GameRegistry.registerTileEntityWithAlternatives(TileGenericPipe.class, "net.minecraft.src.buildcraft.transport.GenericPipe", "net.minecraft.src.buildcraft.GenericPipe", "net.minecraft.src.buildcraft.transport.TileGenericPipe");
+		GameRegistry.registerTileEntityWithAlternatives(BCCompatHooks.getPipeTile(), "net.minecraft.src.buildcraft.transport.GenericPipe", "net.minecraft.src.buildcraft.GenericPipe", "net.minecraft.src.buildcraft.transport.TileGenericPipe");
 		GameRegistry.registerTileEntity(TileFilteredBuffer.class, "net.minecraft.src.buildcraft.transport.TileFilteredBuffer");
 	}
 

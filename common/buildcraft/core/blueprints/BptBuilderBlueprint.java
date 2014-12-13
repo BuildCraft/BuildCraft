@@ -69,7 +69,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	}
 
 	@Override
-	protected void initialize () {
+	protected void internalInit () {
 		for (int j = blueprint.sizeY - 1; j >= 0; --j) {
 			for (int i = 0; i < blueprint.sizeX; ++i) {
 				for (int k = 0; k < blueprint.sizeZ; ++k) {
@@ -192,10 +192,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	}
 
 	public void deploy () {
-		if (!initialized) {
-			initialize();
-			initialized = true;
-		}
+		initialize();
 
 		for (BuildingSlotBlock b : buildList) {
 			if (b.mode == Mode.ClearIfInvalid) {

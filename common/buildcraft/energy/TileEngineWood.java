@@ -13,6 +13,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.EnumFacing;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
+import buildcraft.factory.TilePump;
 
 public class TileEngineWood extends TileEngine {
 
@@ -123,8 +124,10 @@ public class TileEngineWood extends TileEngine {
 			hasSent = true;
 			
 			TileEntity tile = getTile(orientation);
-			
-			if (tile instanceof IPipeTile && ((IPipeTile) tile).getPipeType() != PipeType.POWER) {
+
+			// TODO: Make a proper API out of this
+			if (tile instanceof TilePump ||
+					(tile instanceof IPipeTile && ((IPipeTile) tile).getPipeType() != PipeType.POWER)) {
 				super.sendPower();
 			} else {
 				this.energy = 0;

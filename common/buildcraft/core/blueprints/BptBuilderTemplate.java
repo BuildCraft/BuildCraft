@@ -36,7 +36,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 	}
 
 	@Override
-	protected void initialize () {
+	protected void internalInit () {
 		if (blueprint.excavate) {
 			for (int j = blueprint.sizeY - 1; j >= 0; --j) {
 				for (int i = 0; i < blueprint.sizeX; ++i) {

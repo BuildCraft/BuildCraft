@@ -62,7 +62,7 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
 		}
 
 		for (IStatementParameter param : parameters) {
-			if (param != null) {
+			if (param != null && param instanceof TriggerParameterSignal) {
 				TriggerParameterSignal signal = (TriggerParameterSignal) param;
 
 				if (signal.color != null) {

@@ -10,6 +10,7 @@ package buildcraft.core.gui;
 
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
@@ -76,12 +77,19 @@ public class GuiList extends GuiAdvancedInterface {
 
 		public int line;
 		public int kind;
+		private String desc;
 
-		public Button(GuiAdvancedInterface gui, int x, int y, int iLine, int iKind) {
+		@Override
+		public String getDescription() {
+			return desc;
+		}
+
+		public Button(GuiAdvancedInterface gui, int x, int y, int iLine, int iKind, String iDesc) {
 			super(gui, x, y);
 
 			line = iLine;
 			kind = iKind;
+			desc = iDesc;
 		}
 
 	}
@@ -99,8 +107,8 @@ public class GuiList extends GuiAdvancedInterface {
 				slots.add(new SecondarySlot(this, 44 + sx * 18, 31 + sy * 18, sy, sx));
 			}
 
-			slots.add(new Button(this, 8, 31 + sy * 18, sy, 0));
-			slots.add(new Button(this, 26, 31 + sy * 18, sy, 1));
+			slots.add(new Button(this, 8, 31 + sy * 18, sy, 0, "gui.list.metadata"));
+			slots.add(new Button(this, 26, 31 + sy * 18, sy, 1, "gui.list.oredict"));
 		}
 
 		player = iPlayer;
@@ -166,9 +174,18 @@ public class GuiList extends GuiAdvancedInterface {
 		drawTooltipForSlotAt(par1, par2);
 	}
 
+	private boolean isCarryingList() {
+		ItemStack stack = mc.thePlayer.inventory.getItemStack();
+		return (stack != null && stack.getItem() != null && stack.getItem() instanceof ItemList);
+	}
+
 	@Override
 	protected void mouseClicked(int x, int y, int b) {
 		super.mouseClicked(x, y, b);
+
+		if (isCarryingList()) {
+			return;
+		}
 
 		AdvancedSlot slot = getSlotAtLocation(x, y);
 		ContainerList container = (ContainerList) getContainer();

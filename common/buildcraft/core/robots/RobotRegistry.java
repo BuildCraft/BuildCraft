@@ -178,8 +178,6 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 			HashSet<ResourceId> resourceSet = (HashSet<ResourceId>) resourcesTakenByRobot.get(robot.getRobotId())
 					.clone();
 
-			ResourceId mainId = null;
-
 			for (ResourceId id : resourceSet) {
 				release(id);
 			}

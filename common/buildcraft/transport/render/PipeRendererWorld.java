@@ -18,6 +18,7 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.core.CoreConstants;
+import buildcraft.core.utils.ColorUtils;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;
@@ -33,19 +34,19 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		PipeRenderState state = tile.renderState;
 		IIconProvider icons = tile.getPipeIcons();
 		FakeBlock fakeBlock = FakeBlock.INSTANCE;
-		int glassColorMultiplier = tile.getStainedColorMultiplier();
+		int glassColor = tile.getColor();
 		
 		if (icons == null) {
 			return;
 		}	
 
-		if (renderPass == 0 || glassColorMultiplier >= 0) {
+		if (renderPass == 0 || glassColor >= 0) {
 			// Pass 0 handles the pipe texture, pass 1 handles the transparent stained glass
 			int connectivity = state.pipeConnectionMatrix.getMask();
 			float[] dim = new float[6];
 			
 			if (renderPass == 1) {
-				fakeBlock.setColor(glassColorMultiplier);
+				fakeBlock.setColor(ColorUtils.getRGBColor(glassColor));
 			}
 	
 			// render the unconnected pipe faces of the center block (if any)

@@ -20,8 +20,10 @@ import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.power.IEngine;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.TileBuildCraft;
 import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.PipePowerCobblestone;
 import buildcraft.transport.pipes.PipePowerDiamond;
@@ -90,14 +92,47 @@ public class PipeTransportPower extends PipeTransport {
 			return true;
 		}
 
-		if (tile instanceof IEnergyConnection) {
-			IEnergyConnection handler = (IEnergyConnection) tile;
-			if (handler != null && handler.canConnectEnergy(side.getOpposite())) {
-				return true;
+		if (container.pipe instanceof PipePowerWood) {
+			return isPowerSource(tile, side);
+		} else {
+			if (tile instanceof IEngine) {
+				// Disregard engines for this.
+				return false;
+			}
+			if (tile instanceof IEnergyHandler) {
+				IEnergyConnection handler = (IEnergyConnection) tile;
+				if (handler.canConnectEnergy(side.getOpposite())) {
+					return true;
+				}
 			}
 		}
 
 		return false;
+	}
+
+	public boolean isPowerSource(TileEntity tile, ForgeDirection side) {
+		if (tile instanceof TileBuildCraft && !(tile instanceof IEngine)) {
+			// Disregard non-engine BC tiles.
+			// While this, of course, does nothing to work with other mods,
+			// it at least makes it work nicely with BC's built-in blocks while
+			// the new RF api isn't out.
+			return false;
+		}
+
+		return tile instanceof IEnergyConnection && ((IEnergyConnection) tile).canConnectEnergy(side.getOpposite());
+		// TODO: Look into this code again when the new RF API is out.
+		/*
+		if (tile instanceof IEnergyConnection && ((IEnergyConnection) tile).canConnectEnergy(side.getOpposite())) {
+			if (tile instanceof TileBuildCraft && !(tile instanceof IEngine)) {
+				// Disregard non-engine BC tiles
+				return false;
+			}
+			// Disregard tiles which are consumers but NOT providers
+			return (tile instanceof IEngine) || (tile instanceof IEnergyHandler);
+		} else {
+			// Disregard tiles which can't connect either, I guess.
+			return false;
+		}*/
 	}
 
 	@Override

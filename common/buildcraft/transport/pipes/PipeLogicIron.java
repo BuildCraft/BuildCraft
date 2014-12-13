@@ -29,7 +29,7 @@ public abstract class PipeLogicIron {
 	}
 
 	public void switchOnRedstone() {
-		boolean currentPower = pipe.container.getWorld().isBlockIndirectlyGettingPowered(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+		boolean currentPower = pipe.container.getWorld().isBlockPowered(pipe.container.getPos());
 
 		if (currentPower != lastPower) {
 			switchPosition();
@@ -42,7 +42,7 @@ public abstract class PipeLogicIron {
 		int meta = pipe.container.getBlockMetadata();
 
 		for (int i = meta + 1; i <= meta + 6; ++i) {
-			EnumFacing facing = EnumFacing.getOrientation(i % 6);
+			EnumFacing facing = EnumFacing.getFront(i % 6);
 			if (setFacing(facing)) {
 				return;
 			}
@@ -73,7 +73,7 @@ public abstract class PipeLogicIron {
 	protected abstract boolean isValidConnectingTile(TileEntity tile);
 
 	public void initialize() {
-		lastPower = pipe.container.getWorld().isBlockIndirectlyGettingPowered(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+		lastPower = pipe.container.getWorld().isBlockPowered(pipe.container.getPos());
 	}
 
 	public void onBlockPlaced() {
@@ -83,7 +83,7 @@ public abstract class PipeLogicIron {
 
 	public boolean setFacing(EnumFacing facing) {
 		if (facing.ordinal() != pipe.container.getBlockMetadata() && isValidFacing(facing)) {
-			pipe.container.getWorld().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, facing.ordinal(), 3);
+			pipe.container.getWorld().setBlockMetadataWithNotify(pipe.container.getPos(), facing.ordinal(), 3);
 			pipe.container.scheduleRenderUpdate();
 			return true;
 		}
@@ -92,10 +92,10 @@ public abstract class PipeLogicIron {
 
 	public boolean blockActivated(EntityPlayer entityplayer) {
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord)) {
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pipe.container.getPos())) {
 			switchPosition();
 			pipe.container.scheduleRenderUpdate();
-			((IToolWrench) equipped).wrenchUsed(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+			((IToolWrench) equipped).wrenchUsed(entityplayer, pipe.container.getPos());
 
 			return true;
 		}
@@ -104,7 +104,7 @@ public abstract class PipeLogicIron {
 	}
 
 	public EnumFacing getOutputDirection() {
-		return EnumFacing.getOrientation(pipe.container.getBlockMetadata());
+		return EnumFacing.getFront(pipe.container.getBlockMetadata());
 	}
 
 	public boolean outputOpen(EnumFacing to) {

@@ -109,13 +109,9 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 		return new PacketTileUpdate(this);
 	}
 
-	public BuildCraftPacket getPacketDescription() {
-		return getPacketUpdate();
-	}
-
 	@Override
 	public Packet getDescriptionPacket() {
-		return Utils.toPacket(getPacketDescription(), 0);
+		return Utils.toPacket(getPacketUpdate(), 0);
 	}
 
 	@Override
@@ -166,8 +162,15 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 		}
 	}
 
+<<<<<<< HEAD
 	@Override
 	public int extractEnergy(EnumFacing from, int maxExtract,
+=======
+	/**
+	 * If you want to use this, implement IEnergyProvider.
+	 */
+	public int extractEnergy(ForgeDirection from, int maxExtract,
+>>>>>>> 9883e790c47a3d7eaaa29be953519363a7655314
 			boolean simulate) {
 		if (battery != null && this.canConnectEnergy(from)) {
 			return battery.extractEnergy(maxExtract, simulate);

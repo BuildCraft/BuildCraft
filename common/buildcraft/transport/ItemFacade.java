@@ -265,8 +265,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 
 				if (!Strings.isNullOrEmpty(stack.getUnlocalizedName())
 						&& names.add(stack.getUnlocalizedName())) {
-					addFacade("buildcraft:facade{" + Block.blockRegistry.getNameForObject(block) + "#"
-									+ stack.getItemDamage() + "}", stack);
+					addFacade(stack);
 
 					// prevent adding multiple facades if it's a rotatable block
 					if (block.getRenderType() == 31 || (block.getRenderType() == 39 && i == 2)) {
@@ -415,12 +414,20 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 		return true;
 	}
 
-	public void addFacade(String id, ItemStack itemStack) {
+	public void addFacade(ItemStack itemStack) {
 		if (itemStack.stackSize == 0) {
 			itemStack.stackSize = 1;
 		}
 
-		ItemStack facade = getFacadeForBlock(Block.getBlockFromItem(itemStack.getItem()), itemStack.getItemDamage());
+		Block block = Block.getBlockFromItem(itemStack.getItem());
+		if (block == null) {
+			return;
+		}
+
+		String recipeId = "buildcraft:facade{" + Block.blockRegistry.getNameForObject(block) + "#"
+				+ itemStack.getItemDamage() + "}";
+
+		ItemStack facade = getFacadeForBlock(block, itemStack.getItemDamage());
 		if (!allFacades.contains(facade)) {
 			allFacades.add(facade);
 
@@ -428,7 +435,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 			facade6.stackSize = 6;
 
 			// 3 Structurepipes + this block makes 6 facades
-			BuildcraftRecipeRegistry.assemblyTable.addRecipe(id, 8000, facade6, new ItemStack(
+			BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId, 8000, facade6, new ItemStack(
 					BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
 		}
 	}

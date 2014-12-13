@@ -32,12 +32,12 @@ public class IconFlipped implements IIcon {
 
 	@Override
 	public int getIconWidth() {
-		return flipU ? -this.getIconWidth() : this.getIconWidth();
+		return flipU ? -this.icon.getIconWidth() : this.icon.getIconWidth();
 	}
 
 	@Override
 	public int getIconHeight() {
-		return flipV ? -this.getIconHeight() : this.getIconHeight();
+		return flipV ? -this.icon.getIconHeight() : this.icon.getIconHeight();
 	}
 
 	@Override

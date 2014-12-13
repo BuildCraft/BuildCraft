@@ -41,7 +41,7 @@ public class ActionRobotWorkInArea extends BCStatement implements IActionInterna
 			return null;
 		}
 
-		ItemStack stack = ((StatementParameterItemStack) slot.parameters[0]).getItemStack();
+		ItemStack stack = slot.parameters[0].getItemStack();
 
 		if (!(stack.getItem() instanceof ItemMapLocation)) {
 			return null;

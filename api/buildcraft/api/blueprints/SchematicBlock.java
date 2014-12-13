@@ -2,13 +2,14 @@
  * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ * The BuildCraft API is distributed under the terms of the MIT License.
+ * Please check the contents of the license, which should be located
+ * as "LICENSE.API" in the BuildCraft source code distribution.
  */
 package buildcraft.api.blueprints;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
@@ -40,9 +41,7 @@ public class SchematicBlock extends SchematicBlockBase {
 	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		if (block != null) {
 			if (storedRequirements.length != 0) {
-				for (ItemStack s : storedRequirements) {
-					requirements.add(s);
-				}
+				Collections.addAll(requirements, storedRequirements);
 			} else {
 				requirements.add(new ItemStack(block, 1, meta));
 			}
@@ -137,11 +136,9 @@ public class SchematicBlock extends SchematicBlockBase {
 			NBTTagList rq = nbt.getTagList("rq", Constants.NBT.TAG_COMPOUND);
 
 			ArrayList<ItemStack> rqs = new ArrayList<ItemStack>();
-			int idTEST = 0;
 			for (int i = 0; i < rq.tagCount(); ++i) {
 				try {
 					NBTTagCompound sub = rq.getCompoundTagAt(i);
-					idTEST = sub.getInteger("id");
 					if (sub.getInteger("id") >= 0) {
 						registry.stackToWorld(sub);
 						rqs.add(ItemStack.loadItemStackFromNBT(sub));

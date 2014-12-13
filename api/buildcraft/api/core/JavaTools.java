@@ -2,9 +2,9 @@
  * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ * The BuildCraft API is distributed under the terms of the MIT License.
+ * Please check the contents of the license, which should be located
+ * as "LICENSE.API" in the BuildCraft source code distribution.
  */
 package buildcraft.api.core;
 
@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class JavaTools {
@@ -56,9 +57,7 @@ public class JavaTools {
 	    Class<?> current = clas;
 
 	    while (current != null && current != Object.class) {
-	    	for (Field f : current.getDeclaredFields()) {
-	    		result.add(f);
-	    	}
+			Collections.addAll(result, current.getDeclaredFields());
 
 	        current = current.getSuperclass();
 	    }
@@ -72,9 +71,7 @@ public class JavaTools {
 	    Class<?> current = clas;
 
 	    while (current != null && current != Object.class) {
-	    	for (Method m : current.getDeclaredMethods()) {
-	    		result.add(m);
-	    	}
+			Collections.addAll(result, current.getDeclaredMethods());
 
 	        current = current.getSuperclass();
 	    }

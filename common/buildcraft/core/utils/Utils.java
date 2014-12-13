@@ -23,6 +23,7 @@ import io.netty.buffer.Unpooled;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -35,7 +36,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import net.minecraft.util.EnumFacing;
 
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
@@ -336,6 +336,20 @@ public final class Utils {
 		if (tile instanceof TileBuildCraft) {
 			((TileBuildCraft) tile).destroy();
 		}
+	}
+
+	public static boolean isFakePlayer(EntityPlayer player) {
+		if (player instanceof FakePlayer) {
+			return true;
+		}
+
+		// Tip donated by skyboy - addedToChunk must be set to false by a fake player
+		// or it becomes a chunk-loading entity.
+		if (!player.addedToChunk) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public static boolean checkPipesConnections(TileEntity tile1, TileEntity tile2) {

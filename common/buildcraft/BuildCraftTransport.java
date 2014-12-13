@@ -367,17 +367,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipeWaterproof.setUnlocalizedName("pipeWaterproof");
 			CoreProxy.proxy.registerItem(pipeWaterproof);
 
-			if (Loader.isModLoaded("BuildCraft|Compat")) {
-				try {
-					genericPipeBlock = (BlockGenericPipe) this.getClass().getClassLoader().loadClass("buildcraft.transport.BlockGenericPipeCompat").newInstance();
-				} catch (Exception e) {
-					e.printStackTrace();
-					genericPipeBlock = new BlockGenericPipe();
-				}
-			} else {
-				genericPipeBlock = new BlockGenericPipe();
-			}
-			
+			genericPipeBlock = BCCompatHooks.createPipeBlock();
+
 			CoreProxy.proxy.registerBlock(genericPipeBlock.setBlockName("pipeBlock"), ItemBlock.class);
 
 			pipeItemsWood = buildPipe(PipeItemsWood.class, "Wooden Transport Pipe", CreativeTabBuildCraft.PIPES, "plankWood", Blocks.glass, "plankWood");
@@ -528,7 +519,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			try {
 				PrintWriter writer = new PrintWriter("FacadeDebug.txt", "UTF-8");
 				writer.println("*** REGISTERED FACADES ***");
-				for (ItemStack stack : facadeItem.allFacades) {
+				for (ItemStack stack : ItemFacade.allFacades) {
 					if (facadeItem.getBlocksForFacade(stack).length > 0) {
 						writer.println(Block.blockRegistry.getNameForObject(facadeItem.getBlocksForFacade(stack)[0]) + ":" + facadeItem.getMetaValuesForFacade(stack)[0]);
 					}

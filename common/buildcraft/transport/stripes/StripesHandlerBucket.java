@@ -36,26 +36,37 @@ public class StripesHandlerBucket implements IStripesHandler {
 		Block block = world.getBlock(x, y, z);
 		if (block == Blocks.air) {
 			Block underblock = world.getBlock(x, y - 1, z);
-			
-			boolean rollback = false;
 
 			if (((ItemBucket) stack.getItem()).tryPlaceContainedLiquid(world, x, y - 1, z)) {
 				stack.stackSize = 0;
 				pipe.sendItem(emptyBucket, direction.getOpposite());
 				
 				return true;
-			} else if (underblock instanceof IFluidBlock) {
-				Fluid fluid = ((IFluidBlock) underblock).getFluid();
-				FluidStack fluidStack = new FluidStack(fluid, 1000);
-				ItemStack filledBucket = FluidContainerRegistry.fillFluidContainer(fluidStack, emptyBucket);
+			} else {
+				ItemStack filledBucket = null;
+
+				if (underblock instanceof IFluidBlock) {
+					Fluid fluid = ((IFluidBlock) underblock).getFluid();
+					FluidStack fluidStack = new FluidStack(fluid, 1000);
+					filledBucket = FluidContainerRegistry.fillFluidContainer(fluidStack, emptyBucket);
+				}
+
+				if (underblock == Blocks.lava) {
+					filledBucket = new ItemStack(Items.lava_bucket, 1);
+				}
+
+				if (underblock == Blocks.water) {
+					filledBucket = new ItemStack(Items.water_bucket, 1);
+				}
+
 				if (filledBucket != null) {
 					world.setBlockToAir(x, y - 1, z);
-				
+
 					stack.stackSize = 0;
 					pipe.sendItem(filledBucket, direction.getOpposite());
+
+					return true;
 				}
-				
-				return true;
 			}
 
 			return false;

@@ -39,8 +39,6 @@ public class TriggerParameterSignal implements IStatementParameter {
 
 	@Override
 	public IIcon getIcon() {
-		int id = 0;
-
 		if (color == null) {
 			return null;
 		}

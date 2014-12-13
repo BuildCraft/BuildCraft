@@ -32,11 +32,9 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 		IBuildingItemsProvider, ICommandReceiver {
 
 	/**
-	 * Computes the maximum amount of energy required to build a full chest,
-	 * plus a safeguard. That's a nice way to evaluate maximum amount of energy
-	 * that need to be in a builder.
+	 * The builder should not act as a gigantic energy buffer, thus we keep enough
+	 * build energy to build about 2 stacks' worth of blocks.
 	 */
-	private static final int FULL_CHEST_ENERGY = 9 * 3 * 64 * BuilderAPI.BUILD_ENERGY + 10000;
 
 	public LinkedList<LaserData> pathLasers = new LinkedList<LaserData> ();
 
@@ -47,7 +45,7 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 
 	public TileAbstractBuilder() {
 		super();
-		this.setBattery(new RFBattery(FULL_CHEST_ENERGY, 1000, 0));
+		this.setBattery(new RFBattery(2 * 64 * BuilderAPI.BUILD_ENERGY, 1000, 0));
 	}
 	@Override
 	public void initialize () {

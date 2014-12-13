@@ -190,9 +190,7 @@ public final class InterModComms {
 					} else {
 						Block block = (Block) Block.blockRegistry.getObject(blockName);
 						if (block.getRenderType() != 0 && block.getRenderType() != 31) {
-							BuildCraftTransport.facadeItem.addFacade(
-									"buildcraft:facade{" + blockName + "}",
-									new ItemStack(block, 1, metaId));
+							BuildCraftTransport.facadeItem.addFacade(new ItemStack(block, 1, metaId));
 						} else {
 							logRedundantAddFacadeMessage(m, block.toString());
 						}
@@ -203,10 +201,8 @@ public final class InterModComms {
 
 				Block block = Block.getBlockFromItem(modItemStack.getItem());
 				if (block != null && block.getRenderType() != 0 && block.getRenderType() != 31) {
-					BuildCraftTransport.facadeItem.addFacade(
-							"buildcraft:facade{" + Block.blockRegistry.getNameForObject(block) + "}",
-							modItemStack);
-				} else {
+					BuildCraftTransport.facadeItem.addFacade(modItemStack);
+				} else if (block != null) {
 					logRedundantAddFacadeMessage(m, block.toString());
 				}
 			}

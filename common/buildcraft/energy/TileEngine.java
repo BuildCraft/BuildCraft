@@ -11,11 +11,11 @@ package buildcraft.energy;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.EnumFacing;
+import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.power.IEngine;
@@ -27,6 +27,7 @@ import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.utils.MathUtils;
+import buildcraft.core.utils.Utils;
 import buildcraft.energy.gui.ContainerEngine;
 
 public abstract class TileEngine extends TileBuildCraft implements IPipeConnection, IEnergyHandler, IEngine, IHeatable {
@@ -119,7 +120,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 				player.getCurrentEquippedItem().getItem() instanceof IToolWrench) {
 			IToolWrench wrench = (IToolWrench) player.getCurrentEquippedItem().getItem();
 			if (wrench.canWrench(player, xCoord, yCoord, zCoord)) {
-				if (getEnergyStage() == EnergyStage.OVERHEAT) {
+				if (getEnergyStage() == EnergyStage.OVERHEAT && !Utils.isFakePlayer(player)) {
 					energyStage = computeEnergyStage();
 					sendNetworkUpdate();
 				}
@@ -230,8 +231,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 
 			if (!isOrientationValid()) {
 				switchOrientation(true);
-			} else {
-				TileEntity tile = getTile(orientation);
 			}
 		}
 
@@ -513,7 +512,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
         } else if (tile instanceof IEngine) {
             return ((IEngine) tile).canReceiveFromEngine(side.getOpposite());
 		} else if (tile instanceof IEnergyHandler) {
-            return ((IEnergyHandler) tile).canConnectEnergy(side.getOpposite());
+            return ((IEnergyConnection) tile).canConnectEnergy(side.getOpposite());
         } else {
 			return false;
 		}
@@ -555,12 +554,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 		checkOrientation = true;
 	}
 	// RF support
-
-	@Override
-	public int receiveEnergy(EnumFacing from, int maxReceive,
-			boolean simulate) {
-		return 0;
-	}
 
 	@Override
 	public int extractEnergy(EnumFacing from, int maxExtract,

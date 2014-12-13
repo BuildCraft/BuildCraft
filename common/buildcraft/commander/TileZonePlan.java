@@ -9,12 +9,14 @@
 package buildcraft.commander;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.chunk.Chunk;
 
+import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.ItemMapLocation;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.ZonePlan;
@@ -38,6 +40,8 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 	private int currentSelectedArea = 0;
 
 	private SimpleInventory inv = new SimpleInventory(2, "inv", 64);
+
+	private SafeTimeTracker zonePlannerScanning = new SafeTimeTracker(5);
 
 	@Override
 	public void initialize() {
@@ -103,7 +107,7 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 			return;
 		}
 
-		if (scan) {
+		if (scan && zonePlannerScanning.markTimeIfDelay(worldObj)) {
 			int[] coords = getCoords();
 			Chunk chunk = worldObj.getChunkFromChunkCoords(coords[0], coords[1]);
 			loadChunk(chunk);
@@ -147,11 +151,11 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 				int x = (chunk.xPosition << 4) + cx;
 				int z = (chunk.zPosition << 4) + cz;
 
-				int color = 0;
-
-				for (int y = getWorldObj().getHeight() - 1; y >= 0; --y) {
-					if (!chunk.getBlock(cx, y, cz).isAir(worldObj, x, y, z)) {
-						color = chunk.getBlock(cx, y, cz).getMapColor(0).colorIndex;
+				int y = getWorldObj().getHeightValue(x, z);
+				int color;
+				while ((color = chunk.getBlock(cx, y, cz).getMapColor(0).colorIndex) == MapColor.airColor.colorIndex) {
+					y--;
+					if (y < 0) {
 						break;
 					}
 				}
@@ -193,7 +197,7 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 		chunkIt = nbt.getInteger("chunkIt");
 		colors = nbt.getByteArray("colors");
 
-		if (colors.length != RESOLUTION * RESOLUTION || chunkIt >= colors.length) {
+		if (colors.length != RESOLUTION * RESOLUTION || chunkIt >= RESOLUTION_CHUNKS * RESOLUTION_CHUNKS) {
 			colors = new byte[RESOLUTION * RESOLUTION];
 			scan = true;
 			chunkIt = 0;

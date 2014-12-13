@@ -97,10 +97,14 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 		if (itemBlueprint != null && ItemBlueprint.getId(itemBlueprint) != null && bluePrintBuilder == null) {
 			BlueprintBase bpt = BlueprintBase.instantiate(itemBlueprint, worldObj, xCoord, yCoord, zCoord, direction);
 
-			bluePrintBuilder = new BptBuilderBlueprint((Blueprint) bpt, worldObj, xCoord, yCoord, zCoord);
-			bptContext = bluePrintBuilder.getContext();
-			box.initialize(bluePrintBuilder);
-			sendNetworkUpdate();
+			if (bpt instanceof Blueprint) {
+				bluePrintBuilder = new BptBuilderBlueprint((Blueprint) bpt, worldObj, xCoord, yCoord, zCoord);
+				bptContext = bluePrintBuilder.getContext();
+				box.initialize(bluePrintBuilder);
+				sendNetworkUpdate();
+			} else {
+				return;
+			}
 		}
 
 		if (laser == null && direction != EnumFacing.UNKNOWN) {

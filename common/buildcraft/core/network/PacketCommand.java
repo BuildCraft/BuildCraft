@@ -52,7 +52,7 @@ public class PacketCommand extends BuildCraftPacket {
 
 	public void handle(EntityPlayer player) {
 		if (handler != null) {
-			ICommandReceiver receiver = (ICommandReceiver) handler.handle(player, stream, player.worldObj);
+			ICommandReceiver receiver = handler.handle(player, stream, player.worldObj);
 			if (receiver != null) {
 				receiver.receiveCommand(command, FMLCommonHandler.instance().getEffectiveSide(), player, stream);
 			}

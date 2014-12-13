@@ -415,7 +415,7 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 		IStatement statement = null;
 
 		if (tag != null && tag.length() > 0) {
-			statement = (IStatement) StatementManager.statements.get(tag);
+			statement = StatementManager.statements.get(tag);
 		}
 		gate.setAction(action, statement);
 
@@ -432,7 +432,7 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 		IStatement statement = null;
 
 		if (tag != null && tag.length() > 0) {
-			statement = (IStatement) StatementManager.statements.get(tag);
+			statement = StatementManager.statements.get(tag);
 		}
 		gate.setTrigger(trigger, statement);
 

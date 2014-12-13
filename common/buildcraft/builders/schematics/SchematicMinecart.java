@@ -36,7 +36,7 @@ public class SchematicMinecart extends SchematicEntity {
 				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
 		pos.x -= 0.5;
 		pos.z -= 0.5;
-		entityNBT.setTag("Pos", this.newDoubleNBTList(new double[] {pos.x, pos.y, pos.z}));
+		entityNBT.setTag("Pos", this.newDoubleNBTList(pos.x, pos.y, pos.z));
 	}
 
 
@@ -49,7 +49,7 @@ public class SchematicMinecart extends SchematicEntity {
 				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
 		pos.x += 0.5;
 		pos.z += 0.5;
-		entityNBT.setTag("Pos", this.newDoubleNBTList(new double[] {pos.x, pos.y, pos.z}));
+		entityNBT.setTag("Pos", this.newDoubleNBTList(pos.x, pos.y, pos.z));
 	}
 
 	@Override

@@ -145,7 +145,7 @@ public class BlockQuarry extends BlockBuildCraft {
 			return;
 		}
 
-		BuildCraftFactory.frameBlock.breakBlock(world, i, j, k, block, metadata);
+		BuildCraftFactory.frameBlock.removeNeighboringFrames(world, i, j, k);
 
 		super.breakBlock(world, i, j, k, block, metadata);
 	}

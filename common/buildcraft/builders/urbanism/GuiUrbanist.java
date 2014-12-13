@@ -207,7 +207,7 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 		int x = Mouse.getEventX() * this.width / this.mc.displayWidth;
 	    int y = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
 
-	    if (onInterface(x, x)) {
+	    if (onInterface(x, y)) {
 			return;
 		}
 

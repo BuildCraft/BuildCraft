@@ -11,10 +11,16 @@ package buildcraft.transport.pipes;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+<<<<<<< HEAD
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.util.EnumFacing;
 import cofh.api.energy.IEnergyConnection;
+=======
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.common.util.ForgeDirection;
+>>>>>>> 9883e790c47a3d7eaaa29be953519363a7655314
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
@@ -72,7 +78,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 			} else {
 				TileEntity tile = container.getTile(o);
 			
-				if (powerSources[o.ordinal()] = isPowerSource(tile, o)) {
+				if (powerSources[o.ordinal()] = transport.isPowerSource(tile, o)) {
 					sources++;
 				}
 			}
@@ -128,22 +134,6 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 		requestedEnergy = 0;
 	}
 
-	public boolean requestsPower() {
-		if (full) {
-			boolean request = battery.getEnergyStored() < battery.getMaxEnergyStored() / 2;
-
-			if (request) {
-				full = false;
-			}
-
-			return request;
-		}
-
-		full = battery.getEnergyStored() >= battery.getMaxEnergyStored() - 100;
-
-		return !full;
-	}
-
 	@Override
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
@@ -182,6 +172,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 		}
 	}
 
+<<<<<<< HEAD
 	public boolean isPowerSource(TileEntity tile, EnumFacing from) {
 		if (!transport.inputOpen(from)) {
 			return false;
@@ -190,6 +181,8 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 		}
 	}
 
+=======
+>>>>>>> 9883e790c47a3d7eaaa29be953519363a7655314
 	@Override
 	public boolean canConnectEnergy(EnumFacing from) {
 		return true;

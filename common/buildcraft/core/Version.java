@@ -183,7 +183,7 @@ public class Version implements Runnable {
 
 			conn.disconnect();
 
-			return changelog.toArray(new String[0]);
+			return changelog.toArray(new String[changelog.size()]);
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
