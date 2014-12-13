@@ -181,7 +181,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 						// legacy beta BuildCraft
 						"\"$MINECRAFT" + File.separator + "config" + File.separator + "buildcraft" + File.separator
 								+ "blueprints" + File.separator + "client\"",
-						// infered used download location
+						// inferred user download location
 						"\"" + getDownloadsDir() + "\""
 				}
 				).getStringList().clone();

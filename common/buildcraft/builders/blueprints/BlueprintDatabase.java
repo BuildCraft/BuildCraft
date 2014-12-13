@@ -35,7 +35,7 @@ public class BlueprintDatabase {
 	private File outputDir;
 	private File[] inputDirs;
 
-	private Set<BlueprintId> blueprintIds = new TreeSet<BlueprintId>();
+	private Set<BlueprintId> blueprintIds;
 	private BlueprintId [] pages = new BlueprintId [0];
 
 	/**
@@ -56,6 +56,11 @@ public class BlueprintDatabase {
 			inputDirs[i] = new File(inputPaths[i]);
 		}
 
+		refresh();
+	}
+
+	public void refresh() {
+		blueprintIds = new TreeSet<BlueprintId>();
 		loadIndex(inputDirs);
 	}
 
@@ -187,7 +192,7 @@ public class BlueprintDatabase {
 				}
 			}
 
-			pages = blueprintIds.toArray(pages);
+			pages = blueprintIds.toArray(new BlueprintId[blueprintIds.size()]);
 		}
 	}
 
