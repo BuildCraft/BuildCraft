@@ -22,7 +22,7 @@ import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.utils.AverageUtil;
 
-public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory, IHasWork, IControllable {
+public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory, IHasWork {
 
 	public int clientRequiredEnergy = 0;
 	protected SimpleInventory inv = new SimpleInventory(getSizeInventory(), "inv", 64);
@@ -193,16 +193,5 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 		iCrafting.sendProgressBarUpdate(container, 3, (currentStored >>> 16) & 0xFFFF);
 		iCrafting.sendProgressBarUpdate(container, 4, lRecentEnergy & 0xFFFF);
 		iCrafting.sendProgressBarUpdate(container, 5, (lRecentEnergy >>> 16) & 0xFFFF);
-	}
-
-	@Override
-	public boolean hasWork() {
-		return mode != IControllable.Mode.Off;
-	}
-	
-	@Override
-	public boolean acceptsControlMode(Mode mode) {
-		return mode == IControllable.Mode.On ||
-				mode == IControllable.Mode.Off;
 	}
 }

@@ -28,7 +28,6 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
-import buildcraft.api.tiles.IControllable;
 import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
@@ -79,8 +78,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 			}
 		}
 
-		if (getEnergy() >= currentRecipe.craft(this, true).energyCost
-				&& mode != IControllable.Mode.Off) {
+		if (getEnergy() >= currentRecipe.craft(this, true).energyCost) {
 			setEnergy(0);
 
 			if (currentRecipe.canBeCrafted(this)) {
@@ -316,7 +314,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 
 	@Override
 	public boolean hasWork() {
-		return currentRecipe != null && super.hasWork();
+		return currentRecipe != null;
 	}
 
 	@Override

@@ -17,7 +17,7 @@ public class TileChargingTable extends TileLaserTableBase implements IHasWork {
     public void updateEntity() {
         super.updateEntity();
 
-        if (getEnergy() > 0 && mode != Mode.Off) {
+        if (getEnergy() > 0) {
             if (getRequiredEnergy() > 0) {
                 ItemStack stack = this.getStackInSlot(0);
                 IEnergyContainerItem containerItem = (IEnergyContainerItem) stack.getItem();

@@ -32,7 +32,6 @@ import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.power.ILaserTarget;
-import buildcraft.api.tiles.IControllable;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.InventoryCopy;
 import buildcraft.core.inventory.InventoryIterator;
@@ -231,9 +230,6 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 			updateRecipe();
 		}
 		if (worldObj.isRemote) {
-			return;
-		}
-		if (mode ==  IControllable.Mode.Off) {
 			return;
 		}
 		updateRecipe();
@@ -440,12 +436,12 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 
 	@Override
 	public boolean canCraft() {
-		return craftable && !justCrafted && mode != IControllable.Mode.Off;
+		return craftable && !justCrafted;
 	}
 
 	@Override
 	public boolean hasWork() {
-		return requiresLaserEnergy() && super.hasWork();
+		return requiresLaserEnergy();
 	}
 
 	@Override

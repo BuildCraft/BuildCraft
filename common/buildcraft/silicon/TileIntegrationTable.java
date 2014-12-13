@@ -79,8 +79,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements IFlexibl
 			return;
 		}
 
-		if (getEnergy() >= craftingPreview.energyCost
-				&& mode != IControllable.Mode.Off) {
+		if (getEnergy() >= craftingPreview.energyCost) {
 			setEnergy(0);
 			craftingPreview = null;
 
@@ -185,7 +184,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements IFlexibl
 
     @Override
     public boolean hasWork() {
-		return craftingPreview != null && super.hasWork();
+		return craftingPreview != null;
     }
 
 	@Override
