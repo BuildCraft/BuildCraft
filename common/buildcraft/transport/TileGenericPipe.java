@@ -72,7 +72,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	public Pipe pipe;
 	public int redstoneInput;
 	public int[] redstoneInputSide = new int[ForgeDirection.VALID_DIRECTIONS.length];
-	public int glassColor = -1;
 	
 	protected boolean deletePipe = false;
 	protected boolean sendClientUpdate = false;
@@ -83,7 +82,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	protected boolean attachPluggables = false;
 
 	private TileBuffer[] tileBuffer;
-	
+	private int glassColor = -1;
+
 	public static class CoreState implements IClientState {
 		public int pipeId = -1;
 		public ItemGate.GatePluggable[] gates = new ItemGate.GatePluggable[ForgeDirection.VALID_DIRECTIONS.length];
@@ -420,20 +420,27 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		}
 	}
 
-	public int getItemMetadata() {
-		return 1 + (worldObj.isRemote ? renderState.glassColor : glassColor);
-	}
-	
-	public int getStainedColorMultiplier() {
-		int color;
-		
-		if (worldObj.isRemote) {
-			color = renderState.glassColor;
-		} else {
-			color = this.glassColor;
+	public void initializeFromItemMetadata(int i) {
+		if (i >= 1 && i <= 16) {
+			setColor((i - 1) & 15);
 		}
-		
-		return color >= 0 ? ColorUtils.getRGBColor(color) : -1;
+	}
+
+	public int getItemMetadata() {
+		return (getColor() >= 0 ? (1 + getColor()) : 0);
+	}
+
+	public int getColor() {
+		return worldObj.isRemote ? renderState.glassColor : this.glassColor;
+	}
+
+	public void setColor(int color) {
+		// -1 = no color
+		if (!worldObj.isRemote && color >= -1 && color < 16) {
+			glassColor = color;
+			notifyBlockChanged();
+			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, blockType);
+		}
 	}
 	
 	/**
