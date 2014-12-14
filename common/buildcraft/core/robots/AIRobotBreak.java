@@ -55,13 +55,12 @@ public class AIRobotBreak extends AIRobot {
 
 	@Override
 	public void update() {
-		if (hardness == 0) {
-			// defensive code
-			terminate();
-			return;
+		if (hardness != 0) {
+		    blockDamage += speed / hardness / 30F;
+		} else {
+		    // Instantly break the block
+		    blockDamage = 1.1F;
 		}
-
-		blockDamage += speed / hardness / 30F;
 
 		if (blockDamage > 1.0F) {
 			robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), blockToBreak.x,
