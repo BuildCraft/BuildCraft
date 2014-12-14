@@ -158,8 +158,8 @@ public class BlockTank extends BlockBuildCraft {
 						IFluidContainerItem container = (IFluidContainerItem) current.getItem();
 						FluidStack liquid = container.getFluid(current);
 						FluidStack tankLiquid = tank.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid;
-						boolean mustDrain = (liquid == null || liquid.amount == 0);
-						boolean mustFill = (tankLiquid == null || tankLiquid.amount == 0);
+						boolean mustDrain = liquid == null || liquid.amount == 0;
+						boolean mustFill = tankLiquid == null || tankLiquid.amount == 0;
 						if (mustDrain && mustFill) {
 							// Both are empty, do nothing
 						} else if (mustDrain || !entityplayer.isSneaking()) {

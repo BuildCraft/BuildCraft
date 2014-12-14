@@ -10,7 +10,6 @@ package buildcraft.core.gui;
 
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
@@ -79,11 +78,6 @@ public class GuiList extends GuiAdvancedInterface {
 		public int kind;
 		private String desc;
 
-		@Override
-		public String getDescription() {
-			return desc;
-		}
-
 		public Button(GuiAdvancedInterface gui, int x, int y, int iLine, int iKind, String iDesc) {
 			super(gui, x, y);
 
@@ -92,6 +86,10 @@ public class GuiList extends GuiAdvancedInterface {
 			desc = iDesc;
 		}
 
+		@Override
+		public String getDescription() {
+			return desc;
+		}
 	}
 
 	public GuiList(EntityPlayer iPlayer) {
@@ -176,7 +174,7 @@ public class GuiList extends GuiAdvancedInterface {
 
 	private boolean isCarryingList() {
 		ItemStack stack = mc.thePlayer.inventory.getItemStack();
-		return (stack != null && stack.getItem() != null && stack.getItem() instanceof ItemList);
+		return stack != null && stack.getItem() != null && stack.getItem() instanceof ItemList;
 	}
 
 	@Override
