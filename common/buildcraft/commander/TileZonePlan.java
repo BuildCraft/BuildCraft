@@ -14,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.chunk.Chunk;
 
 import buildcraft.api.core.SafeTimeTracker;
@@ -46,8 +47,8 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 	@Override
 	public void initialize() {
 		super.initialize();
-		chunkStartX = (xCoord >> 4) - RESOLUTION_CHUNKS / 2;
-		chunkStartZ = (zCoord >> 4) - RESOLUTION_CHUNKS / 2;
+		chunkStartX = (pos.getX() >> 4) - RESOLUTION_CHUNKS / 2;
+		chunkStartZ = (pos.getZ() >> 4) - RESOLUTION_CHUNKS / 2;
 
 		if (!scan) {
 			chunkIt = 0;
@@ -56,8 +57,8 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 	}
 
 	private int[] getCoords() {
-		int chunkCenterX = xCoord >> 4;
-		int chunkCenterZ = zCoord >> 4;
+		int chunkCenterX = pos.getX() >> 4;
+		int chunkCenterZ = pos.getZ() >> 4;
 
 		if (chunkIt == 0) {
 			return new int[] {chunkCenterX, chunkCenterZ};
@@ -100,8 +101,8 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		if (worldObj.isRemote) {
 			return;
@@ -151,9 +152,9 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 				int x = (chunk.xPosition << 4) + cx;
 				int z = (chunk.zPosition << 4) + cz;
 
-				int y = getWorldObj().getHeightValue(x, z);
+				int y = getWorld().getChunksLowestHorizon(x, z);
 				int color;
-				while ((color = chunk.getBlock(cx, y, cz).getMapColor(0).colorIndex) == MapColor.airColor.colorIndex) {
+				while ((color = chunk.getBlock(cx, y, cz).getMapColor(chunk.getBlockState(new BlockPos(cx, y, cz))).colorIndex) == MapColor.airColor.colorIndex) {
 					y--;
 					if (y < 0) {
 						break;
@@ -264,13 +265,13 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public String getInventoryName() {
-		return inv.getInventoryName();
+	public String getName() {
+		return inv.getName();
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
-		return inv.hasCustomInventoryName();
+	public boolean hasCustomName() {
+		return inv.hasCustomName();
 	}
 
 	@Override
@@ -284,13 +285,13 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public void openInventory() {
-		inv.openInventory();
+	public void openInventory(EntityPlayer player) {
+		inv.openInventory(player);
 	}
 
 	@Override
-	public void closeInventory() {
-		inv.closeInventory();
+	public void closeInventory(EntityPlayer player) {
+		inv.closeInventory(player);
 	}
 
 	@Override

@@ -325,7 +325,7 @@ public final class Utils {
 		return lasers;
 	}
 
-	public static void preDestroyBlock(World world, BlockPos pos) {
+	public static void preDestroyBlock(World world, BlockPos pos, IBlockState state) {
 		TileEntity tile = world.getTileEntity(pos);
 
 		if (tile instanceof IInventory && !world.isRemote) {
@@ -565,5 +565,14 @@ public final class Utils {
 
 	public static ItemStack getItemStack(IBlockState state) {
 		return getItemStack(state, 1);
+	}
+
+	public static boolean nextTo(BlockPos pos, BlockPos pos1) {
+		for (EnumFacing dir : EnumFacing.values()) {
+			if (pos.offset(dir).equals(pos1)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

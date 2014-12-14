@@ -11,7 +11,7 @@ package buildcraft.silicon.statements;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
@@ -66,7 +66,7 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 					ItemStack item = stackParam.getItemStack();
 
 					if (item != null && item.getItem() instanceof ItemMapLocation) {
-						BlockIndex index = ItemMapLocation.getBlockIndex(item);
+						BlockPos index = ItemMapLocation.getBlockPos(item);
 
 						if (index != null) {
 							EnumFacing side = ItemMapLocation.getSide(item);

@@ -57,8 +57,8 @@ public final class CraftingHelper {
 				&& item1.stackSize == 1 && item2.stackSize == 1
 				&& item1.getItem().isRepairable()) {
             Item itemBase = item1.getItem();
-            int item1Durability = itemBase.getMaxDamage() - item1.getItemDamageForDisplay();
-            int item2Durability = itemBase.getMaxDamage() - item2.getItemDamageForDisplay();
+            int item1Durability = itemBase.getMaxDamage() - item1.getItemDamage();
+            int item2Durability = itemBase.getMaxDamage() - item2.getItemDamage();
             int repairAmt = item1Durability + item2Durability + itemBase.getMaxDamage() * 5 / 100;
             int newDamage = itemBase.getMaxDamage() - repairAmt;
 

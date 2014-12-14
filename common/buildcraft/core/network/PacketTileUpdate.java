@@ -22,20 +22,18 @@ public class PacketTileUpdate extends PacketUpdate {
 		super(PacketIds.TILE_UPDATE);
 
 		TileEntity entity = (TileEntity) tile;
-		posX = entity.xCoord;
-		posY = entity.yCoord;
-		posZ = entity.zCoord;
+		pos = entity.getPos();
 
 		this.isChunkDataPacket = true;
 		this.payload = tile;
 	}
 
 	public boolean targetExists(World world) {
-		return world.blockExists(posX, posY, posZ);
+		return world.isBlockLoaded(pos);
 	}
 
 	public TileEntity getTarget(World world) {
-		return world.getTileEntity(posX, posY, posZ);
+		return world.getTileEntity(pos);
 	}
 
 }

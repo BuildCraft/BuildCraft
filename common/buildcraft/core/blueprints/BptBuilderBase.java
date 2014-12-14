@@ -36,6 +36,7 @@ import buildcraft.core.builders.BuildingSlotBlock;
 import buildcraft.core.builders.IBuildingItemsProvider;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.utils.BlockUtils;
+import buildcraft.core.utils.Utils;
 
 public abstract class BptBuilderBase implements IAreaProvider {
 
@@ -45,15 +46,17 @@ public abstract class BptBuilderBase implements IAreaProvider {
 	protected TreeSet<BlockPos> clearedLocations = new TreeSet<BlockPos>();
 	protected TreeSet<BlockPos> builtLocations = new TreeSet<BlockPos>();
 	protected int x, y, z;
+	protected BlockPos pos;
 	protected boolean initialized = false;
 
 	private long nextBuildDate = 0;
 
-	public BptBuilderBase(BlueprintBase bluePrint, World world, int x, int y, int z) {
+	public BptBuilderBase(BlueprintBase bluePrint, World world, BlockPos pos) {
 		this.blueprint = bluePrint;
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.pos = pos;
+		this.x = pos.getX();
+		this.y = pos.getY();
+		this.z = pos.getZ();
 		done = false;
 
 		Box box = new Box();
@@ -74,6 +77,10 @@ public abstract class BptBuilderBase implements IAreaProvider {
 	protected abstract BuildingSlot reserveNextBlock(World world);
 
 	protected abstract BuildingSlot getNextBlock(World world, TileAbstractBuilder inv);
+
+	public boolean buildNextSlot(World world, TileAbstractBuilder builder, BlockPos pos) {
+		return buildNextSlot(world, builder, pos.getX(), pos.getY(), pos.getZ());
+	}
 
 	public boolean buildNextSlot(World world, TileAbstractBuilder builder, double x, double y, double z) {
 		initialize();
@@ -180,7 +187,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 	}
 
 	private int getBlockBreakEnergy(BuildingSlotBlock slot) {
-		return BlockUtils.computeBlockBreakEnergy(context.world(), slot.x, slot.y, slot.z);
+		return BlockUtils.computeBlockBreakEnergy(context.world(), slot.pos);
 	}
 
 	protected final boolean canDestroy(TileAbstractBuilder builder, IBuilderContext context, BuildingSlotBlock slot) {

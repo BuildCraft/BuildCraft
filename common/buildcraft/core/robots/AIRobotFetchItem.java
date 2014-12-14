@@ -63,7 +63,7 @@ public class AIRobotFetchItem extends AIRobot {
 				TransactorSimple inventoryInsert = new TransactorSimple(robot);
 
 				target.getEntityItem().stackSize -= inventoryInsert.inject(
-						target.getEntityItem(), EnumFacing.UNKNOWN,
+						target.getEntityItem(), null,
 						true);
 
 				if (target.getEntityItem().stackSize <= 0) {
@@ -129,7 +129,7 @@ public class AIRobotFetchItem extends AIRobot {
 				} else {
 					EntityItem item = (EntityItem) e;
 
-					if (inventoryInsert.inject(item.getEntityItem(), EnumFacing.UNKNOWN, false) > 0) {
+					if (inventoryInsert.inject(item.getEntityItem(), null, false) > 0) {
 						if (target == null) {
 							previousDistance = sqrDistance;
 							target = item;

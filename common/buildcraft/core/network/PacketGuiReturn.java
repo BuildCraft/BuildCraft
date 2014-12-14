@@ -13,11 +13,13 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.DimensionManager;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.core.utils.Utils;
 
 public class PacketGuiReturn extends BuildCraftPacket {
 	private EntityPlayer sender;
@@ -43,14 +45,12 @@ public class PacketGuiReturn extends BuildCraftPacket {
 
 	@Override
 	public void writeData(ByteBuf data) {
-		data.writeInt(obj.getWorld().provider.dimensionId);
+		data.writeInt(obj.getWorld().provider.getDimensionId());
 		
 		if (obj instanceof TileEntity) {
 			TileEntity tile = (TileEntity) obj;
 			data.writeBoolean(true);
-			data.writeInt(tile.xCoord);
-			data.writeInt(tile.yCoord);
-			data.writeInt(tile.zCoord);
+			Utils.writeBlockPos(data, tile.getPos());
 		} else if (obj instanceof Entity) {
 			Entity entity = (Entity) obj;
 			data.writeBoolean(false);
@@ -73,11 +73,8 @@ public class PacketGuiReturn extends BuildCraftPacket {
 		boolean tileReturn = data.readBoolean();
 		
 		if (tileReturn) {
-			int x = data.readInt();
-			int y = data.readInt();
-			int z = data.readInt();
-
-			TileEntity t = world.getTileEntity(x, y, z);
+			BlockPos pos = Utils.readBlockPos(data);
+			TileEntity t = world.getTileEntity(pos);
 
 			if (t instanceof IGuiReturnHandler) {
 				((IGuiReturnHandler) t).readGuiData(data, sender);

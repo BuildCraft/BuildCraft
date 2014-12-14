@@ -14,7 +14,7 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.api.blueprints.IBuilderContext;
 
-public class SchematicPiston extends SchematicRotateMeta {
+public class SchematicPiston extends SchematicRotate {
 
 	public SchematicPiston() {
 		super(new int[] {2, 5, 3, 4}, true);

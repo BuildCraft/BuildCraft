@@ -68,9 +68,7 @@ public class AIRobotLoad extends AIRobot {
 			DockingStation station = (DockingStation) robot.getDockingStation();
 
 			for (EnumFacing dir : EnumFacing.values()) {
-				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.getFrontOffsetX(),
-						station.y()
-								+ dir.getFrontOffsetY(), station.z() + dir.getFrontOffsetZ());
+				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.pos().offset(dir));
 
 				if (nearbyTile != null && nearbyTile instanceof IInventory) {
 					IInventory tileInventory = (IInventory) nearbyTile;
@@ -87,7 +85,7 @@ public class AIRobotLoad extends AIRobot {
 
 								if (quantity == -1) {
 
-									ItemStack added = t.add(slot.getStackInSlot(), EnumFacing.UNKNOWN, true);
+									ItemStack added = t.add(slot.getStackInSlot(), null, true);
 									slot.decreaseStackInSlot(added.stackSize);
 									return;
 								} else {
@@ -97,7 +95,7 @@ public class AIRobotLoad extends AIRobot {
 										toAdd.stackSize = quantity;
 									}
 
-									ItemStack added = t.add(toAdd, EnumFacing.UNKNOWN, true);
+									ItemStack added = t.add(toAdd, null, true);
 									slot.decreaseStackInSlot(added.stackSize);
 									return;
 								}

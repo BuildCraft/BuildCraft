@@ -90,9 +90,7 @@ public class AIRobotSearchStackRequest extends AIRobot {
 		}
 
 		for (EnumFacing dir : EnumFacing.values()) {
-			TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.getFrontOffsetX(), station.y()
-					+ dir.getFrontOffsetY(), station.z()
-					+ dir.getFrontOffsetZ());
+			TileEntity nearbyTile = robot.worldObj.getTileEntity(station.pos().offset(dir));
 
 			if (nearbyTile instanceof IRequestProvider) {
 				IRequestProvider provider = (IRequestProvider) nearbyTile;

@@ -11,8 +11,7 @@ package buildcraft.api.core;
 import java.util.Locale;
 import java.util.Random;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -107,7 +106,10 @@ public enum EnumColor {
 		0xe4e4e4};
 
 	@SideOnly(Side.CLIENT)
-	private static IIcon[] brushIcons;
+	private static final ResourceLocation ICON_SHEET = new ResourceLocation("buildcraft", "textures/gui/sheet_brushes.png");
+
+	@SideOnly(Side.CLIENT)
+	private static SheetIcon[] brushIcons;
 
 	public int getDarkHex() {
 		return DARK_HEX[ordinal()];
@@ -192,16 +194,15 @@ public enum EnumColor {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static void registerIcons(IIconRegister iconRegister) {
-		brushIcons = new IIcon[16];
+	public static void registerIcons() {
+		brushIcons = new SheetIcon[16];
 		for (EnumColor c : values()) {
-			brushIcons[c.ordinal()] = iconRegister.registerIcon("buildcraft:triggers/color_"
-					+ c.name().toLowerCase(Locale.ENGLISH));
+			brushIcons[c.ordinal()] = new SheetIcon(ICON_SHEET, c.ordinal() * 16, 0);
 		}
 	}
 
 	@SideOnly(Side.CLIENT)
-	public IIcon getIcon() {
+	public SheetIcon getIcon() {
 		return brushIcons [ordinal()];
 	}
 }

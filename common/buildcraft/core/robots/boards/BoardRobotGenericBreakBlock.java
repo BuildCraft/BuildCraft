@@ -16,7 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import buildcraft.api.boards.RedstoneBoardRobot;
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.statements.IStatementParameter;
@@ -36,7 +36,7 @@ import buildcraft.transport.gates.StatementSlot;
 
 public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
-	private BlockIndex indexStored;
+	private BlockPos indexStored;
 	private ArrayList<Block> blockFilter = new ArrayList<Block>();
 	private ArrayList<Integer> metaFilter = new ArrayList<Integer>();
 
@@ -55,7 +55,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
 	public final void preemt(AIRobot ai) {
 		if (ai instanceof AIRobotSearchBlock) {
-			BlockIndex index = ((AIRobotSearchBlock) ai).blockFound;
+			BlockPos index = ((AIRobotSearchBlock) ai).blockFound;
 
 			if (!robot.getRegistry().isTaken(new ResourceIdBlock(index))) {
 				abortDelegateAI();
@@ -179,7 +179,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 		super.loadSelfFromNBT(nbt);
 
 		if (nbt.hasKey("indexStored")) {
-			indexStored = new BlockIndex (nbt.getCompoundTag("indexStored"));
+			indexStored = new BlockPos (nbt.getCompoundTag("indexStored"));
 		}
 	}
 }

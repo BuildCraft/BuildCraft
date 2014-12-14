@@ -101,7 +101,7 @@ public final class GateExpansionPulsar extends GateExpansionBuildcraft implement
 				// TODO: (1 - 1) is coming from pulse count, which has been
 				// removed. The add energy algorithm probably needs to be
 				// reviewed altogether.
-				((IEnergyHandler) pipeTile).receiveEnergy(EnumFacing.UNKNOWN, Math.min(1 << (1 - 1), 64) * 10,
+				((IEnergyHandler) pipeTile).receiveEnergy(null, Math.min(1 << (1 - 1), 64) * 10,
 						false);
 				hasPulsed = true;
 			} else {

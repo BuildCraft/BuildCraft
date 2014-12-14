@@ -26,7 +26,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.boards.RedstoneBoardRegistry;
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.IZone;
 import buildcraft.builders.TileMarker;
@@ -80,7 +80,7 @@ public class ItemMapLocation extends ItemBuildCraft {
 			}
 			case 2: {
 				NBTTagList pathNBT = cpt.getTagList("path", Constants.NBT.TAG_COMPOUND);
-				BlockIndex first = new BlockIndex(pathNBT.getCompoundTagAt(0));
+				BlockPos first = new BlockPos(pathNBT.getCompoundTagAt(0));
 
 				int x = first.x;
 				int y = first.y;
@@ -150,7 +150,7 @@ public class ItemMapLocation extends ItemBuildCraft {
 
 			NBTTagList pathNBT = new NBTTagList();
 
-			for (BlockIndex index : pathTile.getPath()) {
+			for (BlockPos index : pathTile.getPath()) {
 				NBTTagCompound nbt = new NBTTagCompound();
 				index.writeTo(nbt);
 				pathNBT.appendTag(nbt);
@@ -181,7 +181,7 @@ public class ItemMapLocation extends ItemBuildCraft {
 		return true;
 	}
 
-	public static BlockIndex getBlockIndex(ItemStack item) {
+	public static BlockPos getBlockPos(ItemStack item) {
 		NBTTagCompound cpt = NBTUtils.getItemData(item);
 
 		if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
@@ -189,7 +189,7 @@ public class ItemMapLocation extends ItemBuildCraft {
 			int y = cpt.getInteger("y");
 			int z = cpt.getInteger("z");
 
-			return new BlockIndex(x, y, z);
+			return new BlockPos(x, y, z);
 		} else {
 			return null;
 		}
@@ -218,7 +218,7 @@ public class ItemMapLocation extends ItemBuildCraft {
 		if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
 			return EnumFacing.values()[cpt.getByte("side")];
 		} else {
-			return EnumFacing.UNKNOWN;
+			return null;
 		}
 	}
 

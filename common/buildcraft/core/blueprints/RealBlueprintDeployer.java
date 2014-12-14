@@ -10,6 +10,7 @@ package buildcraft.core.blueprints;
 
 import java.io.File;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import net.minecraft.util.EnumFacing;
@@ -23,24 +24,24 @@ import buildcraft.builders.blueprints.BlueprintId.Kind;
 public class RealBlueprintDeployer extends BlueprintDeployer {
 
 	@Override
-	public void deployBlueprint(World world, int x, int y, int z,
+	public void deployBlueprint(World world, BlockPos pos,
 			EnumFacing dir, File file) {
 
-		deployBlueprint(world, x, y, z, dir, (Blueprint) BlueprintDatabase.load(file));
+		deployBlueprint(world, pos, dir, (Blueprint) BlueprintDatabase.load(file));
 	}
 
 	@Override
-	public void deployBlueprintFromFileStream(World world, int x, int y, int z,
+	public void deployBlueprintFromFileStream(World world, BlockPos pos,
 			EnumFacing dir, byte [] data) {
 
-		deployBlueprint(world, x, y, z, dir, (Blueprint) BlueprintDatabase.load(data));
+		deployBlueprint(world, pos, dir, (Blueprint) BlueprintDatabase.load(data));
 	}
 
-	private void deployBlueprint(World world, int x, int y, int z, EnumFacing dir, Blueprint bpt) {
+	private void deployBlueprint(World world, BlockPos pos, EnumFacing dir, Blueprint bpt) {
 		bpt.id = new BlueprintId();
 		bpt.id.kind = Kind.Blueprint;
 
-		BptContext context = bpt.getContext(world, bpt.getBoxForPos(x, y, z));
+		BptContext context = bpt.getContext(world, bpt.getBoxForPos(pos));
 
 		if (bpt.rotate) {
 			if (dir == EnumFacing.EAST) {
@@ -59,13 +60,13 @@ public class RealBlueprintDeployer extends BlueprintDeployer {
 
 		Translation transform = new Translation();
 
-		transform.x = x - bpt.anchorX;
-		transform.y = y - bpt.anchorY;
-		transform.z = z - bpt.anchorZ;
+		transform.x = pos.getX() - bpt.anchorX;
+		transform.y = pos.getY() - bpt.anchorY;
+		transform.z = pos.getZ() - bpt.anchorZ;
 
 		bpt.translateToWorld(transform);
 
-		new BptBuilderBlueprint(bpt, world, x, y, z).deploy();
+		new BptBuilderBlueprint(bpt, world, pos).deploy();
 	}
 }
 

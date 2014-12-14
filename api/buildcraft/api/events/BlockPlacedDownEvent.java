@@ -9,7 +9,9 @@
 package buildcraft.api.events;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.BlockPos;
 
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -18,15 +20,12 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 @Cancelable
 public class BlockPlacedDownEvent extends Event {
 	public EntityPlayer player;
-	public Block block;
-	public int meta, x, y, z;
+	public IBlockState state;
+	public BlockPos pos;
 
-	public BlockPlacedDownEvent(EntityPlayer player, Block block, int meta, int x, int y, int z) {
+	public BlockPlacedDownEvent(EntityPlayer player, IBlockState state, BlockPos pos) {
 		this.player = player;
-		this.block = block;
-		this.meta = meta;
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		this.state = state;
+		this.pos = pos;
 	}
 }

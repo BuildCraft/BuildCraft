@@ -10,7 +10,6 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -83,12 +82,12 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
 	}
 
 	@Override
-	public void registerIcons(IIconRegister register) {
-		icon = register.registerIcon("buildcraft:triggers/trigger_pipesignal_" + color.name().toLowerCase() + "_" + (active ? "active" : "inactive"));
+	public IStatementParameter createParameter(int index) {
+		return new TriggerParameterSignal();
 	}
 
 	@Override
-	public IStatementParameter createParameter(int index) {
-		return new TriggerParameterSignal();
+	public int getSheetLocation() {
+		return 15 + (7 + color.ordinal() * 2 + (active ? 1 : 0)) * 16;
 	}
 }

@@ -10,7 +10,6 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.EnumFacing;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
@@ -55,11 +54,6 @@ public class ActionValve extends BCStatement implements IActionInternal {
     }
 
     @Override
-    public void registerIcons(IIconRegister iconRegister) {
-    	icon = iconRegister.registerIcon("buildcraft:triggers/action_valve_" + state.name().toLowerCase(Locale.ENGLISH));
-    }
-
-    @Override
     public int maxParameters() {
     	return 1;
     }
@@ -74,7 +68,12 @@ public class ActionValve extends BCStatement implements IActionInternal {
 		return new StatementParameterDirection();
     }
 
-    @Override
+	@Override
+	public int getSheetLocation() {
+		return 12 + (5 + state.ordinal()) * 16;
+	}
+
+	@Override
     public void actionActivate(IStatementContainer container, IStatementParameter[] parameters) {
 	    IPipe pipe = ((Gate) container).getPipe();
 		

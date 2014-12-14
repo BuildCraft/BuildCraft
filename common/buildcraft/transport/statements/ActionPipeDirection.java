@@ -10,7 +10,6 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.statements.IActionInternal;
@@ -35,13 +34,13 @@ public class ActionPipeDirection extends BCStatement implements IActionInternal 
 	}
 
 	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_dir_" + direction.name().toLowerCase(Locale.ENGLISH));
+	public IStatement rotateLeft() {
+		return BuildCraftTransport.actionPipeDirection[direction.rotateY().ordinal()];
 	}
 
 	@Override
-	public IStatement rotateLeft() {
-		return BuildCraftTransport.actionPipeDirection[direction.getRotation(EnumFacing.UP).ordinal()];
+	public int getSheetLocation() {
+		return (15 * 16) + 10 + direction.ordinal();
 	}
 
 	@Override

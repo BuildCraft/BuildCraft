@@ -10,16 +10,18 @@ package buildcraft.builders.schematics;
 
 import java.util.LinkedList;
 
+import net.minecraft.block.BlockEnderChest;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 
 import buildcraft.api.blueprints.IBuilderContext;
 
-public class SchematicEnderChest extends SchematicRotateMeta {
+public class SchematicEnderChest extends SchematicRotate {
 
 	public SchematicEnderChest() {
-		super (new int[]{2, 5, 3, 4}, true);
+		super(BlockEnderChest.field_176437_a);
 	}
 
 	@Override
@@ -29,13 +31,7 @@ public class SchematicEnderChest extends SchematicRotateMeta {
 	}
 
 	@Override
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
+	public void storeRequirements(IBuilderContext context, BlockPos pos) {
 		// cancel requirements reading
 	}
-
-	@Override
-	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
-		return block == context.world().getBlock(x, y, z);
-	}
-
 }

@@ -204,7 +204,7 @@ public class AIRobotCraftWorkbench extends AIRobotCraftGeneric {
 
 			ITransactor transactor = Transactor.getTransactorFor(robot);
 
-			transactor.add(output, EnumFacing.UNKNOWN, true);
+			transactor.add(output, null, true);
 		}
 	}
 
@@ -231,9 +231,7 @@ public class AIRobotCraftWorkbench extends AIRobotCraftGeneric {
 			}
 
 			for (EnumFacing dir : EnumFacing.values()) {
-				Block nearbyBlock = robot.worldObj.getBlock(station.x() + dir.getFrontOffsetX(), station.y()
-						+ dir.getFrontOffsetY(), station.z()
-						+ dir.getFrontOffsetZ());
+				Block nearbyBlock = robot.worldObj.getBlockState(station.pos().offset(dir)).getBlock();
 
 				if (nearbyBlock instanceof BlockWorkbench) {
 					return true;

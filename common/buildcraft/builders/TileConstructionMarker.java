@@ -42,7 +42,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 
 	public static HashSet<TileConstructionMarker> currentMarkers = new HashSet<TileConstructionMarker>();
 
-	public EnumFacing direction = EnumFacing.UNKNOWN;
+	public EnumFacing direction = null;
 
 	public LaserData laser;
 	public ItemStack itemBlueprint;
@@ -73,8 +73,8 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		BuildingItem toRemove = null;
 
@@ -95,10 +95,10 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 		}
 
 		if (itemBlueprint != null && ItemBlueprint.getId(itemBlueprint) != null && bluePrintBuilder == null) {
-			BlueprintBase bpt = BlueprintBase.instantiate(itemBlueprint, worldObj, xCoord, yCoord, zCoord, direction);
+			BlueprintBase bpt = BlueprintBase.instantiate(itemBlueprint, worldObj, pos, direction);
 
 			if (bpt instanceof Blueprint) {
-				bluePrintBuilder = new BptBuilderBlueprint((Blueprint) bpt, worldObj, xCoord, yCoord, zCoord);
+				bluePrintBuilder = new BptBuilderBlueprint((Blueprint) bpt, worldObj, pos);
 				bptContext = bluePrintBuilder.getContext();
 				box.initialize(bluePrintBuilder);
 				sendNetworkUpdate();
@@ -107,12 +107,12 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 			}
 		}
 
-		if (laser == null && direction != EnumFacing.UNKNOWN) {
+		if (laser == null && direction != null) {
 			laser = new LaserData();
-			laser.head = new Position(xCoord + 0.5F, yCoord + 0.5F, zCoord + 0.5F);
-			laser.tail = new Position(xCoord + 0.5F + direction.getFrontOffsetX() * 0.5F,
-					yCoord + 0.5F + direction.getFrontOffsetY() * 0.5F,
-					zCoord + 0.5F + direction.getFrontOffsetZ() * 0.5F);
+			laser.head = new Position(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F);
+			laser.tail = new Position(pos.getX() + 0.5F + direction.getFrontOffsetX() * 0.5F,
+					pos.getY() + 0.5F + direction.getFrontOffsetY() * 0.5F,
+					pos.getZ() + 0.5F + direction.getFrontOffsetZ() * 0.5F);
 			laser.isVisible = true;
 			sendNetworkUpdate();
 		}
@@ -130,7 +130,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 
-		nbt.setByte("direction", (byte) direction.ordinal());
+		nbt.setByte("direction", (byte) (direction != null ? direction.ordinal() : 6));
 
 		if (itemBlueprint != null) {
 			NBTTagCompound bptNBT = new NBTTagCompound();
@@ -153,7 +153,11 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
-		direction = EnumFacing.getOrientation(nbt.getByte("direction"));
+		if (nbt.getByte("direction") <= 5) {
+			direction = EnumFacing.getFront(nbt.getByte("direction"));
+		} else {
+			direction = null;
+		}
 
 		if (nbt.hasKey("itemBlueprint")) {
 			itemBlueprint = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("itemBlueprint"));
@@ -224,7 +228,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	public AxisAlignedBB getRenderBoundingBox() {
 		Box renderBox = new Box(this).extendToEncompass(box);
 
-		return renderBox.expand(50).fromBounds();
+		return renderBox.expand(50).getBoundingBox();
 	}
 
 	@Override

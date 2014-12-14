@@ -22,6 +22,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.ResourceLocation;
@@ -43,7 +44,7 @@ import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.core.IZone;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.robots.AIRobot;
@@ -79,10 +80,10 @@ public class EntityRobot extends EntityRobotBase implements
 
 	public LaserData laser = new LaserData();
 	public IDockingStation linkedDockingStation;
-	public BlockIndex linkedDockingStationIndex;
+	public BlockPos linkedDockingStationIndex;
 	public EnumFacing linkedDockingStationSide;
 
-	public BlockIndex currentDockingStationIndex;
+	public BlockPos currentDockingStationIndex;
 	public EnumFacing currentDockingStationSide;
 
 	public boolean isDocked = false;
@@ -160,7 +161,7 @@ public class EntityRobot extends EntityRobotBase implements
 		preventEntitySpawning = false;
 		noClip = true;
 		isImmuneToFire = true;
-		this.func_110163_bv(); // persistenceRequired = true
+		this.enablePersistence();
 
 		dataWatcher.addObject(12, Float.valueOf(0));
 		dataWatcher.addObject(13, Float.valueOf(0));
@@ -267,17 +268,15 @@ public class EntityRobot extends EntityRobotBase implements
 			motionX = 0;
 			motionY = 0;
 			motionZ = 0;
-			posX = currentDockingStation.x() + 0.5F + currentDockingStation.side().getFrontOffsetX() * 0.5F;
-			posY = currentDockingStation.y() + 0.5F + currentDockingStation.side().getFrontOffsetY() * 0.5F;
-			posZ = currentDockingStation.z() + 0.5F + currentDockingStation.side().getFrontOffsetZ() * 0.5F;
+			posX = currentDockingStation.pos().getX() + 0.5F + currentDockingStation.side().getFrontOffsetX() * 0.5F;
+			posY = currentDockingStation.pos().getY() + 0.5F + currentDockingStation.side().getFrontOffsetY() * 0.5F;
+			posZ = currentDockingStation.pos().getZ() + 0.5F + currentDockingStation.side().getFrontOffsetZ() * 0.5F;
 		}
 
 		if (!worldObj.isRemote) {
 			if (linkedDockingStation == null) {
 				linkedDockingStation = RobotRegistry.getRegistry(worldObj).getStation(
-						linkedDockingStationIndex.x,
-						linkedDockingStationIndex.y,
-						linkedDockingStationIndex.z,
+						linkedDockingStationIndex,
 						linkedDockingStationSide);
 
 				if (linkedDockingStation == null
@@ -293,9 +292,7 @@ public class EntityRobot extends EntityRobotBase implements
 			if (currentDockingStationIndex != null && currentDockingStation == null) {
 				currentDockingStation = (DockingStation)
 						RobotRegistry.getRegistry(worldObj).getStation(
-						currentDockingStationIndex.x,
-						currentDockingStationIndex.y,
-						currentDockingStationIndex.z,
+						currentDockingStationIndex,
 						currentDockingStationSide);
 			}
 
@@ -329,29 +326,23 @@ public class EntityRobot extends EntityRobotBase implements
 		height = 0.5F;
 
 		if (laser.isVisible) {
-			boundingBox.minX = Math.min(posX, laser.tail.x);
-			boundingBox.minY = Math.min(posY, laser.tail.y);
-			boundingBox.minZ = Math.min(posZ, laser.tail.z);
-
-			boundingBox.maxX = Math.max(posX, laser.tail.x);
-			boundingBox.maxY = Math.max(posY, laser.tail.y);
-			boundingBox.maxZ = Math.max(posZ, laser.tail.z);
-
-			boundingBox.minX--;
-			boundingBox.minY--;
-			boundingBox.minZ--;
-
-			boundingBox.maxX++;
-			boundingBox.maxY++;
-			boundingBox.maxZ++;
+			setEntityBoundingBox(new AxisAlignedBB(
+					Math.min(posX, laser.tail.x) - 1,
+					Math.min(posY, laser.tail.y) - 1,
+					Math.min(posZ, laser.tail.z) - 1,
+					Math.max(posX, laser.tail.x) + 1,
+					Math.max(posY, laser.tail.y) + 1,
+					Math.max(posZ, laser.tail.z) + 1
+			));
 		} else {
-			boundingBox.minX = posX - 0.25F;
-			boundingBox.minY = posY - 0.25F;
-			boundingBox.minZ = posZ - 0.25F;
-
-			boundingBox.maxX = posX + 0.25F;
-			boundingBox.maxY = posY + 0.25F;
-			boundingBox.maxZ = posZ + 0.25F;
+			setEntityBoundingBox(new AxisAlignedBB(
+					posX - 0.25F,
+					posY - 0.25F,
+					posZ - 0.25F,
+					posX + 0.25F,
+					posY + 0.25F,
+					posZ + 0.25F
+			));
 		}
 	}
 
@@ -359,13 +350,7 @@ public class EntityRobot extends EntityRobotBase implements
 		width = 0F;
 		height = 0F;
 
-		boundingBox.minX = posX;
-		boundingBox.minY = posY;
-		boundingBox.minZ = posZ;
-
-		boundingBox.maxX = posX;
-		boundingBox.maxY = posY;
-		boundingBox.maxZ = posZ;
+		setEntityBoundingBox(new AxisAlignedBB(posX, posY, posZ, posX, posY, posZ));
 	}
 
 	private void iterateBehaviorDocked() {
@@ -395,16 +380,16 @@ public class EntityRobot extends EntityRobotBase implements
 	public void setCurrentItemOrArmor(int i, ItemStack itemstack) {
 	}
 
-	@Override
-	public ItemStack[] getLastActiveItems() {
-		return new ItemStack [0];
-	}
+	//@Override
+	//public ItemStack[] getLastActiveItems() {
+	//	return new ItemStack [0];
+	//}
 
 	@Override
-    protected void fall(float par1) {}
+    public void fall(float par1, float par2) {}
 
-	@Override
-    protected void updateFallState(double par1, boolean par3) {}
+	//@Override
+    //protected void updateFallState(double par1, boolean par3) {}
 
 	@Override
 	public void moveEntityWithHeading(float par1, float par2) {
@@ -426,7 +411,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 		NBTTagCompound linkedStationNBT = new NBTTagCompound();
 		NBTTagCompound linkedStationIndexNBT = new NBTTagCompound();
-		linkedDockingStationIndex.writeTo(linkedStationIndexNBT);
+		Utils.writeBlockPos(linkedStationIndexNBT, linkedDockingStationIndex);
 		linkedStationNBT.setTag("index", linkedStationIndexNBT);
 		linkedStationNBT.setByte("side", (byte) linkedDockingStationSide.ordinal());
 		nbt.setTag("linkedStation", linkedStationNBT);
@@ -434,7 +419,7 @@ public class EntityRobot extends EntityRobotBase implements
 		if (currentDockingStationIndex != null) {
 			NBTTagCompound currentStationNBT = new NBTTagCompound();
 			NBTTagCompound currentStationIndexNBT = new NBTTagCompound();
-			currentDockingStationIndex.writeTo(currentStationIndexNBT);
+			Utils.writeBlockPos(currentStationIndexNBT, currentDockingStationIndex);
 			currentStationNBT.setTag("index", currentStationIndexNBT);
 			currentStationNBT.setByte("side", (byte) currentDockingStationSide.ordinal());
 			nbt.setTag("currentStation", currentStationNBT);
@@ -491,12 +476,12 @@ public class EntityRobot extends EntityRobotBase implements
 		super.readEntityFromNBT(nbt);
 
 		NBTTagCompound linkedStationNBT = nbt.getCompoundTag("linkedStation");
-		linkedDockingStationIndex = new BlockIndex(linkedStationNBT.getCompoundTag("index"));
+		linkedDockingStationIndex = Utils.readBlockPos(linkedStationNBT.getCompoundTag("index"));
 		linkedDockingStationSide = EnumFacing.values()[linkedStationNBT.getByte("side")];
 
 		if (nbt.hasKey("currentStation")) {
 			NBTTagCompound currentStationNBT = nbt.getCompoundTag("currentStation");
-			currentDockingStationIndex = new BlockIndex(currentStationNBT.getCompoundTag("index"));
+			currentDockingStationIndex = Utils.readBlockPos(currentStationNBT.getCompoundTag("index"));
 			currentDockingStationSide = EnumFacing.values()[currentStationNBT.getByte("side")];
 
 		}
@@ -539,8 +524,7 @@ public class EntityRobot extends EntityRobotBase implements
 			tank = null;
 		}
 
-		// Restore robot persistence on pre-6.1.9 robots
-		this.func_110163_bv();
+		this.enablePersistence();
     }
 
 	@Override
@@ -552,7 +536,7 @@ public class EntityRobot extends EntityRobotBase implements
 				currentDockingStation.side.getFrontOffsetY(),
 				currentDockingStation.side.getFrontOffsetZ());
 
-		currentDockingStationIndex = currentDockingStation.index();
+		currentDockingStationIndex = currentDockingStation.pos();
 		currentDockingStationSide = currentDockingStation.side();
 	}
 
@@ -582,7 +566,7 @@ public class EntityRobot extends EntityRobotBase implements
 		}
 
 		linkedDockingStation = station;
-		linkedDockingStationIndex = linkedDockingStation.index();
+		linkedDockingStationIndex = linkedDockingStation.pos();
 		linkedDockingStationSide = linkedDockingStation.side();
 	}
 
@@ -627,12 +611,12 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public String getInventoryName() {
+	public String getName() {
 		return null;
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
+	public boolean hasCustomName() {
 		return false;
 	}
 
@@ -660,11 +644,11 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public void openInventory() {
+	public void openInventory(EntityPlayer player) {
 	}
 
 	@Override
-	public void closeInventory() {
+	public void closeInventory(EntityPlayer player) {
 	}
 
 	@Override
@@ -672,6 +656,26 @@ public class EntityRobot extends EntityRobotBase implements
 		return inv[var1] == null
 				|| (inv[var1].isItemEqual(var2) && inv[var1].isStackable() && inv[var1].stackSize
 						+ var2.stackSize <= inv[var1].getItem().getItemStackLimit(inv[var1]));
+	}
+
+	@Override
+	public int getField(int id) {
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) {
+
+	}
+
+	@Override
+	public int getFieldCount() {
+		return 0;
+	}
+
+	@Override
+	public void clear() {
+
 	}
 
 	@Override
@@ -699,7 +703,7 @@ public class EntityRobot extends EntityRobotBase implements
 				}
 			}), worldObj);
 		} else {
-			Vec3 v = Vec3.createVectorHelper(x, y, z);
+			Vec3 v = new Vec3(x, y, z);
 			v.normalize();
 
 			steamDx = (int) v.xCoord;
@@ -774,7 +778,11 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public void aimItemAt(int x, int y, int z) {
+	public void aimItemAt(BlockPos pos) {
+		int x = pos.getX();
+		int y = pos.getY();
+		int z = pos.getZ();
+
 		itemAngle1 = (float) Math.atan2(z - Math.floor(posZ),
 				x - Math.floor(posX));
 
@@ -985,7 +993,7 @@ public class EntityRobot extends EntityRobotBase implements
 	 */
 	public ItemStack receiveItem(TileEntity tile, ItemStack stack) {
 		if (currentDockingStation != null
-				&& currentDockingStation.index().nextTo(new BlockIndex(tile))
+				&& Utils.nextTo(currentDockingStation.pos(), tile.getPos())
 				&& mainAI != null) {
 
 			return mainAI.getActiveAI().receiveItem(stack);

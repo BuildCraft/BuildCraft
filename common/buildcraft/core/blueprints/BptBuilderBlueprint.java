@@ -24,6 +24,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
 import net.minecraft.util.EnumFacing;
@@ -36,7 +37,6 @@ import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.StackKey;
@@ -64,8 +64,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	private LinkedList<BuildingSlot> postProcessing = new LinkedList<BuildingSlot>();
 	private BuildingSlotIterator iterator;
 
-	public BptBuilderBlueprint(Blueprint bluePrint, World world, int x, int y, int z) {
-		super(bluePrint, world, x, y, z);
+	public BptBuilderBlueprint(Blueprint bluePrint, World world, BlockPos pos) {
+		super(bluePrint, world, pos);
 	}
 
 	@Override
@@ -76,13 +76,13 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					int xCoord = i + x - blueprint.anchorX;
 					int yCoord = j + y - blueprint.anchorY;
 					int zCoord = k + z - blueprint.anchorZ;
+					BlockPos pos = new BlockPos(xCoord, yCoord, zCoord);
 
 					if (yCoord < 0 || yCoord >= context.world.getHeight()) {
 						continue;
 					}
 
-					if (!clearedLocations.contains(new BlockIndex(
-									xCoord, yCoord, zCoord))) {
+					if (!clearedLocations.contains(pos)) {
 						SchematicBlock slot = (SchematicBlock) blueprint.contents[i][j][k];
 
 						if (slot == null && !blueprint.excavate) {
@@ -91,19 +91,16 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 						if (slot == null) {
 							slot = new SchematicBlock();
-							slot.meta = 0;
-							slot.block = Blocks.air;
+							slot.state = Blocks.air.getDefaultState();
 						}
 
-						if (!SchematicRegistry.INSTANCE.isAllowedForBuilding(slot.block, slot.meta)) {
+						if (!SchematicRegistry.INSTANCE.isAllowedForBuilding(slot.state)) {
 							continue;
 						}
 
 						BuildingSlotBlock b = new BuildingSlotBlock();
 						b.schematic = slot;
-						b.x = xCoord;
-						b.y = yCoord;
-						b.z = zCoord;
+						b.pos = pos;
 						b.mode = Mode.ClearIfInvalid;
 						b.buildStage = 0;
 
@@ -124,6 +121,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					int xCoord = i + x - blueprint.anchorX;
 					int yCoord = j + y - blueprint.anchorY;
 					int zCoord = k + z - blueprint.anchorZ;
+					BlockPos pos = new BlockPos(xCoord, yCoord, zCoord);
 
 					SchematicBlock slot = (SchematicBlock) blueprint.contents[i][j][k];
 
@@ -131,19 +129,16 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						continue;
 					}
 
-					if (!SchematicRegistry.INSTANCE.isAllowedForBuilding(slot.block, slot.meta)) {
+					if (!SchematicRegistry.INSTANCE.isAllowedForBuilding(slot.state)) {
 						continue;
 					}
 
 					BuildingSlotBlock b = new BuildingSlotBlock();
 					b.schematic = slot;
-					b.x = xCoord;
-					b.y = yCoord;
-					b.z = zCoord;
+					b.pos = pos;
 					b.mode = Mode.Build;
 
-					if (!builtLocations.contains(new BlockIndex(xCoord, yCoord,
-								zCoord))) {
+					if (!builtLocations.contains(pos)) {
 						switch (slot.getBuildStage()) {
 						case STANDALONE:
 							tmpStandalone.add(b);
@@ -196,7 +191,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 		for (BuildingSlotBlock b : buildList) {
 			if (b.mode == Mode.ClearIfInvalid) {
-				context.world.setBlockToAir(b.x, b.y, b.z);
+				context.world.setBlockToAir(b.pos);
 			} else if (!b.schematic.doNotBuild()) {
 				b.stackConsumed = new LinkedList<ItemStack>();
 
@@ -329,11 +324,9 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				iterator.remove();
 
 				if (slot.mode == Mode.ClearIfInvalid) {
-					clearedLocations.add(new BlockIndex(slot.x,
-							slot.y, slot.z));
+					clearedLocations.add(slot.pos);
 				} else {
-					builtLocations.add(new BlockIndex(slot.x,
-							slot.y, slot.z));
+					builtLocations.add(slot.pos);
 				}
 
 				postProcessing.add(slot);
@@ -346,24 +339,20 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 
 			try {
-				if (BlockUtils.isUnbreakableBlock(world, slot.x, slot.y, slot.z)) {
+				if (BlockUtils.isUnbreakableBlock(world, slot.pos)) {
 					// if the block can't be broken, just forget this iterator
 					iterator.remove();
 
 					if (slot.mode == Mode.ClearIfInvalid) {
-						clearedLocations.add(new BlockIndex(slot.x,
-								slot.y, slot.z));
+						clearedLocations.add(slot.pos);
 					} else {
-						builtLocations.add(new BlockIndex(slot.x,
-								slot.y, slot.z));
+						builtLocations.add(slot.pos);
 					}
 				} else if (!slot.isAlreadyBuilt(context)) {
 					if (slot.mode == Mode.ClearIfInvalid) {
-						if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y,
-								slot.z)) {
+						if (BuildCraftAPI.isSoftBlock(world, slot.pos)) {
 							iterator.remove();
-							clearedLocations.add(new BlockIndex(slot.x,
-									slot.y, slot.z));
+							clearedLocations.add(slot.pos);
 						} else {
 							if (builder == null) {
 								createDestroyItems(slot);
@@ -373,8 +362,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 								createDestroyItems(slot);
 
 								iterator.remove();
-								clearedLocations.add(new BlockIndex(slot.x,
-										slot.y, slot.z));
+								clearedLocations.add(slot.pos);
 								return slot;
 							}
 						}
@@ -392,8 +380,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 							iterator.remove();
 							postProcessing.add(slot);
-							builtLocations.add(new BlockIndex(slot.x,
-									slot.y, slot.z));
+							builtLocations.add(slot.pos);
 							return slot;
 						}
 					} else {
@@ -479,13 +466,13 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 		for (ItemStack reqStk : tmpReq) {
 			boolean itemBlock = reqStk.getItem() instanceof ItemBlock;
-			Fluid fluid = itemBlock ? FluidRegistry.lookupFluidForBlock(((ItemBlock) reqStk.getItem()).field_150939_a) : null;
+			Fluid fluid = itemBlock ? FluidRegistry.lookupFluidForBlock(((ItemBlock) reqStk.getItem()).getBlock()) : null;
 
 			if (fluid != null && builder instanceof TileBuilder && ((TileBuilder) builder).drainBuild(new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME), true)) {
 				continue;
 			}
 
-			for (IInvSlot slotInv : InventoryIterator.getIterable(new InventoryCopy(builder), EnumFacing.UNKNOWN)) {
+			for (IInvSlot slotInv : InventoryIterator.getIterable(new InventoryCopy(builder), null)) {
 				if (!builder.isBuildingMaterialSlot(slotInv.getIndex())) {
 					continue;
 				}
@@ -560,7 +547,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			ItemStack usedStack = reqStk;
 
 			boolean itemBlock = reqStk.getItem() instanceof ItemBlock;
-			Fluid fluid = itemBlock ? FluidRegistry.lookupFluidForBlock(((ItemBlock) reqStk.getItem()).field_150939_a) : null;
+			Fluid fluid = itemBlock ? FluidRegistry.lookupFluidForBlock(((ItemBlock) reqStk.getItem()).getBlock()) : null;
 
 			if (fluid != null
 					&& inv instanceof TileBuilder
@@ -569,7 +556,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				continue;
 			}
 
-			for (IInvSlot slotInv : InventoryIterator.getIterable(inv, EnumFacing.UNKNOWN)) {
+			for (IInvSlot slotInv : InventoryIterator.getIterable(inv, null)) {
 				if (inv instanceof TileAbstractBuilder &&
 						!((TileAbstractBuilder) inv).isBuildingMaterialSlot(slotInv.getIndex())) {
 					continue;

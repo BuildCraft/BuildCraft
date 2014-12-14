@@ -39,7 +39,7 @@ public class TileEnergyReceiver extends TileBuildCraft implements IPipeConnectio
 
 	public TileBuffer getTileBuffer(EnumFacing side) {
 		if (tileCache == null) {
-			tileCache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
+			tileCache = TileBuffer.makeBuffer(worldObj, pos, false);
 		}
 
 		return tileCache[side.ordinal()];
@@ -71,7 +71,7 @@ public class TileEnergyReceiver extends TileBuildCraft implements IPipeConnectio
 	}
 
 	@Override
-	public void updateEntity () {
+	public void update () {
 		sendPower();
 	}
 }

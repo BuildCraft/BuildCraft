@@ -16,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
@@ -163,15 +164,10 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 
 	private void build() {
 		if (slotToBuild != null) {
-			int destX = (int) Math.floor(destination.x);
-			int destY = (int) Math.floor(destination.y);
-			int destZ = (int) Math.floor(destination.z);
-			Block block = context.world().getBlock(destX, destY, destZ);
-			int meta = context.world().getBlockMetadata(destX, destY, destZ);
+			BlockPos dest = destination.toBlockPos();
 
-			context.world().playAuxSFXAtEntity(null, 2001,
-					destX, destY, destZ,
-					Block.getIdFromBlock(block) + (meta << 12));
+			context.world().playAuxSFXAtEntity(null, 2001, dest,
+					Block.getStateId(context.world().getBlockState(dest)));
 
 			/*if (BlockUtil.isToughBlock(context.world(), destX, destY, destZ)) {
 				BlockUtil.breakBlock(context.world(), destX, destY, destZ, BuildCraftBuilders.fillerLifespanTough);

@@ -247,11 +247,6 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
-		return false;
-	}
-
-	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
 		if (side.isClient()) {
 			if ("requestSelectedBlueprint".equals(command)) {

@@ -89,13 +89,13 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
 	}
 
 	@Override
-	public String getInventoryName() {
-		return inv.getInventoryName();
+	public String getName() {
+		return inv.getName();
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
-		return inv.hasCustomInventoryName();
+	public boolean hasCustomName() {
+		return inv.hasCustomName();
 	}
 
 	@Override
@@ -109,13 +109,13 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
 	}
 
 	@Override
-	public void openInventory() {
-		inv.openInventory();
+	public void openInventory(EntityPlayer player) {
+		inv.openInventory(player);
 	}
 
 	@Override
-	public void closeInventory() {
-		inv.closeInventory();
+	public void closeInventory(EntityPlayer player) {
+		inv.closeInventory(player);
 	}
 
 	@Override

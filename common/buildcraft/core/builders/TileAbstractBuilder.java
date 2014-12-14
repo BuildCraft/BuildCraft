@@ -78,8 +78,8 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		RFBattery battery = this.getBattery();
 

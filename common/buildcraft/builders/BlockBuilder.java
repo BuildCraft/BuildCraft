@@ -116,7 +116,7 @@ public class BlockBuilder extends BlockBuildCraft {
 			}
 
 			return true;
-		} else if (builder != null && TankUtils.handleRightClick(builder, EnumFacing.UNKNOWN, entityplayer, true, false)) {
+		} else if (builder != null && TankUtils.handleRightClick(builder, null, entityplayer, true, false)) {
 			return true;
 		} else {
 			if (!world.isRemote) {

@@ -113,8 +113,8 @@ public class GuiBuilder extends GuiAdvancedInterface {
 	}
 
 	@Override
-	protected void mouseMovedOrUp(int mouseX, int mouseY, int eventType) {
-		super.mouseMovedOrUp(mouseX, mouseY, eventType);
+	protected void mouseReleased(int mouseX, int mouseY, int eventType) {
+		super.mouseReleased(mouseX, mouseY, eventType);
 
 		if (this.selectedButton != null && eventType == 0) {
 			this.selectedButton.mouseReleased(mouseX, mouseY);

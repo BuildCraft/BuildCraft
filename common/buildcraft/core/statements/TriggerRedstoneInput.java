@@ -8,7 +8,6 @@
  */
 package buildcraft.core.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -40,7 +39,12 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
 	
 		return param;
     }
-	
+
+	@Override
+	public int getSheetLocation() {
+		return 15 + (active ? 0 : 1) * 16;
+	}
+
 	@Override
 	public int maxParameters() {
 		return 1;
@@ -60,10 +64,5 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
 		}
 		
 		return active ? level > 0 : level == 0;
-	}
-
-	@Override
-	public void registerIcons(IIconRegister register) {
-		icon = register.registerIcon("buildcraft:triggers/trigger_redstoneinput_" + (active ? "active" : "inactive"));
 	}
 }

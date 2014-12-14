@@ -8,9 +8,6 @@
  */
 package buildcraft.transport.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -51,12 +48,6 @@ public class TriggerRedstoneFaderInput extends BCStatement implements ITriggerIn
 		
 		return inputLevel == level;
 	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon(String.format("buildcraft:triggers/redstone_%02d", level));
-	}
 	
     @Override
     public IStatementParameter createParameter(int index) {
@@ -68,7 +59,12 @@ public class TriggerRedstoneFaderInput extends BCStatement implements ITriggerIn
 	
 		return param;
     }
-	
+
+	@Override
+	public int getSheetLocation() {
+		return 9 + level * 16;
+	}
+
 	@Override
 	public int maxParameters() {
 		return 1;

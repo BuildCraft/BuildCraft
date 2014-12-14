@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
@@ -43,12 +44,13 @@ public final class BucketHandler {
 	}
 
 	private ItemStack fillCustomBucket(World world, MovingObjectPosition pos) {
-		Block block = world.getBlock(pos.blockX, pos.blockY, pos.blockZ);
+		IBlockState state = world.getBlockState(pos.func_178782_a());
 
-		Item bucket = buckets.get(block);
+		Item bucket = buckets.get(state.getBlock());
 
-		if (bucket != null && world.getBlockMetadata(pos.blockX, pos.blockY, pos.blockZ) == 0) {
-			world.setBlockToAir(pos.blockX, pos.blockY, pos.blockZ);
+		// TODO: Replace with BlockState check
+		if (bucket != null && state.getBlock().getMetaFromState(state) == 0) {
+			world.setBlockToAir(pos.func_178782_a());
 			return new ItemStack(bucket);
 		} else {
 			return null;

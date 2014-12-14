@@ -36,7 +36,7 @@ public class ActionIterator implements Iterable<StatementSlot> {
 
 		public It() {
 			while (!isValid()) {
-				if (curDir == EnumFacing.UNKNOWN) {
+				if (curDir == null) {
 					break;
 				} else if (pipe.gates[curDir.ordinal()] == null
 						|| index >= pipe.gates[curDir.ordinal()].activeActions.size() - 1) {
@@ -64,7 +64,7 @@ public class ActionIterator implements Iterable<StatementSlot> {
 			while (true) {
 				if (index < Gate.MAX_STATEMENTS - 1) {
 					index++;
-				} else if (curDir != EnumFacing.UNKNOWN) {
+				} else if (curDir != null) {
 					index = 0;
 					curDir = EnumFacing.values()[curDir.ordinal() + 1];
 				} else {
@@ -93,7 +93,7 @@ public class ActionIterator implements Iterable<StatementSlot> {
 		}
 
 		private boolean isValid() {
-			return curDir != EnumFacing.UNKNOWN
+			return curDir != null
 					&& pipe.gates[curDir.ordinal()] != null
 					&& index < pipe.gates[curDir.ordinal()].activeActions.size();
 		}

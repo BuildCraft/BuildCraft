@@ -8,11 +8,7 @@
  */
 package buildcraft.core.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.util.EnumFacing;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.api.gates.IGate;
@@ -35,6 +31,11 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITri
 	@Override
 	public String getDescription() {
 		return StringUtils.localize("gate.trigger.machine.energyStored" + (high ? "High" : "Low"));
+	}
+
+	@Override
+	public int getSheetLocation() {
+		return 12 + (high ? 1 : 2) * 16;
 	}
 
 	private boolean isValidEnergyHandler(IEnergyHandler handler) {
@@ -60,7 +61,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITri
 			IGate gate = (IGate) container;
 			if (gate.getPipe() instanceof IEnergyHandler) {
 				if (isValidEnergyHandler((IEnergyHandler) gate.getPipe())) {
-					return isTriggeredEnergyHandler((IEnergyHandler) gate.getPipe(), EnumFacing.UNKNOWN);
+					return isTriggeredEnergyHandler((IEnergyHandler) gate.getPipe(), null);
 				}
 			}
 		}
@@ -78,11 +79,5 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITri
 		}
 
 		return false;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_machine_energy_" + (high ? "high" : "low"));
 	}
 }

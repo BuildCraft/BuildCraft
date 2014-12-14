@@ -53,13 +53,13 @@ public abstract class PipeEventItem extends PipeEvent {
 	public static class DropItem extends PipeEventItem {
 
 		public EntityItem entity;
-		public EnumFacing direction = EnumFacing.UNKNOWN;
+		public EnumFacing direction = null;
 
 		public DropItem(TravelingItem item, EntityItem entity) {
 			super(item);
 			this.entity = entity;
 
-			if (item.output != EnumFacing.UNKNOWN) {
+			if (item.output != null) {
 				this.direction = item.output;
 			} else {
 				this.direction = item.input;

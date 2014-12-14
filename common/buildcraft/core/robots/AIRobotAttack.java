@@ -49,8 +49,7 @@ public class AIRobotAttack extends AIRobot {
 		}
 
 		if (robot.getDistanceToEntity(target) > 2.0) {
-			startDelegateAI(new AIRobotGotoBlock(robot, (int) Math.floor(target.posX),
-					(int) Math.floor(target.posY), (int) Math.floor(target.posZ)));
+			startDelegateAI(new AIRobotGotoBlock(robot, target.getPosition()));
 			robot.setItemActive(false);
 
 			return;
@@ -61,8 +60,7 @@ public class AIRobotAttack extends AIRobot {
 		if (delay > 20) {
 			delay = 0;
 			((EntityRobot) robot).attackTargetEntityWithCurrentItem(target);
-			robot.aimItemAt((int) Math.floor(target.posX), (int) Math.floor(target.posY),
-					(int) Math.floor(target.posZ));
+			robot.aimItemAt(target.getPosition());
 		}
 	}
 

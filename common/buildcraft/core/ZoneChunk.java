@@ -82,7 +82,7 @@ public class ZoneChunk implements ISerializable {
 		}
 	}
 
-	public BlockPos getRandomBlockIndex(Random rand) {
+	public BlockPos getRandomBlockPos(Random rand) {
 		int x, z;
 
 		if (fullSet) {

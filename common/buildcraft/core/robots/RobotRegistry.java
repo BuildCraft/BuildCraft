@@ -16,6 +16,7 @@ import java.util.Map;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 
@@ -208,8 +209,8 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	@Override
-	public synchronized IDockingStation getStation(int x, int y, int z, EnumFacing side) {
-		StationIndex index = new StationIndex(side, x, y, z);
+	public synchronized IDockingStation getStation(BlockPos pos, EnumFacing side) {
+		StationIndex index = new StationIndex(side, pos);
 
 		if (stations.containsKey(index)) {
 			return stations.get(index);
@@ -268,14 +269,14 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	public static synchronized RobotRegistry getRegistry(World world) {
-		if (!registries.containsKey(world.provider.dimensionId)
-				|| registries.get(world.provider.dimensionId).world != world) {
+		if (!registries.containsKey(world.provider.getDimensionId())
+				|| registries.get(world.provider.getDimensionId()).world != world) {
 
-			RobotRegistry newRegistry = (RobotRegistry) world.perWorldStorage.loadData(RobotRegistry.class, "robotRegistry");
+			RobotRegistry newRegistry = (RobotRegistry) world.getPerWorldStorage().loadData(RobotRegistry.class, "robotRegistry");
 
 			if (newRegistry == null) {
 				newRegistry = new RobotRegistry("robotRegistry");
-				world.perWorldStorage.setData("robotRegistry", newRegistry);
+				world.getPerWorldStorage().setData("robotRegistry", newRegistry);
 			}
 
 			newRegistry.world = world;
@@ -284,12 +285,12 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 				((DockingStation) d).world = world;
 			}
 
-			registries.put(world.provider.dimensionId, newRegistry);
+			registries.put(world.provider.getDimensionId(), newRegistry);
 			
 			return newRegistry;
 		}
 
-		return registries.get(world.provider.dimensionId);
+		return registries.get(world.provider.getDimensionId());
 	}
 
 	@Override

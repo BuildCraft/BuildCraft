@@ -12,25 +12,26 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.robots.IDockingStation;
+import buildcraft.core.utils.Utils;
 
 public class StationIndex {
 
-	public BlockIndex index = new BlockIndex();
-	public EnumFacing side = EnumFacing.UNKNOWN;
+	public BlockPos index;
+	public EnumFacing side = null;
 
 	protected StationIndex() {
 	}
 
-	public StationIndex(EnumFacing iSide, int x, int y, int z) {
+	public StationIndex(EnumFacing iSide, BlockPos pos) {
 		side = iSide;
-		index = new BlockIndex(x, y, z);
+		index = pos;
 	}
 
 	public StationIndex(IDockingStation station) {
 		side = station.side();
-		index = station.index();
+		index = station.pos();
 	}
 
 	@Override
@@ -52,13 +53,13 @@ public class StationIndex {
 
 	public void writeToNBT(NBTTagCompound nbt) {
 		NBTTagCompound indexNBT = new NBTTagCompound();
-		index.writeTo(indexNBT);
+		Utils.writeBlockPos(indexNBT, index);
 		nbt.setTag("index", indexNBT);
 		nbt.setByte("side", (byte) side.ordinal());
 	}
 
 	protected void readFromNBT(NBTTagCompound nbt) {
-		index = new BlockIndex(nbt.getCompoundTag("index"));
+		index = Utils.readBlockPos(nbt.getCompoundTag("index"));
 		side = EnumFacing.values()[nbt.getByte("side")];
 	}
 }

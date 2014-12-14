@@ -21,6 +21,11 @@ public class PatternFrame extends FillerPattern {
 	}
 
 	@Override
+	protected int getIconPosition() {
+		return 5;
+	}
+
+	@Override
 	public Template getTemplate(Box box, World world) {
 		Template template = new Template (box.sizeX(), box.sizeY(), box.sizeZ());
 

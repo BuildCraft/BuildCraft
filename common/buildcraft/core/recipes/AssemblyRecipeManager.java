@@ -25,7 +25,7 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 
 	@Override
 	public void addRecipe(String id, int energyCost, ItemStack output, Object... input) {
-		String name = Item.itemRegistry.getNameForObject(output.getItem());
+		String name = (String) Item.itemRegistry.getNameForObject(output.getItem());
 
 		if (BuildCraftCore.recipesBlacklist.contains(name)) {
 			return;

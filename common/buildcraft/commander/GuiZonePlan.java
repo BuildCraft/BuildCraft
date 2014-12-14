@@ -8,6 +8,7 @@
  */
 package buildcraft.commander;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -16,10 +17,10 @@ import org.lwjgl.opengl.GL11;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.EnumColor;
+import buildcraft.api.core.SheetIcon;
 import buildcraft.core.BCDynamicTexture;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ZonePlan;
@@ -79,7 +80,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 		}
 
 		@Override
-		public IIcon getIcon() {
+		public SheetIcon getIcon() {
 			return color.getIcon();
 		}
 
@@ -110,8 +111,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 		getContainer().currentAreaSelection = new ZonePlan();
 
-		cx = zonePlan.xCoord;
-		cz = zonePlan.zCoord;
+		cx = zonePlan.getPos().getX();
+		cz = zonePlan.getPos().getZ();
 
 		resetNullSlots(16);
 
@@ -202,7 +203,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	}
 
 	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 
 		int blocksX = (mouseX - mapXMin) * zoomLevel;
@@ -255,8 +256,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	}
 
 	@Override
-	protected void mouseMovedOrUp(int mouseX, int mouseY, int eventType) {
-		super.mouseMovedOrUp(mouseX, mouseY, eventType);
+	protected void mouseReleased(int mouseX, int mouseY, int eventType) {
+		super.mouseReleased(mouseX, mouseY, eventType);
 
 		if (eventType != -1 && inSelection) {
 			boolean val = tool.displayString.equals("+");
@@ -287,7 +288,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	}
 
 	@Override
-	protected void keyTyped(char carac, int val) {
+	protected void keyTyped(char carac, int val) throws IOException {
 		super.keyTyped(carac, val);
 
 		if (carac == '+' && zoomLevel > 1) {

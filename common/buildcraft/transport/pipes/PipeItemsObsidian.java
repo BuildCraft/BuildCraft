@@ -80,7 +80,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 	}
 
 	private AxisAlignedBB getSuckingBox(EnumFacing orientation, int distance) {
-		if (orientation == EnumFacing.UNKNOWN) {
+		if (orientation == null) {
 			return null;
 		}
 		Position p1 = new Position(container.xCoord, container.yCoord, container.zCoord, orientation);
@@ -205,7 +205,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 
 		EnumFacing orientation = getOpenOrientation().getOpposite();
 
-		if (orientation != EnumFacing.UNKNOWN) {
+		if (orientation != null) {
 			container.getWorld().playSoundAtEntity(entity, "random.pop", 0.2F, ((container.getWorld().rand.nextFloat() - container.getWorld().rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
 
 			ItemStack stack = null;

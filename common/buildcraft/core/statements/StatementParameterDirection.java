@@ -8,11 +8,10 @@
  */
 package buildcraft.core.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.EnumFacing;
+import buildcraft.api.core.SheetIcon;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -21,10 +20,7 @@ import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.TileGenericPipe;
 
 public class StatementParameterDirection implements IStatementParameter {
-
-    private static IIcon[] icons;
-    
-	public EnumFacing direction = EnumFacing.UNKNOWN;
+	public EnumFacing direction = null;
     
 	public StatementParameterDirection() {
 		
@@ -36,34 +32,27 @@ public class StatementParameterDirection implements IStatementParameter {
 	}
 
 	@Override
-	public IIcon getIcon() {
-	    if (direction == EnumFacing.UNKNOWN) {
-	    	return null;
-	    } else {
-	    	return icons[direction.ordinal()];
-	    }
-	}
-
-	@Override
 	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
 		if (source.getTile() instanceof TileGenericPipe) {
 			do {
-				direction = EnumFacing.getOrientation((direction.ordinal() + (mouse.getButton() > 0 ? -1 : 1)) % 6);
+				direction = EnumFacing.getFront((direction.ordinal() + (mouse.getButton() > 0 ? -1 : 1)) % 6);
 			} while (((TileGenericPipe) source.getTile()).isPipeConnected(direction));
 		}
 	}
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
-	    nbt.setByte("direction", (byte) direction.ordinal());
+		if (direction != null) {
+			nbt.setByte("direction", (byte) direction.ordinal());
+		}
 	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 	    if (nbt.hasKey("direction")) {
-	    	direction = EnumFacing.getOrientation(nbt.getByte("direction"));
+	    	direction = EnumFacing.getFront(nbt.getByte("direction"));
 	    } else {
-	    	direction = EnumFacing.UNKNOWN;
+	    	direction = null;
 	    }
 	}
 
@@ -78,7 +67,7 @@ public class StatementParameterDirection implements IStatementParameter {
 
 	@Override
 	public String getDescription() {
-		if (direction == EnumFacing.UNKNOWN) {
+		if (direction == null) {
 			return "";
 		} else {
 			return StringUtils.localize("direction." + direction.name().toLowerCase());
@@ -91,21 +80,14 @@ public class StatementParameterDirection implements IStatementParameter {
 	}
 
 	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		icons = new IIcon[] {
-				iconRegister.registerIcon("buildcraft:triggers/trigger_dir_down"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_dir_up"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_dir_north"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_dir_south"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_dir_west"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_dir_east")
-		};
+	public SheetIcon getIcon() {
+		return new SheetIcon(BCStatement.STATEMENT_ICONS, 10 + direction.ordinal(), 15);
 	}
 
 	@Override
 	public IStatementParameter rotateLeft() {
 		StatementParameterDirection d = new StatementParameterDirection();
-		d.direction = direction.getRotation(EnumFacing.UP);
+		d.direction = direction.rotateY();
 		return d;
 	}
 }

@@ -11,12 +11,14 @@ package buildcraft.core.utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirt;
 import net.minecraft.block.BlockGrass;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 public class WorldPropertyIsDirt extends WorldProperty {
 
 	@Override
-	public boolean get(IBlockAccess blockAccess, Block block, int meta, int x, int y, int z) {
-		return block instanceof BlockDirt || block instanceof BlockGrass;
+	public boolean get(IBlockAccess blockAccess, IBlockState state, BlockPos pos) {
+		return state.getBlock() instanceof BlockDirt || state.getBlock() instanceof BlockGrass;
 	}
 }

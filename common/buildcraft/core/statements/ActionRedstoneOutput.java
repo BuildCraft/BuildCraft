@@ -8,7 +8,6 @@
  */
 package buildcraft.core.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.statements.IActionInternal;
@@ -43,7 +42,12 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
 	
 		return param;
     }
-	
+
+	@Override
+	public int getSheetLocation() {
+		return 15;
+	}
+
 	@Override
 	public int maxParameters() {
 		return 1;
@@ -67,11 +71,5 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
 
 	protected int getSignalLevel() {
 		return 15;
-	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister register) {
-		icon = register.registerIcon("buildcraft:triggers/action_redstoneoutput");
 	}
 }

@@ -15,10 +15,10 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;
 
 public abstract class BCStatement implements IStatement {
+	public static final ResourceLocation STATEMENT_ICONS = new ResourceLocation("buildcraft", "textures/gui/statements.png");
+
 	protected final String uniqueTag;
 	protected SheetIcon icon;
-
-	private static final ResourceLocation STATEMENT_ICONS = new ResourceLocation("buildcraft", "textures/gui/statements.png");
 
 	/**
 	 * UniqueTag accepts multiple possible tags, use this feature to migrate to
@@ -40,6 +40,10 @@ public abstract class BCStatement implements IStatement {
 		return uniqueTag;
 	}
 
+	@Override
+	public SheetIcon getIcon() {
+		return icon;
+	}
 
 	@Override
 	public int maxParameters() {

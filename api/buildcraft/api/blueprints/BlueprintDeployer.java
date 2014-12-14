@@ -10,6 +10,7 @@ package buildcraft.api.blueprints;
 
 import java.io.File;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.util.EnumFacing;
 
@@ -33,7 +34,7 @@ public abstract class BlueprintDeployer {
 	 * Deploy the contents of the blueprints as if the builder was located at
 	 * {x, y, z} facing the direction dir.
 	 */
-	public abstract void deployBlueprint(World world, int x, int y, int z,
+	public abstract void deployBlueprint(World world, BlockPos pos,
 			EnumFacing dir, File file);
 			
 	/**
@@ -41,7 +42,7 @@ public abstract class BlueprintDeployer {
 	*{x, y, z} facing the direction dir.
 	*/
 	
-	public abstract void deployBlueprintFromFileStream(World world, int x, int y,
-	int z, EnumFacing dir, byte [] data);
+	public abstract void deployBlueprintFromFileStream(World world, BlockPos pos,
+													   EnumFacing dir, byte [] data);
 
 }

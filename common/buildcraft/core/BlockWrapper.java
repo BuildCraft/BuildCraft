@@ -11,10 +11,10 @@ package buildcraft.core;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 
 public class BlockWrapper {
-	public BlockIndex index;
+	public BlockPos index;
 	public TileEntity tile;
 	public Block block;
 }

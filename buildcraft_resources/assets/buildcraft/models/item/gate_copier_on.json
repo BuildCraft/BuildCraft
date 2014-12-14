@@ -1,0 +1,6 @@
+{
+    "parent": "items/buildcraft_base",
+    "textures": {
+        "layer0": "items/gateCopierOn"
+    }
+}

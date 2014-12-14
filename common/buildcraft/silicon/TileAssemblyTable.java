@@ -14,6 +14,7 @@ import java.util.List;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -58,14 +59,19 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		return result;
 	}
 
-	@Override
+	// TODO
+	/*@Override
 	public boolean canUpdate() {
 		return !FMLCommonHandler.instance().getEffectiveSide().isClient();
-	}
+	}*/
 
 	@Override
-	public void updateEntity() { // WARNING: run only server-side, see canUpdate()
-		super.updateEntity();
+	public void update() { // WARNING: run only server-side, see canUpdate()
+		super.update();
+
+		if (worldObj.isRemote) {
+			return;
+		}
 
 		if (currentRecipe == null) {
 			return;
@@ -95,15 +101,15 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 
 				if (remaining != null && remaining.stackSize > 0) {
 					remaining.stackSize -= Utils
-							.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, remaining);
+							.addToRandomInventoryAround(worldObj, pos, remaining);
 				}
 
 				if (remaining != null && remaining.stackSize > 0) {
-					remaining.stackSize -= Utils.addToRandomPipeAround(worldObj, xCoord, yCoord, zCoord, EnumFacing.UNKNOWN, remaining);
+					remaining.stackSize -= Utils.addToRandomPipeAround(worldObj, pos, null, remaining);
 				}
 
 				if (remaining != null && remaining.stackSize > 0) {
-					EntityItem entityitem = new EntityItem(worldObj, xCoord + 0.5, yCoord + 0.7, zCoord + 0.5,
+					EntityItem entityitem = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() + 0.7, pos.getZ() + 0.5,
 							remaining);
 
 					worldObj.spawnEntityInWorld(entityitem);
@@ -127,11 +133,6 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		if (currentRecipe == null) {
 			setNextCurrentRecipe();
 		}
-	}
-
-	@Override
-	public String getInventoryName() {
-		return StringUtils.localize("tile.assemblyTableBlock.name");
 	}
 
 	@Override
@@ -330,11 +331,6 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
-		return false;
-	}
-
-	@Override
 	public int getCraftingItemStackSize() {
 		return getSizeInventory();
 	}
@@ -362,5 +358,10 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 	@Override
 	public int getCraftingFluidStackSize() {
 		return 0;
+	}
+
+	@Override
+	public String getName() {
+		return "tile.assemblyTableBlock.name";
 	}
 }

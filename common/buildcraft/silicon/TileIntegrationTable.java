@@ -57,8 +57,8 @@ public class TileIntegrationTable extends TileLaserTableBase implements IFlexibl
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		if (worldObj.isRemote) {
 			return;
@@ -174,13 +174,8 @@ public class TileIntegrationTable extends TileLaserTableBase implements IFlexibl
 	}
 
 	@Override
-	public String getInventoryName() {
-		return StringUtils.localize("tile.integrationTableBlock.name");
-	}
-
-	@Override
-	public boolean hasCustomInventoryName() {
-		return false;
+	public String getName() {
+		return "tile.integrationTableBlock.name";
 	}
 
     @Override

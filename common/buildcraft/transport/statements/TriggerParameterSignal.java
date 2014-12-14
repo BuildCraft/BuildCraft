@@ -10,21 +10,19 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IIcon;
+import buildcraft.api.core.SheetIcon;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.api.transport.PipeWire;
+import buildcraft.core.statements.BCStatement;
 import buildcraft.core.utils.StringUtils;
 
 public class TriggerParameterSignal implements IStatementParameter {
 
-	private static IIcon[] icons;
-	
 	public boolean active = false;
 	public PipeWire color = null;
 
@@ -38,12 +36,15 @@ public class TriggerParameterSignal implements IStatementParameter {
 	}
 
 	@Override
-	public IIcon getIcon() {
+	public SheetIcon getIcon() {
 		if (color == null) {
 			return null;
 		}
 
-		return icons[color.ordinal() + (active ? 4 : 0)];
+		return new SheetIcon(BCStatement.STATEMENT_ICONS,
+				15,
+				7 + color.ordinal() * 2 + (active ? 1 : 0)
+		);
 	}
 
 	@Override
@@ -105,20 +106,6 @@ public class TriggerParameterSignal implements IStatementParameter {
 	@Override
 	public String getUniqueTag() {
 		return "buildcraft:pipeWireTrigger";
-	}
-
-	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		icons = new IIcon[]{
-				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_red_inactive"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_blue_inactive"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_green_inactive"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_yellow_inactive"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_red_active"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_blue_active"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_green_active"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_yellow_active")
-		};
 	}
 
 	@Override

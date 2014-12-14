@@ -16,18 +16,20 @@ import net.minecraft.block.BlockGrass;
 import net.minecraft.block.BlockGravel;
 import net.minecraft.block.BlockSand;
 import net.minecraft.block.BlockSnow;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 public class WorldPropertyIsShoveled extends WorldProperty {
 
 	@Override
-	public boolean get(IBlockAccess blockAccess, Block block, int meta, int x, int y, int z) {
-		return block instanceof BlockDirt
-				|| block instanceof BlockSand
-				|| block instanceof BlockClay
-				|| block instanceof BlockGravel
-				|| block instanceof BlockFarmland
-				|| block instanceof BlockGrass
-				|| block instanceof BlockSnow;
+	public boolean get(IBlockAccess blockAccess, IBlockState state, BlockPos pos) {
+		return state.getBlock() instanceof BlockDirt
+				|| state.getBlock() instanceof BlockSand
+				|| state.getBlock() instanceof BlockClay
+				|| state.getBlock() instanceof BlockGravel
+				|| state.getBlock() instanceof BlockFarmland
+				|| state.getBlock() instanceof BlockGrass
+				|| state.getBlock() instanceof BlockSnow;
 	}
 }

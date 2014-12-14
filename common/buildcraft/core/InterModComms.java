@@ -217,7 +217,7 @@ public final class InterModComms {
 
 				Block block = Block.getBlockFromItem(modItemStack.getItem());
 				if (block != null) {
-					String blockName = Block.blockRegistry.getNameForObject(block);
+					String blockName = (String) Block.blockRegistry.getNameForObject(block);
 					ItemFacade.blacklistFacade(blockName);
 				}
 			} else {

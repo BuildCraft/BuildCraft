@@ -12,10 +12,12 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import buildcraft.api.blueprints.SchematicMask;
+import buildcraft.api.core.SheetIcon;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Blueprint;
@@ -28,13 +30,17 @@ import buildcraft.core.utils.StringUtils;
 public abstract class FillerPattern implements IFillerPattern {
 
 	public static final Map<String, FillerPattern> patterns = new TreeMap<String, FillerPattern>();
+	private static final ResourceLocation PATTERN_ICONS = new ResourceLocation("buildcraft", "textures/gui/sheet_fillerPatterns.png");
 	private final String tag;
-	private IIcon icon;
+	private SheetIcon icon;
 
 	public FillerPattern(String tag) {
 		this.tag = tag;
+		this.icon = new SheetIcon(PATTERN_ICONS, getIconPosition() & 15, getIconPosition() >> 4);
 		patterns.put(getUniqueTag (), this);
 	}
+
+	protected abstract int getIconPosition();
 
 	@Override
 	public String getDisplayName() {
@@ -46,12 +52,8 @@ public abstract class FillerPattern implements IFillerPattern {
 		return "buildcraft:" + tag;
 	}
 
-	public void registerIcon(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:fillerPatterns/" + tag);
-	}
-
 	@Override
-	public IIcon getIcon() {
+	public SheetIcon getIcon() {
 		return icon;
 	}
 
@@ -113,7 +115,7 @@ public abstract class FillerPattern implements IFillerPattern {
 
 	public abstract Template getTemplate (Box box, World world);
 
-	public Blueprint getBlueprint (Box box, World world, Block block, int meta) {
+	public Blueprint getBlueprint (Box box, World world, IBlockState state) {
 		Blueprint result = new Blueprint (box.sizeX(), box.sizeY(), box.sizeZ());
 
 		Template tmpl = getTemplate(box, world);
@@ -123,7 +125,7 @@ public abstract class FillerPattern implements IFillerPattern {
 				for (int z = 0; z < box.sizeZ(); ++z) {
 					if (tmpl.contents[x][y][z] != null) {
 						result.contents[x][y][z] = SchematicRegistry.INSTANCE
-								.createSchematicBlock(block, meta);
+								.createSchematicBlock(state);
 					}
 
 				}
@@ -134,7 +136,7 @@ public abstract class FillerPattern implements IFillerPattern {
 	}
 
 	public BptBuilderTemplate getTemplateBuilder (Box box, World world) {
-		return new BptBuilderTemplate(getTemplate(box, world), world, box.xMin, box.yMin, box.zMin);
+		return new BptBuilderTemplate(getTemplate(box, world), world, new BlockPos(box.xMin, box.yMin, box.zMin));
 	}
 
 	private static boolean isValid (int x, int y, int z, BlueprintBase bpt) {

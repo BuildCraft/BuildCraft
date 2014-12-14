@@ -122,7 +122,7 @@ public class ZonePlan implements IZone, ISerializable {
 	}
 
 	@Override
-	public BlockPos getRandomBlockIndex(Random rand) {
+	public BlockPos getRandomBlockPos(Random rand) {
 		if (chunkMapping.size() == 0) {
 			return null;
 		}
@@ -131,7 +131,7 @@ public class ZonePlan implements IZone, ISerializable {
 
 		for (Map.Entry<ChunkIndex, ZoneChunk> e : chunkMapping.entrySet()) {
 			if (chunkId == 0) {
-				BlockPos i = e.getValue().getRandomBlockIndex(rand);
+				BlockPos i = e.getValue().getRandomBlockPos(rand);
 				return i.add((e.getKey().x << 4), 0, (e.getKey().z << 4));
 			}
 

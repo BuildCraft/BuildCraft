@@ -15,7 +15,7 @@ import net.minecraft.tileentity.TileEntityFurnace;
 
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
@@ -105,7 +105,7 @@ public class AIRobotCraftFurnace extends AIRobotCraftGeneric {
 
 						if (stack != null) {
 							ITransactor transactor = Transactor.getTransactorFor(robot);
-							transactor.add(stack, EnumFacing.UNKNOWN, true);
+							transactor.add(stack, null, true);
 							crafted = true;
 						}
 					}
@@ -128,14 +128,14 @@ public class AIRobotCraftFurnace extends AIRobotCraftGeneric {
 				terminate();
 			} else {
 				stationFound = ((AIRobotSearchStation) ai).targetStation;
-				furnace = getUsableFurnace(new BlockIndex(stationFound.x(), stationFound.y(), stationFound.z()));
+				furnace = getUsableFurnace(stationFound.pos());
 
 				if (furnace == null) {
 					terminate();
 					return;
 				}
 
-				BlockIndex index = new BlockIndex(furnace);
+				BlockPos index = furnace.getPos();
 
 				if (!robot.getRegistry().take(new ResourceIdBlock(index), robot)) {
 					terminate();
@@ -168,7 +168,7 @@ public class AIRobotCraftFurnace extends AIRobotCraftGeneric {
 			}
 
 			for (EnumFacing dir : EnumFacing.values()) {
-				if (getUsableFurnace(new BlockIndex(station.x(), station.y(), station.z())) != null) {
+				if (getUsableFurnace(station.pos()) != null) {
 					return true;
 				}
 			}
@@ -185,22 +185,20 @@ public class AIRobotCraftFurnace extends AIRobotCraftGeneric {
 		}
 	}
 
-	private TileEntityFurnace getUsableFurnace(BlockIndex b) {
+	private TileEntityFurnace getUsableFurnace(BlockPos b) {
 		// reserve that furnace if found from the block reserve system
 
 		for (EnumFacing dir : EnumFacing.values()) {
-			BlockIndex index = new BlockIndex (b.x + dir.getFrontOffsetX(), b.y
-					+ dir.getFrontOffsetY(), b.z
-					+ dir.getFrontOffsetZ());
+			BlockPos index = b.offset(dir);
 
 			if (robot.getRegistry().isTaken(new ResourceIdBlock(index))) {
 				continue;
 			}
 
-			Block nearbyBlock = robot.worldObj.getBlock(index.x, index.y, index.z);
+			Block nearbyBlock = robot.worldObj.getBlockState(index).getBlock();
 
 			if (nearbyBlock instanceof BlockFurnace) {
-				TileEntityFurnace f = (TileEntityFurnace) robot.worldObj.getTileEntity(index.x, index.y, index.z);
+				TileEntityFurnace f = (TileEntityFurnace) robot.worldObj.getTileEntity(index);
 
 				if (f.getStackInSlot(INPUT_SLOT) != null
 						&& !StackHelper.isMatchingItem(input, f.getStackInSlot(INPUT_SLOT))) {

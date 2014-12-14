@@ -106,7 +106,7 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements IClien
 
 	@Override
 	public int getIconIndex(EnumFacing direction) {
-		if (direction == EnumFacing.UNKNOWN) {
+		if (direction == null) {
 			return standardIconIndex + color;
 		}
 		if (container != null && container.getBlockMetadata() == direction.ordinal()) {

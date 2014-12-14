@@ -15,6 +15,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 
 import buildcraft.api.core.BCLog;
 
@@ -25,8 +26,8 @@ public class PacketNBT extends PacketCoordinates {
 	public PacketNBT() {
 	}
 
-	public PacketNBT(int id, NBTTagCompound nbttagcompound, int xCoord, int yCoord, int zCoord) {
-		super(id, xCoord, yCoord, zCoord);
+	public PacketNBT(int id, NBTTagCompound nbttagcompound, BlockPos pos) {
+		super(id, pos);
 		this.nbttagcompound = nbttagcompound;
 	}
 

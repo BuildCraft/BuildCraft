@@ -20,7 +20,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
@@ -40,7 +40,7 @@ import buildcraft.transport.gates.StatementSlot;
 
 public class BoardRobotPump extends RedstoneBoardRobot {
 
-	private BlockIndex blockFound;
+	private BlockPos blockFound;
 	private ArrayList<Fluid> fluidFilter = new ArrayList<Fluid>();
 
 	public BoardRobotPump(EntityRobotBase iRobot) {
@@ -54,7 +54,7 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 
 	@Override
 	public void update() {
-		FluidStack tank = robot.getTankInfo(EnumFacing.UNKNOWN)[0].fluid;
+		FluidStack tank = robot.getTankInfo(null)[0].fluid;
 
 		if (tank != null && tank.amount > 0) {
 			startDelegateAI(new AIRobotGotoStationAndUnloadFluids(robot, robot.getZoneToWork()));

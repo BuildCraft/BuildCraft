@@ -19,6 +19,11 @@ public class PatternClear extends FillerPattern {
 	}
 
 	@Override
+	protected int getIconPosition() {
+		return 1;
+	}
+
+	@Override
 	public Template getTemplate (Box box, World world) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;

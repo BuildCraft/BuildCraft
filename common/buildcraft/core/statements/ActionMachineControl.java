@@ -10,7 +10,6 @@ package buildcraft.core.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -37,16 +36,15 @@ public class ActionMachineControl extends BCStatement implements IActionExternal
 	}
 
 	@Override
+	public int getSheetLocation() {
+		return 15 + (4 + mode.ordinal()) * 16;
+	}
+
+	@Override
 	public void actionActivate(TileEntity target, EnumFacing side,
 			IStatementContainer source, IStatementParameter[] parameters) {
 		if (target instanceof IControllable) {
 			((IControllable) target).setControlMode(mode);
 		}
-	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister register) {
-		icon = register.registerIcon("buildcraft:triggers/action_machinecontrol_" + mode.name().toLowerCase());
 	}
 }

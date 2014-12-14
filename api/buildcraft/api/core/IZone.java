@@ -17,6 +17,6 @@ public interface IZone {
 
 	boolean contains(double x, double y, double z);
 
-	BlockPos getRandomBlockIndex(Random rand);
+	BlockPos getRandomBlockPos(Random rand);
 
 }

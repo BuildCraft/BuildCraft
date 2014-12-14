@@ -9,10 +9,11 @@
 package buildcraft.transport;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -26,9 +27,6 @@ import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
 
 public class BlockFilteredBuffer extends BlockBuildCraft {
-
-	private static IIcon blockTexture;
-
 	public BlockFilteredBuffer() {
 		super(Material.iron);
 		setHardness(5F);
@@ -40,10 +38,10 @@ public class BlockFilteredBuffer extends BlockBuildCraft {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer,
-			int par6, float par7, float par8, float par9) {
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer,
+			EnumFacing par6, float par7, float par8, float par9) {
 
-		super.onBlockActivated(world, x, y, z, entityplayer, par6, par7, par8, par9);
+		super.onBlockActivated(world, pos, state, entityplayer, par6, par7, par8, par9);
 		
 		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
 		FMLCommonHandler.instance().bus().post(event);
@@ -62,21 +60,9 @@ public class BlockFilteredBuffer extends BlockBuildCraft {
 		}
 
 		if (!world.isRemote) {
-			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.FILTERED_BUFFER, world, x, y, z);
+			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.FILTERED_BUFFER, world, pos.getX(), pos.getY(), pos.getZ());
 		}
 
 		return true;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		blockTexture = par1IconRegister.registerIcon("buildcraft:filteredBuffer_all");
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int i, int j) {
-		return blockTexture;
 	}
 }

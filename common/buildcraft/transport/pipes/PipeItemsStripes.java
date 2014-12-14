@@ -245,7 +245,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 
 		EnumFacing o = getOpenOrientation();
 
-		if (o != EnumFacing.UNKNOWN) {
+		if (o != null) {
 			Position p = new Position(container.xCoord, container.yCoord,
 					container.zCoord, o);
 			p.moveForwards(1.0);

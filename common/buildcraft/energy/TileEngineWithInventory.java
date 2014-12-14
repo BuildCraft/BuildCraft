@@ -13,6 +13,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.utils.Utils;
@@ -59,7 +60,7 @@ public abstract class TileEngineWithInventory extends TileEngine implements IInv
 	}
 
 	@Override
-	public String getInventoryName() {
+	public String getName() {
 		return "Engine";
 	}
 
@@ -69,16 +70,8 @@ public abstract class TileEngineWithInventory extends TileEngine implements IInv
 	}
 
 	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
-	}
-
-	@Override
-	public void openInventory() {
-	}
-
-	@Override
-	public void closeInventory() {
+	public boolean hasCustomName() {
+		return false;
 	}
 
 	@Override
@@ -93,11 +86,21 @@ public abstract class TileEngineWithInventory extends TileEngine implements IInv
 		inv.writeToNBT(data);
 	}
 
+	@Override
+	public void openInventory(EntityPlayer player) {
+
+	}
+
+	@Override
+	public void closeInventory(EntityPlayer player) {
+
+	}
+
     // ISidedInventory
 
     @Override
-    public int[] getAccessibleSlotsFromSide(int side) {
-        if (side == orientation.ordinal()) {
+    public int[] getSlotsForFace(EnumFacing side) {
+        if (side == orientation) {
             return new int[0];
         } else {
             return defaultSlotArray;
@@ -105,12 +108,12 @@ public abstract class TileEngineWithInventory extends TileEngine implements IInv
     }
 
     @Override
-    public boolean canInsertItem(int slot, ItemStack stack, int side) {
-        return side != orientation.ordinal();
+    public boolean canInsertItem(int slot, ItemStack stack, EnumFacing side) {
+        return side != orientation;
     }
 
     @Override
-    public boolean canExtractItem(int slot, ItemStack stack, int side) {
-        return side != orientation.ordinal();
+    public boolean canExtractItem(int slot, ItemStack stack, EnumFacing side) {
+        return side != orientation;
     }
 }

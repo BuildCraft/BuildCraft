@@ -51,20 +51,18 @@ public class AIRobotUnloadFluids extends AIRobot {
 			DockingStation station = (DockingStation) robot.getDockingStation();
 
 			if (!ActionRobotFilter.canInteractWithFluid(station,
-					new SimpleFluidFilter(robot.getTankInfo(EnumFacing.UNKNOWN)[0].fluid),
+					new SimpleFluidFilter(robot.getTankInfo(null)[0].fluid),
 					ActionStationAcceptFluids.class)) {
 				return;
 			}
 
 			for (EnumFacing dir : EnumFacing.values()) {
-				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.getFrontOffsetX(), station.y()
-						+ dir.getFrontOffsetY(), station.z()
-						+ dir.getFrontOffsetZ());
+				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.pos().offset(dir));
 
 				if (nearbyTile != null && nearbyTile instanceof IFluidHandler) {
 					IFluidHandler handler = (IFluidHandler) nearbyTile;
 
-					FluidStack drainable = robot.drain(EnumFacing.UNKNOWN, FluidContainerRegistry.BUCKET_VOLUME,
+					FluidStack drainable = robot.drain(null, FluidContainerRegistry.BUCKET_VOLUME,
 							false);
 
 					if (drainable != null) {
@@ -74,7 +72,7 @@ public class AIRobotUnloadFluids extends AIRobot {
 
 						if (filled > 0) {
 							drainable.amount = filled;
-							robot.drain(EnumFacing.UNKNOWN, drainable, true);
+							robot.drain(null, drainable, true);
 							unloaded += filled;
 							return;
 						}

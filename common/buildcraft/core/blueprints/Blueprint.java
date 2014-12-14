@@ -75,8 +75,8 @@ public class Blueprint extends BlueprintBase {
 	@Override
 	public void readFromWorld(IBuilderContext context, TileEntity anchorTile, BlockPos pos) {
 		BptContext bptContext = (BptContext) context;
-		IBlockState blockState = anchorTile.getWorld().getBlockState(pos);
-		Block block = blockState.getBlock();
+		IBlockState state = anchorTile.getWorld().getBlockState(pos);
+		Block block = state.getBlock();
 		
 		if (context.world().isAirBlock(pos)) {
 			// Although no schematic will be returned for the block "air" by
@@ -85,7 +85,7 @@ public class Blueprint extends BlueprintBase {
 			return;
 		}
 
-		SchematicBlock slot = SchematicRegistry.INSTANCE.createSchematicBlock(block, meta);
+		SchematicBlock slot = SchematicRegistry.INSTANCE.createSchematicBlock(state);
 
 		if (slot == null) {
 			return;
@@ -95,9 +95,9 @@ public class Blueprint extends BlueprintBase {
 		int posY = (int) (pos.getY() - context.surroundingBox().pMin().y);
 		int posZ = (int) (pos.getZ() - context.surroundingBox().pMin().z);
 
-		slot.state = blockState;
+		slot.state = state;
 
-		if (!SchematicRegistry.INSTANCE.isSupported(block, meta)) {
+		if (!SchematicRegistry.INSTANCE.isSupported(state)) {
 			return;
 		}
 
@@ -216,7 +216,7 @@ public class Blueprint extends BlueprintBase {
 
 						if (block != null) {
 							int meta = cpt.getInteger("blockMeta");
-							contents[x][y][z] = SchematicRegistry.INSTANCE.createSchematicBlock(block, meta);
+							contents[x][y][z] = SchematicRegistry.INSTANCE.createSchematicBlock(block.getStateFromMeta(meta));
 							if (contents[x][y][z] != null) {
 								contents[x][y][z].readSchematicFromNBT(cpt, mapping);
 	

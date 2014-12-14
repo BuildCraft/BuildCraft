@@ -35,7 +35,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import buildcraft.api.blueprints.BuilderAPI;
-import buildcraft.builders.schematics.SchematicIgnoreMeta;
+import buildcraft.builders.schematics.SchematicIgnoreState;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
@@ -155,7 +155,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 		BuilderAPI.schematicRegistry.registerSchematicBlock(refineryBlock, SchematicRefinery.class);
 		BuilderAPI.schematicRegistry.registerSchematicBlock(tankBlock, SchematicTank.class);
-		BuilderAPI.schematicRegistry.registerSchematicBlock(frameBlock, SchematicIgnoreMeta.class);
+		BuilderAPI.schematicRegistry.registerSchematicBlock(frameBlock, SchematicIgnoreState.class);
 		BuilderAPI.schematicRegistry.registerSchematicBlock(pumpBlock, SchematicPump.class);
 
 		if (BuildCraftCore.loadDefaultRecipes) {

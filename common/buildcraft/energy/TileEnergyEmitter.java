@@ -13,14 +13,14 @@ import java.util.TreeMap;
 
 import net.minecraft.util.AxisAlignedBB;
 
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.LaserData;
 import buildcraft.core.RFBattery; */
 import buildcraft.core.TileBuildCraft;
 
 public class TileEnergyEmitter extends TileBuildCraft {
-/*	public Map<BlockIndex, Target> targets = new TreeMap<BlockIndex, Target>();
+/*	public Map<BlockPos, Target> targets = new TreeMap<BlockPos, Target>();
 
 	public int rfAcc = 0;
 	public int accumulated = 0;
@@ -80,7 +80,7 @@ public class TileEnergyEmitter extends TileBuildCraft {
 				float dz = zCoord - receiver.zCoord;
 
 				if (dx * dx + dy * dy + dz * dz < 100 * 100) {
-					BlockIndex index = new BlockIndex(receiver.xCoord, receiver.yCoord, receiver.zCoord);
+					BlockPos index = new BlockPos(receiver.xCoord, receiver.yCoord, receiver.zCoord);
 
 					if (!targets.containsKey(index)) {
 						addLaser(receiver.xCoord, receiver.yCoord,
@@ -144,7 +144,7 @@ public class TileEnergyEmitter extends TileBuildCraft {
 
 	@RPC (RPCSide.CLIENT)
 	public void addLaser (int x, int y, int z) {
-		BlockIndex index = new BlockIndex(x, y, z);
+		BlockPos index = new BlockPos(x, y, z);
 
 		if (!targets.containsKey(index)) {
 			Target t = new Target();
@@ -163,7 +163,7 @@ public class TileEnergyEmitter extends TileBuildCraft {
 
 	@RPC (RPCSide.CLIENT)
 	public void enableLaser (int x, int y, int z) {
-		BlockIndex index = new BlockIndex(x, y, z);
+		BlockPos index = new BlockPos(x, y, z);
 
 		if (targets.containsKey(index)) {
 			targets.get(index).data.isVisible = true;
@@ -172,7 +172,7 @@ public class TileEnergyEmitter extends TileBuildCraft {
 
 	@RPC (RPCSide.CLIENT)
 	public void disableLaser (int x, int y, int z) {
-		BlockIndex index = new BlockIndex(x, y, z);
+		BlockPos index = new BlockPos(x, y, z);
 
 		if (targets.containsKey(index)) {
 			targets.get(index).data.isVisible = false;
@@ -181,7 +181,7 @@ public class TileEnergyEmitter extends TileBuildCraft {
 
 	@RPC (RPCSide.SERVER)
 	public void requestLasers (RPCMessageInfo info) {
-		for (BlockIndex b : targets.keySet()) {
+		for (BlockPos b : targets.keySet()) {
 			RPCHandler.rpcPlayer(info.sender, this, "addLaser", b.x, b.y, b.z);
 		}
 	}

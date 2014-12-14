@@ -24,14 +24,16 @@ import org.lwjgl.util.glu.GLU;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
-import net.minecraft.util.IIcon;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -58,7 +60,6 @@ import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.EnumColor;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.IWorldProperty;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
@@ -74,7 +75,6 @@ import buildcraft.api.tiles.IControllable;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.CommandBuildCraft;
-import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiHandler;
 import buildcraft.core.InterModComms;
@@ -156,15 +156,13 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Item mapLocationItem;
 	public static Item listItem;
 	@SideOnly(Side.CLIENT)
-	public static IIcon redLaserTexture;
+	public static TextureAtlasSprite redLaserTexture;
 	@SideOnly(Side.CLIENT)
-	public static IIcon blueLaserTexture;
+	public static TextureAtlasSprite blueLaserTexture;
 	@SideOnly(Side.CLIENT)
-	public static IIcon stripesLaserTexture;
+	public static TextureAtlasSprite stripesLaserTexture;
 	@SideOnly(Side.CLIENT)
-	public static IIcon transparentTexture;
-	@SideOnly(Side.CLIENT)
-	public static IIconProvider iconProvider;
+	public static TextureAtlasSprite transparentTexture;
 	public static int blockByEntityModel;
 	public static int legacyPipeModel;
 	public static int markerModel;
@@ -421,18 +419,11 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
-	public void textureHook(TextureStitchEvent.Pre event) {
-		if (event.map.getTextureType() == 1) {
-			iconProvider = new CoreIconProvider();
-			iconProvider.registerIcons(event.map);
-			EnumColor.registerIcons(event.map);
-		} else if (event.map.getTextureType() == 0) {
-			BuildCraftCore.redLaserTexture = event.map.registerIcon("buildcraft:blockRedLaser");
-			BuildCraftCore.blueLaserTexture = event.map.registerIcon("buildcraft:blockBlueLaser");
-			BuildCraftCore.stripesLaserTexture = event.map.registerIcon("buildcraft:blockStripesLaser");
-			BuildCraftCore.transparentTexture = event.map.registerIcon("buildcraft:blockTransparentLaser");
-		}
-
+	public void onModelBakeEvent(ModelBakeEvent event) {
+		BuildCraftCore.redLaserTexture = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("buildcraft:blockRedLaser");
+		BuildCraftCore.blueLaserTexture = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("buildcraft:blockBlueLaser");
+		BuildCraftCore.stripesLaserTexture = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("buildcraft:blockStripesLaser");
+		BuildCraftCore.transparentTexture = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("buildcraft:blockTransparentLaser");
 	}
 
 	public void loadRecipes() {

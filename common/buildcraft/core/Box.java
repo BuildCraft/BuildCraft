@@ -17,8 +17,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.ISerializable;
@@ -47,8 +47,8 @@ public class Box implements IBox, ISerializable {
 	}
 
 	public Box(TileEntity e) {
-		initialize(e.xCoord, e.yCoord, e.zCoord, e.xCoord + 1, e.yCoord + 1,
-				e.zCoord + 1);
+		initialize(e.getPos().getX(), e.getPos().getY(), e.getPos().getZ(),
+				e.getPos().getX() + 1, e.getPos().getY() + 1, e.getPos().getZ() + 1);
 	}
 
 	public Box(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
@@ -122,13 +122,13 @@ public class Box implements IBox, ISerializable {
 		initialize(centerX - size, centerY - size, centerZ - size, centerX + size, centerY + size, centerZ + size);
 	}
 
-	public List<BlockIndex> getBlocksInArea() {
-		List<BlockIndex> blocks = new ArrayList<BlockIndex>();
+	public List<BlockPos> getBlocksInArea() {
+		List<BlockPos> blocks = new ArrayList<BlockPos>();
 
 		for (float x = xMin; x <= xMax; x++) {
 			for (float y = yMin; y <= yMax; y++) {
 				for (float z = zMin; z <= zMax; z++) {
-					blocks.add(new BlockIndex((int) x, (int) y, (int) z));
+					blocks.add(new BlockPos((int) x, (int) y, (int) z));
 				}
 			}
 		}
@@ -162,8 +162,8 @@ public class Box implements IBox, ISerializable {
 		return contains((int) p.x, (int) p.y, (int) p.z);
 	}
 
-	public boolean contains(BlockIndex i) {
-		return contains(i.x, i.y, i.z);
+	public boolean contains(BlockPos i) {
+		return contains(i.getX(), i.getY(), i.getZ());
 	}
 
 	@Override
@@ -324,50 +324,50 @@ public class Box implements IBox, ISerializable {
 		return this;
 	}
 
-	public Box extendToEncompass(BlockIndex toBeContained) {
-		if (toBeContained.x < xMin) {
-			xMin = toBeContained.x - 1;
+	public Box extendToEncompass(BlockPos toBeContained) {
+		if (toBeContained.getX() < xMin) {
+			xMin = toBeContained.getX() - 1;
 		}
 
-		if (toBeContained.y < yMin) {
-			yMin = toBeContained.y - 1;
+		if (toBeContained.getY() < yMin) {
+			yMin = toBeContained.getY() - 1;
 		}
 
-		if (toBeContained.z < zMin) {
-			zMin = toBeContained.z - 1;
+		if (toBeContained.getZ() < zMin) {
+			zMin = toBeContained.getZ() - 1;
 		}
 
-		if (toBeContained.x > xMax) {
-			xMax = toBeContained.x + 1;
+		if (toBeContained.getX() > xMax) {
+			xMax = toBeContained.getX() + 1;
 		}
 
-		if (toBeContained.y > yMax) {
-			yMax = toBeContained.y + 1;
+		if (toBeContained.getY() > yMax) {
+			yMax = toBeContained.getY() + 1;
 		}
 
-		if (toBeContained.z > zMax) {
-			zMax = toBeContained.z + 1;
+		if (toBeContained.getZ() > zMax) {
+			zMax = toBeContained.getZ() + 1;
 		}
 
 		return this;
 	}
 
 	@Override
-	public double distanceTo(BlockIndex index) {
-		int dx = index.x - (xMin + (xMax - xMin + 1));
-		int dy = index.y - (yMin + (yMax - yMin + 1));
-		int dz = index.z - (zMin + (zMax - zMin + 1));
+	public double distanceTo(BlockPos index) {
+		int dx = index.getX() - (xMin + (xMax - xMin + 1));
+		int dy = index.getY() - (yMin + (yMax - yMin + 1));
+		int dz = index.getZ() - (zMin + (zMax - zMin + 1));
 
 		return Math.sqrt(dx * dx + dy * dy + dz * dz);
 	}
 
 	@Override
-	public BlockIndex getRandomBlockIndex(Random rand) {
+	public BlockPos getRandomBlockPos(Random rand) {
 		int x = xMin + rand.nextInt(xMax - xMin);
 		int y = yMin + rand.nextInt(yMax - yMin);
 		int z = zMin + rand.nextInt(zMax - zMin);
 
-		return new BlockIndex(x, y, z);
+		return new BlockPos(x, y, z);
 
 	}
 

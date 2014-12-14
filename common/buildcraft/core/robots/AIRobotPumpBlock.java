@@ -14,13 +14,13 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 
 public class AIRobotPumpBlock extends AIRobot {
 
-	public BlockIndex blockToPump;
+	public BlockPos blockToPump;
 	public long waited = 0;
 	int pumped = 0;
 
@@ -28,7 +28,7 @@ public class AIRobotPumpBlock extends AIRobot {
 		super(iRobot);
 	}
 
-	public AIRobotPumpBlock(EntityRobotBase iRobot, BlockIndex iBlockToPump) {
+	public AIRobotPumpBlock(EntityRobotBase iRobot, BlockPos iBlockToPump) {
 		super(iRobot);
 
 		blockToPump = iBlockToPump;
@@ -36,7 +36,7 @@ public class AIRobotPumpBlock extends AIRobot {
 
 	@Override
 	public void start() {
-		robot.aimItemAt(blockToPump.x, blockToPump.y, blockToPump.z);
+		robot.aimItemAt(blockToPump);
 	}
 
 	@Override
@@ -49,15 +49,14 @@ public class AIRobotPumpBlock extends AIRobot {
 		if (waited < 40) {
 			waited++;
 		} else {
-			Fluid fluid = FluidRegistry.lookupFluidForBlock(robot.worldObj.getBlock(blockToPump.x, blockToPump.y,
-					blockToPump.z));
+			Fluid fluid = FluidRegistry.lookupFluidForBlock(robot.worldObj.getBlockState(blockToPump).getBlock());
 
 			if (fluid != null) {
-				pumped = robot.fill(EnumFacing.UNKNOWN,
+				pumped = robot.fill(null,
 						new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME), true);
 
 				if (pumped > 0) {
-					robot.worldObj.setBlockToAir(blockToPump.x, blockToPump.y, blockToPump.z);
+					robot.worldObj.setBlockToAir(blockToPump);
 				}
 			}
 
@@ -68,7 +67,7 @@ public class AIRobotPumpBlock extends AIRobot {
 
 	@Override
 	public void end() {
-		robot.aimItemAt(0, 1, 0);
+		robot.aimItemAt(new BlockPos(0, 1, 0));
 	}
 
 	@Override

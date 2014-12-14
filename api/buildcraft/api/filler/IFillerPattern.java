@@ -8,17 +8,16 @@
  */
 package buildcraft.api.filler;
 
-import net.minecraft.util.IIcon;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import buildcraft.api.core.SheetIcon;
 
 public interface IFillerPattern {
 
 	String getUniqueTag();
 
 	@SideOnly(Side.CLIENT)
-	IIcon getIcon();
+	SheetIcon getIcon();
 
 	String getDisplayName();
 }

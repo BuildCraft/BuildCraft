@@ -30,6 +30,7 @@ import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.Position;
 import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.utils.Utils;
 
 public class BuildingSlotBlock extends BuildingSlot {
 
@@ -66,7 +67,7 @@ public class BuildingSlotBlock extends BuildingSlot {
 				// This is slightly hackish, but it's a very important way to verify
 				// the stored requirements.
 
-				if (!context.world().isAirBlock(x, y, z) &&
+				if (!context.world().isAirBlock(pos) &&
 						getSchematic().getBuildingPermission() == BuildingPermission.ALL &&
 						getSchematic() instanceof SchematicBlock) {
 					SchematicBlock sb = (SchematicBlock) getSchematic();
@@ -74,7 +75,7 @@ public class BuildingSlotBlock extends BuildingSlot {
 					ItemStack[] oldRequirementsArray = sb.storedRequirements;
 					List<ItemStack> oldRequirements = Arrays.asList(oldRequirementsArray);
 					sb.storedRequirements = new ItemStack[0];
-					sb.storeRequirements(context, x, y, z);
+					sb.storeRequirements(context, pos);
 					for (ItemStack s : sb.storedRequirements) {
 						boolean contains = false;
 						for (ItemStack ss : oldRequirements) {
@@ -85,9 +86,9 @@ public class BuildingSlotBlock extends BuildingSlot {
 						}
 						if (!contains) {
 							BCLog.logger.warn("Blueprint has MISMATCHING REQUIREMENTS! Potential corrupted/hacked blueprint! Removed mismatched block.");
-							BCLog.logger.warn("Location: " + x + ", " + y + ", " + z + " - ItemStack: " + s.toString());
-							context.world().removeTileEntity(x, y, z);
-							context.world().setBlockToAir(x, y, z);
+							BCLog.logger.warn("Location: " + pos.toString() + " - ItemStack: " + s.toString());
+							context.world().removeTileEntity(pos);
+							context.world().setBlockToAir(pos);
 							return;
 						}
 					}

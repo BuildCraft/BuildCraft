@@ -24,7 +24,7 @@ public class BptPipeIron extends BptPipeExtension {
 		int orientation = slot.meta & 7;
 		int others = slot.meta - orientation;
 
-		slot.meta = EnumFacing.values()[orientation].getRotation(EnumFacing.UP).ordinal() + others;
+		slot.meta = EnumFacing.values()[orientation].rotateY().ordinal() + others;
 	}
 
 }

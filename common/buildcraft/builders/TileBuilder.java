@@ -31,7 +31,7 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.Position;
 import buildcraft.api.robots.EntityRobotBase;
@@ -80,7 +80,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	private SimpleInventory inv = new SimpleInventory(28, "Builder", 64);
 	private BptBuilderBase currentBuilder;
 	private RecursiveBlueprintBuilder recursiveBuilder;
-	private LinkedList<BlockIndex> path;
+	private LinkedList<BlockPos> path;
 	private ArrayList<ItemStack> requiredToBuild;
 	private NBTTagCompound initNBT = null;
 	private boolean done = true;
@@ -88,15 +88,15 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	
 	private class PathIterator {
 
-		public Iterator<BlockIndex> currentIterator;
+		public Iterator<BlockPos> currentIterator;
 		public double cx, cy, cz;
 		public float ix, iy, iz;
-		public BlockIndex to;
+		public BlockPos to;
 		public double lastDistance;
 		AxisAlignedBB oldBoundingBox = null;
 		EnumFacing o = null;
 
-		public PathIterator(BlockIndex from, Iterator<BlockIndex> it, EnumFacing initialDir) {
+		public PathIterator(BlockPos from, Iterator<BlockPos> it, EnumFacing initialDir) {
 			this.to = it.next();
 
 			currentIterator = it;
@@ -222,10 +222,10 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			iterateBpt(true);
 
 			if (initNBT.hasKey("iterator")) {
-				BlockIndex expectedTo = new BlockIndex(initNBT.getCompoundTag("iterator"));
+				BlockPos expectedTo = new BlockPos(initNBT.getCompoundTag("iterator"));
 
 				while (!done && currentBuilder != null && currentPathIterator != null) {
-					BlockIndex bi = new BlockIndex((int) currentPathIterator.ix,
+					BlockPos bi = new BlockPos((int) currentPathIterator.ix,
 							(int) currentPathIterator.iy, (int) currentPathIterator.iz);
 
 					if (bi.equals(expectedTo)) {
@@ -254,7 +254,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 					if (tile instanceof TilePathMarker) {
 						path = ((TilePathMarker) tile).getPath();
 
-						for (BlockIndex b : path) {
+						for (BlockPos b : path) {
 							worldObj.setBlockToAir(b.x, b.y, b.z);
 
 							BuildCraftBuilders.pathMarkerBlock.dropBlockAsItem(
@@ -279,9 +279,9 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 	public void createLasersForPath() {
 		pathLasers = new LinkedList<LaserData>();
-		BlockIndex previous = null;
+		BlockPos previous = null;
 
-		for (BlockIndex b : path) {
+		for (BlockPos b : path) {
 			if (previous != null) {
 				LaserData laser = new LaserData(new Position(previous.x + 0.5,
 						previous.y + 0.5, previous.z + 0.5), new Position(
@@ -353,8 +353,8 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		if (currentBuilder == null || (currentBuilder.isDone(this) || forceIterate)) {
 			if (path != null && path.size() > 1) {
 				if (currentPathIterator == null) {
-					Iterator<BlockIndex> it = path.iterator();
-					BlockIndex start = it.next();
+					Iterator<BlockPos> it = path.iterator();
+					BlockPos start = it.next();
 					currentPathIterator = new PathIterator(start, it,
 							EnumFacing.values()[worldObj.getBlockMetadata(
 									xCoord, yCoord, zCoord)].getOpposite());
@@ -497,12 +497,12 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		}
 
 		if (nbttagcompound.hasKey("path")) {
-			path = new LinkedList<BlockIndex>();
+			path = new LinkedList<BlockPos>();
 			NBTTagList list = nbttagcompound.getTagList("path",
 					Constants.NBT.TAG_COMPOUND);
 
 			for (int i = 0; i < list.tagCount(); ++i) {
-				path.add(new BlockIndex(list.getCompoundTagAt(i)));
+				path.add(new BlockPos(list.getCompoundTagAt(i)));
 			}
 		}
 
@@ -528,7 +528,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		if (path != null) {
 			NBTTagList list = new NBTTagList();
 
-			for (BlockIndex i : path) {
+			for (BlockPos i : path) {
 				NBTTagCompound c = new NBTTagCompound();
 				i.writeTo(c);
 				list.appendTag(c);
@@ -550,7 +550,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 		if (currentPathIterator != null) {
 			NBTTagCompound iteratorNBT = new NBTTagCompound();
-			new BlockIndex((int) currentPathIterator.ix,
+			new BlockPos((int) currentPathIterator.ix,
 					(int) currentPathIterator.iy, (int) currentPathIterator.iz)
 					.writeTo(iteratorNBT);
 			bptNBT.setTag ("iterator", iteratorNBT);
@@ -901,7 +901,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			}
 
 			ITransactor t = Transactor.getTransactorFor(this);
-			ItemStack added = t.add(toAdd, EnumFacing.UNKNOWN, true);
+			ItemStack added = t.add(toAdd, null, true);
 
 			if (added.stackSize >= stack.stackSize) {
 				return null;

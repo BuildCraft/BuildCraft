@@ -10,9 +10,12 @@ package buildcraft.core.utils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -23,19 +26,17 @@ public class WorldPropertyIsOre extends WorldProperty {
 	public WorldPropertyIsOre(int harvestLevel) {
 		for (String oreName : OreDictionary.getOreNames()) {
 			if (oreName.startsWith("ore")) {
-				ArrayList<ItemStack> oreStacks = OreDictionary.getOres(oreName);
+				List<ItemStack> oreStacks = OreDictionary.getOres(oreName);
 				if (oreStacks.size() > 0) {
 					Block block = Block.getBlockFromItem(oreStacks.get(0).getItem());
-					int meta = oreStacks.get(0).getItemDamage();
-					if (meta >= 16 || meta < 0) {
-						meta = 0;
-					}
-					if (block == null) {
-						continue;
-					}
-					if ("pickaxe".equals(block.getHarvestTool(meta)) &&
-							block.getHarvestLevel(meta) <= harvestLevel) {
-						ores.add(OreDictionary.getOreID(oreName));
+					try {
+						IBlockState state = block.getStateFromMeta(oreStacks.get(0).getItemDamage());
+						if ("pickaxe".equals(block.getHarvestTool(state)) &&
+								block.getHarvestLevel(state) <= harvestLevel) {
+							ores.add(OreDictionary.getOreID(oreName));
+						}
+					} catch(Exception e) {
+
 					}
 				}
 			}
@@ -43,17 +44,13 @@ public class WorldPropertyIsOre extends WorldProperty {
 	}
 
 	@Override
-	public boolean get(IBlockAccess blockAccess, Block block, int meta, int x, int y, int z) {
-		if (block == null) {
-			return false;
-		} else {
-			ItemStack stack = new ItemStack(block, 1, meta);
+	public boolean get(IBlockAccess blockAccess, IBlockState state, BlockPos pos) {
+		ItemStack stack = Utils.getItemStack(state);
 
-			if (stack.getItem() != null) {
-				for (int id : OreDictionary.getOreIDs(stack)) {
-					if (ores.contains(id)) {
-						return true;
-					}
+		if (stack.getItem() != null) {
+			for (int id : OreDictionary.getOreIDs(stack)) {
+				if (ores.contains(id)) {
+					return true;
 				}
 			}
 		}

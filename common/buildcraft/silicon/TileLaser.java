@@ -15,6 +15,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.EnumFacing;
 import buildcraft.api.core.Position;
@@ -59,13 +60,13 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 		}
 		
 		laser.isVisible = false;
-		laser.head = new Position(xCoord, yCoord, zCoord);
-		laser.tail = new Position(xCoord, yCoord, zCoord);
+		laser.head = new Position(pos);
+		laser.tail = new Position(pos);
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		laser.iterateTexture();
 
@@ -146,32 +147,32 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 	protected void findTable() {
 		int meta = getBlockMetadata();
 
-		int minX = xCoord - 5;
-		int minY = yCoord - 5;
-		int minZ = zCoord - 5;
-		int maxX = xCoord + 5;
-		int maxY = yCoord + 5;
-		int maxZ = zCoord + 5;
+		int minX = pos.getX() - 5;
+		int minY = pos.getY() - 5;
+		int minZ = pos.getZ() - 5;
+		int maxX = pos.getX() + 5;
+		int maxY = pos.getY() + 5;
+		int maxZ = pos.getZ() + 5;
 
-		switch (EnumFacing.getOrientation(meta)) {
+		switch (EnumFacing.getFront(meta)) {
 			case WEST:
-				maxX = xCoord;
+				maxX = pos.getX();
 				break;
 			case EAST:
-				minX = xCoord;
+				minX = pos.getX();
 				break;
 			case DOWN:
-				maxY = yCoord;
+				maxY = pos.getY();
 				break;
 			case UP:
-				minY = yCoord;
+				minY = pos.getY();
 				break;
 			case NORTH:
-				maxZ = zCoord;
+				maxZ = pos.getZ();
 				break;
 			default:
 			case SOUTH:
-				minZ = zCoord;
+				minZ = pos.getZ();
 				break;
 		}
 
@@ -180,8 +181,9 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 		for (int x = minX; x <= maxX; ++x) {
 			for (int y = minY; y <= maxY; ++y) {
 				for (int z = minZ; z <= maxZ; ++z) {
-					if (worldObj.getBlock(x, y, z) instanceof ILaserTargetBlock) {
-						TileEntity tile = worldObj.getTileEntity(x, y, z);
+					BlockPos pos = new BlockPos(x, y, z);
+					if (worldObj.getBlockState(pos).getBlock() instanceof ILaserTargetBlock) {
+						TileEntity tile = worldObj.getTileEntity(pos);
 						
 						if (tile instanceof ILaserTarget) {
 							ILaserTarget table = (ILaserTarget) tile;
@@ -207,8 +209,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 		int meta = getBlockMetadata();
 		double px = 0, py = 0, pz = 0;
 
-		switch (EnumFacing.getOrientation(meta)) {
-
+		switch (EnumFacing.getFront(meta)) {
 			case WEST:
 				px = -LASER_OFFSET;
 				break;
@@ -230,7 +231,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 				break;
 		}
 
-		Position head = new Position(xCoord + 0.5 + px, yCoord + 0.5 + py, zCoord + 0.5 + pz);
+		Position head = new Position(pos.getX() + 0.5 + px, pos.getY() + 0.5 + py, pos.getZ() + 0.5 + pz);
 		Position tail = new Position(laserTarget.getXCoord() + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F, laserTarget.getYCoord() + 9F / 16F,
 				laserTarget.getZCoord() + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F);
 
@@ -319,7 +320,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
-		return new Box(this).extendToEncompass(laser.tail).fromBounds();
+		return new Box(this).extendToEncompass(laser.tail).getBoundingBox();
 	}
 	
 	@Override

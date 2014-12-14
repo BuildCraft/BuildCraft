@@ -11,6 +11,7 @@ package buildcraft.core.blueprints;
 import java.util.ArrayList;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import net.minecraft.util.EnumFacing;
@@ -24,34 +25,32 @@ public class RecursiveBlueprintBuilder {
 	private RecursiveBlueprintBuilder current;
 	private int nextSubBlueprint = 0;
 	private ArrayList<NBTTagCompound> subBlueprints = new ArrayList<NBTTagCompound>();
-	private int x, y, z;
+	private BlockPos pos;
 	private EnumFacing dir;
 	private World world;
 	private Box box = new Box();
 
-	public RecursiveBlueprintBuilder(BlueprintBase iBlueprint, World iWorld, int iX, int iY, int iZ,
+	public RecursiveBlueprintBuilder(BlueprintBase iBlueprint, World iWorld, BlockPos pos,
 			EnumFacing iDir) {
 		blueprint = iBlueprint;
 		subBlueprints = iBlueprint.subBlueprintsNBT;
 		world = iWorld;
-		x = iX;
-		y = iY;
-		z = iZ;
+		pos = this.pos;
 		dir = iDir;
 	}
 
 	public BptBuilderBase nextBuilder() {
 		if (!returnedThis) {
-			blueprint.adjustToWorld(world, x, y, x, dir);
+			blueprint.adjustToWorld(world, pos, dir);
 
 			returnedThis = true;
 
 			BptBuilderBase builder;
 
 			if (blueprint instanceof Blueprint) {
-				builder = new BptBuilderBlueprint((Blueprint) blueprint, world, x, y, z);
+				builder = new BptBuilderBlueprint((Blueprint) blueprint, world, pos);
 			} else if (blueprint instanceof Template) {
-				builder = new BptBuilderTemplate(blueprint, world, x, y, z);
+				builder = new BptBuilderTemplate(blueprint, world, pos);
 			} else {
 				return null;
 			}
@@ -85,7 +84,7 @@ public class RecursiveBlueprintBuilder {
 
 		EnumFacing nbtDir = EnumFacing.values()[nbt.getByte("dir")];
 
-		current = new RecursiveBlueprintBuilder(bpt, world, nx, ny, nz, nbtDir);
+		current = new RecursiveBlueprintBuilder(bpt, world, new BlockPos(nx, ny, nz), nbtDir);
 		nextSubBlueprint++;
 
 		return current.nextBuilder();

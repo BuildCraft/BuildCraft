@@ -35,7 +35,8 @@ public final class InventoryIterator {
 	 * @return Iterable
 	 */
 	public static Iterable<IInvSlot> getIterable(IInventory inv, EnumFacing side) {
-		if (inv instanceof ISidedInventory) {
+		if (inv instanceof ISidedInventory && side != null) {
+			// TODO: Is side really warranted for here?
 			return new InventoryIteratorSided((ISidedInventory) inv, side);
 		}
 

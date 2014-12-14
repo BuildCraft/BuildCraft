@@ -12,6 +12,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fluids.IFluidHandler;
@@ -41,7 +42,7 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 
 	public abstract RedstoneBoardRobot getBoard();
 
-	public abstract void aimItemAt(int x, int y, int z);
+	public abstract void aimItemAt(BlockPos pos);
 
 	public abstract int getEnergy();
 

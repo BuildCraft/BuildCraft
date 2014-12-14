@@ -11,7 +11,9 @@ package buildcraft.core.network;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import buildcraft.core.utils.Utils;
 
 public class CommandTargetTile extends CommandTarget {
 	@Override
@@ -22,18 +24,14 @@ public class CommandTargetTile extends CommandTarget {
 	@Override
 	public void write(ByteBuf data, Object target) {
 		TileEntity tile = (TileEntity) target;
-		data.writeInt(tile.xCoord);
-		data.writeShort(tile.yCoord);
-		data.writeInt(tile.zCoord);
+		Utils.writeBlockPos(data, tile.getPos());
 	}
 
 	@Override
 	public ICommandReceiver handle(EntityPlayer player, ByteBuf data, World world) {
-		int posX = data.readInt();
-		int posY = data.readShort();
-		int posZ = data.readInt();
-		if (world.blockExists(posX, posY, posZ)) {
-			TileEntity tile = world.getTileEntity(posX, posY, posZ);
+		BlockPos pos = Utils.readBlockPos(data);
+		if (world.isBlockLoaded(pos)) {
+			TileEntity tile = world.getTileEntity(pos);
 			if (tile instanceof ICommandReceiver) {
 				return (ICommandReceiver) tile;
 			}

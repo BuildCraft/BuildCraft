@@ -8,9 +8,11 @@
  */
 package buildcraft.core.gui;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.sun.prism.util.tess.Tess;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -18,16 +20,17 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fluids.FluidStack;
 
+import buildcraft.api.core.SheetIcon;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.slots.IPhantomSlot;
 import buildcraft.core.gui.tooltips.IToolTipProvider;
@@ -39,6 +42,7 @@ import buildcraft.core.utils.SessionVars;
 
 public abstract class GuiBuildCraft extends GuiContainer {
 
+	public static final ResourceLocation ICONS_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/sheet_icons.png");
 	public static final ResourceLocation LEDGER_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/ledger.png");
 	public final LedgerManager ledgerManager = new LedgerManager(this);
 	public final TileEntity tile;
@@ -152,7 +156,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 	//The magic is here
 	private void drawCutIcon(IIcon icon, int x, int y, int width, int height, int cut) {
-		Tessellator tess = Tessellator.instance;
+		WorldRenderer tess = Tessellator.getInstance().getWorldRenderer();
 		tess.startDrawingQuads();
 		tess.addVertexWithUV(x, y + height, zLevel, icon.getMinU(), icon.getInterpolatedV(height));
 		tess.addVertexWithUV(x + width, y + height, zLevel, icon.getInterpolatedU(width), icon.getInterpolatedV(height));
@@ -213,7 +217,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 	// / MOUSE CLICKS
 	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		int mX = mouseX - guiLeft;
 		int mY = mouseY - guiTop;
 
@@ -251,8 +255,8 @@ public abstract class GuiBuildCraft extends GuiContainer {
 	}
 
 	@Override
-	protected void mouseMovedOrUp(int mouseX, int mouseY, int eventType) {
-		super.mouseMovedOrUp(mouseX, mouseY, eventType);
+	protected void mouseReleased(int mouseX, int mouseY, int eventType) {
+		super.mouseReleased(mouseX, mouseY, eventType);
 
 		int mX = mouseX - guiLeft;
 		int mY = mouseY - guiTop;
@@ -326,7 +330,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 					line = "\u00a7" + Integer.toHexString(tip.color) + line;
 				}
 
-				this.fontRendererObj.drawStringWithShadow(line, x, y, -1);
+				this.fontRendererObj.func_175063_a(line, x, y, -1);
 
 				y += 10 + tip.getSpacing();
 			}
@@ -406,7 +410,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 				String tooltip = ledger.getTooltip();
 				int textWidth = fontRendererObj.getStringWidth(tooltip);
 				drawGradientRect(startX - 3, startY - 3, startX + textWidth + 3, startY + 8 + 3, 0xc0000000, 0xc0000000);
-				fontRendererObj.drawStringWithShadow(tooltip, startX, startY, -1);
+				fontRendererObj.func_175063_a(tooltip, startX, startY, -1);
 			}
 		}
 
@@ -528,10 +532,10 @@ public abstract class GuiBuildCraft extends GuiContainer {
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0F);
 		}
 
-		protected void drawIcon(IIcon icon, int x, int y) {
-
+		protected void drawIcon(SheetIcon icon, int x, int y) {
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0F);
-			drawTexturedModelRectFromIcon(x, y, icon, 16, 16);
+			bindTexture(icon.getTexture());
+			drawTexturedModalRect(x, y, icon.getU(), icon.getV(), 16, 16);
 		}
 	}
 

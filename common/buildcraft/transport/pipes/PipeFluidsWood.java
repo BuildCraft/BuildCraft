@@ -140,7 +140,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 
 	@Override
 	public int getIconIndex(EnumFacing direction) {
-		if (direction == EnumFacing.UNKNOWN) {
+		if (direction == null) {
 			return standardIconIndex;
 		} else {
 			int metadata = container.getBlockMetadata();

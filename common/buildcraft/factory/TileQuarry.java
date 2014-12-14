@@ -357,7 +357,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 							columnHeights[searchX][searchZ] = height = worldObj.getHeightValue(bx, bz);
 						}
 
-						if (height > 0 && height < by && worldObj.provider.dimensionId != -1) {
+						if (height > 0 && height < by && worldObj.provider.getDimensionId() != -1) {
 							continue;
 						}
 

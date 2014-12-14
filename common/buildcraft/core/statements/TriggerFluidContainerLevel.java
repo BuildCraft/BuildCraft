@@ -10,7 +10,6 @@ package buildcraft.core.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -94,14 +93,13 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
 		return false;
 	}
 
-
-	@Override
-	public void registerIcons(IIconRegister register) {
-		icon = register.registerIcon("buildcraft:triggers/trigger_liquidcontainer_" + type.name().toLowerCase());
-	}
-	
 	@Override
 	public IStatementParameter createParameter(int index) {
 		return new StatementParameterItemStack();
+	}
+
+	@Override
+	public int getSheetLocation() {
+		return 13 + (4 + type.ordinal()) * 16;
 	}
 }

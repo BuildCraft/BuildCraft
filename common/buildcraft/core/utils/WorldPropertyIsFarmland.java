@@ -10,12 +10,14 @@ package buildcraft.core.utils;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFarmland;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 public class WorldPropertyIsFarmland extends WorldProperty {
 
 	@Override
-	public boolean get(IBlockAccess blockAccess, Block block, int meta, int x, int y, int z) {
-		return block instanceof BlockFarmland;
+	public boolean get(IBlockAccess blockAccess, IBlockState state, BlockPos pos) {
+		return state.getBlock() instanceof BlockFarmland;
 	}
 }

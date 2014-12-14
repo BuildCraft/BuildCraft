@@ -50,7 +50,7 @@ public class AIRobotUnload extends AIRobot {
 
 		Pipe pipe = station.getPipe().pipe;
 
-		for (IInvSlot robotSlot : InventoryIterator.getIterable(robot, EnumFacing.UNKNOWN)) {
+		for (IInvSlot robotSlot : InventoryIterator.getIterable(robot, null)) {
 			if (robotSlot.getStackInSlot() == null) {
 				continue;
 			}

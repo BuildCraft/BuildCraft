@@ -11,12 +11,13 @@ package buildcraft.core.robots;
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.robots.AIRobot;
@@ -79,7 +80,7 @@ public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 
 				for (IInvSlot s : InventoryIterator.getIterable(robot)) {
 					if (s.getStackInSlot() != null) {
-						ItemStack added = trans.add(s.getStackInSlot(), EnumFacing.UNKNOWN, true);
+						ItemStack added = trans.add(s.getStackInSlot(), null, true);
 
 						if (added.stackSize == 0) {
 							terminate();
@@ -120,14 +121,14 @@ public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 				terminate();
 			} else {
 				stationFound = ((AIRobotSearchStation) ai).targetStation;
-				table = getUsableAssemblyTable(new BlockIndex(stationFound.x(), stationFound.y(), stationFound.z()));
+				table = getUsableAssemblyTable(stationFound.pos());
 
 				if (table == null) {
 					terminate();
 					return;
 				}
 
-				BlockIndex index = new BlockIndex(table);
+				BlockPos index = table.getPos();
 
 				if (!robot.getRegistry().take(new ResourceIdBlock(index), robot)) {
 					terminate();
@@ -150,7 +151,7 @@ public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 	public ItemStack receiveItem(ItemStack stack) {
 		if (StackHelper.isMatchingItem(stack, expectedResult.crafted)) {
 			ITransactor robotTransactor = Transactor.getTransactorFor(robot);
-			ItemStack added = robotTransactor.add(stack, EnumFacing.UNKNOWN, true);
+			ItemStack added = robotTransactor.add(stack, null, true);
 
 			stack.stackSize -= added.stackSize;
 
@@ -215,7 +216,7 @@ public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 			}
 
 			for (EnumFacing dir : EnumFacing.values()) {
-				if (getUsableAssemblyTable(new BlockIndex(station.x(), station.y(), station.z())) != null) {
+				if (getUsableAssemblyTable(station.pos()) != null) {
 					return true;
 				}
 			}
@@ -224,19 +225,17 @@ public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 		}
 	}
 
-	private TileAssemblyTable getUsableAssemblyTable(BlockIndex b) {
+	private TileAssemblyTable getUsableAssemblyTable(BlockPos b) {
 
 		for (EnumFacing dir : EnumFacing.values()) {
-			BlockIndex index = new BlockIndex (b.x + dir.getFrontOffsetX(), b.y
-					+ dir.getFrontOffsetY(), b.z
-					+ dir.getFrontOffsetZ());
+			BlockPos index = b.offset(dir);
 
 			if (robot.getRegistry().isTaken(new ResourceIdBlock(index))) {
 				continue;
 			}
 
-			Block nearbyBlock = robot.worldObj.getBlock(index.x, index.y, index.z);
-			int nearbyMeta = robot.worldObj.getBlockMetadata(index.x, index.y, index.z);
+			IBlockState nearbyState = robot.worldObj.getBlockState(index);
+			Block nearbyBlock = nearbyState.getBlock();
 
 			if (nearbyBlock instanceof BlockLaserTable && nearbyMeta == 0) {
 				TileAssemblyTable f = (TileAssemblyTable) robot.worldObj.getTileEntity(index.x, index.y, index.z);

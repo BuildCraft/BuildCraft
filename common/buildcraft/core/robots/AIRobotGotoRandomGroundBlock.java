@@ -10,7 +10,7 @@ package buildcraft.core.robots;
 
 import java.util.LinkedList;
 
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
@@ -19,7 +19,7 @@ import buildcraft.core.utils.PathFindingJob;
 
 public class AIRobotGotoRandomGroundBlock extends AIRobot {
 
-	public BlockIndex blockFound;
+	public BlockPos blockFound;
 
 	private int range;
 	private PathFinding pathFinding;
@@ -45,7 +45,7 @@ public class AIRobotGotoRandomGroundBlock extends AIRobot {
 			startDelegateAI(new AIRobotSearchRandomGroundBlock(robot, range, filter, zone));
 		} else {
 			if (!pathFindingJob.isAlive()) {
-				LinkedList<BlockIndex> path = pathFinding.getResult();
+				LinkedList<BlockPos> path = pathFinding.getResult();
 				if (path.size() == 0) {
 					terminate();
 				} else {
@@ -66,7 +66,7 @@ public class AIRobotGotoRandomGroundBlock extends AIRobot {
 			}
 
 			blockFound = aiFind.blockFound;
-			pathFinding = new PathFinding(robot.worldObj, new BlockIndex(robot), blockFound);
+			pathFinding = new PathFinding(robot.worldObj, new BlockPos(robot), blockFound);
 			pathFindingJob = new PathFindingJob(pathFinding);
 			pathFindingJob.start();
 		} else if (ai instanceof AIRobotGotoBlock) {

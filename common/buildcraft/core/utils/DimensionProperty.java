@@ -11,6 +11,7 @@ package buildcraft.core.utils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.LongHashMap;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.IWorldAccess;
@@ -31,9 +32,9 @@ public class DimensionProperty implements IWorldAccess {
 		worldProperty = iProp;
 	}
 
-	public synchronized boolean get(int x, int y, int z) {
-		int xChunk = x >> 4;
-		int zChunk = z >> 4;
+	public synchronized boolean get(BlockPos pos) {
+		int xChunk = pos.getX() >> 4;
+		int zChunk = pos.getZ() >> 4;
 		long chunkId = ChunkCoordIntPair.chunkXZ2Int(xChunk, zChunk);
 		ChunkProperty property;
 
@@ -46,7 +47,7 @@ public class DimensionProperty implements IWorldAccess {
 		}
 
 
-		return property.get(x & 0xF, y, z & 0xF);
+		return property.get(pos.getX() & 0xF, pos.getY(), pos.getZ() & 0xF);
 	}
 
 	private void load(Chunk chunk, ChunkProperty property) {
@@ -54,11 +55,8 @@ public class DimensionProperty implements IWorldAccess {
             for (int x = 0; x < 16; ++x) {
                 for (int y = 0; y < worldHeight; ++y) {
                     for (int z = 0; z < 16; ++z) {
-                        Block block = chunk.getBlock(x, y, z);
-                        int meta = chunk.getBlockMetadata(x, y, z);
-
                         boolean prop = worldProperty.
-                                get(world, block, meta, chunk.xPosition * 16 + x, y, chunk.zPosition * 16 + z);
+                                get(world, chunk.getBlockState(new BlockPos(x, y, z)), new BlockPos(chunk.xPosition * 16 + x, y, chunk.zPosition * 16 + z));
                         property.set(x, y, z, prop);
                     }
                 }
@@ -67,24 +65,23 @@ public class DimensionProperty implements IWorldAccess {
 	}
 
 	@Override
-	public synchronized void markBlockForUpdate(int x, int y, int z) {
-		int xChunk = x >> 4;
-		int zChunk = z >> 4;
+	public synchronized void markBlockForUpdate(BlockPos pos) {
+		int xChunk = pos.getX() >> 4;
+		int zChunk = pos.getZ() >> 4;
 		long chunkId = ChunkCoordIntPair.chunkXZ2Int(xChunk, zChunk);
 
 		if (chunkMapping.containsItem(chunkId)) {
 			ChunkProperty property = (ChunkProperty) chunkMapping.getValueByKey(chunkId);
 
-			Block block = world.getBlock(x, y, z);
-			int meta = world.getBlockMetadata(x, y, z);
 			boolean prop = worldProperty.
-					get(world, block, meta, x, y, z);
-			property.set(x & 0xF, y, z & 0xF, prop);
+					get(world, world.getBlockState(pos), pos);
+			property.set(pos.getX() & 0xF, pos.getY(), pos.getZ() & 0xF, prop);
 		}
 	}
 
 	@Override
-	public void markBlockForRenderUpdate(int var1, int var2, int var3) {
+	public void notifyLightSet(BlockPos pos) {
+
 	}
 
 	@Override
@@ -101,36 +98,38 @@ public class DimensionProperty implements IWorldAccess {
 	}
 
 	@Override
-	public void spawnParticle(String var1, double var2, double var4, double var6, double var8, double var10,
-			double var12) {
+	public void func_180442_a(int p_180442_1_, boolean p_180442_2_, double p_180442_3_, double p_180442_5_, double p_180442_7_, double p_180442_9_, double p_180442_11_, double p_180442_13_, int... p_180442_15_) {
+
 	}
 
 	@Override
-	public void onEntityCreate(Entity var1) {
+	public void onEntityAdded(Entity entityIn) {
+
 	}
 
 	@Override
-	public void onEntityDestroy(Entity var1) {
+	public void onEntityRemoved(Entity entityIn) {
+
 	}
 
 	@Override
-	public void playRecord(String var1, int var2, int var3, int var4) {
+	public void func_174961_a(String p_174961_1_, BlockPos p_174961_2_) {
+
 	}
 
 	@Override
-	public void broadcastSound(int var1, int var2, int var3, int var4, int var5) {
+	public void func_180440_a(int p_180440_1_, BlockPos p_180440_2_, int p_180440_3_) {
+
 	}
 
 	@Override
-	public void playAuxSFX(EntityPlayer var1, int var2, int var3, int var4, int var5, int var6) {
+	public void func_180439_a(EntityPlayer p_180439_1_, int p_180439_2_, BlockPos p_180439_3_, int p_180439_4_) {
+
 	}
 
 	@Override
-	public void destroyBlockPartially(int var1, int var2, int var3, int var4, int var5) {
-	}
+	public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress) {
 
-	@Override
-	public void onStaticEntitiesChanged() {
 	}
 
 	public void clear() {

@@ -29,7 +29,7 @@ public class BptItemPipeFilters extends BptPipeExtension {
 		inv.readFromNBT(slot.tileNBT);
 
 		for (int dir = 0; dir <= 5; ++dir) {
-			EnumFacing r = EnumFacing.values()[dir].getRotation(EnumFacing.UP);
+			EnumFacing r = EnumFacing.values()[dir].rotateY();
 
 			for (int s = 0; s < 9; ++s) {
 				newInv.setInventorySlotContents(r.ordinal() * 9 + s, inv.getStackInSlot(dir * 9 + s));

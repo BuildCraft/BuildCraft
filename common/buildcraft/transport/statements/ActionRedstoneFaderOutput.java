@@ -8,8 +8,6 @@
  */
 package buildcraft.transport.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.statements.IActionInternal;
@@ -32,15 +30,8 @@ public class ActionRedstoneFaderOutput extends ActionRedstoneOutput implements I
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon() {
-		return icon;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon(String.format("buildcraft:triggers/redstone_%02d", level));
+	public int getSheetLocation() {
+		return 9 + (level * 16);
 	}
 
 	@Override

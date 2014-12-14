@@ -10,7 +10,6 @@ package buildcraft.core.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -95,14 +94,14 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
 
 		return false;
 	}
-
-	@Override
-	public void registerIcons(IIconRegister register) {
-		icon = register.registerIcon("buildcraft:triggers/trigger_inventory_" + type.name().toLowerCase());
-	}
 	
 	@Override
 	public IStatementParameter createParameter(int index) {
 		return new StatementParameterItemStack();
+	}
+
+	@Override
+	public int getSheetLocation() {
+		return 10 + type.ordinal() * 16;
 	}
 }

@@ -46,7 +46,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.events.PipePlacedEvent;
 import buildcraft.api.events.RobotPlacementEvent;
@@ -76,7 +76,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	public static int facadeRenderColor = -1;
 	public static Map<Item, Class<? extends Pipe>> pipes = new HashMap<Item, Class<? extends Pipe>>();
-	public static Map<BlockIndex, Pipe<?>> pipeRemoved = new HashMap<BlockIndex, Pipe<?>>();
+	public static Map<BlockPos, Pipe<?>> pipeRemoved = new HashMap<BlockPos, Pipe<?>>();
 
 	private static long lastRemovedDate = -1;
 
@@ -324,12 +324,12 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		MovingObjectPosition[] hits = new MovingObjectPosition[31];
 		AxisAlignedBB[] boxes = new AxisAlignedBB[31];
 		EnumFacing[] sideHit = new EnumFacing[31];
-		Arrays.fill(sideHit, EnumFacing.UNKNOWN);
+		Arrays.fill(sideHit, null);
 
 		// pipe
 
 		for (EnumFacing side : DIR_VALUES) {
-			if (side == EnumFacing.UNKNOWN || tileG.isPipeConnected(side)) {
+			if (side == null || tileG.isPipeConnected(side)) {
 				AxisAlignedBB bb = getPipeBoundingBox(side);
 				setBlockBounds(bb);
 				boxes[side.ordinal()] = bb;
@@ -507,7 +507,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		float min = CoreConstants.PIPE_MIN_POS;
 		float max = CoreConstants.PIPE_MAX_POS;
 
-		if (side == EnumFacing.UNKNOWN) {
+		if (side == null) {
 			return AxisAlignedBB.fromBounds(min, min, min, max, max, max);
 		}
 
@@ -546,7 +546,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			pipeRemoved.clear();
 		}
 
-		pipeRemoved.put(new BlockIndex(x, y, z), pipe);
+		pipeRemoved.put(new BlockPos(x, y, z), pipe);
 		world.removeTileEntity(x, y, z);
 
 		updateNeighbourSignalState(pipe);
@@ -570,7 +570,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		Pipe<?> pipe = getPipe(world, x, y, z);
 
 		if (pipe == null) {
-			pipe = pipeRemoved.get(new BlockIndex(x, y, z));
+			pipe = pipeRemoved.get(new BlockPos(x, y, z));
 		}
 		
 		if (pipe != null) {
@@ -596,7 +596,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		Pipe<?> pipe = getPipe(world, i, j, k);
 
 		if (pipe == null) {
-			pipe = pipeRemoved.get(new BlockIndex(i, j, k));
+			pipe = pipeRemoved.get(new BlockPos(i, j, k));
 		}
 
 		if (pipe != null) {
@@ -856,7 +856,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			}
 		}
 		if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pipe) {
-			if (!pipe.hasGate(side) && addGate(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != EnumFacing.UNKNOWN ? rayTraceResult.sideHit : side)) {
+			if (!pipe.hasGate(side) && addGate(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != null ? rayTraceResult.sideHit : side)) {
 				return true;
 			}
 		}
@@ -930,7 +930,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			}
 		}
 		if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pipe) {
-			if (addFacade(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != EnumFacing.UNKNOWN ? rayTraceResult.sideHit : side)) {
+			if (addFacade(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != null ? rayTraceResult.sideHit : side)) {
 				return true;
 			}
 		}
@@ -958,7 +958,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			}
 		}
 		if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pipe) {
-			if (addPlug(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != EnumFacing.UNKNOWN ? rayTraceResult.sideHit : side)) {
+			if (addPlug(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != null ? rayTraceResult.sideHit : side)) {
 				return true;
 			}
 		}
@@ -975,7 +975,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			}
 		}
 		if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pipe) {
-			if (addRobotStation(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != EnumFacing.UNKNOWN ? rayTraceResult.sideHit : side)) {
+			if (addRobotStation(player, pipe, rayTraceResult.sideHit != null && rayTraceResult.sideHit != null ? rayTraceResult.sideHit : side)) {
 				return true;
 			}
 		}
@@ -1147,8 +1147,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return placed;
 	}
 
-	public static Pipe<?> getPipe(IBlockAccess blockAccess, int i, int j, int k) {
-		TileEntity tile = blockAccess.getTileEntity(i, j, k);
+	public static Pipe<?> getPipe(IBlockAccess blockAccess, BlockPos pos) {
+		TileEntity tile = blockAccess.getTileEntity(pos);
 
 		if (!(tile instanceof TileGenericPipe) || tile.isInvalid()) {
 			return null;

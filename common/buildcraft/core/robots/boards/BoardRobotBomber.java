@@ -17,7 +17,7 @@ import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.ITransactor;
@@ -34,7 +34,7 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
 
 	private static final IStackFilter TNT_FILTER = new ArrayStackFilter(new ItemStack(Blocks.tnt));
 
-	private BlockIndex target = null;
+	private BlockPos target = null;
 
 	private int flyingHeight = 20;
 
@@ -80,7 +80,7 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
 					aiFind.blockFound.z));
 		} else if (ai instanceof AIRobotGotoBlock) {
 			ITransactor t = Transactor.getTransactorFor(robot);
-			ItemStack stack = t.remove(TNT_FILTER, EnumFacing.UNKNOWN, true);
+			ItemStack stack = t.remove(TNT_FILTER, null, true);
 
 			if (stack != null && stack.stackSize > 0) {
 				EntityTNTPrimed tnt = new EntityTNTPrimed(robot.worldObj, robot.posX + 0.25, robot.posY - 1,

@@ -61,8 +61,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 			return;
 		}
 
-		IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord,
-				zCoord);
+		IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, pos);
 
 		if (a != null) {
 			box.initialize(a);
@@ -76,7 +75,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 
 		if (currentPattern != null && currentTemplate == null) {
 			currentTemplate = currentPattern
-					.getTemplateBuilder(box, getWorldObj());
+					.getTemplateBuilder(box, getWorld());
 			context = currentTemplate.getContext();
 		}
 
@@ -89,8 +88,8 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		if (worldObj.isRemote) {
 			return;
@@ -119,12 +118,12 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 		}
 
 		if (currentPattern != null && currentTemplate == null) {
-			currentTemplate = currentPattern.getTemplateBuilder(box, getWorldObj());
+			currentTemplate = currentPattern.getTemplateBuilder(box, getWorld());
 			context = currentTemplate.getContext();
 		}
 
 		if (currentTemplate != null) {
-			currentTemplate.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord);
+			currentTemplate.buildNextSlot(worldObj, this, pos);
 
 			if (currentTemplate.isDone(this)) {
 				done = true;
@@ -163,7 +162,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	}
 
 	@Override
-	public String getInventoryName() {
+	public String getName() {
 		return "Filler";
 	}
 
@@ -226,16 +225,6 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	}
 
 	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		if (worldObj.getTileEntity(xCoord, yCoord, zCoord) != this) {
-			return false;
-		}
-
-		return entityplayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D,
-				zCoord + 0.5D) <= 64D;
-	}
-
-	@Override
 	public void invalidate() {
 		super.invalidate();
 		destroy();
@@ -263,7 +252,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 		done = data.readBoolean();
 		setPattern((FillerPattern) FillerManager.registry.getPattern(Utils.readUTF(data)));
 
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+		worldObj.markBlockForUpdate(pos);
 	}
 
 	@Override
@@ -272,11 +261,11 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	}
 
 	@Override
-	public void openInventory() {
+	public void openInventory(EntityPlayer player) {
 	}
 
 	@Override
-	public void closeInventory() {
+	public void closeInventory(EntityPlayer player) {
 	}
 
 	@Override
@@ -302,18 +291,13 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
-		return false;
-	}
-
-	@Override
 	public Box getBox() {
 		return box;
 	}
 
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
-		return new Box (this).extendToEncompass(box).expand(50).fromBounds();
+		return new Box (this).extendToEncompass(box).expand(50).getBoundingBox();
 	}
 
 	@Override

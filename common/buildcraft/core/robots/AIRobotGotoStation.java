@@ -12,14 +12,15 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
+import buildcraft.core.utils.Utils;
 
 public class AIRobotGotoStation extends AIRobot {
 
-	private BlockIndex stationIndex;
+	private BlockPos stationIndex;
 	private EnumFacing stationSide;
 	private boolean docked = false;
 
@@ -30,24 +31,20 @@ public class AIRobotGotoStation extends AIRobot {
 	public AIRobotGotoStation(EntityRobotBase iRobot, IDockingStation station) {
 		super(iRobot);
 
-		stationIndex = station.index();
+		stationIndex = station.pos();
 		stationSide = station.side();
 	}
 
 	@Override
 	public void start() {
 		DockingStation station = (DockingStation)
-				robot.getRegistry().getStation(stationIndex.x, stationIndex.y, stationIndex.z,
-				stationSide);
+				robot.getRegistry().getStation(stationIndex, stationSide);
 
 		if (station == null || station == robot.getDockingStation()) {
 			terminate();
 		} else {
 			if (station.take(robot)) {
-				startDelegateAI(new AIRobotGotoBlock(robot,
-						station.x() + station.side().getFrontOffsetX(),
-						station.y() + station.side().getFrontOffsetY(),
-						station.z() + station.side().getFrontOffsetZ()));
+				startDelegateAI(new AIRobotGotoBlock(robot, station.pos().offset(station.side())));
 			} else {
 				terminate();
 			}
@@ -57,16 +54,15 @@ public class AIRobotGotoStation extends AIRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		DockingStation station = (DockingStation)
-				robot.getRegistry().getStation(stationIndex.x, stationIndex.y, stationIndex.z,
-						stationSide);
+				robot.getRegistry().getStation(stationIndex, stationSide);
 
 		if (station == null) {
 			terminate();
 		} else if (ai instanceof AIRobotGotoBlock) {
 			startDelegateAI(new AIRobotStraightMoveTo(robot,
-					stationIndex.x + 0.5F + stationSide.getFrontOffsetX() * 0.5F,
-					stationIndex.y + 0.5F + stationSide.getFrontOffsetY() * 0.5F,
-					stationIndex.z + 0.5F + stationSide.getFrontOffsetZ() * 0.5F));
+					stationIndex.getX() + 0.5F + stationSide.getFrontOffsetX() * 0.5F,
+					stationIndex.getY() + 0.5F + stationSide.getFrontOffsetY() * 0.5F,
+					stationIndex.getZ() + 0.5F + stationSide.getFrontOffsetZ() * 0.5F));
 		} else {
 			docked = true;
 			robot.dock(station);
@@ -87,14 +83,14 @@ public class AIRobotGotoStation extends AIRobot {
 	@Override
 	public void writeSelfToNBT(NBTTagCompound nbt) {
 		NBTTagCompound indexNBT = new NBTTagCompound();
-		stationIndex.writeTo(indexNBT);
+		Utils.writeBlockPos(indexNBT, stationIndex);
 		nbt.setTag("stationIndex", indexNBT);
 		nbt.setByte("stationSide", (byte) stationSide.ordinal());
 	}
 
 	@Override
 	public void loadSelfFromNBT(NBTTagCompound nbt) {
-		stationIndex = new BlockIndex(nbt.getCompoundTag("stationIndex"));
+		stationIndex = Utils.readBlockPos(nbt.getCompoundTag("stationIndex"));
 		stationSide = EnumFacing.values()[nbt.getByte("stationSide")];
 	}
 }

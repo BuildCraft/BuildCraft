@@ -8,6 +8,7 @@
  */
 package buildcraft.core.builders.patterns;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.core.Box;
@@ -18,6 +19,11 @@ public class PatternHorizon extends FillerPattern {
 
 	public PatternHorizon() {
 		super("horizon");
+	}
+
+	@Override
+	protected int getIconPosition() {
+		return 6;
 	}
 
 	@Override
@@ -47,6 +53,6 @@ public class PatternHorizon extends FillerPattern {
 	public BptBuilderTemplate getTemplateBuilder (Box box, World world) {
 		int yMin = box.pMin().y > 0 ? (int) box.pMin().y - 1 : 0;
 
-		return new BptBuilderTemplate(getTemplate(box, world), world, box.xMin, yMin, box.zMin);
+		return new BptBuilderTemplate(getTemplate(box, world), world, new BlockPos(box.xMin, yMin, box.zMin));
 	}
 }

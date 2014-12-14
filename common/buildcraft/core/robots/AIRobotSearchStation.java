@@ -50,7 +50,7 @@ public class AIRobotSearchStation extends AIRobot {
 				continue;
 			}
 
-			if (zone != null && !zone.contains(d.x(), d.y(), d.z())) {
+			if (zone != null && !zone.contains(d.pos().getX(), d.pos().getY(), d.pos().getZ())) {
 				continue;
 			}
 
@@ -59,9 +59,9 @@ public class AIRobotSearchStation extends AIRobot {
 					continue;
 				}
 
-				double dx = robot.posX - d.x();
-				double dy = robot.posY - d.y();
-				double dz = robot.posZ - d.z();
+				double dx = robot.posX - d.pos().getX();
+				double dy = robot.posY - d.pos().getY();
+				double dz = robot.posZ - d.pos().getZ();
 				double distance = dx * dx + dy * dy + dz * dz;
 
 				if (potentialStation == null || distance < potentialStationDistance) {

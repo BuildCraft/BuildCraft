@@ -8,6 +8,7 @@
  */
 package buildcraft.core.gui;
 
+import java.io.IOException;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -118,7 +119,7 @@ public class GuiList extends GuiAdvancedInterface {
 	public void initGui() {
 		super.initGui();
 
-		textField = new GuiTextField(this.fontRendererObj, 10, 10, 156, 12);
+		textField = new GuiTextField(0, this.fontRendererObj, 10, 10, 156, 12);
 		textField.setMaxStringLength(32);
 		textField.setText(ItemList.getLabel(player.getCurrentEquippedItem()));
 		textField.setFocused(false);
@@ -205,7 +206,7 @@ public class GuiList extends GuiAdvancedInterface {
 	}
 
 	@Override
-	protected void keyTyped(char c, int i) {
+	protected void keyTyped(char c, int i) throws IOException {
 		if (textField.isFocused()) {
 			if (c == 13 || c == 27) {
 				textField.setFocused(false);

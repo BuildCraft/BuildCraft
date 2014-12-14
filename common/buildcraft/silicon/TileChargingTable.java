@@ -7,14 +7,18 @@ import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.utils.StringUtils;
 
 public class TileChargingTable extends TileLaserTableBase implements IHasWork {
-    @Override
+    /*@Override
     public boolean canUpdate() {
         return !FMLCommonHandler.instance().getEffectiveSide().isClient();
-    }
+    }*/
 
     @Override
-    public void updateEntity() { // WARNING: run only server-side, see canUpdate()
-        super.updateEntity();
+    public void update() { // WARNING: run only server-side, see canUpdate()
+        super.update();
+
+        if (worldObj.isRemote) {
+            return;
+        }
 
         if (getEnergy() > 0) {
             if (getRequiredEnergy() > 0) {
@@ -55,13 +59,8 @@ public class TileChargingTable extends TileLaserTableBase implements IHasWork {
     }
 
     @Override
-    public String getInventoryName() {
-        return StringUtils.localize("tile.chargingTableBlock.name");
-    }
-
-    @Override
-    public boolean hasCustomInventoryName() {
-        return false;
+    public String getName() {
+        return "tile.chargingTableBlock.name";
     }
 
     @Override

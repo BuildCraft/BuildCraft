@@ -66,9 +66,7 @@ public class AIRobotGotoStationToLoadFluids extends AIRobot {
 			}
 
 			for (EnumFacing dir : EnumFacing.values()) {
-				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.getFrontOffsetX(), station.y()
-						+ dir.getFrontOffsetY(), station.z()
-						+ dir.getFrontOffsetZ());
+				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.pos().offset(dir));
 
 				if (nearbyTile != null && nearbyTile instanceof IFluidHandler) {
 					IFluidHandler handler = (IFluidHandler) nearbyTile;
@@ -79,7 +77,7 @@ public class AIRobotGotoStationToLoadFluids extends AIRobot {
 					// items as well.
 					if (drainable != null
 							&& filter.matches(drainable.getFluid())
-							&& robot.canFill(EnumFacing.UNKNOWN, drainable.getFluid())) {
+							&& robot.canFill(null, drainable.getFluid())) {
 						return true;
 					}
 				}

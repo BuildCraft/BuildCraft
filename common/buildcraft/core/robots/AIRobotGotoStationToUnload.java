@@ -60,7 +60,7 @@ public class AIRobotGotoStationToUnload extends AIRobot {
 		public boolean matches(DockingStation station) {
 			Pipe pipe = station.getPipe().pipe;
 
-			for (IInvSlot robotSlot : InventoryIterator.getIterable(robot, EnumFacing.UNKNOWN)) {
+			for (IInvSlot robotSlot : InventoryIterator.getIterable(robot, null)) {
 				if (robotSlot.getStackInSlot() == null) {
 					continue;
 				}

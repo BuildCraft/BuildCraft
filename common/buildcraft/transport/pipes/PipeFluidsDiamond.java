@@ -131,7 +131,7 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
 		}
 
 		// get center tank, from which outputs are checked; ignore if has no fluid
-		FluidTankInfo[] tanks = transport.getTankInfo(EnumFacing.UNKNOWN);
+		FluidTankInfo[] tanks = transport.getTankInfo(null);
 		if (tanks == null || tanks[0] == null || tanks[0].fluid == null || tanks[0].fluid.amount == 0) {
 			return true;
 		}

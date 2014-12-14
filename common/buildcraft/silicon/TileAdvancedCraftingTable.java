@@ -168,7 +168,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	}
 
 	public WeakReference<EntityPlayer> getInternalPlayer() {
-		return CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, xCoord, yCoord + 1, zCoord);
+		return CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, pos.offsetUp());
 	}
 
 	@Override
@@ -197,11 +197,6 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	}
 
 	@Override
-	public String getInventoryName() {
-		return StringUtils.localize("tile.assemblyWorkbenchBlock.name");
-	}
-
-	@Override
 	public void markDirty() {
 		super.markDirty();
 		craftable = craftResult.getStackInSlot(0) != null;
@@ -218,8 +213,8 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		if (worldObj.isRemote) {
 			return;
@@ -343,11 +338,11 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 			output.stackSize -= Transactor.getTransactorFor(invOutput).add(output, EnumFacing.UP, true).stackSize;
 
 			if (output.stackSize > 0) {
-				output.stackSize -= Utils.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, output);
+				output.stackSize -= Utils.addToRandomInventoryAround(worldObj, pos, output);
 			}
 
 			if (output.stackSize > 0) {
-				InvUtils.dropItems(worldObj, output, xCoord, yCoord + 1, zCoord);
+				InvUtils.dropItems(worldObj, output, pos.offsetUp());
 			}
 		}
 	}
@@ -384,7 +379,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 		updateRecipe();
 
 		if (worldObj.isRemote) {
-			PacketSlotChange packet = new PacketSlotChange(PacketIds.ADVANCED_WORKBENCH_SETSLOT, xCoord, yCoord, zCoord, slot, stack);
+			PacketSlotChange packet = new PacketSlotChange(PacketIds.ADVANCED_WORKBENCH_SETSLOT, pos, slot, stack);
 			BuildCraftSilicon.instance.sendToServer(packet);
 		}
 	}
@@ -449,17 +444,17 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	}
 
 	@Override
-	public int[] getAccessibleSlotsFromSide(int side) {
+	public int[] getSlotsForFace(EnumFacing side) {
 		return SLOTS;
 	}
 
 	@Override
-	public boolean canInsertItem(int slot, ItemStack stack, int side) {
+	public boolean canInsertItem(int slot, ItemStack stack, EnumFacing side) {
 		return isItemValidForSlot(slot, stack);
 	}
 
 	@Override
-	public boolean canExtractItem(int slot, ItemStack stack, int side) {
+	public boolean canExtractItem(int slot, ItemStack stack, EnumFacing side) {
 		return slot >= 15;
 	}
 
@@ -468,8 +463,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 		return slot < 15;
 	}
 
-	@Override
-	public boolean hasCustomInventoryName() {
-		return false;
+	public String getName() {
+		return "tile.assemblyWorkbenchBlock.name";
 	}
 }

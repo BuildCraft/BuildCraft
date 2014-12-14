@@ -81,11 +81,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	}
 
 	@Override
-	public String getInventoryName() {
-		return null;
-	}
-
-	@Override
 	public int getInventoryStackLimit() {
 		return 0;
 	}
@@ -96,8 +91,13 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	}
 
 	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
+	public void openInventory(EntityPlayer playerIn) {
+
+	}
+
+	@Override
+	public void closeInventory(EntityPlayer playerIn) {
+
 	}
 
 	@Override
@@ -106,7 +106,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	}
 
 	@Override
-	public void updateEntity() {
+	public void update() {
 		if (worldObj.isRemote) {
 			simpleAnimationIterate();
 			return;
@@ -247,14 +247,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 		}
 	}
 
-	@Override
-	public void openInventory() {
-	}
-
-	@Override
-	public void closeInventory() {
-	}
-
 	public void resetFilters() {
 		for (SingleUseTank tank : tankManager) {
 			tank.setAcceptedFluid(null);
@@ -375,11 +367,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
-		return false;
-	}
-
-	@Override
 	public int getCraftingItemStackSize() {
 		return 0;
 	}
@@ -420,5 +407,10 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	@Override
 	public int getCraftingFluidStackSize() {
 		return tanks.length;
+	}
+
+	@Override
+	public String getName() {
+		return "";
 	}
 }

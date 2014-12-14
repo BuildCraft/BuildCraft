@@ -13,10 +13,12 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -41,28 +43,29 @@ public abstract class BlockBuildCraft extends BlockContainer {
 
 
 	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {
-		super.onBlockPlacedBy(world, x, y, z, entity, stack);
-		FMLCommonHandler.instance().bus().post(new BlockPlacedDownEvent((EntityPlayer) entity, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z), x, y, z));
-		TileEntity tile = world.getTileEntity(x, y, z);
+	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack stack) {
+		super.onBlockPlacedBy(world, pos, state, entity, stack);
+		FMLCommonHandler.instance().bus().post(new BlockPlacedDownEvent((EntityPlayer) entity, world.getBlockState(pos), pos));
+		TileEntity tile = world.getTileEntity(pos);
 		if (tile instanceof TileBuildCraft) {
 			((TileBuildCraft) tile).onBlockPlacedBy(entity, stack);
 		}
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
-		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, block, par6);
+	public void breakBlock(World world, BlockPos pos, IBlockState state) {
+		Utils.preDestroyBlock(world, pos, state);
+		super.breakBlock(world, pos, state);
 	}
 
 	@Override
-	public int getLightValue(IBlockAccess world, int x, int y, int z) {
-		TileEntity tile = world.getTileEntity(x, y, z);
-		if (tile instanceof IHasWork && ((IHasWork) tile).hasWork()) {
-			return super.getLightValue(world, x, y, z) + 8;
-		} else {
-			return super.getLightValue(world, x, y, z);
+	public int getLightValue(IBlockAccess world, BlockPos pos) {
+		if (hasTileEntity(world.getBlockState(pos))) {
+			TileEntity tile = world.getTileEntity(pos);
+			if (tile instanceof IHasWork && ((IHasWork) tile).hasWork()) {
+				return super.getLightValue(world, pos) + 8;
+			}
 		}
+		return super.getLightValue(world, pos);
 	}
 }

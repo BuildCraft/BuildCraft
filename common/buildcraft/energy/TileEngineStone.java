@@ -55,7 +55,7 @@ public class TileEngineStone extends TileEngineWithInventory {
 			return true;
 		}
 		if (!worldObj.isRemote) {
-			player.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_STONE, worldObj, xCoord, yCoord, zCoord);
+			player.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_STONE, worldObj, pos.getX(), pos.getY(), pos.getZ());
 		}
 		return true;
 	}
@@ -166,10 +166,5 @@ public class TileEngineStone extends TileEngineWithInventory {
 		double e = TARGET_OUTPUT * getMaxEnergy() - energy;
 		esum = MathUtils.clamp(esum + e, -eLimit, eLimit);
 		return (int) Math.round(MathUtils.clamp(e * kp + esum * ki, MIN_OUTPUT, MAX_OUTPUT));
-	}
-
-	@Override
-	public boolean hasCustomInventoryName() {
-		return false;
 	}
 }

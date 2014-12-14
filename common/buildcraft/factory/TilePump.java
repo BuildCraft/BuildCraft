@@ -28,7 +28,7 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.CoreConstants;
@@ -49,7 +49,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 	public SingleUseTank tank = new SingleUseTank("tank", MAX_LIQUID, this);
 
 	private EntityBlock tube;
-	private TreeMap<Integer, Deque<BlockPos> pumpLayerQueues = new TreeMap<Integer, Deque<BlockPos>>();
+	private TreeMap<Integer, Deque<BlockPos>> pumpLayerQueues = new TreeMap<Integer, Deque<BlockPos>>();
 	private double tubeY = Double.NaN;
 	private int aimY = 0;
 
@@ -101,7 +101,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 			return;
 		}
 
-		BlockIndex index = getNextIndexToPump(false);
+		BlockPos index = getNextIndexToPump(false);
 
 		FluidStack fluidToPump = index != null ? BlockUtils.drainBlock(worldObj, index.x, index.y, index.z, false) : null;
 		if (fluidToPump != null) {
@@ -195,7 +195,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 		}
 	}
 
-	private BlockIndex getNextIndexToPump(boolean remove) {
+	private BlockPos getNextIndexToPump(boolean remove) {
 		if (pumpLayerQueues.isEmpty()) {
 			if (timer.markTimeIfDelay(worldObj)) {
 				rebuildQueue();
@@ -204,7 +204,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 			return null;
 		}
 
-		Deque<BlockIndex> topLayer = pumpLayerQueues.lastEntry().getValue();
+		Deque<BlockPos> topLayer = pumpLayerQueues.lastEntry().getValue();
 
 		if (topLayer != null) {
 			if (topLayer.isEmpty()) {
@@ -212,7 +212,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 			}
 
 			if (remove) {
-				BlockIndex index = topLayer.pollLast();
+				BlockPos index = topLayer.pollLast();
 				return index;
 			} else {
 				return topLayer.peekLast();
@@ -222,11 +222,11 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 		}
 	}
 
-	private Deque<BlockIndex> getLayerQueue(int layer) {
-		Deque<BlockIndex> pumpQueue = pumpLayerQueues.get(layer);
+	private Deque<BlockPos> getLayerQueue(int layer) {
+		Deque<BlockPos> pumpQueue = pumpLayerQueues.get(layer);
 
 		if (pumpQueue == null) {
-			pumpQueue = new LinkedList<BlockIndex>();
+			pumpQueue = new LinkedList<BlockPos>();
 			pumpLayerQueues.put(layer, pumpQueue);
 		}
 
@@ -249,18 +249,18 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 			return;
 		}
 
-		Set<BlockIndex> visitedBlocks = new HashSet<BlockIndex>();
-		Deque<BlockIndex> fluidsFound = new LinkedList<BlockIndex>();
+		Set<BlockPos> visitedBlocks = new HashSet<BlockPos>();
+		Deque<BlockPos> fluidsFound = new LinkedList<BlockPos>();
 
 		queueForPumping(x, y, z, visitedBlocks, fluidsFound, pumpingFluid);
 
 //		long timeoutTime = System.nanoTime() + 10000;
 
 		while (!fluidsFound.isEmpty()) {
-			Deque<BlockIndex> fluidsToExpand = fluidsFound;
-			fluidsFound = new LinkedList<BlockIndex>();
+			Deque<BlockPos> fluidsToExpand = fluidsFound;
+			fluidsFound = new LinkedList<BlockPos>();
 
-			for (BlockIndex index : fluidsToExpand) {
+			for (BlockPos index : fluidsToExpand) {
 				queueForPumping(index.x, index.y + 1, index.z, visitedBlocks, fluidsFound, pumpingFluid);
 				queueForPumping(index.x + 1, index.y, index.z, visitedBlocks, fluidsFound, pumpingFluid);
 				queueForPumping(index.x - 1, index.y, index.z, visitedBlocks, fluidsFound, pumpingFluid);
@@ -279,8 +279,8 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 		}
 	}
 
-	public void queueForPumping(int x, int y, int z, Set<BlockIndex> visitedBlocks, Deque<BlockIndex> fluidsFound, Fluid pumpingFluid) {
-		BlockIndex index = new BlockIndex(x, y, z);
+	public void queueForPumping(int x, int y, int z, Set<BlockPos> visitedBlocks, Deque<BlockPos> fluidsFound, Fluid pumpingFluid) {
+		BlockPos index = new BlockPos(x, y, z);
 		if (visitedBlocks.add(index)) {
 			if ((x - xCoord) * (x - xCoord) + (z - zCoord) * (z - zCoord) > 64 * 64) {
 				return;
@@ -326,7 +326,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 	}
 
 	private boolean isFluidAllowed(Fluid fluid) {
-		return BuildCraftFactory.pumpDimensionList.isFluidAllowed(fluid, worldObj.provider.dimensionId);
+		return BuildCraftFactory.pumpDimensionList.isFluidAllowed(fluid, worldObj.provider.getDimensionId());
 	}
 
 	@Override
@@ -360,7 +360,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 
 	@Override
 	public boolean hasWork() {
-		BlockIndex next = getNextIndexToPump(false);
+		BlockPos next = getNextIndexToPump(false);
 
 		if (next != null) {
 			return isPumpableFluid(next.x, next.y, next.z);

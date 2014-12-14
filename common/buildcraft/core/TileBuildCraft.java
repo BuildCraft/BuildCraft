@@ -21,6 +21,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import cofh.api.energy.IEnergyHandler;
@@ -218,12 +219,12 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 	// Helpers for overriding
 
 	public boolean hasCustomName() {
-		return true;
+		return false;
 	}
 
 	public IChatComponent getDisplayName() {
 		if (this instanceof IInventory) {
-			return new ChatComponentText(((IInventory) this).getName());
+			return new ChatComponentTranslation(((IInventory) this).getName());
 		} else {
 			return null;
 		}
@@ -246,6 +247,6 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 	}
 
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getTileEntity(pos) == this;
+		return worldObj.getTileEntity(pos) == this && entityplayer.getDistanceSq(pos) <= 64.0D;
 	}
 }

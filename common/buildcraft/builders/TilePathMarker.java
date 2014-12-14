@@ -17,7 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.core.Position;
 import buildcraft.core.LaserData;
 
@@ -87,7 +87,7 @@ public class TilePathMarker extends TileMarker {
 		double nearestDistance = 0, distance;
 
 		for (TilePathMarker t : availableMarkers) {
-			if (t == this || t == this.links[0] || t == this.links[1] || t.getWorld().provider.dimensionId != this.getWorld().provider.dimensionId) {
+			if (t == this || t == this.links[0] || t == this.links[1] || t.getWorld().provider.getDimensionId() != this.getWorld().provider.getDimensionId()) {
 				continue;
 			}
 
@@ -142,23 +142,23 @@ public class TilePathMarker extends TileMarker {
 		}
 	}
 
-	public LinkedList<BlockIndex> getPath() {
-		TreeSet<BlockIndex> visitedPaths = new TreeSet<BlockIndex>();
-		LinkedList<BlockIndex> res = new LinkedList<BlockIndex>();
+	public LinkedList<BlockPos> getPath() {
+		TreeSet<BlockPos> visitedPaths = new TreeSet<BlockPos>();
+		LinkedList<BlockPos> res = new LinkedList<BlockPos>();
 
 		TilePathMarker nextTile = this;
 
 		while (nextTile != null) {
-			BlockIndex b = new BlockIndex(nextTile.xCoord, nextTile.yCoord, nextTile.zCoord);
+			BlockPos b = new BlockPos(nextTile.xCoord, nextTile.yCoord, nextTile.zCoord);
 
 			visitedPaths.add(b);
 			res.add(b);
 
 			if (nextTile.links[0] != null
-					&& !visitedPaths.contains(new BlockIndex(nextTile.links[0].xCoord, nextTile.links[0].yCoord, nextTile.links[0].zCoord))) {
+					&& !visitedPaths.contains(new BlockPos(nextTile.links[0].xCoord, nextTile.links[0].yCoord, nextTile.links[0].zCoord))) {
 				nextTile = nextTile.links[0];
 			} else if (nextTile.links[1] != null
-					&& !visitedPaths.contains(new BlockIndex(nextTile.links[1].xCoord, nextTile.links[1].yCoord, nextTile.links[1].zCoord))) {
+					&& !visitedPaths.contains(new BlockPos(nextTile.links[1].xCoord, nextTile.links[1].yCoord, nextTile.links[1].zCoord))) {
 				nextTile = nextTile.links[1];
 			} else {
 				nextTile = null;
@@ -284,7 +284,7 @@ public class TilePathMarker extends TileMarker {
 	public static void clearAvailableMarkersList(World w) {
 		for (Iterator<TilePathMarker> it = availableMarkers.iterator(); it.hasNext();) {
 			TilePathMarker t = it.next();
-			if (t.getWorld().provider.dimensionId != w.provider.dimensionId) {
+			if (t.getWorld().provider.getDimensionId() != w.provider.getDimensionId()) {
 				it.remove();
 			}
 		}
