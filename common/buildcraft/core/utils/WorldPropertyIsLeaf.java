@@ -27,7 +27,7 @@ public class WorldPropertyIsLeaf extends WorldProperty {
 		if (block == null) {
 			return false;
 		} else {
-			ItemStack stack = new ItemStack(block);
+			ItemStack stack = new ItemStack(block, 1, meta);
 
 			if (stack.getItem() != null) {
 				for (int id : OreDictionary.getOreIDs(stack)) {

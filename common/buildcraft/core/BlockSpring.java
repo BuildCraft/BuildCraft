@@ -53,9 +53,7 @@ public class BlockSpring extends Block {
 		super(Material.rock);
 		setBlockUnbreakable();
 		setResistance(6000000.0F);
-
-		// TODO: set proper sound
-		//setStepSound(soundStoneFootstep);
+		setStepSound(soundTypeStone);
 
 		disableStats();
 		setTickRandomly(true);

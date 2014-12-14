@@ -149,6 +149,7 @@ public class CoreProxy implements ICoreProxy {
 
 	private WeakReference<EntityPlayer> createNewPlayer(WorldServer world, int x, int y, int z) {
 		EntityPlayer player = FakePlayerFactory.get(world, BuildCraftCore.gameProfile);
+		player.posX = x;
 		player.posY = y;
 		player.posZ = z;
 		return new WeakReference<EntityPlayer>(player);
