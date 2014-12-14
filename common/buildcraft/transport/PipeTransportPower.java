@@ -17,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyReceiver;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
@@ -99,7 +100,7 @@ public class PipeTransportPower extends PipeTransport {
 				// Disregard engines for this.
 				return false;
 			}
-			if (tile instanceof IEnergyHandler) {
+			if (tile instanceof IEnergyHandler || tile instanceof IEnergyReceiver) {
 				IEnergyConnection handler = (IEnergyConnection) tile;
 				if (handler.canConnectEnergy(side.getOpposite())) {
 					return true;
@@ -237,6 +238,16 @@ public class PipeTransportPower extends PipeTransport {
 									powerConsumed, false);
 							tilePowered = true;
 						}
+					} else if (tiles[out] instanceof IEnergyReceiver) {
+						IEnergyReceiver handler = (IEnergyReceiver) tiles[out];
+
+						if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[out].getOpposite())) {
+							// Transmit power to an RF energy handler
+
+							powerConsumed = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[out].getOpposite(),
+									powerConsumed, false);
+							tilePowered = true;
+						}
 					}
 
 					if (!tilePowered) {
@@ -297,6 +308,15 @@ public class PipeTransportPower extends PipeTransport {
 		    
 			if (tile instanceof IEnergyHandler) {
 				IEnergyHandler handler = (IEnergyHandler) tile;
+				if (handler.canConnectEnergy(dir.getOpposite())) {
+					int request = handler.receiveEnergy(dir.getOpposite(), this.maxPower, true);
+
+					if (request > 0) {
+						requestEnergy(dir, request);
+					}
+				}
+			} else if (tile instanceof IEnergyReceiver) {
+				IEnergyReceiver handler = (IEnergyReceiver) tile;
 				if (handler.canConnectEnergy(dir.getOpposite())) {
 					int request = handler.receiveEnergy(dir.getOpposite(), this.maxPower, true);
 
