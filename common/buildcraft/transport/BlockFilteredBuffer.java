@@ -43,7 +43,7 @@ public class BlockFilteredBuffer extends BlockBuildCraft {
 
 		super.onBlockActivated(world, pos, state, entityplayer, par6, par7, par8, par9);
 		
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, pos, state);
 		FMLCommonHandler.instance().bus().post(event);
 		if (event.isCanceled()) {
 			return false;

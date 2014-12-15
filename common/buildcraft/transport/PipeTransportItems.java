@@ -139,7 +139,7 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	private void destroyPipe() {
-		BlockUtils.explodeBlock(container.getWorld(), container.getPos().getX(), container.getPos().getY(), container.getPos().getZ());
+		BlockUtils.explodeBlock(container.getWorld(), container.getPos());
 		container.getWorld().setBlockToAir(container.getPos());
 	}
 

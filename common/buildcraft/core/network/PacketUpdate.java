@@ -25,7 +25,7 @@ public class PacketUpdate extends BuildCraftPacket {
 	}
 
 	public PacketUpdate(int packetId, ISerializable payload) {
-		this(packetId, new BlockPos(0, 0, 0), payload);
+		this(packetId, BlockPos.ORIGIN, payload);
 	}
 
 	public PacketUpdate(int packetId, BlockPos pos, ISerializable payload) {

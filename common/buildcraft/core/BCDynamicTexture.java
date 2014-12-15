@@ -8,6 +8,7 @@
  */
 package buildcraft.core;
 
+import com.sun.prism.util.tess.Tess;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -77,7 +78,8 @@ public class BCDynamicTexture {
 
 		float f = 1F / width;
 		float f1 = 1F / height;
-		WorldRenderer renderer = Tessellator.getInstance().getWorldRenderer();
+		Tessellator tessellator = Tessellator.getInstance();
+		WorldRenderer renderer = tessellator.getWorldRenderer();
 		renderer.startDrawingQuads();
 		renderer.addVertexWithUV(
 				screenX + 0,
@@ -103,6 +105,6 @@ public class BCDynamicTexture {
 				zLevel,
 				(clipX + 0) * f,
 				(clipY + 0) * f1);
-		renderer.draw();
+		tessellator.draw();
 	}
 }

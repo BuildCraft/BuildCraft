@@ -1,0 +1,8 @@
+{
+    "parent": "block/laserTable",
+    "textures": {
+        "top": "blocks/assemblytable_top",
+        "side": "blocks/assemblytable_side",
+        "bottom": "blocks/assemblytable_bottom"
+    }
+}
