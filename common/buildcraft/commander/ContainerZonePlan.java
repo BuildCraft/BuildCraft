@@ -8,11 +8,6 @@
  */
 package buildcraft.commander;
 
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.IntBuffer;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.entity.player.EntityPlayer;

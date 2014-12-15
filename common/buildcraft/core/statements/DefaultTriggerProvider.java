@@ -15,7 +15,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.ITriggerExternal;
@@ -57,9 +60,13 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 			res.add(BuildCraftCore.triggerMachineInactive);
 		}
 
-		if (tile instanceof IEnergyHandler && ((IEnergyHandler) tile).getMaxEnergyStored(side.getOpposite()) > 0) {
-			res.add((ITriggerExternal) BuildCraftCore.triggerEnergyHigh);
-			res.add((ITriggerExternal) BuildCraftCore.triggerEnergyLow);
+		if (tile instanceof IEnergyConnection && ((IEnergyConnection) tile).canConnectEnergy(side.getOpposite())) {
+			if ((tile instanceof IEnergyHandler && ((IEnergyHandler) tile).getMaxEnergyStored(side.getOpposite()) > 0)
+					|| (tile instanceof IEnergyReceiver && ((IEnergyReceiver) tile).getMaxEnergyStored(side.getOpposite()) > 0)
+					|| (tile instanceof IEnergyProvider && ((IEnergyProvider) tile).getMaxEnergyStored(side.getOpposite()) > 0)) {
+				res.add((ITriggerExternal) BuildCraftCore.triggerEnergyHigh);
+				res.add((ITriggerExternal) BuildCraftCore.triggerEnergyLow);
+			}
 		}
 
 		return res;

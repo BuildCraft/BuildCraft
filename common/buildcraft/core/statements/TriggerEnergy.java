@@ -13,7 +13,10 @@ import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
+import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyProvider;
+import cofh.api.energy.IEnergyReceiver;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -36,13 +39,21 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITri
 		return StringUtils.localize("gate.trigger.machine.energyStored" + (high ? "High" : "Low"));
 	}
 
-	private boolean isValidEnergyHandler(IEnergyHandler handler) {
-		return handler != null;
-	}
+	private boolean isTriggeredEnergyHandler(IEnergyConnection connection, ForgeDirection side) {
+		int energyStored, energyMaxStored;
 
-	private boolean isTriggeredEnergyHandler(IEnergyHandler handler, ForgeDirection side) {
-		int energyStored = handler.getEnergyStored(side);
-		int energyMaxStored = handler.getMaxEnergyStored(side);
+		if (connection instanceof IEnergyHandler) {
+			energyStored = ((IEnergyHandler) connection).getEnergyStored(side);
+			energyMaxStored = ((IEnergyHandler) connection).getMaxEnergyStored(side);
+		} else if (connection instanceof IEnergyProvider) {
+			energyStored = ((IEnergyProvider) connection).getEnergyStored(side);
+			energyMaxStored = ((IEnergyProvider) connection).getMaxEnergyStored(side);
+		} else if (connection instanceof IEnergyReceiver) {
+			energyStored = ((IEnergyReceiver) connection).getEnergyStored(side);
+			energyMaxStored = ((IEnergyReceiver) connection).getMaxEnergyStored(side);
+		} else {
+			return false;
+		}
 
 		if (energyMaxStored > 0) {
 			if (high) {
@@ -58,9 +69,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITri
 		if (container instanceof IGate) {
 			IGate gate = (IGate) container;
 			if (gate.getPipe() instanceof IEnergyHandler) {
-				if (isValidEnergyHandler((IEnergyHandler) gate.getPipe())) {
-					return isTriggeredEnergyHandler((IEnergyHandler) gate.getPipe(), ForgeDirection.UNKNOWN);
-				}
+				return isTriggeredEnergyHandler((IEnergyHandler) gate.getPipe(), ForgeDirection.UNKNOWN);
 			}
 		}
 		
@@ -70,10 +79,10 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITri
 
 	@Override
 	public boolean isTriggerActive(TileEntity tile, ForgeDirection side, IStatementContainer container, IStatementParameter[] parameters) {
-		if (tile instanceof IEnergyHandler) {
-			// Since we return false upon the trigger being invalid anyway,
-			// we can skip the isValidEnergyHandler(...) check.
-			return isTriggeredEnergyHandler((IEnergyHandler) tile, side.getOpposite());
+		if (tile instanceof IEnergyHandler || tile instanceof IEnergyProvider || tile instanceof IEnergyReceiver) {
+			if (((IEnergyConnection) tile).canConnectEnergy(side.getOpposite())) {
+				return isTriggeredEnergyHandler((IEnergyConnection) tile, side.getOpposite());
+			}
 		}
 
 		return false;
