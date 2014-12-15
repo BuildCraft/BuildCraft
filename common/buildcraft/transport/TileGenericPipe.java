@@ -434,13 +434,15 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		return worldObj.isRemote ? renderState.glassColor : this.glassColor;
 	}
 
-	public void setColor(int color) {
+	public boolean setColor(int color) {
 		// -1 = no color
-		if (!worldObj.isRemote && color >= -1 && color < 16) {
+		if (!worldObj.isRemote && color >= -1 && color < 16 && glassColor != color) {
 			glassColor = color;
 			notifyBlockChanged();
 			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, blockType);
+			return true;
 		}
+		return false;
 	}
 	
 	/**
