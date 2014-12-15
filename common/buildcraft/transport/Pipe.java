@@ -33,9 +33,9 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.ActionState;
 import buildcraft.api.statements.IActionInternal;
-import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.IPipeTile;
-import buildcraft.api.transport.PipeWire;
+import buildcraft.api.pipes.IPipe;
+import buildcraft.api.pipes.IPipeContainer;
+import buildcraft.api.pipes.PipeWire;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.utils.Utils;
@@ -495,16 +495,10 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		}
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			if (container.hasFacade(direction)) {
-				result.add (container.getFacade(direction));
-			}
-
-			if (container.hasPlug(direction)) {
-				result.add (new ItemStack(BuildCraftTransport.plugItem));
-			}
-
-			if (container.hasRobotStation(direction)) {
-				result.add (new ItemStack(BuildCraftTransport.robotStationItem));
+			if (container.hasPluggable(direction)) {
+				for (ItemStack stack : container.getPluggable(direction).getDropItems(container)) {
+					result.add(stack);
+				}
 			}
 		}
 
@@ -623,22 +617,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	@Override
-	public int x() {
-		return container.xCoord;
-	}
-
-	@Override
-	public int y() {
-		return container.yCoord;
-	}
-
-	@Override
-	public int z() {
-		return container.zCoord;
-	}
-
-	@Override
-	public IPipeTile getTile() {
+	public IPipeContainer getTile() {
 		return container;
 	}
 	

@@ -8,6 +8,8 @@
  */
 package buildcraft.core.network;
 
+import buildcraft.api.core.ISerializable;
+
 public interface ISyncedTile {
 
 	/**
@@ -16,7 +18,7 @@ public interface ISyncedTile {
 	 * @param stateId
 	 * @return an object that should be refreshed from the state
 	 */
-	IClientState getStateInstance(byte stateId);
+	ISerializable getStateInstance(byte stateId);
 
 	/**
 	 * Called after a state has been updated

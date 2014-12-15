@@ -20,8 +20,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.transport.IPipePluggable;
-import buildcraft.api.transport.IPipeTile;
+import buildcraft.api.pipes.IPipePluggable;
+import buildcraft.api.pipes.IPipeContainer;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.robots.DockingStation;
@@ -55,76 +55,4 @@ public class ItemRobotStation extends ItemBuildCraft {
         return 0;
     }
 
-	public static class RobotStationPluggable implements IPipePluggable {
-		private DockingStation station;
-		private boolean isValid = false;
-
-		public RobotStationPluggable() {
-
-		}
-
-		@Override
-		public void writeToNBT(NBTTagCompound nbt) {
-
-		}
-
-		@Override
-		public void readFromNBT(NBTTagCompound nbt) {
-
-		}
-
-		@Override
-		public ItemStack[] getDropItems(IPipeTile pipe) {
-			return new ItemStack[] { new ItemStack(BuildCraftTransport.robotStationItem) };
-		}
-
-		@Override
-		public void onAttachedPipe(IPipeTile pipe, ForgeDirection direction) {
-			validate(pipe, direction);
-		}
-
-		@Override
-		public void onDetachedPipe(IPipeTile pipe, ForgeDirection direction) {
-			invalidate();
-		}
-
-		public DockingStation getStation() {
-			return station;
-		}
-
-		@Override
-		public boolean blocking(IPipeTile pipe, ForgeDirection direction) {
-			return true;
-		}
-
-		@Override
-		public void invalidate() {
-			if (station != null
-					&& station.getPipe() != null
-					&& !station.getPipe().getWorld().isRemote) {
-				RobotRegistry.getRegistry(station.world).removeStation(station);
-				isValid = false;
-			}
-		}
-
-		@Override
-		public void validate(IPipeTile pipe, ForgeDirection direction) {
-			TileGenericPipe gPipe = (TileGenericPipe) pipe;
-			if (!isValid && !gPipe.getWorld().isRemote) {
-				station = (DockingStation)
-						RobotRegistry.getRegistry(gPipe.getWorld()).getStation(
-						gPipe.xCoord,
-						gPipe.yCoord,
-						gPipe.zCoord,
-						direction);
-
-				if (station == null) {
-					station = new DockingStation(gPipe, direction);
-					RobotRegistry.getRegistry(gPipe.getWorld()).registerStation(station);
-				}
-
-				isValid = true;
-			}
-		}
-	}
 }

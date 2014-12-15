@@ -28,7 +28,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.Position;
-import buildcraft.api.transport.IPipeTile.PipeType;
+import buildcraft.api.pipes.IPipeContainer.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.utils.BlockUtils;

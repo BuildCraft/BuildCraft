@@ -25,15 +25,15 @@ import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.transport.IPipeTile;
-import buildcraft.api.transport.PipeManager;
+import buildcraft.api.pipes.IPipeContainer;
+import buildcraft.api.pipes.PipeManager;
 import buildcraft.core.RFBattery;
-import buildcraft.core.network.IClientState;
+import buildcraft.api.core.ISerializable;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 
-public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergyHandler, IClientState {
+public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergyHandler, ISerializable {
 	public int liquidToExtract;
 
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeFluidsWood_Standard.ordinal();
@@ -46,7 +46,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 	private PipeLogicWood logic = new PipeLogicWood(this) {
 		@Override
 		protected boolean isValidConnectingTile(TileEntity tile) {
-			if (tile instanceof IPipeTile) {
+			if (tile instanceof IPipeContainer) {
 				return false;
 			}
 			if (!(tile instanceof IFluidHandler)) {

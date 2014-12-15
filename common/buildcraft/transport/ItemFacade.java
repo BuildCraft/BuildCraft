@@ -37,9 +37,9 @@ import buildcraft.api.core.Position;
 import buildcraft.api.facades.FacadeType;
 import buildcraft.api.facades.IFacadeItem;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
-import buildcraft.api.transport.IPipePluggable;
-import buildcraft.api.transport.IPipeTile;
-import buildcraft.api.transport.PipeWire;
+import buildcraft.api.pipes.IPipePluggable;
+import buildcraft.api.pipes.IPipeContainer;
+import buildcraft.api.pipes.PipeWire;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
@@ -443,61 +443,6 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 	public static void blacklistFacade(String blockName) {
 		if (!blacklistedFacades.contains(blockName)) {
 			blacklistedFacades.add(blockName);
-		}
-	}
-
-	public static class FacadePluggable implements IPipePluggable {
-		public FacadeState[] states;
-
-		public FacadePluggable(FacadeState[] states) {
-			this.states = states;
-		}
-
-		public FacadePluggable() {
-		}
-
-		@Override
-		public void writeToNBT(NBTTagCompound nbt) {
-			if (states != null) {
-				nbt.setTag("states", FacadeState.writeArray(states));
-			}
-		}
-
-		@Override
-		public void readFromNBT(NBTTagCompound nbt) {
-			if (nbt.hasKey("states")) {
-				states = FacadeState.readArray(nbt.getTagList("states", Constants.NBT.TAG_COMPOUND));
-			}
-		}
-
-		@Override
-		public ItemStack[] getDropItems(IPipeTile pipe) {
-			return states == null ? null : new ItemStack[] { getFacade(states) };
-		}
-
-		@Override
-		public void onAttachedPipe(IPipeTile pipe, ForgeDirection direction) {
-
-		}
-
-		@Override
-		public void onDetachedPipe(IPipeTile pipe, ForgeDirection direction) {
-
-		}
-
-		@Override
-		public boolean blocking(IPipeTile pipe, ForgeDirection direction) {
-			return false;
-		}
-
-		@Override
-		public void invalidate() {
-
-		}
-
-		@Override
-		public void validate(IPipeTile pipe, ForgeDirection direction) {
-
 		}
 	}
 

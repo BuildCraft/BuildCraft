@@ -10,21 +10,18 @@ package buildcraft.transport;
 
 import io.netty.buffer.ByteBuf;
 
-import buildcraft.core.network.IClientState;
+import buildcraft.api.core.ISerializable;
 import buildcraft.transport.utils.ConnectionMatrix;
 import buildcraft.transport.utils.FacadeMatrix;
 import buildcraft.transport.utils.GateMatrix;
-import buildcraft.transport.utils.RobotStationMatrix;
 import buildcraft.transport.utils.TextureMatrix;
 import buildcraft.transport.utils.WireMatrix;
 
-public class PipeRenderState implements IClientState {
+public class PipeRenderState implements ISerializable {
 
 	public final ConnectionMatrix pipeConnectionMatrix = new ConnectionMatrix();
 	public final TextureMatrix textureMatrix = new TextureMatrix();
 	public final WireMatrix wireMatrix = new WireMatrix();
-	public final ConnectionMatrix plugMatrix = new ConnectionMatrix();
-	public final RobotStationMatrix robotStationMatrix = new RobotStationMatrix();
 	public final FacadeMatrix facadeMatrix = new FacadeMatrix();
 	public final GateMatrix gateMatrix = new GateMatrix();
 	public byte glassColor = -1;
@@ -37,22 +34,19 @@ public class PipeRenderState implements IClientState {
 		textureMatrix.clean();
 		facadeMatrix.clean();
 		wireMatrix.clean();
-		plugMatrix.clean();
-		robotStationMatrix.clean();
 		gateMatrix.clean();
 	}
 
 	public boolean isDirty() {
 		return dirty || pipeConnectionMatrix.isDirty()
 				|| textureMatrix.isDirty() || wireMatrix.isDirty()
-				|| facadeMatrix.isDirty() || plugMatrix.isDirty()
-				|| robotStationMatrix.isDirty() || gateMatrix.isDirty();
+				|| facadeMatrix.isDirty()  || gateMatrix.isDirty();
 	}
 
 	public boolean needsRenderUpdate() {
 		return pipeConnectionMatrix.isDirty() || textureMatrix.isDirty()
-				|| facadeMatrix.isDirty() || plugMatrix.isDirty()
-				|| robotStationMatrix.isDirty() || gateMatrix.isDirty();
+				|| wireMatrix.isDirty() || facadeMatrix.isDirty()
+				|| gateMatrix.isDirty();
 	}
 
 	@Override
@@ -62,8 +56,6 @@ public class PipeRenderState implements IClientState {
 		textureMatrix.writeData(data);
 		wireMatrix.writeData(data);
 		facadeMatrix.writeData(data);
-		plugMatrix.writeData(data);
-		robotStationMatrix.writeData(data);
 		gateMatrix.writeData(data);
 	}
 
@@ -74,8 +66,6 @@ public class PipeRenderState implements IClientState {
 		textureMatrix.readData(data);
 		wireMatrix.readData(data);
 		facadeMatrix.readData(data);
-		plugMatrix.readData(data);
-		robotStationMatrix.readData(data);
 		gateMatrix.readData(data);
 	}
 }

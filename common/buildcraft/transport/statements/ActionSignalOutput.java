@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.transport.PipeWire;
+import buildcraft.api.pipes.PipeWire;
 import buildcraft.core.statements.BCStatement;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Gate;

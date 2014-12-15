@@ -6,12 +6,19 @@
  * Please check the contents of the license, which should be located
  * as "LICENSE.API" in the BuildCraft source code distribution.
  */
-package buildcraft.api.transport;
+package buildcraft.api.pipes;
 
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.api.gates.IGate;
 
-public interface IStripesPipe extends IPipe {
-	void sendItem(ItemStack itemStack, ForgeDirection direction);
-	void dropItem(ItemStack itemStack, ForgeDirection direction);
+public interface IPipe {
+	IPipeContainer getTile();
+
+	IGate getGate(ForgeDirection side);
+	
+	boolean hasGate(ForgeDirection side);
+	
+	boolean isWired(PipeWire wire);
+	
+	boolean isWireActive(PipeWire wire);
 }

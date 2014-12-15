@@ -17,6 +17,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.api.core.render.ITextureStates;
 import buildcraft.transport.BlockGenericPipe;
 
 

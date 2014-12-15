@@ -1,27 +1,10 @@
-/**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
- *
- * The BuildCraft API is distributed under the terms of the MIT License.
- * Please check the contents of the license, which should be located
- * as "LICENSE.API" in the BuildCraft source code distribution.
- */
 package buildcraft.api.transport;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.EnumColor;
 
-public interface IPipeTile {
-
-	public enum PipeType {
-
-		ITEM, FLUID, POWER, STRUCTURE
-	}
-
-	PipeType getPipeType();
-
+public interface IInjectable {
 	/**
 	 * Offers an ItemStack for addition to the pipe. Will be rejected if the
 	 * pipe doesn't accept items from that side.
@@ -41,16 +24,4 @@ public interface IPipeTile {
 	 * but with no color attribute.
 	 */
 	int injectItem(ItemStack stack, boolean doAdd, ForgeDirection from);
-
-	/**
-	 * True if the pipe is connected to the block/pipe in the specific direction
-	 * 
-	 * @param with
-	 * @return true if connect
-	 */
-	boolean isPipeConnected(ForgeDirection with);
-
-	TileEntity getAdjacentTile(ForgeDirection dir);
-	
-	IPipe getPipe();
 }

@@ -40,8 +40,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
-import buildcraft.api.transport.IPipeTile;
-import buildcraft.api.transport.IPipeTile.PipeType;
+import buildcraft.api.pipes.IPipeContainer;
+import buildcraft.api.pipes.IPipeContainer.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.IDropControlInventory;
@@ -149,7 +149,7 @@ public final class Utils {
 	 * successful, false otherwise.
 	 */
 	public static int addToRandomPipeAround(World world, int x, int y, int z, ForgeDirection from, ItemStack stack) {
-		List<IPipeTile> possiblePipes = new ArrayList<IPipeTile>();
+		List<IPipeContainer> possiblePipes = new ArrayList<IPipeContainer>();
 		List<ForgeDirection> pipeDirections = new ArrayList<ForgeDirection>();
 
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
@@ -163,8 +163,8 @@ public final class Utils {
 
 			TileEntity tile = world.getTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
 
-			if (tile instanceof IPipeTile) {
-				IPipeTile pipe = (IPipeTile) tile;
+			if (tile instanceof IPipeContainer) {
+				IPipeContainer pipe = (IPipeContainer) tile;
 				if (pipe.getPipeType() != PipeType.ITEM) {
 					continue;
 				}
@@ -180,7 +180,7 @@ public final class Utils {
 		if (possiblePipes.size() > 0) {
 			int choice = RANDOM.nextInt(possiblePipes.size());
 
-			IPipeTile pipeEntry = possiblePipes.get(choice);
+			IPipeContainer pipeEntry = possiblePipes.get(choice);
 
 			return pipeEntry.injectItem(stack, true, pipeDirections.get(choice));
 		}
@@ -366,7 +366,7 @@ public final class Utils {
 			return false;
 		}
 
-		if (!(tile1 instanceof IPipeTile) && !(tile2 instanceof IPipeTile)) {
+		if (!(tile1 instanceof IPipeContainer) && !(tile2 instanceof IPipeContainer)) {
 			return false;
 		}
 
@@ -386,11 +386,11 @@ public final class Utils {
 			o = ForgeDirection.SOUTH;
 		}
 
-		if (tile1 instanceof IPipeTile && !((IPipeTile) tile1).isPipeConnected(o)) {
+		if (tile1 instanceof IPipeContainer && !((IPipeContainer) tile1).isPipeConnected(o)) {
 			return false;
 		}
 
-		if (tile2 instanceof IPipeTile && !((IPipeTile) tile2).isPipeConnected(o.getOpposite())) {
+		if (tile2 instanceof IPipeContainer && !((IPipeContainer) tile2).isPipeConnected(o.getOpposite())) {
 			return false;
 		}
 

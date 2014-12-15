@@ -14,6 +14,7 @@ import java.util.List;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import buildcraft.api.core.ISerializable;
 
 public class PacketTileState extends PacketCoordinates {
 
@@ -21,9 +22,9 @@ public class PacketTileState extends PacketCoordinates {
 
 	private class StateWithId {
 		public byte stateId;
-		public IClientState state;
+		public ISerializable state;
 
-		public StateWithId(byte stateId, IClientState state) {
+		public StateWithId(byte stateId, ISerializable state) {
 			this.stateId = stateId;
 			this.state = state;
 		}
@@ -40,8 +41,7 @@ public class PacketTileState extends PacketCoordinates {
 	/**
 	 * Constructor for outgoing packets
 	 *
-	 * @param x
-	 *            , y, z - the coordinates the tile to sync
+	 * @param x, y, z - the coordinates the tile to sync
 	 */
 	public PacketTileState(int x, int y, int z) {
 		super(PacketIds.STATE_UPDATE, x, y, z);
@@ -62,7 +62,7 @@ public class PacketTileState extends PacketCoordinates {
 		}
 	}
 
-	public void addStateForSerialization(byte stateId, IClientState state) {
+	public void addStateForSerialization(byte stateId, ISerializable state) {
 		stateList.add(new StateWithId(stateId, state));
 	}
 

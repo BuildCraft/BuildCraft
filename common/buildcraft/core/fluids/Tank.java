@@ -18,9 +18,8 @@ import net.minecraftforge.fluids.FluidTank;
 
 import buildcraft.core.gui.tooltips.ToolTip;
 import buildcraft.core.gui.tooltips.ToolTipLine;
-import buildcraft.core.network.INBTSerializable;
 
-public class Tank extends FluidTank implements INBTSerializable {
+public class Tank extends FluidTank {
 	public int colorRenderCache = 0xFFFFFF;
 
 	protected final ToolTip toolTip = new ToolTip() {
@@ -92,17 +91,5 @@ public class Tank extends FluidTank implements INBTSerializable {
 			amount = getFluid().amount;
 		}
 		toolTip.add(new ToolTipLine(String.format(Locale.ENGLISH, "%,d / %,d", amount, getCapacity())));
-	}
-
-	@Override
-	public NBTTagCompound serializeNBT() {
-		NBTTagCompound nbt = new NBTTagCompound();
-		writeToNBT(nbt);
-		return nbt;
-	}
-
-	@Override
-	public void serializeNBT(NBTTagCompound nbt) {
-		readFromNBT(nbt);
 	}
 }

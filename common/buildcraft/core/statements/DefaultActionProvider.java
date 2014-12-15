@@ -11,10 +11,7 @@ package buildcraft.core.statements;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import org.apache.logging.log4j.Level;
-
 import net.minecraft.tileentity.TileEntity;
-import cpw.mods.fml.common.FMLLog;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;
@@ -23,7 +20,7 @@ import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IActionProvider;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.tiles.IControllable;
-import buildcraft.api.transport.IPipeTile;
+import buildcraft.api.pipes.IPipeContainer;
 
 public class DefaultActionProvider implements IActionProvider {
 
@@ -31,7 +28,7 @@ public class DefaultActionProvider implements IActionProvider {
 	public Collection<IActionInternal> getInternalActions(IStatementContainer container) {
 		LinkedList<IActionInternal> res = new LinkedList<IActionInternal>();
 
-		if (container.getTile() instanceof IPipeTile) {
+		if (container.getTile() instanceof IPipeContainer) {
 			res.add(BuildCraftCore.actionRedstone);
 		}
 		

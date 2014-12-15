@@ -1,0 +1,137 @@
+package buildcraft.transport;
+
+import io.netty.buffer.ByteBuf;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.render.ITextureStates;
+import buildcraft.api.pipes.IPipe;
+import buildcraft.api.pipes.IPipeContainer;
+import buildcraft.api.pipes.IPipePluggable;
+import buildcraft.api.pipes.IPipePluggableRenderer;
+import buildcraft.core.utils.MatrixTranformations;
+
+public class PlugPluggable implements IPipePluggable {
+	public class PlugPluggableRenderer implements IPipePluggableRenderer {
+		private float zFightOffset = 1 / 4096.0F;
+
+		@Override
+		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, ForgeDirection side, IPipePluggable pipePluggable, ITextureStates blockStateMachine, int x, int y, int z) {
+			float[][] zeroState = new float[3][2];
+
+			// X START - END
+			zeroState[0][0] = 0.25F + zFightOffset;
+			zeroState[0][1] = 0.75F - zFightOffset;
+			// Y START - END
+			zeroState[1][0] = 0.125F;
+			zeroState[1][1] = 0.251F;
+			// Z START - END
+			zeroState[2][0] = 0.25F + zFightOffset;
+			zeroState[2][1] = 0.75F - zFightOffset;
+
+			blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal())); // Structure Pipe
+
+			float[][] rotated = MatrixTranformations.deepClone(zeroState);
+			MatrixTranformations.transform(rotated, side);
+
+			renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
+			renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
+
+			// X START - END
+			zeroState[0][0] = 0.25F + 0.125F / 2 + zFightOffset;
+			zeroState[0][1] = 0.75F - 0.125F / 2 + zFightOffset;
+			// Y START - END
+			zeroState[1][0] = 0.25F;
+			zeroState[1][1] = 0.25F + 0.125F;
+			// Z START - END
+			zeroState[2][0] = 0.25F + 0.125F / 2;
+			zeroState[2][1] = 0.75F - 0.125F / 2;
+
+			blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal())); // Structure Pipe
+
+			rotated = MatrixTranformations.deepClone(zeroState);
+			MatrixTranformations.transform(rotated, side);
+
+			renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
+			renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
+		}
+	}
+	public PlugPluggable() {
+
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+
+	}
+
+	@Override
+	public ItemStack[] getDropItems(IPipeContainer pipe) {
+		return new ItemStack[] { new ItemStack(BuildCraftTransport.plugItem) };
+	}
+
+	@Override
+	public void onAttachedPipe(IPipeContainer pipe, ForgeDirection direction) {
+
+	}
+
+	@Override
+	public void onDetachedPipe(IPipeContainer pipe, ForgeDirection direction) {
+
+	}
+
+	@Override
+	public boolean isBlocking(IPipeContainer pipe, ForgeDirection direction) {
+		return true;
+	}
+
+	@Override
+	public void invalidate() {
+
+	}
+
+	@Override
+	public void validate(IPipeContainer pipe, ForgeDirection direction) {
+
+	}
+
+	@Override
+	public AxisAlignedBB getBoundingBox(ForgeDirection side) {
+		float[][] bounds = new float[3][2];
+		// X START - END
+		bounds[0][0] = 0.25F;
+		bounds[0][1] = 0.75F;
+		// Y START - END
+		bounds[1][0] = 0.125F;
+		bounds[1][1] = 0.251F;
+		// Z START - END
+		bounds[2][0] = 0.25F;
+		bounds[2][1] = 0.75F;
+
+		MatrixTranformations.transform(bounds, side);
+		return AxisAlignedBB.getBoundingBox(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
+	}
+
+	@Override
+	public IPipePluggableRenderer getRenderer() {
+		return new PlugPluggableRenderer();
+	}
+
+	@Override
+	public void writeData(ByteBuf data) {
+
+	}
+
+	@Override
+	public void readData(ByteBuf data) {
+
+	}
+}

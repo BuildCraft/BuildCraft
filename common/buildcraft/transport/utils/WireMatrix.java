@@ -14,7 +14,7 @@ import io.netty.buffer.ByteBuf;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.transport.PipeWire;
+import buildcraft.api.pipes.PipeWire;
 
 public class WireMatrix {
 

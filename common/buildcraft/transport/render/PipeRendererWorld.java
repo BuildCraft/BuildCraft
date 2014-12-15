@@ -17,6 +17,9 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.core.render.ITextureStates;
+import buildcraft.api.pipes.IPipePluggable;
+import buildcraft.api.pipes.IPipePluggableRenderer;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.utils.ColorUtils;
 import buildcraft.core.utils.MatrixTranformations;
@@ -110,8 +113,15 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 		// Force other opaque renders into pass 0
 		if (renderPass == 0) {
-			pipePlugRenderer(renderblocks, fakeBlock, state, x, y, z);
-			pipeRobotStationRenderer(renderblocks, fakeBlock, state, x, y, z);
+			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+				if (tile.hasPluggable(dir)) {
+					IPipePluggable p = tile.getPluggable(dir);
+					IPipePluggableRenderer r = p.getRenderer();
+					if (r != null) {
+						r.renderPluggable(renderblocks, tile.getPipe(), dir, p, fakeBlock, x, y, z);
+					}
+				}
+			}
 		}
 	}
 
@@ -154,172 +164,6 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 	private void pipeFacadeRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, PipeRenderState state, int x, int y, int z) {
 		FacadeRenderHelper.pipeFacadeRenderer(renderblocks, blockStateMachine, state, x, y, z);
-	}
-
-	private void pipePlugRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, PipeRenderState state, int x, int y, int z) {
-		float[][] zeroState = new float[3][2];
-
-		// X START - END
-		zeroState[0][0] = 0.25F + zFightOffset;
-		zeroState[0][1] = 0.75F - zFightOffset;
-		// Y START - END
-		zeroState[1][0] = 0.125F;
-		zeroState[1][1] = 0.251F;
-		// Z START - END
-		zeroState[2][0] = 0.25F + zFightOffset;
-		zeroState[2][1] = 0.75F - zFightOffset;
-
-		blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal())); // Structure Pipe
-
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			if (state.plugMatrix.isConnected(direction)) {
-				float[][] rotated = MatrixTranformations.deepClone(zeroState);
-				MatrixTranformations.transform(rotated, direction);
-
-				renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-				renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
-			}
-		}
-
-		// X START - END
-		zeroState[0][0] = 0.25F + 0.125F / 2 + zFightOffset;
-		zeroState[0][1] = 0.75F - 0.125F / 2 + zFightOffset;
-		// Y START - END
-		zeroState[1][0] = 0.25F;
-		zeroState[1][1] = 0.25F + 0.125F;
-		// Z START - END
-		zeroState[2][0] = 0.25F + 0.125F / 2;
-		zeroState[2][1] = 0.75F - 0.125F / 2;
-
-		blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal())); // Structure Pipe
-
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			if (state.plugMatrix.isConnected(direction)) {
-				float[][] rotated = MatrixTranformations.deepClone(zeroState);
-				MatrixTranformations.transform(rotated, direction);
-
-				renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-				renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
-			}
-		}
-
-	}
-
-	private void pipeRobotStationPartRender(RenderBlocks renderblocks,
-			ITextureStates blockStateMachine, PipeRenderState state, int x, int y, int z,
-			float xStart, float xEnd, float yStart, float yEnd, float zStart,
-			float zEnd) {
-
-		float[][] zeroState = new float[3][2];
-		// X START - END
-		zeroState[0][0] = xStart + zFightOffset;
-		zeroState[0][1] = xEnd - zFightOffset;
-		// Y START - END
-		zeroState[1][0] = yStart;
-		zeroState[1][1] = yEnd;
-		// Z START - END
-		zeroState[2][0] = zStart + zFightOffset;
-		zeroState[2][1] = zEnd - zFightOffset;
-
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			if (state.robotStationMatrix.isConnected(direction)) {
-				switch (state.robotStationMatrix.getState(direction)) {
-				case None:
-				case Available:
-					blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider
-							.getIcon(PipeIconProvider.TYPE.PipeRobotStation.ordinal()));
-					break;
-				case Reserved:
-					blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider
-							.getIcon(PipeIconProvider.TYPE.PipeRobotStationReserved.ordinal()));
-					break;
-				case Linked:
-					blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider
-							.getIcon(PipeIconProvider.TYPE.PipeRobotStationLinked.ordinal()));
-					break;
-				}
-
-				float[][] rotated = MatrixTranformations.deepClone(zeroState);
-				MatrixTranformations.transform(rotated, direction);
-
-				renderblocks.setRenderBounds(rotated[0][0], rotated[1][0],
-						rotated[2][0], rotated[0][1], rotated[1][1],
-						rotated[2][1]);
-				renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
-			}
-		}
-
-	}
-
-	private void pipeRobotStationRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, PipeRenderState state, int x, int y, int z) {
-		//float width = 0.075F;
-
-		pipeRobotStationPartRender (renderblocks, blockStateMachine, state, x, y, z,
-				0.45F, 0.55F,
-				0.0F, 0.224F,
-				0.45F, 0.55F);
-
-
-		/*pipeRobotStationPartRender (renderblocks, block, state, x, y, z,
-				0.25F, 0.75F,
-				0.025F, 0.224F,
-				0.25F, 0.25F + width);
-
-		pipeRobotStationPartRender (renderblocks, block, state, x, y, z,
-				0.25F, 0.75F,
-				0.025F, 0.224F,
-				0.75F - width, 0.75F);
-
-		pipeRobotStationPartRender (renderblocks, block, state, x, y, z,
-				0.25F, 0.25F + width,
-				0.025F, 0.224F,
-				0.25F + width, 0.75F - width);
-
-		pipeRobotStationPartRender (renderblocks, block, state, x, y, z,
-				0.75F - width, 0.75F,
-				0.025F, 0.224F,
-				0.25F + width, 0.75F - width);*/
-
-		float[][] zeroState = new float[3][2];
-
-
-		// X START - END
-		zeroState[0][0] = 0.25F + zFightOffset;
-		zeroState[0][1] = 0.75F - zFightOffset;
-		// Y START - END
-		zeroState[1][0] = 0.225F;
-		zeroState[1][1] = 0.251F;
-		// Z START - END
-		zeroState[2][0] = 0.25F + zFightOffset;
-		zeroState[2][1] = 0.75F - zFightOffset;
-
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			if (state.robotStationMatrix.isConnected(direction)) {
-				switch (state.robotStationMatrix.getState(direction)) {
-				case None:
-				case Available:
-					blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider
-							.getIcon(PipeIconProvider.TYPE.PipeRobotStation.ordinal()));
-					break;
-				case Reserved:
-					blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider
-							.getIcon(PipeIconProvider.TYPE.PipeRobotStationReserved.ordinal()));
-					break;
-				case Linked:
-					blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider
-							.getIcon(PipeIconProvider.TYPE.PipeRobotStationLinked.ordinal()));
-					break;
-				}
-
-				float[][] rotated = MatrixTranformations.deepClone(zeroState);
-				MatrixTranformations.transform(rotated, direction);
-
-				renderblocks.setRenderBounds(rotated[0][0], rotated[1][0],
-						rotated[2][0], rotated[0][1], rotated[1][1],
-						rotated[2][1]);
-				renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
-			}
-		}
 	}
 
 	@Override

@@ -6,11 +6,11 @@
  * Please check the contents of the license, which should be located
  * as "LICENSE.API" in the BuildCraft source code distribution.
  */
-package buildcraft.api.transport;
+package buildcraft.api.pipes;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.transport.IPipeTile.PipeType;
+import buildcraft.api.pipes.IPipeContainer.PipeType;
 
 public interface IPipeConnection {
 

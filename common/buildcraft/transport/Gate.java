@@ -35,8 +35,8 @@ import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.statements.StatementParameterItemStack;
-import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.PipeWire;
+import buildcraft.api.pipes.IPipe;
+import buildcraft.api.pipes.PipeWire;
 import buildcraft.core.GuiIds;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
@@ -472,7 +472,7 @@ public final class Gate implements IGate, IStatementContainer {
 				((IActionInternal) action).actionActivate(this, slot.parameters);
 			} else if (action instanceof IActionExternal) {
 				for (ForgeDirection side: ForgeDirection.VALID_DIRECTIONS) {
-					TileEntity tile = this.getPipe().getTile().getAdjacentTile(side);
+					TileEntity tile = this.getPipe().getTile().getNeighborTile(side);
 					if (tile != null) {
 						((IActionExternal) action).actionActivate(tile, side, this, slot.parameters);
 					}
@@ -532,7 +532,7 @@ public final class Gate implements IGate, IStatementContainer {
 			}
 		} else if (trigger instanceof ITriggerExternal) {
 			for (ForgeDirection side: ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity tile = this.getPipe().getTile().getAdjacentTile(side);
+				TileEntity tile = this.getPipe().getTile().getNeighborTile(side);
 				if (tile != null && ((ITriggerExternal) trigger).isTriggerActive(tile, side, this, parameters)) {
 					return true;
 				}

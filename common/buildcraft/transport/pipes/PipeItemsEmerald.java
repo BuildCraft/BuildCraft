@@ -26,13 +26,13 @@ import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.InventoryWrapper;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.network.IClientState;
+import buildcraft.api.core.ISerializable;
 import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
 
-public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGuiReturnHandler {
+public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IGuiReturnHandler {
 
 	public enum FilterMode {
 		WHITE_LIST, BLACK_LIST, ROUND_ROBIN

@@ -7,9 +7,8 @@ import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.transport.IStripesHandler;
-import buildcraft.api.transport.IStripesHandler.StripesHandlerType;
-import buildcraft.api.transport.IStripesPipe;
+import buildcraft.api.pipes.IStripesHandler;
+import buildcraft.api.pipes.IStripesPipe;
 
 public class StripesHandlerShears implements IStripesHandler {
 

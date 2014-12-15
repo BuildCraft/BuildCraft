@@ -11,11 +11,13 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import buildcraft.api.pipes.IPipePluggable;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.transport.BlockGenericPipe.Part;
 import buildcraft.transport.BlockGenericPipe.RaytraceResult;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
+import buildcraft.transport.gates.GatePluggable;
 
 public class ItemGateCopier extends ItemBuildCraft {
 
@@ -53,8 +55,11 @@ public class ItemGateCopier extends ItemBuildCraft {
 		
 		RaytraceResult rayTraceResult = ((BlockGenericPipe) block).doRayTrace(world, x, y, z, player);
 
-		if (rayTraceResult != null && rayTraceResult.boundingBox != null && rayTraceResult.hitPart == Part.Gate) {
-			gate = ((TileGenericPipe) tile).pipe.gates[rayTraceResult.sideHit.ordinal()];
+		if (rayTraceResult != null && rayTraceResult.boundingBox != null && rayTraceResult.hitPart == Part.Pluggable) {
+			IPipePluggable pluggable = ((TileGenericPipe) tile).getPluggable(rayTraceResult.sideHit);
+			if (pluggable instanceof GatePluggable) {
+				gate = ((TileGenericPipe) tile).pipe.gates[rayTraceResult.sideHit.ordinal()];
+			}
 		}
 		
 		if (isCopying) {

@@ -10,7 +10,7 @@ package buildcraft.core.robots;
 
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.api.transport.IPipeTile.PipeType;
+import buildcraft.api.pipes.IPipeContainer.PipeType;
 import buildcraft.transport.PipeTransportPower;
 
 public class AIRobotRecharge extends AIRobot {

@@ -9,9 +9,9 @@
 package buildcraft.transport;
 
 import net.minecraft.inventory.IInventory;
-import buildcraft.core.network.IClientState;
+import buildcraft.api.core.ISerializable;
 
-public interface IDiamondPipe extends IClientState {
+public interface IDiamondPipe extends ISerializable {
     IInventory getFilters();
 
 }

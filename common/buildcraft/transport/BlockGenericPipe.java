@@ -52,9 +52,10 @@ import buildcraft.api.events.PipePlacedEvent;
 import buildcraft.api.events.RobotPlacementEvent;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.pipes.IPipePluggable;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.api.transport.PipeWire;
+import buildcraft.api.pipes.PipeWire;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.CreativeTabBuildCraft;
@@ -67,6 +68,7 @@ import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateFactory;
+import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.render.PipeRendererWorld;
 import buildcraft.transport.utils.FacadeMatrix;
@@ -84,10 +86,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	static enum Part {
 		Pipe,
-		Gate,
-		Facade,
-		Plug,
-		RobotStation
+		Pluggable
 	}
 
 	static class RaytraceResult {
@@ -253,20 +252,16 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		if (rayTraceResult != null && rayTraceResult.boundingBox != null) {
 			AxisAlignedBB box = rayTraceResult.boundingBox;
 			switch (rayTraceResult.hitPart) {
-			case Gate:
-			case Plug:
-			case RobotStation: {
-				float scale = 0.001F;
-				box = box.expand(scale, scale, scale);
-				break;
-			}
-			case Pipe: {
-				float scale = 0.08F;
-				box = box.expand(scale, scale, scale);
-				break;
-			}
-			case Facade:
-				break;
+				case Pluggable: {
+					float scale = 0.001F;
+					box = box.expand(scale, scale, scale);
+					break;
+				}
+				case Pipe: {
+					float scale = 0.08F;
+					box = box.expand(scale, scale, scale);
+					break;
+				}
 			}
 			return box.getOffsetBoundingBox(x, y, z);
 		}
@@ -338,51 +333,15 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			}
 		}
 
-		// gates
+		// pluggables
 
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-			if (pipe.hasGate(side)) {
-				AxisAlignedBB bb = getGateBoundingBox(side);
+			if (tileG.getPluggable(side) != null) {
+				AxisAlignedBB bb = tileG.getPluggable(side).getBoundingBox(side);
 				setBlockBounds(bb);
 				boxes[7 + side.ordinal()] = bb;
 				hits[7 + side.ordinal()] = super.collisionRayTrace(world, x, y, z, origin, direction);
 				sideHit[7 + side.ordinal()] = side;
-			}
-		}
-
-		// facades
-
-		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-			if (tileG.hasFacade(side)) {
-				AxisAlignedBB bb = getFacadeBoundingBox(side);
-				setBlockBounds(bb);
-				boxes[13 + side.ordinal()] = bb;
-				hits[13 + side.ordinal()] = super.collisionRayTrace(world, x, y, z, origin, direction);
-				sideHit[13 + side.ordinal()] = side;
-			}
-		}
-
-		// plugs
-
-		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-			if (tileG.hasPlug(side)) {
-				AxisAlignedBB bb = getPlugBoundingBox(side);
-				setBlockBounds(bb);
-				boxes[19 + side.ordinal()] = bb;
-				hits[19 + side.ordinal()] = super.collisionRayTrace(world, x, y, z, origin, direction);
-				sideHit[19 + side.ordinal()] = side;
-			}
-		}
-
-		// robotStations
-
-		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-			if (tileG.hasRobotStation(side)) {
-				AxisAlignedBB bb = getRobotStationBoundingBox(side);
-				setBlockBounds(bb);
-				boxes[25 + side.ordinal()] = bb;
-				hits[25 + side.ordinal()] = super.collisionRayTrace(world, x, y, z, origin, direction);
-				sideHit[25 + side.ordinal()] = side;
 			}
 		}
 
@@ -418,14 +377,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 			if (minIndex < 7) {
 				hitPart = Part.Pipe;
-			} else if (minIndex < 13) {
-				hitPart = Part.Gate;
-			} else if (minIndex < 19) {
-				hitPart = Part.Facade;
-			} else if (minIndex < 25) {
-				hitPart = Part.Plug;
 			} else {
-				hitPart = Part.RobotStation;
+				hitPart = Part.Pluggable;
 			}
 
 			return new RaytraceResult(hitPart, hits[minIndex], boxes[minIndex], sideHit[minIndex]);
@@ -434,73 +387,6 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	private void setBlockBounds(AxisAlignedBB bb) {
 		setBlockBounds((float) bb.minX, (float) bb.minY, (float) bb.minZ, (float) bb.maxX, (float) bb.maxY, (float) bb.maxZ);
-	}
-
-	private AxisAlignedBB getGateBoundingBox(ForgeDirection side) {
-		float min = CoreConstants.PIPE_MIN_POS + 0.05F;
-		float max = CoreConstants.PIPE_MAX_POS - 0.05F;
-
-		float[][] bounds = new float[3][2];
-		// X START - END
-		bounds[0][0] = min;
-		bounds[0][1] = max;
-		// Y START - END
-		bounds[1][0] = CoreConstants.PIPE_MIN_POS - 0.10F;
-		bounds[1][1] = CoreConstants.PIPE_MIN_POS;
-		// Z START - END
-		bounds[2][0] = min;
-		bounds[2][1] = max;
-
-		MatrixTranformations.transform(bounds, side);
-		return AxisAlignedBB.getBoundingBox(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
-	}
-
-	private AxisAlignedBB getFacadeBoundingBox(ForgeDirection side) {
-		float[][] bounds = new float[3][2];
-		// X START - END
-		bounds[0][0] = 0.0F;
-		bounds[0][1] = 1.0F;
-		// Y START - END
-		bounds[1][0] = 0.0F;
-		bounds[1][1] = TransportConstants.FACADE_THICKNESS;
-		// Z START - END
-		bounds[2][0] = 0.0F;
-		bounds[2][1] = 1.0F;
-
-		MatrixTranformations.transform(bounds, side);
-		return AxisAlignedBB.getBoundingBox(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
-	}
-
-	private AxisAlignedBB getPlugBoundingBox(ForgeDirection side) {
-		float[][] bounds = new float[3][2];
-		// X START - END
-		bounds[0][0] = 0.25F;
-		bounds[0][1] = 0.75F;
-		// Y START - END
-		bounds[1][0] = 0.125F;
-		bounds[1][1] = 0.251F;
-		// Z START - END
-		bounds[2][0] = 0.25F;
-		bounds[2][1] = 0.75F;
-
-		MatrixTranformations.transform(bounds, side);
-		return AxisAlignedBB.getBoundingBox(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
-	}
-
-	private AxisAlignedBB getRobotStationBoundingBox(ForgeDirection side) {
-		float[][] bounds = new float[3][2];
-		// X START - END
-		bounds[0][0] = 0.25F;
-		bounds[0][1] = 0.75F;
-		// Y START - END
-		bounds[1][0] = 0.125F;
-		bounds[1][1] = 0.251F;
-		// Z START - END
-		bounds[2][0] = 0.25F;
-		bounds[2][1] = 0.75F;
-
-		MatrixTranformations.transform(bounds, side);
-		return AxisAlignedBB.getBoundingBox(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
 	}
 
 	private AxisAlignedBB getPipeBoundingBox(ForgeDirection side) {
@@ -625,25 +511,27 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 		if (rayTraceResult != null && rayTraceResult.boundingBox != null) {
 			switch (rayTraceResult.hitPart) {
-			case Gate:
+				case Pluggable: {
 					Pipe<?> pipe = getPipe(world, x, y, z);
-					Gate gate = pipe.gates[rayTraceResult.sideHit.ordinal()];
-					return gate != null ? gate.getGateItem() : null;
-			case Plug:
-					return new ItemStack(BuildCraftTransport.plugItem);
-			case RobotStation:
-				return new ItemStack(BuildCraftTransport.robotStationItem);
-			case Pipe:
-				return new ItemStack(getPipe(world, x, y, z).item, 1, getPipe(world, x, y, z).container.getItemMetadata());
-			case Facade:
-				ForgeDirection dir = ForgeDirection
-						.getOrientation(target.sideHit);
-				FacadeMatrix matrix = getPipe(world, x, y, z).container.renderState.facadeMatrix;
-				Block block = matrix.getFacadeBlock(dir);
-				if (block != null) {
-					return BuildCraftTransport.facadeItem.getFacadeForBlock(block,
-							matrix.getFacadeMetaId(dir));
+					IPipePluggable pluggable = pipe.container.getPluggable(rayTraceResult.sideHit);
+					if (pluggable instanceof FacadePluggable) {
+						ForgeDirection dir = ForgeDirection
+								.getOrientation(target.sideHit);
+						FacadeMatrix matrix = getPipe(world, x, y, z).container.renderState.facadeMatrix;
+						Block block = matrix.getFacadeBlock(dir);
+						if (block != null) {
+							return BuildCraftTransport.facadeItem.getFacadeForBlock(block,
+									matrix.getFacadeMetaId(dir));
+						}
+					} else {
+						ItemStack[] drops = pluggable.getDropItems(pipe.container);
+						if (drops != null && drops.length > 0) {
+							return drops[0];
+						}
+					}
 				}
+				case Pipe:
+					return new ItemStack(getPipe(world, x, y, z).item, 1, getPipe(world, x, y, z).container.getItemMetadata());
 			}
 		}
 		return null;
@@ -788,7 +676,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 					RaytraceResult rayTraceResult = doRayTrace(world, x, y, z,
 							player);
 
-					if (rayTraceResult != null && rayTraceResult.hitPart == Part.RobotStation) {
+					if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable
+							&& pipe.container.getPluggable(rayTraceResult.sideHit) instanceof RobotStationPluggable) {
 						DockingStation station = pipe.container.getStation(rayTraceResult.sideHit);
 
 						if (!station.isTaken()) {
@@ -831,7 +720,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 			RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 
-			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Gate) {
+			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable
+					&& pipe.container.getPluggable(rayTraceResult.sideHit) instanceof GatePluggable) {
 				clickedGate = pipe.gates[rayTraceResult.sideHit.ordinal()];
 			}
 
@@ -849,7 +739,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	private boolean addOrStripGate(World world, int x, int y, int z, EntityPlayer player, ForgeDirection side, Pipe<?> pipe) {
 		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 		if (player.isSneaking()) {
-			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Gate) {
+			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable
+					&& pipe.container.getPluggable(rayTraceResult.sideHit) instanceof GatePluggable) {
 				if (pipe.container.hasGate(rayTraceResult.sideHit)) {
 					return pipe.container.dropSideItems(rayTraceResult.sideHit);
 				}
@@ -923,7 +814,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	private boolean addOrStripFacade(World world, int x, int y, int z, EntityPlayer player, ForgeDirection side, Pipe<?> pipe) {
 		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 		if (player.isSneaking()) {
-			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Facade) {
+			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable
+					&& pipe.container.getPluggable(rayTraceResult.sideHit) instanceof FacadePluggable) {
 				if (pipe.container.hasFacade(rayTraceResult.sideHit)) {
 					return pipe.container.dropSideItems(rayTraceResult.sideHit);
 				}
@@ -951,7 +843,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	private boolean addOrStripPlug(World world, int x, int y, int z, EntityPlayer player, ForgeDirection side, Pipe<?> pipe) {
 		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 		if (player.isSneaking()) {
-			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Plug) {
+			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable
+					&& pipe.container.getPluggable(rayTraceResult.sideHit) instanceof PlugPluggable) {
 				if (pipe.container.dropSideItems(rayTraceResult.sideHit)) {
 					return true;
 				}
@@ -968,7 +861,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	private boolean addOrStripRobotStation(World world, int x, int y, int z, EntityPlayer player, ForgeDirection side, Pipe<?> pipe) {
 		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 		if (player.isSneaking()) {
-			if (rayTraceResult != null && rayTraceResult.hitPart == Part.RobotStation) {
+			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable
+					&& pipe.container.getPluggable(rayTraceResult.sideHit) instanceof RobotStationPluggable) {
 				if (pipe.container.dropSideItems(rayTraceResult.sideHit)) {
 					return true;
 				}
@@ -1311,7 +1205,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	@Override
 	public boolean recolourBlock(World world, int x, int y, int z, ForgeDirection side, int colour) {
 		TileGenericPipe pipeTile = (TileGenericPipe) world.getTileEntity(x, y, z);
-		if (!pipeTile.hasPlug(side)) {
+		if (!pipeTile.hasBlockingPluggable(side)) {
 			return pipeTile.setColor(colour);
 		}
 

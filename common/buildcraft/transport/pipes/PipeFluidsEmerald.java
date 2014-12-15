@@ -22,13 +22,13 @@ import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.network.IClientState;
+import buildcraft.api.core.ISerializable;
 import buildcraft.core.utils.FluidUtils;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
 
-public class PipeFluidsEmerald extends PipeFluidsWood implements IClientState {
+public class PipeFluidsEmerald extends PipeFluidsWood implements ISerializable {
 	private SimpleInventory filters = new SimpleInventory(1, "Filters", 1);
 
 	public PipeFluidsEmerald(Item item) {

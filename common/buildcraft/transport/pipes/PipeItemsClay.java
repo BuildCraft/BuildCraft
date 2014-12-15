@@ -16,7 +16,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.transport.IPipeTile;
+import buildcraft.api.pipes.IPipeContainer;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
@@ -49,7 +49,7 @@ public class PipeItemsClay extends Pipe<PipeTransportItems> {
             if (!event.item.blacklist.contains(o) && container.pipe.outputOpen(o)) {
                 if (container.isPipeConnected(o)) {
                     TileEntity entity = container.getTile(o);
-                    if (entity instanceof IPipeTile) {
+                    if (entity instanceof IPipeContainer) {
                         pipesList.add(o);
                     } else {
                         nonPipesList.add(o);

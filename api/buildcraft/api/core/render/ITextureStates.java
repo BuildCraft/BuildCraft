@@ -6,10 +6,11 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.transport.render;
+package buildcraft.api.core.render;
 
 import net.minecraft.block.Block;
 import net.minecraft.util.IIcon;
+import buildcraft.transport.render.TextureStateManager;
 
 public interface ITextureStates extends ICullable {
 

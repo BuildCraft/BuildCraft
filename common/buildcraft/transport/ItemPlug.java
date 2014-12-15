@@ -20,8 +20,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.transport.IPipePluggable;
-import buildcraft.api.transport.IPipeTile;
+import buildcraft.api.pipes.IPipePluggable;
+import buildcraft.api.pipes.IPipeContainer;
 import buildcraft.core.ItemBuildCraft;
 
 public class ItemPlug extends ItemBuildCraft {
@@ -52,49 +52,4 @@ public class ItemPlug extends ItemBuildCraft {
         return 0;
     }
 
-	public static class PlugPluggable implements IPipePluggable {
-		public PlugPluggable() {
-
-		}
-
-		@Override
-		public void writeToNBT(NBTTagCompound nbt) {
-
-		}
-
-		@Override
-		public void readFromNBT(NBTTagCompound nbt) {
-
-		}
-
-		@Override
-		public ItemStack[] getDropItems(IPipeTile pipe) {
-			return new ItemStack[] { new ItemStack(BuildCraftTransport.plugItem) };
-		}
-
-		@Override
-		public void onAttachedPipe(IPipeTile pipe, ForgeDirection direction) {
-
-		}
-
-		@Override
-		public void onDetachedPipe(IPipeTile pipe, ForgeDirection direction) {
-
-		}
-
-		@Override
-		public boolean blocking(IPipeTile pipe, ForgeDirection direction) {
-			return true;
-		}
-
-		@Override
-		public void invalidate() {
-
-		}
-
-		@Override
-		public void validate(IPipeTile pipe, ForgeDirection direction) {
-
-		}
-	}
 }

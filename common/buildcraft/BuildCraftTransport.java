@@ -43,8 +43,8 @@ import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.transport.IExtractionHandler;
-import buildcraft.api.transport.PipeManager;
-import buildcraft.api.transport.PipeWire;
+import buildcraft.api.pipes.PipeManager;
+import buildcraft.api.pipes.PipeWire;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
@@ -56,6 +56,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.FacadePluggable;
 import buildcraft.transport.GuiHandler;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemGateCopier;
@@ -68,6 +69,8 @@ import buildcraft.transport.PipeActionProvider;
 import buildcraft.transport.PipeColoringRecipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTriggerProvider;
+import buildcraft.transport.PlugPluggable;
+import buildcraft.transport.RobotStationPluggable;
 import buildcraft.transport.TileFilteredBuffer;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TransportProxy;
@@ -77,6 +80,7 @@ import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.GateExpansionPulsar;
 import buildcraft.transport.gates.GateExpansionRedstoneFader;
 import buildcraft.transport.gates.GateExpansionTimer;
+import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.network.PacketHandlerTransport;
 import buildcraft.transport.pipes.PipeFluidsCobblestone;
@@ -501,6 +505,11 @@ public class BuildCraftTransport extends BuildCraftMod {
 		PipeManager.registerStripesHandler(new StripesHandlerBucket());
 		PipeManager.registerStripesHandler(new StripesHandlerArrow());
 		PipeManager.registerStripesHandler(new StripesHandlerShears());
+
+		PipeManager.registerPipePluggable(FacadePluggable.class, "facade");
+		PipeManager.registerPipePluggable(GatePluggable.class, "gate");
+		PipeManager.registerPipePluggable(PlugPluggable.class, "plug");
+		PipeManager.registerPipePluggable(RobotStationPluggable.class, "robotStation");
 		
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
