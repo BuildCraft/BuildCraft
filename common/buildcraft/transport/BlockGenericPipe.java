@@ -1312,8 +1312,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	public boolean recolourBlock(World world, int x, int y, int z, ForgeDirection side, int colour) {
 		TileGenericPipe pipeTile = (TileGenericPipe) world.getTileEntity(x, y, z);
 		if (!pipeTile.hasPlug(side)) {
-			pipeTile.setColor(colour);
-			return true;
+			return pipeTile.setColor(colour);
 		}
 
 		return false;
