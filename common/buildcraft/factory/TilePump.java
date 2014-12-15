@@ -29,6 +29,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.EntityBlock;
@@ -41,7 +42,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtils;
 import buildcraft.core.utils.Utils;
 
-public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler {
+public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler, IRedstoneEngineReceiver {
 
 	public static final int REBUID_DELAY = 512;
 	public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 16;
@@ -447,5 +448,10 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 	@Override
 	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
 		return new FluidTankInfo[]{tank.getInfo()};
+	}
+
+	@Override
+	public boolean canConnectRedstoneEngine(ForgeDirection side) {
+		return true;
 	}
 }

@@ -895,8 +895,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	public boolean hasGate(ForgeDirection direction) {
 		if (direction == null || direction == ForgeDirection.UNKNOWN) {
 			return false;
-		} else if (this.getWorldObj().isRemote) {
-			return renderState.gateMatrix.isGateExists(direction);
 		} else {
 			return sideProperties.pluggables[direction.ordinal()] instanceof GatePluggable;
 		}
