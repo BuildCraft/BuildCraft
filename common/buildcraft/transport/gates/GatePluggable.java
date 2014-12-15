@@ -94,6 +94,11 @@ public class GatePluggable implements IPipePluggable {
 	}
 
 	@Override
+	public void update(IPipeContainer pipe, ForgeDirection direction) {
+
+	}
+
+	@Override
 	public void onAttachedPipe(IPipeContainer pipe, ForgeDirection direction) {
 		TileGenericPipe pipeReal = (TileGenericPipe) pipe;
 		if (!pipeReal.getWorld().isRemote) {

@@ -166,6 +166,11 @@ public class RobotStationPluggable implements IPipePluggable {
 	}
 
 	@Override
+	public void update(IPipeContainer pipe, ForgeDirection direction) {
+
+	}
+
+	@Override
 	public void onAttachedPipe(IPipeContainer pipe, ForgeDirection direction) {
 		validate(pipe, direction);
 	}

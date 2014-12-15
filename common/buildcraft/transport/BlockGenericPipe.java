@@ -336,8 +336,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		// pluggables
 
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-			if (tileG.getPluggable(side) != null) {
-				AxisAlignedBB bb = tileG.getPluggable(side).getBoundingBox(side);
+			if (tileG.getPipePluggable(side) != null) {
+				AxisAlignedBB bb = tileG.getPipePluggable(side).getBoundingBox(side);
 				setBlockBounds(bb);
 				boxes[7 + side.ordinal()] = bb;
 				hits[7 + side.ordinal()] = super.collisionRayTrace(world, x, y, z, origin, direction);
@@ -513,7 +513,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			switch (rayTraceResult.hitPart) {
 				case Pluggable: {
 					Pipe<?> pipe = getPipe(world, x, y, z);
-					IPipePluggable pluggable = pipe.container.getPluggable(rayTraceResult.sideHit);
+					IPipePluggable pluggable = pipe.container.getPipePluggable(rayTraceResult.sideHit);
 					if (pluggable instanceof FacadePluggable) {
 						ForgeDirection dir = ForgeDirection
 								.getOrientation(target.sideHit);
@@ -677,7 +677,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 							player);
 
 					if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable
-							&& pipe.container.getPluggable(rayTraceResult.sideHit) instanceof RobotStationPluggable) {
+							&& pipe.container.getPipePluggable(rayTraceResult.sideHit) instanceof RobotStationPluggable) {
 						DockingStation station = pipe.container.getStation(rayTraceResult.sideHit);
 
 						if (!station.isTaken()) {
@@ -721,7 +721,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 
 			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable
-					&& pipe.container.getPluggable(rayTraceResult.sideHit) instanceof GatePluggable) {
+					&& pipe.container.getPipePluggable(rayTraceResult.sideHit) instanceof GatePluggable) {
 				clickedGate = pipe.gates[rayTraceResult.sideHit.ordinal()];
 			}
 
@@ -740,7 +740,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 		if (player.isSneaking()) {
 			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable
-					&& pipe.container.getPluggable(rayTraceResult.sideHit) instanceof GatePluggable) {
+					&& pipe.container.getPipePluggable(rayTraceResult.sideHit) instanceof GatePluggable) {
 				if (pipe.container.hasGate(rayTraceResult.sideHit)) {
 					return pipe.container.dropSideItems(rayTraceResult.sideHit);
 				}
@@ -815,7 +815,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 		if (player.isSneaking()) {
 			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable
-					&& pipe.container.getPluggable(rayTraceResult.sideHit) instanceof FacadePluggable) {
+					&& pipe.container.getPipePluggable(rayTraceResult.sideHit) instanceof FacadePluggable) {
 				if (pipe.container.hasFacade(rayTraceResult.sideHit)) {
 					return pipe.container.dropSideItems(rayTraceResult.sideHit);
 				}
@@ -844,7 +844,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 		if (player.isSneaking()) {
 			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable
-					&& pipe.container.getPluggable(rayTraceResult.sideHit) instanceof PlugPluggable) {
+					&& pipe.container.getPipePluggable(rayTraceResult.sideHit) instanceof PlugPluggable) {
 				if (pipe.container.dropSideItems(rayTraceResult.sideHit)) {
 					return true;
 				}
@@ -862,7 +862,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 		if (player.isSneaking()) {
 			if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable
-					&& pipe.container.getPluggable(rayTraceResult.sideHit) instanceof RobotStationPluggable) {
+					&& pipe.container.getPipePluggable(rayTraceResult.sideHit) instanceof RobotStationPluggable) {
 				if (pipe.container.dropSideItems(rayTraceResult.sideHit)) {
 					return true;
 				}

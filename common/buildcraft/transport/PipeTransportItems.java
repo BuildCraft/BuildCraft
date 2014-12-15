@@ -52,7 +52,7 @@ public class PipeTransportItems extends PipeTransport {
 
 	public void readjustSpeed(TravelingItem item) {
 		PipeEventItem.AdjustSpeed event = new PipeEventItem.AdjustSpeed(item);
-		container.pipe.handlePipeEvent(event);
+		container.pipe.eventBus.handleEvent(event);
 		if (!event.handled) {
 			defaultReajustSpeed(item);
 		}
@@ -103,7 +103,7 @@ public class PipeTransportItems extends PipeTransport {
 		}
 
 		PipeEventItem.Entered event = new PipeEventItem.Entered(item);
-		container.pipe.handlePipeEvent(event);
+		container.pipe.eventBus.handleEvent(event);
 		if (event.cancelled) {
 			return;
 		}
@@ -166,7 +166,7 @@ public class PipeTransportItems extends PipeTransport {
 		}
 
 		PipeEventItem.Entered event = new PipeEventItem.Entered(item);
-		container.pipe.handlePipeEvent(event);
+		container.pipe.eventBus.handleEvent(event);
 		if (event.cancelled) {
 			return;
 		}
@@ -207,7 +207,7 @@ public class PipeTransportItems extends PipeTransport {
 		}
 
 		PipeEventItem.FindDest event = new PipeEventItem.FindDest(item, result);
-		container.pipe.handlePipeEvent(event);
+		container.pipe.eventBus.handleEvent(event);
 
 		if (allowBouncing && result.isEmpty()) {
 			if (canReceivePipeObjects(item.input.getOpposite(), item)) {
@@ -277,14 +277,14 @@ public class PipeTransportItems extends PipeTransport {
 					}
 				} else {
 					PipeEventItem.ReachedCenter event = new PipeEventItem.ReachedCenter(item);
-					container.pipe.handlePipeEvent(event);
+					container.pipe.eventBus.handleEvent(event);
 				}
 
 			} else if (!item.toCenter && endReached(item)) {
 				TileEntity tile = container.getTile(item.output);
 
 				PipeEventItem.ReachedEnd event = new PipeEventItem.ReachedEnd(item, tile);
-				container.pipe.handlePipeEvent(event);
+				container.pipe.eventBus.handleEvent(event);
 				boolean handleItem = !event.handled;
 
 				// If the item has not been scheduled to removal by the hook
@@ -334,7 +334,7 @@ public class PipeTransportItems extends PipeTransport {
 		}
 
 		PipeEventItem.DropItem event = new PipeEventItem.DropItem(item, item.toEntityItem());
-		container.pipe.handlePipeEvent(event);
+		container.pipe.eventBus.handleEvent(event);
 
 		if (event.entity == null) {
 			return;

@@ -45,14 +45,13 @@ import buildcraft.transport.pipes.events.PipeEvent;
 import buildcraft.transport.statements.ActionValve.ValveState;
 
 public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory, IPipe {
-	private static Map<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>> eventHandlers = new HashMap<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>>();
-
 	public int[] signalStrength = new int[]{0, 0, 0, 0};
 	public TileGenericPipe container;
 	public final T transport;
 	public final Item item;
 	public boolean[] wireSet = new boolean[]{false, false, false, false};
 	public final Gate[] gates = new Gate[ForgeDirection.VALID_DIRECTIONS.length];
+	public PipeEventBus eventBus = new PipeEventBus();
 
 	private boolean internalUpdateScheduled = false;
 	private boolean initialized = false;
@@ -62,6 +61,8 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public Pipe(T transport, Item item) {
 		this.transport = transport;
 		this.item = item;
+
+		eventBus.registerHandler(this);
 	}
 
 	public void setTile(TileEntity tile) {
@@ -75,60 +76,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 				gate.resolveActions();
 			}
 		}
-	}
-
-	//	public final void handlePipeEvent(PipeEvent event) {
-//		try {
-//			Method method = getClass().getDeclaredMethod("eventHandler", event.getClass());
-//			method.invoke(this, event);
-//		} catch (Exception ex) {
-//		}
-//	}
-	private static class EventHandler {
-
-		public final Method method;
-
-		public EventHandler(Method method) {
-			this.method = method;
-		}
-	}
-
-	public final void handlePipeEvent(PipeEvent event) {
-		Map<Class<? extends PipeEvent>, EventHandler> handlerMap = eventHandlers.get(getClass());
-
-		if (handlerMap == null) {
-			handlerMap = new HashMap<Class<? extends PipeEvent>, EventHandler>();
-			eventHandlers.put(getClass(), handlerMap);
-		}
-
-		EventHandler handler = handlerMap.get(event.getClass());
-
-		if (handler == null) {
-			handler = makeEventHandler(event, handlerMap);
-		}
-
-		if (handler.method == null) {
-			return;
-		}
-
-		try {
-			handler.method.invoke(this, event);
-		} catch (Exception ex) {
-		}
-	}
-
-	private EventHandler makeEventHandler(PipeEvent event, Map<Class<? extends PipeEvent>, EventHandler> handlerMap) {
-		EventHandler handler;
-
-		try {
-			Method method = getClass().getDeclaredMethod("eventHandler", event.getClass());
-			handler = new EventHandler(method);
-		} catch (Exception ex) {
-			handler = new EventHandler(null);
-		}
-
-		handlerMap.put(event.getClass(), handler);
-		return handler;
 	}
 
 	public boolean blockActivated(EntityPlayer entityplayer) {
@@ -495,8 +442,8 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		}
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			if (container.hasPluggable(direction)) {
-				for (ItemStack stack : container.getPluggable(direction).getDropItems(container)) {
+			if (container.hasPipePluggable(direction)) {
+				for (ItemStack stack : container.getPipePluggable(direction).getDropItems(container)) {
 					result.add(stack);
 				}
 			}
