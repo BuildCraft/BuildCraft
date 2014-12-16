@@ -8,6 +8,8 @@
  */
 package buildcraft.transport.pipes;
 
+import java.util.ArrayList;
+import java.util.List;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -31,6 +33,7 @@ import buildcraft.transport.IDiamondPipe;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
+import buildcraft.transport.pipes.events.PipeEventFluid;
 
 public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDiamondPipe {
 
@@ -124,22 +127,13 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
         return true;
     }
 
-	@Override
-	public boolean outputOpen(ForgeDirection to) {
-		if (!super.outputOpen(to)) {
-			return false;
-		}
+	public void eventHandler(PipeEventFluid.FindDest event) {
+		Fluid fluidInTank = event.fluidStack.getFluid();
+		List<ForgeDirection> removedDestinations = new ArrayList<ForgeDirection>();
 
-		// get center tank, from which outputs are checked; ignore if has no fluid
-		FluidTankInfo[] tanks = transport.getTankInfo(ForgeDirection.UNKNOWN);
-		if (tanks == null || tanks[0] == null || tanks[0].fluid == null || tanks[0].fluid.amount == 0) {
-			return true;
-		}
-
-		Fluid fluidInTank = tanks[0].fluid.getFluid();
 		boolean[] validFilter = new boolean[6];
 		boolean isFiltered = false;
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+		for (ForgeDirection dir : event.destinations) {
 			if (container.isPipeConnected(dir) && filters.filteredDirections[dir.ordinal()]) {
 				for (int slot = dir.ordinal() * 9; slot < dir.ordinal() * 9 + 9; ++slot) {
 					if (filters.fluids[slot] != null && filters.fluids[slot].getID() == fluidInTank.getID()) {
@@ -150,18 +144,25 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
 				}
 			}
 		}
-		// the direction is filtered and liquids match
-		if (filters.filteredDirections[to.ordinal()] && validFilter[to.ordinal()]) {
-			return true;
+
+		for (ForgeDirection to : event.destinations) {
+			// the direction is filtered and liquids match
+			if (filters.filteredDirections[to.ordinal()] && validFilter[to.ordinal()]) {
+				continue;
+			}
+
+			// we haven't found a filter for this liquid and the direction is free
+			if (!isFiltered && !filters.filteredDirections[to.ordinal()]) {
+				continue;
+			}
+
+			// we have a filter for the liquid, but not a valid direction
+			removedDestinations.add(to);
 		}
 
-		// we haven't found a filter for this liquid and the direction is free
-		if (!isFiltered && !filters.filteredDirections[to.ordinal()]) {
-			return true;
+		for (ForgeDirection dir : removedDestinations) {
+			event.destinations.remove(dir);
 		}
-
-		// we have a filter for the liquid, but not a valid direction
-		return false;
 	}
 
     /* SAVING & LOADING */

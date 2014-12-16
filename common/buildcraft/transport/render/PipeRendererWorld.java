@@ -17,8 +17,8 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.render.ITextureStates;
-import buildcraft.api.pipes.IPipePluggable;
 import buildcraft.api.pipes.IPipePluggableRenderer;
+import buildcraft.api.pipes.PipePluggable;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.utils.ColorUtils;
 import buildcraft.transport.PipeIconProvider;
@@ -113,7 +113,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		if (renderPass == 0) {
 			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 				if (tile.hasPipePluggable(dir)) {
-					IPipePluggable p = tile.getPipePluggable(dir);
+					PipePluggable p = tile.getPipePluggable(dir);
 					IPipePluggableRenderer r = p.getRenderer();
 					if (r != null) {
 						r.renderPluggable(renderblocks, tile.getPipe(), dir, p, fakeBlock, x, y, z);

@@ -11,7 +11,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import buildcraft.api.pipes.IPipePluggable;
+import buildcraft.api.pipes.PipePluggable;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.transport.BlockGenericPipe.Part;
@@ -56,7 +56,7 @@ public class ItemGateCopier extends ItemBuildCraft {
 		RaytraceResult rayTraceResult = ((BlockGenericPipe) block).doRayTrace(world, x, y, z, player);
 
 		if (rayTraceResult != null && rayTraceResult.boundingBox != null && rayTraceResult.hitPart == Part.Pluggable) {
-			IPipePluggable pluggable = ((TileGenericPipe) tile).getPipePluggable(rayTraceResult.sideHit);
+			PipePluggable pluggable = ((TileGenericPipe) tile).getPipePluggable(rayTraceResult.sideHit);
 			if (pluggable instanceof GatePluggable) {
 				gate = ((TileGenericPipe) tile).pipe.gates[rayTraceResult.sideHit.ordinal()];
 			}

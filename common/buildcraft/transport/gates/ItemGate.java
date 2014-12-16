@@ -33,7 +33,6 @@ import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.pipes.IPipePluggableRenderer;
 import buildcraft.api.statements.StatementManager;
-import buildcraft.api.pipes.IPipePluggable;
 import buildcraft.api.pipes.IPipeContainer;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.inventory.InvUtils;

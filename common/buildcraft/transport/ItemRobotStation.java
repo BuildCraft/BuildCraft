@@ -20,7 +20,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.pipes.IPipePluggable;
 import buildcraft.api.pipes.IPipeContainer;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;

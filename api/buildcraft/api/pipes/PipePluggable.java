@@ -22,21 +22,33 @@ import buildcraft.api.core.ISerializable;
  * An IPipePluggable MUST have an empty constructor for client-side
  * rendering!
  */
-public interface IPipePluggable extends INBTStoreable, ISerializable {
-	ItemStack[] getDropItems(IPipeContainer pipe);
+public abstract class PipePluggable implements INBTStoreable, ISerializable {
+	public abstract ItemStack[] getDropItems(IPipeContainer pipe);
 
-	void onAttachedPipe(IPipeContainer pipe, ForgeDirection direction);
+	public void update(IPipeContainer pipe, ForgeDirection direction) {
 
-	void onDetachedPipe(IPipeContainer pipe, ForgeDirection direction);
+	}
 
-	boolean isBlocking(IPipeContainer pipe, ForgeDirection direction);
+	public void onAttachedPipe(IPipeContainer pipe, ForgeDirection direction) {
+		validate(pipe, direction);
+	}
 
-	void invalidate();
+	public void onDetachedPipe(IPipeContainer pipe, ForgeDirection direction) {
+		invalidate();
+	}
 
-	void validate(IPipeContainer pipe, ForgeDirection direction);
+	public abstract boolean isBlocking(IPipeContainer pipe, ForgeDirection direction);
 
-	AxisAlignedBB getBoundingBox(ForgeDirection side);
+	public void invalidate() {
+
+	}
+
+	public void validate(IPipeContainer pipe, ForgeDirection direction) {
+
+	}
+
+	public abstract AxisAlignedBB getBoundingBox(ForgeDirection side);
 
 	@SideOnly(Side.CLIENT)
-	IPipePluggableRenderer getRenderer();
+	public abstract IPipePluggableRenderer getRenderer();
 }

@@ -46,4 +46,7 @@ public interface IPipeContainer extends IInjectable {
 	IPipe getNeighborPipe(ForgeDirection dir);
 	
 	IPipe getPipe();
+
+	PipePluggable getPipePluggable(ForgeDirection direction);
+	boolean hasPipePluggable(ForgeDirection direction);
 }

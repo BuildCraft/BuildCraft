@@ -12,14 +12,14 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.pipes.IPipeContainer;
-import buildcraft.api.pipes.IPipePluggable;
 import buildcraft.api.pipes.IPipePluggableRenderer;
+import buildcraft.api.pipes.PipePluggable;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.transport.Gate;
 import buildcraft.transport.TileGenericPipe;
 
-public class GatePluggable implements IPipePluggable {
+public class GatePluggable extends PipePluggable {
 	public GateDefinition.GateMaterial material;
 	public GateDefinition.GateLogic logic;
 	public IGateExpansion[] expansions;
@@ -94,11 +94,6 @@ public class GatePluggable implements IPipePluggable {
 	}
 
 	@Override
-	public void update(IPipeContainer pipe, ForgeDirection direction) {
-
-	}
-
-	@Override
 	public void onAttachedPipe(IPipeContainer pipe, ForgeDirection direction) {
 		TileGenericPipe pipeReal = (TileGenericPipe) pipe;
 		if (!pipeReal.getWorld().isRemote) {
@@ -152,16 +147,6 @@ public class GatePluggable implements IPipePluggable {
 			}
 		}
 		return true;
-	}
-
-	@Override
-	public void invalidate() {
-
-	}
-
-	@Override
-	public void validate(IPipeContainer pipe, ForgeDirection direction) {
-
 	}
 
 	@Override

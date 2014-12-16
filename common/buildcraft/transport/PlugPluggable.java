@@ -10,16 +10,16 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.pipes.IPipe;
 import buildcraft.api.pipes.IPipeContainer;
-import buildcraft.api.pipes.IPipePluggable;
 import buildcraft.api.pipes.IPipePluggableRenderer;
+import buildcraft.api.pipes.PipePluggable;
 import buildcraft.core.utils.MatrixTranformations;
 
-public class PlugPluggable implements IPipePluggable {
+public class PlugPluggable extends PipePluggable {
 	public class PlugPluggableRenderer implements IPipePluggableRenderer {
 		private float zFightOffset = 1 / 4096.0F;
 
 		@Override
-		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, ForgeDirection side, IPipePluggable pipePluggable, ITextureStates blockStateMachine, int x, int y, int z) {
+		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, ForgeDirection side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int x, int y, int z) {
 			float[][] zeroState = new float[3][2];
 
 			// X START - END
@@ -79,33 +79,8 @@ public class PlugPluggable implements IPipePluggable {
 	}
 
 	@Override
-	public void update(IPipeContainer pipe, ForgeDirection direction) {
-
-	}
-
-	@Override
-	public void onAttachedPipe(IPipeContainer pipe, ForgeDirection direction) {
-
-	}
-
-	@Override
-	public void onDetachedPipe(IPipeContainer pipe, ForgeDirection direction) {
-
-	}
-
-	@Override
 	public boolean isBlocking(IPipeContainer pipe, ForgeDirection direction) {
 		return true;
-	}
-
-	@Override
-	public void invalidate() {
-
-	}
-
-	@Override
-	public void validate(IPipeContainer pipe, ForgeDirection direction) {
-
 	}
 
 	@Override

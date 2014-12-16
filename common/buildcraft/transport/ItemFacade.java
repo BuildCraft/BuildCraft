@@ -37,7 +37,6 @@ import buildcraft.api.core.Position;
 import buildcraft.api.facades.FacadeType;
 import buildcraft.api.facades.IFacadeItem;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
-import buildcraft.api.pipes.IPipePluggable;
 import buildcraft.api.pipes.IPipeContainer;
 import buildcraft.api.pipes.PipeWire;
 import buildcraft.core.BlockSpring;

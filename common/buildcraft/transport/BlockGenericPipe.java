@@ -52,7 +52,7 @@ import buildcraft.api.events.PipePlacedEvent;
 import buildcraft.api.events.RobotPlacementEvent;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.pipes.IPipePluggable;
+import buildcraft.api.pipes.PipePluggable;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.pipes.PipeWire;
@@ -513,7 +513,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			switch (rayTraceResult.hitPart) {
 				case Pluggable: {
 					Pipe<?> pipe = getPipe(world, x, y, z);
-					IPipePluggable pluggable = pipe.container.getPipePluggable(rayTraceResult.sideHit);
+					PipePluggable pluggable = pipe.container.getPipePluggable(rayTraceResult.sideHit);
 					if (pluggable instanceof FacadePluggable) {
 						ForgeDirection dir = ForgeDirection
 								.getOrientation(target.sideHit);

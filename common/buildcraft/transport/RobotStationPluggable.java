@@ -1,6 +1,5 @@
 package buildcraft.transport;
 
-import java.awt.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.ItemStack;
@@ -11,8 +10,8 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.pipes.IPipe;
 import buildcraft.api.pipes.IPipeContainer;
-import buildcraft.api.pipes.IPipePluggable;
 import buildcraft.api.pipes.IPipePluggableRenderer;
+import buildcraft.api.pipes.PipePluggable;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.RobotRegistry;
 import buildcraft.core.utils.MatrixTranformations;
@@ -20,7 +19,7 @@ import buildcraft.core.utils.MatrixTranformations;
 /**
 * Created by asie on 12/15/14.
 */
-public class RobotStationPluggable implements IPipePluggable {
+public class RobotStationPluggable extends PipePluggable {
 	public class RobotStationPluggableRenderer implements IPipePluggableRenderer {
 		private float zFightOffset = 1 / 4096.0F;
 
@@ -66,7 +65,7 @@ public class RobotStationPluggable implements IPipePluggable {
 		}
 
 		@Override
-		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, ForgeDirection side, IPipePluggable pipePluggable, ITextureStates blockStateMachine, int x, int y, int z) {
+		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, ForgeDirection side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int x, int y, int z) {
 			RobotStationState state = ((RobotStationPluggable) pipePluggable).renderState;
 
 			//float width = 0.075F;
@@ -163,21 +162,6 @@ public class RobotStationPluggable implements IPipePluggable {
 	@Override
 	public ItemStack[] getDropItems(IPipeContainer pipe) {
 		return new ItemStack[] { new ItemStack(BuildCraftTransport.robotStationItem) };
-	}
-
-	@Override
-	public void update(IPipeContainer pipe, ForgeDirection direction) {
-
-	}
-
-	@Override
-	public void onAttachedPipe(IPipeContainer pipe, ForgeDirection direction) {
-		validate(pipe, direction);
-	}
-
-	@Override
-	public void onDetachedPipe(IPipeContainer pipe, ForgeDirection direction) {
-		invalidate();
 	}
 
 	public DockingStation getStation() {

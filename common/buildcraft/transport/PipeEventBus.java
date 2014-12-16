@@ -52,12 +52,14 @@ public class PipeEventBus {
 		Map<Method, Class<? extends PipeEvent>> methods = new HashMap<Method, Class<? extends PipeEvent>>();
 
 		for (Method m: handler.getClass().getDeclaredMethods()) {
-			Class[] parameters = m.getParameterTypes();
-			if (parameters.length == 1 && PipeEvent.class.isAssignableFrom(parameters[0])) {
-				Class<? extends PipeEvent> eventType = (Class<? extends PipeEvent>) parameters[0];
-				List<EventHandler> eventHandlerList = getHandlerList(eventType);
-				eventHandlerList.add(new EventHandler(m, handler));
-				methods.put(m, eventType);
+			if ("eventHandler".equals(m.getName())) {
+				Class[] parameters = m.getParameterTypes();
+				if (parameters.length == 1 && PipeEvent.class.isAssignableFrom(parameters[0])) {
+					Class<? extends PipeEvent> eventType = (Class<? extends PipeEvent>) parameters[0];
+					List<EventHandler> eventHandlerList = getHandlerList(eventType);
+					eventHandlerList.add(new EventHandler(m, handler));
+					methods.put(m, eventType);
+				}
 			}
 		}
 

@@ -20,11 +20,11 @@ public abstract class PipeManager {
 
 	public static List<IStripesHandler> stripesHandlers = new ArrayList<IStripesHandler>();
 	public static List<IExtractionHandler> extractionHandlers = new ArrayList<IExtractionHandler>();
-	public static ArrayList<Class<? extends IPipePluggable>> pipePluggables = new ArrayList<Class<? extends IPipePluggable>>();
-	private static Map<String, Class<? extends IPipePluggable>> pipePluggableNames =
-			new HashMap<String, Class<? extends IPipePluggable>>();
-	private static Map<Class<? extends IPipePluggable>, String> pipePluggableByNames =
-			new HashMap<Class<? extends IPipePluggable>, String>();
+	public static ArrayList<Class<? extends PipePluggable>> pipePluggables = new ArrayList<Class<? extends PipePluggable>>();
+	private static Map<String, Class<? extends PipePluggable>> pipePluggableNames =
+			new HashMap<String, Class<? extends PipePluggable>>();
+	private static Map<Class<? extends PipePluggable>, String> pipePluggableByNames =
+			new HashMap<Class<? extends PipePluggable>, String>();
 
 	public static void registerExtractionHandler(IExtractionHandler handler) {
 		extractionHandlers.add(handler);
@@ -34,7 +34,7 @@ public abstract class PipeManager {
 		stripesHandlers.add(handler);
 	}
 
-	public static void registerPipePluggable(Class<? extends IPipePluggable> pluggable, String name) {
+	public static void registerPipePluggable(Class<? extends PipePluggable> pluggable, String name) {
 		pipePluggables.add(pluggable);
 		pipePluggableNames.put(name, pluggable);
 		pipePluggableByNames.put(pluggable, name);
@@ -70,7 +70,7 @@ public abstract class PipeManager {
 		return pipePluggableNames.get(pluggableName);
 	}
 
-	public static String getPluggableName(Class<? extends IPipePluggable> aClass) {
+	public static String getPluggableName(Class<? extends PipePluggable> aClass) {
 		return pipePluggableByNames.get(aClass);
 	}
 }

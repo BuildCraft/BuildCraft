@@ -7,11 +7,11 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.pipes.IPipeContainer;
-import buildcraft.api.pipes.IPipePluggable;
 import buildcraft.api.pipes.IPipePluggableRenderer;
+import buildcraft.api.pipes.PipePluggable;
 import buildcraft.core.utils.MatrixTranformations;
 
-public class FacadePluggable implements IPipePluggable {
+public class FacadePluggable extends PipePluggable {
 	public ItemFacade.FacadeState[] states;
 
 	public FacadePluggable(ItemFacade.FacadeState[] states) {
@@ -41,33 +41,8 @@ public class FacadePluggable implements IPipePluggable {
 	}
 
 	@Override
-	public void update(IPipeContainer pipe, ForgeDirection direction) {
-
-	}
-
-	@Override
-	public void onAttachedPipe(IPipeContainer pipe, ForgeDirection direction) {
-
-	}
-
-	@Override
-	public void onDetachedPipe(IPipeContainer pipe, ForgeDirection direction) {
-
-	}
-
-	@Override
 	public boolean isBlocking(IPipeContainer pipe, ForgeDirection direction) {
 		return false;
-	}
-
-	@Override
-	public void invalidate() {
-
-	}
-
-	@Override
-	public void validate(IPipeContainer pipe, ForgeDirection direction) {
-
 	}
 
 	@Override
