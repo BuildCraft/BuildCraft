@@ -20,8 +20,10 @@ import buildcraft.api.core.render.ITextureStates;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.FacadePluggable;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;
+import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TransportConstants;
 
 public final class FacadeRenderHelper {
@@ -93,31 +95,43 @@ public final class FacadeRenderHelper {
 				rotated[2][1] - zOffsets[side.ordinal()]);
 	}
 
-	public static void pipeFacadeRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, PipeRenderState state, int x, int y, int z) {
+	public static void pipeFacadeRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, TileGenericPipe tile, PipeRenderState state, int x, int y, int z) {
 		ITextureStates textureManager = blockStateMachine;
 		IIcon[] textures = textureManager.getTextureState().popArray();
 
 		//block_statemachine.setRenderAllSides();
 		
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			Block renderBlock = state.facadeMatrix.getFacadeBlock(direction);
+			if (!(tile.getPipePluggable(direction) instanceof FacadePluggable)) {
+				continue;
+			}
+
+			FacadePluggable pluggable = (FacadePluggable) tile.getPipePluggable(direction);
+			Block renderBlock = pluggable.getRenderingBlock();
 
 			if (renderBlock != null) {
+
 				// If the facade is meant to render in the current pass
 				if (renderBlock.canRenderInPass(PipeRendererWorld.renderPass)) {
-					int renderMeta = state.facadeMatrix.getFacadeMetaId(direction);
+					int renderMeta = pluggable.getRenderingMeta();
 
 					for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+
 						textures[side.ordinal()] = renderBlock.getIcon(side.ordinal(), renderMeta);
 						if (side == direction || side == direction.getOpposite()) {
 							blockStateMachine.setRenderSide(side, true);
 						} else {
-							blockStateMachine.setRenderSide(side, state.facadeMatrix.getFacadeBlock(side) == null);
+							if (!(tile.getPipePluggable(side) instanceof FacadePluggable)) {
+								blockStateMachine.setRenderSide(side, true);
+							} else {
+								FacadePluggable pluggable2 = (FacadePluggable) tile.getPipePluggable(side);
+								blockStateMachine.setRenderSide(side, pluggable2.getRenderingBlock() == null);
+							}
 						}
 					}
 
 					try {
-						BlockGenericPipe.facadeRenderColor = Item.getItemFromBlock(state.facadeMatrix.getFacadeBlock(direction)).getColorFromItemStack(new ItemStack(renderBlock, 1, renderMeta), 0);
+						BlockGenericPipe.facadeRenderColor = Item.getItemFromBlock(pluggable.getRenderingBlock()).getColorFromItemStack(new ItemStack(renderBlock, 1, renderMeta), 0);
 					} catch (Throwable error) {
 					}
 
@@ -134,7 +148,7 @@ public final class FacadeRenderHelper {
 					}
 
 					// Hollow facade
-					if (state.pipeConnectionMatrix.isConnected(direction)) {
+					if (pluggable.isHollow()) {
 						float[][] rotated = MatrixTranformations.deepClone(zeroStateFacade);
 						rotated[0][0] = CoreConstants.PIPE_MIN_POS - zFightOffset * 4;
 						rotated[0][1] = CoreConstants.PIPE_MAX_POS + zFightOffset * 4;
@@ -194,12 +208,16 @@ public final class FacadeRenderHelper {
 		// Always render connectors in pass 0
 		if (PipeRendererWorld.renderPass == 0) {
 			for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-				if (state.facadeMatrix.getFacadeBlock(direction) != null && !state.pipeConnectionMatrix.isConnected(direction)) {
-					float[][] rotated = MatrixTranformations.deepClone(zeroStateSupport);
-					MatrixTranformations.transform(rotated, direction);
+				if (tile.getPipePluggable(direction) instanceof FacadePluggable) {
+					FacadePluggable pluggable = (FacadePluggable) tile.getPipePluggable(direction);
 
-					renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-					renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
+					if (!pluggable.isHollow()) {
+						float[][] rotated = MatrixTranformations.deepClone(zeroStateSupport);
+						MatrixTranformations.transform(rotated, direction);
+
+						renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
+						renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
+					}
 				}
 			}
 		}

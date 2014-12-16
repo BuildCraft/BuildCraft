@@ -50,6 +50,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 		public final Block block;
 		public final int metadata;
 		public final boolean transparent;
+		public final boolean hollow;
 		public final PipeWire wire;
 
 		public FacadeState(Block block, int metadata, PipeWire wire) {
@@ -57,6 +58,15 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 			this.metadata = metadata;
 			this.wire = wire;
 			this.transparent = false;
+			this.hollow = false;
+		}
+
+		public FacadeState(Block block, int metadata, PipeWire wire, boolean hollow) {
+			this.block = block;
+			this.metadata = metadata;
+			this.wire = wire;
+			this.transparent = false;
+			this.hollow = hollow;
 		}
 
 		public FacadeState(NBTTagCompound nbt) {
@@ -64,6 +74,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 			this.metadata = nbt.getByte("metadata");
 			this.wire = nbt.hasKey("wire") ? PipeWire.fromOrdinal(nbt.getByte("wire")) : null;
 			this.transparent = nbt.hasKey("transparent") && nbt.getBoolean("transparent");
+			this.hollow = nbt.hasKey("hollow") && nbt.getBoolean("hollow");
 		}
 
 		private FacadeState(PipeWire wire) {
@@ -71,6 +82,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 			this.metadata = 0;
 			this.wire = wire;
 			this.transparent = true;
+			this.hollow = false;
 		}
 
 		public static FacadeState create(Block block, int metadata) {
@@ -94,6 +106,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 				nbt.setByte("wire", (byte) wire.ordinal());
 			}
 			nbt.setBoolean("transparent", transparent);
+			nbt.setBoolean("hollow", hollow);
 		}
 
 		public static NBTTagList writeArray(FacadeState[] states) {
@@ -180,7 +193,11 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 		} else if (state.block.getRenderType() == 39 && meta > 2) {
 			meta = 2;
 		}
-		return CoreProxy.proxy.getItemDisplayName(new ItemStack(state.block, 1, meta));
+		String s = CoreProxy.proxy.getItemDisplayName(new ItemStack(state.block, 1, meta));
+		if (state.hollow) {
+			s += " (" + StringUtils.localize("item.Facade.state_hollow") + ")";
+		}
+		return s;
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
@@ -427,15 +444,28 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 				+ itemStack.getItemDamage() + "}";
 
 		ItemStack facade = getFacadeForBlock(block, itemStack.getItemDamage());
+
 		if (!allFacades.contains(facade)) {
 			allFacades.add(facade);
 
 			ItemStack facade6 = facade.copy();
 			facade6.stackSize = 6;
 
+			FacadeState state = getFacadeStates(facade6)[0];
+			ItemStack facadeHollow = getFacade(new FacadeState(state.block, state.metadata, state.wire, true));
+
+			ItemStack facade6Hollow = facadeHollow.copy();
+			facade6Hollow.stackSize = 6;
+
 			// 3 Structurepipes + this block makes 6 facades
 			BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId, 8000, facade6, new ItemStack(
 					BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
+
+			BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":hollow", 8000, facade6Hollow, new ItemStack(
+					BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
+
+			BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":toHollow", 160, facadeHollow, facade);
+			BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":fromHollow", 160, facade, facadeHollow);
 		}
 	}
 

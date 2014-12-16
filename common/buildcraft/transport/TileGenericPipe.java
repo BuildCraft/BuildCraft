@@ -215,10 +215,12 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			PipePluggable pluggable = pluggables[direction.ordinal()];
 			if (pluggable != null) {
 				pluggable.onDetachedPipe(pipe, direction);
-				ItemStack[] stacks = pluggable.getDropItems(pipe);
-				if (stacks != null) {
-					for (ItemStack stack : stacks) {
-						InvUtils.dropItems(pipe.worldObj, stack, pipe.xCoord, pipe.yCoord, pipe.zCoord);
+				if (!pipe.getWorld().isRemote) {
+					ItemStack[] stacks = pluggable.getDropItems(pipe);
+					if (stacks != null) {
+						for (ItemStack stack : stacks) {
+							InvUtils.dropItems(pipe.worldObj, stack, pipe.xCoord, pipe.yCoord, pipe.zCoord);
+						}
 					}
 				}
 				result = true;
@@ -503,33 +505,28 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			PipePluggable pluggable = sideProperties.pluggables[direction.ordinal()];
 			if (!(pluggable instanceof FacadePluggable)) {
-				renderState.facadeMatrix.setFacade(direction, null, 0, true);
 				continue;
 			}
+
 			FacadeState[] states = ((FacadePluggable) pluggable).states;
-			if (states == null) {
-				renderState.facadeMatrix.setFacade(direction, null, 0, true);
-				continue;
-			}
 			// Iterate over all states and activate first proper
-			FacadeState defaultState = null, activeState = null;
-			for (FacadeState state : states) {
+			int defaultState = -1;
+			int activeState = -1;
+			for (int i = 0; i < states.length; i++) {
+				FacadeState state = states[i];
 				if (state.wire == null) {
-					defaultState = state;
+					defaultState = i;
 					continue;
 				}
 				if (pipe != null && pipe.isWireActive(state.wire)) {
-					activeState = state;
+					activeState = i;
 					break;
 				}
 			}
-			if (activeState == null) {
+			if (activeState < 0) {
 				activeState = defaultState;
 			}
-			Block block = activeState != null ? activeState.block : null;
-			int metadata = activeState != null ? activeState.metadata : 0;
-			boolean transparent = activeState == null || block == null;
-			renderState.facadeMatrix.setFacade(direction, block, metadata, transparent);
+			((FacadePluggable) pluggable).setActiveState(activeState);
 		}
 
 		pluggableState.setPluggables(sideProperties.pluggables);
@@ -892,8 +889,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	public boolean hasFacade(ForgeDirection direction) {
 		if (direction == null || direction == ForgeDirection.UNKNOWN) {
 			return false;
-		} else if (this.getWorldObj().isRemote) {
-			return renderState.facadeMatrix.getFacadeBlock(direction) != null;
 		} else {
 			return sideProperties.pluggables[direction.ordinal()] instanceof FacadePluggable;
 		}
@@ -930,7 +925,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	public boolean hasEnabledFacade(ForgeDirection direction) {
-		return hasFacade(direction) && !renderState.facadeMatrix.getFacadeTransparent(direction);
+		return hasFacade(direction) && !((FacadePluggable) getPipePluggable(direction)).getRenderingTransparent();
 	}
 
 	public ItemStack getFacade(ForgeDirection direction) {
@@ -1065,7 +1060,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	@Override
 	public boolean isSolidOnSide(ForgeDirection side) {
-		if (hasFacade(side)) {
+		if (hasPipePluggable(side) && getPipePluggable(side).isSolidOnSide(this, side)) {
 			return true;
 		}
 

@@ -106,7 +106,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		renderblocks.setRenderBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 
 		// Facade renderer handles rendering in both passes
-		pipeFacadeRenderer(renderblocks, fakeBlock, state, x, y, z);
+		pipeFacadeRenderer(renderblocks, fakeBlock, tile, state, x, y, z);
 		//block.setRenderAllSides();//Start fresh
 
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
@@ -157,8 +157,8 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		renderblocks.renderStandardBlock(stateHost, x, y, z);
 	}
 
-	private void pipeFacadeRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, PipeRenderState state, int x, int y, int z) {
-		FacadeRenderHelper.pipeFacadeRenderer(renderblocks, blockStateMachine, state, x, y, z);
+	private void pipeFacadeRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, TileGenericPipe tile, PipeRenderState state, int x, int y, int z) {
+		FacadeRenderHelper.pipeFacadeRenderer(renderblocks, blockStateMachine, tile, state, x, y, z);
 	}
 
 	@Override

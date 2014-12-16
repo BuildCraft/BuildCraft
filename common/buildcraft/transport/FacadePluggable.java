@@ -1,6 +1,7 @@
 package buildcraft.transport;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
@@ -13,9 +14,16 @@ import buildcraft.core.utils.MatrixTranformations;
 
 public class FacadePluggable extends PipePluggable {
 	public ItemFacade.FacadeState[] states;
+	private ItemFacade.FacadeState activeState;
+
+	// Client sync
+	private Block block;
+	private int meta;
+	private boolean transparent, renderAsHollow;
 
 	public FacadePluggable(ItemFacade.FacadeState[] states) {
 		this.states = states;
+		activeState = states.length > 0 ? states[0] : null;
 	}
 
 	public FacadePluggable() {
@@ -37,13 +45,25 @@ public class FacadePluggable extends PipePluggable {
 
 	@Override
 	public ItemStack[] getDropItems(IPipeContainer pipe) {
-		return states == null ? null : new ItemStack[] { ItemFacade.getFacade(states) };
+		if (states != null) {
+			return new ItemStack[] { ItemFacade.getFacade(states) };
+		} else {
+			return new ItemStack[] { ItemFacade.getFacade(new ItemFacade.FacadeState(getRenderingBlock(), getRenderingMeta(), null, isHollow())) };
+		}
 	}
 
 	@Override
 	public boolean isBlocking(IPipeContainer pipe, ForgeDirection direction) {
-		return false;
+		return isHollow();
 	}
+
+	public boolean isHollow() {
+		return states == null ? renderAsHollow : !states[0].hollow;
+	}
+
+	public Block getRenderingBlock() { return block; }
+	public int getRenderingMeta() { return meta; }
+	public boolean getRenderingTransparent() { return transparent; }
 
 	@Override
 	public AxisAlignedBB getBoundingBox(ForgeDirection side) {
@@ -63,16 +83,51 @@ public class FacadePluggable extends PipePluggable {
 	}
 
 	@Override
+	public boolean isSolidOnSide(IPipeContainer pipe, ForgeDirection direction) {
+		return !isHollow();
+	}
+
+	@Override
 	public IPipePluggableRenderer getRenderer() {
 		return null;
 	}
 
 	@Override
 	public void writeData(ByteBuf data) {
+		if (activeState == null) {
+			activeState = states.length > 0 ? states[0] : null;
+		}
+
+		data.writeBoolean(activeState == null ? false : activeState.hollow);
+
+		if (activeState == null || activeState.block == null) {
+			data.writeShort(0);
+		} else {
+			data.writeShort(Block.getIdFromBlock(activeState.block));
+		}
+
+		data.writeByte(activeState == null ? 0 : activeState.metadata);
+		data.writeBoolean(activeState == null ? false : activeState.transparent);
 	}
 
 	@Override
 	public void readData(ByteBuf data) {
+		renderAsHollow = data.readBoolean();
 
+		int blockId = data.readUnsignedShort();
+		if (blockId > 0) {
+			block = Block.getBlockById(blockId);
+		} else {
+			block = null;
+		}
+
+		meta = data.readByte();
+		transparent = data.readBoolean();
+	}
+
+	protected void setActiveState(int id) {
+		if (id >= 0 && id < states.length) {
+			activeState = states[id];
+		}
 	}
 }

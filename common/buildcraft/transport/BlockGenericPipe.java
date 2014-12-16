@@ -514,20 +514,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				case Pluggable: {
 					Pipe<?> pipe = getPipe(world, x, y, z);
 					PipePluggable pluggable = pipe.container.getPipePluggable(rayTraceResult.sideHit);
-					if (pluggable instanceof FacadePluggable) {
-						ForgeDirection dir = ForgeDirection
-								.getOrientation(target.sideHit);
-						FacadeMatrix matrix = getPipe(world, x, y, z).container.renderState.facadeMatrix;
-						Block block = matrix.getFacadeBlock(dir);
-						if (block != null) {
-							return BuildCraftTransport.facadeItem.getFacadeForBlock(block,
-									matrix.getFacadeMetaId(dir));
-						}
-					} else {
-						ItemStack[] drops = pluggable.getDropItems(pipe.container);
-						if (drops != null && drops.length > 0) {
-							return drops[0];
-						}
+					ItemStack[] drops = pluggable.getDropItems(pipe.container);
+					if (drops != null && drops.length > 0) {
+						return drops[0];
 					}
 				}
 				case Pipe:

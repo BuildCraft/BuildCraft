@@ -12,7 +12,6 @@ import io.netty.buffer.ByteBuf;
 
 import buildcraft.api.core.ISerializable;
 import buildcraft.transport.utils.ConnectionMatrix;
-import buildcraft.transport.utils.FacadeMatrix;
 import buildcraft.transport.utils.GateMatrix;
 import buildcraft.transport.utils.TextureMatrix;
 import buildcraft.transport.utils.WireMatrix;
@@ -22,7 +21,6 @@ public class PipeRenderState implements ISerializable {
 	public final ConnectionMatrix pipeConnectionMatrix = new ConnectionMatrix();
 	public final TextureMatrix textureMatrix = new TextureMatrix();
 	public final WireMatrix wireMatrix = new WireMatrix();
-	public final FacadeMatrix facadeMatrix = new FacadeMatrix();
 	public final GateMatrix gateMatrix = new GateMatrix();
 	public byte glassColor = -1;
 	
@@ -32,7 +30,6 @@ public class PipeRenderState implements ISerializable {
 		dirty = false;
 		pipeConnectionMatrix.clean();
 		textureMatrix.clean();
-		facadeMatrix.clean();
 		wireMatrix.clean();
 		gateMatrix.clean();
 	}
@@ -40,13 +37,12 @@ public class PipeRenderState implements ISerializable {
 	public boolean isDirty() {
 		return dirty || pipeConnectionMatrix.isDirty()
 				|| textureMatrix.isDirty() || wireMatrix.isDirty()
-				|| facadeMatrix.isDirty()  || gateMatrix.isDirty();
+				|| gateMatrix.isDirty();
 	}
 
 	public boolean needsRenderUpdate() {
 		return pipeConnectionMatrix.isDirty() || textureMatrix.isDirty()
-				|| wireMatrix.isDirty() || facadeMatrix.isDirty()
-				|| gateMatrix.isDirty();
+				|| wireMatrix.isDirty() || gateMatrix.isDirty();
 	}
 
 	@Override
@@ -55,7 +51,6 @@ public class PipeRenderState implements ISerializable {
 		pipeConnectionMatrix.writeData(data);
 		textureMatrix.writeData(data);
 		wireMatrix.writeData(data);
-		facadeMatrix.writeData(data);
 		gateMatrix.writeData(data);
 	}
 
@@ -65,7 +60,6 @@ public class PipeRenderState implements ISerializable {
 		pipeConnectionMatrix.readData(data);
 		textureMatrix.readData(data);
 		wireMatrix.readData(data);
-		facadeMatrix.readData(data);
 		gateMatrix.readData(data);
 	}
 }
