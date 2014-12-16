@@ -8,7 +8,6 @@
  */
 package buildcraft.transport.render;
 
-import com.sun.prism.util.tess.Tess;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
@@ -60,6 +59,67 @@ public class FacadeItemRenderer implements IItemRenderer {
 		render.renderFaceXPos(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(block, 5, decodedMeta));
 		tessellator.draw();
 	}
+	
+	private void drawHollowCube(Tessellator tessellator, RenderBlocks render, Block block, int decodedMeta) {
+		IIcon icon0 = tryGetBlockIcon(block, 0, decodedMeta);
+		IIcon icon1 = tryGetBlockIcon(block, 1, decodedMeta);
+		IIcon icon2 = tryGetBlockIcon(block, 2, decodedMeta);
+		IIcon icon3 = tryGetBlockIcon(block, 3, decodedMeta);
+		IIcon icon4 = tryGetBlockIcon(block, 4, decodedMeta);
+		IIcon icon5 = tryGetBlockIcon(block, 5, decodedMeta);
+		
+		float width = 14F / 16F;
+		float cavity = 4F / 16F;
+		double innerWidth = 1 - cavity;
+		
+		tessellator.startDrawingQuads();
+		render.setRenderBounds(0F, 0F, width, 1F, 1F, 1F);
+		
+		//Outside
+		tessellator.setNormal(0, -1, 0);
+		render.renderFaceYNeg(block, 0, 0, 0, icon0);
+		tessellator.setNormal(0, 1, 0);
+		render.renderFaceYPos(block, 0, 0, 0, icon1);
+		tessellator.setNormal(-1, 0, 0);
+		render.renderFaceXNeg(block, 0, 0, 0, icon4);
+		tessellator.setNormal(1, 0, 0);
+		render.renderFaceXPos(block, 0, 0, 0, icon5);
+		
+		//Inside
+		tessellator.setNormal(0, -1, 0);
+		render.renderFaceYNeg(block, 0, innerWidth, 0, icon0);
+		tessellator.setNormal(0, 1, 0);
+		render.renderFaceYPos(block, 0, -innerWidth, 0, icon1);
+		tessellator.setNormal(-1, 0, 0);
+		render.renderFaceXNeg(block, innerWidth, 0, 0, icon4);
+		tessellator.setNormal(1, 0, 0);
+		render.renderFaceXPos(block, -innerWidth, 0, 0, icon5);
+		
+		//Hollow
+		render.setRenderBounds(0, 0, width, cavity, 1, 1);
+		tessellator.setNormal(0, 0, -1);
+		render.renderFaceZNeg(block, 0, 0, 0, icon2);
+		tessellator.setNormal(0, 0, 1);
+		render.renderFaceZPos(block, 0, 0, 0, icon3);
+		render.setRenderBounds(innerWidth, 0, width, 1, 1, 1);
+		tessellator.setNormal(0, 0, -1);
+		render.renderFaceZNeg(block, 0, 0, 0, icon2);
+		tessellator.setNormal(0, 0, 1);
+		render.renderFaceZPos(block, 0, 0, 0, icon3);
+		
+		render.setRenderBounds(cavity, 0, width, innerWidth, cavity, 1);
+		tessellator.setNormal(0, 0, -1);
+		render.renderFaceZNeg(block, 0, 0, 0, icon2);
+		tessellator.setNormal(0, 0, 1);
+		render.renderFaceZPos(block, 0, 0, 0, icon3);
+		render.setRenderBounds(cavity, innerWidth, width, innerWidth, 1, 1);
+		tessellator.setNormal(0, 0, -1);
+		render.renderFaceZNeg(block, 0, 0, 0, icon2);
+		tessellator.setNormal(0, 0, 1);
+		render.renderFaceZPos(block, 0, 0, 0, icon3);
+		
+		tessellator.draw();
+	}
 
 	private void renderFacadeItem(RenderBlocks render, ItemStack item, float translateX, float translateY, float translateZ) {
 		if (lastTime < System.currentTimeMillis()) {
@@ -108,9 +168,10 @@ public class FacadeItemRenderer implements IItemRenderer {
 		}
 
 		if (hollow) {
-			// TODO
+			GL11.glTranslatef(translateX, translateY, translateZ);
+			drawHollowCube(tessellator, render, block, decodedMeta);
 		} else {
-			render.setRenderBounds(0F, 0F, 1F - 1F / 16F, 1F, 1F, 1F);
+			render.setRenderBounds(0F, 0F, 14F / 16F, 1F, 1F, 1F);
 			GL11.glTranslatef(translateX, translateY, translateZ);
 			drawCube(tessellator, render, block, decodedMeta);
 		}
