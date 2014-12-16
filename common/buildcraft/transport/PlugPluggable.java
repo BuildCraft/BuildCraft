@@ -19,7 +19,11 @@ public class PlugPluggable extends PipePluggable {
 		private float zFightOffset = 1 / 4096.0F;
 
 		@Override
-		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, ForgeDirection side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int x, int y, int z) {
+		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, ForgeDirection side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
+			if (renderPass != 0) {
+				return;
+			}
+
 			float[][] zeroState = new float[3][2];
 
 			// X START - END

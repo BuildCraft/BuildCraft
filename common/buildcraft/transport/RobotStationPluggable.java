@@ -65,7 +65,11 @@ public class RobotStationPluggable extends PipePluggable {
 		}
 
 		@Override
-		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, ForgeDirection side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int x, int y, int z) {
+		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, ForgeDirection side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
+			if (renderPass != 0) {
+				return;
+			}
+
 			RobotStationState state = ((RobotStationPluggable) pipePluggable).renderState;
 
 			//float width = 0.075F;

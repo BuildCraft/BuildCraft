@@ -109,15 +109,12 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		pipeFacadeRenderer(renderblocks, fakeBlock, state, x, y, z);
 		//block.setRenderAllSides();//Start fresh
 
-		// Force other opaque renders into pass 0
-		if (renderPass == 0) {
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				if (tile.hasPipePluggable(dir)) {
-					PipePluggable p = tile.getPipePluggable(dir);
-					IPipePluggableRenderer r = p.getRenderer();
-					if (r != null) {
-						r.renderPluggable(renderblocks, tile.getPipe(), dir, p, fakeBlock, x, y, z);
-					}
+		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			if (tile.hasPipePluggable(dir)) {
+				PipePluggable p = tile.getPipePluggable(dir);
+				IPipePluggableRenderer r = p.getRenderer();
+				if (r != null) {
+					r.renderPluggable(renderblocks, tile.getPipe(), dir, p, fakeBlock, renderPass, x, y, z);
 				}
 			}
 		}
