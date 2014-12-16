@@ -23,6 +23,10 @@ public class GatePluggable extends PipePluggable {
 	public GateDefinition.GateMaterial material;
 	public GateDefinition.GateLogic logic;
 	public IGateExpansion[] expansions;
+	public boolean isLit, isPulsing;
+
+	public Gate realGate;
+	private float pulseStage;
 
 	public GatePluggable() {
 	}
@@ -64,6 +68,8 @@ public class GatePluggable extends PipePluggable {
 	public void writeData(ByteBuf buf) {
 		buf.writeByte(material.ordinal());
 		buf.writeByte(logic.ordinal());
+		buf.writeBoolean(realGate.isGateActive());
+		buf.writeBoolean(realGate.isGatePulsing());
 
 		final int expansionsSize = expansions.length;
 		buf.writeInt(expansionsSize);
@@ -76,6 +82,8 @@ public class GatePluggable extends PipePluggable {
 	public void readData(ByteBuf buf) {
 		material = GateDefinition.GateMaterial.fromOrdinal(buf.readByte());
 		logic = GateDefinition.GateLogic.fromOrdinal(buf.readByte());
+		isLit = buf.readBoolean();
+		isPulsing = buf.readBoolean();
 
 		final int expansionsSize = buf.readInt();
 		expansions = new IGateExpansion[expansionsSize];
@@ -94,6 +102,17 @@ public class GatePluggable extends PipePluggable {
 	}
 
 	@Override
+	public void update(IPipeContainer pipe, ForgeDirection direction) {
+		if (isPulsing || pulseStage > 0.11F) {
+			// if it is moving, or is still in a moved state, then complete
+			// the current movement
+			pulseStage = (pulseStage + 0.01F) % 1F;
+		} else {
+			pulseStage = 0;
+		}
+	}
+
+	@Override
 	public void onAttachedPipe(IPipeContainer pipe, ForgeDirection direction) {
 		TileGenericPipe pipeReal = (TileGenericPipe) pipe;
 		if (!pipeReal.getWorld().isRemote) {
@@ -102,6 +121,7 @@ public class GatePluggable extends PipePluggable {
 				pipeReal.pipe.gates[direction.ordinal()] = GateFactory.makeGate(pipeReal.pipe, material, logic, direction);
 				pipeReal.scheduleRenderUpdate();
 			}
+			this.realGate = pipeReal.pipe.gates[direction.ordinal()];
 		}
 	}
 
@@ -173,5 +193,9 @@ public class GatePluggable extends PipePluggable {
 	@Override
 	public IPipePluggableRenderer getRenderer() {
 		return null;
+	}
+
+	public float getPulseStage() {
+		return pulseStage;
 	}
 }

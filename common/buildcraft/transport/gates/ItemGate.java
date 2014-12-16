@@ -31,18 +31,22 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.pipes.IPipe;
+import buildcraft.api.pipes.IPipePluggableItem;
 import buildcraft.api.pipes.IPipePluggableRenderer;
+import buildcraft.api.pipes.PipePluggable;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.pipes.IPipeContainer;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Gate;
+import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 
-public class ItemGate extends ItemBuildCraft {
+public class ItemGate extends ItemBuildCraft implements IPipePluggableItem {
 
 	protected static final String NBT_TAG_MAT = "mat";
 	protected static final String NBT_TAG_LOGIC = "logic";
@@ -258,5 +262,12 @@ public class ItemGate extends ItemBuildCraft {
 		}
 		
 		StatementManager.registerIcons(iconRegister);
+	}
+
+	@Override
+	public PipePluggable createPipePluggable(IPipe pipe, ForgeDirection side, ItemStack stack) {
+		Pipe<?> realPipe = (Pipe<?>) pipe;
+
+		return new GatePluggable(GateFactory.makeGate(realPipe, stack, side));
 	}
 }

@@ -40,6 +40,7 @@ import buildcraft.api.pipes.PipeWire;
 import buildcraft.core.GuiIds;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
+import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.gates.StatementSlot;
 import buildcraft.transport.gui.ContainerGateInterface;
@@ -292,21 +293,6 @@ public final class Gate implements IGate, IStatementContainer {
 		if (!player.worldObj.isRemote) {
 			player.openGui(BuildCraftTransport.instance, GuiIds.GATES, pipe.container.getWorldObj(), pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
 			((ContainerGateInterface) player.openContainer).setGate(direction.ordinal());
-		}
-	}
-
-	/**
-	 *  This code is aimed at being active on the client only, and moves
-	 *  the internal position of the gate. There's no need to do that
-	 *  or to synchronize that with the server as this is only for animation.
-	 */
-	public void updatePulse () {
-		if (pipe.container.renderState.gateMatrix.isGatePulsing(direction) || pulseStage > 0.11F) {
-			// if it is moving, or is still in a moved state, then complete
-			// the current movement
-			pulseStage = (pulseStage + 0.01F) % 1F;
-		} else {
-			pulseStage = 0;
 		}
 	}
 

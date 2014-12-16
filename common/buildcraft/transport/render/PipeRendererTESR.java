@@ -55,6 +55,7 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
+import buildcraft.transport.gates.GatePluggable;
 
 public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	public static final float DISPLAY_MULTIPLIER = 0.1f;
@@ -477,14 +478,14 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	}
 
 	private void renderGates(TileGenericPipe pipe, double x, double y, double z) {
-		for (Gate gate : pipe.pipe.gates) {
-			if (gate != null) {
-				renderGate(pipe, x, y, z, gate, gate.getDirection());
+		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+			if (pipe.getPipePluggable(direction) instanceof GatePluggable) {
+				renderGate(pipe, x, y, z, (GatePluggable) pipe.getPipePluggable(direction), direction);
 			}
 		}
 	}
 
-	private void renderGate(TileGenericPipe pipe, double x, double y, double z, Gate gate, ForgeDirection direction) {
+	private void renderGate(TileGenericPipe pipe, double x, double y, double z, GatePluggable gate, ForgeDirection direction) {
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
 //		GL11.glEnable(GL11.GL_LIGHTING);
@@ -499,7 +500,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		bindTexture(TextureMap.locationBlocksTexture);
 
 		IIcon iconLogic;
-		if (pipe.renderState.gateMatrix.isGateLit(direction)) {
+		if (gate.isLit) {
 			iconLogic = gate.logic.getIconLit();
 		} else {
 			iconLogic = gate.logic.getIconDark();
@@ -512,7 +513,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		float pulseStage = gate.getPulseStage() * 2F;
 
-		if (pipe.renderState.gateMatrix.isGatePulsing(direction) || pulseStage != 0) {
+		if (gate.isPulsing || pulseStage != 0) {
 			// Render pulsing gate
 			float amplitude = 0.10F;
 			float start = 0.01F;
@@ -531,7 +532,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			renderGate(pipe, materialIcon, 1, 0.13F, translateCenter, translateCenter, direction);
 		}
 
-		for (IGateExpansion expansion : gate.expansions.keySet()) {
+		for (IGateExpansion expansion : gate.expansions) {
 			renderGate(pipe, expansion.getOverlayBlock(), 2, 0.13F, translateCenter, translateCenter, direction);
 		}
 

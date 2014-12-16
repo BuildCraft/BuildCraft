@@ -493,14 +493,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			}
 		}
 
-		// Gate Textures and movement
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			final Gate gate = pipe.gates[direction.ordinal()];
-			renderState.gateMatrix.setIsGateExists(gate != null, direction);
-			renderState.gateMatrix.setIsGateLit(gate != null && gate.isGateActive(), direction);
-			renderState.gateMatrix.setIsGatePulsing(gate != null && gate.isGatePulsing(), direction);
-		}
-
 		// Facades
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			PipePluggable pluggable = sideProperties.pluggables[direction.ordinal()];
@@ -531,10 +523,12 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 		pluggableState.setPluggables(sideProperties.pluggables);
 
+		// TODO: Add way of signalizing render update via Pluggables
+
 		if (renderState.isDirty()) {
 			renderState.clean();
-			sendUpdateToClient();
 		}
+		sendUpdateToClient();
 	}
 
 	public void initialize(Pipe<?> pipe) {
@@ -866,24 +860,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	public void scheduleRenderUpdate() {
 		refreshRenderState = true;
-	}
-
-	public boolean addFacade(ForgeDirection direction, FacadeState[] states) {
-		return setPluggable(direction, new FacadePluggable(states));
-	}
-
-	public boolean addPlug(ForgeDirection direction) {
-		return setPluggable(direction, new PlugPluggable());
-	}
-
-	public boolean addRobotStation(ForgeDirection direction) {
-		return setPluggable(direction, new RobotStationPluggable());
-	}
-
-	public boolean addGate(ForgeDirection direction, Gate gate) {
-		gate.setDirection(direction);
-		pipe.gates[direction.ordinal()] = gate;
-		return setPluggable(direction, new GatePluggable(gate));
 	}
 
 	public boolean hasFacade(ForgeDirection direction) {

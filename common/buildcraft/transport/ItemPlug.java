@@ -20,10 +20,13 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.pipes.IPipe;
 import buildcraft.api.pipes.IPipeContainer;
+import buildcraft.api.pipes.IPipePluggableItem;
+import buildcraft.api.pipes.PipePluggable;
 import buildcraft.core.ItemBuildCraft;
 
-public class ItemPlug extends ItemBuildCraft {
+public class ItemPlug extends ItemBuildCraft implements IPipePluggableItem {
 
 	public ItemPlug() {
 		super();
@@ -51,4 +54,8 @@ public class ItemPlug extends ItemBuildCraft {
         return 0;
     }
 
+	@Override
+	public PipePluggable createPipePluggable(IPipe pipe, ForgeDirection side, ItemStack stack) {
+		return new PlugPluggable();
+	}
 }

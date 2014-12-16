@@ -10,6 +10,7 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.pipes.IPipe;
 import buildcraft.api.pipes.IPipeContainer;
+import buildcraft.api.pipes.IPipePluggableItem;
 import buildcraft.api.pipes.IPipePluggableRenderer;
 import buildcraft.api.pipes.PipePluggable;
 import buildcraft.core.robots.DockingStation;
@@ -19,7 +20,7 @@ import buildcraft.core.utils.MatrixTranformations;
 /**
 * Created by asie on 12/15/14.
 */
-public class RobotStationPluggable extends PipePluggable {
+public class RobotStationPluggable extends PipePluggable implements IPipePluggableItem {
 	public class RobotStationPluggableRenderer implements IPipePluggableRenderer {
 		private float zFightOffset = 1 / 4096.0F;
 
@@ -245,5 +246,10 @@ public class RobotStationPluggable extends PipePluggable {
 	@Override
 	public void readData(ByteBuf data) {
 		this.renderState = RobotStationState.values()[data.readUnsignedByte()];
+	}
+
+	@Override
+	public PipePluggable createPipePluggable(IPipe pipe, ForgeDirection side, ItemStack stack) {
+		return new RobotStationPluggable();
 	}
 }

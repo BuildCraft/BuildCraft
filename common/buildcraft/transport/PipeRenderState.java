@@ -12,7 +12,6 @@ import io.netty.buffer.ByteBuf;
 
 import buildcraft.api.core.ISerializable;
 import buildcraft.transport.utils.ConnectionMatrix;
-import buildcraft.transport.utils.GateMatrix;
 import buildcraft.transport.utils.TextureMatrix;
 import buildcraft.transport.utils.WireMatrix;
 
@@ -21,7 +20,6 @@ public class PipeRenderState implements ISerializable {
 	public final ConnectionMatrix pipeConnectionMatrix = new ConnectionMatrix();
 	public final TextureMatrix textureMatrix = new TextureMatrix();
 	public final WireMatrix wireMatrix = new WireMatrix();
-	public final GateMatrix gateMatrix = new GateMatrix();
 	public byte glassColor = -1;
 	
 	private boolean dirty = true;
@@ -31,18 +29,16 @@ public class PipeRenderState implements ISerializable {
 		pipeConnectionMatrix.clean();
 		textureMatrix.clean();
 		wireMatrix.clean();
-		gateMatrix.clean();
 	}
 
 	public boolean isDirty() {
 		return dirty || pipeConnectionMatrix.isDirty()
-				|| textureMatrix.isDirty() || wireMatrix.isDirty()
-				|| gateMatrix.isDirty();
+				|| textureMatrix.isDirty() || wireMatrix.isDirty();
 	}
 
 	public boolean needsRenderUpdate() {
 		return pipeConnectionMatrix.isDirty() || textureMatrix.isDirty()
-				|| wireMatrix.isDirty() || gateMatrix.isDirty();
+				|| wireMatrix.isDirty();
 	}
 
 	@Override
@@ -51,7 +47,6 @@ public class PipeRenderState implements ISerializable {
 		pipeConnectionMatrix.writeData(data);
 		textureMatrix.writeData(data);
 		wireMatrix.writeData(data);
-		gateMatrix.writeData(data);
 	}
 
 	@Override
@@ -60,6 +55,5 @@ public class PipeRenderState implements ISerializable {
 		pipeConnectionMatrix.readData(data);
 		textureMatrix.readData(data);
 		wireMatrix.readData(data);
-		gateMatrix.readData(data);
 	}
 }

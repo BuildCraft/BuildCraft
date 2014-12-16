@@ -36,6 +36,9 @@ import buildcraft.api.core.JavaTools;
 import buildcraft.api.core.Position;
 import buildcraft.api.facades.FacadeType;
 import buildcraft.api.facades.IFacadeItem;
+import buildcraft.api.pipes.IPipe;
+import buildcraft.api.pipes.IPipePluggableItem;
+import buildcraft.api.pipes.PipePluggable;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.pipes.IPipeContainer;
 import buildcraft.api.pipes.PipeWire;
@@ -45,7 +48,7 @@ import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtils;
 
-public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
+public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePluggableItem {
 	public static class FacadeState {
 		public final Block block;
 		public final int metadata;
@@ -208,29 +211,6 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 		for (ItemStack stack : allFacades) {
 			itemList.add(stack.copy());
 		}
-	}
-
-	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer player, World worldObj, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-		if (worldObj.isRemote) {
-			return false;
-		}
-		Position pos = new Position(x, y, z, ForgeDirection.getOrientation(side));
-		pos.moveForwards(1.0);
-
-		TileEntity tile = worldObj.getTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
-		if (!(tile instanceof TileGenericPipe)) {
-			return false;
-		}
-		TileGenericPipe pipeTile = (TileGenericPipe) tile;
-
-		if (pipeTile.addFacade(ForgeDirection.getOrientation(side).getOpposite(), getFacadeStates(stack))) {
-			stack.stackSize--;
-
-			return true;
-		}
-
-		return false;
 	}
 
 	public void initialize() {
@@ -604,5 +584,10 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 
 		stack.setTagCompound(nbt);
 		return stack;
+	}
+
+	@Override
+	public PipePluggable createPipePluggable(IPipe pipe, ForgeDirection side, ItemStack stack) {
+		return new FacadePluggable(getFacadeStates(stack));
 	}
 }

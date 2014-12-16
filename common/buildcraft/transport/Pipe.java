@@ -150,17 +150,12 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		actionStates.clear();
 
 		// Update the gate if we have any
-		for (Gate gate : gates) {
-			if (gate == null) {
-				continue;
-			}
-			if (container.getWorldObj().isRemote) {
-				// on client, only update the graphical pulse if needed
-				gate.updatePulse();
-			} else {
-				// on server, do the internal gate update
-				gate.resolveActions();
-				gate.tick();
+		if (!container.getWorldObj().isRemote) {
+			for (Gate gate : gates) {
+				if (gate != null) {
+					gate.resolveActions();
+					gate.tick();
+				}
 			}
 		}
 	}

@@ -16,7 +16,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.transport.IInjectable;
 
-public interface IPipeContainer extends IInjectable {
+public interface IPipeContainer extends IInjectable, IPipePluggableContainer {
 
 	public enum PipeType {
 
@@ -46,7 +46,4 @@ public interface IPipeContainer extends IInjectable {
 	IPipe getNeighborPipe(ForgeDirection dir);
 	
 	IPipe getPipe();
-
-	PipePluggable getPipePluggable(ForgeDirection direction);
-	boolean hasPipePluggable(ForgeDirection direction);
 }
