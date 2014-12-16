@@ -47,6 +47,10 @@ public abstract class PipePluggable implements INBTStoreable, ISerializable {
 
 	}
 
+	public boolean isSolidOnSide(IPipeContainer pipe, ForgeDirection direction) {
+		return false;
+	}
+
 	public abstract AxisAlignedBB getBoundingBox(ForgeDirection side);
 
 	@SideOnly(Side.CLIENT)

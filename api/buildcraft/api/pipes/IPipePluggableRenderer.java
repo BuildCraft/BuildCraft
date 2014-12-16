@@ -7,5 +7,5 @@ import buildcraft.api.core.render.ITextureStates;
 public interface IPipePluggableRenderer {
 	void renderPluggable(RenderBlocks renderblocks, IPipe pipe, ForgeDirection side,
 						 PipePluggable pipePluggable, ITextureStates blockStateMachine,
-						 int x, int y, int z);
+						 int renderPass, int x, int y, int z);
 }
