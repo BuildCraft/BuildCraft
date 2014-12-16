@@ -20,15 +20,4 @@ public abstract class PipeEventFluid extends PipeEvent {
 			this.destinations = destinations;
 		}
 	}
-
-	public static class Fill extends PipeEventFluid {
-		public final ForgeDirection from;
-		public final boolean doAdd;
-
-		public Fill(ForgeDirection from, FluidStack fluidStack, boolean doAdd) {
-			super(fluidStack);
-			this.from = from;
-			this.doAdd = doAdd;
-		}
-	}
 }

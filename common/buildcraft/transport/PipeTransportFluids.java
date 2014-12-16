@@ -8,6 +8,7 @@
  */
 package buildcraft.transport;
 
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,6 +39,7 @@ import buildcraft.transport.pipes.PipeFluidsSandstone;
 import buildcraft.transport.pipes.PipeFluidsStone;
 import buildcraft.transport.pipes.PipeFluidsVoid;
 import buildcraft.transport.pipes.PipeFluidsWood;
+import buildcraft.transport.pipes.events.PipeEventFluid;
 
 public class PipeTransportFluids extends PipeTransport implements IFluidHandler {
     public static final Map<Class<? extends Pipe<?>>, Integer> fluidCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
@@ -406,21 +408,26 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			FluidStack testStack = pushStack.copy();
 			testStack.amount = flowRate;
 			// Move liquid from the center to the output sides
+			ArrayList<ForgeDirection> realDirections = new ArrayList<ForgeDirection>();
 			for (ForgeDirection direction : directions) {
 				if (transferState[direction.ordinal()] == TransferState.Output) {
-					int available = internalTanks[direction.ordinal()].fill(testStack, false);
-					int ammountToPush = (int) (available / (double) flowRate / outputCount * Math.min(flowRate, totalAvailable));
-					if (ammountToPush < 1) {
-						ammountToPush++;
-					}
+					realDirections.add(direction);
+				}
+			}
+			container.pipe.eventBus.handleEvent(new PipeEventFluid.FindDest(pushStack, realDirections));
+			for (ForgeDirection direction : realDirections) {
+				int available = internalTanks[direction.ordinal()].fill(testStack, false);
+				int ammountToPush = (int) (available / (double) flowRate / outputCount * Math.min(flowRate, totalAvailable));
+				if (ammountToPush < 1) {
+					ammountToPush++;
+				}
 
-					FluidStack liquidToPush = internalTanks[ForgeDirection.UNKNOWN.ordinal()].drain(ammountToPush, false);
-					if (liquidToPush != null) {
-						int filled = internalTanks[direction.ordinal()].fill(liquidToPush, true);
-						internalTanks[ForgeDirection.UNKNOWN.ordinal()].drain(filled, true);
+				FluidStack liquidToPush = internalTanks[ForgeDirection.UNKNOWN.ordinal()].drain(ammountToPush, false);
+				if (liquidToPush != null) {
+					int filled = internalTanks[direction.ordinal()].fill(liquidToPush, true);
+					internalTanks[ForgeDirection.UNKNOWN.ordinal()].drain(filled, true);
 //						if (filled > 0)
 //							FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord));
-					}
 				}
 			}
 		}
