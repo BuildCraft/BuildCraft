@@ -880,7 +880,11 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	public boolean setPluggable(ForgeDirection direction, PipePluggable pluggable) {
-		if (worldObj != null && worldObj.isRemote || pluggable == null) {
+		if (worldObj != null && worldObj.isRemote) {
+			return false;
+		}
+
+		if (pluggable == null || direction == null || direction == ForgeDirection.UNKNOWN) {
 			return false;
 		}
 

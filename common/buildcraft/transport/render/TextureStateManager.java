@@ -12,6 +12,7 @@ import net.minecraft.util.IIcon;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import buildcraft.api.core.render.ITextureStateManager;
 
 /*
  * This class moves texture management from PipeRenderState 
@@ -19,7 +20,7 @@ import cpw.mods.fml.relauncher.SideOnly;
  */
 
 @SideOnly(Side.CLIENT)
-public final class TextureStateManager {
+public final class TextureStateManager implements ITextureStateManager {
 	
 	private IIcon currentTexture;
 	private IIcon[] textureArray;
@@ -52,5 +53,4 @@ public final class TextureStateManager {
 	public void set(IIcon icon) {
 		currentTexture = icon;
 	}
-	
 }

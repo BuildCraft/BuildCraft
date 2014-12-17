@@ -60,6 +60,8 @@ public class LensPluggable extends PipePluggable {
 
 			renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 			renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
+
+			((FakeBlock) blockStateMachine).setColor(0xFFFFFF);
 		}
 	}
 

@@ -97,7 +97,7 @@ public final class FacadeRenderHelper {
 
 	public static void pipeFacadeRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, TileGenericPipe tile, PipeRenderState state, int x, int y, int z) {
 		ITextureStates textureManager = blockStateMachine;
-		IIcon[] textures = textureManager.getTextureState().popArray();
+		IIcon[] textures = ((TextureStateManager) textureManager.getTextureState()).popArray();
 
 		//block_statemachine.setRenderAllSides();
 		
@@ -202,7 +202,7 @@ public final class FacadeRenderHelper {
 			BlockGenericPipe.facadeRenderColor = -1;
 		}
 
-		textureManager.getTextureState().pushArray();
+		((TextureStateManager) textureManager.getTextureState()).pushArray();
 		blockStateMachine.setRenderAllSides();
 
 		textureManager.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal())); // Structure Pipe
