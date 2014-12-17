@@ -98,21 +98,19 @@ public class FacadePluggable extends PipePluggable {
 			activeState = states.length > 0 ? states[0] : null;
 		}
 
-		data.writeBoolean(activeState == null ? false : activeState.hollow);
-
 		if (activeState == null || activeState.block == null) {
 			data.writeShort(0);
 		} else {
 			data.writeShort(Block.getIdFromBlock(activeState.block));
 		}
 
-		data.writeByte(activeState == null ? 0 : activeState.metadata);
-		data.writeBoolean(activeState == null ? false : activeState.transparent);
+		data.writeByte((activeState != null && activeState.transparent ? 128 : 0) |
+				(activeState != null && activeState.hollow ? 64 : 0) |
+				(activeState == null ? 0 : activeState.metadata));
 	}
 
 	@Override
 	public void readData(ByteBuf data) {
-		renderAsHollow = data.readBoolean();
 
 		int blockId = data.readUnsignedShort();
 		if (blockId > 0) {
@@ -121,8 +119,11 @@ public class FacadePluggable extends PipePluggable {
 			block = null;
 		}
 
-		meta = data.readByte();
-		transparent = data.readBoolean();
+		int flags = data.readUnsignedByte();
+
+		meta = flags & 0x0F;
+		transparent = (flags & 0x80) > 0;
+		renderAsHollow = (flags & 0x40) > 0;
 	}
 
 	protected void setActiveState(int id) {

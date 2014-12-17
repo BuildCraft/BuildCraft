@@ -55,7 +55,6 @@ public class PlugPluggable extends PipePluggable {
 			zeroState[2][1] = 0.75F - 0.125F / 2;
 
 			blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal())); // Structure Pipe
-
 			rotated = MatrixTranformations.deepClone(zeroState);
 			MatrixTranformations.transform(rotated, side);
 

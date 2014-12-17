@@ -353,6 +353,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 				if (sideProperties.pluggables[i] != null) {
 					sideProperties.pluggables[i].onAttachedPipe(this, ForgeDirection.getOrientation(i));
+					pipe.eventBus.registerHandler(sideProperties.pluggables[i]);
 				}
 			}
 		}

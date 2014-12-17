@@ -88,7 +88,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
 			    if (renderCache[dir.ordinal()] == null) {
 					renderCache[dir.ordinal()] = new FluidStack(0, 0);
 			    }
-		        renderCache[dir.ordinal()].amount = Math.min(transLiq.getCapacity(), data.readInt());
+		        renderCache[dir.ordinal()].amount = Math.min(transLiq.getCapacity(), data.readUnsignedShort());
 			}
 		}
 	}
@@ -115,9 +115,9 @@ public class PacketFluidUpdate extends PacketCoordinates {
 			}
 			if (delta.get(dir.ordinal() * FLUID_DATA_NUM + FLUID_AMOUNT_BIT)) {
 				if (liquid != null) {
-					data.writeInt(liquid.amount);
+					data.writeShort(liquid.amount);
 				} else {
-					data.writeInt(0);
+					data.writeShort(0);
 				}
 			}
 		}

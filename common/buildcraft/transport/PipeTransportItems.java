@@ -97,7 +97,6 @@ public class PipeTransportItems extends PipeTransport {
 		readjustSpeed(item);
 		readjustPosition(item);
 
-
 		if (!container.getWorldObj().isRemote) {
 			item.output = resolveDestination(item);
 		}
@@ -446,7 +445,6 @@ public class PipeTransportItems extends PipeTransport {
 		item.input = packet.getInputOrientation();
 		item.output = packet.getOutputOrientation();
 		item.color = packet.getColor();
-
 	}
 
 	private void sendTravelerPacket(TravelingItem data, boolean forceStackRefresh) {

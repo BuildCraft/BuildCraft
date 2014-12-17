@@ -248,6 +248,7 @@ item.FacadePhased.state=%s: %s
 item.FacadePhased.state_default=Default: %s
 item.FacadePhased.state_transparent=Transparent
 item.PipePlug.name=Pipe Plug
+item.Lens.name=Lens
 
 itemGroup.buildcraft.blocks=Buildcraft Blocks
 itemGroup.buildcraft.boards=Buildcraft Robots

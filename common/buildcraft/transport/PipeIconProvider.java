@@ -135,6 +135,7 @@ public class PipeIconProvider implements IIconProvider {
 		Stripes("pipeStripes"),
 		//
 		PipeStainedOverlay("pipeStainedOverlay"),
+		PipeLens("pipeLens"),
 		//
 		TransparentFacade("transparent_facade"),
 		Transparent("transparent"),

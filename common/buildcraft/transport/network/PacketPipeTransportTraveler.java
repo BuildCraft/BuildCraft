@@ -51,14 +51,12 @@ public class PacketPipeTransportTraveler extends BuildCraftPacket {
 
 		data.writeShort(item.id);
 
-		data.writeByte((byte) item.input.ordinal());
-		data.writeByte((byte) item.output.ordinal());
+		byte flags = (byte) ((item.output.ordinal() & 7) | ((item.input.ordinal() & 7) << 3) | (forceStackRefresh ? 64 : 0));
+		data.writeByte(flags);
 
 		data.writeByte(item.color != null ? item.color.ordinal() : -1);
 
 		data.writeFloat(item.getSpeed());
-
-		data.writeBoolean(forceStackRefresh);
 	}
 
 	@Override
@@ -73,8 +71,10 @@ public class PacketPipeTransportTraveler extends BuildCraftPacket {
 
 		this.entityId = data.readShort();
 
-		this.input = ForgeDirection.getOrientation(data.readByte());
-		this.output = ForgeDirection.getOrientation(data.readByte());
+		int flags = data.readUnsignedByte();
+
+		this.input = ForgeDirection.getOrientation((flags >> 3) & 7);
+		this.output = ForgeDirection.getOrientation(flags & 7);
 
 		byte c = data.readByte();
 		if (c != -1) {
@@ -83,7 +83,7 @@ public class PacketPipeTransportTraveler extends BuildCraftPacket {
 
 		this.speed = data.readFloat();
 
-		this.forceStackRefresh = data.readBoolean();
+		this.forceStackRefresh = (flags & 0x40) > 0;
 	}
 
 	public int getTravelingEntityId() {

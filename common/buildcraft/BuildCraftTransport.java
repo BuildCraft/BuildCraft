@@ -60,10 +60,12 @@ import buildcraft.transport.FacadePluggable;
 import buildcraft.transport.GuiHandler;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemGateCopier;
+import buildcraft.transport.ItemLens;
 import buildcraft.transport.ItemPipe;
 import buildcraft.transport.ItemPipeWire;
 import buildcraft.transport.ItemPlug;
 import buildcraft.transport.ItemRobotStation;
+import buildcraft.transport.LensPluggable;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeActionProvider;
 import buildcraft.transport.PipeColoringRecipe;
@@ -166,6 +168,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item pipeGate;
 	public static Item pipeWire;
 	public static Item plugItem;
+	public static Item lensItem;
 	public static Item robotStationItem;
 	public static Item pipeStructureCobblestone;
 	public static Item gateCopier;
@@ -430,6 +433,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 			plugItem.setUnlocalizedName("pipePlug");
 			CoreProxy.proxy.registerItem(plugItem);
 
+			lensItem = new ItemLens();
+			lensItem.setUnlocalizedName("pipeLens");
+			CoreProxy.proxy.registerItem(lensItem);
+
 			robotStationItem = new ItemRobotStation();
 			robotStationItem.setUnlocalizedName("robotStation");
 			CoreProxy.proxy.registerItem(robotStationItem);
@@ -508,6 +515,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		PipeManager.registerPipePluggable(FacadePluggable.class, "facade");
 		PipeManager.registerPipePluggable(GatePluggable.class, "gate");
+		PipeManager.registerPipePluggable(LensPluggable.class, "lens");
 		PipeManager.registerPipePluggable(PlugPluggable.class, "plug");
 		PipeManager.registerPipePluggable(RobotStationPluggable.class, "robotStation");
 		
