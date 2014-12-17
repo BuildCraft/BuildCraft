@@ -8,8 +8,6 @@
  */
 package buildcraft.transport.render;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -17,6 +15,9 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.client.IItemRenderer;
+
+import org.lwjgl.opengl.GL11;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.facades.FacadeType;
 import buildcraft.api.facades.IFacadeItem;
@@ -25,10 +26,10 @@ import buildcraft.core.render.RenderUtils;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.PipeIconProvider;
+import buildcraft.transport.TransportConstants;
 
 public class FacadeItemRenderer implements IItemRenderer {
 
-	private static final float zFightOffset = 1F / 4096F;
 	private long lastTime = 0L;
 
 	private int renderState = 0;
@@ -59,7 +60,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 		render.renderFaceXPos(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(block, 5, decodedMeta));
 		tessellator.draw();
 	}
-	
+
 	private void drawHollowCube(Tessellator tessellator, RenderBlocks render, Block block, int decodedMeta) {
 		IIcon icon0 = tryGetBlockIcon(block, 0, decodedMeta);
 		IIcon icon1 = tryGetBlockIcon(block, 1, decodedMeta);
@@ -67,14 +68,14 @@ public class FacadeItemRenderer implements IItemRenderer {
 		IIcon icon3 = tryGetBlockIcon(block, 3, decodedMeta);
 		IIcon icon4 = tryGetBlockIcon(block, 4, decodedMeta);
 		IIcon icon5 = tryGetBlockIcon(block, 5, decodedMeta);
-		
-		float width = 14F / 16F;
-		float cavity = 4F / 16F;
+
+		float width = 1 - TransportConstants.FACADE_THICKNESS;
+		float cavity = (CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS) / 2F;
 		double innerWidth = 1 - cavity;
-		
+
 		tessellator.startDrawingQuads();
 		render.setRenderBounds(0F, 0F, width, 1F, 1F, 1F);
-		
+
 		//Outside
 		tessellator.setNormal(0, -1, 0);
 		render.renderFaceYNeg(block, 0, 0, 0, icon0);
@@ -84,7 +85,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 		render.renderFaceXNeg(block, 0, 0, 0, icon4);
 		tessellator.setNormal(1, 0, 0);
 		render.renderFaceXPos(block, 0, 0, 0, icon5);
-		
+
 		//Inside
 		tessellator.setNormal(0, -1, 0);
 		render.renderFaceYNeg(block, 0, innerWidth, 0, icon0);
@@ -94,8 +95,9 @@ public class FacadeItemRenderer implements IItemRenderer {
 		render.renderFaceXNeg(block, innerWidth, 0, 0, icon4);
 		tessellator.setNormal(1, 0, 0);
 		render.renderFaceXPos(block, -innerWidth, 0, 0, icon5);
-		
+
 		//Hollow
+		render.field_152631_f = true;
 		render.setRenderBounds(0, 0, width, cavity, 1, 1);
 		tessellator.setNormal(0, 0, -1);
 		render.renderFaceZNeg(block, 0, 0, 0, icon2);
@@ -106,6 +108,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 		render.renderFaceZNeg(block, 0, 0, 0, icon2);
 		tessellator.setNormal(0, 0, 1);
 		render.renderFaceZPos(block, 0, 0, 0, icon3);
+		render.field_152631_f = false;
 		
 		render.setRenderBounds(cavity, 0, width, innerWidth, cavity, 1);
 		tessellator.setNormal(0, 0, -1);
@@ -117,7 +120,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 		render.renderFaceZNeg(block, 0, 0, 0, icon2);
 		tessellator.setNormal(0, 0, 1);
 		render.renderFaceZPos(block, 0, 0, 0, icon3);
-		
+
 		tessellator.draw();
 	}
 
@@ -131,15 +134,15 @@ public class FacadeItemRenderer implements IItemRenderer {
 		FacadeType type = ((IFacadeItem) item.getItem()).getFacadeType(item);
 		FacadeState[] states = ItemFacade.getFacadeStates(item);
 		FacadeState activeState = null;
-        
-        if (states.length > 0) {
-            // TODO: Figure out why NEI causes states[] to be of length 0
-            if (type == FacadeType.Basic) {
-                activeState = states[0];
-            } else if (type == FacadeType.Phased) {
-                activeState = states[renderState % states.length];
-            }
-        }
+
+		if (states.length > 0) {
+			// TODO: Figure out why NEI causes states[] to be of length 0
+			if (type == FacadeType.Basic) {
+				activeState = states[0];
+			} else if (type == FacadeType.Phased) {
+				activeState = states[renderState % states.length];
+			}
+		}
 		Block block = activeState != null ? activeState.block : null;
 		int decodedMeta = activeState != null ? activeState.metadata : 0;
 		boolean hollow = activeState != null ? activeState.hollow : false;
@@ -171,7 +174,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 			GL11.glTranslatef(translateX, translateY, translateZ);
 			drawHollowCube(tessellator, render, block, decodedMeta);
 		} else {
-			render.setRenderBounds(0F, 0F, 14F / 16F, 1F, 1F, 1F);
+			render.setRenderBounds(0F, 0F, 1 - TransportConstants.FACADE_THICKNESS, 1F, 1F, 1F);
 			GL11.glTranslatef(translateX, translateY, translateZ);
 			drawCube(tessellator, render, block, decodedMeta);
 		}
