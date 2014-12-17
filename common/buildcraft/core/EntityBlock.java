@@ -94,4 +94,9 @@ public class EntityBlock extends Entity {
 	public int getBrightnessForRender(float par1) {
 		return brightness > 0 ? brightness : super.getBrightnessForRender(par1);
 	}
+	
+	@SideOnly(Side.CLIENT)
+    public boolean isInRangeToRenderDist(double distance) {
+		return distance < 50000;
+    }
 }
