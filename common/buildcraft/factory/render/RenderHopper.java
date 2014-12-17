@@ -8,8 +8,6 @@
  */
 package buildcraft.factory.render;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.Tessellator;
@@ -17,6 +15,8 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+
+import org.lwjgl.opengl.GL11;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
@@ -64,16 +64,15 @@ public class RenderHopper extends TileEntitySpecialRenderer implements IInventor
 		}
 
 		GL11.glPushMatrix();
-		GL11.glDisable(GL11.GL_LIGHTING);
-
 		GL11.glTranslated(x, y, z);
 		bindTexture(HOPPER_TEXTURE);
 		top.render((float) (1.0 / 16.0));
 		bottom.render((float) (1.0 / 16.0));
 		bindTexture(HOPPER_MIDDLE_TEXTURE);
+		GL11.glTranslated(0.005, 0, 0.005);
+		GL11.glScaled(0.99, 1, 0.99);
 		middle.render(Tessellator.instance, 1F / 16F);
 
-		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glPopMatrix();
 	}
 }
