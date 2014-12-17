@@ -149,6 +149,7 @@ public final class FacadeRenderHelper {
 
 					// Hollow facade
 					if (pluggable.isHollow()) {
+						renderblocks.field_152631_f = true;
 						float[][] rotated = MatrixTranformations.deepClone(zeroStateFacade);
 						rotated[0][0] = CoreConstants.PIPE_MIN_POS - zFightOffset * 4;
 						rotated[0][1] = CoreConstants.PIPE_MAX_POS + zFightOffset * 4;
@@ -179,6 +180,7 @@ public final class FacadeRenderHelper {
 						MatrixTranformations.transform(rotated, direction);
 						setRenderBounds(renderblocks, rotated, direction);
 						renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
+						renderblocks.field_152631_f = false;
 					} else { // Solid facade
 						float[][] rotated = MatrixTranformations.deepClone(zeroStateFacade);
 						MatrixTranformations.transform(rotated, direction);
