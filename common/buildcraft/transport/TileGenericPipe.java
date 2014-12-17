@@ -72,7 +72,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	public Pipe pipe;
 	public int redstoneInput;
 	public int[] redstoneInputSide = new int[ForgeDirection.VALID_DIRECTIONS.length];
-	
+
 	protected boolean deletePipe = false;
 	protected boolean sendClientUpdate = false;
 	protected boolean blockNeighborChange = false;
@@ -279,14 +279,14 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		super.readFromNBT(nbt);
 
 		glassColor = nbt.hasKey("stainedColor") ? nbt.getByte("stainedColor") : -1;
-		
+
 		redstoneInput = 0;
-		
+
 		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 			final String key = "redstoneInputSide[" + i + "]";
 			if (nbt.hasKey(key)) {
 				redstoneInputSide[i] = nbt.getByte(key);
-				
+
 				if (redstoneInputSide[i] > redstoneInput) {
 					redstoneInput = redstoneInputSide[i];
 				}
@@ -294,7 +294,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				redstoneInputSide[i] = 0;
 			}
 		}
-		
+
 		coreState.pipeId = nbt.getInteger("pipeId");
 		pipe = BlockGenericPipe.createPipe((Item) Item.getItemById(coreState.pipeId));
 		bindPipe();
@@ -352,10 +352,11 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			// Attach callback
 			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 				if (sideProperties.pluggables[i] != null) {
-					sideProperties.pluggables[i].onAttachedPipe(this, ForgeDirection.getOrientation(i));
 					pipe.eventBus.registerHandler(sideProperties.pluggables[i]);
+					sideProperties.pluggables[i].onAttachedPipe(this, ForgeDirection.getOrientation(i));
 				}
 			}
+			notifyBlockChanged();
 		}
 
 		if (!worldObj.isRemote) {
@@ -447,13 +448,13 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		}
 		return false;
 	}
-	
+
 	/**
 	 *  PRECONDITION: worldObj must not be null
 	 */
 	protected void refreshRenderState() {
 		renderState.glassColor = (byte) glassColor;
-		
+
 		// Pipe connections;
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			renderState.pipeConnectionMatrix.setConnected(o, this.pipeConnectionsBuffer[o.ordinal()]);
@@ -704,7 +705,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			return null;
 		}
 	}
-	
+
 	protected boolean canPipeConnect_internal(TileEntity with, ForgeDirection side) {
 		if (!(pipe instanceof IPipeConnectionForced) || !((IPipeConnectionForced) pipe).ignoreConnectionOverrides(side)) {
 			if (with instanceof IPipeConnection) {
@@ -717,15 +718,15 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 		if (with instanceof TileGenericPipe) {
 			TileGenericPipe other = (TileGenericPipe) with;
-			
+
 			if (other.hasBlockingPluggable(side.getOpposite())) {
 				return false;
 			}
-			
+
 			if (other.glassColor >= 0 && glassColor >= 0 && other.glassColor != glassColor) {
 				return false;
 			}
-			
+
 			Pipe<?> otherPipe = ((TileGenericPipe) with).pipe;
 
 			if (!BlockGenericPipe.isValid(otherPipe)) {
@@ -983,13 +984,17 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				break;
 			}
 			case 2: {
+				// TODO: Add some kind of isDirty flag? I don't know...
+				worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+				sideProperties.pluggables = pluggableState.getPluggables();
+
 				for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 					final PipePluggable pluggable = getPipePluggable(ForgeDirection.getOrientation(i));
 					if (pluggable != null && pluggable instanceof GatePluggable) {
 						final GatePluggable gatePluggable = (GatePluggable) pluggable;
 						Gate gate = pipe.gates[i];
-						if (gate == null || gate.logic != gatePluggable.logic || gate.material != gatePluggable.material) {
-							pipe.gates[i] = GateFactory.makeGate(pipe, gatePluggable.material, gatePluggable.logic, ForgeDirection.getOrientation(i));
+						if (gate == null || gate.logic != gatePluggable.getLogic() || gate.material != gatePluggable.getMaterial()) {
+							pipe.gates[i] = GateFactory.makeGate(pipe, gatePluggable.getMaterial(), gatePluggable.getLogic(), ForgeDirection.getOrientation(i));
 						}
 					} else {
 						pipe.gates[i] = null;
@@ -997,10 +1002,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				}
 
 				syncGateExpansions();
-
-				// TODO: Add some kind of isDirty flag? I don't know...
-				worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
-				sideProperties.pluggables = pluggableState.getPluggables();
 				break;
 			}
 		}
@@ -1014,8 +1015,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				continue;
 			}
 			GatePluggable gatePluggable = (GatePluggable) sideProperties.pluggables[i];
-			if (gatePluggable.expansions.length > 0) {
-				for (IGateExpansion expansion : gatePluggable.expansions) {
+			if (gatePluggable.getExpansions().length > 0) {
+				for (IGateExpansion expansion : gatePluggable.getExpansions()) {
 					if (expansion != null) {
 						if (!gate.expansions.containsKey(expansion)) {
 							gate.addGateExpansion(expansion);

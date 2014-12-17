@@ -1,5 +1,6 @@
 package buildcraft.transport.gates;
 
+import java.util.HashSet;
 import java.util.Set;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -10,6 +11,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.gates.GateExpansions;
+import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.pipes.IPipeContainer;
 import buildcraft.api.pipes.IPipePluggableRenderer;
@@ -25,13 +27,18 @@ public class GatePluggable extends PipePluggable {
 	public IGateExpansion[] expansions;
 	public boolean isLit, isPulsing;
 
-	public Gate realGate;
+	public Gate realGate, instantiatedGate;
 	private float pulseStage;
 
 	public GatePluggable() {
 	}
 
 	public GatePluggable(Gate gate) {
+		instantiatedGate = gate;
+		initFromGate(gate);
+	}
+
+	private void initFromGate(Gate gate) {
 		this.material = gate.material;
 		this.logic = gate.logic;
 
@@ -68,8 +75,8 @@ public class GatePluggable extends PipePluggable {
 	public void writeData(ByteBuf buf) {
 		buf.writeByte(material.ordinal());
 		buf.writeByte(logic.ordinal());
-		buf.writeBoolean(realGate.isGateActive());
-		buf.writeBoolean(realGate.isGatePulsing());
+		buf.writeBoolean(realGate != null ? realGate.isGateActive() : false);
+		buf.writeBoolean(realGate != null ? realGate.isGatePulsing() : false);
 
 		final int expansionsSize = expansions.length;
 		buf.writeInt(expansionsSize);
@@ -116,12 +123,20 @@ public class GatePluggable extends PipePluggable {
 	public void onAttachedPipe(IPipeContainer pipe, ForgeDirection direction) {
 		TileGenericPipe pipeReal = (TileGenericPipe) pipe;
 		if (!pipeReal.getWorld().isRemote) {
-			Gate gate = pipeReal.pipe.gates[direction.ordinal()];
-			if (gate == null || gate.material != material || gate.logic != logic) {
-				pipeReal.pipe.gates[direction.ordinal()] = GateFactory.makeGate(pipeReal.pipe, material, logic, direction);
-				pipeReal.scheduleRenderUpdate();
+			if (instantiatedGate != null) {
+				pipeReal.pipe.gates[direction.ordinal()] = instantiatedGate;
+			} else {
+				Gate gate = pipeReal.pipe.gates[direction.ordinal()];
+				if (gate == null || gate.material != material || gate.logic != logic) {
+					pipeReal.pipe.gates[direction.ordinal()] = GateFactory.makeGate(pipeReal.pipe, material, logic, direction);
+					for (IGateExpansion expansion : expansions) {
+						pipeReal.pipe.gates[direction.ordinal()].addGateExpansion(expansion);
+					}
+					pipeReal.scheduleRenderUpdate();
+				}
 			}
-			this.realGate = pipeReal.pipe.gates[direction.ordinal()];
+
+			realGate = pipeReal.pipe.gates[direction.ordinal()];
 		}
 	}
 
@@ -197,5 +212,17 @@ public class GatePluggable extends PipePluggable {
 
 	public float getPulseStage() {
 		return pulseStage;
+	}
+
+	public GateDefinition.GateMaterial getMaterial() {
+		return material;
+	}
+
+	public GateDefinition.GateLogic getLogic() {
+		return logic;
+	}
+
+	public IGateExpansion[] getExpansions() {
+		return expansions;
 	}
 }

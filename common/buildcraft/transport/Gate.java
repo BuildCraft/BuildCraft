@@ -152,7 +152,7 @@ public final class Gate implements IGate, IStatementContainer {
 
 	public void addGateExpansion(IGateExpansion expansion) {
 		if (!expansions.containsKey(expansion)) {
-			expansions.put(expansion, expansion.makeController(pipe.container));
+			expansions.put(expansion, expansion.makeController(pipe != null ? pipe.container : null));
 		}
 	}
 	

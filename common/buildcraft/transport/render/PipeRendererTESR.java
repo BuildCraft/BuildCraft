@@ -501,9 +501,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		IIcon iconLogic;
 		if (gate.isLit) {
-			iconLogic = gate.logic.getIconLit();
+			iconLogic = gate.getLogic().getIconLit();
 		} else {
-			iconLogic = gate.logic.getIconDark();
+			iconLogic = gate.getLogic().getIconDark();
 		}
 
 		float translateCenter = 0;
@@ -527,12 +527,12 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			renderGate(pipe, iconLogic, 0, 0.13F, translateCenter, translateCenter, direction);
 		}
 
-		IIcon materialIcon = gate.material.getIconBlock();
+		IIcon materialIcon = gate.getMaterial().getIconBlock();
 		if (materialIcon != null) {
 			renderGate(pipe, materialIcon, 1, 0.13F, translateCenter, translateCenter, direction);
 		}
 
-		for (IGateExpansion expansion : gate.expansions) {
+		for (IGateExpansion expansion : gate.getExpansions()) {
 			renderGate(pipe, expansion.getOverlayBlock(), 2, 0.13F, translateCenter, translateCenter, direction);
 		}
 

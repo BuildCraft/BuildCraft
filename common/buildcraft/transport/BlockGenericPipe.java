@@ -715,28 +715,25 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	private boolean addOrStripPipePluggable(World world, int x, int y, int z, ItemStack stack, EntityPlayer player, ForgeDirection side, Pipe<?> pipe) {
 		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 
-		ForgeDirection pSide = rayTraceResult.sideHit;
-		if (pSide == ForgeDirection.UNKNOWN || pSide == null) {
-			pSide = side;
-		}
+		ForgeDirection placementSide = rayTraceResult != null && rayTraceResult.sideHit != ForgeDirection.UNKNOWN ? rayTraceResult.sideHit : side;
 
 		IPipePluggableItem pluggableItem = (IPipePluggableItem) stack.getItem();
-		PipePluggable pluggable = pluggableItem.createPipePluggable(pipe, rayTraceResult.sideHit, stack);
+		PipePluggable pluggable = pluggableItem.createPipePluggable(pipe, placementSide, stack);
+
+		if (pluggable == null) {
+			return false;
+		}
 
 		if (player.isSneaking()) {
-			if (pipe.container.hasPipePluggable(pSide) && rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable
-					&& pluggable.getClass().isInstance(pipe.container.getPipePluggable(pSide))) {
-				return pipe.container.dropSideItems(pSide);
+			if (pipe.container.hasPipePluggable(side) && rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable
+					&& pluggable.getClass().isInstance(pipe.container.getPipePluggable(side))) {
+				return pipe.container.dropSideItems(side);
 			}
 		}
 
 		if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pipe) {
-			if (pluggable == null) {
-				return false;
-			}
-
-			if (!pipe.container.hasPipePluggable(pSide)) {
-				pipe.container.setPluggable(pSide, pluggable);
+			if (!pipe.container.hasPipePluggable(placementSide)) {
+				pipe.container.setPluggable(placementSide, pluggable);
 
 				if (!player.capabilities.isCreativeMode) {
 					stack.stackSize--;
