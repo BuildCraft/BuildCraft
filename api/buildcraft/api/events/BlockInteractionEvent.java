@@ -9,7 +9,9 @@
 package buildcraft.api.events;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.BlockPos;
 
 import net.minecraftforge.fml.common.eventhandler.Cancelable;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -17,17 +19,12 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 @Cancelable
 public class BlockInteractionEvent extends Event {
 	public EntityPlayer player;
-	public Block block;
-	public int meta;
+	public BlockPos pos;
+	public IBlockState state;
 
-	public BlockInteractionEvent(EntityPlayer player, Block block) {
+	public BlockInteractionEvent(EntityPlayer player, BlockPos pos, IBlockState state) {
 		this.player = player;
-		this.block = block;
-	}
-
-	public BlockInteractionEvent(EntityPlayer player, Block block, int meta) {
-		this.player = player;
-		this.block = block;
-		this.meta = meta;
+		this.pos = pos;
+		this.state = state;
 	}
 }

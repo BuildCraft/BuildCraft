@@ -38,6 +38,6 @@ public class ItemLaserTable extends ItemBlockBuildCraft {
 
 	@Override
 	public int getMetadata(int meta) {
-		return meta < BlockLaserTable.TABLE_MAX ? meta : 0;
+		return meta >= 0 && meta < BlockLaserTable.LaserTableType.values().length ? meta : 0;
 	}
 }
