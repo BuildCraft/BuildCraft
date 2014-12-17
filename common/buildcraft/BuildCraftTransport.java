@@ -53,6 +53,7 @@ import buildcraft.core.PowerMode;
 import buildcraft.core.Version;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.ColorUtils;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
@@ -589,7 +590,13 @@ public class BuildCraftTransport extends BuildCraftMod {
 			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:greenWire", 5000, PipeWire.GREEN.getStack(8),
 					"dyeGreen", "dustRedstone", "ingotIron");
 			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:yellowWire", 5000, PipeWire.YELLOW.getStack(8),
-					"dyeYellow", "dustRedstone", "ingotIron");			
+					"dyeYellow", "dustRedstone", "ingotIron");
+
+			// Lens
+			for (int i = 0; i < 16; i++) {
+				BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:lens:" + i, 10000, new ItemStack(lensItem, i, 4),
+						ColorUtils.getOreDictionaryName(15 - i), "blockGlass", "ingotIron");
+			}
 
 			// GATES
 			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:simpleGate", 100000,

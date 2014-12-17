@@ -80,6 +80,9 @@ public final class ColorUtils {
 	public static String getName(int wool) {
 		return WOOL_TO_NAME[wool & 15];
 	}
+	public static String getOreDictionaryName(int wool) {
+		return OREDICT_DYE_NAMES[wool & 15];
+	}
 	
 	public static String getFormatting(int wool) {
 		return "\u00a7" + WOOL_TO_CHAT[wool & 15];

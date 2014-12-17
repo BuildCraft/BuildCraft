@@ -20,13 +20,16 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.pipes.IPipe;
 import buildcraft.api.pipes.IPipeContainer;
+import buildcraft.api.pipes.IPipePluggableItem;
+import buildcraft.api.pipes.PipePluggable;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.RobotRegistry;
 
-public class ItemRobotStation extends ItemBuildCraft {
+public class ItemRobotStation extends ItemBuildCraft implements IPipePluggableItem {
 
 	public ItemRobotStation() {
 		super(CreativeTabBuildCraft.ITEMS);
@@ -54,4 +57,8 @@ public class ItemRobotStation extends ItemBuildCraft {
         return 0;
     }
 
+	@Override
+	public PipePluggable createPipePluggable(IPipe pipe, ForgeDirection side, ItemStack stack) {
+		return new RobotStationPluggable();
+	}
 }

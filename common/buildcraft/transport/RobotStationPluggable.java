@@ -5,6 +5,8 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.render.ITextureStates;
@@ -17,10 +19,10 @@ import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.RobotRegistry;
 import buildcraft.core.utils.MatrixTranformations;
 
-/**
-* Created by asie on 12/15/14.
-*/
 public class RobotStationPluggable extends PipePluggable implements IPipePluggableItem {
+	@SideOnly(Side.CLIENT)
+	public final RobotStationPluggableRenderer RENDERER = new RobotStationPluggableRenderer();
+
 	public class RobotStationPluggableRenderer implements IPipePluggableRenderer {
 		private float zFightOffset = 1 / 4096.0F;
 
@@ -231,7 +233,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 
 	@Override
 	public IPipePluggableRenderer getRenderer() {
-		return new RobotStationPluggableRenderer();
+		return RENDERER;
 	}
 
 	@Override

@@ -5,6 +5,8 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.render.ITextureStates;
@@ -15,6 +17,9 @@ import buildcraft.api.pipes.PipePluggable;
 import buildcraft.core.utils.MatrixTranformations;
 
 public class PlugPluggable extends PipePluggable {
+	@SideOnly(Side.CLIENT)
+	public final PlugPluggableRenderer RENDERER = new PlugPluggableRenderer();
+
 	public class PlugPluggableRenderer implements IPipePluggableRenderer {
 		private float zFightOffset = 1 / 4096.0F;
 
@@ -62,6 +67,7 @@ public class PlugPluggable extends PipePluggable {
 			renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
 		}
 	}
+
 	public PlugPluggable() {
 
 	}
@@ -105,7 +111,7 @@ public class PlugPluggable extends PipePluggable {
 
 	@Override
 	public IPipePluggableRenderer getRenderer() {
-		return new PlugPluggableRenderer();
+		return RENDERER;
 	}
 
 	@Override
