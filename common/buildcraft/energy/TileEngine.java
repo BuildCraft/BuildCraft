@@ -17,6 +17,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyReceiver;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.power.IEngine;
 import buildcraft.api.tiles.IHeatable;
@@ -298,6 +299,13 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 					orientation.getOpposite(),
 					this.energy, true);
 			return extractEnergy(maxEnergy, false);
+		} else if (tile instanceof IEnergyReceiver) {
+			IEnergyReceiver handler = (IEnergyReceiver) tile;
+
+			int maxEnergy = handler.receiveEnergy(
+					orientation.getOpposite(),
+					this.energy, true);
+			return extractEnergy(maxEnergy, false);
 		} else {
 			return 0;
 		}
@@ -328,7 +336,14 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
                         extracted, false);
 
                 extractEnergy(neededRF, true);
-            }
+            } else if (tile instanceof IEnergyReceiver) {
+				IEnergyReceiver handler = (IEnergyReceiver) tile;
+				int neededRF = handler.receiveEnergy(
+						orientation.getOpposite(),
+						extracted, false);
+
+				extractEnergy(neededRF, true);
+			}
 		}
 	}
 
@@ -511,7 +526,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
             return false;
         } else if (tile instanceof IEngine) {
             return ((IEngine) tile).canReceiveFromEngine(side.getOpposite());
-		} else if (tile instanceof IEnergyHandler) {
+		} else if (tile instanceof IEnergyHandler || tile instanceof IEnergyReceiver) {
             return ((IEnergyConnection) tile).canConnectEnergy(side.getOpposite());
         } else {
 			return false;
