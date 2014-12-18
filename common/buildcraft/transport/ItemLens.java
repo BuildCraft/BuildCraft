@@ -36,9 +36,8 @@ public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public IIcon getIconFromDamageForRenderPass(int meta, int pass)
-	{
-		return icons[pass & 1];
+	public IIcon getIconFromDamageForRenderPass(int meta, int pass) {
+		return icons[meta >= 16 ? (1 + (pass & 1)) : (1 - (pass & 1))];
 	}
 
 	@Override
@@ -48,15 +47,19 @@ public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
 		return true;
 	}
 
+	public int getDye(ItemStack stack) {
+		return 15 - (stack.getItemDamage() & 15);
+	}
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public int getColorFromItemStack(ItemStack stack, int pass) {
-		return pass == 1 ? ColorUtils.getRGBColor(15 - stack.getItemDamage()) : 16777215;
+		return pass == 0 ? ColorUtils.getRGBColor(getDye(stack)) : 16777215;
 	}
 
 	@Override
 	public String getItemStackDisplayName(ItemStack itemstack) {
-		return StringUtils.localize("item.Lens.name") + " (" + StringUtils.localize("color." + ColorUtils.getName(15 - itemstack.getItemDamage())) + ")";
+		return StringUtils.localize(itemstack.getItemDamage() >= 16 ? "item.Filter.name" : "item.Lens.name") + " (" + StringUtils.localize("color." + ColorUtils.getName(getDye(itemstack))) + ")";
 	}
 
 	@Override
@@ -69,7 +72,8 @@ public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
 	public void registerIcons(IIconRegister register) {
 	    icons = new IIcon[] {
 				register.registerIcon("buildcraft:pipeLensItem0"),
-				register.registerIcon("buildcraft:pipeLensItem1")
+				register.registerIcon("buildcraft:pipeLensItem1"),
+				register.registerIcon("buildcraft:pipeFilterItem0")
 		};
 	}
 
@@ -77,7 +81,7 @@ public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(Item item, CreativeTabs tab, List itemList) {
-		for (int i = 0; i < 16; i++) {
+		for (int i = 0; i < 32; i++) {
 			itemList.add(new ItemStack(item, 1, i));
 		}
 	}

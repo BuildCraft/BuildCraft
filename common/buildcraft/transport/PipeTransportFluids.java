@@ -543,10 +543,11 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		if (tile instanceof IFluidHandler) {
 			IFluidHandler liq = (IFluidHandler) tile;
 
-			FluidTankInfo[] tankInfo = liq.getTankInfo(side.getOpposite());
+			/*FluidTankInfo[] tankInfo = liq.getTankInfo(side.getOpposite());
 			if (tankInfo != null && tankInfo.length > 0) {
 				return true;
-			}
+			}*/
+			return true;
 		}
 
 		return tile instanceof TileGenericPipe;

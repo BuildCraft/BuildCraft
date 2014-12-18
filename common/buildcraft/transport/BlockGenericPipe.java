@@ -601,7 +601,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			// Right click while sneaking with empty hand to strip equipment
 			// from the pipe.
 			if (player.isSneaking() && currentItem == null) {
-				if (stripEquipment(world, x, y, z, player, pipe)) {
+				if (stripEquipment(world, x, y, z, player, pipe, ForgeDirection.getOrientation(side))) {
 					return true;
 				}
 			} else if (currentItem == null) {
@@ -725,7 +725,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		if (player.isSneaking()) {
 			if (pipe.container.hasPipePluggable(side) && rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable
 					&& pluggable.getClass().isInstance(pipe.container.getPipePluggable(side))) {
-				return pipe.container.dropSideItems(side);
+				return pipe.container.setPluggable(side, null);
 			}
 		}
 
@@ -789,14 +789,14 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return false;
 	}
 
-	private boolean stripEquipment(World world, int x, int y, int z, EntityPlayer player, Pipe<?> pipe) {
+	private boolean stripEquipment(World world, int x, int y, int z, EntityPlayer player, Pipe<?> pipe, ForgeDirection side) {
 		// Try to strip pluggables first
-		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
-		if (rayTraceResult != null && rayTraceResult.hitPart != Part.Pipe) {
-			if (pipe.container.dropSideItems(rayTraceResult.sideHit)) {
-				return true;
-			}
+		//RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
+		//if (rayTraceResult != null && rayTraceResult.hitPart != Part.Pipe) {
+		if (pipe.container.hasPipePluggable(side)) {
+			return pipe.container.setPluggable(side, null);
 		}
+		//}
 
 		// Try to strip wires second, starting with yellow.
 		for (PipeWire color : PipeWire.values()) {

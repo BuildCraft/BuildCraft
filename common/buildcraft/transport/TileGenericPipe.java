@@ -225,8 +225,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				}
 				result = true;
 			}
-			pluggables[direction.ordinal()] = null;
-			pipe.notifyBlockChanged();
 			return result;
 		}
 
@@ -900,7 +898,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			return false;
 		}
 
-		if (pluggable == null || direction == null || direction == ForgeDirection.UNKNOWN) {
+		if (direction == null || direction == ForgeDirection.UNKNOWN) {
 			return false;
 		}
 
@@ -911,9 +909,10 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		}
 
 		sideProperties.pluggables[direction.ordinal()] = pluggable;
-		pipe.eventBus.registerHandler(pluggable);
-
-		pluggable.onAttachedPipe(this, direction);
+		if (pluggable != null) {
+			pipe.eventBus.registerHandler(pluggable);
+			pluggable.onAttachedPipe(this, direction);
+		}
 		notifyBlockChanged();
 		return true;
 	}
@@ -923,12 +922,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	public boolean hasEnabledFacade(ForgeDirection direction) {
 		return hasFacade(direction) && !((FacadePluggable) getPipePluggable(direction)).getRenderingTransparent();
-	}
-
-	public ItemStack getFacade(ForgeDirection direction) {
-		PipePluggable pluggable = sideProperties.pluggables[direction.ordinal()];
-		return pluggable instanceof FacadePluggable ?
-				ItemFacade.getFacade(((FacadePluggable) pluggable).states) : null;
 	}
 
 	public DockingStation getStation(ForgeDirection direction) {
@@ -944,10 +937,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			pipe.gates[direction] = gate;
 			sideProperties.pluggables[direction] = new GatePluggable(gate);
 		}
-	}
-
-	public boolean dropSideItems(ForgeDirection direction) {
-		return sideProperties.dropItem(this, direction);
 	}
 
 	@SideOnly(Side.CLIENT)
