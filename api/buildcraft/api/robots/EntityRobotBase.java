@@ -68,4 +68,6 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 	public abstract IRobotRegistry getRegistry();
 
 	public abstract void releaseResources();
+
+	public abstract void onChunkUnload();
 }
