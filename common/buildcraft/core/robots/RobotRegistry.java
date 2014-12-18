@@ -9,6 +9,7 @@
 package buildcraft.core.robots;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -19,8 +20,11 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.world.ChunkEvent;
 
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
@@ -71,6 +75,14 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 		markDirty();
 
 		releaseResources(robot, true);
+		robotsLoaded.remove(robot.getRobotId());
+	}
+
+	@Override
+	public void unloadRobot(EntityRobotBase robot) {
+		markDirty();
+
+		releaseResources(robot, false, true);
 		robotsLoaded.remove(robot.getRobotId());
 	}
 
@@ -172,6 +184,10 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	private synchronized void releaseResources(EntityRobotBase robot, boolean forceAll) {
+		releaseResources(robot, forceAll, false);
+	}
+
+	private synchronized void releaseResources(EntityRobotBase robot, boolean forceAll, boolean resetMainLink) {
 		markDirty();
 
 		if (resourcesTakenByRobot.containsKey(robot.getRobotId())) {
@@ -195,6 +211,9 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 				if (!d.canRelease()) {
 					if (forceAll) {
 						d.unsafeRelease(robot);
+					}
+					else if (resetMainLink && d.isMainStation() && d.robotIdTaking() == robot.getRobotId()) {
+						d.invalidateRobotTakingEntity();
 					}
 				} else {
 					d.unsafeRelease(robot);
@@ -284,6 +303,8 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 				((DockingStation) d).world = world;
 			}
 
+			MinecraftForge.EVENT_BUS.register(newRegistry);
+
 			registries.put(world.provider.dimensionId, newRegistry);
 			
 			return newRegistry;
@@ -346,6 +367,18 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 
 			if (station.linkedId() != EntityRobotBase.NULL_ROBOT_ID) {
 				take(station, station.linkedId());
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onChunkUnload(ChunkEvent.Unload e)
+	{
+		if(e.world == this.world)
+		{
+			for (EntityRobot robot : new ArrayList<EntityRobot>(robotsLoaded.values())) {
+				if(!e.world.loadedEntityList.contains(robot))
+					robot.onChunkUnload();
 			}
 		}
 	}
