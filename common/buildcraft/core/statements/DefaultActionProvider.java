@@ -20,7 +20,7 @@ import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IActionProvider;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.tiles.IControllable;
-import buildcraft.api.pipes.IPipeContainer;
+import buildcraft.api.transport.IPipeContainer;
 
 public class DefaultActionProvider implements IActionProvider {
 

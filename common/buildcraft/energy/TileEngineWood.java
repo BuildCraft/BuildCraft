@@ -11,10 +11,9 @@ package buildcraft.energy;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.pipes.IPipeContainer;
-import buildcraft.api.pipes.IPipeContainer.PipeType;
+import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.IPipeContainer.PipeType;
 import buildcraft.api.power.IRedstoneEngineReceiver;
-import buildcraft.factory.TilePump;
 
 public class TileEngineWood extends TileEngine {
 

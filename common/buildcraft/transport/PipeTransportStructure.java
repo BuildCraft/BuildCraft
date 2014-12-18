@@ -12,7 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.pipes.IPipeContainer.PipeType;
+import buildcraft.api.transport.IPipeContainer.PipeType;
 
 public class PipeTransportStructure extends PipeTransport {
 

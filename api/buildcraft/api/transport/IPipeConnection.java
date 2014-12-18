@@ -6,11 +6,9 @@
  * Please check the contents of the license, which should be located
  * as "LICENSE.API" in the BuildCraft source code distribution.
  */
-package buildcraft.api.pipes;
+package buildcraft.api.transport;
 
 import net.minecraftforge.common.util.ForgeDirection;
-
-import buildcraft.api.pipes.IPipeContainer.PipeType;
 
 public interface IPipeConnection {
 
@@ -27,5 +25,5 @@ public interface IPipeConnection {
 	 * @return CONNECT to force a connection, DISCONNECT to force no connection,
 	 * and DEFAULT to let the pipe decide.
 	 */
-	ConnectOverride overridePipeConnection(PipeType type, ForgeDirection with);
+	ConnectOverride overridePipeConnection(IPipeContainer.PipeType type, ForgeDirection with);
 }

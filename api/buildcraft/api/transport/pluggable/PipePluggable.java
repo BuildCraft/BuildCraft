@@ -6,10 +6,9 @@
  * Please check the contents of the license, which should be located
  * as "LICENSE.API" in the BuildCraft source code distribution.
  */
-package buildcraft.api.pipes;
+package buildcraft.api.transport.pluggable;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 
 import cpw.mods.fml.relauncher.Side;
@@ -17,6 +16,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.INBTStoreable;
 import buildcraft.api.core.ISerializable;
+import buildcraft.api.transport.IPipeContainer;
 
 /**
  * An IPipePluggable MUST have an empty constructor for client-side

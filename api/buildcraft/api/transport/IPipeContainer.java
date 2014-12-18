@@ -6,17 +6,16 @@
  * Please check the contents of the license, which should be located
  * as "LICENSE.API" in the BuildCraft source code distribution.
  */
-package buildcraft.api.pipes;
+package buildcraft.api.transport;
 
 import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.core.EnumColor;
-import buildcraft.api.transport.IInjectable;
+import buildcraft.api.transport.pluggable.IPipePluggableContainer;
+import buildcraft.api.transport.pluggable.PipePluggable;
 
-public interface IPipeContainer extends IInjectable, IPipePluggableContainer {
+public interface IPipeContainer extends IInjectable {
 
 	public enum PipeType {
 
@@ -46,4 +45,7 @@ public interface IPipeContainer extends IInjectable, IPipePluggableContainer {
 	IPipe getNeighborPipe(ForgeDirection dir);
 	
 	IPipe getPipe();
+
+	PipePluggable getPipePluggable(ForgeDirection direction);
+	boolean hasPipePluggable(ForgeDirection direction);
 }

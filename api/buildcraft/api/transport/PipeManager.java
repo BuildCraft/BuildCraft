@@ -6,7 +6,7 @@
  * Please check the contents of the license, which should be located
  * as "LICENSE.API" in the BuildCraft source code distribution.
  */
-package buildcraft.api.pipes;
+package buildcraft.api.transport;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.minecraft.world.World;
-import buildcraft.api.transport.IExtractionHandler;
+import buildcraft.api.transport.pluggable.PipePluggable;
 
 public abstract class PipeManager {
 

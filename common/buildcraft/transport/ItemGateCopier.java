@@ -11,7 +11,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import buildcraft.api.pipes.PipePluggable;
+import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.transport.BlockGenericPipe.Part;

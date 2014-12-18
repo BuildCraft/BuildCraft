@@ -7,9 +7,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.pipes.IPipeContainer;
-import buildcraft.api.pipes.IPipePluggableRenderer;
-import buildcraft.api.pipes.PipePluggable;
+import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
+import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.utils.MatrixTranformations;
 
 public class FacadePluggable extends PipePluggable {

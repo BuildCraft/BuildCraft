@@ -52,11 +52,11 @@ import buildcraft.api.events.PipePlacedEvent;
 import buildcraft.api.events.RobotPlacementEvent;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.pipes.IPipePluggableItem;
-import buildcraft.api.pipes.PipePluggable;
+import buildcraft.api.transport.pluggable.IPipePluggableItem;
+import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.api.pipes.PipeWire;
+import buildcraft.api.transport.PipeWire;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.CreativeTabBuildCraft;
@@ -68,9 +68,7 @@ import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateDefinition;
-import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.GatePluggable;
-import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.render.PipeRendererWorld;
 
 public class BlockGenericPipe extends BlockBuildCraft {

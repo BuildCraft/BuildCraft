@@ -8,13 +8,10 @@
  */
 package buildcraft.transport;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.entity.Entity;
@@ -33,15 +30,14 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.ActionState;
 import buildcraft.api.statements.IActionInternal;
-import buildcraft.api.pipes.IPipe;
-import buildcraft.api.pipes.IPipeContainer;
-import buildcraft.api.pipes.PipeWire;
+import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.PipeWire;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.StatementSlot;
-import buildcraft.transport.pipes.events.PipeEvent;
 import buildcraft.transport.statements.ActionValve.ValveState;
 
 public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory, IPipe {

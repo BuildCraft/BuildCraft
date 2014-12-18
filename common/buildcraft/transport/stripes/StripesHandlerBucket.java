@@ -12,8 +12,8 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
-import buildcraft.api.pipes.IStripesHandler;
-import buildcraft.api.pipes.IStripesPipe;
+import buildcraft.api.transport.IStripesHandler;
+import buildcraft.api.transport.IStripesPipe;
 
 public class StripesHandlerBucket implements IStripesHandler {
 	private static final ItemStack emptyBucket = new ItemStack(Items.bucket, 1);

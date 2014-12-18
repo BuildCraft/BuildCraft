@@ -40,8 +40,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
-import buildcraft.api.pipes.IPipeContainer;
-import buildcraft.api.pipes.IPipeContainer.PipeType;
+import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.IPipeContainer.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.IDropControlInventory;
@@ -85,7 +85,7 @@ public final class Utils {
 			Position pos = new Position(x, y, z, orientation);
 			pos.moveForwards(1.0);
 
-			TileEntity tileInventory = world.getTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+			TileEntity tileInventory = BlockUtils.getTileEntity(world, (int) pos.x, (int) pos.y, (int) pos.z);
 			ITransactor transactor = Transactor.getTransactorFor(tileInventory);
 			if (transactor != null && !(tileInventory instanceof TileEngine) && transactor.add(stack, orientation.getOpposite(), false).stackSize > 0) {
 				return transactor.add(stack, orientation.getOpposite(), true).stackSize;
@@ -161,7 +161,7 @@ public final class Utils {
 
 			pos.moveForwards(1.0);
 
-			TileEntity tile = world.getTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+			TileEntity tile = BlockUtils.getTileEntity(world, (int) pos.x, (int) pos.y, (int) pos.z);
 
 			if (tile instanceof IPipeContainer) {
 				IPipeContainer pipe = (IPipeContainer) tile;
@@ -192,36 +192,41 @@ public final class Utils {
 		tmp.orientation = step;
 		tmp.moveForwards(1.0);
 
-		return world.getTileEntity((int) tmp.x, (int) tmp.y, (int) tmp.z);
+		return BlockUtils.getTileEntity(world, (int) tmp.x, (int) tmp.y, (int) tmp.z);
 	}
 
 	public static IAreaProvider getNearbyAreaProvider(World world, int i, int j, int k) {
-		TileEntity a1 = world.getTileEntity(i + 1, j, k);
-		TileEntity a2 = world.getTileEntity(i - 1, j, k);
-		TileEntity a3 = world.getTileEntity(i, j, k + 1);
-		TileEntity a4 = world.getTileEntity(i, j, k - 1);
-		TileEntity a5 = world.getTileEntity(i, j + 1, k);
-		TileEntity a6 = world.getTileEntity(i, j - 1, k);
+		TileEntity a1 = BlockUtils.getTileEntity(world, i + 1, j, k);
 
 		if (a1 instanceof IAreaProvider) {
 			return (IAreaProvider) a1;
 		}
 
+		TileEntity a2 = BlockUtils.getTileEntity(world, i - 1, j, k);
+
 		if (a2 instanceof IAreaProvider) {
 			return (IAreaProvider) a2;
 		}
+
+		TileEntity a3 = BlockUtils.getTileEntity(world, i, j, k + 1);
 
 		if (a3 instanceof IAreaProvider) {
 			return (IAreaProvider) a3;
 		}
 
+		TileEntity a4 = BlockUtils.getTileEntity(world, i, j, k - 1);
+
 		if (a4 instanceof IAreaProvider) {
 			return (IAreaProvider) a4;
 		}
 
+		TileEntity a5 = BlockUtils.getTileEntity(world, i, j + 1, k);
+
 		if (a5 instanceof IAreaProvider) {
 			return (IAreaProvider) a5;
 		}
+
+		TileEntity a6 = BlockUtils.getTileEntity(world, i, j - 1, k);
 
 		if (a6 instanceof IAreaProvider) {
 			return (IAreaProvider) a6;

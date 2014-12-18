@@ -15,7 +15,7 @@ import buildcraft.api.core.JavaTools;
 import buildcraft.api.facades.FacadeType;
 import buildcraft.api.facades.IFacadeItem;
 import buildcraft.api.recipes.CraftingResult;
-import buildcraft.api.pipes.PipeWire;
+import buildcraft.api.transport.PipeWire;
 import buildcraft.silicon.ItemRedstoneChipset;
 import buildcraft.silicon.TileIntegrationTable;
 import buildcraft.transport.ItemFacade;

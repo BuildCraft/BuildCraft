@@ -3,9 +3,8 @@ package buildcraft.transport;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.ISerializable;
-import buildcraft.api.pipes.IPipe;
-import buildcraft.api.pipes.PipeManager;
-import buildcraft.api.pipes.PipePluggable;
+import buildcraft.api.transport.PipeManager;
+import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.transport.utils.ConnectionMatrix;
 
 public class PipePluggableState implements ISerializable {

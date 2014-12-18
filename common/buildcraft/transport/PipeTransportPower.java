@@ -22,7 +22,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.power.IEngine;
-import buildcraft.api.pipes.IPipeContainer.PipeType;
+import buildcraft.api.transport.IPipeContainer.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.transport.network.PacketPowerUpdate;

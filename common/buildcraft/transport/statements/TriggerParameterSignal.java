@@ -18,7 +18,7 @@ import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
-import buildcraft.api.pipes.PipeWire;
+import buildcraft.api.transport.PipeWire;
 import buildcraft.core.utils.StringUtils;
 
 public class TriggerParameterSignal implements IStatementParameter {

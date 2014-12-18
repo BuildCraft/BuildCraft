@@ -19,10 +19,12 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S27PacketExplosion;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.Chunk;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 
@@ -220,5 +222,13 @@ public final class BlockUtils {
 
 	public static int computeBlockBreakEnergy(World world, int x, int y, int z) {
 		return (int) Math.floor(BuilderAPI.BREAK_ENERGY * BuildCraftFactory.miningMultiplier * ((world.getBlock(x, y, z).getBlockHardness(world, x, y, z) + 1) * 2));
+	}
+
+	public static TileEntity getTileEntity(World world, int x, int y, int z) {
+		if (world.blockExists(x, y, z)) {
+			return world.getChunkFromBlockCoords(x, z).getTileEntityUnsafe(x & 15, y, z & 15);
+		} else {
+			return null;
+		}
 	}
 }

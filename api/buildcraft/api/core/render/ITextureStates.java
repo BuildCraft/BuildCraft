@@ -10,11 +10,10 @@ package buildcraft.api.core.render;
 
 import net.minecraft.block.Block;
 import net.minecraft.util.IIcon;
-import buildcraft.transport.render.TextureStateManager;
 
 public interface ITextureStates extends ICullable {
 
-	TextureStateManager getTextureState();
+	ITextureStateManager getTextureState();
 	
 	IIcon getIcon(int side, int meta);
 	

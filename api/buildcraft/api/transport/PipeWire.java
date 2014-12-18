@@ -6,7 +6,7 @@
  * Please check the contents of the license, which should be located
  * as "LICENSE.API" in the BuildCraft source code distribution.
  */
-package buildcraft.api.pipes;
+package buildcraft.api.transport;
 
 import java.util.Locale;
 

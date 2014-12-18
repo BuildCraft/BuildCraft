@@ -1,6 +1,5 @@
 package buildcraft.transport.gates;
 
-import java.util.HashSet;
 import java.util.Set;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
@@ -11,11 +10,10 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.gates.GateExpansions;
-import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.pipes.IPipeContainer;
-import buildcraft.api.pipes.IPipePluggableRenderer;
-import buildcraft.api.pipes.PipePluggable;
+import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
+import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.transport.Gate;

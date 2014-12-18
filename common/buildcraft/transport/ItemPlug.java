@@ -11,7 +11,6 @@ package buildcraft.transport;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 import cpw.mods.fml.relauncher.Side;
@@ -19,11 +18,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.BuildCraftTransport;
-import buildcraft.api.pipes.IPipe;
-import buildcraft.api.pipes.IPipeContainer;
-import buildcraft.api.pipes.IPipePluggableItem;
-import buildcraft.api.pipes.PipePluggable;
+import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.pluggable.IPipePluggableItem;
+import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.ItemBuildCraft;
 
 public class ItemPlug extends ItemBuildCraft implements IPipePluggableItem {

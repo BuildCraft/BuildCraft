@@ -17,7 +17,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.pipes.IPipeContainer;
+import buildcraft.api.transport.IPipeContainer;
 import buildcraft.core.RFBattery;
 import buildcraft.transport.IPipeTransportPowerHook;
 import buildcraft.transport.Pipe;

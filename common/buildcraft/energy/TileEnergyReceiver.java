@@ -16,8 +16,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import cofh.api.energy.IEnergyHandler;
 
-import buildcraft.api.pipes.IPipeConnection;
-import buildcraft.api.pipes.IPipeContainer.PipeType;
+import buildcraft.api.transport.IPipeConnection;
+import buildcraft.api.transport.IPipeContainer.PipeType;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
 
