@@ -766,7 +766,22 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	protected boolean hasBlockingPluggable(ForgeDirection side) {
 		PipePluggable pluggable = getPipePluggable(side);
-		return pluggable != null && pluggable.isBlocking(this, side);
+		if (pluggable == null) {
+			return false;
+		}
+
+		if (pluggable instanceof IPipeConnection) {
+			IPipe pipe = getNeighborPipe(side);
+			if (pipe != null) {
+				IPipeConnection.ConnectOverride override = ((IPipeConnection) pluggable).overridePipeConnection(pipe.getTile().getPipeType(), side);
+				if (override == IPipeConnection.ConnectOverride.CONNECT) {
+					return true;
+				} else if (override == IPipeConnection.ConnectOverride.DISCONNECT) {
+					return false;
+				}
+			}
+		}
+		return pluggable.isBlocking(this, side);
 	}
 
 	private void computeConnections() {

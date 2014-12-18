@@ -22,6 +22,7 @@ import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.utils.ColorUtils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
@@ -63,6 +64,11 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 
 			((IToolWrench) equipped).wrenchUsed(player, container.xCoord, container.yCoord, container.zCoord);
 			return true;
+		}  else {
+			int color = ColorUtils.getColorIDFromDye(player.getCurrentEquippedItem());
+			if (color >= 0 && color < 16) {
+				setColor(EnumColor.fromId(15 - color));
+			}
 		}
 
 		return false;

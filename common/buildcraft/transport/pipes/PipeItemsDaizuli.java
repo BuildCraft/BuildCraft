@@ -27,6 +27,7 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.core.ISerializable;
+import buildcraft.core.utils.ColorUtils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
@@ -82,10 +83,18 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements ISeria
 
 	@Override
 	public boolean blockActivated(EntityPlayer player) {
-		Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
-		if (player.isSneaking() && equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, container.xCoord, container.yCoord, container.zCoord)) {
-			setColor(getColor().getNext());
-			((IToolWrench) equipped).wrenchUsed(player, container.xCoord, container.yCoord, container.zCoord);
+		if (player.isSneaking()) {
+			Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
+			if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, container.xCoord, container.yCoord, container.zCoord)) {
+				setColor(getColor().getNext());
+				((IToolWrench) equipped).wrenchUsed(player, container.xCoord, container.yCoord, container.zCoord);
+				return true;
+			}
+		}
+
+		int color = ColorUtils.getColorIDFromDye(player.getCurrentEquippedItem());
+		if (color >= 0 && color < 16) {
+			setColor(EnumColor.fromId(15 - color));
 			return true;
 		}
 
