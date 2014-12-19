@@ -12,13 +12,13 @@ import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.transport.IPipeContainer.PipeType;
+import buildcraft.api.transport.IPipeContainer;
 
 public class PipeTransportStructure extends PipeTransport {
 
 	@Override
-	public PipeType getPipeType() {
-		return PipeType.STRUCTURE;
+	public IPipeContainer.PipeType getPipeType() {
+		return IPipeContainer.PipeType.STRUCTURE;
 	}
 
 	@Override

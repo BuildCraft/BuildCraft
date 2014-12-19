@@ -16,11 +16,6 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 
 public interface IPipeContainer extends IInjectable {
 
-	public enum PipeType {
-
-		ITEM, FLUID, POWER, STRUCTURE
-	}
-
 	PipeType getPipeType();
 
 	World getWorldObj();
@@ -47,4 +42,12 @@ public interface IPipeContainer extends IInjectable {
 
 	PipePluggable getPipePluggable(ForgeDirection direction);
 	boolean hasPipePluggable(ForgeDirection direction);
+
+	/**
+	* Created by asie on 12/19/14.
+	*/
+	enum PipeType {
+
+		ITEM, FLUID, POWER, STRUCTURE
+	}
 }

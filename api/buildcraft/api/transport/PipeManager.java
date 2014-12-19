@@ -13,23 +13,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.world.World;
 import buildcraft.api.transport.pluggable.PipePluggable;
 
 public abstract class PipeManager {
 
 	public static List<IStripesHandler> stripesHandlers = new ArrayList<IStripesHandler>();
-	public static List<IExtractionHandler> extractionHandlers = new ArrayList<IExtractionHandler>();
 	public static ArrayList<Class<? extends PipePluggable>> pipePluggables = new ArrayList<Class<? extends PipePluggable>>();
 	private static Map<String, Class<? extends PipePluggable>> pipePluggableNames =
 			new HashMap<String, Class<? extends PipePluggable>>();
 	private static Map<Class<? extends PipePluggable>, String> pipePluggableByNames =
 			new HashMap<Class<? extends PipePluggable>, String>();
 
-	public static void registerExtractionHandler(IExtractionHandler handler) {
-		extractionHandlers.add(handler);
-	}
-	
 	public static void registerStripesHandler(IStripesHandler handler) {
 		stripesHandlers.add(handler);
 	}
@@ -38,32 +32,6 @@ public abstract class PipeManager {
 		pipePluggables.add(pluggable);
 		pipePluggableNames.put(name, pluggable);
 		pipePluggableByNames.put(pluggable, name);
-	}
-
-	/**
-	 * param extractor can be null
-	 */
-	public static boolean canExtractItems(Object extractor, World world, int i, int j, int k) {
-		for (IExtractionHandler handler : extractionHandlers) {
-			if (!handler.canExtractItems(extractor, world, i, j, k)) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * param extractor can be null
-	 */
-	public static boolean canExtractFluids(Object extractor, World world, int i, int j, int k) {
-		for (IExtractionHandler handler : extractionHandlers) {
-			if (!handler.canExtractFluids(extractor, world, i, j, k)) {
-				return false;
-			}
-		}
-
-		return true;
 	}
 
 	public static Class<?> getPluggableByName(String pluggableName) {

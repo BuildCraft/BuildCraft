@@ -17,7 +17,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.api.transport.IPipeConnection;
-import buildcraft.api.transport.IPipeContainer.PipeType;
+import buildcraft.api.transport.IPipeContainer;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
 
@@ -65,9 +65,9 @@ public class TileEnergyReceiver extends TileBuildCraft implements IPipeConnectio
 	}
 
 	@Override
-	public ConnectOverride overridePipeConnection(PipeType type,
+	public ConnectOverride overridePipeConnection(IPipeContainer.PipeType type,
 			ForgeDirection with) {
-		return type == PipeType.POWER ? ConnectOverride.CONNECT : ConnectOverride.DISCONNECT;
+		return type == IPipeContainer.PipeType.POWER ? ConnectOverride.CONNECT : ConnectOverride.DISCONNECT;
 	}
 
 	@Override

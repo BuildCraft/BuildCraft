@@ -22,7 +22,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.power.IEngine;
-import buildcraft.api.transport.IPipeContainer.PipeType;
+import buildcraft.api.transport.IPipeContainer;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.transport.network.PacketPowerUpdate;
@@ -75,8 +75,8 @@ public class PipeTransportPower extends PipeTransport {
 	}
 
 	@Override
-	public PipeType getPipeType() {
-		return PipeType.POWER;
+	public IPipeContainer.PipeType getPipeType() {
+		return IPipeContainer.PipeType.POWER;
 	}
 
 	public void initFromPipe(Class<? extends Pipe> pipeClass) {

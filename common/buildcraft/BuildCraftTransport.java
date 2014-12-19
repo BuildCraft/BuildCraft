@@ -42,7 +42,6 @@ import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementManager;
-import buildcraft.api.transport.IExtractionHandler;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.CreativeTabBuildCraft;
@@ -245,49 +244,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 		Object[] input;
 	}
 
-	private static class ExtractionHandler implements IExtractionHandler {
-
-		private final String[] items;
-		private final String[] liquids;
-
-		public ExtractionHandler(String[] items, String[] liquids) {
-			this.items = items;
-			this.liquids = liquids;
-		}
-
-		@Override
-		public boolean canExtractItems(Object extractor, World world, int i, int j, int k) {
-			return testStrings(items, world, i, j, k);
-		}
-
-		@Override
-		public boolean canExtractFluids(Object extractor, World world, int i, int j, int k) {
-			return testStrings(liquids, world, i, j, k);
-		}
-
-		private boolean testStrings(String[] excludedBlocks, World world, int i, int j, int k) {
-			Block block = world.getBlock(i, j, k);
-			if (block == null) {
-				return false;
-			}
-
-			//int meta = world.getBlockMetadata(i, j, k);
-
-			// TODO: the exculded list is not taken into account. This probably
-			// needs to be migrated to an implementation based on names instead
-			// of ids, low priority for now.
-			/*for (String excluded : excludedBlocks) {
-				if (excluded.equals(block.getUnlocalizedName()))
-					return false;
-
-				String[] tokens = excluded.split(":");
-				if (tokens[0].equals(Integer.toString(id)) && (tokens.length == 1 || tokens[1].equals(Integer.toString(meta))))
-					return false;
-			}*/
-			return true;
-		}
-	}
-
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
 		try {
@@ -301,32 +257,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 			Property printFacadeList = BuildCraftCore.mainConfiguration.get("debug", "facades.printFacadeList", false);
 			debugPrintFacadeList = printFacadeList.getBoolean();
 
-			Property exclusionItemList = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "woodenPipe.item.exclusion", new String[0]);
-
-			String[] excludedItemBlocks = exclusionItemList.getStringList();
-			if (excludedItemBlocks != null) {
-				for (int j = 0; j < excludedItemBlocks.length; ++j) {
-					excludedItemBlocks[j] = excludedItemBlocks[j].trim();
-				}
-			} else {
-				excludedItemBlocks = new String[0];
-			}
-
-			Property exclusionFluidList = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "woodenPipe.liquid.exclusion", new String[0]);
-
-			String[] excludedFluidBlocks = exclusionFluidList.getStringList();
-			if (excludedFluidBlocks != null) {
-				for (int j = 0; j < excludedFluidBlocks.length; ++j) {
-					excludedFluidBlocks[j] = excludedFluidBlocks[j].trim();
-				}
-			} else {
-				excludedFluidBlocks = new String[0];
-			}
-
 			filteredBufferBlock = new BlockFilteredBuffer();
 			CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));
-
-			PipeManager.registerExtractionHandler(new ExtractionHandler(excludedItemBlocks, excludedFluidBlocks));
 
 			GateExpansions.registerExpansion(GateExpansionPulsar.INSTANCE);
 			GateExpansions.registerExpansion(GateExpansionTimer.INSTANCE);

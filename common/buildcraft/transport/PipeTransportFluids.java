@@ -25,7 +25,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.transport.IPipeContainer.PipeType;
+import buildcraft.api.transport.IPipeContainer;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.MathUtils;
 import buildcraft.transport.network.PacketFluidUpdate;
@@ -184,8 +184,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
     }
 
 	@Override
-	public PipeType getPipeType() {
-		return PipeType.FLUID;
+	public IPipeContainer.PipeType getPipeType() {
+		return IPipeContainer.PipeType.FLUID;
 	}
 
 	public int getCapacity() {

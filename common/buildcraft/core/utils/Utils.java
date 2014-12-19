@@ -41,7 +41,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipeContainer;
-import buildcraft.api.transport.IPipeContainer.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.IDropControlInventory;
@@ -67,7 +66,6 @@ public final class Utils {
 	private Utils() {
 	}
 
-	/* IINVENTORY HELPERS */
 	/**
 	 * Tries to add the passed stack to any valid inventories around the given
 	 * coordinates.
@@ -165,7 +163,7 @@ public final class Utils {
 
 			if (tile instanceof IPipeContainer) {
 				IPipeContainer pipe = (IPipeContainer) tile;
-				if (pipe.getPipeType() != PipeType.ITEM) {
+				if (pipe.getPipeType() != IPipeContainer.PipeType.ITEM) {
 					continue;
 				}
 				if (!pipe.isPipeConnected(side.getOpposite())) {
