@@ -34,19 +34,22 @@ public class DimensionProperty implements IWorldAccess {
 	public synchronized boolean get(int x, int y, int z) {
 		int xChunk = x >> 4;
 		int zChunk = z >> 4;
-		long chunkId = ChunkCoordIntPair.chunkXZ2Int(xChunk, zChunk);
-		ChunkProperty property;
 
-		if (!chunkMapping.containsItem(chunkId)) {
-			property = new ChunkProperty(world, world.getHeight(), xChunk, zChunk);
-			chunkMapping.add(chunkId, property);
-			load(world.getChunkFromChunkCoords(xChunk, zChunk), property);
+		if (world.getChunkProvider().chunkExists(xChunk, zChunk)) {
+			long chunkId = ChunkCoordIntPair.chunkXZ2Int(xChunk, zChunk);
+			ChunkProperty property;
+			if (!chunkMapping.containsItem(chunkId)) {
+				property = new ChunkProperty(world, world.getHeight(), xChunk, zChunk);
+				chunkMapping.add(chunkId, property);
+				load(world.getChunkFromChunkCoords(xChunk, zChunk), property);
+			} else {
+				property = (ChunkProperty) chunkMapping.getValueByKey(chunkId);
+			}
+
+			return property.get(x & 0xF, y, z & 0xF);
 		} else {
-			property = (ChunkProperty) chunkMapping.getValueByKey(chunkId);
+			return false;
 		}
-
-
-		return property.get(x & 0xF, y, z & 0xF);
 	}
 
 	private void load(Chunk chunk, ChunkProperty property) {
@@ -70,16 +73,18 @@ public class DimensionProperty implements IWorldAccess {
 	public synchronized void markBlockForUpdate(int x, int y, int z) {
 		int xChunk = x >> 4;
 		int zChunk = z >> 4;
-		long chunkId = ChunkCoordIntPair.chunkXZ2Int(xChunk, zChunk);
+		if (world.getChunkProvider().chunkExists(xChunk, zChunk)) {
+			long chunkId = ChunkCoordIntPair.chunkXZ2Int(xChunk, zChunk);
 
-		if (chunkMapping.containsItem(chunkId)) {
-			ChunkProperty property = (ChunkProperty) chunkMapping.getValueByKey(chunkId);
+			if (chunkMapping.containsItem(chunkId)) {
+				ChunkProperty property = (ChunkProperty) chunkMapping.getValueByKey(chunkId);
 
-			Block block = world.getBlock(x, y, z);
-			int meta = world.getBlockMetadata(x, y, z);
-			boolean prop = worldProperty.
-					get(world, block, meta, x, y, z);
-			property.set(x & 0xF, y, z & 0xF, prop);
+				Block block = world.getBlock(x, y, z);
+				int meta = world.getBlockMetadata(x, y, z);
+				boolean prop = worldProperty.
+						get(world, block, meta, x, y, z);
+				property.set(x & 0xF, y, z & 0xF, prop);
+			}
 		}
 	}
 
