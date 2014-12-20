@@ -110,6 +110,9 @@ public final class GateDefinition {
 
 		@SideOnly(Side.CLIENT)
 		private IIcon iconItem;
+		
+		@SideOnly(Side.CLIENT)
+		private IIcon iconGate;
 
 		@SideOnly(Side.CLIENT)
 		public IIcon getIconLit() {
@@ -119,6 +122,11 @@ public final class GateDefinition {
 		@SideOnly(Side.CLIENT)
 		public IIcon getIconDark() {
 			return iconDark;
+		}
+		
+		@SideOnly(Side.CLIENT)
+		public IIcon getGateIcon() {
+			return iconGate;
 		}
 
 		@SideOnly(Side.CLIENT)
@@ -132,8 +140,10 @@ public final class GateDefinition {
 
 		@SideOnly(Side.CLIENT)
 		public void registerBlockIcon(IIconRegister iconRegister) {
-			iconLit = iconRegister.registerIcon("buildcraft:gates/gate_lit_" + getTag());
-			iconDark = iconRegister.registerIcon("buildcraft:gates/gate_dark_" + getTag());
+			iconLit = iconRegister.registerIcon("buildcraft:gates/gate_" + getTag() + "_lit");
+			iconDark = iconRegister.registerIcon("buildcraft:gates/gate_" + getTag() + "_dark");
+			
+			iconGate = iconRegister.registerIcon("buildcraft:gates/gate_" + getTag());
 		}
 
 		@SideOnly(Side.CLIENT)
