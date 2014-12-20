@@ -146,13 +146,6 @@ public class FacadeItemRenderer implements IItemRenderer {
 		Block block = activeState != null ? activeState.block : null;
 		int decodedMeta = activeState != null ? activeState.metadata : 0;
 		boolean hollow = activeState != null ? activeState.hollow : false;
-		ItemStack decodedStack = new ItemStack(block, 1, decodedMeta);
-
-		try {
-			int color = decodedStack.getItem().getColorFromItemStack(decodedStack, 0);
-			RenderUtils.setGLColorFromInt(color);
-		} catch (Throwable error) {
-		}
 
 		Tessellator tessellator = Tessellator.instance;
 
@@ -170,6 +163,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
 		}
 
+		RenderUtils.setGLColorFromInt(block.getRenderColor(decodedMeta));
 		if (hollow) {
 			GL11.glTranslatef(translateX, translateY, translateZ);
 			drawHollowCube(tessellator, render, block, decodedMeta);
