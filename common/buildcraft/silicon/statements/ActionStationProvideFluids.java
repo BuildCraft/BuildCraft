@@ -8,7 +8,6 @@
  */
 package buildcraft.silicon.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -27,10 +26,10 @@ public class ActionStationProvideFluids extends BCStatement implements IActionIn
 		return StringUtils.localize("gate.action.station.povide_fluids");
 	}
 
-	@Override
+	/*@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/action_station_provide_fluids");
-	}
+	}*/
 
 	@Override
 	public int maxParameters() {

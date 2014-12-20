@@ -36,7 +36,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.oredict.RecipeSorter;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.EnumColor;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
@@ -229,8 +228,8 @@ public class BuildCraftTransport extends BuildCraftMod {
     
 	private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
 
-	public IIconProvider pipeIconProvider = new PipeIconProvider();
-	public IIconProvider wireIconProvider = new WireIconProvider();
+	/*public IIconProvider pipeIconProvider = new PipeIconProvider();
+	public IIconProvider wireIconProvider = new WireIconProvider();*/
 
 	private static class PipeRecipe {
 		boolean isShapeless = false; // pipe recipes come shaped and unshaped.

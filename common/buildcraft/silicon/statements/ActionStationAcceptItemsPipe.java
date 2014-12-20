@@ -8,7 +8,6 @@
  */
 package buildcraft.silicon.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
@@ -30,10 +29,10 @@ public class ActionStationAcceptItemsPipe extends ActionStationInputItems {
 		return StringUtils.localize("gate.action.station.drop_items_in_pipe");
 	}
 
-	@Override
+	/*@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/action_station_drop_in_pipe");
-	}
+	}*/
 
 	@Override
 	public int maxParameters() {
@@ -57,9 +56,9 @@ public class ActionStationAcceptItemsPipe extends ActionStationInputItems {
 		}
 
 		if (station.getPipe().pipe.transport instanceof PipeTransportItems) {
-			float cx = station.x() + 0.5F + 0.2F * station.side().getFrontOffsetX();
-			float cy = station.y() + 0.5F + 0.2F * station.side().getFrontOffsetY();
-			float cz = station.z() + 0.5F + 0.2F * station.side().getFrontOffsetZ();
+			float cx = station.pos().getX() + 0.5F + 0.2F * station.side().getFrontOffsetX();
+			float cy = station.pos().getY() + 0.5F + 0.2F * station.side().getFrontOffsetY();
+			float cz = station.pos().getZ() + 0.5F + 0.2F * station.side().getFrontOffsetZ();
 
 			TravelingItem item = TravelingItem.make(cx, cy, cz, invSlot.getStackInSlot());
 

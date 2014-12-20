@@ -11,8 +11,6 @@ package buildcraft.core.gui;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-
-import com.sun.prism.util.tess.Tess;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -126,7 +124,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		if (fluid == null || fluid.getFluid() == null) {
 			return;
 		}
-		IIcon icon = fluid.getFluid().getIcon(fluid);
+		//IIcon icon = fluid.getFluid().getIcon(fluid);
 		mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 		RenderUtils.setGLColorFromInt(fluid.getFluid().getColor(fluid));
 		int fullX = width / 16;
@@ -136,7 +134,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		int level = fluid.amount * height / maxCapacity;
 		int fullLvl = (height - level) / 16;
 		int lastLvl = (height - level) - fullLvl * 16;
-		for (int i = 0; i < fullX; i++) {
+		/*for (int i = 0; i < fullX; i++) {
 			for (int j = 0; j < fullY; j++) {
 				if (j >= fullLvl) {
 					drawCutIcon(icon, x + i * 16, y + j * 16, 16, 16, j == fullLvl ? lastLvl : 0);
@@ -151,11 +149,11 @@ public abstract class GuiBuildCraft extends GuiContainer {
 				drawCutIcon(icon, x + fullX * 16, y + i * 16, lastX, 16, i == fullLvl ? lastLvl : 0);
 			}
 		}
-		drawCutIcon(icon, x + fullX * 16, y + fullY * 16, lastX, lastY, fullLvl == fullY ? lastLvl : 0);
+		drawCutIcon(icon, x + fullX * 16, y + fullY * 16, lastX, lastY, fullLvl == fullY ? lastLvl : 0);*/
 	}
 
 	//The magic is here
-	private void drawCutIcon(IIcon icon, int x, int y, int width, int height, int cut) {
+	/*private void drawCutIcon(IIcon icon, int x, int y, int width, int height, int cut) {
 		Tessellator tess = Tessellator.getInstance();
 		WorldRenderer wr = tess.getWorldRenderer();
 		wr.startDrawingQuads();
@@ -164,7 +162,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		wr.addVertexWithUV(x + width, y + cut, zLevel, icon.getInterpolatedU(width), icon.getInterpolatedV(cut));
 		wr.addVertexWithUV(x, y + cut, zLevel, icon.getMinU(), icon.getInterpolatedV(cut));
 		tess.draw();
-	}
+	}*/
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int mouseX, int mouseY) {

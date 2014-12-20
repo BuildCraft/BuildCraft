@@ -9,8 +9,11 @@
 package buildcraft.transport.pipes;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -21,12 +24,12 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.util.EnumFacing;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IStripesHandler;
 import buildcraft.api.transport.IStripesHandler.StripesHandlerType;
 import buildcraft.api.transport.IStripesPipe;
 import buildcraft.api.transport.PipeManager;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtils;
 import buildcraft.transport.BlockGenericPipe;
@@ -58,13 +61,11 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 			return;
 		}
 		
-		Position p = new Position(container.xCoord, container.yCoord,
-				container.zCoord, event.direction);
+		Position p = new Position(container.getPos(), event.direction);
 		p.moveForwards(1.0);
 
 		ItemStack stack = event.entity.getEntityItem();
-		EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld(),
-				(int) p.x, (int) p.y, (int) p.z).get();
+		EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld(), p.toBlockPos()).get();
 		
 		switch (event.direction) {
 			case DOWN:
@@ -91,7 +92,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 				player.rotationPitch = 0;
 				player.rotationYaw = 270;
 				break;
-			case UNKNOWN:
+			default:
 				break;
 		}
 		
@@ -102,7 +103,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 		for (IStripesHandler handler : PipeManager.stripesHandlers) {
 			if (handler.getType() == StripesHandlerType.ITEM_USE
 					&& handler.shouldHandle(stack)) {
-				if (handler.handle(getWorld(), (int) p.x, (int) p.y, (int) p.z,
+				if (handler.handle(getWorld(), p.toBlockPos(),
 						event.direction, stack, player, this)) {
 					return;
 				}
@@ -116,73 +117,71 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 		if (convertPipe(transport, event.item)) {
 			int moves = 0;
 			while (stack.stackSize > 0) {
-				if (getWorld().getBlock((int) p.x, (int) p.y, (int) p.z) != Blocks.air) {
+				if (getWorld().getBlockState(p.toBlockPos()).getBlock() != Blocks.air) {
 					break;
 				}
 				stack.getItem().onItemUse(new ItemStack(stack.getItem(), 1, stack.getItemDamage()),
-						player, getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0, 0, 0
+						player, getWorld(), p.toBlockPos(), EnumFacing.UP, 0, 0, 0
 					);
 				stack.stackSize--;
 				p.moveForwards(1.0);
 				moves++;
 			}
-			if (getWorld().getBlock((int) p.x, (int) p.y, (int) p.z) != Blocks.air) {
+			if (getWorld().getBlockState(p.toBlockPos()).getBlock() != Blocks.air) {
 				p.moveBackwards(1.0);
 				stack.stackSize++;
-				getWorld().setBlockToAir((int) p.x, (int) p.y, (int) p.z);
+				getWorld().setBlockToAir(p.toBlockPos());
 			}
 			
 			BuildCraftTransport.pipeItemsStripes.onItemUse(new ItemStack(
-					BuildCraftTransport.pipeItemsStripes, 1, this.container.getItemMetadata()), player, getWorld(), (int) p.x,
-					(int) p.y, (int) p.z, 1, 0, 0, 0
+					BuildCraftTransport.pipeItemsStripes, 1, this.container.getItemMetadata()), player, getWorld(), p.toBlockPos(), EnumFacing.UP, 0, 0, 0
 				);
 			this.container.initializeFromItemMetadata(stack.getItemDamage() - 1);
 			
 			if (stack.stackSize > 0) {
-				TileEntity targetTile = getWorld().getTileEntity((int) p.x, (int) p.y, (int) p.z);
+				TileEntity targetTile = getWorld().getTileEntity(p.toBlockPos());
 				if (targetTile instanceof TileGenericPipe) {
 					TravelingItem newItem = TravelingItem.make(
-							container.xCoord + 0.5,
-							container.yCoord + TransportUtils.getPipeFloorOf(
+							container.getPos().getX() + 0.5,
+							container.getPos().getY() + TransportUtils.getPipeFloorOf(
 									new ItemStack(BuildCraftTransport.pipeItemsStripes)),
-							container.zCoord + 0.5, stack.copy());
+							container.getPos().getZ() + 0.5, stack.copy());
 					((PipeTransportItems) ((TileGenericPipe) targetTile).pipe.transport).injectItem(newItem, event.direction.getOpposite());
 
 					stack.stackSize = 0;
 				}
 			}
 		} else if (stack.getItem() instanceof ItemBlock) {
-			if (getWorld().getBlock((int) p.x, (int) p.y, (int) p.z) == Blocks.air) {
-				stack.tryPlaceItemIntoWorld(
+			if (getWorld().getBlockState(p.toBlockPos()).getBlock() == Blocks.air) {
+				stack.onItemUse(
 						player,
-					getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0.0f, 0.0f,
+					getWorld(), p.toBlockPos(), EnumFacing.UP, 0.0f, 0.0f,
 					0.0f);
 			}
 		} else {
-			stack.tryPlaceItemIntoWorld(
+			stack.onItemUse(
 					player,
-					getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0.0f, 0.0f,
+					getWorld(), p.toBlockPos(), EnumFacing.UP, 0.0f, 0.0f,
 					0.0f);
 		}
 	}
 	
 	@Override
 	public void dropItem(ItemStack itemStack, EnumFacing direction) {
-		Position p = new Position(container.xCoord, container.yCoord,
-				container.zCoord, direction);
+		Position p = new Position(container.getPos(), direction);
 		p.moveForwards(1.0);
 
-		itemStack.tryPlaceItemIntoWorld(CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld()).get(),
-				getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0.0f, 0.0f,
+		itemStack.onItemUse(CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld()).get(),
+				getWorld(), p.toBlockPos(), EnumFacing.UP, 0.0f, 0.0f,
 				0.0f);
 	}
 	
 	@Override
 	public void sendItem(ItemStack itemStack, EnumFacing direction) {
 		TravelingItem newItem = TravelingItem.make(
-				container.xCoord + 0.5,
-				container.yCoord + TransportUtils.getPipeFloorOf(itemStack),
-				container.zCoord + 0.5, itemStack);
+				container.getPos().getX() + 0.5,
+				container.getPos().getY() + TransportUtils.getPipeFloorOf(itemStack),
+				container.getPos().getZ() + 0.5, itemStack);
 		transport.injectItem(newItem, direction);
 	}
 
@@ -206,10 +205,10 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 		return false;
 	}
 
-	@Override
+	/*@Override
 	public IIconProvider getIconProvider() {
 		return BuildCraftTransport.instance.pipeIconProvider;
-	}
+	}*/
 
 	@Override
 	public int getIconIndex(EnumFacing direction) {
@@ -246,31 +245,31 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 		EnumFacing o = getOpenOrientation();
 
 		if (o != null) {
-			Position p = new Position(container.xCoord, container.yCoord,
-					container.zCoord, o);
+			Position p = new Position(container.getPos(), o);
 			p.moveForwards(1.0);
 
-			if (!BlockUtils.isUnbreakableBlock(getWorld(), (int) p.x, (int) p.y, (int) p.z)) {
-				Block block = getWorld().getBlock((int) p.x, (int) p.y, (int) p.z);
-				int metadata = getWorld().getBlockMetadata((int) p.x, (int) p.y, (int) p.z);
+			if (!BlockUtils.isUnbreakableBlock(getWorld(), p.toBlockPos())) {
+				IBlockState state = getWorld().getBlockState(p.toBlockPos());
+				Block block = state.getBlock();
+				int metadata = ((EnumFacing)state.getValue(BlockBuildCraft.FACING_PROP)).getIndex();
 				
 				ItemStack stack = new ItemStack(block, 1, metadata);
 				EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld(),
-						(int) p.x, (int) p.y, (int) p.z).get();
+						p.toBlockPos()).get();
 				
 				for (IStripesHandler handler : PipeManager.stripesHandlers) {
 					if (handler.getType() == StripesHandlerType.BLOCK_BREAK
 							&& handler.shouldHandle(stack)) {
-						if (handler.handle(getWorld(), (int) p.x, (int) p.y, (int) p.z,
+						if (handler.handle(getWorld(), p.toBlockPos(),
 								o, stack, player, this)) {
 							return maxReceive;
 						}
 					}
 				}
 				
-				ArrayList<ItemStack> stacks = block.getDrops(
-						getWorld(), (int) p.x, (int) p.y, (int) p.z,
-						metadata, 0
+				List<ItemStack> stacks = block.getDrops(
+						getWorld(), p.toBlockPos(),
+						state, 0
 				);
 
 				if (stacks != null) {
@@ -281,7 +280,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 					}
 				}
 
-				getWorld().setBlockToAir((int) p.x, (int) p.y, (int) p.z);
+				getWorld().setBlockToAir(p.toBlockPos());
 			}
 		}
 

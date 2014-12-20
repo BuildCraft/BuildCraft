@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.boards.RedstoneBoardNBT;
@@ -74,12 +73,12 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 		}
 	}
 
-	@Override
+	/*@Override
 	public void registerIcons(IIconRegister par1IconRegister) {
 		for (BoardFactory f : boards.values()) {
 			f.boardNBT.registerIcons(par1IconRegister);
 		}
-	}
+	}*/
 
 	@Override
 	public Collection<RedstoneBoardNBT<?>> getAllBoardNBTs() {

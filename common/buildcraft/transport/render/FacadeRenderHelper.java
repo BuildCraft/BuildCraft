@@ -9,10 +9,8 @@
 package buildcraft.transport.render;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
@@ -82,7 +80,7 @@ public final class FacadeRenderHelper {
 		zOffsets[5] = 0;
 	}
 
-	private static void setRenderBounds(RenderBlocks renderblocks, float[][] rotated, EnumFacing side) {
+	/*private static void setRenderBounds(RenderBlocks renderblocks, float[][] rotated, EnumFacing side) {
 		renderblocks.setRenderBounds(
 				rotated[0][0] + xOffsets[side.ordinal()],
 				rotated[1][0] + yOffsets[side.ordinal()],
@@ -202,5 +200,5 @@ public final class FacadeRenderHelper {
 				}
 			}
 		}
-	}
+	}*/
 }

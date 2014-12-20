@@ -8,7 +8,6 @@
  */
 package buildcraft.core;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.BlockPos;
@@ -37,11 +36,11 @@ public class ItemBuildCraft extends Item {
 		return super.setUnlocalizedName(par1Str);
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister par1IconRegister) {
 		this.itemIcon = par1IconRegister.registerIcon("buildcraft:" + iconName);
-	}
+	}*/
 
 	public Item setPassSneakClick(boolean passClick) {
 		this.passSneakClick = passClick;

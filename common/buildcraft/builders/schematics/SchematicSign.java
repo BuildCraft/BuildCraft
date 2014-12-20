@@ -12,9 +12,8 @@ import java.util.LinkedList;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
 
@@ -32,21 +31,21 @@ public class SchematicSign extends SchematicTile {
 	}
 
 	@Override
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
+	public void storeRequirements(IBuilderContext context, BlockPos pos) {
 		// cancel requirements reading
 	}
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
 		if (!isWall) {
-			double angle = (meta * 360.0) / 16.0;
+			double angle = (getMetaData() * 360.0) / 16.0;
 			angle += 90.0;
 			if (angle >= 360) {
 				angle -= 360;
 			}
-			meta = (int) (angle / 360.0 * 16.0);
+			setMetaData((int) (angle / 360.0 * 16.0));
 		} else {
-			meta = EnumFacing.values()[meta].getRotation(EnumFacing.UP).ordinal();
+			setMetaData(EnumFacing.values()[getMetaData()].getIndex());
 		}
 	}
 }

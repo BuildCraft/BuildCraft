@@ -25,7 +25,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
@@ -50,17 +49,15 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
 		return filters;
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
 		return BuildCraftTransport.instance.pipeIconProvider;
-	}
+	}*/
 
 	@Override
 	public int getIconIndex(EnumFacing direction) {
 		switch (direction) {
-			case UNKNOWN:
-				return PipeIconProvider.TYPE.PipeItemsDiamond_Center.ordinal();
 			case DOWN:
 				return PipeIconProvider.TYPE.PipeItemsDiamond_Down.ordinal();
 			case UP:
@@ -74,7 +71,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
 			case EAST:
 				return PipeIconProvider.TYPE.PipeItemsDiamond_East.ordinal();
 			default:
-				throw new IllegalArgumentException("direction out of bounds");
+				return PipeIconProvider.TYPE.PipeItemsDiamond_Center.ordinal();
 		}
 	}
 
@@ -92,7 +89,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
 		}
 
 		if (!container.getWorld().isRemote) {
-			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.getWorld(), container.xCoord, container.yCoord, container.zCoord);
+			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.getWorld(), container.getPos().getX(), container.getPos().getY(), container.getPos().getZ());
 		}
 
 		return true;

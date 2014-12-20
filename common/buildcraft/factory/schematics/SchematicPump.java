@@ -11,7 +11,7 @@ package buildcraft.factory.schematics;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
-
+import net.minecraft.util.BlockPos;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
@@ -24,21 +24,22 @@ public class SchematicPump extends SchematicTile {
 	}
 
 	@Override
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
+	public void storeRequirements(IBuilderContext context, BlockPos pos) {
 
 	}
 
 	@Override
-	public void initializeFromObjectAt(IBuilderContext context, int x, int y, int z) {
-		super.initializeFromObjectAt(context, x, y, z);
+	public void initializeFromObjectAt(IBuilderContext context, BlockPos pos) {
+		super.initializeFromObjectAt(context, pos);
 
 		tileNBT.removeTag("tank");
 		tileNBT.removeTag("mjStored");
 	}
 
 	@Override
-	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
-		context.world().setBlock(x, y, z, block, 0, 3);
+	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+		//TODO: Check if that is correct
+		context.world().setBlockState(pos, state.getBlock().getDefaultState(), 3);
 	}
 
 	@Override

@@ -14,6 +14,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.WorldServer;
 import buildcraft.api.core.BuildCraftAPI;
 
@@ -41,9 +42,9 @@ public class SchematicMask extends SchematicBlockBase {
 				// block which replacement is not straightforward
 				context.world().setBlockToAir(pos);
 
-				stack.tryPlaceItemIntoWorld(
+				stack.onItemUse(
 						BuildCraftAPI.proxy.getBuildCraftPlayer((WorldServer) context.world()).get(),
-						context.world(), pos, 1, 0.0f, 0.0f, 0.0f);
+						context.world(), pos, EnumFacing.UP, 0.0f, 0.0f, 0.0f);
 			}
 		} else {
 			context.world().setBlockToAir(pos);
@@ -51,11 +52,11 @@ public class SchematicMask extends SchematicBlockBase {
 	}
 
 	@Override
-	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
+	public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
 		if (isConcrete) {
-			return !BuildCraftAPI.isSoftBlock(context.world(), x, y, z);
+			return !BuildCraftAPI.isSoftBlock(context.world(), pos);
 		} else {
-			return BuildCraftAPI.isSoftBlock(context.world(), x, y, z);
+			return BuildCraftAPI.isSoftBlock(context.world(), pos);
 		}
 	}
 

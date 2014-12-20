@@ -10,11 +10,9 @@ package buildcraft.core.robots.boards;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
@@ -30,7 +28,7 @@ public final class BoardRobotHarvesterNBT extends RedstoneBoardRobotNBT {
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft",
 			DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_harvester.png");
 
-	public IIcon icon;
+	//public IIcon icon;
 
 	private BoardRobotHarvesterNBT() {
 	}
@@ -50,7 +48,7 @@ public final class BoardRobotHarvesterNBT extends RedstoneBoardRobotNBT {
 		return new BoardRobotHarvester(robot);
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIcon(NBTTagCompound nbt) {
 		return icon;
 	}
@@ -58,7 +56,7 @@ public final class BoardRobotHarvesterNBT extends RedstoneBoardRobotNBT {
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:board_blue");
-	}
+	}*/
 
 	@Override
 	public ResourceLocation getRobotTexture() {

@@ -14,6 +14,7 @@ import com.google.common.collect.Maps;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GLAllocation;
@@ -26,7 +27,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.util.EnumFacing;
@@ -90,18 +90,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	}
 
 	public PipeRendererTESR() {
-		customRenderItem = new RenderItem() {
-			@Override
-			public boolean shouldBob() {
-				return false;
-			}
-
-			@Override
-			public boolean shouldSpreadItems() {
-				return false;
-			}
-		};
-		customRenderItem.setRenderManager(RenderManager.instance);
+		customRenderItem = Minecraft.getMinecraft().getRenderItem();
 
 		box = new ModelRenderer(model, 0, 0);
 		//box.addBox(0, 64 + 1, 64 + 1, 16, 128 - 2, 128 - 2);
@@ -127,7 +116,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		} else {
 			block.baseBlock = Blocks.water;
 		}
-		block.texture = fluid.getStillIcon();
+		//block.texture = fluid.getStillIcon();
 
 		float size = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
 
@@ -221,7 +210,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		initialized = true;
 
 		RenderInfo block = new RenderInfo();
-		block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.Power_Normal.ordinal());
+		//block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.Power_Normal.ordinal());
 
 		float size = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
 
@@ -247,7 +236,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			GL11.glEndList();
 		}
 
-		block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.Power_Overload.ordinal());
+		//block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.Power_Overload.ordinal());
 
 		size = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
 
@@ -438,7 +427,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		bindTexture(TextureMap.locationBlocksTexture);
 
 		RenderInfo renderBox = new RenderInfo();
-		renderBox.texture = BuildCraftTransport.instance.wireIconProvider.getIcon(state.wireMatrix.getWireIconIndex(color));
+		//renderBox.texture = BuildCraftTransport.instance.wireIconProvider.getIcon(state.wireMatrix.getWireIconIndex(color));
 
 		// Z render
 
@@ -498,17 +487,17 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		bindTexture(TextureMap.locationBlocksTexture);
 
-		IIcon iconLogic;
+		//IIcon iconLogic;
 		if (pipe.renderState.gateMatrix.isGateLit(direction)) {
-			iconLogic = gate.logic.getIconLit();
+			//iconLogic = gate.logic.getIconLit();
 		} else {
-			iconLogic = gate.logic.getIconDark();
+			//iconLogic = gate.logic.getIconDark();
 		}
 
 		float translateCenter = 0;
 
 		// Render base gate
-		renderGate(pipe, iconLogic, 0, 0.1F, 0, 0, direction);
+		//renderGate(pipe, iconLogic, 0, 0.1F, 0, 0, direction);
 
 		float pulseStage = gate.getPulseStage() * 2F;
 
@@ -523,16 +512,16 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				translateCenter = amplitude - ((pulseStage - 1F) * amplitude) + start;
 			}
 
-			renderGate(pipe, iconLogic, 0, 0.13F, translateCenter, translateCenter, direction);
+			//renderGate(pipe, iconLogic, 0, 0.13F, translateCenter, translateCenter, direction);
 		}
 
-		IIcon materialIcon = gate.material.getIconBlock();
+		/*IIcon materialIcon = gate.material.getIconBlock();
 		if (materialIcon != null) {
 			renderGate(pipe, materialIcon, 1, 0.13F, translateCenter, translateCenter, direction);
-		}
+		}*/
 
 		for (IGateExpansion expansion : gate.expansions.keySet()) {
-			renderGate(pipe, expansion.getOverlayBlock(), 2, 0.13F, translateCenter, translateCenter, direction);
+			//renderGate(pipe, expansion.getOverlayBlock(), 2, 0.13F, translateCenter, translateCenter, direction);
 		}
 
 		RenderHelper.enableStandardItemLighting();
@@ -541,11 +530,11 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();
 	}
 
-	private void renderGate(TileGenericPipe tile, IIcon icon, int layer, float trim, float translateCenter, float extraDepth, EnumFacing direction) {
+	private void renderGate(TileGenericPipe tile, /*IIcon icon,*/ int layer, float trim, float translateCenter, float extraDepth, EnumFacing direction) {
 		PipeRenderState state = tile.renderState;
 
 		RenderInfo renderBox = new RenderInfo();
-		renderBox.texture = icon;
+		//renderBox.texture = icon;
 
 		float[][] zeroState = new float[3][2];
 		float min = CoreConstants.PIPE_MIN_POS + trim / 2F;
@@ -822,13 +811,13 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		GL11.glTranslatef(0, 0.25F, 0);
 		GL11.glScalef(renderScale, renderScale, renderScale);
 		dummyEntityItem.setEntityItemStack(itemstack);
-		customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
+		//customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
 
 		if (color != null) {
 			bindTexture(TextureMap.locationBlocksTexture);
 			RenderInfo block = new RenderInfo();
 
-			block.texture = PipeIconProvider.TYPE.ItemBox.getIcon();
+			//block.texture = PipeIconProvider.TYPE.ItemBox.getIcon();
 
 			float pix = 0.0625F;
 

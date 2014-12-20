@@ -30,7 +30,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.ActionState;
 import buildcraft.api.statements.IActionInternal;
@@ -179,8 +178,8 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	 *
 	 * @return An array of icons
 	 */
-	@SideOnly(Side.CLIENT)
-	public abstract IIconProvider getIconProvider();
+	/*@SideOnly(Side.CLIENT)
+	public abstract IIconProvider getIconProvider();*/
 
 	/**
 	 * Should return the index in the array returned by GetTextureIcons() for a

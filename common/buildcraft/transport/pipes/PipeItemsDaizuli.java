@@ -23,7 +23,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.network.IClientState;
@@ -83,9 +82,9 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements IClien
 	@Override
 	public boolean blockActivated(EntityPlayer player) {
 		Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
-		if (player.isSneaking() && equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, container.xCoord, container.yCoord, container.zCoord)) {
+		if (player.isSneaking() && equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, container.getPos())) {
 			setColor(getColor().getNext());
-			((IToolWrench) equipped).wrenchUsed(player, container.xCoord, container.yCoord, container.zCoord);
+			((IToolWrench) equipped).wrenchUsed(player, container.getPos());
 			return true;
 		}
 
@@ -115,11 +114,11 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements IClien
 		return solidIconIndex;
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
 		return BuildCraftTransport.instance.pipeIconProvider;
-	}
+	}*/
 
 	@Override
 	public boolean canConnectRedstone() {
@@ -127,7 +126,7 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements IClien
 	}
 
 	public void eventHandler(PipeEventItem.FindDest event) {
-		EnumFacing output = EnumFacing.getOrientation(container.getBlockMetadata());
+		EnumFacing output = EnumFacing.getFront(container.getBlockMetadata());
 		if (event.item.color == getColor() && event.destinations.contains(output)) {
 			event.destinations.clear();
 			event.destinations.add(output);

@@ -11,7 +11,7 @@ package buildcraft.builders.schematics;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
-
+import net.minecraft.util.BlockPos;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 
@@ -19,33 +19,33 @@ public class SchematicPumpkin extends SchematicBlock {
 
 	@Override
 	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(block, 1, 0));
+		requirements.add(new ItemStack(state.getBlock(), 1, 0));
 	}
 
 	@Override
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
+	public void storeRequirements(IBuilderContext context, BlockPos pos) {
 		// cancel requirements reading
 	}
 
 	@Override
-	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
-		return block == context.world().getBlock(x, y, z);
+	public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
+		return state.getBlock() == context.world().getBlockState(pos).getBlock();
 	}
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
-		switch (meta) {
+		switch (getMetaData()) {
 		case 0:
-			meta = 1;
+			setMetaData(1);
 			break;
 		case 1:
-			meta = 2;
+			setMetaData(2);
 			break;
 		case 2:
-			meta = 3;
+			setMetaData(3);
 			break;
 		case 3:
-			meta = 0;
+			setMetaData(0);
 			break;
 		}
 	}

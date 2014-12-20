@@ -8,16 +8,13 @@
  */
 package buildcraft.transport;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.IIconProvider;
 
-public class PipeIconProvider implements IIconProvider {
+public class PipeIconProvider /*implements IIconProvider*/ {
 
 	public enum TYPE {
 
@@ -143,7 +140,7 @@ public class PipeIconProvider implements IIconProvider {
 		public static final TYPE[] VALUES = values();
 		private final String iconTag;
 		private final String iconTagColorBlind;
-		private IIcon icon;
+		//private IIcon icon;
 
 		private TYPE(String iconTag, String iconTagColorBlind) {
 			this.iconTag = iconTag;
@@ -154,16 +151,16 @@ public class PipeIconProvider implements IIconProvider {
 			this(iconTag, iconTag);
 		}
 
-		private void registerIcon(IIconRegister iconRegister) {
+		/*private void registerIcon(IIconRegister iconRegister) {
 			icon = iconRegister.registerIcon("buildcraft:" + (BuildCraftCore.colorBlindMode ? iconTagColorBlind : iconTag));
 		}
 
 		public IIcon getIcon() {
 			return icon;
-		}
+		}*/
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public IIcon getIcon(int pipeIconIndex) {
 		if (pipeIconIndex == -1) {
@@ -178,5 +175,5 @@ public class PipeIconProvider implements IIconProvider {
 		for (TYPE type : TYPE.VALUES) {
 			type.registerIcon(iconRegister);
 		}
-	}
+	}*/
 }

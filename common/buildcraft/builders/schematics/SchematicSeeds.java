@@ -12,7 +12,7 @@ import java.util.LinkedList;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
+import net.minecraft.util.BlockPos;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 
@@ -30,17 +30,17 @@ public class SchematicSeeds extends SchematicBlock {
 	}
 
 	@Override
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
+	public void storeRequirements(IBuilderContext context, BlockPos pos) {
 
 	}
 
 	@Override
-	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
-		context.world().setBlock(x, y, z, block, 0, 3);
+	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+		context.world().setBlockState(pos, state, 3);
 	}
 
 	@Override
-	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
-		return context.world().getBlock(x, y, z) == block;
+	public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
+		return context.world().getBlockState(pos).getBlock() == state.getBlock();
 	}
 }

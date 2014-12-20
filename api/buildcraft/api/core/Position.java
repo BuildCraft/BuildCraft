@@ -59,6 +59,11 @@ public class Position implements ISerializable {
 		y = pos.getY();
 		z = pos.getZ();
 	}
+	
+	public Position(BlockPos pos, EnumFacing orientation) {
+		this(pos);
+		this.orientation = orientation;
+	}
 
 	public void moveRight(double step) {
 		switch (orientation) {

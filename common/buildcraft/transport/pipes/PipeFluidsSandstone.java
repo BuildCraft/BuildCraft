@@ -18,7 +18,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.transport.IPipeConnectionForced;
 import buildcraft.transport.IPipeTransportFluidsHook;
 import buildcraft.transport.Pipe;
@@ -34,11 +33,11 @@ public class PipeFluidsSandstone extends Pipe<PipeTransportFluids> implements IP
         transport.initFromPipe(getClass());
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
 		return BuildCraftTransport.instance.pipeIconProvider;
-	}
+	}*/
 
 	@Override
 	public int getIconIndex(EnumFacing direction) {

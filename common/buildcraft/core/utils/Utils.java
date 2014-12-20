@@ -575,4 +575,37 @@ public final class Utils {
 		}
 		return false;
 	}
+	
+	// WORLD HELPER
+	
+    /**
+     * Checks between a min and max all the chunks inbetween actually exist. Args: world, minX, minY, minZ, maxX, maxY, maxZ
+     */
+    public static boolean checkChunksExist(World world, int minX, int minY, int minZ, int maxX, int maxY, int maxZ)
+    {
+        if (maxY >= 0 && minY < 256)
+        {
+            minX >>= 4;
+            minZ >>= 4;
+            maxX >>= 4;
+            maxZ >>= 4;
+
+            for (int var7 = minX; var7 <= maxX; ++var7)
+            {
+                for (int var8 = minZ; var8 <= maxZ; ++var8)
+                {
+                    if (!world.chunkExists(var7, var8))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

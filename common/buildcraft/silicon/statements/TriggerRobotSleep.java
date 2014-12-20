@@ -8,7 +8,6 @@
  */
 package buildcraft.silicon.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.EnumFacing;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
@@ -33,10 +32,10 @@ public class TriggerRobotSleep extends BCStatement implements ITriggerInternal {
 		return StringUtils.localize("gate.trigger.robot.sleep");
 	}
 
-	@Override
+	/*@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_robot_sleep");
-	}
+	}*/
 
 	@Override
 	public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {

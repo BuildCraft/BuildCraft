@@ -238,7 +238,7 @@ public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 			Block nearbyBlock = nearbyState.getBlock();
 
 			if (nearbyBlock instanceof BlockLaserTable && nearbyMeta == 0) {
-				TileAssemblyTable f = (TileAssemblyTable) robot.worldObj.getTileEntity(index.x, index.y, index.z);
+				TileAssemblyTable f = (TileAssemblyTable) robot.worldObj.getTileEntity(index);
 
 				// TODO: check if assembly table has some empty slots
 

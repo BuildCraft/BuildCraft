@@ -8,7 +8,7 @@
  */
 package buildcraft.silicon.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.BlockPos;
@@ -38,10 +38,10 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 		return StringUtils.localize("gate.action.robot.goto_station");
 	}
 
-	@Override
+	/*@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/action_robot_goto_station");
-	}
+	}*/
 
 	@Override
 	public void actionActivate(IStatementContainer container, IStatementParameter[] parameters) {
@@ -71,8 +71,7 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 						if (index != null) {
 							EnumFacing side = ItemMapLocation.getSide(item);
 							DockingStation paramStation = (DockingStation)
-									registry.getStation(index.x,
-									index.y, index.z, side);
+									registry.getStation(index, side);
 
 							if (paramStation != null) {
 								newStation = paramStation;

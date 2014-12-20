@@ -22,13 +22,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
-
 import net.minecraftforge.client.MinecraftForgeClient;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.core.EntityBlock;
@@ -95,12 +93,12 @@ public class CoreProxyClient extends CoreProxy {
 		BuildCraftCore.legacyPipeModel = RenderingRegistry.getNextAvailableRenderId();
 		BuildCraftCore.markerModel = RenderingRegistry.getNextAvailableRenderId();
 
-		RenderingRegistry.registerBlockHandler(new RenderingEntityBlocks());
-		RenderingRegistry.registerBlockHandler(BuildCraftCore.legacyPipeModel, new RenderingEntityBlocks());
-		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
-
-		// TODO: Move these to a Silicon proxy renderer
-		MinecraftForgeClient.registerItemRenderer(BuildCraftSilicon.robotItem, new RenderRobot());
+//		RenderingRegistry.registerBlockHandler(new RenderingEntityBlocks());
+//		RenderingRegistry.registerBlockHandler(BuildCraftCore.legacyPipeModel, new RenderingEntityBlocks());
+//		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
+//
+//		// TODO: Move these to a Silicon proxy renderer
+//		MinecraftForgeClient.registerItemRenderer(BuildCraftSilicon.robotItem, new RenderRobot());
 	}
 
 	@Override
@@ -120,15 +118,15 @@ public class CoreProxyClient extends CoreProxy {
 		EntityBlock eb = super.newEntityBlock(world, i, j, k, iSize, jSize, kSize, laserKind);
 		switch (laserKind) {
 		case Blue:
-			eb.texture = BuildCraftCore.blueLaserTexture;
+			//eb.texture = BuildCraftCore.blueLaserTexture;
 			break;
 
 		case Red:
-			eb.texture = BuildCraftCore.redLaserTexture;
+			//eb.texture = BuildCraftCore.redLaserTexture;
 			break;
 
 		case Stripes:
-			eb.texture = BuildCraftCore.stripesLaserTexture;
+			//eb.texture = BuildCraftCore.stripesLaserTexture;
 			break;
 		}
 		return eb;

@@ -10,30 +10,30 @@ package buildcraft.core.render;
 
 import java.util.Arrays;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import org.lwjgl.opengl.GL11;
+
 import buildcraft.core.EntityBlock;
 
+//TODO (1.8): Rewrite
 public final class RenderEntityBlock extends Render {
 
 	public static RenderEntityBlock INSTANCE = new RenderEntityBlock();
-	protected RenderBlocks renderBlocks;
+	//protected RenderBlocks renderBlocks;
 
 	private RenderEntityBlock() {
-		renderBlocks = field_147909_c;
+		super(Minecraft.getMinecraft().getRenderManager());
+		//renderBlocks = field_147909_c;
 	}
 
 	@Override
@@ -50,8 +50,8 @@ public final class RenderEntityBlock extends Render {
 		public double maxY;
 		public double maxZ;
 		public Block baseBlock = Blocks.sand;
-		public IIcon texture = null;
-		public IIcon[] textureArray = null;
+		//public IIcon texture = null;
+		//public IIcon[] textureArray = null;
 		public boolean[] renderSide = new boolean[6];
 		public float light = -1f;
 		public int brightness = -1;
@@ -60,10 +60,10 @@ public final class RenderEntityBlock extends Render {
 			setRenderAllSides();
 		}
 
-		public RenderInfo(Block template, IIcon[] texture) {
+		public RenderInfo(Block template /*,*IIcon[] texture*/) {
 			this();
 			this.baseBlock = template;
-			this.textureArray = texture;
+			//this.textureArray = texture;
 		}
 
 		public RenderInfo(float minX, float minY, float minZ, float maxX, float maxY, float maxZ) {
@@ -71,8 +71,8 @@ public final class RenderEntityBlock extends Render {
 			setBounds(minX, minY, minZ, maxX, maxY, maxZ);
 		}
 
-		public float getBlockBrightness(IBlockAccess iblockaccess, int i, int j, int k) {
-			return baseBlock.getMixedBrightnessForBlock(iblockaccess, i, j, k);
+		public float getBlockBrightness(IBlockAccess iblockaccess, BlockPos pos) {
+			return baseBlock.getMixedBrightnessForBlock(iblockaccess, pos);
 		}
 
 		public final void setBounds(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
@@ -115,7 +115,7 @@ public final class RenderEntityBlock extends Render {
 			maxZ = 1 - temp;
 		}
 
-		public IIcon getBlockTextureFromSide(int i) {
+		/*public IIcon getBlockTextureFromSide(int i) {
 			if (texture != null) {
 				return texture;
 			}
@@ -131,7 +131,7 @@ public final class RenderEntityBlock extends Render {
 
 				return textureArray[index];
 			}
-		}
+		}*/
 	}
 
 	@Override
@@ -147,7 +147,7 @@ public final class RenderEntityBlock extends Render {
 		shadowSize = entity.shadowSize;
 		World world = entity.worldObj;
 		RenderInfo util = new RenderInfo();
-		util.texture = entity.texture;
+		//util.texture = entity.texture;
 		bindTexture(TextureMap.locationBlocksTexture);
 
 		for (int iBase = 0; iBase < entity.iSize; ++iBase) {
@@ -194,7 +194,7 @@ public final class RenderEntityBlock extends Render {
 	}
 
 	public void renderBlock(RenderInfo info, IBlockAccess blockAccess, double x, double y, double z, int lightX, int lightY, int lightZ, boolean doLight, boolean doTessellating) {
-		float lightBottom = 0.5F;
+		/*float lightBottom = 0.5F;
 		float lightTop = 1.0F;
 		float lightEastWest = 0.8F;
 		float lightNorthSouth = 0.6F;
@@ -283,6 +283,6 @@ public final class RenderEntityBlock extends Render {
 
 		if (doTessellating) {
 			tessellator.draw();
-		}
+		}*/
 	}
 }

@@ -9,20 +9,15 @@
 package buildcraft.commander;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.World;
-
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.BlockBuildCraft;
@@ -31,8 +26,8 @@ import buildcraft.core.utils.Utils;
 
 public class BlockZonePlan extends BlockBuildCraft {
 
-	private IIcon blockTextureSide;
-	private IIcon blockTextureFront;
+	/*private IIcon blockTextureSide;
+	private IIcon blockTextureFront;*/
 
 	public BlockZonePlan() {
 		super(Material.iron);
@@ -44,10 +39,9 @@ public class BlockZonePlan extends BlockBuildCraft {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7,
-			float par8, float par9) {
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing side, float hitX, float hitY, float hitZ) {
 
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, pos, state);
 		FMLCommonHandler.instance().bus().post(event);
 		if (event.isCanceled()) {
 			return false;
@@ -55,22 +49,21 @@ public class BlockZonePlan extends BlockBuildCraft {
 
 		if (!world.isRemote) {
 			entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.MAP,
-					world, i, j, k);
+					world, pos.getX(), pos.getY(), pos.getZ());
 		}
 
 		return true;
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
-		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
+	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entityliving, ItemStack stack) {
+		super.onBlockPlacedBy(world, pos, state, entityliving, stack);
 
 		EnumFacing orientation = Utils.get2dOrientation(entityliving);
-
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
+		world.setBlockState(pos, state.withProperty(FACING_PROP, orientation.getOpposite()), 1);
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		blockTextureSide = par1IconRegister.registerIcon("buildcraft:zonePlan_side");
@@ -88,6 +81,6 @@ public class BlockZonePlan extends BlockBuildCraft {
 		}
 
 		return blockTextureSide;
-	}
+	}*/
 
 }

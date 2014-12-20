@@ -23,7 +23,6 @@ import net.minecraft.util.EnumFacing;
 import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeManager;
@@ -52,7 +51,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 			if (!(tile instanceof IInventory)) {
 				return false;
 			}
-			if (!PipeManager.canExtractItems(pipe, tile.getWorld(), tile.xCoord, tile.yCoord, tile.zCoord)) {
+			if (!PipeManager.canExtractItems(pipe, tile.getWorld(), tile.getPos())) {
 				return false;
 			}
 			return true;
@@ -80,11 +79,11 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 		super.initialize();
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
 		return BuildCraftTransport.instance.pipeIconProvider;
-	}
+	}*/
 
 	@Override
 	public int getIconIndex(EnumFacing direction) {
@@ -136,11 +135,11 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 			return;
 		}
 
-		EnumFacing side = EnumFacing.getOrientation(meta);
+		EnumFacing side = EnumFacing.getFront(meta);
 		TileEntity tile = container.getTile(side);
 
 		if (tile instanceof IInventory) {
-			if (!PipeManager.canExtractItems(this, tile.getWorld(), tile.xCoord, tile.yCoord, tile.zCoord)) {
+			if (!PipeManager.canExtractItems(this, tile.getWorld(), tile.getPos())) {
 				return;
 			}
 
@@ -160,7 +159,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 					continue;
 				}
 
-				Position entityPos = new Position(tile.xCoord + 0.5, tile.yCoord + 0.5, tile.zCoord + 0.5, side.getOpposite());
+				Position entityPos = new Position(tile.getPos().add(0.5D, 0.5D, 0.5D), side.getOpposite());
 
 				entityPos.moveForwards(0.6);
 
@@ -200,10 +199,10 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 			return null;
 		}
 
-		for (int k : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
+		for (int k : inventory.getSlotsForFace(from)) {
 			ItemStack slot = inventory.getStackInSlot(k);
 
-			if (slot != null && slot.stackSize > 0 && inventory.canExtractItem(k, slot, from.ordinal())) {
+			if (slot != null && slot.stackSize > 0 && inventory.canExtractItem(k, slot, from)) {
 				if (doRemove) {
 					int stackSize = battery.useEnergy(10, slot.stackSize * 10, false) / 10;
 					

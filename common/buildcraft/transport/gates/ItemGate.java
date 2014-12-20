@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Set;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -22,7 +21,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -375,7 +373,7 @@ public class ItemGate extends ItemBuildCraft {
 		}
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIconIndex(ItemStack stack) {
 		return getLogic(stack).getIconItem();
 	}
@@ -396,5 +394,5 @@ public class ItemGate extends ItemBuildCraft {
 		}
 		
 		StatementManager.registerIcons(iconRegister);
-	}
+	}*/
 }

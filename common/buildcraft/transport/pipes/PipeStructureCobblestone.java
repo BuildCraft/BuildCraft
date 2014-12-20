@@ -27,11 +27,11 @@ public class PipeStructureCobblestone extends Pipe {
 		super(new PipeTransportStructure(), item);
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
 		return BuildCraftTransport.instance.pipeIconProvider;
-	}
+	}*/
 
 	@Override
 	public int getIconIndex(EnumFacing direction) {

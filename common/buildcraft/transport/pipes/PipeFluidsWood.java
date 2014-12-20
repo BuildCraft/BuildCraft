@@ -24,7 +24,6 @@ import net.minecraftforge.fluids.IFluidHandler;
 import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.RFBattery;
@@ -52,7 +51,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 			if (!(tile instanceof IFluidHandler)) {
 				return false;
 			}
-			if (!PipeManager.canExtractFluids(pipe, tile.getWorldObj (), tile.xCoord, tile.yCoord, tile.zCoord)) {
+			if (!PipeManager.canExtractFluids(pipe, tile.getWorld(), tile.getPos())) {
 				return false;
 			}
 			return true;
@@ -89,7 +88,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 		int meta = container.getBlockMetadata();
 		
 		if (liquidToExtract > 0 && meta < 6) {
-			EnumFacing side = EnumFacing.getOrientation(meta);
+			EnumFacing side = EnumFacing.getFront(meta);
 			TileEntity tile = container.getTile(side);
 
 			if (tile instanceof IFluidHandler) {
@@ -103,11 +102,11 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 			}
 
 			TileEntity tile = container.getTile(EnumFacing
-					.getOrientation(meta));
+					.getFront(meta));
 
 			if (tile instanceof IFluidHandler) {
 				if (!PipeManager.canExtractFluids(this, tile.getWorld(),
-						tile.xCoord, tile.yCoord, tile.zCoord)) {
+						tile.getPos())) {
 					return;
 				}
 
@@ -132,11 +131,11 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 		return inserted;
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
 		return BuildCraftTransport.instance.pipeIconProvider;
-	}
+	}*/
 
 	@Override
 	public int getIconIndex(EnumFacing direction) {

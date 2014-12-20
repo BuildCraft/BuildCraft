@@ -21,10 +21,10 @@ public class BptPipeIron extends BptPipeExtension {
 
 	@Override
 	public void rotateLeft(SchematicTile slot, IBuilderContext context) {
-		int orientation = slot.meta & 7;
-		int others = slot.meta - orientation;
+		int orientation = slot.getMetaData() & 7;
+		int others = slot.getMetaData() - orientation;
 
-		slot.meta = EnumFacing.values()[orientation].rotateY().ordinal() + others;
+		slot.setMetaData(EnumFacing.values()[orientation].rotateY().ordinal() + others);
 	}
 
 }

@@ -9,20 +9,15 @@
 package buildcraft.commander;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import net.minecraft.world.World;
-
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-
+import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.BlockBuildCraft;
@@ -31,8 +26,8 @@ import buildcraft.core.utils.Utils;
 
 public class BlockRequester extends BlockBuildCraft {
 
-	private IIcon blockTextureDefault;
-	private IIcon blockTextureSide;
+	/*private IIcon blockTextureDefault;
+	private IIcon blockTextureSide;*/
 
 	public BlockRequester() {
 		super(Material.iron);
@@ -44,10 +39,9 @@ public class BlockRequester extends BlockBuildCraft {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7,
-			float par8, float par9) {
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing side, float hitX, float hitY, float hitZ) {
 
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, pos, state);
 		FMLCommonHandler.instance().bus().post(event);
 		if (event.isCanceled()) {
 			return false;
@@ -55,22 +49,22 @@ public class BlockRequester extends BlockBuildCraft {
 
 		if (!world.isRemote) {
 			entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.REQUESTER,
-					world, i, j, k);
+					world, pos.getX(), pos.getY(), pos.getZ());
 		}
 
 		return true;
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
-		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
+	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack stack) {
+		super.onBlockPlacedBy(world, pos, state, entity, stack);
 
-		EnumFacing orientation = Utils.get2dOrientation(entityliving);
+		EnumFacing orientation = Utils.get2dOrientation(entity);
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
+		world.setBlockState(pos, state.withProperty(FACING_PROP, EnumFacing.SOUTH), 3);
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		blockTextureDefault = par1IconRegister.registerIcon("buildcraft:commander_side");
@@ -84,6 +78,6 @@ public class BlockRequester extends BlockBuildCraft {
 		} else {
 			return blockTextureSide;
 		}
-	}
+	}*/
 
 }

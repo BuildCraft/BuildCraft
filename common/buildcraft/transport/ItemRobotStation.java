@@ -8,7 +8,6 @@
  */
 package buildcraft.transport;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -44,7 +43,7 @@ public class ItemRobotStation extends ItemBuildCraft {
 		return true;
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister par1IconRegister) {
 	    // NOOP
@@ -54,7 +53,7 @@ public class ItemRobotStation extends ItemBuildCraft {
     @SideOnly(Side.CLIENT)
     public int getSpriteNumber() {
         return 0;
-    }
+    }*/
 
 	public static class RobotStationPluggable implements IPipePluggable {
 		private DockingStation station;
@@ -113,11 +112,7 @@ public class ItemRobotStation extends ItemBuildCraft {
 			TileGenericPipe gPipe = (TileGenericPipe) pipe;
 			if (!isValid && !gPipe.getWorld().isRemote) {
 				station = (DockingStation)
-						RobotRegistry.getRegistry(gPipe.getWorld()).getStation(
-						gPipe.xCoord,
-						gPipe.yCoord,
-						gPipe.zCoord,
-						direction);
+						RobotRegistry.getRegistry(gPipe.getWorld()).getStation(gPipe.getPos(), direction);
 
 				if (station == null) {
 					station = new DockingStation(gPipe, direction);

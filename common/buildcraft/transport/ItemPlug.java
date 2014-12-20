@@ -8,7 +8,7 @@
  */
 package buildcraft.transport;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -35,12 +35,12 @@ public class ItemPlug extends ItemBuildCraft {
 		return "item.PipePlug";
 	}
 
-	@Override
+	/*@Override
 	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
 		return true;
-	}
+	}*/
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister par1IconRegister) {
 	    // NOOP
@@ -50,7 +50,7 @@ public class ItemPlug extends ItemBuildCraft {
     @SideOnly(Side.CLIENT)
 	public int getSpriteNumber() {
         return 0;
-    }
+    }*/
 
 	public static class PlugPluggable implements IPipePluggable {
 		public PlugPluggable() {

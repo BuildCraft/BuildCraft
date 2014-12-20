@@ -10,7 +10,6 @@ package buildcraft.api.boards;
 
 import java.util.Collection;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class RedstoneBoardRegistry {
@@ -25,7 +24,7 @@ public abstract class RedstoneBoardRegistry {
 
 	public abstract RedstoneBoardNBT<?> getRedstoneBoard(String id);
 
-	public abstract void registerIcons(IIconRegister par1IconRegister);
+	/*public abstract void registerIcons(IIconRegister par1IconRegister);*/
 
 	public abstract Collection<RedstoneBoardNBT<?>> getAllBoardNBTs();
 }

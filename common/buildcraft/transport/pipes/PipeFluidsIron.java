@@ -19,7 +19,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -82,11 +81,11 @@ public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 		return super.outputOpen(to) && logic.outputOpen(to);
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
 		return BuildCraftTransport.instance.pipeIconProvider;
-	}
+	}*/
 
 	@Override
 	public int getIconIndex(EnumFacing direction) {

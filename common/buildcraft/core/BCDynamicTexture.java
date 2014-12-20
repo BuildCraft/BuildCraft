@@ -8,7 +8,6 @@
  */
 package buildcraft.core;
 
-import com.sun.prism.util.tess.Tess;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;

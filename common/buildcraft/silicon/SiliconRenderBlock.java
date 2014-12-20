@@ -11,18 +11,15 @@ package buildcraft.silicon;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.IBlockAccess;
-
-import net.minecraftforge.fml.client.registry.ISimpleBlockRenderingHandler;
 
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.core.CoreConstants;
 
-public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
-	@Override
+public class SiliconRenderBlock /*implements ISimpleBlockRenderingHandler */ {
+	/*@Override
 	public int getRenderId() {
 		return SiliconProxy.laserBlockModel;
 	}
@@ -170,5 +167,5 @@ public class SiliconRenderBlock implements ISimpleBlockRenderingHandler {
 		tessellator.setNormal(1.0F, 0.0F, 0.0F);
 		renderblocks.renderFaceXPos(block, 0.0D, 0.0D, 0.0D, block.getIcon(5, i));
 		tessellator.draw();
-	}
+	}*/
 }

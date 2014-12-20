@@ -8,15 +8,8 @@
  */
 package buildcraft.builders.urbanism;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import buildcraft.api.core.IIconProvider;
-
-public final class UrbanistToolsIconProvider implements IIconProvider {
+public final class UrbanistToolsIconProvider /*implements IIconProvider*/ {
 
 	public static UrbanistToolsIconProvider INSTANCE = new UrbanistToolsIconProvider();
 	public static final int Tool_Block_Place = 0;
@@ -27,13 +20,13 @@ public final class UrbanistToolsIconProvider implements IIconProvider {
 	public static final int Tool_Blueprint = 5;
 
 	public static final int MAX = 6;
-	@SideOnly(Side.CLIENT)
-	private final IIcon[] icons = new IIcon[MAX];
+	/*@SideOnly(Side.CLIENT)
+	private final IIcon[] icons = new IIcon[MAX];*/
 
 	private UrbanistToolsIconProvider() {
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public IIcon getIcon(int iconIndex) {
 		return icons[iconIndex];
@@ -48,5 +41,5 @@ public final class UrbanistToolsIconProvider implements IIconProvider {
 		icons[UrbanistToolsIconProvider.Tool_Path] = iconRegister.registerIcon("buildcraft:icons/urbanist_path");
 		icons[UrbanistToolsIconProvider.Tool_Filler] = iconRegister.registerIcon("buildcraft:icons/urbanist_filler");
 		icons[UrbanistToolsIconProvider.Tool_Blueprint] = iconRegister.registerIcon("buildcraft:icons/urbanist_blueprint");
-	}
+	}*/
 }

@@ -9,28 +9,26 @@
 package buildcraft.builders;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.core.Position;
 import buildcraft.core.utils.NBTUtils;
 
 public class ItemConstructionMarker extends ItemBlock {
 
-	@SideOnly(Side.CLIENT)
+	/*@SideOnly(Side.CLIENT)
 	public IIcon iconBase;
 
 	@SideOnly(Side.CLIENT)
-	public IIcon iconRecording;
+	public IIcon iconRecording;*/
 
 	public ItemConstructionMarker(Block block) {
 		super(block);
@@ -40,7 +38,7 @@ public class ItemConstructionMarker extends ItemBlock {
 		return NBTUtils.getItemData(marker).hasKey("x");
 	}
 
-	public static void link(ItemStack marker, World world, int x, int y, int z) {
+	public static void link(ItemStack marker, World world, BlockPos pos) {
 		NBTTagCompound nbt = NBTUtils.getItemData(marker);
 
 		if (nbt.hasKey("x")) {
@@ -48,15 +46,15 @@ public class ItemConstructionMarker extends ItemBlock {
 			int oy = nbt.getInteger("y");
 			int oz = nbt.getInteger("z");
 
-			TileEntity tile1 = world.getTileEntity(ox, oy, oz);
+			TileEntity tile1 = world.getTileEntity(new BlockPos(ox, oy, oz));
 
-			if (!new Position(ox, oy, oz).isClose(new Position(x, y, z), 64)) {
+			if (!new Position(ox, oy, oz).isClose(new Position(pos), 64)) {
 				return;
 			}
 
 			if (tile1 != null && (tile1 instanceof TileArchitect)) {
 				TileArchitect architect = (TileArchitect) tile1;
-				TileEntity tile2 = world.getTileEntity(x, y, z);
+				TileEntity tile2 = world.getTileEntity(pos);
 
 				if (tile1 != tile2 && tile2 != null) {
 					if (tile2 instanceof TileArchitect
@@ -74,12 +72,12 @@ public class ItemConstructionMarker extends ItemBlock {
 			}
 		}
 
-		nbt.setInteger("x", x);
-		nbt.setInteger("y", y);
-		nbt.setInteger("z", z);
+		nbt.setInteger("x", pos.getX());
+		nbt.setInteger("y", pos.getY());
+		nbt.setInteger("z", pos.getZ());
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIconIndex(ItemStack marker) {
 		NBTTagCompound nbt = NBTUtils.getItemData(marker);
 
@@ -99,13 +97,12 @@ public class ItemConstructionMarker extends ItemBlock {
 
 		iconBase = par1IconRegister.registerIcon("buildcraft:constructMarker");
 		iconRecording = par1IconRegister.registerIcon("buildcraft:constructMarkerRec");
-	}
+	}*/
 
 	@Override
-	public boolean onItemUse(ItemStack marker, EntityPlayer player, World world, int x,
-			int y, int z, int side, float par8, float par9, float par10) {
+	public boolean onItemUse(ItemStack marker, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
 
-		TileEntity tile = world.getTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(pos);
 		NBTTagCompound nbt = NBTUtils.getItemData(marker);
 
 		if (nbt.hasKey("x")
@@ -119,7 +116,7 @@ public class ItemConstructionMarker extends ItemBlock {
 
 			return true;
 		} else {
-			return super.onItemUse(marker, player, world, x, y, z, side, par8, par9, par10);
+			return super.onItemUse(marker, player, world, pos, side, hitX, hitY, hitZ);
 		}
 	}
 }

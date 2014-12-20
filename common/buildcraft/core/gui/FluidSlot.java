@@ -8,7 +8,6 @@
  */
 package buildcraft.core.gui;
 
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fluids.Fluid;
@@ -37,7 +36,7 @@ public class FluidSlot extends AdvancedSlot {
 		super.drawSprite(cornerX, cornerY);
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIcon() {
 		return FluidRenderer.getFluidTexture(fluid, false);
 	}
@@ -45,5 +44,5 @@ public class FluidSlot extends AdvancedSlot {
 	@Override
 	public ResourceLocation getTexture() {
 		return FluidRenderer.getFluidSheet(fluid);
-	}
+	}*/
 }

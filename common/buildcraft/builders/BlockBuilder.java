@@ -8,24 +8,18 @@
  */
 package buildcraft.builders;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.tools.IToolWrench;
@@ -37,9 +31,9 @@ import buildcraft.core.utils.Utils;
 
 public class BlockBuilder extends BlockBuildCraft {
 
-	IIcon blockTextureTop;
+	/*IIcon blockTextureTop;
 	IIcon blockTextureSide;
-	IIcon blockTextureFront;
+	IIcon blockTextureFront;*/
 
 	public BlockBuilder() {
 		super(Material.iron);
@@ -52,7 +46,7 @@ public class BlockBuilder extends BlockBuildCraft {
 		return new TileBuilder();
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIcon(int i, int j) {
 		if (j == 0 && i == 3) {
 			return blockTextureFront;
@@ -68,51 +62,50 @@ public class BlockBuilder extends BlockBuildCraft {
 			default:
 				return blockTextureSide;
 		}
-	}
+	}*/
 
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing side, float hitX, float hitY, float hitZ) {
 
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking()) {
 			return false;
 		}
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, pos, state);
 		FMLCommonHandler.instance().bus().post(event);
 		if (event.isCanceled()) {
 			return false;
 		}
 
-		TileEntity tile = world.getTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(pos);
 		TileBuilder builder = tile instanceof TileBuilder ? (TileBuilder) tile : null;
 
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, x, y, z)) {
-			int meta = world.getBlockMetadata(x, y, z);
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pos)) {
 
-			switch (EnumFacing.values()[meta]) {
+			switch (side) {
 				case WEST:
-					world.setBlockMetadataWithNotify(x, y, z, EnumFacing.SOUTH.ordinal(), 0);
+					world.setBlockState(pos, state.withProperty(FACING_PROP, EnumFacing.SOUTH), 0);
 					break;
 				case EAST:
-					world.setBlockMetadataWithNotify(x, y, z, EnumFacing.NORTH.ordinal(), 0);
+					world.setBlockState(pos, state.withProperty(FACING_PROP, EnumFacing.NORTH), 0);
 					break;
 				case NORTH:
-					world.setBlockMetadataWithNotify(x, y, z, EnumFacing.WEST.ordinal(), 0);
+					world.setBlockState(pos, state.withProperty(FACING_PROP, EnumFacing.WEST), 0);
 					break;
 				case SOUTH:
 				default:
-					world.setBlockMetadataWithNotify(x, y, z, EnumFacing.EAST.ordinal(), 0);
+					world.setBlockState(pos, state.withProperty(FACING_PROP, EnumFacing.EAST), 0);
 					break;
 			}
 
-			world.markBlockForUpdate(x, y, z);
-			((IToolWrench) equipped).wrenchUsed(entityplayer, x, y, z);
+			world.markBlockForUpdate(pos);
+			((IToolWrench) equipped).wrenchUsed(entityplayer, pos);
 
 			return true;
 		} else if (equipped instanceof ItemConstructionMarker) {
 			if (ItemConstructionMarker.linkStarted(entityplayer.getCurrentEquippedItem())) {
-				ItemConstructionMarker.link(entityplayer.getCurrentEquippedItem(), world, x, y, z);
+				ItemConstructionMarker.link(entityplayer.getCurrentEquippedItem(), world, pos);
 			}
 
 			return true;
@@ -120,7 +113,7 @@ public class BlockBuilder extends BlockBuildCraft {
 			return true;
 		} else {
 			if (!world.isRemote) {
-				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BUILDER, world, x, y, z);
+				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BUILDER, world, pos);
 			}
 
 			return true;
@@ -128,39 +121,35 @@ public class BlockBuilder extends BlockBuildCraft {
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
-		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
+	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entityliving, ItemStack stack) {
+		super.onBlockPlacedBy(world, pos, state, entityliving, stack);
 		EnumFacing orientation = Utils.get2dOrientation(entityliving);
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
+		world.setBlockState(pos, state.withProperty(FACING_PROP, orientation.getOpposite()), 1);
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
-		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, block, par6);
+	public void breakBlock(World world, BlockPos pos, IBlockState state) {
+		Utils.preDestroyBlock(world, pos, state);
+		super.breakBlock(world, pos, state);
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		blockTextureTop = par1IconRegister.registerIcon("buildcraft:builder_top");
 		blockTextureSide = par1IconRegister.registerIcon("buildcraft:builder_side");
 		blockTextureFront = par1IconRegister.registerIcon("buildcraft:builder_front");
-	}
+	}*/
+
 
 	@Override
-	public boolean renderAsNormalBlock() {
+	public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
 		return false;
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, EnumFacing side) {
-		return false;
-	}
-
-	@Override
-	public int getLightValue(IBlockAccess world, int x, int y, int z) {
+	public int getLightValue(IBlockAccess world, BlockPos pos) {
 		return 1;
 	}
 }

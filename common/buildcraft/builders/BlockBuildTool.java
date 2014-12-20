@@ -10,21 +10,19 @@ package buildcraft.builders;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockBuildTool extends Block {
 
-	private IIcon texture;
+	//private IIcon texture;
 
 	public BlockBuildTool() {
 		super(Material.iron);
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIcon(int i, int j) {
 		return texture;
 	}
@@ -33,5 +31,5 @@ public class BlockBuildTool extends Block {
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
         texture = par1IconRegister.registerIcon("buildcraft:blockRedLaser");
-	}
+	}*/
 }

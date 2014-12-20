@@ -8,7 +8,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.core.RFBattery;
 import buildcraft.transport.PipeIconProvider;
 
@@ -25,11 +24,11 @@ public class PipePowerEmerald extends PipePowerWood {
 		transport.initFromPipe(this.getClass());
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
 		return BuildCraftTransport.instance.pipeIconProvider;
-	}
+	}*/
 
 	@Override
 	public int getIconIndex(EnumFacing direction) {

@@ -10,10 +10,8 @@ package buildcraft.builders;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -24,7 +22,7 @@ import buildcraft.core.utils.Utils;
 
 public class BlockPathMarker extends BlockMarker {
 
-	private IIcon activeMarker;
+	//private IIcon activeMarker;
 
     public BlockPathMarker() {
 	}
@@ -36,13 +34,12 @@ public class BlockPathMarker extends BlockMarker {
 
 	@Override
 	public void breakBlock(World world, BlockPos pos, IBlockState state) {
-		Utils.preDestroyBlock(world, pos);
+		Utils.preDestroyBlock(world, pos, state);
 		super.breakBlock(world, pos, state);
 	}
 
-	@Override
+	/*@Override
 	@SuppressWarnings({ "all" })
-	// @Override (client only)
 	public IIcon getIcon(IBlockAccess iblockaccess, int i, int j, int k, int l) {
 		TilePathMarker marker = (TilePathMarker) iblockaccess.getTileEntity(i, j, k);
 
@@ -58,5 +55,5 @@ public class BlockPathMarker extends BlockMarker {
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
 	    blockIcon = par1IconRegister.registerIcon("buildcraft:blockPathMarker");
 		activeMarker = par1IconRegister.registerIcon("buildcraft:blockPathMarkerActive");
-	}
+	}*/
 }

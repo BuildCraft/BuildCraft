@@ -9,19 +9,19 @@
 package buildcraft.builders;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.utils.Utils;
 
@@ -36,47 +36,47 @@ public class BlockConstructionMarker extends BlockMarker {
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
-		Utils.preDestroyBlock(world, x, y, z);
-		TileConstructionMarker marker = (TileConstructionMarker) world.getTileEntity(x, y, z);
+	public void breakBlock(World world, BlockPos pos, IBlockState state) {
+		Utils.preDestroyBlock(world, pos, state);
+		TileConstructionMarker marker = (TileConstructionMarker) world.getTileEntity(pos);
 		if (marker != null && marker.itemBlueprint != null && !world.isRemote) {
 			float f1 = 0.7F;
 			double d = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
 			double d1 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
 			double d2 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
-			EntityItem itemToDrop = new EntityItem(world, x + d, y + d1, z + d2, marker.itemBlueprint);
+			EntityItem itemToDrop = new EntityItem(world, pos.getX() + d, pos.getY() + d1, pos.getZ() + d2, marker.itemBlueprint);
 			itemToDrop.delayBeforeCanPickup = 10;
 			world.spawnEntityInWorld(itemToDrop);
 		}
-		super.breakBlock(world, x, y, z, block, par6);
+		super.breakBlock(world, pos, state);
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		blockIcon = par1IconRegister.registerIcon("buildcraft:constructMarker");
-	}
+	}*/
 
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
-		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
+	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entityliving, ItemStack stack) {
+		super.onBlockPlacedBy(world, pos, state, entityliving, stack);
 
-		TileConstructionMarker tile = (TileConstructionMarker) world.getTileEntity(i, j, k);
+		TileConstructionMarker tile = (TileConstructionMarker) world.getTileEntity(pos);
 		tile.direction = Utils.get2dOrientation(entityliving);
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7,
-			float par8, float par9) {
-		super.onBlockActivated(world, x, y, z, entityplayer, par6, par7, par8, par9);
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing face, float hitX,
+			float hitY, float hitZ) {
+		super.onBlockActivated(world, pos, state, entityplayer, face, hitX, hitY, hitZ);
 
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, pos, state);
 		FMLCommonHandler.instance().bus().post(event);
 		if (event.isCanceled()) {
 			return false;
 		}
 
-		TileConstructionMarker marker = (TileConstructionMarker) world.getTileEntity(x, y, z);
+		TileConstructionMarker marker = (TileConstructionMarker) world.getTileEntity(pos);
 
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem()
 				: null;
@@ -97,7 +97,7 @@ public class BlockConstructionMarker extends BlockMarker {
 			}
 		} else if (equipped instanceof ItemConstructionMarker) {
 			if (ItemConstructionMarker.linkStarted(entityplayer.getCurrentEquippedItem())) {
-				ItemConstructionMarker.link(entityplayer.getCurrentEquippedItem(), world, x, y, z);
+				ItemConstructionMarker.link(entityplayer.getCurrentEquippedItem(), world, pos);
 			}
 		}
 

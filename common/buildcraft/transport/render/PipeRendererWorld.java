@@ -9,14 +9,11 @@
 package buildcraft.transport.render;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.fml.client.registry.ISimpleBlockRenderingHandler;
 import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.utils.ColorUtils;
 import buildcraft.core.utils.MatrixTranformations;
@@ -25,9 +22,9 @@ import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TransportProxy;
 
-public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
+public class PipeRendererWorld /*implements ISimpleBlockRenderingHandler*/ {
 	
-	public static int renderPass = -1;	
+	/*public static int renderPass = -1;	
 	public static float zFightOffset = 1F / 4096F;
 	
 	public void renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, TileGenericPipe tile, int x, int y, int z) {
@@ -140,7 +137,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	/**
 	 * Render a block with normal and inverted vertex order so back face culling
 	 * doesn't have any effect.
-	 */
+	 *
 	private void renderTwoWayBlock(RenderBlocks renderblocks, FakeBlock stateHost, int x, int y, int z, float[] dim, int mask) {
 		assert mask != 0;
 		
@@ -279,8 +276,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				0.75F - width, 0.75F,
 				0.025F, 0.224F,
 				0.25F + width, 0.75F - width);*/
-
-		float[][] zeroState = new float[3][2];
+		/*float[][] zeroState = new float[3][2];
 
 
 		// X START - END
@@ -353,5 +349,5 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	@Override
 	public int getRenderId() {
 		return TransportProxy.pipeModel;
-	}
+	}*/
 }

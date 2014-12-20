@@ -8,23 +8,22 @@
  */
 package buildcraft.builders.urbanism;
 
-import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 
 class UrbanistToolErase extends UrbanistTool {
 
-	@Override
+	/*@Override
 	public IIcon getIcon() {
 		return UrbanistToolsIconProvider.INSTANCE.getIcon(UrbanistToolsIconProvider.Tool_Block_Erase);
-	}
+	}*/
 
 	@Override
 	public String getDescription() {
 		return "Erase Block";
 	}
 
-	@Override
+	/*@Override
 	public void worldClicked (GuiUrbanist gui, MovingObjectPosition pos) {
 		gui.urbanist.rpcEraseBlock(pos.blockX, pos.blockY, pos.blockZ);
-	}
+	}*/
 }

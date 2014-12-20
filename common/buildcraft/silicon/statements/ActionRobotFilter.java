@@ -11,7 +11,6 @@ package buildcraft.silicon.statements;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -45,10 +44,10 @@ public class ActionRobotFilter extends BCStatement implements IActionInternal {
 		return StringUtils.localize("gate.action.robot.filter");
 	}
 
-	@Override
+	/*@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/action_robot_filter");
-	}
+	}*/
 
 	@Override
 	public int minParameters() {

@@ -10,11 +10,9 @@ package buildcraft.transport;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
 
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -25,7 +23,7 @@ import buildcraft.core.ItemBuildCraft;
 
 public class ItemPipeWire extends ItemBuildCraft {
 
-	private IIcon[] icons;
+	//private IIcon[] icons;
 
 	public ItemPipeWire() {
 		super();
@@ -35,10 +33,10 @@ public class ItemPipeWire extends ItemBuildCraft {
 		setUnlocalizedName("pipeWire");
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIconFromDamage(int damage) {
 		return icons[damage];
-	}
+	}*/
 
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {
@@ -54,18 +52,19 @@ public class ItemPipeWire extends ItemBuildCraft {
 		}
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister par1IconRegister) {
 		icons = new IIcon[PipeWire.VALUES.length];
 		for (PipeWire pipeWire : PipeWire.VALUES) {
 			icons[pipeWire.ordinal()] = par1IconRegister.registerIcon("buildcraft:" + pipeWire.getTag());
 		}
-	}
+	}*/
 
 	public void registerItemStacks() {
 		for (PipeWire pipeWire : PipeWire.VALUES) {
-			GameRegistry.registerCustomItemStack(pipeWire.getTag(), pipeWire.getStack());
+			//TODO (1.8): probably use Variants (not sure)
+			//GameRegistry.registerCustomItemStack(pipeWire.getTag(), pipeWire.getStack());
 		}
 	}
 }

@@ -10,11 +10,9 @@ package buildcraft.core.robots.boards;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
@@ -27,7 +25,7 @@ public final class BoardRobotPickerNBT extends RedstoneBoardRobotNBT {
 
 	public static BoardRobotPickerNBT instance = new BoardRobotPickerNBT();
 
-	public IIcon icon;
+	//public IIcon icon;
 
 	private BoardRobotPickerNBT() {
 	}
@@ -47,7 +45,7 @@ public final class BoardRobotPickerNBT extends RedstoneBoardRobotNBT {
 		return new BoardRobotPicker(object, nbt);
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIcon(NBTTagCompound nbt) {
 		return icon;
 	}
@@ -55,7 +53,7 @@ public final class BoardRobotPickerNBT extends RedstoneBoardRobotNBT {
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:board_green");
-	}
+	}*/
 
 	@Override
 	public ResourceLocation getRobotTexture() {

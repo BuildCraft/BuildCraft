@@ -13,7 +13,7 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,18 +21,16 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.BlockBuildCraft;
@@ -50,13 +48,13 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 			{AxisAlignedBB.fromBounds(0.0, 0.0, 0.0, 0.5, 1.0, 1.0), AxisAlignedBB.fromBounds(0.5, 0.25, 0.25, 1.0, 0.75, 0.75)} // +X
 	};
 
-	private static IIcon woodTexture;
+	/*private static IIcon woodTexture;
 	private static IIcon stoneTexture;
-	private static IIcon ironTexture;
+	private static IIcon ironTexture;*/
 
 	public BlockEngine() {
 		super(Material.iron);
-		setBlockName("engineBlock");
+		setUnlocalizedName("engineBlock");
 	}
 
 	@Override
@@ -64,18 +62,14 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 		return false;
 	}
 
-	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
-	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		woodTexture = par1IconRegister.registerIcon("buildcraft:engineWoodBottom");
 		stoneTexture = par1IconRegister.registerIcon("buildcraft:engineStoneBottom");
 		ironTexture = par1IconRegister.registerIcon("buildcraft:engineIronBottom");
-	}
+	}*/
 
 	@Override
 	public int getRenderType() {
@@ -83,7 +77,9 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	}
 
 	@Override
-	public TileEntity createTileEntity(World world, int metadata) {
+	public TileEntity createTileEntity(World world, IBlockState state) {
+		
+		//TODO: Variant
 		switch (metadata) {
 			case 0:
 				return new TileEngineWood();
@@ -99,8 +95,8 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, EnumFacing side) {
-		TileEntity tile = world.getTileEntity(x, y, z);
+	public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
+		TileEntity tile = world.getTileEntity(pos);
 
 		if (tile instanceof TileEngine) {
 			return ((TileEngine) tile).orientation.getOpposite() == side;
@@ -110,8 +106,8 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	}
 
 	@Override
-	public boolean rotateBlock(World world, int x, int y, int z, EnumFacing axis) {
-		TileEntity tile = world.getTileEntity(x, y, z);
+	public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
+		TileEntity tile = world.getTileEntity(pos);
 
 		if (tile instanceof TileEngine) {
 			return ((TileEngine) tile).switchOrientation(false);
@@ -121,9 +117,9 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer player, int side, float par7, float par8, float par9) {
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ) {
 
-		TileEntity tile = world.getTileEntity(i, j, k);
+		TileEntity tile = world.getTileEntity(pos);
 
 		// REMOVED DUE TO CREATIVE ENGINE REQUIREMENTS - dmillerw
 		// Drop through if the player is sneaking
@@ -131,7 +127,7 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 //			return false;
 //		}
 
-		BlockInteractionEvent event = new BlockInteractionEvent(player, this, world.getBlockMetadata(i, j, k));
+		BlockInteractionEvent event = new BlockInteractionEvent(player, pos, state);
 		FMLCommonHandler.instance().bus().post(event);
 		if (event.isCanceled()) {
 			return false;
@@ -145,7 +141,7 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 		}
 
 		if (tile instanceof TileEngine) {
-			return ((TileEngine) tile).onBlockActivated(player, EnumFacing.getOrientation(side));
+			return ((TileEngine) tile).onBlockActivated(player, side);
 		}
 
 		return false;
@@ -153,24 +149,24 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void addCollisionBoxesToList(World wrd, int x, int y, int z, AxisAlignedBB mask, List list, Entity ent) {
-		TileEntity tile = wrd.getTileEntity(x, y, z);
+	public void addCollisionBoxesToList(World wrd, BlockPos pos, IBlockState state, AxisAlignedBB mask, List list, Entity ent) {
+		TileEntity tile = wrd.getTileEntity(pos);
 		if (tile instanceof TileEngine) {
 			AxisAlignedBB[] aabbs = boxes[((TileEngine) tile).orientation.ordinal()];
 			for (AxisAlignedBB aabb : aabbs) {
-				AxisAlignedBB aabbTmp = aabb.getOffsetBoundingBox(x, y, z);
+				AxisAlignedBB aabbTmp = aabb.offset(pos.getX(), pos.getY(), pos.getZ());
 				if (mask.intersectsWith(aabbTmp)) {
 					list.add(aabbTmp);
 				}
 			}
 		} else {
-			super.addCollisionBoxesToList(wrd, x, y, z, mask, list, ent);
+			super.addCollisionBoxesToList(wrd, pos, state, mask, list, ent);
 		}
 	}
 
 	@Override
-	public AxisAlignedBB[] getBoxes(World wrd, int x, int y, int z, EntityPlayer player) {
-		TileEntity tile = wrd.getTileEntity(x, y, z);
+	public AxisAlignedBB[] getBoxes(World wrd, BlockPos pos, EntityPlayer player) {
+		TileEntity tile = wrd.getTileEntity(pos);
 		if (tile instanceof TileEngine) {
 			return boxes[((TileEngine) tile).orientation.ordinal()];
 		} else {
@@ -184,13 +180,13 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	}
 
 	@Override
-	public MovingObjectPosition collisionRayTrace(World wrd, int x, int y, int z, Vec3 origin, Vec3 direction) {
-		TileEntity tile = wrd.getTileEntity(x, y, z);
+	public MovingObjectPosition collisionRayTrace(World wrd, BlockPos pos, Vec3 origin, Vec3 direction) {
+		TileEntity tile = wrd.getTileEntity(pos);
 		if (tile instanceof TileEngine) {
 			AxisAlignedBB[] aabbs = boxes[((TileEngine) tile).orientation.ordinal()];
 			MovingObjectPosition closest = null;
 			for (AxisAlignedBB aabb : aabbs) {
-				MovingObjectPosition mop = aabb.getOffsetBoundingBox(x, y, z).calculateIntercept(origin, direction);
+				MovingObjectPosition mop = aabb.offset(pos.getX(), pos.getY(), pos.getZ()).calculateIntercept(origin, direction);
 				if (mop != null) {
 					if (closest != null && mop.hitVec.distanceTo(origin) < closest.hitVec.distanceTo(origin)) {
 						closest = mop;
@@ -199,14 +195,12 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 					}
 				}
 			}
-			if (closest != null) {
-				closest.blockX = x;
-				closest.blockY = y;
-				closest.blockZ = z;
-			}
+			if (closest != null) 
+				closest = new MovingObjectPosition(new Vec3(pos.getX(), pos.getY(), pos.getZ()), closest.field_178784_b);
+			
 			return closest;
 		} else {
-			return super.collisionRayTrace(wrd, x, y, z, origin, direction);
+			return super.collisionRayTrace(wrd, pos, origin, direction);
 		}
 	}
 
@@ -223,14 +217,14 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	}
 
 	@Override
-	public int damageDropped(int i) {
-		return i;
+	public int damageDropped(IBlockState state) {
+		return 1;
 	}
 
 	@SuppressWarnings({"all"})
 	@Override
-	public void randomDisplayTick(World world, int i, int j, int k, Random random) {
-		TileEntity tile = world.getTileEntity(i, j, k);
+	public void randomDisplayTick(World world, BlockPos pos, IBlockState state, Random random) {
+		TileEntity tile = world.getTileEntity(pos);
 
 		if (!(tile instanceof TileEngine)) {
 			return;
@@ -238,24 +232,24 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 
 		if (((TileEngine) tile).getEnergyStage() == TileEngine.EnergyStage.OVERHEAT) {
 			for (int f = 0; f < 16; f++) {
-				world.spawnParticle("smoke", i + 0.4F + (random.nextFloat() * 0.2F),
-						j + (random.nextFloat() * 0.5F),
-						k + 0.4F + (random.nextFloat() * 0.2F),
+				world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, pos.getX() + 0.4F + (random.nextFloat() * 0.2F),
+						pos.getY() + (random.nextFloat() * 0.5F),
+						pos.getZ() + 0.4F + (random.nextFloat() * 0.2F),
 						random.nextFloat() * 0.04F - 0.02F,
 						random.nextFloat() * 0.05F + 0.02F,
 						random.nextFloat() * 0.04F - 0.02F);
 			}
 		} else if (((TileEngine) tile).isBurning()) {
-			float f = i + 0.5F;
-			float f1 = j + 0.0F + (random.nextFloat() * 6F) / 16F;
-			float f2 = k + 0.5F;
+			float f = pos.getX() + 0.5F;
+			float f1 = pos.getY() + 0.0F + (random.nextFloat() * 6F) / 16F;
+			float f2 = pos.getZ()  + 0.5F;
 			float f3 = 0.52F;
 			float f4 = random.nextFloat() * 0.6F - 0.3F;
 
-			world.spawnParticle("reddust", f - f3, f1, f2 + f4, 0.0D, 0.0D, 0.0D);
-			world.spawnParticle("reddust", f + f3, f1, f2 + f4, 0.0D, 0.0D, 0.0D);
-			world.spawnParticle("reddust", f + f4, f1, f2 - f3, 0.0D, 0.0D, 0.0D);
-			world.spawnParticle("reddust", f + f4, f1, f2 + f3, 0.0D, 0.0D, 0.0D);
+			world.spawnParticle(EnumParticleTypes.REDSTONE, f - f3, f1, f2 + f4, 0.0D, 0.0D, 0.0D);
+			world.spawnParticle(EnumParticleTypes.REDSTONE, f + f3, f1, f2 + f4, 0.0D, 0.0D, 0.0D);
+			world.spawnParticle(EnumParticleTypes.REDSTONE, f + f4, f1, f2 - f3, 0.0D, 0.0D, 0.0D);
+			world.spawnParticle(EnumParticleTypes.REDSTONE, f + f4, f1, f2 + f3, 0.0D, 0.0D, 0.0D);
 		}
 	}
 
@@ -269,15 +263,15 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	}
 
 	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-		TileEntity tile = world.getTileEntity(x, y, z);
+	public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock) {
+		TileEntity tile = world.getTileEntity(pos);
 
 		if (tile instanceof TileEngine) {
 			((TileEngine) tile).onNeighborUpdate();
 		}
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public IIcon getIcon(int side, int meta) {
 		switch (meta) {
@@ -290,7 +284,7 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 			default:
 				return null;
 		}
-	}
+	}*/
 
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {

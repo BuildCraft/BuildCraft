@@ -8,9 +8,7 @@
  */
 package buildcraft.builders;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -18,14 +16,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.core.utils.NBTUtils;
 
 public class ItemBlueprintStandard extends ItemBlueprint {
-	private IIcon cleanBlueprint;
-	private IIcon usedBlueprint;
+	/*private IIcon cleanBlueprint;
+	private IIcon usedBlueprint;*/
 
 	public ItemBlueprintStandard() {
 		super();
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIconIndex(ItemStack stack) {
 		if (!NBTUtils.getItemData(stack).hasKey("name")) {
 			itemIcon = cleanBlueprint;
@@ -41,5 +39,5 @@ public class ItemBlueprintStandard extends ItemBlueprint {
 	public void registerIcons(IIconRegister par1IconRegister) {
 		cleanBlueprint = par1IconRegister.registerIcon("buildcraft:blueprint_clean");
 		usedBlueprint = par1IconRegister.registerIcon("buildcraft:blueprint_used");
-	}
+	}*/
 }

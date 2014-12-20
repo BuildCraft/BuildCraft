@@ -9,19 +9,15 @@
 package buildcraft.core.render;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
-
-import net.minecraftforge.fml.client.registry.ISimpleBlockRenderingHandler;
 
 import buildcraft.BuildCraftCore;
 
-public class RenderingMarkers implements ISimpleBlockRenderingHandler {
+public class RenderingMarkers /*implements ISimpleBlockRenderingHandler*/ {
 
 	/* PATH MARKER RENDERING */
-	public static final double[][][] frontX = new double[6][3][4];
+	/*public static final double[][][] frontX = new double[6][3][4];
 	public static final double[][][] frontZ = new double[6][3][4];
 	public static final double[][][] frontY = new double[6][3][4];
 	public static final int[] metaToOld = new int[6];
@@ -242,5 +238,5 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 			face[j][2] = face[j][3];
 			face[j][3] = tmp;
 		}
-	}
+	}*/
 }

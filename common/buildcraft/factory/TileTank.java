@@ -38,12 +38,12 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 
 	/* UPDATING */
 	@Override
-	public void updateEntity() {
+	public void update() {
 		if (worldObj.isRemote) {
 			int lightValue = getFluidLightLevel();
 			if (prevLightValue != lightValue) {
 				prevLightValue = lightValue;
-				worldObj.updateLightByType(EnumSkyBlock.Block, xCoord, yCoord, zCoord);
+				worldObj.updateLightByType(EnumSkyBlock.BLOCK, pos);
 			}
 			return;
 		}

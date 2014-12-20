@@ -15,9 +15,7 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.particle.EntityFX;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -36,8 +34,8 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 	protected float particleRed;
 	protected float particleGreen;
 	protected float particleBlue;
-	@SideOnly(Side.CLIENT)
-	protected IIcon[] theIcon;
+	/*@SideOnly(Side.CLIENT)
+	protected IIcon[] theIcon;*/
 	protected boolean flammable;
 	protected int flammability = 0;
 	private MapColor mapColor;
@@ -48,7 +46,7 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 		mapColor = iMapColor;
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIcon(int side, int meta) {
 		return side != 0 && side != 1 ? this.theIcon[1] : this.theIcon[0];
 	}
@@ -58,14 +56,17 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 	public void registerBlockIcons(IIconRegister iconRegister) {
 		this.theIcon = new IIcon[] {iconRegister.registerIcon("buildcraft:" + fluidName + "_still"),
 				iconRegister.registerIcon("buildcraft:" + fluidName + "_flow")};
-	}
+	}*/
 
 	@Override
-	public void onNeighborChange(World world, BlockPos pos, BlockPos neighbor) {
+	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
 		super.onNeighborChange(world, pos, neighbor);
-		if (flammable && world.provider.getDimensionId() == -1) {
-			world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4F, true, true);
-			world.setBlockToAir(pos);
+		if(!(world instanceof World)) return;
+		
+		World worldobj = (World)world;
+		if (flammable && worldobj.provider.getDimensionId() == -1) {
+			worldobj.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4F, true, true);
+			worldobj.setBlockToAir(pos);
 		}
 	}
 
@@ -80,22 +81,22 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 	}
 
 	@Override
-	public int getFireSpreadSpeed(IBlockAccess world, int x, int y, int z, EnumFacing face) {
+	public int getFireSpreadSpeed(IBlockAccess world, BlockPos pos, EnumFacing face) {
 		return flammable ? 300 : 0;
 	}
 
 	@Override
-	public int getFlammability(IBlockAccess world, int x, int y, int z, EnumFacing face) {
+	public int getFlammability(IBlockAccess world, BlockPos pos, EnumFacing face) {
 		return flammability;
 	}
 
 	@Override
-	public boolean isFlammable(IBlockAccess world, int x, int y, int z, EnumFacing face) {
+	public boolean isFlammable(IBlockAccess world, BlockPos pos, EnumFacing face) {
 		return flammable;
 	}
 
 	@Override
-	public boolean isFireSource(World world, int x, int y, int z, EnumFacing side) {
+	public boolean isFireSource(World world, BlockPos pos, EnumFacing side) {
 		return flammable && flammability == 0;
 	}
 

@@ -8,15 +8,11 @@
  */
 package buildcraft.transport;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.IIconProvider;
 
-public class WireIconProvider implements IIconProvider {
+public class WireIconProvider /*implements IIconProvider*/ {
 	
 	public static final int Texture_Red_Dark				=  0;
 	public static final int Texture_Red_Lit					=  1;
@@ -29,7 +25,7 @@ public class WireIconProvider implements IIconProvider {
 	
 	public static final int MAX								=  8;
 
-	@SideOnly(Side.CLIENT)
+	/*@SideOnly(Side.CLIENT)
 	private IIcon[] icons;
 	
 	@Override
@@ -52,6 +48,6 @@ public class WireIconProvider implements IIconProvider {
 		icons[WireIconProvider.Texture_Yellow_Dark] = iconRegister.registerIcon("buildcraft:texture_yellow_dark");
 		icons[WireIconProvider.Texture_Yellow_Lit] = iconRegister.registerIcon("buildcraft:texture_yellow_lit");		
 
-	}
+	}*/
 
 }

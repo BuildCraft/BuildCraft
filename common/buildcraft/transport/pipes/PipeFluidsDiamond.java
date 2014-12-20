@@ -21,7 +21,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidTankInfo;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.utils.FluidUtils;
@@ -76,17 +75,15 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
         return filters;
     }
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
 		return BuildCraftTransport.instance.pipeIconProvider;
-	}
+	}*/
 
 	@Override
     public int getIconIndex(EnumFacing direction) {
         switch (direction) {
-            case UNKNOWN:
-                return PipeIconProvider.TYPE.PipeFluidsDiamond_Center.ordinal();
             case DOWN:
                 return PipeIconProvider.TYPE.PipeFluidsDiamond_Down.ordinal();
             case UP:
@@ -100,7 +97,7 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
             case EAST:
                 return PipeIconProvider.TYPE.PipeFluidsDiamond_East.ordinal();
             default:
-                throw new IllegalArgumentException("direction out of bounds");
+            	return PipeIconProvider.TYPE.PipeFluidsDiamond_Center.ordinal();
         }
     }
 
@@ -118,7 +115,7 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
         }
 
         if (!container.getWorld().isRemote) {
-            entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.getWorld(), container.xCoord, container.yCoord, container.zCoord);
+            entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.getWorld(), container.getPos().getX(), container.getPos().getY(), container.getPos().getZ());
         }
 
         return true;

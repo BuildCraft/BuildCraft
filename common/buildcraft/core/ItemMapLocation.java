@@ -36,11 +36,11 @@ import buildcraft.core.utils.StringUtils;
 
 public class ItemMapLocation extends ItemBuildCraft {
 
-	public IIcon clean;
+	/*public IIcon clean;
 	public IIcon spot;
 	public IIcon area;
 	public IIcon path;
-	public IIcon zone;
+	public IIcon zone;*/
 
 	public ItemMapLocation() {
 		super(CreativeTabBuildCraft.ITEMS);
@@ -80,11 +80,12 @@ public class ItemMapLocation extends ItemBuildCraft {
 			}
 			case 2: {
 				NBTTagList pathNBT = cpt.getTagList("path", Constants.NBT.TAG_COMPOUND);
+				// This is strange!
 				BlockPos first = new BlockPos(pathNBT.getCompoundTagAt(0));
 
-				int x = first.x;
-				int y = first.y;
-				int z = first.z;
+				int x = first.getX();
+				int y = first.getY();
+				int z = first.getZ();
 
 				list.add(StringUtils.localize("{" + x + ", " + y + ", " + z + "} + " + pathNBT.tagCount() + " elements"));
 				break;
@@ -99,7 +100,7 @@ public class ItemMapLocation extends ItemBuildCraft {
 		}
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIconIndex(ItemStack stack) {
 		NBTTagCompound cpt = NBTUtils.getItemData(stack);
 
@@ -135,7 +136,7 @@ public class ItemMapLocation extends ItemBuildCraft {
 		zone = par1IconRegister.registerIcon("buildcraft:map_zone");
 
 		RedstoneBoardRegistry.instance.registerIcons(par1IconRegister);
-	}
+	}*/
 
 	@Override
 	public boolean onItemUse(ItemStack stack, EntityPlayer par2EntityPlayer, World world, int x,

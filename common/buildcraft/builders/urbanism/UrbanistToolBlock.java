@@ -9,7 +9,6 @@
 package buildcraft.builders.urbanism;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import buildcraft.core.DefaultProps;
 
@@ -19,10 +18,10 @@ class UrbanistToolBlock extends UrbanistTool {
 	private static final int GUI_TEXTURE_WIDTH = 64;
 	private static final int GUI_TEXTURE_HEIGHT = 210;
 
-	@Override
+	/*@Override
 	public IIcon getIcon() {
 		return UrbanistToolsIconProvider.INSTANCE.getIcon(UrbanistToolsIconProvider.Tool_Block_Place);
-	}
+	}*/
 
 	@Override
 	public String getDescription() {

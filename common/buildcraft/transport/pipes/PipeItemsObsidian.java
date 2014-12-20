@@ -28,7 +28,6 @@ import net.minecraft.util.EnumFacing;
 import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.core.RFBattery;
 import buildcraft.core.inventory.ITransactor;
@@ -55,11 +54,11 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 		Arrays.fill(entitiesDropped, -1);
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
 		return BuildCraftTransport.instance.pipeIconProvider;
-	}
+	}*/
 
 	@Override
 	public int getIconIndex(EnumFacing direction) {
@@ -83,8 +82,8 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 		if (orientation == null) {
 			return null;
 		}
-		Position p1 = new Position(container.xCoord, container.yCoord, container.zCoord, orientation);
-		Position p2 = new Position(container.xCoord, container.yCoord, container.zCoord, orientation);
+		Position p1 = new Position(container.getPos(), orientation);
+		Position p2 = new Position(container.getPos(), orientation);
 
 		switch (orientation) {
 			case EAST:
@@ -248,7 +247,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 				return;
 			}
 			
-			TravelingItem item = TravelingItem.make(container.xCoord + 0.5, container.yCoord + TransportUtils.getPipeFloorOf(stack), container.zCoord + 0.5, stack);
+			TravelingItem item = TravelingItem.make(container.getPos().getX() + 0.5, container.getPos().getY() + TransportUtils.getPipeFloorOf(stack), container.getPos().getZ() + 0.5, stack);
 
 			item.setSpeed((float) speed);
 

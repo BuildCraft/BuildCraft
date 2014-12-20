@@ -21,8 +21,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.BlockFluidBase;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.utils.Utils;
 
 public class SchematicBlock extends SchematicBlockBase {
@@ -177,5 +179,20 @@ public class SchematicBlock extends SchematicBlockBase {
 
 			nbt.setTag("rq", rq);
 		}
+	}
+	
+	public EnumFacing getFace()
+	{
+		return ((EnumFacing)state.getValue(BlockBuildCraft.FACING_PROP));
+	}
+	
+	public int getMetaData()
+	{
+		return getFace().getIndex();
+	}
+	
+	public void setMetaData(int newValue)
+	{
+		state = state.withProperty(BlockBuildCraft.FACING_PROP, EnumFacing.getFront(newValue));
 	}
 }

@@ -38,6 +38,7 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.robots.StackRequest;
 import buildcraft.api.tiles.IHasWork;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.LaserData;
@@ -101,9 +102,9 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 			currentIterator = it;
 
-			double dx = to.x - from.x;
-			double dy = to.y - from.y;
-			double dz = to.z - from.z;
+			double dx = to.getX() - from.getX();
+			double dy = to.getY() - from.getY();
+			double dz = to.getZ() - from.getZ();
 
 			double size = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
@@ -111,12 +112,12 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			cy = dy / size / 10;
 			cz = dz / size / 10;
 
-			ix = from.x;
-			iy = from.y;
-			iz = from.z;
+			ix = from.getX();
+			iy = from.getY();
+			iz = from.getZ();
 
-			lastDistance = (ix - to.x) * (ix - to.x) + (iy - to.y)
-					* (iy - to.y) + (iz - to.z) * (iz - to.z);
+			lastDistance = (ix - to.getX()) * (ix - to.getX()) + (iy - to.getY())
+					* (iy - to.getY()) + (iz - to.getZ()) * (iz - to.getZ());
 
 			if (dx == 0 && dz == 0) {
 				o = initialDir;
@@ -152,7 +153,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 					return null;
 				}
 
-				AxisAlignedBB boundingBox = bpt.fromBounds();
+				AxisAlignedBB boundingBox = bpt.getBoundingBox();
 
 				if (oldBoundingBox == null || !collision(oldBoundingBox, boundingBox)) {
 
@@ -167,8 +168,8 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 				iy += cy;
 				iz += cz;
 
-				double distance = (ix - to.x) * (ix - to.x) + (iy - to.y)
-						* (iy - to.y) + (iz - to.z) * (iz - to.z);
+				double distance = (ix - to.getX()) * (ix - to.getX()) + (iy - to.getY())
+						* (iy - to.getY()) + (iz - to.getZ()) * (iz - to.getZ());
 
 				if (distance > lastDistance) {
 					return null;
@@ -222,7 +223,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			iterateBpt(true);
 
 			if (initNBT.hasKey("iterator")) {
-				BlockPos expectedTo = new BlockPos(initNBT.getCompoundTag("iterator"));
+				BlockPos expectedTo = Utils.readBlockPos(initNBT.getCompoundTag("iterator"));
 
 				while (!done && currentBuilder != null && currentPathIterator != null) {
 					BlockPos bi = new BlockPos((int) currentPathIterator.ix,
@@ -246,20 +247,20 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 		box.kind = Kind.STRIPES;
 
-		for (int x = xCoord - 1; x <= xCoord + 1; ++x) {
-			for (int y = yCoord - 1; y <= yCoord + 1; ++y) {
-				for (int z = zCoord - 1; z <= zCoord + 1; ++z) {
-					TileEntity tile = worldObj.getTileEntity(x, y, z);
+		for (int x = pos.getX() - 1; x <= pos.getX() + 1; ++x) {
+			for (int y = pos.getY() - 1; y <= pos.getY() + 1; ++y) {
+				for (int z = pos.getZ() - 1; z <= pos.getZ() + 1; ++z) {
+					TileEntity tile = worldObj.getTileEntity(new BlockPos(x, y, z));
 
 					if (tile instanceof TilePathMarker) {
 						path = ((TilePathMarker) tile).getPath();
 
 						for (BlockPos b : path) {
-							worldObj.setBlockToAir(b.x, b.y, b.z);
+							worldObj.setBlockToAir(b);
 
 							BuildCraftBuilders.pathMarkerBlock.dropBlockAsItem(
-									worldObj, b.x, b.y, b.z,
-									0, 0);
+									worldObj, b,
+									worldObj.getBlockState(b), 0);
 						}
 
 						break;
@@ -283,9 +284,9 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 		for (BlockPos b : path) {
 			if (previous != null) {
-				LaserData laser = new LaserData(new Position(previous.x + 0.5,
-						previous.y + 0.5, previous.z + 0.5), new Position(
-						b.x + 0.5, b.y + 0.5, b.z + 0.5));
+				LaserData laser = new LaserData(new Position(previous.getX() + 0.5,
+						previous.getY() + 0.5, previous.getZ() + 0.5), new Position(
+						b.getX() + 0.5, b.getY() + 0.5, b.getZ() + 0.5));
 
 				pathLasers.add(laser);
 			}
@@ -310,18 +311,19 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 	@Deprecated
 	public BptBuilderBase instanciateBluePrintBuilder(int x, int y, int z, EnumFacing o) {
+		BlockPos pos = new BlockPos(x, y, z);
 		BlueprintBase bpt = instanciateBlueprint();
         if (bpt == null) {
             return null;
         }
 
-		bpt = bpt.adjustToWorld(worldObj, x, y, z, o);
+		bpt = bpt.adjustToWorld(worldObj, pos, o);
 
 		if (bpt != null) {
 			if (getStackInSlot(0).getItem() instanceof ItemBlueprintStandard) {
-				return new BptBuilderBlueprint((Blueprint) bpt, worldObj, x, y, z);
+				return new BptBuilderBlueprint((Blueprint) bpt, worldObj, pos);
 			} else if (getStackInSlot(0).getItem() instanceof ItemBlueprintTemplate) {
-				return new BptBuilderTemplate(bpt, worldObj, x, y, z);
+				return new BptBuilderTemplate(bpt, worldObj, pos);
 			}
 		}
 		return null;
@@ -355,9 +357,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 				if (currentPathIterator == null) {
 					Iterator<BlockPos> it = path.iterator();
 					BlockPos start = it.next();
-					currentPathIterator = new PathIterator(start, it,
-							EnumFacing.values()[worldObj.getBlockMetadata(
-									xCoord, yCoord, zCoord)].getOpposite());
+					currentPathIterator = new PathIterator(start, it, ((EnumFacing)worldObj.getBlockState(pos).getValue(BlockBuildCraft.FACING_PROP)).getOpposite());
 				}
 
 				if (currentBuilder != null && currentBuilder.isDone(this)) {
@@ -393,8 +393,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 					BlueprintBase bpt = instanciateBlueprint();
 
 					if (bpt != null) {
-						recursiveBuilder = new RecursiveBlueprintBuilder(bpt, worldObj, xCoord, yCoord, zCoord,
-								EnumFacing.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite());
+						recursiveBuilder = new RecursiveBlueprintBuilder(bpt, worldObj, pos, ((EnumFacing)worldObj.getBlockState(pos).getValue(BlockBuildCraft.FACING_PROP)).getOpposite());
 
 						currentBuilder = recursiveBuilder.nextBuilder();
 
@@ -422,7 +421,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 				}
 			}
 			if (dropBlueprint) {
-				InvUtils.dropItems(getWorldObj(), getStackInSlot(0), xCoord, yCoord, zCoord);
+				InvUtils.dropItems(worldObj, getStackInSlot(0), pos);
 			}
 
 			setInventorySlotContents(0, null);
@@ -472,7 +471,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	}
 
 	@Override
-	public String getInventoryName() {
+	public String getName() {
 		return "Builder";
 	}
 
@@ -483,7 +482,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
+		return worldObj.getTileEntity(getPos()) == this;
 	}
 
 	@Override
@@ -502,7 +501,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 					Constants.NBT.TAG_COMPOUND);
 
 			for (int i = 0; i < list.tagCount(); ++i) {
-				path.add(new BlockPos(list.getCompoundTagAt(i)));
+				path.add(Utils.readBlockPos(list.getCompoundTagAt(i)));
 			}
 		}
 
@@ -530,7 +529,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 			for (BlockPos i : path) {
 				NBTTagCompound c = new NBTTagCompound();
-				i.writeTo(c);
+				Utils.writeBlockPos(c, i);
 				list.appendTag(c);
 			}
 
@@ -550,9 +549,8 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 		if (currentPathIterator != null) {
 			NBTTagCompound iteratorNBT = new NBTTagCompound();
-			new BlockPos((int) currentPathIterator.ix,
-					(int) currentPathIterator.iy, (int) currentPathIterator.iz)
-					.writeTo(iteratorNBT);
+			Utils.writeBlockPos(iteratorNBT, new BlockPos((int) currentPathIterator.ix,
+					(int) currentPathIterator.iy, (int) currentPathIterator.iz));
 			bptNBT.setTag ("iterator", iteratorNBT);
 		}
 
@@ -565,17 +563,10 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		destroy();
 	}
 
-	@Override
-	public void openInventory() {
-	}
 
 	@Override
-	public void closeInventory() {
-	}
-
-	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		if (worldObj.isRemote) {
 			return;
@@ -596,7 +587,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 		iterateBpt(false);
 
-		if (getWorldObj().getWorldInfo().getGameType() == GameType.CREATIVE) {
+		if (worldObj.getWorldInfo().getGameType() == GameType.CREATIVE) {
 			build();
 		} else if (getBattery().getEnergyStored() > POWER_ACTIVATION) {
 			build();
@@ -649,7 +640,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 				if (id < 0 || id >= fluidTanks.length) {
 					return;
 				}
-				if (isUseableByPlayer(player) && player.getDistanceSq(xCoord, yCoord, zCoord) <= 64) {
+				if (isUseableByPlayer(player) && player.getDistanceSq(pos.getX(), pos.getY(), pos.getZ()) <= 64) {
 					fluidTanks[id].setFluid(null);
 					sendNetworkUpdate();
 				}
@@ -681,7 +672,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
+	public boolean hasCustomName() {
 		return false;
 	}
 
@@ -708,12 +699,12 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			renderBox = renderBox.extendToEncompass(l.tail);
 		}
 
-		return renderBox.expand(50).fromBounds();
+		return renderBox.expand(50).getBoundingBox();
 	}
 
 	public void build () {
 		if (currentBuilder != null) {
-			if (currentBuilder.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord)) {
+			if (currentBuilder.buildNextSlot(worldObj, this, pos.getX(), pos.getY(), pos.getZ())) {
 				updateRequirements();
 			}
 		}

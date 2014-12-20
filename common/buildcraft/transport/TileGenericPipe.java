@@ -36,7 +36,6 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumColor;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.transport.IPipe;
@@ -954,13 +953,13 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		return sideProperties.dropItem(this, direction);
 	}
 
-	@SideOnly(Side.CLIENT)
+	/*@SideOnly(Side.CLIENT)
 	public IIconProvider getPipeIcons() {
 		if (pipe == null) {
 			return null;
 		}
 		return pipe.getIconProvider();
-	}
+	}*/
 
 	@Override
 	public IClientState getStateInstance(byte stateId) {

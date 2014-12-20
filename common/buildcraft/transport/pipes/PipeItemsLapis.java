@@ -37,11 +37,11 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 		super(new PipeTransportItems(), item);
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
 		return BuildCraftTransport.instance.pipeIconProvider;
-	}
+	}*/
 
 	@Override
 	public int getIconIndex(EnumFacing direction) {
@@ -54,14 +54,14 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 	@Override
 	public boolean blockActivated(EntityPlayer player) {
 		Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, container.xCoord, container.yCoord, container.zCoord)) {
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, container.getPos())) {
 			if (player.isSneaking()) {
 				setColor(getColor().getPrevious());
 			} else {
 				setColor(getColor().getNext());
 			}
 
-			((IToolWrench) equipped).wrenchUsed(player, container.xCoord, container.yCoord, container.zCoord);
+			((IToolWrench) equipped).wrenchUsed(player, container.getPos());
 			return true;
 		}
 
@@ -74,7 +74,7 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 
 	public void setColor(EnumColor color) {
 		if (color.ordinal() != container.getBlockMetadata()) {
-			container.getWorld().setBlockMetadataWithNotify(container.xCoord, container.yCoord, container.zCoord, color.ordinal(), 3);
+			container.getWorld().setBlockMetadataWithNotify(container.getPos(), color.ordinal(), 3);
 			container.scheduleRenderUpdate();
 		}
 	}
