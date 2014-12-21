@@ -8,6 +8,7 @@
  */
 package buildcraft.core;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.command.CommandBase;
@@ -43,7 +44,7 @@ public class CommandBuildCraft extends CommandBase {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public List getCommandAliases() {
-		return null;
+		return new LinkedList<String>();
 	}
 
 	@Override

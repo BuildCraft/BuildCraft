@@ -31,6 +31,7 @@ import buildcraft.commander.BlockRequester;
 import buildcraft.commander.BlockZonePlan;
 import buildcraft.commander.TileRequester;
 import buildcraft.commander.TileZonePlan;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
@@ -202,7 +203,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		CoreProxy.proxy.registerTileEntity(TileZonePlan.class, "net.minecraft.src.buildcraft.commander.TileZonePlan");
 		CoreProxy.proxy.registerTileEntity(TileRequester.class, "net.minecraft.src.buildcraft.commander.TileRequester");
 
-		BuilderAPI.schematicRegistry.registerSchematicBlock(laserBlock, SchematicRotate.class, new int[] {2, 5, 3, 4}, true);
+		BuilderAPI.schematicRegistry.registerSchematicBlock(laserBlock, SchematicRotate.class, BlockBuildCraft.FACING_PROP);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();

@@ -26,6 +26,7 @@ import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.JavaTools;
+import buildcraft.core.utils.Utils;
 
 public final class SchematicRegistry implements ISchematicRegistry {
 
@@ -99,12 +100,14 @@ public final class SchematicRegistry implements ISchematicRegistry {
 	
 	public void registerSchematicBlock(IBlockState state, Class<? extends Schematic> clazz, Object... params) {
 		Block block = state.getBlock();
-		if (block == null || Block.blockRegistry.getNameForObject(block) == null || "null".equals(Block.blockRegistry.getNameForObject(block))) {
+		if (block == null || Utils.getBlockName(block) == null || "null".equals(Utils.getBlockName(block))) {
 			BCLog.logger.warn("Builder: Mod tried to register block '" + (block != null ? block.getClass().getName() : "null") + "' schematic with a null name! Ignoring.");
 			return;
 		}
+
 		if (schematicBlocks.containsKey(toStringKey(state))) {
-			throw new RuntimeException("Builder: Block " + Block.blockRegistry.getNameForObject(block) + " is already associated with a schematic.");
+			BCLog.logger.warn("Builder: Block " + Utils.getBlockName(block) + " is already associated with a schematic. Ignoring...");
+			return;
 		}
 
 		schematicBlocks.put(toStringKey(state), new SchematicConstructor(clazz, params));
@@ -172,7 +175,7 @@ public final class SchematicRegistry implements ISchematicRegistry {
 
 	public boolean isAllowedForBuilding(IBlockState state) {
 		Block block = state.getBlock();
-		String name = (String) Block.blockRegistry.getNameForObject(block);
+		String name = Utils.getBlockName(block);
 		return isSupported(state) && !blocksForbidden.contains(name) && !modsForbidden.contains(name.split(":", 2)[0]);
 	}
 
@@ -200,6 +203,6 @@ public final class SchematicRegistry implements ISchematicRegistry {
 	}
 	
 	private String toStringKey(IBlockState state) {
-		return ((String) Block.blockRegistry.getNameForObject(state.getBlock())) + ":" + state.getBlock().getMetaFromState(state);
+		return (Utils.getBlockName(state.getBlock())) + ":" + state.getBlock().getMetaFromState(state);
 	}
 }

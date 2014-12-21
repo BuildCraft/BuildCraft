@@ -21,6 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -33,7 +34,7 @@ import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.utils.Utils;
 
 public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBlock {
-	public enum LaserTableType {
+	public enum LaserTableType implements IStringSerializable {
 		ASSEMBLY_TABLE,
 		ADVANCED_CRAFTING_TABLE,
 		INTEGRATION_TABLE,
@@ -42,14 +43,17 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
 		public static LaserTableType getType(IBlockState state) {
 			return (LaserTableType) state.getValue(TYPE);
 		}
+
+		@Override
+		public String getName() {
+			return name();
+		}
 	};
 
 	public static final PropertyEnum TYPE = PropertyEnum.create("type", LaserTableType.class);
 
 	public BlockLaserTable() {
-		super(Material.iron);
-
-		setDefaultState(getBlockState().getBaseState().withProperty(TYPE, LaserTableType.ASSEMBLY_TABLE));
+		super(Material.iron, new PropertyEnum[]{TYPE});
 		setBlockBounds(0, 0, 0, 1, 9F / 16F, 1);
 		setHardness(10F);
 		setCreativeTab(CreativeTabBuildCraft.BLOCKS.get());
@@ -103,18 +107,6 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
 	public int damageDropped(IBlockState state)
 	{
 		return this.getMetaFromState(state);
-	}
-
-
-	@Override
-	public int getMetaFromState(IBlockState state)
-	{
-		return LaserTableType.getType(state).ordinal();
-	}
-
-	@Override
-	public IBlockState getStateFromMeta(int meta) {
-		return this.getDefaultState().withProperty(TYPE, LaserTableType.values()[meta]);
 	}
 
 	@SuppressWarnings({"rawtypes", "unchecked"})

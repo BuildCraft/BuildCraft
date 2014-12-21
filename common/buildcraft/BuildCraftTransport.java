@@ -53,6 +53,7 @@ import buildcraft.core.PowerMode;
 import buildcraft.core.Version;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.Utils;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
@@ -329,30 +330,30 @@ public class BuildCraftTransport extends BuildCraftMod {
 			groupItemsTrigger = groupItemsTriggerProp.getInt();
 
 			Property facadeBlacklistProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "facade.blacklist", new String[] {
-					(String) Block.blockRegistry.getNameForObject(Blocks.bedrock),
-					(String) Block.blockRegistry.getNameForObject(Blocks.command_block),
-					(String) Block.blockRegistry.getNameForObject(Blocks.end_portal_frame),
-					(String) Block.blockRegistry.getNameForObject(Blocks.grass),
-					(String) Block.blockRegistry.getNameForObject(Blocks.leaves),
-					(String) Block.blockRegistry.getNameForObject(Blocks.leaves2),
-					(String) Block.blockRegistry.getNameForObject(Blocks.lit_pumpkin),
-					(String) Block.blockRegistry.getNameForObject(Blocks.lit_redstone_lamp),
-					(String) Block.blockRegistry.getNameForObject(Blocks.mob_spawner),
-					(String) Block.blockRegistry.getNameForObject(Blocks.monster_egg),
-					(String) Block.blockRegistry.getNameForObject(Blocks.redstone_lamp),
-					(String) Block.blockRegistry.getNameForObject(Blocks.double_stone_slab),
-					(String) Block.blockRegistry.getNameForObject(Blocks.double_wooden_slab),
-					(String) Block.blockRegistry.getNameForObject(Blocks.sponge),
-					JavaTools.surroundWithQuotes((String) Block.blockRegistry.getNameForObject(BuildCraftBuilders.architectBlock)),
-					JavaTools.surroundWithQuotes((String) Block.blockRegistry.getNameForObject(BuildCraftBuilders.builderBlock)),
-					JavaTools.surroundWithQuotes((String) Block.blockRegistry.getNameForObject(BuildCraftBuilders.fillerBlock)),
-					JavaTools.surroundWithQuotes((String) Block.blockRegistry.getNameForObject(BuildCraftBuilders.libraryBlock)),
-					JavaTools.surroundWithQuotes((String) Block.blockRegistry.getNameForObject(BuildCraftFactory.autoWorkbenchBlock)),
-					JavaTools.surroundWithQuotes((String) Block.blockRegistry.getNameForObject(BuildCraftFactory.floodGateBlock)),
-					JavaTools.surroundWithQuotes((String) Block.blockRegistry.getNameForObject(BuildCraftFactory.miningWellBlock)),
-					JavaTools.surroundWithQuotes((String) Block.blockRegistry.getNameForObject(BuildCraftFactory.pumpBlock)),
-					JavaTools.surroundWithQuotes((String) Block.blockRegistry.getNameForObject(BuildCraftFactory.quarryBlock)),
-					JavaTools.surroundWithQuotes((String) Block.blockRegistry.getNameForObject(BuildCraftTransport.filteredBufferBlock)),
+					Utils.getBlockName(Blocks.bedrock),
+					Utils.getBlockName(Blocks.command_block),
+					Utils.getBlockName(Blocks.end_portal_frame),
+					Utils.getBlockName(Blocks.grass),
+					Utils.getBlockName(Blocks.leaves),
+					Utils.getBlockName(Blocks.leaves2),
+					Utils.getBlockName(Blocks.lit_pumpkin),
+					Utils.getBlockName(Blocks.lit_redstone_lamp),
+					Utils.getBlockName(Blocks.mob_spawner),
+					Utils.getBlockName(Blocks.monster_egg),
+					Utils.getBlockName(Blocks.redstone_lamp),
+					Utils.getBlockName(Blocks.double_stone_slab),
+					Utils.getBlockName(Blocks.double_wooden_slab),
+					Utils.getBlockName(Blocks.sponge),
+					JavaTools.surroundWithQuotes(Utils.getBlockName(BuildCraftBuilders.architectBlock)),
+					JavaTools.surroundWithQuotes(Utils.getBlockName(BuildCraftBuilders.builderBlock)),
+					JavaTools.surroundWithQuotes(Utils.getBlockName(BuildCraftBuilders.fillerBlock)),
+					JavaTools.surroundWithQuotes(Utils.getBlockName(BuildCraftBuilders.libraryBlock)),
+					JavaTools.surroundWithQuotes(Utils.getBlockName(BuildCraftFactory.autoWorkbenchBlock)),
+					JavaTools.surroundWithQuotes(Utils.getBlockName(BuildCraftFactory.floodGateBlock)),
+					JavaTools.surroundWithQuotes(Utils.getBlockName(BuildCraftFactory.miningWellBlock)),
+					JavaTools.surroundWithQuotes(Utils.getBlockName(BuildCraftFactory.pumpBlock)),
+					JavaTools.surroundWithQuotes(Utils.getBlockName(BuildCraftFactory.quarryBlock)),
+					JavaTools.surroundWithQuotes(Utils.getBlockName(BuildCraftTransport.filteredBufferBlock)),
 			});
 
 			facadeBlacklistProp.comment = "Blocks listed here will not have facades created. The format is modid:blockname.\nFor mods with a | character, the value needs to be surrounded with quotes.";
@@ -520,7 +521,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 				writer.println("*** REGISTERED FACADES ***");
 				for (ItemStack stack : ItemFacade.allFacades) {
 					if (facadeItem.getBlocksForFacade(stack).length > 0) {
-						writer.println(Block.blockRegistry.getNameForObject(facadeItem.getBlocksForFacade(stack)[0]) + ":" + facadeItem.getMetaValuesForFacade(stack)[0]);
+						writer.println(Utils.getBlockName(facadeItem.getBlocksForFacade(stack)[0]) + ":" + facadeItem.getMetaValuesForFacade(stack)[0]);
 					}
 				}
 				writer.close();

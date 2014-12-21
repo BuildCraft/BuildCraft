@@ -8,13 +8,16 @@
  */
 package buildcraft.core;
 
+import java.util.Comparator;
 import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -39,17 +42,89 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	
 	public static final PropertyDirection FACING_PROP = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 	public static final PropertyEnum COLOR_PROP = PropertyEnum.create("color", EnumColor.class, EnumColor.VALUES);
-	
+
+	private final PropertyEnum[] properties;
+	private final int[] propertySizes;
+	private final BlockState myBlockState;
+
 	protected BlockBuildCraft(Material material) {
-		this(material, CreativeTabBuildCraft.BLOCKS);
+		this(material, CreativeTabBuildCraft.BLOCKS, new PropertyEnum[]{});
 	}
 
 	protected BlockBuildCraft(Material material, CreativeTabBuildCraft creativeTab) {
+		this(material, creativeTab, new PropertyEnum[]{});
+	}
+
+	protected BlockBuildCraft(Material material, PropertyEnum[] properties) {
+		this(material, CreativeTabBuildCraft.BLOCKS, properties);
+	}
+
+	protected BlockBuildCraft(Material material, CreativeTabBuildCraft creativeTab, PropertyEnum[] properties) {
 		super(material);
 		setCreativeTab(creativeTab.get());
 		setHardness(5F);
+
+		this.properties = properties;
+		this.propertySizes = new int[properties.length];
+
+		this.myBlockState = createBlockState();
+
+		IBlockState defaultState = getBlockState().getBaseState();
+		for (int i = 0; i < properties.length; i++) {
+			propertySizes[i] = properties[i].getAllowedValues().size();
+			Object o = properties[i].getAllowedValues().iterator().next();
+			defaultState = defaultState.withProperty(properties[i], (Comparable) o);
+		}
+		setDefaultState(defaultState);
 	}
 
+	@Override
+	public BlockState getBlockState()
+	{
+		return this.myBlockState;
+	}
+
+	@Override
+	protected BlockState createBlockState() {
+		if (properties == null) {
+			// Will be overridden later
+			return new BlockState(this, new IProperty[]{});
+		}
+
+		return new BlockState(this, properties);
+	}
+
+	@Override
+	public int getMetaFromState(IBlockState state) {
+		int mul = 1;
+		int val = 0;
+		for (int i = 0; i < properties.length; i++) {
+			val += ((Enum) state.getValue(properties[i])).ordinal() * mul;
+			mul *= propertySizes[i];
+		}
+		return val;
+	}
+
+	@Override
+	public IBlockState getStateFromMeta(int meta) {
+		IBlockState state = getDefaultState();
+		int mul = 1;
+		int prevMul = 1;
+		int val = meta;
+		for (int i = 0; i < properties.length; i++) {
+			mul *= propertySizes[i];
+			int enumVal = val % mul;
+			val -= enumVal;
+			val /= prevMul;
+			try {
+				state = state.withProperty(properties[i], ((Enum[]) properties[i].getValueClass().getMethod("values").invoke(null))[enumVal]);
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			prevMul = mul;
+		}
+		return state;
+	}
 
 	@Override
 	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack stack) {

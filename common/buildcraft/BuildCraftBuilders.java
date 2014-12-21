@@ -13,6 +13,13 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
+import net.minecraft.block.BlockChest;
+import net.minecraft.block.BlockDispenser;
+import net.minecraft.block.BlockDropper;
+import net.minecraft.block.BlockFenceGate;
+import net.minecraft.block.BlockFurnace;
+import net.minecraft.block.BlockLadder;
+import net.minecraft.block.BlockTrapDoor;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.item.EntityMinecartChest;
 import net.minecraft.entity.item.EntityMinecartEmpty;
@@ -117,6 +124,7 @@ import buildcraft.builders.statements.BuildersActionProvider;
 import buildcraft.builders.urbanism.BlockUrbanist;
 import buildcraft.builders.urbanism.TileUrbanist;
 import buildcraft.builders.urbanism.UrbanistToolsIconProvider;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
@@ -308,30 +316,34 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		schemes.registerSchematicBlock(Blocks.skull, SchematicSkull.class);
 
-		schemes.registerSchematicBlock(Blocks.ladder, SchematicRotate.class, new int[]{2, 5, 3, 4}, true);
-		schemes.registerSchematicBlock(Blocks.acacia_fence_gate, SchematicRotate.class, new int[]{0, 1, 2, 3}, true);
-		schemes.registerSchematicBlock(Blocks.birch_fence_gate, SchematicRotate.class, new int[]{0, 1, 2, 3}, true);
-		schemes.registerSchematicBlock(Blocks.dark_oak_fence_gate, SchematicRotate.class, new int[]{0, 1, 2, 3}, true);
-		schemes.registerSchematicBlock(Blocks.jungle_fence_gate, SchematicRotate.class, new int[]{0, 1, 2, 3}, true);
-		schemes.registerSchematicBlock(Blocks.oak_fence_gate, SchematicRotate.class, new int[]{0, 1, 2, 3}, true);
-		schemes.registerSchematicBlock(Blocks.spruce_fence_gate, SchematicRotate.class, new int[]{0, 1, 2, 3}, true);
-		schemes.registerSchematicBlock(Blocks.log, SchematicRotate.class, new int[]{8, 4, 8, 4}, true);
+		schemes.registerSchematicBlock(Blocks.ladder, SchematicRotate.class, BlockLadder.field_176382_a);
+		schemes.registerSchematicBlock(Blocks.acacia_fence_gate, SchematicRotate.class, BlockFenceGate.FACING);
+		schemes.registerSchematicBlock(Blocks.birch_fence_gate, SchematicRotate.class, BlockFenceGate.FACING);
+		schemes.registerSchematicBlock(Blocks.dark_oak_fence_gate, SchematicRotate.class, BlockFenceGate.FACING);
+		schemes.registerSchematicBlock(Blocks.jungle_fence_gate, SchematicRotate.class, BlockFenceGate.FACING);
+		schemes.registerSchematicBlock(Blocks.oak_fence_gate, SchematicRotate.class, BlockFenceGate.FACING);
+		schemes.registerSchematicBlock(Blocks.spruce_fence_gate, SchematicRotate.class, BlockFenceGate.FACING);
+
+		// TODO!
+
+		/*schemes.registerSchematicBlock(Blocks.log, SchematicRotate.class, new int[]{8, 4, 8, 4}, true);
 		schemes.registerSchematicBlock(Blocks.log2, SchematicRotate.class, new int[]{8, 4, 8, 4}, true);
 		schemes.registerSchematicBlock(Blocks.hay_block, SchematicRotate.class, new int[]{8, 4, 8, 4}, true);
 		schemes.registerSchematicBlock(Blocks.quartz_block, SchematicRotate.class, new int[]{4, 3, 4, 3}, true);
 		schemes.registerSchematicBlock(Blocks.hopper, SchematicRotate.class, new int[]{2, 5, 3, 4}, true);
 		schemes.registerSchematicBlock(Blocks.anvil, SchematicRotate.class, new int[]{0, 1, 2, 3}, true);
 
-		schemes.registerSchematicBlock(Blocks.furnace, SchematicRotate.class, new int[]{2, 5, 3, 4}, true);
-		schemes.registerSchematicBlock(Blocks.lit_furnace, SchematicRotate.class, new int[]{2, 5, 3, 4}, true);
-		schemes.registerSchematicBlock(Blocks.chest, SchematicRotate.class, new int[]{2, 5, 3, 4}, true);
-		schemes.registerSchematicBlock(Blocks.dispenser, SchematicRotate.class, new int[]{2, 5, 3, 4}, true);
-		schemes.registerSchematicBlock(Blocks.dropper, SchematicRotate.class, new int[]{2, 5, 3, 4}, true);
+		schemes.registerSchematicBlock(Blocks.vine, SchematicRotate.class, new int[]{1, 4, 8, 2}, false);*/
+		schemes.registerSchematicBlock(Blocks.trapdoor, SchematicRotate.class, BlockTrapDoor.FACING_PROP);
+
+		schemes.registerSchematicBlock(Blocks.furnace, SchematicRotate.class, BlockFurnace.FACING);
+		schemes.registerSchematicBlock(Blocks.lit_furnace, SchematicRotate.class, BlockFurnace.FACING);
+		schemes.registerSchematicBlock(Blocks.chest, SchematicRotate.class, BlockChest.FACING_PROP);
+		schemes.registerSchematicBlock(Blocks.dispenser, SchematicRotate.class, BlockDispenser.FACING);
+		schemes.registerSchematicBlock(Blocks.dropper, SchematicRotate.class, BlockDropper.FACING);
 
 		schemes.registerSchematicBlock(Blocks.ender_chest, SchematicEnderChest.class);
 
-		schemes.registerSchematicBlock(Blocks.vine, SchematicRotate.class, new int[]{1, 4, 8, 2}, false);
-		schemes.registerSchematicBlock(Blocks.trapdoor, SchematicRotate.class, new int[]{0, 1, 2, 3}, false);
 
 		schemes.registerSchematicBlock(Blocks.wooden_button, SchematicLever.class);
 		schemes.registerSchematicBlock(Blocks.stone_button, SchematicLever.class);
@@ -437,8 +449,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		// BuildCraft blocks
 
-		schemes.registerSchematicBlock(architectBlock, SchematicRotate.class, new int[]{2, 5, 3, 4}, true);
-		schemes.registerSchematicBlock(builderBlock, SchematicRotate.class, new int[]{2, 5, 3, 4}, true);
+		schemes.registerSchematicBlock(architectBlock, SchematicRotate.class, BlockBuildCraft.FACING_PROP);
+		schemes.registerSchematicBlock(builderBlock, SchematicRotate.class, BlockBuildCraft.FACING_PROP);
 
 		schemes.registerSchematicBlock(markerBlock, SchematicWallSide.class);
 		schemes.registerSchematicBlock(pathMarkerBlock, SchematicWallSide.class);

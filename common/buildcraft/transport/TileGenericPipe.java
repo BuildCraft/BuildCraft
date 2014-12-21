@@ -165,34 +165,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				IPipePluggable pluggable = null;
 				if (nbt.hasKey("facadeState[" + i + "]")) {
 					pluggable = new ItemFacade.FacadePluggable(FacadeState.readArray(nbt.getTagList("facadeState[" + i + "]", Constants.NBT.TAG_COMPOUND)));
-				} else {
-					// Migration support for 5.0.x and 6.0.x
-					if (nbt.hasKey("facadeBlocks[" + i + "]")) {
-						// 5.0.x
-						Block block = (Block) Block.blockRegistry.getObjectById(nbt.getInteger("facadeBlocks[" + i + "]"));
-						int blockId = nbt.getInteger("facadeBlocks[" + i + "]");
-
-						if (blockId != 0) {
-							int metadata = nbt.getInteger("facadeMeta[" + i + "]");
-							pluggable = new ItemFacade.FacadePluggable(new FacadeState[]{FacadeState.create(block, metadata)});
-						}
-					} else if (nbt.hasKey("facadeBlocksStr[" + i + "][0]")) {
-						// 6.0.x
-						FacadeState mainState = FacadeState.create(
-								(Block) Block.blockRegistry.getObject(nbt.getString("facadeBlocksStr[" + i + "][0]")),
-								nbt.getInteger("facadeMeta[" + i + "][0]")
-						);
-						if (nbt.hasKey("facadeBlocksStr[" + i + "][1]")) {
-							FacadeState phasedState = FacadeState.create(
-									(Block) Block.blockRegistry.getObject(nbt.getString("facadeBlocksStr[" + i + "][1]")),
-									nbt.getInteger("facadeMeta[" + i + "][1]"),
-									PipeWire.fromOrdinal(nbt.getInteger("facadeWires[" + i + "]"))
-							);
-							pluggable = new ItemFacade.FacadePluggable(new FacadeState[]{mainState, phasedState});
-						} else {
-							pluggable = new ItemFacade.FacadePluggable(new FacadeState[]{mainState});
-						}
-					}
 				}
 
 				if (nbt.getBoolean("plug[" + i + "]")) {

@@ -11,13 +11,14 @@ package buildcraft.api.core;
 import java.util.Locale;
 import java.util.Random;
 
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public enum EnumColor {
+public enum EnumColor implements IStringSerializable {
 
 	BLACK,
 	RED,

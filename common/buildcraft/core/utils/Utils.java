@@ -35,6 +35,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.util.EnumFacing;
@@ -575,7 +576,23 @@ public final class Utils {
 		}
 		return false;
 	}
-	
+
+	public static String getBlockName(Block block) {
+		ResourceLocation location = ((ResourceLocation) Block.blockRegistry.getNameForObject(block));
+		if (location == null) {
+			return null;
+		}
+		return location.getResourceDomain() + ":" + location.getResourcePath();
+	}
+
+	public static String getItemName(Item item) {
+		ResourceLocation location = ((ResourceLocation) Item.itemRegistry.getNameForObject(item));
+		if (location == null) {
+			return null;
+		}
+		return location.getResourceDomain() + ":" + location.getResourcePath();
+	}
+
 	// WORLD HELPER
 	
     /**

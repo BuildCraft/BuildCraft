@@ -10,6 +10,7 @@ package buildcraft.factory;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
@@ -31,7 +32,7 @@ public class BlockMiningWell extends BlockBuildCraft {
 	//IIcon textureFront, textureSides, textureBack, textureTop;
 
 	public BlockMiningWell() {
-		super(Material.ground);
+		super(Material.ground, new PropertyEnum[]{FACING_PROP});
 
 		setHardness(5F);
 		setResistance(10F);

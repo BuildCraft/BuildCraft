@@ -31,6 +31,7 @@ import buildcraft.api.gates.IGateExpansion;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.IntegrationRecipeManager;
 import buildcraft.core.recipes.RefineryRecipeManager;
+import buildcraft.core.utils.Utils;
 import buildcraft.energy.worldgen.OilPopulate;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.recipes.GateExpansionRecipe;
@@ -217,7 +218,7 @@ public final class InterModComms {
 
 				Block block = Block.getBlockFromItem(modItemStack.getItem());
 				if (block != null) {
-					String blockName = (String) Block.blockRegistry.getNameForObject(block);
+					String blockName = Utils.getBlockName(block);
 					ItemFacade.blacklistFacade(blockName);
 				}
 			} else {

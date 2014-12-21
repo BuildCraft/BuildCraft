@@ -32,7 +32,6 @@ public abstract class BCStatement implements IStatement {
 		for (String tag : uniqueTag) {
 			StatementManager.statements.put(tag, this);
 		}
-		this.icon = new SheetIcon(STATEMENT_ICONS, getSheetLocation() & 15, getSheetLocation() >> 4);
 	}
 
 	@Override
@@ -42,6 +41,9 @@ public abstract class BCStatement implements IStatement {
 
 	@Override
 	public SheetIcon getIcon() {
+		if (icon == null) {
+			this.icon = new SheetIcon(STATEMENT_ICONS, getSheetLocation() & 15, getSheetLocation() >> 4);
+		}
 		return icon;
 	}
 

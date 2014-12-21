@@ -41,6 +41,7 @@ import buildcraft.api.core.ICoreProxy;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.ItemBlockBuildCraft;
 import buildcraft.core.LaserKind;
+import buildcraft.core.utils.Utils;
 
 public class CoreProxy implements ICoreProxy {
 
@@ -111,7 +112,7 @@ public class CoreProxy implements ICoreProxy {
 
 	@SuppressWarnings("unchecked")
 	public void addCraftingRecipe(ItemStack result, Object... recipe) {
-		String name = (String) Item.itemRegistry.getNameForObject(result.getItem());
+		String name = Utils.getItemName(result.getItem());
 
 		if (BuildCraftCore.recipesBlacklist.contains(name)) {
 			return;
@@ -121,7 +122,7 @@ public class CoreProxy implements ICoreProxy {
 	}
 
 	public void addShapelessRecipe(ItemStack result, Object... recipe) {
-		String name = (String) Item.itemRegistry.getNameForObject(result.getItem());
+		String name = (String) Utils.getItemName(result.getItem());
 
 		if (BuildCraftCore.recipesBlacklist.contains(name)) {
 			return;

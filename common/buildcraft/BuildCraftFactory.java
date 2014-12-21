@@ -187,7 +187,6 @@ public class BuildCraftFactory extends BuildCraftMod {
 			BuildCraftCore.mainConfiguration.save();
 		}
 
-
 		miningWellBlock = new BlockMiningWell();
 		CoreProxy.proxy.registerBlock(miningWellBlock.setUnlocalizedName("miningWellBlock"));
 

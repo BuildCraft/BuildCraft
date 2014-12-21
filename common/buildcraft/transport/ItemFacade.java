@@ -46,6 +46,7 @@ import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.core.utils.Utils;
 
 public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 	public static class FacadeState {
@@ -89,7 +90,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 
 		public void writeToNBT(NBTTagCompound nbt) {
 			if (block != null) {
-				nbt.setString("block", (String) Block.blockRegistry.getNameForObject(block));
+				nbt.setString("block", Utils.getBlockName(block));
 			}
 			nbt.setByte("metadata", (byte) metadata);
 			if (wire != null) {
@@ -282,7 +283,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 	}
 
 	private static boolean isBlockBlacklisted(Block block) {
-		String blockName = (String) Block.blockRegistry.getNameForObject(block);
+		String blockName = Utils.getBlockName(block);
 
 		if (blockName == null) {
 			return true;
@@ -344,10 +345,10 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 		if (nbt.hasKey("id")) {
 			block = (Block) Block.blockRegistry.getObjectById(nbt.getInteger("id"));
 		} else if (nbt.hasKey("name")) {
-			block = (Block) Block.blockRegistry.getObject(nbt.getString("name"));
+			block = (Block) Block.getBlockFromName(nbt.getString("name"));
 		}
 		if (nbt.hasKey("name_alt")) {
-			blockAlt = (Block) Block.blockRegistry.getObject(nbt.getString("name_alt"));
+			blockAlt = (Block) Block.getBlockFromName(nbt.getString("name_alt"));
 		}
 		if (nbt.hasKey("meta")) {
 			metadata = nbt.getInteger("meta");
@@ -425,7 +426,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 			return;
 		}
 
-		String recipeId = "buildcraft:facade{" + Block.blockRegistry.getNameForObject(block) + "#"
+		String recipeId = "buildcraft:facade{" + Utils.getBlockName(block) + "#"
 				+ itemStack.getItemDamage() + "}";
 
 		ItemStack facade = getFacadeForBlock(block, itemStack.getItemDamage());
