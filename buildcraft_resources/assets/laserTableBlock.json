@@ -1,0 +1,8 @@
+{
+    "variants": {
+        "type=assembly_table": { "model": "buildcraftsilicon:assemblyTable" },
+        "type=advanced_crafting_table": { "model": "buildcraftsilicon:advWorkbenchTable" },
+        "type=integration_table": { "model": "buildcraftsilicon:integrationTable" },
+        "type=charging_table": { "model": "buildcraftsilicon:chargingTable" }
+    }
+}

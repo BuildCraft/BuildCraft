@@ -1,0 +1,8 @@
+{
+    "parent": "buildcraftsilicon:block/laserTable",
+    "textures": {
+        "top": "buildcraft:blocks/assemblytable_top",
+        "side": "buildcraft:blocks/assemblytable_side",
+        "bottom": "buildcraft:blocks/assemblytable_bottom"
+    }
+}

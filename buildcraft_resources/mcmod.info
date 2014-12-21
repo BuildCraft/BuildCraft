@@ -1,6 +1,6 @@
 [
 {
-  "modid": "BuildCraft|Core",
+  "modid": "BuildCraftCore",
   "name": "BuildCraft",
   "version": "$version",
   "mcversion": "$mcversion",
@@ -17,7 +17,7 @@
   ]
 },
 {
-  "modid": "BuildCraft|Builders",
+  "modid": "BuildCraftBuilders",
   "name": "BC Builders",
   "version": "$version",
   "mcversion": "$mcversion",
@@ -27,14 +27,14 @@
   "url": "http://www.mod-buildcraft.com/",
   "updateUrl": "",
   "authorList": [ "SpaceToad", "BuildCraft Team" ],
-  "parent": "BuildCraft|Core",
+  "parent": "BuildCraftCore",
   "screenshots": [],
   "dependencies": [
      "mod_MinecraftForge"
   ]
 },
 {
-  "modid": "BuildCraft|Energy",
+  "modid": "BuildCraftEnergy",
   "name": "BC Energy",
   "version": "$version",
   "mcversion": "$mcversion",
@@ -44,14 +44,14 @@
   "url": "http://www.mod-buildcraft.com/",
   "updateUrl": "",
   "authorList": [ "SpaceToad", "BuildCraft Team" ],
-  "parent": "BuildCraft|Core",
+  "parent": "BuildCraftCore",
   "screenshots": [],
   "dependencies": [
      "mod_MinecraftForge"
   ]
 },
 {
-  "modid": "BuildCraft|Factory",
+  "modid": "BuildCraftFactory",
   "name": "BC Factory",
   "version": "$version",
   "mcversion": "$mcversion",
@@ -61,14 +61,14 @@
   "url": "http://www.mod-buildcraft.com/",
   "updateUrl": "",
   "authorList": [ "SpaceToad", "BuildCraft Team" ],
-  "parent": "BuildCraft|Core",
+  "parent": "BuildCraftCore",
   "screenshots": [],
   "dependencies": [
      "mod_MinecraftForge"
   ]
 },
 {
-  "modid": "BuildCraft|Silicon",
+  "modid": "BuildCraftSilicon",
   "name": "BC Silicon",
   "version": "$version",
   "mcversion": "$mcversion",
@@ -78,14 +78,14 @@
   "url": "http://www.mod-buildcraft.com/",
   "updateUrl": "",
   "authorList": [ "SpaceToad", "BuildCraft Team" ],
-  "parent": "BuildCraft|Core",
+  "parent": "BuildCraftCore",
   "screenshots": [],
   "dependencies": [
      "mod_MinecraftForge"
   ]
 },
 {
-  "modid": "BuildCraft|Transport",
+  "modid": "BuildCraftTransport",
   "name": "BC Transport",
   "version": "$version",
   "mcversion": "$mcversion",
@@ -95,7 +95,7 @@
   "url": "http://www.mod-buildcraft.com/",
   "updateUrl": "",
   "authorList": [ "SpaceToad", "BuildCraft Team" ],
-  "parent": "BuildCraft|Core",
+  "parent": "BuildCraftCore",
   "screenshots": [],
   "dependencies": [
      "mod_MinecraftForge"

@@ -90,10 +90,10 @@ import buildcraft.silicon.statements.RobotsActionProvider;
 import buildcraft.silicon.statements.RobotsTriggerProvider;
 import buildcraft.silicon.statements.TriggerRobotSleep;
 
-@Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon", dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
+@Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraftSilicon", dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
 public class BuildCraftSilicon extends BuildCraftMod {
 
-	@Mod.Instance("BuildCraft|Silicon")
+	@Mod.Instance("BuildCraftSilicon")
 	public static BuildCraftSilicon instance;
 
 	public static ItemRedstoneChipset redstoneChipset;
@@ -337,18 +337,5 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				TileAdvancedCraftingTable.class.getCanonicalName());
 		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
 				TileIntegrationTable.class.getCanonicalName());
-	}
-
-	@Mod.EventHandler
-	public void remap(FMLMissingMappingsEvent event) {
-		for (FMLMissingMappingsEvent.MissingMapping mapping: event.get()) {
-			if (mapping.name.equals("BuildCraft|Silicon:null")) {
-				if (mapping.type == GameRegistry.Type.ITEM) {
-					mapping.remap(Item.getItemFromBlock(assemblyTableBlock));
-				} else {
-					mapping.remap(assemblyTableBlock);
-				}
-			}
-		}
 	}
 }

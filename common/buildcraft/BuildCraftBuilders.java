@@ -143,10 +143,10 @@ import buildcraft.core.builders.patterns.PatternPyramid;
 import buildcraft.core.builders.patterns.PatternStairs;
 import buildcraft.core.proxy.CoreProxy;
 
-@Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
+@Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraftBuilders", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftBuilders extends BuildCraftMod {
 
-	@Mod.Instance("BuildCraft|Builders")
+	@Mod.Instance("BuildCraftBuilders")
 	public static BuildCraftBuilders instance;
 
 	public static final char BPT_SEP_CHARACTER = '-';
@@ -623,18 +623,5 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		//		TilePathMarker.class.getCanonicalName());
 		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
 				TileBlueprintLibrary.class.getCanonicalName());
-	}
-
-	@Mod.EventHandler
-	public void remap(FMLMissingMappingsEvent event) {
-		for (FMLMissingMappingsEvent.MissingMapping mapping: event.get()) {
-			if (mapping.name.equals("BuildCraft|Builders:null")) {
-				if (mapping.type == GameRegistry.Type.ITEM) {
-					mapping.remap(Item.getItemFromBlock(buildToolBlock));
-				} else {
-					mapping.remap(buildToolBlock);
-				}
-			}
-		}
 	}
 }

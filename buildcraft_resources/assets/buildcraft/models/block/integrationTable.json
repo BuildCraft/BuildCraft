@@ -1,8 +1,0 @@
-{
-    "parent": "block/laserTable",
-    "textures": {
-        "top": "blocks/integrationtable_top",
-        "side": "blocks/integrationtable_side",
-        "bottom": "blocks/integrationtable_bottom"
-    }
-}

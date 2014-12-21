@@ -1,0 +1,11 @@
+{
+    "parent": "minecraft:block/cube_all",
+    "textures": {
+        "up": "buildcraft:blocks/autoWorkbench_top",
+        "down": "buildcraft:blocks/autoWorkbench_top",
+        "north": "buildcraft:blocks/autoWorkbench_side",
+        "east": "buildcraft:blocks/autoWorkbench_side",
+        "south": "buildcraft:blocks/autoWorkbench_side",
+        "west": "buildcraft:blocks/autoWorkbench_side"
+    }
+}

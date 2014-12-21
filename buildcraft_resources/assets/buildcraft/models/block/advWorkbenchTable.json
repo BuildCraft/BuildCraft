@@ -1,8 +1,0 @@
-{
-    "parent": "block/laserTable",
-    "textures": {
-        "top": "blocks/advworkbenchtable_top",
-        "side": "blocks/advworkbenchtable_side",
-        "bottom": "blocks/advworkbenchtable_bottom"
-    }
-}

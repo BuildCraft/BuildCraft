@@ -124,10 +124,10 @@ import buildcraft.core.utils.WorldPropertyIsWood;
 import buildcraft.energy.fuels.CoolantManager;
 import buildcraft.energy.fuels.FuelManager;
 
-@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.8]", dependencies = "required-after:Forge@[10.13.0.1207,)")
+@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraftCore", acceptedMinecraftVersions = "[1.8]", dependencies = "required-after:Forge@[10.13.0.1207,)")
 public class BuildCraftCore extends BuildCraftMod {
 
-	@Mod.Instance("BuildCraft|Core")
+	@Mod.Instance("BuildCraftCore")
 	public static BuildCraftCore instance;
 
 	public static final boolean NONRELEASED_BLOCKS = true;
@@ -360,8 +360,8 @@ public class BuildCraftCore extends BuildCraftMod {
 			loadRecipes();
 		}
 		EntityRegistry.registerModEntity(EntityRobot.class, "bcRobot", EntityIds.ROBOT, instance, 50, 1, true);
-		EntityList.stringToClassMapping.remove("BuildCraft|Core.bcLaser");
-		EntityList.stringToClassMapping.remove("BuildCraft|Core.bcEnergyLaser");
+		EntityList.stringToClassMapping.remove("BuildCraftCore.bcLaser");
+		EntityList.stringToClassMapping.remove("BuildCraftCore.bcEnergyLaser");
 
 		FMLCommonHandler.instance().bus().register(new CraftingHandler());
 

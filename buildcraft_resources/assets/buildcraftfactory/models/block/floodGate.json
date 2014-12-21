@@ -1,0 +1,11 @@
+{
+    "parent": "minecraft:block/cube_all",
+    "textures": {
+        "up": "buildcraft:blocks/floodGate_top",
+        "down": "buildcraft:blocks/floodGate_bottom",
+        "north": "buildcraft:blocks/floodGate_side",
+        "east": "buildcraft:blocks/floodGate_side",
+        "south": "buildcraft:blocks/floodGate_side",
+        "west": "buildcraft:blocks/floodGate_side"
+    }
+}

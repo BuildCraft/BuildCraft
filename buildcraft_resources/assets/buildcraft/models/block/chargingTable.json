@@ -1,8 +1,0 @@
-{
-    "parent": "block/laserTable",
-    "textures": {
-        "top": "blocks/chargingtable_top",
-        "side": "blocks/chargingtable_side",
-        "bottom": "blocks/chargingtable_bottom"
-    }
-}

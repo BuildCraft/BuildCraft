@@ -146,10 +146,10 @@ import buildcraft.transport.stripes.StripesHandlerBucket;
 import buildcraft.transport.stripes.StripesHandlerRightClick;
 import buildcraft.transport.stripes.StripesHandlerShears;
 
-@Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
+@Mod(version = Version.VERSION, modid = "BuildCraftTransport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTransport extends BuildCraftMod {
 
-	@Mod.Instance("BuildCraft|Transport")
+	@Mod.Instance("BuildCraftTransport")
 	public static BuildCraftTransport instance;
 
 	public static float pipeDurability;
@@ -562,7 +562,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 				'I', "ingotIron",
 				'C', Chipset.GOLD.getStack());
 
-		if (Loader.isModLoaded("BuildCraft|Silicon")) {
+		if (Loader.isModLoaded("BuildCraftSilicon")) {
 			GameRegistry.addShapelessRecipe(new ItemStack(gateCopier, 1), new ItemStack(BuildCraftCore.wrenchItem), Chipset.RED.getStack(1));
 					
 			// PIPE WIRE

@@ -1,8 +1,0 @@
-{
-    "variants": {
-        "type=assembly_table": { "model": "assemblyTable" },
-        "type=advanced_crafting_table": { "model": "advWorkbenchTable" },
-        "type=integration_table": { "model": "integrationTable" },
-        "type=charging_table": { "model": "chargingTable" }
-    }
-}

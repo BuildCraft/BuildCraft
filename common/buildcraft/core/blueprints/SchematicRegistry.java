@@ -106,7 +106,7 @@ public final class SchematicRegistry implements ISchematicRegistry {
 		}
 
 		if (schematicBlocks.containsKey(toStringKey(state))) {
-			BCLog.logger.warn("Builder: Block " + Utils.getBlockName(block) + " is already associated with a schematic. Ignoring...");
+			//BCLog.logger.warn("Builder: Block " + Utils.getBlockName(block) + " is already associated with a schematic. Ignoring...");
 			return;
 		}
 

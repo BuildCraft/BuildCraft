@@ -74,10 +74,10 @@ import buildcraft.energy.worldgen.BiomeInitializer;
 import buildcraft.energy.worldgen.OilPopulate;
 import buildcraft.transport.network.PacketHandlerTransport;
 
-@Mod(name = "BuildCraft Energy", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Energy", dependencies = DefaultProps.DEPENDENCY_CORE)
+@Mod(name = "BuildCraft Energy", version = Version.VERSION, useMetadata = false, modid = "BuildCraftEnergy", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftEnergy extends BuildCraftMod {
 
-	@Mod.Instance("BuildCraft|Energy")
+	@Mod.Instance("BuildCraftEnergy")
 	public static BuildCraftEnergy instance;
 
 	public static final int ENERGY_REMOVE_BLOCK = 25;
