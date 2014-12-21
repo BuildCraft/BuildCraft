@@ -6,32 +6,31 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.transport;
+package buildcraft.transport.pluggable;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
+import cofh.api.energy.IEnergyHandler;
 import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.IPipeContainer;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.ItemBuildCraft;
 
-public class ItemPlug extends ItemBuildCraft implements IPipePluggableItem {
+public class ItemPowerAdapter extends ItemBuildCraft implements IPipePluggableItem {
 
-	public ItemPlug() {
+	public ItemPowerAdapter() {
 		super();
 	}
 
 	@Override
 	public String getUnlocalizedName(ItemStack itemstack) {
-		return "item.PipePlug";
+		return "item.PipePowerAdapter";
 	}
 
 	@Override
@@ -42,7 +41,7 @@ public class ItemPlug extends ItemBuildCraft implements IPipePluggableItem {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister par1IconRegister) {
-	    // NOOP
+		this.itemIcon = par1IconRegister.registerIcon("buildcraft:pipePowerAdapter");
 	}
 
 	@Override
@@ -53,6 +52,10 @@ public class ItemPlug extends ItemBuildCraft implements IPipePluggableItem {
 
 	@Override
 	public PipePluggable createPipePluggable(IPipe pipe, ForgeDirection side, ItemStack stack) {
-		return new PlugPluggable();
+		if (pipe.getTile().getPipeType() != IPipeContainer.PipeType.POWER && pipe instanceof IEnergyHandler) {
+			return new PowerAdapterPluggable();
+		} else {
+			return null;
+		}
 	}
 }

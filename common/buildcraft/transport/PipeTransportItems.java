@@ -35,6 +35,7 @@ import buildcraft.core.utils.BlockUtils;
 import buildcraft.core.utils.MathUtils;
 import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
 import buildcraft.transport.network.PacketPipeTransportTraveler;
+import buildcraft.transport.pipes.events.PipeEvent;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
 
@@ -52,7 +53,7 @@ public class PipeTransportItems extends PipeTransport {
 
 	public void readjustSpeed(TravelingItem item) {
 		PipeEventItem.AdjustSpeed event = new PipeEventItem.AdjustSpeed(item);
-		container.pipe.eventBus.handleEvent(event);
+		container.pipe.eventBus.handleEvent(PipeEventItem.AdjustSpeed.class, event);
 		if (!event.handled) {
 			defaultReajustSpeed(item);
 		}
@@ -102,7 +103,7 @@ public class PipeTransportItems extends PipeTransport {
 		}
 
 		PipeEventItem.Entered event = new PipeEventItem.Entered(item);
-		container.pipe.eventBus.handleEvent(event);
+		container.pipe.eventBus.handleEvent(PipeEventItem.Entered.class, event);
 		if (event.cancelled) {
 			return;
 		}
@@ -165,7 +166,7 @@ public class PipeTransportItems extends PipeTransport {
 		}
 
 		PipeEventItem.Entered event = new PipeEventItem.Entered(item);
-		container.pipe.eventBus.handleEvent(event);
+		container.pipe.eventBus.handleEvent(PipeEventItem.Entered.class, event);
 		if (event.cancelled) {
 			return;
 		}
@@ -206,7 +207,7 @@ public class PipeTransportItems extends PipeTransport {
 		}
 
 		PipeEventItem.FindDest event = new PipeEventItem.FindDest(item, result);
-		container.pipe.eventBus.handleEvent(event);
+		container.pipe.eventBus.handleEvent(PipeEventItem.FindDest.class, event);
 
 		if (allowBouncing && result.isEmpty()) {
 			if (canReceivePipeObjects(item.input.getOpposite(), item)) {
@@ -276,14 +277,14 @@ public class PipeTransportItems extends PipeTransport {
 					}
 				} else {
 					PipeEventItem.ReachedCenter event = new PipeEventItem.ReachedCenter(item);
-					container.pipe.eventBus.handleEvent(event);
+					container.pipe.eventBus.handleEvent(PipeEventItem.ReachedCenter.class, event);
 				}
 
 			} else if (!item.toCenter && endReached(item)) {
 				TileEntity tile = container.getTile(item.output);
 
 				PipeEventItem.ReachedEnd event = new PipeEventItem.ReachedEnd(item, tile);
-				container.pipe.eventBus.handleEvent(event);
+				container.pipe.eventBus.handleEvent(PipeEventItem.ReachedEnd.class, event);
 				boolean handleItem = !event.handled;
 
 				// If the item has not been scheduled to removal by the hook
@@ -333,7 +334,7 @@ public class PipeTransportItems extends PipeTransport {
 		}
 
 		PipeEventItem.DropItem event = new PipeEventItem.DropItem(item, item.toEntityItem());
-		container.pipe.eventBus.handleEvent(event);
+		container.pipe.eventBus.handleEvent(PipeEventItem.DropItem.class, event);
 
 		if (event.entity == null) {
 			return;

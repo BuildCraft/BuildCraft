@@ -52,9 +52,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 			if (!(tile instanceof IFluidHandler)) {
 				return false;
 			}
-			if (!PipeManager.canExtractFluids(pipe, tile.getWorldObj (), tile.xCoord, tile.yCoord, tile.zCoord)) {
-				return false;
-			}
+
 			return true;
 		}
 	    };
@@ -106,11 +104,6 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 					.getOrientation(meta));
 
 			if (tile instanceof IFluidHandler) {
-				if (!PipeManager.canExtractFluids(this, tile.getWorldObj(),
-						tile.xCoord, tile.yCoord, tile.zCoord)) {
-					return;
-				}
-
 				if (liquidToExtract <= FluidContainerRegistry.BUCKET_VOLUME) {
 					liquidToExtract += FluidContainerRegistry.BUCKET_VOLUME;
 				}

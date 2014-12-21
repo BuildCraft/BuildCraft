@@ -69,6 +69,7 @@ import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GatePluggable;
+import buildcraft.transport.pluggable.RobotStationPluggable;
 import buildcraft.transport.render.PipeRendererWorld;
 
 public class BlockGenericPipe extends BlockBuildCraft {

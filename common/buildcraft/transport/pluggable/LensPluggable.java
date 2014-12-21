@@ -1,6 +1,5 @@
-package buildcraft.transport;
+package buildcraft.transport.pluggable;
 
-import java.util.HashSet;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.ItemStack;
@@ -18,6 +17,8 @@ import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.utils.ColorUtils;
 import buildcraft.core.utils.MatrixTranformations;
+import buildcraft.transport.PipeIconProvider;
+import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.render.FakeBlock;
 
@@ -25,8 +26,8 @@ public class LensPluggable extends PipePluggable {
 	@SideOnly(Side.CLIENT)
 	public final LensPluggableRenderer RENDERER = new LensPluggableRenderer();
 
-	protected int color;
-	protected boolean isFilter;
+	public int color;
+	public boolean isFilter;
 	protected IPipeContainer container;
 	private ForgeDirection side;
 
@@ -83,8 +84,14 @@ public class LensPluggable extends PipePluggable {
 
 	@Override
 	public void validate(IPipeContainer pipe, ForgeDirection direction) {
-		side = direction;
-		container = pipe;
+		this.container = pipe;
+		this.side = direction;
+	}
+
+	@Override
+	public void invalidate() {
+		this.container = null;
+		this.side = ForgeDirection.UNKNOWN;
 	}
 
 	@Override

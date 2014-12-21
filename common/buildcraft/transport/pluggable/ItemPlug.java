@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.transport;
+package buildcraft.transport.pluggable;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,18 +21,17 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 
-public class ItemRobotStation extends ItemBuildCraft implements IPipePluggableItem {
+public class ItemPlug extends ItemBuildCraft implements IPipePluggableItem {
 
-	public ItemRobotStation() {
-		super(CreativeTabBuildCraft.ITEMS);
+	public ItemPlug() {
+		super();
 	}
 
 	@Override
 	public String getUnlocalizedName(ItemStack itemstack) {
-		return "item.PipeRobotStation";
+		return "item.PipePlug";
 	}
 
 	@Override
@@ -48,12 +47,12 @@ public class ItemRobotStation extends ItemBuildCraft implements IPipePluggableIt
 
 	@Override
     @SideOnly(Side.CLIENT)
-    public int getSpriteNumber() {
+	public int getSpriteNumber() {
         return 0;
     }
 
 	@Override
 	public PipePluggable createPipePluggable(IPipe pipe, ForgeDirection side, ItemStack stack) {
-		return new RobotStationPluggable();
+		return new PlugPluggable();
 	}
 }

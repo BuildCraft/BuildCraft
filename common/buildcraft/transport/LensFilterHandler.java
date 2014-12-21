@@ -1,11 +1,13 @@
 package buildcraft.transport;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeContainer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.transport.pipes.events.PipeEventItem;
+import buildcraft.transport.pluggable.LensPluggable;
 
 /**
 * Created by asie on 12/18/14.
@@ -19,8 +21,8 @@ public class LensFilterHandler {
 
 	public void eventHandler(PipeEventItem.FindDest event) {
 		IPipeContainer container = pipe.getTile();
-		HashSet<ForgeDirection> wrongColored = new HashSet<ForgeDirection>();
-		HashSet<ForgeDirection> anyColored = new HashSet<ForgeDirection>();
+		LinkedList<ForgeDirection> correctColored = new LinkedList<ForgeDirection>();
+		LinkedList<ForgeDirection> notColored = new LinkedList<ForgeDirection>();
 		boolean encounteredColor = false;
 		int myColor = event.item.color == null ? -1 : event.item.color.ordinal();
 
@@ -43,7 +45,6 @@ public class LensFilterHandler {
 					int otherColor = ((LensPluggable) pluggable).color;
 					// Check if colors conflict - if so, the side is unpassable
 					if (sideColor >= 0 && otherColor != sideColor) {
-						wrongColored.add(dir);
 						continue;
 					} else {
 						sideColor = otherColor;
@@ -53,17 +54,15 @@ public class LensFilterHandler {
 
 			if (myColor == sideColor) {
 				encounteredColor = true;
-			} else {
-				wrongColored.add(dir);
+				correctColored.add(dir);
 			}
 
-			if (sideColor != -1) {
-				anyColored.add(dir);
+			if (sideColor == -1) {
+				notColored.add(dir);
 			}
 		}
 
-		for (ForgeDirection dir : (encounteredColor ? wrongColored : anyColored)) {
-			event.destinations.remove(dir);
-		}
+		event.destinations.clear();
+		event.destinations.addAll(encounteredColor ? correctColored : notColored);
 	}
 }

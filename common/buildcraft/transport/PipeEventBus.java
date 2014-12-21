@@ -79,8 +79,8 @@ public class PipeEventBus {
 		handlerMethods.remove(handler);
 	}
 
-	public void handleEvent(PipeEvent event) {
-		for (EventHandler eventHandler : getHandlerList(event.getClass())) {
+	public void handleEvent(Class<? extends PipeEvent> eventClass, PipeEvent event) {
+		for (EventHandler eventHandler : getHandlerList(eventClass)) {
 			try {
 				eventHandler.method.invoke(eventHandler.owner, event);
 			} catch (Exception e) {

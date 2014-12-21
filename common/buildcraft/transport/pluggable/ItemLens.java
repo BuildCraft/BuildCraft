@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.transport;
+package buildcraft.transport.pluggable;
 
 import java.util.List;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -20,6 +20,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.IPipeContainer;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.ItemBuildCraft;
@@ -88,6 +89,10 @@ public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
 
 	@Override
 	public PipePluggable createPipePluggable(IPipe pipe, ForgeDirection side, ItemStack stack) {
-		return new LensPluggable(stack);
+		if (pipe.getTile().getPipeType() == IPipeContainer.PipeType.ITEM) {
+			return new LensPluggable(stack);
+		} else {
+			return null;
+		}
 	}
 }

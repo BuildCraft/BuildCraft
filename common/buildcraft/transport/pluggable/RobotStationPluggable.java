@@ -1,4 +1,4 @@
-package buildcraft.transport;
+package buildcraft.transport.pluggable;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -18,6 +18,8 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.RobotRegistry;
 import buildcraft.core.utils.MatrixTranformations;
+import buildcraft.transport.PipeIconProvider;
+import buildcraft.transport.TileGenericPipe;
 
 public class RobotStationPluggable extends PipePluggable implements IPipePluggableItem {
 	@SideOnly(Side.CLIENT)

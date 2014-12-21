@@ -58,6 +58,8 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.GatePluggable;
+import buildcraft.transport.pluggable.PlugPluggable;
+import buildcraft.transport.pluggable.RobotStationPluggable;
 
 public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		IPipeContainer, ITileBufferHolder, IEnergyHandler, IDropControlInventory,
@@ -1103,10 +1105,26 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		}
 	}
 
+	private IEnergyHandler internalGetEnergyHandler(ForgeDirection side) {
+		if (hasPipePluggable(side)) {
+			PipePluggable pluggable = getPipePluggable(side);
+			if (pluggable instanceof IEnergyHandler) {
+				return (IEnergyHandler) pluggable;
+			} else if (pluggable.isBlocking(this, side)) {
+				return null;
+			}
+		}
+		if (pipe instanceof IEnergyHandler) {
+			return (IEnergyHandler) pipe;
+		}
+		return null;
+	}
+
 	@Override
 	public boolean canConnectEnergy(ForgeDirection from) {
-		if (pipe instanceof IEnergyHandler) {
-			return ((IEnergyHandler) pipe).canConnectEnergy(from);
+		IEnergyHandler handler = internalGetEnergyHandler(from);
+		if (handler != null) {
+			return handler.canConnectEnergy(from);
 		} else {
 			return false;
 		}
@@ -1115,8 +1133,9 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive,
 			boolean simulate) {
-		if (pipe instanceof IEnergyHandler) {
-			return ((IEnergyHandler) pipe).receiveEnergy(from, maxReceive, simulate);
+		IEnergyHandler handler = internalGetEnergyHandler(from);
+		if (handler != null) {
+			return handler.receiveEnergy(from, maxReceive, simulate);
 		} else {
 			return 0;
 		}
@@ -1125,8 +1144,9 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	@Override
 	public int extractEnergy(ForgeDirection from, int maxExtract,
 			boolean simulate) {
-		if (pipe instanceof IEnergyHandler) {
-			return ((IEnergyHandler) pipe).extractEnergy(from, maxExtract, simulate);
+		IEnergyHandler handler = internalGetEnergyHandler(from);
+		if (handler != null) {
+			return handler.extractEnergy(from, maxExtract, simulate);
 		} else {
 			return 0;
 		}
@@ -1134,8 +1154,9 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	@Override
 	public int getEnergyStored(ForgeDirection from) {
-		if (pipe instanceof IEnergyHandler) {
-			return ((IEnergyHandler) pipe).getEnergyStored(from);
+		IEnergyHandler handler = internalGetEnergyHandler(from);
+		if (handler != null) {
+			return handler.getEnergyStored(from);
 		} else {
 			return 0;
 		}
@@ -1143,8 +1164,9 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	@Override
 	public int getMaxEnergyStored(ForgeDirection from) {
-		if (pipe instanceof IEnergyHandler) {
-			return ((IEnergyHandler) pipe).getMaxEnergyStored(from);
+		IEnergyHandler handler = internalGetEnergyHandler(from);
+		if (handler != null) {
+			return handler.getMaxEnergyStored(from);
 		} else {
 			return 0;
 		}

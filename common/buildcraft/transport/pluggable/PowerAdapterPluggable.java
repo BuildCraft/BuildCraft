@@ -1,4 +1,4 @@
-package buildcraft.transport;
+package buildcraft.transport.pluggable;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -8,6 +8,7 @@ import net.minecraft.util.AxisAlignedBB;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
+import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.transport.IPipe;
@@ -15,12 +16,15 @@ import buildcraft.api.transport.IPipeContainer;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.utils.MatrixTranformations;
+import buildcraft.transport.PipeIconProvider;
 
-public class PlugPluggable extends PipePluggable {
+public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandler {
 	@SideOnly(Side.CLIENT)
-	public final PlugPluggableRenderer RENDERER = new PlugPluggableRenderer();
+	public final PowerAdapterPluggableRenderer RENDERER = new PowerAdapterPluggableRenderer();
 
-	public class PlugPluggableRenderer implements IPipePluggableRenderer {
+	private IPipeContainer container;
+
+	public class PowerAdapterPluggableRenderer implements IPipePluggableRenderer {
 		private float zFightOffset = 1 / 4096.0F;
 
 		@Override
@@ -32,14 +36,14 @@ public class PlugPluggable extends PipePluggable {
 			float[][] zeroState = new float[3][2];
 
 			// X START - END
-			zeroState[0][0] = 0.25F + zFightOffset;
-			zeroState[0][1] = 0.75F - zFightOffset;
+			zeroState[0][0] = 0.25F;
+			zeroState[0][1] = 0.75F;
 			// Y START - END
-			zeroState[1][0] = 0.125F;
-			zeroState[1][1] = 0.251F;
+			zeroState[1][0] = 0.000F;
+			zeroState[1][1] = 0.125F;
 			// Z START - END
-			zeroState[2][0] = 0.25F + zFightOffset;
-			zeroState[2][1] = 0.75F - zFightOffset;
+			zeroState[2][0] = 0.25F;
+			zeroState[2][1] = 0.75F;
 
 			blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal())); // Structure Pipe
 
@@ -68,8 +72,18 @@ public class PlugPluggable extends PipePluggable {
 		}
 	}
 
-	public PlugPluggable() {
+	public PowerAdapterPluggable() {
 
+	}
+
+	@Override
+	public void validate(IPipeContainer pipe, ForgeDirection direction) {
+		this.container = pipe;
+	}
+
+	@Override
+	public void invalidate() {
+		this.container = null;
 	}
 
 	@Override
@@ -96,14 +110,14 @@ public class PlugPluggable extends PipePluggable {
 	public AxisAlignedBB getBoundingBox(ForgeDirection side) {
 		float[][] bounds = new float[3][2];
 		// X START - END
-		bounds[0][0] = 0.25F;
-		bounds[0][1] = 0.75F;
+		bounds[0][0] = 0.1875F;
+		bounds[0][1] = 0.8125F;
 		// Y START - END
-		bounds[1][0] = 0.125F;
+		bounds[1][0] = 0.000F;
 		bounds[1][1] = 0.251F;
 		// Z START - END
-		bounds[2][0] = 0.25F;
-		bounds[2][1] = 0.75F;
+		bounds[2][0] = 0.1875F;
+		bounds[2][1] = 0.8125F;
 
 		MatrixTranformations.transform(bounds, side);
 		return AxisAlignedBB.getBoundingBox(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
@@ -122,5 +136,47 @@ public class PlugPluggable extends PipePluggable {
 	@Override
 	public void readData(ByteBuf data) {
 
+	}
+
+	@Override
+	public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
+		int maxR = Math.min(40, maxReceive);
+		if (container instanceof IEnergyHandler) {
+			int energyCanReceive = ((IEnergyHandler) container).receiveEnergy(from, maxR, true);
+			if (!simulate) {
+				return ((IEnergyHandler) container).receiveEnergy(from, energyCanReceive, false);
+			} else {
+				return energyCanReceive;
+			}
+		}
+		return 0;
+	}
+
+	@Override
+	public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) {
+		return 0;
+	}
+
+	@Override
+	public int getEnergyStored(ForgeDirection from) {
+		if (container instanceof IEnergyHandler) {
+			return ((IEnergyHandler) container).getEnergyStored(from);
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	public int getMaxEnergyStored(ForgeDirection from) {
+		if (container instanceof IEnergyHandler) {
+			return ((IEnergyHandler) container).getMaxEnergyStored(from);
+		} else {
+			return 0;
+		}
+	}
+
+	@Override
+	public boolean canConnectEnergy(ForgeDirection from) {
+		return true;
 	}
 }

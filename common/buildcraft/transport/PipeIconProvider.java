@@ -142,6 +142,10 @@ public class PipeIconProvider implements IIconProvider {
 		TransparentFacade("transparent_facade"),
 		Transparent("transparent"),
 		//
+		PipePowerAdapterTop("pipePowerAdapterTop"),
+		PipePowerAdapterSide("pipePowerAdapterSide"),
+		PipePowerAdapterBottom("pipePowerAdapterBottom"),
+		//
 		ItemBox("itemBox");
 		public static final TYPE[] VALUES = values();
 		private final String iconTag;

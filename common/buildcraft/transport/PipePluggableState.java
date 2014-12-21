@@ -50,6 +50,8 @@ public class PipePluggableState implements ISerializable {
 				} catch(Exception e) {
 					e.printStackTrace();
 				}
+			} else {
+				pluggables[dir.ordinal()] = null;
 			}
 		}
 	}

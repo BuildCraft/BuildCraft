@@ -52,9 +52,6 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 			if (!(tile instanceof IInventory)) {
 				return false;
 			}
-			if (!PipeManager.canExtractItems(pipe, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord)) {
-				return false;
-			}
 			return true;
 		}
 	};
@@ -140,10 +137,6 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 		TileEntity tile = container.getTile(side);
 
 		if (tile instanceof IInventory) {
-			if (!PipeManager.canExtractItems(this, tile.getWorldObj(), tile.xCoord, tile.yCoord, tile.zCoord)) {
-				return;
-			}
-
 			IInventory inventory = (IInventory) tile;
 
 			ItemStack[] extracted = checkExtract(inventory, true, side.getOpposite());
