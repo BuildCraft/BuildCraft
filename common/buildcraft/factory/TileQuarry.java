@@ -70,7 +70,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	public EntityPlayer placedBy;
 
 	protected Box box = new Box();
-	private BlockPos targetPos;
+	private BlockPos targetPos = BlockPos.ORIGIN;
 	private double headPosX, headPosY, headPosZ;
 	private double speed = 0.03;
 	private Stage stage = Stage.BUILDING;

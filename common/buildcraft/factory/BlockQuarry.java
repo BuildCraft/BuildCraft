@@ -13,6 +13,7 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -37,7 +38,7 @@ public class BlockQuarry extends BlockBuildCraft {
 	IIcon textureSide;*/
 
 	public BlockQuarry() {
-		super(Material.iron);
+		super(Material.iron, new PropertyEnum[]{FACING_PROP});
 
 		setHardness(10F);
 		setResistance(10F);

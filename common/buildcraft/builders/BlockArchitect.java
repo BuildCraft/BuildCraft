@@ -10,6 +10,7 @@ package buildcraft.builders;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,7 +33,7 @@ import buildcraft.core.utils.Utils;
 public class BlockArchitect extends BlockBuildCraft {
 
 	public BlockArchitect() {
-		super(Material.iron, CreativeTabBuildCraft.BLOCKS);
+		super(Material.iron, new PropertyEnum[]{FACING_PROP});
 	}
 
 	@Override

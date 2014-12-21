@@ -13,6 +13,7 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -26,6 +27,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
@@ -40,6 +42,20 @@ import buildcraft.core.ICustomHighlight;
 import buildcraft.core.IItemPipe;
 
 public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
+	public enum EngineType implements IStringSerializable {
+		WOOD, STONE, IRON, CREATIVE;
+
+		public static EngineType getType(IBlockState state) {
+			return (EngineType) state.getValue(TYPE);
+		}
+
+		@Override
+		public String getName() {
+			return name();
+		}
+	};
+
+	public static final PropertyEnum TYPE = PropertyEnum.create("type", EngineType.class);
 
 	private static final AxisAlignedBB[][] boxes = {
 			{AxisAlignedBB.fromBounds(0.0, 0.5, 0.0, 1.0, 1.0, 1.0), AxisAlignedBB.fromBounds(0.25, 0.0, 0.25, 0.75, 0.5, 0.75)}, // -Y
@@ -55,7 +71,7 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	private static IIcon ironTexture;*/
 
 	public BlockEngine() {
-		super(Material.iron);
+		super(Material.iron, new PropertyEnum[]{TYPE});
 		setUnlocalizedName("engineBlock");
 	}
 
