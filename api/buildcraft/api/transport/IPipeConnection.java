@@ -25,5 +25,5 @@ public interface IPipeConnection {
 	 * @return CONNECT to force a connection, DISCONNECT to force no connection,
 	 * and DEFAULT to let the pipe decide.
 	 */
-	ConnectOverride overridePipeConnection(IPipeContainer.PipeType type, ForgeDirection with);
+	ConnectOverride overridePipeConnection(IPipeTile.PipeType type, ForgeDirection with);
 }

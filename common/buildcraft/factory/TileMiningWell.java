@@ -15,7 +15,7 @@ import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.transport.IPipeConnection;
-import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.utils.BlockUtils;
@@ -110,9 +110,9 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 	}
 
 	@Override
-	public ConnectOverride overridePipeConnection(IPipeContainer.PipeType type,
+	public ConnectOverride overridePipeConnection(IPipeTile.PipeType type,
 			ForgeDirection with) {
-		return type == IPipeContainer.PipeType.ITEM ? ConnectOverride.CONNECT : ConnectOverride.DEFAULT;
+		return type == IPipeTile.PipeType.ITEM ? ConnectOverride.CONNECT : ConnectOverride.DEFAULT;
 	}
 
 	@Override

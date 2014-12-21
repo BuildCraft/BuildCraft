@@ -12,7 +12,7 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.utils.ColorUtils;
@@ -28,7 +28,7 @@ public class LensPluggable extends PipePluggable {
 
 	public int color;
 	public boolean isFilter;
-	protected IPipeContainer container;
+	protected IPipeTile container;
 	private ForgeDirection side;
 
 	public class LensPluggableRenderer implements IPipePluggableRenderer {
@@ -83,7 +83,7 @@ public class LensPluggable extends PipePluggable {
 	}
 
 	@Override
-	public void validate(IPipeContainer pipe, ForgeDirection direction) {
+	public void validate(IPipeTile pipe, ForgeDirection direction) {
 		this.container = pipe;
 		this.side = direction;
 	}
@@ -95,12 +95,12 @@ public class LensPluggable extends PipePluggable {
 	}
 
 	@Override
-	public ItemStack[] getDropItems(IPipeContainer pipe) {
+	public ItemStack[] getDropItems(IPipeTile pipe) {
 		return new ItemStack[]{ new ItemStack(BuildCraftTransport.lensItem, 1, color | (isFilter ? 16 : 0)) };
 	}
 
 	@Override
-	public boolean isBlocking(IPipeContainer pipe, ForgeDirection direction) {
+	public boolean isBlocking(IPipeTile pipe, ForgeDirection direction) {
 		return false;
 	}
 

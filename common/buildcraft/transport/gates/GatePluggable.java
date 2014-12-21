@@ -11,7 +11,7 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
@@ -98,7 +98,7 @@ public class GatePluggable extends PipePluggable {
 	}
 
 	@Override
-	public ItemStack[] getDropItems(IPipeContainer pipe) {
+	public ItemStack[] getDropItems(IPipeTile pipe) {
 		ItemStack gate = ItemGate.makeGateItem(material, logic);
 		for (IGateExpansion expansion : expansions) {
 			ItemGate.addGateExpansion(gate, expansion);
@@ -107,7 +107,7 @@ public class GatePluggable extends PipePluggable {
 	}
 
 	@Override
-	public void update(IPipeContainer pipe, ForgeDirection direction) {
+	public void update(IPipeTile pipe, ForgeDirection direction) {
 		if (isPulsing || pulseStage > 0.11F) {
 			// if it is moving, or is still in a moved state, then complete
 			// the current movement
@@ -118,7 +118,7 @@ public class GatePluggable extends PipePluggable {
 	}
 
 	@Override
-	public void onAttachedPipe(IPipeContainer pipe, ForgeDirection direction) {
+	public void onAttachedPipe(IPipeTile pipe, ForgeDirection direction) {
 		TileGenericPipe pipeReal = (TileGenericPipe) pipe;
 		if (!pipeReal.getWorld().isRemote) {
 			if (instantiatedGate != null) {
@@ -139,7 +139,7 @@ public class GatePluggable extends PipePluggable {
 	}
 
 	@Override
-	public void onDetachedPipe(IPipeContainer pipe, ForgeDirection direction) {
+	public void onDetachedPipe(IPipeTile pipe, ForgeDirection direction) {
 		TileGenericPipe pipeReal = (TileGenericPipe) pipe;
 		if (!pipeReal.getWorld().isRemote) {
 			Gate gate = pipeReal.pipe.gates[direction.ordinal()];
@@ -152,7 +152,7 @@ public class GatePluggable extends PipePluggable {
 	}
 
 	@Override
-	public boolean isBlocking(IPipeContainer pipe, ForgeDirection direction) {
+	public boolean isBlocking(IPipeTile pipe, ForgeDirection direction) {
 		return true;
 	}
 

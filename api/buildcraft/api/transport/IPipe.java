@@ -12,7 +12,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.gates.IGate;
 
 public interface IPipe {
-	IPipeContainer getTile();
+	IPipeTile getTile();
 
 	IGate getGate(ForgeDirection side);
 	

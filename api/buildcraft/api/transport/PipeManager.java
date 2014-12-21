@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.world.World;
 import buildcraft.api.transport.pluggable.PipePluggable;
 
 public abstract class PipeManager {
@@ -23,6 +24,16 @@ public abstract class PipeManager {
 			new HashMap<String, Class<? extends PipePluggable>>();
 	private static Map<Class<? extends PipePluggable>, String> pipePluggableByNames =
 			new HashMap<Class<? extends PipePluggable>, String>();
+
+	@Deprecated
+	public static boolean canExtractItems(Object extractor, World world, int i, int j, int k) {
+		return true;
+	}
+
+	@Deprecated
+	public static boolean canExtractFluids(Object extractor, World world, int i, int j, int k) {
+		return true;
+	}
 
 	public static void registerStripesHandler(IStripesHandler handler) {
 		stripesHandlers.add(handler);

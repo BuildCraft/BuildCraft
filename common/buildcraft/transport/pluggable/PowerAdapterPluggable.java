@@ -12,7 +12,7 @@ import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.utils.MatrixTranformations;
@@ -22,7 +22,7 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
 	@SideOnly(Side.CLIENT)
 	public final PowerAdapterPluggableRenderer RENDERER = new PowerAdapterPluggableRenderer();
 
-	private IPipeContainer container;
+	private IPipeTile container;
 
 	public class PowerAdapterPluggableRenderer implements IPipePluggableRenderer {
 		private float zFightOffset = 1 / 4096.0F;
@@ -77,7 +77,7 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
 	}
 
 	@Override
-	public void validate(IPipeContainer pipe, ForgeDirection direction) {
+	public void validate(IPipeTile pipe, ForgeDirection direction) {
 		this.container = pipe;
 	}
 
@@ -97,12 +97,12 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
 	}
 
 	@Override
-	public ItemStack[] getDropItems(IPipeContainer pipe) {
+	public ItemStack[] getDropItems(IPipeTile pipe) {
 		return new ItemStack[] { new ItemStack(BuildCraftTransport.plugItem) };
 	}
 
 	@Override
-	public boolean isBlocking(IPipeContainer pipe, ForgeDirection direction) {
+	public boolean isBlocking(IPipeTile pipe, ForgeDirection direction) {
 		return true;
 	}
 

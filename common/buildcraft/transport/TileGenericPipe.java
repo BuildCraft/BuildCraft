@@ -39,7 +39,7 @@ import buildcraft.api.core.Position;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeConnection;
-import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.PipeWire;
@@ -62,7 +62,7 @@ import buildcraft.transport.pluggable.PlugPluggable;
 import buildcraft.transport.pluggable.RobotStationPluggable;
 
 public class TileGenericPipe extends TileEntity implements IFluidHandler,
-		IPipeContainer, ITileBufferHolder, IEnergyHandler, IDropControlInventory,
+		IPipeTile, ITileBufferHolder, IEnergyHandler, IDropControlInventory,
 		ISyncedTile, ISolidSideTile, IGuiReturnHandler {
 
 	public boolean initialized = false;
@@ -1185,8 +1185,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	@Override
 	public IPipe getNeighborPipe(ForgeDirection dir) {
 		TileEntity neighborTile = getTile(dir);
-		if (neighborTile instanceof IPipeContainer) {
-			return ((IPipeContainer) neighborTile).getPipe();
+		if (neighborTile instanceof IPipeTile) {
+			return ((IPipeTile) neighborTile).getPipe();
 		} else {
 			return null;
 		}

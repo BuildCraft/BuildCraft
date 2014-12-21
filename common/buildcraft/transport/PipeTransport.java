@@ -17,7 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.utils.BitSetUtils;
 
 public abstract class PipeTransport {
@@ -34,7 +34,7 @@ public abstract class PipeTransport {
 		}
 	}
 
-	public abstract IPipeContainer.PipeType getPipeType();
+	public abstract IPipeTile.PipeType getPipeType();
 
 	public World getWorld() {
 		return container.getWorldObj();

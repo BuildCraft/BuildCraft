@@ -20,7 +20,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.ItemBuildCraft;
@@ -89,7 +89,7 @@ public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
 
 	@Override
 	public PipePluggable createPipePluggable(IPipe pipe, ForgeDirection side, ItemStack stack) {
-		if (pipe.getTile().getPipeType() == IPipeContainer.PipeType.ITEM) {
+		if (pipe.getTile().getPipeType() == IPipeTile.PipeType.ITEM) {
 			return new LensPluggable(stack);
 		} else {
 			return null;

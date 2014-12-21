@@ -17,7 +17,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.RFBattery;
 import buildcraft.transport.IPipeTransportPowerHook;
 import buildcraft.transport.Pipe;
@@ -157,7 +157,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 
 	@Override
 	public int requestEnergy(ForgeDirection from, int amount) {
-		if (container.getTile(from) instanceof IPipeContainer) {
+		if (container.getTile(from) instanceof IPipeTile) {
 			requestedEnergy += amount;
 			return amount;
 		} else {

@@ -23,7 +23,7 @@ import buildcraft.api.power.IEngine;
 import buildcraft.api.tiles.IHeatable;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipeConnection;
-import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.utils.MathUtils;
@@ -397,7 +397,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 
 			TileEntity tile = getTile(o);
 
-			if ((!pipesOnly || tile instanceof IPipeContainer) && isPoweredTile(tile, o)) {
+			if ((!pipesOnly || tile instanceof IPipeTile) && isPoweredTile(tile, o)) {
 				orientation = o;
 				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 				worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlock(xCoord, yCoord, zCoord));
@@ -549,8 +549,8 @@ public abstract class TileEngine extends TileBuildCraft implements IPipeConnecti
 	public abstract int calculateCurrentOutput();
 
 	@Override
-	public ConnectOverride overridePipeConnection(IPipeContainer.PipeType type, ForgeDirection with) {
-		if (type == IPipeContainer.PipeType.POWER) {
+	public ConnectOverride overridePipeConnection(IPipeTile.PipeType type, ForgeDirection with) {
+		if (type == IPipeTile.PipeType.POWER) {
 			return ConnectOverride.DEFAULT;
 		} else if (with == orientation) {
 			return ConnectOverride.DISCONNECT;

@@ -25,8 +25,7 @@ import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.transport.IPipeContainer;
-import buildcraft.api.transport.PipeManager;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.RFBattery;
 import buildcraft.api.core.ISerializable;
 import buildcraft.transport.Pipe;
@@ -46,7 +45,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 	private PipeLogicWood logic = new PipeLogicWood(this) {
 		@Override
 		protected boolean isValidConnectingTile(TileEntity tile) {
-			if (tile instanceof IPipeContainer) {
+			if (tile instanceof IPipeTile) {
 				return false;
 			}
 			if (!(tile instanceof IFluidHandler)) {

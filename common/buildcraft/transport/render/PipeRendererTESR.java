@@ -36,7 +36,7 @@ import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.DefaultProps;
@@ -280,14 +280,14 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		renderGatesWires(pipe, x, y, z);
 		renderGates(pipe, x, y, z);
 
-		IPipeContainer.PipeType pipeType = pipe.getPipeType();
+		IPipeTile.PipeType pipeType = pipe.getPipeType();
 
 		// do not use switch. we will be transitioning away from the enum
-		if (pipeType == IPipeContainer.PipeType.ITEM) {
+		if (pipeType == IPipeTile.PipeType.ITEM) {
 			renderSolids(pipe.pipe, x, y, z);
-		} else if (pipeType == IPipeContainer.PipeType.FLUID) {
+		} else if (pipeType == IPipeTile.PipeType.FLUID) {
 			renderFluids(pipe.pipe, x, y, z);
-		} else if (pipeType == IPipeContainer.PipeType.POWER) {
+		} else if (pipeType == IPipeTile.PipeType.POWER) {
 			renderPower(pipe.pipe, x, y, z);
 		} /* else if (pipeType == PipeType.STRUCTURE) {
 			// no object to render in a structure pipe;

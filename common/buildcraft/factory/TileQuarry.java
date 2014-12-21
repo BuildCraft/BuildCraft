@@ -38,7 +38,7 @@ import buildcraft.api.filler.FillerManager;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.transport.IPipeConnection;
-import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.CoreConstants;
@@ -877,7 +877,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	}
 
 	@Override
-	public ConnectOverride overridePipeConnection(IPipeContainer.PipeType type, ForgeDirection with) {
-		return type == IPipeContainer.PipeType.ITEM ? ConnectOverride.CONNECT : ConnectOverride.DEFAULT;
+	public ConnectOverride overridePipeConnection(IPipeTile.PipeType type, ForgeDirection with) {
+		return type == IPipeTile.PipeType.ITEM ? ConnectOverride.CONNECT : ConnectOverride.DEFAULT;
 	}
 }

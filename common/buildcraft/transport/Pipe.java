@@ -31,7 +31,7 @@ import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.ActionState;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.inventory.InvUtils;
@@ -556,7 +556,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	@Override
-	public IPipeContainer getTile() {
+	public IPipeTile getTile() {
 		return container;
 	}
 	

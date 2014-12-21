@@ -1,10 +1,9 @@
 package buildcraft.transport;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.pluggable.LensPluggable;
@@ -20,7 +19,7 @@ public class LensFilterHandler {
 	}
 
 	public void eventHandler(PipeEventItem.FindDest event) {
-		IPipeContainer container = pipe.getTile();
+		IPipeTile container = pipe.getTile();
 		LinkedList<ForgeDirection> correctColored = new LinkedList<ForgeDirection>();
 		LinkedList<ForgeDirection> notColored = new LinkedList<ForgeDirection>();
 		boolean encounteredColor = false;
@@ -39,7 +38,7 @@ public class LensFilterHandler {
 			// (2/2) From the other pipe's outpost
 			IPipe otherPipe = container.getNeighborPipe(dir);
 			if (otherPipe != null && otherPipe.getTile() != null) {
-				IPipeContainer otherContainer = otherPipe.getTile();
+				IPipeTile otherContainer = otherPipe.getTile();
 				pluggable = otherContainer.getPipePluggable(dir.getOpposite());
 				if (pluggable != null && pluggable instanceof LensPluggable && ((LensPluggable) pluggable).isFilter) {
 					int otherColor = ((LensPluggable) pluggable).color;

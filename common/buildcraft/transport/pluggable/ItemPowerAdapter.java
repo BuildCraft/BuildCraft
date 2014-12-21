@@ -17,7 +17,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.ItemBuildCraft;
@@ -52,7 +52,7 @@ public class ItemPowerAdapter extends ItemBuildCraft implements IPipePluggableIt
 
 	@Override
 	public PipePluggable createPipePluggable(IPipe pipe, ForgeDirection side, ItemStack stack) {
-		if (pipe.getTile().getPipeType() != IPipeContainer.PipeType.POWER && pipe instanceof IEnergyHandler) {
+		if (pipe.getTile().getPipeType() != IPipeTile.PipeType.POWER && pipe instanceof IEnergyHandler) {
 			return new PowerAdapterPluggable();
 		} else {
 			return null;

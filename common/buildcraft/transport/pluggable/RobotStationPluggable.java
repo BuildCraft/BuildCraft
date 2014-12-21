@@ -11,7 +11,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.transport.IPipe;
-import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
@@ -169,7 +169,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 	}
 
 	@Override
-	public ItemStack[] getDropItems(IPipeContainer pipe) {
+	public ItemStack[] getDropItems(IPipeTile pipe) {
 		return new ItemStack[] { new ItemStack(BuildCraftTransport.robotStationItem) };
 	}
 
@@ -178,7 +178,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 	}
 
 	@Override
-	public boolean isBlocking(IPipeContainer pipe, ForgeDirection direction) {
+	public boolean isBlocking(IPipeTile pipe, ForgeDirection direction) {
 		return true;
 	}
 
@@ -193,7 +193,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 	}
 
 	@Override
-	public void validate(IPipeContainer pipe, ForgeDirection direction) {
+	public void validate(IPipeTile pipe, ForgeDirection direction) {
 		TileGenericPipe gPipe = (TileGenericPipe) pipe;
 		if (!isValid && !gPipe.getWorld().isRemote) {
 			station = (DockingStation)

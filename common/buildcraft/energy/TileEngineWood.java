@@ -11,7 +11,7 @@ package buildcraft.energy;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 
 public class TileEngineWood extends TileEngine {
@@ -87,7 +87,7 @@ public class TileEngineWood extends TileEngine {
 	}
 
 	@Override
-	public ConnectOverride overridePipeConnection(IPipeContainer.PipeType type, ForgeDirection with) {
+	public ConnectOverride overridePipeConnection(IPipeTile.PipeType type, ForgeDirection with) {
 		return ConnectOverride.DISCONNECT;
 	}
 
@@ -126,7 +126,7 @@ public class TileEngineWood extends TileEngine {
 
 			// TODO: Make a proper API out of this
 			if ((tile instanceof IRedstoneEngineReceiver && ((IRedstoneEngineReceiver) tile).canConnectRedstoneEngine(orientation.getOpposite())) ||
-					(tile instanceof IPipeContainer && ((IPipeContainer) tile).getPipeType() != IPipeContainer.PipeType.POWER)) {
+					(tile instanceof IPipeTile && ((IPipeTile) tile).getPipeType() != IPipeTile.PipeType.POWER)) {
 				super.sendPower();
 			} else {
 				this.energy = 0;

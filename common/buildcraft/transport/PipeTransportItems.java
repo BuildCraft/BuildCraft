@@ -28,14 +28,13 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.Position;
-import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.utils.BlockUtils;
 import buildcraft.core.utils.MathUtils;
 import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
 import buildcraft.transport.network.PacketPipeTransportTraveler;
-import buildcraft.transport.pipes.events.PipeEvent;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
 
@@ -47,8 +46,8 @@ public class PipeTransportItems extends PipeTransport {
 	public final TravelerSet items = new TravelerSet(this);
 
 	@Override
-	public IPipeContainer.PipeType getPipeType() {
-		return IPipeContainer.PipeType.ITEM;
+	public IPipeTile.PipeType getPipeType() {
+		return IPipeTile.PipeType.ITEM;
 	}
 
 	public void readjustSpeed(TravelingItem item) {

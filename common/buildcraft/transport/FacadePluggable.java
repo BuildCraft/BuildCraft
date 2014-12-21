@@ -7,7 +7,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.transport.IPipeContainer;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.utils.MatrixTranformations;
@@ -44,7 +44,7 @@ public class FacadePluggable extends PipePluggable {
 	}
 
 	@Override
-	public ItemStack[] getDropItems(IPipeContainer pipe) {
+	public ItemStack[] getDropItems(IPipeTile pipe) {
 		if (states != null) {
 			return new ItemStack[] { ItemFacade.getFacade(states) };
 		} else {
@@ -53,7 +53,7 @@ public class FacadePluggable extends PipePluggable {
 	}
 
 	@Override
-	public boolean isBlocking(IPipeContainer pipe, ForgeDirection direction) {
+	public boolean isBlocking(IPipeTile pipe, ForgeDirection direction) {
 		return isHollow();
 	}
 
@@ -83,7 +83,7 @@ public class FacadePluggable extends PipePluggable {
 	}
 
 	@Override
-	public boolean isSolidOnSide(IPipeContainer pipe, ForgeDirection direction) {
+	public boolean isSolidOnSide(IPipeTile pipe, ForgeDirection direction) {
 		return !isHollow();
 	}
 
