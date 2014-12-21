@@ -159,4 +159,10 @@ public class ActionRobotFilter extends BCStatement implements IActionInternal {
 			IStatementParameter[] parameters) {
 		
 	}
+
+	@Override
+	public int getSheetLocation() {
+		// TODO Auto-generated method stub
+		return 20;
+	}
 }

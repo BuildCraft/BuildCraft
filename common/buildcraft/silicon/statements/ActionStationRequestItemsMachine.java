@@ -35,4 +35,10 @@ public class ActionStationRequestItemsMachine extends BCStatement implements IAc
 			IStatementParameter[] parameters) {
 		
 	}
+
+	@Override
+	public int getSheetLocation() {
+		// TODO Auto-generated method stub
+		return 19;
+	}
 }

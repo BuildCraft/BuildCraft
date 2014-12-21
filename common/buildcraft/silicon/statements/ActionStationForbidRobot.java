@@ -85,4 +85,10 @@ public class ActionStationForbidRobot extends BCStatement implements IActionInte
 			IStatementParameter[] parameters) {
 		
 	}
+
+	@Override
+	public int getSheetLocation() {
+		// TODO Auto-generated method stub
+		return 108;
+	}
 }

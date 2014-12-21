@@ -95,4 +95,10 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 		return new StatementParameterItemStack();
 	}
 
+	@Override
+	public int getSheetLocation() {
+		// TODO Auto-generated method stub
+		return 28;
+	}
+
 }

@@ -45,7 +45,7 @@ public class BlockConstructionMarker extends BlockMarker {
 			double d1 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
 			double d2 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
 			EntityItem itemToDrop = new EntityItem(world, pos.getX() + d, pos.getY() + d1, pos.getZ() + d2, marker.itemBlueprint);
-			itemToDrop.delayBeforeCanPickup = 10;
+			itemToDrop.setDefaultPickupDelay();
 			world.spawnEntityInWorld(itemToDrop);
 		}
 		super.breakBlock(world, pos, state);

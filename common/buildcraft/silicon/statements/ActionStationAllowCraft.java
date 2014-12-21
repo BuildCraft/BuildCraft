@@ -46,4 +46,10 @@ public class ActionStationAllowCraft extends BCStatement implements IActionInter
 			IStatementParameter[] parameters) {
 		
 	}
+
+	@Override
+	public int getSheetLocation() {
+		// TODO Auto-generated method stub
+		return 108;
+	}
 }

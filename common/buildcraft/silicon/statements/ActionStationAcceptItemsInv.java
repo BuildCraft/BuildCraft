@@ -74,4 +74,10 @@ public class ActionStationAcceptItemsInv extends ActionStationInputItems {
 
 		return false;
 	}
+
+	@Override
+	public int getSheetLocation() {
+		// TODO Auto-generated method stub
+		return 100;
+	}
 }

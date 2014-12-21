@@ -60,4 +60,9 @@ public class TriggerRobotSleep extends BCStatement implements ITriggerInternal {
 
 		return false;
 	}
+
+	@Override
+	public int getSheetLocation() {
+		return 68;
+	}
 }

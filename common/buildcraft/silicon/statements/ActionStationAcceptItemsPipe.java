@@ -72,4 +72,10 @@ public class ActionStationAcceptItemsPipe extends ActionStationInputItems {
 		return false;
 	}
 
+	@Override
+	public int getSheetLocation() {
+		// TODO Auto-generated method stub
+		return 112;
+	}
+
 }

@@ -36,4 +36,10 @@ public class ActionRobotWakeUp extends BCStatement implements IActionInternal {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public int getSheetLocation() {
+		// TODO Auto-generated method stub
+		return 52;
+	}
 }

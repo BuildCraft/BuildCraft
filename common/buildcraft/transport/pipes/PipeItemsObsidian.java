@@ -184,7 +184,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 					if (stack != null && battery.useEnergy(10, 10, false) > 0) {
 						trans.remove(StackFilter.ALL, openOrientation, true);
 						EntityItem entityitem = new EntityItem(container.getWorld(), cart.posX, cart.posY + 0.3F, cart.posZ, stack);
-						entityitem.delayBeforeCanPickup = 10;
+						entityitem.setDefaultPickupDelay();
 						container.getWorld().spawnEntityInWorld(entityitem);
 						pullItemIntoPipe(entityitem, 1);
 

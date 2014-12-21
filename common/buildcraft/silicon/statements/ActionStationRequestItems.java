@@ -79,4 +79,9 @@ public class ActionStationRequestItems extends ActionStationInputItems {
 
 		return false;
 	}
+
+	@Override
+	public int getSheetLocation() {
+		return 99;
+	}
 }
