@@ -130,11 +130,6 @@ public final class FacadeRenderHelper {
 						}
 					}
 
-					try {
-						BlockGenericPipe.facadeRenderColor = Item.getItemFromBlock(pluggable.getRenderingBlock()).getColorFromItemStack(new ItemStack(renderBlock, 1, renderMeta), 0);
-					} catch (Throwable error) {
-					}
-
 					if (renderBlock.getRenderType() == 31) {
 						if ((renderMeta & 12) == 4) {
 							renderblocks.uvRotateEast = 1;
@@ -147,6 +142,7 @@ public final class FacadeRenderHelper {
 						}
 					}
 
+					BlockGenericPipe.facadeRenderColor = renderBlock.getRenderColor(renderMeta);
 					// Hollow facade
 					if (pluggable.isHollow()) {
 						renderblocks.field_152631_f = true;
@@ -187,6 +183,7 @@ public final class FacadeRenderHelper {
 						setRenderBounds(renderblocks, rotated, direction);
 						renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
 					}
+					BlockGenericPipe.facadeRenderColor = -1;
 
 					if (renderBlock.getRenderType() == 31) {
 						renderblocks.uvRotateSouth = 0;
