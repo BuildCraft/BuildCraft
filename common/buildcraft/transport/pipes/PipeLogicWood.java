@@ -11,10 +11,9 @@ package buildcraft.transport.pipes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraft.util.EnumFacing;
-
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.TileBuffer;
 import buildcraft.transport.Pipe;
 
@@ -39,7 +38,8 @@ public abstract class PipeLogicWood {
 		}
 
 		if (newFacing != null && newFacing.ordinal() != meta) {
-			pipe.container.getWorld().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, newFacing.ordinal(), 3);
+			//pipe.container.getWorld().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, newFacing.ordinal(), 3);
+			pipe.container.getWorld().setBlockState(pipe.container.getPos(), pipe.container.getWorld().getBlockState(pipe.container.getPos()).withProperty(BlockBuildCraft.FACING_PROP, newFacing), 3);
 			pipe.container.scheduleRenderUpdate();
 		}
 	}

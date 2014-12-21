@@ -23,6 +23,6 @@ public class ItemSpring extends ItemBlockBuildCraft {
 
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {
-		return "tile.spring." + BlockSpring.EnumSpring.fromMeta(stack.getItemDamage()).name().toLowerCase(Locale.ENGLISH);
+		return "tile.spring." + BlockSpring.EnumSpring.values()[(stack.getItemDamage())].name().toLowerCase(Locale.ENGLISH);
 	}
 }

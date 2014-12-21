@@ -61,7 +61,7 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 		}
 
 		if (!container.getWorld().isRemote) {
-			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_LOGEMERALD_ITEM, container.getWorld(), container.xCoord, container.yCoord, container.zCoord);
+			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_LOGEMERALD_ITEM, container.getWorld(), container.getPos().getX(), container.getPos().getY(), container.getPos().getZ());
 		}
 
 		return true;
@@ -107,7 +107,7 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 
 	@Override
 	public ItemStack checkExtractGeneric(net.minecraft.inventory.ISidedInventory inventory, boolean doRemove, EnumFacing from) {
-		for (int i : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
+		for (int i : inventory.getSlotsForFace(from)) {
 			ItemStack stack = inventory.getStackInSlot(i);
 			if (stack != null && stack.stackSize > 0) {
 				ItemStack filter = getCurrentFilter();
@@ -117,7 +117,7 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 				if (!filter.isItemEqual(stack)) {
 					continue;
 				}
-				if (!inventory.canExtractItem(i, stack, from.ordinal())) {
+				if (!inventory.canExtractItem(i, stack, from)) {
 					continue;
 				}
 				if (doRemove) {

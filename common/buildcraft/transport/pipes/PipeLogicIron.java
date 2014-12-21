@@ -12,10 +12,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraft.util.EnumFacing;
-
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.TileBuffer;
 import buildcraft.transport.Pipe;
 
@@ -77,13 +76,15 @@ public abstract class PipeLogicIron {
 	}
 
 	public void onBlockPlaced() {
-		pipe.container.getWorld().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, 1, 3);
+		//pipe.container.getWorld().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, 1, 3);
+		pipe.container.getWorld().setBlockState(pipe.container.getPos(), pipe.container.getWorld().getBlockState(pipe.container.getPos()).withProperty(BlockBuildCraft.FACING_PROP, EnumFacing.UP), 3);
 		switchPosition();
 	}
 
 	public boolean setFacing(EnumFacing facing) {
 		if (facing.ordinal() != pipe.container.getBlockMetadata() && isValidFacing(facing)) {
-			pipe.container.getWorld().setBlockMetadataWithNotify(pipe.container.getPos(), facing.ordinal(), 3);
+			//pipe.container.getWorld().setBlockMetadataWithNotify(pipe.container.getPos(), facing.ordinal(), 3);
+			pipe.container.getWorld().setBlockState(pipe.container.getPos(), pipe.container.getWorld().getBlockState(pipe.container.getPos()).withProperty(BlockBuildCraft.FACING_PROP, facing), 3);
 			pipe.container.scheduleRenderUpdate();
 			return true;
 		}

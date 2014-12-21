@@ -12,7 +12,6 @@ import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import net.minecraft.util.BlockPos;
@@ -28,6 +27,7 @@ import buildcraft.core.robots.AIRobotUseToolOnBlock;
 import buildcraft.core.robots.IBlockFilter;
 import buildcraft.core.robots.ResourceIdBlock;
 import buildcraft.core.robots.RobotRegistry;
+import buildcraft.core.utils.Utils;
 
 public class BoardRobotFarmer extends RedstoneBoardRobot {
 
@@ -54,10 +54,10 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 		} else {
 			startDelegateAI(new AIRobotSearchBlock(robot, new IBlockFilter() {
 				@Override
-				public boolean matches(World world, int x, int y, int z) {
-					return BuildCraftAPI.isDirtProperty.get(world, x, y, z)
-							&& !robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z))
-							&& isAirAbove(world, x, y, z);
+				public boolean matches(World world, BlockPos pos) {
+					return BuildCraftAPI.isDirtProperty.get(world, pos)
+							&& !robot.getRegistry().isTaken(new ResourceIdBlock(pos))
+							&& isAirAbove(world, pos);
 				}
 			}));
 		}
@@ -108,7 +108,8 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 
 		if (blockFound != null) {
 			NBTTagCompound sub = new NBTTagCompound();
-			blockFound.writeTo(sub);
+			Utils.writeBlockPos(sub, blockFound);
+			
 			nbt.setTag("blockFound", sub);
 		}
 	}
@@ -118,13 +119,13 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 		super.loadSelfFromNBT(nbt);
 
 		if (nbt.hasKey("blockFound")) {
-			blockFound = new BlockPos(nbt.getCompoundTag("blockFound"));
+			blockFound = Utils.readBlockPos(nbt.getCompoundTag("blockFound"));
 		}
 	}
 
-	private boolean isAirAbove(World world, int x, int y, int z) {
+	private boolean isAirAbove(World world, BlockPos pos) {
 		synchronized (world) {
-			return world.isAirBlock(x, y + 1, z);
+			return world.isAirBlock(pos.offsetUp());
 		}
 	}
 }

@@ -16,7 +16,9 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -77,9 +79,7 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	}
 
 	@Override
-	public TileEntity createTileEntity(World world, IBlockState state) {
-		
-		//TODO: Variant
+	public TileEntity createNewTileEntity(World world, int metadata) {
 		switch (metadata) {
 			case 0:
 				return new TileEngineWood();
@@ -205,8 +205,9 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 	}
 
 	@Override
-	public void onPostBlockPlaced(World world, int x, int y, int z, int par5) {
-		TileEntity tile = world.getTileEntity(x, y, z);
+	public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+		IBlockState result = super.onBlockPlaced(world, pos, facing, hitX, hitY, hitZ, meta, placer);
+		TileEntity tile = world.getTileEntity(pos);
 		if (tile instanceof TileEngine) {
 			TileEngine engine = (TileEngine) tile;
 			engine.orientation = EnumFacing.UP;
@@ -214,6 +215,7 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 				engine.switchOrientation(true);
 			}
 		}
+		return result;
 	}
 
 	@Override
@@ -286,8 +288,4 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 		}
 	}*/
 
-	@Override
-	public TileEntity createNewTileEntity(World world, int metadata) {
-		return null;
-	}
 }

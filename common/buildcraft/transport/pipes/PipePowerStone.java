@@ -27,11 +27,11 @@ public class PipePowerStone extends Pipe<PipeTransportPower> {
 		transport.initFromPipe(getClass());
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
 		return BuildCraftTransport.instance.pipeIconProvider;
-	}
+	}*/
 
 	@Override
 	public int getIconIndex(EnumFacing direction) {

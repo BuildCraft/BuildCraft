@@ -40,7 +40,7 @@ public class TransportProxyClient extends TransportProxy {
 	@Override
 	public void registerRenderers() {
 
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsWood, pipeItemRenderer);
+		/*MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsWood, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsCobblestone, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsStone, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsQuartz, pipeItemRenderer);
@@ -83,13 +83,13 @@ public class TransportProxyClient extends TransportProxy {
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.facadeItem, facadeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.plugItem, plugItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.robotStationItem, robotStationItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeGate, gateItemRenderer);
+		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeGate, gateItemRenderer);*/
 
 		// TODO: PIPEWORLDRENDERER
 	}
 
 	@Override
 	public void setIconProviderFromPipe(ItemPipe item, Pipe<?> dummyPipe) {
-		item.setPipesIcons(dummyPipe.getIconProvider());
+		//item.setPipesIcons(dummyPipe.getIconProvider());
 	}
 }

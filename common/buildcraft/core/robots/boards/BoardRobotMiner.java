@@ -10,8 +10,8 @@ package buildcraft.core.robots.boards;
 
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.AIRobot;
@@ -52,9 +52,9 @@ public class BoardRobotMiner extends BoardRobotGenericBreakBlock {
 	}
 
 	@Override
-	public boolean isExpectedBlock(World world, int x, int y, int z) {
+	public boolean isExpectedBlock(World world, BlockPos pos) {
 		return BuildCraftAPI.isOreProperty[Math.min(BuildCraftAPI.isOreProperty.length, harvestLevel)]
-				.get(world, x, y, z);
+				.get(world, pos);
 	}
 
 }

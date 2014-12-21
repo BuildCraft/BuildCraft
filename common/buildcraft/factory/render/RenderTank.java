@@ -22,7 +22,7 @@ import buildcraft.factory.TileTank;
 public class RenderTank extends TileEntitySpecialRenderer {
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
+	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int i) {
 
 		TileTank tank = (TileTank) tileentity;
 

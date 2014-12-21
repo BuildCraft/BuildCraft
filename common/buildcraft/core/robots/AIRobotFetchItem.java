@@ -10,9 +10,7 @@ package buildcraft.core.robots;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-
-import net.minecraft.util.EnumFacing;
-
+import net.minecraft.util.BlockPos;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
@@ -147,8 +145,8 @@ public class AIRobotFetchItem extends AIRobot {
 		if (target != null) {
 			BoardRobotPicker.targettedItems.add(target.getEntityId());
 
-			startDelegateAI(new AIRobotGotoBlock(robot, (int) Math.floor(target.posX),
-					(int) Math.floor(target.posY), (int) Math.floor(target.posZ)));
+			startDelegateAI(new AIRobotGotoBlock(robot, new BlockPos((int) Math.floor(target.posX),
+					(int) Math.floor(target.posY), (int) Math.floor(target.posZ))));
 
 		} else {
 			// No item was found, terminate this AI

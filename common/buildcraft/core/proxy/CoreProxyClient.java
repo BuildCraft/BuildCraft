@@ -89,9 +89,9 @@ public class CoreProxyClient extends CoreProxy {
 
 	@Override
 	public void initializeRendering() {
-		BuildCraftCore.blockByEntityModel = RenderingRegistry.getNextAvailableRenderId();
+		/*BuildCraftCore.blockByEntityModel = RenderingRegistry.getNextAvailableRenderId();
 		BuildCraftCore.legacyPipeModel = RenderingRegistry.getNextAvailableRenderId();
-		BuildCraftCore.markerModel = RenderingRegistry.getNextAvailableRenderId();
+		BuildCraftCore.markerModel = RenderingRegistry.getNextAvailableRenderId();*/
 
 //		RenderingRegistry.registerBlockHandler(new RenderingEntityBlocks());
 //		RenderingRegistry.registerBlockHandler(BuildCraftCore.legacyPipeModel, new RenderingEntityBlocks());
@@ -110,7 +110,7 @@ public class CoreProxyClient extends CoreProxy {
 	/* BUILDCRAFT PLAYER */
 	@Override
 	public String playerName() {
-		return FMLClientHandler.instance().getClient().thePlayer.getDisplayName();
+		return FMLClientHandler.instance().getClient().thePlayer.getDisplayName().getFormattedText();
 	}
 
 	@Override

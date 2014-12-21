@@ -9,15 +9,14 @@
 package buildcraft.builders.urbanism;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.common.FMLCommonHandler;
-
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.BlockBuildCraft;
@@ -34,13 +33,13 @@ public class BlockUrbanist extends BlockBuildCraft {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (!world.isRemote) {
 			entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.URBANIST,
-					world, i, j, k);
+					world, pos.getX(), pos.getY(), pos.getZ());
 		}
 
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, pos, state);
 		FMLCommonHandler.instance().bus().post(event);
 		if (event.isCanceled()) {
 			return false;
@@ -56,17 +55,17 @@ public class BlockUrbanist extends BlockBuildCraft {
 	}
 
 	@Override
-	public boolean renderAsNormalBlock() {
+	public boolean isNormalCube() {
 		return false;
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, EnumFacing side) {
+	public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
 		return false;
 	}
 
 	@Override
-	public int getLightValue(IBlockAccess world, int x, int y, int z) {
+	public int getLightValue(IBlockAccess world, BlockPos pos) {
 		return 1;
 	}
 }

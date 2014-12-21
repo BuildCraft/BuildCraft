@@ -16,8 +16,8 @@ import buildcraft.silicon.render.RenderLaserBlock;
 public class SiliconProxyClient extends SiliconProxy {
 	@Override
 	public void registerRenderers() {
-		SiliconProxy.laserBlockModel = RenderingRegistry.getNextAvailableRenderId();
-		RenderingRegistry.registerBlockHandler(new SiliconRenderBlock());
+		/*SiliconProxy.laserBlockModel = RenderingRegistry.getNextAvailableRenderId();
+		RenderingRegistry.registerBlockHandler(new SiliconRenderBlock());*/
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileLaser.class, new RenderLaserBlock());
 	}

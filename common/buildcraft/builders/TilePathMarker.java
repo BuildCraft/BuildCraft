@@ -30,7 +30,7 @@ public class TilePathMarker extends TileMarker {
 
 	private static LinkedList<TilePathMarker> availableMarkers = new LinkedList<TilePathMarker>();
 
-	public int x0, y0, z0, x1, y1, z1;
+	public BlockPos pos0, pos1;
 	public boolean loadLink0 = false;
 	public boolean loadLink1 = false;
 
@@ -67,8 +67,8 @@ public class TilePathMarker extends TileMarker {
 		}
 
 		LaserData laser = new LaserData
-				(new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5),
-			  	 new Position(pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5));
+				(new Position(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5),
+			  	 new Position(pathMarker.pos.getX() + 0.5, pathMarker.pos.getY() + 0.5, pathMarker.pos.getZ() + 0.5));
 
 		LaserData laser2 = new LaserData (laser.head, laser.tail);
 		laser2.isVisible = false;
@@ -91,7 +91,7 @@ public class TilePathMarker extends TileMarker {
 				continue;
 			}
 
-			distance = Math.sqrt(Math.pow(this.xCoord - t.xCoord, 2) + Math.pow(this.yCoord - t.yCoord, 2) + Math.pow(this.zCoord - t.zCoord, 2));
+			distance = Math.sqrt(Math.pow(this.pos.getX() - t.pos.getX(), 2) + Math.pow(this.pos.getY() - t.pos.getY(), 2) + Math.pow(this.pos.getZ() - t.pos.getZ(), 2));
 
 			if (distance > searchSize) {
 				continue;
@@ -120,8 +120,8 @@ public class TilePathMarker extends TileMarker {
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		if (worldObj.isRemote) {
 			return;
@@ -137,8 +137,8 @@ public class TilePathMarker extends TileMarker {
 			tryingToConnect = false;
 
 			sendNetworkUpdate();
-			getWorldObj().markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord,
-					xCoord, yCoord, zCoord);
+			worldObj.markBlockRangeForRenderUpdate(pos.getX(), pos.getY(), pos.getZ(),
+					pos.getX(), pos.getY(), pos.getZ());
 		}
 	}
 
@@ -149,16 +149,16 @@ public class TilePathMarker extends TileMarker {
 		TilePathMarker nextTile = this;
 
 		while (nextTile != null) {
-			BlockPos b = new BlockPos(nextTile.xCoord, nextTile.yCoord, nextTile.zCoord);
+			BlockPos b = new BlockPos(nextTile.pos.getX(), nextTile.pos.getY(), nextTile.pos.getZ());
 
 			visitedPaths.add(b);
 			res.add(b);
 
 			if (nextTile.links[0] != null
-					&& !visitedPaths.contains(new BlockPos(nextTile.links[0].xCoord, nextTile.links[0].yCoord, nextTile.links[0].zCoord))) {
+					&& !visitedPaths.contains(new BlockPos(nextTile.links[0].pos.getX(), nextTile.links[0].pos.getY(), nextTile.links[0].pos.getZ()))) {
 				nextTile = nextTile.links[0];
 			} else if (nextTile.links[1] != null
-					&& !visitedPaths.contains(new BlockPos(nextTile.links[1].xCoord, nextTile.links[1].yCoord, nextTile.links[1].zCoord))) {
+					&& !visitedPaths.contains(new BlockPos(nextTile.links[1].pos.getX(), nextTile.links[1].pos.getY(), nextTile.links[1].pos.getZ()))) {
 				nextTile = nextTile.links[1];
 			} else {
 				nextTile = null;
@@ -194,7 +194,7 @@ public class TilePathMarker extends TileMarker {
 		}
 
 		if (loadLink0) {
-			TileEntity e0 = worldObj.getTileEntity(x0, y0, z0);
+			TileEntity e0 = worldObj.getTileEntity(pos0);
 
 			if (links[0] != e0 && links[1] != e0 && e0 instanceof TilePathMarker) {
 				createLaserAndConnect((TilePathMarker) e0);
@@ -204,7 +204,7 @@ public class TilePathMarker extends TileMarker {
 		}
 
 		if (loadLink1) {
-			TileEntity e1 = worldObj.getTileEntity(x1, y1, z1);
+			TileEntity e1 = worldObj.getTileEntity(pos1);
 
 			if (links[0] != e1 && links[1] != e1 && e1 instanceof TilePathMarker) {
 				createLaserAndConnect((TilePathMarker) e1);
@@ -239,17 +239,13 @@ public class TilePathMarker extends TileMarker {
 		super.readFromNBT(nbttagcompound);
 
 		if (nbttagcompound.hasKey("x0")) {
-			x0 = nbttagcompound.getInteger("x0");
-			y0 = nbttagcompound.getInteger("y0");
-			z0 = nbttagcompound.getInteger("z0");
+			pos0 = new BlockPos(nbttagcompound.getInteger("x0"), nbttagcompound.getInteger("y0"), nbttagcompound.getInteger("z0"));
 
 			loadLink0 = true;
 		}
 
 		if (nbttagcompound.hasKey("x1")) {
-			x1 = nbttagcompound.getInteger("x1");
-			y1 = nbttagcompound.getInteger("y1");
-			z1 = nbttagcompound.getInteger("z1");
+			pos1 = new BlockPos(nbttagcompound.getInteger("x1"), nbttagcompound.getInteger("y1"), nbttagcompound.getInteger("z1"));
 
 			loadLink1 = true;
 		}
@@ -260,15 +256,15 @@ public class TilePathMarker extends TileMarker {
 		super.writeToNBT(nbttagcompound);
 
 		if (links[0] != null) {
-			nbttagcompound.setInteger("x0", links[0].xCoord);
-			nbttagcompound.setInteger("y0", links[0].yCoord);
-			nbttagcompound.setInteger("z0", links[0].zCoord);
+			nbttagcompound.setInteger("x0", links[0].pos.getX());
+			nbttagcompound.setInteger("y0", links[0].pos.getY());
+			nbttagcompound.setInteger("z0", links[0].pos.getZ());
 		}
 
 		if (links[1] != null) {
-			nbttagcompound.setInteger("x1", links[1].xCoord);
-			nbttagcompound.setInteger("y1", links[1].yCoord);
-			nbttagcompound.setInteger("z1", links[1].zCoord);
+			nbttagcompound.setInteger("x1", links[1].pos.getX());
+			nbttagcompound.setInteger("y1", links[1].pos.getY());
+			nbttagcompound.setInteger("z1", links[1].pos.getZ());
 		}
 	}
 
@@ -310,7 +306,7 @@ public class TilePathMarker extends TileMarker {
 		tryingToConnect = (flags & 4) != 0;
 
 		if (previousState != tryingToConnect) {
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			worldObj.markBlockForUpdate(pos);
 		}
 	}
 

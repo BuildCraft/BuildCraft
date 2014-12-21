@@ -153,7 +153,7 @@ public class GuiArchitect extends GuiBuildCraft {
 	}
 
 	@Override
-	protected void mouseClicked(int i, int j, int k) {
+	protected void mouseClicked(int i, int j, int k) throws IOException {
 		super.mouseClicked(i, j, k);
 
 		textField.mouseClicked(i - guiLeft, j - guiTop, k);

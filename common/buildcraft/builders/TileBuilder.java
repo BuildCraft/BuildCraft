@@ -934,4 +934,12 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		box.readData(stream);
 		fluidTank.readData(stream);
 	}
+
+	@Override
+	public void openInventory(EntityPlayer playerIn) {
+	}
+
+	@Override
+	public void closeInventory(EntityPlayer playerIn) {		
+	}
 }

@@ -14,6 +14,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -26,6 +27,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import buildcraft.api.core.EnumColor;
 import buildcraft.api.events.BlockPlacedDownEvent;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.utils.Utils;
@@ -36,7 +38,8 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	protected final Random rand = new Random();
 	
 	public static final PropertyDirection FACING_PROP = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
-
+	public static final PropertyEnum COLOR_PROP = PropertyEnum.create("color", EnumColor.class, EnumColor.VALUES);
+	
 	protected BlockBuildCraft(Material material) {
 		this(material, CreativeTabBuildCraft.BLOCKS);
 	}

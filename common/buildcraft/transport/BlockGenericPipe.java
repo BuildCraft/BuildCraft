@@ -1186,7 +1186,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		for (IGateExpansion expansion : GateExpansions.getExpansions()) {
 			expansion.registerBlockOverlay(iconRegister);
 		}
-	}
+	}*/
 
 	/**
 	 * Spawn a digging particle effect in the world, this is a wrapper around
@@ -1202,7 +1202,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	@SideOnly(Side.CLIENT)
 	@Override
 	public boolean addHitEffects(World worldObj, MovingObjectPosition target, EffectRenderer effectRenderer) {
-		BlockPos targetPos = targetPos;
+		BlockPos targetPos = new BlockPos(target.hitVec);
 		int x = targetPos.getX();
 		int y = targetPos.getY();
 		int z = targetPos.getZ();

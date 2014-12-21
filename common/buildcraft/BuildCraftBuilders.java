@@ -579,7 +579,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		TilePathMarker.clearAvailableMarkersList();
 	}
 
-	@SubscribeEvent
+	/*@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void loadTextures(TextureStitchEvent.Pre evt) {
 		if (evt.map.getTextureType() == 0) {
@@ -595,7 +595,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		if (event.map.getTextureType() == 1) {
 			UrbanistToolsIconProvider.INSTANCE.registerIcons(event.map);
 		}
-	}
+	}*/
 
 	@Mod.EventHandler
 	public void whiteListAppliedEnergetics(FMLInitializationEvent event) {

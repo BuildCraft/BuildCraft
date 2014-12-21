@@ -75,7 +75,7 @@ public class PipeFluidsEmerald extends PipeFluidsWood implements IClientState {
 		}
 
 		if (!container.getWorld().isRemote) {
-			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_FLUID, container.getWorld(), container.xCoord, container.yCoord, container.zCoord);
+			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_FLUID, container.getWorld(), container.getPos().getX(), container.getPos().getY(), container.getPos().getZ());
 		}
 
 		return true;

@@ -11,8 +11,8 @@ package buildcraft.core.robots.boards;
 import net.minecraft.item.ItemAxe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.EntityRobotBase;
@@ -38,7 +38,7 @@ public class BoardRobotLumberjack extends BoardRobotGenericBreakBlock {
 	}
 
 	@Override
-	public boolean isExpectedBlock(World world, int x, int y, int z) {
-		return BuildCraftAPI.isWoodProperty.get(world, x, y, z);
+	public boolean isExpectedBlock(World world, BlockPos pos) {
+		return BuildCraftAPI.isWoodProperty.get(world, pos);
 	}
 }

@@ -47,7 +47,7 @@ public class CommandBuildCraft extends CommandBase {
 	}
 
 	@Override
-	public void processCommand(ICommandSender sender, String[] arguments) {
+	public void processCommand(ICommandSender sender, String[] arguments) throws WrongUsageException {
 
 		if (arguments.length <= 0) {
 			throw new WrongUsageException("Type '" + this.getCommandUsage(sender) + "' for help.");

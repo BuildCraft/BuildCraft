@@ -80,7 +80,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		this.baseTexture = baseTexture;
 		this.chamberTexture = chamberTexture;
 		this.trunkTexture = trunkTexture;
-		field_147501_a = TileEntityRendererDispatcher.instance;
+		rendererDispatcher = TileEntityRendererDispatcher.instance;
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
+	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int i) {
 
 		TileEngine engine = (TileEngine) tileentity;
 

@@ -81,7 +81,7 @@ public class BlockPlainPipe extends Block implements IFramePipeConnection {
 	}*/
 
 	@Override
-	public boolean isLadder(IBlockAccess world, int x, int y, int z, EntityLivingBase entity) {
+	public boolean isLadder(IBlockAccess world, BlockPos pos, EntityLivingBase entity) {
 		return true;
 	}
 }

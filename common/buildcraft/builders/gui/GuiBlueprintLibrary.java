@@ -8,12 +8,13 @@
  */
 package buildcraft.builders.gui;
 
+import java.io.IOException;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-
 import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
 import buildcraft.builders.TileBlueprintLibrary;
@@ -119,7 +120,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 	}
 
 	@Override
-	protected void mouseClicked(int i, int j, int k) {
+	protected void mouseClicked(int i, int j, int k) throws IOException {
 		super.mouseClicked(i, j, k);
 
 		int x = i - guiLeft;

@@ -89,7 +89,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 
 		public void writeToNBT(NBTTagCompound nbt) {
 			if (block != null) {
-				nbt.setString("block", Block.blockRegistry.getNameForObject(block));
+				nbt.setString("block", (String) Block.blockRegistry.getNameForObject(block));
 			}
 			nbt.setByte("metadata", (byte) metadata);
 			if (wire != null) {

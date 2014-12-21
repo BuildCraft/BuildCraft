@@ -46,7 +46,7 @@ public class EntityRobotEnergyFX extends EntityFX {
 		this.noClip = false;
 	}
 
-	@Override
+	/*@Override
 	public void renderParticle(Tessellator tesslator, float p2, float p3, float p4,
 			float p5, float p6, float p7) {
 		float f6 = (this.particleAge + p2) / this.particleMaxAge * 32.0F;
@@ -61,7 +61,7 @@ public class EntityRobotEnergyFX extends EntityFX {
 
 		this.particleScale = this.smokeParticleScale * f6;
 		super.renderParticle(tesslator, p2, p3, p4, p5, p6, p7);
-	}
+	}*/
 
 	/**
 	 * Called to update the entity's position/logic.

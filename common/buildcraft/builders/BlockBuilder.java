@@ -113,7 +113,7 @@ public class BlockBuilder extends BlockBuildCraft {
 			return true;
 		} else {
 			if (!world.isRemote) {
-				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BUILDER, world, pos);
+				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BUILDER, world, pos.getX(), pos.getY(), pos.getZ());
 			}
 
 			return true;

@@ -342,7 +342,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		}
 	}
 
-	@SubscribeEvent
+	/*@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void textureHook(TextureStitchEvent.Post event) {
 		if (event.map.getTextureType() == 0) {
@@ -350,7 +350,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			buildcraftFluidFuel.setIcons(blockFuel.getBlockTextureFromSide(1), blockFuel.getBlockTextureFromSide(2));
 			buildcraftFluidRedPlasma.setIcons(blockRedPlasma.getBlockTextureFromSide(1), blockRedPlasma.getBlockTextureFromSide(2));
 		}
-	}
+	}*/
 
 	public static void loadRecipes() {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 0),

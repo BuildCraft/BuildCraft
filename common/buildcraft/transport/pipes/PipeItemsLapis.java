@@ -16,11 +16,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
@@ -73,7 +75,8 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 
 	public void setColor(EnumColor color) {
 		if (color.ordinal() != container.getBlockMetadata()) {
-			container.getWorld().setBlockMetadataWithNotify(container.getPos(), color.ordinal(), 3);
+			BlockPos pos = container.getPos();
+			container.getWorld().setBlockState(pos, container.getWorld().getBlockState(pos).withProperty(BlockBuildCraft.FACING_PROP, color), 3);
 			container.scheduleRenderUpdate();
 		}
 	}

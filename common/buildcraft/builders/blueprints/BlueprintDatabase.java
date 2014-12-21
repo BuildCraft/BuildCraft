@@ -8,6 +8,8 @@
  */
 package buildcraft.builders.blueprints;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
+
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
@@ -235,7 +238,8 @@ public class BlueprintDatabase {
 
 	public static BlueprintBase load(byte[] data) {
 		try {
-			NBTTagCompound nbt = CompressedStreamTools.func_152457_a(data, NBTSizeTracker.field_152451_a);
+			//Ugly but will probably work
+			NBTTagCompound nbt = CompressedStreamTools.func_152456_a(new DataInputStream(new ByteArrayInputStream(data)), NBTSizeTracker.INFINITE);
 
 			BlueprintBase blueprint = BlueprintBase.loadBluePrint(nbt);
 			blueprint.setData(data);

@@ -1,16 +1,21 @@
 package buildcraft.factory;
 
 import java.util.List;
+
 import net.minecraft.block.Block;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent;
 import buildcraft.BuildCraftCore;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtils;
 import buildcraft.core.utils.MathUtils;
@@ -69,7 +74,7 @@ public class BlockMiner {
 	}
 
 	public void invalidate() {
-		world.destroyBlockInWorldPartially(minerId, x, y, z, -1);
+		world.sendBlockBreakProgress(minerId, pos, -1);
 	}
 	
 	public int acceptEnergy(int offeredAmount) {
@@ -79,19 +84,19 @@ public class BlockMiner {
 		energyAccepted += usedAmount;
 
 		if (energyAccepted >= energyRequired) {
-			world.destroyBlockInWorldPartially(minerId, x, y, z, -1);
+			world.sendBlockBreakProgress(minerId, pos, -1);
 
 			hasMined = true;
 
-			Block block = world.getBlock(x, y, z);
-			int meta = world.getBlockMetadata(x, y, z);
+			IBlockState state = world.getBlockState(pos);
+			Block block = state.getBlock();
+			int meta = ((EnumFacing)state.getValue(BlockBuildCraft.FACING_PROP)).getIndex();
 
-			BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(x, y, z, world, block, meta,
-					CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world).get());
+			BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, state, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world).get());
 			MinecraftForge.EVENT_BUS.post(breakEvent);
 
 			if (!breakEvent.isCanceled()) {
-				List<ItemStack> stacks = BlockUtils.getItemStackFromBlock((WorldServer) world, x, y, z);
+				List<ItemStack> stacks = BlockUtils.getItemStackFromBlock((WorldServer) world, pos);
 
 				if (stacks != null) {
 					for (ItemStack s : stacks) {
@@ -104,20 +109,20 @@ public class BlockMiner {
 				world.playAuxSFXAtEntity(
 						null,
 						2001,
-						x, y, z,
+						pos,
 						Block.getIdFromBlock(block)
 								+ (meta << 12));
 
-				if (block.hasTileEntity(meta)) {
-					world.removeTileEntity(x, y, z);
+				if (block.hasTileEntity(state)) {
+					world.removeTileEntity(pos);
 				}
 
-				world.setBlockToAir(x, y, z);
+				world.setBlockToAir(pos);
 			} else {
 				hasFailed = true;
 			}
 		} else {
-			world.destroyBlockInWorldPartially(minerId, x, y, z, MathUtils.clamp((int) Math.floor(energyAccepted * 10 / energyRequired), 0, 9));
+			world.sendBlockBreakProgress(minerId, pos, MathUtils.clamp((int) Math.floor(energyAccepted * 10 / energyRequired), 0, 9));
 		}
 		return usedAmount;
 	}

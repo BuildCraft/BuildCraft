@@ -76,7 +76,7 @@ public class RenderEnergyEmitter extends TileEntitySpecialRenderer {
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
+	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int i) {
 		TileEnergyEmitter emitter = (TileEnergyEmitter) tileentity;
 
 		if (emitter != null) {

@@ -43,7 +43,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 			int lightValue = getFluidLightLevel();
 			if (prevLightValue != lightValue) {
 				prevLightValue = lightValue;
-				worldObj.updateLightByType(EnumSkyBlock.BLOCK, pos);
+				worldObj.checkLightFor(EnumSkyBlock.BLOCK, pos);
 			}
 			return;
 		}

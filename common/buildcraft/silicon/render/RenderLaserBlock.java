@@ -20,7 +20,7 @@ import buildcraft.silicon.TileLaser;
 public class RenderLaserBlock extends TileEntitySpecialRenderer {
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
+	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int i) {
 		TileLaser laser = (TileLaser) tileentity;
 
 		if (laser != null) {
@@ -32,10 +32,10 @@ public class RenderLaserBlock extends TileEntitySpecialRenderer {
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 			GL11.glTranslated(x, y, z);
-			GL11.glTranslated(-tileentity.xCoord, -tileentity.yCoord, -tileentity.zCoord);
+			GL11.glTranslated(-tileentity.getPos().getX(), -tileentity.getPos().getY(), -tileentity.getPos().getZ());
 
 			GL11.glPushMatrix();
-			RenderLaser.doRenderLaser(TileEntityRendererDispatcher.instance.field_147553_e,
+			RenderLaser.doRenderLaser(TileEntityRendererDispatcher.instance.renderEngine,
 					laser.laser, laser.getTexture());
 			GL11.glPopMatrix();
 

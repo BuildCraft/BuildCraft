@@ -68,7 +68,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	}
 
 	public WeakReference<EntityPlayer> getInternalPlayer() {
-		return CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, xCoord, yCoord + 1, zCoord);
+		return CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, pos.offsetUp());
 	}
 
 	@Override
@@ -97,7 +97,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	}
 
 	@Override
-	public String getInventoryName() {
+	public String getName() {
 		return "";
 	}
 
@@ -108,7 +108,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer player) {
-		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this && player.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D) <= 64.0D;
+		return worldObj.getTileEntity(pos) == this && player.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64.0D;
 	}
 
 	@Override
@@ -163,14 +163,14 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		return CraftingHelper.findMatchingRecipe(craftMatrix, worldObj);
 	}
 
-	@Override
+	/*@Override
 	public boolean canUpdate() {
 		return true;
-	}
+	}*/
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		if (worldObj.isRemote) {
 			return;
@@ -254,17 +254,17 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 			ItemStack stack = slot.getStackInSlot();
 			if (stack != null) {
 				slot.setStackInSlot(null);
-				InvUtils.dropItems(worldObj, stack, xCoord, yCoord + 1, zCoord);
+				InvUtils.dropItems(worldObj, stack, pos.offsetUp());
 			}
 		}
 	}
 
 	@Override
-	public void openInventory() {
+	public void openInventory(EntityPlayer player) {
 	}
 
 	@Override
-	public void closeInventory() {
+	public void closeInventory(EntityPlayer player) {
 	}
 
 	@Override
@@ -288,17 +288,17 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	}
 
 	@Override
-	public int[] getAccessibleSlotsFromSide(int var1) {
+	public int[] getSlotsForFace(EnumFacing face) {
 		return SLOTS;
 	}
 
 	@Override
-	public boolean canInsertItem(int slot, ItemStack stack, int side) {
+	public boolean canInsertItem(int slot, ItemStack stack, EnumFacing direction) {
 		return isItemValidForSlot(slot, stack);
 	}
 
 	@Override
-	public boolean canExtractItem(int slot, ItemStack stack, int side) {
+	public boolean canExtractItem(int slot, ItemStack stack, EnumFacing direction) {
 		return slot == SLOT_RESULT;
 	}
 
@@ -319,7 +319,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
+	public boolean hasCustomName() {
 		return false;
 	}
 }

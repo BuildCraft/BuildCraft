@@ -47,7 +47,7 @@ public class ItemGateCopier extends ItemBuildCraft {
 			return false;
 		}
 
-		RaytraceResult rayTraceResult = ((BlockGenericPipe) block).doRayTrace(world, pos.getX(), pos.getY(), pos.getZ(), player);
+		RaytraceResult rayTraceResult = ((BlockGenericPipe) block).doRayTrace(world, pos, player);
 
 		if (rayTraceResult != null && rayTraceResult.boundingBox != null && rayTraceResult.hitPart == Part.Gate) {
 			gate = ((TileGenericPipe) tile).pipe.gates[rayTraceResult.sideHit.ordinal()];

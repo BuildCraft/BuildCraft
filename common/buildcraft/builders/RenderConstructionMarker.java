@@ -46,8 +46,8 @@ public class RenderConstructionMarker extends RenderBoxProvider {
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
-		super.renderTileEntityAt(tileentity, x, y, z, f);
+	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int i) {
+		super.renderTileEntityAt(tileentity, x, y, z, f, i);
 
 		TileConstructionMarker marker = (TileConstructionMarker) tileentity;
 

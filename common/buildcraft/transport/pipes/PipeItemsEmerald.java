@@ -89,7 +89,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 		}
 
 		if (!container.getWorld().isRemote) {
-			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_ITEM, container.getWorld(), container.xCoord, container.yCoord, container.zCoord);
+			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_ITEM, container.getWorld(), container.getPos().getX(), container.getPos().getY(), container.getPos().getZ());
 		}
 
 		return true;
@@ -112,7 +112,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 	}
 
 	private ItemStack[] checkExtractFiltered(ISidedInventory inventory, boolean doRemove, EnumFacing from) {
-		for (int k : inventory.getAccessibleSlotsFromSide(from)) {
+		for (int k : inventory.getSlotsForFace(from)) {
 			ItemStack stack = inventory.getStackInSlot(k);
 
 			if (stack == null || stack.stackSize <= 0) {
@@ -143,7 +143,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 	}
 
 	private ItemStack[] checkExtractRoundRobin(ISidedInventory inventory, boolean doRemove, EnumFacing from) {
-		for (int i : inventory.getAccessibleSlotsFromSide(from)) {
+		for (int i : inventory.getSlotsForFace(from)) {
 			ItemStack stack = inventory.getStackInSlot(i);
 
 			if (stack != null && stack.stackSize > 0) {

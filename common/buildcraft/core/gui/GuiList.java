@@ -181,7 +181,7 @@ public class GuiList extends GuiAdvancedInterface {
 	}
 
 	@Override
-	protected void mouseClicked(int x, int y, int b) {
+	protected void mouseClicked(int x, int y, int b) throws IOException {
 		super.mouseClicked(x, y, b);
 
 		if (isCarryingList()) {

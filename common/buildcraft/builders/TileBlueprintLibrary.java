@@ -8,6 +8,8 @@
  */
 package buildcraft.builders;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -18,7 +20,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
-
 import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
@@ -291,7 +292,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 				byte[] data = Utils.readByteArray(stream);
 
 				try {
-					NBTTagCompound nbt = CompressedStreamTools.func_152457_a(data, NBTSizeTracker.field_152451_a);
+					NBTTagCompound nbt = CompressedStreamTools.func_152456_a(new DataInputStream(new ByteArrayInputStream(data)), NBTSizeTracker.INFINITE);
 					BlueprintBase bpt = BlueprintBase.loadBluePrint(nbt);
 					bpt.setData(data);
 					bpt.id = id;
@@ -322,7 +323,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 				}
 			} else if ("uploadServerEnd".equals(command)) {
 				try {
-					NBTTagCompound nbt = CompressedStreamTools.func_152457_a(blueprintDownload, NBTSizeTracker.field_152451_a);
+					NBTTagCompound nbt = CompressedStreamTools.func_152456_a(new DataInputStream(new ByteArrayInputStream(blueprintDownload)), NBTSizeTracker.INFINITE);
 					BlueprintBase bpt = BlueprintBase.loadBluePrint(nbt);
 					bpt.setData(blueprintDownload);
 					bpt.id = blueprintDownloadId;
