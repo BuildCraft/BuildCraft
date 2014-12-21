@@ -41,6 +41,8 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	protected final Random rand = new Random();
 	
 	public static final PropertyDirection FACING_PROP = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
+	public static final PropertyDirection FACING_6_PROP = PropertyDirection.create("facing");
+
 	public static final PropertyEnum COLOR_PROP = PropertyEnum.create("color", EnumColor.class, EnumColor.VALUES);
 
 	private final PropertyEnum[] properties;
@@ -183,4 +185,9 @@ public abstract class BlockBuildCraft extends BlockContainer {
             world.spawnEntityInWorld(entityitem);
         }
     }
+
+	@Override
+	public int getRenderType() {
+		return 3;
+	}
 }

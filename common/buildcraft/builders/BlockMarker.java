@@ -11,6 +11,7 @@ package buildcraft.builders;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -33,7 +34,7 @@ public class BlockMarker extends BlockBuildCraft {
 
 	
 	public BlockMarker() {
-		super(Material.circuits);
+		super(Material.circuits, new PropertyEnum[]{FACING_6_PROP});
 
 		setLightLevel(0.5F);
 		setHardness(0.0F);
@@ -67,7 +68,7 @@ public class BlockMarker extends BlockBuildCraft {
 
 	@Override
 	public AxisAlignedBB getSelectedBoundingBox(World world, BlockPos pos) {
-		EnumFacing side = (EnumFacing)world.getBlockState(pos).getValue(FACING_PROP);
+		EnumFacing side = (EnumFacing)world.getBlockState(pos).getValue(FACING_6_PROP);
 		AxisAlignedBB bBox = getBoundingBox(side);
 		bBox.offset(pos.getX(), pos.getY(), pos.getZ());
 		return bBox;
@@ -75,7 +76,7 @@ public class BlockMarker extends BlockBuildCraft {
 
 	@Override
 	public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
-		EnumFacing side = (EnumFacing)world.getBlockState(pos).getValue(FACING_PROP);
+		EnumFacing side = (EnumFacing)world.getBlockState(pos).getValue(FACING_6_PROP);
 		AxisAlignedBB bb = getBoundingBox(side);
 		setBlockBounds((float) bb.minX, (float) bb.minY, (float) bb.minZ, (float) bb.maxX, (float) bb.maxY, (float) bb.maxZ);
 	}
@@ -162,7 +163,7 @@ public class BlockMarker extends BlockBuildCraft {
 	}
 
 	private void dropTorchIfCantStay(World world, BlockPos pos, IBlockState state) {
-		EnumFacing side = (EnumFacing)state.getValue(FACING_PROP);
+		EnumFacing side = (EnumFacing)state.getValue(FACING_6_PROP);
 		if (!canPlaceBlockOnSide(world, pos, side)) {
 			dropBlockAsItem(world, pos, state, 0);
 			world.setBlockToAir(pos);

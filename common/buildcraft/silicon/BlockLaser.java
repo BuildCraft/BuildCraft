@@ -11,6 +11,7 @@ package buildcraft.silicon;
 import java.util.List;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -44,7 +45,7 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 	private IIcon textureTop, textureBottom, textureSide;*/
 
 	public BlockLaser() {
-		super(Material.iron);
+		super(Material.iron, new PropertyEnum[]{FACING_6_PROP});
 		setHardness(10F);
 		setCreativeTab(CreativeTabBuildCraft.BLOCKS.get());
 	}
@@ -134,7 +135,7 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 			retMeta = facing.getIndex();
 		}
 
-		return worldIn.getBlockState(pos).withProperty(FACING_PROP, EnumFacing.getFront(retMeta));
+		return getDefaultState().withProperty(FACING_6_PROP, EnumFacing.getFront(retMeta));
 	}
 
 	/*@Override

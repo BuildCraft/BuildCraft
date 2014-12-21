@@ -180,7 +180,12 @@ public class Position implements ISerializable {
 		x = stream.readDouble();
 		y = stream.readDouble();
 		z = stream.readDouble();
-		orientation = EnumFacing.getFront(stream.readByte());
+		byte o = stream.readByte();
+		if (o == 6) {
+			orientation = null;
+		} else {
+			orientation = EnumFacing.getFront(o);
+		}
 	}
 
 	@Override
@@ -188,7 +193,7 @@ public class Position implements ISerializable {
 		stream.writeDouble(x);
 		stream.writeDouble(y);
 		stream.writeDouble(z);
-		stream.writeByte(orientation.ordinal());
+		stream.writeByte(orientation != null ? orientation.ordinal() : 6);
 	}
 
 	public BlockPos toBlockPos() {

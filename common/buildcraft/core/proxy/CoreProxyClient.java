@@ -8,21 +8,28 @@
  */
 package buildcraft.core.proxy;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -36,6 +43,7 @@ import buildcraft.core.render.RenderRobot;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingMarkers;
 import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.render.TileEntityPickupFX;
 
 public class CoreProxyClient extends CoreProxy {
@@ -99,6 +107,21 @@ public class CoreProxyClient extends CoreProxy {
 //
 //		// TODO: Move these to a Silicon proxy renderer
 //		MinecraftForgeClient.registerItemRenderer(BuildCraftSilicon.robotItem, new RenderRobot());
+
+		for (Block block : blocksToRegisterRenderersFor) {
+			for (IBlockState state : (List<IBlockState>) block.getBlockState().getValidStates()) {
+				String type = "";
+				for (IProperty property : (Collection<IProperty>) state.getProperties().keySet()) {
+					type += property.getName() + "=";
+					if (state.getValue(property) instanceof Integer) {
+						type += ((Integer) state.getValue(property)).intValue();
+					} else {
+						type += ((IStringSerializable) state.getValue(property)).getName();
+					}
+				}
+				Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(block), block.damageDropped(state), new ModelResourceLocation(Utils.getBlockName(block), type.toLowerCase()));
+			}
+		}
 	}
 
 	@Override
@@ -143,5 +166,13 @@ public class CoreProxyClient extends CoreProxy {
 		} else {
 			return Minecraft.getMinecraft().thePlayer;
 		}
+	}
+
+	private LinkedList<Block> blocksToRegisterRenderersFor = new LinkedList<Block>();
+
+	@Override
+	public void registerBlock(Block block, Class<? extends ItemBlock> item) {
+		super.registerBlock(block, item);
+		blocksToRegisterRenderersFor.add(block);
 	}
 }
