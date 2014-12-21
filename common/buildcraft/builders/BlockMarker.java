@@ -82,15 +82,6 @@ public class BlockMarker extends BlockBuildCraft {
 	}
 
 	@Override
-	public int getRenderType() {
-		return BuildCraftCore.markerModel;
-	}
-
-	public boolean isACube() {
-		return false;
-	}
-
-	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileMarker();
 	}
@@ -164,6 +155,7 @@ public class BlockMarker extends BlockBuildCraft {
 
 	private void dropTorchIfCantStay(World world, BlockPos pos, IBlockState state) {
 		EnumFacing side = (EnumFacing)state.getValue(FACING_6_PROP);
+		System.out.println("SIDE IS " + side.name());
 		if (!canPlaceBlockOnSide(world, pos, side)) {
 			dropBlockAsItem(world, pos, state, 0);
 			world.setBlockToAir(pos);

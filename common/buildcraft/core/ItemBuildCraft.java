@@ -47,6 +47,14 @@ public class ItemBuildCraft extends Item {
 		return this;
 	}
 
+	public String getModelName(int metadata) {
+		return iconName;
+	}
+
+	public String getModelSuffix(int metadata) {
+		return "";
+	}
+
 	@Override
 	public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player) {
 		return passSneakClick;

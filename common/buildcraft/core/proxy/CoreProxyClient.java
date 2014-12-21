@@ -36,7 +36,9 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.client.MinecraftForgeClient;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftSilicon;
+import buildcraft.api.core.EnumColor;
 import buildcraft.core.EntityBlock;
+import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.LaserKind;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderRobot;
@@ -107,6 +109,7 @@ public class CoreProxyClient extends CoreProxy {
 //
 //		// TODO: Move these to a Silicon proxy renderer
 //		MinecraftForgeClient.registerItemRenderer(BuildCraftSilicon.robotItem, new RenderRobot());
+		EnumColor.registerIcons();
 
 		for (Block block : blocksToRegisterRenderersFor) {
 			for (IBlockState state : (List<IBlockState>) block.getBlockState().getValidStates()) {
@@ -120,6 +123,19 @@ public class CoreProxyClient extends CoreProxy {
 					}
 				}
 				Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(block), block.damageDropped(state), new ModelResourceLocation(Utils.getBlockName(block), type.toLowerCase()));
+			}
+		}
+		for (Item item : itemsToRegisterRenderersFor) {
+			if (!(item instanceof ItemBlock)) {
+				LinkedList<ItemStack> stacks = new LinkedList<ItemStack>();
+				item.getSubItems(item, item.getCreativeTab(), stacks);
+				for (ItemStack stack : stacks) {
+					String type = Utils.getItemName(item);
+					if (item instanceof ItemBuildCraft) {
+						type += ((ItemBuildCraft) item).getModelSuffix(stack.getItemDamage());
+					}
+					Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, stack.getItemDamage(), new ModelResourceLocation(type));
+				}
 			}
 		}
 	}
@@ -169,10 +185,17 @@ public class CoreProxyClient extends CoreProxy {
 	}
 
 	private LinkedList<Block> blocksToRegisterRenderersFor = new LinkedList<Block>();
+	private LinkedList<Item> itemsToRegisterRenderersFor = new LinkedList<Item>();
 
 	@Override
 	public void registerBlock(Block block, Class<? extends ItemBlock> item) {
 		super.registerBlock(block, item);
 		blocksToRegisterRenderersFor.add(block);
+	}
+
+	@Override
+	public void registerItem(Item item) {
+		super.registerItem(item);
+		itemsToRegisterRenderersFor.add(item);
 	}
 }

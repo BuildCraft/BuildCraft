@@ -100,15 +100,6 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 		zonePlan = iZonePlan;
 
-		getContainer().mapTexture = new BCDynamicTexture(mapWidth, mapHeight);
-		getContainer().mapTexture.createDynamicTexture();
-
-		currentSelection = new BCDynamicTexture(mapWidth, mapHeight);
-		currentSelection.createDynamicTexture();
-
-		newSelection = new BCDynamicTexture(1, 1);
-		newSelection.createDynamicTexture();
-
 		getContainer().currentAreaSelection = new ZonePlan();
 
 		cx = zonePlan.getPos().getX();
@@ -124,12 +115,23 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 		colorSelected = (AreaSlot) slots.get(0);
 
+		inventorySlots = container.inventorySlots;
+	}
+
+	private void initializeMap() {
+		getContainer().mapTexture = new BCDynamicTexture(mapWidth, mapHeight);
+		getContainer().mapTexture.createDynamicTexture();
+
+		currentSelection = new BCDynamicTexture(mapWidth, mapHeight);
+		currentSelection.createDynamicTexture();
+
+		newSelection = new BCDynamicTexture(1, 1);
+		newSelection.createDynamicTexture();
+
 		newSelection.setColor(0, 0, colorSelected.color.getDarkHex(), alpha);
 
 		uploadMap();
 		getContainer().loadArea(colorSelected.color.ordinal());
-
-		inventorySlots = container.inventorySlots;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -159,6 +161,10 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		super.drawGuiContainerBackgroundLayer(f, x, y);
+
+		if (getContainer().mapTexture == null) {
+			initializeMap();
+		}
 
 		mapXMin = (width - getContainer().mapTexture.width) / 2;
 
