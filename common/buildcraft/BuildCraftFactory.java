@@ -330,7 +330,7 @@ public class BuildCraftFactory extends BuildCraftMod {
         InterModComms.processIMC(event);
     }
 
-	@SubscribeEvent
+	/*@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void loadTextures(TextureStitchEvent.Pre evt) {
 		if (evt.map.getTextureType() == 0) {
@@ -339,7 +339,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 			FactoryProxyClient.drillTexture = terrainTextures.registerIcon("buildcraft:blockDrillTexture");
 			FactoryProxyClient.drillHeadTexture = terrainTextures.registerIcon("buildcraft:blockDrillHeadTexture");
 		}
-	}
+	}*/
 
 	@Mod.EventHandler
 	public void whiteListAppliedEnergetics(FMLInitializationEvent event) {

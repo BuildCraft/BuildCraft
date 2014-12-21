@@ -112,14 +112,14 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 	}
 
 	private ItemStack[] checkExtractFiltered(ISidedInventory inventory, boolean doRemove, EnumFacing from) {
-		for (int k : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
+		for (int k : inventory.getAccessibleSlotsFromSide(from)) {
 			ItemStack stack = inventory.getStackInSlot(k);
 
 			if (stack == null || stack.stackSize <= 0) {
 				continue;
 			}
 
-			if (!inventory.canExtractItem(k, stack, from.ordinal())) {
+			if (!inventory.canExtractItem(k, stack, from)) {
 				continue;
 			}
 
@@ -143,7 +143,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 	}
 
 	private ItemStack[] checkExtractRoundRobin(ISidedInventory inventory, boolean doRemove, EnumFacing from) {
-		for (int i : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
+		for (int i : inventory.getAccessibleSlotsFromSide(from)) {
 			ItemStack stack = inventory.getStackInSlot(i);
 
 			if (stack != null && stack.stackSize > 0) {
@@ -157,7 +157,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 					continue;
 				}
 
-				if (!inventory.canExtractItem(i, stack, from.ordinal())) {
+				if (!inventory.canExtractItem(i, stack, from)) {
 					continue;
 				}
 

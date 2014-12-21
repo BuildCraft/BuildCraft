@@ -11,7 +11,6 @@ package buildcraft.transport.render;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -37,7 +36,7 @@ public final class FakeBlock extends Block implements ITextureStates {
 	
 	private FakeBlock() {
 		super(Material.glass);
-		textureState = new TextureStateManager(null); //Always Clientside
+		textureState = new TextureStateManager(); //Always Clientside
 	}	
 	
 	@Override
@@ -57,10 +56,10 @@ public final class FakeBlock extends Block implements ITextureStates {
 	public TextureStateManager getTextureState() {
 		return textureState;
 	}
-	@Override	
+	/*@Override	
 	public IIcon getIcon(int side, int meta) {
 		return textureState.isSided() ? textureState.getTextureArray()[side] : textureState.getTexture();
-	}
+	}*/
 	@Override
 	public void setRenderSide(EnumFacing side, boolean render) {
 		if (render) {

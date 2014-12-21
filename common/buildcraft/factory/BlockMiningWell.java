@@ -11,12 +11,10 @@ package buildcraft.factory;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 import net.minecraftforge.fml.relauncher.Side;
@@ -30,7 +28,7 @@ import buildcraft.core.utils.Utils;
 
 public class BlockMiningWell extends BlockBuildCraft {
 
-	IIcon textureFront, textureSides, textureBack, textureTop;
+	//IIcon textureFront, textureSides, textureBack, textureTop;
 
 	public BlockMiningWell() {
 		super(Material.ground);
@@ -42,7 +40,7 @@ public class BlockMiningWell extends BlockBuildCraft {
 		//setStepSound(soundStoneFootstep);
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIcon(int i, int j) {
 		if (j == 0 && i == 3) {
 			return textureFront;
@@ -59,7 +57,7 @@ public class BlockMiningWell extends BlockBuildCraft {
 		} else {
 			return textureSides;
 		}
-	}
+	}*/
 
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
@@ -90,12 +88,12 @@ public class BlockMiningWell extends BlockBuildCraft {
 		return new TileMiningWell();
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
 	    textureFront = par1IconRegister.registerIcon("buildcraft:miningwell_front");
         textureSides = par1IconRegister.registerIcon("buildcraft:miningwell_side");
         textureBack = par1IconRegister.registerIcon("buildcraft:miningwell_back");
         textureTop = par1IconRegister.registerIcon("buildcraft:miningwell_top");
-	}
+	}*/
 }

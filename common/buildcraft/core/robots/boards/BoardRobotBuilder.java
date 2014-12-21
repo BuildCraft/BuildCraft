@@ -108,11 +108,7 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 			if (robot.getEnergy() - currentBuildingSlot.getEnergyRequirement() < EntityRobotBase.SAFETY_ENERGY) {
 				startDelegateAI(new AIRobotRecharge(robot));
 			} else {
-				startDelegateAI(new AIRobotGotoBlock(robot,
-					(int) currentBuildingSlot.getDestination().x,
-					(int) currentBuildingSlot.getDestination().y,
-					(int) currentBuildingSlot.getDestination().z,
-					8));
+				startDelegateAI(new AIRobotGotoBlock(robot, currentBuildingSlot.getDestination().toBlockPos() ,	8));
 			}
 			// TODO: take into account cases where the robot can't reach the
 			// destination - go to work on another block

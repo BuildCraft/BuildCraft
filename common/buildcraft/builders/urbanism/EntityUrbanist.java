@@ -56,7 +56,7 @@ public class EntityUrbanist extends EntityLivingBase {
 	public void onUpdate() {
         Vec3 look = this.getLook(1.0F).normalize();
 
-        Vec3 worldUp = Vec3.createVectorHelper(0, 1, 0);
+        Vec3 worldUp = new Vec3(0, 1, 0);
         Vec3 side = worldUp.crossProduct(look).normalize();
         Vec3 forward = side.crossProduct(worldUp).normalize();
 
@@ -116,20 +116,12 @@ public class EntityUrbanist extends EntityLivingBase {
 
 	}
 
-	@Override
-	public ItemStack[] getLastActiveItems() {
-		return null;
-	}
 
 	public MovingObjectPosition rayTraceMouse() {
 		double distance = 1000;
 
-        Vec3 localPos = this.getPosition(1.0F);
+        Vec3 localPos = this.getPositionVector().addVector(BuildCraftCore.diffX, BuildCraftCore.diffY, BuildCraftCore.diffZ);
         Vec3 look = this.getLook(1.0F).normalize();
-
-        localPos.xCoord += BuildCraftCore.diffX;
-        localPos.yCoord += BuildCraftCore.diffY;
-        localPos.zCoord += BuildCraftCore.diffZ;
 
         Vec3 vec32 = localPos.addVector(look.xCoord * distance, look.yCoord * distance, look.zCoord * distance);
 
@@ -151,16 +143,12 @@ public class EntityUrbanist extends EntityLivingBase {
 //				worldObj.spawnEntityInWorld(laser);
 //			}
 
-			localPos = this.getPosition(1.0F);
-			localPos.xCoord += BuildCraftCore.diffX;
-		    localPos.yCoord += BuildCraftCore.diffY + 0.1F;
-		    localPos.zCoord += BuildCraftCore.diffZ;
+			localPos = this.getPositionVector().addVector(BuildCraftCore.diffX, BuildCraftCore.diffY + 0.1F, BuildCraftCore.diffZ);
+
 
 		    look = this.getLook(1.0F).normalize();
 
-			Vec3 aimed = Vec3.createVectorHelper(
-					localPos.xCoord + look.xCoord * 200,
-					localPos.yCoord + look.yCoord * 200,
+			Vec3 aimed = new Vec3(localPos.xCoord + look.xCoord * 200,	localPos.yCoord + look.yCoord * 200,
 					localPos.zCoord + look.zCoord * 200);
 
 //			laser.setPositions(
@@ -178,6 +166,16 @@ public class EntityUrbanist extends EntityLivingBase {
 	@Override
 	public ItemStack getEquipmentInSlot(int var1) {
 		return null;
+	}
+
+	@Override
+	public ItemStack getCurrentArmor(int slotIn) {
+		return null;
+	}
+
+	@Override
+	public ItemStack[] getInventory() {
+		return new ItemStack[5];
 	}
 
 }

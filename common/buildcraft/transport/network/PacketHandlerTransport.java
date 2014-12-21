@@ -11,14 +11,12 @@ package buildcraft.transport.network;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.common.network.NetworkRegistry;
-
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
@@ -94,11 +92,11 @@ public class PacketHandlerTransport extends SimpleChannelInboundHandler<BuildCra
 	private void onPipeTravelerUpdate(EntityPlayer player, PacketPipeTransportTraveler packet) {
 		World world = player.worldObj;
 
-		if (!world.blockExists(packet.posX, packet.posY, packet.posZ)) {
+		if (!world.isAirBlock(packet.pos)) {
 			return;
 		}
 
-		TileEntity entity = world.getTileEntity(packet.posX, packet.posY, packet.posZ);
+		TileEntity entity = world.getTileEntity(packet.pos);
 		if (!(entity instanceof TileGenericPipe)) {
 			return;
 		}
@@ -122,11 +120,11 @@ public class PacketHandlerTransport extends SimpleChannelInboundHandler<BuildCra
 	 */
 	private void onPacketPower(EntityPlayer player, PacketPowerUpdate packetPower) {
 		World world = player.worldObj;
-		if (!world.blockExists(packetPower.posX, packetPower.posY, packetPower.posZ)) {
+		if (!world.isAirBlock(packetPower.pos)) {
 			return;
 		}
 
-		TileEntity entity = world.getTileEntity(packetPower.posX, packetPower.posY, packetPower.posZ);
+		TileEntity entity = world.getTileEntity(packetPower.pos);
 		if (!(entity instanceof TileGenericPipe)) {
 			return;
 		}
@@ -152,12 +150,12 @@ public class PacketHandlerTransport extends SimpleChannelInboundHandler<BuildCra
 	 * @param y
 	 * @param z
 	 */
-	private TileGenericPipe getPipe(World world, int x, int y, int z) {
-		if (!world.blockExists(x, y, z)) {
+	private TileGenericPipe getPipe(World world, BlockPos pos) {
+		if (world.isAirBlock(pos)) {
 			return null;
 		}
 
-		TileEntity tile = world.getTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(pos);
 		if (!(tile instanceof TileGenericPipe)) {
 			return null;
 		}
@@ -172,7 +170,7 @@ public class PacketHandlerTransport extends SimpleChannelInboundHandler<BuildCra
 	 * @param packet
 	 */
 	private void onDiamondPipeSelect(EntityPlayer player, PacketSlotChange packet) {
-		TileGenericPipe pipe = getPipe(player.worldObj, packet.posX, packet.posY, packet.posZ);
+		TileGenericPipe pipe = getPipe(player.worldObj, packet.pos);
 		if (pipe == null) {
 			return;
 		}
@@ -191,7 +189,7 @@ public class PacketHandlerTransport extends SimpleChannelInboundHandler<BuildCra
 	 * @param packet
 	 */
 	private void onEmeraldPipeSelect(EntityPlayer player, PacketSlotChange packet) {
-		TileGenericPipe pipe = getPipe(player.worldObj, packet.posX, packet.posY, packet.posZ);
+		TileGenericPipe pipe = getPipe(player.worldObj, packet.pos);
 		if (pipe == null) {
 			return;
 		}

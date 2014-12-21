@@ -25,7 +25,6 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.BlockMultiTexture;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.utils.Utils;

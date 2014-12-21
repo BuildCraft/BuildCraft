@@ -64,8 +64,8 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 	}
 	
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		if (powered) {
 			pumpLayerQueues.clear();
@@ -103,13 +103,13 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 
 		BlockPos index = getNextIndexToPump(false);
 
-		FluidStack fluidToPump = index != null ? BlockUtils.drainBlock(worldObj, index.x, index.y, index.z, false) : null;
+		FluidStack fluidToPump = index != null ? BlockUtils.drainBlock(worldObj, index, false) : null;
 		if (fluidToPump != null) {
 			if (isFluidAllowed(fluidToPump.getFluid()) && tank.fill(fluidToPump, false) == fluidToPump.amount) {
 				if (getBattery().useEnergy(100, 100, false) > 0) {
 					if (fluidToPump.getFluid() != FluidRegistry.WATER || BuildCraftCore.consumeWaterSources || numFluidBlocksFound < 9) {
 						index = getNextIndexToPump(true);
-						BlockUtils.drainBlock(worldObj, index.x, index.y, index.z, true);
+						BlockUtils.drainBlock(worldObj, index, true);
 					}
 
 					tank.fill(fluidToPump, true);
@@ -121,11 +121,11 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 				rebuildQueue();
 
 				if (getNextIndexToPump(false) == null) {
-					for (int y = yCoord - 1; y > 0; --y) {
-						if (isPumpableFluid(xCoord, y, zCoord)) {
+					for (int y = pos.getY() - 1; y > 0; --y) {
+						if (isPumpableFluid(new BlockPos(pos.getX(), y, pos.getZ()))) {
 							aimY = y;
 							return;
-						} else if (isBlocked(xCoord, y, zCoord)) {
+						} else if (isBlocked(new BlockPos(pos.getX(), y, pos.getZ()))) {
 							return;
 						}
 					}
@@ -135,7 +135,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 	}
 
 	public void onNeighborBlockChange(Block block) {
-		boolean p = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+		boolean p = worldObj.isBlockPowered(pos);
 
 		if (powered != p) {
 			powered = p;
@@ -146,15 +146,15 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 		}
 	}
 
-	private boolean isBlocked(int x, int y, int z) {
-		Material mat = worldObj.getBlock(x, y, z).getMaterial();
+	private boolean isBlocked(BlockPos pos) {
+		Material mat = worldObj.getBlockState(pos).getBlock().getMaterial();
 
 		return mat.blocksMovement();
 	}
 
 	private void pushToConsumers() {
 		if (cache == null) {
-			cache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
+			cache = TileBuffer.makeBuffer(worldObj, pos, false);
 		}
 
 		TankUtils.pushFluidToConsumers(tank, 400, cache);
@@ -167,13 +167,13 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 			if (!Double.isNaN(tubeY)) {
 				tube.posY = tubeY;
 			} else {
-				tube.posY = yCoord;
+				tube.posY = pos.getY();
 			}
 
 			tubeY = tube.posY;
 
 			if (aimY == 0) {
-				aimY = yCoord;
+				aimY = pos.getY();
 			}
 
 			setTubePosition();
@@ -236,10 +236,8 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 	public void rebuildQueue() {
 		numFluidBlocksFound = 0;
 		pumpLayerQueues.clear();
-		int x = xCoord;
-		int y = aimY;
-		int z = zCoord;
-		Fluid pumpingFluid = BlockUtils.getFluid(worldObj.getBlock(x, y, z));
+		BlockPos p = new BlockPos(pos.getX(), aimY, pos.getZ());
+		Fluid pumpingFluid = BlockUtils.getFluid(worldObj.getBlockState(p).getBlock());
 
 		if (pumpingFluid == null) {
 			return;
@@ -252,7 +250,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 		Set<BlockPos> visitedBlocks = new HashSet<BlockPos>();
 		Deque<BlockPos> fluidsFound = new LinkedList<BlockPos>();
 
-		queueForPumping(x, y, z, visitedBlocks, fluidsFound, pumpingFluid);
+		queueForPumping(p, visitedBlocks, fluidsFound, pumpingFluid);
 
 //		long timeoutTime = System.nanoTime() + 10000;
 
@@ -261,11 +259,11 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 			fluidsFound = new LinkedList<BlockPos>();
 
 			for (BlockPos index : fluidsToExpand) {
-				queueForPumping(index.x, index.y + 1, index.z, visitedBlocks, fluidsFound, pumpingFluid);
-				queueForPumping(index.x + 1, index.y, index.z, visitedBlocks, fluidsFound, pumpingFluid);
-				queueForPumping(index.x - 1, index.y, index.z, visitedBlocks, fluidsFound, pumpingFluid);
-				queueForPumping(index.x, index.y, index.z + 1, visitedBlocks, fluidsFound, pumpingFluid);
-				queueForPumping(index.x, index.y, index.z - 1, visitedBlocks, fluidsFound, pumpingFluid);
+				queueForPumping(index.offsetUp(), visitedBlocks, fluidsFound, pumpingFluid);
+				queueForPumping(index.offsetEast(), visitedBlocks, fluidsFound, pumpingFluid);
+				queueForPumping(index.offsetWest(), visitedBlocks, fluidsFound, pumpingFluid);
+				queueForPumping(index.offsetNorth(), visitedBlocks, fluidsFound, pumpingFluid);
+				queueForPumping(index.offsetSouth(), visitedBlocks, fluidsFound, pumpingFluid);
 
 				if (pumpingFluid == FluidRegistry.WATER
 						&& !BuildCraftCore.consumeWaterSources
@@ -279,28 +277,27 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 		}
 	}
 
-	public void queueForPumping(int x, int y, int z, Set<BlockPos> visitedBlocks, Deque<BlockPos> fluidsFound, Fluid pumpingFluid) {
-		BlockPos index = new BlockPos(x, y, z);
+	public void queueForPumping(BlockPos index, Set<BlockPos> visitedBlocks, Deque<BlockPos> fluidsFound, Fluid pumpingFluid) {
 		if (visitedBlocks.add(index)) {
-			if ((x - xCoord) * (x - xCoord) + (z - zCoord) * (z - zCoord) > 64 * 64) {
+			if ((index.getX() - pos.getX()) * (index.getX() - pos.getY()) + index.getZ() - pos.getZ() * (index.getZ() - pos.getZ()) > 64 * 64) {
 				return;
 			}
 
-			Block block = worldObj.getBlock(x, y, z);
+			Block block = worldObj.getBlockState(index).getBlock();
 
 			if (BlockUtils.getFluid(block) == pumpingFluid) {
 				fluidsFound.add(index);
 			}
 
-			if (canDrainBlock(block, x, y, z, pumpingFluid)) {
-				getLayerQueue(y).add(index);
+			if (canDrainBlock(block, index, pumpingFluid)) {
+				getLayerQueue(index.getY()).add(index);
 				numFluidBlocksFound++;
 			}
 		}
 	}
 
-	private boolean isPumpableFluid(int x, int y, int z) {
-		Fluid fluid = BlockUtils.getFluid(worldObj.getBlock(x, y, z));
+	private boolean isPumpableFluid(BlockPos pos) {
+		Fluid fluid = BlockUtils.getFluid(worldObj.getBlockState(pos).getBlock());
 
 		if (fluid == null) {
 			return false;
@@ -311,12 +308,12 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 		}
 	}
 
-	private boolean canDrainBlock(Block block, int x, int y, int z, Fluid fluid) {
+	private boolean canDrainBlock(Block block, BlockPos pos, Fluid fluid) {
 		if (!isFluidAllowed(fluid)) {
 			return false;
 		}
 
-		FluidStack fluidStack = BlockUtils.drainBlock(block, worldObj, x, y, z, false);
+		FluidStack fluidStack = BlockUtils.drainBlock(block, worldObj, pos, false);
 
 		if (fluidStack == null || fluidStack.amount <= 0) {
 			return false;
@@ -354,7 +351,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 		if (tube != null) {
 			data.setFloat("tubeY", (float) tube.posY);
 		} else {
-			data.setFloat("tubeY", yCoord);
+			data.setFloat("tubeY", pos.getY());
 		}
 	}
 
@@ -363,7 +360,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 		BlockPos next = getNextIndexToPump(false);
 
 		if (next != null) {
-			return isPumpableFluid(next.x, next.y, next.z);
+			return isPumpableFluid(next);
 		} else {
 			return false;
 		}
@@ -389,9 +386,9 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 		if (tube != null) {
 			tube.iSize = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
 			tube.kSize = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
-			tube.jSize = yCoord - tube.posY;
+			tube.jSize = pos.getY() - tube.posY;
 
-			tube.setPosition(xCoord + CoreConstants.PIPE_MIN_POS, tubeY, zCoord + CoreConstants.PIPE_MIN_POS);
+			tube.setPosition(pos.getX() + CoreConstants.PIPE_MIN_POS, tubeY, pos.getZ() + CoreConstants.PIPE_MIN_POS);
 		}
 	}
 

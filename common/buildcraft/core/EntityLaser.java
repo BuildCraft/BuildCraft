@@ -10,9 +10,9 @@ package buildcraft.core;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-
 import buildcraft.api.core.Position;
 
 public abstract class EntityLaser extends Entity {
@@ -28,6 +28,8 @@ public abstract class EntityLaser extends Entity {
 	public LaserData data = new LaserData();
 
 	protected boolean needsUpdate = true;
+	
+	public AxisAlignedBB boundingBox;
 
 	public EntityLaser(World world) {
 		super(world);
@@ -78,22 +80,11 @@ public abstract class EntityLaser extends Entity {
 		//if (worldObj.isRemote) {
 		//	updateDataClient();
 		//}
-
-		boundingBox.minX = Math.min(data.head.x, data.tail.x);
-		boundingBox.minY = Math.min(data.head.y, data.tail.y);
-		boundingBox.minZ = Math.min(data.head.z, data.tail.z);
-
-		boundingBox.maxX = Math.max(data.head.x, data.tail.x);
-		boundingBox.maxY = Math.max(data.head.y, data.tail.y);
-		boundingBox.maxZ = Math.max(data.head.z, data.tail.z);
-
-		boundingBox.minX--;
-		boundingBox.minY--;
-		boundingBox.minZ--;
-
-		boundingBox.maxX++;
-		boundingBox.maxY++;
-		boundingBox.maxZ++;
+		
+		//TODO (1.8): Avoid Object Overflow
+		boundingBox = new AxisAlignedBB(Math.min(data.head.x, data.tail.x), Math.min(data.head.y, data.tail.y) - 1.0D, 
+				Math.min(data.head.z, data.tail.z) - 1.0D,  Math.max(data.head.x, data.tail.x) + 1.0D, 
+				Math.max(data.head.y, data.tail.y) + 1.0D , Math.max(data.head.z, data.tail.z) + 1.0D);
 
 		data.update();
 	}

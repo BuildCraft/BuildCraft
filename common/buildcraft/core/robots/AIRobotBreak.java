@@ -64,13 +64,12 @@ public class AIRobotBreak extends AIRobot {
 		blockDamage += speed / hardness / 30F;
 
 		if (blockDamage > 1.0F) {
-			robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), blockToBreak.x,
-					blockToBreak.y, blockToBreak.z, -1);
+			robot.worldObj.sendBlockBreakProgress(robot.getEntityId(), blockToBreak, -1);
 			blockDamage = 0;
 
 			if (robot.getHeldItem() != null) {
 				robot.getHeldItem().getItem()
-						.onBlockStartBreak(robot.getHeldItem(), blockToBreak.x, blockToBreak.y, blockToBreak.z,
+						.onBlockStartBreak(robot.getHeldItem(), blockToBreak,
 							CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj).get());
 			}
 
@@ -91,16 +90,14 @@ public class AIRobotBreak extends AIRobot {
 
 			terminate();
 		} else {
-			robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), blockToBreak.x,
-					blockToBreak.y, blockToBreak.z, (int) (blockDamage * 10.0F) - 1);
+			robot.worldObj.sendBlockBreakProgress(robot.getEntityId(), blockToBreak, (int) (blockDamage * 10.0F) - 1);
 		}
 	}
 
 	@Override
 	public void end() {
 		robot.setItemActive(false);
-		robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), blockToBreak.x,
-				blockToBreak.y, blockToBreak.z, -1);
+		robot.worldObj.sendBlockBreakProgress(robot.getEntityId(), blockToBreak, -1);
 	}
 
 	private float getBreakSpeed(EntityRobotBase robot, ItemStack usingItem) {

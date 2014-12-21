@@ -19,7 +19,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.Box;
@@ -54,7 +54,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
 			if (urbanist == null) {
 				urbanist = new EntityUrbanist(worldObj);
 				worldObj.spawnEntityInWorld(urbanist);
-				player = Minecraft.getMinecraft().renderViewEntity;
+				player = (EntityLivingBase) Minecraft.getMinecraft().getRenderViewEntity();
 
 				urbanist.copyLocationAndAnglesFrom(player);
 				urbanist.tile = this;
@@ -63,7 +63,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
 				urbanist.rotationYaw = 0;
 				urbanist.rotationPitch = 0;
 
-				Minecraft.getMinecraft().renderViewEntity = urbanist;
+				Minecraft.getMinecraft().setRenderViewEntity(urbanist);
 				thirdPersonView = Minecraft.getMinecraft().gameSettings.thirdPersonView;
 				Minecraft.getMinecraft().gameSettings.thirdPersonView = 8;
 
@@ -80,8 +80,8 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 	}
 
 	private BuildCraftPacket createXYZPacket(String name, final int x, final int y, final int z) {
@@ -107,18 +107,16 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
 			startFiller(fillerTag, box);
 		} else {
 			// XYZ commands go here
-			int x = stream.readInt();
-			int y = stream.readInt();
-			int z = stream.readInt();
+			BlockPos pos = Utils.readBlockPos(stream);
 
 			if (side.isServer() && "setBlock".equals(command)) {
-				worldObj.setBlock(x, y, z, Blocks.brick_block);
+				worldObj.setBlockState(pos, Blocks.brick_block.getDefaultState());
 			} else if (side.isServer() && "eraseBlock".equals(command)) {
 				// tasks.add(new UrbanistTaskErase(this, x, y, z));
 			} else if ("createFrame".equals(command)) {
-				createFrame(x, y, z);
+				createFrame(pos.getX(), pos.getY(), pos.getZ());
 			} else if ("moveFrame".equals(command)) {
-				moveFrame(x, y, z);
+				moveFrame(pos.getX(), pos.getY(), pos.getZ());
 			}
 		}
 	}
@@ -223,7 +221,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
 	}
 
 	public void destroyUrbanistEntity() {
-		Minecraft.getMinecraft().renderViewEntity = player;
+		Minecraft.getMinecraft().setRenderViewEntity(player);
 		Minecraft.getMinecraft().gameSettings.thirdPersonView = thirdPersonView;
 		worldObj.removeEntity(urbanist);
 		urbanist.setDead();
@@ -255,12 +253,12 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
 	}
 
 	@Override
-	public String getInventoryName() {
+	public String getName() {
 		return null;
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
+	public boolean hasCustomName() {
 		return false;
 	}
 
@@ -272,14 +270,6 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer var1) {
 		return true;
-	}
-
-	@Override
-	public void openInventory() {
-	}
-
-	@Override
-	public void closeInventory() {
 	}
 
 	@Override
@@ -295,7 +285,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
 			box.extendToEncompass(b.box);
 		}
 
-		return box.fromBounds();
+		return box.getBoundingBox();
 	}
 
 	@Override
@@ -360,5 +350,15 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
 		}
 
 		return result;
+	}
+
+	@Override
+	public void openInventory(EntityPlayer playerIn) {
+		
+	}
+
+	@Override
+	public void closeInventory(EntityPlayer playerIn) {
+		
 	}
 }

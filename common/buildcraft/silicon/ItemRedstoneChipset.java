@@ -11,11 +11,9 @@ package buildcraft.silicon;
 import java.util.List;
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
 
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -37,7 +35,7 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 		COMP,
 		EMERALD;
 		public static final Chipset[] VALUES = values();
-		private IIcon icon;
+		//private IIcon icon;
 
 		public String getChipsetName() {
 			return "redstone_" + name().toLowerCase(Locale.ENGLISH) + "_chipset";
@@ -65,10 +63,10 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 		setMaxDamage(0);
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIconFromDamage(int damage) {
 		return Chipset.fromOrdinal(damage).icon;
-	}
+	}*/
 
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {
@@ -84,17 +82,18 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 		}
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister par1IconRegister) {
 		for (Chipset chipset : Chipset.VALUES) {
 			chipset.icon = par1IconRegister.registerIcon("buildcraft:" + chipset.getChipsetName());
 		}
-	}
+	}*/
 
 	public void registerItemStacks() {
 		for (Chipset chipset : Chipset.VALUES) {
-			GameRegistry.registerCustomItemStack(chipset.getChipsetName(), chipset.getStack());
+			//TODO (1.8): Maybe we need to use variants here
+			//GameRegistry.registerCustomItemStack(chipset.getChipsetName(), chipset.getStack());
 		}
 	}
 }

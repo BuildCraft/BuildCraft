@@ -10,21 +10,16 @@ package buildcraft.core;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.Constants;
 import net.minecraft.util.EnumFacing;
-
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import net.minecraft.util.BlockPos;
 import buildcraft.api.core.IBox;
@@ -33,6 +28,7 @@ import buildcraft.builders.TileMarker;
 import buildcraft.builders.TilePathMarker;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.core.utils.Utils;
 
 public class ItemMapLocation extends ItemBuildCraft {
 
@@ -80,8 +76,7 @@ public class ItemMapLocation extends ItemBuildCraft {
 			}
 			case 2: {
 				NBTTagList pathNBT = cpt.getTagList("path", Constants.NBT.TAG_COMPOUND);
-				// This is strange!
-				BlockPos first = new BlockPos(pathNBT.getCompoundTagAt(0));
+				BlockPos first = Utils.readBlockPos(pathNBT.getCompoundTagAt(0));
 
 				int x = first.getX();
 				int y = first.getY();
@@ -139,9 +134,8 @@ public class ItemMapLocation extends ItemBuildCraft {
 	}*/
 
 	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer par2EntityPlayer, World world, int x,
-			int y, int z, int side, float par8, float par9, float par10) {
-		TileEntity tile = world.getTileEntity(x, y, z);
+	public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
+		TileEntity tile = world.getTileEntity(pos);
 		NBTTagCompound cpt = NBTUtils.getItemData(stack);
 
 		if (tile instanceof TilePathMarker) {
@@ -153,7 +147,7 @@ public class ItemMapLocation extends ItemBuildCraft {
 
 			for (BlockPos index : pathTile.getPath()) {
 				NBTTagCompound nbt = new NBTTagCompound();
-				index.writeTo(nbt);
+				Utils.writeBlockPos(nbt, index);
 				pathNBT.appendTag(nbt);
 			}
 
@@ -173,10 +167,9 @@ public class ItemMapLocation extends ItemBuildCraft {
 		} else {
 			cpt.setByte("kind", (byte) 0);
 
-			cpt.setByte("side", (byte) side);
-			cpt.setInteger("x", x);
-			cpt.setInteger("y", y);
-			cpt.setInteger("z", z);
+			cpt.setByte("side", (byte) side.getIndex());
+			
+			Utils.writeBlockPos(cpt, pos);
 		}
 
 		return true;

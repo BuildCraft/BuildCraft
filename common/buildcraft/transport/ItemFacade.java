@@ -17,7 +17,6 @@ import com.google.common.collect.Sets;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryCrafting;
@@ -242,13 +241,15 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 	private void registerValidFacades(Block block, Item item) {
 		Set<String> names = Sets.newHashSet();
 
-		for (IBlockState state: block.getBlockState().getValidStates()) {
+		for (Object o: block.getBlockState().getValidStates()) {
+			IBlockState state = (IBlockState) o;
 			try {
 				if (block.hasTileEntity(state)) {
 					continue;
 				}
 				
-				ItemStack stack = new ItemStack(item, 1, state);
+				//TODO: get item metadata
+				ItemStack stack = new ItemStack(item, 1);
 
                 // Check if all of these functions work correctly.
                 // If an exception is filed, or null is returned, this generally means that
@@ -268,7 +269,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 					addFacade(stack);
 
 					// prevent adding multiple facades if it's a rotatable block
-					if (block.getRenderType() == 31 || (block.getRenderType() == 39 && i == 2)) {
+					if (block.getRenderType() == 31 || (block.getRenderType() == 39)) {
 						break;
 					}
 				}
@@ -593,9 +594,14 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 		public ItemStack getRecipeOutput() {
 			return null;
 		}
+
+		@Override
+		public ItemStack[] func_179532_b(InventoryCrafting inv) {
+			return new ItemStack[] {getCraftingResult(inv)};
+		}
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister par1IconRegister) {
 		// NOOP
@@ -605,7 +611,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 	@SideOnly(Side.CLIENT)
 	public int getSpriteNumber() {
 		return 0;
-	}
+	}*/
 	
 	@Override
 	public ItemStack getFacadeForBlock(Block block, int metadata) {

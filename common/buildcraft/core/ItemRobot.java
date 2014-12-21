@@ -10,7 +10,6 @@ package buildcraft.core;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -91,10 +90,10 @@ public class ItemRobot extends ItemBuildCraft {
 		}
 	}
 
-	@Override
+	/*@Override
 	public void registerIcons(IIconRegister par1IconRegister) {
 		// cancels default BC icon registering
-	}
+	}*/
 
 	public static ItemStack createRobotStack(ItemStack board) {
 		ItemStack robot = new ItemStack(BuildCraftSilicon.robotItem);

@@ -8,16 +8,15 @@
  */
 package buildcraft.builders.urbanism;
 
+import java.io.IOException;
+
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.inventory.IInventory;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
@@ -43,11 +42,11 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 			this.tool = tool;
 		}
 
-		@SideOnly(Side.CLIENT)
+		/*@SideOnly(Side.CLIENT)
 		@Override
 		public IIcon getIcon() {
 			return tool.getIcon();
-		}
+		}*/
 
 		@Override
 		public String getDescription() {
@@ -166,7 +165,7 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 	}
 
 	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 
 		if (!onInterface(mouseX, mouseY)) {
@@ -201,7 +200,7 @@ public class GuiUrbanist extends GuiAdvancedInterface {
     }
 
 	@Override
-	public void handleMouseInput() {
+	public void handleMouseInput() throws IOException {
 		super.handleMouseInput();
 
 		int x = Mouse.getEventX() * this.width / this.mc.displayWidth;

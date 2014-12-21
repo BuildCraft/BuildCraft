@@ -11,7 +11,6 @@ package buildcraft.builders;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import buildcraft.builders.urbanism.TileUrbanist;
-import buildcraft.core.render.RenderBlockMultiTexture;
 import buildcraft.core.render.RenderBoxProvider;
 import buildcraft.core.render.RenderBuilder;
 
