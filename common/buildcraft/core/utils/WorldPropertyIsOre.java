@@ -12,9 +12,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class WorldPropertyIsOre extends WorldProperty {
@@ -22,6 +25,7 @@ public class WorldPropertyIsOre extends WorldProperty {
 	public HashSet<Integer> ores = new HashSet<Integer>();
 
 	public WorldPropertyIsOre(int harvestLevel) {
+		initBlockHarvestTools();
 		for (String oreName : OreDictionary.getOreNames()) {
 			if (oreName.startsWith("ore")) {
 				ArrayList<ItemStack> oreStacks = OreDictionary.getOres(oreName);
@@ -41,6 +45,11 @@ public class WorldPropertyIsOre extends WorldProperty {
 				}
 			}
 		}
+	}
+
+	private void initBlockHarvestTools() {
+		// Make sure the static code block in the ForgeHooks class is run
+		ForgeHooks.canToolHarvestBlock(Blocks.coal_ore, 0, new ItemStack(Items.diamond_pickaxe));
 	}
 
 	@Override
