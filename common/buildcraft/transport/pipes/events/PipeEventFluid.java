@@ -1,8 +1,8 @@
 package buildcraft.transport.pipes.events;
 
 import java.util.List;
+
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 public abstract class PipeEventFluid extends PipeEvent {

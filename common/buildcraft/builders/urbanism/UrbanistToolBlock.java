@@ -11,6 +11,7 @@ package buildcraft.builders.urbanism;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+
 import buildcraft.core.DefaultProps;
 
 class UrbanistToolBlock extends UrbanistTool {

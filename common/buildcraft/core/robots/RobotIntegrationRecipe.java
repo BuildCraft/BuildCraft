@@ -9,6 +9,7 @@
 package buildcraft.core.robots;
 
 import net.minecraft.item.ItemStack;
+
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.core.ItemRobot;

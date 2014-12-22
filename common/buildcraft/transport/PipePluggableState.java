@@ -1,7 +1,9 @@
 package buildcraft.transport;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.api.transport.pluggable.PipePluggable;
@@ -47,7 +49,7 @@ public class PipePluggableState implements ISerializable {
 					PipePluggable p = PipeManager.pipePluggables.get(data.readUnsignedShort()).newInstance();
 					p.readData(data);
 					pluggables[dir.ordinal()] = p;
-				} catch(Exception e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			} else {

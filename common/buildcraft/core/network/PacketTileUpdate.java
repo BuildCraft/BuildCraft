@@ -10,6 +10,7 @@ package buildcraft.core.network;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import buildcraft.api.core.ISerializable;
 
 public class PacketTileUpdate extends PacketUpdate {

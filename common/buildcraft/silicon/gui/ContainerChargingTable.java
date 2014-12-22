@@ -12,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
+
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.slots.SlotValidated;
 import buildcraft.silicon.TileChargingTable;

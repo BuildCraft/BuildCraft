@@ -4,7 +4,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;

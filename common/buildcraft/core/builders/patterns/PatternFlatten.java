@@ -9,6 +9,7 @@
 package buildcraft.core.builders.patterns;
 
 import net.minecraft.world.World;
+
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.BptBuilderTemplate;

@@ -9,6 +9,7 @@
 package buildcraft.commander;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.block.material.MapColor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;

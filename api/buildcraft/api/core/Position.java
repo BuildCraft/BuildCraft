@@ -9,6 +9,7 @@
 package buildcraft.api.core;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 

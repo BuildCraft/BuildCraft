@@ -13,20 +13,24 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.core.ISerializable;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.api.core.ISerializable;
 import buildcraft.core.utils.ColorUtils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -92,9 +96,9 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements ISeria
 			}
 		}
 
-		int color = ColorUtils.getColorIDFromDye(player.getCurrentEquippedItem());
-		if (color >= 0 && color < 16) {
-			setColor(EnumColor.fromId(15 - color));
+		int newColor = ColorUtils.getColorIDFromDye(player.getCurrentEquippedItem());
+		if (newColor >= 0 && newColor < 16) {
+			setColor(EnumColor.fromId(15 - newColor));
 			return true;
 		}
 

@@ -10,6 +10,7 @@ package buildcraft.core.gui.slots;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+
 import buildcraft.builders.TileArchitect;
 
 public class SlotArchitect extends SlotBase {

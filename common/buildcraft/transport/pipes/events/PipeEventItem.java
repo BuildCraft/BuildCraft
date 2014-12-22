@@ -12,7 +12,9 @@ import java.util.List;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.transport.TravelingItem;
 
 public abstract class PipeEventItem extends PipeEvent {

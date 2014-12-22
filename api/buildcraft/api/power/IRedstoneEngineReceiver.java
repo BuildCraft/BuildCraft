@@ -1,7 +1,7 @@
 package buildcraft.api.power;
 
 import net.minecraftforge.common.util.ForgeDirection;
-import cofh.api.energy.IEnergyConnection;
+
 import cofh.api.energy.IEnergyReceiver;
 
 /**

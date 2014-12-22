@@ -1,6 +1,7 @@
 package buildcraft.core.network;
 
 import io.netty.buffer.ByteBuf;
+
 import buildcraft.api.core.ISerializable;
 
 public class Serializable implements ISerializable {

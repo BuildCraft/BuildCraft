@@ -20,7 +20,9 @@ import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagShort;
+
 import net.minecraftforge.common.util.Constants;
+
 import buildcraft.api.core.BCLog;
 
 public class MappingRegistry {

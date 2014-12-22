@@ -11,6 +11,7 @@ package buildcraft.api.transport;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 public interface IStripesHandler {

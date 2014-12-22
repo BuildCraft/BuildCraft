@@ -17,8 +17,10 @@ import net.minecraft.block.BlockWorkbench;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidHandler;
+
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.statements.IActionExternal;

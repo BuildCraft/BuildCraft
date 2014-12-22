@@ -9,6 +9,7 @@
 package buildcraft.builders.schematics;
 
 import net.minecraft.nbt.NBTTagCompound;
+
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.blueprints.SchematicMask;

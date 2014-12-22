@@ -21,12 +21,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.ISerializable;
 import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.InventoryWrapper;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
-import buildcraft.api.core.ISerializable;
 import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;

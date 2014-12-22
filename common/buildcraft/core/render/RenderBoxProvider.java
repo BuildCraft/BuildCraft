@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+
 import buildcraft.core.Box;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IBoxProvider;
