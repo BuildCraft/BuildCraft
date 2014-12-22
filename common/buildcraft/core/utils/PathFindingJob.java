@@ -32,6 +32,7 @@ public class PathFindingJob extends Thread {
 	@Override
 	public void run() {
 		try {
+			pathFinding.preRun();
 			for (int i = 0; i < maxIterations; ++i) {
 				if (isTerminated() || pathFinding.isDone()) {
 					break;
