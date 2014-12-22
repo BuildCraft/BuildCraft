@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.utils.ModelHelper;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.transport.BlockGenericPipe.Part;
 import buildcraft.transport.BlockGenericPipe.RaytraceResult;
@@ -26,9 +27,9 @@ public class ItemGateCopier extends ItemBuildCraft {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public ModelResourceLocation getModel(ItemStack stack, EntityPlayer player, int useRemaining) {
-		return stack.hasTagCompound() && stack.getTagCompound().hasKey("logic") ? new ModelResourceLocation("gate_copier_on") : new ModelResourceLocation("gate_copier_off");
+	public void registerModels() {
+		ModelHelper.registerItemModel(this, 0, "");
+		ModelHelper.registerItemModel(this, 1, "On");
 	}
 
 	@Override
@@ -56,6 +57,7 @@ public class ItemGateCopier extends ItemBuildCraft {
 		if (isCopying) {
 			if (gate == null) {
 				stack.setTagCompound(null);
+				stack.setItemDamage(0);
 				player.addChatMessage(new ChatComponentTranslation("chat.gateCopier.clear"));
 				return true;
 			}
@@ -63,6 +65,7 @@ public class ItemGateCopier extends ItemBuildCraft {
 			gate.writeStatementsToNBT(data);
 			data.setByte("material", (byte) gate.material.ordinal());
 			data.setByte("logic", (byte) gate.logic.ordinal());
+			stack.setItemDamage(1);
 			player.addChatMessage(new ChatComponentTranslation("chat.gateCopier.gateCopied"));
 		} else {
 			if (!data.hasKey("logic")) {

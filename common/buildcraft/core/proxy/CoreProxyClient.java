@@ -46,6 +46,7 @@ import buildcraft.core.render.RenderRobot;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingMarkers;
 import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.utils.IModelRegister;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.render.TileEntityPickupFX;
 
@@ -127,20 +128,8 @@ public class CoreProxyClient extends CoreProxy {
 			}
 		}
 		for (Item item : itemsToRegisterRenderersFor) {
-			if (!(item instanceof ItemBlock)) {
-				LinkedList<ItemStack> stacks = new LinkedList<ItemStack>();
-				item.getSubItems(item, item.getCreativeTab(), stacks);
-				List<String> variants = new LinkedList<String>();
-				for (ItemStack stack : stacks) {
-					String type = Utils.getItemName(item);
-					if (item instanceof ItemBuildCraft) {
-						type += ((ItemBuildCraft) item).getModelSuffix(stack.getItemDamage());
-					}
-					variants.add(type);
-					Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, stack.getItemDamage(), new ModelResourceLocation(type, "inventory"));
-				}
-				
-				ModelBakery.addVariantName(item, variants.toArray(new String[variants.size()]));
+			if (item instanceof IModelRegister) {
+				((IModelRegister) item).registerModels();
 			}
 		}
 	}

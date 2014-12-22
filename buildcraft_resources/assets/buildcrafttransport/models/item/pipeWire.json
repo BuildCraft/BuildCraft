@@ -1,8 +1,5 @@
 {
     "parent": "builtin/generated",
-    "textures": {
-        "layer0": "buildcraft:items/redPipeWire"
-    },
     "display": {
         "thirdperson": {
             "rotation": [ -90, 0, 0 ],

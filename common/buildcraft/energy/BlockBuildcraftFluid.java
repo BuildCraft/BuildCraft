@@ -13,6 +13,8 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.util.BlockPos;
@@ -144,5 +146,21 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 	@Override
 	public MapColor getMapColor(IBlockState state) {
 		return mapColor;
+	}
+
+	// TODO: Remove when Forge fixes BlockStates
+	@Override
+	protected BlockState createBlockState() {
+		return new BlockState(this, new IProperty[]{LEVEL});
+	}
+
+	@Override
+	public int getMetaFromState(IBlockState state) {
+		return ((Integer) state.getValue(LEVEL)).intValue();
+	}
+
+	@Override
+	public IBlockState getStateFromMeta(int meta) {
+		return getBlockState().getBaseState().withProperty(LEVEL, meta);
 	}
 }

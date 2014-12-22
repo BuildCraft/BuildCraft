@@ -13,31 +13,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.core.utils.ModelHelper;
 import buildcraft.core.utils.NBTUtils;
 
 public class ItemBlueprintStandard extends ItemBlueprint {
-	/*private IIcon cleanBlueprint;
-	private IIcon usedBlueprint;*/
-
 	public ItemBlueprintStandard() {
 		super();
 	}
-
-	/*@Override
-	public IIcon getIconIndex(ItemStack stack) {
-		if (!NBTUtils.getItemData(stack).hasKey("name")) {
-			itemIcon = cleanBlueprint;
-		} else {
-			itemIcon = usedBlueprint;
-		}
-		
-		return itemIcon;
-    }
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister) {
-		cleanBlueprint = par1IconRegister.registerIcon("buildcraft:blueprint_clean");
-		usedBlueprint = par1IconRegister.registerIcon("buildcraft:blueprint_used");
-	}*/
 }

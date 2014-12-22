@@ -29,6 +29,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.utils.ModelHelper;
 import buildcraft.core.utils.NBTUtils;
 
 public class ItemList extends ItemBuildCraft {
@@ -221,14 +222,13 @@ public class ItemList extends ItemBuildCraft {
 		}
 
 		return itemIcon;
-	}
+	}*/
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister) {
-		baseIcon = par1IconRegister.registerIcon("buildcraft:list");
-		writtenIcon = par1IconRegister.registerIcon("buildcraft:list_used");
-	}*/
+	public void registerModels() {
+		ModelHelper.registerItemModel(this, 0, "");
+		ModelHelper.registerItemModel(this, 1, "Used");
+	}
 
 	@Override
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
@@ -252,6 +252,7 @@ public class ItemList extends ItemBuildCraft {
 		NBTTagCompound nbt = NBTUtils.getItemData(stack);
 
 		nbt.setBoolean("written", true);
+		stack.setItemDamage(1);
 
 		NBTTagCompound lineNBT = new NBTTagCompound();
 		line.writeToNBT(lineNBT);

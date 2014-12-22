@@ -18,10 +18,9 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.utils.ModelHelper;
 
 public class ItemPipeWire extends ItemBuildCraft {
-
-	//private IIcon[] icons;
 
 	public ItemPipeWire() {
 		super();
@@ -30,11 +29,6 @@ public class ItemPipeWire extends ItemBuildCraft {
 		setPassSneakClick(true);
 		setUnlocalizedName("pipeWire");
 	}
-
-	/*@Override
-	public IIcon getIconFromDamage(int damage) {
-		return icons[damage];
-	}*/
 
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {
@@ -50,19 +44,13 @@ public class ItemPipeWire extends ItemBuildCraft {
 		}
 	}
 
-	/*@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister) {
-		icons = new IIcon[PipeWire.VALUES.length];
+	@Override
+	public void registerModels() {
 		for (PipeWire pipeWire : PipeWire.VALUES) {
-			icons[pipeWire.ordinal()] = par1IconRegister.registerIcon("buildcraft:" + pipeWire.getTag());
+			ModelHelper.registerItemModel(this, pipeWire.ordinal(), pipeWire.getColor());
 		}
-	}*/
-	
-	public String getModelSuffix(int metadata) {
-		return PipeWire.fromOrdinal(metadata).getColor();
 	}
-	
+
 	public void registerItemStacks() {
 		for (PipeWire pipeWire : PipeWire.VALUES) {
 			//TODO (1.8): probably use Variants (not sure)

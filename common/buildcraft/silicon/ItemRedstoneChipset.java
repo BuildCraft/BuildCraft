@@ -21,6 +21,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftSilicon;
 import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.utils.ModelHelper;
 
 public class ItemRedstoneChipset extends ItemBuildCraft {
 
@@ -73,6 +74,13 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 		return "item." + Chipset.fromOrdinal(stack.getItemDamage()).getChipsetName();
 	}
 
+	@Override
+	public void registerModels() {
+		for (Chipset chipset : Chipset.VALUES) {
+			ModelHelper.registerItemModel(this, chipset.ordinal(), "_" + chipset.name().toLowerCase());
+		}
+	}
+
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
 	@SideOnly(Side.CLIENT)
@@ -91,9 +99,5 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 	}*/
 
 	public void registerItemStacks() {
-		for (Chipset chipset : Chipset.VALUES) {
-			//TODO (1.8): Maybe we need to use variants here
-			//GameRegistry.registerCustomItemStack(chipset.getChipsetName(), chipset.getStack());
-		}
 	}
 }

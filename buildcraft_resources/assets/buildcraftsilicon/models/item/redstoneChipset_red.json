@@ -1,0 +1,6 @@
+{
+    "parent": "buildcraftsilicon:item/redstoneChipset",
+    "textures": {
+        "layer0": "buildcraft:items/redstone_red_chipset"
+    }
+}

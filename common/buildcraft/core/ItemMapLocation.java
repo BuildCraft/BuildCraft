@@ -26,6 +26,7 @@ import buildcraft.api.core.IBox;
 import buildcraft.api.core.IZone;
 import buildcraft.builders.TileMarker;
 import buildcraft.builders.TilePathMarker;
+import buildcraft.core.utils.ModelHelper;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
@@ -45,6 +46,15 @@ public class ItemMapLocation extends ItemBuildCraft {
 	@Override
 	public int getItemStackLimit(ItemStack stack) {
 		return NBTUtils.getItemData(stack).hasKey("kind") ? 1 : 16;
+	}
+
+	@Override
+	public void registerModels() {
+		ModelHelper.registerItemModel(this, 0, "");
+		ModelHelper.registerItemModel(this, 1, "Spot");
+		ModelHelper.registerItemModel(this, 2, "Area");
+		ModelHelper.registerItemModel(this, 3, "Path");
+		ModelHelper.registerItemModel(this, 4, "Zone");
 	}
 
 	@Override
@@ -140,6 +150,7 @@ public class ItemMapLocation extends ItemBuildCraft {
 
 		if (tile instanceof TilePathMarker) {
 			cpt.setByte("kind", (byte) 2);
+			stack.setItemDamage(3);
 
 			TilePathMarker pathTile = (TilePathMarker) tile;
 
@@ -154,6 +165,7 @@ public class ItemMapLocation extends ItemBuildCraft {
 			cpt.setTag("path", pathNBT);
 		} else if (tile instanceof TileMarker) {
 			cpt.setByte("kind", (byte) 1);
+			stack.setItemDamage(2);
 
 			TileMarker areaTile = (TileMarker) tile;
 
@@ -166,6 +178,7 @@ public class ItemMapLocation extends ItemBuildCraft {
 
 		} else {
 			cpt.setByte("kind", (byte) 0);
+			stack.setItemDamage(1);
 
 			cpt.setByte("side", (byte) side.getIndex());
 			
@@ -235,6 +248,7 @@ public class ItemMapLocation extends ItemBuildCraft {
 		NBTTagCompound cpt = NBTUtils.getItemData(item);
 
 		cpt.setByte("kind", (byte) 3);
+		item.setItemDamage(4);
 		plan.writeToNBT(cpt);
 	}
 }

@@ -1,0 +1,6 @@
+{
+    "parent": "buildcraftcore:item/mapLocation",
+    "textures": {
+        "layer0": "buildcraft:items/map_area"
+    }
+}

@@ -1,5 +1,5 @@
 {
-    "parent": "buildcraftcore:items/buildcraft_base",
+    "parent": "buildcraftcore:item/buildcraft_base",
     "textures": {
         "layer0": "buildcraft:items/gateCopierOff"
     }

@@ -51,6 +51,9 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		super(container);
 		this.container = container;
 
+		// Bug? Otherwise it crashes in handleMouseInput()...
+		this.mc = Minecraft.getMinecraft();
+
 		this.texture = texture;
 
 		if (inventory instanceof TileEntity) {
