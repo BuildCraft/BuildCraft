@@ -11,6 +11,7 @@ package buildcraft.transport;
 import org.apache.logging.log4j.Level;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -21,35 +22,39 @@ import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+
 import cofh.api.energy.IEnergyHandler;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeManager;
-import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.transport.PipeWire;
+import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.ITileBufferHolder;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.network.BuildCraftPacket;
-import buildcraft.api.core.ISerializable;
 import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.network.ISyncedTile;
 import buildcraft.core.network.PacketTileState;
@@ -771,9 +776,9 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		}
 
 		if (pluggable instanceof IPipeConnection) {
-			IPipe pipe = getNeighborPipe(side);
-			if (pipe != null) {
-				IPipeConnection.ConnectOverride override = ((IPipeConnection) pluggable).overridePipeConnection(pipe.getTile().getPipeType(), side);
+			IPipe neighborPipe = getNeighborPipe(side);
+			if (neighborPipe != null) {
+				IPipeConnection.ConnectOverride override = ((IPipeConnection) pluggable).overridePipeConnection(neighborPipe.getTile().getPipeType(), side);
 				if (override == IPipeConnection.ConnectOverride.CONNECT) {
 					return true;
 				} else if (override == IPipeConnection.ConnectOverride.DISCONNECT) {

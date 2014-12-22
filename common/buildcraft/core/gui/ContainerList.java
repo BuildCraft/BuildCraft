@@ -9,11 +9,13 @@
 package buildcraft.core.gui;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 import cpw.mods.fml.relauncher.Side;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.core.ItemList;
 import buildcraft.core.network.CommandWriter;

@@ -9,6 +9,7 @@
 package buildcraft.core.blueprints;
 
 import net.minecraft.world.World;
+
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.core.IBox;

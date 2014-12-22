@@ -13,6 +13,7 @@ import java.util.Collection;
 import org.lwjgl.opengl.GL11;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;

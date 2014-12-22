@@ -12,11 +12,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.power.ILaserTarget;

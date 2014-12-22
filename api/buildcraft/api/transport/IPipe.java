@@ -9,6 +9,7 @@
 package buildcraft.api.transport;
 
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.gates.IGate;
 
 public interface IPipe {

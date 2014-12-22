@@ -9,6 +9,7 @@
 package buildcraft.core.inventory.filters;
 
 import net.minecraft.item.ItemStack;
+
 import buildcraft.core.inventory.StackHelper;
 
 /**

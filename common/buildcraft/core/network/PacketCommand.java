@@ -9,9 +9,13 @@
 package buildcraft.core.network;
 
 import java.util.ArrayList;
+
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.entity.player.EntityPlayer;
+
 import cpw.mods.fml.common.FMLCommonHandler;
+
 import buildcraft.core.utils.Utils;
 
 public class PacketCommand extends BuildCraftPacket {

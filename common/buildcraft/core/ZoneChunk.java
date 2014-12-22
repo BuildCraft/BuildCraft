@@ -12,7 +12,9 @@ import java.util.BitSet;
 import java.util.Random;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.nbt.NBTTagCompound;
+
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.utils.BitSetUtils;

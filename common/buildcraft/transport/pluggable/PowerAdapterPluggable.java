@@ -1,14 +1,16 @@
 package buildcraft.transport.pluggable;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import cofh.api.energy.IEnergyHandler;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.transport.IPipe;

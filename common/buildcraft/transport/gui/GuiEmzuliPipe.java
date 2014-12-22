@@ -11,7 +11,6 @@ package buildcraft.transport.gui;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
-
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;

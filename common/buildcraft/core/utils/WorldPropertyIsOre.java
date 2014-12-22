@@ -14,6 +14,7 @@ import java.util.HashSet;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
+
 import net.minecraftforge.oredict.OreDictionary;
 
 public class WorldPropertyIsOre extends WorldProperty {

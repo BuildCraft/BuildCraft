@@ -9,6 +9,7 @@
 package buildcraft.core.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
+
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;

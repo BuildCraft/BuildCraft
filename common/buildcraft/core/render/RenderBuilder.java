@@ -12,6 +12,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.tileentity.TileEntity;
+
 import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
 import buildcraft.core.builders.TileAbstractBuilder;

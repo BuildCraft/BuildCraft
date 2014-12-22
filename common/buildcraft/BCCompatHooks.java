@@ -9,7 +9,9 @@
 package buildcraft;
 
 import net.minecraft.tileentity.TileEntity;
+
 import cpw.mods.fml.common.Loader;
+
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.TileGenericPipe;
 

@@ -9,6 +9,7 @@
 package buildcraft.transport.pipes;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
@@ -25,9 +26,9 @@ import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.core.ISerializable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.RFBattery;
-import buildcraft.api.core.ISerializable;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;

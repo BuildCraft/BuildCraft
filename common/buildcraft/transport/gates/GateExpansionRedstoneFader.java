@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.tileentity.TileEntity;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGateExpansion;

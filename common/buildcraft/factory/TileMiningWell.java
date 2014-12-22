@@ -9,7 +9,9 @@
 package buildcraft.factory;
 
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.tiles.IControllable;

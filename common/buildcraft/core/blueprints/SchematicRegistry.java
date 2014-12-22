@@ -15,8 +15,10 @@ import java.util.HashSet;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+
 import buildcraft.api.blueprints.ISchematicRegistry;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicBlock;

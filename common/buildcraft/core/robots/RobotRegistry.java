@@ -21,6 +21,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -211,8 +212,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 				if (!d.canRelease()) {
 					if (forceAll) {
 						d.unsafeRelease(robot);
-					}
-					else if (resetMainLink && d.isMainStation() && d.robotIdTaking() == robot.getRobotId()) {
+					} else if (resetMainLink && d.isMainStation() && d.robotIdTaking() == robot.getRobotId()) {
 						d.invalidateRobotTakingEntity();
 					}
 				} else {
@@ -306,7 +306,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 			MinecraftForge.EVENT_BUS.register(newRegistry);
 
 			registries.put(world.provider.dimensionId, newRegistry);
-			
+
 			return newRegistry;
 		}
 
@@ -372,13 +372,12 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	@SubscribeEvent
-	public void onChunkUnload(ChunkEvent.Unload e)
-	{
-		if(e.world == this.world)
-		{
+	public void onChunkUnload(ChunkEvent.Unload e) {
+		if (e.world == this.world) {
 			for (EntityRobot robot : new ArrayList<EntityRobot>(robotsLoaded.values())) {
-				if(!e.world.loadedEntityList.contains(robot))
+				if (!e.world.loadedEntityList.contains(robot)) {
 					robot.onChunkUnload();
+				}
 			}
 		}
 	}

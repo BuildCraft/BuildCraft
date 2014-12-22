@@ -12,11 +12,14 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+
 import net.minecraftforge.common.util.Constants;
+
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;

@@ -39,11 +39,14 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
@@ -52,11 +55,11 @@ import buildcraft.api.events.PipePlacedEvent;
 import buildcraft.api.events.RobotPlacementEvent;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.transport.pluggable.IPipePluggableItem;
-import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.PipeWire;
+import buildcraft.api.transport.pluggable.IPipePluggableItem;
+import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.CreativeTabBuildCraft;

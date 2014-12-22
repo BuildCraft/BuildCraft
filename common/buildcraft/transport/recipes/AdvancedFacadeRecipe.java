@@ -9,7 +9,9 @@
 package buildcraft.transport.recipes;
 
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.oredict.OreDictionary;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.facades.FacadeType;
