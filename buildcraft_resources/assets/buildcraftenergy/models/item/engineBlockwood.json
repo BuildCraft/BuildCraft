@@ -1,0 +1,10 @@
+{
+    "parent": "buildcraftenergy:item/engineBlock",
+    "textures": {
+        "particle": "buildcraft:blocks/engine/woodEngine_back",
+        "base": "buildcraft:blocks/engine/woodEngine_back",
+        "front": "buildcraft:blocks/engine/woodEngine_side",
+        "chamber": "buildcraft:blocks/engine/chamber_base",
+        "trunk": "buildcraft:blocks/engine/trunk_blue"
+    }
+}

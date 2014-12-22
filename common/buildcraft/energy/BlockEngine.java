@@ -15,12 +15,14 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
@@ -40,8 +42,10 @@ import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.ICustomHighlight;
 import buildcraft.core.IItemPipe;
+import buildcraft.core.utils.IModelRegister;
+import buildcraft.core.utils.ModelHelper;
 
-public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
+public class BlockEngine extends BlockBuildCraft implements ICustomHighlight, IModelRegister {
 	public enum EngineType implements IStringSerializable {
 		WOOD, STONE, IRON, CREATIVE;
 
@@ -287,6 +291,15 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 		if (tile instanceof TileEngine) {
 			((TileEngine) tile).onNeighborUpdate();
 		}
+	}
+
+	@Override
+	public void registerModels() {
+		Item item = ItemBlock.getItemFromBlock(this);
+		ModelHelper.registerItemModel(item, 0, "wood");
+		ModelHelper.registerItemModel(item, 1, "stone");
+		ModelHelper.registerItemModel(item, 2, "iron");
+		ModelHelper.registerItemModel(item, 3, "creative");
 	}
 
 	/*@Override
