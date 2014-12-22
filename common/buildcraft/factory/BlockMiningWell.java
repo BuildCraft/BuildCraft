@@ -89,13 +89,4 @@ public class BlockMiningWell extends BlockBuildCraft {
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileMiningWell();
 	}
-
-	/*@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-	    textureFront = par1IconRegister.registerIcon("buildcraft:miningwell_front");
-        textureSides = par1IconRegister.registerIcon("buildcraft:miningwell_side");
-        textureBack = par1IconRegister.registerIcon("buildcraft:miningwell_back");
-        textureTop = par1IconRegister.registerIcon("buildcraft:miningwell_top");
-	}*/
 }

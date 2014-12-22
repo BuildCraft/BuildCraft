@@ -8,11 +8,18 @@
  */
 package buildcraft.transport;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.BCCompatHooks;
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.BCLog;
+import buildcraft.core.utils.Utils;
 
 public class TransportProxy {
 
@@ -27,6 +34,17 @@ public class TransportProxy {
 	}
 
 	public void registerRenderers() {
+		for (Object o : Item.itemRegistry) {
+			if (o instanceof ItemPipe) {
+				BCLog.logger.info("Registering model for " + ((Item) o).getUnlocalizedName());
+				final ModelResourceLocation loc = new ModelResourceLocation(Utils.getItemName((Item) o), null);
+				Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register((Item) o, new ItemMeshDefinition() {
+					public ModelResourceLocation getModelLocation(ItemStack stack) {
+						return loc;
+					}
+				});
+			}
+		}
 	}
 
 	public void initIconProviders(BuildCraftTransport instance){

@@ -29,6 +29,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.events.BlockPlacedDownEvent;
@@ -45,7 +47,8 @@ public abstract class BlockBuildCraft extends BlockContainer {
 
 	public static final PropertyEnum COLOR_PROP = PropertyEnum.create("color", EnumColor.class, EnumColor.VALUES);
 
-	private final PropertyEnum[] properties;
+	protected final PropertyEnum[] properties;
+
 	private final int[] propertySizes;
 	private final BlockState myBlockState;
 
@@ -73,7 +76,11 @@ public abstract class BlockBuildCraft extends BlockContainer {
 
 		IBlockState defaultState = getBlockState().getBaseState();
 		for (int i = 0; i < properties.length; i++) {
-			propertySizes[i] = properties[i].getAllowedValues().size();
+			try {
+				propertySizes[i] = ((Enum[]) properties[i].getValueClass().getMethod("values").invoke(null)).length;
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
 			Object o = properties[i].getAllowedValues().iterator().next();
 			defaultState = defaultState.withProperty(properties[i], (Comparable) o);
 		}
@@ -104,11 +111,13 @@ public abstract class BlockBuildCraft extends BlockContainer {
 			val += ((Enum) state.getValue(properties[i])).ordinal() * mul;
 			mul *= propertySizes[i];
 		}
+		System.out.println("state is " +val);
 		return val;
 	}
 
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
+		System.out.println("meta is " +meta);
 		IBlockState state = getDefaultState();
 		int mul = 1;
 		int prevMul = 1;
@@ -119,7 +128,11 @@ public abstract class BlockBuildCraft extends BlockContainer {
 			val -= enumVal;
 			val /= prevMul;
 			try {
-				state = state.withProperty(properties[i], ((Enum[]) properties[i].getValueClass().getMethod("values").invoke(null))[enumVal]);
+				if (properties[i].getValueClass() == EnumFacing.class) {
+					state = state.withProperty(properties[i], EnumFacing.getFront(enumVal));
+				} else {
+					state = state.withProperty(properties[i], ((Enum[]) properties[i].getValueClass().getMethod("values").invoke(null))[enumVal]);
+				}
 			} catch(Exception e) {
 				e.printStackTrace();
 			}

@@ -90,7 +90,7 @@ public class BlockMiner {
 
 			IBlockState state = world.getBlockState(pos);
 			Block block = state.getBlock();
-			int meta = ((EnumFacing)state.getValue(BlockBuildCraft.FACING_PROP)).getIndex();
+			int meta = block.getMetaFromState(state);
 
 			BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, state, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world).get());
 			MinecraftForge.EVENT_BUS.post(breakEvent);

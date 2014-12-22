@@ -11,6 +11,7 @@ package buildcraft.transport.utils;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.property.IUnlistedProperty;
 
 public class ConnectionMatrix {
 	private int mask = 0;

@@ -8,11 +8,14 @@
  */
 package buildcraft.transport;
 
+import tv.twitch.Core;
+
 import org.apache.logging.log4j.Level;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -23,6 +26,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.common.property.Properties;
 import net.minecraftforge.common.util.Constants;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
@@ -59,11 +65,15 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.ItemGate;
+import buildcraft.transport.render.PipeRendererModel;
 import buildcraft.transport.utils.RobotStationState;
 
 public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		IPipeTile, ITileBufferHolder, IEnergyHandler, IDropControlInventory,
 		ISyncedTile, ISolidSideTile, IGuiReturnHandler {
+
+	public static final RenderStateProperty RENDER_STATE_PROP = new RenderStateProperty();
+	public static final CoreStateProperty CORE_STATE_PROP = new CoreStateProperty();
 
 	public boolean initialized = false;
 	public final PipeRenderState renderState = new PipeRenderState();
@@ -84,6 +94,50 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	private TileBuffer[] tileBuffer;
 	private int glassColor = -1;
+
+	public static class CoreStateProperty implements IUnlistedProperty<CoreState> {
+		@Override
+		public String getName() {
+			return "coreState";
+		}
+
+		@Override
+		public boolean isValid(CoreState value) {
+			return true;
+		}
+
+		@Override
+		public Class<CoreState> getType() {
+			return CoreState.class;
+		}
+
+		@Override
+		public String valueToString(CoreState value) {
+			return value.toString();
+		}
+	}
+
+	public static class RenderStateProperty implements IUnlistedProperty<PipeRenderState> {
+		@Override
+		public String getName() {
+			return "renderState";
+		}
+
+		@Override
+		public boolean isValid(PipeRenderState value) {
+			return true;
+		}
+
+		@Override
+		public Class<PipeRenderState> getType() {
+			return PipeRenderState.class;
+		}
+
+		@Override
+		public String valueToString(PipeRenderState value) {
+			return value.toString();
+		}
+	}
 
 	public static class CoreState implements IClientState {
 		public int pipeId = -1;
@@ -1139,5 +1193,11 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	@Override
 	public IPipe getPipe() {
 		return pipe;
+	}
+
+	public IExtendedBlockState getState() {
+		return ((IExtendedBlockState) getBlockType().getDefaultState())
+				.withProperty(CORE_STATE_PROP, coreState)
+				.withProperty(RENDER_STATE_PROP, renderState);
 	}
 }

@@ -14,6 +14,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -21,6 +25,9 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -28,6 +35,7 @@ import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLInterModComms.IMCEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.common.config.Configuration;
@@ -35,6 +43,7 @@ import net.minecraftforge.common.config.Property;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.oredict.RecipeSorter;
 import buildcraft.api.blueprints.BuilderAPI;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.gates.GateExpansions;
@@ -119,6 +128,7 @@ import buildcraft.transport.pipes.PipeStructureCobblestone;
 import buildcraft.transport.recipes.AdvancedFacadeRecipe;
 import buildcraft.transport.recipes.GateExpansionRecipe;
 import buildcraft.transport.recipes.GateLogicSwapRecipe;
+import buildcraft.transport.render.PipeRendererModel;
 import buildcraft.transport.schematics.BptItemPipeFilters;
 import buildcraft.transport.schematics.BptPipeIron;
 import buildcraft.transport.schematics.BptPipeWooden;
@@ -229,8 +239,8 @@ public class BuildCraftTransport extends BuildCraftMod {
     
 	private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
 
-	/*public IIconProvider pipeIconProvider = new PipeIconProvider();
-	public IIconProvider wireIconProvider = new WireIconProvider();*/
+	public static final PipeIconProvider pipeIconProvider = new PipeIconProvider();
+	public static final WireIconProvider wireIconProvider = new WireIconProvider();
 
 	private static class PipeRecipe {
 		boolean isShapeless = false; // pipe recipes come shaped and unshaped.
@@ -509,6 +519,22 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		TransportProxy.proxy.registerRenderers();
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+		MinecraftForge.EVENT_BUS.register(this);
+	}
+
+	@SubscribeEvent
+	public void registerModels(ModelBakeEvent event) {
+		for (Object o : Block.blockRegistry) {
+			if (o instanceof BlockGenericPipe) {
+				BCLog.logger.info("Registering model for " + ((Block) o).getUnlocalizedName());
+				event.modelRegistry.putObject(new ModelResourceLocation(Utils.getBlockName((Block) o), null), new PipeRendererModel());
+			}
+		}
+	}
+	@SubscribeEvent
+	public void registerTextures(TextureStitchEvent.Pre event) {
+		pipeIconProvider.registerIcons(event.map);
+		wireIconProvider.registerIcons(event.map);
 	}
 
 	@Mod.EventHandler

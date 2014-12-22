@@ -13,6 +13,7 @@
         }
     ],
     "textures": {
+        "particle": "buildcraft:blocks/tank_bottom_side",
         "up": "buildcraft:blocks/tank_top",
         "down": "buildcraft:blocks/tank_top",
 	"side": "buildcraft:blocks/tank_stacked_side"

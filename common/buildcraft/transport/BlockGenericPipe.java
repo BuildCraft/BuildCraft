@@ -20,6 +20,9 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EffectRenderer;
@@ -41,6 +44,8 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -63,6 +68,7 @@ import buildcraft.core.ItemRobot;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.utils.IModelRegister;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateDefinition;
@@ -71,7 +77,7 @@ import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.utils.FacadeMatrix;
 
 
-public class BlockGenericPipe extends BlockBuildCraft {
+public class BlockGenericPipe extends BlockBuildCraft implements IModelRegister {
 
 	public static int facadeRenderColor = -1;
 	public static Map<Item, Class<? extends Pipe>> pipes = new HashMap<Item, Class<? extends Pipe>>();
@@ -112,19 +118,18 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	/* Defined subprograms ************************************************* */
 	public BlockGenericPipe() {
-		super(Material.glass);
+		super(Material.glass, new PropertyEnum[]{FACING_6_PROP});
 		setCreativeTab(null);
+	}
+
+	@Override
+	protected BlockState createBlockState() {
+		return new ExtendedBlockState(this, new PropertyEnum[]{FACING_6_PROP}, new IUnlistedProperty[]{TileGenericPipe.CORE_STATE_PROP, TileGenericPipe.RENDER_STATE_PROP});
 	}
 
 	@Override
 	public float getBlockHardness(World worldIn, BlockPos pos) {
 		return BuildCraftTransport.pipeDurability;
-	}
-
-	/* Rendering Delegation Attributes ************************************* */
-	@Override
-	public int getRenderType() {
-		return TransportProxy.pipeModel;
 	}
 
 	/*@Override
@@ -683,6 +688,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	public IBlockState onBlockPlaced(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
 		Pipe<?> pipe = getPipe(world, pos);
 
+		System.out.println("PLACED");
+
 		if (isValid(pipe)) {
 			pipe.onBlockPlaced();
 		}
@@ -1125,7 +1132,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			return true;
 		}
 
-		boolean placed = world.setBlockState(pos, world.getBlockState(pos).withProperty(FACING_PROP, EnumFacing.getFront(meta)));
+		boolean placed = world.setBlockState(pos, BuildCraftTransport.genericPipeBlock.getDefaultState().withProperty(FACING_6_PROP, EnumFacing.getFront(meta)));
 
 		if (placed) {
 			TileEntity tile = world.getTileEntity(pos);
@@ -1313,8 +1320,23 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		}
 	}
 
+	@Override
+	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+		TileEntity tile = world.getTileEntity(pos);
+		if (tile instanceof TileGenericPipe) {
+			return ((TileGenericPipe) tile).getState();
+		} else {
+			return state;
+		}
+	}
+
 	/*@Override
 	public IIcon getIcon(int side, int meta) {
 		return PipeIconProvider.TYPE.PipeItemsStone.getIcon();
 	}*/
+
+	@Override
+	public void registerModels() {
+
+	}
 }

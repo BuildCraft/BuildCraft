@@ -49,18 +49,18 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 			BlockPos loc = pos.down();
 			World world = worldObj;
 
-			while (world.getBlockState(pos).getBlock() == BuildCraftFactory.plainPipeBlock) {
-				pos = pos.down();
+			while (world.getBlockState(loc).getBlock() == BuildCraftFactory.plainPipeBlock) {
+				loc = loc.down();
 			}
 
-			if (loc.getY() < 1 || loc.getY() < pos.getY() - BuildCraftFactory.miningDepth || !BlockUtils.canChangeBlock(world, pos)) {
+			if (loc.getY() < 1 || loc.getY() < pos.getY() - BuildCraftFactory.miningDepth || !BlockUtils.canChangeBlock(world, loc)) {
 				isDigging = false;
 				// Drain energy, because at 0 energy this will stop doing calculations.
 				getBattery().useEnergy(0, 10, false);
 				return;
 			}
 
-			if (world.isAirBlock(pos)) {
+			if (world.isAirBlock(loc)) {
 				if (getBattery().getEnergyStored() >= BuilderAPI.BUILD_ENERGY) {
 					getBattery().useEnergy(BuilderAPI.BUILD_ENERGY, BuilderAPI.BUILD_ENERGY, false);
 					world.setBlockState(loc, BuildCraftFactory.plainPipeBlock.getDefaultState());

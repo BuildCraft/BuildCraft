@@ -31,9 +31,10 @@ import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.utils.ColorUtils;
+import buildcraft.core.utils.IModelRegister;
 import buildcraft.core.utils.StringUtils;
 
-public class ItemPipe extends ItemBuildCraft implements IItemPipe {
+public class ItemPipe extends ItemBuildCraft implements IItemPipe, IModelRegister {
 
 	/*@SideOnly(Side.CLIENT)
 	private IIconProvider iconProvider;*/
@@ -85,6 +86,8 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 			return false;
 		}
 
+		pos = new BlockPos(i, j, k);
+
 		if (world.canBlockBePlaced(block, pos, false, side, player, itemstack)) {
 			Pipe<?> pipe = BlockGenericPipe.createPipe(this);
 
@@ -101,11 +104,10 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 					((TileGenericPipe) tile).initializeFromItemMetadata(itemstack.getItemDamage());
 				}
 
-				// TODO: Fix sound
-				//world.playSoundEffect(i + 0.5F, j + 0.5F, k + 0.5F,
-				//		block.stepSound.getPlaceSound(),
-				//		(block.stepSound.getVolume() + 1.0F) / 2.0F,
-				//		block.stepSound.getPitch() * 0.8F);
+				world.playSoundEffect(i + 0.5F, j + 0.5F, k + 0.5F,
+						block.stepSound.getPlaceSound(),
+						(block.stepSound.getVolume() + 1.0F) / 2.0F,
+						block.stepSound.getFrequency() * 0.8F);
 
 				itemstack.stackSize--;
 			}
@@ -158,5 +160,10 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 		Class<? extends Pipe> pipe = BlockGenericPipe.pipes.get(this);
 		List<String> toolTip = PipeToolTipManager.getToolTip(pipe, advanced);
 		list.addAll(toolTip);
+	}
+
+	@Override
+	public void registerModels() {
+
 	}
 }

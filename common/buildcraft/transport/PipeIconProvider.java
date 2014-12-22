@@ -9,13 +9,17 @@
 package buildcraft.transport;
 
 
+import javax.xml.soap.Text;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.transport.render.TextureStateManager;
 
 public class PipeIconProvider /*implements IIconProvider*/ {
 
@@ -143,7 +147,7 @@ public class PipeIconProvider /*implements IIconProvider*/ {
 		public static final TYPE[] VALUES = values();
 		private final String iconTag;
 		private final String iconTagColorBlind;
-		//private IIcon icon;
+		private TextureAtlasSprite sprite;
 
 		private TYPE(String iconTag, String iconTagColorBlind) {
 			this.iconTag = iconTag;
@@ -154,30 +158,27 @@ public class PipeIconProvider /*implements IIconProvider*/ {
 			this(iconTag, iconTag);
 		}
 
-		/*private void registerIcon(TextureStitchEvent.Pre event) {
-			event.map.func_174943_a();
-			icon = iconRegister.registerIcon("buildcraft:" + (BuildCraftCore.colorBlindMode ? iconTagColorBlind : iconTag));
+		private void registerIcon(TextureMap map) {
+			sprite = map.registerSprite(new ResourceLocation("buildcraft", (BuildCraftCore.colorBlindMode ? iconTagColorBlind : iconTag)));
 		}
 
-		public IIcon getIcon() {
-			return icon;
-		}*/
+		public TextureAtlasSprite getIcon() {
+			return sprite;
+		}
 	}
 
-	/*@Override
 	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int pipeIconIndex) {
+	public TextureAtlasSprite getIcon(int pipeIconIndex) {
 		if (pipeIconIndex == -1) {
 			return null;
 		}
-		return TYPE.VALUES[pipeIconIndex].icon;
+		return TYPE.VALUES[pipeIconIndex].sprite;
 	}
 
-	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister iconRegister) {
+	public void registerIcons(TextureMap map) {
 		for (TYPE type : TYPE.VALUES) {
-			type.registerIcon(iconRegister);
+			type.registerIcon(map);
 		}
-	}*/
+	}
 }

@@ -30,10 +30,6 @@ import buildcraft.core.inventory.InvUtils;
 
 public class BlockTank extends BlockBuildCraft {
 
-	/*private IIcon textureStackedSide;
-	private IIcon textureBottomSide;
-	private IIcon textureTop;*/
-
 	public BlockTank() {
 		super(Material.glass);
 		setBlockBounds(0.125F, 0F, 0.125F, 0.875F, 1F, 0.875F);
@@ -41,6 +37,8 @@ public class BlockTank extends BlockBuildCraft {
 		setCreativeTab(CreativeTabBuildCraft.BLOCKS.get());
 	}
 
+	@Override
+	public boolean isVisuallyOpaque() { return false; }
 
 	@Override
 	public boolean isOpaqueCube() {

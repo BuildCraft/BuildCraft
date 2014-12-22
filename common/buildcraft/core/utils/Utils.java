@@ -154,7 +154,7 @@ public final class Utils {
 		List<EnumFacing> pipeDirections = new ArrayList<EnumFacing>();
 
 		for (EnumFacing side : EnumFacing.values()) {
-			if (from.getOpposite() == side) {
+			if (from != null && from.getOpposite() == side) {
 				continue;
 			}
 
