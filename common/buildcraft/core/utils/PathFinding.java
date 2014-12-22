@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import net.minecraft.world.World;
-
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IZone;
@@ -38,6 +37,7 @@ public class PathFinding {
 	private float sqrMaxDistance = -1;
 	private IZone zone;
 	private double maxDistanceToEnd = 0;
+	private boolean targetNotFound;
 
 	private HashMap<BlockIndex, Node> openList = new HashMap<BlockIndex, PathFinding.Node>();
 	private HashMap<BlockIndex, Node> closedList = new HashMap<BlockIndex, PathFinding.Node>();
@@ -87,7 +87,33 @@ public class PathFinding {
 		nextIteration = startNode;
 		maxDistance = iMaxDistance;
 		sqrMaxDistance = maxDistance * maxDistance;
+		maxDistance = maxDistance * 1.25f;
 		zone = iZone;
+		targetNotFound = false;
+	}
+
+	public void preRun() {
+		if(end == null) {
+			targetNotFound = searchForTarget(64);
+		}
+	}
+
+
+	private boolean searchForTarget(int range) {
+		for (int dx = -range; dx <= range; dx++) {
+			for (int dy = -range; dy <= range; dy++) {
+				for (int dz = -range; dz <= range; dz++)	{
+					int x = start.x + dx;
+					int y = Math.max(0, start.y + dy);
+					int z = start.z + dz;
+					if (zone != null && !zone.contains(x, y, z))
+						continue;
+					if(pathFound.matches(world, x, y, z))
+						return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	public void iterate() {
@@ -116,7 +142,7 @@ public class PathFinding {
 	}
 
 	public boolean isDone() {
-		return nextIteration == null;
+		return nextIteration == null || (end == null && targetNotFound);
 	}
 
 	public LinkedList<BlockIndex> getResult() {
@@ -393,6 +419,10 @@ public class PathFinding {
 		}
 
 		return resultMoves;
+	}
+
+	private boolean totalDistanceExceeded(Node nextNode) {
+		return maxDistance != -1 && nextNode.totalWeight > maxDistance;
 	}
 
 }
