@@ -24,6 +24,7 @@ public class BoardRobotMiner extends BoardRobotGenericBreakBlock {
 
 	public BoardRobotMiner(EntityRobotBase iRobot) {
 		super(iRobot);
+		detectHarvestLevel();
 	}
 
 	@Override
@@ -31,13 +32,17 @@ public class BoardRobotMiner extends BoardRobotGenericBreakBlock {
 		super.delegateAIEnded(ai);
 
 		if (ai instanceof AIRobotFetchAndEquipItemStack) {
-			ItemStack stack = robot.getHeldItem();
+			detectHarvestLevel();
+		}
+	}
 
-			if (stack != null && stack.getItem() instanceof ItemPickaxe) {
-				ItemPickaxe pickaxe = (ItemPickaxe) stack.getItem();
+	private void detectHarvestLevel() {
+		ItemStack stack = robot.getHeldItem();
 
-				harvestLevel = pickaxe.getHarvestLevel(stack, "pickaxe");
-			}
+		if (stack != null && stack.getItem() instanceof ItemPickaxe) {
+			ItemPickaxe pickaxe = (ItemPickaxe) stack.getItem();
+
+			harvestLevel = pickaxe.getHarvestLevel(stack, "pickaxe");
 		}
 	}
 
