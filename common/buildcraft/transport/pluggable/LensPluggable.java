@@ -23,9 +23,6 @@ import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.render.FakeBlock;
 
 public class LensPluggable extends PipePluggable {
-	@SideOnly(Side.CLIENT)
-	public final LensPluggableRenderer RENDERER = new LensPluggableRenderer();
-
 	public int color;
 	public boolean isFilter;
 	protected IPipeTile container;
@@ -123,7 +120,7 @@ public class LensPluggable extends PipePluggable {
 
 	@Override
 	public IPipePluggableRenderer getRenderer() {
-		return RENDERER;
+		return new LensPluggableRenderer();
 	}
 
 	@Override

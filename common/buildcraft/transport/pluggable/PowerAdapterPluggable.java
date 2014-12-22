@@ -19,9 +19,6 @@ import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.transport.PipeIconProvider;
 
 public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandler {
-	@SideOnly(Side.CLIENT)
-	public final PowerAdapterPluggableRenderer RENDERER = new PowerAdapterPluggableRenderer();
-
 	private IPipeTile container;
 
 	public class PowerAdapterPluggableRenderer implements IPipePluggableRenderer {
@@ -125,7 +122,7 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
 
 	@Override
 	public IPipePluggableRenderer getRenderer() {
-		return RENDERER;
+		return new PowerAdapterPluggableRenderer();
 	}
 
 	@Override

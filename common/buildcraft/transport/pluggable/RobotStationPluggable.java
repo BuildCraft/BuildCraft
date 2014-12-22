@@ -22,9 +22,6 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TileGenericPipe;
 
 public class RobotStationPluggable extends PipePluggable implements IPipePluggableItem {
-	@SideOnly(Side.CLIENT)
-	public final RobotStationPluggableRenderer RENDERER = new RobotStationPluggableRenderer();
-
 	public class RobotStationPluggableRenderer implements IPipePluggableRenderer {
 		private float zFightOffset = 1 / 4096.0F;
 
@@ -235,7 +232,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 
 	@Override
 	public IPipePluggableRenderer getRenderer() {
-		return RENDERER;
+		return new RobotStationPluggableRenderer();
 	}
 
 	@Override

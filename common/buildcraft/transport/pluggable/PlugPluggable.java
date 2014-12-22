@@ -18,9 +18,6 @@ import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.transport.PipeIconProvider;
 
 public class PlugPluggable extends PipePluggable {
-	@SideOnly(Side.CLIENT)
-	public final PlugPluggableRenderer RENDERER = new PlugPluggableRenderer();
-
 	public class PlugPluggableRenderer implements IPipePluggableRenderer {
 		private float zFightOffset = 1 / 4096.0F;
 
@@ -112,7 +109,7 @@ public class PlugPluggable extends PipePluggable {
 
 	@Override
 	public IPipePluggableRenderer getRenderer() {
-		return RENDERER;
+		return new PlugPluggableRenderer();
 	}
 
 	@Override
