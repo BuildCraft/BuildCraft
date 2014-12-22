@@ -13,11 +13,9 @@ import java.util.List;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.ItemBuildCraft;
 
@@ -60,7 +58,11 @@ public class ItemPipeWire extends ItemBuildCraft {
 			icons[pipeWire.ordinal()] = par1IconRegister.registerIcon("buildcraft:" + pipeWire.getTag());
 		}
 	}*/
-
+	
+	public String getModelSuffix(int metadata) {
+		return PipeWire.fromOrdinal(metadata).getColor();
+	}
+	
 	public void registerItemStacks() {
 		for (PipeWire pipeWire : PipeWire.VALUES) {
 			//TODO (1.8): probably use Variants (not sure)

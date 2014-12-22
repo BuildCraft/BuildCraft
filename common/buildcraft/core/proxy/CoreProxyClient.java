@@ -17,6 +17,7 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -129,13 +130,17 @@ public class CoreProxyClient extends CoreProxy {
 			if (!(item instanceof ItemBlock)) {
 				LinkedList<ItemStack> stacks = new LinkedList<ItemStack>();
 				item.getSubItems(item, item.getCreativeTab(), stacks);
+				List<String> variants = new LinkedList<String>();
 				for (ItemStack stack : stacks) {
 					String type = Utils.getItemName(item);
 					if (item instanceof ItemBuildCraft) {
 						type += ((ItemBuildCraft) item).getModelSuffix(stack.getItemDamage());
 					}
-					Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, stack.getItemDamage(), new ModelResourceLocation(type));
+					variants.add(type);
+					Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, stack.getItemDamage(), new ModelResourceLocation(type, "inventory"));
 				}
+				
+				ModelBakery.addVariantName(item, variants.toArray(new String[variants.size()]));
 			}
 		}
 	}
