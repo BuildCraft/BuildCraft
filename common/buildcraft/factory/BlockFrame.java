@@ -65,6 +65,9 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 	}
 
 	@Override
+	public boolean isFullCube() { return false; }
+
+	@Override
 	public Item getItemDropped(IBlockState i, Random random, int j) {
 		return null;
 	}

@@ -122,10 +122,8 @@ public class BlockMarker extends BlockBuildCraft {
 		return false;
 	}
 
-	/*@Override
-	public boolean renderAsNormalBlock() {
-		return false;
-	}*/
+	@Override
+	public boolean isFullCube() { return false; }
 
 	@Override
 	public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock) {

@@ -16,6 +16,7 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
@@ -528,6 +529,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 			if (o instanceof BlockGenericPipe) {
 				BCLog.logger.info("Registering model for " + ((Block) o).getUnlocalizedName());
 				event.modelRegistry.putObject(new ModelResourceLocation(Utils.getBlockName((Block) o), null), new PipeRendererModel());
+				for (EnumFacing f: EnumFacing.values()) {
+					event.modelRegistry.putObject(new ModelResourceLocation(Utils.getBlockName((Block) o), "facing=" + f.name().toLowerCase()), new PipeRendererModel());
+				}
 			}
 		}
 	}

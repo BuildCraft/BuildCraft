@@ -43,6 +43,8 @@ public class BlockPlainPipe extends Block implements IFramePipeConnection {
 		return false;
 	}
 
+	@Override
+	public boolean isFullCube() { return false; }
 
 	@Override
 	public boolean isNormalCube() {

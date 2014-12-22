@@ -34,17 +34,6 @@ public class TransportProxy {
 	}
 
 	public void registerRenderers() {
-		for (Object o : Item.itemRegistry) {
-			if (o instanceof ItemPipe) {
-				BCLog.logger.info("Registering model for " + ((Item) o).getUnlocalizedName());
-				final ModelResourceLocation loc = new ModelResourceLocation(Utils.getItemName((Item) o), null);
-				Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register((Item) o, new ItemMeshDefinition() {
-					public ModelResourceLocation getModelLocation(ItemStack stack) {
-						return loc;
-					}
-				});
-			}
-		}
 	}
 
 	public void initIconProviders(BuildCraftTransport instance){

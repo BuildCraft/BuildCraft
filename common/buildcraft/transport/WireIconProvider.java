@@ -40,13 +40,13 @@ public class WireIconProvider /*implements IIconProvider*/ {
 	public void registerIcons(TextureMap map) {
 		icons = new TextureAtlasSprite[MAX];
 
-		icons[WireIconProvider.Texture_Red_Dark] = map.registerSprite(new ResourceLocation("buildcraft", "texture_red_dark"));
-		icons[WireIconProvider.Texture_Red_Lit] = map.registerSprite(new ResourceLocation("buildcraft", "texture_red_lit"));
-		icons[WireIconProvider.Texture_Blue_Dark] = map.registerSprite(new ResourceLocation("buildcraft", "texture_blue_dark"));
-		icons[WireIconProvider.Texture_Blue_Lit] = map.registerSprite(new ResourceLocation("buildcraft", "texture_blue_lit"));
-		icons[WireIconProvider.Texture_Green_Dark] = map.registerSprite(new ResourceLocation("buildcraft", "texture_green_dark"));
-		icons[WireIconProvider.Texture_Green_Lit] = map.registerSprite(new ResourceLocation("buildcraft", "texture_green_lit"));
-		icons[WireIconProvider.Texture_Yellow_Dark] = map.registerSprite(new ResourceLocation("buildcraft", "texture_yellow_dark"));
-		icons[WireIconProvider.Texture_Yellow_Lit] = map.registerSprite(new ResourceLocation("buildcraft", "texture_yellow_lit"));
+		icons[WireIconProvider.Texture_Red_Dark] = map.registerSprite(new ResourceLocation("buildcraft", "blocks/texture_red_dark"));
+		icons[WireIconProvider.Texture_Red_Lit] = map.registerSprite(new ResourceLocation("buildcraft", "blocks/texture_red_lit"));
+		icons[WireIconProvider.Texture_Blue_Dark] = map.registerSprite(new ResourceLocation("buildcraft", "blocks/texture_blue_dark"));
+		icons[WireIconProvider.Texture_Blue_Lit] = map.registerSprite(new ResourceLocation("buildcraft", "blocks/texture_blue_lit"));
+		icons[WireIconProvider.Texture_Green_Dark] = map.registerSprite(new ResourceLocation("buildcraft", "blocks/texture_green_dark"));
+		icons[WireIconProvider.Texture_Green_Lit] = map.registerSprite(new ResourceLocation("buildcraft", "blocks/texture_green_lit"));
+		icons[WireIconProvider.Texture_Yellow_Dark] = map.registerSprite(new ResourceLocation("buildcraft", "blocks/texture_yellow_dark"));
+		icons[WireIconProvider.Texture_Yellow_Lit] = map.registerSprite(new ResourceLocation("buildcraft", "blocks/texture_yellow_lit"));
 	}
 }

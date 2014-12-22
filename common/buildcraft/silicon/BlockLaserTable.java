@@ -117,4 +117,7 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
             par3List.add(new ItemStack(this, 1, this.getMetaFromState(this.getDefaultState().withProperty(TYPE, type))));
         }
 	}
+
+	@Override
+	public boolean isFullCube() { return false; }
 }

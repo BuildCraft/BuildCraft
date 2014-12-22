@@ -8,11 +8,18 @@
  */
 package buildcraft.transport;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.resources.model.ModelResourceLocation;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.BCLog;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.render.FacadeItemRenderer;
 import buildcraft.transport.render.GateItemRenderer;
 import buildcraft.transport.render.PipeItemRenderer;
@@ -37,53 +44,62 @@ public class TransportProxyClient extends TransportProxy {
 		ClientRegistry.bindTileEntitySpecialRenderer(TileGenericPipe.class, rp);
 	}
 
+	private void registerPipeRenderer(Item item) {
+		BCLog.logger.info("Registering model for " + item.getUnlocalizedName());
+		final ModelResourceLocation loc = new ModelResourceLocation(Utils.getBlockName(BuildCraftTransport.genericPipeBlock), null);
+		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, new ItemMeshDefinition() {
+			public ModelResourceLocation getModelLocation(ItemStack stack) {
+				return loc;
+			}
+		});
+	}
+
 	@Override
 	public void registerRenderers() {
+		registerPipeRenderer(BuildCraftTransport.pipeItemsWood);
+		registerPipeRenderer(BuildCraftTransport.pipeItemsCobblestone);
+		registerPipeRenderer(BuildCraftTransport.pipeItemsStone);
+		registerPipeRenderer(BuildCraftTransport.pipeItemsQuartz);
+		registerPipeRenderer(BuildCraftTransport.pipeItemsIron);
+		registerPipeRenderer(BuildCraftTransport.pipeItemsGold);
+		registerPipeRenderer(BuildCraftTransport.pipeItemsDiamond);
+		registerPipeRenderer(BuildCraftTransport.pipeItemsObsidian);
+		registerPipeRenderer(BuildCraftTransport.pipeItemsEmerald);
+		registerPipeRenderer(BuildCraftTransport.pipeItemsLapis);
+		registerPipeRenderer(BuildCraftTransport.pipeItemsDaizuli);
+		registerPipeRenderer(BuildCraftTransport.pipeItemsEmzuli);
+		registerPipeRenderer(BuildCraftTransport.pipeItemsStripes);
+        registerPipeRenderer(BuildCraftTransport.pipeItemsClay);
 
-		/*MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsWood, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsCobblestone, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsStone, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsQuartz, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsIron, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsGold, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsDiamond, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsObsidian, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsEmerald, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsLapis, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsDaizuli, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsEmzuli, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsStripes, pipeItemRenderer);
-        MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsClay, pipeItemRenderer);
+		registerPipeRenderer(BuildCraftTransport.pipeFluidsWood);
+		registerPipeRenderer(BuildCraftTransport.pipeFluidsCobblestone);
+		registerPipeRenderer(BuildCraftTransport.pipeFluidsStone);
+		registerPipeRenderer(BuildCraftTransport.pipeFluidsQuartz);
+		registerPipeRenderer(BuildCraftTransport.pipeFluidsIron);
+		registerPipeRenderer(BuildCraftTransport.pipeFluidsGold);
+		registerPipeRenderer(BuildCraftTransport.pipeFluidsDiamond);
+		registerPipeRenderer(BuildCraftTransport.pipeFluidsEmerald);
 
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeFluidsWood, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeFluidsCobblestone, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeFluidsStone, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeFluidsQuartz, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeFluidsIron, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeFluidsGold, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeFluidsDiamond, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeFluidsEmerald, pipeItemRenderer);
+		registerPipeRenderer(BuildCraftTransport.pipePowerWood);
+		registerPipeRenderer(BuildCraftTransport.pipePowerCobblestone);
+		registerPipeRenderer(BuildCraftTransport.pipePowerStone);
+		registerPipeRenderer(BuildCraftTransport.pipePowerQuartz);
+		registerPipeRenderer(BuildCraftTransport.pipePowerIron);
+		registerPipeRenderer(BuildCraftTransport.pipePowerGold);
+		registerPipeRenderer(BuildCraftTransport.pipePowerDiamond);
+		registerPipeRenderer(BuildCraftTransport.pipePowerEmerald);
+		registerPipeRenderer(BuildCraftTransport.pipeStructureCobblestone);
 
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerWood, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerCobblestone, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerStone, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerQuartz, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerIron, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerGold, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerDiamond, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerEmerald, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeStructureCobblestone, pipeItemRenderer);
+		registerPipeRenderer(BuildCraftTransport.pipeItemsVoid);
+		registerPipeRenderer(BuildCraftTransport.pipeFluidsVoid);
+		registerPipeRenderer(BuildCraftTransport.pipeItemsSandstone);
+		registerPipeRenderer(BuildCraftTransport.pipeFluidsSandstone);
+        registerPipeRenderer(BuildCraftTransport.pipePowerSandstone);
 
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsVoid, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeFluidsVoid, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsSandstone, pipeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeFluidsSandstone, pipeItemRenderer);
-        MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipePowerSandstone, pipeItemRenderer);
-
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.facadeItem, facadeItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.plugItem, plugItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.robotStationItem, robotStationItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeGate, gateItemRenderer);*/
+		/*registerPipeRenderer(BuildCraftTransport.facadeItem, facadeItemRenderer);
+		registerPipeRenderer(BuildCraftTransport.plugItem, plugItemRenderer);
+		registerPipeRenderer(BuildCraftTransport.robotStationItem, robotStationItemRenderer);
+		registerPipeRenderer(BuildCraftTransport.pipeGate, gateItemRenderer);*/
 
 		// TODO: PIPEWORLDRENDERER
 	}

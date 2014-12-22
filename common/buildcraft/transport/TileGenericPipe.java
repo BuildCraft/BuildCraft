@@ -10,10 +10,12 @@ package buildcraft.transport;
 
 import tv.twitch.Core;
 
+import java.util.Collection;
 import org.apache.logging.log4j.Level;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,6 +24,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
+import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -70,7 +73,7 @@ import buildcraft.transport.utils.RobotStationState;
 
 public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		IPipeTile, ITileBufferHolder, IEnergyHandler, IDropControlInventory,
-		ISyncedTile, ISolidSideTile, IGuiReturnHandler {
+		ISyncedTile, ISolidSideTile, IGuiReturnHandler, IUpdatePlayerListBox {
 
 	public static final RenderStateProperty RENDER_STATE_PROP = new RenderStateProperty();
 	public static final CoreStateProperty CORE_STATE_PROP = new CoreStateProperty();
@@ -377,6 +380,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		BlockGenericPipe.updateNeighbourSignalState(pipe);
 	}
 
+	@Override
 	public void update() {
 		if (attachPluggables) {
 			attachPluggables = false;
@@ -757,7 +761,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 		if (with instanceof TileGenericPipe) {
 			TileGenericPipe other = (TileGenericPipe) with;
-			
+
 			if (other.hasBlockingPluggable(side.getOpposite())) {
 				return false;
 			}
@@ -1195,9 +1199,9 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		return pipe;
 	}
 
-	public IExtendedBlockState getState() {
-		return ((IExtendedBlockState) getBlockType().getDefaultState())
-				.withProperty(CORE_STATE_PROP, coreState)
+	public IExtendedBlockState getState(IBlockState state) {
+		IExtendedBlockState extendedBlockState = ((IExtendedBlockState) state)
 				.withProperty(RENDER_STATE_PROP, renderState);
+		return extendedBlockState;
 	}
 }

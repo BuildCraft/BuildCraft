@@ -159,7 +159,7 @@ public class PipeIconProvider /*implements IIconProvider*/ {
 		}
 
 		private void registerIcon(TextureMap map) {
-			sprite = map.registerSprite(new ResourceLocation("buildcraft", (BuildCraftCore.colorBlindMode ? iconTagColorBlind : iconTag)));
+			sprite = map.registerSprite(new ResourceLocation("buildcraft", "blocks/" + (BuildCraftCore.colorBlindMode ? iconTagColorBlind : iconTag)));
 		}
 
 		public TextureAtlasSprite getIcon() {
@@ -178,6 +178,7 @@ public class PipeIconProvider /*implements IIconProvider*/ {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(TextureMap map) {
 		for (TYPE type : TYPE.VALUES) {
+			System.out.println("Registering icon " + type.name());
 			type.registerIcon(map);
 		}
 	}

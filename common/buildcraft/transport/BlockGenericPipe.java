@@ -40,6 +40,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
@@ -148,6 +149,15 @@ public class BlockGenericPipe extends BlockBuildCraft implements IModelRegister 
 		return false;
 	}
 
+	@Override
+	public boolean isFullCube() { return false; }
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public EnumWorldBlockLayer getBlockLayer()
+	{
+		return EnumWorldBlockLayer.CUTOUT;
+	}
 
 	@Override
 	public boolean canBeReplacedByLeaves(IBlockAccess world, BlockPos pos){
@@ -1092,6 +1102,11 @@ public class BlockGenericPipe extends BlockBuildCraft implements IModelRegister 
 		}
 	}
 
+	@Override
+	public boolean isVisuallyOpaque() {
+		return true;
+	}
+
 	/* Registration ******************************************************** */
 	public static ItemPipe registerPipe(Class<? extends Pipe> clas, CreativeTabBuildCraft creativeTab) {
 		ItemPipe item = new ItemPipe(creativeTab);
@@ -1324,7 +1339,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IModelRegister 
 	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
 		TileEntity tile = world.getTileEntity(pos);
 		if (tile instanceof TileGenericPipe) {
-			return ((TileGenericPipe) tile).getState();
+			return ((TileGenericPipe) tile).getState(state);
 		} else {
 			return state;
 		}

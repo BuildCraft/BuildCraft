@@ -111,13 +111,11 @@ public abstract class BlockBuildCraft extends BlockContainer {
 			val += ((Enum) state.getValue(properties[i])).ordinal() * mul;
 			mul *= propertySizes[i];
 		}
-		System.out.println("state is " +val);
 		return val;
 	}
 
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		System.out.println("meta is " +meta);
 		IBlockState state = getDefaultState();
 		int mul = 1;
 		int prevMul = 1;
