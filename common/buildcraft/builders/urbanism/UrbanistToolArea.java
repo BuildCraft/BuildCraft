@@ -33,9 +33,9 @@ class UrbanistToolArea extends UrbanistTool {
 	@Override
 	public void worldClicked (GuiUrbanist gui, MovingObjectPosition pos) {
 		if (step == 0) {
-			x = pos.func_178782_a().getX();
-			y = pos.func_178782_a().getY() + 1;
-			z = pos.func_178782_a().getZ();
+			x = pos.getBlockPos().getX();
+			y = pos.getBlockPos().getY() + 1;
+			z = pos.getBlockPos().getZ();
 
 			startX = x;
 			startY = y;
@@ -61,8 +61,8 @@ class UrbanistToolArea extends UrbanistTool {
 	@Override
 	public void worldMoved(GuiUrbanist gui, MovingObjectPosition pos) {
 		if (step == 1) {
-			x = pos.func_178782_a().getX();
-			z = pos.func_178782_a().getZ();
+			x = pos.getBlockPos().getX();
+			z = pos.getBlockPos().getZ();
 
 			gui.urbanist.rpcMoveFrame(x, y, z);
 		} else if (step == 2) {

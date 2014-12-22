@@ -33,7 +33,7 @@ public final class GuiTools {
     public static void drawCenteredString(FontRenderer fr, String s, int y, int guiWidth, int color, boolean shadow) {
         int sWidth = fr.getStringWidth(s);
         int sPos = guiWidth / 2 - sWidth / 2;
-        fr.func_175065_a(s, sPos, y, color, shadow);
+        fr.drawString(s, sPos, y, color, shadow);
     }
 
     public static void newButtonRowAuto(List<GuiBetterButton> buttonList, int xStart, int xSize, List<? extends GuiBetterButton> buttons) {

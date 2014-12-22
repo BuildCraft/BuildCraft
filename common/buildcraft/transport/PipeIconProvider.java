@@ -9,6 +9,9 @@
 package buildcraft.transport;
 
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -151,7 +154,8 @@ public class PipeIconProvider /*implements IIconProvider*/ {
 			this(iconTag, iconTag);
 		}
 
-		/*private void registerIcon(IIconRegister iconRegister) {
+		/*private void registerIcon(TextureStitchEvent.Pre event) {
+			event.map.func_174943_a();
 			icon = iconRegister.registerIcon("buildcraft:" + (BuildCraftCore.colorBlindMode ? iconTagColorBlind : iconTag));
 		}
 

@@ -115,13 +115,13 @@ public class BlockSpring extends Block {
 		if (!spring.canGen || spring.liquidBlock == null) {
 			return;
 		}
-		if (!world.isAirBlock(pos.offsetUp())) {
+		if (!world.isAirBlock(pos.up())) {
 			return;
 		}
 		if (spring.chance != -1 && rand.nextInt(spring.chance) != 0) {
 			return;
 		}
-		world.setBlockState(pos.offsetUp(), spring.liquidBlock.getDefaultState());
+		world.setBlockState(pos.up(), spring.liquidBlock.getDefaultState());
 	}
 
 	// TODO: 1.7.10 - Prevents updates on chunk generation

@@ -33,7 +33,7 @@ public class WorldPropertyIsHarvestable extends WorldProperty {
 				|| block instanceof BlockDoublePlant) {
 			return true;
 		} else if (block instanceof BlockCactus || block instanceof BlockReed) {
-			if (pos.getY() > 0 && blockAccess.getBlockState(pos.offsetDown()).getBlock() == block) {
+			if (pos.getY() > 0 && blockAccess.getBlockState(pos.down()).getBlock() == block) {
 				return true;
 			}
 		} else if (block instanceof BlockCrops) {

@@ -59,7 +59,7 @@ public class SchematicRail extends SchematicBlock {
 
 	@Override
 	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
-		context.world().setBlockState(pos, state.withProperty(BlockRail.field_176565_b, EnumRailDirection.NORTH_SOUTH), 3);
+		context.world().setBlockState(pos, state.withProperty(BlockRail.SHAPE, EnumRailDirection.NORTH_SOUTH), 3);
 	}
 
 	@Override
@@ -69,12 +69,12 @@ public class SchematicRail extends SchematicBlock {
 
 	@Override
 	public void postProcessing(IBuilderContext context, BlockPos pos) {
-		context.world().setBlockState(pos, state.withProperty(BlockRail.field_176565_b, EnumRailDirection.func_177016_a(getMetaData())), 3);
+		context.world().setBlockState(pos, state.withProperty(BlockRail.SHAPE, EnumRailDirection.byMetadata(getMetaData())), 3);
 	}
 	
 	@Override
 	public void setMetaData(int newValue)
 	{
-		state = state.withProperty(BlockRail.field_176565_b, EnumRailDirection.func_177016_a(newValue));
+		state = state.withProperty(BlockRail.SHAPE, EnumRailDirection.byMetadata(newValue));
 	}
 }

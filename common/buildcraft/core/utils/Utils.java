@@ -611,7 +611,7 @@ public final class Utils {
             {
                 for (int var8 = minZ; var8 <= maxZ; ++var8)
                 {
-                    if (!world.chunkExists(var7, var8))
+                    if (!world.getChunkProvider().chunkExists(var7, var8))
                     {
                         return false;
                     }

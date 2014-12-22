@@ -60,7 +60,7 @@ public class SchematicBed extends SchematicBlock {
 			return;
 		}
 		
-		context.world().setBlockState(pos, state.withProperty(BlockBed.PART_PROP, getFace()), 3);
+		context.world().setBlockState(pos, state.withProperty(BlockBed.PART, getFace()), 3);
 		
 		int x2 = pos.getX();
 		int z2 = pos.getY();
@@ -80,7 +80,7 @@ public class SchematicBed extends SchematicBlock {
 			break;
 		}
 
-		context.world().setBlockState(new BlockPos(x2, pos.getY(), z2), state.withProperty(BlockBed.PART_PROP, EnumFacing.getFront(getMetaData() + 8)), 3);
+		context.world().setBlockState(new BlockPos(x2, pos.getY(), z2), state.withProperty(BlockBed.PART, EnumFacing.getFront(getMetaData() + 8)), 3);
 	}
 
 	@Override

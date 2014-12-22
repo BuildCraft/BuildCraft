@@ -212,7 +212,7 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight {
 				}
 			}
 			if (closest != null) 
-				closest = new MovingObjectPosition(new Vec3(pos.getX(), pos.getY(), pos.getZ()), closest.field_178784_b);
+				closest = new MovingObjectPosition(new Vec3(pos.getX(), pos.getY(), pos.getZ()), closest.sideHit);
 			
 			return closest;
 		} else {

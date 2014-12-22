@@ -83,7 +83,7 @@ public class PipeColoringRecipe implements IRecipe {
 	}
 
 	@Override
-	public ItemStack[] func_179532_b(InventoryCrafting p_179532_1_) {
+	public ItemStack[] getRemainingItems(InventoryCrafting p_179532_1_) {
 		// TODO
 		return new ItemStack[0];
 	}

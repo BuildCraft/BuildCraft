@@ -146,7 +146,7 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 
 	private boolean isAirAbove(World world, BlockPos pos) {
 		synchronized (world) {
-			return world.isAirBlock(pos.offsetUp());
+			return world.isAirBlock(pos.up());
 		}
 	}
 

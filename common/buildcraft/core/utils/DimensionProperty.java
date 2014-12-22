@@ -98,7 +98,7 @@ public class DimensionProperty implements IWorldAccess {
 	}
 
 	@Override
-	public void func_180442_a(int p_180442_1_, boolean p_180442_2_, double p_180442_3_, double p_180442_5_, double p_180442_7_, double p_180442_9_, double p_180442_11_, double p_180442_13_, int... p_180442_15_) {
+	public void spawnParticle(int p_180442_1_, boolean p_180442_2_, double p_180442_3_, double p_180442_5_, double p_180442_7_, double p_180442_9_, double p_180442_11_, double p_180442_13_, int... p_180442_15_) {
 
 	}
 
@@ -113,17 +113,17 @@ public class DimensionProperty implements IWorldAccess {
 	}
 
 	@Override
-	public void func_174961_a(String p_174961_1_, BlockPos p_174961_2_) {
+	public void playRecord(String recordName, BlockPos blockPosIn) {
 
 	}
 
 	@Override
-	public void func_180440_a(int p_180440_1_, BlockPos p_180440_2_, int p_180440_3_) {
+	public void broadcastSound(int p_180440_1_, BlockPos p_180440_2_, int p_180440_3_) {
 
 	}
 
 	@Override
-	public void func_180439_a(EntityPlayer p_180439_1_, int p_180439_2_, BlockPos p_180439_3_, int p_180439_4_) {
+	public void playAusSFX(EntityPlayer p_180439_1_, int p_180439_2_, BlockPos blockPosIn, int p_180439_4_) {
 
 	}
 

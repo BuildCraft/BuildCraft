@@ -168,7 +168,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 	}
 
 	public WeakReference<EntityPlayer> getInternalPlayer() {
-		return CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, pos.offsetUp());
+		return CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, pos.up());
 	}
 
 	@Override
@@ -342,7 +342,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 			}
 
 			if (output.stackSize > 0) {
-				InvUtils.dropItems(worldObj, output, pos.offsetUp());
+				InvUtils.dropItems(worldObj, output, pos.up());
 			}
 		}
 	}

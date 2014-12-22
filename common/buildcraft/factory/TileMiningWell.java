@@ -46,11 +46,11 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 		}
 
 		if (miner == null) {
-			BlockPos loc = pos.offsetDown();
+			BlockPos loc = pos.down();
 			World world = worldObj;
 
 			while (world.getBlockState(pos).getBlock() == BuildCraftFactory.plainPipeBlock) {
-				pos = pos.offsetDown();
+				pos = pos.down();
 			}
 
 			if (loc.getY() < 1 || loc.getY() < pos.getY() - BuildCraftFactory.miningDepth || !BlockUtils.canChangeBlock(world, pos)) {

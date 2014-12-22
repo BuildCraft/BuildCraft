@@ -332,7 +332,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 					line = "\u00a7" + Integer.toHexString(tip.color) + line;
 				}
 
-				this.fontRendererObj.func_175063_a(line, x, y, -1);
+				this.fontRendererObj.drawString(line, x, y, -1);
 
 				y += 10 + tip.getSpacing();
 			}
@@ -412,7 +412,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 				String tooltip = ledger.getTooltip();
 				int textWidth = fontRendererObj.getStringWidth(tooltip);
 				drawGradientRect(startX - 3, startY - 3, startX + textWidth + 3, startY + 8 + 3, 0xc0000000, 0xc0000000);
-				fontRendererObj.func_175063_a(tooltip, startX, startY, -1);
+				fontRendererObj.drawString(tooltip, startX, startY, -1);
 			}
 		}
 

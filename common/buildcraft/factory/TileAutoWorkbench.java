@@ -68,7 +68,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	}
 
 	public WeakReference<EntityPlayer> getInternalPlayer() {
-		return CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, pos.offsetUp());
+		return CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, pos.up());
 	}
 
 	@Override
@@ -254,7 +254,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 			ItemStack stack = slot.getStackInSlot();
 			if (stack != null) {
 				slot.setStackInSlot(null);
-				InvUtils.dropItems(worldObj, stack, pos.offsetUp());
+				InvUtils.dropItems(worldObj, stack, pos.up());
 			}
 		}
 	}

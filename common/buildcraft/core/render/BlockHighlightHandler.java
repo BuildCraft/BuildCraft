@@ -29,7 +29,7 @@ public class BlockHighlightHandler {
 	@SubscribeEvent
 	public void handleBlockHighlight(DrawBlockHighlightEvent e) {
 		if (e.target.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
-			BlockPos blockPos = e.target.func_178782_a();
+			BlockPos blockPos = e.target.getBlockPos();
 			Block block = e.player.worldObj.getBlockState(blockPos).getBlock();
 			if (block instanceof ICustomHighlight) {
 				AxisAlignedBB[] aabbs = ((ICustomHighlight) block).getBoxes(e.player.worldObj, blockPos, e.player);

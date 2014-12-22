@@ -259,11 +259,11 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler 
 			fluidsFound = new LinkedList<BlockPos>();
 
 			for (BlockPos index : fluidsToExpand) {
-				queueForPumping(index.offsetUp(), visitedBlocks, fluidsFound, pumpingFluid);
-				queueForPumping(index.offsetEast(), visitedBlocks, fluidsFound, pumpingFluid);
-				queueForPumping(index.offsetWest(), visitedBlocks, fluidsFound, pumpingFluid);
-				queueForPumping(index.offsetNorth(), visitedBlocks, fluidsFound, pumpingFluid);
-				queueForPumping(index.offsetSouth(), visitedBlocks, fluidsFound, pumpingFluid);
+				queueForPumping(index.up(), visitedBlocks, fluidsFound, pumpingFluid);
+				queueForPumping(index.east(), visitedBlocks, fluidsFound, pumpingFluid);
+				queueForPumping(index.west(), visitedBlocks, fluidsFound, pumpingFluid);
+				queueForPumping(index.north(), visitedBlocks, fluidsFound, pumpingFluid);
+				queueForPumping(index.south(), visitedBlocks, fluidsFound, pumpingFluid);
 
 				if (pumpingFluid == FluidRegistry.WATER
 						&& !BuildCraftCore.consumeWaterSources

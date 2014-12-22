@@ -115,8 +115,8 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 			GL11.glEnable(GL11.GL_LIGHTING);
 			float prevZ = getItemRenderer().zLevel;
 			getItemRenderer().zLevel = 200F;
-			getItemRenderer().func_180450_b(item, x, y);
-			getItemRenderer().func_175030_a(getFontRenderer(), item, x, y);
+			getItemRenderer().renderItemAndEffectIntoGUI(item, x, y);
+			getItemRenderer().renderItemOverlays(getFontRenderer(), item, x, y);
 			getItemRenderer().zLevel = prevZ;
 			GL11.glDisable(GL11.GL_LIGHTING);
 		}

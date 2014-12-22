@@ -21,7 +21,7 @@ import buildcraft.api.blueprints.IBuilderContext;
 public class SchematicEnderChest extends SchematicRotate {
 
 	public SchematicEnderChest() {
-		super(BlockEnderChest.field_176437_a);
+		super(BlockEnderChest.FACING);
 	}
 
 	@Override

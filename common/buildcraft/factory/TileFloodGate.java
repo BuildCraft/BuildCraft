@@ -189,11 +189,11 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		if (tank.getFluidType() == null) {
 			return;
 		}
-		queueForFilling(pos.offsetDown());
-		queueForFilling(pos.offsetEast());
-		queueForFilling(pos.offsetNorth());
-		queueForFilling(pos.offsetSouth());
-		queueForFilling(pos.offsetWest());
+		queueForFilling(pos.down());
+		queueForFilling(pos.east());
+		queueForFilling(pos.north());
+		queueForFilling(pos.south());
+		queueForFilling(pos.west());
 	}
 
 	public void queueForFilling(BlockPos pos) {

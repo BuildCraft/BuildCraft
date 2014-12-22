@@ -1,28 +1,17 @@
-package buildcraft.transport.gates;
+package buildcraft.transport.render;
 
 import java.util.List;
-import net.minecraft.client.Minecraft;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.IBakedModel;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.client.model.ISmartItemModel;
-import buildcraft.BuildCraftBuilders;
+import net.minecraftforge.client.model.ISmartBlockModel;
 
-public class GateItemModel implements ISmartItemModel {
-	private ItemStack stack;
-	private IBakedModel baseModel;
-
-	private GateItemModel(ItemStack stack) {
-		this.stack = stack;
-		this.baseModel = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getItemModel(new ItemStack(BuildCraftBuilders.blueprintItem));
-	}
-
+public class PipeRendererModel implements ISmartBlockModel {
 	@Override
-	public IBakedModel handleItemState(ItemStack stack) {
-		return new GateItemModel(stack);
+	public IBakedModel handleBlockState(IBlockState state) {
+		return null;
 	}
 
 	@Override

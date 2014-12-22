@@ -597,7 +597,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 		}
 
 		@Override
-		public ItemStack[] func_179532_b(InventoryCrafting inv) {
+		public ItemStack[] getRemainingItems(InventoryCrafting inv) {
 			return new ItemStack[] {getCraftingResult(inv)};
 		}
 	}

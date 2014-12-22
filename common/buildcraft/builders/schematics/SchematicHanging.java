@@ -100,7 +100,7 @@ public class SchematicHanging extends SchematicEntity {
 				EntityHanging h = (EntityHanging) e;
 				Position existingPositon = new Position(h.chunkCoordX, h.chunkCoordY, h.chunkCoordZ);
 
-				if (existingPositon.isClose(newPosition, 0.1F) && EnumFacing.getFront(dir) == ((EntityHanging) e).field_174860_b) {
+				if (existingPositon.isClose(newPosition, 0.1F) && EnumFacing.getFront(dir) == ((EntityHanging) e).facingDirection) {
 					return true;
 				}
 			}

@@ -44,7 +44,7 @@ public class SchematicTripWireHook extends SchematicBlock {
 
 	@Override
 	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
-		context.world().setBlockState(pos, state.withProperty(BlockTripWireHook.FACING_PROP, EnumFacing.DOWN), 3);
+		context.world().setBlockState(pos, state.withProperty(BlockTripWireHook.FACING, EnumFacing.DOWN), 3);
 	}
 
 	@Override

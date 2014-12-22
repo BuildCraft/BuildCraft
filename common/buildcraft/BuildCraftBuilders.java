@@ -316,7 +316,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		schemes.registerSchematicBlock(Blocks.skull, SchematicSkull.class);
 
-		schemes.registerSchematicBlock(Blocks.ladder, SchematicRotate.class, BlockLadder.field_176382_a);
+		schemes.registerSchematicBlock(Blocks.ladder, SchematicRotate.class, BlockLadder.FACING);
 		schemes.registerSchematicBlock(Blocks.acacia_fence_gate, SchematicRotate.class, BlockFenceGate.FACING);
 		schemes.registerSchematicBlock(Blocks.birch_fence_gate, SchematicRotate.class, BlockFenceGate.FACING);
 		schemes.registerSchematicBlock(Blocks.dark_oak_fence_gate, SchematicRotate.class, BlockFenceGate.FACING);
@@ -334,11 +334,11 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(Blocks.anvil, SchematicRotate.class, new int[]{0, 1, 2, 3}, true);
 
 		schemes.registerSchematicBlock(Blocks.vine, SchematicRotate.class, new int[]{1, 4, 8, 2}, false);*/
-		schemes.registerSchematicBlock(Blocks.trapdoor, SchematicRotate.class, BlockTrapDoor.FACING_PROP);
+		schemes.registerSchematicBlock(Blocks.trapdoor, SchematicRotate.class, BlockTrapDoor.FACING);
 
 		schemes.registerSchematicBlock(Blocks.furnace, SchematicRotate.class, BlockFurnace.FACING);
 		schemes.registerSchematicBlock(Blocks.lit_furnace, SchematicRotate.class, BlockFurnace.FACING);
-		schemes.registerSchematicBlock(Blocks.chest, SchematicRotate.class, BlockChest.FACING_PROP);
+		schemes.registerSchematicBlock(Blocks.chest, SchematicRotate.class, BlockChest.FACING);
 		schemes.registerSchematicBlock(Blocks.dispenser, SchematicRotate.class, BlockDispenser.FACING);
 		schemes.registerSchematicBlock(Blocks.dropper, SchematicRotate.class, BlockDropper.FACING);
 

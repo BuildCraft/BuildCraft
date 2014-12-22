@@ -115,8 +115,8 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 		super.randomDisplayTick(world, pos, state, rand);
 
 		if (rand.nextInt(10) == 0
-				&& World.doesBlockHaveSolidTopSurface(world, pos.offsetDown())
-				&& !world.getBlockState(pos.offsetDown(2)).getBlock().getMaterial().blocksMovement()) {
+				&& World.doesBlockHaveSolidTopSurface(world, pos.down())
+				&& !world.getBlockState(pos.down(2)).getBlock().getMaterial().blocksMovement()) {
 
 			double px = pos.getX() + rand.nextFloat();
 			double py = pos.getY() - 1.05D;

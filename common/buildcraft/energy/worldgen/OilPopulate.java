@@ -108,7 +108,7 @@ public final class OilPopulate {
 			return;
 		}
 
-		double deviation = surfaceDeviation(world, p.offsetUp(groundLevel), 8);
+		double deviation = surfaceDeviation(world, p.up(groundLevel), 8);
 		if (deviation > 0.45) {
 			return;
 		}
@@ -160,7 +160,7 @@ public final class OilPopulate {
 			} else {
 				lakeRadius = 5 + rand.nextInt(10);
 			}
-			generateSurfaceDeposit(world, rand, biome, wellPos.offsetUp(groundLevel), lakeRadius);
+			generateSurfaceDeposit(world, rand, biome, wellPos.up(groundLevel), lakeRadius);
 
 			boolean makeSpring = type == GenType.LARGE && BuildCraftEnergy.spawnOilSprings && BuildCraftCore.springBlock != null && (BuildCraftCore.debugWorldgen || rand.nextDouble() <= 0.25);
 
@@ -172,27 +172,27 @@ public final class OilPopulate {
 				baseY = wellY;
 			}
 
-			if (makeSpring && world.getBlockState(wellPos.offsetUp(baseY)).getBlock() == Blocks.bedrock) {
+			if (makeSpring && world.getBlockState(wellPos.up(baseY)).getBlock() == Blocks.bedrock) {
 				//FIXME: Apply the good metadata!
-				world.setBlockState(wellPos.offsetUp(baseY), BuildCraftCore.springBlock.getDefaultState(), 3);
+				world.setBlockState(wellPos.up(baseY), BuildCraftCore.springBlock.getDefaultState(), 3);
 			}
 			for (int y = baseY + 1; y <= maxHeight; ++y) {
-				world.setBlockState(wellPos.offsetUp(y), BuildCraftEnergy.blockOil.getDefaultState(), 3);
+				world.setBlockState(wellPos.up(y), BuildCraftEnergy.blockOil.getDefaultState(), 3);
 			}
 
 			if (type == GenType.LARGE) {
 				for (int y = wellY; y <= maxHeight - wellHeight / 2; ++y) {
-					BlockPos targetPos = new BlockPos(wellPos).offsetUp(y);
-					world.setBlockState(targetPos.offsetEast(), BuildCraftEnergy.blockOil.getDefaultState(), 3);
-					world.setBlockState(targetPos.offsetWest(), BuildCraftEnergy.blockOil.getDefaultState(), 3);
-					world.setBlockState(targetPos.offsetSouth(), BuildCraftEnergy.blockOil.getDefaultState(), 3);
-					world.setBlockState(targetPos.offsetNorth(), BuildCraftEnergy.blockOil.getDefaultState(), 3);
+					BlockPos targetPos = new BlockPos(wellPos).up(y);
+					world.setBlockState(targetPos.east(), BuildCraftEnergy.blockOil.getDefaultState(), 3);
+					world.setBlockState(targetPos.west(), BuildCraftEnergy.blockOil.getDefaultState(), 3);
+					world.setBlockState(targetPos.south(), BuildCraftEnergy.blockOil.getDefaultState(), 3);
+					world.setBlockState(targetPos.north(), BuildCraftEnergy.blockOil.getDefaultState(), 3);
 				}
 			}
 
 		} else if (type == GenType.LAKE) {
 			// Generate a surface oil lake
-			BlockPos lakePos = new BlockPos(p).offsetUp(groundLevel);
+			BlockPos lakePos = new BlockPos(p).up(groundLevel);
 			
 			Block block = world.getBlockState(lakePos).getBlock();
 			if (block == biome.topBlock) {
@@ -216,10 +216,10 @@ public final class OilPopulate {
 		for (int w = 1; w <= radius; ++w) {
 			float proba = (float) (radius - w + 4) / (float) (radius + 4);
 
-			setOilWithProba(world, biome, rand, proba, pos.offsetSouth(w), depth);
-			setOilWithProba(world, biome, rand, proba, pos.offsetNorth(w), depth);
-			setOilWithProba(world, biome, rand, proba, pos.offsetEast(w), depth);
-			setOilWithProba(world, biome, rand, proba, pos.offsetWest(w), depth);
+			setOilWithProba(world, biome, rand, proba, pos.south(w), depth);
+			setOilWithProba(world, biome, rand, proba, pos.north(w), depth);
+			setOilWithProba(world, biome, rand, proba, pos.east(w), depth);
+			setOilWithProba(world, biome, rand, proba, pos.west(w), depth);
 
 			for (int i = 1; i <= w; ++i) {
 				setOilWithProba(world, biome, rand, proba, pos.add(i, 0, w), depth);
@@ -288,21 +288,21 @@ public final class OilPopulate {
 	}
 
 	private boolean isOilAdjacent(World world, BlockPos pos) {
-		return isOil(world, pos.offsetEast())
-				|| isOil(world, pos.offsetWest())
-				|| isOil(world, pos.offsetSouth())
-				|| isOil(world, pos.offsetNorth());
+		return isOil(world, pos.east())
+				|| isOil(world, pos.west())
+				|| isOil(world, pos.south())
+				|| isOil(world, pos.north());
 	}
 
 	private boolean isOilSurrounded(World world, BlockPos pos) {
-		return isOil(world, pos.offsetEast())
-				&& isOil(world, pos.offsetWest())
-				&& isOil(world, pos.offsetSouth())
-				&& isOil(world, pos.offsetNorth());
+		return isOil(world, pos.east())
+				&& isOil(world, pos.west())
+				&& isOil(world, pos.south())
+				&& isOil(world, pos.north());
 	}
 
 	private void setOilWithProba(World world, BiomeGenBase biome, Random rand, float proba, BlockPos pos, int depth) {
-		if (rand.nextFloat() <= proba && !world.isAirBlock(pos.offsetDown(depth - 1))) {
+		if (rand.nextFloat() <= proba && !world.isAirBlock(pos.down(depth - 1))) {
 			if (isOilAdjacent(world, pos)) {
 				setOilColumnForLake(world, biome, pos, depth, 3);
 			}
@@ -310,24 +310,24 @@ public final class OilPopulate {
 	}
 
 	private void setOilColumnForLake(World world, BiomeGenBase biome, BlockPos pos, int depth, int update) {
-		if (isReplaceableForLake(world, biome, pos.offsetUp())) {
-			if (!world.isAirBlock(pos.offsetUp(2))) {
+		if (isReplaceableForLake(world, biome, pos.up())) {
+			if (!world.isAirBlock(pos.up(2))) {
 				return;
 			}
-			if (isReplaceableFluid(world, pos) || world.isSideSolid(pos.offsetDown(), EnumFacing.UP)) {
+			if (isReplaceableFluid(world, pos) || world.isSideSolid(pos.down(), EnumFacing.UP)) {
 				world.setBlockState(pos, BuildCraftEnergy.blockOil.getDefaultState(), update);
 			} else {
 				return;
 			}
-			if (!world.isAirBlock(pos.offsetUp())) {
-				world.setBlockState(pos.offsetUp(), Blocks.air.getDefaultState(), update);
+			if (!world.isAirBlock(pos.up())) {
+				world.setBlockState(pos.up(), Blocks.air.getDefaultState(), update);
 			}
 
 			for (int d = 1; d <= depth - 1; d++) {
-				if (isReplaceableFluid(world, pos.offsetDown(d)) || !world.isSideSolid(pos.offsetDown(d - 1), EnumFacing.UP)) {
+				if (isReplaceableFluid(world, pos.down(d)) || !world.isSideSolid(pos.down(d - 1), EnumFacing.UP)) {
 					return;
 				}
-				world.setBlockState(pos.offsetDown(d), BuildCraftEnergy.blockOil.getDefaultState(), 2);
+				world.setBlockState(pos.down(d), BuildCraftEnergy.blockOil.getDefaultState(), 2);
 			}
 		}
 	}

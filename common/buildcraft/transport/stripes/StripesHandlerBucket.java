@@ -34,13 +34,13 @@ public class StripesHandlerBucket implements IStripesHandler {
 	public boolean handle(World world, BlockPos pos,
 			EnumFacing direction, ItemStack stack, EntityPlayer player,
 			IStripesPipe pipe) {
-		BlockPos underPos = pos.offsetDown();
+		BlockPos underPos = pos.down();
 		Block block = world.getBlockState(pos).getBlock();
 
 		if (block == Blocks.air) {
 			Block underblock = world.getBlockState(pos).getBlock();
 
-			if (((ItemBucket) stack.getItem()).func_180616_a(world, underPos)) {
+			if (((ItemBucket) stack.getItem()).tryPlaceContainedLiquid(world, underPos)) {
 				stack.stackSize = 0;
 				pipe.sendItem(emptyBucket, direction.getOpposite());
 				

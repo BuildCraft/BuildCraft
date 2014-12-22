@@ -311,7 +311,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 			return false;
 		}
 
-		setTarget(nextTarget.offsetUp());
+		setTarget(nextTarget.up());
 
 		return true;
 	}
@@ -455,8 +455,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 			return;
 		}
 
-		if (isQuarriableBlock(targetPos.offsetDown())) {
-			miner = new BlockMiner(worldObj, this, targetPos.offsetDown());
+		if (isQuarriableBlock(targetPos.down())) {
+			miner = new BlockMiner(worldObj, this, targetPos.down());
 			stage = Stage.DIGGING;
 		} else {
 			stage = Stage.IDLE;

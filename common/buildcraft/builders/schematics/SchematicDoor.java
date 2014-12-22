@@ -78,8 +78,8 @@ public class SchematicDoor extends SchematicBlock {
 	@Override
 	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
 
-		context.world().setBlockState(pos, state.withProperty(BlockDoor.FACING_PROP, getFace()), 3);
-		context.world().setBlockState(pos.offsetUp(), state.withProperty(BlockDoor.FACING_PROP, EnumFacing.getFront(upperMeta)), 3);
+		context.world().setBlockState(pos, state.withProperty(BlockDoor.FACING, getFace()), 3);
+		context.world().setBlockState(pos.up(), state.withProperty(BlockDoor.FACING, EnumFacing.getFront(upperMeta)), 3);
 	}
 
 	@Override
@@ -87,7 +87,7 @@ public class SchematicDoor extends SchematicBlock {
 		super.initializeFromObjectAt(context, pos);
 
 		if ((getMetaData() & 8) == 0) {
-			upperMeta = ((EnumFacing)context.world().getBlockState(pos.offsetUp()).getValue(BlockBuildCraft.FACING_PROP)).getIndex();;
+			upperMeta = ((EnumFacing)context.world().getBlockState(pos.up()).getValue(BlockBuildCraft.FACING_PROP)).getIndex();;
 		}
 	}
 

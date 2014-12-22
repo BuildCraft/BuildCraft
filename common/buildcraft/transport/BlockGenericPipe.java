@@ -630,7 +630,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			case Pipe:
 				return new ItemStack(getPipe(world, pos).item, 1, getPipe(world, pos).container.getItemMetadata());
 			case Facade:
-				EnumFacing dir = target.field_178784_b;
+				EnumFacing dir = target.sideHit;
 				FacadeMatrix matrix = getPipe(world, pos).container.renderState.facadeMatrix;
 				Block block = matrix.getFacadeBlock(dir);
 				if (block != null) {
