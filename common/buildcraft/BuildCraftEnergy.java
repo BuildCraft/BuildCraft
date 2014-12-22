@@ -145,6 +145,11 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		double fuelLavaMultiplier = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.lava.combustion", 1.0F, "adjust energy value of Lava in Combustion Engines").getDouble(1.0F);
 		double fuelOilMultiplier = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.oil.combustion", 1.0F, "adjust energy value of Oil in Combustion Engines").getDouble(1.0F);
 		double fuelFuelMultiplier = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.fuel.combustion", 1.0F, "adjust energy value of Fuel in Combustion Engines").getDouble(1.0F);
+		
+		int fuelLavaEnergyOutput = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.lava.combustion.energyOutput", 20, "adjust output energy by Lava in Combustion Engines").getInt(20);
+		int fuelOilEnergyOutput = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.oil.combustion.energyOutput", 30, "adjust output energy by Oil in Combustion Engines").getInt(30);
+		int fuelFuelEnergyOutput = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.fuel.combustion.energyOutput", 60, "adjust output energy by Fuel in Combustion Engines").getInt(60);
+		
 		BuildCraftCore.mainConfiguration.save();
 
 		if (oilDesertBiomeId > 0) {
@@ -250,9 +255,9 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		BuildcraftRecipeRegistry.refinery.addRecipe("buildcraft:fuel", new FluidStack(fluidOil, 1), new FluidStack(
 				fluidFuel, 1), 120, 1);
 
-		BuildcraftFuelRegistry.fuel.addFuel(FluidRegistry.LAVA, 20, (int) (6000 * fuelLavaMultiplier));
-		BuildcraftFuelRegistry.fuel.addFuel(fluidOil, 30, (int) (5000 * fuelOilMultiplier));
-		BuildcraftFuelRegistry.fuel.addFuel(fluidFuel, 60, (int) (25000 * fuelFuelMultiplier));
+		BuildcraftFuelRegistry.fuel.addFuel(FluidRegistry.LAVA, fuelLavaEnergyOutput, (int) (6000 * fuelLavaMultiplier));
+		BuildcraftFuelRegistry.fuel.addFuel(fluidOil, fuelOilEnergyOutput, (int) (5000 * fuelOilMultiplier));
+		BuildcraftFuelRegistry.fuel.addFuel(fluidFuel, fuelFuelEnergyOutput, (int) (25000 * fuelFuelMultiplier));
 
 		BuildcraftFuelRegistry.coolant.addCoolant(FluidRegistry.WATER, 0.0023f);
 		BuildcraftFuelRegistry.coolant.addSolidCoolant(StackKey.stack(Blocks.ice), StackKey.fluid(FluidRegistry.WATER), 2f);
