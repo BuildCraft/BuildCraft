@@ -114,6 +114,11 @@ public class CoreProxyClient extends CoreProxy {
 		EnumColor.registerIcons();
 
 		for (Block block : blocksToRegisterRenderersFor) {
+			if (block instanceof IModelRegister) {
+				((IModelRegister) block).registerModels();
+				continue;
+			}
+
 			for (IBlockState state : (List<IBlockState>) block.getBlockState().getValidStates()) {
 				String type = "";
 				for (IProperty property : (Collection<IProperty>) state.getProperties().keySet()) {
@@ -125,6 +130,7 @@ public class CoreProxyClient extends CoreProxy {
 					}
 				}
 				Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(block), block.damageDropped(state), new ModelResourceLocation(Utils.getBlockName(block), type.toLowerCase()));
+				ModelBakery.addVariantName(Item.getItemFromBlock(block), type.toLowerCase());
 			}
 		}
 		for (Item item : itemsToRegisterRenderersFor) {

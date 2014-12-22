@@ -23,8 +23,9 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int i) {
+		// FLUID RENDERING IS BROKEN IN 1.8 - TODO
 
-		TileTank tank = (TileTank) tileentity;
+		/*TileTank tank = (TileTank) tileentity;
 
 		FluidStack liquid = tank.tank.getFluid();
 		int color = tank.tank.colorRenderCache;
@@ -54,6 +55,6 @@ public class RenderTank extends TileEntitySpecialRenderer {
 		GL11.glCallList(displayList[(int) ((float) liquid.amount / (float) (tank.tank.getCapacity()) * (FluidRenderer.DISPLAY_STAGES - 1))]);
 
 		GL11.glPopAttrib();
-		GL11.glPopMatrix();
+		GL11.glPopMatrix();*/
 	}
 }

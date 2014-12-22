@@ -10,6 +10,7 @@ package buildcraft.factory;
 
 import java.lang.reflect.Method;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import buildcraft.BuildCraftFactory;
@@ -18,6 +19,7 @@ import buildcraft.core.EntityBlock;
 import buildcraft.core.render.RenderBuilder;
 import buildcraft.core.render.RenderVoid;
 import buildcraft.core.render.RenderingEntityBlocks;
+import buildcraft.core.utils.ModelHelper;
 import buildcraft.factory.gui.GuiAutoCrafting;
 import buildcraft.factory.render.RenderHopper;
 import buildcraft.factory.render.RenderRefinery;
@@ -28,6 +30,11 @@ public class FactoryProxyClient extends FactoryProxy {
 	/*public static IIcon pumpTexture;
 	public static IIcon drillTexture;
 	public static IIcon drillHeadTexture;*/
+
+	@Override
+	public void initializeModels(ModelBakeEvent event) {
+
+	}
 
 	@Override
 	public void initializeTileEntities() {

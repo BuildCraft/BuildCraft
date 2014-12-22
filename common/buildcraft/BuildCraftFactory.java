@@ -19,6 +19,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
@@ -323,6 +324,12 @@ public class BuildCraftFactory extends BuildCraftMod {
 					'F', new ItemStack(Blocks.iron_bars));
 		}
 	}
+
+	@SubscribeEvent
+	public void onModelBakeEvent(ModelBakeEvent event) {
+		FactoryProxy.proxy.initializeModels(event);
+	}
+
 
 	@Mod.EventHandler
     public void processIMCRequests(FMLInterModComms.IMCEvent event) {

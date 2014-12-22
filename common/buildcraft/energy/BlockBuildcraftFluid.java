@@ -163,4 +163,19 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 	public IBlockState getStateFromMeta(int meta) {
 		return getBlockState().getBaseState().withProperty(LEVEL, meta);
 	}
+
+	@Override
+	public int getRenderType() {
+		return 3;
+	}
+
+	@Override
+	protected void flowIntoBlock(World world, BlockPos pos, int meta)
+	{
+		if (meta < 0) return;
+		if (displaceIfPossible(world, pos))
+		{
+			world.setBlockState(pos, this.getDefaultState().withProperty(LEVEL, meta), 3);
+		}
+	}
 }
