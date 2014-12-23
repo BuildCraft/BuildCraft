@@ -735,7 +735,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		double[] head = getHead();
 
 		if (movingHorizontally) {
-			if (Math.abs(pos.getX() - head[0]) < instantSpeed * 2 && Math.abs(target.getZ() - head[2]) < instantSpeed * 2) {
+			if (Math.abs(target.getX() - head[0]) < instantSpeed * 2 && Math.abs(target.getZ() - head[2]) < instantSpeed * 2) {
 				head[0] = target.getX();
 				head[2] = target.getZ();
 
