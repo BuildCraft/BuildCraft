@@ -92,7 +92,7 @@ public class PacketHandlerTransport extends SimpleChannelInboundHandler<BuildCra
 	private void onPipeTravelerUpdate(EntityPlayer player, PacketPipeTransportTraveler packet) {
 		World world = player.worldObj;
 
-		if (!world.isAirBlock(packet.pos)) {
+		if (world.isAirBlock(packet.pos)) {
 			return;
 		}
 
@@ -120,7 +120,7 @@ public class PacketHandlerTransport extends SimpleChannelInboundHandler<BuildCra
 	 */
 	private void onPacketPower(EntityPlayer player, PacketPowerUpdate packetPower) {
 		World world = player.worldObj;
-		if (!world.isAirBlock(packetPower.pos)) {
+		if (world.isAirBlock(packetPower.pos)) {
 			return;
 		}
 
@@ -146,9 +146,7 @@ public class PacketHandlerTransport extends SimpleChannelInboundHandler<BuildCra
 	 * Retrieves pipe at specified coordinates if any.
 	 *
 	 * @param world
-	 * @param x
-	 * @param y
-	 * @param z
+	 * @param pos
 	 */
 	private TileGenericPipe getPipe(World world, BlockPos pos) {
 		if (world.isAirBlock(pos)) {

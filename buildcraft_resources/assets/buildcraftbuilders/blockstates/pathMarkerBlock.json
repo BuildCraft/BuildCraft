@@ -1,0 +1,11 @@
+{
+    "variants": {
+        "normal": { "model": "buildcraftbuilders:pathMarker" },
+        "inventory": { "model": "buildcraftbuilders:pathMarker" },
+        "facing=up":  { "model": "buildcraftbuilders:pathMarker" },
+        "facing=east":  { "model": "buildcraftbuilders:pathMarker_wall" },
+        "facing=south":  { "model": "buildcraftbuilders:pathMarker_wall", "y": 90 },
+        "facing=west":  { "model": "buildcraftbuilders:pathMarker_wall", "y": 180 },
+        "facing=north":  { "model": "buildcraftbuilders:pathMarker_wall", "y": 270 }
+    }
+}

@@ -1,0 +1,6 @@
+{
+    "parent": "block/torch",
+    "textures": {
+        "torch": "buildcraft:blocks/blockPathMarker"
+    }
+}

@@ -13,10 +13,12 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -43,7 +45,8 @@ public class BlockMarker extends BlockBuildCraft {
 
 	public static boolean canPlaceTorch(World world, BlockPos pos, EnumFacing side) {
 		Block block = world.getBlockState(pos).getBlock();
-		return block != null && (/*block.renderAsNormalBlock() &&*/ block.isOpaqueCube() || block.isSideSolid(world, pos, side));
+		// TODO: Check if isFullCube is correct
+		return (block.isOpaqueCube() || block.isFullCube() || block.isSideSolid(world, pos, side));
 	}
 
 	private AxisAlignedBB getBoundingBox(EnumFacing dir) {
@@ -139,11 +142,10 @@ public class BlockMarker extends BlockBuildCraft {
 		return canPlaceTorch(world, pos.offset(side, -1), side);
 	}
 
-	/* Not needed anymore
-	 * @Override
-	public int onBlockPlaced(World world, int x, int y, int z, int side, float par6, float par7, float par8, int meta) {
-		return side;
-	}*/
+	@Override
+	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+		return this.getDefaultState().withProperty(FACING_6_PROP, facing);
+	}
 
 	@Override
 	public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
@@ -160,9 +162,9 @@ public class BlockMarker extends BlockBuildCraft {
 		}
 	}
 
-	/*@Override
+	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister iconRegister) {
-		this.blockIcon = iconRegister.registerIcon("buildcraft:blockMarker");
-	}*/
+	public EnumWorldBlockLayer getBlockLayer() {
+		return EnumWorldBlockLayer.CUTOUT;
+	}
 }

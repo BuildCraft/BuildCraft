@@ -39,7 +39,7 @@ public abstract class PipeLogicWood {
 
 		if (newFacing != null && newFacing.ordinal() != meta) {
 			//pipe.container.getWorld().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, newFacing.ordinal(), 3);
-			pipe.container.getWorld().setBlockState(pipe.container.getPos(), pipe.container.getWorld().getBlockState(pipe.container.getPos()).withProperty(BlockBuildCraft.FACING_PROP, newFacing), 3);
+			pipe.container.getWorld().setBlockState(pipe.container.getPos(), pipe.container.getWorld().getBlockState(pipe.container.getPos()).withProperty(BlockBuildCraft.FACING_6_PROP, newFacing), 3);
 			pipe.container.scheduleRenderUpdate();
 		}
 	}

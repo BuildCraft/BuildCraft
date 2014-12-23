@@ -26,9 +26,6 @@ import buildcraft.core.utils.Utils;
 
 public class BlockRequester extends BlockBuildCraft {
 
-	/*private IIcon blockTextureDefault;
-	private IIcon blockTextureSide;*/
-
 	public BlockRequester() {
 		super(Material.iron);
 	}
@@ -54,30 +51,4 @@ public class BlockRequester extends BlockBuildCraft {
 
 		return true;
 	}
-
-	@Override
-	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack stack) {
-		super.onBlockPlacedBy(world, pos, state, entity, stack);
-
-		EnumFacing orientation = Utils.get2dOrientation(entity);
-
-		world.setBlockState(pos, state.withProperty(FACING_PROP, EnumFacing.SOUTH), 3);
-	}
-
-	/*@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		blockTextureDefault = par1IconRegister.registerIcon("buildcraft:commander_side");
-		blockTextureSide = par1IconRegister.registerIcon("buildcraft:requester_side");
-	}
-
-	@Override
-	public IIcon getIcon(int i, int j) {
-		if (i == 0 || i == 1) {
-			return blockTextureDefault;
-		} else {
-			return blockTextureSide;
-		}
-	}*/
-
 }

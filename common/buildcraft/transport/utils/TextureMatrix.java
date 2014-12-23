@@ -18,12 +18,14 @@ public class TextureMatrix {
 	private boolean dirty = false;
 
 	public int getTextureIndex(EnumFacing direction) {
-		return iconIndexes[direction.ordinal()];
+		int v = direction != null ? direction.ordinal() : 6;
+		return iconIndexes[v];
 	}
 
 	public void setIconIndex(EnumFacing direction, int value) {
-		if (iconIndexes[direction.ordinal()] != value) {
-			iconIndexes[direction.ordinal()] = value;
+		int v = direction != null ? direction.ordinal() : 6;
+		if (iconIndexes[v] != value) {
+			iconIndexes[v] = value;
 			dirty = true;
 		}
 	}

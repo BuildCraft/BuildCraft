@@ -19,6 +19,8 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.entity.RenderEntity;
+import net.minecraft.client.renderer.entity.RenderEntityItem;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -78,7 +80,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	private ModelRenderer box;
 
 	private final EntityItem dummyEntityItem = new EntityItem(null);
-	private final RenderItem customRenderItem;
+	private final RenderEntityItem customRenderItem;
 	private boolean initialized = false;
 
 	private class DisplayFluidList {
@@ -90,7 +92,8 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	}
 
 	public PipeRendererTESR() {
-		customRenderItem = Minecraft.getMinecraft().getRenderItem();
+		customRenderItem = new RenderEntityItem(Minecraft.getMinecraft().getRenderManager(),
+				Minecraft.getMinecraft().getRenderItem());
 
 		box = new ModelRenderer(model, 0, 0);
 		//box.addBox(0, 64 + 1, 64 + 1, 16, 128 - 2, 128 - 2);
@@ -799,7 +802,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	}
 
 	public void doRenderItem(TravelingItem travellingItem, double x, double y, double z, float light, EnumColor color) {
-
 		if (travellingItem == null || travellingItem.getItemStack() == null) {
 			return;
 		}
@@ -808,10 +810,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		ItemStack itemstack = travellingItem.getItemStack();
 		GL11.glPushMatrix();
 		GL11.glTranslatef((float) x, (float) y, (float) z);
-		GL11.glTranslatef(0, 0.25F, 0);
 		GL11.glScalef(renderScale, renderScale, renderScale);
 		dummyEntityItem.setEntityItemStack(itemstack);
-		//customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
+		customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
 
 		if (color != null) {
 			bindTexture(TextureMap.locationBlocksTexture);

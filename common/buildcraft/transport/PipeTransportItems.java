@@ -450,7 +450,7 @@ public class PipeTransportItems extends PipeTransport {
 
 	private void sendTravelerPacket(TravelingItem data, boolean forceStackRefresh) {
 		PacketPipeTransportTraveler packet = new PacketPipeTransportTraveler(data, forceStackRefresh);
-		BuildCraftTransport.instance.sendToPlayers(packet, container.getWorld(), container.getPos().getX(), container.getPos().getY(), container.getPos().getZ(), DefaultProps.PIPE_CONTENTS_RENDER_DIST);
+		BuildCraftTransport.instance.sendToPlayersNear(packet, container, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 	}
 
 	public int getNumberOfStacks() {

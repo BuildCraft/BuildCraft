@@ -1,0 +1,12 @@
+{
+    "parent": "block/cube",
+    "textures": {
+        "particle": "buildcraft:blocks/commander_side",
+        "down": "buildcraft:blocks/commander_side",
+        "up": "buildcraft:blocks/commander_side",
+        "north": "buildcraft:blocks/requester_side",
+        "east": "buildcraft:blocks/requester_side",
+        "south": "buildcraft:blocks/requester_side",
+        "west": "buildcraft:blocks/requester_side"
+    }
+}

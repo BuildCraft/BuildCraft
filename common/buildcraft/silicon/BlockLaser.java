@@ -41,9 +41,6 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 			{AxisAlignedBB.fromBounds(0.0, 0.0, 0.0, 0.25, 1.0, 1.0), AxisAlignedBB.fromBounds(0.25, 0.3125, 0.3125, 0.8125, 0.6875, 0.6875)} // +X
 	};
 
-	/*@SideOnly(Side.CLIENT)
-	private IIcon textureTop, textureBottom, textureSide;*/
-
 	public BlockLaser() {
 		super(Material.iron, new PropertyEnum[]{FACING_6_PROP});
 		setHardness(10F);
@@ -94,17 +91,12 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 	}
 
 	@Override
-	public int getRenderType() {
-		return SiliconProxy.laserBlockModel;
-	}
-
-	@Override
 	public boolean isOpaqueCube() {
 		return false;
 	}
 
-
-	public boolean isACube() {
+	@Override
+	public boolean isFullCube() {
 		return false;
 	}
 
@@ -112,18 +104,6 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileLaser();
 	}
-
-	/*@Override
-	public IIcon getIcon(int i, int j) {
-		if (i == (j ^ 1)) {
-			return textureBottom;
-		} else if (i == j) {
-			return textureTop;
-		} else {
-			return textureSide;
-		}
-
-	}*/
 
 	@Override
 	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
@@ -137,14 +117,6 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 
 		return getDefaultState().withProperty(FACING_6_PROP, EnumFacing.getFront(retMeta));
 	}
-
-	/*@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		textureTop = par1IconRegister.registerIcon("buildcraft:laser_top");
-		textureBottom = par1IconRegister.registerIcon("buildcraft:laser_bottom");
-		textureSide = par1IconRegister.registerIcon("buildcraft:laser_side");
-	}*/
 
 	@Override
 	public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {

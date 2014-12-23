@@ -489,6 +489,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			EnumFacing o = EnumFacing.getFront(i);
 			renderState.textureMatrix.setIconIndex(o, pipe.getIconIndex(o));
 		}
+		renderState.textureMatrix.setIconIndex(null, pipe.getIconIndex(null));
 
 		// WireState
 		for (PipeWire color : PipeWire.values()) {

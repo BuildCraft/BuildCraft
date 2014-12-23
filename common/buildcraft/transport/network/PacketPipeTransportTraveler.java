@@ -64,7 +64,6 @@ public class PacketPipeTransportTraveler extends BuildCraftPacket {
 		this.itemY = data.readFloat();
 		this.itemZ = data.readFloat();
 
-		
 		pos = new BlockPos(MathHelper.floor_float(itemX), MathHelper.floor_float(itemY), MathHelper.floor_float(itemZ));
 
 		this.entityId = data.readShort();

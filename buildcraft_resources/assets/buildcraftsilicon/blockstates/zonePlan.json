@@ -1,0 +1,9 @@
+{
+    "variants": {
+        "facing=up": { "model": "buildcraftsilicon:zonePlan" },
+        "facing=east": { "model": "buildcraftsilicon:zonePlan" },
+        "facing=south": { "model": "buildcraftsilicon:zonePlan", "y": 90 },
+        "facing=west": { "model": "buildcraftsilicon:zonePlan", "y": 180 },
+        "facing=north": { "model": "buildcraftsilicon:zonePlan", "y": 270 }
+    }
+}

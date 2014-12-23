@@ -79,12 +79,6 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 		super.initialize();
 	}
 
-	/*@Override
-	@SideOnly(Side.CLIENT)
-	public IIconProvider getIconProvider() {
-		return BuildCraftTransport.instance.pipeIconProvider;
-	}*/
-
 	@Override
 	public int getIconIndex(EnumFacing direction) {
 		if (direction == null) {

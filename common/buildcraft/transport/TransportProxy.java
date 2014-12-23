@@ -25,7 +25,6 @@ public class TransportProxy {
 
 	@SidedProxy(clientSide = "buildcraft.transport.TransportProxyClient", serverSide = "buildcraft.transport.TransportProxy")
 	public static TransportProxy proxy;
-	public static int pipeModel = -1;
 
 	public void registerTileEntities() {
         // The first name here is the current TE name; the remaining names are old names used for backwards compatibility

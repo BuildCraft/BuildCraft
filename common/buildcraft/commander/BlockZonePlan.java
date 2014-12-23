@@ -27,9 +27,6 @@ import buildcraft.core.utils.Utils;
 
 public class BlockZonePlan extends BlockBuildCraft {
 
-	/*private IIcon blockTextureSide;
-	private IIcon blockTextureFront;*/
-
 	public BlockZonePlan() {
 		super(Material.iron, new PropertyEnum[]{FACING_PROP});
 	}
@@ -63,25 +60,5 @@ public class BlockZonePlan extends BlockBuildCraft {
 		EnumFacing orientation = Utils.get2dOrientation(entityliving);
 		world.setBlockState(pos, state.withProperty(FACING_PROP, orientation.getOpposite()), 1);
 	}
-
-	/*@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		blockTextureSide = par1IconRegister.registerIcon("buildcraft:zonePlan_side");
-		blockTextureFront = par1IconRegister.registerIcon("buildcraft:zonePlan_front");
-	}
-
-	@Override
-	public IIcon getIcon(int i, int j) {
-		if (j == 0 && i == 3) {
-			return blockTextureFront;
-		}
-
-		if (i == j) {
-			return blockTextureFront;
-		}
-
-		return blockTextureSide;
-	}*/
 
 }

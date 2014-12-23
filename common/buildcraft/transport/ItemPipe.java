@@ -127,6 +127,10 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe, IModelRegiste
 		this.pipeIconIndex = index;
 	}
 
+	public int getPipeIconIndex() {
+		return this.pipeIconIndex;
+	}
+
 	/*@Override
 	@SideOnly(Side.CLIENT)
 	public IIcon getIconFromDamage(int par1) {
