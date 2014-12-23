@@ -11,7 +11,7 @@ package buildcraft.factory.schematics;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
-
+import net.minecraft.util.BlockPos;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
 
@@ -19,22 +19,22 @@ public class SchematicTank extends SchematicTile {
 
 	@Override
 	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(block));
+		requirements.add(new ItemStack(state.getBlock()));
 	}
 
 	@Override
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
-
-	}
-
-	@Override
-	public void initializeFromObjectAt(IBuilderContext context, int x, int y, int z) {
+	public void storeRequirements(IBuilderContext context, BlockPos pos) {
 
 	}
 
 	@Override
-	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
-		context.world().setBlock(x, y, z, block, meta, 3);
+	public void initializeFromObjectAt(IBuilderContext context, BlockPos pos) {
+
+	}
+
+	@Override
+	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+		context.world().setBlockState(pos, state, 3);
 	}
 
 	@Override

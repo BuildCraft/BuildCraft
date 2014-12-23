@@ -11,23 +11,23 @@ package buildcraft.core.robots;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldServer;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.proxy.CoreProxy;
 
 public class AIRobotUseToolOnBlock extends AIRobot {
 
-	private BlockIndex useToBlock;
+	private BlockPos useToBlock;
 	private int useCycles = 0;
 
 	public AIRobotUseToolOnBlock(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotUseToolOnBlock(EntityRobotBase iRobot, BlockIndex index) {
+	public AIRobotUseToolOnBlock(EntityRobotBase iRobot, BlockPos index) {
 		super(iRobot);
 
 		useToBlock = index;
@@ -35,7 +35,7 @@ public class AIRobotUseToolOnBlock extends AIRobot {
 
 	@Override
 	public void start() {
-		robot.aimItemAt(useToBlock.x, useToBlock.y, useToBlock.z);
+		robot.aimItemAt(useToBlock);
 		robot.setItemActive(true);
 	}
 
@@ -57,7 +57,7 @@ public class AIRobotUseToolOnBlock extends AIRobot {
 			}
 
 			stack.getItem().onItemUse(stack, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj).get(),
-					robot.worldObj, useToBlock.x, useToBlock.y, useToBlock.z, ForgeDirection.UP.ordinal(), 0, 0, 0);
+					robot.worldObj, useToBlock, EnumFacing.UP, 0, 0, 0);
 
 			terminate();
 		}

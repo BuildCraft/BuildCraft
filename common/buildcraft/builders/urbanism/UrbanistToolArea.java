@@ -11,7 +11,6 @@ package buildcraft.builders.urbanism;
 import org.lwjgl.input.Mouse;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 
 class UrbanistToolArea extends UrbanistTool {
@@ -21,10 +20,10 @@ class UrbanistToolArea extends UrbanistTool {
 	private int x, y, z;
 	private float baseY = 0;
 
-	@Override
+	/*@Override
 	public IIcon getIcon() {
 		return UrbanistToolsIconProvider.INSTANCE.getIcon(UrbanistToolsIconProvider.Tool_Area);
-	}
+	}*/
 
 	@Override
 	public String getDescription() {
@@ -34,9 +33,9 @@ class UrbanistToolArea extends UrbanistTool {
 	@Override
 	public void worldClicked (GuiUrbanist gui, MovingObjectPosition pos) {
 		if (step == 0) {
-			x = pos.blockX;
-			y = pos.blockY + 1;
-			z = pos.blockZ;
+			x = pos.getBlockPos().getX();
+			y = pos.getBlockPos().getY() + 1;
+			z = pos.getBlockPos().getZ();
 
 			startX = x;
 			startY = y;
@@ -62,8 +61,8 @@ class UrbanistToolArea extends UrbanistTool {
 	@Override
 	public void worldMoved(GuiUrbanist gui, MovingObjectPosition pos) {
 		if (step == 1) {
-			x = pos.blockX;
-			z = pos.blockZ;
+			x = pos.getBlockPos().getX();
+			z = pos.getBlockPos().getZ();
 
 			gui.urbanist.rpcMoveFrame(x, y, z);
 		} else if (step == 2) {

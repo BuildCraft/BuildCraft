@@ -18,7 +18,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.GuiIds;
@@ -35,7 +35,7 @@ import buildcraft.transport.PipeIconProvider;
 public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGuiReturnHandler {
 
 	public enum FilterMode {
-		WHITE_LIST, BLACK_LIST, ROUND_ROBIN;
+		WHITE_LIST, BLACK_LIST, ROUND_ROBIN
 	}
 
 	public class EmeraldPipeSettings {
@@ -88,15 +88,15 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 			return true;
 		}
 
-		if (!container.getWorldObj().isRemote) {
-			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_ITEM, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord);
+		if (!container.getWorld().isRemote) {
+			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_ITEM, container.getWorld(), container.getPos().getX(), container.getPos().getY(), container.getPos().getZ());
 		}
 
 		return true;
 	}
 
 	@Override
-	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, ForgeDirection from) {
+	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, EnumFacing from) {
 		if (inventory == null) {
 			return null;
 		}
@@ -111,15 +111,15 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 		return checkExtractFiltered(sidedInventory, doRemove, from);
 	}
 
-	private ItemStack[] checkExtractFiltered(ISidedInventory inventory, boolean doRemove, ForgeDirection from) {
-		for (int k : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
+	private ItemStack[] checkExtractFiltered(ISidedInventory inventory, boolean doRemove, EnumFacing from) {
+		for (int k : inventory.getSlotsForFace(from)) {
 			ItemStack stack = inventory.getStackInSlot(k);
 
 			if (stack == null || stack.stackSize <= 0) {
 				continue;
 			}
 
-			if (!inventory.canExtractItem(k, stack, from.ordinal())) {
+			if (!inventory.canExtractItem(k, stack, from)) {
 				continue;
 			}
 
@@ -142,8 +142,8 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 		return null;
 	}
 
-	private ItemStack[] checkExtractRoundRobin(ISidedInventory inventory, boolean doRemove, ForgeDirection from) {
-		for (int i : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
+	private ItemStack[] checkExtractRoundRobin(ISidedInventory inventory, boolean doRemove, EnumFacing from) {
+		for (int i : inventory.getSlotsForFace(from)) {
 			ItemStack stack = inventory.getStackInSlot(i);
 
 			if (stack != null && stack.stackSize > 0) {
@@ -157,7 +157,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements IClientState, IGu
 					continue;
 				}
 
-				if (!inventory.canExtractItem(i, stack, from.ordinal())) {
+				if (!inventory.canExtractItem(i, stack, from)) {
 					continue;
 				}
 

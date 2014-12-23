@@ -11,6 +11,7 @@ package buildcraft.core.inventory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IChatComponent;
 
 /**
  * Creates a deep copy of an existing IInventory.
@@ -71,8 +72,18 @@ public class InventoryCopy implements IInventory {
 	}
 
 	@Override
-	public String getInventoryName() {
-		return orignal.getInventoryName();
+	public String getName() {
+		return orignal.getName();
+	}
+
+	@Override
+	public boolean hasCustomName() {
+		return orignal.hasCustomName();
+	}
+
+	@Override
+	public IChatComponent getDisplayName() {
+		return orignal.getDisplayName();
 	}
 
 	@Override
@@ -86,11 +97,11 @@ public class InventoryCopy implements IInventory {
 	}
 
 	@Override
-	public void openInventory() {
+	public void openInventory(EntityPlayer player) {
 	}
 
 	@Override
-	public void closeInventory() {
+	public void closeInventory(EntityPlayer player) {
 	}
 
 	@Override
@@ -103,13 +114,28 @@ public class InventoryCopy implements IInventory {
 		return orignal.isItemValidForSlot(slot, stack);
 	}
 
-	public ItemStack[] getItemStacks() {
-		return contents;
+	@Override
+	public int getField(int id) {
+		return orignal.getField(id);
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
-		return false;
+	public void setField(int id, int value) {
+
+	}
+
+	@Override
+	public int getFieldCount() {
+		return orignal.getFieldCount();
+	}
+
+	@Override
+	public void clear() {
+
+	}
+
+	public ItemStack[] getItemStacks() {
+		return contents;
 	}
 
 	@Override

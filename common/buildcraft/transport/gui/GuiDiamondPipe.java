@@ -17,7 +17,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.pipes.PipeItemsDiamond;
+import buildcraft.transport.IDiamondPipe;
 
 public class GuiDiamondPipe extends GuiBuildCraft {
 
@@ -33,7 +33,7 @@ public class GuiDiamondPipe extends GuiBuildCraft {
 		}
 	}
 
-	public GuiDiamondPipe(IInventory playerInventory, PipeItemsDiamond pipe) {
+	public GuiDiamondPipe(IInventory playerInventory, IDiamondPipe pipe) {
 		super(new ContainerDiamondPipe(playerInventory, pipe), pipe.getFilters(), TEXTURE);
 		this.playerInventory = playerInventory;
 		this.filterInventory = pipe.getFilters();
@@ -43,7 +43,7 @@ public class GuiDiamondPipe extends GuiBuildCraft {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		fontRendererObj.drawString(filterInventory.getInventoryName(), getCenteredOffset(filterInventory.getInventoryName()), 6, 0x404040);
+		fontRendererObj.drawString(filterInventory.getName(), getCenteredOffset(filterInventory.getName()), 6, 0x404040);
 		fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, ySize - 97, 0x404040);
 	}
 

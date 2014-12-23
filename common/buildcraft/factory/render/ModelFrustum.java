@@ -143,7 +143,7 @@ public class ModelFrustum {
 	 */
 	public void render(Tessellator par1Tessellator, float par2) {
 		for (TexturedQuad element : this.quadList) {
-			element.draw(par1Tessellator, par2);
+			element.draw(par1Tessellator.getWorldRenderer(), par2);
 		}
 	}
 }

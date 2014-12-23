@@ -10,12 +10,7 @@ package buildcraft.transport.gates;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.StringUtils;
@@ -40,17 +35,17 @@ public final class GateDefinition {
 		IRON("gate_interface_2.png", 164, 2, 0, 0),
 		GOLD("gate_interface_3.png", 200, 4, 1, 0),
 		DIAMOND("gate_interface_4.png", 200, 8, 1, 0),
-		EMERALD("gate_interface_5.png", 200, 4, 3, 3);
+		EMERALD("gate_interface_5.png", 200, 4, 3, 3), ;
 		public static final GateMaterial[] VALUES = values();
 		public final ResourceLocation guiFile;
 		public final int guiHeight;
 		public final int numSlots;
 		public final int numTriggerParameters;
 		public final int numActionParameters;
-		@SideOnly(Side.CLIENT)
+		/*@SideOnly(Side.CLIENT)
 		private IIcon iconBlock;
 		@SideOnly(Side.CLIENT)
-		private IIcon iconItem;
+		private IIcon iconItem;*/
 
 		private GateMaterial(String guiFile, int guiHeight, int numSlots, int triggerParameterSlots,
 				int actionParameterSlots) {
@@ -61,7 +56,7 @@ public final class GateDefinition {
 			this.numActionParameters = actionParameterSlots;
 		}
 
-		@SideOnly(Side.CLIENT)
+		/*@SideOnly(Side.CLIENT)
 		public IIcon getIconBlock() {
 			return iconBlock;
 		}
@@ -69,13 +64,13 @@ public final class GateDefinition {
 		@SideOnly(Side.CLIENT)
 		public IIcon getIconItem() {
 			return iconItem;
-		}
+		}*/
 
 		public String getTag() {
 			return name().toLowerCase(Locale.ENGLISH);
 		}
 
-		@SideOnly(Side.CLIENT)
+		/*@SideOnly(Side.CLIENT)
 		public void registerBlockIcon(IIconRegister iconRegister) {
 			if (this != REDSTONE) {
 				iconBlock = iconRegister.registerIcon("buildcraft:gates/gate_material_" + getTag());
@@ -87,7 +82,7 @@ public final class GateDefinition {
 			if (this != REDSTONE) {
 				iconItem = iconRegister.registerIcon("buildcraft:gates/gate_material_" + getTag());
 			}
-		}
+		}*/
 
 		public static GateMaterial fromOrdinal(int ordinal) {
 			if (ordinal < 0 || ordinal >= VALUES.length) {
@@ -102,7 +97,7 @@ public final class GateDefinition {
 		AND, OR;
 		public static final GateLogic[] VALUES = values();
 
-		@SideOnly(Side.CLIENT)
+		/*@SideOnly(Side.CLIENT)
 		private IIcon iconLit;
 
 		@SideOnly(Side.CLIENT)
@@ -124,13 +119,13 @@ public final class GateDefinition {
 		@SideOnly(Side.CLIENT)
 		public IIcon getIconItem() {
 			return iconItem;
-		}
+		}*/
 
 		public String getTag() {
 			return name().toLowerCase(Locale.ENGLISH);
 		}
 
-		@SideOnly(Side.CLIENT)
+		/*@SideOnly(Side.CLIENT)
 		public void registerBlockIcon(IIconRegister iconRegister) {
 			iconLit = iconRegister.registerIcon("buildcraft:gates/gate_lit_" + getTag());
 			iconDark = iconRegister.registerIcon("buildcraft:gates/gate_dark_" + getTag());
@@ -139,7 +134,7 @@ public final class GateDefinition {
 		@SideOnly(Side.CLIENT)
 		public void registerItemIcon(IIconRegister iconRegister) {
 			iconItem = iconRegister.registerIcon("buildcraft:gates/gate_logic_" + getTag());
-		}
+		}*/
 
 		public static GateLogic fromOrdinal(int ordinal) {
 			if (ordinal < 0 || ordinal >= VALUES.length) {

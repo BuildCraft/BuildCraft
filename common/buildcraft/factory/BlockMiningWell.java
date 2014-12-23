@@ -10,17 +10,18 @@ package buildcraft.factory;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftFactory;
 import buildcraft.core.BlockBuildCraft;
@@ -28,10 +29,10 @@ import buildcraft.core.utils.Utils;
 
 public class BlockMiningWell extends BlockBuildCraft {
 
-	IIcon textureFront, textureSides, textureBack, textureTop;
+	//IIcon textureFront, textureSides, textureBack, textureTop;
 
 	public BlockMiningWell() {
-		super(Material.ground);
+		super(Material.ground, new PropertyEnum[]{FACING_PROP});
 
 		setHardness(5F);
 		setResistance(10F);
@@ -40,7 +41,7 @@ public class BlockMiningWell extends BlockBuildCraft {
 		//setStepSound(soundStoneFootstep);
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIcon(int i, int j) {
 		if (j == 0 && i == 3) {
 			return textureFront;
@@ -52,47 +53,40 @@ public class BlockMiningWell extends BlockBuildCraft {
 			return textureBack;
 		} else if (i == j) {
 			return textureFront;
-		} else if (j >= 0 && j < 6 && ForgeDirection.values()[j].getOpposite().ordinal() == i) {
+		} else if (j >= 0 && j < 6 && EnumFacing.values()[j].getOpposite().ordinal() == i) {
 			return textureBack;
 		} else {
 			return textureSides;
 		}
+	}*/
+
+	@Override
+	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entityliving, ItemStack stack) {
+		super.onBlockPlacedBy(world, pos, state, entityliving, stack);
+		EnumFacing orientation = Utils.get2dOrientation(entityliving);
+		//TODO: Check if that is correct
+		world.setBlockState(pos, state.withProperty(FACING_PROP, orientation.getOpposite()), 1);
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
-		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
-		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
+	public void breakBlock(World world, BlockPos pos, IBlockState state) {
+		super.breakBlock(world, pos, state);
+		removePipes(world, pos);
 	}
 
-	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-		super.breakBlock(world, x, y, z, block, meta);
-		removePipes(world, x, y, z);
-	}
-
-	public void removePipes(World world, int x, int y, int z) {
-		for (int depth = y - 1; depth > 0; depth--) {
-			Block pipe = world.getBlock(x, depth, z);
+	public void removePipes(World world, BlockPos pos) {
+		for (int depth = pos.getY() - 1; depth > 0; depth--) {
+			BlockPos t = new BlockPos(pos.getX(), depth, pos.getZ());
+			Block pipe = world.getBlockState(t).getBlock();
 			if (pipe != BuildCraftFactory.plainPipeBlock) {
 				break;
 			}
-			world.setBlockToAir(x, depth, z);
+			world.setBlockToAir(t);
 		}
 	}
 
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileMiningWell();
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-	    textureFront = par1IconRegister.registerIcon("buildcraft:miningwell_front");
-        textureSides = par1IconRegister.registerIcon("buildcraft:miningwell_side");
-        textureBack = par1IconRegister.registerIcon("buildcraft:miningwell_back");
-        textureTop = par1IconRegister.registerIcon("buildcraft:miningwell_top");
 	}
 }

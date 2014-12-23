@@ -10,7 +10,7 @@ package buildcraft.core.inventory;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.core.IInvSlot;
 
 public class TransactorRoundRobin extends TransactorSimple {
@@ -20,7 +20,7 @@ public class TransactorRoundRobin extends TransactorSimple {
 	}
 
 	@Override
-	public int inject(ItemStack stack, ForgeDirection orientation, boolean doAdd) {
+	public int inject(ItemStack stack, EnumFacing orientation, boolean doAdd) {
 
 		int added = 0;
 

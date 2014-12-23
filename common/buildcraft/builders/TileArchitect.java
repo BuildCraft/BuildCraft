@@ -11,6 +11,7 @@ package buildcraft.builders;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -18,12 +19,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.api.core.BlockIndex;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
@@ -33,25 +35,23 @@ import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BlueprintReadConfiguration;
 import buildcraft.core.blueprints.RecursiveBlueprintReader;
 import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCSide;
+import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.CommandWriter;
+import buildcraft.core.network.ICommandReceiver;
+import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.Utils;
 
-public class TileArchitect extends TileBuildCraft implements IInventory, IBoxProvider {
+public class TileArchitect extends TileBuildCraft implements IInventory, IBoxProvider, ICommandReceiver {
 
 	public String currentAuthorName = "";
-	@NetworkData
+
 	public Box box = new Box();
-	@NetworkData
 	public String name = "";
-	@NetworkData
 	public BlueprintReadConfiguration readConfiguration = new BlueprintReadConfiguration();
 
-	@NetworkData
 	public LinkedList<LaserData> subLasers = new LinkedList<LaserData>();
 
-	public ArrayList<BlockIndex> subBlueprints = new ArrayList<BlockIndex>();
+	public ArrayList<BlockPos> subBlueprints = new ArrayList<BlockPos>();
 
 	private SimpleInventory inv = new SimpleInventory(2, "Architect", 1);
 
@@ -62,8 +62,8 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		if (!worldObj.isRemote) {
 			if (reader != null) {
@@ -82,8 +82,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 		if (!worldObj.isRemote) {
 			if (!box.isInitialized()) {
-				IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord,
-						yCoord, zCoord);
+				IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, pos);
 
 				if (a != null) {
 					box.initialize(a);
@@ -92,17 +91,6 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 				}
 			}
 		}
-	}
-
-	@RPC (RPCSide.SERVER)
-	public void handleClientSetName(String nameSet) {
-		name = nameSet;
-		RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "setName", name);
-	}
-
-	@RPC
-	public void setName (String name) {
-		this.name = name;
 	}
 
 	@Override
@@ -141,18 +129,18 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	@Override
-	public String getInventoryName() {
-		return "Template";
-	}
-
-	@Override
 	public int getInventoryStackLimit() {
 		return 1;
 	}
 
 	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
+	public void openInventory(EntityPlayer playerIn) {
+
+	}
+
+	@Override
+	public void closeInventory(EntityPlayer playerIn) {
+
 	}
 
 	@Override
@@ -175,7 +163,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		NBTTagList subBptList = nbt.getTagList("subBlueprints", Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < subBptList.tagCount(); ++i) {
-			BlockIndex index = new BlockIndex(subBptList.getCompoundTagAt(i));
+			BlockPos index = Utils.readBlockPos(subBptList.getCompoundTagAt(i));
 
 			addSubBlueprint(index);
 		}
@@ -202,9 +190,9 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 		NBTTagList subBptList = new NBTTagList();
 
-		for (BlockIndex b : subBlueprints) {
+		for (BlockPos b : subBlueprints) {
 			NBTTagCompound subBpt = new NBTTagCompound();
-			b.writeTo(subBpt);
+			Utils.writeBlockPos(subBpt, b);
 			subBptList.appendTag(subBpt);
 		}
 
@@ -212,13 +200,37 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	@Override
+	public void writeData(ByteBuf stream) {
+		box.writeData(stream);
+		Utils.writeUTF(stream, name);
+		readConfiguration.writeData(stream);
+		stream.writeShort(subLasers.size());
+		for (LaserData ld: subLasers) {
+			ld.writeData(stream);
+		}
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		box.readData(stream);
+		name = Utils.readUTF(stream);
+		readConfiguration.readData(stream);
+		int size = stream.readUnsignedShort();
+		subLasers.clear();
+		for (int i = 0; i < size; i++) {
+			LaserData ld = new LaserData();
+			ld.readData(stream);
+			subLasers.add(ld);
+		}
+	}
+	@Override
 	public void invalidate() {
 		super.invalidate();
 		destroy();
 	}
 
 	private void initializeComputing() {
-		if (getWorldObj().isRemote) {
+		if (worldObj.isRemote) {
 			return;
 		}
 
@@ -231,19 +243,6 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		} else {
 			return 0;
 		}
-	}
-
-	@Override
-	public void openInventory() {
-	}
-
-	@Override
-	public void closeInventory() {
-	}
-
-	@Override
-	public boolean hasCustomInventoryName() {
-		return true;
 	}
 
 	@Override
@@ -267,24 +266,45 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		return completeBox.getBoundingBox();
 	}
 
-	@RPC (RPCSide.SERVER)
-	private void setReadConfiguration (BlueprintReadConfiguration conf) {
-		readConfiguration = conf;
-		sendNetworkUpdate();
+	public BuildCraftPacket getPacketSetName() {
+		return new PacketCommand(this, "setName", new CommandWriter() {
+			public void write(ByteBuf data) {
+				Utils.writeUTF(data, name);
+			}
+		});
+	}
+	@Override
+	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
+		if ("setName".equals(command)) {
+			this.name = Utils.readUTF(stream);
+			if (side.isServer()) {
+				BuildCraftCore.instance.sendToPlayersNear(getPacketSetName(), this);
+			}
+		} else if (side.isServer()) {
+			if ("setReadConfiguration".equals(command)) {
+				readConfiguration.readData(stream);
+				sendNetworkUpdate();
+			}
+		}
 	}
 
 	public void rpcSetConfiguration (BlueprintReadConfiguration conf) {
 		readConfiguration = conf;
-		RPCHandler.rpcServer(this, "setReadConfiguration", conf);
+
+		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setReadConfiguration", new CommandWriter() {
+			public void write(ByteBuf data) {
+				readConfiguration.writeData(data);
+			}
+		}));
 	}
 
 	public void addSubBlueprint(TileEntity sub) {
-		addSubBlueprint(new BlockIndex(sub));
+		addSubBlueprint(sub.getPos());
 
 		sendNetworkUpdate();
 	}
 
-	private void addSubBlueprint(BlockIndex index) {
+	private void addSubBlueprint(BlockPos index) {
 		subBlueprints.add(index);
 
 		LaserData laser = new LaserData(new Position(index), new Position(this));
@@ -298,5 +318,10 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		laser.tail.z += 0.5F;
 
 		subLasers.add(laser);
+	}
+
+	@Override
+	public String getName() {
+		return "Template";
 	}
 }

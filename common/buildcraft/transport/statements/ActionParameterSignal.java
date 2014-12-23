@@ -10,34 +10,23 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IIcon;
+import buildcraft.api.core.SheetIcon;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.api.transport.PipeWire;
+import buildcraft.core.statements.BCStatement;
 import buildcraft.core.utils.StringUtils;
 
 public class ActionParameterSignal implements IStatementParameter {
-	
-	private static IIcon[] icons;
-	
+
 	public PipeWire color = null;
 
 	public ActionParameterSignal() {
 
-	}
-
-	@Override
-	public IIcon getIcon() {
-		if (color == null) {
-			return null;
-		} else {
-			return icons[color.ordinal()];
-		}
 	}
 
 	@Override
@@ -90,14 +79,11 @@ public class ActionParameterSignal implements IStatementParameter {
 	}
 
 	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		icons = new IIcon[] {
-				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_red_active"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_blue_active"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_green_active"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_yellow_active")
-		};
-
+	public SheetIcon getIcon() {
+		if (color != null) {
+			return new SheetIcon(BCStatement.STATEMENT_ICONS, 15, 7 + (color.ordinal() * 2));
+		}
+		return null;
 	}
 
 	@Override

@@ -8,10 +8,11 @@
  */
 package buildcraft.core.robots;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public interface IBlockFilter {
 
-	boolean matches(World world, int x, int y, int z);
+	boolean matches(World world, BlockPos pos);
 
 }

@@ -10,9 +10,8 @@ package buildcraft.core.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -34,7 +33,7 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
 		private TriggerType(float level) {
 			this.level = level;
 		}
-	};
+	}
 
 	public TriggerType type;
 
@@ -54,7 +53,7 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
 	}
 
 	@Override
-	public boolean isTriggerActive(TileEntity tile, ForgeDirection side, IStatementContainer statementContainer, IStatementParameter[] parameters) {
+	public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer statementContainer, IStatementParameter[] parameters) {
 		if (tile instanceof IFluidHandler) {
 			IFluidHandler container = (IFluidHandler) tile;
 
@@ -74,6 +73,9 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
 			}
 
 			for (FluidTankInfo c : liquids) {
+				if (c == null) {
+					continue;
+				}
 				if (c.fluid == null) {
 					if (searchedFluid == null) {
 						return true;
@@ -91,14 +93,13 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
 		return false;
 	}
 
-
-	@Override
-	public void registerIcons(IIconRegister register) {
-		icon = register.registerIcon("buildcraft:triggers/trigger_liquidcontainer_" + type.name().toLowerCase());
-	}
-	
 	@Override
 	public IStatementParameter createParameter(int index) {
 		return new StatementParameterItemStack();
+	}
+
+	@Override
+	public int getSheetLocation() {
+		return 13 + (4 + type.ordinal()) * 16;
 	}
 }

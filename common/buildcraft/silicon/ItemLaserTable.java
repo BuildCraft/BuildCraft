@@ -30,12 +30,14 @@ public class ItemLaserTable extends ItemBlockBuildCraft {
 				return "tile.assemblyWorkbenchBlock";
 			case 2:
 				return "tile.integrationTableBlock";
+            case 3:
+                return "tile.chargingTableBlock";
 		}
 		return super.getUnlocalizedName();
 	}
 
 	@Override
 	public int getMetadata(int meta) {
-		return meta <= 2 ? meta : 0;
+		return meta >= 0 && meta < BlockLaserTable.LaserTableType.values().length ? meta : 0;
 	}
 }

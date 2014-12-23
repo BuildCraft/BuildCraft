@@ -12,31 +12,30 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.utils.ModelHelper;
 import buildcraft.core.utils.NBTUtils;
 
 public class ItemList extends ItemBuildCraft {
 
-	private IIcon baseIcon;
-	private IIcon writtenIcon;
+	/*private IIcon baseIcon;
+	private IIcon writtenIcon;*/
 
 	public static class StackLine {
 		public boolean oreWildcard = false;
@@ -118,8 +117,8 @@ public class ItemList extends ItemBuildCraft {
 				return base == matched;
 			} else if (base.getClass() == matched.getClass()) {
 				if (base instanceof ItemBlock) {
-					Block baseBlock = ((ItemBlock) base).field_150939_a;
-					Block matchedBlock = ((ItemBlock) matched).field_150939_a;
+					Block baseBlock = ((ItemBlock) base).block;
+					Block matchedBlock = ((ItemBlock) matched).block;
 
 					if (baseBlock.getClass() == Block.class) {
 						return baseBlock == matchedBlock;
@@ -209,7 +208,12 @@ public class ItemList extends ItemBuildCraft {
 		}
 	}
 
-	@Override
+	public ItemList() {
+		super();
+		setMaxStackSize(1);
+	}
+
+	/*@Override
 	public IIcon getIconIndex(ItemStack stack) {
 		if (NBTUtils.getItemData(stack).hasKey("written")) {
 			itemIcon = writtenIcon;
@@ -218,13 +222,12 @@ public class ItemList extends ItemBuildCraft {
 		}
 
 		return itemIcon;
-	}
+	}*/
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister) {
-		baseIcon = par1IconRegister.registerIcon("buildcraft:list");
-		writtenIcon = par1IconRegister.registerIcon("buildcraft:list_used");
+	public void registerModels() {
+		ModelHelper.registerItemModel(this, 0, "");
+		ModelHelper.registerItemModel(this, 1, "Used");
 	}
 
 	@Override
@@ -249,6 +252,7 @@ public class ItemList extends ItemBuildCraft {
 		NBTTagCompound nbt = NBTUtils.getItemData(stack);
 
 		nbt.setBoolean("written", true);
+		stack.setItemDamage(1);
 
 		NBTTagCompound lineNBT = new NBTTagCompound();
 		line.writeToNBT(lineNBT);

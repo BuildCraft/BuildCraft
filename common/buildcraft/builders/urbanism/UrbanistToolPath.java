@@ -8,13 +8,12 @@
  */
 package buildcraft.builders.urbanism;
 
-import net.minecraft.util.IIcon;
 
 class UrbanistToolPath extends UrbanistTool {
-	@Override
+	/*@Override
 	public IIcon getIcon() {
 		return UrbanistToolsIconProvider.INSTANCE.getIcon(UrbanistToolsIconProvider.Tool_Path);
-	}
+	}*/
 
 	@Override
 	public String getDescription() {

@@ -8,7 +8,6 @@
  */
 package buildcraft.transport.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -27,8 +26,8 @@ public class ActionEnergyPulsar extends BCStatement implements IActionInternal {
 	}
 
 	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/action_pulsar");
+	public int getSheetLocation() {
+		return 11;
 	}
 
 	@Override

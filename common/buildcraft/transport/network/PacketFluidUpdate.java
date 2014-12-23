@@ -12,8 +12,9 @@ import java.util.BitSet;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
@@ -28,16 +29,16 @@ public class PacketFluidUpdate extends PacketCoordinates {
 	public static int FLUID_AMOUNT_BIT = 1;
 	public static int FLUID_DATA_NUM = 2;
 
-	public FluidStack[] renderCache = new FluidStack[ForgeDirection.values().length];
-	public int[] colorRenderCache = new int[ForgeDirection.values().length];
+	public FluidStack[] renderCache = new FluidStack[EnumFacing.values().length];
+	public int[] colorRenderCache = new int[EnumFacing.values().length];
 	public BitSet delta;
 
-	public PacketFluidUpdate(int xCoord, int yCoord, int zCoord) {
-		super(PacketIds.PIPE_LIQUID, xCoord, yCoord, zCoord);
+	public PacketFluidUpdate(BlockPos pos) {
+		super(PacketIds.PIPE_LIQUID, pos);
 	}
 
-	public PacketFluidUpdate(int xCoord, int yCoord, int zCoord, boolean chunkPacket) {
-		super(PacketIds.PIPE_LIQUID, xCoord, yCoord, zCoord);
+	public PacketFluidUpdate(BlockPos pos, boolean chunkPacket) {
+		super(PacketIds.PIPE_LIQUID, pos);
 		this.isChunkDataPacket = chunkPacket;
 	}
 
@@ -49,11 +50,11 @@ public class PacketFluidUpdate extends PacketCoordinates {
 		super.readData(data);
 
 		World world = CoreProxy.proxy.getClientWorld();
-		if (!world.blockExists(posX, posY, posZ)) {
+		if (!world.isBlockLoaded(pos, false)) {
 			return;
 		}
 
-		TileEntity entity = world.getTileEntity(posX, posY, posZ);
+		TileEntity entity = world.getTileEntity(pos);
 		if (!(entity instanceof TileGenericPipe)) {
 			return;
 		}
@@ -78,7 +79,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
 
 		// System.out.printf("read %d, %d, %d = %s, %s%n", posX, posY, posZ, Arrays.toString(dBytes), delta);
 
-		for (ForgeDirection dir : ForgeDirection.values()) {
+		for (EnumFacing dir : EnumFacing.values()) {
 			if (delta.get(dir.ordinal() * FLUID_DATA_NUM + FLUID_ID_BIT)) {
 			    int amt = renderCache[dir.ordinal()] != null ? renderCache[dir.ordinal()].amount : 0;
 				renderCache[dir.ordinal()] = new FluidStack(data.readShort(), amt);
@@ -101,7 +102,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
 		// System.out.printf("write %d, %d, %d = %s, %s%n", posX, posY, posZ, Arrays.toString(dBytes), delta);
 		data.writeBytes(dBytes);
 
-		for (ForgeDirection dir : ForgeDirection.values()) {
+		for (EnumFacing dir : EnumFacing.values()) {
 			FluidStack liquid = renderCache[dir.ordinal()];
 
 			if (delta.get(dir.ordinal() * FLUID_DATA_NUM + FLUID_ID_BIT)) {

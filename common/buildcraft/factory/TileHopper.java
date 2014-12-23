@@ -8,13 +8,12 @@
  */
 package buildcraft.factory;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.SimpleInventory;
@@ -24,8 +23,12 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 
 	private final SimpleInventory inventory = new SimpleInventory(4, "Hopper", 64);
 	private boolean isEmpty;
-	private TileEntity outputTile;
-	
+
+    @Override
+    public void initialize() {
+        inventory.addListener(this);
+    }
+
 	@Override
 	public void readFromNBT(NBTTagCompound nbtTagCompound) {
 		super.readFromNBT(nbtTagCompound);
@@ -38,8 +41,7 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 		}
 
 		inventory.readFromNBT(p);
-		
-		refreshInventoryFlags();
+		inventory.markDirty();
 	}
 
 	@Override
@@ -50,25 +52,14 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 		if (worldObj.isRemote || isEmpty ||
 				worldObj.getTotalWorldTime() % 2 != 0) {
 			return;
 		}
 
-		if (outputTile == null || outputTile.isInvalid()) {
-			Block block = worldObj.getBlock(xCoord, yCoord - 1, zCoord);
-			outputTile = null;
-			
-			if (block.hasTileEntity(worldObj.getBlockMetadata(xCoord, yCoord - 1, zCoord))) {
-				outputTile = worldObj.getTileEntity(xCoord, yCoord - 1, zCoord);
-			}
-			
-			if (outputTile == null) {
-				return;
-			}
-		}
+		TileEntity outputTile = getTile(EnumFacing.DOWN);
 
 		ITransactor transactor = Transactor.getTransactorFor(outputTile);
 		
@@ -83,14 +74,15 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 			}
 			
 			ItemStack clonedStack = stackInSlot.copy().splitStack(1);
-			if (transactor.add(clonedStack, ForgeDirection.UP, true).stackSize > 0) {
+			if (transactor.add(clonedStack, EnumFacing.UP, true).stackSize > 0) {
 				inventory.decrStackSize(internalSlot, 1);
 				return;
 			}
 		}
 	}
 
-	private void refreshInventoryFlags() {
+    @Override
+	public void markDirty() {
 		isEmpty = true;
 		
 		for (int internalSlot = 0; internalSlot < inventory.getSizeInventory(); internalSlot++) {
@@ -118,26 +110,18 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	@Override
 	public ItemStack decrStackSize(int slotId, int count) {
 		ItemStack output = inventory.decrStackSize(slotId, count);
-		refreshInventoryFlags();
 		return output;
 	}
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slotId) {
 		ItemStack output = inventory.getStackInSlotOnClosing(slotId);
-		refreshInventoryFlags();
 		return output;
 	}
 
 	@Override
 	public void setInventorySlotContents(int slotId, ItemStack itemStack) {
 		inventory.setInventorySlotContents(slotId, itemStack);
-		refreshInventoryFlags();
-	}
-
-	@Override
-	public String getInventoryName() {
-		return inventory.getInventoryName();
 	}
 
 	@Override
@@ -146,16 +130,13 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityPlayer) {
-		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this && entityPlayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D) <= 64.0D;
+	public void openInventory(EntityPlayer playerIn) {
+
 	}
 
 	@Override
-	public void openInventory() {
-	}
+	public void closeInventory(EntityPlayer playerIn) {
 
-	@Override
-	public void closeInventory() {
 	}
 
 	@Override
@@ -164,7 +145,7 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
-		return false;
+	public String getName() {
+		return inventory.getName();
 	}
 }

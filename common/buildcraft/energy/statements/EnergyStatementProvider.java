@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.ITriggerExternal;
@@ -28,7 +28,7 @@ public class EnergyStatementProvider implements ITriggerProvider {
 	}
 
 	@Override
-	public Collection<ITriggerExternal> getExternalTriggers(ForgeDirection side, TileEntity tile) {
+	public Collection<ITriggerExternal> getExternalTriggers(EnumFacing side, TileEntity tile) {
 		LinkedList<ITriggerExternal> triggers = new LinkedList<ITriggerExternal>();
 		
 		if (tile instanceof TileEngine) {
@@ -36,6 +36,7 @@ public class EnergyStatementProvider implements ITriggerProvider {
 			triggers.add(BuildCraftEnergy.triggerGreenEngineHeat);
 			triggers.add(BuildCraftEnergy.triggerYellowEngineHeat);
 			triggers.add(BuildCraftEnergy.triggerRedEngineHeat);
+			triggers.add(BuildCraftEnergy.triggerEngineOverheat);
 		}
 		
 		return triggers;

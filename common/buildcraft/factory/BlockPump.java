@@ -10,25 +10,22 @@ package buildcraft.factory;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.utils.Utils;
 
 public class BlockPump extends BlockBuildCraft {
 
-	private IIcon textureTop;
+	/*private IIcon textureTop;
 	private IIcon textureBottom;
-	private IIcon textureSide;
+	private IIcon textureSide;*/
 
 	public BlockPump() {
 		super(Material.iron);
@@ -39,7 +36,7 @@ public class BlockPump extends BlockBuildCraft {
 		return new TilePump();
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIcon(int i, int j) {
 		switch (i) {
 			case 0:
@@ -49,17 +46,17 @@ public class BlockPump extends BlockBuildCraft {
 			default:
 				return textureSide;
 		}
+	}*/
+
+	@Override
+	public void breakBlock(World world, BlockPos pos, IBlockState state) {
+		Utils.preDestroyBlock(world, pos, state);
+		super.breakBlock(world, pos, state);
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
-		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, block, par6);
-	}
-
-	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-		TileEntity tile = world.getTileEntity(i, j, k);
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing side, float hitX, float hitY, float hitZ) {
+		TileEntity tile = world.getTileEntity(pos);
 
 		if (tile instanceof TilePump) {
 			TilePump pump = (TilePump) tile;
@@ -71,11 +68,11 @@ public class BlockPump extends BlockBuildCraft {
 
 			// Restart the quarry if its a wrench
 			Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-			if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
+			if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pos)) {
 
 				pump.tank.reset();
 				pump.rebuildQueue();
-				((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
+				((IToolWrench) equipped).wrenchUsed(entityplayer, pos);
 				return true;
 			}
 		}
@@ -84,19 +81,19 @@ public class BlockPump extends BlockBuildCraft {
 	}
 
 	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-		super.onNeighborBlockChange(world, x, y, z, block);
-		TileEntity tile = world.getTileEntity(x, y, z);
+	public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block block) {
+		super.onNeighborBlockChange(world, pos, state, block);
+		TileEntity tile = world.getTileEntity(pos);
 		if (tile instanceof TilePump) {
 			((TilePump) tile).onNeighborBlockChange(block);
 		}
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		textureTop = par1IconRegister.registerIcon("buildcraft:pump_top");
 		textureBottom = par1IconRegister.registerIcon("buildcraft:pump_bottom");
 		textureSide = par1IconRegister.registerIcon("buildcraft:pump_side");
-	}
+	}*/
 }

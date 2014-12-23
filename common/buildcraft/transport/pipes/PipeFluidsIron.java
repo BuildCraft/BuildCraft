@@ -14,12 +14,11 @@ import java.util.LinkedList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -52,7 +51,6 @@ public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 		super(new PipeTransportFluids(), item);
 
         transport.initFromPipe(getClass());
-		transport.travelDelay = 8;
 	}
 
 	@Override
@@ -79,19 +77,19 @@ public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 	}
 
 	@Override
-	public boolean outputOpen(ForgeDirection to) {
+	public boolean outputOpen(EnumFacing to) {
 		return super.outputOpen(to) && logic.outputOpen(to);
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
 		return BuildCraftTransport.instance.pipeIconProvider;
-	}
+	}*/
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
-		if (direction == ForgeDirection.UNKNOWN) {
+	public int getIconIndex(EnumFacing direction) {
+		if (direction == null) {
 			return standardIconIndex;
 		}
 		if (container != null && container.getBlockMetadata() == direction.ordinal()) {
@@ -116,7 +114,7 @@ public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 	@Override
 	public LinkedList<IActionInternal> getActions() {
 		LinkedList<IActionInternal> action = super.getActions();
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing direction : EnumFacing.values()) {
 			if (container.isPipeConnected(direction)) {
 				action.add(BuildCraftTransport.actionPipeDirection[direction.ordinal()]);
 			}

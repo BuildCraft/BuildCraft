@@ -13,11 +13,11 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.ITransactor;
@@ -34,7 +34,7 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
 
 	private static final IStackFilter TNT_FILTER = new ArrayStackFilter(new ItemStack(Blocks.tnt));
 
-	private BlockIndex target = null;
+	private BlockPos target = null;
 
 	private int flyingHeight = 20;
 
@@ -62,8 +62,8 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
 		} else {
 			startDelegateAI(new AIRobotSearchRandomGroundBlock(robot, 100, new IBlockFilter() {
 				@Override
-				public boolean matches(World world, int x, int y, int z) {
-					return y < world.getActualHeight() - flyingHeight && !world.isAirBlock(x, y, z);
+				public boolean matches(World world, BlockPos pos) {
+					return pos.getY() < world.getActualHeight() - flyingHeight && !world.isAirBlock(pos);
 				}
 			}, robot.getZoneToWork()));
 		}
@@ -76,11 +76,10 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
 		} else if (ai instanceof AIRobotSearchRandomGroundBlock) {
 			AIRobotSearchRandomGroundBlock aiFind = (AIRobotSearchRandomGroundBlock) ai;
 
-			startDelegateAI(new AIRobotGotoBlock(robot, aiFind.blockFound.x, aiFind.blockFound.y + flyingHeight,
-					aiFind.blockFound.z));
+			startDelegateAI(new AIRobotGotoBlock(robot, aiFind.blockFound.up(flyingHeight)));
 		} else if (ai instanceof AIRobotGotoBlock) {
 			ITransactor t = Transactor.getTransactorFor(robot);
-			ItemStack stack = t.remove(TNT_FILTER, ForgeDirection.UNKNOWN, true);
+			ItemStack stack = t.remove(TNT_FILTER, null, true);
 
 			if (stack != null && stack.stackSize > 0) {
 				EntityTNTPrimed tnt = new EntityTNTPrimed(robot.worldObj, robot.posX + 0.25, robot.posY - 1,

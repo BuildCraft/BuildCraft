@@ -53,10 +53,10 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 			double minDistance = Double.MAX_VALUE;
 
 			for (TileConstructionMarker marker : TileConstructionMarker.currentMarkers) {
-				if (marker.getWorldObj() == robot.worldObj && marker.needsToBuild()) {
-					double dx = robot.posX - marker.xCoord;
-					double dy = robot.posY - marker.yCoord;
-					double dz = robot.posZ - marker.zCoord;
+				if (marker.getWorld() == robot.worldObj && marker.needsToBuild()) {
+					double dx = robot.posX - marker.getPos().getX();
+					double dy = robot.posY - marker.getPos().getY();
+					double dz = robot.posZ - marker.getPos().getZ();
 					double distance = dx * dx + dy * dy + dz * dz;
 
 					if (distance < minDistance) {
@@ -108,11 +108,7 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 			if (robot.getEnergy() - currentBuildingSlot.getEnergyRequirement() < EntityRobotBase.SAFETY_ENERGY) {
 				startDelegateAI(new AIRobotRecharge(robot));
 			} else {
-				startDelegateAI(new AIRobotGotoBlock(robot,
-					(int) currentBuildingSlot.getDestination().x,
-					(int) currentBuildingSlot.getDestination().y,
-					(int) currentBuildingSlot.getDestination().z,
-					8));
+				startDelegateAI(new AIRobotGotoBlock(robot, currentBuildingSlot.getDestination().toBlockPos() ,	8));
 			}
 			// TODO: take into account cases where the robot can't reach the
 			// destination - go to work on another block

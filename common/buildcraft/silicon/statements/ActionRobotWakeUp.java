@@ -8,7 +8,6 @@
  */
 package buildcraft.silicon.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -26,15 +25,21 @@ public class ActionRobotWakeUp extends BCStatement implements IActionInternal {
 		return StringUtils.localize("gate.action.robot.wakeup");
 	}
 
-	@Override
+	/*@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/action_robot_wakeup");
-	}
+	}*/
 
 	@Override
 	public void actionActivate(IStatementContainer source,
 			IStatementParameter[] parameters) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public int getSheetLocation() {
+		// TODO Auto-generated method stub
+		return 52;
 	}
 }

@@ -8,19 +8,17 @@
  */
 package buildcraft.core.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.util.ResourceLocation;
+import buildcraft.api.core.SheetIcon;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;
 
 public abstract class BCStatement implements IStatement {
+	public static final ResourceLocation STATEMENT_ICONS = new ResourceLocation("buildcraft", "textures/gui/statements.png");
 
 	protected final String uniqueTag;
-
-	protected IIcon icon;
+	protected SheetIcon icon;
 
 	/**
 	 * UniqueTag accepts multiple possible tags, use this feature to migrate to
@@ -40,16 +38,13 @@ public abstract class BCStatement implements IStatement {
 	public String getUniqueTag() {
 		return uniqueTag;
 	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon() {
-		return icon;
-	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister iconRegister) {
+	public SheetIcon getIcon() {
+		if (icon == null) {
+			this.icon = new SheetIcon(STATEMENT_ICONS, getSheetLocation() & 15, getSheetLocation() >> 4);
+		}
+		return icon;
 	}
 
 	@Override
@@ -76,4 +71,6 @@ public abstract class BCStatement implements IStatement {
 	public IStatementParameter createParameter(int index) {
 		return null;
 	}
+
+	public abstract int getSheetLocation();
 }

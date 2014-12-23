@@ -21,7 +21,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
@@ -204,7 +204,7 @@ public class AIRobotCraftWorkbench extends AIRobotCraftGeneric {
 
 			ITransactor transactor = Transactor.getTransactorFor(robot);
 
-			transactor.add(output, ForgeDirection.UNKNOWN, true);
+			transactor.add(output, null, true);
 		}
 	}
 
@@ -230,10 +230,8 @@ public class AIRobotCraftWorkbench extends AIRobotCraftGeneric {
 				return false;
 			}
 
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				Block nearbyBlock = robot.worldObj.getBlock(station.x() + dir.offsetX, station.y()
-						+ dir.offsetY, station.z()
-						+ dir.offsetZ);
+			for (EnumFacing dir : EnumFacing.values()) {
+				Block nearbyBlock = robot.worldObj.getBlockState(station.pos().offset(dir)).getBlock();
 
 				if (nearbyBlock instanceof BlockWorkbench) {
 					return true;

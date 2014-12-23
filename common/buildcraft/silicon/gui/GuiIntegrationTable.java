@@ -27,7 +27,7 @@ public class GuiIntegrationTable extends GuiLaserTable {
 	public GuiIntegrationTable(InventoryPlayer playerInventory, TileIntegrationTable table) {
 		super(playerInventory, new ContainerIntegrationTable(playerInventory, table), table, TEXTURE);
 		this.integrationTable = table;
-		xSize = 175;
+		xSize = 176;
 		ySize = 173;
 	}
 
@@ -48,7 +48,7 @@ public class GuiIntegrationTable extends GuiLaserTable {
 		drawLedgers(par1, par2);
 
 
-		String title = table.getInventoryName();
+		String title = table.getName();
 		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
 	}
 

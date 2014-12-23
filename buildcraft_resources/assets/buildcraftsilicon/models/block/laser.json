@@ -1,0 +1,30 @@
+{
+    "elements": [
+        { "from": [ 0, 0, 0 ],
+          "to": [ 16, 4, 16 ],
+            "faces": {
+                "down":  { "texture": "#bottom", "cullface": "down" },
+                "up":    { "texture": "#top" },
+                "north": { "texture": "#side", "cullface": "north" },
+                "south": { "texture": "#side", "cullface": "south" },
+                "west":  { "texture": "#side", "cullface": "west" },
+                "east":  { "texture": "#side", "cullface": "east" }
+            }
+        },
+        { "from": [ 4, 4, 4 ],
+          "to": [ 12, 14, 12 ],
+            "faces": {
+                "up":    { "texture": "#top" },
+                "north": { "texture": "#side" },
+                "south": { "texture": "#side" },
+                "west": { "texture": "#side" },
+                "east": { "texture": "#side" }
+            }
+        }
+    ],
+    "textures": {
+        "top": "buildcraft:blocks/laser_top",
+        "side": "buildcraft:blocks/laser_side",
+        "bottom": "buildcraft:blocks/laser_bottom"
+    }
+}

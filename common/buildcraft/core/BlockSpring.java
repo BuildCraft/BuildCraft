@@ -13,20 +13,24 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.world.World;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class BlockSpring extends Block {
 
 	public static final Random rand = new Random();
+	public static final PropertyEnum TYPE = PropertyEnum.create("type", EnumSpring.class);
 
-	public enum EnumSpring {
+	public enum EnumSpring implements IStringSerializable {
 
 		WATER(5, -1, Blocks.water),
 		OIL(6000, 8, null); // Set in BuildCraftEnergy
@@ -41,11 +45,12 @@ public class BlockSpring extends Block {
 			this.liquidBlock = liquidBlock;
 		}
 
-		public static EnumSpring fromMeta(int meta) {
-			if (meta < 0 || meta >= VALUES.length) {
-				return WATER;
-			}
-			return VALUES[meta];
+		public static EnumSpring fromState(IBlockState state) {
+			return (EnumSpring) state.getValue(TYPE);
+		}
+
+		public String getName() {
+			return this.name();
 		}
 	}
 
@@ -53,13 +58,18 @@ public class BlockSpring extends Block {
 		super(Material.rock);
 		setBlockUnbreakable();
 		setResistance(6000000.0F);
+		setDefaultState(getBlockState().getBaseState().withProperty(TYPE, EnumSpring.WATER));
 
-		// TODO: set proper sound
-		//setStepSound(soundStoneFootstep);
+		setStepSound(Block.soundTypeStone);
 
 		disableStats();
 		setTickRandomly(true);
 		setCreativeTab(CreativeTabBuildCraft.BLOCKS.get());
+	}
+
+	@Override
+	protected BlockState createBlockState() {
+		return new BlockState(this, new IProperty[]{TYPE});
 	}
 
 	@Override
@@ -70,13 +80,23 @@ public class BlockSpring extends Block {
 	}
 
 	@Override
-	public int damageDropped(int meta) {
-		return meta;
+	public int damageDropped(IBlockState state) {
+		return 0;
 	}
 
 	@Override
-	public void updateTick(World world, int x, int y, int z, Random random) {
-		assertSpring(world, x, y, z);
+	public int getMetaFromState(IBlockState state) {
+		return ((EnumSpring) state.getValue(TYPE)).ordinal();
+	}
+
+	@Override
+	public IBlockState getStateFromMeta(int meta) {
+		return getDefaultState().withProperty(TYPE, EnumSpring.values()[meta]);
+	}
+
+	@Override
+	public void updateTick(World world, BlockPos pos, IBlockState state, Random random) {
+		assertSpring(world, pos, state);
 	}
 
 //	@Override
@@ -84,37 +104,29 @@ public class BlockSpring extends Block {
 //		assertSpring(world, x, y, z);
 //	}
 	@Override
-	public void onBlockAdded(World world, int x, int y, int z) {
-		super.onBlockAdded(world, x, y, z);
-		int meta = world.getBlockMetadata(x, y, z);
-		world.scheduleBlockUpdate(x, y, z, this, EnumSpring.fromMeta(meta).tickRate);
+	public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
+		super.onBlockAdded(world, pos, state);
+		world.scheduleUpdate(pos, this, EnumSpring.fromState(state).tickRate);
 	}
 
-	private void assertSpring(World world, int x, int y, int z) {
-		int meta = world.getBlockMetadata(x, y, z);
-		EnumSpring spring = EnumSpring.fromMeta(meta);
-		world.scheduleBlockUpdate(x, y, z, this, spring.tickRate);
+	private void assertSpring(World world, BlockPos pos, IBlockState state) {
+		EnumSpring spring = EnumSpring.fromState(state);
+		world.scheduleUpdate(pos, this, spring.tickRate);
 		if (!spring.canGen || spring.liquidBlock == null) {
 			return;
 		}
-		if (!world.isAirBlock(x, y + 1, z)) {
+		if (!world.isAirBlock(pos.up())) {
 			return;
 		}
 		if (spring.chance != -1 && rand.nextInt(spring.chance) != 0) {
 			return;
 		}
-		world.setBlock(x, y + 1, z, spring.liquidBlock);
+		world.setBlockState(pos.up(), spring.liquidBlock.getDefaultState());
 	}
 
-	// Prevents updates on chunk generation
-	@Override
-	public boolean func_149698_L() {
-		return false;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		blockIcon = par1IconRegister.registerIcon("bedrock");
-	}
+	// TODO: 1.7.10 - Prevents updates on chunk generation
+	//@Override
+	//public boolean func_149698_L() {
+	//	return false;
+	//}
 }

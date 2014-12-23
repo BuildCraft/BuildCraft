@@ -12,19 +12,22 @@ import java.util.Collection;
 
 import org.lwjgl.opengl.GL11;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.builders.TileBuilder;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.gui.ItemSlot;
-import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.CommandWriter;
+import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.StringUtils;
 
 public class GuiBuilder extends GuiAdvancedInterface {
@@ -110,8 +113,8 @@ public class GuiBuilder extends GuiAdvancedInterface {
 	}
 
 	@Override
-	protected void mouseMovedOrUp(int mouseX, int mouseY, int eventType) {
-		super.mouseMovedOrUp(mouseX, mouseY, eventType);
+	protected void mouseReleased(int mouseX, int mouseY, int eventType) {
+		super.mouseReleased(mouseX, mouseY, eventType);
 
 		if (this.selectedButton != null && eventType == 0) {
 			this.selectedButton.mouseReleased(mouseX, mouseY);
@@ -131,7 +134,11 @@ public class GuiBuilder extends GuiAdvancedInterface {
 			if (super.mousePressed(mc, x, y)) {
 				selectedButton = this;
 				clicked = true;
-				RPCHandler.rpcServer(builder, "eraseFluidTank", id);
+				BuildCraftCore.instance.sendToServer(new PacketCommand(builder, "eraseFluidTank", new CommandWriter() {
+					public void write(ByteBuf data) {
+						data.writeInt(id);
+					}
+				}));
 				return true;
 			} else {
 				return false;
@@ -146,11 +153,10 @@ public class GuiBuilder extends GuiAdvancedInterface {
 
 		@Override
 		public void drawButton(Minecraft mc, int x, int y) {
-			// hovered
-			this.field_146123_n = x >= this.xPosition && y >= this.yPosition && x < this.xPosition + this.width && y < this.yPosition + this.height;
+			this.hovered = x >= this.xPosition && y >= this.yPosition && x < this.xPosition + this.width && y < this.yPosition + this.height;
 
 			mc.renderEngine.bindTexture(FOREGROUND_TEXTURE);
-			drawTexturedModalRect(xPosition, yPosition, 0, (clicked ? 1 : this.field_146123_n ? 2 : 0) * 18, 18, 18);
+			drawTexturedModalRect(xPosition, yPosition, 0, (clicked ? 1 : this.hovered ? 2 : 0) * 18, 18, 18);
 			mouseDragged(mc, x, y);
 		}
 	}

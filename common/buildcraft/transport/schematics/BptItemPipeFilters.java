@@ -10,7 +10,7 @@ package buildcraft.transport.schematics;
 
 import net.minecraft.item.Item;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
@@ -29,7 +29,7 @@ public class BptItemPipeFilters extends BptPipeExtension {
 		inv.readFromNBT(slot.tileNBT);
 
 		for (int dir = 0; dir <= 5; ++dir) {
-			ForgeDirection r = ForgeDirection.values()[dir].getRotation(ForgeDirection.UP);
+			EnumFacing r = EnumFacing.values()[dir].rotateY();
 
 			for (int s = 0; s < 9; ++s) {
 				newInv.setInventorySlotContents(r.ordinal() * 9 + s, inv.getStackInSlot(dir * 9 + s));

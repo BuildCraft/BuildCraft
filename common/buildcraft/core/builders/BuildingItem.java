@@ -11,27 +11,26 @@ package buildcraft.core.builders;
 import java.util.Date;
 import java.util.LinkedList;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
-import buildcraft.api.core.NetworkData;
+import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.Position;
 import buildcraft.core.StackAtPosition;
 
-public class BuildingItem implements IBuildingItem {
+public class BuildingItem implements IBuildingItem, ISerializable {
 
 	public static int ITEMS_SPACE = 2;
 
-	@NetworkData
 	public Position origin, destination;
-
-	@NetworkData
 	public LinkedList<StackAtPosition> stacksToDisplay = new LinkedList<StackAtPosition>();
 
 	public Position posDisplay = new Position();
@@ -48,8 +47,6 @@ public class BuildingItem implements IBuildingItem {
 	private boolean initialized = false;
 	private double vx, vy, vz;
 	private double maxHeight;
-
-	@NetworkData
 	private double lifetime = 0;
 
 	public void initialize () {
@@ -167,15 +164,10 @@ public class BuildingItem implements IBuildingItem {
 
 	private void build() {
 		if (slotToBuild != null) {
-			int destX = (int) Math.floor(destination.x);
-			int destY = (int) Math.floor(destination.y);
-			int destZ = (int) Math.floor(destination.z);
-			Block block = context.world().getBlock(destX, destY, destZ);
-			int meta = context.world().getBlockMetadata(destX, destY, destZ);
+			BlockPos dest = destination.toBlockPos();
 
-			context.world().playAuxSFXAtEntity(null, 2001,
-					destX, destY, destZ,
-					Block.getIdFromBlock(block) + (meta << 12));
+			context.world().playAuxSFXAtEntity(null, 2001, dest,
+					Block.getStateId(context.world().getBlockState(dest)));
 
 			/*if (BlockUtil.isToughBlock(context.world(), destX, destY, destZ)) {
 				BlockUtil.breakBlock(context.world(), destX, destY, destZ, BuildCraftBuilders.fillerLifespanTough);
@@ -288,6 +280,33 @@ public class BuildingItem implements IBuildingItem {
 					stacksToDisplay.add(sPos);
 				}
 			}
+		}
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		origin = new Position();
+		destination = new Position();
+		origin.readData(stream);
+		destination.readData(stream);
+		lifetime = stream.readDouble();
+		stacksToDisplay.clear();
+		int size = stream.readUnsignedShort();
+		for (int i = 0; i < size; i++) {
+			StackAtPosition e = new StackAtPosition();
+			e.readData(stream);
+			stacksToDisplay.add(e);
+		}
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		origin.writeData(stream);
+		destination.writeData(stream);
+		stream.writeDouble(lifetime);
+		stream.writeShort(stacksToDisplay.size());
+		for (StackAtPosition s: stacksToDisplay) {
+			s.writeData(stream);
 		}
 	}
 }

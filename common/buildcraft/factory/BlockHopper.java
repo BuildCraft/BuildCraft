@@ -9,16 +9,15 @@
 package buildcraft.factory;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.events.BlockInteractionEvent;
@@ -28,7 +27,7 @@ import buildcraft.core.IItemPipe;
 
 public class BlockHopper extends BlockBuildCraft {
 
-	private static IIcon icon;
+	//private static IIcon icon;
 
 	public BlockHopper() {
 		super(Material.iron);
@@ -39,10 +38,6 @@ public class BlockHopper extends BlockBuildCraft {
 		return new TileHopper();
 	}
 
-	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
-	}
 
 	@Override
 	public boolean isOpaqueCube() {
@@ -55,15 +50,15 @@ public class BlockHopper extends BlockBuildCraft {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-		super.onBlockActivated(world, x, y, z, entityplayer, par6, par7, par8, par9);
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing face, float hitX, float hitY, float hitZ) {
+		super.onBlockActivated(world, pos, state, entityplayer, face, hitX, hitY, hitZ);
 
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking()) {
 			return false;
 		}
 
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, pos, state);
 		FMLCommonHandler.instance().bus().post(event);
 		if (event.isCanceled()) {
 			return false;
@@ -76,13 +71,13 @@ public class BlockHopper extends BlockBuildCraft {
 		}
 
 		if (!world.isRemote) {
-			entityplayer.openGui(BuildCraftFactory.instance, GuiIds.HOPPER, world, x, y, z);
+			entityplayer.openGui(BuildCraftFactory.instance, GuiIds.HOPPER, world, pos.getX(), pos.getY(), pos.getZ());
 		}
 
 		return true;
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		icon = par1IconRegister.registerIcon("buildcraft:hopperBottom");
@@ -92,5 +87,5 @@ public class BlockHopper extends BlockBuildCraft {
 	@SideOnly(Side.CLIENT)
 	public IIcon getIcon(int par1, int par2) {
 		return icon;
-	}
+	}*/
 }

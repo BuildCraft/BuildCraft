@@ -10,7 +10,6 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -45,13 +44,18 @@ public class ActionSignalOutput extends BCStatement implements IActionInternal {
 	}
 
 	@Override
+	public int getSheetLocation() {
+		return 15 + (7 + (color.ordinal() * 2)) * 16;
+	}
+
+	@Override
 	public void actionActivate(IStatementContainer container, IStatementParameter[] parameters) {
 		Gate gate = (Gate) container;
 
 		gate.broadcastSignal(color);
 
 		for (IStatementParameter param : parameters) {
-			if (param != null) {
+			if (param != null && param instanceof ActionParameterSignal) {
 				ActionParameterSignal signal = (ActionParameterSignal) param;
 
 				if (signal.color != null) {
@@ -59,10 +63,5 @@ public class ActionSignalOutput extends BCStatement implements IActionInternal {
 				}
 			}
 		}
-	}
-	
-	@Override
-	public void registerIcons(IIconRegister register) {
-		icon = register.registerIcon("buildcraft:triggers/trigger_pipesignal_" + color.name().toLowerCase() + "_active");
 	}
 }

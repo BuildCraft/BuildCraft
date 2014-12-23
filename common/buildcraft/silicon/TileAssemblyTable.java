@@ -12,25 +12,27 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import cpw.mods.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
-import buildcraft.api.core.NetworkData;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.api.tiles.IControllable;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCSide;
+import buildcraft.core.network.CommandWriter;
+import buildcraft.core.network.ICommandReceiver;
+import buildcraft.core.network.PacketCommand;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.robots.ResourceIdAssemblyTable;
@@ -38,14 +40,9 @@ import buildcraft.core.robots.RobotRegistry;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
 
-public class TileAssemblyTable extends TileLaserTableBase implements IInventory, IFlexibleCrafter {
-
-	@NetworkData
+public class TileAssemblyTable extends TileLaserTableBase implements IInventory, IFlexibleCrafter, ICommandReceiver {
 	public String currentRecipeId = "";
-
 	public IFlexibleRecipe<ItemStack> currentRecipe;
-
-	@NetworkData
 	private HashSet<String> plannedOutput = new HashSet<String>();
 
 	public List<CraftingResult<ItemStack>> getPotentialOutputs() {
@@ -62,14 +59,19 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		return result;
 	}
 
-	@Override
+	// TODO
+	/*@Override
 	public boolean canUpdate() {
 		return !FMLCommonHandler.instance().getEffectiveSide().isClient();
-	}
+	}*/
 
 	@Override
-	public void updateEntity() { // WARNING: run only server-side, see canUpdate()
-		super.updateEntity();
+	public void update() { // WARNING: run only server-side, see canUpdate()
+		super.update();
+
+		if (worldObj.isRemote) {
+			return;
+		}
 
 		if (currentRecipe == null) {
 			return;
@@ -99,15 +101,15 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 
 				if (remaining != null && remaining.stackSize > 0) {
 					remaining.stackSize -= Utils
-							.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, remaining);
+							.addToRandomInventoryAround(worldObj, pos, remaining);
 				}
 
 				if (remaining != null && remaining.stackSize > 0) {
-					remaining.stackSize -= Utils.addToRandomPipeAround(worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN, remaining);
+					remaining.stackSize -= Utils.addToRandomPipeAround(worldObj, pos, null, remaining);
 				}
 
 				if (remaining != null && remaining.stackSize > 0) {
-					EntityItem entityitem = new EntityItem(worldObj, xCoord + 0.5, yCoord + 0.7, zCoord + 0.5,
+					EntityItem entityitem = new EntityItem(worldObj, pos.getX() + 0.5, pos.getY() + 0.7, pos.getZ() + 0.5,
 							remaining);
 
 					worldObj.spawnEntityInWorld(entityitem);
@@ -134,10 +136,27 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 	}
 
 	@Override
-	public String getInventoryName() {
-		return StringUtils.localize("tile.assemblyTableBlock.name");
+	public void readData(ByteBuf stream) {
+		super.readData(stream);
+		currentRecipeId = Utils.readUTF(stream);
+		plannedOutput.clear();
+		int size = stream.readUnsignedByte();
+		for (int i = 0; i < size; i++) {
+			plannedOutput.add(Utils.readUTF(stream));
+		}
 	}
 
+	@Override
+	public void writeData(ByteBuf stream) {
+		super.writeData(stream);
+		Utils.writeUTF(stream, currentRecipeId);
+		stream.writeByte(plannedOutput.size());
+		for (String s: plannedOutput) {
+			Utils.writeUTF(stream, s);
+		}
+
+		currentRecipe = AssemblyRecipeManager.INSTANCE.getRecipe(currentRecipeId);
+	}
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
@@ -267,23 +286,33 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		setCurrentRecipe(null);
 	}
 
-	public void rpcSelectRecipe(String id, boolean select) {
-		RPCHandler.rpcServer(this, "selectRecipe", id, select);
+	public void rpcSelectRecipe(final String id, final boolean select) {
+		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "select", new CommandWriter() {
+			public void write(ByteBuf data) {
+				Utils.writeUTF(data, id);
+				data.writeBoolean(select);
+			}
+		}));
 	}
 
-	@RPC(RPCSide.SERVER)
-	private void selectRecipe(String id, boolean select) {
-		IFlexibleRecipe<ItemStack> recipe = AssemblyRecipeManager.INSTANCE.getRecipe(id);
+	@Override
+	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
+		if (side.isServer() && "select".equals(command)) {
+			String id = Utils.readUTF(stream);
+			boolean select = stream.readBoolean();
 
-		if (recipe != null) {
-			if (select) {
-				planOutput(recipe);
-			} else {
-				cancelPlanOutput(recipe);
+			IFlexibleRecipe<ItemStack> recipe = AssemblyRecipeManager.INSTANCE.getRecipe(id);
+
+			if (recipe != null) {
+				if (select) {
+					planOutput(recipe);
+				} else {
+					cancelPlanOutput(recipe);
+				}
 			}
-		}
 
-		sendNetworkUpdate();
+			sendNetworkUpdate();
+		}
 	}
 
 	@Override
@@ -302,16 +331,6 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
-		return false;
-	}
-
-	@Override
-	public void postPacketHandling(PacketUpdate packet) {
-		currentRecipe = AssemblyRecipeManager.INSTANCE.getRecipe(currentRecipeId);
-	}
-
-	@Override
 	public int getCraftingItemStackSize() {
 		return getSizeInventory();
 	}
@@ -322,7 +341,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 	}
 
 	@Override
-	public ItemStack decrCraftingItemgStack(int slotid, int val) {
+	public ItemStack decrCraftingItemStack(int slotid, int val) {
 		return decrStackSize(slotid, val);
 	}
 
@@ -339,5 +358,10 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 	@Override
 	public int getCraftingFluidStackSize() {
 		return 0;
+	}
+
+	@Override
+	public String getName() {
+		return "tile.assemblyTableBlock.name";
 	}
 }

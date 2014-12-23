@@ -8,28 +8,29 @@
  */
 package buildcraft.energy;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
+import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
-import buildcraft.api.core.NetworkData;
-import buildcraft.api.power.IPowerEmitter;
-import buildcraft.api.power.IPowerReceptor;
-import buildcraft.api.power.PowerHandler;
-import buildcraft.api.power.PowerHandler.PowerReceiver;
+import buildcraft.BuildCraftEnergy;
+import buildcraft.api.power.IEngine;
+import buildcraft.api.tiles.IHeatable;
+import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.TileBuffer;
 import buildcraft.core.TileBuildCraft;
+import buildcraft.core.utils.MathUtils;
+import buildcraft.core.utils.Utils;
 import buildcraft.energy.gui.ContainerEngine;
 
-public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter,
-		IPipeConnection, IEnergyHandler {
+public abstract class TileEngine extends TileBuildCraft implements IPipeConnection, IEnergyHandler, IEngine, IHeatable {
 	// Index corresponds to metadata
 	public static final ResourceLocation[] BASE_TEXTURES = new ResourceLocation[]{
 			new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/base_wood.png"),
@@ -58,8 +59,9 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 	public static final ResourceLocation TRUNK_GREEN_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_green.png");
 	public static final ResourceLocation TRUNK_YELLOW_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_yellow.png");
 	public static final ResourceLocation TRUNK_RED_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_red.png");
+	public static final ResourceLocation TRUNK_OVERHEAT_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_overheat.png");
 
-	public enum EnergyStage {
+    public enum EnergyStage {
 		BLUE, GREEN, YELLOW, RED, OVERHEAT;
 		public static final EnergyStage[] VALUES = values();
 	}
@@ -72,18 +74,14 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 	public float progress;
 	public int energy;
 	public float heat = MIN_HEAT;
-	@NetworkData
 	public EnergyStage energyStage = EnergyStage.BLUE;
-	@NetworkData
-	public ForgeDirection orientation = ForgeDirection.UP;
+	public EnumFacing orientation = EnumFacing.UP;
 
 	protected int progressPart = 0;
 	protected boolean lastPower = false;
 
 	private boolean checkOrientation = false;
-	private TileBuffer[] tileCache;
 
-	@NetworkData
 	private boolean isPumping = false; // Used for SMP synch
 
 	public TileEngine() {
@@ -110,12 +108,28 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 				return TRUNK_YELLOW_TEXTURE;
 			case RED:
 				return TRUNK_RED_TEXTURE;
+			case OVERHEAT:
+				return TRUNK_OVERHEAT_TEXTURE;
 			default:
 				return TRUNK_RED_TEXTURE;
 		}
 	}
 
-	public boolean onBlockActivated(EntityPlayer player, ForgeDirection side) {
+	public boolean onBlockActivated(EntityPlayer player, EnumFacing side) {
+		if (!player.worldObj.isRemote && player.getCurrentEquippedItem() != null &&
+				player.getCurrentEquippedItem().getItem() instanceof IToolWrench) {
+			IToolWrench wrench = (IToolWrench) player.getCurrentEquippedItem().getItem();
+			if (wrench.canWrench(player, pos)) {
+				if (getEnergyStage() == EnergyStage.OVERHEAT && !Utils.isFakePlayer(player)) {
+					energyStage = computeEnergyStage();
+					sendNetworkUpdate();
+				}
+				checkOrientation = true;
+
+				wrench.wrenchUsed(player, pos);
+				return true;
+			}
+		}
 		return false;
 	}
 
@@ -148,6 +162,9 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 
 			if (energyStage != newStage) {
 				energyStage = newStage;
+				if (energyStage == EnergyStage.OVERHEAT) {
+					overheat();
+				}
 				sendNetworkUpdate();
 			}
 		}
@@ -155,20 +172,20 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 		return energyStage;
 	}
 
-	public void updateHeatLevel() {
+	public void overheat() {
+		this.isPumping = false;
+		if (BuildCraftEnergy.canEnginesExplode) {
+			worldObj.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 3, true);
+			worldObj.setBlockToAir(pos);
+		}
+	}
+
+	public void updateHeat() {
 		heat = (float) ((MAX_HEAT - MIN_HEAT) * getEnergyLevel()) + MIN_HEAT;
 	}
 
 	public float getHeatLevel() {
 		return (heat - MIN_HEAT) / (MAX_HEAT - MIN_HEAT);
-	}
-
-	public float getIdealHeatLevel() {
-		return heat / IDEAL_HEAT;
-	}
-
-	public float getHeat() {
-		return heat;
 	}
 
 	public float getPistonSpeed() {
@@ -191,8 +208,8 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		if (worldObj.isRemote) {
 			if (progressPart != 0) {
@@ -214,16 +231,20 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 
 			if (!isOrientationValid()) {
 				switchOrientation(true);
-			} else {
-				TileEntity tile = getTileBuffer(orientation).getTile();
 			}
 		}
 
-		updateHeatLevel();
+		updateHeat();
 		getEnergyStage();
+
+		if (getEnergyStage() == EnergyStage.OVERHEAT) {
+			this.energy = Math.max(this.energy - 50, 0);
+			return;
+		}
+
 		engineUpdate();
 
-		TileEntity tile = getTileBuffer(orientation).getTile();
+		TileEntity tile = getTile(orientation);
 
 		if (progressPart != 0) {
 			progress += getPistonSpeed();
@@ -261,58 +282,53 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 	}
 
 	private int getPowerToExtract() {
-		TileEntity tile = getTileBuffer(orientation).getTile();
+		TileEntity tile = getTile(orientation);
 
-		if (tile instanceof IEnergyHandler) {
+        if (tile instanceof IEngine) {
+            IEngine engine = (IEngine) tile;
+
+            int maxEnergy = engine.receiveEnergyFromEngine(
+                    orientation.getOpposite(),
+                    this.energy, true);
+            return extractEnergy(maxEnergy, false);
+        } else if (tile instanceof IEnergyHandler) {
 			IEnergyHandler handler = (IEnergyHandler) tile;
 
-			int minEnergy = 0;
 			int maxEnergy = handler.receiveEnergy(
 					orientation.getOpposite(),
-					Math.round(this.energy), true);
-			return extractEnergy(minEnergy, maxEnergy, false);
-		} else if (tile instanceof IPowerReceptor) {
-			PowerReceiver receptor = ((IPowerReceptor) tile)
-					.getPowerReceiver(orientation.getOpposite());
-
-			return extractEnergy((int) Math.floor(receptor.getMinEnergyReceived() * 10),
-					(int) Math.ceil(receptor.getMaxEnergyReceived() * 10), false);
+					this.energy, true);
+			return extractEnergy(maxEnergy, false);
 		} else {
 			return 0;
 		}
 	}
 
 	protected void sendPower() {
-		TileEntity tile = getTileBuffer(orientation).getTile();
+		TileEntity tile = getTile(orientation);
 		if (isPoweredTile(tile, orientation)) {
 			int extracted = getPowerToExtract();
-			if (extracted > 0) {
-				setPumping(true);
-			} else {
+			if (extracted <= 0) {
 				setPumping(false);
+                return;
 			}
 
-			if (tile instanceof IEnergyHandler) {
-				IEnergyHandler handler = (IEnergyHandler) tile;
-				if (extracted > 0) {
-					int neededRF = handler.receiveEnergy(
-							orientation.getOpposite(),
-							(int) Math.round(extracted), false);
+            setPumping(true);
 
-					extractEnergy(0, neededRF, true);
-				}
-			} else if (tile instanceof IPowerReceptor) {
-				PowerReceiver receptor = ((IPowerReceptor) tile)
-						.getPowerReceiver(orientation.getOpposite());
+			if (tile instanceof IEngine) {
+                IEngine engine = (IEngine) tile;
+                int neededRF = engine.receiveEnergyFromEngine(
+                        orientation.getOpposite(),
+                        extracted, false);
 
-				if (extracted > 0) {
-					double neededMJ = receptor.receiveEnergy(
-							PowerHandler.Type.ENGINE, extracted / 10.0,
-							orientation.getOpposite());
+                extractEnergy(neededRF, true);
+            } else if (tile instanceof IEnergyHandler) {
+                IEnergyHandler handler = (IEnergyHandler) tile;
+                int neededRF = handler.receiveEnergy(
+                        orientation.getOpposite(),
+                        extracted, false);
 
-					extractEnergy((int) Math.floor(receptor.getMinEnergyReceived() * 10), (int) Math.ceil(neededMJ * 10), true);
-				}
-			}
+                extractEnergy(neededRF, true);
+            }
 		}
 	}
 
@@ -348,7 +364,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 	}
 
 	public boolean isOrientationValid() {
-		TileEntity tile = getTileBuffer(orientation).getTile();
+		TileEntity tile = getTile(orientation);
 
 		return isPoweredTile(tile, orientation);
 	}
@@ -363,14 +379,14 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 
 	private boolean switchOrientationDo(boolean pipesOnly) {
 		for (int i = orientation.ordinal() + 1; i <= orientation.ordinal() + 6; ++i) {
-			ForgeDirection o = ForgeDirection.VALID_DIRECTIONS[i % 6];
+			EnumFacing o = EnumFacing.values()[i % 6];
 
-			TileEntity tile = getTileBuffer(o).getTile();
+			TileEntity tile = getTile(o);
 
 			if ((!pipesOnly || tile instanceof IPipeTile) && isPoweredTile(tile, o)) {
 				orientation = o;
-				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-				worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlock(xCoord, yCoord, zCoord));
+				worldObj.markBlockForUpdate(pos);
+				worldObj.notifyNeighborsOfStateChange(pos, blockType);
 
 				return true;
 			}
@@ -379,25 +395,15 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 		return false;
 	}
 
-	public TileBuffer getTileBuffer(ForgeDirection side) {
-		if (tileCache == null) {
-			tileCache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
-		}
-
-		return tileCache[side.ordinal()];
-	}
-
 	@Override
 	public void invalidate() {
 		super.invalidate();
-		tileCache = null;
 		checkOrientation = true;
 	}
 
 	@Override
 	public void validate() {
 		super.validate();
-		tileCache = null;
 		checkOrientation = true;
 	}
 
@@ -405,7 +411,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
 
-		orientation = ForgeDirection.getOrientation(data.getByte("orientation"));
+		orientation = EnumFacing.getFront(data.getByte("orientation"));
 		progress = data.getFloat("progress");
 		energy = data.getInteger("energy");
 		heat = data.getFloat("heat");
@@ -419,6 +425,20 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 		data.setFloat("progress", progress);
 		data.setInteger("energy", energy);
 		data.setFloat("heat", heat);
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		int flags = stream.readUnsignedByte();
+		energyStage = EnergyStage.values()[flags & 0x07];
+		isPumping = (flags & 0x08) != 0;
+		orientation = EnumFacing.getFront(stream.readByte());
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		stream.writeByte(energyStage.ordinal() | (isPumping ? 8 : 0));
+		stream.writeByte(orientation.ordinal());
 	}
 
 	public void getGUINetworkData(int id, int value) {
@@ -453,24 +473,19 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 	public abstract boolean isBurning();
 
 	public void addEnergy(int addition) {
-		energy += addition;
-
 		if (getEnergyStage() == EnergyStage.OVERHEAT) {
-			worldObj.createExplosion(null, xCoord, yCoord, zCoord, explosionRange(), true);
-			worldObj.setBlockToAir(xCoord, yCoord, zCoord);
+			return;
 		}
+
+		energy += addition;
 
 		if (energy > getMaxEnergy()) {
 			energy = getMaxEnergy();
 		}
 	}
 
-	public int extractEnergy(int min, int energyMax, boolean doExtract) {
+	public int extractEnergy(int energyMax, boolean doExtract) {
 		int max = Math.min(energyMax, maxEnergyExtracted());
-		
-		if (max < min || energy < min) {
-			return 0;
-		}
 
 		int extracted;
 
@@ -491,14 +506,14 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 		return extracted;
 	}
 
-	public boolean isPoweredTile(TileEntity tile, ForgeDirection side) {
+	public boolean isPoweredTile(TileEntity tile, EnumFacing side) {
 		if (tile == null) {
-			return false;
+            return false;
+        } else if (tile instanceof IEngine) {
+            return ((IEngine) tile).canReceiveFromEngine(side.getOpposite());
 		} else if (tile instanceof IEnergyHandler) {
-			return ((IEnergyHandler) tile).canConnectEnergy(side.getOpposite());
-		} else if (tile instanceof IPowerReceptor) {
-			return ((IPowerReceptor) tile).getPowerReceiver(side.getOpposite()) != null;
-		} else {
+            return ((IEnergyConnection) tile).canConnectEnergy(side.getOpposite());
+        } else {
 			return false;
 		}
 	}
@@ -513,8 +528,6 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 
 	public abstract int maxEnergyExtracted();
 
-	public abstract float explosionRange();
-
 	public int getEnergyStored() {
 		return energy;
 	}
@@ -522,7 +535,7 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 	public abstract int calculateCurrentOutput();
 
 	@Override
-	public ConnectOverride overridePipeConnection(PipeType type, ForgeDirection with) {
+	public ConnectOverride overridePipeConnection(PipeType type, EnumFacing with) {
 		if (type == PipeType.POWER) {
 			return ConnectOverride.DEFAULT;
 		} else if (with == orientation) {
@@ -532,36 +545,24 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 		}
 	}
 
-	@Override
-	public boolean canEmitPowerFrom(ForgeDirection side) {
-		return side == orientation;
-	}
-
 	public void checkRedstonePower() {
-		isRedstonePowered = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+		isRedstonePowered = worldObj.isBlockPowered(pos);
 	}
 
 	public void onNeighborUpdate() {
 		checkRedstonePower();
 		checkOrientation = true;
-		tileCache = null;
 	}
 	// RF support
 
 	@Override
-	public int receiveEnergy(ForgeDirection from, int maxReceive,
+	public int extractEnergy(EnumFacing from, int maxExtract,
 			boolean simulate) {
 		return 0;
 	}
 
 	@Override
-	public int extractEnergy(ForgeDirection from, int maxExtract,
-			boolean simulate) {
-		return 0;
-	}
-
-	@Override
-	public int getEnergyStored(ForgeDirection from) {
+	public int getEnergyStored(EnumFacing from) {
 		if (!(from == orientation)) {
 			return 0;
 		}
@@ -570,12 +571,60 @@ public abstract class TileEngine extends TileBuildCraft implements IPowerEmitter
 	}
 
 	@Override
-	public int getMaxEnergyStored(ForgeDirection from) {
+	public int getMaxEnergyStored(EnumFacing from) {
 		return this.getMaxEnergy();
 	}
 
 	@Override
-	public boolean canConnectEnergy(ForgeDirection from) {
+	public boolean canConnectEnergy(EnumFacing from) {
 		return from == orientation;
 	}
+
+    // IEngine
+
+    @Override
+    public boolean canReceiveFromEngine(EnumFacing side) {
+        return side == orientation.getOpposite();
+    }
+
+    @Override
+    public int receiveEnergyFromEngine(EnumFacing side, int amount, boolean simulate) {
+        if (canReceiveFromEngine(side)) {
+            int targetEnergy = Math.min(this.getMaxEnergy() - this.energy, amount);
+            if (!simulate) {
+                energy += targetEnergy;
+            }
+            return targetEnergy;
+        } else {
+            return 0;
+        }
+    }
+
+    // IHeatable
+
+    @Override
+    public double getMinHeatValue() {
+        return MIN_HEAT;
+    }
+
+    @Override
+    public double getIdealHeatValue() {
+        return IDEAL_HEAT;
+    }
+
+    @Override
+    public double getMaxHeatValue() {
+        return MAX_HEAT;
+    }
+
+    @Override
+    public double getCurrentHeatValue() {
+        return heat;
+    }
+
+    @Override
+    public double setHeatValue(double value) {
+        heat = (float) MathUtils.clamp(value, MIN_HEAT, MAX_HEAT);
+        return heat;
+    }
 }

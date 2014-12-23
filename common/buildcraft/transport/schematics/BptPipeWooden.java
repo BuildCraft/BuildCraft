@@ -9,7 +9,7 @@
 package buildcraft.transport.schematics;
 
 import net.minecraft.item.Item;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
 
@@ -21,10 +21,10 @@ public class BptPipeWooden extends BptPipeExtension {
 
 	@Override
 	public void rotateLeft(SchematicTile slot, IBuilderContext context) {
-		int orientation = slot.meta & 7;
-		int others = slot.meta - orientation;
+		int orientation = slot.getMetaData() & 7;
+		int others = slot.getMetaData() - orientation;
 
-		slot.meta = ForgeDirection.values()[orientation].getRotation(ForgeDirection.UP).ordinal() + others;
+		slot.setMetaData(EnumFacing.values()[orientation].rotateY().ordinal() + others);
 	}
 
 }

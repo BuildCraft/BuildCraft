@@ -2,13 +2,14 @@
  * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ * The BuildCraft API is distributed under the terms of the MIT License.
+ * Please check the contents of the license, which should be located
+ * as "LICENSE.API" in the BuildCraft source code distribution.
  */
 package buildcraft.api.blueprints;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 
 import net.minecraft.entity.Entity;
@@ -43,9 +44,7 @@ public class SchematicEntity extends Schematic {
 
 	@Override
 	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		for (ItemStack s : storedRequirements) {
-			requirements.add(s);
-		}
+		Collections.addAll(requirements, storedRequirements);
 	}
 
 	public void writeToWorld(IBuilderContext context) {
@@ -60,8 +59,8 @@ public class SchematicEntity extends Schematic {
 	@Override
 	public void translateToBlueprint(Translation transform) {
 		NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
-		Position pos = new Position(nbttaglist.func_150309_d(0),
-				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
+		Position pos = new Position(nbttaglist.getDouble(0),
+				nbttaglist.getDouble(1), nbttaglist.getDouble(2));
 		pos = transform.translate(pos);
 
 		entityNBT.setTag("Pos",
@@ -71,8 +70,8 @@ public class SchematicEntity extends Schematic {
 	@Override
 	public void translateToWorld(Translation transform) {
 		NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
-		Position pos = new Position(nbttaglist.func_150309_d(0),
-				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
+		Position pos = new Position(nbttaglist.getDouble(0),
+				nbttaglist.getDouble(1), nbttaglist.getDouble(2));
 		pos = transform.translate(pos);
 
 		entityNBT.setTag("Pos",
@@ -96,26 +95,24 @@ public class SchematicEntity extends Schematic {
 	@Override
 	public void rotateLeft(IBuilderContext context) {
 		NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
-		Position pos = new Position(nbttaglist.func_150309_d(0),
-				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
+		Position pos = new Position(nbttaglist.getDouble(0),
+				nbttaglist.getDouble(1), nbttaglist.getDouble(2));
 		pos = context.rotatePositionLeft(pos);
 		entityNBT.setTag("Pos",
 				this.newDoubleNBTList(pos.x, pos.y, pos.z));
 
 		nbttaglist = entityNBT.getTagList("Rotation", 5);
-		float yaw = nbttaglist.func_150308_e(0);
+		float yaw = nbttaglist.getFloat(0);
 		yaw += 90;
 		entityNBT.setTag(
 				"Rotation",
 				this.newFloatNBTList(yaw,
-						nbttaglist.func_150308_e(1)));
+						nbttaglist.getFloat(1)));
 	}
 
 	@Override
 	public void writeSchematicToNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		super.writeSchematicToNBT(nbt, registry);
-
-		NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
 
 		nbt.setInteger("entityId", registry.getIdForEntity(entity));
 		nbt.setTag("entity", entityNBT);
@@ -196,8 +193,8 @@ public class SchematicEntity extends Schematic {
 
 	public boolean isAlreadyBuilt(IBuilderContext context) {
 		NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
-		Position newPosition = new Position(nbttaglist.func_150309_d(0),
-				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
+		Position newPosition = new Position(nbttaglist.getDouble(0),
+				nbttaglist.getDouble(1), nbttaglist.getDouble(2));
 
 		for (Object o : context.world().loadedEntityList) {
 			Entity e = (Entity) o;

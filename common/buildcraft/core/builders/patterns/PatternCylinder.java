@@ -18,6 +18,10 @@ public class PatternCylinder extends FillerPattern {
 		super("cylinder");
 	}
 
+	@Override
+	protected int getIconPosition() {
+		return 2;
+	}
 
 	@Override
 	public Template getTemplate(Box box, World world) {

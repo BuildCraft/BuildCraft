@@ -8,22 +8,16 @@
  */
 package buildcraft.energy.gui;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.core.CoreIconProvider;
+import buildcraft.api.core.SheetIcon;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.energy.TileEngine;
 
 public abstract class GuiEngine extends GuiBuildCraft {
-
-	private static final ResourceLocation ITEM_TEXTURE = TextureMap.locationItemsTexture;
-
 	protected class EngineLedger extends Ledger {
 
 		TileEngine engine;
@@ -44,22 +38,22 @@ public abstract class GuiEngine extends GuiBuildCraft {
 			drawBackground(x, y);
 
 			// Draw icon
-			Minecraft.getMinecraft().renderEngine.bindTexture(ITEM_TEXTURE);
-			drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
+			bindTexture(ICONS_TEXTURE);
+			drawIcon(new SheetIcon(ICONS_TEXTURE, 0, 0), x + 3, y + 4);
 
 			if (!isFullyOpened()) {
 				return;
 			}
 
-			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
-			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.currentOutput") + ":", x + 22, y + 20, subheaderColour);
+			fontRendererObj.drawString(StringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
+			fontRendererObj.drawString(StringUtils.localize("gui.currentOutput") + ":", x + 22, y + 20, subheaderColour);
 			fontRendererObj.drawString(String.format("%d RF/t", engine.currentOutput),
 					x + 22, y + 32, textColour);
-			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
+			fontRendererObj.drawString(StringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
 			fontRendererObj.drawString(String.format("%d RF", engine.getEnergyStored()), x + 22,
 					y + 56, textColour);
-			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.heat") + ":", x + 22, y + 68, subheaderColour);
-			fontRendererObj.drawString(String.format("%.2f \u00B0C", engine.getHeat()), x + 22, y + 80, textColour);
+			fontRendererObj.drawString(StringUtils.localize("gui.heat") + ":", x + 22, y + 68, subheaderColour);
+			fontRendererObj.drawString(String.format("%.2f \u00B0C", engine.getCurrentHeatValue()), x + 22, y + 80, textColour);
 
 		}
 

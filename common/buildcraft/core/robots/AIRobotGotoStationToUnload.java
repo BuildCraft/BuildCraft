@@ -8,7 +8,7 @@
  */
 package buildcraft.core.robots;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.IZone;
@@ -60,7 +60,7 @@ public class AIRobotGotoStationToUnload extends AIRobot {
 		public boolean matches(DockingStation station) {
 			Pipe pipe = station.getPipe().pipe;
 
-			for (IInvSlot robotSlot : InventoryIterator.getIterable(robot, ForgeDirection.UNKNOWN)) {
+			for (IInvSlot robotSlot : InventoryIterator.getIterable(robot, null)) {
 				if (robotSlot.getStackInSlot() == null) {
 					continue;
 				}

@@ -8,13 +8,15 @@
  */
 package buildcraft.builders.gui;
 
+import java.io.IOException;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-
 import buildcraft.BuildCraftBuilders;
+import buildcraft.BuildCraftCore;
 import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.builders.blueprints.BlueprintId;
 import buildcraft.builders.blueprints.BlueprintId.Kind;
@@ -52,6 +54,8 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		deleteButton = new GuiButton(2, guiLeft + 158, guiTop + 114, 25, 20, StringUtils.localize("gui.del"));
 		buttonList.add(deleteButton);
 
+		library.refresh();
+
 		checkDelete();
 		checkPages();
 	}
@@ -74,14 +78,14 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 				int i2 = 24;
 
 				if (bpt.kind == Kind.Blueprint) {
-					drawGradientRect(l1, i2 + 9 * c, l1 + 146, i2 + 9 * (c + 1), 0xFFA0A0FF, 0xFFA0A0FF);
+					drawGradientRect(l1, i2 + 9 * c, l1 + 146, i2 + 9 * (c + 1), 0xFFA0C0F0, 0xFFA0C0F0);
 				} else {
 					drawGradientRect(l1, i2 + 9 * c, l1 + 146, i2 + 9 * (c + 1), 0x80ffffff, 0x80ffffff);
 				}
 			}
 
 			if (bpt.kind == Kind.Blueprint) {
-				fontRendererObj.drawString(name, 9, 25 + 9 * c, 0x1000FF);
+				fontRendererObj.drawString(name, 9, 25 + 9 * c, 0x305080);
 			} else {
 				fontRendererObj.drawString(name, 9, 25 + 9 * c, 0x000000);
 			}
@@ -116,7 +120,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 	}
 
 	@Override
-	protected void mouseClicked(int i, int j, int k) {
+	protected void mouseClicked(int i, int j, int k) throws IOException {
 		super.mouseClicked(i, j, k);
 
 		int x = i - guiLeft;

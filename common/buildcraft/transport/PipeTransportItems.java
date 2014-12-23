@@ -24,14 +24,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.inventory.Transactor;
-import buildcraft.core.utils.BlockUtil;
+import buildcraft.core.utils.BlockUtils;
 import buildcraft.core.utils.MathUtils;
 import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
 import buildcraft.transport.network.PacketPipeTransportTraveler;
@@ -73,18 +73,18 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	private void readjustPosition(TravelingItem item) {
-		double x = MathUtils.clamp(item.xCoord, container.xCoord + 0.01, container.xCoord + 0.99);
-		double y = MathUtils.clamp(item.yCoord, container.yCoord + 0.01, container.yCoord + 0.99);
-		double z = MathUtils.clamp(item.zCoord, container.zCoord + 0.01, container.zCoord + 0.99);
+		double x = MathUtils.clamp(item.xCoord, container.getPos().getX() + 0.01, container.getPos().getX() + 0.99);
+		double y = MathUtils.clamp(item.yCoord, container.getPos().getY() + 0.01, container.getPos().getY() + 0.99);
+		double z = MathUtils.clamp(item.zCoord, container.getPos().getZ() + 0.01, container.getPos().getZ() + 0.99);
 
-		if (item.input != ForgeDirection.UP && item.input != ForgeDirection.DOWN) {
-			y = container.yCoord + TransportUtils.getPipeFloorOf(item.getItemStack());
+		if (item.input != EnumFacing.UP && item.input != EnumFacing.DOWN) {
+			y = container.getPos().getY() + TransportUtils.getPipeFloorOf(item.getItemStack());
 		}
 
 		item.setPosition(x, y, z);
 	}
 
-	public void injectItem(TravelingItem item, ForgeDirection inputOrientation) {
+	public void injectItem(TravelingItem item, EnumFacing inputOrientation) {
 		if (item.isCorrupted()) {
 			// Safe guard - if for any reason the item is corrupted at this
 			// stage, avoid adding it to the pipe to avoid further exceptions.
@@ -98,7 +98,7 @@ public class PipeTransportItems extends PipeTransport {
 		readjustPosition(item);
 
 
-		if (!container.getWorldObj().isRemote) {
+		if (!container.getWorld().isRemote) {
 			item.output = resolveDestination(item);
 		}
 
@@ -110,7 +110,7 @@ public class PipeTransportItems extends PipeTransport {
 
 		items.add(item);
 
-		if (!container.getWorldObj().isRemote) {
+		if (!container.getWorld().isRemote) {
 			sendTravelerPacket(item, false);
 
 			if (items.size() > BuildCraftTransport.groupItemsTrigger) {
@@ -118,7 +118,7 @@ public class PipeTransportItems extends PipeTransport {
 			}
 
 			if (items.size() > MAX_PIPE_STACKS) {
-				BCLog.logger.log(Level.WARN, String.format("Pipe exploded at %d,%d,%d because it had too many stacks: %d", container.xCoord, container.yCoord, container.zCoord, items.size()));
+				BCLog.logger.log(Level.WARN, String.format("Pipe exploded at %d,%d,%d because it had too many stacks: %d", container.getPos().getX(), container.getPos().getY(), container.getPos().getZ(), items.size()));
 				destroyPipe();
 				return;
 			}
@@ -132,15 +132,15 @@ public class PipeTransportItems extends PipeTransport {
 			}
 
 			if (numItems > MAX_PIPE_ITEMS) {
-				BCLog.logger.log(Level.WARN, String.format("Pipe exploded at %d,%d,%d because it had too many items: %d", container.xCoord, container.yCoord, container.zCoord, numItems));
+				BCLog.logger.log(Level.WARN, String.format("Pipe exploded at %d,%d,%d because it had too many items: %d", container.getPos().getX(), container.getPos().getY(), container.getPos().getZ(), numItems));
 				destroyPipe();
 			}
 		}
 	}
 
 	private void destroyPipe() {
-		BlockUtil.explodeBlock(container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord);
-		container.getWorldObj().setBlockToAir(container.xCoord, container.yCoord, container.zCoord);
+		BlockUtils.explodeBlock(container.getWorld(), container.getPos());
+		container.getWorld().setBlockToAir(container.getPos());
 	}
 
 	/**
@@ -161,7 +161,7 @@ public class PipeTransportItems extends PipeTransport {
 		readjustSpeed(item);
 		readjustPosition(item);
 
-		if (!container.getWorldObj().isRemote) {
+		if (!container.getWorld().isRemote) {
 			item.output = resolveDestination(item);
 		}
 
@@ -173,16 +173,16 @@ public class PipeTransportItems extends PipeTransport {
 
 		items.unscheduleRemoval(item);
 
-		if (!container.getWorldObj().isRemote) {
+		if (!container.getWorld().isRemote) {
 			sendTravelerPacket(item, true);
 		}
 	}
 
-	public ForgeDirection resolveDestination(TravelingItem data) {
-		List<ForgeDirection> validDestinations = getPossibleMovements(data);
+	public EnumFacing resolveDestination(TravelingItem data) {
+		List<EnumFacing> validDestinations = getPossibleMovements(data);
 
 		if (validDestinations.isEmpty()) {
-			return ForgeDirection.UNKNOWN;
+			return null;
 		}
 
 		return validDestinations.get(0);
@@ -192,15 +192,14 @@ public class PipeTransportItems extends PipeTransport {
 	 * Returns a list of all possible movements, that is to say adjacent
 	 * implementers of IPipeEntry or TileEntityChest.
 	 */
-	public List<ForgeDirection> getPossibleMovements(TravelingItem item) {
-		LinkedList<ForgeDirection> result = new LinkedList<ForgeDirection>();
+	public List<EnumFacing> getPossibleMovements(TravelingItem item) {
+		LinkedList<EnumFacing> result = new LinkedList<EnumFacing>();
 
 		item.blacklist.add(item.input.getOpposite());
 
-		EnumSet<ForgeDirection> sides = EnumSet.complementOf(item.blacklist);
-		sides.remove(ForgeDirection.UNKNOWN);
+		EnumSet<EnumFacing> sides = EnumSet.complementOf(item.blacklist);
 
-		for (ForgeDirection o : sides) {
+		for (EnumFacing o : sides) {
 			if (container.pipe.outputOpen(o) && canReceivePipeObjects(o, item)) {
 				result.add(o);
 			}
@@ -220,7 +219,7 @@ public class PipeTransportItems extends PipeTransport {
 		return result;
 	}
 
-	private boolean canReceivePipeObjects(ForgeDirection o, TravelingItem item) {
+	private boolean canReceivePipeObjects(EnumFacing o, TravelingItem item) {
 		TileEntity entity = container.getTile(o);
 
 		if (!container.isPipeConnected(o)) {
@@ -249,7 +248,7 @@ public class PipeTransportItems extends PipeTransport {
 	private void moveSolids() {
 		items.flush();
 
-		if (!container.getWorldObj().isRemote) {
+		if (!container.getWorld().isRemote) {
 			items.purgeCorruptedItems();
 		}
 
@@ -269,9 +268,9 @@ public class PipeTransportItems extends PipeTransport {
 				item.toCenter = false;
 
 				// Reajusting to the middle
-				item.setPosition(container.xCoord + 0.5, container.yCoord + TransportUtils.getPipeFloorOf(item.getItemStack()), container.zCoord + 0.5);
+				item.setPosition(container.getPos().getX() + 0.5, container.getPos().getY() + TransportUtils.getPipeFloorOf(item.getItemStack()), container.getPos().getZ() + 0.5);
 
-				if (item.output == ForgeDirection.UNKNOWN) {
+				if (item.output == null) {
 					if (items.scheduleRemoval(item)) {
 						dropItem(item);
 					}
@@ -313,7 +312,7 @@ public class PipeTransportItems extends PipeTransport {
 		if (passToNextPipe(item, tile)) {
 			// NOOP
 		} else if (tile instanceof IInventory) {
-			if (!container.getWorldObj().isRemote) {
+			if (!container.getWorld().isRemote) {
 				if (item.getInsertionHandler().canInsertItem(item, (IInventory) tile)) {
 					ItemStack added = Transactor.getTransactorFor(tile).add(item.getItemStack(), item.output.getOpposite(), true);
 					item.getItemStack().stackSize -= added.stackSize;
@@ -329,7 +328,7 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	private void dropItem(TravelingItem item) {
-		if (container.getWorldObj().isRemote) {
+		if (container.getWorld().isRemote) {
 			return;
 		}
 
@@ -341,39 +340,39 @@ public class PipeTransportItems extends PipeTransport {
 		}
 
 		final EntityItem entity = event.entity;
-		ForgeDirection direction = item.input;
-		entity.setPosition(entity.posX + direction.offsetX * 0.5d,
-				entity.posY + direction.offsetY * 0.5d,
-				entity.posZ + direction.offsetZ * 0.5d);
+		EnumFacing direction = item.input;
+		entity.setPosition(entity.posX + direction.getFrontOffsetX() * 0.5d,
+				entity.posY + direction.getFrontOffsetY() * 0.5d,
+				entity.posZ + direction.getFrontOffsetZ() * 0.5d);
 
-		entity.motionX = direction.offsetX * item.speed * 5
+		entity.motionX = direction.getFrontOffsetX() * item.speed * 5
 				+ getWorld().rand.nextGaussian() * 0.1d;
-		entity.motionY = direction.offsetY * item.speed * 5
+		entity.motionY = direction.getFrontOffsetY() * item.speed * 5
 				+ getWorld().rand.nextGaussian() * 0.1d;
-		entity.motionZ = direction.offsetZ * item.speed * 5
+		entity.motionZ = direction.getFrontOffsetZ() * item.speed * 5
 				+ getWorld().rand.nextGaussian() * 0.1d;
 
-		container.getWorldObj().spawnEntityInWorld(entity);
+		container.getWorld().spawnEntityInWorld(entity);
 	}
 
 	protected boolean middleReached(TravelingItem item) {
 		float middleLimit = item.getSpeed() * 1.01F;
-		return Math.abs(container.xCoord + 0.5 - item.xCoord) < middleLimit
-				&& Math.abs(container.yCoord + TransportUtils.getPipeFloorOf(item.getItemStack()) - item.yCoord) < middleLimit
+		return Math.abs(container.getPos().getX() + 0.5 - item.xCoord) < middleLimit
+				&& Math.abs(container.getPos().getY() + TransportUtils.getPipeFloorOf(item.getItemStack()) - item.yCoord) < middleLimit
 				&& Math
-						.abs(container.zCoord + 0.5 - item.zCoord) < middleLimit;
+						.abs(container.getPos().getZ() + 0.5 - item.zCoord) < middleLimit;
 	}
 
 	protected boolean endReached(TravelingItem item) {
-		return item.xCoord > container.xCoord + 1 || item.xCoord < container.xCoord || item.yCoord > container.yCoord + 1 || item.yCoord < container.yCoord || item.zCoord > container.zCoord + 1 || item.zCoord < container.zCoord;
+		return item.xCoord > container.getPos().getX() + 1 || item.xCoord < container.getPos().getX() || item.yCoord > container.getPos().getY() + 1 || item.yCoord < container.getPos().getY() || item.zCoord > container.getPos().getZ() + 1 || item.zCoord < container.getPos().getZ();
 	}
 
 	protected boolean outOfBounds(TravelingItem item) {
-		return item.xCoord > container.xCoord + 2 || item.xCoord < container.xCoord - 1 || item.yCoord > container.yCoord + 2 || item.yCoord < container.yCoord - 1 || item.zCoord > container.zCoord + 2 || item.zCoord < container.zCoord - 1;
+		return item.xCoord > container.getPos().getX() + 2 || item.xCoord < container.getPos().getX() - 1 || item.yCoord > container.getPos().getY() + 2 || item.yCoord < container.getPos().getY() - 1 || item.zCoord > container.getPos().getZ() + 2 || item.zCoord < container.getPos().getZ() - 1;
 	}
 
 	public Position getPosition() {
-		return new Position(container.xCoord, container.yCoord, container.zCoord);
+		return new Position(container.getPos().getX(), container.getPos().getY(), container.getPos().getZ());
 	}
 
 	@Override
@@ -451,7 +450,7 @@ public class PipeTransportItems extends PipeTransport {
 
 	private void sendTravelerPacket(TravelingItem data, boolean forceStackRefresh) {
 		PacketPipeTransportTraveler packet = new PacketPipeTransportTraveler(data, forceStackRefresh);
-		BuildCraftTransport.instance.sendToPlayers(packet, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
+		BuildCraftTransport.instance.sendToPlayersNear(packet, container, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 	}
 
 	public int getNumberOfStacks() {
@@ -473,7 +472,7 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	@Override
-	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
+	public boolean canPipeConnect(TileEntity tile, EnumFacing side) {
 		if (tile instanceof TileGenericPipe) {
 			Pipe<?> pipe2 = ((TileGenericPipe) tile).pipe;
 			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportItems)) {
@@ -482,7 +481,7 @@ public class PipeTransportItems extends PipeTransport {
 		}
 
 		if (tile instanceof ISidedInventory) {
-			int[] slots = ((ISidedInventory) tile).getAccessibleSlotsFromSide(side.getOpposite().ordinal());
+			int[] slots = ((ISidedInventory) tile).getSlotsForFace(side.getOpposite());
 			return slots != null && slots.length > 0;
 		}
 

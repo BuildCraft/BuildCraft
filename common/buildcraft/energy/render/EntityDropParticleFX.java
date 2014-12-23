@@ -11,13 +11,12 @@ package buildcraft.energy.render;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.particle.EntityFX;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class EntityDropParticleFX extends EntityFX {
@@ -94,13 +93,14 @@ public class EntityDropParticleFX extends EntityFX {
 		int x = MathHelper.floor_double(this.posX);
 		int y = MathHelper.floor_double(this.posY);
 		int z = MathHelper.floor_double(this.posZ);
-		Block block = worldObj.getBlock(x, y, z);
+		BlockPos pos = new BlockPos(x, y, z);
+		Block block = worldObj.getBlockState(pos).getBlock();
 		
 		Material material = block.getMaterial();
 
 		if ((material.isLiquid() || material.isSolid()) && block instanceof IFluidBlock) {
 			double d0 = MathHelper.floor_double(this.posY) + 1 - ((IFluidBlock) block)
-					.getFilledPercentage(worldObj, x, y, z);
+					.getFilledPercentage(worldObj, pos);
 
 			if (this.posY < d0) {
 				this.setDead();

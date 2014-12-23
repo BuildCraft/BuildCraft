@@ -10,11 +10,10 @@ package buildcraft.core.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -30,7 +29,8 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
 	public enum State {
 
 		Empty, Contains, Space, Full
-	};
+	}
+
 	public State state;
 
 	public TriggerInventory(State state) {
@@ -50,7 +50,7 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
 	}
 
 	@Override
-	public boolean isTriggerActive(TileEntity tile, ForgeDirection side, IStatementContainer container, IStatementParameter[] parameters) {
+	public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer container, IStatementParameter[] parameters) {
 		ItemStack searchedStack = null;
 
 		if (parameters != null && parameters.length >= 1 && parameters[0] != null) {
@@ -99,14 +99,13 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
 		return false;
 	}
 
-
-	@Override
-	public void registerIcons(IIconRegister register) {
-		icon = register.registerIcon("buildcraft:triggers/trigger_inventory_" + state.name().toLowerCase());
-	}
-	
 	@Override
 	public IStatementParameter createParameter(int index) {
 		return new StatementParameterItemStack();
+	}
+
+	@Override
+	public int getSheetLocation() {
+		return 13 + (11 + state.ordinal()) * 16;
 	}
 }

@@ -11,11 +11,14 @@ package buildcraft.builders;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.core.NetworkData;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraft.util.EnumFacing;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.Position;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
@@ -29,24 +32,20 @@ import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.builders.BuildingItem;
 import buildcraft.core.builders.IBuildingItemsProvider;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCMessageInfo;
-import buildcraft.core.network.RPCSide;
+import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.CommandWriter;
+import buildcraft.core.network.ICommandReceiver;
+import buildcraft.core.network.PacketCommand;
+import buildcraft.core.utils.Utils;
 
-public class TileConstructionMarker extends TileBuildCraft implements IBuildingItemsProvider, IBoxProvider {
+public class TileConstructionMarker extends TileBuildCraft implements IBuildingItemsProvider, IBoxProvider, ICommandReceiver {
 
 	public static HashSet<TileConstructionMarker> currentMarkers = new HashSet<TileConstructionMarker>();
 
-	public ForgeDirection direction = ForgeDirection.UNKNOWN;
+	public EnumFacing direction = null;
 
-	@NetworkData
 	public LaserData laser;
-
-	@NetworkData
 	public ItemStack itemBlueprint;
-
-	@NetworkData
 	public Box box = new Box();
 
 	public BptBuilderBase bluePrintBuilder;
@@ -56,17 +55,26 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	private NBTTagCompound initNBT;
 
 	@Override
-	public void initialize() {
+	public void initialize () {
+		super.initialize();
 		box.kind = Kind.BLUE_STRIPES;
 
 		if (worldObj.isRemote) {
-			RPCHandler.rpcServer(this, "uploadBuildersInAction");
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadBuildersInAction", null));
 		}
 	}
 
+	private BuildCraftPacket createLaunchItemPacket(final BuildingItem i) {
+		return new PacketCommand(this, "launchItem", new CommandWriter() {
+			public void write(ByteBuf data) {
+				i.writeData(data);
+			}
+		});
+	}
+
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		BuildingItem toRemove = null;
 
@@ -87,20 +95,24 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 		}
 
 		if (itemBlueprint != null && ItemBlueprint.getId(itemBlueprint) != null && bluePrintBuilder == null) {
-			BlueprintBase bpt = BlueprintBase.instantiate(itemBlueprint, worldObj, xCoord, yCoord, zCoord, direction);
+			BlueprintBase bpt = BlueprintBase.instantiate(itemBlueprint, worldObj, pos, direction);
 
-			bluePrintBuilder = new BptBuilderBlueprint((Blueprint) bpt, worldObj, xCoord, yCoord, zCoord);
-			bptContext = bluePrintBuilder.getContext();
-			box.initialize(bluePrintBuilder);
-			sendNetworkUpdate();
+			if (bpt instanceof Blueprint) {
+				bluePrintBuilder = new BptBuilderBlueprint((Blueprint) bpt, worldObj, pos);
+				bptContext = bluePrintBuilder.getContext();
+				box.initialize(bluePrintBuilder);
+				sendNetworkUpdate();
+			} else {
+				return;
+			}
 		}
 
-		if (laser == null && direction != ForgeDirection.UNKNOWN) {
+		if (laser == null && direction != null) {
 			laser = new LaserData();
-			laser.head = new Position(xCoord + 0.5F, yCoord + 0.5F, zCoord + 0.5F);
-			laser.tail = new Position(xCoord + 0.5F + direction.offsetX * 0.5F,
-					yCoord + 0.5F + direction.offsetY * 0.5F,
-					zCoord + 0.5F + direction.offsetZ * 0.5F);
+			laser.head = new Position(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F);
+			laser.tail = new Position(pos.getX() + 0.5F + direction.getFrontOffsetX() * 0.5F,
+					pos.getY() + 0.5F + direction.getFrontOffsetY() * 0.5F,
+					pos.getZ() + 0.5F + direction.getFrontOffsetZ() * 0.5F);
 			laser.isVisible = true;
 			sendNetworkUpdate();
 		}
@@ -118,7 +130,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 
-		nbt.setByte("direction", (byte) direction.ordinal());
+		nbt.setByte("direction", (byte) (direction != null ? direction.ordinal() : 6));
 
 		if (itemBlueprint != null) {
 			NBTTagCompound bptNBT = new NBTTagCompound();
@@ -141,7 +153,11 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
-		direction = ForgeDirection.getOrientation(nbt.getByte("direction"));
+		if (nbt.getByte("direction") <= 5) {
+			direction = EnumFacing.getFront(nbt.getByte("direction"));
+		} else {
+			direction = null;
+		}
 
 		if (nbt.hasKey("itemBlueprint")) {
 			itemBlueprint = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("itemBlueprint"));
@@ -186,12 +202,21 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	@Override
 	public void addAndLaunchBuildingItem(BuildingItem item) {
 		buildersInAction.add(item);
-		RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "launchItem", item);
+		BuildCraftCore.instance.sendToPlayersNear(createLaunchItemPacket(item), this);
 	}
 
-	@RPC(RPCSide.CLIENT)
-	private void launchItem(BuildingItem item) {
-		buildersInAction.add(item);
+	@Override
+	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
+		if (side.isServer() && "uploadBuildersInAction".equals(command)) {
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadBuildersInAction", null));
+			for (BuildingItem i : buildersInAction) {
+				BuildCraftCore.instance.sendToPlayer((EntityPlayer) sender, createLaunchItemPacket(i));
+			}
+		} else if (side.isClient() && "launchItem".equals(command)) {
+			BuildingItem item = new BuildingItem();
+			item.readData(stream);
+			buildersInAction.add(item);
+		}
 	}
 
 	@Override
@@ -206,10 +231,32 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 		return renderBox.expand(50).getBoundingBox();
 	}
 
-	@RPC(RPCSide.SERVER)
-	private void uploadBuildersInAction(RPCMessageInfo info) {
-		for (BuildingItem i : buildersInAction) {
-			RPCHandler.rpcPlayer(info.sender, this, "launchItem", i);
+	@Override
+	public void writeData(ByteBuf stream) {
+		box.writeData(stream);
+		stream.writeByte((laser != null ? 1 : 0) | (itemBlueprint != null ? 2 : 0));
+		if (laser != null) {
+			laser.writeData(stream);
+		}
+		if (itemBlueprint != null) {
+			Utils.writeStack(stream, itemBlueprint);
+		}
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		box.readData(stream);
+		int flags = stream.readUnsignedByte();
+		if ((flags & 1) != 0) {
+			laser = new LaserData();
+			laser.readData(stream);
+		} else {
+			laser = null;
+		}
+		if ((flags & 2) != 0) {
+			itemBlueprint = Utils.readStack(stream);
+		} else {
+			itemBlueprint = null;
 		}
 	}
 }

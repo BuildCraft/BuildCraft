@@ -8,20 +8,18 @@
  */
 package buildcraft.builders;
 
-import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.TreeSet;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import buildcraft.api.core.BlockIndex;
-import buildcraft.api.core.NetworkData;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.core.Position;
 import buildcraft.core.LaserData;
-import buildcraft.core.network.PacketUpdate;
 
 public class TilePathMarker extends TileMarker {
 
@@ -32,14 +30,11 @@ public class TilePathMarker extends TileMarker {
 
 	private static LinkedList<TilePathMarker> availableMarkers = new LinkedList<TilePathMarker>();
 
-	public int x0, y0, z0, x1, y1, z1;
+	public BlockPos pos0, pos1;
 	public boolean loadLink0 = false;
 	public boolean loadLink1 = false;
 
-	@NetworkData
 	public LaserData[] lasers = new LaserData[2];
-
-	@NetworkData
 	public boolean tryingToConnect = false;
 
 	public TilePathMarker[] links = new TilePathMarker[2];
@@ -72,8 +67,8 @@ public class TilePathMarker extends TileMarker {
 		}
 
 		LaserData laser = new LaserData
-				(new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5),
-			  	 new Position(pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5, pathMarker.zCoord + 0.5));
+				(new Position(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5),
+			  	 new Position(pathMarker.pos.getX() + 0.5, pathMarker.pos.getY() + 0.5, pathMarker.pos.getZ() + 0.5));
 
 		LaserData laser2 = new LaserData (laser.head, laser.tail);
 		laser2.isVisible = false;
@@ -92,11 +87,11 @@ public class TilePathMarker extends TileMarker {
 		double nearestDistance = 0, distance;
 
 		for (TilePathMarker t : availableMarkers) {
-			if (t == this || t == this.links[0] || t == this.links[1] || t.getWorldObj().provider.dimensionId != this.getWorldObj().provider.dimensionId) {
+			if (t == this || t == this.links[0] || t == this.links[1] || t.getWorld().provider.getDimensionId() != this.getWorld().provider.getDimensionId()) {
 				continue;
 			}
 
-			distance = Math.sqrt(Math.pow(this.xCoord - t.xCoord, 2) + Math.pow(this.yCoord - t.yCoord, 2) + Math.pow(this.zCoord - t.zCoord, 2));
+			distance = Math.sqrt(Math.pow(this.pos.getX() - t.pos.getX(), 2) + Math.pow(this.pos.getY() - t.pos.getY(), 2) + Math.pow(this.pos.getZ() - t.pos.getZ(), 2));
 
 			if (distance > searchSize) {
 				continue;
@@ -125,8 +120,8 @@ public class TilePathMarker extends TileMarker {
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		if (worldObj.isRemote) {
 			return;
@@ -142,28 +137,28 @@ public class TilePathMarker extends TileMarker {
 			tryingToConnect = false;
 
 			sendNetworkUpdate();
-			getWorldObj().markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord,
-					xCoord, yCoord, zCoord);
+			worldObj.markBlockRangeForRenderUpdate(pos.getX(), pos.getY(), pos.getZ(),
+					pos.getX(), pos.getY(), pos.getZ());
 		}
 	}
 
-	public LinkedList<BlockIndex> getPath() {
-		TreeSet<BlockIndex> visitedPaths = new TreeSet<BlockIndex>();
-		LinkedList<BlockIndex> res = new LinkedList<BlockIndex>();
+	public LinkedList<BlockPos> getPath() {
+		TreeSet<BlockPos> visitedPaths = new TreeSet<BlockPos>();
+		LinkedList<BlockPos> res = new LinkedList<BlockPos>();
 
 		TilePathMarker nextTile = this;
 
 		while (nextTile != null) {
-			BlockIndex b = new BlockIndex(nextTile.xCoord, nextTile.yCoord, nextTile.zCoord);
+			BlockPos b = new BlockPos(nextTile.pos.getX(), nextTile.pos.getY(), nextTile.pos.getZ());
 
 			visitedPaths.add(b);
 			res.add(b);
 
 			if (nextTile.links[0] != null
-					&& !visitedPaths.contains(new BlockIndex(nextTile.links[0].xCoord, nextTile.links[0].yCoord, nextTile.links[0].zCoord))) {
+					&& !visitedPaths.contains(new BlockPos(nextTile.links[0].pos.getX(), nextTile.links[0].pos.getY(), nextTile.links[0].pos.getZ()))) {
 				nextTile = nextTile.links[0];
 			} else if (nextTile.links[1] != null
-					&& !visitedPaths.contains(new BlockIndex(nextTile.links[1].xCoord, nextTile.links[1].yCoord, nextTile.links[1].zCoord))) {
+					&& !visitedPaths.contains(new BlockPos(nextTile.links[1].pos.getX(), nextTile.links[1].pos.getY(), nextTile.links[1].pos.getZ()))) {
 				nextTile = nextTile.links[1];
 			} else {
 				nextTile = null;
@@ -199,7 +194,7 @@ public class TilePathMarker extends TileMarker {
 		}
 
 		if (loadLink0) {
-			TileEntity e0 = worldObj.getTileEntity(x0, y0, z0);
+			TileEntity e0 = worldObj.getTileEntity(pos0);
 
 			if (links[0] != e0 && links[1] != e0 && e0 instanceof TilePathMarker) {
 				createLaserAndConnect((TilePathMarker) e0);
@@ -209,7 +204,7 @@ public class TilePathMarker extends TileMarker {
 		}
 
 		if (loadLink1) {
-			TileEntity e1 = worldObj.getTileEntity(x1, y1, z1);
+			TileEntity e1 = worldObj.getTileEntity(pos1);
 
 			if (links[0] != e1 && links[1] != e1 && e1 instanceof TilePathMarker) {
 				createLaserAndConnect((TilePathMarker) e1);
@@ -244,17 +239,13 @@ public class TilePathMarker extends TileMarker {
 		super.readFromNBT(nbttagcompound);
 
 		if (nbttagcompound.hasKey("x0")) {
-			x0 = nbttagcompound.getInteger("x0");
-			y0 = nbttagcompound.getInteger("y0");
-			z0 = nbttagcompound.getInteger("z0");
+			pos0 = new BlockPos(nbttagcompound.getInteger("x0"), nbttagcompound.getInteger("y0"), nbttagcompound.getInteger("z0"));
 
 			loadLink0 = true;
 		}
 
 		if (nbttagcompound.hasKey("x1")) {
-			x1 = nbttagcompound.getInteger("x1");
-			y1 = nbttagcompound.getInteger("y1");
-			z1 = nbttagcompound.getInteger("z1");
+			pos1 = new BlockPos(nbttagcompound.getInteger("x1"), nbttagcompound.getInteger("y1"), nbttagcompound.getInteger("z1"));
 
 			loadLink1 = true;
 		}
@@ -265,15 +256,15 @@ public class TilePathMarker extends TileMarker {
 		super.writeToNBT(nbttagcompound);
 
 		if (links[0] != null) {
-			nbttagcompound.setInteger("x0", links[0].xCoord);
-			nbttagcompound.setInteger("y0", links[0].yCoord);
-			nbttagcompound.setInteger("z0", links[0].zCoord);
+			nbttagcompound.setInteger("x0", links[0].pos.getX());
+			nbttagcompound.setInteger("y0", links[0].pos.getY());
+			nbttagcompound.setInteger("z0", links[0].pos.getZ());
 		}
 
 		if (links[1] != null) {
-			nbttagcompound.setInteger("x1", links[1].xCoord);
-			nbttagcompound.setInteger("y1", links[1].yCoord);
-			nbttagcompound.setInteger("z1", links[1].zCoord);
+			nbttagcompound.setInteger("x1", links[1].pos.getX());
+			nbttagcompound.setInteger("y1", links[1].pos.getY());
+			nbttagcompound.setInteger("z1", links[1].pos.getZ());
 		}
 	}
 
@@ -289,20 +280,45 @@ public class TilePathMarker extends TileMarker {
 	public static void clearAvailableMarkersList(World w) {
 		for (Iterator<TilePathMarker> it = availableMarkers.iterator(); it.hasNext();) {
 			TilePathMarker t = it.next();
-			if (t.getWorldObj().provider.dimensionId != w.provider.dimensionId) {
+			if (t.getWorld().provider.getDimensionId() != w.provider.getDimensionId()) {
 				it.remove();
 			}
 		}
 	}
 
 	@Override
-	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
+	public void readData(ByteBuf data) {
 		boolean previousState = tryingToConnect;
 
-		super.handleUpdatePacket(packet);
+		int flags = data.readUnsignedByte();
+		if ((flags & 1) != 0) {
+			lasers[0] = new LaserData();
+			lasers[0].readData(data);
+		} else {
+			lasers[0] = null;
+		}
+		if ((flags & 2) != 0) {
+			lasers[1] = new LaserData();
+			lasers[1].readData(data);
+		} else {
+			lasers[1] = null;
+		}
+		tryingToConnect = (flags & 4) != 0;
 
 		if (previousState != tryingToConnect) {
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			worldObj.markBlockForUpdate(pos);
+		}
+	}
+
+	@Override
+	public void writeData(ByteBuf data) {
+		int flags = (lasers[0] != null ? 1 : 0) | (lasers[1] != null ? 2 : 0) | (tryingToConnect ? 4 : 0);
+		data.writeByte(flags);
+		if (lasers[0] != null) {
+			lasers[0].writeData(data);
+		}
+		if (lasers[1] != null) {
+			lasers[1].writeData(data);
 		}
 	}
 }

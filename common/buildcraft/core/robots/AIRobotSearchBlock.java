@@ -12,16 +12,17 @@ import java.util.LinkedList;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.utils.PathFinding;
 import buildcraft.core.utils.PathFindingJob;
+import buildcraft.core.utils.Utils;
 
 public class AIRobotSearchBlock extends AIRobot {
 
-	public BlockIndex blockFound;
-	public LinkedList<BlockIndex> path;
+	public BlockPos blockFound;
+	public LinkedList<BlockPos> path;
 	private PathFinding blockScanner = null;
 	private PathFindingJob blockScannerJob;
 	private IBlockFilter pathFound;
@@ -40,7 +41,7 @@ public class AIRobotSearchBlock extends AIRobot {
 
 	@Override
 	public void start() {
-		blockScanner = new PathFinding(robot.worldObj, new BlockIndex(robot), pathFound, 64, robot.getZoneToWork());
+		blockScanner = new PathFinding(robot.worldObj, new BlockPos(robot), pathFound, 64, robot.getZoneToWork());
 		blockScannerJob = new PathFindingJob(blockScanner);
 		blockScannerJob.start();
 	}
@@ -80,7 +81,7 @@ public class AIRobotSearchBlock extends AIRobot {
 
 		if (blockFound != null) {
 			NBTTagCompound sub = new NBTTagCompound();
-			blockFound.writeTo(sub);
+			Utils.writeBlockPos(sub, blockFound);
 			nbt.setTag("blockFound", sub);
 		}
 	}
@@ -90,7 +91,7 @@ public class AIRobotSearchBlock extends AIRobot {
 		super.loadSelfFromNBT(nbt);
 
 		if (nbt.hasKey("blockFound")) {
-			blockFound = new BlockIndex(nbt.getCompoundTag("blockFound"));
+			blockFound = Utils.readBlockPos(nbt.getCompoundTag("blockFound"));
 		}
 	}
 }

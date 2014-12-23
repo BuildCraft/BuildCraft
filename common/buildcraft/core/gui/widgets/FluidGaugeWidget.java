@@ -8,7 +8,6 @@
  */
 package buildcraft.core.gui.widgets;
 
-import net.minecraft.util.IIcon;
 
 import net.minecraftforge.fluids.FluidStack;
 
@@ -41,11 +40,11 @@ public class FluidGaugeWidget extends Widget {
 			return;
 		}
 
-        IIcon liquidIcon = FluidRenderer.getFluidTexture(fluidStack, false);
+        /*IIcon liquidIcon = FluidRenderer.getFluidTexture(fluidStack, false);
 
 		if (liquidIcon == null) {
             return;
-		}
+		}*/
 
         float scale = Math.min(fluidStack.amount, tank.getCapacity()) / (float) tank.getCapacity();
 
@@ -53,7 +52,7 @@ public class FluidGaugeWidget extends Widget {
 
         for (int col = 0; col < w / 16; col++) {
             for (int row = 0; row <= h / 16; row++) {
-                gui.drawTexturedModelRectFromIcon(guiX + x + col * 16, guiY + y + row * 16 - 1, liquidIcon, 16, 16);
+                //gui.drawTexturedModelRectFromIcon(guiX + x + col * 16, guiY + y + row * 16 - 1, liquidIcon, 16, 16);
             }
         }
 

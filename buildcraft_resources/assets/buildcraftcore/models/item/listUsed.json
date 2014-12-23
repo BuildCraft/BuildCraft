@@ -1,0 +1,6 @@
+{
+    "parent": "buildcraftcore:item/list",
+    "textures": {
+        "layer0": "buildcraft:items/list_used"
+    }
+}

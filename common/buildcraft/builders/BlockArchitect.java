@@ -10,30 +10,30 @@ package buildcraft.builders;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-
-import net.minecraftforge.common.util.ForgeDirection;
-
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.BlockMultiTexture;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.utils.Utils;
 
-public class BlockArchitect extends BlockMultiTexture {
+public class BlockArchitect extends BlockBuildCraft {
 
 	public BlockArchitect() {
-		super(Material.iron, CreativeTabBuildCraft.BLOCKS);
+		super(Material.iron, new PropertyEnum[]{FACING_PROP});
 	}
 
 	@Override
@@ -42,52 +42,50 @@ public class BlockArchitect extends BlockMultiTexture {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7,
-			float par8, float par9) {
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing side, float hitX, float hitY, float hitZ) {
 
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking()) {
 			return false;
 		}
 
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, pos, state);
 		FMLCommonHandler.instance().bus().post(event);
 		if (event.isCanceled()) {
 			return false;
 		}
 
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, x, y, z)) {
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pos)) {
 
-			int meta = world.getBlockMetadata(x, y, z);
-
-			switch (ForgeDirection.values()[meta]) {
+			//TOOD: Need test
+			switch (side) {
 			case WEST:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.SOUTH.ordinal(), 0);
+				world.setBlockState(pos, state.withProperty(FACING_PROP, EnumFacing.SOUTH), 0);
 				break;
 			case EAST:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.NORTH.ordinal(), 0);
+				world.setBlockState(pos, state.withProperty(FACING_PROP, EnumFacing.NORTH), 0);
 				break;
 			case NORTH:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.WEST.ordinal(), 0);
+				world.setBlockState(pos, state.withProperty(FACING_PROP, EnumFacing.WEST), 0);
 				break;
 			case SOUTH:
 			default:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.EAST.ordinal(), 0);
+				world.setBlockState(pos, state.withProperty(FACING_PROP, EnumFacing.EAST), 0);
 				break;
 			}
 
-			world.markBlockForUpdate(x, y, z);
-			((IToolWrench) equipped).wrenchUsed(entityplayer, x, y, z);
+			world.markBlockForUpdate(pos);
+			((IToolWrench) equipped).wrenchUsed(entityplayer, pos);
 			return true;
 		} else if (equipped instanceof ItemConstructionMarker) {
-			ItemConstructionMarker.link(entityplayer.getCurrentEquippedItem(), world, x, y, z);
+			ItemConstructionMarker.link(entityplayer.getCurrentEquippedItem(), world, pos);
 
 			return true;
 		} else {
 
 			if (!world.isRemote) {
-				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.ARCHITECT_TABLE, world, x, y, z);
+				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.ARCHITECT_TABLE, world, pos.getX(), pos.getY(), pos.getZ());
 			}
 			return true;
 
@@ -95,38 +93,39 @@ public class BlockArchitect extends BlockMultiTexture {
 	}
 
 	@Override
-	public void breakBlock(World world, int i, int j, int k, Block block, int par6) {
-		Utils.preDestroyBlock(world, i, j, k);
+	public void breakBlock(World world, BlockPos pos, IBlockState state) {
+		Utils.preDestroyBlock(world, pos, state);
 
-		super.breakBlock(world, i, j, k, block, par6);
+		super.breakBlock(world, pos, state);
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
-		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
+	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entityliving, ItemStack stack) {
+		super.onBlockPlacedBy(world, pos, state, entityliving, stack);
 
-		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
+		EnumFacing orientation = Utils.get2dOrientation(entityliving);
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
+		//TODO: Check if that is correct
+		world.setBlockState(pos, state.withProperty(FACING_PROP, orientation.getOpposite()), 1);
 	}
 
 	@Override
-	public boolean renderAsNormalBlock() {
+	public boolean isNormalCube() {
 		return false;
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+	public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
 		return false;
 	}
 
 	@Override
-	public int getLightValue(IBlockAccess world, int x, int y, int z) {
+	public int getLightValue(IBlockAccess world, BlockPos pos) {
 		return 1;
 	}
 
 	/* MULTI TEXTURE */
-	@Override
+	/*@Override
 	public String getIconPrefix() {
 		return "architect_";
 	}
@@ -134,6 +133,6 @@ public class BlockArchitect extends BlockMultiTexture {
 	@Override
 	public int getFrontSide(IBlockAccess world, int x, int y, int z) {
 		return world.getBlockMetadata(x, y, z);
-	}
+	}*/
 
 }

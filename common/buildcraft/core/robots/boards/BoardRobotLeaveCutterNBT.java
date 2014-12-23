@@ -10,11 +10,9 @@ package buildcraft.core.robots.boards;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
@@ -30,7 +28,7 @@ public final class BoardRobotLeaveCutterNBT extends RedstoneBoardRobotNBT {
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft",
 			DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_leave_cutter.png");
 
-	private IIcon icon;
+	//private IIcon icon;
 
 	@Override
 	public RedstoneBoardRobot create(NBTTagCompound nbt, EntityRobotBase robot) {
@@ -52,7 +50,7 @@ public final class BoardRobotLeaveCutterNBT extends RedstoneBoardRobotNBT {
 		list.add(StringUtils.localize("buildcraft.boardRobotLeaveCutter"));
 	}
 
-	@Override
+	/*@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:board_blue");
 	}
@@ -60,5 +58,5 @@ public final class BoardRobotLeaveCutterNBT extends RedstoneBoardRobotNBT {
 	@Override
 	public IIcon getIcon(NBTTagCompound nbt) {
 		return icon;
-	}
+	}*/
 }

@@ -10,15 +10,14 @@ package buildcraft.builders.urbanism;
 
 import java.util.ArrayList;
 
-import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 
 import buildcraft.core.gui.AdvancedSlot;
 
 class UrbanistTool {
-	public IIcon getIcon() {
+	/*public IIcon getIcon() {
 		return null;
-	}
+	}*/
 
 	public String getDescription() {
 		return "Tool not available";

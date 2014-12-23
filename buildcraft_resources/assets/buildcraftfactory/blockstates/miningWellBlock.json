@@ -1,0 +1,9 @@
+{
+    "variants": {
+        "facing=up": { "model": "buildcraftfactory:miningWell" },
+        "facing=east": { "model": "buildcraftfactory:miningWell" },
+        "facing=south": { "model": "buildcraftfactory:miningWell", "y": 90 },
+        "facing=west": { "model": "buildcraftfactory:miningWell", "y": 180 },
+        "facing=north": { "model": "buildcraftfactory:miningWell", "y": 270 }
+    }
+}

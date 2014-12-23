@@ -10,59 +10,62 @@ package buildcraft.builders.schematics;
 
 import java.util.LinkedList;
 
+import net.minecraft.block.BlockBed;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.core.BlockBuildCraft;
 
 public class SchematicBed extends SchematicBlock {
 
 	@Override
 	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		if ((meta & 8) == 0) {
+		if ((getMetaData() & 8) == 0) {
 			requirements.add(new ItemStack(Items.bed));
 		}
 	}
 
 	@Override
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
+	public void storeRequirements(IBuilderContext context, BlockPos pos) {
 		// cancel requirements reading
 	}
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
-		int orientation = meta & 7;
-		int others = meta - orientation;
+		int orientation = getMetaData() & 7;
+		int others = getMetaData() - orientation;
 
 		switch (orientation) {
 		case 0:
-			meta = 1 + others;
+			setMetaData(1 + others);
 			break;
 		case 1:
-			meta = 2 + others;
+			setMetaData(2 + others);
 			break;
 		case 2:
-			meta = 3 + others;
+			setMetaData(3 + others);
 			break;
 		case 3:
-			meta = 0 + others;
+			setMetaData(0 + others);
 			break;
 		}
 	}
 
 	@Override
-	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
-		if ((meta & 8) != 0) {
+	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+		if ((getMetaData() & 8) != 0) {
 			return;
 		}
+		
+		context.world().setBlockState(pos, state.withProperty(BlockBed.PART, getFace()), 3);
+		
+		int x2 = pos.getX();
+		int z2 = pos.getY();
 
-		context.world().setBlock(x, y, z, block, meta, 3);
-
-		int x2 = x;
-		int z2 = z;
-
-		switch (meta) {
+		switch (getMetaData()) {
 		case 0:
 			z2++;
 			break;
@@ -77,11 +80,11 @@ public class SchematicBed extends SchematicBlock {
 			break;
 		}
 
-		context.world().setBlock(x2, y, z2, block, meta + 8, 3);
+		context.world().setBlockState(new BlockPos(x2, pos.getY(), z2), state.withProperty(BlockBed.PART, EnumFacing.getFront(getMetaData() + 8)), 3);
 	}
 
 	@Override
 	public boolean doNotBuild() {
-		return (meta & 8) != 0;
+		return (getMetaData() & 8) != 0;
 	}
 }

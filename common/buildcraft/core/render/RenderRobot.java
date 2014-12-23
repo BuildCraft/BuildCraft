@@ -13,9 +13,9 @@ import java.util.Date;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -26,16 +26,14 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.MinecraftForgeClient;
-
 import buildcraft.BuildCraftSilicon;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.ItemRobot;
 import buildcraft.core.robots.EntityRobot;
 
-public class RenderRobot extends Render implements IItemRenderer {
+public class RenderRobot extends Render /*implements IItemRenderer*/ {
 
 	private final EntityItem dummyEntityItem = new EntityItem(null);
 	private final RenderItem customRenderItem;
@@ -45,18 +43,8 @@ public class RenderRobot extends Render implements IItemRenderer {
 	private ModelRenderer box;
 
 	public RenderRobot() {
-		customRenderItem = new RenderItem() {
-			@Override
-			public boolean shouldBob() {
-				return false;
-			}
-
-			@Override
-			public boolean shouldSpreadItems() {
-				return false;
-			}
-		};
-		customRenderItem.setRenderManager(RenderManager.instance);
+		super(Minecraft.getMinecraft().getRenderManager());
+		customRenderItem = Minecraft.getMinecraft().getRenderItem();
 
 		box = new ModelRenderer(model, 0, 0);
 		box.addBox(-4F, -4F, -4F, 8, 8, 8);
@@ -70,7 +58,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 		doRender((EntityRobot) entity, x, y, z, f, f1);
 	}
 
-	private void doRender(EntityRobot robot, double x, double y, double z, float f, float f1) {
+	/*private void doRender(EntityRobot robot, double x, double y, double z, float f, float f1) {
 		GL11.glPushMatrix();
 		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glTranslated(x, y, z);
@@ -169,14 +157,14 @@ public class RenderRobot extends Render implements IItemRenderer {
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glPopMatrix();
 
-	}
+	}*/
 
 	@Override
 	protected ResourceLocation getEntityTexture(Entity entity) {
 		return ((EntityRobot) entity).getTexture();
 	}
 
-	@Override
+	/*@Override
 	public boolean handleRenderType(ItemStack item, ItemRenderType type) {
 		return true;
 	}
@@ -223,7 +211,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 
 	/**
 	 * This is a refactor from the code of RenderPlayer.
-	 */
+	 *
 	public void doRenderItemAtHand(EntityRobot robot, ItemStack currentItem) {
 		ItemStack itemstack1 = currentItem;
 		float f3, f5;
@@ -281,7 +269,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 				 * GL11.glRotatef(-60.0F, 0.0F, 0.0F, 1.0F); }
 				 */
 
-				GL11.glTranslatef(0.0F, 0.1875F, 0.0F);
+				/*GL11.glTranslatef(0.0F, 0.1875F, 0.0F);
 				GL11.glScalef(f3, -f3, f3);
 				GL11.glRotatef(-100.0F, 1.0F, 0.0F, 0.0F);
 				GL11.glRotatef(45.0F, 0.0F, 1.0F, 0.0F);
@@ -330,6 +318,6 @@ public class RenderRobot extends Render implements IItemRenderer {
 
 		GL11.glPopMatrix();
 
-	}
+	}*/
 
 }

@@ -45,7 +45,7 @@ public class RenderHopper extends TileEntitySpecialRenderer implements IInventor
 		bottom.rotationPointX = 8F;
 		bottom.rotationPointY = 8F;
 		bottom.rotationPointZ = 8F;
-		field_147501_a = TileEntityRendererDispatcher.instance;
+		rendererDispatcher = TileEntityRendererDispatcher.instance;
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class RenderHopper extends TileEntitySpecialRenderer implements IInventor
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity var1, double x, double y, double z, float f) {
+	public void renderTileEntityAt(TileEntity var1, double x, double y, double z, float f, int i) {
 		render(x, y, z);
 	}
 
@@ -71,7 +71,7 @@ public class RenderHopper extends TileEntitySpecialRenderer implements IInventor
 		top.render((float) (1.0 / 16.0));
 		bottom.render((float) (1.0 / 16.0));
 		bindTexture(HOPPER_MIDDLE_TEXTURE);
-		middle.render(Tessellator.instance, 1F / 16F);
+		middle.render(Tessellator.getInstance(), 1F / 16F);
 
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glPopMatrix();

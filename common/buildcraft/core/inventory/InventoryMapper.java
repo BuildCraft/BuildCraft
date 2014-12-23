@@ -11,6 +11,7 @@ package buildcraft.core.inventory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IChatComponent;
 
 /**
  * Wrapper class used to specify part of an existing inventory to be treated as
@@ -69,8 +70,18 @@ public class InventoryMapper implements IInventory {
     }
 
     @Override
-    public String getInventoryName() {
-        return inv.getInventoryName();
+    public String getName() {
+        return inv.getName();
+    }
+
+    @Override
+    public boolean hasCustomName() {
+        return false;
+    }
+
+    @Override
+    public IChatComponent getDisplayName() {
+        return null;
     }
 
     public void setStackSizeLimit(int limit) {
@@ -88,13 +99,13 @@ public class InventoryMapper implements IInventory {
     }
 
     @Override
-    public void openInventory() {
-        inv.openInventory();
+    public void openInventory(EntityPlayer player) {
+        inv.openInventory(player);
     }
 
     @Override
-    public void closeInventory() {
-        inv.closeInventory();
+    public void closeInventory(EntityPlayer player) {
+        inv.closeInventory(player);
     }
 
     @Override
@@ -110,12 +121,27 @@ public class InventoryMapper implements IInventory {
         return true;
     }
 
-	@Override
-	public boolean hasCustomInventoryName() {
-		return inv.hasCustomInventoryName();
-	}
+    @Override
+    public int getField(int id) {
+        return inv.getField(id);
+    }
 
-	@Override
+    @Override
+    public void setField(int id, int value) {
+        inv.setField(id, value);
+    }
+
+    @Override
+    public int getFieldCount() {
+        return inv.getFieldCount();
+    }
+
+    @Override
+    public void clear() {
+        inv.clear();
+    }
+
+    @Override
 	public void markDirty() {
 		inv.markDirty();
 	}

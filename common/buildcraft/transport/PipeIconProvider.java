@@ -8,16 +8,20 @@
  */
 package buildcraft.transport;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import javax.xml.soap.Text;
+
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.IIconProvider;
+import buildcraft.transport.render.TextureStateManager;
 
-public class PipeIconProvider implements IIconProvider {
+public class PipeIconProvider /*implements IIconProvider*/ {
 
 	public enum TYPE {
 
@@ -87,6 +91,7 @@ public class PipeIconProvider implements IIconProvider {
 		PipeItemsSandstone("pipeItemsSandstone"),
 		PipeItemsStone("pipeItemsStone"),
 		PipeItemsQuartz("pipeItemsQuartz"),
+        PipeItemsClay("pipeItemsClay"),
 		PipeItemsVoid("pipeItemsVoid"),
 		//
 		PipeFluidsCobblestone("pipeFluidsCobblestone"),
@@ -98,11 +103,21 @@ public class PipeIconProvider implements IIconProvider {
 		PipeFluidsSandstone("pipeFluidsSandstone"),
 		PipeFluidsStone("pipeFluidsStone"),
 		PipeFluidsVoid("pipeFluidsVoid"),
+        //
+        PipeFluidsDiamond_Item("pipeFluidsDiamond_item"),
+        PipeFluidsDiamond_Center("pipeFluidsDiamond_center"),
+        PipeFluidsDiamond_Down("pipeFluidsDiamond_down"),
+        PipeFluidsDiamond_Up("pipeFluidsDiamond_up"),
+        PipeFluidsDiamond_North("pipeFluidsDiamond_north"),
+        PipeFluidsDiamond_South("pipeFluidsDiamond_south"),
+        PipeFluidsDiamond_West("pipeFluidsDiamond_west", "pipeFluidsDiamond_west_cb"),
+        PipeFluidsDiamond_East("pipeFluidsDiamond_east"),
 		//
 		PipePowerDiamond("pipePowerDiamond"),
 		PipePowerGold("pipePowerGold"),
 		PipePowerQuartz("pipePowerQuartz"),
 		PipePowerStone("pipePowerStone"),
+        PipePowerSandstone("pipePowerSandstone"),
 		PipePowerCobblestone("pipePowerCobblestone"),
 		PipePowerWood_Standard("pipePowerWood_standard"),
 		PipePowerEmerald_Standard("pipePowerEmerald_standard"),
@@ -132,7 +147,7 @@ public class PipeIconProvider implements IIconProvider {
 		public static final TYPE[] VALUES = values();
 		private final String iconTag;
 		private final String iconTagColorBlind;
-		private IIcon icon;
+		private TextureAtlasSprite sprite;
 
 		private TYPE(String iconTag, String iconTagColorBlind) {
 			this.iconTag = iconTag;
@@ -143,29 +158,28 @@ public class PipeIconProvider implements IIconProvider {
 			this(iconTag, iconTag);
 		}
 
-		private void registerIcon(IIconRegister iconRegister) {
-			icon = iconRegister.registerIcon("buildcraft:" + (BuildCraftCore.colorBlindMode ? iconTagColorBlind : iconTag));
+		private void registerIcon(TextureMap map) {
+			sprite = map.registerSprite(new ResourceLocation("buildcraft", "blocks/" + (BuildCraftCore.colorBlindMode ? iconTagColorBlind : iconTag)));
 		}
 
-		public IIcon getIcon() {
-			return icon;
+		public TextureAtlasSprite getIcon() {
+			return sprite;
 		}
 	}
 
-	@Override
 	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int pipeIconIndex) {
+	public TextureAtlasSprite getIcon(int pipeIconIndex) {
 		if (pipeIconIndex == -1) {
 			return null;
 		}
-		return TYPE.VALUES[pipeIconIndex].icon;
+		return TYPE.VALUES[pipeIconIndex].sprite;
 	}
 
-	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister iconRegister) {
+	public void registerIcons(TextureMap map) {
 		for (TYPE type : TYPE.VALUES) {
-			type.registerIcon(iconRegister);
+			System.out.println("Registering icon " + type.name());
+			type.registerIcon(map);
 		}
 	}
 }

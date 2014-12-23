@@ -1,0 +1,21 @@
+{
+    "elements": [
+        {   "from": [ 2, 0, 2 ],
+            "to": [ 14, 16, 14 ],
+            "faces": {
+                "down":  { "texture": "#down", "cullface": "down" },
+                "up":    { "texture": "#up", "cullface": "up" },
+                "north": { "texture": "#side" },
+                "south": { "texture": "#side" },
+                "west":  { "texture": "#side" },
+                "east":  { "texture": "#side" }
+            }
+        }
+    ],
+    "textures": {
+        "particle": "buildcraft:blocks/tank_bottom_side",
+        "up": "buildcraft:blocks/tank_top",
+        "down": "buildcraft:blocks/tank_top",
+	"side": "buildcraft:blocks/tank_stacked_side"
+    }
+}

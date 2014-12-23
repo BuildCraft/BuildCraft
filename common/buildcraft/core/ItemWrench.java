@@ -17,10 +17,9 @@ import net.minecraft.block.BlockChest;
 import net.minecraft.block.BlockLever;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-
-import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.tools.IToolWrench;
 
 public class ItemWrench extends ItemBuildCraft implements IToolWrench {
@@ -48,8 +47,8 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 	}
 
 	@Override
-	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-		Block block = world.getBlock(x, y, z);
+	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
+		Block block = world.getBlockState(pos).getBlock();
 
 		if (block == null) {
 			return false;
@@ -59,7 +58,7 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 			return false;
 		}
 
-		if (block.rotateBlock(world, x, y, z, ForgeDirection.getOrientation(side))) {
+		if (block.rotateBlock(world, pos, side)) {
 			player.swingItem();
 			return !world.isRemote;
 		}
@@ -67,17 +66,17 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 	}
 
 	@Override
-	public boolean canWrench(EntityPlayer player, int x, int y, int z) {
+	public boolean canWrench(EntityPlayer player, BlockPos pos) {
 		return true;
 	}
 
 	@Override
-	public void wrenchUsed(EntityPlayer player, int x, int y, int z) {
+	public void wrenchUsed(EntityPlayer player, BlockPos pos) {
 		player.swingItem();
 	}
 
 	@Override
-	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
+	public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player) {
 		return true;
 	}
 }

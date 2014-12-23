@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.statements.IActionExternal;
@@ -32,7 +32,7 @@ public class BuildersActionProvider implements IActionProvider {
 	}
 
 	@Override
-	public Collection<IActionExternal> getExternalActions(ForgeDirection side, TileEntity tile) {
+	public Collection<IActionExternal> getExternalActions(EnumFacing side, TileEntity tile) {
 		LinkedList<IActionExternal> actions = new LinkedList<IActionExternal>();
 		if (tile instanceof TileFiller) {
 			for (IFillerPattern p : FillerManager.registry.getPatterns()) {

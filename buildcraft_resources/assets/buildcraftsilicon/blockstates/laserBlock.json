@@ -1,0 +1,10 @@
+{
+    "variants": {
+        "facing=up": { "model": "buildcraftsilicon:laser" },
+        "facing=down": { "model": "buildcraftsilicon:laser", "x": 180 },
+        "facing=north": { "model": "buildcraftsilicon:laser", "x": 90 },
+        "facing=east": { "model": "buildcraftsilicon:laser", "x": 90, "y": 90 },
+        "facing=south": { "model": "buildcraftsilicon:laser", "x": 90, "y": 180 },
+        "facing=west": { "model": "buildcraftsilicon:laser", "x": 90, "y": 270 }
+    }
+}

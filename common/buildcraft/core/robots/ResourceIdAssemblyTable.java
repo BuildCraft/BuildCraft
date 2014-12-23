@@ -8,7 +8,7 @@
  */
 package buildcraft.core.robots;
 
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.robots.ResourceId;
 import buildcraft.silicon.TileAssemblyTable;
 
@@ -19,7 +19,7 @@ public class ResourceIdAssemblyTable extends ResourceId {
 	}
 
 	public ResourceIdAssemblyTable(TileAssemblyTable tile) {
-		index = new BlockIndex(tile);
+		index = tile.getPos();
 	}
 
 }

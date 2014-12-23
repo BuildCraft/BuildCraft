@@ -150,7 +150,7 @@ public abstract class BuildCraftContainer extends Container {
 		stackSlot.stackSize = stackSize;
 
 		if (stackSlot.stackSize <= 0) {
-			slot.putStack((ItemStack) null);
+			slot.putStack(null);
 		}
 	}
 

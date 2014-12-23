@@ -12,20 +12,20 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
-import buildcraft.api.core.IIconProvider;
-import buildcraft.api.core.NetworkData;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.network.IClientState;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
@@ -37,11 +37,10 @@ import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.statements.ActionPipeColor;
 import buildcraft.transport.statements.ActionPipeDirection;
 
-public class PipeItemsDaizuli extends Pipe<PipeTransportItems> {
+public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements IClientState {
 
 	private int standardIconIndex = PipeIconProvider.TYPE.PipeItemsDaizuli_Black.ordinal();
 	private int solidIconIndex = PipeIconProvider.TYPE.PipeAllDaizuli_Solid.ordinal();
-	@NetworkData
 	private int color = EnumColor.BLACK.ordinal();
 	private PipeLogicIron logic = new PipeLogicIron(this) {
 		@Override
@@ -83,9 +82,9 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> {
 	@Override
 	public boolean blockActivated(EntityPlayer player) {
 		Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
-		if (player.isSneaking() && equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, container.xCoord, container.yCoord, container.zCoord)) {
+		if (player.isSneaking() && equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, container.getPos())) {
 			setColor(getColor().getNext());
-			((IToolWrench) equipped).wrenchUsed(player, container.xCoord, container.yCoord, container.zCoord);
+			((IToolWrench) equipped).wrenchUsed(player, container.getPos());
 			return true;
 		}
 
@@ -105,8 +104,8 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> {
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
-		if (direction == ForgeDirection.UNKNOWN) {
+	public int getIconIndex(EnumFacing direction) {
+		if (direction == null) {
 			return standardIconIndex + color;
 		}
 		if (container != null && container.getBlockMetadata() == direction.ordinal()) {
@@ -115,11 +114,11 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> {
 		return solidIconIndex;
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
 		return BuildCraftTransport.instance.pipeIconProvider;
-	}
+	}*/
 
 	@Override
 	public boolean canConnectRedstone() {
@@ -127,7 +126,7 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> {
 	}
 
 	public void eventHandler(PipeEventItem.FindDest event) {
-		ForgeDirection output = ForgeDirection.getOrientation(container.getBlockMetadata());
+		EnumFacing output = EnumFacing.getFront(container.getBlockMetadata());
 		if (event.item.color == getColor() && event.destinations.contains(output)) {
 			event.destinations.clear();
 			event.destinations.add(output);
@@ -172,7 +171,7 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> {
 	public LinkedList<IActionInternal> getActions() {
 		LinkedList<IActionInternal> action = super.getActions();
 		action.addAll(Arrays.asList(BuildCraftTransport.actionPipeColor));
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing direction : EnumFacing.values()) {
 			if (container.isPipeConnected(direction)) {
 				action.add(BuildCraftTransport.actionPipeDirection[direction.ordinal()]);
 			}
@@ -190,5 +189,15 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> {
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
 		color = data.getByte("color");
+	}
+
+	@Override
+	public void writeData(ByteBuf data) {
+		data.writeByte(color);
+	}
+
+	@Override
+	public void readData(ByteBuf data) {
+		color = data.readByte();
 	}
 }

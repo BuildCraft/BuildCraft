@@ -8,14 +8,17 @@
  */
 package buildcraft.builders.gui;
 
+import java.io.IOException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import buildcraft.BuildCraftBuilders;
+import buildcraft.BuildCraftCore;
 import buildcraft.builders.TileArchitect;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.blueprints.BlueprintReadConfiguration;
@@ -23,8 +26,10 @@ import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.gui.buttons.GuiBetterButton;
 import buildcraft.core.gui.tooltips.ToolTip;
 import buildcraft.core.gui.tooltips.ToolTipLine;
-import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.CommandWriter;
+import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.core.utils.Utils;
 
 public class GuiArchitect extends GuiBuildCraft {
 
@@ -71,7 +76,7 @@ public class GuiArchitect extends GuiBuildCraft {
 		));
 		buttonList.add(optionAllowCreative);
 		
-		textField = new GuiTextField(this.fontRendererObj, TEXT_X, TEXT_Y, TEXT_WIDTH, TEXT_HEIGHT);
+		textField = new GuiTextField(0, this.fontRendererObj, TEXT_X, TEXT_Y, TEXT_WIDTH, TEXT_HEIGHT);
 		textField.setMaxStringLength(BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE);
 		textField.setText(architect.name);
 		textField.setFocused(true);
@@ -148,20 +153,25 @@ public class GuiArchitect extends GuiBuildCraft {
 	}
 
 	@Override
-	protected void mouseClicked(int i, int j, int k) {
+	protected void mouseClicked(int i, int j, int k) throws IOException {
 		super.mouseClicked(i, j, k);
 
 		textField.mouseClicked(i - guiLeft, j - guiTop, k);
 	}
 
 	@Override
-	protected void keyTyped(char c, int i) {
+	protected void keyTyped(char c, int i) throws IOException {
 		if (textField.isFocused()) {
 			if (c == 13 || c == 27) {
 				textField.setFocused(false);
 			} else {
 				textField.textboxKeyTyped(c, i);
-				RPCHandler.rpcServer(architect, "handleClientSetName", textField.getText());
+				final String text = textField.getText();
+				BuildCraftCore.instance.sendToServer(new PacketCommand(architect, "setName", new CommandWriter() {
+					public void write(ByteBuf data) {
+						Utils.writeUTF(data, text);
+					}
+				}));
 			}
 		} else {
 			super.keyTyped(c, i);

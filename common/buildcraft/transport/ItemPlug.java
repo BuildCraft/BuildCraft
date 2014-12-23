@@ -8,16 +8,16 @@
  */
 package buildcraft.transport;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipePluggable;
@@ -35,12 +35,12 @@ public class ItemPlug extends ItemBuildCraft {
 		return "item.PipePlug";
 	}
 
-	@Override
+	/*@Override
 	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
 		return true;
-	}
+	}*/
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister par1IconRegister) {
 	    // NOOP
@@ -50,7 +50,7 @@ public class ItemPlug extends ItemBuildCraft {
     @SideOnly(Side.CLIENT)
 	public int getSpriteNumber() {
         return 0;
-    }
+    }*/
 
 	public static class PlugPluggable implements IPipePluggable {
 		public PlugPluggable() {
@@ -73,17 +73,17 @@ public class ItemPlug extends ItemBuildCraft {
 		}
 
 		@Override
-		public void onAttachedPipe(IPipeTile pipe, ForgeDirection direction) {
+		public void onAttachedPipe(IPipeTile pipe, EnumFacing direction) {
 
 		}
 
 		@Override
-		public void onDetachedPipe(IPipeTile pipe, ForgeDirection direction) {
+		public void onDetachedPipe(IPipeTile pipe, EnumFacing direction) {
 
 		}
 
 		@Override
-		public boolean blocking(IPipeTile pipe, ForgeDirection direction) {
+		public boolean blocking(IPipeTile pipe, EnumFacing direction) {
 			return true;
 		}
 
@@ -93,7 +93,7 @@ public class ItemPlug extends ItemBuildCraft {
 		}
 
 		@Override
-		public void validate(IPipeTile pipe, ForgeDirection direction) {
+		public void validate(IPipeTile pipe, EnumFacing direction) {
 
 		}
 	}

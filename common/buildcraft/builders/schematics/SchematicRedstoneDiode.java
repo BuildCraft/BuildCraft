@@ -12,7 +12,7 @@ import java.util.LinkedList;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
+import net.minecraft.util.BlockPos;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 
@@ -29,12 +29,13 @@ public class SchematicRedstoneDiode extends SchematicBlock {
 	}
 
 	@Override
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
+	public void storeRequirements(IBuilderContext context, BlockPos pos) {
 
 	}
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
+		int meta = getMetaData();
 		int step = meta - (meta & 3);
 
 		switch (meta - step) {
@@ -51,5 +52,6 @@ public class SchematicRedstoneDiode extends SchematicBlock {
 			meta = 0 + step;
 			break;
 		}
+		setMetaData(meta);
 	}
 }

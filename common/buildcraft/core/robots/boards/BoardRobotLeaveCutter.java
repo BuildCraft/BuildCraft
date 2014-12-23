@@ -10,8 +10,8 @@ package buildcraft.core.robots.boards;
 
 import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.EntityRobotBase;
@@ -33,8 +33,8 @@ public class BoardRobotLeaveCutter extends BoardRobotGenericBreakBlock {
 	}
 
 	@Override
-	public boolean isExpectedBlock(World world, int x, int y, int z) {
-		return BuildCraftAPI.isLeavesProperty.get(world, x, y, z);
+	public boolean isExpectedBlock(World world, BlockPos pos) {
+		return BuildCraftAPI.isLeavesProperty.get(world, pos);
 	}
 
 }

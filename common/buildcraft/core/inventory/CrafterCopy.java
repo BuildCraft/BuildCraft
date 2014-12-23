@@ -56,7 +56,7 @@ public class CrafterCopy implements IFlexibleCrafter {
 	}
 
 	@Override
-	public ItemStack decrCraftingItemgStack(int slotid, int val) {
+	public ItemStack decrCraftingItemStack(int slotid, int val) {
 		ItemStack result;
 
 		if (val >= items[slotid].stackSize) {

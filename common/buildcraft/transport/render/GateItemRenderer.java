@@ -12,20 +12,20 @@ import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
 import net.minecraftforge.client.IItemRenderer;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.transport.gates.ItemGate;
 
-public class GateItemRenderer implements IItemRenderer {
+public class GateItemRenderer /*implements IItemRenderer*/ {
 
-	RenderItem renderItem = new RenderItem();
+	/*RenderItem renderItem = Minecraft.getMinecraft().getRenderItem();
 
 	@Override
 	public boolean handleRenderType(ItemStack stack, ItemRenderType type) {
@@ -45,7 +45,7 @@ public class GateItemRenderer implements IItemRenderer {
 		if (type == ItemRenderType.INVENTORY) {
 			render(ItemRenderType.INVENTORY, stack);
 		} else if (type == ItemRenderType.ENTITY) {
-			if (RenderManager.instance.options.fancyGraphics) {
+			if (Minecraft.getMinecraft().getRenderManager().options.fancyGraphics) {
 				renderAsEntity(stack, (EntityItem) data[1]);
 			} else {
 				renderAsEntityFlat(stack);
@@ -74,7 +74,7 @@ public class GateItemRenderer implements IItemRenderer {
 			return;
 		}
 		GL11.glPushMatrix();
-		Tessellator tessellator = Tessellator.instance;
+		Tessellator tessellator = Tessellator.getInstance();
 
 		float uv1 = icon.getMinU();
 		float uv2 = icon.getMaxU();
@@ -181,5 +181,5 @@ public class GateItemRenderer implements IItemRenderer {
 		}
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glPopMatrix();
-	}
+	}*/
 }

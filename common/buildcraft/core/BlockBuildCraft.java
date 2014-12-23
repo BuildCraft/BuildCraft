@@ -8,18 +8,31 @@
  */
 package buildcraft.core;
 
+import java.util.Comparator;
 import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.FMLCommonHandler;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import buildcraft.api.core.EnumColor;
 import buildcraft.api.events.BlockPlacedDownEvent;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.utils.Utils;
@@ -28,41 +41,164 @@ public abstract class BlockBuildCraft extends BlockContainer {
 
 	protected static boolean keepInventory = false;
 	protected final Random rand = new Random();
+	
+	public static final PropertyDirection FACING_PROP = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
+	public static final PropertyDirection FACING_6_PROP = PropertyDirection.create("facing");
+
+	public static final PropertyEnum COLOR_PROP = PropertyEnum.create("color", EnumColor.class, EnumColor.VALUES);
+
+	protected final PropertyEnum[] properties;
+
+	private final int[] propertySizes;
+	private final BlockState myBlockState;
 
 	protected BlockBuildCraft(Material material) {
-		this(material, CreativeTabBuildCraft.BLOCKS);
+		this(material, CreativeTabBuildCraft.BLOCKS, new PropertyEnum[]{});
 	}
 
 	protected BlockBuildCraft(Material material, CreativeTabBuildCraft creativeTab) {
+		this(material, creativeTab, new PropertyEnum[]{});
+	}
+
+	protected BlockBuildCraft(Material material, PropertyEnum[] properties) {
+		this(material, CreativeTabBuildCraft.BLOCKS, properties);
+	}
+
+	protected BlockBuildCraft(Material material, CreativeTabBuildCraft creativeTab, PropertyEnum[] properties) {
 		super(material);
 		setCreativeTab(creativeTab.get());
 		setHardness(5F);
+
+		this.properties = properties;
+		this.propertySizes = new int[properties.length];
+
+		this.myBlockState = createBlockState();
+
+		IBlockState defaultState = getBlockState().getBaseState();
+		for (int i = 0; i < properties.length; i++) {
+			try {
+				propertySizes[i] = ((Enum[]) properties[i].getValueClass().getMethod("values").invoke(null)).length;
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			Object o = properties[i].getAllowedValues().iterator().next();
+			defaultState = defaultState.withProperty(properties[i], (Comparable) o);
+		}
+		setDefaultState(defaultState);
 	}
 
+	@Override
+	public BlockState getBlockState()
+	{
+		return this.myBlockState;
+	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {
-		super.onBlockPlacedBy(world, x, y, z, entity, stack);
-		FMLCommonHandler.instance().bus().post(new BlockPlacedDownEvent((EntityPlayer) entity, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z), x, y, z));
-		TileEntity tile = world.getTileEntity(x, y, z);
+	protected BlockState createBlockState() {
+		if (properties == null) {
+			// Will be overridden later
+			return new BlockState(this, new IProperty[]{});
+		}
+
+		return new BlockState(this, properties);
+	}
+
+	@Override
+	public int getMetaFromState(IBlockState state) {
+		int mul = 1;
+		int val = 0;
+		for (int i = 0; i < properties.length; i++) {
+			val += ((Enum) state.getValue(properties[i])).ordinal() * mul;
+			mul *= propertySizes[i];
+		}
+		return val;
+	}
+
+	@Override
+	public IBlockState getStateFromMeta(int meta) {
+		IBlockState state = getDefaultState();
+		int mul = 1;
+		int prevMul = 1;
+		int val = meta;
+		for (int i = 0; i < properties.length; i++) {
+			mul *= propertySizes[i];
+			int enumVal = val % mul;
+			val -= enumVal;
+			val /= prevMul;
+			try {
+				if (properties[i].getValueClass() == EnumFacing.class) {
+					state = state.withProperty(properties[i], EnumFacing.getFront(enumVal));
+				} else {
+					state = state.withProperty(properties[i], ((Enum[]) properties[i].getValueClass().getMethod("values").invoke(null))[enumVal]);
+				}
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			prevMul = mul;
+		}
+		return state;
+	}
+
+	@Override
+	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack stack) {
+		super.onBlockPlacedBy(world, pos, state, entity, stack);
+		FMLCommonHandler.instance().bus().post(new BlockPlacedDownEvent((EntityPlayer) entity, world.getBlockState(pos), pos));
+		TileEntity tile = world.getTileEntity(pos);
 		if (tile instanceof TileBuildCraft) {
 			((TileBuildCraft) tile).onBlockPlacedBy(entity, stack);
 		}
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
-		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, block, par6);
+	public void breakBlock(World world, BlockPos pos, IBlockState state) {
+		Utils.preDestroyBlock(world, pos, state);
+		super.breakBlock(world, pos, state);
 	}
 
 	@Override
-	public int getLightValue(IBlockAccess world, int x, int y, int z) {
-		TileEntity tile = world.getTileEntity(x, y, z);
-		if (tile instanceof IHasWork && ((IHasWork) tile).hasWork()) {
-			return super.getLightValue(world, x, y, z) + 8;
-		} else {
-			return super.getLightValue(world, x, y, z);
+	public int getLightValue(IBlockAccess world, BlockPos pos) {
+		if (hasTileEntity(world.getBlockState(pos))) {
+			TileEntity tile = world.getTileEntity(pos);
+			if (tile instanceof IHasWork && ((IHasWork) tile).hasWork()) {
+				return super.getLightValue(world, pos) + 8;
+			}
 		}
+		return super.getLightValue(world, pos);
+	}
+	
+    public void dropItemStack(World world, BlockPos pos, ItemStack itemstack)
+    {
+        float f = RANDOM.nextFloat() * 0.8F + 0.1F;
+        float f1 = RANDOM.nextFloat() * 0.8F + 0.1F;
+        float f2 = RANDOM.nextFloat() * 0.8F + 0.1F;
+
+        while (itemstack.stackSize > 0)
+        {
+            int i = RANDOM.nextInt(21) + 10;
+
+            if (i > itemstack.stackSize)
+            {
+                i = itemstack.stackSize;
+            }
+
+            itemstack.stackSize -= i;
+            EntityItem entityitem = new EntityItem(world, pos.getX() + (double)f, pos.getY() + (double)f1, pos.getZ() + (double)f2, new ItemStack(itemstack.getItem(), i, itemstack.getMetadata()));
+
+            if (itemstack.hasTagCompound())
+            {
+                entityitem.getEntityItem().setTagCompound((NBTTagCompound)itemstack.getTagCompound().copy());
+            }
+
+            float f3 = 0.05F;
+            entityitem.motionX = RANDOM.nextGaussian() * (double)f3;
+            entityitem.motionY = RANDOM.nextGaussian() * (double)f3 + 0.20000000298023224D;
+            entityitem.motionZ = RANDOM.nextGaussian() * (double)f3;
+            world.spawnEntityInWorld(entityitem);
+        }
+    }
+
+	@Override
+	public int getRenderType() {
+		return 3;
 	}
 }

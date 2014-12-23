@@ -9,17 +9,14 @@
 package buildcraft.energy;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBucket;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.utils.IModelRegister;
+import buildcraft.core.utils.ModelHelper;
 
-public class ItemBucketBuildcraft extends ItemBucket {
+public class ItemBucketBuildcraft extends ItemBucket implements IModelRegister {
 
 	private String iconName;
 
@@ -40,8 +37,13 @@ public class ItemBucketBuildcraft extends ItemBucket {
 	}
 
 	@Override
+	public void registerModels() {
+		ModelHelper.registerItemModel(this, 0, "");
+	}
+
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister par1IconRegister) {
 		this.itemIcon = par1IconRegister.registerIcon("buildcraft:" + iconName);
-	}
+	}*/
 }

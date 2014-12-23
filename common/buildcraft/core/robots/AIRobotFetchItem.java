@@ -10,9 +10,7 @@ package buildcraft.core.robots;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-
-import net.minecraftforge.common.util.ForgeDirection;
-
+import net.minecraft.util.BlockPos;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
@@ -63,7 +61,7 @@ public class AIRobotFetchItem extends AIRobot {
 				TransactorSimple inventoryInsert = new TransactorSimple(robot);
 
 				target.getEntityItem().stackSize -= inventoryInsert.inject(
-						target.getEntityItem(), ForgeDirection.UNKNOWN,
+						target.getEntityItem(), null,
 						true);
 
 				if (target.getEntityItem().stackSize <= 0) {
@@ -129,7 +127,7 @@ public class AIRobotFetchItem extends AIRobot {
 				} else {
 					EntityItem item = (EntityItem) e;
 
-					if (inventoryInsert.inject(item.getEntityItem(), ForgeDirection.UNKNOWN, false) > 0) {
+					if (inventoryInsert.inject(item.getEntityItem(), null, false) > 0) {
 						if (target == null) {
 							previousDistance = sqrDistance;
 							target = item;
@@ -147,8 +145,8 @@ public class AIRobotFetchItem extends AIRobot {
 		if (target != null) {
 			BoardRobotPicker.targettedItems.add(target.getEntityId());
 
-			startDelegateAI(new AIRobotGotoBlock(robot, (int) Math.floor(target.posX),
-					(int) Math.floor(target.posY), (int) Math.floor(target.posZ)));
+			startDelegateAI(new AIRobotGotoBlock(robot, new BlockPos((int) Math.floor(target.posX),
+					(int) Math.floor(target.posY), (int) Math.floor(target.posZ))));
 
 		} else {
 			// No item was found, terminate this AI

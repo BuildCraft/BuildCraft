@@ -10,16 +10,13 @@ package buildcraft.core;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class EntityBlock extends Entity {
 
-	@SideOnly(Side.CLIENT)
-	public IIcon texture;
 	public float shadowSize = 0;
 	public float rotationX = 0;
 	public float rotationY = 0;
@@ -53,13 +50,7 @@ public class EntityBlock extends Entity {
 	@Override
 	public void setPosition(double d, double d1, double d2) {
 		super.setPosition(d, d1, d2);
-		boundingBox.minX = posX;
-		boundingBox.minY = posY;
-		boundingBox.minZ = posZ;
-
-		boundingBox.maxX = posX + iSize;
-		boundingBox.maxY = posY + jSize;
-		boundingBox.maxZ = posZ + kSize;
+		this.setEntityBoundingBox(AxisAlignedBB.fromBounds(posX, posY, posZ, posX + iSize, posY + jSize, posZ + kSize));
 	}
 
 	@Override

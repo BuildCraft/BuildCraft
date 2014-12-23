@@ -8,15 +8,13 @@
  */
 package buildcraft.factory;
 
-import java.io.IOException;
-
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.EnumSkyBlock;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -29,8 +27,6 @@ import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.fluids.TankManager;
-import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketUpdate;
 
 public class TileTank extends TileBuildCraft implements IFluidHandler {
 
@@ -42,12 +38,12 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 
 	/* UPDATING */
 	@Override
-	public void updateEntity() {
+	public void update() {
 		if (worldObj.isRemote) {
 			int lightValue = getFluidLightLevel();
 			if (prevLightValue != lightValue) {
 				prevLightValue = lightValue;
-				worldObj.updateLightByType(EnumSkyBlock.Block, xCoord, yCoord, zCoord);
+				worldObj.checkLightFor(EnumSkyBlock.BLOCK, pos);
 			}
 			return;
 		}
@@ -65,19 +61,12 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 
 	/* NETWORK */
 	@Override
-	public PacketPayload getPacketPayload() {
-		PacketPayload payload = new PacketPayload(new PacketPayload.StreamWriter() {
-			@Override
-			public void writeData(ByteBuf data) {
+	public void writeData(ByteBuf data) {
 				tankManager.writeData(data);
 			}
-		});
-		return payload;
-	}
 
 	@Override
-	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		ByteBuf stream = packet.payload.stream;
+	public void readData(ByteBuf stream) {
 		tankManager.readData(stream);
 	}
 
@@ -131,7 +120,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	}
 
 	public static TileTank getTankBelow(TileTank tile) {
-		TileEntity below = tile.getWorldObj().getTileEntity(tile.xCoord, tile.yCoord - 1, tile.zCoord);
+		TileEntity below = tile.getTile(EnumFacing.DOWN);
 		if (below instanceof TileTank) {
 			return (TileTank) below;
 		} else {
@@ -140,7 +129,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	}
 
 	public static TileTank getTankAbove(TileTank tile) {
-		TileEntity above = tile.getWorldObj().getTileEntity(tile.xCoord, tile.yCoord + 1, tile.zCoord);
+		TileEntity above = tile.getTile(EnumFacing.UP);
 		if (above instanceof TileTank) {
 			return (TileTank) above;
 		} else {
@@ -165,7 +154,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 
 	/* ITANKCONTAINER */
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		if (resource == null) {
 			return 0;
 		}
@@ -193,14 +182,14 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, int maxEmpty, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, int maxEmpty, boolean doDrain) {
 		TileTank bottom = getBottomTank();
 		bottom.hasUpdate = true;
 		return bottom.tank.drain(maxEmpty, doDrain);
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
 		if (resource == null) {
 			return null;
 		}
@@ -212,7 +201,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection direction) {
+	public FluidTankInfo[] getTankInfo(EnumFacing direction) {
 		FluidTank compositeTank = new FluidTank(tank.getCapacity());
 
 		TileTank tile = getBottomTank();
@@ -247,13 +236,13 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	}
 
 	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
+	public boolean canFill(EnumFacing from, Fluid fluid) {
 		Fluid tankFluid = getBottomTank().tank.getFluidType();
 		return tankFluid == null || tankFluid == fluid;
 	}
 
 	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
 		Fluid tankFluid = getBottomTank().tank.getFluidType();
 		return tankFluid != null && tankFluid == fluid;
 	}

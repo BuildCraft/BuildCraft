@@ -15,10 +15,10 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.fluids.FluidStack;
-
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IInventoryRenderer;
 import buildcraft.core.fluids.Tank;
@@ -55,7 +55,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 		}
 
-		field_147501_a = TileEntityRendererDispatcher.instance;
+		rendererDispatcher = TileEntityRendererDispatcher.instance;
 	}
 
 	public RenderRefinery(String baseTexture) {
@@ -68,7 +68,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
+	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int i) {
 
 		render((TileRefinery) tileentity, x, y, z);
 	}
@@ -99,7 +99,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 			anim = tile.getAnimationStage();
 
 			angle = 0;
-			switch (tile.getWorldObj().getBlockMetadata(tile.xCoord, tile.yCoord, tile.zCoord)) {
+			switch (((EnumFacing)tile.getWorld().getBlockState(tile.getPos()).getValue(BlockBuildCraft.FACING_PROP)).getIndex()) {
 				case 2:
 					angle = 90;
 					break;
@@ -188,7 +188,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 			GL11.glScalef(0.5F, 1, 0.5F);
 
 			if (liquid1 != null && liquid1.amount > 0) {
-				int[] list1 = FluidRenderer.getFluidDisplayLists(liquid1, tile.getWorldObj(), false);
+				int[] list1 = FluidRenderer.getFluidDisplayLists(liquid1, tile.getWorld(), false);
 
 				if (list1 != null) {
 					bindTexture(FluidRenderer.getFluidSheet(liquid1));
@@ -198,7 +198,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 			}
 
 			if (liquid2 != null && liquid2.amount > 0) {
-				int[] list2 = FluidRenderer.getFluidDisplayLists(liquid2, tile.getWorldObj(), false);
+				int[] list2 = FluidRenderer.getFluidDisplayLists(liquid2, tile.getWorld(), false);
 
 				if (list2 != null) {
 					GL11.glPushMatrix();
@@ -212,7 +212,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
 
 			if (liquidResult != null && liquidResult.amount > 0) {
-				int[] list3 = FluidRenderer.getFluidDisplayLists(liquidResult, tile.getWorldObj(), false);
+				int[] list3 = FluidRenderer.getFluidDisplayLists(liquidResult, tile.getWorld(), false);
 
 				if (list3 != null) {
 					GL11.glPushMatrix();

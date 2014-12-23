@@ -17,16 +17,18 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
@@ -34,13 +36,14 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import buildcraft.api.blueprints.BuilderAPI;
-import buildcraft.builders.schematics.SchematicIgnoreMeta;
+import buildcraft.builders.schematics.SchematicIgnoreState;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.ConfigUtils;
+import buildcraft.core.utils.Utils;
 import buildcraft.factory.BlockAutoWorkbench;
 import buildcraft.factory.BlockFloodGate;
 import buildcraft.factory.BlockFrame;
@@ -68,13 +71,12 @@ import buildcraft.factory.schematics.SchematicPump;
 import buildcraft.factory.schematics.SchematicRefinery;
 import buildcraft.factory.schematics.SchematicTank;
 
-@Mod(name = "BuildCraft Factory", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Factory", dependencies = DefaultProps.DEPENDENCY_CORE)
+@Mod(name = "BuildCraft Factory", version = Version.VERSION, useMetadata = false, modid = "BuildCraftFactory", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftFactory extends BuildCraftMod {
 
-	@Mod.Instance("BuildCraft|Factory")
+	@Mod.Instance("BuildCraftFactory")
 	public static BuildCraftFactory instance;
 
-	public static final int MINING_RF_COST_PER_BLOCK = 640;
 	public static BlockQuarry quarryBlock;
 	public static BlockMiningWell miningWellBlock;
 	public static BlockAutoWorkbench autoWorkbenchBlock;
@@ -86,6 +88,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 	public static BlockRefinery refineryBlock;
 	public static BlockHopper hopperBlock;
 
+	public static boolean quarryLoadsChunks = true;
 	public static boolean allowMining = true;
 	public static boolean quarryOneTimeUse = false;
 	public static float miningMultiplier = 1;
@@ -95,7 +98,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		FactoryProxy.proxy.initializeNEIIntegration();
-		ForgeChunkManager.setForcedChunkLoadingCallback(instance, new QuarryChunkloadCallback());
+		if (quarryLoadsChunks) {
+			ForgeChunkManager.setForcedChunkLoadingCallback(instance, new QuarryChunkloadCallback());
+		}
 	}
 
 	public class QuarryChunkloadCallback implements ForgeChunkManager.OrderedLoadingCallback {
@@ -103,12 +108,15 @@ public class BuildCraftFactory extends BuildCraftMod {
 		@Override
 		public void ticketsLoaded(List<Ticket> tickets, World world) {
 			for (Ticket ticket : tickets) {
-				int quarryX = ticket.getModData().getInteger("quarryX");
-				int quarryY = ticket.getModData().getInteger("quarryY");
-				int quarryZ = ticket.getModData().getInteger("quarryZ");
-				TileQuarry tq = (TileQuarry) world.getTileEntity(quarryX, quarryY, quarryZ);
-				tq.forceChunkLoading(ticket);
+				BlockPos quarryPos = Utils.readBlockPos(ticket.getModData());
 
+				if (world.isBlockLoaded(quarryPos)) {
+					Block block = world.getBlockState(quarryPos).getBlock();
+					if (block == quarryBlock) {
+						TileQuarry tq = (TileQuarry) world.getTileEntity(quarryPos);
+						tq.forceChunkLoading(ticket);
+					}
+				}
 			}
 		}
 
@@ -116,13 +124,13 @@ public class BuildCraftFactory extends BuildCraftMod {
 		public List<Ticket> ticketsLoaded(List<Ticket> tickets, World world, int maxTicketCount) {
 			List<Ticket> validTickets = Lists.newArrayList();
 			for (Ticket ticket : tickets) {
-				int quarryX = ticket.getModData().getInteger("quarryX");
-				int quarryY = ticket.getModData().getInteger("quarryY");
-				int quarryZ = ticket.getModData().getInteger("quarryZ");
+				BlockPos quarryPos = Utils.readBlockPos(ticket.getModData());
 
-				Block block = world.getBlock(quarryX, quarryY, quarryZ);
-				if (block == quarryBlock) {
-					validTickets.add(ticket);
+				if (world.isBlockLoaded(quarryPos)) {
+					Block block = world.getBlockState(quarryPos).getBlock();
+					if (block == quarryBlock) {
+						validTickets.add(ticket);
+					}
 				}
 			}
 			return validTickets;
@@ -148,7 +156,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 		BuilderAPI.schematicRegistry.registerSchematicBlock(refineryBlock, SchematicRefinery.class);
 		BuilderAPI.schematicRegistry.registerSchematicBlock(tankBlock, SchematicTank.class);
-		BuilderAPI.schematicRegistry.registerSchematicBlock(frameBlock, SchematicIgnoreMeta.class);
+		BuilderAPI.schematicRegistry.registerSchematicBlock(frameBlock, SchematicIgnoreState.class);
 		BuilderAPI.schematicRegistry.registerSchematicBlock(pumpBlock, SchematicPump.class);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
@@ -167,6 +175,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 		quarryOneTimeUse = genCat.get("quarry.one.time.use", false, "Quarry cannot be picked back up after placement");
 		miningMultiplier = genCat.get("mining.cost.multipler", 1F, 1F, 10F, "cost multiplier for mining operations, range (1.0 - 10.0)\nhigh values may render engines incapable of powering machines directly");
 		miningDepth = genCat.get("mining.depth", 2, 256, 256, "how far below the machine can mining machines dig, range (2 - 256), default 256");
+		quarryLoadsChunks = genCat.get("quarry.loads.chunks", true, "Quarry loads chunks required for mining");
 
 		Property pumpList = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pumping.controlList", DefaultProps.PUMP_DIMENSION_LIST);
 		pumpList.comment = "Allows admins to whitelist or blacklist pumping of specific fluids in specific dimensions.\n"
@@ -179,36 +188,35 @@ public class BuildCraftFactory extends BuildCraftMod {
 			BuildCraftCore.mainConfiguration.save();
 		}
 
-
 		miningWellBlock = new BlockMiningWell();
-		CoreProxy.proxy.registerBlock(miningWellBlock.setBlockName("miningWellBlock"));
+		CoreProxy.proxy.registerBlock(miningWellBlock.setUnlocalizedName("miningWellBlock"));
 
 		plainPipeBlock = new BlockPlainPipe();
-		CoreProxy.proxy.registerBlock(plainPipeBlock.setBlockName("plainPipeBlock"));
+		CoreProxy.proxy.registerBlock(plainPipeBlock.setUnlocalizedName("plainPipeBlock"));
 
 		autoWorkbenchBlock = new BlockAutoWorkbench();
-		CoreProxy.proxy.registerBlock(autoWorkbenchBlock.setBlockName("autoWorkbenchBlock"));
+		CoreProxy.proxy.registerBlock(autoWorkbenchBlock.setUnlocalizedName("autoWorkbenchBlock"));
 
 		frameBlock = new BlockFrame();
-		CoreProxy.proxy.registerBlock(frameBlock.setBlockName("frameBlock"));
+		CoreProxy.proxy.registerBlock(frameBlock.setUnlocalizedName("frameBlock"));
 
 		quarryBlock = new BlockQuarry();
-		CoreProxy.proxy.registerBlock(quarryBlock.setBlockName("machineBlock"));
+		CoreProxy.proxy.registerBlock(quarryBlock.setUnlocalizedName("machineBlock"));
 
 		tankBlock = new BlockTank();
-		CoreProxy.proxy.registerBlock(tankBlock.setBlockName("tankBlock"));
+		CoreProxy.proxy.registerBlock(tankBlock.setUnlocalizedName("tankBlock"));
 
 		pumpBlock = new BlockPump();
-		CoreProxy.proxy.registerBlock(pumpBlock.setBlockName("pumpBlock"));
+		CoreProxy.proxy.registerBlock(pumpBlock.setUnlocalizedName("pumpBlock"));
 
 		floodGateBlock = new BlockFloodGate();
-		CoreProxy.proxy.registerBlock(floodGateBlock.setBlockName("floodGateBlock"));
+		CoreProxy.proxy.registerBlock(floodGateBlock.setUnlocalizedName("floodGateBlock"));
 
 		refineryBlock = new BlockRefinery();
-		CoreProxy.proxy.registerBlock(refineryBlock.setBlockName("refineryBlock"));
+		CoreProxy.proxy.registerBlock(refineryBlock.setUnlocalizedName("refineryBlock"));
 
 		hopperBlock = new BlockHopper();
-		CoreProxy.proxy.registerBlock(hopperBlock.setBlockName("blockHopper"));
+		CoreProxy.proxy.registerBlock(hopperBlock.setUnlocalizedName("blockHopper"));
 
 
 		FactoryProxy.proxy.initializeEntityRenders();
@@ -317,12 +325,18 @@ public class BuildCraftFactory extends BuildCraftMod {
 		}
 	}
 
+	@SubscribeEvent
+	public void onModelBakeEvent(ModelBakeEvent event) {
+		FactoryProxy.proxy.initializeModels(event);
+	}
+
+
 	@Mod.EventHandler
     public void processIMCRequests(FMLInterModComms.IMCEvent event) {
         InterModComms.processIMC(event);
     }
 
-	@SubscribeEvent
+	/*@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void loadTextures(TextureStitchEvent.Pre evt) {
 		if (evt.map.getTextureType() == 0) {
@@ -331,7 +345,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 			FactoryProxyClient.drillTexture = terrainTextures.registerIcon("buildcraft:blockDrillTexture");
 			FactoryProxyClient.drillHeadTexture = terrainTextures.registerIcon("buildcraft:blockDrillHeadTexture");
 		}
-	}
+	}*/
 
 	@Mod.EventHandler
 	public void whiteListAppliedEnergetics(FMLInitializationEvent event) {

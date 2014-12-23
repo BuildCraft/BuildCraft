@@ -12,7 +12,7 @@ import java.util.Collection;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
@@ -89,10 +89,8 @@ public class AIRobotSearchStackRequest extends AIRobot {
 			return null;
 		}
 
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
-					+ dir.offsetY, station.z()
-					+ dir.offsetZ);
+		for (EnumFacing dir : EnumFacing.values()) {
+			TileEntity nearbyTile = robot.worldObj.getTileEntity(station.pos().offset(dir));
 
 			if (nearbyTile instanceof IRequestProvider) {
 				IRequestProvider provider = (IRequestProvider) nearbyTile;

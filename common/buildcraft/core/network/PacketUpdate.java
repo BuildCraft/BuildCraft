@@ -9,29 +9,29 @@
 package buildcraft.core.network;
 
 import io.netty.buffer.ByteBuf;
+import net.minecraft.util.BlockPos;
+import buildcraft.api.core.ISerializable;
+import buildcraft.core.utils.Utils;
 
 public class PacketUpdate extends BuildCraftPacket {
 
-	public int posX;
-	public int posY;
-	public int posZ;
-	public PacketPayload payload;
+	public BlockPos pos;
+	public ByteBuf stream;
+	public ISerializable payload;
 
 	private int packetId;
 
 	public PacketUpdate() {
 	}
 
-	public PacketUpdate(int packetId, PacketPayload payload) {
-		this(packetId, 0, 0, 0, payload);
+	public PacketUpdate(int packetId, ISerializable payload) {
+		this(packetId, BlockPos.ORIGIN, payload);
 	}
 
-	public PacketUpdate(int packetId, int posX, int posY, int posZ, PacketPayload payload) {
+	public PacketUpdate(int packetId, BlockPos pos, ISerializable payload) {
 		this(packetId);
 
-		this.posX = posX;
-		this.posY = posY;
-		this.posZ = posZ;
+		this.pos = pos;
 
 		this.payload = payload;
 	}
@@ -44,9 +44,7 @@ public class PacketUpdate extends BuildCraftPacket {
 	@Override
 	public void writeData(ByteBuf data) {
 		data.writeByte(packetId);
-		data.writeInt(posX);
-		data.writeShort(posY);
-		data.writeInt(posZ);
+		Utils.writeBlockPos(data, pos);
 
 		if (payload != null) {
 			payload.writeData(data);
@@ -56,17 +54,9 @@ public class PacketUpdate extends BuildCraftPacket {
 	@Override
 	public void readData(ByteBuf data) {
 		packetId = data.readByte();
-		posX = data.readInt();
-		posY = data.readShort();
-		posZ = data.readInt();
+		pos = Utils.readBlockPos(data);
 
-		if (data.isReadable()) {
-			payload = new PacketPayload();
-
-			if (payload != null) {
-				payload.readData(data);
-			}
-		}
+		stream = data; // for further reading
 	}
 
 	@Override

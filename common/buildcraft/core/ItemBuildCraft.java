@@ -8,16 +8,16 @@
  */
 package buildcraft.core;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import buildcraft.core.utils.IModelRegister;
+import buildcraft.core.utils.ModelHelper;
 
-public class ItemBuildCraft extends Item {
-
-	private String iconName;
+public class ItemBuildCraft extends Item implements IModelRegister {
 	private boolean passSneakClick = false;
 
 	public ItemBuildCraft() {
@@ -30,25 +30,17 @@ public class ItemBuildCraft extends Item {
 		setCreativeTab(creativeTab.get());
 	}
 
-	@Override
-	public Item setUnlocalizedName(String par1Str) {
-		iconName = par1Str;
-		return super.setUnlocalizedName(par1Str);
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister) {
-		this.itemIcon = par1IconRegister.registerIcon("buildcraft:" + iconName);
-	}
-
 	public Item setPassSneakClick(boolean passClick) {
 		this.passSneakClick = passClick;
 		return this;
 	}
 
 	@Override
-	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
+	public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player) {
 		return passSneakClick;
+	}
+
+	public void registerModels() {
+		ModelHelper.registerItemModel(this, 0, "");
 	}
 }

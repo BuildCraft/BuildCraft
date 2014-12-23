@@ -14,7 +14,7 @@ import java.util.Map;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -26,8 +26,10 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.utils.MathUtils;
 import buildcraft.transport.network.PacketFluidUpdate;
 import buildcraft.transport.pipes.PipeFluidsCobblestone;
+import buildcraft.transport.pipes.PipeFluidsDiamond;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
 import buildcraft.transport.pipes.PipeFluidsGold;
 import buildcraft.transport.pipes.PipeFluidsIron;
@@ -149,8 +151,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public static short INPUT_TTL = 60; // 100
 	public static short OUTPUT_TTL = 80; // 80
 	public static short OUTPUT_COOLDOWN = 30; // 30
-	private static final ForgeDirection[] directions = ForgeDirection.VALID_DIRECTIONS;
-	private static final ForgeDirection[] orientations = ForgeDirection.values();
+	private static final EnumFacing[] directions = EnumFacing.values();
+	private static final EnumFacing[] orientations = EnumFacing.values();
 	public byte initClient = 0;
 	public int travelDelay = 12;
 	public int flowRate;
@@ -166,16 +168,17 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	private int clientSyncCounter = 0;
 
     public PipeTransportFluids() {
-		for (ForgeDirection direction : orientations) {
+		for (EnumFacing direction : orientations) {
 			internalTanks[direction.ordinal()] = new PipeSection(getCapacity());
-			if (direction != ForgeDirection.UNKNOWN) {
+			if (direction != null) {
 				transferState[direction.ordinal()] = TransferState.None;
 			}
 		}
 	}
 
     public void initFromPipe(Class<? extends Pipe> pipeClass) {
-        flowRate = fluidCapacities.get(pipeClass);
+	    flowRate = fluidCapacities.get(pipeClass);
+	    travelDelay = MathUtils.clamp(Math.round(16 / (flowRate / 10)), 1, 12);
     }
 
 	@Override
@@ -187,7 +190,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		return LIQUID_IN_PIPE;
 	}
 
-	private boolean canReceiveFluid(ForgeDirection o) {
+	private boolean canReceiveFluid(EnumFacing o) {
 		TileEntity entity = container.getTile(o);
 
 		if (!container.isPipeConnected(o)) {
@@ -211,13 +214,13 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 	@Override
 	public void updateEntity() {
-		if (container.getWorldObj().isRemote) {
+		if (container.getWorld().isRemote) {
 			return;
 		}
 
 		moveFluids();
 
-		if (tracker.markTimeIfDelay(container.getWorldObj())) {
+		if (tracker.markTimeIfDelay(container.getWorld())) {
 
 			boolean init = false;
 			if (++clientSyncCounter > BuildCraftCore.longUpdateFactor) {
@@ -226,7 +229,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			}
 			PacketFluidUpdate packet = computeFluidUpdate(init, true);
 			if (packet != null) {
-				BuildCraftTransport.instance.sendToPlayers(packet, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
+				BuildCraftTransport.instance.sendToPlayersNear(packet, container, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 			}
 		}
 	}
@@ -241,20 +244,20 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	private PacketFluidUpdate computeFluidUpdate(boolean initPacket, boolean persistChange) {
 
 		boolean changed = false;
-		BitSet delta = new BitSet(PacketFluidUpdate.FLUID_DATA_NUM * ForgeDirection.VALID_DIRECTIONS.length);
+		BitSet delta = new BitSet(PacketFluidUpdate.FLUID_DATA_NUM * EnumFacing.values().length);
 
 		if (initClient > 0) {
 			initClient--;
 			if (initClient == 1) {
 				changed = true;
-				delta.set(0, PacketFluidUpdate.FLUID_DATA_NUM * ForgeDirection.VALID_DIRECTIONS.length);
+				delta.set(0, PacketFluidUpdate.FLUID_DATA_NUM * EnumFacing.values().length);
 			}
 		}
 
 		FluidStack[] renderCacheCopy = this.renderCache.clone();
 		int[] colorRenderCacheCopy = this.colorRenderCache.clone();
 
-		for (ForgeDirection dir : orientations) {
+		for (EnumFacing dir : orientations) {
 			FluidStack current = internalTanks[dir.ordinal()].getFluid();
 			FluidStack prev = renderCacheCopy[dir.ordinal()];
 
@@ -310,7 +313,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		}
 
 		if (changed || initPacket) {
-			PacketFluidUpdate packet = new PacketFluidUpdate(container.xCoord, container.yCoord, container.zCoord, initPacket);
+			PacketFluidUpdate packet = new PacketFluidUpdate(container.getPos(), initPacket);
 			packet.renderCache = renderCacheCopy;
 			packet.colorRenderCache = colorRenderCacheCopy;
 			packet.delta = delta;
@@ -335,12 +338,12 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		super.readFromNBT(nbttagcompound);
 
-		for (ForgeDirection direction : orientations) {
-			if (nbttagcompound.hasKey("tank[" + direction.ordinal() + "]")) {
-				internalTanks[direction.ordinal()].readFromNBT(nbttagcompound.getCompoundTag("tank[" + direction.ordinal() + "]"));
+		for (int i = 0; i < 7; i++) {
+			if (nbttagcompound.hasKey("tank[" + i + "]")) {
+				internalTanks[i].readFromNBT(nbttagcompound.getCompoundTag("tank[" + i + "]"));
 			}
-			if (direction != ForgeDirection.UNKNOWN) {
-				transferState[direction.ordinal()] = TransferState.values()[nbttagcompound.getShort("transferState[" + direction.ordinal() + "]")];
+			if (i < 6) {
+				transferState[i] = TransferState.values()[nbttagcompound.getShort("transferState[" + i + "]")];
 			}
 		}
 	}
@@ -349,18 +352,18 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-		for (ForgeDirection direction : orientations) {
+		for (int i = 0; i < 7; i++) {
 			NBTTagCompound subTag = new NBTTagCompound();
-			internalTanks[direction.ordinal()].writeToNBT(subTag);
-			nbttagcompound.setTag("tank[" + direction.ordinal() + "]", subTag);
-			if (direction != ForgeDirection.UNKNOWN) {
-				nbttagcompound.setShort("transferState[" + direction.ordinal() + "]", (short) transferState[direction.ordinal()].ordinal());
+			internalTanks[i].writeToNBT(subTag);
+			nbttagcompound.setTag("tank[" + i + "]", subTag);
+			if (i < 6) {
+				nbttagcompound.setShort("transferState[" + i + "]", (short) transferState[i].ordinal());
 			}
 		}
 	}
 
 	private void moveFluids() {
-		short newTimeSlot = (short) (container.getWorldObj().getTotalWorldTime() % travelDelay);
+		short newTimeSlot = (short) (container.getWorld().getTotalWorldTime() % travelDelay);
 
 		short outputCount = computeCurrentConnectionStatesAndTickFlows(newTimeSlot > 0 && newTimeSlot < travelDelay ? newTimeSlot : 0);
 		moveFromPipe(outputCount);
@@ -371,7 +374,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	private void moveFromPipe(short outputCount) {
 		// Move liquid from the non-center to the connected output blocks
 		if (outputCount > 0) {
-			for (ForgeDirection o : directions) {
+			for (EnumFacing o : directions) {
 				if (transferState[o.ordinal()] == TransferState.Output) {
 					TileEntity target = this.container.getTile(o);
 					if (!(target instanceof IFluidHandler)) {
@@ -385,7 +388,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 						if (filled <= 0) {
 							outputTTL[o.ordinal()]--;
 						}
-//						else FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord));
+//						else FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.getWorld(), container.xCoord, container.yCoord, container.zCoord));
 					}
 				}
 			}
@@ -394,8 +397,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 	private void moveFromCenter(short outputCount) {
 		// Split liquids moving to output equally based on flowrate, how much each side can accept and available liquid
-		FluidStack pushStack = internalTanks[ForgeDirection.UNKNOWN.ordinal()].getFluid();
-		int totalAvailable = internalTanks[ForgeDirection.UNKNOWN.ordinal()].getAvailable();
+		FluidStack pushStack = internalTanks[6].getFluid();
+		int totalAvailable = internalTanks[6].getAvailable();
 		if (totalAvailable < 1) {
 			return;
 		}
@@ -403,7 +406,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			FluidStack testStack = pushStack.copy();
 			testStack.amount = flowRate;
 			// Move liquid from the center to the output sides
-			for (ForgeDirection direction : directions) {
+			for (EnumFacing direction : directions) {
 				if (transferState[direction.ordinal()] == TransferState.Output) {
 					int available = internalTanks[direction.ordinal()].fill(testStack, false);
 					int ammountToPush = (int) (available / (double) flowRate / outputCount * Math.min(flowRate, totalAvailable));
@@ -411,12 +414,12 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 						ammountToPush++;
 					}
 
-					FluidStack liquidToPush = internalTanks[ForgeDirection.UNKNOWN.ordinal()].drain(ammountToPush, false);
+					FluidStack liquidToPush = internalTanks[6].drain(ammountToPush, false);
 					if (liquidToPush != null) {
 						int filled = internalTanks[direction.ordinal()].fill(liquidToPush, true);
-						internalTanks[ForgeDirection.UNKNOWN.ordinal()].drain(filled, true);
+						internalTanks[6].drain(filled, true);
 //						if (filled > 0)
-//							FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord));
+//							FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.getWorld(), container.xCoord, container.yCoord, container.zCoord));
 					}
 				}
 			}
@@ -425,13 +428,13 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 	private void moveToCenter() {
 		int transferInCount = 0;
-		FluidStack stackInCenter = internalTanks[ForgeDirection.UNKNOWN.ordinal()].drain(flowRate, false);
-		int spaceAvailable = internalTanks[ForgeDirection.UNKNOWN.ordinal()].getCapacity();
+		FluidStack stackInCenter = internalTanks[6].drain(flowRate, false);
+		int spaceAvailable = internalTanks[6].getCapacity();
 		if (stackInCenter != null) {
 			spaceAvailable -= stackInCenter.amount;
 		}
 
-		for (ForgeDirection dir : directions) {
+		for (EnumFacing dir : directions) {
 			inputPerTick[dir.ordinal()] = 0;
 			if (transferState[dir.ordinal()] == TransferState.Output) {
 				continue;
@@ -447,7 +450,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			transferInCount++;
 		}
 
-		for (ForgeDirection dir : directions) {
+		for (EnumFacing dir : directions) {
 			// Move liquid from input sides to the center
 			if (transferState[dir.ordinal()] != TransferState.Output && inputPerTick[dir.ordinal()] > 0) {
 
@@ -458,10 +461,10 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 				FluidStack liquidToPush = internalTanks[dir.ordinal()].drain(ammountToDrain, false);
 				if (liquidToPush != null) {
-					int filled = internalTanks[ForgeDirection.UNKNOWN.ordinal()].fill(liquidToPush, true);
+					int filled = internalTanks[6].fill(liquidToPush, true);
 					internalTanks[dir.ordinal()].drain(filled, true);
 //					if (filled > 0)
-//						FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord));
+//						FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.getWorld(), container.xCoord, container.yCoord, container.zCoord));
 				}
 			}
 		}
@@ -471,13 +474,10 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		short outputCount = 0;
 
 		// Processes all internal tanks
-		for (ForgeDirection direction : orientations) {
+		for (EnumFacing direction : orientations) {
 			internalTanks[direction.ordinal()].setTime(newTimeSlot);
 			internalTanks[direction.ordinal()].moveFluids();
 			// Input processing
-			if (direction == ForgeDirection.UNKNOWN) {
-				continue;
-			}
 			if (transferState[direction.ordinal()] == TransferState.Input) {
 				inputTTL[direction.ordinal()]--;
 				if (inputTTL[direction.ordinal()] <= 0) {
@@ -504,6 +504,9 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 				outputCount++;
 			}
 		}
+
+		internalTanks[6].setTime(newTimeSlot);
+		internalTanks[6].moveFluids();
 		return outputCount;
 	}
 
@@ -511,7 +514,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public void onNeighborBlockChange(int blockId) {
 		super.onNeighborBlockChange(blockId);
 
-		for (ForgeDirection direction : directions) {
+		for (EnumFacing direction : directions) {
 			if (!container.isPipeConnected(direction)) {
 				internalTanks[direction.ordinal()].reset();
 				transferState[direction.ordinal()] = TransferState.None;
@@ -522,7 +525,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	}
 
 	@Override
-	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
+	public boolean canPipeConnect(TileEntity tile, EnumFacing side) {
 		if (tile instanceof TileGenericPipe) {
 			Pipe<?> pipe2 = ((TileGenericPipe) tile).pipe;
 			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportFluids)) {
@@ -546,13 +549,13 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	 * ITankContainer implementation *
 	 */
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		return fill(from.ordinal(), resource, doFill);
 	}
 
 	private int fill(int tankIndex, FluidStack resource, boolean doFill) {
-	        ForgeDirection d = ForgeDirection.getOrientation(tankIndex);
-		if (d != ForgeDirection.UNKNOWN && !inputOpen(d)) {
+		EnumFacing d = EnumFacing.getFront(tankIndex);
+		if (tankIndex != 6 && !inputOpen(d)) {
 			return 0;
 		}
 
@@ -564,7 +567,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			filled = internalTanks[tankIndex].fill(resource, doFill);
 		}
 
-		if (filled > 0 && doFill && tankIndex != ForgeDirection.UNKNOWN.ordinal()) {
+		if (filled > 0 && doFill && tankIndex != 6) {
 			transferState[tankIndex] = TransferState.Input;
 			inputTTL[tankIndex] = INPUT_TTL;
 		}
@@ -573,38 +576,39 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
 		return null;
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
 		return null;
 	}
 
 	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
+	public boolean canFill(EnumFacing from, Fluid fluid) {
 	        return inputOpen(from);
 	}
 
 	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
 		return false;
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+	public FluidTankInfo[] getTankInfo(EnumFacing from) {
 		return new FluidTankInfo[]{new FluidTankInfo(internalTanks[from.ordinal()])};
 	}
 
     static {
         fluidCapacities.put(PipeFluidsCobblestone.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+        fluidCapacities.put(PipeFluidsDiamond.class, 8 * BuildCraftTransport.pipeFluidsBaseFlowRate);
         fluidCapacities.put(PipeFluidsEmerald.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
-        fluidCapacities.put(PipeFluidsGold.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
-        fluidCapacities.put(PipeFluidsIron.class, 2 * BuildCraftTransport.pipeFluidsBaseFlowRate);
-        fluidCapacities.put(PipeFluidsQuartz.class, 2 * BuildCraftTransport.pipeFluidsBaseFlowRate);
-        fluidCapacities.put(PipeFluidsSandstone.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
-        fluidCapacities.put(PipeFluidsStone.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+        fluidCapacities.put(PipeFluidsGold.class, 8 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+        fluidCapacities.put(PipeFluidsIron.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+        fluidCapacities.put(PipeFluidsQuartz.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+        fluidCapacities.put(PipeFluidsSandstone.class, 2 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+        fluidCapacities.put(PipeFluidsStone.class, 2 * BuildCraftTransport.pipeFluidsBaseFlowRate);
         fluidCapacities.put(PipeFluidsVoid.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
         fluidCapacities.put(PipeFluidsWood.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
     }

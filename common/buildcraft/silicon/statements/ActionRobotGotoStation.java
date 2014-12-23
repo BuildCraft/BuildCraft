@@ -8,10 +8,10 @@
  */
 package buildcraft.silicon.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
+
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
@@ -38,17 +38,17 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 		return StringUtils.localize("gate.action.robot.goto_station");
 	}
 
-	@Override
+	/*@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/action_robot_goto_station");
-	}
+	}*/
 
 	@Override
 	public void actionActivate(IStatementContainer container, IStatementParameter[] parameters) {
 		Pipe<?> pipe = ((Gate) container).pipe;
 		RobotRegistry registry = RobotRegistry.getRegistry(pipe.getWorld());
 
-		for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing d : EnumFacing.values()) {
 			DockingStation station = pipe.container.getStation(d);
 
 			if (station != null && station.robotTaking() != null) {
@@ -66,13 +66,12 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 					ItemStack item = stackParam.getItemStack();
 
 					if (item != null && item.getItem() instanceof ItemMapLocation) {
-						BlockIndex index = ItemMapLocation.getBlockIndex(item);
+						BlockPos index = ItemMapLocation.getBlockPos(item);
 
 						if (index != null) {
-							ForgeDirection side = ItemMapLocation.getSide(item);
+							EnumFacing side = ItemMapLocation.getSide(item);
 							DockingStation paramStation = (DockingStation)
-									registry.getStation(index.x,
-									index.y, index.z, side);
+									registry.getStation(index, side);
 
 							if (paramStation != null) {
 								newStation = paramStation;
@@ -94,6 +93,12 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 	@Override
 	public IStatementParameter createParameter(int index) {
 		return new StatementParameterItemStack();
+	}
+
+	@Override
+	public int getSheetLocation() {
+		// TODO Auto-generated method stub
+		return 28;
 	}
 
 }

@@ -10,7 +10,7 @@ package buildcraft.silicon;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.CraftingResult;
@@ -57,8 +57,8 @@ public class TileIntegrationTable extends TileLaserTableBase implements IFlexibl
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		if (worldObj.isRemote) {
 			return;
@@ -90,7 +90,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements IFlexibl
 				ItemStack result = craftResult.crafted.copy();
 
 				ITransactor trans = Transactor.getTransactorFor(invOutput);
-				trans.add(result, ForgeDirection.UP, true);
+				trans.add(result, EnumFacing.UP, true);
 			}
 		}
 	}
@@ -174,13 +174,8 @@ public class TileIntegrationTable extends TileLaserTableBase implements IFlexibl
 	}
 
 	@Override
-	public String getInventoryName() {
-		return StringUtils.localize("tile.integrationTableBlock.name");
-	}
-
-	@Override
-	public boolean hasCustomInventoryName() {
-		return false;
+	public String getName() {
+		return "tile.integrationTableBlock.name";
 	}
 
     @Override
@@ -228,7 +223,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements IFlexibl
 	}
 
 	@Override
-	public ItemStack decrCraftingItemgStack(int slotid, int val) {
+	public ItemStack decrCraftingItemStack(int slotid, int val) {
 		return decrStackSize(slotid + 3, val);
 	}
 

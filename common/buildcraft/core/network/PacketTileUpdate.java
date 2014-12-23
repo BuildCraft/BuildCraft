@@ -10,6 +10,7 @@ package buildcraft.core.network;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import buildcraft.api.core.ISerializable;
 
 public class PacketTileUpdate extends PacketUpdate {
 
@@ -17,26 +18,22 @@ public class PacketTileUpdate extends PacketUpdate {
 		super(PacketIds.TILE_UPDATE);
 	}
 
-	public PacketTileUpdate(ISynchronizedTile tile) {
+	public PacketTileUpdate(ISerializable tile) {
 		super(PacketIds.TILE_UPDATE);
 
-		payload = tile.getPacketPayload();
-
 		TileEntity entity = (TileEntity) tile;
-		posX = entity.xCoord;
-		posY = entity.yCoord;
-		posZ = entity.zCoord;
+		pos = entity.getPos();
 
 		this.isChunkDataPacket = true;
-
+		this.payload = tile;
 	}
 
 	public boolean targetExists(World world) {
-		return world.blockExists(posX, posY, posZ);
+		return world.isBlockLoaded(pos);
 	}
 
 	public TileEntity getTarget(World world) {
-		return world.getTileEntity(posX, posY, posZ);
+		return world.getTileEntity(pos);
 	}
 
 }

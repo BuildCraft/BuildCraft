@@ -21,8 +21,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.biome.BiomeGenBase;
-import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
-import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
+import net.minecraftforge.fml.common.event.FMLInterModComms.IMCEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms.IMCMessage;
 import net.minecraftforge.fluids.FluidStack;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
@@ -31,6 +31,7 @@ import buildcraft.api.gates.IGateExpansion;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.IntegrationRecipeManager;
 import buildcraft.core.recipes.RefineryRecipeManager;
+import buildcraft.core.utils.Utils;
 import buildcraft.energy.worldgen.OilPopulate;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.recipes.GateExpansionRecipe;
@@ -190,9 +191,7 @@ public final class InterModComms {
 					} else {
 						Block block = (Block) Block.blockRegistry.getObject(blockName);
 						if (block.getRenderType() != 0 && block.getRenderType() != 31) {
-							BuildCraftTransport.facadeItem.addFacade(
-									"buildcraft:facade{" + blockName + "}",
-									new ItemStack(block, 1, metaId));
+							BuildCraftTransport.facadeItem.addFacade(new ItemStack(block, 1, metaId));
 						} else {
 							logRedundantAddFacadeMessage(m, block.toString());
 						}
@@ -203,10 +202,8 @@ public final class InterModComms {
 
 				Block block = Block.getBlockFromItem(modItemStack.getItem());
 				if (block != null && block.getRenderType() != 0 && block.getRenderType() != 31) {
-					BuildCraftTransport.facadeItem.addFacade(
-							"buildcraft:facade{" + Block.blockRegistry.getNameForObject(block) + "}",
-							modItemStack);
-				} else {
+					BuildCraftTransport.facadeItem.addFacade(modItemStack);
+				} else if (block != null) {
 					logRedundantAddFacadeMessage(m, block.toString());
 				}
 			}
@@ -221,7 +218,7 @@ public final class InterModComms {
 
 				Block block = Block.getBlockFromItem(modItemStack.getItem());
 				if (block != null) {
-					String blockName = Block.blockRegistry.getNameForObject(block);
+					String blockName = Utils.getBlockName(block);
 					ItemFacade.blacklistFacade(blockName);
 				}
 			} else {

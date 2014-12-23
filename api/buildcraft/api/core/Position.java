@@ -2,48 +2,41 @@
  * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ * The BuildCraft API is distributed under the terms of the MIT License.
+ * Please check the contents of the license, which should be located
+ * as "LICENSE.API" in the BuildCraft source code distribution.
  */
 package buildcraft.api.core;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 
-public class Position {
+public class Position implements ISerializable {
 
-	@NetworkData
 	public double x, y, z;
-
-	@NetworkData
-	public ForgeDirection orientation;
+	public EnumFacing orientation;
 
 	public Position() {
 		x = 0;
 		y = 0;
 		z = 0;
-		orientation = ForgeDirection.UNKNOWN;
 	}
 
 	public Position(double ci, double cj, double ck) {
 		x = ci;
 		y = cj;
 		z = ck;
-		orientation = ForgeDirection.UNKNOWN;
 	}
 
-	public Position(double ci, double cj, double ck, ForgeDirection corientation) {
+	public Position(double ci, double cj, double ck, EnumFacing corientation) {
 		x = ci;
 		y = cj;
 		z = ck;
 		orientation = corientation;
-
-		if (orientation == null) {
-			orientation = ForgeDirection.UNKNOWN;
-		}
 	}
 
 	public Position(Position p) {
@@ -58,17 +51,18 @@ public class Position {
 	}
 
 	public Position(TileEntity tile) {
-		x = tile.xCoord;
-		y = tile.yCoord;
-		z = tile.zCoord;
-		orientation = ForgeDirection.UNKNOWN;
+		this(tile.getPos());
 	}
 
-	public Position(BlockIndex index) {
-		x = index.x;
-		y = index.y;
-		z = index.z;
-		orientation = ForgeDirection.UNKNOWN;
+	public Position(BlockPos pos) {
+		x = pos.getX();
+		y = pos.getY();
+		z = pos.getZ();
+	}
+	
+	public Position(BlockPos pos, EnumFacing orientation) {
+		this(pos);
+		this.orientation = orientation;
 	}
 
 	public void moveRight(double step) {
@@ -139,21 +133,23 @@ public class Position {
 	}
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		if (orientation == null) {
-			orientation = ForgeDirection.UNKNOWN;
-		}
-
 		nbttagcompound.setDouble("i", x);
 		nbttagcompound.setDouble("j", y);
 		nbttagcompound.setDouble("k", z);
-		nbttagcompound.setByte("orientation", (byte) orientation.ordinal());
+		nbttagcompound.setByte("orientation", (byte) (orientation != null ? orientation.ordinal() : 6));
 	}
 
 	public void readFromNBT(NBTTagCompound nbttagcompound) {
 		x = nbttagcompound.getDouble("i");
 		y = nbttagcompound.getDouble("j");
 		z = nbttagcompound.getDouble("k");
-		orientation = ForgeDirection.values() [nbttagcompound.getByte("orientation")];
+
+		byte o = nbttagcompound.getByte("orientation");
+		if (o == 6) {
+			orientation = null;
+		} else {
+			orientation = EnumFacing.values()[o];
+		}
 	}
 
 	@Override
@@ -177,5 +173,30 @@ public class Position {
 		double sqrDis = dx * dx + dy * dy + dz * dz;
 
 		return !(sqrDis > f * f);
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		x = stream.readDouble();
+		y = stream.readDouble();
+		z = stream.readDouble();
+		byte o = stream.readByte();
+		if (o == 6) {
+			orientation = null;
+		} else {
+			orientation = EnumFacing.getFront(o);
+		}
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		stream.writeDouble(x);
+		stream.writeDouble(y);
+		stream.writeDouble(z);
+		stream.writeByte(orientation != null ? orientation.ordinal() : 6);
+	}
+
+	public BlockPos toBlockPos() {
+		return new BlockPos((int) x, (int) y, (int) z);
 	}
 }

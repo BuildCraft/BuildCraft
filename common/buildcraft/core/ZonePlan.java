@@ -12,18 +12,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.BlockPos;
 
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.api.core.BlockIndex;
+import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.IZone;
-import buildcraft.api.core.NetworkData;
 
-public class ZonePlan implements IZone {
-
-	@NetworkData
+public class ZonePlan implements IZone, ISerializable {
 	private HashMap<ChunkIndex, ZoneChunk> chunkMapping = new HashMap<ChunkIndex, ZoneChunk>();
 
 	public boolean get(int x, int z) {
@@ -94,15 +93,15 @@ public class ZonePlan implements IZone {
 	}
 
 	@Override
-	public double distanceTo(BlockIndex index) {
+	public double distanceTo(BlockPos pos) {
 		double maxSqrDistance = Double.MAX_VALUE;
 
 		for (Map.Entry<ChunkIndex, ZoneChunk> e : chunkMapping.entrySet()) {
 			double cx = e.getKey().x << 4 + 8;
 			double cz = e.getKey().x << 4 + 8;
 
-			double dx = cx - index.x;
-			double dz = cz - index.z;
+			double dx = cx - pos.getX();
+			double dz = cz - pos.getZ();
 
 			double sqrDistance = dx * dx + dz * dz;
 
@@ -123,7 +122,7 @@ public class ZonePlan implements IZone {
 	}
 
 	@Override
-	public BlockIndex getRandomBlockIndex(Random rand) {
+	public BlockPos getRandomBlockPos(Random rand) {
 		if (chunkMapping.size() == 0) {
 			return null;
 		}
@@ -132,16 +131,35 @@ public class ZonePlan implements IZone {
 
 		for (Map.Entry<ChunkIndex, ZoneChunk> e : chunkMapping.entrySet()) {
 			if (chunkId == 0) {
-				BlockIndex i = e.getValue().getRandomBlockIndex(rand);
-				i.x = (e.getKey().x << 4) + i.x;
-				i.z = (e.getKey().z << 4) + i.z;
-
-				return i;
+				BlockPos i = e.getValue().getRandomBlockPos(rand);
+				return i.add((e.getKey().x << 4), 0, (e.getKey().z << 4));
 			}
 
 			chunkId--;
 		}
 
 		return null;
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		chunkMapping.clear();
+		int size = stream.readInt();
+		for (int i = 0; i < size; i++) {
+			ChunkIndex key = new ChunkIndex();
+			ZoneChunk value = new ZoneChunk();
+			key.readData(stream);
+			value.readData(stream);
+			chunkMapping.put(key, value);
+		}
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		stream.writeInt(chunkMapping.size());
+		for (Map.Entry<ChunkIndex, ZoneChunk> e : chunkMapping.entrySet()) {
+			e.getKey().writeData(stream);
+			e.getValue().writeData(stream);
+		}
 	}
 }

@@ -13,10 +13,9 @@ import java.util.LinkedList;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultProps;
@@ -46,7 +45,7 @@ class UrbanistToolFiller extends UrbanistToolArea {
 			this.index = index;
 		}
 
-		@Override
+		/*@Override
 		public ResourceLocation getTexture() {
 			return TextureMap.locationBlocksTexture;
 		}
@@ -59,7 +58,7 @@ class UrbanistToolFiller extends UrbanistToolArea {
 			} else {
 				return null;
 			}
-		}
+		}*/
 
 		@Override
 		public String getDescription() {
@@ -87,10 +86,10 @@ class UrbanistToolFiller extends UrbanistToolArea {
 		}
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIcon() {
 		return UrbanistToolsIconProvider.INSTANCE.getIcon(UrbanistToolsIconProvider.Tool_Filler);
-	}
+	}*/
 
 	@Override
 	public String getDescription() {

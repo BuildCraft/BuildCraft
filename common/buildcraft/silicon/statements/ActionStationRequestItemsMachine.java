@@ -8,7 +8,6 @@
  */
 package buildcraft.silicon.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -26,14 +25,20 @@ public class ActionStationRequestItemsMachine extends BCStatement implements IAc
 		return StringUtils.localize("gate.action.station.provide_machine_request");
 	}
 
-	@Override
+	/*@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/action_station_machine_request");
-	}
+	}*/
 
 	@Override
 	public void actionActivate(IStatementContainer source,
 			IStatementParameter[] parameters) {
 		
+	}
+
+	@Override
+	public int getSheetLocation() {
+		// TODO Auto-generated method stub
+		return 19;
 	}
 }

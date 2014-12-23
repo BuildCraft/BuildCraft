@@ -12,13 +12,13 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
+import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.boards.RedstoneBoardRegistry;
@@ -26,11 +26,12 @@ import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementManager;
-import buildcraft.builders.schematics.SchematicRotateMeta;
+import buildcraft.builders.schematics.SchematicRotate;
 import buildcraft.commander.BlockRequester;
 import buildcraft.commander.BlockZonePlan;
 import buildcraft.commander.TileRequester;
 import buildcraft.commander.TileZonePlan;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
@@ -66,6 +67,7 @@ import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 import buildcraft.silicon.SiliconProxy;
 import buildcraft.silicon.TileAdvancedCraftingTable;
 import buildcraft.silicon.TileAssemblyTable;
+import buildcraft.silicon.TileChargingTable;
 import buildcraft.silicon.TileIntegrationTable;
 import buildcraft.silicon.TileLaser;
 import buildcraft.silicon.boards.BoardRecipe;
@@ -88,10 +90,10 @@ import buildcraft.silicon.statements.RobotsActionProvider;
 import buildcraft.silicon.statements.RobotsTriggerProvider;
 import buildcraft.silicon.statements.TriggerRobotSleep;
 
-@Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon", dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
+@Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraftSilicon", dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
 public class BuildCraftSilicon extends BuildCraftMod {
 
-	@Mod.Instance("BuildCraft|Silicon")
+	@Mod.Instance("BuildCraftSilicon")
 	public static BuildCraftSilicon instance;
 
 	public static ItemRedstoneChipset redstoneChipset;
@@ -124,19 +126,19 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		BuildCraftCore.mainConfiguration.save();
 
 		laserBlock = new BlockLaser();
-		laserBlock.setBlockName("laserBlock");
+		laserBlock.setUnlocalizedName("laserBlock");
 		CoreProxy.proxy.registerBlock(laserBlock);
 
 		assemblyTableBlock = new BlockLaserTable();
-		assemblyTableBlock.setBlockName("laserTableBlock");
+		assemblyTableBlock.setUnlocalizedName("laserTableBlock");
 		CoreProxy.proxy.registerBlock(assemblyTableBlock, ItemLaserTable.class);
 
 		zonePlanBlock = new BlockZonePlan();
-		zonePlanBlock.setBlockName("zonePlan");
+		zonePlanBlock.setUnlocalizedName("zonePlan");
 		CoreProxy.proxy.registerBlock(zonePlanBlock);
 
 		requesterBlock = new BlockRequester();
-		requesterBlock.setBlockName("requester");
+		requesterBlock.setUnlocalizedName("requester");
 		CoreProxy.proxy.registerBlock(requesterBlock);
 
 		redstoneChipset = new ItemRedstoneChipset();
@@ -196,10 +198,12 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				"net.minecraft.src.buildcraft.factory.TileAssemblyAdvancedWorkbench");
 		CoreProxy.proxy.registerTileEntity(TileIntegrationTable.class,
 				"net.minecraft.src.buildcraft.factory.TileIntegrationTable");
+        CoreProxy.proxy.registerTileEntity(TileChargingTable.class,
+                "net.minecraft.src.buildcraft.factory.TileChargingTable");
 		CoreProxy.proxy.registerTileEntity(TileZonePlan.class, "net.minecraft.src.buildcraft.commander.TileZonePlan");
 		CoreProxy.proxy.registerTileEntity(TileRequester.class, "net.minecraft.src.buildcraft.commander.TileRequester");
 
-		BuilderAPI.schematicRegistry.registerSchematicBlock(laserBlock, SchematicRotateMeta.class, new int[] {2, 5, 3, 4}, true);
+		BuilderAPI.schematicRegistry.registerSchematicBlock(laserBlock, SchematicRotate.class, BlockBuildCraft.FACING_PROP);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
@@ -245,6 +249,15 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'R', "dustRedstone",
 				'C', new ItemStack(redstoneChipset, 1, 0),
 				'G', "gearDiamond");
+
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 3),
+				"ORO",
+				"OCO",
+				"OGO",
+				'O', Blocks.obsidian,
+				'R', "dustRedstone",
+				'C', new ItemStack(redstoneChipset, 1, 0),
+				'G', "gearGold");
 
 		// COMMANDER BLOCKS
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(zonePlanBlock, 1, 0),
@@ -324,18 +337,5 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				TileAdvancedCraftingTable.class.getCanonicalName());
 		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
 				TileIntegrationTable.class.getCanonicalName());
-	}
-
-	@Mod.EventHandler
-	public void remap(FMLMissingMappingsEvent event) {
-		for (FMLMissingMappingsEvent.MissingMapping mapping: event.get()) {
-			if (mapping.name.equals("BuildCraft|Silicon:null")) {
-				if (mapping.type == GameRegistry.Type.ITEM) {
-					mapping.remap(Item.getItemFromBlock(assemblyTableBlock));
-				} else {
-					mapping.remap(assemblyTableBlock);
-				}
-			}
-		}
 	}
 }

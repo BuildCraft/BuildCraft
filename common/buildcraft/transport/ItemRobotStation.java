@@ -8,16 +8,16 @@
  */
 package buildcraft.transport;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IPipePluggable;
@@ -39,11 +39,11 @@ public class ItemRobotStation extends ItemBuildCraft {
 	}
 
 	@Override
-	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
+	public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player) {
 		return true;
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister par1IconRegister) {
 	    // NOOP
@@ -53,7 +53,7 @@ public class ItemRobotStation extends ItemBuildCraft {
     @SideOnly(Side.CLIENT)
     public int getSpriteNumber() {
         return 0;
-    }
+    }*/
 
 	public static class RobotStationPluggable implements IPipePluggable {
 		private DockingStation station;
@@ -79,12 +79,12 @@ public class ItemRobotStation extends ItemBuildCraft {
 		}
 
 		@Override
-		public void onAttachedPipe(IPipeTile pipe, ForgeDirection direction) {
+		public void onAttachedPipe(IPipeTile pipe, EnumFacing direction) {
 			validate(pipe, direction);
 		}
 
 		@Override
-		public void onDetachedPipe(IPipeTile pipe, ForgeDirection direction) {
+		public void onDetachedPipe(IPipeTile pipe, EnumFacing direction) {
 			invalidate();
 		}
 
@@ -93,7 +93,7 @@ public class ItemRobotStation extends ItemBuildCraft {
 		}
 
 		@Override
-		public boolean blocking(IPipeTile pipe, ForgeDirection direction) {
+		public boolean blocking(IPipeTile pipe, EnumFacing direction) {
 			return true;
 		}
 
@@ -108,15 +108,11 @@ public class ItemRobotStation extends ItemBuildCraft {
 		}
 
 		@Override
-		public void validate(IPipeTile pipe, ForgeDirection direction) {
+		public void validate(IPipeTile pipe, EnumFacing direction) {
 			TileGenericPipe gPipe = (TileGenericPipe) pipe;
 			if (!isValid && !gPipe.getWorld().isRemote) {
 				station = (DockingStation)
-						RobotRegistry.getRegistry(gPipe.getWorld()).getStation(
-						gPipe.xCoord,
-						gPipe.yCoord,
-						gPipe.zCoord,
-						direction);
+						RobotRegistry.getRegistry(gPipe.getWorld()).getStation(gPipe.getPos(), direction);
 
 				if (station == null) {
 					station = new DockingStation(gPipe, direction);

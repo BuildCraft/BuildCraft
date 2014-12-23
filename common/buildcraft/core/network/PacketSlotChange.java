@@ -11,6 +11,7 @@ package buildcraft.core.network;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 
 import buildcraft.core.utils.Utils;
 
@@ -22,8 +23,8 @@ public class PacketSlotChange extends PacketCoordinates {
 	public PacketSlotChange() {
 	}
 
-	public PacketSlotChange(int id, int x, int y, int z, int slot, ItemStack stack) {
-		super(id, x, y, z);
+	public PacketSlotChange(int id, BlockPos pos, int slot, ItemStack stack) {
+		super(id, pos);
 		this.slot = slot;
 		this.stack = stack;
 	}

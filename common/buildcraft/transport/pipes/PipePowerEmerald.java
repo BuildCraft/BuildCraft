@@ -2,13 +2,12 @@ package buildcraft.transport.pipes;
 
 import net.minecraft.item.Item;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.core.RFBattery;
 import buildcraft.transport.PipeIconProvider;
 
@@ -25,15 +24,15 @@ public class PipePowerEmerald extends PipePowerWood {
 		transport.initFromPipe(this.getClass());
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
 		return BuildCraftTransport.instance.pipeIconProvider;
-	}
+	}*/
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
-		if (direction != ForgeDirection.UNKNOWN && powerSources[direction.ordinal()]) {
+	public int getIconIndex(EnumFacing direction) {
+		if (direction != null && powerSources[direction.ordinal()]) {
 			return solidIconIndex;
 		} else {
 			return standardIconIndex;

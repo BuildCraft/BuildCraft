@@ -15,8 +15,8 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.tooltips.IToolTipProvider;
@@ -74,7 +74,7 @@ public class GuiBetterButton extends GuiButton implements IToolTipProvider {
 			return;
 		}
 		
-		FontRenderer fontrenderer = minecraft.fontRenderer;
+		FontRenderer fontrenderer = minecraft.fontRendererObj;
 		bindButtonTextures(minecraft);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		int xOffset = texture.getX();

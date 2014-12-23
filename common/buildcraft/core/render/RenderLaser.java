@@ -10,6 +10,7 @@ package buildcraft.core.render;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GLAllocation;
@@ -17,7 +18,6 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.core.Position;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
@@ -34,6 +34,7 @@ public class RenderLaser extends Render {
 	private static int [][] scaledBoxes;
 
 	public RenderLaser() {
+		super(Minecraft.getMinecraft().getRenderManager());
 	}
 
 	private static ModelRenderer getBox(int index) {

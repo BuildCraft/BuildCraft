@@ -17,7 +17,7 @@ import net.minecraft.block.BlockWorkbench;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.robots.IRequestProvider;
@@ -44,7 +44,7 @@ public class RobotsActionProvider implements IActionProvider {
 
 		ArrayList<DockingStation> stations = new ArrayList<DockingStation>();
 
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing dir : EnumFacing.values()) {
 			if (((TileGenericPipe) tile).getStation(dir) != null) {
 				stations.add(((TileGenericPipe) tile).getStation(dir));
 			}
@@ -64,7 +64,7 @@ public class RobotsActionProvider implements IActionProvider {
 			result.add(BuildCraftSilicon.actionStationDropInPipe);
 		}
 
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing dir : EnumFacing.values()) {
 			TileEntity sideTile = ((TileGenericPipe) tile).getTile(dir);
 			Block sideBlock = ((TileGenericPipe) tile).getBlock(dir);
 			
@@ -94,7 +94,7 @@ public class RobotsActionProvider implements IActionProvider {
 	}
 
 	@Override
-	public Collection<IActionExternal> getExternalActions(ForgeDirection side, TileEntity tile) {
+	public Collection<IActionExternal> getExternalActions(EnumFacing side, TileEntity tile) {
 		return null;
 	}
 

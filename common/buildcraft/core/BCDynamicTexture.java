@@ -9,10 +9,11 @@
 package buildcraft.core;
 
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BCDynamicTexture {
 
@@ -76,27 +77,28 @@ public class BCDynamicTexture {
 
 		float f = 1F / width;
 		float f1 = 1F / height;
-		Tessellator tessellator = Tessellator.instance;
-		tessellator.startDrawingQuads();
-		tessellator.addVertexWithUV(
+		Tessellator tessellator = Tessellator.getInstance();
+		WorldRenderer renderer = tessellator.getWorldRenderer();
+		renderer.startDrawingQuads();
+		renderer.addVertexWithUV(
 				screenX + 0,
 				screenY + clipHeight,
 				zLevel,
 				(clipX + 0) * f,
 				(clipY + clipHeight) * f1);
-		tessellator.addVertexWithUV(
+		renderer.addVertexWithUV(
 				screenX + clipWidth,
 				screenY + clipHeight,
 				zLevel,
 				(clipX + clipWidth) * f,
 				(clipY + clipHeight) * f1);
-		tessellator.addVertexWithUV(
+		renderer.addVertexWithUV(
 				screenX + clipWidth,
 				screenY + 0,
 				zLevel,
 				(clipX + clipWidth) * f,
 				(clipY + 0) * f1);
-		tessellator.addVertexWithUV(
+		renderer.addVertexWithUV(
 				screenX + 0,
 				screenY + 0,
 				zLevel,

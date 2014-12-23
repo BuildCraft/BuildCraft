@@ -2,23 +2,23 @@
  * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ * The BuildCraft API is distributed under the terms of the MIT License.
+ * Please check the contents of the license, which should be located
+ * as "LICENSE.API" in the BuildCraft source code distribution.
  */
 package buildcraft.api.core;
 
 import java.util.Locale;
 import java.util.Random;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-public enum EnumColor {
+public enum EnumColor implements IStringSerializable {
 
 	BLACK,
 	RED,
@@ -107,7 +107,10 @@ public enum EnumColor {
 		0xe4e4e4};
 
 	@SideOnly(Side.CLIENT)
-	private static IIcon[] brushIcons;
+	private static final ResourceLocation ICON_SHEET = new ResourceLocation("buildcraft", "textures/gui/sheet_brushes.png");
+
+	@SideOnly(Side.CLIENT)
+	private static SheetIcon[] brushIcons;
 
 	public int getDarkHex() {
 		return DARK_HEX[ordinal()];
@@ -192,16 +195,15 @@ public enum EnumColor {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static void registerIcons(IIconRegister iconRegister) {
-		brushIcons = new IIcon[16];
+	public static void registerIcons() {
+		brushIcons = new SheetIcon[16];
 		for (EnumColor c : values()) {
-			brushIcons[c.ordinal()] = iconRegister.registerIcon("buildcraft:triggers/color_"
-					+ c.name().toLowerCase(Locale.ENGLISH));
+			brushIcons[c.ordinal()] = new SheetIcon(ICON_SHEET, c.ordinal() * 16, 0);
 		}
 	}
 
 	@SideOnly(Side.CLIENT)
-	public IIcon getIcon() {
+	public SheetIcon getIcon() {
 		return brushIcons [ordinal()];
 	}
 }

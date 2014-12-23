@@ -8,16 +8,19 @@
  */
 package buildcraft.commander;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.EnumColor;
+import buildcraft.api.core.SheetIcon;
 import buildcraft.core.BCDynamicTexture;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ZonePlan;
@@ -26,7 +29,8 @@ import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.gui.buttons.GuiBetterButton;
 import buildcraft.core.gui.tooltips.ToolTip;
 import buildcraft.core.gui.tooltips.ToolTipLine;
-import buildcraft.core.network.RPCHandler;
+import buildcraft.core.network.CommandWriter;
+import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.StringUtils;
 
 public class GuiZonePlan extends GuiAdvancedInterface {
@@ -76,7 +80,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 		}
 
 		@Override
-		public IIcon getIcon() {
+		public SheetIcon getIcon() {
 			return color.getIcon();
 		}
 
@@ -96,19 +100,10 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 		zonePlan = iZonePlan;
 
-		getContainer().mapTexture = new BCDynamicTexture(mapWidth, mapHeight);
-		getContainer().mapTexture.createDynamicTexture();
-
-		currentSelection = new BCDynamicTexture(mapWidth, mapHeight);
-		currentSelection.createDynamicTexture();
-
-		newSelection = new BCDynamicTexture(1, 1);
-		newSelection.createDynamicTexture();
-
 		getContainer().currentAreaSelection = new ZonePlan();
 
-		cx = zonePlan.xCoord;
-		cz = zonePlan.zCoord;
+		cx = zonePlan.getPos().getX();
+		cz = zonePlan.getPos().getZ();
 
 		resetNullSlots(16);
 
@@ -120,12 +115,23 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 		colorSelected = (AreaSlot) slots.get(0);
 
+		inventorySlots = container.inventorySlots;
+	}
+
+	private void initializeMap() {
+		getContainer().mapTexture = new BCDynamicTexture(mapWidth, mapHeight);
+		getContainer().mapTexture.createDynamicTexture();
+
+		currentSelection = new BCDynamicTexture(mapWidth, mapHeight);
+		currentSelection.createDynamicTexture();
+
+		newSelection = new BCDynamicTexture(1, 1);
+		newSelection.createDynamicTexture();
+
 		newSelection.setColor(0, 0, colorSelected.color.getDarkHex(), alpha);
 
 		uploadMap();
 		getContainer().loadArea(colorSelected.color.ordinal());
-
-		inventorySlots = container.inventorySlots;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -141,14 +147,24 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	}
 
 	private void uploadMap() {
-		RPCHandler.rpcServer(getContainer(), "computeMap", cx, cz, getContainer().mapTexture.width,
-				getContainer().mapTexture.height,
-				zoomLevel);
+		BuildCraftCore.instance.sendToServer(new PacketCommand(getContainer(), "computeMap", new CommandWriter() {
+			public void write(ByteBuf data) {
+				data.writeInt(cx);
+				data.writeInt(cz);
+				data.writeShort(getContainer().mapTexture.width);
+				data.writeShort(getContainer().mapTexture.height);
+				data.writeByte(zoomLevel);
+			}
+		}));
 	}
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		super.drawGuiContainerBackgroundLayer(f, x, y);
+
+		if (getContainer().mapTexture == null) {
+			initializeMap();
+		}
 
 		mapXMin = (width - getContainer().mapTexture.width) / 2;
 
@@ -193,7 +209,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	}
 
 	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 
 		int blocksX = (mouseX - mapXMin) * zoomLevel;
@@ -246,8 +262,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	}
 
 	@Override
-	protected void mouseMovedOrUp(int mouseX, int mouseY, int eventType) {
-		super.mouseMovedOrUp(mouseX, mouseY, eventType);
+	protected void mouseReleased(int mouseX, int mouseY, int eventType) {
+		super.mouseReleased(mouseX, mouseY, eventType);
 
 		if (eventType != -1 && inSelection) {
 			boolean val = tool.displayString.equals("+");
@@ -278,7 +294,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	}
 
 	@Override
-	protected void keyTyped(char carac, int val) {
+	protected void keyTyped(char carac, int val) throws IOException {
 		super.keyTyped(carac, val);
 
 		if (carac == '+' && zoomLevel > 1) {

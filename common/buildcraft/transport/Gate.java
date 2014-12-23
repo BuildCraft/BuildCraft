@@ -15,13 +15,12 @@ import java.util.List;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGate;
@@ -39,14 +38,11 @@ import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.GuiIds;
-import buildcraft.core.statements.ActionRedstoneOutput;
-import buildcraft.core.statements.StatementParameterRedstoneGateSideOnly;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.gates.StatementSlot;
 import buildcraft.transport.gui.ContainerGateInterface;
-import buildcraft.transport.statements.ActionRedstoneFaderOutput;
 import buildcraft.transport.statements.ActionValve;
 
 public final class Gate implements IGate, IStatementContainer {
@@ -80,10 +76,10 @@ public final class Gate implements IGate, IStatementContainer {
 	 */
 	public boolean isPulsing = false;
 	private float pulseStage = 0;
-	private ForgeDirection direction;
+	private EnumFacing direction;
 
 	// / CONSTRUCTOR
-	public Gate(Pipe<?> pipe, GateMaterial material, GateLogic logic, ForgeDirection direction) {
+	public Gate(Pipe<?> pipe, GateMaterial material, GateLogic logic, EnumFacing direction) {
 		this.pipe = pipe;
 		this.material = material;
 		this.logic = logic;
@@ -95,6 +91,11 @@ public final class Gate implements IGate, IStatementContainer {
 	}
 
 	public void setTrigger(int position, IStatement trigger) {
+		if (trigger != triggers[position]) {
+			for (int i = 0; i < triggerParameters[position].length; i++) {
+				triggerParameters[position][i] = null;
+			}
+		}
 		triggers[position] = trigger;
 	}
 
@@ -103,12 +104,18 @@ public final class Gate implements IGate, IStatementContainer {
 	}
 
 	public void setAction(int position, IStatement action) {
-		// HUGE HACK! TODO - Remove in 6.2 API rewrite by adding
+		// HUGE HACK! TODO - Remove in 6.3 API rewrite by adding
 		// ways for actions to fix their state on removal.
 		if (actions[position] instanceof ActionValve && pipe != null && pipe.transport != null) {
-			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			for (EnumFacing side : EnumFacing.values()) {
 				pipe.transport.allowInput(side, true);
 				pipe.transport.allowOutput(side, true);
+			}
+		}
+
+		if (action != actions[position]) {
+			for (int i = 0; i < actionParameters[position].length; i++) {
+				actionParameters[position][i] = null;
 			}
 		}
 		actions[position] = action;
@@ -134,11 +141,11 @@ public final class Gate implements IGate, IStatementContainer {
 		return actionParameters[action][param];
 	}
 
-	public ForgeDirection getDirection() {
+	public EnumFacing getDirection() {
 		return direction;
 	}
 
-	public void setDirection(ForgeDirection direction) {
+	public void setDirection(EnumFacing direction) {
 		this.direction = direction;
 	}
 
@@ -283,7 +290,7 @@ public final class Gate implements IGate, IStatementContainer {
 	// GUI
 	public void openGui(EntityPlayer player) {
 		if (!player.worldObj.isRemote) {
-			player.openGui(BuildCraftTransport.instance, GuiIds.GATES, pipe.container.getWorldObj(), pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+			player.openGui(BuildCraftTransport.instance, GuiIds.GATES, pipe.container.getWorld(), pipe.container.getPos().getX(), pipe.container.getPos().getY(), pipe.container.getPos().getZ());
 			((ContainerGateInterface) player.openContainer).setGate(direction.ordinal());
 		}
 	}
@@ -346,7 +353,15 @@ public final class Gate implements IGate, IStatementContainer {
 	public int getSidedRedstoneOutput() {
 		return redstoneOutputSide;
 	}
-	
+
+	public void setRedstoneOutput(boolean sideOnly, int value) {
+		redstoneOutputSide = value;
+
+		if (!sideOnly) {
+			redstoneOutput = value;
+		}
+	}
+
 	public void startResolution() {
 		for (GateExpansionController expansion : expansions.values()) {
 			expansion.startResolution();
@@ -456,7 +471,7 @@ public final class Gate implements IGate, IStatementContainer {
 			if (action instanceof IActionInternal) {
 				((IActionInternal) action).actionActivate(this, slot.parameters);
 			} else if (action instanceof IActionExternal) {
-				for (ForgeDirection side: ForgeDirection.VALID_DIRECTIONS) {
+				for (EnumFacing side: EnumFacing.values()) {
 					TileEntity tile = this.getPipe().getTile().getAdjacentTile(side);
 					if (tile != null) {
 						((IActionExternal) action).actionActivate(tile, side, this, slot.parameters);
@@ -465,33 +480,17 @@ public final class Gate implements IGate, IStatementContainer {
 			} else {
 				continue;
 			}
-			
-			// TODO: A lot of the code below should be removed in favor
-			// of calls to actionActivate
 
 			// Custom gate actions take precedence over defaults.
 			if (resolveAction(action)) {
 				continue;
 			}
 
-			if (action instanceof ActionRedstoneOutput || action instanceof ActionRedstoneFaderOutput) {
-				if (slot.parameters != null && slot.parameters.length >= 1 &&
-						slot.parameters[0] instanceof StatementParameterRedstoneGateSideOnly &&
-						((StatementParameterRedstoneGateSideOnly) slot.parameters[0]).isOn) {
-					redstoneOutputSide = (action instanceof ActionRedstoneFaderOutput) ? ((ActionRedstoneFaderOutput) action).level : 15;
-				} else {
-					redstoneOutput = (action instanceof ActionRedstoneFaderOutput) ? ((ActionRedstoneFaderOutput) action).level : 15;
-					if (redstoneOutput > redstoneOutputSide) {
-						redstoneOutputSide = redstoneOutput;
-					}
-				}
-			} else {
-				for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-					TileEntity tile = pipe.container.getTile(side);
-					if (tile instanceof IActionReceptor) {
-						IActionReceptor recept = (IActionReceptor) tile;
-						recept.actionActivated(action, slot.parameters);
-					}
+			for (EnumFacing side : EnumFacing.values()) {
+				TileEntity tile = pipe.container.getTile(side);
+				if (tile instanceof IActionReceptor) {
+					IActionReceptor recept = (IActionReceptor) tile;
+					recept.actionActivated(action, slot.parameters);
 				}
 			}
 		}
@@ -532,7 +531,7 @@ public final class Gate implements IGate, IStatementContainer {
 				return true;
 			}
 		} else if (trigger instanceof ITriggerExternal) {
-			for (ForgeDirection side: ForgeDirection.VALID_DIRECTIONS) {
+			for (EnumFacing side: EnumFacing.values()) {
 				TileEntity tile = this.getPipe().getTile().getAdjacentTile(side);
 				if (tile != null && ((ITriggerExternal) trigger).isTriggerActive(tile, side, this, parameters)) {
 					return true;
@@ -569,9 +568,8 @@ public final class Gate implements IGate, IStatementContainer {
 		ArrayList<IStatement> allTriggers = new ArrayList<IStatement>(64);
 		allTriggers.addAll(StatementManager.getInternalTriggers(this));
 		
-		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing o : EnumFacing.values()) {
 			TileEntity tile = pipe.container.getTile(o);
-			Block block = pipe.container.getBlock(o);
 			allTriggers.addAll(StatementManager.getExternalTriggers(o, tile));
 		}
 		
@@ -595,9 +593,8 @@ public final class Gate implements IGate, IStatementContainer {
 		ArrayList<IStatement> allActions = new ArrayList<IStatement>(64);
 		allActions.addAll(StatementManager.getInternalActions(this));
 		
-		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing o : EnumFacing.values()) {
 			TileEntity tile = pipe.container.getTile(o);
-			Block block = pipe.container.getBlock(o);
 			allActions.addAll(StatementManager.getExternalActions(o, tile));
 		}
 		
@@ -625,7 +622,7 @@ public final class Gate implements IGate, IStatementContainer {
 	}
 
 	@Override
-	public ForgeDirection getSide() {
+	public EnumFacing getSide() {
 		return direction;
 	}
 

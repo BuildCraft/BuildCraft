@@ -8,36 +8,46 @@
  */
 package buildcraft.core.proxy;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IChatComponent;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.client.registry.RenderingRegistry;
-
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.client.MinecraftForgeClient;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftSilicon;
+import buildcraft.api.core.EnumColor;
 import buildcraft.core.EntityBlock;
+import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.LaserKind;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderRobot;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingMarkers;
 import buildcraft.core.robots.EntityRobot;
+import buildcraft.core.utils.IModelRegister;
+import buildcraft.core.utils.Utils;
 import buildcraft.transport.render.TileEntityPickupFX;
 
 public class CoreProxyClient extends CoreProxy {
@@ -91,16 +101,43 @@ public class CoreProxyClient extends CoreProxy {
 
 	@Override
 	public void initializeRendering() {
-		BuildCraftCore.blockByEntityModel = RenderingRegistry.getNextAvailableRenderId();
+		/*BuildCraftCore.blockByEntityModel = RenderingRegistry.getNextAvailableRenderId();
 		BuildCraftCore.legacyPipeModel = RenderingRegistry.getNextAvailableRenderId();
-		BuildCraftCore.markerModel = RenderingRegistry.getNextAvailableRenderId();
+		BuildCraftCore.markerModel = RenderingRegistry.getNextAvailableRenderId();*/
 
-		RenderingRegistry.registerBlockHandler(new RenderingEntityBlocks());
-		RenderingRegistry.registerBlockHandler(BuildCraftCore.legacyPipeModel, new RenderingEntityBlocks());
-		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
+//		RenderingRegistry.registerBlockHandler(new RenderingEntityBlocks());
+//		RenderingRegistry.registerBlockHandler(BuildCraftCore.legacyPipeModel, new RenderingEntityBlocks());
+//		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
+//
+//		// TODO: Move these to a Silicon proxy renderer
+//		MinecraftForgeClient.registerItemRenderer(BuildCraftSilicon.robotItem, new RenderRobot());
+		EnumColor.registerIcons();
 
-		// TODO: Move these to a Silicon proxy renderer
-		MinecraftForgeClient.registerItemRenderer(BuildCraftSilicon.robotItem, new RenderRobot());
+		for (Block block : blocksToRegisterRenderersFor) {
+			if (block instanceof IModelRegister) {
+				((IModelRegister) block).registerModels();
+				continue;
+			}
+
+			for (IBlockState state : (List<IBlockState>) block.getBlockState().getValidStates()) {
+				String type = "";
+				for (IProperty property : (Collection<IProperty>) state.getProperties().keySet()) {
+					type += property.getName() + "=";
+					if (state.getValue(property) instanceof Integer) {
+						type += ((Integer) state.getValue(property)).intValue();
+					} else {
+						type += ((IStringSerializable) state.getValue(property)).getName();
+					}
+				}
+				Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(block), block.damageDropped(state), new ModelResourceLocation(Utils.getBlockName(block), type.toLowerCase()));
+				ModelBakery.addVariantName(Item.getItemFromBlock(block), type.toLowerCase());
+			}
+		}
+		for (Item item : itemsToRegisterRenderersFor) {
+			if (item instanceof IModelRegister) {
+				((IModelRegister) item).registerModels();
+			}
+		}
 	}
 
 	@Override
@@ -112,7 +149,7 @@ public class CoreProxyClient extends CoreProxy {
 	/* BUILDCRAFT PLAYER */
 	@Override
 	public String playerName() {
-		return FMLClientHandler.instance().getClient().thePlayer.getDisplayName();
+		return FMLClientHandler.instance().getClient().thePlayer.getDisplayName().getFormattedText();
 	}
 
 	@Override
@@ -120,15 +157,15 @@ public class CoreProxyClient extends CoreProxy {
 		EntityBlock eb = super.newEntityBlock(world, i, j, k, iSize, jSize, kSize, laserKind);
 		switch (laserKind) {
 		case Blue:
-			eb.texture = BuildCraftCore.blueLaserTexture;
+			//eb.texture = BuildCraftCore.blueLaserTexture;
 			break;
 
 		case Red:
-			eb.texture = BuildCraftCore.redLaserTexture;
+			//eb.texture = BuildCraftCore.redLaserTexture;
 			break;
 
 		case Stripes:
-			eb.texture = BuildCraftCore.stripesLaserTexture;
+			//eb.texture = BuildCraftCore.stripesLaserTexture;
 			break;
 		}
 		return eb;
@@ -145,5 +182,20 @@ public class CoreProxyClient extends CoreProxy {
 		} else {
 			return Minecraft.getMinecraft().thePlayer;
 		}
+	}
+
+	private LinkedList<Block> blocksToRegisterRenderersFor = new LinkedList<Block>();
+	private LinkedList<Item> itemsToRegisterRenderersFor = new LinkedList<Item>();
+
+	@Override
+	public void registerBlock(Block block, Class<? extends ItemBlock> item) {
+		super.registerBlock(block, item);
+		blocksToRegisterRenderersFor.add(block);
+	}
+
+	@Override
+	public void registerItem(Item item) {
+		super.registerItem(item);
+		itemsToRegisterRenderersFor.add(item);
 	}
 }

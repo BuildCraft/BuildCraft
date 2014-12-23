@@ -12,10 +12,8 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
 import net.minecraftforge.client.IItemRenderer;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.facades.FacadeType;
@@ -26,13 +24,13 @@ import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.PipeIconProvider;
 
-public class FacadeItemRenderer implements IItemRenderer {
+public class FacadeItemRenderer /*implements IItemRenderer*/ {
 
 	private long lastTime = 0L;
 
 	private int renderState = 0;
 
-	private void renderFacadeItem(RenderBlocks render, ItemStack item, float translateX, float translateY, float translateZ) {
+	/*private void renderFacadeItem(RenderBlocks render, ItemStack item, float translateX, float translateY, float translateZ) {
 		if (lastTime < System.currentTimeMillis()) {
 			// 12 = LCM(1, 2, 3, 4)
 			renderState = (renderState + 1) % 12;
@@ -53,9 +51,10 @@ public class FacadeItemRenderer implements IItemRenderer {
         }
 		Block block = activeState != null ? activeState.block : null;
 		int decodedMeta = activeState != null ? activeState.metadata : 0;
+		ItemStack decodedStack = new ItemStack(block, 1, decodedMeta);
 
 		try {
-			int color = item.getItem().getColorFromItemStack(new ItemStack(block, 1, decodedMeta), 0);
+			int color = decodedStack.getItem().getColorFromItemStack(decodedStack, 0);
 			RenderUtils.setGLColorFromInt(color);
 		} catch (Throwable error) {
 		}
@@ -109,6 +108,8 @@ public class FacadeItemRenderer implements IItemRenderer {
 		}
 
 		GL11.glPopMatrix();
+
+		RenderUtils.setGLColorFromInt(0xFFFFFF);
 
 		// Render StructurePipe
 		block = BuildCraftTransport.genericPipeBlock;
@@ -205,5 +206,5 @@ public class FacadeItemRenderer implements IItemRenderer {
 				break;
 			default:
 		}
-	}
+	}*/
 }

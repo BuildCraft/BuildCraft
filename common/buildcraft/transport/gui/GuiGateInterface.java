@@ -8,6 +8,7 @@
  */
 package buildcraft.transport.gui;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -15,10 +16,9 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
@@ -58,7 +58,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			}
 		}
 
-		@SideOnly(Side.CLIENT)
+		/*@SideOnly(Side.CLIENT)
 		@Override
 		public IIcon getIcon() {
 			IStatement stmt = getStatement();
@@ -68,7 +68,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			} else {
 				return null;
 			}
-		}
+		}*/
 
 		@Override
 		public boolean isDefined() {
@@ -142,7 +142,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			}
 		}
 
-		@Override
+		/*@Override
 		public IIcon getIcon() {
 			IStatementParameter parameter = getParameter();
 
@@ -151,7 +151,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			} else {
 				return null;
 			}
-		}
+		}*/
 
 		public abstract IStatementParameter getParameter();
 
@@ -178,7 +178,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@Override
 		public void setParameter(IStatementParameter param, boolean notifyServer) {
-			container.setTriggerParameter(statementSlot.slot, slot, (IStatementParameter) param, notifyServer);
+			container.setTriggerParameter(statementSlot.slot, slot, param, notifyServer);
 		}
 	}
 
@@ -194,7 +194,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 		@Override
 		public void setParameter(IStatementParameter param, boolean notifyServer) {
-			container.setActionParameter(statementSlot.slot, slot, (IStatementParameter) param, notifyServer);
+			container.setActionParameter(statementSlot.slot, slot, param, notifyServer);
 		}
 	}
 
@@ -367,7 +367,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 	}
 
 	@Override
-	protected void mouseClicked(int i, int j, int k) {
+	protected void mouseClicked(int i, int j, int k) throws IOException {
 		if (gate == null) {
 			return;
 		}

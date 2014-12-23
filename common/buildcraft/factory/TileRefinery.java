@@ -8,8 +8,6 @@
  */
 package buildcraft.factory;
 
-import java.io.IOException;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -17,7 +15,7 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -25,7 +23,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
@@ -35,9 +32,8 @@ import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.SingleUseTank;
 import buildcraft.core.fluids.TankManager;
-import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.recipes.RefineryRecipeManager;
+import buildcraft.core.utils.Utils;
 
 public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInventory, IHasWork, IFlexibleCrafter {
 
@@ -58,7 +54,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	private SafeTimeTracker updateNetworkTime = new SafeTimeTracker(BuildCraftCore.updateFactor);
 	private boolean isActive;
 
-	@NetworkData
 	private String currentRecipeId = "";
 
 	public TileRefinery() {
@@ -86,11 +81,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	}
 
 	@Override
-	public String getInventoryName() {
-		return null;
-	}
-
-	@Override
 	public int getInventoryStackLimit() {
 		return 0;
 	}
@@ -101,8 +91,13 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	}
 
 	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
+	public void openInventory(EntityPlayer playerIn) {
+
+	}
+
+	@Override
+	public void closeInventory(EntityPlayer playerIn) {
+
 	}
 
 	@Override
@@ -111,7 +106,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	}
 
 	@Override
-	public void updateEntity() {
+	public void update() {
 		if (worldObj.isRemote) {
 			simpleAnimationIterate();
 			return;
@@ -252,14 +247,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 		}
 	}
 
-	@Override
-	public void openInventory() {
-	}
-
-	@Override
-	public void closeInventory() {
-	}
-
 	public void resetFilters() {
 		for (SingleUseTank tank : tankManager) {
 			tank.setAcceptedFluid(null);
@@ -297,7 +284,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 
 	/* ITANKCONTAINER */
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		int used = 0;
 		FluidStack resourceUsing = resource.copy();
 
@@ -311,7 +298,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, int maxEmpty, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, int maxEmpty, boolean doDrain) {
 		FluidStack r = result.drain(maxEmpty, doDrain);
 
 		updateRecipe();
@@ -337,7 +324,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
 		if (resource == null || !resource.isFluidEqual(result.getFluid())) {
 			return null;
 		}
@@ -345,54 +332,38 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection direction) {
+	public FluidTankInfo[] getTankInfo(EnumFacing direction) {
 		return tankManager.getTankInfo(direction);
 	}
 
 	// Network
-	@Override
-	public PacketPayload getPacketPayload() {
-		PacketPayload payload = new PacketPayload(new PacketPayload.StreamWriter() {
-			@Override
-			public void writeData(ByteBuf data) {
-				data.writeFloat(animationSpeed);
-				tankManager.writeData(data);
-			}
-		});
-		return payload;
+	public void writeData(ByteBuf stream) {
+		stream.writeFloat(animationSpeed);
+		Utils.writeUTF(stream, currentRecipeId);
+		tankManager.writeData(stream);
 	}
 
 	@Override
-	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		ByteBuf stream = packet.payload.stream;
+	public void readData(ByteBuf stream) {
 		animationSpeed = stream.readFloat();
+		currentRecipeId = Utils.readUTF(stream);
 		tankManager.readData(stream);
-	}
-
-	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
-		return true;
-	}
-
-	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
-		return true;
-	}
-
-	@Override
-	public boolean hasCustomInventoryName() {
-		return false;
-	}
-
-	@Override
-	public void postPacketHandling(PacketUpdate packet) {
-		super.postPacketHandling(packet);
 
 		currentRecipe = RefineryRecipeManager.INSTANCE.getRecipe(currentRecipeId);
 
 		if (currentRecipe != null) {
 			craftingResult = currentRecipe.craft(this, true);
 		}
+	}
+
+	@Override
+	public boolean canFill(EnumFacing from, Fluid fluid) {
+		return true;
+	}
+
+	@Override
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
+		return true;
 	}
 
 	@Override
@@ -406,7 +377,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	}
 
 	@Override
-	public ItemStack decrCraftingItemgStack(int slotid, int val) {
+	public ItemStack decrCraftingItemStack(int slotid, int val) {
 		return null;
 	}
 
@@ -436,5 +407,10 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	@Override
 	public int getCraftingFluidStackSize() {
 		return tanks.length;
+	}
+
+	@Override
+	public String getName() {
+		return "";
 	}
 }

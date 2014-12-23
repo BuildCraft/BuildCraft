@@ -10,7 +10,7 @@ package buildcraft.core.robots;
 
 import net.minecraft.tileentity.TileEntity;
 
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.robots.ResourceId;
 
 public class ResourceIdRequest extends ResourceId {
@@ -20,7 +20,7 @@ public class ResourceIdRequest extends ResourceId {
 	}
 
 	public ResourceIdRequest(TileEntity tile, int i) {
-		index = new BlockIndex(tile);
+		index = tile.getPos();
 		localId = i;
 	}
 

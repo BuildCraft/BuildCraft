@@ -9,15 +9,16 @@
 package buildcraft.factory;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.events.BlockInteractionEvent;
@@ -27,27 +28,15 @@ import buildcraft.core.IItemPipe;
 
 public class BlockAutoWorkbench extends BlockBuildCraft {
 
-	IIcon topTexture;
-	IIcon sideTexture;
-
 	public BlockAutoWorkbench() {
 		super(Material.wood);
 		setHardness(3.0F);
 	}
 
 	@Override
-	public IIcon getIcon(int i, int j) {
-		if (i == 1 || i == 0) {
-			return topTexture;
-		} else {
-			return sideTexture;
-		}
-	}
-
-	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-		super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9);
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing par6, float par7, float par8, float par9) {
+		super.onBlockActivated(world, pos, state, entityplayer, par6, par7, par8, par9);
+		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, pos, state);
 		FMLCommonHandler.instance().bus().post(event);
 		if (event.isCanceled()) {
 			return false;
@@ -65,21 +54,14 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 		}
 
 		if (!world.isRemote) {
-			entityplayer.openGui(BuildCraftFactory.instance, GuiIds.AUTO_CRAFTING_TABLE, world, i, j, k);
+			entityplayer.openGui(BuildCraftFactory.instance, GuiIds.AUTO_CRAFTING_TABLE, world, pos.getX(), pos.getY(), pos.getZ());
 		}
 
 		return true;
 	}
 
 	@Override
-	public TileEntity createNewTileEntity(World world, int metadata) {
+	public TileEntity createNewTileEntity(World world, int meta) {
 		return new TileAutoWorkbench();
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-	    topTexture = par1IconRegister.registerIcon("buildcraft:autoWorkbench_top");
-	    sideTexture = par1IconRegister.registerIcon("buildcraft:autoWorkbench_side");
 	}
 }

@@ -116,7 +116,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 		// Item stacks with alternatives consumption
 
 		for (List<ItemStack> requirements : inputItemsWithAlternatives) {
-			IStackFilter filter = new ArrayStackFilter(requirements.toArray(new ItemStack[0]));
+			IStackFilter filter = new ArrayStackFilter(requirements.toArray(new ItemStack[requirements.size()]));
 			int amount = requirements.get(0).stackSize;
 
 			if (consumeItems(crafter, result, filter, amount, preview) != 0) {
@@ -193,7 +193,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 						removed = stack.copy();
 						removed.stackSize = expected;
 					} else {
-						removed = crafter.decrCraftingItemgStack(slotid, expected);
+						removed = crafter.decrCraftingItemStack(slotid, expected);
 					}
 
 					expected = 0;
@@ -201,7 +201,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 					if (preview) {
 						removed = stack.copy();
 					} else {
-						removed = crafter.decrCraftingItemgStack(slotid, stack.stackSize);
+						removed = crafter.decrCraftingItemStack(slotid, stack.stackSize);
 					}
 
 					expected -= removed.stackSize;

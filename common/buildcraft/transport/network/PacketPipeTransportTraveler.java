@@ -9,10 +9,9 @@
 package buildcraft.transport.network;
 
 import io.netty.buffer.ByteBuf;
-
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
-
-import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.EnumColor;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
@@ -20,15 +19,13 @@ import buildcraft.transport.TravelingItem;
 
 public class PacketPipeTransportTraveler extends BuildCraftPacket {
 
-	public int posX;
-	public int posY;
-	public int posZ;
+	public BlockPos pos;
 
 	private TravelingItem item;
 	private boolean forceStackRefresh;
 	private int entityId;
-	private ForgeDirection input;
-	private ForgeDirection output;
+	private EnumFacing input;
+	private EnumFacing output;
 	private EnumColor color;
 	private float itemX;
 	private float itemY;
@@ -67,14 +64,12 @@ public class PacketPipeTransportTraveler extends BuildCraftPacket {
 		this.itemY = data.readFloat();
 		this.itemZ = data.readFloat();
 
-		posX = MathHelper.floor_float(itemX);
-		posY = MathHelper.floor_float(itemY);
-		posZ = MathHelper.floor_float(itemZ);
+		pos = new BlockPos(MathHelper.floor_float(itemX), MathHelper.floor_float(itemY), MathHelper.floor_float(itemZ));
 
 		this.entityId = data.readShort();
 
-		this.input = ForgeDirection.getOrientation(data.readByte());
-		this.output = ForgeDirection.getOrientation(data.readByte());
+		this.input = EnumFacing.getFront(data.readByte());
+		this.output = EnumFacing.getFront(data.readByte());
 
 		byte c = data.readByte();
 		if (c != -1) {
@@ -90,11 +85,11 @@ public class PacketPipeTransportTraveler extends BuildCraftPacket {
 		return entityId;
 	}
 
-	public ForgeDirection getInputOrientation() {
+	public EnumFacing getInputOrientation() {
 		return input;
 	}
 
-	public ForgeDirection getOutputOrientation() {
+	public EnumFacing getOutputOrientation() {
 		return output;
 	}
 

@@ -10,9 +10,8 @@ package buildcraft.core.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -28,7 +27,8 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 	public enum State {
 
 		Empty, Contains, Space, Full
-	};
+	}
+
 	public State state;
 
 	public TriggerFluidContainer(State state) {
@@ -47,7 +47,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 	}
 
 	@Override
-	public boolean isTriggerActive(TileEntity tile, ForgeDirection side, IStatementContainer statementContainer, IStatementParameter[] parameters) {
+	public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer statementContainer, IStatementParameter[] parameters) {
 		if (tile instanceof IFluidHandler) {
 			IFluidHandler container = (IFluidHandler) tile;
 
@@ -69,14 +69,14 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 			switch (state) {
 				case Empty:
 					for (FluidTankInfo c : liquids) {
-						if (c.fluid != null && c.fluid.amount > 0 && (searchedFluid == null || searchedFluid.isFluidEqual(c.fluid))) {
+						if (c != null && c.fluid != null && c.fluid.amount > 0 && (searchedFluid == null || searchedFluid.isFluidEqual(c.fluid))) {
 							return false;
 						}
 					}
 					return true;
 				case Contains:
 					for (FluidTankInfo c : liquids) {
-						if (c.fluid != null && c.fluid.amount > 0 && (searchedFluid == null || searchedFluid.isFluidEqual(c.fluid))) {
+						if (c != null && c.fluid != null && c.fluid.amount > 0 && (searchedFluid == null || searchedFluid.isFluidEqual(c.fluid))) {
 							return true;
 						}
 					}
@@ -84,7 +84,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 				case Space:
 					if (searchedFluid == null) {
 						for (FluidTankInfo c : liquids) {
-							if (c.fluid == null || c.fluid.amount < c.capacity) {
+							if (c != null && (c.fluid == null || c.fluid.amount < c.capacity)) {
 								return true;
 							}
 						}
@@ -94,7 +94,7 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 				case Full:
 					if (searchedFluid == null) {
 						for (FluidTankInfo c : liquids) {
-							if (c.fluid == null || c.fluid.amount < c.capacity) {
+							if (c != null && (c.fluid == null || c.fluid.amount < c.capacity)) {
 								return false;
 							}
 						}
@@ -108,12 +108,12 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
 	}
 
 	@Override
-	public void registerIcons(IIconRegister register) {
-		icon = register.registerIcon("buildcraft:triggers/trigger_liquidcontainer_" + state.name().toLowerCase());
-	}
-	
-	@Override
 	public IStatementParameter createParameter(int index) {
 		return new StatementParameterItemStack();
+	}
+
+	@Override
+	public int getSheetLocation() {
+		return 13 + (7 + state.ordinal()) * 16;
 	}
 }

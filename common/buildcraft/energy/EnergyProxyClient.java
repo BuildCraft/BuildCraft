@@ -8,10 +8,9 @@
  */
 package buildcraft.energy;
 
-import cpw.mods.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.render.RenderingEntityBlocks;
-import buildcraft.core.render.RenderingEntityBlocks.EntityRenderIndex;
 import buildcraft.energy.render.RenderEnergyEmitter;
 import buildcraft.energy.render.RenderEngine;
 
@@ -28,9 +27,9 @@ public class EnergyProxyClient extends EnergyProxy {
 	public void registerBlockRenderers() {
 		//RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.emitterBlock, 0), new RenderEnergyEmitter());
 		//TODO Update me to grab differing trunk textures
-		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 0), new RenderEngine(TileEngine.BASE_TEXTURES[0], TileEngine.CHAMBER_TEXTURES[0], TileEngine.TRUNK_BLUE_TEXTURE));
+		/*RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 0), new RenderEngine(TileEngine.BASE_TEXTURES[0], TileEngine.CHAMBER_TEXTURES[0], TileEngine.TRUNK_BLUE_TEXTURE));
 		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 1), new RenderEngine(TileEngine.BASE_TEXTURES[1], TileEngine.CHAMBER_TEXTURES[1], TileEngine.TRUNK_BLUE_TEXTURE));
 		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 2), new RenderEngine(TileEngine.BASE_TEXTURES[2], TileEngine.CHAMBER_TEXTURES[2], TileEngine.TRUNK_BLUE_TEXTURE));
-		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 3), new RenderEngine(TileEngine.BASE_TEXTURES[3], TileEngine.CHAMBER_TEXTURES[3], TileEngine.TRUNK_TEXTURES[3]));
+		RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftEnergy.engineBlock, 3), new RenderEngine(TileEngine.BASE_TEXTURES[3], TileEngine.CHAMBER_TEXTURES[3], TileEngine.TRUNK_TEXTURES[3]));*/
 	}
 }

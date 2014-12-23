@@ -2,9 +2,9 @@
  * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ * The BuildCraft API is distributed under the terms of the MIT License.
+ * Please check the contents of the license, which should be located
+ * as "LICENSE.API" in the BuildCraft source code distribution.
  */
 package buildcraft.api.statements;
 
@@ -14,11 +14,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.EnumFacing;
 
 public final class StatementManager {
 
@@ -58,7 +57,7 @@ public final class StatementManager {
 		parameters.put(name, param);
 	}
 
-	public static List<ITriggerExternal> getExternalTriggers(ForgeDirection side, TileEntity entity) {
+	public static List<ITriggerExternal> getExternalTriggers(EnumFacing side, TileEntity entity) {
 		List<ITriggerExternal> result;
 
 		if (entity instanceof IOverrideDefaultStatements) {
@@ -85,13 +84,15 @@ public final class StatementManager {
 		return result;
 	}
 
-	public static List<IActionExternal> getExternalActions(ForgeDirection side, TileEntity entity) {
+	public static List<IActionExternal> getExternalActions(EnumFacing side, TileEntity entity) {
 		List<IActionExternal> result = new LinkedList<IActionExternal>();
 
 		if (entity instanceof IOverrideDefaultStatements) {
 			result = ((IOverrideDefaultStatements) entity).overrideActions();
 			if (result != null) {
 				return result;
+			} else {
+				result = new LinkedList<IActionExternal>();
 			}
 		}
 		
@@ -160,21 +161,5 @@ public final class StatementManager {
 		}
 
 		return null;
-	}
-	
-	/**
-	 * Generally, this function should be called by every mod implementing
-	 * the Statements API ***as a container*** (that is, adding its own gates)
-	 * on the client side from a given Item of choice.
-	 */
-	@SideOnly(Side.CLIENT)
-	public static void registerIcons(IIconRegister register) {
-		for (IStatement statement : statements.values()) {
-			statement.registerIcons(register);
-		}
-
-		for (Class<? extends IStatementParameter> parameter : parameters.values()) {
-			createParameter(parameter).registerIcons(register);
-		}
 	}
 }

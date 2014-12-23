@@ -13,9 +13,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IZone;
 import buildcraft.core.robots.IBlockFilter;
@@ -30,25 +30,25 @@ public class PathFinding {
 	public static int PATH_ITERATIONS = 1000;
 
 	private World world;
-	private BlockIndex start;
-	private BlockIndex end;
-	private BlockIndex boxEnd;
+	private BlockPos start;
+	private BlockPos end;
+	private BlockPos boxEnd;
 	private IBlockFilter pathFound;
 	private float maxDistance = -1;
 	private float sqrMaxDistance = -1;
 	private IZone zone;
 	private double maxDistanceToEnd = 0;
 
-	private HashMap<BlockIndex, Node> openList = new HashMap<BlockIndex, PathFinding.Node>();
-	private HashMap<BlockIndex, Node> closedList = new HashMap<BlockIndex, PathFinding.Node>();
+	private HashMap<BlockPos, Node> openList = new HashMap<BlockPos, PathFinding.Node>();
+	private HashMap<BlockPos, Node> closedList = new HashMap<BlockPos, PathFinding.Node>();
 
 	private Node nextIteration;
 
-	private LinkedList<BlockIndex> result;
+	private LinkedList<BlockPos> result;
 
 	private boolean endReached = false;
 
-	public PathFinding(World iWorld, BlockIndex iStart, BlockIndex iEnd) {
+	public PathFinding(World iWorld, BlockPos iStart, BlockPos iEnd) {
 		world = iWorld;
 		start = iStart;
 		end = iEnd;
@@ -63,7 +63,7 @@ public class PathFinding {
 		nextIteration = startNode;
 	}
 
-	public PathFinding(World iWorld, BlockIndex iStart, BlockIndex iEnd, double iMaxDistanceToEnd) {
+	public PathFinding(World iWorld, BlockPos iStart, BlockPos iEnd, double iMaxDistanceToEnd) {
 		this(iWorld, iStart, iEnd);
 
 		maxDistanceToEnd = iMaxDistanceToEnd;
@@ -72,7 +72,7 @@ public class PathFinding {
 	// TODO: It's probably more efficient to start a search first, and then to
 	// compute the path, instead of computing all possible path from the get
 	// go.
-	public PathFinding(World iWorld, BlockIndex iStart, IBlockFilter iPathFound, float iMaxDistance, IZone iZone) {
+	public PathFinding(World iWorld, BlockPos iStart, IBlockFilter iPathFound, float iMaxDistance, IZone iZone) {
 		world = iWorld;
 		start = iStart;
 		pathFound = iPathFound;
@@ -101,7 +101,7 @@ public class PathFinding {
 			}
 
 			if (endReached) {
-				result = new LinkedList<BlockIndex>();
+				result = new LinkedList<BlockPos>();
 
 				while (nextIteration != null) {
 					result.addFirst(nextIteration.index);
@@ -119,11 +119,11 @@ public class PathFinding {
 		return nextIteration == null;
 	}
 
-	public LinkedList<BlockIndex> getResult() {
+	public LinkedList<BlockPos> getResult() {
 		if (result != null) {
 			return result;
 		} else {
-			return new LinkedList<BlockIndex>();
+			return new LinkedList<BlockPos>();
 		}
 	}
 
@@ -141,13 +141,13 @@ public class PathFinding {
 						continue;
 					}
 
-					int x = from.index.x + dx;
-					int y = from.index.y + dy;
-					int z = from.index.z + dz;
+					int x = from.index.getX() + dx;
+					int y = from.index.getY() + dy;
+					int z = from.index.getZ() + dz;
 
 					Node nextNode = new Node();
 					nextNode.parent = from;
-					nextNode.index = new BlockIndex(x, y, z);
+					nextNode.index = new BlockPos(x, y, z);
 
 					if (resultMoves[dx + 1][dy + 1][dz + 1] == 2) {
 						endReached = true;
@@ -213,28 +213,24 @@ public class PathFinding {
 		public double movementCost;
 		public double destinationCost;
 		public double totalWeight;
-		public BlockIndex index;
+		public BlockPos index;
 	}
 
-	private static double distance(BlockIndex i1, BlockIndex i2) {
-		double dx = (double) i1.x - (double) i2.x;
-		double dy = (double) i1.y - (double) i2.y;
-		double dz = (double) i1.z - (double) i2.z;
-
-		return Math.sqrt(dx * dx + dy * dy + dz * dz);
+	private static double distance(BlockPos i1, BlockPos i2) {
+		return Math.sqrt(i1.distanceSq(i2));
 	}
 
 	private boolean endReached(int x, int y, int z) {
 		if (zone != null && !zone.contains(x, y, z)) {
 			return false;
 		} else if (pathFound != null) {
-			return pathFound.matches(world, x, y, z);
+			return pathFound.matches(world, new BlockPos(x, y, z));
 		} else {
 			if (maxDistanceToEnd == 0) {
-				return end.x == x && end.y == y && end.z == z;
+				return end.getX() == x && end.getY() == y && end.getZ() == z;
 			} else {
-				return BuildCraftAPI.isSoftBlock(world, x, y, z)
-						&& distance(new BlockIndex(x, y, z), end) <= maxDistanceToEnd;
+				return BuildCraftAPI.isSoftBlock(world, new BlockPos(x, y, z))
+						&& distance(new BlockPos(x, y, z), end) <= maxDistanceToEnd;
 			}
 		}
 	}
@@ -245,13 +241,13 @@ public class PathFinding {
 		for (int dx = -1; dx <= +1; ++dx) {
 			for (int dy = -1; dy <= +1; ++dy) {
 				for (int dz = -1; dz <= +1; ++dz) {
-					int x = from.index.x + dx;
-					int y = from.index.y + dy;
-					int z = from.index.z + dz;
+					int x = from.index.getX() + dx;
+					int y = from.index.getY() + dy;
+					int z = from.index.getZ() + dz;
 
 					if (endReached(x, y, z)) {
 						resultMoves[dx + 1][dy + 1][dz + 1] = 2;
-					} else if (!BuildCraftAPI.isSoftBlock(world, x, y, z)) {
+					} else if (!BuildCraftAPI.isSoftBlock(world, new BlockPos(x, y, z))) {
 						resultMoves[dx + 1][dy + 1][dz + 1] = 0;
 					} else {
 						resultMoves[dx + 1][dy + 1][dz + 1] = 1;
@@ -375,13 +371,13 @@ public class PathFinding {
 			for (int dx = -1; dx <= +1; ++dx) {
 				for (int dy = -1; dy <= +1; ++dy) {
 					for (int dz = -1; dz <= +1; ++dz) {
-						int x = from.index.x + dx;
-						int y = from.index.y + dy;
-						int z = from.index.z + dz;
+						int x = from.index.getX() + dx;
+						int y = from.index.getY() + dy;
+						int z = from.index.getZ() + dz;
 
-						float distX = x - start.x;
-						float distY = y - start.y;
-						float distZ = z - start.z;
+						float distX = x - start.getX();
+						float distY = y - start.getY();
+						float distZ = z - start.getZ();
 						float sqrDist = distX * distX + distY * distY + distZ * distZ;
 
 						if (sqrDist > sqrMaxDistance) {

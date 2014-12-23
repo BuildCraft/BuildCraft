@@ -8,6 +8,7 @@
  */
 package buildcraft.core.gui;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
@@ -90,7 +91,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		}
 	}
 
-	public static RenderItem getItemRenderer () {
+	public RenderItem getItemRenderer () {
 		return itemRender;
 	}
 
@@ -112,17 +113,17 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
 		if (item != null) {
 			GL11.glEnable(GL11.GL_LIGHTING);
-			float prevZ = GuiAdvancedInterface.getItemRenderer().zLevel;
-			GuiAdvancedInterface.getItemRenderer().zLevel = 200F;
-			GuiAdvancedInterface.getItemRenderer().renderItemAndEffectIntoGUI(getFontRenderer(), mc.renderEngine, item, x, y);
-			GuiAdvancedInterface.getItemRenderer().renderItemOverlayIntoGUI(getFontRenderer(), mc.renderEngine, item, x, y);
-			GuiAdvancedInterface.getItemRenderer().zLevel = prevZ;
+			float prevZ = getItemRenderer().zLevel;
+			getItemRenderer().zLevel = 200F;
+			getItemRenderer().renderItemAndEffectIntoGUI(item, x, y);
+			getItemRenderer().renderItemOverlays(getFontRenderer(), item, x, y);
+			getItemRenderer().zLevel = prevZ;
 			GL11.glDisable(GL11.GL_LIGHTING);
 		}
 	}
 
 	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
 
 		AdvancedSlot slot = getSlotAtLocation(mouseX, mouseY);

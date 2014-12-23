@@ -6,8 +6,9 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -30,32 +31,45 @@ public class StripesHandlerBucket implements IStripesHandler {
 	}
 
 	@Override
-	public boolean handle(World world, int x, int y, int z,
-			ForgeDirection direction, ItemStack stack, EntityPlayer player,
+	public boolean handle(World world, BlockPos pos,
+			EnumFacing direction, ItemStack stack, EntityPlayer player,
 			IStripesPipe pipe) {
-		Block block = world.getBlock(x, y, z);
-		if (block == Blocks.air) {
-			Block underblock = world.getBlock(x, y - 1, z);
-			
-			boolean rollback = false;
+		BlockPos underPos = pos.down();
+		Block block = world.getBlockState(pos).getBlock();
 
-			if (((ItemBucket) stack.getItem()).tryPlaceContainedLiquid(world, x, y - 1, z)) {
+		if (block == Blocks.air) {
+			Block underblock = world.getBlockState(pos).getBlock();
+
+			if (((ItemBucket) stack.getItem()).tryPlaceContainedLiquid(world, underPos)) {
 				stack.stackSize = 0;
 				pipe.sendItem(emptyBucket, direction.getOpposite());
 				
 				return true;
-			} else if (underblock instanceof IFluidBlock) {
-				Fluid fluid = ((IFluidBlock) underblock).getFluid();
-				FluidStack fluidStack = new FluidStack(fluid, 1000);
-				ItemStack filledBucket = FluidContainerRegistry.fillFluidContainer(fluidStack, emptyBucket);
+			} else {
+				ItemStack filledBucket = null;
+
+				if (underblock instanceof IFluidBlock) {
+					Fluid fluid = ((IFluidBlock) underblock).getFluid();
+					FluidStack fluidStack = new FluidStack(fluid, 1000);
+					filledBucket = FluidContainerRegistry.fillFluidContainer(fluidStack, emptyBucket);
+				}
+
+				if (underblock == Blocks.lava) {
+					filledBucket = new ItemStack(Items.lava_bucket, 1);
+				}
+
+				if (underblock == Blocks.water) {
+					filledBucket = new ItemStack(Items.water_bucket, 1);
+				}
+
 				if (filledBucket != null) {
-					world.setBlockToAir(x, y - 1, z);
-				
+					world.setBlockToAir(underPos);
+
 					stack.stackSize = 0;
 					pipe.sendItem(filledBucket, direction.getOpposite());
+
+					return true;
 				}
-				
-				return true;
 			}
 
 			return false;

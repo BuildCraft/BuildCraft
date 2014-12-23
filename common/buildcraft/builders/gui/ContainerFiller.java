@@ -13,9 +13,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.SheetIcon;
 import buildcraft.builders.TileFiller;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.GuiBuildCraft;
@@ -35,8 +36,9 @@ public class ContainerFiller extends BuildCraftContainer {
 		@SideOnly(Side.CLIENT)
 		@Override
 		public void draw(GuiBuildCraft gui, int guiX, int guiY, int mouseX, int mouseY) {
-			gui.bindTexture(TextureMap.locationBlocksTexture);
-			gui.drawTexturedModelRectFromIcon(guiX + x, guiY + y, tile.currentPattern.getIcon(), 16, 16);
+			SheetIcon icon = tile.currentPattern.getIcon();
+			gui.bindTexture(icon.getTexture());
+			gui.drawTexturedModalRect(guiX + x, guiY + y, icon.getU(), icon.getV(), 16, 16);
 		}
 	}
 

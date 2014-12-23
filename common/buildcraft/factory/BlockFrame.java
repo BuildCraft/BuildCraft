@@ -14,19 +14,20 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.IFramePipeConnection;
@@ -40,151 +41,148 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
+	public void breakBlock(World world, BlockPos pos, IBlockState state) {
 		if (world.isRemote) {
 			return;
 		}
-		
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			Block nBlock = world.getBlock(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
+
+		removeNeighboringFrames(world, pos);
+	}
+
+	protected void removeNeighboringFrames(World world, BlockPos pos) {
+		for (EnumFacing dir : EnumFacing.values()) {
+			BlockPos nPos = pos.offset(dir);
+			Block nBlock = world.getBlockState(nPos).getBlock();
 			if (nBlock == this) {
-				world.setBlockToAir(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
+				world.setBlockToAir(nPos);
 			}
 		}
 	}
+
 	@Override
 	public boolean isOpaqueCube() {
 		return false;
 	}
 
 	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
-	}
+	public boolean isFullCube() { return false; }
 
 	@Override
-	public Item getItemDropped(int i, Random random, int j) {
+	public Item getItemDropped(IBlockState i, Random random, int j) {
 		return null;
 	}
 
 	@Override
-	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
+	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
 		return new ArrayList<ItemStack>();
 	}
-	
-	@Override
-	public int getRenderType() {
-		return BuildCraftCore.legacyPipeModel;
-	}
 
 	@Override
-	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int i, int j, int k) {
+	public AxisAlignedBB getCollisionBoundingBox(World world, BlockPos pos, IBlockState state) {
 		float xMin = CoreConstants.PIPE_MIN_POS, xMax = CoreConstants.PIPE_MAX_POS, yMin = CoreConstants.PIPE_MIN_POS, yMax = CoreConstants.PIPE_MAX_POS, zMin = CoreConstants.PIPE_MIN_POS, zMax = CoreConstants.PIPE_MAX_POS;
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i - 1, j, k)) {
+		if (Utils.checkLegacyPipesConnections(world, pos, pos.west())) {
 			xMin = 0.0F;
 		}
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i + 1, j, k)) {
+		if (Utils.checkLegacyPipesConnections(world, pos, pos.east())) {
 			xMax = 1.0F;
 		}
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j - 1, k)) {
+		if (Utils.checkLegacyPipesConnections(world, pos, pos.down())) {
 			yMin = 0.0F;
 		}
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j + 1, k)) {
+		if (Utils.checkLegacyPipesConnections(world, pos, pos.up())) {
 			yMax = 1.0F;
 		}
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k - 1)) {
+		if (Utils.checkLegacyPipesConnections(world, pos, pos.north())) {
 			zMin = 0.0F;
 		}
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k + 1)) {
+		if (Utils.checkLegacyPipesConnections(world, pos, pos.south())) {
 			zMax = 1.0F;
 		}
 
-		return AxisAlignedBB.getBoundingBox((double) i + xMin, (double) j + yMin, (double) k + zMin, (double) i + xMax, (double) j + yMax, (double) k + zMax);
+		return AxisAlignedBB.fromBounds((double) pos.getX() + xMin, (double) pos.getY() + yMin, (double) pos.getZ() + zMin, (double) pos.getX() + xMax, (double) pos.getY() + yMax, (double) pos.getZ() + zMax);
 	}
 
 	@Override
-	@SuppressWarnings({ "all" })
-	// @Override (client only)
-	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int i, int j, int k) {
-		return getCollisionBoundingBoxFromPool(world, i, j, k);
+	public AxisAlignedBB getSelectedBoundingBox(World world, BlockPos pos) {
+		return getCollisionBoundingBox(world, pos, null);
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public void addCollisionBoxesToList(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, List arraylist, Entity par7Entity) {
+	public void addCollisionBoxesToList(World world, BlockPos pos, IBlockState state, AxisAlignedBB axisalignedbb, List arraylist, Entity par7Entity) {
 		setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
-		super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+		super.addCollisionBoxesToList(world, pos, state, axisalignedbb, arraylist, par7Entity);
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i - 1, j, k)) {
+		if (Utils.checkLegacyPipesConnections(world, pos, pos.west())) {
 			setBlockBounds(0.0F, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
-			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, pos, state, axisalignedbb, arraylist, par7Entity);
 		}
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i + 1, j, k)) {
+		if (Utils.checkLegacyPipesConnections(world, pos, pos.east())) {
 			setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, 1.0F, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
-			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, pos, state, axisalignedbb, arraylist, par7Entity);
 		}
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j - 1, k)) {
+		if (Utils.checkLegacyPipesConnections(world, pos, pos.down())) {
 			setBlockBounds(CoreConstants.PIPE_MIN_POS, 0.0F, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
-			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, pos, state, axisalignedbb, arraylist, par7Entity);
 		}
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j + 1, k)) {
+		if (Utils.checkLegacyPipesConnections(world, pos, pos.up())) {
 			setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, 1.0F, CoreConstants.PIPE_MAX_POS);
-			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, pos, state, axisalignedbb, arraylist, par7Entity);
 		}
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k - 1)) {
+		if (Utils.checkLegacyPipesConnections(world, pos, pos.north())) {
 			setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, 0.0F, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
-			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, pos, state, axisalignedbb, arraylist, par7Entity);
 		}
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k + 1)) {
+		if (Utils.checkLegacyPipesConnections(world, pos, pos.south())) {
 			setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, 1.0F);
-			super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+			super.addCollisionBoxesToList(world, pos, state, axisalignedbb, arraylist, par7Entity);
 		}
 
 		setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 	}
 
 	@Override
-	public MovingObjectPosition collisionRayTrace(World world, int i, int j, int k, Vec3 vec3d, Vec3 vec3d1) {
+	public MovingObjectPosition collisionRayTrace(World world, BlockPos pos, Vec3 vec3d, Vec3 vec3d1) {
 		float xMin = CoreConstants.PIPE_MIN_POS, xMax = CoreConstants.PIPE_MAX_POS, yMin = CoreConstants.PIPE_MIN_POS, yMax = CoreConstants.PIPE_MAX_POS, zMin = CoreConstants.PIPE_MIN_POS, zMax = CoreConstants.PIPE_MAX_POS;
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i - 1, j, k)) {
+		if (Utils.checkLegacyPipesConnections(world, pos, pos.west())) {
 			xMin = 0.0F;
 		}
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i + 1, j, k)) {
+		if (Utils.checkLegacyPipesConnections(world, pos, pos.east())) {
 			xMax = 1.0F;
 		}
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j - 1, k)) {
+		if (Utils.checkLegacyPipesConnections(world, pos, pos.down())) {
 			yMin = 0.0F;
 		}
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j + 1, k)) {
+		if (Utils.checkLegacyPipesConnections(world, pos, pos.up())) {
 			yMax = 1.0F;
 		}
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k - 1)) {
+		if (Utils.checkLegacyPipesConnections(world, pos, pos.north())) {
 			zMin = 0.0F;
 		}
 
-		if (Utils.checkLegacyPipesConnections(world, i, j, k, i, j, k + 1)) {
+		if (Utils.checkLegacyPipesConnections(world, pos, pos.south())) {
 			zMax = 1.0F;
 		}
 
 		setBlockBounds(xMin, yMin, zMin, xMax, yMax, zMax);
 
-		MovingObjectPosition r = super.collisionRayTrace(world, i, j, k, vec3d, vec3d1);
+		MovingObjectPosition r = super.collisionRayTrace(world, pos, vec3d, vec3d1);
 
 		setBlockBounds(0, 0, 0, 1, 1, 1);
 
@@ -192,19 +190,13 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 	}
 
 	@Override
-	public boolean isPipeConnected(IBlockAccess blockAccess, int x1, int y1, int z1, int x2, int y2, int z2) {
-		return blockAccess.getBlock(x2, y2, z2) == this;
+	public boolean isPipeConnected(IBlockAccess blockAccess, BlockPos pos, BlockPos pos1) {
+		return blockAccess.getBlockState(pos1).getBlock() == this;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void getSubBlocks(Item item, CreativeTabs tab, List list) {
 		list.add(new ItemStack(this));
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-	    blockIcon = par1IconRegister.registerIcon("buildcraft:blockFrame");
 	}
 }

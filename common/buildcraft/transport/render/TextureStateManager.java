@@ -8,10 +8,9 @@
  */
 package buildcraft.transport.render;
 
-import net.minecraft.util.IIcon;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /*
  * This class moves texture management from PipeRenderState 
@@ -21,7 +20,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public final class TextureStateManager {
 	
-	private IIcon currentTexture;
+	/*private IIcon currentTexture;
 	private IIcon[] textureArray;
 	private IIcon[] textureArrayCache;	
 	
@@ -51,6 +50,6 @@ public final class TextureStateManager {
 	}
 	public void set(IIcon icon) {
 		currentTexture = icon;
-	}
+	}*/
 	
 }

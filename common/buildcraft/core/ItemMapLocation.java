@@ -10,37 +10,34 @@ package buildcraft.core;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
-
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.boards.RedstoneBoardRegistry;
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.IZone;
 import buildcraft.builders.TileMarker;
 import buildcraft.builders.TilePathMarker;
+import buildcraft.core.utils.ModelHelper;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.core.utils.Utils;
 
 public class ItemMapLocation extends ItemBuildCraft {
 
-	public IIcon clean;
+	/*public IIcon clean;
 	public IIcon spot;
 	public IIcon area;
 	public IIcon path;
-	public IIcon zone;
+	public IIcon zone;*/
 
 	public ItemMapLocation() {
 		super(CreativeTabBuildCraft.ITEMS);
@@ -49,6 +46,15 @@ public class ItemMapLocation extends ItemBuildCraft {
 	@Override
 	public int getItemStackLimit(ItemStack stack) {
 		return NBTUtils.getItemData(stack).hasKey("kind") ? 1 : 16;
+	}
+
+	@Override
+	public void registerModels() {
+		ModelHelper.registerItemModel(this, 0, "");
+		ModelHelper.registerItemModel(this, 1, "Spot");
+		ModelHelper.registerItemModel(this, 2, "Area");
+		ModelHelper.registerItemModel(this, 3, "Path");
+		ModelHelper.registerItemModel(this, 4, "Zone");
 	}
 
 	@Override
@@ -62,7 +68,7 @@ public class ItemMapLocation extends ItemBuildCraft {
 				int x = cpt.getInteger("x");
 				int y = cpt.getInteger("y");
 				int z = cpt.getInteger("z");
-				ForgeDirection side = ForgeDirection.values()[cpt.getByte("side")];
+				EnumFacing side = EnumFacing.values()[cpt.getByte("side")];
 
 				list.add(StringUtils.localize("{" + x + ", " + y + ", " + z + ", " + side + "}"));
 				break;
@@ -80,11 +86,11 @@ public class ItemMapLocation extends ItemBuildCraft {
 			}
 			case 2: {
 				NBTTagList pathNBT = cpt.getTagList("path", Constants.NBT.TAG_COMPOUND);
-				BlockIndex first = new BlockIndex(pathNBT.getCompoundTagAt(0));
+				BlockPos first = Utils.readBlockPos(pathNBT.getCompoundTagAt(0));
 
-				int x = first.x;
-				int y = first.y;
-				int z = first.z;
+				int x = first.getX();
+				int y = first.getY();
+				int z = first.getZ();
 
 				list.add(StringUtils.localize("{" + x + ", " + y + ", " + z + "} + " + pathNBT.tagCount() + " elements"));
 				break;
@@ -99,7 +105,7 @@ public class ItemMapLocation extends ItemBuildCraft {
 		}
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIconIndex(ItemStack stack) {
 		NBTTagCompound cpt = NBTUtils.getItemData(stack);
 
@@ -135,30 +141,31 @@ public class ItemMapLocation extends ItemBuildCraft {
 		zone = par1IconRegister.registerIcon("buildcraft:map_zone");
 
 		RedstoneBoardRegistry.instance.registerIcons(par1IconRegister);
-	}
+	}*/
 
 	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer par2EntityPlayer, World world, int x,
-			int y, int z, int side, float par8, float par9, float par10) {
-		TileEntity tile = world.getTileEntity(x, y, z);
+	public boolean onItemUse(ItemStack stack, EntityPlayer playerIn, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
+		TileEntity tile = world.getTileEntity(pos);
 		NBTTagCompound cpt = NBTUtils.getItemData(stack);
 
 		if (tile instanceof TilePathMarker) {
 			cpt.setByte("kind", (byte) 2);
+			stack.setItemDamage(3);
 
 			TilePathMarker pathTile = (TilePathMarker) tile;
 
 			NBTTagList pathNBT = new NBTTagList();
 
-			for (BlockIndex index : pathTile.getPath()) {
+			for (BlockPos index : pathTile.getPath()) {
 				NBTTagCompound nbt = new NBTTagCompound();
-				index.writeTo(nbt);
+				Utils.writeBlockPos(nbt, index);
 				pathNBT.appendTag(nbt);
 			}
 
 			cpt.setTag("path", pathNBT);
 		} else if (tile instanceof TileMarker) {
 			cpt.setByte("kind", (byte) 1);
+			stack.setItemDamage(2);
 
 			TileMarker areaTile = (TileMarker) tile;
 
@@ -171,17 +178,17 @@ public class ItemMapLocation extends ItemBuildCraft {
 
 		} else {
 			cpt.setByte("kind", (byte) 0);
+			stack.setItemDamage(1);
 
-			cpt.setByte("side", (byte) side);
-			cpt.setInteger("x", x);
-			cpt.setInteger("y", y);
-			cpt.setInteger("z", z);
+			cpt.setByte("side", (byte) side.getIndex());
+			
+			Utils.writeBlockPos(cpt, pos);
 		}
 
 		return true;
 	}
 
-	public static BlockIndex getBlockIndex(ItemStack item) {
+	public static BlockPos getBlockPos(ItemStack item) {
 		NBTTagCompound cpt = NBTUtils.getItemData(item);
 
 		if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
@@ -189,7 +196,7 @@ public class ItemMapLocation extends ItemBuildCraft {
 			int y = cpt.getInteger("y");
 			int z = cpt.getInteger("z");
 
-			return new BlockIndex(x, y, z);
+			return new BlockPos(x, y, z);
 		} else {
 			return null;
 		}
@@ -212,13 +219,13 @@ public class ItemMapLocation extends ItemBuildCraft {
 		}
 	}
 
-	public static ForgeDirection getSide(ItemStack item) {
+	public static EnumFacing getSide(ItemStack item) {
 		NBTTagCompound cpt = NBTUtils.getItemData(item);
 
 		if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
-			return ForgeDirection.values()[cpt.getByte("side")];
+			return EnumFacing.values()[cpt.getByte("side")];
 		} else {
-			return ForgeDirection.UNKNOWN;
+			return null;
 		}
 	}
 
@@ -241,6 +248,7 @@ public class ItemMapLocation extends ItemBuildCraft {
 		NBTTagCompound cpt = NBTUtils.getItemData(item);
 
 		cpt.setByte("kind", (byte) 3);
+		item.setItemDamage(4);
 		plan.writeToNBT(cpt);
 	}
 }

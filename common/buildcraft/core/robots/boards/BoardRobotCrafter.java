@@ -168,7 +168,7 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 	}
 
 	private ItemStack lookForFurnaceRecipe(ItemStack order) {
-		for (Object o : FurnaceRecipes.smelting().getSmeltingList().entrySet()) {
+		for (Object o : FurnaceRecipes.instance().getSmeltingList().entrySet()) {
 			Map.Entry e = (Map.Entry) o;
 			ItemStack input = (ItemStack) e.getKey();
 			ItemStack output = (ItemStack) e.getValue();

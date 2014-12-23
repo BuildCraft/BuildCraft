@@ -10,9 +10,14 @@ package buildcraft.energy;
 
 import java.util.LinkedList;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
@@ -23,16 +28,16 @@ public class SchematicEngine extends SchematicTile {
 	public void rotateLeft(IBuilderContext context) {
 		int o = tileNBT.getInteger("orientation");
 
-		o = ForgeDirection.values()[o].getRotation(ForgeDirection.UP).ordinal();
+		o = EnumFacing.values()[o].rotateY().ordinal();
 
 		tileNBT.setInteger("orientation", o);
 	}
 
 	@Override
-	public void initializeFromObjectAt(IBuilderContext context, int x, int y, int z) {
-		super.initializeFromObjectAt(context, x, y, z);
+	public void initializeFromObjectAt(IBuilderContext context, BlockPos pos) {
+		super.initializeFromObjectAt(context, pos);
 
-		TileEngine engine = (TileEngine) context.world().getTileEntity(x, y, z);
+		TileEngine engine = (TileEngine) context.world().getTileEntity(pos);
 
 		tileNBT.setInteger("orientation", engine.orientation.ordinal());
 		tileNBT.removeTag("progress");
@@ -43,24 +48,24 @@ public class SchematicEngine extends SchematicTile {
 	}
 
 	@Override
-	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
-		super.placeInWorld(context, x, y, z, stacks);
+	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+		super.placeInWorld(context, pos, stacks);
 
-		TileEngine engine = (TileEngine) context.world().getTileEntity(x, y, z);
+		TileEngine engine = (TileEngine) context.world().getTileEntity(pos);
 
-		engine.orientation = ForgeDirection.getOrientation(tileNBT.getInteger("orientation"));
+		engine.orientation = EnumFacing.getFront(tileNBT.getInteger("orientation"));
 		engine.sendNetworkUpdate();
 	}
 
 	@Override
-	public void postProcessing (IBuilderContext context, int x, int y, int z) {
-		TileEngine engine = (TileEngine) context.world().getTileEntity(x, y, z);
+	public void postProcessing (IBuilderContext context, BlockPos pos) {
+		TileEngine engine = (TileEngine) context.world().getTileEntity(pos);
 
 		if (engine != null) {
-			engine.orientation = ForgeDirection.getOrientation(tileNBT.getInteger("orientation"));
+			engine.orientation = EnumFacing.getFront(tileNBT.getInteger("orientation"));
 			engine.sendNetworkUpdate();
-			context.world().markBlockForUpdate(x, y, z);
-			context.world().notifyBlocksOfNeighborChange(x, y, z, block);
+			context.world().markBlockForUpdate(pos);
+			context.world().notifyNeighborsOfStateChange(pos, state.getBlock());
 		}
 	}
 

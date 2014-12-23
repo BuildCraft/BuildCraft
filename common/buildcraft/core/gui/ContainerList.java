@@ -8,16 +8,20 @@
  */
 package buildcraft.core.gui;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
+import net.minecraftforge.fml.relauncher.Side;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.ItemList;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCSide;
+import buildcraft.core.network.CommandWriter;
+import buildcraft.core.network.ICommandReceiver;
+import buildcraft.core.network.PacketCommand;
+import buildcraft.core.utils.Utils;
 
-public class ContainerList extends BuildCraftContainer {
+public class ContainerList extends BuildCraftContainer implements ICommandReceiver {
 
 	public ItemList.StackLine[] lines;
 	private EntityPlayer player;
@@ -45,18 +49,22 @@ public class ContainerList extends BuildCraftContainer {
 		return true;
 	}
 
-	@RPC(RPCSide.SERVER)
-	public void setStack(int lineIndex, int slotIndex, ItemStack stack) {
+	public void setStack(final int lineIndex, final int slotIndex, final ItemStack stack) {
 		lines[lineIndex].setStack(slotIndex, stack);
 		ItemList.saveLine(player.getCurrentEquippedItem(), lines[lineIndex], lineIndex);
 
 		if (player.worldObj.isRemote) {
-			RPCHandler.rpcServer(this, "setStack", lineIndex, slotIndex, stack);
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setStack", new CommandWriter() {
+				public void write(ByteBuf data) {
+					data.writeByte(lineIndex);
+					data.writeByte(slotIndex);
+					Utils.writeStack(data, stack);
+				}
+			}));
 		}
 	}
 
-	@RPC(RPCSide.SERVER)
-	public void switchButton(int lineIndex, int button) {
+	public void switchButton(final int lineIndex, final int button) {
 		if (button == 0) {
 			lines[lineIndex].oreWildcard = false;
 			lines[lineIndex].subitemsWildcard = !lines[lineIndex].subitemsWildcard;
@@ -68,16 +76,37 @@ public class ContainerList extends BuildCraftContainer {
 		ItemList.saveLine(player.getCurrentEquippedItem(), lines[lineIndex], lineIndex);
 
 		if (player.worldObj.isRemote) {
-			RPCHandler.rpcServer(this, "switchButton", lineIndex, button);
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "switchButton", new CommandWriter() {
+				public void write(ByteBuf data) {
+					data.writeByte(lineIndex);
+					data.writeByte(button);
+				}
+			}));
 		}
 	}
 
-	@RPC(RPCSide.SERVER)
-	public void setLabel(String text) {
+	public void setLabel(final String text) {
 		ItemList.saveLabel(player.getCurrentEquippedItem(), text);
 
 		if (player.worldObj.isRemote) {
-			RPCHandler.rpcServer(this, "setLabel", text);
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setLabel", new CommandWriter() {
+				public void write(ByteBuf data) {
+					Utils.writeUTF(data, text);
+				}
+			}));
+		}
+	}
+
+	@Override
+	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
+		if (side.isServer()) {
+			if ("setLabel".equals(command)) {
+				setLabel(Utils.readUTF(stream));
+			} else if ("switchButton".equals(command)) {
+				switchButton(stream.readUnsignedByte(), stream.readUnsignedByte());
+			} else if ("setStack".equals(command)) {
+				setStack(stream.readUnsignedByte(), stream.readUnsignedByte(), Utils.readStack(stream));
+			}
 		}
 	}
 }

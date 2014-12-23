@@ -8,7 +8,6 @@
  */
 package buildcraft.silicon.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import buildcraft.api.core.IZone;
 import buildcraft.api.statements.IActionInternal;
@@ -31,17 +30,17 @@ public class ActionRobotWorkInArea extends BCStatement implements IActionInterna
 		return StringUtils.localize("gate.action.robot.work_in_area");
 	}
 
-	@Override
+	/*@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/action_robot_in_area");
-	}
+	}*/
 
 	public static IZone getArea(StatementSlot slot) {
 		if (slot.parameters[0] == null) {
 			return null;
 		}
 
-		ItemStack stack = ((StatementParameterItemStack) slot.parameters[0]).getItemStack();
+		ItemStack stack = slot.parameters[0].getItemStack();
 
 		if (!(stack.getItem() instanceof ItemMapLocation)) {
 			return null;
@@ -69,5 +68,11 @@ public class ActionRobotWorkInArea extends BCStatement implements IActionInterna
 	public void actionActivate(IStatementContainer source,
 			IStatementParameter[] parameters) {
 		
+	}
+
+	@Override
+	public int getSheetLocation() {
+		// TODO Auto-generated method stub
+		return 36;
 	}
 }

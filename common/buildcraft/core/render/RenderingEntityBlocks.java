@@ -14,22 +14,19 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
-
-import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.IInventoryRenderer;
 import buildcraft.core.utils.Utils;
 
-public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
+public class RenderingEntityBlocks /*implements ISimpleBlockRenderingHandler */ {
 
-	public static HashMap<EntityRenderIndex, IInventoryRenderer> blockByEntityRenders = new HashMap<EntityRenderIndex, IInventoryRenderer>();
+	/*public static HashMap<EntityRenderIndex, IInventoryRenderer> blockByEntityRenders = new HashMap<EntityRenderIndex, IInventoryRenderer>();
 	private static final ResourceLocation BLOCK_TEXTURE = TextureMap.locationBlocksTexture;
 
 	public static class EntityRenderIndex {
@@ -129,7 +126,7 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 	}
 
 	/* LEGACY PIPE RENDERING and quarry frames! */
-	private void legacyPipeRender(RenderBlocks renderblocks, IBlockAccess iblockaccess, int i, int j, int k, Block block, int l) {
+	/*private void legacyPipeRender(RenderBlocks renderblocks, IBlockAccess iblockaccess, int i, int j, int k, Block block, int l) {
 		float minSize = CoreConstants.PIPE_MIN_POS;
 		float maxSize = CoreConstants.PIPE_MAX_POS;
 
@@ -174,7 +171,7 @@ public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 		}
 
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-	}
+	}*/
 
 
 }

@@ -16,7 +16,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryCrafting;
@@ -26,11 +26,12 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.core.Position;
@@ -45,6 +46,7 @@ import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.core.utils.Utils;
 
 public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 	public static class FacadeState {
@@ -88,7 +90,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 
 		public void writeToNBT(NBTTagCompound nbt) {
 			if (block != null) {
-				nbt.setString("block", Block.blockRegistry.getNameForObject(block));
+				nbt.setString("block", Utils.getBlockName(block));
 			}
 			nbt.setByte("metadata", (byte) metadata);
 			if (wire != null) {
@@ -195,20 +197,18 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 	}
 
 	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer player, World worldObj, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+	public boolean onItemUse(ItemStack stack, EntityPlayer player, World worldObj, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
 		if (worldObj.isRemote) {
 			return false;
 		}
-		Position pos = new Position(x, y, z, ForgeDirection.getOrientation(side));
-		pos.moveForwards(1.0);
 
-		TileEntity tile = worldObj.getTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+		TileEntity tile = worldObj.getTileEntity(pos.offset(side));
 		if (!(tile instanceof TileGenericPipe)) {
 			return false;
 		}
 		TileGenericPipe pipeTile = (TileGenericPipe) tile;
 
-		if (pipeTile.addFacade(ForgeDirection.getOrientation(side).getOpposite(), getFacadeStates(stack))) {
+		if (pipeTile.addFacade(side.getOpposite(), getFacadeStates(stack))) {
 			stack.stackSize--;
 
 			return true;
@@ -242,13 +242,15 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 	private void registerValidFacades(Block block, Item item) {
 		Set<String> names = Sets.newHashSet();
 
-		for (int i = 0; i < 16; i++) {
+		for (Object o: block.getBlockState().getValidStates()) {
+			IBlockState state = (IBlockState) o;
 			try {
-				if (block.hasTileEntity(i)) {
+				if (block.hasTileEntity(state)) {
 					continue;
 				}
 				
-				ItemStack stack = new ItemStack(item, 1, i);
+				//TODO: get item metadata
+				ItemStack stack = new ItemStack(item, 1);
 
                 // Check if all of these functions work correctly.
                 // If an exception is filed, or null is returned, this generally means that
@@ -265,11 +267,10 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 
 				if (!Strings.isNullOrEmpty(stack.getUnlocalizedName())
 						&& names.add(stack.getUnlocalizedName())) {
-					addFacade("buildcraft:facade{" + Block.blockRegistry.getNameForObject(block) + "#"
-									+ stack.getItemDamage() + "}", stack);
+					addFacade(stack);
 
 					// prevent adding multiple facades if it's a rotatable block
-					if (block.getRenderType() == 31 || (block.getRenderType() == 39 && i == 2)) {
+					if (block.getRenderType() == 31 || (block.getRenderType() == 39)) {
 						break;
 					}
 				}
@@ -282,25 +283,27 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 	}
 
 	private static boolean isBlockBlacklisted(Block block) {
-		String blockName = Block.blockRegistry.getNameForObject(block);
+		String blockName = Utils.getBlockName(block);
 
 		if (blockName == null) {
 			return true;
 		}
 
-		for (String blacklistedBlock : BuildCraftTransport.facadeBlacklist) {
-			if (blockName.equals(JavaTools.stripSurroundingQuotes(blacklistedBlock))) {
-				return true;
-			}
-		}
-
+        // Blocks blacklisted by mods should always be treated as blacklisted
 		for (String blacklistedBlock : blacklistedFacades) {
 			if (blockName.equals(blacklistedBlock)) {
 				return true;
 			}
 		}
 
-		return false;
+        // Blocks blacklisted by config should depend on the config settings
+        for (String blacklistedBlock : BuildCraftTransport.facadeBlacklist) {
+            if (blockName.equals(JavaTools.stripSurroundingQuotes(blacklistedBlock))) {
+                return true ^ BuildCraftTransport.facadeTreatBlacklistAsWhitelist;
+            }
+        }
+
+		return false ^ BuildCraftTransport.facadeTreatBlacklistAsWhitelist;
 	}
 
 	private static boolean isBlockValidForFacade(Block block) {
@@ -342,10 +345,10 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 		if (nbt.hasKey("id")) {
 			block = (Block) Block.blockRegistry.getObjectById(nbt.getInteger("id"));
 		} else if (nbt.hasKey("name")) {
-			block = (Block) Block.blockRegistry.getObject(nbt.getString("name"));
+			block = (Block) Block.getBlockFromName(nbt.getString("name"));
 		}
 		if (nbt.hasKey("name_alt")) {
-			blockAlt = (Block) Block.blockRegistry.getObject(nbt.getString("name_alt"));
+			blockAlt = (Block) Block.getBlockFromName(nbt.getString("name_alt"));
 		}
 		if (nbt.hasKey("meta")) {
 			metadata = nbt.getInteger("meta");
@@ -408,17 +411,25 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 	}
 
 	@Override
-	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
+	public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player) {
 		// Simply send shift click to the pipe / mod block.
 		return true;
 	}
 
-	public void addFacade(String id, ItemStack itemStack) {
+	public void addFacade(ItemStack itemStack) {
 		if (itemStack.stackSize == 0) {
 			itemStack.stackSize = 1;
 		}
 
-		ItemStack facade = getFacadeForBlock(Block.getBlockFromItem(itemStack.getItem()), itemStack.getItemDamage());
+		Block block = Block.getBlockFromItem(itemStack.getItem());
+		if (block == null) {
+			return;
+		}
+
+		String recipeId = "buildcraft:facade{" + Utils.getBlockName(block) + "#"
+				+ itemStack.getItemDamage() + "}";
+
+		ItemStack facade = getFacadeForBlock(block, itemStack.getItemDamage());
 		if (!allFacades.contains(facade)) {
 			allFacades.add(facade);
 
@@ -426,7 +437,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 			facade6.stackSize = 6;
 
 			// 3 Structurepipes + this block makes 6 facades
-			BuildcraftRecipeRegistry.assemblyTable.addRecipe(id, 8000, facade6, new ItemStack(
+			BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId, 8000, facade6, new ItemStack(
 					BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
 		}
 	}
@@ -467,17 +478,17 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 		}
 
 		@Override
-		public void onAttachedPipe(IPipeTile pipe, ForgeDirection direction) {
+		public void onAttachedPipe(IPipeTile pipe, EnumFacing direction) {
 
 		}
 
 		@Override
-		public void onDetachedPipe(IPipeTile pipe, ForgeDirection direction) {
+		public void onDetachedPipe(IPipeTile pipe, EnumFacing direction) {
 
 		}
 
 		@Override
-		public boolean blocking(IPipeTile pipe, ForgeDirection direction) {
+		public boolean blocking(IPipeTile pipe, EnumFacing direction) {
 			return false;
 		}
 
@@ -487,7 +498,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 		}
 
 		@Override
-		public void validate(IPipeTile pipe, ForgeDirection direction) {
+		public void validate(IPipeTile pipe, EnumFacing direction) {
 
 		}
 	}
@@ -584,9 +595,14 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 		public ItemStack getRecipeOutput() {
 			return null;
 		}
+
+		@Override
+		public ItemStack[] getRemainingItems(InventoryCrafting inv) {
+			return new ItemStack[] {getCraftingResult(inv)};
+		}
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister par1IconRegister) {
 		// NOOP
@@ -596,7 +612,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem {
 	@SideOnly(Side.CLIENT)
 	public int getSpriteNumber() {
 		return 0;
-	}
+	}*/
 	
 	@Override
 	public ItemStack getFacadeForBlock(Block block, int metadata) {

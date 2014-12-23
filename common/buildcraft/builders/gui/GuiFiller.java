@@ -8,6 +8,8 @@
  */
 package buildcraft.builders.gui;
 
+import java.io.IOException;
+
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
@@ -47,7 +49,7 @@ public class GuiFiller extends GuiBuildCraft {
 	}
 
 	@Override
-	protected void actionPerformed(GuiButton button) {
+	protected void actionPerformed(GuiButton button) throws IOException {
 		super.actionPerformed(button);
 
 		if (button.id == 0) {

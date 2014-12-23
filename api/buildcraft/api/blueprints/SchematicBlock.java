@@ -2,28 +2,34 @@
  * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ * The BuildCraft API is distributed under the terms of the MIT License.
+ * Please check the contents of the license, which should be located
+ * as "LICENSE.API" in the BuildCraft source code distribution.
  */
 package buildcraft.api.blueprints;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.BlockFluidBase;
+import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.utils.Utils;
 
 public class SchematicBlock extends SchematicBlockBase {
 
-	public Block block = null;
-	public int meta = 0;
+	public IBlockState state = null;
 	public BuildingPermission defaultPermission = BuildingPermission.ALL;
 
 	/**
@@ -37,36 +43,33 @@ public class SchematicBlock extends SchematicBlockBase {
 	
 	@Override
 	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		if (block != null) {
+		if (state != null) {
 			if (storedRequirements.length != 0) {
-				for (ItemStack s : storedRequirements) {
-					requirements.add(s);
-				}
+				Collections.addAll(requirements, storedRequirements);
 			} else {
-				requirements.add(new ItemStack(block, 1, meta));
+				requirements.add(Utils.getItemStack(state));
 			}
 		}
 	}
 
 	@Override
-	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
-		return block == context.world().getBlock(x, y, z) && meta == context.world().getBlockMetadata(x, y, z);
+	public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
+		return state == context.world().getBlockState(pos);
 	}
 
 	@Override
-	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
-		super.placeInWorld(context, x, y, z, stacks);
+	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+		super.placeInWorld(context, pos, stacks);
 
-		this.setBlockInWorld(context, x, y, z);
+		this.setBlockInWorld(context, pos);
 	}
 
 	@Override
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
-		super.storeRequirements(context, x, y, z);
+	public void storeRequirements(IBuilderContext context, BlockPos pos) {
+		super.storeRequirements(context, pos);
 
-		if (block != null) {
-			ArrayList<ItemStack> req = block.getDrops(context.world(), x,
-					y, z, context.world().getBlockMetadata(x, y, z), 0);
+		if (state != null) {
+			List<ItemStack> req = state.getBlock().getDrops(context.world(), pos, state, 0);
 
 			if (req != null) {
 				storedRequirements = new ItemStack [req.size()];
@@ -95,6 +98,7 @@ public class SchematicBlock extends SchematicBlockBase {
 
 	@Override
 	public BuildingStage getBuildStage () {
+		Block block = state.getBlock();
 		if (block instanceof BlockFalling) {
 			return BuildingStage.SUPPORTED;
 		} else if (block instanceof BlockFluidBase || block instanceof BlockLiquid) {
@@ -112,10 +116,8 @@ public class SchematicBlock extends SchematicBlockBase {
 	}
 	
 	// Utility functions
-	protected void setBlockInWorld(IBuilderContext context, int x, int y, int z) {
-		// Meta needs to be specified twice, depending on the block behavior
-		context.world().setBlock(x, y, z, block, meta, 3);
-		context.world().setBlockMetadataWithNotify(x, y, z, meta, 3);
+	protected void setBlockInWorld(IBuilderContext context, BlockPos pos) {
+		context.world().setBlockState(pos, state, 3);
 	}
 	
 	public boolean doNotUse() {
@@ -124,8 +126,8 @@ public class SchematicBlock extends SchematicBlockBase {
 	
 	protected void readBlockFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		try {
-			block = registry.getBlockForId(nbt.getInteger("blockId"));
-			meta = nbt.getInteger("blockMeta");
+			Block block = registry.getBlockForId(nbt.getInteger("blockId"));
+			state = block.getStateFromMeta(nbt.getInteger("blockMeta"));
 		} catch (MappingNotFoundException e) {
 			doNotUse = true;
 		}
@@ -136,11 +138,9 @@ public class SchematicBlock extends SchematicBlockBase {
 			NBTTagList rq = nbt.getTagList("rq", Constants.NBT.TAG_COMPOUND);
 
 			ArrayList<ItemStack> rqs = new ArrayList<ItemStack>();
-			int idTEST = 0;
 			for (int i = 0; i < rq.tagCount(); ++i) {
 				try {
 					NBTTagCompound sub = rq.getCompoundTagAt(i);
-					idTEST = sub.getInteger("id");
 					if (sub.getInteger("id") >= 0) {
 						registry.stackToWorld(sub);
 						rqs.add(ItemStack.loadItemStackFromNBT(sub));
@@ -162,8 +162,8 @@ public class SchematicBlock extends SchematicBlockBase {
 	}
 	
 	protected void writeBlockToNBT(NBTTagCompound nbt, MappingRegistry registry) {
-		nbt.setInteger("blockId", registry.getIdForBlock(block));
-		nbt.setInteger("blockMeta", meta);
+		nbt.setInteger("blockId", registry.getIdForBlock(state.getBlock()));
+		nbt.setInteger("blockMeta", state.getBlock().getMetaFromState(state));
 	}
 	
 	protected void writeRequirementsToNBT(NBTTagCompound nbt, MappingRegistry registry) {
@@ -179,5 +179,20 @@ public class SchematicBlock extends SchematicBlockBase {
 
 			nbt.setTag("rq", rq);
 		}
+	}
+	
+	public EnumFacing getFace()
+	{
+		return ((EnumFacing)state.getValue(BlockBuildCraft.FACING_PROP));
+	}
+	
+	public int getMetaData()
+	{
+		return getFace().getIndex();
+	}
+	
+	public void setMetaData(int newValue)
+	{
+		state = state.withProperty(BlockBuildCraft.FACING_PROP, EnumFacing.getFront(newValue));
 	}
 }

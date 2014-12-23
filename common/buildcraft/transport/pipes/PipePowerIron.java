@@ -14,13 +14,13 @@ import java.util.LinkedList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.ChatComponentText;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.PowerMode;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.Pipe;
@@ -37,7 +37,7 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
+	public int getIconIndex(EnumFacing direction) {
 		if (container == null) {
 			return PipeIconProvider.TYPE.PipePowerIronM128.ordinal();
 		}
@@ -47,7 +47,7 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 	@Override
 	public boolean blockActivated(EntityPlayer player) {
 		Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, container.xCoord, container.yCoord, container.zCoord)) {
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, container.getPos())) {
 			if (player.isSneaking()) {
 				setMode(getMode().getPrevious());
 			} else {
@@ -59,7 +59,7 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 						getMode().maxPower)));
 			}
 
-			((IToolWrench) equipped).wrenchUsed(player, container.xCoord, container.yCoord, container.zCoord);
+			((IToolWrench) equipped).wrenchUsed(player, container.getPos());
 			return true;
 		}
 
@@ -78,16 +78,17 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 
 	public void setMode(PowerMode mode) {
 		if (mode.ordinal() != container.getBlockMetadata()) {
-			container.getWorldObj().setBlockMetadataWithNotify(container.xCoord, container.yCoord, container.zCoord, mode.ordinal(), 3);
+			//TODO: Check if that is correct
+			container.getWorld().setBlockState(container.getPos(), container.getWorld().getBlockState(container.getPos()).withProperty(BlockBuildCraft.FACING_PROP, mode), 3);
 			container.scheduleRenderUpdate();
 		}
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
 		return BuildCraftTransport.instance.pipeIconProvider;
-	}
+	}*/
 
 	@Override
 	protected void actionsActivated(Collection<StatementSlot> actions) {

@@ -10,7 +10,6 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -33,8 +32,8 @@ public class ActionPowerLimiter extends BCStatement implements IActionInternal {
 	}
 
 	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_limiter_" + limit.name().toLowerCase(Locale.ENGLISH));
+	public int getSheetLocation() {
+		return 14 + (8 + limit.ordinal()) * 16;
 	}
 
 	@Override

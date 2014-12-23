@@ -11,14 +11,12 @@ package buildcraft.silicon.network;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.common.network.NetworkRegistry;
-
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
@@ -50,13 +48,13 @@ public class PacketHandlerSilicon extends SimpleChannelInboundHandler<BuildCraft
 
 	}
 
-	private TileAssemblyTable getAssemblyTable(World world, int x, int y, int z) {
+	private TileAssemblyTable getAssemblyTable(World world, BlockPos pos) {
 
-		if (!world.blockExists(x, y, z)) {
+		if (world.isAirBlock(pos)) {
 			return null;
 		}
 
-		TileEntity tile = world.getTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(pos);
 		if (!(tile instanceof TileAssemblyTable)) {
 			return null;
 		}
@@ -64,13 +62,13 @@ public class PacketHandlerSilicon extends SimpleChannelInboundHandler<BuildCraft
 		return (TileAssemblyTable) tile;
 	}
 
-	private TileAdvancedCraftingTable getAdvancedWorkbench(World world, int x, int y, int z) {
+	private TileAdvancedCraftingTable getAdvancedWorkbench(World world, BlockPos pos) {
 
-		if (!world.blockExists(x, y, z)) {
+		if (world.isAirBlock(pos)) {
 			return null;
 		}
 
-		TileEntity tile = world.getTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(pos);
 		if (!(tile instanceof TileAdvancedCraftingTable)) {
 			return null;
 		}
@@ -86,7 +84,7 @@ public class PacketHandlerSilicon extends SimpleChannelInboundHandler<BuildCraft
 	 */
 	private void onAdvancedWorkbenchSet(EntityPlayer player, PacketSlotChange packet1) {
 
-		TileAdvancedCraftingTable tile = getAdvancedWorkbench(player.worldObj, packet1.posX, packet1.posY, packet1.posZ);
+		TileAdvancedCraftingTable tile = getAdvancedWorkbench(player.worldObj, packet1.pos);
 		if (tile == null) {
 			return;
 		}

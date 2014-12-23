@@ -9,23 +9,21 @@
 package buildcraft.factory;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
-
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.events.BlockInteractionEvent;
@@ -33,15 +31,15 @@ import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
-import buildcraft.core.fluids.FluidUtils;
+import buildcraft.core.fluids.TankUtils;
 import buildcraft.core.utils.Utils;
 
 public class BlockRefinery extends BlockBuildCraft {
 
-	private static IIcon icon;
+	//private static IIcon icon;
 
 	public BlockRefinery() {
-		super(Material.iron);
+		super(Material.iron, new PropertyEnum[]{FACING_PROP});
 
 		setHardness(5F);
 		setCreativeTab(CreativeTabBuildCraft.BLOCKS.get());
@@ -52,10 +50,6 @@ public class BlockRefinery extends BlockBuildCraft {
 		return false;
 	}
 
-	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
-	}
 
 	public boolean isACube() {
 		return false;
@@ -72,45 +66,46 @@ public class BlockRefinery extends BlockBuildCraft {
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
-		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
+	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entityliving, ItemStack stack) {
+		super.onBlockPlacedBy(world, pos, state, entityliving, stack);
 
-		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
+		EnumFacing orientation = Utils.get2dOrientation(entityliving);
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
+		world.setBlockState(pos, state.withProperty(FACING_PROP, orientation.getOpposite()), 1);
 	}
 
 	@Override
-	public boolean rotateBlock(World world, int x, int y, int z, ForgeDirection axis) {
-		int meta = world.getBlockMetadata(x, y, z);
+	public boolean rotateBlock(World world, BlockPos pos, EnumFacing axis) {
+		IBlockState state = world.getBlockState(pos);
+		EnumFacing side = (EnumFacing)state.getValue(FACING_PROP);
 
-		switch (ForgeDirection.getOrientation(meta)) {
+		switch (side) {
 			case WEST:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.SOUTH.ordinal(), 3);
+				world.setBlockState(pos, state.withProperty(FACING_PROP, EnumFacing.SOUTH), 3);
 				break;
 			case EAST:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.NORTH.ordinal(), 3);
+				world.setBlockState(pos, state.withProperty(FACING_PROP, EnumFacing.NORTH), 3);
 				break;
 			case NORTH:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.WEST.ordinal(), 3);
+				world.setBlockState(pos, state.withProperty(FACING_PROP, EnumFacing.WEST), 3);
 				break;
 			case SOUTH:
 			default:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.EAST.ordinal(), 3);
+				world.setBlockState(pos, state.withProperty(FACING_PROP, EnumFacing.EAST), 3);
 				break;
 		}
-		world.markBlockForUpdate(x, y, z);
+		world.markBlockForUpdate(pos);
 		return true;
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
-		TileEntity tile = world.getTileEntity(x, y, z);
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing face, float hitX, float hitY, float hitZ) {
+		TileEntity tile = world.getTileEntity(pos);
 
 		if (!(tile instanceof TileRefinery)) {
 			return false;
 		}
-		BlockInteractionEvent event = new BlockInteractionEvent(player, this);
+		BlockInteractionEvent event = new BlockInteractionEvent(player, pos, state);
 		FMLCommonHandler.instance().bus().post(event);
 		if (event.isCanceled()) {
 			 return false;
@@ -118,15 +113,15 @@ public class BlockRefinery extends BlockBuildCraft {
 
 		ItemStack current = player.getCurrentEquippedItem();
 		Item equipped = current != null ? current.getItem() : null;
-		if (player.isSneaking() && equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, x, y, z)) {
+		if (player.isSneaking() && equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, pos)) {
 			((TileRefinery) tile).resetFilters();
-			((IToolWrench) equipped).wrenchUsed(player, x, y, z);
+			((IToolWrench) equipped).wrenchUsed(player, pos);
 			return true;
 		}
 
 		if (current != null && current.getItem() != Items.bucket) {
 			if (!world.isRemote) {
-				if (FluidUtils.handleRightClick((TileRefinery) tile, ForgeDirection.getOrientation(side), player, true, false)) {
+				if (TankUtils.handleRightClick((TileRefinery) tile, face, player, true, false)) {
 					return true;
 				}
 			} else if (FluidContainerRegistry.isContainer(current)) {
@@ -136,13 +131,13 @@ public class BlockRefinery extends BlockBuildCraft {
 
 
 		if (!world.isRemote) {
-			player.openGui(BuildCraftFactory.instance, GuiIds.REFINERY, world, x, y, z);
+			player.openGui(BuildCraftFactory.instance, GuiIds.REFINERY, world, pos.getX(), pos.getY(), pos.getZ());
 		}
 
 		return true;
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		icon = par1IconRegister.registerIcon("buildcraft:refineryBack");
@@ -152,5 +147,5 @@ public class BlockRefinery extends BlockBuildCraft {
 	@SideOnly(Side.CLIENT)
 	public IIcon getIcon(int par1, int par2) {
 		return icon;
-	}
+	}*/
 }

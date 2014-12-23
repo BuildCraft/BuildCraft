@@ -2,9 +2,9 @@
  * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ * The BuildCraft API is distributed under the terms of the MIT License.
+ * Please check the contents of the license, which should be located
+ * as "LICENSE.API" in the BuildCraft source code distribution.
  */
 package buildcraft.api.blueprints;
 
@@ -13,6 +13,7 @@ import java.util.LinkedList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.core.IInvSlot;
 
 /**
@@ -150,7 +151,7 @@ public abstract class Schematic {
 	 * y, z} on the world. For blocks, block and meta fields will be initialized
 	 * automatically.
 	 */
-	public void initializeFromObjectAt(IBuilderContext context, int x, int y, int z) {
+	public void initializeFromObjectAt(IBuilderContext context, BlockPos pos) {
 
 	}
 
@@ -158,14 +159,14 @@ public abstract class Schematic {
 	 * Places the block in the world, at the location specified in the slot,
 	 * using the stack in parameters
 	 */
-	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
+	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
 
 	}
 
 	/**
 	 * Write specific requirements coming from the world to the blueprint.
 	 */
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
+	public void storeRequirements(IBuilderContext context, BlockPos pos) {
 
 	}
 
@@ -217,7 +218,7 @@ public abstract class Schematic {
 	 *
 	 * Post processing will be called on these blocks.
 	 */
-	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
+	public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
 		return true;
 	}
 
@@ -256,7 +257,7 @@ public abstract class Schematic {
 	 * blocks. This may be useful to adjust variable depending on surrounding
 	 * blocks that may not be there already at initial building.
 	 */
-	public void postProcessing(IBuilderContext context, int x, int y, int z) {
+	public void postProcessing(IBuilderContext context, BlockPos pos) {
 
 	}
 

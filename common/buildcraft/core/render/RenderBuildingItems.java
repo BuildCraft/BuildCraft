@@ -10,6 +10,7 @@ package buildcraft.core.render;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.item.EntityItem;
@@ -24,18 +25,7 @@ public class RenderBuildingItems {
 	private final RenderItem customRenderItem;
 
 	public RenderBuildingItems () {
-		customRenderItem = new RenderItem() {
-			@Override
-			public boolean shouldBob() {
-				return false;
-			}
-
-			@Override
-			public boolean shouldSpreadItems() {
-				return false;
-			}
-		};
-		customRenderItem.setRenderManager(RenderManager.instance);
+		customRenderItem = Minecraft.getMinecraft().getRenderItem();
 	}
 
 	public void render(TileEntity tile, double x, double y, double z) {
@@ -44,7 +34,7 @@ public class RenderBuildingItems {
 		GL11.glPushMatrix();
 
 		GL11.glTranslated(x, y, z);
-		GL11.glTranslated(-tile.xCoord, -tile.yCoord, -tile.zCoord);
+		GL11.glTranslated(-tile.getPos().getX(), -tile.getPos().getY(), -tile.getPos().getZ());
 
 		if (provider.getBuilders() != null) {
 			for (BuildingItem i : provider.getBuilders()) {
@@ -71,7 +61,8 @@ public class RenderBuildingItems {
 				GL11.glTranslatef(0, 0.25F, 0);
 				GL11.glScalef(renderScale, renderScale, renderScale);
 				dummyEntityItem.setEntityItemStack(s.stack);
-				customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
+				//TODO (1.8): Render
+				//customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
 
 				GL11.glPopMatrix();
 			}

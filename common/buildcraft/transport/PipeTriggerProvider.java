@@ -11,7 +11,7 @@ package buildcraft.transport;
 import java.util.LinkedList;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.statements.IStatementContainer;
@@ -66,7 +66,7 @@ public class PipeTriggerProvider implements ITriggerProvider {
 				break;
 		}
 
-		if (tile instanceof IEnergyHandler && ((IEnergyHandler) tile).getMaxEnergyStored(ForgeDirection.UNKNOWN) > 0) {
+		if (tile instanceof IEnergyHandler && ((IEnergyHandler) tile).getMaxEnergyStored(null) > 0) {
 			result.add((ITriggerInternal) BuildCraftCore.triggerEnergyHigh);
 			result.add((ITriggerInternal) BuildCraftCore.triggerEnergyLow);
 		}
@@ -75,7 +75,7 @@ public class PipeTriggerProvider implements ITriggerProvider {
 	}
 
 	@Override
-	public LinkedList<ITriggerExternal> getExternalTriggers(ForgeDirection side, TileEntity tile) {
+	public LinkedList<ITriggerExternal> getExternalTriggers(EnumFacing side, TileEntity tile) {
 		return null;
 	}
 }

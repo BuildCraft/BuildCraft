@@ -8,8 +8,7 @@
  */
 package buildcraft.silicon.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -33,10 +32,10 @@ public class TriggerRobotSleep extends BCStatement implements ITriggerInternal {
 		return StringUtils.localize("gate.trigger.robot.sleep");
 	}
 
-	@Override
+	/*@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_robot_sleep");
-	}
+	}*/
 
 	@Override
 	public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
@@ -47,7 +46,7 @@ public class TriggerRobotSleep extends BCStatement implements ITriggerInternal {
 		Pipe<?> pipe = (Pipe<?>) ((IGate) container).getPipe();
 		TileGenericPipe tile = pipe.container;
 
-		for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing d : EnumFacing.values()) {
 			DockingStation station = tile.getStation(d);
 
 			if (station != null && station.robotTaking() != null) {
@@ -60,5 +59,10 @@ public class TriggerRobotSleep extends BCStatement implements ITriggerInternal {
 		}
 
 		return false;
+	}
+
+	@Override
+	public int getSheetLocation() {
+		return 68;
 	}
 }

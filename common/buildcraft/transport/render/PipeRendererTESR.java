@@ -14,10 +14,13 @@ import com.google.common.collect.Maps;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.entity.RenderEntity;
+import net.minecraft.client.renderer.entity.RenderEntityItem;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -26,10 +29,9 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -78,7 +80,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	private ModelRenderer box;
 
 	private final EntityItem dummyEntityItem = new EntityItem(null);
-	private final RenderItem customRenderItem;
+	private final RenderEntityItem customRenderItem;
 	private boolean initialized = false;
 
 	private class DisplayFluidList {
@@ -90,18 +92,8 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	}
 
 	public PipeRendererTESR() {
-		customRenderItem = new RenderItem() {
-			@Override
-			public boolean shouldBob() {
-				return false;
-			}
-
-			@Override
-			public boolean shouldSpreadItems() {
-				return false;
-			}
-		};
-		customRenderItem.setRenderManager(RenderManager.instance);
+		customRenderItem = new RenderEntityItem(Minecraft.getMinecraft().getRenderManager(),
+				Minecraft.getMinecraft().getRenderItem());
 
 		box = new ModelRenderer(model, 0, 0);
 		//box.addBox(0, 64 + 1, 64 + 1, 16, 128 - 2, 128 - 2);
@@ -127,7 +119,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		} else {
 			block.baseBlock = Blocks.water;
 		}
-		block.texture = fluid.getStillIcon();
+		//block.texture = fluid.getStillIcon();
 
 		float size = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
 
@@ -221,7 +213,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		initialized = true;
 
 		RenderInfo block = new RenderInfo();
-		block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.Power_Normal.ordinal());
+		//block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.Power_Normal.ordinal());
 
 		float size = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
 
@@ -247,7 +239,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			GL11.glEndList();
 		}
 
-		block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.Power_Overload.ordinal());
+		//block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.Power_Overload.ordinal());
 
 		size = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
 
@@ -275,7 +267,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
+	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int fff) {
 		if (BuildCraftCore.render == RenderMode.NoDynamic) {
 			return;
 		}
@@ -337,32 +329,32 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		boolean foundX = false, foundY = false, foundZ = false;
 
-		if (state.wireMatrix.isWireConnected(color, ForgeDirection.WEST)) {
+		if (state.wireMatrix.isWireConnected(color, EnumFacing.WEST)) {
 			minX = 0;
 			foundX = true;
 		}
 
-		if (state.wireMatrix.isWireConnected(color, ForgeDirection.EAST)) {
+		if (state.wireMatrix.isWireConnected(color, EnumFacing.EAST)) {
 			maxX = 1;
 			foundX = true;
 		}
 
-		if (state.wireMatrix.isWireConnected(color, ForgeDirection.DOWN)) {
+		if (state.wireMatrix.isWireConnected(color, EnumFacing.DOWN)) {
 			minY = 0;
 			foundY = true;
 		}
 
-		if (state.wireMatrix.isWireConnected(color, ForgeDirection.UP)) {
+		if (state.wireMatrix.isWireConnected(color, EnumFacing.UP)) {
 			maxY = 1;
 			foundY = true;
 		}
 
-		if (state.wireMatrix.isWireConnected(color, ForgeDirection.NORTH)) {
+		if (state.wireMatrix.isWireConnected(color, EnumFacing.NORTH)) {
 			minZ = 0;
 			foundZ = true;
 		}
 
-		if (state.wireMatrix.isWireConnected(color, ForgeDirection.SOUTH)) {
+		if (state.wireMatrix.isWireConnected(color, EnumFacing.SOUTH)) {
 			maxZ = 1;
 			foundZ = true;
 		}
@@ -438,14 +430,14 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		bindTexture(TextureMap.locationBlocksTexture);
 
 		RenderInfo renderBox = new RenderInfo();
-		renderBox.texture = BuildCraftTransport.instance.wireIconProvider.getIcon(state.wireMatrix.getWireIconIndex(color));
+		//renderBox.texture = BuildCraftTransport.instance.wireIconProvider.getIcon(state.wireMatrix.getWireIconIndex(color));
 
 		// Z render
 
 		if (minZ != CoreConstants.PIPE_MIN_POS || maxZ != CoreConstants.PIPE_MAX_POS || !found) {
 			renderBox.setBounds(cx == CoreConstants.PIPE_MIN_POS ? cx - 0.05F : cx, cy == CoreConstants.PIPE_MIN_POS ? cy - 0.05F : cy, minZ, cx == CoreConstants.PIPE_MIN_POS ? cx
 					: cx + 0.05F, cy == CoreConstants.PIPE_MIN_POS ? cy : cy + 0.05F, maxZ);
-			RenderEntityBlock.INSTANCE.renderBlock(renderBox, pipe.getWorldObj(), 0, 0, 0, pipe.xCoord, pipe.yCoord, pipe.zCoord, true, true);
+			RenderEntityBlock.INSTANCE.renderBlock(renderBox, pipe.getWorld(), 0, 0, 0, pipe.getPos().getX(), pipe.getPos().getY(), pipe.getPos().getZ(), true, true);
 		}
 
 		// X render
@@ -453,7 +445,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		if (minX != CoreConstants.PIPE_MIN_POS || maxX != CoreConstants.PIPE_MAX_POS || !found) {
 			renderBox.setBounds(minX, cy == CoreConstants.PIPE_MIN_POS ? cy - 0.05F : cy, cz == CoreConstants.PIPE_MIN_POS ? cz - 0.05F : cz, maxX, cy == CoreConstants.PIPE_MIN_POS ? cy
 					: cy + 0.05F, cz == CoreConstants.PIPE_MIN_POS ? cz : cz + 0.05F);
-			RenderEntityBlock.INSTANCE.renderBlock(renderBox, pipe.getWorldObj(), 0, 0, 0, pipe.xCoord, pipe.yCoord, pipe.zCoord, true, true);
+			RenderEntityBlock.INSTANCE.renderBlock(renderBox, pipe.getWorld(), 0, 0, 0, pipe.getPos().getX(), pipe.getPos().getY(), pipe.getPos().getZ(), true, true);
 		}
 
 		// Y render
@@ -461,13 +453,13 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		if (minY != CoreConstants.PIPE_MIN_POS || maxY != CoreConstants.PIPE_MAX_POS || !found) {
 			renderBox.setBounds(cx == CoreConstants.PIPE_MIN_POS ? cx - 0.05F : cx, minY, cz == CoreConstants.PIPE_MIN_POS ? cz - 0.05F : cz, cx == CoreConstants.PIPE_MIN_POS ? cx
 					: cx + 0.05F, maxY, cz == CoreConstants.PIPE_MIN_POS ? cz : cz + 0.05F);
-			RenderEntityBlock.INSTANCE.renderBlock(renderBox, pipe.getWorldObj(), 0, 0, 0, pipe.xCoord, pipe.yCoord, pipe.zCoord, true, true);
+			RenderEntityBlock.INSTANCE.renderBlock(renderBox, pipe.getWorld(), 0, 0, 0, pipe.getPos().getX(), pipe.getPos().getY(), pipe.getPos().getZ(), true, true);
 		}
 
 		if (center || !found) {
 			renderBox.setBounds(cx == CoreConstants.PIPE_MIN_POS ? cx - 0.05F : cx, cy == CoreConstants.PIPE_MIN_POS ? cy - 0.05F : cy, cz == CoreConstants.PIPE_MIN_POS ? cz - 0.05F : cz,
 					cx == CoreConstants.PIPE_MIN_POS ? cx : cx + 0.05F, cy == CoreConstants.PIPE_MIN_POS ? cy : cy + 0.05F, cz == CoreConstants.PIPE_MIN_POS ? cz : cz + 0.05F);
-			RenderEntityBlock.INSTANCE.renderBlock(renderBox, pipe.getWorldObj(), 0, 0, 0, pipe.xCoord, pipe.yCoord, pipe.zCoord, true, true);
+			RenderEntityBlock.INSTANCE.renderBlock(renderBox, pipe.getWorld(), 0, 0, 0, pipe.getPos().getX(), pipe.getPos().getY(), pipe.getPos().getZ(), true, true);
 		}
 
 		RenderHelper.enableStandardItemLighting();
@@ -484,7 +476,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		}
 	}
 
-	private void renderGate(TileGenericPipe pipe, double x, double y, double z, Gate gate, ForgeDirection direction) {
+	private void renderGate(TileGenericPipe pipe, double x, double y, double z, Gate gate, EnumFacing direction) {
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
 //		GL11.glEnable(GL11.GL_LIGHTING);
@@ -498,17 +490,17 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		bindTexture(TextureMap.locationBlocksTexture);
 
-		IIcon iconLogic;
+		//IIcon iconLogic;
 		if (pipe.renderState.gateMatrix.isGateLit(direction)) {
-			iconLogic = gate.logic.getIconLit();
+			//iconLogic = gate.logic.getIconLit();
 		} else {
-			iconLogic = gate.logic.getIconDark();
+			//iconLogic = gate.logic.getIconDark();
 		}
 
 		float translateCenter = 0;
 
 		// Render base gate
-		renderGate(pipe, iconLogic, 0, 0.1F, 0, 0, direction);
+		//renderGate(pipe, iconLogic, 0, 0.1F, 0, 0, direction);
 
 		float pulseStage = gate.getPulseStage() * 2F;
 
@@ -523,16 +515,16 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				translateCenter = amplitude - ((pulseStage - 1F) * amplitude) + start;
 			}
 
-			renderGate(pipe, iconLogic, 0, 0.13F, translateCenter, translateCenter, direction);
+			//renderGate(pipe, iconLogic, 0, 0.13F, translateCenter, translateCenter, direction);
 		}
 
-		IIcon materialIcon = gate.material.getIconBlock();
+		/*IIcon materialIcon = gate.material.getIconBlock();
 		if (materialIcon != null) {
 			renderGate(pipe, materialIcon, 1, 0.13F, translateCenter, translateCenter, direction);
-		}
+		}*/
 
 		for (IGateExpansion expansion : gate.expansions.keySet()) {
-			renderGate(pipe, expansion.getOverlayBlock(), 2, 0.13F, translateCenter, translateCenter, direction);
+			//renderGate(pipe, expansion.getOverlayBlock(), 2, 0.13F, translateCenter, translateCenter, direction);
 		}
 
 		RenderHelper.enableStandardItemLighting();
@@ -541,11 +533,11 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();
 	}
 
-	private void renderGate(TileGenericPipe tile, IIcon icon, int layer, float trim, float translateCenter, float extraDepth, ForgeDirection direction) {
+	private void renderGate(TileGenericPipe tile, /*IIcon icon,*/ int layer, float trim, float translateCenter, float extraDepth, EnumFacing direction) {
 		PipeRenderState state = tile.renderState;
 
 		RenderInfo renderBox = new RenderInfo();
-		renderBox.texture = icon;
+		//renderBox.texture = icon;
 
 		float[][] zeroState = new float[3][2];
 		float min = CoreConstants.PIPE_MIN_POS + trim / 2F;
@@ -563,7 +555,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		GL11.glPushMatrix();
 
-		float xt = direction.offsetX * translateCenter, yt = direction.offsetY * translateCenter, zt = direction.offsetZ
+		float xt = direction.getFrontOffsetX() * translateCenter, yt = direction.getFrontOffsetY() * translateCenter, zt = direction.getFrontOffsetZ()
 				* translateCenter;
 
 		GL11.glTranslatef(xt, yt, zt);
@@ -576,17 +568,17 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		}
 
 		renderBox.setBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-		RenderEntityBlock.INSTANCE.renderBlock(renderBox, tile.getWorldObj(), 0, 0, 0, tile.xCoord, tile.yCoord,
-				tile.zCoord, true, true);
+		RenderEntityBlock.INSTANCE.renderBlock(renderBox, tile.getWorld(), 0, 0, 0, tile.getPos().getX(), tile.getPos().getY(),
+				tile.getPos().getZ(), true, true);
 		GL11.glPopMatrix();
 	}
 
-	public boolean isOpenOrientation(PipeRenderState state, ForgeDirection direction) {
+	public boolean isOpenOrientation(PipeRenderState state, EnumFacing direction) {
 		int connections = 0;
 
-		ForgeDirection targetOrientation = ForgeDirection.UNKNOWN;
+		EnumFacing targetOrientation = null;
 
-		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing o : EnumFacing.values()) {
 			if (state.pipeConnectionMatrix.isConnected(o)) {
 
 				connections++;
@@ -605,7 +597,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	}
 
 	private void renderPower(Pipe<PipeTransportPower> pipe, double x, double y, double z) {
-		initializeDisplayPowerList(pipe.container.getWorldObj());
+		initializeDisplayPowerList(pipe.container.getWorld());
 
 		PipeTransportPower pow = pipe.transport;
 
@@ -645,7 +637,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		/*bindTexture(STRIPES_TEXTURE);
 
 		for (int side = 0; side < 6; side += 2) {
-			if (pipe.container.isPipeConnected(ForgeDirection.values()[side])) {
+			if (pipe.container.isPipeConnected(EnumFacing.values()[side])) {
 				GL11.glPushMatrix();
 
 				GL11.glTranslatef(0.5F, 0.5F, 0.5F);
@@ -699,7 +691,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		boolean sides = false, above = false;
 
-		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing side : EnumFacing.values()) {
 			int i = side.ordinal();
 
 			FluidStack fluidStack = trans.renderCache[i];
@@ -712,7 +704,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				continue;
 			}
 
-			DisplayFluidList d = getListFromBuffer(fluidStack, pipe.container.getWorldObj());
+			DisplayFluidList d = getListFromBuffer(fluidStack, pipe.container.getWorld());
 
 			if (d == null) {
 				continue;
@@ -723,7 +715,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			GL11.glPushMatrix();
 			int list = 0;
 
-			switch (ForgeDirection.VALID_DIRECTIONS[i]) {
+			switch (EnumFacing.values()[i]) {
 				case UP:
 					above = true;
 					list = d.sideVertical[stage];
@@ -752,16 +744,16 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			GL11.glPopMatrix();
 		}
 		// CENTER
-		FluidStack fluidStack = trans.renderCache[ForgeDirection.UNKNOWN.ordinal()];
+		FluidStack fluidStack = trans.renderCache[6];
 
 		if (fluidStack != null && fluidStack.amount > 0) {
-			DisplayFluidList d = getListFromBuffer(fluidStack, pipe.container.getWorldObj());
+			DisplayFluidList d = getListFromBuffer(fluidStack, pipe.container.getWorld());
 
 			if (d != null) {
 				int stage = (int) ((float) fluidStack.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
 
 				bindTexture(TextureMap.locationBlocksTexture);
-				RenderUtils.setGLColorFromInt(trans.colorRenderCache[ForgeDirection.UNKNOWN.ordinal()]);
+				RenderUtils.setGLColorFromInt(trans.colorRenderCache[6]);
 
 				if (above) {
 					GL11.glCallList(d.centerVertical[stage]);
@@ -793,7 +785,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		GL11.glPushMatrix();
 		GL11.glDisable(2896 /* GL_LIGHTING */);
 
-		float light = pipe.container.getWorldObj().getLightBrightness(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+		float light = pipe.container.getWorld().getLightBrightness(pipe.container.getPos());
 
 		int count = 0;
 		for (TravelingItem item : pipe.transport.items) {
@@ -801,7 +793,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				break;
 			}
 
-			doRenderItem(item, x + item.xCoord - pipe.container.xCoord, y + item.yCoord - pipe.container.yCoord, z + item.zCoord - pipe.container.zCoord, light, item.color);
+			doRenderItem(item, x + item.xCoord - pipe.container.getPos().getX(), y + item.yCoord - pipe.container.getPos().getY(), z + item.zCoord - pipe.container.getPos().getZ(), light, item.color);
 			count++;
 		}
 
@@ -810,7 +802,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	}
 
 	public void doRenderItem(TravelingItem travellingItem, double x, double y, double z, float light, EnumColor color) {
-
 		if (travellingItem == null || travellingItem.getItemStack() == null) {
 			return;
 		}
@@ -819,7 +810,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		ItemStack itemstack = travellingItem.getItemStack();
 		GL11.glPushMatrix();
 		GL11.glTranslatef((float) x, (float) y, (float) z);
-		GL11.glTranslatef(0, 0.25F, 0);
 		GL11.glScalef(renderScale, renderScale, renderScale);
 		dummyEntityItem.setEntityItemStack(itemstack);
 		customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
@@ -828,7 +818,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			bindTexture(TextureMap.locationBlocksTexture);
 			RenderInfo block = new RenderInfo();
 
-			block.texture = PipeIconProvider.TYPE.ItemBox.getIcon();
+			//block.texture = PipeIconProvider.TYPE.ItemBox.getIcon();
 
 			float pix = 0.0625F;
 

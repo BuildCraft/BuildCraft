@@ -8,9 +8,9 @@
  */
 package buildcraft.core.gui;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
@@ -18,16 +18,17 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.fluids.FluidStack;
 
+import buildcraft.api.core.SheetIcon;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.slots.IPhantomSlot;
 import buildcraft.core.gui.tooltips.IToolTipProvider;
@@ -39,6 +40,7 @@ import buildcraft.core.utils.SessionVars;
 
 public abstract class GuiBuildCraft extends GuiContainer {
 
+	public static final ResourceLocation ICONS_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/sheet_icons.png");
 	public static final ResourceLocation LEDGER_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/ledger.png");
 	public final LedgerManager ledgerManager = new LedgerManager(this);
 	public final TileEntity tile;
@@ -48,6 +50,9 @@ public abstract class GuiBuildCraft extends GuiContainer {
 	public GuiBuildCraft(BuildCraftContainer container, IInventory inventory, ResourceLocation texture) {
 		super(container);
 		this.container = container;
+
+		// Bug? Otherwise it crashes in handleMouseInput()...
+		this.mc = Minecraft.getMinecraft();
 
 		this.texture = texture;
 
@@ -122,7 +127,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		if (fluid == null || fluid.getFluid() == null) {
 			return;
 		}
-		IIcon icon = fluid.getFluid().getIcon(fluid);
+		//IIcon icon = fluid.getFluid().getIcon(fluid);
 		mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 		RenderUtils.setGLColorFromInt(fluid.getFluid().getColor(fluid));
 		int fullX = width / 16;
@@ -132,7 +137,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		int level = fluid.amount * height / maxCapacity;
 		int fullLvl = (height - level) / 16;
 		int lastLvl = (height - level) - fullLvl * 16;
-		for (int i = 0; i < fullX; i++) {
+		/*for (int i = 0; i < fullX; i++) {
 			for (int j = 0; j < fullY; j++) {
 				if (j >= fullLvl) {
 					drawCutIcon(icon, x + i * 16, y + j * 16, 16, 16, j == fullLvl ? lastLvl : 0);
@@ -147,19 +152,20 @@ public abstract class GuiBuildCraft extends GuiContainer {
 				drawCutIcon(icon, x + fullX * 16, y + i * 16, lastX, 16, i == fullLvl ? lastLvl : 0);
 			}
 		}
-		drawCutIcon(icon, x + fullX * 16, y + fullY * 16, lastX, lastY, fullLvl == fullY ? lastLvl : 0);
+		drawCutIcon(icon, x + fullX * 16, y + fullY * 16, lastX, lastY, fullLvl == fullY ? lastLvl : 0);*/
 	}
 
 	//The magic is here
-	private void drawCutIcon(IIcon icon, int x, int y, int width, int height, int cut) {
-		Tessellator tess = Tessellator.instance;
-		tess.startDrawingQuads();
-		tess.addVertexWithUV(x, y + height, zLevel, icon.getMinU(), icon.getInterpolatedV(height));
-		tess.addVertexWithUV(x + width, y + height, zLevel, icon.getInterpolatedU(width), icon.getInterpolatedV(height));
-		tess.addVertexWithUV(x + width, y + cut, zLevel, icon.getInterpolatedU(width), icon.getInterpolatedV(cut));
-		tess.addVertexWithUV(x, y + cut, zLevel, icon.getMinU(), icon.getInterpolatedV(cut));
+	/*private void drawCutIcon(IIcon icon, int x, int y, int width, int height, int cut) {
+		Tessellator tess = Tessellator.getInstance();
+		WorldRenderer wr = tess.getWorldRenderer();
+		wr.startDrawingQuads();
+		wr.addVertexWithUV(x, y + height, zLevel, icon.getMinU(), icon.getInterpolatedV(height));
+		wr.addVertexWithUV(x + width, y + height, zLevel, icon.getInterpolatedU(width), icon.getInterpolatedV(height));
+		wr.addVertexWithUV(x + width, y + cut, zLevel, icon.getInterpolatedU(width), icon.getInterpolatedV(cut));
+		wr.addVertexWithUV(x, y + cut, zLevel, icon.getMinU(), icon.getInterpolatedV(cut));
 		tess.draw();
-	}
+	}*/
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int mouseX, int mouseY) {
@@ -213,7 +219,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
 	// / MOUSE CLICKS
 	@Override
-	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
 		int mX = mouseX - guiLeft;
 		int mY = mouseY - guiTop;
 
@@ -251,8 +257,8 @@ public abstract class GuiBuildCraft extends GuiContainer {
 	}
 
 	@Override
-	protected void mouseMovedOrUp(int mouseX, int mouseY, int eventType) {
-		super.mouseMovedOrUp(mouseX, mouseY, eventType);
+	protected void mouseReleased(int mouseX, int mouseY, int eventType) {
+		super.mouseReleased(mouseX, mouseY, eventType);
 
 		int mX = mouseX - guiLeft;
 		int mY = mouseY - guiTop;
@@ -326,7 +332,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 					line = "\u00a7" + Integer.toHexString(tip.color) + line;
 				}
 
-				this.fontRendererObj.drawStringWithShadow(line, x, y, -1);
+				this.fontRendererObj.drawString(line, x, y, -1);
 
 				y += 10 + tip.getSpacing();
 			}
@@ -406,7 +412,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 				String tooltip = ledger.getTooltip();
 				int textWidth = fontRendererObj.getStringWidth(tooltip);
 				drawGradientRect(startX - 3, startY - 3, startX + textWidth + 3, startY + 8 + 3, 0xc0000000, 0xc0000000);
-				fontRendererObj.drawStringWithShadow(tooltip, startX, startY, -1);
+				fontRendererObj.drawString(tooltip, startX, startY, -1);
 			}
 		}
 
@@ -528,10 +534,10 @@ public abstract class GuiBuildCraft extends GuiContainer {
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0F);
 		}
 
-		protected void drawIcon(IIcon icon, int x, int y) {
-
+		protected void drawIcon(SheetIcon icon, int x, int y) {
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0F);
-			drawTexturedModelRectFromIcon(x, y, icon, 16, 16);
+			bindTexture(icon.getTexture());
+			drawTexturedModalRect(x, y, icon.getU(), icon.getV(), 16, 16);
 		}
 	}
 

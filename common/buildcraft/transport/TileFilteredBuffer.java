@@ -12,6 +12,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.SimpleInventory;
 
@@ -19,11 +21,6 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory {
 
 	private final SimpleInventory inventoryFilters = new SimpleInventory(9, "FilteredBufferFilters", 1);
 	private final SimpleInventory inventoryStorage = new SimpleInventory(9, "FilteredBufferStorage", 64);
-
-	@Override
-	public void updateEntity() {
-		super.updateEntity();
-	}
 
 	public IInventory getFilters() {
 		return inventoryFilters;
@@ -57,8 +54,8 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public String getInventoryName() {
-		return inventoryStorage.getInventoryName();
+	public String getName() {
+		return inventoryStorage.getName();
 	}
 
 	@Override
@@ -68,15 +65,15 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory {
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityPlayer) {
-		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
+		return worldObj.getTileEntity(pos) == this;
 	}
 
 	@Override
-	public void openInventory() {
+	public void openInventory(EntityPlayer player) {
 	}
 
 	@Override
-	public void closeInventory() {
+	public void closeInventory(EntityPlayer player) {
 	}
 
 	@Override
@@ -97,6 +94,26 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory {
 		}
 
 		return false;
+	}
+
+	@Override
+	public int getField(int id) {
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) {
+
+	}
+
+	@Override
+	public int getFieldCount() {
+		return 0;
+	}
+
+	@Override
+	public void clear() {
+
 	}
 
 	@Override
@@ -128,7 +145,12 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
+	public boolean hasCustomName() {
 		return false;
+	}
+
+	@Override
+	public IChatComponent getDisplayName() {
+		return new ChatComponentText(this.getName());
 	}
 }

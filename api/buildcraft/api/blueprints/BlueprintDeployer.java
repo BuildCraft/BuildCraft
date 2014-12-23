@@ -2,16 +2,17 @@
  * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ * The BuildCraft API is distributed under the terms of the MIT License.
+ * Please check the contents of the license, which should be located
+ * as "LICENSE.API" in the BuildCraft source code distribution.
  */
 package buildcraft.api.blueprints;
 
 import java.io.File;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 /**
  * This class is provided as a utility class for third-party mods that would
@@ -33,15 +34,15 @@ public abstract class BlueprintDeployer {
 	 * Deploy the contents of the blueprints as if the builder was located at
 	 * {x, y, z} facing the direction dir.
 	 */
-	public abstract void deployBlueprint(World world, int x, int y, int z,
-			ForgeDirection dir, File file);
+	public abstract void deployBlueprint(World world, BlockPos pos,
+			EnumFacing dir, File file);
 			
 	/**
 	*Deploy the contents of the byte array as if the builder was located at
 	*{x, y, z} facing the direction dir.
 	*/
 	
-	public abstract void deployBlueprintFromFileStream(World world, int x, int y,
-	int z, ForgeDirection dir, byte [] data);
+	public abstract void deployBlueprintFromFileStream(World world, BlockPos pos,
+													   EnumFacing dir, byte [] data);
 
 }

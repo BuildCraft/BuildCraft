@@ -10,7 +10,8 @@ package buildcraft.core.robots;
 
 import net.minecraft.item.ItemStack;
 
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
@@ -18,6 +19,7 @@ import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.robots.StackRequest;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.filters.ArrayStackOrListFilter;
+import buildcraft.core.utils.Utils;
 import buildcraft.silicon.statements.ActionStationRequestItemsMachine;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.ActionIterator;
@@ -93,7 +95,7 @@ public class AIRobotDeliverRequested extends AIRobot {
 
 			Pipe pipe = station.getPipe().pipe;
 
-			if (!station.index().nextTo(new BlockIndex(requested.requester))) {
+			if (!Utils.nextTo(station.pos(), requested.requester.getPos())) {
 				return false;
 			}
 

@@ -10,6 +10,7 @@ package buildcraft.core.inventory;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.core.utils.Utils;
 
@@ -23,17 +24,17 @@ public class InventoryWrapperSimple extends InventoryWrapper {
 	}
 
 	@Override
-	public int[] getAccessibleSlotsFromSide(int var1) {
+	public int[] getSlotsForFace(EnumFacing face) {
 		return slots;
 	}
 
 	@Override
-	public boolean canInsertItem(int slotIndex, ItemStack itemstack, int side) {
+	public boolean canInsertItem(int slotIndex, ItemStack itemstack, EnumFacing side) {
 		return isItemValidForSlot(slotIndex, itemstack);
 	}
 
 	@Override
-	public boolean canExtractItem(int slotIndex, ItemStack itemstack, int side) {
+	public boolean canExtractItem(int slotIndex, ItemStack itemstack, EnumFacing side) {
 		return true;
 	}
 

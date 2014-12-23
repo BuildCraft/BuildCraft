@@ -11,10 +11,9 @@ package buildcraft.transport.pipes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
-
-import net.minecraftforge.common.util.ForgeDirection;
-
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.TileBuffer;
 import buildcraft.transport.Pipe;
 
@@ -28,10 +27,10 @@ public abstract class PipeLogicWood {
 
 	private void switchSource() {
 		int meta = pipe.container.getBlockMetadata();
-		ForgeDirection newFacing = null;
+		EnumFacing newFacing = null;
 
 		for (int i = meta + 1; i <= meta + 6; ++i) {
-			ForgeDirection facing = ForgeDirection.getOrientation(i % 6);
+			EnumFacing facing = EnumFacing.getFront(i % 6);
 			if (isValidFacing(facing)) {
 				newFacing = facing;
 				break;
@@ -39,7 +38,8 @@ public abstract class PipeLogicWood {
 		}
 
 		if (newFacing != null && newFacing.ordinal() != meta) {
-			pipe.container.getWorldObj().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, newFacing.ordinal(), 3);
+			//pipe.container.getWorld().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, newFacing.ordinal(), 3);
+			pipe.container.getWorld().setBlockState(pipe.container.getPos(), pipe.container.getWorld().getBlockState(pipe.container.getPos()).withProperty(BlockBuildCraft.FACING_6_PROP, newFacing), 3);
 			pipe.container.scheduleRenderUpdate();
 		}
 	}
@@ -50,14 +50,14 @@ public abstract class PipeLogicWood {
 		if (meta > 5) {
 			switchSource();
 		} else {
-			ForgeDirection facing = ForgeDirection.getOrientation(meta);
+			EnumFacing facing = EnumFacing.getFront(meta);
 			if (!isValidFacing(facing)) {
 				switchSource();
 			}
 		}
 	}
 
-	private boolean isValidFacing(ForgeDirection side) {
+	private boolean isValidFacing(EnumFacing side) {
 		TileBuffer[] tileBuffer = pipe.container.getTileCache();
 		if (tileBuffer == null) {
 			return true;
@@ -74,16 +74,16 @@ public abstract class PipeLogicWood {
 	protected abstract boolean isValidConnectingTile(TileEntity tile);
 
 	public void initialize() {
-		if (!pipe.container.getWorldObj().isRemote) {
+		if (!pipe.container.getWorld().isRemote) {
 			switchSourceIfNeeded();
 		}
 	}
 
 	public boolean blockActivated(EntityPlayer entityplayer) {
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord)) {
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pipe.container.getPos())) {
 			switchSource();
-			((IToolWrench) equipped).wrenchUsed(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+			((IToolWrench) equipped).wrenchUsed(entityplayer, pipe.container.getPos());
 			return true;
 		}
 
@@ -91,7 +91,7 @@ public abstract class PipeLogicWood {
 	}
 
 	public void onNeighborBlockChange(int blockId) {
-		if (!pipe.container.getWorldObj().isRemote) {
+		if (!pipe.container.getWorld().isRemote) {
 			switchSourceIfNeeded();
 		}
 	}

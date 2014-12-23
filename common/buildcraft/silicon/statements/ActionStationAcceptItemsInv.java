@@ -8,11 +8,10 @@
  */
 package buildcraft.silicon.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
@@ -34,10 +33,10 @@ public class ActionStationAcceptItemsInv extends ActionStationInputItems {
 		return StringUtils.localize("gate.action.station.accept_items");
 	}
 
-	@Override
+	/*@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/action_station_accept_items");
-	}
+	}*/
 
 	@Override
 	public int maxParameters() {
@@ -56,10 +55,8 @@ public class ActionStationAcceptItemsInv extends ActionStationInputItems {
 			return false;
 		}
 
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
-					+ dir.offsetY, station.z()
-					+ dir.offsetZ);
+		for (EnumFacing dir : EnumFacing.values()) {
+			TileEntity nearbyTile = robot.worldObj.getTileEntity(station.pos().offset(dir));
 
 			if (nearbyTile != null && nearbyTile instanceof IInventory) {
 				ITransactor trans = Transactor.getTransactorFor(nearbyTile);
@@ -76,5 +73,11 @@ public class ActionStationAcceptItemsInv extends ActionStationInputItems {
 		}
 
 		return false;
+	}
+
+	@Override
+	public int getSheetLocation() {
+		// TODO Auto-generated method stub
+		return 100;
 	}
 }

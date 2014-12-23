@@ -12,10 +12,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
-
-import net.minecraftforge.common.util.ForgeDirection;
-
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.TileBuffer;
 import buildcraft.transport.Pipe;
 
@@ -29,7 +28,7 @@ public abstract class PipeLogicIron {
 	}
 
 	public void switchOnRedstone() {
-		boolean currentPower = pipe.container.getWorldObj().isBlockIndirectlyGettingPowered(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+		boolean currentPower = pipe.container.getWorld().isBlockPowered(pipe.container.getPos());
 
 		if (currentPower != lastPower) {
 			switchPosition();
@@ -42,14 +41,14 @@ public abstract class PipeLogicIron {
 		int meta = pipe.container.getBlockMetadata();
 
 		for (int i = meta + 1; i <= meta + 6; ++i) {
-			ForgeDirection facing = ForgeDirection.getOrientation(i % 6);
+			EnumFacing facing = EnumFacing.getFront(i % 6);
 			if (setFacing(facing)) {
 				return;
 			}
 		}
 	}
 
-	private boolean isValidFacing(ForgeDirection side) {
+	private boolean isValidFacing(EnumFacing side) {
 		if (!pipe.container.isPipeConnected(side)) {
 			return false;
 		}
@@ -73,17 +72,19 @@ public abstract class PipeLogicIron {
 	protected abstract boolean isValidConnectingTile(TileEntity tile);
 
 	public void initialize() {
-		lastPower = pipe.container.getWorldObj().isBlockIndirectlyGettingPowered(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+		lastPower = pipe.container.getWorld().isBlockPowered(pipe.container.getPos());
 	}
 
 	public void onBlockPlaced() {
-		pipe.container.getWorldObj().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, 1, 3);
+		//pipe.container.getWorld().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, 1, 3);
+		pipe.container.getWorld().setBlockState(pipe.container.getPos(), pipe.container.getWorld().getBlockState(pipe.container.getPos()).withProperty(BlockBuildCraft.FACING_6_PROP, EnumFacing.UP), 3);
 		switchPosition();
 	}
 
-	public boolean setFacing(ForgeDirection facing) {
+	public boolean setFacing(EnumFacing facing) {
 		if (facing.ordinal() != pipe.container.getBlockMetadata() && isValidFacing(facing)) {
-			pipe.container.getWorldObj().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, facing.ordinal(), 3);
+			//pipe.container.getWorld().setBlockMetadataWithNotify(pipe.container.getPos(), facing.ordinal(), 3);
+			pipe.container.getWorld().setBlockState(pipe.container.getPos(), pipe.container.getWorld().getBlockState(pipe.container.getPos()).withProperty(BlockBuildCraft.FACING_6_PROP, facing), 3);
 			pipe.container.scheduleRenderUpdate();
 			return true;
 		}
@@ -92,10 +93,10 @@ public abstract class PipeLogicIron {
 
 	public boolean blockActivated(EntityPlayer entityplayer) {
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord)) {
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pipe.container.getPos())) {
 			switchPosition();
 			pipe.container.scheduleRenderUpdate();
-			((IToolWrench) equipped).wrenchUsed(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+			((IToolWrench) equipped).wrenchUsed(entityplayer, pipe.container.getPos());
 
 			return true;
 		}
@@ -103,7 +104,11 @@ public abstract class PipeLogicIron {
 		return false;
 	}
 
-	public boolean outputOpen(ForgeDirection to) {
+	public EnumFacing getOutputDirection() {
+		return EnumFacing.getFront(pipe.container.getBlockMetadata());
+	}
+
+	public boolean outputOpen(EnumFacing to) {
 		return to.ordinal() == pipe.container.getBlockMetadata();
 	}
 }

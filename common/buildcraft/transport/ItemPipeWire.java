@@ -10,22 +10,17 @@ package buildcraft.transport;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
-
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
+import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.utils.ModelHelper;
 
 public class ItemPipeWire extends ItemBuildCraft {
-
-	private IIcon[] icons;
 
 	public ItemPipeWire() {
 		super();
@@ -33,11 +28,6 @@ public class ItemPipeWire extends ItemBuildCraft {
 		setMaxDamage(0);
 		setPassSneakClick(true);
 		setUnlocalizedName("pipeWire");
-	}
-
-	@Override
-	public IIcon getIconFromDamage(int damage) {
-		return icons[damage];
 	}
 
 	@Override
@@ -55,17 +45,16 @@ public class ItemPipeWire extends ItemBuildCraft {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister) {
-		icons = new IIcon[PipeWire.VALUES.length];
+	public void registerModels() {
 		for (PipeWire pipeWire : PipeWire.VALUES) {
-			icons[pipeWire.ordinal()] = par1IconRegister.registerIcon("buildcraft:" + pipeWire.getTag());
+			ModelHelper.registerItemModel(this, pipeWire.ordinal(), pipeWire.getColor());
 		}
 	}
 
 	public void registerItemStacks() {
 		for (PipeWire pipeWire : PipeWire.VALUES) {
-			GameRegistry.registerCustomItemStack(pipeWire.getTag(), pipeWire.getStack());
+			//TODO (1.8): probably use Variants (not sure)
+			//GameRegistry.registerCustomItemStack(pipeWire.getTag(), pipeWire.getStack());
 		}
 	}
 }

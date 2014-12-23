@@ -1,0 +1,6 @@
+{
+    "parent": "buildcrafttransport:item/pipeWire",
+    "textures": {
+        "layer0": "buildcraft:items/yellowPipeWire"
+    }
+}

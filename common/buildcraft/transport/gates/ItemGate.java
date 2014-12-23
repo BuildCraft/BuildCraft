@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Set;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -22,12 +21,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
@@ -116,7 +114,7 @@ public class ItemGate extends ItemBuildCraft {
 		}
 
 		@Override
-		public void onAttachedPipe(IPipeTile pipe, ForgeDirection direction) {
+		public void onAttachedPipe(IPipeTile pipe, EnumFacing direction) {
 			TileGenericPipe pipeReal = (TileGenericPipe) pipe;
 			if (!pipeReal.getWorld().isRemote) {
 				Gate gate = pipeReal.pipe.gates[direction.ordinal()];
@@ -128,7 +126,7 @@ public class ItemGate extends ItemBuildCraft {
 		}
 
 		@Override
-		public void onDetachedPipe(IPipeTile pipe, ForgeDirection direction) {
+		public void onDetachedPipe(IPipeTile pipe, EnumFacing direction) {
 			TileGenericPipe pipeReal = (TileGenericPipe) pipe;
 			if (!pipeReal.getWorld().isRemote) {
 				Gate gate = pipeReal.pipe.gates[direction.ordinal()];
@@ -141,7 +139,7 @@ public class ItemGate extends ItemBuildCraft {
 		}
 
 		@Override
-		public boolean blocking(IPipeTile pipe, ForgeDirection direction) {
+		public boolean blocking(IPipeTile pipe, EnumFacing direction) {
 			return true;
 		}
 
@@ -177,7 +175,7 @@ public class ItemGate extends ItemBuildCraft {
 		}
 
 		@Override
-		public void validate(IPipeTile pipe, ForgeDirection direction) {
+		public void validate(IPipeTile pipe, EnumFacing direction) {
 
 		}
 	}
@@ -375,7 +373,7 @@ public class ItemGate extends ItemBuildCraft {
 		}
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIconIndex(ItemStack stack) {
 		return getLogic(stack).getIconItem();
 	}
@@ -396,5 +394,5 @@ public class ItemGate extends ItemBuildCraft {
 		}
 		
 		StatementManager.registerIcons(iconRegister);
-	}
+	}*/
 }

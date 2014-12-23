@@ -10,11 +10,12 @@ package buildcraft.core;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public interface ICustomHighlight {
 
-	AxisAlignedBB[] getBoxes(World wrd, int x, int y, int z, EntityPlayer player);
+	AxisAlignedBB[] getBoxes(World wrd, BlockPos pos, EntityPlayer player);
 
 	double getExpansion();
 }

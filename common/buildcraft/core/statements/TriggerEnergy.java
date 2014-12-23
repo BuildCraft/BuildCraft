@@ -8,12 +8,8 @@
  */
 package buildcraft.core.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
@@ -25,8 +21,6 @@ import buildcraft.core.utils.StringUtils;
 public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITriggerExternal {
 
 	private boolean high;
-	private IIcon iconEnergyLow;
-	private IIcon iconEnergyHigh;
 
 	public TriggerEnergy(boolean high) {
 		super("buildcraft:energyStored" + (high ? "high" : "low"));
@@ -39,11 +33,16 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITri
 		return StringUtils.localize("gate.trigger.machine.energyStored" + (high ? "High" : "Low"));
 	}
 
-	private boolean isValidEnergyHandler(IEnergyHandler handler) {
-		return handler instanceof IEnergyHandler;
+	@Override
+	public int getSheetLocation() {
+		return 12 + (high ? 1 : 2) * 16;
 	}
 
-	private boolean isTriggeredEnergyHandler(IEnergyHandler handler, ForgeDirection side) {
+	private boolean isValidEnergyHandler(IEnergyHandler handler) {
+		return handler != null;
+	}
+
+	private boolean isTriggeredEnergyHandler(IEnergyHandler handler, EnumFacing side) {
 		int energyStored = handler.getEnergyStored(side);
 		int energyMaxStored = handler.getMaxEnergyStored(side);
 
@@ -62,7 +61,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITri
 			IGate gate = (IGate) container;
 			if (gate.getPipe() instanceof IEnergyHandler) {
 				if (isValidEnergyHandler((IEnergyHandler) gate.getPipe())) {
-					return isTriggeredEnergyHandler((IEnergyHandler) gate.getPipe(), ForgeDirection.UNKNOWN);
+					return isTriggeredEnergyHandler((IEnergyHandler) gate.getPipe(), null);
 				}
 			}
 		}
@@ -72,7 +71,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITri
 
 
 	@Override
-	public boolean isTriggerActive(TileEntity tile, ForgeDirection side, IStatementContainer container, IStatementParameter[] parameters) {
+	public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer container, IStatementParameter[] parameters) {
 		if (tile instanceof IEnergyHandler) {
 			// Since we return false upon the trigger being invalid anyway,
 			// we can skip the isValidEnergyHandler(...) check.
@@ -80,11 +79,5 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITri
 		}
 
 		return false;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_machine_energy_" + (high ? "high" : "low"));
 	}
 }

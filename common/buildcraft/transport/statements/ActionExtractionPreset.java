@@ -10,7 +10,6 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
@@ -34,8 +33,8 @@ public class ActionExtractionPreset extends BCStatement implements IActionIntern
 	}
 
 	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/extraction_preset_" + color.name().toLowerCase(Locale.ENGLISH));
+	public int getSheetLocation() {
+		return 13 + (color == EnumColor.BLUE ? 0 : (color == EnumColor.GREEN ? 1 : (color == EnumColor.RED ? 2 : 3)));
 	}
 
 	@Override

@@ -31,10 +31,7 @@ public class AIRobotGoAndLinkToDock extends AIRobot {
 			terminate();
 		} else {
 			if (station.takeAsMain(robot)) {
-				startDelegateAI(new AIRobotGotoBlock(robot,
-						station.x() + station.side.offsetX * 2,
-						station.y() + station.side.offsetY * 2,
-						station.z() + station.side.offsetZ * 2));
+				startDelegateAI(new AIRobotGotoBlock(robot, station.pos().offset(station.side(), 2)));
 			} else {
 				terminate();
 			}
@@ -45,9 +42,9 @@ public class AIRobotGoAndLinkToDock extends AIRobot {
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoBlock) {
 			startDelegateAI(new AIRobotStraightMoveTo(robot,
-					station.x() + 0.5F + station.side.offsetX * 0.5F,
-					station.y() + 0.5F + station.side.offsetY * 0.5F,
-					station.z() + 0.5F + station.side.offsetZ * 0.5F));
+					station.pos().getX() + 0.5F + station.side.getFrontOffsetX() * 0.5F,
+					station.pos().getY() + 0.5F + station.side.getFrontOffsetY() * 0.5F,
+					station.pos().getZ() + 0.5F + station.side.getFrontOffsetZ() * 0.5F));
 		} else {
 			robot.dock(station);
 			station = null;

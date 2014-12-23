@@ -4,10 +4,12 @@ import java.util.BitSet;
 import java.util.Iterator;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidBlock;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicFluid;
 import buildcraft.builders.schematics.SchematicBlockCreative;
@@ -37,12 +39,7 @@ public final class HeuristicBlockDetection {
 				}
 			}
 		} */
-		
-		// Register fluids
-		for (Fluid f : FluidRegistry.getRegisteredFluids().values()) {
-			SchematicRegistry.INSTANCE.registerSchematicBlock(f.getBlock(), SchematicFluid.class, new FluidStack(f, 1000));
-		}
-		
+
 		// Register blocks
 		Iterator i = Block.blockRegistry.iterator();
 		while (i.hasNext()) {
@@ -51,13 +48,17 @@ public final class HeuristicBlockDetection {
 				continue;
 			}
 			
-			for (int meta = 0; meta < 16; meta++) {
-				if (!SchematicRegistry.INSTANCE.isSupported(block, meta)) {
+			for (Object o : block.getBlockState().getValidStates()) {
+				if (o == null) {
+					continue;
+				}
+				IBlockState state = (IBlockState) o;
+				if (!SchematicRegistry.INSTANCE.isSupported(state)) {
 					try {
-						if (block.hasTileEntity(meta)) {
+						if (block.hasTileEntity(state)) {
 							// All tiles are registered as creative only.
 							// This is helpful for example for server admins.
-							SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicTileCreative.class);
+							SchematicRegistry.INSTANCE.registerSchematicBlock(state, SchematicTileCreative.class);
 							continue;
 						}
 						
@@ -65,15 +66,22 @@ public final class HeuristicBlockDetection {
 						
 						try {
 							if (creativeOnly) {
-								SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlockCreative.class);
+								SchematicRegistry.INSTANCE.registerSchematicBlock(state, SchematicBlockCreative.class);
 							} else {
-								SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlock.class);
+							    if (block instanceof IFluidBlock) {
+									IFluidBlock fblock = (IFluidBlock) block;
+									if (fblock.getFluid() != null) {
+										SchematicRegistry.INSTANCE.registerSchematicBlock(state, SchematicFluid.class, new FluidStack(fblock.getFluid(), 1000));
+									}
+								} else {
+									SchematicRegistry.INSTANCE.registerSchematicBlock(state, SchematicBlock.class);
+								}
 							}
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
 					} catch (Exception e) {
-						
+
 					}
 				}
 			}

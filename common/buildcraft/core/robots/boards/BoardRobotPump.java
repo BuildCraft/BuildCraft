@@ -13,14 +13,14 @@ import java.util.ArrayList;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
@@ -40,7 +40,7 @@ import buildcraft.transport.gates.StatementSlot;
 
 public class BoardRobotPump extends RedstoneBoardRobot {
 
-	private BlockIndex blockFound;
+	private BlockPos blockFound;
 	private ArrayList<Fluid> fluidFilter = new ArrayList<Fluid>();
 
 	public BoardRobotPump(EntityRobotBase iRobot) {
@@ -54,7 +54,7 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 
 	@Override
 	public void update() {
-		FluidStack tank = robot.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid;
+		FluidStack tank = robot.getTankInfo(null)[0].fluid;
 
 		if (tank != null && tank.amount > 0) {
 			startDelegateAI(new AIRobotGotoStationAndUnloadFluids(robot, robot.getZoneToWork()));
@@ -64,10 +64,10 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 			startDelegateAI(new AIRobotSearchBlock(robot, new IBlockFilter() {
 
 				@Override
-				public boolean matches(World world, int x, int y, int z) {
-					if (BuildCraftAPI.isFluidSource.get(world, x, y, z)
-							&& !robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z))) {
-						return matchesGateFilter(world, x, y, z);
+				public boolean matches(World world, BlockPos pos) {
+					if (BuildCraftAPI.isFluidSource.get(world, pos)
+							&& !robot.getRegistry().isTaken(new ResourceIdBlock(pos))) {
+						return matchesGateFilter(world, pos);
 					} else {
 						return false;
 					}
@@ -131,14 +131,14 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 		}
 	}
 
-	private boolean matchesGateFilter(World world, int x, int y, int z) {
+	private boolean matchesGateFilter(World world, BlockPos pos) {
 		if (fluidFilter.size() == 0) {
 			return true;
 		}
 
         Block block;
 		synchronized (world) {
-			block = world.getBlock(x, y, z);
+			block = world.getBlockState(pos).getBlock();
 		}
 
         Fluid fluid = FluidRegistry.lookupFluidForBlock(block);

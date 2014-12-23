@@ -8,25 +8,28 @@
  */
 package buildcraft.commander;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import net.minecraftforge.fml.relauncher.Side;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.robots.StackRequest;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCSide;
+import buildcraft.core.network.CommandWriter;
+import buildcraft.core.network.ICommandReceiver;
+import buildcraft.core.network.PacketCommand;
 import buildcraft.core.robots.ResourceIdRequest;
 import buildcraft.core.robots.RobotRegistry;
+import buildcraft.core.utils.Utils;
 
-public class TileRequester extends TileBuildCraft implements IInventory, IRequestProvider {
-
+public class TileRequester extends TileBuildCraft implements IInventory, IRequestProvider, ICommandReceiver {
 	public static final int NB_ITEMS = 20;
 
 	private SimpleInventory inv = new SimpleInventory(NB_ITEMS, "items", 64);
@@ -36,14 +39,24 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
 
 	}
 
-	@RPC(RPCSide.SERVER)
-	public void setRequest(int index, ItemStack stack) {
+	public void setRequest(final int index, final ItemStack stack) {
 		if (worldObj.isRemote) {
-			RPCHandler.rpcServer(this, "setRequest", index, stack);
-			return;
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setRequest", new CommandWriter() {
+				public void write(ByteBuf data) {
+					data.writeByte(index);
+					Utils.writeStack(data, stack);
+				}
+			}));
+		} else {
+			requests.setInventorySlotContents(index, stack);
 		}
+	}
 
-		requests.setInventorySlotContents(index, stack);
+	@Override
+	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
+		if (side.isServer() && "setRequest".equals(command)) {
+			setRequest(stream.readUnsignedByte(), Utils.readStack(stream));
+		}
 	}
 
 	public ItemStack getRequest(int index) {
@@ -76,13 +89,13 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
 	}
 
 	@Override
-	public String getInventoryName() {
-		return inv.getInventoryName();
+	public String getName() {
+		return inv.getName();
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
-		return inv.hasCustomInventoryName();
+	public boolean hasCustomName() {
+		return inv.hasCustomName();
 	}
 
 	@Override
@@ -96,13 +109,13 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
 	}
 
 	@Override
-	public void openInventory() {
-		inv.openInventory();
+	public void openInventory(EntityPlayer player) {
+		inv.openInventory(player);
 	}
 
 	@Override
-	public void closeInventory() {
-		inv.closeInventory();
+	public void closeInventory(EntityPlayer player) {
+		inv.closeInventory(player);
 	}
 
 	@Override

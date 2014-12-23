@@ -17,26 +17,27 @@ import net.minecraft.block.BlockMelon;
 import net.minecraft.block.BlockMushroom;
 import net.minecraft.block.BlockReed;
 import net.minecraft.block.BlockTallGrass;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 public class WorldPropertyIsHarvestable extends WorldProperty {
 
 	@Override
-	public boolean get(IBlockAccess blockAccess, Block block, int meta, int x, int y, int z) {
-		if (block == null) {
-			return false;
-		} else if (block instanceof BlockFlower
+	public boolean get(IBlockAccess blockAccess, IBlockState state, BlockPos pos) {
+		Block block = state.getBlock();
+		if (block instanceof BlockFlower
 				|| block instanceof BlockTallGrass
 				|| block instanceof BlockMelon
 				|| block instanceof BlockMushroom
 				|| block instanceof BlockDoublePlant) {
 			return true;
 		} else if (block instanceof BlockCactus || block instanceof BlockReed) {
-			if (y > 0 && blockAccess.getBlock(x, y - 1, z) == block) {
+			if (pos.getY() > 0 && blockAccess.getBlockState(pos.down()).getBlock() == block) {
 				return true;
 			}
 		} else if (block instanceof BlockCrops) {
-			return meta == 7;
+			return ((Integer)state.getValue(BlockCrops.AGE)).intValue() == 7;
 		}
 
 		return false;

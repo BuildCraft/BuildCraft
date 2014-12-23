@@ -8,13 +8,11 @@
  */
 package buildcraft.core;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
+import buildcraft.api.core.ISerializable;
 
-import buildcraft.api.core.NetworkData;
-
-public class ChunkIndex {
-
-	@NetworkData
+public class ChunkIndex implements ISerializable {
 	public int x, z;
 
 	public ChunkIndex() {
@@ -51,5 +49,17 @@ public class ChunkIndex {
 	public void readFromNBT(NBTTagCompound nbt) {
 		x = nbt.getInteger("x");
 		z = nbt.getInteger("z");
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		x = stream.readInt();
+		z = stream.readInt();
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		stream.writeInt(x);
+		stream.writeInt(z);
 	}
 }

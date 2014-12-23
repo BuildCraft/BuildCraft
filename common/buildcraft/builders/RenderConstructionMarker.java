@@ -10,6 +10,7 @@ package buildcraft.builders;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -41,23 +42,12 @@ public class RenderConstructionMarker extends RenderBoxProvider {
 		box.rotationPointY = 8;
 		box.rotationPointZ = 8;
 
-		customRenderItem = new RenderItem() {
-			@Override
-			public boolean shouldBob() {
-				return false;
-			}
-
-			@Override
-			public boolean shouldSpreadItems() {
-				return false;
-			}
-		};
-		customRenderItem.setRenderManager(RenderManager.instance);
+		customRenderItem = Minecraft.getMinecraft().getRenderItem();
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
-		super.renderTileEntityAt(tileentity, x, y, z, f);
+	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int i) {
+		super.renderTileEntityAt(tileentity, x, y, z, f, i);
 
 		TileConstructionMarker marker = (TileConstructionMarker) tileentity;
 
@@ -70,22 +60,22 @@ public class RenderConstructionMarker extends RenderBoxProvider {
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 			GL11.glTranslated(x, y, z);
-			GL11.glTranslated(-tileentity.xCoord, -tileentity.yCoord, -tileentity.zCoord);
+			GL11.glTranslated(-tileentity.getPos().getX(), -tileentity.getPos().getY(), -tileentity.getPos().getZ());
 
 			if (marker.laser != null) {
 				GL11.glPushMatrix();
 				RenderLaser
 						.doRenderLaser(
-								TileEntityRendererDispatcher.instance.field_147553_e,
+								TileEntityRendererDispatcher.instance.renderEngine,
 								marker.laser, EntityLaser.LASER_TEXTURES[4]);
 				GL11.glPopMatrix();
 			}
 
 			if (marker.itemBlueprint != null) {
 				doRenderItem(marker.itemBlueprint,
-					marker.xCoord + 0.5F,
-					marker.yCoord + 0.2F,
-					marker.zCoord + 0.5F);
+					marker.getPos().getX() + 0.5F,
+					marker.getPos().getY() + 0.2F,
+					marker.getPos().getZ() + 0.5F);
 			}
 
 			//GL11.glEnable(GL11.GL_LIGHTING);
@@ -107,7 +97,7 @@ public class RenderConstructionMarker extends RenderBoxProvider {
 		GL11.glTranslatef(0, 0.25F, 0);
 		GL11.glScalef(renderScale, renderScale, renderScale);
 		dummyEntityItem.setEntityItemStack(stack);
-		customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
+		//customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
 
 		GL11.glPopMatrix();
 	}

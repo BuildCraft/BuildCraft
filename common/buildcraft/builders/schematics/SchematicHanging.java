@@ -14,7 +14,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.Translation;
@@ -98,9 +98,9 @@ public class SchematicHanging extends SchematicEntity {
 
 			if (e instanceof EntityHanging) {
 				EntityHanging h = (EntityHanging) e;
-				Position existingPositon = new Position(h.field_146063_b, h.field_146064_c, h.field_146062_d);
+				Position existingPositon = new Position(h.chunkCoordX, h.chunkCoordY, h.chunkCoordZ);
 
-				if (existingPositon.isClose(newPosition, 0.1F) && dir == ((EntityHanging) e).hangingDirection) {
+				if (existingPositon.isClose(newPosition, 0.1F) && EnumFacing.getFront(dir) == ((EntityHanging) e).facingDirection) {
 					return true;
 				}
 			}

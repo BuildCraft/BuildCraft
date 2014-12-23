@@ -10,11 +10,15 @@ package buildcraft.builders.schematics;
 
 import java.util.LinkedList;
 
+import net.minecraft.block.BlockDoor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.core.BlockBuildCraft;
 
 public class SchematicDoor extends SchematicBlock {
 
@@ -28,19 +32,19 @@ public class SchematicDoor extends SchematicBlock {
 
 	@Override
 	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		if ((meta & 8) == 0) {
+		if ((getMetaData() & 8) == 0) {
 			requirements.add(stack.copy());
 		}
 	}
 
 	@Override
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
+	public void storeRequirements(IBuilderContext context, BlockPos pos) {
 		// cancel requirements reading
 	}
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
-		meta = rotateMeta(meta);
+		state = state.withProperty(BlockBuildCraft.FACING_PROP, EnumFacing.getFront(rotateMeta(this.getMetaData())));
 	}
 
 	private int rotateMeta (int meta) {
@@ -63,29 +67,27 @@ public class SchematicDoor extends SchematicBlock {
 
 	@Override
 	public boolean doNotBuild() {
-		return (meta & 8) != 0;
+		return (getMetaData() & 8) != 0;
 	}
 
 	@Override
-	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
-		return block == context.world().getBlock(x, y, z);
+	public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
+		return state.getBlock() == context.world().getBlockState(pos).getBlock();
 	}
 
 	@Override
-	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
-		context.world().setBlock(x, y, z, block, meta, 3);
-		context.world().setBlock(x, y + 1, z, block, upperMeta, 3);
+	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
 
-		context.world().setBlockMetadataWithNotify(x, y + 1, z, upperMeta, 3);
-		context.world().setBlockMetadataWithNotify(x, y, z, meta, 3);
+		context.world().setBlockState(pos, state.withProperty(BlockDoor.FACING, getFace()), 3);
+		context.world().setBlockState(pos.up(), state.withProperty(BlockDoor.FACING, EnumFacing.getFront(upperMeta)), 3);
 	}
 
 	@Override
-	public void initializeFromObjectAt(IBuilderContext context, int x, int y, int z) {
-		super.initializeFromObjectAt(context, x, y, z);
+	public void initializeFromObjectAt(IBuilderContext context, BlockPos pos) {
+		super.initializeFromObjectAt(context, pos);
 
-		if ((meta & 8) == 0) {
-			upperMeta = context.world().getBlockMetadata(x, y + 1, z);
+		if ((getMetaData() & 8) == 0) {
+			upperMeta = ((EnumFacing)context.world().getBlockState(pos.up()).getValue(BlockBuildCraft.FACING_PROP)).getIndex();;
 		}
 	}
 

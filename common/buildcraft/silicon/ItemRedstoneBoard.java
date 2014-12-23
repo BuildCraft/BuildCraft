@@ -10,16 +10,14 @@ package buildcraft.silicon;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IIcon;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.boards.RedstoneBoardNBT;
@@ -30,8 +28,8 @@ import buildcraft.core.utils.NBTUtils;
 
 public class ItemRedstoneBoard extends ItemBuildCraft {
 
-	public IIcon cleanBoard;
-	public IIcon unknownBoard;
+	/*public IIcon cleanBoard;
+	public IIcon unknownBoard;*/
 
 	public ItemRedstoneBoard() {
 		super(CreativeTabBuildCraft.BOARDS);
@@ -51,7 +49,7 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 		}
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIconIndex(ItemStack stack) {
 		NBTTagCompound cpt = NBTUtils.getItemData(stack);
 
@@ -73,7 +71,7 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 		unknownBoard = par1IconRegister.registerIcon("buildcraft:board_unknown");
 
 		RedstoneBoardRegistry.instance.registerIcons(par1IconRegister);
-	}
+	}*/
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override

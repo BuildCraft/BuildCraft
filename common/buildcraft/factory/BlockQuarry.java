@@ -9,24 +9,23 @@
 package buildcraft.factory;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import net.minecraftforge.common.util.ForgeDirection;
-
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.BlockBuildCraft;
@@ -34,12 +33,12 @@ import buildcraft.core.utils.Utils;
 
 public class BlockQuarry extends BlockBuildCraft {
 
-	IIcon textureTop;
+	/*IIcon textureTop;
 	IIcon textureFront;
-	IIcon textureSide;
+	IIcon textureSide;*/
 
 	public BlockQuarry() {
-		super(Material.iron);
+		super(Material.iron, new PropertyEnum[]{FACING_PROP});
 
 		setHardness(10F);
 		setResistance(10F);
@@ -48,21 +47,22 @@ public class BlockQuarry extends BlockBuildCraft {
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
-		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
+	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entityliving, ItemStack stack) {
+		super.onBlockPlacedBy(world, pos, state, entityliving, stack);
 
-		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
+		EnumFacing orientation = Utils.get2dOrientation(entityliving);
 
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
+		//TODO: Check if that is correct
+		world.setBlockState(pos, state.withProperty(FACING_PROP, orientation.getOpposite()), 1);
 		if (entityliving instanceof EntityPlayer) {
-			TileEntity tile = world.getTileEntity(i, j, k);
+			TileEntity tile = world.getTileEntity(pos);
 			if (tile instanceof TileQuarry) {
 				((TileQuarry) tile).placedBy = (EntityPlayer) entityliving;
 			}
 		}
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIcon(int i, int j) {
 		// If no metadata is set, then this is an icon.
 		if (j == 0 && i == 3) {
@@ -79,80 +79,61 @@ public class BlockQuarry extends BlockBuildCraft {
 			default:
 				return textureSide;
 		}
-	}
+	}*/
 
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileQuarry();
 	}
 
-	public void searchFrames(World world, int i, int j, int k) {
+	public void searchFrames(World world, BlockPos pos) {
 		int width2 = 1;
-		if (!world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2)) {
+		if (!Utils.checkChunksExist(world, pos.getX() - width2, pos.getY() - width2, pos.getZ() - width2, pos.getX() + width2, pos.getY() + width2, pos.getZ() + width2)) {
 			return;
 		}
 
-		Block block = world.getBlock(i, j, k);
+		IBlockState state = world.getBlockState(pos);
+		Block block = state.getBlock();
 
 		if (block != BuildCraftFactory.frameBlock) {
 			return;
 		}
 
-		int meta = world.getBlockMetadata(i, j, k);
+		int meta = ((EnumFacing)state.getValue(FACING_PROP)).getIndex();
 
 		if ((meta & 8) == 0) {
-			world.setBlockMetadataWithNotify(i, j, k, meta | 8, 0);
+			world.setBlockState(pos, state.withProperty(FACING_PROP, EnumFacing.getFront(meta | 8)), 0);
+			
+			EnumFacing[] dirs = EnumFacing.values();
 
-			ForgeDirection[] dirs = ForgeDirection.VALID_DIRECTIONS;
-
-			for (ForgeDirection dir : dirs) {
-				switch (dir) {
-				case UP:
-						searchFrames(world, i, j + 1, k);
-					break;
-				case DOWN:
-						searchFrames(world, i, j - 1, k);
-					break;
-				case SOUTH:
-						searchFrames(world, i, j, k + 1);
-					break;
-				case NORTH:
-						searchFrames(world, i, j, k - 1);
-					break;
-				case EAST:
-						searchFrames(world, i + 1, j, k);
-					break;
-				case WEST:
-					default:
-						searchFrames(world, i - 1, j, k);
-					break;
-				}
+			for (EnumFacing dir : dirs) {
+				searchFrames(world, pos.offset(dir));
 			}
 		}
 	}
 
 	@Override
-	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
+	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
 		if (BuildCraftFactory.quarryOneTimeUse) {
 			return new ArrayList<ItemStack>();
 		}
-		return super.getDrops(world, x, y, z, metadata, fortune);
+		return super.getDrops(world, pos, state, fortune);
 	}
 
 	@Override
-	public void breakBlock(World world, int i, int j, int k, Block block, int metadata) {
+	public void breakBlock(World world, BlockPos pos, IBlockState state) {
 		if (world.isRemote) {
 			return;
 		}
 
-		BuildCraftFactory.frameBlock.breakBlock(world, i, j, k, block, metadata);
+		BuildCraftFactory.frameBlock.removeNeighboringFrames(world, pos);
 
-		super.breakBlock(world, i, j, k, block, metadata);
+		super.breakBlock(world, pos, state);
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-		TileQuarry tile = (TileQuarry) world.getTileEntity(i, j, k);
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing side, float hitX, float hitY, float hitZ) {
+		TileQuarry tile = (TileQuarry) world.getTileEntity(pos);
 
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking()) {
@@ -161,10 +142,10 @@ public class BlockQuarry extends BlockBuildCraft {
 
 		// Restart the quarry if its a wrench
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
+		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pos)) {
 
 			tile.reinitalize();
-			((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
+			((IToolWrench) equipped).wrenchUsed(entityplayer, pos);
 			return true;
 
 		}
@@ -172,26 +153,22 @@ public class BlockQuarry extends BlockBuildCraft {
 		return false;
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		textureSide = par1IconRegister.registerIcon("buildcraft:quarry_side");
 		textureTop = par1IconRegister.registerIcon("buildcraft:quarry_top");
 		textureFront = par1IconRegister.registerIcon("buildcraft:quarry_front");
-	}
+	}*/
+
 
 	@Override
-	public boolean renderAsNormalBlock() {
+	public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
 		return false;
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
-		return false;
-	}
-
-	@Override
-	public int getLightValue(IBlockAccess world, int x, int y, int z) {
+	public int getLightValue(IBlockAccess world, BlockPos pos) {
 		return 1;
 	}
 }

@@ -8,6 +8,7 @@
  */
 package buildcraft.core;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.command.CommandBase;
@@ -22,32 +23,32 @@ public class CommandBuildCraft extends CommandBase {
 
 	@Override
 	public int compareTo(Object arg0) {
-		return this.getCommandName().compareTo(((ICommand) arg0).getCommandName());
+		return this.getName().compareTo(((ICommand) arg0).getName());
 	}
 
 	@Override
-	public String getCommandName() {
+	public String getName() {
 		return "buildcraft";
 	}
 
 	@Override
 	public String getCommandUsage(ICommandSender sender) {
-		return "/" + this.getCommandName() + " help";
+		return "/" + this.getName() + " help";
 	}
 
 	@Override
-	public boolean canCommandSenderUseCommand(ICommandSender par1ICommandSender) {
+	public boolean canCommandSenderUse(ICommandSender par1ICommandSender) {
 		return true;
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	public List getCommandAliases() {
-		return null;
+	public List getAliases() {
+		return new LinkedList<String>();
 	}
 
 	@Override
-	public void processCommand(ICommandSender sender, String[] arguments) {
+	public void execute(ICommandSender sender, String[] arguments) throws WrongUsageException {
 
 		if (arguments.length <= 0) {
 			throw new WrongUsageException("Type '" + this.getCommandUsage(sender) + "' for help.");
@@ -57,7 +58,7 @@ public class CommandBuildCraft extends CommandBase {
 			commandVersion(sender, arguments);
 			return;
 		} else if (arguments[0].matches("help")) {
-			sender.addChatMessage(new ChatComponentText("Format: '" + this.getCommandName() + " <command> <arguments>'"));
+			sender.addChatMessage(new ChatComponentText("Format: '" + this.getName() + " <command> <arguments>'"));
 			sender.addChatMessage(new ChatComponentText("Available commands:"));
 			sender.addChatMessage(new ChatComponentText("- version : Version information."));
 			return;

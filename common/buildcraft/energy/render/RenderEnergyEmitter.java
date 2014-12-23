@@ -12,7 +12,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+//import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -20,10 +20,10 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.EntityLaser;
-import buildcraft.core.render.RenderLaser;
+//import buildcraft.core.EntityLaser;
+//import buildcraft.core.render.RenderLaser;
 import buildcraft.energy.TileEnergyEmitter;
-import buildcraft.energy.TileEnergyEmitter.Target;
+//import buildcraft.energy.TileEnergyEmitter.Target;
 
 public class RenderEnergyEmitter extends TileEntitySpecialRenderer {
 
@@ -76,7 +76,7 @@ public class RenderEnergyEmitter extends TileEntitySpecialRenderer {
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
+	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int i) {
 		TileEnergyEmitter emitter = (TileEnergyEmitter) tileentity;
 
 		if (emitter != null) {
@@ -89,13 +89,13 @@ public class RenderEnergyEmitter extends TileEntitySpecialRenderer {
 
 			GL11.glTranslated(x, y, z);
 
-			for (Target t : emitter.targets.values()) {
+			/* for (Target t : emitter.targets.values()) {
 				GL11.glPushMatrix();
 				GL11.glTranslated(0.5F, 0.5F, 0.5F);
 				RenderLaser.doRenderLaserWave(TileEntityRendererDispatcher.instance.field_147553_e,
 						t.data, EntityLaser.LASER_TEXTURES[3]);
 				GL11.glPopMatrix();
-			}
+			} */
 
 			//GL11.glEnable(GL11.GL_LIGHTING);
 			GL11.glPopAttrib();

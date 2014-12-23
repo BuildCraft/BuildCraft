@@ -9,14 +9,13 @@
 package buildcraft.builders;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.BlockBuildCraft;
@@ -25,32 +24,32 @@ import buildcraft.core.GuiIds;
 
 public class BlockBlueprintLibrary extends BlockBuildCraft {
 
-	private IIcon textureTop;
-    private IIcon textureSide;
+	/*private IIcon textureTop;
+    private IIcon textureSide;*/
 
     public BlockBlueprintLibrary() {
 		super(Material.wood, CreativeTabBuildCraft.BLOCKS);
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-		super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9);
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing face, float par7, float par8, float par9) {
+		super.onBlockActivated(world, pos, state, entityplayer, face, par7, par8, par9);
 
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking()) {
 			return false;
 		}
 		
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, pos, state);
 		FMLCommonHandler.instance().bus().post(event);
 		if (event.isCanceled()) {
 			return false;
 		}
 
-		TileEntity tile = world.getTileEntity(i, j, k);
+		TileEntity tile = world.getTileEntity(pos);
 		if (tile instanceof TileBlueprintLibrary) {
 			if (!world.isRemote) {
-				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BLUEPRINT_LIBRARY, world, i, j, k);
+				entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BLUEPRINT_LIBRARY, world, pos.getX(), pos.getY(), pos.getZ());
 			}
 		}
 
@@ -62,7 +61,7 @@ public class BlockBlueprintLibrary extends BlockBuildCraft {
 		return new TileBlueprintLibrary();
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIcon(int i, int j) {
 		switch (i) {
 		case 0:
@@ -78,5 +77,5 @@ public class BlockBlueprintLibrary extends BlockBuildCraft {
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
 	    textureTop = par1IconRegister.registerIcon("buildcraft:library_topbottom");
         textureSide = par1IconRegister.registerIcon("buildcraft:library_side");
-	}
+	}*/
 }

@@ -2,22 +2,22 @@
  * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ * The BuildCraft API is distributed under the terms of the MIT License.
+ * Please check the contents of the license, which should be located
+ * as "LICENSE.API" in the BuildCraft source code distribution.
  */
 package buildcraft.api.robots;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-import net.minecraftforge.common.util.ForgeDirection;
-
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import buildcraft.core.utils.Utils;
 
 public abstract class ResourceId {
 
-	public BlockIndex index = new BlockIndex();
-	public ForgeDirection side = ForgeDirection.UNKNOWN;
+	public BlockPos index;
+	public EnumFacing side;
 	public int localId = 0;
 
 	protected ResourceId() {
@@ -43,7 +43,7 @@ public abstract class ResourceId {
 
 	public void writeToNBT(NBTTagCompound nbt) {
 		NBTTagCompound indexNBT = new NBTTagCompound();
-		index.writeTo(indexNBT);
+		Utils.writeBlockPos(nbt, index);
 		nbt.setTag("index", indexNBT);
 		nbt.setByte("side", (byte) side.ordinal());
 		nbt.setInteger("localId", localId);
@@ -51,8 +51,8 @@ public abstract class ResourceId {
 	}
 
 	protected void readFromNBT(NBTTagCompound nbt) {
-		index = new BlockIndex(nbt.getCompoundTag("index"));
-		side = ForgeDirection.values()[nbt.getByte("side")];
+		index = Utils.readBlockPos(nbt.getCompoundTag("index"));
+		side = EnumFacing.values()[nbt.getByte("side")];
 		localId = nbt.getInteger("localId");
 	}
 

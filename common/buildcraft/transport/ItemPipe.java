@@ -10,32 +10,34 @@ package buildcraft.transport;
 
 import java.util.List;
 
-import org.apache.logging.log4j.Level;
-
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import org.apache.logging.log4j.Level;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.utils.ColorUtils;
+import buildcraft.core.utils.IModelRegister;
 import buildcraft.core.utils.StringUtils;
 
-public class ItemPipe extends ItemBuildCraft implements IItemPipe {
+public class ItemPipe extends ItemBuildCraft implements IItemPipe, IModelRegister {
 
-	@SideOnly(Side.CLIENT)
-	private IIconProvider iconProvider;
+	/*@SideOnly(Side.CLIENT)
+	private IIconProvider iconProvider;*/
 	private int pipeIconIndex;
 
 	protected ItemPipe(CreativeTabBuildCraft creativeTab) {
@@ -45,37 +47,37 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 	}
 
 	@Override
-	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z,
-			int sideI, float par8, float par9, float par10) {
-		int side = sideI;
+	public boolean onItemUse(ItemStack itemstack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
+		int index = side.getIndex();
 		Block block = BuildCraftTransport.genericPipeBlock;
 
-		int i = x;
-		int j = y;
-		int k = z;
+		int i = pos.getX();
+		int j = pos.getY();
+		int k = pos.getZ();
 
-		Block worldBlock = world.getBlock(i, j, k);
+		IBlockState state = world.getBlockState(pos);
+		Block worldBlock = state.getBlock();
 
 		if (worldBlock == Blocks.snow) {
-			side = 1;
+			index = 1;
 		} else if (worldBlock != Blocks.vine && worldBlock != Blocks.tallgrass && worldBlock != Blocks.deadbush
-				&& (worldBlock == null || !worldBlock.isReplaceable(world, i, j, k))) {
-			if (side == 0) {
+				&& (worldBlock == null || !worldBlock.isReplaceable(world, pos))) {
+			if (index == 0) {
 				j--;
 			}
-			if (side == 1) {
+			if (index == 1) {
 				j++;
 			}
-			if (side == 2) {
+			if (index == 2) {
 				k--;
 			}
-			if (side == 3) {
+			if (index == 3) {
 				k++;
 			}
-			if (side == 4) {
+			if (index == 4) {
 				i--;
 			}
-			if (side == 5) {
+			if (index == 5) {
 				i++;
 			}
 		}
@@ -84,27 +86,28 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 			return false;
 		}
 
-		if (world.canPlaceEntityOnSide(block, i, j, k, false, side, entityplayer, itemstack)) {
+		pos = new BlockPos(i, j, k);
+
+		if (world.canBlockBePlaced(block, pos, false, side, player, itemstack)) {
 			Pipe<?> pipe = BlockGenericPipe.createPipe(this);
 
 			if (pipe == null) {
-				BCLog.logger.log(Level.WARN, "Pipe failed to create during placement at {0},{1},{2}", new Object[]{i, j, k});
+				BCLog.logger.log(Level.WARN, "Pipe failed to create during placement at {0},{1},{2}", i, j, k);
 				return true;
 			}
 			
-			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, block, 0, entityplayer)) {
-				block.onBlockPlacedBy(world, i, j, k, entityplayer, itemstack);
+			if (BlockGenericPipe.placePipe(pipe, world, new BlockPos(i, j, k), block, 0, player)) {
+				block.onBlockPlacedBy(world, pos, block.getDefaultState(), player, itemstack);
 
-				if (!world.isRemote && itemstack.getItemDamage() >= 1) {
-					TileEntity tile = world.getTileEntity(i, j, k);
-					((TileGenericPipe) tile).glassColor = (itemstack.getItemDamage() - 1) & 15;
+				if (!world.isRemote) {
+					TileEntity tile = world.getTileEntity(pos);
+					((TileGenericPipe) tile).initializeFromItemMetadata(itemstack.getItemDamage());
 				}
-				
-				// TODO: Fix sound
-				//world.playSoundEffect(i + 0.5F, j + 0.5F, k + 0.5F,
-				//		block.stepSound.getPlaceSound(),
-				//		(block.stepSound.getVolume() + 1.0F) / 2.0F,
-				//		block.stepSound.getPitch() * 0.8F);
+
+				world.playSoundEffect(i + 0.5F, j + 0.5F, k + 0.5F,
+						block.stepSound.getPlaceSound(),
+						(block.stepSound.getVolume() + 1.0F) / 2.0F,
+						block.stepSound.getFrequency() * 0.8F);
 
 				itemstack.stackSize--;
 			}
@@ -115,16 +118,20 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 		}
 	}
 
-	@SideOnly(Side.CLIENT)
+	/*@SideOnly(Side.CLIENT)
 	public void setPipesIcons(IIconProvider iconProvider) {
 		this.iconProvider = iconProvider;
-	}
+	}*/
 
 	public void setPipeIconIndex(int index) {
 		this.pipeIconIndex = index;
 	}
 
-	@Override
+	public int getPipeIconIndex() {
+		return this.pipeIconIndex;
+	}
+
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public IIcon getIconFromDamage(int par1) {
 		if (iconProvider != null) { // invalid pipes won't have this set
@@ -134,7 +141,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 		}
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister par1IconRegister) {
 		// NOOP
@@ -144,7 +151,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 	@SideOnly(Side.CLIENT)
 	public int getSpriteNumber() {
 		return 0;
-	}
+	}*/
 
 	@Override
 	@SideOnly(Side.CLIENT)
@@ -155,7 +162,12 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 			list.add(ColorUtils.getFormattingTooltip(color) + EnumChatFormatting.ITALIC + StringUtils.localize("color." + ColorUtils.getName(color)));
 		}
 		Class<? extends Pipe> pipe = BlockGenericPipe.pipes.get(this);
-		List<String> toolTip = PipeToolTipManager.getToolTip(pipe);
+		List<String> toolTip = PipeToolTipManager.getToolTip(pipe, advanced);
 		list.addAll(toolTip);
+	}
+
+	@Override
+	public void registerModels() {
+
 	}
 }

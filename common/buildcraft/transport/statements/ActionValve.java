@@ -10,8 +10,7 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -55,11 +54,6 @@ public class ActionValve extends BCStatement implements IActionInternal {
     }
 
     @Override
-    public void registerIcons(IIconRegister iconRegister) {
-    	icon = iconRegister.registerIcon("buildcraft:triggers/action_valve_" + state.name().toLowerCase(Locale.ENGLISH));
-    }
-
-    @Override
     public int maxParameters() {
     	return 1;
     }
@@ -74,21 +68,26 @@ public class ActionValve extends BCStatement implements IActionInternal {
 		return new StatementParameterDirection();
     }
 
-    @Override
+	@Override
+	public int getSheetLocation() {
+		return 12 + (5 + state.ordinal()) * 16;
+	}
+
+	@Override
     public void actionActivate(IStatementContainer container, IStatementParameter[] parameters) {
 	    IPipe pipe = ((Gate) container).getPipe();
 		
 	    if (pipe != null && pipe instanceof Pipe) {
 			PipeTransport transport = ((Pipe) pipe).transport;
 			if (parameters[0] != null && parameters[0] instanceof StatementParameterDirection) {
-				ForgeDirection side = ((StatementParameterDirection) parameters[0]).direction;
+				EnumFacing side = ((StatementParameterDirection) parameters[0]).direction;
 		
-				if (side != ForgeDirection.UNKNOWN) {
+				if (side != null) {
 				    transport.allowInput(side, state.inputOpen);
 				    transport.allowOutput(side, state.outputOpen);
 				}
 		    } else {
-		    	for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+		    	for (EnumFacing side : EnumFacing.values()) {
 				    transport.allowInput(side, state.inputOpen);
 				    transport.allowOutput(side, state.outputOpen);
 		    	}

@@ -15,7 +15,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
@@ -34,8 +35,8 @@ public class SchematicPipe extends SchematicTile {
 	private BuildingPermission permission = BuildingPermission.ALL;
 
 	@Override
-	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
-		Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
+	public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
+		Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), pos);
 
 		if (BlockGenericPipe.isValid(pipe)) {
 			return pipe.item == Item.getItemById(tileNBT.getInteger("pipeId"));
@@ -76,7 +77,7 @@ public class SchematicPipe extends SchematicTile {
 			}
 
 			for (int i = 0; i < 6; ++i) {
-				int newI = ForgeDirection.values()[i].getRotation(ForgeDirection.UP).ordinal();
+				int newI = EnumFacing.values()[i].rotateY().ordinal();
 
 				if (gatesNBT[i] != null) {
 					rotateGateLeft(gatesNBT[i]);
@@ -129,27 +130,27 @@ public class SchematicPipe extends SchematicTile {
 
 		if (gateNBT.hasKey("direction")) {
 			gateNBT.setInteger("direction",
-					ForgeDirection.values()[gateNBT.getInteger("direction")].
-							getRotation(ForgeDirection.UP).ordinal());
+					EnumFacing.values()[gateNBT.getInteger("direction")].
+							rotateY().ordinal());
 		}
 	}
 
 	@Override
-	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
-		tileNBT.setInteger("x", x);
-		tileNBT.setInteger("y", y);
-		tileNBT.setInteger("z", z);
+	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+		tileNBT.setInteger("x", pos.getX());
+		tileNBT.setInteger("y", pos.getY());
+		tileNBT.setInteger("z", pos.getZ());
 
-		context.world().setBlock(x, y, z, block, meta, 3);
+		context.world().setBlockState(pos, state, 3);
 
-		TileEntity tile = context.world().getTileEntity(x, y, z);
+		TileEntity tile = context.world().getTileEntity(pos);
 		tile.readFromNBT(tileNBT);
 	}
 
 	@Override
-	public void initializeFromObjectAt(IBuilderContext context, int x, int y, int z) {
-		TileEntity tile = context.world().getTileEntity(x, y, z);
-		Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
+	public void initializeFromObjectAt(IBuilderContext context, BlockPos pos) {
+		TileEntity tile = context.world().getTileEntity(pos);
+		Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), pos);
 
 		if (BlockGenericPipe.isValid(pipe)) {
 			tile.writeToNBT(tileNBT);
@@ -158,7 +159,7 @@ public class SchematicPipe extends SchematicTile {
 
 			tileNBT.removeTag("travelingEntities");
 
-			for (ForgeDirection direction : ForgeDirection.values()) {
+			for (EnumFacing direction : EnumFacing.values()) {
 				tileNBT.removeTag("tank[" + direction.ordinal() + "]");
 				tileNBT.removeTag("transferState[" + direction.ordinal() + "]");
 			}
@@ -173,8 +174,8 @@ public class SchematicPipe extends SchematicTile {
 	}
 
 	@Override
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
-		Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
+	public void storeRequirements(IBuilderContext context, BlockPos pos) {
+		Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), pos);
 
 		if (BlockGenericPipe.isValid(pipe)) {
 			ArrayList<ItemStack> items = pipe.computeItemDrop();
@@ -186,7 +187,7 @@ public class SchematicPipe extends SchematicTile {
 	}
 
 	@Override
-	public void postProcessing(IBuilderContext context, int x, int y, int z) {
+	public void postProcessing(IBuilderContext context, BlockPos pos) {
 		Item pipeItem = Item.getItemById(tileNBT.getInteger("pipeId"));
 
 		if (BptPipeExtension.contains(pipeItem)) {

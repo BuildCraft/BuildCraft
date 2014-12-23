@@ -8,55 +8,37 @@
  */
 package buildcraft.core;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 
+import io.netty.buffer.ByteBuf;
+import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
+import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IChatComponent;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftCore;
-import buildcraft.api.power.IPowerReceptor;
+import buildcraft.api.core.ISerializable;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.ISynchronizedTile;
-import buildcraft.core.network.PacketPayload;
 import buildcraft.core.network.PacketTileUpdate;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.utils.Utils;
 
-public abstract class TileBuildCraft extends TileEntity implements ISynchronizedTile, IEnergyHandler {
-	@SuppressWarnings("rawtypes")
-	private static Map<Class, TilePacketWrapper> updateWrappers = new HashMap<Class, TilePacketWrapper>();
-	@SuppressWarnings("rawtypes")
-	private static Map<Class, TilePacketWrapper> descriptionWrappers = new HashMap<Class, TilePacketWrapper>();
-	
+public abstract class TileBuildCraft extends TileEntity implements IEnergyHandler, ISynchronizedTile, ISerializable, IUpdatePlayerListBox {
+    protected TileBuffer[] cache;
 	protected HashSet<EntityPlayer> guiWatchers = new HashSet<EntityPlayer>();
-	
-	private final TilePacketWrapper descriptionPacket;
-	private final TilePacketWrapper updatePacket;
+
 	private boolean init = false;
 	private String owner = "[BuildCraft]";
 	private RFBattery battery;
-
-	public TileBuildCraft() {
-		if (!updateWrappers.containsKey(this.getClass())) {
-			updateWrappers.put(this.getClass(), new TilePacketWrapper(this.getClass()));
-		}
-
-		if (!descriptionWrappers.containsKey(this.getClass())) {
-			descriptionWrappers.put(this.getClass(), new TilePacketWrapper(this.getClass()));
-		}
-
-		updatePacket = updateWrappers.get(this.getClass());
-		descriptionPacket = descriptionWrappers.get(this.getClass());
-	}
 
 	public String getOwner() {
 		return owner;
@@ -75,71 +57,62 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	}
 	
 	@Override
-	public void updateEntity() {
+	public void update() {
 		if (!init && !isInvalid()) {
 			initialize();
 			init = true;
 		}
-
-		if (this instanceof IPowerReceptor) {
-			IPowerReceptor receptor = (IPowerReceptor) this;
-			receptor.getPowerReceiver(null).update();
-		}
 	}
+
+	public void initialize() {
+
+	}
+
+    @Override
+    public void validate() {
+        super.validate();
+        cache = null;
+    }
 
 	@Override
 	public void invalidate() {
 		init = false;
 		super.invalidate();
-	}
-
-	public void initialize() {
-		Utils.handleBufferedDescription(this);
+        cache = null;
 	}
 
 	public void onBlockPlacedBy(EntityLivingBase entity, ItemStack stack) {
 		if (entity instanceof EntityPlayer) {
-			owner = ((EntityPlayer) entity).getDisplayName();
+			owner = ((EntityPlayer) entity).getDisplayNameString();
 		}
 	}
 
 	public void destroy() {
+        cache = null;
 	}
 
 	public void sendNetworkUpdate() {
 		if (worldObj != null && !worldObj.isRemote) {
-			BuildCraftCore.instance.sendToPlayers(getUpdatePacket(), worldObj,
-					xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE);
+			BuildCraftCore.instance.sendToPlayers(getPacketUpdate(), worldObj,
+					pos.getX(), pos.getY(), pos.getZ(), DefaultProps.NETWORK_UPDATE_RANGE);
 		}
 	}
 
-	@Override
-	public Packet getDescriptionPacket() {
-		return Utils.toPacket(getUpdatePacket(), 0);
+	public void writeData(ByteBuf stream) {
+
 	}
 
-	@Override
-	public PacketPayload getPacketPayload() {
-		return updatePacket.toPayload(this);
+	public void readData(ByteBuf stream) {
+
 	}
 
-	@Override
-	public BuildCraftPacket getUpdatePacket() {
+	public BuildCraftPacket getPacketUpdate() {
 		return new PacketTileUpdate(this);
 	}
 
 	@Override
-	public void handleDescriptionPacket(PacketUpdate packet) throws IOException {
-		descriptionPacket.fromPayload(this, packet.payload);
-	}
-
-	@Override
-	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		updatePacket.fromPayload(this, packet.payload);
-	}
-
-	@Override
-	public void postPacketHandling(PacketUpdate packet) {
+	public Packet getDescriptionPacket() {
+		return Utils.toPacket(getPacketUpdate(), 0);
 	}
 
 	@Override
@@ -167,7 +140,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 
 	@Override
 	public int hashCode() {
-		return (xCoord * 37 + yCoord) * 37 + zCoord;
+		return pos.hashCode();
 	}
 
 	@Override
@@ -176,12 +149,12 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	}
 
 	@Override
-	public boolean canConnectEnergy(ForgeDirection from) {
+	public boolean canConnectEnergy(EnumFacing from) {
 		return battery != null;
 	}
 
 	@Override
-	public int receiveEnergy(ForgeDirection from, int maxReceive,
+	public int receiveEnergy(EnumFacing from, int maxReceive,
 			boolean simulate) {
 		if (battery != null && this.canConnectEnergy(from)) {
 			return battery.receiveEnergy(maxReceive, simulate);
@@ -190,8 +163,11 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 		}
 	}
 
+	/**
+	 * If you want to use this, implement IEnergyProvider.
+	 */
 	@Override
-	public int extractEnergy(ForgeDirection from, int maxExtract,
+	public int extractEnergy(EnumFacing from, int maxExtract,
 			boolean simulate) {
 		if (battery != null && this.canConnectEnergy(from)) {
 			return battery.extractEnergy(maxExtract, simulate);
@@ -201,7 +177,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	}
 
 	@Override
-	public int getEnergyStored(ForgeDirection from) {
+	public int getEnergyStored(EnumFacing from) {
 		if (battery != null && this.canConnectEnergy(from)) {
 			return battery.getEnergyStored();
 		} else {
@@ -210,7 +186,7 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 	}
 
 	@Override
-	public int getMaxEnergyStored(ForgeDirection from) {
+	public int getMaxEnergyStored(EnumFacing from) {
 		if (battery != null && this.canConnectEnergy(from)) {
 			return battery.getMaxEnergyStored();
 		} else {
@@ -224,5 +200,53 @@ public abstract class TileBuildCraft extends TileEntity implements ISynchronized
 
 	protected void setBattery(RFBattery battery) {
 		this.battery = battery;
+	}
+
+    public Block getBlock(EnumFacing side) {
+        if (cache == null) {
+            cache = TileBuffer.makeBuffer(worldObj, pos, false);
+        }
+        return cache[side.ordinal()].getBlock();
+    }
+
+    public TileEntity getTile(EnumFacing side) {
+        if (cache == null) {
+            cache = TileBuffer.makeBuffer(worldObj, pos, false);
+        }
+        return cache[side.ordinal()].getTile();
+    }
+
+	// Helpers for overriding
+
+	public boolean hasCustomName() {
+		return false;
+	}
+
+	public IChatComponent getDisplayName() {
+		if (this instanceof IInventory) {
+			return new ChatComponentTranslation(((IInventory) this).getName());
+		} else {
+			return null;
+		}
+	}
+
+	public int getField(int id) {
+		return 0;
+	}
+
+	public void setField(int id, int value) {
+
+	}
+
+	public int getFieldCount() {
+		return 0;
+	}
+
+	public void clear() {
+
+	}
+
+	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+		return worldObj.getTileEntity(pos) == this && entityplayer.getDistanceSq(pos) <= 64.0D;
 	}
 }

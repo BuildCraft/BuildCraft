@@ -10,7 +10,7 @@ package buildcraft.core.robots;
 
 import net.minecraft.tileentity.TileEntity;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
@@ -61,10 +61,8 @@ public class AIRobotLoadFluids extends AIRobot {
 				return;
 			}
 
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
-						+ dir.offsetY, station.z()
-						+ dir.offsetZ);
+			for (EnumFacing dir : EnumFacing.values()) {
+				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.pos().offset(dir));
 
 				if (nearbyTile != null && nearbyTile instanceof IFluidHandler) {
 					IFluidHandler handler = (IFluidHandler) nearbyTile;
@@ -75,7 +73,7 @@ public class AIRobotLoadFluids extends AIRobot {
 
 						drainable = drainable.copy();
 
-						int filled = robot.fill(ForgeDirection.UNKNOWN, drainable, true);
+						int filled = robot.fill(null, drainable, true);
 
 						if (filled > 0) {
 							drainable.amount = filled;

@@ -11,7 +11,7 @@ package buildcraft.core.network;
 public final class PacketIds {
 
 	public static final int TILE_UPDATE = 0;
-	// public static final int PIPE_DESCRIPTION = 1;
+	public static final int COMMAND = 1;
 	public static final int PIPE_TRAVELER = 2;
 	public static final int PIPE_LIQUID = 3;
 	public static final int PIPE_POWER = 4;
@@ -24,15 +24,11 @@ public final class PacketIds {
 	public static final int REFINERY_FILTER_SET = 50;
 
 	public static final int ADVANCED_WORKBENCH_SETSLOT = 70;
-	public static final int SELECTION_ADVANCED_WORKBENCH = 71;
 
 	public static final int GUI_RETURN = 80;
 	public static final int GUI_WIDGET = 81;
 
 	public static final int STATE_UPDATE = 100;
-
-	public static final int RPC = 110;
-	public static final int RPC_PIPE = 111;
 
 	/**
 	 * Deactivate constructor

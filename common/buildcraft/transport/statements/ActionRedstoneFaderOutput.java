@@ -8,18 +8,13 @@
  */
 package buildcraft.transport.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.statements.IActionInternal;
-import buildcraft.api.statements.IStatementContainer;
-import buildcraft.api.statements.IStatementParameter;
-import buildcraft.core.statements.BCStatement;
-import buildcraft.core.statements.StatementParameterRedstoneGateSideOnly;
+import buildcraft.core.statements.ActionRedstoneOutput;
 import buildcraft.core.utils.StringUtils;
 
-public class ActionRedstoneFaderOutput extends BCStatement implements IActionInternal {
+public class ActionRedstoneFaderOutput extends ActionRedstoneOutput implements IActionInternal {
 
 	public final int level;
 
@@ -35,36 +30,12 @@ public class ActionRedstoneFaderOutput extends BCStatement implements IActionInt
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon() {
-		return icon;
+	public int getSheetLocation() {
+		return 9 + (level * 16);
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon(String.format("buildcraft:triggers/redstone_%02d", level));
-	}
-	
-    @Override
-    public IStatementParameter createParameter(int index) {
-		IStatementParameter param = null;
-	
-		if (index == 0) {
-		    param = new StatementParameterRedstoneGateSideOnly();
-		}
-	
-		return param;
-    }
-	
-	@Override
-	public int maxParameters() {
-		return 1;
-	}
-
-	@Override
-	public void actionActivate(IStatementContainer source,
-			IStatementParameter[] parameters) {
-		
+	protected int getSignalLevel() {
+		return level;
 	}
 }

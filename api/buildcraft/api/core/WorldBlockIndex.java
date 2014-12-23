@@ -2,9 +2,9 @@
  * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ * The BuildCraft API is distributed under the terms of the MIT License.
+ * Please check the contents of the license, which should be located
+ * as "LICENSE.API" in the BuildCraft source code distribution.
  */
 package buildcraft.api.core;
 
@@ -31,7 +31,7 @@ public class WorldBlockIndex implements Comparable<WorldBlockIndex> {
 	 */
 	public WorldBlockIndex(World world, int x, int y, int z) {
 
-		dimension = world.provider.dimensionId;
+		dimension = world.provider.getDimensionId();
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -45,7 +45,7 @@ public class WorldBlockIndex implements Comparable<WorldBlockIndex> {
 	}
 
 	public WorldBlockIndex(Entity entity) {
-		dimension = entity.worldObj.provider.dimensionId;
+		dimension = entity.worldObj.provider.getDimensionId();
 		x = (int) Math.floor(entity.posX);
 		y = (int) Math.floor(entity.posY);
 		z = (int) Math.floor(entity.posZ);

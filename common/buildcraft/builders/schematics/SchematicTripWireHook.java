@@ -10,8 +10,10 @@ package buildcraft.builders.schematics;
 
 import java.util.LinkedList;
 
+import net.minecraft.block.BlockTripWireHook;
 import net.minecraft.item.ItemStack;
-
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 
@@ -19,8 +21,8 @@ public class SchematicTripWireHook extends SchematicBlock {
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
-		int pos = meta & 3;
-		int others = meta - pos;
+		int pos = getMetaData() & 3;
+		int others = getMetaData() - pos;
 
 		switch (pos) {
 		case 0:
@@ -37,17 +39,17 @@ public class SchematicTripWireHook extends SchematicBlock {
 			break;
 		}
 
-		meta = pos + others;
+		setMetaData(pos + others);
 	}
 
 	@Override
-	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
-		context.world().setBlock(x, y, z, block, meta, 3);
+	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+		context.world().setBlockState(pos, state.withProperty(BlockTripWireHook.FACING, EnumFacing.DOWN), 3);
 	}
 
 	@Override
-	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
-		return block == context.world().getBlock(x, y, z);
+	public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
+		return state.getBlock() == context.world().getBlockState(pos).getBlock();
 	}
 
 }

@@ -14,7 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -28,9 +28,9 @@ import buildcraft.api.fuels.IFuel;
 import buildcraft.api.fuels.ISolidCoolant;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
-import buildcraft.core.fluids.FluidUtils;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.fluids.TankManager;
+import buildcraft.core.fluids.TankUtils;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.energy.gui.ContainerEngine;
 
@@ -69,14 +69,18 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	}
 
 	@Override
-	public boolean onBlockActivated(EntityPlayer player, ForgeDirection side) {
+	public boolean onBlockActivated(EntityPlayer player, EnumFacing side) {
+		if (super.onBlockActivated(player, side)) {
+			return true;
+		}
+
 		ItemStack current = player.getCurrentEquippedItem();
 		if (current != null) {
 			if (current.getItem() instanceof IItemPipe) {
 				return false;
 			}
 			if (!worldObj.isRemote) {
-				if (FluidUtils.handleRightClick(this, side, player, true, true)) {
+				if (TankUtils.handleRightClick(this, side, player, true, true)) {
 					return true;
 				}
 			} else {
@@ -86,14 +90,9 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 			}
 		}
 		if (!worldObj.isRemote) {
-			player.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_IRON, worldObj, xCoord, yCoord, zCoord);
+			player.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_IRON, worldObj, pos.getX(), pos.getY(), pos.getZ());
 		}
 		return true;
-	}
-
-	@Override
-	public float explosionRange() {
-		return 4;
 	}
 
 	@Override
@@ -117,7 +116,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	private float getBiomeTempScalar() {
 		if (biomeCache == null) {
-			biomeCache = worldObj.getBiomeGenForCoords(xCoord, zCoord);
+			biomeCache = worldObj.getBiomeGenForCoords(pos);
 		}
 		float tempScalar = biomeCache.temperature - 1.0F;
 		tempScalar *= 0.5F;
@@ -133,8 +132,19 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	@Override
 	public boolean isBurning() {
+		if (getEnergyStage() == EnergyStage.OVERHEAT) {
+			return false;
+		}
+
 		FluidStack fuel = tankFuel.getFluid();
 		return fuel != null && fuel.amount > 0 && penaltyCooling == 0 && isRedstonePowered;
+	}
+
+	@Override
+	public void overheat() {
+		super.overheat();
+		// Evaporate all remaining coolant as a form of penalty.
+		tankCoolant.setFluid(null);
 	}
 
 	@Override
@@ -183,7 +193,10 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	}
 
 	@Override
-	public void updateHeatLevel() {
+	public void updateHeat() {
+		if (energyStage == EnergyStage.OVERHEAT && heat > MIN_HEAT) {
+			heat -= COOLDOWN_RATE;
+		}
 	}
 
 	@Override
@@ -203,8 +216,8 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 			}
 
 			if (liquid != null) {
-				if (fill(ForgeDirection.UNKNOWN, liquid, false) == liquid.amount) {
-					fill(ForgeDirection.UNKNOWN, liquid, true);
+				if (fill(null, liquid, false) == liquid.amount) {
+					fill(null, liquid, true);
 					setInventorySlotContents(0, InvUtils.consumeItem(stack));
 				}
 			}
@@ -335,12 +348,12 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	/* ITANKCONTAINER */
 	@Override
-	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
 		return tankFuel.drain(maxDrain, doDrain);
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
 		if (resource == null) {
 			return null;
 		}
@@ -354,14 +367,12 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	}
 
 	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
-		return true;
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
+		return from != orientation;
 	}
 
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-
-		// Handle coolant
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		if (BuildcraftFuelRegistry.coolant.getCoolant(resource.getFluid()) != null) {
 			return tankCoolant.fill(resource, doFill);
 		} else if (BuildcraftFuelRegistry.fuel.getFuel(resource.getFluid()) != null) {
@@ -372,13 +383,28 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	}
 
 	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
-		return BuildcraftFuelRegistry.coolant.getCoolant(fluid) != null || BuildcraftFuelRegistry.fuel.getFuel(fluid) != null;
+	public boolean canFill(EnumFacing from, Fluid fluid) {
+		return from != orientation &&
+                (BuildcraftFuelRegistry.coolant.getCoolant(fluid) != null ||
+                        BuildcraftFuelRegistry.fuel.getFuel(fluid) != null);
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection direction) {
-		return tankManager.getTankInfo(direction);
+	public FluidTankInfo[] getTankInfo(EnumFacing direction) {
+        if (direction == orientation) {
+            return null;
+        }
+        return tankManager.getTankInfo(direction);
+	}
+
+	@Override
+	public void openInventory(EntityPlayer playerIn) {
+
+	}
+
+	@Override
+	public void closeInventory(EntityPlayer playerIn) {
+
 	}
 
 	@Override
@@ -389,7 +415,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 			return true;
 		} else {
 			FluidStack fluidStack = FluidContainerRegistry.getFluidForFilledItem(itemstack);
-			return fluidStack != null && canFill(ForgeDirection.UNKNOWN, fluidStack.getFluid());
+			return fluidStack != null && canFill(null, fluidStack.getFluid());
 		}
 	}
 
@@ -423,10 +449,5 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 		} else {
 			return currentFuel.getPowerPerCycle();
 		}
-	}
-
-	@Override
-	public boolean hasCustomInventoryName() {
-		return false;
 	}
 }

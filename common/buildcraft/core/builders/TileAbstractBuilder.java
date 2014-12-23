@@ -11,31 +11,31 @@ package buildcraft.core.builders;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.relauncher.Side;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.ITileBuilder;
-import buildcraft.api.core.NetworkData;
 import buildcraft.core.IBoxProvider;
 import buildcraft.core.LaserData;
 import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCMessageInfo;
-import buildcraft.core.network.RPCSide;
+import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.CommandWriter;
+import buildcraft.core.network.ICommandReceiver;
+import buildcraft.core.network.PacketCommand;
 
 public abstract class TileAbstractBuilder extends TileBuildCraft implements ITileBuilder, IInventory, IBoxProvider,
-		IBuildingItemsProvider {
+		IBuildingItemsProvider, ICommandReceiver {
 
 	/**
-	 * Computes the maximum amount of energy required to build a full chest,
-	 * plus a safeguard. That's a nice way to evaluate maximum amount of energy
-	 * that need to be in a builder.
+	 * The builder should not act as a gigantic energy buffer, thus we keep enough
+	 * build energy to build about 2 stacks' worth of blocks.
 	 */
-	private static final int FULL_CHEST_ENERGY = 9 * 3 * 64 * BuilderAPI.BUILD_ENERGY + 10000;
 
-	@NetworkData
 	public LinkedList<LaserData> pathLasers = new LinkedList<LaserData> ();
 
 	public ArrayList<BuildingItem> buildersInAction = new ArrayList<BuildingItem>();
@@ -45,27 +45,41 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 
 	public TileAbstractBuilder() {
 		super();
-		this.setBattery(new RFBattery(FULL_CHEST_ENERGY, 1000, 0));
+		this.setBattery(new RFBattery(2 * 64 * BuilderAPI.BUILD_ENERGY, 1000, 0));
 	}
 	@Override
 	public void initialize () {
 		super.initialize();
 
 		if (worldObj.isRemote) {
-			RPCHandler.rpcServer(this, "uploadBuildersInAction");
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadBuildersInAction", null));
 		}
 	}
 
-	@RPC (RPCSide.SERVER)
-	private void uploadBuildersInAction (RPCMessageInfo info) {
-		for (BuildingItem i : buildersInAction) {
-			RPCHandler.rpcPlayer(info.sender, this, "launchItem", i);
+	private BuildCraftPacket createLaunchItemPacket(final BuildingItem i) {
+		return new PacketCommand(this, "launchItem", new CommandWriter() {
+			public void write(ByteBuf data) {
+				i.writeData(data);
+			}
+		});
+	}
+
+	@Override
+	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
+		if (side.isServer() && "uploadBuildersInAction".equals(command)) {
+			for (BuildingItem i : buildersInAction) {
+				BuildCraftCore.instance.sendToPlayer((EntityPlayer) sender, createLaunchItemPacket(i));
+			}
+		} else if (side.isClient() && "launchItem".equals(command)) {
+			BuildingItem item = new BuildingItem();
+			item.readData(stream);
+			buildersInAction.add(item);
 		}
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		RFBattery battery = this.getBattery();
 
@@ -115,15 +129,10 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 		return pathLasers;
 	}
 
-	@RPC (RPCSide.CLIENT)
-	public void launchItem (BuildingItem item) {
-		buildersInAction.add(item);
-	}
-
 	@Override
 	public void addAndLaunchBuildingItem(BuildingItem item) {
 		buildersInAction.add(item);
-		RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "launchItem", item);
+		BuildCraftCore.instance.sendToPlayersNear(createLaunchItemPacket(item), this);
 	}
 
 	public final int energyAvailable() {
@@ -145,6 +154,25 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 
 		rfPrev = getBattery().getEnergyStored();
 		rfUnchangedCycles = 0;
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		int size = stream.readUnsignedShort();
+		pathLasers.clear();
+		for (int i = 0; i < size; i++) {
+			LaserData ld = new LaserData();
+			ld.readData(stream);
+			pathLasers.add(ld);
+		}
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		stream.writeShort(pathLasers.size());
+		for (LaserData ld : pathLasers) {
+			ld.writeData(stream);
+		}
 	}
 
 	@Override

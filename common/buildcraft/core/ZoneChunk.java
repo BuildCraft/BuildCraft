@@ -11,17 +11,16 @@ package buildcraft.core;
 import java.util.BitSet;
 import java.util.Random;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
-import buildcraft.api.core.BlockIndex;
-import buildcraft.api.core.NetworkData;
+import net.minecraft.util.BlockPos;
+import buildcraft.api.core.ISerializable;
 import buildcraft.core.utils.BitSetUtils;
+import buildcraft.core.utils.Utils;
 
-public class ZoneChunk {
+public class ZoneChunk implements ISerializable {
 
-	@NetworkData
 	public BitSet property;
-
-	@NetworkData
 	private boolean fullSet = false;
 
 	public ZoneChunk() {
@@ -83,7 +82,7 @@ public class ZoneChunk {
 		}
 	}
 
-	public BlockIndex getRandomBlockIndex(Random rand) {
+	public BlockPos getRandomBlockPos(Random rand) {
 		int x, z;
 
 		if (fullSet) {
@@ -103,10 +102,29 @@ public class ZoneChunk {
 			x = bitPosition - 16 * z;
 		}
 
-		return new BlockIndex(x, 0, z);
+		return new BlockPos(x, 0, z);
 	}
 
 	public boolean isEmpty() {
 		return !fullSet && property.isEmpty();
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		if (stream.readBoolean()) {
+			property = BitSetUtils.fromByteArray(Utils.readByteArray(stream));
+		}
+		fullSet = stream.readBoolean();
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		if (property != null) {
+			stream.writeBoolean(true);
+			Utils.writeByteArray(stream, BitSetUtils.toByteArray(property));
+		} else {
+			stream.writeBoolean(false);
+		}
+		stream.writeBoolean(fullSet);
 	}
 }

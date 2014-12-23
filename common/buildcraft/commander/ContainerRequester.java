@@ -8,18 +8,21 @@
  */
 package buildcraft.commander;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
+import net.minecraftforge.fml.relauncher.Side;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.gui.BuildCraftContainer;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCMessageInfo;
-import buildcraft.core.network.RPCSide;
+import buildcraft.core.network.CommandWriter;
+import buildcraft.core.network.ICommandReceiver;
+import buildcraft.core.network.PacketCommand;
+import buildcraft.core.utils.Utils;
 
-public class ContainerRequester extends BuildCraftContainer {
+public class ContainerRequester extends BuildCraftContainer implements ICommandReceiver {
 
 	public GuiRequester gui;
 
@@ -56,22 +59,31 @@ public class ContainerRequester extends BuildCraftContainer {
 	}
 
 	public void getRequestList() {
-		RPCHandler.rpcServer(this, "rpcGetRequestList");
+		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "getRequestList", null));
 	}
 
-	@RPC(RPCSide.SERVER)
-	public void rpcGetRequestList(RPCMessageInfo info) {
-		ItemStack[] stacks = new ItemStack[TileRequester.NB_ITEMS];
+	@Override
+	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
+		if (side.isServer() && "getRequestList".equals(command)) {
+			final ItemStack[] stacks = new ItemStack[TileRequester.NB_ITEMS];
 
-		for (int i = 0; i < TileRequester.NB_ITEMS; ++i) {
-			stacks[i] = requester.getRequest(i);
+			for (int i = 0; i < TileRequester.NB_ITEMS; ++i) {
+				stacks[i] = requester.getRequest(i);
+			}
+
+			BuildCraftCore.instance.sendToPlayer((EntityPlayer) sender, new PacketCommand(this, "receiveRequestList",
+					new CommandWriter() {
+				public void write(ByteBuf data) {
+					for (ItemStack s : stacks) {
+						Utils.writeStack(data, s);
+					}
+				}
+			}));
+		} else if (side.isClient() && "receiveRequestList".equals(command)) {
+			requests = new ItemStack[TileRequester.NB_ITEMS];
+			for (int i = 0; i < TileRequester.NB_ITEMS; i++) {
+				requests[i] = Utils.readStack(stream);
+			}
 		}
-
-		RPCHandler.rpcPlayer(info.sender, this, "rpcReceiveRequestList", stacks, null);
-	}
-
-	@RPC(RPCSide.CLIENT)
-	public void rpcReceiveRequestList(ItemStack[] items, Object dummy) {
-		requests = items;
 	}
 }

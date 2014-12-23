@@ -15,10 +15,11 @@ import net.minecraft.nbt.NBTTagList;
 
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.utils.PathFinding;
 import buildcraft.core.utils.PathFindingJob;
+import buildcraft.core.utils.Utils;
 
 public class AIRobotGotoBlock extends AIRobotGoto {
 
@@ -26,35 +27,35 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 
 	private PathFinding pathSearch;
 	private PathFindingJob pathSearchJob;
-	private LinkedList<BlockIndex> path;
+	private LinkedList<BlockPos> path;
 	private double prevDistance = Double.MAX_VALUE;
 	private float finalX, finalY, finalZ;
 	private double maxDistance = 0;
-	private BlockIndex lastBlockInPath;
+	private BlockPos lastBlockInPath;
 
 	public AIRobotGotoBlock(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotGotoBlock(EntityRobotBase robot, int x, int y, int z) {
+	public AIRobotGotoBlock(EntityRobotBase robot, BlockPos pos) {
 		super(robot);
-		finalX = x;
-		finalY = y;
-		finalZ = z;
+		finalX = pos.getX();
+		finalY = pos.getY();
+		finalZ = pos.getZ();
 	}
 
-	public AIRobotGotoBlock(EntityRobotBase robot, int x, int y, int z, double iMaxDistance) {
-		this(robot, x, y, z);
+	public AIRobotGotoBlock(EntityRobotBase robot, BlockPos pos, double iMaxDistance) {
+		this(robot, pos);
 
 		maxDistance = iMaxDistance;
 	}
 
-	public AIRobotGotoBlock(EntityRobotBase robot, LinkedList<BlockIndex> iPath) {
+	public AIRobotGotoBlock(EntityRobotBase robot, LinkedList<BlockPos> iPath) {
 		super(robot);
 		path = iPath;
-		finalX = path.getLast().x;
-		finalY = path.getLast().y;
-		finalZ = path.getLast().z;
+		finalX = path.getLast().getX();
+		finalY = path.getLast().getY();
+		finalZ = path.getLast().getZ();
 		setNextInPath();
 	}
 
@@ -66,8 +67,8 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 	@Override
 	public void update() {
 		if (path == null && pathSearch == null) {
-			pathSearch = new PathFinding(robot.worldObj, new BlockIndex((int) Math.floor(robot.posX),
-					(int) Math.floor(robot.posY), (int) Math.floor(robot.posZ)), new BlockIndex(
+			pathSearch = new PathFinding(robot.worldObj, new BlockPos((int) Math.floor(robot.posX),
+					(int) Math.floor(robot.posY), (int) Math.floor(robot.posZ)), new BlockPos(
 					(int) Math.floor(finalX), (int) Math.floor(finalY), (int) Math.floor(finalZ)), maxDistance);
 
 			pathSearchJob = new PathFindingJob(pathSearch, 100);
@@ -106,9 +107,9 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 			robot.motionZ = 0;
 
 			if (lastBlockInPath != null) {
-				robot.posX = lastBlockInPath.x + 0.5F;
-				robot.posY = lastBlockInPath.y + 0.5F;
-				robot.posZ = lastBlockInPath.z + 0.5F;
+				robot.posX = lastBlockInPath.getX() + 0.5F;
+				robot.posY = lastBlockInPath.getY() + 0.5F;
+				robot.posZ = lastBlockInPath.getZ() + 0.5F;
 			}
 
 			terminate();
@@ -117,8 +118,8 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 
 	private void setNextInPath() {
 		if (path.size() > 0) {
-			BlockIndex next = path.getFirst();
-			setDestination(robot, next.x + 0.5F, next.y + 0.5F, next.z + 0.5F);
+			BlockPos next = path.getFirst();
+			setDestination(robot, next.getX() + 0.5F, next.getY() + 0.5F, next.getZ() + 0.5F);
 			prevDistance = Double.MAX_VALUE;
 		}
 	}
@@ -150,9 +151,9 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 		if (path != null) {
 			NBTTagList pathList = new NBTTagList();
 
-			for (BlockIndex i : path) {
+			for (BlockPos i : path) {
 				NBTTagCompound subNBT = new NBTTagCompound();
-				i.writeTo(subNBT);
+				Utils.writeBlockPos(subNBT, i);
 				pathList.appendTag(subNBT);
 			}
 
@@ -172,10 +173,10 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 		if (nbt.hasKey("path")) {
 			NBTTagList pathList = nbt.getTagList("path", Constants.NBT.TAG_COMPOUND);
 
-			path = new LinkedList<BlockIndex>();
+			path = new LinkedList<BlockPos>();
 
 			for (int i = 0; i < pathList.tagCount(); ++i) {
-				path.add(new BlockIndex(pathList.getCompoundTagAt(i)));
+				path.add(Utils.readBlockPos(pathList.getCompoundTagAt(i)));
 			}
 
 			setNextInPath();

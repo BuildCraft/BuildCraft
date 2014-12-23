@@ -8,6 +8,8 @@
  */
 package buildcraft.core.utils;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -20,23 +22,26 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.util.EnumFacing;
 
-import cpw.mods.fml.common.network.internal.FMLProxyPacket;
-
-import net.minecraftforge.common.util.ForgeDirection;
-
-import buildcraft.BuildCraftCore;
-import buildcraft.api.core.BlockIndex;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipeTile;
@@ -52,15 +57,13 @@ import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.Transactor;
 import buildcraft.core.network.BuildCraftPacket;
-import buildcraft.core.network.ISynchronizedTile;
-import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.TileEngine;
 
 public final class Utils {
 
 	public static final Random RANDOM = new Random();
-	private static final List<ForgeDirection> directions = new ArrayList<ForgeDirection>(Arrays.asList(ForgeDirection.VALID_DIRECTIONS));
+	private static final List<EnumFacing> directions = new ArrayList<EnumFacing>(Arrays.asList(EnumFacing.values()));
 
 	/**
 	 * Deactivate constructor
@@ -75,18 +78,15 @@ public final class Utils {
 	 *
 	 * @param stack
 	 * @param world
-	 * @param x
-	 * @param y
-	 * @param z
+	 * @param sourcePos
 	 * @return amount used
 	 */
-	public static int addToRandomInventoryAround(World world, int x, int y, int z, ItemStack stack) {
+	public static int addToRandomInventoryAround(World world, BlockPos sourcePos, ItemStack stack) {
 		Collections.shuffle(directions);
-		for (ForgeDirection orientation : directions) {
-			Position pos = new Position(x, y, z, orientation);
-			pos.moveForwards(1.0);
+		for (EnumFacing orientation : directions) {
+			BlockPos pos = sourcePos.offset(orientation);
 
-			TileEntity tileInventory = world.getTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+			TileEntity tileInventory = world.getTileEntity(pos);
 			ITransactor transactor = Transactor.getTransactorFor(tileInventory);
 			if (transactor != null && !(tileInventory instanceof TileEngine) && transactor.add(stack, orientation.getOpposite(), false).stackSize > 0) {
 				return transactor.add(stack, orientation.getOpposite(), true).stackSize;
@@ -100,9 +100,9 @@ public final class Utils {
 	 * Returns the cardinal direction of the entity depending on its
 	 * rotationYaw
 	 */
-	public static ForgeDirection get2dOrientation(EntityLivingBase entityliving) {
-		ForgeDirection[] orientationTable = { ForgeDirection.SOUTH,
-				ForgeDirection.WEST, ForgeDirection.NORTH, ForgeDirection.EAST };
+	public static EnumFacing get2dOrientation(EntityLivingBase entityliving) {
+		EnumFacing[] orientationTable = { EnumFacing.SOUTH,
+				EnumFacing.WEST, EnumFacing.NORTH, EnumFacing.EAST };
 		int orientationIndex = MathHelper.floor_double((entityliving.rotationYaw + 45.0) / 90.0) & 3;
 		return orientationTable[orientationIndex];
 	}
@@ -112,31 +112,31 @@ public final class Utils {
 	 * should probably be removed following the same principles
 	 */
 	@Deprecated
-	private static ForgeDirection get2dOrientation(Position pos1, Position pos2) {
+	private static EnumFacing get2dOrientation(Position pos1, Position pos2) {
 		double dX = pos1.x - pos2.x;
 		double dZ = pos1.z - pos2.z;
 		double angle = Math.atan2(dZ, dX) / Math.PI * 180 + 180;
 
 		if (angle < 45 || angle > 315) {
-			return ForgeDirection.EAST;
+			return EnumFacing.EAST;
 		} else if (angle < 135) {
-			return ForgeDirection.SOUTH;
+			return EnumFacing.SOUTH;
 		} else if (angle < 225) {
-			return ForgeDirection.WEST;
+			return EnumFacing.WEST;
 		} else {
-			return ForgeDirection.NORTH;
+			return EnumFacing.NORTH;
 		}
 	}
 
-	public static ForgeDirection get3dOrientation(Position pos1, Position pos2) {
+	public static EnumFacing get3dOrientation(Position pos1, Position pos2) {
 		double dX = pos1.x - pos2.x;
 		double dY = pos1.y - pos2.y;
 		double angle = Math.atan2(dY, dX) / Math.PI * 180 + 180;
 
 		if (angle > 45 && angle < 135) {
-			return ForgeDirection.UP;
+			return EnumFacing.UP;
 		} else if (angle > 225 && angle < 315) {
-			return ForgeDirection.DOWN;
+			return EnumFacing.DOWN;
 		} else {
 			return get2dOrientation(pos1, pos2);
 		}
@@ -149,20 +149,17 @@ public final class Utils {
 	 * isn't used again so that entities doesn't go backwards. Returns true if
 	 * successful, false otherwise.
 	 */
-	public static int addToRandomPipeAround(World world, int x, int y, int z, ForgeDirection from, ItemStack stack) {
+	public static int addToRandomPipeAround(World world, BlockPos sourcePos, EnumFacing from, ItemStack stack) {
 		List<IPipeTile> possiblePipes = new ArrayList<IPipeTile>();
-		List<ForgeDirection> pipeDirections = new ArrayList<ForgeDirection>();
+		List<EnumFacing> pipeDirections = new ArrayList<EnumFacing>();
 
-		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-			if (from.getOpposite() == side) {
+		for (EnumFacing side : EnumFacing.values()) {
+			if (from != null && from.getOpposite() == side) {
 				continue;
 			}
 
-			Position pos = new Position(x, y, z, side);
-
-			pos.moveForwards(1.0);
-
-			TileEntity tile = world.getTileEntity((int) pos.x, (int) pos.y, (int) pos.z);
+			BlockPos pos = sourcePos.offset(side);
+			TileEntity tile = world.getTileEntity(pos);
 
 			if (tile instanceof IPipeTile) {
 				IPipeTile pipe = (IPipeTile) tile;
@@ -188,21 +185,17 @@ public final class Utils {
 		return 0;
 	}
 
-	public static TileEntity getTile(World world, Position pos, ForgeDirection step) {
-		Position tmp = new Position(pos);
-		tmp.orientation = step;
-		tmp.moveForwards(1.0);
-
-		return world.getTileEntity((int) tmp.x, (int) tmp.y, (int) tmp.z);
+	public static TileEntity getTile(World world, BlockPos sourcePos, EnumFacing step) {
+		return world.getTileEntity(sourcePos.offset(step));
 	}
 
-	public static IAreaProvider getNearbyAreaProvider(World world, int i, int j, int k) {
-		TileEntity a1 = world.getTileEntity(i + 1, j, k);
-		TileEntity a2 = world.getTileEntity(i - 1, j, k);
-		TileEntity a3 = world.getTileEntity(i, j, k + 1);
-		TileEntity a4 = world.getTileEntity(i, j, k - 1);
-		TileEntity a5 = world.getTileEntity(i, j + 1, k);
-		TileEntity a6 = world.getTileEntity(i, j - 1, k);
+	public static IAreaProvider getNearbyAreaProvider(World world, BlockPos pos) {
+		TileEntity a1 = world.getTileEntity(pos.offset(EnumFacing.EAST));
+		TileEntity a2 = world.getTileEntity(pos.offset(EnumFacing.WEST));
+		TileEntity a3 = world.getTileEntity(pos.offset(EnumFacing.SOUTH));
+		TileEntity a4 = world.getTileEntity(pos.offset(EnumFacing.NORTH));
+		TileEntity a5 = world.getTileEntity(pos.offset(EnumFacing.UP));
+		TileEntity a6 = world.getTileEntity(pos.offset(EnumFacing.DOWN));
 
 		if (a1 instanceof IAreaProvider) {
 			return (IAreaProvider) a1;
@@ -333,30 +326,12 @@ public final class Utils {
 		return lasers;
 	}
 
-	public static void handleBufferedDescription(ISynchronizedTile tileSynch) {
-		TileEntity tile = (TileEntity) tileSynch;
-		BlockIndex index = new BlockIndex(tile.xCoord, tile.yCoord, tile.zCoord);
-
-		if (BuildCraftCore.bufferedDescriptions.containsKey(index)) {
-
-			PacketUpdate payload = BuildCraftCore.bufferedDescriptions.get(index);
-			BuildCraftCore.bufferedDescriptions.remove(index);
-
-			try {
-				tileSynch.handleDescriptionPacket(payload);
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-			tileSynch.postPacketHandling(payload);
-		}
-	}
-
-	public static void preDestroyBlock(World world, int i, int j, int k) {
-		TileEntity tile = world.getTileEntity(i, j, k);
+	public static void preDestroyBlock(World world, BlockPos pos, IBlockState state) {
+		TileEntity tile = world.getTileEntity(pos);
 
 		if (tile instanceof IInventory && !world.isRemote) {
 			if (!(tile instanceof IDropControlInventory) || ((IDropControlInventory) tile).doDrop()) {
-				InvUtils.dropItems(world, (IInventory) tile, i, j, k);
+				InvUtils.dropItems(world, (IInventory) tile, pos);
 				InvUtils.wipeInventory((IInventory) tile);
 			}
 		}
@@ -364,6 +339,20 @@ public final class Utils {
 		if (tile instanceof TileBuildCraft) {
 			((TileBuildCraft) tile).destroy();
 		}
+	}
+
+	public static boolean isFakePlayer(EntityPlayer player) {
+		if (player instanceof FakePlayer) {
+			return true;
+		}
+
+		// Tip donated by skyboy - addedToChunk must be set to false by a fake player
+		// or it becomes a chunk-loading entity.
+		if (!player.addedToChunk) {
+			return true;
+		}
+
+		return false;
 	}
 
 	public static boolean checkPipesConnections(TileEntity tile1, TileEntity tile2) {
@@ -375,20 +364,23 @@ public final class Utils {
 			return false;
 		}
 
-		ForgeDirection o = ForgeDirection.UNKNOWN;
+		BlockPos pos1 = tile1.getPos();
+		BlockPos pos2 = tile2.getPos();
 
-		if (tile1.xCoord - 1 == tile2.xCoord) {
-			o = ForgeDirection.WEST;
-		} else if (tile1.xCoord + 1 == tile2.xCoord) {
-			o = ForgeDirection.EAST;
-		} else if (tile1.yCoord - 1 == tile2.yCoord) {
-			o = ForgeDirection.DOWN;
-		} else if (tile1.yCoord + 1 == tile2.yCoord) {
-			o = ForgeDirection.UP;
-		} else if (tile1.zCoord - 1 == tile2.zCoord) {
-			o = ForgeDirection.NORTH;
-		} else if (tile1.zCoord + 1 == tile2.zCoord) {
-			o = ForgeDirection.SOUTH;
+		EnumFacing o = null;
+
+		if (pos1.getX() - 1 == pos2.getX()) {
+			o = EnumFacing.WEST;
+		} else if (pos1.getX() + 1 == pos2.getX()) {
+			o = EnumFacing.EAST;
+		} else if (pos1.getY() - 1 == pos2.getY()) {
+			o = EnumFacing.DOWN;
+		} else if (pos1.getY() + 1 == pos2.getY()) {
+			o = EnumFacing.UP;
+		} else if (pos1.getZ() - 1 == pos2.getZ()) {
+			o = EnumFacing.NORTH;
+		} else if (pos1.getZ() + 1 == pos2.getZ()) {
+			o = EnumFacing.SOUTH;
 		}
 
 		if (tile1 instanceof IPipeTile && !((IPipeTile) tile1).isPipeConnected(o)) {
@@ -402,20 +394,20 @@ public final class Utils {
 		return true;
 	}
 
-	public static boolean checkLegacyPipesConnections(IBlockAccess blockAccess, int x1, int y1, int z1, int x2, int y2, int z2) {
+	public static boolean checkLegacyPipesConnections(IBlockAccess blockAccess, BlockPos pos1, BlockPos pos2) {
 
-		Block b1 = blockAccess.getBlock(x1, y1, z1);
-		Block b2 = blockAccess.getBlock(x2, y2, z2);
+		Block b1 = blockAccess.getBlockState(pos1).getBlock();
+		Block b2 = blockAccess.getBlockState(pos2).getBlock();
 
 		if (!(b1 instanceof IFramePipeConnection) && !(b2 instanceof IFramePipeConnection)) {
 			return false;
 		}
 
-		if (b1 instanceof IFramePipeConnection && !((IFramePipeConnection) b1).isPipeConnected(blockAccess, x1, y1, z1, x2, y2, z2)) {
+		if (b1 instanceof IFramePipeConnection && !((IFramePipeConnection) b1).isPipeConnected(blockAccess, pos1, pos2)) {
 			return false;
 		}
 
-		if (b2 instanceof IFramePipeConnection && !((IFramePipeConnection) b2).isPipeConnected(blockAccess, x2, y2, z2, x1, y1, z1)) {
+		if (b2 instanceof IFramePipeConnection && !((IFramePipeConnection) b2).isPipeConnected(blockAccess, pos2, pos1)) {
 			return false;
 		}
 
@@ -463,9 +455,13 @@ public final class Utils {
 
 	public static void writeNBT (ByteBuf data, NBTTagCompound nbt) {
 		try {
-			byte[] compressed = CompressedStreamTools.compress(nbt);
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			CompressedStreamTools.writeCompressed(nbt, out);
+			out.flush();
+			byte[] compressed = out.toByteArray();
 			data.writeInt(compressed.length);
 			data.writeBytes(compressed);
+			out.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -476,7 +472,7 @@ public final class Utils {
 			int length = data.readInt();
 			byte[] compressed = new byte[length];
 			data.readBytes(compressed);
-			return CompressedStreamTools.func_152457_a(compressed, NBTSizeTracker.field_152451_a);
+			return CompressedStreamTools.readCompressed(new ByteArrayInputStream(compressed));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
@@ -484,26 +480,67 @@ public final class Utils {
 	}
 
 	public static void writeStack (ByteBuf data, ItemStack stack) {
-		if (stack == null) {
-			data.writeBoolean(false);
+		if (stack == null || stack.getItem() == null || stack.stackSize < 0) {
+			data.writeByte(0);
 		} else {
-			data.writeBoolean(true);
-			NBTTagCompound nbt = new NBTTagCompound();
-			stack.writeToNBT(nbt);
-			Utils.writeNBT(data, nbt);
+			// ItemStacks generally shouldn't have a stackSize above 64,
+			// so we use this "trick" to save bandwidth by storing it in the first byte.
+			data.writeByte((MathUtils.clamp(stack.stackSize + 1, 0, 64) & 0x7F) | (stack.hasTagCompound() ? 128 : 0));
+			data.writeShort(Item.getIdFromItem(stack.getItem()));
+			data.writeShort(stack.getItemDamage());
+			if (stack.hasTagCompound()) {
+				Utils.writeNBT(data, stack.getTagCompound());
+			}
 		}
 	}
-
 
 	public static ItemStack readStack(ByteBuf data) {
-		if (!data.readBoolean()) {
+		int flags = data.readUnsignedByte();
+		if (flags == 0) {
 			return null;
 		} else {
-			NBTTagCompound nbt = readNBT(data);
-			return ItemStack.loadItemStackFromNBT(nbt);
+			boolean hasCompound = (flags & 0x80) != 0;
+			int stackSize = (flags & 0x7F) - 1;
+			int itemId = data.readUnsignedShort();
+			int itemDamage = data.readShort();
+			ItemStack stack = new ItemStack(Item.getItemById(itemId), stackSize, itemDamage);
+			if (hasCompound) {
+				stack.setTagCompound(Utils.readNBT(data));
+			}
+			return stack;
 		}
 	}
 
+	public static void writeByteArray(ByteBuf stream, byte[] data) {
+		stream.writeInt(data.length);
+		stream.writeBytes(data);
+	}
+
+	public static byte[] readByteArray(ByteBuf stream) {
+		byte[] data = new byte[stream.readInt()];
+		stream.readBytes(data, 0, data.length);
+		return data;
+	}
+
+	public static void writeBlockPos(ByteBuf stream, BlockPos pos) {
+		stream.writeInt(pos.getX());
+		stream.writeShort(pos.getY());
+		stream.writeInt(pos.getZ());
+	}
+
+	public static BlockPos readBlockPos(ByteBuf stream) {
+		return new BlockPos(stream.readInt(), stream.readShort(), stream.readInt());
+	}
+
+	public static void writeBlockPos(NBTTagCompound compound, BlockPos pos) {
+		compound.setInteger("x", pos.getX());
+		compound.setShort("y", (short) pos.getY());
+		compound.setInteger("z", pos.getZ());
+	}
+
+	public static BlockPos readBlockPos(NBTTagCompound compound) {
+		return new BlockPos(compound.getInteger("x"), compound.getShort("y"), compound.getInteger("z"));
+	}
 	/**
 	 * This subprogram transforms a packet into a FML packet to be send in the
 	 * minecraft default packet mechanism. This always use BC-CORE as a
@@ -520,6 +557,72 @@ public final class Utils {
 		buf.writeByte((byte) discriminator);
 		packet.writeData(buf);
 
-		return new FMLProxyPacket(buf, DefaultProps.NET_CHANNEL_NAME + "-CORE");
+		return new FMLProxyPacket(new PacketBuffer(buf), DefaultProps.NET_CHANNEL_NAME + "-CORE");
 	}
+
+	public static ItemStack getItemStack(IBlockState state, int quantity) {
+		return new ItemStack(state.getBlock(), quantity, state.getBlock().damageDropped(state));
+	}
+
+	public static ItemStack getItemStack(IBlockState state) {
+		return getItemStack(state, 1);
+	}
+
+	public static boolean nextTo(BlockPos pos, BlockPos pos1) {
+		for (EnumFacing dir : EnumFacing.values()) {
+			if (pos.offset(dir).equals(pos1)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static String getBlockName(Block block) {
+		ResourceLocation location = ((ResourceLocation) Block.blockRegistry.getNameForObject(block));
+		if (location == null) {
+			return null;
+		}
+		return location.getResourceDomain() + ":" + location.getResourcePath();
+	}
+
+	public static String getItemName(Item item) {
+		ResourceLocation location = ((ResourceLocation) Item.itemRegistry.getNameForObject(item));
+		if (location == null) {
+			return null;
+		}
+		return location.getResourceDomain() + ":" + location.getResourcePath();
+	}
+
+	// WORLD HELPER
+	
+    /**
+     * Checks between a min and max all the chunks inbetween actually exist. Args: world, minX, minY, minZ, maxX, maxY, maxZ
+     */
+    public static boolean checkChunksExist(World world, int minX, int minY, int minZ, int maxX, int maxY, int maxZ)
+    {
+        if (maxY >= 0 && minY < 256)
+        {
+            minX >>= 4;
+            minZ >>= 4;
+            maxX >>= 4;
+            maxZ >>= 4;
+
+            for (int var7 = minX; var7 <= maxX; ++var7)
+            {
+                for (int var8 = minZ; var8 <= maxZ; ++var8)
+                {
+                    if (!world.getChunkProvider().chunkExists(var7, var8))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }

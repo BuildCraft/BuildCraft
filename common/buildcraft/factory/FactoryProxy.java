@@ -10,7 +10,8 @@ package buildcraft.factory;
 
 import net.minecraft.world.World;
 
-import cpw.mods.fml.common.SidedProxy;
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.fml.common.SidedProxy;
 
 import buildcraft.core.EntityBlock;
 
@@ -25,6 +26,10 @@ public class FactoryProxy {
 	}
 
 	public void initializeNEIIntegration() {
+	}
+
+	public void initializeModels(ModelBakeEvent event) {
+
 	}
 
 	public EntityBlock newPumpTube(World w) {

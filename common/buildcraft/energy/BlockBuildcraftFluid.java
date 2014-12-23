@@ -13,17 +13,19 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.particle.EntityFX;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import cpw.mods.fml.client.FMLClientHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 
@@ -34,8 +36,8 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 	protected float particleRed;
 	protected float particleGreen;
 	protected float particleBlue;
-	@SideOnly(Side.CLIENT)
-	protected IIcon[] theIcon;
+	/*@SideOnly(Side.CLIENT)
+	protected IIcon[] theIcon;*/
 	protected boolean flammable;
 	protected int flammability = 0;
 	private MapColor mapColor;
@@ -46,7 +48,7 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 		mapColor = iMapColor;
 	}
 
-	@Override
+	/*@Override
 	public IIcon getIcon(int side, int meta) {
 		return side != 0 && side != 1 ? this.theIcon[1] : this.theIcon[0];
 	}
@@ -56,14 +58,17 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 	public void registerBlockIcons(IIconRegister iconRegister) {
 		this.theIcon = new IIcon[] {iconRegister.registerIcon("buildcraft:" + fluidName + "_still"),
 				iconRegister.registerIcon("buildcraft:" + fluidName + "_flow")};
-	}
+	}*/
 
 	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-		super.onNeighborBlockChange(world, x, y, z, block);
-		if (flammable && world.provider.dimensionId == -1) {
-			world.newExplosion(null, x, y, z, 4F, true, true);
-			world.setBlockToAir(x, y, z);
+	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
+		super.onNeighborChange(world, pos, neighbor);
+		if(!(world instanceof World)) return;
+		
+		World worldobj = (World)world;
+		if (flammable && worldobj.provider.getDimensionId() == -1) {
+			worldobj.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4F, true, true);
+			worldobj.setBlockToAir(pos);
 		}
 	}
 
@@ -78,22 +83,22 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 	}
 
 	@Override
-	public int getFireSpreadSpeed(IBlockAccess world, int x, int y, int z, ForgeDirection face) {
+	public int getFireSpreadSpeed(IBlockAccess world, BlockPos pos, EnumFacing face) {
 		return flammable ? 300 : 0;
 	}
 
 	@Override
-	public int getFlammability(IBlockAccess world, int x, int y, int z, ForgeDirection face) {
+	public int getFlammability(IBlockAccess world, BlockPos pos, EnumFacing face) {
 		return flammability;
 	}
 
 	@Override
-	public boolean isFlammable(IBlockAccess world, int x, int y, int z, ForgeDirection face) {
+	public boolean isFlammable(IBlockAccess world, BlockPos pos, EnumFacing face) {
 		return flammable;
 	}
 
 	@Override
-	public boolean isFireSource(World world, int x, int y, int z, ForgeDirection side) {
+	public boolean isFireSource(World world, BlockPos pos, EnumFacing side) {
 		return flammable && flammability == 0;
 	}
 
@@ -106,16 +111,16 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void randomDisplayTick(World world, int x, int y, int z, Random rand) {
-		super.randomDisplayTick(world, x, y, z, rand);
+	public void randomDisplayTick(World world, BlockPos pos, IBlockState state, Random rand) {
+		super.randomDisplayTick(world, pos, state, rand);
 
 		if (rand.nextInt(10) == 0
-				&& World.doesBlockHaveSolidTopSurface(world, x, y - 1, z)
-				&& !world.getBlock(x, y - 2, z).getMaterial().blocksMovement()) {
+				&& World.doesBlockHaveSolidTopSurface(world, pos.down())
+				&& !world.getBlockState(pos.down(2)).getBlock().getMaterial().blocksMovement()) {
 
-			double px = x + rand.nextFloat();
-			double py = y - 1.05D;
-			double pz = z + rand.nextFloat();
+			double px = pos.getX() + rand.nextFloat();
+			double py = pos.getY() - 1.05D;
+			double pz = pos.getZ() + rand.nextFloat();
 
 			EntityFX fx = new EntityDropParticleFX(world, px, py, pz, particleRed, particleGreen, particleBlue);
 			FMLClientHandler.instance().getClient().effectRenderer.addEffect(fx);
@@ -123,23 +128,54 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 	}
 
 	@Override
-	public boolean canDisplace(IBlockAccess world, int x, int y, int z) {
-		if (world.getBlock(x, y, z).getMaterial().isLiquid()) {
+	public boolean canDisplace(IBlockAccess world, BlockPos pos) {
+		if (world.getBlockState(pos).getBlock().getMaterial().isLiquid()) {
 			return false;
 		}
-		return super.canDisplace(world, x, y, z);
+		return super.canDisplace(world, pos);
 	}
 
 	@Override
-	public boolean displaceIfPossible(World world, int x, int y, int z) {
-		if (world.getBlock(x, y, z).getMaterial().isLiquid()) {
+	public boolean displaceIfPossible(World world, BlockPos pos) {
+		if (world.getBlockState(pos).getBlock().getMaterial().isLiquid()) {
 			return false;
 		}
-		return super.displaceIfPossible(world, x, y, z);
+		return super.displaceIfPossible(world, pos);
 	}
 
 	@Override
-	public MapColor getMapColor(int meta) {
+	public MapColor getMapColor(IBlockState state) {
 		return mapColor;
+	}
+
+	// TODO: Remove when Forge fixes BlockStates
+	@Override
+	protected BlockState createBlockState() {
+		return new BlockState(this, new IProperty[]{LEVEL});
+	}
+
+	@Override
+	public int getMetaFromState(IBlockState state) {
+		return ((Integer) state.getValue(LEVEL)).intValue();
+	}
+
+	@Override
+	public IBlockState getStateFromMeta(int meta) {
+		return getBlockState().getBaseState().withProperty(LEVEL, meta);
+	}
+
+	@Override
+	public int getRenderType() {
+		return 3;
+	}
+
+	@Override
+	protected void flowIntoBlock(World world, BlockPos pos, int meta)
+	{
+		if (meta < 0) return;
+		if (displaceIfPossible(world, pos))
+		{
+			world.setBlockState(pos, this.getDefaultState().withProperty(LEVEL, meta), 3);
+		}
 	}
 }

@@ -10,7 +10,7 @@ package buildcraft.transport.gates;
 
 import java.util.Iterator;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
@@ -30,18 +30,18 @@ public class ActionIterator implements Iterable<StatementSlot> {
 
 	private class It implements Iterator<StatementSlot> {
 
-		private ForgeDirection curDir = ForgeDirection.values()[0];
+		private EnumFacing curDir = EnumFacing.values()[0];
 		private int index = 0;
 		private StatementSlot next;
 
 		public It() {
 			while (!isValid()) {
-				if (curDir == ForgeDirection.UNKNOWN) {
+				if (curDir == null) {
 					break;
 				} else if (pipe.gates[curDir.ordinal()] == null
 						|| index >= pipe.gates[curDir.ordinal()].activeActions.size() - 1) {
 					index = 0;
-					curDir = ForgeDirection.values()[curDir.ordinal() + 1];
+					curDir = EnumFacing.values()[curDir.ordinal() + 1];
 				} else {
 					index++;
 				}
@@ -64,9 +64,9 @@ public class ActionIterator implements Iterable<StatementSlot> {
 			while (true) {
 				if (index < Gate.MAX_STATEMENTS - 1) {
 					index++;
-				} else if (curDir != ForgeDirection.UNKNOWN) {
+				} else if (curDir != null) {
 					index = 0;
-					curDir = ForgeDirection.values()[curDir.ordinal() + 1];
+					curDir = EnumFacing.values()[curDir.ordinal() + 1];
 				} else {
 					break;
 				}
@@ -93,9 +93,9 @@ public class ActionIterator implements Iterable<StatementSlot> {
 		}
 
 		private boolean isValid() {
-			return curDir != ForgeDirection.UNKNOWN
+			return curDir != null
 					&& pipe.gates[curDir.ordinal()] != null
 					&& index < pipe.gates[curDir.ordinal()].activeActions.size();
 		}
-	};
+	}
 }

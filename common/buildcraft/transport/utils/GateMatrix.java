@@ -9,14 +9,14 @@
 package buildcraft.transport.utils;
 
 import io.netty.buffer.ByteBuf;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public class GateMatrix {
 
-	private final boolean[] isGateLit = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
-	private final boolean[] isGatePulsing = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
-	private final boolean[] isGateExists = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
-	private final int[] gateIconIndex = new int[ForgeDirection.VALID_DIRECTIONS.length];
+	private final boolean[] isGateLit = new boolean[EnumFacing.values().length];
+	private final boolean[] isGatePulsing = new boolean[EnumFacing.values().length];
+	private final boolean[] isGateExists = new boolean[EnumFacing.values().length];
+	private final int[] gateIconIndex = new int[EnumFacing.values().length];
 	private boolean dirty = false;
 
 	public GateMatrix() {
@@ -30,42 +30,42 @@ public class GateMatrix {
 		dirty = false;
 	}
 
-	public void setIsGateLit(boolean gateLit, ForgeDirection direction) {
+	public void setIsGateLit(boolean gateLit, EnumFacing direction) {
 		if (isGateLit[direction.ordinal()] != gateLit) {
 			isGateLit[direction.ordinal()] = gateLit;
 			dirty = true;
 		}
 	}
 
-	public boolean isGateLit(ForgeDirection direction) {
+	public boolean isGateLit(EnumFacing direction) {
 		return isGateLit[direction.ordinal()];
 	}
 
-	public void setIsGatePulsing(boolean gatePulsing, ForgeDirection direction) {
+	public void setIsGatePulsing(boolean gatePulsing, EnumFacing direction) {
 		if (isGatePulsing[direction.ordinal()] != gatePulsing) {
 			isGatePulsing[direction.ordinal()] = gatePulsing;
 			dirty = true;
 		}
 	}
 
-	public boolean isGatePulsing(ForgeDirection direction) {
+	public boolean isGatePulsing(EnumFacing direction) {
 		return isGatePulsing[direction.ordinal()];
 	}
 
 
-	public void setIsGateExists(boolean gateExists, ForgeDirection direction) {
+	public void setIsGateExists(boolean gateExists, EnumFacing direction) {
 		if (isGateExists[direction.ordinal()] != gateExists) {
 			isGateExists[direction.ordinal()] = gateExists;
 			dirty = true;
 		}
 	}
 
-	public boolean isGateExists(ForgeDirection direction) {
+	public boolean isGateExists(EnumFacing direction) {
 		return isGateExists[direction.ordinal()];
 	}
 
 	public void writeData(ByteBuf data) {
-		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+		for (int i = 0; i < EnumFacing.values().length; i++) {
 			data.writeBoolean(isGateLit[i]);
 			data.writeBoolean(isGatePulsing[i]);
 			data.writeBoolean(isGateExists[i]);
@@ -74,7 +74,7 @@ public class GateMatrix {
 	}
 
 	public void readData(ByteBuf data) {
-		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+		for (int i = 0; i < EnumFacing.values().length; i++) {
 			isGateLit[i] = data.readBoolean();
 			isGatePulsing[i] = data.readBoolean();
 			isGateExists[i] = data.readBoolean();

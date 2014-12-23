@@ -12,20 +12,18 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
 import net.minecraftforge.client.IItemRenderer;
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.utils.ColorUtils;
 import buildcraft.transport.PipeIconProvider;
 
-public class PipeItemRenderer implements IItemRenderer {
+public class PipeItemRenderer /*implements IItemRenderer*/ {
 	private static final float zFightOffset = 1 / 4096.0F;
-	
+	/*
 	private void renderPipeItem(RenderBlocks render, ItemStack item, float translateX, float translateY, float translateZ) {
 		GL11.glPushAttrib(GL11.GL_COLOR_BUFFER_BIT); //don't break other mods' guis when holding a pipe
 		//force transparency
@@ -102,7 +100,7 @@ public class PipeItemRenderer implements IItemRenderer {
 	/**
 	 * IItemRenderer implementation *
 	 */
-	@Override
+	/*@Override
 	public boolean handleRenderType(ItemStack item, ItemRenderType type) {
 		switch (type) {
 			case ENTITY:
@@ -140,5 +138,5 @@ public class PipeItemRenderer implements IItemRenderer {
 				break;
 			default:
 		}
-	}
+	}*/
 }

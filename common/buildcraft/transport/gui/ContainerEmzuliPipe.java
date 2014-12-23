@@ -19,8 +19,8 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
@@ -138,8 +138,9 @@ public class ContainerEmzuliPipe extends BuildCraftContainer {
 			super.draw(gui, guiX, guiY, mouseX, mouseY);
 			EnumColor color = colors.getCurrent();
 			if (color != null) {
-				gui.bindTexture(TextureMap.locationItemsTexture);
-				gui.drawTexturedModelRectFromIcon(guiX + x + 2, guiY + y + 2, BuildCraftTransport.actionPipeColor[color.ordinal()].getIcon(), 16, 16);
+				//TODO (1.8): Render
+				//gui.bindTexture(TextureMap.locationItemsTexture);
+				//gui.drawTexturedModelRectFromIcon(guiX + x + 2, guiY + y + 2, BuildCraftTransport.actionPipeColor[color.ordinal()].getIcon(), 16, 16);
 			} else {
 				gui.drawTexturedModalRect(guiX + x + 2, guiY + y + 2, u, v + h + h, 16, 16);
 			}

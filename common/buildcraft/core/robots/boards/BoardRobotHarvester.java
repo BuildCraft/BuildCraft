@@ -10,8 +10,8 @@ package buildcraft.core.robots.boards;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.EntityRobotBase;
@@ -37,7 +37,7 @@ public class BoardRobotHarvester extends BoardRobotGenericBreakBlock {
 	}
 
 	@Override
-	public boolean isExpectedBlock(World world, int x, int y, int z) {
-		return BuildCraftAPI.isHarvestableProperty.get(world, x, y, z);
+	public boolean isExpectedBlock(World world, BlockPos pos) {
+		return BuildCraftAPI.isHarvestableProperty.get(world, pos);
 	}
 }

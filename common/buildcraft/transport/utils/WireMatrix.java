@@ -12,7 +12,7 @@ import java.util.BitSet;
 
 import io.netty.buffer.ByteBuf;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.PipeWire;
 
@@ -44,11 +44,11 @@ public class WireMatrix {
 		}
 	}
 
-	public boolean isWireConnected(PipeWire color, ForgeDirection direction) {
+	public boolean isWireConnected(PipeWire color, EnumFacing direction) {
 		return wires[color.ordinal()].isConnected(direction);
 	}
 
-	public void setWireConnected(PipeWire color, ForgeDirection direction, boolean value) {
+	public void setWireConnected(PipeWire color, EnumFacing direction, boolean value) {
 		wires[color.ordinal()].setConnected(direction, value);
 	}
 

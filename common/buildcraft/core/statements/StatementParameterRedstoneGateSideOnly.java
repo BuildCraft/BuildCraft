@@ -1,9 +1,8 @@
 package buildcraft.core.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IIcon;
+import buildcraft.api.core.SheetIcon;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -12,9 +11,6 @@ import buildcraft.core.utils.StringUtils;
 
 public class StatementParameterRedstoneGateSideOnly implements
 		IStatementParameter {
-
-	private static IIcon icon;
-	
 	public boolean isOn = false;
 	
 	public StatementParameterRedstoneGateSideOnly() {
@@ -24,15 +20,6 @@ public class StatementParameterRedstoneGateSideOnly implements
 	@Override
 	public ItemStack getItemStack() {
 		return null;
-	}
-
-	@Override
-	public IIcon getIcon() {
-		if (!isOn) {
-			return null;
-		} else {
-			return icon;
-		}
 	}
 
 	@Override
@@ -63,8 +50,12 @@ public class StatementParameterRedstoneGateSideOnly implements
 	}
 
 	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/redstone_gate_side_only");
+	public SheetIcon getIcon() {
+		if (!isOn) {
+			return null;
+		} else {
+			return new SheetIcon(BCStatement.STATEMENT_ICONS, 9, 0);
+		}
 	}
 
 	@Override

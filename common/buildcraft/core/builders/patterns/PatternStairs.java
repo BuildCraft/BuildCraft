@@ -26,6 +26,11 @@ public class PatternStairs extends FillerPattern {
 	}
 
 	@Override
+	protected int getIconPosition() {
+		return 8;
+	}
+
+	@Override
 	public Template getTemplate(Box box, World world) {
 		int xMin = 0;
 		int yMin = 0;

@@ -11,6 +11,7 @@ package buildcraft.factory;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.core.EntityBlock;
@@ -38,7 +39,7 @@ public class EntityMechanicalArm extends Entity {
 
 	public EntityMechanicalArm(World world, double x, double y, double z, double width, double height, TileQuarry parent) {
 		this(world);
-		setPositionAndRotation(parent.xCoord, parent.yCoord, parent.zCoord, 0, 0);
+		setPositionAndRotation(parent.getPos().getX(), parent.getPos().getY(), parent.getPos().getZ(), 0, 0);
 		this.xRoot = x;
 		this.yRoot = y;
 		this.zRoot = z;
@@ -96,7 +97,7 @@ public class EntityMechanicalArm extends Entity {
 	}
 
 	private void findAndJoinQuarry() {
-		TileEntity te = worldObj.getTileEntity((int) posX, (int) posY, (int) posZ);
+		TileEntity te = worldObj.getTileEntity(new BlockPos((int) posX, (int) posY, (int) posZ));
 		if (te != null && te instanceof TileQuarry) {
 			parent = (TileQuarry) te;
 			parent.setArm(this);

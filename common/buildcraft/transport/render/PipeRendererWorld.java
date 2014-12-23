@@ -9,43 +9,41 @@
 package buildcraft.transport.render;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
-import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.core.CoreConstants;
+import buildcraft.core.utils.ColorUtils;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TransportProxy;
 
-public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
+public class PipeRendererWorld /*implements ISimpleBlockRenderingHandler*/ {
 	
-	public static int renderPass = -1;	
+	/*public static int renderPass = -1;	
 	public static float zFightOffset = 1F / 4096F;
 	
 	public void renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, TileGenericPipe tile, int x, int y, int z) {
 		PipeRenderState state = tile.renderState;
 		IIconProvider icons = tile.getPipeIcons();
 		FakeBlock fakeBlock = FakeBlock.INSTANCE;
-		int glassColorMultiplier = tile.getStainedColorMultiplier();
+		int glassColor = tile.getColor();
 		
 		if (icons == null) {
 			return;
 		}	
 
-		if (renderPass == 0 || glassColorMultiplier >= 0) {
+		if (renderPass == 0 || glassColor >= 0) {
 			// Pass 0 handles the pipe texture, pass 1 handles the transparent stained glass
 			int connectivity = state.pipeConnectionMatrix.getMask();
 			float[] dim = new float[6];
 			
 			if (renderPass == 1) {
-				fakeBlock.setColor(glassColorMultiplier);
+				fakeBlock.setColor(ColorUtils.getRGBColor(glassColor));
 			}
 	
 			// render the unconnected pipe faces of the center block (if any)
@@ -54,7 +52,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				resetToCenterDimensions(dim);
 				
 				if (renderPass == 0) {
-					fakeBlock.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.UNKNOWN)));
+					fakeBlock.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(null)));
 				} else {
 					fakeBlock.getTextureState().set(PipeIconProvider.TYPE.PipeStainedOverlay.getIcon());
 				}
@@ -86,7 +84,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				
 				// render sub block
 				if (renderPass == 0) {
-					fakeBlock.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.VALID_DIRECTIONS[dir])));
+					fakeBlock.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(EnumFacing.values()[dir])));
 				} else {
 					fakeBlock.getTextureState().set(PipeIconProvider.TYPE.PipeStainedOverlay.getIcon());
 				}
@@ -97,7 +95,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 			fakeBlock.setColor(0xFFFFFF);
 		} else if (renderPass == 1) {
 			// Fix a bug in Minecraft 1.7.2-1.7.10
-			// Remove in 1.8
+			// TODO: Remove in 1.8
 			renderblocks.renderFaceXNeg(fakeBlock, x, y, z, PipeIconProvider.TYPE.Transparent.getIcon());
 		}
 
@@ -139,7 +137,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	/**
 	 * Render a block with normal and inverted vertex order so back face culling
 	 * doesn't have any effect.
-	 */
+	 *
 	private void renderTwoWayBlock(RenderBlocks renderblocks, FakeBlock stateHost, int x, int y, int z, float[] dim, int mask) {
 		assert mask != 0;
 		
@@ -170,7 +168,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 		blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal())); // Structure Pipe
 
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing direction : EnumFacing.values()) {
 			if (state.plugMatrix.isConnected(direction)) {
 				float[][] rotated = MatrixTranformations.deepClone(zeroState);
 				MatrixTranformations.transform(rotated, direction);
@@ -192,7 +190,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 		blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal())); // Structure Pipe
 
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing direction : EnumFacing.values()) {
 			if (state.plugMatrix.isConnected(direction)) {
 				float[][] rotated = MatrixTranformations.deepClone(zeroState);
 				MatrixTranformations.transform(rotated, direction);
@@ -220,7 +218,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		zeroState[2][0] = zStart + zFightOffset;
 		zeroState[2][1] = zEnd - zFightOffset;
 
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing direction : EnumFacing.values()) {
 			if (state.robotStationMatrix.isConnected(direction)) {
 				switch (state.robotStationMatrix.getState(direction)) {
 				case None:
@@ -278,8 +276,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				0.75F - width, 0.75F,
 				0.025F, 0.224F,
 				0.25F + width, 0.75F - width);*/
-
-		float[][] zeroState = new float[3][2];
+		/*float[][] zeroState = new float[3][2];
 
 
 		// X START - END
@@ -292,7 +289,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		zeroState[2][0] = 0.25F + zFightOffset;
 		zeroState[2][1] = 0.75F - zFightOffset;
 
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing direction : EnumFacing.values()) {
 			if (state.robotStationMatrix.isConnected(direction)) {
 				switch (state.robotStationMatrix.getState(direction)) {
 				case None:
@@ -352,5 +349,5 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	@Override
 	public int getRenderId() {
 		return TransportProxy.pipeModel;
-	}
+	}*/
 }

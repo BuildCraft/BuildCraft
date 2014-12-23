@@ -10,6 +10,7 @@ package buildcraft.builders;
 
 import java.util.List;
 
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,6 +21,7 @@ import buildcraft.builders.blueprints.BlueprintId;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.blueprints.BlueprintBase;
+import buildcraft.core.utils.ModelHelper;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.core.utils.StringUtils;
 
@@ -88,5 +90,20 @@ public abstract class ItemBlueprint extends ItemBuildCraft {
 
 	public static BlueprintBase loadBlueprint(ItemStack stack) {
 		return BuildCraftBuilders.serverDB.load(getId(stack));
+	}
+
+	@Override
+	public void registerModels() {
+		ModelHelper.registerItemModel(this, 0, "");
+		ModelHelper.registerItemModel(this, 1, "Used");
+	}
+
+	@Override
+	public net.minecraft.client.resources.model.ModelResourceLocation getModel(ItemStack stack, EntityPlayer player, int useRemaining) {
+		if (NBTUtils.getItemData(stack).hasKey("name")) {
+			return ModelHelper.getItemResourceLocation(stack.getItem(), "Used");
+		} else {
+			return null;
+		}
 	}
 }

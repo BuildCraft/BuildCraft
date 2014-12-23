@@ -10,6 +10,7 @@ package buildcraft.transport.network;
 
 import io.netty.buffer.ByteBuf;
 
+import net.minecraft.util.BlockPos;
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.transport.render.PipeRendererTESR;
@@ -22,8 +23,8 @@ public class PacketPowerUpdate extends PacketCoordinates {
 	public PacketPowerUpdate() {
 	}
 
-	public PacketPowerUpdate(int x, int y, int z) {
-		super(PacketIds.PIPE_POWER, x, y, z);
+	public PacketPowerUpdate(BlockPos pos) {
+		super(PacketIds.PIPE_POWER, pos);
 	}
 
 	@Override

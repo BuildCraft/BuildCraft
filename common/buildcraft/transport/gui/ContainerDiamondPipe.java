@@ -14,15 +14,16 @@ import net.minecraft.inventory.Slot;
 
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.slots.SlotPhantom;
-import buildcraft.transport.pipes.PipeItemsDiamond;
+import buildcraft.transport.IDiamondPipe;
+import buildcraft.transport.Pipe;
 
 public class ContainerDiamondPipe extends BuildCraftContainer {
 
-	private final PipeItemsDiamond pipe;
+	private final IDiamondPipe pipe;
 	private final IInventory playerInv;
 	private final IInventory filterInv;
 
-	public ContainerDiamondPipe(IInventory playerInventory, PipeItemsDiamond pipe) {
+	public ContainerDiamondPipe(IInventory playerInventory, IDiamondPipe pipe) {
 		super(pipe.getFilters().getSizeInventory());
 		this.pipe = pipe;
 		this.playerInv = playerInventory;
@@ -47,6 +48,6 @@ public class ContainerDiamondPipe extends BuildCraftContainer {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return pipe.container.isUseableByPlayer(entityplayer);
+		return ((Pipe) pipe).container.isUseableByPlayer(entityplayer);
 	}
 }

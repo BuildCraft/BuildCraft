@@ -33,7 +33,7 @@ public class RenderBoxProvider extends TileEntitySpecialRenderer {
 	}
 
 	@Override
-	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
+	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int i) {
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
 		GL11.glEnable(GL11.GL_CULL_FACE);
@@ -42,14 +42,14 @@ public class RenderBoxProvider extends TileEntitySpecialRenderer {
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 		GL11.glPushMatrix();
-		GL11.glTranslated(-tileentity.xCoord, -tileentity.yCoord, -tileentity.zCoord);
+		GL11.glTranslated(-tileentity.getPos().getX(), -tileentity.getPos().getY(), -tileentity.getPos().getZ());
 		GL11.glTranslated(x, y, z);
 
 		if (tileentity instanceof IBoxesProvider) {
 			for (Box b : ((IBoxesProvider) tileentity).getBoxes()) {
 				if (b.isVisible) {
 					RenderBox.doRender(
-						TileEntityRendererDispatcher.instance.field_147553_e,
+						TileEntityRendererDispatcher.instance.renderEngine,
 						getTexture(b.kind), b);
 				}
 			}
@@ -58,7 +58,7 @@ public class RenderBoxProvider extends TileEntitySpecialRenderer {
 
 			if (b.isVisible) {
 				RenderBox.doRender(
-					TileEntityRendererDispatcher.instance.field_147553_e,
+					TileEntityRendererDispatcher.instance.renderEngine,
 					getTexture(b.kind), b);
 			}
 		}

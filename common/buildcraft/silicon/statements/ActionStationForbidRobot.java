@@ -8,7 +8,7 @@
  */
 package buildcraft.silicon.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
+
 import net.minecraft.item.ItemStack;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.statements.IActionInternal;
@@ -33,10 +33,10 @@ public class ActionStationForbidRobot extends BCStatement implements IActionInte
 		return StringUtils.localize("gate.action.station.forbid_robot");
 	}
 
-	@Override
+	/*@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/action_station_robot_forbidden");
-	}
+	}*/
 
 	@Override
 	public int minParameters() {
@@ -84,5 +84,11 @@ public class ActionStationForbidRobot extends BCStatement implements IActionInte
 	public void actionActivate(IStatementContainer source,
 			IStatementParameter[] parameters) {
 		
+	}
+
+	@Override
+	public int getSheetLocation() {
+		// TODO Auto-generated method stub
+		return 108;
 	}
 }

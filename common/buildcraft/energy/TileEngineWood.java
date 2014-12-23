@@ -10,9 +10,10 @@ package buildcraft.energy;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
+import buildcraft.factory.TilePump;
 
 public class TileEngineWood extends TileEngine {
 
@@ -29,8 +30,8 @@ public class TileEngineWood extends TileEngine {
 	}
 
 	@Override
-	public float explosionRange() {
-		return 1;
+	public ResourceLocation getTrunkTexture(EnergyStage stage) {
+		return super.getTrunkTexture(stage == EnergyStage.RED && progress < 0.5 ? EnergyStage.YELLOW : stage);
 	}
 
 	@Override
@@ -46,9 +47,9 @@ public class TileEngineWood extends TileEngine {
 	@Override
 	protected EnergyStage computeEnergyStage() {
 		double energyLevel = getEnergyLevel();
-		if (energyLevel < 0.25f) {
+		if (energyLevel < 0.33f) {
 			return EnergyStage.BLUE;
-		} else if (energyLevel < 0.5f) {
+		} else if (energyLevel < 0.66f) {
 			return EnergyStage.GREEN;
 		} else if (energyLevel < 0.75f) {
 			return EnergyStage.YELLOW;
@@ -87,7 +88,7 @@ public class TileEngineWood extends TileEngine {
 	}
 
 	@Override
-	public ConnectOverride overridePipeConnection(PipeType type, ForgeDirection with) {
+	public ConnectOverride overridePipeConnection(PipeType type, EnumFacing with) {
 		return ConnectOverride.DISCONNECT;
 	}
 
@@ -113,7 +114,7 @@ public class TileEngineWood extends TileEngine {
 
 	// TODO: HACK
 	@Override
-	public boolean canConnectEnergy(ForgeDirection from) {
+	public boolean canConnectEnergy(EnumFacing from) {
 		return false;
 	}
 
@@ -122,9 +123,11 @@ public class TileEngineWood extends TileEngine {
 		if (progressPart == 2 && !hasSent) {
 			hasSent = true;
 			
-			TileEntity tile = getTileBuffer(orientation).getTile();
-			
-			if (tile instanceof IPipeTile && ((IPipeTile) tile).getPipeType() != PipeType.POWER) {
+			TileEntity tile = getTile(orientation);
+
+			// TODO: Make a proper API out of this
+			if (tile instanceof TilePump ||
+					(tile instanceof IPipeTile && ((IPipeTile) tile).getPipeType() != PipeType.POWER)) {
 				super.sendPower();
 			} else {
 				this.energy = 0;

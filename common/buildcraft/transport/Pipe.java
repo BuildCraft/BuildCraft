@@ -24,12 +24,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.ActionState;
 import buildcraft.api.statements.IActionInternal;
@@ -38,7 +38,6 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.network.TilePacketWrapper;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.StatementSlot;
@@ -46,9 +45,6 @@ import buildcraft.transport.pipes.events.PipeEvent;
 import buildcraft.transport.statements.ActionValve.ValveState;
 
 public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory, IPipe {
-
-	@SuppressWarnings("rawtypes")
-	private static Map<Class, TilePacketWrapper> networkWrappers = new HashMap<Class, TilePacketWrapper>();
 	private static Map<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>> eventHandlers = new HashMap<Class<? extends Pipe>, Map<Class<? extends PipeEvent>, EventHandler>>();
 
 	public int[] signalStrength = new int[]{0, 0, 0, 0};
@@ -56,7 +52,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public final T transport;
 	public final Item item;
 	public boolean[] wireSet = new boolean[]{false, false, false, false};
-	public final Gate[] gates = new Gate[ForgeDirection.VALID_DIRECTIONS.length];
+	public final Gate[] gates = new Gate[EnumFacing.values().length];
 
 	private boolean internalUpdateScheduled = false;
 	private boolean initialized = false;
@@ -66,11 +62,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public Pipe(T transport, Item item) {
 		this.transport = transport;
 		this.item = item;
-
-		if (!networkWrappers.containsKey(this.getClass())) {
-			networkWrappers
-					.put(this.getClass(), new TilePacketWrapper(new Class[]{TileGenericPipe.class, this.transport.getClass()}));
-		}
 	}
 
 	public void setTile(TileEntity tile) {
@@ -156,7 +147,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 	}
 
-	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
+	public boolean canPipeConnect(TileEntity tile, EnumFacing side) {
 		Pipe<?> otherPipe;
 
 		if (tile instanceof TileGenericPipe) {
@@ -179,7 +170,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	 * getTextureIndex(Orienations.Unknown) has logic. Then override this
 	 */
 	public int getIconIndexForItem() {
-		return getIconIndex(ForgeDirection.UNKNOWN);
+		return getIconIndex(null);
 	}
 
 	/**
@@ -187,8 +178,8 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	 *
 	 * @return An array of icons
 	 */
-	@SideOnly(Side.CLIENT)
-	public abstract IIconProvider getIconProvider();
+	/*@SideOnly(Side.CLIENT)
+	public abstract IIconProvider getIconProvider();*/
 
 	/**
 	 * Should return the index in the array returned by GetTextureIcons() for a
@@ -199,7 +190,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	 *
 	 * @return An index valid in the array returned by getTextureIcons()
 	 */
-	public abstract int getIconIndex(ForgeDirection direction);
+	public abstract int getIconIndex(EnumFacing direction);
 
 	public void updateEntity() {
 		transport.updateEntity();
@@ -216,7 +207,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 			if (gate == null) {
 				continue;
 			}
-			if (container.getWorldObj().isRemote) {
+			if (container.getWorld().isRemote) {
 				// on client, only update the graphical pulse if needed
 				gate.updatePulse();
 			} else {
@@ -235,7 +226,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		transport.writeToNBT(data);
 		
 		// Save gate if any
-		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+		for (int i = 0; i < EnumFacing.values().length; i++) {
 			final String key = "Gate[" + i + "]";
 			Gate gate = gates[i];
 			if (gate != null) {
@@ -255,16 +246,9 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public void readFromNBT(NBTTagCompound data) {
 		transport.readFromNBT(data);
 		
-		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+		for (int i = 0; i < EnumFacing.values().length; i++) {
 			final String key = "Gate[" + i + "]";
 			gates[i] = data.hasKey(key) ? GateFactory.makeGate(this, data.getCompoundTag(key)) : null;
-		}
-
-		// Legacy support
-		if (data.hasKey("Gate")) {
-			transport.container.setGate(GateFactory.makeGate(this, data.getCompoundTag("Gate")), 0);
-			
-			data.removeTag("Gate");
 		}
 
 		for (int i = 0; i < 4; ++i) {
@@ -285,7 +269,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	private void readNearbyPipesSignal(PipeWire color) {
 		boolean foundBiggerSignal = false;
 
-		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing o : EnumFacing.values()) {
 			TileEntity tile = container.getTile(o);
 
 			if (tile instanceof TileGenericPipe) {
@@ -304,7 +288,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 			// worldObj.markBlockNeedsUpdate(container.xCoord, container.yCoord, zCoord);
 			container.scheduleRenderUpdate();
 
-			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+			for (EnumFacing o : EnumFacing.values()) {
 				TileEntity tile = container.getTile(o);
 
 				if (tile instanceof TileGenericPipe) {
@@ -346,7 +330,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		// STEP 2: transmit signal in nearby blocks
 
 		if (signalStrength[wire.ordinal()] > 1) {
-			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+			for (EnumFacing o : EnumFacing.values()) {
 				TileEntity tile = container.getTile(o);
 
 				if (tile instanceof TileGenericPipe) {
@@ -363,7 +347,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	private boolean receiveSignal(int signal, PipeWire color) {
-		if (container.getWorldObj() == null) {
+		if (container.getWorld() == null) {
 			return false;
 		}
 
@@ -383,11 +367,11 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		}
 	}
 
-	public boolean inputOpen(ForgeDirection from) {
+	public boolean inputOpen(EnumFacing from) {
 		return transport.inputOpen(from);
 	}
 
-	public boolean outputOpen(ForgeDirection to) {
+	public boolean outputOpen(EnumFacing to) {
 		return transport.outputOpen(to);
 	}
 
@@ -403,10 +387,10 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		return false;
 	}
 	
-	public int getMaxRedstoneOutput(ForgeDirection dir) {
+	public int getMaxRedstoneOutput(EnumFacing dir) {
 		int output = 0;
 		
-		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing side : EnumFacing.values()) {
 			output = Math.max(output, getRedstoneOutput(side));
 			if (side == dir) {
 				output = Math.max(output, getRedstoneOutputSide(side));
@@ -416,20 +400,20 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		return output;
 	}
 
-	private int getRedstoneOutput(ForgeDirection dir) {
+	private int getRedstoneOutput(EnumFacing dir) {
 		Gate gate = gates[dir.ordinal()];
 
 		return gate != null ? gate.getRedstoneOutput() : 0;
 	}
 
-	private int getRedstoneOutputSide(ForgeDirection dir) {
+	private int getRedstoneOutputSide(EnumFacing dir) {
 		Gate gate = gates[dir.ordinal()];
 
 		return gate != null ? gate.getSidedRedstoneOutput() : 0;
 	}
 
 	public int isPoweringTo(int side) {
-		ForgeDirection o = ForgeDirection.getOrientation(side).getOpposite();
+		EnumFacing o = EnumFacing.getFront(side).getOpposite();
 
 		TileEntity tile = container.getTile(o);
 
@@ -459,7 +443,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 	@Deprecated
 	public boolean hasGate() {
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing direction : EnumFacing.values()) {
 			if (hasGate(direction)) {
 				return true;
 			}
@@ -467,25 +451,25 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		return false;
 	}
 
-	public boolean hasGate(ForgeDirection side) {
+	public boolean hasGate(EnumFacing side) {
 		return container.hasGate(side);
 	}
 
-	protected void notifyBlocksOfNeighborChange(ForgeDirection side) {
-		container.getWorldObj().notifyBlocksOfNeighborChange(container.xCoord + side.offsetX, container.yCoord + side.offsetY, container.zCoord + side.offsetZ, BuildCraftTransport.genericPipeBlock);
+	protected void notifyBlocksOfNeighborChange(EnumFacing side) {
+		container.getWorld().notifyBlockOfStateChange(container.getPos().offset(side), BuildCraftTransport.genericPipeBlock);
 	}
 
 	protected void updateNeighbors(boolean needSelf) {
 		if (needSelf) {
-			container.getWorldObj().notifyBlocksOfNeighborChange(container.xCoord, container.yCoord, container.zCoord, BuildCraftTransport.genericPipeBlock);
+			container.getWorld().notifyBlockOfStateChange(container.getPos(), BuildCraftTransport.genericPipeBlock);
 		}
-		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing side : EnumFacing.values()) {
 			notifyBlocksOfNeighborChange(side);
 		}
 	}
 
 	public void dropItem(ItemStack stack) {
-		InvUtils.dropItems(container.getWorldObj(), stack, container.xCoord, container.yCoord, container.zCoord);
+		InvUtils.dropItems(container.getWorld(), stack, container.getPos());
 	}
 
 	public ArrayList<ItemStack> computeItemDrop() {
@@ -503,7 +487,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 			}
 		}
 
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing direction : EnumFacing.values()) {
 			if (container.hasFacade(direction)) {
 				result.add (container.getFacade(direction));
 			}
@@ -581,12 +565,12 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	/**
 	 * If this pipe is open on one side, return it.
 	 */
-	public ForgeDirection getOpenOrientation() {
+	public EnumFacing getOpenOrientation() {
 		int connectionsNum = 0;
 
-		ForgeDirection targetOrientation = ForgeDirection.UNKNOWN;
+		EnumFacing targetOrientation = null;
 
-		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing o : EnumFacing.values()) {
 			if (container.isPipeConnected(o)) {
 
 				connectionsNum++;
@@ -598,7 +582,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		}
 
 		if (connectionsNum > 1 || connectionsNum == 0) {
-			return ForgeDirection.UNKNOWN;
+			return null;
 		}
 
 		return targetOrientation.getOpposite();
@@ -628,23 +612,11 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public World getWorld() {
-		return container.getWorldObj();
+		return container.getWorld();
 	}
 
 	@Override
-	public int x() {
-		return container.xCoord;
-	}
-
-	@Override
-	public int y() {
-		return container.yCoord;
-	}
-
-	@Override
-	public int z() {
-		return container.zCoord;
-	}
+	public BlockPos pos() { return container.getPos(); }
 
 	@Override
 	public IPipeTile getTile() {
@@ -652,8 +624,8 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 	
 	@Override
-	public IGate getGate(ForgeDirection side) {
-		if (side == ForgeDirection.UNKNOWN) {
+	public IGate getGate(EnumFacing side) {
+		if (side == null) {
 			return null;
 		}
 		

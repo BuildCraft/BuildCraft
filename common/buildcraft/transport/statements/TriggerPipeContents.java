@@ -10,10 +10,9 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -41,7 +40,8 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
 		requestsEnergy,
 		tooMuchEnergy;
 		public ITriggerInternal trigger;
-	};
+	}
+
 	private PipeContents kind;
 
 	public TriggerPipeContents(PipeContents kind) {
@@ -100,7 +100,7 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
 			}
 
 			if (kind == PipeContents.empty) {
-				for (FluidTankInfo b : transportFluids.getTankInfo(ForgeDirection.UNKNOWN)) {
+				for (FluidTankInfo b : transportFluids.getTankInfo(null)) {
 					if (b.fluid != null && b.fluid.amount != 0) {
 						return false;
 					}
@@ -108,7 +108,7 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
 
 				return true;
 			} else {
-				for (FluidTankInfo b : transportFluids.getTankInfo(ForgeDirection.UNKNOWN)) {
+				for (FluidTankInfo b : transportFluids.getTankInfo(null)) {
 					if (b.fluid != null && b.fluid.amount != 0) {
 						if (searchedFluid == null || searchedFluid.isFluidEqual(b.fluid)) {
 							return true;
@@ -155,8 +155,7 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_pipecontents_" + kind.name().toLowerCase(Locale.ENGLISH));
+	public int getSheetLocation() {
+		return 10 + (3 + kind.ordinal()) * 16;
 	}
 }

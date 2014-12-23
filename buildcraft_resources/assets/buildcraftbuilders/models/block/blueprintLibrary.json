@@ -1,0 +1,12 @@
+{
+    "parent": "block/cube",
+    "textures": {
+        "particle": "buildcraft:blocks/library_side",
+        "down": "buildcraft:blocks/library_topbottom",
+        "up": "buildcraft:blocks/library_topbottom",
+        "north": "buildcraft:blocks/library_side",
+        "east": "buildcraft:blocks/library_side",
+        "south": "buildcraft:blocks/library_side",
+        "west": "buildcraft:blocks/library_side"
+    }
+}

@@ -12,17 +12,20 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.power.ILaserTargetBlock;
@@ -31,13 +34,26 @@ import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.utils.Utils;
 
 public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBlock {
+	public enum LaserTableType implements IStringSerializable {
+		ASSEMBLY_TABLE,
+		ADVANCED_CRAFTING_TABLE,
+		INTEGRATION_TABLE,
+		CHARGING_TABLE;
 
-	@SideOnly(Side.CLIENT)
-	private IIcon[][] icons;
+		public static LaserTableType getType(IBlockState state) {
+			return (LaserTableType) state.getValue(TYPE);
+		}
+
+		@Override
+		public String getName() {
+			return name();
+		}
+	};
+
+	public static final PropertyEnum TYPE = PropertyEnum.create("type", LaserTableType.class);
 
 	public BlockLaserTable() {
-		super(Material.iron);
-
+		super(Material.iron, new PropertyEnum[]{TYPE});
 		setBlockBounds(0, 0, 0, 1, 9F / 16F, 1);
 		setHardness(10F);
 		setCreativeTab(CreativeTabBuildCraft.BLOCKS.get());
@@ -49,55 +65,35 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
 	}
 
 	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
-	}
-
-	public boolean isACube() {
-		return false;
-	}
-
-	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing par6, float par7, float par8, float par9) {
 		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking()) {
 			return false;
 		}
 
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this, world.getBlockMetadata(i, j, k));
+		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, pos, state);
 		FMLCommonHandler.instance().bus().post(event);
 		if (event.isCanceled()) {
 			return false;
 		}
 
 		if (!world.isRemote) {
-			int meta = world.getBlockMetadata(i, j, k);
-			entityplayer.openGui(BuildCraftSilicon.instance, meta, world, i, j, k);
+			entityplayer.openGui(BuildCraftSilicon.instance, LaserTableType.getType(state).ordinal(), world, pos.getX(), pos.getY(), pos.getZ());
 		}
 		return true;
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
-		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, block, par6);
-	}
-
-	@Override
-	public IIcon getIcon(int side, int meta) {
-		int s = side > 1 ? 2 : side;
-		return icons[meta][s];
-	}
-
-	@Override
-	public TileEntity createTileEntity(World world, int metadata) {
-		switch (metadata) {
-			case 0:
+	public TileEntity createTileEntity(World world, IBlockState state) {
+		switch (LaserTableType.getType(state)) {
+			case ASSEMBLY_TABLE:
 				return new TileAssemblyTable();
-			case 1:
+			case ADVANCED_CRAFTING_TABLE:
 				return new TileAdvancedCraftingTable();
-			case 2:
+			case INTEGRATION_TABLE:
 				return new TileIntegrationTable();
+            case CHARGING_TABLE:
+                return new TileChargingTable();
 		}
 		return null;
 	}
@@ -108,37 +104,20 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
 	}
 
 	@Override
-	public int damageDropped(int par1) {
-		return par1;
+	public int damageDropped(IBlockState state)
+	{
+		return this.getMetaFromState(state);
 	}
 
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(Item item, CreativeTabs par2CreativeTabs, List par3List) {
-		par3List.add(new ItemStack(this, 1, 0));
-		par3List.add(new ItemStack(this, 1, 1));
-		par3List.add(new ItemStack(this, 1, 2));
+        for (LaserTableType type : LaserTableType.values()) {
+            par3List.add(new ItemStack(this, 1, this.getMetaFromState(this.getDefaultState().withProperty(TYPE, type))));
+        }
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		icons = new IIcon[3][];
-		icons[0] = new IIcon[3];
-		icons[1] = new IIcon[3];
-		icons[2] = new IIcon[3];
-
-		icons[0][0] = par1IconRegister.registerIcon("buildcraft:assemblytable_bottom");
-		icons[0][1] = par1IconRegister.registerIcon("buildcraft:assemblytable_top");
-		icons[0][2] = par1IconRegister.registerIcon("buildcraft:assemblytable_side");
-
-		icons[1][0] = par1IconRegister.registerIcon("buildcraft:advworkbenchtable_bottom");
-		icons[1][1] = par1IconRegister.registerIcon("buildcraft:advworkbenchtable_top");
-		icons[1][2] = par1IconRegister.registerIcon("buildcraft:advworkbenchtable_side");
-
-		icons[2][0] = par1IconRegister.registerIcon("buildcraft:integrationtable_bottom");
-		icons[2][1] = par1IconRegister.registerIcon("buildcraft:integrationtable_top");
-		icons[2][2] = par1IconRegister.registerIcon("buildcraft:integrationtable_side");
-	}
+	public boolean isFullCube() { return false; }
 }

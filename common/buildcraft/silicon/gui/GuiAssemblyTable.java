@@ -21,7 +21,6 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.CraftingResult;
-import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
@@ -49,20 +48,20 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 			// Draw background
 			drawBackground(x, y);
 
-			// Draw icon
-			Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationItemsTexture);
-			drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
+			// TODO (1.8): rewrite icon drawing
+			/*Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationItemsTexture);
+			drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);*/
 
 			if (!isFullyOpened()) {
 				return;
 			}
 
-			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
-			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.assemblyCurrentRequired") + ":", x + 22, y + 20, subheaderColour);
+			fontRendererObj.drawString(StringUtils.localize("gui.energy"), x + 22, y + 8, headerColour);
+			fontRendererObj.drawString(StringUtils.localize("gui.assemblyCurrentRequired") + ":", x + 22, y + 20, subheaderColour);
 			fontRendererObj.drawString(String.format("%d RF", table.clientRequiredEnergy), x + 22, y + 32, textColour);
-			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
+			fontRendererObj.drawString(StringUtils.localize("gui.stored") + ":", x + 22, y + 44, subheaderColour);
 			fontRendererObj.drawString(String.format("%d RF", table.getEnergy()), x + 22, y + 56, textColour);
-			fontRendererObj.drawStringWithShadow(StringUtils.localize("gui.assemblyRate") + ":", x + 22, y + 68, subheaderColour);
+			fontRendererObj.drawString(StringUtils.localize("gui.assemblyRate") + ":", x + 22, y + 68, subheaderColour);
 			fontRendererObj.drawString(String.format("%.1f RF/t", table.getRecentEnergyAverage() / 100.0f), x + 22, y + 80, textColour);
 
 		}
@@ -95,7 +94,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		super(new ContainerAssemblyTable(playerInventory, assemblyTable), assemblyTable, TEXTURE);
 
 		this.table = assemblyTable;
-		xSize = 175;
+		xSize = 176;
 		ySize = 207;
 
 		for (int j = 0; j < 2; ++j) {

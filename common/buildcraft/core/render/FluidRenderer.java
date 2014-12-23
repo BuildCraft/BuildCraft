@@ -17,7 +17,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -41,7 +40,7 @@ public final class FluidRenderer {
 
 	}
 
-	public static IIcon getFluidTexture(FluidStack fluidStack, boolean flowing) {
+	/*public static IIcon getFluidTexture(FluidStack fluidStack, boolean flowing) {
 		if (fluidStack == null) {
 			return null;
 		}
@@ -57,7 +56,7 @@ public final class FluidRenderer {
 			icon = ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
 		}
 		return icon;
-	}
+	}*/
 
 	public static ResourceLocation getFluidSheet(FluidStack liquid) {
 		if (liquid == null) {
@@ -97,10 +96,10 @@ public final class FluidRenderer {
 
 		if (fluid.getBlock() != null) {
 			liquidBlock.baseBlock = fluid.getBlock();
-			liquidBlock.texture = getFluidTexture(fluidStack, flowing);
+			//liquidBlock.texture = getFluidTexture(fluidStack, flowing);
 		} else {
 			liquidBlock.baseBlock = Blocks.water;
-			liquidBlock.texture = getFluidTexture(fluidStack, flowing);
+			//liquidBlock.texture = getFluidTexture(fluidStack, flowing);
 		}
 
 		cache.put(fluid, diplayLists);

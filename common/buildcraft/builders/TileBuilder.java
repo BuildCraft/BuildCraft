@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,22 +21,24 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.WorldSettings.GameType;
+import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftBuilders;
-import buildcraft.api.core.BlockIndex;
+import buildcraft.BuildCraftCore;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.core.IInvSlot;
-import buildcraft.api.core.NetworkData;
 import buildcraft.api.core.Position;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.robots.StackRequest;
 import buildcraft.api.tiles.IHasWork;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.LaserData;
@@ -54,18 +57,17 @@ import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.inventory.Transactor;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCMessageInfo;
-import buildcraft.core.network.RPCSide;
+import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.CommandWriter;
+import buildcraft.core.network.PacketCommand;
 import buildcraft.core.robots.ResourceIdRequest;
 import buildcraft.core.robots.RobotRegistry;
+import buildcraft.core.utils.Utils;
 
 public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluidHandler, IRequestProvider {
 
 	private static int POWER_ACTIVATION = 500;
 
-	@NetworkData
 	public Box box = new Box();
 	public PathIterator currentPathIterator;
 	public Tank[] fluidTanks = new Tank[] {
@@ -74,13 +76,12 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			new Tank("fluid3", FluidContainerRegistry.BUCKET_VOLUME * 8, this),
 			new Tank("fluid4", FluidContainerRegistry.BUCKET_VOLUME * 8, this)
 	};
-	@NetworkData
 	public TankManager<Tank> fluidTank = new TankManager<Tank>(fluidTanks);
 
 	private SimpleInventory inv = new SimpleInventory(28, "Builder", 64);
 	private BptBuilderBase currentBuilder;
 	private RecursiveBlueprintBuilder recursiveBuilder;
-	private LinkedList<BlockIndex> path;
+	private LinkedList<BlockPos> path;
 	private ArrayList<ItemStack> requiredToBuild;
 	private NBTTagCompound initNBT = null;
 	private boolean done = true;
@@ -88,22 +89,22 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	
 	private class PathIterator {
 
-		public Iterator<BlockIndex> currentIterator;
+		public Iterator<BlockPos> currentIterator;
 		public double cx, cy, cz;
 		public float ix, iy, iz;
-		public BlockIndex to;
+		public BlockPos to;
 		public double lastDistance;
 		AxisAlignedBB oldBoundingBox = null;
-		ForgeDirection o = null;
+		EnumFacing o = null;
 
-		public PathIterator(BlockIndex from, Iterator<BlockIndex> it, ForgeDirection initialDir) {
+		public PathIterator(BlockPos from, Iterator<BlockPos> it, EnumFacing initialDir) {
 			this.to = it.next();
 
 			currentIterator = it;
 
-			double dx = to.x - from.x;
-			double dy = to.y - from.y;
-			double dz = to.z - from.z;
+			double dx = to.getX() - from.getX();
+			double dy = to.getY() - from.getY();
+			double dz = to.getZ() - from.getZ();
 
 			double size = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
@@ -111,26 +112,26 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			cy = dy / size / 10;
 			cz = dz / size / 10;
 
-			ix = from.x;
-			iy = from.y;
-			iz = from.z;
+			ix = from.getX();
+			iy = from.getY();
+			iz = from.getZ();
 
-			lastDistance = (ix - to.x) * (ix - to.x) + (iy - to.y)
-					* (iy - to.y) + (iz - to.z) * (iz - to.z);
+			lastDistance = (ix - to.getX()) * (ix - to.getX()) + (iy - to.getY())
+					* (iy - to.getY()) + (iz - to.getZ()) * (iz - to.getZ());
 
 			if (dx == 0 && dz == 0) {
 				o = initialDir;
 			} else if (Math.abs(dx) > Math.abs(dz)) {
 				if (dx > 0) {
-					o = ForgeDirection.EAST;
+					o = EnumFacing.EAST;
 				} else {
-					o = ForgeDirection.WEST;
+					o = EnumFacing.WEST;
 				}
 			} else {
 				if (dz > 0) {
-					o = ForgeDirection.SOUTH;
+					o = EnumFacing.SOUTH;
 				} else {
-					o = ForgeDirection.NORTH;
+					o = EnumFacing.NORTH;
 				}
 			}
 		}
@@ -167,8 +168,8 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 				iy += cy;
 				iz += cz;
 
-				double distance = (ix - to.x) * (ix - to.x) + (iy - to.y)
-						* (iy - to.y) + (iz - to.z) * (iz - to.z);
+				double distance = (ix - to.getX()) * (ix - to.getX()) + (iy - to.getY())
+						* (iy - to.getY()) + (iz - to.getZ()) * (iz - to.getZ());
 
 				if (distance > lastDistance) {
 					return null;
@@ -222,10 +223,10 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			iterateBpt(true);
 
 			if (initNBT.hasKey("iterator")) {
-				BlockIndex expectedTo = new BlockIndex(initNBT.getCompoundTag("iterator"));
+				BlockPos expectedTo = Utils.readBlockPos(initNBT.getCompoundTag("iterator"));
 
 				while (!done && currentBuilder != null && currentPathIterator != null) {
-					BlockIndex bi = new BlockIndex((int) currentPathIterator.ix,
+					BlockPos bi = new BlockPos((int) currentPathIterator.ix,
 							(int) currentPathIterator.iy, (int) currentPathIterator.iz);
 
 					if (bi.equals(expectedTo)) {
@@ -246,20 +247,20 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 		box.kind = Kind.STRIPES;
 
-		for (int x = xCoord - 1; x <= xCoord + 1; ++x) {
-			for (int y = yCoord - 1; y <= yCoord + 1; ++y) {
-				for (int z = zCoord - 1; z <= zCoord + 1; ++z) {
-					TileEntity tile = worldObj.getTileEntity(x, y, z);
+		for (int x = pos.getX() - 1; x <= pos.getX() + 1; ++x) {
+			for (int y = pos.getY() - 1; y <= pos.getY() + 1; ++y) {
+				for (int z = pos.getZ() - 1; z <= pos.getZ() + 1; ++z) {
+					TileEntity tile = worldObj.getTileEntity(new BlockPos(x, y, z));
 
 					if (tile instanceof TilePathMarker) {
 						path = ((TilePathMarker) tile).getPath();
 
-						for (BlockIndex b : path) {
-							worldObj.setBlockToAir(b.x, b.y, b.z);
+						for (BlockPos b : path) {
+							worldObj.setBlockToAir(b);
 
 							BuildCraftBuilders.pathMarkerBlock.dropBlockAsItem(
-									worldObj, b.x, b.y, b.z,
-									0, 0);
+									worldObj, b,
+									worldObj.getBlockState(b), 0);
 						}
 
 						break;
@@ -279,13 +280,13 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 	public void createLasersForPath() {
 		pathLasers = new LinkedList<LaserData>();
-		BlockIndex previous = null;
+		BlockPos previous = null;
 
-		for (BlockIndex b : path) {
+		for (BlockPos b : path) {
 			if (previous != null) {
-				LaserData laser = new LaserData(new Position(previous.x + 0.5,
-						previous.y + 0.5, previous.z + 0.5), new Position(
-						b.x + 0.5, b.y + 0.5, b.z + 0.5));
+				LaserData laser = new LaserData(new Position(previous.getX() + 0.5,
+						previous.getY() + 0.5, previous.getZ() + 0.5), new Position(
+						b.getX() + 0.5, b.getY() + 0.5, b.getZ() + 0.5));
 
 				pathLasers.add(laser);
 			}
@@ -309,52 +310,54 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	}
 
 	@Deprecated
-	public BptBuilderBase instanciateBluePrintBuilder(int x, int y, int z, ForgeDirection o) {
+	public BptBuilderBase instanciateBluePrintBuilder(int x, int y, int z, EnumFacing o) {
+		BlockPos pos = new BlockPos(x, y, z);
 		BlueprintBase bpt = instanciateBlueprint();
         if (bpt == null) {
             return null;
         }
 
-		bpt = bpt.adjustToWorld(worldObj, x, y, z, o);
+		bpt = bpt.adjustToWorld(worldObj, pos, o);
 
-		if (getStackInSlot(0).getItem() instanceof ItemBlueprintStandard) {
-			return new BptBuilderBlueprint((Blueprint) bpt, worldObj, x, y, z);
-		} else if (getStackInSlot(0).getItem() instanceof ItemBlueprintTemplate) {
-			return new BptBuilderTemplate(bpt, worldObj, x, y, z);
-		} else {
-			return null;
+		if (bpt != null) {
+			if (getStackInSlot(0).getItem() instanceof ItemBlueprintStandard) {
+				return new BptBuilderBlueprint((Blueprint) bpt, worldObj, pos);
+			} else if (getStackInSlot(0).getItem() instanceof ItemBlueprintTemplate) {
+				return new BptBuilderTemplate(bpt, worldObj, pos);
+			}
 		}
+		return null;
 	}
 
 	public void iterateBpt(boolean forceIterate) {
 		if (getStackInSlot(0) == null || !(getStackInSlot(0).getItem() instanceof ItemBlueprint)) {
-			if (currentBuilder != null) {
-				currentBuilder = null;
-			}
-
 			if (box.isInitialized()) {
-				box.reset();
+				if (currentBuilder != null) {
+					currentBuilder = null;
+				}
+
+				if (box.isInitialized()) {
+					box.reset();
+				}
+
+				if (currentPathIterator != null) {
+					currentPathIterator = null;
+				}
+
+				updateRequirements();
+
+				sendNetworkUpdate();
+
+				return;
 			}
-
-			if (currentPathIterator != null) {
-				currentPathIterator = null;
-			}
-
-			updateRequirements();
-
-			sendNetworkUpdate();
-
-			return;
 		}
 
 		if (currentBuilder == null || (currentBuilder.isDone(this) || forceIterate)) {
 			if (path != null && path.size() > 1) {
 				if (currentPathIterator == null) {
-					Iterator<BlockIndex> it = path.iterator();
-					BlockIndex start = it.next();
-					currentPathIterator = new PathIterator(start, it,
-							ForgeDirection.values()[worldObj.getBlockMetadata(
-									xCoord, yCoord, zCoord)].getOpposite());
+					Iterator<BlockPos> it = path.iterator();
+					BlockPos start = it.next();
+					currentPathIterator = new PathIterator(start, it, ((EnumFacing)worldObj.getBlockState(pos).getValue(BlockBuildCraft.FACING_PROP)).getOpposite());
 				}
 
 				if (currentBuilder != null && currentBuilder.isDone(this)) {
@@ -378,18 +381,23 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 				} else {
 					done = false;
 				}
+
+				updateRequirements();
 			} else {
 				if (currentBuilder != null && currentBuilder.isDone(this)) {
 					currentBuilder.postProcessing(worldObj);
 					currentBuilder = recursiveBuilder.nextBuilder();
+
+					updateRequirements();
 				} else {
 					BlueprintBase bpt = instanciateBlueprint();
 
 					if (bpt != null) {
-						recursiveBuilder = new RecursiveBlueprintBuilder(bpt, worldObj, xCoord, yCoord, zCoord,
-								ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite());
+						recursiveBuilder = new RecursiveBlueprintBuilder(bpt, worldObj, pos, ((EnumFacing)worldObj.getBlockState(pos).getValue(BlockBuildCraft.FACING_PROP)).getOpposite());
 
 						currentBuilder = recursiveBuilder.nextBuilder();
+
+						updateRequirements();
 					}
 				}
 
@@ -401,11 +409,9 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 					done = false;
 				}
 			}
-
-			updateRequirements();
 		}
 
-		if (done) {
+		if (done && getStackInSlot(0) != null) {
 			boolean dropBlueprint = true;
 			for (int i = 1; i < getSizeInventory(); ++i) {
 				if (getStackInSlot(i) == null) {
@@ -415,7 +421,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 				}
 			}
 			if (dropBlueprint) {
-				InvUtils.dropItems(getWorldObj(), getStackInSlot(0), xCoord, yCoord, zCoord);
+				InvUtils.dropItems(worldObj, getStackInSlot(0), pos);
 			}
 
 			setInventorySlotContents(0, null);
@@ -439,8 +445,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 		if (!worldObj.isRemote) {
 			if (i == 0) {
-				RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "setItemRequirements",
-						null, null);
+				BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "clearItemRequirements", null), worldObj);
 				iterateBpt(false);
 			}
 		}
@@ -466,7 +471,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	}
 
 	@Override
-	public String getInventoryName() {
+	public String getName() {
 		return "Builder";
 	}
 
@@ -477,7 +482,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
+		return worldObj.getTileEntity(getPos()) == this;
 	}
 
 	@Override
@@ -491,12 +496,12 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		}
 
 		if (nbttagcompound.hasKey("path")) {
-			path = new LinkedList<BlockIndex>();
+			path = new LinkedList<BlockPos>();
 			NBTTagList list = nbttagcompound.getTagList("path",
 					Constants.NBT.TAG_COMPOUND);
 
 			for (int i = 0; i < list.tagCount(); ++i) {
-				path.add(new BlockIndex(list.getCompoundTagAt(i)));
+				path.add(Utils.readBlockPos(list.getCompoundTagAt(i)));
 			}
 		}
 
@@ -522,9 +527,9 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		if (path != null) {
 			NBTTagList list = new NBTTagList();
 
-			for (BlockIndex i : path) {
+			for (BlockPos i : path) {
 				NBTTagCompound c = new NBTTagCompound();
-				i.writeTo(c);
+				Utils.writeBlockPos(c, i);
 				list.appendTag(c);
 			}
 
@@ -544,9 +549,8 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 		if (currentPathIterator != null) {
 			NBTTagCompound iteratorNBT = new NBTTagCompound();
-			new BlockIndex((int) currentPathIterator.ix,
-					(int) currentPathIterator.iy, (int) currentPathIterator.iz)
-					.writeTo(iteratorNBT);
+			Utils.writeBlockPos(iteratorNBT, new BlockPos((int) currentPathIterator.ix,
+					(int) currentPathIterator.iy, (int) currentPathIterator.iz));
 			bptNBT.setTag ("iterator", iteratorNBT);
 		}
 
@@ -559,17 +563,10 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		destroy();
 	}
 
-	@Override
-	public void openInventory() {
-	}
 
 	@Override
-	public void closeInventory() {
-	}
-
-	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		if (worldObj.isRemote) {
 			return;
@@ -590,12 +587,10 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 		iterateBpt(false);
 
-		if (getWorldObj().getWorldInfo().getGameType() == GameType.CREATIVE) {
+		if (worldObj.getWorldInfo().getGameType() == GameType.CREATIVE) {
 			build();
-		} else {
-			if (getBattery().getEnergyStored() > POWER_ACTIVATION) {
-				build();
-			}
+		} else if (getBattery().getEnergyStored() > POWER_ACTIVATION) {
+			build();
 		}
 
 		if (!isBuilding && this.isBuildingBlueprint()) {
@@ -623,30 +618,51 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		return requiredToBuild;
 	}
 
-	@RPC (RPCSide.CLIENT)
-	public void setItemRequirements(ArrayList<ItemStack> rq, ArrayList<Integer> realSizes) {
-		// Item stack serialized are represented through bytes, so 0-255. In
-		// order to get the real amounts, we need to pass the real sizes of the
-		// stacks as a separate list.
-
-		requiredToBuild = rq;
-
-		if (rq != null && rq.size() > 0) {
-			Iterator<ItemStack> itStack = rq.iterator();
-			Iterator<Integer> size = realSizes.iterator();
-
-			while (true) {
-				ItemStack stack = itStack.next();
-				stack.stackSize = size.next();
-
-				if (stack.stackSize > 999) {
-					stack.stackSize = 999;
-				}
-
-				if (!itStack.hasNext()) {
-					break;
+	@Override
+	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
+		super.receiveCommand(command, side, sender, stream);
+		if (side.isClient()) {
+			if ("clearItemRequirements".equals(command)) {
+				requiredToBuild = null;
+			} else if ("setItemRequirements".equals(command)) {
+				int size = stream.readUnsignedShort();
+				requiredToBuild = new ArrayList<ItemStack>();
+				for (int i = 0; i < size; i++) {
+					ItemStack stack = Utils.readStack(stream);
+					stack.stackSize = Math.min(999, stream.readUnsignedShort());
+					requiredToBuild.add(stack);
 				}
 			}
+		} else if (side.isServer()) {
+			EntityPlayer player = (EntityPlayer) sender;
+			if ("eraseFluidTank".equals(command)) {
+				int id = stream.readInt();
+				if (id < 0 || id >= fluidTanks.length) {
+					return;
+				}
+				if (isUseableByPlayer(player) && player.getDistanceSq(pos.getX(), pos.getY(), pos.getZ()) <= 64) {
+					fluidTanks[id].setFluid(null);
+					sendNetworkUpdate();
+				}
+			}
+		}
+	}
+
+	private BuildCraftPacket getItemRequirementsPacket(final ArrayList<ItemStack> items) {
+		if (items != null) {
+			return new PacketCommand(this, "setItemRequirements", new CommandWriter() {
+				public void write(ByteBuf data) {
+					data.writeShort(items.size());
+					if (items != null) {
+						for (ItemStack rb : items) {
+							Utils.writeStack(data, rb);
+							data.writeShort(rb.stackSize);
+						}
+					}
+				}
+			});
+		} else {
+			return new PacketCommand(this, "clearItemRequirements", null);
 		}
 	}
 
@@ -656,7 +672,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
+	public boolean hasCustomName() {
 		return false;
 	}
 
@@ -688,53 +704,32 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 	public void build () {
 		if (currentBuilder != null) {
-			if (currentBuilder.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord)) {
+			if (currentBuilder.buildNextSlot(worldObj, this, pos.getX(), pos.getY(), pos.getZ())) {
 				updateRequirements();
 			}
 		}
 	}
 
 	public void updateRequirements() {
-		if (guiWatchers.size() == 0) {
-			// Nobody watching, do not update.
-			return;
-		}
-		
 		ArrayList<ItemStack> reqCopy = null;
-		ArrayList<Integer> realSize = null;
 		if (currentBuilder instanceof BptBuilderBlueprint) {
-			reqCopy = new ArrayList<ItemStack>();
-			realSize = new ArrayList<Integer>();
-
-			for (ItemStack stack : ((BptBuilderBlueprint) currentBuilder).neededItems) {
-				realSize.add(stack.stackSize);
-				ItemStack newStack = stack.copy();
-				newStack.stackSize = 0;
-				reqCopy.add(newStack);
-			}
+			currentBuilder.initialize();
+			reqCopy = ((BptBuilderBlueprint) currentBuilder).neededItems;
 		}
-		
+
 		for (EntityPlayer p : guiWatchers) {
-			RPCHandler.rpcPlayer(p, this, "setItemRequirements", reqCopy, realSize);
+			BuildCraftCore.instance.sendToPlayer(p, getItemRequirementsPacket(reqCopy));
 		}
 	}
 	
 	public void updateRequirements(EntityPlayer caller) {
 		ArrayList<ItemStack> reqCopy = null;
-		ArrayList<Integer> realSize = null;
 		if (currentBuilder instanceof BptBuilderBlueprint) {
-			reqCopy = new ArrayList<ItemStack>();
-			realSize = new ArrayList<Integer>();
-
-			for (ItemStack stack : ((BptBuilderBlueprint) currentBuilder).neededItems) {
-				realSize.add(stack.stackSize);
-				ItemStack newStack = stack.copy();
-				newStack.stackSize = 0;
-				reqCopy.add(newStack);
-			}
+			currentBuilder.initialize();
+			reqCopy = ((BptBuilderBlueprint) currentBuilder).neededItems;
 		}
 
-		RPCHandler.rpcPlayer(caller, this, "setItemRequirements", reqCopy, realSize);
+		BuildCraftCore.instance.sendToPlayer(caller, getItemRequirementsPacket(reqCopy));
 	}
 
 	public BptBuilderBase getBlueprint () {
@@ -746,17 +741,17 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	}
 
 	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
 		return false;
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
 		return null;
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
 		return null;
 	}
 
@@ -770,7 +765,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	}
 
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		Fluid fluid = resource.getFluid();
 		Tank emptyTank = null;
 		for (Tank tank : fluidTanks) {
@@ -796,7 +791,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	}
 
 	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
+	public boolean canFill(EnumFacing from, Fluid fluid) {
 		boolean emptyAvailable = false;
 		for (Tank tank : fluidTanks) {
 			Fluid type = tank.getFluidType();
@@ -810,19 +805,8 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+	public FluidTankInfo[] getTankInfo(EnumFacing from) {
 		return fluidTank.getTankInfo(from);
-	}
-
-	@RPC(RPCSide.SERVER)
-	public void eraseFluidTank(int id, RPCMessageInfo info) {
-		if (id < 0 || id >= fluidTanks.length) {
-			return;
-		}
-		if (isUseableByPlayer(info.sender) && info.sender.getDistanceSq(xCoord, yCoord, zCoord) <= 64) {
-			fluidTanks[id].setFluid(null);
-			sendNetworkUpdate();
-		}
 	}
 
 	@Override
@@ -908,7 +892,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			}
 
 			ITransactor t = Transactor.getTransactorFor(this);
-			ItemStack added = t.add(toAdd, ForgeDirection.UNKNOWN, true);
+			ItemStack added = t.add(toAdd, null, true);
 
 			if (added.stackSize >= stack.stackSize) {
 				return null;
@@ -935,5 +919,27 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		}
 
 		return left;
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		super.writeData(stream);
+		box.writeData(stream);
+		fluidTank.writeData(stream);
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		super.readData(stream);
+		box.readData(stream);
+		fluidTank.readData(stream);
+	}
+
+	@Override
+	public void openInventory(EntityPlayer playerIn) {
+	}
+
+	@Override
+	public void closeInventory(EntityPlayer playerIn) {		
 	}
 }

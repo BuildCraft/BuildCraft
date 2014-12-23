@@ -8,33 +8,39 @@
  */
 package buildcraft.builders;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
-
+import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.BuildCraftBuilders;
+import buildcraft.BuildCraftCore;
 import buildcraft.builders.blueprints.BlueprintId;
 import buildcraft.builders.blueprints.BlueprintId.Kind;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCSide;
+import buildcraft.core.network.CommandWriter;
+import buildcraft.core.network.ICommandReceiver;
+import buildcraft.core.network.PacketCommand;
+import buildcraft.core.utils.Utils;
 
 /**
  * In this implementation, the blueprint library is the interface to the
  * *local* player blueprint. The player will be able to load blueprint on his
  * environment, and save blueprints to the server environment.
  */
-public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
+public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, ICommandReceiver {
 	private static final int PROGRESS_TIME = 100;
+	private static final int CHUNK_SIZE = 16384;
 
 	public SimpleInventory inv = new SimpleInventory(4, "Blueprint Library", 1);
 
@@ -50,17 +56,25 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 
 	public int pageId = 0;
 
+	private BlueprintId blueprintDownloadId;
+	private byte[] blueprintDownload;
+
 	public TileBlueprintLibrary() {
 
+	}
+
+	public void refresh() {
+		if (worldObj.isRemote) {
+			BuildCraftBuilders.clientDB.refresh();
+			setCurrentPage(BuildCraftBuilders.clientDB.getPage(pageId));
+		}
 	}
 
 	@Override
 	public void initialize() {
 		super.initialize();
 
-		if (worldObj.isRemote) {
-			setCurrentPage(BuildCraftBuilders.clientDB.getPage (pageId));
-		}
+		refresh();
 	}
 
 	public void setCurrentPage(ArrayList<BlueprintId> newPage) {
@@ -168,11 +182,6 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public String getInventoryName() {
-		return "";
-	}
-
-	@Override
 	public int getInventoryStackLimit() {
 		return 1;
 	}
@@ -183,21 +192,18 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 	}
 
 	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
+	public void openInventory(EntityPlayer playerIn) {
+
 	}
 
 	@Override
-	public void openInventory() {
+	public void closeInventory(EntityPlayer playerIn) {
+
 	}
 
 	@Override
-	public void closeInventory() {
-	}
-
-	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		if (worldObj.isRemote) {
 			return;
@@ -221,78 +227,118 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 			setInventorySlotContents(1, getStackInSlot(0));
 			setInventorySlotContents(0, null);
 
-			BlueprintBase bpt = ItemBlueprint.loadBlueprint(getStackInSlot(1));
+			final BlueprintBase bpt = ItemBlueprint.loadBlueprint(getStackInSlot(1));
 
 			if (bpt != null && uploadingPlayer != null) {
-				RPCHandler.rpcPlayer(uploadingPlayer, this, "downloadBlueprintToClient",
-						bpt.id, bpt.getData());
+				BuildCraftCore.instance.sendToPlayer(uploadingPlayer, new PacketCommand(this, "downloadBlueprintToClient",
+						new CommandWriter() {
+					public void write(ByteBuf data) {
+						bpt.id.writeData(data);
+						Utils.writeByteArray(data, bpt.getData());
+					}
+				}));
 				uploadingPlayer = null;
 			}
 		}
 
 		if (progressOut == 100 && getStackInSlot(3) == null) {
-			RPCHandler.rpcPlayer(downloadingPlayer, this, "requestSelectedBlueprint");
+			BuildCraftCore.instance.sendToPlayer(downloadingPlayer, new PacketCommand(this, "requestSelectedBlueprint", null));
 			progressOut = 0;
 		}
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
-		return false;
-	}
+	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
+		if (side.isClient()) {
+			if ("requestSelectedBlueprint".equals(command)) {
+				if (isOutputConsistent()) {
+					if (selected > -1 && selected < currentPage.size()) {
+						// Work around 32k max limit on client->server
+						final BlueprintBase bpt = BuildCraftBuilders.clientDB
+								.load(currentPage.get(selected));
+						final byte[] bptData = bpt.getData();
+						final int chunks = (bptData.length + CHUNK_SIZE - 1) / CHUNK_SIZE;
 
-	@RPC (RPCSide.CLIENT)
-	public void requestSelectedBlueprint () {
-		if (isOutputConsistent()) {
-			if (selected > -1 && selected < currentPage.size()) {
-				BlueprintBase bpt = BuildCraftBuilders.clientDB
-						.load(currentPage.get(selected));
+						BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadServerBegin",
+								new CommandWriter() {
+									public void write(ByteBuf data) {
+										bpt.id.writeData(data);
+										data.writeShort(chunks);
+									}
+								}));
 
-				RPCHandler.rpcServer(this, "uploadBlueprintToServer", bpt.id,
-						bpt.getData());
-			} else {
-				RPCHandler.rpcServer(this, "uploadBlueprintToServer", null,
-						null);
+						for (int i = 0; i < chunks; i++) {
+							final int chunk = i;
+							final int start = CHUNK_SIZE * chunk;
+							final int length = Math.min(CHUNK_SIZE, bptData.length - start);
+							BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadServerChunk",
+									new CommandWriter() {
+										public void write(ByteBuf data) {
+											data.writeShort(chunk);
+											data.writeShort(length);
+											data.writeBytes(bptData, start, length);
+										}
+									}));
+						}
+
+						BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadServerEnd", null));
+					} else {
+						BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadNothingToServer", null));
+					}
+				}
+			} else if ("downloadBlueprintToClient".equals(command)) {
+				BlueprintId id = new BlueprintId();
+				id.readData(stream);
+				byte[] data = Utils.readByteArray(stream);
+
+				try {
+					NBTTagCompound nbt = CompressedStreamTools.func_152456_a(new DataInputStream(new ByteArrayInputStream(data)), NBTSizeTracker.INFINITE);
+					BlueprintBase bpt = BlueprintBase.loadBluePrint(nbt);
+					bpt.setData(data);
+					bpt.id = id;
+
+					BuildCraftBuilders.clientDB.add(bpt);
+					setCurrentPage(BuildCraftBuilders.clientDB.getPage(pageId));
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-		}
-	}
-
-	@RPC (RPCSide.SERVER)
-	public void uploadBlueprintToServer (BlueprintId id, byte [] data) {
-		try {
-			if (data != null) {
-				NBTTagCompound nbt = CompressedStreamTools.func_152457_a(data, NBTSizeTracker.field_152451_a);
-				BlueprintBase bpt = BlueprintBase.loadBluePrint(nbt);
-				bpt.setData(data);
-				bpt.id = id;
-				BuildCraftBuilders.serverDB.add(bpt);
-				setInventorySlotContents(3, bpt.getStack());
-			} else {
+		} else if (side.isServer()) {
+			if ("uploadNothingToServer".equals(command)) {
 				setInventorySlotContents(3, getStackInSlot(2));
+				setInventorySlotContents(2, null);
+
+				downloadingPlayer = null;
+			} else if ("uploadServerBegin".equals(command)) {
+				blueprintDownloadId = new BlueprintId();
+				blueprintDownloadId.readData(stream);
+				blueprintDownload = new byte[CHUNK_SIZE * stream.readUnsignedShort()];
+			} else if ("uploadServerChunk".equals(command)) {
+				int start = stream.readUnsignedShort() * CHUNK_SIZE;
+				int length = stream.readUnsignedShort();
+				if (blueprintDownload != null) {
+					stream.readBytes(blueprintDownload, start, length);
+				} else {
+					stream.skipBytes(length);
+				}
+			} else if ("uploadServerEnd".equals(command)) {
+				try {
+					NBTTagCompound nbt = CompressedStreamTools.func_152456_a(new DataInputStream(new ByteArrayInputStream(blueprintDownload)), NBTSizeTracker.INFINITE);
+					BlueprintBase bpt = BlueprintBase.loadBluePrint(nbt);
+					bpt.setData(blueprintDownload);
+					bpt.id = blueprintDownloadId;
+					BuildCraftBuilders.serverDB.add(bpt);
+
+					setInventorySlotContents(3, bpt.getStack());
+					setInventorySlotContents(2, null);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+				blueprintDownloadId = null;
+				blueprintDownload = null;
+				downloadingPlayer = null;
 			}
-
-			setInventorySlotContents(2, null);
-
-			downloadingPlayer = null;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	@RPC (RPCSide.CLIENT)
-	public void downloadBlueprintToClient (BlueprintId id, byte [] data) {
-		try {
-			NBTTagCompound nbt = CompressedStreamTools.func_152457_a(data, NBTSizeTracker.field_152451_a);
-			BlueprintBase bpt = BlueprintBase.loadBluePrint(nbt);
-			bpt.setData(data);
-			bpt.id = id;
-
-			BuildCraftBuilders.clientDB.add(bpt);
-			setCurrentPage(BuildCraftBuilders.clientDB.getPage(pageId));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 
@@ -309,5 +355,10 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory {
 				&& currentPage.get(selected).kind == Kind.Blueprint) ||
 				(getStackInSlot(2).getItem() instanceof ItemBlueprintTemplate
 				&& currentPage.get(selected).kind == Kind.Template);
+	}
+
+	@Override
+	public String getName() {
+		return "Blueprint Library";
 	}
 }

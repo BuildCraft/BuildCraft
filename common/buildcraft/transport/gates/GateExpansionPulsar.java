@@ -12,7 +12,7 @@ import java.util.List;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
@@ -51,7 +51,7 @@ public final class GateExpansionPulsar extends GateExpansionBuildcraft implement
 			// one single moment would do the work at the same time. This
 			// spreads a bit work load. Note, this is not a problem for
 			// existing gates since tick is stored in NBT
-			tick = (int) Math.random() * PULSE_PERIOD;
+			tick = (int) (Math.random() * PULSE_PERIOD);
 		}
 
 		@Override
@@ -101,7 +101,7 @@ public final class GateExpansionPulsar extends GateExpansionBuildcraft implement
 				// TODO: (1 - 1) is coming from pulse count, which has been
 				// removed. The add energy algorithm probably needs to be
 				// reviewed altogether.
-				((IEnergyHandler) pipeTile).receiveEnergy(ForgeDirection.UNKNOWN, Math.min(1 << (1 - 1), 64) * 10,
+				((IEnergyHandler) pipeTile).receiveEnergy(null, Math.min(1 << (1 - 1), 64) * 10,
 						false);
 				hasPulsed = true;
 			} else {

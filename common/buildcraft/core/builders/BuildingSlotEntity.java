@@ -8,6 +8,7 @@
  */
 package buildcraft.core.builders;
 
+import java.util.Collections;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
@@ -39,8 +40,8 @@ public class BuildingSlotEntity extends BuildingSlot {
 	@Override
 	public Position getDestination () {
 		NBTTagList nbttaglist = schematic.entityNBT.getTagList("Pos", 6);
-		Position pos = new Position(nbttaglist.func_150309_d(0),
-				nbttaglist.func_150309_d(1), nbttaglist.func_150309_d(2));
+		Position pos = new Position(nbttaglist.getDouble(0),
+				nbttaglist.getDouble(1), nbttaglist.getDouble(2));
 
 		return pos;
 	}
@@ -49,9 +50,7 @@ public class BuildingSlotEntity extends BuildingSlot {
 	public LinkedList<ItemStack> getRequirements (IBuilderContext context) {
 		LinkedList<ItemStack> results = new LinkedList<ItemStack>();
 
-		for (ItemStack s : schematic.storedRequirements) {
-			results.add(s);
-		}
+		Collections.addAll(results, schematic.storedRequirements);
 
 		return results;
 	}

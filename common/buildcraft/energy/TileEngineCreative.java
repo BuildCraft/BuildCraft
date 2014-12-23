@@ -8,20 +8,19 @@
  */
 package buildcraft.energy;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.core.NetworkData;
+import net.minecraft.util.EnumFacing;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.PowerMode;
 import buildcraft.core.utils.StringUtils;
 
 public class TileEngineCreative extends TileEngine {
-
-	@NetworkData
 	private PowerMode powerMode = PowerMode.M2;
 
 	@Override
@@ -45,19 +44,20 @@ public class TileEngineCreative extends TileEngine {
 	}
 
 	@Override
-	public boolean onBlockActivated(EntityPlayer player, ForgeDirection side) {
-		if (!getWorldObj().isRemote) {
+	public boolean onBlockActivated(EntityPlayer player, EnumFacing side) {
+		if (!getWorld().isRemote) {
 			Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
 
-			if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, xCoord, yCoord, zCoord)) {
+			if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, pos)) {
 				powerMode = powerMode.getNext();
 				energy = 0;
 
-				player.addChatMessage(new ChatComponentText(String.format(StringUtils.localize("chat.pipe.power.iron.mode"), powerMode.maxPower)));
+				// TODO: check
+				player.addChatMessage(new ChatComponentTranslation("chat.pipe.power.iron.mode", powerMode.maxPower));
 
 				sendNetworkUpdate();
 
-				((IToolWrench) equipped).wrenchUsed(player, xCoord, yCoord, zCoord);
+				((IToolWrench) equipped).wrenchUsed(player, pos);
 				return true;
 			}
 		}
@@ -77,6 +77,18 @@ public class TileEngineCreative extends TileEngine {
 		super.writeToNBT(data);
 
 		data.setByte("mode", (byte) powerMode.ordinal());
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		super.readData(stream);
+		powerMode = PowerMode.fromId(stream.readUnsignedByte());
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		super.writeData(stream);
+		stream.writeByte(powerMode.ordinal());
 	}
 
 	@Override
@@ -116,10 +128,5 @@ public class TileEngineCreative extends TileEngine {
 	@Override
 	public int calculateCurrentOutput() {
 		return powerMode.maxPower;
-	}
-
-	@Override
-	public float explosionRange() {
-		return 0;
 	}
 }

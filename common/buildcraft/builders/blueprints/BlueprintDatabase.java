@@ -8,17 +8,19 @@
  */
 package buildcraft.builders.blueprints;
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
+
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
@@ -36,7 +38,7 @@ public class BlueprintDatabase {
 	private File outputDir;
 	private File[] inputDirs;
 
-	private Set<BlueprintId> blueprintIds = new TreeSet<BlueprintId>();
+	private Set<BlueprintId> blueprintIds;
 	private BlueprintId [] pages = new BlueprintId [0];
 
 	/**
@@ -57,6 +59,11 @@ public class BlueprintDatabase {
 			inputDirs[i] = new File(inputPaths[i]);
 		}
 
+		refresh();
+	}
+
+	public void refresh() {
+		blueprintIds = new TreeSet<BlueprintId>();
 		loadIndex(inputDirs);
 	}
 
@@ -95,19 +102,12 @@ public class BlueprintDatabase {
 		File blueprintFile = getBlueprintFile(id, outputDir);
 
 		if (!blueprintFile.exists()) {
-			OutputStream gzOs = null;
 			try {
 				FileOutputStream f = new FileOutputStream(blueprintFile);
 				f.write(blueprint.getData());
 				f.close();
 			} catch (IOException ex) {
 				BCLog.logger.error(String.format("Failed to save Blueprint file: %s %s", blueprintFile.getName(), ex.getMessage()));
-			} finally {
-				try {
-					if (gzOs != null) {
-						gzOs.close();
-					}
-				} catch (IOException e) { }
 			}
 		}
 
@@ -195,7 +195,7 @@ public class BlueprintDatabase {
 				}
 			}
 
-			pages = blueprintIds.toArray(pages);
+			pages = blueprintIds.toArray(new BlueprintId[blueprintIds.size()]);
 		}
 	}
 
@@ -238,7 +238,8 @@ public class BlueprintDatabase {
 
 	public static BlueprintBase load(byte[] data) {
 		try {
-			NBTTagCompound nbt = CompressedStreamTools.func_152457_a(data, NBTSizeTracker.field_152451_a);
+			//Ugly but will probably work
+			NBTTagCompound nbt = CompressedStreamTools.func_152456_a(new DataInputStream(new ByteArrayInputStream(data)), NBTSizeTracker.INFINITE);
 
 			BlueprintBase blueprint = BlueprintBase.loadBluePrint(nbt);
 			blueprint.setData(data);

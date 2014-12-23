@@ -8,8 +8,9 @@
  */
 package buildcraft.core;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 public interface IFramePipeConnection {
-	boolean isPipeConnected(IBlockAccess blockAccess, int x1, int y1, int z1, int x2, int y2, int z2);
+	boolean isPipeConnected(IBlockAccess blockAccess, BlockPos pos1, BlockPos pos2);
 }

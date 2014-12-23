@@ -11,6 +11,7 @@ package buildcraft.core.blueprints;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
@@ -35,12 +36,12 @@ public class Template extends BlueprintBase {
 	}
 
 	@Override
-	public void readFromWorld(IBuilderContext context, TileEntity anchorTile, int x, int y, int z) {
-		int posX = (int) (x - context.surroundingBox().pMin().x);
-		int posY = (int) (y - context.surroundingBox().pMin().y);
-		int posZ = (int) (z - context.surroundingBox().pMin().z);
+	public void readFromWorld(IBuilderContext context, TileEntity anchorTile, BlockPos pos) {
+		int posX = (int) (pos.getX() - context.surroundingBox().pMin().x);
+		int posY = (int) (pos.getY() - context.surroundingBox().pMin().y);
+		int posZ = (int) (pos.getZ() - context.surroundingBox().pMin().z);
 
-		if (!BuildCraftAPI.isSoftBlock(anchorTile.getWorldObj(), x, y, z)) {
+		if (!BuildCraftAPI.isSoftBlock(anchorTile.getWorld(), pos)) {
 			contents[posX][posY][posZ] = new SchematicMask(true);
 		}
 	}

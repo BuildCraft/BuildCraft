@@ -11,22 +11,21 @@ package buildcraft.silicon;
 import java.util.List;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import net.minecraftforge.common.util.ForgeDirection;
-
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ICustomHighlight;
@@ -34,26 +33,23 @@ import buildcraft.core.ICustomHighlight;
 public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 
 	private static final AxisAlignedBB[][] boxes = {
-			{AxisAlignedBB.getBoundingBox(0.0, 0.75, 0.0, 1.0, 1.0, 1.0), AxisAlignedBB.getBoundingBox(0.3125, 0.1875, 0.3125, 0.6875, 0.75, 0.6875)}, // -Y
-			{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.0, 1.0, 0.25, 1.0), AxisAlignedBB.getBoundingBox(0.3125, 0.25, 0.3125, 0.6875, 0.8125, 0.6875)}, // +Y
-			{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.75, 1.0, 1.0, 1.0), AxisAlignedBB.getBoundingBox(0.3125, 0.3125, 0.1875, 0.6875, 0.6875, 0.75)}, // -Z
-			{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.0, 1.0, 1.0, 0.25), AxisAlignedBB.getBoundingBox(0.3125, 0.3125, 0.25, 0.6875, 0.6875, 0.8125)}, // +Z
-			{AxisAlignedBB.getBoundingBox(0.75, 0.0, 0.0, 1.0, 1.0, 1.0), AxisAlignedBB.getBoundingBox(0.1875, 0.3125, 0.3125, 0.75, 0.6875, 0.6875)}, // -X
-			{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.0, 0.25, 1.0, 1.0), AxisAlignedBB.getBoundingBox(0.25, 0.3125, 0.3125, 0.8125, 0.6875, 0.6875)} // +X
+			{AxisAlignedBB.fromBounds(0.0, 0.75, 0.0, 1.0, 1.0, 1.0), AxisAlignedBB.fromBounds(0.3125, 0.1875, 0.3125, 0.6875, 0.75, 0.6875)}, // -Y
+			{AxisAlignedBB.fromBounds(0.0, 0.0, 0.0, 1.0, 0.25, 1.0), AxisAlignedBB.fromBounds(0.3125, 0.25, 0.3125, 0.6875, 0.8125, 0.6875)}, // +Y
+			{AxisAlignedBB.fromBounds(0.0, 0.0, 0.75, 1.0, 1.0, 1.0), AxisAlignedBB.fromBounds(0.3125, 0.3125, 0.1875, 0.6875, 0.6875, 0.75)}, // -Z
+			{AxisAlignedBB.fromBounds(0.0, 0.0, 0.0, 1.0, 1.0, 0.25), AxisAlignedBB.fromBounds(0.3125, 0.3125, 0.25, 0.6875, 0.6875, 0.8125)}, // +Z
+			{AxisAlignedBB.fromBounds(0.75, 0.0, 0.0, 1.0, 1.0, 1.0), AxisAlignedBB.fromBounds(0.1875, 0.3125, 0.3125, 0.75, 0.6875, 0.6875)}, // -X
+			{AxisAlignedBB.fromBounds(0.0, 0.0, 0.0, 0.25, 1.0, 1.0), AxisAlignedBB.fromBounds(0.25, 0.3125, 0.3125, 0.8125, 0.6875, 0.6875)} // +X
 	};
 
-	@SideOnly(Side.CLIENT)
-	private IIcon textureTop, textureBottom, textureSide;
-
 	public BlockLaser() {
-		super(Material.iron);
+		super(Material.iron, new PropertyEnum[]{FACING_6_PROP});
 		setHardness(10F);
 		setCreativeTab(CreativeTabBuildCraft.BLOCKS.get());
 	}
 
 	@Override
-	public AxisAlignedBB[] getBoxes(World wrd, int x, int y, int z, EntityPlayer player) {
-		return boxes[wrd.getBlockMetadata(x, y, z)];
+	public AxisAlignedBB[] getBoxes(World wrd, BlockPos pos, EntityPlayer player) {
+		return boxes[((EnumFacing)wrd.getBlockState(pos).getValue(FACING_PROP)).getIndex()];
 	}
 
 	@Override
@@ -62,11 +58,12 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 	}
 
 	@Override
-	public MovingObjectPosition collisionRayTrace(World wrd, int x, int y, int z, Vec3 origin, Vec3 direction) {
-		AxisAlignedBB[] aabbs = boxes[wrd.getBlockMetadata(x, y, z)];
+	public MovingObjectPosition collisionRayTrace(World wrd, BlockPos pos, Vec3 origin, Vec3 direction) {
+		EnumFacing face;
+		AxisAlignedBB[] aabbs = boxes[((EnumFacing)wrd.getBlockState(pos).getValue(FACING_PROP)).getIndex()];
 		MovingObjectPosition closest = null;
 		for (AxisAlignedBB aabb : aabbs) {
-			MovingObjectPosition mop = aabb.getOffsetBoundingBox(x, y, z).calculateIntercept(origin, direction);
+			MovingObjectPosition mop = aabb.offset(pos.getX(), pos.getY(), pos.getZ()).calculateIntercept(origin, direction);
 			if (mop != null) {
 				if (closest != null && mop.hitVec.distanceTo(origin) < closest.hitVec.distanceTo(origin)) {
 					closest = mop;
@@ -76,28 +73,21 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 			}
 		}
 		if (closest != null) {
-			closest.blockX = x;
-			closest.blockY = y;
-			closest.blockZ = z;
+			closest = new MovingObjectPosition(new Vec3(pos.getX(), pos.getY(), pos.getZ()), closest.sideHit);
 		}
 		return closest;
 	}
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void addCollisionBoxesToList(World wrd, int x, int y, int z, AxisAlignedBB mask, List list, Entity ent) {
-		AxisAlignedBB[] aabbs = boxes[wrd.getBlockMetadata(x, y, z)];
+	public void addCollisionBoxesToList(World wrd, BlockPos pos, IBlockState state, AxisAlignedBB mask, List list, Entity ent) {
+		AxisAlignedBB[] aabbs = boxes[((EnumFacing)wrd.getBlockState(pos).getValue(FACING_PROP)).getIndex()];
 		for (AxisAlignedBB aabb : aabbs) {
-			AxisAlignedBB aabbTmp = aabb.getOffsetBoundingBox(x, y, z);
+			AxisAlignedBB aabbTmp = aabb.offset(pos.getX(), pos.getY(), pos.getZ());
 			if (mask.intersectsWith(aabbTmp)) {
 				list.add(aabbTmp);
 			}
 		}
-	}
-
-	@Override
-	public int getRenderType() {
-		return SiliconProxy.laserBlockModel;
 	}
 
 	@Override
@@ -106,11 +96,7 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 	}
 
 	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
-	}
-
-	public boolean isACube() {
+	public boolean isFullCube() {
 		return false;
 	}
 
@@ -120,40 +106,20 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 	}
 
 	@Override
-	public IIcon getIcon(int i, int j) {
-		if (i == (j ^ 1)) {
-			return textureBottom;
-		} else if (i == j) {
-			return textureTop;
-		} else {
-			return textureSide;
-		}
-
-	}
-
-	@Override
-	public int onBlockPlaced(World world, int x, int y, int z, int side, float par6, float par7, float par8, int meta) {
-		super.onBlockPlaced(world, x, y, z, side, par6, par7, par8, meta);
+	public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer) {
+		super.onBlockPlaced(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer);
 
 		int retMeta = meta;
 
-		if (side <= 6) {
-			retMeta = side;
+		if (facing.getIndex() <= 6) {
+			retMeta = facing.getIndex();
 		}
 
-		return retMeta;
+		return getDefaultState().withProperty(FACING_6_PROP, EnumFacing.getFront(retMeta));
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		textureTop = par1IconRegister.registerIcon("buildcraft:laser_top");
-		textureBottom = par1IconRegister.registerIcon("buildcraft:laser_bottom");
-		textureSide = par1IconRegister.registerIcon("buildcraft:laser_side");
-	}
-
-	@Override
-	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+	public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
 		return false;
 	}
 }

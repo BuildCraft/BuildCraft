@@ -2,9 +2,9 @@
  * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
+ * The BuildCraft API is distributed under the terms of the MIT License.
+ * Please check the contents of the license, which should be located
+ * as "LICENSE.API" in the BuildCraft source code distribution.
  */
 package buildcraft.api.blueprints;
 
@@ -15,6 +15,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.core.JavaTools;
 
 public class SchematicTile extends SchematicBlock {
@@ -45,15 +46,15 @@ public class SchematicTile extends SchematicBlock {
 	 * Places the block in the world, at the location specified in the slot.
 	 */
 	@Override
-	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
-		super.placeInWorld(context, x, y, z, stacks);
+	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+		super.placeInWorld(context, pos, stacks);
 
-		if (block.hasTileEntity(meta)) {
-			TileEntity tile = context.world().getTileEntity(x, y, z);
+		if (state.getBlock().hasTileEntity(state)) {
+			TileEntity tile = context.world().getTileEntity(pos);
 
-			tileNBT.setInteger("x", x);
-			tileNBT.setInteger("y", y);
-			tileNBT.setInteger("z", z);
+			tileNBT.setInteger("x", pos.getX());
+			tileNBT.setInteger("y", pos.getY());
+			tileNBT.setInteger("z", pos.getZ());
 
 			if (tile != null) {
 				tile.readFromNBT(tileNBT);
@@ -62,11 +63,11 @@ public class SchematicTile extends SchematicBlock {
 	}
 
 	@Override
-	public void initializeFromObjectAt(IBuilderContext context, int x, int y, int z) {
-		super.initializeFromObjectAt(context, x, y, z);
+	public void initializeFromObjectAt(IBuilderContext context, BlockPos pos) {
+		super.initializeFromObjectAt(context, pos);
 
-		if (block.hasTileEntity(meta)) {
-			TileEntity tile = context.world().getTileEntity(x, y, z);
+		if (state.getBlock().hasTileEntity(state)) {
+			TileEntity tile = context.world().getTileEntity(pos);
 
 			if (tile != null) {
 				tile.writeToNBT(tileNBT);
@@ -75,11 +76,11 @@ public class SchematicTile extends SchematicBlock {
 	}
 
 	@Override
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
-		super.storeRequirements(context, x, y, z);
+	public void storeRequirements(IBuilderContext context, BlockPos pos) {
+		super.storeRequirements(context, pos);
 
-		if (block.hasTileEntity(meta)) {
-			TileEntity tile = context.world().getTileEntity(x, y, z);
+		if (state.getBlock().hasTileEntity(state)) {
+			TileEntity tile = context.world().getTileEntity(pos);
 
 			if (tile instanceof IInventory) {
 				IInventory inv = (IInventory) tile;

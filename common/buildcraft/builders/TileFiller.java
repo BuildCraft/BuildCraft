@@ -8,13 +8,13 @@
  */
 package buildcraft.builders;
 
-import java.io.IOException;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraftforge.fml.relauncher.Side;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.tiles.IControllable;
@@ -27,14 +27,12 @@ import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.builders.patterns.PatternFill;
 import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.network.PacketPayload;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCSide;
+import buildcraft.core.network.CommandWriter;
+import buildcraft.core.network.ICommandReceiver;
+import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.Utils;
 
-public class TileFiller extends TileAbstractBuilder implements IHasWork, IControllable {
+public class TileFiller extends TileAbstractBuilder implements IHasWork, IControllable, ICommandReceiver {
 
 	private static int POWER_ACTIVATION = 500;
 
@@ -63,14 +61,13 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 			return;
 		}
 
-		IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord,
-				zCoord);
+		IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, pos);
 
 		if (a != null) {
 			box.initialize(a);
 
 			if (a instanceof TileMarker) {
-				((TileMarker) a).removeFromWorld();
+				a.removeFromWorld();
 			}
 
 			sendNetworkUpdate();
@@ -78,7 +75,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 
 		if (currentPattern != null && currentTemplate == null) {
 			currentTemplate = currentPattern
-					.getTemplateBuilder(box, getWorldObj());
+					.getTemplateBuilder(box, getWorld());
 			context = currentTemplate.getContext();
 		}
 
@@ -91,8 +88,8 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	}
 
 	@Override
-	public void updateEntity() {
-		super.updateEntity();
+	public void update() {
+		super.update();
 
 		if (worldObj.isRemote) {
 			return;
@@ -121,12 +118,12 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 		}
 
 		if (currentPattern != null && currentTemplate == null) {
-			currentTemplate = currentPattern.getTemplateBuilder(box, getWorldObj());
+			currentTemplate = currentPattern.getTemplateBuilder(box, getWorld());
 			context = currentTemplate.getContext();
 		}
 
 		if (currentTemplate != null) {
-			currentTemplate.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord);
+			currentTemplate.buildNextSlot(worldObj, this, pos);
 
 			if (currentTemplate.isDone(this)) {
 				done = true;
@@ -165,7 +162,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	}
 
 	@Override
-	public String getInventoryName() {
+	public String getName() {
 		return "Filler";
 	}
 
@@ -228,16 +225,6 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	}
 
 	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		if (worldObj.getTileEntity(xCoord, yCoord, zCoord) != this) {
-			return false;
-		}
-
-		return entityplayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D,
-				zCoord + 0.5D) <= 64D;
-	}
-
-	@Override
 	public void invalidate() {
 		super.invalidate();
 		destroy();
@@ -253,35 +240,19 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	}
 
 	@Override
-	public PacketPayload getPacketPayload() {
-		PacketPayload payload = new PacketPayload(new PacketPayload.StreamWriter() {
-			@Override
-			public void writeData(ByteBuf data) {
-				box.writeToStream(data);
-				data.writeBoolean(done);
-				Utils.writeUTF(data, currentPattern.getUniqueTag());
-			}
-		});
-
-		return payload;
+	public void writeData(ByteBuf data) {
+		box.writeData(data);
+		data.writeBoolean(done);
+		Utils.writeUTF(data, currentPattern.getUniqueTag());
 	}
 
-	public void handlePacketPayload(ByteBuf data) {
-		box.readFromStream(data);
+	@Override
+	public void readData(ByteBuf data) {
+		box.readData(data);
 		done = data.readBoolean();
 		setPattern((FillerPattern) FillerManager.registry.getPattern(Utils.readUTF(data)));
 
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-	}
-
-	@Override
-	public void handleDescriptionPacket(PacketUpdate packet) throws IOException {
-		handlePacketPayload(packet.payload.stream);
-	}
-
-	@Override
-	public void handleUpdatePacket(PacketUpdate packet) throws IOException {
-		handlePacketPayload(packet.payload.stream);
+		worldObj.markBlockForUpdate(pos);
 	}
 
 	@Override
@@ -290,11 +261,11 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	}
 
 	@Override
-	public void openInventory() {
+	public void openInventory(EntityPlayer player) {
 	}
 
 	@Override
-	public void closeInventory() {
+	public void closeInventory(EntityPlayer player) {
 	}
 
 	@Override
@@ -302,18 +273,21 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 		return true;
 	}
 
-	public void rpcSetPatternFromString (String name) {
-		RPCHandler.rpcServer(this, "setPatternFromString", name);
-	}
-
-	@RPC (RPCSide.SERVER)
-	public void setPatternFromString (String name) {
-		setPattern((FillerPattern) FillerManager.registry.getPattern(name));
+	public void rpcSetPatternFromString (final String name) {
+		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setPattern", new CommandWriter() {
+			public void write(ByteBuf data) {
+				Utils.writeUTF(data, name);
+			}
+		}));
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
-		return false;
+	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
+		super.receiveCommand(command, side, sender, stream);
+		if (side.isServer() && "setPattern".equals(command)) {
+			String name = Utils.readUTF(stream);
+			setPattern((FillerPattern) FillerManager.registry.getPattern(name));
+		}
 	}
 
 	@Override

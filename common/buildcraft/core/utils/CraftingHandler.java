@@ -10,8 +10,8 @@ package buildcraft.core.utils;
 
 import net.minecraft.item.Item;
 
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;

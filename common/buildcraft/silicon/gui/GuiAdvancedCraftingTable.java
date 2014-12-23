@@ -24,7 +24,7 @@ public class GuiAdvancedCraftingTable extends GuiLaserTable {
 	public GuiAdvancedCraftingTable(InventoryPlayer playerInventory, TileAdvancedCraftingTable advancedWorkbench) {
 		super(playerInventory, new ContainerAdvancedCraftingTable(playerInventory, advancedWorkbench), advancedWorkbench, TEXTURE);
 		this.workbench = advancedWorkbench;
-		xSize = 175;
+		xSize = 176;
 		ySize = 240;
 	}
 

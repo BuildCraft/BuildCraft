@@ -16,7 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import buildcraft.api.boards.RedstoneBoardRobot;
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.statements.IStatementParameter;
@@ -30,13 +30,14 @@ import buildcraft.core.robots.AIRobotSearchBlock;
 import buildcraft.core.robots.DockingStation;
 import buildcraft.core.robots.IBlockFilter;
 import buildcraft.core.robots.ResourceIdBlock;
+import buildcraft.core.utils.Utils;
 import buildcraft.silicon.statements.ActionRobotFilter;
 import buildcraft.transport.gates.ActionIterator;
 import buildcraft.transport.gates.StatementSlot;
 
 public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
-	private BlockIndex indexStored;
+	private BlockPos indexStored;
 	private ArrayList<Block> blockFilter = new ArrayList<Block>();
 	private ArrayList<Integer> metaFilter = new ArrayList<Integer>();
 
@@ -51,11 +52,11 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 	 * called from parallel jobs. In particular, world should not be directly
 	 * used, only through WorldProperty class and subclasses.
 	 */
-	public abstract boolean isExpectedBlock(World world, int x, int y, int z);
+	public abstract boolean isExpectedBlock(World world, BlockPos pos);
 
 	public final void preemt(AIRobot ai) {
 		if (ai instanceof AIRobotSearchBlock) {
-			BlockIndex index = ((AIRobotSearchBlock) ai).blockFound;
+			BlockPos index = ((AIRobotSearchBlock) ai).blockFound;
 
 			if (!robot.getRegistry().isTaken(new ResourceIdBlock(index))) {
 				abortDelegateAI();
@@ -77,9 +78,9 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
 			startDelegateAI(new AIRobotSearchBlock(robot, new IBlockFilter() {
 				@Override
-				public boolean matches(World world, int x, int y, int z) {
-					if (isExpectedBlock(world, x, y, z) && !robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z))) {
-						return matchesGateFilter(world, x, y, z);
+				public boolean matches(World world, BlockPos pos) {
+					if (isExpectedBlock(world, pos) && !robot.getRegistry().isTaken(new ResourceIdBlock(pos))) {
+						return matchesGateFilter(world, pos);
 					} else {
 						return false;
 					}
@@ -133,7 +134,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 						ItemStack stack = param.getItemStack();
 
 						if (stack != null && stack.getItem() instanceof ItemBlock) {
-							blockFilter.add(((ItemBlock) stack.getItem()).field_150939_a);
+							blockFilter.add(((ItemBlock) stack.getItem()).block);
 							metaFilter.add(stack.getItemDamage());
 						}
 					}
@@ -142,7 +143,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 		}
 	}
 
-	private boolean matchesGateFilter(World world, int x, int y, int z) {
+	private boolean matchesGateFilter(World world, BlockPos pos) {
 		if (blockFilter.size() == 0) {
 			return true;
 		}
@@ -150,8 +151,8 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
         Block block;
         int meta;
 		synchronized (world) {
-            block = world.getBlock(x, y, z);
-            meta = world.getBlockMetadata(x, y, z);
+            block = world.getBlockState(pos).getBlock();
+            meta = world.getTileEntity(pos).getBlockMetadata();
 		}
 
         for (int i = 0; i < blockFilter.size(); ++i) {
@@ -169,7 +170,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
 		if (indexStored != null) {
 			NBTTagCompound sub = new NBTTagCompound();
-			indexStored.writeTo(sub);
+			Utils.writeBlockPos(sub, indexStored);
 			nbt.setTag("indexStored", sub);
 		}
 	}
@@ -179,7 +180,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 		super.loadSelfFromNBT(nbt);
 
 		if (nbt.hasKey("indexStored")) {
-			indexStored = new BlockIndex (nbt.getCompoundTag("indexStored"));
+			indexStored = Utils.readBlockPos(nbt.getCompoundTag("indexStored"));
 		}
 	}
 }

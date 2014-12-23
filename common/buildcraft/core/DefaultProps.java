@@ -12,8 +12,8 @@ public final class DefaultProps {
 
 	public static final String MOD = "BuildCraft";
 
-	public static final String DEPENDENCY_CORE = "required-after:BuildCraft|Core@" + Version.VERSION;
-	public static final String DEPENDENCY_TRANSPORT = "required-after:BuildCraft|Transport@" + Version.VERSION;
+	public static final String DEPENDENCY_CORE = "required-after:BuildCraftCore@" + Version.VERSION;
+	public static final String DEPENDENCY_TRANSPORT = "required-after:BuildCraftTransport@" + Version.VERSION;
 
 	public static final String NET_CHANNEL_NAME = "BC";
 	public static int NETWORK_UPDATE_RANGE = 128;

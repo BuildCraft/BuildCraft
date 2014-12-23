@@ -11,24 +11,20 @@ package buildcraft.transport.render;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
 
 import net.minecraftforge.client.IItemRenderer;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.transport.PipeIconProvider;
 
-public class PlugItemRenderer implements IItemRenderer {
+public class PlugItemRenderer /*implements IItemRenderer*/ {
 
-	private void renderPlugItem(RenderBlocks render, ItemStack item, float translateX, float translateY, float translateZ) {
+	/*private void renderPlugItem(RenderBlocks render, ItemStack item, float translateX, float translateY, float translateZ) {
 		// Render StructurePipe
 		Block block = BuildCraftTransport.genericPipeBlock;
 		Tessellator tessellator = Tessellator.instance;
-
-		block = BuildCraftTransport.genericPipeBlock;
 		IIcon textureID = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal()); // Structure pipe
 
 		block.setBlockBounds(0.25F, 0.25F, 0.25F, 0.75F, 0.375F, 0.75F);
@@ -109,5 +105,5 @@ public class PlugItemRenderer implements IItemRenderer {
 				break;
 			default:
 		}
-	}
+	}*/
 }

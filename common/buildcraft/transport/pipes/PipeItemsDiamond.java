@@ -19,25 +19,24 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.network.IClientState;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.IDiamondPipe;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.pipes.events.PipeEventItem;
 
-public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IClientState {
+public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamondPipe {
 
 	private SimpleInventory filters = new SimpleInventory(54, "Filters", 1);
 
@@ -45,21 +44,20 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IClien
 		super(new PipeTransportItems(), item);
 	}
 
+	@Override
 	public IInventory getFilters() {
 		return filters;
 	}
 
-	@Override
+	/*@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
 		return BuildCraftTransport.instance.pipeIconProvider;
-	}
+	}*/
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
+	public int getIconIndex(EnumFacing direction) {
 		switch (direction) {
-			case UNKNOWN:
-				return PipeIconProvider.TYPE.PipeItemsDiamond_Center.ordinal();
 			case DOWN:
 				return PipeIconProvider.TYPE.PipeItemsDiamond_Down.ordinal();
 			case UP:
@@ -73,7 +71,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IClien
 			case EAST:
 				return PipeIconProvider.TYPE.PipeItemsDiamond_East.ordinal();
 			default:
-				throw new IllegalArgumentException("direction out of bounds");
+				return PipeIconProvider.TYPE.PipeItemsDiamond_Center.ordinal();
 		}
 	}
 
@@ -90,19 +88,19 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IClien
 			}
 		}
 
-		if (!container.getWorldObj().isRemote) {
-			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord);
+		if (!container.getWorld().isRemote) {
+			entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.getWorld(), container.getPos().getX(), container.getPos().getY(), container.getPos().getZ());
 		}
 
 		return true;
 	}
 
 	public void eventHandler(PipeEventItem.FindDest event) {
-		LinkedList<ForgeDirection> filteredOrientations = new LinkedList<ForgeDirection>();
-		LinkedList<ForgeDirection> defaultOrientations = new LinkedList<ForgeDirection>();
+		LinkedList<EnumFacing> filteredOrientations = new LinkedList<EnumFacing>();
+		LinkedList<EnumFacing> defaultOrientations = new LinkedList<EnumFacing>();
 
 		// Filtered outputs
-		for (ForgeDirection dir : event.destinations) {
+		for (EnumFacing dir : event.destinations) {
 			boolean foundFilter = false;
 
 			// NB: if there's several of the same match, the probability

@@ -10,9 +10,10 @@ package buildcraft.builders;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-import cpw.mods.fml.common.network.IGuiHandler;
+import net.minecraftforge.fml.common.network.IGuiHandler;
 
 import buildcraft.builders.gui.ContainerArchitect;
 import buildcraft.builders.gui.ContainerBlueprintLibrary;
@@ -37,11 +38,13 @@ public class GuiHandler implements IGuiHandler {
 
 	@Override
 	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-		if (!world.blockExists(x, y, z)) {
+		BlockPos pos = new BlockPos(x, y, z);
+
+		if (!world.isBlockLoaded(pos)) {
 			return null;
 		}
 
-		TileEntity tile = world.getTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(pos);
 
 		switch (id) {
 
@@ -95,12 +98,13 @@ public class GuiHandler implements IGuiHandler {
 
 	@Override
 	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+		BlockPos pos = new BlockPos(x, y, z);
 
-		if (!world.blockExists(x, y, z)) {
+		if (!world.isBlockLoaded(pos)) {
 			return null;
 		}
 
-		TileEntity tile = world.getTileEntity(x, y, z);
+		TileEntity tile = world.getTileEntity(pos);
 
 		switch (id) {
 

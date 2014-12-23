@@ -22,27 +22,29 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 import buildcraft.api.core.IZone;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.robots.AIRobot;
@@ -51,17 +53,17 @@ import buildcraft.api.robots.IDockingStation;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
 import buildcraft.core.RFBattery;
-import buildcraft.core.network.RPC;
-import buildcraft.core.network.RPCHandler;
-import buildcraft.core.network.RPCMessageInfo;
-import buildcraft.core.network.RPCSide;
+import buildcraft.core.network.CommandWriter;
+import buildcraft.core.network.ICommandReceiver;
+import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.NBTUtils;
+import buildcraft.core.utils.Utils;
 import buildcraft.silicon.statements.ActionRobotWorkInArea;
 import buildcraft.transport.gates.ActionIterator;
 import buildcraft.transport.gates.StatementSlot;
 
 public class EntityRobot extends EntityRobotBase implements
-		IEntityAdditionalSpawnData, IInventory, IFluidHandler {
+		IEntityAdditionalSpawnData, IInventory, IFluidHandler, ICommandReceiver {
 
 	public static final ResourceLocation ROBOT_BASE = new ResourceLocation("buildcraft",
 			DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_base.png");
@@ -78,11 +80,11 @@ public class EntityRobot extends EntityRobotBase implements
 
 	public LaserData laser = new LaserData();
 	public IDockingStation linkedDockingStation;
-	public BlockIndex linkedDockingStationIndex;
-	public ForgeDirection linkedDockingStationSide;
+	public BlockPos linkedDockingStationIndex;
+	public EnumFacing linkedDockingStationSide;
 
-	public BlockIndex currentDockingStationIndex;
-	public ForgeDirection currentDockingStationSide;
+	public BlockPos currentDockingStationIndex;
+	public EnumFacing currentDockingStationSide;
 
 	public boolean isDocked = false;
 
@@ -159,7 +161,7 @@ public class EntityRobot extends EntityRobotBase implements
 		preventEntitySpawning = false;
 		noClip = true;
 		isImmuneToFire = true;
-		this.func_110163_bv(); // persistenceRequired = true
+		this.enablePersistence();
 
 		dataWatcher.addObject(12, Float.valueOf(0));
 		dataWatcher.addObject(13, Float.valueOf(0));
@@ -201,7 +203,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 	protected void init() {
 		if (worldObj.isRemote) {
-			RPCHandler.rpcServer(this, "requestInitialization");
+			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "requestInitialization", null));
 		}
 	}
 
@@ -266,17 +268,15 @@ public class EntityRobot extends EntityRobotBase implements
 			motionX = 0;
 			motionY = 0;
 			motionZ = 0;
-			posX = currentDockingStation.x() + 0.5F + currentDockingStation.side().offsetX * 0.5F;
-			posY = currentDockingStation.y() + 0.5F + currentDockingStation.side().offsetY * 0.5F;
-			posZ = currentDockingStation.z() + 0.5F + currentDockingStation.side().offsetZ * 0.5F;
+			posX = currentDockingStation.pos().getX() + 0.5F + currentDockingStation.side().getFrontOffsetX() * 0.5F;
+			posY = currentDockingStation.pos().getY() + 0.5F + currentDockingStation.side().getFrontOffsetY() * 0.5F;
+			posZ = currentDockingStation.pos().getZ() + 0.5F + currentDockingStation.side().getFrontOffsetZ() * 0.5F;
 		}
 
 		if (!worldObj.isRemote) {
 			if (linkedDockingStation == null) {
 				linkedDockingStation = RobotRegistry.getRegistry(worldObj).getStation(
-						linkedDockingStationIndex.x,
-						linkedDockingStationIndex.y,
-						linkedDockingStationIndex.z,
+						linkedDockingStationIndex,
 						linkedDockingStationSide);
 
 				if (linkedDockingStation == null
@@ -292,9 +292,7 @@ public class EntityRobot extends EntityRobotBase implements
 			if (currentDockingStationIndex != null && currentDockingStation == null) {
 				currentDockingStation = (DockingStation)
 						RobotRegistry.getRegistry(worldObj).getStation(
-						currentDockingStationIndex.x,
-						currentDockingStationIndex.y,
-						currentDockingStationIndex.z,
+						currentDockingStationIndex,
 						currentDockingStationSide);
 			}
 
@@ -328,29 +326,23 @@ public class EntityRobot extends EntityRobotBase implements
 		height = 0.5F;
 
 		if (laser.isVisible) {
-			boundingBox.minX = Math.min(posX, laser.tail.x);
-			boundingBox.minY = Math.min(posY, laser.tail.y);
-			boundingBox.minZ = Math.min(posZ, laser.tail.z);
-
-			boundingBox.maxX = Math.max(posX, laser.tail.x);
-			boundingBox.maxY = Math.max(posY, laser.tail.y);
-			boundingBox.maxZ = Math.max(posZ, laser.tail.z);
-
-			boundingBox.minX--;
-			boundingBox.minY--;
-			boundingBox.minZ--;
-
-			boundingBox.maxX++;
-			boundingBox.maxY++;
-			boundingBox.maxZ++;
+			setEntityBoundingBox(new AxisAlignedBB(
+					Math.min(posX, laser.tail.x) - 1,
+					Math.min(posY, laser.tail.y) - 1,
+					Math.min(posZ, laser.tail.z) - 1,
+					Math.max(posX, laser.tail.x) + 1,
+					Math.max(posY, laser.tail.y) + 1,
+					Math.max(posZ, laser.tail.z) + 1
+			));
 		} else {
-			boundingBox.minX = posX - 0.25F;
-			boundingBox.minY = posY - 0.25F;
-			boundingBox.minZ = posZ - 0.25F;
-
-			boundingBox.maxX = posX + 0.25F;
-			boundingBox.maxY = posY + 0.25F;
-			boundingBox.maxZ = posZ + 0.25F;
+			setEntityBoundingBox(new AxisAlignedBB(
+					posX - 0.25F,
+					posY - 0.25F,
+					posZ - 0.25F,
+					posX + 0.25F,
+					posY + 0.25F,
+					posZ + 0.25F
+			));
 		}
 	}
 
@@ -358,13 +350,7 @@ public class EntityRobot extends EntityRobotBase implements
 		width = 0F;
 		height = 0F;
 
-		boundingBox.minX = posX;
-		boundingBox.minY = posY;
-		boundingBox.minZ = posZ;
-
-		boundingBox.maxX = posX;
-		boundingBox.maxY = posY;
-		boundingBox.maxZ = posZ;
+		setEntityBoundingBox(new AxisAlignedBB(posX, posY, posZ, posX, posY, posZ));
 	}
 
 	private void iterateBehaviorDocked() {
@@ -394,16 +380,16 @@ public class EntityRobot extends EntityRobotBase implements
 	public void setCurrentItemOrArmor(int i, ItemStack itemstack) {
 	}
 
-	@Override
-	public ItemStack[] getLastActiveItems() {
-		return new ItemStack [0];
-	}
+	//@Override
+	//public ItemStack[] getLastActiveItems() {
+	//	return new ItemStack [0];
+	//}
 
 	@Override
-    protected void fall(float par1) {}
+    public void fall(float par1, float par2) {}
 
-	@Override
-    protected void updateFallState(double par1, boolean par3) {}
+	//@Override
+    //protected void updateFallState(double par1, boolean par3) {}
 
 	@Override
 	public void moveEntityWithHeading(float par1, float par2) {
@@ -425,7 +411,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 		NBTTagCompound linkedStationNBT = new NBTTagCompound();
 		NBTTagCompound linkedStationIndexNBT = new NBTTagCompound();
-		linkedDockingStationIndex.writeTo(linkedStationIndexNBT);
+		Utils.writeBlockPos(linkedStationIndexNBT, linkedDockingStationIndex);
 		linkedStationNBT.setTag("index", linkedStationIndexNBT);
 		linkedStationNBT.setByte("side", (byte) linkedDockingStationSide.ordinal());
 		nbt.setTag("linkedStation", linkedStationNBT);
@@ -433,7 +419,7 @@ public class EntityRobot extends EntityRobotBase implements
 		if (currentDockingStationIndex != null) {
 			NBTTagCompound currentStationNBT = new NBTTagCompound();
 			NBTTagCompound currentStationIndexNBT = new NBTTagCompound();
-			currentDockingStationIndex.writeTo(currentStationIndexNBT);
+			Utils.writeBlockPos(currentStationIndexNBT, currentDockingStationIndex);
 			currentStationNBT.setTag("index", currentStationIndexNBT);
 			currentStationNBT.setByte("side", (byte) currentDockingStationSide.ordinal());
 			nbt.setTag("currentStation", currentStationNBT);
@@ -490,13 +476,13 @@ public class EntityRobot extends EntityRobotBase implements
 		super.readEntityFromNBT(nbt);
 
 		NBTTagCompound linkedStationNBT = nbt.getCompoundTag("linkedStation");
-		linkedDockingStationIndex = new BlockIndex(linkedStationNBT.getCompoundTag("index"));
-		linkedDockingStationSide = ForgeDirection.values()[linkedStationNBT.getByte("side")];
+		linkedDockingStationIndex = Utils.readBlockPos(linkedStationNBT.getCompoundTag("index"));
+		linkedDockingStationSide = EnumFacing.values()[linkedStationNBT.getByte("side")];
 
 		if (nbt.hasKey("currentStation")) {
 			NBTTagCompound currentStationNBT = nbt.getCompoundTag("currentStation");
-			currentDockingStationIndex = new BlockIndex(currentStationNBT.getCompoundTag("index"));
-			currentDockingStationSide = ForgeDirection.values()[currentStationNBT.getByte("side")];
+			currentDockingStationIndex = Utils.readBlockPos(currentStationNBT.getCompoundTag("index"));
+			currentDockingStationSide = EnumFacing.values()[currentStationNBT.getByte("side")];
 
 		}
 
@@ -538,8 +524,7 @@ public class EntityRobot extends EntityRobotBase implements
 			tank = null;
 		}
 
-		// Restore robot persistence on pre-6.1.9 robots
-		this.func_110163_bv();
+		this.enablePersistence();
     }
 
 	@Override
@@ -547,11 +532,11 @@ public class EntityRobot extends EntityRobotBase implements
 		currentDockingStation = (DockingStation) station;
 
 		setSteamDirection(
-				currentDockingStation.side.offsetX,
-				currentDockingStation.side.offsetY,
-				currentDockingStation.side.offsetZ);
+				currentDockingStation.side.getFrontOffsetX(),
+				currentDockingStation.side.getFrontOffsetY(),
+				currentDockingStation.side.getFrontOffsetZ());
 
-		currentDockingStationIndex = currentDockingStation.index();
+		currentDockingStationIndex = currentDockingStation.pos();
 		currentDockingStationSide = currentDockingStation.side();
 	}
 
@@ -581,7 +566,7 @@ public class EntityRobot extends EntityRobotBase implements
 		}
 
 		linkedDockingStation = station;
-		linkedDockingStationIndex = linkedDockingStation.index();
+		linkedDockingStationIndex = linkedDockingStation.pos();
 		linkedDockingStationSide = linkedDockingStation.side();
 	}
 
@@ -608,7 +593,7 @@ public class EntityRobot extends EntityRobotBase implements
 			inv[var1] = null;
 		}
 
-		RPCHandler.rpcBroadcastAllPlayers(this, "rpcClientSetInventory", var1, inv[var1]);
+		updateClientSlot(var1);
 
 		return result;
 	}
@@ -622,16 +607,16 @@ public class EntityRobot extends EntityRobotBase implements
 	public void setInventorySlotContents(int var1, ItemStack var2) {
 		inv[var1] = var2;
 
-		RPCHandler.rpcBroadcastAllPlayers(this, "rpcClientSetInventory", var1, inv[var1]);
+		updateClientSlot(var1);
 	}
 
 	@Override
-	public String getInventoryName() {
+	public String getName() {
 		return null;
 	}
 
 	@Override
-	public boolean hasCustomInventoryName() {
+	public boolean hasCustomName() {
 		return false;
 	}
 
@@ -644,24 +629,53 @@ public class EntityRobot extends EntityRobotBase implements
 	public void markDirty() {
 	}
 
+	public void updateClientSlot(final int slot) {
+		BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "clientSetInventory", new CommandWriter() {
+			public void write(ByteBuf data) {
+				data.writeShort(slot);
+				Utils.writeStack(data, inv[slot]);
+			}
+		}), worldObj);
+	}
+
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer var1) {
 		return false;
 	}
 
 	@Override
-	public void openInventory() {
+	public void openInventory(EntityPlayer player) {
 	}
 
 	@Override
-	public void closeInventory() {
+	public void closeInventory(EntityPlayer player) {
 	}
 
 	@Override
 	public boolean isItemValidForSlot(int var1, ItemStack var2) {
 		return inv[var1] == null
 				|| (inv[var1].isItemEqual(var2) && inv[var1].isStackable() && inv[var1].stackSize
-						+ var2.stackSize <= inv[var1].getItem().getItemStackLimit());
+						+ var2.stackSize <= inv[var1].getItem().getItemStackLimit(inv[var1]));
+	}
+
+	@Override
+	public int getField(int id) {
+		return 0;
+	}
+
+	@Override
+	public void setField(int id, int value) {
+
+	}
+
+	@Override
+	public int getFieldCount() {
+		return 0;
+	}
+
+	@Override
+	public void clear() {
+
 	}
 
 	@Override
@@ -672,41 +686,84 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	public void setItemInUse(ItemStack stack) {
 		itemInUse = stack;
-		RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "clientSetItemInUse", stack);
+		BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "clientSetItemInUse", new CommandWriter() {
+			public void write(ByteBuf data) {
+				Utils.writeStack(data, itemInUse);
+			}
+		}), worldObj);
 	}
 
-	@RPC(RPCSide.CLIENT)
-	private void clientSetItemInUse(ItemStack stack) {
-		itemInUse = stack;
-	}
-
-	@RPC(RPCSide.CLIENT)
-	private void rpcClientSetInventory(int i, ItemStack stack) {
-		inv[i] = stack;
-	}
-
-	@RPC(RPCSide.SERVER)
-	public void requestInitialization(RPCMessageInfo info) {
-		RPCHandler.rpcPlayer(info.sender, this, "rpcInitialize", itemInUse, itemActive);
-
-		for (int i = 0; i < inv.length; ++i) {
-			RPCHandler.rpcPlayer(info.sender, this, "rpcClientSetInventory", i, inv[i]);
-		}
-
-		if (currentDockingStation != null) {
-			setSteamDirection(
-					currentDockingStation.side.offsetX,
-					currentDockingStation.side.offsetY,
-					currentDockingStation.side.offsetZ);
+	private void setSteamDirection(final int x, final int y, final int z) {
+		if (!worldObj.isRemote) {
+			BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "setSteamDirection", new CommandWriter() {
+				public void write(ByteBuf data) {
+					data.writeInt(x);
+					data.writeShort(y);
+					data.writeInt(z);
+				}
+			}), worldObj);
 		} else {
-			setSteamDirection(0, -1, 0);
+			Vec3 v = new Vec3(x, y, z);
+			v.normalize();
+
+			steamDx = (int) v.xCoord;
+			steamDy = (int) v.yCoord;
+			steamDz = (int) v.zCoord;
 		}
 	}
 
-	@RPC(RPCSide.CLIENT)
-	private void rpcInitialize(ItemStack stack, boolean active) {
-		itemInUse = stack;
-		itemActive = active;
+	@Override
+	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
+		if (side.isClient()) {
+			if ("clientSetItemInUse".equals(command)) {
+				itemInUse = Utils.readStack(stream);
+			} else if ("clientSetInventory".equals(command)) {
+				int slot = stream.readUnsignedShort();
+				inv[slot] = Utils.readStack(stream);
+			} else if ("initialize".equals(command)) {
+				itemInUse = Utils.readStack(stream);
+				itemActive = stream.readBoolean();
+			} else if ("setItemActive".equals(command)) {
+				itemActive = stream.readBoolean();
+				itemActiveStage = 0;
+				lastUpdateTime = new Date().getTime();
+
+				if (!itemActive) {
+					setSteamDirection(0, -1, 0);
+				}
+			} else if ("setSteamDirection".equals(command)) {
+				setSteamDirection(stream.readInt(), stream.readShort(), stream.readInt());
+			}
+		} else if (side.isServer()) {
+			EntityPlayer p = (EntityPlayer) sender;
+			if ("requestInitialization".equals(command)) {
+				BuildCraftCore.instance.sendToPlayer(p, new PacketCommand(this, "initialize", new CommandWriter() {
+					public void write(ByteBuf data) {
+						Utils.writeStack(data, itemInUse);
+						data.writeBoolean(itemActive);
+					}
+				}));
+
+				for (int i = 0; i < inv.length; ++i) {
+					final int j = i;
+					BuildCraftCore.instance.sendToPlayer(p, new PacketCommand(this, "clientSetInventory", new CommandWriter() {
+						public void write(ByteBuf data) {
+							data.writeShort(j);
+							Utils.writeStack(data, inv[j]);
+						}
+					}));
+				}
+
+				if (currentDockingStation != null) {
+					setSteamDirection(
+							currentDockingStation.side.getFrontOffsetX(),
+							currentDockingStation.side.getFrontOffsetY(),
+							currentDockingStation.side.getFrontOffsetZ());
+				} else {
+					setSteamDirection(0, -1, 0);
+				}
+			}
+		}
 	}
 
 	@Override
@@ -721,7 +778,11 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public void aimItemAt(int x, int y, int z) {
+	public void aimItemAt(BlockPos pos) {
+		int x = pos.getX();
+		int y = pos.getY();
+		int z = pos.getZ();
+
 		itemAngle1 = (float) Math.atan2(z - Math.floor(posZ),
 				x - Math.floor(posX));
 
@@ -751,35 +812,14 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public void setItemActive(boolean isActive) {
+	public void setItemActive(final boolean isActive) {
 		if (isActive != itemActive) {
 			itemActive = isActive;
-			RPCHandler.rpcBroadcastWorldPlayers(worldObj, this, "rpcSetItemActive", isActive);
-		}
-	}
-
-	@RPC(RPCSide.CLIENT)
-	private void rpcSetItemActive(boolean isActive) {
-		itemActive = isActive;
-		itemActiveStage = 0;
-		lastUpdateTime = new Date().getTime();
-
-		if (!isActive) {
-			setSteamDirection(0, -1, 0);
-		}
-	}
-
-	@RPC(RPCSide.CLIENT)
-	private void setSteamDirection(int x, int y, int z) {
-		if (!worldObj.isRemote) {
-			RPCHandler.rpcBroadcastAllPlayers(this, "setSteamDirection", x, y, z);
-		} else {
-			Vec3 v = Vec3.createVectorHelper(x, y, z);
-			v.normalize();
-
-			steamDx = (int) v.xCoord;
-			steamDy = (int) v.yCoord;
-			steamDz = (int) v.zCoord;
+			BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "setItemActive", new CommandWriter() {
+				public void write(ByteBuf data) {
+					data.writeBoolean(isActive);
+				}
+			}), worldObj);
 		}
 	}
 
@@ -953,7 +993,7 @@ public class EntityRobot extends EntityRobotBase implements
 	 */
 	public ItemStack receiveItem(TileEntity tile, ItemStack stack) {
 		if (currentDockingStation != null
-				&& currentDockingStation.index().nextTo(new BlockIndex(tile))
+				&& Utils.nextTo(currentDockingStation.pos(), tile.getPos())
 				&& mainAI != null) {
 
 			return mainAI.getActiveAI().receiveItem(stack);
@@ -963,7 +1003,7 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		int result = 0;
 
 		if (tank == null) {
@@ -992,7 +1032,7 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
 		if (tank != null && tank.fluidID == resource.fluidID) {
 			return drain(from, resource.amount, doDrain);
 		} else {
@@ -1001,7 +1041,7 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
 		FluidStack result = null;
 
 		if (tank == null) {
@@ -1029,7 +1069,7 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
+	public boolean canFill(EnumFacing from, Fluid fluid) {
 		return tank == null
 				|| tank.amount == 0
 				|| (tank.amount < maxFluid
@@ -1037,14 +1077,14 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
 		return tank != null
 				&& tank.amount != 0
 				&& tank.fluidID == fluid.getID();
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+	public FluidTankInfo[] getTankInfo(EnumFacing from) {
 		return new FluidTankInfo[] {new FluidTankInfo(tank, maxFluid)};
 	}
 }

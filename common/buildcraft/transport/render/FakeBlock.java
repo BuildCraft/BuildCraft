@@ -10,13 +10,14 @@ package buildcraft.transport.render;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
+import buildcraft.transport.BlockGenericPipe;
 
 
 /*
@@ -35,11 +36,15 @@ public final class FakeBlock extends Block implements ITextureStates {
 	
 	private FakeBlock() {
 		super(Material.glass);
-		textureState = new TextureStateManager(null); //Always Clientside
+		textureState = new TextureStateManager(); //Always Clientside
 	}	
 	
 	@Override
-	public int colorMultiplier(IBlockAccess blockAccess, int x, int y, int z) {
+	public int colorMultiplier(IBlockAccess blockAccess, BlockPos pos, int renderPass) {
+		// TODO: Move this somewhere else?
+		if (BlockGenericPipe.facadeRenderColor >= 0) {
+			return BlockGenericPipe.facadeRenderColor;
+		}
 		return colorMultiplier;
 	}
 	
@@ -51,12 +56,12 @@ public final class FakeBlock extends Block implements ITextureStates {
 	public TextureStateManager getTextureState() {
 		return textureState;
 	}
-	@Override	
+	/*@Override	
 	public IIcon getIcon(int side, int meta) {
 		return textureState.isSided() ? textureState.getTextureArray()[side] : textureState.getTexture();
-	}
+	}*/
 	@Override
-	public void setRenderSide(ForgeDirection side, boolean render) {
+	public void setRenderSide(EnumFacing side, boolean render) {
 		if (render) {
 			renderMask |= 1 << side.ordinal();
 		} else {
