@@ -73,7 +73,7 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 			}
 		}
 		if (closest != null) {
-			closest = new MovingObjectPosition(new Vec3(pos.getX(), pos.getY(), pos.getZ()), closest.sideHit);
+			closest = new MovingObjectPosition(new Vec3(pos.getX(), pos.getY(), pos.getZ()), closest.sideHit, pos);
 		}
 		return closest;
 	}

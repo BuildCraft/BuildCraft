@@ -41,10 +41,13 @@ public class BlockHighlightHandler {
 				GL11.glDisable(GL11.GL_TEXTURE_2D);
 				GL11.glDepthMask(false);
 				double exp = ((ICustomHighlight) block).getExpansion();
+				double d0 = e.player.lastTickPosX + (e.player.posX - e.player.lastTickPosX) * (double)e.partialTicks;
+				double d1 = e.player.lastTickPosY + (e.player.posY - e.player.lastTickPosY) * (double)e.partialTicks;
+				double d2 = e.player.lastTickPosZ + (e.player.posZ - e.player.lastTickPosZ) * (double)e.partialTicks;
 				for (AxisAlignedBB aabb : aabbs) {
 					RenderGlobal.drawOutlinedBoundingBox(new AxisAlignedBB(aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ).expand(exp, exp, exp)
 						.offset(blockPos.getX(), blockPos.getY(), blockPos.getZ())
-						.offset(-pos.getX(), -pos.getY(), -pos.getZ()), -1);
+						.offset(-d0, -d1, -d2), -1);
 				}
 				GL11.glDepthMask(true);
 				GL11.glEnable(GL11.GL_TEXTURE_2D);
