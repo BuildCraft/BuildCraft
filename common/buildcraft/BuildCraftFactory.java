@@ -139,6 +139,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void load(FMLInitializationEvent evt) {
+		FactoryProxy.proxy.initializeEntityRenders();
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
 		// EntityRegistry.registerModEntity(EntityMechanicalArm.class, "bcMechanicalArm", EntityIds.MECHANICAL_ARM, instance, 50, 1, true);
@@ -217,9 +218,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 		hopperBlock = new BlockHopper();
 		CoreProxy.proxy.registerBlock(hopperBlock.setUnlocalizedName("blockHopper"));
-
-
-		FactoryProxy.proxy.initializeEntityRenders();
+		
 		if (BuildCraftCore.mainConfiguration.hasChanged()) {
 			BuildCraftCore.mainConfiguration.save();
 		}

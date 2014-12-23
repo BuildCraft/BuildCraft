@@ -11,8 +11,6 @@ package buildcraft.api.blueprints;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.apache.logging.log4j.Level;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
@@ -20,7 +18,11 @@ import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagShort;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
+
+import org.apache.logging.log4j.Level;
+
 import buildcraft.api.core.BCLog;
 
 public class MappingRegistry {
@@ -242,7 +244,7 @@ public class MappingRegistry {
 		for (Block b : idToBlock) {
 			NBTTagCompound sub = new NBTTagCompound();
 			sub.setString("name",
-					(String) Block.blockRegistry.getNameForObject(b));
+					((ResourceLocation) Block.blockRegistry.getNameForObject(b)).getResourcePath());
 			blocksMapping.appendTag(sub);
 		}
 
@@ -253,7 +255,7 @@ public class MappingRegistry {
 		for (Item i : idToItem) {
 			NBTTagCompound sub = new NBTTagCompound();
 			sub.setString("name",
-					(String) Item.itemRegistry.getNameForObject(i));
+					((ResourceLocation) Item.itemRegistry.getNameForObject(i)).getResourcePath());
 			itemsMapping.appendTag(sub);
 		}
 
