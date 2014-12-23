@@ -1,9 +1,5 @@
 {
     "variants": {
-        "facing=up": { "model": "buildcraftfactory:pump" },
-        "facing=east": { "model": "buildcraftfactory:pump" },
-        "facing=south": { "model": "buildcraftfactory:pump", "y": 90 },
-        "facing=west": { "model": "buildcraftfactory:pump", "y": 180 },
-        "facing=north": { "model": "buildcraftfactory:pump", "y": 270 }
+        "normal": { "model": "buildcraftfactory:pump" }
     }
 }

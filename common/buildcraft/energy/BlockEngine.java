@@ -240,7 +240,7 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight, IM
 
 	@Override
 	public int damageDropped(IBlockState state) {
-		return 1;
+		return EngineType.getType(state).ordinal();
 	}
 
 	@SuppressWarnings({"all"})

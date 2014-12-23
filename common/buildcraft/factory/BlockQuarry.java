@@ -38,10 +38,11 @@ public class BlockQuarry extends BlockBuildCraft {
 	IIcon textureSide;*/
 
 	public BlockQuarry() {
-		super(Material.iron, new PropertyEnum[]{FACING_PROP});
+		super(Material.iron, new PropertyEnum[]{FACING_6_PROP});
 
 		setHardness(10F);
 		setResistance(10F);
+		setDefaultState(getDefaultState().withProperty(FACING_PROP, EnumFacing.NORTH));
 		// TODO: set proper sound
 		//setStepSound(soundAnvilFootstep);
 	}
