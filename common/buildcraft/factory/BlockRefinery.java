@@ -39,7 +39,7 @@ public class BlockRefinery extends BlockBuildCraft {
 	//private static IIcon icon;
 
 	public BlockRefinery() {
-		super(Material.iron, new PropertyEnum[]{FACING_PROP});
+		super(Material.iron, new PropertyEnum[]{FACING_6_PROP});
 
 		setHardness(5F);
 		setCreativeTab(CreativeTabBuildCraft.BLOCKS.get());
