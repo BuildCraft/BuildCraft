@@ -40,7 +40,7 @@ public class RenderArchitect extends RenderBoxProvider {
 				if (laser != null) {
 					GL11.glPushMatrix();
 					RenderLaser
-							.doRenderLaserWave(
+							.doRenderLaserWave(tileentity.getWorld(),
 									TileEntityRendererDispatcher.instance.renderEngine,
 									laser, EntityLaser.LASER_TEXTURES[3]);
 

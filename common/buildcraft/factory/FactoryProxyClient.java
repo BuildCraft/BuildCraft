@@ -9,6 +9,9 @@
 package buildcraft.factory;
 
 import java.lang.reflect.Method;
+
+import net.minecraft.init.Blocks;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -27,9 +30,9 @@ import buildcraft.factory.render.RenderTank;
 
 public class FactoryProxyClient extends FactoryProxy {
 
-	/*public static IIcon pumpTexture;
-	public static IIcon drillTexture;
-	public static IIcon drillHeadTexture;*/
+	public static ResourceLocation pumpTexture = new ResourceLocation("buildcraft:pump_tube");
+	public static ResourceLocation drillTexture = new ResourceLocation("buildcraft:blockDrillTexture");
+	public static ResourceLocation drillHeadTexture = new ResourceLocation("buildcraft:blockDrillHeadTexture");
 
 	@Override
 	public void initializeModels(ModelBakeEvent event) {
@@ -77,21 +80,22 @@ public class FactoryProxyClient extends FactoryProxy {
 	@Override
 	public EntityBlock newPumpTube(World w) {
 		EntityBlock eb = super.newPumpTube(w);
-		//eb.texture = pumpTexture;
+		eb.resource = pumpTexture;
 		return eb;
 	}
 
 	@Override
 	public EntityBlock newDrill(World w, double i, double j, double k, double l, double d, double e) {
 		EntityBlock eb = super.newDrill(w, i, j, k, l, d, e);
-		//eb.texture = drillTexture;
+//		eb.resource = drillTexture;
 		return eb;
 	}
 
 	@Override
 	public EntityBlock newDrillHead(World w, double i, double j, double k, double l, double d, double e) {
 		EntityBlock eb = super.newDrillHead(w, i, j, k, l, d, e);
-		//eb.texture = drillHeadTexture;
+		eb.blockState = Blocks.diamond_block.getDefaultState();
+//		eb.resource = drillHeadTexture;
 		return eb;
 	}
 }

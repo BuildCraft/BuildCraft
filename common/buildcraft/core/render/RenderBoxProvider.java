@@ -48,7 +48,7 @@ public class RenderBoxProvider extends TileEntitySpecialRenderer {
 		if (tileentity instanceof IBoxesProvider) {
 			for (Box b : ((IBoxesProvider) tileentity).getBoxes()) {
 				if (b.isVisible) {
-					RenderBox.doRender(
+					RenderBox.doRender(tileentity.getWorld(),
 						TileEntityRendererDispatcher.instance.renderEngine,
 						getTexture(b.kind), b);
 				}
@@ -57,7 +57,7 @@ public class RenderBoxProvider extends TileEntitySpecialRenderer {
 			Box b = ((IBoxProvider) tileentity).getBox();
 
 			if (b.isVisible) {
-				RenderBox.doRender(
+				RenderBox.doRender(tileentity.getWorld(),
 					TileEntityRendererDispatcher.instance.renderEngine,
 					getTexture(b.kind), b);
 			}

@@ -115,9 +115,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		Fluid fluid = FluidRegistry.getFluid(liquidId);
 		if (fluid.getBlock() != null) {
-			block.baseBlock = fluid.getBlock();
+			block.blockState = fluid.getBlock().getDefaultState();
 		} else {
-			block.baseBlock = Blocks.water;
+			block.blockState = Blocks.water.getDefaultState();
 		}
 		//block.texture = fluid.getStillIcon();
 
@@ -437,7 +437,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		if (minZ != CoreConstants.PIPE_MIN_POS || maxZ != CoreConstants.PIPE_MAX_POS || !found) {
 			renderBox.setBounds(cx == CoreConstants.PIPE_MIN_POS ? cx - 0.05F : cx, cy == CoreConstants.PIPE_MIN_POS ? cy - 0.05F : cy, minZ, cx == CoreConstants.PIPE_MIN_POS ? cx
 					: cx + 0.05F, cy == CoreConstants.PIPE_MIN_POS ? cy : cy + 0.05F, maxZ);
-			RenderEntityBlock.INSTANCE.renderBlock(renderBox, pipe.getWorld(), 0, 0, 0, pipe.getPos().getX(), pipe.getPos().getY(), pipe.getPos().getZ(), true, true);
+			RenderEntityBlock.INSTANCE.renderBlock(renderBox, pipe.getWorld(), 0, 0, 0, pipe.getPos(), true, true);
 		}
 
 		// X render
@@ -445,7 +445,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		if (minX != CoreConstants.PIPE_MIN_POS || maxX != CoreConstants.PIPE_MAX_POS || !found) {
 			renderBox.setBounds(minX, cy == CoreConstants.PIPE_MIN_POS ? cy - 0.05F : cy, cz == CoreConstants.PIPE_MIN_POS ? cz - 0.05F : cz, maxX, cy == CoreConstants.PIPE_MIN_POS ? cy
 					: cy + 0.05F, cz == CoreConstants.PIPE_MIN_POS ? cz : cz + 0.05F);
-			RenderEntityBlock.INSTANCE.renderBlock(renderBox, pipe.getWorld(), 0, 0, 0, pipe.getPos().getX(), pipe.getPos().getY(), pipe.getPos().getZ(), true, true);
+			RenderEntityBlock.INSTANCE.renderBlock(renderBox, pipe.getWorld(), 0, 0, 0, pipe.getPos(), true, true);
 		}
 
 		// Y render
@@ -453,13 +453,13 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		if (minY != CoreConstants.PIPE_MIN_POS || maxY != CoreConstants.PIPE_MAX_POS || !found) {
 			renderBox.setBounds(cx == CoreConstants.PIPE_MIN_POS ? cx - 0.05F : cx, minY, cz == CoreConstants.PIPE_MIN_POS ? cz - 0.05F : cz, cx == CoreConstants.PIPE_MIN_POS ? cx
 					: cx + 0.05F, maxY, cz == CoreConstants.PIPE_MIN_POS ? cz : cz + 0.05F);
-			RenderEntityBlock.INSTANCE.renderBlock(renderBox, pipe.getWorld(), 0, 0, 0, pipe.getPos().getX(), pipe.getPos().getY(), pipe.getPos().getZ(), true, true);
+			RenderEntityBlock.INSTANCE.renderBlock(renderBox, pipe.getWorld(), 0, 0, 0, pipe.getPos(), true, true);
 		}
 
 		if (center || !found) {
 			renderBox.setBounds(cx == CoreConstants.PIPE_MIN_POS ? cx - 0.05F : cx, cy == CoreConstants.PIPE_MIN_POS ? cy - 0.05F : cy, cz == CoreConstants.PIPE_MIN_POS ? cz - 0.05F : cz,
 					cx == CoreConstants.PIPE_MIN_POS ? cx : cx + 0.05F, cy == CoreConstants.PIPE_MIN_POS ? cy : cy + 0.05F, cz == CoreConstants.PIPE_MIN_POS ? cz : cz + 0.05F);
-			RenderEntityBlock.INSTANCE.renderBlock(renderBox, pipe.getWorld(), 0, 0, 0, pipe.getPos().getX(), pipe.getPos().getY(), pipe.getPos().getZ(), true, true);
+			RenderEntityBlock.INSTANCE.renderBlock(renderBox, pipe.getWorld(), 0, 0, 0, pipe.getPos(), true, true);
 		}
 
 		RenderHelper.enableStandardItemLighting();
@@ -533,45 +533,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();
 	}
 
-	private void renderGate(TileGenericPipe tile, /*IIcon icon,*/ int layer, float trim, float translateCenter, float extraDepth, EnumFacing direction) {
-		PipeRenderState state = tile.renderState;
-
-		RenderInfo renderBox = new RenderInfo();
-		//renderBox.texture = icon;
-
-		float[][] zeroState = new float[3][2];
-		float min = CoreConstants.PIPE_MIN_POS + trim / 2F;
-		float max = CoreConstants.PIPE_MAX_POS - trim / 2F;
-
-		// X START - END
-		zeroState[0][0] = min;
-		zeroState[0][1] = max;
-		// Y START - END
-		zeroState[1][0] = CoreConstants.PIPE_MIN_POS - 0.10F - 0.001F * layer;
-		zeroState[1][1] = CoreConstants.PIPE_MIN_POS + 0.001F + 0.01F * layer + extraDepth;
-		// Z START - END
-		zeroState[2][0] = min;
-		zeroState[2][1] = max;
-
-		GL11.glPushMatrix();
-
-		float xt = direction.getFrontOffsetX() * translateCenter, yt = direction.getFrontOffsetY() * translateCenter, zt = direction.getFrontOffsetZ()
-				* translateCenter;
-
-		GL11.glTranslatef(xt, yt, zt);
-
-		float[][] rotated = MatrixTranformations.deepClone(zeroState);
-		MatrixTranformations.transform(rotated, direction);
-
-		if (layer != 0) {
-			renderBox.setRenderSingleSide(direction.ordinal());
-		}
-
-		renderBox.setBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-		RenderEntityBlock.INSTANCE.renderBlock(renderBox, tile.getWorld(), 0, 0, 0, tile.getPos().getX(), tile.getPos().getY(),
-				tile.getPos().getZ(), true, true);
-		GL11.glPopMatrix();
-	}
 
 	public boolean isOpenOrientation(PipeRenderState state, EnumFacing direction) {
 		int connections = 0;

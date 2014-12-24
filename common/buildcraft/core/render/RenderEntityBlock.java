@@ -11,9 +11,14 @@ package buildcraft.core.render;
 import java.util.Arrays;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
@@ -49,7 +54,8 @@ public final class RenderEntityBlock extends Render {
 		public double maxX;
 		public double maxY;
 		public double maxZ;
-		public Block baseBlock = Blocks.sand;
+		public IBlockState blockState = Blocks.sand.getDefaultState();
+		public ResourceLocation resource;
 		//public IIcon texture = null;
 		//public IIcon[] textureArray = null;
 		public boolean[] renderSide = new boolean[6];
@@ -60,9 +66,9 @@ public final class RenderEntityBlock extends Render {
 			setRenderAllSides();
 		}
 
-		public RenderInfo(Block template /*,*IIcon[] texture*/) {
+		public RenderInfo(IBlockState state /*,*IIcon[] texture*/) {
 			this();
-			this.baseBlock = template;
+			this.blockState = state;
 			//this.textureArray = texture;
 		}
 
@@ -72,7 +78,7 @@ public final class RenderEntityBlock extends Render {
 		}
 
 		public float getBlockBrightness(IBlockAccess iblockaccess, BlockPos pos) {
-			return baseBlock.getMixedBrightnessForBlock(iblockaccess, pos);
+			return blockState.getBlock().getMixedBrightnessForBlock(iblockaccess, pos);
 		}
 
 		public final void setBounds(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
@@ -147,8 +153,9 @@ public final class RenderEntityBlock extends Render {
 		shadowSize = entity.shadowSize;
 		World world = entity.worldObj;
 		RenderInfo util = new RenderInfo();
-		//util.texture = entity.texture;
-		bindTexture(TextureMap.locationBlocksTexture);
+		if(entity.blockState != null)
+			util.blockState = entity.blockState;
+		util.resource = entity.resource;
 
 		for (int iBase = 0; iBase < entity.iSize; ++iBase) {
 			for (int jBase = 0; jBase < entity.jSize; ++jBase) {
@@ -165,7 +172,8 @@ public final class RenderEntityBlock extends Render {
 					util.maxX = remainX > 1.0 ? 1.0 : remainX;
 					util.maxY = remainY > 1.0 ? 1.0 : remainY;
 					util.maxZ = remainZ > 1.0 ? 1.0 : remainZ;
-
+					//GlStateManager.enableTexture2D();
+					GlStateManager.enableRescaleNormal();
 					GL11.glPushMatrix();
 					GL11.glTranslatef((float) i, (float) j, (float) k);
 					GL11.glRotatef(entity.rotationX, 1, 0, 0);
@@ -180,9 +188,11 @@ public final class RenderEntityBlock extends Render {
 					lightZ = (int) (Math.floor(entity.posZ) + kBase);
 
 					GL11.glDisable(2896 /* GL_LIGHTING */);
-					renderBlock(util, world, 0, 0, 0, lightX, lightY, lightZ, false, true);
+					
+					renderBlock(util, world, 0, 0, 0, new BlockPos(lightX, lightY, lightZ), false, true);
 					GL11.glEnable(2896 /* GL_LIGHTING */);
 					GL11.glPopMatrix();
+					GlStateManager.disableRescaleNormal();
 
 				}
 			}
@@ -190,99 +200,21 @@ public final class RenderEntityBlock extends Render {
 	}
 
 	public void renderBlock(RenderInfo info, IBlockAccess blockAccess, int x, int y, int z, boolean doLight, boolean doTessellating) {
-		renderBlock(info, blockAccess, x, y, z, x, y, z, doLight, doTessellating);
+		renderBlock(info, blockAccess, x, y, z, new BlockPos(x, y, z), doLight, doTessellating);
 	}
 
-	public void renderBlock(RenderInfo info, IBlockAccess blockAccess, double x, double y, double z, int lightX, int lightY, int lightZ, boolean doLight, boolean doTessellating) {
-		/*float lightBottom = 0.5F;
-		float lightTop = 1.0F;
-		float lightEastWest = 0.8F;
-		float lightNorthSouth = 0.6F;
+	public void renderBlock(RenderInfo info, IBlockAccess blockAccess, double x, double y, double z, BlockPos lightPos, boolean doLight, boolean doTessellating) {
 
 		Tessellator tessellator = Tessellator.getInstance();
 		WorldRenderer renderer = tessellator.getWorldRenderer();
+		BlockRendererDispatcher renderBlocks = Minecraft.getMinecraft().getBlockRendererDispatcher();
+		BlockPos pos = new BlockPos(x, y, z);
+		renderer.startDrawingQuads();
+		renderer.setVertexFormat(DefaultVertexFormats.BLOCK);
+		renderer.setTranslation((double)(-pos.getX()), (double)(-pos.getY()), (double)(-pos.getZ()));
 
-		boolean realDoLight = doLight;
-
-		if (blockAccess == null) {
-			realDoLight = false;
-		}
-
-		if (doTessellating) {
-			renderer.startDrawingQuads();
-		}
-
-		float light = 0;
-		if (realDoLight) {
-			if (info.light < 0) {
-				light = info.baseBlock.getMixedBrightnessForBlock(blockAccess, lightX, lightY, lightZ);
-				light = light + ((1.0f - light) * 0.4f);
-			} else {
-				light = info.light;
-			}
-			int brightness = 0;
-			if (info.brightness < 0) {
-				brightness = info.baseBlock.getMixedBrightnessForBlock(blockAccess, lightX, lightY, lightZ);
-			} else {
-				brightness = info.brightness;
-			}
-			renderer.setBrightness(brightness);
-			renderer.setColorOpaque_F(lightBottom * light, lightBottom * light, lightBottom * light);
-		} else {
-//			tessellator.setColorOpaque_F(1.0F, 1.0F, 1.0F);
-			if (info.brightness >= 0) {
-				tessellator.setBrightness(info.brightness);
-			}
-		}
-
-		renderBlocks.setRenderBounds(info.minX, info.minY, info.minZ, info.maxX, info.maxY, info.maxZ);
-
-		if (info.renderSide[0]) {
-			renderBlocks.renderFaceYNeg(info.baseBlock, x, y, z, info.getBlockTextureFromSide(0));
-		}
-
-		if (realDoLight) {
-			tessellator.setColorOpaque_F(lightTop * light, lightTop * light, lightTop * light);
-		}
-
-		if (info.renderSide[1]) {
-			renderBlocks.renderFaceYPos(info.baseBlock, x, y, z, info.getBlockTextureFromSide(1));
-		}
-
-		if (realDoLight) {
-			tessellator.setColorOpaque_F(lightEastWest * light, lightEastWest * light, lightEastWest * light);
-		}
-
-		if (info.renderSide[2]) {
-			renderBlocks.renderFaceZNeg(info.baseBlock, x, y, z, info.getBlockTextureFromSide(2));
-		}
-
-		if (realDoLight) {
-			tessellator.setColorOpaque_F(lightEastWest * light, lightEastWest * light, lightEastWest * light);
-		}
-
-		if (info.renderSide[3]) {
-			renderBlocks.renderFaceZPos(info.baseBlock, x, y, z, info.getBlockTextureFromSide(3));
-		}
-
-		if (realDoLight) {
-			tessellator.setColorOpaque_F(lightNorthSouth * light, lightNorthSouth * light, lightNorthSouth * light);
-		}
-
-		if (info.renderSide[4]) {
-			renderBlocks.renderFaceXNeg(info.baseBlock, x, y, z, info.getBlockTextureFromSide(4));
-		}
-
-		if (realDoLight) {
-			tessellator.setColorOpaque_F(lightNorthSouth * light, lightNorthSouth * light, lightNorthSouth * light);
-		}
-
-		if (info.renderSide[5]) {
-			renderBlocks.renderFaceXPos(info.baseBlock, x, y, z, info.getBlockTextureFromSide(5));
-		}
-
-		if (doTessellating) {
-			tessellator.draw();
-		}*/
+        GlStateManager.scale(info.maxX - info.minX, info.maxY - info.minY, info.maxZ - info.minZ);
+		renderBlocks.renderBlock(info.blockState, pos, blockAccess, renderer);
+		tessellator.draw();
 	}
 }

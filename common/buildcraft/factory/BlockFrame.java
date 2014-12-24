@@ -14,27 +14,37 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraft.util.EnumFacing;
-import buildcraft.BuildCraftCore;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CoreConstants;
+import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.IFramePipeConnection;
 import buildcraft.core.utils.Utils;
 
 public class BlockFrame extends Block implements IFramePipeConnection {
 
+	public static PropertyBool UP_PROP = PropertyBool.create("up");
+	public static PropertyBool DOWN_PROP = PropertyBool.create("down");
+	public static PropertyBool WEST_PROP = PropertyBool.create("west");
+	public static PropertyBool EAST_PROP = PropertyBool.create("east");
+	public static PropertyBool NORTH_PROP = PropertyBool.create("north");
+	public static PropertyBool SOUTH_PROP = PropertyBool.create("south");
+	
+	
 	public BlockFrame() {
 		super(Material.glass);
 		setHardness(0.5F);
@@ -199,4 +209,28 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 	public void getSubBlocks(Item item, CreativeTabs tab, List list) {
 		list.add(new ItemStack(this));
 	}
+	
+	public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock){
+		boolean oldUp = (Boolean) state.getValue(UP_PROP);
+		boolean oldDown = (Boolean) state.getValue(DOWN_PROP);
+		boolean oldNorth = (Boolean) state.getValue(NORTH_PROP);
+		boolean oldSouth = (Boolean) state.getValue(SOUTH_PROP);
+		boolean oldEast = (Boolean) state.getValue(EAST_PROP);
+		boolean oldWest = (Boolean) state.getValue(WEST_PROP);
+		Object newOrientation = null;
+		boolean up = Utils.checkLegacyPipesConnections(world, pos, pos.up());
+		boolean down = Utils.checkLegacyPipesConnections(world, pos, pos.down());
+		boolean north = Utils.checkLegacyPipesConnections(world, pos, pos.north());
+		boolean south = Utils.checkLegacyPipesConnections(world, pos, pos.south());
+		boolean east = Utils.checkLegacyPipesConnections(world, pos, pos.east());
+		boolean west = Utils.checkLegacyPipesConnections(world, pos, pos.west());
+		
+//		if(oldUp != up)
+//		else if(oldDown != down)
+//		else if(oldNorth != north)
+//		else if(oldSouth != south)
+//		else if(oldEast != east)
+//		else if
+	}
+
 }

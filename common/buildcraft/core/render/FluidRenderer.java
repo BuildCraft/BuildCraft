@@ -95,10 +95,10 @@ public final class FluidRenderer {
 		diplayLists = new int[DISPLAY_STAGES];
 
 		if (fluid.getBlock() != null) {
-			liquidBlock.baseBlock = fluid.getBlock();
+			liquidBlock.blockState = fluid.getBlock().getDefaultState();
 			//liquidBlock.texture = getFluidTexture(fluidStack, flowing);
 		} else {
-			liquidBlock.baseBlock = Blocks.water;
+			liquidBlock.blockState = Blocks.water.getDefaultState();
 			//liquidBlock.texture = getFluidTexture(fluidStack, flowing);
 		}
 

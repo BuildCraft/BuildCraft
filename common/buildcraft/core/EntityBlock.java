@@ -8,12 +8,12 @@
  */
 package buildcraft.core;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class EntityBlock extends Entity {
 
@@ -23,6 +23,8 @@ public class EntityBlock extends Entity {
 	public float rotationZ = 0;
 	public double iSize, jSize, kSize;
 	private int brightness = -1;
+	public ResourceLocation resource;
+	public IBlockState blockState;
 
 	public EntityBlock(World world) {
 		super(world);

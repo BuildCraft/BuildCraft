@@ -35,7 +35,7 @@ public class RenderLaserBlock extends TileEntitySpecialRenderer {
 			GL11.glTranslated(-tileentity.getPos().getX(), -tileentity.getPos().getY(), -tileentity.getPos().getZ());
 
 			GL11.glPushMatrix();
-			RenderLaser.doRenderLaser(TileEntityRendererDispatcher.instance.renderEngine,
+			RenderLaser.doRenderLaser(tileentity.getWorld(), TileEntityRendererDispatcher.instance.renderEngine,
 					laser.laser, laser.getTexture());
 			GL11.glPopMatrix();
 

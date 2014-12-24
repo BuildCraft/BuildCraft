@@ -8,8 +8,6 @@
  */
 package buildcraft.core.render;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
@@ -18,6 +16,10 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+
+import org.lwjgl.opengl.GL11;
+
 import buildcraft.api.core.Position;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
@@ -53,7 +55,7 @@ public class RenderLaser extends Render {
 		return box [index];
 	}
 
-	private static void initScaledBoxes () {
+	private static void initScaledBoxes (World world) {
 		if (scaledBoxes == null) {
 			scaledBoxes = new int [100][20];
 
@@ -82,7 +84,7 @@ public class RenderLaser extends Render {
 					block.maxY = maxSize / 2F - diff;
 					block.maxZ = maxSize / 2F - diff;
 
-					RenderEntityBlock.INSTANCE.renderBlock(block, null, 0, 0,
+					RenderEntityBlock.INSTANCE.renderBlock(block, world, 0, 0,
 							0, false, true);
 
 					GL11.glEndList();
@@ -111,13 +113,13 @@ public class RenderLaser extends Render {
 
 		// FIXME: WARNING! not using getBox (laser) will kill laser movement.
 		// we can use some other method for the animation though.
-		doRenderLaser(renderManager.renderEngine, laser.data, laser.getTexture());
+		doRenderLaser(laser.worldObj, renderManager.renderEngine, laser.data, laser.getTexture());
 
 		GL11.glPopAttrib();
 		GL11.glPopMatrix();
 	}
 
-	public static void doRenderLaserWave(TextureManager textureManager, LaserData laser, ResourceLocation texture) {
+	public static void doRenderLaserWave(World world, TextureManager textureManager, LaserData laser, ResourceLocation texture) {
 		if (!laser.isVisible || texture == null) {
 			return;
 		}
@@ -134,7 +136,7 @@ public class RenderLaser extends Render {
 
 		int indexList = 0;
 
-		initScaledBoxes();
+		initScaledBoxes(world);
 
 		double x1 = laser.wavePosition;
 		double x2 = x1 + scaledBoxes [0].length * STEP;
@@ -157,7 +159,7 @@ public class RenderLaser extends Render {
 
 
 
-	public static void doRenderLaser(TextureManager textureManager, LaserData laser, ResourceLocation texture) {
+	public static void doRenderLaser(World world, TextureManager textureManager, LaserData laser, ResourceLocation texture) {
 		if (!laser.isVisible || texture == null) {
 			return;
 		}
@@ -172,7 +174,7 @@ public class RenderLaser extends Render {
 
 		textureManager.bindTexture(texture);
 
-		initScaledBoxes();
+		initScaledBoxes(world);
 
 		doRenderLaserLine(laser.renderSize, laser.laserTexAnimation);
 

@@ -42,7 +42,7 @@ public class RenderBuilder extends RenderBoxProvider {
 					if (laser != null) {
 						GL11.glPushMatrix();
 						RenderLaser
-								.doRenderLaser(
+								.doRenderLaser(tileentity.getWorld(),
 										TileEntityRendererDispatcher.instance.renderEngine,
 										laser, EntityLaser.LASER_TEXTURES[4]);
 						GL11.glPopMatrix();

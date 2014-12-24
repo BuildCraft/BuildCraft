@@ -335,16 +335,6 @@ public class BuildCraftFactory extends BuildCraftMod {
         InterModComms.processIMC(event);
     }
 
-	/*@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public void loadTextures(TextureStitchEvent.Pre evt) {
-		if (evt.map.getTextureType() == 0) {
-			TextureMap terrainTextures = evt.map;
-			FactoryProxyClient.pumpTexture = terrainTextures.registerIcon("buildcraft:pump_tube");
-			FactoryProxyClient.drillTexture = terrainTextures.registerIcon("buildcraft:blockDrillTexture");
-			FactoryProxyClient.drillHeadTexture = terrainTextures.registerIcon("buildcraft:blockDrillHeadTexture");
-		}
-	}*/
 
 	@Mod.EventHandler
 	public void whiteListAppliedEnergetics(FMLInitializationEvent event) {
