@@ -8,17 +8,20 @@
  */
 package buildcraft.silicon;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemMeshDefinition;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
@@ -83,5 +86,33 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 			nbt.createBoard(nbtData);
 			itemList.add(stack.copy());
 		}
+	}
+	
+	@Override
+	public void registerModels() {
+		//List to contains all NBT variants
+		List<String> variants = new ArrayList<String>();
+		
+		// Add Default Variant
+		variants.add("buildcraftsilicon:board_unknown");
+		
+		for (RedstoneBoardNBT nbt : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
+			variants.add(nbt.getRessourceID());
+		}
+		
+		// Register all items variants
+		ModelBakery.addVariantName(this, variants.toArray(new String[variants.size()]));
+		
+		// Use custom ItemMeshDefinition to render with NBT
+		Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(this, new ItemMeshDefinition() {
+
+			@Override
+			public ModelResourceLocation getModelLocation(ItemStack stack) {
+				NBTTagCompound nbt = NBTUtils.getItemData(stack);
+				if(nbt == null || RedstoneBoardRegistry.instance.getRedstoneBoard(nbt) == null) return new ModelResourceLocation("buildcraftsilicon:board_unknown", "inventory");
+				else return RedstoneBoardRegistry.instance.getRedstoneBoard(nbt).getModelLocation();
+			}
+			
+		});
 	}
 }
