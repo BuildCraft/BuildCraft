@@ -236,6 +236,8 @@ public class BuildCraftTransport extends BuildCraftMod {
     public static IActionInternal[] actionValve = new IActionInternal[4];
 
     public static boolean debugPrintFacadeList = false;
+
+	public static float gateCostMultiplier = 1.0F;
     
 	private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
 
@@ -260,6 +262,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 			Property printFacadeList = BuildCraftCore.mainConfiguration.get("debug", "facades.printFacadeList", false);
 			debugPrintFacadeList = printFacadeList.getBoolean();
+
+			gateCostMultiplier = BuildCraftCore.mainConfiguration.getFloat("gate.recipeCostMultiplier", Configuration.CATEGORY_GENERAL, 1.0F, 0.001F, 1000.0F, "The multiplier for gate recipe cost.");
 
 			filteredBufferBlock = new BlockFilteredBuffer();
 			CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));
@@ -374,9 +378,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 			lensItem.setUnlocalizedName("pipeLens");
 			CoreProxy.proxy.registerItem(lensItem);
 
-			powerAdapterItem = new ItemPowerAdapter();
-			powerAdapterItem.setUnlocalizedName("pipePowerAdapter");
-			CoreProxy.proxy.registerItem(powerAdapterItem);
+			//powerAdapterItem = new ItemPowerAdapter();
+			//powerAdapterItem.setUnlocalizedName("pipePowerAdapter");
+			//CoreProxy.proxy.registerItem(powerAdapterItem);
 
 			robotStationItem = new ItemRobotStation();
 			robotStationItem.setUnlocalizedName("robotStation");
@@ -539,15 +543,15 @@ public class BuildCraftTransport extends BuildCraftMod {
 			}
 
 			// GATES
-			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:simpleGate", 100000,
+			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:simpleGate", (int) Math.round(100000 * gateCostMultiplier),
 					ItemGate.makeGateItem(GateMaterial.REDSTONE, GateLogic.AND), Chipset.RED.getStack(),
 					PipeWire.RED.getStack());
 
-			addGateRecipe("Iron", 200000, GateMaterial.IRON, Chipset.IRON, PipeWire.RED, PipeWire.BLUE);
-			addGateRecipe("Gold", 400000, GateMaterial.GOLD, Chipset.GOLD, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
-			addGateRecipe("Diamond", 800000, GateMaterial.DIAMOND, Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE,
+			addGateRecipe("Iron", (int) Math.round(200000 * gateCostMultiplier), GateMaterial.IRON, Chipset.IRON, PipeWire.RED, PipeWire.BLUE);
+			addGateRecipe("Gold", (int) Math.round(400000 * gateCostMultiplier), GateMaterial.GOLD, Chipset.GOLD, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
+			addGateRecipe("Diamond", (int) Math.round(800000 * gateCostMultiplier), GateMaterial.DIAMOND, Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE,
 					PipeWire.GREEN, PipeWire.YELLOW);
-			addGateRecipe("Emerald", 1200000, GateMaterial.EMERALD, Chipset.EMERALD, PipeWire.RED, PipeWire.BLUE,
+			addGateRecipe("Emerald", (int) Math.round(1200000 * gateCostMultiplier), GateMaterial.EMERALD, Chipset.EMERALD, PipeWire.RED, PipeWire.BLUE,
 					PipeWire.GREEN, PipeWire.YELLOW);
 
 
