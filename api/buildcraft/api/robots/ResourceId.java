@@ -38,7 +38,7 @@ public abstract class ResourceId {
 
 	@Override
 	public int hashCode() {
-		return ((index.hashCode() * 37) + side.ordinal() * 37) + localId;
+		return (((index != null ? index.hashCode() : 0) * 37) + (side != null ? side.ordinal() : 0) * 37) + localId;
 	}
 
 	public void writeToNBT(NBTTagCompound nbt) {
