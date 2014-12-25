@@ -76,7 +76,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		ISyncedTile, ISolidSideTile, IGuiReturnHandler, IUpdatePlayerListBox {
 
 	public static final RenderStateProperty RENDER_STATE_PROP = new RenderStateProperty();
-	public static final CoreStateProperty CORE_STATE_PROP = new CoreStateProperty();
 
 	public boolean initialized = false;
 	public final PipeRenderState renderState = new PipeRenderState();
@@ -97,28 +96,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	private TileBuffer[] tileBuffer;
 	private int glassColor = -1;
-
-	public static class CoreStateProperty implements IUnlistedProperty<CoreState> {
-		@Override
-		public String getName() {
-			return "coreState";
-		}
-
-		@Override
-		public boolean isValid(CoreState value) {
-			return true;
-		}
-
-		@Override
-		public Class<CoreState> getType() {
-			return CoreState.class;
-		}
-
-		@Override
-		public String valueToString(CoreState value) {
-			return value.toString();
-		}
-	}
 
 	public static class RenderStateProperty implements IUnlistedProperty<PipeRenderState> {
 		@Override
@@ -1075,7 +1052,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	@Override
 	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
-		return oldState != newState;
+		// All BlockState changes are related to pipe information and require NOT removing the tile entity.
+		return false;
 	}
 
 	@Override
@@ -1198,11 +1176,5 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	@Override
 	public IPipe getPipe() {
 		return pipe;
-	}
-
-	public IExtendedBlockState getState(IBlockState state) {
-		IExtendedBlockState extendedBlockState = ((IExtendedBlockState) state)
-				.withProperty(RENDER_STATE_PROP, renderState);
-		return extendedBlockState;
 	}
 }

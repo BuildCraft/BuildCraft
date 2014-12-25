@@ -12,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.IHopper;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import buildcraft.core.TileBuildCraft;
@@ -19,7 +20,7 @@ import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.Transactor;
 
-public class TileHopper extends TileBuildCraft implements IInventory {
+public class TileHopper extends TileBuildCraft implements IInventory, IHopper {
 
 	private final SimpleInventory inventory = new SimpleInventory(4, "Hopper", 64);
 	private boolean isEmpty;
@@ -147,5 +148,20 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	@Override
 	public String getName() {
 		return inventory.getName();
+	}
+
+	@Override
+	public double getXPos() {
+		return pos.getX();
+	}
+
+	@Override
+	public double getYPos() {
+		return pos.getY();
+	}
+
+	@Override
+	public double getZPos() {
+		return pos.getZ();
 	}
 }

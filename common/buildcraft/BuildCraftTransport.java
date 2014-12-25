@@ -527,14 +527,15 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public void registerModels(ModelBakeEvent event) {
 		for (Object o : Block.blockRegistry) {
 			if (o instanceof BlockGenericPipe) {
-				BCLog.logger.info("Registering model for " + ((Block) o).getUnlocalizedName());
 				event.modelRegistry.putObject(new ModelResourceLocation(Utils.getBlockName((Block) o), null), new PipeRendererModel());
-				for (EnumFacing f: EnumFacing.values()) {
-					event.modelRegistry.putObject(new ModelResourceLocation(Utils.getBlockName((Block) o), "facing=" + f.name().toLowerCase()), new PipeRendererModel());
+				event.modelRegistry.putObject(new ModelResourceLocation(Utils.getBlockName((Block) o), "normal"), new PipeRendererModel());
+				for (int i = 0; i < 16; i++) {
+					event.modelRegistry.putObject(new ModelResourceLocation(Utils.getBlockName((Block) o), "data=" + i), new PipeRendererModel());
 				}
 			}
 		}
 	}
+
 	@SubscribeEvent
 	public void registerTextures(TextureStitchEvent.Pre event) {
 		pipeIconProvider.registerIcons(event.map);

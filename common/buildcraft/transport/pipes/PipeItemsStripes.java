@@ -251,7 +251,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 			if (!BlockUtils.isUnbreakableBlock(getWorld(), p.toBlockPos())) {
 				IBlockState state = getWorld().getBlockState(p.toBlockPos());
 				Block block = state.getBlock();
-				int metadata = ((EnumFacing)state.getValue(BlockBuildCraft.FACING_PROP)).getIndex();
+				int metadata = state.getBlock().damageDropped(state);
 				
 				ItemStack stack = new ItemStack(block, 1, metadata);
 				EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld(),

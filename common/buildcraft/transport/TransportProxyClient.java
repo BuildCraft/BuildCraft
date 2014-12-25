@@ -95,13 +95,6 @@ public class TransportProxyClient extends TransportProxy {
 		registerPipeRenderer(BuildCraftTransport.pipeItemsSandstone);
 		registerPipeRenderer(BuildCraftTransport.pipeFluidsSandstone);
         registerPipeRenderer(BuildCraftTransport.pipePowerSandstone);
-
-		/*registerPipeRenderer(BuildCraftTransport.facadeItem, facadeItemRenderer);
-		registerPipeRenderer(BuildCraftTransport.plugItem, plugItemRenderer);
-		registerPipeRenderer(BuildCraftTransport.robotStationItem, robotStationItemRenderer);
-		registerPipeRenderer(BuildCraftTransport.pipeGate, gateItemRenderer);*/
-
-		// TODO: PIPEWORLDRENDERER
 	}
 
 	@Override

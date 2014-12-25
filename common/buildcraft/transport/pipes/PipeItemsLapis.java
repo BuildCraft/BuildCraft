@@ -23,6 +23,7 @@ import buildcraft.api.core.EnumColor;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.BlockBuildCraft;
+import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
@@ -76,7 +77,7 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 	public void setColor(EnumColor color) {
 		if (color.ordinal() != container.getBlockMetadata()) {
 			BlockPos pos = container.getPos();
-			container.getWorld().setBlockState(pos, container.getWorld().getBlockState(pos).withProperty(BlockBuildCraft.FACING_PROP, color), 3);
+			container.getWorld().setBlockState(pos, container.getWorld().getBlockState(pos).withProperty(BlockGenericPipe.DATA_PROP, color.ordinal()), 3);
 			container.scheduleRenderUpdate();
 		}
 	}

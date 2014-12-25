@@ -63,10 +63,6 @@ public class PipeRendererModel implements IBakedModel, ISmartBlockModel, ISmartI
 				0
 		};
 	}
-
-	private int[] vertexToInts(float x, float y, float z, TextureAtlasSprite texture, float u, float v) {
-		return vertexToInts(x, y, z, -1, texture, u, v);
-	}
 	
 	@Override
 	public List getFaceQuads(EnumFacing p_177551_1_) {
@@ -103,18 +99,20 @@ public class PipeRendererModel implements IBakedModel, ISmartBlockModel, ISmartI
 			}
 	};
 
-	private BakedQuad createSidedBakedQuad(float x1, float x2, float z1, float z2, float y, TextureAtlasSprite texture, EnumFacing side)
+	private void createTwoSidedBakedQuad(List<BakedQuad> quads, float x1, float x2, float z1, float z2, float y, TextureAtlasSprite texture, EnumFacing side)
 	{
 		Vec3 v1 = rotate(new Vec3(x1 - .5, y - .5, z1 - .5), side).addVector(.5, .5, .5);
 		Vec3 v2 = rotate(new Vec3(x1 - .5, y - .5, z2 - .5), side).addVector(.5, .5, .5);
 		Vec3 v3 = rotate(new Vec3(x2 - .5, y - .5, z2 - .5), side).addVector(.5, .5, .5);
 		Vec3 v4 = rotate(new Vec3(x2 - .5, y - .5, z1 - .5), side).addVector(.5, .5, .5);
-		return new BakedQuad(Ints.concat(
-				vertexToInts((float)v1.xCoord, (float)v1.yCoord, (float)v1.zCoord, -1, texture, x1 * 16, z1 * 16),
-				vertexToInts((float)v2.xCoord, (float)v2.yCoord, (float)v2.zCoord, -1, texture, x1 * 16, z2 * 16),
-				vertexToInts((float)v3.xCoord, (float)v3.yCoord, (float)v3.zCoord, -1, texture, x2 * 16, z2 * 16),
-				vertexToInts((float)v4.xCoord, (float)v4.yCoord, (float)v4.zCoord, -1, texture, x2 * 16, z1 * 16)
-		), -1, side);
+		int[] data = Ints.concat(
+				vertexToInts((float) v1.xCoord, (float) v1.yCoord, (float) v1.zCoord, -1, texture, x1 * 16, z1 * 16),
+				vertexToInts((float) v2.xCoord, (float) v2.yCoord, (float) v2.zCoord, -1, texture, x1 * 16, z2 * 16),
+				vertexToInts((float) v3.xCoord, (float) v3.yCoord, (float) v3.zCoord, -1, texture, x2 * 16, z2 * 16),
+				vertexToInts((float) v4.xCoord, (float) v4.yCoord, (float) v4.zCoord, -1, texture, x2 * 16, z1 * 16)
+		);
+		quads.add(new BakedQuad(data, -1, side));
+		quads.add(new BakedQuad(data, -1, side.getOpposite()));
 	}
 
 	private static Vec3 rotate(Vec3 vec, EnumFacing side)
@@ -131,50 +129,73 @@ public class PipeRendererModel implements IBakedModel, ISmartBlockModel, ISmartI
 		return null;
 	}
 
+	private EnumFacing getSide(Vec3 a, Vec3 b, Vec3 c) {
+		int dir = a.yCoord == b.yCoord && b.yCoord == c.yCoord ? 0 : (a.xCoord == b.xCoord && b.xCoord == c.xCoord ? 2 : 4);
+		if (dir == 0) {
+			dir += (c.yCoord >= 0.5) ? 1 : 0;
+		} else if (dir == 2) {
+			dir += (c.xCoord >= 0.5) ? 1 : 0;
+		} else if (dir == 4) {
+			dir += (c.zCoord >= 0.5) ? 1 : 0;
+		}
+		return EnumFacing.getFront(dir);
+	}
+
 	@Override
 	public List getGeneralQuads() {
 		LinkedList<BakedQuad> quads = new LinkedList<BakedQuad>();
-		if (state != null) {
-			PipeRenderState renderState = state.getValue(TileGenericPipe.RENDER_STATE_PROP);
-			if (renderState == null || renderState.pipeConnectionMatrix == null) {
-				return quads;
-			}
-
-			for (int i = 0; i < 6; i++) {
-				isConnected[i] = renderState.pipeConnectionMatrix.isConnected(EnumFacing.getFront(i));
-				textures[i] = BuildCraftTransport.pipeIconProvider.getIcon(renderState.textureMatrix.getTextureIndex(EnumFacing.getFront(i)));
-			}
-			textures[6] = BuildCraftTransport.pipeIconProvider.getIcon(renderState.textureMatrix.getTextureIndex(null));
-		} else {
-			for (int i = 0; i < 6; i++) {
-				isConnected[i] = i < 2;
-			}
-			for (int i = 0; i < 7; i++) {
-				textures[i] = BuildCraftTransport.pipeIconProvider.getIcon(((ItemPipe) stack.getItem()).getPipeIconIndex());
-			}
-		}
 
 		float min = CoreConstants.PIPE_MIN_POS;
 		float max = CoreConstants.PIPE_MAX_POS;
 
+		if (this.state != null) {
+			PipeRenderState renderState = this.state.getValue(TileGenericPipe.RENDER_STATE_PROP);
+			if (renderState != null) {
+				for (int i = 0; i < 6; i++) {
+					isConnected[i] = renderState.pipeConnectionMatrix.isConnected(EnumFacing.getFront(i));
+					if (isConnected[i]) {
+						textures[i] = BuildCraftTransport.pipeIconProvider.getIcon(renderState.textureMatrix.getTextureIndex(EnumFacing.getFront(i)));
+					}
+				}
+				textures[6] = BuildCraftTransport.pipeIconProvider.getIcon(renderState.textureMatrix.getTextureIndex(null));
+			} else {
+				textures[6] = BuildCraftTransport.pipeIconProvider.getIcon(0);
+				for (int i = 0; i < 6; i++) {
+					isConnected[i] = false;
+				}
+			}
+		} else {
+			for (int i = 0; i < 6; i++) {
+				isConnected[i] = i < 2;
+			}
+			textures[0] = BuildCraftTransport.pipeIconProvider.getIcon(((ItemPipe) stack.getItem()).getPipeIconIndex());
+			textures[1] = BuildCraftTransport.pipeIconProvider.getIcon(((ItemPipe) stack.getItem()).getPipeIconIndex());
+			textures[6] = BuildCraftTransport.pipeIconProvider.getIcon(((ItemPipe) stack.getItem()).getPipeIconIndex());
+		}
+
 		for (EnumFacing f : EnumFacing.values()) {
 			if (!isConnected[f.ordinal()]) {
-				quads.add(createSidedBakedQuad(min, max, min, max, max, textures[6], f));
+				createTwoSidedBakedQuad(quads, min, max, min, max, max, textures[6], f);
 			} else {
+				// This renderer is so bad...
 				TextureAtlasSprite sprite = textures[f.ordinal()];
 				for (float[][] v : quadVertexes) {
 					Vec3 v1 = rotate(new Vec3(v[0][0] - .5, v[0][1] - .5, v[0][2] - .5), f).addVector(.5, .5, .5);
 					Vec3 v2 = rotate(new Vec3(v[1][0] - .5, v[1][1] - .5, v[1][2] - .5), f).addVector(.5, .5, .5);
 					Vec3 v3 = rotate(new Vec3(v[2][0] - .5, v[2][1] - .5, v[2][2] - .5), f).addVector(.5, .5, .5);
 					Vec3 v4 = rotate(new Vec3(v[3][0] - .5, v[3][1] - .5, v[3][2] - .5), f).addVector(.5, .5, .5);
-					for (EnumFacing ff : EnumFacing.values()) {
-						quads.add(new BakedQuad(Ints.concat(
-								vertexToInts((float) v1.xCoord, (float) v1.yCoord, (float) v1.zCoord, -1, sprite, 4, 0),
-								vertexToInts((float) v2.xCoord, (float) v2.yCoord, (float) v2.zCoord, -1, sprite, 12, 0),
-								vertexToInts((float) v3.xCoord, (float) v3.yCoord, (float) v3.zCoord, -1, sprite, 12, 4),
-								vertexToInts((float) v4.xCoord, (float) v4.yCoord, (float) v4.zCoord, -1, sprite, 4, 4)
-						), -1, ff));
-					}
+					EnumFacing side = getSide(v1, v2, v3);
+					int[] data = Ints.concat(
+							vertexToInts((float) v1.xCoord, (float) v1.yCoord, (float) v1.zCoord, -1, sprite, 4, 0),
+							vertexToInts((float) v2.xCoord, (float) v2.yCoord, (float) v2.zCoord, -1, sprite, 12, 0),
+							vertexToInts((float) v3.xCoord, (float) v3.yCoord, (float) v3.zCoord, -1, sprite, 12, 4),
+							vertexToInts((float) v4.xCoord, (float) v4.yCoord, (float) v4.zCoord, -1, sprite, 4, 4)
+					);
+					quads.add(new BakedQuad(data, -1, side));
+					//quads.add(new BakedQuad(data, -1, side.getOpposite()));
+				}
+				if (isItem && f.ordinal() < 2) {
+					createTwoSidedBakedQuad(quads, min, max, min, max, 1.0F, textures[f.ordinal()], f);
 				}
 			}
 		}

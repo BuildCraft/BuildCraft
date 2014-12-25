@@ -11,12 +11,16 @@ package buildcraft.core;
 import java.util.Comparator;
 import java.util.Random;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -45,26 +49,26 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	public static final PropertyDirection FACING_PROP = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
 	public static final PropertyDirection FACING_6_PROP = PropertyDirection.create("facing");
 
-	public static final PropertyEnum COLOR_PROP = PropertyEnum.create("color", EnumColor.class, EnumColor.VALUES);
+	public static final IProperty COLOR_PROP = PropertyEnum.create("color", EnumColor.class, EnumColor.VALUES);
 
-	protected final PropertyEnum[] properties;
+	protected final IProperty[] properties;
 
 	private final int[] propertySizes;
 	private final BlockState myBlockState;
 
 	protected BlockBuildCraft(Material material) {
-		this(material, CreativeTabBuildCraft.BLOCKS, new PropertyEnum[]{});
+		this(material, CreativeTabBuildCraft.BLOCKS, new IProperty[]{});
 	}
 
 	protected BlockBuildCraft(Material material, CreativeTabBuildCraft creativeTab) {
-		this(material, creativeTab, new PropertyEnum[]{});
+		this(material, creativeTab, new IProperty[]{});
 	}
 
-	protected BlockBuildCraft(Material material, PropertyEnum[] properties) {
+	protected BlockBuildCraft(Material material, IProperty[] properties) {
 		this(material, CreativeTabBuildCraft.BLOCKS, properties);
 	}
 
-	protected BlockBuildCraft(Material material, CreativeTabBuildCraft creativeTab, PropertyEnum[] properties) {
+	protected BlockBuildCraft(Material material, CreativeTabBuildCraft creativeTab, IProperty[] properties) {
 		super(material);
 		setCreativeTab(creativeTab.get());
 		setHardness(5F);
@@ -77,7 +81,14 @@ public abstract class BlockBuildCraft extends BlockContainer {
 		IBlockState defaultState = getBlockState().getBaseState();
 		for (int i = 0; i < properties.length; i++) {
 			try {
-				propertySizes[i] = ((Enum[]) properties[i].getValueClass().getMethod("values").invoke(null)).length;
+				if (properties[i] instanceof PropertyBool) {
+					propertySizes[i] = 2;
+				} else if (properties[i] instanceof PropertyInteger) {
+					// HACK! Only allows 4-bit integers
+					propertySizes[i] = 16;
+				} else if (properties[i].getValueClass().isEnum()) {
+					propertySizes[i] = ((Enum[]) properties[i].getValueClass().getMethod("values").invoke(null)).length;
+				}
 			} catch(Exception e) {
 				e.printStackTrace();
 			}
@@ -108,7 +119,13 @@ public abstract class BlockBuildCraft extends BlockContainer {
 		int mul = 1;
 		int val = 0;
 		for (int i = 0; i < properties.length; i++) {
-			val += ((Enum) state.getValue(properties[i])).ordinal() * mul;
+			if (properties[i] instanceof PropertyInteger) {
+				val += ((Integer) state.getValue(properties[i])).intValue();
+			} else if (properties[i] instanceof PropertyBool) {
+				val += ((Boolean) state.getValue(properties[i])).booleanValue() ? 1 : 0;
+			} else {
+				val += ((Enum) state.getValue(properties[i])).ordinal() * mul;
+			}
 			mul *= propertySizes[i];
 		}
 		return val;
@@ -126,7 +143,11 @@ public abstract class BlockBuildCraft extends BlockContainer {
 			val -= enumVal;
 			val /= prevMul;
 			try {
-				if (properties[i].getValueClass() == EnumFacing.class) {
+				if (properties[i] instanceof PropertyInteger) {
+					state = state.withProperty(properties[i], val);
+				} else if (properties[i] instanceof PropertyBool) {
+					state = state.withProperty(properties[i], val > 0);
+				} else if (properties[i].getValueClass() == EnumFacing.class) {
 					state = state.withProperty(properties[i], EnumFacing.getFront(enumVal));
 				} else {
 					state = state.withProperty(properties[i], ((Enum[]) properties[i].getValueClass().getMethod("values").invoke(null))[enumVal]);

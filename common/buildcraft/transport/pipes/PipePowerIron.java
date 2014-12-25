@@ -23,6 +23,7 @@ import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.PowerMode;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
@@ -78,8 +79,7 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 
 	public void setMode(PowerMode mode) {
 		if (mode.ordinal() != container.getBlockMetadata()) {
-			//TODO: Check if that is correct
-			container.getWorld().setBlockState(container.getPos(), container.getWorld().getBlockState(container.getPos()).withProperty(BlockBuildCraft.FACING_PROP, mode), 3);
+			container.getWorld().setBlockState(container.getPos(), container.getWorld().getBlockState(container.getPos()).withProperty(BlockGenericPipe.DATA_PROP, mode.ordinal()), 3);
 			container.scheduleRenderUpdate();
 		}
 	}

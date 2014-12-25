@@ -22,6 +22,7 @@ import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -46,6 +47,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -115,17 +117,19 @@ public class BlockGenericPipe extends BlockBuildCraft implements IModelRegister 
 		}
 	}
 
+	public static final PropertyInteger DATA_PROP = PropertyInteger.create("data", 0, 15);
+
 	private boolean skippedFirstIconRegister;
 
 	/* Defined subprograms ************************************************* */
 	public BlockGenericPipe() {
-		super(Material.glass, new PropertyEnum[]{FACING_6_PROP});
+		super(Material.glass, new IProperty[]{DATA_PROP});
 		setCreativeTab(null);
 	}
 
 	@Override
 	protected BlockState createBlockState() {
-		return new ExtendedBlockState(this, new PropertyEnum[]{FACING_6_PROP}, new IUnlistedProperty[]{TileGenericPipe.CORE_STATE_PROP, TileGenericPipe.RENDER_STATE_PROP});
+		return new ExtendedBlockState(this, new IProperty[]{DATA_PROP}, new IUnlistedProperty[]{TileGenericPipe.RENDER_STATE_PROP});
 	}
 
 	@Override
@@ -1147,7 +1151,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IModelRegister 
 			return true;
 		}
 
-		boolean placed = world.setBlockState(pos, BuildCraftTransport.genericPipeBlock.getDefaultState().withProperty(FACING_6_PROP, EnumFacing.getFront(meta)));
+		boolean placed = world.setBlockState(pos, BuildCraftTransport.genericPipeBlock.getDefaultState().withProperty(DATA_PROP, meta));
 
 		if (placed) {
 			TileEntity tile = world.getTileEntity(pos);
@@ -1339,7 +1343,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IModelRegister 
 	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
 		TileEntity tile = world.getTileEntity(pos);
 		if (tile instanceof TileGenericPipe) {
-			return ((TileGenericPipe) tile).getState(state);
+			return ((IExtendedBlockState) state).withProperty(TileGenericPipe.RENDER_STATE_PROP, ((TileGenericPipe) tile).renderState);
 		} else {
 			return state;
 		}
