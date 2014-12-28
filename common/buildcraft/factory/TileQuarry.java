@@ -300,8 +300,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		if (!columnVisitListIsUpdated) { // nextTarget may not be accurate, at least search the target column for changes
 			for (int y = nextTarget[1] + 1; y < yCoord + 3; y++) {
 				Block block = worldObj.getBlock(nextTarget[0], y, nextTarget[2]);
-				if (BlockUtils.isAnObstructingBlock(block, worldObj, nextTarget[0], y, nextTarget[2])
-						|| !BuildCraftAPI.isSoftBlock(worldObj, nextTarget[0], y, nextTarget[2])) {
+				if (BlockUtils.isAnObstructingBlock(block, worldObj, nextTarget[0], y, nextTarget[2])) {
 					createColumnVisitList();
 					columnVisitListIsUpdated = true;
 					nextTarget = null;
@@ -373,12 +372,13 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 						if (!BlockUtils.canChangeBlock(block, worldObj, bx, by, bz)) {
 							blockedColumns[searchX][searchZ] = true;
-						} else if (!BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz)) {
-							visitList.add(new int[]{bx, by, bz});
-						}
 
-						if (height == 0 && !worldObj.isAirBlock(bx, by, bz)) {
-							columnHeights[searchX][searchZ] = by;
+							if (height == 0) {
+								columnHeights[searchX][searchZ] = by;
+							}
+
+						} else if (BlockUtils.isAnObstructingBlock(block, worldObj, bx, by, bz)) {
+							visitList.add(new int[]{bx, by, bz});
 						}
 
 						// Stop at two planes - generally any obstructions will have been found and will force a recompute prior to this
@@ -463,8 +463,14 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		}
 
 		if (isQuarriableBlock(targetX, targetY - 1, targetZ)) {
-			miner = new BlockMiner(worldObj, this, targetX, targetY - 1, targetZ);
-			stage = Stage.DIGGING;
+			if (BuildCraftAPI.isSoftBlock(worldObj, targetX, targetY - 1, targetZ)) {
+				miner = null;
+				stage = Stage.IDLE;
+				worldObj.setBlockToAir(targetX, targetY - 1, targetZ);
+			} else {
+				miner = new BlockMiner(worldObj, this, targetX, targetY - 1, targetZ);
+				stage = Stage.DIGGING;
+			}
 		} else {
 			stage = Stage.IDLE;
 		}
@@ -473,7 +479,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	private boolean isQuarriableBlock(int bx, int by, int bz) {
 		Block block = worldObj.getBlock(bx, by, bz);
 		return BlockUtils.canChangeBlock(block, worldObj, bx, by, bz)
-				&& !BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz);
+				&& BlockUtils.isAnObstructingBlock(block, worldObj, bx, by, bz);
+	//			&& !BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz);
 	}
 
 	@Override

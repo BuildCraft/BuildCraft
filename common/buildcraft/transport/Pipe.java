@@ -430,12 +430,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 			}
 		}
 
-		for (Gate gate : gates) {
-			if (gate != null) {
-				result.add(gate.getGateItem());
-			}
-		}
-
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			if (container.hasPipePluggable(direction)) {
 				for (ItemStack stack : container.getPipePluggable(direction).getDropItems(container)) {
