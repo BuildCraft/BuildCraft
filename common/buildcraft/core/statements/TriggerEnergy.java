@@ -68,6 +68,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITri
 		}
 		return false;
 	}
+
 	@Override
 	public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
 		if (container instanceof IGate) {
@@ -76,10 +77,9 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITri
 				return isTriggeredEnergyHandler((IEnergyHandler) gate.getPipe(), ForgeDirection.UNKNOWN);
 			}
 		}
-		
+
 		return false;
 	}
-
 
 	@Override
 	public boolean isTriggerActive(TileEntity tile, ForgeDirection side, IStatementContainer container, IStatementParameter[] parameters) {
