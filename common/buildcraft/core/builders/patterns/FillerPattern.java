@@ -117,18 +117,22 @@ public abstract class FillerPattern implements IFillerPattern {
 	public Blueprint getBlueprint (Box box, World world, Block block, int meta) {
 		Blueprint result = new Blueprint (box.sizeX(), box.sizeY(), box.sizeZ());
 
-		Template tmpl = getTemplate(box, world);
+		try {
+			Template tmpl = getTemplate(box, world);
 
-		for (int x = 0; x < box.sizeX(); ++x) {
-			for (int y = 0; y < box.sizeY(); ++y) {
-				for (int z = 0; z < box.sizeZ(); ++z) {
-					if (tmpl.contents[x][y][z] != null) {
-						result.contents[x][y][z] = SchematicRegistry.INSTANCE
-								.createSchematicBlock(block, meta);
+			for (int x = 0; x < box.sizeX(); ++x) {
+				for (int y = 0; y < box.sizeY(); ++y) {
+					for (int z = 0; z < box.sizeZ(); ++z) {
+						if (tmpl.contents[x][y][z] != null) {
+							result.contents[x][y][z] = SchematicRegistry.INSTANCE
+									.createSchematicBlock(block, meta);
+						}
+
 					}
-
 				}
 			}
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
 
 		return result;
