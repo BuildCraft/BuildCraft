@@ -21,6 +21,7 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.ITriggerProvider;
+import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.statements.TriggerPipeContents;
 
 public class PipeTriggerProvider implements ITriggerProvider {
@@ -69,7 +70,8 @@ public class PipeTriggerProvider implements ITriggerProvider {
 				break;
 		}
 
-		if (tile instanceof IEnergyHandler && ((IEnergyHandler) tile).getMaxEnergyStored(ForgeDirection.UNKNOWN) > 0) {
+		if (tile instanceof IEnergyHandler && ((IEnergyHandler) tile).getMaxEnergyStored(ForgeDirection.UNKNOWN) > 0
+				&& !(pipe instanceof PipePowerWood)) {
 			result.add((ITriggerInternal) BuildCraftCore.triggerEnergyHigh);
 			result.add((ITriggerInternal) BuildCraftCore.triggerEnergyLow);
 		}
