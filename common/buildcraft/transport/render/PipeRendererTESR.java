@@ -10,6 +10,7 @@ package buildcraft.transport.render;
 
 import java.util.HashMap;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 
 import org.lwjgl.opengl.GL11;
@@ -789,13 +790,15 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		float light = pipe.container.getWorldObj().getLightBrightness(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
 
 		int count = 0;
-		for (TravelingItem item : pipe.transport.items) {
-			if (count >= MAX_ITEMS_TO_RENDER) {
-				break;
-			}
+		synchronized (pipe.transport.items) {
+			for (TravelingItem item : pipe.transport.items) {
+				if (count >= MAX_ITEMS_TO_RENDER) {
+					break;
+				}
 
-			doRenderItem(item, x + item.xCoord - pipe.container.xCoord, y + item.yCoord - pipe.container.yCoord, z + item.zCoord - pipe.container.zCoord, light, item.color);
-			count++;
+				doRenderItem(item, x + item.xCoord - pipe.container.xCoord, y + item.yCoord - pipe.container.yCoord, z + item.zCoord - pipe.container.zCoord, light, item.color);
+				count++;
+			}
 		}
 
 		GL11.glPopMatrix();

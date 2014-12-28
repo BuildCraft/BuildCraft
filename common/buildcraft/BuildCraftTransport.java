@@ -20,6 +20,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -68,6 +69,7 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeActionProvider;
 import buildcraft.transport.PipeColoringRecipe;
 import buildcraft.transport.PipeIconProvider;
+import buildcraft.transport.PipeThreadManager;
 import buildcraft.transport.PipeTriggerProvider;
 import buildcraft.transport.TileFilteredBuffer;
 import buildcraft.transport.TileGenericPipe;
@@ -470,6 +472,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		TransportProxy.proxy.registerRenderers();
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+
+		FMLCommonHandler.instance().bus().register(PipeThreadManager.INSTANCE);
 	}
 
 	@Mod.EventHandler

@@ -79,6 +79,9 @@ public abstract class PipeTransport {
 	public void updateEntity() {
 	}
 
+	public void updateThread() {
+	}
+
 	public void setTile(TileGenericPipe tile) {
 	    this.container = tile;
 	}

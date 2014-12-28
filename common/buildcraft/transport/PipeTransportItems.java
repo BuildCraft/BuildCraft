@@ -47,6 +47,8 @@ public class PipeTransportItems extends PipeTransport {
 	public boolean allowBouncing = false;
 	public final TravelerSet items = new TravelerSet(this);
 
+	private final ArrayList<TravelingItem> toPushOut = new ArrayList<TravelingItem>();
+
 	@Override
 	public IPipeTile.PipeType getPipeType() {
 		return IPipeTile.PipeType.ITEM;
@@ -243,12 +245,23 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	@Override
-	public void updateEntity() {
+	public void updateThread() {
 		moveSolids();
 	}
 
+	@Override
+	public void updateEntity() {
+		for (TravelingItem item : toPushOut) {
+			TileEntity tile = container.getTile(item.output);
+			handleTileReached(item, tile);
+		}
+		toPushOut.clear();
+	}
+
 	private void moveSolids() {
-		items.flush();
+		synchronized (items) {
+			items.flush();
+		}
 
 		if (!container.getWorldObj().isRemote) {
 			items.purgeCorruptedItems();
@@ -290,13 +303,16 @@ public class PipeTransportItems extends PipeTransport {
 
 				// If the item has not been scheduled to removal by the hook
 				if (handleItem && items.scheduleRemoval(item)) {
-					handleTileReached(item, tile);
+					synchronized (toPushOut) {
+						toPushOut.add(item);
+					}
 				}
-
 			}
 		}
 		items.iterating = false;
-		items.flush();
+		synchronized (items) {
+			items.flush();
+		}
 	}
 
 	private boolean passToNextPipe(TravelingItem item, TileEntity tile) {

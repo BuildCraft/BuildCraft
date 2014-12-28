@@ -341,6 +341,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		}
 
 		sideProperties.validate(this);
+
+		PipeThreadManager.INSTANCE.addPipe(this);
 	}
 
 	protected void notifyBlockChanged() {
@@ -351,7 +353,30 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	@Override
+	public boolean canUpdate() {
+		return true;
+	}
+
+	@Override
 	public void updateEntity() {
+		if (!worldObj.isRemote) {
+			if (deletePipe) {
+				worldObj.setBlockToAir(xCoord, yCoord, zCoord);
+			}
+		}
+
+		if (!BlockGenericPipe.isValid(pipe)) {
+			return;
+		}
+
+		pipe.updateEntity();
+	}
+
+	public void postUpdateEntity() {
+
+	}
+
+	public void updateThread() {
 		if (attachPluggables) {
 			attachPluggables = false;
 			// Attach callback
@@ -365,10 +390,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		}
 
 		if (!worldObj.isRemote) {
-			if (deletePipe) {
-				worldObj.setBlockToAir(xCoord, yCoord, zCoord);
-			}
-
 			if (pipe == null) {
 				return;
 			}
@@ -382,7 +403,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			return;
 		}
 
-		pipe.updateEntity();
+		pipe.updateThread();
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			PipePluggable p = getPipePluggable(direction);

@@ -217,15 +217,12 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	}
 
 	@Override
-	public void updateEntity() {
+	public void updateThread() {
 		if (container.getWorldObj().isRemote) {
 			return;
 		}
 
-		moveFluids();
-
 		if (tracker.markTimeIfDelay(container.getWorldObj())) {
-
 			boolean init = false;
 			if (++clientSyncCounter > BuildCraftCore.longUpdateFactor) {
 				clientSyncCounter = 0;
@@ -236,6 +233,15 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 				BuildCraftTransport.instance.sendToPlayers(packet, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 			}
 		}
+	}
+
+	@Override
+	public void updateEntity() {
+		if (container.getWorldObj().isRemote) {
+			return;
+		}
+
+		moveFluids();
 	}
 
 	/**

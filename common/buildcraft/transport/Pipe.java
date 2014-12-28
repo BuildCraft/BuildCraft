@@ -141,6 +141,10 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 	public void updateEntity() {
 		transport.updateEntity();
+	}
+
+	public void updateThread() {
+		transport.updateThread();
 
 		if (internalUpdateScheduled) {
 			internalUpdate();
