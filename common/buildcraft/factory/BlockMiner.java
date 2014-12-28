@@ -112,6 +112,8 @@ public class BlockMiner {
 						Block.getIdFromBlock(block)
 								+ (meta << 12));
 
+				Utils.preDestroyBlock(world, x, y, z);
+
 				if (block.hasTileEntity(meta)) {
 					world.removeTileEntity(x, y, z);
 				}
