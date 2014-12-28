@@ -133,6 +133,7 @@ public abstract class FillerPattern implements IFillerPattern {
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
+			return null;
 		}
 
 		return result;
