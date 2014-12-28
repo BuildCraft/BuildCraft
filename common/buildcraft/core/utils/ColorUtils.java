@@ -54,6 +54,10 @@ public final class ColorUtils {
 	}
 	
 	public static int getColorIDFromDye(ItemStack stack) {
+		if (stack == null || stack.getItem() == null) {
+			return -1;
+		}
+
 		if (stack.getItem() == Items.dye) {
 			return 15 - stack.getItemDamage();
 		}

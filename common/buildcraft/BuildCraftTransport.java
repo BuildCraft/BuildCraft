@@ -538,8 +538,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 			// Lens
 			for (int i = 0; i < 16; i++) {
-				BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:lens:" + i, 10000, new ItemStack(lensItem, i, 4),
+				BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:lens:" + i, 10000, new ItemStack(lensItem, 2, i),
 						ColorUtils.getOreDictionaryName(15 - i), "blockGlass", "ingotIron");
+				BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:filter:" + i, 10000, new ItemStack(lensItem, 2, i + 16),
+						ColorUtils.getOreDictionaryName(15 - i), "blockGlass", Blocks.iron_bars);
 			}
 
 			// GATES
