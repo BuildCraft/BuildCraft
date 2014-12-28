@@ -190,10 +190,11 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		} else if (stage == Stage.IDLE) {
 			idling();
 		} else if (stage == Stage.MOVING) {
-			int energyToUse = 20 + (int) Math.ceil(getBattery().getEnergyStored() / 500);
+			int energyUsed = this.getBattery().useEnergy(20, (int) Math.ceil(20 + getBattery().getEnergyStored() / 10), false);
 
-			if (this.consumeEnergy(energyToUse)) {
-				speed = 0.1 + energyToUse / 2000F;
+			if (energyUsed >= 20) {
+
+				speed = 0.1 + energyUsed / 2000F;
 
 				// If it's raining or snowing above the head, slow down.
 				if (worldObj.isRaining()) {
@@ -201,7 +202,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 					int headBPY = (int) Math.floor(headPosY);
 					int headBPZ = (int) Math.floor(headPosZ);
 					if (worldObj.getHeightValue(headBPX, headBPZ) < headBPY) {
-						speed *= 0.675;
+						speed *= 0.7;
 					}
 				}
 
