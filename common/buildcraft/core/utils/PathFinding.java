@@ -93,7 +93,7 @@ public class PathFinding {
 	}
 
 	public void preRun() {
-		if(end == null) {
+		if (end == null) {
 			targetNotFound = searchForTarget(64);
 		}
 	}
