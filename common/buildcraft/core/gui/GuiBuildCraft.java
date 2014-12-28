@@ -18,6 +18,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
@@ -123,6 +124,11 @@ public abstract class GuiBuildCraft extends GuiContainer {
 			return;
 		}
 		IIcon icon = fluid.getFluid().getIcon(fluid);
+
+		if (icon == null) {
+			icon = ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
+		}
+
 		mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 		RenderUtils.setGLColorFromInt(fluid.getFluid().getColor(fluid));
 		int fullX = width / 16;
