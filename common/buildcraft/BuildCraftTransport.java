@@ -28,6 +28,7 @@ import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 
@@ -69,6 +70,7 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeActionProvider;
 import buildcraft.transport.PipeColoringRecipe;
 import buildcraft.transport.PipeIconProvider;
+import buildcraft.transport.PipeThreadInfoCommand;
 import buildcraft.transport.PipeThreadManager;
 import buildcraft.transport.PipeTriggerProvider;
 import buildcraft.transport.TileFilteredBuffer;
@@ -499,6 +501,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 				e.printStackTrace();
 			}
 		}
+
+		if (enableThreads) {
+			BuildCraftCore.command.addSubCommand(new PipeThreadInfoCommand());
+		}
 	}
 
 	public void loadRecipes() {
@@ -658,5 +664,12 @@ public class BuildCraftTransport extends BuildCraftMod {
 				TileGenericPipe.class.getCanonicalName());
 		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
 				TileFilteredBuffer.class.getCanonicalName());
+	}
+
+	@Mod.EventHandler
+	public void serverStarting(FMLServerStartingEvent event) {
+		if (enableThreads) {
+			PipeThreadManager.INSTANCE.refreshTicker();
+		}
 	}
 }

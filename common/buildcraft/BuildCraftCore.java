@@ -75,7 +75,7 @@ import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.BuildCraftConfiguration;
-import buildcraft.core.CommandBuildCraft;
+import buildcraft.core.command.CommandBuildCraft;
 import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.GuiHandler;
@@ -145,6 +145,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static int updateFactor = 10;
 	public static long longUpdateFactor = 40;
 	public static BuildCraftConfiguration mainConfiguration;
+	public static CommandBuildCraft command;
 
 	public static Block springBlock;
 	public static Item woodenGearItem;
@@ -320,6 +321,8 @@ public class BuildCraftCore extends BuildCraftMod {
 
 			MinecraftForge.EVENT_BUS.register(this);
 			MinecraftForge.EVENT_BUS.register(new BlockHighlightHandler());
+
+			command = new CommandBuildCraft();
 		} finally {
 			if (mainConfiguration.hasChanged()) {
 				mainConfiguration.save();
@@ -416,7 +419,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	@Mod.EventHandler
 	public void serverStarting(FMLServerStartingEvent event) {
 		serverThread = Thread.currentThread();
-		event.registerServerCommand(new CommandBuildCraft());
+		event.registerServerCommand(command);
 	}
 
 	@SubscribeEvent

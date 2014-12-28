@@ -6,8 +6,9 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core;
+package buildcraft.core.command;
 
+import java.util.HashMap;
 import java.util.List;
 
 import net.minecraft.command.CommandBase;
@@ -16,9 +17,15 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.util.ChatComponentText;
 
+import buildcraft.core.Version;
 import buildcraft.core.proxy.CoreProxy;
 
 public class CommandBuildCraft extends CommandBase {
+	private HashMap<String, SubCommandBase> subCommands = new HashMap<String, SubCommandBase>();
+
+	public void addSubCommand(SubCommandBase subCommand) {
+		subCommands.put(subCommand.getName(), subCommand);
+	}
 
 	@Override
 	public int compareTo(Object arg0) {
@@ -60,6 +67,12 @@ public class CommandBuildCraft extends CommandBase {
 			sender.addChatMessage(new ChatComponentText("Format: '" + this.getCommandName() + " <command> <arguments>'"));
 			sender.addChatMessage(new ChatComponentText("Available commands:"));
 			sender.addChatMessage(new ChatComponentText("- version : Version information."));
+			for (SubCommandBase subCommand : subCommands.values()) {
+				sender.addChatMessage(new ChatComponentText("- " + subCommand.getName() + " : " + subCommand.getDescription()));
+			}
+			return;
+		} else if (subCommands.containsKey(arguments[0])) {
+			subCommands.get(arguments[0]).processCommand(sender, arguments);
 			return;
 		}
 
