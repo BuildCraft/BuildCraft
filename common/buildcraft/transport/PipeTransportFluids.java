@@ -171,6 +171,9 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	private final SafeTimeTracker tracker = new SafeTimeTracker(BuildCraftCore.updateFactor);
 	private int clientSyncCounter = 0;
 
+	private int currentTimeSlot = -1;
+	private int currentOutputCount = 0;
+
     public PipeTransportFluids() {
 		for (ForgeDirection direction : orientations) {
 			internalTanks[direction.ordinal()] = new PipeSection(getCapacity());
@@ -216,10 +219,23 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		return false;
 	}
 
+	private void updateTimeSlots() {
+		int newTimeSlot = (int) container.getWorldObj().getTotalWorldTime() % travelDelay;
+		if (newTimeSlot != currentTimeSlot) {
+			currentTimeSlot = newTimeSlot;
+			currentOutputCount = computeCurrentConnectionStatesAndTickFlows(newTimeSlot > 0 && newTimeSlot < travelDelay ? newTimeSlot : 0);
+		}
+	}
+
 	@Override
 	public void updateThread() {
 		if (container.getWorldObj().isRemote) {
 			return;
+		}
+
+		updateTimeSlots();
+		if (currentOutputCount == 0) {
+			moveToCenter();
 		}
 
 		if (tracker.markTimeIfDelay(container.getWorldObj())) {
@@ -241,7 +257,11 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			return;
 		}
 
-		moveFluids();
+		if (currentOutputCount > 0) {
+			moveFromPipe(currentOutputCount);
+			moveFromCenter(currentOutputCount);
+			moveToCenter();
+		}
 	}
 
 	/**
@@ -372,16 +392,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		}
 	}
 
-	private void moveFluids() {
-		short newTimeSlot = (short) (container.getWorldObj().getTotalWorldTime() % travelDelay);
-
-		short outputCount = computeCurrentConnectionStatesAndTickFlows(newTimeSlot > 0 && newTimeSlot < travelDelay ? newTimeSlot : 0);
-		moveFromPipe(outputCount);
-		moveFromCenter(outputCount);
-		moveToCenter();
-	}
-
-	private void moveFromPipe(short outputCount) {
+	private void moveFromPipe(int outputCount) {
 		// Move liquid from the non-center to the connected output blocks
 		if (outputCount > 0) {
 			for (ForgeDirection o : directions) {
@@ -405,7 +416,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		}
 	}
 
-	private void moveFromCenter(short outputCount) {
+	private void moveFromCenter(int outputCount) {
 		// Split liquids moving to output equally based on flowrate, how much each side can accept and available liquid
 		FluidStack pushStack = internalTanks[ForgeDirection.UNKNOWN.ordinal()].getFluid();
 		int totalAvailable = internalTanks[ForgeDirection.UNKNOWN.ordinal()].getAvailable();
@@ -485,12 +496,12 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		}
 	}
 
-	private short computeCurrentConnectionStatesAndTickFlows(short newTimeSlot) {
-		short outputCount = 0;
+	private int computeCurrentConnectionStatesAndTickFlows(int newTimeSlot) {
+		int outputCount = 0;
 
 		// Processes all internal tanks
 		for (ForgeDirection direction : orientations) {
-			internalTanks[direction.ordinal()].setTime(newTimeSlot);
+			internalTanks[direction.ordinal()].setTime((short) newTimeSlot);
 			internalTanks[direction.ordinal()].moveFluids();
 			// Input processing
 			if (direction == ForgeDirection.UNKNOWN) {

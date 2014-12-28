@@ -370,10 +370,12 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		}
 
 		pipe.updateEntity();
-	}
 
-	public void postUpdateEntity() {
-
+		if (!BuildCraftTransport.enableThreads) {
+			// If threading is disabled, we need to run updateThread()
+			// ourselves - the manager WILL NOT do it for us!
+			updateThread();
+		}
 	}
 
 	public void updateThread() {

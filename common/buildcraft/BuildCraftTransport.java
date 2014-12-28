@@ -165,6 +165,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static float pipeDurability;
     public static int pipeFluidsBaseFlowRate;
     public static boolean facadeTreatBlacklistAsWhitelist;
+	public static boolean enableThreads;
 
 	public static BlockGenericPipe genericPipeBlock;
 	public static BlockFilteredBuffer filteredBufferBlock;
@@ -255,6 +256,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
 		try {
+			enableThreads = BuildCraftCore.mainConfiguration.getBoolean("pipes.threading", Configuration.CATEGORY_GENERAL, true, "Enable threaded pipe code. If you're getting ConcurrentModificationExceptions, it's probably best to turn this off.");
+
 			Property durability = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.durability", DefaultProps.PIPES_DURABILITY);
 			durability.comment = "How long a pipe will take to break";
 			pipeDurability = (float) durability.getDouble(DefaultProps.PIPES_DURABILITY);
@@ -473,7 +476,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 		TransportProxy.proxy.registerRenderers();
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
-		FMLCommonHandler.instance().bus().register(PipeThreadManager.INSTANCE);
+		if (enableThreads) {
+			FMLCommonHandler.instance().bus().register(PipeThreadManager.INSTANCE);
+		}
 	}
 
 	@Mod.EventHandler
