@@ -26,6 +26,7 @@ import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IStripesHandler;
 import buildcraft.api.transport.IStripesHandler.StripesHandlerType;
 import buildcraft.api.transport.IStripesPipe;
@@ -143,13 +144,13 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 			
 			if (stack.stackSize > 0) {
 				TileEntity targetTile = getWorld().getTileEntity((int) p.x, (int) p.y, (int) p.z);
-				if (targetTile instanceof TileGenericPipe) {
+				if (targetTile instanceof IPipeTile) {
 					TravelingItem newItem = TravelingItem.make(
 							container.xCoord + 0.5,
 							container.yCoord + TransportUtils.getPipeFloorOf(
 									new ItemStack(BuildCraftTransport.pipeItemsStripes)),
 							container.zCoord + 0.5, stack.copy());
-					((PipeTransportItems) ((TileGenericPipe) targetTile).pipe.transport).injectItem(newItem, event.direction.getOpposite());
+					((PipeTransportItems) ((Pipe<?>)((IPipeTile) targetTile).getPipe()).transport).injectItem(newItem, event.direction.getOpposite());
 
 					stack.stackSize = 0;
 				}

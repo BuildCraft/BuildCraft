@@ -88,8 +88,8 @@ public class PipeTransportPower extends PipeTransport {
 
 	@Override
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
-		if (tile instanceof TileGenericPipe) {
-			Pipe<?> pipe2 = ((TileGenericPipe) tile).pipe;
+		if (tile instanceof IPipeTile) {
+			Pipe<?> pipe2 = (Pipe<?>) ((IPipeTile) tile).getPipe();
 			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportPower)) {
 				return false;
 			}
@@ -222,11 +222,11 @@ public class PipeTransportPower extends PipeTransport {
 					int powerConsumed = powerQuery[out] * totalPowerContained / totalPowerQuery;
 					boolean tilePowered = false;
 
-					if (tiles[out] instanceof TileGenericPipe) {
+					if (tiles[out] instanceof IPipeTile) {
 						// Transmit power to the nearby pipe
 
-						TileGenericPipe nearbyTile = (TileGenericPipe) tiles[out];
-						PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
+						Pipe<?> nearbyPipe = (Pipe<?>) ((IPipeTile) tiles[out]).getPipe();
+						PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyPipe.transport;
 						powerConsumed = nearbyTransport.receiveEnergy(
 								ForgeDirection.VALID_DIRECTIONS[out].getOpposite(),
 								powerConsumed);
@@ -305,7 +305,7 @@ public class PipeTransportPower extends PipeTransport {
 
 			TileEntity tile = tiles [dir.ordinal()];
 			
-		    if (tile instanceof TileGenericPipe && ((TileGenericPipe) tile).pipe.transport instanceof PipeTransportPower) {
+		    if (tile instanceof IPipeTile && ((Pipe<?>) ((IPipeTile) tile).getPipe()).transport instanceof PipeTransportPower) {
 		    	continue;
 		    }
 		    
@@ -357,14 +357,14 @@ public class PipeTransportPower extends PipeTransport {
 				if (tiles[i] != null) {
 					TileEntity entity = tiles[i];
 
-					if (entity instanceof TileGenericPipe) {
-						TileGenericPipe nearbyTile = (TileGenericPipe) entity;
+					if (entity instanceof IPipeTile) {
+						Pipe<?> nearbyPipe = (Pipe<?>) ((IPipeTile) entity).getPipe();
 
-						if (nearbyTile.pipe == null) {
+						if (nearbyPipe == null) {
 							continue;
 						}
 
-						PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
+						PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyPipe.transport;
 						nearbyTransport.requestEnergy(ForgeDirection.VALID_DIRECTIONS[i].getOpposite(), transferQuery[i]);
 					}
 				}

@@ -431,19 +431,19 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	public void initializeFromItemMetadata(int i) {
 		if (i >= 1 && i <= 16) {
-			setColor((i - 1) & 15);
+			setPipeColor((i - 1) & 15);
 		}
 	}
 
 	public int getItemMetadata() {
-		return getColor() >= 0 ? (1 + getColor()) : 0;
+		return getPipeColor() >= 0 ? (1 + getPipeColor()) : 0;
 	}
 
-	public int getColor() {
+	public int getPipeColor() {
 		return worldObj.isRemote ? renderState.glassColor : this.glassColor;
 	}
 
-	public boolean setColor(int color) {
+	public boolean setPipeColor(int color) {
 		// -1 = no color
 		if (!worldObj.isRemote && color >= -1 && color < 16 && glassColor != color) {
 			glassColor = color;
@@ -555,8 +555,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			if (tile instanceof ITileBufferHolder) {
 				((ITileBufferHolder) tile).blockCreated(o, BuildCraftTransport.genericPipeBlock, this);
 			}
-			if (tile instanceof TileGenericPipe) {
-				((TileGenericPipe) tile).scheduleNeighborChange();
+			if (tile instanceof IPipeTile) {
+				((IPipeTile) tile).scheduleNeighborChange();
 			}
 		}
 
@@ -721,18 +721,18 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			}
 		}
 
-		if (with instanceof TileGenericPipe) {
-			TileGenericPipe other = (TileGenericPipe) with;
+		if (with instanceof IPipeTile) {
+			IPipeTile other = (IPipeTile) with;
 
 			if (other.hasBlockingPluggable(side.getOpposite())) {
 				return false;
 			}
 
-			if (other.glassColor >= 0 && glassColor >= 0 && other.glassColor != glassColor) {
+			if (other.getPipeColor() >= 0 && glassColor >= 0 && other.getPipeColor() != glassColor) {
 				return false;
 			}
 
-			Pipe<?> otherPipe = ((TileGenericPipe) with).pipe;
+			Pipe<?> otherPipe = (Pipe<?>) other.getPipe();
 
 			if (!BlockGenericPipe.isValid(otherPipe)) {
 				return false;
@@ -769,7 +769,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		return canPipeConnect_internal(with, side);
 	}
 
-	protected boolean hasBlockingPluggable(ForgeDirection side) {
+	public boolean hasBlockingPluggable(ForgeDirection side) {
 		PipePluggable pluggable = getPipePluggable(side);
 		if (pluggable == null) {
 			return false;

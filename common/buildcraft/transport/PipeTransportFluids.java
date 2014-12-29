@@ -27,6 +27,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.utils.MathUtils;
@@ -195,21 +196,21 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	}
 
 	private boolean canReceiveFluid(ForgeDirection o) {
-		TileEntity entity = container.getTile(o);
+		TileEntity tile = container.getTile(o);
 
 		if (!container.isPipeConnected(o)) {
 			return false;
 		}
 
-		if (entity instanceof TileGenericPipe) {
-			Pipe<?> pipe = ((TileGenericPipe) entity).pipe;
+		if (tile instanceof IPipeTile) {
+			Pipe<?> pipe = (Pipe<?>) ((IPipeTile) tile).getPipe();
 
 			if (pipe == null || !inputOpen(o.getOpposite())) {
 				return false;
 			}
 		}
 
-		if (entity instanceof IFluidHandler) {
+		if (tile instanceof IFluidHandler) {
 			return true;
 		}
 
@@ -535,8 +536,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 	@Override
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
-		if (tile instanceof TileGenericPipe) {
-			Pipe<?> pipe2 = ((TileGenericPipe) tile).pipe;
+		if (tile instanceof IPipeTile) {
+			Pipe<?> pipe2 = (Pipe<?>) ((IPipeTile) tile).getPipe();
 			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportFluids)) {
 				return false;
 			}
@@ -552,7 +553,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			return true;
 		}
 
-		return tile instanceof TileGenericPipe;
+		return tile instanceof IPipeTile;
 	}
 
 	/**
