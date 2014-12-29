@@ -14,6 +14,7 @@ import java.util.List;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.HashMultiset;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -79,6 +80,8 @@ public final class Gate implements IGate, IStatementContainer {
 	public boolean isPulsing = false;
 	private float pulseStage = 0;
 	private ForgeDirection direction;
+
+	private HashMultiset<IStatement> statementCounts = HashMultiset.create();
 
 	// / CONSTRUCTOR
 	public Gate(Pipe<?> pipe, GateMaterial material, GateLogic logic, ForgeDirection direction) {
@@ -412,7 +415,7 @@ public final class Gate implements IGate, IStatementContainer {
 			}
 		}
 
-		activeActions = new ArrayList<StatementSlot>();
+		activeActions.clear();
 
 		for (int it = 0; it < MAX_STATEMENTS; ++it) {
 			boolean allActive = true;
@@ -449,6 +452,14 @@ public final class Gate implements IGate, IStatementContainer {
 
 			if (logic == GateLogic.OR && actionsState[it] == ActionActiveState.Partial) {
 				actionsState[it] = ActionActiveState.Activated;
+			}
+		}
+
+		statementCounts.clear();
+
+		for (int it = 0; it < MAX_STATEMENTS; ++it) {
+			if (actionsState[it] == ActionActiveState.Activated) {
+				statementCounts.add(actions[it], 1);
 			}
 		}
 
@@ -501,7 +512,7 @@ public final class Gate implements IGate, IStatementContainer {
 
 	public boolean resolveAction(IStatement action) {
 		for (GateExpansionController expansion : expansions.values()) {
-			if (expansion.resolveAction(action)) {
+			if (expansion.resolveAction(action, statementCounts.count(action))) {
 				return true;
 			}
 		}

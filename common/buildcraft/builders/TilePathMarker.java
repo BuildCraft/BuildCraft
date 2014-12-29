@@ -144,7 +144,7 @@ public class TilePathMarker extends TileMarker {
 	}
 
 	public LinkedList<BlockIndex> getPath() {
-		TreeSet<BlockIndex> visitedPaths = new TreeSet<BlockIndex>();
+		HashSet<BlockIndex> visitedPaths = new HashSet<BlockIndex>();
 		LinkedList<BlockIndex> res = new LinkedList<BlockIndex>();
 
 		TilePathMarker nextTile = this;

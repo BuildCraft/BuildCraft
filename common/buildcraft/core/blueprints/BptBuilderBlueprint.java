@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -59,7 +60,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 	public ArrayList<ItemStack> neededItems = new ArrayList<ItemStack>();
 
-	protected TreeSet<Integer> builtEntities = new TreeSet<Integer>();
+	protected HashSet<Integer> builtEntities = new HashSet<Integer>();
 
 	private LinkedList<BuildingSlotBlock> buildList = new LinkedList<BuildingSlotBlock>();
 	private LinkedList<BuildingSlotEntity> entityList = new LinkedList<BuildingSlotEntity>();

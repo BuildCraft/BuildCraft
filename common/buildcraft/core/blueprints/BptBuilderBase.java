@@ -9,6 +9,7 @@
 package buildcraft.core.blueprints;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.TreeSet;
 
@@ -44,8 +45,8 @@ public abstract class BptBuilderBase implements IAreaProvider {
 	public BlueprintBase blueprint;
 	public BptContext context;
 	protected boolean done;
-	protected TreeSet<BlockIndex> clearedLocations = new TreeSet<BlockIndex>();
-	protected TreeSet<BlockIndex> builtLocations = new TreeSet<BlockIndex>();
+	protected HashSet<BlockIndex> clearedLocations = new HashSet<BlockIndex>();
+	protected HashSet<BlockIndex> builtLocations = new HashSet<BlockIndex>();
 	protected int x, y, z;
 	protected boolean initialized = false;
 

@@ -21,6 +21,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.blueprints.BuilderAPI;
@@ -123,8 +124,12 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static IActionInternal actionStationDropInPipe = new ActionStationAcceptItemsPipe();
 	public static IActionInternal actionStationMachineRequestItems = new ActionStationRequestItemsMachine();
 
+	public static float chipsetCostMultiplier = 1.0F;
+
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
+		chipsetCostMultiplier = BuildCraftCore.mainConfiguration.getFloat("chipset.costMultiplier", Configuration.CATEGORY_GENERAL, 1.0F, 0.001F, 1000.0F, "The multiplier for chipset recipe cost.");
+
 		BuildCraftCore.mainConfiguration.save();
 
 		laserBlock = new BlockLaser();
@@ -283,21 +288,21 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'I', "ingotIron");
 		
 		// CHIPSETS
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redstoneChipset", 100000, Chipset.RED.getStack(),
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redstoneChipset", Math.round(100000 * chipsetCostMultiplier), Chipset.RED.getStack(),
 				"dustRedstone");
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:ironChipset", 200000, Chipset.IRON.getStack(),
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:ironChipset", Math.round(200000 * chipsetCostMultiplier), Chipset.IRON.getStack(),
 				"dustRedstone", "ingotIron");
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:goldChipset", 400000, Chipset.GOLD.getStack(),
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:goldChipset", Math.round(400000 * chipsetCostMultiplier), Chipset.GOLD.getStack(),
 				"dustRedstone", "ingotGold");
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:diamondChipset", 800000,
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:diamondChipset", Math.round(800000 * chipsetCostMultiplier),
 				Chipset.DIAMOND.getStack(), "dustRedstone", "gemDiamond");
-        BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:emeraldChipset", 1200000,
+        BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:emeraldChipset", Math.round(1200000 * chipsetCostMultiplier),
                 Chipset.EMERALD.getStack(), "dustRedstone", "gemEmerald");
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:pulsatingChipset", 400000,
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:pulsatingChipset", Math.round(400000 * chipsetCostMultiplier),
 				Chipset.PULSATING.getStack(2), "dustRedstone", Items.ender_pearl);
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:quartzChipset", 600000, Chipset.QUARTZ.getStack(),
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:quartzChipset", Math.round(600000 * chipsetCostMultiplier), Chipset.QUARTZ.getStack(),
 				"dustRedstone", "gemQuartz");
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:compChipset", 600000, Chipset.COMP.getStack(),
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:compChipset", Math.round(600000 * chipsetCostMultiplier), Chipset.COMP.getStack(),
 				"dustRedstone", Items.comparator);
 
 		// ROBOTS AND BOARDS

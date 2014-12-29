@@ -8,10 +8,31 @@
  */
 package buildcraft.transport.gates;
 
+import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementManager;
 
 public class StatementSlot {
 	public IStatement statement;
 	public IStatementParameter[] parameters;
+
+	@Override
+	public boolean equals(Object o) {
+		if (o == null || !(o instanceof StatementSlot)) {
+			return false;
+		}
+		StatementSlot s = (StatementSlot) o;
+		if (s.statement != statement || parameters.length != s.parameters.length) {
+			return false;
+		}
+		for (int i = 0; i < parameters.length; i++) {
+			IStatementParameter p1 = parameters[i];
+			IStatementParameter p2 = s.parameters[i];
+			if (!(p1.equals(p2))) {
+				return false;
+			}
+		}
+		return true;
+	}
 }
