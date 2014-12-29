@@ -221,22 +221,14 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	}
 
 	private void updateTimeSlots() {
-		int newTimeSlot = (int) container.getWorldObj().getTotalWorldTime() % travelDelay;
-		if (newTimeSlot != currentTimeSlot) {
-			currentTimeSlot = newTimeSlot;
-			currentOutputCount = computeCurrentConnectionStatesAndTickFlows(newTimeSlot > 0 && newTimeSlot < travelDelay ? newTimeSlot : 0);
-		}
+		currentTimeSlot = (int) container.getWorldObj().getTotalWorldTime() % travelDelay;
+		currentOutputCount = computeCurrentConnectionStatesAndTickFlows(currentTimeSlot > 0 && currentTimeSlot < travelDelay ? currentTimeSlot : 0);
 	}
 
 	@Override
 	public void updateThread() {
 		if (container.getWorldObj().isRemote) {
 			return;
-		}
-
-		updateTimeSlots();
-		if (currentOutputCount == 0) {
-			moveToCenter();
 		}
 
 		if (tracker.markTimeIfDelay(container.getWorldObj())) {
@@ -257,6 +249,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		if (container.getWorldObj().isRemote) {
 			return;
 		}
+
+		updateTimeSlots();
 
 		if (currentOutputCount > 0) {
 			moveFromPipe(currentOutputCount);

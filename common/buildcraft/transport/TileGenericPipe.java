@@ -342,7 +342,9 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 		sideProperties.validate(this);
 
-		PipeThreadManager.INSTANCE.addPipe(this);
+		if (!worldObj.isRemote) {
+			PipeThreadManager.INSTANCE.addPipe(this);
+		}
 	}
 
 	protected void notifyBlockChanged() {
@@ -363,35 +365,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			if (deletePipe) {
 				worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 			}
-		}
 
-		if (!BlockGenericPipe.isValid(pipe)) {
-			return;
-		}
-
-		pipe.updateEntity();
-
-		if (!BuildCraftTransport.enableThreads) {
-			// If threading is disabled, we need to run updateThread()
-			// ourselves - the manager WILL NOT do it for us!
-			updateThread();
-		}
-	}
-
-	public void updateThread() {
-		if (attachPluggables) {
-			attachPluggables = false;
-			// Attach callback
-			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-				if (sideProperties.pluggables[i] != null) {
-					pipe.eventBus.registerHandler(sideProperties.pluggables[i]);
-					sideProperties.pluggables[i].onAttachedPipe(this, ForgeDirection.getOrientation(i));
-				}
-			}
-			notifyBlockChanged();
-		}
-
-		if (!worldObj.isRemote) {
 			if (pipe == null) {
 				return;
 			}
@@ -405,49 +379,87 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			return;
 		}
 
-		pipe.updateThread();
+		synchronized (pipe) {
+			pipe.updateEntity();
 
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			PipePluggable p = getPipePluggable(direction);
-			if (p != null) {
-				p.update(this, direction);
-			}
-		}
-
-		if (worldObj.isRemote) {
-			if (resyncGateExpansions) {
-				syncGateExpansions();
+			if (worldObj.isRemote || !BuildCraftTransport.enableThreads) {
+				// If threading is disabled, we need to run updateThread()
+				// ourselves - the manager WILL NOT do it for us!
+				//
+				// We also don't do threading on clients, as they do a lot
+				// less work than the server.
+				updateThread();
 			}
 
-			return;
-		}
+			if (blockNeighborChange) {
+				computeConnections();
+				pipe.onNeighborBlockChange(0);
+				blockNeighborChange = false;
+			}
 
-		if (blockNeighborChange) {
-			computeConnections();
-			pipe.onNeighborBlockChange(0);
-			blockNeighborChange = false;
-			refreshRenderState = true;
-		}
+			if (refreshRenderState) {
+				refreshRenderState();
+				refreshRenderState = false;
+			}
 
-		if (refreshRenderState) {
-			refreshRenderState();
-			refreshRenderState = false;
-		}
+			if (sendClientUpdate) {
+				sendClientUpdate = false;
 
-		if (sendClientUpdate) {
-			sendClientUpdate = false;
+				if (worldObj instanceof WorldServer) {
+					WorldServer world = (WorldServer) worldObj;
+					BuildCraftPacket updatePacket = getBCDescriptionPacket();
 
-			if (worldObj instanceof WorldServer) {
-				WorldServer world = (WorldServer) worldObj;
-				BuildCraftPacket updatePacket = getBCDescriptionPacket();
+					for (Object o : world.playerEntities) {
+						EntityPlayerMP player = (EntityPlayerMP) o;
 
-				for (Object o : world.playerEntities) {
-					EntityPlayerMP player = (EntityPlayerMP) o;
-
-					if (world.getPlayerManager().isPlayerWatchingChunk (player, xCoord >> 4, zCoord >> 4)) {
-						BuildCraftCore.instance.sendToPlayer(player, updatePacket);
+						if (world.getPlayerManager().isPlayerWatchingChunk (player, xCoord >> 4, zCoord >> 4)) {
+							BuildCraftCore.instance.sendToPlayer(player, updatePacket);
+						}
 					}
 				}
+			}
+		}
+	}
+
+	public void updateThread() {
+		if (!worldObj.isRemote) {
+			if (pipe == null) {
+				return;
+			}
+		}
+
+		synchronized (pipe) {
+			if (!BlockGenericPipe.isValid(pipe)) {
+				return;
+			}
+
+			if (attachPluggables) {
+				attachPluggables = false;
+				// Attach callback
+				for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+					if (sideProperties.pluggables[i] != null) {
+						pipe.eventBus.registerHandler(sideProperties.pluggables[i]);
+						sideProperties.pluggables[i].onAttachedPipe(this, ForgeDirection.getOrientation(i));
+					}
+				}
+				notifyBlockChanged();
+			}
+
+			pipe.updateThread();
+
+			for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+				PipePluggable p = getPipePluggable(direction);
+				if (p != null) {
+					p.update(this, direction);
+				}
+			}
+
+			if (worldObj.isRemote) {
+				if (resyncGateExpansions) {
+					syncGateExpansions();
+				}
+
+				return;
 			}
 		}
 	}

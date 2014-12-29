@@ -32,6 +32,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -165,8 +166,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static BuildCraftTransport instance;
 
 	public static float pipeDurability;
-    public static int pipeFluidsBaseFlowRate;
-    public static boolean facadeTreatBlacklistAsWhitelist;
+	public static int pipeFluidsBaseFlowRate;
+	public static boolean facadeTreatBlacklistAsWhitelist;
 	public static boolean enableThreads;
 
 	public static BlockGenericPipe genericPipeBlock;
@@ -198,7 +199,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item pipeItemsSandstone;
 	public static Item pipeItemsEmzuli;
 	public static Item pipeItemsStripes;
-    public static Item pipeItemsClay;
+	public static Item pipeItemsClay;
 	public static Item pipeFluidsWood;
 	public static Item pipeFluidsCobblestone;
 	public static Item pipeFluidsStone;
@@ -217,8 +218,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item pipePowerGold;
 	public static Item pipePowerDiamond;
 	public static Item pipePowerEmerald;
-    public static Item pipePowerSandstone;
-	
+	public static Item pipePowerSandstone;
+
 	public static int groupItemsTrigger;
 	public static String[] facadeBlacklist;
 
@@ -238,12 +239,12 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static IActionInternal actionExtractionPresetBlue = new ActionExtractionPreset(EnumColor.BLUE);
 	public static IActionInternal actionExtractionPresetGreen = new ActionExtractionPreset(EnumColor.GREEN);
 	public static IActionInternal actionExtractionPresetYellow = new ActionExtractionPreset(EnumColor.YELLOW);
-    public static IActionInternal[] actionValve = new IActionInternal[4];
+	public static IActionInternal[] actionValve = new IActionInternal[4];
 
-    public static boolean debugPrintFacadeList = false;
+	public static boolean debugPrintFacadeList = false;
 
 	public static float gateCostMultiplier = 1.0F;
-    
+
 	private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
 
 	public IIconProvider pipeIconProvider = new PipeIconProvider();
@@ -283,7 +284,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			groupItemsTriggerProp.comment = "when reaching this amount of objects in a pipes, items will be automatically grouped";
 			groupItemsTrigger = groupItemsTriggerProp.getInt();
 
-			Property facadeBlacklistProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "facade.blacklist", new String[] {
+			Property facadeBlacklistProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "facade.blacklist", new String[]{
 					Block.blockRegistry.getNameForObject(Blocks.bedrock),
 					Block.blockRegistry.getNameForObject(Blocks.command_block),
 					Block.blockRegistry.getNameForObject(Blocks.end_portal_frame),
@@ -313,8 +314,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 			facadeBlacklistProp.comment = "Blocks listed here will not have facades created. The format is modid:blockname.\nFor mods with a | character, the value needs to be surrounded with quotes.";
 			facadeBlacklist = facadeBlacklistProp.getStringList();
 
-            Property facadeAsWhitelist = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "facade.treatBlacklistAsWhitelist", false);
-            facadeTreatBlacklistAsWhitelist = facadeAsWhitelist.getBoolean();
+			Property facadeAsWhitelist = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "facade.treatBlacklistAsWhitelist", false);
+			facadeTreatBlacklistAsWhitelist = facadeAsWhitelist.getBoolean();
 
 			pipeWaterproof = new ItemBuildCraft();
 
@@ -340,7 +341,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipeItemsVoid = buildPipe(PipeItemsVoid.class, "Void Transport Pipe", CreativeTabBuildCraft.PIPES, "dyeBlack", Blocks.glass, "dustRedstone");
 			pipeItemsEmzuli = buildPipe(PipeItemsEmzuli.class, "Emzuli Transport Pipe", CreativeTabBuildCraft.PIPES, "blockLapis", Blocks.glass, "gemEmerald");
 			pipeItemsStripes = buildPipe(PipeItemsStripes.class, "Stripes Transport Pipe", CreativeTabBuildCraft.PIPES, "gearGold", Blocks.glass, "gearGold");
-            pipeItemsClay = buildPipe(PipeItemsClay.class, "Clay Transport Pipe", CreativeTabBuildCraft.PIPES, Blocks.clay, Blocks.glass, Blocks.clay);
+			pipeItemsClay = buildPipe(PipeItemsClay.class, "Clay Transport Pipe", CreativeTabBuildCraft.PIPES, Blocks.clay, Blocks.glass, Blocks.clay);
 
 			pipeFluidsWood = buildPipe(PipeFluidsWood.class, "Wooden Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsWood);
 			pipeFluidsCobblestone = buildPipe(PipeFluidsCobblestone.class, "Cobblestone Waterproof Pipe", CreativeTabBuildCraft.PIPES, pipeWaterproof, pipeItemsCobblestone);
@@ -361,9 +362,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipePowerGold = buildPipe(PipePowerGold.class, "Golden Kinesis Pipe", CreativeTabBuildCraft.PIPES, "dustRedstone", pipeItemsGold);
 			pipePowerDiamond = buildPipe(PipePowerDiamond.class, "Diamond Kinesis Pipe", CreativeTabBuildCraft.PIPES, "dustRedstone", pipeItemsDiamond);
 			pipePowerEmerald = buildPipe(PipePowerEmerald.class, "Emerald Kinesis Pipe", CreativeTabBuildCraft.PIPES, "dustRedstone", pipeItemsEmerald);
-            pipePowerSandstone = buildPipe(PipePowerSandstone.class, "Sandstone Kinesis Pipe", CreativeTabBuildCraft.PIPES, "dustRedstone", pipeItemsSandstone);
+			pipePowerSandstone = buildPipe(PipePowerSandstone.class, "Sandstone Kinesis Pipe", CreativeTabBuildCraft.PIPES, "dustRedstone", pipeItemsSandstone);
 
-            pipeStructureCobblestone = buildPipe(PipeStructureCobblestone.class, "Cobblestone Structure Pipe", CreativeTabBuildCraft.PIPES, Blocks.gravel, pipeItemsCobblestone);
+			pipeStructureCobblestone = buildPipe(PipeStructureCobblestone.class, "Cobblestone Structure Pipe", CreativeTabBuildCraft.PIPES, Blocks.gravel, pipeItemsCobblestone);
 
 			pipeWire = new ItemPipeWire();
 			CoreProxy.proxy.registerItem(pipeWire);
@@ -395,7 +396,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 			gateCopier = new ItemGateCopier();
 			CoreProxy.proxy.registerItem(gateCopier);
-			
+
 			for (PipeContents kind : PipeContents.values()) {
 				triggerPipe[kind.ordinal()] = new TriggerPipeContents(kind);
 			}
@@ -424,7 +425,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			}
 
 			for (ValveState state : ValveState.VALUES) {
-			    actionValve[state.ordinal()] = new ActionValve(state);
+				actionValve[state.ordinal()] = new ActionValve(state);
 			}
 
 			for (PowerMode limit : PowerMode.VALUES) {
@@ -459,7 +460,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		StatementManager.registerParameterClass(ActionParameterSignal.class);
 		StatementManager.registerTriggerProvider(new PipeTriggerProvider());
 		StatementManager.registerActionProvider(new PipeActionProvider());
-		
+
 		PipeManager.registerStripesHandler(new StripesHandlerRightClick());
 		PipeManager.registerStripesHandler(new StripesHandlerBucket());
 		PipeManager.registerStripesHandler(new StripesHandlerArrow());
@@ -470,7 +471,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		PipeManager.registerPipePluggable(LensPluggable.class, "lens");
 		PipeManager.registerPipePluggable(PlugPluggable.class, "plug");
 		PipeManager.registerPipePluggable(RobotStationPluggable.class, "robotStation");
-		
+
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
 		}
@@ -480,13 +481,14 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		if (enableThreads) {
 			FMLCommonHandler.instance().bus().register(PipeThreadManager.INSTANCE);
+			MinecraftForge.EVENT_BUS.register(PipeThreadManager.INSTANCE);
 		}
 	}
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		facadeItem.initialize();
-		
+
 		if (debugPrintFacadeList) {
 			try {
 				PrintWriter writer = new PrintWriter("FacadeDebug.txt", "UTF-8");
@@ -521,11 +523,11 @@ public class BuildCraftTransport extends BuildCraftMod {
 		}
 
 		GameRegistry.addRecipe(new PipeColoringRecipe());
-		
+
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(filteredBufferBlock, 1),
 				"wdw", "wcw", "wpw", 'w', "plankWood", 'd',
-			BuildCraftTransport.pipeItemsDiamond, 'c', Blocks.chest, 'p',
-			Blocks.piston);
+				BuildCraftTransport.pipeItemsDiamond, 'c', Blocks.chest, 'p',
+				Blocks.piston);
 
 		//Facade turning helper
 		GameRegistry.addRecipe(facadeItem.new FacadeRecipe());
@@ -540,7 +542,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		if (Loader.isModLoaded("BuildCraft|Silicon")) {
 			GameRegistry.addShapelessRecipe(new ItemStack(gateCopier, 1), new ItemStack(BuildCraftCore.wrenchItem), Chipset.RED.getStack(1));
-					
+
 			// PIPE WIRE
 			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redWire", 5000, PipeWire.RED.getStack(8),
 					"dyeRed", "dustRedstone", "ingotIron");
@@ -589,7 +591,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	}
 
 	private static void addGateRecipe(String materialName, int energyCost, GateMaterial material, Chipset chipset,
-			PipeWire... pipeWire) {
+									  PipeWire... pipeWire) {
 		List<ItemStack> temp = new ArrayList<ItemStack>();
 		temp.add(chipset.getStack());
 		for (PipeWire wire : pipeWire) {
@@ -601,30 +603,30 @@ public class BuildCraftTransport extends BuildCraftMod {
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:orGate" + materialName, energyCost,
 				ItemGate.makeGateItem(material, GateLogic.OR), inputs);
 	}
-	
+
 	@Mod.EventHandler
 	public void processIMCRequests(IMCEvent event) {
 		InterModComms.processIMC(event);
 	}
 
 	public static Item buildPipe(Class<? extends Pipe> clas,
-			String descr, CreativeTabBuildCraft creativeTab,
-			Object... ingredients) {
+								 String descr, CreativeTabBuildCraft creativeTab,
+								 Object... ingredients) {
 		ItemPipe res = BlockGenericPipe.registerPipe(clas, creativeTab);
 		res.setUnlocalizedName(clas.getSimpleName());
-		
+
 		// Add appropriate recipes to temporary list
 		if (ingredients.length == 3) {
 			for (int i = 0; i < 17; i++) {
 				PipeRecipe recipe = new PipeRecipe();
 				ItemStack glass;
-				
+
 				if (i == 0) {
 					glass = new ItemStack(Blocks.glass);
 				} else {
 					glass = new ItemStack(Blocks.stained_glass, 1, i - 1);
 				}
-				
+
 				recipe.result = new ItemStack(res, 8, i);
 				recipe.input = new Object[]{"ABC", 'A', ingredients[0], 'B', glass, 'C', ingredients[2]};
 
@@ -633,20 +635,20 @@ public class BuildCraftTransport extends BuildCraftMod {
 		} else if (ingredients.length == 2) {
 			for (int i = 0; i < 17; i++) {
 				PipeRecipe recipe = new PipeRecipe();
-				
+
 				Object left = ingredients[0];
 				Object right = ingredients[1];
 
 				if (ingredients[1] instanceof ItemPipe) {
 					right = new ItemStack((Item) right, 1, i);
 				}
-				
+
 				recipe.isShapeless = true;
 				recipe.result = new ItemStack(res, 1, i);
 				recipe.input = new Object[]{left, right};
 
 				pipeRecipes.add(recipe);
-	
+
 				if (ingredients[1] instanceof ItemPipe) {
 					PipeRecipe uncraft = new PipeRecipe();
 					uncraft.isShapeless = true;
@@ -666,12 +668,5 @@ public class BuildCraftTransport extends BuildCraftMod {
 				TileGenericPipe.class.getCanonicalName());
 		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
 				TileFilteredBuffer.class.getCanonicalName());
-	}
-
-	@Mod.EventHandler
-	public void serverStarting(FMLServerStartingEvent event) {
-		if (enableThreads) {
-			PipeThreadManager.INSTANCE.refreshTicker();
-		}
 	}
 }

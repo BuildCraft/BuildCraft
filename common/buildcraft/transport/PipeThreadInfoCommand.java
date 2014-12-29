@@ -2,6 +2,7 @@ package buildcraft.transport;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.world.World;
 import buildcraft.core.command.SubCommandBase;
 
 public class PipeThreadInfoCommand extends SubCommandBase {
@@ -17,8 +18,9 @@ public class PipeThreadInfoCommand extends SubCommandBase {
 
 	@Override
 	public void processCommand(ICommandSender sender, String[] arguments) {
-		sender.addChatMessage(new ChatComponentText("Last tick duration: " + PipeThreadManager.INSTANCE.getCurrentTime() + " ms"));
-		sender.addChatMessage(new ChatComponentText("Avg. tick duration: " + PipeThreadManager.INSTANCE.getAverageTime() + " ms"));
-		sender.addChatMessage(new ChatComponentText("Pipe count: " + PipeThreadManager.INSTANCE.getPipeCount()));
+		for (World w : PipeThreadManager.INSTANCE.managers.keySet()) {
+			PipeThreadManager.PipeWorldThreadManager manager = PipeThreadManager.INSTANCE.managers.get(w);
+			sender.addChatMessage(new ChatComponentText("Dimension " + w.provider.dimensionId + ": " + manager.getAverageTime() + " ms [" + manager.getPipeCount() + " pipes]"));
+		}
 	}
 }
