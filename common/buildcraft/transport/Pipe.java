@@ -97,8 +97,8 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
 		Pipe<?> otherPipe;
 
-		if (tile instanceof TileGenericPipe) {
-			otherPipe = ((TileGenericPipe) tile).pipe;
+		if (tile instanceof IPipeTile) {
+			otherPipe = (Pipe<?>) ((IPipeTile)tile).getPipe();
 			if (!BlockGenericPipe.isFullyDefined(otherPipe)) {
 				return false;
 			}
@@ -225,12 +225,13 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			TileEntity tile = container.getTile(o);
 
-			if (tile instanceof TileGenericPipe) {
-				TileGenericPipe tilePipe = (TileGenericPipe) tile;
+			if (tile instanceof IPipeTile) {
+				IPipeTile tilePipe = (IPipeTile) tile;
+				Pipe<?> pipe = (Pipe<?>) tilePipe.getPipe();
 
-				if (BlockGenericPipe.isFullyDefined(tilePipe.pipe)) {
+				if (BlockGenericPipe.isFullyDefined(pipe)) {
 					if (isWireConnectedTo(tile, color)) {
-						foundBiggerSignal |= receiveSignal(tilePipe.pipe.signalStrength[color.ordinal()] - 1, color);
+						foundBiggerSignal |= receiveSignal(pipe.signalStrength[color.ordinal()] - 1, color);
 					}
 				}
 			}
@@ -244,11 +245,12 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity tile = container.getTile(o);
 
-				if (tile instanceof TileGenericPipe) {
-					TileGenericPipe tilePipe = (TileGenericPipe) tile;
+				if (tile instanceof IPipeTile) {
+					IPipeTile tilePipe = (IPipeTile) tile;
+					Pipe<?> pipe = (Pipe<?>) tilePipe.getPipe();
 
-					if (BlockGenericPipe.isFullyDefined(tilePipe.pipe)) {
-						tilePipe.pipe.internalUpdateScheduled = true;
+					if (BlockGenericPipe.isFullyDefined(pipe)) {
+						pipe.internalUpdateScheduled = true;
 					}
 				}
 			}
@@ -286,12 +288,13 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity tile = container.getTile(o);
 
-				if (tile instanceof TileGenericPipe) {
-					TileGenericPipe tilePipe = (TileGenericPipe) tile;
+				if (tile instanceof IPipeTile) {
+					IPipeTile tilePipe = (IPipeTile) tile;
+					Pipe<?> pipe = (Pipe<?>) tilePipe.getPipe();
 
-					if (BlockGenericPipe.isFullyDefined(tilePipe.pipe) && tilePipe.pipe.wireSet[wire.ordinal()]) {
+					if (BlockGenericPipe.isFullyDefined(pipe) && pipe.wireSet[wire.ordinal()]) {
 						if (isWireConnectedTo(tile, wire)) {
-							tilePipe.pipe.receiveSignal(signalStrength[wire.ordinal()] - 1, wire);
+							pipe.receiveSignal(signalStrength[wire.ordinal()] - 1, wire);
 						}
 					}
 				}
@@ -370,7 +373,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 		TileEntity tile = container.getTile(o);
 
-		if (tile instanceof TileGenericPipe && container.isPipeConnected(o)) {
+		if (tile instanceof IPipeTile && container.isPipeConnected(o)) {
 			return 0;
 		} else {
 			return getMaxRedstoneOutput(o);
@@ -476,21 +479,21 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public boolean isWireConnectedTo(TileEntity tile, PipeWire color) {
-		if (!(tile instanceof TileGenericPipe)) {
+		if (!(tile instanceof IPipeTile)) {
 			return false;
 		}
 
-		TileGenericPipe tilePipe = (TileGenericPipe) tile;
+		Pipe<?> pipe = (Pipe<?>) ((IPipeTile) tile).getPipe();
 
-		if (!BlockGenericPipe.isFullyDefined(tilePipe.pipe)) {
+		if (!BlockGenericPipe.isFullyDefined(pipe)) {
 			return false;
 		}
 
-		if (!tilePipe.pipe.wireSet[color.ordinal()]) {
+		if (!pipe.wireSet[color.ordinal()]) {
 			return false;
 		}
 
-		return tilePipe.pipe.transport instanceof PipeTransportStructure || transport instanceof PipeTransportStructure
+		return pipe.transport instanceof PipeTransportStructure || transport instanceof PipeTransportStructure
 				|| Utils.checkPipesConnections(
 						container, tile);
 	}

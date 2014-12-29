@@ -230,11 +230,11 @@ public class PipeTransportItems extends PipeTransport {
 			return false;
 		}
 
-		if (entity instanceof TileGenericPipe) {
-			TileGenericPipe pipe = (TileGenericPipe) entity;
+		if (entity instanceof IPipeTile) {
+			Pipe<?> pipe = (Pipe<?>) ((IPipeTile) entity).getPipe();
 
 			//return !pipe.pipe.isClosed() && pipe.pipe.transport instanceof PipeTransportItems;
-			return pipe.pipe.inputOpen(o.getOpposite()) && pipe.pipe.transport instanceof PipeTransportItems;
+			return pipe.inputOpen(o.getOpposite()) && pipe.transport instanceof PipeTransportItems;
 		} else if (entity instanceof IInventory && item.getInsertionHandler().canInsertItem(item, (IInventory) entity)) {
 			if (Transactor.getTransactorFor(entity).add(item.getItemStack(), o.getOpposite(), false).stackSize > 0) {
 				return true;
@@ -316,10 +316,10 @@ public class PipeTransportItems extends PipeTransport {
 	}
 
 	private boolean passToNextPipe(TravelingItem item, TileEntity tile) {
-		if (tile instanceof TileGenericPipe) {
-			TileGenericPipe pipe = (TileGenericPipe) tile;
-			if (BlockGenericPipe.isValid(pipe.pipe) && pipe.pipe.transport instanceof PipeTransportItems) {
-				((PipeTransportItems) pipe.pipe.transport).injectItem(item, item.output);
+		if (tile instanceof IPipeTile) {
+			Pipe<?> pipe = (Pipe<?>) ((IPipeTile) tile).getPipe();
+			if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof PipeTransportItems) {
+				((PipeTransportItems) pipe.transport).injectItem(item, item.output);
 				return true;
 			}
 		}
@@ -490,8 +490,8 @@ public class PipeTransportItems extends PipeTransport {
 
 	@Override
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
-		if (tile instanceof TileGenericPipe) {
-			Pipe<?> pipe2 = ((TileGenericPipe) tile).pipe;
+		if (tile instanceof IPipeTile) {
+			Pipe<?> pipe2 = (Pipe<?>) ((IPipeTile) tile).getPipe();
 			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportItems)) {
 				return false;
 			}
@@ -502,7 +502,7 @@ public class PipeTransportItems extends PipeTransport {
 			return slots != null && slots.length > 0;
 		}
 
-		return tile instanceof TileGenericPipe || (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0);
+		return tile instanceof IPipeTile || (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0);
 	}
 	
 	/**

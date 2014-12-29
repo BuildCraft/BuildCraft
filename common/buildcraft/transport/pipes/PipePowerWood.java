@@ -37,7 +37,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 	protected RFBattery battery;
 
 	private boolean full;
-	private int requestedEnergy, sources;
+	private int requestedEnergy, sources, lastRequestedEnergy;
 
 	public PipePowerWood(Item item) {
 		super(new PipeTransportPower(), item);
@@ -128,6 +128,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 			}
 		}
 
+		lastRequestedEnergy = requestedEnergy;
 		requestedEnergy = 0;
 	}
 
@@ -178,7 +179,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 	public int receiveEnergy(ForgeDirection from, int maxReceive,
 			boolean simulate) {
 		if (from.ordinal() < 6 && powerSources[from.ordinal()]) {
-			return battery.receiveEnergy(maxReceive, simulate);
+			return battery.receiveEnergy(simulate ? Math.min(maxReceive, lastRequestedEnergy) : maxReceive, simulate);
 		} else {
 			return 0;
 		}

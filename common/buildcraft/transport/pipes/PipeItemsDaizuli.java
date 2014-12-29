@@ -31,11 +31,11 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.utils.ColorUtils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TransportConstants;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.gates.StatementSlot;
@@ -51,8 +51,8 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements ISeria
 	private PipeLogicIron logic = new PipeLogicIron(this) {
 		@Override
 		protected boolean isValidConnectingTile(TileEntity tile) {
-			if (tile instanceof TileGenericPipe) {
-				Pipe<?> otherPipe = ((TileGenericPipe) tile).pipe;
+			if (tile instanceof IPipeTile) {
+				Pipe<?> otherPipe = (Pipe<?>) ((IPipeTile) tile).getPipe();
 				if (otherPipe instanceof PipeItemsWood) {
 					return false;
 				}

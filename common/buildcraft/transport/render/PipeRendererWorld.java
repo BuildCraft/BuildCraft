@@ -38,7 +38,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		PipeRenderState state = tile.renderState;
 		IIconProvider icons = tile.getPipeIcons();
 		FakeBlock fakeBlock = FakeBlock.INSTANCE;
-		int glassColor = tile.getColor();
+		int glassColor = tile.getPipeColor();
 		
 		if (icons == null) {
 			return;

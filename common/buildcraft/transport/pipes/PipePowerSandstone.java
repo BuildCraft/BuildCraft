@@ -18,6 +18,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.transport.IPipeConnectionForced;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -44,7 +45,7 @@ public class PipePowerSandstone extends Pipe<PipeTransportPower> implements IPip
 
     @Override
     public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
-        return (tile instanceof TileGenericPipe) && super.canPipeConnect(tile, side);
+        return (tile instanceof IPipeTile) && super.canPipeConnect(tile, side);
     }
 
     @Override

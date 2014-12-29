@@ -19,6 +19,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.transport.IPipeConnectionForced;
 import buildcraft.transport.IPipeTransportFluidsHook;
 import buildcraft.transport.Pipe;
@@ -47,7 +48,7 @@ public class PipeFluidsSandstone extends Pipe<PipeTransportFluids> implements IP
 
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-		if (!(container.getTile(from) instanceof TileGenericPipe)) {
+		if (!(container.getTile(from) instanceof IPipeTile)) {
 			return 0;
 		} else {
 			return transport.internalTanks[from.ordinal()].fill(resource, doFill);
@@ -56,7 +57,7 @@ public class PipeFluidsSandstone extends Pipe<PipeTransportFluids> implements IP
 
 	@Override
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
-		return (tile instanceof TileGenericPipe) && super.canPipeConnect(tile, side);
+		return (tile instanceof IPipeTile) && super.canPipeConnect(tile, side);
 	}
 
 	@Override

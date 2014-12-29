@@ -642,7 +642,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				}
 			} else if (currentItem.getItem() == Items.water_bucket) {
 				if (!world.isRemote) {
-					pipe.container.setColor(-1);
+					pipe.container.setPipeColor(-1);
 				}
 				return true;
 			} else if (currentItem.getItem() instanceof IPipePluggableItem) {
@@ -1101,7 +1101,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	public boolean recolourBlock(World world, int x, int y, int z, ForgeDirection side, int colour) {
 		TileGenericPipe pipeTile = (TileGenericPipe) world.getTileEntity(x, y, z);
 		if (!pipeTile.hasBlockingPluggable(side)) {
-			return pipeTile.setColor(colour);
+			return pipeTile.setPipeColor(colour);
 		}
 
 		return false;
