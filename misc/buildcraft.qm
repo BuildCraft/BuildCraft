@@ -1,0 +1,57 @@
+{
+	"formatVersion": 1,
+	"uid": "buildcraft",
+	"repo": "github.BuildCraft",
+	"modId": "BuildCraft|Core",
+	"name": "BuildCraft",
+	"nemName": "BuildCraft",
+	"description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more!",
+	"license": "Minecraft Mod Public License 1.0",
+	"urls": {
+		"icon": ["https://raw.githubusercontent.com/BuildCraft/BuildCraft/6.1.x/buildcraft_resources/assets/buildcraft/textures/blocks/builder_front.png"],
+		"logo": ["https://raw.githubusercontent.com/BuildCraft/BuildCraft/master/buildcraft_resources/assets/buildcraft/logo.png"],
+		"website": ["http://mod-buildcraft.com"],
+		"github": ["https://github.com/BuildCraft/BuildCraft"],
+		"curse": ["curse:buildcraft"]
+	},
+	"updateUrl": "github://BuildCraft@BuildCraft/misc/buildcraft.qm",
+	"tags": ["Pipes", "Processing", "Energy", "Automation"],
+	"categories": [],
+	"authors": {
+		"Founder": ["SpaceToad"],
+		"Core Team Members": ["CovertJaguar", "SirSengir", "Kraphty", "asie"]
+	},
+	"references": {},
+	"versions": [
+		{
+			"mcCompat": ["1.7.10"],
+			"name": "6.2.7",
+			"type": "Release",
+			"installType": "forgeMod",
+			"urls": [{
+				"url": "http://www.mod-buildcraft.com/releases/BuildCraft/6.2.7/buildcraft-6.2.7.jar",
+				"downloadType": "parallel"
+			}]
+		},
+		{
+			"mcCompat": ["1.7.2"],
+			"name": "6.0.16",
+			"type": "Release",
+			"installType": "forgeMod",
+			"urls": [{
+				"url": "http://www.mod-buildcraft.com/releases/BuildCraft/6.0.16/buildcraft-6.0.16.jar",
+				"downloadType": "parallel"
+			}]
+		},
+		{
+			"mcCompat": ["1.6.4"],
+			"name": "4.2.2",
+			"type": "Release",
+			"installType": "forgeMod",
+			"urls": [{
+				"url": "http://www.mod-buildcraft.com/releases/BuildCraft/4.2.2/buildcraft-4.2.2.jar",
+				"downloadType": "parallel"
+			}]
+		}
+	]
+}
