@@ -267,6 +267,10 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		for (String recipeId : plannedOutput) {
 			IFlexibleRecipe<ItemStack> recipe = AssemblyRecipeManager.INSTANCE.getRecipe(recipeId);
 
+			if (recipe == null) {
+				continue;
+			}
+
 			if (recipe == currentRecipe) {
 				takeNext = true;
 			} else if (takeNext && recipe.canBeCrafted(this)) {
@@ -277,6 +281,10 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 
 		for (String recipeId : plannedOutput) {
 			IFlexibleRecipe<ItemStack> recipe = AssemblyRecipeManager.INSTANCE.getRecipe(recipeId);
+
+			if (recipe == null) {
+				continue;
+			}
 
 			if (recipe.canBeCrafted(this)) {
 				setCurrentRecipe(recipe);

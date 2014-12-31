@@ -41,6 +41,10 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 	}
 
 	private void addRecipe(String id, IFlexibleRecipe<ItemStack> recipe) {
+		if (recipe == null) {
+			throw new RuntimeException("Recipe \"" + id + "\" is null!");
+		}
+
 		if (assemblyRecipes.containsKey(id)) {
 			throw new RuntimeException("Recipe \"" + id + "\" already registered");
 		}
