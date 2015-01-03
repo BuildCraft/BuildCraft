@@ -37,6 +37,7 @@ public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
 
 	public ItemLens() {
 		super();
+		setHasSubtypes(true);
 	}
 
 	@Override
