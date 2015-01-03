@@ -105,6 +105,7 @@ gate.material.iron=Iron
 gate.material.gold=Gold
 gate.material.diamond=Diamond
 gate.material.emerald=Emerald
+gate.material.quartz=Quartz
 
 gate.name=%s %s Gate
 gate.name.basic=Basic Gate
@@ -304,6 +305,7 @@ tip.gate.wires=§9§oCompatible Wires:
 tip.gate.wires.redstone=Red
 tip.gate.wires.iron=Red, Blue
 tip.gate.wires.gold=Red, Blue, Green
+tip.gate.wires.quartz=Red, Blue, Green
 tip.gate.wires.diamond=Red, Blue, Green, Yellow
 tip.gate.wires.emerald=Red, Blue, Green, Yellow
 tip.gate.expansions=§9§oInstalled Expansions:

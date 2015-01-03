@@ -11,6 +11,7 @@ package buildcraft.transport.gui;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.inventory.IInventory;
@@ -233,6 +234,15 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			slots.add(new TriggerSlot(62, 44, pipe, 1));
 			slots.add(new ActionSlot(98, 26, pipe, 0));
 			slots.add(new ActionSlot(98, 44, pipe, 1));
+		} else if (gate.material == GateMaterial.QUARTZ) {
+			for (int i = 0; i < 2; i++) {
+				TriggerSlot ts = new TriggerSlot(44, 26 + (i * 18), pipe, i);
+				ActionSlot as = new ActionSlot(98, 26 + (i * 18), pipe, i);
+				slots.add(ts);
+				slots.add(as);
+				slots.add(new TriggerParameterSlot(62, 26 + (i * 18), pipe, 0, ts));
+				slots.add(new ActionParameterSlot(116, 26 + (i * 18), pipe, 0, as));
+			}
 		} else if (gate.material == GateMaterial.GOLD) {
 			for (int k = 0; k < 4; ++k) {
 				slots.add(new TriggerSlot(53, 26 + 18 * k, pipe, position));
@@ -368,15 +378,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		drawBackgroundSlots();
 	}
 
-	@Override
-	protected void mouseClicked(int i, int j, int k) {
-		if (gate == null) {
-			return;
-		}
-		super.mouseClicked(i, j, k);
-
-		AdvancedSlot slot = getSlotAtLocation(i, j);
-
+	private void doSlotClick(AdvancedSlot slot, int k) {
 		if (slot instanceof TriggerSlot && container.hasTriggers()) {
 			TriggerSlot triggerSlot = (TriggerSlot) slot;
 
@@ -484,5 +486,31 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		}
 
 		container.markDirty();
+	}
+
+	@Override
+	protected void mouseClicked(int i, int j, int k) {
+		if (gate == null) {
+			return;
+		}
+		super.mouseClicked(i, j, k);
+
+		AdvancedSlot slot = getSlotAtLocation(i, j);
+
+		if (slot != null) {
+			doSlotClick(slot, k);
+		}
+	}
+
+	@Override
+	public void handleMouseInput() {
+		super.handleMouseInput();
+
+		int wheel = Mouse.getEventDWheel();
+		if (wheel != 0) {
+			int i = Mouse.getEventX() * this.width / this.mc.displayWidth;
+			int j = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
+			doSlotClick(getSlotAtLocation(i, j), wheel > 0 ? 0 : 1);
+		}
 	}
 }

@@ -21,6 +21,7 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.transport.Gate;
 
 public class TriggerParameterSignal implements IStatementParameter {
 
@@ -49,28 +50,37 @@ public class TriggerParameterSignal implements IStatementParameter {
 
 	@Override
 	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+		int maxColor = 4;
+		if (source instanceof Gate) {
+			maxColor = ((Gate) source).material.maxWireColor;
+		}
+
 		if (mouse.getButton() == 0) {
 			if (color == null) {
 				active = true;
 				color = PipeWire.RED;
 			} else if (active) {
 				active = false;
-			} else if (color == PipeWire.YELLOW) {
+			} else if (color == PipeWire.values()[maxColor - 1]) {
 				color = null;
 			} else {
-				color = PipeWire.values()[color.ordinal() + 1];
+				do {
+					color = PipeWire.values()[(color.ordinal() + 1) & 3];
+				} while (color.ordinal() >= maxColor);
 				active = true;
 			}
 		} else {
 			if (color == null) {
 				active = false;
-				color = PipeWire.YELLOW;
+				color = PipeWire.values()[maxColor - 1];
 			} else if (!active) {
 				active = true;
 			} else if (color == PipeWire.RED) {
 				color = null;
 			} else {
-				color = PipeWire.values()[color.ordinal() - 1];
+				do {
+					color = PipeWire.values()[(color.ordinal() - 1) & 3];
+				} while (color.ordinal() >= maxColor);
 				active = false;
 			}
 		}

@@ -21,6 +21,7 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.transport.Gate;
 
 public class ActionParameterSignal implements IStatementParameter {
 	
@@ -43,12 +44,19 @@ public class ActionParameterSignal implements IStatementParameter {
 
 	@Override
 	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+		int maxColor = 4;
+		if (source instanceof Gate) {
+			maxColor = ((Gate) source).material.maxWireColor;
+		}
+
 		if (color == null) {
-			color = mouse.getButton() == 0 ? PipeWire.RED : PipeWire.YELLOW;
-		} else if (color == (mouse.getButton() == 0 ? PipeWire.YELLOW : PipeWire.RED)) {
+			color = mouse.getButton() == 0 ? PipeWire.RED : PipeWire.values()[maxColor - 1];
+		} else if (color == (mouse.getButton() == 0 ? PipeWire.values()[maxColor - 1] : PipeWire.RED)) {
 			color = null;
 		} else {
-			color = PipeWire.values()[mouse.getButton() == 0 ? color.ordinal() + 1 : color.ordinal() - 1];
+			do {
+				color = PipeWire.values()[(mouse.getButton() == 0 ? color.ordinal() + 1 : color.ordinal() - 1) & 3];
+			} while (color.ordinal() >= maxColor);
 		}
 	}
 

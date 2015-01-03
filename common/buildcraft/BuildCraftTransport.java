@@ -551,11 +551,11 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 			addGateRecipe("Iron", (int) Math.round(200000 * gateCostMultiplier), GateMaterial.IRON, Chipset.IRON, PipeWire.RED, PipeWire.BLUE);
 			addGateRecipe("Gold", (int) Math.round(400000 * gateCostMultiplier), GateMaterial.GOLD, Chipset.GOLD, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
+			addGateRecipe("Quartz", (int) Math.round(600000 * gateCostMultiplier), GateMaterial.QUARTZ, Chipset.QUARTZ, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
 			addGateRecipe("Diamond", (int) Math.round(800000 * gateCostMultiplier), GateMaterial.DIAMOND, Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE,
 					PipeWire.GREEN, PipeWire.YELLOW);
 			addGateRecipe("Emerald", (int) Math.round(1200000 * gateCostMultiplier), GateMaterial.EMERALD, Chipset.EMERALD, PipeWire.RED, PipeWire.BLUE,
 					PipeWire.GREEN, PipeWire.YELLOW);
-
 
 			// REVERSAL RECIPE
 			BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateLogicSwapRecipe("buildcraft:gateSwap"));

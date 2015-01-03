@@ -11,6 +11,7 @@ package buildcraft.commander;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import io.netty.buffer.ByteBuf;
@@ -393,6 +394,30 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 				tool.displayString = "+";
 				tool.getToolTip().remove(0);
 				tool.getToolTip().add(new ToolTipLine(StringUtils.localize("tip.tool.add")));
+			}
+		}
+	}
+
+	@Override
+	public void handleMouseInput() {
+		super.handleMouseInput();
+
+		int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
+		int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
+
+		if (mouseX >= mapXMin && mouseX <= mapXMin + getContainer().mapTexture.width
+				&& mouseY >= mapYMin && mouseY <= mapYMin + getContainer().mapTexture.height) {
+			int wheel = Mouse.getEventDWheel();
+			if (wheel != 0) {
+				if (zoomLevel < 6 && wheel > 0) {
+					zoomLevel++;
+					uploadMap();
+					refreshSelectedArea();
+				} else if (zoomLevel > 1 && wheel < 0) {
+					zoomLevel--;
+					uploadMap();
+					refreshSelectedArea();
+				}
 			}
 		}
 	}

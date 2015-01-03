@@ -551,7 +551,7 @@ public final class Gate implements IGate, IStatementContainer {
 	// TRIGGERS
 	public void addTriggers(List<ITriggerInternal> list) {
 		for (PipeWire wire : PipeWire.VALUES) {
-			if (pipe.wireSet[wire.ordinal()] && material.ordinal() >= wire.ordinal()) {
+			if (pipe.wireSet[wire.ordinal()] && wire.ordinal() < material.maxWireColor) {
 				list.add(BuildCraftTransport.triggerPipeWireActive[wire.ordinal()]);
 				list.add(BuildCraftTransport.triggerPipeWireInactive[wire.ordinal()]);
 			}
@@ -577,7 +577,7 @@ public final class Gate implements IGate, IStatementContainer {
 	// ACTIONS
 	public void addActions(List<IActionInternal> list) {
 		for (PipeWire wire : PipeWire.VALUES) {
-			if (pipe.wireSet[wire.ordinal()] && material.ordinal() >= wire.ordinal()) {
+			if (pipe.wireSet[wire.ordinal()] && wire.ordinal() < material.maxWireColor) {
 				list.add(BuildCraftTransport.actionPipeWire[wire.ordinal()]);
 			}
 		}
