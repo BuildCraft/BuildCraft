@@ -11,6 +11,7 @@ package buildcraft.commander;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -293,7 +294,10 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	protected void keyTyped(char carac, int val) {
 		super.keyTyped(carac, val);
 
-		if (carac == '+' && zoomLevel > 1) {
+		if (val == Keyboard.KEY_F5) {
+			uploadMap();
+			refreshSelectedArea();
+		} else if (carac == '+' && zoomLevel > 1) {
 			zoomLevel--;
 			uploadMap();
 			refreshSelectedArea();
