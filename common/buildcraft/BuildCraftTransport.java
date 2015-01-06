@@ -46,6 +46,7 @@ import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.api.transport.PipeWire;
+import buildcraft.compat.CompatHooks;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
@@ -119,7 +120,6 @@ import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.pipes.PipeStructureCobblestone;
 import buildcraft.transport.pluggable.ItemLens;
 import buildcraft.transport.pluggable.ItemPlug;
-import buildcraft.transport.pluggable.ItemPowerAdapter;
 import buildcraft.transport.pluggable.ItemRobotStation;
 import buildcraft.transport.pluggable.LensPluggable;
 import buildcraft.transport.pluggable.PlugPluggable;
@@ -314,7 +314,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipeWaterproof.setUnlocalizedName("pipeWaterproof");
 			CoreProxy.proxy.registerItem(pipeWaterproof);
 
-			genericPipeBlock = BCCompatHooks.createPipeBlock();
+			genericPipeBlock = CompatHooks.INSTANCE.createPipeBlock();
 
 			CoreProxy.proxy.registerBlock(genericPipeBlock.setBlockName("pipeBlock"), ItemBlock.class);
 

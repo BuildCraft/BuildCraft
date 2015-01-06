@@ -25,9 +25,11 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.power.IEngine;
+import buildcraft.api.power.IRedstoneEngine;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.TileBuildCraft;
+import buildcraft.energy.TileEngineWood;
 import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.PipePowerCobblestone;
 import buildcraft.transport.pipes.PipePowerDiamond;
@@ -120,6 +122,12 @@ public class PipeTransportPower extends PipeTransport {
 			// While this, of course, does nothing to work with other mods,
 			// it at least makes it work nicely with BC's built-in blocks while
 			// the new RF api isn't out.
+			return false;
+		}
+
+		if (tile instanceof IRedstoneEngine) {
+			// Do not render wooden pipe connections to match the look of transport/fluid pipes
+			// for kinesis.
 			return false;
 		}
 

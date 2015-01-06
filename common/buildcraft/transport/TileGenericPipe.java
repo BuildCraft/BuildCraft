@@ -43,6 +43,8 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.power.IRedstoneEngine;
+import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
@@ -63,12 +65,13 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.GatePluggable;
+import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.pluggable.PlugPluggable;
 import buildcraft.transport.pluggable.RobotStationPluggable;
 
 public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		IPipeTile, ITileBufferHolder, IEnergyHandler, IDropControlInventory,
-		ISyncedTile, ISolidSideTile, IGuiReturnHandler {
+		ISyncedTile, ISolidSideTile, IGuiReturnHandler, IRedstoneEngineReceiver {
 
 	public boolean initialized = false;
 	public final PipeRenderState renderState = new PipeRenderState();
@@ -589,7 +592,14 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		blockNeighborChange = true;
 	}
 
-	/* IPIPEENTRY */
+	@Override
+	public boolean canInjectItems(ForgeDirection from) {
+		if (getPipeType() != IPipeTile.PipeType.ITEM) {
+			return false;
+		}
+		return isPipeConnected(from);
+	}
+
 	@Override
 	public int injectItem(ItemStack payload, boolean doAdd, ForgeDirection from, EnumColor color) {
 		if (!pipe.inputOpen(from)) {
@@ -1200,5 +1210,14 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	@Override
 	public IPipe getPipe() {
 		return pipe;
+	}
+
+	@Override
+	public boolean canConnectRedstoneEngine(ForgeDirection side) {
+		if (pipe instanceof IRedstoneEngineReceiver) {
+			return ((IRedstoneEngineReceiver) pipe).canConnectRedstoneEngine(side);
+		} else {
+			return ((getPipeType() != PipeType.POWER) && (getPipeType() != PipeType.STRUCTURE));
+		}
 	}
 }

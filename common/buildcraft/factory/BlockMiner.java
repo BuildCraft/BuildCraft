@@ -50,7 +50,7 @@ public class BlockMiner {
 
 		// Second, try to add to adjacent pipes
 		if (stack.stackSize > 0) {
-			stack.stackSize -= Utils.addToRandomPipeAround(owner.getWorldObj(), owner.xCoord, owner.yCoord, owner.zCoord, ForgeDirection.UNKNOWN, stack);
+			stack.stackSize -= Utils.addToRandomInjectableAround(owner.getWorldObj(), owner.xCoord, owner.yCoord, owner.zCoord, ForgeDirection.UNKNOWN, stack);
 		}
 
 		// Lastly, throw the object away

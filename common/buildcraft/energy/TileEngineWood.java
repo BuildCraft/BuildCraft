@@ -13,10 +13,11 @@ import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.api.power.IRedstoneEngine;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.transport.IPipeTile;
 
-public class TileEngineWood extends TileEngine {
+public class TileEngineWood extends TileEngine implements IRedstoneEngine {
 
 	private boolean hasSent = false;
 	
@@ -126,9 +127,7 @@ public class TileEngineWood extends TileEngine {
 			
 			TileEntity tile = getTile(orientation);
 
-			// TODO: Make a proper API out of this
-			if ((tile instanceof IRedstoneEngineReceiver && ((IRedstoneEngineReceiver) tile).canConnectRedstoneEngine(orientation.getOpposite())) ||
-					(tile instanceof IPipeTile && ((IPipeTile) tile).getPipeType() != IPipeTile.PipeType.POWER)) {
+			if (tile instanceof IRedstoneEngineReceiver && ((IRedstoneEngineReceiver) tile).canConnectRedstoneEngine(orientation.getOpposite())) {
 				super.sendPower();
 			} else {
 				this.energy = 0;

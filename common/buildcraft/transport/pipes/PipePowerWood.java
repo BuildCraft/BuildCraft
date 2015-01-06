@@ -18,9 +18,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyProvider;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.RFBattery;
 import buildcraft.transport.IPipeTransportPowerHook;
@@ -28,7 +30,7 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 
-public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTransportPowerHook, IEnergyHandler {
+public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTransportPowerHook, IEnergyHandler, IRedstoneEngineReceiver {
 
 	public final boolean[] powerSources = new boolean[6];
 
@@ -38,6 +40,8 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 
 	private boolean full;
 	private int requestedEnergy, sources, lastRequestedEnergy;
+
+	private boolean allowExtraction = false;
 
 	public PipePowerWood(Item item) {
 		super(new PipeTransportPower(), item);
@@ -99,6 +103,32 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 
 		if (sources == 0) {
 			return;
+		}
+
+		if (allowExtraction) {
+			allowExtraction = false;
+
+			int energyMaxExtract = Math.min(battery.getMaxEnergyExtract(), battery.getMaxEnergyStored() - battery.getEnergyStored());
+			energyMaxExtract /= sources;
+
+			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+				if (!powerSources[o.ordinal()]) {
+					continue;
+				}
+
+				TileEntity source = container.getNeighborTile(o);
+				if (source instanceof IEnergyProvider) {
+					int energyExtracted = battery.addEnergy(0,
+							((IEnergyProvider) source).extractEnergy(o.getOpposite(), energyMaxExtract, true),
+							false);
+					((IEnergyProvider) source).extractEnergy(o.getOpposite(), energyExtracted, true);
+				} else if (source instanceof IEnergyHandler) {
+					int energyExtracted = battery.addEnergy(0,
+							((IEnergyHandler) source).extractEnergy(o.getOpposite(), energyMaxExtract, true),
+							false);
+					((IEnergyHandler) source).extractEnergy(o.getOpposite(), energyExtracted, true);
+				}
+			}
 		}
 
 		int energyToRemove = Math.min(battery.getEnergyStored(), requestedEnergy);
@@ -178,6 +208,10 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive,
 			boolean simulate) {
+		if (from.ordinal() < 6 && container.getNeighborTile(from) instanceof IRedstoneEngineReceiver) {
+			allowExtraction = true;
+			return maxReceive;
+		}
 		if (from.ordinal() < 6 && powerSources[from.ordinal()]) {
 			return battery.receiveEnergy(simulate ? Math.min(maxReceive, lastRequestedEnergy) : maxReceive, simulate);
 		} else {
@@ -199,5 +233,10 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 	@Override
 	public int getMaxEnergyStored(ForgeDirection from) {
 		return battery.getMaxEnergyStored();
+	}
+
+	@Override
+	public boolean canConnectRedstoneEngine(ForgeDirection side) {
+		return true;
 	}
 }

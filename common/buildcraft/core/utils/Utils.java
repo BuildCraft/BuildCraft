@@ -40,7 +40,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
+import buildcraft.api.transport.IInjectable;
 import buildcraft.api.transport.IPipeTile;
+import buildcraft.compat.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.IDropControlInventory;
@@ -141,13 +143,13 @@ public final class Utils {
 
 	/**
 	 * Look around the tile given in parameter in all 6 position, tries to add
-	 * the items to a random pipe entry around. Will make sure that the location
+	 * the items to a random injectable tile around. Will make sure that the location
 	 * from which the items are coming from (identified by the from parameter)
 	 * isn't used again so that entities doesn't go backwards. Returns true if
 	 * successful, false otherwise.
 	 */
-	public static int addToRandomPipeAround(World world, int x, int y, int z, ForgeDirection from, ItemStack stack) {
-		List<IPipeTile> possiblePipes = new ArrayList<IPipeTile>();
+	public static int addToRandomInjectableAround(World world, int x, int y, int z, ForgeDirection from, ItemStack stack) {
+		List<IInjectable> possiblePipes = new ArrayList<IInjectable>();
 		List<ForgeDirection> pipeDirections = new ArrayList<ForgeDirection>();
 
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
@@ -161,24 +163,26 @@ public final class Utils {
 
 			TileEntity tile = BlockUtils.getTileEntity(world, (int) pos.x, (int) pos.y, (int) pos.z);
 
-			if (tile instanceof IPipeTile) {
-				IPipeTile pipe = (IPipeTile) tile;
-				if (pipe.getPipeType() != IPipeTile.PipeType.ITEM) {
-					continue;
-				}
-				if (!pipe.isPipeConnected(side.getOpposite())) {
+			if (tile instanceof IInjectable) {
+				if (!((IInjectable) tile).canInjectItems(side.getOpposite())) {
 					continue;
 				}
 
-				possiblePipes.add(pipe);
+				possiblePipes.add((IInjectable) tile);
 				pipeDirections.add(side.getOpposite());
+			} else {
+				IInjectable wrapper = CompatHooks.INSTANCE.getInjectableWrapper(tile, side);
+				if (wrapper != null) {
+					possiblePipes.add(wrapper);
+					pipeDirections.add(side.getOpposite());
+				}
 			}
 		}
 
 		if (possiblePipes.size() > 0) {
 			int choice = RANDOM.nextInt(possiblePipes.size());
 
-			IPipeTile pipeEntry = possiblePipes.get(choice);
+			IInjectable pipeEntry = possiblePipes.get(choice);
 
 			return pipeEntry.injectItem(stack, true, pipeDirections.get(choice));
 		}
