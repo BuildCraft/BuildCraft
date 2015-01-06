@@ -23,7 +23,6 @@ import buildcraft.transport.IPipeConnectionForced;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.TileGenericPipe;
 
 public class PipeItemsSandstone extends Pipe implements IPipeConnectionForced {
 

@@ -8,16 +8,15 @@
  */
 package buildcraft.compat;
 
+import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 
 import cpw.mods.fml.common.Loader;
 
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.transport.IInjectable;
-import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.TileGenericPipe;
 
-public final class CompatHooks {
+public class CompatHooks {
 	public static final CompatHooks INSTANCE;
 
 	static {
@@ -45,35 +44,42 @@ public final class CompatHooks {
 		return null;
 	}
 
-	public BlockGenericPipe createPipeBlock() {
-		BlockGenericPipe genericPipeBlock;
+	public Block getBlock(Class<? extends Block> klazz) {
+		Block block = null;
 
 		if (Loader.isModLoaded("BuildCraft|Compat")) {
 			try {
-				genericPipeBlock = (BlockGenericPipe) CompatHooks.class.getClassLoader().loadClass("buildcraft.transport.BlockGenericPipeCompat").newInstance();
+				block = (Block) CompatHooks.class.getClassLoader().loadClass(klazz.getName() + "Compat").newInstance();
+			} catch (ClassNotFoundException e) {
+				// Class not supplied by Compat
 			} catch (Exception e) {
 				e.printStackTrace();
-				genericPipeBlock = new BlockGenericPipe();
 			}
-		} else {
-			genericPipeBlock = new BlockGenericPipe();
 		}
 
-		return genericPipeBlock;
+		if (block == null) {
+			try {
+				block = klazz.newInstance();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		return block;
 	}
 
-	public Class<? extends TileEntity> getPipeTile() {
-		Class<? extends TileEntity> tileClass;
+	public Class<? extends TileEntity> getTile(Class<? extends TileEntity> klazz) {
+		Class<? extends TileEntity> tileClass = klazz;
 
 		if (Loader.isModLoaded("BuildCraft|Compat")) {
 			try {
-				tileClass = (Class<? extends TileEntity>) CompatHooks.class.getClassLoader().loadClass("buildcraft.transport.TileGenericPipeCompat");
+				tileClass = (Class<? extends TileEntity>) CompatHooks.class.getClassLoader().loadClass(klazz.getName() + "Compat");
+			} catch (ClassNotFoundException e) {
+				// Class not supplied by Compat
+				tileClass = klazz;
 			} catch (Exception e) {
 				e.printStackTrace();
-				tileClass = TileGenericPipe.class;
 			}
-		} else {
-			tileClass = TileGenericPipe.class;
 		}
 
 		return tileClass;

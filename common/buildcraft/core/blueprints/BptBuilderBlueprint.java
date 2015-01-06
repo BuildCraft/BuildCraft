@@ -17,7 +17,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Map.Entry;
-import java.util.TreeSet;
 
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;

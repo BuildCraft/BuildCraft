@@ -8,10 +8,8 @@
  */
 package buildcraft.transport.gates;
 
-import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.StatementManager;
 
 public class StatementSlot {
 	public IStatement statement;

@@ -38,6 +38,7 @@ import net.minecraftforge.common.config.Property;
 
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.builders.schematics.SchematicIgnoreMeta;
+import buildcraft.compat.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
@@ -147,8 +148,8 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 		// EntityRegistry.registerModEntity(EntityMechanicalArm.class, "bcMechanicalArm", EntityIds.MECHANICAL_ARM, instance, 50, 1, true);
 
-		CoreProxy.proxy.registerTileEntity(TileQuarry.class, "Machine");
-		CoreProxy.proxy.registerTileEntity(TileMiningWell.class, "MiningWell");
+		CoreProxy.proxy.registerTileEntity(CompatHooks.INSTANCE.getTile(TileQuarry.class), "Machine");
+		CoreProxy.proxy.registerTileEntity(CompatHooks.INSTANCE.getTile(TileMiningWell.class), "MiningWell");
 		CoreProxy.proxy.registerTileEntity(TileAutoWorkbench.class, "AutoWorkbench");
 		CoreProxy.proxy.registerTileEntity(TilePump.class, "net.minecraft.src.buildcraft.factory.TilePump");
 		CoreProxy.proxy.registerTileEntity(TileFloodGate.class, "net.minecraft.src.buildcraft.factory.TileFloodGate");
@@ -193,7 +194,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 		}
 
 
-		miningWellBlock = new BlockMiningWell();
+		miningWellBlock = (BlockMiningWell) CompatHooks.INSTANCE.getBlock(BlockMiningWell.class);
 		CoreProxy.proxy.registerBlock(miningWellBlock.setBlockName("miningWellBlock"));
 
 		plainPipeBlock = new BlockPlainPipe();
@@ -205,7 +206,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 		frameBlock = new BlockFrame();
 		CoreProxy.proxy.registerBlock(frameBlock.setBlockName("frameBlock"));
 
-		quarryBlock = new BlockQuarry();
+		quarryBlock = (BlockQuarry) CompatHooks.INSTANCE.getBlock(BlockQuarry.class);
 		CoreProxy.proxy.registerBlock(quarryBlock.setBlockName("machineBlock"));
 
 		tankBlock = new BlockTank();
@@ -315,7 +316,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 					" I ",
 					'I', "ingotIron",
 					'C', Blocks.chest,
-					'G', "gearStone");
+					'G', "gearIron");
 		}
 
 		if (floodGateBlock != null) {

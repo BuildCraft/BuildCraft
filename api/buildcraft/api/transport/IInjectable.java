@@ -7,8 +7,10 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.EnumColor;
 
 public interface IInjectable {
+	boolean canInjectItems(ForgeDirection from);
+
 	/**
-	 * Offers an ItemStack for addition to the pipe. Will be rejected if the
+	 * Offers an ItemStack for 3addition to the pipe. Will be rejected if the
 	 * pipe doesn't accept items from that side.
 	 *
 	 * @param stack ItemStack offered for addition. Do not manipulate this!
@@ -19,11 +21,4 @@ public interface IInjectable {
 	 * @return Amount of items used from the passed stack.
 	 */
 	int injectItem(ItemStack stack, boolean doAdd, ForgeDirection from, EnumColor color);
-
-	/**
-	 * Same as
-	 * {@link #injectItem(ItemStack, boolean, ForgeDirection, EnumColor)}
-	 * but with no color attribute.
-	 */
-	int injectItem(ItemStack stack, boolean doAdd, ForgeDirection from);
 }

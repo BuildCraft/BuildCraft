@@ -98,7 +98,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		Pipe<?> otherPipe;
 
 		if (tile instanceof IPipeTile) {
-			otherPipe = (Pipe<?>) ((IPipeTile)tile).getPipe();
+			otherPipe = (Pipe<?>) ((IPipeTile) tile).getPipe();
 			if (!BlockGenericPipe.isFullyDefined(otherPipe)) {
 				return false;
 			}

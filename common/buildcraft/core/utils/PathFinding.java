@@ -102,14 +102,16 @@ public class PathFinding {
 	private boolean searchForTarget(int range) {
 		for (int dx = -range; dx <= range; dx++) {
 			for (int dy = -range; dy <= range; dy++) {
-				for (int dz = -range; dz <= range; dz++)	{
+				for (int dz = -range; dz <= range; dz++) {
 					int x = start.x + dx;
 					int y = Math.max(0, start.y + dy);
 					int z = start.z + dz;
-					if (zone != null && !zone.contains(x, y, z))
+					if (zone != null && !zone.contains(x, y, z)) {
 						continue;
-					if(pathFound.matches(world, x, y, z))
+					}
+					if (pathFound.matches(world, x, y, z)) {
 						return false;
+					}
 				}
 			}
 		}

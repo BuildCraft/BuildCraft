@@ -11,7 +11,6 @@ package buildcraft.core.blueprints;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.TreeSet;
 
 import org.apache.logging.log4j.Level;
 

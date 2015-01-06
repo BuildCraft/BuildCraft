@@ -184,7 +184,7 @@ public final class Utils {
 
 			IInjectable pipeEntry = possiblePipes.get(choice);
 
-			return pipeEntry.injectItem(stack, true, pipeDirections.get(choice));
+			return pipeEntry.injectItem(stack, true, pipeDirections.get(choice), null);
 		}
 		return 0;
 	}

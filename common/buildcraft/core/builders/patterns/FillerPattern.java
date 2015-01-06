@@ -34,7 +34,7 @@ public abstract class FillerPattern implements IFillerPattern {
 
 	public FillerPattern(String tag) {
 		this.tag = tag;
-		patterns.put(getUniqueTag (), this);
+		patterns.put(getUniqueTag(), this);
 	}
 
 	@Override
@@ -131,7 +131,7 @@ public abstract class FillerPattern implements IFillerPattern {
 					}
 				}
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}

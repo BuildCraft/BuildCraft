@@ -16,19 +16,26 @@ import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import cofh.api.energy.IEnergyHandler;
+import buildcraft.BuildCraftFactory;
+import buildcraft.api.blueprints.BuilderAPI;
+import buildcraft.api.power.IRedstoneEngineReceiver;
+import buildcraft.api.transport.IInjectable;
+import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.Transactor;
 
-public class TileHopper extends TileBuildCraft implements IInventory {
+public class TileHopper extends TileBuildCraft implements IInventory, IEnergyHandler, IRedstoneEngineReceiver {
 
 	private final SimpleInventory inventory = new SimpleInventory(4, "Hopper", 64);
 	private boolean isEmpty;
 
     @Override
     public void initialize() {
-        inventory.addListener(this);
+		this.setBattery(new RFBattery(10, 10, 0));
+		inventory.addListener(this);
     }
 
 	@Override
@@ -66,6 +73,30 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 		ITransactor transactor = Transactor.getTransactorFor(outputTile);
 		
 		if (transactor == null) {
+			if (outputTile instanceof IInjectable && getBattery().getEnergyStored() >= 10) {
+				ItemStack stackToOutput = null;
+				int internalSlot = 0;
+
+				getBattery().useEnergy(10, 10, false);
+
+				for (; internalSlot < inventory.getSizeInventory(); internalSlot++) {
+					ItemStack stackInSlot = inventory.getStackInSlot(internalSlot);
+					if (stackInSlot == null || stackInSlot.stackSize == 0) {
+						continue;
+					}
+					stackToOutput = stackInSlot.copy();
+					stackToOutput.stackSize = 1;
+					break;
+				}
+
+				if (stackToOutput != null) {
+					int used = ((IInjectable) outputTile).injectItem(stackToOutput, true, ForgeDirection.UP, null);
+					if (used > 0) {
+						decrStackSize(internalSlot, 1);
+					}
+				}
+			}
+
 			return;
 		}
 		
@@ -157,5 +188,17 @@ public class TileHopper extends TileBuildCraft implements IInventory {
 	@Override
 	public boolean hasCustomInventoryName() {
 		return false;
+	}
+
+	@Override
+	public boolean canConnectRedstoneEngine(ForgeDirection side) {
+		// blocks up and down
+		return (side.ordinal() >= 2);
+	}
+
+	@Override
+	public boolean canConnectEnergy(ForgeDirection side) {
+		// blocks up and down
+		return (side.ordinal() >= 2);
 	}
 }

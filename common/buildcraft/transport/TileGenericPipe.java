@@ -43,7 +43,6 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.power.IRedstoneEngine;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeConnection;
@@ -65,7 +64,6 @@ import buildcraft.core.utils.Utils;
 import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.GatePluggable;
-import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.pluggable.PlugPluggable;
 import buildcraft.transport.pluggable.RobotStationPluggable;
 
@@ -1217,7 +1215,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		if (pipe instanceof IRedstoneEngineReceiver) {
 			return ((IRedstoneEngineReceiver) pipe).canConnectRedstoneEngine(side);
 		} else {
-			return ((getPipeType() != PipeType.POWER) && (getPipeType() != PipeType.STRUCTURE));
+			return (getPipeType() != PipeType.POWER) && (getPipeType() != PipeType.STRUCTURE);
 		}
 	}
 }

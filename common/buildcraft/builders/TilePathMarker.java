@@ -11,7 +11,6 @@ package buildcraft.builders;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.TreeSet;
 
 import io.netty.buffer.ByteBuf;
 
