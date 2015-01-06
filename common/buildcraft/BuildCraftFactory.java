@@ -316,7 +316,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 					" I ",
 					'I', "ingotIron",
 					'C', Blocks.chest,
-					'G', "gearIron");
+					'G', "gearStone");
+
+			CoreProxy.proxy.addShapelessRecipe(new ItemStack(hopperBlock), Blocks.hopper, "gearStone");
 		}
 
 		if (floodGateBlock != null) {

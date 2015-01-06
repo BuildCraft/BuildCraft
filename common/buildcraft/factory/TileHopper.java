@@ -17,8 +17,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import cofh.api.energy.IEnergyHandler;
-import buildcraft.BuildCraftFactory;
-import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.transport.IInjectable;
 import buildcraft.core.RFBattery;
@@ -193,12 +191,17 @@ public class TileHopper extends TileBuildCraft implements IInventory, IEnergyHan
 	@Override
 	public boolean canConnectRedstoneEngine(ForgeDirection side) {
 		// blocks up and down
-		return (side.ordinal() >= 2);
+		return side.ordinal() >= 2;
+	}
+
+	@Override
+	public String getOwner() {
+		return super.getOwner();
 	}
 
 	@Override
 	public boolean canConnectEnergy(ForgeDirection side) {
 		// blocks up and down
-		return (side.ordinal() >= 2);
+		return side.ordinal() >= 2;
 	}
 }

@@ -29,7 +29,6 @@ import buildcraft.api.power.IRedstoneEngine;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.energy.TileEngineWood;
 import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.PipePowerCobblestone;
 import buildcraft.transport.pipes.PipePowerDiamond;

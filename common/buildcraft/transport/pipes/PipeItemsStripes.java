@@ -150,7 +150,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 							container.yCoord + TransportUtils.getPipeFloorOf(
 									new ItemStack(BuildCraftTransport.pipeItemsStripes)),
 							container.zCoord + 0.5, stack.copy());
-					((PipeTransportItems) ((Pipe<?>)((IPipeTile) targetTile).getPipe()).transport).injectItem(newItem, event.direction.getOpposite());
+					((PipeTransportItems) ((Pipe<?>) ((IPipeTile) targetTile).getPipe()).transport).injectItem(newItem, event.direction.getOpposite());
 
 					stack.stackSize = 0;
 				}
