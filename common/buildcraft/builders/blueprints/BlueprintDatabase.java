@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
@@ -162,7 +163,12 @@ public class BlueprintDatabase {
 		};
 
 		if (directory.exists()) {
-			for (File blueprintFile : directory.listFiles(filter)) {
+			File[] files = directory.listFiles(filter);
+			if (files == null || files.length == 0) {
+				return;
+			}
+
+			for (File blueprintFile : files) {
 				String fileName = blueprintFile.getName();
 
 				BlueprintId id = new BlueprintId();
