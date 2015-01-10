@@ -15,7 +15,6 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
