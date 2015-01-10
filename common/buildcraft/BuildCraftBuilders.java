@@ -540,6 +540,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pathMarkerBlock, 1), "l ", "r ", 'l',
 			"dyeGreen", 'r', Blocks.redstone_torch);
 
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(constructionMarkerBlock, 1), "l ", "r ", 'l',
+				"gearGold", 'r', Blocks.redstone_torch);
+
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock, 1), "btb", "ycy", "gCg", 'b',
 			"dyeBlack", 't', markerBlock, 'y', "dyeYellow",
 			'c', Blocks.crafting_table, 'g', "gearGold", 'C', Blocks.chest);
