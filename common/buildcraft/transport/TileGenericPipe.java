@@ -54,7 +54,6 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.ITileBufferHolder;
 import buildcraft.core.TileBuffer;
-import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.network.ISyncedTile;
@@ -88,8 +87,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	protected boolean pipeBound = false;
 	protected boolean resyncGateExpansions = false;
 	protected boolean attachPluggables = false;
+	protected SideProperties sideProperties = new SideProperties();
 
-	private SideProperties sideProperties = new SideProperties();
 	private TileBuffer[] tileBuffer;
 	private int glassColor = -1;
 
@@ -218,7 +217,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			pluggables = newPluggables;
 		}
 
-		public boolean dropItem(TileGenericPipe pipe, ForgeDirection direction) {
+		public boolean dropItem(TileGenericPipe pipe, ForgeDirection direction, EntityPlayer player) {
 			boolean result = false;
 			PipePluggable pluggable = pluggables[direction.ordinal()];
 			if (pluggable != null) {
@@ -227,7 +226,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 					ItemStack[] stacks = pluggable.getDropItems(pipe);
 					if (stacks != null) {
 						for (ItemStack stack : stacks) {
-							InvUtils.dropItems(pipe.worldObj, stack, pipe.xCoord, pipe.yCoord, pipe.zCoord);
+							Utils.dropTryIntoPlayerInventory(pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord,
+									stack, player);
 						}
 					}
 				}
@@ -909,6 +909,10 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	public boolean setPluggable(ForgeDirection direction, PipePluggable pluggable) {
+		return setPluggable(direction, pluggable, null);
+	}
+
+	public boolean setPluggable(ForgeDirection direction, PipePluggable pluggable, EntityPlayer player) {
 		if (worldObj != null && worldObj.isRemote) {
 			return false;
 		}
@@ -919,7 +923,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 		// Remove old pluggable
 		if (sideProperties.pluggables[direction.ordinal()] != null) {
-			sideProperties.dropItem(this, direction);
+			sideProperties.dropItem(this, direction, player);
 			pipe.eventBus.unregisterHandler(sideProperties.pluggables[direction.ordinal()]);
 		}
 

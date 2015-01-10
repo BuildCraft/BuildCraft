@@ -57,7 +57,7 @@ public class FacadePluggable extends PipePluggable {
 
 	@Override
 	public boolean isBlocking(IPipeTile pipe, ForgeDirection direction) {
-		return isHollow();
+		return !isHollow();
 	}
 
 	public boolean isHollow() {

@@ -729,13 +729,13 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		if (player.isSneaking()) {
 			if (pipe.container.hasPipePluggable(side) && rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable
 					&& pluggable.getClass().isInstance(pipe.container.getPipePluggable(side))) {
-				return pipe.container.setPluggable(side, null);
+				return pipe.container.setPluggable(side, null, player);
 			}
 		}
 
 		if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pipe) {
 			if (!pipe.container.hasPipePluggable(placementSide)) {
-				pipe.container.setPluggable(placementSide, pluggable);
+				pipe.container.setPluggable(placementSide, pluggable, player);
 
 				if (!player.capabilities.isCreativeMode) {
 					stack.stackSize--;
@@ -754,7 +754,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			}
 			return true;
 		}
-		return player.isSneaking() && stripWire(pipe, color);
+		return player.isSneaking() && stripWire(pipe, color, player);
 	}
 
 	private boolean addWire(Pipe<?> pipe, PipeWire color) {
@@ -769,10 +769,10 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		return false;
 	}
 
-	private boolean stripWire(Pipe<?> pipe, PipeWire color) {
+	private boolean stripWire(Pipe<?> pipe, PipeWire color, EntityPlayer player) {
 		if (pipe.wireSet[color.ordinal()]) {
 			if (!pipe.container.getWorldObj().isRemote) {
-				dropWire(color, pipe);
+				dropWire(color, pipe, player);
 			}
 
 			pipe.signalStrength[color.ordinal()] = 0;
@@ -794,18 +794,24 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	private boolean stripEquipment(World world, int x, int y, int z, EntityPlayer player, Pipe<?> pipe, ForgeDirection side) {
-		// Try to strip pluggables first
-		//RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
-		//if (rayTraceResult != null && rayTraceResult.hitPart != Part.Pipe) {
-		if (pipe.container.hasPipePluggable(side)) {
-			return pipe.container.setPluggable(side, null);
-		}
-		//}
+		if (!world.isRemote) {
+			// Try to strip pluggables first
+			ForgeDirection nSide = side;
 
-		// Try to strip wires second, starting with yellow.
-		for (PipeWire color : PipeWire.values()) {
-			if (stripWire(pipe, color)) {
-				return true;
+			RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
+			if (rayTraceResult != null && rayTraceResult.hitPart != Part.Pipe) {
+				nSide = rayTraceResult.sideHit;
+			}
+
+			if (pipe.container.hasPipePluggable(nSide)) {
+				return pipe.container.setPluggable(nSide, null, player);
+			}
+
+			// Try to strip wires second, starting with yellow.
+			for (PipeWire color : PipeWire.values()) {
+				if (stripWire(pipe, color, player)) {
+					return true;
+				}
 			}
 		}
 
@@ -817,8 +823,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	 *
 	 * @param pipeWire
 	 */
-	private void dropWire(PipeWire pipeWire, Pipe<?> pipe) {
-		pipe.dropItem(pipeWire.getStack());
+	private void dropWire(PipeWire pipeWire, Pipe<?> pipe, EntityPlayer player) {
+		Utils.dropTryIntoPlayerInventory(pipe.container.getWorld(), pipe.container.x(),
+				pipe.container.y(), pipe.container.z(), pipeWire.getStack(), player);
 	}
 
 

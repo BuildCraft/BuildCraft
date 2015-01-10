@@ -189,6 +189,12 @@ public final class Utils {
 		return 0;
 	}
 
+	public static void dropTryIntoPlayerInventory(World world, int x, int y, int z, ItemStack stack, EntityPlayer player) {
+		if (player == null || !player.inventory.addItemStackToInventory(stack)) {
+			InvUtils.dropItems(world, stack, x, y, z);
+		}
+	}
+
 	public static TileEntity getTile(World world, Position pos, ForgeDirection step) {
 		Position tmp = new Position(pos);
 		tmp.orientation = step;
