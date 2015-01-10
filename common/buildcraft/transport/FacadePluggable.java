@@ -61,7 +61,7 @@ public class FacadePluggable extends PipePluggable {
 	}
 
 	public boolean isHollow() {
-		return states == null ? renderAsHollow : !states[0].hollow;
+		return states == null ? renderAsHollow : states[0].hollow;
 	}
 
 	public Block getRenderingBlock() { return block; }
