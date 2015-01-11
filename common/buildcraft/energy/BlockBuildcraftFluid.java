@@ -71,8 +71,9 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 
 	@Override
 	public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
-
-		if(!dense || entity == null) return;
+		if (!dense || entity == null) {
+			return;
+		}
 
 		entity.motionY = Math.min(0.0, entity.motionY);
 
