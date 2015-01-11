@@ -15,6 +15,7 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -37,6 +38,7 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 	@SideOnly(Side.CLIENT)
 	protected IIcon[] theIcon;
 	protected boolean flammable;
+	protected boolean dense = false;
 	protected int flammability = 0;
 	private MapColor mapColor;
 
@@ -65,6 +67,27 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 			world.newExplosion(null, x, y, z, 4F, true, true);
 			world.setBlockToAir(x, y, z);
 		}
+	}
+
+	@Override
+	public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
+
+		if(!dense || entity == null) return;
+
+		entity.motionY = Math.min(0.0, entity.motionY);
+
+		if (entity.motionY < -0.05) {
+			entity.motionY *= 0.05;
+		}
+
+		entity.motionX = Math.max(-0.05, Math.min(0.05, entity.motionX * 0.05));
+		entity.motionY -= 0.05;
+		entity.motionZ = Math.max(-0.05, Math.min(0.05, entity.motionZ * 0.05));
+	}
+
+	public BlockBuildcraftFluid setDense(boolean dense) {
+		this.dense = dense;
+		return this;
 	}
 
 	public BlockBuildcraftFluid setFlammable(boolean flammable) {
