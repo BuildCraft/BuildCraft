@@ -181,16 +181,28 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);
 
 		// Oil and fuel
-		buildcraftFluidOil = new Fluid("oil").setDensity(800).setViscosity(1500);
-		FluidRegistry.registerFluid(buildcraftFluidOil);
+		if (!FluidRegistry.isFluidRegistered("oil")) {
+			buildcraftFluidOil = new Fluid("oil").setDensity(800).setViscosity(15000);
+			FluidRegistry.registerFluid(buildcraftFluidOil);
+		} else {
+			BCLog.logger.warn("Not using BuildCraft oil - issues might occur!");
+		}
 		fluidOil = FluidRegistry.getFluid("oil");
 
-		buildcraftFluidFuel = new Fluid("fuel");
-		FluidRegistry.registerFluid(buildcraftFluidFuel);
+		if (!FluidRegistry.isFluidRegistered("fuel")) {
+			buildcraftFluidFuel = new Fluid("fuel");
+			FluidRegistry.registerFluid(buildcraftFluidFuel);
+		} else {
+			BCLog.logger.warn("Not using BuildCraft fuel - issues might occur!");
+		}
 		fluidFuel = FluidRegistry.getFluid("fuel");
 
-		buildcraftFluidRedPlasma = new Fluid("redplasma").setDensity(10000).setViscosity(10000).setLuminosity(30);
-		FluidRegistry.registerFluid(buildcraftFluidRedPlasma);
+		if (!FluidRegistry.isFluidRegistered("redplasma")) {
+			buildcraftFluidRedPlasma = new Fluid("redplasma").setDensity(10000).setViscosity(10000).setLuminosity(30);
+			FluidRegistry.registerFluid(buildcraftFluidRedPlasma);
+		} else {
+			BCLog.logger.warn("Not using BuildCraft red plasma - issues might occur!");
+		}
 		fluidRedPlasma = FluidRegistry.getFluid("redplasma");
 
 		if (fluidOil.getBlock() == null) {
