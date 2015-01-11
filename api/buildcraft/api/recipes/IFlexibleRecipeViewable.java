@@ -25,7 +25,7 @@ public interface IFlexibleRecipeViewable {
 	
 	/**
 	 * With BuildCraft's implementation (as of 6.1.3), this might
-	 * contain either an ItemStack, a List<ItemStack> or a FluidStack.
+	 * contain either an ItemStack, a List&lt;ItemStack&gt; or a FluidStack.
 	 */
 	Collection<Object> getInputs();
 	
