@@ -103,6 +103,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	public static Item fuel;
 
 	public static boolean canOilBurn;
+	public static boolean isOilDense;
 	public static boolean canEnginesExplode;
 	public static double oilWellScalar = 1.0;
 	public static ITriggerExternal triggerBlueEngineHeat = new TriggerEngineHeat(EnergyStage.BLUE);
@@ -121,6 +122,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		int oilDesertBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "biomeOilDesert", DefaultProps.BIOME_OIL_DESERT).getInt(DefaultProps.BIOME_OIL_DESERT);
 		int oilOceanBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "biomeOilOcean", DefaultProps.BIOME_OIL_OCEAN).getInt(DefaultProps.BIOME_OIL_OCEAN);
 		canOilBurn = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "burnOil", true, "Can oil burn?").getBoolean(true);
+		isOilDense = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "denseOil", true, "Should it be hard to swim in oil?").getBoolean(true);
 		oilWellScalar = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "oilWellGenerationRate", 1.0, "Probability of oil well generation").getDouble(1.0);
 		canEnginesExplode = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "enginesExplode", false, "Do engines explode upon overheat?").getBoolean(false);
 
@@ -192,7 +194,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		fluidRedPlasma = FluidRegistry.getFluid("redplasma");
 
 		if (fluidOil.getBlock() == null) {
-			blockOil = new BlockBuildcraftFluid(fluidOil, Material.water, MapColor.blackColor).setFlammable(canOilBurn).setFlammability(0);
+			blockOil = new BlockBuildcraftFluid(fluidOil, Material.water, MapColor.blackColor).setFlammable(canOilBurn).setFlammability(0).setDense(isOilDense);
 			blockOil.setBlockName("blockOil").setLightOpacity(8);
 			CoreProxy.proxy.registerBlock(blockOil);
 			fluidOil.setBlock(blockOil);
