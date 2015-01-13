@@ -18,7 +18,7 @@ public interface IStatement {
 
 	/**
 	 * Every trigger needs a unique tag, it should be in the format of
-	 * "<modid>:<name>".
+	 * "&lt;modid&gt;:&lt;name&gt;.
 	 *
 	 * @return the unique id
 	 */
