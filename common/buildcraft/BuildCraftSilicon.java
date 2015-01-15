@@ -8,6 +8,9 @@
  */
 package buildcraft;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -95,7 +98,6 @@ import buildcraft.silicon.statements.TriggerRobotSleep;
 
 @Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon", dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
 public class BuildCraftSilicon extends BuildCraftMod {
-
 	@Mod.Instance("BuildCraft|Silicon")
 	public static BuildCraftSilicon instance;
 
@@ -126,11 +128,16 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
 	public static float chipsetCostMultiplier = 1.0F;
 
+	public static List<String> blacklistedRobots;
+
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
 		chipsetCostMultiplier = BuildCraftCore.mainConfiguration.getFloat("chipset.costMultiplier", Configuration.CATEGORY_GENERAL, 1.0F, 0.001F, 1000.0F, "The multiplier for chipset recipe cost.");
 
-		BuildCraftCore.mainConfiguration.save();
+		blacklistedRobots = new ArrayList<String>();
+		blacklistedRobots.addAll(Arrays.asList(BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "boards.blacklist", new String[]{}).getStringList()));
+
+				BuildCraftCore.mainConfiguration.save();
 
 		laserBlock = new BlockLaser();
 		laserBlock.setBlockName("laserBlock");

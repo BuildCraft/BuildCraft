@@ -209,14 +209,16 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 			for (StationIndex s : stationSet) {
 				DockingStation d = (DockingStation) stations.get(s);
 
-				if (!d.canRelease()) {
-					if (forceAll) {
+				if (d != null) {
+					if (!d.canRelease()) {
+						if (forceAll) {
+							d.unsafeRelease(robot);
+						} else if (resetMainLink && d.isMainStation() && d.robotIdTaking() == robot.getRobotId()) {
+							d.invalidateRobotTakingEntity();
+						}
+					} else {
 						d.unsafeRelease(robot);
-					} else if (resetMainLink && d.isMainStation() && d.robotIdTaking() == robot.getRobotId()) {
-						d.invalidateRobotTakingEntity();
 					}
-				} else {
-					d.unsafeRelease(robot);
 				}
 			}
 

@@ -107,6 +107,7 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 	@Override
 	public LinkedList<IActionInternal> getActions() {
 		LinkedList<IActionInternal> action = super.getActions();
+		// TODO: A bit of a hack
 		for (PowerMode mode : PowerMode.VALUES) {
 			action.add(BuildCraftTransport.actionPowerLimiter[mode.ordinal()]);
 		}

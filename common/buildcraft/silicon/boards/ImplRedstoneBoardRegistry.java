@@ -16,6 +16,7 @@ import java.util.Random;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.nbt.NBTTagCompound;
 
+import buildcraft.BuildCraftSilicon;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 
@@ -34,6 +35,10 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 
 	@Override
 	public void registerBoardClass(RedstoneBoardNBT<?> redstoneBoardNBT, float probability) {
+		if (BuildCraftSilicon.blacklistedRobots.contains(redstoneBoardNBT.getID())) {
+			return;
+		}
+
 		BoardFactory factory = new BoardFactory();
 		factory.boardNBT = redstoneBoardNBT;
 		factory.probability = probability;
