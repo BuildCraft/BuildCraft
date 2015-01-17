@@ -81,6 +81,7 @@ public abstract class GuiLaserTable extends GuiBuildCraft {
 	@Override
 	protected void initLedgers(IInventory inventory) {
 		super.initLedgers(inventory);
-		ledgerManager.add(new LaserTableLedger());
+		if(!BuildCraftCore.hidePowerNumbers)
+			ledgerManager.add(new LaserTableLedger());
 	}
 }

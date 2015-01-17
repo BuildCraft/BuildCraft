@@ -141,6 +141,8 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static boolean modifyWorld = false;
 	public static boolean colorBlindMode = false;
 	public static boolean dropBrokenBlocks = true; // Set to false to prevent the filler from dropping broken blocks.
+	public static boolean hidePowerNumbers = false;
+	public static boolean hideFluidNumbers = false;
 	public static int itemLifespan = 1200;
 	public static int updateFactor = 10;
 	public static long longUpdateFactor = 40;
@@ -259,6 +261,14 @@ public class BuildCraftCore extends BuildCraftMod {
 			Property dropBlock = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "dropBrokenBlocks", true);
 			dropBlock.comment = "set to false to prevent fillers from dropping blocks.";
 			dropBrokenBlocks = dropBlock.getBoolean(true);
+			
+			Property hideRFNumbers = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "hidePowerNumbers", false);
+			hideRFNumbers.comment = "set to true to not display any RF or RF/t numbers.";
+			hidePowerNumbers = hideRFNumbers.getBoolean(false);
+			
+			Property hideMBNumbers = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "hideFluidNumbers", false);
+			hideMBNumbers.comment = "set to true to not display any mB or mB/t numbers.";
+			hideFluidNumbers = hideMBNumbers.getBoolean(false);
 
 			Property lifespan = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "itemLifespan", itemLifespan);
 			lifespan.comment = "the lifespan in ticks of items dropped on the ground by pipes and machines, vanilla = 6000, default = 1200";
