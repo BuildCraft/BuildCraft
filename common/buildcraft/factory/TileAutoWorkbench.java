@@ -21,9 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.core.TileBuildCraft;
@@ -46,7 +44,11 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	public InventoryCrafting craftMatrix = new LocalInventoryCrafting();
 	public boolean useLast;
 	public int progress;
-
+	
+	/** Set when nothing can be crafted unless the input grid is changed.
+	 * Cleared whenever the input grid is changed. Not persisted. */
+	private boolean isJammed;
+	
 	private SimpleInventory resultInv = new SimpleInventory(1, "Auto Workbench", 64);
 
 	private IInventory inv = InventoryConcatenator.make().add(resultInv).add(craftMatrix);
@@ -65,6 +67,24 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 					return false;
 				}
 			}, 3, 3);
+		}
+		
+		@Override
+		public void setInventorySlotContents(int p_70299_1_, ItemStack p_70299_2_) {
+			super.setInventorySlotContents(p_70299_1_, p_70299_2_);
+			isJammed = false;
+		}
+		
+		@Override
+		public void markDirty() {
+			super.markDirty();
+			isJammed = false;
+		}
+		
+		@Override
+		public ItemStack decrStackSize(int p_70298_1_, int p_70298_2_) {
+			isJammed = false;
+			return super.decrStackSize(p_70298_1_, p_70298_2_);
 		}
 	}
 
@@ -176,6 +196,10 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		if (worldObj.isRemote) {
 			return;
 		}
+		
+		if (isJammed) {
+			return;
+		}
 
 		balanceSlots();
 
@@ -230,10 +254,12 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		IRecipe recipe = findRecipe();
 		if (recipe == null) {
 			progress = 0;
+			isJammed = true;
 			return;
 		}
 		if (!useLast && isLast()) {
 			progress = 0;
+			isJammed = true;
 			return;
 		}
 		progress += UPDATE_TIME;
@@ -244,6 +270,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		useLast = false;
 		ItemStack result = recipe.getCraftingResult(craftMatrix);
 		if (result == null) {
+			isJammed = true;
 			return;
 		}
 		result = result.copy();
