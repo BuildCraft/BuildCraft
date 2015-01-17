@@ -24,6 +24,7 @@ import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.InvUtils;
@@ -185,7 +186,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 			return;
 		}
 		update++;
-		if (update % UPDATE_TIME == 0) {
+		if (update % UPDATE_TIME == 0 || BuildCraftFactory.fastAutoWorkbench) {
 			updateCrafting();
 		}
 	}
@@ -236,7 +237,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 			return;
 		}
 		progress += UPDATE_TIME;
-		if (progress < CRAFT_TIME) {
+		if (progress < CRAFT_TIME && !BuildCraftFactory.fastAutoWorkbench) {
 			return;
 		}
 		progress = 0;
