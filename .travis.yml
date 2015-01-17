@@ -4,7 +4,7 @@ jdk:
 
 before_install: git clone https://github.com/BuildCraft/BuildCraft-Localization.git ../BuildCraft-Localization
 install: ./gradlew setupCIWorkspace -S
-script: ./gradlew build -S
+script: ./gradlew build
 
 env:
   global:
