@@ -49,6 +49,9 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	 * Cleared whenever the input grid is changed. Not persisted. */
 	private boolean isJammed;
 	
+	/** Set when any slot changes. Cleared when balanceSlots is called. */
+	private boolean needsBalancing;
+
 	private SimpleInventory resultInv = new SimpleInventory(1, "Auto Workbench", 64);
 
 	private IInventory inv = InventoryConcatenator.make().add(resultInv).add(craftMatrix);
@@ -73,17 +76,20 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		public void setInventorySlotContents(int p_70299_1_, ItemStack p_70299_2_) {
 			super.setInventorySlotContents(p_70299_1_, p_70299_2_);
 			isJammed = false;
+			needsBalancing = true;
 		}
 		
 		@Override
 		public void markDirty() {
 			super.markDirty();
 			isJammed = false;
+			needsBalancing = true;
 		}
 		
 		@Override
 		public ItemStack decrStackSize(int p_70298_1_, int p_70298_2_) {
 			isJammed = false;
+			needsBalancing = true;
 			return super.decrStackSize(p_70298_1_, p_70298_2_);
 		}
 	}
@@ -197,11 +203,12 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 			return;
 		}
 		
+		if(needsBalancing)
+			balanceSlots();
+		
 		if (isJammed) {
 			return;
 		}
-
-		balanceSlots();
 
 		if (craftSlot == null) {
 			craftSlot = new SlotCrafting(getInternalPlayer().get(), craftMatrix, craftResult, 0, 0, 0);
@@ -245,6 +252,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 				}
 			}
 		}
+		needsBalancing = false;
 	}
 
 	/**
