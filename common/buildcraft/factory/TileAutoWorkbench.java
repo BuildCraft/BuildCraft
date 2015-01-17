@@ -21,9 +21,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
+import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.InvUtils;
@@ -45,6 +44,13 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	public InventoryCrafting craftMatrix = new LocalInventoryCrafting();
 	public boolean useLast;
 	public int progress;
+	
+	/** Set when nothing can be crafted unless the input grid is changed.
+	 * Cleared whenever the input grid is changed. Not persisted. */
+	private boolean isJammed;
+	
+	/** Set when any slot changes. Cleared when balanceSlots is called. */
+	private boolean needsBalancing;
 
 	private SimpleInventory resultInv = new SimpleInventory(1, "Auto Workbench", 64);
 
@@ -64,6 +70,27 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 					return false;
 				}
 			}, 3, 3);
+		}
+		
+		@Override
+		public void setInventorySlotContents(int p_70299_1_, ItemStack p_70299_2_) {
+			super.setInventorySlotContents(p_70299_1_, p_70299_2_);
+			isJammed = false;
+			needsBalancing = true;
+		}
+		
+		@Override
+		public void markDirty() {
+			super.markDirty();
+			isJammed = false;
+			needsBalancing = true;
+		}
+		
+		@Override
+		public ItemStack decrStackSize(int p_70298_1_, int p_70298_2_) {
+			isJammed = false;
+			needsBalancing = true;
+			return super.decrStackSize(p_70298_1_, p_70298_2_);
 		}
 	}
 
@@ -175,8 +202,13 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		if (worldObj.isRemote) {
 			return;
 		}
-
-		balanceSlots();
+		
+		if(needsBalancing)
+			balanceSlots();
+		
+		if (isJammed) {
+			return;
+		}
 
 		if (craftSlot == null) {
 			craftSlot = new SlotCrafting(getInternalPlayer().get(), craftMatrix, craftResult, 0, 0, 0);
@@ -185,7 +217,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 			return;
 		}
 		update++;
-		if (update % UPDATE_TIME == 0) {
+		if (update % UPDATE_TIME == 0 || BuildCraftFactory.fastAutoWorkbench) {
 			updateCrafting();
 		}
 	}
@@ -220,6 +252,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 				}
 			}
 		}
+		needsBalancing = false;
 	}
 
 	/**
@@ -229,20 +262,23 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		IRecipe recipe = findRecipe();
 		if (recipe == null) {
 			progress = 0;
+			isJammed = true;
 			return;
 		}
 		if (!useLast && isLast()) {
 			progress = 0;
+			isJammed = true;
 			return;
 		}
 		progress += UPDATE_TIME;
-		if (progress < CRAFT_TIME) {
+		if (progress < CRAFT_TIME && !BuildCraftFactory.fastAutoWorkbench) {
 			return;
 		}
 		progress = 0;
 		useLast = false;
 		ItemStack result = recipe.getCraftingResult(craftMatrix);
 		if (result == null) {
+			isJammed = true;
 			return;
 		}
 		result = result.copy();
