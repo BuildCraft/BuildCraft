@@ -23,7 +23,7 @@ public class TransportProxy {
 	public void registerTileEntities() {
         // The first name here is the current TE name; the remaining names are old names used for backwards compatibility
 		GameRegistry.registerTileEntityWithAlternatives(CompatHooks.INSTANCE.getTile(TileGenericPipe.class), "net.minecraft.src.buildcraft.transport.GenericPipe", "net.minecraft.src.buildcraft.GenericPipe", "net.minecraft.src.buildcraft.transport.TileGenericPipe");
-		GameRegistry.registerTileEntity(TileFilteredBuffer.class, "net.minecraft.src.buildcraft.transport.TileFilteredBuffer");
+		GameRegistry.registerTileEntity(CompatHooks.INSTANCE.getTile(TileFilteredBuffer.class), "net.minecraft.src.buildcraft.transport.TileFilteredBuffer");
 	}
 
 	public void registerRenderers() {

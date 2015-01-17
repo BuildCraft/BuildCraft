@@ -148,8 +148,8 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 		// EntityRegistry.registerModEntity(EntityMechanicalArm.class, "bcMechanicalArm", EntityIds.MECHANICAL_ARM, instance, 50, 1, true);
 
-		CoreProxy.proxy.registerTileEntity(CompatHooks.INSTANCE.getTile(TileQuarry.class), "Machine");
-		CoreProxy.proxy.registerTileEntity(CompatHooks.INSTANCE.getTile(TileMiningWell.class), "MiningWell");
+		CoreProxy.proxy.registerTileEntity(TileQuarry.class, "Machine");
+		CoreProxy.proxy.registerTileEntity(TileMiningWell.class, "MiningWell");
 		CoreProxy.proxy.registerTileEntity(TileAutoWorkbench.class, "AutoWorkbench");
 		CoreProxy.proxy.registerTileEntity(TilePump.class, "net.minecraft.src.buildcraft.factory.TilePump");
 		CoreProxy.proxy.registerTileEntity(TileFloodGate.class, "net.minecraft.src.buildcraft.factory.TileFloodGate");
@@ -200,7 +200,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 		plainPipeBlock = new BlockPlainPipe();
 		CoreProxy.proxy.registerBlock(plainPipeBlock.setBlockName("plainPipeBlock"));
 
-		autoWorkbenchBlock = new BlockAutoWorkbench();
+		autoWorkbenchBlock = (BlockAutoWorkbench) CompatHooks.INSTANCE.getBlock(BlockAutoWorkbench.class);
 		CoreProxy.proxy.registerBlock(autoWorkbenchBlock.setBlockName("autoWorkbenchBlock"));
 
 		frameBlock = new BlockFrame();
@@ -209,19 +209,19 @@ public class BuildCraftFactory extends BuildCraftMod {
 		quarryBlock = (BlockQuarry) CompatHooks.INSTANCE.getBlock(BlockQuarry.class);
 		CoreProxy.proxy.registerBlock(quarryBlock.setBlockName("machineBlock"));
 
-		tankBlock = new BlockTank();
+		tankBlock = (BlockTank) CompatHooks.INSTANCE.getBlock(BlockTank.class);
 		CoreProxy.proxy.registerBlock(tankBlock.setBlockName("tankBlock"));
 
-		pumpBlock = new BlockPump();
+		pumpBlock = (BlockPump) CompatHooks.INSTANCE.getBlock(BlockPump.class);
 		CoreProxy.proxy.registerBlock(pumpBlock.setBlockName("pumpBlock"));
 
-		floodGateBlock = new BlockFloodGate();
+		floodGateBlock = (BlockFloodGate) CompatHooks.INSTANCE.getBlock(BlockFloodGate.class);
 		CoreProxy.proxy.registerBlock(floodGateBlock.setBlockName("floodGateBlock"));
 
-		refineryBlock = new BlockRefinery();
+		refineryBlock = (BlockRefinery) CompatHooks.INSTANCE.getBlock(BlockRefinery.class);
 		CoreProxy.proxy.registerBlock(refineryBlock.setBlockName("refineryBlock"));
 
-		hopperBlock = new BlockHopper();
+		hopperBlock = (BlockHopper) CompatHooks.INSTANCE.getBlock(BlockHopper.class);
 		CoreProxy.proxy.registerBlock(hopperBlock.setBlockName("blockHopper"));
 
 

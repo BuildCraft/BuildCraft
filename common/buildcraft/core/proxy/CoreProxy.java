@@ -37,6 +37,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.ICoreProxy;
+import buildcraft.compat.CompatHooks;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.ItemBlockBuildCraft;
 import buildcraft.core.LaserKind;
@@ -101,7 +102,7 @@ public class CoreProxy implements ICoreProxy {
 
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	public void registerTileEntity(Class clas, String ident) {
-		GameRegistry.registerTileEntity(clas, ident);
+		GameRegistry.registerTileEntity(CompatHooks.INSTANCE.getTile(clas), ident);
 	}
 
 	public void onCraftingPickup(World world, EntityPlayer player, ItemStack stack) {

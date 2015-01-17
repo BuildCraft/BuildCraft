@@ -120,6 +120,8 @@ import buildcraft.builders.statements.BuildersActionProvider;
 import buildcraft.builders.urbanism.BlockUrbanist;
 import buildcraft.builders.urbanism.TileUrbanist;
 import buildcraft.builders.urbanism.UrbanistToolsIconProvider;
+import buildcraft.compat.CompatHooks;
+import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
@@ -137,6 +139,7 @@ import buildcraft.core.builders.patterns.PatternHorizon;
 import buildcraft.core.builders.patterns.PatternPyramid;
 import buildcraft.core.builders.patterns.PatternStairs;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.silicon.BlockLaser;
 
 @Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftBuilders extends BuildCraftMod {
@@ -461,26 +464,26 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		buildToolBlock.setBlockName("buildToolBlock");
 		CoreProxy.proxy.registerBlock(buildToolBlock);
 
-		markerBlock = new BlockMarker();
+		markerBlock = (BlockMarker) CompatHooks.INSTANCE.getBlock(BlockMarker.class);
 		CoreProxy.proxy.registerBlock(markerBlock.setBlockName("markerBlock"));
 
-		pathMarkerBlock = new BlockPathMarker();
+		pathMarkerBlock = (BlockPathMarker) CompatHooks.INSTANCE.getBlock(BlockPathMarker.class);
 		CoreProxy.proxy.registerBlock(pathMarkerBlock.setBlockName("pathMarkerBlock"));
 
-		constructionMarkerBlock = new BlockConstructionMarker();
+		constructionMarkerBlock = (BlockConstructionMarker) CompatHooks.INSTANCE.getBlock(BlockConstructionMarker.class);
 		CoreProxy.proxy.registerBlock(constructionMarkerBlock.setBlockName("constructionMarkerBlock"),
 				ItemConstructionMarker.class);
 
-		fillerBlock = new BlockFiller();
+		fillerBlock = (BlockFiller) CompatHooks.INSTANCE.getBlock(BlockFiller.class);
 		CoreProxy.proxy.registerBlock(fillerBlock.setBlockName("fillerBlock"));
 
-		builderBlock = new BlockBuilder();
+		builderBlock = (BlockBuilder) CompatHooks.INSTANCE.getBlock(BlockBuilder.class);
 		CoreProxy.proxy.registerBlock(builderBlock.setBlockName("builderBlock"));
 
-		architectBlock = new BlockArchitect();
+		architectBlock = (BlockArchitect) CompatHooks.INSTANCE.getBlock(BlockArchitect.class);
 		CoreProxy.proxy.registerBlock(architectBlock.setBlockName("architectBlock"));
 
-		libraryBlock = new BlockBlueprintLibrary();
+		libraryBlock = (BlockBlueprintLibrary) CompatHooks.INSTANCE.getBlock(BlockBlueprintLibrary.class);
 		CoreProxy.proxy.registerBlock(libraryBlock.setBlockName("libraryBlock"));
 
 		if (!BuildCraftCore.NONRELEASED_BLOCKS) {
@@ -489,13 +492,13 @@ public class BuildCraftBuilders extends BuildCraftMod {
 			CoreProxy.proxy.registerTileEntity(TileUrbanist.class, "net.minecraft.src.builders.TileUrbanist");
 		}
 
-		GameRegistry.registerTileEntity(TileMarker.class, "Marker");
-		GameRegistry.registerTileEntity(TileFiller.class, "Filler");
-		GameRegistry.registerTileEntity(TileBuilder.class, "net.minecraft.src.builders.TileBuilder");
-		GameRegistry.registerTileEntity(TileArchitect.class, "net.minecraft.src.builders.TileTemplate");
-		GameRegistry.registerTileEntity(TilePathMarker.class, "net.minecraft.src.builders.TilePathMarker");
-		GameRegistry.registerTileEntity(TileConstructionMarker.class, "net.minecraft.src.builders.TileConstructionMarker");
-		GameRegistry.registerTileEntity(TileBlueprintLibrary.class, "net.minecraft.src.builders.TileBlueprintLibrary");
+		CoreProxy.proxy.registerTileEntity(TileMarker.class, "Marker");
+		CoreProxy.proxy.registerTileEntity(TileFiller.class, "Filler");
+		CoreProxy.proxy.registerTileEntity(TileBuilder.class, "net.minecraft.src.builders.TileBuilder");
+		CoreProxy.proxy.registerTileEntity(TileArchitect.class, "net.minecraft.src.builders.TileTemplate");
+		CoreProxy.proxy.registerTileEntity(TilePathMarker.class, "net.minecraft.src.builders.TilePathMarker");
+		CoreProxy.proxy.registerTileEntity(TileConstructionMarker.class, "net.minecraft.src.builders.TileConstructionMarker");
+		CoreProxy.proxy.registerTileEntity(TileBlueprintLibrary.class, "net.minecraft.src.builders.TileBlueprintLibrary");
 
 		SchematicRegistry.INSTANCE.readConfiguration(BuildCraftCore.mainConfiguration);
 

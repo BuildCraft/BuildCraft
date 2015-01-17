@@ -38,6 +38,7 @@ import buildcraft.commander.BlockRequester;
 import buildcraft.commander.BlockZonePlan;
 import buildcraft.commander.TileRequester;
 import buildcraft.commander.TileZonePlan;
+import buildcraft.compat.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
@@ -139,19 +140,19 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
 				BuildCraftCore.mainConfiguration.save();
 
-		laserBlock = new BlockLaser();
+		laserBlock = (BlockLaser) CompatHooks.INSTANCE.getBlock(BlockLaser.class);
 		laserBlock.setBlockName("laserBlock");
 		CoreProxy.proxy.registerBlock(laserBlock);
 
-		assemblyTableBlock = new BlockLaserTable();
+		assemblyTableBlock = (BlockLaserTable) CompatHooks.INSTANCE.getBlock(BlockLaserTable.class);
 		assemblyTableBlock.setBlockName("laserTableBlock");
 		CoreProxy.proxy.registerBlock(assemblyTableBlock, ItemLaserTable.class);
 
-		zonePlanBlock = new BlockZonePlan();
+		zonePlanBlock = (BlockZonePlan) CompatHooks.INSTANCE.getBlock(BlockZonePlan.class);
 		zonePlanBlock.setBlockName("zonePlan");
 		CoreProxy.proxy.registerBlock(zonePlanBlock);
 
-		requesterBlock = new BlockRequester();
+		requesterBlock = (BlockRequester) CompatHooks.INSTANCE.getBlock(BlockRequester.class);
 		requesterBlock.setBlockName("requester");
 		CoreProxy.proxy.registerBlock(requesterBlock);
 

@@ -49,6 +49,7 @@ import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.StatementManager;
+import buildcraft.compat.CompatHooks;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
@@ -177,7 +178,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			biomeOilOcean = BiomeGenOilOcean.makeBiome(oilOceanBiomeId);
 		}
 
-		engineBlock = new BlockEngine();
+		engineBlock = (BlockEngine) CompatHooks.INSTANCE.getBlock(BlockEngine.class);
 		CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);
 
 		// Oil and fuel
