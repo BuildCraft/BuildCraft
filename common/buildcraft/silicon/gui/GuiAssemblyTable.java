@@ -184,6 +184,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	@Override
 	protected void initLedgers(IInventory inventory) {
 		super.initLedgers(inventory);
-		ledgerManager.add(new LaserTableLedger());
+		if(!BuildCraftCore.hidePowerNumbers)
+			ledgerManager.add(new LaserTableLedger());
 	}
 }
