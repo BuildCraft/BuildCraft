@@ -301,14 +301,6 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 
 	private static boolean isBlockValidForFacade(Block block) {
 		try {
-			/*if (block.getRenderType() != 0 && block.getRenderType() != 31 && block.getRenderType() != 39) {
-				return false;
-			}*/
-
-			if (!block.renderAsNormalBlock() && !block.isOpaqueCube()) {
-				return false;
-			}
-
 			if (block.getBlockBoundsMinX() != 0.0 || block.getBlockBoundsMinY() != 0.0 || block.getBlockBoundsMinZ() != 0.0) {
 				return false;
 			}
