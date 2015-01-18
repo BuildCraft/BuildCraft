@@ -137,10 +137,7 @@ public class DockingStation implements IDockingStation {
 
 	public void release(EntityRobotBase robot) {
 		if (robotTaking == robot && !linkIsMain) {
-			linkIsMain = false;
-			robotTaking = null;
-			robotTakingId = EntityRobotBase.NULL_ROBOT_ID;
-			getPipe().scheduleRenderUpdate();
+			unsafeRelease(robot);
 			RobotRegistry.getRegistry(world).markDirty();
 			RobotRegistry.getRegistry(world).release(this, robot.getRobotId());
 		}
@@ -152,6 +149,7 @@ public class DockingStation implements IDockingStation {
 	 */
 	public void unsafeRelease(EntityRobotBase robot) {
 		if (robotTaking == robot) {
+			linkIsMain = false;
 			robotTaking = null;
 			robotTakingId = EntityRobotBase.NULL_ROBOT_ID;
 			getPipe().scheduleRenderUpdate();
