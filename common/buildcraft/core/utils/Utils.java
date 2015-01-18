@@ -22,6 +22,7 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -190,9 +191,12 @@ public final class Utils {
 	}
 
 	public static void dropTryIntoPlayerInventory(World world, int x, int y, int z, ItemStack stack, EntityPlayer player) {
-		if (player == null || !player.inventory.addItemStackToInventory(stack)) {
-			InvUtils.dropItems(world, stack, x, y, z);
+		if (player != null && player.inventory.addItemStackToInventory(stack)) {
+			if (player instanceof EntityPlayerMP) {
+				((EntityPlayerMP) player).sendContainerToPlayer(player.inventoryContainer);
+			}
 		}
+		InvUtils.dropItems(world, stack, x, y, z);
 	}
 
 	public static TileEntity getTile(World world, Position pos, ForgeDirection step) {

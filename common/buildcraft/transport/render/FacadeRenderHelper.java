@@ -120,9 +120,9 @@ public final class FacadeRenderHelper {
 						textures[side.ordinal()] = renderBlock.getIcon(
 								facadeBlockAccess, tile.x(), tile.y(), tile.z(), side.ordinal()
 						);
-						/* if (textures[side.ordinal()] == null) {
+						if (textures[side.ordinal()] == null) {
 							textures[side.ordinal()] = renderBlock.getIcon(side.ordinal(), renderMeta);
-						} */
+						}
 						if (side == direction || side == direction.getOpposite()) {
 							blockStateMachine.setRenderSide(side, true);
 						} else {
