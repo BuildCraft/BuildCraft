@@ -11,6 +11,7 @@ package buildcraft.transport.render;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -109,14 +110,19 @@ public final class FacadeRenderHelper {
 			Block renderBlock = pluggable.getRenderingBlock();
 
 			if (renderBlock != null) {
+				IBlockAccess facadeBlockAccess = new FacadeBlockAccess(tile.getWorldObj(), direction);
 
 				// If the facade is meant to render in the current pass
 				if (renderBlock.canRenderInPass(PipeRendererWorld.renderPass)) {
 					int renderMeta = pluggable.getRenderingMeta();
 
 					for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-
-						textures[side.ordinal()] = renderBlock.getIcon(side.ordinal(), renderMeta);
+						textures[side.ordinal()] = renderBlock.getIcon(
+								facadeBlockAccess, tile.x(), tile.y(), tile.z(), side.ordinal()
+						);
+						/* if (textures[side.ordinal()] == null) {
+							textures[side.ordinal()] = renderBlock.getIcon(side.ordinal(), renderMeta);
+						} */
 						if (side == direction || side == direction.getOpposite()) {
 							blockStateMachine.setRenderSide(side, true);
 						} else {

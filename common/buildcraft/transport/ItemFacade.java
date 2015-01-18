@@ -8,7 +8,7 @@
  */
 package buildcraft.transport;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -138,8 +138,9 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 		}
 	}
 
-	public static final LinkedList<ItemStack> allFacades = new LinkedList<ItemStack>();
-	public static final LinkedList<String> blacklistedFacades = new LinkedList<String>();
+	public static final ArrayList<ItemStack> allFacades = new ArrayList<ItemStack>();
+	public static final ArrayList<String> allFacadeIDs = new ArrayList<String>();
+	public static final ArrayList<String> blacklistedFacades = new ArrayList<String>();
 
 	private static final Block NULL_BLOCK = null;
 	private static final ItemStack NO_MATCH = new ItemStack(NULL_BLOCK, 0, 0);
@@ -241,38 +242,31 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 	}
 
 	private void registerValidFacades(Block block, Item item) {
-		Set<String> names = Sets.newHashSet();
-
-		for (int i = 0; i < 16; i++) {
+		//for (int i = 0; i < 16; i++) {
+		ArrayList<ItemStack> stacks = new ArrayList<ItemStack>(16);
+		for (CreativeTabs tab : item.getCreativeTabs()) {
+			block.getSubBlocks(item, tab, stacks);
+		}
+		for (ItemStack stack : stacks) {
 			try {
+				int i = stack.getItemDamage();
+
 				if (block.hasTileEntity(i)) {
 					continue;
 				}
-				
-				ItemStack stack = new ItemStack(item, 1, i);
 
                 // Check if all of these functions work correctly.
                 // If an exception is filed, or null is returned, this generally means that
                 // this block is invalid.
-                // We do not use getSubBlocks() to permit for rotated combinations of a given facade.
-                // TODO: Rewrite to use getSubBlocks
                 try {
-                    if (stack.getUnlocalizedName() == null || stack.getDisplayName() == null) {
+                    if (stack.getDisplayName() == null || Strings.isNullOrEmpty(stack.getUnlocalizedName())) {
                         continue;
                     }
                 } catch (Throwable t) {
                     continue;
                 }
 
-				if (!Strings.isNullOrEmpty(stack.getUnlocalizedName())
-						&& names.add(stack.getUnlocalizedName())) {
-					addFacade(stack);
-
-					// prevent adding multiple facades if it's a rotatable block
-					if (block.getRenderType() == 31 || (block.getRenderType() == 39 && i == 2)) {
-						break;
-					}
-				}
+				addFacade(stack);
 			} catch (IndexOutOfBoundsException e) {
 
 			} catch (Throwable t) {
@@ -311,7 +305,11 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 				return false;
 			}*/
 
-			if (!block.isBlockNormalCube()) {
+			if (!block.renderAsNormalBlock() && !block.isOpaqueCube()) {
+				return false;
+			}
+
+			if (block.getBlockBoundsMinX() != 0.0 || block.getBlockBoundsMinY() != 0.0 || block.getBlockBoundsMinZ() != 0.0) {
 				return false;
 			}
 
@@ -434,7 +432,8 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 
 		ItemStack facade = getFacadeForBlock(block, itemStack.getItemDamage());
 
-		if (!allFacades.contains(facade)) {
+		if (!allFacadeIDs.contains(recipeId)) {
+			allFacadeIDs.add(recipeId);
 			allFacades.add(facade);
 
 			ItemStack facade6 = facade.copy();
