@@ -170,6 +170,11 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean debug) {
+		for (FacadeState state : getFacadeStates(stack)) {
+			if (!state.transparent && state.block != null) {
+				Item.getItemFromBlock(state.block).addInformation(new ItemStack(state.block, 1, state.metadata), player, list, debug);
+			}
+		}
 		if (getFacadeType(stack) == FacadeType.Phased) {
 			String stateString = StringUtils.localize("item.FacadePhased.state");
 			FacadeState defaultState = null;
@@ -302,7 +307,11 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 
 	private static boolean isBlockValidForFacade(Block block) {
 		try {
-			if (block.getRenderType() != 0 && block.getRenderType() != 31 && block.getRenderType() != 39) {
+			/*if (block.getRenderType() != 0 && block.getRenderType() != 31 && block.getRenderType() != 39) {
+				return false;
+			}*/
+
+			if (!block.isBlockNormalCube()) {
 				return false;
 			}
 
@@ -511,10 +520,6 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 			int stackMeta = blockMeta;
 
 			switch (block.getRenderType()) {
-				case 0:
-					// supports cycling through variants (wool, planks, etc)
-					stackMeta = (blockMeta + 1) & 15;
-					break;
 				case 31:
 					if ((blockMeta & 0xC) == 0) {
 						// Meta | 4 = true
