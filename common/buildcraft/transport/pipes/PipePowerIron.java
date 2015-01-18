@@ -14,12 +14,15 @@ import java.util.LinkedList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftEnergy;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.statements.IActionInternal;
@@ -57,9 +60,15 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 				setMode(getMode().getNext());
 			}
 			if (getWorld().isRemote) {
-				player.addChatMessage(new ChatComponentText(String.format(
-						StringUtils.localize("chat.pipe.power.iron.mode"),
-						getMode().maxPower)));
+				if (BuildCraftCore.hidePowerNumbers) {
+					player.addChatMessage(new ChatComponentText(String.format(
+							StringUtils.localize("chat.pipe.power.iron.mode.numberless"),
+							StringUtils.localize("chat.pipe.power.iron.level." + getMode().maxPower))));
+				} else {
+					player.addChatMessage(new ChatComponentText(String.format(
+							StringUtils.localize("chat.pipe.power.iron.mode"),
+							getMode().maxPower)));
+				}
 			}
 
 			((IToolWrench) equipped).wrenchUsed(player, container.xCoord, container.yCoord, container.zCoord);

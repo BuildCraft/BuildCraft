@@ -18,6 +18,7 @@ import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.PowerMode;
 import buildcraft.core.utils.StringUtils;
@@ -54,7 +55,15 @@ public class TileEngineCreative extends TileEngine {
 				powerMode = powerMode.getNext();
 				energy = 0;
 
-				player.addChatMessage(new ChatComponentText(String.format(StringUtils.localize("chat.pipe.power.iron.mode"), powerMode.maxPower)));
+				if (BuildCraftCore.hidePowerNumbers) {
+					player.addChatMessage(new ChatComponentText(String.format(
+							StringUtils.localize("chat.pipe.power.iron.mode.numberless"),
+							StringUtils.localize("chat.pipe.power.iron.level." + powerMode.maxPower))));
+				} else {
+					player.addChatMessage(new ChatComponentText(String.format(
+							StringUtils.localize("chat.pipe.power.iron.mode"),
+							powerMode.maxPower)));
+				}
 
 				sendNetworkUpdate();
 
