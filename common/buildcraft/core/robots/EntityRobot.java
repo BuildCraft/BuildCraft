@@ -582,7 +582,7 @@ public class EntityRobot extends EntityRobotBase implements
 		DockingStation station = (DockingStation) iStation;
 
 		if (linkedDockingStation != null && linkedDockingStation != station) {
-			((DockingStation) linkedDockingStation).release(this);
+			((DockingStation) linkedDockingStation).unsafeRelease(this);
 		}
 
 		linkedDockingStation = station;
