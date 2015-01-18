@@ -192,22 +192,12 @@ public final class InterModComms {
 						BCLog.logger.info(String.format("Received an invalid add-facade request %s from mod %s", m.getStringValue(), m.getSender()));
 					} else {
 						Block block = (Block) Block.blockRegistry.getObject(blockName);
-						if (block.getRenderType() != 0 && block.getRenderType() != 31) {
-							BuildCraftTransport.facadeItem.addFacade(new ItemStack(block, 1, metaId));
-						} else {
-							logRedundantAddFacadeMessage(m, block.toString());
-						}
+						BuildCraftTransport.facadeItem.addFacade(new ItemStack(block, 1, metaId));
 					}
 				}
 			} else if (m.isItemStackMessage()) {
 				ItemStack modItemStack = m.getItemStackValue();
-
-				Block block = Block.getBlockFromItem(modItemStack.getItem());
-				if (block != null && block.getRenderType() != 0 && block.getRenderType() != 31) {
-					BuildCraftTransport.facadeItem.addFacade(modItemStack);
-				} else if (block != null) {
-					logRedundantAddFacadeMessage(m, block.toString());
-				}
+				BuildCraftTransport.facadeItem.addFacade(modItemStack);
 			}
 		} catch (Exception ex) {
 		}
@@ -228,11 +218,6 @@ public final class InterModComms {
 			}
 		} catch (Throwable e) {
 		}
-	}
-
-	private static void logRedundantAddFacadeMessage(IMCMessage m, String blockName)
-	{
-		BCLog.logger.warn(String.format("%s is trying to add %s - a facade that BuildCraft will add later. Facade addition not necessary.", m.getSender(), blockName));
 	}
 
 	public static void processOilLakeBiomeIMC(IMCEvent event, IMCMessage m) {
