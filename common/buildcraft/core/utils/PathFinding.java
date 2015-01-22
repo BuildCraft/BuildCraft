@@ -101,16 +101,19 @@ public class PathFinding {
 
 	private boolean searchForTarget(int range) {
 		for (int dx = -range; dx <= range; dx++) {
-			for (int dy = -range; dy <= range; dy++) {
-				for (int dz = -range; dz <= range; dz++) {
-					int x = start.x + dx;
-					int y = Math.max(0, start.y + dy);
-					int z = start.z + dz;
-					if (zone != null && !zone.contains(x, y, z)) {
-						continue;
-					}
-					if (pathFound.matches(world, x, y, z)) {
-						return false;
+			for (int dz = -range; dz <= range; dz++) {
+				int x = start.x + dx;
+				int z = start.z + dz;
+				if (world.getChunkProvider().chunkExists (x >> 4, z >> 4)) {
+					int height = world.getChunkFromChunkCoords(x >> 4, z >> 4).getHeightValue(x & 0xF, z & 0xF);
+					for (int dy = -range; dy <= height; dy++) {
+						int y = Math.max(0, start.y + dy);
+						if (zone != null && !zone.contains(x, y, z)) {
+							continue;
+						}
+						if (pathFound.matches(world, x, y, z)) {
+							return false;
+						}
 					}
 				}
 			}

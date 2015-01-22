@@ -77,9 +77,7 @@ public class ActionIterator implements Iterable<StatementSlot> {
 			}
 
 			if (isValid()) {
-				next = new StatementSlot();
-				next.statement = pipe.gates[curDir.ordinal()].actions[index];
-				next.parameters = pipe.gates[curDir.ordinal()].actionParameters[index];
+				next = pipe.gates[curDir.ordinal()].activeActions.get(index);
 			} else {
 				next = null;
 			}
