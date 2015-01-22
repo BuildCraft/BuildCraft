@@ -48,8 +48,8 @@ public interface IPipeTile extends IInjectable {
 	IPipe getPipe();
 	int getPipeColor();
 
-	PipePluggable getPipePluggable(ForgeDirection direction);
-	boolean hasPipePluggable(ForgeDirection direction);
+	PipePluggable getPipePluggable(ForgeDirection direction); // Now in IPluggableProvider
+	boolean hasPipePluggable(ForgeDirection direction); // Now in IPluggableProvider
 	boolean hasBlockingPluggable(ForgeDirection direction);
 
 	void scheduleNeighborChange();
@@ -57,6 +57,6 @@ public interface IPipeTile extends IInjectable {
 	// For compatibility with BC 6.2.x and below
 	int injectItem(ItemStack stack, boolean doAdd, ForgeDirection from, EnumColor color);
 
-	@Deprecated
+	@Deprecated // Now in IInjectable
 	int injectItem(ItemStack stack, boolean doAdd, ForgeDirection from);
 }

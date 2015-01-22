@@ -6,6 +6,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.FacadePluggable;
@@ -22,13 +23,13 @@ public class FacadeBlockAccess implements IBlockAccess {
 
 	@Override
 	public Block getBlock(int x, int y, int z) {
-		System.out.println("Querying block at " + x + ", " + y + ", " + z);
+		//System.out.println("Querying block at " + x + ", " + y + ", " + z);
 		TileEntity tile = world.getTileEntity(x, y, z);
 		if (tile instanceof TileGenericPipe) {
 			PipePluggable p = ((TileGenericPipe) tile).getPipePluggable(side);
-			if (p instanceof FacadePluggable) {
-				System.out.println("Found facade");
-				return ((FacadePluggable) p).getRenderingBlock();
+			if (p instanceof IFacadePluggable) {
+				//System.out.println("Found facade");
+				return ((IFacadePluggable) p).getCurrentBlock();
 			}
 		}
 		return Blocks.air;
@@ -46,13 +47,13 @@ public class FacadeBlockAccess implements IBlockAccess {
 
 	@Override
 	public int getBlockMetadata(int x, int y, int z) {
-		System.out.println("Querying block metadata at " + x + ", " + y + ", " + z);
+		//System.out.println("Querying block metadata at " + x + ", " + y + ", " + z);
 		TileEntity tile = world.getTileEntity(x, y, z);
 		if (tile instanceof TileGenericPipe) {
 			PipePluggable p = ((TileGenericPipe) tile).getPipePluggable(side);
-			if (p instanceof FacadePluggable) {
-				System.out.println("Found facade " + ((FacadePluggable) p).getRenderingMeta());
-				return ((FacadePluggable) p).getRenderingMeta();
+			if (p instanceof IFacadePluggable) {
+				//System.out.println("Found facade " + ((FacadePluggable) p).getRenderingMeta());
+				return ((IFacadePluggable) p).getCurrentMetadata();
 			}
 		}
 		return 0;

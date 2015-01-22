@@ -17,6 +17,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.render.ITextureStates;
+import buildcraft.api.transport.pluggable.IFacadePluggable;
+import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.transport.BlockGenericPipe;
@@ -102,19 +104,24 @@ public final class FacadeRenderHelper {
 		//block_statemachine.setRenderAllSides();
 		
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			if (!(tile.getPipePluggable(direction) instanceof FacadePluggable)) {
+			if (!(tile.getPipePluggable(direction) instanceof IFacadePluggable)) {
 				continue;
 			}
 
-			FacadePluggable pluggable = (FacadePluggable) tile.getPipePluggable(direction);
-			Block renderBlock = pluggable.getRenderingBlock();
+			IFacadePluggable pluggable = (IFacadePluggable) tile.getPipePluggable(direction);
+			if (((PipePluggable) pluggable).getRenderer() != null) {
+				// This IFacadePluggable provides its own renderer.
+				continue;
+			}
+
+			Block renderBlock = pluggable.getCurrentBlock();
 
 			if (renderBlock != null) {
 				IBlockAccess facadeBlockAccess = new FacadeBlockAccess(tile.getWorldObj(), direction);
 
 				// If the facade is meant to render in the current pass
 				if (renderBlock.canRenderInPass(PipeRendererWorld.renderPass)) {
-					int renderMeta = pluggable.getRenderingMeta();
+					int renderMeta = pluggable.getCurrentMetadata();
 
 					for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 						textures[side.ordinal()] = renderBlock.getIcon(
@@ -126,11 +133,11 @@ public final class FacadeRenderHelper {
 						if (side == direction || side == direction.getOpposite()) {
 							blockStateMachine.setRenderSide(side, true);
 						} else {
-							if (!(tile.getPipePluggable(side) instanceof FacadePluggable)) {
+							if (!(tile.getPipePluggable(side) instanceof IFacadePluggable)) {
 								blockStateMachine.setRenderSide(side, true);
 							} else {
-								FacadePluggable pluggable2 = (FacadePluggable) tile.getPipePluggable(side);
-								blockStateMachine.setRenderSide(side, pluggable2.getRenderingBlock() == null);
+								IFacadePluggable pluggable2 = (IFacadePluggable) tile.getPipePluggable(side);
+								blockStateMachine.setRenderSide(side, pluggable2.getCurrentBlock() == null);
 							}
 						}
 					}
@@ -212,8 +219,13 @@ public final class FacadeRenderHelper {
 		// Always render connectors in pass 0
 		if (PipeRendererWorld.renderPass == 0) {
 			for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-				if (tile.getPipePluggable(direction) instanceof FacadePluggable) {
-					FacadePluggable pluggable = (FacadePluggable) tile.getPipePluggable(direction);
+				if (tile.getPipePluggable(direction) instanceof IFacadePluggable) {
+					IFacadePluggable pluggable = (IFacadePluggable) tile.getPipePluggable(direction);
+
+					if (((PipePluggable) pluggable).getRenderer() != null) {
+						// This IFacadePluggable provides its own renderer.
+						continue;
+					}
 
 					if (!pluggable.isHollow()) {
 						float[][] rotated = MatrixTranformations.deepClone(zeroStateSupport);

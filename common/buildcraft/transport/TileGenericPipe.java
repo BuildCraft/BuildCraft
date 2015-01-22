@@ -49,6 +49,7 @@ import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.api.transport.PipeWire;
+import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.IDropControlInventory;
@@ -348,7 +349,9 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		worldObj.notifyBlockOfNeighborChange(xCoord, yCoord, zCoord, getBlock());
 		scheduleRenderUpdate();
 		sendUpdateToClient();
-		BlockGenericPipe.updateNeighbourSignalState(pipe);
+		if (pipe != null) {
+			BlockGenericPipe.updateNeighbourSignalState(pipe);
+		}
 	}
 
 	@Override
@@ -896,7 +899,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		if (direction == null || direction == ForgeDirection.UNKNOWN) {
 			return false;
 		} else {
-			return sideProperties.pluggables[direction.ordinal()] instanceof FacadePluggable;
+			return sideProperties.pluggables[direction.ordinal()] instanceof IFacadePluggable;
 		}
 	}
 
@@ -940,7 +943,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	public boolean hasEnabledFacade(ForgeDirection direction) {
-		return hasFacade(direction) && !((FacadePluggable) getPipePluggable(direction)).getRenderingTransparent();
+		return hasFacade(direction) && !((FacadePluggable) getPipePluggable(direction)).isTransparent();
 	}
 
 	public DockingStation getStation(ForgeDirection direction) {

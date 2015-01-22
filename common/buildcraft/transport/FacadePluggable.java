@@ -11,11 +11,12 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.transport.IPipeTile;
+import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.utils.MatrixTranformations;
 
-public class FacadePluggable extends PipePluggable {
+public class FacadePluggable extends PipePluggable implements IFacadePluggable {
 	public ItemFacade.FacadeState[] states;
 	private ItemFacade.FacadeState activeState;
 
@@ -26,7 +27,7 @@ public class FacadePluggable extends PipePluggable {
 
 	public FacadePluggable(ItemFacade.FacadeState[] states) {
 		this.states = states;
-		activeState = states.length > 0 ? states[0] : null;
+		prepareStates();
 	}
 
 	public FacadePluggable() {
@@ -51,7 +52,7 @@ public class FacadePluggable extends PipePluggable {
 		if (states != null) {
 			return new ItemStack[] { ItemFacade.getFacade(states) };
 		} else {
-			return new ItemStack[] { ItemFacade.getFacade(new ItemFacade.FacadeState(getRenderingBlock(), getRenderingMeta(), null, isHollow())) };
+			return new ItemStack[] { ItemFacade.getFacade(new ItemFacade.FacadeState(getCurrentBlock(), getCurrentMetadata(), null, isHollow())) };
 		}
 	}
 
@@ -60,13 +61,28 @@ public class FacadePluggable extends PipePluggable {
 		return !isHollow();
 	}
 
-	public boolean isHollow() {
-		return states == null ? renderAsHollow : states[0].hollow;
+	@Override
+	public Block getCurrentBlock() {
+		prepareStates();
+		return activeState == null ? block : activeState.block;
 	}
 
-	public Block getRenderingBlock() { return block; }
-	public int getRenderingMeta() { return meta; }
-	public boolean getRenderingTransparent() { return transparent; }
+	@Override
+	public int getCurrentMetadata() {
+		prepareStates();
+		return activeState == null ? meta : activeState.metadata;
+	}
+
+	@Override
+	public boolean isTransparent() {
+		prepareStates();
+		return activeState == null ? transparent : activeState.transparent;
+	}
+
+	public boolean isHollow() {
+		prepareStates();
+		return activeState == null ? renderAsHollow : activeState.hollow;
+	}
 
 	@Override
 	public AxisAlignedBB getBoundingBox(ForgeDirection side) {
@@ -97,9 +113,7 @@ public class FacadePluggable extends PipePluggable {
 
 	@Override
 	public void writeData(ByteBuf data) {
-		if (activeState == null) {
-			activeState = states.length > 0 ? states[0] : null;
-		}
+		prepareStates();
 
 		if (activeState == null || activeState.block == null) {
 			data.writeShort(0);
@@ -114,7 +128,6 @@ public class FacadePluggable extends PipePluggable {
 
 	@Override
 	public void readData(ByteBuf data) {
-
 		int blockId = data.readUnsignedShort();
 		if (blockId > 0) {
 			block = Block.getBlockById(blockId);
@@ -127,6 +140,12 @@ public class FacadePluggable extends PipePluggable {
 		meta = flags & 0x0F;
 		transparent = (flags & 0x80) > 0;
 		renderAsHollow = (flags & 0x40) > 0;
+	}
+
+	private void prepareStates() {
+		if (activeState == null) {
+			activeState = states != null && states.length > 0 ? states[0] : null;
+		}
 	}
 
 	protected void setActiveState(int id) {

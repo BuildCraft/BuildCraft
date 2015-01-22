@@ -27,6 +27,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -244,8 +245,12 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 	private void registerValidFacades(Block block, Item item) {
 		//for (int i = 0; i < 16; i++) {
 		ArrayList<ItemStack> stacks = new ArrayList<ItemStack>(16);
-		for (CreativeTabs tab : item.getCreativeTabs()) {
-			block.getSubBlocks(item, tab, stacks);
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+			block.getSubBlocks(item, null, stacks);
+		} else {
+			for (int i = 0; i < 16; i++) {
+				stacks.add(new ItemStack(item, 1, i));
+			}
 		}
 		for (ItemStack stack : stacks) {
 			try {

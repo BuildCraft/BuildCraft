@@ -231,6 +231,10 @@ public class PipeTransportItems extends PipeTransport {
 		if (entity instanceof IPipeTile) {
 			Pipe<?> pipe = (Pipe<?>) ((IPipeTile) entity).getPipe();
 
+			if (pipe == null || pipe.transport == null) {
+				return false;
+			}
+
 			//return !pipe.pipe.isClosed() && pipe.pipe.transport instanceof PipeTransportItems;
 			return pipe.inputOpen(o.getOpposite()) && pipe.transport instanceof PipeTransportItems;
 		} else if (entity instanceof IInventory && item.getInsertionHandler().canInsertItem(item, (IInventory) entity)) {
