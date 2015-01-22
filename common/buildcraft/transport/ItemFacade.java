@@ -10,10 +10,8 @@ package buildcraft.transport;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;

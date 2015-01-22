@@ -35,12 +35,12 @@ public class FacadeBlockAccess implements IBlockAccess {
 	}
 
 	@Override
-	public TileEntity getTileEntity(int p_147438_1_, int p_147438_2_, int p_147438_3_) {
+	public TileEntity getTileEntity(int x, int y, int z) {
 		return null;
 	}
 
 	@Override
-	public int getLightBrightnessForSkyBlocks(int p_72802_1_, int p_72802_2_, int p_72802_3_, int p_72802_4_) {
+	public int getLightBrightnessForSkyBlocks(int x, int y, int z, int a) {
 		return 0;
 	}
 
@@ -59,7 +59,7 @@ public class FacadeBlockAccess implements IBlockAccess {
 	}
 
 	@Override
-	public int isBlockProvidingPowerTo(int p_72879_1_, int p_72879_2_, int p_72879_3_, int p_72879_4_) {
+	public int isBlockProvidingPowerTo(int x, int y, int z, int side) {
 		return 0;
 	}
 
@@ -84,7 +84,7 @@ public class FacadeBlockAccess implements IBlockAccess {
 	}
 
 	@Override
-	public boolean isSideSolid(int x, int y, int z, ForgeDirection side, boolean _default) {
-		return world.isSideSolid(x, y, z, side, _default);
+	public boolean isSideSolid(int x, int y, int z, ForgeDirection side, boolean def) {
+		return world.isSideSolid(x, y, z, side, def);
 	}
 }

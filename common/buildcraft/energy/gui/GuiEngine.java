@@ -76,7 +76,8 @@ public abstract class GuiEngine extends GuiBuildCraft {
 	@Override
 	protected void initLedgers(IInventory inventory) {
 		super.initLedgers(inventory);
-		if(!BuildCraftCore.hidePowerNumbers)
+		if (!BuildCraftCore.hidePowerNumbers) {
 			ledgerManager.add(new EngineLedger((TileEngine) tile));
+		}
 	}
 }

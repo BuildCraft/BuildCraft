@@ -23,7 +23,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.InvUtils;
@@ -74,8 +73,8 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		}
 		
 		@Override
-		public void setInventorySlotContents(int p_70299_1_, ItemStack p_70299_2_) {
-			super.setInventorySlotContents(p_70299_1_, p_70299_2_);
+		public void setInventorySlotContents(int slot, ItemStack stack) {
+			super.setInventorySlotContents(slot, stack);
 			isJammed = false;
 			needsBalancing = true;
 		}
@@ -88,10 +87,10 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		}
 		
 		@Override
-		public ItemStack decrStackSize(int p_70298_1_, int p_70298_2_) {
+		public ItemStack decrStackSize(int slot, int amount) {
 			isJammed = false;
 			needsBalancing = true;
-			return super.decrStackSize(p_70298_1_, p_70298_2_);
+			return super.decrStackSize(slot, amount);
 		}
 	}
 
@@ -204,8 +203,9 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 			return;
 		}
 		
-		if(needsBalancing)
+		if (needsBalancing) {
 			balanceSlots();
+		}
 		
 		if (isJammed) {
 			return;

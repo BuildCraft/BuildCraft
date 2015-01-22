@@ -306,7 +306,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		
 		TileGenericPipe tileG = pipe.container;
 		
-		if(tileG == null) {
+		if (tileG == null) {
 			return null;
 		}
 
@@ -945,7 +945,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 		if (tile instanceof IPipeTile && !tile.isInvalid()) {
 			IPipe pipe = ((IPipeTile) tile).getPipe();
-			if(pipe instanceof Pipe<?>) {
+			if (pipe instanceof Pipe<?>) {
 				return (Pipe<?>) pipe;
 			}
 		}
@@ -1121,7 +1121,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				if (neighbours[i] != null && neighbours[i].getTile() instanceof IPipeTile &&
 						!neighbours[i].getTile().isInvalid() &&
 						((IPipeTile) neighbours[i].getTile()).getPipe() instanceof Pipe<?>) {
-					((Pipe<?>)((IPipeTile) neighbours[i].getTile()).getPipe()).updateSignalState();
+					((Pipe<?>) ((IPipeTile) neighbours[i].getTile()).getPipe()).updateSignalState();
 				}
 			}
 		}
