@@ -22,12 +22,12 @@ public class FacadeBlockAccess implements IBlockAccess {
 
 	@Override
 	public Block getBlock(int x, int y, int z) {
-		System.out.println("Querying block at " + x + ", " + y + ", " + z);
+		//System.out.println("Querying block at " + x + ", " + y + ", " + z);
 		TileEntity tile = world.getTileEntity(x, y, z);
 		if (tile instanceof TileGenericPipe) {
 			PipePluggable p = ((TileGenericPipe) tile).getPipePluggable(side);
 			if (p instanceof FacadePluggable) {
-				System.out.println("Found facade");
+				//System.out.println("Found facade");
 				return ((FacadePluggable) p).getRenderingBlock();
 			}
 		}
@@ -46,12 +46,12 @@ public class FacadeBlockAccess implements IBlockAccess {
 
 	@Override
 	public int getBlockMetadata(int x, int y, int z) {
-		System.out.println("Querying block metadata at " + x + ", " + y + ", " + z);
+		//System.out.println("Querying block metadata at " + x + ", " + y + ", " + z);
 		TileEntity tile = world.getTileEntity(x, y, z);
 		if (tile instanceof TileGenericPipe) {
 			PipePluggable p = ((TileGenericPipe) tile).getPipePluggable(side);
 			if (p instanceof FacadePluggable) {
-				System.out.println("Found facade " + ((FacadePluggable) p).getRenderingMeta());
+				//System.out.println("Found facade " + ((FacadePluggable) p).getRenderingMeta());
 				return ((FacadePluggable) p).getRenderingMeta();
 			}
 		}

@@ -242,14 +242,18 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 
 	private void registerValidFacades(Block block, Item item) {
 		ArrayList<ItemStack> stacks = new ArrayList<ItemStack>(16);
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-			for (CreativeTabs ct : item.getCreativeTabs()) {
-				block.getSubBlocks(item, ct, stacks);
+		try {
+			if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+				for (CreativeTabs ct : item.getCreativeTabs()) {
+					block.getSubBlocks(item, ct, stacks);
+				}
+			} else {
+				for (int i = 0; i < 16; i++) {
+					stacks.add(new ItemStack(item, 1, i));
+				}
 			}
-		} else {
-			for (int i = 0; i < 16; i++) {
-				stacks.add(new ItemStack(item, 1, i));
-			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		for (ItemStack stack : stacks) {
 			try {
