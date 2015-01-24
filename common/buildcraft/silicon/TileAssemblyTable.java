@@ -36,9 +36,9 @@ import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
 import buildcraft.core.recipes.AssemblyRecipeManager;
-import buildcraft.core.robots.EntityRobot;
-import buildcraft.core.robots.ResourceIdAssemblyTable;
-import buildcraft.core.robots.RobotRegistry;
+import buildcraft.robots.EntityRobot;
+import buildcraft.robots.ResourceIdAssemblyTable;
+import buildcraft.robots.RobotRegistry;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
 

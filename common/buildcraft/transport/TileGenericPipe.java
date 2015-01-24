@@ -59,13 +59,11 @@ import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.network.ISyncedTile;
 import buildcraft.core.network.PacketTileState;
-import buildcraft.core.robots.DockingStation;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.pluggable.PlugPluggable;
-import buildcraft.transport.pluggable.RobotStationPluggable;
 
 public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		IPipeTile, ITileBufferHolder, IEnergyHandler, IDropControlInventory,
@@ -144,7 +142,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 						} else if ("buildcraft.transport.gates.ItemPlug$PlugPluggable".equals(c)) {
 							pluggableClass = PlugPluggable.class;
 						} else if ("buildcraft.transport.gates.ItemRobotStation$RobotStationPluggable".equals(c)) {
-							pluggableClass = RobotStationPluggable.class;
+							pluggableClass = PipeManager.getPluggableByName("robotStation");
 						}
 					} else {
 						pluggableClass = PipeManager.getPluggableByName(pluggableData.getString("pluggableName"));
@@ -199,9 +197,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 				if (nbt.getBoolean("plug[" + i + "]")) {
 					pluggable = new PlugPluggable();
-				}
-				if (nbt.getBoolean("robotStation[" + i + "]")) {
-					pluggable = new RobotStationPluggable();
 				}
 
 				if (pluggable != null) {
@@ -944,12 +939,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	public boolean hasEnabledFacade(ForgeDirection direction) {
 		return hasFacade(direction) && !((FacadePluggable) getPipePluggable(direction)).isTransparent();
-	}
-
-	public DockingStation getStation(ForgeDirection direction) {
-		PipePluggable pluggable = sideProperties.pluggables[direction.ordinal()];
-		return pluggable instanceof RobotStationPluggable ?
-				((RobotStationPluggable) pluggable).getStation() : null;
 	}
 
 	// Legacy

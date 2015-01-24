@@ -17,7 +17,6 @@ import net.minecraft.world.World;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IZone;
-import buildcraft.core.robots.IBlockFilter;
 
 /**
  * This class implements a 3D path finding based on the A* algorithm, following

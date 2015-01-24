@@ -64,15 +64,15 @@ import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemMapLocation;
-import buildcraft.core.ItemRobot;
+import buildcraft.robots.ItemRobot;
 import buildcraft.core.TileBuffer;
-import buildcraft.core.robots.DockingStation;
-import buildcraft.core.robots.EntityRobot;
+import buildcraft.robots.DockingStation;
+import buildcraft.robots.EntityRobot;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GatePluggable;
-import buildcraft.transport.pluggable.RobotStationPluggable;
+import buildcraft.robots.RobotStationPluggable;
 import buildcraft.transport.render.PipeRendererWorld;
 
 public class BlockGenericPipe extends BlockBuildCraft {
@@ -656,7 +656,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 					if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable
 							&& pipe.container.getPipePluggable(rayTraceResult.sideHit) instanceof RobotStationPluggable) {
-						DockingStation station = pipe.container.getStation(rayTraceResult.sideHit);
+						RobotStationPluggable pluggable = (RobotStationPluggable) pipe.container.getPipePluggable(rayTraceResult.sideHit);
+						DockingStation station = pluggable.getStation();
 
 						if (!station.isTaken()) {
 							if (ItemRobot.getRobotNBT(currentItem) == null) {
