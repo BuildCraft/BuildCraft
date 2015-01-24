@@ -121,7 +121,6 @@ import buildcraft.builders.urbanism.BlockUrbanist;
 import buildcraft.builders.urbanism.TileUrbanist;
 import buildcraft.builders.urbanism.UrbanistToolsIconProvider;
 import buildcraft.compat.CompatHooks;
-import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
@@ -139,7 +138,6 @@ import buildcraft.core.builders.patterns.PatternHorizon;
 import buildcraft.core.builders.patterns.PatternPyramid;
 import buildcraft.core.builders.patterns.PatternStairs;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.silicon.BlockLaser;
 
 @Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftBuilders extends BuildCraftMod {

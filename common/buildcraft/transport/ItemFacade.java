@@ -10,10 +10,8 @@ package buildcraft.transport;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -243,14 +241,19 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 	}
 
 	private void registerValidFacades(Block block, Item item) {
-		//for (int i = 0; i < 16; i++) {
 		ArrayList<ItemStack> stacks = new ArrayList<ItemStack>(16);
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-			block.getSubBlocks(item, null, stacks);
-		} else {
-			for (int i = 0; i < 16; i++) {
-				stacks.add(new ItemStack(item, 1, i));
+		try {
+			if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+				for (CreativeTabs ct : item.getCreativeTabs()) {
+					block.getSubBlocks(item, ct, stacks);
+				}
+			} else {
+				for (int i = 0; i < 16; i++) {
+					stacks.add(new ItemStack(item, 1, i));
+				}
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		for (ItemStack stack : stacks) {
 			try {

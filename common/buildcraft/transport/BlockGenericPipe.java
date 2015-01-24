@@ -57,6 +57,8 @@ import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
@@ -296,20 +298,15 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	private RaytraceResult doRayTrace(World world, int x, int y, int z, Vec3 origin, Vec3 direction) {
-		TileEntity pipeTileEntity = world.getTileEntity(x, y, z);
-
-		TileGenericPipe tileG = null;
-		if (pipeTileEntity instanceof TileGenericPipe) {
-			tileG = (TileGenericPipe) pipeTileEntity;
-		}
-
-		if (tileG == null) {
-			return null;
-		}
-
-		Pipe<?> pipe = tileG.pipe;
+		Pipe<?> pipe = getPipe(world, x, y, z);
 
 		if (!isValid(pipe)) {
+			return null;
+		}
+		
+		TileGenericPipe tileG = pipe.container;
+		
+		if (tileG == null) {
 			return null;
 		}
 
@@ -947,11 +944,13 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	public static Pipe<?> getPipe(IBlockAccess blockAccess, int i, int j, int k) {
 		TileEntity tile = blockAccess.getTileEntity(i, j, k);
 
-		if (!(tile instanceof TileGenericPipe) || tile.isInvalid()) {
-			return null;
-		} else {
-			return ((TileGenericPipe) tile).pipe;
+		if (tile instanceof IPipeTile && !tile.isInvalid()) {
+			IPipe pipe = ((IPipeTile) tile).getPipe();
+			if (pipe instanceof Pipe<?>) {
+				return (Pipe<?>) pipe;
+			}
 		}
+		return null;
 	}
 
 	public static boolean isFullyDefined(Pipe<?> pipe) {
@@ -1120,10 +1119,10 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 		if (neighbours != null) {
 			for (int i = 0; i < 6; i++) {
-				if (neighbours[i] != null && neighbours[i].getTile() instanceof TileGenericPipe &&
+				if (neighbours[i] != null && neighbours[i].getTile() instanceof IPipeTile &&
 						!neighbours[i].getTile().isInvalid() &&
-						((TileGenericPipe) neighbours[i].getTile()).pipe != null) {
-					((TileGenericPipe) neighbours[i].getTile()).pipe.updateSignalState();
+						((IPipeTile) neighbours[i].getTile()).getPipe() instanceof Pipe<?>) {
+					((Pipe<?>) ((IPipeTile) neighbours[i].getTile()).getPipe()).updateSignalState();
 				}
 			}
 		}

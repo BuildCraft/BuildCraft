@@ -158,13 +158,16 @@ public class FacadeItemRenderer implements IItemRenderer {
 		GL11.glPushMatrix();
 
 		// Enable glBlending for transparency
-		if (block != null && block.getRenderBlockPass() > 0) {
-			GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
-			GL11.glEnable(GL11.GL_BLEND);
-			OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+		if (block != null) {
+			if (block.getRenderBlockPass() > 0) {
+				GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
+				GL11.glEnable(GL11.GL_BLEND);
+				OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+			}
+
+			RenderUtils.setGLColorFromInt(block.getRenderColor(decodedMeta));
 		}
 
-		RenderUtils.setGLColorFromInt(block.getRenderColor(decodedMeta));
 		if (hollow) {
 			GL11.glTranslatef(translateX, translateY, translateZ);
 			drawHollowCube(tessellator, render, block, decodedMeta);

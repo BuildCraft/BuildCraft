@@ -137,9 +137,9 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 						String c = pluggableData.getString("pluggableClass");
 						if ("buildcraft.transport.gates.ItemGate$GatePluggable".equals(c)) {
 							pluggableClass = GatePluggable.class;
-						} else if ("buildcraft.transport.gates.ItemFacade$FacadePluggable".equals(c)) {
+						} else if ("buildcraft.transport.ItemFacade$FacadePluggable".equals(c)) {
 							pluggableClass = FacadePluggable.class;
-						} else if ("buildcraft.transport.gates.ItemPlug$PlugPluggable".equals(c)) {
+						} else if ("buildcraft.transport.ItemPlug$PlugPluggable".equals(c)) {
 							pluggableClass = PlugPluggable.class;
 						} else if ("buildcraft.transport.gates.ItemRobotStation$RobotStationPluggable".equals(c)) {
 							pluggableClass = PipeManager.getPluggableByName("robotStation");

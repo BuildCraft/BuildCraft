@@ -12,17 +12,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDirt;
-import net.minecraft.block.BlockGrass;
-import net.minecraft.item.ItemSeeds;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemReed;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
+import net.minecraftforge.common.IPlantable;
+import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BlockIndex;
-import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
@@ -30,19 +32,19 @@ import buildcraft.core.inventory.filters.ArrayStackOrListFilter;
 import buildcraft.core.inventory.filters.CompositeFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.inventory.filters.OreStackFilter;
+import buildcraft.core.utils.IBlockFilter;
 import buildcraft.robots.ai.AIRobotFetchAndEquipItemStack;
 import buildcraft.robots.ai.AIRobotGotoBlock;
 import buildcraft.robots.ai.AIRobotGotoRandomGroundBlock;
 import buildcraft.robots.ai.AIRobotGotoSleep;
 import buildcraft.robots.ai.AIRobotSearchBlock;
 import buildcraft.robots.ai.AIRobotUseToolOnBlock;
-import buildcraft.core.utils.IBlockFilter;
 import buildcraft.robots.ResourceIdBlock;
 import buildcraft.robots.statements.ActionRobotFilter;
 
 public class BoardRobotPlanter extends RedstoneBoardRobot {
 
-	private IStackFilter stackFilter = new CompositeFilter(new OreStackFilter("treeSapling"), new SeedFilter());
+	private IStackFilter stackFilter = new CompositeFilter(new PlantableFilter(), new ReedFilter());
 	private BlockIndex blockFound;
 
 	public BoardRobotPlanter(EntityRobotBase iRobot) {
@@ -81,25 +83,40 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 				startDelegateAI(new AIRobotFetchAndEquipItemStack(robot, stackFilter));
 			}
 		} else {
-			if (robot.getHeldItem().getItem() instanceof ItemSeeds) {
-				startDelegateAI(new AIRobotSearchBlock(robot, new IBlockFilter() {
+			final ItemStack itemStack = robot.getHeldItem();
+			IBlockFilter blockFilter;
+			if (itemStack.getItem() instanceof ItemReed) {
+				blockFilter = new IBlockFilter() {
 					@Override
 					public boolean matches(World world, int x, int y, int z) {
-						return BuildCraftAPI.isFarmlandProperty.get(world, x, y, z)
+						return world.getBlock(x, y, z).canSustainPlant(world, x, y, z, ForgeDirection.UP, (IPlantable) Blocks.reeds)
+								&& world.getBlock(x, y, z) != Blocks.reeds
 								&& !robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z))
 								&& isAirAbove(world, x, y, z);
 					}
-				}));
-			} else {
-				startDelegateAI(new AIRobotGotoRandomGroundBlock(robot, 100, new IBlockFilter() {
+				};
+			} else if (itemStack.getItem() instanceof ItemBlock) {
+				final Block plantBlock = ((ItemBlock) itemStack.getItem()).field_150939_a;
+				blockFilter = new IBlockFilter() {
 					@Override
 					public boolean matches(World world, int x, int y, int z) {
-						Block b = robot.worldObj.getBlock(x, y, z);
-
-						return b instanceof BlockDirt || b instanceof BlockGrass;
+						return world.getBlock(x, y, z).canSustainPlant(world, x, y, z, ForgeDirection.UP, (IPlantable) plantBlock)
+								&& world.getBlock(x, y, z) != plantBlock
+								&& !robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z))
+								&& isAirAbove(world, x, y, z);
 					}
-				}, robot.getZoneToWork()));
+				};
+			} else {
+				blockFilter = new IBlockFilter() {
+					@Override
+					public boolean matches(World world, int x, int y, int z) {
+						return world.getBlock(x, y, z).canSustainPlant(world, x, y, z, ForgeDirection.UP, (IPlantable) itemStack.getItem())
+								&& !robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z))
+								&& isAirAbove(world, x, y, z);
+					}
+				};
 			}
+			startDelegateAI(new AIRobotSearchBlock(robot, blockFilter));
 		}
 	}
 
@@ -124,6 +141,7 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 				}
 
 				blockFound = gotoBlock.blockFound;
+				gotoBlock.path.removeLast();
 				startDelegateAI(new AIRobotGotoBlock(robot, gotoBlock.path));
 			} else {
 				startDelegateAI(new AIRobotGotoSleep(robot));
@@ -137,10 +155,23 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 		}
 	}
 
-	private static class SeedFilter implements IStackFilter {
+	private static class PlantableFilter implements IStackFilter {
 		@Override
 		public boolean matches(ItemStack stack) {
-			return stack.getItem() instanceof ItemSeeds;
+			if (stack.getItem() instanceof IPlantable) {
+				return true;
+			}
+			if (stack.getItem() instanceof ItemBlock && ((ItemBlock) stack.getItem()).field_150939_a instanceof IPlantable) {
+				return true;
+			}
+			return false;
+		}
+	}
+
+	private static class ReedFilter implements IStackFilter {
+		@Override
+		public boolean matches(ItemStack stack) {
+			return stack.getItem() instanceof ItemReed;
 		}
 	}
 

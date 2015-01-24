@@ -47,7 +47,6 @@ public class GuiIntegrationTable extends GuiLaserTable {
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		drawLedgers(par1, par2);
 
-
 		String title = table.getInventoryName();
 		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
 	}

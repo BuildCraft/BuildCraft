@@ -544,6 +544,7 @@ public class PipeTransportPower extends PipeTransport {
 
 		if (externalPower[dir.ordinal()] < max) {
 			result = externalPower[dir.ordinal()];
+			externalPower[dir.ordinal()] = 0;
 		} else {
 			result = max;
 			externalPower[dir.ordinal()] -= max;

@@ -10,8 +10,10 @@ package buildcraft.transport.render;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
@@ -102,8 +104,11 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 			fakeBlock.setColor(0xFFFFFF);
 		} else if (renderPass == 1) {
 			// Fix a bug in Minecraft 1.7.2-1.7.10
-			// TODO: Remove in 1.8
-			renderblocks.renderFaceXNeg(fakeBlock, x, y, z, PipeIconProvider.TYPE.Transparent.getIcon());
+			IIcon i = PipeIconProvider.TYPE.Transparent.getIcon();
+			Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
+			Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
+			Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
+			Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
 		}
 
 		renderblocks.setRenderBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
