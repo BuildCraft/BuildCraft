@@ -27,7 +27,10 @@ import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IActionProvider;
 import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.robots.DockingStation;
+import buildcraft.robots.RobotUtils;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
@@ -36,19 +39,18 @@ public class RobotsActionProvider implements IActionProvider {
 
 	@Override
 	public Collection<IActionInternal> getInternalActions(IStatementContainer container) {
+		LinkedList<IActionInternal> result = new LinkedList<IActionInternal>();
 		TileEntity tile = container.getTile();
 		
-		if (!(tile instanceof TileGenericPipe)) {
-			return null;
+		if (!(tile instanceof IPipeTile)) {
+			return result;
 		}
-		
-		LinkedList<IActionInternal> result = new LinkedList<IActionInternal>();
 
 		ArrayList<DockingStation> stations = new ArrayList<DockingStation>();
 
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			if (((TileGenericPipe) tile).getStation(dir) != null) {
-				stations.add(((TileGenericPipe) tile).getStation(dir));
+			if (RobotUtils.getStation((IPipeTile) tile, dir) != null) {
+				stations.add(RobotUtils.getStation((IPipeTile) tile, dir));
 			}
 		}
 

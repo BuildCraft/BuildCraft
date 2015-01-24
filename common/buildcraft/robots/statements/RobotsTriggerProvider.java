@@ -8,6 +8,7 @@
  */
 package buildcraft.robots.statements;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -16,10 +17,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftSilicon;
+import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.ITriggerProvider;
+import buildcraft.api.transport.IPipeTile;
+import buildcraft.robots.DockingStation;
+import buildcraft.robots.RobotUtils;
 import buildcraft.transport.TileGenericPipe;
 
 public class RobotsTriggerProvider implements ITriggerProvider {
@@ -28,21 +33,20 @@ public class RobotsTriggerProvider implements ITriggerProvider {
 	public Collection<ITriggerInternal> getInternalTriggers(IStatementContainer container) {
 		LinkedList<ITriggerInternal> result = new LinkedList<ITriggerInternal>();
 		TileEntity tile = container.getTile();
-		
-		if (!(tile instanceof TileGenericPipe)) {
+
+		if (!(tile instanceof IPipeTile)) {
 			return result;
 		}
 
-		boolean stationFound = false;
+		ArrayList<DockingStation> stations = new ArrayList<DockingStation>();
 
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			if (((TileGenericPipe) tile).getStation(dir) != null) {
-				stationFound = true;
-				break;
+			if (RobotUtils.getStation((IPipeTile) tile, dir) != null) {
+				stations.add(RobotUtils.getStation((IPipeTile) tile, dir));
 			}
 		}
 
-		if (!stationFound) {
+		if (stations.size() == 0) {
 			return result;
 		}
 

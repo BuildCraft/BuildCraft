@@ -16,6 +16,8 @@ import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
+import buildcraft.api.transport.IPipeTile;
+import buildcraft.robots.RobotUtils;
 import buildcraft.robots.ai.AIRobotSleep;
 import buildcraft.robots.DockingStation;
 import buildcraft.robots.EntityRobot;
@@ -42,15 +44,14 @@ public class TriggerRobotSleep extends BCStatement implements ITriggerInternal {
 
 	@Override
 	public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
-		if (!(container instanceof IGate)) {
+		if (!(container.getTile() instanceof IPipeTile)) {
 			return false;
 		}
 		
-		Pipe<?> pipe = (Pipe<?>) ((IGate) container).getPipe();
-		TileGenericPipe tile = pipe.container;
+		IPipeTile tile = (IPipeTile) container.getTile();
 
 		for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
-			DockingStation station = tile.getStation(d);
+			DockingStation station = RobotUtils.getStation(tile, d);
 
 			if (station != null && station.robotTaking() != null) {
 				EntityRobot robot = (EntityRobot) station.robotTaking();

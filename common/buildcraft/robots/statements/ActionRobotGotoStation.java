@@ -19,7 +19,9 @@ import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.ItemMapLocation;
+import buildcraft.robots.RobotUtils;
 import buildcraft.robots.ai.AIRobotGoAndLinkToDock;
 import buildcraft.robots.DockingStation;
 import buildcraft.robots.EntityRobot;
@@ -47,11 +49,15 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 
 	@Override
 	public void actionActivate(IStatementContainer container, IStatementParameter[] parameters) {
-		Pipe<?> pipe = ((Gate) container).pipe;
-		RobotRegistry registry = RobotRegistry.getRegistry(pipe.getWorld());
+		if (!(container.getTile() instanceof IPipeTile)) {
+			return;
+		}
+
+		IPipeTile tile = (IPipeTile) container.getTile();
+		RobotRegistry registry = RobotRegistry.getRegistry(tile.getWorldObj());
 
 		for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
-			DockingStation station = pipe.container.getStation(d);
+			DockingStation station = RobotUtils.getStation(tile, d);
 
 			if (station != null && station.robotTaking() != null) {
 				EntityRobot robot = (EntityRobot) station.robotTaking();
