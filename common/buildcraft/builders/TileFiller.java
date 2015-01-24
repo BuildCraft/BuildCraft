@@ -13,6 +13,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 
 import cpw.mods.fml.relauncher.Side;
@@ -20,6 +21,9 @@ import cpw.mods.fml.relauncher.Side;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.filler.FillerManager;
+import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementManager;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.Box;
@@ -35,11 +39,12 @@ import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.Utils;
 
-public class TileFiller extends TileAbstractBuilder implements IHasWork, IControllable, ICommandReceiver {
+public class TileFiller extends TileAbstractBuilder implements IHasWork, IControllable, ICommandReceiver, IStatementContainer {
 
 	private static int POWER_ACTIVATION = 500;
 
 	public FillerPattern currentPattern = PatternFill.INSTANCE;
+	public IStatementParameter[] patternParameters;
 
 	private BptBuilderTemplate currentTemplate;
 	private BptContext context;
@@ -76,9 +81,9 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 			sendNetworkUpdate();
 		}
 
-		if (currentPattern != null && currentTemplate == null) {
+		if (currentPattern != null && currentTemplate == null && box.isInitialized()) {
 			currentTemplate = currentPattern
-					.getTemplateBuilder(box, getWorldObj());
+					.getTemplateBuilder(box, getWorldObj(), patternParameters);
 			context = currentTemplate.getContext();
 		}
 
@@ -121,7 +126,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 		}
 
 		if (currentPattern != null && currentTemplate == null) {
-			currentTemplate = currentPattern.getTemplateBuilder(box, getWorldObj());
+			currentTemplate = currentPattern.getTemplateBuilder(box, getWorldObj(), patternParameters);
 			context = currentTemplate.getContext();
 		}
 
@@ -183,6 +188,12 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 			currentPattern = PatternFill.INSTANCE;
 		}
 
+		if (nbt.hasKey("pp")) {
+			readParametersFromNBT(nbt.getCompoundTag("pp"));
+		} else {
+			initPatternParameters();
+		}
+
 		if (nbt.hasKey("box")) {
 			box.initialize(nbt.getCompoundTag("box"));
 		}
@@ -218,6 +229,10 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 		}
 
 		nbt.setTag("bpt", bptNBT);
+
+		NBTTagCompound ppNBT = new NBTTagCompound();
+		writeParametersToNBT(ppNBT);
+		nbt.setTag("pp", ppNBT);
 	}
 
 	@Override
@@ -241,12 +256,45 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 		destroy();
 	}
 
+	private void initPatternParameters() {
+		patternParameters = new IStatementParameter[currentPattern.maxParameters()];
+		for (int i = 0; i < currentPattern.minParameters(); i++) {
+			patternParameters[i] = currentPattern.createParameter(i);
+		}
+	}
+
 	public void setPattern(FillerPattern pattern) {
 		if (pattern != null && currentPattern != pattern) {
 			currentPattern = pattern;
 			currentTemplate = null;
 			done = false;
+			initPatternParameters();
 			sendNetworkUpdate();
+		}
+	}
+
+	private void writeParametersToNBT(NBTTagCompound nbt) {
+		nbt.setByte("length", (byte) (patternParameters != null ? patternParameters.length : 0));
+		if (patternParameters != null) {
+			for (int i = 0; i < patternParameters.length; i++) {
+				if (patternParameters[i] != null) {
+					NBTTagCompound patternData = new NBTTagCompound();
+					patternData.setString("kind", patternParameters[i].getUniqueTag());
+					patternParameters[i].writeToNBT(patternData);
+					nbt.setTag("p" + i, patternData);
+				}
+			}
+		}
+	}
+
+	private void readParametersFromNBT(NBTTagCompound nbt) {
+		patternParameters = new IStatementParameter[nbt.getByte("length")];
+		for (int i = 0; i < patternParameters.length; i++) {
+			if (nbt.hasKey("p" + i)) {
+				NBTTagCompound patternData = nbt.getCompoundTag("p" + i);
+				patternParameters[i] = StatementManager.createParameter(patternData.getString("kind"));
+				patternParameters[i].readFromNBT(patternData);
+			}
 		}
 	}
 
@@ -255,13 +303,19 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 		box.writeData(data);
 		data.writeBoolean(done);
 		Utils.writeUTF(data, currentPattern.getUniqueTag());
+		NBTTagCompound parameterData = new NBTTagCompound();
+		writeParametersToNBT(parameterData);
+		Utils.writeNBT(data, parameterData);
 	}
 
 	@Override
 	public void readData(ByteBuf data) {
 		box.readData(data);
 		done = data.readBoolean();
-		setPattern((FillerPattern) FillerManager.registry.getPattern(Utils.readUTF(data)));
+		FillerPattern pattern = (FillerPattern) FillerManager.registry.getPattern(Utils.readUTF(data));
+		NBTTagCompound parameterData = Utils.readNBT(data);
+		readParametersFromNBT(parameterData);
+		setPattern(pattern);
 
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
@@ -298,6 +352,9 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 		if (side.isServer() && "setPattern".equals(command)) {
 			String name = Utils.readUTF(stream);
 			setPattern((FillerPattern) FillerManager.registry.getPattern(name));
+		} else if (side.isServer() && "setParameters".equals(command)) {
+			NBTTagCompound patternData = Utils.readNBT(stream);
+			readParametersFromNBT(patternData);
 		}
 	}
 
@@ -328,4 +385,18 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 				mode == IControllable.Mode.Loop;
 	}
 
+	@Override
+	public TileEntity getTile() {
+		return this;
+	}
+
+	public void rpcSetParameter(int i, IStatementParameter patternParameter) {
+		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setParameters", new CommandWriter() {
+			public void write(ByteBuf data) {
+				NBTTagCompound parameterData = new NBTTagCompound();
+				writeParametersToNBT(parameterData);
+				Utils.writeNBT(data, parameterData);
+			}
+		}));
+	}
 }

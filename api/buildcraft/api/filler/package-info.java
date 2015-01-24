@@ -6,7 +6,7 @@
  * Please check the contents of the license, which should be located
  * as "LICENSE.API" in the BuildCraft source code distribution.
  */
-@API(apiVersion = "2.0", owner = "BuildCraftAPI|core", provides = "BuildCraftAPI|filler")
+@API(apiVersion = "3.0", owner = "BuildCraftAPI|core", provides = "BuildCraftAPI|filler")
 package buildcraft.api.filler;
 import cpw.mods.fml.common.API;
 

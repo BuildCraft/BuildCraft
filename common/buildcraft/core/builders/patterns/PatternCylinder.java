@@ -10,6 +10,7 @@ package buildcraft.core.builders.patterns;
 
 import net.minecraft.world.World;
 
+import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
 
@@ -21,7 +22,7 @@ public class PatternCylinder extends FillerPattern {
 
 
 	@Override
-	public Template getTemplate(Box box, World world) {
+	public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
 		Template result = new Template (box.sizeX(), box.sizeY(), box.sizeZ());
 
 		int xMin = 0;

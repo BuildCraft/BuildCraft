@@ -10,13 +10,13 @@ package buildcraft.core.builders.patterns;
 
 import net.minecraft.world.World;
 
+import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
 
 public class PatternStairs extends FillerPattern {
 
 	// TODO: These parameters need to be settable from the filler
-	private boolean param1 = true;
 	private int param2 = 0;
 	private int param3 = 0;
 	private int param4 = 0;
@@ -26,7 +26,22 @@ public class PatternStairs extends FillerPattern {
 	}
 
 	@Override
-	public Template getTemplate(Box box, World world) {
+	public int maxParameters() {
+		return 1;
+	}
+
+	@Override
+	public int minParameters() {
+		return 1;
+	}
+
+	@Override
+	public IStatementParameter createParameter(int index) {
+		return new PatternParameterYDir(true);
+	}
+
+	@Override
+	public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
 		int xMin = 0;
 		int yMin = 0;
 		int zMin = 0;
@@ -45,7 +60,7 @@ public class PatternStairs extends FillerPattern {
 		int dimX = 0;
 		int dimZ = 0;
 
-		if (param1) {
+		if (parameters[0] != null && !(((PatternParameterYDir) parameters[0]).up)) {
 			height = yMin;
 			heightStep = 1;
 		} else {

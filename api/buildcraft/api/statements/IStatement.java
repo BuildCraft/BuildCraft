@@ -17,7 +17,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public interface IStatement {
 
 	/**
-	 * Every trigger needs a unique tag, it should be in the format of
+	 * Every statement needs a unique tag, it should be in the format of
 	 * "&lt;modid&gt;:&lt;name&gt;.
 	 *
 	 * @return the unique id
@@ -31,27 +31,27 @@ public interface IStatement {
 	void registerIcons(IIconRegister iconRegister);
 
 	/**
-	 * Return the maximum number of parameter this trigger can have, 0 if none.
+	 * Return the maximum number of parameter this statement can have, 0 if none.
 	 */
 	int maxParameters();
 
 	/**
-	 * Return the minimum number of parameter this trigger can have, 0 if none.
+	 * Return the minimum number of parameter this statement can have, 0 if none.
 	 */
 	int minParameters();
 
 	/**
-	 * Return the trigger description in the UI
+	 * Return the statement description in the UI
 	 */
 	String getDescription();
 
 	/**
-	 * Create parameters for the trigger.
+	 * Create parameters for the statement.
 	 */
 	IStatementParameter createParameter(int index);
 
 	/**
-	 * This returns the trigger after a left rotation. Used in particular in
+	 * This returns the statement after a left rotation. Used in particular in
 	 * blueprints orientation.
 	 */
 	IStatement rotateLeft();

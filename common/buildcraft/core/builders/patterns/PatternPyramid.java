@@ -11,20 +11,32 @@ package buildcraft.core.builders.patterns;
 import net.minecraft.world.World;
 
 import buildcraft.api.blueprints.SchematicMask;
+import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
 
 public class PatternPyramid extends FillerPattern {
-
-	// TODO: These parameters need to be settable from the filler
-	private boolean param1 = true;
-
 	public PatternPyramid() {
 		super("pyramid");
 	}
 
 	@Override
-	public Template getTemplate (Box box, World world) {
+	public int maxParameters() {
+		return 1;
+	}
+
+	@Override
+	public int minParameters() {
+		return 1;
+	}
+
+	@Override
+	public IStatementParameter createParameter(int index) {
+		return new PatternParameterYDir(true);
+	}
+
+	@Override
+	public Template getTemplate (Box box, World world, IStatementParameter[] parameters) {
 		int xMin = (int) box.pMin().x;
 		int yMin = (int) box.pMin().y;
 		int zMin = (int) box.pMin().z;
@@ -40,13 +52,12 @@ public class PatternPyramid extends FillerPattern {
 
 		int step = 0;
 		int height;
+		int stepY;
 
-		int stepY = 1;
-
-		if (param1) {
-			stepY = 1;
-		} else {
+		if (parameters[0] != null && !(((PatternParameterYDir) parameters[0]).up)) {
 			stepY = -1;
+		} else {
+			stepY = 1;
 		}
 
 		if (stepY == 1) {

@@ -65,7 +65,7 @@ class UrbanistToolFiller extends UrbanistToolArea {
 
 		@Override
 		public String getDescription() {
-			return getPattern().getDisplayName();
+			return getPattern().getDescription();
 		}
 
 		@Override

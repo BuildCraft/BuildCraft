@@ -29,7 +29,7 @@ public class ContainerFiller extends BuildCraftContainer {
 	private class PatternWidget extends Widget {
 
 		public PatternWidget() {
-			super(80, 30, 0, 0, 16, 16);
+			super(38, 30, 0, 0, 16, 16);
 		}
 
 		@SideOnly(Side.CLIENT)

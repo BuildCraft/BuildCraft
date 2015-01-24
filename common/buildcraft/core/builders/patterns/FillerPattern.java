@@ -18,6 +18,8 @@ import net.minecraft.world.World;
 
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.filler.IFillerPattern;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
@@ -38,8 +40,18 @@ public abstract class FillerPattern implements IFillerPattern {
 	}
 
 	@Override
-	public String getDisplayName() {
+	public String getDescription() {
 		return StringUtils.localize("fillerpattern." + tag);
+	}
+
+	@Override
+	public IStatementParameter createParameter(int index) {
+		return null;
+	}
+
+	@Override
+	public IStatement rotateLeft() {
+		return this;
 	}
 
 	@Override
@@ -47,13 +59,24 @@ public abstract class FillerPattern implements IFillerPattern {
 		return "buildcraft:" + tag;
 	}
 
-	public void registerIcon(IIconRegister iconRegister) {
+	@Override
+	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:fillerPatterns/" + tag);
 	}
 
 	@Override
 	public IIcon getIcon() {
 		return icon;
+	}
+
+	@Override
+	public int maxParameters() {
+		return 0;
+	}
+
+	@Override
+	public int minParameters() {
+		return 0;
 	}
 
 	@Override
@@ -112,13 +135,13 @@ public abstract class FillerPattern implements IFillerPattern {
 		}
 	}
 
-	public abstract Template getTemplate (Box box, World world);
+	public abstract Template getTemplate (Box box, World world, IStatementParameter[] parameters);
 
-	public Blueprint getBlueprint (Box box, World world, Block block, int meta) {
+	public Blueprint getBlueprint (Box box, World world, IStatementParameter[] parameters, Block block, int meta) {
 		Blueprint result = new Blueprint (box.sizeX(), box.sizeY(), box.sizeZ());
 
 		try {
-			Template tmpl = getTemplate(box, world);
+			Template tmpl = getTemplate(box, world, parameters);
 
 			for (int x = 0; x < box.sizeX(); ++x) {
 				for (int y = 0; y < box.sizeY(); ++y) {
@@ -139,8 +162,8 @@ public abstract class FillerPattern implements IFillerPattern {
 		return result;
 	}
 
-	public BptBuilderTemplate getTemplateBuilder (Box box, World world) {
-		return new BptBuilderTemplate(getTemplate(box, world), world, box.xMin, box.yMin, box.zMin);
+	public BptBuilderTemplate getTemplateBuilder (Box box, World world, IStatementParameter[] parameters) {
+		return new BptBuilderTemplate(getTemplate(box, world, parameters), world, box.xMin, box.yMin, box.zMin);
 	}
 
 	private static boolean isValid (int x, int y, int z, BlueprintBase bpt) {

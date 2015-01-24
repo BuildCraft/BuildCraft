@@ -9,29 +9,69 @@
 package buildcraft.builders.gui;
 
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.filler.FillerManager;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.builders.TileFiller;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.builders.patterns.FillerPattern;
+import buildcraft.core.gui.AdvancedSlot;
+import buildcraft.core.gui.GuiAdvancedInterface;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.gui.GuiTools;
+import buildcraft.core.gui.StatementParameterSlot;
+import buildcraft.core.gui.StatementSlot;
 import buildcraft.core.gui.buttons.GuiBetterButton;
 import buildcraft.core.gui.buttons.StandardButtonTextureSets;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.transport.Pipe;
 
-public class GuiFiller extends GuiBuildCraft {
+public class GuiFiller extends GuiAdvancedInterface {
+	class FillerParameterSlot extends StatementParameterSlot {
+		public FillerParameterSlot(int x, int y, int slot) {
+			super(instance, x, y, slot, fakeStatementSlot);
+		}
+
+		@Override
+		public IStatementParameter getParameter() {
+			System.out.println("getParameter " + slot + " " + instance.filler.patternParameters.length);
+
+			if (slot >= instance.filler.patternParameters.length) {
+				return null;
+			} else {
+				return instance.filler.patternParameters[slot];
+			}
+		}
+
+		@Override
+		public void setParameter(IStatementParameter param, boolean notifyServer) {
+			// TODO
+		}
+	}
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/filler.png");
-	IInventory playerInventory;
-	TileFiller filler;
+	private final IInventory playerInventory;
+	private final TileFiller filler;
+	private final GuiFiller instance;
+	private final StatementSlot fakeStatementSlot;
 
 	public GuiFiller(IInventory playerInventory, TileFiller filler) {
 		super(new ContainerFiller(playerInventory, filler), filler, TEXTURE);
 		this.playerInventory = playerInventory;
 		this.filler = filler;
+		this.instance = this;
+		this.fakeStatementSlot = new StatementSlot(instance, -1, -1, 0) {
+			@Override
+			public IStatement getStatement() {
+				return instance.filler.currentPattern;
+			}
+		};
 		xSize = 175;
 		ySize = 240;
 	}
@@ -41,10 +81,15 @@ public class GuiFiller extends GuiBuildCraft {
 		super.initGui();
 		buttonList.clear();
 
-		buttonList.add(new GuiBetterButton(0, guiLeft + 80 - 18, guiTop + 30, 10,
+		buttonList.add(new GuiBetterButton(0, guiLeft + 38 - 18, guiTop + 30, 10,
 				StandardButtonTextureSets.LEFT_BUTTON, ""));
-		buttonList.add(new GuiBetterButton(1, guiLeft + 80 + 16 + 8, guiTop + 30, 10,
+		buttonList.add(new GuiBetterButton(1, guiLeft + 38 + 16 + 8, guiTop + 30, 10,
 				StandardButtonTextureSets.RIGHT_BUTTON, ""));
+
+		slots.clear();
+		for (int i = 0; i < 4; i++) {
+			slots.add(new FillerParameterSlot(77 + (i * 18), 30, i));
+		}
 	}
 
 	@Override
@@ -61,11 +106,37 @@ public class GuiFiller extends GuiBuildCraft {
 	}
 
 	@Override
-	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
+	protected void mouseClicked(int x, int y, int k) {
+		super.mouseClicked(x, y, k);
+
+		AdvancedSlot slot = getSlotAtLocation(x, y);
+
+		if (slot != null) {
+			int i  = ((FillerParameterSlot) slot).slot;
+			if (i < filler.patternParameters.length) {
+				if (filler.patternParameters[i] != null) {
+					filler.patternParameters[i].onClick(filler, filler.currentPattern, mc.thePlayer.inventory.getItemStack(),
+							new StatementMouseClick(k, isShiftKeyDown()));
+				} else {
+					filler.patternParameters[i] = filler.currentPattern.createParameter(i);
+				}
+				filler.rpcSetParameter(i, filler.patternParameters[i]);
+			}
+		}
+	}
+
+	@Override
+	protected void drawGuiContainerBackgroundLayer(float f, int mx, int my) {
+		super.drawGuiContainerBackgroundLayer(f, mx, my);
+		drawBackgroundSlots();
+	}
+
+	@Override
+	protected void drawGuiContainerForegroundLayer(int mx, int my) {
 		String title = StringUtils.localize("tile.fillerBlock.name");
 		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
 		fontRendererObj.drawString(StringUtils.localize("gui.filling.resources"), 8, 74, 0x404040);
 		fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, 142, 0x404040);
-		GuiTools.drawCenteredString(fontRendererObj, filler.currentPattern.getDisplayName(), 56);
+		GuiTools.drawCenteredString(fontRendererObj, filler.currentPattern.getDescription(), 56);
 	}
 }

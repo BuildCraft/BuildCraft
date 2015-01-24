@@ -135,6 +135,7 @@ import buildcraft.core.builders.patterns.PatternFill;
 import buildcraft.core.builders.patterns.PatternFlatten;
 import buildcraft.core.builders.patterns.PatternFrame;
 import buildcraft.core.builders.patterns.PatternHorizon;
+import buildcraft.core.builders.patterns.PatternParameterYDir;
 import buildcraft.core.builders.patterns.PatternPyramid;
 import buildcraft.core.builders.patterns.PatternStairs;
 import buildcraft.core.proxy.CoreProxy;
@@ -526,6 +527,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		}
 
 		StatementManager.registerActionProvider(new BuildersActionProvider());
+
+		StatementManager.registerParameterClass(PatternParameterYDir.class);
 	}
 
 	public static void loadRecipes() {
@@ -576,7 +579,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public void loadTextures(TextureStitchEvent.Pre evt) {
 		if (evt.map.getTextureType() == 0) {
 			for (FillerPattern pattern : FillerPattern.patterns.values()) {
-				pattern.registerIcon(evt.map);
+				pattern.registerIcons(evt.map);
 			}
 		}
 	}

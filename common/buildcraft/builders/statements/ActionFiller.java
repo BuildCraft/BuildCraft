@@ -31,7 +31,7 @@ public class ActionFiller extends BCStatement implements IActionExternal {
 
 	@Override
 	public String getDescription() {
-		return "Pattern: " + pattern.getDisplayName();
+		return "Pattern: " + pattern.getDescription();
 	}
 
 	@Override
