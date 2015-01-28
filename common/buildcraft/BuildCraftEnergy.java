@@ -266,8 +266,12 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		}
 
 		// BucketHandler ensures empty buckets fill with the correct liquid.
-		BucketHandler.INSTANCE.buckets.put(blockOil, bucketOil);
-		BucketHandler.INSTANCE.buckets.put(blockFuel, bucketFuel);
+		if (blockOil != null) {
+			BucketHandler.INSTANCE.buckets.put(blockOil, bucketOil);
+		}
+		if (blockFuel != null) {
+			BucketHandler.INSTANCE.buckets.put(blockFuel, bucketFuel);
+		}
 		MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
 
 		BuildcraftRecipeRegistry.refinery.addRecipe("buildcraft:fuel", new FluidStack(fluidOil, 1), new FluidStack(
@@ -369,9 +373,15 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	@SideOnly(Side.CLIENT)
 	public void textureHook(TextureStitchEvent.Post event) {
 		if (event.map.getTextureType() == 0) {
-			buildcraftFluidOil.setIcons(blockOil.getBlockTextureFromSide(1), blockOil.getBlockTextureFromSide(2));
-			buildcraftFluidFuel.setIcons(blockFuel.getBlockTextureFromSide(1), blockFuel.getBlockTextureFromSide(2));
-			buildcraftFluidRedPlasma.setIcons(blockRedPlasma.getBlockTextureFromSide(1), blockRedPlasma.getBlockTextureFromSide(2));
+			if (buildcraftFluidOil != null) {
+				buildcraftFluidOil.setIcons(blockOil.getBlockTextureFromSide(1), blockOil.getBlockTextureFromSide(2));
+			}
+			if (buildcraftFluidFuel != null) {
+				buildcraftFluidFuel.setIcons(blockFuel.getBlockTextureFromSide(1), blockFuel.getBlockTextureFromSide(2));
+			}
+			if (buildcraftFluidRedPlasma != null) {
+				buildcraftFluidRedPlasma.setIcons(blockRedPlasma.getBlockTextureFromSide(1), blockRedPlasma.getBlockTextureFromSide(2));
+			}
 		}
 	}
 
