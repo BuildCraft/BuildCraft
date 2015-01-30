@@ -183,7 +183,7 @@ public class SchematicPipe extends SchematicTile {
 			storedRequirements = new ItemStack[items.size() + 1];
 			items.toArray(storedRequirements);
 			storedRequirements[storedRequirements.length - 1] = new ItemStack(
-					pipe.item);
+					pipe.item, 1, pipe.container.getItemMetadata());
 		}
 	}
 
