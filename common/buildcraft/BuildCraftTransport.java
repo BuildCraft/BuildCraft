@@ -163,6 +163,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static float pipeDurability;
     public static int pipeFluidsBaseFlowRate;
     public static boolean facadeTreatBlacklistAsWhitelist;
+    public static boolean additionalWaterproofingRecipe;
 
 	public static BlockGenericPipe genericPipeBlock;
 	public static BlockFilteredBuffer filteredBufferBlock;
@@ -262,6 +263,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 			Property printFacadeList = BuildCraftCore.mainConfiguration.get("debug", "facades.printFacadeList", false);
 			debugPrintFacadeList = printFacadeList.getBoolean();
+
+			Property enableAdditionalWaterproofingRecipe = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.fluids.enableAdditionalWaterproofingRecipe", true);
+			enableAdditionalWaterproofingRecipe.comment = "Enable the slimeball based pipe waterproofing recipe";
+			additionalWaterproofingRecipe = enableAdditionalWaterproofingRecipe.getBoolean();
 
 			gateCostMultiplier = BuildCraftCore.mainConfiguration.getFloat("gate.recipeCostMultiplier", Configuration.CATEGORY_GENERAL, 1.0F, 0.001F, 1000.0F, "The multiplier for gate recipe cost.");
 
@@ -495,6 +500,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public void loadRecipes() {
 		// Add base recipe for pipe waterproof.
 		GameRegistry.addShapelessRecipe(new ItemStack(pipeWaterproof, 1), new ItemStack(Items.dye, 1, 2));
+		if(additionalWaterproofingRecipe)
 		GameRegistry.addShapelessRecipe(new ItemStack(pipeWaterproof, 1), new ItemStack(Items.slime_ball, 1, 2));
 
 		// Add pipe recipes
