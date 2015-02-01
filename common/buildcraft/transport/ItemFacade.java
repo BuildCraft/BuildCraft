@@ -426,7 +426,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 		if (block == null) {
 			return;
 		}
-		if (!block.renderAsNormalBlock())
+		if (block.getRenderType() != 0)
 			return;
 
 		String recipeId = "buildcraft:facade{" + Block.blockRegistry.getNameForObject(block) + "#"
