@@ -15,12 +15,6 @@ import java.nio.IntBuffer;
 import java.util.HashSet;
 import java.util.UUID;
 
-import com.mojang.authlib.GameProfile;
-
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.GLU;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.client.renderer.GLAllocation;
@@ -31,20 +25,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.IIcon;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.EntityRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.AchievementPage;
@@ -55,6 +36,10 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.oredict.OreDictionary;
+
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.GLU;
 
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.BCLog;
@@ -97,7 +82,6 @@ import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.IntegrationRecipeManager;
 import buildcraft.core.recipes.RefineryRecipeManager;
 import buildcraft.core.render.BlockHighlightHandler;
-import buildcraft.robots.EntityRobot;
 import buildcraft.core.statements.ActionMachineControl;
 import buildcraft.core.statements.ActionRedstoneOutput;
 import buildcraft.core.statements.DefaultActionProvider;
@@ -122,8 +106,26 @@ import buildcraft.core.utils.WorldPropertyIsOre;
 import buildcraft.core.utils.WorldPropertyIsShoveled;
 import buildcraft.core.utils.WorldPropertyIsSoft;
 import buildcraft.core.utils.WorldPropertyIsWood;
+import buildcraft.core.village.VillagerTradeHandler;
 import buildcraft.energy.fuels.CoolantManager;
 import buildcraft.energy.fuels.FuelManager;
+import buildcraft.robots.EntityRobot;
+
+import com.mojang.authlib.GameProfile;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.common.registry.VillagerRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.0.1207,)")
 public class BuildCraftCore extends BuildCraftMod {
@@ -146,6 +148,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static int itemLifespan = 1200;
 	public static int updateFactor = 10;
 	public static long longUpdateFactor = 40;
+	public static int bcVillagerID = 99;
 	public static BuildCraftConfiguration mainConfiguration;
 
 	public static Block springBlock;
@@ -192,7 +195,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static ITriggerExternal triggerFluidContainerBelow75 = new TriggerFluidContainerLevel(TriggerFluidContainerLevel.TriggerType.BELOW75);
 	public static IActionInternal actionRedstone = new ActionRedstoneOutput();
 	public static IActionExternal[] actionControl;
-	
+
 	public static boolean loadDefaultRecipes = true;
 	public static boolean consumeWaterSources = false;
 
@@ -247,7 +250,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildcraftFuelRegistry.coolant = CoolantManager.INSTANCE;
 
 		BuilderAPI.schematicRegistry = SchematicRegistry.INSTANCE;
-		
+
 		mainConfiguration = new BuildCraftConfiguration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.conf"));
 		try {
 			mainConfiguration.load();
@@ -261,11 +264,11 @@ public class BuildCraftCore extends BuildCraftMod {
 			Property dropBlock = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "dropBrokenBlocks", true);
 			dropBlock.comment = "set to false to prevent fillers from dropping blocks.";
 			dropBrokenBlocks = dropBlock.getBoolean(true);
-			
+
 			Property hideRFNumbers = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "hidePowerNumbers", false);
 			hideRFNumbers.comment = "set to true to not display any RF or RF/t numbers.";
 			hidePowerNumbers = hideRFNumbers.getBoolean(false);
-			
+
 			Property hideMBNumbers = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "hideFluidNumbers", false);
 			hideMBNumbers.comment = "set to true to not display any mB or mB/t numbers.";
 			hideFluidNumbers = hideMBNumbers.getBoolean(false);
@@ -303,6 +306,10 @@ public class BuildCraftCore extends BuildCraftMod {
 				springBlock = new BlockSpring().setBlockName("eternalSpring");
 				CoreProxy.proxy.registerBlock(springBlock, ItemSpring.class);
 			}
+
+			Property villagerID = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "villagerID", 99);
+			villagerID.comment = "Unique ID for the Buildcraft Villager. Set to 0 to disable";
+			bcVillagerID = villagerID.getInt(99);
 
 			Property consumeWater = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "consumeWater", consumeWaterSources);
 			consumeWaterSources = consumeWater.getBoolean(consumeWaterSources);
@@ -348,7 +355,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		// BuildCraft 6.1.4 and below - migration only
 		StatementManager.registerParameterClass("buildcraft:stackTrigger", StatementParameterItemStack.class);
 		StatementManager.registerParameterClass("buildcraft:stackAction", StatementParameterItemStack.class);
-				
+
 		StatementManager.registerParameterClass(StatementParameterItemStack.class);
 		StatementManager.registerParameterClass(StatementParameterDirection.class);
 		StatementManager.registerParameterClass(StatementParameterRedstoneGateSideOnly.class);
@@ -381,6 +388,9 @@ public class BuildCraftCore extends BuildCraftMod {
 		CoreProxy.proxy.initializeEntityRendering();
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+
+		if(bcVillagerID != 0)
+			CoreProxy.proxy.initVillager(); //Registering the texture can only be called on client, so done on proxies
 	}
 
 	@Mod.EventHandler
@@ -412,9 +422,9 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildCraftAPI.isShoveled = new WorldPropertyIsShoveled();
 		BuildCraftAPI.isDirtProperty = new WorldPropertyIsDirt();
 		BuildCraftAPI.isFluidSource = new WorldPropertyIsFluidSource();
-		
+
 		ColorUtils.initialize();
-		
+
 		actionControl = new IActionExternal[IControllable.Mode.values().length];
 		for (IControllable.Mode mode : IControllable.Mode.values()) {
 			if (mode != IControllable.Mode.Unknown) {

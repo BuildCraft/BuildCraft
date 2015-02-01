@@ -243,6 +243,7 @@ item.PipePowerIron.name=Iron Kinesis Pipe
 item.PipePowerGold.name=Golden Kinesis Pipe
 item.PipePowerDiamond.name=Diamond Kinesis Pipe
 item.PipePowerEmerald.name=Emerald Kinesis Pipe
+item.PipePowerVoid.name=Void Kinesis Pipe
 item.PipeItemsStripes.name=Stripes Transport Pipe
 item.PipeStructureCobblestone.name=Cobblestone Structure Pipe
 item.PipeItemsVoid.name=Void Transport Pipe

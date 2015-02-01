@@ -19,22 +19,10 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLInterModComms;
-import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
-
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.RecipeSorter;
-
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
@@ -56,6 +44,8 @@ import buildcraft.core.Version;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.ColorUtils;
+import buildcraft.robots.ItemRobotStation;
+import buildcraft.robots.RobotStationPluggable;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
@@ -116,14 +106,13 @@ import buildcraft.transport.pipes.PipePowerIron;
 import buildcraft.transport.pipes.PipePowerQuartz;
 import buildcraft.transport.pipes.PipePowerSandstone;
 import buildcraft.transport.pipes.PipePowerStone;
+import buildcraft.transport.pipes.PipePowerVoid;
 import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.pipes.PipeStructureCobblestone;
 import buildcraft.transport.pluggable.ItemLens;
 import buildcraft.transport.pluggable.ItemPlug;
-import buildcraft.robots.ItemRobotStation;
 import buildcraft.transport.pluggable.LensPluggable;
 import buildcraft.transport.pluggable.PlugPluggable;
-import buildcraft.robots.RobotStationPluggable;
 import buildcraft.transport.recipes.AdvancedFacadeRecipe;
 import buildcraft.transport.recipes.GateExpansionRecipe;
 import buildcraft.transport.recipes.GateLogicSwapRecipe;
@@ -153,6 +142,15 @@ import buildcraft.transport.stripes.StripesHandlerArrow;
 import buildcraft.transport.stripes.StripesHandlerBucket;
 import buildcraft.transport.stripes.StripesHandlerRightClick;
 import buildcraft.transport.stripes.StripesHandlerShears;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 @Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTransport extends BuildCraftMod {
@@ -214,6 +212,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item pipePowerDiamond;
 	public static Item pipePowerEmerald;
     public static Item pipePowerSandstone;
+    public static Item pipePowerVoid;
 
 	public static int groupItemsTrigger;
 	public static String[] facadeBlacklist;
@@ -360,6 +359,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipePowerDiamond = buildPipe(PipePowerDiamond.class, "Diamond Kinesis Pipe", CreativeTabBuildCraft.PIPES, "dustRedstone", pipeItemsDiamond);
 			pipePowerEmerald = buildPipe(PipePowerEmerald.class, "Emerald Kinesis Pipe", CreativeTabBuildCraft.PIPES, "dustRedstone", pipeItemsEmerald);
             pipePowerSandstone = buildPipe(PipePowerSandstone.class, "Sandstone Kinesis Pipe", CreativeTabBuildCraft.PIPES, "dustRedstone", pipeItemsSandstone);
+            pipePowerVoid = buildPipe(PipePowerVoid.class, "Void Kinesis Pipe", CreativeTabBuildCraft.PIPES, "dustRedstone", pipeItemsVoid);
 
             pipeStructureCobblestone = buildPipe(PipeStructureCobblestone.class, "Cobblestone Structure Pipe", CreativeTabBuildCraft.PIPES, Blocks.gravel, pipeItemsCobblestone);
 
@@ -501,7 +501,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		// Add base recipe for pipe waterproof.
 		GameRegistry.addShapelessRecipe(new ItemStack(pipeWaterproof, 1), new ItemStack(Items.dye, 1, 2));
 		if(additionalWaterproofingRecipe)
-		GameRegistry.addShapelessRecipe(new ItemStack(pipeWaterproof, 1), new ItemStack(Items.slime_ball, 1, 2));
+		GameRegistry.addShapelessRecipe(new ItemStack(pipeWaterproof, 1), new ItemStack(Items.slime_ball, 1));
 
 		// Add pipe recipes
 		for (PipeRecipe pipe : pipeRecipes) {
