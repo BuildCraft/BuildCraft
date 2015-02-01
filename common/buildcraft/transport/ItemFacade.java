@@ -426,6 +426,8 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 		if (block == null) {
 			return;
 		}
+		if (!block.renderAsNormalBlock())
+			return;
 
 		String recipeId = "buildcraft:facade{" + Block.blockRegistry.getNameForObject(block) + "#"
 				+ itemStack.getItemDamage() + "}";
@@ -564,7 +566,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 	public int getSpriteNumber() {
 		return 0;
 	}
-	
+
 	@Override
 	public ItemStack getFacadeForBlock(Block block, int metadata) {
 		return getFacade(FacadeState.create(block, metadata));
