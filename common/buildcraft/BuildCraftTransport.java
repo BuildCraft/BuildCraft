@@ -163,6 +163,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static float pipeDurability;
     public static int pipeFluidsBaseFlowRate;
     public static boolean facadeTreatBlacklistAsWhitelist;
+    public static boolean additionalWaterproofingRecipe;
 
 	public static BlockGenericPipe genericPipeBlock;
 	public static BlockFilteredBuffer filteredBufferBlock;
@@ -213,7 +214,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item pipePowerDiamond;
 	public static Item pipePowerEmerald;
     public static Item pipePowerSandstone;
-	
+
 	public static int groupItemsTrigger;
 	public static String[] facadeBlacklist;
 
@@ -238,7 +239,7 @@ public class BuildCraftTransport extends BuildCraftMod {
     public static boolean debugPrintFacadeList = false;
 
 	public static float gateCostMultiplier = 1.0F;
-    
+
 	private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
 
 	public IIconProvider pipeIconProvider = new PipeIconProvider();
@@ -262,6 +263,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 			Property printFacadeList = BuildCraftCore.mainConfiguration.get("debug", "facades.printFacadeList", false);
 			debugPrintFacadeList = printFacadeList.getBoolean();
+
+			Property enableAdditionalWaterproofingRecipe = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.fluids.enableAdditionalWaterproofingRecipe", true);
+			enableAdditionalWaterproofingRecipe.comment = "Enable the slimeball based pipe waterproofing recipe";
+			additionalWaterproofingRecipe = enableAdditionalWaterproofingRecipe.getBoolean();
 
 			gateCostMultiplier = BuildCraftCore.mainConfiguration.getFloat("gate.recipeCostMultiplier", Configuration.CATEGORY_GENERAL, 1.0F, 0.001F, 1000.0F, "The multiplier for gate recipe cost.");
 
@@ -388,7 +393,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 			gateCopier = new ItemGateCopier();
 			CoreProxy.proxy.registerItem(gateCopier);
-			
+
 			for (PipeContents kind : PipeContents.values()) {
 				triggerPipe[kind.ordinal()] = new TriggerPipeContents(kind);
 			}
@@ -452,7 +457,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		StatementManager.registerParameterClass(ActionParameterSignal.class);
 		StatementManager.registerTriggerProvider(new PipeTriggerProvider());
 		StatementManager.registerActionProvider(new PipeActionProvider());
-		
+
 		PipeManager.registerStripesHandler(new StripesHandlerRightClick());
 		PipeManager.registerStripesHandler(new StripesHandlerBucket());
 		PipeManager.registerStripesHandler(new StripesHandlerArrow());
@@ -463,7 +468,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		PipeManager.registerPipePluggable(LensPluggable.class, "lens");
 		PipeManager.registerPipePluggable(PlugPluggable.class, "plug");
 		PipeManager.registerPipePluggable(RobotStationPluggable.class, "robotStation");
-		
+
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
 		}
@@ -475,7 +480,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		facadeItem.initialize();
-		
+
 		if (debugPrintFacadeList) {
 			try {
 				PrintWriter writer = new PrintWriter("FacadeDebug.txt", "UTF-8");
@@ -495,6 +500,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public void loadRecipes() {
 		// Add base recipe for pipe waterproof.
 		GameRegistry.addShapelessRecipe(new ItemStack(pipeWaterproof, 1), new ItemStack(Items.dye, 1, 2));
+		if(additionalWaterproofingRecipe)
+		GameRegistry.addShapelessRecipe(new ItemStack(pipeWaterproof, 1), new ItemStack(Items.slime_ball, 1, 2));
 
 		// Add pipe recipes
 		for (PipeRecipe pipe : pipeRecipes) {
@@ -506,7 +513,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		}
 
 		GameRegistry.addRecipe(new PipeColoringRecipe());
-		
+
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(filteredBufferBlock, 1),
 				"wdw", "wcw", "wpw", 'w', "plankWood", 'd',
 			BuildCraftTransport.pipeItemsDiamond, 'c', Blocks.chest, 'p',
@@ -525,7 +532,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		if (Loader.isModLoaded("BuildCraft|Silicon")) {
 			GameRegistry.addShapelessRecipe(new ItemStack(gateCopier, 1), new ItemStack(BuildCraftCore.wrenchItem), Chipset.RED.getStack(1));
-					
+
 			// PIPE WIRE
 			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redWire", 5000, PipeWire.RED.getStack(8),
 					"dyeRed", "dustRedstone", "ingotIron");
@@ -586,7 +593,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:orGate" + materialName, energyCost,
 				ItemGate.makeGateItem(material, GateLogic.OR), inputs);
 	}
-	
+
 	@Mod.EventHandler
 	public void processIMCRequests(IMCEvent event) {
 		InterModComms.processIMC(event);
@@ -597,19 +604,19 @@ public class BuildCraftTransport extends BuildCraftMod {
 			Object... ingredients) {
 		ItemPipe res = BlockGenericPipe.registerPipe(clas, creativeTab);
 		res.setUnlocalizedName(clas.getSimpleName());
-		
+
 		// Add appropriate recipes to temporary list
 		if (ingredients.length == 3) {
 			for (int i = 0; i < 17; i++) {
 				PipeRecipe recipe = new PipeRecipe();
 				ItemStack glass;
-				
+
 				if (i == 0) {
 					glass = new ItemStack(Blocks.glass);
 				} else {
 					glass = new ItemStack(Blocks.stained_glass, 1, i - 1);
 				}
-				
+
 				recipe.result = new ItemStack(res, 8, i);
 				recipe.input = new Object[]{"ABC", 'A', ingredients[0], 'B', glass, 'C', ingredients[2]};
 
@@ -618,20 +625,20 @@ public class BuildCraftTransport extends BuildCraftMod {
 		} else if (ingredients.length == 2) {
 			for (int i = 0; i < 17; i++) {
 				PipeRecipe recipe = new PipeRecipe();
-				
+
 				Object left = ingredients[0];
 				Object right = ingredients[1];
 
 				if (ingredients[1] instanceof ItemPipe) {
 					right = new ItemStack((Item) right, 1, i);
 				}
-				
+
 				recipe.isShapeless = true;
 				recipe.result = new ItemStack(res, 1, i);
 				recipe.input = new Object[]{left, right};
 
 				pipeRecipes.add(recipe);
-	
+
 				if (ingredients[1] instanceof ItemPipe) {
 					PipeRecipe uncraft = new PipeRecipe();
 					uncraft.isShapeless = true;
