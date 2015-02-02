@@ -77,14 +77,18 @@ public class ItemList extends ItemBuildCraft {
 				stacks[slot].stackSize = 1;
 			}
 
-			if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && slot == 0) {
+			if (slot == 0) {
 				relatedItems.clear();
 				ores.clear();
 
 				if (stack == null) {
 					isOre = false;
 				} else {
-					setClientPreviewLists();
+					if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+						setClientPreviewLists();
+					} else {
+						isOre = OreDictionary.getOreIDs(stacks[0]).length > 0;
+					}
 				}
 			}
 		}
