@@ -169,7 +169,14 @@ public class AIRobot {
 			NBTTagCompound sub = nbt.getCompoundTag("delegateAI");
 
 			try {
-				delegateAI = (AIRobot) Class.forName(sub.getString("class")).getConstructor(EntityRobotBase.class)
+				String className = sub.getString("class");
+				// Package renames in 6.4.0
+				if (className.contains("buildcraft.core.robots.boards")) {
+					className = className.replace("buildcraft.core.robots.boards", "buildcraft.robots.boards");
+				} else if (className.contains("buildcraft.core.robots")) {
+					className = className.replace("buildcraft.core.robots", "buildcraft.robots.ai");
+				}
+				delegateAI = (AIRobot) Class.forName(className).getConstructor(EntityRobotBase.class)
 						.newInstance(robot);
 
 				if (delegateAI.canLoadFromNBT()) {
@@ -186,7 +193,12 @@ public class AIRobot {
 		AIRobot ai = null;
 
 		try {
-			ai = (AIRobot) Class.forName(nbt.getString("class")).getConstructor(EntityRobotBase.class)
+			String className = nbt.getString("class");
+			// Package renames in 6.4.0
+			if (className.contains("buildcraft.core.robots")) {
+				className = className.replace("buildcraft.core.robots", "buildcraft.robots.ai");
+			}
+			ai = (AIRobot) Class.forName(className).getConstructor(EntityRobotBase.class)
 					.newInstance(robot);
 			ai.loadFromNBT(nbt);
 		} catch (Throwable e) {
