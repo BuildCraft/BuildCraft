@@ -15,8 +15,8 @@ import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.utils.IBlockFilter;
-import buildcraft.core.utils.PathFinding;
-import buildcraft.core.utils.PathFindingJob;
+import buildcraft.core.utils.concurrency.IterableAlgorithmRunner;
+import buildcraft.core.utils.concurrency.PathFinding;
 
 public class AIRobotGotoRandomGroundBlock extends AIRobot {
 
@@ -24,7 +24,7 @@ public class AIRobotGotoRandomGroundBlock extends AIRobot {
 
 	private int range;
 	private PathFinding pathFinding;
-	private PathFindingJob pathFindingJob;
+	private IterableAlgorithmRunner pathFindingJob;
 	private IBlockFilter filter;
 	private IZone zone;
 
@@ -68,7 +68,7 @@ public class AIRobotGotoRandomGroundBlock extends AIRobot {
 
 			blockFound = aiFind.blockFound;
 			pathFinding = new PathFinding(robot.worldObj, new BlockIndex(robot), blockFound);
-			pathFindingJob = new PathFindingJob(pathFinding);
+			pathFindingJob = new IterableAlgorithmRunner(pathFinding);
 			pathFindingJob.start();
 		} else if (ai instanceof AIRobotGotoBlock) {
 			terminate();

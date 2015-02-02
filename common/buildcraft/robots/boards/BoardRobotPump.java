@@ -28,14 +28,14 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
+import buildcraft.core.utils.IBlockFilter;
+import buildcraft.robots.DockingStation;
+import buildcraft.robots.ResourceIdBlock;
 import buildcraft.robots.ai.AIRobotGotoBlock;
 import buildcraft.robots.ai.AIRobotGotoSleep;
 import buildcraft.robots.ai.AIRobotGotoStationAndUnloadFluids;
 import buildcraft.robots.ai.AIRobotPumpBlock;
 import buildcraft.robots.ai.AIRobotSearchBlock;
-import buildcraft.robots.DockingStation;
-import buildcraft.core.utils.IBlockFilter;
-import buildcraft.robots.ResourceIdBlock;
 import buildcraft.robots.statements.ActionRobotFilter;
 import buildcraft.transport.gates.ActionIterator;
 import buildcraft.transport.gates.StatementSlot;
@@ -92,6 +92,7 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 				} else {
 					startDelegateAI(new AIRobotGotoBlock(robot, ((AIRobotSearchBlock) ai).path));
 				}
+				((AIRobotSearchBlock) ai).unreserve();
 			}
 		} else if (ai instanceof AIRobotGotoBlock) {
 			if (!ai.success()) {

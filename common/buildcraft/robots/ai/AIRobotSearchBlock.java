@@ -16,17 +16,16 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.utils.IBlockFilter;
-import buildcraft.core.utils.PathFinding;
-import buildcraft.core.utils.PathFindingJob;
+import buildcraft.core.utils.concurrency.IterableAlgorithmRunner;
+import buildcraft.core.utils.concurrency.PathFindingSearch;
 
 public class AIRobotSearchBlock extends AIRobot {
 
 	public BlockIndex blockFound;
 	public LinkedList<BlockIndex> path;
-	private PathFinding blockScanner = null;
-	private PathFindingJob blockScannerJob;
+	private PathFindingSearch blockScanner = null;
+	private IterableAlgorithmRunner blockScannerJob;
 	private IBlockFilter pathFound;
-	private int stopBefore = 0;
 
 	public AIRobotSearchBlock(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -36,13 +35,12 @@ public class AIRobotSearchBlock extends AIRobot {
 		super(iRobot);
 
 		pathFound = iPathFound;
-		stopBefore = 0;
 	}
 
 	@Override
 	public void start() {
-		blockScanner = new PathFinding(robot.worldObj, new BlockIndex(robot), pathFound, 64, robot.getZoneToWork());
-		blockScannerJob = new PathFindingJob(blockScanner);
+		blockScanner = new PathFindingSearch(robot.worldObj, new BlockIndex(robot), pathFound, 64, robot.getZoneToWork());
+		blockScannerJob = new IterableAlgorithmRunner(blockScanner, 40000);
 		blockScannerJob.start();
 	}
 
@@ -93,5 +91,9 @@ public class AIRobotSearchBlock extends AIRobot {
 		if (nbt.hasKey("blockFound")) {
 			blockFound = new BlockIndex(nbt.getCompoundTag("blockFound"));
 		}
+	}
+
+	public void unreserve() {
+		blockScanner.unreserve(blockFound);
 	}
 }
