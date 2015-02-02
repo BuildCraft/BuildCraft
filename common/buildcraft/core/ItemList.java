@@ -199,7 +199,7 @@ public class ItemList extends ItemBuildCraft {
 				return oreMatch(stacks[0], item);
 			} else {
 				for (ItemStack stack : stacks) {
-					if (stack != null && StackHelper.isMatchingItemOrList(stacks[0], item)) {
+					if (stack != null && StackHelper.isMatchingItemOrList(stack, item)) {
 						return true;
 					}
 				}
