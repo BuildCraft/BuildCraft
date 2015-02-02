@@ -16,7 +16,7 @@ public final class DefaultProps {
 	public static final String DEPENDENCY_TRANSPORT = "required-after:BuildCraft|Transport@" + Version.VERSION;
 
 	public static final String NET_CHANNEL_NAME = "BC";
-	public static int NETWORK_UPDATE_RANGE = 128;
+	public static int NETWORK_UPDATE_RANGE = 64;
 	public static int PIPE_CONTENTS_RENDER_DIST = 24;
 
 	public static String TEXTURE_PATH_GUI = "textures/gui";
