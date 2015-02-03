@@ -9,14 +9,12 @@
 package buildcraft.factory;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -24,8 +22,8 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
@@ -62,8 +60,10 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	public TileRefinery() {
 		super();
 		this.setBattery(new RFBattery(10000, 1500, 0));
+		this.tanks[0].setAcceptedFluid(BuildCraftEnergy.fluidOil);
+		this.tanks[1].setAcceptedFluid(BuildCraftEnergy.fluidOil);
 	}
-	
+
 	@Override
 	public int getSizeInventory() {
 		return 0;
@@ -178,7 +178,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	public boolean hasWork() {
 		return isActive;
 	}
-	
+
 	@Override
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
@@ -299,10 +299,14 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 		int used = 0;
 		FluidStack resourceUsing = resource.copy();
 
-		used += tanks[0].fill(resourceUsing, doFill);
-		resourceUsing.amount -= used;
-		used += tanks[1].fill(resourceUsing, doFill);
-
+		if(RefineryRecipeManager.INSTANCE.getValidFluidStacks1().contains(resource)) {
+		    used += tanks[0].fill(resourceUsing, doFill);
+		    resourceUsing.amount -= used;
+		}
+		if(RefineryRecipeManager.INSTANCE.getValidFluidStacks2().contains(resource)) {
+		    used += tanks[1].fill(resourceUsing, doFill);
+		    resourceUsing.amount -= used;
+		}
 		updateRecipe();
 
 		return used;

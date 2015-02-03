@@ -151,11 +151,11 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		double fuelLavaMultiplier = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.lava.combustion", 1.0F, "adjust energy value of Lava in Combustion Engines").getDouble(1.0F);
 		double fuelOilMultiplier = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.oil.combustion", 1.0F, "adjust energy value of Oil in Combustion Engines").getDouble(1.0F);
 		double fuelFuelMultiplier = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.fuel.combustion", 1.0F, "adjust energy value of Fuel in Combustion Engines").getDouble(1.0F);
-		
+
 		int fuelLavaEnergyOutput = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.lava.combustion.energyOutput", 20, "adjust output energy by Lava in Combustion Engines").getInt(20);
 		int fuelOilEnergyOutput = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.oil.combustion.energyOutput", 30, "adjust output energy by Oil in Combustion Engines").getInt(30);
 		int fuelFuelEnergyOutput = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.fuel.combustion.energyOutput", 60, "adjust output energy by Fuel in Combustion Engines").getInt(60);
-		
+
 		BuildCraftCore.mainConfiguration.save();
 
 		if (oilDesertBiomeId > 0) {
@@ -183,7 +183,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		// Oil and fuel
 		if (!FluidRegistry.isFluidRegistered("oil")) {
-			buildcraftFluidOil = new Fluid("oil").setDensity(800).setViscosity(15000);
+			buildcraftFluidOil = new Fluid("oil").setDensity(800).setViscosity(10000);
 			FluidRegistry.registerFluid(buildcraftFluidOil);
 		} else {
 			BCLog.logger.warn("Not using BuildCraft oil - issues might occur!");
@@ -349,7 +349,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
 		StatementManager.registerTriggerProvider(new EnergyStatementProvider());
-		
+
 		BuilderAPI.schematicRegistry.registerSchematicBlock(engineBlock, SchematicEngine.class);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
@@ -362,7 +362,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
-		
+
 		if (BuildCraftCore.modifyWorld) {
 			MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
 			MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializer());
