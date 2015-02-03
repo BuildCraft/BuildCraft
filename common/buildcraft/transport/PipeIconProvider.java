@@ -117,6 +117,7 @@ public class PipeIconProvider implements IIconProvider {
 		PipePowerCobblestone("pipePowerCobblestone"),
 		PipePowerWood_Standard("pipePowerWood_standard"),
 		PipePowerEmerald_Standard("pipePowerEmerald_standard"),
+		PipePowerVoid("pipePowerVoid"),
 		//
 		PipePowerIronM2("pipePowerIronM2"),
 		PipePowerIronM4("pipePowerIronM4"),

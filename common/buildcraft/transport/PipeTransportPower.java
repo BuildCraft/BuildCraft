@@ -14,13 +14,7 @@ import java.util.Map;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
-import cofh.api.energy.IEnergyConnection;
-import cofh.api.energy.IEnergyHandler;
-import cofh.api.energy.IEnergyReceiver;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
@@ -38,7 +32,11 @@ import buildcraft.transport.pipes.PipePowerIron;
 import buildcraft.transport.pipes.PipePowerQuartz;
 import buildcraft.transport.pipes.PipePowerSandstone;
 import buildcraft.transport.pipes.PipePowerStone;
+import buildcraft.transport.pipes.PipePowerVoid;
 import buildcraft.transport.pipes.PipePowerWood;
+import cofh.api.energy.IEnergyConnection;
+import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyReceiver;
 
 public class PipeTransportPower extends PipeTransport {
 
@@ -311,11 +309,11 @@ public class PipeTransportPower extends PipeTransport {
 			}
 
 			TileEntity tile = tiles [dir.ordinal()];
-			
+
 		    if (tile instanceof IPipeTile && ((Pipe<?>) ((IPipeTile) tile).getPipe()).transport instanceof PipeTransportPower) {
 		    	continue;
 		    }
-		    
+
 			if (tile instanceof IEnergyHandler) {
 				IEnergyHandler handler = (IEnergyHandler) tile;
 				if (handler.canConnectEnergy(dir.getOpposite())) {
@@ -443,7 +441,7 @@ public class PipeTransportPower extends PipeTransport {
 
 	public void requestEnergy(ForgeDirection from, int amount) {
 		step();
-		
+
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
 		    nextPowerQuery[from.ordinal()] += ((IPipeTransportPowerHook) this.container.pipe).requestEnergy(from, amount);
 		} else {
@@ -573,5 +571,6 @@ public class PipeTransportPower extends PipeTransport {
 		powerCapacities.put(PipePowerGold.class, 2560);
 		powerCapacities.put(PipePowerEmerald.class, 2560);
 		powerCapacities.put(PipePowerDiamond.class, 10240);
+		powerCapacities.put(PipePowerVoid.class, 160);
 	}
 }
