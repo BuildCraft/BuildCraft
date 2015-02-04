@@ -2,12 +2,11 @@ package buildcraft.robots;
 
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.transport.TileGenericPipe;
 
 /**
  * Created by asie on 1/24/15.
  */
-public class RobotUtils {
+public final class RobotUtils {
 	private RobotUtils() {
 
 	}

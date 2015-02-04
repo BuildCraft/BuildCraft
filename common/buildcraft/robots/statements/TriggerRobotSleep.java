@@ -12,19 +12,16 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.robots.RobotUtils;
-import buildcraft.robots.ai.AIRobotSleep;
-import buildcraft.robots.DockingStation;
-import buildcraft.robots.EntityRobot;
 import buildcraft.core.statements.BCStatement;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.TileGenericPipe;
+import buildcraft.robots.DockingStation;
+import buildcraft.robots.EntityRobot;
+import buildcraft.robots.RobotUtils;
+import buildcraft.robots.ai.AIRobotSleep;
 
 public class TriggerRobotSleep extends BCStatement implements ITriggerInternal {
 

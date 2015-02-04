@@ -31,15 +31,14 @@ import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.ArrayStackOrListFilter;
 import buildcraft.core.inventory.filters.CompositeFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
-import buildcraft.core.inventory.filters.OreStackFilter;
 import buildcraft.core.utils.IBlockFilter;
+import buildcraft.robots.ResourceIdBlock;
 import buildcraft.robots.ai.AIRobotFetchAndEquipItemStack;
 import buildcraft.robots.ai.AIRobotGotoBlock;
 import buildcraft.robots.ai.AIRobotGotoRandomGroundBlock;
 import buildcraft.robots.ai.AIRobotGotoSleep;
 import buildcraft.robots.ai.AIRobotSearchBlock;
 import buildcraft.robots.ai.AIRobotUseToolOnBlock;
-import buildcraft.robots.ResourceIdBlock;
 import buildcraft.robots.statements.ActionRobotFilter;
 
 public class BoardRobotPlanter extends RedstoneBoardRobot {
@@ -140,10 +139,15 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 					robot.getRegistry().release(new ResourceIdBlock(blockFound));
 				}
 
+				((AIRobotSearchBlock) ai).unreserve();
+
 				blockFound = gotoBlock.blockFound;
 				gotoBlock.path.removeLast();
 				startDelegateAI(new AIRobotGotoBlock(robot, gotoBlock.path));
 			} else {
+				if (gotoBlock.blockFound != null) {
+					gotoBlock.unreserve();
+				}
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		} else if (ai instanceof AIRobotGotoBlock) {

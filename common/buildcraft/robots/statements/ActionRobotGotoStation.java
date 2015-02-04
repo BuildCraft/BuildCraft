@@ -21,15 +21,13 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.ItemMapLocation;
-import buildcraft.robots.RobotUtils;
-import buildcraft.robots.ai.AIRobotGoAndLinkToDock;
+import buildcraft.core.statements.BCStatement;
+import buildcraft.core.utils.StringUtils;
 import buildcraft.robots.DockingStation;
 import buildcraft.robots.EntityRobot;
 import buildcraft.robots.RobotRegistry;
-import buildcraft.core.statements.BCStatement;
-import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.Gate;
-import buildcraft.transport.Pipe;
+import buildcraft.robots.RobotUtils;
+import buildcraft.robots.ai.AIRobotGoAndLinkToDock;
 
 public class ActionRobotGotoStation extends BCStatement implements IActionInternal {
 

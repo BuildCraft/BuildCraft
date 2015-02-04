@@ -148,7 +148,7 @@ public class AIRobot {
 	}
 
 	public final void writeToNBT(NBTTagCompound nbt) {
-		nbt.setString("aiName", AIRobotManager.getAIRobotName(getClass()));
+		nbt.setString("aiName", RobotManager.getAIRobotName(getClass()));
 
 		NBTTagCompound data = new NBTTagCompound();
 		writeSelfToNBT(data);
@@ -172,9 +172,9 @@ public class AIRobot {
 				Class<?> aiRobotClass = null;
 				if (sub.hasKey("class")) {
 					// Migration support for 6.4.x
-					aiRobotClass = AIRobotManager.getAIRobotByLegacyClassName(sub.getString("class"));
+					aiRobotClass = RobotManager.getAIRobotByLegacyClassName(sub.getString("class"));
 				} else {
-					aiRobotClass = AIRobotManager.getAIRobotByName(sub.getString("aiName"));
+					aiRobotClass = RobotManager.getAIRobotByName(sub.getString("aiName"));
 				}
 				delegateAI = (AIRobot) aiRobotClass.getConstructor(EntityRobotBase.class)
 						.newInstance(robot);
@@ -196,9 +196,9 @@ public class AIRobot {
 			Class<?> aiRobotClass = null;
 			if (nbt.hasKey("class")) {
 				// Migration support for 6.4.x
-				aiRobotClass = AIRobotManager.getAIRobotByLegacyClassName(nbt.getString("class"));
+				aiRobotClass = RobotManager.getAIRobotByLegacyClassName(nbt.getString("class"));
 			} else {
-				aiRobotClass = AIRobotManager.getAIRobotByName(nbt.getString("aiName"));
+				aiRobotClass = RobotManager.getAIRobotByName(nbt.getString("aiName"));
 			}
 			ai = (AIRobot) aiRobotClass.getConstructor(EntityRobotBase.class)
 					.newInstance(robot);

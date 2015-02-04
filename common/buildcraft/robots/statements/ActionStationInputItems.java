@@ -13,9 +13,9 @@ import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.inventory.filters.StatementParameterStackFilter;
+import buildcraft.core.statements.BCStatement;
 import buildcraft.robots.DockingStation;
 import buildcraft.robots.EntityRobot;
-import buildcraft.core.statements.BCStatement;
 import buildcraft.transport.gates.StatementSlot;
 
 public abstract class ActionStationInputItems extends BCStatement implements IActionInternal {

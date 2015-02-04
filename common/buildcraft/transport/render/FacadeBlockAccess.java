@@ -9,7 +9,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.FacadePluggable;
 import buildcraft.transport.TileGenericPipe;
 
 public class FacadeBlockAccess implements IBlockAccess {

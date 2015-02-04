@@ -8,10 +8,6 @@
  */
 package buildcraft.api.filler;
 
-import net.minecraft.util.IIcon;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.api.statements.IStatement;
 
 public interface IFillerPattern extends IStatement {

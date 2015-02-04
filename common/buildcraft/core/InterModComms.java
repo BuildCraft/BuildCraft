@@ -11,8 +11,6 @@ package buildcraft.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import buildcraft.api.fuels.ICoolant;
-import buildcraft.energy.fuels.CoolantManager;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
@@ -33,11 +31,13 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.fuels.ICoolant;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.IntegrationRecipeManager;
 import buildcraft.core.recipes.RefineryRecipeManager;
+import buildcraft.energy.fuels.CoolantManager;
 import buildcraft.energy.worldgen.OilPopulate;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.recipes.GateExpansionRecipe;
@@ -258,7 +258,7 @@ public final class InterModComms {
 
 	public static void processCoolantAddIMC(IMCEvent event, IMCMessage m) {
 		boolean failed = false;
-		if (!m.isNBTMessage()){
+		if (!m.isNBTMessage()) {
 			failed = true;
 		} else {
 			NBTTagCompound tag = m.getNBTValue();

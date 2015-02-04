@@ -5,8 +5,6 @@ import net.minecraft.util.IIcon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.api.statements.IStatement;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.gui.GuiGateInterface;
 
 /**
 * Created by asie on 1/24/15.

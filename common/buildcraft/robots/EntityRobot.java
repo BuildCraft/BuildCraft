@@ -247,6 +247,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public void onEntityUpdate() {
+		this.worldObj.theProfiler.startSection("bcEntityRobot");
 		if (!firstUpdateDone) {
 			firstUpdate();
 			firstUpdateDone = true;
@@ -305,7 +306,9 @@ public class EntityRobot extends EntityRobotBase implements
 			}
 
 			if (linkedDockingStation != null) {
+				this.worldObj.theProfiler.startSection("bcRobotAIMainCycle");
 				mainAI.cycle();
+				this.worldObj.theProfiler.endSection();
 
 				if (energySpendPerCycle != mainAI.getActiveAI().getEnergyCost()) {
 					energySpendPerCycle = mainAI.getActiveAI().getEnergyCost();
@@ -319,6 +322,7 @@ public class EntityRobot extends EntityRobotBase implements
 		}
 
 		super.onEntityUpdate();
+		this.worldObj.theProfiler.endSection();
 	}
 	@SideOnly(Side.CLIENT)
 	private void spawnEnergyFX() {
