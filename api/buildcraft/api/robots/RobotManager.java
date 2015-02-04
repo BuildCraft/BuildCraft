@@ -37,7 +37,7 @@ public abstract class RobotManager {
 		aiRobots.add(aiRobot);
 		aiRobotsByNames.put(name, aiRobot);
 		aiRobotsNames.put(aiRobot, name);
-		if(legacyClassName != null) {
+		if (legacyClassName != null) {
 			aiRobotsByLegacyClassNames.put(legacyClassName, aiRobot);
 		}
 	}
@@ -61,7 +61,7 @@ public abstract class RobotManager {
 	public static void registerResourceId(Class<? extends ResourceId> resourceId, String name, String legacyClassName) {
 		resourceIdByNames.put(name, resourceId);
 		resourceIdNames.put(resourceId, name);
-		if(legacyClassName != null) {
+		if (legacyClassName != null) {
 			resourceIdLegacyClassNames.put(legacyClassName, resourceId);
 		}
 	}

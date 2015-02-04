@@ -9,9 +9,7 @@
 package buildcraft.builders.gui;
 
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.filler.FillerManager;
@@ -23,14 +21,12 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
-import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.gui.GuiTools;
 import buildcraft.core.gui.StatementParameterSlot;
 import buildcraft.core.gui.StatementSlot;
 import buildcraft.core.gui.buttons.GuiBetterButton;
 import buildcraft.core.gui.buttons.StandardButtonTextureSets;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.Pipe;
 
 public class GuiFiller extends GuiAdvancedInterface {
 	class FillerParameterSlot extends StatementParameterSlot {

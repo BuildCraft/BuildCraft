@@ -20,9 +20,9 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.Transactor;
+import buildcraft.core.utils.StringUtils;
 import buildcraft.robots.DockingStation;
 import buildcraft.robots.EntityRobot;
-import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.gates.StatementSlot;
 
 public class ActionStationRequestItems extends ActionStationInputItems {

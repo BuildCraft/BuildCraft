@@ -56,6 +56,8 @@ import buildcraft.core.Version;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.ColorUtils;
+import buildcraft.robots.ItemRobotStation;
+import buildcraft.robots.RobotStationPluggable;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
@@ -120,10 +122,8 @@ import buildcraft.transport.pipes.PipePowerWood;
 import buildcraft.transport.pipes.PipeStructureCobblestone;
 import buildcraft.transport.pluggable.ItemLens;
 import buildcraft.transport.pluggable.ItemPlug;
-import buildcraft.robots.ItemRobotStation;
 import buildcraft.transport.pluggable.LensPluggable;
 import buildcraft.transport.pluggable.PlugPluggable;
-import buildcraft.robots.RobotStationPluggable;
 import buildcraft.transport.recipes.AdvancedFacadeRecipe;
 import buildcraft.transport.recipes.GateExpansionRecipe;
 import buildcraft.transport.recipes.GateLogicSwapRecipe;
@@ -500,8 +500,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public void loadRecipes() {
 		// Add base recipe for pipe waterproof.
 		GameRegistry.addShapelessRecipe(new ItemStack(pipeWaterproof, 1), new ItemStack(Items.dye, 1, 2));
-		if(additionalWaterproofingRecipe)
-		GameRegistry.addShapelessRecipe(new ItemStack(pipeWaterproof, 1), new ItemStack(Items.slime_ball, 1, 2));
+		if (additionalWaterproofingRecipe) {
+			GameRegistry.addShapelessRecipe(new ItemStack(pipeWaterproof, 1), new ItemStack(Items.slime_ball, 1, 2));
+		}
 
 		// Add pipe recipes
 		for (PipeRecipe pipe : pipeRecipes) {

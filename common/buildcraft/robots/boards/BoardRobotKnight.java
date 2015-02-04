@@ -18,11 +18,11 @@ import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.IStackFilter;
+import buildcraft.core.utils.IEntityFilter;
 import buildcraft.robots.ai.AIRobotAttack;
 import buildcraft.robots.ai.AIRobotFetchAndEquipItemStack;
 import buildcraft.robots.ai.AIRobotGotoSleep;
 import buildcraft.robots.ai.AIRobotSearchEntity;
-import buildcraft.core.utils.IEntityFilter;
 
 public class BoardRobotKnight extends RedstoneBoardRobot {
 

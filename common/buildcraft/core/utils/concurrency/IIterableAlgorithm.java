@@ -10,8 +10,8 @@ package buildcraft.core.utils.concurrency;
 
 public interface IIterableAlgorithm {
 
-	abstract void iterate();
+	void iterate();
 
-	abstract boolean isDone();
+	boolean isDone();
 
 }

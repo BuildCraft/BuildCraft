@@ -34,10 +34,10 @@ import buildcraft.robots.IStationFilter;
 import buildcraft.robots.ResourceIdAssemblyTable;
 import buildcraft.robots.ResourceIdBlock;
 import buildcraft.robots.RobotRegistry;
-import buildcraft.silicon.BlockLaserTable;
-import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.robots.statements.ActionRobotFilter;
 import buildcraft.robots.statements.ActionStationAllowCraft;
+import buildcraft.silicon.BlockLaserTable;
+import buildcraft.silicon.TileAssemblyTable;
 
 public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 

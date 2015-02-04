@@ -3,8 +3,6 @@ package buildcraft.core.gui;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.gui.GuiGateInterface;
 
 /**
 * Created by asie on 1/24/15.
