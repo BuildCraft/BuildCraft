@@ -15,7 +15,7 @@ import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
 
-public class SchematicTank extends SchematicTile {
+public class SchematicTileIgnoreState extends SchematicTile {
 
 	@Override
 	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
