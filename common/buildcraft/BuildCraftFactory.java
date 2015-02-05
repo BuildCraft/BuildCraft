@@ -37,6 +37,7 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 
 import buildcraft.api.blueprints.BuilderAPI;
+import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.builders.schematics.SchematicIgnoreMeta;
 import buildcraft.compat.CompatHooks;
 import buildcraft.core.DefaultProps;
@@ -68,9 +69,10 @@ import buildcraft.factory.TileQuarry;
 import buildcraft.factory.TileRefinery;
 import buildcraft.factory.TileTank;
 import buildcraft.factory.network.PacketHandlerFactory;
+import buildcraft.factory.schematics.SchematicAutoWorkbench;
 import buildcraft.factory.schematics.SchematicPump;
 import buildcraft.factory.schematics.SchematicRefinery;
-import buildcraft.factory.schematics.SchematicTank;
+import buildcraft.factory.schematics.SchematicTileIgnoreState;
 
 @Mod(name = "BuildCraft Factory", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Factory", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftFactory extends BuildCraftMod {
@@ -160,9 +162,13 @@ public class BuildCraftFactory extends BuildCraftMod {
 		FactoryProxy.proxy.initializeTileEntities();
 
 		BuilderAPI.schematicRegistry.registerSchematicBlock(refineryBlock, SchematicRefinery.class);
-		BuilderAPI.schematicRegistry.registerSchematicBlock(tankBlock, SchematicTank.class);
+		BuilderAPI.schematicRegistry.registerSchematicBlock(tankBlock, SchematicTileIgnoreState.class);
 		BuilderAPI.schematicRegistry.registerSchematicBlock(frameBlock, SchematicIgnoreMeta.class);
 		BuilderAPI.schematicRegistry.registerSchematicBlock(pumpBlock, SchematicPump.class);
+		BuilderAPI.schematicRegistry.registerSchematicBlock(miningWellBlock, SchematicTileIgnoreState.class);
+		BuilderAPI.schematicRegistry.registerSchematicBlock(floodGateBlock, SchematicTileIgnoreState.class);
+		BuilderAPI.schematicRegistry.registerSchematicBlock(autoWorkbenchBlock, SchematicAutoWorkbench.class);
+		BuilderAPI.schematicRegistry.registerSchematicBlock(hopperBlock, SchematicTile.class);
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
