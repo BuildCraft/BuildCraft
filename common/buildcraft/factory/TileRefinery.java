@@ -299,11 +299,11 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 		int used = 0;
 		FluidStack resourceUsing = resource.copy();
 
-		if(RefineryRecipeManager.INSTANCE.getValidFluidStacks1().contains(resource)) {
+		if (RefineryRecipeManager.INSTANCE.getValidFluidStacks1().contains(resource)) {
 		    used += tanks[0].fill(resourceUsing, doFill);
 		    resourceUsing.amount -= used;
 		}
-		if(RefineryRecipeManager.INSTANCE.getValidFluidStacks2().contains(resource)) {
+		if (RefineryRecipeManager.INSTANCE.getValidFluidStacks2().contains(resource)) {
 		    used += tanks[1].fill(resourceUsing, doFill);
 		    resourceUsing.amount -= used;
 		}
@@ -334,8 +334,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 				break;
 			}
 		}
-
-		sendNetworkUpdate();
 	}
 
 	@Override

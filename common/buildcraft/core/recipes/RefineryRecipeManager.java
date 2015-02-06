@@ -83,12 +83,11 @@ public final class RefineryRecipeManager implements IRefineryRecipeManager {
 		recipes.remove(id);
 	}
 
-	public ArrayList<FluidStack> getValidFluidStacks1()
-	{
+	public ArrayList<FluidStack> getValidFluidStacks1() {
 		return validFluids1;
 	}
-	public ArrayList<FluidStack> getValidFluidStacks2()
-	{
+
+	public ArrayList<FluidStack> getValidFluidStacks2() {
 		return validFluids2;
 	}
 }
