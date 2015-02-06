@@ -221,6 +221,10 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 			craftSlot = new SlotCrafting(getInternalPlayer().get(), craftMatrix, craftResult, 0, 0, 0);
 		}
 
+		if (resultInv.getStackInSlot(SLOT_RESULT) != null) {
+			return;
+		}
+
 		update++;
 		if (update % UPDATE_TIME == 0) {
 			updateCrafting();
