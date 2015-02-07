@@ -25,7 +25,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.BlockFluidBase;
 import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.utils.Utils;
 
 public class SchematicBlock extends SchematicBlockBase {
 
@@ -47,7 +46,7 @@ public class SchematicBlock extends SchematicBlockBase {
 			if (storedRequirements.length != 0) {
 				Collections.addAll(requirements, storedRequirements);
 			} else {
-				requirements.add(Utils.getItemStack(state));
+				requirements.add(getItemStack(state));
 			}
 		}
 	}
@@ -179,6 +178,14 @@ public class SchematicBlock extends SchematicBlockBase {
 
 			nbt.setTag("rq", rq);
 		}
+	}
+    
+    protected ItemStack getItemStack(IBlockState state, int quantity) {
+		return new ItemStack(state.getBlock(), quantity, state.getBlock().damageDropped(state));
+	}
+
+	protected ItemStack getItemStack(IBlockState state) {
+		return getItemStack(state, 1);
 	}
 	
 	public EnumFacing getFace()
