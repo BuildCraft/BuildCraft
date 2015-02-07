@@ -38,6 +38,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.BuildCraftProperties;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.ICustomHighlight;
@@ -59,7 +60,7 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight, IM
 		}
 	};
 
-	public static final PropertyEnum TYPE = PropertyEnum.create("type", EngineType.class);
+	public static final PropertyEnum TYPE = BuildCraftProperties.ENGINE_TYPE;
 
 	private static final AxisAlignedBB[][] boxes = {
 			{AxisAlignedBB.fromBounds(0.0, 0.5, 0.0, 1.0, 1.0, 1.0), AxisAlignedBB.fromBounds(0.25, 0.0, 0.25, 0.75, 0.5, 0.75)}, // -Y

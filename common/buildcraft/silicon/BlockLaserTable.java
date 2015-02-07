@@ -27,6 +27,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftSilicon;
+import buildcraft.api.core.BuildCraftProperties;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.power.ILaserTargetBlock;
 import buildcraft.core.BlockBuildCraft;
@@ -50,7 +51,7 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
 		}
 	};
 
-	public static final PropertyEnum TYPE = PropertyEnum.create("type", LaserTableType.class);
+	public static final PropertyEnum TYPE = BuildCraftProperties.LASER_TABLE_TYPE;
 
 	public BlockLaserTable() {
 		super(Material.iron, new PropertyEnum[]{TYPE});

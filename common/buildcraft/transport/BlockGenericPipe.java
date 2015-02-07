@@ -55,6 +55,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.BuildCraftProperties;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.events.PipePlacedEvent;
 import buildcraft.api.events.RobotPlacementEvent;
@@ -117,7 +118,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IModelRegister 
 		}
 	}
 
-	public static final PropertyInteger DATA_PROP = PropertyInteger.create("data", 0, 15);
+	public static final PropertyInteger DATA_PROP = BuildCraftProperties.PIPE_DATA;
 
 	private boolean skippedFirstIconRegister;
 

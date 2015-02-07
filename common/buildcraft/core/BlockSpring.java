@@ -24,11 +24,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.world.World;
+import buildcraft.api.core.BuildCraftProperties;
 
 public class BlockSpring extends Block {
 
 	public static final Random rand = new Random();
-	public static final PropertyEnum TYPE = PropertyEnum.create("type", EnumSpring.class);
+	public static final PropertyEnum TYPE = BuildCraftProperties.SPRING_TYPE;
 
 	public enum EnumSpring implements IStringSerializable {
 
