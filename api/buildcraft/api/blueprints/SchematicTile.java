@@ -72,6 +72,7 @@ public class SchematicTile extends SchematicBlock {
 			if (tile != null) {
 				tile.writeToNBT(tileNBT);
 			}
+			tileNBT = (NBTTagCompound) tileNBT.copy();
 		}
 	}
 
