@@ -12,7 +12,6 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import buildcraft.core.utils.Utils;
 
 public abstract class ResourceId {
 
@@ -43,7 +42,11 @@ public abstract class ResourceId {
 
 	public void writeToNBT(NBTTagCompound nbt) {
 		NBTTagCompound indexNBT = new NBTTagCompound();
-		Utils.writeBlockPos(nbt, index);
+        
+		indexNBT.setInteger("x", index.getX());
+		indexNBT.setShort("y", (short) index.getY());
+		indexNBT.setInteger("z", index.getZ());
+        
 		nbt.setTag("index", indexNBT);
 		nbt.setByte("side", (byte) side.ordinal());
 		nbt.setInteger("localId", localId);
@@ -51,7 +54,8 @@ public abstract class ResourceId {
 	}
 
 	protected void readFromNBT(NBTTagCompound nbt) {
-		index = Utils.readBlockPos(nbt.getCompoundTag("index"));
+		NBTTagCompound tagIndex = nbt.getCompoundTag("index");
+		index = new BlockPos(tagIndex.getInteger("x"), tagIndex.getShort("y"), tagIndex.getInteger("z"));
 		side = EnumFacing.values()[nbt.getByte("side")];
 		localId = nbt.getInteger("localId");
 	}

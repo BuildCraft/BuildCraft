@@ -24,8 +24,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.BlockFluidBase;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.utils.Utils;
+import buildcraft.api.core.BuildCraftProperties;
 
 public class SchematicBlock extends SchematicBlockBase {
 
@@ -47,7 +46,7 @@ public class SchematicBlock extends SchematicBlockBase {
 			if (storedRequirements.length != 0) {
 				Collections.addAll(requirements, storedRequirements);
 			} else {
-				requirements.add(Utils.getItemStack(state));
+				requirements.add(getItemStack(state));
 			}
 		}
 	}
@@ -180,10 +179,18 @@ public class SchematicBlock extends SchematicBlockBase {
 			nbt.setTag("rq", rq);
 		}
 	}
-	
+
+	protected ItemStack getItemStack(IBlockState state, int quantity) {
+		return new ItemStack(state.getBlock(), quantity, state.getBlock().damageDropped(state));
+	}
+
+	protected ItemStack getItemStack(IBlockState state) {
+		return getItemStack(state, 1);
+	}
+
 	public EnumFacing getFace()
 	{
-		return ((EnumFacing)state.getValue(BlockBuildCraft.FACING_PROP));
+		return ((EnumFacing)state.getValue(BuildCraftProperties.BLOCK_FACING));
 	}
 	
 	public int getMetaData()
@@ -193,6 +200,6 @@ public class SchematicBlock extends SchematicBlockBase {
 	
 	public void setMetaData(int newValue)
 	{
-		state = state.withProperty(BlockBuildCraft.FACING_PROP, EnumFacing.getFront(newValue));
+		state = state.withProperty(BuildCraftProperties.BLOCK_FACING, EnumFacing.getFront(newValue));
 	}
 }
