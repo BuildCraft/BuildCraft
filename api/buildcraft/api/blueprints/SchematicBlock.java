@@ -179,15 +179,15 @@ public class SchematicBlock extends SchematicBlockBase {
 			nbt.setTag("rq", rq);
 		}
 	}
-    
-    protected ItemStack getItemStack(IBlockState state, int quantity) {
+
+	protected ItemStack getItemStack(IBlockState state, int quantity) {
 		return new ItemStack(state.getBlock(), quantity, state.getBlock().damageDropped(state));
 	}
 
 	protected ItemStack getItemStack(IBlockState state) {
 		return getItemStack(state, 1);
 	}
-	
+
 	public EnumFacing getFace()
 	{
 		return ((EnumFacing)state.getValue(BuildCraftProperties.BLOCK_FACING));

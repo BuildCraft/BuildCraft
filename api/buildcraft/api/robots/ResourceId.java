@@ -54,7 +54,7 @@ public abstract class ResourceId {
 	}
 
 	protected void readFromNBT(NBTTagCompound nbt) {
-        NBTTagCompound tagIndex = nbt.getCompoundTag("index");
+		NBTTagCompound tagIndex = nbt.getCompoundTag("index");
 		index = new BlockPos(tagIndex.getInteger("x"), tagIndex.getShort("y"), tagIndex.getInteger("z"));
 		side = EnumFacing.values()[nbt.getByte("side")];
 		localId = nbt.getInteger("localId");
