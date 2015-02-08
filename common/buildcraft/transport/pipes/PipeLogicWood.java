@@ -37,8 +37,11 @@ public abstract class PipeLogicWood {
 				break;
 			}
 		}
+		if (newFacing == null) {
+			newFacing = ForgeDirection.UNKNOWN;
+		}
 
-		if (newFacing != null && newFacing.ordinal() != meta) {
+		if (newFacing.ordinal() != meta) {
 			pipe.container.getWorldObj().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, newFacing.ordinal(), 3);
 			pipe.container.scheduleRenderUpdate();
 		}
@@ -65,6 +68,10 @@ public abstract class PipeLogicWood {
 
 		if (!tileBuffer[side.ordinal()].exists()) {
 			return true;
+		}
+
+		if (pipe.container.hasBlockingPluggable(side)) {
+			return false;
 		}
 
 		TileEntity tile = tileBuffer[side.ordinal()].getTile();
