@@ -81,7 +81,7 @@ public class EntityRobotEnergyFX extends EntityFX {
 
 		if (this.posY == this.prevPosY) {
 			this.motionX *= 1.1D;
-			this.motionY *= 1.1D;
+			this.motionY = 0.001D;
 			this.motionZ *= 1.1D;
 		}
 
