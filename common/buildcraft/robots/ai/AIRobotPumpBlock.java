@@ -67,11 +67,6 @@ public class AIRobotPumpBlock extends AIRobot {
 	}
 
 	@Override
-	public void end() {
-		robot.aimItemAt(0, 1, 0);
-	}
-
-	@Override
 	public int getEnergyCost() {
 		return 20;
 	}

@@ -26,6 +26,7 @@ public class AIRobotStraightMoveTo extends AIRobotGoto {
 		x = ix;
 		y = iy;
 		z = iz;
+		robot.aimItemAt((int) Math.floor(x), (int) Math.floor(y), (int) Math.floor(z));
 	}
 
 	@Override
