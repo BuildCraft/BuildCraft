@@ -406,3 +406,7 @@ bc_update.new_version=§cNew version of BuildCraft available: %s for Minecraft %
 bc_update.download=§cDownload from http://www.mod-buildcraft.com/download
 bc_update.once=This message only displays once
 bc_update.again=Type '/buildcraft version' if you want to see it again
+
+command.buildcraft.version=BuildCraft %s for Minecraft %s (Latest: %s).
+command.buildcraft.versioninfo=Version information.
+command.buildcraft.available=Available Commands:

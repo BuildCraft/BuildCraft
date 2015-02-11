@@ -98,5 +98,8 @@ public final class InventoryConcatenator implements IInventory {
 
 	@Override
 	public void markDirty() {
+		for (IInventory inv : invMap) {
+			inv.markDirty();
+		}
 	}
 }

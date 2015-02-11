@@ -15,7 +15,7 @@ import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.util.ChatComponentText;
-
+import net.minecraft.util.StatCollector;
 import buildcraft.core.proxy.CoreProxy;
 
 public class CommandBuildCraft extends CommandBase {
@@ -58,8 +58,8 @@ public class CommandBuildCraft extends CommandBase {
 			return;
 		} else if (arguments[0].matches("help")) {
 			sender.addChatMessage(new ChatComponentText("Format: '" + this.getCommandName() + " <command> <arguments>'"));
-			sender.addChatMessage(new ChatComponentText("Available commands:"));
-			sender.addChatMessage(new ChatComponentText("- version : Version information."));
+			sender.addChatMessage(new ChatComponentText(StatCollector.translateToLocal("command.buildcraft.available")));
+			sender.addChatMessage(new ChatComponentText(" - version :" + StatCollector.translateToLocal("command.buildcraft.versioninfo")));
 			return;
 		}
 
@@ -69,7 +69,7 @@ public class CommandBuildCraft extends CommandBase {
 	private void commandVersion(ICommandSender sender, String[] arguments) {
 		String colour = Version.isOutdated() ? "\u00A7c" : "\u00A7a";
 
-		sender.addChatMessage(new ChatComponentText(String.format(colour + "BuildCraft %s for Minecraft %s (Latest: %s).", Version.getVersion(),
+		sender.addChatMessage(new ChatComponentText(String.format(colour + StatCollector.translateToLocal("command.buildcraft.version"), Version.getVersion(),
 				CoreProxy.proxy.getMinecraftVersion(), Version.getRecommendedVersion())));
 
 		// TODD This takes too much realstate. See how to improve

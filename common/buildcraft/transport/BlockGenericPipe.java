@@ -432,9 +432,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 		pipeRemoved.put(new BlockIndex(x, y, z), pipe);
 		world.removeTileEntity(x, y, z);
-
-		updateNeighbourSignalState(pipe);
-
+		if (pipe != null) {
+			updateNeighbourSignalState(pipe);
+		}
 	}
 
 	@Override

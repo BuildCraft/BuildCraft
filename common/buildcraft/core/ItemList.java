@@ -77,14 +77,18 @@ public class ItemList extends ItemBuildCraft {
 				stacks[slot].stackSize = 1;
 			}
 
-			if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT && slot == 0) {
+			if (slot == 0) {
 				relatedItems.clear();
 				ores.clear();
 
 				if (stack == null) {
 					isOre = false;
 				} else {
-					setClientPreviewLists();
+					if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+						setClientPreviewLists();
+					} else {
+						isOre = OreDictionary.getOreIDs(stacks[0]).length > 0;
+					}
 				}
 			}
 		}
@@ -199,7 +203,7 @@ public class ItemList extends ItemBuildCraft {
 				return oreMatch(stacks[0], item);
 			} else {
 				for (ItemStack stack : stacks) {
-					if (stack != null && StackHelper.isMatchingItemOrList(stacks[0], item)) {
+					if (stack != null && StackHelper.isMatchingItemOrList(stack, item)) {
 						return true;
 					}
 				}

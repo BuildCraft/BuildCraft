@@ -46,6 +46,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 	public String currentRecipeId = "";
 	public IFlexibleRecipe<ItemStack> currentRecipe;
 	private HashSet<String> plannedOutput = new HashSet<String>();
+	private boolean queuedNetworkUpdate = false;
 
 	public List<CraftingResult<ItemStack>> getPotentialOutputs() {
 		List<CraftingResult<ItemStack>> result = new LinkedList<CraftingResult<ItemStack>>();
@@ -61,6 +62,10 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		return result;
 	}
 
+	private void queueNetworkUpdate() {
+		queuedNetworkUpdate = true;
+	}
+
 	@Override
 	public boolean canUpdate() {
 		return !FMLCommonHandler.instance().getEffectiveSide().isClient();
@@ -69,6 +74,11 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 	@Override
 	public void updateEntity() { // WARNING: run only server-side, see canUpdate()
 		super.updateEntity();
+
+		if (queuedNetworkUpdate) {
+			sendNetworkUpdate();
+			queuedNetworkUpdate = false;
+		}
 
 		if (currentRecipe == null) {
 			return;
@@ -145,6 +155,8 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		for (int i = 0; i < size; i++) {
 			plannedOutput.add(Utils.readUTF(stream));
 		}
+
+		currentRecipe = AssemblyRecipeManager.INSTANCE.getRecipe(currentRecipeId);
 	}
 
 	@Override
@@ -155,8 +167,6 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		for (String s: plannedOutput) {
 			Utils.writeUTF(stream, s);
 		}
-
-		currentRecipe = AssemblyRecipeManager.INSTANCE.getRecipe(currentRecipeId);
 	}
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
@@ -220,7 +230,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		}
 
 		if (worldObj != null && !worldObj.isRemote) {
-			sendNetworkUpdate();
+			queueNetworkUpdate();
 		}
 	}
 
@@ -246,6 +256,8 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 			if (!isAssembling(currentRecipe) || !isPlanned(currentRecipe)) {
 				setCurrentRecipe(recipe);
 			}
+
+			queueNetworkUpdate();
 		}
 	}
 
@@ -259,6 +271,8 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		if (!plannedOutput.isEmpty()) {
 			setCurrentRecipe(AssemblyRecipeManager.INSTANCE.getRecipe(plannedOutput.iterator().next()));
 		}
+
+		queueNetworkUpdate();
 	}
 
 	public void setNextCurrentRecipe() {
@@ -319,8 +333,6 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 					cancelPlanOutput(recipe);
 				}
 			}
-
-			sendNetworkUpdate();
 		}
 	}
 

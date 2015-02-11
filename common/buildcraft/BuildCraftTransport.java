@@ -506,6 +506,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		}
 
 		GameRegistry.addRecipe(new PipeColoringRecipe());
+		RecipeSorter.register("buildcraft:pipecoloring", PipeColoringRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
 		
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(filteredBufferBlock, 1),
 				"wdw", "wcw", "wpw", 'w', "plankWood", 'd',

@@ -75,7 +75,7 @@ public class BlockMiner {
 	public void invalidate() {
 		world.destroyBlockInWorldPartially(minerId, x, y, z, -1);
 	}
-	
+
 	public int acceptEnergy(int offeredAmount) {
 		energyRequired = BlockUtils.computeBlockBreakEnergy(world, x, y, z);
 

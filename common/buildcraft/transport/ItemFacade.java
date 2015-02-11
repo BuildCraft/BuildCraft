@@ -171,7 +171,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean debug) {
 		for (FacadeState state : getFacadeStates(stack)) {
-			if (!state.transparent && state.block != null) {
+			if (state != null && !state.transparent && state.block != null && Item.getItemFromBlock(state.block) != null) {
 				Item.getItemFromBlock(state.block).addInformation(new ItemStack(state.block, 1, state.metadata), player, list, debug);
 			}
 		}

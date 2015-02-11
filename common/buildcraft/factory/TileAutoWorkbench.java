@@ -99,6 +99,12 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	}
 
 	@Override
+	public void markDirty() {
+		super.markDirty();
+		inv.markDirty();
+	}
+
+	@Override
 	public int getSizeInventory() {
 		return 10;
 	}
@@ -214,9 +220,11 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		if (craftSlot == null) {
 			craftSlot = new SlotCrafting(getInternalPlayer().get(), craftMatrix, craftResult, 0, 0, 0);
 		}
+
 		if (resultInv.getStackInSlot(SLOT_RESULT) != null) {
 			return;
 		}
+
 		update++;
 		if (update % UPDATE_TIME == 0) {
 			updateCrafting();
