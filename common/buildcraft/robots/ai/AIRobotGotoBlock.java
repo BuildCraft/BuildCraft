@@ -17,15 +17,15 @@ import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.utils.PathFinding;
-import buildcraft.core.utils.PathFindingJob;
+import buildcraft.core.utils.concurrency.IterableAlgorithmRunner;
+import buildcraft.core.utils.concurrency.PathFinding;
 
 public class AIRobotGotoBlock extends AIRobotGoto {
 
 	public boolean unreachable = false;
 
 	private PathFinding pathSearch;
-	private PathFindingJob pathSearchJob;
+	private IterableAlgorithmRunner pathSearchJob;
 	private LinkedList<BlockIndex> path;
 	private double prevDistance = Double.MAX_VALUE;
 	private float finalX, finalY, finalZ;
@@ -70,7 +70,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 					(int) Math.floor(robot.posY), (int) Math.floor(robot.posZ)), new BlockIndex(
 					(int) Math.floor(finalX), (int) Math.floor(finalY), (int) Math.floor(finalZ)), maxDistance);
 
-			pathSearchJob = new PathFindingJob(pathSearch, 100);
+			pathSearchJob = new IterableAlgorithmRunner(pathSearch, 100);
 			pathSearchJob.start();
 		} else if (path != null) {
 			double distance = robot.getDistance(nextX, nextY, nextZ);

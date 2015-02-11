@@ -66,15 +66,15 @@ import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemMapLocation;
-import buildcraft.robots.ItemRobot;
 import buildcraft.core.TileBuffer;
-import buildcraft.robots.DockingStation;
-import buildcraft.robots.EntityRobot;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.core.utils.Utils;
+import buildcraft.robots.DockingStation;
+import buildcraft.robots.EntityRobot;
+import buildcraft.robots.ItemRobot;
+import buildcraft.robots.RobotStationPluggable;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GatePluggable;
-import buildcraft.robots.RobotStationPluggable;
 import buildcraft.transport.render.PipeRendererWorld;
 
 public class BlockGenericPipe extends BlockBuildCraft {

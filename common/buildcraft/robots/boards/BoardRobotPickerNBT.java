@@ -20,8 +20,8 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.robots.EntityRobot;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.robots.EntityRobot;
 
 public final class BoardRobotPickerNBT extends RedstoneBoardRobotNBT {
 

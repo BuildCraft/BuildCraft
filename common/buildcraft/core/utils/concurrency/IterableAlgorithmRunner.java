@@ -6,33 +6,32 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core.utils;
+package buildcraft.core.utils.concurrency;
 
 import java.util.Date;
 
-public class PathFindingJob extends Thread {
+public class IterableAlgorithmRunner extends Thread {
 
-	private PathFinding pathFinding;
+	private IIterableAlgorithm pathFinding;
 
 	private boolean stop = false;
 	private int maxIterations;
 
 	private boolean done = false;
 
-	public PathFindingJob(PathFinding iPathFinding, int iMaxIterations) {
+	public IterableAlgorithmRunner(IIterableAlgorithm iPathFinding, int iMaxIterations) {
 		super("Path Finding");
 		pathFinding = iPathFinding;
 		maxIterations = iMaxIterations;
 	}
 
-	public PathFindingJob(PathFinding iPathFinding) {
+	public IterableAlgorithmRunner(IIterableAlgorithm iPathFinding) {
 		this(iPathFinding, 1000);
 	}
 
 	@Override
 	public void run() {
 		try {
-			pathFinding.preRun();
 			for (int i = 0; i < maxIterations; ++i) {
 				if (isTerminated() || pathFinding.isDone()) {
 					break;

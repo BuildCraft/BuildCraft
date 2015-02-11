@@ -22,7 +22,6 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.FacadePluggable;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.TileGenericPipe;

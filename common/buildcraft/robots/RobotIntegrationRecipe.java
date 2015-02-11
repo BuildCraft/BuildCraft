@@ -12,7 +12,6 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.recipes.CraftingResult;
-import buildcraft.robots.ItemRobot;
 import buildcraft.silicon.ItemRedstoneBoard;
 import buildcraft.silicon.TileIntegrationTable;
 import buildcraft.transport.recipes.IntegrationTableRecipe;

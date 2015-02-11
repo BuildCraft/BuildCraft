@@ -20,14 +20,14 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.IStackFilter;
+import buildcraft.core.utils.IBlockFilter;
+import buildcraft.robots.ResourceIdBlock;
+import buildcraft.robots.RobotRegistry;
 import buildcraft.robots.ai.AIRobotFetchAndEquipItemStack;
 import buildcraft.robots.ai.AIRobotGotoBlock;
 import buildcraft.robots.ai.AIRobotGotoSleep;
 import buildcraft.robots.ai.AIRobotSearchBlock;
 import buildcraft.robots.ai.AIRobotUseToolOnBlock;
-import buildcraft.core.utils.IBlockFilter;
-import buildcraft.robots.ResourceIdBlock;
-import buildcraft.robots.RobotRegistry;
 
 public class BoardRobotFarmer extends RedstoneBoardRobot {
 
@@ -71,6 +71,7 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 			if (searchAI.blockFound != null
 					&& RobotRegistry.getRegistry(robot.worldObj).take(
 							new ResourceIdBlock(searchAI.blockFound), robot)) {
+				((AIRobotSearchBlock) ai).unreserve();
 
 				if (blockFound != null) {
 					robot.getRegistry().release(new ResourceIdBlock(blockFound));
@@ -79,11 +80,12 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 				blockFound = searchAI.blockFound;
 				startDelegateAI(new AIRobotGotoBlock(robot, searchAI.path));
 			} else {
+				if (searchAI.blockFound != null) {
+					((AIRobotSearchBlock) ai).unreserve();
+				}
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		} else if (ai instanceof AIRobotGotoBlock) {
-			AIRobotGotoBlock gotoBlock = (AIRobotGotoBlock) ai;
-
 			startDelegateAI(new AIRobotUseToolOnBlock(robot, blockFound));
 		} else if (ai instanceof AIRobotFetchAndEquipItemStack) {
 			if (robot.getHeldItem() == null) {

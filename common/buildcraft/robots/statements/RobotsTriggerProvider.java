@@ -17,7 +17,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftSilicon;
-import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
@@ -25,7 +24,6 @@ import buildcraft.api.statements.ITriggerProvider;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.robots.DockingStation;
 import buildcraft.robots.RobotUtils;
-import buildcraft.transport.TileGenericPipe;
 
 public class RobotsTriggerProvider implements ITriggerProvider {
 

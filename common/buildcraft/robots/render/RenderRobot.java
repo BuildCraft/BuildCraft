@@ -31,8 +31,8 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.render.RenderLaser;
 import buildcraft.core.render.RenderUtils;
-import buildcraft.robots.ItemRobot;
 import buildcraft.robots.EntityRobot;
+import buildcraft.robots.ItemRobot;
 
 public class RenderRobot extends Render implements IItemRenderer {
 

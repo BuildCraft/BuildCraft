@@ -30,7 +30,6 @@ import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
-import buildcraft.robots.EntityRobot;
 import buildcraft.core.utils.NBTUtils;
 
 public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {

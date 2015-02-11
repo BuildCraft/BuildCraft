@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core.utils;
+package buildcraft.core.utils.concurrency;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,26 +17,23 @@ import net.minecraft.world.World;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IZone;
+import buildcraft.core.utils.IBlockFilter;
 
 /**
  * This class implements a 3D path finding based on the A* algorithm, following
  * guidelines documented on http://www.policyalmanac.org/games/aStarTutorial.htm
  * .
  */
-public class PathFinding {
+public class PathFinding implements IIterableAlgorithm {
 
 	public static int PATH_ITERATIONS = 1000;
 
 	private World world;
 	private BlockIndex start;
 	private BlockIndex end;
-	private BlockIndex boxEnd;
 	private IBlockFilter pathFound;
-	private float maxDistance = -1;
-	private float sqrMaxDistance = -1;
 	private IZone zone;
 	private double maxDistanceToEnd = 0;
-	private boolean targetNotFound;
 
 	private HashMap<BlockIndex, Node> openList = new HashMap<BlockIndex, PathFinding.Node>();
 	private HashMap<BlockIndex, Node> closedList = new HashMap<BlockIndex, PathFinding.Node>();
@@ -68,58 +65,7 @@ public class PathFinding {
 		maxDistanceToEnd = iMaxDistanceToEnd;
 	}
 
-	// TODO: It's probably more efficient to start a search first, and then to
-	// compute the path, instead of computing all possible path from the get
-	// go.
-	public PathFinding(World iWorld, BlockIndex iStart, IBlockFilter iPathFound, float iMaxDistance, IZone iZone) {
-		world = iWorld;
-		start = iStart;
-		pathFound = iPathFound;
-
-		Node startNode = new Node();
-		startNode.parent = null;
-		startNode.movementCost = 0;
-		startNode.destinationCost = 0;
-		startNode.totalWeight = startNode.movementCost + startNode.destinationCost;
-		startNode.index = iStart;
-		openList.put(start, startNode);
-		nextIteration = startNode;
-		maxDistance = iMaxDistance;
-		sqrMaxDistance = maxDistance * maxDistance;
-		maxDistance = maxDistance * 1.25f;
-		zone = iZone;
-		targetNotFound = false;
-	}
-
-	public void preRun() {
-		if (end == null) {
-			targetNotFound = searchForTarget(64);
-		}
-	}
-
-
-	private boolean searchForTarget(int range) {
-		for (int dx = -range; dx <= range; dx++) {
-			for (int dz = -range; dz <= range; dz++) {
-				int x = start.x + dx;
-				int z = start.z + dz;
-				if (world.getChunkProvider().chunkExists (x >> 4, z >> 4)) {
-					int height = world.getChunkFromChunkCoords(x >> 4, z >> 4).getHeightValue(x & 0xF, z & 0xF);
-					for (int dy = -range; dy <= height; dy++) {
-						int y = Math.max(0, start.y + dy);
-						if (zone != null && !zone.contains(x, y, z)) {
-							continue;
-						}
-						if (pathFound.matches(world, x, y, z)) {
-							return false;
-						}
-					}
-				}
-			}
-		}
-		return true;
-	}
-
+	@Override
 	public void iterate() {
 		iterate(PATH_ITERATIONS);
 	}
@@ -145,8 +91,9 @@ public class PathFinding {
 		}
 	}
 
+	@Override
 	public boolean isDone() {
-		return nextIteration == null || (end == null && targetNotFound);
+		return nextIteration == null;
 	}
 
 	public LinkedList<BlockIndex> getResult() {
@@ -400,33 +347,7 @@ public class PathFinding {
 			resultMoves[2][2][2] = 0;
 		}
 
-
-		if (maxDistance != -1) {
-			for (int dx = -1; dx <= +1; ++dx) {
-				for (int dy = -1; dy <= +1; ++dy) {
-					for (int dz = -1; dz <= +1; ++dz) {
-						int x = from.index.x + dx;
-						int y = from.index.y + dy;
-						int z = from.index.z + dz;
-
-						float distX = x - start.x;
-						float distY = y - start.y;
-						float distZ = z - start.z;
-						float sqrDist = distX * distX + distY * distY + distZ * distZ;
-
-						if (sqrDist > sqrMaxDistance) {
-							resultMoves[dx + 1][dy + 1][dz + 1] = 0;
-						}
-					}
-				}
-			}
-		}
-
 		return resultMoves;
-	}
-
-	private boolean totalDistanceExceeded(Node nextNode) {
-		return maxDistance != -1 && nextNode.totalWeight > maxDistance;
 	}
 
 }

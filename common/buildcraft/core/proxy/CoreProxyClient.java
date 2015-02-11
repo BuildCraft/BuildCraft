@@ -34,10 +34,10 @@ import buildcraft.BuildCraftSilicon;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.LaserKind;
 import buildcraft.core.render.RenderEntityBlock;
-import buildcraft.robots.render.RenderRobot;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingMarkers;
 import buildcraft.robots.EntityRobot;
+import buildcraft.robots.render.RenderRobot;
 import buildcraft.transport.render.TileEntityPickupFX;
 
 public class CoreProxyClient extends CoreProxy {
