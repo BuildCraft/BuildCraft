@@ -151,6 +151,7 @@ import buildcraft.transport.statements.TriggerPipeSignal;
 import buildcraft.transport.statements.TriggerRedstoneFaderInput;
 import buildcraft.transport.stripes.StripesHandlerArrow;
 import buildcraft.transport.stripes.StripesHandlerBucket;
+import buildcraft.transport.stripes.StripesHandlerEntityInteract;
 import buildcraft.transport.stripes.StripesHandlerPipes;
 import buildcraft.transport.stripes.StripesHandlerRightClick;
 import buildcraft.transport.stripes.StripesHandlerShears;
@@ -464,6 +465,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		PipeManager.registerStripesHandler(new StripesHandlerArrow());
 		PipeManager.registerStripesHandler(new StripesHandlerShears());
 		PipeManager.registerStripesHandler(new StripesHandlerPipes());
+		PipeManager.registerStripesHandler(new StripesHandlerEntityInteract());
 
 		PipeManager.registerPipePluggable(FacadePluggable.class, "facade");
 		PipeManager.registerPipePluggable(GatePluggable.class, "gate");
