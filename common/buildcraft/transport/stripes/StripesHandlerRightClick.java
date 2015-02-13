@@ -29,7 +29,8 @@ public class StripesHandlerRightClick implements IStripesHandler {
 	public boolean handle(World world, int x, int y, int z,
 			ForgeDirection direction, ItemStack stack, EntityPlayer player,
 			IStripesPipe pipe) {
-		stack.getItem().onItemRightClick(stack, world, player);
+		ItemStack remainingStack = stack.getItem().onItemRightClick(stack, world, player);
+		pipe.sendItem(remainingStack, direction.getOpposite());
 		return true;
 	}
 

@@ -39,8 +39,11 @@ public class StripesHandlerBucket implements IStripesHandler {
 			Block underblock = world.getBlock(x, y - 1, z);
 
 			if (((ItemBucket) stack.getItem()).tryPlaceContainedLiquid(world, x, y - 1, z)) {
-				stack.stackSize = 0;
 				pipe.sendItem(emptyBucket, direction.getOpposite());
+				stack.stackSize--;
+				if(stack.stackSize > 0) {
+					pipe.sendItem(stack, direction.getOpposite());
+				}
 				
 				return true;
 			} else {
@@ -63,14 +66,15 @@ public class StripesHandlerBucket implements IStripesHandler {
 				if (filledBucket != null) {
 					world.setBlockToAir(x, y - 1, z);
 
-					stack.stackSize = 0;
 					pipe.sendItem(filledBucket, direction.getOpposite());
+					stack.stackSize--;
+					if(stack.stackSize > 0) {
+						pipe.sendItem(stack, direction.getOpposite());
+					}
 
 					return true;
 				}
 			}
-
-			return false;
 		}
 		return false;
 	}

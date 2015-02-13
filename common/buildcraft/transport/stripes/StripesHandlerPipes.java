@@ -74,11 +74,9 @@ public class StripesHandlerPipes implements IStripesHandler {
 		pipeTile.pipe.container.pipe = newPipe;
 		pipeTile.updateEntity(); // Needed so that the tile does computeConnections()
 		
-		ItemStack transportStack = stack.copy();
-		stack.stackSize = 0;
-		transportStack.stackSize--;
-		if (transportStack.stackSize > 0) {
-			pipeTile.pipe.container.injectItem(transportStack, true, direction.getOpposite());
+		stack.stackSize--;
+		if (stack.stackSize > 0) {
+			pipeTile.pipe.container.injectItem(stack, true, direction.getOpposite());
 		}
 
 		return true;
