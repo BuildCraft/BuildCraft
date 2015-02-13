@@ -12,9 +12,7 @@ import java.util.ArrayList;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
@@ -38,9 +36,13 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
+import buildcraft.transport.stripes.StripesHandlerDefault;
 import buildcraft.transport.utils.TransportUtils;
 
 public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnergyHandler, IStripesPipe {
+
+	private IStripesHandler defaultItemsHandler = new StripesHandlerDefault();
+
 	public PipeItemsStripes(Item item) {
 		super(new PipeTransportItems(), item);
 	}
@@ -108,6 +110,11 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 					return;
 				}
 			}
+		}
+
+		if(defaultItemsHandler.handle(getWorld(), (int) p.x, (int) p.y, (int) p.z,
+				event.direction, stack, player, this)) {
+			event.entity = null;
 		}
 	}
 	

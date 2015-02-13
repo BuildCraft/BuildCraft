@@ -41,7 +41,7 @@ public class StripesHandlerBucket implements IStripesHandler {
 			if (((ItemBucket) stack.getItem()).tryPlaceContainedLiquid(world, x, y - 1, z)) {
 				pipe.sendItem(emptyBucket, direction.getOpposite());
 				stack.stackSize--;
-				if(stack.stackSize > 0) {
+				if (stack.stackSize > 0) {
 					pipe.sendItem(stack, direction.getOpposite());
 				}
 				
@@ -68,7 +68,7 @@ public class StripesHandlerBucket implements IStripesHandler {
 
 					pipe.sendItem(filledBucket, direction.getOpposite());
 					stack.stackSize--;
-					if(stack.stackSize > 0) {
+					if (stack.stackSize > 0) {
 						pipe.sendItem(stack, direction.getOpposite());
 					}
 
