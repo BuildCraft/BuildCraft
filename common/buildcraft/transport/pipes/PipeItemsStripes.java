@@ -108,24 +108,6 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 				}
 			}
 		}
-
-		/**
-		 * Special, generic actions not handled by the handler.
-		 */
-		
-		if (stack.getItem() instanceof ItemBlock) {
-			if (getWorld().getBlock((int) p.x, (int) p.y, (int) p.z) == Blocks.air) {
-				stack.tryPlaceItemIntoWorld(
-						player,
-					getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0.0f, 0.0f,
-					0.0f);
-			}
-		} else {
-			stack.tryPlaceItemIntoWorld(
-					player,
-					getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0.0f, 0.0f,
-					0.0f);
-		}
 	}
 	
 	@Override
