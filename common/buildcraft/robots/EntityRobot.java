@@ -948,6 +948,14 @@ public class EntityRobot extends EntityRobotBase implements
 			NBTUtils.getItemData(robotStack).setTag("board", originalBoardNBT);
 			NBTUtils.getItemData(robotStack).setInteger("energy", battery.getEnergyStored());
 			entityDropItem(robotStack, 0);
+			if (itemInUse != null) {
+				entityDropItem(itemInUse, 0);
+			}
+			for (ItemStack element : inv) {
+				if (element != null) {
+					entityDropItem(element, 0);
+				}
+			}
 
 			getRegistry().killRobot(this);
 		}
