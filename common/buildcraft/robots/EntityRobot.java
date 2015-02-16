@@ -116,7 +116,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 	private NBTTagList stackRequestNBT;
 
-	private RFBattery battery = new RFBattery(MAX_ENERGY, MAX_ENERGY, 0);
+	private RFBattery battery = new RFBattery(MAX_ENERGY, MAX_ENERGY, 100);
 
 	private boolean firstUpdateDone = false;
 

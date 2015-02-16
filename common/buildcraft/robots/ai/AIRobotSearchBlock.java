@@ -96,4 +96,10 @@ public class AIRobotSearchBlock extends AIRobot {
 	public void unreserve() {
 		blockScanner.unreserve(blockFound);
 	}
+
+	@Override
+	public int getEnergyCost() {
+		return 2;
+	}
+
 }
