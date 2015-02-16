@@ -32,6 +32,7 @@ public class PathFindingSearch implements IIterableAlgorithm {
 	private List<PathFinding> pathFinders;
 	private IBlockFilter pathFound;
 	private IZone zone;
+	private float maxDistance;
 
 	private int searchRadius;
 	private int searchX;
@@ -39,10 +40,13 @@ public class PathFindingSearch implements IIterableAlgorithm {
 	private int searchZ;
 	private int searchHeight;
 
+
 	public PathFindingSearch(World iWorld, BlockIndex iStart, IBlockFilter iPathFound, float iMaxDistance, IZone iZone) {
 		world = iWorld;
 		start = iStart;
 		pathFound = iPathFound;
+
+		maxDistance = iMaxDistance;
 
 		pathFinders = new LinkedList<PathFinding>();
 		searchRadius = 1;
@@ -67,29 +71,48 @@ public class PathFindingSearch implements IIterableAlgorithm {
 			int currZ = start.z + searchZ;
 			if (0 <= currY && currY <= searchHeight) {
 				if (isTarget(currX, currY, currZ)) {
-					pathFinders.add(new PathFinding(world, start, new BlockIndex(currX, currY, currZ)));
+					pathFinders.add(new PathFinding(world, start, new BlockIndex(currX, currY, currZ), 0, maxDistance));
 				}
 			}
 
-			searchY += 1;
-			if (searchY > searchRadius) {
-				searchY = -searchRadius;
-				searchZ += 1;
-				if (searchZ > searchRadius) {
-					searchZ = -searchRadius;
-					searchX += 1;
-					if (searchX > searchRadius) {
-						searchRadius += 1;
-						searchX = -searchRadius;
-						searchY = -searchRadius;
-						searchZ = -searchRadius;
-					}
-				}
-				searchHeight = getSearchHeight(start.x + searchX, start.z + searchZ);
-			}
+			nextSearchStep();
+
 			if (pathFinders.size() >= 5) {
 				return;
 			}
+		}
+	}
+
+	private void nextSearchStep() {
+		// Step through each block in a hollow cube of size (searchRadius * 2 -1), if done
+		// add 1 to the radius and start over.
+
+		// Step to the next Y
+		if (Math.abs(searchX) == searchRadius || Math.abs(searchZ) == searchRadius) {
+			searchY += 1;
+		} else {
+			searchY += searchRadius * 2;
+		}
+
+		if (searchY > searchRadius) {
+			// Step to the next Z
+			searchY = -searchRadius;
+			searchZ += 1;
+
+			if (searchZ > searchRadius) {
+				// Step to the next X
+				searchZ = -searchRadius;
+				searchX += 1;
+
+				if (searchX > searchRadius) {
+					// Step to the next radius
+					searchRadius += 1;
+					searchX = -searchRadius;
+					searchY = -searchRadius;
+					searchZ = -searchRadius;
+				}
+			}
+			searchHeight = getSearchHeight(start.x + searchX, start.z + searchZ);
 		}
 	}
 
