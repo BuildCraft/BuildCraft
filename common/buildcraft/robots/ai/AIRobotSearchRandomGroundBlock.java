@@ -75,4 +75,9 @@ public class AIRobotSearchRandomGroundBlock extends AIRobot {
 			}
 		}
 	}
+
+	@Override
+	public int getEnergyCost() {
+		return 2;
+	}
 }

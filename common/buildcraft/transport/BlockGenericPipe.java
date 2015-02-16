@@ -670,7 +670,6 @@ public class BlockGenericPipe extends BlockBuildCraft {
 							
 							if (robot != null && robot.getRegistry() != null) {
 								robot.setUniqueRobotId(robot.getRegistry().getNextRobotId());
-								robot.getBattery().setEnergy(EntityRobotBase.MAX_ENERGY);
 	
 								float px = x + 0.5F + rayTraceResult.sideHit.offsetX * 0.5F;
 								float py = y + 0.5F + rayTraceResult.sideHit.offsetY * 0.5F;
