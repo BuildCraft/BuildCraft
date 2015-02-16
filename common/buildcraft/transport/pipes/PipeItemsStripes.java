@@ -12,9 +12,7 @@ import java.util.ArrayList;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
@@ -26,24 +24,25 @@ import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
-import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IStripesHandler;
 import buildcraft.api.transport.IStripesHandler.StripesHandlerType;
 import buildcraft.api.transport.IStripesPipe;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtils;
-import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.ItemPipe;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
+import buildcraft.transport.stripes.StripesHandlerDefault;
 import buildcraft.transport.utils.TransportUtils;
 
 public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnergyHandler, IStripesPipe {
+
+	private IStripesHandler defaultItemsHandler = new StripesHandlerDefault();
+
 	public PipeItemsStripes(Item item) {
 		super(new PipeTransportItems(), item);
 	}
@@ -102,71 +101,20 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 		/**
 		 * Check if there's a handler for this item type.
 		 */
-		
 		for (IStripesHandler handler : PipeManager.stripesHandlers) {
 			if (handler.getType() == StripesHandlerType.ITEM_USE
 					&& handler.shouldHandle(stack)) {
 				if (handler.handle(getWorld(), (int) p.x, (int) p.y, (int) p.z,
 						event.direction, stack, player, this)) {
+					event.entity = null;
 					return;
 				}
 			}
 		}
 
-		/**
-		 * Special, generic actions not handled by the handler.
-		 */
-		
-		if (convertPipe(transport, event.item)) {
-			int moves = 0;
-			while (stack.stackSize > 0) {
-				if (getWorld().getBlock((int) p.x, (int) p.y, (int) p.z) != Blocks.air) {
-					break;
-				}
-				stack.getItem().onItemUse(new ItemStack(stack.getItem(), 1, stack.getItemDamage()),
-						player, getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0, 0, 0
-					);
-				stack.stackSize--;
-				p.moveForwards(1.0);
-				moves++;
-			}
-			if (getWorld().getBlock((int) p.x, (int) p.y, (int) p.z) != Blocks.air) {
-				p.moveBackwards(1.0);
-				stack.stackSize++;
-				getWorld().setBlockToAir((int) p.x, (int) p.y, (int) p.z);
-			}
-			
-			BuildCraftTransport.pipeItemsStripes.onItemUse(new ItemStack(
-					BuildCraftTransport.pipeItemsStripes, 1, this.container.getItemMetadata()), player, getWorld(), (int) p.x,
-					(int) p.y, (int) p.z, 1, 0, 0, 0
-				);
-			this.container.initializeFromItemMetadata(stack.getItemDamage() - 1);
-			
-			if (stack.stackSize > 0) {
-				TileEntity targetTile = getWorld().getTileEntity((int) p.x, (int) p.y, (int) p.z);
-				if (targetTile instanceof IPipeTile) {
-					TravelingItem newItem = TravelingItem.make(
-							container.xCoord + 0.5,
-							container.yCoord + TransportUtils.getPipeFloorOf(
-									new ItemStack(BuildCraftTransport.pipeItemsStripes)),
-							container.zCoord + 0.5, stack.copy());
-					((PipeTransportItems) ((Pipe<?>) ((IPipeTile) targetTile).getPipe()).transport).injectItem(newItem, event.direction.getOpposite());
-
-					stack.stackSize = 0;
-				}
-			}
-		} else if (stack.getItem() instanceof ItemBlock) {
-			if (getWorld().getBlock((int) p.x, (int) p.y, (int) p.z) == Blocks.air) {
-				stack.tryPlaceItemIntoWorld(
-						player,
-					getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0.0f, 0.0f,
-					0.0f);
-			}
-		} else {
-			stack.tryPlaceItemIntoWorld(
-					player,
-					getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0.0f, 0.0f,
-					0.0f);
+		if(defaultItemsHandler.handle(getWorld(), (int) p.x, (int) p.y, (int) p.z,
+				event.direction, stack, player, this)) {
+			event.entity = null;
 		}
 	}
 	
@@ -188,26 +136,6 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 				container.yCoord + TransportUtils.getPipeFloorOf(itemStack),
 				container.zCoord + 0.5, itemStack);
 		transport.injectItem(newItem, direction);
-	}
-
-	private boolean convertPipe(PipeTransportItems pipe, TravelingItem item) {
-		if (item.getItemStack().getItem() instanceof ItemPipe) {
-			if (!(item.getItemStack().getItem() == BuildCraftTransport.pipeItemsStripes)) {
-				Pipe<?> newPipe = BlockGenericPipe.createPipe(item.getItemStack().getItem());
-				newPipe.setTile(this.container);
-				this.container.pipe = newPipe;
-				
-				item.getItemStack().stackSize--;
-
-				if (item.getItemStack().stackSize <= 0) {
-					((PipeTransportItems) newPipe.transport).items.remove(item);
-				}
-
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	@Override

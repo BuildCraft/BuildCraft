@@ -27,7 +27,6 @@ public class StripesHandlerArrow implements IStripesHandler {
 	public boolean handle(World world, int x, int y, int z,
 			ForgeDirection direction, ItemStack stack, EntityPlayer player,
 			IStripesPipe pipe) {
-		stack.stackSize--;
 
 		EntityArrow entityArrow = new EntityArrow(world, player, 0);
 		entityArrow.setPosition(x + 0.5d, y + 0.5d, z + 0.5d);
@@ -37,6 +36,11 @@ public class StripesHandlerArrow implements IStripesHandler {
 		entityArrow.motionY = direction.offsetY * 1.8d + world.rand.nextGaussian() * 0.007499999832361937D;
 		entityArrow.motionZ = direction.offsetZ * 1.8d + world.rand.nextGaussian() * 0.007499999832361937D;
 		world.spawnEntityInWorld(entityArrow);
+
+		stack.stackSize--;
+		if (stack.stackSize > 0) {
+			pipe.sendItem(stack, direction.getOpposite());
+		}
 
 		return true;
 	}
