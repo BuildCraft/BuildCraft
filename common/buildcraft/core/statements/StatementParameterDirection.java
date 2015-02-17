@@ -51,7 +51,7 @@ public class StatementParameterDirection implements IStatementParameter {
 		if (source.getTile() instanceof TileGenericPipe) {
 			do {
 				direction = ForgeDirection.getOrientation((direction.ordinal() + (mouse.getButton() > 0 ? -1 : 1)) % 6);
-			} while (((TileGenericPipe) source.getTile()).isPipeConnected(direction));
+			} while (!((TileGenericPipe) source.getTile()).isPipeConnected(direction));
 		}
 	}
 
