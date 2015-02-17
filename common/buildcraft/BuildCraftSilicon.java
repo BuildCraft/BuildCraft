@@ -11,6 +11,7 @@ package buildcraft;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -65,6 +66,7 @@ import buildcraft.robots.boards.BoardRobotPlanterNBT;
 import buildcraft.robots.boards.BoardRobotPumpNBT;
 import buildcraft.robots.boards.BoardRobotShovelmanNBT;
 import buildcraft.robots.statements.ActionRobotFilter;
+import buildcraft.robots.statements.ActionRobotFilterTool;
 import buildcraft.robots.statements.ActionRobotGotoStation;
 import buildcraft.robots.statements.ActionRobotWakeUp;
 import buildcraft.robots.statements.ActionRobotWorkInArea;
@@ -117,6 +119,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static IActionInternal actionRobotWakeUp = new ActionRobotWakeUp();
 	public static IActionInternal actionRobotWorkInArea = new ActionRobotWorkInArea();
 	public static IActionInternal actionRobotFilter = new ActionRobotFilter();
+	public static IActionInternal actionRobotFilterTool = new ActionRobotFilterTool();
 	public static IActionInternal actionRobotAllowCraft = new ActionStationAllowCraft();
 	public static IActionInternal actionStationRequestItems = new ActionStationRequestItems();
 	public static IActionInternal actionStationAcceptItems = new ActionStationAcceptItemsInv();
