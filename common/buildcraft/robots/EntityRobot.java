@@ -721,7 +721,7 @@ public class EntityRobot extends EntityRobotBase implements
 			}), worldObj);
 		} else {
 			Vec3 v = Vec3.createVectorHelper(x, y, z);
-			v.normalize();
+			v = v.normalize();
 
 			steamDx = (int) v.xCoord;
 			steamDy = (int) v.yCoord;

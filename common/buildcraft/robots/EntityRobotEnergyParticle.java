@@ -79,14 +79,8 @@ public class EntityRobotEnergyParticle extends EntityFX {
 		this.setParticleTextureIndex(7 - this.particleAge * 8 / this.particleMaxAge);
 		this.moveEntity(this.motionX, this.motionY, this.motionZ);
 
-		if (this.posY == this.prevPosY) {
-			this.motionX *= 1.1D;
-			this.motionY = 0.001D;
-			this.motionZ *= 1.1D;
-		}
-
 		this.motionX *= 0.98;
-		this.motionY *= 0.98;
+		this.motionY += 0.0005;
 		this.motionZ *= 0.98;
 
 		if (this.onGround) {
