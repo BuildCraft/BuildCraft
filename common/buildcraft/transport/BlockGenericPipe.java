@@ -55,7 +55,6 @@ import buildcraft.api.events.PipePlacedEvent;
 import buildcraft.api.events.RobotPlacementEvent;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
