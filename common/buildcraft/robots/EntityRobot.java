@@ -63,6 +63,7 @@ import buildcraft.core.utils.NBTUtils;
 import buildcraft.core.utils.Utils;
 import buildcraft.robots.ai.AIRobotMain;
 import buildcraft.robots.statements.ActionRobotWorkInArea;
+import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.gates.ActionIterator;
 import buildcraft.transport.gates.StatementSlot;
 
@@ -315,7 +316,7 @@ public class EntityRobot extends EntityRobotBase implements
 					needsUpdate = true;
 				}
 
-				if (this.battery.getEnergyStored() <= 0) {
+				if (this.battery.getEnergyStored() <= 0 && !linkedToChargeStation()) {
 					setDead();
 				}
 			}
@@ -324,6 +325,17 @@ public class EntityRobot extends EntityRobotBase implements
 		super.onEntityUpdate();
 		this.worldObj.theProfiler.endSection();
 	}
+
+	private boolean linkedToChargeStation() {
+		if (currentDockingStation == null) {
+			return false;
+		}
+		if (!(currentDockingStation.getPipe().pipe.transport instanceof PipeTransportPower)) {
+			return false;
+		}
+		return true;
+	}
+
 	@SideOnly(Side.CLIENT)
 	private void spawnEnergyFX() {
 	    Minecraft.getMinecraft().effectRenderer.addEffect(new EntityRobotEnergyParticle(
