@@ -117,9 +117,12 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	private static Fluid buildcraftFluidFuel;
 	private static Fluid buildcraftFluidRedPlasma;
 
-
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
+		if (isDisabled(evt.getModMetadata().modId)) {
+			disabled = true;
+			return;
+		}
 		int oilDesertBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "biomeOilDesert", DefaultProps.BIOME_OIL_DESERT).getInt(DefaultProps.BIOME_OIL_DESERT);
 		int oilOceanBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "biomeOilOcean", DefaultProps.BIOME_OIL_OCEAN).getInt(DefaultProps.BIOME_OIL_OCEAN);
 		canOilBurn = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "burnOil", true, "Can oil burn?").getBoolean(true);
@@ -343,6 +346,9 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
+		if (disabled) {
+			return;
+		}
 		channels = NetworkRegistry.INSTANCE.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-ENERGY", new BuildCraftChannelHandler(),  new PacketHandlerTransport());
 
@@ -362,7 +368,9 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
-
+		if (disabled) {
+			return;
+		}
 		if (BuildCraftCore.modifyWorld) {
 			MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
 			MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializer());
@@ -372,6 +380,9 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void textureHook(TextureStitchEvent.Post event) {
+		if (disabled) {
+			return;
+		}
 		if (event.map.getTextureType() == 0) {
 			if (buildcraftFluidOil != null) {
 				buildcraftFluidOil.setIcons(blockOil.getBlockTextureFromSide(1), blockOil.getBlockTextureFromSide(2));
@@ -420,11 +431,17 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
+		if (disabled) {
+			return;
+		}
 		InterModComms.processIMC(event);
 	}
 
 	@Mod.EventHandler
 	public void whiteListAppliedEnergetics(FMLInitializationEvent event) {
+		if (disabled) {
+			return;
+		}
 		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
 				TileEngine.class.getCanonicalName());
 	}
