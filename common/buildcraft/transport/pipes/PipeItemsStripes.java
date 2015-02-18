@@ -112,7 +112,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 			}
 		}
 
-		if(defaultItemsHandler.handle(getWorld(), (int) p.x, (int) p.y, (int) p.z,
+		if (defaultItemsHandler.handle(getWorld(), (int) p.x, (int) p.y, (int) p.z,
 				event.direction, stack, player, this)) {
 			event.entity = null;
 		}
