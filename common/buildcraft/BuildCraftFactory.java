@@ -100,6 +100,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
+		if (disabled) {
+			return;
+		}
 		FactoryProxy.proxy.initializeNEIIntegration();
 		if (quarryLoadsChunks) {
 			ForgeChunkManager.setForcedChunkLoadingCallback(instance, new QuarryChunkloadCallback());
@@ -146,6 +149,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void load(FMLInitializationEvent evt) {
+		if (disabled) {
+			return;
+		}
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 
 		// EntityRegistry.registerModEntity(EntityMechanicalArm.class, "bcMechanicalArm", EntityIds.MECHANICAL_ARM, instance, 50, 1, true);
@@ -177,6 +183,10 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void initialize(FMLPreInitializationEvent evt) {
+		if (isDisabled(evt.getModMetadata().modId)) {
+			disabled = true;
+			return;
+		}
 		channels = NetworkRegistry.INSTANCE.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-FACTORY", new BuildCraftChannelHandler(), new PacketHandlerFactory());
 
@@ -341,12 +351,18 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 	@Mod.EventHandler
     public void processIMCRequests(FMLInterModComms.IMCEvent event) {
+		if (disabled) {
+			return;
+		}
         InterModComms.processIMC(event);
     }
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void loadTextures(TextureStitchEvent.Pre evt) {
+		if (disabled) {
+			return;
+		}
 		if (evt.map.getTextureType() == 0) {
 			TextureMap terrainTextures = evt.map;
 			FactoryProxyClient.pumpTexture = terrainTextures.registerIcon("buildcraft:pump_tube");
@@ -357,6 +373,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void whiteListAppliedEnergetics(FMLInitializationEvent event) {
+		if (disabled) {
+			return;
+		}
 		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
 		//		TileQuarry.class.getCanonicalName());
 		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",

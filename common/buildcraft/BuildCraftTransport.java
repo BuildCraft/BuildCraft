@@ -252,6 +252,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
+		if (isDisabled(evt.getModMetadata().modId)) {
+			disabled = true;
+			return;
+		}
 		try {
 			Property durability = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.durability", DefaultProps.PIPES_DURABILITY);
 			durability.comment = "How long a pipe will take to break";
@@ -430,6 +434,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
+		if (disabled) {
+			return;
+		}
 		channels = NetworkRegistry.INSTANCE.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-TRANSPORT", new BuildCraftChannelHandler(), new PacketHandlerTransport());
 
@@ -474,6 +481,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
+		if (disabled) {
+			return;
+		}
 		facadeItem.initialize();
 		
 		if (debugPrintFacadeList) {
@@ -590,6 +600,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 	
 	@Mod.EventHandler
 	public void processIMCRequests(IMCEvent event) {
+		if (disabled) {
+			return;
+		}
 		InterModComms.processIMC(event);
 	}
 
@@ -648,6 +661,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void whiteListAppliedEnergetics(FMLInitializationEvent event) {
+		if (disabled) {
+			return;
+		}
 		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
 				TileGenericPipe.class.getCanonicalName());
 		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",

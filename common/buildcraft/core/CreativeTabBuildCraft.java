@@ -10,6 +10,7 @@ package buildcraft.core;
 
 import java.util.Locale;
 
+import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -44,18 +45,35 @@ public enum CreativeTabBuildCraft {
 	private ItemStack getItem() {
 		switch (this) {
 		case BLOCKS:
-			return new ItemStack (BuildCraftFactory.quarryBlock, 1);
+			return getAvailableItem(BuildCraftFactory.quarryBlock, BuildCraftCore.ironGearItem);
 		case ITEMS:
-			return new ItemStack (BuildCraftCore.wrenchItem, 1);
+			return new ItemStack(BuildCraftCore.wrenchItem, 1);
 		case PIPES:
-			return new ItemStack (BuildCraftTransport.pipeItemsDiamond, 1);
+			return getAvailableItem(BuildCraftTransport.pipeItemsDiamond, BuildCraftCore.stoneGearItem);
 		case FACADES:
-			return BuildCraftTransport.facadeItem.getFacadeForBlock(Blocks.brick_block, 0);
+			return BuildCraftTransport.facadeItem != null ? BuildCraftTransport.facadeItem.getFacadeForBlock(Blocks.brick_block, 0)
+					: new ItemStack(BuildCraftCore.woodenGearItem, 1);
 		case BOARDS:
-			return new ItemStack(BuildCraftSilicon.redstoneBoard, 1);
+			return getAvailableItem(BuildCraftSilicon.redstoneBoard, BuildCraftCore.diamondGearItem);
 		}
 
-		return BuildCraftTransport.facadeItem.getFacadeForBlock(Blocks.brick_block, 0);
+		return new ItemStack(BuildCraftCore.wrenchItem, 1);
+	}
+
+	private ItemStack getAvailableItem(Object... items) {
+		for (Object item : items) {
+			if (item == null) {
+				continue;
+			}
+			if (item instanceof Item) {
+				return new ItemStack((Item) item, 1);
+			}
+			if (item instanceof Block) {
+				return new ItemStack((Block) item, 1);
+			}
+			throw new IllegalArgumentException();
+		}
+		return null;
 	}
 
 	private final class Tab extends CreativeTabs {

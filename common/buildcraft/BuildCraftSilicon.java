@@ -133,6 +133,10 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
+		if (isDisabled(evt.getModMetadata().modId)) {
+			disabled = true;
+			return;
+		}
 		chipsetCostMultiplier = BuildCraftCore.mainConfiguration.getFloat("chipset.costMultiplier", Configuration.CATEGORY_GENERAL, 1.0F, 0.001F, 1000.0F, "The multiplier for chipset recipe cost.");
 
 		blacklistedRobots = new ArrayList<String>();
@@ -201,6 +205,9 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
+		if (disabled) {
+			return;
+		}
 		channels = NetworkRegistry.INSTANCE
 				.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-SILICON", new BuildCraftChannelHandler(), new PacketHandlerSilicon());
@@ -339,11 +346,17 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void processRequests(FMLInterModComms.IMCEvent event) {
+		if (disabled) {
+			return;
+		}
 		InterModComms.processIMC(event);
 	}
 
 	@Mod.EventHandler
 	public void whiteListAppliedEnergetics(FMLInitializationEvent event) {
+		if (disabled) {
+			return;
+		}
 		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
 				TileLaser.class.getCanonicalName());
 		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
@@ -356,6 +369,9 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void remap(FMLMissingMappingsEvent event) {
+		if (disabled) {
+			return;
+		}
 		for (FMLMissingMappingsEvent.MissingMapping mapping: event.get()) {
 			if (mapping.name.equals("BuildCraft|Silicon:null")) {
 				if (mapping.type == GameRegistry.Type.ITEM) {
