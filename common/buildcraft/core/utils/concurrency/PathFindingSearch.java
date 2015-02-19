@@ -11,6 +11,7 @@ package buildcraft.core.utils.concurrency;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,32 +34,25 @@ public class PathFindingSearch implements IIterableAlgorithm {
 	private IBlockFilter pathFound;
 	private IZone zone;
 	private float maxDistance;
+	private Iterator<BlockIndex> blockIter;
 
-	private int searchRadius;
-	private int searchX;
-	private int searchY;
-	private int searchZ;
-	private int searchHeight;
-
-
-	public PathFindingSearch(World iWorld, BlockIndex iStart, IBlockFilter iPathFound, float iMaxDistance, IZone iZone) {
+	public PathFindingSearch(World iWorld, BlockIndex iStart,
+			Iterator<BlockIndex> iBlockIter, IBlockFilter iPathFound,
+			float iMaxDistance, IZone iZone) {
 		world = iWorld;
 		start = iStart;
 		pathFound = iPathFound;
 
 		maxDistance = iMaxDistance;
+		zone = iZone;
+		blockIter = iBlockIter;
 
 		pathFinders = new LinkedList<PathFinding>();
-		searchRadius = 1;
-		searchX = -1;
-		searchY = -1;
-		searchZ = -1;
-		getSearchHeight(start.x + searchX, start.z + searchZ);
 	}
 
 	@Override
 	public void iterate() {
-		if (pathFinders.size() < 5 && searchRadius < 64) {
+		if (pathFinders.size() < 5 && blockIter.hasNext()) {
 			iterateSearch(PATH_ITERATIONS * 50);
 		}
 		iteratePathFind(PATH_ITERATIONS);
@@ -66,16 +60,17 @@ public class PathFindingSearch implements IIterableAlgorithm {
 
 	private void iterateSearch(int itNumber) {
 		for (int i = 0; i < itNumber; ++i) {
-			int currX = start.x + searchX;
-			int currY = start.y + searchY;
-			int currZ = start.z + searchZ;
-			if (0 <= currY && currY <= searchHeight) {
-				if (isTarget(currX, currY, currZ)) {
-					pathFinders.add(new PathFinding(world, start, new BlockIndex(currX, currY, currZ), 0, maxDistance));
-				}
+			if (!blockIter.hasNext()) {
+				return;
 			}
 
-			nextSearchStep();
+			BlockIndex delta = blockIter.next();
+			BlockIndex block = new BlockIndex(start.x + delta.x, start.y + delta.y, start.z + delta.z);
+			if (isLoadedChunk(block.x, block.z)) {
+				if (isTarget(block)) {
+					pathFinders.add(new PathFinding(world, start, block, 0, maxDistance));
+				}
+			}
 
 			if (pathFinders.size() >= 5) {
 				return;
@@ -83,72 +78,35 @@ public class PathFindingSearch implements IIterableAlgorithm {
 		}
 	}
 
-	private void nextSearchStep() {
-		// Step through each block in a hollow cube of size (searchRadius * 2 -1), if done
-		// add 1 to the radius and start over.
-
-		// Step to the next Y
-		if (Math.abs(searchX) == searchRadius || Math.abs(searchZ) == searchRadius) {
-			searchY += 1;
-		} else {
-			searchY += searchRadius * 2;
-		}
-
-		if (searchY > searchRadius) {
-			// Step to the next Z
-			searchY = -searchRadius;
-			searchZ += 1;
-
-			if (searchZ > searchRadius) {
-				// Step to the next X
-				searchZ = -searchRadius;
-				searchX += 1;
-
-				if (searchX > searchRadius) {
-					// Step to the next radius
-					searchRadius += 1;
-					searchX = -searchRadius;
-					searchY = -searchRadius;
-					searchZ = -searchRadius;
-				}
-			}
-			searchHeight = getSearchHeight(start.x + searchX, start.z + searchZ);
-		}
-	}
-
-	private boolean isTarget(int x, int y, int z) {
-		if (zone != null && !zone.contains(x, y, z)) {
+	private boolean isTarget(BlockIndex block) {
+		if (zone != null && !zone.contains(block.x, block.y, block.z)) {
 			return false;
 		}
-		if (!pathFound.matches(world, x, y, z)) {
+		if (!pathFound.matches(world, block.x, block.y, block.z)) {
 			return false;
 		}
 		synchronized (reservations) {
 			if (reservations.containsKey(world.provider.dimensionId)) {
 				HashSet<BlockIndex> dimReservations = reservations
 						.get(world.provider.dimensionId);
-				if (dimReservations.contains(new BlockIndex(x, y, z))) {
+				if (dimReservations.contains(block)) {
 					return false;
 				}
 			}
 		}
-		if (!BuildCraftAPI.isSoftBlock(world, x - 1, y, z)
-				&& !BuildCraftAPI.isSoftBlock(world, x + 1, y, z)
-				&& !BuildCraftAPI.isSoftBlock(world, x, y, z - 1)
-				&& !BuildCraftAPI.isSoftBlock(world, x, y, z + 1)
-				&& !BuildCraftAPI.isSoftBlock(world, x, y - 1, z)
-				&& !BuildCraftAPI.isSoftBlock(world, x, y + 1, z)) {
+		if (!BuildCraftAPI.isSoftBlock(world, block.x - 1, block.y, block.z)
+				&& !BuildCraftAPI.isSoftBlock(world, block.x + 1, block.y, block.z)
+				&& !BuildCraftAPI.isSoftBlock(world, block.x, block.y, block.z - 1)
+				&& !BuildCraftAPI.isSoftBlock(world, block.x, block.y, block.z + 1)
+				&& !BuildCraftAPI.isSoftBlock(world, block.x, block.y - 1, block.z)
+				&& !BuildCraftAPI.isSoftBlock(world, block.x, block.y + 1, block.z)) {
 			return false;
 		}
 		return true;
 	}
 
-	private int getSearchHeight(int x, int z) {
-		if (world.getChunkProvider().chunkExists(x >> 4, z >> 4)) {
-			return 256;
-		} else {
-			return -1;
-		}
+	private boolean isLoadedChunk(int x, int z) {
+		return world.getChunkProvider().chunkExists(x >> 4, z >> 4);
 	}
 
 	public void iteratePathFind(int itNumber) {
@@ -173,7 +131,7 @@ public class PathFindingSearch implements IIterableAlgorithm {
 				return true;
 			}
 		}
-		return searchRadius >= 64;
+		return !blockIter.hasNext();
 	}
 
 	public LinkedList<BlockIndex> getResult() {

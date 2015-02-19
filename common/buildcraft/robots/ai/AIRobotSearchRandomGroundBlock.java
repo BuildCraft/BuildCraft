@@ -25,10 +25,6 @@ public class AIRobotSearchRandomGroundBlock extends AIRobot {
 	private IZone zone;
 	private int attempts = 0;
 
-	public AIRobotSearchRandomGroundBlock(EntityRobotBase iRobot) {
-		super(iRobot);
-	}
-
 	public AIRobotSearchRandomGroundBlock(EntityRobotBase iRobot, int iRange, IBlockFilter iFilter, IZone iZone) {
 		super(iRobot);
 
