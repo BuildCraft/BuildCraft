@@ -13,8 +13,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.IShearable;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
-import buildcraft.api.transport.IStripesPipe;
 
 public class StripesHandlerShears implements IStripesHandler {
 
@@ -31,7 +31,7 @@ public class StripesHandlerShears implements IStripesHandler {
 	@Override
 	public boolean handle(World world, int x, int y, int z,
 			ForgeDirection direction, ItemStack stack, EntityPlayer player,
-			IStripesPipe pipe) {
+			IStripesActivator activator) {
 		Block block = world.getBlock(x, y, z);
 
 		if (block instanceof IShearable) {
@@ -42,9 +42,9 @@ public class StripesHandlerShears implements IStripesHandler {
 						EnchantmentHelper.getEnchantmentLevel(Enchantment.fortune.effectId, stack));
 				world.setBlockToAir(x, y, z);
 				stack.damageItem(1, player);
-				pipe.sendItem(stack, direction.getOpposite());
+				activator.sendItem(stack, direction.getOpposite());
 				for (ItemStack dropStack : drops) {
-					pipe.sendItem(dropStack, direction.getOpposite());
+					activator.sendItem(dropStack, direction.getOpposite());
 				}
 				return true;
 			}

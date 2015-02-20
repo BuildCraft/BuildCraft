@@ -41,7 +41,7 @@ import buildcraft.transport.utils.TransportUtils;
 
 public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnergyHandler, IStripesPipe {
 
-	private IStripesHandler defaultItemsHandler = new StripesHandlerDefault();
+	private static IStripesHandler defaultItemsHandler = new StripesHandlerDefault();
 
 	public PipeItemsStripes(Item item) {
 		super(new PipeTransportItems(), item);

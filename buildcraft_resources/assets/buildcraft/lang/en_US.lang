@@ -17,6 +17,7 @@ buildcraft.boardRobotBuilder=Builder
 buildcraft.boardRobotCrafter=Crafter
 buildcraft.boardRobotDelivery=Delivery
 buildcraft.boardRobotPump=Pump
+buildcraft.boardRobotStripes=Stripes
 
 chat.gateCopier.clear=Gate information cleared.
 chat.gateCopier.gateCopied=Copied gate information to copier.

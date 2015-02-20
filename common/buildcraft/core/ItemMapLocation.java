@@ -212,6 +212,20 @@ public class ItemMapLocation extends ItemBuildCraft {
 		}
 	}
 
+	public static IBox getPointBox(ItemStack item) {
+		NBTTagCompound cpt = NBTUtils.getItemData(item);
+
+		if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
+			int x = cpt.getInteger("x");
+			int y = cpt.getInteger("y");
+			int z = cpt.getInteger("z");
+
+			return new Box(x, y, z, x, y, z);
+		} else {
+			return null;
+		}
+	}
+
 	public static ForgeDirection getSide(ItemStack item) {
 		NBTTagCompound cpt = NBTUtils.getItemData(item);
 
@@ -232,6 +246,8 @@ public class ItemMapLocation extends ItemBuildCraft {
 			return plan;
 		} else if (cpt.hasKey("kind") && cpt.getByte("kind") == 1) {
 			return getBox(item);
+		} else if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
+			return getPointBox(item);
 		} else {
 			return null;
 		}

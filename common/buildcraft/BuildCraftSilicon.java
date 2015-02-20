@@ -65,6 +65,7 @@ import buildcraft.robots.boards.BoardRobotPickerNBT;
 import buildcraft.robots.boards.BoardRobotPlanterNBT;
 import buildcraft.robots.boards.BoardRobotPumpNBT;
 import buildcraft.robots.boards.BoardRobotShovelmanNBT;
+import buildcraft.robots.boards.BoardRobotStripesNBT;
 import buildcraft.robots.statements.ActionRobotFilter;
 import buildcraft.robots.statements.ActionRobotFilterTool;
 import buildcraft.robots.statements.ActionRobotGotoStation;
@@ -197,6 +198,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotBomberNBT.instance, 1);
 
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotBuilderNBT.instance, 0.5F);
+		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotStripesNBT.instance, 0.5F);
 
 		StatementManager.registerActionProvider(new RobotsActionProvider());
 		StatementManager.registerTriggerProvider(new RobotsTriggerProvider());

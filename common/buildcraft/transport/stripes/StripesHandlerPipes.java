@@ -18,8 +18,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Position;
+import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
-import buildcraft.api.transport.IStripesPipe;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.ItemPipe;
 import buildcraft.transport.Pipe;
@@ -41,7 +41,7 @@ public class StripesHandlerPipes implements IStripesHandler {
 	@Override
 	public boolean handle(World world, int x, int y, int z,
 			ForgeDirection direction, ItemStack stack, EntityPlayer player,
-			IStripesPipe pipe) {
+			IStripesActivator activator) {
 
 		if (!(stack.getItem() instanceof ItemPipe) || (stack.getItem() == BuildCraftTransport.pipeItemsStripes)) {
 			return false;

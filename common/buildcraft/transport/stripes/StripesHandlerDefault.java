@@ -14,8 +14,8 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
-import buildcraft.api.transport.IStripesPipe;
 
 public class StripesHandlerDefault implements IStripesHandler {
 
@@ -32,14 +32,14 @@ public class StripesHandlerDefault implements IStripesHandler {
 	@Override
 	public boolean handle(World world, int x, int y, int z,
 			ForgeDirection direction, ItemStack stack, EntityPlayer player,
-			IStripesPipe pipe) {
+			IStripesActivator activator) {
 		if (!world.isAirBlock(x, y, z)) {
 			return false;
 		}
 		if (!stack.tryPlaceItemIntoWorld(player, world, x, y - 1, z, 1, 0.0f, 0.0f, 0.0f)) {
 			return false;
 		}
-		pipe.sendItem(stack, direction.getOpposite());
+		activator.sendItem(stack, direction.getOpposite());
 		return true;
 	}
 

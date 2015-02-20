@@ -183,6 +183,7 @@ import buildcraft.robots.boards.BoardRobotPicker;
 import buildcraft.robots.boards.BoardRobotPlanter;
 import buildcraft.robots.boards.BoardRobotPump;
 import buildcraft.robots.boards.BoardRobotShovelman;
+import buildcraft.robots.boards.BoardRobotStripes;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.0.1207,)")
 public class BuildCraftCore extends BuildCraftMod {
@@ -432,6 +433,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		RobotManager.registerAIRobot(BoardRobotPlanter.class, "boardRobotPlanter", "buildcraft.core.robots.boards.BoardRobotPlanter");
 		RobotManager.registerAIRobot(BoardRobotPump.class, "boardRobotPump", "buildcraft.core.robots.boards.BoardRobotPump");
 		RobotManager.registerAIRobot(BoardRobotShovelman.class, "boardRobotShovelman", "buildcraft.core.robots.boards.BoardRobotShovelman");
+		RobotManager.registerAIRobot(BoardRobotStripes.class, "boardRobotStripes", "buildcraft.core.robots.boards.BoardRobotStripes");
 		RobotManager.registerAIRobot(AIRobotAttack.class, "aiRobotAttack", "buildcraft.core.robots.AIRobotAttack");
 		RobotManager.registerAIRobot(AIRobotBreak.class, "aiRobotBreak", "buildcraft.core.robots.AIRobotBreak");
 		RobotManager.registerAIRobot(AIRobotCraftAssemblyTable.class, "aiRobotCraftAssemblyTable", "buildcraft.core.robots.AIRobotCraftAssemblyTable");

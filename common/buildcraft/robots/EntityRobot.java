@@ -25,6 +25,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
@@ -1114,5 +1115,16 @@ public class EntityRobot extends EntityRobotBase implements
 	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
 		return new FluidTankInfo[] {new FluidTankInfo(tank, maxFluid)};
 	}
+
+    @SideOnly(Side.CLIENT)
+    public IIcon getItemIcon(ItemStack stack, int renderPass) {
+        IIcon iicon = super.getItemIcon(stack, renderPass);
+
+        if (iicon == null) {
+            iicon = stack.getItem().getIcon(stack, renderPass, null, itemInUse, 0);
+        }
+
+        return iicon;
+    }
 
 }
