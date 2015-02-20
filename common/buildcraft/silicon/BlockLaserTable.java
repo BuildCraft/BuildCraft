@@ -21,13 +21,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.core.BuildCraftProperties;
+import buildcraft.api.enums.EnumLaserTableType;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.power.ILaserTargetBlock;
 import buildcraft.core.BlockBuildCraft;
@@ -35,22 +35,6 @@ import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.utils.Utils;
 
 public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBlock {
-	public enum LaserTableType implements IStringSerializable {
-		ASSEMBLY_TABLE,
-		ADVANCED_CRAFTING_TABLE,
-		INTEGRATION_TABLE,
-		CHARGING_TABLE;
-
-		public static LaserTableType getType(IBlockState state) {
-			return (LaserTableType) state.getValue(TYPE);
-		}
-
-		@Override
-		public String getName() {
-			return name();
-		}
-	};
-
 	public static final PropertyEnum TYPE = BuildCraftProperties.LASER_TABLE_TYPE;
 
 	public BlockLaserTable() {
@@ -79,14 +63,14 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
 		}
 
 		if (!world.isRemote) {
-			entityplayer.openGui(BuildCraftSilicon.instance, LaserTableType.getType(state).ordinal(), world, pos.getX(), pos.getY(), pos.getZ());
+			entityplayer.openGui(BuildCraftSilicon.instance, EnumLaserTableType.getType(state).ordinal(), world, pos.getX(), pos.getY(), pos.getZ());
 		}
 		return true;
 	}
 
 	@Override
 	public TileEntity createTileEntity(World world, IBlockState state) {
-		switch (LaserTableType.getType(state)) {
+		switch (EnumLaserTableType.getType(state)) {
 			case ASSEMBLY_TABLE:
 				return new TileAssemblyTable();
 			case ADVANCED_CRAFTING_TABLE:
@@ -114,7 +98,7 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(Item item, CreativeTabs par2CreativeTabs, List par3List) {
-        for (LaserTableType type : LaserTableType.values()) {
+        for (EnumLaserTableType type : EnumLaserTableType.values()) {
             par3List.add(new ItemStack(this, 1, this.getMetaFromState(this.getDefaultState().withProperty(TYPE, type))));
         }
 	}

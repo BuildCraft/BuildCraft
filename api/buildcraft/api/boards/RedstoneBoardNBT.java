@@ -15,8 +15,6 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.Constants;
 
 public abstract class RedstoneBoardNBT<T> {
@@ -51,11 +49,11 @@ public abstract class RedstoneBoardNBT<T> {
 		return 1F - (float) Math.pow(rand.nextFloat(), 1F / difficulty);
 	}
 	
-	public String getRessourceID(){
+	public String getRessourceID() {
 		return getID().replaceFirst("buildcraft:", "buildcraftsilicon:");
 	}
 
-	public ModelResourceLocation getModelLocation(){
+	public ModelResourceLocation getModelLocation() {
 		return new ModelResourceLocation(getRessourceID(), "inventory");
 	}
 }

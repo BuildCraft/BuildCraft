@@ -8,18 +8,13 @@
  */
 package buildcraft.core;
 
-import java.util.Comparator;
 import java.util.Random;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockState;
@@ -34,11 +29,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.property.ExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import buildcraft.api.core.BuildCraftProperties;
-import buildcraft.api.core.EnumColor;
 import buildcraft.api.events.BlockPlacedDownEvent;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.utils.Utils;

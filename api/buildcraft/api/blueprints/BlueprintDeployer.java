@@ -11,8 +11,8 @@ package buildcraft.api.blueprints;
 import java.io.File;
 
 import net.minecraft.util.BlockPos;
-import net.minecraft.world.World;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 
 /**
  * This class is provided as a utility class for third-party mods that would

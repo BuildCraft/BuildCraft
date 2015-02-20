@@ -21,7 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.EnumColor;
+import buildcraft.api.enums.EnumColor;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.InvUtils;

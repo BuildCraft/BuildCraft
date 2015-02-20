@@ -8,15 +8,13 @@
  */
 package buildcraft.core.network;
 
+import io.netty.buffer.ByteBuf;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
-import com.sun.xml.internal.ws.util.ByteArrayBuffer;
-
-import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
