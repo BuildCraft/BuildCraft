@@ -19,14 +19,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
-
 import net.minecraft.util.EnumFacing;
-
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.Position;
+import buildcraft.api.enums.EnumColor;
 import buildcraft.core.inventory.StackHelper;
 
 public class TravelingItem {

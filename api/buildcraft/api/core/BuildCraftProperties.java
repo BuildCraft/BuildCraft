@@ -4,9 +4,10 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.util.EnumFacing;
-import buildcraft.core.BlockSpring.EnumSpring;
-import buildcraft.energy.BlockEngine.EngineType;
-import buildcraft.silicon.BlockLaserTable.LaserTableType;
+import buildcraft.api.enums.EnumEngineType;
+import buildcraft.api.enums.EnumColor;
+import buildcraft.api.enums.EnumSpring;
+import buildcraft.api.enums.EnumLaserTableType;
 
 public final class BuildCraftProperties {
 
@@ -17,9 +18,9 @@ public final class BuildCraftProperties {
 
 	public static final PropertyEnum SPRING_TYPE = PropertyEnum.create("type", EnumSpring.class);
 
-	public static final PropertyEnum ENGINE_TYPE = PropertyEnum.create("type", EngineType.class);
+	public static final PropertyEnum ENGINE_TYPE = PropertyEnum.create("type", EnumEngineType.class);
 	
-	public static final PropertyEnum LASER_TABLE_TYPE = PropertyEnum.create("type", LaserTableType.class);
+	public static final PropertyEnum LASER_TABLE_TYPE = PropertyEnum.create("type", EnumLaserTableType.class);
 	
 	public static final PropertyInteger PIPE_DATA = PropertyInteger.create("data", 0, 15);
 }
