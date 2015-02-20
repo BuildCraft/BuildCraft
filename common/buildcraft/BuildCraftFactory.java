@@ -115,12 +115,10 @@ public class BuildCraftFactory extends BuildCraftMod {
 				int quarryY = ticket.getModData().getInteger("quarryY");
 				int quarryZ = ticket.getModData().getInteger("quarryZ");
 
-				if (world.blockExists(quarryX, quarryY, quarryZ)) {
-					Block block = world.getBlock(quarryX, quarryY, quarryZ);
-					if (block == quarryBlock) {
-						TileQuarry tq = (TileQuarry) world.getTileEntity(quarryX, quarryY, quarryZ);
-						tq.forceChunkLoading(ticket);
-					}
+				Block block = world.getBlock(quarryX, quarryY, quarryZ);
+				if (block == quarryBlock) {
+					TileQuarry tq = (TileQuarry) world.getTileEntity(quarryX, quarryY, quarryZ);
+					tq.forceChunkLoading(ticket);
 				}
 			}
 		}
@@ -133,11 +131,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 				int quarryY = ticket.getModData().getInteger("quarryY");
 				int quarryZ = ticket.getModData().getInteger("quarryZ");
 
-				if (world.blockExists(quarryX, quarryY, quarryZ)) {
-					Block block = world.getBlock(quarryX, quarryY, quarryZ);
-					if (block == quarryBlock) {
-						validTickets.add(ticket);
-					}
+				Block block = world.getBlock(quarryX, quarryY, quarryZ);
+				if (block == quarryBlock) {
+					validTickets.add(ticket);
 				}
 			}
 			return validTickets;
