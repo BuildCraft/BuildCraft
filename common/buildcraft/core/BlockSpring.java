@@ -18,42 +18,17 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.world.World;
 import buildcraft.api.core.BuildCraftProperties;
+import buildcraft.api.enums.EnumSpring;
 
 public class BlockSpring extends Block {
 
 	public static final Random rand = new Random();
 	public static final PropertyEnum TYPE = BuildCraftProperties.SPRING_TYPE;
-
-	public enum EnumSpring implements IStringSerializable {
-
-		WATER(5, -1, Blocks.water),
-		OIL(6000, 8, null); // Set in BuildCraftEnergy
-		public static final EnumSpring[] VALUES = values();
-		public final int tickRate, chance;
-		public Block liquidBlock;
-		public boolean canGen = true;
-
-		private EnumSpring(int tickRate, int chance, Block liquidBlock) {
-			this.tickRate = tickRate;
-			this.chance = chance;
-			this.liquidBlock = liquidBlock;
-		}
-
-		public static EnumSpring fromState(IBlockState state) {
-			return (EnumSpring) state.getValue(TYPE);
-		}
-
-		public String getName() {
-			return this.name();
-		}
-	}
 
 	public BlockSpring() {
 		super(Material.rock);

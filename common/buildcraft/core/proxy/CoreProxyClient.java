@@ -37,7 +37,7 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.client.MinecraftForgeClient;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftSilicon;
-import buildcraft.api.core.EnumColor;
+import buildcraft.api.enums.EnumColor;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.LaserKind;

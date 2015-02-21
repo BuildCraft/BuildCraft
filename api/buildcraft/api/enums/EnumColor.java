@@ -6,7 +6,7 @@
  * Please check the contents of the license, which should be located
  * as "LICENSE.API" in the BuildCraft source code distribution.
  */
-package buildcraft.api.core;
+package buildcraft.api.enums;
 
 import java.util.Locale;
 import java.util.Random;
@@ -14,9 +14,9 @@ import java.util.Random;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
-
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import buildcraft.api.core.SheetIcon;
 
 public enum EnumColor implements IStringSerializable {
 

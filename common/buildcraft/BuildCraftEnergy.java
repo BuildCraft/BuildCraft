@@ -42,11 +42,11 @@ import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.core.StackKey;
+import buildcraft.api.enums.EnumSpring;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.StatementManager;
-import buildcraft.core.BlockSpring;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
@@ -194,8 +194,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		if (blockOil != null) {
 			spawnOilSprings = BuildCraftCore.mainConfiguration.get("worldgen", "oilSprings", true).getBoolean(true);
-			BlockSpring.EnumSpring.OIL.canGen = spawnOilSprings;
-			BlockSpring.EnumSpring.OIL.liquidBlock = blockOil;
+			EnumSpring.OIL.canGen = spawnOilSprings;
+			EnumSpring.OIL.liquidBlock = blockOil;
 		}
 
 		if (fluidFuel.getBlock() == null) {

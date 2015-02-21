@@ -38,7 +38,7 @@ import net.minecraftforge.fluids.FluidStack;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.EnumColor;
+import buildcraft.api.enums.EnumColor;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.api.transport.PipeWire;

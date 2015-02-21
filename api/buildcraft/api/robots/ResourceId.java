@@ -42,11 +42,11 @@ public abstract class ResourceId {
 
 	public void writeToNBT(NBTTagCompound nbt) {
 		NBTTagCompound indexNBT = new NBTTagCompound();
-        
+
 		indexNBT.setInteger("x", index.getX());
 		indexNBT.setShort("y", (short) index.getY());
 		indexNBT.setInteger("z", index.getZ());
-        
+
 		nbt.setTag("index", indexNBT);
 		nbt.setByte("side", (byte) side.ordinal());
 		nbt.setInteger("localId", localId);

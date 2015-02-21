@@ -11,7 +11,7 @@ package buildcraft.api.transport;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import buildcraft.api.core.EnumColor;
+import buildcraft.api.enums.EnumColor;
 
 public interface IPipeTile {
 

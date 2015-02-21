@@ -10,7 +10,7 @@ package buildcraft.silicon;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-
+import buildcraft.api.enums.EnumLaserTableType;
 import buildcraft.core.ItemBlockBuildCraft;
 
 public class ItemLaserTable extends ItemBlockBuildCraft {
@@ -38,6 +38,6 @@ public class ItemLaserTable extends ItemBlockBuildCraft {
 
 	@Override
 	public int getMetadata(int meta) {
-		return meta >= 0 && meta < BlockLaserTable.LaserTableType.values().length ? meta : 0;
+		return meta >= 0 && meta < EnumLaserTableType.values().length ? meta : 0;
 	}
 }
