@@ -306,6 +306,9 @@ public class PipeTransportPower extends PipeTransport {
 		int[] transferQuery = new int[6];
 		for (int i = 0; i < 6; ++i) {
 			transferQuery[i] = 0;
+			if (!inputOpen(ForgeDirection.getOrientation(i))) {
+				continue;
+			}
 			for (int j = 0; j < 6; ++j) {
 				if (j != i) {
 					transferQuery[i] += powerQuery[j];
