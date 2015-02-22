@@ -1113,14 +1113,16 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	public static void updateNeighbourSignalState(Pipe<?> pipe) {
-		TileBuffer[] neighbours = pipe.container.getTileCache();
+		if (pipe != null && pipe.container != null) {
+			TileBuffer[] neighbours = pipe.container.getTileCache();
 
-		if (neighbours != null) {
-			for (int i = 0; i < 6; i++) {
-				if (neighbours[i] != null && neighbours[i].getTile() instanceof IPipeTile &&
-						!neighbours[i].getTile().isInvalid() &&
-						((IPipeTile) neighbours[i].getTile()).getPipe() instanceof Pipe<?>) {
-					((Pipe<?>) ((IPipeTile) neighbours[i].getTile()).getPipe()).updateSignalState();
+			if (neighbours != null) {
+				for (int i = 0; i < 6; i++) {
+					if (neighbours[i] != null && neighbours[i].getTile() instanceof IPipeTile &&
+							!neighbours[i].getTile().isInvalid() &&
+							((IPipeTile) neighbours[i].getTile()).getPipe() instanceof Pipe<?>) {
+						((Pipe<?>) ((IPipeTile) neighbours[i].getTile()).getPipe()).updateSignalState();
+					}
 				}
 			}
 		}
