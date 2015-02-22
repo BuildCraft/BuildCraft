@@ -1,0 +1,14 @@
+Additions:
+* **Robots now actually use energy.** Watch out. (hea3ven, asie)
+* **Filler parameters.** You can now configure patterns in more detailed ways! [WIP] (asie)
+* Additional pipe sealant recipe using slimeballs. (warlordjones)
+* Massive robot pathfinding improvements. (hea3ven)
+* Stripes pipe retraction with void pipes (hea3ven)
+* Stripes pipes can now put on armor and items on entities. (hea3ven)
+* Stripes robot. Yes. (hea3ven)
+
+Bugfixes:
+* **All the power bugs.** (CovertJaguar, indirectly)
+* [#2472] Gravestones don't drop contents when mined (asie)
+* [#2469, #2456] Further crashes on pipe corruption (asie)
+* Many robot bugfixes (hea3ven)

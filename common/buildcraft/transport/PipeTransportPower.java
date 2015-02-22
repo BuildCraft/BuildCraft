@@ -258,7 +258,6 @@ public class PipeTransportPower extends PipeTransport {
 				}
 			}
 		}
-		double highestPower = 0;
 		for (int i = 0; i < 6; i++) {
 			displayPower[i] = (short) ((prevDisplayPower[i] * (DISPLAY_SMOOTHING - 1.0F) + displayPower[i]) / DISPLAY_SMOOTHING);
 			if (displayPower[i] > highestPower) {
