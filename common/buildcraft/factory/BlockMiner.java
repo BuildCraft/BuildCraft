@@ -113,11 +113,6 @@ public class BlockMiner {
 								+ (meta << 12));
 
 				Utils.preDestroyBlock(world, x, y, z);
-
-				if (block.hasTileEntity(meta)) {
-					world.removeTileEntity(x, y, z);
-				}
-
 				world.setBlockToAir(x, y, z);
 			} else {
 				hasFailed = true;
