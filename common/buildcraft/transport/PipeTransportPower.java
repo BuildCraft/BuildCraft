@@ -15,8 +15,6 @@ import java.util.Map;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import cofh.api.energy.IEnergyConnection;
-import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
@@ -34,6 +32,9 @@ import buildcraft.transport.pipes.PipePowerQuartz;
 import buildcraft.transport.pipes.PipePowerSandstone;
 import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
+import cofh.api.energy.IEnergyConnection;
+import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyReceiver;
 
 public class PipeTransportPower extends PipeTransport {
 
@@ -99,7 +100,7 @@ public class PipeTransportPower extends PipeTransport {
 				// Disregard engines for this.
 				return false;
 			}
-			if (tile instanceof IEnergyHandler) {
+			if (tile instanceof IEnergyHandler || tile instanceof IEnergyReceiver) {
 				IEnergyConnection handler = (IEnergyConnection) tile;
 				if (handler.canConnectEnergy(side.getOpposite())) {
 					return true;
@@ -237,6 +238,16 @@ public class PipeTransportPower extends PipeTransport {
 									powerConsumed, false);
 							tilePowered = true;
 						}
+					} else if (tiles[out] instanceof IEnergyReceiver) {
+						IEnergyReceiver handler = (IEnergyReceiver) tiles[out];
+
+						if (handler.canConnectEnergy(EnumFacing.values()[out].getOpposite())) {
+							// Transmit power to an RF energy handler
+
+							powerConsumed = handler.receiveEnergy(EnumFacing.values()[out].getOpposite(),
+									powerConsumed, false);
+							tilePowered = true;
+						}
 					}
 
 					if (!tilePowered) {
@@ -297,6 +308,15 @@ public class PipeTransportPower extends PipeTransport {
 		    
 			if (tile instanceof IEnergyHandler) {
 				IEnergyHandler handler = (IEnergyHandler) tile;
+				if (handler.canConnectEnergy(dir.getOpposite())) {
+					int request = handler.receiveEnergy(dir.getOpposite(), this.maxPower, true);
+
+					if (request > 0) {
+						requestEnergy(dir, request);
+					}
+				}
+			} else if (tile instanceof IEnergyReceiver) {
+				IEnergyReceiver handler = (IEnergyReceiver) tile;
 				if (handler.canConnectEnergy(dir.getOpposite())) {
 					int request = handler.receiveEnergy(dir.getOpposite(), this.maxPower, true);
 

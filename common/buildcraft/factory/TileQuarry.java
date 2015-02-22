@@ -30,6 +30,7 @@ import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
 import buildcraft.BuildCraftFactory;
+import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.SafeTimeTracker;
@@ -44,6 +45,7 @@ import buildcraft.core.Box.Kind;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.DefaultAreaProvider;
 import buildcraft.core.IDropControlInventory;
+import buildcraft.core.RFBattery;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
@@ -95,6 +97,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 	public TileQuarry () {
 		box.kind = Kind.STRIPES;
+		this.setBattery(new RFBattery((int) (2 * 64 * BuilderAPI.BREAK_ENERGY * BuildCraftFactory.miningMultiplier), (int) (1000 * BuildCraftFactory.miningMultiplier), 0));
 	}
 
 	public void createUtilsIfNeeded() {

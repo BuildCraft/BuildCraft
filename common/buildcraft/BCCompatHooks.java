@@ -13,7 +13,11 @@ import net.minecraftforge.fml.common.Loader;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.TileGenericPipe;
 
-public class BCCompatHooks {
+public final class BCCompatHooks {
+	private BCCompatHooks() {
+
+	}
+
 	public static BlockGenericPipe createPipeBlock() {
 		BlockGenericPipe genericPipeBlock;
 

@@ -38,6 +38,7 @@ public class PathFinding {
 	private float sqrMaxDistance = -1;
 	private IZone zone;
 	private double maxDistanceToEnd = 0;
+	private boolean targetNotFound;
 
 	private HashMap<BlockPos, Node> openList = new HashMap<BlockPos, PathFinding.Node>();
 	private HashMap<BlockPos, Node> closedList = new HashMap<BlockPos, PathFinding.Node>();
@@ -87,7 +88,33 @@ public class PathFinding {
 		nextIteration = startNode;
 		maxDistance = iMaxDistance;
 		sqrMaxDistance = maxDistance * maxDistance;
+		maxDistance = maxDistance * 1.25f;
 		zone = iZone;
+		targetNotFound = false;
+	}
+
+	public void preRun() {
+		if(end == null) {
+			targetNotFound = searchForTarget(64);
+		}
+	}
+
+
+	private boolean searchForTarget(int range) {
+		for (int dx = -range; dx <= range; dx++) {
+			for (int dy = -range; dy <= range; dy++) {
+				for (int dz = -range; dz <= range; dz++)	{
+					int x = start.getX() + dx;
+					int y = Math.max(0, start.getY() + dy);
+					int z = start.getZ() + dz;
+					if (zone != null && !zone.contains(x, y, z))
+						continue;
+					if (pathFound.matches(world, new BlockPos(x, y, z)))
+						return false;
+				}
+			}
+		}
+		return true;
 	}
 
 	public void iterate() {
@@ -116,7 +143,7 @@ public class PathFinding {
 	}
 
 	public boolean isDone() {
-		return nextIteration == null;
+		return nextIteration == null || (end == null && targetNotFound);
 	}
 
 	public LinkedList<BlockPos> getResult() {
@@ -389,6 +416,10 @@ public class PathFinding {
 		}
 
 		return resultMoves;
+	}
+
+	private boolean totalDistanceExceeded(Node nextNode) {
+		return maxDistance != -1 && nextNode.totalWeight > maxDistance;
 	}
 
 }

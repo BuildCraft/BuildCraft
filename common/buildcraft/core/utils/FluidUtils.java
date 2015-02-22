@@ -18,15 +18,12 @@ public final class FluidUtils {
 		if (stack != null) {
 			if (stack.getItem() instanceof IFluidContainerItem) {
 				IFluidContainerItem ctr = (IFluidContainerItem) stack.getItem();
-				if (ctr.getFluid(stack) != null) {
-					return ctr.getFluid(stack);
-				}
-			} else if (FluidContainerRegistry.isFilledContainer(stack) &&
-					FluidContainerRegistry.getFluidForFilledItem(stack) != null) {
+				return ctr.getFluid(stack);
+			} else if (FluidContainerRegistry.isFilledContainer(stack)) {
 				return FluidContainerRegistry.getFluidForFilledItem(stack);
 			} else if (stack.getItem() instanceof ItemBlock) {
 				Block b = Block.getBlockFromItem(stack.getItem());
-				if (b instanceof IFluidBlock) {
+				if (b != null && b instanceof IFluidBlock && ((IFluidBlock) b).getFluid() != null) {
 					return new FluidStack(((IFluidBlock) b).getFluid(), 1000);
 				}
 			}
@@ -35,10 +32,11 @@ public final class FluidUtils {
 	}
 
 	public static Fluid getFluidFromItemStack(ItemStack stack) {
-		return getFluidStackFromItemStack(stack).getFluid();
+		FluidStack fluidStack = getFluidStackFromItemStack(stack);
+		return fluidStack != null ? fluidStack.getFluid() : null;
 	}
 
 	public static boolean isFluidContainer(ItemStack stack) {
-		return stack.getItem() instanceof IFluidContainerItem || FluidContainerRegistry.isFilledContainer(stack);
+		return stack != null && stack.getItem() != null && (stack.getItem() instanceof IFluidContainerItem || FluidContainerRegistry.isFilledContainer(stack));
 	}
 }

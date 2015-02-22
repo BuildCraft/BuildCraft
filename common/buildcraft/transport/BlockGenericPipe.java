@@ -1319,8 +1319,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IModelRegister 
 	public boolean recolourBlock(World world, int x, int y, int z, ForgeDirection side, int colour) {
 		TileGenericPipe pipeTile = (TileGenericPipe) world.getTileEntity(pos);
 		if (!pipeTile.hasPlug(side)) {
-			pipeTile.setColor(colour);
-			return true;
+			return pipeTile.setColor(colour);
 		}
 
 		return false;

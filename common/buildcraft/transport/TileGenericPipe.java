@@ -64,7 +64,6 @@ import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.network.ISyncedTile;
 import buildcraft.core.network.PacketTileState;
 import buildcraft.core.robots.DockingStation;
-import buildcraft.core.utils.ColorUtils;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.gates.GateFactory;
@@ -435,20 +434,22 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	public int getItemMetadata() {
-		return (getColor() >= 0 ? (1 + getColor()) : 0);
+		return getColor() >= 0 ? (1 + getColor()) : 0;
 	}
 
 	public int getColor() {
 		return worldObj.isRemote ? renderState.glassColor : this.glassColor;
 	}
 
-	public void setColor(int color) {
+	public boolean setColor(int color) {
 		// -1 = no color
-		if (!worldObj.isRemote && color >= -1 && color < 16) {
+		if (!worldObj.isRemote && color >= -1 && color < 16 && glassColor != color) {
 			glassColor = color;
 			notifyBlockChanged();
 			worldObj.notifyNeighborsOfStateChange(pos, blockType);
+			return true;
 		}
+		return false;
 	}
 	
 	/**
