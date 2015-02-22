@@ -432,6 +432,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	public void initializeFromItemMetadata(int i) {
 		if (i >= 1 && i <= 16) {
 			setPipeColor((i - 1) & 15);
+		} else {
+			setPipeColor(-1);
 		}
 	}
 

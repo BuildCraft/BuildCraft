@@ -61,6 +61,7 @@ public class RobotsActionProvider implements IActionProvider {
 		result.add(BuildCraftSilicon.actionRobotWorkInArea);
 		result.add(BuildCraftSilicon.actionRobotWakeUp);
 		result.add(BuildCraftSilicon.actionRobotFilter);
+		result.add(BuildCraftSilicon.actionRobotFilterTool);
 		result.add(BuildCraftSilicon.actionStationForbidRobot);
 
 		if (((TileGenericPipe) tile).pipe.transport instanceof PipeTransportItems) {

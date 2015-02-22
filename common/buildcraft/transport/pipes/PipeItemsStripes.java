@@ -28,6 +28,7 @@ import buildcraft.api.transport.IStripesHandler;
 import buildcraft.api.transport.IStripesHandler.StripesHandlerType;
 import buildcraft.api.transport.IStripesPipe;
 import buildcraft.api.transport.PipeManager;
+import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtils;
 import buildcraft.transport.Pipe;
@@ -41,7 +42,7 @@ import buildcraft.transport.utils.TransportUtils;
 
 public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnergyHandler, IStripesPipe {
 
-	private IStripesHandler defaultItemsHandler = new StripesHandlerDefault();
+	private static IStripesHandler defaultItemsHandler = new StripesHandlerDefault();
 
 	public PipeItemsStripes(Item item) {
 		super(new PipeTransportItems(), item);
@@ -124,9 +125,8 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 				container.zCoord, direction);
 		p.moveForwards(1.0);
 
-		itemStack.tryPlaceItemIntoWorld(CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld()).get(),
-				getWorld(), (int) p.x, (int) p.y, (int) p.z, 1, 0.0f, 0.0f,
-				0.0f);
+		InvUtils.dropItems(getWorld(), itemStack, (int) p.x, (int) p.y, (int) p.z);
+
 	}
 	
 	@Override

@@ -140,7 +140,6 @@ import buildcraft.robots.ai.AIRobotFetchItem;
 import buildcraft.robots.ai.AIRobotGoAndLinkToDock;
 import buildcraft.robots.ai.AIRobotGoto;
 import buildcraft.robots.ai.AIRobotGotoBlock;
-import buildcraft.robots.ai.AIRobotGotoRandomGroundBlock;
 import buildcraft.robots.ai.AIRobotGotoSleep;
 import buildcraft.robots.ai.AIRobotGotoStation;
 import buildcraft.robots.ai.AIRobotGotoStationAndLoad;
@@ -158,6 +157,7 @@ import buildcraft.robots.ai.AIRobotRecharge;
 import buildcraft.robots.ai.AIRobotSearchAndGotoStation;
 import buildcraft.robots.ai.AIRobotSearchBlock;
 import buildcraft.robots.ai.AIRobotSearchEntity;
+import buildcraft.robots.ai.AIRobotSearchRandomBlock;
 import buildcraft.robots.ai.AIRobotSearchRandomGroundBlock;
 import buildcraft.robots.ai.AIRobotSearchStackRequest;
 import buildcraft.robots.ai.AIRobotSearchStation;
@@ -183,6 +183,7 @@ import buildcraft.robots.boards.BoardRobotPicker;
 import buildcraft.robots.boards.BoardRobotPlanter;
 import buildcraft.robots.boards.BoardRobotPump;
 import buildcraft.robots.boards.BoardRobotShovelman;
+import buildcraft.robots.boards.BoardRobotStripes;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.0.1207,)")
 public class BuildCraftCore extends BuildCraftMod {
@@ -432,6 +433,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		RobotManager.registerAIRobot(BoardRobotPlanter.class, "boardRobotPlanter", "buildcraft.core.robots.boards.BoardRobotPlanter");
 		RobotManager.registerAIRobot(BoardRobotPump.class, "boardRobotPump", "buildcraft.core.robots.boards.BoardRobotPump");
 		RobotManager.registerAIRobot(BoardRobotShovelman.class, "boardRobotShovelman", "buildcraft.core.robots.boards.BoardRobotShovelman");
+		RobotManager.registerAIRobot(BoardRobotStripes.class, "boardRobotStripes", "buildcraft.core.robots.boards.BoardRobotStripes");
 		RobotManager.registerAIRobot(AIRobotAttack.class, "aiRobotAttack", "buildcraft.core.robots.AIRobotAttack");
 		RobotManager.registerAIRobot(AIRobotBreak.class, "aiRobotBreak", "buildcraft.core.robots.AIRobotBreak");
 		RobotManager.registerAIRobot(AIRobotCraftAssemblyTable.class, "aiRobotCraftAssemblyTable", "buildcraft.core.robots.AIRobotCraftAssemblyTable");
@@ -444,7 +446,6 @@ public class BuildCraftCore extends BuildCraftMod {
 		RobotManager.registerAIRobot(AIRobotGoAndLinkToDock.class, "aiRobotGoAndLinkToDock", "buildcraft.core.robots.AIRobotGoAndLinkToDock");
 		RobotManager.registerAIRobot(AIRobotGoto.class, "aiRobotGoto", "buildcraft.core.robots.AIRobotGoto");
 		RobotManager.registerAIRobot(AIRobotGotoBlock.class, "aiRobotGotoBlock", "buildcraft.core.robots.AIRobotGotoBlock");
-		RobotManager.registerAIRobot(AIRobotGotoRandomGroundBlock.class, "aiRobotGotoRandomGroundBlock", "buildcraft.core.robots.AIRobotGotoRandomGroundBlock");
 		RobotManager.registerAIRobot(AIRobotGotoSleep.class, "aiRobotGotoSleep", "buildcraft.core.robots.AIRobotGotoSleep");
 		RobotManager.registerAIRobot(AIRobotGotoStation.class, "aiRobotGotoStation", "buildcraft.core.robots.AIRobotGotoStation");
 		RobotManager.registerAIRobot(AIRobotGotoStationAndLoad.class, "aiRobotGotoStationAndLoad", "buildcraft.core.robots.AIRobotGotoStationAndLoad");
@@ -461,6 +462,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		RobotManager.registerAIRobot(AIRobotSearchAndGotoStation.class, "aiRobotSearchAndGotoStation", "buildcraft.core.robots.AIRobotSearchAndGotoStation");
 		RobotManager.registerAIRobot(AIRobotSearchBlock.class, "aiRobotSearchBlock", "buildcraft.core.robots.AIRobotSearchBlock");
 		RobotManager.registerAIRobot(AIRobotSearchEntity.class, "aiRobotSearchEntity", "buildcraft.core.robots.AIRobotSearchEntity");
+		RobotManager.registerAIRobot(AIRobotSearchRandomBlock.class, "aiRobotSearchRandomBlock", "buildcraft.core.robots.AIRobotSearchRandomBlock");
 		RobotManager.registerAIRobot(AIRobotSearchRandomGroundBlock.class, "aiRobotSearchRandomGroundBlock", "buildcraft.core.robots.AIRobotSearchRandomGroundBlock");
 		RobotManager.registerAIRobot(AIRobotSearchStackRequest.class, "aiRobotSearchStackRequest", "buildcraft.core.robots.AIRobotSearchStackRequest");
 		RobotManager.registerAIRobot(AIRobotSearchStation.class, "aiRobotSearchStation", "buildcraft.core.robots.AIRobotSearchStation");

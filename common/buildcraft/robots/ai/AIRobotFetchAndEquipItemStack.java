@@ -18,8 +18,10 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.Transactor;
+import buildcraft.core.inventory.filters.AggregateFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.robots.DockingStation;
+import buildcraft.robots.statements.ActionRobotFilterTool;
 
 public class AIRobotFetchAndEquipItemStack extends AIRobot {
 
@@ -32,7 +34,7 @@ public class AIRobotFetchAndEquipItemStack extends AIRobot {
 	public AIRobotFetchAndEquipItemStack(EntityRobotBase iRobot, IStackFilter iFilter) {
 		super(iRobot);
 
-		filter = iFilter;
+		filter = new AggregateFilter(ActionRobotFilterTool.getGateFilter(iRobot.getLinkedStation()), iFilter);
 	}
 
 	@Override

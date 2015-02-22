@@ -20,8 +20,8 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
-import buildcraft.api.transport.IStripesPipe;
 
 public class StripesHandlerEntityInteract implements IStripesHandler {
 
@@ -38,7 +38,7 @@ public class StripesHandlerEntityInteract implements IStripesHandler {
 	@Override
 	public boolean handle(World world, int x, int y, int z,
 			ForgeDirection direction, ItemStack stack, EntityPlayer player,
-			IStripesPipe pipe) {
+			IStripesActivator activator) {
 
 		AxisAlignedBB box = AxisAlignedBB.getBoundingBox(x, y, z, x + 1, y + 1,	z + 1);
 		List entities = world.getEntitiesWithinAABBExcludingEntity(null, box);
@@ -64,21 +64,21 @@ public class StripesHandlerEntityInteract implements IStripesHandler {
 				continue;
 			}
 			successful = true;
-			dropItemsExcept(stack, player, pipe, direction);
+			dropItemsExcept(stack, player, activator, direction);
 		}
 		if (stack.stackSize > 0) {
-			pipe.sendItem(stack, direction.getOpposite());
+			activator.sendItem(stack, direction.getOpposite());
 		}
 
 		return successful;
 	}
 
-	private void dropItemsExcept(ItemStack stack, EntityPlayer player, IStripesPipe pipe, ForgeDirection direction) {
+	private void dropItemsExcept(ItemStack stack, EntityPlayer player, IStripesActivator activator, ForgeDirection direction) {
 		for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
 			ItemStack invStack = player.inventory.getStackInSlot(i);
 			if (invStack != null && invStack != stack) {
 				player.inventory.setInventorySlotContents(i, null);
-				pipe.sendItem(invStack, direction.getOpposite());
+				activator.sendItem(invStack, direction.getOpposite());
 			}
 		}
 	}

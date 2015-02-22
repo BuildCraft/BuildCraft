@@ -25,6 +25,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
@@ -63,6 +64,7 @@ import buildcraft.core.utils.NBTUtils;
 import buildcraft.core.utils.Utils;
 import buildcraft.robots.ai.AIRobotMain;
 import buildcraft.robots.statements.ActionRobotWorkInArea;
+import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.gates.ActionIterator;
 import buildcraft.transport.gates.StatementSlot;
 
@@ -315,7 +317,7 @@ public class EntityRobot extends EntityRobotBase implements
 					needsUpdate = true;
 				}
 
-				if (this.battery.getEnergyStored() <= 0) {
+				if (this.battery.getEnergyStored() <= 0 && !linkedToChargeStation()) {
 					setDead();
 				}
 			}
@@ -324,6 +326,17 @@ public class EntityRobot extends EntityRobotBase implements
 		super.onEntityUpdate();
 		this.worldObj.theProfiler.endSection();
 	}
+
+	private boolean linkedToChargeStation() {
+		if (currentDockingStation == null) {
+			return false;
+		}
+		if (!(currentDockingStation.getPipe().pipe.transport instanceof PipeTransportPower)) {
+			return false;
+		}
+		return true;
+	}
+
 	@SideOnly(Side.CLIENT)
 	private void spawnEnergyFX() {
 	    Minecraft.getMinecraft().effectRenderer.addEffect(new EntityRobotEnergyParticle(
@@ -709,7 +722,7 @@ public class EntityRobot extends EntityRobotBase implements
 			}), worldObj);
 		} else {
 			Vec3 v = Vec3.createVectorHelper(x, y, z);
-			v.normalize();
+			v = v.normalize();
 
 			steamDx = (int) v.xCoord;
 			steamDy = (int) v.yCoord;
@@ -1102,5 +1115,16 @@ public class EntityRobot extends EntityRobotBase implements
 	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
 		return new FluidTankInfo[] {new FluidTankInfo(tank, maxFluid)};
 	}
+
+    @SideOnly(Side.CLIENT)
+    public IIcon getItemIcon(ItemStack stack, int renderPass) {
+        IIcon iicon = super.getItemIcon(stack, renderPass);
+
+        if (iicon == null) {
+            iicon = stack.getItem().getIcon(stack, renderPass, null, itemInUse, 0);
+        }
+
+        return iicon;
+    }
 
 }

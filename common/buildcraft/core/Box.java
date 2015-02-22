@@ -363,9 +363,9 @@ public class Box implements IBox, ISerializable {
 
 	@Override
 	public BlockIndex getRandomBlockIndex(Random rand) {
-		int x = xMin + rand.nextInt(xMax - xMin);
-		int y = yMin + rand.nextInt(yMax - yMin);
-		int z = zMin + rand.nextInt(zMax - zMin);
+		int x = (xMax > xMin) ? xMin + rand.nextInt(xMax - xMin) : xMin;
+		int y = (yMax > yMin) ? yMin + rand.nextInt(yMax - yMin) : yMin;
+		int z = (zMax > zMin) ? zMin + rand.nextInt(zMax - zMin) : zMin;
 
 		return new BlockIndex(x, y, z);
 
