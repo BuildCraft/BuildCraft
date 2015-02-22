@@ -199,102 +199,58 @@ public class PipeTransportPower extends PipeTransport {
         }
 
 		// Send the power to nearby pipes who requested it
-
 		System.arraycopy(displayPower, 0, prevDisplayPower, 0, 6);
 		Arrays.fill(displayPower, (short) 0);
 
-		// STEP 1 - computes the total amount of power contained and total
-		// amount of power queried
-
-		int totalPowerContained = 0;
-		int totalPowerQuery = 0;
-
-		for (int dir = 0; dir < 6; ++dir) {
-			totalPowerContained += internalPower[dir];
-			if (internalPower[dir] == 0) {
-				totalPowerQuery += powerQuery[dir];
-			}
-		}
-
-		// STEP 2 - sends the power to all directions and computes the actual
-		// amount of power that was consumed
-
-		int totalPowerConsumed = 0;
-
-		if (totalPowerContained > 0) {
-			for (int out = 0; out < 6; ++out) {
-				externalPower[out] = 0;
-
-				if (powerQuery[out] > 0 && internalPower[out] == 0) {
-					int powerConsumed = powerQuery[out] * totalPowerContained / totalPowerQuery;
-					boolean tilePowered = false;
-
-					if (tiles[out] instanceof IPipeTile) {
-						// Transmit power to the nearby pipe
-
-						Pipe<?> nearbyPipe = (Pipe<?>) ((IPipeTile) tiles[out]).getPipe();
-						PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyPipe.transport;
-						powerConsumed = nearbyTransport.receiveEnergy(
-								ForgeDirection.VALID_DIRECTIONS[out].getOpposite(),
-								powerConsumed);
-						tilePowered = true;
-					} else if (tiles[out] instanceof IEnergyHandler) {
-						IEnergyHandler handler = (IEnergyHandler) tiles[out];
-
-						if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[out].getOpposite())) {
-							// Transmit power to an RF energy handler
-
-							powerConsumed = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[out].getOpposite(),
-									powerConsumed, false);
-							tilePowered = true;
+		for (int i = 0; i < 6; ++i) {
+			if (internalPower[i] > 0) {
+				float totalPowerQuery = 0;
+				for (int j = 0; j < 6; ++j) {
+					if (j != i && powerQuery[j] > 0)
+						if (tiles[j] instanceof TileGenericPipe || tiles[j] instanceof IEnergyReceiver || tiles[j] instanceof IEnergyHandler) {
+							totalPowerQuery += powerQuery[j];
 						}
-					} else if (tiles[out] instanceof IEnergyReceiver) {
-						IEnergyReceiver handler = (IEnergyReceiver) tiles[out];
+				}
+				for (int j = 0; j < 6; ++j) {
+					if (j != i && powerQuery[j] > 0) {
+						int watts = (int) Math.floor((internalPower[i] * powerQuery[j]) / totalPowerQuery);
 
-						if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[out].getOpposite())) {
-							// Transmit power to an RF energy handler
-
-							powerConsumed = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[out].getOpposite(),
-									powerConsumed, false);
-							tilePowered = true;
+						if (tiles[j] instanceof IPipeTile) {
+							Pipe<?> nearbyPipe = (Pipe<?>) ((IPipeTile) tiles[j]).getPipe();
+							PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyPipe.transport;
+							watts = nearbyTransport.receiveEnergy(
+									ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
+									watts);
+							internalPower[i] -= watts;
+						} else if (tiles[j] instanceof IEnergyHandler) {
+							IEnergyHandler handler = (IEnergyHandler) tiles[j];
+							if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
+								watts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
+										watts, false);
+								internalPower[i] -= watts;
+							}
+						} else if (tiles[j] instanceof IEnergyReceiver) {
+							IEnergyReceiver handler = (IEnergyReceiver) tiles[j];
+							if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
+								watts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
+										watts, false);
+								internalPower[i] -= watts;
+							}
 						}
-					}
 
-					if (!tilePowered) {
-						externalPower[out] = powerConsumed;
+						displayPower[j] += watts;
+						displayPower[i] += watts;
 					}
-
-					displayPower[out] += powerConsumed;
-					totalPowerConsumed += powerConsumed;
 				}
 			}
 		}
-
-		// STEP 3 - assume equal repartition of all consumed locations and
-		// compute display for each source of power
-
-		if (totalPowerConsumed > 0) {
-			for (int in = 0; in < 6; ++in) {
-				int powerConsumed = internalPower[in] * totalPowerConsumed / totalPowerContained;
-				displayPower[in] += powerConsumed;
-			}
-		}
-
-		// NEXT STEPS... other things to do...
-
-		highestPower = 0;
+		double highestPower = 0;
 		for (int i = 0; i < 6; i++) {
 			displayPower[i] = (short) ((prevDisplayPower[i] * (DISPLAY_SMOOTHING - 1.0F) + displayPower[i]) / DISPLAY_SMOOTHING);
-
 			if (displayPower[i] > highestPower) {
 				highestPower = displayPower[i];
 			}
-
-			if (displayPower[i] < 0) {
-				displayPower[i] = 0;
-			}
 		}
-
 		overload += highestPower > maxPower * 0.95 ? 1 : -1;
 		if (overload < 0) {
 			overload = 0;
@@ -303,24 +259,21 @@ public class PipeTransportPower extends PipeTransport {
 			overload = OVERLOAD_TICKS;
 		}
 
-		// Compute the tiles requesting energy that are not power pipes
-
+	// Compute the tiles requesting energy that are not power pipes
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-		    if (!outputOpen(dir)) {
-			    continue;
+			if (!outputOpen(dir)) {
+				continue;
 			}
 
 			TileEntity tile = tiles [dir.ordinal()];
-			
-		    if (tile instanceof IPipeTile && ((Pipe<?>) ((IPipeTile) tile).getPipe()).transport instanceof PipeTransportPower) {
-		    	continue;
-		    }
-		    
+
+			if (tile instanceof IPipeTile && ((Pipe<?>) ((IPipeTile) tile).getPipe()).transport instanceof PipeTransportPower) {
+				continue;
+			}
 			if (tile instanceof IEnergyHandler) {
 				IEnergyHandler handler = (IEnergyHandler) tile;
 				if (handler.canConnectEnergy(dir.getOpposite())) {
 					int request = handler.receiveEnergy(dir.getOpposite(), this.maxPower, true);
-
 					if (request > 0) {
 						requestEnergy(dir, request);
 					}
@@ -329,7 +282,6 @@ public class PipeTransportPower extends PipeTransport {
 				IEnergyReceiver handler = (IEnergyReceiver) tile;
 				if (handler.canConnectEnergy(dir.getOpposite())) {
 					int request = handler.receiveEnergy(dir.getOpposite(), this.maxPower, true);
-
 					if (request > 0) {
 						requestEnergy(dir, request);
 					}
@@ -338,45 +290,34 @@ public class PipeTransportPower extends PipeTransport {
 		}
 
 		// Sum the amount of energy requested on each side
-
 		int[] transferQuery = new int[6];
-
 		for (int i = 0; i < 6; ++i) {
 			transferQuery[i] = 0;
-
-			if (!inputOpen(ForgeDirection.getOrientation(i))) {
-			    continue;
-			}
-
 			for (int j = 0; j < 6; ++j) {
 				if (j != i) {
 					transferQuery[i] += powerQuery[j];
 				}
 			}
-
 			transferQuery[i] = Math.min(transferQuery[i], maxPower);
 		}
 
 		// Transfer the requested energy to nearby pipes
-
 		for (int i = 0; i < 6; ++i) {
 			if (transferQuery[i] != 0) {
 				if (tiles[i] != null) {
 					TileEntity entity = tiles[i];
-
-					if (entity instanceof IPipeTile) {
-						Pipe<?> nearbyPipe = (Pipe<?>) ((IPipeTile) entity).getPipe();
-
-						if (nearbyPipe == null) {
+					if (entity instanceof TileGenericPipe) {
+						TileGenericPipe nearbyTile = (TileGenericPipe) entity;
+						if (nearbyTile.pipe == null) {
 							continue;
 						}
-
-						PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyPipe.transport;
+						PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyTile.pipe.transport;
 						nearbyTransport.requestEnergy(ForgeDirection.VALID_DIRECTIONS[i].getOpposite(), transferQuery[i]);
 					}
 				}
 			}
 		}
+
 
 		if (tracker.markTimeIfDelay(container.getWorldObj())) {
 			PacketPowerUpdate packet = new PacketPowerUpdate(container.xCoord, container.yCoord, container.zCoord);
@@ -399,13 +340,9 @@ public class PipeTransportPower extends PipeTransport {
 			powerQuery = nextPowerQuery;
 			nextPowerQuery = new int[6];
 
+			int[] next = internalPower;
 			internalPower = internalNextPower;
-			internalNextPower = new int[6];
-
-			for (int i = 0; i < internalNextPower.length; ++i) {
-				internalNextPower[i] = 0;
-				nextPowerQuery[i] = 0;
-			}
+			internalNextPower = internalPower;
 		}
 	}
 

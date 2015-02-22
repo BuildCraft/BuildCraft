@@ -216,6 +216,19 @@ public final class Gate implements IGate, IStatementContainer {
 	}
 
 	public void readStatementsFromNBT(NBTTagCompound data) {
+		// Clear
+		for (int i = 0; i < material.numSlots; ++i) {
+			triggers[i] = null;
+			actions[i] = null;
+			for (int j = 0; j < material.numTriggerParameters; j++) {
+				triggerParameters[i][j] = null;
+			}
+			for (int j = 0; j < material.numActionParameters; j++) {
+				actionParameters[i][j] = null;
+			}
+		}
+
+		// Read
 		for (int i = 0; i < material.numSlots; ++i) {
 			if (data.hasKey("trigger[" + i + "]")) {
 				triggers[i] = StatementManager.statements.get(data.getString("trigger[" + i + "]"));
