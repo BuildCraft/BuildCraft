@@ -43,8 +43,7 @@ public class BlockQuarry extends BlockBuildCraft {
 		setHardness(10F);
 		setResistance(10F);
 		setDefaultState(getDefaultState().withProperty(FACING_PROP, EnumFacing.NORTH));
-		// TODO: set proper sound
-		//setStepSound(soundAnvilFootstep);
+		setStepSound(soundTypeAnvil);
 	}
 
 	@Override

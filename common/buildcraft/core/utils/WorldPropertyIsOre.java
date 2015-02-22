@@ -17,6 +17,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
+
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class WorldPropertyIsOre extends WorldProperty {
@@ -24,6 +26,7 @@ public class WorldPropertyIsOre extends WorldProperty {
 	public HashSet<Integer> ores = new HashSet<Integer>();
 
 	public WorldPropertyIsOre(int harvestLevel) {
+		initBlockHarvestTools();
 		for (String oreName : OreDictionary.getOreNames()) {
 			if (oreName.startsWith("ore")) {
 				List<ItemStack> oreStacks = OreDictionary.getOres(oreName);
@@ -41,6 +44,12 @@ public class WorldPropertyIsOre extends WorldProperty {
 				}
 			}
 		}
+	}
+
+	private void initBlockHarvestTools() {
+		// Make sure the static code block in the ForgeHooks class is run
+		//TODO: Change this, maybe use reflection to call initTools()?
+		//ForgeHooks.canToolHarvestBlock(Blocks.coal_ore, 0, new ItemStack(Items.diamond_pickaxe));
 	}
 
 	@Override

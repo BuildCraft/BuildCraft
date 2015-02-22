@@ -36,9 +36,7 @@ public class BlockMiningWell extends BlockBuildCraft {
 
 		setHardness(5F);
 		setResistance(10F);
-
-		// TODO: set proper sound
-		//setStepSound(soundStoneFootstep);
+		setStepSound(soundTypeStone);
 	}
 
 	/*@Override
