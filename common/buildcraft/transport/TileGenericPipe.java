@@ -11,6 +11,7 @@ package buildcraft.transport;
 import tv.twitch.Core;
 
 import java.util.Collection;
+
 import org.apache.logging.log4j.Level;
 
 import io.netty.buffer.ByteBuf;
@@ -44,8 +45,8 @@ import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.Position;
+import buildcraft.api.enums.EnumColor;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeConnection;

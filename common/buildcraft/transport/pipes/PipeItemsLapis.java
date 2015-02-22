@@ -19,7 +19,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.EnumColor;
+import buildcraft.api.enums.EnumColor;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.BlockBuildCraft;

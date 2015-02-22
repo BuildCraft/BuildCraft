@@ -12,7 +12,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
-import buildcraft.api.core.EnumColor;
+import buildcraft.api.enums.EnumColor;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.PacketIds;
 import buildcraft.transport.TravelingItem;

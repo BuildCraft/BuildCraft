@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.util.EnumFacing;
 
 public final class StatementManager {
