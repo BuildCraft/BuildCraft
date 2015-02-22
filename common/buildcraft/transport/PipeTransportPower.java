@@ -175,6 +175,17 @@ public class PipeTransportPower extends PipeTransport {
 		}
 	}
 
+	private Object getEnergyProvider(int side) {
+		ForgeDirection fs = ForgeDirection.getOrientation(side);
+		if (container.hasPipePluggable(fs)) {
+			Object pp = container.getPipePluggable(fs);
+			if (pp instanceof IEnergyReceiver) {
+				return pp;
+			}
+		}
+		return tiles[side];
+	}
+
 	@Override
 	public void updateEntity() {
 		if (container.getWorldObj().isRemote) {
@@ -206,31 +217,34 @@ public class PipeTransportPower extends PipeTransport {
 			if (internalPower[i] > 0) {
 				float totalPowerQuery = 0;
 				for (int j = 0; j < 6; ++j) {
-					if (j != i && powerQuery[j] > 0)
-						if (tiles[j] instanceof TileGenericPipe || tiles[j] instanceof IEnergyReceiver || tiles[j] instanceof IEnergyHandler) {
+					if (j != i && powerQuery[j] > 0) {
+						Object ep = getEnergyProvider(j);
+						if (ep instanceof TileGenericPipe || ep instanceof IEnergyReceiver || ep instanceof IEnergyHandler) {
 							totalPowerQuery += powerQuery[j];
 						}
+					}
 				}
 				for (int j = 0; j < 6; ++j) {
 					if (j != i && powerQuery[j] > 0) {
+						Object ep = getEnergyProvider(j);
 						int watts = (int) Math.floor((internalPower[i] * powerQuery[j]) / totalPowerQuery);
 
-						if (tiles[j] instanceof IPipeTile) {
-							Pipe<?> nearbyPipe = (Pipe<?>) ((IPipeTile) tiles[j]).getPipe();
+						if (ep instanceof IPipeTile) {
+							Pipe<?> nearbyPipe = (Pipe<?>) ((IPipeTile) ep).getPipe();
 							PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyPipe.transport;
 							watts = nearbyTransport.receiveEnergy(
 									ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
 									watts);
 							internalPower[i] -= watts;
-						} else if (tiles[j] instanceof IEnergyHandler) {
-							IEnergyHandler handler = (IEnergyHandler) tiles[j];
+						} else if (ep instanceof IEnergyHandler) {
+							IEnergyHandler handler = (IEnergyHandler) ep;
 							if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
 								watts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
 										watts, false);
 								internalPower[i] -= watts;
 							}
-						} else if (tiles[j] instanceof IEnergyReceiver) {
-							IEnergyReceiver handler = (IEnergyReceiver) tiles[j];
+						} else if (ep instanceof IEnergyReceiver) {
+							IEnergyReceiver handler = (IEnergyReceiver) ep;
 							if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
 								watts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
 										watts, false);
@@ -265,7 +279,7 @@ public class PipeTransportPower extends PipeTransport {
 				continue;
 			}
 
-			TileEntity tile = tiles [dir.ordinal()];
+			Object tile = getEnergyProvider(dir.ordinal());
 
 			if (tile instanceof IPipeTile && ((Pipe<?>) ((IPipeTile) tile).getPipe()).transport instanceof PipeTransportPower) {
 				continue;

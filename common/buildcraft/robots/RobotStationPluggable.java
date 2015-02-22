@@ -9,6 +9,7 @@ import net.minecraft.util.AxisAlignedBB;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import cofh.api.energy.IEnergyReceiver;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.transport.IPipe;
@@ -20,7 +21,7 @@ import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TileGenericPipe;
 
-public class RobotStationPluggable extends PipePluggable implements IPipePluggableItem {
+public class RobotStationPluggable extends PipePluggable implements IPipePluggableItem, IEnergyReceiver {
 	public class RobotStationPluggableRenderer implements IPipePluggableRenderer {
 		private float zFightOffset = 1 / 4096.0F;
 
@@ -250,5 +251,28 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 	@Override
 	public PipePluggable createPipePluggable(IPipe pipe, ForgeDirection side, ItemStack stack) {
 		return new RobotStationPluggable();
+	}
+
+	@Override
+	public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
+		if (station != null && station.isTaken()) {
+			return station.robotTaking().getBattery().receiveEnergy(maxReceive, simulate);
+		}
+		return 0;
+	}
+
+	@Override
+	public int getEnergyStored(ForgeDirection from) {
+		return 0;
+	}
+
+	@Override
+	public int getMaxEnergyStored(ForgeDirection from) {
+		return 0;
+	}
+
+	@Override
+	public boolean canConnectEnergy(ForgeDirection from) {
+		return true;
 	}
 }
