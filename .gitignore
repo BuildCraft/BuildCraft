@@ -21,3 +21,11 @@ run
 
 #mac
 .DS_Store
+
+#minecraft
+blueprints
+config
+logs
+saves
+options.txt
+usernamecache.json
