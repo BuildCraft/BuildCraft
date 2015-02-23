@@ -537,7 +537,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		
 		actionControl = new IActionExternal[IControllable.Mode.values().length];
 		for (IControllable.Mode mode : IControllable.Mode.values()) {
-			if (mode != IControllable.Mode.Unknown) {
+			if (mode != IControllable.Mode.Unknown && mode != IControllable.Mode.Mode) {
 				actionControl[mode.ordinal()] = new ActionMachineControl(mode);
 			}
 		}
