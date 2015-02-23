@@ -22,13 +22,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-
+import cpw.mods.fml.common.registry.VillagerRegistry;
 import net.minecraftforge.client.MinecraftForgeClient;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.core.EntityBlock;
@@ -145,5 +144,10 @@ public class CoreProxyClient extends CoreProxy {
 		} else {
 			return Minecraft.getMinecraft().thePlayer;
 		}
+	}
+	@Override
+	public void initVillager() {
+		super.initVillager();
+		VillagerRegistry.instance().registerVillagerSkin(BuildCraftCore.bcVillagerID, new ResourceLocation("buildcraft:textures/entities/villager.png"));
 	}
 }

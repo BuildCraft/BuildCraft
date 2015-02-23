@@ -26,10 +26,12 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.gen.structure.MapGenStructureIO;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.VillagerRegistry;
 
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.oredict.ShapedOreRecipe;
@@ -41,6 +43,9 @@ import buildcraft.compat.CompatHooks;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.ItemBlockBuildCraft;
 import buildcraft.core.LaserKind;
+import buildcraft.core.worldgen.ComponentBuildcraftHouse;
+import buildcraft.core.worldgen.VillageCreationHandler;
+import buildcraft.core.worldgen.VillagerTradeHandler;
 
 public class CoreProxy implements ICoreProxy {
 
@@ -193,6 +198,18 @@ public class CoreProxy implements ICoreProxy {
 			return ((NetHandlerPlayServer) handler).playerEntity;
 		} else {
 			return null;
+		}
+	}
+
+	public void initVillager()
+	{
+		VillagerRegistry.instance().registerVillagerId(BuildCraftCore.bcVillagerID);
+		VillagerRegistry.instance().registerVillageTradeHandler(BuildCraftCore.bcVillagerID, new VillagerTradeHandler());
+		VillagerRegistry.instance().registerVillageCreationHandler(new VillageCreationHandler());
+		try {
+			MapGenStructureIO.func_143031_a(ComponentBuildcraftHouse.class, "buildcraft:house");
+		} catch (Throwable e) {
+			e.printStackTrace();
 		}
 	}
 }
