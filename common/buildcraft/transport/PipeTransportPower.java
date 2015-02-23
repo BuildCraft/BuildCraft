@@ -64,7 +64,6 @@ public class PipeTransportPower extends PipeTransport {
 	private int[] internalPower = new int[6];
 	private int[] externalPower = new int[6];
 
-	private int highestPower;
 	private SafeTimeTracker tracker = new SafeTimeTracker(2 * BuildCraftCore.updateFactor);
 
 	public PipeTransportPower() {
@@ -234,13 +233,14 @@ public class PipeTransportPower extends PipeTransport {
 				}
 			}
 		}
+		double highestPower = 0.0;
 		for (int i = 0; i < 6; i++) {
 			displayPower[i] = (short) ((prevDisplayPower[i] * (DISPLAY_SMOOTHING - 1.0F) + displayPower[i]) / DISPLAY_SMOOTHING);
 			if (displayPower[i] > highestPower) {
 				highestPower = displayPower[i];
 			}
 		}
-		overload += highestPower > maxPower * 0.95 ? 1 : -1;
+		overload += highestPower > ((double) maxPower) * 0.95 ? 1 : -1;
 		if (overload < 0) {
 			overload = 0;
 		}
@@ -418,46 +418,6 @@ public class PipeTransportPower extends PipeTransport {
 	public void handlePowerPacket(PacketPowerUpdate packetPower) {
 		displayPower = packetPower.displayPower;
 		overload = packetPower.overload ? OVERLOAD_TICKS : 0;
-	}
-
-	/**
-	 * This can be use to provide a rough estimate of how much power is flowing
-	 * through a pipe. Measured in RF/t.
-	 *
-	 * @return RF/t
-	 */
-	public int getCurrentPowerTransferRate() {
-		return highestPower;
-	}
-
-	/**
-	 * This can be use to provide a rough estimate of how much power is
-	 * contained in a pipe. Measured in RF.
-	 *
-	 * Max should be around (throughput * internalPower.length * 2), ie 1120 RF for a Cobblestone Pipe.
-	 *
-	 * @return RF
-	 */
-	public int getCurrentPowerAmount() {
-		int amount = 0;
-		for (int d : internalPower) {
-			amount += d;
-		}
-		for (int d : internalNextPower) {
-			amount += d;
-		}
-		return amount;
-	}
-
-	public int clearInstantPower() {
-		int amount = 0;
-
-		for (int i = 0; i < internalPower.length; ++i) {
-			amount += internalPower [i];
-			internalPower [i] = 0;
-		}
-
-		return amount;
 	}
 
 	public int consumePower(ForgeDirection dir, int max) {
