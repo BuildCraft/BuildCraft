@@ -52,7 +52,6 @@ public class PipeTransportPower extends PipeTransport {
 	public int[] nextPowerQuery = new int[6];
 	public int[] internalNextPower = new int[6];
 	public int maxPower = 80;
-	public float[] movementStage = new float[] {0, 0, 0};
 
 	private boolean needsInit = true;
 	private TileEntity[] tiles = new TileEntity[6];
@@ -71,10 +70,6 @@ public class PipeTransportPower extends PipeTransport {
 	public PipeTransportPower() {
 		for (int i = 0; i < 6; ++i) {
 			powerQuery[i] = 0;
-		}
-
-		for (int i = 0; i < 3; ++i) {
-			movementStage[i] = (float) Math.random();
 		}
 	}
 
@@ -131,19 +126,6 @@ public class PipeTransportPower extends PipeTransport {
 		}
 
 		return tile instanceof IEnergyConnection && ((IEnergyConnection) tile).canConnectEnergy(side.getOpposite());
-		// TODO: Look into this code again when the new RF API is out.
-		/*
-		if (tile instanceof IEnergyConnection && ((IEnergyConnection) tile).canConnectEnergy(side.getOpposite())) {
-			if (tile instanceof TileBuildCraft && !(tile instanceof IEngine)) {
-				// Disregard non-engine BC tiles
-				return false;
-			}
-			// Disregard tiles which are consumers but NOT providers
-			return (tile instanceof IEngine) || (tile instanceof IEnergyHandler);
-		} else {
-			// Disregard tiles which can't connect either, I guess.
-			return false;
-		}*/
 	}
 
 	@Override
@@ -189,13 +171,6 @@ public class PipeTransportPower extends PipeTransport {
 	@Override
 	public void updateEntity() {
 		if (container.getWorldObj().isRemote) {
-			// updating movement stage. We're only carrying the movement on half
-			// the things. This is purely for animation purpose.
-
-			for (int i = 0; i < 6; i += 2) {
-				movementStage [i / 2] = (movementStage [i / 2] + 0.01F) % 1.0F;
-			}
-
 			return;
 		}
 
@@ -224,10 +199,11 @@ public class PipeTransportPower extends PipeTransport {
 						}
 					}
 				}
+
 				for (int j = 0; j < 6; ++j) {
 					if (j != i && powerQuery[j] > 0) {
 						Object ep = getEnergyProvider(j);
-						int watts = (int) Math.floor((internalPower[i] * powerQuery[j]) / totalPowerQuery);
+						int watts = (int) Math.floor(internalPower[i] * powerQuery[j] / totalPowerQuery);
 
 						if (ep instanceof IPipeTile) {
 							Pipe<?> nearbyPipe = (Pipe<?>) ((IPipeTile) ep).getPipe();
@@ -358,7 +334,7 @@ public class PipeTransportPower extends PipeTransport {
 
 			int[] next = internalPower;
 			internalPower = internalNextPower;
-			internalNextPower = internalPower;
+			internalNextPower = next;
 		}
 	}
 
@@ -458,7 +434,7 @@ public class PipeTransportPower extends PipeTransport {
 	 * This can be use to provide a rough estimate of how much power is
 	 * contained in a pipe. Measured in RF.
 	 *
-	 * Max should be around (throughput * internalPower.length * 2), ie 112 MJ for a Cobblestone Pipe.
+	 * Max should be around (throughput * internalPower.length * 2), ie 1120 RF for a Cobblestone Pipe.
 	 *
 	 * @return RF
 	 */
@@ -471,14 +447,6 @@ public class PipeTransportPower extends PipeTransport {
 			amount += d;
 		}
 		return amount;
-	}
-
-	public float getPistonStage(int i) {
-		if (movementStage [i] < 0.5F) {
-			return movementStage [i] * 2;
-		} else {
-			return 1 - (movementStage [i] - 0.5F) * 2;
-		}
 	}
 
 	public int clearInstantPower() {
