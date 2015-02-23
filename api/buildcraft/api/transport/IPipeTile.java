@@ -25,7 +25,7 @@ public interface IPipeTile extends IInjectable {
 
 	PipeType getPipeType();
 
-	World getWorldObj();
+	World getWorld();
 
 	int x();
 

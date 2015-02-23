@@ -52,7 +52,7 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 		}
 
 		IPipeTile tile = (IPipeTile) container.getTile();
-		RobotRegistry registry = RobotRegistry.getRegistry(tile.getWorldObj());
+		RobotRegistry registry = RobotRegistry.getRegistry(tile.getWorld());
 
 		for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
 			DockingStation station = RobotUtils.getStation(tile, d);
