@@ -49,6 +49,8 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 	private String owner = "[BuildCraft]";
 	private RFBattery battery;
 
+	private int receivedTick, extractedTick;
+
 	public String getOwner() {
 		return owner;
 	}
@@ -70,6 +72,11 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 		if (!init && !isInvalid()) {
 			initialize();
 			init = true;
+		}
+
+		if (battery != null) {
+			receivedTick = 0;
+			extractedTick = 0;
 		}
 	}
 
@@ -172,7 +179,11 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 	public int receiveEnergy(ForgeDirection from, int maxReceive,
 			boolean simulate) {
 		if (battery != null && this.canConnectEnergy(from)) {
-			return battery.receiveEnergy(maxReceive, simulate);
+			int received = battery.receiveEnergy(maxReceive - receivedTick, simulate);
+			if (!simulate) {
+				receivedTick += received;
+			}
+			return received;
 		} else {
 			return 0;
 		}
@@ -184,7 +195,11 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 	public int extractEnergy(ForgeDirection from, int maxExtract,
 			boolean simulate) {
 		if (battery != null && this.canConnectEnergy(from)) {
-			return battery.extractEnergy(maxExtract, simulate);
+			int extracted = battery.extractEnergy(maxExtract - extractedTick, simulate);
+			if (!simulate) {
+				extractedTick += extracted;
+			}
+			return extracted;
 		} else {
 			return 0;
 		}

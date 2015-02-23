@@ -37,6 +37,8 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 	 */
 	@Override
 	public void updateEntity () {
+		super.updateEntity();
+
 		if (worldObj.isRemote) {
 			return;
 		}

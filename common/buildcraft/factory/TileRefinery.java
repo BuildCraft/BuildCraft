@@ -110,6 +110,8 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 
 	@Override
 	public void updateEntity() {
+		super.updateEntity();
+
 		if (worldObj.isRemote) {
 			simpleAnimationIterate();
 			return;
