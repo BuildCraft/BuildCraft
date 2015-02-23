@@ -28,7 +28,7 @@ import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.core.utils.StringUtils;
 
-public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITriggerExternal {
+public class TriggerEnergy extends BCStatement implements ITriggerExternal {
 
 	private boolean high;
 
@@ -66,18 +66,6 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITri
 				return (energyStored / energyMaxStored) < 0.05;
 			}
 		}
-		return false;
-	}
-
-	@Override
-	public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
-		if (container instanceof IGate) {
-			IGate gate = (IGate) container;
-			if (gate.getPipe() instanceof IEnergyHandler) {
-				return isTriggeredEnergyHandler((IEnergyHandler) gate.getPipe(), ForgeDirection.UNKNOWN);
-			}
-		}
-
 		return false;
 	}
 
