@@ -18,10 +18,12 @@ import buildcraft.silicon.gui.ContainerAdvancedCraftingTable;
 import buildcraft.silicon.gui.ContainerAssemblyTable;
 import buildcraft.silicon.gui.ContainerChargingTable;
 import buildcraft.silicon.gui.ContainerIntegrationTable;
+import buildcraft.silicon.gui.ContainerProgrammingTable;
 import buildcraft.silicon.gui.GuiAdvancedCraftingTable;
 import buildcraft.silicon.gui.GuiAssemblyTable;
 import buildcraft.silicon.gui.GuiChargingTable;
 import buildcraft.silicon.gui.GuiIntegrationTable;
+import buildcraft.silicon.gui.GuiProgrammingTable;
 
 public class GuiHandler implements IGuiHandler {
 
@@ -62,6 +64,13 @@ public class GuiHandler implements IGuiHandler {
             } else {
                 return new GuiChargingTable(player.inventory, (TileChargingTable) tile);
             }
+
+		case 4:
+			if (!(tile instanceof TileProgrammingTable)) {
+				return null;
+			} else {
+				return new GuiProgrammingTable(player.inventory, (TileProgrammingTable) tile);
+			}
 
         default:
 			return null;
@@ -105,6 +114,13 @@ public class GuiHandler implements IGuiHandler {
             } else {
                 return new ContainerChargingTable(player.inventory, (TileChargingTable) tile);
             }
+
+		case 4:
+			if (!(tile instanceof TileProgrammingTable)) {
+				return null;
+			} else {
+				return new ContainerProgrammingTable(player.inventory, (TileProgrammingTable) tile);
+			}
 
 		default:
 			return null;

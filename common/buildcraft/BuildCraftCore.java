@@ -96,6 +96,7 @@ import buildcraft.core.network.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.IntegrationRecipeManager;
+import buildcraft.core.recipes.ProgrammingRecipeManager;
 import buildcraft.core.recipes.RefineryRecipeManager;
 import buildcraft.core.render.BlockHighlightHandler;
 import buildcraft.core.statements.ActionMachineControl;
@@ -302,6 +303,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildcraftRecipeRegistry.assemblyTable = AssemblyRecipeManager.INSTANCE;
 		BuildcraftRecipeRegistry.integrationTable = IntegrationRecipeManager.INSTANCE;
 		BuildcraftRecipeRegistry.refinery = RefineryRecipeManager.INSTANCE;
+		BuildcraftRecipeRegistry.programmingTable = ProgrammingRecipeManager.INSTANCE;
 
 		BuildcraftFuelRegistry.fuel = FuelManager.INSTANCE;
 		BuildcraftFuelRegistry.coolant = CoolantManager.INSTANCE;

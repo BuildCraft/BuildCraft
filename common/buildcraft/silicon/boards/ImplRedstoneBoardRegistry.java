@@ -96,4 +96,9 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 
 		return result;
 	}
+
+	// TODO: Publicize this in the abstract class (6.5.0)
+	public float getProbability(String id) {
+		return boards.get(id) != null ? boards.get(id).probability : 0;
+	}
 }

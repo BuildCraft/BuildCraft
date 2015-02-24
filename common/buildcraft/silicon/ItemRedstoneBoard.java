@@ -86,4 +86,8 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 			itemList.add(stack.copy());
 		}
 	}
+
+	public static boolean isClean(ItemStack stack) {
+		return !stack.hasTagCompound() || !stack.getTagCompound().hasKey("id");
+	}
 }

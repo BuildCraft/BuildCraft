@@ -33,8 +33,9 @@ import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.utils.Utils;
 
 public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBlock {
-    protected static final int TABLE_MAX = 4;
+    protected static final int TABLE_MAX = 5;
 
+	private static final String[] ICON_NAMES = {"assemblytable", "advworkbenchtable", "integrationtable", "chargingtable", "programmingtable"};
 	@SideOnly(Side.CLIENT)
 	private IIcon[][] icons;
 
@@ -107,6 +108,8 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
 				return new TileIntegrationTable();
             case 3:
                 return new TileChargingTable();
+			case 4:
+				return new TileProgrammingTable();
 		}
 		return null;
 	}
@@ -136,22 +139,9 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
 		icons = new IIcon[TABLE_MAX][];
         for (int i = 0; i < TABLE_MAX; i++) {
             icons[i] = new IIcon[3];
+			icons[i][0] = par1IconRegister.registerIcon("buildcraft:" + ICON_NAMES[i] + "_bottom");
+			icons[i][1] = par1IconRegister.registerIcon("buildcraft:" + ICON_NAMES[i] + "_top");
+			icons[i][2] = par1IconRegister.registerIcon("buildcraft:" + ICON_NAMES[i] + "_side");
         }
-
-		icons[0][0] = par1IconRegister.registerIcon("buildcraft:assemblytable_bottom");
-		icons[0][1] = par1IconRegister.registerIcon("buildcraft:assemblytable_top");
-		icons[0][2] = par1IconRegister.registerIcon("buildcraft:assemblytable_side");
-
-		icons[1][0] = par1IconRegister.registerIcon("buildcraft:advworkbenchtable_bottom");
-		icons[1][1] = par1IconRegister.registerIcon("buildcraft:advworkbenchtable_top");
-		icons[1][2] = par1IconRegister.registerIcon("buildcraft:advworkbenchtable_side");
-
-		icons[2][0] = par1IconRegister.registerIcon("buildcraft:integrationtable_bottom");
-		icons[2][1] = par1IconRegister.registerIcon("buildcraft:integrationtable_top");
-		icons[2][2] = par1IconRegister.registerIcon("buildcraft:integrationtable_side");
-
-        icons[3][0] = par1IconRegister.registerIcon("buildcraft:chargingtable_bottom");
-        icons[3][1] = par1IconRegister.registerIcon("buildcraft:chargingtable_top");
-        icons[3][2] = par1IconRegister.registerIcon("buildcraft:chargingtable_side");
 	}
 }

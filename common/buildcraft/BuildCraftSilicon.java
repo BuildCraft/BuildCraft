@@ -96,7 +96,8 @@ import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.silicon.TileChargingTable;
 import buildcraft.silicon.TileIntegrationTable;
 import buildcraft.silicon.TileLaser;
-import buildcraft.silicon.boards.BoardRecipe;
+import buildcraft.silicon.TileProgrammingTable;
+import buildcraft.silicon.boards.BoardProgrammingRecipe;
 import buildcraft.silicon.boards.ImplRedstoneBoardRegistry;
 import buildcraft.silicon.network.PacketHandlerSilicon;
 
@@ -220,6 +221,8 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				"net.minecraft.src.buildcraft.factory.TileIntegrationTable");
         CoreProxy.proxy.registerTileEntity(TileChargingTable.class,
                 "net.minecraft.src.buildcraft.factory.TileChargingTable");
+		CoreProxy.proxy.registerTileEntity(TileProgrammingTable.class,
+				"net.minecraft.src.buildcraft.factory.TileProgrammingTable");
 		CoreProxy.proxy.registerTileEntity(TileZonePlan.class, "net.minecraft.src.buildcraft.commander.TileZonePlan");
 		CoreProxy.proxy.registerTileEntity(TileRequester.class, "net.minecraft.src.buildcraft.commander.TileRequester");
 
@@ -278,6 +281,15 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'R', "dustRedstone",
 				'C', new ItemStack(redstoneChipset, 1, 0),
 				'G', "gearGold");
+
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 4),
+				"ORO",
+				"OCO",
+				"OGO",
+				'O', Blocks.obsidian,
+				'R', "dustRedstone",
+				'C', Items.emerald,
+				'G', "gearDiamond");
 
 		// COMMANDER BLOCKS
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(zonePlanBlock, 1, 0),
@@ -338,7 +350,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'R', redstoneCrystal,
 				'C', Chipset.DIAMOND.getStack());
 
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe(new BoardRecipe("buildcraft:redstoneBoard"));
+		BuildcraftRecipeRegistry.programmingTable.addRecipe(new BoardProgrammingRecipe());
 		BuildcraftRecipeRegistry.integrationTable.addRecipe(new RobotIntegrationRecipe("buildcraft:robotIntegration"));
 	}
 
