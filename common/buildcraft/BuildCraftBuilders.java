@@ -431,9 +431,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(architectBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 		schemes.registerSchematicBlock(builderBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 
-		schemes.registerSchematicBlock(markerBlock, SchematicWallSide.class);
-		schemes.registerSchematicBlock(pathMarkerBlock, SchematicWallSide.class);
-		schemes.registerSchematicBlock(constructionMarkerBlock, SchematicWallSide.class);
+		// Landmarks are often caught incorrectly, making building them counter-productive.
+		schemes.registerSchematicBlock(markerBlock, SchematicIgnore.class);
+		schemes.registerSchematicBlock(pathMarkerBlock, SchematicIgnore.class);
+		schemes.registerSchematicBlock(constructionMarkerBlock, SchematicIgnore.class);
 
 		// Factories required to save entities in world
 
