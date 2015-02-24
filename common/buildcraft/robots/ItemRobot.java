@@ -132,6 +132,9 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
 
 	@Override
 	public int receiveEnergy(ItemStack container, int maxReceive, boolean simulate) {
+		if (!container.hasTagCompound()) {
+			return 0;
+		}
 		int currentEnergy = container.getTagCompound().getInteger("energy");
 		int energyReceived = Math.min(EntityRobotBase.MAX_ENERGY - currentEnergy, maxReceive);
 		if (!simulate) {
@@ -142,6 +145,9 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
 
 	@Override
 	public int extractEnergy(ItemStack container, int maxExtract, boolean simulate) {
+		if (!container.hasTagCompound()) {
+			return 0;
+		}
 		int currentEnergy = container.getTagCompound().getInteger("energy");
 		int energyExtracted = Math.min(currentEnergy, maxExtract);
 		if (!simulate) {
@@ -152,11 +158,17 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
 
 	@Override
 	public int getEnergyStored(ItemStack container) {
+		if (!container.hasTagCompound()) {
+			return 0;
+		}
 		return container.getTagCompound().getInteger("energy");
 	}
 
 	@Override
 	public int getMaxEnergyStored(ItemStack container) {
+		if (!container.hasTagCompound()) {
+			return 0;
+		}
 		return EntityRobotBase.MAX_ENERGY;
 	}
 }
