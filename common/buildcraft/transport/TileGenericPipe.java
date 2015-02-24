@@ -601,11 +601,9 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	@Override
 	public int injectItem(ItemStack payload, boolean doAdd, ForgeDirection from, EnumColor color) {
-		if (!pipe.inputOpen(from)) {
-			return 0;
-		}
+		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof PipeTransportItems && isPipeConnected(from)
+				&& pipe.inputOpen(from)) {
 
-		if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof PipeTransportItems && isPipeConnected(from)) {
 			if (doAdd) {
 				Position itemPos = new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5, from.getOpposite());
 				itemPos.moveBackwards(0.4);

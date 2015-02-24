@@ -84,8 +84,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	@Mod.Instance("BuildCraft|Energy")
 	public static BuildCraftEnergy instance;
 
-	public static final int ENERGY_REMOVE_BLOCK = 25;
-	public static final int ENERGY_EXTRACT_ITEM = 2;
 	public static boolean spawnOilSprings = true;
 	public static BiomeGenOilDesert biomeOilDesert;
 	public static BiomeGenOilOcean biomeOilOcean;
@@ -232,8 +230,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		if (fluidRedPlasma.getBlock() == null) {
 			blockRedPlasma = new BlockBuildcraftFluid(fluidRedPlasma, Material.water, MapColor.redColor).setFlammable(
-					false).setParticleColor(0.9F, 0, 0);
-			blockRedPlasma.setBlockName("blockRedPlasma");
+					false).setParticleColor(0.9F, 0, 0);blockRedPlasma.setBlockName("blockRedPlasma");
 			CoreProxy.proxy.registerBlock(blockRedPlasma);
 			fluidRedPlasma.setBlock(blockRedPlasma);
 		} else {
