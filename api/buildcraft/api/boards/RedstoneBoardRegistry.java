@@ -19,6 +19,7 @@ public abstract class RedstoneBoardRegistry {
 
 	public abstract void registerBoardClass(RedstoneBoardNBT<?> redstoneBoardNBT, float probability);
 
+	@Deprecated
 	public abstract void createRandomBoard(NBTTagCompound nbt);
 
 	public abstract RedstoneBoardNBT getRedstoneBoard(NBTTagCompound nbt);

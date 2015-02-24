@@ -8,13 +8,17 @@
  */
 package buildcraft.api.recipes;
 
-public final class BuildcraftRecipeRegistry {
+import java.util.Collection;
+import net.minecraft.item.ItemStack;
 
-	public static IAssemblyRecipeManager assemblyTable;
-	public static IIntegrationRecipeManager integrationTable;
-	public static IRefineryRecipeManager refinery;
-	public static IProgrammingRecipeManager programmingTable;
+public interface IProgrammingRecipeManager {
+	void addRecipe(IProgrammingRecipe recipe);
+	
+	void removeRecipe(String id);
 
-	private BuildcraftRecipeRegistry() {
-	}
+	void removeRecipe(IProgrammingRecipe recipe);
+
+	IProgrammingRecipe getRecipe(String id);
+
+	Collection<IProgrammingRecipe> getRecipes();
 }
