@@ -41,6 +41,7 @@ public final class RefineryRecipeManager implements IRefineryRecipeManager {
 		FlexibleRecipe<FluidStack> recipe = new FlexibleRecipe<FluidStack>(id, result, energy, delay, ingredient);
 		recipes.put(id, recipe);
 		validFluids1.add(ingredient);
+		validFluids2.add(ingredient);
 	}
 
 	@Override

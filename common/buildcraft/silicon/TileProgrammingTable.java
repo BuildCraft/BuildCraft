@@ -72,7 +72,7 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
 
 			if (currentRecipe.canCraft(this.getStackInSlot(0))) {
 				ItemStack remaining = currentRecipe.craft(this.getStackInSlot(0), options.get(optionId));
-				this.setInventorySlotContents(0, null);
+				this.decrStackSize(0, remaining.stackSize);
 
 				if (remaining != null && remaining.stackSize > 0) {
 					remaining.stackSize -= Utils

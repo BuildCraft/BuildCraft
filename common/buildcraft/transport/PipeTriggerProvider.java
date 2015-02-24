@@ -69,18 +69,18 @@ public class PipeTriggerProvider implements ITriggerProvider {
 			case STRUCTURE:
 				break;
 		}
-
-		if (tile instanceof IEnergyHandler && ((IEnergyHandler) tile).getMaxEnergyStored(ForgeDirection.UNKNOWN) > 0
-				&& !(pipe instanceof PipePowerWood)) {
-			result.add((ITriggerInternal) BuildCraftCore.triggerEnergyHigh);
-			result.add((ITriggerInternal) BuildCraftCore.triggerEnergyLow);
-		}
-
 		return result;
 	}
 
 	@Override
 	public LinkedList<ITriggerExternal> getExternalTriggers(ForgeDirection side, TileEntity tile) {
-		return null;
+		LinkedList<ITriggerExternal> result = new LinkedList<ITriggerExternal>();
+
+		if (tile instanceof IEnergyHandler && ((IEnergyHandler) tile).getMaxEnergyStored(side) > 0) {
+			result.add((ITriggerExternal) BuildCraftCore.triggerEnergyHigh);
+			result.add((ITriggerExternal) BuildCraftCore.triggerEnergyLow);
+		}
+
+		return result;
 	}
 }
