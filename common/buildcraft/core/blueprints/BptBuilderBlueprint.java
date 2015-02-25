@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Map.Entry;
 
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -25,9 +26,13 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings.GameType;
 
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -36,6 +41,7 @@ import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
@@ -53,6 +59,7 @@ import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.inventory.InventoryCopy;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtils;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
@@ -159,6 +166,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 							tmpExpanding.add(b);
 							b.buildStage = 3;
 							break;
+
 						}
 					} else {
 						postProcessing.add(b);
@@ -277,27 +285,16 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		if (buildList.size() != 0) {
 			BuildingSlot slot = internalGetNextBlock(world, inv);
 			checkDone();
-
-			if (slot != null) {
-				return slot;
-			} else {
-				return null;
-			}
+			return slot;
 		}
 
 		if (entityList.size() != 0) {
 			BuildingSlot slot = internalGetNextEntity(world, inv);
-			checkDone ();
-
-			if (slot != null) {
-				return slot;
-			} else {
-				return null;
-			}
+			checkDone();
+			return slot;
 		}
 
 		checkDone();
-
 		return null;
 	}
 
@@ -348,7 +345,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 
 			try {
-				if (BlockUtils.isUnbreakableBlock(world, slot.x, slot.y, slot.z)) {
+				if (BlockUtils.isUnbreakableBlock(world, slot.x, slot.y, slot.z)
+						|| isBlockBreakCanceled(world, slot.x, slot.y, slot.z)) {
 					// if the block can't be broken, just forget this iterator
 					iterator.remove();
 
@@ -383,6 +381,12 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					} else if (!slot.schematic.doNotBuild()) {
 						if (builder == null) {
 							return slot;
+						} else if (isBlockPlaceCanceled(world, x, y, z, slot.schematic)) {
+							// Forge does not allow us to place a block in
+							// this position.
+							iterator.remove();
+							builtLocations.add(new BlockIndex(slot.x,
+									slot.y, slot.z));
 						} else if (checkRequirements(builder, slot.schematic)) {
 							// At this stage, regardless of the fact that the
 							// block can actually be built or not, we'll try.
@@ -425,6 +429,32 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 		return null;
 	}
+
+	private boolean isBlockBreakCanceled(World world, int x, int y, int z) {
+		if (!world.isAirBlock(x, y, z)) {
+			BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(x, y, z, world, world.getBlock(x, y, z),
+					world.getBlockMetadata(x, y, z),
+					CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world).get());
+			MinecraftForge.EVENT_BUS.post(breakEvent);
+			return breakEvent.isCanceled();
+		}
+		return false;
+	}
+
+	private boolean isBlockPlaceCanceled(World world, int x, int y, int z, SchematicBlockBase schematic) {
+		Block block = schematic instanceof SchematicBlock ? ((SchematicBlock) schematic).block : Blocks.stone;
+		int meta = schematic instanceof SchematicBlock ? ((SchematicBlock) schematic).meta : 0;
+
+		BlockEvent.PlaceEvent placeEvent = new BlockEvent.PlaceEvent(
+				new BlockSnapshot(world, x, y, z, block, meta),
+				Blocks.air,
+				CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world, x, y, z).get()
+		);
+
+		MinecraftForge.EVENT_BUS.post(placeEvent);
+		return placeEvent.isCanceled();
+	}
+
 
 	private BuildingSlot internalGetNextEntity(World world, TileAbstractBuilder builder) {
 		Iterator<BuildingSlotEntity> it = entityList.iterator();

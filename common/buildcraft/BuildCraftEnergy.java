@@ -359,7 +359,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
-
 		if (BuildCraftCore.modifyWorld) {
 			MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
 			MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializer());
