@@ -44,7 +44,6 @@ public class FluidHandlerCopy implements IFluidHandler {
 
 	@Override
 	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

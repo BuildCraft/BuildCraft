@@ -42,7 +42,6 @@ public class PacketNBT extends PacketCoordinates {
 			data.writeShort(compressed.length);
 			data.writeBytes(compressed);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
 	}
@@ -58,7 +57,6 @@ public class PacketNBT extends PacketCoordinates {
 		try {
 			this.nbttagcompound = CompressedStreamTools.func_152457_a(compressed, NBTSizeTracker.field_152451_a);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

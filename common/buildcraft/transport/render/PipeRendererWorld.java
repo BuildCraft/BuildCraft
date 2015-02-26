@@ -171,7 +171,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 	@Override
 	public void renderInventoryBlock(Block block, int metadata, int modelID, RenderBlocks renderer) {
-		// TODO Auto-generated method stub
+		// Done with a special item renderer
 	}
 
 	@Override

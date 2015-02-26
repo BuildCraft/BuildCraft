@@ -32,8 +32,6 @@ import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketTileUpdate;
 import buildcraft.core.utils.Utils;
 
-// TODO: Move back to IEnergyReceiver when EIO updates
-
 /**
  * For future maintainers: This class intentionally does not implement
  * just every interface out there. For some of them (such as IControllable),

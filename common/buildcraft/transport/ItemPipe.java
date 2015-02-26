@@ -102,11 +102,10 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 					((TileGenericPipe) tile).initializeFromItemMetadata(itemstack.getItemDamage());
 				}
 
-				// TODO: Fix sound
-				//world.playSoundEffect(i + 0.5F, j + 0.5F, k + 0.5F,
-				//		block.stepSound.getPlaceSound(),
-				//		(block.stepSound.getVolume() + 1.0F) / 2.0F,
-				//		block.stepSound.getPitch() * 0.8F);
+				world.playSoundEffect(i + 0.5F, j + 0.5F, k + 0.5F,
+						block.stepSound.func_150496_b(),
+						(block.stepSound.getVolume() + 1.0F) / 2.0F,
+						block.stepSound.getPitch() * 0.8F);
 
 				itemstack.stackSize--;
 			}

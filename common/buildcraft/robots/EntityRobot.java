@@ -948,11 +948,6 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	public void setDead() {
 		if (!worldObj.isRemote && !isDead) {
-			// FIXME: placing a robot gives it full energy, so if it's dropped
-			// for lack of energy, it's a cheap way to refuel it. Find
-			// some other way to cope with that problem - such as a manual
-			// charger?
-
 			if (mainAI != null) {
 				mainAI.abort();
 			}

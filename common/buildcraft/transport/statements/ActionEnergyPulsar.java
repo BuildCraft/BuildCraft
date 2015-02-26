@@ -35,7 +35,6 @@ public class ActionEnergyPulsar extends BCStatement implements IActionInternal {
 	@Override
 	public void actionActivate(IStatementContainer source,
 			IStatementParameter[] parameters) {
-		// TODO Auto-generated method stub
 		
 	}
 }

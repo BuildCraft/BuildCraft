@@ -19,7 +19,6 @@ import buildcraft.core.render.RenderUtils;
 /**
  * For the refinery, a kind of phantom slot for fluid.
  */
-//TODO Get this class working well (Now it's just here to let the refinery compil)
 public class FluidSlot extends AdvancedSlot {
 
 	public Fluid fluid;

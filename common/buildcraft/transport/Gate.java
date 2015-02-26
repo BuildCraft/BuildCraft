@@ -109,7 +109,7 @@ public final class Gate implements IGate, IStatementContainer {
 	}
 
 	public void setAction(int position, IStatement action) {
-		// HUGE HACK! TODO - Remove in 6.3 API rewrite by adding
+		// HUGE HACK! TODO - Remove in an API rewrite by adding
 		// ways for actions to fix their state on removal.
 		if (actions[position] instanceof ActionValve && pipe != null && pipe.transport != null) {
 			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {

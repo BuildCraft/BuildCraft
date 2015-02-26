@@ -133,19 +133,6 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 
 		int energyToRemove = Math.min(battery.getEnergyStored(), requestedEnergy);
 
-		// TODO: Have energyToRemove be precalculated
-		// and used in receiveEnergy and extractEnergy.
-		// That way, we can replicate BC behaviour more accurately,
-		// but we still need to see how well that works with constant power.
-
-		/* if (mjStored > 40) {
-			energyToRemove = mjStored / 40 + 4;
-		} else if (mjStored > 10) {
-			energyToRemove = mjStored / 10;
-		} else {
-			energyToRemove = 1;
-		} */
-
 		energyToRemove /= sources;
 
 		if (battery.getEnergyStored() > 0) {

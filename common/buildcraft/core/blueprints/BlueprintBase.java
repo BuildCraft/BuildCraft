@@ -279,7 +279,6 @@ public abstract class BlueprintBase {
 			try {
 				BlueprintBase.this.setData(CompressedStreamTools.compress(nbt));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
