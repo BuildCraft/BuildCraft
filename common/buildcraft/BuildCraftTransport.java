@@ -257,21 +257,21 @@ public class BuildCraftTransport extends BuildCraftMod {
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
 		try {
-			Property durability = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.durability", DefaultProps.PIPES_DURABILITY);
+			Property durability = BuildCraftCore.mainConfiguration.get("general", "pipes.durability", DefaultProps.PIPES_DURABILITY);
 			durability.comment = "How long a pipe will take to break";
 			pipeDurability = (float) durability.getDouble(DefaultProps.PIPES_DURABILITY);
 
-			Property baseFlowRate = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.fluids.baseFlowRate", DefaultProps.PIPES_FLUIDS_BASE_FLOW_RATE);
+			Property baseFlowRate = BuildCraftCore.mainConfiguration.get("general", "pipes.fluids.baseFlowRate", DefaultProps.PIPES_FLUIDS_BASE_FLOW_RATE);
 			pipeFluidsBaseFlowRate = baseFlowRate.getInt();
 
 			Property printFacadeList = BuildCraftCore.mainConfiguration.get("debug", "facades.printFacadeList", false);
 			debugPrintFacadeList = printFacadeList.getBoolean();
 
-			Property enableAdditionalWaterproofingRecipe = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.fluids.enableAdditionalWaterproofingRecipe", true);
+			Property enableAdditionalWaterproofingRecipe = BuildCraftCore.mainConfiguration.get("general", "pipes.fluids.enableAdditionalWaterproofingRecipe", true);
 			enableAdditionalWaterproofingRecipe.comment = "Enable the slimeball based pipe waterproofing recipe";
 			additionalWaterproofingRecipe = enableAdditionalWaterproofingRecipe.getBoolean();
 
-			gateCostMultiplier = BuildCraftCore.mainConfiguration.getFloat("gate.recipeCostMultiplier", Configuration.CATEGORY_GENERAL, 1.0F, 0.001F, 1000.0F, "The multiplier for gate recipe cost.");
+			gateCostMultiplier = BuildCraftCore.mainConfiguration.getFloat("gate.recipeCostMultiplier", "general", 1.0F, 0.001F, 1000.0F, "The multiplier for gate recipe cost.");
 
 			filteredBufferBlock = new BlockFilteredBuffer();
 			CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));
@@ -280,11 +280,11 @@ public class BuildCraftTransport extends BuildCraftMod {
 			GateExpansions.registerExpansion(GateExpansionTimer.INSTANCE);
 			GateExpansions.registerExpansion(GateExpansionRedstoneFader.INSTANCE);
 
-			Property groupItemsTriggerProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "pipes.groupItemsTrigger", 32);
+			Property groupItemsTriggerProp = BuildCraftCore.mainConfiguration.get("general", "pipes.groupItemsTrigger", 32);
 			groupItemsTriggerProp.comment = "when reaching this amount of objects in a pipes, items will be automatically grouped";
 			groupItemsTrigger = groupItemsTriggerProp.getInt();
 
-			Property facadeBlacklistProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "facade.blacklist", new String[] {
+			Property facadeBlacklistProp = BuildCraftCore.mainConfiguration.get("general", "facade.blacklist", new String[] {
 					Block.blockRegistry.getNameForObject(Blocks.bedrock),
 					Block.blockRegistry.getNameForObject(Blocks.command_block),
 					Block.blockRegistry.getNameForObject(Blocks.end_portal_frame),
@@ -314,7 +314,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			facadeBlacklistProp.comment = "Blocks listed here will not have facades created. The format is modid:blockname.\nFor mods with a | character, the value needs to be surrounded with quotes.";
 			facadeBlacklist = facadeBlacklistProp.getStringList();
 
-            Property facadeAsWhitelist = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "facade.treatBlacklistAsWhitelist", false);
+            Property facadeAsWhitelist = BuildCraftCore.mainConfiguration.get("general", "facade.treatBlacklistAsWhitelist", false);
             facadeTreatBlacklistAsWhitelist = facadeAsWhitelist.getBoolean();
 
 			pipeWaterproof = new ItemBuildCraft();

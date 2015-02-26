@@ -201,7 +201,6 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static boolean debugWorldgen = false;
 	public static boolean modifyWorld = false;
 	public static boolean colorBlindMode = false;
-	public static boolean dropBrokenBlocks = true; // Set to false to prevent the filler from dropping broken blocks.
 	public static boolean hidePowerNumbers = false;
 	public static boolean hideFluidNumbers = false;
 	public static int itemLifespan = 1200;
@@ -314,36 +313,32 @@ public class BuildCraftCore extends BuildCraftMod {
 		try {
 			mainConfiguration.load();
 
-			Property updateCheck = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "update.check", true);
+			Property updateCheck = BuildCraftCore.mainConfiguration.get("general", "update.check", true);
 			updateCheck.comment = "set to true for version check on startup";
 			if (updateCheck.getBoolean(true)) {
 				Version.check();
 			}
 
-			Property dropBlock = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "dropBrokenBlocks", true);
-			dropBlock.comment = "set to false to prevent fillers from dropping blocks.";
-			dropBrokenBlocks = dropBlock.getBoolean(true);
-			
-			Property hideRFNumbers = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "hidePowerNumbers", false);
+			Property hideRFNumbers = BuildCraftCore.mainConfiguration.get("general", "hidePowerNumbers", false);
 			hideRFNumbers.comment = "set to true to not display any RF or RF/t numbers.";
 			hidePowerNumbers = hideRFNumbers.getBoolean(false);
 			
-			Property hideMBNumbers = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "hideFluidNumbers", false);
+			Property hideMBNumbers = BuildCraftCore.mainConfiguration.get("general", "hideFluidNumbers", false);
 			hideMBNumbers.comment = "set to true to not display any mB or mB/t numbers.";
 			hideFluidNumbers = hideMBNumbers.getBoolean(false);
 
-			Property lifespan = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "itemLifespan", itemLifespan);
+			Property lifespan = BuildCraftCore.mainConfiguration.get("general", "itemLifespan", itemLifespan);
 			lifespan.comment = "the lifespan in ticks of items dropped on the ground by pipes and machines, vanilla = 6000, default = 1200";
 			itemLifespan = lifespan.getInt(itemLifespan);
 			if (itemLifespan < 100) {
 				itemLifespan = 100;
 			}
 
-			Property factor = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "network.updateFactor", 10);
+			Property factor = BuildCraftCore.mainConfiguration.get("general", "network.updateFactor", 10);
 			factor.comment = "increasing this number will decrease network update frequency, useful for overloaded servers";
 			updateFactor = factor.getInt(10);
 
-			Property longFactor = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "network.stateRefreshPeriod", 40);
+			Property longFactor = BuildCraftCore.mainConfiguration.get("general", "network.stateRefreshPeriod", 40);
 			longFactor.comment = "delay between full client sync packets, increasing it saves bandwidth, decreasing makes for better client syncronization.";
 			longUpdateFactor = longFactor.getInt(40);
 
@@ -356,7 +351,7 @@ public class BuildCraftCore extends BuildCraftMod {
 			listItem = (new ItemList()).setUnlocalizedName("list");
 			CoreProxy.proxy.registerItem(listItem);
 
-			Property modifyWorldProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "modifyWorld", true);
+			Property modifyWorldProp = BuildCraftCore.mainConfiguration.get("general", "modifyWorld", true);
 			modifyWorldProp.comment = "set to false if BuildCraft should not generate custom blocks (e.g. oil)";
 			modifyWorld = modifyWorldProp.getBoolean(true);
 
@@ -366,7 +361,7 @@ public class BuildCraftCore extends BuildCraftMod {
 				CoreProxy.proxy.registerBlock(springBlock, ItemSpring.class);
 			}
 
-			Property consumeWater = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "consumeWater", consumeWaterSources);
+			Property consumeWater = BuildCraftCore.mainConfiguration.get("general", "consumeWater", consumeWaterSources);
 			consumeWaterSources = consumeWater.getBoolean(consumeWaterSources);
 			consumeWater.comment = "set to true if the Pump should consume water";
 
@@ -481,7 +476,7 @@ public class BuildCraftCore extends BuildCraftMod {
 			MinecraftForge.EVENT_BUS.register(new SpringPopulate());
 		}
 
-		for (String l : BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL,
+		for (String l : BuildCraftCore.mainConfiguration.get("general",
 				"recipesBlacklist", new String[0]).getStringList()) {
 			recipesBlacklist.add(JavaTools.stripSurroundingQuotes(l.trim()));
 		}

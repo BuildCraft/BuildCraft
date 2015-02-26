@@ -162,7 +162,8 @@ public class BptBuilderTemplate extends BptBuilderBase {
 				return null;
 			}
 
-			if (BlockUtils.isUnbreakableBlock(world, slot.x, slot.y, slot.z)) {
+			if (BlockUtils.isUnbreakableBlock(world, slot.x, slot.y, slot.z)
+					|| isBlockBreakCanceled(world, slot.x, slot.y, slot.z)) {
 				iterator.remove();
 				if (slot.mode == Mode.ClearIfInvalid) {
 					clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
@@ -186,7 +187,8 @@ public class BptBuilderTemplate extends BptBuilderBase {
 					}
 				}
 			} else if (slot.mode == Mode.Build) {
-				if (!BuildCraftAPI.isSoftBlock(world, slot.x, slot.y, slot.z)) {
+				if (!BuildCraftAPI.isSoftBlock(world, slot.x, slot.y, slot.z)
+						|| isBlockPlaceCanceled(world, x, y, z, slot.schematic)) {
 					iterator.remove();
 					builtLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
 				} else {

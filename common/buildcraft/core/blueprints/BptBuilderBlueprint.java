@@ -205,9 +205,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		initialize();
 
 		for (BuildingSlotBlock b : buildList) {
-			if (b.mode == Mode.ClearIfInvalid) {
-				context.world.setBlockToAir(b.x, b.y, b.z);
-			} else if (!b.schematic.doNotBuild()) {
+			if (!b.schematic.doNotBuild()) {
 				b.stackConsumed = new LinkedList<ItemStack>();
 
 				try {
@@ -429,32 +427,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 		return null;
 	}
-
-	private boolean isBlockBreakCanceled(World world, int x, int y, int z) {
-		if (!world.isAirBlock(x, y, z)) {
-			BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(x, y, z, world, world.getBlock(x, y, z),
-					world.getBlockMetadata(x, y, z),
-					CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world).get());
-			MinecraftForge.EVENT_BUS.post(breakEvent);
-			return breakEvent.isCanceled();
-		}
-		return false;
-	}
-
-	private boolean isBlockPlaceCanceled(World world, int x, int y, int z, SchematicBlockBase schematic) {
-		Block block = schematic instanceof SchematicBlock ? ((SchematicBlock) schematic).block : Blocks.stone;
-		int meta = schematic instanceof SchematicBlock ? ((SchematicBlock) schematic).meta : 0;
-
-		BlockEvent.PlaceEvent placeEvent = new BlockEvent.PlaceEvent(
-				new BlockSnapshot(world, x, y, z, block, meta),
-				Blocks.air,
-				CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world, x, y, z).get()
-		);
-
-		MinecraftForge.EVENT_BUS.post(placeEvent);
-		return placeEvent.isCanceled();
-	}
-
 
 	private BuildingSlot internalGetNextEntity(World world, TileAbstractBuilder builder) {
 		Iterator<BuildingSlotEntity> it = entityList.iterator();

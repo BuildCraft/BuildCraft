@@ -167,6 +167,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public static BlueprintDatabase clientDB;
 
 	public static boolean debugPrintSchematicList = false;
+	public static boolean dropBrokenBlocks = false;
 	
 	@Mod.EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
@@ -197,6 +198,14 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		for (int i = 0; i < blueprintLibraryInput.length; ++i) {
 			blueprintLibraryInput[i] = JavaTools.stripSurroundingQuotes(replacePathVariables(blueprintLibraryInput[i]));
 		}
+
+		//Property dropBlock = BuildCraftCore.mainConfiguration.get("general", "builder.dropBrokenBlocks", false, "set to true to force the builder to drop broken blocks");
+		//dropBrokenBlocks = dropBlock.getBoolean(false);
+
+		Property markerRange = BuildCraftCore.mainConfiguration.get("general", "marker.range", 64, "Set the default marker range. Setting it too high might cause lag and general weirdness, so watch out!");
+		markerRange.setMinValue(8);
+		markerRange.setMaxValue(64);
+		DefaultProps.MARKER_RANGE = markerRange.getInt();
 		
 		Property printSchematicList = BuildCraftCore.mainConfiguration.get("debug", "blueprints.printSchematicList", false);
 		debugPrintSchematicList = printSchematicList.getBoolean();

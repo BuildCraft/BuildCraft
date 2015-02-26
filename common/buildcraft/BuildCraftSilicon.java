@@ -138,10 +138,10 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
-		chipsetCostMultiplier = BuildCraftCore.mainConfiguration.getFloat("chipset.costMultiplier", Configuration.CATEGORY_GENERAL, 1.0F, 0.001F, 1000.0F, "The multiplier for chipset recipe cost.");
+		chipsetCostMultiplier = BuildCraftCore.mainConfiguration.getFloat("chipset.costMultiplier", "general", 1.0F, 0.001F, 1000.0F, "The multiplier for chipset recipe cost.");
 
 		blacklistedRobots = new ArrayList<String>();
-		blacklistedRobots.addAll(Arrays.asList(BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "boards.blacklist", new String[]{}).getStringList()));
+		blacklistedRobots.addAll(Arrays.asList(BuildCraftCore.mainConfiguration.get("general", "boards.blacklist", new String[]{}).getStringList()));
 
 				BuildCraftCore.mainConfiguration.save();
 

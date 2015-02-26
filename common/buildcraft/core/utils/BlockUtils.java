@@ -86,7 +86,7 @@ public final class BlockUtils {
 			return false;
 		}
 
-		if (!world.isAirBlock(x, y, z) && BuildCraftCore.dropBrokenBlocks && !world.isRemote && world.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
+		if (!world.isAirBlock(x, y, z) && !world.isRemote && world.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
 			List<ItemStack> items = getItemStackFromBlock(world, x, y, z);
 
 			for (ItemStack item : items) {

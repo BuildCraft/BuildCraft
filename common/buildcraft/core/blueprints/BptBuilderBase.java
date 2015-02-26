@@ -14,19 +14,27 @@ import java.util.LinkedList;
 
 import org.apache.logging.log4j.Level;
 
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.event.world.BlockEvent;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
+import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
@@ -37,6 +45,7 @@ import buildcraft.core.builders.BuildingSlot;
 import buildcraft.core.builders.BuildingSlotBlock;
 import buildcraft.core.builders.IBuildingItemsProvider;
 import buildcraft.core.builders.TileAbstractBuilder;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtils;
 
 public abstract class BptBuilderBase implements IAreaProvider {
@@ -271,5 +280,30 @@ public abstract class BptBuilderBase implements IAreaProvider {
 				BCLog.logger.log(Level.WARN, "can't load building item", e);
 			}
 		}
+	}
+
+	protected boolean isBlockBreakCanceled(World world, int x, int y, int z) {
+		if (!world.isAirBlock(x, y, z)) {
+			BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(x, y, z, world, world.getBlock(x, y, z),
+					world.getBlockMetadata(x, y, z),
+					CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world).get());
+			MinecraftForge.EVENT_BUS.post(breakEvent);
+			return breakEvent.isCanceled();
+		}
+		return false;
+	}
+
+	protected boolean isBlockPlaceCanceled(World world, int x, int y, int z, SchematicBlockBase schematic) {
+		Block block = schematic instanceof SchematicBlock ? ((SchematicBlock) schematic).block : Blocks.stone;
+		int meta = schematic instanceof SchematicBlock ? ((SchematicBlock) schematic).meta : 0;
+
+		BlockEvent.PlaceEvent placeEvent = new BlockEvent.PlaceEvent(
+				new BlockSnapshot(world, x, y, z, block, meta),
+				Blocks.air,
+				CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world, x, y, z).get()
+		);
+
+		MinecraftForge.EVENT_BUS.post(placeEvent);
+		return placeEvent.isCanceled();
 	}
 }
