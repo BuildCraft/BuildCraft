@@ -3,7 +3,6 @@ package buildcraft.silicon.boards;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.boards.RedstoneBoardNBT;
@@ -12,9 +11,6 @@ import buildcraft.api.recipes.IProgrammingRecipe;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.silicon.ItemRedstoneBoard;
 
-/**
- * Created by asie on 2/24/15.
- */
 public class BoardProgrammingRecipe implements IProgrammingRecipe {
 	private class BoardSorter implements Comparator<ItemStack> {
 		private BoardProgrammingRecipe recipe;
@@ -55,7 +51,7 @@ public class BoardProgrammingRecipe implements IProgrammingRecipe {
 
 	@Override
 	public boolean canCraft(ItemStack input) {
-		return (input.getItem() instanceof ItemRedstoneBoard);
+		return input.getItem() instanceof ItemRedstoneBoard;
 	}
 
 	@Override

@@ -230,7 +230,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		if (fluidRedPlasma.getBlock() == null) {
 			blockRedPlasma = new BlockBuildcraftFluid(fluidRedPlasma, Material.water, MapColor.redColor).setFlammable(
-					false).setParticleColor(0.9F, 0, 0);blockRedPlasma.setBlockName("blockRedPlasma");
+					false).setParticleColor(0.9F, 0, 0);
+			blockRedPlasma.setBlockName("blockRedPlasma");
 			CoreProxy.proxy.registerBlock(blockRedPlasma);
 			fluidRedPlasma.setBlock(blockRedPlasma);
 		} else {

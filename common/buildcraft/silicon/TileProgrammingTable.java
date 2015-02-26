@@ -226,7 +226,7 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-		return (slot == 0 || stack == null);
+		return slot == 0 || stack == null;
 	}
 
 	@Override
