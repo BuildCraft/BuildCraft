@@ -30,6 +30,7 @@ import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftFactory;
@@ -835,7 +836,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 			}
 		}
 
-		if (placedBy != null) {
+		if (placedBy != null && !(placedBy instanceof FakePlayer)) {
 			placedBy.addChatMessage(new ChatComponentText(
 					String.format(
 							"[BUILDCRAFT] The quarry at %d %d %d will keep %d chunks loaded",
