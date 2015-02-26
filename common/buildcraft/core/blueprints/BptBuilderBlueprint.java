@@ -18,7 +18,6 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Map.Entry;
 
-import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
@@ -26,13 +25,9 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.WorldSettings.GameType;
 
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -41,7 +36,6 @@ import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicBlock;
-import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
@@ -59,7 +53,6 @@ import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.inventory.InventoryCopy;
 import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BlockUtils;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
