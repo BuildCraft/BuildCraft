@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * The BuildCraft API is distributed under the terms of the MIT License.
@@ -148,7 +148,7 @@ public class AIRobot {
 	}
 
 	public final void writeToNBT(NBTTagCompound nbt) {
-		nbt.setString("class", getClass().getCanonicalName());
+		nbt.setString("aiName", RobotManager.getAIRobotName(getClass()));
 
 		NBTTagCompound data = new NBTTagCompound();
 		writeSelfToNBT(data);
@@ -169,7 +169,14 @@ public class AIRobot {
 			NBTTagCompound sub = nbt.getCompoundTag("delegateAI");
 
 			try {
-				delegateAI = (AIRobot) Class.forName(sub.getString("class")).getConstructor(EntityRobotBase.class)
+				Class<?> aiRobotClass = null;
+				if (sub.hasKey("class")) {
+					// Migration support for 6.4.x
+					aiRobotClass = RobotManager.getAIRobotByLegacyClassName(sub.getString("class"));
+				} else {
+					aiRobotClass = RobotManager.getAIRobotByName(sub.getString("aiName"));
+				}
+				delegateAI = (AIRobot) aiRobotClass.getConstructor(EntityRobotBase.class)
 						.newInstance(robot);
 
 				if (delegateAI.canLoadFromNBT()) {
@@ -186,7 +193,14 @@ public class AIRobot {
 		AIRobot ai = null;
 
 		try {
-			ai = (AIRobot) Class.forName(nbt.getString("class")).getConstructor(EntityRobotBase.class)
+			Class<?> aiRobotClass = null;
+			if (nbt.hasKey("class")) {
+				// Migration support for 6.4.x
+				aiRobotClass = RobotManager.getAIRobotByLegacyClassName(nbt.getString("class"));
+			} else {
+				aiRobotClass = RobotManager.getAIRobotByName(nbt.getString("aiName"));
+			}
+			ai = (AIRobot) aiRobotClass.getConstructor(EntityRobotBase.class)
 					.newInstance(robot);
 			ai.loadFromNBT(nbt);
 		} catch (Throwable e) {

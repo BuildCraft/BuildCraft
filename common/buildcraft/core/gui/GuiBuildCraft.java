@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -10,6 +10,7 @@ package buildcraft.core.gui;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import org.lwjgl.opengl.GL11;
 
@@ -453,20 +454,35 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		protected int currentHeight = minHeight;
 		private boolean open;
 
+		private long lastUpdateTime = -1;
+
 		public void update() {
+			if (lastUpdateTime < 0) {
+				lastUpdateTime = (new Date()).getTime();
+			}
+
+			long updateTime = (new Date()).getTime();
+			int updateVal = (int) Math.round((updateTime - lastUpdateTime) / 8.0);
+
 			// Width
 			if (open && currentWidth < maxWidth) {
-				currentWidth += 4;
+				currentWidth += updateVal;
+				currentWidth = Math.min(maxWidth, currentWidth);
 			} else if (!open && currentWidth > minWidth) {
-				currentWidth -= 4;
+				currentWidth -= updateVal;
+				currentWidth = Math.max(minWidth, currentWidth);
 			}
 
 			// Height
 			if (open && currentHeight < maxHeight) {
-				currentHeight += 4;
+				currentHeight += updateVal;
+				currentHeight = Math.min(maxWidth, currentHeight);
 			} else if (!open && currentHeight > minHeight) {
-				currentHeight -= 4;
+				currentHeight -= updateVal;
+				currentHeight = Math.max(minHeight, currentHeight);
 			}
+
+			lastUpdateTime = updateTime;
 		}
 
 		public int getHeight() {

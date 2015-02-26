@@ -17,6 +17,7 @@ buildcraft.boardRobotBuilder=Builder
 buildcraft.boardRobotCrafter=Crafter
 buildcraft.boardRobotDelivery=Delivery
 buildcraft.boardRobotPump=Pump
+buildcraft.boardRobotStripes=Stripes
 
 chat.gateCopier.clear=Gate information cleared.
 chat.gateCopier.gateCopied=Copied gate information to copier.
@@ -101,6 +102,7 @@ gate.action.robot.work_in_area=Work in Area
 gate.action.robot.wakeup=Wake Up
 gate.action.station.forbid_robot=Robot Forbidden
 gate.action.robot.filter=Filter
+gate.action.robot.filter_tool=Filter Tool
 
 gate.expansion.fader=Redstone Fader
 gate.expansion.pulsar=Autarchic Pulsar
@@ -292,6 +294,7 @@ tile.markerBlock.name=Land Mark
 tile.miningWellBlock.name=Mining Well
 tile.pathMarkerBlock.name=Path Mark
 tile.plainPipeBlock.name=Mining Pipe
+tile.programmingTableBlock.name=Programming Table
 tile.pumpBlock.name=Pump
 tile.refineryBlock.name=Refinery
 tile.requester.name=Requester

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -27,9 +27,9 @@ import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
-import buildcraft.core.robots.ResourceIdRequest;
-import buildcraft.core.robots.RobotRegistry;
 import buildcraft.core.utils.Utils;
+import buildcraft.robots.ResourceIdRequest;
+import buildcraft.robots.RobotRegistry;
 
 public class TileRequester extends TileBuildCraft implements IInventory, IRequestProvider, ICommandReceiver {
 	public static final int NB_ITEMS = 20;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -17,6 +17,7 @@ public final class DefaultProps {
 
 	public static final String NET_CHANNEL_NAME = "BC";
 	public static int NETWORK_UPDATE_RANGE = 64;
+	public static int MARKER_RANGE = 64;
 	public static int PIPE_CONTENTS_RENDER_DIST = 24;
 
 	public static String TEXTURE_PATH_GUI = "textures/gui";

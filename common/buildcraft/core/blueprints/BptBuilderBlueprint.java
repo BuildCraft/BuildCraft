@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -159,6 +159,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 							tmpExpanding.add(b);
 							b.buildStage = 3;
 							break;
+
 						}
 					} else {
 						postProcessing.add(b);
@@ -197,9 +198,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		initialize();
 
 		for (BuildingSlotBlock b : buildList) {
-			if (b.mode == Mode.ClearIfInvalid) {
-				context.world.setBlockToAir(b.x, b.y, b.z);
-			} else if (!b.schematic.doNotBuild()) {
+			if (!b.schematic.doNotBuild()) {
 				b.stackConsumed = new LinkedList<ItemStack>();
 
 				try {
@@ -277,27 +276,16 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		if (buildList.size() != 0) {
 			BuildingSlot slot = internalGetNextBlock(world, inv);
 			checkDone();
-
-			if (slot != null) {
-				return slot;
-			} else {
-				return null;
-			}
+			return slot;
 		}
 
 		if (entityList.size() != 0) {
 			BuildingSlot slot = internalGetNextEntity(world, inv);
-			checkDone ();
-
-			if (slot != null) {
-				return slot;
-			} else {
-				return null;
-			}
+			checkDone();
+			return slot;
 		}
 
 		checkDone();
-
 		return null;
 	}
 
@@ -348,7 +336,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 
 			try {
-				if (BlockUtils.isUnbreakableBlock(world, slot.x, slot.y, slot.z)) {
+				if (BlockUtils.isUnbreakableBlock(world, slot.x, slot.y, slot.z)
+						|| isBlockBreakCanceled(world, slot.x, slot.y, slot.z)) {
 					// if the block can't be broken, just forget this iterator
 					iterator.remove();
 
@@ -383,6 +372,12 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					} else if (!slot.schematic.doNotBuild()) {
 						if (builder == null) {
 							return slot;
+						} else if (isBlockPlaceCanceled(world, x, y, z, slot.schematic)) {
+							// Forge does not allow us to place a block in
+							// this position.
+							iterator.remove();
+							builtLocations.add(new BlockIndex(slot.x,
+									slot.y, slot.z));
 						} else if (checkRequirements(builder, slot.schematic)) {
 							// At this stage, regardless of the fact that the
 							// block can actually be built or not, we'll try.
@@ -500,9 +495,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				FluidStack fluidStack = fluid != null ? FluidContainerRegistry.getFluidForFilledItem(invStk) : null;
 				boolean compatibleContainer = fluidStack != null && fluidStack.getFluid() == fluid && fluidStack.amount >= FluidContainerRegistry.BUCKET_VOLUME;
 
-				if (invStk.hasTagCompound() == reqStk.hasTagCompound() &&
-						(!invStk.hasTagCompound() || invStk.getTagCompound().equals(reqStk.getTagCompound())) &&
-						(StackHelper.isCraftingEquivalent(reqStk, invStk, true) || compatibleContainer)) {
+				if (StackHelper.isMatchingItem(reqStk, invStk, true, true) || compatibleContainer) {
 					try {
 						stacksUsed.add(slot.useItem(context, reqStk, slotInv));
 					} catch (Throwable t) {

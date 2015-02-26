@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * The BuildCraft API is distributed under the terms of the MIT License.
@@ -26,7 +26,6 @@ import net.minecraftforge.common.util.Constants;
 import buildcraft.api.core.Position;
 
 public class SchematicEntity extends Schematic {
-
 	public Class<? extends Entity> entity;
 
 	/**
@@ -43,6 +42,7 @@ public class SchematicEntity extends Schematic {
 	 * Schematic.
 	 */
 	public ItemStack[] storedRequirements = new ItemStack[0];
+	public BuildingPermission defaultPermission = BuildingPermission.ALL;
 
 	@Override
 	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
@@ -154,13 +154,11 @@ public class SchematicEntity extends Schematic {
 
 					rqs.add(ItemStack.loadItemStackFromNBT(sub));
 				} else {
-					// TODO: requirement can't be retreived, this blueprint is
-					// only useable in creative
+					defaultPermission = BuildingPermission.CREATIVE_ONLY;
 				}
 			} catch (Throwable t) {
 				t.printStackTrace();
-				// TODO: requirement can't be retreived, this blueprint is
-				// only useable in creative
+				defaultPermission = BuildingPermission.CREATIVE_ONLY;
 			}
 		}
 
@@ -214,5 +212,10 @@ public class SchematicEntity extends Schematic {
 	@Override
 	public int buildTime() {
 		return 5;
+	}
+
+	@Override
+	public BuildingPermission getBuildingPermission() {
+		return defaultPermission;
 	}
 }

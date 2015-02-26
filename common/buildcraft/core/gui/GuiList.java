@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -174,14 +174,18 @@ public class GuiList extends GuiAdvancedInterface {
 
 	private boolean isCarryingList() {
 		ItemStack stack = mc.thePlayer.inventory.getItemStack();
-		return stack != null && stack.getItem() != null && stack.getItem() instanceof ItemList;
+		return stack != null && stack.getItem() instanceof ItemList;
+	}
+
+	private boolean hasListEquipped() {
+		return mc.thePlayer.getCurrentEquippedItem() != null && mc.thePlayer.getCurrentEquippedItem().getItem() instanceof ItemList;
 	}
 
 	@Override
 	protected void mouseClicked(int x, int y, int b) {
 		super.mouseClicked(x, y, b);
 
-		if (isCarryingList()) {
+		if (isCarryingList() || !hasListEquipped()) {
 			return;
 		}
 

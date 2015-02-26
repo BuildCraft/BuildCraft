@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -55,7 +55,6 @@ import buildcraft.api.events.PipePlacedEvent;
 import buildcraft.api.events.RobotPlacementEvent;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
@@ -66,15 +65,15 @@ import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemMapLocation;
-import buildcraft.core.ItemRobot;
 import buildcraft.core.TileBuffer;
-import buildcraft.core.robots.DockingStation;
-import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.core.utils.Utils;
+import buildcraft.robots.DockingStation;
+import buildcraft.robots.EntityRobot;
+import buildcraft.robots.ItemRobot;
+import buildcraft.robots.RobotStationPluggable;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GatePluggable;
-import buildcraft.transport.pluggable.RobotStationPluggable;
 import buildcraft.transport.render.PipeRendererWorld;
 
 public class BlockGenericPipe extends BlockBuildCraft {
@@ -653,7 +652,8 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 					if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable
 							&& pipe.container.getPipePluggable(rayTraceResult.sideHit) instanceof RobotStationPluggable) {
-						DockingStation station = pipe.container.getStation(rayTraceResult.sideHit);
+						RobotStationPluggable pluggable = (RobotStationPluggable) pipe.container.getPipePluggable(rayTraceResult.sideHit);
+						DockingStation station = pluggable.getStation();
 
 						if (!station.isTaken()) {
 							if (ItemRobot.getRobotNBT(currentItem) == null) {
@@ -669,7 +669,6 @@ public class BlockGenericPipe extends BlockBuildCraft {
 							
 							if (robot != null && robot.getRegistry() != null) {
 								robot.setUniqueRobotId(robot.getRegistry().getNextRobotId());
-								robot.getBattery().setEnergy(EntityRobotBase.MAX_ENERGY);
 	
 								float px = x + 0.5F + rayTraceResult.sideHit.offsetX * 0.5F;
 								float py = y + 0.5F + rayTraceResult.sideHit.offsetY * 0.5F;
@@ -1114,14 +1113,16 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	public static void updateNeighbourSignalState(Pipe<?> pipe) {
-		TileBuffer[] neighbours = pipe.container.getTileCache();
+		if (pipe != null && pipe.container != null) {
+			TileBuffer[] neighbours = pipe.container.getTileCache();
 
-		if (neighbours != null) {
-			for (int i = 0; i < 6; i++) {
-				if (neighbours[i] != null && neighbours[i].getTile() instanceof IPipeTile &&
-						!neighbours[i].getTile().isInvalid() &&
-						((IPipeTile) neighbours[i].getTile()).getPipe() instanceof Pipe<?>) {
-					((Pipe<?>) ((IPipeTile) neighbours[i].getTile()).getPipe()).updateSignalState();
+			if (neighbours != null) {
+				for (int i = 0; i < 6; i++) {
+					if (neighbours[i] != null && neighbours[i].getTile() instanceof IPipeTile &&
+							!neighbours[i].getTile().isInvalid() &&
+							((IPipeTile) neighbours[i].getTile()).getPipe() instanceof Pipe<?>) {
+						((Pipe<?>) ((IPipeTile) neighbours[i].getTile()).getPipe()).updateSignalState();
+					}
 				}
 			}
 		}

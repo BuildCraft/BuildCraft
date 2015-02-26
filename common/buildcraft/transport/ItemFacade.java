@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -426,6 +426,9 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 		if (block == null) {
 			return;
 		}
+		if (!block.getMaterial().blocksMovement()) {
+			return;
+		}
 
 		String recipeId = "buildcraft:facade{" + Block.blockRegistry.getNameForObject(block) + "#"
 				+ itemStack.getItemDamage() + "}";
@@ -564,7 +567,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 	public int getSpriteNumber() {
 		return 0;
 	}
-	
+
 	@Override
 	public ItemStack getFacadeForBlock(Block block, int metadata) {
 		return getFacade(FacadeState.create(block, metadata));

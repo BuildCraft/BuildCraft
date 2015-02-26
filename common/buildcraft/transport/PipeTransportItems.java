@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -230,6 +230,10 @@ public class PipeTransportItems extends PipeTransport {
 
 		if (entity instanceof IPipeTile) {
 			Pipe<?> pipe = (Pipe<?>) ((IPipeTile) entity).getPipe();
+			if (pipe == null || pipe.transport == null) {
+				return false;
+			}
+
 			if (pipe == null || pipe.transport == null) {
 				return false;
 			}

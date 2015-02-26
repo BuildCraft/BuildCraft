@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -109,7 +109,7 @@ public final class Gate implements IGate, IStatementContainer {
 	}
 
 	public void setAction(int position, IStatement action) {
-		// HUGE HACK! TODO - Remove in 6.3 API rewrite by adding
+		// HUGE HACK! TODO - Remove in an API rewrite by adding
 		// ways for actions to fix their state on removal.
 		if (actions[position] instanceof ActionValve && pipe != null && pipe.transport != null) {
 			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
@@ -216,6 +216,19 @@ public final class Gate implements IGate, IStatementContainer {
 	}
 
 	public void readStatementsFromNBT(NBTTagCompound data) {
+		// Clear
+		for (int i = 0; i < material.numSlots; ++i) {
+			triggers[i] = null;
+			actions[i] = null;
+			for (int j = 0; j < material.numTriggerParameters; j++) {
+				triggerParameters[i][j] = null;
+			}
+			for (int j = 0; j < material.numActionParameters; j++) {
+				actionParameters[i][j] = null;
+			}
+		}
+
+		// Read
 		for (int i = 0; i < material.numSlots; ++i) {
 			if (data.hasKey("trigger[" + i + "]")) {
 				triggers[i] = StatementManager.statements.get(data.getString("trigger[" + i + "]"));

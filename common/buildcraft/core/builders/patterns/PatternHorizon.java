@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -11,6 +11,7 @@ package buildcraft.core.builders.patterns;
 import net.minecraft.world.World;
 
 import buildcraft.api.blueprints.SchematicMask;
+import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.Template;
@@ -22,7 +23,7 @@ public class PatternHorizon extends FillerPattern {
 	}
 
 	@Override
-	public Template getTemplate (Box box, World world) {
+	public Template getTemplate (Box box, World world, IStatementParameter[] parameters) {
 		int xMin = (int) box.pMin().x;
 		int yMin = box.pMin().y > 0 ? (int) box.pMin().y - 1 : 0;
 		int zMin = (int) box.pMin().z;
@@ -45,9 +46,9 @@ public class PatternHorizon extends FillerPattern {
 	}
 
 	@Override
-	public BptBuilderTemplate getTemplateBuilder (Box box, World world) {
+	public BptBuilderTemplate getTemplateBuilder (Box box, World world, IStatementParameter[] parameters) {
 		int yMin = box.pMin().y > 0 ? (int) box.pMin().y - 1 : 0;
 
-		return new BptBuilderTemplate(getTemplate(box, world), world, box.xMin, yMin, box.zMin);
+		return new BptBuilderTemplate(getTemplate(box, world, parameters), world, box.xMin, yMin, box.zMin);
 	}
 }

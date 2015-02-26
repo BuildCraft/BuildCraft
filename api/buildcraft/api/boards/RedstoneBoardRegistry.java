@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * The BuildCraft API is distributed under the terms of the MIT License.
@@ -19,6 +19,7 @@ public abstract class RedstoneBoardRegistry {
 
 	public abstract void registerBoardClass(RedstoneBoardNBT<?> redstoneBoardNBT, float probability);
 
+	@Deprecated
 	public abstract void createRandomBoard(NBTTagCompound nbt);
 
 	public abstract RedstoneBoardNBT getRedstoneBoard(NBTTagCompound nbt);

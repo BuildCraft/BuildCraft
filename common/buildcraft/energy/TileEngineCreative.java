@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -16,6 +16,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ResourceLocation;
 
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
@@ -55,14 +56,16 @@ public class TileEngineCreative extends TileEngine {
 				powerMode = powerMode.getNext();
 				energy = 0;
 
-				if (BuildCraftCore.hidePowerNumbers) {
-					player.addChatMessage(new ChatComponentText(String.format(
-							StringUtils.localize("chat.pipe.power.iron.mode.numberless"),
-							StringUtils.localize("chat.pipe.power.iron.level." + powerMode.maxPower))));
-				} else {
-					player.addChatMessage(new ChatComponentText(String.format(
-							StringUtils.localize("chat.pipe.power.iron.mode"),
-							powerMode.maxPower)));
+				if (!(player instanceof FakePlayer)) {
+					if (BuildCraftCore.hidePowerNumbers) {
+						player.addChatMessage(new ChatComponentText(String.format(
+								StringUtils.localize("chat.pipe.power.iron.mode.numberless"),
+								StringUtils.localize("chat.pipe.power.iron.level." + powerMode.maxPower))));
+					} else {
+						player.addChatMessage(new ChatComponentText(String.format(
+								StringUtils.localize("chat.pipe.power.iron.mode"),
+								powerMode.maxPower)));
+					}
 				}
 
 				sendNetworkUpdate();

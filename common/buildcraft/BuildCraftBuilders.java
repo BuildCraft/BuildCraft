@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -135,6 +135,7 @@ import buildcraft.core.builders.patterns.PatternFill;
 import buildcraft.core.builders.patterns.PatternFlatten;
 import buildcraft.core.builders.patterns.PatternFrame;
 import buildcraft.core.builders.patterns.PatternHorizon;
+import buildcraft.core.builders.patterns.PatternParameterYDir;
 import buildcraft.core.builders.patterns.PatternPyramid;
 import buildcraft.core.builders.patterns.PatternStairs;
 import buildcraft.core.proxy.CoreProxy;
@@ -166,6 +167,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public static BlueprintDatabase clientDB;
 
 	public static boolean debugPrintSchematicList = false;
+	public static boolean dropBrokenBlocks = false;
 	
 	@Mod.EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
@@ -196,6 +198,14 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		for (int i = 0; i < blueprintLibraryInput.length; ++i) {
 			blueprintLibraryInput[i] = JavaTools.stripSurroundingQuotes(replacePathVariables(blueprintLibraryInput[i]));
 		}
+
+		//Property dropBlock = BuildCraftCore.mainConfiguration.get("general", "builder.dropBrokenBlocks", false, "set to true to force the builder to drop broken blocks");
+		//dropBrokenBlocks = dropBlock.getBoolean(false);
+
+		Property markerRange = BuildCraftCore.mainConfiguration.get("general", "marker.range", 64, "Set the default marker range. Setting it too high might cause lag and general weirdness, so watch out!");
+		markerRange.setMinValue(8);
+		markerRange.setMaxValue(64);
+		DefaultProps.MARKER_RANGE = markerRange.getInt();
 		
 		Property printSchematicList = BuildCraftCore.mainConfiguration.get("debug", "blueprints.printSchematicList", false);
 		debugPrintSchematicList = printSchematicList.getBoolean();
@@ -430,9 +440,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(architectBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 		schemes.registerSchematicBlock(builderBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 
-		schemes.registerSchematicBlock(markerBlock, SchematicWallSide.class);
-		schemes.registerSchematicBlock(pathMarkerBlock, SchematicWallSide.class);
-		schemes.registerSchematicBlock(constructionMarkerBlock, SchematicWallSide.class);
+		// Landmarks are often caught incorrectly, making building them counter-productive.
+		schemes.registerSchematicBlock(markerBlock, SchematicIgnore.class);
+		schemes.registerSchematicBlock(pathMarkerBlock, SchematicIgnore.class);
+		schemes.registerSchematicBlock(constructionMarkerBlock, SchematicIgnore.class);
 
 		// Factories required to save entities in world
 
@@ -527,6 +538,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		}
 
 		StatementManager.registerActionProvider(new BuildersActionProvider());
+
+		StatementManager.registerParameterClass(PatternParameterYDir.class);
 	}
 
 	public static void loadRecipes() {
@@ -577,7 +590,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public void loadTextures(TextureStitchEvent.Pre evt) {
 		if (evt.map.getTextureType() == 0) {
 			for (FillerPattern pattern : FillerPattern.patterns.values()) {
-				pattern.registerIcon(evt.map);
+				pattern.registerIcons(evt.map);
 			}
 		}
 	}

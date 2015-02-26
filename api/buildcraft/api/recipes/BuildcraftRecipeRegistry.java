@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * The BuildCraft API is distributed under the terms of the MIT License.
@@ -13,6 +13,7 @@ public final class BuildcraftRecipeRegistry {
 	public static IAssemblyRecipeManager assemblyTable;
 	public static IIntegrationRecipeManager integrationTable;
 	public static IRefineryRecipeManager refinery;
+	public static IProgrammingRecipeManager programmingTable;
 
 	private BuildcraftRecipeRegistry() {
 	}

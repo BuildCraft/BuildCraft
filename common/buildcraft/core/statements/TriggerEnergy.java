@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -21,14 +21,12 @@ import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
 
-import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerExternal;
-import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.core.utils.StringUtils;
 
-public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITriggerExternal {
+public class TriggerEnergy extends BCStatement implements ITriggerExternal {
 
 	private boolean high;
 
@@ -66,18 +64,6 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal, ITri
 				return (energyStored / energyMaxStored) < 0.05;
 			}
 		}
-		return false;
-	}
-
-	@Override
-	public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
-		if (container instanceof IGate) {
-			IGate gate = (IGate) container;
-			if (gate.getPipe() instanceof IEnergyHandler) {
-				return isTriggeredEnergyHandler((IEnergyHandler) gate.getPipe(), ForgeDirection.UNKNOWN);
-			}
-		}
-
 		return false;
 	}
 

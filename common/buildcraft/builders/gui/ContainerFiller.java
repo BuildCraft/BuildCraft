@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -29,7 +29,7 @@ public class ContainerFiller extends BuildCraftContainer {
 	private class PatternWidget extends Widget {
 
 		public PatternWidget() {
-			super(80, 30, 0, 0, 16, 16);
+			super(38, 30, 0, 0, 16, 16);
 		}
 
 		@SideOnly(Side.CLIENT)

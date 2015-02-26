@@ -6,9 +6,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.transport.BlockGenericPipe;
-import buildcraft.transport.FacadePluggable;
 import buildcraft.transport.TileGenericPipe;
 
 public class FacadeBlockAccess implements IBlockAccess {
@@ -26,9 +26,9 @@ public class FacadeBlockAccess implements IBlockAccess {
 		TileEntity tile = world.getTileEntity(x, y, z);
 		if (tile instanceof TileGenericPipe) {
 			PipePluggable p = ((TileGenericPipe) tile).getPipePluggable(side);
-			if (p instanceof FacadePluggable) {
+			if (p instanceof IFacadePluggable) {
 				//System.out.println("Found facade");
-				return ((FacadePluggable) p).getRenderingBlock();
+				return ((IFacadePluggable) p).getCurrentBlock();
 			}
 		}
 		return Blocks.air;
@@ -50,9 +50,9 @@ public class FacadeBlockAccess implements IBlockAccess {
 		TileEntity tile = world.getTileEntity(x, y, z);
 		if (tile instanceof TileGenericPipe) {
 			PipePluggable p = ((TileGenericPipe) tile).getPipePluggable(side);
-			if (p instanceof FacadePluggable) {
+			if (p instanceof IFacadePluggable) {
 				//System.out.println("Found facade " + ((FacadePluggable) p).getRenderingMeta());
-				return ((FacadePluggable) p).getRenderingMeta();
+				return ((IFacadePluggable) p).getCurrentMetadata();
 			}
 		}
 		return 0;

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -8,25 +8,21 @@
  */
 package buildcraft.transport.gui;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.core.gui.AdvancedSlot;
 import buildcraft.core.gui.GuiAdvancedInterface;
+import buildcraft.core.gui.StatementParameterSlot;
+import buildcraft.core.gui.StatementSlot;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.ActionActiveState;
 import buildcraft.transport.Gate;
@@ -34,56 +30,15 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 
 public class GuiGateInterface extends GuiAdvancedInterface {
-
 	IInventory playerInventory;
 	private final ContainerGateInterface container;
+	private final GuiGateInterface instance;
 	private final Pipe<?> pipe;
 	private Gate gate;
 
-	private abstract class StatementSlot extends AdvancedSlot {
-		public int slot;
-		public ArrayList<StatementParameterSlot> parameters = new ArrayList<StatementParameterSlot>();
-
-		public StatementSlot(int x, int y, Pipe<?> pipe, int slot) {
-			super(GuiGateInterface.this, x, y);
-
-			this.slot = slot;
-		}
-
-		@Override
-		public String getDescription() {
-			IStatement stmt = getStatement();
-
-			if (stmt != null) {
-				return stmt.getDescription();
-			} else {
-				return "";
-			}
-		}
-
-		@SideOnly(Side.CLIENT)
-		@Override
-		public IIcon getIcon() {
-			IStatement stmt = getStatement();
-
-			if (stmt != null) {
-				return stmt.getIcon();
-			} else {
-				return null;
-			}
-		}
-
-		@Override
-		public boolean isDefined() {
-			return getStatement() != null;
-		}
-
-		public abstract IStatement getStatement();
-	}
-
 	private class TriggerSlot extends StatementSlot {
 		public TriggerSlot(int x, int y, Pipe<?> pipe, int slot) {
-			super(x, y, pipe, slot);
+			super(instance, x, y, slot);
 		}
 
 		@Override
@@ -94,7 +49,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 	private class ActionSlot extends StatementSlot {
 		public ActionSlot(int x, int y, Pipe<?> pipe, int slot) {
-			super(x, y, pipe, slot);
+			super(instance, x, y, slot);
 		}
 
 		@Override
@@ -103,75 +58,9 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		}
 	}
 
-	private abstract class StatementParameterSlot extends AdvancedSlot {
-
-		public Pipe<?> pipe;
-		public int slot;
-		public StatementSlot statementSlot;
-
-		public StatementParameterSlot(int x, int y, Pipe<?> pipe, int slot, StatementSlot iStatementSlot) {
-			super(GuiGateInterface.this, x, y);
-
-			this.pipe = pipe;
-			this.slot = slot;
-			this.statementSlot = iStatementSlot;
-			statementSlot.parameters.add(this);
-		}
-
-		@Override
-		public boolean isDefined() {
-			return getParameter() != null;
-		}
-
-		@Override
-		public String getDescription() {
-			IStatementParameter parameter = getParameter();
-
-			if (parameter != null) {
-				return parameter.getDescription() != null ? parameter.getDescription() : "";
-			} else {
-				return null;
-			}
-		}
-		
-		@Override
-		public ItemStack getItemStack() {
-			IStatementParameter parameter = getParameter();
-
-			if (parameter != null) {
-				return parameter.getItemStack();
-			} else {
-				return null;
-			}
-		}
-
-		@Override
-		public IIcon getIcon() {
-			IStatementParameter parameter = getParameter();
-
-			if (parameter != null) {
-				return parameter.getIcon();
-			} else {
-				return null;
-			}
-		}
-
-		public abstract IStatementParameter getParameter();
-
-		public boolean isAllowed() {
-			return statementSlot.getStatement() != null && slot < statementSlot.getStatement().maxParameters();
-		}
-
-		public boolean isRequired() {
-			return statementSlot.getStatement() != null && slot < statementSlot.getStatement().minParameters();
-		}
-
-		public abstract void setParameter(IStatementParameter param, boolean notifyServer);
-	}
-
 	class TriggerParameterSlot extends StatementParameterSlot {
 		public TriggerParameterSlot(int x, int y, Pipe<?> pipe, int slot, StatementSlot iStatementSlot) {
-			super(x, y, pipe, slot, iStatementSlot);
+			super(instance, x, y, slot, iStatementSlot);
 		}
 
 		@Override
@@ -187,7 +76,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 	class ActionParameterSlot extends StatementParameterSlot {
 		public ActionParameterSlot(int x, int y, Pipe<?> pipe, int slot, StatementSlot iStatementSlot) {
-			super(x, y, pipe, slot, iStatementSlot);
+			super(instance, x, y, slot, iStatementSlot);
 		}
 
 		@Override
@@ -208,6 +97,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 		container.gateCallback = this;
 		this.pipe = pipe;
 		this.playerInventory = playerInventory;
+		this.instance = this;
 	}
 
 	public void setGate(Gate gate) {

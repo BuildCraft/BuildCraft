@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -50,7 +50,6 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.AchievementPage;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.BlockFluidBase;
@@ -65,6 +64,7 @@ import buildcraft.api.core.IWorldProperty;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
+import buildcraft.api.robots.RobotManager;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatement;
@@ -95,9 +95,9 @@ import buildcraft.core.network.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.IntegrationRecipeManager;
+import buildcraft.core.recipes.ProgrammingRecipeManager;
 import buildcraft.core.recipes.RefineryRecipeManager;
 import buildcraft.core.render.BlockHighlightHandler;
-import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.statements.ActionMachineControl;
 import buildcraft.core.statements.ActionRedstoneOutput;
 import buildcraft.core.statements.DefaultActionProvider;
@@ -124,8 +124,68 @@ import buildcraft.core.utils.WorldPropertyIsSoft;
 import buildcraft.core.utils.WorldPropertyIsWood;
 import buildcraft.energy.fuels.CoolantManager;
 import buildcraft.energy.fuels.FuelManager;
+import buildcraft.robots.EntityRobot;
+import buildcraft.robots.ResourceIdAssemblyTable;
+import buildcraft.robots.ResourceIdBlock;
+import buildcraft.robots.ResourceIdRequest;
+import buildcraft.robots.ai.AIRobotAttack;
+import buildcraft.robots.ai.AIRobotBreak;
+import buildcraft.robots.ai.AIRobotCraftAssemblyTable;
+import buildcraft.robots.ai.AIRobotCraftFurnace;
+import buildcraft.robots.ai.AIRobotCraftWorkbench;
+import buildcraft.robots.ai.AIRobotDeliverRequested;
+import buildcraft.robots.ai.AIRobotDisposeItems;
+import buildcraft.robots.ai.AIRobotFetchAndEquipItemStack;
+import buildcraft.robots.ai.AIRobotFetchItem;
+import buildcraft.robots.ai.AIRobotGoAndLinkToDock;
+import buildcraft.robots.ai.AIRobotGoto;
+import buildcraft.robots.ai.AIRobotGotoBlock;
+import buildcraft.robots.ai.AIRobotGotoSleep;
+import buildcraft.robots.ai.AIRobotGotoStation;
+import buildcraft.robots.ai.AIRobotGotoStationAndLoad;
+import buildcraft.robots.ai.AIRobotGotoStationAndLoadFluids;
+import buildcraft.robots.ai.AIRobotGotoStationAndUnload;
+import buildcraft.robots.ai.AIRobotGotoStationToLoad;
+import buildcraft.robots.ai.AIRobotGotoStationToLoadFluids;
+import buildcraft.robots.ai.AIRobotGotoStationToUnload;
+import buildcraft.robots.ai.AIRobotGotoStationToUnloadFluids;
+import buildcraft.robots.ai.AIRobotLoad;
+import buildcraft.robots.ai.AIRobotLoadFluids;
+import buildcraft.robots.ai.AIRobotMain;
+import buildcraft.robots.ai.AIRobotPumpBlock;
+import buildcraft.robots.ai.AIRobotRecharge;
+import buildcraft.robots.ai.AIRobotSearchAndGotoStation;
+import buildcraft.robots.ai.AIRobotSearchBlock;
+import buildcraft.robots.ai.AIRobotSearchEntity;
+import buildcraft.robots.ai.AIRobotSearchRandomBlock;
+import buildcraft.robots.ai.AIRobotSearchRandomGroundBlock;
+import buildcraft.robots.ai.AIRobotSearchStackRequest;
+import buildcraft.robots.ai.AIRobotSearchStation;
+import buildcraft.robots.ai.AIRobotSleep;
+import buildcraft.robots.ai.AIRobotStraightMoveTo;
+import buildcraft.robots.ai.AIRobotUnload;
+import buildcraft.robots.ai.AIRobotUnloadFluids;
+import buildcraft.robots.ai.AIRobotUseToolOnBlock;
+import buildcraft.robots.boards.BoardRobotBomber;
+import buildcraft.robots.boards.BoardRobotBuilder;
+import buildcraft.robots.boards.BoardRobotButcher;
+import buildcraft.robots.boards.BoardRobotCarrier;
+import buildcraft.robots.boards.BoardRobotCrafter;
+import buildcraft.robots.boards.BoardRobotDelivery;
+import buildcraft.robots.boards.BoardRobotFarmer;
+import buildcraft.robots.boards.BoardRobotFluidCarrier;
+import buildcraft.robots.boards.BoardRobotHarvester;
+import buildcraft.robots.boards.BoardRobotKnight;
+import buildcraft.robots.boards.BoardRobotLeaveCutter;
+import buildcraft.robots.boards.BoardRobotLumberjack;
+import buildcraft.robots.boards.BoardRobotMiner;
+import buildcraft.robots.boards.BoardRobotPicker;
+import buildcraft.robots.boards.BoardRobotPlanter;
+import buildcraft.robots.boards.BoardRobotPump;
+import buildcraft.robots.boards.BoardRobotShovelman;
+import buildcraft.robots.boards.BoardRobotStripes;
 
-@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.0.1207,)")
+@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.0.1236,)")
 public class BuildCraftCore extends BuildCraftMod {
 
 	@Mod.Instance("BuildCraft|Core")
@@ -140,7 +200,6 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static boolean debugWorldgen = false;
 	public static boolean modifyWorld = false;
 	public static boolean colorBlindMode = false;
-	public static boolean dropBrokenBlocks = true; // Set to false to prevent the filler from dropping broken blocks.
 	public static boolean hidePowerNumbers = false;
 	public static boolean hideFluidNumbers = false;
 	public static int itemLifespan = 1200;
@@ -242,6 +301,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildcraftRecipeRegistry.assemblyTable = AssemblyRecipeManager.INSTANCE;
 		BuildcraftRecipeRegistry.integrationTable = IntegrationRecipeManager.INSTANCE;
 		BuildcraftRecipeRegistry.refinery = RefineryRecipeManager.INSTANCE;
+		BuildcraftRecipeRegistry.programmingTable = ProgrammingRecipeManager.INSTANCE;
 
 		BuildcraftFuelRegistry.fuel = FuelManager.INSTANCE;
 		BuildcraftFuelRegistry.coolant = CoolantManager.INSTANCE;
@@ -252,36 +312,32 @@ public class BuildCraftCore extends BuildCraftMod {
 		try {
 			mainConfiguration.load();
 
-			Property updateCheck = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "update.check", true);
+			Property updateCheck = BuildCraftCore.mainConfiguration.get("general", "update.check", true);
 			updateCheck.comment = "set to true for version check on startup";
 			if (updateCheck.getBoolean(true)) {
 				Version.check();
 			}
 
-			Property dropBlock = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "dropBrokenBlocks", true);
-			dropBlock.comment = "set to false to prevent fillers from dropping blocks.";
-			dropBrokenBlocks = dropBlock.getBoolean(true);
-			
-			Property hideRFNumbers = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "hidePowerNumbers", false);
+			Property hideRFNumbers = BuildCraftCore.mainConfiguration.get("general", "hidePowerNumbers", false);
 			hideRFNumbers.comment = "set to true to not display any RF or RF/t numbers.";
 			hidePowerNumbers = hideRFNumbers.getBoolean(false);
 			
-			Property hideMBNumbers = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "hideFluidNumbers", false);
+			Property hideMBNumbers = BuildCraftCore.mainConfiguration.get("general", "hideFluidNumbers", false);
 			hideMBNumbers.comment = "set to true to not display any mB or mB/t numbers.";
 			hideFluidNumbers = hideMBNumbers.getBoolean(false);
 
-			Property lifespan = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "itemLifespan", itemLifespan);
+			Property lifespan = BuildCraftCore.mainConfiguration.get("general", "itemLifespan", itemLifespan);
 			lifespan.comment = "the lifespan in ticks of items dropped on the ground by pipes and machines, vanilla = 6000, default = 1200";
 			itemLifespan = lifespan.getInt(itemLifespan);
 			if (itemLifespan < 100) {
 				itemLifespan = 100;
 			}
 
-			Property factor = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "network.updateFactor", 10);
+			Property factor = BuildCraftCore.mainConfiguration.get("general", "network.updateFactor", 10);
 			factor.comment = "increasing this number will decrease network update frequency, useful for overloaded servers";
 			updateFactor = factor.getInt(10);
 
-			Property longFactor = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "network.stateRefreshPeriod", 40);
+			Property longFactor = BuildCraftCore.mainConfiguration.get("general", "network.stateRefreshPeriod", 40);
 			longFactor.comment = "delay between full client sync packets, increasing it saves bandwidth, decreasing makes for better client syncronization.";
 			longUpdateFactor = longFactor.getInt(40);
 
@@ -294,7 +350,7 @@ public class BuildCraftCore extends BuildCraftMod {
 			listItem = (new ItemList()).setUnlocalizedName("list");
 			CoreProxy.proxy.registerItem(listItem);
 
-			Property modifyWorldProp = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "modifyWorld", true);
+			Property modifyWorldProp = BuildCraftCore.mainConfiguration.get("general", "modifyWorld", true);
 			modifyWorldProp.comment = "set to false if BuildCraft should not generate custom blocks (e.g. oil)";
 			modifyWorld = modifyWorldProp.getBoolean(true);
 
@@ -304,7 +360,7 @@ public class BuildCraftCore extends BuildCraftMod {
 				CoreProxy.proxy.registerBlock(springBlock, ItemSpring.class);
 			}
 
-			Property consumeWater = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "consumeWater", consumeWaterSources);
+			Property consumeWater = BuildCraftCore.mainConfiguration.get("general", "consumeWater", consumeWaterSources);
 			consumeWaterSources = consumeWater.getBoolean(consumeWaterSources);
 			consumeWater.comment = "set to true if the Pump should consume water";
 
@@ -355,11 +411,71 @@ public class BuildCraftCore extends BuildCraftMod {
 		StatementManager.registerTriggerProvider(new DefaultTriggerProvider());
 		StatementManager.registerActionProvider(new DefaultActionProvider());
 
+		RobotManager.registerAIRobot(AIRobotMain.class, "aiRobotMain", "buildcraft.core.robots.AIRobotMain");
+		RobotManager.registerAIRobot(BoardRobotBomber.class, "boardRobotBomber", "buildcraft.core.robots.boards.BoardRobotBomber");
+		RobotManager.registerAIRobot(BoardRobotBuilder.class, "boardRobotBuilder", "buildcraft.core.robots.boards.BoardRobotBuilder");
+		RobotManager.registerAIRobot(BoardRobotButcher.class, "boardRobotButcher", "buildcraft.core.robots.boards.BoardRobotButcher");
+		RobotManager.registerAIRobot(BoardRobotCarrier.class, "boardRobotCarrier", "buildcraft.core.robots.boards.BoardRobotCarrier");
+		RobotManager.registerAIRobot(BoardRobotCrafter.class, "boardRobotCrafter", "buildcraft.core.robots.boards.BoardRobotCrafter");
+		RobotManager.registerAIRobot(BoardRobotDelivery.class, "boardRobotDelivery", "buildcraft.core.robots.boards.BoardRobotDelivery");
+		RobotManager.registerAIRobot(BoardRobotFarmer.class, "boardRobotFarmer", "buildcraft.core.robots.boards.BoardRobotFarmer");
+		RobotManager.registerAIRobot(BoardRobotFluidCarrier.class, "boardRobotFluidCarrier", "buildcraft.core.robots.boards.BoardRobotFluidCarrier");
+		RobotManager.registerAIRobot(BoardRobotHarvester.class, "boardRobotHarvester", "buildcraft.core.robots.boards.BoardRobotHarvester");
+		RobotManager.registerAIRobot(BoardRobotKnight.class, "boardRobotKnight", "buildcraft.core.robots.boards.BoardRobotKnight");
+		RobotManager.registerAIRobot(BoardRobotLeaveCutter.class, "boardRobotLeaveCutter", "buildcraft.core.robots.boards.BoardRobotLeaveCutter");
+		RobotManager.registerAIRobot(BoardRobotLumberjack.class, "boardRobotLumberjack", "buildcraft.core.robots.boards.BoardRobotLumberjack");
+		RobotManager.registerAIRobot(BoardRobotMiner.class, "boardRobotMiner", "buildcraft.core.robots.boards.BoardRobotMiner");
+		RobotManager.registerAIRobot(BoardRobotPicker.class, "boardRobotPicker", "buildcraft.core.robots.boards.BoardRobotPicker");
+		RobotManager.registerAIRobot(BoardRobotPlanter.class, "boardRobotPlanter", "buildcraft.core.robots.boards.BoardRobotPlanter");
+		RobotManager.registerAIRobot(BoardRobotPump.class, "boardRobotPump", "buildcraft.core.robots.boards.BoardRobotPump");
+		RobotManager.registerAIRobot(BoardRobotShovelman.class, "boardRobotShovelman", "buildcraft.core.robots.boards.BoardRobotShovelman");
+		RobotManager.registerAIRobot(BoardRobotStripes.class, "boardRobotStripes", "buildcraft.core.robots.boards.BoardRobotStripes");
+		RobotManager.registerAIRobot(AIRobotAttack.class, "aiRobotAttack", "buildcraft.core.robots.AIRobotAttack");
+		RobotManager.registerAIRobot(AIRobotBreak.class, "aiRobotBreak", "buildcraft.core.robots.AIRobotBreak");
+		RobotManager.registerAIRobot(AIRobotCraftAssemblyTable.class, "aiRobotCraftAssemblyTable", "buildcraft.core.robots.AIRobotCraftAssemblyTable");
+		RobotManager.registerAIRobot(AIRobotCraftFurnace.class, "aiRobotCraftFurnace", "buildcraft.core.robots.AIRobotCraftFurnace");
+		RobotManager.registerAIRobot(AIRobotCraftWorkbench.class, "aiRobotCraftWorkbench", "buildcraft.core.robots.AIRobotCraftWorkbench");
+		RobotManager.registerAIRobot(AIRobotDeliverRequested.class, "aiRobotDeliverRequested", "buildcraft.core.robots.AIRobotDeliverRequested");
+		RobotManager.registerAIRobot(AIRobotDisposeItems.class, "aiRobotDisposeItems", "buildcraft.core.robots.AIRobotDisposeItems");
+		RobotManager.registerAIRobot(AIRobotFetchAndEquipItemStack.class, "aiRobotFetchAndEquipItemStack", "buildcraft.core.robots.AIRobotFetchAndEquipItemStack");
+		RobotManager.registerAIRobot(AIRobotFetchItem.class, "aiRobotFetchItem", "buildcraft.core.robots.AIRobotFetchItem");
+		RobotManager.registerAIRobot(AIRobotGoAndLinkToDock.class, "aiRobotGoAndLinkToDock", "buildcraft.core.robots.AIRobotGoAndLinkToDock");
+		RobotManager.registerAIRobot(AIRobotGoto.class, "aiRobotGoto", "buildcraft.core.robots.AIRobotGoto");
+		RobotManager.registerAIRobot(AIRobotGotoBlock.class, "aiRobotGotoBlock", "buildcraft.core.robots.AIRobotGotoBlock");
+		RobotManager.registerAIRobot(AIRobotGotoSleep.class, "aiRobotGotoSleep", "buildcraft.core.robots.AIRobotGotoSleep");
+		RobotManager.registerAIRobot(AIRobotGotoStation.class, "aiRobotGotoStation", "buildcraft.core.robots.AIRobotGotoStation");
+		RobotManager.registerAIRobot(AIRobotGotoStationAndLoad.class, "aiRobotGotoStationAndLoad", "buildcraft.core.robots.AIRobotGotoStationAndLoad");
+		RobotManager.registerAIRobot(AIRobotGotoStationAndLoadFluids.class, "aiRobotGotoStationAndLoadFluids", "buildcraft.core.robots.AIRobotGotoStationAndLoadFluids");
+		RobotManager.registerAIRobot(AIRobotGotoStationAndUnload.class, "aiRobotGotoStationAndUnload", "buildcraft.core.robots.AIRobotGotoStationAndUnload");
+		RobotManager.registerAIRobot(AIRobotGotoStationToLoad.class, "aiRobotGotoStationToLoad", "buildcraft.core.robots.AIRobotGotoStationToLoad");
+		RobotManager.registerAIRobot(AIRobotGotoStationToLoadFluids.class, "aiRobotGotoStationToLoadFluids", "buildcraft.core.robots.AIRobotGotoStationToLoadFluids");
+		RobotManager.registerAIRobot(AIRobotGotoStationToUnload.class, "aiRobotGotoStationToUnload", "buildcraft.core.robots.AIRobotGotoStationToUnload");
+		RobotManager.registerAIRobot(AIRobotGotoStationToUnloadFluids.class, "aiRobotGotoStationToUnloadFluids", "buildcraft.core.robots.AIRobotGotoStationToUnloadFluids");
+		RobotManager.registerAIRobot(AIRobotLoad.class, "aiRobotLoad", "buildcraft.core.robots.AIRobotLoad");
+		RobotManager.registerAIRobot(AIRobotLoadFluids.class, "aiRobotLoadFluids", "buildcraft.core.robots.AIRobotLoadFluids");
+		RobotManager.registerAIRobot(AIRobotPumpBlock.class, "aiRobotPumpBlock", "buildcraft.core.robots.AIRobotPumpBlock");
+		RobotManager.registerAIRobot(AIRobotRecharge.class, "aiRobotRecharge", "buildcraft.core.robots.AIRobotRecharge");
+		RobotManager.registerAIRobot(AIRobotSearchAndGotoStation.class, "aiRobotSearchAndGotoStation", "buildcraft.core.robots.AIRobotSearchAndGotoStation");
+		RobotManager.registerAIRobot(AIRobotSearchBlock.class, "aiRobotSearchBlock", "buildcraft.core.robots.AIRobotSearchBlock");
+		RobotManager.registerAIRobot(AIRobotSearchEntity.class, "aiRobotSearchEntity", "buildcraft.core.robots.AIRobotSearchEntity");
+		RobotManager.registerAIRobot(AIRobotSearchRandomBlock.class, "aiRobotSearchRandomBlock", "buildcraft.core.robots.AIRobotSearchRandomBlock");
+		RobotManager.registerAIRobot(AIRobotSearchRandomGroundBlock.class, "aiRobotSearchRandomGroundBlock", "buildcraft.core.robots.AIRobotSearchRandomGroundBlock");
+		RobotManager.registerAIRobot(AIRobotSearchStackRequest.class, "aiRobotSearchStackRequest", "buildcraft.core.robots.AIRobotSearchStackRequest");
+		RobotManager.registerAIRobot(AIRobotSearchStation.class, "aiRobotSearchStation", "buildcraft.core.robots.AIRobotSearchStation");
+		RobotManager.registerAIRobot(AIRobotSleep.class, "aiRobotSleep", "buildcraft.core.robots.AIRobotSleep");
+		RobotManager.registerAIRobot(AIRobotStraightMoveTo.class, "aiRobotStraightMoveTo", "buildcraft.core.robots.AIRobotStraightMoveTo");
+		RobotManager.registerAIRobot(AIRobotUnload.class, "aiRobotUnload", "buildcraft.core.robots.AIRobotUnload");
+		RobotManager.registerAIRobot(AIRobotUnloadFluids.class, "aiRobotUnloadFluids", "buildcraft.core.robots.AIRobotUnloadFluids");
+		RobotManager.registerAIRobot(AIRobotUseToolOnBlock.class, "aiRobotUseToolOnBlock", "buildcraft.core.robots.AIRobotUseToolOnBlock");
+		RobotManager.registerResourceId(ResourceIdAssemblyTable.class, "resourceIdAssemblyTable", "buildcraft.core.robots.ResourceIdAssemblyTable");
+		RobotManager.registerResourceId(ResourceIdBlock.class, "resourceIdBlock", "buildcraft.core.robots.ResourceIdBlock");
+		RobotManager.registerResourceId(ResourceIdRequest.class, "resourceIdRequest", "buildcraft.core.robots.ResourceIdRequest");
+
 		if (BuildCraftCore.modifyWorld) {
 			MinecraftForge.EVENT_BUS.register(new SpringPopulate());
 		}
 
-		for (String l : BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL,
+		for (String l : BuildCraftCore.mainConfiguration.get("general",
 				"recipesBlacklist", new String[0]).getStringList()) {
 			recipesBlacklist.add(JavaTools.stripSurroundingQuotes(l.trim()));
 		}
@@ -417,7 +533,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		
 		actionControl = new IActionExternal[IControllable.Mode.values().length];
 		for (IControllable.Mode mode : IControllable.Mode.values()) {
-			if (mode != IControllable.Mode.Unknown) {
+			if (mode != IControllable.Mode.Unknown && mode != IControllable.Mode.Mode) {
 				actionControl[mode.ordinal()] = new ActionMachineControl(mode);
 			}
 		}

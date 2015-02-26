@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -30,6 +30,7 @@ import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftFactory;
@@ -38,6 +39,7 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.filler.FillerManager;
+import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.transport.IPipeConnection;
@@ -604,7 +606,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 	private void initializeBlueprintBuilder() {
 		Blueprint bpt = ((FillerPattern) FillerManager.registry.getPattern("buildcraft:frame"))
-				.getBlueprint(box, worldObj, BuildCraftFactory.frameBlock, 0);
+				.getBlueprint(box, worldObj, new IStatementParameter[0], BuildCraftFactory.frameBlock, 0);
 
 		if (bpt != null) {
 			builder = new BptBuilderBlueprint(bpt, worldObj, box.xMin, yCoord, box.zMin);
@@ -834,7 +836,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 			}
 		}
 
-		if (placedBy != null) {
+		if (placedBy != null && !(placedBy instanceof FakePlayer)) {
 			placedBy.addChatMessage(new ChatComponentText(
 					String.format(
 							"[BUILDCRAFT] The quarry at %d %d %d will keep %d chunks loaded",

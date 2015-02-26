@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -19,7 +19,6 @@ import buildcraft.core.render.RenderUtils;
 /**
  * For the refinery, a kind of phantom slot for fluid.
  */
-//TODO Get this class working well (Now it's just here to let the refinery compil)
 public class FluidSlot extends AdvancedSlot {
 
 	public Fluid fluid;

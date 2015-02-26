@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * The BuildCraft API is distributed under the terms of the MIT License.
@@ -27,7 +27,7 @@ public final class BCLog {
 	public static void initLog() {
 
 		logger.info("Starting BuildCraft " + getVersion());
-		logger.info("Copyright (c) SpaceToad, 2011-2014");
+		logger.info("Copyright (c) SpaceToad, 2011-2015");
 		logger.info("http://www.mod-buildcraft.com");
 	}
 

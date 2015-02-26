@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -113,25 +113,26 @@ public class Blueprint extends BlueprintBase {
 		}
 
 		switch (slot.getBuildingPermission()) {
-		case ALL:
-			break;
-		case CREATIVE_ONLY:
-			if (bptContext.readConfiguration.allowCreative) {
-				if (buildingPermission == BuildingPermission.ALL) {
-					buildingPermission = BuildingPermission.CREATIVE_ONLY;
+			case ALL:
+				break;
+			case CREATIVE_ONLY:
+				if (bptContext.readConfiguration.allowCreative) {
+					if (buildingPermission == BuildingPermission.ALL) {
+						buildingPermission = BuildingPermission.CREATIVE_ONLY;
+					}
+				} else {
+					contents[posX][posY][posZ] = null;
 				}
-			} else {
-				contents[posX][posY][posZ] = null;
-			}
-			break;
-		case NONE:
-			buildingPermission = BuildingPermission.NONE;
-			break;
+				break;
+			case NONE:
+				buildingPermission = BuildingPermission.NONE;
+				break;
 		}
 	}
 
 	@Override
 	public void readEntitiesFromWorld(IBuilderContext context, TileEntity anchorTile) {
+		BptContext bptContext = (BptContext) context;
 		Translation transform = new Translation();
 
 		transform.x = -context.surroundingBox().pMin().x;
@@ -146,7 +147,22 @@ public class Blueprint extends BlueprintBase {
 
 				if (s != null) {
 					s.readFromWorld(context, e);
-					entities.add(s);
+					switch (s.getBuildingPermission()) {
+						case ALL:
+							entities.add(s);
+							break;
+						case CREATIVE_ONLY:
+							if (bptContext.readConfiguration.allowCreative) {
+								if (buildingPermission == BuildingPermission.ALL) {
+									buildingPermission = BuildingPermission.CREATIVE_ONLY;
+								}
+								entities.add(s);
+							}
+							break;
+						case NONE:
+							buildingPermission = BuildingPermission.NONE;
+							break;
+					}
 				}
 			}
 		}

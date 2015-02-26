@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -20,15 +20,12 @@ import net.minecraft.world.World;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.Position;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
 
 public class TilePathMarker extends TileMarker {
-
-	// TODO: this should be moved to default props
 	// A list with the pathMarkers that aren't fully connected
 	// It only contains markers within the loaded chunks
-	public static int searchSize = 64;
-
 	private static LinkedList<TilePathMarker> availableMarkers = new LinkedList<TilePathMarker>();
 
 	public int x0, y0, z0, x1, y1, z1;
@@ -94,7 +91,7 @@ public class TilePathMarker extends TileMarker {
 
 			distance = Math.sqrt(Math.pow(this.xCoord - t.xCoord, 2) + Math.pow(this.yCoord - t.yCoord, 2) + Math.pow(this.zCoord - t.zCoord, 2));
 
-			if (distance > searchSize) {
+			if (distance > DefaultProps.MARKER_RANGE) {
 				continue;
 			}
 

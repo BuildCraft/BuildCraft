@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -102,11 +102,10 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 					((TileGenericPipe) tile).initializeFromItemMetadata(itemstack.getItemDamage());
 				}
 
-				// TODO: Fix sound
-				//world.playSoundEffect(i + 0.5F, j + 0.5F, k + 0.5F,
-				//		block.stepSound.getPlaceSound(),
-				//		(block.stepSound.getVolume() + 1.0F) / 2.0F,
-				//		block.stepSound.getPitch() * 0.8F);
+				world.playSoundEffect(i + 0.5F, j + 0.5F, k + 0.5F,
+						block.stepSound.func_150496_b(),
+						(block.stepSound.getVolume() + 1.0F) / 2.0F,
+						block.stepSound.getPitch() * 0.8F);
 
 				itemstack.stackSize--;
 			}

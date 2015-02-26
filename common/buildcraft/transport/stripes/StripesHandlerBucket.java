@@ -14,8 +14,8 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
 
+import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
-import buildcraft.api.transport.IStripesPipe;
 
 public class StripesHandlerBucket implements IStripesHandler {
 	private static final ItemStack emptyBucket = new ItemStack(Items.bucket, 1);
@@ -33,14 +33,17 @@ public class StripesHandlerBucket implements IStripesHandler {
 	@Override
 	public boolean handle(World world, int x, int y, int z,
 			ForgeDirection direction, ItemStack stack, EntityPlayer player,
-			IStripesPipe pipe) {
+			IStripesActivator activator) {
 		Block block = world.getBlock(x, y, z);
 		if (block == Blocks.air) {
 			Block underblock = world.getBlock(x, y - 1, z);
 
 			if (((ItemBucket) stack.getItem()).tryPlaceContainedLiquid(world, x, y - 1, z)) {
-				stack.stackSize = 0;
-				pipe.sendItem(emptyBucket, direction.getOpposite());
+				activator.sendItem(emptyBucket, direction.getOpposite());
+				stack.stackSize--;
+				if (stack.stackSize > 0) {
+					activator.sendItem(stack, direction.getOpposite());
+				}
 				
 				return true;
 			} else {
@@ -63,14 +66,15 @@ public class StripesHandlerBucket implements IStripesHandler {
 				if (filledBucket != null) {
 					world.setBlockToAir(x, y - 1, z);
 
-					stack.stackSize = 0;
-					pipe.sendItem(filledBucket, direction.getOpposite());
+					activator.sendItem(filledBucket, direction.getOpposite());
+					stack.stackSize--;
+					if (stack.stackSize > 0) {
+						activator.sendItem(stack, direction.getOpposite());
+					}
 
 					return true;
 				}
 			}
-
-			return false;
 		}
 		return false;
 	}

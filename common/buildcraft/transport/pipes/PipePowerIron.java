@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -18,6 +18,7 @@ import net.minecraft.util.ChatComponentText;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
@@ -57,7 +58,7 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 			} else {
 				setMode(getMode().getNext());
 			}
-			if (getWorld().isRemote) {
+			if (getWorld().isRemote && !(player instanceof FakePlayer)) {
 				if (BuildCraftCore.hidePowerNumbers) {
 					player.addChatMessage(new ChatComponentText(String.format(
 							StringUtils.localize("chat.pipe.power.iron.mode.numberless"),

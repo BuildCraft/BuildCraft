@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -11,6 +11,7 @@ package buildcraft.core.builders.patterns;
 import net.minecraft.world.World;
 
 import buildcraft.api.blueprints.SchematicMask;
+import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
 
@@ -22,7 +23,7 @@ public class PatternFrame extends FillerPattern {
 	}
 
 	@Override
-	public Template getTemplate(Box box, World world) {
+	public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
 		Template template = new Template (box.sizeX(), box.sizeY(), box.sizeZ());
 
 		int xMin = 0;

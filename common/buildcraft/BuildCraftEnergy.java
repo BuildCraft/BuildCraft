@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
@@ -34,7 +34,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -84,8 +83,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	@Mod.Instance("BuildCraft|Energy")
 	public static BuildCraftEnergy instance;
 
-	public static final int ENERGY_REMOVE_BLOCK = 25;
-	public static final int ENERGY_EXTRACT_ITEM = 2;
 	public static boolean spawnOilSprings = true;
 	public static BiomeGenOilDesert biomeOilDesert;
 	public static BiomeGenOilOcean biomeOilOcean;
@@ -122,39 +119,39 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	public void preInit(FMLPreInitializationEvent evt) {
 		int oilDesertBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "biomeOilDesert", DefaultProps.BIOME_OIL_DESERT).getInt(DefaultProps.BIOME_OIL_DESERT);
 		int oilOceanBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "biomeOilOcean", DefaultProps.BIOME_OIL_OCEAN).getInt(DefaultProps.BIOME_OIL_OCEAN);
-		canOilBurn = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "burnOil", true, "Can oil burn?").getBoolean(true);
-		isOilDense = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "denseOil", true, "Should it be hard to swim in oil?").getBoolean(true);
-		oilWellScalar = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "oilWellGenerationRate", 1.0, "Probability of oil well generation").getDouble(1.0);
-		canEnginesExplode = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "enginesExplode", false, "Do engines explode upon overheat?").getBoolean(false);
+		canOilBurn = BuildCraftCore.mainConfiguration.get("general", "burnOil", true, "Can oil burn?").getBoolean(true);
+		isOilDense = BuildCraftCore.mainConfiguration.get("general", "denseOil", true, "Should it be hard to swim in oil?").getBoolean(true);
+		oilWellScalar = BuildCraftCore.mainConfiguration.get("general", "oilWellGenerationRate", 1.0, "Probability of oil well generation").getDouble(1.0);
+		canEnginesExplode = BuildCraftCore.mainConfiguration.get("general", "enginesExplode", false, "Do engines explode upon overheat?").getBoolean(false);
 
 		setBiomeList(
 				OilPopulate.INSTANCE.surfaceDepositBiomes,
 				BuildCraftCore.mainConfiguration
-						.get(Configuration.CATEGORY_GENERAL, "oil.increasedBiomeIDs",
+						.get("general", "oil.increasedBiomeIDs",
 								new String[] {BiomeDictionary.Type.SANDY.toString(), BiomeGenBase.taiga.biomeName},
 								"IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have increased oil generation rates."));
 
 		setBiomeList(
 				OilPopulate.INSTANCE.excessiveBiomes,
 				BuildCraftCore.mainConfiguration
-				.get(Configuration.CATEGORY_GENERAL,
+				.get("general",
 								"oil.excessiveBiomeIDs",
 								new String[] {},
 								"IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have GREATLY increased oil generation rates."));
 
 		setBiomeList(OilPopulate.INSTANCE.excludedBiomes,
                 BuildCraftCore.mainConfiguration
-				.get(Configuration.CATEGORY_GENERAL, "oil.excludeBiomeIDs",
+				.get("general", "oil.excludeBiomeIDs",
 						new String[] {BiomeGenBase.sky.biomeName, BiomeGenBase.hell.biomeName},
 						"IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that are excluded from generating oil."));
 
-		double fuelLavaMultiplier = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.lava.combustion", 1.0F, "adjust energy value of Lava in Combustion Engines").getDouble(1.0F);
-		double fuelOilMultiplier = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.oil.combustion", 1.0F, "adjust energy value of Oil in Combustion Engines").getDouble(1.0F);
-		double fuelFuelMultiplier = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.fuel.combustion", 1.0F, "adjust energy value of Fuel in Combustion Engines").getDouble(1.0F);
+		double fuelLavaMultiplier = BuildCraftCore.mainConfiguration.get("general", "fuel.lava.combustion", 1.0F, "adjust energy value of Lava in Combustion Engines").getDouble(1.0F);
+		double fuelOilMultiplier = BuildCraftCore.mainConfiguration.get("general", "fuel.oil.combustion", 1.0F, "adjust energy value of Oil in Combustion Engines").getDouble(1.0F);
+		double fuelFuelMultiplier = BuildCraftCore.mainConfiguration.get("general", "fuel.fuel.combustion", 1.0F, "adjust energy value of Fuel in Combustion Engines").getDouble(1.0F);
 
-		int fuelLavaEnergyOutput = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.lava.combustion.energyOutput", 20, "adjust output energy by Lava in Combustion Engines").getInt(20);
-		int fuelOilEnergyOutput = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.oil.combustion.energyOutput", 30, "adjust output energy by Oil in Combustion Engines").getInt(30);
-		int fuelFuelEnergyOutput = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL, "fuel.fuel.combustion.energyOutput", 60, "adjust output energy by Fuel in Combustion Engines").getInt(60);
+		int fuelLavaEnergyOutput = BuildCraftCore.mainConfiguration.get("general", "fuel.lava.combustion.energyOutput", 20, "adjust output energy by Lava in Combustion Engines").getInt(20);
+		int fuelOilEnergyOutput = BuildCraftCore.mainConfiguration.get("general", "fuel.oil.combustion.energyOutput", 30, "adjust output energy by Oil in Combustion Engines").getInt(30);
+		int fuelFuelEnergyOutput = BuildCraftCore.mainConfiguration.get("general", "fuel.fuel.combustion.energyOutput", 60, "adjust output energy by Fuel in Combustion Engines").getInt(60);
 
 		BuildCraftCore.mainConfiguration.save();
 
@@ -362,7 +359,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
-
 		if (BuildCraftCore.modifyWorld) {
 			MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
 			MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializer());

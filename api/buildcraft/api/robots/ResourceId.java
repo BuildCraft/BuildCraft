@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * The BuildCraft API is distributed under the terms of the MIT License.
@@ -47,7 +47,7 @@ public abstract class ResourceId {
 		nbt.setTag("index", indexNBT);
 		nbt.setByte("side", (byte) side.ordinal());
 		nbt.setInteger("localId", localId);
-		nbt.setString("class", getClass().getCanonicalName());
+		nbt.setString("resourceName", RobotManager.getResourceIdName(getClass()));
 	}
 
 	protected void readFromNBT(NBTTagCompound nbt) {
@@ -58,9 +58,15 @@ public abstract class ResourceId {
 
 	public static ResourceId load(NBTTagCompound nbt) {
 		try {
-			Class clas = Class.forName(nbt.getString("class"));
+			Class cls = null;
+			if (nbt.hasKey("class")) {
+				// Migration support for 6.4.x
+				cls = RobotManager.getResourceIdByLegacyClassName(nbt.getString("class"));
+			} else {
+				cls = RobotManager.getResourceIdByName("resourceName");
+			}
 
-			ResourceId id = (ResourceId) clas.newInstance();
+			ResourceId id = (ResourceId) cls.newInstance();
 			id.readFromNBT(nbt);
 
 			return id;

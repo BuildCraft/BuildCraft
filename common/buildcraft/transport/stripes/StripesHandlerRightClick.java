@@ -8,8 +8,8 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
-import buildcraft.api.transport.IStripesPipe;
 
 public class StripesHandlerRightClick implements IStripesHandler {
 
@@ -28,8 +28,9 @@ public class StripesHandlerRightClick implements IStripesHandler {
 	@Override
 	public boolean handle(World world, int x, int y, int z,
 			ForgeDirection direction, ItemStack stack, EntityPlayer player,
-			IStripesPipe pipe) {
-		stack.getItem().onItemRightClick(stack, world, player);
+			IStripesActivator activator) {
+		ItemStack remainingStack = stack.getItem().onItemRightClick(stack, world, player);
+		activator.sendItem(remainingStack, direction.getOpposite());
 		return true;
 	}
 
