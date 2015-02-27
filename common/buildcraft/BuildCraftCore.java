@@ -185,7 +185,7 @@ import buildcraft.robots.boards.BoardRobotPump;
 import buildcraft.robots.boards.BoardRobotShovelman;
 import buildcraft.robots.boards.BoardRobotStripes;
 
-@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.0.1236,)")
+@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.2.1236,)")
 public class BuildCraftCore extends BuildCraftMod {
 
 	@Mod.Instance("BuildCraft|Core")
