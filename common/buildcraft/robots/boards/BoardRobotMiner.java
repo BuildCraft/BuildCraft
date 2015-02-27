@@ -19,7 +19,7 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.robots.ai.AIRobotFetchAndEquipItemStack;
 
 public class BoardRobotMiner extends BoardRobotGenericBreakBlock {
-
+	private static final int MAX_HARVEST_LEVEL = 3;
 	private int harvestLevel = 0;
 
 	public BoardRobotMiner(EntityRobotBase iRobot) {
@@ -58,7 +58,7 @@ public class BoardRobotMiner extends BoardRobotGenericBreakBlock {
 
 	@Override
 	public boolean isExpectedBlock(World world, int x, int y, int z) {
-		return BuildCraftAPI.isOreProperty[Math.min(BuildCraftAPI.isOreProperty.length, harvestLevel)]
+		return BuildCraftAPI.getWorldProperty("ore@hardness=" + Math.min(MAX_HARVEST_LEVEL, harvestLevel))
 				.get(world, x, y, z);
 	}
 

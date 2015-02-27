@@ -36,7 +36,7 @@ public class BoardRobotShovelman extends BoardRobotGenericBreakBlock {
 
 	@Override
 	public boolean isExpectedBlock(World world, int x, int y, int z) {
-		return BuildCraftAPI.isShoveled.get(world, x, y, z);
+		return BuildCraftAPI.getWorldProperty("shoveled").get(world, x, y, z);
 	}
 
 }

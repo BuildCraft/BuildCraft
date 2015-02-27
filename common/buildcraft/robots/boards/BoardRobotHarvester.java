@@ -38,6 +38,6 @@ public class BoardRobotHarvester extends BoardRobotGenericBreakBlock {
 
 	@Override
 	public boolean isExpectedBlock(World world, int x, int y, int z) {
-		return BuildCraftAPI.isHarvestableProperty.get(world, x, y, z);
+		return BuildCraftAPI.getWorldProperty("harvestable").get(world, x, y, z);
 	}
 }

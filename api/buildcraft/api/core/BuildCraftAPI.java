@@ -8,6 +8,7 @@
  */
 package buildcraft.api.core;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,16 +20,7 @@ public final class BuildCraftAPI {
 	public static ICoreProxy proxy;
 
 	public static final Set<Block> softBlocks = new HashSet<Block>();
-
-	public static IWorldProperty isSoftProperty;
-	public static IWorldProperty isWoodProperty;
-	public static IWorldProperty isLeavesProperty;
-	public static IWorldProperty[] isOreProperty;
-	public static IWorldProperty isHarvestableProperty;
-	public static IWorldProperty isFarmlandProperty;
-	public static IWorldProperty isDirtProperty;
-	public static IWorldProperty isShoveled;
-	public static IWorldProperty isFluidSource;
+	public static final HashMap<String, IWorldProperty> worldProperties = new HashMap<String, IWorldProperty>();
 
 	/**
 	 * Deactivate constructor
@@ -36,7 +28,18 @@ public final class BuildCraftAPI {
 	private BuildCraftAPI() {
 	}
 
+	public static IWorldProperty getWorldProperty(String name) {
+		return worldProperties.get(name);
+	}
+
+	public static void registerWorldProperty(String name, IWorldProperty property) {
+		if (worldProperties.containsKey(name)) {
+			BCLog.logger.warn("The WorldProperty key '" + name + "' is being overidden with " + property.getClass().getSimpleName() + "!");
+		}
+		worldProperties.put(name, property);
+	}
+
 	public static boolean isSoftBlock(World world, int x, int y, int z) {
-		return isSoftProperty.get(world, x, y, z);
+		return worldProperties.get("soft").get(world, x, y, z);
 	}
 }

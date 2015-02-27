@@ -17,6 +17,7 @@ import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.core.IWorldProperty;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.IStackFilter;
@@ -44,6 +45,7 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 
 	@Override
 	public void update() {
+		final IWorldProperty isDirt = BuildCraftAPI.getWorldProperty("dirt");
 		if (robot.getHeldItem() == null) {
 			startDelegateAI(new AIRobotFetchAndEquipItemStack(robot, new IStackFilter() {
 				@Override
@@ -55,7 +57,7 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 			startDelegateAI(new AIRobotSearchBlock(robot, new IBlockFilter() {
 				@Override
 				public boolean matches(World world, int x, int y, int z) {
-					return BuildCraftAPI.isDirtProperty.get(world, x, y, z)
+					return isDirt.get(world, x, y, z)
 							&& !robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z))
 							&& isAirAbove(world, x, y, z);
 				}

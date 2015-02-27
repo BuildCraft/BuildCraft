@@ -24,6 +24,7 @@ import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.core.IWorldProperty;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.statements.IStatementParameter;
@@ -56,6 +57,7 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 
 	@Override
 	public void update() {
+		final IWorldProperty isFluidSource = BuildCraftAPI.getWorldProperty("fluidSource");
 		FluidStack tank = robot.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid;
 
 		if (tank != null && tank.amount > 0) {
@@ -67,7 +69,7 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 
 				@Override
 				public boolean matches(World world, int x, int y, int z) {
-					if (BuildCraftAPI.isFluidSource.get(world, x, y, z)
+					if (isFluidSource.get(world, x, y, z)
 							&& !robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z))) {
 						return matchesGateFilter(world, x, y, z);
 					} else {

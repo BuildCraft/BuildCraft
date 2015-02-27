@@ -39,6 +39,6 @@ public class BoardRobotLumberjack extends BoardRobotGenericBreakBlock {
 
 	@Override
 	public boolean isExpectedBlock(World world, int x, int y, int z) {
-		return BuildCraftAPI.isWoodProperty.get(world, x, y, z);
+		return BuildCraftAPI.getWorldProperty("wood").get(world, x, y, z);
 	}
 }

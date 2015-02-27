@@ -187,7 +187,6 @@ import buildcraft.robots.boards.BoardRobotStripes;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.0.1236,)")
 public class BuildCraftCore extends BuildCraftMod {
-
 	@Mod.Instance("BuildCraft|Core")
 	public static BuildCraftCore instance;
 
@@ -516,18 +515,17 @@ public class BuildCraftCore extends BuildCraftMod {
 
 		FMLCommonHandler.instance().bus().register(new TickHandlerCore());
 
-		BuildCraftAPI.isSoftProperty = new WorldPropertyIsSoft();
-		BuildCraftAPI.isWoodProperty = new WorldPropertyIsWood();
-		BuildCraftAPI.isLeavesProperty = new WorldPropertyIsLeaf();
-		BuildCraftAPI.isOreProperty = new IWorldProperty[4];
-		for (int i = 0; i < BuildCraftAPI.isOreProperty.length; i++) {
-			BuildCraftAPI.isOreProperty[i] = new WorldPropertyIsOre(i);
+		BuildCraftAPI.registerWorldProperty("soft", new WorldPropertyIsSoft());
+		BuildCraftAPI.registerWorldProperty("wood", new WorldPropertyIsWood());
+		BuildCraftAPI.registerWorldProperty("leaves", new WorldPropertyIsLeaf());
+		for (int i = 0; i < 4; i++) {
+			BuildCraftAPI.registerWorldProperty("ore@hardness=" + i, new WorldPropertyIsOre(i));
 		}
-		BuildCraftAPI.isHarvestableProperty = new WorldPropertyIsHarvestable();
-		BuildCraftAPI.isFarmlandProperty = new WorldPropertyIsFarmland();
-		BuildCraftAPI.isShoveled = new WorldPropertyIsShoveled();
-		BuildCraftAPI.isDirtProperty = new WorldPropertyIsDirt();
-		BuildCraftAPI.isFluidSource = new WorldPropertyIsFluidSource();
+		BuildCraftAPI.registerWorldProperty("harvestable", new WorldPropertyIsHarvestable());
+		BuildCraftAPI.registerWorldProperty("farmland", new WorldPropertyIsFarmland());
+		BuildCraftAPI.registerWorldProperty("shoveled", new WorldPropertyIsShoveled());
+		BuildCraftAPI.registerWorldProperty("dirt", new WorldPropertyIsDirt());
+		BuildCraftAPI.registerWorldProperty("fluidSource", new WorldPropertyIsFluidSource());
 		
 		ColorUtils.initialize();
 		
@@ -648,16 +646,9 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	@SubscribeEvent
 	public void cleanRegistries(WorldEvent.Unload unload) {
-		BuildCraftAPI.isSoftProperty.clear();
-		BuildCraftAPI.isWoodProperty.clear();
-		BuildCraftAPI.isLeavesProperty.clear();
-		for (int i = 0; i < BuildCraftAPI.isOreProperty.length; i++) {
-			BuildCraftAPI.isOreProperty[i].clear();
+		for (IWorldProperty property : BuildCraftAPI.worldProperties.values()) {
+			property.clear();
 		}
-		BuildCraftAPI.isHarvestableProperty.clear();
-		BuildCraftAPI.isFarmlandProperty.clear();
-		BuildCraftAPI.isShoveled.clear();
-		BuildCraftAPI.isDirtProperty.clear();
 	}
 
 	@Mod.EventHandler

@@ -34,7 +34,7 @@ public class BoardRobotLeaveCutter extends BoardRobotGenericBreakBlock {
 
 	@Override
 	public boolean isExpectedBlock(World world, int x, int y, int z) {
-		return BuildCraftAPI.isLeavesProperty.get(world, x, y, z);
+		return BuildCraftAPI.getWorldProperty("leaves").get(world, x, y, z);
 	}
 
 }
