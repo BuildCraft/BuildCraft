@@ -255,7 +255,8 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
-		if (station != null && station.isTaken() && station.robotTaking() != null && station.robotTaking().getBattery() != null) {
+		if (station != null && station.isTaken() && station.robotTaking() != null && station.robotTaking().getBattery() != null
+				&& station.robotTaking().getDockingStation() == station) {
 			return station.robotTaking().getBattery().receiveEnergy(maxReceive, simulate);
 		}
 		return 0;
