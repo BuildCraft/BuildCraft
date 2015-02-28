@@ -49,9 +49,13 @@ public class StatementParameterDirection implements IStatementParameter {
 	@Override
 	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
 		if (source.getTile() instanceof TileGenericPipe) {
-			do {
+			for (int i = 0; i < 6; i++) {
 				direction = ForgeDirection.getOrientation((direction.ordinal() + (mouse.getButton() > 0 ? -1 : 1)) % 6);
-			} while (!((TileGenericPipe) source.getTile()).isPipeConnected(direction));
+				if (((TileGenericPipe) source.getTile()).isPipeConnected(direction)) {
+					return;
+				}
+			}
+			direction = ForgeDirection.UNKNOWN;
 		}
 	}
 
