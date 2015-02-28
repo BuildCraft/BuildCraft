@@ -215,7 +215,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Item diamondGearItem;
 	public static Item wrenchItem;
 	public static Item mapLocationItem;
-	public static Item listItem;
+	public static ItemList listItem;
 	@SideOnly(Side.CLIENT)
 	public static IIcon redLaserTexture;
 	@SideOnly(Side.CLIENT)
@@ -347,7 +347,7 @@ public class BuildCraftCore extends BuildCraftMod {
 			mapLocationItem = (new ItemMapLocation()).setUnlocalizedName("mapLocation");
 			CoreProxy.proxy.registerItem(mapLocationItem);
 
-			listItem = (new ItemList()).setUnlocalizedName("list");
+			listItem = (ItemList) ((new ItemList()).setUnlocalizedName("list"));
 			CoreProxy.proxy.registerItem(listItem);
 
 			Property modifyWorldProp = BuildCraftCore.mainConfiguration.get("general", "modifyWorld", true);

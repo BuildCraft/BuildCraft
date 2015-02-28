@@ -13,6 +13,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ItemList;
 
@@ -118,7 +119,7 @@ public class GuiList extends GuiAdvancedInterface {
 
 		textField = new GuiTextField(this.fontRendererObj, 10, 10, 156, 12);
 		textField.setMaxStringLength(32);
-		textField.setText(ItemList.getLabel(player.getCurrentEquippedItem()));
+		textField.setText(BuildCraftCore.listItem.getLabel(player.getCurrentEquippedItem()));
 		textField.setFocused(false);
 	}
 

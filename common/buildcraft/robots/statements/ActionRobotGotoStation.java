@@ -14,13 +14,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.BlockIndex;
+import buildcraft.api.items.IMapLocation;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.ItemMapLocation;
 import buildcraft.core.statements.BCStatement;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.robots.DockingStation;
@@ -71,11 +71,12 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 					StatementParameterItemStack stackParam = (StatementParameterItemStack) parameters[0];
 					ItemStack item = stackParam.getItemStack();
 
-					if (item != null && item.getItem() instanceof ItemMapLocation) {
-						BlockIndex index = ItemMapLocation.getBlockIndex(item);
+					if (item != null && item.getItem() instanceof IMapLocation) {
+						IMapLocation map = (IMapLocation) item.getItem();
+						BlockIndex index = map.getPoint(item);
 
 						if (index != null) {
-							ForgeDirection side = ItemMapLocation.getSide(item);
+							ForgeDirection side = map.getPointSide(item);
 							DockingStation paramStation = (DockingStation)
 									registry.getStation(index.x,
 									index.y, index.z, side);

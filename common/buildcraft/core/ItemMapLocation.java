@@ -8,6 +8,7 @@
  */
 package buildcraft.core;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -29,12 +30,13 @@ import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.IZone;
+import buildcraft.api.items.IMapLocation;
 import buildcraft.builders.TileMarker;
 import buildcraft.builders.TilePathMarker;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.core.utils.StringUtils;
 
-public class ItemMapLocation extends ItemBuildCraft {
+public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 
 	public IIcon clean;
 	public IIcon spot;
@@ -181,21 +183,8 @@ public class ItemMapLocation extends ItemBuildCraft {
 		return true;
 	}
 
-	public static BlockIndex getBlockIndex(ItemStack item) {
-		NBTTagCompound cpt = NBTUtils.getItemData(item);
-
-		if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
-			int x = cpt.getInteger("x");
-			int y = cpt.getInteger("y");
-			int z = cpt.getInteger("z");
-
-			return new BlockIndex(x, y, z);
-		} else {
-			return null;
-		}
-	}
-
-	public static IBox getBox(ItemStack item) {
+	@Override
+	public IBox getBox(ItemStack item) {
 		NBTTagCompound cpt = NBTUtils.getItemData(item);
 
 		if (cpt.hasKey("kind") && cpt.getByte("kind") == 1) {
@@ -207,6 +196,8 @@ public class ItemMapLocation extends ItemBuildCraft {
 			int zMax = cpt.getInteger("zMax");
 
 			return new Box(xMin, yMin, zMin, xMax, yMax, zMax);
+		} else if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
+			return getPointBox(item);
 		} else {
 			return null;
 		}
@@ -226,7 +217,8 @@ public class ItemMapLocation extends ItemBuildCraft {
 		}
 	}
 
-	public static ForgeDirection getSide(ItemStack item) {
+	@Override
+	public ForgeDirection getPointSide(ItemStack item) {
 		NBTTagCompound cpt = NBTUtils.getItemData(item);
 
 		if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
@@ -236,7 +228,19 @@ public class ItemMapLocation extends ItemBuildCraft {
 		}
 	}
 
-	public static IZone getZone(ItemStack item) {
+	@Override
+	public BlockIndex getPoint(ItemStack item) {
+		NBTTagCompound cpt = NBTUtils.getItemData(item);
+
+		if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
+			return new BlockIndex(cpt.getInteger("x"), cpt.getInteger("y"), cpt.getInteger("z"));
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public IZone getZone(ItemStack item) {
 		NBTTagCompound cpt = NBTUtils.getItemData(item);
 
 		if (cpt.hasKey("kind") && cpt.getByte("kind") == 3) {
@@ -253,10 +257,36 @@ public class ItemMapLocation extends ItemBuildCraft {
 		}
 	}
 
+	@Override
+	public List<BlockIndex> getPath(ItemStack item) {
+		NBTTagCompound cpt = NBTUtils.getItemData(item);
+
+		if (cpt.hasKey("kind") && cpt.getByte("kind") == 2) {
+			List<BlockIndex> indexList = new ArrayList<BlockIndex>();
+			NBTTagList pathNBT = cpt.getTagList("path", Constants.NBT.TAG_COMPOUND);
+			for (int i = 0; i < pathNBT.tagCount(); i++) {
+				indexList.add(new BlockIndex(pathNBT.getCompoundTagAt(i)));
+			}
+			return indexList;
+		} else if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
+			List<BlockIndex> indexList = new ArrayList<BlockIndex>();
+			indexList.add(new BlockIndex(cpt.getInteger("x"), cpt.getInteger("y"), cpt.getInteger("z")));
+			return indexList;
+		} else {
+			return null;
+		}
+	}
+
 	public static void setZone(ItemStack item, ZonePlan plan) {
 		NBTTagCompound cpt = NBTUtils.getItemData(item);
 
 		cpt.setByte("kind", (byte) 3);
 		plan.writeToNBT(cpt);
+	}
+
+	@Override
+	public MapLocationType getType(ItemStack stack) {
+		NBTTagCompound cpt = NBTUtils.getItemData(stack);
+		return MapLocationType.values()[cpt.getByte("kind")];
 	}
 }

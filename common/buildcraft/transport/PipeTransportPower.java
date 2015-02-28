@@ -26,7 +26,6 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.power.IEngine;
 import buildcraft.api.power.IRedstoneEngine;
-import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.TileBuildCraft;
