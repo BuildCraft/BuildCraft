@@ -10,6 +10,8 @@ package buildcraft.compat;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 
 import cpw.mods.fml.common.Loader;
 
@@ -42,6 +44,14 @@ public class CompatHooks {
 
 	public IInjectable getInjectableWrapper(TileEntity tile, ForgeDirection side) {
 		return null;
+	}
+
+	public Block getVisualBlock(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+		return null;
+	}
+
+	public int getVisualMeta(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+		return -1;
 	}
 
 	public Block getBlock(Class<? extends Block> klazz) {
