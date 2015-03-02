@@ -11,7 +11,6 @@ package buildcraft.compat;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 
 import cpw.mods.fml.common.Loader;
 
