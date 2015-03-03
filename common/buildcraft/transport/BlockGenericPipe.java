@@ -55,6 +55,7 @@ import buildcraft.api.events.PipePlacedEvent;
 import buildcraft.api.events.RobotPlacementEvent;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.items.IMapLocation;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
@@ -64,7 +65,6 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.ItemMapLocation;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.core.utils.Utils;
@@ -617,7 +617,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 				// Only check the instance at this point. Call the IToolWrench
 				// interface callbacks for the individual pipe/logic calls
 				return pipe.blockActivated(player);
-			} else if (currentItem.getItem() instanceof ItemMapLocation) {
+			} else if (currentItem.getItem() instanceof IMapLocation) {
 				// We want to be able to record pipe locations
 				return false;
 			} else if (PipeWire.RED.isPipeWire(currentItem)) {

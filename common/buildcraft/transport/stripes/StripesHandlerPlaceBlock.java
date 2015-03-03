@@ -34,10 +34,10 @@ public class StripesHandlerPlaceBlock implements IStripesHandler {
 	public boolean handle(World world, int x, int y, int z,
 			ForgeDirection direction, ItemStack stack, EntityPlayer player,
 			IStripesActivator activator) {
-		if (!world.isAirBlock(x, y, z)) {
-			return false;
+		if (!world.isAirBlock(x, y, z) && stack.tryPlaceItemIntoWorld(player, world, x, y, z, 1, 0.0f, 0.0f, 0.0f)) {
+			return true;
 		}
-		return stack.tryPlaceItemIntoWorld(player, world, x, y, z, 1, 0.0f, 0.0f, 0.0f);
+		return false;
 	}
 
 }

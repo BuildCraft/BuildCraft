@@ -185,7 +185,7 @@ import buildcraft.robots.boards.BoardRobotPump;
 import buildcraft.robots.boards.BoardRobotShovelman;
 import buildcraft.robots.boards.BoardRobotStripes;
 
-@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.0.1236,)")
+@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.2.1236,)")
 public class BuildCraftCore extends BuildCraftMod {
 	@Mod.Instance("BuildCraft|Core")
 	public static BuildCraftCore instance;
@@ -214,7 +214,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Item diamondGearItem;
 	public static Item wrenchItem;
 	public static Item mapLocationItem;
-	public static Item listItem;
+	public static ItemList listItem;
 	@SideOnly(Side.CLIENT)
 	public static IIcon redLaserTexture;
 	@SideOnly(Side.CLIENT)
@@ -346,7 +346,7 @@ public class BuildCraftCore extends BuildCraftMod {
 			mapLocationItem = (new ItemMapLocation()).setUnlocalizedName("mapLocation");
 			CoreProxy.proxy.registerItem(mapLocationItem);
 
-			listItem = (new ItemList()).setUnlocalizedName("list");
+			listItem = (ItemList) ((new ItemList()).setUnlocalizedName("list"));
 			CoreProxy.proxy.registerItem(listItem);
 
 			Property modifyWorldProp = BuildCraftCore.mainConfiguration.get("general", "modifyWorld", true);

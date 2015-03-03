@@ -86,15 +86,14 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 			if (!ai.success()) {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			} else {
-				blockFound = ((AIRobotSearchBlock) ai).blockFound;
-
-				if (!robot.getRegistry().take(new ResourceIdBlock (blockFound), robot)) {
-					blockFound = null;
-					startDelegateAI(new AIRobotGotoSleep(robot));
+				releaseBlockFound();
+				AIRobotSearchBlock searchAI = (AIRobotSearchBlock) ai;
+				if (searchAI.takeResource()) {
+					blockFound = searchAI.blockFound;
+					startDelegateAI(new AIRobotGotoBlock(robot, searchAI.path));
 				} else {
-					startDelegateAI(new AIRobotGotoBlock(robot, ((AIRobotSearchBlock) ai).path));
+					startDelegateAI(new AIRobotGotoSleep(robot));
 				}
-				((AIRobotSearchBlock) ai).unreserve();
 			}
 		} else if (ai instanceof AIRobotGotoBlock) {
 			if (!ai.success()) {
@@ -103,11 +102,18 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 				startDelegateAI(new AIRobotPumpBlock(robot, blockFound));
 			}
 		} else if (ai instanceof AIRobotGotoStationAndUnloadFluids) {
-			robot.getRegistry().take(new ResourceIdBlock (blockFound), robot);
+			releaseBlockFound();
 
 			if (!ai.success()) {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
+		}
+	}
+
+	private void releaseBlockFound() {
+		if (blockFound != null) {
+			robot.getRegistry().release(new ResourceIdBlock(blockFound));
+			blockFound = null;
 		}
 	}
 

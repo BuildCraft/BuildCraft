@@ -37,13 +37,9 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
-import buildcraft.transport.stripes.StripesHandlerDefault;
 import buildcraft.transport.utils.TransportUtils;
 
 public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnergyHandler, IStripesPipe {
-
-	private static IStripesHandler defaultItemsHandler = new StripesHandlerDefault();
-
 	public PipeItemsStripes(Item item) {
 		super(new PipeTransportItems(), item);
 	}
@@ -111,11 +107,6 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 					return;
 				}
 			}
-		}
-
-		if (defaultItemsHandler.handle(getWorld(), (int) p.x, (int) p.y, (int) p.z,
-				event.direction, stack, player, this)) {
-			event.entity = null;
 		}
 	}
 	

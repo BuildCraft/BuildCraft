@@ -8,6 +8,7 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.compat.CompatHooks;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.TileGenericPipe;
 
@@ -22,12 +23,15 @@ public class FacadeBlockAccess implements IBlockAccess {
 
 	@Override
 	public Block getBlock(int x, int y, int z) {
-		//System.out.println("Querying block at " + x + ", " + y + ", " + z);
+		Block compatBlock = CompatHooks.INSTANCE.getVisualBlock(world, x, y, z, side);
+		if (compatBlock != null) {
+			return compatBlock;
+		}
+
 		TileEntity tile = world.getTileEntity(x, y, z);
 		if (tile instanceof TileGenericPipe) {
 			PipePluggable p = ((TileGenericPipe) tile).getPipePluggable(side);
 			if (p instanceof IFacadePluggable) {
-				//System.out.println("Found facade");
 				return ((IFacadePluggable) p).getCurrentBlock();
 			}
 		}
@@ -46,7 +50,11 @@ public class FacadeBlockAccess implements IBlockAccess {
 
 	@Override
 	public int getBlockMetadata(int x, int y, int z) {
-		//System.out.println("Querying block metadata at " + x + ", " + y + ", " + z);
+		int compatMeta = CompatHooks.INSTANCE.getVisualMeta(world, x, y, z, side);
+		if (compatMeta >= 0) {
+			return compatMeta;
+		}
+
 		TileEntity tile = world.getTileEntity(x, y, z);
 		if (tile instanceof TileGenericPipe) {
 			PipePluggable p = ((TileGenericPipe) tile).getPipePluggable(side);

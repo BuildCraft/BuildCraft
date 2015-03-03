@@ -36,7 +36,6 @@ import buildcraft.robots.ResourceIdBlock;
 import buildcraft.robots.ai.AIRobotFetchAndEquipItemStack;
 import buildcraft.robots.ai.AIRobotGotoBlock;
 import buildcraft.robots.ai.AIRobotGotoSleep;
-import buildcraft.robots.ai.AIRobotSearchBlockBase;
 import buildcraft.robots.ai.AIRobotSearchRandomBlock;
 import buildcraft.robots.ai.AIRobotUseToolOnBlock;
 import buildcraft.robots.statements.ActionRobotFilter;
@@ -122,32 +121,34 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotSearchRandomBlock) {
-			AIRobotSearchBlockBase gotoBlock = (AIRobotSearchBlockBase) ai;
-
-			if (gotoBlock.blockFound != null
-					&& robot.getRegistry().take(new ResourceIdBlock(gotoBlock.blockFound), robot)) {
-
-				if (blockFound != null) {
-					robot.getRegistry().release(new ResourceIdBlock(blockFound));
-				}
-
-				gotoBlock.unreserve();
-
-				blockFound = gotoBlock.blockFound;
-				gotoBlock.path.removeLast();
-				startDelegateAI(new AIRobotGotoBlock(robot, gotoBlock.path));
-			} else {
-				if (gotoBlock.blockFound != null) {
-					gotoBlock.unreserve();
-				}
+			if (!ai.success()) {
 				startDelegateAI(new AIRobotGotoSleep(robot));
+			} else {
+				releaseBlockFound();
+				AIRobotSearchRandomBlock searchAI = (AIRobotSearchRandomBlock) ai;
+				if (searchAI.takeResource()) {
+					blockFound = searchAI.blockFound;
+					searchAI.path.removeLast();
+					startDelegateAI(new AIRobotGotoBlock(robot, searchAI.path));
+				} else {
+					startDelegateAI(new AIRobotGotoSleep(robot));
+				}
 			}
 		} else if (ai instanceof AIRobotGotoBlock) {
 			startDelegateAI(new AIRobotUseToolOnBlock(robot, blockFound));
+		} else if (ai instanceof AIRobotUseToolOnBlock) {
+			releaseBlockFound();
 		} else if (ai instanceof AIRobotFetchAndEquipItemStack) {
 			if (robot.getHeldItem() == null) {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
+		}
+	}
+
+	private void releaseBlockFound() {
+		if (blockFound != null) {
+			robot.getRegistry().release(new ResourceIdBlock(blockFound));
+			blockFound = null;
 		}
 	}
 

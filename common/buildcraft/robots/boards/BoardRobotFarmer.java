@@ -23,7 +23,6 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.utils.IBlockFilter;
 import buildcraft.robots.ResourceIdBlock;
-import buildcraft.robots.RobotRegistry;
 import buildcraft.robots.ai.AIRobotFetchAndEquipItemStack;
 import buildcraft.robots.ai.AIRobotGotoBlock;
 import buildcraft.robots.ai.AIRobotGotoSleep;
@@ -68,24 +67,17 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotSearchBlock) {
-			AIRobotSearchBlock searchAI = (AIRobotSearchBlock) ai;
-
-			if (searchAI.blockFound != null
-					&& RobotRegistry.getRegistry(robot.worldObj).take(
-							new ResourceIdBlock(searchAI.blockFound), robot)) {
-				((AIRobotSearchBlock) ai).unreserve();
-
-				if (blockFound != null) {
-					robot.getRegistry().release(new ResourceIdBlock(blockFound));
-				}
-
-				blockFound = searchAI.blockFound;
-				startDelegateAI(new AIRobotGotoBlock(robot, searchAI.path));
-			} else {
-				if (searchAI.blockFound != null) {
-					((AIRobotSearchBlock) ai).unreserve();
-				}
+			if (!ai.success()) {
 				startDelegateAI(new AIRobotGotoSleep(robot));
+			} else {
+				releaseBlockFound();
+				AIRobotSearchBlock searchAI = (AIRobotSearchBlock) ai;
+				if (searchAI.takeResource()) {
+					blockFound = searchAI.blockFound;
+					startDelegateAI(new AIRobotGotoBlock(robot, searchAI.path));
+				} else {
+					startDelegateAI(new AIRobotGotoSleep(robot));
+				}
 			}
 		} else if (ai instanceof AIRobotGotoBlock) {
 			startDelegateAI(new AIRobotUseToolOnBlock(robot, blockFound));
@@ -94,6 +86,12 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		} else if (ai instanceof AIRobotUseToolOnBlock) {
+			releaseBlockFound();
+		}
+	}
+
+	private void releaseBlockFound() {
+		if (blockFound != null) {
 			robot.getRegistry().release(new ResourceIdBlock(blockFound));
 			blockFound = null;
 		}
@@ -101,9 +99,7 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 
 	@Override
 	public void end() {
-		if (blockFound != null) {
-			robot.getRegistry().release(new ResourceIdBlock(blockFound));
-		}
+		releaseBlockFound();
 	}
 
 	@Override

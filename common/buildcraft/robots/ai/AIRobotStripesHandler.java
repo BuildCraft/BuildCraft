@@ -24,12 +24,8 @@ import buildcraft.api.transport.IStripesHandler.StripesHandlerType;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.transport.stripes.StripesHandlerDefault;
 
 public class AIRobotStripesHandler extends AIRobot implements IStripesActivator {
-
-	private static IStripesHandler defaultItemsHandler = new StripesHandlerDefault();
-
 	private BlockIndex useToBlock;
 	private int useCycles = 0;
 
@@ -77,17 +73,11 @@ public class AIRobotStripesHandler extends AIRobot implements IStripesActivator 
 					}
 				}
 			}
-
-			if (defaultItemsHandler.handle(robot.worldObj, (int) p.x, (int) p.y,
-					(int) p.z, direction, stack, player, this)) {
-				robot.setItemInUse(null);
-			}
 			terminate();
 		}
 	}
 
 	private ForgeDirection getDirection() {
-
 		return null;
 	}
 

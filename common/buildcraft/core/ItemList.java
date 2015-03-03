@@ -30,10 +30,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.api.items.IList;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.utils.NBTUtils;
 
-public class ItemList extends ItemBuildCraft {
+public class ItemList extends ItemBuildCraft implements IList {
 
 	private IIcon baseIcon;
 	private IIcon writtenIcon;
@@ -288,11 +289,13 @@ public class ItemList extends ItemBuildCraft {
 		return result;
 	}
 
-	public static String getLabel(ItemStack stack) {
+	@Override
+	public String getLabel(ItemStack stack) {
 		return NBTUtils.getItemData(stack).getString("label");
 	}
 
-	public static boolean matches(ItemStack stackList, ItemStack item) {
+	@Override
+	public boolean matches(ItemStack stackList, ItemStack item) {
 		StackLine[] lines = getLines(stackList);
 
 		for (StackLine line : lines) {

@@ -25,9 +25,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.events.BlockInteractionEvent;
+import buildcraft.api.items.IMapLocation;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CreativeTabBuildCraft;
-import buildcraft.core.ItemMapLocation;
 import buildcraft.core.utils.Utils;
 
 public class BlockMarker extends BlockBuildCraft {
@@ -98,7 +98,7 @@ public class BlockMarker extends BlockBuildCraft {
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
 		if (entityplayer.inventory.getCurrentItem() != null
-				&& entityplayer.inventory.getCurrentItem().getItem() instanceof ItemMapLocation) {
+				&& entityplayer.inventory.getCurrentItem().getItem() instanceof IMapLocation) {
 			return false;
 		}
 
