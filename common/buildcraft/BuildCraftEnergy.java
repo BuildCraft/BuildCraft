@@ -19,6 +19,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.stats.Achievement;
 import net.minecraft.world.biome.BiomeGenBase;
 
 import cpw.mods.fml.common.Mod;
@@ -99,6 +100,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	public static Item bucketFuel;
 	public static Item bucketRedPlasma;
 	public static Item fuel;
+
+	public static Achievement engineAchievement1;
+	public static Achievement engineAchievement2;
+	public static Achievement engineAchievement3;
 
 	public static boolean canOilBurn;
 	public static boolean isOilDense;
@@ -355,6 +360,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		EnergyProxy.proxy.registerBlockRenderers();
 		EnergyProxy.proxy.registerTileEntities();
+
+		engineAchievement1 = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.redstoneEngine", "engineAchievement1", 1, -2, new ItemStack(engineBlock, 1, 0), BuildCraftCore.woodenGearAchievement));
+		engineAchievement2 = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.stirlingEngine", "engineAchievement2", 3, -2, new ItemStack(engineBlock, 1, 1), engineAchievement1));
+		engineAchievement3 = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.combustionEngine", "engineAchievement3", 5, -2, new ItemStack(engineBlock, 1, 2), engineAchievement2));
 	}
 
 	@Mod.EventHandler

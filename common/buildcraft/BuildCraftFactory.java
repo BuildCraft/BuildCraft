@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.stats.Achievement;
 import net.minecraft.world.World;
 
 import cpw.mods.fml.common.Mod;
@@ -89,6 +90,11 @@ public class BuildCraftFactory extends BuildCraftMod {
 	public static BlockTank tankBlock;
 	public static BlockRefinery refineryBlock;
 	public static BlockHopper hopperBlock;
+
+	public static Achievement aLotOfCraftingAchievement;
+	public static Achievement straightDownAchievement;
+	public static Achievement chunkDestroyerAchievement;
+	public static Achievement refineAndRedefineAchievement;
 
 	public static boolean quarryLoadsChunks = true;
 	public static boolean allowMining = true;
@@ -164,6 +170,11 @@ public class BuildCraftFactory extends BuildCraftMod {
 		BuilderAPI.schematicRegistry.registerSchematicBlock(floodGateBlock, SchematicTileIgnoreState.class);
 		BuilderAPI.schematicRegistry.registerSchematicBlock(autoWorkbenchBlock, SchematicAutoWorkbench.class);
 		BuilderAPI.schematicRegistry.registerSchematicBlock(hopperBlock, SchematicTile.class);
+
+		aLotOfCraftingAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.aLotOfCrafting", "aLotOfCraftingAchievement", 1, 2, autoWorkbenchBlock, BuildCraftCore.woodenGearAchievement));
+		straightDownAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.straightDown", "straightDownAchievement", 5, 2, miningWellBlock, BuildCraftCore.ironGearAchievement));
+		chunkDestroyerAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.chunkDestroyer", "chunkDestroyerAchievement", 9, 2, quarryBlock, BuildCraftCore.diamondGearAchievement));
+		refineAndRedefineAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.refineAndRedefine", "refineAndRedefineAchievement", 10, 0, refineryBlock, BuildCraftCore.diamondGearAchievement));
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();

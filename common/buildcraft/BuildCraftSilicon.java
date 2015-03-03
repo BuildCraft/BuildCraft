@@ -16,6 +16,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.stats.Achievement;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -131,6 +132,9 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static IActionInternal actionStationDropInPipe = new ActionStationAcceptItemsPipe();
 	public static IActionInternal actionStationMachineRequestItems = new ActionStationRequestItemsMachine();
 
+	public static Achievement timeForSomeLogicAchievement;
+	public static Achievement tinglyLaserAchievement;
+
 	public static float chipsetCostMultiplier = 1.0F;
 
 	public static List<String> blacklistedRobots;
@@ -226,6 +230,9 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		CoreProxy.proxy.registerTileEntity(TileRequester.class, "net.minecraft.src.buildcraft.commander.TileRequester");
 
 		BuilderAPI.schematicRegistry.registerSchematicBlock(laserBlock, SchematicRotateMeta.class, new int[] {2, 5, 3, 4}, true);
+
+		timeForSomeLogicAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.timeForSomeLogic", "timeForSomeLogicAchievement", 9, -2, assemblyTableBlock, BuildCraftCore.diamondGearAchievement));
+		tinglyLaserAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.tinglyLaser", "tinglyLaserAchievement", 11, -2, laserBlock, timeForSomeLogicAchievement));
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();

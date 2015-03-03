@@ -25,6 +25,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.Launch;
+import net.minecraft.stats.Achievement;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -161,7 +162,11 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public static ItemBlueprintTemplate templateItem;
 	public static ItemBlueprintStandard blueprintItem;
 
-	public static ActionFiller[] fillerActions;
+	public static Achievement architectAchievement;
+	public static Achievement libraryAchievement;
+	public static Achievement blueprintAchievement;
+	public static Achievement builderAchievement;
+	public static Achievement templateAchievement;
 
 	public static BlueprintDatabase serverDB;
 	public static BlueprintDatabase clientDB;
@@ -452,6 +457,12 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicFactory.registerSchematicFactory(SchematicEntity.class, new SchematicFactoryEntity());
 
 		BlueprintDeployer.instance = new RealBlueprintDeployer();
+
+		architectAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.architect", "architectAchievement", 11, 2, BuildCraftBuilders.architectBlock, BuildCraftCore.goldGearAchievement));
+		builderAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.builder", "builderAchievement", 13, 2, BuildCraftBuilders.builderBlock, architectAchievement));
+		blueprintAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.blueprint", "blueprintAchievement", 11, 4, BuildCraftBuilders.blueprintItem, architectAchievement));
+		templateAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.template", "templateAchievement", 13, 4, BuildCraftBuilders.templateItem, blueprintAchievement));
+		libraryAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.blueprintLibrary", "blueprintLibraryAchievement", 15, 2, BuildCraftBuilders.libraryBlock, builderAchievement));
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
