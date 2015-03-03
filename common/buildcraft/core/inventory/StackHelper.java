@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.oredict.OreDictionary;
 
-import buildcraft.core.ItemList;
+import buildcraft.api.items.IList;
 
 public class StackHelper {
 
@@ -46,10 +46,12 @@ public class StackHelper {
 			return false;
 		}
 
-		if (stack1.getItem() instanceof ItemList) {
-			return ItemList.matches(stack1, stack2);
-		} else if (stack2.getItem() instanceof ItemList) {
-			return ItemList.matches(stack2, stack1);
+		if (stack1.getItem() instanceof IList) {
+			IList list = (IList) stack1.getItem();
+			return list.matches(stack1, stack2);
+		} else if (stack2.getItem() instanceof IList) {
+			IList list = (IList) stack2.getItem();
+			return list.matches(stack2, stack1);
 		}
 
 		if (!stack1.isItemEqual(stack2)) {
@@ -137,10 +139,12 @@ public class StackHelper {
 			return false;
 		}
 
-		if (a.getItem() instanceof ItemList) {
-			return ItemList.matches(a, b);
-		} else if (b.getItem() instanceof ItemList) {
-			return ItemList.matches(b, a);
+		if (a.getItem() instanceof IList) {
+			IList list = (IList) a.getItem();
+			return list.matches(a, b);
+		} else if (b.getItem() instanceof IList) {
+			IList list = (IList) b.getItem();
+			return list.matches(b, a);
 		}
 
 		return isMatchingItem(a, b, true, false);

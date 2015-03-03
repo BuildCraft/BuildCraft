@@ -12,11 +12,11 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.core.IZone;
+import buildcraft.api.items.IMapLocation;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
-import buildcraft.core.ItemMapLocation;
 import buildcraft.core.statements.BCStatement;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.transport.gates.StatementSlot;
@@ -44,11 +44,12 @@ public class ActionRobotWorkInArea extends BCStatement implements IActionInterna
 
 		ItemStack stack = slot.parameters[0].getItemStack();
 
-		if (!(stack.getItem() instanceof ItemMapLocation)) {
+		if (stack == null || !(stack.getItem() instanceof IMapLocation)) {
 			return null;
 		}
 
-		return ItemMapLocation.getZone(stack);
+		IMapLocation map = (IMapLocation) stack.getItem();
+		return map.getZone(stack);
 	}
 
 	@Override

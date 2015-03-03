@@ -20,7 +20,6 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.utils.IBlockFilter;
 import buildcraft.robots.ResourceIdBlock;
-import buildcraft.robots.RobotRegistry;
 import buildcraft.robots.ai.AIRobotFetchAndEquipItemStack;
 import buildcraft.robots.ai.AIRobotGotoBlock;
 import buildcraft.robots.ai.AIRobotGotoSleep;
@@ -63,24 +62,17 @@ public class BoardRobotStripes extends RedstoneBoardRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotSearchRandomBlock) {
-			AIRobotSearchRandomBlock searchAI = (AIRobotSearchRandomBlock) ai;
-
-			if (searchAI.blockFound != null
-					&& RobotRegistry.getRegistry(robot.worldObj).take(
-							new ResourceIdBlock(searchAI.blockFound), robot)) {
-				searchAI.unreserve();
-
-				if (blockFound != null) {
-					robot.getRegistry().release(new ResourceIdBlock(blockFound));
-				}
-
-				blockFound = searchAI.blockFound;
-				startDelegateAI(new AIRobotGotoBlock(robot, searchAI.path));
-			} else {
-				if (searchAI.blockFound != null) {
-					searchAI.unreserve();
-				}
+			if (!ai.success()) {
 				startDelegateAI(new AIRobotGotoSleep(robot));
+			} else {
+				releaseBlockFound();
+				AIRobotSearchRandomBlock searchAI = (AIRobotSearchRandomBlock) ai;
+				if (searchAI.takeResource()) {
+					blockFound = searchAI.blockFound;
+					startDelegateAI(new AIRobotGotoBlock(robot, searchAI.path));
+				} else {
+					startDelegateAI(new AIRobotGotoSleep(robot));
+				}
 			}
 		} else if (ai instanceof AIRobotGotoBlock) {
 			startDelegateAI(new AIRobotStripesHandler(robot, blockFound));
@@ -89,6 +81,12 @@ public class BoardRobotStripes extends RedstoneBoardRobot {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		} else if (ai instanceof AIRobotStripesHandler) {
+			releaseBlockFound();
+		}
+	}
+
+	private void releaseBlockFound() {
+		if (blockFound != null) {
 			robot.getRegistry().release(new ResourceIdBlock(blockFound));
 			blockFound = null;
 		}

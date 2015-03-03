@@ -198,7 +198,9 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		initialize();
 
 		for (BuildingSlotBlock b : buildList) {
-			if (!b.schematic.doNotBuild()) {
+			if (b.mode == Mode.ClearIfInvalid) {
+				context.world.setBlockToAir(b.x, b.y, b.z);
+			} else if (!b.schematic.doNotBuild()) {
 				b.stackConsumed = new LinkedList<ItemStack>();
 
 				try {

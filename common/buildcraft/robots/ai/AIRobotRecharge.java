@@ -26,6 +26,9 @@ public class AIRobotRecharge extends AIRobot {
 	@Override
 	public void start() {
 		robot.getRegistry().releaseResources(robot);
+		robot.motionX = 0;
+		robot.motionY = 0;
+		robot.motionZ = 0;
 
 		startDelegateAI(new AIRobotSearchAndGotoStation(robot, new IStationFilter() {
 			@Override
@@ -33,6 +36,11 @@ public class AIRobotRecharge extends AIRobot {
 				return station.getPipe().getPipeType() == IPipeTile.PipeType.POWER;
 			}
 		}, null));
+	}
+
+	@Override
+	public int getEnergyCost() {
+		return 0;
 	}
 
 	@Override

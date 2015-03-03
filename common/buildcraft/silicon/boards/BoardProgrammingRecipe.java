@@ -1,6 +1,7 @@
 package buildcraft.silicon.boards;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import net.minecraft.item.ItemStack;
@@ -38,7 +39,7 @@ public class BoardProgrammingRecipe implements IProgrammingRecipe {
 			nbt.createBoard(NBTUtils.getItemData(stack));
 			options.add(stack);
 		}
-		options.sort(new BoardSorter(this));
+		Collections.sort(options, new BoardSorter(this));
 		return options;
 	}
 

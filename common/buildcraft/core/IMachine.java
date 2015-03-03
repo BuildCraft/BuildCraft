@@ -10,7 +10,7 @@ package buildcraft.core;
 
 /**
  * Left only to stop certain mods depending on it from crashing.
- * Please move to the classes contained in builcraft.api.tiles
+ * Please move to the classes contained in buildcraft.api.tiles
  * and IPipeConnection from .transport.
  */
 @Deprecated

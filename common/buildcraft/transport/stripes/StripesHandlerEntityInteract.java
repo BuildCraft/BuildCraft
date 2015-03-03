@@ -66,7 +66,7 @@ public class StripesHandlerEntityInteract implements IStripesHandler {
 			successful = true;
 			dropItemsExcept(stack, player, activator, direction);
 		}
-		if (stack.stackSize > 0) {
+		if (stack.stackSize > 0 && successful) {
 			activator.sendItem(stack, direction.getOpposite());
 		}
 

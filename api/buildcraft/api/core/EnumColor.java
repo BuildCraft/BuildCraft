@@ -36,6 +36,7 @@ public enum EnumColor {
 	MAGENTA,
 	ORANGE,
 	WHITE;
+
 	public static final EnumColor[] VALUES = values();
 	public static final String[] DYES = {
 		"dyeBlack",

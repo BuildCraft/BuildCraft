@@ -14,8 +14,6 @@ import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import cofh.api.energy.IEnergyHandler;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.ITriggerExternal;
@@ -73,11 +71,6 @@ public class PipeTriggerProvider implements ITriggerProvider {
 	@Override
 	public LinkedList<ITriggerExternal> getExternalTriggers(ForgeDirection side, TileEntity tile) {
 		LinkedList<ITriggerExternal> result = new LinkedList<ITriggerExternal>();
-
-		if (tile instanceof IEnergyHandler && ((IEnergyHandler) tile).getMaxEnergyStored(side) > 0) {
-			result.add((ITriggerExternal) BuildCraftCore.triggerEnergyHigh);
-			result.add((ITriggerExternal) BuildCraftCore.triggerEnergyLow);
-		}
 
 		return result;
 	}

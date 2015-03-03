@@ -23,10 +23,20 @@ import cofh.api.energy.IEnergyReceiver;
 
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.ITriggerExternal;
+import buildcraft.api.statements.ITriggerInternal;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.utils.StringUtils;
 
-public class TriggerEnergy extends BCStatement implements ITriggerExternal {
+public class TriggerEnergy extends BCStatement implements ITriggerInternal {
+	public static class Neighbor {
+		public TileEntity tile;
+		public ForgeDirection side;
+
+		public Neighbor(TileEntity tile, ForgeDirection side) {
+			this.tile = tile;
+			this.side = side;
+		}
+	}
 
 	private boolean high;
 
@@ -67,14 +77,26 @@ public class TriggerEnergy extends BCStatement implements ITriggerExternal {
 		return false;
 	}
 
-	@Override
-	public boolean isTriggerActive(TileEntity tile, ForgeDirection side, IStatementContainer container, IStatementParameter[] parameters) {
-		if (tile instanceof IEnergyHandler || tile instanceof IEnergyProvider || tile instanceof IEnergyReceiver) {
-			if (((IEnergyConnection) tile).canConnectEnergy(side.getOpposite())) {
+	protected static boolean isTriggered(Object tile, ForgeDirection side) {
+		return (tile instanceof IEnergyHandler || tile instanceof IEnergyProvider || tile instanceof IEnergyReceiver)
+			&& (((IEnergyConnection) tile).canConnectEnergy(side.getOpposite()));
+	}
+
+	protected boolean isActive(Object tile, ForgeDirection side) {
+		if (isTriggered(tile, side)) {
 				return isTriggeredEnergyHandler((IEnergyConnection) tile, side.getOpposite());
-			}
 		}
 
+		return false;
+	}
+
+	public static boolean isTriggeringPipe(TileEntity tile) {
+		if (tile instanceof IPipeTile) {
+			IPipeTile pipeTile = (IPipeTile) tile;
+			if (pipeTile.getPipeType() == IPipeTile.PipeType.POWER && pipeTile.getPipe() instanceof IEnergyHandler) {
+				return true;
+			}
+		}
 		return false;
 	}
 
@@ -82,5 +104,42 @@ public class TriggerEnergy extends BCStatement implements ITriggerExternal {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_machine_energy_" + (high ? "high" : "low"));
+	}
+
+	@Override
+	public boolean isTriggerActive(IStatementContainer source, IStatementParameter[] parameters) {
+		// Internal check
+		if (isTriggeringPipe(source.getTile())) {
+			return isActive(((IPipeTile) source.getTile()).getPipe(), ForgeDirection.UNKNOWN);
+		}
+
+		Neighbor triggeringNeighbor = getTriggeringNeighbor(source.getTile());
+		if (triggeringNeighbor != null) {
+			return isActive(triggeringNeighbor.tile, triggeringNeighbor.side);
+		}
+		return false;
+	}
+
+	public static Neighbor getTriggeringNeighbor(TileEntity parent) {
+		if (parent instanceof IPipeTile) {
+			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+				TileEntity tile = ((IPipeTile) parent).getNeighborTile(side);
+				if (tile != null && isTriggered(tile, side)) {
+					return new Neighbor(tile, side);
+				}
+			}
+		} else {
+			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+				TileEntity tile = parent.getWorldObj().getTileEntity(
+						parent.xCoord + side.offsetX,
+						parent.yCoord + side.offsetY,
+						parent.zCoord + side.offsetZ
+				);
+				if (tile != null && isTriggered(tile, side)) {
+					return new Neighbor(tile, side);
+				}
+			}
+		}
+		return null;
 	}
 }

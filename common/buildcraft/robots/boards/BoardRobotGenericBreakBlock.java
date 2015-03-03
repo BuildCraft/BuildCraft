@@ -92,23 +92,28 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotSearchBlock) {
-			if (indexStored != null) {
-				robot.getRegistry().release(new ResourceIdBlock(indexStored));
-			}
-
-			indexStored = ((AIRobotSearchBlock) ai).blockFound;
-
-			if (indexStored == null) {
+			if (!ai.success()) {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			} else {
-				if (robot.getRegistry().take(new ResourceIdBlock(indexStored), robot)) {
-					startDelegateAI(new AIRobotGotoBlock(robot, ((AIRobotSearchBlock) ai).path));
+				releaseBlockFound();
+				AIRobotSearchBlock searchAI = (AIRobotSearchBlock) ai;
+				if (searchAI.takeResource()) {
+					indexStored = searchAI.blockFound;
+					startDelegateAI(new AIRobotGotoBlock(robot, searchAI.path));
+				} else {
+					startDelegateAI(new AIRobotGotoSleep(robot));
 				}
-				((AIRobotSearchBlock) ai).unreserve();
 			}
 		} else if (ai instanceof AIRobotGotoBlock) {
 			startDelegateAI(new AIRobotBreak(robot, indexStored));
 		} else if (ai instanceof AIRobotBreak) {
+			releaseBlockFound();
+			startDelegateAI(new AIRobotGotoSleep(robot));
+		}
+	}
+
+	private void releaseBlockFound() {
+		if (indexStored != null) {
 			robot.getRegistry().release(new ResourceIdBlock(indexStored));
 			indexStored = null;
 		}
@@ -116,9 +121,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
 	@Override
 	public void end() {
-		if (indexStored != null) {
-			robot.getRegistry().release(new ResourceIdBlock(indexStored));
-		}
+		releaseBlockFound();
 	}
 
 	public final void updateFilter() {
