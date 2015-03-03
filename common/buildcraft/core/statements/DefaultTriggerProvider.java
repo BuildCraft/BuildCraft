@@ -66,7 +66,8 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 		if (tile instanceof IEnergyConnection && ((IEnergyConnection) tile).canConnectEnergy(side.getOpposite())) {
 			if ((tile instanceof IEnergyHandler && ((IEnergyHandler) tile).getMaxEnergyStored(side.getOpposite()) > 0)
 					|| (tile instanceof IEnergyReceiver && ((IEnergyReceiver) tile).getMaxEnergyStored(side.getOpposite()) > 0)
-					|| (tile instanceof IEnergyProvider && ((IEnergyProvider) tile).getMaxEnergyStored(side.getOpposite()) > 0)) {
+					|| (tile instanceof IEnergyProvider && ((IEnergyProvider) tile).getMaxEnergyStored(side.getOpposite()) > 0)
+					|| (TriggerEnergy.isTriggeringPipe(tile))) {
 				res.add((ITriggerExternal) BuildCraftCore.triggerEnergyHigh);
 				res.add((ITriggerExternal) BuildCraftCore.triggerEnergyLow);
 			}

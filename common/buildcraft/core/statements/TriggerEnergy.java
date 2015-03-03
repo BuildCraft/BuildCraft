@@ -24,14 +24,17 @@ import cofh.api.energy.IEnergyReceiver;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerExternal;
+import buildcraft.api.statements.ITriggerInternal;
+import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.transport.pipes.PipePowerWood;
 
-public class TriggerEnergy extends BCStatement implements ITriggerExternal {
-
+public class TriggerEnergy extends BCStatement implements ITriggerInternal {
 	private boolean high;
 
-	public TriggerEnergy(boolean high) {
-		super("buildcraft:energyStored" + (high ? "high" : "low"));
+	public TriggerEnergy(String name, boolean high) {
+		super(name);
 
 		this.high = high;
 	}
@@ -67,8 +70,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerExternal {
 		return false;
 	}
 
-	@Override
-	public boolean isTriggerActive(TileEntity tile, ForgeDirection side, IStatementContainer container, IStatementParameter[] parameters) {
+	protected boolean isTriggered(Object tile, ForgeDirection side) {
 		if (tile instanceof IEnergyHandler || tile instanceof IEnergyProvider || tile instanceof IEnergyReceiver) {
 			if (((IEnergyConnection) tile).canConnectEnergy(side.getOpposite())) {
 				return isTriggeredEnergyHandler((IEnergyConnection) tile, side.getOpposite());
@@ -78,9 +80,50 @@ public class TriggerEnergy extends BCStatement implements ITriggerExternal {
 		return false;
 	}
 
+	public static boolean isTriggeringPipe(TileEntity tile) {
+		if (tile instanceof IPipeTile) {
+			IPipeTile pipeTile = (IPipeTile) tile;
+			if (pipeTile.getPipeType() == IPipeTile.PipeType.POWER && pipeTile.getPipe() instanceof IEnergyHandler) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_machine_energy_" + (high ? "high" : "low"));
+	}
+
+	@Override
+	public boolean isTriggerActive(IStatementContainer source, IStatementParameter[] parameters) {
+		// Internal check
+		if (isTriggeringPipe(source.getTile())) {
+			return isTriggered(((IPipeTile) source.getTile()).getPipe(), ForgeDirection.UNKNOWN);
+		}
+
+		TileEntity parent = source.getTile();
+
+		if (parent instanceof IPipeTile) {
+			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+				TileEntity tile = ((IPipeTile) parent).getNeighborTile(side);
+				if (tile != null && isTriggered(tile, side)) {
+					return true;
+				}
+			}
+		} else {
+			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+				TileEntity tile = parent.getWorldObj().getTileEntity(
+						source.getTile().xCoord + side.offsetX,
+						source.getTile().yCoord + side.offsetY,
+						source.getTile().zCoord + side.offsetZ
+				);
+				if (tile != null && isTriggered(tile, side)) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }
