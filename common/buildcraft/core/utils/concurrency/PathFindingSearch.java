@@ -65,7 +65,9 @@ public class PathFindingSearch implements IIterableAlgorithm {
 			}
 
 			BlockIndex delta = blockIter.next();
-			BlockIndex block = new BlockIndex(start.x + delta.x, start.y + delta.y, start.z + delta.z);
+			BlockIndex block = new BlockIndex(start.x + delta.x,
+					((start.y + delta.y) > 0) ? start.y + delta.y : 0,
+					start.z + delta.z);
 			if (isLoadedChunk(block.x, block.z)) {
 				if (isTarget(block)) {
 					pathFinders.add(new PathFinding(world, start, block, 0, maxDistance));
