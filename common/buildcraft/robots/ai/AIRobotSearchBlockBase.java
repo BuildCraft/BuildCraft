@@ -8,9 +8,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.robots.ResourceId;
 import buildcraft.core.utils.IBlockFilter;
 import buildcraft.core.utils.concurrency.IterableAlgorithmRunner;
 import buildcraft.core.utils.concurrency.PathFindingSearch;
+import buildcraft.robots.ResourceIdBlock;
 
 public class AIRobotSearchBlockBase extends AIRobot {
 
@@ -26,6 +28,8 @@ public class AIRobotSearchBlockBase extends AIRobot {
 
 		pathFound = iPathFound;
 		blockIter = iBlockIter;
+		blockFound = null;
+		path = null;
 	}
 
 	@Override
@@ -67,6 +71,11 @@ public class AIRobotSearchBlockBase extends AIRobot {
 	}
 
 	@Override
+	public boolean success() {
+		return blockFound != null;
+	}
+
+	@Override
 	public void writeSelfToNBT(NBTTagCompound nbt) {
 		super.writeSelfToNBT(nbt);
 
@@ -84,6 +93,15 @@ public class AIRobotSearchBlockBase extends AIRobot {
 		if (nbt.hasKey("blockFound")) {
 			blockFound = new BlockIndex(nbt.getCompoundTag("blockFound"));
 		}
+	}
+
+	public boolean takeResource() {
+		boolean taken = false;
+		if (robot.getRegistry().take(new ResourceIdBlock(blockFound), robot)) {
+			taken = true;
+		}
+		unreserve();
+		return taken;
 	}
 
 	public void unreserve() {
