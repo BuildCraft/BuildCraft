@@ -9,7 +9,6 @@
 package buildcraft.transport.stripes;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;

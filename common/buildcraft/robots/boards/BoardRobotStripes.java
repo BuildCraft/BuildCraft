@@ -20,11 +20,9 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.utils.IBlockFilter;
 import buildcraft.robots.ResourceIdBlock;
-import buildcraft.robots.RobotRegistry;
 import buildcraft.robots.ai.AIRobotFetchAndEquipItemStack;
 import buildcraft.robots.ai.AIRobotGotoBlock;
 import buildcraft.robots.ai.AIRobotGotoSleep;
-import buildcraft.robots.ai.AIRobotSearchBlock;
 import buildcraft.robots.ai.AIRobotSearchRandomBlock;
 import buildcraft.robots.ai.AIRobotStripesHandler;
 

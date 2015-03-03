@@ -151,11 +151,11 @@ import buildcraft.transport.statements.TriggerRedstoneFaderInput;
 import buildcraft.transport.stripes.StripesHandlerArrow;
 import buildcraft.transport.stripes.StripesHandlerBucket;
 import buildcraft.transport.stripes.StripesHandlerEntityInteract;
+import buildcraft.transport.stripes.StripesHandlerHoe;
 import buildcraft.transport.stripes.StripesHandlerPipes;
 import buildcraft.transport.stripes.StripesHandlerPlaceBlock;
 import buildcraft.transport.stripes.StripesHandlerRightClick;
 import buildcraft.transport.stripes.StripesHandlerShears;
-import buildcraft.transport.stripes.StripesHandlerHoe;
 
 @Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTransport extends BuildCraftMod {

@@ -19,11 +19,9 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.api.robots.ResourceId;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.utils.IBlockFilter;
 import buildcraft.robots.ResourceIdBlock;
-import buildcraft.robots.RobotRegistry;
 import buildcraft.robots.ai.AIRobotFetchAndEquipItemStack;
 import buildcraft.robots.ai.AIRobotGotoBlock;
 import buildcraft.robots.ai.AIRobotGotoSleep;
@@ -72,7 +70,7 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 			} else {
 				releaseBlockFound();
 				AIRobotSearchBlock searchAI = (AIRobotSearchBlock) ai;
-				if(searchAI.takeResource()) {
+				if (searchAI.takeResource()) {
 					blockFound = searchAI.blockFound;
 					startDelegateAI(new AIRobotGotoBlock(robot, searchAI.path));
 				} else {

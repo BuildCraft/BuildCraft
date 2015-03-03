@@ -74,11 +74,6 @@ public class PipeTriggerProvider implements ITriggerProvider {
 	public LinkedList<ITriggerExternal> getExternalTriggers(ForgeDirection side, TileEntity tile) {
 		LinkedList<ITriggerExternal> result = new LinkedList<ITriggerExternal>();
 
-		if (tile instanceof IEnergyHandler && ((IEnergyHandler) tile).getMaxEnergyStored(side) > 0) {
-			result.add((ITriggerExternal) BuildCraftCore.triggerEnergyHigh);
-			result.add((ITriggerExternal) BuildCraftCore.triggerEnergyLow);
-		}
-
 		return result;
 	}
 }

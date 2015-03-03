@@ -137,7 +137,6 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 	}
 
 	protected boolean isValidTable() {
-
 		if (laserTarget == null || laserTarget.isInvalidTarget() || !laserTarget.requiresLaserEnergy()) {
 			return false;
 		}
@@ -308,11 +307,11 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 	public ResourceLocation getTexture() {
 		double avg = powerAverage / POWER_AVERAGING;
 
-		if (avg <= 1.0) {
+		if (avg <= 10.0) {
 			return EntityLaser.LASER_TEXTURES[0];
-		} else if (avg <= 2.0) {
+		} else if (avg <= 20.0) {
 			return EntityLaser.LASER_TEXTURES[1];
-		} else if (avg <= 3.0) {
+		} else if (avg <= 30.0) {
 			return EntityLaser.LASER_TEXTURES[2];
 		} else {
 			return EntityLaser.LASER_TEXTURES[3];

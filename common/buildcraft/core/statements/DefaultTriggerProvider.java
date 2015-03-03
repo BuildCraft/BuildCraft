@@ -63,21 +63,18 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 			res.add(BuildCraftCore.triggerMachineInactive);
 		}
 
-		if (tile instanceof IEnergyConnection && ((IEnergyConnection) tile).canConnectEnergy(side.getOpposite())) {
-			if ((tile instanceof IEnergyHandler && ((IEnergyHandler) tile).getMaxEnergyStored(side.getOpposite()) > 0)
-					|| (tile instanceof IEnergyReceiver && ((IEnergyReceiver) tile).getMaxEnergyStored(side.getOpposite()) > 0)
-					|| (tile instanceof IEnergyProvider && ((IEnergyProvider) tile).getMaxEnergyStored(side.getOpposite()) > 0)
-					|| (TriggerEnergy.isTriggeringPipe(tile))) {
-				res.add((ITriggerExternal) BuildCraftCore.triggerEnergyHigh);
-				res.add((ITriggerExternal) BuildCraftCore.triggerEnergyLow);
-			}
-		}
-
 		return res;
 	}
 
 	@Override
 	public LinkedList<ITriggerInternal> getInternalTriggers(IStatementContainer container) {
-		return null;
+		LinkedList<ITriggerInternal> res = new LinkedList<ITriggerInternal>();
+
+		if (TriggerEnergy.isTriggeringPipe(container.getTile()) || TriggerEnergy.getTriggeringNeighbor(container.getTile()) != null) {
+			res.add((ITriggerInternal) BuildCraftCore.triggerEnergyHigh);
+			res.add((ITriggerInternal) BuildCraftCore.triggerEnergyLow);
+		}
+
+		return res;
 	}
 }

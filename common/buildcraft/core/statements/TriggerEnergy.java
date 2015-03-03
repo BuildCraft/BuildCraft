@@ -23,18 +23,25 @@ import cofh.api.energy.IEnergyReceiver;
 
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.pipes.PipePowerWood;
 
 public class TriggerEnergy extends BCStatement implements ITriggerInternal {
+	public static class Neighbor {
+		public TileEntity tile;
+		public ForgeDirection side;
+
+		public Neighbor(TileEntity tile, ForgeDirection side) {
+			this.tile = tile;
+			this.side = side;
+		}
+	}
+
 	private boolean high;
 
-	public TriggerEnergy(String name, boolean high) {
-		super(name);
+	public TriggerEnergy(boolean high) {
+		super("buildcraft:energyStored" + (high ? "high" : "low"));
 
 		this.high = high;
 	}
@@ -70,11 +77,14 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
 		return false;
 	}
 
-	protected boolean isTriggered(Object tile, ForgeDirection side) {
-		if (tile instanceof IEnergyHandler || tile instanceof IEnergyProvider || tile instanceof IEnergyReceiver) {
-			if (((IEnergyConnection) tile).canConnectEnergy(side.getOpposite())) {
+	protected static boolean isTriggered(Object tile, ForgeDirection side) {
+		return (tile instanceof IEnergyHandler || tile instanceof IEnergyProvider || tile instanceof IEnergyReceiver)
+			&& (((IEnergyConnection) tile).canConnectEnergy(side.getOpposite()));
+	}
+
+	protected boolean isActive(Object tile, ForgeDirection side) {
+		if (isTriggered(tile, side)) {
 				return isTriggeredEnergyHandler((IEnergyConnection) tile, side.getOpposite());
-			}
 		}
 
 		return false;
@@ -100,30 +110,36 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
 	public boolean isTriggerActive(IStatementContainer source, IStatementParameter[] parameters) {
 		// Internal check
 		if (isTriggeringPipe(source.getTile())) {
-			return isTriggered(((IPipeTile) source.getTile()).getPipe(), ForgeDirection.UNKNOWN);
+			return isActive(((IPipeTile) source.getTile()).getPipe(), ForgeDirection.UNKNOWN);
 		}
 
-		TileEntity parent = source.getTile();
+		Neighbor triggeringNeighbor = getTriggeringNeighbor(source.getTile());
+		if (triggeringNeighbor != null) {
+			return isActive(triggeringNeighbor.tile, triggeringNeighbor.side);
+		}
+		return false;
+	}
 
+	public static Neighbor getTriggeringNeighbor(TileEntity parent) {
 		if (parent instanceof IPipeTile) {
 			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity tile = ((IPipeTile) parent).getNeighborTile(side);
 				if (tile != null && isTriggered(tile, side)) {
-					return true;
+					return new Neighbor(tile, side);
 				}
 			}
 		} else {
 			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity tile = parent.getWorldObj().getTileEntity(
-						source.getTile().xCoord + side.offsetX,
-						source.getTile().yCoord + side.offsetY,
-						source.getTile().zCoord + side.offsetZ
+						parent.xCoord + side.offsetX,
+						parent.yCoord + side.offsetY,
+						parent.zCoord + side.offsetZ
 				);
 				if (tile != null && isTriggered(tile, side)) {
-					return true;
+					return new Neighbor(tile, side);
 				}
 			}
 		}
-		return false;
+		return null;
 	}
 }

@@ -8,7 +8,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.api.robots.ResourceId;
 import buildcraft.core.utils.IBlockFilter;
 import buildcraft.core.utils.concurrency.IterableAlgorithmRunner;
 import buildcraft.core.utils.concurrency.PathFindingSearch;

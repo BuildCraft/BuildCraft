@@ -36,8 +36,6 @@ import buildcraft.robots.ResourceIdBlock;
 import buildcraft.robots.ai.AIRobotFetchAndEquipItemStack;
 import buildcraft.robots.ai.AIRobotGotoBlock;
 import buildcraft.robots.ai.AIRobotGotoSleep;
-import buildcraft.robots.ai.AIRobotSearchBlock;
-import buildcraft.robots.ai.AIRobotSearchBlockBase;
 import buildcraft.robots.ai.AIRobotSearchRandomBlock;
 import buildcraft.robots.ai.AIRobotUseToolOnBlock;
 import buildcraft.robots.statements.ActionRobotFilter;
