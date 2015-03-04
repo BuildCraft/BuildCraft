@@ -16,6 +16,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
+import buildcraft.api.robots.RobotManager;
 import buildcraft.transport.TileGenericPipe;
 
 public class DockingStation implements IDockingStation {
@@ -56,7 +57,7 @@ public class DockingStation implements IDockingStation {
 
 		if (pipe == null || pipe.isInvalid()) {
 			// Inconsistency - remove this pipe from the registry.
-			RobotRegistry.getRegistry(world).removeStation(this);
+			RobotManager.registryProvider.getRegistry(world).removeStation(this);
 			pipe = null;
 		}
 
@@ -88,7 +89,7 @@ public class DockingStation implements IDockingStation {
 		if (robotTakingId == EntityRobotBase.NULL_ROBOT_ID) {
 			return null;
 		} else if (robotTaking == null) {
-			robotTaking = RobotRegistry.getRegistry(world).getLoadedRobot(robotTakingId);
+			robotTaking = RobotManager.registryProvider.getRegistry(world).getLoadedRobot(robotTakingId);
 		}
 
 		return robotTaking;
@@ -109,9 +110,9 @@ public class DockingStation implements IDockingStation {
 			robotTaking = robot;
 			robotTakingId = robot.getRobotId();
 			getPipe().scheduleRenderUpdate();
-			RobotRegistry.getRegistry(world).markDirty();
+			((RobotRegistry) RobotManager.registryProvider.getRegistry(world)).markDirty();
 			((EntityRobot) robot).setMainStation(this);
-			RobotRegistry.getRegistry(world).take(this, robot.getRobotId());
+			RobotManager.registryProvider.getRegistry(world).take(this, robot.getRobotId());
 
 			return true;
 		} else {
@@ -126,8 +127,8 @@ public class DockingStation implements IDockingStation {
 			robotTaking = robot;
 			robotTakingId = robot.getRobotId();
 			getPipe().scheduleRenderUpdate();
-			RobotRegistry.getRegistry(world).markDirty();
-			RobotRegistry.getRegistry(world).take(this, robot.getRobotId());
+			((RobotRegistry) RobotManager.registryProvider.getRegistry(world)).markDirty();
+			RobotManager.registryProvider.getRegistry(world).take(this, robot.getRobotId());
 
 			return true;
 		} else {
@@ -138,8 +139,8 @@ public class DockingStation implements IDockingStation {
 	public void release(EntityRobotBase robot) {
 		if (robotTaking == robot && !linkIsMain) {
 			unsafeRelease(robot);
-			RobotRegistry.getRegistry(world).markDirty();
-			RobotRegistry.getRegistry(world).release(this, robot.getRobotId());
+			((RobotRegistry) RobotManager.registryProvider.getRegistry(world)).markDirty();
+			RobotManager.registryProvider.getRegistry(world).release(this, robot.getRobotId());
 		}
 	}
 

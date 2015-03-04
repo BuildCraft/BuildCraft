@@ -30,13 +30,13 @@ import net.minecraftforge.event.world.ChunkEvent;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
 import buildcraft.api.robots.IRobotRegistry;
+import buildcraft.api.robots.IRobotRegistryProvider;
 import buildcraft.api.robots.ResourceId;
 
 public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 
-	public static HashMap<Integer, RobotRegistry> registries = new HashMap<Integer, RobotRegistry>();
-
 	protected World world;
+	protected HashMap<StationIndex, IDockingStation> stations = new HashMap<StationIndex, IDockingStation>();
 
 	private long nextRobotID = Long.MIN_VALUE;
 
@@ -44,7 +44,6 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	private HashMap<ResourceId, Long> resourcesTaken = new HashMap<ResourceId, Long>();
 	private HashMap<Long, HashSet<ResourceId>> resourcesTakenByRobot = new HashMap<Long, HashSet<ResourceId>>();
 
-	private HashMap<StationIndex, IDockingStation> stations = new HashMap<StationIndex, IDockingStation>();
 	private HashMap<Long, HashSet<StationIndex>> stationsTakenByRobot = new HashMap<Long, HashSet<StationIndex>>();
 
 	public RobotRegistry(String id) {
@@ -288,33 +287,6 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 		if (stationsTakenByRobot.containsKey(robotId)) {
 			stationsTakenByRobot.get(robotId).remove(new StationIndex(station));
 		}
-	}
-
-	public static synchronized RobotRegistry getRegistry(World world) {
-		if (!registries.containsKey(world.provider.dimensionId)
-				|| registries.get(world.provider.dimensionId).world != world) {
-
-			RobotRegistry newRegistry = (RobotRegistry) world.perWorldStorage.loadData(RobotRegistry.class, "robotRegistry");
-
-			if (newRegistry == null) {
-				newRegistry = new RobotRegistry("robotRegistry");
-				world.perWorldStorage.setData("robotRegistry", newRegistry);
-			}
-
-			newRegistry.world = world;
-
-			for (IDockingStation d : newRegistry.stations.values()) {
-				((DockingStation) d).world = world;
-			}
-
-			MinecraftForge.EVENT_BUS.register(newRegistry);
-
-			registries.put(world.provider.dimensionId, newRegistry);
-
-			return newRegistry;
-		}
-
-		return registries.get(world.provider.dimensionId);
 	}
 
 	@Override

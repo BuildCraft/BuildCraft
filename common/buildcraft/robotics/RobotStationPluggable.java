@@ -12,6 +12,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyReceiver;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.render.ITextureStates;
+import buildcraft.api.robots.RobotManager;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
@@ -184,7 +185,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 		if (station != null
 				&& station.getPipe() != null
 				&& !station.getPipe().getWorld().isRemote) {
-			RobotRegistry.getRegistry(station.world).removeStation(station);
+			RobotManager.registryProvider.getRegistry(station.world).removeStation(station);
 			isValid = false;
 		}
 	}
@@ -194,7 +195,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 		TileGenericPipe gPipe = (TileGenericPipe) pipe;
 		if (!isValid && !gPipe.getWorld().isRemote) {
 			station = (DockingStation)
-					RobotRegistry.getRegistry(gPipe.getWorld()).getStation(
+					RobotManager.registryProvider.getRegistry(gPipe.getWorld()).getStation(
 					gPipe.xCoord,
 					gPipe.yCoord,
 					gPipe.zCoord,
@@ -202,7 +203,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 
 			if (station == null) {
 				station = new DockingStation(gPipe, direction);
-				RobotRegistry.getRegistry(gPipe.getWorld()).registerStation(station);
+				RobotManager.registryProvider.getRegistry(gPipe.getWorld()).registerStation(station);
 			}
 
 			isValid = true;

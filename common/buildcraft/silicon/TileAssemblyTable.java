@@ -32,6 +32,8 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
+import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.robots.RobotManager;
 import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
@@ -39,9 +41,6 @@ import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.utils.NetworkUtils;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
-import buildcraft.robotics.EntityRobot;
-import buildcraft.robotics.ResourceIdAssemblyTable;
-import buildcraft.robotics.RobotRegistry;
 
 public class TileAssemblyTable extends TileLaserTableBase implements IInventory, IFlexibleCrafter, ICommandReceiver {
 	public String currentRecipeId = "";
@@ -99,7 +98,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 			if (currentRecipe.canBeCrafted(this)) {
 				ItemStack remaining = currentRecipe.craft(this, false).crafted.copy();
 
-				EntityRobot robot = RobotRegistry.getRegistry(worldObj)
+				EntityRobotBase robot = RobotManager.registryProvider.getRegistry(worldObj)
 						.robotTaking(new ResourceIdAssemblyTable(this));
 
 				if (robot != null) {

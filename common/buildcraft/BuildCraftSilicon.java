@@ -54,7 +54,7 @@ import buildcraft.silicon.TileLaser;
 import buildcraft.silicon.TileProgrammingTable;
 import buildcraft.silicon.network.PacketHandlerSilicon;
 
-@Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon", dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
+@Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftSilicon extends BuildCraftMod {
 	@Mod.Instance("BuildCraft|Silicon")
 	public static BuildCraftSilicon instance;

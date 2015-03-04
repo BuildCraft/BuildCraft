@@ -31,7 +31,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
@@ -52,7 +51,6 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.events.PipePlacedEvent;
-import buildcraft.api.events.RobotPlacementEvent;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.items.IMapLocation;
@@ -68,10 +66,6 @@ import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.core.utils.Utils;
-import buildcraft.robotics.DockingStation;
-import buildcraft.robotics.EntityRobot;
-import buildcraft.robotics.ItemRobot;
-import buildcraft.robotics.RobotStationPluggable;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.render.PipeRendererWorld;
@@ -86,12 +80,12 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	private static final ForgeDirection[] DIR_VALUES = ForgeDirection.values();
 
-	static enum Part {
+	public static enum Part {
 		Pipe,
 		Pluggable
 	}
 
-	static class RaytraceResult {
+	public static class RaytraceResult {
 		public final Part hitPart;
 		public final MovingObjectPosition movingObjectPosition;
 		public final AxisAlignedBB boundingBox;
@@ -644,49 +638,6 @@ public class BlockGenericPipe extends BlockBuildCraft {
 			} else if (currentItem.getItem() instanceof IPipePluggableItem) {
 				if (addOrStripPipePluggable(world, x, y, z, currentItem, player, ForgeDirection.getOrientation(side), pipe)) {
 					return true;
-				}
-			} else if (currentItem.getItem () instanceof ItemRobot) {
-				if (!world.isRemote) {
-					RaytraceResult rayTraceResult = doRayTrace(world, x, y, z,
-							player);
-
-					if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable
-							&& pipe.container.getPipePluggable(rayTraceResult.sideHit) instanceof RobotStationPluggable) {
-						RobotStationPluggable pluggable = (RobotStationPluggable) pipe.container.getPipePluggable(rayTraceResult.sideHit);
-						DockingStation station = pluggable.getStation();
-
-						if (!station.isTaken()) {
-							if (ItemRobot.getRobotNBT(currentItem) == null) {
-								return true;
-							}
-							RobotPlacementEvent robotEvent = new RobotPlacementEvent(player, ((NBTTagCompound) currentItem.stackTagCompound.getTag("board")).getString("id"));
-							FMLCommonHandler.instance().bus().post(robotEvent);
-							if (robotEvent.isCanceled()) {
-								return true;
-							}
-							EntityRobot robot = ((ItemRobot) currentItem.getItem())
-									.createRobot(currentItem, world);
-							
-							if (robot != null && robot.getRegistry() != null) {
-								robot.setUniqueRobotId(robot.getRegistry().getNextRobotId());
-	
-								float px = x + 0.5F + rayTraceResult.sideHit.offsetX * 0.5F;
-								float py = y + 0.5F + rayTraceResult.sideHit.offsetY * 0.5F;
-								float pz = z + 0.5F + rayTraceResult.sideHit.offsetZ * 0.5F;
-	
-								robot.setPosition(px, py, pz);
-								station.takeAsMain(robot);
-								robot.dock(robot.getLinkedStation());
-								world.spawnEntityInWorld(robot);
-	
-								if (!player.capabilities.isCreativeMode) {
-									player.getCurrentEquippedItem().stackSize--;
-								}
-							}
-						}
-
-						return true;
-					}
 				}
 			}
 

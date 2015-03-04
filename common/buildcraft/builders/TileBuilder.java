@@ -40,6 +40,7 @@ import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.Position;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
+import buildcraft.api.robots.RobotManager;
 import buildcraft.api.robots.StackRequest;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
@@ -65,8 +66,6 @@ import buildcraft.core.network.Packet;
 import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.NetworkUtils;
-import buildcraft.robotics.ResourceIdRequest;
-import buildcraft.robotics.RobotRegistry;
 
 public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluidHandler, IRequestProvider, IControllable {
 
@@ -876,7 +875,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		} else if (!(currentBuilder instanceof BptBuilderBlueprint)) {
 			return false;
 		} else {
-			return RobotRegistry.getRegistry(worldObj).take(new ResourceIdRequest(this, i), robot);
+			return RobotManager.registryProvider.getRegistry(worldObj).take(new ResourceIdRequest(this, i), robot);
 		}
 	}
 

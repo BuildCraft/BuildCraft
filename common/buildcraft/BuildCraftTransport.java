@@ -163,7 +163,7 @@ import buildcraft.transport.stripes.StripesHandlerPlaceBlock;
 import buildcraft.transport.stripes.StripesHandlerRightClick;
 import buildcraft.transport.stripes.StripesHandlerShears;
 
-@Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
+@Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_SILICON)
 public class BuildCraftTransport extends BuildCraftMod {
 
 	@Mod.Instance("BuildCraft|Transport")

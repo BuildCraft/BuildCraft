@@ -21,6 +21,7 @@ import buildcraft.api.core.IInvSlot;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.robots.RobotManager;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.InventoryCopy;
@@ -31,7 +32,7 @@ import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.IStationFilter;
-import buildcraft.robotics.ResourceIdAssemblyTable;
+import buildcraft.silicon.ResourceIdAssemblyTable;
 import buildcraft.robotics.ResourceIdBlock;
 import buildcraft.robotics.RobotRegistry;
 import buildcraft.robotics.statements.ActionRobotFilter;
@@ -96,7 +97,7 @@ public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 					}
 				}
 
-				RobotRegistry.getRegistry(robot.worldObj).take(new ResourceIdAssemblyTable(table), robot);
+				RobotManager.registryProvider.getRegistry(robot.worldObj).take(new ResourceIdAssemblyTable(table), robot);
 				table.planOutput(expectedResult.recipe);
 				// TODO: How to make sure this output is not crafted more than
 				// once??

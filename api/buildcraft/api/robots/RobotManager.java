@@ -13,8 +13,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class RobotManager {
-
+	public static IRobotRegistryProvider registryProvider;
 	public static ArrayList<Class<? extends AIRobot>> aiRobots = new ArrayList<Class<? extends AIRobot>>();
+
 	private static Map<Class<? extends AIRobot>, String> aiRobotsNames =
 			new HashMap<Class<? extends AIRobot>, String>();
 	private static Map<String, Class<? extends AIRobot>> aiRobotsByNames =

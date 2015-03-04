@@ -55,6 +55,7 @@ import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
+import buildcraft.api.robots.RobotManager;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
 import buildcraft.core.RFBattery;
@@ -283,7 +284,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 		if (!worldObj.isRemote) {
 			if (linkedDockingStation == null) {
-				linkedDockingStation = RobotRegistry.getRegistry(worldObj).getStation(
+				linkedDockingStation = RobotManager.registryProvider.getRegistry(worldObj).getStation(
 						linkedDockingStationIndex.x,
 						linkedDockingStationIndex.y,
 						linkedDockingStationIndex.z,
@@ -301,7 +302,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 			if (currentDockingStationIndex != null && currentDockingStation == null) {
 				currentDockingStation = (DockingStation)
-						RobotRegistry.getRegistry(worldObj).getStation(
+						RobotManager.registryProvider.getRegistry(worldObj).getStation(
 						currentDockingStationIndex.x,
 						currentDockingStationIndex.y,
 						currentDockingStationIndex.z,
@@ -1003,7 +1004,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public RobotRegistry getRegistry() {
-		return RobotRegistry.getRegistry(worldObj);
+		return (RobotRegistry) RobotManager.registryProvider.getRegistry(worldObj);
 	}
 
 	@Override
@@ -1015,6 +1016,7 @@ public class EntityRobot extends EntityRobotBase implements
 	 * Tries to receive items in parameters, return items that are left after
 	 * the operation.
 	 */
+	@Override
 	public ItemStack receiveItem(TileEntity tile, ItemStack stack) {
 		if (currentDockingStation != null
 				&& currentDockingStation.index().nextTo(new BlockIndex(tile))

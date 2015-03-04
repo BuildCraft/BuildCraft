@@ -10,6 +10,7 @@ package buildcraft.robotics;
 
 import java.util.List;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,19 +20,22 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import cofh.api.energy.IEnergyContainerItem;
 import buildcraft.BuildCraftRobotics;
-import buildcraft.BuildCraftSilicon;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
+import buildcraft.api.events.RobotPlacementEvent;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.utils.NBTUtils;
+import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.Pipe;
 
 public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
 
@@ -171,5 +175,62 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
 			return 0;
 		}
 		return EntityRobotBase.MAX_ENERGY;
+	}
+
+	@Override
+	public boolean onItemUse(ItemStack currentItem, EntityPlayer player, World world, int x, int y, int z, int side, float p_77648_8_, float p_77648_9_, float p_77648_10_) {
+		if (!world.isRemote) {
+			Block b = world.getBlock(x, y, z);
+			if (!(b instanceof BlockGenericPipe)) {
+				return false;
+			}
+
+			Pipe<?> pipe = BlockGenericPipe.getPipe(world, x, y, z);
+			if (pipe == null) {
+				return false;
+			}
+
+			BlockGenericPipe pipeBlock = (BlockGenericPipe) b;
+			BlockGenericPipe.RaytraceResult rayTraceResult = pipeBlock.doRayTrace(world, x, y, z, player);
+
+			if (rayTraceResult != null && rayTraceResult.hitPart == BlockGenericPipe.Part.Pluggable
+					&& pipe.container.getPipePluggable(rayTraceResult.sideHit) instanceof RobotStationPluggable) {
+				RobotStationPluggable pluggable = (RobotStationPluggable) pipe.container.getPipePluggable(rayTraceResult.sideHit);
+				DockingStation station = pluggable.getStation();
+
+				if (!station.isTaken()) {
+					if (ItemRobot.getRobotNBT(currentItem) == null) {
+						return true;
+					}
+					RobotPlacementEvent robotEvent = new RobotPlacementEvent(player, ((NBTTagCompound) currentItem.stackTagCompound.getTag("board")).getString("id"));
+					FMLCommonHandler.instance().bus().post(robotEvent);
+					if (robotEvent.isCanceled()) {
+						return true;
+					}
+					EntityRobot robot = ((ItemRobot) currentItem.getItem())
+							.createRobot(currentItem, world);
+
+					if (robot != null && robot.getRegistry() != null) {
+						robot.setUniqueRobotId(robot.getRegistry().getNextRobotId());
+
+						float px = x + 0.5F + rayTraceResult.sideHit.offsetX * 0.5F;
+						float py = y + 0.5F + rayTraceResult.sideHit.offsetY * 0.5F;
+						float pz = z + 0.5F + rayTraceResult.sideHit.offsetZ * 0.5F;
+
+						robot.setPosition(px, py, pz);
+						station.takeAsMain(robot);
+						robot.dock(robot.getLinkedStation());
+						world.spawnEntityInWorld(robot);
+
+						if (!player.capabilities.isCreativeMode) {
+							player.getCurrentEquippedItem().stackSize--;
+						}
+					}
+				}
+
+				return true;
+			}
+		}
+		return false;
 	}
 }

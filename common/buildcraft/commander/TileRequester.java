@@ -20,6 +20,7 @@ import cpw.mods.fml.relauncher.Side;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
+import buildcraft.api.robots.RobotManager;
 import buildcraft.api.robots.StackRequest;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.SimpleInventory;
@@ -174,7 +175,7 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
 			return null;
 		} else if (isFulfilled(i)) {
 			return null;
-		} else if (RobotRegistry.getRegistry(worldObj).isTaken(new ResourceIdRequest(this, i))) {
+		} else if (RobotManager.registryProvider.getRegistry(worldObj).isTaken(new ResourceIdRequest(this, i))) {
 			return null;
 		} else {
 			StackRequest r = new StackRequest();
@@ -194,7 +195,7 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
 		} else if (isFulfilled(i)) {
 			return false;
 		} else {
-			return RobotRegistry.getRegistry(worldObj).take(new ResourceIdRequest(this, i), robot);
+			return RobotManager.registryProvider.getRegistry(worldObj).take(new ResourceIdRequest(this, i), robot);
 		}
 	}
 

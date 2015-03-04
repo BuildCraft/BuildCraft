@@ -16,6 +16,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.items.IMapLocation;
 import buildcraft.api.robots.AIRobot;
+import buildcraft.api.robots.RobotManager;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -52,7 +53,7 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 		}
 
 		IPipeTile tile = (IPipeTile) container.getTile();
-		RobotRegistry registry = RobotRegistry.getRegistry(tile.getWorld());
+		RobotRegistry registry = (RobotRegistry) RobotManager.registryProvider.getRegistry(tile.getWorld());
 
 		for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
 			DockingStation station = RobotUtils.getStation(tile, d);
