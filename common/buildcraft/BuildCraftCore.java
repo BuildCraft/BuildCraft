@@ -41,7 +41,6 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -72,12 +71,13 @@ import buildcraft.api.statements.StatementManager;
 import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.core.AchievementManager;
+import buildcraft.core.BCCreativeTab;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.CommandBuildCraft;
 import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.GuiHandler;
+import buildcraft.core.CoreGuiHandler;
 import buildcraft.core.InterModComms;
 import buildcraft.core.ItemGear;
 import buildcraft.core.ItemList;
@@ -89,7 +89,6 @@ import buildcraft.core.TickHandlerCore;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.network.ChannelHandler;
-import buildcraft.core.network.EntityIds;
 import buildcraft.core.network.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.recipes.AssemblyRecipeManager;
@@ -219,6 +218,8 @@ public class BuildCraftCore extends BuildCraftMod {
 	@Mod.EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
 		BCLog.initLog();
+
+		new BCCreativeTab("main");
 
 		BuildcraftRecipeRegistry.assemblyTable = AssemblyRecipeManager.INSTANCE;
 		BuildcraftRecipeRegistry.integrationTable = IntegrationRecipeManager.INSTANCE;
@@ -361,13 +362,16 @@ public class BuildCraftCore extends BuildCraftMod {
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
 		}
+
+		BCCreativeTab.get("main").setIcon(new ItemStack(BuildCraftCore.wrenchItem, 1));
+
 		EntityList.stringToClassMapping.remove("BuildCraft|Core.bcLaser");
 		EntityList.stringToClassMapping.remove("BuildCraft|Core.bcEnergyLaser");
 
 		CoreProxy.proxy.initializeRendering();
 		CoreProxy.proxy.initializeEntityRendering();
 
-		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new CoreGuiHandler());
 	}
 
 	@Mod.EventHandler

@@ -9,6 +9,7 @@
 package buildcraft.core;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
@@ -22,13 +23,13 @@ public class ItemBuildCraft extends Item {
 	private boolean passSneakClick = false;
 
 	public ItemBuildCraft() {
-		this(CreativeTabBuildCraft.ITEMS);
+		this(BCCreativeTab.get("items"));
 	}
 
-	public ItemBuildCraft(CreativeTabBuildCraft creativeTab) {
+	public ItemBuildCraft(CreativeTabs creativeTab) {
 		super();
 
-		setCreativeTab(creativeTab.get());
+		setCreativeTab(creativeTab);
 	}
 
 	@Override

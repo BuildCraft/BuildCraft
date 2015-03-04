@@ -45,7 +45,7 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 	public IIcon zone;
 
 	public ItemMapLocation() {
-		super(CreativeTabBuildCraft.ITEMS);
+		super(BCCreativeTab.get("main"));
 	}
 
 	@Override

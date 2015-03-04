@@ -27,7 +27,7 @@ import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.IStationFilter;
-import buildcraft.robotics.ResourceIdBlock;
+import buildcraft.api.robots.ResourceIdBlock;
 import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.robotics.statements.ActionStationAllowCraft;
 

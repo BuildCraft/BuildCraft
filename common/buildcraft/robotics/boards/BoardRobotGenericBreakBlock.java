@@ -25,7 +25,7 @@ import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.core.inventory.filters.IStackFilter;
 import buildcraft.core.utils.IBlockFilter;
 import buildcraft.robotics.DockingStation;
-import buildcraft.robotics.ResourceIdBlock;
+import buildcraft.api.robots.ResourceIdBlock;
 import buildcraft.robotics.ai.AIRobotBreak;
 import buildcraft.robotics.ai.AIRobotFetchAndEquipItemStack;
 import buildcraft.robotics.ai.AIRobotGotoBlock;

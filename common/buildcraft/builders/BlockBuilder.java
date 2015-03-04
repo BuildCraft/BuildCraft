@@ -30,7 +30,7 @@ import buildcraft.BuildCraftBuilders;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.BCCreativeTab;
 import buildcraft.core.GuiIds;
 import buildcraft.core.fluids.TankUtils;
 import buildcraft.core.utils.Utils;
@@ -44,7 +44,7 @@ public class BlockBuilder extends BlockBuildCraft {
 	public BlockBuilder() {
 		super(Material.iron);
 		setHardness(5F);
-		setCreativeTab(CreativeTabBuildCraft.BLOCKS.get());
+		setCreativeTab(BCCreativeTab.get("main"));
 	}
 
 	@Override

@@ -29,7 +29,7 @@ import net.minecraftforge.fluids.IFluidContainerItem;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.BCCreativeTab;
 import buildcraft.core.inventory.InvUtils;
 
 public class BlockTank extends BlockBuildCraft {
@@ -42,7 +42,7 @@ public class BlockTank extends BlockBuildCraft {
 		super(Material.glass);
 		setBlockBounds(0.125F, 0F, 0.125F, 0.875F, 1F, 0.875F);
 		setHardness(0.5F);
-		setCreativeTab(CreativeTabBuildCraft.BLOCKS.get());
+		setCreativeTab(BCCreativeTab.get("main"));
 	}
 
 	@Override

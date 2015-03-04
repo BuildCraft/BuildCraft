@@ -22,10 +22,9 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftRobotics;
-import buildcraft.BuildCraftSilicon;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
-import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.BCCreativeTab;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.utils.NBTUtils;
 
@@ -35,7 +34,7 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 	public IIcon unknownBoard;
 
 	public ItemRedstoneBoard() {
-		super(CreativeTabBuildCraft.BOARDS);
+		super(BCCreativeTab.get("boards"));
 	}
 
 	@Override

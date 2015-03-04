@@ -11,14 +11,14 @@ package buildcraft.energy;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.BCCreativeTab;
 import buildcraft.core.ItemBlockBuildCraft;
 
 public class ItemEngine extends ItemBlockBuildCraft {
 
 	public ItemEngine(Block block) {
 		super(block);
-		setCreativeTab(CreativeTabBuildCraft.BLOCKS.get());
+		setCreativeTab(BCCreativeTab.get("main"));
 		setMaxDamage(0);
 		setHasSubtypes(true);
 	}

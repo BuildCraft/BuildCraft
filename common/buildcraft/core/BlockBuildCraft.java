@@ -13,6 +13,7 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -32,12 +33,12 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	protected final Random rand = new Random();
 
 	protected BlockBuildCraft(Material material) {
-		this(material, CreativeTabBuildCraft.BLOCKS);
+		this(material, BCCreativeTab.get("main"));
 	}
 
-	protected BlockBuildCraft(Material material, CreativeTabBuildCraft creativeTab) {
+	protected BlockBuildCraft(Material material, CreativeTabs creativeTab) {
 		super(material);
-		setCreativeTab(creativeTab.get());
+		setCreativeTab(creativeTab);
 		setHardness(5F);
 	}
 

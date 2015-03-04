@@ -62,7 +62,7 @@ import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CoreConstants;
-import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.BCCreativeTab;
 import buildcraft.core.TileBuffer;
 import buildcraft.core.utils.MatrixTranformations;
 import buildcraft.core.utils.Utils;
@@ -836,7 +836,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	/* Registration ******************************************************** */
-	public static ItemPipe registerPipe(Class<? extends Pipe> clas, CreativeTabBuildCraft creativeTab) {
+	public static ItemPipe registerPipe(Class<? extends Pipe> clas, BCCreativeTab creativeTab) {
 		ItemPipe item = new ItemPipe(creativeTab);
 		item.setUnlocalizedName("buildcraftPipe." + clas.getSimpleName().toLowerCase(Locale.ENGLISH));
 		GameRegistry.registerItem(item, item.getUnlocalizedName());

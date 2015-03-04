@@ -8,6 +8,7 @@
  */
 package buildcraft;
 
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -25,13 +26,11 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.blueprints.BuilderAPI;
-import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
+import buildcraft.api.robots.RobotManager;
 import buildcraft.builders.schematics.SchematicRotateMeta;
-import buildcraft.commander.BlockRequester;
-import buildcraft.commander.BlockZonePlan;
-import buildcraft.commander.TileRequester;
-import buildcraft.commander.TileZonePlan;
+import buildcraft.robotics.TileRequester;
+import buildcraft.robotics.TileZonePlan;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
@@ -41,10 +40,11 @@ import buildcraft.core.network.ChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.BlockLaserTable;
-import buildcraft.silicon.GuiHandler;
+import buildcraft.silicon.SiliconGuiHandler;
 import buildcraft.silicon.ItemLaserTable;
 import buildcraft.silicon.ItemRedstoneChipset;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
+import buildcraft.silicon.ResourceIdAssemblyTable;
 import buildcraft.silicon.SiliconProxy;
 import buildcraft.silicon.TileAdvancedCraftingTable;
 import buildcraft.silicon.TileAssemblyTable;
@@ -62,8 +62,6 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static ItemRedstoneChipset redstoneChipset;
 	public static BlockLaser laserBlock;
 	public static BlockLaserTable assemblyTableBlock;
-	public static BlockZonePlan zonePlanBlock;
-	public static BlockRequester requesterBlock;
 	public static Item redstoneCrystal;
 
 	public static Achievement timeForSomeLogicAchievement;
@@ -85,14 +83,6 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		assemblyTableBlock.setBlockName("laserTableBlock");
 		CoreProxy.proxy.registerBlock(assemblyTableBlock, ItemLaserTable.class);
 
-		zonePlanBlock = (BlockZonePlan) CompatHooks.INSTANCE.getBlock(BlockZonePlan.class);
-		zonePlanBlock.setBlockName("zonePlan");
-		CoreProxy.proxy.registerBlock(zonePlanBlock);
-
-		requesterBlock = (BlockRequester) CompatHooks.INSTANCE.getBlock(BlockRequester.class);
-		requesterBlock.setBlockName("requester");
-		CoreProxy.proxy.registerBlock(requesterBlock);
-
 		redstoneChipset = new ItemRedstoneChipset();
 		redstoneChipset.setUnlocalizedName("redstoneChipset");
 		CoreProxy.proxy.registerItem(redstoneChipset);
@@ -109,7 +99,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-SILICON", new ChannelHandler(), new PacketHandlerSilicon());
 
-		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new SiliconGuiHandler());
 		CoreProxy.proxy.registerTileEntity(TileLaser.class, "net.minecraft.src.buildcraft.factory.TileLaser");
 		CoreProxy.proxy.registerTileEntity(TileAssemblyTable.class,
 				"net.minecraft.src.buildcraft.factory.TileAssemblyTable");
@@ -125,6 +115,8 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		CoreProxy.proxy.registerTileEntity(TileRequester.class, "net.minecraft.src.buildcraft.commander.TileRequester");
 
 		BuilderAPI.schematicRegistry.registerSchematicBlock(laserBlock, SchematicRotateMeta.class, new int[] {2, 5, 3, 4}, true);
+
+		RobotManager.registerResourceId(ResourceIdAssemblyTable.class, "resourceIdAssemblyTable", "buildcraft.core.robots.ResourceIdAssemblyTable");
 
 		timeForSomeLogicAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.timeForSomeLogic", "timeForSomeLogicAchievement", 9, -2, assemblyTableBlock, BuildCraftCore.diamondGearAchievement));
 		tinglyLaserAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.tinglyLaser", "tinglyLaserAchievement", 11, -2, laserBlock, timeForSomeLogicAchievement));
@@ -192,27 +184,6 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				'C', Items.emerald,
 				'G', "gearDiamond");
 
-		// COMMANDER BLOCKS
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(zonePlanBlock, 1, 0),
-				"IRI",
-				"GMG",
-				"IDI",
-				'M', Items.map,
-				'R', "dustRedstone",
-				'G', "gearGold",
-				'D', "gearDiamond",
-				'I', "ingotIron");
-		
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(requesterBlock, 1, 0),
-				"IPI",
-				"GCG",
-				"IRI",
-				'C', Blocks.chest,
-				'R', "dustRedstone",
-				'P', Blocks.piston,
-				'G', "gearIron",
-				'I', "ingotIron");
-		
 		// CHIPSETS
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redstoneChipset", Math.round(100000 * chipsetCostMultiplier), Chipset.RED.getStack(),
 				"dustRedstone");
@@ -262,6 +233,25 @@ public class BuildCraftSilicon extends BuildCraftMod {
 					mapping.remap(Item.getItemFromBlock(assemblyTableBlock));
 				} else {
 					mapping.remap(assemblyTableBlock);
+				}
+			}
+
+			// Silicon -> Robotics migration code
+			if (mapping.type == GameRegistry.Type.ITEM) {
+				if (mapping.name.equals("BuildCraft|Silicon:robot")) {
+					mapping.remap((Item) Item.itemRegistry.getObject("BuildCraft|Robotics:robot"));
+				} else if (mapping.name.equals("BuildCraft|Silicon:redstone_board")) {
+					mapping.remap((Item) Item.itemRegistry.getObject("BuildCraft|Robotics:redstone_board"));
+				} else if (mapping.name.equals("BuildCraft|Silicon:requester")) {
+					mapping.remap((Item) Item.itemRegistry.getObject("BuildCraft|Robotics:requester"));
+				} else if (mapping.name.equals("BuildCraft|Silicon:zonePlan")) {
+					mapping.remap((Item) Item.itemRegistry.getObject("BuildCraft|Robotics:zonePlan"));
+				}
+			} else if (mapping.type == GameRegistry.Type.BLOCK) {
+				if (mapping.name.equals("BuildCraft|Silicon:requester")) {
+					mapping.remap(Block.getBlockFromName("BuildCraft|Robotics:requester"));
+				} else if (mapping.name.equals("BuildCraft|Silicon:zonePlan")) {
+					mapping.remap(Block.getBlockFromName("BuildCraft|Robotics:zonePlan"));
 				}
 			}
 		}

@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.commander;
+package buildcraft.robotics;
 
 import io.netty.buffer.ByteBuf;
 
@@ -29,8 +29,7 @@ import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.NetworkUtils;
-import buildcraft.robotics.ResourceIdRequest;
-import buildcraft.robotics.RobotRegistry;
+import buildcraft.api.robots.ResourceIdRequest;
 
 public class TileRequester extends TileBuildCraft implements IInventory, IRequestProvider, ICommandReceiver {
 	public static final int NB_ITEMS = 20;

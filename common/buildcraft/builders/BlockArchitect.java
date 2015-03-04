@@ -30,7 +30,7 @@ import buildcraft.BuildCraftBuilders;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.BCCreativeTab;
 import buildcraft.core.GuiIds;
 import buildcraft.core.utils.Utils;
 
@@ -40,7 +40,7 @@ public class BlockArchitect extends BlockBuildCraft {
 	IIcon blockTextureFront;
 
 	public BlockArchitect() {
-		super(Material.iron, CreativeTabBuildCraft.BLOCKS);
+		super(Material.iron, BCCreativeTab.get("main"));
 	}
 
 	@Override

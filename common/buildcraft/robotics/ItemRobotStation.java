@@ -21,13 +21,13 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.BCCreativeTab;
 import buildcraft.core.ItemBuildCraft;
 
 public class ItemRobotStation extends ItemBuildCraft implements IPipePluggableItem {
 
 	public ItemRobotStation() {
-		super(CreativeTabBuildCraft.ITEMS);
+		super(BCCreativeTab.get("robots"));
 	}
 
 	@Override

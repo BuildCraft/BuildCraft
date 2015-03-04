@@ -58,7 +58,7 @@ import buildcraft.factory.BlockRefinery;
 import buildcraft.factory.BlockTank;
 import buildcraft.factory.FactoryProxy;
 import buildcraft.factory.FactoryProxyClient;
-import buildcraft.factory.GuiHandler;
+import buildcraft.factory.FactoryGuiHandler;
 import buildcraft.factory.PumpDimensionList;
 import buildcraft.factory.TileAutoWorkbench;
 import buildcraft.factory.TileFloodGate;
@@ -147,7 +147,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void load(FMLInitializationEvent evt) {
-		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new FactoryGuiHandler());
 
 		// EntityRegistry.registerModEntity(EntityMechanicalArm.class, "bcMechanicalArm", EntityIds.MECHANICAL_ARM, instance, 50, 1, true);
 

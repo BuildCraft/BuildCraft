@@ -67,7 +67,7 @@ import buildcraft.builders.BlockMarker;
 import buildcraft.builders.BlockPathMarker;
 import buildcraft.builders.BuilderProxy;
 import buildcraft.builders.EventHandlerBuilders;
-import buildcraft.builders.GuiHandler;
+import buildcraft.builders.BuildersGuiHandler;
 import buildcraft.builders.HeuristicBlockDetection;
 import buildcraft.builders.ItemBlueprintStandard;
 import buildcraft.builders.ItemBlueprintTemplate;
@@ -292,7 +292,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
 		// Register gui handler
-		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new BuildersGuiHandler());
 
 		// Register save handler
 		MinecraftForge.EVENT_BUS.register(new EventHandlerBuilders());

@@ -28,7 +28,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.BCCreativeTab;
 import buildcraft.core.IItemPipe;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.utils.ColorUtils;
@@ -40,7 +40,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 	private IIconProvider iconProvider;
 	private int pipeIconIndex;
 
-	protected ItemPipe(CreativeTabBuildCraft creativeTab) {
+	protected ItemPipe(BCCreativeTab creativeTab) {
 		super(creativeTab);
         this.setMaxDamage(0);
         this.setHasSubtypes(true);

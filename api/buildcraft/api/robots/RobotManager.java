@@ -16,19 +16,25 @@ public abstract class RobotManager {
 	public static IRobotRegistryProvider registryProvider;
 	public static ArrayList<Class<? extends AIRobot>> aiRobots = new ArrayList<Class<? extends AIRobot>>();
 
-	private static Map<Class<? extends AIRobot>, String> aiRobotsNames =
-			new HashMap<Class<? extends AIRobot>, String>();
-	private static Map<String, Class<? extends AIRobot>> aiRobotsByNames =
-			new HashMap<String, Class<? extends AIRobot>>();
-	private static Map<String, Class<? extends AIRobot>> aiRobotsByLegacyClassNames =
-			new HashMap<String, Class<? extends AIRobot>>();
+	static {
+		aiRobotsByNames = new HashMap<String, Class<? extends AIRobot>>();
+		aiRobotsNames = new HashMap<Class<? extends AIRobot>, String>();
+		aiRobotsByLegacyClassNames = new HashMap<String, Class<? extends AIRobot>>();
+		resourceIdNames = new HashMap<Class<? extends ResourceId>, String>();
+		resourceIdByNames = new HashMap<String, Class<? extends ResourceId>>();
+		resourceIdLegacyClassNames = new HashMap<String, Class<? extends ResourceId>>();
 
-	private static Map<Class<? extends ResourceId>, String> resourceIdNames =
-			new HashMap<Class<? extends ResourceId>, String>();
-	private static Map<String, Class<? extends ResourceId>> resourceIdByNames =
-			new HashMap<String, Class<? extends ResourceId>>();
-	private static Map<String, Class<? extends ResourceId>> resourceIdLegacyClassNames =
-			new HashMap<String, Class<? extends ResourceId>>();
+		registerResourceId(ResourceIdBlock.class, "resourceIdBlock", "buildcraft.core.robots.ResourceIdBlock");
+		registerResourceId(ResourceIdRequest.class, "resourceIdRequest", "buildcraft.core.robots.ResourceIdRequest");
+	}
+
+	private static Map<Class<? extends AIRobot>, String> aiRobotsNames;
+	private static Map<String, Class<? extends AIRobot>> aiRobotsByNames;
+	private static Map<String, Class<? extends AIRobot>> aiRobotsByLegacyClassNames;
+
+	private static Map<Class<? extends ResourceId>, String> resourceIdNames;
+	private static Map<String, Class<? extends ResourceId>> resourceIdByNames;
+	private static Map<String, Class<? extends ResourceId>> resourceIdLegacyClassNames;
 
 	public static void registerAIRobot(Class<? extends AIRobot> aiRobot, String name) {
 		registerAIRobot(aiRobot, name, null);

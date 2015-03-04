@@ -27,7 +27,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.items.IMapLocation;
 import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.BCCreativeTab;
 import buildcraft.core.utils.Utils;
 
 public class BlockMarker extends BlockBuildCraft {
@@ -37,7 +37,7 @@ public class BlockMarker extends BlockBuildCraft {
 
 		setLightLevel(0.5F);
 		setHardness(0.0F);
-		setCreativeTab(CreativeTabBuildCraft.ITEMS.get());
+		setCreativeTab(BCCreativeTab.get("main"));
 	}
 
 	public static boolean canPlaceTorch(World world, int x, int y, int z, ForgeDirection side) {

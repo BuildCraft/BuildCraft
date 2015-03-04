@@ -62,7 +62,7 @@ import buildcraft.energy.BlockEnergyReceiver;
 import buildcraft.energy.BlockEngine;
 import buildcraft.energy.BucketHandler;
 import buildcraft.energy.EnergyProxy;
-import buildcraft.energy.GuiHandler;
+import buildcraft.energy.EnergyGuiHandler;
 import buildcraft.energy.IMCHandlerEnergy;
 import buildcraft.energy.ItemBucketBuildcraft;
 import buildcraft.energy.ItemEngine;
@@ -351,7 +351,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		channels = NetworkRegistry.INSTANCE.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-ENERGY", new ChannelHandler(),  new PacketHandlerTransport());
 
-		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
+		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new EnergyGuiHandler());
 
 		StatementManager.registerTriggerProvider(new EnergyStatementProvider());
 

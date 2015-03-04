@@ -11,15 +11,18 @@ package buildcraft;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import buildcraft.api.boards.RedstoneBoardRegistry;
@@ -28,21 +31,22 @@ import buildcraft.api.robots.RobotManager;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementManager;
+import buildcraft.core.BCCreativeTab;
+import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.network.EntityIds;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.robotics.BlockRequester;
+import buildcraft.robotics.BlockZonePlan;
 import buildcraft.robotics.BoardProgrammingRecipe;
 import buildcraft.robotics.EntityRobot;
 import buildcraft.robotics.ImplRedstoneBoardRegistry;
 import buildcraft.robotics.ItemRedstoneBoard;
 import buildcraft.robotics.ItemRobot;
-import buildcraft.robotics.RobotRegistry;
 import buildcraft.robotics.RobotRegistryProvider;
-import buildcraft.silicon.ResourceIdAssemblyTable;
-import buildcraft.robotics.ResourceIdBlock;
-import buildcraft.robotics.ResourceIdRequest;
+import buildcraft.robotics.RoboticsGuiHandler;
 import buildcraft.robotics.RobotIntegrationRecipe;
 import buildcraft.robotics.RoboticsProxy;
 import buildcraft.robotics.ai.AIRobotAttack;
@@ -143,6 +147,9 @@ public class BuildCraftRobotics extends BuildCraftMod {
 	@Mod.Instance("BuildCraft|Robotics")
 	public static BuildCraftRobotics instance;
 
+	public static BlockZonePlan zonePlanBlock;
+	public static BlockRequester requesterBlock;
+
 	public static ItemRedstoneBoard redstoneBoard;
 	public static Item robotItem;
 
@@ -172,12 +179,14 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
+		new BCCreativeTab("boards");
+
 		chipsetCostMultiplier = BuildCraftCore.mainConfiguration.getFloat("chipset.costMultiplier", "general", 1.0F, 0.001F, 1000.0F, "The multiplier for chipset recipe cost.");
 
 		blacklistedRobots = new ArrayList<String>();
 		blacklistedRobots.addAll(Arrays.asList(BuildCraftCore.mainConfiguration.get("general", "boards.blacklist", new String[]{}).getStringList()));
 
-				BuildCraftCore.mainConfiguration.save();
+		BuildCraftCore.mainConfiguration.save();
 
 		robotItem = new ItemRobot().setUnlocalizedName("robot");
 		CoreProxy.proxy.registerItem(robotItem);
@@ -185,6 +194,14 @@ public class BuildCraftRobotics extends BuildCraftMod {
 		redstoneBoard = new ItemRedstoneBoard();
 		redstoneBoard.setUnlocalizedName("redstone_board");
 		CoreProxy.proxy.registerItem(redstoneBoard);
+
+		zonePlanBlock = (BlockZonePlan) CompatHooks.INSTANCE.getBlock(BlockZonePlan.class);
+		zonePlanBlock.setBlockName("zonePlan");
+		CoreProxy.proxy.registerBlock(zonePlanBlock);
+
+		requesterBlock = (BlockRequester) CompatHooks.INSTANCE.getBlock(BlockRequester.class);
+		requesterBlock.setBlockName("requester");
+		CoreProxy.proxy.registerBlock(requesterBlock);
 
 		RedstoneBoardRegistry.instance = new ImplRedstoneBoardRegistry();
 
@@ -207,7 +224,9 @@ public class BuildCraftRobotics extends BuildCraftMod {
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotKnightNBT.instance, 1);
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotBomberNBT.instance, 1);
 
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotBuilderNBT.instance, 0.5F);
+		if (Loader.isModLoaded("BuildCraft|Builders")) {
+			RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotBuilderNBT.instance, 0.5F);
+		}
 		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotStripesNBT.instance, 0.5F);
 
 		StatementManager.registerActionProvider(new RobotsActionProvider());
@@ -216,9 +235,13 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
+		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new RoboticsGuiHandler());
+
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
 		}
+
+		BCCreativeTab.get("boards").setIcon(new ItemStack(BuildCraftRobotics.redstoneBoard, 1));
 
 		EntityRegistry.registerModEntity(EntityRobot.class, "bcRobot", EntityIds.ROBOT, instance, 50, 1, true);
 
@@ -226,7 +249,9 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
 		RobotManager.registerAIRobot(AIRobotMain.class, "aiRobotMain", "buildcraft.core.robots.AIRobotMain");
 		RobotManager.registerAIRobot(BoardRobotBomber.class, "boardRobotBomber", "buildcraft.core.robots.boards.BoardRobotBomber");
-		RobotManager.registerAIRobot(BoardRobotBuilder.class, "boardRobotBuilder", "buildcraft.core.robots.boards.BoardRobotBuilder");
+		if (Loader.isModLoaded("BuildCraft|Builders")) {
+			RobotManager.registerAIRobot(BoardRobotBuilder.class, "boardRobotBuilder", "buildcraft.core.robots.boards.BoardRobotBuilder");
+		}
 		RobotManager.registerAIRobot(BoardRobotButcher.class, "boardRobotButcher", "buildcraft.core.robots.boards.BoardRobotButcher");
 		RobotManager.registerAIRobot(BoardRobotCarrier.class, "boardRobotCarrier", "buildcraft.core.robots.boards.BoardRobotCarrier");
 		RobotManager.registerAIRobot(BoardRobotCrafter.class, "boardRobotCrafter", "buildcraft.core.robots.boards.BoardRobotCrafter");
@@ -280,9 +305,6 @@ public class BuildCraftRobotics extends BuildCraftMod {
 		RobotManager.registerAIRobot(AIRobotUnload.class, "aiRobotUnload", "buildcraft.core.robots.AIRobotUnload");
 		RobotManager.registerAIRobot(AIRobotUnloadFluids.class, "aiRobotUnloadFluids", "buildcraft.core.robots.AIRobotUnloadFluids");
 		RobotManager.registerAIRobot(AIRobotUseToolOnBlock.class, "aiRobotUseToolOnBlock", "buildcraft.core.robots.AIRobotUseToolOnBlock");
-		RobotManager.registerResourceId(ResourceIdAssemblyTable.class, "resourceIdAssemblyTable", "buildcraft.core.robots.ResourceIdAssemblyTable");
-		RobotManager.registerResourceId(ResourceIdBlock.class, "resourceIdBlock", "buildcraft.core.robots.ResourceIdBlock");
-		RobotManager.registerResourceId(ResourceIdRequest.class, "resourceIdRequest", "buildcraft.core.robots.ResourceIdRequest");
 
 		RoboticsProxy.proxy.registerRenderers();
 	}
@@ -296,13 +318,32 @@ public class BuildCraftRobotics extends BuildCraftMod {
 				'R', BuildCraftSilicon.redstoneCrystal,
 				'C', ItemRedstoneChipset.Chipset.DIAMOND.getStack());
 
-
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(redstoneBoard),
 				"PPP",
 				"PRP",
 				"PPP",
 				'R', "dustRedstone",
 				'P', Items.paper);
+
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(zonePlanBlock, 1, 0),
+				"IRI",
+				"GMG",
+				"IDI",
+				'M', Items.map,
+				'R', "dustRedstone",
+				'G', "gearGold",
+				'D', "gearDiamond",
+				'I', "ingotIron");
+
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(requesterBlock, 1, 0),
+				"IPI",
+				"GCG",
+				"IRI",
+				'C', Blocks.chest,
+				'R', "dustRedstone",
+				'P', Blocks.piston,
+				'G', "gearIron",
+				'I', "ingotIron");
 
 		BuildcraftRecipeRegistry.programmingTable.addRecipe(new BoardProgrammingRecipe());
 		BuildcraftRecipeRegistry.integrationTable.addRecipe(new RobotIntegrationRecipe("buildcraft:robotIntegration"));
@@ -311,18 +352,5 @@ public class BuildCraftRobotics extends BuildCraftMod {
 	@Mod.EventHandler
 	public void processRequests(FMLInterModComms.IMCEvent event) {
 		InterModComms.processIMC(event);
-	}
-
-	@Mod.EventHandler
-	public void remap(FMLMissingMappingsEvent event) {
-		for (FMLMissingMappingsEvent.MissingMapping mapping: event.get()) {
-			if (mapping.type == GameRegistry.Type.ITEM) {
-				if (mapping.name.equals("BuildCraft|Silicon:robot")) {
-					mapping.remap(robotItem);
-				} else if (mapping.name.equals("BuildCraft|Silicon:redstone_board")) {
-					mapping.remap(redstoneBoard);
-				}
-			}
-		}
 	}
 }

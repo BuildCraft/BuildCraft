@@ -42,7 +42,7 @@ import buildcraft.api.transport.PipeWire;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.BlockSpring;
-import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.BCCreativeTab;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.StringUtils;
@@ -145,7 +145,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 	private static final ItemStack NO_MATCH = new ItemStack(NULL_BLOCK, 0, 0);
 
 	public ItemFacade() {
-		super(CreativeTabBuildCraft.FACADES);
+		super(BCCreativeTab.get("facades"));
 
 		setHasSubtypes(true);
 		setMaxDamage(0);

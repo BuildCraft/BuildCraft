@@ -11,7 +11,7 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.utils.IBlockFilter;
 import buildcraft.core.utils.IterableAlgorithmRunner;
 import buildcraft.core.utils.PathFindingSearch;
-import buildcraft.robotics.ResourceIdBlock;
+import buildcraft.api.robots.ResourceIdBlock;
 
 public class AIRobotSearchBlockBase extends AIRobot {
 

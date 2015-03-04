@@ -31,7 +31,7 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.core.utils.IBlockFilter;
 import buildcraft.robotics.DockingStation;
-import buildcraft.robotics.ResourceIdBlock;
+import buildcraft.api.robots.ResourceIdBlock;
 import buildcraft.robotics.ai.AIRobotGotoBlock;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
 import buildcraft.robotics.ai.AIRobotGotoStationAndUnloadFluids;

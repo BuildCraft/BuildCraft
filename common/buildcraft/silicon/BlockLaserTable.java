@@ -29,7 +29,7 @@ import buildcraft.BuildCraftSilicon;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.power.ILaserTargetBlock;
 import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.BCCreativeTab;
 import buildcraft.core.utils.Utils;
 
 public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBlock {
@@ -44,7 +44,7 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
 
 		setBlockBounds(0, 0, 0, 1, 9F / 16F, 1);
 		setHardness(10F);
-		setCreativeTab(CreativeTabBuildCraft.BLOCKS.get());
+		setCreativeTab(BCCreativeTab.get("main"));
 	}
 
 	@Override

@@ -66,6 +66,7 @@ import buildcraft.core.network.Packet;
 import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.NetworkUtils;
+import buildcraft.api.robots.ResourceIdRequest;
 
 public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluidHandler, IRequestProvider, IControllable {
 

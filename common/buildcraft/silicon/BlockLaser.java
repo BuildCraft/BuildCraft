@@ -28,7 +28,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.BCCreativeTab;
 import buildcraft.core.ICustomHighlight;
 
 public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
@@ -48,7 +48,7 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 	public BlockLaser() {
 		super(Material.iron);
 		setHardness(10F);
-		setCreativeTab(CreativeTabBuildCraft.BLOCKS.get());
+		setCreativeTab(BCCreativeTab.get("main"));
 	}
 
 	@Override

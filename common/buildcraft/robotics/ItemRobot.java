@@ -31,7 +31,7 @@ import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.events.RobotPlacementEvent;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.BCCreativeTab;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.transport.BlockGenericPipe;
@@ -40,7 +40,7 @@ import buildcraft.transport.Pipe;
 public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
 
 	public ItemRobot() {
-		super(CreativeTabBuildCraft.BOARDS);
+		super(BCCreativeTab.get("boards"));
 	}
 
 	public EntityRobot createRobot(ItemStack stack, World world) {

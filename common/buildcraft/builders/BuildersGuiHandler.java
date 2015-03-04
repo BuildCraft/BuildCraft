@@ -25,15 +25,9 @@ import buildcraft.builders.gui.GuiFiller;
 import buildcraft.builders.urbanism.ContainerUrbanist;
 import buildcraft.builders.urbanism.GuiUrbanist;
 import buildcraft.builders.urbanism.TileUrbanist;
-import buildcraft.commander.ContainerRequester;
-import buildcraft.commander.ContainerZonePlan;
-import buildcraft.commander.GuiRequester;
-import buildcraft.commander.GuiZonePlan;
-import buildcraft.commander.TileRequester;
-import buildcraft.commander.TileZonePlan;
 import buildcraft.core.GuiIds;
 
-public class GuiHandler implements IGuiHandler {
+public class BuildersGuiHandler implements IGuiHandler {
 
 	@Override
 	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
@@ -74,18 +68,6 @@ public class GuiHandler implements IGuiHandler {
 				return null;
 			}
 			return new GuiUrbanist(player.inventory, (TileUrbanist) tile);
-
-		case GuiIds.MAP:
-			if (!(tile instanceof TileZonePlan)) {
-				return null;
-			}
-			return new GuiZonePlan(player.inventory, (TileZonePlan) tile);
-
-		case GuiIds.REQUESTER:
-			if (!(tile instanceof TileRequester)) {
-				return null;
-			}
-			return new GuiRequester(player.inventory, (TileRequester) tile);
 
 		default:
 			return null;
@@ -133,20 +115,6 @@ public class GuiHandler implements IGuiHandler {
 				return null;
 			} else {
 				return new ContainerUrbanist(player.inventory, (TileUrbanist) tile);
-			}
-
-		case GuiIds.MAP:
-			if (!(tile instanceof TileZonePlan)) {
-				return null;
-			} else {
-				return new ContainerZonePlan(player.inventory, (TileZonePlan) tile);
-			}
-
-		case GuiIds.REQUESTER:
-			if (!(tile instanceof TileRequester)) {
-				return null;
-			} else {
-				return new ContainerRequester(player.inventory, (TileRequester) tile);
 			}
 
 		default:

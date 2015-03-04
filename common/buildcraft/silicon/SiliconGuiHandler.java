@@ -25,7 +25,7 @@ import buildcraft.silicon.gui.GuiChargingTable;
 import buildcraft.silicon.gui.GuiIntegrationTable;
 import buildcraft.silicon.gui.GuiProgrammingTable;
 
-public class GuiHandler implements IGuiHandler {
+public class SiliconGuiHandler implements IGuiHandler {
 
 	@Override
 	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {

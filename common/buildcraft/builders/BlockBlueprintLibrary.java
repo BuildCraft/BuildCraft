@@ -22,7 +22,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.BCCreativeTab;
 import buildcraft.core.GuiIds;
 
 public class BlockBlueprintLibrary extends BlockBuildCraft {
@@ -31,7 +31,7 @@ public class BlockBlueprintLibrary extends BlockBuildCraft {
     private IIcon textureSide;
 
     public BlockBlueprintLibrary() {
-		super(Material.wood, CreativeTabBuildCraft.BLOCKS);
+		super(Material.wood, BCCreativeTab.get("main"));
 	}
 
 	@Override

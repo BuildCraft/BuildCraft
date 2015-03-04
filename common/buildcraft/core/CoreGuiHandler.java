@@ -16,7 +16,7 @@ import cpw.mods.fml.common.network.IGuiHandler;
 import buildcraft.core.gui.ContainerList;
 import buildcraft.core.gui.GuiList;
 
-public class GuiHandler implements IGuiHandler {
+public class CoreGuiHandler implements IGuiHandler {
 
 	@Override
 	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {

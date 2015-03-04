@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.commander;
+package buildcraft.robotics;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -23,24 +23,24 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.BuildCraftBuilders;
+import buildcraft.BuildCraftRobotics;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.utils.Utils;
 
-public class BlockZonePlan extends BlockBuildCraft {
+public class BlockRequester extends BlockBuildCraft {
 
+	private IIcon blockTextureDefault;
 	private IIcon blockTextureSide;
-	private IIcon blockTextureFront;
 
-	public BlockZonePlan() {
+	public BlockRequester() {
 		super(Material.iron);
 	}
 
 	@Override
 	public TileEntity createNewTileEntity(World world, int meta) {
-		return new TileZonePlan();
+		return new TileRequester();
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class BlockZonePlan extends BlockBuildCraft {
 		}
 
 		if (!world.isRemote) {
-			entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.MAP,
+			entityplayer.openGui(BuildCraftRobotics.instance, GuiIds.REQUESTER,
 					world, i, j, k);
 		}
 
@@ -73,21 +73,17 @@ public class BlockZonePlan extends BlockBuildCraft {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		blockTextureSide = par1IconRegister.registerIcon("buildcraft:zonePlan_side");
-		blockTextureFront = par1IconRegister.registerIcon("buildcraft:zonePlan_front");
+		blockTextureDefault = par1IconRegister.registerIcon("buildcraft:commander_side");
+		blockTextureSide = par1IconRegister.registerIcon("buildcraft:requester_side");
 	}
 
 	@Override
 	public IIcon getIcon(int i, int j) {
-		if (j == 0 && i == 3) {
-			return blockTextureFront;
+		if (i == 0 || i == 1) {
+			return blockTextureDefault;
+		} else {
+			return blockTextureSide;
 		}
-
-		if (i == j) {
-			return blockTextureFront;
-		}
-
-		return blockTextureSide;
 	}
 
 }

@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.commander;
+package buildcraft.robotics.gui;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -35,6 +35,7 @@ import buildcraft.core.gui.tooltips.ToolTipLine;
 import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.StringUtils;
+import buildcraft.robotics.TileZonePlan;
 
 public class GuiZonePlan extends GuiAdvancedInterface {
 

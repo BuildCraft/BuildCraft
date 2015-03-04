@@ -10,6 +10,7 @@ package buildcraft.energy;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBucket;
@@ -17,20 +18,20 @@ import net.minecraft.item.ItemBucket;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import buildcraft.core.CreativeTabBuildCraft;
+import buildcraft.core.BCCreativeTab;
 
 public class ItemBucketBuildcraft extends ItemBucket {
 
 	private String iconName;
 
 	public ItemBucketBuildcraft(Block block) {
-		this(block, CreativeTabBuildCraft.ITEMS);
+		this(block, BCCreativeTab.get("main"));
 	}
 
-	public ItemBucketBuildcraft(Block block, CreativeTabBuildCraft creativeTab) {
+	public ItemBucketBuildcraft(Block block, CreativeTabs creativeTab) {
 		super(block);
 		setContainerItem(Items.bucket);
-		setCreativeTab(creativeTab.get());
+		setCreativeTab(creativeTab);
 	}
 
 	@Override

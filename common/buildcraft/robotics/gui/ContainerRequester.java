@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.commander;
+package buildcraft.robotics.gui;
 
 import io.netty.buffer.ByteBuf;
 
@@ -23,7 +23,7 @@ import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
 import buildcraft.core.utils.NetworkUtils;
-import buildcraft.core.utils.Utils;
+import buildcraft.robotics.TileRequester;
 
 public class ContainerRequester extends BuildCraftContainer implements ICommandReceiver {
 
