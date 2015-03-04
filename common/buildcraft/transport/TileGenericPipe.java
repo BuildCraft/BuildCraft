@@ -18,7 +18,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -55,7 +54,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.ITileBufferHolder;
 import buildcraft.core.TileBuffer;
-import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.Packet;
 import buildcraft.core.network.IGuiReturnHandler;
 import buildcraft.core.network.ISyncedTile;
 import buildcraft.core.network.PacketTileState;
@@ -416,7 +415,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 			if (worldObj instanceof WorldServer) {
 				WorldServer world = (WorldServer) worldObj;
-				BuildCraftPacket updatePacket = getBCDescriptionPacket();
+				Packet updatePacket = getBCDescriptionPacket();
 
 				for (Object o : world.playerEntities) {
 					EntityPlayerMP player = (EntityPlayerMP) o;
@@ -648,7 +647,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	/* SMP */
 
-	public BuildCraftPacket getBCDescriptionPacket() {
+	public Packet getBCDescriptionPacket() {
 		bindPipe();
 		updateCoreState();
 
@@ -670,7 +669,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	@Override
-	public Packet getDescriptionPacket() {
+	public net.minecraft.network.Packet getDescriptionPacket() {
 		return Utils.toPacket(getBCDescriptionPacket(), 1);
 	}
 

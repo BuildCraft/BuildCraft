@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
+import buildcraft.BuildCraftRobotics;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.BuildCraftTransport;
 
@@ -52,7 +53,7 @@ public enum CreativeTabBuildCraft {
 		case FACADES:
 			return BuildCraftTransport.facadeItem.getFacadeForBlock(Blocks.brick_block, 0);
 		case BOARDS:
-			return new ItemStack(BuildCraftSilicon.redstoneBoard, 1);
+			return new ItemStack(BuildCraftRobotics.redstoneBoard, 1);
 		}
 
 		return BuildCraftTransport.facadeItem.getFacadeForBlock(Blocks.brick_block, 0);

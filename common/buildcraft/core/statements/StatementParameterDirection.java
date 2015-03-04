@@ -19,8 +19,8 @@ import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.utils.StringUtils;
-import buildcraft.transport.TileGenericPipe;
 
 public class StatementParameterDirection implements IStatementParameter {
 
@@ -48,10 +48,10 @@ public class StatementParameterDirection implements IStatementParameter {
 
 	@Override
 	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
-		if (source.getTile() instanceof TileGenericPipe) {
+		if (source.getTile() instanceof IPipeTile) {
 			for (int i = 0; i < 6; i++) {
 				direction = ForgeDirection.getOrientation((direction.ordinal() + (mouse.getButton() > 0 ? -1 : 1)) % 6);
-				if (((TileGenericPipe) source.getTile()).isPipeConnected(direction)) {
+				if (((IPipeTile) source.getTile()).isPipeConnected(direction)) {
 					return;
 				}
 			}

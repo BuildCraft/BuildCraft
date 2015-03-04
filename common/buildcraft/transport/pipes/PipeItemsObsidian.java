@@ -38,6 +38,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.TransportProxy;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
@@ -220,7 +221,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 					return;
 				}
 				
-				CoreProxy.proxy.obsidianPipePickup(container.getWorldObj(), item, this.container);
+				TransportProxy.proxy.obsidianPipePickup(container.getWorldObj(), item, this.container);
 
 				int energyUsed = Math.min(10 * contained.stackSize * distance, battery.getEnergyStored());
 

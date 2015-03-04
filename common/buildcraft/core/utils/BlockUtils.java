@@ -37,8 +37,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftEnergy;
-import buildcraft.BuildCraftFactory;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.core.proxy.CoreProxy;
 
@@ -132,7 +130,8 @@ public final class BlockUtils {
 			return false;
 		}
 
-		if (block == BuildCraftEnergy.blockOil) {
+		// TODO: Make this support all "heavy" liquids, not just oil/lava
+		if (block instanceof IFluidBlock && ((IFluidBlock) block).getFluid() != null && ((IFluidBlock) block).getFluid().getName().equals("oil")) {
 			return false;
 		}
 
@@ -220,7 +219,7 @@ public final class BlockUtils {
 	}
 
 	public static int computeBlockBreakEnergy(World world, int x, int y, int z) {
-		return (int) Math.floor(BuilderAPI.BREAK_ENERGY * BuildCraftFactory.miningMultiplier * ((world.getBlock(x, y, z).getBlockHardness(world, x, y, z) + 1) * 2));
+		return (int) Math.floor(BuilderAPI.BREAK_ENERGY * BuildCraftCore.miningMultiplier * ((world.getBlock(x, y, z).getBlockHardness(world, x, y, z) + 1) * 2));
 	}
 
 	public static TileEntity getTileEntity(World world, int x, int y, int z) {

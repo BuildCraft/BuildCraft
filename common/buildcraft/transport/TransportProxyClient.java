@@ -8,6 +8,10 @@
  */
 package buildcraft.transport;
 
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
@@ -21,6 +25,7 @@ import buildcraft.transport.render.PipeRendererTESR;
 import buildcraft.transport.render.PipeRendererWorld;
 import buildcraft.transport.render.PlugItemRenderer;
 import buildcraft.transport.render.RobotStationItemRenderer;
+import buildcraft.transport.render.TileEntityPickupFX;
 
 public class TransportProxyClient extends TransportProxy {
 
@@ -39,8 +44,12 @@ public class TransportProxyClient extends TransportProxy {
 	}
 
 	@Override
-	public void registerRenderers() {
+	public void obsidianPipePickup(World world, EntityItem item, TileEntity tile) {
+		FMLClientHandler.instance().getClient().effectRenderer.addEffect(new TileEntityPickupFX(world, item, tile));
+	}
 
+	@Override
+	public void registerRenderers() {
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsWood, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsCobblestone, pipeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeItemsStone, pipeItemRenderer);

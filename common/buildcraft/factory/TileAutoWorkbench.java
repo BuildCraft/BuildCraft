@@ -31,7 +31,7 @@ import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.CraftingHelper;
+import buildcraft.core.utils.CraftingUtils;
 import buildcraft.core.utils.Utils;
 
 public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory {
@@ -193,7 +193,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 			}
 		}
 
-		return CraftingHelper.findMatchingRecipe(craftMatrix, worldObj);
+		return CraftingUtils.findMatchingRecipe(craftMatrix, worldObj);
 	}
 
 	@Override

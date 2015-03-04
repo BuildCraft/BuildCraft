@@ -15,11 +15,11 @@ import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.EnumColor;
-import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.Packet;
 import buildcraft.core.network.PacketIds;
 import buildcraft.transport.TravelingItem;
 
-public class PacketPipeTransportTraveler extends BuildCraftPacket {
+public class PacketPipeTransportTraveler extends Packet {
 
 	public int posX;
 	public int posY;

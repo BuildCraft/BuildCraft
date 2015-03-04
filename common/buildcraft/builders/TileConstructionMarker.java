@@ -36,11 +36,11 @@ import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.builders.BuildingItem;
 import buildcraft.core.builders.IBuildingItemsProvider;
-import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.Packet;
 import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.utils.NetworkUtils;
 
 public class TileConstructionMarker extends TileBuildCraft implements IBuildingItemsProvider, IBoxProvider, ICommandReceiver {
 
@@ -68,7 +68,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 		}
 	}
 
-	private BuildCraftPacket createLaunchItemPacket(final BuildingItem i) {
+	private Packet createLaunchItemPacket(final BuildingItem i) {
 		return new PacketCommand(this, "launchItem", new CommandWriter() {
 			public void write(ByteBuf data) {
 				i.writeData(data);
@@ -239,7 +239,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 			laser.writeData(stream);
 		}
 		if (itemBlueprint != null) {
-			Utils.writeStack(stream, itemBlueprint);
+			NetworkUtils.writeStack(stream, itemBlueprint);
 		}
 	}
 
@@ -254,7 +254,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 			laser = null;
 		}
 		if ((flags & 2) != 0) {
-			itemBlueprint = Utils.readStack(stream);
+			itemBlueprint = NetworkUtils.readStack(stream);
 		} else {
 			itemBlueprint = null;
 		}

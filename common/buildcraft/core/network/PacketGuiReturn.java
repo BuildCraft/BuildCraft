@@ -19,7 +19,7 @@ import net.minecraftforge.common.DimensionManager;
 
 import buildcraft.BuildCraftCore;
 
-public class PacketGuiReturn extends BuildCraftPacket {
+public class PacketGuiReturn extends Packet {
 	private EntityPlayer sender;
 	private IGuiReturnHandler obj;
 	private byte[] extraData;

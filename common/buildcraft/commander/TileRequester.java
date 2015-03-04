@@ -27,9 +27,9 @@ import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
-import buildcraft.core.utils.Utils;
-import buildcraft.robots.ResourceIdRequest;
-import buildcraft.robots.RobotRegistry;
+import buildcraft.core.utils.NetworkUtils;
+import buildcraft.robotics.ResourceIdRequest;
+import buildcraft.robotics.RobotRegistry;
 
 public class TileRequester extends TileBuildCraft implements IInventory, IRequestProvider, ICommandReceiver {
 	public static final int NB_ITEMS = 20;
@@ -46,7 +46,7 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
 			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setRequest", new CommandWriter() {
 				public void write(ByteBuf data) {
 					data.writeByte(index);
-					Utils.writeStack(data, stack);
+					NetworkUtils.writeStack(data, stack);
 				}
 			}));
 		} else {
@@ -57,7 +57,7 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
 		if (side.isServer() && "setRequest".equals(command)) {
-			setRequest(stream.readUnsignedByte(), Utils.readStack(stream));
+			setRequest(stream.readUnsignedByte(), NetworkUtils.readStack(stream));
 		}
 	}
 

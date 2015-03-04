@@ -37,6 +37,7 @@ import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
+import buildcraft.core.utils.NetworkUtils;
 import buildcraft.core.utils.Utils;
 
 public class TileFiller extends TileAbstractBuilder implements IHasWork, IControllable, ICommandReceiver, IStatementContainer {
@@ -302,18 +303,18 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	public void writeData(ByteBuf data) {
 		box.writeData(data);
 		data.writeBoolean(done);
-		Utils.writeUTF(data, currentPattern.getUniqueTag());
+		NetworkUtils.writeUTF(data, currentPattern.getUniqueTag());
 		NBTTagCompound parameterData = new NBTTagCompound();
 		writeParametersToNBT(parameterData);
-		Utils.writeNBT(data, parameterData);
+		NetworkUtils.writeNBT(data, parameterData);
 	}
 
 	@Override
 	public void readData(ByteBuf data) {
 		box.readData(data);
 		done = data.readBoolean();
-		FillerPattern pattern = (FillerPattern) FillerManager.registry.getPattern(Utils.readUTF(data));
-		NBTTagCompound parameterData = Utils.readNBT(data);
+		FillerPattern pattern = (FillerPattern) FillerManager.registry.getPattern(NetworkUtils.readUTF(data));
+		NBTTagCompound parameterData = NetworkUtils.readNBT(data);
 		readParametersFromNBT(parameterData);
 		setPattern(pattern);
 
@@ -341,7 +342,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	public void rpcSetPatternFromString (final String name) {
 		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setPattern", new CommandWriter() {
 			public void write(ByteBuf data) {
-				Utils.writeUTF(data, name);
+				NetworkUtils.writeUTF(data, name);
 			}
 		}));
 	}
@@ -350,10 +351,10 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
 		super.receiveCommand(command, side, sender, stream);
 		if (side.isServer() && "setPattern".equals(command)) {
-			String name = Utils.readUTF(stream);
+			String name = NetworkUtils.readUTF(stream);
 			setPattern((FillerPattern) FillerManager.registry.getPattern(name));
 		} else if (side.isServer() && "setParameters".equals(command)) {
-			NBTTagCompound patternData = Utils.readNBT(stream);
+			NBTTagCompound patternData = NetworkUtils.readNBT(stream);
 			readParametersFromNBT(patternData);
 		}
 	}
@@ -395,7 +396,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 			public void write(ByteBuf data) {
 				NBTTagCompound parameterData = new NBTTagCompound();
 				writeParametersToNBT(parameterData);
-				Utils.writeNBT(data, parameterData);
+				NetworkUtils.writeNBT(data, parameterData);
 			}
 		}));
 	}

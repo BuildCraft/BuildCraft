@@ -16,7 +16,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BuildingPermission;
-import buildcraft.builders.blueprints.BlueprintId;
+import buildcraft.core.blueprints.BlueprintId;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.blueprints.BlueprintBase;

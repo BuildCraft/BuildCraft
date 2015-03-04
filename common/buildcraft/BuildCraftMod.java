@@ -24,12 +24,12 @@ import cpw.mods.fml.relauncher.Side;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.Packet;
 
 public class BuildCraftMod {
 	public EnumMap<Side, FMLEmbeddedChannel> channels;
 
-	public void sendToPlayers(BuildCraftPacket packet, World world, int x, int y, int z, int maxDistance) {
+	public void sendToPlayers(Packet packet, World world, int x, int y, int z, int maxDistance) {
 		try {
 			channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
 					.set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
@@ -41,15 +41,15 @@ public class BuildCraftMod {
 		}
 	}
 
-	public void sendToPlayersNear(BuildCraftPacket packet, TileEntity tileEntity, int maxDistance) {
+	public void sendToPlayersNear(Packet packet, TileEntity tileEntity, int maxDistance) {
 		sendToPlayers(packet, tileEntity.getWorldObj(), tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, maxDistance);
 	}
 
-	public void sendToPlayersNear(BuildCraftPacket packet, TileEntity tileEntity) {
+	public void sendToPlayersNear(Packet packet, TileEntity tileEntity) {
 		sendToPlayersNear(packet, tileEntity, DefaultProps.NETWORK_UPDATE_RANGE);
 	}
 
-	public void sendToWorld(BuildCraftPacket packet, World world) {
+	public void sendToWorld(Packet packet, World world) {
 		try {
 			channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
 					.set(FMLOutboundHandler.OutboundTarget.DIMENSION);
@@ -61,7 +61,7 @@ public class BuildCraftMod {
 		}
 	}
 	
-	public void sendToPlayer(EntityPlayer entityplayer, BuildCraftPacket packet) {
+	public void sendToPlayer(EntityPlayer entityplayer, Packet packet) {
 		try {
 			channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
 					.set(FMLOutboundHandler.OutboundTarget.PLAYER);
@@ -78,7 +78,7 @@ public class BuildCraftMod {
 		}
 	}
 	
-	public void sendToAll(BuildCraftPacket packet) {
+	public void sendToAll(Packet packet) {
 		try {
 			channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
 					.set(FMLOutboundHandler.OutboundTarget.ALL);
@@ -88,7 +88,7 @@ public class BuildCraftMod {
 		}
 	}
 
-	public void sendToServer(BuildCraftPacket packet) {
+	public void sendToServer(Packet packet) {
 		try {
 			channels.get(Side.CLIENT).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(OutboundTarget.TOSERVER);
 			channels.get(Side.CLIENT).writeOutbound(packet);

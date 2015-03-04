@@ -24,7 +24,7 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.EnumColor;
-import buildcraft.core.BCDynamicTexture;
+import buildcraft.core.render.BCDynamicTexture;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ZonePlan;
 import buildcraft.core.gui.AdvancedSlot;

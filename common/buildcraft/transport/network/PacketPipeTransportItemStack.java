@@ -12,12 +12,12 @@ import io.netty.buffer.ByteBuf;
 
 import net.minecraft.item.ItemStack;
 
-import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.Packet;
 import buildcraft.core.network.PacketIds;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.utils.NetworkUtils;
 import buildcraft.transport.TravelingItem;
 
-public class PacketPipeTransportItemStack extends BuildCraftPacket {
+public class PacketPipeTransportItemStack extends Packet {
 
 	private ItemStack stack;
 	private int entityId;
@@ -33,13 +33,13 @@ public class PacketPipeTransportItemStack extends BuildCraftPacket {
 	@Override
 	public void writeData(ByteBuf data) {
 		data.writeInt(entityId);
-		Utils.writeStack(data, stack);
+		NetworkUtils.writeStack(data, stack);
 	}
 
 	@Override
 	public void readData(ByteBuf data) {
 		this.entityId = data.readInt();
-		stack = Utils.readStack(data);
+		stack = NetworkUtils.readStack(data);
 		TravelingItem item = TravelingItem.clientCache.get(entityId);
 		if (item != null) {
 			item.setItemStack(stack);

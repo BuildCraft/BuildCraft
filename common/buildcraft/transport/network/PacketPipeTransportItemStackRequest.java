@@ -13,11 +13,11 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.Packet;
 import buildcraft.core.network.PacketIds;
 import buildcraft.transport.TravelingItem;
 
-public class PacketPipeTransportItemStackRequest extends BuildCraftPacket {
+public class PacketPipeTransportItemStackRequest extends Packet {
 
 	public int travelerID;
 	TravelingItem item;

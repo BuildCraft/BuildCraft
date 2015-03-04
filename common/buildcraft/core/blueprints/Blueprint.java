@@ -27,7 +27,7 @@ import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.BCLog;
-import buildcraft.builders.blueprints.BlueprintId.Kind;
+import buildcraft.core.blueprints.BlueprintId.Kind;
 import buildcraft.core.utils.NBTUtils;
 
 public class Blueprint extends BlueprintBase {

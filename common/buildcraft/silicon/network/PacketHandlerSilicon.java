@@ -19,7 +19,7 @@ import net.minecraft.world.World;
 
 import cpw.mods.fml.common.network.NetworkRegistry;
 
-import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.Packet;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.proxy.CoreProxy;
@@ -27,10 +27,10 @@ import buildcraft.silicon.TileAdvancedCraftingTable;
 import buildcraft.silicon.TileAssemblyTable;
 
 @Sharable
-public class PacketHandlerSilicon extends SimpleChannelInboundHandler<BuildCraftPacket>  {
+public class PacketHandlerSilicon extends SimpleChannelInboundHandler<Packet>  {
 
 	@Override
-	protected  void channelRead0(ChannelHandlerContext ctx, BuildCraftPacket packet) {
+	protected  void channelRead0(ChannelHandlerContext ctx, Packet packet) {
 		try {
 			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
 

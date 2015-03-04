@@ -25,7 +25,8 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.BCLog;
-import buildcraft.builders.blueprints.BlueprintId.Kind;
+import buildcraft.core.blueprints.BlueprintId;
+import buildcraft.core.blueprints.BlueprintId.Kind;
 import buildcraft.core.blueprints.BlueprintBase;
 
 public class BlueprintDatabase {

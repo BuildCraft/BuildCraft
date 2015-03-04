@@ -25,7 +25,7 @@ import buildcraft.api.core.ISerializable;
 import buildcraft.core.proxy.CoreProxy;
 
 @Sharable
-public class PacketHandler extends SimpleChannelInboundHandler<BuildCraftPacket>  {
+public class PacketHandler extends SimpleChannelInboundHandler<Packet>  {
 	private void onTileUpdate(EntityPlayer player, PacketTileUpdate packet) throws IOException {
 		World world = player.worldObj;
 
@@ -44,7 +44,7 @@ public class PacketHandler extends SimpleChannelInboundHandler<BuildCraftPacket>
 	}
 
 	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, BuildCraftPacket packet) {
+	protected void channelRead0(ChannelHandlerContext ctx, Packet packet) {
 		try {
 			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
 			EntityPlayer player = CoreProxy.proxy.getPlayerFromNetHandler(netHandler);

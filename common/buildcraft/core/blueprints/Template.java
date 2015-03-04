@@ -16,7 +16,7 @@ import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.builders.blueprints.BlueprintId.Kind;
+import buildcraft.core.blueprints.BlueprintId.Kind;
 import buildcraft.core.utils.NBTUtils;
 
 /**

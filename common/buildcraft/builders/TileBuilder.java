@@ -43,6 +43,7 @@ import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.robots.StackRequest;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
+import buildcraft.builders.blueprints.RecursiveBlueprintBuilder;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.LaserData;
@@ -51,7 +52,6 @@ import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptBuilderTemplate;
-import buildcraft.core.blueprints.RecursiveBlueprintBuilder;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.fluids.Tank;
 import buildcraft.core.fluids.TankManager;
@@ -61,12 +61,12 @@ import buildcraft.core.inventory.InventoryIterator;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.inventory.Transactor;
-import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.Packet;
 import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.PacketCommand;
-import buildcraft.core.utils.Utils;
-import buildcraft.robots.ResourceIdRequest;
-import buildcraft.robots.RobotRegistry;
+import buildcraft.core.utils.NetworkUtils;
+import buildcraft.robotics.ResourceIdRequest;
+import buildcraft.robotics.RobotRegistry;
 
 public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluidHandler, IRequestProvider, IControllable {
 
@@ -644,7 +644,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 				int size = stream.readUnsignedShort();
 				requiredToBuild = new ArrayList<ItemStack>();
 				for (int i = 0; i < size; i++) {
-					ItemStack stack = Utils.readStack(stream);
+					ItemStack stack = NetworkUtils.readStack(stream);
 					stack.stackSize = Math.min(999, stream.readUnsignedShort());
 					requiredToBuild.add(stack);
 				}
@@ -664,14 +664,14 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		}
 	}
 
-	private BuildCraftPacket getItemRequirementsPacket(final ArrayList<ItemStack> items) {
+	private Packet getItemRequirementsPacket(final ArrayList<ItemStack> items) {
 		if (items != null) {
 			return new PacketCommand(this, "setItemRequirements", new CommandWriter() {
 				public void write(ByteBuf data) {
 					data.writeShort(items.size());
 					if (items != null) {
 						for (ItemStack rb : items) {
-							Utils.writeStack(data, rb);
+							NetworkUtils.writeStack(data, rb);
 							data.writeShort(rb.stackSize);
 						}
 					}

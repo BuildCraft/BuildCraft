@@ -36,11 +36,12 @@ import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
 import buildcraft.core.recipes.AssemblyRecipeManager;
+import buildcraft.core.utils.NetworkUtils;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
-import buildcraft.robots.EntityRobot;
-import buildcraft.robots.ResourceIdAssemblyTable;
-import buildcraft.robots.RobotRegistry;
+import buildcraft.robotics.EntityRobot;
+import buildcraft.robotics.ResourceIdAssemblyTable;
+import buildcraft.robotics.RobotRegistry;
 
 public class TileAssemblyTable extends TileLaserTableBase implements IInventory, IFlexibleCrafter, ICommandReceiver {
 	public String currentRecipeId = "";
@@ -149,11 +150,11 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 	@Override
 	public void readData(ByteBuf stream) {
 		super.readData(stream);
-		currentRecipeId = Utils.readUTF(stream);
+		currentRecipeId = NetworkUtils.readUTF(stream);
 		plannedOutput.clear();
 		int size = stream.readUnsignedByte();
 		for (int i = 0; i < size; i++) {
-			plannedOutput.add(Utils.readUTF(stream));
+			plannedOutput.add(NetworkUtils.readUTF(stream));
 		}
 
 		currentRecipe = AssemblyRecipeManager.INSTANCE.getRecipe(currentRecipeId);
@@ -162,10 +163,10 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 	@Override
 	public void writeData(ByteBuf stream) {
 		super.writeData(stream);
-		Utils.writeUTF(stream, currentRecipeId);
+		NetworkUtils.writeUTF(stream, currentRecipeId);
 		stream.writeByte(plannedOutput.size());
 		for (String s: plannedOutput) {
-			Utils.writeUTF(stream, s);
+			NetworkUtils.writeUTF(stream, s);
 		}
 	}
 	@Override
@@ -312,7 +313,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 	public void rpcSelectRecipe(final String id, final boolean select) {
 		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "select", new CommandWriter() {
 			public void write(ByteBuf data) {
-				Utils.writeUTF(data, id);
+				NetworkUtils.writeUTF(data, id);
 				data.writeBoolean(select);
 			}
 		}));
@@ -321,7 +322,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
 		if (side.isServer() && "select".equals(command)) {
-			String id = Utils.readUTF(stream);
+			String id = NetworkUtils.readUTF(stream);
 			boolean select = stream.readBoolean();
 
 			IFlexibleRecipe<ItemStack> recipe = AssemblyRecipeManager.INSTANCE.getRecipe(id);

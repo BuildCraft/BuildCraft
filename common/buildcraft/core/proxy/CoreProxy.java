@@ -37,7 +37,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.ICoreProxy;
-import buildcraft.compat.CompatHooks;
+import buildcraft.core.CompatHooks;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.ItemBlockBuildCraft;
 import buildcraft.core.LaserKind;
@@ -78,9 +78,6 @@ public class CoreProxy implements ICoreProxy {
 	}
 
 	/* GFX */
-	public void obsidianPipePickup(World world, EntityItem item, TileEntity tile) {
-	}
-
 	public void initializeRendering() {
 	}
 
@@ -128,14 +125,6 @@ public class CoreProxy implements ICoreProxy {
 		}
 
 		CraftingManager.getInstance().getRecipeList().add(new ShapelessOreRecipe(result, recipe));
-	}
-
-	public int addCustomTexture(String pathToTexture) {
-		return 0;
-	}
-
-	public Random createNewRandom(World world) {
-		return new Random(world.getSeed());
 	}
 
 	public String playerName() {

@@ -26,7 +26,7 @@ import buildcraft.core.IBoxProvider;
 import buildcraft.core.LaserData;
 import buildcraft.core.RFBattery;
 import buildcraft.core.TileBuildCraft;
-import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.Packet;
 import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
@@ -59,7 +59,7 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 		}
 	}
 
-	private BuildCraftPacket createLaunchItemPacket(final BuildingItem i) {
+	private Packet createLaunchItemPacket(final BuildingItem i) {
 		return new PacketCommand(this, "launchItem", new CommandWriter() {
 			public void write(ByteBuf data) {
 				i.writeData(data);

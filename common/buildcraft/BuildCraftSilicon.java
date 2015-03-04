@@ -8,10 +8,6 @@
  */
 package buildcraft;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -31,63 +27,22 @@ import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
-import buildcraft.api.statements.IActionInternal;
-import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.api.statements.StatementManager;
 import buildcraft.builders.schematics.SchematicRotateMeta;
 import buildcraft.commander.BlockRequester;
 import buildcraft.commander.BlockZonePlan;
 import buildcraft.commander.TileRequester;
 import buildcraft.commander.TileZonePlan;
-import buildcraft.compat.CompatHooks;
+import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.Version;
-import buildcraft.core.network.BuildCraftChannelHandler;
+import buildcraft.core.network.ChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.robots.ItemRobot;
-import buildcraft.robots.RobotIntegrationRecipe;
-import buildcraft.robots.boards.BoardRobotBomberNBT;
-import buildcraft.robots.boards.BoardRobotBuilderNBT;
-import buildcraft.robots.boards.BoardRobotButcherNBT;
-import buildcraft.robots.boards.BoardRobotCarrierNBT;
-import buildcraft.robots.boards.BoardRobotCrafterNBT;
-import buildcraft.robots.boards.BoardRobotDeliveryNBT;
-import buildcraft.robots.boards.BoardRobotFarmerNBT;
-import buildcraft.robots.boards.BoardRobotFluidCarrierNBT;
-import buildcraft.robots.boards.BoardRobotHarvesterNBT;
-import buildcraft.robots.boards.BoardRobotKnightNBT;
-import buildcraft.robots.boards.BoardRobotLeaveCutterNBT;
-import buildcraft.robots.boards.BoardRobotLumberjackNBT;
-import buildcraft.robots.boards.BoardRobotMinerNBT;
-import buildcraft.robots.boards.BoardRobotPickerNBT;
-import buildcraft.robots.boards.BoardRobotPlanterNBT;
-import buildcraft.robots.boards.BoardRobotPumpNBT;
-import buildcraft.robots.boards.BoardRobotShovelmanNBT;
-import buildcraft.robots.boards.BoardRobotStripesNBT;
-import buildcraft.robots.statements.ActionRobotFilter;
-import buildcraft.robots.statements.ActionRobotFilterTool;
-import buildcraft.robots.statements.ActionRobotGotoStation;
-import buildcraft.robots.statements.ActionRobotWakeUp;
-import buildcraft.robots.statements.ActionRobotWorkInArea;
-import buildcraft.robots.statements.ActionStationAcceptFluids;
-import buildcraft.robots.statements.ActionStationAcceptItemsInv;
-import buildcraft.robots.statements.ActionStationAcceptItemsPipe;
-import buildcraft.robots.statements.ActionStationAllowCraft;
-import buildcraft.robots.statements.ActionStationForbidRobot;
-import buildcraft.robots.statements.ActionStationProvideFluids;
-import buildcraft.robots.statements.ActionStationProvideItems;
-import buildcraft.robots.statements.ActionStationRequestItems;
-import buildcraft.robots.statements.ActionStationRequestItemsMachine;
-import buildcraft.robots.statements.RobotsActionProvider;
-import buildcraft.robots.statements.RobotsTriggerProvider;
-import buildcraft.robots.statements.TriggerRobotSleep;
 import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.BlockLaserTable;
 import buildcraft.silicon.GuiHandler;
 import buildcraft.silicon.ItemLaserTable;
-import buildcraft.silicon.ItemRedstoneBoard;
 import buildcraft.silicon.ItemRedstoneChipset;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 import buildcraft.silicon.SiliconProxy;
@@ -97,8 +52,6 @@ import buildcraft.silicon.TileChargingTable;
 import buildcraft.silicon.TileIntegrationTable;
 import buildcraft.silicon.TileLaser;
 import buildcraft.silicon.TileProgrammingTable;
-import buildcraft.silicon.boards.BoardProgrammingRecipe;
-import buildcraft.silicon.boards.ImplRedstoneBoardRegistry;
 import buildcraft.silicon.network.PacketHandlerSilicon;
 
 @Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon", dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
@@ -107,46 +60,22 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public static BuildCraftSilicon instance;
 
 	public static ItemRedstoneChipset redstoneChipset;
-	public static ItemRedstoneBoard redstoneBoard;
 	public static BlockLaser laserBlock;
 	public static BlockLaserTable assemblyTableBlock;
 	public static BlockZonePlan zonePlanBlock;
 	public static BlockRequester requesterBlock;
 	public static Item redstoneCrystal;
-	public static Item robotItem;
-
-	public static ITriggerInternal triggerRobotSleep = new TriggerRobotSleep();
-
-	public static IActionInternal actionRobotGotoStation = new ActionRobotGotoStation();
-	public static IActionInternal actionRobotWakeUp = new ActionRobotWakeUp();
-	public static IActionInternal actionRobotWorkInArea = new ActionRobotWorkInArea();
-	public static IActionInternal actionRobotFilter = new ActionRobotFilter();
-	public static IActionInternal actionRobotFilterTool = new ActionRobotFilterTool();
-	public static IActionInternal actionRobotAllowCraft = new ActionStationAllowCraft();
-	public static IActionInternal actionStationRequestItems = new ActionStationRequestItems();
-	public static IActionInternal actionStationAcceptItems = new ActionStationAcceptItemsInv();
-	public static IActionInternal actionStationProvideItems = new ActionStationProvideItems();
-	public static IActionInternal actionStationAcceptFluids = new ActionStationAcceptFluids();
-	public static IActionInternal actionStationProvideFluids = new ActionStationProvideFluids();
-	public static IActionInternal actionStationForbidRobot = new ActionStationForbidRobot();
-	public static IActionInternal actionStationDropInPipe = new ActionStationAcceptItemsPipe();
-	public static IActionInternal actionStationMachineRequestItems = new ActionStationRequestItemsMachine();
 
 	public static Achievement timeForSomeLogicAchievement;
 	public static Achievement tinglyLaserAchievement;
 
 	public static float chipsetCostMultiplier = 1.0F;
 
-	public static List<String> blacklistedRobots;
-
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
 		chipsetCostMultiplier = BuildCraftCore.mainConfiguration.getFloat("chipset.costMultiplier", "general", 1.0F, 0.001F, 1000.0F, "The multiplier for chipset recipe cost.");
 
-		blacklistedRobots = new ArrayList<String>();
-		blacklistedRobots.addAll(Arrays.asList(BuildCraftCore.mainConfiguration.get("general", "boards.blacklist", new String[]{}).getStringList()));
-
-				BuildCraftCore.mainConfiguration.save();
+		BuildCraftCore.mainConfiguration.save();
 
 		laserBlock = (BlockLaser) CompatHooks.INSTANCE.getBlock(BlockLaser.class);
 		laserBlock.setBlockName("laserBlock");
@@ -169,50 +98,16 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		CoreProxy.proxy.registerItem(redstoneChipset);
 		redstoneChipset.registerItemStacks();
 
-		redstoneBoard = new ItemRedstoneBoard();
-		redstoneBoard.setUnlocalizedName("redstone_board");
-		CoreProxy.proxy.registerItem(redstoneBoard);
-
 		redstoneCrystal = (new ItemBuildCraft()).setUnlocalizedName("redstoneCrystal");
 		CoreProxy.proxy.registerItem(redstoneCrystal);
 		OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal));
-
-		robotItem = new ItemRobot().setUnlocalizedName("robot");
-		CoreProxy.proxy.registerItem(robotItem);
-
-		RedstoneBoardRegistry.instance = new ImplRedstoneBoardRegistry();
-
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotPickerNBT.instance, 20);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotCarrierNBT.instance, 10);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotLumberjackNBT.instance, 10);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotHarvesterNBT.instance, 10);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotMinerNBT.instance, 10);
-
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotFluidCarrierNBT.instance, 5);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotPlanterNBT.instance, 5);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotFarmerNBT.instance, 5);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotLeaveCutterNBT.instance, 5);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotButcherNBT.instance, 5);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotShovelmanNBT.instance, 5);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotCrafterNBT.instance, 5);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotDeliveryNBT.instance, 5);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotPumpNBT.instance, 5);
-
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotKnightNBT.instance, 1);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotBomberNBT.instance, 1);
-
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotBuilderNBT.instance, 0.5F);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotStripesNBT.instance, 0.5F);
-
-		StatementManager.registerActionProvider(new RobotsActionProvider());
-		StatementManager.registerTriggerProvider(new RobotsTriggerProvider());
 	}
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE
 				.newChannel
-				(DefaultProps.NET_CHANNEL_NAME + "-SILICON", new BuildCraftChannelHandler(), new PacketHandlerSilicon());
+				(DefaultProps.NET_CHANNEL_NAME + "-SILICON", new ChannelHandler(), new PacketHandlerSilicon());
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 		CoreProxy.proxy.registerTileEntity(TileLaser.class, "net.minecraft.src.buildcraft.factory.TileLaser");
@@ -340,24 +235,6 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redstoneCrystal", 10000000, new ItemStack(
 				redstoneCrystal), new ItemStack(
 				Blocks.redstone_block));
-
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(redstoneBoard),
-				"PPP",
-				"PRP",
-				"PPP",
-				'R', "dustRedstone",
-				'P', Items.paper);
-
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(robotItem),
-				"PPP",
-				"PRP",
-				"C C",
-				'P', "ingotIron",
-				'R', redstoneCrystal,
-				'C', Chipset.DIAMOND.getStack());
-
-		BuildcraftRecipeRegistry.programmingTable.addRecipe(new BoardProgrammingRecipe());
-		BuildcraftRecipeRegistry.integrationTable.addRecipe(new RobotIntegrationRecipe("buildcraft:robotIntegration"));
 	}
 
 	@Mod.EventHandler

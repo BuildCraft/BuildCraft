@@ -19,9 +19,9 @@ import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.core.utils.INBTTagable;
+import buildcraft.api.core.INBTStoreable;
 
-public class SimpleInventory implements IInventory, INBTTagable {
+public class SimpleInventory implements IInventory, INBTStoreable {
 
 	private final ItemStack[] contents;
 	private final String name;

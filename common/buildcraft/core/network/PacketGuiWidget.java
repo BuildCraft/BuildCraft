@@ -16,7 +16,7 @@ import cpw.mods.fml.client.FMLClientHandler;
 
 import buildcraft.core.gui.BuildCraftContainer;
 
-public class PacketGuiWidget extends BuildCraftPacket {
+public class PacketGuiWidget extends Packet {
 
     private byte windowId, widgetId;
     private byte[] payload;

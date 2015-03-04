@@ -14,6 +14,8 @@ public final class DefaultProps {
 
 	public static final String DEPENDENCY_CORE = "required-after:BuildCraft|Core@" + Version.VERSION;
 	public static final String DEPENDENCY_TRANSPORT = "required-after:BuildCraft|Transport@" + Version.VERSION;
+	public static final String DEPENDENCY_SILICON = "required-after:BuildCraft|Silicon@" + Version.VERSION;
+	public static final String DEPENDENCY_SILICON_TRANSPORT = DEPENDENCY_TRANSPORT + ";" + DEPENDENCY_SILICON;
 
 	public static final String NET_CHANNEL_NAME = "BC";
 	public static int NETWORK_UPDATE_RANGE = 64;
@@ -28,13 +30,8 @@ public final class DefaultProps {
 
 	public static String PUMP_DIMENSION_LIST = "+/*/*,+/-1/lava";
 
-	public static boolean CURRENT_CONTINUOUS = false;
 	public static double PIPES_DURABILITY = 0.25D;
-        public static int PIPES_FLUIDS_BASE_FLOW_RATE = 10;
-	public static boolean FILLER_DESTROY = false;
-
-	public static final int FILLER_LIFESPAN_TOUGH = 20;
-	public static final int FILLER_LIFESPAN_NORMAL = 6000;
+	public static int PIPES_FLUIDS_BASE_FLOW_RATE = 10;
 
 	public static int BIOME_OIL_OCEAN = 126;
 	public static int BIOME_OIL_DESERT = 127;

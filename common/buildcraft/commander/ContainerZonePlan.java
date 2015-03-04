@@ -18,7 +18,7 @@ import net.minecraft.inventory.Slot;
 import cpw.mods.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.core.BCDynamicTexture;
+import buildcraft.core.render.BCDynamicTexture;
 import buildcraft.core.ZonePlan;
 import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.gui.slots.SlotOutput;

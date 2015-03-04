@@ -10,7 +10,7 @@ package buildcraft.core.network;
 
 import io.netty.buffer.ByteBuf;
 
-public abstract class PacketCoordinates extends BuildCraftPacket {
+public abstract class PacketCoordinates extends Packet {
 
 	public int posX;
 	public int posY;

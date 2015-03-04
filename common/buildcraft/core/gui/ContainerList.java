@@ -21,6 +21,7 @@ import buildcraft.core.ItemList;
 import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
+import buildcraft.core.utils.NetworkUtils;
 import buildcraft.core.utils.Utils;
 
 public class ContainerList extends BuildCraftContainer implements ICommandReceiver {
@@ -60,7 +61,7 @@ public class ContainerList extends BuildCraftContainer implements ICommandReceiv
 				public void write(ByteBuf data) {
 					data.writeByte(lineIndex);
 					data.writeByte(slotIndex);
-					Utils.writeStack(data, stack);
+					NetworkUtils.writeStack(data, stack);
 				}
 			}));
 		}
@@ -93,7 +94,7 @@ public class ContainerList extends BuildCraftContainer implements ICommandReceiv
 		if (player.worldObj.isRemote) {
 			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setLabel", new CommandWriter() {
 				public void write(ByteBuf data) {
-					Utils.writeUTF(data, text);
+					NetworkUtils.writeUTF(data, text);
 				}
 			}));
 		}
@@ -103,11 +104,11 @@ public class ContainerList extends BuildCraftContainer implements ICommandReceiv
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
 		if (side.isServer()) {
 			if ("setLabel".equals(command)) {
-				setLabel(Utils.readUTF(stream));
+				setLabel(NetworkUtils.readUTF(stream));
 			} else if ("switchButton".equals(command)) {
 				switchButton(stream.readUnsignedByte(), stream.readUnsignedByte());
 			} else if ("setStack".equals(command)) {
-				setStack(stream.readUnsignedByte(), stream.readUnsignedByte(), Utils.readStack(stream));
+				setStack(stream.readUnsignedByte(), stream.readUnsignedByte(), NetworkUtils.readStack(stream));
 			}
 		}
 	}

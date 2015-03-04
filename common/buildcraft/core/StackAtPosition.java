@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.Position;
+import buildcraft.core.utils.NetworkUtils;
 import buildcraft.core.utils.Utils;
 
 public class StackAtPosition implements ISerializable {
@@ -23,11 +24,11 @@ public class StackAtPosition implements ISerializable {
 
 	@Override
 	public void readData(ByteBuf stream) {
-		stack = Utils.readStack(stream);
+		stack = NetworkUtils.readStack(stream);
 	}
 
 	@Override
 	public void writeData(ByteBuf stream) {
-		Utils.writeStack(stream, stack);
+		NetworkUtils.writeStack(stream, stack);
 	}
 }

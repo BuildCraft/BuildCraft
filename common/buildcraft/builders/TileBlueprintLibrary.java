@@ -24,14 +24,15 @@ import cpw.mods.fml.relauncher.Side;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
-import buildcraft.builders.blueprints.BlueprintId;
-import buildcraft.builders.blueprints.BlueprintId.Kind;
+import buildcraft.core.blueprints.BlueprintId;
+import buildcraft.core.blueprints.BlueprintId.Kind;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
+import buildcraft.core.utils.NetworkUtils;
 import buildcraft.core.utils.Utils;
 
 /**
@@ -243,7 +244,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 						new CommandWriter() {
 					public void write(ByteBuf data) {
 						bpt.id.writeData(data);
-						Utils.writeByteArray(data, bpt.getData());
+						NetworkUtils.writeByteArray(data, bpt.getData());
 					}
 				}));
 				uploadingPlayer = null;
@@ -303,7 +304,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 			} else if ("downloadBlueprintToClient".equals(command)) {
 				BlueprintId id = new BlueprintId();
 				id.readData(stream);
-				byte[] data = Utils.readByteArray(stream);
+				byte[] data = NetworkUtils.readByteArray(stream);
 
 				try {
 					NBTTagCompound nbt = CompressedStreamTools.func_152457_a(data, NBTSizeTracker.field_152451_a);

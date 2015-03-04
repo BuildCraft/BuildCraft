@@ -20,10 +20,11 @@ import net.minecraft.world.World;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.Position;
+import buildcraft.api.core.IPathProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
 
-public class TilePathMarker extends TileMarker {
+public class TilePathMarker extends TileMarker implements IPathProvider {
 	// A list with the pathMarkers that aren't fully connected
 	// It only contains markers within the loaded chunks
 	private static LinkedList<TilePathMarker> availableMarkers = new LinkedList<TilePathMarker>();

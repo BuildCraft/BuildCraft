@@ -22,6 +22,7 @@ import buildcraft.core.gui.BuildCraftContainer;
 import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
+import buildcraft.core.utils.NetworkUtils;
 import buildcraft.core.utils.Utils;
 
 public class ContainerRequester extends BuildCraftContainer implements ICommandReceiver {
@@ -77,14 +78,14 @@ public class ContainerRequester extends BuildCraftContainer implements ICommandR
 					new CommandWriter() {
 				public void write(ByteBuf data) {
 					for (ItemStack s : stacks) {
-						Utils.writeStack(data, s);
+						NetworkUtils.writeStack(data, s);
 					}
 				}
 			}));
 		} else if (side.isClient() && "receiveRequestList".equals(command)) {
 			requests = new ItemStack[TileRequester.NB_ITEMS];
 			for (int i = 0; i < TileRequester.NB_ITEMS; i++) {
-				requests[i] = Utils.readStack(stream);
+				requests[i] = NetworkUtils.readStack(stream);
 			}
 		}
 	}

@@ -12,7 +12,7 @@ import io.netty.buffer.ByteBuf;
 
 import buildcraft.api.core.ISerializable;
 
-public class PacketUpdate extends BuildCraftPacket {
+public class PacketUpdate extends Packet {
 
 	public int posX;
 	public int posY;

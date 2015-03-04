@@ -30,7 +30,6 @@ import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.Position;
 import buildcraft.builders.ItemBlueprint;
-import buildcraft.builders.blueprints.BlueprintId;
 import buildcraft.core.Box;
 import buildcraft.core.Version;
 

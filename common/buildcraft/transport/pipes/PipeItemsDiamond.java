@@ -29,6 +29,7 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.core.GuiIds;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.utils.NetworkUtils;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.IDiamondPipe;
@@ -152,12 +153,12 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
 	public void writeData(ByteBuf data) {
 		NBTTagCompound nbt = new NBTTagCompound();
 		writeToNBT(nbt);
-		Utils.writeNBT(data, nbt);
+		NetworkUtils.writeNBT(data, nbt);
 	}
 
 	@Override
 	public void readData(ByteBuf data) {
-		NBTTagCompound nbt = Utils.readNBT(data);
+		NBTTagCompound nbt = NetworkUtils.readNBT(data);
 		readFromNBT(nbt);
 	}
 }

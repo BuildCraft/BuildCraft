@@ -17,7 +17,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
@@ -27,7 +26,7 @@ import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.tiles.IControllable;
-import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.Packet;
 import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketTileUpdate;
 import buildcraft.core.utils.Utils;
@@ -120,12 +119,12 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 
 	}
 
-	public BuildCraftPacket getPacketUpdate() {
+	public Packet getPacketUpdate() {
 		return new PacketTileUpdate(this);
 	}
 
 	@Override
-	public Packet getDescriptionPacket() {
+	public net.minecraft.network.Packet getDescriptionPacket() {
 		return Utils.toPacket(getPacketUpdate(), 0);
 	}
 

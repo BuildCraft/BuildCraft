@@ -16,8 +16,8 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.TileBlueprintLibrary;
-import buildcraft.builders.blueprints.BlueprintId;
-import buildcraft.builders.blueprints.BlueprintId.Kind;
+import buildcraft.core.blueprints.BlueprintId;
+import buildcraft.core.blueprints.BlueprintId.Kind;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.gui.GuiBuildCraft;
 import buildcraft.core.utils.StringUtils;

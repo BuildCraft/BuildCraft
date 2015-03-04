@@ -9,73 +9,49 @@
 package buildcraft.core;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
-import com.google.common.primitives.Ints;
-
-import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.world.biome.BiomeGenBase;
 
 import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
 
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.fuels.ICoolant;
-import buildcraft.api.gates.GateExpansions;
-import buildcraft.api.gates.IGateExpansion;
 import buildcraft.core.recipes.AssemblyRecipeManager;
-import buildcraft.core.recipes.IntegrationRecipeManager;
 import buildcraft.core.recipes.RefineryRecipeManager;
-import buildcraft.energy.fuels.CoolantManager;
-import buildcraft.energy.worldgen.OilPopulate;
-import buildcraft.transport.ItemFacade;
-import buildcraft.transport.recipes.GateExpansionRecipe;
 
 public final class InterModComms {
-
+	private static final Set<IMCHandler> handlers = new HashSet<IMCHandler>();
 	/**
 	 * Deactivate constructor
 	 */
 	private InterModComms() {
 	}
 
+	public static void registerHandler(IMCHandler handler) {
+		handlers.add(handler);
+	}
+
 	public static void processIMC(IMCEvent event) {
 		for (IMCMessage m : event.getMessages()) {
-			if (m.key.equals("add-facade")) {
-				processAddFacadeIMC(event, m);
-			} else if (m.key.equals("blacklist-facade")) {
-				processBlacklistFacadeIMC(event, m);
-			} else if (m.key.equals("oil-lake-biome")) {
-				processOilLakeBiomeIMC(event, m);
-			} else if (m.key.equals("oil-gen-exclude")) {
-				processOilGenExcludeIMC(event, m);
-			} else if (m.key.equals("add-assembly-recipe")) {
+			if (m.key.equals("add-assembly-recipe")) {
 				processAssemblyRecipeAddIMC(event, m);
 			} else if (m.key.equals("add-refinery-recipe")) {
 				processRefineryRecipeAddIMC(event, m);
-			} else if (m.key.equals("add-gate-expansion-recipe")) {
-				processGateExpansionRecipeAddIMC(event, m);
 			} else if (m.key.equals("remove-assembly-recipe")) {
 				processAssemblyRecipeRemoveIMC(event, m);
 			} else if (m.key.equals("remove-refinery-recipe")) {
 				processRefineryRecipeRemoveIMC(event, m);
-			} else if (m.key.equals("add-coolant")) {
-				processCoolantAddIMC(event, m);
-			} else if (m.key.equals("remove-coolant")) {
-				processCoolantRemoveIMC(event, m);
 			} else {
-				BCLog.logger.warn(String.format("Received an IMC message with unknown key ('%s') from %s!", new Object[]{m.key, m.getSender()}));
+				for (IMCHandler h : handlers) {
+					h.processIMCEvent(event, m);
+				}
 			}
 		}
 	}
@@ -95,32 +71,7 @@ public final class InterModComms {
 			BCLog.logger.info(String.format("Received a refinery recipe '%s' removal request from mod %s", msg.getStringValue(), msg.getSender()));
 		}
 	}
-	
-	public static void processGateExpansionRecipeAddIMC(IMCEvent event, IMCMessage msg) {
-		boolean failed = false;
-		if (!msg.isNBTMessage()) {
-			failed = true;
-		} else {
-			NBTTagCompound recipe = msg.getNBTValue();
-			if (!recipe.hasKey("id") || !recipe.hasKey("expansion") || !recipe.hasKey("input")) {
-				failed = true;
-				return;
-			}
-			IGateExpansion exp = GateExpansions.getExpansion(recipe.getString("expansion"));
-			ItemStack is = ItemStack.loadItemStackFromNBT(recipe.getCompoundTag("input"));
-			if (exp == null || is == null) {
-				failed = true;
-				return;
-			}
-			IntegrationRecipeManager.INSTANCE.addRecipe(new GateExpansionRecipe(
-					recipe.getString("id"), exp, is
-				));
-		}
-		if (failed) {
-			BCLog.logger.warn("Received invalid gate expansion recipe IMC message from mod %s!", msg.getSender());
-		}
-	}
-	
+
 	public static void processAssemblyRecipeAddIMC(IMCEvent event, IMCMessage msg) {
 		boolean failed = false;
 		if (!msg.isNBTMessage()) {
@@ -181,117 +132,6 @@ public final class InterModComms {
 		}
 		if (failed) {
 			BCLog.logger.warn("Received invalid refinery recipe IMC message from mod %s!", msg.getSender());
-		}
-	}
-
-	public static void processAddFacadeIMC(IMCEvent event, IMCMessage m) {
-		try {
-			if (m.isStringMessage()) {
-				Splitter splitter = Splitter.on("@").trimResults();
-
-				String[] array = Iterables.toArray(splitter.split(m.getStringValue()), String.class);
-				if (array.length != 2) {
-					BCLog.logger.info(String.format("Received an invalid add-facade request %s from mod %s", m.getStringValue(), m.getSender()));
-				} else {
-					String blockName = array[0];
-					Integer metaId = Ints.tryParse(array[1]);
-
-					if (Strings.isNullOrEmpty(blockName) || metaId == null) {
-						BCLog.logger.info(String.format("Received an invalid add-facade request %s from mod %s", m.getStringValue(), m.getSender()));
-					} else {
-						Block block = (Block) Block.blockRegistry.getObject(blockName);
-						BuildCraftTransport.facadeItem.addFacade(new ItemStack(block, 1, metaId));
-					}
-				}
-			} else if (m.isItemStackMessage()) {
-				ItemStack modItemStack = m.getItemStackValue();
-				BuildCraftTransport.facadeItem.addFacade(modItemStack);
-			}
-		} catch (Exception ex) {
-		}
-	}
-
-	public static void processBlacklistFacadeIMC(IMCEvent event, IMCMessage message) {
-		try {
-			if (message.isItemStackMessage()) {
-				ItemStack modItemStack = message.getItemStackValue();
-
-				Block block = Block.getBlockFromItem(modItemStack.getItem());
-				if (block != null) {
-					String blockName = Block.blockRegistry.getNameForObject(block);
-					ItemFacade.blacklistFacade(blockName);
-				}
-			} else {
-				BCLog.logger.info(String.format("Invalid blacklist-facade message from mod %s. Send an ItemStackMessage instead.", message.getSender()));
-			}
-		} catch (Throwable e) {
-		}
-	}
-
-	public static void processOilLakeBiomeIMC(IMCEvent event, IMCMessage m) {
-		try {
-			String biomeID = m.getStringValue().trim();
-			int id = Integer.valueOf(biomeID);
-			if (id >= BiomeGenBase.getBiomeGenArray().length) {
-					throw new IllegalArgumentException("Biome ID must be less than " + BiomeGenBase.getBiomeGenArray().length);
-			}
-			OilPopulate.INSTANCE.surfaceDepositBiomes.add(id);
-		} catch (Exception ex) {
-			BCLog.logger.warn(String.format("Received an invalid oil-lake-biome request %s from mod %s", m.getStringValue(), m.getSender()));
-		}
-		BCLog.logger.info(String.format("Received a successful oil-lake-biome request %s from mod %s", m.getStringValue(), m.getSender()));
-	}
-
-	public static void processOilGenExcludeIMC(IMCEvent event, IMCMessage m) {
-		try {
-			String biomeID = m.getStringValue().trim();
-			int id = Integer.valueOf(biomeID);
-			if (id >= BiomeGenBase.getBiomeGenArray().length) {
-				throw new IllegalArgumentException("Biome ID must be less than " + BiomeGenBase.getBiomeGenArray().length);
-			}
-			OilPopulate.INSTANCE.excludedBiomes.add(id);
-		} catch (Exception ex) {
-			BCLog.logger.warn(String.format("Received an invalid oil-gen-exclude request %s from mod %s", m.getStringValue(), m.getSender()));
-		}
-		BCLog.logger.info(String.format("Received a successful oil-gen-exclude request %s from mod %s", m.getStringValue(), m.getSender()));
-	}
-
-	public static void processCoolantAddIMC(IMCEvent event, IMCMessage m) {
-		boolean failed = false;
-		if (!m.isNBTMessage()) {
-			failed = true;
-		} else {
-			NBTTagCompound tag = m.getNBTValue();
-			if (!tag.hasKey("coolant") || !tag.hasKey("degrees", 3)) {
-				failed = true;
-			} else {
-				Fluid coolant = FluidRegistry.getFluid(tag.getString("coolant"));
-				if (coolant != null) {
-					CoolantManager.INSTANCE.addCoolant(coolant, tag.getInteger("degrees"));
-				} else {
-					failed = true;
-				}
-			}
-		}
-		if (failed) {
-			BCLog.logger.warn("Received invalid coolant IMC message from mod %s!", m.getSender());
-		}
-	}
-
-	public static void processCoolantRemoveIMC(IMCEvent event, IMCMessage m) {
-		boolean failed = false;
-		if (m.isStringMessage()) {
-			ICoolant coolant = CoolantManager.INSTANCE.getCoolant(FluidRegistry.getFluid(m.getStringValue()));
-			if (coolant != null) {
-				CoolantManager.INSTANCE.getCoolants().remove(coolant);
-			} else {
-				failed = true;
-			}
-		} else {
-			failed = true;
-		}
-		if (failed) {
-			BCLog.logger.warn("Received invalid coolant IMC message from mod %s!", m.getSender());
 		}
 	}
 }

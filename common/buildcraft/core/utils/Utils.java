@@ -8,8 +8,6 @@
  */
 package buildcraft.core.utils;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,11 +22,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTSizeTracker;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
@@ -41,9 +35,10 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
+import buildcraft.api.power.IEngine;
 import buildcraft.api.transport.IInjectable;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.compat.CompatHooks;
+import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.IDropControlInventory;
@@ -54,9 +49,8 @@ import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.ITransactor;
 import buildcraft.core.inventory.InvUtils;
 import buildcraft.core.inventory.Transactor;
-import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.Packet;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.energy.TileEngine;
 
 public final class Utils {
 
@@ -88,7 +82,7 @@ public final class Utils {
 
 			TileEntity tileInventory = BlockUtils.getTileEntity(world, (int) pos.x, (int) pos.y, (int) pos.z);
 			ITransactor transactor = Transactor.getTransactorFor(tileInventory);
-			if (transactor != null && !(tileInventory instanceof TileEngine) && transactor.add(stack, orientation.getOpposite(), false).stackSize > 0) {
+			if (transactor != null && !(tileInventory instanceof IEngine) && transactor.add(stack, orientation.getOpposite(), false).stackSize > 0) {
 				return transactor.add(stack, orientation.getOpposite(), true).stackSize;
 			}
 		}
@@ -105,41 +99,6 @@ public final class Utils {
 				ForgeDirection.WEST, ForgeDirection.NORTH, ForgeDirection.EAST };
 		int orientationIndex = MathHelper.floor_double((entityliving.rotationYaw + 45.0) / 90.0) & 3;
 		return orientationTable[orientationIndex];
-	}
-
-	/*
-	 * FIXME This is only kept here for the purpose of get3dOrientation, which
-	 * should probably be removed following the same principles
-	 */
-	@Deprecated
-	private static ForgeDirection get2dOrientation(Position pos1, Position pos2) {
-		double dX = pos1.x - pos2.x;
-		double dZ = pos1.z - pos2.z;
-		double angle = Math.atan2(dZ, dX) / Math.PI * 180 + 180;
-
-		if (angle < 45 || angle > 315) {
-			return ForgeDirection.EAST;
-		} else if (angle < 135) {
-			return ForgeDirection.SOUTH;
-		} else if (angle < 225) {
-			return ForgeDirection.WEST;
-		} else {
-			return ForgeDirection.NORTH;
-		}
-	}
-
-	public static ForgeDirection get3dOrientation(Position pos1, Position pos2) {
-		double dX = pos1.x - pos2.x;
-		double dY = pos1.y - pos2.y;
-		double angle = Math.atan2(dY, dX) / Math.PI * 180 + 180;
-
-		if (angle > 45 && angle < 135) {
-			return ForgeDirection.UP;
-		} else if (angle > 225 && angle < 315) {
-			return ForgeDirection.DOWN;
-		} else {
-			return get2dOrientation(pos1, pos2);
-		}
 	}
 
 	/**
@@ -197,14 +156,6 @@ public final class Utils {
 			}
 		}
 		InvUtils.dropItems(world, stack, x, y, z);
-	}
-
-	public static TileEntity getTile(World world, Position pos, ForgeDirection step) {
-		Position tmp = new Position(pos);
-		tmp.orientation = step;
-		tmp.moveForwards(1.0);
-
-		return BlockUtils.getTileEntity(world, (int) tmp.x, (int) tmp.y, (int) tmp.z);
 	}
 
 	public static IAreaProvider getNearbyAreaProvider(World world, int i, int j, int k) {
@@ -443,101 +394,6 @@ public final class Utils {
 		return slots;
 	}
 
-	public static void writeUTF (ByteBuf data, String str) {
-		try {
-			if (str == null) {
-				data.writeInt(0);
-				return;
-			}
-			byte [] b = str.getBytes("UTF-8");
-			data.writeInt (b.length);
-			data.writeBytes(b);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			data.writeInt (0);
-		}
-	}
-
-	public static String readUTF (ByteBuf data) {
-		try {
-			int len = data.readInt();
-			if (len == 0) {
-				return "";
-			}
-			byte [] b = new byte [len];
-			data.readBytes(b);
-			return new String (b, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public static void writeNBT (ByteBuf data, NBTTagCompound nbt) {
-		try {
-			byte[] compressed = CompressedStreamTools.compress(nbt);
-			data.writeInt(compressed.length);
-			data.writeBytes(compressed);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public static NBTTagCompound readNBT(ByteBuf data) {
-		try {
-			int length = data.readInt();
-			byte[] compressed = new byte[length];
-			data.readBytes(compressed);
-			return CompressedStreamTools.func_152457_a(compressed, NBTSizeTracker.field_152451_a);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public static void writeStack (ByteBuf data, ItemStack stack) {
-		if (stack == null || stack.getItem() == null || stack.stackSize < 0) {
-			data.writeByte(0);
-		} else {
-			// ItemStacks generally shouldn't have a stackSize above 64,
-			// so we use this "trick" to save bandwidth by storing it in the first byte.
-			data.writeByte((MathUtils.clamp(stack.stackSize + 1, 0, 64) & 0x7F) | (stack.hasTagCompound() ? 128 : 0));
-			data.writeShort(Item.getIdFromItem(stack.getItem()));
-			data.writeShort(stack.getItemDamage());
-			if (stack.hasTagCompound()) {
-				Utils.writeNBT(data, stack.getTagCompound());
-			}
-		}
-	}
-
-	public static ItemStack readStack(ByteBuf data) {
-		int flags = data.readUnsignedByte();
-		if (flags == 0) {
-			return null;
-		} else {
-			boolean hasCompound = (flags & 0x80) != 0;
-			int stackSize = (flags & 0x7F) - 1;
-			int itemId = data.readUnsignedShort();
-			int itemDamage = data.readShort();
-			ItemStack stack = new ItemStack(Item.getItemById(itemId), stackSize, itemDamage);
-			if (hasCompound) {
-				stack.setTagCompound(Utils.readNBT(data));
-			}
-			return stack;
-		}
-	}
-
-	public static void writeByteArray(ByteBuf stream, byte[] data) {
-		stream.writeInt(data.length);
-		stream.writeBytes(data);
-	}
-
-	public static byte[] readByteArray(ByteBuf stream) {
-		byte[] data = new byte[stream.readInt()];
-		stream.readBytes(data, 0, data.length);
-		return data;
-	}
-
 	/**
 	 * This subprogram transforms a packet into a FML packet to be send in the
 	 * minecraft default packet mechanism. This always use BC-CORE as a
@@ -548,7 +404,7 @@ public final class Utils {
 	 * member). It is probably opening a maintenance issue and should be
 	 * replaced eventually by some more solid mechanism.
 	 */
-	public static FMLProxyPacket toPacket (BuildCraftPacket packet, int discriminator) {
+	public static FMLProxyPacket toPacket (Packet packet, int discriminator) {
 		ByteBuf buf = Unpooled.buffer();
 
 		buf.writeByte((byte) discriminator);

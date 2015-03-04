@@ -8,11 +8,14 @@
  */
 package buildcraft.transport;
 
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.compat.CompatHooks;
+import buildcraft.core.CompatHooks;
 
 public class TransportProxy {
 
@@ -33,5 +36,8 @@ public class TransportProxy {
 	}
 
 	public void setIconProviderFromPipe(ItemPipe item, Pipe<?> dummyPipe) {
+	}
+
+	public void obsidianPipePickup(World world, EntityItem item, TileEntity tile) {
 	}
 }

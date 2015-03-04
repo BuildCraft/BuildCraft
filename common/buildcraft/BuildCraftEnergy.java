@@ -49,12 +49,12 @@ import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.StatementManager;
-import buildcraft.compat.CompatHooks;
+import buildcraft.core.CompatHooks;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
-import buildcraft.core.network.BuildCraftChannelHandler;
+import buildcraft.core.network.ChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.BlockBuildcraftFluid;
 import buildcraft.energy.BlockEnergyEmitter;
@@ -63,6 +63,7 @@ import buildcraft.energy.BlockEngine;
 import buildcraft.energy.BucketHandler;
 import buildcraft.energy.EnergyProxy;
 import buildcraft.energy.GuiHandler;
+import buildcraft.energy.IMCHandlerEnergy;
 import buildcraft.energy.ItemBucketBuildcraft;
 import buildcraft.energy.ItemEngine;
 import buildcraft.energy.SchematicEngine;
@@ -286,6 +287,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		BuildcraftFuelRegistry.coolant.addCoolant(FluidRegistry.WATER, 0.0023f);
 		BuildcraftFuelRegistry.coolant.addSolidCoolant(StackKey.stack(Blocks.ice), StackKey.fluid(FluidRegistry.WATER), 2f);
 
+		InterModComms.registerHandler(new IMCHandlerEnergy());
+
 		// Receiver / emitter
 
 		if (!BuildCraftCore.NONRELEASED_BLOCKS) {
@@ -346,7 +349,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE.newChannel
-				(DefaultProps.NET_CHANNEL_NAME + "-ENERGY", new BuildCraftChannelHandler(),  new PacketHandlerTransport());
+				(DefaultProps.NET_CHANNEL_NAME + "-ENERGY", new ChannelHandler(),  new PacketHandlerTransport());
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new GuiHandler());
 

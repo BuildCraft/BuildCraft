@@ -1,7 +1,5 @@
 package buildcraft.core;
 
-import java.util.HashSet;
-import java.util.Set;
 import net.minecraft.item.Item;
 import net.minecraft.stats.Achievement;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -13,15 +11,12 @@ public class AchievementManager {
 
 	public AchievementManager() {
 		page = new AchievementPage("BuildCraft");
+		AchievementPage.registerAchievementPage(page);
 	}
 
 	public Achievement registerAchievement(Achievement a) {
 		page.getAchievements().add(a.registerStat());
 		return a;
-	}
-
-	public void finalize() {
-		AchievementPage.registerAchievementPage(page);
 	}
 
 	@SubscribeEvent

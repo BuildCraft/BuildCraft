@@ -28,11 +28,11 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.core.BlockIndex;
+import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
+import buildcraft.api.core.IPathProvider;
 import buildcraft.api.core.IZone;
 import buildcraft.api.items.IMapLocation;
-import buildcraft.builders.TileMarker;
-import buildcraft.builders.TilePathMarker;
 import buildcraft.core.utils.NBTUtils;
 import buildcraft.core.utils.StringUtils;
 
@@ -145,24 +145,22 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 		TileEntity tile = world.getTileEntity(x, y, z);
 		NBTTagCompound cpt = NBTUtils.getItemData(stack);
 
-		if (tile instanceof TilePathMarker) {
+		if (tile instanceof IPathProvider) {
 			cpt.setByte("kind", (byte) 2);
-
-			TilePathMarker pathTile = (TilePathMarker) tile;
 
 			NBTTagList pathNBT = new NBTTagList();
 
-			for (BlockIndex index : pathTile.getPath()) {
+			for (BlockIndex index : ((IPathProvider) tile).getPath()) {
 				NBTTagCompound nbt = new NBTTagCompound();
 				index.writeTo(nbt);
 				pathNBT.appendTag(nbt);
 			}
 
 			cpt.setTag("path", pathNBT);
-		} else if (tile instanceof TileMarker) {
+		} else if (tile instanceof IAreaProvider) {
 			cpt.setByte("kind", (byte) 1);
 
-			TileMarker areaTile = (TileMarker) tile;
+			IAreaProvider areaTile = (IAreaProvider) tile;
 
 			cpt.setInteger("xMin", areaTile.xMin());
 			cpt.setInteger("yMin", areaTile.yMin());

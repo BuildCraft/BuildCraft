@@ -18,6 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.utils.BitSetUtils;
+import buildcraft.core.utils.NetworkUtils;
 import buildcraft.core.utils.Utils;
 
 public class ZoneChunk implements ISerializable {
@@ -114,7 +115,7 @@ public class ZoneChunk implements ISerializable {
 	@Override
 	public void readData(ByteBuf stream) {
 		if (stream.readBoolean()) {
-			property = BitSetUtils.fromByteArray(Utils.readByteArray(stream));
+			property = BitSetUtils.fromByteArray(NetworkUtils.readByteArray(stream));
 		}
 		fullSet = stream.readBoolean();
 	}
@@ -123,7 +124,7 @@ public class ZoneChunk implements ISerializable {
 	public void writeData(ByteBuf stream) {
 		if (property != null) {
 			stream.writeBoolean(true);
-			Utils.writeByteArray(stream, BitSetUtils.toByteArray(property));
+			NetworkUtils.writeByteArray(stream, BitSetUtils.toByteArray(property));
 		} else {
 			stream.writeBoolean(false);
 		}

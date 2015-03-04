@@ -24,17 +24,17 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 
 import net.minecraftforge.fluids.FluidRegistry;
 
-import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.Packet;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.TileRefinery;
 
 @Sharable
-public class PacketHandlerFactory extends SimpleChannelInboundHandler<BuildCraftPacket> {
+public class PacketHandlerFactory extends SimpleChannelInboundHandler<Packet> {
 
 	@Override
-	protected  void channelRead0(ChannelHandlerContext ctx, BuildCraftPacket packet) {
+	protected  void channelRead0(ChannelHandlerContext ctx, Packet packet) {
 		try {
 			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
 			EntityPlayer player = CoreProxy.proxy.getPlayerFromNetHandler(netHandler);

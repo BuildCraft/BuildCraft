@@ -28,6 +28,7 @@ import buildcraft.core.inventory.InventoryWrapper;
 import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.network.IGuiReturnHandler;
+import buildcraft.core.utils.NetworkUtils;
 import buildcraft.core.utils.Utils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
@@ -219,12 +220,12 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
 	public void writeData(ByteBuf data) {
 		NBTTagCompound nbt = new NBTTagCompound();
 		writeToNBT(nbt);
-		Utils.writeNBT(data, nbt);
+		NetworkUtils.writeNBT(data, nbt);
 	}
 
 	@Override
 	public void readData(ByteBuf data) {
-		NBTTagCompound nbt = Utils.readNBT(data);
+		NBTTagCompound nbt = NetworkUtils.readNBT(data);
 		readFromNBT(nbt);
 	}
 

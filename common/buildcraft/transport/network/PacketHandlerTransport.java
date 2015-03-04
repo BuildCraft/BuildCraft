@@ -19,7 +19,7 @@ import net.minecraft.world.World;
 
 import cpw.mods.fml.common.network.NetworkRegistry;
 
-import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.Packet;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.network.PacketSlotChange;
 import buildcraft.core.proxy.CoreProxy;
@@ -30,7 +30,7 @@ import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
 
 @Sharable
-public class PacketHandlerTransport extends SimpleChannelInboundHandler<BuildCraftPacket>  {
+public class PacketHandlerTransport extends SimpleChannelInboundHandler<Packet>  {
 
 	/**
 	 * TODO: A lot of this is based on the player to retrieve the world.
@@ -39,7 +39,7 @@ public class PacketHandlerTransport extends SimpleChannelInboundHandler<BuildCra
 	 * RPCs.
 	 */
 	@Override
-	protected  void channelRead0(ChannelHandlerContext ctx, BuildCraftPacket packet) {
+	protected  void channelRead0(ChannelHandlerContext ctx, Packet packet) {
 		try {
 			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
 			EntityPlayer player = CoreProxy.proxy.getPlayerFromNetHandler(netHandler);

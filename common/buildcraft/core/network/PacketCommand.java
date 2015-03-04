@@ -16,9 +16,9 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 
-import buildcraft.core.utils.Utils;
+import buildcraft.core.utils.NetworkUtils;
 
-public class PacketCommand extends BuildCraftPacket {
+public class PacketCommand extends Packet {
 	public static final ArrayList<CommandTarget> targets;
 	public ByteBuf stream;
 	public String command;
@@ -65,7 +65,7 @@ public class PacketCommand extends BuildCraftPacket {
 
 	@Override
 	public void writeData(ByteBuf data) {
-		Utils.writeUTF(data, command);
+		NetworkUtils.writeUTF(data, command);
 		data.writeByte(targets.indexOf(handler));
 		handler.write(data, target);
 		if (writer != null) {
@@ -75,7 +75,7 @@ public class PacketCommand extends BuildCraftPacket {
 
 	@Override
 	public void readData(ByteBuf data) {
-		command = Utils.readUTF(data);
+		command = NetworkUtils.readUTF(data);
 		handler = targets.get(data.readUnsignedByte());
 		stream = data; // for further reading
 	}

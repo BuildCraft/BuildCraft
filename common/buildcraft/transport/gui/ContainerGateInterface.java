@@ -30,11 +30,11 @@ import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.core.gui.BuildCraftContainer;
-import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.Packet;
 import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.utils.NetworkUtils;
 import buildcraft.transport.ActionActiveState;
 import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
@@ -299,17 +299,17 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 	}
 
 	// PACKET GENERATION
-	public BuildCraftPacket getStatementPacket(final String name, final int slot, final IStatement statement) {
+	public Packet getStatementPacket(final String name, final int slot, final IStatement statement) {
 		final String statementKind = statement != null ? statement.getUniqueTag() : null;
 		return new PacketCommand(this, name, new CommandWriter() {
 			public void write(ByteBuf data) {
 				data.writeByte(slot);
-				Utils.writeUTF(data, statementKind);
+				NetworkUtils.writeUTF(data, statementKind);
 			}
 		});
 	}
 
-	public BuildCraftPacket getStatementParameterPacket(final String name, final int slot,
+	public Packet getStatementParameterPacket(final String name, final int slot,
 			final int paramSlot, final IStatementParameter parameter) {
 		final String parameterName = parameter != null ? parameter.getUniqueTag() : null;
 		final NBTTagCompound parameterNBT = new NBTTagCompound();
@@ -320,8 +320,8 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 			public void write(ByteBuf data) {
 				data.writeByte(slot);
 				data.writeByte(paramSlot);
-				Utils.writeUTF(data, parameterName);
-				Utils.writeNBT(data, parameterNBT);
+				NetworkUtils.writeUTF(data, parameterName);
+				NetworkUtils.writeNBT(data, parameterNBT);
 			}
 		});
 	}
@@ -345,10 +345,10 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 						data.writeShort(triggerStrings.length);
 						data.writeShort(actionStrings.length);
 						for (String trigger : triggerStrings) {
-							Utils.writeUTF(data, trigger);
+							NetworkUtils.writeUTF(data, trigger);
 						}
 						for (String action : actionStrings) {
-							Utils.writeUTF(data, action);
+							NetworkUtils.writeUTF(data, action);
 						}
 					}
 				}));
@@ -374,10 +374,10 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 				String[] triggerStrings = new String[stream.readShort()];
 				String[] actionStrings = new String[stream.readShort()];
 				for (int i = 0; i < triggerStrings.length; i++) {
-					triggerStrings[i] = Utils.readUTF(stream);
+					triggerStrings[i] = NetworkUtils.readUTF(stream);
 				}
 				for (int i = 0; i < actionStrings.length; i++) {
-					actionStrings[i] = Utils.readUTF(stream);
+					actionStrings[i] = NetworkUtils.readUTF(stream);
 				}
 
 				stringsToStatements(this.potentialTriggers, triggerStrings);
@@ -386,14 +386,14 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 		}
 
 		if ("setAction".equals(command)) {
-			setAction(stream.readUnsignedByte(), Utils.readUTF(stream), false);
+			setAction(stream.readUnsignedByte(), NetworkUtils.readUTF(stream), false);
 		} else if ("setTrigger".equals(command)) {
-			setTrigger(stream.readUnsignedByte(), Utils.readUTF(stream), false);
+			setTrigger(stream.readUnsignedByte(), NetworkUtils.readUTF(stream), false);
 		} else if ("setActionParameter".equals(command) || "setTriggerParameter".equals(command)) {
 			int slot = stream.readUnsignedByte();
 			int param = stream.readUnsignedByte();
-			String parameterName = Utils.readUTF(stream);
-			NBTTagCompound parameterData = Utils.readNBT(stream);
+			String parameterName = NetworkUtils.readUTF(stream);
+			NBTTagCompound parameterData = NetworkUtils.readNBT(stream);
 			IStatementParameter parameter = null;
 			if (parameterName != null && parameterName.length() > 0) {
 				parameter = StatementManager.createParameter(parameterName);

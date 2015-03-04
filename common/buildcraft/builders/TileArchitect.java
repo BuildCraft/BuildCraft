@@ -29,18 +29,19 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
+import buildcraft.builders.blueprints.RecursiveBlueprintReader;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.IBoxProvider;
 import buildcraft.core.LaserData;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.blueprints.BlueprintReadConfiguration;
-import buildcraft.core.blueprints.RecursiveBlueprintReader;
 import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.network.BuildCraftPacket;
+import buildcraft.core.network.Packet;
 import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
+import buildcraft.core.utils.NetworkUtils;
 import buildcraft.core.utils.Utils;
 
 public class TileArchitect extends TileBuildCraft implements IInventory, IBoxProvider, ICommandReceiver {
@@ -205,7 +206,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	@Override
 	public void writeData(ByteBuf stream) {
 		box.writeData(stream);
-		Utils.writeUTF(stream, name);
+		NetworkUtils.writeUTF(stream, name);
 		readConfiguration.writeData(stream);
 		stream.writeShort(subLasers.size());
 		for (LaserData ld: subLasers) {
@@ -216,7 +217,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	@Override
 	public void readData(ByteBuf stream) {
 		box.readData(stream);
-		name = Utils.readUTF(stream);
+		name = NetworkUtils.readUTF(stream);
 		readConfiguration.readData(stream);
 		int size = stream.readUnsignedShort();
 		subLasers.clear();
@@ -282,17 +283,17 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		return completeBox.getBoundingBox();
 	}
 
-	public BuildCraftPacket getPacketSetName() {
+	public Packet getPacketSetName() {
 		return new PacketCommand(this, "setName", new CommandWriter() {
 			public void write(ByteBuf data) {
-				Utils.writeUTF(data, name);
+				NetworkUtils.writeUTF(data, name);
 			}
 		});
 	}
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
 		if ("setName".equals(command)) {
-			this.name = Utils.readUTF(stream);
+			this.name = NetworkUtils.readUTF(stream);
 			if (side.isServer()) {
 				BuildCraftCore.instance.sendToPlayersNear(getPacketSetName(), this);
 			}

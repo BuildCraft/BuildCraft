@@ -27,18 +27,12 @@ import net.minecraft.world.World;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
-import net.minecraftforge.client.MinecraftForgeClient;
-
 import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftSilicon;
 import buildcraft.core.EntityBlock;
 import buildcraft.core.LaserKind;
 import buildcraft.core.render.RenderEntityBlock;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingMarkers;
-import buildcraft.robots.EntityRobot;
-import buildcraft.robots.render.RenderRobot;
-import buildcraft.transport.render.TileEntityPickupFX;
 
 public class CoreProxyClient extends CoreProxy {
 
@@ -83,12 +77,6 @@ public class CoreProxyClient extends CoreProxy {
 		return stack.getDisplayName();
 	}
 
-	/* GFX */
-	@Override
-	public void obsidianPipePickup(World world, EntityItem item, TileEntity tile) {
-		FMLClientHandler.instance().getClient().effectRenderer.addEffect(new TileEntityPickupFX(world, item, tile));
-	}
-
 	@Override
 	public void initializeRendering() {
 		BuildCraftCore.blockByEntityModel = RenderingRegistry.getNextAvailableRenderId();
@@ -98,15 +86,11 @@ public class CoreProxyClient extends CoreProxy {
 		RenderingRegistry.registerBlockHandler(new RenderingEntityBlocks());
 		RenderingRegistry.registerBlockHandler(BuildCraftCore.legacyPipeModel, new RenderingEntityBlocks());
 		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
-
-		// TODO: Move these to a Silicon proxy renderer
-		MinecraftForgeClient.registerItemRenderer(BuildCraftSilicon.robotItem, new RenderRobot());
 	}
 
 	@Override
 	public void initializeEntityRendering() {
 		RenderingRegistry.registerEntityRenderingHandler(EntityBlock.class, RenderEntityBlock.INSTANCE);
-		RenderingRegistry.registerEntityRenderingHandler(EntityRobot.class, new RenderRobot());
 	}
 
 	/* BUILDCRAFT PLAYER */

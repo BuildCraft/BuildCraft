@@ -19,7 +19,7 @@ import buildcraft.api.power.ILaserTarget;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.utils.AverageUtil;
+import buildcraft.core.utils.Average;
 
 public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory, IHasWork {
 
@@ -27,7 +27,7 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 	protected SimpleInventory inv = new SimpleInventory(getSizeInventory(), "inv", 64);
 	private int energy = 0;
 	private int recentEnergyAverage;
-	private AverageUtil recentEnergyAverageUtil = new AverageUtil(20);
+	private Average recentEnergyAverageUtil = new Average(20);
 
 	@Override
 	public void updateEntity() {

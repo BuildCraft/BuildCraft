@@ -45,23 +45,24 @@ import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.api.transport.PipeWire;
-import buildcraft.compat.CompatHooks;
+import buildcraft.core.CompatHooks;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.PowerMode;
 import buildcraft.core.Version;
-import buildcraft.core.network.BuildCraftChannelHandler;
+import buildcraft.core.network.ChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.ColorUtils;
-import buildcraft.robots.ItemRobotStation;
-import buildcraft.robots.RobotStationPluggable;
+import buildcraft.robotics.ItemRobotStation;
+import buildcraft.robotics.RobotStationPluggable;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.FacadePluggable;
 import buildcraft.transport.GuiHandler;
+import buildcraft.transport.IMCHandlerTransport;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemGateCopier;
 import buildcraft.transport.ItemPipe;
@@ -82,7 +83,12 @@ import buildcraft.transport.gates.GateExpansionRedstoneFader;
 import buildcraft.transport.gates.GateExpansionTimer;
 import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.gates.ItemGate;
+import buildcraft.transport.network.PacketFluidUpdate;
 import buildcraft.transport.network.PacketHandlerTransport;
+import buildcraft.transport.network.PacketPipeTransportItemStack;
+import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
+import buildcraft.transport.network.PacketPipeTransportTraveler;
+import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.PipeFluidsCobblestone;
 import buildcraft.transport.pipes.PipeFluidsDiamond;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
@@ -244,6 +250,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static float gateCostMultiplier = 1.0F;
 
 	private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
+	private static ChannelHandler transportChannelHandler;
 
 	public IIconProvider pipeIconProvider = new PipeIconProvider();
 	public IIconProvider wireIconProvider = new WireIconProvider();
@@ -434,12 +441,22 @@ public class BuildCraftTransport extends BuildCraftMod {
 		} finally {
 			BuildCraftCore.mainConfiguration.save();
 		}
+
+		InterModComms.registerHandler(new IMCHandlerTransport());
 	}
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
+		transportChannelHandler = new ChannelHandler();
+
+		transportChannelHandler.registerPacketType(PacketFluidUpdate.class);
+		transportChannelHandler.registerPacketType(PacketPipeTransportItemStack.class);
+		transportChannelHandler.registerPacketType(PacketPipeTransportItemStackRequest.class);
+		transportChannelHandler.registerPacketType(PacketPipeTransportTraveler.class);
+		transportChannelHandler.registerPacketType(PacketPowerUpdate.class);
+
 		channels = NetworkRegistry.INSTANCE.newChannel
-				(DefaultProps.NET_CHANNEL_NAME + "-TRANSPORT", new BuildCraftChannelHandler(), new PacketHandlerTransport());
+				(DefaultProps.NET_CHANNEL_NAME + "-TRANSPORT", transportChannelHandler, new PacketHandlerTransport());
 
 		TransportProxy.proxy.registerTileEntities();
 

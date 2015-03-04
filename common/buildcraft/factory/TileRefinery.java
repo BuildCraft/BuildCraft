@@ -34,6 +34,7 @@ import buildcraft.core.TileBuildCraft;
 import buildcraft.core.fluids.SingleUseTank;
 import buildcraft.core.fluids.TankManager;
 import buildcraft.core.recipes.RefineryRecipeManager;
+import buildcraft.core.utils.NetworkUtils;
 import buildcraft.core.utils.Utils;
 
 public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInventory, IHasWork, IFlexibleCrafter {
@@ -354,14 +355,14 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	// Network
 	public void writeData(ByteBuf stream) {
 		stream.writeFloat(animationSpeed);
-		Utils.writeUTF(stream, currentRecipeId);
+		NetworkUtils.writeUTF(stream, currentRecipeId);
 		tankManager.writeData(stream);
 	}
 
 	@Override
 	public void readData(ByteBuf stream) {
 		animationSpeed = stream.readFloat();
-		currentRecipeId = Utils.readUTF(stream);
+		currentRecipeId = NetworkUtils.readUTF(stream);
 		tankManager.readData(stream);
 
 		currentRecipe = RefineryRecipeManager.INSTANCE.getRecipe(currentRecipeId);

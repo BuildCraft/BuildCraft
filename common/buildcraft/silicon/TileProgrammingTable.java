@@ -24,6 +24,7 @@ import buildcraft.api.recipes.IProgrammingRecipe;
 import buildcraft.core.network.CommandWriter;
 import buildcraft.core.network.ICommandReceiver;
 import buildcraft.core.network.PacketCommand;
+import buildcraft.core.utils.NetworkUtils;
 import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
 
@@ -122,7 +123,7 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
 	@Override
 	public void readData(ByteBuf stream) {
 		super.readData(stream);
-		currentRecipeId = Utils.readUTF(stream);
+		currentRecipeId = NetworkUtils.readUTF(stream);
 		optionId = stream.readUnsignedByte();
 		updateRecipe();
 	}
@@ -130,7 +131,7 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
 	@Override
 	public void writeData(ByteBuf stream) {
 		super.writeData(stream);
-		Utils.writeUTF(stream, currentRecipeId);
+		NetworkUtils.writeUTF(stream, currentRecipeId);
 		stream.writeByte(optionId);
 	}
 

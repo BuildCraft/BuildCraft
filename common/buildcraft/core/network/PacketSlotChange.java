@@ -12,6 +12,7 @@ import io.netty.buffer.ByteBuf;
 
 import net.minecraft.item.ItemStack;
 
+import buildcraft.core.utils.NetworkUtils;
 import buildcraft.core.utils.Utils;
 
 public class PacketSlotChange extends PacketCoordinates {
@@ -33,7 +34,7 @@ public class PacketSlotChange extends PacketCoordinates {
 		super.writeData(data);
 
 		data.writeShort(slot);
-		Utils.writeStack(data, stack);		
+		NetworkUtils.writeStack(data, stack);
 	}
 
 	@Override
@@ -41,6 +42,6 @@ public class PacketSlotChange extends PacketCoordinates {
 		super.readData(data);
 
 		this.slot = data.readUnsignedShort();
-		stack = Utils.readStack(data);
+		stack = NetworkUtils.readStack(data);
 	}
 }
