@@ -13,7 +13,6 @@ import cpw.mods.fml.client.registry.ClientRegistry;
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingEntityBlocks.EntityRenderIndex;
-import buildcraft.energy.render.RenderEnergyEmitter;
 import buildcraft.energy.render.RenderEngine;
 
 public class EnergyProxyClient extends EnergyProxy {
@@ -22,7 +21,6 @@ public class EnergyProxyClient extends EnergyProxy {
 	public void registerTileEntities() {
 		super.registerTileEntities();
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEngine.class, new RenderEngine());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEnergyEmitter.class, new RenderEnergyEmitter());
 	}
 
 	@Override

@@ -57,8 +57,6 @@ import buildcraft.core.Version;
 import buildcraft.core.network.ChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.BlockBuildcraftFluid;
-import buildcraft.energy.BlockEnergyEmitter;
-import buildcraft.energy.BlockEnergyReceiver;
 import buildcraft.energy.BlockEngine;
 import buildcraft.energy.BucketHandler;
 import buildcraft.energy.EnergyProxy;
@@ -67,8 +65,6 @@ import buildcraft.energy.IMCHandlerEnergy;
 import buildcraft.energy.ItemBucketBuildcraft;
 import buildcraft.energy.ItemEngine;
 import buildcraft.energy.SchematicEngine;
-import buildcraft.energy.TileEnergyEmitter;
-import buildcraft.energy.TileEnergyReceiver;
 import buildcraft.energy.TileEngine;
 import buildcraft.energy.TileEngine.EnergyStage;
 import buildcraft.energy.statements.EnergyStatementProvider;
@@ -89,8 +85,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	public static BiomeGenOilDesert biomeOilDesert;
 	public static BiomeGenOilOcean biomeOilOcean;
 	public static BlockEngine engineBlock;
-	public static BlockEnergyEmitter emitterBlock;
-	public static BlockEnergyReceiver receiverBlock;
 	public static Fluid fluidOil;
 	public static Fluid fluidFuel;
 	public static Fluid fluidRedPlasma;
@@ -288,18 +282,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		BuildcraftFuelRegistry.coolant.addSolidCoolant(StackKey.stack(Blocks.ice), StackKey.fluid(FluidRegistry.WATER), 2f);
 
 		InterModComms.registerHandler(new IMCHandlerEnergy());
-
-		// Receiver / emitter
-
-		if (!BuildCraftCore.NONRELEASED_BLOCKS) {
-			emitterBlock = new BlockEnergyEmitter();
-			CoreProxy.proxy.registerBlock(emitterBlock.setBlockName("energyEmitterBlock"));
-			CoreProxy.proxy.registerTileEntity(TileEnergyEmitter.class, "net.minecraft.src.builders.TileEnergyEmitter");
-
-			receiverBlock = new BlockEnergyReceiver();
-			CoreProxy.proxy.registerBlock(receiverBlock.setBlockName("energyReceiverBlock"));
-			CoreProxy.proxy.registerTileEntity(TileEnergyReceiver.class, "net.minecraft.src.builders.TileEnergyReceiver");
-		}
 
 		MinecraftForge.EVENT_BUS.register(this);
 	}
