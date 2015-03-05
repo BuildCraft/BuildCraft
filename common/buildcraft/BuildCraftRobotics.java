@@ -31,6 +31,7 @@ import buildcraft.api.robots.RobotManager;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementManager;
+import buildcraft.api.transport.PipeManager;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
@@ -45,7 +46,9 @@ import buildcraft.robotics.EntityRobot;
 import buildcraft.robotics.ImplRedstoneBoardRegistry;
 import buildcraft.robotics.ItemRedstoneBoard;
 import buildcraft.robotics.ItemRobot;
+import buildcraft.robotics.ItemRobotStation;
 import buildcraft.robotics.RobotRegistryProvider;
+import buildcraft.robotics.RobotStationPluggable;
 import buildcraft.robotics.RoboticsGuiHandler;
 import buildcraft.robotics.RobotIntegrationRecipe;
 import buildcraft.robotics.RoboticsProxy;
@@ -152,6 +155,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
 	public static ItemRedstoneBoard redstoneBoard;
 	public static Item robotItem;
+	public static Item robotStationItem;
 
 	public static ITriggerInternal triggerRobotSleep = new TriggerRobotSleep();
 
@@ -190,6 +194,9 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
 		robotItem = new ItemRobot().setUnlocalizedName("robot");
 		CoreProxy.proxy.registerItem(robotItem);
+
+		robotStationItem = new ItemRobotStation().setUnlocalizedName("robotStation");
+		CoreProxy.proxy.registerItem(robotStationItem);
 
 		redstoneBoard = new ItemRedstoneBoard();
 		redstoneBoard.setUnlocalizedName("redstone_board");
@@ -243,6 +250,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
 		BCCreativeTab.get("boards").setIcon(new ItemStack(BuildCraftRobotics.redstoneBoard, 1));
 
+		PipeManager.registerPipePluggable(RobotStationPluggable.class, "robotStation");
 		EntityRegistry.registerModEntity(EntityRobot.class, "bcRobot", EntityIds.ROBOT, instance, 50, 1, true);
 
 		RobotManager.registryProvider = new RobotRegistryProvider();
@@ -344,6 +352,10 @@ public class BuildCraftRobotics extends BuildCraftMod {
 				'P', Blocks.piston,
 				'G', "gearIron",
 				'I', "ingotIron");
+
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(robotStationItem), "   ", " I ", "ICI",
+				'I', "ingotIron",
+				'C', ItemRedstoneChipset.Chipset.GOLD.getStack());
 
 		BuildcraftRecipeRegistry.programmingTable.addRecipe(new BoardProgrammingRecipe());
 		BuildcraftRecipeRegistry.integrationTable.addRecipe(new RobotIntegrationRecipe("buildcraft:robotIntegration"));

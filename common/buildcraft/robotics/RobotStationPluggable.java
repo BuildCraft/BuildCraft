@@ -10,6 +10,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import cofh.api.energy.IEnergyReceiver;
+import buildcraft.BuildCraftRobotics;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.robots.RobotManager;
@@ -168,7 +169,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 
 	@Override
 	public ItemStack[] getDropItems(IPipeTile pipe) {
-		return new ItemStack[] { new ItemStack(BuildCraftTransport.robotStationItem) };
+		return new ItemStack[] { new ItemStack(BuildCraftRobotics.robotStationItem) };
 	}
 
 	public DockingStation getStation() {

@@ -24,7 +24,6 @@ import buildcraft.transport.render.PipeItemRenderer;
 import buildcraft.transport.render.PipeRendererTESR;
 import buildcraft.transport.render.PipeRendererWorld;
 import buildcraft.transport.render.PlugItemRenderer;
-import buildcraft.transport.render.RobotStationItemRenderer;
 import buildcraft.transport.render.TileEntityPickupFX;
 
 public class TransportProxyClient extends TransportProxy {
@@ -33,7 +32,6 @@ public class TransportProxyClient extends TransportProxy {
 	public static final PipeRendererWorld pipeWorldRenderer = new PipeRendererWorld();
 	public static final FacadeItemRenderer facadeItemRenderer = new FacadeItemRenderer();
 	public static final PlugItemRenderer plugItemRenderer = new PlugItemRenderer();
-	public static final RobotStationItemRenderer robotStationItemRenderer = new RobotStationItemRenderer();
 	public static final GateItemRenderer gateItemRenderer = new GateItemRenderer();
 
 	@Override
@@ -92,7 +90,6 @@ public class TransportProxyClient extends TransportProxy {
 
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.facadeItem, facadeItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.plugItem, plugItemRenderer);
-		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.robotStationItem, robotStationItemRenderer);
 		MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeGate, gateItemRenderer);
 
 		TransportProxy.pipeModel = RenderingRegistry.getNextAvailableRenderId();

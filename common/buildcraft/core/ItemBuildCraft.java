@@ -23,7 +23,7 @@ public class ItemBuildCraft extends Item {
 	private boolean passSneakClick = false;
 
 	public ItemBuildCraft() {
-		this(BCCreativeTab.get("items"));
+		this(BCCreativeTab.get("main"));
 	}
 
 	public ItemBuildCraft(CreativeTabs creativeTab) {

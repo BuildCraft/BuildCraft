@@ -25,6 +25,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
+import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -33,8 +34,10 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.oredict.ShapedOreRecipe;
 
 import buildcraft.api.blueprints.BuilderAPI;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.JavaTools;
@@ -43,6 +46,7 @@ import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementManager;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.CompatHooks;
@@ -55,8 +59,6 @@ import buildcraft.core.Version;
 import buildcraft.core.network.ChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.ColorUtils;
-import buildcraft.robotics.ItemRobotStation;
-import buildcraft.robotics.RobotStationPluggable;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
@@ -163,7 +165,7 @@ import buildcraft.transport.stripes.StripesHandlerPlaceBlock;
 import buildcraft.transport.stripes.StripesHandlerRightClick;
 import buildcraft.transport.stripes.StripesHandlerShears;
 
-@Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_SILICON)
+@Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTransport extends BuildCraftMod {
 
 	@Mod.Instance("BuildCraft|Transport")
@@ -183,7 +185,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item plugItem;
 	public static Item lensItem;
 	public static Item powerAdapterItem;
-	public static Item robotStationItem;
 	public static Item pipeStructureCobblestone;
 	public static Item gateCopier;
 	public static ItemFacade facadeItem;
@@ -400,10 +401,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 			//powerAdapterItem.setUnlocalizedName("pipePowerAdapter");
 			//CoreProxy.proxy.registerItem(powerAdapterItem);
 
-			robotStationItem = new ItemRobotStation();
-			robotStationItem.setUnlocalizedName("robotStation");
-			CoreProxy.proxy.registerItem(robotStationItem);
-
 			gateCopier = new ItemGateCopier();
 			CoreProxy.proxy.registerItem(gateCopier);
 
@@ -497,7 +494,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 		PipeManager.registerPipePluggable(GatePluggable.class, "gate");
 		PipeManager.registerPipePluggable(LensPluggable.class, "lens");
 		PipeManager.registerPipePluggable(PlugPluggable.class, "plug");
-		PipeManager.registerPipePluggable(RobotStationPluggable.class, "robotStation");
 		
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
@@ -555,61 +551,88 @@ public class BuildCraftTransport extends BuildCraftMod {
 		GameRegistry.addRecipe(facadeItem.new FacadeRecipe());
 		RecipeSorter.register("facadeTurningHelper", ItemFacade.FacadeRecipe.class, RecipeSorter.Category.SHAPELESS, "");
 
+		if (Loader.isModLoaded("BuildCraft|Silicon")) {
+			loadSiliconRecipes();
+		} else {
+			BCLog.logger.warn("**********************************************");
+			BCLog.logger.warn("*   You are using the BuildCraft Transport   *");
+			BCLog.logger.warn("* module WITHOUT the Silicon module. Certain *");
+			BCLog.logger.warn("* crafting recipes will be unavailable, and  *");
+			BCLog.logger.warn("*   you are HIGHLY encouraged to either add  *");
+			BCLog.logger.warn("* the module or add custom recipes for those *");
+			BCLog.logger.warn("*              parts of the mod.             *");
+			BCLog.logger.warn("**********************************************");
+
+			// Alternate recipes
+			// Pipe Plug
+			GameRegistry.addShapelessRecipe(new ItemStack(plugItem, 4), "I", 'I', new ItemStack(pipeStructureCobblestone));
+
+			// Lenses, Filters
+			for (int i = 0; i < 16; i++) {
+				String dye = ColorUtils.getOreDictionaryName(15 - i);
+				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(lensItem, 8, i),
+						"OSO", "SGS", "OSO",
+						'O', "ingotIron", 'S', dye, 'G', "blockGlass"
+						));
+				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(lensItem, 8, i + 16),
+						"OSO", "SGS", "OSO",
+						'O', Blocks.iron_bars, 'S', dye, 'G', "blockGlass"
+				));
+			}
+		}
+	}
+
+	private static void loadSiliconRecipes() {
+		GameRegistry.addShapelessRecipe(new ItemStack(gateCopier, 1), new ItemStack(BuildCraftCore.wrenchItem), Chipset.RED.getStack(1));
+
+		// Pipe Plug
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:pipePlug", 10000, new ItemStack(plugItem, 8),
 				new ItemStack(pipeStructureCobblestone));
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(robotStationItem), "   ", " I ", "ICI",
-				'I', "ingotIron",
-				'C', Chipset.GOLD.getStack());
+		// PIPE WIRE
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redWire", 5000, PipeWire.RED.getStack(8),
+				"dyeRed", "dustRedstone", "ingotIron");
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:blueWire", 5000, PipeWire.BLUE.getStack(8),
+				"dyeBlue", "dustRedstone", "ingotIron");
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:greenWire", 5000, PipeWire.GREEN.getStack(8),
+				"dyeGreen", "dustRedstone", "ingotIron");
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:yellowWire", 5000, PipeWire.YELLOW.getStack(8),
+				"dyeYellow", "dustRedstone", "ingotIron");
 
-		if (Loader.isModLoaded("BuildCraft|Silicon")) {
-			GameRegistry.addShapelessRecipe(new ItemStack(gateCopier, 1), new ItemStack(BuildCraftCore.wrenchItem), Chipset.RED.getStack(1));
-
-			// PIPE WIRE
-			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redWire", 5000, PipeWire.RED.getStack(8),
-					"dyeRed", "dustRedstone", "ingotIron");
-			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:blueWire", 5000, PipeWire.BLUE.getStack(8),
-					"dyeBlue", "dustRedstone", "ingotIron");
-			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:greenWire", 5000, PipeWire.GREEN.getStack(8),
-					"dyeGreen", "dustRedstone", "ingotIron");
-			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:yellowWire", 5000, PipeWire.YELLOW.getStack(8),
-					"dyeYellow", "dustRedstone", "ingotIron");
-
-			// Lens
-			for (int i = 0; i < 16; i++) {
-				BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:lens:" + i, 10000, new ItemStack(lensItem, 2, i),
-						ColorUtils.getOreDictionaryName(15 - i), "blockGlass", "ingotIron");
-				BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:filter:" + i, 10000, new ItemStack(lensItem, 2, i + 16),
-						ColorUtils.getOreDictionaryName(15 - i), "blockGlass", Blocks.iron_bars);
-			}
-
-			// GATES
-			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:simpleGate", (int) Math.round(100000 * gateCostMultiplier),
-					ItemGate.makeGateItem(GateMaterial.REDSTONE, GateLogic.AND), Chipset.RED.getStack(),
-					PipeWire.RED.getStack());
-
-			addGateRecipe("Iron", (int) Math.round(200000 * gateCostMultiplier), GateMaterial.IRON, Chipset.IRON, PipeWire.RED, PipeWire.BLUE);
-			addGateRecipe("Gold", (int) Math.round(400000 * gateCostMultiplier), GateMaterial.GOLD, Chipset.GOLD, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
-			addGateRecipe("Quartz", (int) Math.round(600000 * gateCostMultiplier), GateMaterial.QUARTZ, Chipset.QUARTZ, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
-			addGateRecipe("Diamond", (int) Math.round(800000 * gateCostMultiplier), GateMaterial.DIAMOND, Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE,
-					PipeWire.GREEN, PipeWire.YELLOW);
-			addGateRecipe("Emerald", (int) Math.round(1200000 * gateCostMultiplier), GateMaterial.EMERALD, Chipset.EMERALD, PipeWire.RED, PipeWire.BLUE,
-					PipeWire.GREEN, PipeWire.YELLOW);
-
-			// REVERSAL RECIPE
-			BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateLogicSwapRecipe("buildcraft:gateSwap"));
-
-			// EXPANSIONS
-			BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe("buildcraft:expansionPulsar",
-					GateExpansionPulsar.INSTANCE, Chipset.PULSATING.getStack()));
-			BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe("buildcraft:expansionQuartz",
-					GateExpansionTimer.INSTANCE, Chipset.QUARTZ.getStack()));
-			BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe("buildcraft:expansionComp",
-					GateExpansionRedstoneFader.INSTANCE, Chipset.COMP.getStack()));
-
-			// FACADE
-			BuildcraftRecipeRegistry.integrationTable.addRecipe(new AdvancedFacadeRecipe("buildcraft:advancedFacade"));
+		// Lenses, Filters
+		for (int i = 0; i < 16; i++) {
+			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:lens:" + i, 10000, new ItemStack(lensItem, 2, i),
+					ColorUtils.getOreDictionaryName(15 - i), "blockGlass", "ingotIron");
+			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:filter:" + i, 10000, new ItemStack(lensItem, 2, i + 16),
+					ColorUtils.getOreDictionaryName(15 - i), "blockGlass", Blocks.iron_bars);
 		}
+
+		// GATES
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:simpleGate", (int) Math.round(100000 * gateCostMultiplier),
+				ItemGate.makeGateItem(GateMaterial.REDSTONE, GateLogic.AND), Chipset.RED.getStack(),
+				PipeWire.RED.getStack());
+
+		addGateRecipe("Iron", (int) Math.round(200000 * gateCostMultiplier), GateMaterial.IRON, Chipset.IRON, PipeWire.RED, PipeWire.BLUE);
+		addGateRecipe("Gold", (int) Math.round(400000 * gateCostMultiplier), GateMaterial.GOLD, Chipset.GOLD, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
+		addGateRecipe("Quartz", (int) Math.round(600000 * gateCostMultiplier), GateMaterial.QUARTZ, Chipset.QUARTZ, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
+		addGateRecipe("Diamond", (int) Math.round(800000 * gateCostMultiplier), GateMaterial.DIAMOND, Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE,
+				PipeWire.GREEN, PipeWire.YELLOW);
+		addGateRecipe("Emerald", (int) Math.round(1200000 * gateCostMultiplier), GateMaterial.EMERALD, Chipset.EMERALD, PipeWire.RED, PipeWire.BLUE,
+				PipeWire.GREEN, PipeWire.YELLOW);
+
+		// REVERSAL RECIPE
+		BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateLogicSwapRecipe("buildcraft:gateSwap"));
+
+		// EXPANSIONS
+		BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe("buildcraft:expansionPulsar",
+				GateExpansionPulsar.INSTANCE, Chipset.PULSATING.getStack()));
+		BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe("buildcraft:expansionQuartz",
+				GateExpansionTimer.INSTANCE, Chipset.QUARTZ.getStack()));
+		BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe("buildcraft:expansionComp",
+				GateExpansionRedstoneFader.INSTANCE, Chipset.COMP.getStack()));
+
+		// FACADE
+		BuildcraftRecipeRegistry.integrationTable.addRecipe(new AdvancedFacadeRecipe("buildcraft:advancedFacade"));
 	}
 
 	private static void addGateRecipe(String materialName, int energyCost, GateMaterial material, Chipset chipset,
@@ -690,5 +713,16 @@ public class BuildCraftTransport extends BuildCraftMod {
 				TileGenericPipe.class.getCanonicalName());
 		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
 				TileFilteredBuffer.class.getCanonicalName());
+	}
+
+	@Mod.EventHandler
+	public void remap(FMLMissingMappingsEvent event) {
+		for (FMLMissingMappingsEvent.MissingMapping mapping : event.get()) {
+			if (mapping.type == GameRegistry.Type.ITEM) {
+				if (mapping.name.equals("BuildCraft|Transport:robotStation")) {
+					mapping.remap((Item) Item.itemRegistry.getObject("BuildCraft|Robotics:robotStation"));
+				}
+			}
+		}
 	}
 }

@@ -12,11 +12,15 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.client.MinecraftForgeClient;
 import buildcraft.BuildCraftRobotics;
 import buildcraft.robotics.render.RenderRobot;
+import buildcraft.robotics.render.RobotStationItemRenderer;
 
 public class RoboticsProxyClient extends RoboticsProxy {
+	public static final RobotStationItemRenderer robotStationItemRenderer = new RobotStationItemRenderer();
+
 	@Override
 	public void registerRenderers() {
 		RenderingRegistry.registerEntityRenderingHandler(EntityRobot.class, new RenderRobot());
 		MinecraftForgeClient.registerItemRenderer(BuildCraftRobotics.robotItem, new RenderRobot());
+		MinecraftForgeClient.registerItemRenderer(BuildCraftRobotics.robotStationItem, robotStationItemRenderer);
 	}
 }
