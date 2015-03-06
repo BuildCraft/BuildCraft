@@ -10,6 +10,7 @@ package buildcraft.robotics.ai;
 
 import net.minecraft.entity.Entity;
 
+import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.robotics.EntityRobot;
@@ -87,6 +88,6 @@ public class AIRobotAttack extends AIRobot {
 
 	@Override
 	public int getEnergyCost() {
-		return 50;
+		return (BuilderAPI.BREAK_ENERGY * 2 / 20);
 	}
 }

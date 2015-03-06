@@ -70,6 +70,6 @@ public class AIRobotUseToolOnBlock extends AIRobot {
 
 	@Override
 	public int getEnergyCost() {
-		return 30;
+		return 8;
 	}
 }
