@@ -16,6 +16,7 @@ import net.minecraft.world.WorldServer;
 
 import net.minecraftforge.common.ForgeHooks;
 
+import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
@@ -129,7 +130,7 @@ public class AIRobotBreak extends AIRobot {
 
 	@Override
 	public int getEnergyCost() {
-		return 30;
+		return (int) Math.ceil((float) BuilderAPI.BREAK_ENERGY * 2 / 30.0F);
 	}
 
 	@Override
