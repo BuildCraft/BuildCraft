@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.recipes.CraftingResult;
-import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.silicon.ItemRedstoneChipset;
 import buildcraft.silicon.TileIntegrationTable;
 import buildcraft.transport.gates.GateDefinition.GateLogic;

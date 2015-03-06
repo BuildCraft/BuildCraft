@@ -24,10 +24,9 @@ import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.GuiIds;
-import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.utils.FluidUtils;
-import buildcraft.core.utils.NetworkUtils;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.inventory.SimpleInventory;
+import buildcraft.core.lib.utils.FluidUtils;
+import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
 

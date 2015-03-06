@@ -20,10 +20,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.core.DefaultProps;
-import buildcraft.core.IInventoryRenderer;
-import buildcraft.core.fluids.Tank;
-import buildcraft.core.render.FluidRenderer;
-import buildcraft.core.render.RenderUtils;
+import buildcraft.core.lib.render.IInventoryRenderer;
+import buildcraft.core.lib.fluids.Tank;
+import buildcraft.core.lib.render.FluidRenderer;
+import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.factory.TileRefinery;
 
 public class RenderRefinery extends TileEntitySpecialRenderer implements IInventoryRenderer {

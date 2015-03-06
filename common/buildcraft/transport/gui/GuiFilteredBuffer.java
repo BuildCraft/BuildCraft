@@ -16,7 +16,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.DefaultProps;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.transport.TileFilteredBuffer;
 
 public class GuiFilteredBuffer extends GuiContainer {

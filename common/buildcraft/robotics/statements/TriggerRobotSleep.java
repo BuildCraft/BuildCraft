@@ -17,7 +17,7 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.statements.BCStatement;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.EntityRobot;
 import buildcraft.robotics.RobotUtils;

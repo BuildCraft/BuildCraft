@@ -30,9 +30,9 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.IItemPipe;
-import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.utils.ColorUtils;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.items.ItemBuildCraft;
+import buildcraft.core.lib.utils.ColorUtils;
+import buildcraft.core.lib.utils.StringUtils;
 
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 

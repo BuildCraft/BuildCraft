@@ -9,6 +9,7 @@
 package buildcraft.energy;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -30,10 +31,10 @@ import buildcraft.api.fuels.IFuel;
 import buildcraft.api.fuels.ISolidCoolant;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
-import buildcraft.core.fluids.Tank;
-import buildcraft.core.fluids.TankManager;
-import buildcraft.core.fluids.TankUtils;
-import buildcraft.core.inventory.InvUtils;
+import buildcraft.core.lib.fluids.Tank;
+import buildcraft.core.lib.fluids.TankManager;
+import buildcraft.core.lib.fluids.TankUtils;
+import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.energy.gui.ContainerEngine;
 
 public class TileEngineIron extends TileEngineWithInventory implements IFluidHandler {
@@ -333,7 +334,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	}
 
 	@Override
-	public void sendGUINetworkData(ContainerEngine containerEngine, ICrafting iCrafting) {
+	public void sendGUINetworkData(Container containerEngine, ICrafting iCrafting) {
 		super.sendGUINetworkData(containerEngine, iCrafting);
 		iCrafting.sendProgressBarUpdate(containerEngine, 15, tankFuel.getFluid() != null ? tankFuel.getFluid().fluidID : 0);
 		iCrafting.sendProgressBarUpdate(containerEngine, 16, tankCoolant.getFluid() != null ? tankCoolant.getFluid().fluidID : 0);

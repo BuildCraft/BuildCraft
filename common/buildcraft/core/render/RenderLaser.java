@@ -21,7 +21,8 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.api.core.Position;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
-import buildcraft.core.render.RenderEntityBlock.RenderInfo;
+import buildcraft.core.lib.render.RenderEntityBlock;
+import buildcraft.core.lib.render.RenderEntityBlock.RenderInfo;
 
 public class RenderLaser extends Render {
 

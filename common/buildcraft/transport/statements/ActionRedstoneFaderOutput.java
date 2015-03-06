@@ -16,7 +16,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.core.statements.ActionRedstoneOutput;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.utils.StringUtils;
 
 public class ActionRedstoneFaderOutput extends ActionRedstoneOutput implements IActionInternal {
 

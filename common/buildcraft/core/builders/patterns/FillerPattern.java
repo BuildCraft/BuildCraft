@@ -26,7 +26,7 @@ import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.blueprints.Template;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.utils.StringUtils;
 
 public abstract class FillerPattern implements IFillerPattern {
 

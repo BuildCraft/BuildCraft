@@ -22,7 +22,7 @@ import net.minecraftforge.client.IItemRenderer;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.CoreConstants;
-import buildcraft.core.utils.ColorUtils;
+import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.transport.PipeIconProvider;
 
 public class PipeItemRenderer implements IItemRenderer {

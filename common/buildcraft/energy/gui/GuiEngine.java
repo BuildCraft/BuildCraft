@@ -15,10 +15,10 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CoreIconProvider;
-import buildcraft.core.gui.BuildCraftContainer;
-import buildcraft.core.gui.GuiBuildCraft;
-import buildcraft.core.utils.StringUtils;
-import buildcraft.energy.TileEngine;
+import buildcraft.core.lib.gui.BuildCraftContainer;
+import buildcraft.core.lib.gui.GuiBuildCraft;
+import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.engines.TileEngineBase;
 
 public abstract class GuiEngine extends GuiBuildCraft {
 
@@ -26,12 +26,12 @@ public abstract class GuiEngine extends GuiBuildCraft {
 
 	protected class EngineLedger extends Ledger {
 
-		TileEngine engine;
+		TileEngineBase engine;
 		int headerColour = 0xe1c92f;
 		int subheaderColour = 0xaaafb8;
 		int textColour = 0x000000;
 
-		public EngineLedger(TileEngine engine) {
+		public EngineLedger(TileEngineBase engine) {
 			this.engine = engine;
 			maxHeight = 94;
 			overlayColor = 0xd46c1f;
@@ -77,7 +77,7 @@ public abstract class GuiEngine extends GuiBuildCraft {
 	protected void initLedgers(IInventory inventory) {
 		super.initLedgers(inventory);
 		if (!BuildCraftCore.hidePowerNumbers) {
-			ledgerManager.add(new EngineLedger((TileEngine) tile));
+			ledgerManager.add(new EngineLedger((TileEngineBase) tile));
 		}
 	}
 }

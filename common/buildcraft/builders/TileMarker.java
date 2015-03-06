@@ -20,11 +20,11 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.Position;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.EntityBlock;
+import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.LaserKind;
-import buildcraft.core.TileBuildCraft;
+import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.utils.Utils;
 
 public class TileMarker extends TileBuildCraft implements IAreaProvider {
 	public static class TileWrapper implements ISerializable {

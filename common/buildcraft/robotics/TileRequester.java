@@ -22,13 +22,13 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.robots.RobotManager;
 import buildcraft.api.robots.StackRequest;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.network.CommandWriter;
-import buildcraft.core.network.ICommandReceiver;
-import buildcraft.core.network.PacketCommand;
-import buildcraft.core.utils.NetworkUtils;
+import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.inventory.SimpleInventory;
+import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.core.lib.network.command.CommandWriter;
+import buildcraft.core.lib.network.command.ICommandReceiver;
+import buildcraft.core.lib.network.command.PacketCommand;
+import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.api.robots.ResourceIdRequest;
 
 public class TileRequester extends TileBuildCraft implements IInventory, IRequestProvider, ICommandReceiver {

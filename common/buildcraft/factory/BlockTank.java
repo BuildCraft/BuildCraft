@@ -28,9 +28,9 @@ import net.minecraftforge.fluids.IFluidContainerItem;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.events.BlockInteractionEvent;
-import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.BCCreativeTab;
-import buildcraft.core.inventory.InvUtils;
+import buildcraft.core.lib.inventory.InvUtils;
 
 public class BlockTank extends BlockBuildCraft {
 

@@ -20,7 +20,7 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.builders.TileConstructionMarker;
 import buildcraft.core.builders.BuildingItem;
 import buildcraft.core.builders.BuildingSlot;
-import buildcraft.core.inventory.filters.ArrayStackFilter;
+import buildcraft.core.lib.inventory.filters.ArrayStackFilter;
 import buildcraft.robotics.ai.AIRobotGotoBlock;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
 import buildcraft.robotics.ai.AIRobotGotoStationToLoad;

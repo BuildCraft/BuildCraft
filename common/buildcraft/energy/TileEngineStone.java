@@ -10,6 +10,7 @@ package buildcraft.energy;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,8 +21,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.GuiIds;
-import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.utils.MathUtils;
+import buildcraft.core.lib.inventory.InvUtils;
+import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.energy.gui.ContainerEngine;
 
 public class TileEngineStone extends TileEngineWithInventory {
@@ -138,7 +139,7 @@ public class TileEngineStone extends TileEngineWithInventory {
 	}
 
 	@Override
-	public void sendGUINetworkData(ContainerEngine containerEngine, ICrafting iCrafting) {
+	public void sendGUINetworkData(Container containerEngine, ICrafting iCrafting) {
 		super.sendGUINetworkData(containerEngine, iCrafting);
 		iCrafting.sendProgressBarUpdate(containerEngine, 15, burnTime);
 		iCrafting.sendProgressBarUpdate(containerEngine, 16, totalBurnTime);

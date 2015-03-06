@@ -23,13 +23,13 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.BuildCraftCore;
 import buildcraft.builders.TileBuilder;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.fluids.Tank;
-import buildcraft.core.gui.AdvancedSlot;
-import buildcraft.core.gui.GuiAdvancedInterface;
-import buildcraft.core.gui.ItemSlot;
-import buildcraft.core.network.CommandWriter;
-import buildcraft.core.network.PacketCommand;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.fluids.Tank;
+import buildcraft.core.lib.gui.AdvancedSlot;
+import buildcraft.core.lib.gui.GuiAdvancedInterface;
+import buildcraft.core.lib.gui.ItemSlot;
+import buildcraft.core.lib.network.command.CommandWriter;
+import buildcraft.core.lib.network.command.PacketCommand;
+import buildcraft.core.lib.utils.StringUtils;
 
 public class GuiBuilder extends GuiAdvancedInterface {
 	private static final ResourceLocation BLUEPRINT_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/builder_blueprint.png");

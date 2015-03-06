@@ -35,15 +35,15 @@ import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.CoreConstants;
-import buildcraft.core.EntityBlock;
-import buildcraft.core.RFBattery;
-import buildcraft.core.TileBuffer;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.fluids.SingleUseTank;
-import buildcraft.core.fluids.TankUtils;
+import buildcraft.core.lib.EntityBlock;
+import buildcraft.core.lib.RFBattery;
+import buildcraft.core.lib.TileBuffer;
+import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.fluids.SingleUseTank;
+import buildcraft.core.lib.fluids.TankUtils;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BlockUtils;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.core.lib.utils.Utils;
 
 public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler, IRedstoneEngineReceiver {
 

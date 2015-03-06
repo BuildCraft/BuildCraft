@@ -9,7 +9,7 @@ import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.utils.StringUtils;
 
 public class StatementParameterRedstoneGateSideOnly implements
 		IStatementParameter {

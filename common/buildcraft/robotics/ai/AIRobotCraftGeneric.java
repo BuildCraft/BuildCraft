@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.inventory.filters.ArrayStackFilter;
+import buildcraft.core.lib.inventory.filters.ArrayStackFilter;
 
 public abstract class AIRobotCraftGeneric extends AIRobot {
 

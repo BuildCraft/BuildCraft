@@ -50,10 +50,10 @@ import buildcraft.core.builders.BuildingSlotEntity;
 import buildcraft.core.builders.BuildingSlotIterator;
 import buildcraft.core.builders.IBuildingItemsProvider;
 import buildcraft.core.builders.TileAbstractBuilder;
-import buildcraft.core.inventory.InventoryCopy;
-import buildcraft.core.inventory.InventoryIterator;
-import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.utils.BlockUtils;
+import buildcraft.core.lib.inventory.InventoryCopy;
+import buildcraft.core.lib.inventory.InventoryIterator;
+import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.core.lib.utils.BlockUtils;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
 

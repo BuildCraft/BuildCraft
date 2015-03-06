@@ -22,7 +22,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.Position;
-import buildcraft.core.utils.NBTUtils;
+import buildcraft.core.lib.utils.NBTUtils;
 
 public class ItemConstructionMarker extends ItemBlock {
 

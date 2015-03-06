@@ -19,9 +19,9 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.gui.FluidSlot;
-import buildcraft.core.gui.GuiAdvancedInterface;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.gui.FluidSlot;
+import buildcraft.core.lib.gui.GuiAdvancedInterface;
+import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.factory.TileRefinery;
 
 public class GuiRefinery extends GuiAdvancedInterface {

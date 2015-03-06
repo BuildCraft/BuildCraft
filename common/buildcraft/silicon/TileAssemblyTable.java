@@ -34,13 +34,13 @@ import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.RobotManager;
-import buildcraft.core.network.CommandWriter;
-import buildcraft.core.network.ICommandReceiver;
-import buildcraft.core.network.PacketCommand;
+import buildcraft.core.lib.network.command.CommandWriter;
+import buildcraft.core.lib.network.command.ICommandReceiver;
+import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.recipes.AssemblyRecipeManager;
-import buildcraft.core.utils.NetworkUtils;
-import buildcraft.core.utils.StringUtils;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.Utils;
 
 public class TileAssemblyTable extends TileLaserTableBase implements IInventory, IFlexibleCrafter, ICommandReceiver {
 	public String currentRecipeId = "";

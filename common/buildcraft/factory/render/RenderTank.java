@@ -15,8 +15,8 @@ import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.core.render.FluidRenderer;
-import buildcraft.core.render.RenderUtils;
+import buildcraft.core.lib.render.FluidRenderer;
+import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.factory.TileTank;
 
 public class RenderTank extends TileEntitySpecialRenderer {

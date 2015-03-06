@@ -23,7 +23,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 
-import buildcraft.core.ICustomHighlight;
+import buildcraft.core.lib.render.ICustomHighlight;
 
 public class BlockHighlightHandler {
 

@@ -13,7 +13,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.core.network.Packet;
+import buildcraft.core.lib.network.Packet;
 import buildcraft.core.network.PacketIds;
 import buildcraft.transport.TravelingItem;
 

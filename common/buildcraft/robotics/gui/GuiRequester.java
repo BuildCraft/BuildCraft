@@ -13,8 +13,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.DefaultProps;
-import buildcraft.core.gui.AdvancedSlot;
-import buildcraft.core.gui.GuiAdvancedInterface;
+import buildcraft.core.lib.gui.AdvancedSlot;
+import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.robotics.TileRequester;
 
 public class GuiRequester extends GuiAdvancedInterface {

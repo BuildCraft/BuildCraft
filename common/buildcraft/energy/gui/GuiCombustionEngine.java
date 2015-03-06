@@ -12,7 +12,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.DefaultProps;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.energy.TileEngineIron;
 
 public class GuiCombustionEngine extends GuiEngine {

@@ -28,7 +28,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.Position;
-import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.lib.inventory.StackHelper;
 
 public class TravelingItem {
 

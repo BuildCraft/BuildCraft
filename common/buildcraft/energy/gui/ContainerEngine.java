@@ -13,7 +13,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 
-import buildcraft.core.gui.BuildCraftContainer;
+import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.energy.TileEngineStone;
 import buildcraft.energy.TileEngineWithInventory;
 

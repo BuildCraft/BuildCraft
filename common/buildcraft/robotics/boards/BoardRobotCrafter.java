@@ -30,7 +30,7 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
 import buildcraft.api.robots.StackRequest;
-import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.robotics.ai.AIRobotCraftAssemblyTable;
 import buildcraft.robotics.ai.AIRobotCraftFurnace;

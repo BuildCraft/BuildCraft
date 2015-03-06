@@ -18,9 +18,10 @@ import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.RFBattery;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.utils.BlockUtils;
+import buildcraft.core.lib.RFBattery;
+import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.utils.BlockMiner;
+import buildcraft.core.lib.utils.BlockUtils;
 
 public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeConnection, IControllable {
 	boolean isDigging = true;

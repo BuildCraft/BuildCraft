@@ -25,8 +25,8 @@ import buildcraft.core.builders.BuildingSlotBlock;
 import buildcraft.core.builders.BuildingSlotBlock.Mode;
 import buildcraft.core.builders.BuildingSlotIterator;
 import buildcraft.core.builders.TileAbstractBuilder;
-import buildcraft.core.inventory.InventoryIterator;
-import buildcraft.core.utils.BlockUtils;
+import buildcraft.core.lib.inventory.InventoryIterator;
+import buildcraft.core.lib.utils.BlockUtils;
 
 public class BptBuilderTemplate extends BptBuilderBase {
 

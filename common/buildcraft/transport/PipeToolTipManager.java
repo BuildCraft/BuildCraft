@@ -18,7 +18,7 @@ import net.minecraft.client.gui.GuiScreen;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftCore;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.utils.StringUtils;
 
 @SideOnly(Side.CLIENT)
 public final class PipeToolTipManager {

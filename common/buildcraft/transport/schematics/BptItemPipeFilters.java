@@ -14,7 +14,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
-import buildcraft.core.inventory.SimpleInventory;
+import buildcraft.core.lib.inventory.SimpleInventory;
 
 public class BptItemPipeFilters extends BptPipeExtension {
 

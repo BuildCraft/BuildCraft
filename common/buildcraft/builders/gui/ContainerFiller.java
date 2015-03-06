@@ -17,9 +17,9 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.builders.TileFiller;
-import buildcraft.core.gui.BuildCraftContainer;
-import buildcraft.core.gui.GuiBuildCraft;
-import buildcraft.core.gui.widgets.Widget;
+import buildcraft.core.lib.gui.BuildCraftContainer;
+import buildcraft.core.lib.gui.GuiBuildCraft;
+import buildcraft.core.lib.gui.widgets.Widget;
 
 public class ContainerFiller extends BuildCraftContainer {
 

@@ -14,7 +14,7 @@ import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.statements.BCStatement;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.utils.StringUtils;
 
 public class ActionStationRequestItemsMachine extends BCStatement implements IActionInternal {
 

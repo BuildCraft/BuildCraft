@@ -27,12 +27,12 @@ import buildcraft.BuildCraftCore;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.IBoxesProvider;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.network.Packet;
-import buildcraft.core.network.CommandWriter;
-import buildcraft.core.network.ICommandReceiver;
-import buildcraft.core.network.PacketCommand;
-import buildcraft.core.utils.NetworkUtils;
+import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.network.Packet;
+import buildcraft.core.lib.network.command.CommandWriter;
+import buildcraft.core.lib.network.command.ICommandReceiver;
+import buildcraft.core.lib.network.command.PacketCommand;
+import buildcraft.core.lib.utils.NetworkUtils;
 
 public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesProvider, ICommandReceiver {
 

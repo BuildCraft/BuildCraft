@@ -21,7 +21,7 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.IInventoryRenderer;
+import buildcraft.core.lib.render.IInventoryRenderer;
 
 public class RenderHopper extends TileEntitySpecialRenderer implements IInventoryRenderer {
 

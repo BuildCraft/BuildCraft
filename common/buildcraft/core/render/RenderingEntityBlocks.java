@@ -24,8 +24,8 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CoreConstants;
-import buildcraft.core.IInventoryRenderer;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.render.IInventoryRenderer;
+import buildcraft.core.lib.utils.Utils;
 
 public class RenderingEntityBlocks implements ISimpleBlockRenderingHandler {
 

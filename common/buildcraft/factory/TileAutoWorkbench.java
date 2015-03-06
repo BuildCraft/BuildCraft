@@ -25,15 +25,15 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.tiles.IHasWork;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.inventory.InventoryConcatenator;
-import buildcraft.core.inventory.InventoryIterator;
-import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.inventory.InvUtils;
+import buildcraft.core.lib.inventory.InventoryConcatenator;
+import buildcraft.core.lib.inventory.InventoryIterator;
+import buildcraft.core.lib.inventory.SimpleInventory;
+import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.CraftingUtils;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.utils.CraftingUtils;
+import buildcraft.core.lib.utils.Utils;
 
 public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory, IHasWork {
 

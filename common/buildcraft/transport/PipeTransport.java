@@ -20,7 +20,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.utils.BitSetUtils;
+import buildcraft.core.lib.utils.BitSetUtils;
 
 public abstract class PipeTransport {
 

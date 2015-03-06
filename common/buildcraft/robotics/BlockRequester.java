@@ -25,9 +25,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftRobotics;
 import buildcraft.api.events.BlockInteractionEvent;
-import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.GuiIds;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.utils.Utils;
 
 public class BlockRequester extends BlockBuildCraft {
 

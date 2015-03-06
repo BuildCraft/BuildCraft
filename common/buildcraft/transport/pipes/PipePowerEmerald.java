@@ -9,7 +9,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.core.RFBattery;
+import buildcraft.core.lib.RFBattery;
 import buildcraft.transport.PipeIconProvider;
 
 public class PipePowerEmerald extends PipePowerWood {

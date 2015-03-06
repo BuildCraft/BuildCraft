@@ -22,7 +22,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.PowerMode;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.TileEngine;
+import buildcraft.core.lib.engines.TileEngineBase;
+import buildcraft.core.lib.utils.StringUtils;
 
 public class TileEngineCreative extends TileEngine {
 	private PowerMode powerMode = PowerMode.M2;

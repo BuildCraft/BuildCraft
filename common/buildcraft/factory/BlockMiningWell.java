@@ -23,8 +23,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftFactory;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.block.BlockBuildCraft;
+import buildcraft.core.lib.utils.Utils;
 
 public class BlockMiningWell extends BlockBuildCraft {
 

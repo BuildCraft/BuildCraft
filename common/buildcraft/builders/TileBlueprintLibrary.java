@@ -26,14 +26,13 @@ import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.blueprints.BlueprintId;
 import buildcraft.core.blueprints.BlueprintId.Kind;
-import buildcraft.core.TileBuildCraft;
+import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.blueprints.BlueprintBase;
-import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.network.CommandWriter;
-import buildcraft.core.network.ICommandReceiver;
-import buildcraft.core.network.PacketCommand;
-import buildcraft.core.utils.NetworkUtils;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.inventory.SimpleInventory;
+import buildcraft.core.lib.network.command.CommandWriter;
+import buildcraft.core.lib.network.command.ICommandReceiver;
+import buildcraft.core.lib.network.command.PacketCommand;
+import buildcraft.core.lib.utils.NetworkUtils;
 
 /**
  * In this implementation, the blueprint library is the interface to the

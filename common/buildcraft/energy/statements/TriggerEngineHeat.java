@@ -22,9 +22,9 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.core.statements.BCStatement;
-import buildcraft.core.utils.StringUtils;
-import buildcraft.energy.TileEngine;
-import buildcraft.energy.TileEngine.EnergyStage;
+import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.engines.TileEngineBase;
+import buildcraft.core.lib.engines.TileEngineBase.EnergyStage;
 
 public class TriggerEngineHeat extends BCStatement implements ITriggerExternal {
 
@@ -43,8 +43,8 @@ public class TriggerEngineHeat extends BCStatement implements ITriggerExternal {
 
 	@Override
 	public boolean isTriggerActive(TileEntity tile, ForgeDirection side, IStatementContainer container, IStatementParameter[] parameters) {
-		if (tile instanceof TileEngine) {
-			TileEngine engine = (TileEngine) tile;
+		if (tile instanceof TileEngineBase) {
+			TileEngineBase engine = (TileEngineBase) tile;
 
 			return engine.getEnergyStage() == stage;
 		}

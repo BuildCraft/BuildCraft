@@ -46,7 +46,7 @@ import buildcraft.core.builders.BuildingSlotBlock;
 import buildcraft.core.builders.IBuildingItemsProvider;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BlockUtils;
+import buildcraft.core.lib.utils.BlockUtils;
 
 public abstract class BptBuilderBase implements IAreaProvider {
 

@@ -12,7 +12,7 @@ import buildcraft.api.core.IInvSlot;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.core.inventory.filters.StatementParameterStackFilter;
+import buildcraft.core.lib.inventory.filters.StatementParameterStackFilter;
 import buildcraft.core.statements.BCStatement;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.EntityRobot;

@@ -20,8 +20,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.ISerializable;
-import buildcraft.core.utils.NetworkUtils;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.utils.NetworkUtils;
 
 public final class BlueprintId implements Comparable<BlueprintId>, ISerializable {
 	public enum Kind {

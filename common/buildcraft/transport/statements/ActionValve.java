@@ -20,7 +20,7 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.statements.BCStatement;
 import buildcraft.core.statements.StatementParameterDirection;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransport;

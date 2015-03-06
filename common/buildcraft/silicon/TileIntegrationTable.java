@@ -19,12 +19,12 @@ import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.api.recipes.IIntegrationRecipe;
-import buildcraft.core.inventory.ITransactor;
-import buildcraft.core.inventory.InventoryMapper;
-import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.inventory.Transactor;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.inventory.ITransactor;
+import buildcraft.core.lib.inventory.InventoryMapper;
+import buildcraft.core.lib.inventory.SimpleInventory;
+import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.core.lib.inventory.Transactor;
+import buildcraft.core.lib.utils.StringUtils;
 
 public class TileIntegrationTable extends TileLaserTableBase implements IFlexibleCrafter {
 

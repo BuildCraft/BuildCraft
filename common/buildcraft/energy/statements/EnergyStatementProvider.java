@@ -20,7 +20,7 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.ITriggerProvider;
-import buildcraft.energy.TileEngine;
+import buildcraft.core.lib.engines.TileEngineBase;
 
 public class EnergyStatementProvider implements ITriggerProvider {
 
@@ -33,7 +33,7 @@ public class EnergyStatementProvider implements ITriggerProvider {
 	public Collection<ITriggerExternal> getExternalTriggers(ForgeDirection side, TileEntity tile) {
 		LinkedList<ITriggerExternal> triggers = new LinkedList<ITriggerExternal>();
 		
-		if (tile instanceof TileEngine) {
+		if (tile instanceof TileEngineBase) {
 			triggers.add(BuildCraftEnergy.triggerBlueEngineHeat);
 			triggers.add(BuildCraftEnergy.triggerGreenEngineHeat);
 			triggers.add(BuildCraftEnergy.triggerYellowEngineHeat);

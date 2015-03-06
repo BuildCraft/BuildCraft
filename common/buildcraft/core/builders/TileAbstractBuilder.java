@@ -24,12 +24,12 @@ import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.ITileBuilder;
 import buildcraft.core.IBoxProvider;
 import buildcraft.core.LaserData;
-import buildcraft.core.RFBattery;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.network.Packet;
-import buildcraft.core.network.CommandWriter;
-import buildcraft.core.network.ICommandReceiver;
-import buildcraft.core.network.PacketCommand;
+import buildcraft.core.lib.RFBattery;
+import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.network.Packet;
+import buildcraft.core.lib.network.command.CommandWriter;
+import buildcraft.core.lib.network.command.ICommandReceiver;
+import buildcraft.core.lib.network.command.PacketCommand;
 
 public abstract class TileAbstractBuilder extends TileBuildCraft implements ITileBuilder, IInventory, IBoxProvider,
 		IBuildingItemsProvider, ICommandReceiver {

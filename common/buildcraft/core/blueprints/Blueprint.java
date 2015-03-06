@@ -28,7 +28,7 @@ import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.blueprints.BlueprintId.Kind;
-import buildcraft.core.utils.NBTUtils;
+import buildcraft.core.lib.utils.NBTUtils;
 
 public class Blueprint extends BlueprintBase {
 	public LinkedList<SchematicEntity> entities = new LinkedList<SchematicEntity>();

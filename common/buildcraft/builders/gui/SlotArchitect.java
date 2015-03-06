@@ -12,7 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 
 import buildcraft.builders.TileArchitect;
-import buildcraft.core.gui.slots.SlotBase;
+import buildcraft.core.lib.gui.slots.SlotBase;
 
 public class SlotArchitect extends SlotBase {
 	private TileArchitect architect;

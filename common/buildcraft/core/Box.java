@@ -23,7 +23,7 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.Position;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.utils.Utils;
 
 public class Box implements IBox, ISerializable {
 	public enum Kind {

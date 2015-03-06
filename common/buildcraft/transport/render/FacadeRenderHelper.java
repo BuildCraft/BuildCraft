@@ -20,7 +20,7 @@ import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
-import buildcraft.core.utils.MatrixTranformations;
+import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;

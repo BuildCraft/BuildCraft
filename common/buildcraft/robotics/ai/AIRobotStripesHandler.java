@@ -22,7 +22,7 @@ import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
 import buildcraft.api.transport.IStripesHandler.StripesHandlerType;
 import buildcraft.api.transport.PipeManager;
-import buildcraft.core.inventory.InvUtils;
+import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.proxy.CoreProxy;
 
 public class AIRobotStripesHandler extends AIRobot implements IStripesActivator {

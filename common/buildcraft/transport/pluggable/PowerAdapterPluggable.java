@@ -17,7 +17,7 @@ import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.core.utils.MatrixTranformations;
+import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.PipeIconProvider;
 
 public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandler {

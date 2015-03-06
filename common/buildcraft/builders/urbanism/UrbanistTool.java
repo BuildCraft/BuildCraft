@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 
-import buildcraft.core.gui.AdvancedSlot;
+import buildcraft.core.lib.gui.AdvancedSlot;
 
 class UrbanistTool {
 	public IIcon getIcon() {

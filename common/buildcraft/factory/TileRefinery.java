@@ -29,13 +29,12 @@ import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.api.tiles.IHasWork;
-import buildcraft.core.RFBattery;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.fluids.SingleUseTank;
-import buildcraft.core.fluids.TankManager;
+import buildcraft.core.lib.RFBattery;
+import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.fluids.SingleUseTank;
+import buildcraft.core.lib.fluids.TankManager;
 import buildcraft.core.recipes.RefineryRecipeManager;
-import buildcraft.core.utils.NetworkUtils;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.utils.NetworkUtils;
 
 public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInventory, IHasWork, IFlexibleCrafter {
 

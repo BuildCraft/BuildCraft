@@ -19,11 +19,11 @@ import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.transport.IInjectable;
-import buildcraft.core.RFBattery;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.inventory.ITransactor;
-import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.inventory.Transactor;
+import buildcraft.core.lib.RFBattery;
+import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.inventory.ITransactor;
+import buildcraft.core.lib.inventory.SimpleInventory;
+import buildcraft.core.lib.inventory.Transactor;
 
 public class TileHopper extends TileBuildCraft implements IInventory, IEnergyHandler, IRedstoneEngineReceiver {
 

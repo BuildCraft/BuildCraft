@@ -21,12 +21,12 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IProgrammingRecipe;
-import buildcraft.core.network.CommandWriter;
-import buildcraft.core.network.ICommandReceiver;
-import buildcraft.core.network.PacketCommand;
-import buildcraft.core.utils.NetworkUtils;
-import buildcraft.core.utils.StringUtils;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.network.command.CommandWriter;
+import buildcraft.core.lib.network.command.ICommandReceiver;
+import buildcraft.core.lib.network.command.PacketCommand;
+import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.Utils;
 
 public class TileProgrammingTable extends TileLaserTableBase implements IInventory, ISidedInventory, ICommandReceiver {
 	public static final int WIDTH = 6;

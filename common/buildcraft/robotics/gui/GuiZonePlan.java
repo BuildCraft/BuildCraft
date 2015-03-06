@@ -24,17 +24,17 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.EnumColor;
-import buildcraft.core.render.BCDynamicTexture;
+import buildcraft.core.lib.render.DynamicTexturePaletted;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ZonePlan;
-import buildcraft.core.gui.AdvancedSlot;
-import buildcraft.core.gui.GuiAdvancedInterface;
-import buildcraft.core.gui.buttons.GuiBetterButton;
-import buildcraft.core.gui.tooltips.ToolTip;
-import buildcraft.core.gui.tooltips.ToolTipLine;
-import buildcraft.core.network.CommandWriter;
-import buildcraft.core.network.PacketCommand;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.gui.AdvancedSlot;
+import buildcraft.core.lib.gui.GuiAdvancedInterface;
+import buildcraft.core.lib.gui.buttons.GuiBetterButton;
+import buildcraft.core.lib.gui.tooltips.ToolTip;
+import buildcraft.core.lib.gui.tooltips.ToolTipLine;
+import buildcraft.core.lib.network.command.CommandWriter;
+import buildcraft.core.lib.network.command.PacketCommand;
+import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.robotics.TileZonePlan;
 
 public class GuiZonePlan extends GuiAdvancedInterface {
@@ -47,7 +47,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 	private TileZonePlan zonePlan;
 
-	private BCDynamicTexture newSelection;
+	private DynamicTexturePaletted newSelection;
 	private int selX1 = 0;
 	private int selX2 = 0;
 	private int selY1 = 0;
@@ -55,7 +55,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 	private boolean inSelection = false;
 
-	private BCDynamicTexture currentSelection;
+	private DynamicTexturePaletted currentSelection;
 
 	private int mapXMin = 0;
 	private int mapYMin = 0;
@@ -104,13 +104,13 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 		zonePlan = iZonePlan;
 
-		getContainer().mapTexture = new BCDynamicTexture(mapWidth, mapHeight);
+		getContainer().mapTexture = new DynamicTexturePaletted(mapWidth, mapHeight);
 		getContainer().mapTexture.createDynamicTexture();
 
-		currentSelection = new BCDynamicTexture(mapWidth, mapHeight);
+		currentSelection = new DynamicTexturePaletted(mapWidth, mapHeight);
 		currentSelection.createDynamicTexture();
 
-		newSelection = new BCDynamicTexture(1, 1);
+		newSelection = new DynamicTexturePaletted(1, 1);
 		newSelection.createDynamicTexture();
 
 		getContainer().currentAreaSelection = new ZonePlan();
@@ -310,10 +310,10 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 			mapWidth = 200;
 			mapHeight = 100;
 
-			getContainer().mapTexture = new BCDynamicTexture(mapWidth, mapHeight);
+			getContainer().mapTexture = new DynamicTexturePaletted(mapWidth, mapHeight);
 			getContainer().mapTexture.createDynamicTexture();
 
-			currentSelection = new BCDynamicTexture(mapWidth, mapHeight);
+			currentSelection = new DynamicTexturePaletted(mapWidth, mapHeight);
 			currentSelection.createDynamicTexture();
 
 			uploadMap();
@@ -324,10 +324,10 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 			mapWidth = this.mc.displayWidth;
 			mapHeight = this.mc.displayHeight;
 
-			getContainer().mapTexture = new BCDynamicTexture(mapWidth, mapHeight);
+			getContainer().mapTexture = new DynamicTexturePaletted(mapWidth, mapHeight);
 			getContainer().mapTexture.createDynamicTexture();
 
-			currentSelection = new BCDynamicTexture(mapWidth, mapHeight);
+			currentSelection = new DynamicTexturePaletted(mapWidth, mapHeight);
 			currentSelection.createDynamicTexture();
 
 			uploadMap();

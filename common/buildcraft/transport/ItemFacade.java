@@ -43,9 +43,9 @@ import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.BCCreativeTab;
-import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.utils.StringUtils;
 
 public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePluggableItem {
 	public static class FacadeState {

@@ -49,15 +49,16 @@ import buildcraft.core.Box.Kind;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.DefaultAreaProvider;
 import buildcraft.core.IDropControlInventory;
-import buildcraft.core.RFBattery;
+import buildcraft.core.lib.RFBattery;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BlockUtils;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.utils.BlockMiner;
+import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.core.lib.utils.Utils;
 
 public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory, IDropControlInventory, IPipeConnection, IControllable {
 

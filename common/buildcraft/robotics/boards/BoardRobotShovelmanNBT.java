@@ -21,7 +21,7 @@ import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.utils.StringUtils;
 
 public final class BoardRobotShovelmanNBT extends RedstoneBoardRobotNBT {
 

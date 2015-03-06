@@ -33,7 +33,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.IFramePipeConnection;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.utils.Utils;
 
 public class BlockFrame extends Block implements IFramePipeConnection {
 

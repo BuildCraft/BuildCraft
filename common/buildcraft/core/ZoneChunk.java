@@ -17,9 +17,8 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.ISerializable;
-import buildcraft.core.utils.BitSetUtils;
-import buildcraft.core.utils.NetworkUtils;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.utils.BitSetUtils;
+import buildcraft.core.lib.utils.NetworkUtils;
 
 public class ZoneChunk implements ISerializable {
 

@@ -25,8 +25,8 @@ import buildcraft.BuildCraftRobotics;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.core.BCCreativeTab;
-import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.utils.NBTUtils;
+import buildcraft.core.lib.items.ItemBuildCraft;
+import buildcraft.core.lib.utils.NBTUtils;
 
 public class ItemRedstoneBoard extends ItemBuildCraft {
 

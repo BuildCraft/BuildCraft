@@ -22,7 +22,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftSilicon;
-import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.lib.items.ItemBuildCraft;
 
 public class ItemRedstoneChipset extends ItemBuildCraft {
 

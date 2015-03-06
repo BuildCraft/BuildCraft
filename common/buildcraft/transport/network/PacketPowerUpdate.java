@@ -10,7 +10,7 @@ package buildcraft.transport.network;
 
 import io.netty.buffer.ByteBuf;
 
-import buildcraft.core.network.PacketCoordinates;
+import buildcraft.core.lib.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.transport.render.PipeRendererTESR;
 

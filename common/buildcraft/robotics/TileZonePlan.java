@@ -19,9 +19,9 @@ import net.minecraft.world.chunk.Chunk;
 
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.ItemMapLocation;
-import buildcraft.core.TileBuildCraft;
+import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.ZonePlan;
-import buildcraft.core.inventory.SimpleInventory;
+import buildcraft.core.lib.inventory.SimpleInventory;
 
 public class TileZonePlan extends TileBuildCraft implements IInventory {
 

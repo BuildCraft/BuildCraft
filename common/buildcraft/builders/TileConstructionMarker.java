@@ -28,7 +28,7 @@ import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.IBoxProvider;
 import buildcraft.core.LaserData;
-import buildcraft.core.TileBuildCraft;
+import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptBuilderBase;
@@ -36,11 +36,11 @@ import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.builders.BuildingItem;
 import buildcraft.core.builders.IBuildingItemsProvider;
-import buildcraft.core.network.Packet;
-import buildcraft.core.network.CommandWriter;
-import buildcraft.core.network.ICommandReceiver;
-import buildcraft.core.network.PacketCommand;
-import buildcraft.core.utils.NetworkUtils;
+import buildcraft.core.lib.network.Packet;
+import buildcraft.core.lib.network.command.CommandWriter;
+import buildcraft.core.lib.network.command.ICommandReceiver;
+import buildcraft.core.lib.network.command.PacketCommand;
+import buildcraft.core.lib.utils.NetworkUtils;
 
 public class TileConstructionMarker extends TileBuildCraft implements IBuildingItemsProvider, IBoxProvider, ICommandReceiver {
 

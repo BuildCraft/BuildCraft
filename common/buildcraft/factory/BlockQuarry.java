@@ -29,8 +29,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.BlockBuildCraft;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.block.BlockBuildCraft;
+import buildcraft.core.lib.utils.Utils;
 
 public class BlockQuarry extends BlockBuildCraft {
 

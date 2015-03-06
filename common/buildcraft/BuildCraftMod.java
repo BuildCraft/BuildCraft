@@ -24,7 +24,7 @@ import cpw.mods.fml.relauncher.Side;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.network.Packet;
+import buildcraft.core.lib.network.Packet;
 
 public class BuildCraftMod {
 	public EnumMap<Side, FMLEmbeddedChannel> channels;

@@ -19,10 +19,10 @@ import net.minecraftforge.fluids.Fluid;
 
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.ISerializable;
-import buildcraft.core.gui.BuildCraftContainer;
+import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketUpdate;
-import buildcraft.core.network.Serializable;
+import buildcraft.core.lib.network.PacketUpdate;
+import buildcraft.core.lib.network.Serializable;
 import buildcraft.factory.TileRefinery;
 
 public class ContainerRefinery extends BuildCraftContainer {

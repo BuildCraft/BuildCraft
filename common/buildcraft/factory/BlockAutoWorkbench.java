@@ -21,7 +21,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.events.BlockInteractionEvent;
-import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
 

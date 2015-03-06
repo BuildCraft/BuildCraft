@@ -24,9 +24,9 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.fluids.Tank;
-import buildcraft.core.fluids.TankManager;
+import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.fluids.Tank;
+import buildcraft.core.lib.fluids.TankManager;
 
 public class TileTank extends TileBuildCraft implements IFluidHandler {
 

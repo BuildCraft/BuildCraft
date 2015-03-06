@@ -16,9 +16,9 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CoreIconProvider;
-import buildcraft.core.gui.BuildCraftContainer;
-import buildcraft.core.gui.GuiBuildCraft;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.gui.BuildCraftContainer;
+import buildcraft.core.lib.gui.GuiBuildCraft;
+import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.silicon.TileLaserTableBase;
 
 public abstract class GuiLaserTable extends GuiBuildCraft {

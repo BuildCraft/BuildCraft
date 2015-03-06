@@ -19,9 +19,9 @@ import net.minecraft.world.World;
 
 import cpw.mods.fml.common.network.NetworkRegistry;
 
-import buildcraft.core.network.Packet;
+import buildcraft.core.lib.network.Packet;
 import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketSlotChange;
+import buildcraft.core.lib.network.PacketSlotChange;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.silicon.TileAdvancedCraftingTable;
 import buildcraft.silicon.TileAssemblyTable;

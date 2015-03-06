@@ -26,10 +26,10 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.filler.IFillerPattern;
-import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.GuiIds;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.utils.Utils;
 
 public class BlockFiller extends BlockBuildCraft {
 

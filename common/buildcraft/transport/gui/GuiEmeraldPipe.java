@@ -14,12 +14,12 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.DefaultProps;
-import buildcraft.core.gui.GuiBuildCraft;
-import buildcraft.core.gui.buttons.GuiImageButton;
-import buildcraft.core.gui.buttons.IButtonClickEventListener;
-import buildcraft.core.gui.buttons.IButtonClickEventTrigger;
-import buildcraft.core.network.PacketGuiReturn;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.gui.GuiBuildCraft;
+import buildcraft.core.lib.gui.buttons.GuiImageButton;
+import buildcraft.core.lib.gui.buttons.IButtonClickEventListener;
+import buildcraft.core.lib.gui.buttons.IButtonClickEventTrigger;
+import buildcraft.core.lib.network.PacketGuiReturn;
+import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.transport.pipes.PipeItemsEmerald;
 import buildcraft.transport.pipes.PipeItemsEmerald.FilterMode;
 

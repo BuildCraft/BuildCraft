@@ -29,11 +29,11 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.GuiIds;
-import buildcraft.core.fluids.TankUtils;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.fluids.TankUtils;
+import buildcraft.core.lib.utils.Utils;
 
 public class BlockBuilder extends BlockBuildCraft {
 

@@ -23,7 +23,7 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.facades.FacadeType;
 import buildcraft.api.facades.IFacadeItem;
 import buildcraft.core.CoreConstants;
-import buildcraft.core.render.RenderUtils;
+import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.PipeIconProvider;

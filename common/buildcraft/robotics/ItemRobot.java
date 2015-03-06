@@ -32,8 +32,8 @@ import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.events.RobotPlacementEvent;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.BCCreativeTab;
-import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.utils.NBTUtils;
+import buildcraft.core.lib.items.ItemBuildCraft;
+import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Pipe;
 

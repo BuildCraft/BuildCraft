@@ -14,8 +14,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.utils.NBTUtils;
+import buildcraft.core.lib.items.ItemBuildCraft;
+import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.transport.BlockGenericPipe.Part;
 import buildcraft.transport.BlockGenericPipe.RaytraceResult;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;

@@ -25,10 +25,12 @@ import net.minecraft.world.biome.BiomeGenBase;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -41,7 +43,6 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.core.StackKey;
@@ -49,24 +50,23 @@ import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.StatementManager;
-import buildcraft.core.CompatHooks;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
-import buildcraft.core.network.ChannelHandler;
+import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.BlockBuildcraftFluid;
-import buildcraft.energy.BlockEngine;
 import buildcraft.energy.BucketHandler;
 import buildcraft.energy.EnergyProxy;
 import buildcraft.energy.EnergyGuiHandler;
 import buildcraft.energy.IMCHandlerEnergy;
 import buildcraft.energy.ItemBucketBuildcraft;
-import buildcraft.energy.ItemEngine;
-import buildcraft.energy.SchematicEngine;
-import buildcraft.energy.TileEngine;
-import buildcraft.energy.TileEngine.EnergyStage;
+import buildcraft.core.lib.engines.TileEngineBase;
+import buildcraft.core.lib.engines.TileEngineBase.EnergyStage;
+import buildcraft.energy.TileEngineCreative;
+import buildcraft.energy.TileEngineIron;
+import buildcraft.energy.TileEngineStone;
 import buildcraft.energy.statements.EnergyStatementProvider;
 import buildcraft.energy.statements.TriggerEngineHeat;
 import buildcraft.energy.worldgen.BiomeGenOilDesert;
@@ -84,7 +84,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	public static boolean spawnOilSprings = true;
 	public static BiomeGenOilDesert biomeOilDesert;
 	public static BiomeGenOilOcean biomeOilOcean;
-	public static BlockEngine engineBlock;
 	public static Fluid fluidOil;
 	public static Fluid fluidFuel;
 	public static Fluid fluidRedPlasma;
@@ -174,9 +173,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			}
 			biomeOilOcean = BiomeGenOilOcean.makeBiome(oilOceanBiomeId);
 		}
-
-		engineBlock = (BlockEngine) CompatHooks.INSTANCE.getBlock(BlockEngine.class);
-		CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);
 
 		// Oil and fuel
 		if (!FluidRegistry.isFluidRegistered("oil")) {
@@ -281,6 +277,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		BuildcraftFuelRegistry.coolant.addCoolant(FluidRegistry.WATER, 0.0023f);
 		BuildcraftFuelRegistry.coolant.addSolidCoolant(StackKey.stack(Blocks.ice), StackKey.fluid(FluidRegistry.WATER), 2f);
 
+		BuildCraftCore.engineBlock.registerTile(TileEngineStone.class, "tile.engineStone");
+		BuildCraftCore.engineBlock.registerTile(TileEngineIron.class, "tile.engineIron");
+		BuildCraftCore.engineBlock.registerTile(TileEngineCreative.class, "tile.engineCreative");
+
 		InterModComms.registerHandler(new IMCHandlerEnergy());
 
 		MinecraftForge.EVENT_BUS.register(this);
@@ -337,8 +337,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		StatementManager.registerTriggerProvider(new EnergyStatementProvider());
 
-		BuilderAPI.schematicRegistry.registerSchematicBlock(engineBlock, SchematicEngine.class);
-
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
 		}
@@ -346,9 +344,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		EnergyProxy.proxy.registerBlockRenderers();
 		EnergyProxy.proxy.registerTileEntities();
 
-		engineAchievement1 = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.redstoneEngine", "engineAchievement1", 1, -2, new ItemStack(engineBlock, 1, 0), BuildCraftCore.woodenGearAchievement));
-		engineAchievement2 = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.stirlingEngine", "engineAchievement2", 3, -2, new ItemStack(engineBlock, 1, 1), engineAchievement1));
-		engineAchievement3 = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.combustionEngine", "engineAchievement3", 5, -2, new ItemStack(engineBlock, 1, 2), engineAchievement2));
+		engineAchievement2 = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.stirlingEngine", "engineAchievement2", 3, -2, new ItemStack(BuildCraftCore.engineBlock, 1, 1), BuildCraftCore.engineRedstoneAchievement));
+		engineAchievement3 = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.combustionEngine", "engineAchievement3", 5, -2, new ItemStack(BuildCraftCore.engineBlock, 1, 2), engineAchievement2));
 	}
 
 	@Mod.EventHandler
@@ -376,13 +373,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	}
 
 	public static void loadRecipes() {
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 0),
-				"www", " g ", "GpG", 'w', "plankWood", 'g', "blockGlass", 'G',
-				"gearWood", 'p', Blocks.piston);
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 1),
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(BuildCraftCore.engineBlock, 1, 1),
 				"www", " g ", "GpG", 'w', "cobblestone",
 				'g', "blockGlass", 'G', "gearStone", 'p', Blocks.piston);
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 2),
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(BuildCraftCore.engineBlock, 1, 2),
 				"www", " g ", "GpG", 'w', "ingotIron",
 				'g', "blockGlass", 'G', "gearIron", 'p', Blocks.piston);
 	}
@@ -416,6 +410,19 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	@Mod.EventHandler
 	public void whiteListAppliedEnergetics(FMLInitializationEvent event) {
 		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
-				TileEngine.class.getCanonicalName());
+				TileEngineBase.class.getCanonicalName());
+	}
+
+	@Mod.EventHandler
+	public void remap(FMLMissingMappingsEvent event) {
+		for (FMLMissingMappingsEvent.MissingMapping mapping : event.get()) {
+			if (mapping.name.equals("BuildCraft|Energy:engineBlock")) {
+				if (mapping.type == GameRegistry.Type.BLOCK) {
+					mapping.remap(BuildCraftCore.engineBlock);
+				} else if (mapping.type == GameRegistry.Type.ITEM) {
+					mapping.remap(Item.getItemFromBlock(BuildCraftCore.engineBlock));
+				}
+			}
+		}
 	}
 }

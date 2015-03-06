@@ -29,7 +29,7 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.utils.MathUtils;
+import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.transport.network.PacketFluidUpdate;
 import buildcraft.transport.pipes.PipeFluidsCobblestone;
 import buildcraft.transport.pipes.PipeFluidsDiamond;

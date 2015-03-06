@@ -18,10 +18,10 @@ import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.core.blueprints.BlueprintId;
 import buildcraft.core.BCCreativeTab;
-import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.blueprints.BlueprintBase;
-import buildcraft.core.utils.NBTUtils;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.StringUtils;
 
 public abstract class ItemBlueprint extends ItemBuildCraft {
 

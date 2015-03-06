@@ -33,8 +33,9 @@ import buildcraft.api.core.IBox;
 import buildcraft.api.core.IPathProvider;
 import buildcraft.api.core.IZone;
 import buildcraft.api.items.IMapLocation;
-import buildcraft.core.utils.NBTUtils;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.items.ItemBuildCraft;
+import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.StringUtils;
 
 public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 

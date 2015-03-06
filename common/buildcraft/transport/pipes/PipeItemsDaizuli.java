@@ -32,7 +32,7 @@ import buildcraft.api.core.ISerializable;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.utils.ColorUtils;
+import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;

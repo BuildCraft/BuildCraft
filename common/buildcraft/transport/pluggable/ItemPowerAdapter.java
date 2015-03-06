@@ -24,7 +24,7 @@ import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.lib.items.ItemBuildCraft;
 
 public class ItemPowerAdapter extends ItemBuildCraft implements IPipePluggableItem {
 

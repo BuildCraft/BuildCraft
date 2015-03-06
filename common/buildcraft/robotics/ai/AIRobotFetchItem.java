@@ -16,8 +16,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.inventory.TransactorSimple;
-import buildcraft.core.inventory.filters.IStackFilter;
+import buildcraft.core.lib.inventory.TransactorSimple;
+import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.robotics.boards.BoardRobotPicker;
 
 public class AIRobotFetchItem extends AIRobot {

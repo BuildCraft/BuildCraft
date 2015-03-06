@@ -18,11 +18,11 @@ import net.minecraft.item.ItemStack;
 import cpw.mods.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.core.gui.BuildCraftContainer;
-import buildcraft.core.network.CommandWriter;
-import buildcraft.core.network.ICommandReceiver;
-import buildcraft.core.network.PacketCommand;
-import buildcraft.core.utils.NetworkUtils;
+import buildcraft.core.lib.gui.BuildCraftContainer;
+import buildcraft.core.lib.network.command.CommandWriter;
+import buildcraft.core.lib.network.command.ICommandReceiver;
+import buildcraft.core.lib.network.command.PacketCommand;
+import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.robotics.TileRequester;
 
 public class ContainerRequester extends BuildCraftContainer implements ICommandReceiver {

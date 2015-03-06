@@ -11,7 +11,7 @@ package buildcraft.robotics.ai;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.inventory.filters.IStackFilter;
+import buildcraft.core.lib.inventory.filters.IStackFilter;
 
 public class AIRobotGotoStationAndLoad extends AIRobot {
 

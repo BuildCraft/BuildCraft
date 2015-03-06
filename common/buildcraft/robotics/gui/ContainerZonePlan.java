@@ -18,18 +18,18 @@ import net.minecraft.inventory.Slot;
 import cpw.mods.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.core.render.BCDynamicTexture;
+import buildcraft.core.lib.render.DynamicTexturePaletted;
 import buildcraft.core.ZonePlan;
-import buildcraft.core.gui.BuildCraftContainer;
-import buildcraft.core.gui.slots.SlotOutput;
-import buildcraft.core.network.CommandWriter;
-import buildcraft.core.network.ICommandReceiver;
-import buildcraft.core.network.PacketCommand;
+import buildcraft.core.lib.gui.BuildCraftContainer;
+import buildcraft.core.lib.gui.slots.SlotOutput;
+import buildcraft.core.lib.network.command.CommandWriter;
+import buildcraft.core.lib.network.command.ICommandReceiver;
+import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.robotics.TileZonePlan;
 
 public class ContainerZonePlan extends BuildCraftContainer implements ICommandReceiver {
 
-	public BCDynamicTexture mapTexture;
+	public DynamicTexturePaletted mapTexture;
 	public ZonePlan currentAreaSelection;
 	public GuiZonePlan gui;
 

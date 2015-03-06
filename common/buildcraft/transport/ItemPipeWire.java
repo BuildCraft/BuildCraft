@@ -21,7 +21,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.api.transport.PipeWire;
-import buildcraft.core.ItemBuildCraft;
+import buildcraft.core.lib.items.ItemBuildCraft;
 
 public class ItemPipeWire extends ItemBuildCraft {
 

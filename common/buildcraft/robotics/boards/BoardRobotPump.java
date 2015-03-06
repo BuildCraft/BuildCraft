@@ -29,7 +29,7 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
-import buildcraft.core.utils.IBlockFilter;
+import buildcraft.core.lib.utils.IBlockFilter;
 import buildcraft.robotics.DockingStation;
 import buildcraft.api.robots.ResourceIdBlock;
 import buildcraft.robotics.ai.AIRobotGotoBlock;

@@ -20,7 +20,7 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.BlockUtils;
+import buildcraft.core.lib.utils.BlockUtils;
 
 public class AIRobotBreak extends AIRobot {
 

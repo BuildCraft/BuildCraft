@@ -15,7 +15,7 @@ import net.minecraft.util.IIcon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-import buildcraft.core.utils.NBTUtils;
+import buildcraft.core.lib.utils.NBTUtils;
 
 public class ItemBlueprintStandard extends ItemBlueprint {
 	private IIcon cleanBlueprint;

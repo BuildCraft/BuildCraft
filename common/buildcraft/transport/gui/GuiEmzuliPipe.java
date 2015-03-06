@@ -12,8 +12,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.DefaultProps;
-import buildcraft.core.gui.GuiBuildCraft;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.gui.GuiBuildCraft;
+import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.transport.pipes.PipeItemsEmzuli;
 
 public class GuiEmzuliPipe extends GuiBuildCraft {

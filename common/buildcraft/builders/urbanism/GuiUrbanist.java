@@ -19,8 +19,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.core.DefaultProps;
-import buildcraft.core.gui.AdvancedSlot;
-import buildcraft.core.gui.GuiAdvancedInterface;
+import buildcraft.core.lib.gui.AdvancedSlot;
+import buildcraft.core.lib.gui.GuiAdvancedInterface;
 
 public class GuiUrbanist extends GuiAdvancedInterface {
 

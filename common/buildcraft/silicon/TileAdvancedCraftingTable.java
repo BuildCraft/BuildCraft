@@ -34,21 +34,21 @@ import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.power.ILaserTarget;
-import buildcraft.core.inventory.InvUtils;
-import buildcraft.core.inventory.InventoryCopy;
-import buildcraft.core.inventory.InventoryIterator;
-import buildcraft.core.inventory.InventoryMapper;
-import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.inventory.Transactor;
-import buildcraft.core.inventory.filters.CraftingFilter;
-import buildcraft.core.inventory.filters.IStackFilter;
+import buildcraft.core.lib.inventory.InvUtils;
+import buildcraft.core.lib.inventory.InventoryCopy;
+import buildcraft.core.lib.inventory.InventoryIterator;
+import buildcraft.core.lib.inventory.InventoryMapper;
+import buildcraft.core.lib.inventory.SimpleInventory;
+import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.core.lib.inventory.Transactor;
+import buildcraft.core.lib.inventory.filters.CraftingFilter;
+import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketSlotChange;
+import buildcraft.core.lib.network.PacketSlotChange;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.utils.CraftingUtils;
-import buildcraft.core.utils.StringUtils;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.utils.CraftingUtils;
+import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.Utils;
 
 public class TileAdvancedCraftingTable extends TileLaserTableBase implements IInventory, ILaserTarget, ISidedInventory {
 

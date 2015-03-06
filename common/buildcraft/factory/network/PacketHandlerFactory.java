@@ -24,9 +24,9 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 
 import net.minecraftforge.fluids.FluidRegistry;
 
-import buildcraft.core.network.Packet;
+import buildcraft.core.lib.network.Packet;
 import buildcraft.core.network.PacketIds;
-import buildcraft.core.network.PacketUpdate;
+import buildcraft.core.lib.network.PacketUpdate;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.TileRefinery;
 

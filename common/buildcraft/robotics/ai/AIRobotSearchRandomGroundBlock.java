@@ -12,7 +12,7 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.utils.IBlockFilter;
+import buildcraft.core.lib.utils.IBlockFilter;
 
 public class AIRobotSearchRandomGroundBlock extends AIRobot {
 

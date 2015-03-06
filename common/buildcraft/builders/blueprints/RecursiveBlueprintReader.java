@@ -22,7 +22,7 @@ import buildcraft.builders.ItemBlueprintTemplate;
 import buildcraft.builders.TileArchitect;
 import buildcraft.builders.TileBuilder;
 import buildcraft.builders.TileConstructionMarker;
-import buildcraft.core.utils.BlockScanner;
+import buildcraft.core.lib.utils.BlockScanner;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptContext;

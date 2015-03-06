@@ -27,7 +27,7 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.PowerMode;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;

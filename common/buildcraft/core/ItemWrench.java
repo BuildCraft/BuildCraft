@@ -22,6 +22,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.lib.items.ItemBuildCraft;
 
 public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 

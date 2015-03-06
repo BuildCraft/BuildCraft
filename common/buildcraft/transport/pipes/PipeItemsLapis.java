@@ -25,7 +25,7 @@ import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.utils.ColorUtils;
+import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;

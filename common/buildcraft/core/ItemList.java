@@ -31,8 +31,9 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.items.IList;
-import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.utils.NBTUtils;
+import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.core.lib.items.ItemBuildCraft;
+import buildcraft.core.lib.utils.NBTUtils;
 
 public class ItemList extends ItemBuildCraft implements IList {
 

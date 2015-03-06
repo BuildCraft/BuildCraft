@@ -19,14 +19,14 @@ import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.builders.TileFiller;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.builders.patterns.FillerPattern;
-import buildcraft.core.gui.AdvancedSlot;
-import buildcraft.core.gui.GuiAdvancedInterface;
-import buildcraft.core.gui.GuiTools;
-import buildcraft.core.gui.StatementParameterSlot;
-import buildcraft.core.gui.StatementSlot;
-import buildcraft.core.gui.buttons.GuiBetterButton;
-import buildcraft.core.gui.buttons.StandardButtonTextureSets;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.gui.AdvancedSlot;
+import buildcraft.core.lib.gui.GuiAdvancedInterface;
+import buildcraft.core.lib.gui.GuiTools;
+import buildcraft.core.lib.gui.StatementParameterSlot;
+import buildcraft.core.lib.gui.StatementSlot;
+import buildcraft.core.lib.gui.buttons.GuiBetterButton;
+import buildcraft.core.lib.gui.buttons.StandardButtonTextureSets;
+import buildcraft.core.lib.utils.StringUtils;
 
 public class GuiFiller extends GuiAdvancedInterface {
 	class FillerParameterSlot extends StatementParameterSlot {

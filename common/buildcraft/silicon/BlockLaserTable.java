@@ -28,9 +28,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.power.ILaserTargetBlock;
-import buildcraft.core.BlockBuildCraft;
+import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.BCCreativeTab;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.utils.Utils;
 
 public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBlock {
     protected static final int TABLE_MAX = 5;

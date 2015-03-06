@@ -23,15 +23,14 @@ import buildcraft.BuildCraftCore;
 import buildcraft.builders.TileArchitect;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.blueprints.BlueprintReadConfiguration;
-import buildcraft.core.gui.GuiBuildCraft;
-import buildcraft.core.gui.buttons.GuiBetterButton;
-import buildcraft.core.gui.tooltips.ToolTip;
-import buildcraft.core.gui.tooltips.ToolTipLine;
-import buildcraft.core.network.CommandWriter;
-import buildcraft.core.network.PacketCommand;
-import buildcraft.core.utils.NetworkUtils;
-import buildcraft.core.utils.StringUtils;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.gui.GuiBuildCraft;
+import buildcraft.core.lib.gui.buttons.GuiBetterButton;
+import buildcraft.core.lib.gui.tooltips.ToolTip;
+import buildcraft.core.lib.gui.tooltips.ToolTipLine;
+import buildcraft.core.lib.network.command.CommandWriter;
+import buildcraft.core.lib.network.command.PacketCommand;
+import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.core.lib.utils.StringUtils;
 
 public class GuiArchitect extends GuiBuildCraft {
 

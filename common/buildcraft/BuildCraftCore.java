@@ -75,6 +75,7 @@ import buildcraft.core.BCCreativeTab;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.CommandBuildCraft;
+import buildcraft.core.CompatHooks;
 import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.CoreGuiHandler;
@@ -88,8 +89,11 @@ import buildcraft.core.SpringPopulate;
 import buildcraft.core.TickHandlerCore;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.SchematicRegistry;
-import buildcraft.core.network.ChannelHandler;
-import buildcraft.core.network.PacketHandler;
+import buildcraft.core.BlockEngine;
+import buildcraft.core.lib.engines.TileEngineBase;
+import buildcraft.core.TileEngineWood;
+import buildcraft.core.lib.network.ChannelHandler;
+import buildcraft.core.lib.network.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.IntegrationRecipeManager;
@@ -109,7 +113,7 @@ import buildcraft.core.statements.TriggerInventory;
 import buildcraft.core.statements.TriggerInventoryLevel;
 import buildcraft.core.statements.TriggerMachine;
 import buildcraft.core.statements.TriggerRedstoneInput;
-import buildcraft.core.utils.ColorUtils;
+import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.properties.WorldPropertyIsDirt;
 import buildcraft.core.properties.WorldPropertyIsFarmland;
 import buildcraft.core.properties.WorldPropertyIsFluidSource;
@@ -119,6 +123,8 @@ import buildcraft.core.properties.WorldPropertyIsOre;
 import buildcraft.core.properties.WorldPropertyIsShoveled;
 import buildcraft.core.properties.WorldPropertyIsSoft;
 import buildcraft.core.properties.WorldPropertyIsWood;
+import buildcraft.core.lib.engines.ItemEngine;
+import buildcraft.core.SchematicEngine;
 import buildcraft.energy.fuels.CoolantManager;
 import buildcraft.energy.fuels.FuelManager;
 
@@ -143,6 +149,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static long longUpdateFactor = 40;
 	public static BuildCraftConfiguration mainConfiguration;
 
+	public static BlockEngine engineBlock;
 	public static Block springBlock;
 	public static Item woodenGearItem;
 	public static Item stoneGearItem;
@@ -200,6 +207,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Achievement goldGearAchievement;
 	public static Achievement diamondGearAchievement;
 	public static Achievement wrenchAchievement;
+	public static Achievement engineRedstoneAchievement;
 
 	public static HashSet<String> recipesBlacklist = new HashSet<String>();
 
@@ -309,6 +317,11 @@ public class BuildCraftCore extends BuildCraftMod {
 			CoreProxy.proxy.registerItem(diamondGearItem);
 			OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));
 
+			engineBlock = (BlockEngine) CompatHooks.INSTANCE.getBlock(BlockEngine.class);
+			CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);
+			engineBlock.registerTile((Class<? extends TileEngineBase>) CompatHooks.INSTANCE.getTile(TileEngineWood.class), "tile.engineWood");
+			CoreProxy.proxy.registerTileEntity(TileEngineWood.class, "net.minecraft.src.buildcraft.energy.TileEngineWood");
+
 			MinecraftForge.EVENT_BUS.register(this);
 			MinecraftForge.EVENT_BUS.register(new BlockHighlightHandler());
 		} finally {
@@ -335,6 +348,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		goldGearAchievement = achievementManager.registerAchievement(new Achievement("achievement.goldGear", "goldGearAchievement", 6, 0, goldGearItem, ironGearAchievement));
 		diamondGearAchievement = achievementManager.registerAchievement(new Achievement("achievement.diamondGear", "diamondGearAchievement", 8, 0, diamondGearItem, goldGearAchievement));
 		wrenchAchievement = achievementManager.registerAchievement(new Achievement("achievement.wrench", "wrenchAchievement", 3, 2, wrenchItem, stoneGearAchievement));
+		engineRedstoneAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.redstoneEngine", "engineAchievement1", 1, -2, new ItemStack(engineBlock, 1, 0), BuildCraftCore.woodenGearAchievement));
 
 		// BuildCraft 6.1.4 and below - migration only
 		StatementManager.registerParameterClass("buildcraft:stackTrigger", StatementParameterItemStack.class);
@@ -367,6 +381,8 @@ public class BuildCraftCore extends BuildCraftMod {
 
 		EntityList.stringToClassMapping.remove("BuildCraft|Core.bcLaser");
 		EntityList.stringToClassMapping.remove("BuildCraft|Core.bcEnergyLaser");
+
+		BuilderAPI.schematicRegistry.registerSchematicBlock(engineBlock, SchematicEngine.class);
 
 		CoreProxy.proxy.initializeRendering();
 		CoreProxy.proxy.initializeEntityRendering();
@@ -455,6 +471,10 @@ public class BuildCraftCore extends BuildCraftMod {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(mapLocationItem), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y', "dyeYellow");
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(listItem), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y',
 				"dyeGreen");
+
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 0),
+				"www", " g ", "GpG", 'w', "plankWood", 'g', "blockGlass", 'G',
+				"gearWood", 'p', Blocks.piston);
 	}
 
 	@Mod.EventHandler

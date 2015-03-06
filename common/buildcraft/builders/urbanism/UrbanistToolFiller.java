@@ -23,8 +23,8 @@ import buildcraft.api.filler.IFillerPattern;
 import buildcraft.core.Box;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.builders.patterns.FillerPattern;
-import buildcraft.core.gui.AdvancedSlot;
-import buildcraft.core.gui.GuiAdvancedInterface;
+import buildcraft.core.lib.gui.AdvancedSlot;
+import buildcraft.core.lib.gui.GuiAdvancedInterface;
 
 class UrbanistToolFiller extends UrbanistToolArea {
 

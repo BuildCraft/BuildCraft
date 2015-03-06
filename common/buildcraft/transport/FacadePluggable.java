@@ -14,7 +14,7 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.core.utils.MatrixTranformations;
+import buildcraft.core.lib.utils.MatrixTranformations;
 
 public class FacadePluggable extends PipePluggable implements IFacadePluggable {
 	public ItemFacade.FacadeState[] states;

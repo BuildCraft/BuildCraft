@@ -19,8 +19,8 @@ import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.core.blueprints.BlueprintId;
 import buildcraft.core.blueprints.BlueprintId.Kind;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.gui.GuiBuildCraft;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.gui.GuiBuildCraft;
+import buildcraft.core.lib.utils.StringUtils;
 
 public class GuiBlueprintLibrary extends GuiBuildCraft {
 

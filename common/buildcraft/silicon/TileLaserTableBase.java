@@ -17,9 +17,9 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.power.ILaserTarget;
 import buildcraft.api.tiles.IHasWork;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.utils.Average;
+import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.inventory.SimpleInventory;
+import buildcraft.core.lib.utils.Average;
 
 public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory, IHasWork {
 

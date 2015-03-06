@@ -13,7 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import buildcraft.core.EntityBlock;
+import buildcraft.core.lib.EntityBlock;
 
 public class EntityMechanicalArm extends Entity {
 

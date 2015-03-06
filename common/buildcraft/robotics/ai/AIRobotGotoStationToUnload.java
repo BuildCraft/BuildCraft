@@ -14,7 +14,7 @@ import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.inventory.InventoryIterator;
+import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.EntityRobot;
 import buildcraft.robotics.IStationFilter;

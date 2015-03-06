@@ -18,9 +18,9 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.gui.AdvancedSlot;
-import buildcraft.core.gui.GuiAdvancedInterface;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.gui.AdvancedSlot;
+import buildcraft.core.lib.gui.GuiAdvancedInterface;
+import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.silicon.TileProgrammingTable;
 
 public class GuiProgrammingTable extends GuiAdvancedInterface {

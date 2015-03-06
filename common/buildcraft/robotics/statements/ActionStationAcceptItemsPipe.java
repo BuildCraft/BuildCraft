@@ -13,7 +13,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.EntityRobot;
 import buildcraft.transport.PipeTransportItems;

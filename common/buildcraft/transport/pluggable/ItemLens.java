@@ -27,9 +27,9 @@ import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.core.ItemBuildCraft;
-import buildcraft.core.utils.ColorUtils;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.items.ItemBuildCraft;
+import buildcraft.core.lib.utils.ColorUtils;
+import buildcraft.core.lib.utils.StringUtils;
 
 public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
 

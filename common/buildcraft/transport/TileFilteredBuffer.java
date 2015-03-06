@@ -13,8 +13,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.inventory.SimpleInventory;
+import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.inventory.SimpleInventory;
 
 public class TileFilteredBuffer extends TileBuildCraft implements IInventory {
 

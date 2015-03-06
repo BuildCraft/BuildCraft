@@ -28,11 +28,11 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.core.TileBuildCraft;
-import buildcraft.core.fluids.Tank;
-import buildcraft.core.fluids.TankUtils;
-import buildcraft.core.utils.BlockUtils;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.fluids.Tank;
+import buildcraft.core.lib.fluids.TankUtils;
+import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.core.lib.utils.Utils;
 
 public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 

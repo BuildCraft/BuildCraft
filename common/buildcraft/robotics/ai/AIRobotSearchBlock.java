@@ -9,8 +9,8 @@
 package buildcraft.robotics.ai;
 
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.utils.BlockScannerExpanding;
-import buildcraft.core.utils.IBlockFilter;
+import buildcraft.core.lib.utils.BlockScannerExpanding;
+import buildcraft.core.lib.utils.IBlockFilter;
 
 public class AIRobotSearchBlock extends AIRobotSearchBlockBase {
 

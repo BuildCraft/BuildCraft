@@ -17,7 +17,7 @@ import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.blueprints.BlueprintId.Kind;
-import buildcraft.core.utils.NBTUtils;
+import buildcraft.core.lib.utils.NBTUtils;
 
 /**
  * Use the template system to describe fillers

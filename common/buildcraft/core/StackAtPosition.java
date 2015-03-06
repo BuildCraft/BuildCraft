@@ -14,8 +14,7 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.Position;
-import buildcraft.core.utils.NetworkUtils;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.lib.utils.NetworkUtils;
 
 public class StackAtPosition implements ISerializable {
 	public ItemStack stack;

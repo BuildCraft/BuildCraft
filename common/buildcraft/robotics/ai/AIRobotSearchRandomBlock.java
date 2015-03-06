@@ -13,9 +13,9 @@ import java.util.Iterator;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.utils.BlockScannerRandom;
-import buildcraft.core.utils.BlockScannerZoneRandom;
-import buildcraft.core.utils.IBlockFilter;
+import buildcraft.core.lib.utils.BlockScannerRandom;
+import buildcraft.core.lib.utils.BlockScannerZoneRandom;
+import buildcraft.core.lib.utils.IBlockFilter;
 
 public class AIRobotSearchRandomBlock extends AIRobotSearchBlockBase {
 

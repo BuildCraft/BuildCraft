@@ -14,8 +14,10 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import buildcraft.core.inventory.SimpleInventory;
-import buildcraft.core.utils.Utils;
+import buildcraft.core.TileEngine;
+import buildcraft.core.lib.engines.TileEngineBase;
+import buildcraft.core.lib.inventory.SimpleInventory;
+import buildcraft.core.lib.utils.Utils;
 
 public abstract class TileEngineWithInventory extends TileEngine implements IInventory, ISidedInventory {
 

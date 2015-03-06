@@ -23,7 +23,7 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IControllable.Mode;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.utils.StringUtils;
 
 public class ActionMachineControl extends BCStatement implements IActionExternal {
 	public final Mode mode;

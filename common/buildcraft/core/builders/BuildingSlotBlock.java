@@ -29,7 +29,7 @@ import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.Position;
-import buildcraft.core.inventory.StackHelper;
+import buildcraft.core.lib.inventory.StackHelper;
 
 public class BuildingSlotBlock extends BuildingSlot {
 

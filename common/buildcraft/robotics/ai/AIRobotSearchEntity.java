@@ -13,8 +13,8 @@ import net.minecraft.entity.Entity;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.inventory.TransactorSimple;
-import buildcraft.core.utils.IEntityFilter;
+import buildcraft.core.lib.inventory.TransactorSimple;
+import buildcraft.core.lib.utils.IEntityFilter;
 
 public class AIRobotSearchEntity extends AIRobot {
 

@@ -27,11 +27,10 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
 
 import buildcraft.BuildCraftRobotics;
-import buildcraft.BuildCraftSilicon;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.render.RenderLaser;
-import buildcraft.core.render.RenderUtils;
+import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.robotics.EntityRobot;
 import buildcraft.robotics.ItemRobot;
 

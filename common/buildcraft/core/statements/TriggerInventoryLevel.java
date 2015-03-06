@@ -22,9 +22,9 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.StatementParameterItemStack;
-import buildcraft.core.inventory.InventoryIterator;
-import buildcraft.core.inventory.StackHelper;
-import buildcraft.core.utils.StringUtils;
+import buildcraft.core.lib.inventory.InventoryIterator;
+import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.core.lib.utils.StringUtils;
 
 public class TriggerInventoryLevel extends BCStatement implements ITriggerExternal {
 

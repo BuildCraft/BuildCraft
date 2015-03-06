@@ -15,22 +15,24 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.core.EntityBlock;
+import buildcraft.core.TileEngine;
+import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.LaserKind;
-import buildcraft.core.render.RenderEntityBlock;
+import buildcraft.core.lib.engines.RenderEngine;
+import buildcraft.core.lib.engines.TileEngineBase;
+import buildcraft.core.lib.render.RenderEntityBlock;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingMarkers;
 
@@ -86,6 +88,12 @@ public class CoreProxyClient extends CoreProxy {
 		RenderingRegistry.registerBlockHandler(new RenderingEntityBlocks());
 		RenderingRegistry.registerBlockHandler(BuildCraftCore.legacyPipeModel, new RenderingEntityBlocks());
 		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
+
+		//TODO Update me to grab differing trunk textures
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEngineBase.class, new RenderEngine());
+		for (int i = 0; i < BuildCraftCore.engineBlock.getEngineCount(); i++) {
+			RenderingEntityBlocks.blockByEntityRenders.put(new RenderingEntityBlocks.EntityRenderIndex(BuildCraftCore.engineBlock, i), new RenderEngine(TileEngine.BASE_TEXTURES[i], TileEngine.CHAMBER_TEXTURES[i], TileEngine.TRUNK_TEXTURES[i]));
+		}
 	}
 
 	@Override
