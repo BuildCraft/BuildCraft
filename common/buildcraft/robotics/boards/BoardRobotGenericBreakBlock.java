@@ -108,7 +108,6 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 			startDelegateAI(new AIRobotBreak(robot, indexStored));
 		} else if (ai instanceof AIRobotBreak) {
 			releaseBlockFound();
-			startDelegateAI(new AIRobotGotoSleep(robot));
 		}
 	}
 
