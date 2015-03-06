@@ -7,7 +7,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cofh.api.energy.IEnergyContainerItem;
 
 import buildcraft.api.tiles.IHasWork;
-import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.utils.StringUtils;
 
 public class TileChargingTable extends TileLaserTableBase implements IHasWork {
     @Override
