@@ -17,6 +17,7 @@ import java.util.List;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -30,6 +31,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.Position;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.inventory.Transactor;
@@ -40,7 +42,7 @@ import buildcraft.transport.network.PacketPipeTransportTraveler;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
 
-public class PipeTransportItems extends PipeTransport {
+public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
 	public static final int MAX_PIPE_STACKS = 64;
 	public static final int MAX_PIPE_ITEMS = 1024;
@@ -124,13 +126,7 @@ public class PipeTransportItems extends PipeTransport {
 				return;
 			}
 
-			int numItems = 0;
-			for (TravelingItem travellingItem : items) {
-				ItemStack stack = travellingItem.getItemStack();
-				if (stack != null && stack.stackSize > 0) {
-					numItems += stack.stackSize;
-				}
-			}
+			int numItems = getNumberOfItems();
 
 			if (numItems > MAX_PIPE_ITEMS) {
 				BCLog.logger.log(Level.WARN, String.format("Pipe exploded at %d,%d,%d because it had too many items: %d", container.xCoord, container.yCoord, container.zCoord, numItems));
@@ -468,10 +464,9 @@ public class PipeTransportItems extends PipeTransport {
 	public int getNumberOfItems() {
 		int num = 0;
 		for (TravelingItem item : items) {
-			if (item.getItemStack() == null) {
-				continue;
+			if (item.getItemStack() != null) {
+				num += item.getItemStack().stackSize;
 			}
-			num += item.getItemStack().stackSize;
 		}
 		return num;
 	}
@@ -543,5 +538,11 @@ public class PipeTransportItems extends PipeTransport {
 	@Override
 	public boolean delveIntoUnloadedChunks() {
 		return true;
+	}
+
+	@Override
+	public void getDebugInfo(List<String> info, ForgeDirection side, ItemStack debugger, EntityPlayer player) {
+		info.add("PipeTransportItems");
+		info.add("- Items: " + getNumberOfStacks() + "/" + MAX_PIPE_STACKS + " (" + getNumberOfItems() + "/" + MAX_PIPE_ITEMS + ")");
 	}
 }

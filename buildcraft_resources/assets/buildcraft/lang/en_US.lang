@@ -261,12 +261,13 @@ item.FacadePhased.state_transparent=Transparent
 item.PipePlug.name=Pipe Plug
 item.Lens.name=Lens
 item.Filter.name=Filter
+item.debugger.name=Debugger
+item.debugger.warning=Use only for testing! Leaks secrets.
 
-itemGroup.buildcraft.blocks=Buildcraft Blocks
-itemGroup.buildcraft.boards=Buildcraft Robots
-itemGroup.buildcraft.items=Buildcraft Items
-itemGroup.buildcraft.pipes=Buildcraft Pipes
-itemGroup.buildcraft.facades=Buildcraft Facades
+itemGroup.buildcraft.boards=BuildCraft Robots
+itemGroup.buildcraft.main=BuildCraft
+itemGroup.buildcraft.pipes=BuildCraft Pipes
+itemGroup.buildcraft.facades=BuildCraft Facades
 
 tile.architectBlock.name=Architect Table
 tile.assemblyTableBlock.name=Assembly Table

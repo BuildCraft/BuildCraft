@@ -358,8 +358,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	 * All power input MUST go through designated input pipes, such as Wooden
 	 * Power Pipes or a subclass thereof.
 	 */
-	public int receiveEnergy(ForgeDirection from, int valI) {
-		int val = valI;
+	public int receiveEnergy(ForgeDirection from, int val) {
 		step();
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
 			int ret = ((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from, val);
@@ -460,13 +459,9 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	@Override
 	public void getDebugInfo(List<String> info, ForgeDirection side, ItemStack debugger, EntityPlayer player) {
 		info.add("PipeTransportPower (" + maxPower + " RF/t)");
-		info.add("- internalPower: " + Arrays.toString(internalPower));
-		info.add("- internalNextPower: " + Arrays.toString(internalNextPower));
-		info.add("- powerQuery: " + Arrays.toString(powerQuery));
-		info.add("- nextPowerQuery: " + Arrays.toString(nextPowerQuery));
-		info.add("- displayPower: " + Arrays.toString(displayPower));
-		info.add("- energyInput: " + Arrays.toString(dbgEnergyInput));
-		info.add("- energyOutput: " + Arrays.toString(dbgEnergyOutput));
+		info.add("- internalPower: " + Arrays.toString(internalPower) + " <- " + Arrays.toString(internalNextPower));
+		info.add("- powerQuery: " + Arrays.toString(powerQuery) + " <- " + Arrays.toString(nextPowerQuery));
+		info.add("- energy: IN " + Arrays.toString(dbgEnergyInput) + ", OUT " + Arrays.toString(dbgEnergyOutput));
 
 		int[] totalPowerQuery = new int[6];
 		for (int i = 0; i < 6; ++i) {

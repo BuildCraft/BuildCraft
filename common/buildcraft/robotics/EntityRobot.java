@@ -9,6 +9,7 @@
 package buildcraft.robotics;
 
 import java.util.Date;
+import java.util.List;
 import java.util.WeakHashMap;
 
 import io.netty.buffer.ByteBuf;
@@ -55,6 +56,7 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
 import buildcraft.api.robots.RobotManager;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
 import buildcraft.core.lib.RFBattery;
@@ -70,7 +72,7 @@ import buildcraft.transport.gates.ActionIterator;
 import buildcraft.transport.gates.StatementSlot;
 
 public class EntityRobot extends EntityRobotBase implements
-		IEntityAdditionalSpawnData, IInventory, IFluidHandler, ICommandReceiver {
+		IEntityAdditionalSpawnData, IInventory, IFluidHandler, ICommandReceiver, IDebuggable {
 
 	public static final ResourceLocation ROBOT_BASE = new ResourceLocation("buildcraft",
 			DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_base.png");
@@ -1124,4 +1126,10 @@ public class EntityRobot extends EntityRobotBase implements
         return iicon;
     }
 
+	@Override
+	public void getDebugInfo(List<String> info, ForgeDirection side, ItemStack debugger, EntityPlayer player) {
+		// TODO: Add AI information
+		info.add("Robot " + board.getNBTHandler().getID() + " (" + getBattery().getEnergyStored() + "/" + getBattery().getMaxEnergyStored() + " RF)");
+		info.add("Position: " + posX + ", " + posY + ", " + posZ);
+	}
 }

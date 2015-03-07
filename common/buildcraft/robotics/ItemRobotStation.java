@@ -27,7 +27,7 @@ import buildcraft.core.lib.items.ItemBuildCraft;
 public class ItemRobotStation extends ItemBuildCraft implements IPipePluggableItem {
 
 	public ItemRobotStation() {
-		super(BCCreativeTab.get("robots"));
+		super(BCCreativeTab.get("boards"));
 	}
 
 	@Override

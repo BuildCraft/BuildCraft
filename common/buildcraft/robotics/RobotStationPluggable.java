@@ -1,8 +1,10 @@
 package buildcraft.robotics;
 
+import java.util.List;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
@@ -14,6 +16,7 @@ import buildcraft.BuildCraftRobotics;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.robots.RobotManager;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
@@ -23,7 +26,7 @@ import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TileGenericPipe;
 
-public class RobotStationPluggable extends PipePluggable implements IPipePluggableItem, IEnergyReceiver {
+public class RobotStationPluggable extends PipePluggable implements IPipePluggableItem, IEnergyReceiver, IDebuggable {
 	public class RobotStationPluggableRenderer implements IPipePluggableRenderer {
 		private float zFightOffset = 1 / 4096.0F;
 
@@ -228,6 +231,12 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 		return AxisAlignedBB.getBoundingBox(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
 	}
 
+	private void refreshRenderState() {
+		this.renderState = station.isTaken()
+				? (station.isMainStation() ? RobotStationState.Linked : RobotStationState.Reserved)
+				: RobotStationState.Available;
+	}
+
 	public RobotStationState getRenderState() {
 		return renderState;
 	}
@@ -239,9 +248,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 
 	@Override
 	public void writeData(ByteBuf data) {
-		this.renderState = station.isTaken()
-				? (station.isMainStation() ? RobotStationState.Linked : RobotStationState.Reserved)
-				: RobotStationState.Available;
+		refreshRenderState();
 		data.writeByte(getRenderState().ordinal());
 	}
 
@@ -277,5 +284,18 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 	@Override
 	public boolean canConnectEnergy(ForgeDirection from) {
 		return true;
+	}
+
+	@Override
+	public void getDebugInfo(List<String> info, ForgeDirection side, ItemStack debugger, EntityPlayer player) {
+		if (station == null) {
+			info.add("RobotStationPluggable: No station found!");
+		} else {
+			refreshRenderState();
+			info.add("Docking Station (side " + side.name() + ", " + renderState.name() + ")");
+			if (station.robotTaking() != null && station.robotTaking() instanceof IDebuggable) {
+				((IDebuggable) station.robotTaking()).getDebugInfo(info, ForgeDirection.UNKNOWN, debugger, player);
+			}
+		}
 	}
 }
