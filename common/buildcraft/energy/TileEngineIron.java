@@ -256,6 +256,11 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 		if (currentCoolant != null) {
 			float cooling = currentCoolant.getDegreesCoolingPerMB(heat);
 			cooling /= getBiomeTempScalar();
+			
+			if (cooling > extraHeat) {
+				return;
+			}
+			
 			if (coolantAmount * cooling > extraHeat) {
 				tankCoolant.drain(Math.round(extraHeat / cooling), true);
 				heat -= extraHeat;
