@@ -8,6 +8,7 @@
  */
 package buildcraft.transport;
 
+import java.util.List;
 import org.apache.logging.log4j.Level;
 
 import io.netty.buffer.ByteBuf;
@@ -43,6 +44,7 @@ import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.power.IRedstoneEngineReceiver;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
@@ -66,7 +68,8 @@ import buildcraft.transport.pluggable.PlugPluggable;
 
 public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		IPipeTile, ITileBufferHolder, IEnergyHandler, IDropControlInventory,
-		ISyncedTile, ISolidSideTile, IGuiReturnHandler, IRedstoneEngineReceiver {
+		ISyncedTile, ISolidSideTile, IGuiReturnHandler, IRedstoneEngineReceiver,
+		IDebuggable {
 
 	public boolean initialized = false;
 	public final PipeRenderState renderState = new PipeRenderState();
@@ -1212,6 +1215,19 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			return ((IRedstoneEngineReceiver) pipe).canConnectRedstoneEngine(side);
 		} else {
 			return (getPipeType() != PipeType.POWER) && (getPipeType() != PipeType.STRUCTURE);
+		}
+	}
+
+	@Override
+	public void getDebugInfo(List<String> info, ForgeDirection side, ItemStack debugger, EntityPlayer player) {
+		if (pipe instanceof IDebuggable) {
+			((IDebuggable) pipe).getDebugInfo(info, side, debugger, player);
+		}
+		if (pipe.transport instanceof IDebuggable) {
+			((IDebuggable) pipe.transport).getDebugInfo(info, side, debugger, player);
+		}
+		if (getPipePluggable(side) != null && getPipePluggable(side) instanceof IDebuggable) {
+			((IDebuggable) getPipePluggable(side)).getDebugInfo(info, side, debugger, player);
 		}
 	}
 }

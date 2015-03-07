@@ -8,7 +8,10 @@
  */
 package buildcraft.transport.pipes;
 
+import java.util.List;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
@@ -23,6 +26,7 @@ import cofh.api.energy.IEnergyProvider;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.power.IRedstoneEngineReceiver;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.transport.IPipeTransportPowerHook;
@@ -30,7 +34,7 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 
-public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTransportPowerHook, IEnergyHandler, IRedstoneEngineReceiver {
+public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTransportPowerHook, IEnergyHandler, IRedstoneEngineReceiver, IDebuggable {
 
 	public final boolean[] powerSources = new boolean[6];
 
@@ -225,5 +229,13 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 	@Override
 	public boolean canConnectRedstoneEngine(ForgeDirection side) {
 		return true;
+	}
+
+	@Override
+	public void getDebugInfo(List<String> info, ForgeDirection side, ItemStack debugger, EntityPlayer player) {
+		info.add("Power Acceptor");
+		info.add("- requestedEnergy: " + requestedEnergy);
+		info.add("- lastRequestedEnergy: " + lastRequestedEnergy);
+		info.add("- stored: " + battery.getEnergyStored() + "/" + battery.getMaxEnergyStored() + " RF");
 	}
 }

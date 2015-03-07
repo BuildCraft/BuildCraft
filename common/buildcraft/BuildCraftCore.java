@@ -80,6 +80,7 @@ import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.CoreGuiHandler;
 import buildcraft.core.InterModComms;
+import buildcraft.core.ItemDebugger;
 import buildcraft.core.ItemGear;
 import buildcraft.core.ItemList;
 import buildcraft.core.ItemMapLocation;
@@ -158,6 +159,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Item diamondGearItem;
 	public static Item wrenchItem;
 	public static Item mapLocationItem;
+	public static Item debuggerItem;
 	public static ItemList listItem;
 	@SideOnly(Side.CLIENT)
 	public static IIcon redLaserTexture;
@@ -280,6 +282,9 @@ public class BuildCraftCore extends BuildCraftMod {
 
 			listItem = (ItemList) ((new ItemList()).setUnlocalizedName("list"));
 			CoreProxy.proxy.registerItem(listItem);
+
+			debuggerItem = (ItemDebugger) ((new ItemDebugger())).setUnlocalizedName("debugger");
+			CoreProxy.proxy.registerItem(debuggerItem);
 
 			Property modifyWorldProp = BuildCraftCore.mainConfiguration.get("general", "modifyWorld", true);
 			modifyWorldProp.comment = "set to false if BuildCraft should not generate custom blocks (e.g. oil)";
