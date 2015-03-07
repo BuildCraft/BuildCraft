@@ -199,7 +199,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive,
 			boolean simulate) {
-		if (from.ordinal() < 6 && container.getNeighborTile(from) instanceof IRedstoneEngineReceiver) {
+		if (from.ordinal() < 6 && container.getNeighborTile(from) instanceof IRedstoneEngine) {
 			allowExtraction = true;
 			return maxReceive;
 		}
