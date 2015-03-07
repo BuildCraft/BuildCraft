@@ -323,8 +323,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 		if (hopperBlock != null) {
 			CoreProxy.proxy.addCraftingRecipe(new ItemStack(hopperBlock),
 					"ICI",
-					"IGI",
-					" I ",
+					" G ",
 					'I', "ingotIron",
 					'C', Blocks.chest,
 					'G', "gearStone");
