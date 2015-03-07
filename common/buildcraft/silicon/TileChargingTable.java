@@ -27,7 +27,7 @@ public class TileChargingTable extends TileLaserTableBase implements IHasWork {
                 addEnergy(0 - containerItem.receiveEnergy(stack, getEnergy(), false));
                 this.setInventorySlotContents(0, stack);
             } else {
-                addEnergy(-10);
+                subtractEnergy(Math.min(getEnergy(), 10));
             }
         }
     }
