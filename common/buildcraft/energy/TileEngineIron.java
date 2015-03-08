@@ -48,6 +48,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	public Tank tankCoolant = new Tank("tankCoolant", MAX_LIQUID, this);
 
 	private int burnTime = 0;
+	private float coolingBuffer = 0.0f;
 
 	private TankManager<Tank> tankManager = new TankManager<Tank>();
 	private IFuel currentFuel;
@@ -246,6 +247,21 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	private void coolEngine(float idealHeat) {
 		float extraHeat = heat - idealHeat;
 
+		if (coolingBuffer < extraHeat) {
+			fillCoolingBuffer();
+		}
+
+		if (coolingBuffer >= extraHeat) {
+			coolingBuffer -= extraHeat;
+			heat -= extraHeat;
+			return;
+		}
+
+		heat -= coolingBuffer;
+		coolingBuffer = 0.0f;
+	}
+
+	private void fillCoolingBuffer() {
 		FluidStack coolant = this.tankCoolant.getFluid();
 		if (coolant == null) {
 			return;
@@ -256,18 +272,8 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 		if (currentCoolant != null) {
 			float cooling = currentCoolant.getDegreesCoolingPerMB(heat);
 			cooling /= getBiomeTempScalar();
-			
-			if (cooling > extraHeat) {
-				return;
-			}
-			
-			if (coolantAmount * cooling > extraHeat) {
-				tankCoolant.drain(Math.round(extraHeat / cooling), true);
-				heat -= extraHeat;
-			} else {
-				tankCoolant.drain(coolantAmount, true);
-				heat -= coolantAmount * cooling;
-			}
+			coolingBuffer += coolantAmount * cooling;
+			tankCoolant.drain(coolantAmount, true);
 		}
 	}
 
