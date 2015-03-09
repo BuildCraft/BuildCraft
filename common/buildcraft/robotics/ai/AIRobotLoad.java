@@ -68,6 +68,8 @@ public class AIRobotLoad extends AIRobot {
 		if (robot.getDockingStation() != null) {
 			DockingStation station = (DockingStation) robot.getDockingStation();
 
+			int loaded = 0;
+
 			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX,
 						station.y()
@@ -87,20 +89,22 @@ public class AIRobotLoad extends AIRobot {
 								ITransactor t = Transactor.getTransactorFor(robot);
 
 								if (quantity == -1) {
-
 									ItemStack added = t.add(slot.getStackInSlot(), ForgeDirection.UNKNOWN, true);
 									slot.decreaseStackInSlot(added.stackSize);
-									return;
 								} else {
 									ItemStack toAdd = slot.getStackInSlot().copy();
 
-									if (toAdd.stackSize >= quantity) {
-										toAdd.stackSize = quantity;
+									if (toAdd.stackSize > quantity - loaded) {
+										toAdd.stackSize = quantity - loaded;
 									}
 
 									ItemStack added = t.add(toAdd, ForgeDirection.UNKNOWN, true);
 									slot.decreaseStackInSlot(added.stackSize);
-									return;
+									loaded += added.stackSize;
+
+									if (quantity - loaded <= 0) {
+										return;
+									}
 								}
 							}
 						}

@@ -9,7 +9,8 @@
 package buildcraft.robotics.boards;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.monster.IMob;
+import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 
@@ -48,7 +49,7 @@ public class BoardRobotKnight extends RedstoneBoardRobot {
 			startDelegateAI(new AIRobotSearchEntity(robot, new IEntityFilter() {
 				@Override
 				public boolean matches(Entity entity) {
-					return entity instanceof EntityMob;
+					return (entity instanceof IMob) || (entity instanceof EntityWolf && ((EntityWolf) entity).isAngry());
 				}
 			}, 250, robot.getZoneToWork()));
 		}
