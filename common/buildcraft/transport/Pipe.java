@@ -61,8 +61,8 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		this.transport = transport;
 		this.item = item;
 
-		eventBus.registerHandler(this);
 		eventBus.registerHandler(new LensFilterHandler(this));
+		eventBus.registerHandler(this);
 	}
 
 	public void setTile(TileEntity tile) {
