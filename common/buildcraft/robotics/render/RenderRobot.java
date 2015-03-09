@@ -217,7 +217,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 
 			GL11.glPushMatrix();
 			GL11.glEnable(GL11.GL_BLEND);
-			GL11.glEnable(GL11.GL_DEPTH_TEST);
+			GL11.glEnable(GL11.GL_ALPHA_TEST);
 			GL11.glDisable(GL11.GL_LIGHTING);
 			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
@@ -227,11 +227,13 @@ public class RenderRobot extends Render implements IItemRenderer {
 			box.render(factor);
 
 			GL11.glDisable(GL11.GL_BLEND);
+			
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			texManager.bindTexture(overlay_cyan);
 			box.render(factor);
 
 			GL11.glEnable(GL11.GL_LIGHTING);
+			GL11.glDisable(GL11.GL_ALPHA_TEST);
 			GL11.glPopMatrix();
 
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
