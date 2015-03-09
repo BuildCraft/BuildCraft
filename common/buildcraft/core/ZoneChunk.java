@@ -103,8 +103,9 @@ public class ZoneChunk implements ISerializable {
 			z = bitPosition / 16;
 			x = bitPosition - 16 * z;
 		}
+		int y = rand.nextInt(255);
 
-		return new BlockIndex(x, 0, z);
+		return new BlockIndex(x, y, z);
 	}
 
 	public boolean isEmpty() {
