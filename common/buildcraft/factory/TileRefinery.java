@@ -60,8 +60,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	public TileRefinery() {
 		super();
 		this.setBattery(new RFBattery(10000, 1500, 0));
-		this.tanks[0].setAcceptedFluid(BuildCraftEnergy.fluidOil);
-		this.tanks[1].setAcceptedFluid(BuildCraftEnergy.fluidOil);
 	}
 
 	@Override
