@@ -44,7 +44,7 @@ public class AIRobotSleep extends AIRobot {
 
 	@Override
 	public int getEnergyCost() {
-		// This trick is so we ge 0.1 RF per tick.
-		return sleptTime % 10;
+		// This trick is so we get 0.1 RF per tick.
+		return sleptTime % 10 == 0 ? 1 : 0;
 	}
 }
