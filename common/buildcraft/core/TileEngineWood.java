@@ -21,15 +21,10 @@ import buildcraft.core.lib.engines.TileEngineBase;
 public class TileEngineWood extends TileEngine implements IRedstoneEngine {
 
 	private boolean hasSent = false;
-	
-	@Override
-	public ResourceLocation getBaseTexture() {
-		return BASE_TEXTURES[0];
-	}
 
 	@Override
-	public ResourceLocation getChamberTexture() {
-		return CHAMBER_TEXTURES[0];
+	public String getResourcePrefix() {
+		return "buildcraftcore:textures/blocks/engineWood";
 	}
 
 	@Override

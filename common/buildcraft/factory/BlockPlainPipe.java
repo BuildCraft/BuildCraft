@@ -62,10 +62,6 @@ public class BlockPlainPipe extends Block implements IFramePipeConnection {
 		return false;
 	}
 
-	public float getHeightInPipe() {
-		return 0.5F;
-	}
-
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void getSubBlocks(Item item, CreativeTabs tab, List list) {
@@ -83,13 +79,12 @@ public class BlockPlainPipe extends Block implements IFramePipeConnection {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		this.blockIcon = par1IconRegister.registerIcon("buildcraft:blockPlainPipe");
+	public boolean isLadder(IBlockAccess world, int x, int y, int z, EntityLivingBase entity) {
+		return true;
 	}
 
 	@Override
-	public boolean isLadder(IBlockAccess world, int x, int y, int z, EntityLivingBase entity) {
-		return true;
+	public void registerBlockIcons(IIconRegister register) {
+		blockIcon = register.registerIcon("buildcraftfactory:plainPipeBlock/default");
 	}
 }

@@ -40,7 +40,7 @@ import buildcraft.core.lib.utils.SessionVars;
 
 public abstract class GuiBuildCraft extends GuiContainer {
 
-	public static final ResourceLocation LEDGER_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/ledger.png");
+	public static final ResourceLocation LEDGER_TEXTURE = new ResourceLocation("buildcraftcore:textures/gui/ledger.png");
 	public final LedgerManager ledgerManager = new LedgerManager(this);
 	public final TileEntity tile;
 	public final BuildCraftContainer container;

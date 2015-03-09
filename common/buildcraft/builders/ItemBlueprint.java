@@ -13,6 +13,7 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.IIcon;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BuildingPermission;
@@ -88,5 +89,23 @@ public abstract class ItemBlueprint extends ItemBuildCraft {
 
 	public static BlueprintBase loadBlueprint(ItemStack stack) {
 		return BuildCraftBuilders.serverDB.load(getId(stack));
+	}
+
+	public abstract String getIconType();
+
+	@Override
+	public String[] getIconNames() {
+		return new String[]{ getIconType() + "/clean", getIconType() + "/used" };
+	}
+
+	@Override
+	public IIcon getIconIndex(ItemStack stack) {
+		if (!NBTUtils.getItemData(stack).hasKey("name")) {
+			itemIcon = icons[0];
+		} else {
+			itemIcon = icons[1];
+		}
+
+		return itemIcon;
 	}
 }

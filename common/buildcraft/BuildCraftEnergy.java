@@ -56,7 +56,7 @@ import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.energy.BlockBuildcraftFluid;
+import buildcraft.core.lib.block.BlockBuildCraftFluid;
 import buildcraft.energy.BucketHandler;
 import buildcraft.energy.EnergyProxy;
 import buildcraft.energy.EnergyGuiHandler;
@@ -200,7 +200,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		fluidRedPlasma = FluidRegistry.getFluid("redplasma");
 
 		if (fluidOil.getBlock() == null) {
-			blockOil = new BlockBuildcraftFluid(fluidOil, Material.water, MapColor.blackColor).setFlammable(canOilBurn).setFlammability(0).setDense(isOilDense);
+			blockOil = new BlockBuildCraftFluid(fluidOil, Material.water, MapColor.blackColor).setFlammable(canOilBurn).setFlammability(0).setDense(isOilDense);
 			blockOil.setBlockName("blockOil").setLightOpacity(8);
 			CoreProxy.proxy.registerBlock(blockOil);
 			fluidOil.setBlock(blockOil);
@@ -215,7 +215,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		}
 
 		if (fluidFuel.getBlock() == null) {
-			blockFuel = new BlockBuildcraftFluid(fluidFuel, Material.water, MapColor.yellowColor).setFlammable(true).setFlammability(5).setParticleColor(0.7F, 0.7F, 0.0F);
+			blockFuel = new BlockBuildCraftFluid(fluidFuel, Material.water, MapColor.yellowColor).setFlammable(true).setFlammability(5).setParticleColor(0.7F, 0.7F, 0.0F);
 			blockFuel.setBlockName("blockFuel").setLightOpacity(3);
 			CoreProxy.proxy.registerBlock(blockFuel);
 			fluidFuel.setBlock(blockFuel);
@@ -224,7 +224,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		}
 
 		if (fluidRedPlasma.getBlock() == null) {
-			blockRedPlasma = new BlockBuildcraftFluid(fluidRedPlasma, Material.water, MapColor.redColor).setFlammable(
+			blockRedPlasma = new BlockBuildCraftFluid(fluidRedPlasma, Material.water, MapColor.redColor).setFlammable(
 					false).setParticleColor(0.9F, 0, 0);
 			blockRedPlasma.setBlockName("blockRedPlasma");
 			CoreProxy.proxy.registerBlock(blockRedPlasma);

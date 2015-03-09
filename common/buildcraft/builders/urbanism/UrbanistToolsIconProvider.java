@@ -42,11 +42,11 @@ public final class UrbanistToolsIconProvider implements IIconProvider {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister iconRegister) {
-		icons[UrbanistToolsIconProvider.Tool_Block_Place] = iconRegister.registerIcon("buildcraft:icons/urbanist_block");
-		icons[UrbanistToolsIconProvider.Tool_Block_Erase] = iconRegister.registerIcon("buildcraft:icons/urbanist_erase");
-		icons[UrbanistToolsIconProvider.Tool_Area] = iconRegister.registerIcon("buildcraft:icons/urbanist_area");
-		icons[UrbanistToolsIconProvider.Tool_Path] = iconRegister.registerIcon("buildcraft:icons/urbanist_path");
-		icons[UrbanistToolsIconProvider.Tool_Filler] = iconRegister.registerIcon("buildcraft:icons/urbanist_filler");
-		icons[UrbanistToolsIconProvider.Tool_Blueprint] = iconRegister.registerIcon("buildcraft:icons/urbanist_blueprint");
+		icons[UrbanistToolsIconProvider.Tool_Block_Place] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_block");
+		icons[UrbanistToolsIconProvider.Tool_Block_Erase] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_erase");
+		icons[UrbanistToolsIconProvider.Tool_Area] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_area");
+		icons[UrbanistToolsIconProvider.Tool_Path] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_path");
+		icons[UrbanistToolsIconProvider.Tool_Filler] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_filler");
+		icons[UrbanistToolsIconProvider.Tool_Blueprint] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_blueprint");
 	}
 }

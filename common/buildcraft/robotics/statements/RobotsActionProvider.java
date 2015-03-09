@@ -63,6 +63,7 @@ public class RobotsActionProvider implements IActionProvider {
 		result.add(BuildCraftRobotics.actionRobotFilter);
 		result.add(BuildCraftRobotics.actionRobotFilterTool);
 		result.add(BuildCraftRobotics.actionStationForbidRobot);
+		result.add(BuildCraftRobotics.actionStationForceRobot);
 
 		if (((TileGenericPipe) tile).pipe.transport instanceof PipeTransportItems) {
 			result.add(BuildCraftRobotics.actionStationDropInPipe);

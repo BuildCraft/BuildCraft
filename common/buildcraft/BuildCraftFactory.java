@@ -353,9 +353,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 	public void loadTextures(TextureStitchEvent.Pre evt) {
 		if (evt.map.getTextureType() == 0) {
 			TextureMap terrainTextures = evt.map;
-			FactoryProxyClient.pumpTexture = terrainTextures.registerIcon("buildcraft:pump_tube");
-			FactoryProxyClient.drillTexture = terrainTextures.registerIcon("buildcraft:blockDrillTexture");
-			FactoryProxyClient.drillHeadTexture = terrainTextures.registerIcon("buildcraft:blockDrillHeadTexture");
+			FactoryProxyClient.pumpTexture = terrainTextures.registerIcon("buildcraftfactory:pumpBlock/tube");
+			FactoryProxyClient.drillTexture = terrainTextures.registerIcon("buildcraftfactory:machineBlock/drill");
+			FactoryProxyClient.drillHeadTexture = terrainTextures.registerIcon("buildcraftfactory:machineBlock/drill_head");
 		}
 	}
 

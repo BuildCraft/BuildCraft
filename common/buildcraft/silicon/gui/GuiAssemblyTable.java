@@ -30,7 +30,7 @@ import buildcraft.silicon.TileAssemblyTable;
 
 public class GuiAssemblyTable extends GuiAdvancedInterface {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/assembly_table.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftsilicon:textures/gui/assembly_table.png");
 
 	private class LaserTableLedger extends Ledger {
 

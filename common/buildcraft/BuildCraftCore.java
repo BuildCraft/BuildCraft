@@ -448,10 +448,10 @@ public class BuildCraftCore extends BuildCraftMod {
 			iconProvider.registerIcons(event.map);
 			EnumColor.registerIcons(event.map);
 		} else if (event.map.getTextureType() == 0) {
-			BuildCraftCore.redLaserTexture = event.map.registerIcon("buildcraft:blockRedLaser");
-			BuildCraftCore.blueLaserTexture = event.map.registerIcon("buildcraft:blockBlueLaser");
-			BuildCraftCore.stripesLaserTexture = event.map.registerIcon("buildcraft:blockStripesLaser");
-			BuildCraftCore.transparentTexture = event.map.registerIcon("buildcraft:blockTransparentLaser");
+			BuildCraftCore.redLaserTexture = event.map.registerIcon("buildcraftcore:laserBox/blockRedLaser");
+			BuildCraftCore.blueLaserTexture = event.map.registerIcon("buildcraftcore:laserBox/blockBlueLaser");
+			BuildCraftCore.stripesLaserTexture = event.map.registerIcon("buildcraftcore:laserBox/blockStripesLaser");
+			BuildCraftCore.transparentTexture = event.map.registerIcon("buildcraftcore:laserBox/blockTransparentLaser");
 		}
 
 	}

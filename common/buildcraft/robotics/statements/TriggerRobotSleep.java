@@ -36,21 +36,16 @@ public class TriggerRobotSleep extends BCStatement implements ITriggerInternal {
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_robot_sleep");
+		icon = iconRegister.registerIcon("buildcraftrobotics:triggers/trigger_robot_sleep");
 	}
 
 	@Override
 	public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
-		if (!(container.getTile() instanceof IPipeTile)) {
-			return false;
-		}
-		
-		IPipeTile tile = (IPipeTile) container.getTile();
+		DockingStationIterator iterator = new DockingStationIterator(container);
 
-		for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
-			DockingStation station = RobotUtils.getStation(tile, d);
-
-			if (station != null && station.robotTaking() != null) {
+		while (iterator.hasNext()) {
+			DockingStation station = iterator.next();
+			if (station.robotTaking() != null) {
 				EntityRobot robot = (EntityRobot) station.robotTaking();
 
 				if (robot.mainAI.getActiveAI() instanceof AIRobotSleep) {

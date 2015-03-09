@@ -8,7 +8,6 @@
  */
 package buildcraft.robotics.statements;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -21,34 +20,19 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.ITriggerProvider;
-import buildcraft.api.transport.IPipeTile;
-import buildcraft.robotics.DockingStation;
-import buildcraft.robotics.RobotUtils;
 
 public class RobotsTriggerProvider implements ITriggerProvider {
-
 	@Override
 	public Collection<ITriggerInternal> getInternalTriggers(IStatementContainer container) {
 		LinkedList<ITriggerInternal> result = new LinkedList<ITriggerInternal>();
-		TileEntity tile = container.getTile();
+		DockingStationIterator iterator = new DockingStationIterator(container);
 
-		if (!(tile instanceof IPipeTile)) {
-			return result;
+		if (iterator.hasNext()) {
+			result.add(BuildCraftRobotics.triggerRobotSleep);
+			result.add(BuildCraftRobotics.triggerRobotInStation);
+			result.add(BuildCraftRobotics.triggerRobotLinked);
+			result.add(BuildCraftRobotics.triggerRobotReserved);
 		}
-
-		ArrayList<DockingStation> stations = new ArrayList<DockingStation>();
-
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			if (RobotUtils.getStation((IPipeTile) tile, dir) != null) {
-				stations.add(RobotUtils.getStation((IPipeTile) tile, dir));
-			}
-		}
-
-		if (stations.size() == 0) {
-			return result;
-		}
-
-		result.add(BuildCraftRobotics.triggerRobotSleep);
 
 		return result;
 	}
@@ -57,5 +41,4 @@ public class RobotsTriggerProvider implements ITriggerProvider {
 	public Collection<ITriggerExternal> getExternalTriggers(ForgeDirection side, TileEntity tile) {
 		return null;
 	}
-
 }

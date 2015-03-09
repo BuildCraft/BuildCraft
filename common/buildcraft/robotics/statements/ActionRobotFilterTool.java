@@ -41,7 +41,7 @@ public class ActionRobotFilterTool extends BCStatement implements IActionInterna
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/action_robot_filter_tool");
+		icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_robot_filter_tool");
 	}
 
 	@Override

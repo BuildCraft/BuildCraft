@@ -19,7 +19,7 @@ import buildcraft.factory.TileHopper;
 
 public class GuiHopper extends GuiContainer {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/hopper_gui.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftfactory:textures/gui/hopper_gui.png");
 
 	public GuiHopper(InventoryPlayer inventory, TileHopper tile) {
 		super(new ContainerHopper(inventory, tile));

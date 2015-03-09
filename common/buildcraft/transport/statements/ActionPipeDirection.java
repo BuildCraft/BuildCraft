@@ -38,7 +38,7 @@ public class ActionPipeDirection extends BCStatement implements IActionInternal 
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_dir_" + direction.name().toLowerCase(Locale.ENGLISH));
+		icon = iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_" + direction.name().toLowerCase(Locale.ENGLISH));
 	}
 
 	@Override

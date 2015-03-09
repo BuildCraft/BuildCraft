@@ -121,14 +121,14 @@ public class TriggerParameterSignal implements IStatementParameter {
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icons = new IIcon[]{
-				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_red_inactive"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_blue_inactive"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_green_inactive"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_yellow_inactive"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_red_active"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_blue_active"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_green_active"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_pipesignal_yellow_active")
+				iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_red_inactive"),
+				iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_blue_inactive"),
+				iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_green_inactive"),
+				iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_yellow_inactive"),
+				iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_red_active"),
+				iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_blue_active"),
+				iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_green_active"),
+				iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_yellow_active")
 		};
 	}
 

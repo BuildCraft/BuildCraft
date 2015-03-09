@@ -51,6 +51,6 @@ public class TriggerMachine extends BCStatement implements ITriggerExternal {
 
 	@Override
 	public void registerIcons(IIconRegister register) {
-		icon = register.registerIcon("buildcraft:triggers/trigger_machine_" + (active ? "active" : "inactive"));
+		icon = register.registerIcon("buildcraftcore:triggers/trigger_machine_" + (active ? "active" : "inactive"));
 	}
 }

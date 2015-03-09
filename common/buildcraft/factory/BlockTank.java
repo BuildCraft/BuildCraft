@@ -33,10 +33,7 @@ import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.inventory.InvUtils;
 
 public class BlockTank extends BlockBuildCraft {
-
 	private IIcon textureStackedSide;
-	private IIcon textureBottomSide;
-	private IIcon textureTop;
 
 	public BlockTank() {
 		super(Material.glass);
@@ -60,43 +57,23 @@ public class BlockTank extends BlockBuildCraft {
 		return new TileTank();
 	}
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int par1, int par2) {
-		switch (par1) {
-			case 0:
-			case 1:
-				return textureTop;
-			default:
-				return textureBottomSide;
-		}
-	}
-
 	@SuppressWarnings({"all"})
 	@Override
-	public IIcon getIcon(IBlockAccess iblockaccess, int i, int j, int k, int l) {
-		switch (l) {
-			case 0:
-			case 1:
-				return textureTop;
-			default:
-				if (iblockaccess.getBlock(i, j - 1, k) == this) {
-					return textureStackedSide;
-				} else {
-					return textureBottomSide;
-				}
+	public IIcon getIconAbsolute(IBlockAccess iblockaccess, int i, int j, int k, int side, int metadata) {
+		if (side >= 2 && iblockaccess.getBlock(i, j - 1, k) == this) {
+			return textureStackedSide;
+		} else {
+			return super.getIconAbsolute(side, metadata);
 		}
 	}
 
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-		ItemStack current = entityplayer.inventory.getCurrentItem();
-
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
-		FMLCommonHandler.instance().bus().post(event);
-		if (event.isCanceled()) {
-			return false;
+		if (super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9)) {
+			return true;
 		}
+
+		ItemStack current = entityplayer.inventory.getCurrentItem();
 
 		if (current != null) {
 			TileEntity tile = world.getTileEntity(i, j, k);
@@ -194,9 +171,8 @@ public class BlockTank extends BlockBuildCraft {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		textureStackedSide = par1IconRegister.registerIcon("buildcraft:tank_stacked_side");
-		textureBottomSide = par1IconRegister.registerIcon("buildcraft:tank_bottom_side");
-		textureTop = par1IconRegister.registerIcon("buildcraft:tank_top");
+		super.registerBlockIcons(par1IconRegister);
+		textureStackedSide = par1IconRegister.registerIcon("buildcraftfactory:tankBlock/side_stacked");
 	}
 
 	@Override

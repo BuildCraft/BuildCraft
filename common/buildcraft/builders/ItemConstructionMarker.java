@@ -97,8 +97,8 @@ public class ItemConstructionMarker extends ItemBlock {
 	public void registerIcons(IIconRegister par1IconRegister) {
 		super.registerIcons(par1IconRegister);
 
-		iconBase = par1IconRegister.registerIcon("buildcraft:constructMarker");
-		iconRecording = par1IconRegister.registerIcon("buildcraft:constructMarkerRec");
+		iconBase = par1IconRegister.registerIcon("buildcraftbuilders:constructionMarkerBlock/default");
+		iconRecording = par1IconRegister.registerIcon("buildcraftbuilders:constructionMarkerBlock/recording");
 	}
 
 	@Override

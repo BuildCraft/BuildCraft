@@ -30,7 +30,7 @@ public class ActionStationAcceptFluids extends BCStatement implements IActionInt
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/action_station_accept_fluids");
+		icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_station_accept_fluids");
 	}
 
 	@Override

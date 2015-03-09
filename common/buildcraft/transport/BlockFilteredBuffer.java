@@ -26,9 +26,6 @@ import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
 
 public class BlockFilteredBuffer extends BlockBuildCraft {
-
-	private static IIcon blockTexture;
-
 	public BlockFilteredBuffer() {
 		super(Material.iron);
 		setHardness(5F);
@@ -42,13 +39,8 @@ public class BlockFilteredBuffer extends BlockBuildCraft {
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer,
 			int par6, float par7, float par8, float par9) {
-
-		super.onBlockActivated(world, x, y, z, entityplayer, par6, par7, par8, par9);
-		
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
-		FMLCommonHandler.instance().bus().post(event);
-		if (event.isCanceled()) {
-			return false;
+		if (super.onBlockActivated(world, x, y, z, entityplayer, par6, par7, par8, par9)) {
+			return true;
 		}
 
 		if (entityplayer.isSneaking()) {
@@ -66,17 +58,5 @@ public class BlockFilteredBuffer extends BlockBuildCraft {
 		}
 
 		return true;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		blockTexture = par1IconRegister.registerIcon("buildcraft:filteredBuffer_all");
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int i, int j) {
-		return blockTexture;
 	}
 }

@@ -16,7 +16,7 @@ import buildcraft.silicon.TileChargingTable;
 
 public class GuiChargingTable extends GuiLaserTable {
 
-	public static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/charging_table.png");
+	public static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftsilicon:textures/gui/charging_table.png");
 	private final TileChargingTable table;
 
 	public GuiChargingTable(InventoryPlayer playerInventory, TileChargingTable chargingTable) {

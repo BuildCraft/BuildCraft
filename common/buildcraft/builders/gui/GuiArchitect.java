@@ -40,7 +40,7 @@ public class GuiArchitect extends GuiBuildCraft {
 	private static final int TEXT_HEIGHT = 12;
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation(
-			"buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/architect_gui.png");
+			"buildcraftbuilders:textures/gui/architect_gui.png");
 
 	private TileArchitect architect;
 

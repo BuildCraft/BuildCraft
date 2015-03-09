@@ -18,7 +18,7 @@ import buildcraft.silicon.TileAdvancedCraftingTable;
 
 public class GuiAdvancedCraftingTable extends GuiLaserTable {
 
-	public static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/assembly_advancedworkbench.png");
+	public static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftsilicon:textures/gui/assembly_advancedworkbench.png");
 	private final TileAdvancedCraftingTable workbench;
 
 	public GuiAdvancedCraftingTable(InventoryPlayer playerInventory, TileAdvancedCraftingTable advancedWorkbench) {

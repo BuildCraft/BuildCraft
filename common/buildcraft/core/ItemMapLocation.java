@@ -38,13 +38,6 @@ import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.StringUtils;
 
 public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
-
-	public IIcon clean;
-	public IIcon spot;
-	public IIcon area;
-	public IIcon path;
-	public IIcon zone;
-
 	public ItemMapLocation() {
 		super(BCCreativeTab.get("main"));
 	}
@@ -107,36 +100,23 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 		NBTTagCompound cpt = NBTUtils.getItemData(stack);
 
 		if (!cpt.hasKey("kind")) {
-			itemIcon = clean;
+			return icons[0];
 		} else {
-			switch (cpt.getByte("kind")) {
-			case 0:
-				itemIcon = spot;
-				break;
-			case 1:
-				itemIcon = area;
-				break;
-			case 2:
-				itemIcon = path;
-				break;
-			case 3:
-				itemIcon = zone;
-				break;
-			}
+			return getIconFromDamage(cpt.getByte("kind") + 1);
 		}
-
-		return itemIcon;
 	}
+
+	@Override
+	public String[] getIconNames() {
+		return new String[]{ "mapLocation/clean", "mapLocation/spot", "mapLocation/area", "mapLocation/path", "mapLocation/zone" };
+	}
+
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister par1IconRegister) {
-		clean = par1IconRegister.registerIcon("buildcraft:map_clean");
-		spot = par1IconRegister.registerIcon("buildcraft:map_spot");
-		area = par1IconRegister.registerIcon("buildcraft:map_area");
-		path = par1IconRegister.registerIcon("buildcraft:map_path");
-		zone = par1IconRegister.registerIcon("buildcraft:map_zone");
-
+		super.registerIcons(par1IconRegister);
+		// TODO: Move this
 		RedstoneBoardRegistry.instance.registerIcons(par1IconRegister);
 	}
 

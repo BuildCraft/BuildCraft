@@ -22,11 +22,12 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.render.IInventoryRenderer;
+import buildcraft.core.lib.render.ModelFrustum;
 
 public class RenderHopper extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
-	private static final ResourceLocation HOPPER_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/hopper.png");
-	private static final ResourceLocation HOPPER_MIDDLE_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/hopper_middle.png");
+	private static final ResourceLocation HOPPER_TEXTURE = new ResourceLocation("buildcraftfactory:textures/blocks/hopperBlock/top.png");
+	private static final ResourceLocation HOPPER_MIDDLE_TEXTURE = new ResourceLocation("buildcraftfactory:textures/blocks/hopperBlock/middle.png");
 	private ModelBase model = new ModelBase() {
 	};
 	private final ModelRenderer top;

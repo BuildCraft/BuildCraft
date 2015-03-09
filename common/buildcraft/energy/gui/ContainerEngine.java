@@ -15,7 +15,7 @@ import net.minecraft.inventory.Slot;
 
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.energy.TileEngineStone;
-import buildcraft.energy.TileEngineWithInventory;
+import buildcraft.core.lib.engines.TileEngineWithInventory;
 
 public class ContainerEngine extends BuildCraftContainer {
 

@@ -32,6 +32,6 @@ public class BlockBuildTool extends Block {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
-        texture = par1IconRegister.registerIcon("buildcraft:blockRedLaser");
+        texture = par1IconRegister.registerIcon("buildcraftcore:laserBox/blockRedLaser");
 	}
 }

@@ -24,19 +24,21 @@ import buildcraft.transport.gates.ActionIterator;
 import buildcraft.transport.gates.StatementSlot;
 
 public class ActionStationForbidRobot extends BCStatement implements IActionInternal {
+	private final boolean invert;
 
-	public ActionStationForbidRobot() {
-		super("buildcraft:station.forbid_robot");
+	public ActionStationForbidRobot(boolean invert) {
+		super("buildcraft:station." + (invert ? "force" : "forbid") + "_robot");
+		this.invert = invert;
 	}
 
 	@Override
 	public String getDescription() {
-		return StringUtils.localize("gate.action.station.forbid_robot");
+		return StringUtils.localize("gate.action.station." + (invert ? "force" : "forbid") + "_robot");
 	}
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/action_station_robot_forbidden");
+		icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_station_robot_" + (invert ? "mandatory" : "forbidden"));
 	}
 
 	@Override
@@ -57,7 +59,7 @@ public class ActionStationForbidRobot extends BCStatement implements IActionInte
 	public static boolean isForbidden(DockingStation station, EntityRobotBase robot) {
 		for (StatementSlot s : new ActionIterator(station.getPipe().pipe)) {
 			if (s.statement instanceof ActionStationForbidRobot) {
-				if (ActionStationForbidRobot.isForbidden(s, robot)) {
+				if (((ActionStationForbidRobot) s.statement).invert ^ ActionStationForbidRobot.isForbidden(s, robot)) {
 					return true;
 				}
 			}

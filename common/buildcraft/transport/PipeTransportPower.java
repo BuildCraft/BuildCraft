@@ -59,6 +59,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 
 	public int[] dbgEnergyInput = new int[6];
 	public int[] dbgEnergyOutput = new int[6];
+	public int[] dbgEnergyOffered = new int[6];
 
 	private boolean needsInit = true;
 	private TileEntity[] tiles = new TileEntity[6];
@@ -193,9 +194,6 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 		System.arraycopy(displayPower, 0, prevDisplayPower, 0, 6);
 		Arrays.fill(displayPower, (short) 0);
 
-		Arrays.fill(dbgEnergyInput, 0);
-		Arrays.fill(dbgEnergyOutput, 0);
-
 		for (int i = 0; i < 6; ++i) {
 			if (internalPower[i] > 0) {
 				int totalPowerQuery = 0;
@@ -221,7 +219,6 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 										ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
 										watts);
 								internalPower[i] -= watts;
-								dbgEnergyInput[i] += watts;
 								dbgEnergyOutput[j] += watts;
 							} else if (ep instanceof IEnergyHandler) {
 								IEnergyHandler handler = (IEnergyHandler) ep;
@@ -230,7 +227,6 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 											watts, false);
 								}
 								internalPower[i] -= watts;
-								dbgEnergyInput[i] += watts;
 								dbgEnergyOutput[j] += watts;
 							} else if (ep instanceof IEnergyReceiver) {
 								IEnergyReceiver handler = (IEnergyReceiver) ep;
@@ -239,7 +235,6 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 											watts, false);
 								}
 								internalPower[i] -= watts;
-								dbgEnergyInput[i] += watts;
 								dbgEnergyOutput[j] += watts;
 							}
 
@@ -344,6 +339,10 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 				&& currentDate != container.getWorldObj().getTotalWorldTime()) {
 			currentDate = container.getWorldObj().getTotalWorldTime();
 
+			Arrays.fill(dbgEnergyInput, 0);
+			Arrays.fill(dbgEnergyOffered, 0);
+			Arrays.fill(dbgEnergyOutput, 0);
+
 			powerQuery = nextPowerQuery;
 			nextPowerQuery = new int[6];
 
@@ -359,14 +358,18 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	 * Power Pipes or a subclass thereof.
 	 */
 	public int receiveEnergy(ForgeDirection from, int val) {
+		int side = from.ordinal();
+
 		step();
+
+		dbgEnergyOffered[side] += val;
+
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
 			int ret = ((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from, val);
 			if (ret >= 0) {
 				return ret;
 			}
 		}
-		int side = from.ordinal();
 		if (internalNextPower[side] > maxPower) {
 			return 0;
 		}
@@ -380,6 +383,8 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 				val = 0;
 			}
 		}
+
+		dbgEnergyInput[side] += val;
 
 		return val;
 	}
@@ -462,6 +467,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 		info.add("- internalPower: " + Arrays.toString(internalPower) + " <- " + Arrays.toString(internalNextPower));
 		info.add("- powerQuery: " + Arrays.toString(powerQuery) + " <- " + Arrays.toString(nextPowerQuery));
 		info.add("- energy: IN " + Arrays.toString(dbgEnergyInput) + ", OUT " + Arrays.toString(dbgEnergyOutput));
+		info.add("- energy: OFFERED " + Arrays.toString(dbgEnergyOffered));
 
 		int[] totalPowerQuery = new int[6];
 		for (int i = 0; i < 6; ++i) {

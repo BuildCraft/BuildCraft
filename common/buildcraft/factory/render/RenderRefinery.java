@@ -28,7 +28,7 @@ import buildcraft.factory.TileRefinery;
 
 public class RenderRefinery extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/refinery.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftfactory:textures/blocks/refineryBlock/refinery.png");
 	private static final float pixel = (float) (1.0 / 16.0);
 	private final ModelRenderer tank;
 	private final ModelRenderer[] magnet = new ModelRenderer[4];

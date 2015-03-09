@@ -17,7 +17,7 @@ import buildcraft.energy.TileEngineIron;
 
 public class GuiCombustionEngine extends GuiEngine {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/combustion_engine_gui.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftenergy:textures/gui/combustion_engine_gui.png");
 
 	public GuiCombustionEngine(InventoryPlayer inventoryplayer, TileEngineIron tileEngine) {
 		super(new ContainerEngine(inventoryplayer, tileEngine), tileEngine, TEXTURE);

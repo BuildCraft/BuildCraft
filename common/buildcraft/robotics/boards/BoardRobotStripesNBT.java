@@ -27,8 +27,8 @@ public final class BoardRobotStripesNBT extends RedstoneBoardRobotNBT {
 
 	public static BoardRobotStripesNBT instance = new BoardRobotStripesNBT();
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft",
-			DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_stripes.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation(
+			DefaultProps.TEXTURE_PATH_ROBOTS + "/robot_stripes.png");
 
 	private IIcon icon;
 
@@ -54,7 +54,7 @@ public final class BoardRobotStripesNBT extends RedstoneBoardRobotNBT {
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:board_yellow");
+		icon = iconRegister.registerIcon("buildcraftrobotics:board/yellow");
 	}
 
 	@Override

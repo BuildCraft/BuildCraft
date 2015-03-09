@@ -26,7 +26,6 @@ import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.lib.utils.Utils;
 
 public class BlockConstructionMarker extends BlockMarker {
-
     public BlockConstructionMarker() {
 	}
 
@@ -52,12 +51,6 @@ public class BlockConstructionMarker extends BlockMarker {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		blockIcon = par1IconRegister.registerIcon("buildcraft:constructMarker");
-	}
-
-	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
 
@@ -68,12 +61,8 @@ public class BlockConstructionMarker extends BlockMarker {
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7,
 			float par8, float par9) {
-		super.onBlockActivated(world, x, y, z, entityplayer, par6, par7, par8, par9);
-
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
-		FMLCommonHandler.instance().bus().post(event);
-		if (event.isCanceled()) {
-			return false;
+		if (super.onBlockActivated(world, x, y, z, entityplayer, par6, par7, par8, par9)) {
+			return true;
 		}
 
 		TileConstructionMarker marker = (TileConstructionMarker) world.getTileEntity(x, y, z);

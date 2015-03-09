@@ -37,14 +37,12 @@ import buildcraft.core.lib.fluids.TankUtils;
 import buildcraft.core.lib.utils.Utils;
 
 public class BlockRefinery extends BlockBuildCraft {
-
-	private static IIcon icon;
-
 	public BlockRefinery() {
 		super(Material.iron);
 
 		setHardness(5F);
 		setCreativeTab(BCCreativeTab.get("main"));
+		setRotatable(true);
 	}
 
 	@Override
@@ -54,10 +52,6 @@ public class BlockRefinery extends BlockBuildCraft {
 
 	@Override
 	public boolean renderAsNormalBlock() {
-		return false;
-	}
-
-	public boolean isACube() {
 		return false;
 	}
 
@@ -72,48 +66,15 @@ public class BlockRefinery extends BlockBuildCraft {
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
-		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
-
-		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
-
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
-	}
-
-	@Override
-	public boolean rotateBlock(World world, int x, int y, int z, ForgeDirection axis) {
-		int meta = world.getBlockMetadata(x, y, z);
-
-		switch (ForgeDirection.getOrientation(meta)) {
-			case WEST:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.SOUTH.ordinal(), 3);
-				break;
-			case EAST:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.NORTH.ordinal(), 3);
-				break;
-			case NORTH:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.WEST.ordinal(), 3);
-				break;
-			case SOUTH:
-			default:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.EAST.ordinal(), 3);
-				break;
-		}
-		world.markBlockForUpdate(x, y, z);
-		return true;
-	}
-
-	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
+		if (super.onBlockActivated(world, x, y, z, player, side, hitX, hitY, hitZ)) {
+			return true;
+		}
+
 		TileEntity tile = world.getTileEntity(x, y, z);
 
 		if (!(tile instanceof TileRefinery)) {
 			return false;
-		}
-		BlockInteractionEvent event = new BlockInteractionEvent(player, this);
-		FMLCommonHandler.instance().bus().post(event);
-		if (event.isCanceled()) {
-			 return false;
 		}
 
 		ItemStack current = player.getCurrentEquippedItem();
@@ -140,17 +101,5 @@ public class BlockRefinery extends BlockBuildCraft {
 		}
 
 		return true;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		icon = par1IconRegister.registerIcon("buildcraft:refineryBack");
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int par1, int par2) {
-		return icon;
 	}
 }

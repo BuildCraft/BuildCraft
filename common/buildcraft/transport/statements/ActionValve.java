@@ -58,7 +58,7 @@ public class ActionValve extends BCStatement implements IActionInternal {
 
     @Override
     public void registerIcons(IIconRegister iconRegister) {
-    	icon = iconRegister.registerIcon("buildcraft:triggers/action_valve_" + state.name().toLowerCase(Locale.ENGLISH));
+    	icon = iconRegister.registerIcon("buildcrafttransport:triggers/action_valve_" + state.name().toLowerCase(Locale.ENGLISH));
     }
 
     @Override

@@ -29,10 +29,6 @@ import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.NBTUtils;
 
 public class ItemRedstoneBoard extends ItemBuildCraft {
-
-	public IIcon cleanBoard;
-	public IIcon unknownBoard;
-
 	public ItemRedstoneBoard() {
 		super(BCCreativeTab.get("boards"));
 	}
@@ -56,9 +52,9 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 		NBTTagCompound cpt = NBTUtils.getItemData(stack);
 
 		if (!cpt.hasKey("id")) {
-			itemIcon = cleanBoard;
+			itemIcon = icons[0];
 		} else if ("<unknown>".equals(cpt.getString("id"))) {
-			itemIcon = unknownBoard;
+			itemIcon = icons[1];
 		} else {
 			itemIcon = RedstoneBoardRegistry.instance.getRedstoneBoard(cpt).getIcon(cpt);
 		}
@@ -68,12 +64,10 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister) {
-		cleanBoard = par1IconRegister.registerIcon("buildcraft:board_clean");
-		unknownBoard = par1IconRegister.registerIcon("buildcraft:board_unknown");
-
-		RedstoneBoardRegistry.instance.registerIcons(par1IconRegister);
+	public String[] getIconNames() {
+		return new String[]{ "board/clean", "board/unknown" };
 	}
+
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override

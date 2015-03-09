@@ -20,12 +20,15 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.robotics.EntityRobot;
 
 public final class BoardRobotPickerNBT extends RedstoneBoardRobotNBT {
-
 	public static BoardRobotPickerNBT instance = new BoardRobotPickerNBT();
+
+	private static final ResourceLocation TEXTURE = new ResourceLocation(
+			DefaultProps.TEXTURE_PATH_ROBOTS + "/robot_picker.png");
 
 	public IIcon icon;
 
@@ -54,11 +57,11 @@ public final class BoardRobotPickerNBT extends RedstoneBoardRobotNBT {
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:board_green");
+		icon = iconRegister.registerIcon("buildcraftrobotics:board/green");
 	}
 
 	@Override
 	public ResourceLocation getRobotTexture() {
-		return EntityRobot.ROBOT_TRANSPORT;
+		return TEXTURE;
 	}
 }

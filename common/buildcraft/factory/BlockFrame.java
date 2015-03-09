@@ -211,8 +211,7 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-	    blockIcon = par1IconRegister.registerIcon("buildcraft:blockFrame");
+	public void registerBlockIcons(IIconRegister register) {
+		blockIcon = register.registerIcon("buildcraftfactory:frameBlock/default");
 	}
 }

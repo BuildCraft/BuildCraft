@@ -36,12 +36,12 @@ public abstract class GateExpansionBuildcraft implements IGateExpansion {
 
 	@Override
 	public void registerBlockOverlay(IIconRegister iconRegister) {
-		iconBlock = iconRegister.registerIcon("buildcraft:gates/gate_expansion_" + tag);
+		iconBlock = iconRegister.registerIcon("buildcrafttransport:gates/gate_expansion_" + tag);
 	}
 
 	@Override
 	public void registerItemOverlay(IIconRegister iconRegister) {
-		iconItem = iconRegister.registerIcon("buildcraft:gates/gate_expansion_" + tag);
+		iconItem = iconRegister.registerIcon("buildcrafttransport:gates/gate_expansion_" + tag);
 	}
 
 	@Override

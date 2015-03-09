@@ -27,9 +27,9 @@ public class GuiDiamondPipe extends GuiBuildCraft {
 
 	static {
 		if (!BuildCraftCore.colorBlindMode) {
-			TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/filter.png");
+			TEXTURE = new ResourceLocation("buildcrafttransport:textures/gui/filter.png");
 		} else {
-			TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/filter_cb.png");
+			TEXTURE = new ResourceLocation("buildcrafttransport:textures/gui/filter_cb.png");
 		}
 	}
 

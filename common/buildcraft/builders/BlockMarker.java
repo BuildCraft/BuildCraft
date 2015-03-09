@@ -86,10 +86,6 @@ public class BlockMarker extends BlockBuildCraft {
 		return BuildCraftCore.markerModel;
 	}
 
-	public boolean isACube() {
-		return false;
-	}
-
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileMarker();
@@ -97,14 +93,12 @@ public class BlockMarker extends BlockBuildCraft {
 
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-		if (entityplayer.inventory.getCurrentItem() != null
-				&& entityplayer.inventory.getCurrentItem().getItem() instanceof IMapLocation) {
-			return false;
+		if (super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9)) {
+			return true;
 		}
 
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
-		FMLCommonHandler.instance().bus().post(event);
-		if (event.isCanceled()) {
+		if (entityplayer.inventory.getCurrentItem() != null
+				&& entityplayer.inventory.getCurrentItem().getItem() instanceof IMapLocation) {
 			return false;
 		}
 
@@ -113,12 +107,6 @@ public class BlockMarker extends BlockBuildCraft {
 			((TileMarker) tile).tryConnection();
 		}
 		return true;
-	}
-
-	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
-		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, block, par6);
 	}
 
 	@Override
@@ -168,11 +156,5 @@ public class BlockMarker extends BlockBuildCraft {
 			dropBlockAsItem(world, x, y, z, 0, 0);
 			world.setBlockToAir(x, y, z);
 		}
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister iconRegister) {
-		this.blockIcon = iconRegister.registerIcon("buildcraft:blockMarker");
 	}
 }

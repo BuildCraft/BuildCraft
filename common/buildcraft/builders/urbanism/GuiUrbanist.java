@@ -24,7 +24,7 @@ import buildcraft.core.lib.gui.GuiAdvancedInterface;
 
 public class GuiUrbanist extends GuiAdvancedInterface {
 
-	private static final ResourceLocation TOOLBAR_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/urbanist_tools.png");
+	private static final ResourceLocation TOOLBAR_TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/urbanist_tools.png");
 	private static final int TOOLBAR_TEXTURE_WIDTH = 194;
 	private static final int TOOLBAR_TEXTURE_HEIGHT = 27;
 

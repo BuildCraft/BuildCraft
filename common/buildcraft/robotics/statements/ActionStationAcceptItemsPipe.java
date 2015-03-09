@@ -33,7 +33,7 @@ public class ActionStationAcceptItemsPipe extends ActionStationInputItems {
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/action_station_drop_in_pipe");
+		icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_station_drop_in_pipe");
 	}
 
 	@Override

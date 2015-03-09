@@ -25,7 +25,7 @@ import buildcraft.core.lib.gui.tooltips.ToolTip;
 @SideOnly(Side.CLIENT)
 public class GuiBetterButton extends GuiButton implements IToolTipProvider {
 
-	public static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/buttons.png");
+	public static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation("buildcraftcore:textures/gui/buttons.png");
 	protected final IButtonTextureSet texture;
 	private ToolTip toolTip;
 

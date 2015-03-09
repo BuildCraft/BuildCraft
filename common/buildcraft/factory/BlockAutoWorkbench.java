@@ -26,34 +26,17 @@ import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
 
 public class BlockAutoWorkbench extends BlockBuildCraft {
-
-	IIcon topTexture;
-	IIcon sideTexture;
-
 	public BlockAutoWorkbench() {
 		super(Material.wood);
 		setHardness(3.0F);
 	}
 
 	@Override
-	public IIcon getIcon(int i, int j) {
-		if (i == 1 || i == 0) {
-			return topTexture;
-		} else {
-			return sideTexture;
-		}
-	}
-
-	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-		super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9);
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
-		FMLCommonHandler.instance().bus().post(event);
-		if (event.isCanceled()) {
-			return false;
+		if (super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9)) {
+			return true;
 		}
 
-		// Drop through if the player is sneaking
 		if (entityplayer.isSneaking()) {
 			return false;
 		}
@@ -74,12 +57,5 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileAutoWorkbench();
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-	    topTexture = par1IconRegister.registerIcon("buildcraft:autoWorkbench_top");
-	    sideTexture = par1IconRegister.registerIcon("buildcraft:autoWorkbench_side");
 	}
 }

@@ -49,7 +49,7 @@ public class ActionRobotFilter extends BCStatement implements IActionInternal {
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/action_robot_filter");
+		icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_robot_filter");
 	}
 
 	@Override

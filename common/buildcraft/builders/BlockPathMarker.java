@@ -33,28 +33,20 @@ public class BlockPathMarker extends BlockMarker {
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
-		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, block, par6);
-	}
+	public IIcon getIconAbsolute(IBlockAccess iblockaccess, int x, int y, int z, int side, int metadata) {
+		TilePathMarker marker = (TilePathMarker) iblockaccess.getTileEntity(x, y, z);
 
-	@Override
-	@SuppressWarnings({ "all" })
-	// @Override (client only)
-	public IIcon getIcon(IBlockAccess iblockaccess, int i, int j, int k, int l) {
-		TilePathMarker marker = (TilePathMarker) iblockaccess.getTileEntity(i, j, k);
-
-		if (l == 1 || (marker != null && marker.tryingToConnect)) {
+		if (side == 1 || (marker != null && marker.tryingToConnect)) {
 			return activeMarker;
 		} else {
-			return super.getIcon(iblockaccess, i, j, k, l);
+			return super.getIconAbsolute(side, metadata);
 		}
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
-	    blockIcon = par1IconRegister.registerIcon("buildcraft:blockPathMarker");
-		activeMarker = par1IconRegister.registerIcon("buildcraft:blockPathMarkerActive");
+		super.registerBlockIcons(par1IconRegister);
+		activeMarker = par1IconRegister.registerIcon("buildcraftbuilders:pathMarkerBlock/active");
 	}
 }

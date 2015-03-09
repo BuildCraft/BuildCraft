@@ -30,10 +30,6 @@ import buildcraft.core.GuiIds;
 import buildcraft.core.lib.utils.Utils;
 
 public class BlockRequester extends BlockBuildCraft {
-
-	private IIcon blockTextureDefault;
-	private IIcon blockTextureSide;
-
 	public BlockRequester() {
 		super(Material.iron);
 	}
@@ -46,11 +42,8 @@ public class BlockRequester extends BlockBuildCraft {
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7,
 			float par8, float par9) {
-
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
-		FMLCommonHandler.instance().bus().post(event);
-		if (event.isCanceled()) {
-			return false;
+		if (super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9)) {
+			return true;
 		}
 
 		if (!world.isRemote) {
@@ -60,30 +53,4 @@ public class BlockRequester extends BlockBuildCraft {
 
 		return true;
 	}
-
-	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
-		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
-
-		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
-
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		blockTextureDefault = par1IconRegister.registerIcon("buildcraft:commander_side");
-		blockTextureSide = par1IconRegister.registerIcon("buildcraft:requester_side");
-	}
-
-	@Override
-	public IIcon getIcon(int i, int j) {
-		if (i == 0 || i == 1) {
-			return blockTextureDefault;
-		} else {
-			return blockTextureSide;
-		}
-	}
-
 }

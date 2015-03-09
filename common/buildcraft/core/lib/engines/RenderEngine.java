@@ -82,6 +82,10 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		field_147501_a = TileEntityRendererDispatcher.instance;
 	}
 
+	public RenderEngine(TileEngineBase engine) {
+		this(engine.getBaseTexture(), engine.getChamberTexture(), engine.getTrunkTexture(TileEngineBase.EnergyStage.BLUE));
+	}
+
 	@Override
 	public void inventoryRender(double x, double y, double z, float f, float f1) {
 		render(0.25F, ForgeDirection.UP, baseTexture, chamberTexture, trunkTexture, x, y, z);
@@ -89,7 +93,6 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
-
 		TileEngineBase engine = (TileEngineBase) tileentity;
 
 		if (engine != null) {

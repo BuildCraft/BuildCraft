@@ -57,7 +57,7 @@ public final class GateDefinition {
 
 		private GateMaterial(String guiFile, int guiHeight, int numSlots, int triggerParameterSlots,
 				int actionParameterSlots, int maxWireColor) {
-			this.guiFile = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/" + guiFile);
+			this.guiFile = new ResourceLocation("buildcrafttransport:textures/gui/" + guiFile);
 			this.guiHeight = guiHeight;
 			this.numSlots = numSlots;
 			this.numTriggerParameters = triggerParameterSlots;
@@ -82,14 +82,14 @@ public final class GateDefinition {
 		@SideOnly(Side.CLIENT)
 		public void registerBlockIcon(IIconRegister iconRegister) {
 			if (this != REDSTONE) {
-				iconBlock = iconRegister.registerIcon("buildcraft:gates/gate_material_" + getTag());
+				iconBlock = iconRegister.registerIcon("buildcrafttransport:gates/gate_material_" + getTag());
 			}
 		}
 
 		@SideOnly(Side.CLIENT)
 		public void registerItemIcon(IIconRegister iconRegister) {
 			if (this != REDSTONE) {
-				iconItem = iconRegister.registerIcon("buildcraft:gates/gate_material_" + getTag());
+				iconItem = iconRegister.registerIcon("buildcrafttransport:gates/gate_material_" + getTag());
 			}
 		}
 
@@ -144,15 +144,15 @@ public final class GateDefinition {
 
 		@SideOnly(Side.CLIENT)
 		public void registerBlockIcon(IIconRegister iconRegister) {
-			iconLit = iconRegister.registerIcon("buildcraft:gates/gate_" + getTag() + "_lit");
-			iconDark = iconRegister.registerIcon("buildcraft:gates/gate_" + getTag() + "_dark");
+			iconLit = iconRegister.registerIcon("buildcrafttransport:gates/gate_" + getTag() + "_lit");
+			iconDark = iconRegister.registerIcon("buildcrafttransport:gates/gate_" + getTag() + "_dark");
 			
-			iconGate = iconRegister.registerIcon("buildcraft:gates/gate_" + getTag());
+			iconGate = iconRegister.registerIcon("buildcrafttransport:gates/gate_" + getTag());
 		}
 
 		@SideOnly(Side.CLIENT)
 		public void registerItemIcon(IIconRegister iconRegister) {
-			iconItem = iconRegister.registerIcon("buildcraft:gates/gate_logic_" + getTag());
+			iconItem = iconRegister.registerIcon("buildcrafttransport:gates/gate_logic_" + getTag());
 		}
 
 		public static GateLogic fromOrdinal(int ordinal) {

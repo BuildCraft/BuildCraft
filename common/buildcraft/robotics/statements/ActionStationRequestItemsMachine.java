@@ -29,7 +29,7 @@ public class ActionStationRequestItemsMachine extends BCStatement implements IAc
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/action_station_machine_request");
+		icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_station_machine_request");
 	}
 
 	@Override

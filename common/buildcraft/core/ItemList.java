@@ -36,10 +36,6 @@ import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.NBTUtils;
 
 public class ItemList extends ItemBuildCraft implements IList {
-
-	private IIcon baseIcon;
-	private IIcon writtenIcon;
-
 	public static class StackLine {
 		public boolean oreWildcard = false;
 		public boolean subitemsWildcard = false;
@@ -222,20 +218,12 @@ public class ItemList extends ItemBuildCraft implements IList {
 
 	@Override
 	public IIcon getIconIndex(ItemStack stack) {
-		if (NBTUtils.getItemData(stack).hasKey("written")) {
-			itemIcon = writtenIcon;
-		} else {
-			itemIcon = baseIcon;
-		}
-
-		return itemIcon;
+		return icons[NBTUtils.getItemData(stack).hasKey("written") ? 1 : 0];
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister) {
-		baseIcon = par1IconRegister.registerIcon("buildcraft:list");
-		writtenIcon = par1IconRegister.registerIcon("buildcraft:list_used");
+	public String[] getIconNames() {
+		return new String[]{ "list/clean", "list/used" };
 	}
 
 	@Override

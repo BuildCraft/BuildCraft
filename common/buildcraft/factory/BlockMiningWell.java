@@ -27,41 +27,13 @@ import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.utils.Utils;
 
 public class BlockMiningWell extends BlockBuildCraft {
-
-	IIcon textureFront, textureSides, textureBack, textureTop;
-
 	public BlockMiningWell() {
 		super(Material.ground);
 
 		setHardness(5F);
 		setResistance(10F);
 		setStepSound(soundTypeStone);
-	}
-
-	@Override
-	public IIcon getIcon(int i, int j) {
-		if (j == 0 && i == 3) {
-			return textureFront;
-		}
-
-		if (i == 1) {
-			return textureTop;
-		} else if (i == 0) {
-			return textureBack;
-		} else if (i == j) {
-			return textureFront;
-		} else if (j >= 0 && j < 6 && ForgeDirection.values()[j].getOpposite().ordinal() == i) {
-			return textureBack;
-		} else {
-			return textureSides;
-		}
-	}
-
-	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
-		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
-		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
+		setRotatable(true);
 	}
 
 	@Override
@@ -83,14 +55,5 @@ public class BlockMiningWell extends BlockBuildCraft {
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileMiningWell();
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-	    textureFront = par1IconRegister.registerIcon("buildcraft:miningwell_front");
-        textureSides = par1IconRegister.registerIcon("buildcraft:miningwell_side");
-        textureBack = par1IconRegister.registerIcon("buildcraft:miningwell_back");
-        textureTop = par1IconRegister.registerIcon("buildcraft:miningwell_top");
 	}
 }

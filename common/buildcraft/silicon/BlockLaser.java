@@ -42,9 +42,6 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 			{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.0, 0.25, 1.0, 1.0), AxisAlignedBB.getBoundingBox(0.25, 0.3125, 0.3125, 0.8125, 0.6875, 0.6875)} // +X
 	};
 
-	@SideOnly(Side.CLIENT)
-	private IIcon textureTop, textureBottom, textureSide;
-
 	public BlockLaser() {
 		super(Material.iron);
 		setHardness(10F);
@@ -110,25 +107,27 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 		return false;
 	}
 
-	public boolean isACube() {
-		return false;
-	}
-
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileLaser();
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
+	public IIcon getIcon(IBlockAccess access, int x, int y, int z, int side) {
+		return getIcon(side, access.getBlockMetadata(x, y, z));
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
 	public IIcon getIcon(int i, int j) {
 		if (i == (j ^ 1)) {
-			return textureBottom;
+			return icons[0][0];
 		} else if (i == j) {
-			return textureTop;
+			return icons[0][1];
 		} else {
-			return textureSide;
+			return icons[0][2];
 		}
-
 	}
 
 	@Override
@@ -142,14 +141,6 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 		}
 
 		return retMeta;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		textureTop = par1IconRegister.registerIcon("buildcraft:laser_top");
-		textureBottom = par1IconRegister.registerIcon("buildcraft:laser_bottom");
-		textureSide = par1IconRegister.registerIcon("buildcraft:laser_side");
 	}
 
 	@Override

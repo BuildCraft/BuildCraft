@@ -16,7 +16,7 @@ import buildcraft.core.DefaultProps;
 
 class UrbanistToolBlock extends UrbanistTool {
 
-	private static final ResourceLocation GUI_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/urbanist_tool_place_block.png");
+	private static final ResourceLocation GUI_TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/urbanist_tool_place_block.png");
 	private static final int GUI_TEXTURE_WIDTH = 64;
 	private static final int GUI_TEXTURE_HEIGHT = 210;
 

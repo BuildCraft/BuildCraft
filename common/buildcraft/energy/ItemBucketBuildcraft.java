@@ -43,6 +43,6 @@ public class ItemBucketBuildcraft extends ItemBucket {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister par1IconRegister) {
-		this.itemIcon = par1IconRegister.registerIcon("buildcraft:" + iconName);
+		this.itemIcon = par1IconRegister.registerIcon("buildcraftenergy:" + iconName);
 	}
 }

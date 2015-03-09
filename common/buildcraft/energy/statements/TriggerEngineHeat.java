@@ -55,6 +55,6 @@ public class TriggerEngineHeat extends BCStatement implements ITriggerExternal {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/trigger_engineheat_" + stage.name().toLowerCase(Locale.ENGLISH));
+		icon = iconRegister.registerIcon("buildcraftenergy:triggers/trigger_engineheat_" + stage.name().toLowerCase(Locale.ENGLISH));
 	}
 }

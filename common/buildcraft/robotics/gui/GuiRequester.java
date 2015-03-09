@@ -19,8 +19,7 @@ import buildcraft.robotics.TileRequester;
 
 public class GuiRequester extends GuiAdvancedInterface {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft",
-			DefaultProps.TEXTURE_PATH_GUI + "/requester_gui.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftrobotics:textures/gui/requester_gui.png");
 
 	private TileRequester requester;
 

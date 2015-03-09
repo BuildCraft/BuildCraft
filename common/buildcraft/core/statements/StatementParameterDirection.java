@@ -99,12 +99,12 @@ public class StatementParameterDirection implements IStatementParameter {
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icons = new IIcon[] {
-				iconRegister.registerIcon("buildcraft:triggers/trigger_dir_down"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_dir_up"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_dir_north"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_dir_south"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_dir_west"),
-				iconRegister.registerIcon("buildcraft:triggers/trigger_dir_east")
+				iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_down"),
+				iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_up"),
+				iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_north"),
+				iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_south"),
+				iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_west"),
+				iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_east")
 		};
 	}
 

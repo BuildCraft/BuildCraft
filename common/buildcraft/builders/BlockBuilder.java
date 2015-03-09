@@ -45,6 +45,7 @@ public class BlockBuilder extends BlockBuildCraft {
 		super(Material.iron);
 		setHardness(5F);
 		setCreativeTab(BCCreativeTab.get("main"));
+		setRotatable(true);
 	}
 
 	@Override
@@ -53,34 +54,12 @@ public class BlockBuilder extends BlockBuildCraft {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int i, int j) {
-		if (j == 0 && i == 3) {
-			return blockTextureFront;
-		}
-
-		if (i == j) {
-			return blockTextureFront;
-		}
-
-		switch (i) {
-			case 1:
-				return blockTextureTop;
-			default:
-				return blockTextureSide;
-		}
-	}
-
-	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-
-		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking()) {
-			return false;
+		if (super.onBlockActivated(world, x, y, z, entityplayer, par6, par7, par8, par9)) {
+			return true;
 		}
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
-		FMLCommonHandler.instance().bus().post(event);
-		if (event.isCanceled()) {
+
+		if (entityplayer.isSneaking()) {
 			return false;
 		}
 
@@ -88,30 +67,7 @@ public class BlockBuilder extends BlockBuildCraft {
 		TileBuilder builder = tile instanceof TileBuilder ? (TileBuilder) tile : null;
 
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, x, y, z)) {
-			int meta = world.getBlockMetadata(x, y, z);
-
-			switch (ForgeDirection.values()[meta]) {
-				case WEST:
-					world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.SOUTH.ordinal(), 0);
-					break;
-				case EAST:
-					world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.NORTH.ordinal(), 0);
-					break;
-				case NORTH:
-					world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.WEST.ordinal(), 0);
-					break;
-				case SOUTH:
-				default:
-					world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.EAST.ordinal(), 0);
-					break;
-			}
-
-			world.markBlockForUpdate(x, y, z);
-			((IToolWrench) equipped).wrenchUsed(entityplayer, x, y, z);
-
-			return true;
-		} else if (equipped instanceof ItemConstructionMarker) {
+		if (equipped instanceof ItemConstructionMarker) {
 			if (ItemConstructionMarker.linkStarted(entityplayer.getCurrentEquippedItem())) {
 				ItemConstructionMarker.link(entityplayer.getCurrentEquippedItem(), world, x, y, z);
 			}
@@ -126,28 +82,6 @@ public class BlockBuilder extends BlockBuildCraft {
 
 			return true;
 		}
-	}
-
-	@Override
-	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
-		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
-		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
-
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
-	}
-
-	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
-		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, block, par6);
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		blockTextureTop = par1IconRegister.registerIcon("buildcraft:builder_top");
-		blockTextureSide = par1IconRegister.registerIcon("buildcraft:builder_side");
-		blockTextureFront = par1IconRegister.registerIcon("buildcraft:builder_front");
 	}
 
 	@Override

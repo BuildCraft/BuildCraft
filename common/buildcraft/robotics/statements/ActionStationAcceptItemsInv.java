@@ -38,7 +38,7 @@ public class ActionStationAcceptItemsInv extends ActionStationInputItems {
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/action_station_accept_items");
+		icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_station_accept_items");
 	}
 
 	@Override

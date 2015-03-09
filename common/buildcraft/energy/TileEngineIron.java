@@ -13,7 +13,6 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.BiomeGenBase;
 
 import net.minecraftforge.common.util.ForgeDirection;
@@ -31,11 +30,11 @@ import buildcraft.api.fuels.IFuel;
 import buildcraft.api.fuels.ISolidCoolant;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
+import buildcraft.core.lib.engines.TileEngineWithInventory;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.fluids.TankManager;
 import buildcraft.core.lib.fluids.TankUtils;
 import buildcraft.core.lib.inventory.InvUtils;
-import buildcraft.energy.gui.ContainerEngine;
 
 public class TileEngineIron extends TileEngineWithInventory implements IFluidHandler {
 
@@ -62,13 +61,8 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	}
 
 	@Override
-	public ResourceLocation getBaseTexture() {
-		return BASE_TEXTURES[2];
-	}
-
-	@Override
-	public ResourceLocation getChamberTexture() {
-		return CHAMBER_TEXTURES[2];
+	public String getResourcePrefix() {
+		return "buildcraftenergy:textures/blocks/engineIron";
 	}
 
 	@Override

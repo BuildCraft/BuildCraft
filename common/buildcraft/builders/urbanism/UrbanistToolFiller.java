@@ -28,7 +28,7 @@ import buildcraft.core.lib.gui.GuiAdvancedInterface;
 
 class UrbanistToolFiller extends UrbanistToolArea {
 
-	private static final ResourceLocation GUI_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/urbanist_tool_filler.png");
+	private static final ResourceLocation GUI_TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/urbanist_tool_filler.png");
 	private static final int GUI_TEXTURE_WIDTH = 64;
 	private static final int GUI_TEXTURE_HEIGHT = 210;
 

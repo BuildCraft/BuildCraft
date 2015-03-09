@@ -65,7 +65,7 @@ public class StatementParameterRedstoneGateSideOnly implements
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/redstone_gate_side_only");
+		icon = iconRegister.registerIcon("buildcraftcore:triggers/redstone_gate_side_only");
 	}
 
 	@Override

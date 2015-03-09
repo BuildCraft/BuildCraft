@@ -27,8 +27,8 @@ public final class BoardRobotLumberjackNBT extends RedstoneBoardRobotNBT {
 
 	public static BoardRobotLumberjackNBT instance = new BoardRobotLumberjackNBT();
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft",
-			DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_lumberjack.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation(
+			DefaultProps.TEXTURE_PATH_ROBOTS + "/robot_lumberjack.png");
 
 	public IIcon icon;
 
@@ -57,7 +57,7 @@ public final class BoardRobotLumberjackNBT extends RedstoneBoardRobotNBT {
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:board_blue");
+		icon = iconRegister.registerIcon("buildcraftrobotics:board/blue");
 	}
 
 	@Override

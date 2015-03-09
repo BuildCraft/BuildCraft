@@ -13,8 +13,8 @@ import net.minecraft.world.World;
 
 import cpw.mods.fml.common.network.IGuiHandler;
 
-import buildcraft.core.lib.gui.ContainerList;
-import buildcraft.core.lib.gui.GuiList;
+import buildcraft.core.gui.ContainerList;
+import buildcraft.core.gui.GuiList;
 
 public class CoreGuiHandler implements IGuiHandler {
 

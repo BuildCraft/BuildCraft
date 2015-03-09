@@ -36,8 +36,8 @@ import buildcraft.robotics.ItemRobot;
 
 public class RenderRobot extends Render implements IItemRenderer {
 
-	private static final ResourceLocation overlay = new ResourceLocation("buildcraft",
-			DefaultProps.TEXTURE_PATH_ENTITIES + "/robot_overlay.png");
+	private static final ResourceLocation overlay = new ResourceLocation(
+			DefaultProps.TEXTURE_PATH_ROBOTS + "/robot_overlay.png");
 	
 	private final EntityItem dummyEntityItem = new EntityItem(null);
 	private final RenderItem customRenderItem;

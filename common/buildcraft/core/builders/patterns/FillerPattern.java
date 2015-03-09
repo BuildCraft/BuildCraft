@@ -61,7 +61,7 @@ public abstract class FillerPattern implements IFillerPattern {
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:fillerPatterns/" + tag);
+		icon = iconRegister.registerIcon("buildcraftcore:fillerPatterns/" + tag);
 	}
 
 	@Override

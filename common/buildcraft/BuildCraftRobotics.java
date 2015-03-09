@@ -142,6 +142,8 @@ import buildcraft.robotics.statements.ActionStationRequestItems;
 import buildcraft.robotics.statements.ActionStationRequestItemsMachine;
 import buildcraft.robotics.statements.RobotsActionProvider;
 import buildcraft.robotics.statements.RobotsTriggerProvider;
+import buildcraft.robotics.statements.TriggerRobotInStation;
+import buildcraft.robotics.statements.TriggerRobotLinked;
 import buildcraft.robotics.statements.TriggerRobotSleep;
 import buildcraft.silicon.ItemRedstoneChipset;
 
@@ -158,6 +160,9 @@ public class BuildCraftRobotics extends BuildCraftMod {
 	public static Item robotStationItem;
 
 	public static ITriggerInternal triggerRobotSleep = new TriggerRobotSleep();
+	public static ITriggerInternal triggerRobotInStation = new TriggerRobotInStation();
+	public static ITriggerInternal triggerRobotLinked = new TriggerRobotLinked(false);
+	public static ITriggerInternal triggerRobotReserved = new TriggerRobotLinked(true);
 
 	public static IActionInternal actionRobotGotoStation = new ActionRobotGotoStation();
 	public static IActionInternal actionRobotWakeUp = new ActionRobotWakeUp();
@@ -170,7 +175,8 @@ public class BuildCraftRobotics extends BuildCraftMod {
 	public static IActionInternal actionStationProvideItems = new ActionStationProvideItems();
 	public static IActionInternal actionStationAcceptFluids = new ActionStationAcceptFluids();
 	public static IActionInternal actionStationProvideFluids = new ActionStationProvideFluids();
-	public static IActionInternal actionStationForbidRobot = new ActionStationForbidRobot();
+	public static IActionInternal actionStationForceRobot = new ActionStationForbidRobot(true);
+	public static IActionInternal actionStationForbidRobot = new ActionStationForbidRobot(true);
 	public static IActionInternal actionStationDropInPipe = new ActionStationAcceptItemsPipe();
 	public static IActionInternal actionStationMachineRequestItems = new ActionStationRequestItemsMachine();
 

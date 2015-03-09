@@ -33,50 +33,23 @@ import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.utils.Utils;
 
 public class BlockQuarry extends BlockBuildCraft {
-
-	IIcon textureTop;
-	IIcon textureFront;
-	IIcon textureSide;
-
 	public BlockQuarry() {
 		super(Material.iron);
 
 		setHardness(10F);
 		setResistance(10F);
 		setStepSound(soundTypeAnvil);
+		setRotatable(true);
 	}
 
 	@Override
 	public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
 		super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
-
-		ForgeDirection orientation = Utils.get2dOrientation(entityliving);
-
-		world.setBlockMetadataWithNotify(i, j, k, orientation.getOpposite().ordinal(), 1);
 		if (entityliving instanceof EntityPlayer) {
 			TileEntity tile = world.getTileEntity(i, j, k);
 			if (tile instanceof TileQuarry) {
 				((TileQuarry) tile).placedBy = (EntityPlayer) entityliving;
 			}
-		}
-	}
-
-	@Override
-	public IIcon getIcon(int i, int j) {
-		// If no metadata is set, then this is an icon.
-		if (j == 0 && i == 3) {
-			return textureFront;
-		}
-
-		if (i == j && i > 1) {
-			return textureFront;
-		}
-
-		switch (i) {
-			case 1:
-				return textureTop;
-			default:
-				return textureSide;
 		}
 	}
 
@@ -151,6 +124,10 @@ public class BlockQuarry extends BlockBuildCraft {
 
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+		if (super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9)) {
+			return true;
+		}
+
 		TileQuarry tile = (TileQuarry) world.getTileEntity(i, j, k);
 
 		// Drop through if the player is sneaking
@@ -169,14 +146,6 @@ public class BlockQuarry extends BlockBuildCraft {
 		}
 
 		return false;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		textureSide = par1IconRegister.registerIcon("buildcraft:quarry_side");
-		textureTop = par1IconRegister.registerIcon("buildcraft:quarry_top");
-		textureFront = par1IconRegister.registerIcon("buildcraft:quarry_front");
 	}
 
 	@Override

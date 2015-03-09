@@ -26,26 +26,17 @@ import buildcraft.core.BCCreativeTab;
 import buildcraft.core.GuiIds;
 
 public class BlockBlueprintLibrary extends BlockBuildCraft {
-
-	private IIcon textureTop;
-    private IIcon textureSide;
-
     public BlockBlueprintLibrary() {
 		super(Material.wood, BCCreativeTab.get("main"));
 	}
 
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-		super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9);
-
-		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking()) {
-			return false;
+		if (super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9)) {
+			return true;
 		}
-		
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
-		FMLCommonHandler.instance().bus().post(event);
-		if (event.isCanceled()) {
+
+		if (entityplayer.isSneaking()) {
 			return false;
 		}
 
@@ -62,23 +53,5 @@ public class BlockBlueprintLibrary extends BlockBuildCraft {
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileBlueprintLibrary();
-	}
-
-	@Override
-	public IIcon getIcon(int i, int j) {
-		switch (i) {
-		case 0:
-		case 1:
-			return textureTop;
-		default:
-			return textureSide;
-		}
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-	    textureTop = par1IconRegister.registerIcon("buildcraft:library_topbottom");
-        textureSide = par1IconRegister.registerIcon("buildcraft:library_side");
 	}
 }

@@ -29,7 +29,7 @@ public class ActionEnergyPulsar extends BCStatement implements IActionInternal {
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/action_pulsar");
+		icon = iconRegister.registerIcon("buildcrafttransport:triggers/action_pulsar");
 	}
 
 	@Override

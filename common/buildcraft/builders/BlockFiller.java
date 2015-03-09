@@ -32,10 +32,6 @@ import buildcraft.core.GuiIds;
 import buildcraft.core.lib.utils.Utils;
 
 public class BlockFiller extends BlockBuildCraft {
-
-	public IFillerPattern currentPattern;
-	private IIcon textureSides;
-	private IIcon textureTopOn;
 	private IIcon textureTopOff;
 
 	public BlockFiller() {
@@ -47,15 +43,11 @@ public class BlockFiller extends BlockBuildCraft {
 
 	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-
-		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking()) {
-			return false;
+		if (super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9)) {
+			return true;
 		}
 
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
-		FMLCommonHandler.instance().bus().post(event);
-		if (event.isCanceled()) {
+		if (entityplayer.isSneaking()) {
 			return false;
 		}
 
@@ -67,35 +59,23 @@ public class BlockFiller extends BlockBuildCraft {
 	}
 
 	@Override
-	public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
-		int m = world.getBlockMetadata(x, y, z);
+	@SideOnly(Side.CLIENT)
+	public IIcon getIconAbsolute(IBlockAccess world, int x, int y, int z, int side, int metadata) {
 		TileEntity tile = world.getTileEntity(x, y, z);
-
 		if (tile != null && tile instanceof TileFiller) {
 			TileFiller filler = (TileFiller) tile;
-			if (side == 1 || side == 0) {
+			if (side != 1) {
+				if (filler.currentPattern != null) {
+					return filler.currentPattern.getIcon();
+				}
+			} else {
 				if (!filler.hasWork()) {
 					return textureTopOff;
-				} else {
-					return textureTopOn;
 				}
-			} else if (filler.currentPattern != null) {
-				return filler.currentPattern.getIcon();
-			} else {
-				return textureSides;
 			}
 		}
 
-		return getIcon(side, m);
-	}
-
-	@Override
-	public IIcon getIcon(int i, int j) {
-		if (i == 0 || i == 1) {
-			return textureTopOn;
-		} else {
-			return textureSides;
-		}
+		return super.getIconAbsolute(side, metadata);
 	}
 
 	@Override
@@ -104,17 +84,10 @@ public class BlockFiller extends BlockBuildCraft {
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
-		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, block, par6);
-	}
-
-	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-	    textureTopOn = par1IconRegister.registerIcon("buildcraft:blockFillerTopOn");
-        textureTopOff = par1IconRegister.registerIcon("buildcraft:blockFillerTopOff");
-        textureSides = par1IconRegister.registerIcon("buildcraft:blockFillerSides");
+	public void registerBlockIcons(IIconRegister register) {
+		super.registerBlockIcons(register);
+	    textureTopOff = register.registerIcon("buildcraftbuilders:fillerBlock/top_off");
 	}
 
 	@Override

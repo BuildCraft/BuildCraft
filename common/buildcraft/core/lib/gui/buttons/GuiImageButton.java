@@ -48,7 +48,7 @@ public class GuiImageButton extends GuiButton implements IButtonClickEventTrigge
 		}
 	}
 
-	public static final ResourceLocation ICON_BUTTON_TEXTURES = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/icon_button.png");
+	public static final ResourceLocation ICON_BUTTON_TEXTURES = new ResourceLocation("buildcraftcore:textures/gui/icon_button.png");
 
 	public static final int SIZE = 18;
 

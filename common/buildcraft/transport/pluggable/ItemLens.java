@@ -32,9 +32,6 @@ import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.StringUtils;
 
 public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
-
-	private IIcon[] icons;
-
 	public ItemLens() {
 		super();
 		setHasSubtypes(true);
@@ -73,14 +70,10 @@ public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister register) {
-	    icons = new IIcon[] {
-				register.registerIcon("buildcraft:pipeLensItem0"),
-				register.registerIcon("buildcraft:pipeLensItem1"),
-				register.registerIcon("buildcraft:pipeFilterItem0")
-		};
+	public String[] getIconNames() {
+		return new String[] {"lens/lensFrame", "lens/transparent", "lens/filterFrame"};
 	}
+
 
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override

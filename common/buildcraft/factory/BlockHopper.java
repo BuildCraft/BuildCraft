@@ -56,16 +56,11 @@ public class BlockHopper extends BlockBuildCraft {
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-		super.onBlockActivated(world, x, y, z, entityplayer, par6, par7, par8, par9);
-
-		// Drop through if the player is sneaking
-		if (entityplayer.isSneaking()) {
-			return false;
+		if (super.onBlockActivated(world, x, y, z, entityplayer, par6, par7, par8, par9)) {
+			return true;
 		}
 
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
-		FMLCommonHandler.instance().bus().post(event);
-		if (event.isCanceled()) {
+		if (entityplayer.isSneaking()) {
 			return false;
 		}
 
@@ -85,12 +80,12 @@ public class BlockHopper extends BlockBuildCraft {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		icon = par1IconRegister.registerIcon("buildcraft:hopperBottom");
+		icon = par1IconRegister.registerIcon("buildcraftfactory:hopperBlock/bottom");
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int par1, int par2) {
+	public IIcon getIconAbsolute(int par1, int par2) {
 		return icon;
 	}
 }

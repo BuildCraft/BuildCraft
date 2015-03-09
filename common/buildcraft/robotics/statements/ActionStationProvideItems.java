@@ -30,7 +30,7 @@ public class ActionStationProvideItems extends BCStatement implements IActionInt
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/action_station_provide_items");
+		icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_station_provide_items");
 	}
 
 	@Override

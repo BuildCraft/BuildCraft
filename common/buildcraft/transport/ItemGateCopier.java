@@ -22,9 +22,6 @@ import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.GatePluggable;
 
 public class ItemGateCopier extends ItemBuildCraft {
-
-	private IIcon[] icons;
-
 	public ItemGateCopier() {
 		super();
 		setMaxStackSize(1);
@@ -112,11 +109,8 @@ public class ItemGateCopier extends ItemBuildCraft {
 
 		return true;
 	}
-	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister register) {
-		icons = new IIcon[]{register.registerIcon("buildcraft:gateCopierOff"), register.registerIcon("buildcraft:gateCopierOn")};
+
+	public String[] getIconNames() {
+		return new String[]{"gateCopier/empty", "gateCopier/full"};
 	}
-	
 }

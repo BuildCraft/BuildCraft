@@ -130,8 +130,8 @@ public class PipeIconProvider implements IIconProvider {
 		PipeRobotStationReserved("pipeRobotStationReserved"),
 		PipeRobotStationLinked("pipeRobotStationLinked"),
 		//
-		Power_Normal("texture_cyan"),
-		Power_Overload("texture_red_lit"),
+		Power_Normal("core:misc/texture_cyan"),
+		Power_Overload("core:misc/texture_red_lit"),
 		Stripes("pipeStripes"),
 		//
 		PipeStainedOverlay("pipeStainedOverlay"),
@@ -140,7 +140,7 @@ public class PipeIconProvider implements IIconProvider {
 		PipeLensOverlay("pipeLensOverlay"),
 		//
 		TransparentFacade("transparent_facade"),
-		Transparent("transparent"),
+		Transparent("core:misc/transparent"),
 		//
 		PipePowerAdapterTop("pipePowerAdapterTop"),
 		PipePowerAdapterSide("pipePowerAdapterSide"),
@@ -162,7 +162,11 @@ public class PipeIconProvider implements IIconProvider {
 		}
 
 		private void registerIcon(IIconRegister iconRegister) {
-			icon = iconRegister.registerIcon("buildcraft:" + (BuildCraftCore.colorBlindMode ? iconTagColorBlind : iconTag));
+			String name = BuildCraftCore.colorBlindMode ? iconTagColorBlind : iconTag;
+			if (name.indexOf(":") < 0) {
+				name = "transport:pipes/" + name;
+			}
+			icon = iconRegister.registerIcon("buildcraft" + name);
 		}
 
 		public IIcon getIcon() {

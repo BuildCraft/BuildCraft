@@ -19,7 +19,7 @@ import buildcraft.energy.TileEngineStone;
 
 public class GuiStoneEngine extends GuiEngine {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/steam_engine_gui.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftenergy:textures/gui/steam_engine_gui.png");
 
 	public GuiStoneEngine(InventoryPlayer inventoryplayer, TileEngineStone tileEngine) {
 		super(new ContainerEngine(inventoryplayer, tileEngine), tileEngine, TEXTURE);

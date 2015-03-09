@@ -39,8 +39,7 @@ import buildcraft.robotics.TileZonePlan;
 
 public class GuiZonePlan extends GuiAdvancedInterface {
 
-	private static final ResourceLocation TMP_TEXTURE = new ResourceLocation("buildcraft",
-			DefaultProps.TEXTURE_PATH_GUI + "/map_gui.png");
+	private static final ResourceLocation TMP_TEXTURE = new ResourceLocation("buildcraftrobotics:textures/gui/zone_planner_gui.png");
 
 	private int mapWidth = 200;
 	private int mapHeight = 100;

@@ -32,15 +32,16 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.MathUtils;
+import buildcraft.core.lib.utils.ResourceUtils;
 import buildcraft.core.lib.utils.Utils;
 
 public abstract class TileEngineBase extends TileBuildCraft implements IPipeConnection, IEnergyHandler, IEngine, IHeatable {
 	// TEMP
-	public static final ResourceLocation TRUNK_BLUE_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_blue.png");
-	public static final ResourceLocation TRUNK_GREEN_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_green.png");
-	public static final ResourceLocation TRUNK_YELLOW_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_yellow.png");
-	public static final ResourceLocation TRUNK_RED_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_red.png");
-	public static final ResourceLocation TRUNK_OVERHEAT_TEXTURE = new ResourceLocation(DefaultProps.TEXTURE_PATH_BLOCKS + "/trunk_overheat.png");
+	public static final ResourceLocation TRUNK_BLUE_TEXTURE = new ResourceLocation("buildcraftcore:textures/blocks/engine/trunk_blue.png");
+	public static final ResourceLocation TRUNK_GREEN_TEXTURE = new ResourceLocation("buildcraftcore:textures/blocks/engine/trunk_green.png");
+	public static final ResourceLocation TRUNK_YELLOW_TEXTURE = new ResourceLocation("buildcraftcore:textures/blocks/engine/trunk_yellow.png");
+	public static final ResourceLocation TRUNK_RED_TEXTURE = new ResourceLocation("buildcraftcore:textures/blocks/engine/trunk_red.png");
+	public static final ResourceLocation TRUNK_OVERHEAT_TEXTURE = new ResourceLocation("buildcraftcore:textures/blocks/engine/trunk_overheat.png");
 
 	public enum EnergyStage {
 		BLUE, GREEN, YELLOW, RED, OVERHEAT;
@@ -74,11 +75,21 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 		}
 	}
 
-	public abstract ResourceLocation getBaseTexture();
+	public abstract String getResourcePrefix();
 
-	public abstract ResourceLocation getChamberTexture();
+	public ResourceLocation getBaseTexture() {
+		return new ResourceLocation(getResourcePrefix() + "/base.png");
+	}
+
+	public ResourceLocation getChamberTexture() {
+		return new ResourceLocation(getResourcePrefix() + "/chamber.png");
+	}
 
 	public ResourceLocation getTrunkTexture(EnergyStage stage) {
+		if (ResourceUtils.resourceExists(getResourcePrefix() + "/trunk.png")) {
+			return new ResourceLocation(getResourcePrefix() + "/trunk.png");
+		}
+
 		switch (stage) {
 			case BLUE:
 				return TRUNK_BLUE_TEXTURE;

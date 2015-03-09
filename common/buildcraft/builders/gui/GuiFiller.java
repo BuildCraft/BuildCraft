@@ -36,8 +36,6 @@ public class GuiFiller extends GuiAdvancedInterface {
 
 		@Override
 		public IStatementParameter getParameter() {
-			System.out.println("getParameter " + slot + " " + instance.filler.patternParameters.length);
-
 			if (slot >= instance.filler.patternParameters.length) {
 				return null;
 			} else {
@@ -51,7 +49,7 @@ public class GuiFiller extends GuiAdvancedInterface {
 		}
 	}
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/filler.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/filler.png");
 	private final IInventory playerInventory;
 	private final TileFiller filler;
 	private final GuiFiller instance;

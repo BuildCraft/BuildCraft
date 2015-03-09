@@ -99,7 +99,7 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
 
 	@Override
 	public void registerIcons(IIconRegister register) {
-		icon = register.registerIcon("buildcraft:triggers/trigger_liquidcontainer_" + type.name().toLowerCase());
+		icon = register.registerIcon("buildcraftcore:triggers/trigger_liquidcontainer_" + type.name().toLowerCase());
 	}
 	
 	@Override

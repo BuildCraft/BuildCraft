@@ -21,7 +21,7 @@ import buildcraft.factory.TileAutoWorkbench;
 
 public class GuiAutoCrafting extends GuiBuildCraft {
 
-	public static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/autobench.png");
+	public static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftfactory:textures/gui/autobench.png");
 	private TileAutoWorkbench bench;
 
 	public GuiAutoCrafting(InventoryPlayer inventoryplayer, World world, TileAutoWorkbench tile) {

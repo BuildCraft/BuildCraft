@@ -18,12 +18,12 @@ import buildcraft.api.core.Position;
 public abstract class EntityLaser extends Entity {
 
 	public static final ResourceLocation[] LASER_TEXTURES = new ResourceLocation[]{
-		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png"),
-		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_2.png"),
-		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_3.png"),
-		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_4.png"),
-		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/stripes.png"),
-		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/blue_stripes.png")};
+		new ResourceLocation("buildcraftcore", "textures/laserBeams/laser_1.png"),
+		new ResourceLocation("buildcraftcore", "textures/laserBeams/laser_2.png"),
+		new ResourceLocation("buildcraftcore", "textures/laserBeams/laser_3.png"),
+		new ResourceLocation("buildcraftcore", "textures/laserBeams/laser_4.png"),
+		new ResourceLocation("buildcraftcore", "textures/laserBeams/stripes.png"),
+		new ResourceLocation("buildcraftcore", "textures/laserBeams/blue_stripes.png")};
 
 	public LaserData data = new LaserData();
 

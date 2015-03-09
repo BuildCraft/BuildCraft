@@ -8,38 +8,13 @@
  */
 package buildcraft.builders;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.IIcon;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import buildcraft.core.lib.utils.NBTUtils;
-
 public class ItemBlueprintStandard extends ItemBlueprint {
-	private IIcon cleanBlueprint;
-	private IIcon usedBlueprint;
-
 	public ItemBlueprintStandard() {
 		super();
 	}
 
 	@Override
-	public IIcon getIconIndex(ItemStack stack) {
-		if (!NBTUtils.getItemData(stack).hasKey("name")) {
-			itemIcon = cleanBlueprint;
-		} else {
-			itemIcon = usedBlueprint;
-		}
-		
-		return itemIcon;
-    }
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister) {
-		cleanBlueprint = par1IconRegister.registerIcon("buildcraft:blueprint_clean");
-		usedBlueprint = par1IconRegister.registerIcon("buildcraft:blueprint_used");
+	public String getIconType() {
+		return "blueprint";
 	}
 }

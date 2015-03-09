@@ -15,15 +15,14 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.GuiIds;
+import buildcraft.core.lib.engines.TileEngineWithInventory;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.MathUtils;
-import buildcraft.energy.gui.ContainerEngine;
 
 public class TileEngineStone extends TileEngineWithInventory {
 
@@ -43,13 +42,8 @@ public class TileEngineStone extends TileEngineWithInventory {
 	}
 
 	@Override
-	public ResourceLocation getBaseTexture() {
-		return BASE_TEXTURES[1];
-	}
-
-	@Override
-	public ResourceLocation getChamberTexture() {
-		return CHAMBER_TEXTURES[1];
+	public String getResourcePrefix() {
+		return "buildcraftenergy:textures/blocks/engineStone";
 	}
 
 	@Override

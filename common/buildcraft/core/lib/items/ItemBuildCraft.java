@@ -12,14 +12,16 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.core.BCCreativeTab;
+import buildcraft.core.lib.utils.ResourceUtils;
 
 public class ItemBuildCraft extends Item {
-
+	public IIcon[] icons;
 	private String iconName;
 	private boolean passSneakClick = false;
 
@@ -41,8 +43,28 @@ public class ItemBuildCraft extends Item {
 
 	@Override
 	@SideOnly(Side.CLIENT)
+	public IIcon getIconFromDamage(int meta) {
+		if (itemIcon != null) { // NBT lookup workaround?
+			return itemIcon;
+		}
+		return icons[meta % icons.length];
+	}
+
+	public String[] getIconNames() {
+		return new String[]{ iconName };
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister par1IconRegister) {
-		this.itemIcon = par1IconRegister.registerIcon("buildcraft:" + iconName);
+		String[] names = getIconNames();
+		String prefix = ResourceUtils.getObjectPrefix(Item.itemRegistry.getNameForObject(this));
+		prefix = prefix.substring(0, prefix.indexOf(":") + 1);
+		icons = new IIcon[names.length];
+
+		for (int i = 0; i < names.length; i++) {
+			icons[i] = par1IconRegister.registerIcon(prefix + names[i]);
+		}
 	}
 
 	public Item setPassSneakClick(boolean passClick) {

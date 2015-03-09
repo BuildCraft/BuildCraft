@@ -65,6 +65,6 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
 
 	@Override
 	public void registerIcons(IIconRegister register) {
-		icon = register.registerIcon("buildcraft:triggers/trigger_redstoneinput_" + (active ? "active" : "inactive"));
+		icon = register.registerIcon("buildcraftcore:triggers/trigger_redstoneinput_" + (active ? "active" : "inactive"));
 	}
 }

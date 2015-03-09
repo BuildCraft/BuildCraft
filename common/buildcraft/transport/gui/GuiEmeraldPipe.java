@@ -25,7 +25,7 @@ import buildcraft.transport.pipes.PipeItemsEmerald.FilterMode;
 
 public class GuiEmeraldPipe extends GuiBuildCraft implements IButtonClickEventListener {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/pipe_emerald.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcrafttransport:textures/gui/pipe_emerald.png");
 
 	private static final int WHITE_LIST_BUTTON_ID = 1;
 	private static final int BLACK_LIST_BUTTON_ID = 2;

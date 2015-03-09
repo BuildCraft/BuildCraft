@@ -18,7 +18,7 @@ import buildcraft.silicon.TileIntegrationTable;
 
 public class GuiIntegrationTable extends GuiLaserTable {
 
-	public static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/integration_table.png");
+	public static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftsilicon:textures/gui/integration_table.png");
 	private static final int FLASH_DELAY = 3;
 	private final TileIntegrationTable integrationTable;
 	private boolean flash;

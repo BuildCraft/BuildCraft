@@ -32,8 +32,8 @@ import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.StringUtils;
 
 public class GuiBuilder extends GuiAdvancedInterface {
-	private static final ResourceLocation BLUEPRINT_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/builder_blueprint.png");
-	private static final ResourceLocation FOREGROUND_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/builder_foreground.png");
+	private static final ResourceLocation BLUEPRINT_TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/builder_blueprint.png");
+	private static final ResourceLocation FOREGROUND_TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/builder_foreground.png");
 	private IInventory playerInventory;
 	private TileBuilder builder;
 	private GuiButton selectedButton;

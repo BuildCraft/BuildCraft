@@ -74,6 +74,6 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister register) {
-		icon = register.registerIcon("buildcraft:triggers/action_redstoneoutput");
+		icon = register.registerIcon("buildcraftcore:triggers/action_redstoneoutput");
 	}
 }

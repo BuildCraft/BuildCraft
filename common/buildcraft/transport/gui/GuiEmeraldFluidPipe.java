@@ -20,7 +20,7 @@ import buildcraft.transport.pipes.PipeFluidsEmerald;
 
 public class GuiEmeraldFluidPipe extends GuiBuildCraft {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/generic_one_slot.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcrafttransport:textures/gui/generic_one_slot.png");
 	IInventory playerInventory;
 	IInventory filterInventory;
 

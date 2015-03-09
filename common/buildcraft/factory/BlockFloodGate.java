@@ -25,11 +25,6 @@ import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.utils.Utils;
 
 public class BlockFloodGate extends BlockBuildCraft {
-
-	private IIcon textureTop;
-	private IIcon textureBottom;
-	private IIcon textureSide;
-
 	public BlockFloodGate() {
 		super(Material.iron);
 	}
@@ -40,25 +35,11 @@ public class BlockFloodGate extends BlockBuildCraft {
 	}
 
 	@Override
-	public IIcon getIcon(int i, int j) {
-		switch (i) {
-			case 0:
-				return textureBottom;
-			case 1:
-				return textureTop;
-			default:
-				return textureSide;
-		}
-	}
-
-	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
-		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, block, par6);
-	}
-
-	@Override
 	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+		if (super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9)) {
+			return true;
+		}
+
 		TileEntity tile = world.getTileEntity(i, j, k);
 
 		if (tile instanceof TileFloodGate) {
@@ -89,13 +70,5 @@ public class BlockFloodGate extends BlockBuildCraft {
 		if (tile instanceof TileFloodGate) {
 			((TileFloodGate) tile).onNeighborBlockChange(block);
 		}
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		textureTop = par1IconRegister.registerIcon("buildcraft:floodgate_top");
-		textureBottom = par1IconRegister.registerIcon("buildcraft:floodgate_bottom");
-		textureSide = par1IconRegister.registerIcon("buildcraft:floodgate_side");
 	}
 }

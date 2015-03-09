@@ -34,7 +34,7 @@ public class ActionRobotWorkInArea extends BCStatement implements IActionInterna
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/action_robot_in_area");
+		icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_robot_in_area");
 	}
 
 	public static IZone getArea(StatementSlot slot) {

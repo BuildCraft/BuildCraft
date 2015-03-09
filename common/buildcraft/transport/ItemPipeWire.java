@@ -59,7 +59,7 @@ public class ItemPipeWire extends ItemBuildCraft {
 	public void registerIcons(IIconRegister par1IconRegister) {
 		icons = new IIcon[PipeWire.VALUES.length];
 		for (PipeWire pipeWire : PipeWire.VALUES) {
-			icons[pipeWire.ordinal()] = par1IconRegister.registerIcon("buildcraft:" + pipeWire.getTag());
+			icons[pipeWire.ordinal()] = par1IconRegister.registerIcon("buildcrafttransport:pipeWire/" + pipeWire.getColor().toLowerCase());
 		}
 	}
 

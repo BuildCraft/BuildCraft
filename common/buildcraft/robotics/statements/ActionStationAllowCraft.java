@@ -30,7 +30,7 @@ public class ActionStationAllowCraft extends BCStatement implements IActionInter
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraft:triggers/action_station_allow_craft");
+		icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_station_allow_craft");
 	}
 
 	@Override

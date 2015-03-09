@@ -25,7 +25,7 @@ import buildcraft.silicon.TileProgrammingTable;
 
 public class GuiProgrammingTable extends GuiAdvancedInterface {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/programming_table.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftsilicon:textures/gui/programming_table.png");
 
 	private class LaserTableLedger extends Ledger {
 

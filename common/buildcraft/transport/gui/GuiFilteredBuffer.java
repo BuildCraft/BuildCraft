@@ -21,7 +21,7 @@ import buildcraft.transport.TileFilteredBuffer;
 
 public class GuiFilteredBuffer extends GuiContainer {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/filteredBuffer_gui.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcrafttransport:textures/gui/filteredBuffer_gui.png");
 	IInventory playerInventory;
 	TileFilteredBuffer filteredBuffer;
 

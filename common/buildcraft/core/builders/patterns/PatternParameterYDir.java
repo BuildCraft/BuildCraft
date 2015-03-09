@@ -41,8 +41,8 @@ public class PatternParameterYDir implements IStatementParameter {
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		iconUp = iconRegister.registerIcon("buildcraft:fillerParameters/arrow_up");
-		iconDown = iconRegister.registerIcon("buildcraft:fillerParameters/arrow_down");
+		iconUp = iconRegister.registerIcon("buildcraftcore:fillerParameters/arrow_up");
+		iconDown = iconRegister.registerIcon("buildcraftcore:fillerParameters/arrow_down");
 	}
 
 	@Override

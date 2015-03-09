@@ -24,7 +24,7 @@ import buildcraft.core.lib.utils.StringUtils;
 
 public class GuiBlueprintLibrary extends GuiBuildCraft {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/library_rw.png");
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/library_rw.png");
 	private GuiButton nextPageButton;
 	private GuiButton prevPageButton;
 	private GuiButton deleteButton;

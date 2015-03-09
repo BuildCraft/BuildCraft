@@ -50,6 +50,6 @@ public class ActionMachineControl extends BCStatement implements IActionExternal
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister register) {
-		icon = register.registerIcon("buildcraft:triggers/action_machinecontrol_" + mode.name().toLowerCase());
+		icon = register.registerIcon("buildcraftcore:triggers/action_machinecontrol_" + mode.name().toLowerCase());
 	}
 }

@@ -61,8 +61,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	public static final float DISPLAY_MULTIPLIER = 0.1f;
 	public static final int POWER_STAGES = 100;
 
-	public static final ResourceLocation STRIPES_TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/stripes.png");
-
 	private static final int LIQUID_STAGES = 40;
 	private static final int MAX_ITEMS_TO_RENDER = 10;
 

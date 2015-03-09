@@ -26,8 +26,8 @@ import buildcraft.factory.TileRefinery;
 
 public class GuiRefinery extends GuiAdvancedInterface {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_GUI + "/refinery_filter.png");
-	ContainerRefinery container;
+	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftfactory:textures/gui/refinery_filter.png");
+	private final ContainerRefinery container;
 
 	public GuiRefinery(InventoryPlayer inventory, TileRefinery refinery) {
 		super(new ContainerRefinery(inventory, refinery), refinery, TEXTURE);

@@ -43,14 +43,14 @@ public class WireIconProvider implements IIconProvider {
 	public void registerIcons(IIconRegister iconRegister) {
 		icons = new IIcon[MAX];
 
-		icons[WireIconProvider.Texture_Red_Dark] = iconRegister.registerIcon("buildcraft:texture_red_dark");
-		icons[WireIconProvider.Texture_Red_Lit] = iconRegister.registerIcon("buildcraft:texture_red_lit");
-		icons[WireIconProvider.Texture_Blue_Dark] = iconRegister.registerIcon("buildcraft:texture_blue_dark");
-		icons[WireIconProvider.Texture_Blue_Lit] = iconRegister.registerIcon("buildcraft:texture_blue_lit");
-		icons[WireIconProvider.Texture_Green_Dark] = iconRegister.registerIcon("buildcraft:texture_green_dark");
-		icons[WireIconProvider.Texture_Green_Lit] = iconRegister.registerIcon("buildcraft:texture_green_lit");
-		icons[WireIconProvider.Texture_Yellow_Dark] = iconRegister.registerIcon("buildcraft:texture_yellow_dark");
-		icons[WireIconProvider.Texture_Yellow_Lit] = iconRegister.registerIcon("buildcraft:texture_yellow_lit");		
+		icons[WireIconProvider.Texture_Red_Dark] = iconRegister.registerIcon("buildcraftcore:misc/texture_red_dark");
+		icons[WireIconProvider.Texture_Red_Lit] = iconRegister.registerIcon("buildcraftcore:misc/texture_red_lit");
+		icons[WireIconProvider.Texture_Blue_Dark] = iconRegister.registerIcon("buildcraftcore:misc/texture_blue_dark");
+		icons[WireIconProvider.Texture_Blue_Lit] = iconRegister.registerIcon("buildcraftcore:misc/texture_blue_lit");
+		icons[WireIconProvider.Texture_Green_Dark] = iconRegister.registerIcon("buildcraftcore:misc/texture_green_dark");
+		icons[WireIconProvider.Texture_Green_Lit] = iconRegister.registerIcon("buildcraftcore:misc/texture_green_lit");
+		icons[WireIconProvider.Texture_Yellow_Dark] = iconRegister.registerIcon("buildcraftcore:misc/texture_yellow_dark");
+		icons[WireIconProvider.Texture_Yellow_Lit] = iconRegister.registerIcon("buildcraftcore:misc/texture_yellow_lit");		
 
 	}
 

@@ -88,7 +88,7 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister par1IconRegister) {
 		for (Chipset chipset : Chipset.VALUES) {
-			chipset.icon = par1IconRegister.registerIcon("buildcraft:" + chipset.getChipsetName());
+			chipset.icon = par1IconRegister.registerIcon("buildcraftsilicon:chipset/" + chipset.getChipsetName());
 		}
 	}
 
