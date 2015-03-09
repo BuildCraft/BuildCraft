@@ -66,6 +66,7 @@ import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.robotics.ai.AIRobotMain;
+import buildcraft.robotics.ai.AIRobotSleep;
 import buildcraft.robotics.statements.ActionRobotWorkInArea;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.gates.ActionIterator;
@@ -113,6 +114,8 @@ public class EntityRobot extends EntityRobotBase implements
 	private RFBattery battery = new RFBattery(MAX_ENERGY, MAX_ENERGY, 100);
 
 	private boolean firstUpdateDone = false;
+
+	private boolean isAsleepClient = false;
 
 	private long robotId = EntityRobotBase.NULL_ROBOT_ID;
 
@@ -169,6 +172,8 @@ public class EntityRobot extends EntityRobotBase implements
 		dataWatcher.addObject(17, Float.valueOf(0));
 		dataWatcher.addObject(18, Float.valueOf(0));
 		dataWatcher.addObject(19, Integer.valueOf(0));
+		dataWatcher.addObject(20, Byte.valueOf((byte) 0));
+		dataWatcher.addObject(21, Integer.valueOf(0));
 	}
 
 	protected void updateDataClient() {
@@ -187,6 +192,8 @@ public class EntityRobot extends EntityRobotBase implements
 		itemAngle1 = dataWatcher.getWatchableObjectFloat(17);
 		itemAngle2 = dataWatcher.getWatchableObjectFloat(18);
 		energySpendPerCycle = dataWatcher.getWatchableObjectInt(19);
+		isAsleepClient = dataWatcher.getWatchableObjectByte(20) == 1;
+		battery.setEnergy(dataWatcher.getWatchableObjectInt(21));
 	}
 
 	protected void updateDataServer() {
@@ -197,6 +204,12 @@ public class EntityRobot extends EntityRobotBase implements
 		dataWatcher.updateObject(17, Float.valueOf(itemAngle1));
 		dataWatcher.updateObject(18, Float.valueOf(itemAngle2));
 		dataWatcher.updateObject(19, energySpendPerCycle);
+		dataWatcher.updateObject(20, Byte.valueOf((byte) (isAsleep() ? 1 : 0)));
+		dataWatcher.updateObject(21, getEnergy());
+	}
+
+	public boolean isAsleep() {
+		return worldObj.isRemote ? isAsleepClient : mainAI.getActiveAI() instanceof AIRobotSleep;
 	}
 
 	protected void init() {

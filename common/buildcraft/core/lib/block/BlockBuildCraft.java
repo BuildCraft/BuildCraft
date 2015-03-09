@@ -188,7 +188,7 @@ public abstract class BlockBuildCraft extends BlockContainer {
 				return getIconAbsolute(access, x, y, z, side, metadata & 8);
 			}
 
-			int front = metadata >= 2 && metadata <= 5 ? metadata : 2;
+			int front = metadata >= 2 && metadata <= 5 ? metadata : 3;
 			return getIconAbsolute(access, x, y, z, SIDE_TEXTURING_LOCATIONS[(front - 2) % 4][(side - 2) % 4], metadata & 8);
 		} else {
 			return getIconAbsolute(access, x, y, z, side, metadata);
@@ -203,7 +203,7 @@ public abstract class BlockBuildCraft extends BlockContainer {
 				return getIconAbsolute(side, metadata & 8);
 			}
 
-			int front = metadata >= 2 && metadata <= 5 ? metadata : 2;
+			int front = metadata >= 2 && metadata <= 5 ? metadata : 3;
 			return getIconAbsolute(SIDE_TEXTURING_LOCATIONS[(front - 2) % 4][(side - 2) % 4], metadata & 8);
 		} else {
 			return getIconAbsolute(side, metadata);

@@ -48,7 +48,7 @@ public class TriggerRobotSleep extends BCStatement implements ITriggerInternal {
 			if (station.robotTaking() != null) {
 				EntityRobot robot = (EntityRobot) station.robotTaking();
 
-				if (robot.mainAI.getActiveAI() instanceof AIRobotSleep) {
+				if (robot.isAsleep()) {
 					return true;
 				}
 			}

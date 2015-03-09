@@ -33,11 +33,13 @@ import buildcraft.core.render.RenderLaser;
 import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.robotics.EntityRobot;
 import buildcraft.robotics.ItemRobot;
+import buildcraft.robotics.RobotUtils;
 
 public class RenderRobot extends Render implements IItemRenderer {
-
-	private static final ResourceLocation overlay = new ResourceLocation(
-			DefaultProps.TEXTURE_PATH_ROBOTS + "/robot_overlay.png");
+	private static final ResourceLocation overlay_red = new ResourceLocation(
+			DefaultProps.TEXTURE_PATH_ROBOTS + "/overlay_side.png");
+	private static final ResourceLocation overlay_cyan = new ResourceLocation(
+			DefaultProps.TEXTURE_PATH_ROBOTS + "/overlay_bottom.png");
 	
 	private final EntityItem dummyEntityItem = new EntityItem(null);
 	private final RenderItem customRenderItem;
@@ -147,7 +149,8 @@ public class RenderRobot extends Render implements IItemRenderer {
 
 		if (robot.getTexture() != null) {
 			renderManager.renderEngine.bindTexture(robot.getTexture());
-			doRenderRobot(1F / 16F, renderManager.renderEngine);
+			float storagePercent = (float) robot.getBattery().getEnergyStored() / (float) robot.getBattery().getMaxEnergyStored();
+			doRenderRobot(1F / 16F, renderManager.renderEngine, storagePercent, robot.isAsleep());
 		}
 		
 		GL11.glPopMatrix();
@@ -189,7 +192,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 			GL11.glScaled(1.5, 1.5, 1.5);
 		}
 		
-		doRenderRobot(1F / 16F, RenderManager.instance.renderEngine);
+		doRenderRobot(1F / 16F, RenderManager.instance.renderEngine, 0.9F, false);
 		
 		GL11.glPopMatrix();
 	}
@@ -205,21 +208,33 @@ public class RenderRobot extends Render implements IItemRenderer {
 		GL11.glPopMatrix();
 	}
 	
-	private void doRenderRobot(float factor, TextureManager texManager) {
+	private void doRenderRobot(float factor, TextureManager texManager, float storagePercent, boolean isAsleep) {
 		box.render(factor);
 
-		GL11.glPushMatrix();
-		texManager.bindTexture(overlay);
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glDisable(GL11.GL_ALPHA_TEST);
-		GL11.glDisable(GL11.GL_LIGHTING);
-		GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE);
-		GL11.glDepthMask(true);
-		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 61680, 0);
-		box.render(factor);
-		GL11.glDisable(GL11.GL_BLEND);
-		GL11.glEnable(GL11.GL_ALPHA_TEST);
-		GL11.glEnable(GL11.GL_LIGHTING);
-		GL11.glPopMatrix();
+		if (!isAsleep) {
+			float lastBrightnessX = OpenGlHelper.lastBrightnessX;
+			float lastBrightnessY = OpenGlHelper.lastBrightnessY;
+
+			GL11.glPushMatrix();
+			GL11.glEnable(GL11.GL_BLEND);
+			GL11.glEnable(GL11.GL_DEPTH_TEST);
+			GL11.glDisable(GL11.GL_LIGHTING);
+			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
+
+			GL11.glColor4f(1.0F, 1.0F, 1.0F, storagePercent);
+			texManager.bindTexture(overlay_red);
+			box.render(factor);
+
+			GL11.glDisable(GL11.GL_BLEND);
+			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+			texManager.bindTexture(overlay_cyan);
+			box.render(factor);
+
+			GL11.glEnable(GL11.GL_LIGHTING);
+			GL11.glPopMatrix();
+
+			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
+		}
 	}
 }

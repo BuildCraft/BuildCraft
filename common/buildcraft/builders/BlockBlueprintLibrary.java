@@ -28,6 +28,7 @@ import buildcraft.core.GuiIds;
 public class BlockBlueprintLibrary extends BlockBuildCraft {
     public BlockBlueprintLibrary() {
 		super(Material.wood, BCCreativeTab.get("main"));
+		setRotatable(true);
 	}
 
 	@Override
