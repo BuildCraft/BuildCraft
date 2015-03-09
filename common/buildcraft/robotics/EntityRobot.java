@@ -120,6 +120,7 @@ public class EntityRobot extends EntityRobotBase implements
 	private long robotId = EntityRobotBase.NULL_ROBOT_ID;
 
 	private int energySpendPerCycle = 0;
+	private int ticksCharging = 0;
 	private float energyFX = 0;
 	private int steamDx = 0;
 	private int steamDy = -1;
@@ -203,9 +204,6 @@ public class EntityRobot extends EntityRobotBase implements
 		dataWatcher.updateObject(15, Byte.valueOf((byte) (laser.isVisible ? 1 : 0)));
 		dataWatcher.updateObject(17, Float.valueOf(itemAngle1));
 		dataWatcher.updateObject(18, Float.valueOf(itemAngle2));
-		dataWatcher.updateObject(19, energySpendPerCycle);
-		dataWatcher.updateObject(20, Byte.valueOf((byte) (isAsleep() ? 1 : 0)));
-		dataWatcher.updateObject(21, getEnergy());
 	}
 
 	public boolean isAsleep() {
@@ -260,9 +258,20 @@ public class EntityRobot extends EntityRobotBase implements
 			firstUpdateDone = true;
 		}
 
-		if (!worldObj.isRemote && needsUpdate) {
-			updateDataServer();
-			needsUpdate = false;
+		if (ticksCharging > 0) {
+			ticksCharging--;
+		}
+
+		if (!worldObj.isRemote) {
+			// The client-side sleep indicator should also display if the robot is charging.
+			// To not break gates and other things checking for sleep, this is done here.
+			dataWatcher.updateObject(20, Byte.valueOf((byte) ((isAsleep() && ticksCharging == 0) ? 1 : 0)));
+			dataWatcher.updateObject(21, getEnergy());
+
+			if (needsUpdate) {
+				updateDataServer();
+				needsUpdate = false;
+			}
 		}
 
 		if (worldObj.isRemote) {
@@ -319,7 +328,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 				if (energySpendPerCycle != mainAI.getActiveAI().getEnergyCost()) {
 					energySpendPerCycle = mainAI.getActiveAI().getEnergyCost();
-					needsUpdate = true;
+					dataWatcher.updateObject(19, energySpendPerCycle);
 				}
 
 				if (this.battery.getEnergyStored() <= 0 && !linkedToChargeStation()) {
@@ -1130,8 +1139,25 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public void getDebugInfo(List<String> info, ForgeDirection side, ItemStack debugger, EntityPlayer player) {
-		// TODO: Add AI information
 		info.add("Robot " + board.getNBTHandler().getID() + " (" + getBattery().getEnergyStored() + "/" + getBattery().getMaxEnergyStored() + " RF)");
 		info.add("Position: " + posX + ", " + posY + ", " + posZ);
+		info.add("AI tree:");
+		AIRobot aiRobot = mainAI;
+		while (aiRobot != null) {
+			info.add("- " + RobotManager.getAIRobotName(aiRobot.getClass()) + " (" + aiRobot.getEnergyCost() + " RF/t)");
+			aiRobot = aiRobot.getDelegateAI();
+		}
+	}
+
+	public int receiveEnergy(int maxReceive, boolean simulate) {
+		int energyReceived = getBattery().receiveEnergy(maxReceive, simulate);
+
+		// 5 RF/t is set as the "sleep threshold" for detecting charging.
+		if (!simulate && energyReceived > 5 && ticksCharging <= 25) {
+			System.out.println("ABOVE THRESHOLD - " + energyReceived);
+			ticksCharging += 5;
+		}
+
+		return energyReceived;
 	}
 }
