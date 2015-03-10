@@ -23,7 +23,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftEnergy;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
