@@ -226,7 +226,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 				Pipe<?> pipe = (Pipe<?>) tilePipe.getPipe();
 
 				if (BlockGenericPipe.isFullyDefined(pipe)) {
-					if (isWireConnectedTo(tile, color)) {
+					if (isWireConnectedTo(tile, color, o)) {
 						foundBiggerSignal |= receiveSignal(pipe.signalStrength[color.ordinal()] - 1, color);
 					}
 				}
@@ -289,7 +289,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 					Pipe<?> pipe = (Pipe<?>) tilePipe.getPipe();
 
 					if (BlockGenericPipe.isFullyDefined(pipe) && pipe.wireSet[wire.ordinal()]) {
-						if (isWireConnectedTo(tile, wire)) {
+						if (isWireConnectedTo(tile, wire, o)) {
 							pipe.receiveSignal(signalStrength[wire.ordinal()] - 1, wire);
 						}
 					}
@@ -474,7 +474,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		return container;
 	}
 
-	public boolean isWireConnectedTo(TileEntity tile, PipeWire color) {
+	public boolean isWireConnectedTo(TileEntity tile, PipeWire color, ForgeDirection dir) {
 		if (!(tile instanceof IPipeTile)) {
 			return false;
 		}
@@ -486,6 +486,10 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		}
 
 		if (!pipe.wireSet[color.ordinal()]) {
+			return false;
+		}
+
+		if (container.hasBlockingPluggable(dir) || pipe.container.hasBlockingPluggable(dir.getOpposite())) {
 			return false;
 		}
 

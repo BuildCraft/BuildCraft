@@ -480,7 +480,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			renderState.wireMatrix.setWire(color, pipe.wireSet[color.ordinal()]);
 
 			for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-				renderState.wireMatrix.setWireConnected(color, direction, pipe.isWireConnectedTo(this.getTile(direction), color));
+				renderState.wireMatrix.setWireConnected(color, direction, pipe.isWireConnectedTo(this.getTile(direction), color, direction));
 			}
 
 			boolean lit = pipe.signalStrength[color.ordinal()] > 0;
