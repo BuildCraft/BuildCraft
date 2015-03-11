@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.common.Loader;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.statements.IStatement;
@@ -32,7 +33,7 @@ public abstract class FillerPattern implements IFillerPattern {
 
 	public static final Map<String, FillerPattern> patterns = new TreeMap<String, FillerPattern>();
 	private final String tag;
-	private IIcon icon;
+	private IIcon icon, blockIcon;
 
 	public FillerPattern(String tag) {
 		this.tag = tag;
@@ -62,11 +63,19 @@ public abstract class FillerPattern implements IFillerPattern {
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
 		icon = iconRegister.registerIcon("buildcraftcore:fillerPatterns/" + tag);
+		if (Loader.isModLoaded("BuildCraft|Builders")) {
+			blockIcon = iconRegister.registerIcon("buildcraftbuilders:fillerBlockIcons/" + tag);
+		}
 	}
 
 	@Override
 	public IIcon getIcon() {
 		return icon;
+	}
+
+	@Override
+	public IIcon getBlockOverlay() {
+		return blockIcon;
 	}
 
 	@Override

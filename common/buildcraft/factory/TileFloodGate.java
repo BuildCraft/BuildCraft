@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeMap;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -28,6 +29,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.core.LaserData;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.fluids.TankUtils;
@@ -35,7 +37,6 @@ import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 
 public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
-
 	public static final int[] REBUILD_DELAY = new int[8];
 	public static final int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 2;
 	private final TreeMap<Integer, Deque<BlockIndex>> pumpLayerQueues = new TreeMap<Integer, Deque<BlockIndex>>();
@@ -45,6 +46,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	private int rebuildDelay;
 	private int tick = Utils.RANDOM.nextInt();
 	private boolean powered = false;
+	private boolean[] blockedSides = new boolean[6];
 
 	static {
 		REBUILD_DELAY[0] = 128;
@@ -189,11 +191,12 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		if (tank.getFluidType() == null) {
 			return;
 		}
-		queueForFilling(x, y - 1, z);
-		queueForFilling(x + 1, y, z);
-		queueForFilling(x - 1, y, z);
-		queueForFilling(x, y, z + 1);
-		queueForFilling(x, y, z - 1);
+		for (int i = 0; i < 6; i++) {
+			if (i != 1 && !blockedSides[i]) {
+				ForgeDirection dir = ForgeDirection.getOrientation(i);
+				queueForFilling(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
+			}
+		}
 	}
 
 	public void queueForFilling(int x, int y, int z) {
@@ -236,6 +239,9 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		tank.readFromNBT(data);
 		rebuildDelay = data.getByte("rebuildDelay");
 		powered = data.getBoolean("powered");
+		for (int i = 0; i < 6; i++) {
+			blockedSides[i] = data.getBoolean("blocked[" + i + "]");
+		}
 	}
 
 	@Override
@@ -244,6 +250,40 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		tank.writeToNBT(data);
 		data.setByte("rebuildDelay", (byte) rebuildDelay);
 		data.setBoolean("powered", powered);
+		for (int i = 0; i < 6; i++) {
+			if (blockedSides[i]) {
+				data.setBoolean("blocked[" + i + "]", true);
+			}
+		}
+	}
+
+	// TODO: fit in single byte
+	@Override
+	public void readData(ByteBuf stream) {
+		for (int i = 0; i < 6; i++) {
+			blockedSides[i] = stream.readBoolean();
+			System.out.println("Rsides=" + i + "=" + blockedSides[i]);
+		}
+	}
+
+	@Override
+	public void writeData(ByteBuf stream) {
+		for (int i = 0; i < 6; i++) {
+			System.out.println("Wsides=" + i + "=" + blockedSides[i]);
+			stream.writeBoolean(blockedSides[i]);
+		}
+	}
+
+	public void switchSide(ForgeDirection side) {
+		System.out.println("Csides=" + side.ordinal() + "=" + blockedSides[side.ordinal()]);
+		if (side.ordinal() != 1) {
+			blockedSides[side.ordinal()] = !blockedSides[side.ordinal()];
+			System.out.println("Ssides=" + side.ordinal() + "=" + blockedSides[side.ordinal()]);
+
+			rebuildQueue();
+			sendNetworkUpdate();
+			worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+		}
 	}
 
 	@Override
@@ -286,5 +326,9 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	@Override
 	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
 		return new FluidTankInfo[]{tank.getInfo()};
+	}
+
+	public boolean isSideBlocked(int side) {
+		return blockedSides[side];
 	}
 }

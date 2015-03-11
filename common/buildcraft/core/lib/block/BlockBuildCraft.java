@@ -13,7 +13,6 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -30,6 +29,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.events.BlockPlacedDownEvent;
 import buildcraft.api.tiles.IHasWork;
@@ -44,6 +44,9 @@ public abstract class BlockBuildCraft extends BlockContainer {
 
 	protected static boolean keepInventory = false;
 	protected final Random rand = new Random();
+	protected int renderPass;
+
+	protected int maxPasses = 1;
 
 	private static final int[][] SIDE_TEXTURING_LOCATIONS = new int[][] {
 			{2, 3, 5, 4},
@@ -71,6 +74,10 @@ public abstract class BlockBuildCraft extends BlockContainer {
 		this.rotatable = rotatable;
 	}
 
+	public void setPassCount(int maxPasses) {
+		this.maxPasses = maxPasses;
+	}
+
 	@Override
 	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {
 		super.onBlockPlacedBy(world, x, y, z, entity, stack);
@@ -93,7 +100,7 @@ public abstract class BlockBuildCraft extends BlockContainer {
 		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
 		FMLCommonHandler.instance().bus().post(event);
 		if (event.isCanceled()) {
-			return false;
+			return true;
 		}
 
 		if (isRotatable()) {
@@ -182,17 +189,19 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IIcon getIcon(IBlockAccess access, int x, int y, int z, int side) {
+		IIcon icon;
 		int metadata = access.getBlockMetadata(x, y, z);
 		if (isRotatable()) {
 			if (side < 2) {
-				return getIconAbsolute(access, x, y, z, side, metadata & 8);
+				icon = getIconAbsolute(access, x, y, z, side, metadata & 8);
+			} else {
+				int front = metadata >= 2 && metadata <= 5 ? metadata : 3;
+				icon = getIconAbsolute(access, x, y, z, SIDE_TEXTURING_LOCATIONS[(front - 2) % 4][(side - 2) % 4], metadata & 8);
 			}
-
-			int front = metadata >= 2 && metadata <= 5 ? metadata : 3;
-			return getIconAbsolute(access, x, y, z, SIDE_TEXTURING_LOCATIONS[(front - 2) % 4][(side - 2) % 4], metadata & 8);
 		} else {
-			return getIconAbsolute(access, x, y, z, side, metadata);
+			icon = getIconAbsolute(access, x, y, z, side, metadata);
 		}
+		return icon != null ? icon : BuildCraftCore.transparentTexture;
 	}
 
 	@Override
@@ -246,5 +255,38 @@ public abstract class BlockBuildCraft extends BlockContainer {
 		for (int i = 0; i < iconBlockNames.length; i++) {
 			registerIconsForMeta(i, iconBlockNames[i], register);
 		}
+	}
+
+	@Override
+	public boolean canRenderInPass(int pass) {
+		if (pass >= maxPasses) {
+			renderPass = 0;
+			return false;
+		} else {
+			renderPass = pass;
+			return true;
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	public int getRenderBlockPass() {
+		return maxPasses > 1 ? 1 : 0;
+	}
+
+	@Override
+	public int getRenderType() {
+		return maxPasses > 1 ? BuildCraftCore.multipassModel : 0;
+	}
+
+	public int getCurrentRenderPass() {
+		return renderPass;
+	}
+
+	public int getIconGlowLevel() {
+		return -1;
+	}
+
+	public int getIconGlowLevel(IBlockAccess access, int x, int y, int z) {
+		return getIconGlowLevel();
 	}
 }

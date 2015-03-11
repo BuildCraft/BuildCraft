@@ -15,16 +15,24 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.api.transport.IPipeTile;
+import buildcraft.core.BlockBuildCraftLED;
 import buildcraft.core.lib.block.BlockBuildCraft;
+import buildcraft.core.lib.utils.ResourceUtils;
 import buildcraft.core.lib.utils.Utils;
 
-public class BlockPump extends BlockBuildCraft {
+public class BlockPump extends BlockBuildCraftLED {
+	private IIcon[] led;
+
 	public BlockPump() {
 		super(Material.iron);
 	}
@@ -71,5 +79,20 @@ public class BlockPump extends BlockBuildCraft {
 		if (tile instanceof TilePump) {
 			((TilePump) tile).onNeighborBlockChange(block);
 		}
+	}
+
+	@Override
+	public int getIconGlowLevel(IBlockAccess access, int x, int y, int z) {
+		if (renderPass < 1) {
+			return -1;
+		} else {
+			TilePump tile = (TilePump) access.getTileEntity(x, y, z);
+			return tile.getIconGlowLevel(renderPass);
+		}
+	}
+
+	@Override
+	public int getLightValue(IBlockAccess world, int x, int y, int z) {
+		return 1;
 	}
 }

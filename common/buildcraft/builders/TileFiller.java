@@ -304,6 +304,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 		box.writeData(data);
 		data.writeBoolean(done);
 		NetworkUtils.writeUTF(data, currentPattern.getUniqueTag());
+
 		NBTTagCompound parameterData = new NBTTagCompound();
 		writeParametersToNBT(parameterData);
 		NetworkUtils.writeNBT(data, parameterData);
@@ -399,5 +400,15 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 				NetworkUtils.writeNBT(data, parameterData);
 			}
 		}));
+	}
+
+	public int getIconGlowLevel(int renderPass) {
+		if (renderPass == 1) { // Red LED
+			return done ? 15 : 0;
+		} else if (renderPass == 2) { // Green LED
+			return 0;
+		} else {
+			return -1;
+		}
 	}
 }

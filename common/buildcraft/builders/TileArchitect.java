@@ -59,6 +59,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	private SimpleInventory inv = new SimpleInventory(2, "Architect", 1);
 
 	private RecursiveBlueprintReader reader;
+	private boolean isProcessing;
 
 	public TileArchitect() {
 		box.kind = Kind.BLUE_STRIPES;
@@ -74,6 +75,8 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 				if (reader.isDone()) {
 					reader = null;
+					isProcessing = false;
+					sendNetworkUpdate();
 				}
 			}
 		}
@@ -208,6 +211,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		box.writeData(stream);
 		NetworkUtils.writeUTF(stream, name);
 		readConfiguration.writeData(stream);
+		stream.writeBoolean(reader != null);
 		stream.writeShort(subLasers.size());
 		for (LaserData ld: subLasers) {
 			ld.writeData(stream);
@@ -219,6 +223,12 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		box.readData(stream);
 		name = NetworkUtils.readUTF(stream);
 		readConfiguration.readData(stream);
+		boolean newIsProcessing = stream.readBoolean();
+		if (newIsProcessing != isProcessing) {
+			isProcessing = newIsProcessing;
+			worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+		}
+
 		int size = stream.readUnsignedShort();
 		subLasers.clear();
 		for (int i = 0; i < size; i++) {
@@ -239,6 +249,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		}
 
 		reader = new RecursiveBlueprintReader(this);
+		sendNetworkUpdate();
 	}
 
 	public int getComputingProgressScaled(int scale) {
@@ -335,5 +346,15 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		laser.tail.z += 0.5F;
 
 		subLasers.add(laser);
+	}
+
+	public int getIconGlowLevel(int renderPass) {
+		if (renderPass == 1) { // Red LED
+			return isProcessing ? 15 : 0;
+		} else if (renderPass == 2) { // Green LED
+			return box != null && box.isInitialized() ? 15 : 0;
+		} else {
+			return -1;
+		}
 	}
 }

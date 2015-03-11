@@ -49,6 +49,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 	private RFBattery battery;
 
 	private int receivedTick, extractedTick;
+	private long worldTimeEnergyReceive;
 
 	public String getOwner() {
 		return owner;
@@ -158,6 +159,10 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 		}
 	}
 
+	protected int getTicksSinceEnergyReceived() {
+		return (int) (worldObj.getTotalWorldTime() - worldTimeEnergyReceive);
+	}
+
 
 	@Override
 	public int hashCode() {
@@ -181,6 +186,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 			int received = battery.receiveEnergy(maxReceive - receivedTick, simulate);
 			if (!simulate) {
 				receivedTick += received;
+				worldTimeEnergyReceive = worldObj.getTotalWorldTime();
 			}
 			return received;
 		} else {

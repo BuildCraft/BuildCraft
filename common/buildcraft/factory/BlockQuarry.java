@@ -12,34 +12,26 @@ import java.util.ArrayList;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.lib.block.BlockBuildCraft;
-import buildcraft.core.lib.utils.Utils;
 
-public class BlockQuarry extends BlockBuildCraft {
+public class BlockQuarry extends BlockLEDHatchBase {
 	public BlockQuarry() {
 		super(Material.iron);
 
 		setHardness(10F);
 		setResistance(10F);
 		setStepSound(soundTypeAnvil);
-		setRotatable(true);
 	}
 
 	@Override
@@ -159,7 +151,12 @@ public class BlockQuarry extends BlockBuildCraft {
 	}
 
 	@Override
-	public int getLightValue(IBlockAccess world, int x, int y, int z) {
-		return 1;
+	public int getIconGlowLevel(IBlockAccess access, int x, int y, int z) {
+		if (renderPass < 2) {
+			return -1;
+		} else {
+			TileQuarry tile = (TileQuarry) access.getTileEntity(x, y, z);
+			return tile.getIconGlowLevel(renderPass);
+		}
 	}
 }

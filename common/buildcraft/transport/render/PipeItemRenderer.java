@@ -22,6 +22,7 @@ import net.minecraftforge.client.IItemRenderer;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.CoreConstants;
+import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.transport.PipeIconProvider;
 
@@ -49,7 +50,8 @@ public class PipeItemRenderer implements IItemRenderer {
 			block.setBlockBoundsForItemRender();
 			render.setRenderBoundsFromBlock(block);
 
-			drawBlock(render, tessellator, block, icon, translateX, translateY, translateZ);
+			GL11.glTranslatef(translateX, translateY, translateZ);
+			RenderUtils.drawBlockItem(render, tessellator, block, icon);
 			block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 			GL11.glColor3ub((byte) 255, (byte) 255, (byte) 255);
 			GL11.glPopMatrix();	
@@ -66,39 +68,12 @@ public class PipeItemRenderer implements IItemRenderer {
 		block.setBlockBoundsForItemRender();
 		render.setRenderBoundsFromBlock(block);
 
-		drawBlock(render, tessellator, block, icon, translateX, translateY, translateZ);
+		GL11.glTranslatef(translateX, translateY, translateZ);
+		RenderUtils.drawBlockItem(render, tessellator, block, icon);
 		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 
 		GL11.glPopAttrib(); // nicely leave the rendering how it was
-	}
-	
-	private void drawBlock(RenderBlocks render, Tessellator tessellator, Block block, IIcon icon, float translateX, float translateY, float translateZ) {
-		GL11.glTranslatef(translateX, translateY, translateZ);
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(0.0F, -1F, 0.0F);
-		render.renderFaceYNeg(block, 0.0D, 0.0D, 0.0D, icon);
-		tessellator.draw();
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(0.0F, 1.0F, 0.0F);
-		render.renderFaceYPos(block, 0.0D, 0.0D, 0.0D, icon);
-		tessellator.draw();
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(0.0F, 0.0F, -1F);
-		render.renderFaceZNeg(block, 0.0D, 0.0D, 0.0D, icon);
-		tessellator.draw();
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(0.0F, 0.0F, 1.0F);
-		render.renderFaceZPos(block, 0.0D, 0.0D, 0.0D, icon);
-		tessellator.draw();
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(-1F, 0.0F, 0.0F);
-		render.renderFaceXNeg(block, 0.0D, 0.0D, 0.0D, icon);
-		tessellator.draw();
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(1.0F, 0.0F, 0.0F);
-		render.renderFaceXPos(block, 0.0D, 0.0D, 0.0D, icon);
-		tessellator.draw();
 	}
 
 	/**

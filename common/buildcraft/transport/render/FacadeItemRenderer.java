@@ -35,31 +35,14 @@ public class FacadeItemRenderer implements IItemRenderer {
 
 	private int renderState = 0;
 
-	private void drawCube(Tessellator tessellator, RenderBlocks render, Block block, int decodedMeta) {
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(0.0F, -1F, 0.0F);
-		render.renderFaceYNeg(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(block, 0, decodedMeta));
-		tessellator.draw();
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(0.0F, 1.0F, 0.0F);
-		render.renderFaceYPos(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(block, 1, decodedMeta));
-		tessellator.draw();
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(0.0F, 0.0F, -1F);
-		render.renderFaceZNeg(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(block, 2, decodedMeta));
-		tessellator.draw();
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(0.0F, 0.0F, 1.0F);
-		render.renderFaceZPos(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(block, 3, decodedMeta));
-		tessellator.draw();
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(-1F, 0.0F, 0.0F);
-		render.renderFaceXNeg(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(block, 4, decodedMeta));
-		tessellator.draw();
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(1.0F, 0.0F, 0.0F);
-		render.renderFaceXPos(block, 0.0D, 0.0D, 0.0D, tryGetBlockIcon(block, 5, decodedMeta));
-		tessellator.draw();
+	private IIcon tryGetBlockIcon(Block block, int side, int decodedMeta) {
+		IIcon icon = RenderUtils.tryGetBlockIcon(block, side, decodedMeta);
+
+		if (icon == null) {
+			icon = PipeIconProvider.TYPE.TransparentFacade.getIcon();
+		}
+
+		return icon;
 	}
 
 	private void drawHollowCube(Tessellator tessellator, RenderBlocks render, Block block, int decodedMeta) {
@@ -174,7 +157,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 		} else {
 			render.setRenderBounds(0F, 0F, 1 - TransportConstants.FACADE_THICKNESS, 1F, 1F, 1F);
 			GL11.glTranslatef(translateX, translateY, translateZ);
-			drawCube(tessellator, render, block, decodedMeta);
+			RenderUtils.drawBlockItem(render, tessellator, block, decodedMeta);
 		}
 
 		// Disable blending
@@ -223,25 +206,6 @@ public class FacadeItemRenderer implements IItemRenderer {
 		}
 		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-	}
-
-	private IIcon tryGetBlockIcon(Block block, int side, int decodedMeta) {
-		IIcon icon = null;
-
-		try {
-			icon = block.getIcon(side, decodedMeta);
-		} catch (Throwable t) {
-			try {
-				icon = block.getBlockTextureFromSide(side);
-			} catch (Throwable ignored) {
-			}
-		} finally {
-			if (icon == null) {
-				icon = PipeIconProvider.TYPE.TransparentFacade.getIcon();
-			}
-		}
-
-		return icon;
 	}
 
 	@Override

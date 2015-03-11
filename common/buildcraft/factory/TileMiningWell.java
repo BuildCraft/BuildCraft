@@ -8,12 +8,15 @@
  */
 package buildcraft.factory;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.blueprints.BuilderAPI;
+import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.transport.IPipeConnection;
@@ -24,8 +27,12 @@ import buildcraft.core.lib.utils.BlockMiner;
 import buildcraft.core.lib.utils.BlockUtils;
 
 public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeConnection, IControllable {
-	boolean isDigging = true;
+	private boolean isDigging = true;
 	private BlockMiner miner;
+	private int ledState;
+	private int ticksSinceAction = 9001;
+
+	private SafeTimeTracker updateTracker = new SafeTimeTracker(BuildCraftCore.updateFactor);
 
 	public TileMiningWell() {
 		super();
@@ -43,6 +50,12 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 		if (worldObj.isRemote) {
 			return;
 		}
+
+		if (updateTracker.markTimeIfDelay(worldObj)) {
+			sendNetworkUpdate();
+		}
+
+		ticksSinceAction++;
 
 		if (mode == Mode.Off) {
 			if (miner != null) {
@@ -74,6 +87,7 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 			}
 
 			if (world.isAirBlock(xCoord, depth, zCoord) || world.getBlock(xCoord, depth, zCoord).isReplaceable(world, xCoord, depth, zCoord)) {
+				ticksSinceAction = 0;
 				if (getBattery().getEnergyStored() >= BuilderAPI.BUILD_ENERGY) {
 					getBattery().useEnergy(BuilderAPI.BUILD_ENERGY, BuilderAPI.BUILD_ENERGY, false);
 					world.setBlock(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock);
@@ -85,6 +99,7 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 
 		if (miner != null) {
 			isDigging = true;
+			ticksSinceAction = 0;
 
 			int usedEnergy = miner.acceptEnergy(getBattery().getEnergyStored());
 			getBattery().useEnergy(usedEnergy, usedEnergy, false);
@@ -110,6 +125,35 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 	}
 
 	@Override
+	public void writeData(ByteBuf stream) {
+		super.writeData(stream);
+
+		ledState = (ticksSinceAction < 2 ? 16 : 0) | (getBattery().getEnergyStored() * 15 / getBattery().getMaxEnergyStored());
+		stream.writeByte(ledState);
+	}
+
+	@Override
+	public void readData(ByteBuf stream) {
+		super.readData(stream);
+
+		int newLedState = stream.readUnsignedByte();
+		if (newLedState != ledState) {
+			ledState = newLedState;
+			worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+		}
+	}
+
+	public int getIconGlowLevel(int renderPass) {
+		if (renderPass == 2) { // Red LED
+			return ledState & 15;
+		} else if (renderPass == 3) { // Green LED
+			return (ledState >> 4) > 0 ? 15 : 0;
+		} else {
+			return -1;
+		}
+	}
+
+	@Override
 	public boolean hasWork() {
 		return isDigging;
 	}
@@ -117,6 +161,9 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 	@Override
 	public ConnectOverride overridePipeConnection(IPipeTile.PipeType type,
 			ForgeDirection with) {
+		if (with.ordinal() == worldObj.getBlockMetadata(xCoord, yCoord, zCoord)) {
+			return ConnectOverride.DISCONNECT;
+		}
 		return type == IPipeTile.PipeType.ITEM ? ConnectOverride.CONNECT : ConnectOverride.DEFAULT;
 	}
 

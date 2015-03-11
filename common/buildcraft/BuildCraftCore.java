@@ -172,6 +172,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	@SideOnly(Side.CLIENT)
 	public static IIconProvider iconProvider;
 	public static int blockByEntityModel;
+	public static int multipassModel;
 	public static int legacyPipeModel;
 	public static int markerModel;
 	public static ITriggerExternal triggerMachineActive = new TriggerMachine(true);
@@ -451,7 +452,7 @@ public class BuildCraftCore extends BuildCraftMod {
 			BuildCraftCore.redLaserTexture = event.map.registerIcon("buildcraftcore:laserBox/blockRedLaser");
 			BuildCraftCore.blueLaserTexture = event.map.registerIcon("buildcraftcore:laserBox/blockBlueLaser");
 			BuildCraftCore.stripesLaserTexture = event.map.registerIcon("buildcraftcore:laserBox/blockStripesLaser");
-			BuildCraftCore.transparentTexture = event.map.registerIcon("buildcraftcore:laserBox/blockTransparentLaser");
+			BuildCraftCore.transparentTexture = event.map.registerIcon("buildcraftcore:misc/transparent");
 		}
 
 	}

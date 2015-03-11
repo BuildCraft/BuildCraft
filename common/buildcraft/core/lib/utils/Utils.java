@@ -26,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.IWorldAccess;
 import net.minecraft.world.World;
 
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
@@ -384,6 +385,11 @@ public final class Utils {
 
 		return true;
 
+	}
+
+	public static boolean isPipeConnected(IBlockAccess access, int x, int y, int z, ForgeDirection dir, IPipeTile.PipeType type) {
+		TileEntity tile = access.getTileEntity(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
+		return tile instanceof IPipeTile && ((IPipeTile) tile).getPipeType() == type && ((IPipeTile) tile).isPipeConnected(dir.getOpposite());
 	}
 
 	public static int[] createSlotArray(int first, int count) {

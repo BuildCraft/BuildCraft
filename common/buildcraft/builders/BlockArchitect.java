@@ -8,23 +8,32 @@
  */
 package buildcraft.builders;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftBuilders;
+import buildcraft.BuildCraftCore;
+import buildcraft.core.BlockBuildCraftLED;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.GuiIds;
+import buildcraft.core.lib.utils.ResourceUtils;
+import buildcraft.factory.TilePump;
 
-public class BlockArchitect extends BlockBuildCraft {
+public class BlockArchitect extends BlockBuildCraftLED {
+	private IIcon[] led;
+
 	public BlockArchitect() {
-		super(Material.iron, BCCreativeTab.get("main"));
+		super(Material.iron);
 		setRotatable(true);
 	}
 
@@ -61,6 +70,16 @@ public class BlockArchitect extends BlockBuildCraft {
 	@Override
 	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
 		return false;
+	}
+
+	@Override
+	public int getIconGlowLevel(IBlockAccess access, int x, int y, int z) {
+		if (renderPass < 1) {
+			return -1;
+		} else {
+			TileArchitect tile = (TileArchitect) access.getTileEntity(x, y, z);
+			return tile.getIconGlowLevel(renderPass);
+		}
 	}
 
 	@Override

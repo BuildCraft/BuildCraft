@@ -26,19 +26,21 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.filler.IFillerPattern;
+import buildcraft.core.BlockBuildCraftLED;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.factory.TileMiningWell;
 
-public class BlockFiller extends BlockBuildCraft {
-	private IIcon textureTopOff;
-
+public class BlockFiller extends BlockBuildCraftLED {
 	public BlockFiller() {
 		super(Material.iron);
 
 		setHardness(5F);
 		setCreativeTab(BCCreativeTab.get("main"));
+		setRotatable(true);
+		setPassCount(4);
 	}
 
 	@Override
@@ -59,35 +61,18 @@ public class BlockFiller extends BlockBuildCraft {
 	}
 
 	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIconAbsolute(IBlockAccess world, int x, int y, int z, int side, int metadata) {
-		TileEntity tile = world.getTileEntity(x, y, z);
-		if (tile != null && tile instanceof TileFiller) {
-			TileFiller filler = (TileFiller) tile;
-			if (side != 1) {
-				if (filler.currentPattern != null) {
-					return filler.currentPattern.getIcon();
-				}
-			} else {
-				if (!filler.hasWork()) {
-					return textureTopOff;
-				}
-			}
+	public int getIconGlowLevel(IBlockAccess access, int x, int y, int z) {
+		if (renderPass == 0 || renderPass == 3) {
+			return -1;
+		} else {
+			TileFiller tile = (TileFiller) access.getTileEntity(x, y, z);
+			return tile.getIconGlowLevel(renderPass);
 		}
-
-		return super.getIconAbsolute(side, metadata);
 	}
 
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileFiller();
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister register) {
-		super.registerBlockIcons(register);
-	    textureTopOff = register.registerIcon("buildcraftbuilders:fillerBlock/top_off");
 	}
 
 	@Override
@@ -103,5 +88,29 @@ public class BlockFiller extends BlockBuildCraft {
 	@Override
 	public int getLightValue(IBlockAccess world, int x, int y, int z) {
 		return 1;
+	}
+
+	@Override
+	public IIcon getIconAbsolute(IBlockAccess access, int x, int y, int z, int side, int meta) {
+		if (renderPass < 3) {
+			return super.getIconAbsolute(access, x, y, z, side, meta);
+		} else {
+			if (side == 2) {
+				TileEntity tile = access.getTileEntity(x, y, z);
+				if (tile instanceof TileFiller && ((TileFiller) tile).currentPattern != null) {
+					return ((TileFiller) tile).currentPattern.getBlockOverlay();
+				}
+			}
+			return null;
+		}
+	}
+
+	@Override
+	public IIcon getIconAbsolute(int side, int meta) {
+		if (renderPass < 3) {
+			return super.getIconAbsolute(side, meta);
+		} else {
+			return null;
+		}
 	}
 }

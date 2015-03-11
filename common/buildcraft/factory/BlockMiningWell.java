@@ -10,30 +10,19 @@ package buildcraft.factory;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftFactory;
-import buildcraft.core.lib.block.BlockBuildCraft;
-import buildcraft.core.lib.utils.Utils;
 
-public class BlockMiningWell extends BlockBuildCraft {
+public class BlockMiningWell extends BlockLEDHatchBase {
 	public BlockMiningWell() {
 		super(Material.ground);
 
 		setHardness(5F);
 		setResistance(10F);
 		setStepSound(soundTypeStone);
-		setRotatable(true);
 	}
 
 	@Override
@@ -55,5 +44,15 @@ public class BlockMiningWell extends BlockBuildCraft {
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileMiningWell();
+	}
+
+	@Override
+	public int getIconGlowLevel(IBlockAccess access, int x, int y, int z) {
+		if (renderPass < 2) {
+			return -1;
+		} else {
+			TileMiningWell tile = (TileMiningWell) access.getTileEntity(x, y, z);
+			return tile.getIconGlowLevel(renderPass);
+		}
 	}
 }

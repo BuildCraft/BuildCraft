@@ -57,9 +57,14 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
 	private int aimY = 0;
 
 	private SafeTimeTracker timer = new SafeTimeTracker(REBUID_DELAY);
-	private int tick = Utils.RANDOM.nextInt();
+	private int tick = Utils.RANDOM.nextInt(32);
+	private int tickPumped = tick - 20;
 	private int numFluidBlocksFound = 0;
 	private boolean powered = false;
+
+	private int ledState;
+	// tick % 16 => min. 16 ticks per network update
+	private SafeTimeTracker updateTracker = new SafeTimeTracker(Math.max(16, BuildCraftCore.updateFactor));
 
 	public TilePump() {
 		super();
@@ -79,6 +84,10 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
 
 		if (worldObj.isRemote) {
 			return;
+		}
+
+		if (updateTracker.markTimeIfDelay(worldObj)) {
+			sendNetworkUpdate();
 		}
 
 		pushToConsumers();
@@ -116,6 +125,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
 					}
 
 					tank.fill(fluidToPump, true);
+					tickPumped = tick;
 				}
 			}
 		} else {
@@ -377,6 +387,8 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
 		buf.writeShort(aimY);
 		buf.writeFloat((float) tubeY);
 		buf.writeBoolean(powered);
+		ledState = ((tick - tickPumped) < 48 ? 16 : 0) | (getBattery().getEnergyStored() * 15 / getBattery().getMaxEnergyStored());
+		buf.writeByte(ledState);
 	}
 
 	@Override
@@ -384,6 +396,12 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
 		aimY = data.readShort();
 		tubeY = data.readFloat();
 		powered = data.readBoolean();
+
+		int newLedState = data.readUnsignedByte();
+		if (newLedState != ledState) {
+			ledState = newLedState;
+			worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+		}
 
 		setTubePosition();
 	}
@@ -456,5 +474,15 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
 	@Override
 	public boolean canConnectRedstoneEngine(ForgeDirection side) {
 		return true;
+	}
+
+	public int getIconGlowLevel(int renderPass) {
+		if (renderPass == 1) { // Red LED
+			return ledState & 15;
+		} else if (renderPass == 2) { // Green LED
+			return (ledState >> 4) > 0 ? 15 : 0;
+		} else {
+			return -1;
+		}
 	}
 }

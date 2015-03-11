@@ -32,6 +32,7 @@ import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.LaserKind;
 import buildcraft.core.lib.engines.RenderEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
+import buildcraft.core.lib.render.RenderBlockMultipass;
 import buildcraft.core.lib.render.RenderEntityBlock;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingMarkers;
@@ -84,10 +85,12 @@ public class CoreProxyClient extends CoreProxy {
 		BuildCraftCore.blockByEntityModel = RenderingRegistry.getNextAvailableRenderId();
 		BuildCraftCore.legacyPipeModel = RenderingRegistry.getNextAvailableRenderId();
 		BuildCraftCore.markerModel = RenderingRegistry.getNextAvailableRenderId();
+		BuildCraftCore.multipassModel = RenderingRegistry.getNextAvailableRenderId();
 
 		RenderingRegistry.registerBlockHandler(new RenderingEntityBlocks());
 		RenderingRegistry.registerBlockHandler(BuildCraftCore.legacyPipeModel, new RenderingEntityBlocks());
 		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
+		RenderingRegistry.registerBlockHandler(BuildCraftCore.multipassModel, new RenderBlockMultipass());
 
 		//TODO Update me to grab differing trunk textures
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEngineBase.class, new RenderEngine());

@@ -23,6 +23,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -33,6 +34,7 @@ import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.BuildCraftAPI;
@@ -82,7 +84,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	private boolean movingVertically;
 	private double headTrajectory;
 
-	private SafeTimeTracker updateTracker = new SafeTimeTracker(10);
+	private SafeTimeTracker updateTracker = new SafeTimeTracker(BuildCraftCore.updateFactor);
 
 	private BptBuilderBase builder;
 
@@ -96,6 +98,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	private NBTTagCompound initNBT = null;
 
 	private BlockMiner miner;
+
+	private int ledState;
 
 	public TileQuarry () {
 		box.kind = Kind.STRIPES;
@@ -512,7 +516,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 	@Override
 	public boolean hasWork() {
-		return mode != Mode.Off && stage != Stage.DONE;
+		return stage != Stage.DONE;
 	}
 
 	private void setBoundaries(boolean useDefaultI) {
@@ -631,6 +635,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		flags |= movingHorizontally ? 0x10 : 0;
 		flags |= movingVertically ? 0x20 : 0;
 		stream.writeByte(flags);
+
+		ledState = (hasWork() && mode != Mode.Off && getTicksSinceEnergyReceived() < 12 ? 16 : 0) | (getBattery().getEnergyStored() * 15 / getBattery().getMaxEnergyStored());
+		stream.writeByte(ledState);
 	}
 
 	@Override
@@ -649,6 +656,11 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		stage = Stage.values()[flags & 0x07];
 		movingHorizontally = (flags & 0x10) != 0;
 		movingVertically = (flags & 0x20) != 0;
+		int newLedState = stream.readUnsignedByte();
+		if (newLedState != ledState) {
+			ledState = newLedState;
+			worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+		}
 
 		createUtilsIfNeeded();
 
@@ -845,6 +857,16 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		}
 	}
 
+	public int getIconGlowLevel(int renderPass) {
+		if (renderPass == 2) { // Red LED
+			return ledState & 15;
+		} else if (renderPass == 3) { // Green LED
+			return (ledState >> 4) > 0 ? 15 : 0;
+		} else {
+			return -1;
+		}
+	}
+
 	@Override
 	public boolean hasCustomInventoryName() {
 		return false;
@@ -887,6 +909,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 	@Override
 	public ConnectOverride overridePipeConnection(IPipeTile.PipeType type, ForgeDirection with) {
+		if (with.ordinal() == worldObj.getBlockMetadata(xCoord, yCoord, zCoord)) {
+			return ConnectOverride.DISCONNECT;
+		}
 		return type == IPipeTile.PipeType.ITEM ? ConnectOverride.CONNECT : ConnectOverride.DEFAULT;
 	}
 }
