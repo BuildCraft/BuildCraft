@@ -8,10 +8,14 @@
  */
 package buildcraft.core.lib.utils;
 
+import java.io.IOException;
 import java.util.UUID;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
+import buildcraft.core.blueprints.BlueprintBase;
 
 public final class NBTUtils {
 
@@ -20,6 +24,18 @@ public final class NBTUtils {
 	 */
 	private NBTUtils() {
 
+	}
+
+
+	public static NBTTagCompound load(byte[] data) {
+		try {
+			NBTTagCompound nbt = CompressedStreamTools.func_152457_a(data, NBTSizeTracker.field_152451_a);
+			return nbt;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 
 	public static NBTTagCompound getItemData(ItemStack stack) {
@@ -50,5 +66,14 @@ public final class NBTUtils {
 			return new UUID(nbtTag.getLong("most"), nbtTag.getLong("least"));
 		}
 		return null;
+	}
+
+	public static byte[] save(NBTTagCompound compound) {
+		try {
+			return CompressedStreamTools.compress(compound);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return new byte[0];
+		}
 	}
 }

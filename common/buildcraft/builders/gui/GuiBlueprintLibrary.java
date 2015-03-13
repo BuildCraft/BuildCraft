@@ -15,10 +15,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.BuildCraftBuilders;
+import buildcraft.api.library.LibraryAPI;
 import buildcraft.builders.TileBlueprintLibrary;
-import buildcraft.core.blueprints.BlueprintId;
-import buildcraft.core.blueprints.BlueprintId.Kind;
-import buildcraft.core.DefaultProps;
+import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.utils.StringUtils;
 
@@ -64,7 +63,7 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
 
 		int c = 0;
-		for (BlueprintId bpt : library.currentPage) {
+		for (LibraryId bpt : library.currentPage) {
 			String name = bpt.name;
 
 			if (name.length() > BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE) {
@@ -75,18 +74,15 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 				int l1 = 8;
 				int i2 = 24;
 
-				if (bpt.kind == Kind.Blueprint) {
-					drawGradientRect(l1, i2 + 9 * c, l1 + 146, i2 + 9 * (c + 1), 0xFFA0C0F0, 0xFFA0C0F0);
-				} else {
+				// TODO
+				//if (bpt.kind == Kind.Blueprint) {
+				//	drawGradientRect(l1, i2 + 9 * c, l1 + 146, i2 + 9 * (c + 1), 0xFFA0C0F0, 0xFFA0C0F0);
+				//} else {
 					drawGradientRect(l1, i2 + 9 * c, l1 + 146, i2 + 9 * (c + 1), 0x80ffffff, 0x80ffffff);
-				}
+				//}
 			}
 
-			if (bpt.kind == Kind.Blueprint) {
-				fontRendererObj.drawString(name, 9, 25 + 9 * c, 0x305080);
-			} else {
-				fontRendererObj.drawString(name, 9, 25 + 9 * c, 0x000000);
-			}
+			fontRendererObj.drawString(name, 9, 25 + 9 * c, LibraryAPI.getHandler(bpt.extension).getTextColor());
 
 			c++;
 		}

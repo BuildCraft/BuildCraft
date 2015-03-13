@@ -9,6 +9,7 @@
 package buildcraft.builders.blueprints;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
@@ -210,7 +211,9 @@ public class RecursiveBlueprintReader {
 	public void createBlueprint() {
 		writingBlueprint.id.name = architect.name;
 		writingBlueprint.author = architect.currentAuthorName;
-		BuildCraftBuilders.serverDB.add(writingBlueprint);
+		NBTTagCompound nbt = new NBTTagCompound();
+		writingBlueprint.writeToNBT(nbt);
+		BuildCraftBuilders.serverDB.add(writingBlueprint.id, nbt);
 
 		if (parentBlueprint == null) {
 			// TODO: This is hacky, should probably be done in the architect

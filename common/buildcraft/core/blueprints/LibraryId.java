@@ -8,6 +8,8 @@
  */
 package buildcraft.core.blueprints;
 
+import sun.nio.ch.Net;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -22,18 +24,14 @@ import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.lib.utils.NetworkUtils;
 
-public final class BlueprintId implements Comparable<BlueprintId>, ISerializable {
-	public enum Kind {
-		Template, Blueprint
-	}
-
+public final class LibraryId implements Comparable<LibraryId>, ISerializable {
 	public byte[] uniqueId;
 	public String name = "";
-	public Kind kind = Kind.Blueprint;
+	public String extension = "tpl";
 
 	public String completeId;
 
-	public BlueprintId() {
+	public LibraryId() {
 	}
 
 	public void generateUniqueId(byte[] data) {
@@ -50,19 +48,23 @@ public final class BlueprintId implements Comparable<BlueprintId>, ISerializable
 	public void write (NBTTagCompound nbt) {
 		nbt.setByteArray("uniqueBptId", uniqueId);
 		nbt.setString("name", name);
-		nbt.setByte("kind", (byte) kind.ordinal());
+		nbt.setString("extension", extension);
 	}
 
 	public void read (NBTTagCompound nbt) {
 		uniqueId = nbt.getByteArray("uniqueBptId");
 		name = nbt.getString("name");
-		kind = Kind.values()[nbt.getByte("kind")];
+		if (nbt.hasKey("kind")) {
+			extension = nbt.getByte("kind") > 0 ? "bpt" : "tpl";
+		} else {
+			extension = nbt.getString("extension");
+		}
 	}
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof BlueprintId) {
-			return Arrays.equals(uniqueId, ((BlueprintId) obj).uniqueId);
+		if (obj instanceof LibraryId) {
+			return Arrays.equals(uniqueId, ((LibraryId) obj).uniqueId);
 		} else {
 			return false;
 		}
@@ -108,7 +110,7 @@ public final class BlueprintId implements Comparable<BlueprintId>, ISerializable
 	}
 
 	@Override
-	public int compareTo(BlueprintId o) {
+	public int compareTo(LibraryId o) {
 		return getCompleteId().compareTo(o.getCompleteId());
 	}
 
@@ -142,13 +144,13 @@ public final class BlueprintId implements Comparable<BlueprintId>, ISerializable
 	public void readData(ByteBuf stream) {
 		uniqueId = NetworkUtils.readByteArray(stream);
 		name = NetworkUtils.readUTF(stream);
-		kind = Kind.values()[stream.readUnsignedByte()];
+		extension = NetworkUtils.readUTF(stream);
 	}
 
 	@Override
 	public void writeData(ByteBuf stream) {
 		NetworkUtils.writeByteArray(stream, uniqueId);
 		NetworkUtils.writeUTF(stream, name);
-		stream.writeByte(kind.ordinal());
+		NetworkUtils.writeUTF(stream, extension);
 	}
 }

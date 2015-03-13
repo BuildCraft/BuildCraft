@@ -40,7 +40,7 @@ public abstract class BlueprintBase {
 	public SchematicBlockBase[][][] contents;
 	public int anchorX, anchorY, anchorZ;
 	public int sizeX, sizeY, sizeZ;
-	public BlueprintId id = new BlueprintId();
+	public LibraryId id = new LibraryId();
 	public String author;
 	public boolean rotate = true;
 	public boolean excavate = true;
@@ -187,7 +187,7 @@ public abstract class BlueprintBase {
 		BlueprintBase bpt;
 
 		if ("template".equals(kind)) {
-			bpt = new Template ();
+			bpt = new Template();
 		} else {
 			bpt = new Blueprint();
 		}

@@ -16,12 +16,13 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.blueprints.BlueprintDeployer;
 import buildcraft.api.blueprints.Translation;
-import buildcraft.builders.blueprints.BlueprintDatabase;
-import buildcraft.core.blueprints.BlueprintId;
-import buildcraft.core.blueprints.BlueprintId.Kind;
+import buildcraft.builders.LibraryDatabase;
+import buildcraft.core.blueprints.BlueprintBase;
+import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptContext;
+import buildcraft.core.lib.utils.NBTUtils;
 
 public class RealBlueprintDeployer extends BlueprintDeployer {
 
@@ -29,19 +30,19 @@ public class RealBlueprintDeployer extends BlueprintDeployer {
 	public void deployBlueprint(World world, int x, int y, int z,
 			ForgeDirection dir, File file) {
 
-		deployBlueprint(world, x, y, z, dir, (Blueprint) BlueprintDatabase.load(file));
+		deployBlueprint(world, x, y, z, dir, (Blueprint) BlueprintBase.loadBluePrint(LibraryDatabase.load(file)));
 	}
 
 	@Override
 	public void deployBlueprintFromFileStream(World world, int x, int y, int z,
 			ForgeDirection dir, byte [] data) {
 
-		deployBlueprint(world, x, y, z, dir, (Blueprint) BlueprintDatabase.load(data));
+		deployBlueprint(world, x, y, z, dir, (Blueprint) BlueprintBase.loadBluePrint(NBTUtils.load(data)));
 	}
 
 	private void deployBlueprint(World world, int x, int y, int z, ForgeDirection dir, Blueprint bpt) {
-		bpt.id = new BlueprintId();
-		bpt.id.kind = Kind.Blueprint;
+		bpt.id = new LibraryId();
+		bpt.id.extension = "bpt";
 
 		BptContext context = bpt.getContext(world, bpt.getBoxForPos(x, y, z));
 

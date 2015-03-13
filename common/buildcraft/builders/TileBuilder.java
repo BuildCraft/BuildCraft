@@ -305,7 +305,6 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		try {
 			bpt = ItemBlueprint.loadBlueprint(getStackInSlot(0));
 		} catch (Throwable t) {
-			setInventorySlotContents(0, null);
 			t.printStackTrace();
 			return null;
 		}

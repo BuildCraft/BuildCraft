@@ -56,6 +56,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
+import buildcraft.api.library.LibraryAPI;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.builders.BlockArchitect;
 import buildcraft.builders.BlockBlueprintLibrary;
@@ -65,6 +66,7 @@ import buildcraft.builders.BlockConstructionMarker;
 import buildcraft.builders.BlockFiller;
 import buildcraft.builders.BlockMarker;
 import buildcraft.builders.BlockPathMarker;
+import buildcraft.builders.BlueprintServerDatabase;
 import buildcraft.builders.BuilderProxy;
 import buildcraft.builders.EventHandlerBuilders;
 import buildcraft.builders.BuildersGuiHandler;
@@ -72,6 +74,8 @@ import buildcraft.builders.HeuristicBlockDetection;
 import buildcraft.builders.ItemBlueprintStandard;
 import buildcraft.builders.ItemBlueprintTemplate;
 import buildcraft.builders.ItemConstructionMarker;
+import buildcraft.builders.LibraryBlueprintTypeHandler;
+import buildcraft.builders.LibraryBookTypeHandler;
 import buildcraft.builders.TileArchitect;
 import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.builders.TileBuilder;
@@ -79,7 +83,7 @@ import buildcraft.builders.TileConstructionMarker;
 import buildcraft.builders.TileFiller;
 import buildcraft.builders.TileMarker;
 import buildcraft.builders.TilePathMarker;
-import buildcraft.builders.blueprints.BlueprintDatabase;
+import buildcraft.builders.LibraryDatabase;
 import buildcraft.builders.schematics.SchematicAir;
 import buildcraft.builders.schematics.SchematicBed;
 import buildcraft.builders.schematics.SchematicBlockCreative;
@@ -167,23 +171,27 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public static Achievement builderAchievement;
 	public static Achievement templateAchievement;
 
-	public static BlueprintDatabase serverDB;
-	public static BlueprintDatabase clientDB;
+	public static BlueprintServerDatabase serverDB;
+	public static LibraryDatabase clientDB;
 
 	public static boolean debugPrintSchematicList = false;
 	public static boolean dropBrokenBlocks = false;
-	
+
+	private String blueprintServerDir;
+	private String blueprintLibraryOutput;
+	private String[] blueprintLibraryInput;
+
 	@Mod.EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
-		String blueprintServerDir = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL,
+		blueprintServerDir = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL,
 				"blueprints.serverDir",
 				"\"$MINECRAFT" + File.separator + "config" + File.separator + "buildcraft" + File.separator
 						+ "blueprints" + File.separator + "server\"").getString();
 
-		String blueprintLibraryOutput = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL,
+		blueprintLibraryOutput = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL,
 				"blueprints.libraryOutput", "\"$MINECRAFT" + File.separator + "blueprints\"").getString();
 
-		String [] blueprintLibraryInput = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL,
+		blueprintLibraryInput = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL,
 				"blueprints.libraryInput", new String []
 				{
 						// expected location
@@ -217,12 +225,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		if (BuildCraftCore.mainConfiguration.hasChanged()) {
 			BuildCraftCore.mainConfiguration.save();
 		}
-
-		serverDB = new BlueprintDatabase();
-		clientDB = new BlueprintDatabase();
-
-		serverDB.init(new String[] {blueprintServerDir}, blueprintServerDir);
-		clientDB.init(blueprintLibraryInput, blueprintLibraryOutput);
 	}
 
 	private static String getDownloadsDir() {
@@ -273,7 +275,13 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		HeuristicBlockDetection.start();
-		
+
+		serverDB = new BlueprintServerDatabase();
+		clientDB = new LibraryDatabase();
+
+		serverDB.init(new String[] {blueprintServerDir}, blueprintServerDir);
+		clientDB.init(blueprintLibraryInput, blueprintLibraryOutput);
+
 		if (debugPrintSchematicList) {
 			try {
 				PrintWriter writer = new PrintWriter("SchematicDebug.txt", "UTF-8");
@@ -454,6 +462,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		SchematicFactory.registerSchematicFactory(SchematicBlock.class, new SchematicFactoryBlock());
 		SchematicFactory.registerSchematicFactory(SchematicMask.class, new SchematicFactoryMask());
 		SchematicFactory.registerSchematicFactory(SchematicEntity.class, new SchematicFactoryEntity());
+
+		LibraryAPI.registerHandler(new LibraryBlueprintTypeHandler(false)); // Template
+		LibraryAPI.registerHandler(new LibraryBlueprintTypeHandler(true)); // Blueprint
+		LibraryAPI.registerHandler(new LibraryBookTypeHandler());
 
 		BlueprintDeployer.instance = new RealBlueprintDeployer();
 
