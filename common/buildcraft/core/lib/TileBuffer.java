@@ -45,9 +45,9 @@ public final class TileBuffer {
 			return;
 		}
 
-		block = world.getBlock(x, y, z);
+		block = BlockUtils.getBlock(world, x, y, z);
 
-		if (block != null && block.hasTileEntity(world.getBlockMetadata(x, y, z))) {
+		if (block != null && block.hasTileEntity(BlockUtils.getBlockMetadata(world, x, y, z))) {
 			tile = BlockUtils.getTileEntity(world, x, y, z);
 		}
 	}

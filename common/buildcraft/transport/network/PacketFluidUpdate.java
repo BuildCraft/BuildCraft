@@ -94,8 +94,6 @@ public class PacketFluidUpdate extends PacketCoordinates {
 		        renderCache[dir.ordinal()].amount = Math.min(transLiq.getCapacity(), data.readUnsignedShort());
 			}
 		}
-
-		transLiq.renderer.push(renderCache, colorRenderCache);
 	}
 
 	@Override

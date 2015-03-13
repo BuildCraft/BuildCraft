@@ -20,10 +20,14 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S27PacketExplosion;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.gen.ChunkProviderServer;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 
@@ -167,7 +171,7 @@ public final class BlockUtils {
 	}
 
 	public static Fluid getFluid(Block block) {
-		return FluidRegistry.lookupFluidForBlock (block);
+		return FluidRegistry.lookupFluidForBlock(block);
 	}
 
 	public static FluidStack drainBlock(World world, int x, int y, int z, boolean doDrain) {
@@ -222,11 +226,67 @@ public final class BlockUtils {
 		return (int) Math.floor(BuilderAPI.BREAK_ENERGY * BuildCraftCore.miningMultiplier * ((world.getBlock(x, y, z).getBlockHardness(world, x, y, z) + 1) * 2));
 	}
 
-	public static TileEntity getTileEntity(World world, int x, int y, int z) {
-		if (world.blockExists(x, y, z)) {
-			return world.getChunkFromBlockCoords(x, z).getTileEntityUnsafe(x & 15, y, z & 15);
-		} else {
-			return null;
+	/**
+	 * The following functions let you avoid unnecessary chunk loads, which is nice.
+	 */
+	private static Chunk lastChunk;
+
+	private static Chunk getChunkUnforced(World world, int x, int z) {
+		Chunk chunk = lastChunk;
+		if (chunk != null) {
+			if (chunk.isChunkLoaded) {
+				if (chunk.worldObj == world && chunk.xPosition == x && chunk.zPosition == z) {
+					return chunk;
+				}
+			} else {
+				lastChunk = null;
+			}
 		}
+
+		chunk = world.getChunkProvider().chunkExists(x, z) ? world.getChunkProvider().provideChunk(x, z) : null;
+		lastChunk = chunk;
+		return chunk;
+	}
+
+	public static TileEntity getTileEntity(World world, int x, int y, int z) {
+		return getTileEntity(world, x, y, z, false);
+	}
+
+	public static TileEntity getTileEntity(World world, int x, int y, int z, boolean force) {
+		if (!force) {
+			if (y < 0 || y > 255) {
+				return null;
+			}
+			Chunk chunk = getChunkUnforced(world, x >> 4, z >> 4);
+			return chunk != null ? chunk.getTileEntityUnsafe(x & 15, y, z & 15) : null;
+		} else return world.getTileEntity(x, y, z);
+	}
+
+	public static Block getBlock(World world, int x, int y, int z) {
+		return getBlock(world, x, y, z, false);
+	}
+
+	public static Block getBlock(World world, int x, int y, int z, boolean force) {
+		if (!force) {
+			if (y < 0 || y > 255) {
+				return Blocks.air;
+			}
+			Chunk chunk = getChunkUnforced(world, x >> 4, z >> 4);
+			return chunk != null ? chunk.getBlock(x & 15, y, z & 15) : Blocks.air;
+		} else return world.getBlock(x, y, z);
+	}
+
+	public static int getBlockMetadata(World world, int x, int y, int z) {
+		return getBlockMetadata(world, x, y, z, false);
+
+	}
+	public static int getBlockMetadata(World world, int x, int y, int z, boolean force) {
+		if (!force) {
+			if (y < 0 || y > 255) {
+				return 0;
+			}
+			Chunk chunk = getChunkUnforced(world, x >> 4, z >> 4);
+			return chunk != null ? chunk.getBlockMetadata(x & 15, y, z & 15) : 0;
+		} else return world.getBlockMetadata(x, y, z);
 	}
 }

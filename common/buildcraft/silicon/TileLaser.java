@@ -31,6 +31,7 @@ import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.utils.BlockUtils;
 
 public class TileLaser extends TileBuildCraft implements IHasWork, IControllable {
 
@@ -63,6 +64,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 		laser.isVisible = false;
 		laser.head = new Position(xCoord, yCoord, zCoord);
 		laser.tail = new Position(xCoord, yCoord, zCoord);
+		laser.waveSize /= 2F;
 	}
 
 	@Override
@@ -178,11 +180,18 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 
 		List<ILaserTarget> targets = new LinkedList<ILaserTarget>();
 
-		for (int x = minX; x <= maxX; ++x) {
-			for (int y = minY; y <= maxY; ++y) {
+		if (minY < 0) {
+			minY = 0;
+		}
+		if (maxY > 255) {
+			maxY = 255;
+		}
+
+		for (int y = minY; y <= maxY; ++y) {
+			for (int x = minX; x <= maxX; ++x) {
 				for (int z = minZ; z <= maxZ; ++z) {
-					if (worldObj.getBlock(x, y, z) instanceof ILaserTargetBlock) {
-						TileEntity tile = worldObj.getTileEntity(x, y, z);
+					if (BlockUtils.getBlock(worldObj, x, y, z) instanceof ILaserTargetBlock) {
+						TileEntity tile = BlockUtils.getTileEntity(worldObj, x, y, z);
 						
 						if (tile instanceof ILaserTarget) {
 							ILaserTarget table = (ILaserTarget) tile;

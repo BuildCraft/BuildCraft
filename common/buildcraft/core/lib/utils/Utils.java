@@ -81,7 +81,7 @@ public final class Utils {
 			Position pos = new Position(x, y, z, orientation);
 			pos.moveForwards(1.0);
 
-			TileEntity tileInventory = BlockUtils.getTileEntity(world, (int) pos.x, (int) pos.y, (int) pos.z);
+			TileEntity tileInventory  =BlockUtils.getTileEntity(world, (int) pos.x, (int) pos.y, (int) pos.z);
 			ITransactor transactor = Transactor.getTransactorFor(tileInventory);
 			if (transactor != null && !(tileInventory instanceof IEngine) && transactor.add(stack, orientation.getOpposite(), false).stackSize > 0) {
 				return transactor.add(stack, orientation.getOpposite(), true).stackSize;
@@ -302,7 +302,7 @@ public final class Utils {
 	}
 
 	public static void preDestroyBlock(World world, int i, int j, int k) {
-		TileEntity tile = world.getTileEntity(i, j, k);
+		TileEntity tile = BlockUtils.getTileEntity(world, i, j, k);
 
 		if (tile instanceof IInventory && !world.isRemote) {
 			if (!(tile instanceof IDropControlInventory) || ((IDropControlInventory) tile).doDrop()) {
