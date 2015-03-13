@@ -35,7 +35,7 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TravelingItem;
 
 public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHandler {
-	protected RFBattery battery = new RFBattery(640, 640, 0);
+	protected RFBattery battery = new RFBattery(640, 80, 0);
 	
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeItemsWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
