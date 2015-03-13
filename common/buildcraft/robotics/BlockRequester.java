@@ -32,6 +32,7 @@ import buildcraft.core.lib.utils.Utils;
 public class BlockRequester extends BlockBuildCraft {
 	public BlockRequester() {
 		super(Material.iron);
+		setRotatable(true);
 	}
 
 	@Override

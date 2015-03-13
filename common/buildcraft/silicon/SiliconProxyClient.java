@@ -10,15 +10,15 @@ package buildcraft.silicon;
 
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-
 import buildcraft.silicon.render.RenderLaserBlock;
+import buildcraft.silicon.render.RenderLaserTile;
 
 public class SiliconProxyClient extends SiliconProxy {
 	@Override
 	public void registerRenderers() {
 		SiliconProxy.laserBlockModel = RenderingRegistry.getNextAvailableRenderId();
-		RenderingRegistry.registerBlockHandler(new SiliconRenderBlock());
+		RenderingRegistry.registerBlockHandler(new RenderLaserBlock());
 
-		ClientRegistry.bindTileEntitySpecialRenderer(TileLaser.class, new RenderLaserBlock());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileLaser.class, new RenderLaserTile());
 	}
 }

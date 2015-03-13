@@ -172,7 +172,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	@SideOnly(Side.CLIENT)
 	public static IIconProvider iconProvider;
 	public static int blockByEntityModel;
-	public static int multipassModel;
+	public static int complexBlockModel;
 	public static int legacyPipeModel;
 	public static int markerModel;
 	public static ITriggerExternal triggerMachineActive = new TriggerMachine(true);

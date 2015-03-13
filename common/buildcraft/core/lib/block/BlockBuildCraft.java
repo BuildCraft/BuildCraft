@@ -212,7 +212,7 @@ public abstract class BlockBuildCraft extends BlockContainer {
 				return getIconAbsolute(side, metadata & 8);
 			}
 
-			int front = metadata >= 2 && metadata <= 5 ? metadata : 3;
+			int front = getFrontSide(metadata);
 			return getIconAbsolute(SIDE_TEXTURING_LOCATIONS[(front - 2) % 4][(side - 2) % 4], metadata & 8);
 		} else {
 			return getIconAbsolute(side, metadata);
@@ -257,8 +257,7 @@ public abstract class BlockBuildCraft extends BlockContainer {
 		}
 	}
 
-	@Override
-	public boolean canRenderInPass(int pass) {
+	public boolean canRenderInPassBC(int pass) {
 		if (pass >= maxPasses) {
 			renderPass = 0;
 			return false;
@@ -268,14 +267,14 @@ public abstract class BlockBuildCraft extends BlockContainer {
 		}
 	}
 
-	@SideOnly(Side.CLIENT)
-	public int getRenderBlockPass() {
-		return maxPasses > 1 ? 1 : 0;
-	}
+	//@SideOnly(Side.CLIENT)
+	//public int getRenderBlockPass() {
+	//	return maxPasses > 1 ? 1 : 0;
+	//}
 
 	@Override
 	public int getRenderType() {
-		return maxPasses > 1 ? BuildCraftCore.multipassModel : 0;
+		return (maxPasses > 1 || isRotatable()) ? BuildCraftCore.complexBlockModel : 0;
 	}
 
 	public int getCurrentRenderPass() {
@@ -288,5 +287,12 @@ public abstract class BlockBuildCraft extends BlockContainer {
 
 	public int getIconGlowLevel(IBlockAccess access, int x, int y, int z) {
 		return getIconGlowLevel();
+	}
+
+	public int getFrontSide(int meta) {
+		if (!isRotatable()) {
+			return -1;
+		}
+		return meta >= 2 && meta <= 5 ? meta : 3;
 	}
 }

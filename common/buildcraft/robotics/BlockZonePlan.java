@@ -32,6 +32,7 @@ import buildcraft.core.lib.utils.Utils;
 public class BlockZonePlan extends BlockBuildCraft {
 	public BlockZonePlan() {
 		super(Material.iron);
+		setRotatable(true);
 	}
 
 	@Override
