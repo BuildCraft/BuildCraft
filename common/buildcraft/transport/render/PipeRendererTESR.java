@@ -38,6 +38,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
+import buildcraft.api.core.Position;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
@@ -283,7 +284,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		// do not use switch. we will be transitioning away from the enum
 		if (pipeType == IPipeTile.PipeType.ITEM) {
-			renderSolids(pipe.pipe, x, y, z);
+			renderSolids(pipe.pipe, x, y, z, f);
 		} else if (pipeType == IPipeTile.PipeType.FLUID) {
 			renderFluids(pipe.pipe, x, y, z);
 		} else if (pipeType == IPipeTile.PipeType.POWER) {
@@ -781,7 +782,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		return getDisplayFluidLists(liquidId, world);
 	}
 
-	private void renderSolids(Pipe<PipeTransportItems> pipe, double x, double y, double z) {
+	private void renderSolids(Pipe<PipeTransportItems> pipe, double x, double y, double z, float f) {
 		GL11.glPushMatrix();
 
 		float light = pipe.container.getWorldObj().getLightBrightness(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
@@ -792,7 +793,10 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				break;
 			}
 
-			doRenderItem(item, x + item.xCoord - pipe.container.xCoord, y + item.yCoord - pipe.container.yCoord, z + item.zCoord - pipe.container.zCoord, light, item.color);
+			Position motion = new Position(0, 0, 0, item.toCenter ? item.input : item.output);
+			motion.moveForwards(item.getSpeed() * f);
+
+			doRenderItem(item, x + item.xCoord - pipe.container.xCoord + motion.x,y + item.yCoord - pipe.container.yCoord, z + item.zCoord - pipe.container.zCoord, light, item.color);
 			count++;
 		}
 

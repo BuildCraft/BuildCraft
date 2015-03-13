@@ -155,6 +155,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public static short INPUT_TTL = 60; // 100
 	public static short OUTPUT_TTL = 80; // 80
 	public static short OUTPUT_COOLDOWN = 30; // 30
+
 	private static final ForgeDirection[] directions = ForgeDirection.VALID_DIRECTIONS;
 	private static final ForgeDirection[] orientations = ForgeDirection.values();
 	public byte initClient = 0;
