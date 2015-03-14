@@ -13,6 +13,7 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.Entity;
@@ -33,7 +34,7 @@ public class RenderLaser extends Render {
 	};
 	private static ModelRenderer [] box;
 
-	private static int [][] scaledBoxes;
+	private static int [][][] scaledBoxes;
 
 	public RenderLaser() {
 	}
@@ -56,36 +57,42 @@ public class RenderLaser extends Render {
 
 	private static void initScaledBoxes () {
 		if (scaledBoxes == null) {
-			scaledBoxes = new int [100][20];
+			scaledBoxes = new int [2][100][20];
 
-			for (int size = 0; size < 100; ++size) {
-				for (int i = 0; i < 20; ++i) {
-					scaledBoxes[size][i] = GLAllocation.generateDisplayLists(1);
-					GL11.glNewList(scaledBoxes[size][i], GL11.GL_COMPILE);
+			for (int flags = 0; flags < 2; ++flags) {
+				for (int size = 0; size < 100; ++size) {
+					for (int i = 0; i < 20; ++i) {
+						scaledBoxes[flags][size][i] = GLAllocation.generateDisplayLists(1);
+						GL11.glNewList(scaledBoxes[flags][size][i], GL11.GL_COMPILE);
 
-					RenderInfo block = new RenderInfo();
+						RenderInfo block = new RenderInfo();
 
-					float minSize = 0.2F * size / 100F;
-					float maxSize = 0.4F * size / 100F;
-					//float minSize = 0.1F;
-					//float maxSize = 0.2F;
+						float minSize = 0.2F * size / 100F;
+						float maxSize = 0.4F * size / 100F;
+						//float minSize = 0.1F;
+						//float maxSize = 0.2F;
 
-					float range = maxSize - minSize;
+						float range = maxSize - minSize;
 
-					float diff = (MathHelper.cos(i / 20F * 2 * (float) Math.PI)
-							* range / 2F);
+						float diff = (MathHelper.cos(i / 20F * 2 * (float) Math.PI)
+								* range / 2F);
 
-					block.minX = 0.0;
-					block.minY = -maxSize / 2F + diff;
-					block.minZ = -maxSize / 2F + diff;
+						block.minX = 0.0;
+						block.minY = -maxSize / 2F + diff;
+						block.minZ = -maxSize / 2F + diff;
 
-					block.maxX = STEP;
-					block.maxY = maxSize / 2F - diff;
-					block.maxZ = maxSize / 2F - diff;
+						block.maxX = STEP;
+						block.maxY = maxSize / 2F - diff;
+						block.maxZ = maxSize / 2F - diff;
 
-					RenderEntityBlock.INSTANCE.renderBlock(block);
+						if (flags == 1) {
+							block.brightness = 15;
+						}
 
-					GL11.glEndList();
+						RenderEntityBlock.INSTANCE.renderBlock(block);
+
+						GL11.glEndList();
+					}
 				}
 			}
 		}
@@ -137,14 +144,14 @@ public class RenderLaser extends Render {
 		initScaledBoxes();
 
 		double x1 = laser.wavePosition;
-		double x2 = x1 + scaledBoxes [0].length * STEP;
+		double x2 = x1 + scaledBoxes[0][0].length * STEP;
 		double x3 = laser.renderSize;
 
 		doRenderLaserLine(x1, laser.laserTexAnimation);
 
 		for (double i = x1; i <= x2 && i <= laser.renderSize; i += STEP) {
-			GL11.glCallList(scaledBoxes [(int) (laser.waveSize * 99F)][indexList]);
-			indexList = (indexList + 1) % scaledBoxes [0].length;
+			GL11.glCallList(scaledBoxes[laser.isGlowing ? 1 : 0][(int) (laser.waveSize * 99F)][indexList]);
+			indexList = (indexList + 1) % scaledBoxes[0][0].length;
 			GL11.glTranslated(STEP, 0, 0);
 		}
 
@@ -174,7 +181,20 @@ public class RenderLaser extends Render {
 
 		initScaledBoxes();
 
-		doRenderLaserLine(laser.renderSize, laser.laserTexAnimation);
+		if (laser.isGlowing) {
+			float lastBrightnessX = OpenGlHelper.lastBrightnessX;
+			float lastBrightnessY = OpenGlHelper.lastBrightnessY;
+
+			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, 240, 240);
+			GL11.glDisable(GL11.GL_LIGHTING);
+
+			doRenderLaserLine(laser.renderSize, laser.laserTexAnimation);
+
+			GL11.glEnable(GL11.GL_LIGHTING);
+			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
+		} else {
+			doRenderLaserLine(laser.renderSize, laser.laserTexAnimation);
+		}
 
 		GL11.glPopMatrix();
 	}

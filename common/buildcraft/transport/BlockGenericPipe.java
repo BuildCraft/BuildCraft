@@ -47,6 +47,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.blocks.IColorRemovable;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.events.BlockInteractionEvent;
@@ -70,7 +71,7 @@ import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.render.PipeRendererWorld;
 
-public class BlockGenericPipe extends BlockBuildCraft {
+public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable {
 
 	public static int facadeRenderColor = -1;
 	public static Map<Item, Class<? extends Pipe>> pipes = new HashMap<Item, Class<? extends Pipe>>();
@@ -1055,6 +1056,16 @@ public class BlockGenericPipe extends BlockBuildCraft {
 		TileGenericPipe pipeTile = (TileGenericPipe) world.getTileEntity(x, y, z);
 		if (!pipeTile.hasBlockingPluggable(side)) {
 			return pipeTile.setPipeColor(colour);
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean removeColorFromBlock(World world, int x, int y, int z, ForgeDirection side) {
+		TileGenericPipe pipeTile = (TileGenericPipe) world.getTileEntity(x, y, z);
+		if (!pipeTile.hasBlockingPluggable(side)) {
+			return pipeTile.setPipeColor(-1);
 		}
 
 		return false;

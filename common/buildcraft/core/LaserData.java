@@ -19,6 +19,7 @@ public class LaserData implements ISerializable {
 	public Position head = new Position(0, 0, 0);
 	public Position tail = new Position(0, 0, 0);
 	public boolean isVisible = true;
+	public boolean isGlowing = false;
 
 	public double renderSize = 1.0 / 16.0;
 	public double angleY = 0;
@@ -81,13 +82,16 @@ public class LaserData implements ISerializable {
 	public void readData(ByteBuf stream) {
 		head.readData(stream);
 		tail.readData(stream);
-		isVisible = stream.readBoolean();
+		int flags = stream.readUnsignedByte();
+		isVisible = (flags & 1) != 0;
+		isGlowing = (flags & 2) != 0;
 	}
 
 	@Override
 	public void writeData(ByteBuf stream) {
 		head.writeData(stream);
 		tail.writeData(stream);
-		stream.writeBoolean(isVisible);
+		int flags = (isVisible ? 1 : 0) | (isGlowing ? 2 : 0);
+		stream.writeByte(flags);
 	}
 }

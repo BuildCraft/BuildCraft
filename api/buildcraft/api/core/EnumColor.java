@@ -192,13 +192,8 @@ public enum EnumColor {
 		return b.toString().trim();
 	}
 
-	@SideOnly(Side.CLIENT)
-	public static void registerIcons(IIconRegister iconRegister) {
-		brushIcons = new IIcon[16];
-		for (EnumColor c : values()) {
-			brushIcons[c.ordinal()] = iconRegister.registerIcon("buildcraftcore:triggers/color_"
-					+ c.name().toLowerCase(Locale.ENGLISH));
-		}
+	public static void setIconArray(IIcon[] icons) {
+		brushIcons = icons;
 	}
 
 	@SideOnly(Side.CLIENT)

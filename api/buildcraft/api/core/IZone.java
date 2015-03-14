@@ -14,6 +14,8 @@ public interface IZone {
 
 	double distanceTo(BlockIndex index);
 
+	double distanceToSquared(BlockIndex index);
+
 	boolean contains(double x, double y, double z);
 
 	BlockIndex getRandomBlockIndex(Random rand);

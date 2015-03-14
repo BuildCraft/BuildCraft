@@ -184,6 +184,10 @@ public final class RenderEntityBlock extends Render {
 		
 		renderBlocks.setRenderBounds(info.minX, info.minY, info.minZ, info.maxX, info.maxY, info.maxZ);
 
+		if (info.brightness != -1) {
+			tessellator.setBrightness(info.brightness << 4);
+		}
+
 		if (info.renderSide[0]) {
 			tessellator.setNormal(0, -1, 0);
 			renderBlocks.renderFaceYNeg(info.baseBlock, 0, 0, 0, info.getBlockTextureFromSide(0));

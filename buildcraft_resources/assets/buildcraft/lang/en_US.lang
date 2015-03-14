@@ -190,6 +190,7 @@ item.goldGearItem.name=Gold Gear
 item.diamondGearItem.name=Diamond Gear
 item.templateItem.name=Template
 item.wrenchItem.name=Wrench
+item.paintbrush.name=Paintbrush
 item.pipeWaterproof.name=Pipe Sealant
 item.redPipeWire.name=Red Pipe Wire
 item.bluePipeWire.name=Blue Pipe Wire

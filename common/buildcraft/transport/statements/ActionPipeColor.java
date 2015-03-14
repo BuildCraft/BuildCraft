@@ -36,7 +36,7 @@ public class ActionPipeColor extends BCStatement implements IActionInternal {
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraftcore:triggers/color_" + color.name().toLowerCase(Locale.ENGLISH));
+		icon = iconRegister.registerIcon("buildcraftcore:paintbrush/" + color.name().toLowerCase(Locale.ENGLISH));
 	}
 
 	@Override

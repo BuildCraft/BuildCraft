@@ -1,0 +1,19 @@
+Additions:
+* **New textures!** - "Essence" made by (CyanideX)
+* **Modularization** - BuildCraft is back to being modules (asie)
+* Blueprint Library is now Electronic Library, supports copying books (asie)
+* Improved robot light handling - the light now denotes sleep state and battery charge level (asie)
+* Added Robot triggers and actions: Linked, Reserved, In Station and Robot Mandatory (asie)
+* Added Debugger for developer use (asie)
+* Made items in pipes move at a much smoother rate (asie)
+
+Bugfixes:
+* **Stopped wooden item pipes from exploding** (asie)
+* Structure pipes not respecting blocking pluggables (asie)
+
+APIs:
+* IDebuggable, for debugger compatibility in tile entities (asie)
+* LibraryAPI for supporting copying of custom items in the Electronic Library (asie)
+
+Breaking changes:
+* Item pipes may no longer be connected to the front of the Mining Well or Quarry.

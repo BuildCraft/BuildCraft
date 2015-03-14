@@ -84,6 +84,7 @@ import buildcraft.core.ItemDebugger;
 import buildcraft.core.ItemGear;
 import buildcraft.core.ItemList;
 import buildcraft.core.ItemMapLocation;
+import buildcraft.core.ItemPaintbrush;
 import buildcraft.core.ItemSpring;
 import buildcraft.core.ItemWrench;
 import buildcraft.core.SpringPopulate;
@@ -95,6 +96,7 @@ import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.TileEngineWood;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.network.PacketHandler;
+import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.IntegrationRecipeManager;
@@ -160,6 +162,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Item wrenchItem;
 	public static Item mapLocationItem;
 	public static Item debuggerItem;
+	public static Item paintbrushItem;
 	public static ItemList listItem;
 	@SideOnly(Side.CLIENT)
 	public static IIcon redLaserTexture;
@@ -323,6 +326,9 @@ public class BuildCraftCore extends BuildCraftMod {
 			CoreProxy.proxy.registerItem(diamondGearItem);
 			OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));
 
+			paintbrushItem = (new ItemPaintbrush()).setUnlocalizedName("paintbrush");
+			CoreProxy.proxy.registerItem(paintbrushItem);
+
 			engineBlock = (BlockEngine) CompatHooks.INSTANCE.getBlock(BlockEngine.class);
 			CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);
 			engineBlock.registerTile((Class<? extends TileEngineBase>) CompatHooks.INSTANCE.getTile(TileEngineWood.class), "tile.engineWood");
@@ -447,7 +453,6 @@ public class BuildCraftCore extends BuildCraftMod {
 		if (event.map.getTextureType() == 1) {
 			iconProvider = new CoreIconProvider();
 			iconProvider.registerIcons(event.map);
-			EnumColor.registerIcons(event.map);
 		} else if (event.map.getTextureType() == 0) {
 			BuildCraftCore.redLaserTexture = event.map.registerIcon("buildcraftcore:laserBox/blockRedLaser");
 			BuildCraftCore.blueLaserTexture = event.map.registerIcon("buildcraftcore:laserBox/blockBlueLaser");
@@ -481,6 +486,15 @@ public class BuildCraftCore extends BuildCraftMod {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 0),
 				"www", " g ", "GpG", 'w', "plankWood", 'g', "blockGlass", 'G',
 				"gearWood", 'p', Blocks.piston);
+
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(paintbrushItem), " iw", " gi", "s  ",
+				's', "stickWood", 'g', "gearWood", 'w', new ItemStack(Blocks.wool, 1, 0), 'i', Items.string);
+
+		for (int i = 0; i < 16; i++) {
+			ItemStack outputStack = new ItemStack(paintbrushItem);
+			NBTUtils.getItemData(outputStack).setByte("color", (byte) i);
+			CoreProxy.proxy.addShapelessRecipe(outputStack, paintbrushItem, EnumColor.fromId(i).getDye());
+		}
 	}
 
 	@Mod.EventHandler

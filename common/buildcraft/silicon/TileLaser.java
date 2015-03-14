@@ -64,7 +64,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 		laser.isVisible = false;
 		laser.head = new Position(xCoord, yCoord, zCoord);
 		laser.tail = new Position(xCoord, yCoord, zCoord);
-		laser.waveSize /= 2F;
+		laser.isGlowing = true;
 	}
 
 	@Override

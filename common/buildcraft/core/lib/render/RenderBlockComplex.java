@@ -83,7 +83,7 @@ public class RenderBlockComplex implements ISimpleBlockRenderingHandler {
 				renderer.renderFaceXPos(block, x, y, z, icon);
 			}
 		} else {
-			renderer.renderStandardBlockWithColorMultiplier(block, x, y, z, 1.0f, 1.0f, 1.0f);
+			renderer.renderStandardBlock(block, x, y, z);
 		}
 
 		renderer.uvRotateTop = 0;

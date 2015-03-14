@@ -154,26 +154,30 @@ public abstract class BlockBuildCraft extends BlockContainer {
 
 	@Override
 	public boolean rotateBlock(World world, int x, int y, int z, ForgeDirection axis) {
-		// TODO: Actually look at the axis parameter
-		int meta = world.getBlockMetadata(x, y, z);
+		if (isRotatable()) {
+			// TODO: Actually look at the axis parameter
+			int meta = world.getBlockMetadata(x, y, z);
 
-		switch (ForgeDirection.getOrientation(meta)) {
-			case WEST:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.SOUTH.ordinal(), 3);
-				break;
-			case EAST:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.NORTH.ordinal(), 3);
-				break;
-			case NORTH:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.WEST.ordinal(), 3);
-				break;
-			case SOUTH:
-			default:
-				world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.EAST.ordinal(), 3);
-				break;
+			switch (ForgeDirection.getOrientation(meta)) {
+				case WEST:
+					world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.SOUTH.ordinal(), 3);
+					break;
+				case EAST:
+					world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.NORTH.ordinal(), 3);
+					break;
+				case NORTH:
+					world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.WEST.ordinal(), 3);
+					break;
+				case SOUTH:
+				default:
+					world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.EAST.ordinal(), 3);
+					break;
+			}
+			world.markBlockForUpdate(x, y, z);
+			return true;
+		} else {
+			return false;
 		}
-		world.markBlockForUpdate(x, y, z);
-		return true;
 	}
 
 	@SideOnly(Side.CLIENT)
