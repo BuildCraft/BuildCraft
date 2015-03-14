@@ -3,6 +3,7 @@ package buildcraft.core.lib.utils;
 import java.util.Iterator;
 import java.util.Random;
 
+import net.minecraft.util.MathHelper;
 import buildcraft.api.core.BlockIndex;
 
 public class BlockScannerRandom implements Iterable<BlockIndex> {
@@ -20,12 +21,12 @@ public class BlockScannerRandom implements Iterable<BlockIndex> {
 		@Override
 		public BlockIndex next() {
 			double radius = rand.nextFloat() * maxDistance;
-			double polarAngle = rand.nextFloat() * 2.0 * Math.PI;
-			double azimuthAngle = rand.nextFloat() * Math.PI;
+			float polarAngle = rand.nextFloat() * 2.0F * (float) Math.PI;
+			float azimuthAngle = rand.nextFloat() * (float) Math.PI;
 
-			int searchX = (int) (radius * Math.cos(polarAngle) * Math.sin(azimuthAngle));
-			int searchY = (int) (radius * Math.cos(azimuthAngle));
-			int searchZ = (int) (radius * Math.sin(polarAngle) * Math.sin(azimuthAngle));
+			int searchX = (int) (radius * MathHelper.cos(polarAngle) * MathHelper.sin(azimuthAngle));
+			int searchY = (int) (radius * MathHelper.cos(azimuthAngle));
+			int searchZ = (int) (radius * MathHelper.sin(polarAngle) * MathHelper.sin(azimuthAngle));
 
 			return new BlockIndex(searchX, searchY, searchZ);
 		}

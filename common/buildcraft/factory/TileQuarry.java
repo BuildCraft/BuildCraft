@@ -26,6 +26,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCoordIntPair;
 
 import net.minecraftforge.common.ForgeChunkManager;
@@ -82,7 +83,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	private Stage stage = Stage.BUILDING;
 	private boolean movingHorizontally;
 	private boolean movingVertically;
-	private double headTrajectory;
+	private float headTrajectory;
 
 	private SafeTimeTracker updateTracker = new SafeTimeTracker(BuildCraftCore.updateFactor);
 
@@ -279,7 +280,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		movingVertically = true;
 		double[] head = getHead();
 		int[] target = getTarget();
-		headTrajectory = Math.atan2(target[2] - head[2], target[0] - head[0]);
+		headTrajectory = (float) Math.atan2(target[2] - head[2], target[0] - head[0]);
 		sendNetworkUpdate();
 	}
 
@@ -775,8 +776,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 					head[1] = target[1];
 				}
 			} else {
-				head[0] += Math.cos(headTrajectory) * instantSpeed;
-				head[2] += Math.sin(headTrajectory) * instantSpeed;
+				head[0] += MathHelper.cos(headTrajectory) * instantSpeed;
+				head[2] += MathHelper.sin(headTrajectory) * instantSpeed;
 			}
 			setHead(head[0], head[1], head[2]);
 		}

@@ -32,7 +32,7 @@ public class PathFinding implements IIterableAlgorithm {
 	private BlockIndex end;
 	private IBlockFilter pathFound;
 	private IZone zone;
-	private double maxDistanceToEnd = 0;
+	private double maxDistanceToEndSq = 0;
 	private float maxTotalDistance = 0;
 
 	private HashMap<BlockIndex, Node> openList = new HashMap<BlockIndex, PathFinding.Node>();
@@ -52,7 +52,7 @@ public class PathFinding implements IIterableAlgorithm {
 		Node startNode = new Node();
 		startNode.parent = null;
 		startNode.movementCost = 0;
-		startNode.destinationCost = distance(start, end);
+		startNode.destinationCost = distanceSq(start, end);
 		startNode.totalWeight = startNode.movementCost + startNode.destinationCost;
 		startNode.index = iStart;
 		openList.put(start, startNode);
@@ -62,7 +62,7 @@ public class PathFinding implements IIterableAlgorithm {
 	public PathFinding(World iWorld, BlockIndex iStart, BlockIndex iEnd, double iMaxDistanceToEnd) {
 		this(iWorld, iStart, iEnd);
 
-		maxDistanceToEnd = iMaxDistanceToEnd;
+		maxDistanceToEndSq = iMaxDistanceToEnd * iMaxDistanceToEnd;
 	}
 
 	public PathFinding(World iWorld, BlockIndex iStart, BlockIndex iEnd, double iMaxDistanceToEnd,
@@ -138,15 +138,16 @@ public class PathFinding implements IIterableAlgorithm {
 						return nextNode;
 					}
 
-					nextNode.movementCost = from.movementCost + distance(nextNode.index, from.index);
+					nextNode.movementCost = from.movementCost + distanceSq(nextNode.index, from.index);
 
 					if (end != null) {
-						nextNode.destinationCost = distance(nextNode.index, end);
+						nextNode.destinationCost = distanceSq(nextNode.index, end);
 					} else if (zone != null) {
 						if (zone.contains(x, y, z)) {
 							nextNode.destinationCost = 0;
 						} else {
-							nextNode.destinationCost = zone.distanceTo(nextNode.index);
+							nextNode.destinationCost = zone.distanceToSquared(nextNode.index);
+
 						}
 					} else {
 						nextNode.destinationCost = 0;
@@ -207,11 +208,15 @@ public class PathFinding implements IIterableAlgorithm {
 	}
 
 	private static double distance(BlockIndex i1, BlockIndex i2) {
+		return Math.sqrt(distanceSq(i1, i2));
+	}
+
+	private static double distanceSq(BlockIndex i1, BlockIndex i2) {
 		double dx = (double) i1.x - (double) i2.x;
 		double dy = (double) i1.y - (double) i2.y;
 		double dz = (double) i1.z - (double) i2.z;
 
-		return Math.sqrt(dx * dx + dy * dy + dz * dz);
+		return dx * dx + dy * dy + dz * dz;
 	}
 
 	private boolean endReached(int x, int y, int z) {
@@ -220,11 +225,11 @@ public class PathFinding implements IIterableAlgorithm {
 		} else if (pathFound != null) {
 			return pathFound.matches(world, x, y, z);
 		} else {
-			if (maxDistanceToEnd == 0) {
+			if (maxDistanceToEndSq == 0) {
 				return end.x == x && end.y == y && end.z == z;
 			} else {
 				return BuildCraftAPI.isSoftBlock(world, x, y, z)
-						&& distance(new BlockIndex(x, y, z), end) <= maxDistanceToEnd;
+						&& distanceSq(new BlockIndex(x, y, z), end) <= maxDistanceToEndSq;
 			}
 		}
 	}

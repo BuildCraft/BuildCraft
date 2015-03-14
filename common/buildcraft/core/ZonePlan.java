@@ -95,14 +95,16 @@ public class ZonePlan implements IZone, ISerializable {
 
 	@Override
 	public double distanceTo(BlockIndex index) {
+		return Math.sqrt(distanceToSquared(index));
+	}
+
+	@Override
+	public double distanceToSquared(BlockIndex index) {
 		double maxSqrDistance = Double.MAX_VALUE;
 
 		for (Map.Entry<ChunkIndex, ZoneChunk> e : chunkMapping.entrySet()) {
-			double cx = e.getKey().x << 4 + 8;
-			double cz = e.getKey().x << 4 + 8;
-
-			double dx = cx - index.x;
-			double dz = cz - index.z;
+			double dx = (e.getKey().x << 4 + 8) - index.x;
+			double dz = (e.getKey().x << 4 + 8) - index.z;
 
 			double sqrDistance = dx * dx + dz * dz;
 
@@ -111,7 +113,7 @@ public class ZonePlan implements IZone, ISerializable {
 			}
 		}
 
-		return Math.sqrt(maxSqrDistance);
+		return maxSqrDistance;
 	}
 
 	@Override

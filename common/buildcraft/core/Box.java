@@ -354,11 +354,17 @@ public class Box implements IBox, ISerializable {
 
 	@Override
 	public double distanceTo(BlockIndex index) {
+
+		return Math.sqrt(distanceToSquared(index));
+	}
+
+	@Override
+	public double distanceToSquared(BlockIndex index) {
 		int dx = index.x - (xMin + (xMax - xMin + 1));
 		int dy = index.y - (yMin + (yMax - yMin + 1));
 		int dz = index.z - (zMin + (zMax - zMin + 1));
 
-		return Math.sqrt(dx * dx + dy * dy + dz * dz);
+		return dx * dx + dy * dy + dz * dz;
 	}
 
 	@Override

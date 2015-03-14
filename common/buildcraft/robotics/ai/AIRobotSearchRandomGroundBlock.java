@@ -8,6 +8,7 @@
  */
 package buildcraft.robotics.ai;
 
+import net.minecraft.util.MathHelper;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
@@ -51,10 +52,10 @@ public class AIRobotSearchRandomGroundBlock extends AIRobot {
 
 		if (zone == null) {
 			double r = robot.worldObj.rand.nextFloat() * range;
-			double a = robot.worldObj.rand.nextFloat() * 2.0 * Math.PI;
+			float a = robot.worldObj.rand.nextFloat() * 2.0F * (float) Math.PI;
 
-			x = (int) (Math.cos(a) * r + Math.floor(robot.posX));
-			z = (int) (Math.sin(a) * r + Math.floor(robot.posZ));
+			x = (int) (MathHelper.cos(a) * r + Math.floor(robot.posX));
+			z = (int) (MathHelper.sin(a) * r + Math.floor(robot.posZ));
 		} else {
 			BlockIndex b = zone.getRandomBlockIndex(robot.worldObj.rand);
 			x = b.x;

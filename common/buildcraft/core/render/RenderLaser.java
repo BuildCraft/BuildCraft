@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.core.Position;
@@ -71,7 +72,7 @@ public class RenderLaser extends Render {
 
 					float range = maxSize - minSize;
 
-					float diff = (float) (Math.cos(i / 20F * 2 * Math.PI)
+					float diff = (MathHelper.cos(i / 20F * 2 * (float) Math.PI)
 							* range / 2F);
 
 					block.minX = 0.0;

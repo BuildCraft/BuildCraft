@@ -97,6 +97,11 @@ public class TileEngineCreative extends TileEngine {
 	}
 
 	@Override
+	public void updateHeat() {
+
+	}
+
+	@Override
 	public float getPistonSpeed() {
 		return 0.02F * (powerMode.ordinal() + 1);
 	}

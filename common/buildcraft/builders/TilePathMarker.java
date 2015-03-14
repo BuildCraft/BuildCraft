@@ -82,7 +82,6 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
 	 */
 	private TilePathMarker findNearestAvailablePathMarker() {
 		TilePathMarker nearestAvailable = null;
-		// The initialization of nearestDistance is only to make the compiler shut up
 		double nearestDistance = 0, distance;
 
 		for (TilePathMarker t : availableMarkers) {
@@ -90,9 +89,12 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
 				continue;
 			}
 
-			distance = Math.sqrt(Math.pow(this.xCoord - t.xCoord, 2) + Math.pow(this.yCoord - t.yCoord, 2) + Math.pow(this.zCoord - t.zCoord, 2));
+			int dx = this.xCoord - t.xCoord;
+			int dy = this.yCoord - t.yCoord;
+			int dz = this.zCoord - t.zCoord;
+			distance = dx * dx + dy * dy + dz * dz;
 
-			if (distance > DefaultProps.MARKER_RANGE) {
+			if (distance > DefaultProps.MARKER_RANGE * DefaultProps.MARKER_RANGE) {
 				continue;
 			}
 

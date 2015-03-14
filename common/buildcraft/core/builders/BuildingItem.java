@@ -89,8 +89,6 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 			destinationToTop.y = destination.y - origin.y;
 			destinationToTop.z = destination.z - origin.z;
 
-			Position distance = new Position();
-
 			double d1 = Math.sqrt(originToTop.x * originToTop.x + originToTop.y
 					* originToTop.y + originToTop.z * originToTop.z);
 
