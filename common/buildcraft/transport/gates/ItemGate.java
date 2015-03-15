@@ -37,6 +37,7 @@ import buildcraft.api.statements.StatementManager;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.StringUtils;
@@ -50,12 +51,14 @@ public class ItemGate extends ItemBuildCraft implements IPipePluggableItem {
 	protected static final String NBT_TAG_MAT = "mat";
 	protected static final String NBT_TAG_LOGIC = "logic";
 	protected static final String NBT_TAG_EX = "ex";
+	private static ArrayList<ItemStack> allGates;
 
 	public ItemGate() {
 		super();
 		setHasSubtypes(false);
 		setMaxDamage(0);
 		setPassSneakClick(true);
+		setCreativeTab(BCCreativeTab.get("gates"));
 	}
 
 	private static NBTTagCompound getNBT(ItemStack stack) {
@@ -207,22 +210,6 @@ public class ItemGate extends ItemBuildCraft implements IPipePluggableItem {
 		}
 	}
 
-	public static ItemStack[] getGateVarients() {
-		ArrayList<ItemStack> gates = new ArrayList<ItemStack>();
-
-		for (GateMaterial material : GateMaterial.VALUES) {
-			for (GateLogic logic : GateLogic.VALUES) {
-				if (material == GateMaterial.REDSTONE && logic == GateLogic.OR) {
-					continue;
-				}
-
-				gates.add(makeGateItem(material, logic));
-			}
-		}
-
-		return gates.toArray(new ItemStack[gates.size()]);
-	}
-
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean adv) {
 		super.addInformation(stack, player, list, adv);
@@ -268,5 +255,21 @@ public class ItemGate extends ItemBuildCraft implements IPipePluggableItem {
 		Pipe<?> realPipe = (Pipe<?>) pipe;
 
 		return new GatePluggable(GateFactory.makeGate(realPipe, stack, side));
+	}
+
+	public static ArrayList<ItemStack> getAllGates() {
+		if (allGates == null) {
+			allGates = new ArrayList<ItemStack>();
+			for (GateDefinition.GateMaterial m : GateDefinition.GateMaterial.VALUES) {
+				for (GateDefinition.GateLogic l : GateDefinition.GateLogic.VALUES) {
+					if (m == GateMaterial.REDSTONE && l == GateLogic.OR) {
+						continue;
+					}
+
+					allGates.add(ItemGate.makeGateItem(m, l));
+				}
+			}
+		}
+		return allGates;
 	}
 }

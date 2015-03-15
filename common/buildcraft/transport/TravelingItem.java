@@ -285,9 +285,7 @@ public class TravelingItem {
 
 	@Override
 	public int hashCode() {
-		int hash = 7;
-		hash = 67 * hash + this.id;
-		return hash;
+		return this.id;
 	}
 
 	@Override

@@ -20,6 +20,7 @@ import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.silicon.ItemRedstoneChipset;
 import buildcraft.silicon.TileIntegrationTable;
+import buildcraft.silicon.recipes.IntegrationTableRecipe;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.ItemPipeWire;

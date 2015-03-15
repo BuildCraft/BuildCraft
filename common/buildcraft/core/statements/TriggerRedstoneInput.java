@@ -10,10 +10,13 @@ package buildcraft.core.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
+import buildcraft.api.statements.containers.IRedstoneStatementContainer;
+import buildcraft.api.statements.containers.ISidedStatementContainer;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.transport.TileGenericPipe;
 
@@ -49,18 +52,18 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
 
 	@Override
 	public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
-		if (!(container.getTile() instanceof TileGenericPipe)) {
+		if (container instanceof IRedstoneStatementContainer) {
+			int level = ((IRedstoneStatementContainer) container).getRedstoneInput(ForgeDirection.UNKNOWN);
+			if (parameters.length > 0 && parameters[0] instanceof StatementParameterRedstoneGateSideOnly &&
+					((StatementParameterRedstoneGateSideOnly) parameters[0]).isOn &&
+					container instanceof ISidedStatementContainer) {
+				level = ((IRedstoneStatementContainer) container).getRedstoneInput(((ISidedStatementContainer) container).getSide());
+			}
+
+			return active ? level > 0 : level == 0;
+		} else {
 			return false;
 		}
-		
-		TileGenericPipe tile = (TileGenericPipe) container.getTile();
-		int level = tile.redstoneInput;
-		if (parameters.length > 0 && parameters[0] instanceof StatementParameterRedstoneGateSideOnly &&
-				((StatementParameterRedstoneGateSideOnly) parameters[0]).isOn) {
-			level = tile.redstoneInputSide[((IGate) container).getSide().ordinal()];
-		}
-		
-		return active ? level > 0 : level == 0;
 	}
 
 	@Override

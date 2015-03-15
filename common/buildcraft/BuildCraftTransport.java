@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -41,7 +42,9 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.JavaTools;
+import buildcraft.api.facades.FacadeAPI;
 import buildcraft.api.gates.GateExpansions;
+import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.ITriggerInternal;
@@ -79,6 +82,7 @@ import buildcraft.transport.TransportProxy;
 import buildcraft.transport.WireIconProvider;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
+import buildcraft.transport.gates.GateExpansionLightSensor;
 import buildcraft.transport.gates.GateExpansionPulsar;
 import buildcraft.transport.gates.GateExpansionRedstoneFader;
 import buildcraft.transport.gates.GateExpansionTimer;
@@ -150,6 +154,7 @@ import buildcraft.transport.statements.ActionValve;
 import buildcraft.transport.statements.ActionValve.ValveState;
 import buildcraft.transport.statements.TriggerClockTimer;
 import buildcraft.transport.statements.TriggerClockTimer.Time;
+import buildcraft.transport.statements.TriggerLightSensor;
 import buildcraft.transport.statements.TriggerParameterSignal;
 import buildcraft.transport.statements.TriggerPipeContents;
 import buildcraft.transport.statements.TriggerPipeContents.PipeContents;
@@ -227,6 +232,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static int groupItemsTrigger;
 	public static String[] facadeBlacklist;
 
+	public static ITriggerInternal triggerLightSensorBright, triggerLightSensorDark;
 	public static ITriggerInternal[] triggerPipe = new ITriggerInternal[PipeContents.values().length];
 	public static ITriggerInternal[] triggerPipeWireActive = new ITriggerInternal[PipeWire.values().length];
 	public static ITriggerInternal[] triggerPipeWireInactive = new ITriggerInternal[PipeWire.values().length];
@@ -265,6 +271,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public void preInit(FMLPreInitializationEvent evt) {
 		new BCCreativeTab("pipes");
 		new BCCreativeTab("facades");
+		if (Loader.isModLoaded("BuildCraft|Silicon")) {
+			new BCCreativeTab("gates");
+		}
 
 		try {
 			Property durability = BuildCraftCore.mainConfiguration.get("general", "pipes.durability", DefaultProps.PIPES_DURABILITY);
@@ -285,10 +294,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 			filteredBufferBlock = new BlockFilteredBuffer();
 			CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));
-
-			GateExpansions.registerExpansion(GateExpansionPulsar.INSTANCE);
-			GateExpansions.registerExpansion(GateExpansionTimer.INSTANCE);
-			GateExpansions.registerExpansion(GateExpansionRedstoneFader.INSTANCE);
 
 			Property groupItemsTriggerProp = BuildCraftCore.mainConfiguration.get("general", "pipes.groupItemsTrigger", 32);
 			groupItemsTriggerProp.comment = "when reaching this amount of objects in a pipes, items will be automatically grouped";
@@ -387,6 +392,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			facadeItem = new ItemFacade();
 			facadeItem.setUnlocalizedName("pipeFacade");
 			CoreProxy.proxy.registerItem(facadeItem);
+			FacadeAPI.facadeItem = facadeItem;
 
 			plugItem = new ItemPlug();
 			plugItem.setUnlocalizedName("pipePlug");
@@ -437,6 +443,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 			for (PowerMode limit : PowerMode.VALUES) {
 				actionPowerLimiter[limit.ordinal()] = new ActionPowerLimiter(limit);
 			}
+
+			triggerLightSensorBright = new TriggerLightSensor(true);
+			triggerLightSensorDark = new TriggerLightSensor(false);
 		} finally {
 			BuildCraftCore.mainConfiguration.save();
 		}
@@ -474,6 +483,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		BCCreativeTab.get("pipes").setIcon(new ItemStack(BuildCraftTransport.pipeItemsDiamond, 1));
 		BCCreativeTab.get("facades").setIcon(facadeItem.getFacadeForBlock(Blocks.brick_block, 0));
+		BCCreativeTab.get("gates").setIcon(ItemGate.makeGateItem(GateMaterial.DIAMOND, GateLogic.AND));
 
 		StatementManager.registerParameterClass(TriggerParameterSignal.class);
 		StatementManager.registerParameterClass(ActionParameterSignal.class);
@@ -493,7 +503,12 @@ public class BuildCraftTransport extends BuildCraftMod {
 		PipeManager.registerPipePluggable(GatePluggable.class, "gate");
 		PipeManager.registerPipePluggable(LensPluggable.class, "lens");
 		PipeManager.registerPipePluggable(PlugPluggable.class, "plug");
-		
+
+		GateExpansions.registerExpansion(GateExpansionPulsar.INSTANCE, Chipset.PULSATING.getStack());
+		GateExpansions.registerExpansion(GateExpansionTimer.INSTANCE, Chipset.QUARTZ.getStack());
+		GateExpansions.registerExpansion(GateExpansionRedstoneFader.INSTANCE, Chipset.COMP.getStack());
+		GateExpansions.registerExpansion(GateExpansionLightSensor.INSTANCE, new ItemStack(Blocks.daylight_detector));
+
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
 		}
@@ -505,6 +520,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		facadeItem.initialize();
+
+		if (Loader.isModLoaded("BuildCraft|Silicon")) {
+			postInitSilicon();
+		}
 
 		if (debugPrintFacadeList) {
 			try {
@@ -519,6 +538,17 @@ public class BuildCraftTransport extends BuildCraftMod {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	private void postInitSilicon() {
+		Map<IGateExpansion, ItemStack> recipes = GateExpansions.getRecipesForPostInit();
+		int recipeId = 0;
+
+		for (IGateExpansion expansion : recipes.keySet()) {
+			BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe("buildcraft:expansion_" + recipeId,
+					expansion, recipes.get(expansion)));
+			recipeId++;
 		}
 	}
 
@@ -621,14 +651,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		// REVERSAL RECIPE
 		BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateLogicSwapRecipe("buildcraft:gateSwap"));
-
-		// EXPANSIONS
-		BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe("buildcraft:expansionPulsar",
-				GateExpansionPulsar.INSTANCE, Chipset.PULSATING.getStack()));
-		BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe("buildcraft:expansionQuartz",
-				GateExpansionTimer.INSTANCE, Chipset.QUARTZ.getStack()));
-		BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe("buildcraft:expansionComp",
-				GateExpansionRedstoneFader.INSTANCE, Chipset.COMP.getStack()));
 
 		// FACADE
 		BuildcraftRecipeRegistry.integrationTable.addRecipe(new AdvancedFacadeRecipe("buildcraft:advancedFacade"));

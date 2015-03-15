@@ -21,6 +21,7 @@ import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IActionProvider;
 import buildcraft.api.statements.IStatementContainer;
+import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.transport.IPipeTile;
 
@@ -30,7 +31,7 @@ public class DefaultActionProvider implements IActionProvider {
 	public Collection<IActionInternal> getInternalActions(IStatementContainer container) {
 		LinkedList<IActionInternal> res = new LinkedList<IActionInternal>();
 
-		if (container.getTile() instanceof IPipeTile) {
+		if (container instanceof IRedstoneStatementContainer) {
 			res.add(BuildCraftCore.actionRedstone);
 		}
 		

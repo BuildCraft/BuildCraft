@@ -31,8 +31,9 @@ import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IActionReceptor;
+import buildcraft.api.statements.containers.IRedstoneStatementContainer;
+import buildcraft.api.statements.containers.ISidedStatementContainer;
 import buildcraft.api.statements.IStatement;
-import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
@@ -48,7 +49,7 @@ import buildcraft.transport.gates.StatementSlot;
 import buildcraft.transport.gui.ContainerGateInterface;
 import buildcraft.transport.statements.ActionValve;
 
-public final class Gate implements IGate, IStatementContainer {
+public final class Gate implements IGate, ISidedStatementContainer, IRedstoneStatementContainer {
 
 	public static int MAX_STATEMENTS = 8;
 	public static int MAX_PARAMETERS = 3;
@@ -640,5 +641,20 @@ public final class Gate implements IGate, IStatementContainer {
 	@Override
 	public TileEntity getTile() {
 		return pipe.container;
+	}
+
+	@Override
+	public int getRedstoneInput(ForgeDirection side) {
+		return side == ForgeDirection.UNKNOWN ? pipe.container.redstoneInput : pipe.container.redstoneInputSide[side.ordinal()];
+	}
+
+	@Override
+	public boolean setRedstoneOutput(ForgeDirection side, int value) {
+		if (side != this.getSide() && side != ForgeDirection.UNKNOWN) {
+			return false;
+		}
+
+		setRedstoneOutput(side != ForgeDirection.UNKNOWN, value);
+		return true;
 	}
 }

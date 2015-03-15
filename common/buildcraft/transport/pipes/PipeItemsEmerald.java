@@ -131,8 +131,12 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
 			}
 
 			if (doRemove) {
-				int stackSize = (int) Math.floor(battery.useEnergy(10, 10 * stack.stackSize, false) / 10);
-				
+				int maxStackSize = stack.stackSize;
+				int stackSize = Math.min(maxStackSize, battery.getEnergyStored() / 10);
+				speedMultiplier = Math.min(4.0F, battery.getEnergyStored() * 10 / stackSize);
+				int energyUsed = (int) (stackSize * 10 * speedMultiplier);
+				battery.useEnergy(energyUsed, energyUsed, false);
+
 				stack = inventory.decrStackSize(k, stackSize);
 			}
 
@@ -165,6 +169,9 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
 					// In Round Robin mode, extract only 1 item regardless of power level.
 					stack = inventory.decrStackSize(i, 1);
 					incrementFilter();
+				} else {
+					stack = stack.copy();
+					stack.stackSize = 1;
 				}
 
 				return new ItemStack[]{ stack };

@@ -8,6 +8,8 @@
  */
 package buildcraft.transport.recipes;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.BuildCraftTransport;
@@ -15,6 +17,7 @@ import buildcraft.api.recipes.CraftingResult;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.silicon.ItemRedstoneChipset;
 import buildcraft.silicon.TileIntegrationTable;
+import buildcraft.silicon.recipes.IntegrationTableRecipe;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.ItemGate;
@@ -52,5 +55,15 @@ public class GateLogicSwapRecipe extends IntegrationTableRecipe {
 		result.crafted = output;
 
 		return result;
+	}
+
+	@Override
+	public Collection<Object> getInputs() {
+		ArrayList<Object> inputs = new ArrayList<Object>();
+
+		inputs.add(ItemGate.getAllGates());
+		inputs.add(ItemRedstoneChipset.Chipset.RED.getStack());
+
+		return inputs;
 	}
 }

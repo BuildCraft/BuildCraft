@@ -35,10 +35,11 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TravelingItem;
 
 public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHandler {
-	protected RFBattery battery = new RFBattery(640, 80, 0);
+	protected RFBattery battery = new RFBattery(2560, 2560 / 8, 0);
 	
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeItemsWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
+	protected float speedMultiplier = 1.0F;
 
 	private int ticksSincePull = 0;
 	
@@ -114,15 +115,40 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 
 			battery.setEnergy(0);
 			ticksSincePull = 0;
+			speedMultiplier = 1.0F;
 		}
 	}
 	
 	private boolean shouldTick() {
-		if (battery.getEnergyStored() >= 64 * 10) {
-			return true;
+		if (ticksSincePull < 8) {
+			return false;
 		} else {
-			return ticksSincePull >= 16 && battery.getEnergyStored() >= 10;
+			// Check if we have just enough energy for the next stack.
+			int meta = container.getBlockMetadata();
+
+			if (meta <= 5) {
+				ForgeDirection side = ForgeDirection.getOrientation(meta);
+				TileEntity tile = container.getTile(side);
+
+				if (tile instanceof IInventory) {
+					int stackSize = 0;
+					IInventory inventory = (IInventory) tile;
+					ItemStack[] extracted = checkExtract(inventory, false, side.getOpposite());
+					if (extracted != null) {
+						for (ItemStack s : extracted) {
+							stackSize += s.stackSize;
+						}
+					}
+
+					if (battery.getEnergyStored() >= stackSize * 10) {
+						return true;
+					}
+				}
+			}
+
 		}
+
+		return ticksSincePull >= 16 && battery.getEnergyStored() >= 10;
 	}
 
 	private void extractItems() {
@@ -157,7 +183,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 				entityPos.moveForwards(0.6);
 
 				TravelingItem entity = makeItem(entityPos.x, entityPos.y, entityPos.z, stack);
-
+				entity.setSpeed(entity.getSpeed() * speedMultiplier);
 				transport.injectItem(entity, entityPos.orientation);
 			}
 		}
@@ -197,8 +223,12 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 
 			if (slot != null && slot.stackSize > 0 && inventory.canExtractItem(k, slot, from.ordinal())) {
 				if (doRemove) {
-					int stackSize = (int) Math.floor(battery.useEnergy(10, slot.stackSize * 10, false) / 10);
-					
+					int maxStackSize = slot.stackSize;
+					int stackSize = Math.min(maxStackSize, battery.getEnergyStored() / 10);
+					speedMultiplier = Math.min(4.0F, battery.getEnergyStored() * 10 / stackSize);
+					int energyUsed = (int) (stackSize * 10 * speedMultiplier);
+					battery.useEnergy(energyUsed, energyUsed, false);
+
 					return inventory.decrStackSize(k, stackSize);
 				} else {
 					return slot;

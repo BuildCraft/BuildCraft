@@ -253,10 +253,6 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 	private void moveSolids() {
 		items.flush();
 
-		if (!container.getWorldObj().isRemote) {
-			items.purgeCorruptedItems();
-		}
-
 		items.iterating = true;
 		for (TravelingItem item : items) {
 			if (item.getContainer() != this.container) {
@@ -270,6 +266,11 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 			item.movePosition(motion.x, motion.y, motion.z);
 
 			if ((item.toCenter && middleReached(item)) || outOfBounds(item)) {
+				if (item.isCorrupted()) {
+					items.remove(item);
+					continue;
+				}
+
 				item.toCenter = false;
 
 				// Reajusting to the middle
@@ -285,6 +286,11 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 				}
 
 			} else if (!item.toCenter && endReached(item)) {
+				if (item.isCorrupted()) {
+					items.remove(item);
+					continue;
+				}
+
 				TileEntity tile = container.getTile(item.output);
 
 				PipeEventItem.ReachedEnd event = new PipeEventItem.ReachedEnd(item, tile);

@@ -8,15 +8,12 @@
  */
 package buildcraft.api.gates;
 
-import net.minecraftforge.common.util.ForgeDirection;
-
+import buildcraft.api.statements.containers.ISidedStatementContainer;
 import buildcraft.api.transport.IPipe;
 
-public interface IGate {
+public interface IGate extends ISidedStatementContainer {
 	@Deprecated
 	void setPulsing(boolean pulse);
-	
-	ForgeDirection getSide();
 
 	IPipe getPipe();
 }

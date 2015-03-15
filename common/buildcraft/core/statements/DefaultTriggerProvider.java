@@ -22,6 +22,7 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.ITriggerProvider;
+import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.tiles.IHasWork;
 
 public class DefaultTriggerProvider implements ITriggerProvider {
@@ -64,6 +65,11 @@ public class DefaultTriggerProvider implements ITriggerProvider {
 	@Override
 	public LinkedList<ITriggerInternal> getInternalTriggers(IStatementContainer container) {
 		LinkedList<ITriggerInternal> res = new LinkedList<ITriggerInternal>();
+
+		if (container instanceof IRedstoneStatementContainer) {
+			res.add(BuildCraftCore.triggerRedstoneActive);
+			res.add(BuildCraftCore.triggerRedstoneInactive);
+		}
 
 		if (TriggerEnergy.isTriggeringPipe(container.getTile()) || TriggerEnergy.getTriggeringNeighbor(container.getTile()) != null) {
 			res.add((ITriggerInternal) BuildCraftCore.triggerEnergyHigh);

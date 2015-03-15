@@ -43,9 +43,6 @@ public class PipeTriggerProvider implements ITriggerProvider {
 				gate.addTriggers(result);
 			}
 		}
-		
-		result.add(BuildCraftCore.triggerRedstoneActive);
-		result.add(BuildCraftCore.triggerRedstoneInactive);
 
 		switch (((TileGenericPipe) tile).getPipeType()) {
 			case ITEM:

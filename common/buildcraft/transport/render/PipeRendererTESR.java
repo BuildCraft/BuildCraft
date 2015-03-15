@@ -796,7 +796,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			Position motion = new Position(0, 0, 0, item.toCenter ? item.input : item.output);
 			motion.moveForwards(item.getSpeed() * f);
 
-			doRenderItem(item, x + item.xCoord - pipe.container.xCoord + motion.x,y + item.yCoord - pipe.container.yCoord, z + item.zCoord - pipe.container.zCoord, light, item.color);
+			doRenderItem(item, x + item.xCoord - pipe.container.xCoord + motion.x, y + item.yCoord - pipe.container.yCoord  + motion.y, z + item.zCoord - pipe.container.zCoord  + motion.z, light, item.color);
 			count++;
 		}
 
