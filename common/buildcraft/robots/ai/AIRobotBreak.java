@@ -56,33 +56,38 @@ public class AIRobotBreak extends AIRobot {
 
 	@Override
 	public void update() {
+
+		if (block == null || block.isAir(robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z)) {
+			terminate();
+		}
+
 		if (hardness != 0) {
-		    blockDamage += speed / hardness / 30F;
+			blockDamage += speed / hardness / 30F;
 		} else {
-		    // Instantly break the block
-		    blockDamage = 1.1F;
+			// Instantly break the block
+			blockDamage = 1.1F;
 		}
 
 		if (blockDamage > 1.0F) {
 			robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), blockToBreak.x,
-					blockToBreak.y, blockToBreak.z, -1);
+				blockToBreak.y, blockToBreak.z, -1);
 			blockDamage = 0;
 
 			if (robot.getHeldItem() != null) {
 				robot.getHeldItem().getItem()
-						.onBlockStartBreak(robot.getHeldItem(), blockToBreak.x, blockToBreak.y, blockToBreak.z,
-							CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj).get());
+					.onBlockStartBreak(robot.getHeldItem(), blockToBreak.x, blockToBreak.y, blockToBreak.z,
+						CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj).get());
 			}
 
 			if (BlockUtils.breakBlock((WorldServer) robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z, 6000)) {
 				robot.worldObj.playAuxSFXAtEntity(null, 2001,
-						blockToBreak.x, blockToBreak.y, blockToBreak.z,
-						Block.getIdFromBlock(block) + (meta << 12));
+					blockToBreak.x, blockToBreak.y, blockToBreak.z,
+					Block.getIdFromBlock(block) + (meta << 12));
 
 				if (robot.getHeldItem() != null) {
 					robot.getHeldItem().getItem()
-							.onBlockDestroyed(robot.getHeldItem(), robot.worldObj, block, blockToBreak.x,
-									blockToBreak.y, blockToBreak.z, robot);
+						.onBlockDestroyed(robot.getHeldItem(), robot.worldObj, block, blockToBreak.x,
+							blockToBreak.y, blockToBreak.z, robot);
 
 					if (robot.getHeldItem().getItemDamage() >= robot.getHeldItem().getMaxDamage()) {
 						robot.setItemInUse(null);
@@ -93,7 +98,7 @@ public class AIRobotBreak extends AIRobot {
 			terminate();
 		} else {
 			robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), blockToBreak.x,
-					blockToBreak.y, blockToBreak.z, (int) (blockDamage * 10.0F) - 1);
+				blockToBreak.y, blockToBreak.z, (int) (blockDamage * 10.0F) - 1);
 		}
 	}
 
