@@ -1,11 +1,20 @@
 Additions:
 * **New textures!** - "Essence" made by (CyanideX)
 * **Modularization** - BuildCraft is back to being modules (asie)
-* Blueprint Library is now Electronic Library, supports copying books (asie)
+* Optimizations to BuildCraft pipes (asie, Player)
+* New blocks:
+  * Blueprint Library renamed to Electronic Library, supports copying books - and soon other things! (asie)
+* New items:
+  * Paintbrush for dyeing pipes and other supported blocks (asie)
+  * Debugger for developer use (asie)
+* New gate expansions:
+  * Light Sensor for detecting brightness in front of a gate (asie)
+* Gate recipes now show up in NEI properly (asie)
 * Improved robot light handling - the light now denotes sleep state and battery charge level (asie)
-* Added Robot triggers and actions: Linked, Reserved, In Station and Robot Mandatory (asie)
-* Added Debugger for developer use (asie)
+* Lasers now glow in the night (asie)
+* New Robot triggers and actions: Linked, Reserved, In Station and Robot Mandatory (asie)
 * Made items in pipes move at a much smoother rate (asie)
+* Optimizations here and there (asie)
 
 Bugfixes:
 * **Stopped wooden item pipes from exploding** (asie)

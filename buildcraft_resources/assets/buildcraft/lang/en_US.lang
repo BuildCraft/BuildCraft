@@ -107,6 +107,9 @@ gate.action.robot.filter_tool=Filter Tool
 gate.expansion.fader=Redstone Fader
 gate.expansion.pulsar=Autarchic Pulsar
 gate.expansion.timer=Clock Timer
+gate.expansion.light_sensor=Light Sensor
+gate.expansion.rtc=Real-Time Clock
+gate.expansion.biological_sensor=Biological Sensor
 
 gate.logic.and=AND
 gate.logic.or=OR
@@ -153,7 +156,9 @@ gate.trigger.pipe.wire.inactive=%s Pipe Signal Off
 gate.trigger.timer=%s Sec Timer
 gate.trigger.robot.sleep=Sleep
 gate.trigger.machine.energyStoredHigh=High Energy Stored
-gate.trigger.machine.energyStoredLow=Low Energy Stored 
+gate.trigger.machine.energyStoredLow=Low Energy Stored
+gate.trigger.light.bright=Bright
+gate.trigger.light.dark=Dark
 
 gui.building.resources=Building Resources
 gui.building.fluids=Fluid Tanks
@@ -269,6 +274,7 @@ itemGroup.buildcraft.boards=BuildCraft Robots
 itemGroup.buildcraft.main=BuildCraft
 itemGroup.buildcraft.pipes=BuildCraft Pipes
 itemGroup.buildcraft.facades=BuildCraft Facades
+itemGroup.buildcraft.gates=BuildCraft Gates
 
 tile.architectBlock.name=Architect Table
 tile.assemblyTableBlock.name=Assembly Table
