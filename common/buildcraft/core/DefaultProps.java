@@ -18,6 +18,7 @@ public final class DefaultProps {
 	public static final String DEPENDENCY_SILICON_TRANSPORT = DEPENDENCY_TRANSPORT + ";" + DEPENDENCY_SILICON;
 
 	public static final String NET_CHANNEL_NAME = "BC";
+	public static final int MAX_NAME_SIZE = 32;
 	public static int NETWORK_UPDATE_RANGE = 64;
 	public static int MARKER_RANGE = 64;
 	public static int PIPE_CONTENTS_RENDER_DIST = 24;

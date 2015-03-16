@@ -18,7 +18,6 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
 import buildcraft.builders.TileArchitect;
 import buildcraft.core.DefaultProps;
@@ -78,7 +77,7 @@ public class GuiArchitect extends GuiBuildCraft {
 		buttonList.add(optionAllowCreative);
 		
 		textField = new GuiTextField(this.fontRendererObj, TEXT_X, TEXT_Y, TEXT_WIDTH, TEXT_HEIGHT);
-		textField.setMaxStringLength(BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE);
+		textField.setMaxStringLength(DefaultProps.MAX_NAME_SIZE);
 		textField.setText(architect.name);
 		textField.setFocused(true);
 

@@ -51,8 +51,14 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
 		NBTTagCompound cpt = NBTUtils.getItemData(stack);
 
-		if (!cpt.hasKey("kind")) {
-		} else {
+		if (cpt.hasKey("name")) {
+			String name = cpt.getString("name");
+			if (name.length() > 0) {
+				list.add(name);
+			}
+		}
+
+		if (cpt.hasKey("kind")) {
 			switch (cpt.getByte("kind")) {
 			case 0: {
 				int x = cpt.getInteger("x");
@@ -89,9 +95,6 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 				break;
 			}
 			}
-		}
-
-		if (cpt.hasKey("kind")) {
 		}
 	}
 
@@ -261,6 +264,19 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 
 		cpt.setByte("kind", (byte) 3);
 		plan.writeToNBT(cpt);
+	}
+
+	@Override
+	public String getName(ItemStack item) {
+		return NBTUtils.getItemData(item).getString("name");
+	}
+
+	@Override
+	public boolean setName(ItemStack item, String name) {
+		NBTTagCompound cpt = NBTUtils.getItemData(item);
+		cpt.setString("name", name);
+
+		return true;
 	}
 
 	@Override

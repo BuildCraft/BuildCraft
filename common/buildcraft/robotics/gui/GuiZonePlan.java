@@ -18,6 +18,7 @@ import org.lwjgl.opengl.GL11;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
@@ -34,6 +35,7 @@ import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
+import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.robotics.TileZonePlan;
 
@@ -72,6 +74,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	private List inventorySlots;
 	private List savedButtonList;
 
+	private GuiTextField textField;
+
 	private static class AreaSlot extends AdvancedSlot {
 
 		public EnumColor color;
@@ -99,7 +103,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 		getContainer().gui = this;
 
 		xSize = 256;
-		ySize = 220;
+		ySize = 228;
 
 		zonePlan = iZonePlan;
 
@@ -121,7 +125,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 		for (int i = 0; i < 4; ++i) {
 			for (int j = 0; j < 4; ++j) {
-				slots.set(i * 4 + j, new AreaSlot(this, 8 + 18 * i, 138 + 18 * j, EnumColor.values()[i * 4 + j]));
+				slots.set(i * 4 + j, new AreaSlot(this, 8 + 18 * i, 146 + 18 * j, EnumColor.values()[i * 4 + j]));
 			}
 		}
 
@@ -145,6 +149,11 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 		buttonList.add(tool);
 
 		savedButtonList = buttonList;
+
+		textField = new GuiTextField(this.fontRendererObj, 74, 125, 156, 12);
+		textField.setMaxStringLength(DefaultProps.MAX_NAME_SIZE);
+		textField.setText(zonePlan.mapName);
+		textField.setFocused(true);
 	}
 
 	private void uploadMap() {
@@ -179,6 +188,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 		currentSelection.drawMap(mapXMin, mapYMin, zLevel);
 
 		GL11.glPopAttrib();
+		GL11.glDisable(GL11.GL_BLEND);
 
 		newSelection.updateDynamicTexture();
 
@@ -193,21 +203,32 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 			drawTexturedModalRect(x1, y1, 0, 0, x2 - x1 + 1, y2 - y1 + 1);
 			GL11.glPopAttrib();
+			GL11.glDisable(GL11.GL_BLEND);
 		}
 
 		if (getContainer().mapTexture.height <= 200) {
 			drawBackgroundSlots();
 
 			bindTexture(texture);
-			drawTexturedModalRect(guiLeft + colorSelected.x, guiTop + colorSelected.y, 0, 220, 16, 16);
-			drawTexturedModalRect(guiLeft + 236, guiTop + 38, 16, 220, 8,
+
+			GL11.glEnable(GL11.GL_ALPHA_TEST);
+			drawTexturedModalRect(guiLeft + colorSelected.x, guiTop + colorSelected.y, 0, 228, 16, 16);
+			drawTexturedModalRect(guiLeft + 236, guiTop + 38, 16, 228, 8,
 					(int) ((zonePlan.progress / (float) TileZonePlan.CRAFT_TIME) * 27));
 		}
 	}
 
 	@Override
+	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
+		super.drawGuiContainerForegroundLayer(par1, par2);
+		textField.drawTextBox();
+	}
+
+	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
 		super.mouseClicked(mouseX, mouseY, mouseButton);
+
+		textField.mouseClicked(mouseX - guiLeft, mouseY - guiTop, mouseButton);
 
 		int blocksX = (mouseX - mapXMin) * zoomLevel;
 		int blocksZ = (mouseY - mapYMin) * zoomLevel;
@@ -293,6 +314,21 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	@Override
 	protected void keyTyped(char carac, int val) {
 		super.keyTyped(carac, val);
+
+		if (textField.isFocused()) {
+			if (carac == 13 || carac == 27) {
+				textField.setFocused(false);
+			} else {
+				textField.textboxKeyTyped(carac, val);
+				final String text = textField.getText();
+				BuildCraftCore.instance.sendToServer(new PacketCommand(getContainer(), "setName", new CommandWriter() {
+					public void write(ByteBuf data) {
+						NetworkUtils.writeUTF(data, text);
+					}
+				}));
+			}
+			return;
+		}
 
 		if (val == Keyboard.KEY_F5) {
 			uploadMap();

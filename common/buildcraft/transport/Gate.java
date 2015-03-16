@@ -31,6 +31,7 @@ import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IActionReceptor;
+import buildcraft.api.statements.ITriggerExternalOverride;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.statements.containers.ISidedStatementContainer;
 import buildcraft.api.statements.IStatement;
@@ -530,8 +531,18 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 		} else if (trigger instanceof ITriggerExternal) {
 			for (ForgeDirection side: ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity tile = this.getPipe().getTile().getNeighborTile(side);
-				if (tile != null && ((ITriggerExternal) trigger).isTriggerActive(tile, side, this, parameters)) {
-					return true;
+				if (tile != null) {
+					if (tile instanceof ITriggerExternalOverride) {
+						ITriggerExternalOverride.Result result = ((ITriggerExternalOverride) tile).override(side, this, parameters);
+						if (result == ITriggerExternalOverride.Result.TRUE) {
+							return true;
+						} else if (result == ITriggerExternalOverride.Result.FALSE) {
+							continue;
+						}
+					}
+					if (((ITriggerExternal) trigger).isTriggerActive(tile, side, this, parameters)) {
+						return true;
+					}
 				}
 			}
 		}

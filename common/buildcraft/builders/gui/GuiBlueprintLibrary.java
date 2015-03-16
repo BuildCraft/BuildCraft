@@ -17,6 +17,7 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.library.LibraryAPI;
 import buildcraft.builders.TileBlueprintLibrary;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.utils.StringUtils;
@@ -66,8 +67,8 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
 		for (LibraryId bpt : library.currentPage) {
 			String name = bpt.name;
 
-			if (name.length() > BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE) {
-				name = name.substring(0, BuildCraftBuilders.MAX_BLUEPRINTS_NAME_SIZE);
+			if (name.length() > DefaultProps.MAX_NAME_SIZE) {
+				name = name.substring(0, DefaultProps.MAX_NAME_SIZE);
 			}
 
 			if (c == library.selected) {

@@ -18,10 +18,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.chunk.Chunk;
 
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.items.INamedItem;
 import buildcraft.core.ItemMapLocation;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.ZonePlan;
 import buildcraft.core.lib.inventory.SimpleInventory;
+import buildcraft.core.lib.utils.NetworkUtils;
 
 public class TileZonePlan extends TileBuildCraft implements IInventory {
 
@@ -33,6 +35,8 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 	public byte[] colors = new byte[RESOLUTION * RESOLUTION];
 
 	public short progress = 0;
+
+	public String mapName = "";
 
 	private boolean scan = false;
 	private int chunkIt = 0;
@@ -136,6 +140,7 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 
 				if (selectedAreas[currentSelectedArea] != null) {
 					ItemMapLocation.setZone(stack, selectedAreas[currentSelectedArea]);
+					((INamedItem) stack.getItem()).setName(stack, mapName);
 				}
 
 				inv.setInventorySlotContents(1, stack);
@@ -176,6 +181,7 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 		nbt.setBoolean("scan", scan);
 		nbt.setInteger("chunkIt", chunkIt);
 		nbt.setByteArray("colors", colors);
+		nbt.setString("name", mapName);
 
 		NBTTagCompound invNBT = new NBTTagCompound();
 		inv.writeToNBT(invNBT);
@@ -197,6 +203,11 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 		scan = nbt.getBoolean("scan");
 		chunkIt = nbt.getInteger("chunkIt");
 		colors = nbt.getByteArray("colors");
+		mapName = nbt.getString("name");
+
+		if (mapName == null) {
+			mapName = "";
+		}
 
 		if (colors.length != RESOLUTION * RESOLUTION || chunkIt >= RESOLUTION_CHUNKS * RESOLUTION_CHUNKS) {
 			colors = new byte[RESOLUTION * RESOLUTION];
@@ -217,11 +228,13 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 	@Override
 	public void writeData(ByteBuf stream) {
 		stream.writeShort(progress);
+		NetworkUtils.writeUTF(stream, mapName);
 	}
 
 	@Override
 	public void readData(ByteBuf stream) {
 		progress = stream.readShort();
+		mapName = NetworkUtils.readUTF(stream);
 	}
 
 	public ZonePlan selectArea(int index) {

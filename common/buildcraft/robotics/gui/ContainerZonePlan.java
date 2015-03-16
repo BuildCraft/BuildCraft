@@ -25,6 +25,7 @@ import buildcraft.core.lib.gui.slots.SlotOutput;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
+import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.robotics.TileZonePlan;
 
 public class ContainerZonePlan extends BuildCraftContainer implements ICommandReceiver {
@@ -46,12 +47,12 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
 		// Player inventory
 		for (int l = 0; l < 3; l++) {
 			for (int k1 = 0; k1 < 9; k1++) {
-				addSlotToContainer(new Slot(playerInventory, k1 + l * 9 + 9, 88 + k1 * 18, 138 + l * 18));
+				addSlotToContainer(new Slot(playerInventory, k1 + l * 9 + 9, 88 + k1 * 18, 146 + l * 18));
 			}
 		}
 
 		for (int i1 = 0; i1 < 9; i1++) {
-			addSlotToContainer(new Slot(playerInventory, i1, 88 + i1 * 18, 196));
+			addSlotToContainer(new Slot(playerInventory, i1, 88 + i1 * 18, 204));
 		}
 	}
 
@@ -108,6 +109,8 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
 				computeMap(stream.readInt(), stream.readInt(),
 						stream.readUnsignedShort(), stream.readUnsignedShort(),
 						stream.readUnsignedByte(), (EntityPlayer) sender);
+			} else if ("setName".equals(command)) {
+				map.mapName = NetworkUtils.readUTF(stream);
 			}
 		}
 	}

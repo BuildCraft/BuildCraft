@@ -9,19 +9,28 @@
 package buildcraft;
 
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 import org.apache.logging.log4j.Level;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
+import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
 
 import buildcraft.api.core.BCLog;
@@ -40,15 +49,7 @@ public class BuildCraftMod {
 			this.source = source;
 		}
 
-		abstract void send();
-
-		void run() {
-			try {
-				send();
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
+		abstract boolean isValid(EntityPlayer player);
 	}
 
 	class PlayerSendRequest extends SendRequest {
@@ -59,11 +60,8 @@ public class BuildCraftMod {
 			this.player = player;
 		}
 
-		void send() {
-			source.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
-					.set(FMLOutboundHandler.OutboundTarget.PLAYER);
-			source.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(player);
-			source.channels.get(Side.SERVER).writeOutbound(packet);
+		boolean isValid(EntityPlayer player) {
+			return this.player.equals(player);
 		}
 	}
 
@@ -75,12 +73,8 @@ public class BuildCraftMod {
 			this.dimensionId = dimensionId;
 		}
 
-		void send() {
-			source.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
-					.set(FMLOutboundHandler.OutboundTarget.DIMENSION);
-			source.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS)
-					.set(dimensionId);
-			source.channels.get(Side.SERVER).writeOutbound(packet);
+		boolean isValid(EntityPlayer player) {
+			return player.worldObj.provider.dimensionId == dimensionId;
 		}
 	}
 
@@ -94,16 +88,12 @@ public class BuildCraftMod {
 			this.x = x;
 			this.y = y;
 			this.z = z;
-			this.md = md;
+			this.md = md * md;
 		}
 
-		@Override
-		void send() {
-			source.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
-					.set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
-			source.channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS)
-					.set(new NetworkRegistry.TargetPoint(dimensionId, x, y, z, md));
-			source.channels.get(Side.SERVER).writeOutbound(packet);
+		boolean isValid(EntityPlayer player) {
+			return dimensionId == player.worldObj.provider.dimensionId
+					&& player.getDistanceSq(x, y, z) <= md;
 		}
 	}
 
@@ -120,7 +110,22 @@ public class BuildCraftMod {
 				}
 
 				while (!packets.isEmpty()) {
-					packets.remove().run();
+					SendRequest r = packets.remove();
+					for (EntityPlayerMP player : (List<EntityPlayerMP>) MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
+						if (r.isValid(player)) {
+							NetHandlerPlayServer handler = player.playerNetServerHandler;
+							if (handler == null) {
+								continue;
+							}
+
+							NetworkManager manager = handler.netManager;
+							if (manager == null || !manager.isChannelOpen()) {
+								continue;
+							}
+
+							manager.scheduleOutboundPacket(r.source.channels.get(Side.SERVER).generatePacketFrom(r.packet));
+						}
+					}
 				}
 			}
 		}

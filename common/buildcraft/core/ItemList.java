@@ -279,6 +279,17 @@ public class ItemList extends ItemBuildCraft implements IList {
 	}
 
 	@Override
+	public boolean setName(ItemStack stack, String name) {
+		saveLabel(stack, name);
+		return true;
+	}
+
+	@Override
+	public String getName(ItemStack stack) {
+		return getLabel(stack);
+	}
+
+	@Override
 	public String getLabel(ItemStack stack) {
 		return NBTUtils.getItemData(stack).getString("label");
 	}

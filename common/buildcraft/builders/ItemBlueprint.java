@@ -17,6 +17,7 @@ import net.minecraft.util.IIcon;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BuildingPermission;
+import buildcraft.api.items.INamedItem;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.BCCreativeTab;
@@ -26,10 +27,21 @@ import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.StringUtils;
 
-public abstract class ItemBlueprint extends ItemBuildCraft {
+public abstract class ItemBlueprint extends ItemBuildCraft implements INamedItem {
 
 	public ItemBlueprint() {
 		super(BCCreativeTab.get("main"));
+	}
+
+	@Override
+	public String getName(ItemStack stack) {
+		return NBTUtils.getItemData(stack).getString("name");
+	}
+
+	@Override
+	public boolean setName(ItemStack stack, String name) {
+		NBTUtils.getItemData(stack).setString("name", name);
+		return true;
 	}
 
 	@Override
