@@ -1,23 +1,36 @@
 Minecraft Mod Public License
 ============================
 
-Version 1.0.1
+Version 1.0.2
 
 0. Definitions
 --------------
 
-Minecraft: Denotes a copy of the Minecraft game licensed by Mojang AB
+MMPL: This license.
+
+Minecraft: Denotes a copy of the Minecraft game licensed by Mojang AB.
 
 User: Anybody that interacts with the software in one of the following ways:
    - play
-   - decompile
-   - recompile or compile
+   - decompile or disassemble
+   - recompile, compile, reassemble, or assemble
    - modify
    - distribute
+The user must own Minecraft.
 
-Mod: The mod code designated by the present license, in source form, binary
+Mod: The software; mod code designated by the present license, in source form, binary
 form, as obtained standalone, as part of a wider distribution or resulting from
 the compilation of the original or modified sources.
+
+Sources: The source code files of the software, including resource files,
+heirarchy, etc. If the software is written in an assembly language file format
+which supports comments, the corresponding assembly files (which support
+comments) are considered sources. Assembly language "source" files which do
+not support comments are considered binary files, even though they are not
+"executable".
+
+Owner: Copyright owner(s) of the mod, or authorized representatives on their
+behalf. Owners double as users, by necessity.
 
 Dependency: Code required for the mod to work properly. This includes 
 dependencies required to compile the code as well as any file or modification
@@ -27,28 +40,40 @@ that is explicitely or implicitely required for the mod to be working.
 --------
 
 The present license is granted to any user of the mod. As a prerequisite, 
-a user must own a legally acquired copy of Minecraft
+the user must be using a liscensed copy of Minecraft.
 
 2. Liability
 ------------
 
 This mod is provided 'as is' with no warranties, implied or otherwise. The owner
 of this mod takes no responsibility for any damages incurred from the use of
-this mod. This mod alters fundamental parts of the Minecraft game, parts of
+this mod. This mod may alter fundamental parts of the Minecraft game, parts of
 Minecraft may not work with this mod installed. All damages caused from the use
-or misuse of this mad fall on the user.
+or misuse of this mod fall on the user.
 
 3. Play rights
 --------------
 
-The user is allowed to install this mod on a client or a server and to play 
-without restriction.
+The user is allowed to install this mod on a client and/or a server and to play 
+without restriction. The user is free to play any modified version of this mod,
+and will not be held responsible for playing a modified version which was
+illegally distributed (although if the same user distributed the modified
+version to begin with, they are still responsible).
 
 4. Modification rights
 ----------------------
 
-The user has the right to decompile the source code, look at either the 
-decompiled version or the original source code, and to modify it.
+The user specifically may not modify the license, regardless of rights
+afforded below.
+
+The user has the right to decompile/disassemble the binary code. The user may
+look at and modify the resulting decompiled code/disassembly. The user may
+also look at and modify the original source code. The user may compile,
+recompile, assemble, and reassemble the original or said modified code. The
+user may also modify the raw binary code, if they so wish.
+
+Unless specified in section 6, the user may NOT distribute or redistribute
+modified code or binaries.
 
 5. Derivation rights
 --------------------
@@ -58,30 +83,42 @@ write code that extends or instanciate the mod classes or interfaces, refer to
 its objects, or calls its functions. This code is known as "derived" code, and 
 can be licensed under a license different from this mod.
 
-6. Distribution of original or modified copy rights
----------------------------------------------------
+Derived code sometimes depends on a modified version of the original mod. In
+this case, the modifications are still subject to distribution under the terms
+of section 6; however, the derived code may either packaged with the modified
+code under the terms of section 6 or packaged seperately under its own
+license.
 
-Is subject to distribution rights this entire mod in its various forms. This
-include:
-   - original binary or source forms of this mod files
-   - modified versions of these binaries or source files, as well as binaries
-     resulting from source modifications
-   - patch to its source or binary files
-   - any copy of a portion of its binary source files
+6. Distribution
+---------------
 
-The user is allowed to redistribute this mod partially, in totality, or 
-included in a distribution.
+The user is allowed to redistribute this mod partially or in totality, either
+by itself or as a part of a larger distribution package, if specific
+conditions are satisfied.
+
+One important exception is a binary file which has been modified by editing
+the raw binary code, for example raw classfiles modified with a hex editor
+may not be redistributed directly (even in a jar!). The user may, however,
+distribute patch files, so that the end-user (who is recieving the patches)
+may modify the raw binary code themselves as allowed under section 4.
+
+Forms of the mod which may be distributed under the relevant subsequent terms
+of this section include but are not limited to:
+   - original binary, source, or disassembled forms of the mod
+   - modified versions of these binary, source, or disassembled files, as well
+     as binaries resulting from recompilation or reassembly
+   - any patch to the mod's binary, source, or disassembed files
+   - any portion of its binary, source, or disassembled files, or of modified
+     versions thereof
 
 When distributing binary files, the user must provide means to obtain its 
-entire set of sources or modified sources at no costs.
+entire set of sources or modified sources at no costs. It is for this reason
+that binary files which have been modified in the raw may not be distributed.
 
-All distributions of this mod must remain licensed under the MMPL.
+All distributions of this mod, in whole or in part, must remain licensed under either this version
+or the most recent version of the MMPL.
 
-All dependencies that this mod have on other mods or classes must be licensed
+All dependencies that this mod has on other mods or classes must be licensed
 under conditions comparable to this version of MMPL, with the exception of the
-Minecraft code and the mod loading framework (e.g. ModLoader, ModLoaderMP or
+Minecraft code and the mod loading framework (e.g. Forge Mod Loader, ModLoader, ModLoaderMP or
 Bukkit).
-
-Modified version of binaries and sources, as well as files containing sections
-copied from this mod, should be distributed under the terms of the present
-license.
