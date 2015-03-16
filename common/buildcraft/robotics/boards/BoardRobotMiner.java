@@ -39,7 +39,7 @@ public class BoardRobotMiner extends BoardRobotGenericBreakBlock {
 	private void detectHarvestLevel() {
 		ItemStack stack = robot.getHeldItem();
 
-		if (stack != null && stack.getItem() instanceof ItemPickaxe) {
+		if (stack != null && stack.getItem().getToolClasses(stack).contains("pickaxe")) {
 			ItemPickaxe pickaxe = (ItemPickaxe) stack.getItem();
 
 			harvestLevel = pickaxe.getHarvestLevel(stack, "pickaxe");
@@ -53,7 +53,7 @@ public class BoardRobotMiner extends BoardRobotGenericBreakBlock {
 
 	@Override
 	public boolean isExpectedTool(ItemStack stack) {
-		return stack != null && stack.getItem() instanceof ItemPickaxe;
+		return stack != null && stack.getItem().getToolClasses(stack).contains("pickaxe");
 	}
 
 	@Override

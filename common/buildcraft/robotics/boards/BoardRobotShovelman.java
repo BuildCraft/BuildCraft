@@ -31,7 +31,7 @@ public class BoardRobotShovelman extends BoardRobotGenericBreakBlock {
 
 	@Override
 	public boolean isExpectedTool(ItemStack stack) {
-		return stack != null && stack.getItem() instanceof ItemSpade;
+		return stack != null && stack.getItem().getToolClasses(stack).contains("shovel");
 	}
 
 	@Override
