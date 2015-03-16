@@ -66,4 +66,16 @@ public class GateLogicSwapRecipe extends IntegrationTableRecipe {
 
 		return inputs;
 	}
+
+	@Override
+	public Collection<Object> getOutput() {
+		ArrayList<Object> gates = new ArrayList<Object>();
+		for (ItemStack stack : ItemGate.getAllGates()) {
+			ItemStack newStack = stack.copy();
+			ItemGate.setLogic(newStack, ItemGate.getLogic(newStack) == GateLogic.AND ? GateLogic.OR : GateLogic.AND);
+			gates.add(newStack);
+		}
+
+		return gates;
+	}
 }

@@ -38,7 +38,7 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
 	public BlockLaserTable() {
 		super(Material.iron);
 
-		setBlockBounds(0, 0, 0, 1, 9F / 16F, 1);
+		setBlockBounds(0, 0, 0, 1, 8F / 16F, 1);
 		setHardness(10F);
 		setCreativeTab(BCCreativeTab.get("main"));
 	}
@@ -51,6 +51,11 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
 	@Override
 	public boolean renderAsNormalBlock() {
 		return false;
+	}
+
+	@Override
+	public int getRenderType() {
+		return SiliconProxy.laserTableModel;
 	}
 
 	@Override

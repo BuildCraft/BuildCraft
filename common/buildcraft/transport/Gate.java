@@ -79,10 +79,10 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 	 * state of the renderer, and update moveStage accordingly.
 	 */
 	public boolean isPulsing = false;
-	private float pulseStage = 0;
 	private ForgeDirection direction;
 
 	private HashMultiset<IStatement> statementCounts = HashMultiset.create();
+	private int[] actionGroups = new int [] {0, 1, 2, 3, 4, 5, 6, 7};
 
 	// / CONSTRUCTOR
 	public Gate(Pipe<?> pipe, GateMaterial material, GateLogic logic, ForgeDirection direction) {
@@ -124,7 +124,10 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 				actionParameters[position][i] = null;
 			}
 		}
+
 		actions[position] = action;
+
+		recalculateActionGroups();
 	}
 
 	public IStatement getAction(int position) {
@@ -137,6 +140,8 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 
 	public void setActionParameter(int action, int param, IStatementParameter p) {
 		actionParameters[action][param] = p;
+
+		recalculateActionGroups();
 	}
 
 	public IStatementParameter getTriggerParameter(int trigger, int param) {
@@ -261,6 +266,8 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 				}
 			}
 		}
+
+		recalculateActionGroups();
 	}
 	
 	public boolean verifyGateStatements() {
@@ -292,7 +299,11 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 				}
 			}
 		}
-		
+
+		if (warning) {
+			recalculateActionGroups();
+		}
+
 		return !warning;
 	}
 	
@@ -388,32 +399,6 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 
 		// Tell the gate to prepare for resolving actions. (Disable pulser)
 		startResolution();
-
-		int [] actionGroups = new int [] {0, 1, 2, 3, 4, 5, 6, 7};
-
-		for (int i = 0; i < MAX_STATEMENTS; ++i) {
-			for (int j = i - 1; j >= 0; --j) {
-				if (actions[i] != null && actions[j] != null
-						&& actions[i].getUniqueTag().equals(actions[j].getUniqueTag())) {
-
-					boolean sameParams = true;
-
-					for (int p = 0; p < MAX_PARAMETERS; ++p) {
-						if ((actionParameters[i][p] != null && actionParameters[j][p] == null)
-								|| (actionParameters[i][p] == null && actionParameters[j][p] != null)
-								|| (actionParameters[i][p] != null
-										&& actionParameters[j][p] != null
-										&& !actionParameters[i][p].equals(actionParameters[j][p]))) {
-							sameParams = false;
-						}
-					}
-
-					if (sameParams) {
-						actionGroups[i] = j;
-					}
-				}
-			}
-		}
 
 		// Computes the actions depending on the triggers
 		for (int it = 0; it < MAX_STATEMENTS; ++it) {
@@ -621,8 +606,32 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 		}
 	}
 
-	public float getPulseStage() {
-		return pulseStage;
+	private void recalculateActionGroups() {
+		for (int i = 0; i < MAX_STATEMENTS; ++i) {
+			actionGroups[i] = i;
+
+			for (int j = i - 1; j >= 0; --j) {
+				if (actions[i] != null && actions[j] != null
+						&& actions[i].getUniqueTag().equals(actions[j].getUniqueTag())) {
+					boolean sameParams = true;
+
+					for (int p = 0; p < MAX_PARAMETERS; ++p) {
+						if ((actionParameters[i][p] != null && actionParameters[j][p] == null)
+								|| (actionParameters[i][p] == null && actionParameters[j][p] != null)
+								|| (actionParameters[i][p] != null
+								&& actionParameters[j][p] != null
+								&& !actionParameters[i][p].equals(actionParameters[j][p]))) {
+							sameParams = false;
+							break;
+						}
+					}
+
+					if (sameParams) {
+						actionGroups[i] = j;
+					}
+				}
+			}
+		}
 	}
 
 	public void broadcastSignal(PipeWire color) {

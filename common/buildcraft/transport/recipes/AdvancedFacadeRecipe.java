@@ -8,6 +8,8 @@
  */
 package buildcraft.transport.recipes;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import net.minecraft.item.ItemStack;
 
 import net.minecraftforge.oredict.OreDictionary;
@@ -24,6 +26,7 @@ import buildcraft.silicon.recipes.IntegrationTableRecipe;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.ItemPipeWire;
+import buildcraft.transport.gates.ItemGate;
 
 public class AdvancedFacadeRecipe extends IntegrationTableRecipe {
 
@@ -94,5 +97,22 @@ public class AdvancedFacadeRecipe extends IntegrationTableRecipe {
 		} else {
 			return null;
 		}
+	}
+
+	@Override
+	public Collection<Object> getInputs() {
+		ArrayList<Object> inputs = new ArrayList<Object>();
+
+		//inputs.add(ItemFacade.allFacades);
+		//inputs.add(ItemRedstoneChipset.Chipset.RED.getStack());
+
+		return inputs;
+	}
+
+	@Override
+	public Collection<Object> getOutput() {
+		ArrayList<Object> outputs = new ArrayList<Object>();
+
+		return outputs;
 	}
 }

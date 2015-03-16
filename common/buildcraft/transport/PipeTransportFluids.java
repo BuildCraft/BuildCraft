@@ -226,13 +226,13 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		moveFluids();
 
 		if (tracker.markTimeIfDelay(container.getWorldObj())) {
-
 			boolean init = false;
 			if (++clientSyncCounter > BuildCraftCore.longUpdateFactor) {
 				clientSyncCounter = 0;
 				init = true;
 			}
 			PacketFluidUpdate packet = computeFluidUpdate(init, true);
+
 			if (packet != null) {
 				BuildCraftTransport.instance.sendToPlayers(packet, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 			}

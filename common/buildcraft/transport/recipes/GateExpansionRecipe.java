@@ -82,15 +82,15 @@ public class GateExpansionRecipe extends IntegrationTableRecipe {
 		return inputs;
 	}
 
-	/*@Override
+	@Override
 	public Collection<Object> getOutput() {
 		ArrayList<Object> gates = new ArrayList<Object>();
 		for (ItemStack stack : ItemGate.getAllGates()) {
 			ItemStack newStack = stack.copy();
-			ItemGate.addGateExpansion(stack, expansion);
+			ItemGate.addGateExpansion(newStack, expansion);
 			gates.add(newStack);
 		}
 
 		return gates;
-	}*/
+	}
 }

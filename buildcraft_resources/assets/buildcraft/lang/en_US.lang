@@ -159,6 +159,10 @@ gate.trigger.machine.energyStoredHigh=High Energy Stored
 gate.trigger.machine.energyStoredLow=Low Energy Stored
 gate.trigger.light.bright=Bright
 gate.trigger.light.dark=Dark
+gate.trigger.time.0=Night
+gate.trigger.time.6=Morning
+gate.trigger.time.12=Afternoon
+gate.trigger.time.18=Evening
 
 gui.building.resources=Building Resources
 gui.building.fluids=Fluid Tanks
@@ -411,7 +415,7 @@ achievement.blueprintAchievement.desc=Craft a blueprint
 achievement.templateAchievement=Basis
 achievement.templateAchievement.desc=Craft a template
 achievement.blueprintLibraryAchievement=Ideas live on
-achievement.blueprintLibraryAchievement.desc=Craft a blueprint library
+achievement.blueprintLibraryAchievement.desc=Craft an electronic library
 
 bc_update.new_version=§cNew version of BuildCraft available: %s for Minecraft %s
 bc_update.download=§cDownload from http://www.mod-buildcraft.com/download
