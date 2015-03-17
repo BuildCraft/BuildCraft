@@ -8,6 +8,7 @@
  */
 package buildcraft.core.statements;
 
+import java.util.Locale;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
 
@@ -38,7 +39,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
 		}
 	}
 
-	private boolean high;
+	private final boolean high;
 
 	public TriggerEnergy(boolean high) {
 		super("buildcraft:energyStored" + (high ? "high" : "low"));
@@ -48,7 +49,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
 
 	@Override
 	public String getDescription() {
-		return StringUtils.localize("gate.trigger.machine.energyStored" + (high ? "High" : "Low"));
+		return StringUtils.localize("gate.trigger.machine.energyStored." + (high ? "high" : "low"));
 	}
 
 	private boolean isTriggeredEnergyHandler(IEnergyConnection connection, ForgeDirection side) {
@@ -68,10 +69,11 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
 		}
 
 		if (energyMaxStored > 0) {
+			float level = (energyStored / energyMaxStored);
 			if (high) {
-				return (energyStored / energyMaxStored) > 0.95;
+				return level > 0.95F;
 			} else {
-				return (energyStored / energyMaxStored) < 0.05;
+				return level < 0.05F;
 			}
 		}
 		return false;

@@ -1,28 +1,37 @@
 Additions:
 * **New textures!** - "Essence" made by (CyanideX)
 * **Modularization** - BuildCraft is back to being modules (asie)
-* Optimizations to BuildCraft pipes (asie, Player)
-* New blocks:
+* Blocks:
   * Blueprint Library renamed to Electronic Library, supports copying books - and soon other things! (asie)
-* New items:
+* Items:
   * Paintbrush for dyeing pipes and other supported blocks (asie)
   * Debugger for developer use (asie)
-* New gate expansions:
-  * Light Sensor for detecting brightness in front of a gate (asie)
-* Gate recipes now show up in NEI properly (asie)
-* Improved robot light handling - the light now denotes sleep state and battery charge level (asie)
-* Lasers now glow in the night (asie)
-* New Robot triggers and actions: Linked, Reserved, In Station and Robot Mandatory (asie)
-* Made items in pipes move at a much smoother rate (asie)
-* Optimizations here and there (asie)
+  * Map Locations can now be named (in the Zone Planner) (asie)
+* Gates:
+  * Gate recipes now show up in NEI properly (asie)
+  * Light Sensor expansion for detecting brightness in front of a gate (asie)
+* Pipes:
+  * Massive optimizations - up to 3x less server-intensive (asie, Player)
+  * Made items in pipes move at a much smoother rate (asie)
+* Robots:
+  * Improved robot light handling - the light now denotes sleep state and battery charge level (asie)
+  * New Robot triggers and actions: Linked, Reserved, In Station and Robot Mandatory (asie)
+  * Robots can now use modded pickaxes, shovels and axes (asie)
+* Misc.:
+  * Lasers now glow in the night (asie)
+  * Miscellanous optimizations (asie)
+  * Packets are now sent in a separate thread, causing most of the pipe optimizations and many other things (asie, Player)
 
 Bugfixes:
 * **Stopped wooden item pipes from exploding** (asie)
 * Structure pipes not respecting blocking pluggables (asie)
+* Fixed alternate slimeball-based pipe sealant recipe being uncraftable (asie)
+* Fixed minor Zone Planner rendering issues (asie)
 
 APIs:
 * IDebuggable, for debugger compatibility in tile entities (asie)
 * LibraryAPI for supporting copying of custom items in the Electronic Library (asie)
+* ISided/IRedstoneStatementContainer (asie)
 
 Breaking changes:
 * Item pipes may no longer be connected to the front of the Mining Well or Quarry.

@@ -11,6 +11,7 @@ package buildcraft.core.statements;
 import java.util.LinkedList;
 
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
@@ -26,7 +27,6 @@ import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.tiles.IHasWork;
 
 public class DefaultTriggerProvider implements ITriggerProvider {
-
 	@Override
 	public LinkedList<ITriggerExternal> getExternalTriggers(ForgeDirection side, TileEntity tile) {
 		LinkedList<ITriggerExternal> res = new LinkedList<ITriggerExternal>();
