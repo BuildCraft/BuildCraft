@@ -15,6 +15,7 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -33,10 +34,11 @@ import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.fluids.SingleUseTank;
 import buildcraft.core.lib.fluids.TankManager;
+import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.recipes.RefineryRecipeManager;
 import buildcraft.core.lib.utils.NetworkUtils;
 
-public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInventory, IHasWork, IFlexibleCrafter {
+public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInventory, IHasWork, IFlexibleCrafter, ICommandReceiver {
 
 	public static int LIQUID_PER_SLOT = FluidContainerRegistry.BUCKET_VOLUME * 4;
 
@@ -425,5 +427,12 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	@Override
 	public int getCraftingFluidStackSize() {
 		return tanks.length;
+	}
+
+	@Override
+	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
+		if (side == Side.SERVER && "setFilter".equals(command)) {
+			setFilter(stream.readByte(), FluidRegistry.getFluid(stream.readShort()));
+		}
 	}
 }

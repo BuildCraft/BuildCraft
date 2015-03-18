@@ -20,6 +20,8 @@ import net.minecraftforge.fluids.Fluid;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.lib.gui.BuildCraftContainer;
+import buildcraft.core.lib.network.command.CommandWriter;
+import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.lib.network.PacketUpdate;
 import buildcraft.core.lib.network.Serializable;
@@ -55,14 +57,14 @@ public class ContainerRefinery extends BuildCraftContainer {
 		refinery.setFilter(slot, filter);
 
 		if (refinery.getWorldObj().isRemote) {
-			ISerializable payload = new Serializable() {
+			CommandWriter payload = new CommandWriter() {
 				@Override
-				public void writeData(ByteBuf data) {
+				public void write(ByteBuf data) {
 					data.writeByte(slot);
 					data.writeShort(filter != null ? filter.getID() : -1);
 				}
 			};
-			BuildCraftFactory.instance.sendToServer(new PacketUpdate(PacketIds.REFINERY_FILTER_SET, refinery.xCoord, refinery.yCoord, refinery.zCoord, payload));
+			BuildCraftFactory.instance.sendToServer(new PacketCommand(refinery, "setFilter", payload));
 		}
 	}
 

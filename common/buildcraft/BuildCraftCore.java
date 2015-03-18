@@ -180,8 +180,8 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static int markerModel;
 	public static ITriggerExternal triggerMachineActive = new TriggerMachine(true);
 	public static ITriggerExternal triggerMachineInactive = new TriggerMachine(false);
-	public static IStatement triggerEnergyHigh = new TriggerEnergy(TriggerEnergy.TriggerType.HIGH);
-	public static IStatement triggerEnergyLow = new TriggerEnergy(TriggerEnergy.TriggerType.LOW);
+	public static IStatement triggerEnergyHigh = new TriggerEnergy(true);
+	public static IStatement triggerEnergyLow = new TriggerEnergy(false);
 	public static ITriggerExternal triggerEmptyInventory = new TriggerInventory(TriggerInventory.State.Empty);
 	public static ITriggerExternal triggerContainsInventory = new TriggerInventory(TriggerInventory.State.Contains);
 	public static ITriggerExternal triggerSpaceInventory = new TriggerInventory(TriggerInventory.State.Space);
