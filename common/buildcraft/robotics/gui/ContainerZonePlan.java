@@ -18,6 +18,7 @@ import net.minecraft.inventory.Slot;
 import cpw.mods.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftRobotics;
 import buildcraft.core.lib.render.DynamicTexturePaletted;
 import buildcraft.core.ZonePlan;
 import buildcraft.core.lib.gui.BuildCraftContainer;
@@ -71,8 +72,7 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
 
 	public void saveArea(final int index) {
 		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "saveArea", new CommandWriter() {
-			public void write(ByteBuf data) {
-				data.writeByte(index);
+			public void write(ByteBuf data) {data.writeByte(index);
 				currentAreaSelection.writeData(data);
 			}
 		}));
@@ -129,7 +129,8 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
 				int iz = z - (map.chunkStartZ << 4);
 
 				if (ix >= 0 && iz >= 0 && ix < TileZonePlan.RESOLUTION && iz < TileZonePlan.RESOLUTION) {
-					textureData[i + j * width] = map.colors[ix + iz * TileZonePlan.RESOLUTION];
+					textureData[i + j * width] = (byte) BuildCraftRobotics.manager.getWorld(map.getWorldObj())
+							.getColor(x, z);
 				}
 			}
 		}

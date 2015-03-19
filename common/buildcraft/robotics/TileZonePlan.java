@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.chunk.Chunk;
 
+import buildcraft.BuildCraftRobotics;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.items.INamedItem;
 import buildcraft.core.ItemMapLocation;
@@ -32,76 +33,25 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 	private static int RESOLUTION_CHUNKS = RESOLUTION >> 4;
 
 	public int chunkStartX, chunkStartZ;
-	public byte[] colors = new byte[RESOLUTION * RESOLUTION];
 
 	public short progress = 0;
 
 	public String mapName = "";
-
-	private boolean scan = false;
-	private int chunkIt = 0;
 
 	private ZonePlan[] selectedAreas = new ZonePlan[16];
 	private int currentSelectedArea = 0;
 
 	private SimpleInventory inv = new SimpleInventory(2, "inv", 64);
 
-	private SafeTimeTracker zonePlannerScanning = new SafeTimeTracker(5);
-
 	@Override
 	public void initialize() {
 		super.initialize();
-		chunkStartX = (xCoord >> 4) - RESOLUTION_CHUNKS / 2;
-		chunkStartZ = (zCoord >> 4) - RESOLUTION_CHUNKS / 2;
 
-		if (!scan) {
-			chunkIt = 0;
-			scan = true;
-		}
-	}
+		int cx = (xCoord >> 4);
+		int cz = (zCoord >> 4);
 
-	private int[] getCoords() {
-		int chunkCenterX = xCoord >> 4;
-		int chunkCenterZ = zCoord >> 4;
-
-		if (chunkIt == 0) {
-			return new int[] {chunkCenterX, chunkCenterZ};
-		}
-
-		int radius = 1;
-		int left = chunkIt;
-
-		while (radius < RESOLUTION_CHUNKS / 2) {
-			int lineLength = radius * 2;
-			int perimeter = lineLength * 4;
-
-			if (left <= perimeter) {
-				int chunkX = 0, chunkZ = 0;
-				int remained = (left - 1) % lineLength;
-
-				if ((left - 1) / lineLength == 0) {
-					chunkX = chunkCenterX + radius;
-					chunkZ = chunkCenterZ - lineLength / 2 + remained;
-				} else if ((left - 1) / lineLength == 1) {
-					chunkX = chunkCenterX - radius;
-					chunkZ = chunkCenterZ - lineLength / 2 + remained + 1;
-				} else if ((left - 1) / lineLength == 2) {
-					chunkX = chunkCenterX - lineLength / 2 + remained + 1;
-					chunkZ = chunkCenterZ + radius;
-				} else {
-					chunkX = chunkCenterX - lineLength / 2 + remained;
-					chunkZ = chunkCenterZ - radius;
-				}
-
-				return new int[] {chunkX, chunkZ};
-			} else {
-				left -= perimeter;
-			}
-
-			radius += 1;
-		}
-
-		return new int[] {chunkCenterX, chunkCenterZ};
+		chunkStartX = cx - RESOLUTION_CHUNKS / 2;
+		chunkStartZ = cz - RESOLUTION_CHUNKS / 2;
 	}
 
 	@Override
@@ -110,19 +60,6 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 
 		if (worldObj.isRemote) {
 			return;
-		}
-
-		if (scan && zonePlannerScanning.markTimeIfDelay(worldObj)) {
-			int[] coords = getCoords();
-			Chunk chunk = worldObj.getChunkFromChunkCoords(coords[0], coords[1]);
-			loadChunk(chunk);
-
-			if (chunkIt > RESOLUTION_CHUNKS * RESOLUTION_CHUNKS) {
-				scan = false;
-				chunkIt = 0;
-			} else {
-				chunkIt++;
-			}
 		}
 
 		if (inv.getStackInSlot(0) != null
@@ -151,36 +88,9 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 		}
 	}
 
-	private void loadChunk(Chunk chunk) {
-		for (int cx = 0; cx < 16; ++cx) {
-			for (int cz = 0; cz < 16; ++cz) {
-				int x = (chunk.xPosition << 4) + cx;
-				int z = (chunk.zPosition << 4) + cz;
-
-				int y = getWorldObj().getHeightValue(x, z);
-				int color;
-				while ((color = chunk.getBlock(cx, y, cz).getMapColor(0).colorIndex) == MapColor.airColor.colorIndex) {
-					y--;
-					if (y < 0) {
-						break;
-					}
-				}
-
-				int ix = x - chunkStartX * 16;
-				int iz = z - chunkStartZ * 16;
-
-				colors[ix + iz * RESOLUTION] = (byte) color;
-			}
-		}
-	}
-
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
-
-		nbt.setBoolean("scan", scan);
-		nbt.setInteger("chunkIt", chunkIt);
-		nbt.setByteArray("colors", colors);
 		nbt.setString("name", mapName);
 
 		NBTTagCompound invNBT = new NBTTagCompound();
@@ -200,19 +110,10 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
-		scan = nbt.getBoolean("scan");
-		chunkIt = nbt.getInteger("chunkIt");
-		colors = nbt.getByteArray("colors");
 		mapName = nbt.getString("name");
 
 		if (mapName == null) {
 			mapName = "";
-		}
-
-		if (colors.length != RESOLUTION * RESOLUTION || chunkIt >= RESOLUTION_CHUNKS * RESOLUTION_CHUNKS) {
-			colors = new byte[RESOLUTION * RESOLUTION];
-			scan = true;
-			chunkIt = 0;
 		}
 
 		inv.readFromNBT(nbt.getCompoundTag("inv"));

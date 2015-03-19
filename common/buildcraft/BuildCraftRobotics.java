@@ -8,6 +8,7 @@
  */
 package buildcraft;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,9 +23,13 @@ import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.MinecraftForge;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.robots.RobotManager;
@@ -126,6 +131,7 @@ import buildcraft.robotics.boards.BoardRobotShovelman;
 import buildcraft.robotics.boards.BoardRobotShovelmanNBT;
 import buildcraft.robotics.boards.BoardRobotStripes;
 import buildcraft.robotics.boards.BoardRobotStripesNBT;
+import buildcraft.robotics.map.MapManager;
 import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.robotics.statements.ActionRobotFilterTool;
 import buildcraft.robotics.statements.ActionRobotGotoStation;
@@ -186,6 +192,9 @@ public class BuildCraftRobotics extends BuildCraftMod {
 	public static float chipsetCostMultiplier = 1.0F;
 
 	public static List<String> blacklistedRobots;
+
+	public static MapManager manager;
+	private static Thread managerThread;
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
@@ -365,6 +374,38 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
 		BuildcraftRecipeRegistry.programmingTable.addRecipe(new BoardProgrammingRecipe());
 		BuildcraftRecipeRegistry.integrationTable.addRecipe(new RobotIntegrationRecipe("buildcraft:robotIntegration"));
+	}
+
+
+	@Mod.EventHandler
+	public void serverUnload(FMLServerStoppingEvent event) {
+		if (managerThread != null) {
+			manager.stop();
+			manager.saveAllWorlds();
+			managerThread.interrupt();
+
+			MinecraftForge.EVENT_BUS.unregister(manager);
+		}
+
+		managerThread = null;
+		manager = null;
+	}
+
+	@Mod.EventHandler
+	public void serverLoad(FMLServerStartingEvent event) {
+		File f = new File(DimensionManager.getCurrentSaveRootDirectory(), "buildcraft/zonemap");
+
+		try {
+			f.mkdirs();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		manager = new MapManager(f);
+		managerThread = new Thread(manager);
+		managerThread.start();
+
+		MinecraftForge.EVENT_BUS.register(manager);
 	}
 
 	@Mod.EventHandler

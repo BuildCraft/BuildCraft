@@ -3,6 +3,8 @@ Additions:
 * **Modularization** - BuildCraft is back to being modules (asie)
 * Blocks:
   * Blueprint Library renamed to Electronic Library, supports copying books - and soon other things! (asie)
+  * Rewritten Zone Planner map system - should have much less lag and take up less disk space!
+    * **Note** - all existing zone planner previews will disappear. To reload them, simply break and place the zone planner!
 * Items:
   * Paintbrush for dyeing pipes and other supported blocks (asie)
   * Debugger for developer use (asie)
