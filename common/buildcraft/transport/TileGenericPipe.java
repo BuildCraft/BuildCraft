@@ -982,15 +982,16 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			return;
 		}
 
+		if (pipe == null && coreState.pipeId != 0) {
+			initialize(BlockGenericPipe.createPipe((Item) Item.itemRegistry.getObjectById(coreState.pipeId)));
+		}
+
+		if (pipe == null) {
+			return;
+		}
+
 		switch (stateId) {
 			case 0:
-				if (pipe == null && coreState.pipeId != 0) {
-					initialize(BlockGenericPipe.createPipe((Item) Item.itemRegistry.getObjectById(coreState.pipeId)));
-				}
-
-				if (pipe == null) {
-					break;
-				}
 				worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
 				break;
 

@@ -150,7 +150,7 @@ public class LibraryDatabase {
 
 				LibraryId id = new LibraryId();
 
-				int sepIndex = fileName.lastIndexOf(BuildCraftBuilders.BPT_SEP_CHARACTER);
+				int sepIndex = fileName.lastIndexOf(LibraryId.BPT_SEP_CHARACTER);
 				int dotIndex = fileName.lastIndexOf('.');
 
 				String extension = fileName.substring(dotIndex + 1);

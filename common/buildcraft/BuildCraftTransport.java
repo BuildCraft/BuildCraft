@@ -20,7 +20,9 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.WorldServer;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -29,9 +31,15 @@ import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
 
+import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.RecipeSorter;
@@ -160,10 +168,12 @@ import buildcraft.transport.statements.TriggerPipeContents;
 import buildcraft.transport.statements.TriggerPipeContents.PipeContents;
 import buildcraft.transport.statements.TriggerPipeSignal;
 import buildcraft.transport.statements.TriggerRedstoneFaderInput;
+import buildcraft.transport.stripes.PipeExtensionListener;
 import buildcraft.transport.stripes.StripesHandlerArrow;
 import buildcraft.transport.stripes.StripesHandlerBucket;
 import buildcraft.transport.stripes.StripesHandlerEntityInteract;
 import buildcraft.transport.stripes.StripesHandlerHoe;
+import buildcraft.transport.stripes.StripesHandlerPipeWires;
 import buildcraft.transport.stripes.StripesHandlerPipes;
 import buildcraft.transport.stripes.StripesHandlerPlaceBlock;
 import buildcraft.transport.stripes.StripesHandlerRightClick;
@@ -254,6 +264,8 @@ public class BuildCraftTransport extends BuildCraftMod {
     public static boolean debugPrintFacadeList = false;
 
 	public static float gateCostMultiplier = 1.0F;
+
+	public static PipeExtensionListener pipeExtensionListener;
 
 	private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
 	private static ChannelHandler transportChannelHandler;
@@ -495,6 +507,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		PipeManager.registerStripesHandler(new StripesHandlerArrow());
 		PipeManager.registerStripesHandler(new StripesHandlerShears());
 		PipeManager.registerStripesHandler(new StripesHandlerPipes());
+		PipeManager.registerStripesHandler(new StripesHandlerPipeWires());
 		PipeManager.registerStripesHandler(new StripesHandlerEntityInteract());
 		PipeManager.registerStripesHandler(new StripesHandlerPlaceBlock());
 		PipeManager.registerStripesHandler(new StripesHandlerHoe());
@@ -539,6 +552,22 @@ public class BuildCraftTransport extends BuildCraftMod {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	@Mod.EventHandler
+	public void serverLoading(FMLServerStartingEvent event) {
+		pipeExtensionListener = new PipeExtensionListener();
+		FMLCommonHandler.instance().bus().register(pipeExtensionListener);
+	}
+
+	@Mod.EventHandler
+	public void serverUnloading(FMLServerStoppingEvent event) {
+		// One last tick
+		for (WorldServer w : DimensionManager.getWorlds()) {
+			pipeExtensionListener.tick(new TickEvent.WorldTickEvent(Side.SERVER, TickEvent.Phase.END, w));
+		}
+		FMLCommonHandler.instance().bus().unregister(pipeExtensionListener);
+		pipeExtensionListener = null;
 	}
 
 	private void postInitSilicon() {

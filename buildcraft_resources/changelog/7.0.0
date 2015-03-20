@@ -14,6 +14,10 @@ Additions:
   * Light Sensor expansion for detecting brightness in front of a gate (asie)
 * Pipes:
   * Massive optimizations - up to 3x less server-intensive (asie, Player)
+  * Improvements to Stripes Pipes:
+    * Extending or retracting a Stripes Pipe now carries over all its gates, pipe wires and pluggables (asie)
+    * You can now extend pipe wires by putting them into a Stripes Pipe (asie)
+    * PlaceBlock now works directly in front of a block again (asie)
   * Made items in pipes move at a much smoother rate (asie)
 * Robots:
   * Improved robot light handling - the light now denotes sleep state and battery charge level (asie)

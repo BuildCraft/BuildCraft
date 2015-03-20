@@ -15,6 +15,7 @@ import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.api.core.Position;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
 
@@ -36,6 +37,13 @@ public class StripesHandlerPlaceBlock implements IStripesHandler {
 			IStripesActivator activator) {
 		if (!world.isAirBlock(x, y, z) && stack.tryPlaceItemIntoWorld(player, world, x, y, z, 1, 0.0f, 0.0f, 0.0f)) {
 			return true;
+		} else if (world.isAirBlock(x, y, z)) {
+			Position src = new Position(x, y, z);
+			src.orientation = direction;
+			src.moveBackwards(1.0D);
+			if (stack.tryPlaceItemIntoWorld(player, world, (int) src.x, (int) src.y, (int) src.z, direction.ordinal(), 0.0f, 0.0f, 0.0f)) {
+				return true;
+			}
 		}
 		return false;
 	}

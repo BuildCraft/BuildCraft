@@ -196,7 +196,7 @@ public final class FacadeRenderHelper {
 						setRenderBounds(renderblocks, rotated, direction);
 						renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
 					}
-					BlockGenericPipe.facadeRenderColor = -1;
+					((FakeBlock) blockStateMachine.getBlock()).setColor(0xFFFFFF);
 
 					if (renderBlock.getRenderType() == 31) {
 						renderblocks.uvRotateSouth = 0;
@@ -209,7 +209,7 @@ public final class FacadeRenderHelper {
 				}
 			}
 
-			BlockGenericPipe.facadeRenderColor = -1;
+			((FakeBlock) blockStateMachine.getBlock()).setColor(0xFFFFFF);
 		}
 
 		((TextureStateManager) textureManager.getTextureState()).pushArray();
