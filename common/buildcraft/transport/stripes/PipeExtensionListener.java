@@ -119,7 +119,7 @@ public class PipeExtensionListener {
 				if (!retract) {
 					r.stack.stackSize--;
 				}
-				
+
 				if (r.stack.stackSize > 0) {
 					sendItem(items, r.stack, r.o.getOpposite());
 				}

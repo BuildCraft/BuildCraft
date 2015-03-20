@@ -9,6 +9,8 @@
 package buildcraft.transport.pipes;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,6 +26,7 @@ import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
+import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.transport.IStripesHandler;
 import buildcraft.api.transport.IStripesHandler.StripesHandlerType;
 import buildcraft.api.transport.IStripesPipe;
@@ -36,10 +39,14 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
+import buildcraft.transport.gates.StatementSlot;
 import buildcraft.transport.pipes.events.PipeEventItem;
+import buildcraft.transport.statements.ActionPipeDirection;
 import buildcraft.transport.utils.TransportUtils;
 
 public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnergyHandler, IStripesPipe {
+	private ForgeDirection actionDir = ForgeDirection.UNKNOWN;
+
 	public PipeItemsStripes(Item item) {
 		super(new PipeTransportItems(), item);
 	}
@@ -57,16 +64,21 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 		if (container.getWorldObj().isRemote) {
 			return;
 		}
+
+		ForgeDirection direction = actionDir;
+		if (direction == ForgeDirection.UNKNOWN) {
+			direction = event.direction;
+		}
 		
 		Position p = new Position(container.xCoord, container.yCoord,
-				container.zCoord, event.direction);
+				container.zCoord, direction);
 		p.moveForwards(1.0);
 
 		ItemStack stack = event.entity.getEntityItem();
 		EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld(),
 				(int) p.x, (int) p.y, (int) p.z).get();
 		
-		switch (event.direction) {
+		switch (direction) {
 			case DOWN:
 				player.rotationPitch = 90;
 				player.rotationYaw = 0;
@@ -102,7 +114,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 			if (handler.getType() == StripesHandlerType.ITEM_USE
 					&& handler.shouldHandle(stack)) {
 				if (handler.handle(getWorld(), (int) p.x, (int) p.y, (int) p.z,
-						event.direction, stack, player, this)) {
+						direction, stack, player, this)) {
 					event.entity = null;
 					return;
 				}
@@ -117,7 +129,31 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 		p.moveForwards(1.0);
 
 		InvUtils.dropItems(getWorld(), itemStack, (int) p.x, (int) p.y, (int) p.z);
+	}
 
+	@Override
+	public LinkedList<IActionInternal> getActions() {
+		LinkedList<IActionInternal> action = super.getActions();
+		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+			if (!container.isPipeConnected(direction)) {
+				action.add(BuildCraftTransport.actionPipeDirection[direction.ordinal()]);
+			}
+		}
+		return action;
+	}
+
+	@Override
+	protected void actionsActivated(Collection<StatementSlot> actions) {
+		super.actionsActivated(actions);
+
+		actionDir = ForgeDirection.UNKNOWN;
+
+		for (StatementSlot action : actions) {
+			if (action.statement instanceof ActionPipeDirection) {
+				actionDir = ((ActionPipeDirection) action.statement).direction;
+				break;
+			}
+		}
 	}
 	
 	@Override

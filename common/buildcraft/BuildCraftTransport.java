@@ -502,15 +502,15 @@ public class BuildCraftTransport extends BuildCraftMod {
 		StatementManager.registerTriggerProvider(new PipeTriggerProvider());
 		StatementManager.registerActionProvider(new PipeActionProvider());
 
-		PipeManager.registerStripesHandler(new StripesHandlerRightClick());
-		PipeManager.registerStripesHandler(new StripesHandlerBucket());
-		PipeManager.registerStripesHandler(new StripesHandlerArrow());
-		PipeManager.registerStripesHandler(new StripesHandlerShears());
-		PipeManager.registerStripesHandler(new StripesHandlerPipes());
-		PipeManager.registerStripesHandler(new StripesHandlerPipeWires());
-		PipeManager.registerStripesHandler(new StripesHandlerEntityInteract());
-		PipeManager.registerStripesHandler(new StripesHandlerPlaceBlock());
-		PipeManager.registerStripesHandler(new StripesHandlerHoe());
+		PipeManager.registerStripesHandler(new StripesHandlerRightClick(), -65536);
+		PipeManager.registerStripesHandler(new StripesHandlerBucket(), 0);
+		PipeManager.registerStripesHandler(new StripesHandlerArrow(), 0);
+		PipeManager.registerStripesHandler(new StripesHandlerShears(), 0);
+		PipeManager.registerStripesHandler(new StripesHandlerPipes(), 0);
+		PipeManager.registerStripesHandler(new StripesHandlerPipeWires(), 0);
+		PipeManager.registerStripesHandler(new StripesHandlerEntityInteract(), 0);
+		PipeManager.registerStripesHandler(new StripesHandlerPlaceBlock(), -32768);
+		PipeManager.registerStripesHandler(new StripesHandlerHoe(), 0);
 
 		PipeManager.registerPipePluggable(FacadePluggable.class, "facade");
 		PipeManager.registerPipePluggable(GatePluggable.class, "gate");

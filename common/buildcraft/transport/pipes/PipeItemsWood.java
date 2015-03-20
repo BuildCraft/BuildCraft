@@ -35,7 +35,7 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TravelingItem;
 
 public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHandler {
-	protected RFBattery battery = new RFBattery(2560, 2560 / 8, 0);
+	protected RFBattery battery = new RFBattery(2560, 80, 0);
 	
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeItemsWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
@@ -225,7 +225,8 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 				if (doRemove) {
 					int maxStackSize = slot.stackSize;
 					int stackSize = Math.min(maxStackSize, battery.getEnergyStored() / 10);
-					speedMultiplier = Math.min(4.0F, battery.getEnergyStored() * 10 / stackSize);
+					// TODO: Look into the Speed Multiplier again someday.
+					//speedMultiplier = Math.min(4.0F, battery.getEnergyStored() * 10 / stackSize);
 					int energyUsed = (int) (stackSize * 10 * speedMultiplier);
 					battery.useEnergy(energyUsed, energyUsed, false);
 
