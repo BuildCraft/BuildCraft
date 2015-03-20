@@ -11,14 +11,12 @@ package buildcraft.core.statements;
 import net.minecraft.client.renderer.texture.IIconRegister;
 
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.statements.containers.ISidedStatementContainer;
 import buildcraft.core.lib.utils.StringUtils;
-import buildcraft.transport.TileGenericPipe;
 
 public class TriggerRedstoneInput extends BCStatement implements ITriggerInternal {
 

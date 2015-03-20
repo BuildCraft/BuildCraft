@@ -8,9 +8,7 @@
  */
 package buildcraft.builders;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
@@ -21,13 +19,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftBuilders;
-import buildcraft.BuildCraftCore;
 import buildcraft.core.BlockBuildCraftLED;
-import buildcraft.core.lib.block.BlockBuildCraft;
-import buildcraft.core.BCCreativeTab;
 import buildcraft.core.GuiIds;
-import buildcraft.core.lib.utils.ResourceUtils;
-import buildcraft.factory.TilePump;
 
 public class BlockArchitect extends BlockBuildCraftLED {
 	private IIcon[] led;

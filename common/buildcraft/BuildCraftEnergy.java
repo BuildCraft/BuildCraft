@@ -101,7 +101,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 	public static boolean canOilBurn;
 	public static boolean isOilDense;
-	public static boolean canEnginesExplode;
 	public static double oilWellScalar = 1.0;
 	public static ITriggerExternal triggerBlueEngineHeat = new TriggerEngineHeat(EnergyStage.BLUE);
 	public static ITriggerExternal triggerGreenEngineHeat = new TriggerEngineHeat(EnergyStage.GREEN);
@@ -121,7 +120,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		canOilBurn = BuildCraftCore.mainConfiguration.get("general", "burnOil", true, "Can oil burn?").getBoolean(true);
 		isOilDense = BuildCraftCore.mainConfiguration.get("general", "denseOil", true, "Should it be hard to swim in oil?").getBoolean(true);
 		oilWellScalar = BuildCraftCore.mainConfiguration.get("general", "oilWellGenerationRate", 1.0, "Probability of oil well generation").getDouble(1.0);
-		canEnginesExplode = BuildCraftCore.mainConfiguration.get("general", "enginesExplode", false, "Do engines explode upon overheat?").getBoolean(false);
 
 		setBiomeList(
 				OilPopulate.INSTANCE.surfaceDepositBiomes,

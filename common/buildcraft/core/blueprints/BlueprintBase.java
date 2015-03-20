@@ -29,7 +29,6 @@ import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.Position;
-import buildcraft.builders.ItemBlueprint;
 import buildcraft.core.Box;
 import buildcraft.core.Version;
 
@@ -299,16 +298,6 @@ public abstract class BlueprintBase {
 		}
 
 		return null;
-	}
-
-	public static BlueprintBase instantiate(ItemStack stack, World world, int x, int y, int z, ForgeDirection o) {
-		BlueprintBase bpt = ItemBlueprint.loadBlueprint(stack);
-
-		if (bpt == null) {
-			return null;
-		}
-
-		return bpt.adjustToWorld(world, x, y, z, o);
 	}
 
 	public BlueprintBase adjustToWorld(World world, int x, int y, int z, ForgeDirection o) {

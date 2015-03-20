@@ -42,7 +42,6 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.StackKey;
-import buildcraft.builders.TileBuilder;
 import buildcraft.core.builders.BuildingSlot;
 import buildcraft.core.builders.BuildingSlotBlock;
 import buildcraft.core.builders.BuildingSlotBlock.Mode;
@@ -480,7 +479,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			boolean itemBlock = reqStk.getItem() instanceof ItemBlock;
 			Fluid fluid = itemBlock ? FluidRegistry.lookupFluidForBlock(((ItemBlock) reqStk.getItem()).field_150939_a) : null;
 
-			if (fluid != null && builder instanceof TileBuilder && ((TileBuilder) builder).drainBuild(new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME), true)) {
+			if (fluid != null && builder.drainBuild(new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME), true)) {
 				continue;
 			}
 
@@ -560,9 +559,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			Fluid fluid = itemBlock ? FluidRegistry.lookupFluidForBlock(((ItemBlock) reqStk.getItem()).field_150939_a) : null;
 
 			if (fluid != null
-					&& inv instanceof TileBuilder
-					&& ((TileBuilder) inv)
-							.drainBuild(new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME), true)) {
+					&& inv instanceof TileAbstractBuilder
+					&& ((TileAbstractBuilder) inv).drainBuild(new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME), true)) {
 				continue;
 			}
 

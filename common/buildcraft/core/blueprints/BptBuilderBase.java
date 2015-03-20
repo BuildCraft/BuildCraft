@@ -29,7 +29,7 @@ import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.world.BlockEvent;
 
-import buildcraft.BuildCraftBuilders;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
@@ -208,7 +208,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		int hardness = (int) Math.ceil(getBlockBreakEnergy(slot) / BuilderAPI.BREAK_ENERGY);
 
 		for (int i = 0; i < hardness; ++i) {
-			slot.addStackConsumed(new ItemStack(BuildCraftBuilders.buildToolBlock));
+			slot.addStackConsumed(new ItemStack(BuildCraftCore.buildToolBlock));
 		}
 	}
 

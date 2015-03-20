@@ -20,7 +20,6 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.statements.containers.ISidedStatementContainer;
 import buildcraft.core.lib.utils.StringUtils;
-import buildcraft.transport.Gate;
 
 public class ActionRedstoneOutput extends BCStatement implements IActionInternal {
 

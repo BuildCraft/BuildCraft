@@ -20,7 +20,7 @@ import net.minecraft.nbt.NBTTagList;
 
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.BuildCraftBuilders;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
@@ -106,7 +106,7 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 
 			if (stacksToDisplay.size() == 0) {
 				StackAtPosition sPos = new StackAtPosition();
-				sPos.stack = new ItemStack(BuildCraftBuilders.buildToolBlock);
+				sPos.stack = new ItemStack(BuildCraftCore.buildToolBlock);
 				stacksToDisplay.add(sPos);
 			}
 

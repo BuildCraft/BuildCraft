@@ -8,11 +8,11 @@
  */
 package buildcraft.core.blueprints;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
-import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.BuildCraftAPI;
@@ -85,7 +85,8 @@ public class Template extends BlueprintBase {
 
 	@Override
 	public ItemStack getStack () {
-		ItemStack stack = new ItemStack(BuildCraftBuilders.templateItem, 1);
+		Item item = (Item) Item.itemRegistry.getObject("BuildCraft|Builders:templateItem");
+		ItemStack stack = new ItemStack(item, 1);
 		NBTTagCompound nbt = NBTUtils.getItemData(stack);
 		id.write (nbt);
 		nbt.setString("author", author);

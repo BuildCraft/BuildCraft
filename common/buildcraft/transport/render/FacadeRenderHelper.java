@@ -20,6 +20,8 @@ import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
+import buildcraft.core.lib.render.FakeBlock;
+import buildcraft.core.lib.render.TextureStateManager;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
@@ -153,7 +155,7 @@ public final class FacadeRenderHelper {
 						}
 					}
 
-					BlockGenericPipe.facadeRenderColor = renderBlock.getRenderColor(renderMeta);
+					((FakeBlock) blockStateMachine.getBlock()).setColor(renderBlock.getRenderColor(renderMeta));
 					// Hollow facade
 					if (pluggable.isHollow()) {
 						renderblocks.field_152631_f = true;

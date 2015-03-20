@@ -8,6 +8,8 @@
  */
 package buildcraft.builders;
 
+import net.minecraft.item.ItemStack;
+
 public class ItemBlueprintTemplate extends ItemBlueprint {
 	public ItemBlueprintTemplate() {
 		super();
@@ -16,5 +18,10 @@ public class ItemBlueprintTemplate extends ItemBlueprint {
 	@Override
 	public String getIconType() {
 		return "template";
+	}
+
+	@Override
+	public Type getType(ItemStack stack) {
+		return Type.TEMPLATE;
 	}
 }

@@ -72,6 +72,7 @@ import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.core.AchievementManager;
 import buildcraft.core.BCCreativeTab;
+import buildcraft.core.BlockBuildTool;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.CommandBuildCraft;
@@ -147,6 +148,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static boolean colorBlindMode = false;
 	public static boolean hidePowerNumbers = false;
 	public static boolean hideFluidNumbers = false;
+	public static boolean canEnginesExplode = false;
 	public static int itemLifespan = 1200;
 	public static int updateFactor = 10;
 	public static long longUpdateFactor = 40;
@@ -154,6 +156,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	public static BlockEngine engineBlock;
 	public static Block springBlock;
+	public static BlockBuildTool buildToolBlock;
 	public static Item woodenGearItem;
 	public static Item stoneGearItem;
 	public static Item ironGearItem;
@@ -276,6 +279,8 @@ public class BuildCraftCore extends BuildCraftMod {
 			longFactor.comment = "delay between full client sync packets, increasing it saves bandwidth, decreasing makes for better client syncronization.";
 			longUpdateFactor = longFactor.getInt(40);
 
+			canEnginesExplode = BuildCraftCore.mainConfiguration.get("general", "enginesExplode", false, "Do engines explode upon overheat?").getBoolean(false);
+
 			wrenchItem = (new ItemWrench()).setUnlocalizedName("wrenchItem");
 			CoreProxy.proxy.registerItem(wrenchItem);
 
@@ -326,6 +331,10 @@ public class BuildCraftCore extends BuildCraftMod {
 
 			paintbrushItem = (new ItemPaintbrush()).setUnlocalizedName("paintbrush");
 			CoreProxy.proxy.registerItem(paintbrushItem);
+
+			buildToolBlock = new BlockBuildTool();
+			buildToolBlock.setBlockName("buildToolBlock");
+			CoreProxy.proxy.registerBlock(buildToolBlock);
 
 			engineBlock = (BlockEngine) CompatHooks.INSTANCE.getBlock(BlockEngine.class);
 			CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);

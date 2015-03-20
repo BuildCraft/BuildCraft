@@ -12,6 +12,7 @@ import java.util.LinkedList;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -19,7 +20,6 @@ import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
@@ -297,7 +297,8 @@ public class Blueprint extends BlueprintBase {
 
 	@Override
 	public ItemStack getStack () {
-		ItemStack stack = new ItemStack(BuildCraftBuilders.blueprintItem, 1);
+		Item item = (Item) Item.itemRegistry.getObject("BuildCraft|Builders:blueprintItem");
+		ItemStack stack = new ItemStack(item, 1);
 		NBTTagCompound nbt = NBTUtils.getItemData(stack);
 		id.write (nbt);
 		nbt.setString("author", author);

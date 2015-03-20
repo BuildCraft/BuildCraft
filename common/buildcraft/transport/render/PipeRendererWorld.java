@@ -25,6 +25,7 @@ import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
+import buildcraft.core.lib.render.FakeBlock;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;

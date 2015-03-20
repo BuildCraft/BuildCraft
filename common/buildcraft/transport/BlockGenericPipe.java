@@ -73,7 +73,6 @@ import buildcraft.transport.render.PipeRendererWorld;
 
 public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable {
 
-	public static int facadeRenderColor = -1;
 	public static Map<Item, Class<? extends Pipe>> pipes = new HashMap<Item, Class<? extends Pipe>>();
 	public static Map<BlockIndex, Pipe<?>> pipeRemoved = new HashMap<BlockIndex, Pipe<?>>();
 
@@ -1040,15 +1039,6 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 			}
 		}
 		return true;
-	}
-
-	@Override
-	public int colorMultiplier(IBlockAccess world, int x, int y, int z) {
-		if (facadeRenderColor != -1) {
-			return facadeRenderColor;
-		}
-
-		return super.colorMultiplier(world, x, y, z);
 	}
 
 	@Override

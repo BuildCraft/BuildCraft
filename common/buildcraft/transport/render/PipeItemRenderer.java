@@ -22,6 +22,7 @@ import net.minecraftforge.client.IItemRenderer;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.CoreConstants;
+import buildcraft.core.lib.render.FakeBlock;
 import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.transport.PipeIconProvider;

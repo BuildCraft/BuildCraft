@@ -17,6 +17,7 @@ import net.minecraft.util.IIcon;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BuildingPermission;
+import buildcraft.api.items.IBlueprintItem;
 import buildcraft.api.items.INamedItem;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.LibraryId;
@@ -27,8 +28,7 @@ import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.StringUtils;
 
-public abstract class ItemBlueprint extends ItemBuildCraft implements INamedItem {
-
+public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprintItem {
 	public ItemBlueprint() {
 		super(BCCreativeTab.get("main"));
 	}
@@ -86,39 +86,6 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements INamedItem
 		return NBTUtils.getItemData(stack).hasKey("name") ? 1 : 16;
 	}
 
-	public static LibraryId getId (ItemStack stack) {
-		NBTTagCompound nbt = NBTUtils.getItemData(stack);
-		if (nbt == null) {
-			return null;
-		}
-		LibraryId id = new LibraryId();
-		id.read (nbt);
-
-		if (BuildCraftBuilders.serverDB.exists(id)) {
-			return id;
-		} else {
-			return null;
-		}
-	}
-
-	public static BlueprintBase loadBlueprint(ItemStack stack) {
-		if (stack == null) {
-			return null;
-		}
-
-		LibraryId id = getId(stack);
-		NBTTagCompound nbt = BuildCraftBuilders.serverDB.load(id);
-		BlueprintBase base;
-		if (stack.getItem() instanceof ItemBlueprintTemplate) {
-			base = new Template();
-		} else {
-			base = new Blueprint();
-		}
-		base.readFromNBT(nbt);
-		base.id = id;
-		return base;
-	}
-
 	public abstract String getIconType();
 
 	@Override
@@ -135,5 +102,39 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements INamedItem
 		}
 
 		return itemIcon;
+	}
+
+
+	public static LibraryId getId(ItemStack stack) {
+		NBTTagCompound nbt = NBTUtils.getItemData(stack);
+		if (nbt == null) {
+			return null;
+		}
+		LibraryId id = new LibraryId();
+		id.read (nbt);
+
+		if (BuildCraftBuilders.serverDB.exists(id)) {
+			return id;
+		} else {
+			return null;
+		}
+	}
+
+	public static BlueprintBase loadBlueprint(ItemStack stack) {
+		if (stack == null || stack.getItem() == null || !(stack.getItem() instanceof IBlueprintItem)) {
+			return null;
+		}
+
+		LibraryId id = getId(stack);
+		NBTTagCompound nbt = BuildCraftBuilders.serverDB.load(id);
+		BlueprintBase base;
+		if (((IBlueprintItem) stack.getItem()).getType(stack) == IBlueprintItem.Type.TEMPLATE) {
+			base = new Template();
+		} else {
+			base = new Blueprint();
+		}
+		base.readFromNBT(nbt);
+		base.id = id;
+		return base;
 	}
 }

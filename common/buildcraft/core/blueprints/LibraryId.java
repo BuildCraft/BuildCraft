@@ -8,8 +8,6 @@
  */
 package buildcraft.core.blueprints;
 
-import sun.nio.ch.Net;
-
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -20,11 +18,12 @@ import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.lib.utils.NetworkUtils;
 
 public final class LibraryId implements Comparable<LibraryId>, ISerializable {
+	public static final char BPT_SEP_CHARACTER = '-';
+
 	public byte[] uniqueId;
 	public String name = "";
 	public String extension = "tpl";
@@ -78,7 +77,7 @@ public final class LibraryId implements Comparable<LibraryId>, ISerializable {
 	public String getCompleteId () {
 		if (completeId == null) {
 			if (uniqueId.length > 0) {
-				completeId = name + BuildCraftBuilders.BPT_SEP_CHARACTER
+				completeId = name + BPT_SEP_CHARACTER
 					+ toString(uniqueId);
 			} else {
 				completeId = name;

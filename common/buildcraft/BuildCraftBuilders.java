@@ -60,7 +60,7 @@ import buildcraft.api.library.LibraryAPI;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.builders.BlockArchitect;
 import buildcraft.builders.BlockBlueprintLibrary;
-import buildcraft.builders.BlockBuildTool;
+import buildcraft.core.BlockBuildTool;
 import buildcraft.builders.BlockBuilder;
 import buildcraft.builders.BlockConstructionMarker;
 import buildcraft.builders.BlockFiller;
@@ -150,9 +150,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	@Mod.Instance("BuildCraft|Builders")
 	public static BuildCraftBuilders instance;
 
-	public static final char BPT_SEP_CHARACTER = '-';
-	public static final int LIBRARY_PAGE_SIZE = 12;
-	public static BlockBuildTool buildToolBlock;
 	public static BlockMarker markerBlock;
 	public static BlockPathMarker pathMarkerBlock;
 	public static BlockConstructionMarker constructionMarkerBlock;
@@ -491,10 +488,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		blueprintItem.setUnlocalizedName("blueprintItem");
 		CoreProxy.proxy.registerItem(blueprintItem);
 
-		buildToolBlock = new BlockBuildTool ();
-		buildToolBlock.setBlockName("buildToolBlock");
-		CoreProxy.proxy.registerBlock(buildToolBlock);
-
 		markerBlock = (BlockMarker) CompatHooks.INSTANCE.getBlock(BlockMarker.class);
 		CoreProxy.proxy.registerBlock(markerBlock.setBlockName("markerBlock"));
 
@@ -643,11 +636,12 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	@Mod.EventHandler
 	public void remap(FMLMissingMappingsEvent event) {
 		for (FMLMissingMappingsEvent.MissingMapping mapping: event.get()) {
-			if (mapping.name.equals("BuildCraft|Builders:null")) {
+			if (mapping.name.equals("BuildCraft|Builders:buildToolBlock")
+					|| mapping.name.equals("BuildCraft|Builders:null")) {
 				if (mapping.type == GameRegistry.Type.ITEM) {
-					mapping.remap(Item.getItemFromBlock(buildToolBlock));
+					mapping.remap(Item.getItemFromBlock(BuildCraftCore.buildToolBlock));
 				} else {
-					mapping.remap(buildToolBlock);
+					mapping.remap(BuildCraftCore.buildToolBlock);
 				}
 			}
 		}

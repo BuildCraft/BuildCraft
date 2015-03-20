@@ -19,6 +19,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import cpw.mods.fml.relauncher.Side;
 
+import net.minecraftforge.fluids.FluidStack;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.ITileBuilder;
@@ -181,5 +182,9 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 	@Override
 	public double getMaxRenderDistanceSquared() {
 		return Double.MAX_VALUE;
+	}
+
+	public boolean drainBuild(FluidStack fluidStack, boolean realDrain) {
+		return false;
 	}
 }

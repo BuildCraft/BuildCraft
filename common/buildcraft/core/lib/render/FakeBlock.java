@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.transport.render;
+package buildcraft.core.lib.render;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -19,7 +19,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.render.ITextureStates;
-import buildcraft.transport.BlockGenericPipe;
 
 /*
  * This is fake block to render pluggables and pipes without altering host state
@@ -42,10 +41,6 @@ public final class FakeBlock extends Block implements ITextureStates {
 	
 	@Override
 	public int colorMultiplier(IBlockAccess blockAccess, int x, int y, int z) {
-		// TODO: Move this somewhere else?
-		if (BlockGenericPipe.facadeRenderColor >= 0) {
-			return BlockGenericPipe.facadeRenderColor;
-		}
 		return colorMultiplier;
 	}
 	

@@ -21,7 +21,7 @@ import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
-import buildcraft.transport.render.FakeBlock;
+import buildcraft.core.lib.render.FakeBlock;
 
 public class LensPluggable extends PipePluggable {
 	public int color;

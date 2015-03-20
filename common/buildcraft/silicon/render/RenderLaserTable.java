@@ -10,7 +10,7 @@ import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.core.lib.render.SubIcon;
 import buildcraft.silicon.SiliconProxy;
-import buildcraft.transport.render.FakeBlock;
+import buildcraft.core.lib.render.FakeBlock;
 
 /**
  * Created by asie on 3/15/15.

@@ -770,6 +770,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		return null;
 	}
 
+	@Override
 	public boolean drainBuild(FluidStack fluidStack, boolean realDrain) {
 		for (Tank tank : fluidTanks) {
 			if (tank.getFluidType() == fluidStack.getFluid()) {

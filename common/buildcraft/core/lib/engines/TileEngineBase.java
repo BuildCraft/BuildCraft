@@ -23,13 +23,12 @@ import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyReceiver;
 
-import buildcraft.BuildCraftEnergy;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.power.IEngine;
 import buildcraft.api.tiles.IHeatable;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.core.lib.utils.ResourceUtils;
@@ -165,7 +164,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 
 	public void overheat() {
 		this.isPumping = false;
-		if (BuildCraftEnergy.canEnginesExplode) {
+		if (BuildCraftCore.canEnginesExplode) {
 			worldObj.createExplosion(null, xCoord, yCoord, zCoord, 3, true);
 			worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 		}

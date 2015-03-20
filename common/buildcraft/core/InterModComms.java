@@ -13,11 +13,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
-import com.google.common.primitives.Ints;
-import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -27,7 +22,6 @@ import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
 
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.RefineryRecipeManager;
