@@ -87,8 +87,7 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 				blockFilter = new IBlockFilter() {
 					@Override
 					public boolean matches(World world, int x, int y, int z) {
-						return world.getBlock(x, y, z).canSustainPlant(world, x, y, z, ForgeDirection.UP, (IPlantable) Blocks.reeds)
-								&& world.getBlock(x, y, z) != Blocks.reeds
+						return isPlantable((IPlantable) Blocks.reeds, Blocks.reeds, world, x, y, z)
 								&& !robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z))
 								&& isAirAbove(world, x, y, z);
 					}
@@ -98,17 +97,17 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 				blockFilter = new IBlockFilter() {
 					@Override
 					public boolean matches(World world, int x, int y, int z) {
-						return world.getBlock(x, y, z).canSustainPlant(world, x, y, z, ForgeDirection.UP, (IPlantable) plantBlock)
-								&& world.getBlock(x, y, z) != plantBlock
+						return isPlantable((IPlantable) plantBlock, plantBlock, world, x, y, z)
 								&& !robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z))
 								&& isAirAbove(world, x, y, z);
 					}
+
 				};
 			} else {
 				blockFilter = new IBlockFilter() {
 					@Override
 					public boolean matches(World world, int x, int y, int z) {
-						return world.getBlock(x, y, z).canSustainPlant(world, x, y, z, ForgeDirection.UP, (IPlantable) itemStack.getItem())
+						return isPlantable((IPlantable) itemStack.getItem(), null, world, x, y, z)
 								&& !robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z))
 								&& isAirAbove(world, x, y, z);
 					}
@@ -169,6 +168,13 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 		@Override
 		public boolean matches(ItemStack stack) {
 			return stack.getItem() instanceof ItemReed;
+		}
+	}
+
+	private boolean isPlantable(IPlantable plant, Block block, World world, int x, int y, int z) {
+		synchronized (world) {
+			return world.getBlock(x, y, z).canSustainPlant(world, x, y, z, ForgeDirection.UP, plant)
+					&& (block == null || world.getBlock(x, y, z) != block);
 		}
 	}
 

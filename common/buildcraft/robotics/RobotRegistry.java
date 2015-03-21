@@ -187,7 +187,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 		releaseResources(robot, forceAll, false);
 	}
 
-	private synchronized void releaseResources(EntityRobotBase robot, boolean forceAll, boolean resetMainLink) {
+	private synchronized void releaseResources(EntityRobotBase robot, boolean forceAll, boolean resetEntities) {
 		markDirty();
 
 		if (resourcesTakenByRobot.containsKey(robot.getRobotId())) {
@@ -212,7 +212,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 					if (!d.canRelease()) {
 						if (forceAll) {
 							d.unsafeRelease(robot);
-						} else if (resetMainLink && d.isMainStation() && d.robotIdTaking() == robot.getRobotId()) {
+						} else if (resetEntities && d.robotIdTaking() == robot.getRobotId()) {
 							d.invalidateRobotTakingEntity();
 						}
 					} else {
