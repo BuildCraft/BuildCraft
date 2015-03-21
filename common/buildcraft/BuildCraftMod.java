@@ -21,6 +21,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.S3FPacketCustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -111,6 +112,8 @@ public class BuildCraftMod {
 
 				while (!packets.isEmpty()) {
 					SendRequest r = packets.remove();
+					S3FPacketCustomPayload packetCustomPayload = new S3FPacketCustomPayload();
+					net.minecraft.network.Packet p = r.source.channels.get(Side.SERVER).generatePacketFrom(r.packet);
 					for (EntityPlayerMP player : (List<EntityPlayerMP>) MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
 						if (r.isValid(player)) {
 							NetHandlerPlayServer handler = player.playerNetServerHandler;
@@ -123,7 +126,7 @@ public class BuildCraftMod {
 								continue;
 							}
 
-							manager.scheduleOutboundPacket(r.source.channels.get(Side.SERVER).generatePacketFrom(r.packet));
+							manager.scheduleOutboundPacket(p);
 						}
 					}
 				}

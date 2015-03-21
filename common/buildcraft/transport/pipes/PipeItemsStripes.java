@@ -158,10 +158,12 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 	
 	@Override
 	public void sendItem(ItemStack itemStack, ForgeDirection direction) {
-		TravelingItem newItem = TravelingItem.make(
-				container.xCoord + 0.5,
+		Position pos = new Position(container.xCoord + 0.5,
 				container.yCoord + TransportUtils.getPipeFloorOf(itemStack),
-				container.zCoord + 0.5, itemStack);
+				container.zCoord + 0.5, direction);
+		pos.moveBackwards(0.25D);
+
+		TravelingItem newItem = TravelingItem.make(pos.x, pos.y, pos.z, itemStack);
 		transport.injectItem(newItem, direction);
 	}
 
@@ -202,7 +204,10 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 			return maxReceive;
 		}
 
-		ForgeDirection o = getOpenOrientation();
+		ForgeDirection o = actionDir;
+		if (o == ForgeDirection.UNKNOWN) {
+			o = getOpenOrientation();
+		}
 
 		if (o != ForgeDirection.UNKNOWN) {
 			Position p = new Position(container.xCoord, container.yCoord,

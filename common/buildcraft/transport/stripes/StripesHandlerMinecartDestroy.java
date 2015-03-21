@@ -14,6 +14,7 @@ import java.util.List;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecart;
+import net.minecraft.entity.item.EntityMinecartContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
@@ -55,11 +56,27 @@ public class StripesHandlerMinecartDestroy implements IStripesHandler {
 		if (minecarts.size() > 0) {
 			Collections.shuffle(minecarts);
 			EntityMinecart cart = minecarts.get(0);
-			cart.captureDrops = true;
+			if (cart instanceof EntityMinecartContainer) {
+				// good job, Mojang. :<
+				EntityMinecartContainer container = (EntityMinecartContainer) cart;
+				for (int i = 0; i < container.getSizeInventory(); i++) {
+					ItemStack s = container.getStackInSlot(i);
+					if (s != null) {
+						container.setInventorySlotContents(i, null);
+						// Safety check
+						if (container.getStackInSlot(i) == null) {
+							activator.sendItem(s, direction.getOpposite());
+						}
+					}
+				}
+			}
+			/* cart.captureDrops = true;
 			cart.killMinecart(DamageSource.generic);
 			for (EntityItem s : cart.capturedDrops) {
 				activator.sendItem(s.getEntityItem(), direction.getOpposite());
-			}
+			} */
+			cart.setDead();
+			activator.sendItem(cart.getCartItem(), direction.getOpposite());
 			return true;
 		}
 
