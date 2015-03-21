@@ -12,6 +12,7 @@ Additions:
 * Gates:
   * Gate recipes now show up in NEI properly (asie)
   * Light Sensor expansion for detecting brightness in front of a gate (asie)
+  * Gate statement parameters now display the item stack information (asie)
 * Pipes:
   * Massive optimizations - up to 3x less server-intensive (asie, Player)
   * Improvements to Stripes Pipes:
@@ -46,3 +47,4 @@ APIs:
 Breaking changes:
 * Item pipes may no longer be connected to the front of the Mining Well or Quarry.
 * Behaviour change: robots now always output to item/fluid pipes, not item/fluid containers
+* Lists are no longer recursive

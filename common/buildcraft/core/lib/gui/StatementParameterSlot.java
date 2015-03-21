@@ -3,6 +3,7 @@ package buildcraft.core.lib.gui;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementParameterItemStack;
 
 /**
 * Created by asie on 1/24/15.
@@ -28,7 +29,8 @@ public abstract class StatementParameterSlot extends AdvancedSlot {
 	public String getDescription() {
 		IStatementParameter parameter = getParameter();
 
-		if (parameter != null) {
+		// HACK: We're explicitly returning null so that the item stack description is used.
+		if (parameter != null && !(parameter instanceof StatementParameterItemStack)) {
 			return parameter.getDescription() != null ? parameter.getDescription() : "";
 		} else {
 			return null;
