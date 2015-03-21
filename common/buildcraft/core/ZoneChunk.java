@@ -97,7 +97,7 @@ public class ZoneChunk implements ISerializable {
 			while (bitId > 0) {
 				bitId--;
 
-				bitPosition = property.nextSetBit(bitPosition);
+				bitPosition = property.nextSetBit(bitPosition + 1);
 			}
 
 			z = bitPosition / 16;
