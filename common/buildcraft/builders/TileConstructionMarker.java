@@ -180,6 +180,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 
 	@Override
 	public void validate() {
+		super.validate();
 		if (!worldObj.isRemote) {
 			currentMarkers.add(this);
 		}
@@ -187,6 +188,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 
 	@Override
 	public void invalidate() {
+		super.invalidate();
 		if (!worldObj.isRemote) {
 			currentMarkers.remove(this);
 		}
