@@ -8,12 +8,9 @@
  */
 package buildcraft.robotics.ai;
 
-import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
@@ -21,11 +18,11 @@ import buildcraft.core.lib.inventory.filters.SimpleFluidFilter;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.robotics.statements.ActionStationAcceptFluids;
+import buildcraft.transport.PipeTransportFluids;
 
 public class AIRobotUnloadFluids extends AIRobot {
 
 	private int unloaded = 0;
-	private int waitedCycles = 0;
 
 	public AIRobotUnloadFluids(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -33,17 +30,11 @@ public class AIRobotUnloadFluids extends AIRobot {
 
 	@Override
 	public void update() {
-		waitedCycles++;
+		int previousUnloaded = unloaded;
+		doLoad();
 
-		if (waitedCycles > 40) {
-			int previousUnloaded = unloaded;
-			doLoad();
-
-			if (unloaded == previousUnloaded) {
-				terminate();
-			} else {
-				waitedCycles = 0;
-			}
+		if (unloaded == previousUnloaded) {
+			terminate();
 		}
 	}
 
@@ -57,28 +48,21 @@ public class AIRobotUnloadFluids extends AIRobot {
 				return;
 			}
 
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
-						+ dir.offsetY, station.z()
-						+ dir.offsetZ);
+			if (station.getPipe().pipe.transport instanceof PipeTransportFluids) {
+				PipeTransportFluids transport = ((PipeTransportFluids) station.getPipe().pipe.transport);
+				FluidStack drainable = robot.drain(ForgeDirection.UNKNOWN, FluidContainerRegistry.BUCKET_VOLUME,
+						false);
 
-				if (nearbyTile != null && nearbyTile instanceof IFluidHandler) {
-					IFluidHandler handler = (IFluidHandler) nearbyTile;
+				if (drainable != null) {
+					drainable = drainable.copy();
 
-					FluidStack drainable = robot.drain(ForgeDirection.UNKNOWN, FluidContainerRegistry.BUCKET_VOLUME,
-							false);
+					int filled = transport.fill(station.side, drainable, true);
 
-					if (drainable != null) {
-						drainable = drainable.copy();
-
-						int filled = handler.fill(station.side, drainable, true);
-
-						if (filled > 0) {
-							drainable.amount = filled;
-							robot.drain(ForgeDirection.UNKNOWN, drainable, true);
-							unloaded += filled;
-							return;
-						}
+					if (filled > 0) {
+						drainable.amount = filled;
+						robot.drain(ForgeDirection.UNKNOWN, drainable, true);
+						unloaded += filled;
+						return;
 					}
 				}
 			}

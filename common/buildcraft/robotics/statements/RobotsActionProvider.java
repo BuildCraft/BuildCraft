@@ -31,6 +31,7 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.RobotUtils;
 import buildcraft.silicon.TileAssemblyTable;
+import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 
@@ -66,21 +67,27 @@ public class RobotsActionProvider implements IActionProvider {
 		result.add(BuildCraftRobotics.actionStationForceRobot);
 
 		if (((TileGenericPipe) tile).pipe.transport instanceof PipeTransportItems) {
-			result.add(BuildCraftRobotics.actionStationDropInPipe);
+			result.add(BuildCraftRobotics.actionStationRequestItems);
+			result.add(BuildCraftRobotics.actionStationAcceptItems);
+		}
+
+		if (((TileGenericPipe) tile).pipe.transport instanceof PipeTransportFluids) {
+			result.add(BuildCraftRobotics.actionStationAcceptFluids);
 		}
 
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 			TileEntity sideTile = ((TileGenericPipe) tile).getTile(dir);
 			Block sideBlock = ((TileGenericPipe) tile).getBlock(dir);
+
+			if (sideTile instanceof IPipeTile) {
+				continue;
+			}
 			
 			if (sideTile instanceof IInventory) {
 				result.add(BuildCraftRobotics.actionStationProvideItems);
-				result.add(BuildCraftRobotics.actionStationRequestItems);
-				result.add(BuildCraftRobotics.actionStationAcceptItems);
 			}
 
 			if (sideTile instanceof IFluidHandler) {
-				result.add(BuildCraftRobotics.actionStationAcceptFluids);
 				result.add(BuildCraftRobotics.actionStationProvideFluids);
 			}
 

@@ -26,6 +26,7 @@ Additions:
   * Improved robot light handling - the light now denotes sleep state and battery charge level (asie)
   * New Robot triggers and actions: Linked, Reserved, In Station and Robot Mandatory (asie)
   * Robots can now use modded pickaxes, shovels and axes (asie)
+  * Behaviour change: robots now always output to item/fluid pipes, not item/fluid containers (asie)
 * Misc.:
   * Lasers now glow in the night (asie)
   * Miscellanous optimizations (asie)
@@ -44,3 +45,4 @@ APIs:
 
 Breaking changes:
 * Item pipes may no longer be connected to the front of the Mining Well or Quarry.
+* Behaviour change: robots now always output to item/fluid pipes, not item/fluid containers

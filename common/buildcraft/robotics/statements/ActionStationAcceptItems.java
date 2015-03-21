@@ -9,26 +9,23 @@
 package buildcraft.robotics.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementManager;
 import buildcraft.api.statements.StatementParameterItemStack;
-import buildcraft.core.lib.inventory.ITransactor;
-import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.EntityRobot;
+import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.TravelingItem;
 import buildcraft.transport.gates.StatementSlot;
 
-public class ActionStationAcceptItemsInv extends ActionStationInputItems {
+public class ActionStationAcceptItems extends ActionStationInputItems {
 
-	public ActionStationAcceptItemsInv() {
+	public ActionStationAcceptItems() {
 		super("buildcraft:station.accept_items");
+		StatementManager.statements.put("buildcraft:station.drop_in_pipe", this);
 	}
 
 	@Override
@@ -58,25 +55,25 @@ public class ActionStationAcceptItemsInv extends ActionStationInputItems {
 			return false;
 		}
 
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
-					+ dir.offsetY, station.z()
-					+ dir.offsetZ);
+		if (!doInsert) {
+			return true;
+		}
 
-			if (nearbyTile != null && nearbyTile instanceof IInventory) {
-				ITransactor trans = Transactor.getTransactorFor(nearbyTile);
+		if (station.getPipe().pipe.transport instanceof PipeTransportItems) {
+			float cx = station.x() + 0.5F + 0.2F * station.side().offsetX;
+			float cy = station.y() + 0.5F + 0.2F * station.side().offsetY;
+			float cz = station.z() + 0.5F + 0.2F * station.side().offsetZ;
 
-				ItemStack added = trans.add(invSlot.getStackInSlot(), dir.getOpposite(), doInsert);
+			TravelingItem item = TravelingItem.make(cx, cy, cz, invSlot.getStackInSlot());
 
-				if (doInsert) {
-					invSlot.decreaseStackInSlot(added.stackSize);
-				}
+			((PipeTransportItems) station.getPipe().pipe.transport).injectItem(item, station.side().getOpposite());
 
-				return true;
+			invSlot.setStackInSlot(null);
 
-			}
+			return true;
 		}
 
 		return false;
 	}
+
 }

@@ -22,6 +22,8 @@ import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.IStationFilter;
 import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.robotics.statements.ActionStationAcceptFluids;
+import buildcraft.transport.PipeTransportFluids;
+import buildcraft.transport.PipeTransportItems;
 
 public class AIRobotGotoStationToUnloadFluids extends AIRobot {
 
@@ -67,21 +69,14 @@ public class AIRobotGotoStationToUnloadFluids extends AIRobot {
 				return false;
 			}
 
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
-						+ dir.offsetY, station.z()
-						+ dir.offsetZ);
+			if (station.getPipe().pipe.transport instanceof PipeTransportFluids) {
+				PipeTransportFluids transport = ((PipeTransportFluids) station.getPipe().pipe.transport);
+				FluidStack drainable = robot.drain(ForgeDirection.UNKNOWN, 1, false);
 
-				if (nearbyTile != null && nearbyTile instanceof IFluidHandler) {
-					IFluidHandler handler = (IFluidHandler) nearbyTile;
+				int filledAmount = transport.fill(station.side, drainable, false);
 
-					FluidStack drainable = robot.drain(ForgeDirection.UNKNOWN, 1, false);
-
-					int filledAmount = handler.fill(station.side, drainable, false);
-
-					if (filledAmount > 0) {
-						return true;
-					}
+				if (filledAmount > 0) {
+					return true;
 				}
 			}
 

@@ -23,6 +23,8 @@ import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.EntityRobot;
+import buildcraft.transport.PipeTransportItems;
+import buildcraft.transport.TravelingItem;
 import buildcraft.transport.gates.StatementSlot;
 
 public class ActionStationRequestItems extends ActionStationInputItems {
@@ -63,23 +65,18 @@ public class ActionStationRequestItems extends ActionStationInputItems {
 			return false;
 		}
 
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
-					+ dir.offsetY, station.z()
-					+ dir.offsetZ);
+		if (station.getPipe().pipe.transport instanceof PipeTransportItems) {
+			float cx = station.x() + 0.5F + 0.2F * station.side().offsetX;
+			float cy = station.y() + 0.5F + 0.2F * station.side().offsetY;
+			float cz = station.z() + 0.5F + 0.2F * station.side().offsetZ;
 
-			if (nearbyTile != null && nearbyTile instanceof IInventory) {
-				ITransactor trans = Transactor.getTransactorFor(nearbyTile);
+			TravelingItem item = TravelingItem.make(cx, cy, cz, invSlot.getStackInSlot());
 
-				ItemStack added = trans.add(invSlot.getStackInSlot(), dir.getOpposite(), doInsert);
+			((PipeTransportItems) station.getPipe().pipe.transport).injectItem(item, station.side().getOpposite());
 
-				if (doInsert) {
-					invSlot.decreaseStackInSlot(added.stackSize);
-				}
+			invSlot.setStackInSlot(null);
 
-				return true;
-
-			}
+			return true;
 		}
 
 		return false;
