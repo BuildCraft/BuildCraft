@@ -24,7 +24,9 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IInvSlot;
+import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.tiles.IHasWork;
+import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.InventoryConcatenator;
@@ -35,7 +37,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.core.lib.utils.Utils;
 
-public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory, IHasWork {
+public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory, IHasWork, IRedstoneEngineReceiver {
 
 	public static final int SLOT_RESULT = 0;
 	public static final int CRAFT_TIME = 256;
@@ -65,9 +67,19 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	private IRecipe currentRecipe;
 	private boolean hasWork = false;
 
+	public TileAutoWorkbench() {
+		super();
+		this.setBattery(new RFBattery(16, 16, 0));
+	}
+
 	@Override
 	public boolean hasWork() {
 		return !isJammed && hasWork;
+	}
+
+	@Override
+	public boolean canConnectRedstoneEngine(ForgeDirection side) {
+		return true;
 	}
 
 	private class LocalInventoryCrafting extends InventoryCrafting {
@@ -244,10 +256,24 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 			return;
 		}
 
-		update++;
-		if (update % UPDATE_TIME == 0) {
-			updateCrafting();
+		int updatesLeft = getBattery().getEnergyStored() + 1;
+
+		while (updatesLeft > 0) {
+			update++;
+
+			if (update % UPDATE_TIME == 0) {
+				updateCrafting();
+
+				if (isJammed || !hasWork || resultInv.getStackInSlot(SLOT_RESULT) != null) {
+					progress = 0;
+					break;
+				}
+			}
+
+			updatesLeft--;
+
 		}
+		getBattery().setEnergy(0);
 	}
 
 	public int getProgressScaled(int i) {
