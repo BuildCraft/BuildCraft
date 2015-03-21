@@ -19,6 +19,8 @@ Additions:
     * You can now extend pipe wires by putting them into a Stripes Pipe (asie)
     * PlaceBlock now works directly in front of a block again (asie)
     * Stripes Pipes can now have their output direction controlled with Gates (asie)
+    * Stripes Pipes can now place and break Minecarts (asie)
+    * Stripes Pipes can now throw XP Bottles and shoot fireworks (asie)
   * Made items in pipes move at a much smoother rate (rendering) (asie)
 * Robots:
   * Improved robot light handling - the light now denotes sleep state and battery charge level (asie)

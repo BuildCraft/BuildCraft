@@ -19,6 +19,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemMinecart;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldServer;
 
@@ -171,13 +172,16 @@ import buildcraft.transport.statements.TriggerRedstoneFaderInput;
 import buildcraft.transport.stripes.PipeExtensionListener;
 import buildcraft.transport.stripes.StripesHandlerArrow;
 import buildcraft.transport.stripes.StripesHandlerBucket;
+import buildcraft.transport.stripes.StripesHandlerDispenser;
 import buildcraft.transport.stripes.StripesHandlerEntityInteract;
 import buildcraft.transport.stripes.StripesHandlerHoe;
+import buildcraft.transport.stripes.StripesHandlerMinecartDestroy;
 import buildcraft.transport.stripes.StripesHandlerPipeWires;
 import buildcraft.transport.stripes.StripesHandlerPipes;
 import buildcraft.transport.stripes.StripesHandlerPlaceBlock;
 import buildcraft.transport.stripes.StripesHandlerRightClick;
 import buildcraft.transport.stripes.StripesHandlerShears;
+import buildcraft.transport.stripes.StripesHandlerUse;
 
 @Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTransport extends BuildCraftMod {
@@ -502,15 +506,27 @@ public class BuildCraftTransport extends BuildCraftMod {
 		StatementManager.registerTriggerProvider(new PipeTriggerProvider());
 		StatementManager.registerActionProvider(new PipeActionProvider());
 
-		PipeManager.registerStripesHandler(new StripesHandlerRightClick(), -65536);
+		// Item use stripes handlers
+		PipeManager.registerStripesHandler(new StripesHandlerRightClick(), -32768);
+		PipeManager.registerStripesHandler(new StripesHandlerDispenser(), -49152);
 		PipeManager.registerStripesHandler(new StripesHandlerBucket(), 0);
 		PipeManager.registerStripesHandler(new StripesHandlerArrow(), 0);
 		PipeManager.registerStripesHandler(new StripesHandlerShears(), 0);
 		PipeManager.registerStripesHandler(new StripesHandlerPipes(), 0);
 		PipeManager.registerStripesHandler(new StripesHandlerPipeWires(), 0);
 		PipeManager.registerStripesHandler(new StripesHandlerEntityInteract(), 0);
-		PipeManager.registerStripesHandler(new StripesHandlerPlaceBlock(), -32768);
+		PipeManager.registerStripesHandler(new StripesHandlerPlaceBlock(), -65536);
+		PipeManager.registerStripesHandler(new StripesHandlerUse(), -131072);
 		PipeManager.registerStripesHandler(new StripesHandlerHoe(), 0);
+
+		StripesHandlerDispenser.items.add(ItemMinecart.class);
+		StripesHandlerRightClick.items.add(Items.egg);
+		StripesHandlerRightClick.items.add(Items.snowball);
+		StripesHandlerRightClick.items.add(Items.experience_bottle);
+		StripesHandlerUse.items.add(Items.fireworks);
+
+		// Block breaking stripes handlers
+		PipeManager.registerStripesHandler(new StripesHandlerMinecartDestroy(), 0);
 
 		PipeManager.registerPipePluggable(FacadePluggable.class, "facade");
 		PipeManager.registerPipePluggable(GatePluggable.class, "gate");

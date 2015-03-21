@@ -1,5 +1,7 @@
 package buildcraft.transport.stripes;
 
+import javafx.geometry.Pos;
+
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
@@ -8,13 +10,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
+import buildcraft.api.core.Position;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
 
-public class StripesHandlerRightClick implements IStripesHandler {
+public class StripesHandlerUse implements IStripesHandler {
 	public static final List<Item> items = new ArrayList<Item>();
 
 	@Override
@@ -24,17 +25,31 @@ public class StripesHandlerRightClick implements IStripesHandler {
 	
 	@Override
 	public boolean shouldHandle(ItemStack stack) {
-		return (stack.getItem() == Items.potionitem && ItemPotion.isSplash(stack.getItemDamage()))
-				   || items.contains(stack.getItem());
+		return items.contains(stack.getItem());
 	}
 
 	@Override
 	public boolean handle(World world, int x, int y, int z,
 			ForgeDirection direction, ItemStack stack, EntityPlayer player,
 			IStripesActivator activator) {
-		ItemStack remainingStack = stack.getItem().onItemRightClick(stack, world, player);
-		activator.sendItem(remainingStack, direction.getOpposite());
-		return true;
+		Position target = new Position(x, y, z, direction);
+		target.moveForwards(1.0D);
+
+		boolean done = stack.getItem().onItemUseFirst(stack, player, world,
+				(int) target.x, (int) target.y, (int) target.z,
+				direction.getOpposite().ordinal(), 0.5F, 0.5F, 0.5F);
+
+		if (!done) {
+			done = stack.getItem().onItemUse(stack, player, world,
+					(int) target.x, (int) target.y, (int) target.z,
+					direction.getOpposite().ordinal(), 0.5F, 0.5F, 0.5F);
+		}
+
+		if (stack.stackSize > 0) {
+			activator.sendItem(stack, direction.getOpposite());
+		}
+
+		return done;
 	}
 
 }
