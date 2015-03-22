@@ -9,6 +9,9 @@
 package buildcraft.core.builders;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import io.netty.buffer.ByteBuf;
@@ -34,20 +37,19 @@ import buildcraft.core.network.PacketCommand;
 public abstract class TileAbstractBuilder extends TileBuildCraft implements ITileBuilder, IInventory, IBoxProvider,
 		IBuildingItemsProvider, ICommandReceiver {
 
-	/**
-	 * The builder should not act as a gigantic energy buffer, thus we keep enough
-	 * build energy to build about 2 stacks' worth of blocks.
-	 */
-
 	public LinkedList<LaserData> pathLasers = new LinkedList<LaserData> ();
 
-	public ArrayList<BuildingItem> buildersInAction = new ArrayList<BuildingItem>();
+	public HashSet<BuildingItem> buildersInAction = new HashSet<BuildingItem>();
 
 	private int rfPrev = 0;
 	private int rfUnchangedCycles = 0;
 
 	public TileAbstractBuilder() {
 		super();
+		/**
+		 * The builder should not act as a gigantic energy buffer, thus we keep enough
+		 * build energy to build about 2 stacks' worth of blocks.
+		 */
 		this.setBattery(new RFBattery(2 * 64 * BuilderAPI.BUILD_ENERGY, 1000, 0));
 	}
 	@Override
@@ -91,18 +93,16 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 			rfUnchangedCycles = 0;
 		}
 
-		BuildingItem toRemove = null;
+		Iterator<BuildingItem> itemIterator = buildersInAction.iterator();
+		BuildingItem i;
 
-		for (BuildingItem i : buildersInAction) {
+		while (itemIterator.hasNext()) {
+			i = itemIterator.next();
 			i.update();
 
-			if (i.isDone) {
-				toRemove = i;
+			if (i.isDone()) {
+				itemIterator.remove();
 			}
-		}
-
-		if (toRemove != null) {
-			buildersInAction.remove(toRemove);
 		}
 
 		if (rfPrev != battery.getEnergyStored()) {
@@ -124,7 +124,7 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 	}
 
 	@Override
-	public ArrayList<BuildingItem> getBuilders() {
+	public Collection<BuildingItem> getBuilders() {
 		return buildersInAction;
 	}
 

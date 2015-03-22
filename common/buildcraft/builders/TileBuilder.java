@@ -586,10 +586,6 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			return;
 		}
 
-		if (currentBuilder != null) {
-			currentBuilder.removeDoneBuilders(this);
-		}
-
 		if ((currentBuilder == null || currentBuilder.isDone(this))
 				&& box.isInitialized()) {
 			box.reset();

@@ -21,6 +21,10 @@ public class StackAtPosition implements ISerializable {
 	public Position pos;
 	public boolean display;
 
+	// Rendering
+	public boolean generatedListId;
+	public int glListId;
+
 	@Override
 	public void readData(ByteBuf stream) {
 		stack = Utils.readStack(stream);

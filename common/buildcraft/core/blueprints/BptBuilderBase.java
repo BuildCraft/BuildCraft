@@ -9,7 +9,9 @@
 package buildcraft.core.blueprints;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import org.apache.logging.log4j.Level;
@@ -174,16 +176,6 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 	public BptContext getContext() {
 		return context;
-	}
-
-	public void removeDoneBuilders (TileAbstractBuilder builder) {
-		ArrayList<BuildingItem> items = builder.getBuilders();
-
-		for (int i = items.size() - 1; i >= 0; --i) {
-			if (items.get(i).isDone()) {
-				items.remove(i);
-			}
-		}
 	}
 
 	public boolean isDone(IBuildingItemsProvider builder) {

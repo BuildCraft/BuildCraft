@@ -9,10 +9,11 @@
 package buildcraft.core.builders;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 public interface IBuildingItemsProvider {
 
-	ArrayList<BuildingItem> getBuilders();
+	Collection<BuildingItem> getBuilders();
 
 	void addAndLaunchBuildingItem(BuildingItem item);
 }
