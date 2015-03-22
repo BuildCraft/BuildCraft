@@ -17,6 +17,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.MathHelper;
 
 import net.minecraftforge.common.util.Constants;
 
@@ -35,21 +36,18 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 	public Position origin, destination;
 	public LinkedList<StackAtPosition> stacksToDisplay = new LinkedList<StackAtPosition>();
 
-	public Position posDisplay = new Position();
 	public boolean isDone = false;
 
 	public BuildingSlot slotToBuild;
 	public IBuilderContext context;
 
-	public double receivedProgress = 0;
-
 	private long previousUpdate;
-	private double lifetimeDisplay = 0;
-	private double maxLifetime = 0;
+	private float lifetimeDisplay = 0;
+	private float maxLifetime = 0;
 	private boolean initialized = false;
 	private double vx, vy, vz;
 	private double maxHeight;
-	private double lifetime = 0;
+	private float lifetime = 0;
 
 	public void initialize () {
 		if (!initialized) {
@@ -59,7 +57,7 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 
 			double size = Math.sqrt(dx * dx + dy * dy + dz * dz);
 
-			maxLifetime = size * 4;
+			maxLifetime = (float) size * 4;
 
 			// maxHeight = 5.0 + (destination.y - origin.y) / 2.0;
 
@@ -98,7 +96,7 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 			d1 = d1 / size * maxLifetime;
 			d2 = d2 / size * maxLifetime;
 
-			maxLifetime = d1 + d2;
+			maxLifetime = (float) d1 + (float) d2;
 
 			vx = dx / maxLifetime;
 			vy = dy / maxLifetime;
@@ -114,11 +112,11 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 		}
 	}
 
-	public Position getDisplayPosition (double time) {
+	public Position getDisplayPosition (float time) {
 		Position result = new Position ();
 
 		result.x = origin.x + vx * time;
-		result.y = origin.y + vy * time + Math.sin(time / maxLifetime * Math.PI) * maxHeight;
+		result.y = origin.y + vy * time + MathHelper.sin(time / maxLifetime * (float) Math.PI) * maxHeight;
 		result.z = origin.z + vz * time;
 
 		return result;
@@ -150,12 +148,12 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 	public void displayUpdate () {
 		initialize();
 
-		double tickDuration = 1000.0 / 20.0;
+		float tickDuration = 50.0F; // miliseconds
 		long currentUpdate = new Date ().getTime();
-		double timeSpan = currentUpdate - previousUpdate;
+		float timeSpan = currentUpdate - previousUpdate;
 		previousUpdate = currentUpdate;
 
-		double displayPortion = timeSpan / tickDuration;
+		float displayPortion = timeSpan / tickDuration;
 
 		if (lifetimeDisplay - lifetime <= 1.0) {
 			lifetimeDisplay += 1.0 * displayPortion;
@@ -188,7 +186,7 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 		int d = 0;
 
 		for (StackAtPosition s : stacksToDisplay) {
-			double stackLife = lifetimeDisplay - d;
+			float stackLife = lifetimeDisplay - d;
 
 			if (stackLife <= maxLifetime && stackLife > 0) {
 				s.pos = getDisplayPosition(stackLife);
@@ -217,7 +215,7 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 		destination.writeToNBT(destinationNBT);
 		nbt.setTag ("destination", destinationNBT);
 
-		nbt.setDouble("lifetime", lifetime);
+		nbt.setFloat("lifetime", lifetime);
 
 		NBTTagList items = new NBTTagList();
 
@@ -251,7 +249,7 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 	public void readFromNBT(NBTTagCompound nbt) throws MappingNotFoundException {
 		origin = new Position(nbt.getCompoundTag("origin"));
 		destination = new Position (nbt.getCompoundTag("destination"));
-		lifetime = nbt.getDouble("lifetime");
+		lifetime = nbt.getFloat("lifetime");
 
 		NBTTagList items = nbt.getTagList("items",
 				Constants.NBT.TAG_COMPOUND);
@@ -294,7 +292,7 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 		destination = new Position();
 		origin.readData(stream);
 		destination.readData(stream);
-		lifetime = stream.readDouble();
+		lifetime = stream.readFloat();
 		stacksToDisplay.clear();
 		int size = stream.readUnsignedShort();
 		for (int i = 0; i < size; i++) {
@@ -308,10 +306,15 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 	public void writeData(ByteBuf stream) {
 		origin.writeData(stream);
 		destination.writeData(stream);
-		stream.writeDouble(lifetime);
+		stream.writeFloat(lifetime);
 		stream.writeShort(stacksToDisplay.size());
 		for (StackAtPosition s: stacksToDisplay) {
 			s.writeData(stream);
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		return (131 * origin.hashCode()) + destination.hashCode();
 	}
 }
