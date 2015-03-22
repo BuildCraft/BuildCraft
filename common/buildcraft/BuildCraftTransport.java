@@ -243,12 +243,12 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 	public static float gateCostMultiplier = 1.0F;
 
-	private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
+	public static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
 
 	public IIconProvider pipeIconProvider = new PipeIconProvider();
 	public IIconProvider wireIconProvider = new WireIconProvider();
 
-	private static class PipeRecipe {
+	public static class PipeRecipe {
 		boolean isShapeless = false; // pipe recipes come shaped and unshaped.
 		ItemStack result;
 		Object[] input;
