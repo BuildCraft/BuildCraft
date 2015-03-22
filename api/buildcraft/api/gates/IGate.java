@@ -8,6 +8,10 @@
  */
 package buildcraft.api.gates;
 
+import java.util.List;
+import buildcraft.api.statements.IStatement;
+import buildcraft.api.statements.IStatementParameter;
+import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.statements.containers.ISidedStatementContainer;
 import buildcraft.api.transport.IPipe;
 
@@ -16,4 +20,12 @@ public interface IGate extends ISidedStatementContainer {
 	void setPulsing(boolean pulse);
 
 	IPipe getPipe();
+
+	List<IStatement> getTriggers();
+	List<IStatement> getActions();
+
+	List<StatementSlot> getActiveActions();
+
+	List<IStatementParameter> getTriggerParameters(int index);
+	List<IStatementParameter> getActionParameters(int index);
 }

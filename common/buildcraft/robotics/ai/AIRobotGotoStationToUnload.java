@@ -14,14 +14,14 @@ import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.transport.IPipe;
 import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.EntityRobot;
 import buildcraft.robotics.IStationFilter;
 import buildcraft.robotics.statements.ActionStationInputItems;
-import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.transport.gates.StatementSlot;
+import buildcraft.api.statements.StatementSlot;
 
 public class AIRobotGotoStationToUnload extends AIRobot {
 
@@ -61,7 +61,7 @@ public class AIRobotGotoStationToUnload extends AIRobot {
 	private class StationInventory implements IStationFilter {
 		@Override
 		public boolean matches(DockingStation station) {
-			Pipe pipe = station.getPipe().pipe;
+			IPipe pipe = station.getPipe().getPipe();
 
 			for (IInvSlot robotSlot : InventoryIterator.getIterable(robot, ForgeDirection.UNKNOWN)) {
 				if (robotSlot.getStackInSlot() == null) {

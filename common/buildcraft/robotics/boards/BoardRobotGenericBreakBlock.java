@@ -33,7 +33,7 @@ import buildcraft.robotics.ai.AIRobotGotoSleep;
 import buildcraft.robotics.ai.AIRobotSearchBlock;
 import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.transport.gates.StatementSlot;
+import buildcraft.api.statements.StatementSlot;
 
 public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
@@ -129,7 +129,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
 		DockingStation station = (DockingStation) robot.getLinkedStation();
 
-		for (StatementSlot slot : new ActionIterator(station.getPipe().pipe)) {
+		for (StatementSlot slot : new ActionIterator(station.getPipe().getPipe())) {
 			if (slot.statement instanceof ActionRobotFilter) {
 				for (IStatementParameter p : slot.parameters) {
 					if (p != null && p instanceof StatementParameterItemStack) {

@@ -21,6 +21,7 @@ import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.robots.StackRequest;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
+import buildcraft.api.transport.IPipe;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.robotics.DockingStation;
@@ -28,9 +29,8 @@ import buildcraft.robotics.IStationFilter;
 import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.robotics.statements.ActionStationRequestItems;
 import buildcraft.robotics.statements.ActionStationRequestItemsMachine;
-import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.transport.gates.StatementSlot;
+import buildcraft.api.statements.StatementSlot;
 
 public class AIRobotSearchStackRequest extends AIRobot {
 
@@ -126,8 +126,7 @@ public class AIRobotSearchStackRequest extends AIRobot {
 
 	private StackRequest getOrderFromRequestingAction(DockingStation station) {
 		boolean actionFound = false;
-
-		Pipe pipe = station.getPipe().pipe;
+		IPipe pipe = station.getPipe().getPipe();
 
 		for (StatementSlot s : new ActionIterator(pipe)) {
 			if (s.statement instanceof ActionStationRequestItems) {

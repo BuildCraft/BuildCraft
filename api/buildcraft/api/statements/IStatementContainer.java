@@ -8,6 +8,7 @@
  */
 package buildcraft.api.statements;
 
+import java.util.List;
 import net.minecraft.tileentity.TileEntity;
 
 /**

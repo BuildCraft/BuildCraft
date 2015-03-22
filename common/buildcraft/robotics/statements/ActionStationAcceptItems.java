@@ -17,9 +17,10 @@ import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.EntityRobot;
+import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TravelingItem;
-import buildcraft.transport.gates.StatementSlot;
+import buildcraft.api.statements.StatementSlot;
 
 public class ActionStationAcceptItems extends ActionStationInputItems {
 
@@ -59,14 +60,14 @@ public class ActionStationAcceptItems extends ActionStationInputItems {
 			return true;
 		}
 
-		if (station.getPipe().pipe.transport instanceof PipeTransportItems) {
+		if (((Pipe) station.getPipe().getPipe()).transport instanceof PipeTransportItems) {
 			float cx = station.x() + 0.5F + 0.2F * station.side().offsetX;
 			float cy = station.y() + 0.5F + 0.2F * station.side().offsetY;
 			float cz = station.z() + 0.5F + 0.2F * station.side().offsetZ;
 
 			TravelingItem item = TravelingItem.make(cx, cy, cz, invSlot.getStackInSlot());
 
-			((PipeTransportItems) station.getPipe().pipe.transport).injectItem(item, station.side().getOpposite());
+			((PipeTransportItems) ((Pipe) station.getPipe().getPipe()).transport).injectItem(item, station.side().getOpposite());
 
 			invSlot.setStackInSlot(null);
 

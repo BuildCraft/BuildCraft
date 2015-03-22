@@ -33,7 +33,7 @@ import buildcraft.core.lib.network.IGuiReturnHandler;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TravelingItem;
-import buildcraft.transport.gates.StatementSlot;
+import buildcraft.api.statements.StatementSlot;
 import buildcraft.transport.statements.ActionExtractionPreset;
 
 public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler {

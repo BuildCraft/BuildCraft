@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 
 import buildcraft.BuildCraftBuilders;
+import buildcraft.BuildCraftCore;
 import buildcraft.core.StackAtPosition;
 import buildcraft.core.builders.BuildingItem;
 import buildcraft.core.builders.IBuildingItemsProvider;
@@ -74,7 +75,7 @@ public class RenderBuildingItems {
 
 	private void doRenderItem(BuildingItem i, float light) {
 		if (buildToolItem == null) {
-			buildToolItem = Item.getItemFromBlock(BuildCraftBuilders.buildToolBlock);
+			buildToolItem = Item.getItemFromBlock(BuildCraftCore.buildToolBlock);
 			buildToolGlList = GL11.glGenLists(1);
 			renderToList(new ItemStack(buildToolItem), buildToolGlList);
 		}

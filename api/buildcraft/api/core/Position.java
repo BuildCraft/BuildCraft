@@ -193,4 +193,9 @@ public class Position implements ISerializable {
 		stream.writeDouble(z);
 		stream.writeByte(orientation.ordinal());
 	}
+
+	@Override
+	public int hashCode() {
+		return (51 * (int) x) + (13 * (int) y) + (int) z;
+	}
 }

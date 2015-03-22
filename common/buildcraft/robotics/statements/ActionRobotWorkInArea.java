@@ -19,7 +19,7 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.core.statements.BCStatement;
 import buildcraft.core.lib.utils.StringUtils;
-import buildcraft.transport.gates.StatementSlot;
+import buildcraft.api.statements.StatementSlot;
 
 public class ActionRobotWorkInArea extends BCStatement implements IActionInternal {
 

@@ -27,6 +27,7 @@ public class PipeTriggerProvider implements ITriggerProvider {
 		LinkedList<ITriggerInternal> result = new LinkedList<ITriggerInternal>();
 		Pipe<?> pipe = null;
 		TileEntity tile = container.getTile();
+
 		if (tile instanceof TileGenericPipe) {
 			pipe = ((TileGenericPipe) tile).pipe;
 		}

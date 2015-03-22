@@ -82,7 +82,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		return true;
 	}
 
-	private class LocalInventoryCrafting extends InventoryCrafting {
+	public class LocalInventoryCrafting extends InventoryCrafting {
 
 		public LocalInventoryCrafting() {
 			super(new Container() {

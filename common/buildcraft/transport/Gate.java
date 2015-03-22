@@ -8,8 +8,11 @@
  */
 package buildcraft.transport;
 
+import scala.actors.threadpool.Arrays;
+
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.common.collect.BiMap;
@@ -46,7 +49,7 @@ import buildcraft.core.GuiIds;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.ItemGate;
-import buildcraft.transport.gates.StatementSlot;
+import buildcraft.api.statements.StatementSlot;
 import buildcraft.transport.gui.ContainerGateInterface;
 import buildcraft.transport.statements.ActionValve;
 
@@ -661,6 +664,37 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 	@Override
 	public TileEntity getTile() {
 		return pipe.container;
+	}
+
+	@Override
+	public List<IStatement> getTriggers() {
+		return Arrays.asList(triggers).subList(0, material.numSlots);
+	}
+
+	@Override
+	public List<IStatement> getActions() {
+		return Arrays.asList(actions).subList(0, material.numSlots);
+	}
+
+	@Override
+	public List<StatementSlot> getActiveActions() {
+		return activeActions;
+	}
+
+	@Override
+	public List<IStatementParameter> getTriggerParameters(int index) {
+		if (index < 0 || index >= material.numSlots) {
+			return null;
+		}
+		return Arrays.asList(triggerParameters[index]).subList(0, material.numTriggerParameters);
+	}
+
+	@Override
+	public List<IStatementParameter> getActionParameters(int index) {
+		if (index < 0 || index >= material.numSlots) {
+			return null;
+		}
+		return Arrays.asList(actionParameters[index]).subList(0, material.numActionParameters);
 	}
 
 	@Override

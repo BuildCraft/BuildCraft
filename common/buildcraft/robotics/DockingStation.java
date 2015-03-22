@@ -9,6 +9,7 @@
 package buildcraft.robotics;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.ForgeDirection;
@@ -17,6 +18,7 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
 import buildcraft.api.robots.RobotManager;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.transport.TileGenericPipe;
 
 public class DockingStation implements IDockingStation {
@@ -29,7 +31,7 @@ public class DockingStation implements IDockingStation {
 	private boolean linkIsMain = false;
 
 	private BlockIndex index;
-	private TileGenericPipe pipe;
+	private IPipeTile pipe;
 
 	public DockingStation(BlockIndex iIndex, ForgeDirection iSide) {
 		index = iIndex;
@@ -50,12 +52,12 @@ public class DockingStation implements IDockingStation {
 		return linkIsMain;
 	}
 
-	public TileGenericPipe getPipe() {
+	public IPipeTile getPipe() {
 		if (pipe == null) {
-			pipe = (TileGenericPipe) world.getTileEntity(index.x, index.y, index.z);
+			pipe = (IPipeTile) world.getTileEntity(index.x, index.y, index.z);
 		}
 
-		if (pipe == null || pipe.isInvalid()) {
+		if (pipe == null || ((TileEntity) pipe).isInvalid()) {
 			// Inconsistency - remove this pipe from the registry.
 			RobotManager.registryProvider.getRegistry(world).removeStation(this);
 			pipe = null;

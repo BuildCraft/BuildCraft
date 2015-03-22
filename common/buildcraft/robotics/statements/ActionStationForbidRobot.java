@@ -21,7 +21,7 @@ import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.ItemRobot;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.transport.gates.StatementSlot;
+import buildcraft.api.statements.StatementSlot;
 
 public class ActionStationForbidRobot extends BCStatement implements IActionInternal {
 	private final boolean invert;
@@ -57,7 +57,7 @@ public class ActionStationForbidRobot extends BCStatement implements IActionInte
 	}
 
 	public static boolean isForbidden(DockingStation station, EntityRobotBase robot) {
-		for (StatementSlot s : new ActionIterator(station.getPipe().pipe)) {
+		for (StatementSlot s : new ActionIterator(station.getPipe().getPipe())) {
 			if (s.statement instanceof ActionStationForbidRobot) {
 				if (((ActionStationForbidRobot) s.statement).invert ^ ActionStationForbidRobot.isForbidden(s, robot)) {
 					return true;

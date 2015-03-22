@@ -54,7 +54,7 @@ public class AIRobotRecharge extends AIRobot {
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotSearchAndGotoStation) {
 			if (robot.getDockingStation() == null
-					|| !(((DockingStation) robot.getDockingStation()).getPipe().pipe.transport instanceof PipeTransportPower)) {
+					|| ((DockingStation) robot.getDockingStation()).getPipe().getPipeType() != IPipeTile.PipeType.POWER) {
 				terminate();
 			}
 		}

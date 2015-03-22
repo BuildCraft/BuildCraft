@@ -9,23 +9,17 @@
 package buildcraft.robotics.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
-import buildcraft.core.lib.inventory.ITransactor;
-import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.EntityRobot;
+import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TravelingItem;
-import buildcraft.transport.gates.StatementSlot;
+import buildcraft.api.statements.StatementSlot;
 
 public class ActionStationRequestItems extends ActionStationInputItems {
 
@@ -65,14 +59,14 @@ public class ActionStationRequestItems extends ActionStationInputItems {
 			return false;
 		}
 
-		if (station.getPipe().pipe.transport instanceof PipeTransportItems) {
+		if (((Pipe) station.getPipe().getPipe()).transport instanceof PipeTransportItems) {
 			float cx = station.x() + 0.5F + 0.2F * station.side().offsetX;
 			float cy = station.y() + 0.5F + 0.2F * station.side().offsetY;
 			float cz = station.z() + 0.5F + 0.2F * station.side().offsetZ;
 
 			TravelingItem item = TravelingItem.make(cx, cy, cz, invSlot.getStackInSlot());
 
-			((PipeTransportItems) station.getPipe().pipe.transport).injectItem(item, station.side().getOpposite());
+			((PipeTransportItems) ((Pipe) station.getPipe().getPipe()).transport).injectItem(item, station.side().getOpposite());
 
 			invSlot.setStackInSlot(null);
 

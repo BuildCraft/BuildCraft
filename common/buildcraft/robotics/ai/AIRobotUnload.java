@@ -13,13 +13,13 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.transport.IPipe;
 import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.EntityRobot;
 import buildcraft.robotics.statements.ActionStationInputItems;
-import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.transport.gates.StatementSlot;
+import buildcraft.api.statements.StatementSlot;
 
 public class AIRobotUnload extends AIRobot {
 
@@ -50,7 +50,7 @@ public class AIRobotUnload extends AIRobot {
 			return false;
 		}
 
-		Pipe pipe = station.getPipe().pipe;
+		IPipe pipe = station.getPipe().getPipe();
 
 		for (IInvSlot robotSlot : InventoryIterator.getIterable(robot, ForgeDirection.UNKNOWN)) {
 			if (robotSlot.getStackInSlot() == null) {

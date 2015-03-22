@@ -12,14 +12,15 @@ import java.util.Iterator;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.api.statements.StatementSlot;
+import buildcraft.api.transport.IPipe;
 import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
 
 public class ActionIterator implements Iterable<StatementSlot> {
+	private IPipe pipe;
 
-	private Pipe pipe;
-
-	public ActionIterator(Pipe iPipe) {
+	public ActionIterator(IPipe iPipe) {
 		pipe = iPipe;
 	}
 
@@ -38,8 +39,8 @@ public class ActionIterator implements Iterable<StatementSlot> {
 			while (!isValid()) {
 				if (curDir == ForgeDirection.UNKNOWN) {
 					break;
-				} else if (pipe.gates[curDir.ordinal()] == null
-						|| index >= pipe.gates[curDir.ordinal()].activeActions.size() - 1) {
+				} else if (pipe.getGate(curDir) == null
+						|| index >= pipe.getGate(curDir).getActiveActions().size() - 1) {
 					index = 0;
 					curDir = ForgeDirection.values()[curDir.ordinal() + 1];
 				} else {
@@ -48,7 +49,7 @@ public class ActionIterator implements Iterable<StatementSlot> {
 			}
 
 			if (isValid()) {
-				next = pipe.gates[curDir.ordinal()].activeActions.get(index);
+				next = pipe.getGate(curDir).getActiveActions().get(index);
 			}
 		}
 
@@ -77,7 +78,7 @@ public class ActionIterator implements Iterable<StatementSlot> {
 			}
 
 			if (isValid()) {
-				next = pipe.gates[curDir.ordinal()].activeActions.get(index);
+				next = pipe.getGate(curDir).getActiveActions().get(index);
 			} else {
 				next = null;
 			}
@@ -92,8 +93,8 @@ public class ActionIterator implements Iterable<StatementSlot> {
 
 		private boolean isValid() {
 			return curDir != ForgeDirection.UNKNOWN
-					&& pipe.gates[curDir.ordinal()] != null
-					&& index < pipe.gates[curDir.ordinal()].activeActions.size();
+					&& pipe.getGate(curDir) != null
+					&& index < pipe.getGate(curDir).getActiveActions().size();
 		}
 	}
 }

@@ -18,6 +18,7 @@ import buildcraft.core.lib.inventory.filters.SimpleFluidFilter;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.robotics.statements.ActionStationAcceptFluids;
+import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportFluids;
 
 public class AIRobotUnloadFluids extends AIRobot {
@@ -48,8 +49,8 @@ public class AIRobotUnloadFluids extends AIRobot {
 				return;
 			}
 
-			if (station.getPipe().pipe.transport instanceof PipeTransportFluids) {
-				PipeTransportFluids transport = ((PipeTransportFluids) station.getPipe().pipe.transport);
+			if (((Pipe) station.getPipe().getPipe()).transport instanceof PipeTransportFluids) {
+				PipeTransportFluids transport = ((PipeTransportFluids) ((Pipe) station.getPipe().getPipe()).transport);
 				FluidStack drainable = robot.drain(ForgeDirection.UNKNOWN, FluidContainerRegistry.BUCKET_VOLUME,
 						false);
 

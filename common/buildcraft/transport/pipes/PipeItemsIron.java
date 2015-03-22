@@ -28,7 +28,7 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.gates.StatementSlot;
+import buildcraft.api.statements.StatementSlot;
 import buildcraft.transport.statements.ActionPipeDirection;
 
 public class PipeItemsIron extends Pipe<PipeTransportItems> {

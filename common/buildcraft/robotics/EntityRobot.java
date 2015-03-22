@@ -51,12 +51,12 @@ import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IZone;
-import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
 import buildcraft.api.robots.RobotManager;
 import buildcraft.api.tiles.IDebuggable;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
 import buildcraft.core.lib.RFBattery;
@@ -68,9 +68,10 @@ import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.robotics.ai.AIRobotMain;
 import buildcraft.robotics.ai.AIRobotSleep;
 import buildcraft.robotics.statements.ActionRobotWorkInArea;
+import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.transport.gates.StatementSlot;
+import buildcraft.api.statements.StatementSlot;
 
 public class EntityRobot extends EntityRobotBase implements
 		IEntityAdditionalSpawnData, IInventory, IFluidHandler, ICommandReceiver, IDebuggable {
@@ -345,7 +346,7 @@ public class EntityRobot extends EntityRobotBase implements
 		if (currentDockingStation == null) {
 			return false;
 		}
-		if (!(currentDockingStation.getPipe().pipe.transport instanceof PipeTransportPower)) {
+		if (currentDockingStation.getPipe().getPipeType() != IPipeTile.PipeType.POWER) {
 			return false;
 		}
 		return true;
@@ -913,7 +914,7 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	public IZone getZoneToWork() {
 		if (linkedDockingStation instanceof DockingStation) {
-			for (StatementSlot s : new ActionIterator(((DockingStation) linkedDockingStation).getPipe().pipe)) {
+			for (StatementSlot s : new ActionIterator(((DockingStation) linkedDockingStation).getPipe().getPipe())) {
 				if (s.statement instanceof ActionRobotWorkInArea) {
 					IZone zone = ActionRobotWorkInArea.getArea(s);
 
