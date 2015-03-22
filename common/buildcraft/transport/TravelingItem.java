@@ -283,6 +283,10 @@ public class TravelingItem {
 		return false;
 	}
 
+	public boolean ignoreWeight() {
+		return false;
+	}
+
 	@Override
 	public int hashCode() {
 		return this.id;

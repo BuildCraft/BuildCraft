@@ -417,7 +417,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 					realDirections.add(direction);
 				}
 			}
-			container.pipe.eventBus.handleEvent(PipeEventFluid.FindDest.class, new PipeEventFluid.FindDest(pushStack, realDirections));
+			container.pipe.eventBus.handleEvent(PipeEventFluid.FindDest.class, new PipeEventFluid.FindDest(container.pipe, pushStack, realDirections));
 			for (ForgeDirection direction : realDirections) {
 				int available = internalTanks[direction.ordinal()].fill(testStack, false);
 				int ammountToPush = (int) (available / (double) flowRate / outputCount * Math.min(flowRate, totalAvailable));

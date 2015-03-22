@@ -15,39 +15,38 @@ import net.minecraft.tileentity.TileEntity;
 
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.transport.Pipe;
 import buildcraft.transport.TravelingItem;
 
 public abstract class PipeEventItem extends PipeEvent {
 
 	public final TravelingItem item;
 
-	public PipeEventItem(TravelingItem item) {
+	public PipeEventItem(Pipe pipe, TravelingItem item) {
+		super(pipe);
 		this.item = item;
 	}
 
 	public static class Entered extends PipeEventItem {
-
 		public boolean cancelled = false;
 
-		public Entered(TravelingItem item) {
-			super(item);
+		public Entered(Pipe pipe, TravelingItem item) {
+			super(pipe, item);
 		}
 	}
 
 	public static class ReachedCenter extends PipeEventItem {
-
-		public ReachedCenter(TravelingItem item) {
-			super(item);
+		public ReachedCenter(Pipe pipe, TravelingItem item) {
+			super(pipe, item);
 		}
 	}
 
 	public static class ReachedEnd extends PipeEventItem {
-
 		public final TileEntity dest;
 		public boolean handled = false;
 
-		public ReachedEnd(TravelingItem item, TileEntity dest) {
-			super(item);
+		public ReachedEnd(Pipe pipe, TravelingItem item, TileEntity dest) {
+			super(pipe, item);
 			this.dest = dest;
 		}
 	}
@@ -57,8 +56,8 @@ public abstract class PipeEventItem extends PipeEvent {
 		public EntityItem entity;
 		public ForgeDirection direction = ForgeDirection.UNKNOWN;
 
-		public DropItem(TravelingItem item, EntityItem entity) {
-			super(item);
+		public DropItem(Pipe pipe, TravelingItem item, EntityItem entity) {
+			super(pipe, item);
 			this.entity = entity;
 
 			if (item.output != ForgeDirection.UNKNOWN) {
@@ -70,11 +69,10 @@ public abstract class PipeEventItem extends PipeEvent {
 	}
 
 	public static class FindDest extends PipeEventItem {
-
 		public final List<ForgeDirection> destinations;
 
-		public FindDest(TravelingItem item, List<ForgeDirection> destinations) {
-			super(item);
+		public FindDest(Pipe pipe, TravelingItem item, List<ForgeDirection> destinations) {
+			super(pipe, item);
 			this.destinations = destinations;
 		}
 	}
@@ -83,8 +81,8 @@ public abstract class PipeEventItem extends PipeEvent {
 
 		public boolean handled = false;
 
-		public AdjustSpeed(TravelingItem item) {
-			super(item);
+		public AdjustSpeed(Pipe pipe, TravelingItem item) {
+			super(pipe, item);
 		}
 	}
 }

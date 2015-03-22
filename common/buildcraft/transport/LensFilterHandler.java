@@ -10,18 +10,9 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.pluggable.LensPluggable;
 
-/**
-* Created by asie on 12/18/14.
-*/
 public class LensFilterHandler {
-	private IPipe pipe;
-
-	public LensFilterHandler(IPipe pipe) {
-		this.pipe = pipe;
-	}
-
 	public void eventHandler(PipeEventItem.FindDest event) {
-		IPipeTile container = pipe.getTile();
+		IPipeTile container = event.pipe.getTile();
 		LinkedList<ForgeDirection> correctColored = new LinkedList<ForgeDirection>();
 		LinkedList<ForgeDirection> notColored = new LinkedList<ForgeDirection>();
 		boolean encounteredColor = false;

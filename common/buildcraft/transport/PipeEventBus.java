@@ -29,12 +29,21 @@ public class PipeEventBus {
 			return e.method.equals(method) && e.owner == owner;
 		}
 	}
+
+	private static final HashSet<Object> globalHandlers = new HashSet<Object>();
+
 	private final HashSet<Object> registeredHandlers = new HashSet<Object>();
 	private final HashMap<Object, Map<Method, Class<? extends PipeEvent>>> handlerMethods = new HashMap<Object, Map<Method, Class<? extends PipeEvent>>>();
 	private final HashMap<Class<? extends PipeEvent>, List<EventHandler>> eventHandlers = new HashMap<Class<? extends PipeEvent>, List<EventHandler>>();
 
 	public PipeEventBus() {
+		for (Object o : globalHandlers) {
+			registerHandler(o);
+		}
+	}
 
+	public static void registerGlobalHandler(Object globalHandler) {
+		globalHandlers.add(globalHandler);
 	}
 
 	private List<EventHandler> getHandlerList(Class<? extends PipeEvent> event) {

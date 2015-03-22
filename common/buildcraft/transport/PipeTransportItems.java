@@ -52,7 +52,6 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 	@Override
 	public void initialize() {
 		super.initialize();
-		container.pipe.eventBus.registerHandler(new LensFilterHandler(container.pipe));
 	}
 
 	@Override
@@ -61,7 +60,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 	}
 
 	public void readjustSpeed(TravelingItem item) {
-		PipeEventItem.AdjustSpeed event = new PipeEventItem.AdjustSpeed(item);
+		PipeEventItem.AdjustSpeed event = new PipeEventItem.AdjustSpeed(container.pipe, item);
 		container.pipe.eventBus.handleEvent(PipeEventItem.AdjustSpeed.class, event);
 		if (!event.handled) {
 			defaultReajustSpeed(item);
@@ -111,7 +110,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 			item.output = resolveDestination(item);
 		}
 
-		PipeEventItem.Entered event = new PipeEventItem.Entered(item);
+		PipeEventItem.Entered event = new PipeEventItem.Entered(container.pipe, item);
 		container.pipe.eventBus.handleEvent(PipeEventItem.Entered.class, event);
 		if (event.cancelled) {
 			return;
@@ -122,11 +121,14 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 		if (!container.getWorldObj().isRemote) {
 			sendTravelerPacket(item, false);
 
-			if (items.size() > BuildCraftTransport.groupItemsTrigger) {
+			int itemStackCount = getNumberOfStacks();
+
+			if (itemStackCount > BuildCraftTransport.groupItemsTrigger) {
 				groupEntities();
+				itemStackCount = getNumberOfStacks();
 			}
 
-			if (items.size() > MAX_PIPE_STACKS) {
+			if (itemStackCount > MAX_PIPE_STACKS) {
 				BCLog.logger.log(Level.WARN, String.format("Pipe exploded at %d,%d,%d because it had too many stacks: %d", container.xCoord, container.yCoord, container.zCoord, items.size()));
 				destroyPipe();
 				return;
@@ -168,7 +170,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 			item.output = resolveDestination(item);
 		}
 
-		PipeEventItem.Entered event = new PipeEventItem.Entered(item);
+		PipeEventItem.Entered event = new PipeEventItem.Entered(container.pipe, item);
 		container.pipe.eventBus.handleEvent(PipeEventItem.Entered.class, event);
 		if (event.cancelled) {
 			return;
@@ -209,7 +211,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 			}
 		}
 
-		PipeEventItem.FindDest event = new PipeEventItem.FindDest(item, result);
+		PipeEventItem.FindDest event = new PipeEventItem.FindDest(container.pipe, item, result);
 		container.pipe.eventBus.handleEvent(PipeEventItem.FindDest.class, event);
 
 		if (allowBouncing && result.isEmpty()) {
@@ -287,7 +289,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 						dropItem(item);
 					}
 				} else {
-					PipeEventItem.ReachedCenter event = new PipeEventItem.ReachedCenter(item);
+					PipeEventItem.ReachedCenter event = new PipeEventItem.ReachedCenter(container.pipe, item);
 					container.pipe.eventBus.handleEvent(PipeEventItem.ReachedCenter.class, event);
 				}
 
@@ -299,7 +301,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
 				TileEntity tile = container.getTile(item.output);
 
-				PipeEventItem.ReachedEnd event = new PipeEventItem.ReachedEnd(item, tile);
+				PipeEventItem.ReachedEnd event = new PipeEventItem.ReachedEnd(container.pipe, item, tile);
 				container.pipe.eventBus.handleEvent(PipeEventItem.ReachedEnd.class, event);
 				boolean handleItem = !event.handled;
 
@@ -349,7 +351,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 			return;
 		}
 
-		PipeEventItem.DropItem event = new PipeEventItem.DropItem(item, item.toEntityItem());
+		PipeEventItem.DropItem event = new PipeEventItem.DropItem(container.pipe, item, item.toEntityItem());
 		container.pipe.eventBus.handleEvent(PipeEventItem.DropItem.class, event);
 
 		if (event.entity == null) {
@@ -470,13 +472,19 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 	}
 
 	public int getNumberOfStacks() {
-		return items.size();
+		int num = 0;
+		for (TravelingItem item : items) {
+			if (!item.ignoreWeight()) {
+				num++;
+			}
+		}
+		return num;
 	}
 
 	public int getNumberOfItems() {
 		int num = 0;
 		for (TravelingItem item : items) {
-			if (item.getItemStack() != null) {
+			if (!item.ignoreWeight() && item.getItemStack() != null) {
 				num += item.getItemStack().stackSize;
 			}
 		}

@@ -679,13 +679,15 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
 		if (rayTraceResult != null && rayTraceResult.hitPart == Part.Pipe) {
 			if (!pipe.container.hasPipePluggable(placementSide)) {
-				pipe.container.setPluggable(placementSide, pluggable, player);
+				if (pipe.container.setPluggable(placementSide, pluggable, player)) {
+					if (!player.capabilities.isCreativeMode) {
+						stack.stackSize--;
+					}
 
-				if (!player.capabilities.isCreativeMode) {
-					stack.stackSize--;
+					return true;
+				} else {
+					return false;
 				}
-
-				return true;
 			}
 		}
 		return false;

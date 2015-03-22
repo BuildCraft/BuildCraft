@@ -1,6 +1,7 @@
 package buildcraft.transport.pipes.events;
 
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.transport.Pipe;
 
 public abstract class PipeEventPower extends PipeEvent {
 	public final ForgeDirection from;
@@ -9,22 +10,23 @@ public abstract class PipeEventPower extends PipeEvent {
 	 */
 	public int power;
 
-	public PipeEventPower(ForgeDirection from, int power) {
+	public PipeEventPower(Pipe pipe, ForgeDirection from, int power) {
+		super(pipe);
 		this.from = from;
 		this.power = power;
 	}
 
 	public static class Request extends PipeEventPower {
-		public Request(ForgeDirection from, int power) {
-			super(from, power);
+		public Request(Pipe pipe, ForgeDirection from, int power) {
+			super(pipe, from, power);
 		}
 	}
 
 	public static class Receive extends PipeEventPower {
 		public boolean override;
 
-		public Receive(ForgeDirection from, int power) {
-			super(from, power);
+		public Receive(Pipe pipe, ForgeDirection from, int power) {
+			super(pipe, from, power);
 			this.override = false;
 		}
 	}
