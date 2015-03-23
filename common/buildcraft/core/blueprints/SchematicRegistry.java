@@ -35,6 +35,8 @@ public final class SchematicRegistry implements ISchematicRegistry {
 
 	public final HashMap<Class<? extends Entity>, SchematicConstructor> schematicEntities = new HashMap<Class<? extends Entity>, SchematicConstructor>();
 
+	private static final HashMap<Class<? extends Schematic>, Constructor<?>> emptyConstructorMap = new HashMap<Class<? extends Schematic>, Constructor<?>>();
+
 	private final HashSet<String> modsForbidden = new HashSet<String>();
 	private final HashSet<String> blocksForbidden = new HashSet<String>();
 
@@ -58,6 +60,10 @@ public final class SchematicRegistry implements ISchematicRegistry {
 		}
 
 		private Constructor<?> findConstructor() throws IllegalArgumentException {
+			if (params.length == 0 && emptyConstructorMap.containsKey(clazz)) {
+				return emptyConstructorMap.get(clazz);
+			}
+
 			for (Constructor<?> c : clazz.getConstructors()) {
 				Class<?>[] typesSignature = c.getParameterTypes();
 				if (typesSignature.length != params.length) {
@@ -82,6 +88,9 @@ public final class SchematicRegistry implements ISchematicRegistry {
 				}
 				if (!valid) {
 					continue;
+				}
+				if (c != null && params.length == 0) {
+					emptyConstructorMap.put(clazz, c);
 				}
 				return c;
 			}

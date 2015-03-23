@@ -37,7 +37,8 @@ import buildcraft.api.statements.StatementSlot;
 
 public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
-	private BlockIndex indexStored;
+	protected BlockIndex indexStored;
+
 	private ArrayList<Block> blockFilter = new ArrayList<Block>();
 	private ArrayList<Integer> metaFilter = new ArrayList<Integer>();
 
@@ -54,11 +55,12 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 	 */
 	public abstract boolean isExpectedBlock(World world, int x, int y, int z);
 
-	public final void preemt(AIRobot ai) {
+	@Override
+	public final void preempt(AIRobot ai) {
 		if (ai instanceof AIRobotSearchBlock) {
 			BlockIndex index = ((AIRobotSearchBlock) ai).blockFound;
 
-			if (!robot.getRegistry().isTaken(new ResourceIdBlock(index))) {
+			if (robot.getRegistry().isTaken(new ResourceIdBlock(index))) {
 				abortDelegateAI();
 			}
 		}
@@ -105,10 +107,14 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 				}
 			}
 		} else if (ai instanceof AIRobotGotoBlock) {
-			startDelegateAI(new AIRobotBreak(robot, indexStored));
-		} else if (ai instanceof AIRobotBreak) {
+			startDelegateAI(getBlockBreakAI());
+		} else if (ai.getClass().isInstance(getBlockBreakAI())) {
 			releaseBlockFound();
 		}
+	}
+
+	protected AIRobot getBlockBreakAI() {
+		return new AIRobotBreak(robot, indexStored);
 	}
 
 	private void releaseBlockFound() {

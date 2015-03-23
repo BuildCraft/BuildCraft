@@ -56,7 +56,6 @@ public class AIRobotBreak extends AIRobot {
 
 	@Override
 	public void update() {
-
 		if (block == null || block.isAir(robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z)) {
 			terminate();
 		}
