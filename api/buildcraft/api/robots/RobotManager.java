@@ -11,6 +11,7 @@ package buildcraft.api.robots;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import buildcraft.api.core.BCLog;
 
 public abstract class RobotManager {
 	public static IRobotRegistryProvider registryProvider;
@@ -41,6 +42,9 @@ public abstract class RobotManager {
 	}
 
 	public static void registerAIRobot(Class<? extends AIRobot> aiRobot, String name, String legacyClassName) {
+		if (aiRobotsByNames.containsKey(name)) {
+			BCLog.logger.info("Overriding " + aiRobotsByNames.get(name).getName() + " with " + aiRobot.getName());
+		}
 		aiRobots.add(aiRobot);
 		aiRobotsByNames.put(name, aiRobot);
 		aiRobotsNames.put(aiRobot, name);
