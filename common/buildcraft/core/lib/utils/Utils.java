@@ -37,6 +37,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.power.IEngine;
+import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.api.transport.IInjectable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.CompatHooks;
@@ -160,40 +161,10 @@ public final class Utils {
 	}
 
 	public static IAreaProvider getNearbyAreaProvider(World world, int i, int j, int k) {
-		TileEntity a1 = BlockUtils.getTileEntity(world, i + 1, j, k);
-
-		if (a1 instanceof IAreaProvider) {
-			return (IAreaProvider) a1;
-		}
-
-		TileEntity a2 = BlockUtils.getTileEntity(world, i - 1, j, k);
-
-		if (a2 instanceof IAreaProvider) {
-			return (IAreaProvider) a2;
-		}
-
-		TileEntity a3 = BlockUtils.getTileEntity(world, i, j, k + 1);
-
-		if (a3 instanceof IAreaProvider) {
-			return (IAreaProvider) a3;
-		}
-
-		TileEntity a4 = BlockUtils.getTileEntity(world, i, j, k - 1);
-
-		if (a4 instanceof IAreaProvider) {
-			return (IAreaProvider) a4;
-		}
-
-		TileEntity a5 = BlockUtils.getTileEntity(world, i, j + 1, k);
-
-		if (a5 instanceof IAreaProvider) {
-			return (IAreaProvider) a5;
-		}
-
-		TileEntity a6 = BlockUtils.getTileEntity(world, i, j - 1, k);
-
-		if (a6 instanceof IAreaProvider) {
-			return (IAreaProvider) a6;
+		for (TileEntity t : (List<TileEntity>) world.loadedTileEntityList) {
+			if (t instanceof ITileAreaProvider && ((ITileAreaProvider) t).isValidFromLocation(i, j, k)) {
+				return (IAreaProvider) t;
+			}
 		}
 
 		return null;

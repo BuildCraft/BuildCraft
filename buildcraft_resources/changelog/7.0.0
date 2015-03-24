@@ -6,6 +6,7 @@ Additions:
   * Rewritten Zone Planner map system - should have much less lag and take up less disk space!
     * **Note** - all existing zone planner previews will disappear. To reload them, simply break and place the zone planner!
   * You can now apply RF power (or a redstone engine) to an Auto Workbench to speed it up (asie - thanks KingTriaxx!)
+  * You can now place a Marker-using machine next to any part of the box and not just corners (asie)
 * Items:
   * Paintbrush for dyeing pipes and other supported blocks (asie)
   * Debugger for developer use (asie)

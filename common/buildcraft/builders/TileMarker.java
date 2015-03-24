@@ -19,6 +19,7 @@ import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.Position;
+import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.LaserKind;
@@ -26,7 +27,7 @@ import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.lib.utils.Utils;
 
-public class TileMarker extends TileBuildCraft implements IAreaProvider {
+public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
 	public static class TileWrapper implements ISerializable {
 
 		public int x, y, z;
@@ -533,4 +534,41 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		createLasers();
 	}
 
+	@Override
+	public boolean isValidFromLocation(int x, int y, int z) {
+		// Rules:
+		// - one or two, but not three, of the coordinates must be equal to the marker's location
+		// - one of the coordinates must be either -1 or 1 away
+		// - it must be physically touching the box
+		// - however, it cannot be INSIDE the box
+		int equal = (x == xCoord ? 1 : 0) + (y == yCoord ? 1 : 0) + (z == zCoord ? 1 : 0);
+		int touching = 0;
+
+		if (equal == 0 || equal == 3) {
+			return false;
+		}
+
+		if (x < (xMin() - 1) || x > (xMax() + 1) || y < (yMin() - 1) || y > (yMax() + 1)
+				|| z < (zMin() - 1) || z > (zMax() + 1)) {
+			return false;
+		}
+
+		if (x >= xMin() && x <= xMax() && y >= yMin() && y <= yMax() && z >= zMin() && z <= zMax()) {
+			return false;
+		}
+
+		if (xMin() - x == 1 || x - xMax() == 1) {
+			touching++;
+		}
+
+		if (yMin() - y == 1 || y - yMax() == 1) {
+			touching++;
+		}
+
+		if (zMin() - z == 1 || z - zMax() == 1) {
+			touching++;
+		}
+
+		return touching == 1;
+	}
 }
