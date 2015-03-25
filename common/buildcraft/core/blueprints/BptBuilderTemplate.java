@@ -30,8 +30,9 @@ import buildcraft.core.utils.BlockUtils;
 
 public class BptBuilderTemplate extends BptBuilderBase {
 
+	private LinkedList<BuildingSlotBlock> clearList = new LinkedList<BuildingSlotBlock>();
 	private LinkedList<BuildingSlotBlock> buildList = new LinkedList<BuildingSlotBlock>();
-	private BuildingSlotIterator iterator;
+	private BuildingSlotIterator iteratorBuild, iteratorClear;
 
 	public BptBuilderTemplate(BlueprintBase bluePrint, World world, int x, int y, int z) {
 		super(bluePrint, world, x, y, z);
@@ -65,7 +66,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 							b.mode = Mode.ClearIfInvalid;
 							b.buildStage = 0;
 
-							buildList.add(b);
+							clearList.add(b);
 						}
 					}
 				}
@@ -102,11 +103,12 @@ public class BptBuilderTemplate extends BptBuilderBase {
 			}
 		}
 
-		iterator = new BuildingSlotIterator(buildList);
+		iteratorBuild = new BuildingSlotIterator(buildList);
+		iteratorClear = new BuildingSlotIterator(clearList);
 	}
 
 	private void checkDone() {
-		if (buildList.size() == 0) {
+		if (buildList.size() == 0 && clearList.size() == 0) {
 			done = true;
 		} else {
 			done = false;
@@ -120,7 +122,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 
 	@Override
 	public BuildingSlot getNextBlock(World world, TileAbstractBuilder inv) {
-		if (buildList.size() != 0) {
+		if (buildList.size() != 0 || clearList.size() != 0) {
 			BuildingSlotBlock slot = internalGetNextBlock(world, inv);
 			checkDone();
 
@@ -152,55 +154,64 @@ public class BptBuilderTemplate extends BptBuilderBase {
 			}
 		}
 
-		iterator.startIteration();
+		// Step 1: Check the cleared
+		iteratorClear.startIteration();
+		while (iteratorClear.hasNext()) {
+			BuildingSlotBlock slot = iteratorClear.next();
 
-		while (iterator.hasNext()) {
-			BuildingSlotBlock slot = iterator.next();
-
-			if (slot.buildStage > buildList.getFirst().buildStage) {
-				iterator.reset ();
-				return null;
+			if (slot.buildStage > clearList.getFirst().buildStage) {
+				iteratorClear.reset();
+				break;
 			}
 
 			if (BlockUtils.isUnbreakableBlock(world, slot.x, slot.y, slot.z)
-					|| isBlockBreakCanceled(world, slot.x, slot.y, slot.z)) {
-				iterator.remove();
-				if (slot.mode == Mode.ClearIfInvalid) {
-					clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
-				} else {
-					builtLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
-				}
-			} else if (slot.mode == Mode.ClearIfInvalid) {
-				if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y, slot.z)) {
-					iterator.remove();
-					clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
-				} else {
-					if (canDestroy(builder, context, slot)) {
-						consumeEnergyToDestroy(builder, slot);
-						createDestroyItems(slot);
+					|| isBlockBreakCanceled(world, slot.x, slot.y, slot.z)
+					|| BuildCraftAPI.isSoftBlock(world, slot.x, slot.y, slot.z)) {
+				iteratorClear.remove();
+				clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
+			} else if (canDestroy(builder, context, slot)) {
+				consumeEnergyToDestroy(builder, slot);
+				createDestroyItems(slot);
 
-						result = slot;
-						iterator.remove();
-						clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
+				result = slot;
+				iteratorClear.remove();
+				clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
 
-						break;
-					}
-				}
-			} else if (slot.mode == Mode.Build) {
-				if (!BuildCraftAPI.isSoftBlock(world, slot.x, slot.y, slot.z)
-						|| isBlockPlaceCanceled(world, x, y, z, slot.schematic)) {
-					iterator.remove();
-					builtLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
-				} else {
-					if (builder.consumeEnergy(BuilderAPI.BUILD_ENERGY) && firstSlotToConsume != null) {
-						slot.addStackConsumed(firstSlotToConsume.decreaseStackInSlot(1));
-						result = slot;
-						iterator.remove();
-						builtLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
+				break;
+			}
+		}
 
-						break;
-					}
-				}
+		if (result != null) {
+			return result;
+		}
+
+		// Step 2: Check the built, but only if we have anything to place and enough energy
+		if (firstSlotToConsume == null || builder.getBattery().getEnergyStored() < BuilderAPI.BUILD_ENERGY) {
+			return null;
+		}
+
+		iteratorBuild.startIteration();
+
+		while (iteratorBuild.hasNext()) {
+			BuildingSlotBlock slot = iteratorBuild.next();
+
+			if (slot.buildStage > buildList.getFirst().buildStage) {
+				iteratorBuild.reset();
+				break;
+			}
+
+			if (BlockUtils.isUnbreakableBlock(world, slot.x, slot.y, slot.z)
+					|| isBlockPlaceCanceled(world, x, y, z, slot.schematic)
+					|| !BuildCraftAPI.isSoftBlock(world, slot.x, slot.y, slot.z)) {
+				iteratorBuild.remove();
+				builtLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
+			} else if (builder.consumeEnergy(BuilderAPI.BUILD_ENERGY)) {
+				slot.addStackConsumed(firstSlotToConsume.decreaseStackInSlot(1));
+				result = slot;
+				iteratorBuild.remove();
+				builtLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
+
+				break;
 			}
 		}
 

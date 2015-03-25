@@ -157,7 +157,7 @@ public class BlockTank extends BlockBuildCraft {
 					if (current.stackSize != 1) {
 						return false;
 					}
-					
+
 					if (!world.isRemote) {
 						IFluidContainerItem container = (IFluidContainerItem) current.getItem();
 						FluidStack liquid = container.getFluid(current);

@@ -168,15 +168,14 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		bindTexture(chamberTexture);
 
 		float chamberf = 2F / 16F;
+		int chamberc = (((int) step + 2) / 2);
 
 		for (int i = 0; i <= step + 2; i += 2) {
 			chamber.render(factor);
 			GL11.glTranslatef(translate[0] * chamberf, translate[1] * chamberf, translate[2] * chamberf);
 		}
 
-		for (int i = 0; i <= step + 2; i += 2) {
-			GL11.glTranslatef(-translate[0] * chamberf, -translate[1] * chamberf, -translate[2] * chamberf);
-		}
+		GL11.glTranslatef(-translate[0] * chamberf * chamberc, -translate[1] * chamberf * chamberc, -translate[2] * chamberf * chamberc);
 
 		bindTexture(trunkTexture);
 
