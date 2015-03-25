@@ -147,4 +147,9 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
 		return false;
 	}
+
+	@Override
+	public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side) {
+		return true;
+	}
 }
