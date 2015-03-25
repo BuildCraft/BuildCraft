@@ -36,37 +36,28 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 	public ContainerAutoWorkbench(InventoryPlayer inventoryplayer, TileAutoWorkbench t) {
 		super(t.getSizeInventory());
 
-		craftResult = new InventoryCraftResult() {
-			@Override
-			public void setInventorySlotContents(int slot, ItemStack stack) {
-				super.setInventorySlotContents(slot, stack);
-				if (stack != null && tile.isLast() && tile.getWorldObj().isRemote) {
-					InvUtils.addItemToolTip(stack, EnumChatFormatting.YELLOW + StringUtils.localize("gui.clickcraft"));
-				}
-			}
-		};
+		craftResult = new InventoryCraftResult();
 		this.tile = t;
-		addSlotToContainer(new SlotUntouchable(craftResult, 0, 93, 27) {
-			@Override
-			public void onPickupFromSlot(EntityPlayer player, ItemStack itemstack) {
-				tile.useLast = true;
-			}
-		});
+		addSlotToContainer(new SlotUntouchable(craftResult, 0, 93, 27));
 		addSlotToContainer(new SlotOutput(tile, TileAutoWorkbench.SLOT_RESULT, 124, 35));
 		for (int y = 0; y < 3; y++) {
 			for (int x = 0; x < 3; x++) {
-				addSlotToContainer(new SlotWorkbench(tile.craftMatrix, x + y * 3, 30 + x * 18, 17 + y * 18));
-			}
-		}
-
-		for (int y = 0; y < 3; y++) {
-			for (int x = 0; x < 9; x++) {
-				addSlotToContainer(new Slot(inventoryplayer, x + y * 9 + 9, 8 + x * 18, 84 + y * 18));
+				addSlotToContainer(new SlotWorkbench(tile, 10 + x + y * 3, 30 + x * 18, 17 + y * 18));
 			}
 		}
 
 		for (int x = 0; x < 9; x++) {
-			addSlotToContainer(new Slot(inventoryplayer, x, 8 + x * 18, 142));
+			addSlotToContainer(new Slot(tile, x, 8 + x * 18, 84));
+		}
+
+		for (int y = 0; y < 3; y++) {
+			for (int x = 0; x < 9; x++) {
+				addSlotToContainer(new Slot(inventoryplayer, x + y * 9 + 9, 8 + x * 18, 116 + y * 18));
+			}
+		}
+
+		for (int x = 0; x < 9; x++) {
+			addSlotToContainer(new Slot(inventoryplayer, x, 8 + x * 18, 174));
 		}
 
 		onCraftMatrixChanged(tile);
@@ -110,7 +101,8 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 	@Override
 	public final void onCraftMatrixChanged(IInventory inv) {
 		super.onCraftMatrixChanged(inv);
-		ItemStack output = tile.findRecipeOutput();
+		tile.craftMatrix.rebuildCache();
+		ItemStack output = tile.craftMatrix.getRecipeOutput();
 		craftResult.setInventorySlotContents(0, output);
 	}
 

@@ -20,10 +20,12 @@ import net.minecraft.inventory.SlotCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IInvSlot;
+import buildcraft.api.power.IRedstoneEngine;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.lib.RFBattery;
@@ -39,33 +41,28 @@ import buildcraft.core.lib.utils.Utils;
 
 public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory, IHasWork, IRedstoneEngineReceiver {
 
-	public static final int SLOT_RESULT = 0;
+	public static final int SLOT_RESULT = 9;
 	public static final int CRAFT_TIME = 256;
 	public static final int UPDATE_TIME = 16;
 	private static final int[] SLOTS = Utils.createSlotArray(0, 10);
 
+	public int progress = 0;
 	public LocalInventoryCrafting craftMatrix = new LocalInventoryCrafting();
-	public boolean useLast;
-	public int progress;
-	
-	/** Set when nothing can be crafted unless the input grid is changed.
-	 * Cleared whenever the input grid is changed. Not persisted. */
-	private boolean isJammed;
-	
-	/** Set when any slot changes. Cleared when balanceSlots is called. */
-	private boolean needsBalancing;
 
 	private SimpleInventory resultInv = new SimpleInventory(1, "Auto Workbench", 64);
+	private SimpleInventory inputInv = new SimpleInventory(9, "Auto Workbench", 64);
 
-	private IInventory inv = InventoryConcatenator.make().add(resultInv).add(craftMatrix);
+	private IInventory inv = InventoryConcatenator.make().add(inputInv).add(resultInv).add(craftMatrix);
 
 	private SlotCrafting craftSlot;
 	private InventoryCraftResult craftResult = new InventoryCraftResult();
 
+	private int[] bindings = new int[9];
+
 	private int update = Utils.RANDOM.nextInt();
 
-	private IRecipe currentRecipe;
 	private boolean hasWork = false;
+	private boolean scheduledCacheRebuild = false;
 
 	public TileAutoWorkbench() {
 		super();
@@ -74,7 +71,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 
 	@Override
 	public boolean hasWork() {
-		return !isJammed && hasWork;
+		return hasWork;
 	}
 
 	@Override
@@ -82,10 +79,17 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		return true;
 	}
 
-	public class LocalInventoryCrafting extends InventoryCrafting {
+	@Override
+	public boolean canConnectEnergy(ForgeDirection side) {
+		TileEntity tile = worldObj.getTileEntity(xCoord + side.offsetX, yCoord + side.offsetY, zCoord + side.offsetZ);
+		return (tile instanceof IRedstoneEngine);
+	}
 
-		public LocalInventoryCrafting() {
-			super(new Container() {
+	public class LocalInventoryCrafting extends InventoryCrafting {
+		public IRecipe currentRecipe;
+		public boolean useBindings, isJammed;
+
+		public LocalInventoryCrafting() {super(new Container() {
 				@Override
 				public boolean canInteractWith(EntityPlayer entityplayer) {
 					return false;
@@ -93,29 +97,93 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 			}, 3, 3);
 		}
 
-		private void rebuildCache() {
-			isJammed = false;
-			needsBalancing = true;
+		@Override
+		public ItemStack getStackInSlot(int slot) {
+			if (useBindings) {
+				if (slot >= 0 && slot < 9 && bindings[slot] >= 0) {
+					return inputInv.getStackInSlot(bindings[slot]);
+				} else {
+					return null;
+				}
+			}
+			return super.getStackInSlot(slot);
+		}
+
+		public ItemStack getRecipeOutput() {
+			if (currentRecipe == null) {
+				return null;
+			}
+			ItemStack result = currentRecipe.getCraftingResult(craftMatrix);
+			if (result != null) {
+				result = result.copy();
+			}
+			return result;
+		}
+
+		private IRecipe findRecipe() {
+			for (IInvSlot slot : InventoryIterator.getIterable(this, ForgeDirection.UP)) {
+				ItemStack stack = slot.getStackInSlot();
+				if (stack == null) {
+					continue;
+				}
+				if (stack.getItem().hasContainerItem(stack)) {
+					return null;
+				}
+			}
+
+			return CraftingUtils.findMatchingRecipe(craftMatrix, worldObj);
+		}
+
+		public void rebuildCache() {
 			currentRecipe = findRecipe();
-			hasWork = currentRecipe != null && currentRecipe.getRecipeOutput() != null && (useLast || !isLast());
+			hasWork = currentRecipe != null && currentRecipe.getRecipeOutput() != null;
+
+			ItemStack result = getRecipeOutput();
+			ItemStack resultInto = resultInv.getStackInSlot(0);
+
+			if (resultInto != null && (
+					!StackHelper.canStacksMerge(resultInto, result)
+							|| resultInto.stackSize + result.stackSize > resultInto.getMaxStackSize())
+					) {
+				isJammed = true;
+			} else {
+				isJammed = false;
+			}
 		}
 		
 		@Override
 		public void setInventorySlotContents(int slot, ItemStack stack) {
+			if (useBindings) {
+				if (slot >= 0 && slot < 9 && bindings[slot] >= 0) {
+					inputInv.setInventorySlotContents(bindings[slot], stack);
+				}
+				return;
+			}
 			super.setInventorySlotContents(slot, stack);
-			rebuildCache();
+			scheduledCacheRebuild = true;
 		}
 		
 		@Override
 		public void markDirty() {
 			super.markDirty();
-			rebuildCache();
+			scheduledCacheRebuild = true;
 		}
 		
 		@Override
 		public ItemStack decrStackSize(int slot, int amount) {
-			rebuildCache();
-			return super.decrStackSize(slot, amount);
+			if (useBindings) {
+				if (slot >= 0 && slot < 9 && bindings[slot] >= 0) {
+					return inputInv.decrStackSize(bindings[slot], amount);
+				} else {
+					return null;
+				}
+			}
+			scheduledCacheRebuild = true;
+			return decrStackSize(slot, amount);
+		}
+
+		public void setUseBindings(boolean use) {
+			useBindings = use;
 		}
 	}
 
@@ -173,7 +241,21 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	public void readFromNBT(NBTTagCompound data) {
 		super.readFromNBT(data);
 		resultInv.readFromNBT(data);
-		InvUtils.readInvFromNBT(craftMatrix, "matrix", data);
+		if (data.hasKey("input")) {
+			InvUtils.readInvFromNBT(inputInv, "input", data);
+			InvUtils.readInvFromNBT(craftMatrix, "matrix", data);
+		} else {
+			InvUtils.readInvFromNBT(inputInv, "matrix", data);
+			for (int i = 0; i < 9; i++) {
+				ItemStack inputStack = inputInv.getStackInSlot(i);
+				if (inputStack != null) {
+					ItemStack matrixStack = inputStack.copy();
+					matrixStack.stackSize = 1;
+					craftMatrix.setInventorySlotContents(i, matrixStack);
+				}
+			}
+		}
+
 		craftMatrix.rebuildCache();
 
 		// Legacy Code
@@ -190,37 +272,10 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	public void writeToNBT(NBTTagCompound data) {
 		super.writeToNBT(data);
 		resultInv.writeToNBT(data);
+		InvUtils.writeInvToNBT(inputInv, "input", data);
 		InvUtils.writeInvToNBT(craftMatrix, "matrix", data);
 	}
 
-	public ItemStack findRecipeOutput() {
-		IRecipe recipe = findRecipe();
-		if (recipe == null) {
-			return null;
-		}
-		ItemStack result = recipe.getCraftingResult(craftMatrix);
-		if (result != null) {
-			result = result.copy();
-		}
-		return result;
-	}
-
-	public IRecipe findRecipe() {
-		for (IInvSlot slot : InventoryIterator.getIterable(craftMatrix, ForgeDirection.UP)) {
-			ItemStack stack = slot.getStackInSlot();
-			if (stack == null) {
-				continue;
-			}
-			if (!stack.isStackable()) {
-				return null;
-			}
-			if (stack.getItem().hasContainerItem(stack)) {
-				return null;
-			}
-		}
-
-		return CraftingUtils.findMatchingRecipe(craftMatrix, worldObj);
-	}
 
 	@Override
 	public boolean canUpdate() {
@@ -235,11 +290,12 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 			return;
 		}
 		
-		if (needsBalancing) {
-			balanceSlots();
+		if (scheduledCacheRebuild) {
+			craftMatrix.rebuildCache();
+			scheduledCacheRebuild = false;
 		}
-		
-		if (isJammed) {
+
+		if (craftMatrix.isJammed || craftMatrix.currentRecipe == null) {
 			progress = 0;
 			return;
 		}
@@ -252,26 +308,11 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 			return;
 		}
 
-		if (resultInv.getStackInSlot(SLOT_RESULT) != null) {
-			return;
-		}
-
-		int updatesLeft = getBattery().getEnergyStored() + 1;
-
-		while (updatesLeft > 0) {
-			update++;
-
-			if (update % UPDATE_TIME == 0) {
-				updateCrafting();
-
-				if (isJammed || !hasWork || resultInv.getStackInSlot(SLOT_RESULT) != null) {
-					progress = 0;
-					break;
-				}
-			}
-
-			updatesLeft--;
-
+		int updateNext = update + getBattery().getEnergyStored() + 1;
+		int updateThreshold = (update & ~15) + 16;
+		update = Math.min(updateThreshold, updateNext);
+		if ((update % UPDATE_TIME) == 0) {
+			updateCrafting();
 		}
 		getBattery().setEnergy(0);
 	}
@@ -281,74 +322,58 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	}
 
 	/**
-	 * Evenly redistributes items between all the slots.
-	 */
-	private void balanceSlots() {
-		for (IInvSlot slotA : InventoryIterator.getIterable(craftMatrix, ForgeDirection.UP)) {
-			ItemStack stackA = slotA.getStackInSlot();
-			if (stackA == null) {
-				continue;
-			}
-			for (IInvSlot slotB : InventoryIterator.getIterable(craftMatrix, ForgeDirection.UP)) {
-				if (slotA.getIndex() == slotB.getIndex()) {
-					continue;
-				}
-				ItemStack stackB = slotB.getStackInSlot();
-				if (stackB == null) {
-					continue;
-				}
-				if (StackHelper.canStacksMerge(stackA, stackB)) {
-					if (stackA.stackSize > stackB.stackSize + 1) {
-						stackA.stackSize--;
-						stackB.stackSize++;
-						return;
-					}
-				}
-			}
-		}
-
-		craftMatrix.rebuildCache();
-		needsBalancing = false;
-	}
-
-	/**
 	 * Increment craft job, find recipes, produce output
 	 */
 	private void updateCrafting() {
-		if (currentRecipe == null) {
-			progress = 0;
-			isJammed = true;
-			return;
-		}
-		if (!useLast && isLast()) {
-			progress = 0;
-			isJammed = true;
-			return;
-		}
 		progress += UPDATE_TIME;
-		if (progress < CRAFT_TIME) {
-			return;
-		}
-		progress = 0;
-		useLast = false;
-		ItemStack result = currentRecipe.getCraftingResult(craftMatrix);
-		if (result == null) {
-			isJammed = true;
-			return;
-		}
-		result = result.copy();
-		craftSlot.onPickupFromSlot(getInternalPlayer().get(), result);
-		resultInv.setInventorySlotContents(SLOT_RESULT, result);
 
-		// clean fake player inventory (crafting handler support)
-		for (IInvSlot slot : InventoryIterator.getIterable(getInternalPlayer().get().inventory, ForgeDirection.UP)) {
-			ItemStack stack = slot.getStackInSlot();
-			if (stack != null) {
-				slot.setStackInSlot(null);
-				InvUtils.dropItems(worldObj, stack, xCoord, yCoord + 1, zCoord);
+		for (int i = 0; i < 9; i++) {
+			ItemStack comparedStack = craftMatrix.getStackInSlot(i);
+			if (comparedStack == null || comparedStack.getItem() == null) {
+				bindings[i] = -1;
+				continue;
+			}
+
+			if (bindings[i] == -1 || !StackHelper.isMatchingItem(inputInv.getStackInSlot(bindings[i]), comparedStack, true, true)) {
+				// Scan for a new binding
+				boolean found = false;
+				for (int j = 0; j < 9; j++) {
+					if (j == bindings[i]) {
+						continue;
+					}
+
+					if (StackHelper.isMatchingItem(inputInv.getStackInSlot(j), comparedStack, true, false)) {
+						found = true;
+						bindings[i] = j;
+						break;
+					}
+				}
+				if (!found) {
+					progress = 0;
+					return;
+				}
 			}
 		}
 
+		if (progress < CRAFT_TIME) {
+			return;
+		}
+
+		progress = 0;
+
+		ItemStack result = craftMatrix.getRecipeOutput();
+		ItemStack resultInto = resultInv.getStackInSlot(0);
+
+		craftMatrix.setUseBindings(true);
+		craftSlot.onPickupFromSlot(getInternalPlayer().get(), result);
+
+		if (resultInto == null) {
+			resultInv.setInventorySlotContents(0, result);
+		} else {
+			resultInto.stackSize += result.stackSize;
+		}
+
+		craftMatrix.setUseBindings(false);
 		craftMatrix.rebuildCache();
 	}
 
@@ -368,9 +393,6 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		if (stack == null) {
 			return false;
 		}
-		if (!stack.isStackable()) {
-			return false;
-		}
 		if (stack.getItem().hasContainerItem(stack)) {
 			return false;
 		}
@@ -387,27 +409,12 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 
 	@Override
 	public boolean canInsertItem(int slot, ItemStack stack, int side) {
-		return isItemValidForSlot(slot, stack);
+		return slot < 9;
 	}
 
 	@Override
 	public boolean canExtractItem(int slot, ItemStack stack, int side) {
 		return slot == SLOT_RESULT;
-	}
-
-	/**
-	 * Returns true if there are only enough inputs for a single craft job.
-	 *
-	 * @return true or false
-	 */
-	public boolean isLast() {
-		for (IInvSlot slot : InventoryIterator.getIterable(craftMatrix, ForgeDirection.UP)) {
-			ItemStack stack = slot.getStackInSlot();
-			if (stack != null && stack.stackSize <= 1) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	@Override

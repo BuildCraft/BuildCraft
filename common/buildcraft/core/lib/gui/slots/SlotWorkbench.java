@@ -11,7 +11,7 @@ package buildcraft.core.lib.gui.slots;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
-public class SlotWorkbench extends SlotBase {
+public class SlotWorkbench extends SlotPhantom {
 
 	public SlotWorkbench(IInventory iinventory, int slotIndex, int posX, int posY) {
 		super(iinventory, slotIndex, posX, posY);
@@ -19,7 +19,7 @@ public class SlotWorkbench extends SlotBase {
 
 	@Override
 	public boolean isItemValid(ItemStack stack) {
-		return stack != null && stack.isStackable() && !stack.getItem().hasContainerItem(stack);
+		return stack != null && !stack.getItem().hasContainerItem(stack);
 	}
 
 	@Override

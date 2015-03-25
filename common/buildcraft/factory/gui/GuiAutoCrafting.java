@@ -27,6 +27,8 @@ public class GuiAutoCrafting extends GuiBuildCraft {
 	public GuiAutoCrafting(InventoryPlayer inventoryplayer, World world, TileAutoWorkbench tile) {
 		super(new ContainerAutoWorkbench(inventoryplayer, tile), tile, TEXTURE);
 		this.bench = tile;
+		xSize = 176;
+		ySize = 197;
 	}
 
 	@Override
@@ -41,7 +43,7 @@ public class GuiAutoCrafting extends GuiBuildCraft {
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		String title = StringUtils.localize("tile.autoWorkbenchBlock.name");
 		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
-		fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, (ySize - 96) + 2, 0x404040);
+		fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, (ySize - 127) + 2, 0x404040);
 	}
 
 	@Override
