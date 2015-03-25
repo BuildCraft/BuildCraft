@@ -2,10 +2,12 @@ Additions:
 * **New textures!** - "Essence" made by (CyanideX)
 * **Modularization** - BuildCraft is back to being modules (asie)
 * Blocks:
+  * Changed automatic crafting mechanics:
+    * Redstone Engines speed up the Auto Workbench a little bit (asie)
+    * The Auto Workbench now supports non-stackable items and has an internal buffer (asie)
   * Blueprint Library renamed to Electronic Library, supports copying books - and soon other things! (asie)
   * Rewritten Zone Planner map system - should have much less lag and take up less disk space!
     * **Note** - all existing zone planner previews will disappear. To reload them, simply break and place the zone planner!
-  * You can now apply RF power (or a redstone engine) to an Auto Workbench to speed it up (asie - thanks KingTriaxx!)
   * You can now place a Marker-using machine next to any part of the box and not just corners (asie)
 * Items:
   * Paintbrush for dyeing pipes and other supported blocks (asie)
