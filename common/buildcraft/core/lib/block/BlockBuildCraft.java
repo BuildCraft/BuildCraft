@@ -55,6 +55,7 @@ public abstract class BlockBuildCraft extends BlockContainer {
 			{5, 4, 3, 2}
 	};
 	private boolean rotatable = false;
+	private boolean alphaPass = false;
 
 	protected BlockBuildCraft(Material material) {
 		this(material, BCCreativeTab.get("main"));
@@ -66,6 +67,8 @@ public abstract class BlockBuildCraft extends BlockContainer {
 		setHardness(5F);
 	}
 
+	public boolean hasAlphaPass() { return alphaPass; }
+
 	public boolean isRotatable() {
 		return rotatable;
 	}
@@ -73,6 +76,8 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	public void setRotatable(boolean rotatable) {
 		this.rotatable = rotatable;
 	}
+
+	public void setAlphaPass(boolean alphaPass) { this.alphaPass = alphaPass; }
 
 	public void setPassCount(int maxPasses) {
 		this.maxPasses = maxPasses;
@@ -271,10 +276,18 @@ public abstract class BlockBuildCraft extends BlockContainer {
 		}
 	}
 
-	//@SideOnly(Side.CLIENT)
-	//public int getRenderBlockPass() {
-	//	return maxPasses > 1 ? 1 : 0;
-	//}
+	@Override
+	public boolean canRenderInPass(int pass) {
+		if (alphaPass) {
+			renderPass = pass;
+		}
+		return pass == 0 || alphaPass;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public int getRenderBlockPass() {
+		return hasAlphaPass() ? 1 : 0;
+	}
 
 	@Override
 	public int getRenderType() {

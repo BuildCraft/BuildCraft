@@ -41,6 +41,8 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
 		setBlockBounds(0, 0, 0, 1, 8F / 16F, 1);
 		setHardness(10F);
 		setCreativeTab(BCCreativeTab.get("main"));
+		setPassCount(2);
+		setAlphaPass(true);
 	}
 
 	@Override

@@ -26,8 +26,14 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 			case 1:
 				renderAdvancedCraftingTable(renderer, true, 0, 0, 0, bcBlock);
 				break;
+			case 2:
+				renderIntegrationTable(renderer, true, 0, 0, 0, bcBlock);
+				break;
 			case 3:
 				renderChargingTable(renderer, true, 0, 0, 0, bcBlock);
+				break;
+			case 4:
+				renderProgrammingTable(renderer, true, 0, 0, 0, bcBlock);
 				break;
 		}
 	}
@@ -42,8 +48,14 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 			case 1:
 				renderAdvancedCraftingTable(renderer, false, x, y, z, bcBlock);
 				break;
+			case 2:
+				renderIntegrationTable(renderer, false, x, y, z, bcBlock);
+				break;
 			case 3:
 				renderChargingTable(renderer, false, x, y, z, bcBlock);
+				break;
+			case 4:
+				renderProgrammingTable(renderer, false, x, y, z, bcBlock);
 				break;
 		}
 		return true;
@@ -73,6 +85,9 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 	}
 
 	private void renderAssemblyTable(RenderBlocks renderer, boolean isInv, int x, int y, int z, BlockBuildCraft block) {
+		if (!isInv && block.getCurrentRenderPass() != 0) {
+			return;
+		}
 		IIcon base = block.getIcon(0, 0);
 		renderCube(renderer, isInv, x, y, z, 0, 0, 0, 16, 2, 16, 16, 21, base, 0x3f); // bottom
 		renderCube(renderer, isInv, x, y, z, 0.0625F, 0.125F, 0.0625F, 14, 1, 14, 18, 39, base, 0x3c); // middle (no top/bottom rendered)
@@ -80,6 +95,9 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 	}
 
 	private void renderChargingTable(RenderBlocks renderer, boolean isInv, int x, int y, int z, BlockBuildCraft block) {
+		if (!isInv && block.getCurrentRenderPass() != 0) {
+			return;
+		}
 		IIcon base = block.getIcon(0, 3);
 		renderCube(renderer, isInv, x, y, z, 0.0625F, 0, 0.0625F, 14, 5, 14, 14, 19, base, 0x3d); // bottom (no top)
 		renderCube(renderer, isInv, x, y, z, 0, 0.3125F, 0, 16, 3, 16, 16, 0, base, 0x3f); // top
@@ -91,7 +109,55 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 		renderCube(renderer, isInv, x, y, z, 0.8125F, 0, 0.8125F, 3, 5, 3, 3, 6, base, 0x3d);
 	}
 
+	private void renderProgrammingTable(RenderBlocks renderer, boolean isInv, int x, int y, int z, BlockBuildCraft block) {
+		IIcon base = block.getIcon(0, 4);
+		if (block.getCurrentRenderPass() != 0) {
+			renderCube(renderer, isInv, x, y, z, 0.25F, 0.375F, 0.25F, 8, 2, 8, 8, 48, base, 0x02); // semitransparent view
+			if (!isInv) {
+				return;
+			}
+		}
+		renderCube(renderer, isInv, x, y, z, 0.0625F, 0, 0.0625F, 14, 3, 14, 14, 23, base, 0x3f); // bottom (no top)
+		renderCube(renderer, isInv, x, y, z, 0.3125F, 0.1875F, 0.3125F, 6, 2, 6, 6, 40, base, 0x3e); // green inside
+
+		// sides (no top)
+		renderCube(renderer, isInv, x, y, z, 0, 0, 0, 4, 3, 4, 4, 0, base, 0x3d);
+		renderCube(renderer, isInv, x, y, z, 0.75F, 0, 0, 4, 3, 4, 4, 0, base, 0x3d);
+		renderCube(renderer, isInv, x, y, z, 0, 0, 0.75F, 4, 3, 4, 4, 0, base, 0x3d);
+		renderCube(renderer, isInv, x, y, z, 0.75F, 0, 0.75F, 4, 3, 4, 4, 0, base, 0x3d);
+
+		// sides (top)
+		renderCube(renderer, isInv, x, y, z, 0, 0.1875F, 0, 4, 5, 16, 16, 2, base, 0x3e);
+		renderCube(renderer, isInv, x, y, z, 0.75F, 0.1875F, 0, 4, 5, 16, 40, 43, base, 0x3e);
+		renderCube(renderer, isInv, x, y, z, 0.25F, 0.1875F, 0, 8, 5, 4, 28, 0, base, 0x0e);
+		renderCube(renderer, isInv, x, y, z, 0.25F, 0.1875F, 0.75F, 8, 5, 4, 28, 9, base, 0x0e);
+	}
+
+	private void renderIntegrationTable(RenderBlocks renderer, boolean isInv, int x, int y, int z, BlockBuildCraft block) {
+		IIcon base = block.getIcon(0, 2);
+		if (!isInv && block.getCurrentRenderPass() != 0) {
+			return;
+		}
+		renderCube(renderer, isInv, x, y, z, 0, 0, 0, 16, 1, 16, 16, 21, base, 0x3f); // black bottom
+		renderCube(renderer, isInv, x, y, z, 0.3125F, 0.1875F, 0.3125F, 6, 4, 6, 6, 38, base, 0x3f); // yellow inside
+
+		// sides (no top)
+		renderCube(renderer, isInv, x, y, z, 0.0625F, 0.0625F, 0.0625F, 4, 2, 4, 4, 0, base, 0x3c);
+		renderCube(renderer, isInv, x, y, z, 0.6875F, 0.0625F, 0.0625F, 4, 2, 4, 4, 0, base, 0x3c);
+		renderCube(renderer, isInv, x, y, z, 0.0625F, 0.0625F, 0.6875F, 4, 2, 4, 4, 0, base, 0x3c);
+		renderCube(renderer, isInv, x, y, z, 0.6875F, 0.0625F, 0.6875F, 4, 2, 4, 4, 0, base, 0x3c);
+
+		// sides (top)
+		renderCube(renderer, isInv, x, y, z, 0, 0.1875F, 0, 5, 5, 16, 16, 0, base, 0x3f);
+		renderCube(renderer, isInv, x, y, z, 0.6875F, 0.1875F, 0, 5, 5, 16, 38, 43, base, 0x3f);
+		renderCube(renderer, isInv, x, y, z, 0.3125F, 0.1875F, 0, 6, 5, 5, 47, 0, base, 0x0f);
+		renderCube(renderer, isInv, x, y, z, 0.3125F, 0.1875F, 0.6875F, 6, 5, 5, 47, 10, base, 0x0f);
+	}
+
 	private void renderAdvancedCraftingTable(RenderBlocks renderer, boolean isInv, int x, int y, int z, BlockBuildCraft block) {
+		if (!isInv && block.getCurrentRenderPass() != 0) {
+			return;
+		}
 		IIcon base = block.getIcon(0, 1);
 		renderCube(renderer, isInv, x, y, z, 0.125F, 0, 0.125F, 12, 3, 12, 12, 21, base, 0x3d); // bottom (no top)
 		renderCube(renderer, isInv, x, y, z, 0, 0.1875F, 0, 16, 5, 16, 16, 0, base, 0x3f); // top
