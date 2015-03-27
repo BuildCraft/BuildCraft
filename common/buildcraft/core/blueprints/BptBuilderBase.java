@@ -184,8 +184,6 @@ public abstract class BptBuilderBase implements IAreaProvider {
 	}
 
 	protected final boolean canDestroy(TileAbstractBuilder builder, IBuilderContext context, BuildingSlotBlock slot) {
-		LinkedList<ItemStack> result = new LinkedList<ItemStack>();
-
 		return builder.energyAvailable() >= getBlockBreakEnergy(slot);
 	}
 

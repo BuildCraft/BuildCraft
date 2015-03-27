@@ -129,9 +129,9 @@ public class BptBuilderTemplate extends BptBuilderBase {
 			if (slot != null) {
 				return slot;
 			}
+		} else {
+			checkDone();
 		}
-
-		checkDone();
 
 		return null;
 	}
@@ -164,20 +164,22 @@ public class BptBuilderTemplate extends BptBuilderBase {
 				break;
 			}
 
-			if (BlockUtils.isUnbreakableBlock(world, slot.x, slot.y, slot.z)
-					|| isBlockBreakCanceled(world, slot.x, slot.y, slot.z)
-					|| BuildCraftAPI.isSoftBlock(world, slot.x, slot.y, slot.z)) {
-				iteratorClear.remove();
-				clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
-			} else if (canDestroy(builder, context, slot)) {
-				consumeEnergyToDestroy(builder, slot);
-				createDestroyItems(slot);
+			if (canDestroy(builder, context, slot)) {
+				if (BlockUtils.isUnbreakableBlock(world, slot.x, slot.y, slot.z)
+						|| isBlockBreakCanceled(world, slot.x, slot.y, slot.z)
+						|| BuildCraftAPI.isSoftBlock(world, slot.x, slot.y, slot.z)) {
+					iteratorClear.remove();
+					clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
+				} else {
+					consumeEnergyToDestroy(builder, slot);
+					createDestroyItems(slot);
 
-				result = slot;
-				iteratorClear.remove();
-				clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
+					result = slot;
+					iteratorClear.remove();
+					clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
 
-				break;
+					break;
+				}
 			}
 		}
 
@@ -186,7 +188,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 		}
 
 		// Step 2: Check the built, but only if we have anything to place and enough energy
-		if (firstSlotToConsume == null || builder.getBattery().getEnergyStored() < BuilderAPI.BUILD_ENERGY) {
+		if (firstSlotToConsume == null) {
 			return null;
 		}
 
