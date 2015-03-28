@@ -55,7 +55,7 @@ public class MapWorld {
 	public MapWorld(World world, File location) {
 		this.world = world;
 		regionMap = new TLongObjectHashMap<MapRegion>();
-		queuedChunks = new PriorityQueue<QueuedXZ>(new Comparator<QueuedXZ>() {
+		queuedChunks = new PriorityQueue<QueuedXZ>(11, new Comparator<QueuedXZ>() {
 			@Override
 			public int compare(QueuedXZ c1, QueuedXZ c2) {
 				return c1.p - c2.p;
