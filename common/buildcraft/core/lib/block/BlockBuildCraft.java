@@ -40,7 +40,7 @@ import buildcraft.core.lib.utils.Utils;
 
 public abstract class BlockBuildCraft extends BlockContainer {
 	@SideOnly(Side.CLIENT)
-	public IIcon[][] icons = new IIcon[16][];
+	public IIcon[][] icons;
 
 	protected static boolean keepInventory = false;
 	protected final Random rand = new Random();
@@ -260,6 +260,7 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister register) {
+		icons = new IIcon[16][];
 		String[] iconBlockNames = getIconBlockNames();
 		for (int i = 0; i < iconBlockNames.length; i++) {
 			registerIconsForMeta(i, iconBlockNames[i], register);

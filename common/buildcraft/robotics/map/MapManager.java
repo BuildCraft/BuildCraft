@@ -30,7 +30,9 @@ public class MapManager implements Runnable {
 		}
 
 		if (!worldMap.containsKey(world)) {
-			worldMap.put(world, new MapWorld(world, location));
+			synchronized (worldMap) {
+				worldMap.put(world, new MapWorld(world, location));
+			}
 		}
 		return worldMap.get(world);
 	}
@@ -63,8 +65,10 @@ public class MapManager implements Runnable {
 
 
 	public void saveAllWorlds() {
-		for (MapWorld world : worldMap.values()) {
-			world.save();
+		synchronized (worldMap) {
+			for (MapWorld world : worldMap.values()) {
+				world.save();
+			}
 		}
 	}
 
@@ -73,8 +77,10 @@ public class MapManager implements Runnable {
 		lastSaveTime = (new Date()).getTime();
 
 		while (!stop) {
-			for (MapWorld world : worldMap.values()) {
-				world.updateChunkInQueue();
+			synchronized (worldMap) {
+				for (MapWorld world : worldMap.values()) {
+					world.updateChunkInQueue();
+				}
 			}
 
 			long now = (new Date()).getTime();

@@ -58,7 +58,7 @@ public class MapWorld {
 		queuedChunks = new PriorityQueue<QueuedXZ>(new Comparator<QueuedXZ>() {
 			@Override
 			public int compare(QueuedXZ c1, QueuedXZ c2) {
-				return c1.p - c2.p;
+				return (c1 != null ? c1.p : 0) - (c2 != null ? c2.p : 0);
 			}
 		});
 
@@ -139,7 +139,7 @@ public class MapWorld {
 
 		if (!world.getChunkProvider().chunkExists(q.x, q.z)) {
 			long now = (new Date()).getTime();
-			if (now - lastForcedChunkLoad < 5000) {
+			if (now - lastForcedChunkLoad < 1000) {
 				q.p++; // Increase priority so it gets looked at later
 				queuedChunks.add(q);
 				return;
@@ -157,6 +157,10 @@ public class MapWorld {
 		while (i.hasNext()) {
 			QueuedXZ id = i.next();
 			i.remove();
+			if (id == null) {
+				continue;
+			}
+
 			MapRegion region = regionMap.get(getXzId(id.x, id.z));
 			if (region == null) {
 				continue;
