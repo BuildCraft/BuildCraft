@@ -52,7 +52,7 @@ public class PathFindingSearch implements IIterableAlgorithm {
 	@Override
 	public void iterate() {
 		if (pathFinders.size() < 5 && blockIter.hasNext()) {
-			iterateSearch(PATH_ITERATIONS * 50);
+			iterateSearch(PATH_ITERATIONS * 10);
 		}
 		iteratePathFind(PATH_ITERATIONS);
 	}

@@ -39,7 +39,7 @@ public class AIRobotFetchAndEquipItemStack extends AIRobot {
 
 	@Override
 	public void update() {
-		startDelegateAI(new AIRobotGotoStationToLoad(robot, filter, null));
+		startDelegateAI(new AIRobotGotoStationToLoad(robot, filter, robot.getZoneToWork()));
 	}
 
 	@Override

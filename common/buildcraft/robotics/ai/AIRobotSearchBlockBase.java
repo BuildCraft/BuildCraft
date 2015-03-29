@@ -36,7 +36,7 @@ public class AIRobotSearchBlockBase extends AIRobot {
 		blockScanner = new PathFindingSearch(robot.worldObj, new BlockIndex(
 				robot), blockIter, pathFound, 96, robot
 				.getZoneToWork());
-		blockScannerJob = new IterableAlgorithmRunner(blockScanner, 40000);
+		blockScannerJob = new IterableAlgorithmRunner(blockScanner);
 		blockScannerJob.start();
 	}
 
