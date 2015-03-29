@@ -45,4 +45,8 @@ public class DockingStationIterator implements Iterator<DockingStation> {
 			return null;
 		}
 	}
+
+	@Override
+	public void remove() {
+	}
 }
