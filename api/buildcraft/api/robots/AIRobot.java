@@ -40,10 +40,18 @@ public class AIRobot {
 
 	}
 
+	/**
+	 * This gets called when a delegate AI ends work naturally.
+	 * @param ai The delegate AI which ended work.
+	 */
 	public void delegateAIEnded(AIRobot ai) {
 
 	}
 
+	/**
+	 * This gets called when a delegate AI is forcibly aborted.
+	 * @param ai The delegate AI which was aborted.
+	 */
 	public void delegateAIAborted(AIRobot ai) {
 
 	}

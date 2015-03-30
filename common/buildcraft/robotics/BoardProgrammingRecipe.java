@@ -44,9 +44,9 @@ public class BoardProgrammingRecipe implements IProgrammingRecipe {
 
 	@Override
 	public int getEnergyCost(ItemStack option) {
-		// TODO: Replace probability with proper energy cost? (7.0.x?)
-		ImplRedstoneBoardRegistry impl = (ImplRedstoneBoardRegistry) RedstoneBoardRegistry.instance;
-		return Math.round((20.0F / impl.getProbability(option.getTagCompound().getString("id"))) * 8000);
+		return RedstoneBoardRegistry.instance.getEnergyCost(
+				RedstoneBoardRegistry.instance.getRedstoneBoard(option.getTagCompound().getString("id"))
+		);
 	}
 
 	@Override

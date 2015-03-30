@@ -17,10 +17,20 @@ public abstract class RedstoneBoardRegistry {
 
 	public static RedstoneBoardRegistry instance;
 
-	public abstract void registerBoardClass(RedstoneBoardNBT<?> redstoneBoardNBT, float probability);
+	/**
+	 * Register a redstone board type.
+	 * @param redstoneBoardNBT The RedstoneBoardNBT instance containing the board information.
+	 * @param energyCost RF price of the board, in RF.
+	 */
+	public abstract void registerBoardType(RedstoneBoardNBT<?> redstoneBoardNBT, int energyCost);
 
 	@Deprecated
-	public abstract void createRandomBoard(NBTTagCompound nbt);
+	/**
+	 * Register a redstone board type. Deprecated, use registerBoardType now.
+	 * @param redstoneBoardNBT The RedstoneBoardNBT instance containing the board information.
+	 * @param probability Since 6.4.x, this is used to calculate the RF price of the board in the Programming Table by doing (160000 / probability).
+	 */
+	public abstract void registerBoardClass(RedstoneBoardNBT<?> redstoneBoardNBT, float probability);
 
 	public abstract RedstoneBoardNBT getRedstoneBoard(NBTTagCompound nbt);
 
@@ -29,4 +39,6 @@ public abstract class RedstoneBoardRegistry {
 	public abstract void registerIcons(IIconRegister par1IconRegister);
 
 	public abstract Collection<RedstoneBoardNBT<?>> getAllBoardNBTs();
+
+	public abstract int getEnergyCost(RedstoneBoardNBT<?> board);
 }

@@ -22,46 +22,29 @@ import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 
 public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
-
 	private static class BoardFactory {
 		public RedstoneBoardNBT<?> boardNBT;
-		public float probability;
+		public int energyCost;
 	}
-
-	private float totalProbability;
 
 	private HashMap<String, BoardFactory> boards = new HashMap<String, BoardFactory>();
 
-	private Random rand = new Random();
-
 	@Override
-	public void registerBoardClass(RedstoneBoardNBT<?> redstoneBoardNBT, float probability) {
+	public void registerBoardType(RedstoneBoardNBT<?> redstoneBoardNBT, int energyCost) {
 		if (BuildCraftRobotics.blacklistedRobots.contains(redstoneBoardNBT.getID())) {
 			return;
 		}
 
 		BoardFactory factory = new BoardFactory();
 		factory.boardNBT = redstoneBoardNBT;
-		factory.probability = probability;
+		factory.energyCost = energyCost;
 
-		totalProbability += probability;
 		boards.put(redstoneBoardNBT.getID(), factory);
 	}
 
 	@Override
-	public void createRandomBoard(NBTTagCompound nbt) {
-		float value = rand.nextFloat() * totalProbability;
-
-		float accumulatedSearch = 0;
-
-		for (BoardFactory f : boards.values()) {
-			accumulatedSearch += f.probability;
-
-			if (accumulatedSearch > value) {
-				f.boardNBT.createBoard(nbt);
-				return;
-			}
-		}
+	public void registerBoardClass(RedstoneBoardNBT<?> redstoneBoardNBT, float probability) {
+		this.registerBoardType(redstoneBoardNBT, Math.round(160000 / probability));
 	}
 
 	@Override
@@ -98,8 +81,8 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 		return result;
 	}
 
-	// TODO: Publicize this in the abstract class (6.5.0)
-	public float getProbability(String id) {
-		return boards.get(id) != null ? boards.get(id).probability : 0;
+	@Override
+	public int getEnergyCost(RedstoneBoardNBT<?> board) {
+		return boards.get(board.getID()).energyCost;
 	}
 }
