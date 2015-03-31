@@ -9,18 +9,16 @@
 package buildcraft.robotics.ai;
 
 import java.util.ArrayList;
-
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.robots.ResourceIdBlock;
 import buildcraft.api.robots.RobotManager;
 import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.InvUtils;
@@ -32,11 +30,10 @@ import buildcraft.core.lib.inventory.filters.ArrayStackFilter;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.IStationFilter;
-import buildcraft.silicon.ResourceIdAssemblyTable;
-import buildcraft.api.robots.ResourceIdBlock;
 import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.robotics.statements.ActionStationAllowCraft;
 import buildcraft.silicon.BlockLaserTable;
+import buildcraft.silicon.ResourceIdAssemblyTable;
 import buildcraft.silicon.TileAssemblyTable;
 
 public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {

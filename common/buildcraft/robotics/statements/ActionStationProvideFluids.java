@@ -9,13 +9,12 @@
 package buildcraft.robotics.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
-import buildcraft.core.statements.BCStatement;
 import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.statements.BCStatement;
 
 public class ActionStationProvideFluids extends BCStatement implements IActionInternal {
 

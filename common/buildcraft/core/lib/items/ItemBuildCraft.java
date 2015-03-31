@@ -14,7 +14,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.core.BCCreativeTab;
@@ -47,7 +46,11 @@ public class ItemBuildCraft extends Item {
 		if (itemIcon != null) { // NBT lookup workaround?
 			return itemIcon;
 		}
-		return icons[meta % icons.length];
+		if (icons != null && icons.length > 0) {
+			return icons[meta % icons.length];
+		} else {
+			return null;
+		}
 	}
 
 	public String[] getIconNames() {

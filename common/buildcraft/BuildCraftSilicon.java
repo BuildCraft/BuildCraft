@@ -14,7 +14,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
-
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -22,29 +21,25 @@ import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
-
 import net.minecraftforge.oredict.OreDictionary;
-
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.robots.RobotManager;
-import buildcraft.builders.schematics.SchematicRotateMeta;
-import buildcraft.robotics.TileRequester;
-import buildcraft.robotics.TileZonePlan;
+import buildcraft.core.builders.schematics.SchematicRotateMeta;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
-import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.Version;
+import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.BlockLaserTable;
-import buildcraft.silicon.SiliconGuiHandler;
 import buildcraft.silicon.ItemLaserTable;
 import buildcraft.silicon.ItemRedstoneChipset;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 import buildcraft.silicon.ResourceIdAssemblyTable;
+import buildcraft.silicon.SiliconGuiHandler;
 import buildcraft.silicon.SiliconProxy;
 import buildcraft.silicon.TileAdvancedCraftingTable;
 import buildcraft.silicon.TileAssemblyTable;
@@ -111,8 +106,6 @@ public class BuildCraftSilicon extends BuildCraftMod {
                 "net.minecraft.src.buildcraft.factory.TileChargingTable");
 		CoreProxy.proxy.registerTileEntity(TileProgrammingTable.class,
 				"net.minecraft.src.buildcraft.factory.TileProgrammingTable");
-		CoreProxy.proxy.registerTileEntity(TileZonePlan.class, "net.minecraft.src.buildcraft.commander.TileZonePlan");
-		CoreProxy.proxy.registerTileEntity(TileRequester.class, "net.minecraft.src.buildcraft.commander.TileRequester");
 
 		BuilderAPI.schematicRegistry.registerSchematicBlock(laserBlock, SchematicRotateMeta.class, new int[] {2, 5, 3, 4}, true);
 

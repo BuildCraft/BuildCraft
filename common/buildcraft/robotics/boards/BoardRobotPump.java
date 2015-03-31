@@ -9,17 +9,14 @@
 package buildcraft.robotics.boards;
 
 import java.util.ArrayList;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BlockIndex;
@@ -27,11 +24,12 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IWorldProperty;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.robots.ResourceIdBlock;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
+import buildcraft.api.statements.StatementSlot;
 import buildcraft.core.lib.utils.IBlockFilter;
 import buildcraft.robotics.DockingStation;
-import buildcraft.api.robots.ResourceIdBlock;
 import buildcraft.robotics.ai.AIRobotGotoBlock;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
 import buildcraft.robotics.ai.AIRobotGotoStationAndUnloadFluids;
@@ -39,7 +37,6 @@ import buildcraft.robotics.ai.AIRobotPumpBlock;
 import buildcraft.robotics.ai.AIRobotSearchBlock;
 import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.api.statements.StatementSlot;
 
 public class BoardRobotPump extends RedstoneBoardRobot {
 

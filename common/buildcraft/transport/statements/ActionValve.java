@@ -9,18 +9,15 @@
 package buildcraft.transport.statements;
 
 import java.util.Locale;
-
 import net.minecraft.client.renderer.texture.IIconRegister;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.transport.IPipe;
+import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.statements.BCStatement;
 import buildcraft.core.statements.StatementParameterDirection;
-import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransport;

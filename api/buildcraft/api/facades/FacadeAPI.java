@@ -1,5 +1,9 @@
 package buildcraft.api.facades;
 
-public class FacadeAPI {
+public final class FacadeAPI {
 	public static IFacadeItem facadeItem;
+
+	private FacadeAPI() {
+
+	}
 }

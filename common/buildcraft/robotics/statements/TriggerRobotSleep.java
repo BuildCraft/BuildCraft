@@ -9,19 +9,13 @@
 package buildcraft.robotics.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-
-import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.statements.BCStatement;
 import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.statements.BCStatement;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.EntityRobot;
-import buildcraft.robotics.RobotUtils;
-import buildcraft.robotics.ai.AIRobotSleep;
 
 public class TriggerRobotSleep extends BCStatement implements ITriggerInternal {
 

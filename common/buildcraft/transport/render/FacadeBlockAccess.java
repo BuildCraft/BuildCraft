@@ -10,7 +10,6 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CompatHooks;
-import buildcraft.transport.BlockGenericPipe;
 
 public class FacadeBlockAccess implements IBlockAccess {
 	private final IBlockAccess world;

@@ -11,9 +11,7 @@ package buildcraft.transport.recipes;
 import java.util.ArrayList;
 import java.util.Collection;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.oredict.OreDictionary;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.facades.FacadeType;
@@ -26,7 +24,6 @@ import buildcraft.silicon.recipes.IntegrationTableRecipe;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.ItemPipeWire;
-import buildcraft.transport.gates.ItemGate;
 
 public class AdvancedFacadeRecipe extends IntegrationTableRecipe {
 

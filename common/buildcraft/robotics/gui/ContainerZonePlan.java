@@ -9,23 +9,20 @@
 package buildcraft.robotics.gui;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.block.material.MapColor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
-
 import cpw.mods.fml.relauncher.Side;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftRobotics;
-import buildcraft.core.lib.render.DynamicTexturePaletted;
 import buildcraft.core.ZonePlan;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.slots.SlotOutput;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
+import buildcraft.core.lib.render.DynamicTexturePaletted;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.robotics.TileZonePlan;
 
@@ -72,7 +69,8 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
 
 	public void saveArea(final int index) {
 		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "saveArea", new CommandWriter() {
-			public void write(ByteBuf data) {data.writeByte(index);
+			public void write(ByteBuf data) {
+				data.writeByte(index);
 				currentAreaSelection.writeData(data);
 			}
 		}));

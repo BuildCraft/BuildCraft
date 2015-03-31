@@ -11,9 +11,7 @@ package buildcraft.builders.blueprints;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.BlockIndex;
@@ -23,11 +21,11 @@ import buildcraft.builders.ItemBlueprintTemplate;
 import buildcraft.builders.TileArchitect;
 import buildcraft.builders.TileBuilder;
 import buildcraft.builders.TileConstructionMarker;
-import buildcraft.core.lib.utils.BlockScanner;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.blueprints.Template;
+import buildcraft.core.lib.utils.BlockScanner;
 
 public class RecursiveBlueprintReader {
 

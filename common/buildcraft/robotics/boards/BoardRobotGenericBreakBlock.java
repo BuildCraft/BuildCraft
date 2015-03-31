@@ -9,23 +9,22 @@
 package buildcraft.robotics.boards;
 
 import java.util.ArrayList;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.robots.ResourceIdBlock;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
+import buildcraft.api.statements.StatementSlot;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.core.lib.utils.IBlockFilter;
 import buildcraft.robotics.DockingStation;
-import buildcraft.api.robots.ResourceIdBlock;
 import buildcraft.robotics.ai.AIRobotBreak;
 import buildcraft.robotics.ai.AIRobotFetchAndEquipItemStack;
 import buildcraft.robotics.ai.AIRobotGotoBlock;
@@ -33,7 +32,6 @@ import buildcraft.robotics.ai.AIRobotGotoSleep;
 import buildcraft.robotics.ai.AIRobotSearchBlock;
 import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.api.statements.StatementSlot;
 
 public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 

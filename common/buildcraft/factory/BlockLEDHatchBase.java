@@ -72,8 +72,7 @@ public abstract class BlockLEDHatchBase extends BlockBuildCraft {
 	}
 
 	@Override
-	public boolean renderAsNormalBlock()
-	{
+	public boolean renderAsNormalBlock() {
 		return false;
 	}
 }

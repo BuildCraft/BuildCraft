@@ -9,13 +9,9 @@
 package buildcraft.core.lib.network.command;
 
 import java.util.ArrayList;
-
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.entity.player.EntityPlayer;
-
 import cpw.mods.fml.common.FMLCommonHandler;
-
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.network.PacketIds;

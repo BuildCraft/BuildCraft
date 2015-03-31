@@ -11,9 +11,7 @@ package buildcraft.core;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -22,13 +20,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.oredict.OreDictionary;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.items.IList;
 import buildcraft.core.lib.inventory.StackHelper;

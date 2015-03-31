@@ -10,9 +10,7 @@ package buildcraft.transport;
 
 import java.util.List;
 import org.apache.logging.log4j.Level;
-
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -22,19 +20,15 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-
 import cofh.api.energy.IEnergyHandler;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
@@ -56,9 +50,9 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.lib.ITileBufferHolder;
 import buildcraft.core.lib.TileBuffer;
-import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.network.IGuiReturnHandler;
 import buildcraft.core.lib.network.ISyncedTile;
+import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.network.PacketTileState;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.ItemFacade.FacadeState;
@@ -806,9 +800,12 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 			TileBuffer t = cache[side.ordinal()];
-			t.refresh();
+			// For blocks which are not loaded, keep the old connection value.
+			if (t.exists()) {
+				t.refresh();
 
-			pipeConnectionsBuffer[side.ordinal()] = canPipeConnect(t.getTile(), side);
+				pipeConnectionsBuffer[side.ordinal()] = canPipeConnect(t.getTile(), side);
+			}
 		}
 	}
 

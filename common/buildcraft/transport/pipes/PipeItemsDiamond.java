@@ -9,28 +9,21 @@
 package buildcraft.transport.pipes;
 
 import java.util.Iterator;
-import java.util.LinkedList;
-
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.core.lib.utils.FluidUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.IDiamondPipe;
@@ -134,7 +127,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
 					ItemStack filter = getFilters().getStackInSlot(v);
 
 					if (StackHelper.isMatchingItemOrList(filter, event.item.getItemStack())) {
-						usedFilters |= (1 << v);
+						usedFilters |= 1 << v;
 						event.destinations.clear();
 						event.destinations.add(dir);
 						event.shuffle = false;

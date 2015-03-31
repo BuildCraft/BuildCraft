@@ -10,11 +10,8 @@ package buildcraft.robotics.statements;
 
 import java.util.Collection;
 import java.util.LinkedList;
-
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftRobotics;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.ITriggerExternal;

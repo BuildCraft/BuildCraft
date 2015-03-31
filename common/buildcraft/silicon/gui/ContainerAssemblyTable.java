@@ -12,7 +12,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
-
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.silicon.TileAssemblyTable;
 

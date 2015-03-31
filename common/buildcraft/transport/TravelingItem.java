@@ -10,21 +10,16 @@ package buildcraft.transport;
 
 import java.util.EnumSet;
 import java.util.Map;
-
 import com.google.common.collect.MapMaker;
-
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.Position;

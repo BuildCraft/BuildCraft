@@ -11,16 +11,13 @@ package buildcraft.builders;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
 import buildcraft.api.core.BlockIndex;
-import buildcraft.api.core.Position;
 import buildcraft.api.core.IPathProvider;
+import buildcraft.api.core.Position;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
 

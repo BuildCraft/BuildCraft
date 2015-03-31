@@ -9,14 +9,11 @@
 package buildcraft.core.render;
 
 import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-
 import buildcraft.core.Box;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.IBoxProvider;
 import buildcraft.core.IBoxesProvider;
 

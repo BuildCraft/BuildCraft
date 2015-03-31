@@ -11,9 +11,7 @@ package buildcraft.robotics.ai;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.Position;
 import buildcraft.api.robots.AIRobot;

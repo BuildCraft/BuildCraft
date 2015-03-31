@@ -9,7 +9,6 @@
 package buildcraft.builders.schematics;
 
 import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicEntity;

@@ -14,7 +14,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.Translation;

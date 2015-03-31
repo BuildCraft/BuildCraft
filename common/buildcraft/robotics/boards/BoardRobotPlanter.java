@@ -10,7 +10,6 @@ package buildcraft.robotics.boards;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
@@ -18,21 +17,19 @@ import net.minecraft.item.ItemReed;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.robots.ResourceIdBlock;
 import buildcraft.core.lib.inventory.filters.ArrayStackFilter;
 import buildcraft.core.lib.inventory.filters.ArrayStackOrListFilter;
 import buildcraft.core.lib.inventory.filters.CompositeFilter;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.core.lib.utils.IBlockFilter;
-import buildcraft.api.robots.ResourceIdBlock;
 import buildcraft.robotics.ai.AIRobotFetchAndEquipItemStack;
 import buildcraft.robotics.ai.AIRobotGotoBlock;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
@@ -127,7 +124,7 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 				AIRobotSearchRandomBlock searchAI = (AIRobotSearchRandomBlock) ai;
 				if (searchAI.takeResource()) {
 					blockFound = searchAI.blockFound;
-					if (searchAI.path.size() > 1){
+					if (searchAI.path.size() > 1) {
 						searchAI.path.removeLast();
 					}
 					startDelegateAI(new AIRobotGotoBlock(robot, searchAI.path));

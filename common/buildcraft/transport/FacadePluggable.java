@@ -1,15 +1,12 @@
 package buildcraft.transport;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;

@@ -13,15 +13,13 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.ForgeHooks;
-
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.core.proxy.CoreProxy;
 
 public class AIRobotBreak extends AIRobot {
 

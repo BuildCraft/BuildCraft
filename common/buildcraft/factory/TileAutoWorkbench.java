@@ -9,7 +9,6 @@
 package buildcraft.factory;
 
 import java.lang.ref.WeakReference;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -23,7 +22,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.power.IRedstoneEngine;
 import buildcraft.api.power.IRedstoneEngineReceiver;
@@ -35,9 +33,9 @@ import buildcraft.core.lib.inventory.InventoryConcatenator;
 import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.proxy.CoreProxy;
 
 public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory, IHasWork, IRedstoneEngineReceiver {
 
@@ -82,14 +80,15 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	@Override
 	public boolean canConnectEnergy(ForgeDirection side) {
 		TileEntity tile = worldObj.getTileEntity(xCoord + side.offsetX, yCoord + side.offsetY, zCoord + side.offsetZ);
-		return (tile instanceof IRedstoneEngine);
+		return tile instanceof IRedstoneEngine;
 	}
 
 	public class LocalInventoryCrafting extends InventoryCrafting {
 		public IRecipe currentRecipe;
 		public boolean useBindings, isJammed;
 
-		public LocalInventoryCrafting() {super(new Container() {
+		public LocalInventoryCrafting() {
+			super(new Container() {
 				@Override
 				public boolean canInteractWith(EntityPlayer entityplayer) {
 					return false;

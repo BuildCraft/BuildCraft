@@ -11,13 +11,9 @@ package buildcraft.robotics;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Random;
-
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.BuildCraftRobotics;
-import buildcraft.BuildCraftSilicon;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 

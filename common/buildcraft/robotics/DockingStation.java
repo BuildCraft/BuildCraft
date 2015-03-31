@@ -11,9 +11,7 @@ package buildcraft.robotics;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;

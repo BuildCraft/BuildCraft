@@ -9,15 +9,13 @@
 package buildcraft.transport.statements;
 
 import java.util.Locale;
-
 import net.minecraft.client.renderer.texture.IIconRegister;
-
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.core.statements.BCStatement;
 import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.statements.BCStatement;
 
 public class ActionExtractionPreset extends BCStatement implements IActionInternal {
 

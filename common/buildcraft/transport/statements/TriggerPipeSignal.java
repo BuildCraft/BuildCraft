@@ -9,16 +9,14 @@
 package buildcraft.transport.statements;
 
 import java.util.Locale;
-
 import net.minecraft.client.renderer.texture.IIconRegister;
-
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.transport.PipeWire;
-import buildcraft.core.statements.BCStatement;
 import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.statements.BCStatement;
 import buildcraft.transport.Pipe;
 
 public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {

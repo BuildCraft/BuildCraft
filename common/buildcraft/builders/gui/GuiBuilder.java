@@ -9,20 +9,15 @@
 package buildcraft.builders.gui;
 
 import java.util.Collection;
-
 import org.lwjgl.opengl.GL11;
-
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.builders.TileBuilder;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;

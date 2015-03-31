@@ -9,12 +9,9 @@
 package buildcraft.factory.gui;
 
 import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
-
-import buildcraft.core.DefaultProps;
 import buildcraft.factory.TileHopper;
 
 public class GuiHopper extends GuiContainer {

@@ -9,28 +9,21 @@
 package buildcraft.silicon;
 
 import java.util.List;
-
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.power.ILaserTargetBlock;
-import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.BCCreativeTab;
-import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.lib.block.BlockBuildCraft;
 
 public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBlock {
     protected static final int TABLE_MAX = 5;

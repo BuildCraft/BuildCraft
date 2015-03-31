@@ -14,10 +14,8 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBucket;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import buildcraft.core.BCCreativeTab;
 
 public class ItemBucketBuildcraft extends ItemBucket {

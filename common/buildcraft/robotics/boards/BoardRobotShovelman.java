@@ -8,10 +8,8 @@
  */
 package buildcraft.robotics.boards;
 
-import net.minecraft.item.ItemSpade;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.robots.EntityRobotBase;

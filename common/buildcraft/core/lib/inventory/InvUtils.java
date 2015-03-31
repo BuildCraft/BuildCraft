@@ -17,10 +17,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.core.IInvSlot;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
 

@@ -12,16 +12,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-
 import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
-
 import net.minecraftforge.fluids.FluidStack;
-
 import buildcraft.api.core.BCLog;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.RefineryRecipeManager;

@@ -9,10 +9,8 @@
 package buildcraft.core.lib.render;
 
 import net.minecraft.util.IIcon;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import buildcraft.api.core.render.ITextureStateManager;
 
 /*

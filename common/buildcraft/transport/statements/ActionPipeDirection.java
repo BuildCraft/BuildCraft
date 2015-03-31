@@ -9,11 +9,8 @@
 package buildcraft.transport.statements;
 
 import java.util.Locale;
-
 import net.minecraft.client.renderer.texture.IIconRegister;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatement;

@@ -10,18 +10,16 @@ package buildcraft.robotics.statements;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
-
 import buildcraft.api.robots.IDockingStation;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
+import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.lib.inventory.filters.ArrayFluidFilter;
 import buildcraft.core.lib.inventory.filters.ArrayStackOrListFilter;
@@ -30,11 +28,10 @@ import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.core.lib.inventory.filters.PassThroughFluidFilter;
 import buildcraft.core.lib.inventory.filters.PassThroughStackFilter;
 import buildcraft.core.lib.inventory.filters.StatementParameterStackFilter;
-import buildcraft.core.statements.BCStatement;
 import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.statements.BCStatement;
 import buildcraft.robotics.DockingStation;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.api.statements.StatementSlot;
 
 public class ActionRobotFilter extends BCStatement implements IActionInternal {
 

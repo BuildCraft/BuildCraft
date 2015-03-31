@@ -13,10 +13,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -26,14 +24,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.IWorldAccess;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
-
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.power.IEngine;
@@ -42,11 +36,11 @@ import buildcraft.api.transport.IInjectable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.IFramePipeConnection;
 import buildcraft.core.LaserData;
 import buildcraft.core.LaserKind;
+import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.InvUtils;
@@ -82,7 +76,7 @@ public final class Utils {
 			Position pos = new Position(x, y, z, orientation);
 			pos.moveForwards(1.0);
 
-			TileEntity tileInventory  =BlockUtils.getTileEntity(world, (int) pos.x, (int) pos.y, (int) pos.z);
+			TileEntity tileInventory = BlockUtils.getTileEntity(world, (int) pos.x, (int) pos.y, (int) pos.z);
 			ITransactor transactor = Transactor.getTransactorFor(tileInventory);
 			if (transactor != null && !(tileInventory instanceof IEngine) && transactor.add(stack, orientation.getOpposite(), false).stackSize > 0) {
 				return transactor.add(stack, orientation.getOpposite(), true).stackSize;

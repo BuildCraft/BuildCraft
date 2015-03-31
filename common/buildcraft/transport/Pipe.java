@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,17 +21,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.ActionState;
 import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
@@ -40,7 +37,6 @@ import buildcraft.core.IDropControlInventory;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.gates.GateFactory;
-import buildcraft.api.statements.StatementSlot;
 import buildcraft.transport.statements.ActionValve.ValveState;
 
 public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory, IPipe {

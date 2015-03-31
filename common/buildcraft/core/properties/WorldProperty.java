@@ -9,11 +9,9 @@
 package buildcraft.core.properties;
 
 import java.util.HashMap;
-
 import net.minecraft.block.Block;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import buildcraft.api.core.IWorldProperty;
 
 public abstract class WorldProperty implements IWorldProperty {

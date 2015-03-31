@@ -10,22 +10,17 @@ package buildcraft.robotics.gui;
 
 import java.util.LinkedList;
 import java.util.List;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.EnumColor;
-import buildcraft.core.lib.render.DynamicTexturePaletted;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ZonePlan;
 import buildcraft.core.lib.gui.AdvancedSlot;
@@ -35,6 +30,7 @@ import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
+import buildcraft.core.lib.render.DynamicTexturePaletted;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.robotics.TileZonePlan;

@@ -10,7 +10,6 @@ package buildcraft.core.lib.gui.widgets;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.gui.tooltips.ToolTip;
 

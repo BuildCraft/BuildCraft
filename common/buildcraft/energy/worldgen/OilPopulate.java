@@ -11,7 +11,6 @@ package buildcraft.energy.worldgen;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.block.BlockStaticLiquid;
@@ -20,10 +19,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
-
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-
 import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
@@ -31,7 +28,6 @@ import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType
 import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.IFluidBlock;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 

@@ -10,9 +10,7 @@ package buildcraft.core.lib.inventory;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.core.IInvSlot;
 
 public final class InventoryIterator {

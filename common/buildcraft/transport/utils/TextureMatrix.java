@@ -9,7 +9,6 @@
 package buildcraft.transport.utils;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class TextureMatrix {

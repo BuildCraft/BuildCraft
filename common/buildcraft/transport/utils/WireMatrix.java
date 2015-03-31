@@ -9,11 +9,8 @@
 package buildcraft.transport.utils;
 
 import java.util.BitSet;
-
 import io.netty.buffer.ByteBuf;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.transport.PipeWire;
 
 public class WireMatrix {

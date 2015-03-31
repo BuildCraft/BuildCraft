@@ -9,9 +9,7 @@
 package buildcraft.core.lib.inventory.filters;
 
 import java.util.ArrayList;
-
 import net.minecraft.item.ItemStack;
-
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
 

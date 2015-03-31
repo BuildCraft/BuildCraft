@@ -9,7 +9,6 @@
 package buildcraft.core.lib.block;
 
 import java.util.Random;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
@@ -23,11 +22,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.events.BlockInteractionEvent;
@@ -39,21 +36,22 @@ import buildcraft.core.lib.utils.ResourceUtils;
 import buildcraft.core.lib.utils.Utils;
 
 public abstract class BlockBuildCraft extends BlockContainer {
-	@SideOnly(Side.CLIENT)
-	public IIcon[][] icons;
-
 	protected static boolean keepInventory = false;
-	protected final Random rand = new Random();
-	protected int renderPass;
-
-	protected int maxPasses = 1;
-
 	private static final int[][] SIDE_TEXTURING_LOCATIONS = new int[][] {
 			{2, 3, 5, 4},
 			{3, 2, 4, 5},
 			{4, 5, 2, 3},
 			{5, 4, 3, 2}
 	};
+
+	@SideOnly(Side.CLIENT)
+	public IIcon[][] icons;
+
+	protected final Random rand = new Random();
+	protected int renderPass;
+
+	protected int maxPasses = 1;
+
 	private boolean rotatable = false;
 	private boolean alphaPass = false;
 

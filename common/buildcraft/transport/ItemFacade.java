@@ -10,9 +10,7 @@ package buildcraft.transport;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import com.google.common.base.Strings;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -24,14 +22,11 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.facades.FacadeType;
@@ -41,11 +36,11 @@ import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.core.BlockSpring;
 import buildcraft.core.BCCreativeTab;
+import buildcraft.core.BlockSpring;
 import buildcraft.core.lib.items.ItemBuildCraft;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.proxy.CoreProxy;
 
 public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePluggableItem {
 	public static class FacadeState {

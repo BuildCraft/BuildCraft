@@ -11,7 +11,6 @@ package buildcraft.api.core;
 import java.util.Locale;
 import java.util.Random;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 

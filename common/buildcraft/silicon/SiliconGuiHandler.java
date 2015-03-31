@@ -11,9 +11,7 @@ package buildcraft.silicon;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.network.IGuiHandler;
-
 import buildcraft.silicon.gui.ContainerAdvancedCraftingTable;
 import buildcraft.silicon.gui.ContainerAssemblyTable;
 import buildcraft.silicon.gui.ContainerChargingTable;

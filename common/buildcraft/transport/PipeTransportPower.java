@@ -12,18 +12,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyReceiver;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
@@ -357,7 +353,8 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	 * All power input MUST go through designated input pipes, such as Wooden
 	 * Power Pipes or a subclass thereof.
 	 */
-	public int receiveEnergy(ForgeDirection from, int val) {
+	public int receiveEnergy(ForgeDirection from, int iVal) {
+		int val = iVal;
 		int side = from.ordinal();
 
 		step();

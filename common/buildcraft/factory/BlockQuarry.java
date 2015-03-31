@@ -9,7 +9,6 @@
 package buildcraft.factory;
 
 import java.util.ArrayList;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.EntityLivingBase;
@@ -19,9 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.tools.IToolWrench;
 

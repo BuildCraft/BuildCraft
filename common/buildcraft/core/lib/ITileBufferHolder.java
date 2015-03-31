@@ -10,7 +10,6 @@ package buildcraft.core.lib;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
 
 public interface ITileBufferHolder {

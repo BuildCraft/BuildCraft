@@ -18,26 +18,20 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
-
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
-
-import buildcraft.BuildCraftBuilders;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.library.LibraryAPI;
 import buildcraft.core.blueprints.LibraryId;
-import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.lib.utils.NBTUtils;
 
 public class LibraryDatabase {
 	private static final int PAGE_SIZE = 12;
 
-	private File outputDir;
-	private File[] inputDirs;
-
 	protected Set<LibraryId> blueprintIds;
 	protected LibraryId[] pages = new LibraryId[0];
+
+	private File outputDir;
+	private File[] inputDirs;
 
 	/**
 	 * Initialize the blueprint database.

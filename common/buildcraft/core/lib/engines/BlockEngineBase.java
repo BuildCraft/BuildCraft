@@ -10,7 +10,6 @@ package buildcraft.core.lib.engines;
 
 import java.util.List;
 import java.util.Random;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -21,16 +20,13 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.FMLCommonHandler;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.events.BlockInteractionEvent;
+import buildcraft.core.IItemPipe;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.render.ICustomHighlight;
-import buildcraft.core.IItemPipe;
 
 public abstract class BlockEngineBase extends BlockBuildCraft implements ICustomHighlight {
 	private static final AxisAlignedBB[][] boxes = {

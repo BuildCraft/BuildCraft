@@ -10,13 +10,11 @@ package buildcraft.core.properties;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
-
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.oredict.OreDictionary;
 

@@ -10,8 +10,6 @@ package buildcraft.transport.gui;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
-
-import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.transport.pipes.PipeItemsEmzuli;

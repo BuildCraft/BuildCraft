@@ -9,9 +9,7 @@
 package buildcraft.robotics.render;
 
 import java.util.Date;
-
 import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -23,17 +21,14 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.client.IItemRenderer;
-
 import buildcraft.BuildCraftRobotics;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityLaser;
-import buildcraft.core.render.RenderLaser;
 import buildcraft.core.lib.render.RenderUtils;
+import buildcraft.core.render.RenderLaser;
 import buildcraft.robotics.EntityRobot;
 import buildcraft.robotics.ItemRobot;
-import buildcraft.robotics.RobotUtils;
 
 public class RenderRobot extends Render implements IItemRenderer {
 	private static final ResourceLocation overlay_red = new ResourceLocation(

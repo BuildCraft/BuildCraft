@@ -10,11 +10,8 @@ package buildcraft.core.statements;
 
 import java.util.Collection;
 import java.util.LinkedList;
-
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.statements.IActionExternal;
@@ -23,7 +20,6 @@ import buildcraft.api.statements.IActionProvider;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.tiles.IControllable;
-import buildcraft.api.transport.IPipeTile;
 
 public class DefaultActionProvider implements IActionProvider {
 

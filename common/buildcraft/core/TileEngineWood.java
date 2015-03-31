@@ -10,15 +10,13 @@ package buildcraft.core;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.power.IRedstoneEngine;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.engines.TileEngineBase;
 
-public class TileEngineWood extends TileEngine implements IRedstoneEngine {
+public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
 
 	private boolean hasSent = false;
 

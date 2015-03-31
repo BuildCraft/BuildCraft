@@ -9,17 +9,16 @@
 package buildcraft.robotics.ai;
 
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.EntityRobot;
 import buildcraft.robotics.statements.ActionStationInputItems;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.api.statements.StatementSlot;
 
 public class AIRobotUnload extends AIRobot {
 

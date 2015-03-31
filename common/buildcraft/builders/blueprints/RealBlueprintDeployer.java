@@ -9,19 +9,16 @@
 package buildcraft.builders.blueprints;
 
 import java.io.File;
-
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.blueprints.BlueprintDeployer;
 import buildcraft.api.blueprints.Translation;
 import buildcraft.builders.LibraryDatabase;
-import buildcraft.core.blueprints.BlueprintBase;
-import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.blueprints.Blueprint;
+import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptContext;
+import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.lib.utils.NBTUtils;
 
 public class RealBlueprintDeployer extends BlueprintDeployer {

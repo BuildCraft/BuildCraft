@@ -15,14 +15,10 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
-
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.slots.SlotOutput;
 import buildcraft.core.lib.gui.slots.SlotUntouchable;
 import buildcraft.core.lib.gui.slots.SlotWorkbench;
-import buildcraft.core.lib.inventory.InvUtils;
-import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.factory.TileAutoWorkbench;
 
 public class ContainerAutoWorkbench extends BuildCraftContainer {

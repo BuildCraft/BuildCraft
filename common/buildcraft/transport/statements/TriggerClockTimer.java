@@ -9,14 +9,12 @@
 package buildcraft.transport.statements;
 
 import java.util.Locale;
-
 import net.minecraft.client.renderer.texture.IIconRegister;
-
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.core.statements.BCStatement;
 import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.statements.BCStatement;
 
 public class TriggerClockTimer extends BCStatement implements ITriggerInternal {
 

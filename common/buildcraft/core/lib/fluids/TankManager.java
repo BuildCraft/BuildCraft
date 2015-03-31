@@ -11,16 +11,11 @@ package buildcraft.core.lib.fluids;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import com.google.common.collect.ForwardingList;
-
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.nbt.NBTTagCompound;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;

@@ -9,7 +9,6 @@
 package buildcraft.core.proxy;
 
 import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -21,14 +20,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-
 import buildcraft.BuildCraftCore;
-import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.LaserKind;
+import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.lib.engines.RenderEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.render.RenderBlockComplex;

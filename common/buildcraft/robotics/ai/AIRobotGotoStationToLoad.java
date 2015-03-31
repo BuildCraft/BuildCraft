@@ -10,9 +10,7 @@ package buildcraft.robotics.ai;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;

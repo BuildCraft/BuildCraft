@@ -10,10 +10,10 @@ package buildcraft.robotics.ai;
 
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.statements.StatementSlot;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.statements.ActionRobotWakeUp;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.api.statements.StatementSlot;
 
 public class AIRobotSleep extends AIRobot {
 

@@ -10,7 +10,6 @@ package buildcraft.core.lib.utils;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.oredict.OreDictionary;
 
 public final class ColorUtils {

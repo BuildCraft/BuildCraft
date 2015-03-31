@@ -11,7 +11,6 @@ package buildcraft.transport.recipes;
 import java.util.ArrayList;
 import java.util.Collection;
 import net.minecraft.item.ItemStack;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.recipes.CraftingResult;

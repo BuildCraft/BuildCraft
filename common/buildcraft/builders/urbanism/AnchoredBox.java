@@ -9,9 +9,7 @@
 package buildcraft.builders.urbanism;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.Box;
 

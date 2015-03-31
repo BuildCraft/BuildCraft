@@ -9,18 +9,17 @@
 package buildcraft.robotics.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.statements.StatementParameterItemStack;
+import buildcraft.api.statements.StatementSlot;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.EntityRobot;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TravelingItem;
-import buildcraft.api.statements.StatementSlot;
 
 public class ActionStationAcceptItems extends ActionStationInputItems {
 

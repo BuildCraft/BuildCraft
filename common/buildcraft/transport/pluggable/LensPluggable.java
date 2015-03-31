@@ -1,14 +1,11 @@
 package buildcraft.transport.pluggable;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.render.ITextureStates;
@@ -16,12 +13,12 @@ import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.core.lib.render.FakeBlock;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
-import buildcraft.core.lib.render.FakeBlock;
 
 public class LensPluggable extends PipePluggable {
 	public int color;

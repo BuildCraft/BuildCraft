@@ -9,15 +9,11 @@
 package buildcraft.transport.gates;
 
 import java.util.Locale;
-
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
-import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.utils.StringUtils;
 
 public final class GateDefinition {

@@ -10,7 +10,6 @@ package buildcraft.builders.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
-
 import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.core.lib.gui.slots.SlotBase;
 

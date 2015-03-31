@@ -13,11 +13,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeMap;
-
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
@@ -26,10 +24,8 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.core.LaserData;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.fluids.TankUtils;

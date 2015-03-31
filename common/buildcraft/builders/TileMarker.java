@@ -9,23 +9,20 @@
 package buildcraft.builders;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
 import buildcraft.BuildCraftBuilders;
-import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.Position;
 import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.LaserKind;
+import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.lib.block.TileBuildCraft;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.proxy.CoreProxy;
 
 public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
 	public static class TileWrapper implements ISerializable {

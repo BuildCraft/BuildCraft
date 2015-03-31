@@ -9,18 +9,23 @@
 package buildcraft.robotics;
 
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.Loader;
 import net.minecraftforge.client.MinecraftForgeClient;
 import buildcraft.BuildCraftRobotics;
 import buildcraft.robotics.render.RenderRobot;
 import buildcraft.robotics.render.RobotStationItemRenderer;
 
 public class RoboticsProxyClient extends RoboticsProxy {
-	public static final RobotStationItemRenderer robotStationItemRenderer = new RobotStationItemRenderer();
-
-	@Override
 	public void registerRenderers() {
 		RenderingRegistry.registerEntityRenderingHandler(EntityRobot.class, new RenderRobot());
 		MinecraftForgeClient.registerItemRenderer(BuildCraftRobotics.robotItem, new RenderRobot());
-		MinecraftForgeClient.registerItemRenderer(BuildCraftRobotics.robotStationItem, robotStationItemRenderer);
+		// TODO: Move robot station textures locally
+		if (Loader.isModLoaded("BuildCraft|Transport")) {
+			loadBCTransport();
+		}
+	}
+
+	private void loadBCTransport() {
+		MinecraftForgeClient.registerItemRenderer(BuildCraftRobotics.robotStationItem, new RobotStationItemRenderer());
 	}
 }

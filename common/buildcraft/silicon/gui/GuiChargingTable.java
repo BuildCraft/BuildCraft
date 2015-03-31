@@ -10,8 +10,6 @@ package buildcraft.silicon.gui;
 
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
-
-import buildcraft.core.DefaultProps;
 import buildcraft.silicon.TileChargingTable;
 
 public class GuiChargingTable extends GuiLaserTable {

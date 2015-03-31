@@ -25,9 +25,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blocks.IColorRemovable;
 import buildcraft.api.core.EnumColor;
 import buildcraft.core.lib.items.ItemBuildCraft;
-import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.NBTUtils;
-import buildcraft.core.lib.utils.StringUtils;
 
 public class ItemPaintbrush extends ItemBuildCraft {
 	public ItemPaintbrush() {

@@ -34,8 +34,8 @@ import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.fluids.SingleUseTank;
 import buildcraft.core.lib.fluids.TankManager;
 import buildcraft.core.lib.network.command.ICommandReceiver;
-import buildcraft.core.recipes.RefineryRecipeManager;
 import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.core.recipes.RefineryRecipeManager;
 
 public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInventory, IHasWork, IFlexibleCrafter, ICommandReceiver {
 

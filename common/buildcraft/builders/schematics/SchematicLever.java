@@ -9,9 +9,9 @@
 package buildcraft.builders.schematics;
 
 import buildcraft.api.blueprints.IBuilderContext;
+import buildcraft.core.builders.schematics.SchematicWallSide;
 
 public class SchematicLever extends SchematicWallSide {
-
 	@Override
 	public void rotateLeft(IBuilderContext context) {
 		int status = meta & 8;
@@ -19,6 +19,5 @@ public class SchematicLever extends SchematicWallSide {
 		meta -= status;
 		super.rotateLeft(context);
 		meta += status;
-
 	}
 }

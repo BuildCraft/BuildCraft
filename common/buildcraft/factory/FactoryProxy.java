@@ -9,9 +9,7 @@
 package buildcraft.factory;
 
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.SidedProxy;
-
 import buildcraft.core.lib.EntityBlock;
 
 public class FactoryProxy {

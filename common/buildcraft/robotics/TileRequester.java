@@ -9,17 +9,15 @@
 package buildcraft.robotics;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
 import cpw.mods.fml.relauncher.Side;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
+import buildcraft.api.robots.ResourceIdRequest;
 import buildcraft.api.robots.RobotManager;
 import buildcraft.api.robots.StackRequest;
 import buildcraft.core.lib.block.TileBuildCraft;
@@ -29,7 +27,6 @@ import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
-import buildcraft.api.robots.ResourceIdRequest;
 
 public class TileRequester extends TileBuildCraft implements IInventory, IRequestProvider, ICommandReceiver {
 	public static final int NB_ITEMS = 20;

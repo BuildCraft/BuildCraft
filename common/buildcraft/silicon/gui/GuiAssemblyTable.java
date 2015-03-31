@@ -10,19 +10,15 @@ package buildcraft.silicon.gui;
 
 import java.util.Iterator;
 import java.util.List;
-
 import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.core.CoreIconProvider;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.utils.StringUtils;

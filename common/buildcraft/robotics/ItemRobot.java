@@ -9,7 +9,6 @@
 package buildcraft.robotics;
 
 import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
@@ -19,11 +18,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import cofh.api.energy.IEnergyContainerItem;
 import buildcraft.BuildCraftRobotics;
 import buildcraft.api.boards.RedstoneBoardNBT;
@@ -178,7 +175,7 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
 	}
 
 	@Override
-	public boolean onItemUse(ItemStack currentItem, EntityPlayer player, World world, int x, int y, int z, int side, float p_77648_8_, float p_77648_9_, float p_77648_10_) {
+	public boolean onItemUse(ItemStack currentItem, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		if (!world.isRemote) {
 			Block b = world.getBlock(x, y, z);
 			if (!(b instanceof BlockGenericPipe)) {

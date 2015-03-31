@@ -11,13 +11,11 @@ package buildcraft.builders.gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.builders.TileFiller;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;

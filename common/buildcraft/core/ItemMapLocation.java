@@ -10,7 +10,6 @@ package buildcraft.core;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -19,14 +18,10 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
-
-import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
@@ -119,8 +114,6 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IIconRegister par1IconRegister) {
 		super.registerIcons(par1IconRegister);
-		// TODO: Move this
-		RedstoneBoardRegistry.instance.registerIcons(par1IconRegister);
 	}
 
 	@Override

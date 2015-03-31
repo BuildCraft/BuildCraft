@@ -10,9 +10,7 @@ package buildcraft.factory;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.blueprints.BuilderAPI;

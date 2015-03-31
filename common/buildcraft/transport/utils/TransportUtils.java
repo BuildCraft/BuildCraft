@@ -9,7 +9,6 @@
 package buildcraft.transport.utils;
 
 import net.minecraft.item.ItemStack;
-
 import buildcraft.core.CoreConstants;
 
 public final class TransportUtils {

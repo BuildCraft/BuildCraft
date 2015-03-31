@@ -11,7 +11,6 @@ package buildcraft.robotics.ai;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
-
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.inventory.filters.SimpleFluidFilter;
@@ -50,7 +49,7 @@ public class AIRobotUnloadFluids extends AIRobot {
 			}
 
 			if (((Pipe) station.getPipe().getPipe()).transport instanceof PipeTransportFluids) {
-				PipeTransportFluids transport = ((PipeTransportFluids) ((Pipe) station.getPipe().getPipe()).transport);
+				PipeTransportFluids transport = (PipeTransportFluids) ((Pipe) station.getPipe().getPipe()).transport;
 				FluidStack drainable = robot.drain(ForgeDirection.UNKNOWN, FluidContainerRegistry.BUCKET_VOLUME,
 						false);
 

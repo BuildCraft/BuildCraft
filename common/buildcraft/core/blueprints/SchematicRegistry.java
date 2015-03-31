@@ -12,13 +12,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
-
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-
 import buildcraft.api.blueprints.ISchematicRegistry;
 import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicBlock;
@@ -29,13 +26,12 @@ import buildcraft.api.core.JavaTools;
 public final class SchematicRegistry implements ISchematicRegistry {
 
 	public static SchematicRegistry INSTANCE = new SchematicRegistry();
-	
+	private static final HashMap<Class<? extends Schematic>, Constructor<?>> emptyConstructorMap = new HashMap<Class<? extends Schematic>, Constructor<?>>();
+
 	public final HashMap<String, SchematicConstructor> schematicBlocks =
 			new HashMap<String, SchematicConstructor>();
 
 	public final HashMap<Class<? extends Entity>, SchematicConstructor> schematicEntities = new HashMap<Class<? extends Entity>, SchematicConstructor>();
-
-	private static final HashMap<Class<? extends Schematic>, Constructor<?>> emptyConstructorMap = new HashMap<Class<? extends Schematic>, Constructor<?>>();
 
 	private final HashSet<String> modsForbidden = new HashSet<String>();
 	private final HashSet<String> blocksForbidden = new HashSet<String>();

@@ -36,7 +36,7 @@ public class BlockEngine extends BlockEngineBase {
 	public TileEntity createTileEntity(World world, int metadata) {
 		try {
 			return engineTiles.get(metadata % engineTiles.size()).newInstance();
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}

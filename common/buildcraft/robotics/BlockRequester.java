@@ -9,25 +9,12 @@
 package buildcraft.robotics;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
-import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftRobotics;
-import buildcraft.api.events.BlockInteractionEvent;
-import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.GuiIds;
-import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.lib.block.BlockBuildCraft;
 
 public class BlockRequester extends BlockBuildCraft {
 	public BlockRequester() {

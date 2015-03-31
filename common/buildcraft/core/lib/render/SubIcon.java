@@ -43,8 +43,8 @@ public class SubIcon implements IIcon {
 	}
 
 	@Override
-	public float getInterpolatedU(double p_94214_1_) {
-		return u + (uScale * (float) p_94214_1_ / (float) icon.getIconWidth());
+	public float getInterpolatedU(double uu) {
+		return u + (uScale * (float) uu / (float) icon.getIconWidth());
 	}
 
 	@Override
@@ -58,8 +58,8 @@ public class SubIcon implements IIcon {
 	}
 
 	@Override
-	public float getInterpolatedV(double p_94207_1_) {
-		return v + (vScale * (float) p_94207_1_ / (float) icon.getIconHeight());
+	public float getInterpolatedV(double vv) {
+		return v + (vScale * (float) vv / (float) icon.getIconHeight());
 	}
 
 	@Override

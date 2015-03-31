@@ -10,25 +10,19 @@ package buildcraft.builders;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-
 import cpw.mods.fml.relauncher.Side;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.Position;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.IBoxProvider;
 import buildcraft.core.LaserData;
-import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptBuilderBase;
@@ -36,6 +30,7 @@ import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.builders.BuildingItem;
 import buildcraft.core.builders.IBuildingItemsProvider;
+import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;

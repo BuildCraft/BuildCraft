@@ -11,16 +11,13 @@ package buildcraft.robotics.statements;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockWorkbench;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidHandler;
-
 import buildcraft.BuildCraftRobotics;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.statements.IActionExternal;

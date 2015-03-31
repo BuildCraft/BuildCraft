@@ -9,7 +9,6 @@
 package buildcraft.transport;
 
 import net.minecraft.inventory.IInventory;
-
 import buildcraft.api.core.ISerializable;
 
 public interface IFilteredPipe extends ISerializable {

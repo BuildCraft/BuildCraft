@@ -9,13 +9,10 @@
 package buildcraft.transport.gui;
 
 import java.util.Iterator;
-
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
-
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;

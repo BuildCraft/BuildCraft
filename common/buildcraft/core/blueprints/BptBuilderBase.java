@@ -10,9 +10,7 @@ package buildcraft.core.blueprints;
 
 import java.util.HashSet;
 import java.util.LinkedList;
-
 import org.apache.logging.log4j.Level;
-
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
@@ -22,12 +20,10 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.event.world.BlockEvent;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.IBuilderContext;
@@ -44,8 +40,8 @@ import buildcraft.core.builders.BuildingSlot;
 import buildcraft.core.builders.BuildingSlotBlock;
 import buildcraft.core.builders.IBuildingItemsProvider;
 import buildcraft.core.builders.TileAbstractBuilder;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.core.proxy.CoreProxy;
 
 public abstract class BptBuilderBase implements IAreaProvider {
 

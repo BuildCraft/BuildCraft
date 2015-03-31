@@ -14,17 +14,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
-import buildcraft.api.events.BlockInteractionEvent;
-import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.GuiIds;
 import buildcraft.core.IItemPipe;
+import buildcraft.core.lib.block.BlockBuildCraft;
 
 public class BlockHopper extends BlockBuildCraft {
 

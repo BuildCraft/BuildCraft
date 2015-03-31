@@ -8,13 +8,11 @@
  */
 package buildcraft.transport.gates;
 
-import java.util.Arrays;
 import java.util.List;
 import net.minecraft.tileentity.TileEntity;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.ITriggerInternal;
 
 public final class GateExpansionLightSensor extends GateExpansionBuildcraft implements IGateExpansion {

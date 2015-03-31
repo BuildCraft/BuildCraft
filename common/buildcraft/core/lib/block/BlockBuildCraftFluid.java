@@ -9,7 +9,6 @@
 package buildcraft.core.lib.block;
 
 import java.util.Random;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -19,15 +18,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
-
 import buildcraft.core.lib.render.EntityDropParticleFX;
 import buildcraft.core.lib.utils.ResourceUtils;
 

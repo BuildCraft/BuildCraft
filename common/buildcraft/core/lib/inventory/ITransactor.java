@@ -9,9 +9,7 @@
 package buildcraft.core.lib.inventory;
 
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.core.lib.inventory.filters.IStackFilter;
 
 public interface ITransactor {

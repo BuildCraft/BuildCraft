@@ -9,32 +9,21 @@
 package buildcraft.factory;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
-import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.GuiIds;
+import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.fluids.TankUtils;
-import buildcraft.core.lib.utils.Utils;
 
 public class BlockRefinery extends BlockBuildCraft {
 	public BlockRefinery() {

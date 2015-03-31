@@ -11,25 +11,21 @@ package buildcraft.transport.pipes;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
-
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.utils.ColorUtils;
@@ -38,7 +34,6 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TransportConstants;
 import buildcraft.transport.TravelingItem;
-import buildcraft.api.statements.StatementSlot;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.statements.ActionPipeColor;
 import buildcraft.transport.statements.ActionPipeDirection;

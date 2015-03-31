@@ -11,35 +11,31 @@ package buildcraft.transport.pipes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import cofh.api.energy.IEnergyHandler;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.statements.IActionInternal;
+import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.transport.IStripesHandler;
 import buildcraft.api.transport.IStripesHandler.StripesHandlerType;
 import buildcraft.api.transport.IStripesPipe;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.lib.inventory.InvUtils;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
-import buildcraft.api.statements.StatementSlot;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.statements.ActionPipeDirection;
 import buildcraft.transport.utils.TransportUtils;

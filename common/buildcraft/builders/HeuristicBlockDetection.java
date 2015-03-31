@@ -2,17 +2,14 @@ package buildcraft.builders;
 
 import java.util.BitSet;
 import java.util.Iterator;
-
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
-
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
-
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicFluid;
-import buildcraft.builders.schematics.SchematicBlockCreative;
-import buildcraft.builders.schematics.SchematicTileCreative;
+import buildcraft.core.builders.schematics.SchematicBlockCreative;
+import buildcraft.core.builders.schematics.SchematicTileCreative;
 import buildcraft.core.blueprints.SchematicRegistry;
 
 public final class HeuristicBlockDetection {

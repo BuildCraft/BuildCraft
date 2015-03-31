@@ -9,10 +9,8 @@
 package buildcraft.core.lib.utils;
 
 import org.apache.logging.log4j.Level;
-
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-
 import buildcraft.api.core.BCLog;
 
 public class ConfigUtils {

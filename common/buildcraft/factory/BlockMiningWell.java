@@ -13,7 +13,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import buildcraft.BuildCraftFactory;
 
 public class BlockMiningWell extends BlockLEDHatchBase {

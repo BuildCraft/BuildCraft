@@ -14,13 +14,10 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.HashSet;
 import java.util.UUID;
-
 import com.mojang.authlib.GameProfile;
-
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.client.renderer.GLAllocation;
@@ -31,7 +28,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.IIcon;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -43,7 +39,6 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.IPlantable;
@@ -52,7 +47,6 @@ import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.oredict.OreDictionary;
-
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
@@ -60,7 +54,6 @@ import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.IWorldProperty;
 import buildcraft.api.core.JavaTools;
-import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
@@ -73,13 +66,14 @@ import buildcraft.api.tiles.IControllable;
 import buildcraft.core.AchievementManager;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.BlockBuildTool;
+import buildcraft.core.BlockEngine;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.BuildCraftConfiguration;
 import buildcraft.core.CommandBuildCraft;
 import buildcraft.core.CompatHooks;
+import buildcraft.core.CoreGuiHandler;
 import buildcraft.core.CoreIconProvider;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.CoreGuiHandler;
 import buildcraft.core.InterModComms;
 import buildcraft.core.ItemDebugger;
 import buildcraft.core.ItemGear;
@@ -88,16 +82,27 @@ import buildcraft.core.ItemMapLocation;
 import buildcraft.core.ItemPaintbrush;
 import buildcraft.core.ItemSpring;
 import buildcraft.core.ItemWrench;
+import buildcraft.core.SchematicEngine;
 import buildcraft.core.SpringPopulate;
 import buildcraft.core.TickHandlerCore;
+import buildcraft.core.TileEngineWood;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.SchematicRegistry;
-import buildcraft.core.BlockEngine;
+import buildcraft.core.lib.engines.ItemEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
-import buildcraft.core.TileEngineWood;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.network.PacketHandler;
+import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.properties.WorldPropertyIsDirt;
+import buildcraft.core.properties.WorldPropertyIsFarmland;
+import buildcraft.core.properties.WorldPropertyIsFluidSource;
+import buildcraft.core.properties.WorldPropertyIsHarvestable;
+import buildcraft.core.properties.WorldPropertyIsLeaf;
+import buildcraft.core.properties.WorldPropertyIsOre;
+import buildcraft.core.properties.WorldPropertyIsShoveled;
+import buildcraft.core.properties.WorldPropertyIsSoft;
+import buildcraft.core.properties.WorldPropertyIsWood;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.recipes.IntegrationRecipeManager;
@@ -117,20 +122,6 @@ import buildcraft.core.statements.TriggerInventory;
 import buildcraft.core.statements.TriggerInventoryLevel;
 import buildcraft.core.statements.TriggerMachine;
 import buildcraft.core.statements.TriggerRedstoneInput;
-import buildcraft.core.lib.utils.ColorUtils;
-import buildcraft.core.properties.WorldPropertyIsDirt;
-import buildcraft.core.properties.WorldPropertyIsFarmland;
-import buildcraft.core.properties.WorldPropertyIsFluidSource;
-import buildcraft.core.properties.WorldPropertyIsHarvestable;
-import buildcraft.core.properties.WorldPropertyIsLeaf;
-import buildcraft.core.properties.WorldPropertyIsOre;
-import buildcraft.core.properties.WorldPropertyIsShoveled;
-import buildcraft.core.properties.WorldPropertyIsSoft;
-import buildcraft.core.properties.WorldPropertyIsWood;
-import buildcraft.core.lib.engines.ItemEngine;
-import buildcraft.core.SchematicEngine;
-import buildcraft.energy.fuels.CoolantManager;
-import buildcraft.energy.fuels.FuelManager;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.2.1236,)")
 public class BuildCraftCore extends BuildCraftMod {
@@ -142,6 +133,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static enum RenderMode {
 		Full, NoDynamic
 	}
+
 	public static RenderMode render = RenderMode.Full;
 	public static boolean debugWorldgen = false;
 	public static boolean modifyWorld = false;
@@ -240,9 +232,6 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildcraftRecipeRegistry.integrationTable = IntegrationRecipeManager.INSTANCE;
 		BuildcraftRecipeRegistry.refinery = RefineryRecipeManager.INSTANCE;
 		BuildcraftRecipeRegistry.programmingTable = ProgrammingRecipeManager.INSTANCE;
-
-		BuildcraftFuelRegistry.fuel = FuelManager.INSTANCE;
-		BuildcraftFuelRegistry.coolant = CoolantManager.INSTANCE;
 
 		BuilderAPI.schematicRegistry = SchematicRegistry.INSTANCE;
 		

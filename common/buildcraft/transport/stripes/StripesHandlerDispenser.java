@@ -1,7 +1,5 @@
 package buildcraft.transport.stripes;
 
-import scala.actors.threadpool.Arrays;
-
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.block.BlockDispenser;

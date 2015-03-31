@@ -11,30 +11,24 @@ package buildcraft.factory;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCoordIntPair;
-
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.blueprints.BuilderAPI;
@@ -52,16 +46,16 @@ import buildcraft.core.Box.Kind;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.DefaultAreaProvider;
 import buildcraft.core.IDropControlInventory;
-import buildcraft.core.lib.RFBattery;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.builders.patterns.FillerPattern;
-import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.utils.BlockMiner;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.proxy.CoreProxy;
 
 public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory, IDropControlInventory, IPipeConnection, IControllable {
 

@@ -9,9 +9,7 @@
 package buildcraft.core;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.api.core.ISerializable;
 
 public class ChunkIndex implements ISerializable {

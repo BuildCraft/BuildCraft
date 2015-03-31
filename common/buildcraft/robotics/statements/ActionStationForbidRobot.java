@@ -10,18 +10,17 @@ package buildcraft.robotics.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
-
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
-import buildcraft.core.statements.BCStatement;
+import buildcraft.api.statements.StatementSlot;
 import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.statements.BCStatement;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.ItemRobot;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.api.statements.StatementSlot;
 
 public class ActionStationForbidRobot extends BCStatement implements IActionInternal {
 	private final boolean invert;

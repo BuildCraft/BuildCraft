@@ -10,7 +10,6 @@ package buildcraft.core.lib.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockStaticLiquid;
 import net.minecraft.entity.item.EntityItem;
@@ -20,17 +19,12 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S27PacketExplosion;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.gen.ChunkProviderServer;
-
 import cpw.mods.fml.common.FMLCommonHandler;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
@@ -39,12 +33,12 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.core.proxy.CoreProxy;
 
 public final class BlockUtils {
+	private static Chunk lastChunk;
 
 	/**
 	 * Deactivate constructor
@@ -135,7 +129,7 @@ public final class BlockUtils {
 		}
 
 		// TODO: Make this support all "heavy" liquids, not just oil/lava
-		if (block instanceof IFluidBlock && ((IFluidBlock) block).getFluid() != null && ((IFluidBlock) block).getFluid().getName().equals("oil")) {
+		if (block instanceof IFluidBlock && ((IFluidBlock) block).getFluid() != null && "oil".equals(((IFluidBlock) block).getFluid().getName())) {
 			return false;
 		}
 
@@ -229,7 +223,6 @@ public final class BlockUtils {
 	/**
 	 * The following functions let you avoid unnecessary chunk loads, which is nice.
 	 */
-	private static Chunk lastChunk;
 
 	private static Chunk getChunkUnforced(World world, int x, int z) {
 		Chunk chunk = lastChunk;
@@ -259,7 +252,9 @@ public final class BlockUtils {
 			}
 			Chunk chunk = getChunkUnforced(world, x >> 4, z >> 4);
 			return chunk != null ? chunk.getTileEntityUnsafe(x & 15, y, z & 15) : null;
-		} else return world.getTileEntity(x, y, z);
+		} else {
+			return world.getTileEntity(x, y, z);
+		}
 	}
 
 	public static Block getBlock(World world, int x, int y, int z) {
@@ -273,7 +268,9 @@ public final class BlockUtils {
 			}
 			Chunk chunk = getChunkUnforced(world, x >> 4, z >> 4);
 			return chunk != null ? chunk.getBlock(x & 15, y, z & 15) : Blocks.air;
-		} else return world.getBlock(x, y, z);
+		} else {
+			return world.getBlock(x, y, z);
+		}
 	}
 
 	public static int getBlockMetadata(World world, int x, int y, int z) {
@@ -287,6 +284,8 @@ public final class BlockUtils {
 			}
 			Chunk chunk = getChunkUnforced(world, x >> 4, z >> 4);
 			return chunk != null ? chunk.getBlockMetadata(x & 15, y, z & 15) : 0;
-		} else return world.getBlockMetadata(x, y, z);
+		} else {
+			return world.getBlockMetadata(x, y, z);
+		}
 	}
 }

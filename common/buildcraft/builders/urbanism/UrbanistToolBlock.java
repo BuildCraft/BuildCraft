@@ -12,8 +12,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.core.DefaultProps;
-
 class UrbanistToolBlock extends UrbanistTool {
 
 	private static final ResourceLocation GUI_TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/urbanist_tool_place_block.png");

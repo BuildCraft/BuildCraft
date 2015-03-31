@@ -9,7 +9,7 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
 
-public class NetworkUtils {
+public final class NetworkUtils {
 	private NetworkUtils() {
 
 	}

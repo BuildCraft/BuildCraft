@@ -19,7 +19,7 @@ public class StripesHandlerPipeWires implements IStripesHandler {
 
 	@Override
 	public boolean shouldHandle(ItemStack stack) {
-		return (stack.getItem() instanceof ItemPipeWire);
+		return stack.getItem() instanceof ItemPipeWire;
 	}
 
 	@Override

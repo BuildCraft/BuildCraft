@@ -9,11 +9,8 @@
 package buildcraft.silicon.gui;
 
 import org.lwjgl.opengl.GL11;
-
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
-
-import buildcraft.core.DefaultProps;
 import buildcraft.silicon.TileIntegrationTable;
 
 public class GuiIntegrationTable extends GuiLaserTable {

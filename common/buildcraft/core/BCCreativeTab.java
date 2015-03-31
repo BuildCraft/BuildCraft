@@ -10,7 +10,6 @@ package buildcraft.core;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;

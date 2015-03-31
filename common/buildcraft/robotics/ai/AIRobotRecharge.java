@@ -13,7 +13,6 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.IStationFilter;
-import buildcraft.transport.PipeTransportPower;
 
 public class AIRobotRecharge extends AIRobot {
 

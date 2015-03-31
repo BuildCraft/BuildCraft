@@ -12,7 +12,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-
 import buildcraft.api.core.Position;
 
 public abstract class EntityLaser extends Entity {

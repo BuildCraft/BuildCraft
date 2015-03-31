@@ -11,9 +11,7 @@ package buildcraft.robotics;
 import java.util.Date;
 import java.util.List;
 import java.util.WeakHashMap;
-
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -30,11 +28,9 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -42,7 +38,6 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftRobotics;
 import buildcraft.api.boards.RedstoneBoardNBT;
@@ -55,6 +50,7 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IDockingStation;
 import buildcraft.api.robots.RobotManager;
+import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
@@ -68,10 +64,7 @@ import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.robotics.ai.AIRobotMain;
 import buildcraft.robotics.ai.AIRobotSleep;
 import buildcraft.robotics.statements.ActionRobotWorkInArea;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.api.statements.StatementSlot;
 
 public class EntityRobot extends EntityRobotBase implements
 		IEntityAdditionalSpawnData, IInventory, IFluidHandler, ICommandReceiver, IDebuggable {

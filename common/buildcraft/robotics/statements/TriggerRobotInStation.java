@@ -16,7 +16,6 @@ import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.statements.BCStatement;
 import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.EntityRobot;
-import buildcraft.robotics.ai.AIRobotSleep;
 
 public class TriggerRobotInStation extends BCStatement implements ITriggerInternal {
 

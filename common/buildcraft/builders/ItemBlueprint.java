@@ -9,22 +9,19 @@
 package buildcraft.builders;
 
 import java.util.List;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IIcon;
-
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.items.IBlueprintItem;
-import buildcraft.api.items.INamedItem;
-import buildcraft.core.blueprints.Blueprint;
-import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.BCCreativeTab;
+import buildcraft.core.blueprints.Blueprint;
+import buildcraft.core.blueprints.BlueprintBase;
+import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.blueprints.Template;
 import buildcraft.core.lib.items.ItemBuildCraft;
-import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.StringUtils;
 

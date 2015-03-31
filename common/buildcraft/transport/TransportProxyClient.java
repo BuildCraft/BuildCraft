@@ -14,9 +14,7 @@ import net.minecraft.world.World;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-
 import net.minecraftforge.client.MinecraftForgeClient;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.transport.render.FacadeItemRenderer;
 import buildcraft.transport.render.GateItemRenderer;

@@ -11,7 +11,7 @@ public class MapChunk {
 	private int x, z;
 	private byte[] data;
 
-	public MapChunk(int x, int y) {
+	public MapChunk(int x, int z) {
 		this.x = x;
 		this.z = z;
 		data = new byte[256];
@@ -34,19 +34,19 @@ public class MapChunk {
 	}
 
 	public void update(Chunk chunk) {
-		for (int z = 0; z < 16; z++) {
-			for (int x = 0; x < 16; x++) {
-				int y = chunk.getHeightValue(x, z);
+		for (int bz = 0; bz < 16; bz++) {
+			for (int bx = 0; bx < 16; bx++) {
+				int y = chunk.getHeightValue(bx, bz);
 				int color;
 
-				while ((color = chunk.getBlock(x, y, z).getMapColor(0).colorIndex) == MapColor.airColor.colorIndex) {
+				while ((color = chunk.getBlock(bx, y, bz).getMapColor(0).colorIndex) == MapColor.airColor.colorIndex) {
 					y--;
 					if (y < 0) {
 						break;
 					}
 				}
 
-				data[(z << 4) | x] = (byte) color;
+				data[(bz << 4) | bx] = (byte) color;
 			}
 		}
 	}

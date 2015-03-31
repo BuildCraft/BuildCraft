@@ -6,12 +6,10 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.builders.schematics;
+package buildcraft.core.builders.schematics;
 
 import java.util.LinkedList;
-
 import net.minecraft.item.ItemStack;
-
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 

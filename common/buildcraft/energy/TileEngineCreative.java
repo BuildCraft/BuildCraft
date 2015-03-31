@@ -9,24 +9,19 @@
 package buildcraft.energy;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ResourceLocation;
-
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.PowerMode;
-import buildcraft.core.TileEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.utils.StringUtils;
 
-public class TileEngineCreative extends TileEngine {
+public class TileEngineCreative extends TileEngineBase {
 	private PowerMode powerMode = PowerMode.M2;
 
 	@Override

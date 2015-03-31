@@ -9,7 +9,6 @@
 package buildcraft.robotics.ai;
 
 import java.util.Iterator;
-
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.EntityRobotBase;

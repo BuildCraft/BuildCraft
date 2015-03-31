@@ -11,17 +11,14 @@ package buildcraft.silicon.network;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.network.NetworkRegistry;
-
 import buildcraft.core.lib.network.Packet;
-import buildcraft.core.network.PacketIds;
 import buildcraft.core.lib.network.PacketSlotChange;
+import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.silicon.TileAdvancedCraftingTable;
 import buildcraft.silicon.TileAssemblyTable;

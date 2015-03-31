@@ -13,13 +13,10 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
-import buildcraft.core.TileEngine;
-import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.utils.Utils;
 
-public abstract class TileEngineWithInventory extends TileEngine implements IInventory, ISidedInventory {
+public abstract class TileEngineWithInventory extends TileEngineBase implements IInventory, ISidedInventory {
 
 	private final SimpleInventory inv;
     private final int[] defaultSlotArray;

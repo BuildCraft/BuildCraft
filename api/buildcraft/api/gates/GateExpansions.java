@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 public final class GateExpansions {

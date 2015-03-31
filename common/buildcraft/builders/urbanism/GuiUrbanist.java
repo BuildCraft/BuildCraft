@@ -10,15 +10,11 @@ package buildcraft.builders.urbanism;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
-import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 

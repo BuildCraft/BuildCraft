@@ -9,7 +9,6 @@
 package buildcraft.core;
 
 import java.util.Locale;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import buildcraft.core.lib.items.ItemBlockBuildCraft;

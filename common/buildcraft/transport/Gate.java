@@ -8,25 +8,19 @@
  */
 package buildcraft.transport;
 
-import scala.actors.threadpool.Arrays;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.BitSet;
-import java.util.Collections;
 import java.util.List;
-
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultiset;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGate;
@@ -34,22 +28,22 @@ import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IActionReceptor;
-import buildcraft.api.statements.ITriggerExternalOverride;
-import buildcraft.api.statements.containers.IRedstoneStatementContainer;
-import buildcraft.api.statements.containers.ISidedStatementContainer;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerExternal;
+import buildcraft.api.statements.ITriggerExternalOverride;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.statements.StatementParameterItemStack;
+import buildcraft.api.statements.StatementSlot;
+import buildcraft.api.statements.containers.IRedstoneStatementContainer;
+import buildcraft.api.statements.containers.ISidedStatementContainer;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.GuiIds;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.ItemGate;
-import buildcraft.api.statements.StatementSlot;
 import buildcraft.transport.gui.ContainerGateInterface;
 import buildcraft.transport.statements.ActionValve;
 

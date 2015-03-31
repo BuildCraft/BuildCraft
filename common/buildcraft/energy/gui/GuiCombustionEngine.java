@@ -10,8 +10,6 @@ package buildcraft.energy.gui;
 
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
-
-import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.energy.TileEngineIron;
 

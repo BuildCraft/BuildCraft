@@ -9,10 +9,8 @@
 package buildcraft.builders.schematics;
 
 import java.util.LinkedList;
-
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 

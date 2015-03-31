@@ -9,20 +9,14 @@
 package buildcraft.robotics;
 
 import io.netty.buffer.ByteBuf;
-
-import net.minecraft.block.material.MapColor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.chunk.Chunk;
-
-import buildcraft.BuildCraftRobotics;
-import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.items.INamedItem;
 import buildcraft.core.ItemMapLocation;
-import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.ZonePlan;
+import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.utils.NetworkUtils;
 
@@ -47,8 +41,8 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 	public void initialize() {
 		super.initialize();
 
-		int cx = (xCoord >> 4);
-		int cz = (zCoord >> 4);
+		int cx = xCoord >> 4;
+		int cz = zCoord >> 4;
 
 		chunkStartX = cx - RESOLUTION_CHUNKS / 2;
 		chunkStartZ = cz - RESOLUTION_CHUNKS / 2;

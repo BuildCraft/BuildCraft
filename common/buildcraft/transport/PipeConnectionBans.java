@@ -10,7 +10,6 @@ package buildcraft.transport;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.SetMultimap;
-
 import buildcraft.transport.pipes.PipeFluidsCobblestone;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
 import buildcraft.transport.pipes.PipeFluidsStone;

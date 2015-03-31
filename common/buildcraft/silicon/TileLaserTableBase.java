@@ -14,7 +14,6 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.api.power.ILaserTarget;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.lib.block.TileBuildCraft;

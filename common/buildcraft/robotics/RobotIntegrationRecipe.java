@@ -9,7 +9,6 @@
 package buildcraft.robotics;
 
 import net.minecraft.item.ItemStack;
-
 import buildcraft.BuildCraftRobotics;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.silicon.TileIntegrationTable;

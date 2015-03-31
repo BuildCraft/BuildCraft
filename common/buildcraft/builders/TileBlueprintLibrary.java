@@ -10,25 +10,20 @@ package buildcraft.builders;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
-
 import cpw.mods.fml.relauncher.Side;
-
 import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.library.ILibraryTypeHandler;
 import buildcraft.api.library.LibraryAPI;
 import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.lib.block.TileBuildCraft;
-import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;

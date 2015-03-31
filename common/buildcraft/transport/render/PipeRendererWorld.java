@@ -9,17 +9,15 @@
 package buildcraft.transport.render;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
-
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
@@ -88,7 +86,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				dim[dir / 2 + 3] = dir % 2 == 0 ? CoreConstants.PIPE_MIN_POS : 1;
 	
 				// the mask points to all faces perpendicular to dir, i.e. dirs 0+1 -> mask 111100, 1+2 -> 110011, 3+5 -> 001111
-				int renderMask = (3 << (dir / 2 * 2)) ^ 0x3f;
+				int renderMask = (3 << (dir & 0x6)) ^ 0x3f;
 	
 				fixForRenderPass(dim);
 				
@@ -100,6 +98,39 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				}
 				
 				renderTwoWayBlock(renderblocks, fakeBlock, x, y, z, dim, renderMask);
+
+				// Render connecting block
+				if (Minecraft.getMinecraft().gameSettings.fancyGraphics) {
+					ForgeDirection side = ForgeDirection.getOrientation(dir);
+					Block block = iblockaccess.getBlock(x + side.offsetX,
+							y + side.offsetY,
+							z + side.offsetZ);
+
+					double[] blockBB = new double[]{
+							block.getBlockBoundsMinX(),
+							block.getBlockBoundsMinY(),
+							block.getBlockBoundsMinZ(),
+							block.getBlockBoundsMaxX(),
+							block.getBlockBoundsMaxY(),
+							block.getBlockBoundsMaxZ()
+					};
+
+					resetToCenterDimensions(dim);
+
+					if (dir % 2 == 1) {
+						dim[dir / 2] = 0;
+						dim[dir / 2 + 3] = (float) blockBB[dir / 2];
+					} else {
+						dim[dir / 2] = (float) blockBB[dir / 2 + 3];
+						dim[dir / 2 + 3] = 1;
+					}
+
+					fixForRenderPass(dim);
+
+					renderTwoWayBlock(renderblocks, fakeBlock, x + side.offsetX,
+							y + side.offsetY,
+							z + side.offsetZ, dim, renderMask);
+				}
 			}
 			
 			fakeBlock.setColor(0xFFFFFF);

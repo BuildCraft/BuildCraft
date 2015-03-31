@@ -12,9 +12,7 @@ import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
-
 import com.google.common.collect.Lists;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -27,10 +25,8 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
-
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.power.ILaserTarget;
@@ -43,12 +39,12 @@ import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.inventory.filters.CraftingFilter;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
-import buildcraft.core.network.PacketIds;
 import buildcraft.core.lib.network.PacketSlotChange;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.network.PacketIds;
+import buildcraft.core.proxy.CoreProxy;
 
 public class TileAdvancedCraftingTable extends TileLaserTableBase implements IInventory, ILaserTarget, ISidedInventory {
 

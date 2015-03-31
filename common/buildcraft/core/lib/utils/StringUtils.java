@@ -9,7 +9,6 @@
 package buildcraft.core.lib.utils;
 
 import com.google.common.base.Splitter;
-
 import net.minecraft.util.StatCollector;
 
 public final class StringUtils {

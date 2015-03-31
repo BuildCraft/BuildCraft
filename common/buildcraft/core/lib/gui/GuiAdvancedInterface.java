@@ -9,9 +9,7 @@
 package buildcraft.core.lib.gui;
 
 import java.util.ArrayList;
-
 import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;

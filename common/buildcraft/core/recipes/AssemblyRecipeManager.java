@@ -11,10 +11,8 @@ package buildcraft.core.recipes;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.IAssemblyRecipeManager;
 import buildcraft.api.recipes.IFlexibleRecipe;

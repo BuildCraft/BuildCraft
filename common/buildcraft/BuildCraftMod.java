@@ -12,11 +12,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
-
-import org.apache.logging.log4j.Level;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
@@ -25,23 +20,20 @@ import net.minecraft.network.play.server.S3FPacketCustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
-import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.network.internal.FMLProxyPacket;
 import cpw.mods.fml.relauncher.Side;
-
-import buildcraft.api.core.BCLog;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.network.Packet;
 
 public class BuildCraftMod {
+	private static PacketSender sender = new PacketSender();
+	private static Thread senderThread = new Thread(sender);
+
 	public EnumMap<Side, FMLEmbeddedChannel> channels;
 
-	static abstract class SendRequest {
+	abstract static class SendRequest {
 		final Packet packet;
 		final BuildCraftMod source;
 
@@ -103,10 +95,10 @@ public class BuildCraftMod {
 
 		@Override
 		public void run() {
-			while(true) {
+			while (true) {
 				try {
 					Thread.sleep(10);
-				} catch(Exception e) {
+				} catch (Exception e) {
 
 				}
 
@@ -137,9 +129,6 @@ public class BuildCraftMod {
 			return packets.offer(r);
 		}
 	}
-
-	private static PacketSender sender = new PacketSender();
-	private static Thread senderThread = new Thread(sender);
 
 	static {
 		senderThread.start();

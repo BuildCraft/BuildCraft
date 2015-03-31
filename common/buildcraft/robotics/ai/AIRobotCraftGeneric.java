@@ -9,7 +9,6 @@
 package buildcraft.robotics.ai;
 
 import java.util.ArrayList;
-
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.inventory.filters.ArrayStackFilter;

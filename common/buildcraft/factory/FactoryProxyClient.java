@@ -9,18 +9,15 @@
 package buildcraft.factory;
 
 import java.lang.reflect.Method;
-
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.EntityBlock;
-import buildcraft.core.render.RenderBuilder;
 import buildcraft.core.lib.render.RenderVoid;
+import buildcraft.core.render.RenderBuilder;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingEntityBlocks.EntityRenderIndex;
 import buildcraft.factory.gui.GuiAutoCrafting;

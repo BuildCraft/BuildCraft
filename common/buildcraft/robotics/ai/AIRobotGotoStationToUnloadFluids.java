@@ -8,12 +8,8 @@
  */
 package buildcraft.robotics.ai;
 
-import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidHandler;
-
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
@@ -24,7 +20,6 @@ import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.robotics.statements.ActionStationAcceptFluids;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportFluids;
-import buildcraft.transport.PipeTransportItems;
 
 public class AIRobotGotoStationToUnloadFluids extends AIRobot {
 
@@ -71,7 +66,7 @@ public class AIRobotGotoStationToUnloadFluids extends AIRobot {
 			}
 
 			if (((Pipe) station.getPipe().getPipe()).transport instanceof PipeTransportFluids) {
-				PipeTransportFluids transport = ((PipeTransportFluids) ((Pipe) station.getPipe().getPipe()).transport);
+				PipeTransportFluids transport = (PipeTransportFluids) ((Pipe) station.getPipe().getPipe()).transport;
 				FluidStack drainable = robot.drain(ForgeDirection.UNKNOWN, 1, false);
 
 				int filledAmount = transport.fill(station.side, drainable, false);

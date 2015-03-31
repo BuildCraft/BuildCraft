@@ -9,18 +9,16 @@
 package buildcraft.robotics.ai;
 
 import java.util.Collection;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.robots.StackRequest;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
+import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.transport.IPipe;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
@@ -30,7 +28,6 @@ import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.robotics.statements.ActionStationRequestItems;
 import buildcraft.robotics.statements.ActionStationRequestItemsMachine;
 import buildcraft.transport.gates.ActionIterator;
-import buildcraft.api.statements.StatementSlot;
 
 public class AIRobotSearchStackRequest extends AIRobot {
 

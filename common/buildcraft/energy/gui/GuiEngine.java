@@ -12,13 +12,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CoreIconProvider;
+import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.utils.StringUtils;
-import buildcraft.core.lib.engines.TileEngineBase;
 
 public abstract class GuiEngine extends GuiBuildCraft {
 

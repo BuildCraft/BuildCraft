@@ -10,16 +10,15 @@ package buildcraft.robotics.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
-
 import buildcraft.api.core.IZone;
 import buildcraft.api.items.IMapLocation;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
-import buildcraft.core.statements.BCStatement;
-import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.api.statements.StatementSlot;
+import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.statements.BCStatement;
 
 public class ActionRobotWorkInArea extends BCStatement implements IActionInternal {
 

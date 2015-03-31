@@ -6,12 +6,12 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.builders.schematics;
+package buildcraft.core.builders.schematics;
 
 import buildcraft.api.blueprints.BuildingPermission;
-import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.api.blueprints.SchematicTile;
 
-public class SchematicBlockCreative extends SchematicBlock {
+public class SchematicTileCreative extends SchematicTile {
 
 	@Override
 	public BuildingPermission getBuildingPermission () {

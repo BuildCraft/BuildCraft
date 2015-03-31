@@ -10,14 +10,11 @@ package buildcraft.builders.gui;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
-
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.builders.TileArchitect;
 import buildcraft.core.DefaultProps;

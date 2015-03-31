@@ -10,7 +10,6 @@ package buildcraft.core.lib.network;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
-
 import cpw.mods.fml.common.network.FMLIndexedMessageToMessageCodec;
 import buildcraft.core.lib.network.command.PacketCommand;
 

@@ -10,12 +10,10 @@ package buildcraft.core.lib.utils;
 
 import java.io.IOException;
 import java.util.UUID;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
-import buildcraft.core.blueprints.BlueprintBase;
 
 public final class NBTUtils {
 

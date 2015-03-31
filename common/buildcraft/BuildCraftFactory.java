@@ -9,9 +9,7 @@
 package buildcraft;
 
 import java.util.List;
-
 import com.google.common.collect.Lists;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.init.Blocks;
@@ -19,7 +17,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -29,24 +26,22 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
-
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.SchematicTile;
-import buildcraft.builders.schematics.SchematicIgnoreMeta;
+import buildcraft.core.builders.schematics.SchematicIgnoreMeta;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.network.PacketHandler;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.lib.utils.ConfigUtils;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.BlockAutoWorkbench;
 import buildcraft.factory.BlockFloodGate;
 import buildcraft.factory.BlockFrame;
@@ -57,9 +52,9 @@ import buildcraft.factory.BlockPump;
 import buildcraft.factory.BlockQuarry;
 import buildcraft.factory.BlockRefinery;
 import buildcraft.factory.BlockTank;
+import buildcraft.factory.FactoryGuiHandler;
 import buildcraft.factory.FactoryProxy;
 import buildcraft.factory.FactoryProxyClient;
-import buildcraft.factory.FactoryGuiHandler;
 import buildcraft.factory.PumpDimensionList;
 import buildcraft.factory.TileAutoWorkbench;
 import buildcraft.factory.TileFloodGate;
@@ -295,11 +290,16 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 		if (autoWorkbenchBlock != null) {
 			CoreProxy.proxy.addCraftingRecipe(new ItemStack(autoWorkbenchBlock),
-					" g ",
 					"gwg",
-					" g ",
 					'w', Blocks.crafting_table,
-					'g', "gearWood");
+					'g', "gearStone");
+
+			CoreProxy.proxy.addCraftingRecipe(new ItemStack(autoWorkbenchBlock),
+					"g",
+					"w",
+					"g",
+					'w', Blocks.crafting_table,
+					'g', "gearStone");
 		}
 
 

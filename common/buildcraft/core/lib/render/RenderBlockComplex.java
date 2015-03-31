@@ -45,7 +45,7 @@ public class RenderBlockComplex implements ISimpleBlockRenderingHandler {
 			renderer.uvRotateBottom = Y_ROTATE[block.getFrontSide(meta) - 2];
 		}
 
-		double pDouble = ((pass > 0 ? 1 : 0) / 512.0);
+		double pDouble = (pass > 0 ? 1 : 0) / 512.0;
 		renderer.setRenderBounds(block.getBlockBoundsMinX() - pDouble,
 				block.getBlockBoundsMinY() - pDouble,
 				block.getBlockBoundsMinZ() - pDouble,

@@ -15,7 +15,6 @@ import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.statements.BCStatement;
 import buildcraft.robotics.DockingStation;
-import buildcraft.robotics.EntityRobot;
 
 public class TriggerRobotLinked extends BCStatement implements ITriggerInternal {
 	private final boolean reserved;

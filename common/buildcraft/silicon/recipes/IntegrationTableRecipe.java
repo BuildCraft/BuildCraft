@@ -9,7 +9,6 @@
 package buildcraft.silicon.recipes;
 
 import net.minecraft.item.ItemStack;
-
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IIntegrationRecipe;

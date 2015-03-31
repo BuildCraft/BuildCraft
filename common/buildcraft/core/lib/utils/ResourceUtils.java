@@ -8,7 +8,7 @@ import net.minecraft.client.resources.IResource;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
-public class ResourceUtils {
+public final class ResourceUtils {
 	private ResourceUtils() {
 
 	}

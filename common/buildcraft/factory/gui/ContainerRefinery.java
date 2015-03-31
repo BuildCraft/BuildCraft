@@ -9,22 +9,15 @@
 package buildcraft.factory.gui;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
-
 import net.minecraftforge.fluids.Fluid;
-
 import buildcraft.BuildCraftFactory;
-import buildcraft.api.core.ISerializable;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
-import buildcraft.core.network.PacketIds;
-import buildcraft.core.lib.network.PacketUpdate;
-import buildcraft.core.lib.network.Serializable;
 import buildcraft.factory.TileRefinery;
 
 public class ContainerRefinery extends BuildCraftContainer {

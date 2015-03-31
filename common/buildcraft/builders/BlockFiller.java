@@ -14,12 +14,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftBuilders;
-import buildcraft.core.BlockBuildCraftLED;
 import buildcraft.core.BCCreativeTab;
+import buildcraft.core.BlockBuildCraftLED;
 import buildcraft.core.GuiIds;
 
 public class BlockFiller extends BlockBuildCraftLED {

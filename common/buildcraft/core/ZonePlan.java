@@ -11,14 +11,10 @@ package buildcraft.core;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-
 import net.minecraftforge.common.util.Constants;
-
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.IZone;

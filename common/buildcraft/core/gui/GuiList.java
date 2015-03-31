@@ -12,9 +12,7 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-
 import buildcraft.BuildCraftCore;
-import buildcraft.core.DefaultProps;
 import buildcraft.core.ItemList;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;

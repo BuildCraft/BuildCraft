@@ -2,16 +2,14 @@ package buildcraft.robotics.ai;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-
 import net.minecraft.nbt.NBTTagCompound;
-
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.robots.ResourceIdBlock;
 import buildcraft.core.lib.utils.IBlockFilter;
 import buildcraft.core.lib.utils.IterableAlgorithmRunner;
 import buildcraft.core.lib.utils.PathFindingSearch;
-import buildcraft.api.robots.ResourceIdBlock;
 
 public class AIRobotSearchBlockBase extends AIRobot {
 

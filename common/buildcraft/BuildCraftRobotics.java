@@ -24,8 +24,12 @@ import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import buildcraft.api.boards.RedstoneBoardRegistry;
@@ -35,6 +39,7 @@ import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.transport.PipeManager;
+import buildcraft.builders.urbanism.UrbanistToolsIconProvider;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
@@ -50,11 +55,13 @@ import buildcraft.robotics.ImplRedstoneBoardRegistry;
 import buildcraft.robotics.ItemRedstoneBoard;
 import buildcraft.robotics.ItemRobot;
 import buildcraft.robotics.ItemRobotStation;
+import buildcraft.robotics.RobotIntegrationRecipe;
 import buildcraft.robotics.RobotRegistryProvider;
 import buildcraft.robotics.RobotStationPluggable;
 import buildcraft.robotics.RoboticsGuiHandler;
-import buildcraft.robotics.RobotIntegrationRecipe;
 import buildcraft.robotics.RoboticsProxy;
+import buildcraft.robotics.TileRequester;
+import buildcraft.robotics.TileZonePlan;
 import buildcraft.robotics.ai.AIRobotAttack;
 import buildcraft.robotics.ai.AIRobotBreak;
 import buildcraft.robotics.ai.AIRobotCraftAssemblyTable;
@@ -150,7 +157,7 @@ import buildcraft.robotics.statements.TriggerRobotLinked;
 import buildcraft.robotics.statements.TriggerRobotSleep;
 import buildcraft.silicon.ItemRedstoneChipset;
 
-@Mod(name = "BuildCraft Robotics", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Robotics", dependencies = DefaultProps.DEPENDENCY_SILICON_TRANSPORT)
+@Mod(name = "BuildCraft Robotics", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Robotics", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftRobotics extends BuildCraftMod {
 	@Mod.Instance("BuildCraft|Robotics")
 	public static BuildCraftRobotics instance;
@@ -254,8 +261,9 @@ public class BuildCraftRobotics extends BuildCraftMod {
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new RoboticsGuiHandler());
+		MinecraftForge.EVENT_BUS.register(this);
 
-		if (BuildCraftCore.loadDefaultRecipes) {
+		if (BuildCraftCore.loadDefaultRecipes && Loader.isModLoaded("BuildCraft|Silicon")) {
 			loadRecipes();
 		}
 
@@ -263,6 +271,9 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
 		PipeManager.registerPipePluggable(RobotStationPluggable.class, "robotStation");
 		EntityRegistry.registerModEntity(EntityRobot.class, "bcRobot", EntityIds.ROBOT, instance, 50, 1, true);
+
+		CoreProxy.proxy.registerTileEntity(TileZonePlan.class, "net.minecraft.src.buildcraft.commander.TileZonePlan");
+		CoreProxy.proxy.registerTileEntity(TileRequester.class, "net.minecraft.src.buildcraft.commander.TileRequester");
 
 		RobotManager.registryProvider = new RobotRegistryProvider();
 
@@ -372,6 +383,13 @@ public class BuildCraftRobotics extends BuildCraftMod {
 		BuildcraftRecipeRegistry.integrationTable.addRecipe(new RobotIntegrationRecipe("buildcraft:robotIntegration"));
 	}
 
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void textureHook(TextureStitchEvent.Pre event) {
+		if (event.map.getTextureType() == 1) {
+			RedstoneBoardRegistry.instance.registerIcons(event.map);
+		}
+	}
 
 	@Mod.EventHandler
 	public void serverUnload(FMLServerStoppingEvent event) {

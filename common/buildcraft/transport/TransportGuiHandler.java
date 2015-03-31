@@ -9,13 +9,10 @@
 package buildcraft.transport;
 
 import org.apache.logging.log4j.Level;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.network.IGuiHandler;
-
 import buildcraft.api.core.BCLog;
 import buildcraft.core.GuiIds;
 import buildcraft.transport.gui.ContainerDiamondPipe;

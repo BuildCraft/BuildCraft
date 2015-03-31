@@ -9,9 +9,7 @@
 package buildcraft.core.lib.network;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.item.ItemStack;
-
 import buildcraft.core.lib.utils.NetworkUtils;
 
 public class PacketSlotChange extends PacketCoordinates {

@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.material.Material;
@@ -38,19 +37,15 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.blocks.IColorRemovable;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
-import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.events.PipePlacedEvent;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
@@ -61,10 +56,10 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
-import buildcraft.core.lib.block.BlockBuildCraft;
-import buildcraft.core.CoreConstants;
 import buildcraft.core.BCCreativeTab;
+import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.TileBuffer;
+import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.gates.GateDefinition;

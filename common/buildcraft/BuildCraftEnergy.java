@@ -9,9 +9,7 @@
 package buildcraft;
 
 import java.util.Set;
-
 import org.apache.logging.log4j.Level;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -21,7 +19,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.world.biome.BiomeGenBase;
-
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -33,7 +30,6 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
@@ -42,7 +38,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.core.StackKey;
@@ -54,26 +49,28 @@ import buildcraft.core.BlockSpring;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
-import buildcraft.core.lib.network.ChannelHandler;
-import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.lib.block.BlockBuildCraftFluid;
-import buildcraft.energy.BucketHandler;
-import buildcraft.energy.EnergyProxy;
-import buildcraft.energy.EnergyGuiHandler;
-import buildcraft.energy.IMCHandlerEnergy;
-import buildcraft.energy.ItemBucketBuildcraft;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.engines.TileEngineBase.EnergyStage;
+import buildcraft.core.lib.network.ChannelHandler;
+import buildcraft.core.lib.network.PacketHandler;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.energy.BucketHandler;
+import buildcraft.energy.EnergyGuiHandler;
+import buildcraft.energy.EnergyProxy;
+import buildcraft.energy.IMCHandlerEnergy;
+import buildcraft.energy.ItemBucketBuildcraft;
 import buildcraft.energy.TileEngineCreative;
 import buildcraft.energy.TileEngineIron;
 import buildcraft.energy.TileEngineStone;
+import buildcraft.energy.fuels.CoolantManager;
+import buildcraft.energy.fuels.FuelManager;
 import buildcraft.energy.statements.EnergyStatementProvider;
 import buildcraft.energy.statements.TriggerEngineHeat;
 import buildcraft.energy.worldgen.BiomeGenOilDesert;
 import buildcraft.energy.worldgen.BiomeGenOilOcean;
 import buildcraft.energy.worldgen.BiomeInitializer;
 import buildcraft.energy.worldgen.OilPopulate;
-import buildcraft.transport.network.PacketHandlerTransport;
 
 @Mod(name = "BuildCraft Energy", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Energy", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftEnergy extends BuildCraftMod {
@@ -115,6 +112,9 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
+		BuildcraftFuelRegistry.fuel = FuelManager.INSTANCE;
+		BuildcraftFuelRegistry.coolant = CoolantManager.INSTANCE;
+
 		int oilDesertBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "biomeOilDesert", DefaultProps.BIOME_OIL_DESERT).getInt(DefaultProps.BIOME_OIL_DESERT);
 		int oilOceanBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "biomeOilOcean", DefaultProps.BIOME_OIL_OCEAN).getInt(DefaultProps.BIOME_OIL_OCEAN);
 		canOilBurn = BuildCraftCore.mainConfiguration.get("general", "burnOil", true, "Can oil burn?").getBoolean(true);
@@ -329,7 +329,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE.newChannel
-				(DefaultProps.NET_CHANNEL_NAME + "-ENERGY", new ChannelHandler(),  new PacketHandlerTransport());
+				(DefaultProps.NET_CHANNEL_NAME + "-ENERGY", new ChannelHandler(), new PacketHandler());
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new EnergyGuiHandler());
 

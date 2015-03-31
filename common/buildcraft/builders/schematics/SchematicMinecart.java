@@ -13,7 +13,6 @@ import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
-
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.Translation;

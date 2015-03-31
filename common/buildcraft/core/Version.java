@@ -13,16 +13,12 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-
 import net.minecraft.command.ICommandSender;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
-
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.event.FMLInterModComms;
-
 import net.minecraftforge.common.config.Property;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.proxy.CoreProxy;

@@ -12,9 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
-
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
@@ -23,7 +21,6 @@ import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.render.FakeBlock;
 import buildcraft.core.lib.render.TextureStateManager;
 import buildcraft.core.lib.utils.MatrixTranformations;
-import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.TileGenericPipe;

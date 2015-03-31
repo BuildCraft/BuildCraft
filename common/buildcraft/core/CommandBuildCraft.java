@@ -9,7 +9,6 @@
 package buildcraft.core;
 
 import java.util.List;
-
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
