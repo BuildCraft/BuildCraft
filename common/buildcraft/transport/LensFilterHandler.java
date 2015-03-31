@@ -8,9 +8,11 @@ import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.transport.pipes.events.PipeEventItem;
+import buildcraft.transport.pipes.events.PipeEventPriority;
 import buildcraft.transport.pluggable.LensPluggable;
 
 public class LensFilterHandler {
+	@PipeEventPriority(priority = -100)
 	public void eventHandler(PipeEventItem.FindDest event) {
 		IPipeTile container = event.pipe.getTile();
 		LinkedList<ForgeDirection> correctColored = new LinkedList<ForgeDirection>();

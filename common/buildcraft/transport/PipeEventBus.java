@@ -2,12 +2,14 @@ package buildcraft.transport;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 import buildcraft.transport.pipes.events.PipeEvent;
+import buildcraft.transport.pipes.events.PipeEventPriority;
 
 public class PipeEventBus {
 	private class EventHandler {
@@ -30,6 +32,21 @@ public class PipeEventBus {
 		}
 	}
 
+	private static class EventHandlerCompare implements Comparator<EventHandler> {
+		private int getPriority(EventHandler eh) {
+			PipeEventPriority p = eh.method.getAnnotation(PipeEventPriority.class);
+			return p != null ? p.priority() : 0;
+		}
+
+		@Override
+		public int compare(EventHandler o1, EventHandler o2) {
+			int priority1 = getPriority(o1);
+			int priority2 = getPriority(o2);
+			return priority2 - priority1;
+		}
+	}
+
+	private static final EventHandlerCompare COMPARATOR = new EventHandlerCompare();
 	private static final HashSet<Object> globalHandlers = new HashSet<Object>();
 
 	private final HashSet<Object> registeredHandlers = new HashSet<Object>();
@@ -68,12 +85,17 @@ public class PipeEventBus {
 					Class<? extends PipeEvent> eventType = (Class<? extends PipeEvent>) parameters[0];
 					List<EventHandler> eventHandlerList = getHandlerList(eventType);
 					eventHandlerList.add(new EventHandler(m, handler));
+					updateEventHandlers(eventHandlerList);
 					methods.put(m, eventType);
 				}
 			}
 		}
 
 		handlerMethods.put(handler, methods);
+	}
+
+	private void updateEventHandlers(List<EventHandler> eventHandlerList) {
+		eventHandlerList.sort(COMPARATOR);
 	}
 
 	public void unregisterHandler(Object handler) {

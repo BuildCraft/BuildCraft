@@ -106,14 +106,14 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 		readjustSpeed(item);
 		readjustPosition(item);
 
-		if (!container.getWorldObj().isRemote) {
-			item.output = resolveDestination(item);
-		}
-
 		PipeEventItem.Entered event = new PipeEventItem.Entered(container.pipe, item);
 		container.pipe.eventBus.handleEvent(PipeEventItem.Entered.class, event);
 		if (event.cancelled) {
 			return;
+		}
+
+		if (!container.getWorldObj().isRemote) {
+			item.output = resolveDestination(item);
 		}
 
 		items.add(item);
@@ -166,14 +166,14 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 		readjustSpeed(item);
 		readjustPosition(item);
 
-		if (!container.getWorldObj().isRemote) {
-			item.output = resolveDestination(item);
-		}
-
 		PipeEventItem.Entered event = new PipeEventItem.Entered(container.pipe, item);
 		container.pipe.eventBus.handleEvent(PipeEventItem.Entered.class, event);
 		if (event.cancelled) {
 			return;
+		}
+
+		if (!container.getWorldObj().isRemote) {
+			item.output = resolveDestination(item);
 		}
 
 		items.unscheduleRemoval(item);
@@ -220,7 +220,9 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 			}
 		}
 
-		Collections.shuffle(result);
+		if (event.shuffle) {
+			Collections.shuffle(result);
+		}
 
 		return result;
 	}

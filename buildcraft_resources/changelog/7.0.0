@@ -19,6 +19,7 @@ Additions:
   * Gate statement parameters now display the item stack information (asie)
 * Pipes:
   * Massive optimizations - up to 3x less server-intensive (asie, Player)
+  * Diamond pipes now sort in a round-robin manner, allowing for acting as Distribution Pipes (asie)
   * Improvements to Stripes Pipes:
     * Extending or retracting a Stripes Pipe now carries over all its gates, pipe wires and pluggables (asie)
     * You can now extend pipe wires by putting them into a Stripes Pipe (asie)
@@ -38,6 +39,7 @@ Additions:
   * Packets are now sent in a separate thread, causing most of the pipe optimizations and many other things (asie, Player)
 
 Bugfixes:
+* [#2372] Filters not working with Clay Pipes (asie)
 * **Stopped wooden item pipes from exploding** (asie)
 * Structure pipes not respecting blocking pluggables (asie)
 * Fixed alternate slimeball-based pipe sealant recipe being uncraftable (asie)

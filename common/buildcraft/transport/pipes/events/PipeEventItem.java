@@ -70,6 +70,7 @@ public abstract class PipeEventItem extends PipeEvent {
 
 	public static class FindDest extends PipeEventItem {
 		public final List<ForgeDirection> destinations;
+		public boolean shuffle = true;
 
 		public FindDest(Pipe pipe, TravelingItem item, List<ForgeDirection> destinations) {
 			super(pipe, item);

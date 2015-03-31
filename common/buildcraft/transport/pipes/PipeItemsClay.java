@@ -25,6 +25,7 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.pipes.events.PipeEventItem;
+import buildcraft.transport.pipes.events.PipeEventPriority;
 
 public class PipeItemsClay extends Pipe<PipeTransportItems> {
 
@@ -45,6 +46,7 @@ public class PipeItemsClay extends Pipe<PipeTransportItems> {
 		return PipeIconProvider.TYPE.PipeItemsClay.ordinal();
 	}
 
+    @PipeEventPriority(priority = -200)
     public void eventHandler(PipeEventItem.FindDest event) {
         LinkedList<ForgeDirection> nonPipesList = new LinkedList<ForgeDirection>();
         LinkedList<ForgeDirection> pipesList = new LinkedList<ForgeDirection>();
