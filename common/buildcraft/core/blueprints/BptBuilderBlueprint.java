@@ -338,8 +338,21 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 
 			try {
-				if (BlockUtils.isUnbreakableBlock(world, slot.x, slot.y, slot.z)
-						|| isBlockBreakCanceled(world, slot.x, slot.y, slot.z)) {
+				if (slot.isAlreadyBuilt(context)) {
+					if (slot.mode == Mode.Build) {
+						// Even slots that considered already built may need
+						// post processing calls. For example, flowing water
+						// may need to be adjusted, engines may need to be
+						// turned to the right direction, etc.
+						postProcessing.add(slot);
+					}
+
+					iterator.remove();
+
+					continue;
+				}
+
+				if (BlockUtils.isUnbreakableBlock(world, slot.x, slot.y, slot.z)) {
 					// if the block can't be broken, just forget this iterator
 					iterator.remove();
 
@@ -350,10 +363,11 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						builtLocations.add(new BlockIndex(slot.x,
 								slot.y, slot.z));
 					}
-				} else if (!slot.isAlreadyBuilt(context)) {
+				} else {
 					if (slot.mode == Mode.ClearIfInvalid) {
 						if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y,
-								slot.z)) {
+								slot.z)
+						|| isBlockBreakCanceled(world, slot.x, slot.y, slot.z)) {
 							iterator.remove();
 							clearedLocations.add(new BlockIndex(slot.x,
 									slot.y, slot.z));
@@ -374,13 +388,16 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					} else if (!slot.schematic.doNotBuild()) {
 						if (builder == null) {
 							return slot;
-						} else if (isBlockPlaceCanceled(world, x, y, z, slot.schematic)) {
-							// Forge does not allow us to place a block in
-							// this position.
-							iterator.remove();
-							builtLocations.add(new BlockIndex(slot.x,
-									slot.y, slot.z));
 						} else if (checkRequirements(builder, slot.schematic)) {
+							if (isBlockPlaceCanceled(world, slot.x, slot.y, slot.z, slot.schematic)) {
+								// Forge does not allow us to place a block in
+								// this position.
+								iterator.remove();
+								builtLocations.add(new BlockIndex(slot.x,
+										slot.y, slot.z));
+								continue;
+							}
+
 							// At this stage, regardless of the fact that the
 							// block can actually be built or not, we'll try.
 							// When the item reaches the actual block, we'll
@@ -397,20 +414,10 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						}
 					} else {
 						// Even slots that don't need to be build may need
-						// post processing, see below for the argument.
+						// post processing, see above for the argument.
 						postProcessing.add(slot);
 						iterator.remove();
 					}
-				} else {
-					if (slot.mode == Mode.Build) {
-						// Even slots that considered already built may need
-						// post processing calls. For example, flowing water
-						// may need to be adjusted, engines may need to be
-						// turned to the right direction, etc.
-						postProcessing.add(slot);
-					}
-
-					iterator.remove();
 				}
 			} catch (Throwable t) {
 				// Defensive code against errors in implementers
@@ -517,7 +524,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 		}
 
-		return !(builder.energyAvailable() < slot.getEnergyRequirement(stacksUsed));
+		return builder.energyAvailable() >= slot.getEnergyRequirement(stacksUsed);
 	}
 
 	@Override
