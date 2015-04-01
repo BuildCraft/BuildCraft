@@ -26,6 +26,7 @@ import buildcraft.api.statements.StatementSlot;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.SimpleInventory;
+import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.network.IGuiReturnHandler;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.PipeIconProvider;
@@ -113,7 +114,7 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 				if (filter == null) {
 					return null;
 				}
-				if (!filter.isItemEqual(stack)) {
+				if (!StackHelper.isMatchingItemOrList(stack, filter)) {
 					continue;
 				}
 				if (!inventory.canExtractItem(i, stack, from.ordinal())) {

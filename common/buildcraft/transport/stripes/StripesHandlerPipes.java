@@ -12,12 +12,16 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
+import buildcraft.core.proxy.CoreProxy;
+import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.ItemPipe;
+import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 
@@ -45,17 +49,17 @@ public class StripesHandlerPipes implements IStripesHandler {
 		Position p = new Position(x, y, z, direction);
 		p.moveBackwards(1.0D);
 
-		TileEntity tile = world.getTileEntity((int) p.x, (int) p.y, (int) p.z);
-		if (!(tile instanceof TileGenericPipe)) {
-			return false;
-		}
-		TileGenericPipe pipeTile = (TileGenericPipe) tile;
-		if (!(pipeTile.pipe.transport instanceof PipeTransportItems)) {
-			return false;
-		}
+		Pipe<?> pipe = BlockGenericPipe.createPipe(stack.getItem());
+		if (pipe.transport instanceof PipeTransportItems) {
+			// Checks done, request extension
+			BuildCraftTransport.pipeExtensionListener.requestPipeExtension(stack, world, (int) p.x, (int) p.y, (int) p.z, direction, activator);
+		} else {
+			// Fluid/power pipe, place in front instead
 
-		// Checks done, request extension
-		BuildCraftTransport.pipeExtensionListener.requestPipeExtension(stack, world, (int) p.x, (int) p.y, (int) p.z, direction, activator);
+			stack.getItem().onItemUse(stack,
+					CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world, (int) p.x, (int) p.y, (int) p.z).get(),
+					world, x, y, z, 1, 0, 0, 0);
+		}
 		return true;
 	}
 }
