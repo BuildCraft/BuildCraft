@@ -9,7 +9,7 @@
 package buildcraft.core.blueprints;
 
 import java.util.HashSet;
-import java.util.LinkedList;
+
 import org.apache.logging.log4j.Level;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -180,8 +180,6 @@ public abstract class BptBuilderBase implements IAreaProvider {
 	}
 
 	protected final boolean canDestroy(TileAbstractBuilder builder, IBuilderContext context, BuildingSlotBlock slot) {
-		LinkedList<ItemStack> result = new LinkedList<ItemStack>();
-
 		return builder.energyAvailable() >= getBlockBreakEnergy(slot);
 	}
 

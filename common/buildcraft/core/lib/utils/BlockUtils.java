@@ -178,7 +178,11 @@ public final class BlockUtils {
 		if (fluid != null && FluidRegistry.isFluidRegistered(fluid)) {
 			int meta = world.getBlockMetadata(x, y, z);
 
-			if (meta != 0) {
+			if (block instanceof IFluidBlock) {
+				if (!((IFluidBlock) block).canDrain(world, x, y, z)) {
+					return null;
+				}
+			} else if (meta != 0) {
 				return null;
 			}
 

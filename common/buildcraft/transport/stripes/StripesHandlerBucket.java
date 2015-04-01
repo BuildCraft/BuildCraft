@@ -8,16 +8,26 @@ import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidBlock;
+
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
+import buildcraft.core.utils.BlockUtils;
 
 public class StripesHandlerBucket implements IStripesHandler {
 	private static final ItemStack emptyBucket = new ItemStack(Items.bucket, 1);
-	
+
+	private ItemStack getFilledBucket(FluidStack fluidStack, Block underblock) {
+		if (underblock == Blocks.lava) {
+			return new ItemStack(Items.lava_bucket, 1);
+		} else if (underblock == Blocks.water) {
+			return new ItemStack(Items.water_bucket, 1);
+		} else {
+			return FluidContainerRegistry.fillFluidContainer(fluidStack, emptyBucket);
+		}
+	}
+
 	@Override
 	public StripesHandlerType getType() {
 		return StripesHandlerType.ITEM_USE;
@@ -45,33 +55,26 @@ public class StripesHandlerBucket implements IStripesHandler {
 				
 				return true;
 			} else {
-				ItemStack filledBucket = null;
-
-				if (underblock instanceof IFluidBlock) {
-					Fluid fluid = ((IFluidBlock) underblock).getFluid();
-					FluidStack fluidStack = new FluidStack(fluid, 1000);
-					filledBucket = FluidContainerRegistry.fillFluidContainer(fluidStack, emptyBucket);
-				}
-
-				if (underblock == Blocks.lava) {
-					filledBucket = new ItemStack(Items.lava_bucket, 1);
-				}
-
-				if (underblock == Blocks.water) {
-					filledBucket = new ItemStack(Items.water_bucket, 1);
-				}
-
-				if (filledBucket != null) {
-					world.setBlockToAir(x, y - 1, z);
-
-					activator.sendItem(filledBucket, direction.getOpposite());
-					stack.stackSize--;
-					if (stack.stackSize > 0) {
-						activator.sendItem(stack, direction.getOpposite());
-					}
-
+				if (!FluidContainerRegistry.isEmptyContainer(stack)) {
+					activator.sendItem(stack, direction.getOpposite());
 					return true;
 				}
+
+				FluidStack fluidStack = BlockUtils.drainBlock(underblock, world, x, y - 1, z, true);
+				ItemStack filledBucket = getFilledBucket(fluidStack, underblock);
+
+				if (fluidStack == null || filledBucket == null) {
+					activator.sendItem(stack, direction.getOpposite());
+					return true;
+				}
+
+				activator.sendItem(filledBucket, direction.getOpposite());
+				stack.stackSize--;
+				if (stack.stackSize > 0) {
+					activator.sendItem(stack, direction.getOpposite());
+				}
+
+				return true;
 			}
 		}
 		return false;
