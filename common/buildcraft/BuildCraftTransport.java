@@ -32,11 +32,15 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.RecipeSorter;
@@ -84,6 +88,7 @@ import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TransportGuiHandler;
 import buildcraft.transport.TransportProxy;
 import buildcraft.transport.WireIconProvider;
+import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.GateExpansionLightSensor;
@@ -467,6 +472,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
 		transportChannelHandler = new ChannelHandler();
+		MinecraftForge.EVENT_BUS.register(this);
 
 		transportChannelHandler.registerPacketType(PacketFluidUpdate.class);
 		transportChannelHandler.registerPacketType(PacketPipeTransportItemStack.class);
@@ -561,6 +567,33 @@ public class BuildCraftTransport extends BuildCraftMod {
 				writer.close();
 			} catch (Exception e) {
 				e.printStackTrace();
+			}
+		}
+	}
+
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void textureHook(TextureStitchEvent.Pre event) {
+		if (event.map.getTextureType() == 0) {
+			for (Item i : BlockGenericPipe.pipes.keySet()) {
+				Pipe<?> dummyPipe = BlockGenericPipe.createPipe(i);
+				if (dummyPipe != null) {
+					dummyPipe.getIconProvider().registerIcons(event.map);
+				}
+			}
+
+			wireIconProvider.registerIcons(event.map);
+
+			for (GateDefinition.GateMaterial material : GateDefinition.GateMaterial.VALUES) {
+				material.registerBlockIcon(event.map);
+			}
+
+			for (GateDefinition.GateLogic logic : GateDefinition.GateLogic.VALUES) {
+				logic.registerBlockIcon(event.map);
+			}
+
+			for (IGateExpansion expansion : GateExpansions.getExpansions()) {
+				expansion.registerBlockOverlay(event.map);
 			}
 		}
 	}

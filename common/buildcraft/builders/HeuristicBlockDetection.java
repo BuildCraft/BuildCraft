@@ -8,9 +8,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicFluid;
+import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.builders.schematics.SchematicBlockCreative;
 import buildcraft.core.builders.schematics.SchematicTileCreative;
-import buildcraft.core.blueprints.SchematicRegistry;
 
 public final class HeuristicBlockDetection {
 

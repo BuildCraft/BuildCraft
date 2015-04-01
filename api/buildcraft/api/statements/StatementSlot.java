@@ -24,6 +24,9 @@ public class StatementSlot {
 		for (int i = 0; i < parameters.length; i++) {
 			IStatementParameter p1 = parameters[i];
 			IStatementParameter p2 = s.parameters[i];
+			if (p1 == null && p2 != null) {
+				return false;
+			}
 			if (!(p1.equals(p2))) {
 				return false;
 			}

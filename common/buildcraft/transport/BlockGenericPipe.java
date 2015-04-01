@@ -47,8 +47,6 @@ import buildcraft.api.blocks.IColorRemovable;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.events.PipePlacedEvent;
-import buildcraft.api.gates.GateExpansions;
-import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.items.IMapLocation;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
@@ -62,7 +60,6 @@ import buildcraft.core.lib.TileBuffer;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.core.lib.utils.Utils;
-import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.render.PipeRendererWorld;
 
@@ -98,8 +95,6 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 			return String.format("RayTraceResult: %s, %s", hitPart == null ? "null" : hitPart.name(), boundingBox == null ? "null" : boundingBox.toString());
 		}
 	}
-
-	private boolean skippedFirstIconRegister;
 
 	/* Defined subprograms ************************************************* */
 	public BlockGenericPipe() {
@@ -907,31 +902,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister iconRegister) {
-		if (!skippedFirstIconRegister) {
-			skippedFirstIconRegister = true;
-			return;
-		}
 
-		BuildCraftTransport.instance.wireIconProvider.registerIcons(iconRegister);
-
-		for (Item i : pipes.keySet()) {
-			Pipe<?> dummyPipe = createPipe(i);
-			if (dummyPipe != null) {
-				dummyPipe.getIconProvider().registerIcons(iconRegister);
-			}
-		}
-
-		for (GateDefinition.GateMaterial material : GateDefinition.GateMaterial.VALUES) {
-			material.registerBlockIcon(iconRegister);
-		}
-
-		for (GateDefinition.GateLogic logic : GateDefinition.GateLogic.VALUES) {
-			logic.registerBlockIcon(iconRegister);
-		}
-
-		for (IGateExpansion expansion : GateExpansions.getExpansions()) {
-			expansion.registerBlockOverlay(iconRegister);
-		}
 	}
 
 	/**

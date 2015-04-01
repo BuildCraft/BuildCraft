@@ -171,9 +171,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 			block = BuildCraftTransport.genericPipeBlock;
 			IIcon textureID = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal()); // Structure pipe
 
-			block.setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS - 1F / 16F);
-			block.setBlockBoundsForItemRender();
-			render.setRenderBoundsFromBlock(block);
+			render.setRenderBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS - 1F / 16F);
 			GL11.glTranslatef(translateX, translateY, translateZ + 0.25F);
 
 			tessellator.startDrawingQuads();
@@ -202,7 +200,6 @@ public class FacadeItemRenderer implements IItemRenderer {
 			tessellator.draw();
 		}
 		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 	}
 
 	@Override

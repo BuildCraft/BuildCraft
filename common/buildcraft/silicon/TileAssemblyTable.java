@@ -93,11 +93,13 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 			if (currentRecipe.canBeCrafted(this)) {
 				ItemStack remaining = currentRecipe.craft(this, false).crafted.copy();
 
-				EntityRobotBase robot = RobotManager.registryProvider.getRegistry(worldObj)
-						.robotTaking(new ResourceIdAssemblyTable(this));
+				if (RobotManager.registryProvider != null) {
+					EntityRobotBase robot = RobotManager.registryProvider.getRegistry(worldObj)
+							.robotTaking(new ResourceIdAssemblyTable(this));
 
-				if (robot != null) {
-					remaining = robot.receiveItem(this, remaining);
+					if (robot != null) {
+						remaining = robot.receiveItem(this, remaining);
+					}
 				}
 
 				if (remaining != null && remaining.stackSize > 0) {

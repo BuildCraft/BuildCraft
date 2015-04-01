@@ -15,6 +15,7 @@ import java.util.Set;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import buildcraft.core.lib.utils.NBTUtils;
+
 import gnu.trove.map.hash.TLongObjectHashMap;
 
 public class MapWorld {

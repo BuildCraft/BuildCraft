@@ -2,6 +2,7 @@ package buildcraft.robotics.map;
 
 import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.core.INBTStoreable;
+
 import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class MapRegion implements INBTStoreable {
