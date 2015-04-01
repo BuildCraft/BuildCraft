@@ -164,6 +164,10 @@ public class BptBuilderTemplate extends BptBuilderBase {
 				break;
 			}
 
+			if (!world.blockExists(slot.x, slot.y, slot.z)) {
+				continue;
+			}
+
 			if (canDestroy(builder, context, slot)) {
 				if (BlockUtils.isUnbreakableBlock(world, slot.x, slot.y, slot.z)
 						|| isBlockBreakCanceled(world, slot.x, slot.y, slot.z)
