@@ -1,20 +1,20 @@
 package buildcraft.transport.stripes;
 
-import buildcraft.core.utils.BlockUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBucket;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.*;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
+import buildcraft.core.utils.BlockUtils;
 
 public class StripesHandlerBucket implements IStripesHandler {
 	private static final ItemStack emptyBucket = new ItemStack(Items.bucket, 1);
@@ -65,8 +65,6 @@ public class StripesHandlerBucket implements IStripesHandler {
 				ItemStack filledBucket = getFilledBucket(fluidStack, underblock);
 
 				if (fluidStack == null || filledBucket == null) {
-					if (fluidStack == null) System.out.println("FS NULL");
-					if (filledBucket == null) System.out.println("FB NULL");
 					activator.sendItem(stack, direction.getOpposite());
 					return true;
 				}
