@@ -30,12 +30,32 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	public final Tank tank = new Tank("tank", FluidContainerRegistry.BUCKET_VOLUME * 16, this);
 	public final TankManager<Tank> tankManager = new TankManager<Tank>(tank);
 	public boolean hasUpdate = false;
+	public boolean hasNetworkUpdate = false;
 	public SafeTimeTracker tracker = new SafeTimeTracker(2 * BuildCraftCore.updateFactor);
 	private int prevLightValue = 0;
+	private int cachedComparatorOverride = 0;
+
+	@Override
+	public void initialize() {
+		super.initialize();
+		updateComparators();
+	}
+
+	protected void updateComparators() {
+		int co = calculateComparatorInputOverride();
+		TileTank tank = getBottomTank();
+		while (tank != null) {
+			tank.cachedComparatorOverride = co;
+			tank.hasUpdate = true;
+			tank = getTankAbove(tank);
+		}
+	}
 
 	/* UPDATING */
 	@Override
 	public void updateEntity() {
+		super.updateEntity();
+
 		if (worldObj.isRemote) {
 			int lightValue = getFluidLightLevel();
 			if (prevLightValue != lightValue) {
@@ -50,9 +70,14 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 			moveFluidBelow();
 		}
 
-		if (hasUpdate && tracker.markTimeIfDelay(worldObj)) {
-			sendNetworkUpdate();
+		if (hasUpdate) {
+			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, blockType);
 			hasUpdate = false;
+		}
+
+		if (hasNetworkUpdate && tracker.markTimeIfDelay(worldObj)) {
+			sendNetworkUpdate();
+			hasNetworkUpdate = false;
 		}
 	}
 
@@ -101,7 +126,6 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	}
 
 	public TileTank getTopTank() {
-
 		TileTank lastTank = this;
 
 		while (true) {
@@ -140,10 +164,16 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 			return;
 		}
 
+		int oldComparator = getComparatorInputOverride();
 		int used = below.tank.fill(tank.getFluid(), true);
+
 		if (used > 0) {
-			hasUpdate = true; // not redundant because tank.drain operates on an IFluidTank, not a tile
-			below.hasUpdate = true; // redundant because below.fill sets hasUpdate
+			hasNetworkUpdate = true; // not redundant because tank.drain operates on an IFluidTank, not a tile
+			below.hasNetworkUpdate = true; // redundant because below.fill sets hasUpdate
+
+			if (oldComparator != calculateComparatorInputOverride()) {
+				updateComparators();
+			}
 
 			tank.drain(used, true);
 		}
@@ -165,24 +195,38 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 			return 0;
 		}
 
+		int oldComparator = getComparatorInputOverride();
+
 		while (tankToFill != null && resourceCopy.amount > 0) {
 			int used = tankToFill.tank.fill(resourceCopy, doFill);
 			resourceCopy.amount -= used;
 			if (used > 0) {
-				tankToFill.hasUpdate = true;
+				tankToFill.hasNetworkUpdate = true;
 			}
 
 			totalUsed += used;
 			tankToFill = getTankAbove(tankToFill);
 		}
+
+		if (oldComparator != calculateComparatorInputOverride()) {
+			updateComparators();
+		}
+
 		return totalUsed;
 	}
 
 	@Override
 	public FluidStack drain(ForgeDirection from, int maxEmpty, boolean doDrain) {
 		TileTank bottom = getBottomTank();
-		bottom.hasUpdate = true;
-		return bottom.tank.drain(maxEmpty, doDrain);
+		bottom.hasNetworkUpdate = true;
+		int oldComparator = getComparatorInputOverride();
+		FluidStack output = bottom.tank.drain(maxEmpty, doDrain);
+
+		if (oldComparator != calculateComparatorInputOverride()) {
+			updateComparators();
+		}
+
+		return output;
 	}
 
 	@Override
@@ -247,5 +291,18 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	public int getFluidLightLevel() {
 		FluidStack tankFluid = tank.getFluid();
 		return tankFluid == null ? 0 : tankFluid.getFluid().getLuminosity(tankFluid);
+	}
+
+	public int calculateComparatorInputOverride() {
+		FluidTankInfo[] info = getTankInfo(ForgeDirection.UNKNOWN);
+		if (info.length > 0 && info[0] != null && info[0].fluid != null) {
+			return (info[0].fluid.amount * 15 / info[0].capacity);
+		} else {
+			return 0;
+		}
+	}
+
+	public int getComparatorInputOverride() {
+		return cachedComparatorOverride;
 	}
 }

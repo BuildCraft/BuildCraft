@@ -8,6 +8,7 @@
  */
 package buildcraft.factory;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
@@ -35,6 +36,22 @@ public class BlockTank extends BlockBuildCraft {
 		setBlockBounds(0.125F, 0F, 0.125F, 0.875F, 1F, 0.875F);
 		setHardness(0.5F);
 		setCreativeTab(BCCreativeTab.get("main"));
+	}
+
+	@Override
+	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
+		TileEntity tileAbove = world.getTileEntity(x, y + 1, z);
+		TileEntity tileBelow = world.getTileEntity(x, y - 1, z);
+
+		super.breakBlock(world, x, y, z, block, par6);
+
+		if (tileAbove instanceof TileTank) {
+			((TileTank) tileAbove).updateComparators();
+		}
+
+		if (tileBelow instanceof TileTank) {
+			((TileTank) tileBelow).updateComparators();
+		}
 	}
 
 	@Override
@@ -184,5 +201,22 @@ public class BlockTank extends BlockBuildCraft {
 		}
 
 		return super.getLightValue(world, x, y, z);
+	}
+
+	@Override
+	public boolean hasComparatorInputOverride() {
+		return true;
+	}
+
+	@Override
+	public int getComparatorInputOverride(World world, int x, int y, int z, int side) {
+		TileEntity tile = world.getTileEntity(x, y, z);
+
+		if (tile instanceof TileTank) {
+			TileTank tank = (TileTank) tile;
+			return tank.getComparatorInputOverride();
+		}
+
+		return 0;
 	}
 }
