@@ -168,7 +168,7 @@ public final class BlockUtils {
 	}
 
 	public static Fluid getFluid(Block block) {
-		return FluidRegistry.lookupFluidForBlock (block);
+		return FluidRegistry.lookupFluidForBlock(block);
 	}
 
 	public static FluidStack drainBlock(World world, int x, int y, int z, boolean doDrain) {
@@ -181,7 +181,11 @@ public final class BlockUtils {
 		if (fluid != null && FluidRegistry.isFluidRegistered(fluid)) {
 			int meta = world.getBlockMetadata(x, y, z);
 
-			if (meta != 0) {
+			if (block instanceof IFluidBlock) {
+				if (!((IFluidBlock) block).canDrain(world, x, y, z)) {
+					return null;
+				}
+			} else if (meta != 0) {
 				return null;
 			}
 
