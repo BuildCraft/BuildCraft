@@ -23,6 +23,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.Constants;
@@ -449,14 +451,19 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 			facade6Hollow.stackSize = 6;
 
 			// 3 Structurepipes + this block makes 6 facades
-			BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId, 8000, facade6, new ItemStack(
-					BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
+			if (Loader.isModLoaded("BuildCraft|Silicon")) {
+				BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId, 8000, facade6, new ItemStack(
+						BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
 
-			BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":hollow", 8000, facade6Hollow, new ItemStack(
-					BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
+				BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":hollow", 8000, facade6Hollow, new ItemStack(
+						BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
 
-			BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":toHollow", 160, facadeHollow, facade);
-			BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":fromHollow", 160, facade, facadeHollow);
+				BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":toHollow", 160, facadeHollow, facade);
+				BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":fromHollow", 160, facade, facadeHollow);
+			} else {
+				GameRegistry.addShapedRecipe(facade6, "t ", "ts", "t ", 't', itemStack, 's', BuildCraftTransport.pipeStructureCobblestone);
+				GameRegistry.addShapedRecipe(facade6Hollow, "t ", " s", "t ", 't', itemStack, 's', BuildCraftTransport.pipeStructureCobblestone);
+			}
 		}
 	}
 

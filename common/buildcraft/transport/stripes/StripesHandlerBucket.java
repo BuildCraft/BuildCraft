@@ -13,7 +13,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
-import buildcraft.core.utils.BlockUtils;
+import buildcraft.core.lib.utils.BlockUtils;
 
 public class StripesHandlerBucket implements IStripesHandler {
 	private static final ItemStack emptyBucket = new ItemStack(Items.bucket, 1);
