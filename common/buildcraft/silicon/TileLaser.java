@@ -249,6 +249,9 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 	}
 
 	protected void removeLaser() {
+		if (powerAverage > 0) {
+			pushPower(0);
+		}
 		if (laser.isVisible) {
 			laser.isVisible = false;
 			// force sending the network update even if the network tracker

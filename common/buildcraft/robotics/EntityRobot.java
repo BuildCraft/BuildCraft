@@ -270,13 +270,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 		if (worldObj.isRemote) {
 			updateDataClient();
-
-			energyFX += energySpendPerCycle;
-
-			if (energyFX >= 100) {
-				energyFX = 0;
-				spawnEnergyFX();
-			}
+			updateEnergyFX();
 		}
 
 		if (currentDockingStation != null) {
@@ -343,6 +337,16 @@ public class EntityRobot extends EntityRobotBase implements
 			return false;
 		}
 		return true;
+	}
+
+	@SideOnly(Side.CLIENT)
+	private void updateEnergyFX() {
+		energyFX += energySpendPerCycle;
+
+		if (energyFX >= (100 << (2 * Minecraft.getMinecraft().gameSettings.particleSetting))) {
+			energyFX = 0;
+			spawnEnergyFX();
+		}
 	}
 
 	@SideOnly(Side.CLIENT)

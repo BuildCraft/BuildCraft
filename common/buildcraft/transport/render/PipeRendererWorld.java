@@ -8,15 +8,19 @@
  */
 package buildcraft.transport.render;
 
+import buildcraft.transport.*;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockChest;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.render.ITextureStates;
@@ -25,10 +29,6 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.render.FakeBlock;
 import buildcraft.core.lib.utils.ColorUtils;
-import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.PipeRenderState;
-import buildcraft.transport.TileGenericPipe;
-import buildcraft.transport.TransportProxy;
 
 public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	
@@ -102,34 +102,50 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				// Render connecting block
 				if (Minecraft.getMinecraft().gameSettings.fancyGraphics) {
 					ForgeDirection side = ForgeDirection.getOrientation(dir);
-					Block block = iblockaccess.getBlock(x + side.offsetX,
-							y + side.offsetY,
-							z + side.offsetZ);
+					int px = x + side.offsetX;
+					int py = y + side.offsetY;
+					int pz = z + side.offsetZ;
+					Block block = iblockaccess.getBlock(px, py, pz);
+					if (!(block instanceof BlockGenericPipe) && !block.isOpaqueCube()) {
 
-					double[] blockBB = new double[]{
-							block.getBlockBoundsMinX(),
-							block.getBlockBoundsMinY(),
-							block.getBlockBoundsMinZ(),
-							block.getBlockBoundsMaxX(),
-							block.getBlockBoundsMaxY(),
-							block.getBlockBoundsMaxZ()
-					};
+						double[] blockBB;
+						if (block instanceof BlockChest) {
+							// work around what sems to be a vanilla bug?
+							blockBB = new double[]{
+									0, 0.0625F, 0.0625F,
+									0.875F, 0.9375F, 0.9375F
+							};
+						} else {
+							block.setBlockBoundsBasedOnState(iblockaccess, px, py, pz);
 
-					resetToCenterDimensions(dim);
+							blockBB = new double[]{
+									block.getBlockBoundsMinY(),
+									block.getBlockBoundsMinX(),
+									block.getBlockBoundsMinZ(),
+									block.getBlockBoundsMaxY(),
+									block.getBlockBoundsMaxX(),
+									block.getBlockBoundsMaxZ()
+							};
+						}
 
-					if (dir % 2 == 1) {
-						dim[dir / 2] = 0;
-						dim[dir / 2 + 3] = (float) blockBB[dir / 2];
-					} else {
-						dim[dir / 2] = (float) blockBB[dir / 2 + 3];
-						dim[dir / 2 + 3] = 1;
+						if ((dir % 2 == 1 && blockBB[dir / 2] != 0) || (dir % 2 == 0 && blockBB[dir / 2 + 3] != 1)) {
+							resetToCenterDimensions(dim);
+
+							if (dir % 2 == 1) {
+								dim[dir / 2] = 0;
+								dim[dir / 2 + 3] = (float) blockBB[dir / 2];
+							} else {
+								dim[dir / 2] = (float) blockBB[dir / 2 + 3];
+								dim[dir / 2 + 3] = 1;
+							}
+
+							fixForRenderPass(dim);
+
+							renderTwoWayBlock(renderblocks, fakeBlock, x + side.offsetX,
+									y + side.offsetY,
+									z + side.offsetZ, dim, renderMask);
+						}
 					}
-
-					fixForRenderPass(dim);
-
-					renderTwoWayBlock(renderblocks, fakeBlock, x + side.offsetX,
-							y + side.offsetY,
-							z + side.offsetZ, dim, renderMask);
 				}
 			}
 			
@@ -212,9 +228,10 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 		// Here to prevent Minecraft from crashing when nothing renders on render pass zero
 		// This is likely a bug, and has been submitted as an issue to the Forge team
-		renderer.setRenderBounds(0, 0, 0, 0, 0, 0);
-		renderer.renderStandardBlock(Blocks.stone, x, y, z);
-		renderer.setRenderBoundsFromBlock(block);
+		// TODO: Removed temporaily during 7.0 Beta to see if it's still an issue
+		// renderer.setRenderBounds(0, 0, 0, 0, 0, 0);
+		// renderer.renderStandardBlock(Blocks.stone, x, y, z);
+		// renderer.setRenderBoundsFromBlock(block);
 
 		if (tile instanceof TileGenericPipe) {
 			TileGenericPipe pipeTile = (TileGenericPipe) tile;
