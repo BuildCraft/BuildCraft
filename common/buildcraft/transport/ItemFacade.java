@@ -138,6 +138,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 	}
 
 	public static final ArrayList<ItemStack> allFacades = new ArrayList<ItemStack>();
+	public static final ArrayList<ItemStack> allHollowFacades = new ArrayList<ItemStack>();
 	public static final ArrayList<String> allFacadeIDs = new ArrayList<String>();
 	public static final ArrayList<String> blacklistedFacades = new ArrayList<String>();
 
@@ -212,9 +213,11 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(Item item, CreativeTabs par2CreativeTabs, List itemList) {
-		// Do not call super, that would add a 0:0 facade
 		for (ItemStack stack : allFacades) {
-			itemList.add(stack.copy());
+			itemList.add(stack);
+		}
+		for (ItemStack stack : allHollowFacades) {
+			itemList.add(stack);
 		}
 	}
 
@@ -444,6 +447,8 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 
 			FacadeState state = getFacadeStates(facade6)[0];
 			ItemStack facadeHollow = getFacade(new FacadeState(state.block, state.metadata, state.wire, true));
+
+			allHollowFacades.add(facadeHollow);
 
 			ItemStack facade6Hollow = facadeHollow.copy();
 			facade6Hollow.stackSize = 6;
