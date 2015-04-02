@@ -12,7 +12,6 @@ import net.minecraft.entity.Entity;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.lib.inventory.TransactorSimple;
 import buildcraft.core.lib.utils.IEntityFilter;
 
 public class AIRobotSearchEntity extends AIRobot {
@@ -28,7 +27,7 @@ public class AIRobotSearchEntity extends AIRobot {
 	}
 
 	public AIRobotSearchEntity(EntityRobotBase iRobot, IEntityFilter iFilter, float iMaxRange, IZone iZone) {
-		super(iRobot);
+		this(iRobot);
 
 		maxRange = iMaxRange;
 		zone = iZone;
@@ -38,7 +37,6 @@ public class AIRobotSearchEntity extends AIRobot {
 	@Override
 	public void start() {
 		double previousDistance = Double.MAX_VALUE;
-		TransactorSimple inventoryInsert = new TransactorSimple(robot);
 
 		for (Object o : robot.worldObj.loadedEntityList) {
 			Entity e = (Entity) o;

@@ -26,7 +26,7 @@ public class AIRobotGotoStation extends AIRobot {
 	}
 
 	public AIRobotGotoStation(EntityRobotBase iRobot, DockingStation station) {
-		super(iRobot);
+		this(iRobot);
 
 		stationIndex = station.index();
 		stationSide = station.side();

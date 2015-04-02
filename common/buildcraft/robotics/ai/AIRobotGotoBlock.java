@@ -34,7 +34,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 	}
 
 	public AIRobotGotoBlock(EntityRobotBase robot, int x, int y, int z) {
-		super(robot);
+		this(robot);
 		finalX = x;
 		finalY = y;
 		finalZ = z;

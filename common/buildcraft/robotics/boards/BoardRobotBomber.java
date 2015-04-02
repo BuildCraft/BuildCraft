@@ -15,7 +15,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.inventory.ITransactor;
@@ -31,8 +30,6 @@ import buildcraft.robotics.ai.AIRobotSearchRandomGroundBlock;
 public class BoardRobotBomber extends RedstoneBoardRobot {
 
 	private static final IStackFilter TNT_FILTER = new ArrayStackFilter(new ItemStack(Blocks.tnt));
-
-	private BlockIndex target = null;
 
 	private int flyingHeight = 20;
 

@@ -25,7 +25,7 @@ public class AIRobotSearchAndGotoStation extends AIRobot {
 	}
 
 	public AIRobotSearchAndGotoStation(EntityRobotBase iRobot, IStationFilter iFilter, IZone iZone) {
-		super(iRobot);
+		this(iRobot);
 
 		filter = iFilter;
 		zone = iZone;

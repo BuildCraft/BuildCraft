@@ -24,7 +24,7 @@ public class AIRobotGotoStationAndUnload extends AIRobot {
 	}
 
 	public AIRobotGotoStationAndUnload(EntityRobotBase iRobot, IZone iZone) {
-		super(iRobot);
+		this(iRobot);
 
 		zone = iZone;
 	}

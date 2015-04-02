@@ -36,7 +36,7 @@ public class AIRobotBreak extends AIRobot {
 	}
 
 	public AIRobotBreak(EntityRobotBase iRobot, BlockIndex iBlockToBreak) {
-		super(iRobot);
+		this(iRobot);
 
 		blockToBreak = iBlockToBreak;
 	}

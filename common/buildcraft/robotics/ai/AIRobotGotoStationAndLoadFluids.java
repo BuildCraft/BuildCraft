@@ -24,7 +24,7 @@ public class AIRobotGotoStationAndLoadFluids extends AIRobot {
 	}
 
 	public AIRobotGotoStationAndLoadFluids(EntityRobotBase iRobot, IFluidFilter iFilter, IZone iZone) {
-		super(iRobot);
+		this(iRobot);
 
 		zone = iZone;
 		filter = iFilter;

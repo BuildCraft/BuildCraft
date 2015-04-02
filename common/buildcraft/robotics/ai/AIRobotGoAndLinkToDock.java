@@ -21,7 +21,7 @@ public class AIRobotGoAndLinkToDock extends AIRobot {
 	}
 
 	public AIRobotGoAndLinkToDock(EntityRobotBase iRobot, DockingStation iStation) {
-		super(iRobot);
+		this(iRobot);
 
 		station = iStation;
 	}

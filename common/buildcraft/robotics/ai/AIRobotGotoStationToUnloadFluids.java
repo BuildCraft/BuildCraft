@@ -31,7 +31,7 @@ public class AIRobotGotoStationToUnloadFluids extends AIRobot {
 	}
 
 	public AIRobotGotoStationToUnloadFluids(EntityRobotBase iRobot, IZone iZone) {
-		super(iRobot);
+		this(iRobot);
 
 		zone = iZone;
 	}

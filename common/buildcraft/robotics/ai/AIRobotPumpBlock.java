@@ -28,7 +28,7 @@ public class AIRobotPumpBlock extends AIRobot {
 	}
 
 	public AIRobotPumpBlock(EntityRobotBase iRobot, BlockIndex iBlockToPump) {
-		super(iRobot);
+		this(iRobot);
 
 		blockToPump = iBlockToPump;
 	}

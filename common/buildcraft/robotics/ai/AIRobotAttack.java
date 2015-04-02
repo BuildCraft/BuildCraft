@@ -25,7 +25,7 @@ public class AIRobotAttack extends AIRobot {
 	}
 
 	public AIRobotAttack(EntityRobotBase iRobot, Entity iTarget) {
-		super(iRobot);
+		this(iRobot);
 
 		target = iTarget;
 	}
@@ -77,7 +77,7 @@ public class AIRobotAttack extends AIRobot {
 		if (ai instanceof AIRobotGotoBlock) {
 			AIRobotGotoBlock aiGoto = (AIRobotGotoBlock) ai;
 
-			if (((AIRobotGotoBlock) ai).unreachable) {
+			if (aiGoto.unreachable) {
 				robot.unreachableEntityDetected(target);
 			}
 

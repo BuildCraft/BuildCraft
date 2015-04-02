@@ -48,7 +48,7 @@ public class AIRobotCraftFurnace extends AIRobotCraftGeneric {
 	}
 
 	public AIRobotCraftFurnace(EntityRobotBase iRobot, ItemStack iInput, ItemStack iOutput) {
-		super(iRobot);
+		this(iRobot);
 
 		input = iInput;
 		expectedOutput = iOutput;

@@ -16,8 +16,6 @@ import buildcraft.robotics.IStationFilter;
 
 public class AIRobotRecharge extends AIRobot {
 
-	private DockingStation axeDocking = null;
-
 	public AIRobotRecharge(EntityRobotBase iRobot) {
 		super(iRobot);
 	}

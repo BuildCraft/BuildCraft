@@ -25,15 +25,8 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 	// TODO: Clean this when world unloaded
 	public static Set<Integer> targettedItems = new HashSet<Integer>();
 
-	private NBTTagCompound data;
-
 	public BoardRobotPicker(EntityRobotBase iRobot) {
 		super(iRobot);
-	}
-
-	public BoardRobotPicker(EntityRobotBase robot, NBTTagCompound nbt) {
-		super(robot);
-		data = nbt;
 	}
 
 	@Override

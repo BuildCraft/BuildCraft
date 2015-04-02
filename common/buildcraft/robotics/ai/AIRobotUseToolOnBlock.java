@@ -26,7 +26,7 @@ public class AIRobotUseToolOnBlock extends AIRobot {
 	}
 
 	public AIRobotUseToolOnBlock(EntityRobotBase iRobot, BlockIndex index) {
-		super(iRobot);
+		this(iRobot);
 
 		useToBlock = index;
 	}

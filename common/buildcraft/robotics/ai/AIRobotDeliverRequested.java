@@ -34,7 +34,7 @@ public class AIRobotDeliverRequested extends AIRobot {
 	}
 
 	public AIRobotDeliverRequested(EntityRobotBase robot, StackRequest request) {
-		super(robot);
+		this(robot);
 
 		requested = request;
 	}

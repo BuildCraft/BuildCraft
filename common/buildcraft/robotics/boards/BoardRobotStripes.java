@@ -117,10 +117,4 @@ public class BoardRobotStripes extends RedstoneBoardRobot {
 			blockFound = new BlockIndex(nbt.getCompoundTag("blockFound"));
 		}
 	}
-
-	private boolean isAirAbove(World world, int x, int y, int z) {
-		synchronized (world) {
-			return world.isAirBlock(x, y + 1, z);
-		}
-	}
 }

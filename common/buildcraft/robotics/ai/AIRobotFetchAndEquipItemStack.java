@@ -30,7 +30,7 @@ public class AIRobotFetchAndEquipItemStack extends AIRobot {
 	}
 
 	public AIRobotFetchAndEquipItemStack(EntityRobotBase iRobot, IStackFilter iFilter) {
-		super(iRobot);
+		this(iRobot);
 
 		filter = new AggregateFilter(ActionRobotFilterTool.getGateFilter(iRobot.getLinkedStation()), iFilter);
 	}

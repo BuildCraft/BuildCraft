@@ -32,7 +32,7 @@ public class AIRobotStripesHandler extends AIRobot implements IStripesActivator 
 	}
 
 	public AIRobotStripesHandler(EntityRobotBase iRobot, BlockIndex index) {
-		super(iRobot);
+		this(iRobot);
 
 		useToBlock = index;
 	}
@@ -73,10 +73,6 @@ public class AIRobotStripesHandler extends AIRobot implements IStripesActivator 
 			}
 			terminate();
 		}
-	}
-
-	private ForgeDirection getDirection() {
-		return null;
 	}
 
 	@Override

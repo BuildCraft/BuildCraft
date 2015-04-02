@@ -32,7 +32,7 @@ public class AIRobotGotoStationToUnload extends AIRobot {
 	}
 
 	public AIRobotGotoStationToUnload(EntityRobotBase iRobot, IZone iZone) {
-		super(iRobot);
+		this(iRobot);
 
 		zone = iZone;
 

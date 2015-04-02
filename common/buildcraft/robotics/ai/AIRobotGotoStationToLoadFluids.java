@@ -32,7 +32,7 @@ public class AIRobotGotoStationToLoadFluids extends AIRobot {
 	}
 
 	public AIRobotGotoStationToLoadFluids(EntityRobotBase iRobot, IFluidFilter iFiler, IZone iZone) {
-		super(iRobot);
+		this(iRobot);
 
 		zone = iZone;
 		filter = iFiler;

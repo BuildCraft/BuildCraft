@@ -33,7 +33,7 @@ public class AIRobotGotoStationToLoad extends AIRobot {
 	}
 
 	public AIRobotGotoStationToLoad(EntityRobotBase iRobot, IStackFilter iFilter, IZone iZone) {
-		super(iRobot);
+		this(iRobot);
 
 		filter = iFilter;
 		zone = iZone;

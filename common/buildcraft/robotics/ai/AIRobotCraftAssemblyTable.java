@@ -51,7 +51,7 @@ public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 	}
 
 	public AIRobotCraftAssemblyTable(EntityRobotBase iRobot, CraftingResult craftingResult) {
-		super(iRobot);
+		this(iRobot);
 
 		expectedResult = craftingResult;
 	}
