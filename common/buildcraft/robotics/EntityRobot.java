@@ -64,6 +64,7 @@ import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.robotics.ai.AIRobotMain;
 import buildcraft.robotics.ai.AIRobotSleep;
 import buildcraft.robotics.statements.ActionRobotWorkInArea;
+import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.ActionIterator;
 
 public class EntityRobot extends EntityRobotBase implements
@@ -309,7 +310,8 @@ public class EntityRobot extends EntityRobotBase implements
 						currentDockingStationSide);
 			}
 
-			if (linkedDockingStation != null) {
+			if (linkedDockingStation != null &&
+					((Pipe) linkedDockingStation.getPipe().getPipe()).isInitialized()) {
 				this.worldObj.theProfiler.startSection("bcRobotAIMainCycle");
 				mainAI.cycle();
 				this.worldObj.theProfiler.endSection();

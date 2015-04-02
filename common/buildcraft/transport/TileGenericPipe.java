@@ -564,7 +564,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		scheduleNeighborChange();
 		scheduleRenderUpdate();
 
-		if (pipe.needsInit()) {
+		if (!pipe.isInitialized()) {
 			pipe.initialize();
 		}
 
