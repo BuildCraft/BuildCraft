@@ -383,7 +383,11 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 		if (BuildcraftFuelRegistry.coolant.getCoolant(resource.getFluid()) != null) {
 			return tankCoolant.fill(resource, doFill);
 		} else if (BuildcraftFuelRegistry.fuel.getFuel(resource.getFluid()) != null) {
-			return tankFuel.fill(resource, doFill);
+			int filled = tankFuel.fill(resource, doFill);
+			if (filled > 0 && resource.getFluid() != currentFuel) {
+				currentFuel = BuildcraftFuelRegistry.fuel.getFuel(tankFuel.getFluid().getFluid());
+			}
+			return filled;
 		} else {
 			return 0;
 		}
