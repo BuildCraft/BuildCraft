@@ -333,7 +333,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		Integer[][] columnHeights = new Integer[builder.blueprint.sizeX - 2][builder.blueprint.sizeZ - 2];
 		boolean[][] blockedColumns = new boolean[builder.blueprint.sizeX - 2][builder.blueprint.sizeZ - 2];
 
-		for (int searchY = yCoord + 3; searchY >= 0; --searchY) {
+		for (int searchY = yCoord + 3; searchY >= Math.max(yCoord - BuildCraftFactory.miningDepth, 0); --searchY) {
 			int startX, endX, incX;
 
 			if (searchY % 2 == 0) {
