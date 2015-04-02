@@ -83,8 +83,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						continue;
 					}
 
-					if (!clearedLocations.contains(new BlockIndex(
-									xCoord, yCoord, zCoord))) {
+					if (!isLocationUsed(xCoord, yCoord, zCoord)) {
 						SchematicBlock slot = (SchematicBlock) blueprint.contents[i][j][k];
 
 						if (slot == null && !blueprint.excavate) {
@@ -144,8 +143,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					b.z = zCoord;
 					b.mode = Mode.Build;
 
-					if (!builtLocations.contains(new BlockIndex(xCoord, yCoord,
-								zCoord))) {
+					if (!isLocationUsed(xCoord, yCoord, zCoord)) {
 						switch (slot.getBuildStage()) {
 						case STANDALONE:
 							tmpStandalone.add(b);
@@ -323,15 +321,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 			if (slot.built) {
 				iterator.remove();
-
-				if (slot.mode == Mode.ClearIfInvalid) {
-					clearedLocations.add(new BlockIndex(slot.x,
-							slot.y, slot.z));
-				} else {
-					builtLocations.add(new BlockIndex(slot.x,
-							slot.y, slot.z));
-				}
-
+				markLocationUsed(slot.x, slot.y, slot.z);
 				postProcessing.add(slot);
 
 				continue;
@@ -359,22 +349,14 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				if (BlockUtils.isUnbreakableBlock(world, slot.x, slot.y, slot.z)) {
 					// if the block can't be broken, just forget this iterator
 					iterator.remove();
-
-					if (slot.mode == Mode.ClearIfInvalid) {
-						clearedLocations.add(new BlockIndex(slot.x,
-								slot.y, slot.z));
-					} else {
-						builtLocations.add(new BlockIndex(slot.x,
-								slot.y, slot.z));
-					}
+					markLocationUsed(slot.x, slot.y, slot.z);
 				} else {
 					if (slot.mode == Mode.ClearIfInvalid) {
 						if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y,
 								slot.z)
 						|| isBlockBreakCanceled(world, slot.x, slot.y, slot.z)) {
 							iterator.remove();
-							clearedLocations.add(new BlockIndex(slot.x,
-									slot.y, slot.z));
+							markLocationUsed(slot.x, slot.y, slot.z);
 						} else {
 							if (builder == null) {
 								createDestroyItems(slot);
@@ -384,8 +366,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 								createDestroyItems(slot);
 
 								iterator.remove();
-								clearedLocations.add(new BlockIndex(slot.x,
-										slot.y, slot.z));
+								markLocationUsed(slot.x, slot.y, slot.z);
 								return slot;
 							}
 						}
@@ -397,8 +378,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 								// Forge does not allow us to place a block in
 								// this position.
 								iterator.remove();
-								builtLocations.add(new BlockIndex(slot.x,
-										slot.y, slot.z));
+								markLocationUsed(slot.x, slot.y, slot.z);
 								continue;
 							}
 
@@ -411,9 +391,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 							useRequirements(builder, slot);
 
 							iterator.remove();
+							markLocationUsed(slot.x, slot.y, slot.z);
 							postProcessing.add(slot);
-							builtLocations.add(new BlockIndex(slot.x,
-									slot.y, slot.z));
 							return slot;
 						}
 					} else {

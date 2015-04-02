@@ -8,7 +8,7 @@
  */
 package buildcraft.core.blueprints;
 
-import java.util.HashSet;
+import java.util.BitSet;
 
 import org.apache.logging.log4j.Level;
 
@@ -44,15 +44,15 @@ import buildcraft.core.builders.BuildingSlotBlock;
 import buildcraft.core.builders.IBuildingItemsProvider;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.core.utils.BitSetUtils;
 import buildcraft.core.utils.BlockUtils;
 
 public abstract class BptBuilderBase implements IAreaProvider {
 
 	public BlueprintBase blueprint;
 	public BptContext context;
+	protected BitSet usedLocations;
 	protected boolean done;
-	protected HashSet<BlockIndex> clearedLocations = new HashSet<BlockIndex>();
-	protected HashSet<BlockIndex> builtLocations = new HashSet<BlockIndex>();
 	protected int x, y, z;
 	protected boolean initialized = false;
 
@@ -63,12 +63,27 @@ public abstract class BptBuilderBase implements IAreaProvider {
 		this.x = x;
 		this.y = y;
 		this.z = z;
+		this.usedLocations = new BitSet(bluePrint.sizeX * bluePrint.sizeY * bluePrint.sizeZ);
 		done = false;
 
 		Box box = new Box();
 		box.initialize(this);
 
 		context = bluePrint.getContext(world, box);
+	}
+
+	protected boolean isLocationUsed(int i, int j, int k) {
+		int xCoord = i - x + blueprint.anchorX;
+		int yCoord = j - y + blueprint.anchorY;
+		int zCoord = k - z + blueprint.anchorZ;
+		return usedLocations.get((zCoord * blueprint.sizeY + yCoord) * blueprint.sizeX + xCoord);
+	}
+
+	protected void markLocationUsed(int i, int j, int k) {
+		int xCoord = i - x + blueprint.anchorX;
+		int yCoord = j - y + blueprint.anchorY;
+		int zCoord = k - z + blueprint.anchorZ;
+		usedLocations.set((zCoord * blueprint.sizeY + yCoord) * blueprint.sizeX + xCoord, true);
 	}
 
 	public void initialize() {
@@ -205,23 +220,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 	public void saveBuildStateToNBT(NBTTagCompound nbt, IBuildingItemsProvider builder) {
 		NBTTagList clearList = new NBTTagList();
 
-		for (BlockIndex loc : clearedLocations) {
-			NBTTagCompound cpt = new NBTTagCompound();
-			loc.writeTo(cpt);
-			clearList.appendTag(cpt);
-		}
-
-		nbt.setTag("clearList", clearList);
-
-		NBTTagList builtList = new NBTTagList();
-
-		for (BlockIndex loc : builtLocations) {
-			NBTTagCompound cpt = new NBTTagCompound();
-			loc.writeTo(cpt);
-			builtList.appendTag(cpt);
-		}
-
-		nbt.setTag("builtList", builtList);
+		nbt.setByteArray("usedLocationList", BitSetUtils.toByteArray(usedLocations));
 
 		NBTTagList buildingList = new NBTTagList();
 
@@ -235,20 +234,8 @@ public abstract class BptBuilderBase implements IAreaProvider {
 	}
 
 	public void loadBuildStateToNBT(NBTTagCompound nbt, IBuildingItemsProvider builder) {
-		NBTTagList clearList = nbt.getTagList("clearList", Constants.NBT.TAG_COMPOUND);
-
-		for (int i = 0; i < clearList.tagCount(); ++i) {
-			NBTTagCompound cpt = clearList.getCompoundTagAt(i);
-
-			clearedLocations.add (new BlockIndex(cpt));
-		}
-
-		NBTTagList builtList = nbt.getTagList("builtList", Constants.NBT.TAG_COMPOUND);
-
-		for (int i = 0; i < builtList.tagCount(); ++i) {
-			NBTTagCompound cpt = builtList.getCompoundTagAt(i);
-
-			builtLocations.add (new BlockIndex(cpt));
+		if (nbt.hasKey("usedLocationList")) {
+			usedLocations = BitSetUtils.fromByteArray(nbt.getByteArray("usedLocationList"));
 		}
 
 		NBTTagList buildingList = nbt
@@ -264,6 +251,28 @@ public abstract class BptBuilderBase implements IAreaProvider {
 				builder.getBuilders().add(item);
 			} catch (MappingNotFoundException e) {
 				BCLog.logger.log(Level.WARN, "can't load building item", e);
+			}
+		}
+
+		// 6.4.6 and below migration
+
+		if (nbt.hasKey("clearList")) {
+			NBTTagList clearList = nbt.getTagList("clearList", Constants.NBT.TAG_COMPOUND);
+
+			for (int i = 0; i < clearList.tagCount(); ++i) {
+				NBTTagCompound cpt = clearList.getCompoundTagAt(i);
+				BlockIndex o = new BlockIndex(cpt);
+				markLocationUsed(o.x, o.y, o.z);
+			}
+		}
+
+		if (nbt.hasKey("builtList")) {
+			NBTTagList builtList = nbt.getTagList("builtList", Constants.NBT.TAG_COMPOUND);
+
+			for (int i = 0; i < builtList.tagCount(); ++i) {
+				NBTTagCompound cpt = builtList.getCompoundTagAt(i);
+				BlockIndex o = new BlockIndex(cpt);
+				markLocationUsed(o.x, o.y, o.z);
 			}
 		}
 	}
