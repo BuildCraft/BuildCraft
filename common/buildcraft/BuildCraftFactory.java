@@ -17,6 +17,8 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.world.World;
+import cpw.mods.fml.client.event.ConfigChangedEvent;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -30,7 +32,6 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Property;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.core.CompatHooks;
@@ -38,9 +39,9 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.builders.schematics.SchematicIgnoreMeta;
+import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.network.PacketHandler;
-import buildcraft.core.lib.utils.ConfigUtils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.BlockAutoWorkbench;
 import buildcraft.factory.BlockFloodGate;
@@ -92,18 +93,14 @@ public class BuildCraftFactory extends BuildCraftMod {
 	public static Achievement refineAndRedefineAchievement;
 
 	public static boolean quarryLoadsChunks = true;
-	public static boolean allowMining = true;
 	public static boolean quarryOneTimeUse = false;
-	public static float miningMultiplier = 1;
 	public static int miningDepth = 256;
 	public static PumpDimensionList pumpDimensionList;
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		FactoryProxy.proxy.initializeNEIIntegration();
-		if (quarryLoadsChunks) {
-			ForgeChunkManager.setForcedChunkLoadingCallback(instance, new QuarryChunkloadCallback());
-		}
+		ForgeChunkManager.setForcedChunkLoadingCallback(instance, new QuarryChunkloadCallback());
 	}
 
 	public class QuarryChunkloadCallback implements ForgeChunkManager.OrderedLoadingCallback {
@@ -181,24 +178,17 @@ public class BuildCraftFactory extends BuildCraftMod {
 		channels = NetworkRegistry.INSTANCE.newChannel
 				(DefaultProps.NET_CHANNEL_NAME + "-FACTORY", new ChannelHandler(), new PacketHandler());
 
-		ConfigUtils genCat = new ConfigUtils(BuildCraftCore.mainConfiguration, "general");
-
-		allowMining = genCat.get("mining.enabled", true, "disables the recipes for automated mining machines");
-		quarryOneTimeUse = genCat.get("quarry.one.time.use", false, "Quarry cannot be picked back up after placement");
-		miningDepth = genCat.get("mining.depth", 2, 256, 256, "how far below the machine can mining machines dig, range (2 - 256), default 256");
-		quarryLoadsChunks = genCat.get("quarry.loads.chunks", true, "Quarry loads chunks required for mining");
-
-		Property pumpList = BuildCraftCore.mainConfiguration.get("general", "pumping.controlList", DefaultProps.PUMP_DIMENSION_LIST);
-		pumpList.comment = "Allows admins to whitelist or blacklist pumping of specific fluids in specific dimensions.\n"
+		String plc = "Allows admins to whitelist or blacklist pumping of specific fluids in specific dimensions.\n"
 				+ "Eg. \"-/-1/Lava\" will disable lava in the nether. \"-/*/Lava\" will disable lava in any dimension. \"+/0/*\" will enable any fluid in the overworld.\n"
 				+ "Entries are comma seperated, banned fluids have precedence over allowed ones."
 				+ "Default is \"+/*/*,+/-1/Lava\" - the second redundant entry (\"+/-1/lava\") is there to show the format.";
-		pumpDimensionList = new PumpDimensionList(pumpList.getString());
 
-		if (BuildCraftCore.mainConfiguration.hasChanged()) {
-			BuildCraftCore.mainConfiguration.save();
-		}
+		BuildCraftCore.mainConfigManager.register("general.quarry.oneTimeUse", false, "Should the quarry only be usable once after placing?", ConfigManager.RestartRequirement.NONE);
+		BuildCraftCore.mainConfigManager.register("general.miningDepth", 256, "Should the quarry only be usable once after placing?", ConfigManager.RestartRequirement.NONE);
+		BuildCraftCore.mainConfigManager.register("general.quarry.doChunkLoading", true, "Should the quarry only be usable once after placing?", ConfigManager.RestartRequirement.NONE);
 
+		BuildCraftCore.mainConfigManager.get("general.miningDepth").setMinValue(2).setMaxValue(256);
+		BuildCraftCore.mainConfigManager.register("general.pumpDimensionControl", DefaultProps.PUMP_DIMENSION_LIST, plc, ConfigManager.RestartRequirement.NONE);
 
 		miningWellBlock = (BlockMiningWell) CompatHooks.INSTANCE.getBlock(BlockMiningWell.class);
 		CoreProxy.proxy.registerBlock(miningWellBlock.setBlockName("miningWellBlock"));
@@ -230,62 +220,48 @@ public class BuildCraftFactory extends BuildCraftMod {
 		hopperBlock = (BlockHopper) CompatHooks.INSTANCE.getBlock(BlockHopper.class);
 		CoreProxy.proxy.registerBlock(hopperBlock.setBlockName("blockHopper"));
 
-
 		FactoryProxy.proxy.initializeEntityRenders();
-		if (BuildCraftCore.mainConfiguration.hasChanged()) {
-			BuildCraftCore.mainConfiguration.save();
-		}
 
+		FMLCommonHandler.instance().bus().register(this);
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 	
 	public static void loadRecipes() {
-		if (allowMining) {
-			if (miningWellBlock != null) {
-				CoreProxy.proxy.addCraftingRecipe(new ItemStack(miningWellBlock, 1),
-						"ipi",
-						"igi",
-						"iPi",
-						'p', "dustRedstone",
-						'i', "ingotIron",
-						'g', "gearIron",
-						'P', Items.iron_pickaxe);
-			}
-
-			if (quarryBlock != null) {
-				CoreProxy.proxy.addCraftingRecipe(
-						new ItemStack(quarryBlock),
-						"ipi",
-						"gig",
-						"dDd",
-						'i', "gearIron",
-						'p', "dustRedstone",
-						'g', "gearGold",
-						'd', "gearDiamond",
-						'D', Items.diamond_pickaxe);
-			}
-
-			if (pumpBlock != null && miningWellBlock != null) {
-				CoreProxy.proxy.addCraftingRecipe(new ItemStack(pumpBlock),
-						"T",
-						"W",
-						'T', tankBlock != null ? tankBlock : "blockGlass",
-						'W', miningWellBlock);
-			}
+		if (miningWellBlock != null) {
+			CoreProxy.proxy.addCraftingRecipe(new ItemStack(miningWellBlock, 1),
+					"ipi",
+					"igi",
+					"iPi",
+					'p', "dustRedstone",
+					'i', "ingotIron",
+					'g', "gearIron",
+					'P', Items.iron_pickaxe);
 		}
 
-		if (!allowMining || miningWellBlock == null) {
-			if (pumpBlock != null) {
-				CoreProxy.proxy.addCraftingRecipe(new ItemStack(pumpBlock),
-						"iri",
-						"iTi",
-						"gpg",
-						'r', "dustRedstone",
-						'i', "ingotIron",
-						'T', tankBlock != null ? tankBlock : "blockGlass",
-						'g', "gearIron",
-						'p', BuildCraftTransport.pipeFluidsGold);
-			}
+		if (quarryBlock != null) {
+			CoreProxy.proxy.addCraftingRecipe(
+					new ItemStack(quarryBlock),
+					"ipi",
+					"gig",
+					"dDd",
+					'i', "gearIron",
+					'p', "dustRedstone",
+					'g', "gearGold",
+					'd', "gearDiamond",
+					'D', Items.diamond_pickaxe);
+		}
+
+		if (pumpBlock != null) {
+			CoreProxy.proxy.addCraftingRecipe(
+					new ItemStack(pumpBlock),
+					"ipi",
+					"igi",
+					"TBT",
+					'p', "dustRedstone",
+					'i', "ingotIron",
+					'T', tankBlock,
+					'g', "gearIron",
+					'B', Items.bucket);
 		}
 
 		if (autoWorkbenchBlock != null) {
@@ -340,6 +316,30 @@ public class BuildCraftFactory extends BuildCraftMod {
 					'T', tankBlock != null ? tankBlock : "blockGlass",
 					'G', "gearIron",
 					'F', new ItemStack(Blocks.iron_bars));
+		}
+	}
+
+	public void reloadConfig(ConfigManager.RestartRequirement restartType) {
+		if (restartType == ConfigManager.RestartRequirement.GAME) {
+			reloadConfig(ConfigManager.RestartRequirement.WORLD);
+		} else if (restartType == ConfigManager.RestartRequirement.WORLD) {
+			reloadConfig(ConfigManager.RestartRequirement.NONE);
+		} else {
+			quarryOneTimeUse = BuildCraftCore.mainConfigManager.get("general.quarry.oneTimeUse").getBoolean();
+			quarryLoadsChunks = BuildCraftCore.mainConfigManager.get("general.quarry.doChunkLoading").getBoolean();
+			miningDepth = BuildCraftCore.mainConfigManager.get("general.miningDepth").getInt();
+			pumpDimensionList = new PumpDimensionList(BuildCraftCore.mainConfigManager.get("general.pumpDimensionControl").getString());
+
+			if (BuildCraftCore.mainConfiguration.hasChanged()) {
+				BuildCraftCore.mainConfiguration.save();
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
+		if ("BuildCraft|Core".equals(event.modID)) {
+			reloadConfig(event.isWorldRunning ? ConfigManager.RestartRequirement.NONE : ConfigManager.RestartRequirement.WORLD);
 		}
 	}
 

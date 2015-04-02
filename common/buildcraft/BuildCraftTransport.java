@@ -21,6 +21,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemMinecart;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldServer;
+import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
@@ -65,6 +66,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.PowerMode;
 import buildcraft.core.Version;
+import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.utils.ColorUtils;
@@ -243,7 +245,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item pipePowerEmerald;
     public static Item pipePowerSandstone;
 
-	public static int groupItemsTrigger;
 	public static String[] facadeBlacklist;
 
 	public static ITriggerInternal triggerLightSensorBright, triggerLightSensorDark;
@@ -292,30 +293,13 @@ public class BuildCraftTransport extends BuildCraftMod {
 		}
 
 		try {
-			Property durability = BuildCraftCore.mainConfiguration.get("general", "pipes.durability", DefaultProps.PIPES_DURABILITY);
-			durability.comment = "How long a pipe will take to break";
-			pipeDurability = (float) durability.getDouble(DefaultProps.PIPES_DURABILITY);
-
-			Property baseFlowRate = BuildCraftCore.mainConfiguration.get("general", "pipes.fluids.baseFlowRate", DefaultProps.PIPES_FLUIDS_BASE_FLOW_RATE);
-			pipeFluidsBaseFlowRate = baseFlowRate.getInt();
-
-			Property printFacadeList = BuildCraftCore.mainConfiguration.get("debug", "facades.printFacadeList", false);
-			debugPrintFacadeList = printFacadeList.getBoolean();
-
-			Property enableAdditionalWaterproofingRecipe = BuildCraftCore.mainConfiguration.get("general", "pipes.fluids.enableAdditionalWaterproofingRecipe", true);
-			enableAdditionalWaterproofingRecipe.comment = "Enable the slimeball based pipe waterproofing recipe";
-			additionalWaterproofingRecipe = enableAdditionalWaterproofingRecipe.getBoolean();
-
-			gateCostMultiplier = BuildCraftCore.mainConfiguration.getFloat("gate.recipeCostMultiplier", "general", 1.0F, 0.001F, 1000.0F, "The multiplier for gate recipe cost.");
-
-			filteredBufferBlock = new BlockFilteredBuffer();
-			CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));
-
-			Property groupItemsTriggerProp = BuildCraftCore.mainConfiguration.get("general", "pipes.groupItemsTrigger", 32);
-			groupItemsTriggerProp.comment = "when reaching this amount of objects in a pipes, items will be automatically grouped";
-			groupItemsTrigger = groupItemsTriggerProp.getInt();
-
-			Property facadeBlacklistProp = BuildCraftCore.mainConfiguration.get("general", "facade.blacklist", new String[] {
+			BuildCraftCore.mainConfigManager.register("general.pipes.hardness", DefaultProps.PIPES_DURABILITY, "How hard to break should a pipe be?", ConfigManager.RestartRequirement.NONE);
+			BuildCraftCore.mainConfigManager.register("general.pipes.baseFluidRate", DefaultProps.PIPES_FLUIDS_BASE_FLOW_RATE, "What should the base flow rate of a fluid pipe be?", ConfigManager.RestartRequirement.GAME)
+					.setMinValue(1).setMaxValue(40);
+			BuildCraftCore.mainConfigManager.register("debug.printFacadeList", false, "Print a list of all registered facades.", ConfigManager.RestartRequirement.GAME);
+			BuildCraftCore.mainConfigManager.register("general.pipes.slimeballWaterproofRecipe", false, "Should I enable an alternate Waterproof recipe, based on slimeballs?", ConfigManager.RestartRequirement.GAME);
+			BuildCraftCore.mainConfigManager.register("power.gateCostMultiplier", 1.0D, "What should be the multiplier of all gate power costs?", ConfigManager.RestartRequirement.GAME);
+			BuildCraftCore.mainConfigManager.register("general.pipes.facadeBlacklist", new String[] {
 					Block.blockRegistry.getNameForObject(Blocks.bedrock),
 					Block.blockRegistry.getNameForObject(Blocks.command_block),
 					Block.blockRegistry.getNameForObject(Blocks.end_portal_frame),
@@ -340,13 +324,13 @@ public class BuildCraftTransport extends BuildCraftMod {
 					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftFactory.pumpBlock)),
 					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftFactory.quarryBlock)),
 					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftTransport.filteredBufferBlock)),
-			});
+			}, "What block types should be blacklisted from being a facade?", ConfigManager.RestartRequirement.GAME);
+			BuildCraftCore.mainConfigManager.register("general.pipes.facadeBlacklistAsWhitelist", false, "Should the blacklist be treated as a whitelist instead?", ConfigManager.RestartRequirement.GAME);
 
-			facadeBlacklistProp.comment = "Blocks listed here will not have facades created. The format is modid:blockname.\nFor mods with a | character, the value needs to be surrounded with quotes.";
-			facadeBlacklist = facadeBlacklistProp.getStringList();
+			reloadConfig(ConfigManager.RestartRequirement.GAME);
 
-            Property facadeAsWhitelist = BuildCraftCore.mainConfiguration.get("general", "facade.treatBlacklistAsWhitelist", false);
-            facadeTreatBlacklistAsWhitelist = facadeAsWhitelist.getBoolean();
+			filteredBufferBlock = new BlockFilteredBuffer();
+			CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));
 
 			pipeWaterproof = new ItemBuildCraft();
 
@@ -568,6 +552,34 @@ public class BuildCraftTransport extends BuildCraftMod {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	public void reloadConfig(ConfigManager.RestartRequirement restartType) {
+		if (restartType == ConfigManager.RestartRequirement.GAME) {
+			facadeTreatBlacklistAsWhitelist = BuildCraftCore.mainConfigManager.get("general.pipes.facadeBlacklistAsWhitelist").getBoolean();
+			facadeBlacklist = BuildCraftCore.mainConfigManager.get("general.pipes.facadeBlacklist").getStringList();
+			gateCostMultiplier = (float) BuildCraftCore.mainConfigManager.get("power.gateCostMultiplier").getDouble();
+			additionalWaterproofingRecipe = BuildCraftCore.mainConfigManager.get("general.pipes.slimeballWaterproofRecipe").getBoolean();
+			debugPrintFacadeList = BuildCraftCore.mainConfigManager.get("debug.printFacadeList").getBoolean();
+			pipeFluidsBaseFlowRate = BuildCraftCore.mainConfigManager.get("general.pipes.baseFluidRate").getInt();
+
+			reloadConfig(ConfigManager.RestartRequirement.WORLD);
+		} else if (restartType == ConfigManager.RestartRequirement.WORLD) {
+			reloadConfig(ConfigManager.RestartRequirement.NONE);
+		} else {
+			pipeDurability = (float) BuildCraftCore.mainConfigManager.get("general.pipes.hardness").getDouble();
+
+			if (BuildCraftCore.mainConfiguration.hasChanged()) {
+				BuildCraftCore.mainConfiguration.save();
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
+		if ("BuildCraft|Core".equals(event.modID)) {
+			reloadConfig(event.isWorldRunning ? ConfigManager.RestartRequirement.NONE : ConfigManager.RestartRequirement.WORLD);
 		}
 	}
 

@@ -103,19 +103,11 @@ public class CoreProxy implements ICoreProxy {
 	public void addCraftingRecipe(ItemStack result, Object... recipe) {
 		String name = Item.itemRegistry.getNameForObject(result.getItem());
 
-		if (BuildCraftCore.recipesBlacklist.contains(name)) {
-			return;
-		}
-
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(result, recipe));
 	}
 
 	public void addShapelessRecipe(ItemStack result, Object... recipe) {
 		String name = Item.itemRegistry.getNameForObject(result.getItem());
-
-		if (BuildCraftCore.recipesBlacklist.contains(name)) {
-			return;
-		}
 
 		CraftingManager.getInstance().getRecipeList().add(new ShapelessOreRecipe(result, recipe));
 	}

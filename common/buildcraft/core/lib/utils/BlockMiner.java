@@ -55,7 +55,7 @@ public class BlockMiner {
 
 			EntityItem entityitem = new EntityItem(owner.getWorldObj(), owner.xCoord + f, owner.yCoord + f1 + 0.5F, owner.zCoord + f2, stack);
 
-			entityitem.lifespan = BuildCraftCore.itemLifespan;
+			entityitem.lifespan = BuildCraftCore.itemLifespan * 20;
 			entityitem.delayBeforeCanPickup = 10;
 
 			float f3 = 0.05F;

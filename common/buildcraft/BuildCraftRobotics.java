@@ -191,8 +191,6 @@ public class BuildCraftRobotics extends BuildCraftMod {
 	public static Achievement timeForSomeLogicAchievement;
 	public static Achievement tinglyLaserAchievement;
 
-	public static float chipsetCostMultiplier = 1.0F;
-
 	public static List<String> blacklistedRobots;
 
 	public static MapManager manager;
@@ -201,8 +199,6 @@ public class BuildCraftRobotics extends BuildCraftMod {
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
 		new BCCreativeTab("boards");
-
-		chipsetCostMultiplier = BuildCraftCore.mainConfiguration.getFloat("chipset.costMultiplier", "general", 1.0F, 0.001F, 1000.0F, "The multiplier for chipset recipe cost.");
 
 		blacklistedRobots = new ArrayList<String>();
 		blacklistedRobots.addAll(Arrays.asList(BuildCraftCore.mainConfiguration.get("general", "boards.blacklist", new String[]{}).getStringList()));

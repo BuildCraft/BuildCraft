@@ -6,11 +6,12 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core;
+package buildcraft.core.config;
 
 import java.io.File;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import buildcraft.core.Version;
 
 public class BuildCraftConfiguration extends Configuration {
 
@@ -21,6 +22,7 @@ public class BuildCraftConfiguration extends Configuration {
 	@Override
 	public void save() {
 		Property versionProp = get(CATEGORY_GENERAL, "version", Version.VERSION);
+		versionProp.setShowInGui(false);
 		versionProp.set(Version.VERSION);
 		super.save();
 	}

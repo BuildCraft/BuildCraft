@@ -119,7 +119,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
 			int itemStackCount = getNumberOfStacks();
 
-			if (itemStackCount > BuildCraftTransport.groupItemsTrigger) {
+			if (itemStackCount >= (MAX_PIPE_STACKS / 2)) {
 				groupEntities();
 				itemStackCount = getNumberOfStacks();
 			}

@@ -70,7 +70,7 @@ public final class BlockUtils {
 	}
 
 	public static boolean breakBlock(WorldServer world, int x, int y, int z) {
-		return breakBlock(world, x, y, z, BuildCraftCore.itemLifespan);
+		return breakBlock(world, x, y, z, BuildCraftCore.itemLifespan * 20);
 	}
 
 	public static boolean breakBlock(WorldServer world, int x, int y, int z, int forcedLifespan) {

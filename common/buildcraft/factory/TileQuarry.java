@@ -98,7 +98,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 	public TileQuarry () {
 		box.kind = Kind.STRIPES;
-		this.setBattery(new RFBattery((int) (2 * 64 * BuilderAPI.BREAK_ENERGY * BuildCraftFactory.miningMultiplier), (int) (1000 * BuildCraftFactory.miningMultiplier), 0));
+		this.setBattery(new RFBattery((int) (2 * 64 * BuilderAPI.BREAK_ENERGY * BuildCraftCore.miningMultiplier), (int) (1000 * BuildCraftCore.miningMultiplier), 0));
 	}
 
 	public void createUtilsIfNeeded() {

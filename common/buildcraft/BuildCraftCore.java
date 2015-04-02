@@ -12,7 +12,6 @@ import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.HashSet;
 import java.util.UUID;
 import com.mojang.authlib.GameProfile;
 import org.lwjgl.input.Mouse;
@@ -28,6 +27,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.IIcon;
+import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -43,7 +43,6 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.oredict.OreDictionary;
@@ -53,7 +52,6 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.IWorldProperty;
-import buildcraft.api.core.JavaTools;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
@@ -68,7 +66,7 @@ import buildcraft.core.BCCreativeTab;
 import buildcraft.core.BlockBuildTool;
 import buildcraft.core.BlockEngine;
 import buildcraft.core.BlockSpring;
-import buildcraft.core.BuildCraftConfiguration;
+import buildcraft.core.config.BuildCraftConfiguration;
 import buildcraft.core.CommandBuildCraft;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.CoreGuiHandler;
@@ -88,6 +86,7 @@ import buildcraft.core.TickHandlerCore;
 import buildcraft.core.TileEngineWood;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.SchematicRegistry;
+import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.engines.ItemEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.network.ChannelHandler;
@@ -123,7 +122,7 @@ import buildcraft.core.statements.TriggerInventoryLevel;
 import buildcraft.core.statements.TriggerMachine;
 import buildcraft.core.statements.TriggerRedstoneInput;
 
-@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.2.1236,)")
+@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.2.1236,)", guiFactory = "buildcraft.core.config.ConfigManager")
 public class BuildCraftCore extends BuildCraftMod {
 	@Mod.Instance("BuildCraft|Core")
 	public static BuildCraftCore instance;
@@ -145,6 +144,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static int updateFactor = 10;
 	public static long longUpdateFactor = 40;
 	public static BuildCraftConfiguration mainConfiguration;
+	public static ConfigManager mainConfigManager;
 
 	public static BlockEngine engineBlock;
 	public static Block springBlock;
@@ -210,8 +210,6 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Achievement wrenchAchievement;
 	public static Achievement engineRedstoneAchievement;
 
-	public static HashSet<String> recipesBlacklist = new HashSet<String>();
-
 	public static float diffX, diffY, diffZ;
 
 	public static GameProfile gameProfile = new GameProfile(UUID.nameUUIDFromBytes("buildcraft.core".getBytes()), "[BuildCraft]");
@@ -235,40 +233,31 @@ public class BuildCraftCore extends BuildCraftMod {
 
 		BuilderAPI.schematicRegistry = SchematicRegistry.INSTANCE;
 		
-		mainConfiguration = new BuildCraftConfiguration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.conf"));
+		mainConfiguration = new BuildCraftConfiguration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.cfg"));
+		mainConfigManager = new ConfigManager(mainConfiguration);
 		try {
 			mainConfiguration.load();
 
-			Property updateCheck = BuildCraftCore.mainConfiguration.get("general", "update.check", true);
-			updateCheck.comment = "set to true for version check on startup";
-			if (updateCheck.getBoolean(true)) {
-				Version.check();
-			}
+			mainConfigManager.getCat("debug").setShowInGui(false);
+			mainConfigManager.getCat("vars").setShowInGui(false);
 
-			Property hideRFNumbers = BuildCraftCore.mainConfiguration.get("general", "hidePowerNumbers", false);
-			hideRFNumbers.comment = "set to true to not display any RF or RF/t numbers.";
-			hidePowerNumbers = hideRFNumbers.getBoolean(false);
-			
-			Property hideMBNumbers = BuildCraftCore.mainConfiguration.get("general", "hideFluidNumbers", false);
-			hideMBNumbers.comment = "set to true to not display any mB or mB/t numbers.";
-			hideFluidNumbers = hideMBNumbers.getBoolean(false);
+			mainConfigManager.register("general.updateCheck", true, "Should I check the BuildCraft version on startup?", ConfigManager.RestartRequirement.NONE);
+			mainConfigManager.register("display.hidePowerValues", false, "Should all power values (RF, RF/t) be hidden?", ConfigManager.RestartRequirement.NONE);
+			mainConfigManager.register("display.hideFluidValues", false, "Should all fluid values (mB, mB/t) be hidden?", ConfigManager.RestartRequirement.NONE);
+			mainConfigManager.register("general.itemLifespan", 60, "How long, in seconds, should items stay on the ground? (Vanilla = 300, default = 60)", ConfigManager.RestartRequirement.NONE)
+				.setMinValue(5);
+			mainConfigManager.register("network.updateFactor", 10, "How often, in ticks, should network update packets be sent? Increasing this might help network performance.", ConfigManager.RestartRequirement.GAME)
+				.setMinValue(1);
+			mainConfigManager.register("network.longUpdateFactor", 40, "How often, in ticks, should full network sync packets be sent? Increasing this might help network performance.", ConfigManager.RestartRequirement.GAME)
+				.setMinValue(1);
+			mainConfigManager.register("general.canEnginesExplode", false, "Should engines explode upon overheat?", ConfigManager.RestartRequirement.NONE);
+			mainConfigManager.register("worldgen.enable", true, "Should BuildCraft generate anything in the world?", ConfigManager.RestartRequirement.GAME);
+			mainConfigManager.register("general.pumpsConsumeWater", false, "Should pumps consume water? Enabling this might cause performance issues!", ConfigManager.RestartRequirement.NONE);
+			mainConfigManager.register("power.miningUsageMultiplier", 1.0D, "What should the multiplier of all mining-related power usage be?", ConfigManager.RestartRequirement.NONE);
+			mainConfigManager.register("display.colorBlindMode", false, "Should I enable colorblind mode?", ConfigManager.RestartRequirement.GAME);
+			mainConfigManager.register("worldgen.generateWaterSprings", true, "Should BuildCraft generate water springs?", ConfigManager.RestartRequirement.GAME);
 
-			Property lifespan = BuildCraftCore.mainConfiguration.get("general", "itemLifespan", itemLifespan);
-			lifespan.comment = "the lifespan in ticks of items dropped on the ground by pipes and machines, vanilla = 6000, default = 1200";
-			itemLifespan = lifespan.getInt(itemLifespan);
-			if (itemLifespan < 100) {
-				itemLifespan = 100;
-			}
-
-			Property factor = BuildCraftCore.mainConfiguration.get("general", "network.updateFactor", 10);
-			factor.comment = "increasing this number will decrease network update frequency, useful for overloaded servers";
-			updateFactor = factor.getInt(10);
-
-			Property longFactor = BuildCraftCore.mainConfiguration.get("general", "network.stateRefreshPeriod", 40);
-			longFactor.comment = "delay between full client sync packets, increasing it saves bandwidth, decreasing makes for better client syncronization.";
-			longUpdateFactor = longFactor.getInt(40);
-
-			canEnginesExplode = BuildCraftCore.mainConfiguration.get("general", "enginesExplode", false, "Do engines explode upon overheat?").getBoolean(false);
+			reloadConfig(ConfigManager.RestartRequirement.GAME);
 
 			wrenchItem = (new ItemWrench()).setUnlocalizedName("wrenchItem");
 			CoreProxy.proxy.registerItem(wrenchItem);
@@ -282,21 +271,11 @@ public class BuildCraftCore extends BuildCraftMod {
 			debuggerItem = (ItemDebugger) ((new ItemDebugger())).setUnlocalizedName("debugger");
 			CoreProxy.proxy.registerItem(debuggerItem);
 
-			Property modifyWorldProp = BuildCraftCore.mainConfiguration.get("general", "modifyWorld", true);
-			modifyWorldProp.comment = "set to false if BuildCraft should not generate custom blocks (e.g. oil)";
-			modifyWorld = modifyWorldProp.getBoolean(true);
-
 			if (BuildCraftCore.modifyWorld) {
-				BlockSpring.EnumSpring.WATER.canGen = BuildCraftCore.mainConfiguration.get("worldgen", "waterSpring", true).getBoolean(true);
+				BlockSpring.EnumSpring.WATER.canGen = BuildCraftCore.mainConfigManager.get("worldgen.generateWaterSprings").getBoolean();
 				springBlock = new BlockSpring().setBlockName("eternalSpring");
 				CoreProxy.proxy.registerBlock(springBlock, ItemSpring.class);
 			}
-
-			Property consumeWater = BuildCraftCore.mainConfiguration.get("general", "consumeWater", consumeWaterSources);
-			consumeWaterSources = consumeWater.getBoolean(consumeWaterSources);
-			consumeWater.comment = "set to true if the Pump should consume water";
-
-			miningMultiplier = BuildCraftCore.mainConfiguration.getFloat("general", "mining.cost.multipler", 1F, 1F, 10F, "cost multiplier for mining operations, range (1.0 - 10.0)\nhigh values may render engines incapable of powering machines directly");
 
 			woodenGearItem = (new ItemGear()).setUnlocalizedName("woodenGearItem");
 			CoreProxy.proxy.registerItem(woodenGearItem);
@@ -330,12 +309,10 @@ public class BuildCraftCore extends BuildCraftMod {
 			engineBlock.registerTile((Class<? extends TileEngineBase>) CompatHooks.INSTANCE.getTile(TileEngineWood.class), "tile.engineWood");
 			CoreProxy.proxy.registerTileEntity(TileEngineWood.class, "net.minecraft.src.buildcraft.energy.TileEngineWood");
 
+			FMLCommonHandler.instance().bus().register(this);
 			MinecraftForge.EVENT_BUS.register(this);
 			MinecraftForge.EVENT_BUS.register(new BlockHighlightHandler());
 		} finally {
-			if (mainConfiguration.hasChanged()) {
-				mainConfiguration.save();
-			}
 		}
 
 	}
@@ -370,11 +347,6 @@ public class BuildCraftCore extends BuildCraftMod {
 
 		if (BuildCraftCore.modifyWorld) {
 			MinecraftForge.EVENT_BUS.register(new SpringPopulate());
-		}
-
-		for (String l : BuildCraftCore.mainConfiguration.get("general",
-				"recipesBlacklist", new String[0]).getStringList()) {
-			recipesBlacklist.add(JavaTools.stripSurroundingQuotes(l.trim()));
 		}
 
 		if (mainConfiguration.hasChanged()) {
@@ -454,7 +426,42 @@ public class BuildCraftCore extends BuildCraftMod {
 			BuildCraftCore.stripesLaserTexture = event.map.registerIcon("buildcraftcore:laserBox/blockStripesLaser");
 			BuildCraftCore.transparentTexture = event.map.registerIcon("buildcraftcore:misc/transparent");
 		}
+	}
 
+	public void reloadConfig(ConfigManager.RestartRequirement restartType) {
+		if (restartType == ConfigManager.RestartRequirement.GAME) {
+			modifyWorld = mainConfigManager.get("worldgen.enable").getBoolean();
+			updateFactor = mainConfigManager.get("network.updateFactor").getInt();
+			longUpdateFactor = mainConfigManager.get("network.longUpdateFactor").getInt();
+			colorBlindMode = mainConfigManager.get("display.colorBlindMode").getBoolean();
+
+			reloadConfig(ConfigManager.RestartRequirement.WORLD);
+		} else if (restartType == ConfigManager.RestartRequirement.WORLD) {
+
+			reloadConfig(ConfigManager.RestartRequirement.NONE);
+		} else {
+			hideFluidNumbers = mainConfigManager.get("display.hideFluidValues").getBoolean();
+			hidePowerNumbers = mainConfigManager.get("display.hidePowerValues").getBoolean();
+			itemLifespan = mainConfigManager.get("general.itemLifespan").getInt();
+			canEnginesExplode = mainConfigManager.get("general.canEnginesExplode").getBoolean();
+			consumeWaterSources = mainConfigManager.get("general.pumpsConsumeWater").getBoolean();
+			miningMultiplier = (float) mainConfigManager.get("power.miningUsageMultiplier").getDouble();
+
+			if (mainConfigManager.get("general.updateCheck").getBoolean(true)) {
+				Version.check();
+			}
+
+			if (mainConfiguration.hasChanged()) {
+				mainConfiguration.save();
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
+		if ("BuildCraft|Core".equals(event.modID)) {
+			reloadConfig(event.isWorldRunning ? ConfigManager.RestartRequirement.NONE : ConfigManager.RestartRequirement.WORLD);
+		}
 	}
 
 	public void loadRecipes() {

@@ -26,10 +26,6 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 	public void addRecipe(String id, int energyCost, ItemStack output, Object... input) {
 		String name = Item.itemRegistry.getNameForObject(output.getItem());
 
-		if (BuildCraftCore.recipesBlacklist.contains(name)) {
-			return;
-		}
-
 		addRecipe(id, new FlexibleRecipe<ItemStack>(id, output, energyCost, 0, input));
 	}
 

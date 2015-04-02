@@ -210,7 +210,7 @@ public class TravelingItem {
 			motion.moveForwards(0.1 + getSpeed() * 2F);
 
 			EntityItem entity = new EntityItem(container.getWorldObj(), xCoord, yCoord, zCoord, getItemStack());
-			entity.lifespan = BuildCraftCore.itemLifespan;
+			entity.lifespan = BuildCraftCore.itemLifespan * 20;
 			entity.delayBeforeCanPickup = 10;
 
 			float f3 = 0.00F + container.getWorldObj().rand.nextFloat() * 0.04F - 0.02F;

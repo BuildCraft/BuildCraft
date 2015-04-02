@@ -30,6 +30,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.builders.schematics.SchematicRotateMeta;
+import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
@@ -66,9 +67,13 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
-		chipsetCostMultiplier = BuildCraftCore.mainConfiguration.getFloat("chipset.costMultiplier", "general", 1.0F, 0.001F, 1000.0F, "The multiplier for chipset recipe cost.");
-
+		BuildCraftCore.mainConfigManager.register("power.chipsetCostMultiplier", 1.0D, "The cost multiplier for Chipsets", ConfigManager.RestartRequirement.GAME);
 		BuildCraftCore.mainConfiguration.save();
+		chipsetCostMultiplier = (float) BuildCraftCore.mainConfigManager.get("power.chipsetCostMultiplier").getDouble();
+
+		if (BuildCraftCore.mainConfiguration.hasChanged()) {
+			BuildCraftCore.mainConfiguration.save();
+		}
 
 		laserBlock = (BlockLaser) CompatHooks.INSTANCE.getBlock(BlockLaser.class);
 		laserBlock.setBlockName("laserBlock");

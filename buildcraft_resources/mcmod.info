@@ -100,5 +100,22 @@
   "dependencies": [
      "mod_MinecraftForge"
   ]
+},
+{
+  "modid": "BuildCraft|Robotics",
+  "name": "BC Robotics",
+  "version": "$version",
+  "mcversion": "$mcversion",
+  "description": "Extending Minecraft with pipes, auto-crafting, quarries, engines and much more! (Transport Component)",
+  "credits": "Created by SpaceToad",
+  "logoFile": "assets/buildcraft/logo.png",
+  "url": "http://www.mod-buildcraft.com/",
+  "updateUrl": "",
+  "authorList": [ "SpaceToad", "BuildCraft Team" ],
+  "parent": "BuildCraft|Core",
+  "screenshots": [],
+  "dependencies": [
+     "mod_MinecraftForge"
+  ]
 }
 ]

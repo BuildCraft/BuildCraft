@@ -19,6 +19,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.world.biome.BiomeGenBase;
+import cpw.mods.fml.client.event.ConfigChangedEvent;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -50,6 +52,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.lib.block.BlockBuildCraftFluid;
+import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.engines.TileEngineBase.EnergyStage;
 import buildcraft.core.lib.network.ChannelHandler;
@@ -109,37 +112,36 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	private static Fluid buildcraftFluidFuel;
 	private static Fluid buildcraftFluidRedPlasma;
 
-
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
 		BuildcraftFuelRegistry.fuel = FuelManager.INSTANCE;
 		BuildcraftFuelRegistry.coolant = CoolantManager.INSTANCE;
 
-		int oilDesertBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "biomeOilDesert", DefaultProps.BIOME_OIL_DESERT).getInt(DefaultProps.BIOME_OIL_DESERT);
-		int oilOceanBiomeId = BuildCraftCore.mainConfiguration.get("biomes", "biomeOilOcean", DefaultProps.BIOME_OIL_OCEAN).getInt(DefaultProps.BIOME_OIL_OCEAN);
-		canOilBurn = BuildCraftCore.mainConfiguration.get("general", "burnOil", true, "Can oil burn?").getBoolean(true);
-		isOilDense = BuildCraftCore.mainConfiguration.get("general", "denseOil", true, "Should it be hard to swim in oil?").getBoolean(true);
-		oilWellScalar = BuildCraftCore.mainConfiguration.get("general", "oilWellGenerationRate", 1.0, "Probability of oil well generation").getDouble(1.0);
+		int oilDesertBiomeId = BuildCraftCore.mainConfiguration.get("worldgen.biomes", "biomeOilDesert", DefaultProps.BIOME_OIL_DESERT).getInt(DefaultProps.BIOME_OIL_DESERT);
+		int oilOceanBiomeId = BuildCraftCore.mainConfiguration.get("worldgen.biomes", "biomeOilOcean", DefaultProps.BIOME_OIL_OCEAN).getInt(DefaultProps.BIOME_OIL_OCEAN);
+
+		BuildCraftCore.mainConfigManager.register("worldgen.spawnOilSprings", true, "Should I spawn oil springs?", ConfigManager.RestartRequirement.GAME);
+		BuildCraftCore.mainConfigManager.register("worldgen.oilWellGenerationRate", 1.0D, "How high should be the probability of an oil well generating?", ConfigManager.RestartRequirement.NONE);
 
 		setBiomeList(
 				OilPopulate.INSTANCE.surfaceDepositBiomes,
 				BuildCraftCore.mainConfiguration
-						.get("general", "oil.increasedBiomeIDs",
+						.get("worldgen.biomes", "increasedOilIDs",
 								new String[] {BiomeDictionary.Type.SANDY.toString(), BiomeGenBase.taiga.biomeName},
 								"IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have increased oil generation rates."));
 
 		setBiomeList(
 				OilPopulate.INSTANCE.excessiveBiomes,
 				BuildCraftCore.mainConfiguration
-				.get("general",
-								"oil.excessiveBiomeIDs",
+				.get("worldgen.biomes",
+								"excessiveOilIDs",
 								new String[] {},
 								"IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have GREATLY increased oil generation rates."));
 
 		setBiomeList(OilPopulate.INSTANCE.excludedBiomes,
                 BuildCraftCore.mainConfiguration
-				.get("general", "oil.excludeBiomeIDs",
-						new String[] {BiomeGenBase.sky.biomeName, BiomeGenBase.hell.biomeName},
+				.get("worldgen.biomes", "excludeOilIDs",
+						new String[]{BiomeGenBase.sky.biomeName, BiomeGenBase.hell.biomeName},
 						"IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that are excluded from generating oil."));
 
 		double fuelLavaMultiplier = BuildCraftCore.mainConfiguration.get("general", "fuel.lava.combustion", 1.0F, "adjust energy value of Lava in Combustion Engines").getDouble(1.0F);
@@ -156,7 +158,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			if (BiomeGenBase.getBiomeGenArray()[oilDesertBiomeId] != null) {
 				oilDesertBiomeId = findUnusedBiomeID("oilDesert");
 				// save changes to config file
-				BuildCraftCore.mainConfiguration.get("biomes", "biomeOilDesert", oilDesertBiomeId).set(oilDesertBiomeId);
+				BuildCraftCore.mainConfiguration.get("worldgen.biomes", "biomeOilDesert", oilDesertBiomeId).set(oilDesertBiomeId);
 				BuildCraftCore.mainConfiguration.save();
 			}
 			biomeOilDesert = BiomeGenOilDesert.makeBiome(oilDesertBiomeId);
@@ -166,7 +168,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			if (BiomeGenBase.getBiomeGenArray()[oilOceanBiomeId] != null) {
 				oilOceanBiomeId = findUnusedBiomeID("oilOcean");
 				// save changes to config file
-				BuildCraftCore.mainConfiguration.get("biomes", "biomeOilOcean", oilOceanBiomeId).set(oilOceanBiomeId);
+				BuildCraftCore.mainConfiguration.get("worldgen.biomes", "biomeOilOcean", oilOceanBiomeId).set(oilOceanBiomeId);
 				BuildCraftCore.mainConfiguration.save();
 			}
 			biomeOilOcean = BiomeGenOilOcean.makeBiome(oilOceanBiomeId);
@@ -198,16 +200,21 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		fluidRedPlasma = FluidRegistry.getFluid("redplasma");
 
 		if (fluidOil.getBlock() == null) {
-			blockOil = new BlockBuildCraftFluid(fluidOil, Material.water, MapColor.blackColor).setFlammable(canOilBurn).setFlammability(0).setDense(isOilDense);
+			blockOil = new BlockBuildCraftFluid(fluidOil, Material.water, MapColor.blackColor).setFlammability(0);
 			blockOil.setBlockName("blockOil").setLightOpacity(8);
 			CoreProxy.proxy.registerBlock(blockOil);
 			fluidOil.setBlock(blockOil);
+
+			BuildCraftCore.mainConfigManager.register("general.oilCanBurn", true, "Should oil burn when lit on fire?", ConfigManager.RestartRequirement.NONE);
+			BuildCraftCore.mainConfigManager.register("general.oilIsDense", true, "Should oil be dense and drag entities down?", ConfigManager.RestartRequirement.NONE);
 		} else {
 			blockOil = fluidOil.getBlock();
 		}
 
+		reloadConfig(ConfigManager.RestartRequirement.GAME);
+
 		if (blockOil != null) {
-			spawnOilSprings = BuildCraftCore.mainConfiguration.get("worldgen", "oilSprings", true).getBoolean(true);
+			spawnOilSprings = BuildCraftCore.mainConfigManager.get("worldgen.spawnOilSprings").getBoolean(true);
 			BlockSpring.EnumSpring.OIL.canGen = spawnOilSprings;
 			BlockSpring.EnumSpring.OIL.liquidBlock = blockOil;
 		}
@@ -281,7 +288,35 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
 		InterModComms.registerHandler(new IMCHandlerEnergy());
 
+		FMLCommonHandler.instance().bus().register(this);
 		MinecraftForge.EVENT_BUS.register(this);
+	}
+
+	public void reloadConfig(ConfigManager.RestartRequirement restartType) {
+		if (restartType == ConfigManager.RestartRequirement.GAME) {
+			reloadConfig(ConfigManager.RestartRequirement.WORLD);
+		} else if (restartType == ConfigManager.RestartRequirement.WORLD) {
+			reloadConfig(ConfigManager.RestartRequirement.NONE);
+		} else {
+			oilWellScalar = BuildCraftCore.mainConfigManager.get("worldgen.oilWellGenerationRate").getDouble();
+
+			if (blockOil instanceof BlockBuildCraftFluid) {
+				canOilBurn = BuildCraftCore.mainConfigManager.get("general.oilCanBurn").getBoolean();
+				isOilDense = BuildCraftCore.mainConfigManager.get("general.oilIsDense").getBoolean();
+				((BlockBuildCraftFluid) blockOil).setFlammable(canOilBurn).setDense(isOilDense);
+			}
+
+			if (BuildCraftCore.mainConfiguration.hasChanged()) {
+				BuildCraftCore.mainConfiguration.save();
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onConfigChanged(ConfigChangedEvent.PostConfigChangedEvent event) {
+		if ("BuildCraft|Core".equals(event.modID)) {
+			reloadConfig(event.isWorldRunning ? ConfigManager.RestartRequirement.NONE : ConfigManager.RestartRequirement.WORLD);
+		}
 	}
 
 	private void setBiomeList(Set<Integer> list, Property configuration) {

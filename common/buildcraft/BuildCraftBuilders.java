@@ -25,6 +25,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.stats.Achievement;
+import cpw.mods.fml.client.event.ConfigChangedEvent;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -39,7 +41,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import buildcraft.api.blueprints.BlueprintDeployer;
 import buildcraft.api.blueprints.BuilderAPI;
@@ -137,6 +138,7 @@ import buildcraft.core.builders.schematics.SchematicRotateMeta;
 import buildcraft.core.builders.schematics.SchematicStandalone;
 import buildcraft.core.builders.schematics.SchematicTileCreative;
 import buildcraft.core.builders.schematics.SchematicWallSide;
+import buildcraft.core.config.ConfigManager;
 import buildcraft.core.proxy.CoreProxy;
 
 @Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
@@ -168,53 +170,66 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public static boolean debugPrintSchematicList = false;
 	public static boolean dropBrokenBlocks = false;
 
-	private String blueprintServerDir;
-	private String blueprintLibraryOutput;
-	private String[] blueprintLibraryInput;
+	private String blueprintServerDir, blueprintClientDir;
 
 	@Mod.EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
-		blueprintServerDir = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL,
-				"blueprints.serverDir",
+		BuildCraftCore.mainConfigManager.register("blueprints.serverDatabaseDirectory",
 				"\"$MINECRAFT" + File.separator + "config" + File.separator + "buildcraft" + File.separator
-						+ "blueprints" + File.separator + "server\"").getString();
+						+ "blueprints" + File.separator + "server\"",
+				"Location for the server blueprint database (used by all blueprint items).", ConfigManager.RestartRequirement.WORLD);
+		BuildCraftCore.mainConfigManager.register("blueprints.clientDatabaseDirectory",
+				"\"$MINECRAFT" + File.separator + "blueprints\"",
+				"Location for the client blueprint database (used by the Electronic Library).", ConfigManager.RestartRequirement.NONE);
 
-		blueprintLibraryOutput = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL,
-				"blueprints.libraryOutput", "\"$MINECRAFT" + File.separator + "blueprints\"").getString();
+		BuildCraftCore.mainConfigManager.register("general.markerRange", 64, "Set the maximum marker range.", ConfigManager.RestartRequirement.NONE);
 
-		blueprintLibraryInput = BuildCraftCore.mainConfiguration.get(Configuration.CATEGORY_GENERAL,
-				"blueprints.libraryInput", new String []
-				{
-						// expected location
-						"\"$MINECRAFT" + File.separator + "blueprints\"",
-						// legacy beta BuildCraft
-						"\"$MINECRAFT" + File.separator + "config" + File.separator + "buildcraft" + File.separator
-								+ "blueprints" + File.separator + "client\"",
-						// inferred user download location
-						"\"" + getDownloadsDir() + "\""
-				}
-				).getStringList().clone();
+		BuildCraftCore.mainConfigManager.get("blueprints.serverDatabaseDirectory").setShowInGui(false);
+		BuildCraftCore.mainConfigManager.get("general.markerRange").setMinValue(8).setMaxValue(64);
 
-		blueprintServerDir = JavaTools.stripSurroundingQuotes(replacePathVariables(blueprintServerDir));
-		blueprintLibraryOutput = JavaTools.stripSurroundingQuotes(replacePathVariables(blueprintLibraryOutput));
+		serverDB = new BlueprintServerDatabase();
+		clientDB = new LibraryDatabase();
 
-		for (int i = 0; i < blueprintLibraryInput.length; ++i) {
-			blueprintLibraryInput[i] = JavaTools.stripSurroundingQuotes(replacePathVariables(blueprintLibraryInput[i]));
-		}
+		reloadConfig(ConfigManager.RestartRequirement.GAME);
 
+		// TODO
 		//Property dropBlock = BuildCraftCore.mainConfiguration.get("general", "builder.dropBrokenBlocks", false, "set to true to force the builder to drop broken blocks");
 		//dropBrokenBlocks = dropBlock.getBoolean(false);
 
-		Property markerRange = BuildCraftCore.mainConfiguration.get("general", "marker.range", 64, "Set the default marker range. Setting it too high might cause lag and general weirdness, so watch out!");
-		markerRange.setMinValue(8);
-		markerRange.setMaxValue(64);
-		DefaultProps.MARKER_RANGE = markerRange.getInt();
-		
-		Property printSchematicList = BuildCraftCore.mainConfiguration.get("debug", "blueprints.printSchematicList", false);
+		Property printSchematicList = BuildCraftCore.mainConfiguration.get("debug", "printBlueprintSchematicList", false);
 		debugPrintSchematicList = printSchematicList.getBoolean();
+	}
 
-		if (BuildCraftCore.mainConfiguration.hasChanged()) {
-			BuildCraftCore.mainConfiguration.save();
+	public void reloadConfig(ConfigManager.RestartRequirement restartType) {
+		if (restartType == ConfigManager.RestartRequirement.GAME) {
+
+			reloadConfig(ConfigManager.RestartRequirement.WORLD);
+		} else if (restartType == ConfigManager.RestartRequirement.WORLD) {
+			blueprintServerDir = BuildCraftCore.mainConfigManager.get("blueprints.serverDatabaseDirectory").getString();
+			blueprintServerDir = JavaTools.stripSurroundingQuotes(replacePathVariables(blueprintServerDir));
+			serverDB.init(new String[] {blueprintServerDir}, blueprintServerDir);
+
+			reloadConfig(ConfigManager.RestartRequirement.NONE);
+		} else {
+			blueprintClientDir = BuildCraftCore.mainConfigManager.get("blueprints.clientDatabaseDirectory").getString();
+			blueprintClientDir = JavaTools.stripSurroundingQuotes(replacePathVariables(blueprintClientDir));
+			clientDB.init(new String[] {
+					blueprintClientDir,
+					getDownloadsDir()
+			}, blueprintClientDir);
+
+			DefaultProps.MARKER_RANGE = BuildCraftCore.mainConfigManager.get("general.markerRange").getInt();
+
+			if (BuildCraftCore.mainConfiguration.hasChanged()) {
+				BuildCraftCore.mainConfiguration.save();
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onConfigChanged(ConfigChangedEvent.PostConfigChangedEvent event) {
+		if ("BuildCraft|Core".equals(event.modID)) {
+			reloadConfig(event.isWorldRunning ? ConfigManager.RestartRequirement.NONE : ConfigManager.RestartRequirement.WORLD);
 		}
 	}
 
@@ -266,12 +281,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		HeuristicBlockDetection.start();
-
-		serverDB = new BlueprintServerDatabase();
-		clientDB = new LibraryDatabase();
-
-		serverDB.init(new String[] {blueprintServerDir}, blueprintServerDir);
-		clientDB.init(blueprintLibraryInput, blueprintLibraryOutput);
 
 		if (debugPrintSchematicList) {
 			try {
@@ -526,6 +535,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		}
 
 		MinecraftForge.EVENT_BUS.register(this);
+		FMLCommonHandler.instance().bus().register(this);
 
 		// Create filler registry
 		try {

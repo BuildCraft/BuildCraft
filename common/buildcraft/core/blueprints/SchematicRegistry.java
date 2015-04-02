@@ -182,10 +182,10 @@ public final class SchematicRegistry implements ISchematicRegistry {
 	}
 
 	public void readConfiguration(Configuration conf) {
-		Property excludedMods = conf.get(Configuration.CATEGORY_GENERAL, "builder.excludedMods", new String[0],
-				"mods that should be excluded from the builder.");
-		Property excludedBlocks = conf.get(Configuration.CATEGORY_GENERAL, "builder.excludedBlocks", new String[0],
-				"blocks that should be excluded from the builder.");
+		Property excludedMods = conf.get("blueprints", "excludedMods", new String[0],
+				"mods that should be excluded from the builder.").setLanguageKey("config.blueprints.excludedMods").setRequiresMcRestart(true);
+		Property excludedBlocks = conf.get("blueprints", "excludedBlocks", new String[0],
+				"blocks that should be excluded from the builder.").setLanguageKey("config.blueprints.excludedBlocks").setRequiresMcRestart(true);
 
 		for (String id : excludedMods.getStringList()) {
 			String strippedId = JavaTools.stripSurroundingQuotes(id.trim());

@@ -56,6 +56,46 @@ color.red=Red
 color.white=White
 color.yellow=Yellow
 
+config.general=General
+config.general.pipes=Pipes
+config.blueprints=Blueprints
+config.power=Power Usage
+config.display=Display
+config.worldgen=World Generation
+config.network=Networking
+config.buildcraft=BuildCraft Configuration
+
+config.blueprints.clientDatabaseDirectory=Client directory
+config.blueprints.excludedMods=Excluded mods
+config.blueprints.excludedBlocks=Excluded blocks
+
+config.display.colorBlindMode=Colorblind mode
+config.display.hideFluidValues=Hide fluid numbers
+config.display.hidePowerValues=Hide power numbers
+
+config.general.pumpsConsumeWater=Pumps consume water
+config.general.updateCheck=Check for updates
+config.general.itemLifespan=Item lifespan (seconds)
+config.general.canEnginesExplode=Engines explode
+config.general.oilCanBurn=Burning oil
+config.general.oilIsDense=Dense oil
+config.general.quarry=Quarry Options
+config.general.quarry.oneTimeUse=One-time use
+config.general.quarry.doChunkLoading=Automatic chunk loading
+config.general.miningDepth=Maximum relative mining depth
+config.general.pumpDimensionControl=Pump dimension control
+
+config.network.longUpdateFactor=Client synchronization factor (ticks)
+config.network.updateFactor=Packet sending factor (ticks)
+
+config.power.miningUsageMultiplier=Mining usage multiplier
+config.power.chipsetCostMultiplier=Chipset cost multiplier
+
+config.worldgen.enable=Enable
+config.worldgen.oilWellGenerationRate=Oil well generation rate
+config.worldgen.spawnOilSprings=Spawn oil springs
+
+
 direction.north=North
 direction.west=West
 direction.east=East
