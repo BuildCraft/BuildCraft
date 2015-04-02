@@ -127,7 +127,7 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 				AIRobotSearchRandomBlock searchAI = (AIRobotSearchRandomBlock) ai;
 				if (searchAI.takeResource()) {
 					blockFound = searchAI.blockFound;
-					if (searchAI.path.size() > 1){
+					if (searchAI.path.size() > 1) {
 						searchAI.path.removeLast();
 					}
 					startDelegateAI(new AIRobotGotoBlock(robot, searchAI.path));

@@ -207,7 +207,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 			}
 
 			if (BlockUtils.isUnbreakableBlock(world, slot.x, slot.y, slot.z)
-					|| isBlockPlaceCanceled(world, x, y, z, slot.schematic)
+					|| isBlockPlaceCanceled(world, slot.x, slot.y, slot.z, slot.schematic)
 					|| !BuildCraftAPI.isSoftBlock(world, slot.x, slot.y, slot.z)) {
 				iteratorBuild.remove();
 				builtLocations.add(new BlockIndex(slot.x, slot.y, slot.z));

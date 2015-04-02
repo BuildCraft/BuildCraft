@@ -12,8 +12,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 public class BuildingSlotIterator {
-
-	private static int ITERATIONS_MAX = 1000;
+	private static int ITERATIONS_MAX = 500;
 
 	private LinkedList<BuildingSlotBlock> buildList;
 	private Iterator<BuildingSlotBlock> current;
