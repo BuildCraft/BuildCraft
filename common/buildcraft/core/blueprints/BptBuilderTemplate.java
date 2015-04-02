@@ -51,9 +51,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 
 						SchematicBlockBase slot = blueprint.contents[i][j][k];
 
-						if (slot == null
-								&& !clearedLocations.contains(new BlockIndex(
-										xCoord, yCoord, zCoord))) {
+						if (slot == null && !isLocationUsed(xCoord, yCoord, zCoord)) {
 							BuildingSlotBlock b = new BuildingSlotBlock();
 
 							b.schematic = null;
@@ -83,7 +81,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 
 					SchematicBlockBase slot = blueprint.contents[i][j][k];
 
-					if (slot != null && !builtLocations.contains(new BlockIndex(xCoord, yCoord, zCoord))) {
+					if (slot != null && !isLocationUsed(xCoord, yCoord, zCoord)) {
 						BuildingSlotBlock b = new BuildingSlotBlock();
 
 						b.schematic = slot;
@@ -166,15 +164,14 @@ public class BptBuilderTemplate extends BptBuilderBase {
 						|| isBlockBreakCanceled(world, slot.x, slot.y, slot.z)
 						|| BuildCraftAPI.isSoftBlock(world, slot.x, slot.y, slot.z)) {
 					iteratorClear.remove();
-					clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
+					markLocationUsed(slot.x, slot.y, slot.z);
 				} else {
 					consumeEnergyToDestroy(builder, slot);
 					createDestroyItems(slot);
 
 					result = slot;
 					iteratorClear.remove();
-					clearedLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
-
+					markLocationUsed(slot.x, slot.y, slot.z);
 					break;
 				}
 			}
@@ -203,13 +200,12 @@ public class BptBuilderTemplate extends BptBuilderBase {
 					|| isBlockPlaceCanceled(world, slot.x, slot.y, slot.z, slot.schematic)
 					|| !BuildCraftAPI.isSoftBlock(world, slot.x, slot.y, slot.z)) {
 				iteratorBuild.remove();
-				builtLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
+				markLocationUsed(slot.x, slot.y, slot.z);
 			} else if (builder.consumeEnergy(BuilderAPI.BUILD_ENERGY)) {
 				slot.addStackConsumed(firstSlotToConsume.decreaseStackInSlot(1));
 				result = slot;
 				iteratorBuild.remove();
-				builtLocations.add(new BlockIndex(slot.x, slot.y, slot.z));
-
+				markLocationUsed(slot.x, slot.y, slot.z);
 				break;
 			}
 		}
