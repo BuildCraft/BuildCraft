@@ -38,7 +38,7 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 
 	public abstract boolean isMoving();
 
-	public abstract IDockingStation getLinkedStation();
+	public abstract DockingStation getLinkedStation();
 
 	public abstract RedstoneBoardRobot getBoard();
 
@@ -48,9 +48,9 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 
 	public abstract IEnergyStorage getBattery();
 
-	public abstract IDockingStation getDockingStation();
+	public abstract DockingStation getDockingStation();
 
-	public abstract void dock(IDockingStation station);
+	public abstract void dock(DockingStation station);
 
 	public abstract void undock();
 
@@ -73,4 +73,6 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 	public abstract void onChunkUnload();
 
 	public abstract ItemStack receiveItem(TileEntity tile, ItemStack stack);
+
+	public abstract void setMainStation(DockingStation station);
 }
