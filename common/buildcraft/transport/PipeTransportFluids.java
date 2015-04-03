@@ -569,6 +569,13 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			return 0;
 		}
 
+		// TODO: Workaround - look into further in 7.0 (or just rewrite it to be 1 tank with 7 amounts - MatthiasM2)?
+		for (int i = 0; i <= 6; i++) {
+			if (internalTanks[i].getFluid() != null && !internalTanks[i].getFluid().isFluidEqual(resource)) {
+				return 0;
+			}
+		}
+
 		int filled;
 
 		if (this.container.pipe instanceof IPipeTransportFluidsHook) {
