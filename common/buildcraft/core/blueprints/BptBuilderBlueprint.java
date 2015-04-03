@@ -306,6 +306,10 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		while (iterator.hasNext()) {
 			BuildingSlotBlock slot = iterator.next();
 
+			if (!world.blockExists(slot.x, slot.y, slot.z)) {
+				continue;
+			}
+
 			if (slot.buildStage > buildList.getFirst().buildStage) {
 				iterator.reset();
 				return null;
