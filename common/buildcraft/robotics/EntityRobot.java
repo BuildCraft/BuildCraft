@@ -1141,7 +1141,7 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	public void getDebugInfo(List<String> info, ForgeDirection side, ItemStack debugger, EntityPlayer player) {
 		info.add("Robot " + board.getNBTHandler().getID() + " (" + getBattery().getEnergyStored() + "/" + getBattery().getMaxEnergyStored() + " RF)");
-		info.add("Position: " + posX + ", " + posY + ", " + posZ);
+		info.add(String.format("Position: %.2f, %.2f, %.2f", posX, posY, posZ));
 		info.add("AI tree:");
 		AIRobot aiRobot = mainAI;
 		while (aiRobot != null) {
