@@ -9,9 +9,9 @@
 package buildcraft.robotics.ai;
 
 import buildcraft.api.robots.AIRobot;
+import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.IStationFilter;
 
 public class AIRobotRecharge extends AIRobot {

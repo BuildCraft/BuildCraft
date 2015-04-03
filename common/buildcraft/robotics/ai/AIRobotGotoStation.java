@@ -12,9 +12,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
+import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.api.robots.IDockingStation;
-import buildcraft.robotics.DockingStation;
 
 public class AIRobotGotoStation extends AIRobot {
 
@@ -26,7 +25,7 @@ public class AIRobotGotoStation extends AIRobot {
 		super(iRobot);
 	}
 
-	public AIRobotGotoStation(EntityRobotBase iRobot, IDockingStation station) {
+	public AIRobotGotoStation(EntityRobotBase iRobot, DockingStation station) {
 		super(iRobot);
 
 		stationIndex = station.index();

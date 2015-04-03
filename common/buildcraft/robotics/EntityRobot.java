@@ -47,8 +47,8 @@ import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
+import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.api.robots.IDockingStation;
 import buildcraft.api.robots.RobotManager;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.tiles.IDebuggable;
@@ -73,7 +73,7 @@ public class EntityRobot extends EntityRobotBase implements
 			DefaultProps.TEXTURE_PATH_ROBOTS + "/robot_base.png");
 
 	public LaserData laser = new LaserData();
-	public IDockingStation linkedDockingStation;
+	public DockingStation linkedDockingStation;
 	public BlockIndex linkedDockingStationIndex;
 	public ForgeDirection linkedDockingStationSide;
 
@@ -578,7 +578,7 @@ public class EntityRobot extends EntityRobotBase implements
     }
 
 	@Override
-	public void dock(IDockingStation station) {
+	public void dock(DockingStation station) {
 		currentDockingStation = (DockingStation) station;
 
 		setSteamDirection(
@@ -608,11 +608,12 @@ public class EntityRobot extends EntityRobotBase implements
 		return currentDockingStation;
 	}
 
-	public void setMainStation(IDockingStation iStation) {
-		DockingStation station = (DockingStation) iStation;
+	@Override
+	public void setMainStation(DockingStation iStation) {
+		DockingStation station = iStation;
 
 		if (linkedDockingStation != null && linkedDockingStation != station) {
-			((DockingStation) linkedDockingStation).unsafeRelease(this);
+			linkedDockingStation.unsafeRelease(this);
 		}
 
 		linkedDockingStation = station;
@@ -855,7 +856,7 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public IDockingStation getLinkedStation() {
+	public DockingStation getLinkedStation() {
 		return linkedDockingStation;
 	}
 

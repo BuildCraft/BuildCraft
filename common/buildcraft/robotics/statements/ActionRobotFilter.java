@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import buildcraft.api.robots.IDockingStation;
+import buildcraft.api.robots.DockingStation;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -30,7 +30,6 @@ import buildcraft.core.lib.inventory.filters.PassThroughStackFilter;
 import buildcraft.core.lib.inventory.filters.StatementParameterStackFilter;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.statements.BCStatement;
-import buildcraft.robotics.DockingStation;
 import buildcraft.transport.gates.ActionIterator;
 
 public class ActionRobotFilter extends BCStatement implements IActionInternal {
@@ -64,7 +63,7 @@ public class ActionRobotFilter extends BCStatement implements IActionInternal {
 		return new StatementParameterItemStack();
 	}
 
-	public static Collection<ItemStack> getGateFilterStacks(IDockingStation station) {
+	public static Collection<ItemStack> getGateFilterStacks(DockingStation station) {
 		ArrayList<ItemStack> result = new ArrayList<ItemStack>();
 
 		for (StatementSlot slot : new ActionIterator(((DockingStation) station).getPipe().getPipe())) {
@@ -85,7 +84,7 @@ public class ActionRobotFilter extends BCStatement implements IActionInternal {
 		return result;
 	}
 
-	public static IStackFilter getGateFilter(IDockingStation station) {
+	public static IStackFilter getGateFilter(DockingStation station) {
 		Collection<ItemStack> stacks = getGateFilterStacks(station);
 
 		if (stacks.size() == 0) {
@@ -95,7 +94,7 @@ public class ActionRobotFilter extends BCStatement implements IActionInternal {
 		}
 	}
 
-	public static IFluidFilter getGateFluidFilter(IDockingStation station) {
+	public static IFluidFilter getGateFluidFilter(DockingStation station) {
 		Collection<ItemStack> stacks = getGateFilterStacks(station);
 
 		if (stacks.size() == 0) {

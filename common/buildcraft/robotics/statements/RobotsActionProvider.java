@@ -11,6 +11,7 @@ package buildcraft.robotics.statements;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockWorkbench;
 import net.minecraft.inventory.IInventory;
@@ -19,13 +20,13 @@ import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftRobotics;
+import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IActionProvider;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.RobotUtils;
 import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.transport.PipeTransportFluids;
@@ -43,13 +44,7 @@ public class RobotsActionProvider implements IActionProvider {
 			return result;
 		}
 
-		ArrayList<DockingStation> stations = new ArrayList<DockingStation>();
-
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			if (RobotUtils.getStation((IPipeTile) tile, dir) != null) {
-				stations.add(RobotUtils.getStation((IPipeTile) tile, dir));
-			}
-		}
+		List<DockingStation> stations = RobotUtils.getStations(tile);
 
 		if (stations.size() == 0) {
 			return result;

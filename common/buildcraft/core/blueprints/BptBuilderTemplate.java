@@ -14,7 +14,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.SchematicBlockBase;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.core.builders.BuildingSlot;

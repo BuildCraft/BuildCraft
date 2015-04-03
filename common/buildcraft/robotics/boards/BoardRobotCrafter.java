@@ -24,8 +24,8 @@ import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.api.robots.AIRobot;
+import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.api.robots.IDockingStation;
 import buildcraft.api.robots.StackRequest;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.recipes.AssemblyRecipeManager;
@@ -45,7 +45,7 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 
 	private ItemStack order;
 	private ArrayList<ItemStack> craftingBlacklist = new ArrayList<ItemStack>();
-	private HashSet<IDockingStation> reservedStations = new HashSet<IDockingStation>();
+	private HashSet<DockingStation> reservedStations = new HashSet<DockingStation>();
 	private StackRequest currentRequest = null;
 
 	public BoardRobotCrafter(EntityRobotBase iRobot) {

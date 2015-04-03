@@ -10,8 +10,8 @@ package buildcraft.robotics.ai;
 
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
+import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.IStationFilter;
 
 public class AIRobotSearchAndGotoStation extends AIRobot {

@@ -10,9 +10,8 @@ package buildcraft.robotics.ai;
 
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
+import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.api.robots.IDockingStation;
-import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.IStationFilter;
 import buildcraft.robotics.statements.ActionStationForbidRobot;
 
@@ -45,7 +44,7 @@ public class AIRobotSearchStation extends AIRobot {
 		double potentialStationDistance = Float.MAX_VALUE;
 		DockingStation potentialStation = null;
 
-		for (IDockingStation d : robot.getRegistry().getStations()) {
+		for (DockingStation d : robot.getRegistry().getStations()) {
 			DockingStation station = (DockingStation) d;
 
 			if (d.isTaken() && d.robotIdTaking() != robot.getRobotId()) {

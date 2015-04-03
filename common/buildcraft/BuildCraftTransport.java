@@ -42,7 +42,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;

@@ -225,29 +225,37 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
 		RedstoneBoardRegistry.instance = new ImplRedstoneBoardRegistry();
 
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotPickerNBT.instance, 20);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotCarrierNBT.instance, 10);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotLumberjackNBT.instance, 10);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotHarvesterNBT.instance, 10);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotMinerNBT.instance, 10);
+		// Cheapest, dumbest robot types
+		// Those generally do very simple tasks
+		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotPickerNBT.instance, 8000);
+		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotCarrierNBT.instance, 8000);
+		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotFluidCarrierNBT.instance, 8000);
 
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotFluidCarrierNBT.instance, 5);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotPlanterNBT.instance, 5);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotFarmerNBT.instance, 5);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotLeaveCutterNBT.instance, 5);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotButcherNBT.instance, 5);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotShovelmanNBT.instance, 5);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotCrafterNBT.instance, 5);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotDeliveryNBT.instance, 5);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotPumpNBT.instance, 5);
+		// More expensive robot types
+		// Those generally handle block mining/harvesting/placement.
+		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotLumberjackNBT.instance, 32000);
+		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotHarvesterNBT.instance, 32000);
+		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotMinerNBT.instance, 32000);
+		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotPlanterNBT.instance, 32000);
+		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotFarmerNBT.instance, 32000);
+		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotLeaveCutterNBT.instance, 32000);
+		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotButcherNBT.instance, 32000);
+		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotShovelmanNBT.instance, 32000);
+		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotPumpNBT.instance, 32000);
 
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotKnightNBT.instance, 1);
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotBomberNBT.instance, 1);
+		// Even more expensive
+		// These handle complex multi-step operations.
+		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotCrafterNBT.instance, 128000);
+		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotDeliveryNBT.instance, 128000);
+		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotKnightNBT.instance, 128000);
+		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotBomberNBT.instance, 128000);
+		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotStripesNBT.instance, 128000);
 
+		// Most expensive
+		// Overpowered galore!
 		if (Loader.isModLoaded("BuildCraft|Builders")) {
-			RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotBuilderNBT.instance, 0.5F);
+			RedstoneBoardRegistry.instance.registerBoardType(BoardRobotBuilderNBT.instance, 512000);
 		}
-		RedstoneBoardRegistry.instance.registerBoardClass(BoardRobotStripesNBT.instance, 0.5F);
 
 		StatementManager.registerActionProvider(new RobotsActionProvider());
 		StatementManager.registerTriggerProvider(new RobotsTriggerProvider());

@@ -9,9 +9,9 @@
 package buildcraft.robotics.ai;
 
 import buildcraft.api.robots.AIRobot;
+import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.statements.StatementSlot;
-import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.statements.ActionRobotWakeUp;
 import buildcraft.transport.gates.ActionIterator;
 

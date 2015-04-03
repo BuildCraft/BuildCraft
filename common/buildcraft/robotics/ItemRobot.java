@@ -27,6 +27,7 @@ import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.events.RobotPlacementEvent;
+import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBuildCraft;

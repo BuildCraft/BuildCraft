@@ -10,7 +10,6 @@ package buildcraft.transport.stripes;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -23,7 +22,6 @@ import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.ItemPipe;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.TileGenericPipe;
 
 public class StripesHandlerPipes implements IStripesHandler {
 

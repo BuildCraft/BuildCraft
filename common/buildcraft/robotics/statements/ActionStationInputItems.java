@@ -9,13 +9,13 @@
 package buildcraft.robotics.statements;
 
 import buildcraft.api.core.IInvSlot;
+import buildcraft.api.robots.DockingStation;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.core.lib.inventory.filters.StatementParameterStackFilter;
 import buildcraft.core.statements.BCStatement;
-import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.EntityRobot;
 
 public abstract class ActionStationInputItems extends BCStatement implements IActionInternal {

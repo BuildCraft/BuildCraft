@@ -3,7 +3,7 @@ package buildcraft.robotics;
 import java.util.HashMap;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import buildcraft.api.robots.IDockingStation;
+import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.IRobotRegistryProvider;
 
 public class RobotRegistryProvider implements IRobotRegistryProvider {
@@ -23,7 +23,7 @@ public class RobotRegistryProvider implements IRobotRegistryProvider {
 
 			newRegistry.world = world;
 
-			for (IDockingStation d : newRegistry.stations.values()) {
+			for (DockingStation d : newRegistry.stations.values()) {
 				((DockingStation) d).world = world;
 			}
 

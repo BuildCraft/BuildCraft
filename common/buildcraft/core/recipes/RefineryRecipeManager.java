@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import net.minecraftforge.fluids.FluidStack;
-import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.api.recipes.IRefineryRecipeManager;

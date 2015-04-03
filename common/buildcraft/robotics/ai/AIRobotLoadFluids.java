@@ -14,9 +14,9 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.api.robots.AIRobot;
+import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.inventory.filters.IFluidFilter;
-import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.robotics.statements.ActionStationProvideFluids;
 

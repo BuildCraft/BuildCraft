@@ -8,14 +8,16 @@
  */
 package buildcraft.robotics.statements;
 
+import java.util.List;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import buildcraft.api.robots.DockingStation;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.statements.BCStatement;
-import buildcraft.robotics.DockingStation;
 import buildcraft.robotics.EntityRobot;
+import buildcraft.robotics.RobotUtils;
 
 public class TriggerRobotInStation extends BCStatement implements ITriggerInternal {
 
@@ -35,10 +37,9 @@ public class TriggerRobotInStation extends BCStatement implements ITriggerIntern
 
 	@Override
 	public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
-		DockingStationIterator iterator = new DockingStationIterator(container);
+		List<DockingStation> stations = RobotUtils.getStations(container.getTile());
 
-		while (iterator.hasNext()) {
-			DockingStation station = iterator.next();
+		for (DockingStation station : stations) {
 			if (station.robotTaking() != null) {
 				EntityRobot robot = (EntityRobot) station.robotTaking();
 

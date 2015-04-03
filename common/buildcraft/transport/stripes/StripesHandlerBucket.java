@@ -10,7 +10,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
-
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
 import buildcraft.core.lib.utils.BlockUtils;

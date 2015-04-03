@@ -9,7 +9,6 @@
 package buildcraft.core.blueprints;
 
 import java.util.BitSet;
-
 import org.apache.logging.log4j.Level;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;

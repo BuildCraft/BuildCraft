@@ -10,21 +10,24 @@ package buildcraft.robotics.statements;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftRobotics;
+import buildcraft.api.robots.DockingStation;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.ITriggerProvider;
+import buildcraft.robotics.RobotUtils;
 
 public class RobotsTriggerProvider implements ITriggerProvider {
 	@Override
 	public Collection<ITriggerInternal> getInternalTriggers(IStatementContainer container) {
 		LinkedList<ITriggerInternal> result = new LinkedList<ITriggerInternal>();
-		DockingStationIterator iterator = new DockingStationIterator(container);
+		List<DockingStation> stations = RobotUtils.getStations(container.getTile());
 
-		if (iterator.hasNext()) {
+		if (stations.size() > 0) {
 			result.add(BuildCraftRobotics.triggerRobotSleep);
 			result.add(BuildCraftRobotics.triggerRobotInStation);
 			result.add(BuildCraftRobotics.triggerRobotLinked);

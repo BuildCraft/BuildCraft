@@ -12,7 +12,8 @@ import cofh.api.energy.IEnergyReceiver;
 import buildcraft.BuildCraftRobotics;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.render.ITextureStates;
-import buildcraft.api.robots.IDockingStationPluggable;
+import buildcraft.api.robots.DockingStation;
+import buildcraft.api.robots.IDockingStationProvider;
 import buildcraft.api.robots.RobotManager;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipe;
@@ -25,7 +26,7 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TileGenericPipe;
 
 public class RobotStationPluggable extends PipePluggable implements IPipePluggableItem, IEnergyReceiver, IDebuggable,
-		IDockingStationPluggable {
+		IDockingStationProvider {
 	public class RobotStationPluggableRenderer implements IPipePluggableRenderer {
 		private float zFightOffset = 1 / 4096.0F;
 
