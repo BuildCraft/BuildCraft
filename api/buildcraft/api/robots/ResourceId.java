@@ -63,7 +63,7 @@ public abstract class ResourceId {
 				// Migration support for 6.4.x
 				cls = RobotManager.getResourceIdByLegacyClassName(nbt.getString("class"));
 			} else {
-				cls = RobotManager.getResourceIdByName("resourceName");
+				cls = RobotManager.getResourceIdByName(nbt.getString("resourceName"));
 			}
 
 			ResourceId id = (ResourceId) cls.newInstance();

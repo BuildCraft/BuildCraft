@@ -20,6 +20,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import cofh.api.energy.IEnergyHandler;
@@ -85,21 +86,27 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 		super.updateEntity();
 
 		int meta = container.getBlockMetadata();
+
+		if (meta >= 6) {
+			battery.setEnergy(0);
+			liquidToExtract = 0;
+			return;
+		}
 		
 		if (liquidToExtract > 0 && meta < 6) {
 			ForgeDirection side = ForgeDirection.getOrientation(meta);
 			TileEntity tile = container.getTile(side);
 
 			if (tile instanceof IFluidHandler) {
-				liquidToExtract -= extractFluid((IFluidHandler) tile, side);
+				extractFluid((IFluidHandler) tile, side);
+
+				// Always subtract the liquid to extract.
+				// Massive buffers can cause unpredictable behaviour.
+				liquidToExtract -= transport.flowRate;
 			}
 		}
 
 		if (battery.useEnergy(10, 10, false) > 0) {
-			if (meta > 5) {
-				return;
-			}
-
 			TileEntity tile = container.getTile(ForgeDirection
 					.getOrientation(meta));
 
@@ -112,16 +119,25 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 	}
 
 	public int extractFluid(IFluidHandler fluidHandler, ForgeDirection side) {
-		int flowRate = transport.flowRate;
-		FluidStack extracted = fluidHandler.drain(side.getOpposite(), liquidToExtract > flowRate ? flowRate : liquidToExtract, false);
+		int amount = liquidToExtract > transport.flowRate ? transport.flowRate : liquidToExtract;
+		FluidTankInfo tankInfo = transport.getTankInfo(side)[0];
+		FluidStack extracted;
+
+		if (tankInfo.fluid != null && tankInfo.fluid.getFluid() != null) {
+			extracted = fluidHandler.drain(side.getOpposite(), new FluidStack(tankInfo.fluid.getFluid(), amount), false);
+		} else {
+			extracted = fluidHandler.drain(side.getOpposite(), amount, false);
+		}
 
 		int inserted = 0;
 
 		if (extracted != null) {
 			inserted = transport.fill(side, extracted, true);
-
-			fluidHandler.drain(side.getOpposite(), inserted, true);
+			if (inserted > 0) {
+				fluidHandler.drain(side.getOpposite(), new FluidStack(extracted.getFluid(), inserted), true);
+			}
 		}
+		
 		return inserted;
 	}
 

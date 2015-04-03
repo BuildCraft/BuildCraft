@@ -111,6 +111,7 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	private boolean skippedFirstIconRegister;
+	private ItemPipe itemPipe;
 
 	/* Defined subprograms ************************************************* */
 	public BlockGenericPipe() {
@@ -1130,6 +1131,9 @@ public class BlockGenericPipe extends BlockBuildCraft {
 
 	@Override
 	public IIcon getIcon(int side, int meta) {
-		return PipeIconProvider.TYPE.PipeItemsStone.getIcon();
+		if (itemPipe == null) {
+			itemPipe = (ItemPipe) Item.getItemFromBlock(this);
+		}
+		return itemPipe.getIconFromDamage(0);
 	}
 }

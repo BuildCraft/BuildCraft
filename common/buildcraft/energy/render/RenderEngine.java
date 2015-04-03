@@ -168,7 +168,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		bindTexture(chamberTexture);
 
 		float chamberf = 2F / 16F;
-		int chamberc = ((int) step + 2) / 2;
+		int chamberc = ((int) step + 4) / 2;
 
 		for (int i = 0; i <= step + 2; i += 2) {
 			chamber.render(factor);
