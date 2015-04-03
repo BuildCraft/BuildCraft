@@ -20,9 +20,8 @@ import buildcraft.api.robots.ResourceIdBlock;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.core.lib.utils.IBlockFilter;
 import buildcraft.robotics.ai.AIRobotFetchAndEquipItemStack;
-import buildcraft.robotics.ai.AIRobotGotoBlock;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
-import buildcraft.robotics.ai.AIRobotSearchRandomBlock;
+import buildcraft.robotics.ai.AIRobotSearchAndGotoBlock;
 import buildcraft.robotics.ai.AIRobotStripesHandler;
 
 public class BoardRobotStripes extends RedstoneBoardRobot {
@@ -48,7 +47,7 @@ public class BoardRobotStripes extends RedstoneBoardRobot {
 				}
 			}));
 		} else {
-			startDelegateAI(new AIRobotSearchRandomBlock(robot, new IBlockFilter() {
+			startDelegateAI(new AIRobotSearchAndGotoBlock(robot, true, new IBlockFilter() {
 				@Override
 				public boolean matches(World world, int x, int y, int z) {
 					return world.getBlock(x, y, z).isAir(world, x, y, z)
@@ -60,21 +59,13 @@ public class BoardRobotStripes extends RedstoneBoardRobot {
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotSearchRandomBlock) {
-			if (!ai.success()) {
-				startDelegateAI(new AIRobotGotoSleep(robot));
+		if (ai instanceof AIRobotSearchAndGotoBlock) {
+			if (ai.success()) {
+				blockFound = ((AIRobotSearchAndGotoBlock) ai).getBlockFound();
+				startDelegateAI(new AIRobotStripesHandler(robot, blockFound));
 			} else {
-				releaseBlockFound();
-				AIRobotSearchRandomBlock searchAI = (AIRobotSearchRandomBlock) ai;
-				if (searchAI.takeResource()) {
-					blockFound = searchAI.blockFound;
-					startDelegateAI(new AIRobotGotoBlock(robot, searchAI.path));
-				} else {
-					startDelegateAI(new AIRobotGotoSleep(robot));
-				}
+				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
-		} else if (ai instanceof AIRobotGotoBlock) {
-			startDelegateAI(new AIRobotStripesHandler(robot, blockFound));
 		} else if (ai instanceof AIRobotFetchAndEquipItemStack) {
 			if (robot.getHeldItem() == null) {
 				startDelegateAI(new AIRobotGotoSleep(robot));

@@ -31,9 +31,8 @@ import buildcraft.core.lib.inventory.filters.CompositeFilter;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.core.lib.utils.IBlockFilter;
 import buildcraft.robotics.ai.AIRobotFetchAndEquipItemStack;
-import buildcraft.robotics.ai.AIRobotGotoBlock;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
-import buildcraft.robotics.ai.AIRobotSearchRandomBlock;
+import buildcraft.robotics.ai.AIRobotSearchAndGotoBlock;
 import buildcraft.robotics.ai.AIRobotUseToolOnBlock;
 import buildcraft.robotics.statements.ActionRobotFilter;
 
@@ -110,30 +109,19 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 					}
 				};
 			}
-			startDelegateAI(new AIRobotSearchRandomBlock(robot, blockFilter));
+			startDelegateAI(new AIRobotSearchAndGotoBlock(robot, true, blockFilter));
 		}
 	}
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotSearchRandomBlock) {
-			if (!ai.success()) {
-				startDelegateAI(new AIRobotGotoSleep(robot));
+		if (ai instanceof AIRobotSearchAndGotoBlock) {
+			if (ai.success()) {
+				blockFound = ((AIRobotSearchAndGotoBlock) ai).getBlockFound();
+				startDelegateAI(new AIRobotUseToolOnBlock(robot, blockFound));
 			} else {
-				releaseBlockFound();
-				AIRobotSearchRandomBlock searchAI = (AIRobotSearchRandomBlock) ai;
-				if (searchAI.takeResource()) {
-					blockFound = searchAI.blockFound;
-					if (searchAI.path.size() > 1) {
-						searchAI.path.removeLast();
-					}
-					startDelegateAI(new AIRobotGotoBlock(robot, searchAI.path));
-				} else {
-					startDelegateAI(new AIRobotGotoSleep(robot));
-				}
+				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
-		} else if (ai instanceof AIRobotGotoBlock) {
-			startDelegateAI(new AIRobotUseToolOnBlock(robot, blockFound));
 		} else if (ai instanceof AIRobotUseToolOnBlock) {
 			releaseBlockFound();
 		} else if (ai instanceof AIRobotFetchAndEquipItemStack) {

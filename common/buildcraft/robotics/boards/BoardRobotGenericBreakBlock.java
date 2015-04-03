@@ -27,15 +27,14 @@ import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.core.lib.utils.IBlockFilter;
 import buildcraft.robotics.ai.AIRobotBreak;
 import buildcraft.robotics.ai.AIRobotFetchAndEquipItemStack;
-import buildcraft.robotics.ai.AIRobotGotoBlock;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
-import buildcraft.robotics.ai.AIRobotSearchBlock;
+import buildcraft.robotics.ai.AIRobotSearchAndGotoBlock;
 import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.transport.gates.ActionIterator;
 
 public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
-	protected BlockIndex indexStored;
+	protected BlockIndex blockFound;
 
 	private ArrayList<Block> blockFilter = new ArrayList<Block>();
 	private ArrayList<Integer> metaFilter = new ArrayList<Integer>();
@@ -54,17 +53,6 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 	public abstract boolean isExpectedBlock(World world, int x, int y, int z);
 
 	@Override
-	public final void preempt(AIRobot ai) {
-		if (ai instanceof AIRobotSearchBlock) {
-			BlockIndex index = ((AIRobotSearchBlock) ai).blockFound;
-
-			if (robot.getRegistry().isTaken(new ResourceIdBlock(index))) {
-				abortDelegateAI();
-			}
-		}
-	}
-
-	@Override
 	public final void update() {
 		if (!isExpectedTool(null) && robot.getHeldItem() == null) {
 			startDelegateAI(new AIRobotFetchAndEquipItemStack(robot, new IStackFilter() {
@@ -76,7 +64,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 		} else {
 			updateFilter();
 
-			startDelegateAI(new AIRobotSearchBlock(robot, new IBlockFilter() {
+			startDelegateAI(new AIRobotSearchAndGotoBlock(robot, false, new IBlockFilter() {
 				@Override
 				public boolean matches(World world, int x, int y, int z) {
 					if (isExpectedBlock(world, x, y, z) && !robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z))) {
@@ -91,34 +79,26 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotSearchBlock) {
-			if (!ai.success()) {
-				startDelegateAI(new AIRobotGotoSleep(robot));
+		if (ai instanceof AIRobotSearchAndGotoBlock) {
+			if (ai.success()) {
+				blockFound = ((AIRobotSearchAndGotoBlock) ai).getBlockFound();
+				startDelegateAI(getBlockBreakAI());
 			} else {
-				releaseBlockFound();
-				AIRobotSearchBlock searchAI = (AIRobotSearchBlock) ai;
-				if (searchAI.takeResource()) {
-					indexStored = searchAI.blockFound;
-					startDelegateAI(new AIRobotGotoBlock(robot, searchAI.path));
-				} else {
-					startDelegateAI(new AIRobotGotoSleep(robot));
-				}
+				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
-		} else if (ai instanceof AIRobotGotoBlock) {
-			startDelegateAI(getBlockBreakAI());
 		} else if (ai.getClass().isInstance(getBlockBreakAI())) {
 			releaseBlockFound();
 		}
 	}
 
 	protected AIRobot getBlockBreakAI() {
-		return new AIRobotBreak(robot, indexStored);
+		return new AIRobotBreak(robot, blockFound);
 	}
 
 	private void releaseBlockFound() {
-		if (indexStored != null) {
-			robot.getRegistry().release(new ResourceIdBlock(indexStored));
-			indexStored = null;
+		if (blockFound != null) {
+			robot.getRegistry().release(new ResourceIdBlock(blockFound));
+			blockFound = null;
 		}
 	}
 
@@ -175,9 +155,9 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 	public void writeSelfToNBT(NBTTagCompound nbt) {
 		super.writeSelfToNBT(nbt);
 
-		if (indexStored != null) {
+		if (blockFound != null) {
 			NBTTagCompound sub = new NBTTagCompound();
-			indexStored.writeTo(sub);
+			blockFound.writeTo(sub);
 			nbt.setTag("indexStored", sub);
 		}
 	}
@@ -187,7 +167,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 		super.loadSelfFromNBT(nbt);
 
 		if (nbt.hasKey("indexStored")) {
-			indexStored = new BlockIndex (nbt.getCompoundTag("indexStored"));
+			blockFound = new BlockIndex (nbt.getCompoundTag("indexStored"));
 		}
 	}
 }
