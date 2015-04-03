@@ -102,13 +102,6 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 			}
 			
 			fakeBlock.setColor(0xFFFFFF);
-		} else if (renderPass == 1) {
-			// Fix a bug in Minecraft 1.7.2-1.7.10
-			IIcon i = PipeIconProvider.TYPE.Transparent.getIcon();
-			Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
-			Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
-			Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
-			Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
 		}
 
 		renderblocks.setRenderBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
@@ -178,11 +171,13 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
 		TileEntity tile = world.getTileEntity(x, y, z);
 
-		// Here to prevent Minecraft from crashing when nothing renders on render pass zero
-		// This is likely a bug, and has been submitted as an issue to the Forge team
-		renderer.setRenderBounds(0, 0, 0, 0, 0, 0);
-		renderer.renderStandardBlock(Blocks.stone, x, y, z);
-		renderer.setRenderBoundsFromBlock(block);
+		// Here to prevent Minecraft from crashing when nothing renders on a render pass
+		// (rarely in pass 0, often in pass 1)
+		// This is a 1.7 bug.
+		Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
+		Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
+		Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
+		Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
 
 		if (tile instanceof TileGenericPipe) {
 			TileGenericPipe pipeTile = (TileGenericPipe) tile;
