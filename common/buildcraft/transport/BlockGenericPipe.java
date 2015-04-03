@@ -1130,10 +1130,18 @@ public class BlockGenericPipe extends BlockBuildCraft {
 	}
 
 	@Override
-	public IIcon getIcon(int side, int meta) {
-		if (itemPipe == null) {
-			itemPipe = (ItemPipe) Item.getItemFromBlock(this);
+	public IIcon getIcon(IBlockAccess world, int i, int j, int k, int side) {
+		TileEntity tile = world.getTileEntity(i, j, k);
+		if (tile instanceof TileGenericPipe) {
+			Pipe pipe = (Pipe) ((TileGenericPipe) tile).getPipe();
+			return pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
 		}
-		return itemPipe.getIconFromDamage(0);
+
+		return PipeIconProvider.TYPE.PipeItemsStone.getIcon();
+	}
+
+	@Override
+	public IIcon getIcon(int side, int meta) {
+		return PipeIconProvider.TYPE.PipeItemsStone.getIcon();
 	}
 }
