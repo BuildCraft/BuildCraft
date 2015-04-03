@@ -93,11 +93,13 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 			TileEntity tile = container.getTile(side);
 
 			if (tile instanceof IFluidHandler) {
-				extractFluid((IFluidHandler) tile, side);
+				liquidToExtract -= Math.min(10, extractFluid((IFluidHandler) tile, side));
+			} else {
+				liquidToExtract -= 10;
+			}
 
-				// Always subtract the liquid to extract.
-				// Massive buffers can cause unpredictable behaviour.
-				liquidToExtract -= transport.flowRate;
+			if (liquidToExtract < 0) {
+				liquidToExtract = 0;
 			}
 		}
 

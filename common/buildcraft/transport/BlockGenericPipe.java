@@ -1046,6 +1046,17 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 	}
 
 	@Override
+	public IIcon getIcon(IBlockAccess world, int i, int j, int k, int side) {
+		TileEntity tile = world.getTileEntity(i, j, k);
+		if (tile instanceof TileGenericPipe) {
+			Pipe pipe = (Pipe) ((TileGenericPipe) tile).getPipe();
+			return pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
+		}
+
+		return PipeIconProvider.TYPE.PipeItemsStone.getIcon();
+	}
+
+	@Override
 	public IIcon getIcon(int side, int meta) {
 		return PipeIconProvider.TYPE.PipeItemsStone.getIcon();
 	}
