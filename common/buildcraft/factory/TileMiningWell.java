@@ -86,10 +86,7 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 
 			if (world.isAirBlock(xCoord, depth, zCoord) || world.getBlock(xCoord, depth, zCoord).isReplaceable(world, xCoord, depth, zCoord)) {
 				ticksSinceAction = 0;
-				if (getBattery().getEnergyStored() >= BuilderAPI.BUILD_ENERGY) {
-					getBattery().useEnergy(BuilderAPI.BUILD_ENERGY, BuilderAPI.BUILD_ENERGY, false);
-					world.setBlock(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock);
-				}
+				world.setBlock(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock);
 			} else {
 				miner = new BlockMiner(world, this, xCoord, depth, zCoord);
 			}
