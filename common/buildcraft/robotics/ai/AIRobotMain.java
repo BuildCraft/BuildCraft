@@ -14,9 +14,11 @@ import buildcraft.api.robots.EntityRobotBase;
 public class AIRobotMain extends AIRobot {
 
 	private AIRobot overridingAI;
+	private int rechargeCooldown;
 
 	public AIRobotMain(EntityRobotBase iRobot) {
 		super(iRobot);
+		rechargeCooldown = 0;
 	}
 
 	@Override
@@ -32,7 +34,9 @@ public class AIRobotMain extends AIRobot {
 			}
 		} else if (robot.getEnergy() < EntityRobotBase.SAFETY_ENERGY) {
 			if (!(ai instanceof AIRobotRecharge) && !(ai instanceof AIRobotShutdown)) {
-				startDelegateAI(new AIRobotRecharge(robot));
+				if (rechargeCooldown-- == 0) {
+					startDelegateAI(new AIRobotRecharge(robot));
+				}
 			}
 		} else if (overridingAI != null && ai != overridingAI) {
 			startDelegateAI(overridingAI);
@@ -50,6 +54,11 @@ public class AIRobotMain extends AIRobot {
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
+		if (ai instanceof AIRobotRecharge) {
+			if (!ai.success()) {
+				rechargeCooldown = 120;
+			}
+		}
 		if (ai == overridingAI) {
 			overridingAI = null;
 		}
