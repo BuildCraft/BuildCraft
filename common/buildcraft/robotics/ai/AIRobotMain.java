@@ -26,12 +26,16 @@ public class AIRobotMain extends AIRobot {
 
 	@Override
 	public void preempt(AIRobot ai) {
-		if (!(ai instanceof AIRobotRecharge)) {
-			if (robot.getEnergy() < EntityRobotBase.SAFETY_ENERGY) {
-				startDelegateAI(new AIRobotRecharge(robot));
-			} else if (overridingAI != null && ai != overridingAI) {
-				startDelegateAI(overridingAI);
+		if (robot.getEnergy() <= EntityRobotBase.SHUTDOWN_ENERGY) {
+			if (!(ai instanceof AIRobotShutdown)) {
+				startDelegateAI(new AIRobotShutdown(robot));
 			}
+		} else if (robot.getEnergy() < EntityRobotBase.SAFETY_ENERGY) {
+			if (!(ai instanceof AIRobotRecharge) && !(ai instanceof AIRobotShutdown)) {
+				startDelegateAI(new AIRobotRecharge(robot));
+			}
+		} else if (overridingAI != null && ai != overridingAI) {
+			startDelegateAI(overridingAI);
 		}
 	}
 

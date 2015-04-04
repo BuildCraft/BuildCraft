@@ -94,6 +94,7 @@ import buildcraft.robotics.ai.AIRobotSearchEntity;
 import buildcraft.robotics.ai.AIRobotSearchRandomGroundBlock;
 import buildcraft.robotics.ai.AIRobotSearchStackRequest;
 import buildcraft.robotics.ai.AIRobotSearchStation;
+import buildcraft.robotics.ai.AIRobotShutdown;
 import buildcraft.robotics.ai.AIRobotSleep;
 import buildcraft.robotics.ai.AIRobotStraightMoveTo;
 import buildcraft.robotics.ai.AIRobotUnload;
@@ -333,6 +334,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
 		RobotManager.registerAIRobot(AIRobotSearchRandomGroundBlock.class, "aiRobotSearchRandomGroundBlock", "buildcraft.core.robots.AIRobotSearchRandomGroundBlock");
 		RobotManager.registerAIRobot(AIRobotSearchStackRequest.class, "aiRobotSearchStackRequest", "buildcraft.core.robots.AIRobotSearchStackRequest");
 		RobotManager.registerAIRobot(AIRobotSearchStation.class, "aiRobotSearchStation", "buildcraft.core.robots.AIRobotSearchStation");
+		RobotManager.registerAIRobot(AIRobotShutdown.class, "aiRobotShutdown");
 		RobotManager.registerAIRobot(AIRobotSleep.class, "aiRobotSleep", "buildcraft.core.robots.AIRobotSleep");
 		RobotManager.registerAIRobot(AIRobotStraightMoveTo.class, "aiRobotStraightMoveTo", "buildcraft.core.robots.AIRobotStraightMoveTo");
 		RobotManager.registerAIRobot(AIRobotUnload.class, "aiRobotUnload", "buildcraft.core.robots.AIRobotUnload");
