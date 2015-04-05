@@ -25,18 +25,13 @@ import buildcraft.robotics.statements.ActionStationProvideItems;
 
 public class AIRobotLoad extends AIRobot {
 
+	public static final int ANY_QUANTITY = -1;
 	private IStackFilter filter;
-	private int quantity = -1;
+	private int quantity;
 	private int waitedCycles = 0;
 
 	public AIRobotLoad(EntityRobotBase iRobot) {
 		super(iRobot);
-	}
-
-	public AIRobotLoad(EntityRobotBase iRobot, IStackFilter iFilter) {
-		this(iRobot);
-
-		filter = iFilter;
 	}
 
 	public AIRobotLoad(EntityRobotBase iRobot, IStackFilter iFilter, int iQuantity) {
@@ -86,7 +81,7 @@ public class AIRobotLoad extends AIRobot {
 
 								ITransactor t = Transactor.getTransactorFor(robot);
 
-								if (quantity == -1) {
+								if (quantity == ANY_QUANTITY) {
 									ItemStack added = t.add(slot.getStackInSlot(), ForgeDirection.UNKNOWN, true);
 									slot.decreaseStackInSlot(added.stackSize);
 								} else {

@@ -17,16 +17,18 @@ public class AIRobotGotoStationAndLoad extends AIRobot {
 
 	private IStackFilter filter;
 	private IZone zone;
+	private int quantity;
 
 	public AIRobotGotoStationAndLoad(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotGotoStationAndLoad(EntityRobotBase iRobot, IStackFilter iFilter, IZone iZone) {
+	public AIRobotGotoStationAndLoad(EntityRobotBase iRobot, IStackFilter iFilter, IZone iZone, int iQuantity) {
 		this(iRobot);
 
 		filter = iFilter;
 		zone = iZone;
+		quantity = iQuantity;
 	}
 
 	@Override
@@ -38,7 +40,7 @@ public class AIRobotGotoStationAndLoad extends AIRobot {
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoStationToLoad) {
 			if (ai.success()) {
-				startDelegateAI(new AIRobotLoad(robot, filter, 1));
+				startDelegateAI(new AIRobotLoad(robot, filter, quantity));
 			} else {
 				setSuccess(false);
 				terminate();

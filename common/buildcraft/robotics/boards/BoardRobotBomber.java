@@ -23,7 +23,8 @@ import buildcraft.core.lib.inventory.filters.ArrayStackFilter;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.core.lib.utils.IBlockFilter;
 import buildcraft.robotics.ai.AIRobotGotoBlock;
-import buildcraft.robotics.ai.AIRobotGotoStationToLoad;
+import buildcraft.robotics.ai.AIRobotGotoSleep;
+import buildcraft.robotics.ai.AIRobotGotoStationAndLoad;
 import buildcraft.robotics.ai.AIRobotLoad;
 import buildcraft.robotics.ai.AIRobotSearchRandomGroundBlock;
 
@@ -53,7 +54,7 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
 		}
 
 		if (!containItems) {
-			startDelegateAI(new AIRobotGotoStationToLoad(robot, TNT_FILTER, null));
+			startDelegateAI(new AIRobotGotoStationAndLoad(robot, TNT_FILTER, null, AIRobotLoad.ANY_QUANTITY));
 		} else {
 			startDelegateAI(new AIRobotSearchRandomGroundBlock(robot, 100, new IBlockFilter() {
 				@Override
@@ -66,8 +67,10 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotGotoStationToLoad) {
-			startDelegateAI(new AIRobotLoad(robot, TNT_FILTER));
+		if (ai instanceof AIRobotGotoStationAndLoad) {
+			if (!ai.success()) {
+				startDelegateAI(new AIRobotGotoSleep(robot));
+			}
 		} else if (ai instanceof AIRobotSearchRandomGroundBlock) {
 			if (ai.success()) {
 				AIRobotSearchRandomGroundBlock aiFind = (AIRobotSearchRandomGroundBlock) ai;
@@ -75,6 +78,8 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
 				startDelegateAI(new AIRobotGotoBlock(robot, aiFind.blockFound.x,
 						aiFind.blockFound.y + flyingHeight,
 						aiFind.blockFound.z));
+			} else {
+				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		} else if (ai instanceof AIRobotGotoBlock) {
 			if (ai.success()) {
@@ -90,6 +95,8 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
 					robot.worldObj.spawnEntityInWorld(tnt);
 					robot.worldObj.playSoundAtEntity(tnt, "game.tnt.primed", 1.0F, 1.0F);
 				}
+			} else {
+				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		}
 	}

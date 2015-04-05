@@ -12,16 +12,14 @@ import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
+import buildcraft.robotics.ai.AIRobotGotoStationAndLoad;
 import buildcraft.robotics.ai.AIRobotGotoStationAndUnload;
-import buildcraft.robotics.ai.AIRobotGotoStationToLoad;
 import buildcraft.robotics.ai.AIRobotLoad;
 import buildcraft.robotics.statements.ActionRobotFilter;
 
 public class BoardRobotCarrier extends RedstoneBoardRobot {
-
-	private boolean loadFound = true;
-	private boolean unloadFound = true;
 
 	public BoardRobotCarrier(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -35,8 +33,9 @@ public class BoardRobotCarrier extends RedstoneBoardRobot {
 	@Override
 	public void update() {
 		if (!robot.containsItems()) {
-			startDelegateAI(new AIRobotGotoStationToLoad(robot, ActionRobotFilter.getGateFilter(robot
-					.getLinkedStation()), robot.getZoneToWork()));
+			IStackFilter filter = ActionRobotFilter.getGateFilter(robot.getLinkedStation());
+			startDelegateAI(new AIRobotGotoStationAndLoad(robot, filter, robot.getZoneToWork(),
+					AIRobotLoad.ANY_QUANTITY));
 		} else {
 			startDelegateAI(new AIRobotGotoStationAndUnload(robot, robot.getZoneToWork()));
 		}
@@ -44,36 +43,14 @@ public class BoardRobotCarrier extends RedstoneBoardRobot {
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotGotoStationToLoad) {
-			if (ai.success()) {
-				loadFound = true;
-				startDelegateAI(new AIRobotLoad(robot, ActionRobotFilter.getGateFilter(robot
-						.getLinkedStation())));
-			} else {
-				loadFound = false;
-
-				if (robot.containsItems()) {
-					startDelegateAI(new AIRobotGotoStationAndUnload(robot, robot.getZoneToWork()));
-				} else {
-					unloadFound = false;
-				}
+		if (ai instanceof AIRobotGotoStationAndLoad) {
+			if (!ai.success()) {
+				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		} else if (ai instanceof AIRobotGotoStationAndUnload) {
-			if (ai.success()) {
-				unloadFound = true;
-			} else {
-				unloadFound = false;
-				startDelegateAI(new AIRobotGotoStationToLoad(robot, ActionRobotFilter.getGateFilter(robot
-						.getLinkedStation()), robot.getZoneToWork()));
+			if (!ai.success()) {
+				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
-		}
-
-		if (!loadFound && !unloadFound) {
-			startDelegateAI(new AIRobotGotoSleep(robot));
-
-			// reset load and unload so that upon waking up both are tried.
-			loadFound = true;
-			unloadFound = true;
 		}
 	}
 }
