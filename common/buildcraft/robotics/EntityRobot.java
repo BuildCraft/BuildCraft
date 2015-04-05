@@ -55,6 +55,7 @@ import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.ItemWrench;
 import buildcraft.core.LaserData;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.network.command.CommandWriter;
@@ -969,6 +970,21 @@ public class EntityRobot extends EntityRobotBase implements
 		return unreachableEntities.containsKey(entity);
 	}
 
+	@Override
+	protected boolean interact(EntityPlayer player) {
+		ItemStack stack = player.getCurrentEquippedItem();
+		if(player.isSneaking() && stack != null && stack.getItem() == BuildCraftCore.wrenchItem) {
+			if (!worldObj.isRemote) {
+				convertToItems();
+			} else {
+				((ItemWrench) stack.getItem()).wrenchUsed(player, 0, 0, 0);
+			}
+			return true;
+		} else {
+			return super.interact(player);
+		}
+	}
+
 	private List<ItemStack> getDrops() {
 		List<ItemStack> drops = new ArrayList<ItemStack>();
 		ItemStack robotStack = new ItemStack(BuildCraftRobotics.robotItem);
@@ -995,6 +1011,7 @@ public class EntityRobot extends EntityRobotBase implements
 			for (ItemStack stack : drops) {
 				entityDropItem(stack, 0);
 			}
+			isDead = true;
 		}
 
 		getRegistry().killRobot(this);
@@ -1002,7 +1019,9 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public void setDead() {
-		// prevent super.setDead() from getting called
+		if (worldObj.isRemote) {
+			super.setDead();
+		}
 	}
 
 	@Override
