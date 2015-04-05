@@ -530,6 +530,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			((FacadePluggable) pluggable).setActiveState(activeState);
 		}
 
+		/* TODO: Rewrite the requiresRenderUpdate API to run on the
+		   server side instead of the client side to save network bandwidth */
 		pluggableState.setPluggables(sideProperties.pluggables);
 
 		if (renderState.isDirty()) {
@@ -1008,23 +1010,21 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				// mark for render update if necessary
 				for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 					PipePluggable old = sideProperties.pluggables[i];
-					PipePluggable newer = sideProperties.pluggables[i];
+					PipePluggable newer = newPluggables[i];
 					if (old == null && newer == null) {
 						continue;
-					} else if (old != null && newer != null) {
+					} else if (old != null && newer != null && old.getClass() == newer.getClass()) {
 						if (newer.requiresRenderUpdate(old)) {
 							worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
-							System.out.println("Update requested - " + i);
 							break;
 						}
 					} else {
 						// one of them is null but not the other, so update
 						worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
-						System.out.println("Update requested [null] - " + i);
 						break;
 					}
 				}
-				sideProperties.pluggables = newPluggables;
+				sideProperties.pluggables = newPluggables.clone();
 
 				for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 					final PipePluggable pluggable = getPipePluggable(ForgeDirection.getOrientation(i));
