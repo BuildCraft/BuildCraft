@@ -42,14 +42,24 @@ public class AIRobotFetchAndEquipItemStack extends AIRobot {
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (filter == null) {
-			// filter can't be retreived, usually because of a load operation.
-			// Force a hard abort, preventing parent AI to continue normal
-			// sequence of actions and possibly re-starting this.
-			abort();
-			return;
+		if (ai instanceof AIRobotGotoStationToLoad) {
+			if (filter == null) {
+				// filter can't be retreived, usually because of a load operation.
+				// Force a hard abort, preventing parent AI to continue normal
+				// sequence of actions and possibly re-starting this.
+				abort();
+				return;
+			}
+			if (ai.success()) {
+				equipItemStack();
+			} else {
+				setSuccess(false);
+			}
+			terminate();
 		}
+	}
 
+	private void equipItemStack() {
 		if (robot.getDockingStation() != null) {
 			DockingStation station = (DockingStation) robot.getDockingStation();
 
@@ -73,10 +83,9 @@ public class AIRobotFetchAndEquipItemStack extends AIRobot {
 
 			if (itemFound != null) {
 				robot.setItemInUse(itemFound);
-				terminate();
+			} else {
+				setSuccess(false);
 			}
 		}
-
-		terminate();
 	}
 }

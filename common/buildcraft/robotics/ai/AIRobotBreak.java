@@ -23,7 +23,7 @@ import buildcraft.core.proxy.CoreProxy;
 
 public class AIRobotBreak extends AIRobot {
 
-	public BlockIndex blockToBreak;
+	private BlockIndex blockToBreak;
 	private float blockDamage = 0;
 
 	private Block block;
@@ -90,6 +90,8 @@ public class AIRobotBreak extends AIRobot {
 						robot.setItemInUse(null);
 					}
 				}
+			} else {
+				setSuccess(false);
 			}
 
 			terminate();

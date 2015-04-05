@@ -38,9 +38,7 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotFetchItem) {
-			AIRobotFetchItem fetching = (AIRobotFetchItem) ai;
-
-			if (fetching.itemPickupCancelled || fetching.target != null) {
+			if (ai.success()) {
 				// if we find an item - that may have been cancelled.
 				// let's try to get another one
 				startDelegateAI(new AIRobotFetchItem(robot, 250, ActionRobotFilter.getGateFilter(robot

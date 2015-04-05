@@ -8,6 +8,7 @@
  */
 package buildcraft.robotics.ai;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -54,8 +55,12 @@ public class AIRobotUseToolOnBlock extends AIRobot {
 				robot.setItemInUse(null);
 			}
 
-			stack.getItem().onItemUse(stack, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj).get(),
-					robot.worldObj, useToBlock.x, useToBlock.y, useToBlock.z, ForgeDirection.UP.ordinal(), 0, 0, 0);
+			EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj)
+					.get();
+			if (!stack.getItem().onItemUse(stack, player, robot.worldObj, useToBlock.x,
+					useToBlock.y, useToBlock.z, ForgeDirection.UP.ordinal(), 0, 0, 0)) {
+				setSuccess(false);
+			}
 
 			terminate();
 		}

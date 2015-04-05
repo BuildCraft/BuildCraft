@@ -19,7 +19,6 @@ public class AIRobotGotoStation extends AIRobot {
 
 	private BlockIndex stationIndex;
 	private ForgeDirection stationSide;
-	private boolean docked = false;
 
 	public AIRobotGotoStation(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -30,6 +29,7 @@ public class AIRobotGotoStation extends AIRobot {
 
 		stationIndex = station.index();
 		stationSide = station.side();
+		setSuccess(false);
 	}
 
 	@Override
@@ -66,15 +66,10 @@ public class AIRobotGotoStation extends AIRobot {
 					stationIndex.y + 0.5F + stationSide.offsetY * 0.5F,
 					stationIndex.z + 0.5F + stationSide.offsetZ * 0.5F));
 		} else {
-			docked = true;
+			setSuccess(true);
 			robot.dock(station);
 			terminate();
 		}
-	}
-
-	@Override
-	public boolean success() {
-		return docked;
 	}
 
 	@Override

@@ -69,21 +69,27 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
 		if (ai instanceof AIRobotGotoStationToLoad) {
 			startDelegateAI(new AIRobotLoad(robot, TNT_FILTER));
 		} else if (ai instanceof AIRobotSearchRandomGroundBlock) {
-			AIRobotSearchRandomGroundBlock aiFind = (AIRobotSearchRandomGroundBlock) ai;
+			if (ai.success()) {
+				AIRobotSearchRandomGroundBlock aiFind = (AIRobotSearchRandomGroundBlock) ai;
 
-			startDelegateAI(new AIRobotGotoBlock(robot, aiFind.blockFound.x, aiFind.blockFound.y + flyingHeight,
-					aiFind.blockFound.z));
+				startDelegateAI(new AIRobotGotoBlock(robot, aiFind.blockFound.x,
+						aiFind.blockFound.y + flyingHeight,
+						aiFind.blockFound.z));
+			}
 		} else if (ai instanceof AIRobotGotoBlock) {
-			ITransactor t = Transactor.getTransactorFor(robot);
-			ItemStack stack = t.remove(TNT_FILTER, ForgeDirection.UNKNOWN, true);
+			if (ai.success()) {
+				ITransactor t = Transactor.getTransactorFor(robot);
+				ItemStack stack = t.remove(TNT_FILTER, ForgeDirection.UNKNOWN, true);
 
-			if (stack != null && stack.stackSize > 0) {
-				EntityTNTPrimed tnt = new EntityTNTPrimed(robot.worldObj, robot.posX + 0.25, robot.posY - 1,
-					robot.posZ + 0.25,
-					robot);
-				tnt.fuse = 37;
-				robot.worldObj.spawnEntityInWorld(tnt);
-				robot.worldObj.playSoundAtEntity(tnt, "game.tnt.primed", 1.0F, 1.0F);
+				if (stack != null && stack.stackSize > 0) {
+					EntityTNTPrimed tnt = new EntityTNTPrimed(robot.worldObj, robot.posX + 0.25,
+							robot.posY - 1,
+							robot.posZ + 0.25,
+							robot);
+					tnt.fuse = 37;
+					robot.worldObj.spawnEntityInWorld(tnt);
+					robot.worldObj.playSoundAtEntity(tnt, "game.tnt.primed", 1.0F, 1.0F);
+				}
 			}
 		}
 	}

@@ -14,7 +14,6 @@ import buildcraft.api.robots.EntityRobotBase;
 
 public class AIRobotGotoStationAndUnloadFluids extends AIRobot {
 
-	private boolean found = false;
 	private IZone zone;
 
 	public AIRobotGotoStationAndUnloadFluids(EntityRobotBase iRobot) {
@@ -36,16 +35,11 @@ public class AIRobotGotoStationAndUnloadFluids extends AIRobot {
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoStationToUnloadFluids) {
 			if (ai.success()) {
-				found = true;
 				startDelegateAI(new AIRobotUnloadFluids(robot));
 			} else {
+				setSuccess(false);
 				terminate();
 			}
 		}
-	}
-
-	@Override
-	public boolean success() {
-		return found;
 	}
 }

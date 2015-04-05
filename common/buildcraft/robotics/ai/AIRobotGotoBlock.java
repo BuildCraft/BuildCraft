@@ -19,8 +19,6 @@ import buildcraft.core.lib.utils.PathFinding;
 
 public class AIRobotGotoBlock extends AIRobotGoto {
 
-	public boolean unreachable = false;
-
 	private PathFinding pathSearch;
 	private IterableAlgorithmRunner pathSearchJob;
 	private LinkedList<BlockIndex> path;
@@ -88,7 +86,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 				path = pathSearch.getResult();
 
 				if (path.size() == 0) {
-					unreachable = true;
+					setSuccess(false);
 					terminate();
 					return;
 				}
@@ -109,7 +107,6 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 				robot.posY = lastBlockInPath.y + 0.5F;
 				robot.posZ = lastBlockInPath.z + 0.5F;
 			}
-
 			terminate();
 		}
 	}

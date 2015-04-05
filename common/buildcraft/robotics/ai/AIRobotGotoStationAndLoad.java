@@ -15,7 +15,6 @@ import buildcraft.core.lib.inventory.filters.IStackFilter;
 
 public class AIRobotGotoStationAndLoad extends AIRobot {
 
-	private boolean found = false;
 	private IStackFilter filter;
 	private IZone zone;
 
@@ -39,16 +38,11 @@ public class AIRobotGotoStationAndLoad extends AIRobot {
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoStationToLoad) {
 			if (ai.success()) {
-				found = true;
 				startDelegateAI(new AIRobotLoad(robot, filter, 1));
 			} else {
+				setSuccess(false);
 				terminate();
 			}
 		}
-	}
-
-	@Override
-	public boolean success() {
-		return found;
 	}
 }

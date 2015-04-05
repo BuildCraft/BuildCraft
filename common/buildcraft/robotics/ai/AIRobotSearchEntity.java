@@ -72,6 +72,11 @@ public class AIRobotSearchEntity extends AIRobot {
 	}
 
 	@Override
+	public boolean success() {
+		return target != null;
+	}
+
+	@Override
 	public int getEnergyCost() {
 		return 2;
 	}

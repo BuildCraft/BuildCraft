@@ -17,8 +17,11 @@ public class AIRobot {
 	private AIRobot delegateAI;
 	private AIRobot parentAI;
 
+	private boolean success;
+
 	public AIRobot(EntityRobotBase iRobot) {
 		robot = iRobot;
+		success = true;
 	}
 
 	public void start() {
@@ -65,7 +68,11 @@ public class AIRobot {
 	}
 
 	public boolean success() {
-		return true;
+		return success;
+	}
+
+	protected void setSuccess(boolean iSuccess) {
+		success = iSuccess;
 	}
 
 	public int getEnergyCost() {

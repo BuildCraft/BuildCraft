@@ -20,8 +20,7 @@ import buildcraft.robotics.boards.BoardRobotPicker;
 
 public class AIRobotFetchItem extends AIRobot {
 
-	public EntityItem target;
-	public boolean itemPickupCancelled = false;
+	private EntityItem target;
 
 	private float maxRange;
 	private IStackFilter stackFilter;
@@ -43,7 +42,6 @@ public class AIRobotFetchItem extends AIRobot {
 	@Override
 	public void preempt(AIRobot ai) {
 		if (target != null && target.isDead) {
-			itemPickupCancelled = true;
 			terminate();
 		}
 	}
@@ -78,16 +76,14 @@ public class AIRobotFetchItem extends AIRobot {
 				// This would happen after a load. As we reached the item
 				// location already, just consider that the item is not there
 				// anymore and allow user to try to find another one.
-				itemPickupCancelled = true;
+				setSuccess(false);
 				terminate();
 				return;
 			}
 
-			if (((AIRobotGotoBlock) ai).unreachable) {
+			if (!ai.success()) {
 				robot.unreachableEntityDetected(target);
-				itemPickupCancelled = true;
 				terminate();
-				return;
 			}
 		}
 	}
@@ -149,6 +145,7 @@ public class AIRobotFetchItem extends AIRobot {
 			}
 		} else {
 			// No item was found, terminate this AI
+			setSuccess(false);
 			terminate();
 		}
 	}

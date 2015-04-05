@@ -56,13 +56,11 @@ public class BoardRobotButcher extends RedstoneBoardRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotFetchAndEquipItemStack) {
-			if (robot.getHeldItem() == null) {
+			if (!ai.success()) {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		} else if (ai instanceof AIRobotSearchEntity) {
-			AIRobotSearchEntity mobAI = (AIRobotSearchEntity) ai;
-
-			if (mobAI.target != null) {
+			if (ai.success()) {
 				startDelegateAI(new AIRobotAttack(robot, ((AIRobotSearchEntity) ai).target));
 			} else {
 				startDelegateAI(new AIRobotGotoSleep(robot));

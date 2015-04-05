@@ -87,6 +87,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		} else if (ai.getClass().isInstance(getBlockBreakAI())) {
+			// TODO: if !ai.success() -> can't break block, blacklist it
 			releaseBlockFound();
 		}
 	}

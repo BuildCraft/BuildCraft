@@ -23,7 +23,6 @@ import buildcraft.transport.PipeTransportFluids;
 
 public class AIRobotGotoStationToUnloadFluids extends AIRobot {
 
-	private boolean found = false;
 	private IZone zone;
 
 	public AIRobotGotoStationToUnloadFluids(EntityRobotBase iRobot) {
@@ -44,15 +43,9 @@ public class AIRobotGotoStationToUnloadFluids extends AIRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotSearchAndGotoStation) {
-			found = ((AIRobotSearchAndGotoStation) ai).targetStation != null;
-
+			setSuccess(ai.success());
 			terminate();
 		}
-	}
-
-	@Override
-	public boolean success() {
-		return found;
 	}
 
 	private class StationFilter implements IStationFilter {

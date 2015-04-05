@@ -85,7 +85,7 @@ public class AIRobotSearchStation extends AIRobot {
 	}
 
 	@Override
-	public boolean success () {
+	public boolean success() {
 		return targetStation != null;
 	}
 }

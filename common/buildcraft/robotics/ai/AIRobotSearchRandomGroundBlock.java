@@ -78,6 +78,11 @@ public class AIRobotSearchRandomGroundBlock extends AIRobot {
 	}
 
 	@Override
+	public boolean success() {
+		return blockFound != null;
+	}
+
+	@Override
 	public int getEnergyCost() {
 		return 2;
 	}

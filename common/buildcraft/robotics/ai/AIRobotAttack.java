@@ -16,7 +16,7 @@ import buildcraft.robotics.EntityRobot;
 
 public class AIRobotAttack extends AIRobot {
 
-	public Entity target;
+	private Entity target;
 
 	private int delay = 10;
 
@@ -75,12 +75,9 @@ public class AIRobotAttack extends AIRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoBlock) {
-			AIRobotGotoBlock aiGoto = (AIRobotGotoBlock) ai;
-
-			if (aiGoto.unreachable) {
+			if (!ai.success()) {
 				robot.unreachableEntityDetected(target);
 			}
-
 			terminate();
 		}
 	}

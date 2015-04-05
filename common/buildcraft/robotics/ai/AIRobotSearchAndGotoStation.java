@@ -10,13 +10,11 @@ package buildcraft.robotics.ai;
 
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
-import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.robotics.IStationFilter;
 
 public class AIRobotSearchAndGotoStation extends AIRobot {
 
-	public DockingStation targetStation;
 	private IStationFilter filter;
 	private IZone zone;
 
@@ -40,14 +38,14 @@ public class AIRobotSearchAndGotoStation extends AIRobot {
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotSearchStation) {
 			if (ai.success()) {
-				targetStation = ((AIRobotSearchStation) ai).targetStation;
-				startDelegateAI(new AIRobotGotoStation(robot, targetStation));
+				startDelegateAI(new AIRobotGotoStation(robot, ((AIRobotSearchStation) ai).targetStation));
+			} else {
+				setSuccess(false);
+				terminate();
 			}
+		} else if (ai instanceof AIRobotGotoStation) {
+			setSuccess(ai.success());
+			terminate();
 		}
-	}
-
-	@Override
-	public boolean success() {
-		return targetStation != null;
 	}
 }

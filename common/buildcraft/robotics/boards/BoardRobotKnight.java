@@ -61,9 +61,7 @@ public class BoardRobotKnight extends RedstoneBoardRobot {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		} else if (ai instanceof AIRobotSearchEntity) {
-			AIRobotSearchEntity mobAI = (AIRobotSearchEntity) ai;
-
-			if (mobAI.target != null) {
+			if (ai.success()) {
 				startDelegateAI(new AIRobotAttack(robot, ((AIRobotSearchEntity) ai).target));
 			} else {
 				startDelegateAI(new AIRobotGotoSleep(robot));

@@ -15,7 +15,6 @@ import buildcraft.core.lib.inventory.filters.IFluidFilter;
 
 public class AIRobotGotoStationAndLoadFluids extends AIRobot {
 
-	private boolean found = false;
 	private IZone zone;
 	private IFluidFilter filter;
 
@@ -39,16 +38,11 @@ public class AIRobotGotoStationAndLoadFluids extends AIRobot {
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoStationToLoadFluids) {
 			if (ai.success()) {
-				found = true;
 				startDelegateAI(new AIRobotLoadFluids(robot, filter));
 			} else {
+				setSuccess(false);
 				terminate();
 			}
 		}
-	}
-
-	@Override
-	public boolean success() {
-		return found;
 	}
 }
