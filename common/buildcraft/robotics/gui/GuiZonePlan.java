@@ -39,7 +39,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 	private static final ResourceLocation TMP_TEXTURE = new ResourceLocation("buildcraftrobotics:textures/gui/zone_planner_gui.png");
 
-	private int mapWidth = 200;
+	private int mapWidth = 213;
 	private int mapHeight = 100;
 
 	private TileZonePlan zonePlan;
@@ -146,7 +146,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 		savedButtonList = buttonList;
 
-		textField = new GuiTextField(this.fontRendererObj, 74, 125, 156, 12);
+		textField = new GuiTextField(this.fontRendererObj, 28, 129, 156, 12);
 		textField.setMaxStringLength(DefaultProps.MAX_NAME_SIZE);
 		textField.setText(zonePlan.mapName);
 		textField.setFocused(true);
@@ -168,10 +168,14 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		super.drawGuiContainerBackgroundLayer(f, x, y);
 
-		mapXMin = (width - getContainer().mapTexture.width) / 2;
+		if (getContainer().mapTexture.width <= 213) {
+			mapXMin = guiLeft + 8 + ((213 - getContainer().mapTexture.width) / 2);
+		} else {
+			mapXMin = (width - getContainer().mapTexture.width) / 2;
+		}
 
-		if (getContainer().mapTexture.height <= 200) {
-			mapYMin = guiTop + 20;
+		if (getContainer().mapTexture.height <= 100) {
+			mapYMin = guiTop + 9 + ((100 - getContainer().mapTexture.height) / 2);
 		} else {
 			mapYMin = (height - getContainer().mapTexture.height) / 2;
 		}
@@ -202,7 +206,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 			GL11.glDisable(GL11.GL_BLEND);
 		}
 
-		if (getContainer().mapTexture.height <= 200) {
+		if (getContainer().mapTexture.height <= 100) {
 			drawBackgroundSlots();
 
 			bindTexture(texture);
@@ -338,7 +342,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 			uploadMap();
 			refreshSelectedArea();
 		} else if (carac == 'm') {
-			mapWidth = 200;
+			mapWidth = 213;
 			mapHeight = 100;
 
 			getContainer().mapTexture = new DynamicTexturePaletted(mapWidth, mapHeight);

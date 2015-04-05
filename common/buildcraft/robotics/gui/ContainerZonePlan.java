@@ -39,8 +39,8 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
 
 		map = iZonePlan;
 
-		addSlotToContainer(new Slot(iZonePlan, 0, 233, 20));
-		addSlotToContainer(new SlotOutput(iZonePlan, 1, 233, 68));
+		addSlotToContainer(new Slot(iZonePlan, 0, 233, 9));
+		addSlotToContainer(new SlotOutput(iZonePlan, 1, 233, 57));
 
 		// Player inventory
 		for (int l = 0; l < 3; l++) {
