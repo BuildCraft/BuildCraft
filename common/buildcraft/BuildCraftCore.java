@@ -501,6 +501,8 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
+		BCLog.logger.info("BuildCraft's fake player: UUID = " + gameProfile.getId().toString() + ", name = '" + gameProfile.getName() + "'!");
+
 		for (Object o : Block.blockRegistry) {
 			Block block = (Block) o;
 
