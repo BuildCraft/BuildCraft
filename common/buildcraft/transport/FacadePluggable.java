@@ -34,6 +34,12 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
 	}
 
 	@Override
+	public boolean requiresRenderUpdate(PipePluggable o) {
+		FacadePluggable other = (FacadePluggable) o;
+		return other.block != block || other.meta != meta || other.transparent != transparent || other.renderAsHollow != renderAsHollow;
+	}
+
+	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
 		if (states != null) {
 			nbt.setTag("states", ItemFacade.FacadeState.writeArray(states));

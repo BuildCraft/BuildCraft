@@ -377,7 +377,7 @@ public final class Gate implements IGate, IStatementContainer {
 		
 		int oldRedstoneOutputSide = redstoneOutputSide;
 		redstoneOutputSide = 0;
-		
+
 		boolean wasActive = activeActions.size() > 0;
 
 		BitSet temp = prevBroadcastSignal;

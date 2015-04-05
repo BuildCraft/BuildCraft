@@ -148,6 +148,12 @@ public class LensPluggable extends PipePluggable {
 		isFilter = (flags & 0x20) > 0;
 	}
 
+	@Override
+	public boolean requiresRenderUpdate(PipePluggable o) {
+		LensPluggable other = (LensPluggable) o;
+		return other.color != color || other.isFilter != isFilter;
+	}
+
 	private void color(TravelingItem item) {
 		if ((item.toCenter && item.input.getOpposite() == side)
 				|| (!item.toCenter && item.output == side)) {
