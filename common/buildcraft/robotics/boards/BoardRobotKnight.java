@@ -57,7 +57,7 @@ public class BoardRobotKnight extends RedstoneBoardRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotFetchAndEquipItemStack) {
-			if (robot.getHeldItem() == null) {
+			if (!ai.success()) {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		} else if (ai instanceof AIRobotSearchEntity) {
