@@ -1,6 +1,7 @@
 package buildcraft.transport.pipes.events;
 
 import java.util.List;
+import com.google.common.collect.Multiset;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 import buildcraft.transport.Pipe;
@@ -14,9 +15,9 @@ public abstract class PipeEventFluid extends PipeEvent {
 	}
 
 	public static class FindDest extends PipeEventFluid {
-		public final List<ForgeDirection> destinations;
+		public final Multiset<ForgeDirection> destinations;
 
-		public FindDest(Pipe pipe, FluidStack fluidStack, List<ForgeDirection> destinations) {
+		public FindDest(Pipe pipe, FluidStack fluidStack, Multiset<ForgeDirection> destinations) {
 			super(pipe, fluidStack);
 			this.destinations = destinations;
 		}

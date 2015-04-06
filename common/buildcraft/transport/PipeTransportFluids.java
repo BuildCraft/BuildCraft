@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -408,16 +410,16 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			FluidStack testStack = pushStack.copy();
 			testStack.amount = flowRate;
 			// Move liquid from the center to the output sides
-			ArrayList<ForgeDirection> realDirections = new ArrayList<ForgeDirection>();
+			Multiset<ForgeDirection> realDirections = HashMultiset.create(6);
 			for (ForgeDirection direction : directions) {
 				if (transferState[direction.ordinal()] == TransferState.Output) {
 					realDirections.add(direction);
 				}
 			}
 			container.pipe.eventBus.handleEvent(PipeEventFluid.FindDest.class, new PipeEventFluid.FindDest(container.pipe, pushStack, realDirections));
-			for (ForgeDirection direction : realDirections) {
+			for (ForgeDirection direction : realDirections.elementSet()) {
 				int available = internalTanks[direction.ordinal()].fill(testStack, false);
-				int ammountToPush = (int) (available / (double) flowRate / outputCount * Math.min(flowRate, totalAvailable));
+				int ammountToPush = (int) (available / (double) flowRate / realDirections.size() * Math.min(flowRate, totalAvailable) * realDirections.count(direction));
 				if (ammountToPush < 1) {
 					ammountToPush++;
 				}

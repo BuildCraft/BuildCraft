@@ -9,7 +9,9 @@
 package buildcraft.transport.pipes;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -128,40 +130,37 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
 
 	public void eventHandler(PipeEventFluid.FindDest event) {
 		Fluid fluidInTank = event.fluidStack.getFluid();
-		List<ForgeDirection> removedDestinations = new ArrayList<ForgeDirection>();
+        Set<ForgeDirection> originalDestinations = new HashSet<ForgeDirection>();
+        originalDestinations.addAll(event.destinations.elementSet());
+        boolean isFiltered = true;
+        int[] filterCount = new int[6];
 
-		boolean[] validFilter = new boolean[6];
-		boolean isFiltered = false;
-		for (ForgeDirection dir : event.destinations) {
+		for (ForgeDirection dir : originalDestinations) {
 			if (container.isPipeConnected(dir) && filters.filteredDirections[dir.ordinal()]) {
 				for (int slot = dir.ordinal() * 9; slot < dir.ordinal() * 9 + 9; ++slot) {
 					if (filters.fluids[slot] != null && filters.fluids[slot].getID() == fluidInTank.getID()) {
-						validFilter[dir.ordinal()] = true;
+						filterCount[dir.ordinal()]++;
 						isFiltered = true;
-						break;
 					}
 				}
 			}
 		}
 
-		for (ForgeDirection to : event.destinations) {
-			// the direction is filtered and liquids match
-			if (filters.filteredDirections[to.ordinal()] && validFilter[to.ordinal()]) {
-				continue;
-			}
+        event.destinations.clear();
 
-			// we haven't found a filter for this liquid and the direction is free
-			if (!isFiltered && !filters.filteredDirections[to.ordinal()]) {
-				continue;
-			}
-
-			// we have a filter for the liquid, but not a valid direction
-			removedDestinations.add(to);
-		}
-
-		for (ForgeDirection dir : removedDestinations) {
-			event.destinations.remove(dir);
-		}
+        if (!isFiltered) {
+            for (ForgeDirection to : originalDestinations) {
+                if (!filters.filteredDirections[to.ordinal()]) {
+                    event.destinations.add(to);
+                }
+            }
+        } else {
+            for (ForgeDirection to : originalDestinations) {
+                if (filterCount[to.ordinal()] > 0) {
+                    event.destinations.add(to, filterCount[to.ordinal()]);
+                }
+            }
+        }
 	}
 
     /* SAVING & LOADING */
