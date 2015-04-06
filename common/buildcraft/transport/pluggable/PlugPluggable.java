@@ -119,4 +119,9 @@ public class PlugPluggable extends PipePluggable {
 	public void readData(ByteBuf data) {
 
 	}
+
+	@Override
+	public boolean requiresRenderUpdate(PipePluggable o) {
+		return false;
+	}
 }

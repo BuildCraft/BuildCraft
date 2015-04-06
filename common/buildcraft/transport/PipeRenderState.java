@@ -36,8 +36,7 @@ public class PipeRenderState implements ISerializable {
 	}
 
 	public boolean needsRenderUpdate() {
-		return pipeConnectionMatrix.isDirty() || textureMatrix.isDirty()
-				|| wireMatrix.isDirty();
+		return pipeConnectionMatrix.isDirty() || textureMatrix.isDirty();
 	}
 
 	@Override

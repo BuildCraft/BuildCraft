@@ -526,9 +526,9 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			((FacadePluggable) pluggable).setActiveState(activeState);
 		}
 
+		/* TODO: Rewrite the requiresRenderUpdate API to run on the
+		   server side instead of the client side to save network bandwidth */
 		pluggableState.setPluggables(sideProperties.pluggables);
-
-		// TODO: Add way of signalizing render update via Pluggables
 
 		if (renderState.isDirty()) {
 			renderState.clean();
@@ -979,16 +979,20 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			return;
 		}
 
-		if (pipe == null && coreState.pipeId != 0) {
-			initialize(BlockGenericPipe.createPipe((Item) Item.itemRegistry.getObjectById(coreState.pipeId)));
-		}
-
-		if (pipe == null) {
-			return;
-		}
-
 		switch (stateId) {
 			case 0:
+				if (pipe != null) {
+					break;
+				}
+
+				if (pipe == null && coreState.pipeId != 0) {
+					initialize(BlockGenericPipe.createPipe((Item) Item.itemRegistry.getObjectById(coreState.pipeId)));
+				}
+
+				if (pipe == null) {
+					break;
+				}
+
 				worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
 				break;
 
@@ -1000,9 +1004,26 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				break;
 			}
 			case 2: {
-				// TODO: Add some kind of isDirty flag? I don't know...
-				worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
-				sideProperties.pluggables = pluggableState.getPluggables();
+				PipePluggable[] newPluggables = pluggableState.getPluggables();
+
+				// mark for render update if necessary
+				for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+					PipePluggable old = sideProperties.pluggables[i];
+					PipePluggable newer = newPluggables[i];
+					if (old == null && newer == null) {
+						continue;
+					} else if (old != null && newer != null && old.getClass() == newer.getClass()) {
+						if (newer.requiresRenderUpdate(old)) {
+							worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+							break;
+						}
+					} else {
+						// one of them is null but not the other, so update
+						worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+						break;
+					}
+				}
+				sideProperties.pluggables = newPluggables.clone();
 
 				for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 					final PipePluggable pluggable = getPipePluggable(ForgeDirection.getOrientation(i));

@@ -98,6 +98,12 @@ public class GatePluggable extends PipePluggable {
 	}
 
 	@Override
+	public boolean requiresRenderUpdate(PipePluggable o) {
+		// rendered by TESR
+		return false;
+	}
+
+	@Override
 	public ItemStack[] getDropItems(IPipeTile pipe) {
 		ItemStack gate = ItemGate.makeGateItem(material, logic);
 		for (IGateExpansion expansion : expansions) {

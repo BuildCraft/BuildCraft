@@ -2,6 +2,7 @@ package buildcraft.transport;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -94,7 +95,7 @@ public class PipeEventBus {
 	}
 
 	private void updateEventHandlers(List<EventHandler> eventHandlerList) {
-		eventHandlerList.sort(COMPARATOR);
+		Collections.sort(eventHandlerList, COMPARATOR);
 	}
 
 	public void unregisterHandler(Object handler) {

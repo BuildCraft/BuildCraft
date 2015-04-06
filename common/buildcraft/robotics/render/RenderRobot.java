@@ -77,6 +77,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 			GL11.glPushMatrix();
 			GL11.glTranslatef(-0.125F, 0, -0.125F);
 			doRenderItem(robot.getStackInSlot(0));
+			GL11.glColor3f(1, 1, 1);
 			GL11.glPopMatrix();
 		}
 
@@ -84,6 +85,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 			GL11.glPushMatrix();
 			GL11.glTranslatef(+0.125F, 0, -0.125F);
 			doRenderItem(robot.getStackInSlot(1));
+			GL11.glColor3f(1, 1, 1);
 			GL11.glPopMatrix();
 		}
 
@@ -91,6 +93,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 			GL11.glPushMatrix();
 			GL11.glTranslatef(+0.125F, 0, +0.125F);
 			doRenderItem(robot.getStackInSlot(2));
+			GL11.glColor3f(1, 1, 1);
 			GL11.glPopMatrix();
 		}
 
@@ -98,6 +101,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 			GL11.glPushMatrix();
 			GL11.glTranslatef(-0.125F, 0, +0.125F);
 			doRenderItem(robot.getStackInSlot(3));
+			GL11.glColor3f(1, 1, 1);
 			GL11.glPopMatrix();
 		}
 

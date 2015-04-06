@@ -15,7 +15,6 @@ import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
@@ -24,20 +23,17 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.lib.RFBattery;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 
 public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergyHandler, ISerializable {
+	private static final int ENERGY_MULTIPLIER = 50;
+
 	public int liquidToExtract;
 
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeFluidsWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
-
-	private long lastMining = 0;
-	private boolean lastPower = false;
-	private RFBattery battery = new RFBattery(2500, 1000, 0);
 
 	private PipeLogicWood logic = new PipeLogicWood(this) {
 		@Override
@@ -54,7 +50,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 	    };
 
 	public PipeFluidsWood(Item item) {
-	        super(new PipeTransportFluids(), item);
+		super(new PipeTransportFluids(), item);
 
         transport.initFromPipe(getClass());
 	}
@@ -76,42 +72,28 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 		super.initialize();
 	}
 
+	private TileEntity getConnectingTile() {
+		int meta = container.getBlockMetadata();
+		return meta >= 6 ? null : container.getTile(ForgeDirection.getOrientation(meta));
+	}
+
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
 
-		int meta = container.getBlockMetadata();
-
-		if (meta >= 6) {
-			battery.setEnergy(0);
-			liquidToExtract = 0;
+		if (liquidToExtract == 0) {
 			return;
 		}
-		
-		if (liquidToExtract > 0 && meta < 6) {
-			ForgeDirection side = ForgeDirection.getOrientation(meta);
-			TileEntity tile = container.getTile(side);
 
-			if (tile instanceof IFluidHandler) {
-				liquidToExtract -= Math.min(10, extractFluid((IFluidHandler) tile, side));
-			} else {
-				liquidToExtract -= 10;
-			}
+		TileEntity tile = getConnectingTile();
 
-			if (liquidToExtract < 0) {
-				liquidToExtract = 0;
-			}
-		}
+		if (tile == null || !(tile instanceof IFluidHandler)) {
+			liquidToExtract = 0;
+		} else {
+			extractFluid((IFluidHandler) tile, ForgeDirection.getOrientation(container.getBlockMetadata()));
 
-		if (battery.useEnergy(10, 10, false) > 0) {
-			TileEntity tile = container.getTile(ForgeDirection
-					.getOrientation(meta));
-
-			if (tile instanceof IFluidHandler) {
-				if (liquidToExtract <= FluidContainerRegistry.BUCKET_VOLUME) {
-					liquidToExtract += FluidContainerRegistry.BUCKET_VOLUME;
-				}
-			}
+			// We always subtract the flowRate to ensure that the buffer goes down reasonably quickly.
+			liquidToExtract -= transport.flowRate;
 		}
 	}
 
@@ -173,7 +155,17 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive,
 			boolean simulate) {
-		return battery.receiveEnergy(maxReceive, simulate);
+		TileEntity tile = getConnectingTile();
+		if (tile == null || !(tile instanceof IFluidHandler)) {
+			return 0;
+		}
+
+		int maxToReceive = (1000 - liquidToExtract) / ENERGY_MULTIPLIER;
+		int received = Math.max(maxReceive, maxToReceive);
+		if (!simulate) {
+			liquidToExtract += ENERGY_MULTIPLIER * received;
+		}
+		return received;
 	}
 
 	@Override
@@ -184,21 +176,21 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 
 	@Override
 	public int getEnergyStored(ForgeDirection from) {
-		return battery.getEnergyStored();
+		return 0;
 	}
 
 	@Override
 	public int getMaxEnergyStored(ForgeDirection from) {
-		return battery.getMaxEnergyStored();
+		return 1000 / ENERGY_MULTIPLIER;
 	}
 
 	@Override
 	public void writeData(ByteBuf data) {
-		data.writeInt(liquidToExtract);
+		data.writeShort(liquidToExtract);
 	}
 
 	@Override
 	public void readData(ByteBuf data) {
-		liquidToExtract = data.readInt();
+		liquidToExtract = data.readShort();
 	}
 }

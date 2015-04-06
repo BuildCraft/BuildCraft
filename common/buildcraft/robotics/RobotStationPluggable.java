@@ -254,6 +254,11 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 	}
 
 	@Override
+	public boolean requiresRenderUpdate(PipePluggable o) {
+		return renderState != ((RobotStationPluggable) o).renderState;
+	}
+
+	@Override
 	public void readData(ByteBuf data) {
 		this.renderState = RobotStationState.values()[data.readUnsignedByte()];
 	}
