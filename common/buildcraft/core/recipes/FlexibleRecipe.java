@@ -23,11 +23,58 @@ import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.api.recipes.IFlexibleRecipeViewable;
+import buildcraft.core.inventory.SimpleInventory;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.inventory.filters.ArrayStackFilter;
 import buildcraft.core.inventory.filters.IStackFilter;
 
 public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeViewable {
+	private class PreviewCrafter implements IFlexibleCrafter {
+		private final SimpleInventory inventory;
+		private final IFlexibleCrafter crafter;
+
+		// TODO: Make a safe copy of fluids too
+		public PreviewCrafter(IFlexibleCrafter crafter) {
+			this.crafter = crafter;
+			this.inventory = new SimpleInventory(crafter.getCraftingItemStackSize(), "Preview", 64);
+			for (int i = 0; i < inventory.getSizeInventory(); i++) {
+				ItemStack s = crafter.getCraftingItemStack(i);
+				if (s != null) {
+					inventory.setInventorySlotContents(i, s.copy());
+				}
+			}
+		}
+
+		@Override
+		public int getCraftingItemStackSize() {
+			return inventory.getSizeInventory();
+		}
+
+		@Override
+		public ItemStack getCraftingItemStack(int slotid) {
+			return inventory.getStackInSlot(slotid);
+		}
+
+		@Override
+		public ItemStack decrCraftingItemStack(int slotid, int val) {
+			return inventory.decrStackSize(slotid, val);
+		}
+
+		@Override
+		public FluidStack getCraftingFluidStack(int tankid) {
+			return crafter.getCraftingFluidStack(tankid);
+		}
+
+		@Override
+		public FluidStack decrCraftingFluidStack(int tankid, int val) {
+			return crafter.decrCraftingFluidStack(tankid, val);
+		}
+
+		@Override
+		public int getCraftingFluidStackSize() {
+			return crafter.getCraftingFluidStackSize();
+		}
+	}
 	public int energyCost = 0;
 	public long craftingTime = 0;
 	public String id;
@@ -95,9 +142,14 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 	}
 
 	@Override
-	public CraftingResult<T> craft(IFlexibleCrafter crafter, boolean preview) {
+	public CraftingResult<T> craft(IFlexibleCrafter baseCrafter, boolean preview) {
 		if (output == null) {
 			return null;
+		}
+
+		IFlexibleCrafter crafter = baseCrafter;
+		if (preview) {
+			crafter = new PreviewCrafter(baseCrafter);
 		}
 
 		CraftingResult<T> result = new CraftingResult<T>();
@@ -110,7 +162,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 			IStackFilter filter = new ArrayStackFilter(requirement);
 			int amount = requirement.stackSize;
 
-			if (consumeItems(crafter, result, filter, amount, preview) != 0) {
+			if (consumeItems(crafter, result, filter, amount, false) != 0) {
 				return null;
 			}
 		}
@@ -121,7 +173,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 			IStackFilter filter = new ArrayStackFilter(requirements.toArray(new ItemStack[requirements.size()]));
 			int amount = requirements.get(0).stackSize;
 
-			if (consumeItems(crafter, result, filter, amount, preview) != 0) {
+			if (consumeItems(crafter, result, filter, amount, false) != 0) {
 				return null;
 			}
 		}
