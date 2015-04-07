@@ -28,7 +28,13 @@ public class AIRobotDisposeItems extends AIRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoStationAndUnload) {
-			if (!ai.success()) {
+			if (ai.success()) {
+				if (robot.containsItems()) {
+					startDelegateAI(new AIRobotGotoStationAndUnload(robot, robot.getZoneToWork()));
+				} else {
+					terminate();
+				}
+			} else {
 				for (IInvSlot slot : InventoryIterator.getIterable(robot)) {
 					if (slot.getStackInSlot() != null) {
 						final EntityItem entity = new EntityItem(
@@ -43,10 +49,8 @@ public class AIRobotDisposeItems extends AIRobot {
 						slot.setStackInSlot(null);
 					}
 				}
-			} else if (robot.containsItems()) {
-				startDelegateAI(new AIRobotGotoStationAndUnload(robot, robot.getZoneToWork()));
+				terminate();
 			}
 		}
 	}
-
 }

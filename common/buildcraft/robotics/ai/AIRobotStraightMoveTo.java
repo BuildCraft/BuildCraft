@@ -21,8 +21,7 @@ public class AIRobotStraightMoveTo extends AIRobotGoto {
 	}
 
 	public AIRobotStraightMoveTo(EntityRobotBase iRobot, float ix, float iy, float iz) {
-		super(iRobot);
-		robot = iRobot;
+		this(iRobot);
 		x = ix;
 		y = iy;
 		z = iz;

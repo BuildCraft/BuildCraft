@@ -73,6 +73,7 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 
 		if (markerToBuild == null || !markerToBuild.needsToBuild()) {
 			markerToBuild = null;
+			// TODO: review what is this, maybe shutdown the robot
 			startDelegateAI(new AIRobot(robot));
 			return;
 		}

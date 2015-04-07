@@ -2,7 +2,6 @@ package buildcraft.robotics;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.IDockingStationProvider;

@@ -26,8 +26,12 @@ public class AIRobotSearchRandomGroundBlock extends AIRobot {
 	private IZone zone;
 	private int attempts = 0;
 
-	public AIRobotSearchRandomGroundBlock(EntityRobotBase iRobot, int iRange, IBlockFilter iFilter, IZone iZone) {
+	public AIRobotSearchRandomGroundBlock(EntityRobotBase iRobot) {
 		super(iRobot);
+	}
+
+	public AIRobotSearchRandomGroundBlock(EntityRobotBase iRobot, int iRange, IBlockFilter iFilter, IZone iZone) {
+		this(iRobot);
 
 		range = iRange;
 		filter = iFilter;
@@ -71,6 +75,11 @@ public class AIRobotSearchRandomGroundBlock extends AIRobot {
 				return;
 			}
 		}
+	}
+
+	@Override
+	public boolean success() {
+		return blockFound != null;
 	}
 
 	@Override

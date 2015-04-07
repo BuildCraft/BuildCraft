@@ -8,10 +8,13 @@
  */
 package buildcraft.robotics.boards;
 
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.core.lib.inventory.filters.IFluidFilter;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
 import buildcraft.robotics.ai.AIRobotGotoStationAndLoadFluids;
 import buildcraft.robotics.ai.AIRobotGotoStationAndUnloadFluids;
@@ -30,18 +33,30 @@ public class BoardRobotFluidCarrier extends RedstoneBoardRobot {
 
 	@Override
 	public void update() {
-		startDelegateAI(new AIRobotGotoStationAndLoadFluids(robot, ActionRobotFilter.getGateFluidFilter(robot
-				.getLinkedStation()), robot.getZoneToWork()));
+		if (!robotHasFluid()) {
+			IFluidFilter filter = ActionRobotFilter.getGateFluidFilter(robot.getLinkedStation());
+			startDelegateAI(new AIRobotGotoStationAndLoadFluids(robot, filter,
+					robot.getZoneToWork()));
+		} else {
+			startDelegateAI(new AIRobotGotoStationAndUnloadFluids(robot, robot.getZoneToWork()));
+		}
 	}
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoStationAndLoadFluids) {
-			startDelegateAI(new AIRobotGotoStationAndUnloadFluids(robot, robot.getZoneToWork()));
+			if (!ai.success()) {
+				startDelegateAI(new AIRobotGotoSleep(robot));
+			}
 		} else if (ai instanceof AIRobotGotoStationAndUnloadFluids) {
 			if (!ai.success()) {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		}
+	}
+
+	private boolean robotHasFluid() {
+		FluidStack tank = robot.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid;
+		return tank != null && tank.amount > 0;
 	}
 }

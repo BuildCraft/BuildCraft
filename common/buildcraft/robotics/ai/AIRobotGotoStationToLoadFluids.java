@@ -23,7 +23,6 @@ import buildcraft.robotics.statements.ActionStationProvideFluids;
 
 public class AIRobotGotoStationToLoadFluids extends AIRobot {
 
-	private boolean found = false;
 	private IZone zone;
 	private IFluidFilter filter;
 
@@ -32,7 +31,7 @@ public class AIRobotGotoStationToLoadFluids extends AIRobot {
 	}
 
 	public AIRobotGotoStationToLoadFluids(EntityRobotBase iRobot, IFluidFilter iFiler, IZone iZone) {
-		super(iRobot);
+		this(iRobot);
 
 		zone = iZone;
 		filter = iFiler;
@@ -46,15 +45,9 @@ public class AIRobotGotoStationToLoadFluids extends AIRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotSearchAndGotoStation) {
-			found = ai.success();
-
+			setSuccess(ai.success());
 			terminate();
 		}
-	}
-
-	@Override
-	public boolean success() {
-		return found;
 	}
 
 	private class StationFilter implements IStationFilter {

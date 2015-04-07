@@ -19,16 +19,16 @@ import buildcraft.api.robots.EntityRobotBase;
 
 public class AIRobotPumpBlock extends AIRobot {
 
-	public BlockIndex blockToPump;
-	public long waited = 0;
-	int pumped = 0;
+	private BlockIndex blockToPump;
+	private long waited = 0;
+	private int pumped = 0;
 
 	public AIRobotPumpBlock(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
 	public AIRobotPumpBlock(EntityRobotBase iRobot, BlockIndex iBlockToPump) {
-		super(iRobot);
+		this(iRobot);
 
 		blockToPump = iBlockToPump;
 	}

@@ -26,6 +26,7 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 
 	public static final int MAX_ENERGY = 100000;
 	public static final int SAFETY_ENERGY = MAX_ENERGY / 5;
+	public static final int SHUTDOWN_ENERGY = 0;
 	public static final long NULL_ROBOT_ID = Long.MAX_VALUE;
 
 	public EntityRobotBase(World par1World) {

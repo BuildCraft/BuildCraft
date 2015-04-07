@@ -42,7 +42,7 @@ public class AIRobotSearchStackRequest extends AIRobot {
 	}
 
 	public AIRobotSearchStackRequest(EntityRobotBase iRobot, IStackFilter iFilter, Collection<ItemStack> iBlackList) {
-		super(iRobot);
+		this(iRobot);
 
 		blackList = iBlackList;
 		filter = iFilter;

@@ -15,7 +15,6 @@ import buildcraft.api.robots.EntityRobotBase;
 
 public class AIRobotGotoStationAndUnload extends AIRobot {
 
-	private boolean found = false;
 	private IZone zone;
 	private DockingStation station;
 
@@ -24,7 +23,7 @@ public class AIRobotGotoStationAndUnload extends AIRobot {
 	}
 
 	public AIRobotGotoStationAndUnload(EntityRobotBase iRobot, IZone iZone) {
-		super(iRobot);
+		this(iRobot);
 
 		zone = iZone;
 	}
@@ -48,23 +47,18 @@ public class AIRobotGotoStationAndUnload extends AIRobot {
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoStationToUnload) {
 			if (ai.success()) {
-				found = true;
 				startDelegateAI(new AIRobotUnload(robot));
 			} else {
+				setSuccess(false);
 				terminate();
 			}
 		} else if (ai instanceof AIRobotGotoStation) {
 			if (ai.success()) {
-				found = true;
 				startDelegateAI(new AIRobotUnload(robot));
 			} else {
+				setSuccess(false);
 				terminate();
 			}
 		}
-	}
-
-	@Override
-	public boolean success() {
-		return found;
 	}
 }

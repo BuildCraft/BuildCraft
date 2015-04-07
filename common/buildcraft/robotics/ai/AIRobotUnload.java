@@ -23,7 +23,6 @@ import buildcraft.transport.gates.ActionIterator;
 public class AIRobotUnload extends AIRobot {
 
 	private int waitedCycles = 0;
-	private boolean delivered = false;
 
 	public AIRobotUnload(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -46,6 +45,7 @@ public class AIRobotUnload extends AIRobot {
 		DockingStation station = (DockingStation) robot.getDockingStation();
 
 		if (station == null) {
+			setSuccess(false);
 			return false;
 		}
 
@@ -60,9 +60,6 @@ public class AIRobotUnload extends AIRobot {
 				if (s.statement instanceof ActionStationInputItems) {
 					if (((ActionStationInputItems) s.statement)
 							.insert(station, (EntityRobot) robot, s, robotSlot, true)) {
-
-						delivered = true;
-
 						return true;
 					}
 				}
@@ -75,10 +72,5 @@ public class AIRobotUnload extends AIRobot {
 	@Override
 	public int getEnergyCost() {
 		return 10;
-	}
-
-	@Override
-	public boolean success() {
-		return delivered;
 	}
 }

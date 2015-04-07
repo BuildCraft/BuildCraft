@@ -49,7 +49,7 @@ public class AIRobotCraftWorkbench extends AIRobotCraftGeneric {
 	}
 
 	public AIRobotCraftWorkbench(EntityRobotBase iRobot, IRecipe iRecipe) {
-		super(iRobot);
+		this(iRobot);
 
 		recipe = iRecipe;
 	}

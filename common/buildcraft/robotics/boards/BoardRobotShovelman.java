@@ -16,8 +16,6 @@ import buildcraft.api.robots.EntityRobotBase;
 
 public class BoardRobotShovelman extends BoardRobotGenericBreakBlock {
 
-	private boolean extendedOre = false;
-
 	public BoardRobotShovelman(EntityRobotBase iRobot) {
 		super(iRobot);
 	}

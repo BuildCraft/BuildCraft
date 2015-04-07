@@ -15,7 +15,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.inventory.ITransactor;
@@ -24,15 +23,14 @@ import buildcraft.core.lib.inventory.filters.ArrayStackFilter;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.core.lib.utils.IBlockFilter;
 import buildcraft.robotics.ai.AIRobotGotoBlock;
-import buildcraft.robotics.ai.AIRobotGotoStationToLoad;
+import buildcraft.robotics.ai.AIRobotGotoSleep;
+import buildcraft.robotics.ai.AIRobotGotoStationAndLoad;
 import buildcraft.robotics.ai.AIRobotLoad;
 import buildcraft.robotics.ai.AIRobotSearchRandomGroundBlock;
 
 public class BoardRobotBomber extends RedstoneBoardRobot {
 
 	private static final IStackFilter TNT_FILTER = new ArrayStackFilter(new ItemStack(Blocks.tnt));
-
-	private BlockIndex target = null;
 
 	private int flyingHeight = 20;
 
@@ -56,7 +54,7 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
 		}
 
 		if (!containItems) {
-			startDelegateAI(new AIRobotGotoStationToLoad(robot, TNT_FILTER, null));
+			startDelegateAI(new AIRobotGotoStationAndLoad(robot, TNT_FILTER, null, AIRobotLoad.ANY_QUANTITY));
 		} else {
 			startDelegateAI(new AIRobotSearchRandomGroundBlock(robot, 100, new IBlockFilter() {
 				@Override
@@ -69,24 +67,36 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotGotoStationToLoad) {
-			startDelegateAI(new AIRobotLoad(robot, TNT_FILTER));
+		if (ai instanceof AIRobotGotoStationAndLoad) {
+			if (!ai.success()) {
+				startDelegateAI(new AIRobotGotoSleep(robot));
+			}
 		} else if (ai instanceof AIRobotSearchRandomGroundBlock) {
-			AIRobotSearchRandomGroundBlock aiFind = (AIRobotSearchRandomGroundBlock) ai;
+			if (ai.success()) {
+				AIRobotSearchRandomGroundBlock aiFind = (AIRobotSearchRandomGroundBlock) ai;
 
-			startDelegateAI(new AIRobotGotoBlock(robot, aiFind.blockFound.x, aiFind.blockFound.y + flyingHeight,
-					aiFind.blockFound.z));
+				startDelegateAI(new AIRobotGotoBlock(robot, aiFind.blockFound.x,
+						aiFind.blockFound.y + flyingHeight,
+						aiFind.blockFound.z));
+			} else {
+				startDelegateAI(new AIRobotGotoSleep(robot));
+			}
 		} else if (ai instanceof AIRobotGotoBlock) {
-			ITransactor t = Transactor.getTransactorFor(robot);
-			ItemStack stack = t.remove(TNT_FILTER, ForgeDirection.UNKNOWN, true);
+			if (ai.success()) {
+				ITransactor t = Transactor.getTransactorFor(robot);
+				ItemStack stack = t.remove(TNT_FILTER, ForgeDirection.UNKNOWN, true);
 
-			if (stack != null && stack.stackSize > 0) {
-				EntityTNTPrimed tnt = new EntityTNTPrimed(robot.worldObj, robot.posX + 0.25, robot.posY - 1,
-					robot.posZ + 0.25,
-					robot);
-				tnt.fuse = 37;
-				robot.worldObj.spawnEntityInWorld(tnt);
-				robot.worldObj.playSoundAtEntity(tnt, "game.tnt.primed", 1.0F, 1.0F);
+				if (stack != null && stack.stackSize > 0) {
+					EntityTNTPrimed tnt = new EntityTNTPrimed(robot.worldObj, robot.posX + 0.25,
+							robot.posY - 1,
+							robot.posZ + 0.25,
+							robot);
+					tnt.fuse = 37;
+					robot.worldObj.spawnEntityInWorld(tnt);
+					robot.worldObj.playSoundAtEntity(tnt, "game.tnt.primed", 1.0F, 1.0F);
+				}
+			} else {
+				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		}
 	}

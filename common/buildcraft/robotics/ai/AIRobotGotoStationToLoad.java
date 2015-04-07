@@ -24,7 +24,6 @@ import buildcraft.robotics.statements.ActionStationProvideItems;
 
 public class AIRobotGotoStationToLoad extends AIRobot {
 
-	private boolean found = false;
 	private IStackFilter filter;
 	private IZone zone;
 
@@ -33,7 +32,7 @@ public class AIRobotGotoStationToLoad extends AIRobot {
 	}
 
 	public AIRobotGotoStationToLoad(EntityRobotBase iRobot, IStackFilter iFilter, IZone iZone) {
-		super(iRobot);
+		this(iRobot);
 
 		filter = iFilter;
 		zone = iZone;
@@ -47,15 +46,9 @@ public class AIRobotGotoStationToLoad extends AIRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotSearchAndGotoStation) {
-			found = ((AIRobotSearchAndGotoStation) ai).targetStation != null;
-
+			setSuccess(ai.success());
 			terminate();
 		}
-	}
-
-	@Override
-	public boolean success() {
-		return found;
 	}
 
 	private class StationFilter implements IStationFilter {

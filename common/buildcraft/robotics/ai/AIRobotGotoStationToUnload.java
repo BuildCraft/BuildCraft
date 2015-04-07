@@ -24,7 +24,6 @@ import buildcraft.transport.gates.ActionIterator;
 
 public class AIRobotGotoStationToUnload extends AIRobot {
 
-	private boolean found = false;
 	private IZone zone;
 
 	public AIRobotGotoStationToUnload(EntityRobotBase iRobot) {
@@ -32,7 +31,7 @@ public class AIRobotGotoStationToUnload extends AIRobot {
 	}
 
 	public AIRobotGotoStationToUnload(EntityRobotBase iRobot, IZone iZone) {
-		super(iRobot);
+		this(iRobot);
 
 		zone = iZone;
 
@@ -46,15 +45,9 @@ public class AIRobotGotoStationToUnload extends AIRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotSearchAndGotoStation) {
-			found = ((AIRobotSearchAndGotoStation) ai).targetStation != null;
-
+			setSuccess(ai.success());
 			terminate();
 		}
-	}
-
-	@Override
-	public boolean success() {
-		return found;
 	}
 
 	private class StationInventory implements IStationFilter {

@@ -8,6 +8,7 @@
  */
 package buildcraft.robotics;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.WeakHashMap;
@@ -54,6 +55,7 @@ import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.ItemWrench;
 import buildcraft.core.LaserData;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.network.command.CommandWriter;
@@ -62,8 +64,10 @@ import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.robotics.ai.AIRobotMain;
+import buildcraft.robotics.ai.AIRobotShutdown;
 import buildcraft.robotics.ai.AIRobotSleep;
 import buildcraft.robotics.statements.ActionRobotWorkInArea;
+import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.ActionIterator;
 
 public class EntityRobot extends EntityRobotBase implements
@@ -109,7 +113,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 	private boolean firstUpdateDone = false;
 
-	private boolean isAsleepClient = false;
+	private boolean isActiveClient = false;
 
 	private long robotId = EntityRobotBase.NULL_ROBOT_ID;
 
@@ -187,7 +191,7 @@ public class EntityRobot extends EntityRobotBase implements
 		itemAngle1 = dataWatcher.getWatchableObjectFloat(17);
 		itemAngle2 = dataWatcher.getWatchableObjectFloat(18);
 		energySpendPerCycle = dataWatcher.getWatchableObjectInt(19);
-		isAsleepClient = dataWatcher.getWatchableObjectByte(20) == 1;
+		isActiveClient = dataWatcher.getWatchableObjectByte(20) == 1;
 		battery.setEnergy(dataWatcher.getWatchableObjectInt(21));
 	}
 
@@ -200,8 +204,12 @@ public class EntityRobot extends EntityRobotBase implements
 		dataWatcher.updateObject(18, Float.valueOf(itemAngle2));
 	}
 
-	public boolean isAsleep() {
-		return worldObj.isRemote ? isAsleepClient : mainAI.getActiveAI() instanceof AIRobotSleep;
+	public boolean isActive() {
+		if (worldObj.isRemote) {
+			return isActiveClient;
+		} else {
+			return mainAI.getActiveAI() instanceof AIRobotSleep || mainAI.getActiveAI() instanceof AIRobotShutdown;
+		}
 	}
 
 	protected void init() {
@@ -259,7 +267,7 @@ public class EntityRobot extends EntityRobotBase implements
 		if (!worldObj.isRemote) {
 			// The client-side sleep indicator should also display if the robot is charging.
 			// To not break gates and other things checking for sleep, this is done here.
-			dataWatcher.updateObject(20, Byte.valueOf((byte) ((isAsleep() && ticksCharging == 0) ? 1 : 0)));
+			dataWatcher.updateObject(20, Byte.valueOf((byte) ((isActive() && ticksCharging == 0) ? 1 : 0)));
 			dataWatcher.updateObject(21, getEnergy());
 
 			if (needsUpdate) {
@@ -284,32 +292,30 @@ public class EntityRobot extends EntityRobotBase implements
 
 		if (!worldObj.isRemote) {
 			if (linkedDockingStation == null) {
-				linkedDockingStation = RobotManager.registryProvider.getRegistry(worldObj).getStation(
-						linkedDockingStationIndex.x,
-						linkedDockingStationIndex.y,
-						linkedDockingStationIndex.z,
-						linkedDockingStationSide);
+				if (linkedDockingStationIndex != null) {
+					linkedDockingStation = getRegistry().getStation(linkedDockingStationIndex.x,
+							linkedDockingStationIndex.y, linkedDockingStationIndex.z,
+							linkedDockingStationSide);
+				}
 
 				if (linkedDockingStation == null
 						|| linkedDockingStation.robotTaking() != this) {
-					// Error at load time, the expected linked stations is not
-					// properly set, kill this robot.
-
-					setDead();
-					return;
+					if (!(mainAI.getDelegateAI() instanceof AIRobotShutdown)) {
+						mainAI.startDelegateAI(new AIRobotShutdown(this));
+					}
 				}
 			}
 
 			if (currentDockingStationIndex != null && currentDockingStation == null) {
-				currentDockingStation = (DockingStation)
-						RobotManager.registryProvider.getRegistry(worldObj).getStation(
+				currentDockingStation = getRegistry().getStation(
 						currentDockingStationIndex.x,
 						currentDockingStationIndex.y,
 						currentDockingStationIndex.z,
 						currentDockingStationSide);
 			}
 
-			if (linkedDockingStation != null) {
+			if (linkedDockingStation == null ||
+					((Pipe) linkedDockingStation.getPipe().getPipe()).isInitialized()) {
 				this.worldObj.theProfiler.startSection("bcRobotAIMainCycle");
 				mainAI.cycle();
 				this.worldObj.theProfiler.endSection();
@@ -317,10 +323,6 @@ public class EntityRobot extends EntityRobotBase implements
 				if (energySpendPerCycle != mainAI.getActiveAI().getEnergyCost()) {
 					energySpendPerCycle = mainAI.getActiveAI().getEnergyCost();
 					dataWatcher.updateObject(19, energySpendPerCycle);
-				}
-
-				if (this.battery.getEnergyStored() <= 0 && !linkedToChargeStation()) {
-					setDead();
 				}
 			}
 		}
@@ -458,12 +460,14 @@ public class EntityRobot extends EntityRobotBase implements
     public void writeEntityToNBT(NBTTagCompound nbt) {
 		super.writeEntityToNBT(nbt);
 
-		NBTTagCompound linkedStationNBT = new NBTTagCompound();
-		NBTTagCompound linkedStationIndexNBT = new NBTTagCompound();
-		linkedDockingStationIndex.writeTo(linkedStationIndexNBT);
-		linkedStationNBT.setTag("index", linkedStationIndexNBT);
-		linkedStationNBT.setByte("side", (byte) linkedDockingStationSide.ordinal());
-		nbt.setTag("linkedStation", linkedStationNBT);
+		if (linkedDockingStation != null) {
+			NBTTagCompound linkedStationNBT = new NBTTagCompound();
+			NBTTagCompound linkedStationIndexNBT = new NBTTagCompound();
+			linkedDockingStationIndex.writeTo(linkedStationIndexNBT);
+			linkedStationNBT.setTag("index", linkedStationIndexNBT);
+			linkedStationNBT.setByte("side", (byte) linkedDockingStationSide.ordinal());
+			nbt.setTag("linkedStation", linkedStationNBT);
+		}
 
 		if (currentDockingStationIndex != null) {
 			NBTTagCompound currentStationNBT = new NBTTagCompound();
@@ -524,9 +528,11 @@ public class EntityRobot extends EntityRobotBase implements
 	public void readEntityFromNBT(NBTTagCompound nbt) {
 		super.readEntityFromNBT(nbt);
 
-		NBTTagCompound linkedStationNBT = nbt.getCompoundTag("linkedStation");
-		linkedDockingStationIndex = new BlockIndex(linkedStationNBT.getCompoundTag("index"));
-		linkedDockingStationSide = ForgeDirection.values()[linkedStationNBT.getByte("side")];
+		if (nbt.hasKey("linkedStation")) {
+			NBTTagCompound linkedStationNBT = nbt.getCompoundTag("linkedStation");
+			linkedDockingStationIndex = new BlockIndex(linkedStationNBT.getCompoundTag("index"));
+			linkedDockingStationSide = ForgeDirection.values()[linkedStationNBT.getByte("side")];
+		}
 
 		if (nbt.hasKey("currentStation")) {
 			NBTTagCompound currentStationNBT = nbt.getCompoundTag("currentStation");
@@ -600,6 +606,8 @@ public class EntityRobot extends EntityRobotBase implements
 
 			currentDockingStationIndex = null;
 			currentDockingStationSide = null;
+
+			mainAI.abortDelegateAI();
 		}
 	}
 
@@ -609,16 +617,20 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public void setMainStation(DockingStation iStation) {
-		DockingStation station = iStation;
+	public void setMainStation(DockingStation station) {
 
 		if (linkedDockingStation != null && linkedDockingStation != station) {
 			linkedDockingStation.unsafeRelease(this);
 		}
 
 		linkedDockingStation = station;
-		linkedDockingStationIndex = linkedDockingStation.index();
-		linkedDockingStationSide = linkedDockingStation.side();
+		if (station != null) {
+			linkedDockingStationIndex = linkedDockingStation.index();
+			linkedDockingStationSide = linkedDockingStation.side();
+		} else {
+			linkedDockingStationIndex = null;
+			linkedDockingStationSide = ForgeDirection.UNKNOWN;
+		}
 	}
 
 	@Override
@@ -959,29 +971,57 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public void setDead() {
+	protected boolean interact(EntityPlayer player) {
+		ItemStack stack = player.getCurrentEquippedItem();
+		if(player.isSneaking() && stack != null && stack.getItem() == BuildCraftCore.wrenchItem) {
+			if (!worldObj.isRemote) {
+				convertToItems();
+			} else {
+				((ItemWrench) stack.getItem()).wrenchUsed(player, 0, 0, 0);
+			}
+			return true;
+		} else {
+			return super.interact(player);
+		}
+	}
+
+	private List<ItemStack> getDrops() {
+		List<ItemStack> drops = new ArrayList<ItemStack>();
+		ItemStack robotStack = new ItemStack(BuildCraftRobotics.robotItem);
+		NBTUtils.getItemData(robotStack).setTag("board", originalBoardNBT);
+		NBTUtils.getItemData(robotStack).setInteger("energy", battery.getEnergyStored());
+		drops.add(robotStack);
+		if (itemInUse != null) {
+			drops.add(itemInUse);
+		}
+		for (ItemStack element : inv) {
+			if (element != null) {
+				drops.add(element);
+			}
+		}
+		return drops;
+	}
+
+	private void convertToItems() {
 		if (!worldObj.isRemote && !isDead) {
 			if (mainAI != null) {
 				mainAI.abort();
 			}
-
-			ItemStack robotStack = new ItemStack (BuildCraftRobotics.robotItem);
-			NBTUtils.getItemData(robotStack).setTag("board", originalBoardNBT);
-			NBTUtils.getItemData(robotStack).setInteger("energy", battery.getEnergyStored());
-			entityDropItem(robotStack, 0);
-			if (itemInUse != null) {
-				entityDropItem(itemInUse, 0);
+			List<ItemStack> drops = getDrops();
+			for (ItemStack stack : drops) {
+				entityDropItem(stack, 0);
 			}
-			for (ItemStack element : inv) {
-				if (element != null) {
-					entityDropItem(element, 0);
-				}
-			}
-
-			getRegistry().killRobot(this);
+			isDead = true;
 		}
 
-		super.setDead();
+		getRegistry().killRobot(this);
+	}
+
+	@Override
+	public void setDead() {
+		if (worldObj.isRemote) {
+			super.setDead();
+		}
 	}
 
 	@Override
@@ -1139,7 +1179,7 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	public void getDebugInfo(List<String> info, ForgeDirection side, ItemStack debugger, EntityPlayer player) {
 		info.add("Robot " + board.getNBTHandler().getID() + " (" + getBattery().getEnergyStored() + "/" + getBattery().getMaxEnergyStored() + " RF)");
-		info.add("Position: " + posX + ", " + posY + ", " + posZ);
+		info.add(String.format("Position: %.2f, %.2f, %.2f", posX, posY, posZ));
 		info.add("AI tree:");
 		AIRobot aiRobot = mainAI;
 		while (aiRobot != null) {

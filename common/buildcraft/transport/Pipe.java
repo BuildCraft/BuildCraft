@@ -202,8 +202,8 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		}
 	}
 
-	public boolean needsInit() {
-		return !initialized;
+	public boolean isInitialized() {
+		return initialized;
 	}
 
 	public void initialize() {

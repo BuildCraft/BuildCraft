@@ -16,10 +16,11 @@ import buildcraft.robotics.IStationFilter;
 
 public class AIRobotRecharge extends AIRobot {
 
-	private DockingStation axeDocking = null;
+	private boolean success;
 
 	public AIRobotRecharge(EntityRobotBase iRobot) {
 		super(iRobot);
+		success = false;
 	}
 
 	@Override
@@ -52,10 +53,17 @@ public class AIRobotRecharge extends AIRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotSearchAndGotoStation) {
-			if (robot.getDockingStation() == null
-					|| ((DockingStation) robot.getDockingStation()).getPipe().getPipeType() != IPipeTile.PipeType.POWER) {
+			if (!ai.success()) {
+				setSuccess(false);
 				terminate();
+			} else {
+				success = true;
 			}
 		}
+	}
+
+	@Override
+	public boolean success() {
+		return success;
 	}
 }

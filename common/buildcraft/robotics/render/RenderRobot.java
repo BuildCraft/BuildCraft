@@ -149,7 +149,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 		if (robot.getTexture() != null) {
 			renderManager.renderEngine.bindTexture(robot.getTexture());
 			float storagePercent = (float) robot.getBattery().getEnergyStored() / (float) robot.getBattery().getMaxEnergyStored();
-			doRenderRobot(1F / 16F, renderManager.renderEngine, storagePercent, robot.isAsleep());
+			doRenderRobot(1F / 16F, renderManager.renderEngine, storagePercent, robot.isActive());
 		}
 		
 		GL11.glPopMatrix();

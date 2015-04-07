@@ -31,7 +31,7 @@ public class AIRobotLoadFluids extends AIRobot {
 	}
 
 	public AIRobotLoadFluids(EntityRobotBase iRobot, IFluidFilter iFilter) {
-		super(iRobot);
+		this(iRobot);
 
 		filter = iFilter;
 	}

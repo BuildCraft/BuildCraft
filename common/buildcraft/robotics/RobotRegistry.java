@@ -22,6 +22,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.world.ChunkEvent;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRobotRegistry;
@@ -59,6 +60,9 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 
 		if (robot.getRobotId() == EntityRobotBase.NULL_ROBOT_ID) {
 			((EntityRobot) robot).setUniqueRobotId(getNextRobotId());
+		}
+		if (robotsLoaded.containsKey(robot.getRobotId())) {
+			BCLog.logger.warn("Robot with id %d was not unregistered properly", robot.getRobotId());
 		}
 
 		robotsLoaded.put(robot.getRobotId(), (EntityRobot) robot);
@@ -258,7 +262,11 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 
 		if (stations.containsKey(index)) {
 			if (station.robotTaking() != null) {
-				station.robotTaking().setDead();
+				if (!station.isMainStation()) {
+					station.robotTaking().undock();
+				} else {
+					station.robotTaking().setMainStation(null);
+				}
 			} else if (station.robotIdTaking() != EntityRobotBase.NULL_ROBOT_ID) {
 				stationsTakenByRobot.get(station.robotIdTaking()).remove(index);
 			}

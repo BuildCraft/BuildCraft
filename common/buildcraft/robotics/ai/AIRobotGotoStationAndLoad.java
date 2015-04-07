@@ -15,19 +15,20 @@ import buildcraft.core.lib.inventory.filters.IStackFilter;
 
 public class AIRobotGotoStationAndLoad extends AIRobot {
 
-	private boolean found = false;
 	private IStackFilter filter;
 	private IZone zone;
+	private int quantity;
 
 	public AIRobotGotoStationAndLoad(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotGotoStationAndLoad(EntityRobotBase iRobot, IStackFilter iFilter, IZone iZone) {
-		super(iRobot);
+	public AIRobotGotoStationAndLoad(EntityRobotBase iRobot, IStackFilter iFilter, IZone iZone, int iQuantity) {
+		this(iRobot);
 
 		filter = iFilter;
 		zone = iZone;
+		quantity = iQuantity;
 	}
 
 	@Override
@@ -39,16 +40,11 @@ public class AIRobotGotoStationAndLoad extends AIRobot {
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoStationToLoad) {
 			if (ai.success()) {
-				found = true;
-				startDelegateAI(new AIRobotLoad(robot, filter, 1));
+				startDelegateAI(new AIRobotLoad(robot, filter, quantity));
 			} else {
+				setSuccess(false);
 				terminate();
 			}
 		}
-	}
-
-	@Override
-	public boolean success() {
-		return found;
 	}
 }

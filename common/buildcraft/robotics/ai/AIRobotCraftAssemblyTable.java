@@ -51,7 +51,7 @@ public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 	}
 
 	public AIRobotCraftAssemblyTable(EntityRobotBase iRobot, CraftingResult craftingResult) {
-		super(iRobot);
+		this(iRobot);
 
 		expectedResult = craftingResult;
 	}
@@ -67,7 +67,7 @@ public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 		if (table != null) {
 			if (!craftStarted) {
 				if (requirements.size() != 0) {
-					startDelegateAI(new AIRobotGotoStationAndLoad(robot, new ReqStackFilter(), robot.getZoneToWork()));
+					startDelegateAI(new AIRobotGotoStationAndLoad(robot, new ReqStackFilter(), robot.getZoneToWork(), 1));
 					return;
 				}
 
