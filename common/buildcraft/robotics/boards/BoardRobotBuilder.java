@@ -21,8 +21,7 @@ import buildcraft.core.builders.BuildingSlot;
 import buildcraft.core.lib.inventory.filters.ArrayStackFilter;
 import buildcraft.robotics.ai.AIRobotGotoBlock;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
-import buildcraft.robotics.ai.AIRobotGotoStationToLoad;
-import buildcraft.robotics.ai.AIRobotLoad;
+import buildcraft.robotics.ai.AIRobotGotoStationAndLoad;
 import buildcraft.robotics.ai.AIRobotRecharge;
 
 public class BoardRobotBuilder extends RedstoneBoardRobot {
@@ -93,9 +92,8 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 		}
 
 		if (requirementsToLookFor != null && requirementsToLookFor.size() > 0) {
-			startDelegateAI(new AIRobotGotoStationToLoad(robot,
-					new ArrayStackFilter(requirementsToLookFor.getFirst()),
-					robot.getZoneToWork()));
+			startDelegateAI(new AIRobotGotoStationAndLoad(robot, new ArrayStackFilter(
+					requirementsToLookFor.getFirst()), requirementsToLookFor.getFirst().stackSize));
 		}
 
 		if (currentBuildingSlot != null && requirementsToLookFor != null && requirementsToLookFor.size() == 0) {
@@ -121,16 +119,12 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotGotoStationToLoad) {
+		if (ai instanceof AIRobotGotoStationAndLoad) {
 			if (ai.success()) {
-				startDelegateAI(new AIRobotLoad(robot, new ArrayStackFilter(requirementsToLookFor.getFirst()),
-						requirementsToLookFor.getFirst().stackSize));
+				requirementsToLookFor.removeFirst();
 			} else {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
-		} else if (ai instanceof AIRobotLoad) {
-			// TODO: check that we get the proper items in
-			requirementsToLookFor.removeFirst();
 		} else if (ai instanceof AIRobotGotoBlock) {
 			if (markerToBuild == null || markerToBuild.bluePrintBuilder == null) {
 				// defensive code, in case of a wrong load from NBT

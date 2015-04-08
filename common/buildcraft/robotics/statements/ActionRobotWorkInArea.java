@@ -22,18 +22,45 @@ import buildcraft.core.statements.BCStatement;
 
 public class ActionRobotWorkInArea extends BCStatement implements IActionInternal {
 
-	public ActionRobotWorkInArea() {
-		super("buildcraft:robot.work_in_area");
+	public enum AreaType {
+		WORK("work_in_area"),
+		LOAD_UNLOAD("load_unload_area");
+
+		private String name;
+
+		private AreaType(String iName) {
+			name = iName;
+		}
+
+		public String getTag() {
+			return "buildcraft:robot." + name;
+		}
+
+		public String getUnlocalizedName() {
+			return "gate.action.robot." + name;
+		}
+
+		public String getIcon() {
+			return "buildcraftrobotics:triggers/action_robot_" + name;
+		}
+	}
+
+	private AreaType areaType;
+
+	public ActionRobotWorkInArea(AreaType iAreaType) {
+		super(iAreaType.getTag());
+
+		areaType = iAreaType;
 	}
 
 	@Override
 	public String getDescription() {
-		return StringUtils.localize("gate.action.robot.work_in_area");
+		return StringUtils.localize(areaType.getUnlocalizedName());
 	}
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_robot_in_area");
+		icon = iconRegister.registerIcon(areaType.getIcon());
 	}
 
 	public static IZone getArea(StatementSlot slot) {
@@ -67,8 +94,10 @@ public class ActionRobotWorkInArea extends BCStatement implements IActionInterna
 	}
 
 	@Override
-	public void actionActivate(IStatementContainer source,
-			IStatementParameter[] parameters) {
-		
+	public void actionActivate(IStatementContainer source, IStatementParameter[] parameters) {
+	}
+
+	public AreaType getAreaType() {
+		return areaType;
 	}
 }

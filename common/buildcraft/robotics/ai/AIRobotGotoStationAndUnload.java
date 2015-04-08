@@ -8,24 +8,18 @@
  */
 package buildcraft.robotics.ai;
 
-import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 
 public class AIRobotGotoStationAndUnload extends AIRobot {
 
-	private IZone zone;
 	private DockingStation station;
 
 	public AIRobotGotoStationAndUnload(EntityRobotBase iRobot) {
 		super(iRobot);
-	}
 
-	public AIRobotGotoStationAndUnload(EntityRobotBase iRobot, IZone iZone) {
-		this(iRobot);
-
-		zone = iZone;
+		station = null;
 	}
 
 	public AIRobotGotoStationAndUnload(EntityRobotBase iRobot, DockingStation iStation) {
@@ -37,7 +31,7 @@ public class AIRobotGotoStationAndUnload extends AIRobot {
 	@Override
 	public void start() {
 		if (station == null) {
-			startDelegateAI(new AIRobotGotoStationToUnload(robot, zone));
+			startDelegateAI(new AIRobotGotoStationToUnload(robot));
 		} else {
 			startDelegateAI(new AIRobotGotoStation(robot, station));
 		}

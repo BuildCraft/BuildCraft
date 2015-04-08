@@ -11,7 +11,6 @@ package buildcraft.robotics.ai;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
@@ -25,22 +24,20 @@ import buildcraft.robotics.statements.ActionStationProvideItems;
 public class AIRobotGotoStationToLoad extends AIRobot {
 
 	private IStackFilter filter;
-	private IZone zone;
 
 	public AIRobotGotoStationToLoad(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotGotoStationToLoad(EntityRobotBase iRobot, IStackFilter iFilter, IZone iZone) {
+	public AIRobotGotoStationToLoad(EntityRobotBase iRobot, IStackFilter iFilter) {
 		this(iRobot);
 
 		filter = iFilter;
-		zone = iZone;
 	}
 
 	@Override
 	public void update() {
-		startDelegateAI(new AIRobotSearchAndGotoStation(robot, new StationFilter(), zone));
+		startDelegateAI(new AIRobotSearchAndGotoStation(robot, new StationFilter(), robot.getZoneToLoadUnload()));
 	}
 
 	@Override

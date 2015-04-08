@@ -35,10 +35,9 @@ public class BoardRobotFluidCarrier extends RedstoneBoardRobot {
 	public void update() {
 		if (!robotHasFluid()) {
 			IFluidFilter filter = ActionRobotFilter.getGateFluidFilter(robot.getLinkedStation());
-			startDelegateAI(new AIRobotGotoStationAndLoadFluids(robot, filter,
-					robot.getZoneToWork()));
+			startDelegateAI(new AIRobotGotoStationAndLoadFluids(robot, filter));
 		} else {
-			startDelegateAI(new AIRobotGotoStationAndUnloadFluids(robot, robot.getZoneToWork()));
+			startDelegateAI(new AIRobotGotoStationAndUnloadFluids(robot));
 		}
 	}
 

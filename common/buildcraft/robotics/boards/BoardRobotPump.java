@@ -57,7 +57,7 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 		FluidStack tank = robot.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid;
 
 		if (tank != null && tank.amount > 0) {
-			startDelegateAI(new AIRobotGotoStationAndUnloadFluids(robot, robot.getZoneToWork()));
+			startDelegateAI(new AIRobotGotoStationAndUnloadFluids(robot));
 		} else {
 			updateFilter();
 

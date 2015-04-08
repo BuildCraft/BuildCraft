@@ -54,7 +54,7 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
 		}
 
 		if (!containItems) {
-			startDelegateAI(new AIRobotGotoStationAndLoad(robot, TNT_FILTER, null, AIRobotLoad.ANY_QUANTITY));
+			startDelegateAI(new AIRobotGotoStationAndLoad(robot, TNT_FILTER, AIRobotLoad.ANY_QUANTITY));
 		} else {
 			startDelegateAI(new AIRobotSearchRandomGroundBlock(robot, 100, new IBlockFilter() {
 				@Override

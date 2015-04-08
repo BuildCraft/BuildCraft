@@ -64,14 +64,13 @@ public class AIRobotCraftFurnace extends AIRobotCraftGeneric {
 		if (furnace != null) {
 			if (!craftStarted) {
 				if (furnace.getStackInSlot(FUEL_SLOT) == null && InvUtils.getItem(robot, new FuelFilter()) == null) {
-					startDelegateAI(new AIRobotGotoStationAndLoad(robot, new FuelFilter(), robot.getZoneToWork(), 1));
+					startDelegateAI(new AIRobotGotoStationAndLoad(robot, new FuelFilter(), 1));
 
 					return;
 				}
 
 				if (InvUtils.getItem(robot, new ArrayStackFilter(input)) == null) {
-					startDelegateAI(new AIRobotGotoStationAndLoad(robot, new ArrayStackFilter(input),
-							robot.getZoneToWork(), 1));
+					startDelegateAI(new AIRobotGotoStationAndLoad(robot, new ArrayStackFilter(input), 1));
 
 					return;
 				}

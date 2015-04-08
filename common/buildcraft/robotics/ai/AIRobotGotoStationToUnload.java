@@ -10,7 +10,6 @@ package buildcraft.robotics.ai;
 
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.IInvSlot;
-import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
@@ -24,22 +23,13 @@ import buildcraft.transport.gates.ActionIterator;
 
 public class AIRobotGotoStationToUnload extends AIRobot {
 
-	private IZone zone;
-
 	public AIRobotGotoStationToUnload(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotGotoStationToUnload(EntityRobotBase iRobot, IZone iZone) {
-		this(iRobot);
-
-		zone = iZone;
-
-	}
-
 	@Override
 	public void start() {
-		startDelegateAI(new AIRobotSearchAndGotoStation(robot, new StationInventory(), zone));
+		startDelegateAI(new AIRobotSearchAndGotoStation(robot, new StationInventory(), robot.getZoneToLoadUnload()));
 	}
 
 	@Override
