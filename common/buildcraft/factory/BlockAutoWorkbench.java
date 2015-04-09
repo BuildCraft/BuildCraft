@@ -14,7 +14,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftFactory;
 import buildcraft.core.GuiIds;
-import buildcraft.core.IItemPipe;
+import buildcraft.api.transport.IItemPipe;
 import buildcraft.core.lib.block.BlockBuildCraft;
 
 public class BlockAutoWorkbench extends BlockBuildCraft {

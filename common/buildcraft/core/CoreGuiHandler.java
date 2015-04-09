@@ -21,7 +21,6 @@ public class CoreGuiHandler implements IGuiHandler {
 		if (id == GuiIds.LIST) {
 			return new GuiList(player);
 		}
-
 		return null;
 	}
 
@@ -30,7 +29,6 @@ public class CoreGuiHandler implements IGuiHandler {
 		if (id == GuiIds.LIST) {
 			return new ContainerList(player);
 		}
-
 		return null;
 	}
 }

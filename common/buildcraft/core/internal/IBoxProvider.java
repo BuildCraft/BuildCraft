@@ -6,10 +6,10 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core;
+package buildcraft.core.internal;
 
-import net.minecraft.world.IBlockAccess;
+import buildcraft.core.Box;
 
-public interface IFramePipeConnection {
-	boolean isPipeConnected(IBlockAccess blockAccess, int x1, int y1, int z1, int x2, int y2, int z2);
+public interface IBoxProvider {
+	Box getBox();
 }

@@ -30,7 +30,7 @@ import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
-import buildcraft.core.lib.render.DynamicTexturePaletted;
+import buildcraft.core.lib.render.DynamicTextureBC;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.robotics.TileZonePlan;
@@ -44,7 +44,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 	private TileZonePlan zonePlan;
 
-	private DynamicTexturePaletted newSelection;
+	private DynamicTextureBC newSelection;
 	private int selX1 = 0;
 	private int selX2 = 0;
 	private int selY1 = 0;
@@ -52,7 +52,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 	private boolean inSelection = false;
 
-	private DynamicTexturePaletted currentSelection;
+	private DynamicTextureBC currentSelection;
 
 	private int mapXMin = 0;
 	private int mapYMin = 0;
@@ -103,14 +103,9 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 		zonePlan = iZonePlan;
 
-		getContainer().mapTexture = new DynamicTexturePaletted(mapWidth, mapHeight);
-		getContainer().mapTexture.createDynamicTexture();
-
-		currentSelection = new DynamicTexturePaletted(mapWidth, mapHeight);
-		currentSelection.createDynamicTexture();
-
-		newSelection = new DynamicTexturePaletted(1, 1);
-		newSelection.createDynamicTexture();
+		getContainer().mapTexture = new DynamicTextureBC(mapWidth, mapHeight);
+		currentSelection = new DynamicTextureBC(mapWidth, mapHeight);
+		newSelection = new DynamicTextureBC(1, 1);
 
 		getContainer().currentAreaSelection = new ZonePlan();
 
@@ -180,17 +175,17 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 			mapYMin = (height - getContainer().mapTexture.height) / 2;
 		}
 
-		getContainer().mapTexture.drawMap(mapXMin, mapYMin, zLevel);
+		getContainer().mapTexture.draw(mapXMin, mapYMin, zLevel);
 
 		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
 		GL11.glEnable(GL11.GL_BLEND);
 
-		currentSelection.drawMap(mapXMin, mapYMin, zLevel);
+		currentSelection.draw(mapXMin, mapYMin, zLevel);
 
 		GL11.glPopAttrib();
 		GL11.glDisable(GL11.GL_BLEND);
 
-		newSelection.updateDynamicTexture();
+		newSelection.updateTexture();
 
 		if (inSelection && selX2 != 0) {
 			GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
@@ -345,28 +340,24 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 			mapWidth = 213;
 			mapHeight = 100;
 
-			getContainer().mapTexture = new DynamicTexturePaletted(mapWidth, mapHeight);
-			getContainer().mapTexture.createDynamicTexture();
-
-			currentSelection = new DynamicTexturePaletted(mapWidth, mapHeight);
-			currentSelection.createDynamicTexture();
+			getContainer().mapTexture = new DynamicTextureBC(mapWidth, mapHeight);
+			currentSelection = new DynamicTextureBC(mapWidth, mapHeight);
 
 			uploadMap();
 			refreshSelectedArea();
+
 			container.inventorySlots = inventorySlots;
 			buttonList = savedButtonList;
 		} else if (carac == 'M') {
 			mapWidth = this.mc.displayWidth;
 			mapHeight = this.mc.displayHeight;
 
-			getContainer().mapTexture = new DynamicTexturePaletted(mapWidth, mapHeight);
-			getContainer().mapTexture.createDynamicTexture();
-
-			currentSelection = new DynamicTexturePaletted(mapWidth, mapHeight);
-			currentSelection.createDynamicTexture();
+			getContainer().mapTexture = new DynamicTextureBC(mapWidth, mapHeight);
+			currentSelection = new DynamicTextureBC(mapWidth, mapHeight);
 
 			uploadMap();
 			refreshSelectedArea();
+
 			container.inventorySlots = new LinkedList();
 			buttonList = new LinkedList();
 		}
@@ -405,14 +396,10 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 				g /= zoomLevel * zoomLevel;
 				b /= zoomLevel * zoomLevel;
 
-				r /= 255F;
-				g /= 255F;
-				b /= 255F;
-
 				if (r != 0) {
-					currentSelection.setColor(i, j, r, g, b, alpha);
+					currentSelection.setColori(i, j, (int) r, (int) g, (int) b, (int) (alpha * 255.0F));
 				} else {
-					currentSelection.setColor(i, j, 0, 0, 0, 0);
+					currentSelection.setColori(i, j, 0, 0, 0, 0);
 				}
 			}
 		}

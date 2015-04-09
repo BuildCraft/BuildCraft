@@ -35,7 +35,9 @@ import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.PlayerEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -60,6 +62,7 @@ import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.statements.StatementParameterItemStack;
+import buildcraft.api.tablet.TabletAPI;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.core.AchievementManager;
 import buildcraft.core.BCCreativeTab;
@@ -78,6 +81,8 @@ import buildcraft.core.ItemList;
 import buildcraft.core.ItemMapLocation;
 import buildcraft.core.ItemPaintbrush;
 import buildcraft.core.ItemSpring;
+import buildcraft.core.network.PacketHandlerCore;
+import buildcraft.core.tablet.ItemTablet;
 import buildcraft.core.ItemWrench;
 import buildcraft.core.SchematicEngine;
 import buildcraft.core.SpringPopulate;
@@ -121,6 +126,10 @@ import buildcraft.core.statements.TriggerInventory;
 import buildcraft.core.statements.TriggerInventoryLevel;
 import buildcraft.core.statements.TriggerMachine;
 import buildcraft.core.statements.TriggerRedstoneInput;
+import buildcraft.core.tablet.PacketTabletMessage;
+import buildcraft.core.tablet.TabletProgramMenuFactory;
+import buildcraft.core.tablet.manager.TabletManagerClient;
+import buildcraft.core.tablet.manager.TabletManagerServer;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.2.1236,)", guiFactory = "buildcraft.core.config.ConfigManager")
 public class BuildCraftCore extends BuildCraftMod {
@@ -128,6 +137,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static BuildCraftCore instance;
 
 	public static final boolean NONRELEASED_BLOCKS = true;
+	public static final boolean TABLET_TESTING = false;
 
 	public static enum RenderMode {
 		Full, NoDynamic
@@ -159,6 +169,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Item debuggerItem;
 	public static Item paintbrushItem;
 	public static ItemList listItem;
+	public static ItemTablet tabletItem;
 	@SideOnly(Side.CLIENT)
 	public static IIcon redLaserTexture;
 	@SideOnly(Side.CLIENT)
@@ -300,6 +311,12 @@ public class BuildCraftCore extends BuildCraftMod {
 			paintbrushItem = (new ItemPaintbrush()).setUnlocalizedName("paintbrush");
 			CoreProxy.proxy.registerItem(paintbrushItem);
 
+			if (TABLET_TESTING) {
+				tabletItem = new ItemTablet();
+				tabletItem.setUnlocalizedName("tablet");
+				CoreProxy.proxy.registerItem(tabletItem);
+			}
+
 			buildToolBlock = new BlockBuildTool();
 			buildToolBlock.setBlockName("buildToolBlock");
 			CoreProxy.proxy.registerBlock(buildToolBlock);
@@ -321,10 +338,13 @@ public class BuildCraftCore extends BuildCraftMod {
 	public void init(FMLInitializationEvent evt) {
 		BuildCraftAPI.proxy = CoreProxy.proxy;
 
-		channels = NetworkRegistry.INSTANCE.newChannel
-				(DefaultProps.NET_CHANNEL_NAME + "-CORE", new ChannelHandler(), new PacketHandler());
+		ChannelHandler coreChannelHandler = new ChannelHandler();
+		coreChannelHandler.registerPacketType(PacketTabletMessage.class);
 
-		achievementManager = new AchievementManager();
+		channels = NetworkRegistry.INSTANCE.newChannel
+				(DefaultProps.NET_CHANNEL_NAME + "-CORE", coreChannelHandler, new PacketHandlerCore());
+
+		achievementManager = new AchievementManager("BuildCraft");
 		FMLCommonHandler.instance().bus().register(achievementManager);
 
 		woodenGearAchievement = achievementManager.registerAchievement(new Achievement("achievement.woodenGear", "woodenGearAchievement", 0, 0, woodenGearItem, null));
@@ -368,6 +388,13 @@ public class BuildCraftCore extends BuildCraftMod {
 		CoreProxy.proxy.initializeEntityRendering();
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new CoreGuiHandler());
+
+		FMLCommonHandler.instance().bus().register(TabletManagerClient.INSTANCE);
+		FMLCommonHandler.instance().bus().register(TabletManagerServer.INSTANCE);
+		MinecraftForge.EVENT_BUS.register(TabletManagerClient.INSTANCE);
+		MinecraftForge.EVENT_BUS.register(TabletManagerServer.INSTANCE);
+
+		TabletAPI.registerProgram(new TabletProgramMenuFactory());
 	}
 
 	@Mod.EventHandler
@@ -414,6 +441,12 @@ public class BuildCraftCore extends BuildCraftMod {
 	@Mod.EventHandler
 	public void serverStarting(FMLServerStartingEvent event) {
 		event.registerServerCommand(new CommandBuildCraft());
+	}
+
+	@Mod.EventHandler
+	public void serverStopping(FMLServerStoppingEvent event) {
+		TabletManagerClient.INSTANCE.onServerStopping();
+		TabletManagerServer.INSTANCE.onServerStopping();
 	}
 
 	@SubscribeEvent

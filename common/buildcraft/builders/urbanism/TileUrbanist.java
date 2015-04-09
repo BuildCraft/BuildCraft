@@ -22,7 +22,7 @@ import cpw.mods.fml.relauncher.Side;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
-import buildcraft.core.IBoxesProvider;
+import buildcraft.core.internal.IBoxesProvider;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.network.command.CommandWriter;

@@ -47,7 +47,7 @@ import buildcraft.api.transport.PipeWire;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.IDropControlInventory;
+import buildcraft.core.internal.IDropControlInventory;
 import buildcraft.core.lib.ITileBufferHolder;
 import buildcraft.core.lib.TileBuffer;
 import buildcraft.core.lib.network.IGuiReturnHandler;

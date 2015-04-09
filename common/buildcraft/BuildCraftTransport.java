@@ -194,6 +194,7 @@ public class BuildCraftTransport extends BuildCraftMod {
     public static int pipeFluidsBaseFlowRate;
     public static boolean facadeTreatBlacklistAsWhitelist;
     public static boolean additionalWaterproofingRecipe;
+	public static boolean facadeForceNonLaserReicpe;
 
 	public static BlockGenericPipe genericPipeBlock;
 	public static BlockFilteredBuffer filteredBufferBlock;
@@ -325,6 +326,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 					JavaTools.surroundWithQuotes(Block.blockRegistry.getNameForObject(BuildCraftTransport.filteredBufferBlock)),
 			}, "What block types should be blacklisted from being a facade?", ConfigManager.RestartRequirement.GAME);
 			BuildCraftCore.mainConfigManager.register("general.pipes.facadeBlacklistAsWhitelist", false, "Should the blacklist be treated as a whitelist instead?", ConfigManager.RestartRequirement.GAME);
+			BuildCraftCore.mainConfigManager.register("general.pipes.facadeNoLaserRecipe", false, "Should non-laser (crafting table) facade recipes be forced?", ConfigManager.RestartRequirement.GAME);
 
 			reloadConfig(ConfigManager.RestartRequirement.GAME);
 
@@ -562,6 +564,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			additionalWaterproofingRecipe = BuildCraftCore.mainConfigManager.get("general.pipes.slimeballWaterproofRecipe").getBoolean();
 			debugPrintFacadeList = BuildCraftCore.mainConfigManager.get("debug.printFacadeList").getBoolean();
 			pipeFluidsBaseFlowRate = BuildCraftCore.mainConfigManager.get("general.pipes.baseFluidRate").getInt();
+			facadeForceNonLaserReicpe = BuildCraftCore.mainConfigManager.get("general.pipes.facadeNoLaserRecipe").getBoolean();
 
 			reloadConfig(ConfigManager.RestartRequirement.WORLD);
 		} else if (restartType == ConfigManager.RestartRequirement.WORLD) {
@@ -664,6 +667,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 		GameRegistry.addRecipe(facadeItem.new FacadeRecipe());
 		RecipeSorter.register("facadeTurningHelper", ItemFacade.FacadeRecipe.class, RecipeSorter.Category.SHAPELESS, "");
 
+		// Pipe Plug
+		GameRegistry.addShapelessRecipe(new ItemStack(plugItem, 4), "I", 'I', new ItemStack(pipeStructureCobblestone));
+
 		if (Loader.isModLoaded("BuildCraft|Silicon")) {
 			loadSiliconRecipes();
 		} else {
@@ -677,9 +683,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 			BCLog.logger.warn("**********************************************");
 
 			// Alternate recipes
-			// Pipe Plug
-			GameRegistry.addShapelessRecipe(new ItemStack(plugItem, 4), "I", 'I', new ItemStack(pipeStructureCobblestone));
-
 			// Lenses, Filters
 			for (int i = 0; i < 16; i++) {
 				String dye = ColorUtils.getOreDictionaryName(15 - i);
@@ -697,10 +700,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 	private static void loadSiliconRecipes() {
 		GameRegistry.addShapelessRecipe(new ItemStack(gateCopier, 1), new ItemStack(BuildCraftCore.wrenchItem), Chipset.RED.getStack(1));
-
-		// Pipe Plug
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:pipePlug", 10000, new ItemStack(plugItem, 8),
-				new ItemStack(pipeStructureCobblestone));
 
 		// PIPE WIRE
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redWire", 5000, PipeWire.RED.getStack(8),
@@ -736,7 +735,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		// REVERSAL RECIPE
 		BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateLogicSwapRecipe("buildcraft:gateSwap"));
 
-		// FACADE
+		// PHASED FACADE
 		BuildcraftRecipeRegistry.integrationTable.addRecipe(new AdvancedFacadeRecipe("buildcraft:advancedFacade"));
 	}
 

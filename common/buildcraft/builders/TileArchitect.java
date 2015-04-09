@@ -27,7 +27,7 @@ import buildcraft.api.core.Position;
 import buildcraft.builders.blueprints.RecursiveBlueprintReader;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
-import buildcraft.core.IBoxProvider;
+import buildcraft.core.internal.IBoxProvider;
 import buildcraft.core.LaserData;
 import buildcraft.core.blueprints.BlueprintReadConfiguration;
 import buildcraft.core.lib.block.TileBuildCraft;

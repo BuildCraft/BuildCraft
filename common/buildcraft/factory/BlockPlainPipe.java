@@ -21,7 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import buildcraft.core.CoreConstants;
-import buildcraft.core.IFramePipeConnection;
+import buildcraft.core.internal.IFramePipeConnection;
 
 public class BlockPlainPipe extends Block implements IFramePipeConnection {
 

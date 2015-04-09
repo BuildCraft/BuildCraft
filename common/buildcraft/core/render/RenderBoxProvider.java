@@ -14,8 +14,8 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import buildcraft.core.Box;
-import buildcraft.core.IBoxProvider;
-import buildcraft.core.IBoxesProvider;
+import buildcraft.core.internal.IBoxProvider;
+import buildcraft.core.internal.IBoxesProvider;
 
 public class RenderBoxProvider extends TileEntitySpecialRenderer {
 

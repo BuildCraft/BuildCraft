@@ -27,7 +27,7 @@ import buildcraft.api.fuels.ICoolant;
 import buildcraft.api.fuels.IFuel;
 import buildcraft.api.fuels.ISolidCoolant;
 import buildcraft.core.GuiIds;
-import buildcraft.core.IItemPipe;
+import buildcraft.api.transport.IItemPipe;
 import buildcraft.core.lib.engines.TileEngineWithInventory;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.fluids.TankManager;

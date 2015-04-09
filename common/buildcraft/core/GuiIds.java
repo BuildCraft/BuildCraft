@@ -18,6 +18,7 @@ public final class GuiIds {
 	public static final int MAP = 15;
 	public static final int REQUESTER = 16;
 	public static final int LIST = 17;
+	public static final int TABLET = 18;
 
 	public static final int ENGINE_IRON = 20;
 	public static final int ENGINE_STONE = 21;

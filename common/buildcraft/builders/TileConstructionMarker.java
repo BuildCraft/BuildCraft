@@ -21,7 +21,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.core.Position;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
-import buildcraft.core.IBoxProvider;
+import buildcraft.core.internal.IBoxProvider;
 import buildcraft.core.LaserData;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;

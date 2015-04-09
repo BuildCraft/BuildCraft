@@ -24,7 +24,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.events.BlockInteractionEvent;
-import buildcraft.core.IItemPipe;
+import buildcraft.api.transport.IItemPipe;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.render.ICustomHighlight;
 

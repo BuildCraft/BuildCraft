@@ -351,7 +351,6 @@ public class Box implements IBox, ISerializable {
 
 	@Override
 	public double distanceTo(BlockIndex index) {
-
 		return Math.sqrt(distanceToSquared(index));
 	}
 
@@ -376,7 +375,7 @@ public class Box implements IBox, ISerializable {
 
 	@Override
 	public void readData(ByteBuf stream) {
-		kind = Kind.values()[stream.readByte()];
+		byte flags = stream.readByte();
 		xMin = stream.readInt();
 		yMin = stream.readShort();
 		zMin = stream.readInt();
@@ -384,21 +383,20 @@ public class Box implements IBox, ISerializable {
 		yMax = stream.readShort();
 		zMax = stream.readInt();
 
-		byte flags = stream.readByte();
-		initialized = (flags & 1) != 0;
-		isVisible = (flags & 2) != 0;
+		kind = Kind.values()[flags & 31];
+		initialized = (flags & 64) != 0;
+		isVisible = (flags & 32) != 0;
 	}
 
 	@Override
 	public void writeData(ByteBuf stream) {
-		stream.writeByte(kind.ordinal());
+		stream.writeByte((initialized ? 64 : 0) | (isVisible ? 32 : 0) | kind.ordinal());
 		stream.writeInt(xMin);
 		stream.writeShort(yMin);
 		stream.writeInt(zMin);
 		stream.writeInt(xMax);
 		stream.writeShort(yMax);
 		stream.writeInt(zMax);
-		stream.writeByte((initialized ? 1 : 0) | (isVisible ? 2 : 0));
 	}
 
 }

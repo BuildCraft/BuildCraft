@@ -451,7 +451,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 			facade6Hollow.stackSize = 6;
 
 			// 3 Structurepipes + this block makes 6 facades
-			if (Loader.isModLoaded("BuildCraft|Silicon")) {
+			if (Loader.isModLoaded("BuildCraft|Silicon") && !BuildCraftTransport.facadeForceNonLaserReicpe) {
 				BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId, 8000, facade6, new ItemStack(
 						BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
 

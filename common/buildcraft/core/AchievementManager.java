@@ -9,8 +9,8 @@ import net.minecraftforge.common.AchievementPage;
 public class AchievementManager {
 	public AchievementPage page;
 
-	public AchievementManager() {
-		page = new AchievementPage("BuildCraft");
+	public AchievementManager(String name) {
+		page = new AchievementPage(name);
 		AchievementPage.registerAchievementPage(page);
 	}
 

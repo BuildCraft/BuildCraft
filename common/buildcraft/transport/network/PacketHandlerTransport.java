@@ -17,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import buildcraft.core.lib.network.Packet;
+import buildcraft.core.lib.network.PacketHandler;
 import buildcraft.core.lib.network.PacketSlotChange;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
@@ -27,8 +28,7 @@ import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
 
 @Sharable
-public class PacketHandlerTransport extends SimpleChannelInboundHandler<Packet>  {
-
+public class PacketHandlerTransport extends PacketHandler {
 	/**
 	 * TODO: A lot of this is based on the player to retrieve the world.
 	 * Passing a dimension id would be more appropriate. More generally, it
@@ -36,7 +36,8 @@ public class PacketHandlerTransport extends SimpleChannelInboundHandler<Packet> 
 	 * RPCs.
 	 */
 	@Override
-	protected  void channelRead0(ChannelHandlerContext ctx, Packet packet) {
+	protected void channelRead0(ChannelHandlerContext ctx, Packet packet) {
+		super.channelRead0(ctx, packet);
 		try {
 			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
 			EntityPlayer player = CoreProxy.proxy.getPlayerFromNetHandler(netHandler);

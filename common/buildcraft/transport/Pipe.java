@@ -33,7 +33,7 @@ import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
-import buildcraft.core.IDropControlInventory;
+import buildcraft.core.internal.IDropControlInventory;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.gates.GateFactory;
