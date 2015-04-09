@@ -194,7 +194,7 @@ public class BuildCraftTransport extends BuildCraftMod {
     public static int pipeFluidsBaseFlowRate;
     public static boolean facadeTreatBlacklistAsWhitelist;
     public static boolean additionalWaterproofingRecipe;
-	public static boolean facadeForceNonLaserReicpe;
+	public static boolean facadeForceNonLaserRecipe;
 
 	public static BlockGenericPipe genericPipeBlock;
 	public static BlockFilteredBuffer filteredBufferBlock;
@@ -564,7 +564,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			additionalWaterproofingRecipe = BuildCraftCore.mainConfigManager.get("general.pipes.slimeballWaterproofRecipe").getBoolean();
 			debugPrintFacadeList = BuildCraftCore.mainConfigManager.get("debug.printFacadeList").getBoolean();
 			pipeFluidsBaseFlowRate = BuildCraftCore.mainConfigManager.get("general.pipes.baseFluidRate").getInt();
-			facadeForceNonLaserReicpe = BuildCraftCore.mainConfigManager.get("general.pipes.facadeNoLaserRecipe").getBoolean();
+			facadeForceNonLaserRecipe = BuildCraftCore.mainConfigManager.get("general.pipes.facadeNoLaserRecipe").getBoolean();
 
 			reloadConfig(ConfigManager.RestartRequirement.WORLD);
 		} else if (restartType == ConfigManager.RestartRequirement.WORLD) {
@@ -668,7 +668,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		RecipeSorter.register("facadeTurningHelper", ItemFacade.FacadeRecipe.class, RecipeSorter.Category.SHAPELESS, "");
 
 		// Pipe Plug
-		GameRegistry.addShapelessRecipe(new ItemStack(plugItem, 4), "I", 'I', new ItemStack(pipeStructureCobblestone));
+		GameRegistry.addShapelessRecipe(new ItemStack(plugItem, 4), new ItemStack(pipeStructureCobblestone));
 
 		if (Loader.isModLoaded("BuildCraft|Silicon")) {
 			loadSiliconRecipes();
