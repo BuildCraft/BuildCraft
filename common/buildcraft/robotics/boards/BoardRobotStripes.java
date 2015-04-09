@@ -67,7 +67,7 @@ public class BoardRobotStripes extends RedstoneBoardRobot {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		} else if (ai instanceof AIRobotFetchAndEquipItemStack) {
-			if (robot.getHeldItem() == null) {
+			if (!ai.success()) {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		} else if (ai instanceof AIRobotStripesHandler) {

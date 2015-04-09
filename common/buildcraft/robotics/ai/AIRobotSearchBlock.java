@@ -23,6 +23,7 @@ public class AIRobotSearchBlock extends AIRobot {
 	private IterableAlgorithmRunner blockScannerJob;
 	private IBlockFilter pathFound;
 	private Iterator<BlockIndex> blockIter;
+	private IZone zone;
 
 	public AIRobotSearchBlock(EntityRobotBase iRobot, boolean random, IBlockFilter iPathFound) {
 		super(iRobot);
@@ -31,7 +32,7 @@ public class AIRobotSearchBlock extends AIRobot {
 		if (!random) {
 			blockIter = new BlockScannerExpanding().iterator();
 		} else {
-			IZone zone = iRobot.getZoneToWork();
+			zone = iRobot.getZoneToWork();
 			if (zone != null) {
 				BlockIndex pos = new BlockIndex(iRobot);
 				blockIter = new BlockScannerZoneRandom(pos.x, pos.y, pos.z, iRobot.worldObj.rand, zone)
@@ -47,8 +48,7 @@ public class AIRobotSearchBlock extends AIRobot {
 	@Override
 	public void start() {
 		blockScanner = new PathFindingSearch(robot.worldObj, new BlockIndex(
-				robot), blockIter, pathFound, 96, robot
-				.getZoneToWork());
+				robot), blockIter, pathFound, 96, zone);
 		blockScannerJob = new IterableAlgorithmRunner(blockScanner);
 		blockScannerJob.start();
 	}

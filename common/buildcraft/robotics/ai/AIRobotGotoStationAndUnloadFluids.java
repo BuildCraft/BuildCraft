@@ -8,27 +8,18 @@
  */
 package buildcraft.robotics.ai;
 
-import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 
 public class AIRobotGotoStationAndUnloadFluids extends AIRobot {
 
-	private IZone zone;
-
 	public AIRobotGotoStationAndUnloadFluids(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotGotoStationAndUnloadFluids(EntityRobotBase iRobot, IZone iZone) {
-		this(iRobot);
-
-		zone = iZone;
-	}
-
 	@Override
 	public void start() {
-		startDelegateAI(new AIRobotGotoStationToUnloadFluids(robot, zone));
+		startDelegateAI(new AIRobotGotoStationToUnloadFluids(robot));
 	}
 
 	@Override

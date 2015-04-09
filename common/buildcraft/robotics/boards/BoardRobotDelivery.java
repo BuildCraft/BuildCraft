@@ -53,7 +53,7 @@ public class BoardRobotDelivery extends RedstoneBoardRobot {
 			startDelegateAI(new AIRobotSearchStackRequest(robot, ActionRobotFilter.getGateFilter(robot
 					.getLinkedStation()), deliveryBlacklist));
 		} else {
-			startDelegateAI(new AIRobotGotoStationAndLoad(robot, new ReqFilter(), robot.getZoneToWork(), 1));
+			startDelegateAI(new AIRobotGotoStationAndLoad(robot, new ReqFilter(), 1));
 		}
 	}
 

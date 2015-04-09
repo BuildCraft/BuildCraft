@@ -30,16 +30,15 @@ public class AIRobotGotoStationToLoadFluids extends AIRobot {
 		super(iRobot);
 	}
 
-	public AIRobotGotoStationToLoadFluids(EntityRobotBase iRobot, IFluidFilter iFiler, IZone iZone) {
+	public AIRobotGotoStationToLoadFluids(EntityRobotBase iRobot, IFluidFilter iFiler) {
 		this(iRobot);
 
-		zone = iZone;
 		filter = iFiler;
 	}
 
 	@Override
 	public void update() {
-		startDelegateAI(new AIRobotSearchAndGotoStation(robot, new StationFilter(), zone));
+		startDelegateAI(new AIRobotSearchAndGotoStation(robot, new StationFilter(), robot.getZoneToLoadUnload()));
 	}
 
 	@Override

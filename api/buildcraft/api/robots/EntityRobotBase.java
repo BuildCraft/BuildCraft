@@ -57,6 +57,8 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 
 	public abstract IZone getZoneToWork();
 
+	public abstract IZone getZoneToLoadUnload();
+
 	public abstract boolean containsItems();
 
 	public abstract boolean hasFreeSlot();

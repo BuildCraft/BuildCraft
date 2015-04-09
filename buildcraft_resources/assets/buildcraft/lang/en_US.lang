@@ -139,6 +139,7 @@ gate.action.station.provide_machine_request=Provide Computed Items
 gate.action.station.accept_fluids=Accept Fluids
 gate.action.station.povide_fluids=Provide Fluids
 gate.action.robot.work_in_area=Work in Area
+gate.action.robot.load_unload_area=Load/Unload in Area
 gate.action.robot.wakeup=Wake Up
 gate.action.station.forbid_robot=Robot Forbidden
 gate.action.robot.filter=Filter

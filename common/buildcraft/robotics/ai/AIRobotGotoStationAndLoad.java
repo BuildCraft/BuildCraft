@@ -8,7 +8,6 @@
  */
 package buildcraft.robotics.ai;
 
-import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
@@ -16,24 +15,22 @@ import buildcraft.core.lib.inventory.filters.IStackFilter;
 public class AIRobotGotoStationAndLoad extends AIRobot {
 
 	private IStackFilter filter;
-	private IZone zone;
 	private int quantity;
 
 	public AIRobotGotoStationAndLoad(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotGotoStationAndLoad(EntityRobotBase iRobot, IStackFilter iFilter, IZone iZone, int iQuantity) {
+	public AIRobotGotoStationAndLoad(EntityRobotBase iRobot, IStackFilter iFilter, int iQuantity) {
 		this(iRobot);
 
 		filter = iFilter;
-		zone = iZone;
 		quantity = iQuantity;
 	}
 
 	@Override
 	public void start() {
-		startDelegateAI(new AIRobotGotoStationToLoad(robot, filter, zone));
+		startDelegateAI(new AIRobotGotoStationToLoad(robot, filter));
 	}
 
 	@Override

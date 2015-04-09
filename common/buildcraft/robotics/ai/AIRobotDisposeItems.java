@@ -22,7 +22,7 @@ public class AIRobotDisposeItems extends AIRobot {
 
 	@Override
 	public void start () {
-		startDelegateAI(new AIRobotGotoStationAndUnload(robot, robot.getZoneToWork()));
+		startDelegateAI(new AIRobotGotoStationAndUnload(robot));
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class AIRobotDisposeItems extends AIRobot {
 		if (ai instanceof AIRobotGotoStationAndUnload) {
 			if (ai.success()) {
 				if (robot.containsItems()) {
-					startDelegateAI(new AIRobotGotoStationAndUnload(robot, robot.getZoneToWork()));
+					startDelegateAI(new AIRobotGotoStationAndUnload(robot));
 				} else {
 					terminate();
 				}
