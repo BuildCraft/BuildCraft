@@ -10,7 +10,6 @@ package buildcraft.robotics.ai;
 
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
-import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
@@ -23,21 +22,13 @@ import buildcraft.transport.PipeTransportFluids;
 
 public class AIRobotGotoStationToUnloadFluids extends AIRobot {
 
-	private IZone zone;
-
 	public AIRobotGotoStationToUnloadFluids(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotGotoStationToUnloadFluids(EntityRobotBase iRobot, IZone iZone) {
-		this(iRobot);
-
-		zone = iZone;
-	}
-
 	@Override
 	public void update() {
-		startDelegateAI(new AIRobotSearchAndGotoStation(robot, new StationFilter(), zone));
+		startDelegateAI(new AIRobotSearchAndGotoStation(robot, new StationFilter(), robot.getZoneToLoadUnload()));
 	}
 
 	@Override

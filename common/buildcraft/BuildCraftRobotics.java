@@ -155,6 +155,7 @@ import buildcraft.robotics.statements.RobotsTriggerProvider;
 import buildcraft.robotics.statements.TriggerRobotInStation;
 import buildcraft.robotics.statements.TriggerRobotLinked;
 import buildcraft.robotics.statements.TriggerRobotSleep;
+import buildcraft.robotics.statements.ActionRobotWorkInArea.AreaType;
 import buildcraft.silicon.ItemRedstoneChipset;
 
 @Mod(name = "BuildCraft Robotics", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Robotics", dependencies = DefaultProps.DEPENDENCY_CORE)
@@ -176,7 +177,8 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
 	public static IActionInternal actionRobotGotoStation = new ActionRobotGotoStation();
 	public static IActionInternal actionRobotWakeUp = new ActionRobotWakeUp();
-	public static IActionInternal actionRobotWorkInArea = new ActionRobotWorkInArea();
+	public static IActionInternal actionRobotWorkInArea = new ActionRobotWorkInArea(AreaType.WORK);
+	public static IActionInternal actionRobotLoadUnloadArea = new ActionRobotWorkInArea(AreaType.LOAD_UNLOAD);
 	public static IActionInternal actionRobotFilter = new ActionRobotFilter();
 	public static IActionInternal actionRobotFilterTool = new ActionRobotFilterTool();
 	public static IActionInternal actionRobotAllowCraft = new ActionStationAllowCraft();

@@ -44,7 +44,7 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 				startDelegateAI(new AIRobotFetchItem(robot, 250, ActionRobotFilter.getGateFilter(robot
 						.getLinkedStation()), robot.getZoneToWork()));
 			} else if (robot.containsItems()) {
-				startDelegateAI(new AIRobotGotoStationAndUnload(robot, robot.getZoneToWork()));
+				startDelegateAI(new AIRobotGotoStationAndUnload(robot));
 			} else {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}

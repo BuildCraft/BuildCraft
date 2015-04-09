@@ -34,10 +34,9 @@ public class BoardRobotCarrier extends RedstoneBoardRobot {
 	public void update() {
 		if (!robot.containsItems()) {
 			IStackFilter filter = ActionRobotFilter.getGateFilter(robot.getLinkedStation());
-			startDelegateAI(new AIRobotGotoStationAndLoad(robot, filter, robot.getZoneToWork(),
-					AIRobotLoad.ANY_QUANTITY));
+			startDelegateAI(new AIRobotGotoStationAndLoad(robot, filter, AIRobotLoad.ANY_QUANTITY));
 		} else {
-			startDelegateAI(new AIRobotGotoStationAndUnload(robot, robot.getZoneToWork()));
+			startDelegateAI(new AIRobotGotoStationAndUnload(robot));
 		}
 	}
 

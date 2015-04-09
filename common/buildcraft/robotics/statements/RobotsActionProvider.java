@@ -8,7 +8,6 @@
  */
 package buildcraft.robotics.statements;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -52,6 +51,7 @@ public class RobotsActionProvider implements IActionProvider {
 
 		result.add(BuildCraftRobotics.actionRobotGotoStation);
 		result.add(BuildCraftRobotics.actionRobotWorkInArea);
+		result.add(BuildCraftRobotics.actionRobotLoadUnloadArea);
 		result.add(BuildCraftRobotics.actionRobotWakeUp);
 		result.add(BuildCraftRobotics.actionRobotFilter);
 		result.add(BuildCraftRobotics.actionRobotFilterTool);

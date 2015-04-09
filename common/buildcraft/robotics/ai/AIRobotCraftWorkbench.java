@@ -90,7 +90,7 @@ public class AIRobotCraftWorkbench extends AIRobotCraftGeneric {
 				terminate();
 			}
 		} else if (requirements.size() > 0) {
-			startDelegateAI(new AIRobotGotoStationToLoad(robot, new ReqStackFilter(), robot.getZoneToWork()));
+			startDelegateAI(new AIRobotGotoStationAndLoad(robot, new ReqStackFilter(), 1));
 		} else {
 			startDelegateAI(new AIRobotSearchAndGotoStation(robot, new StationWorkbenchFilter(), robot.getZoneToWork()));
 		}
@@ -98,14 +98,12 @@ public class AIRobotCraftWorkbench extends AIRobotCraftGeneric {
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotGotoStationToLoad) {
+		if (ai instanceof AIRobotGotoStationAndLoad) {
 			if (ai.success()) {
-				startDelegateAI(new AIRobotLoad(robot, new ReqStackFilter(), 1));
+				requirements = tryCraft(false);
 			} else {
 				terminate();
 			}
-		} else if (ai instanceof AIRobotLoad) {
-			requirements = tryCraft(false);
 		} else if (ai instanceof AIRobotSearchAndGotoStation) {
 			if (new StationWorkbenchFilter().matches((DockingStation) robot.getDockingStation())) {
 				craftingTimer = 40;

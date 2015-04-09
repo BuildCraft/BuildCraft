@@ -67,6 +67,7 @@ import buildcraft.robotics.ai.AIRobotMain;
 import buildcraft.robotics.ai.AIRobotShutdown;
 import buildcraft.robotics.ai.AIRobotSleep;
 import buildcraft.robotics.statements.ActionRobotWorkInArea;
+import buildcraft.robotics.statements.ActionRobotWorkInArea.AreaType;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.ActionIterator;
 
@@ -606,8 +607,6 @@ public class EntityRobot extends EntityRobotBase implements
 
 			currentDockingStationIndex = null;
 			currentDockingStationSide = null;
-
-			mainAI.abortDelegateAI();
 		}
 	}
 
@@ -923,14 +922,26 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public IZone getZoneToWork() {
-		if (linkedDockingStation instanceof DockingStation) {
-			for (StatementSlot s : new ActionIterator(((DockingStation) linkedDockingStation).getPipe().getPipe())) {
-				if (s.statement instanceof ActionRobotWorkInArea) {
-					IZone zone = ActionRobotWorkInArea.getArea(s);
+		return getZone(ActionRobotWorkInArea.AreaType.WORK);
+	}
 
-					if (zone != null) {
-						return zone;
-					}
+	@Override
+	public IZone getZoneToLoadUnload() {
+		IZone zone = getZone(ActionRobotWorkInArea.AreaType.LOAD_UNLOAD);
+		if (zone == null) {
+			zone = getZoneToWork();
+		}
+		return zone;
+	}
+
+	private IZone getZone(AreaType areaType) {
+		for (StatementSlot s : new ActionIterator(linkedDockingStation.getPipe().getPipe())) {
+			if (s.statement instanceof ActionRobotWorkInArea
+					&& ((ActionRobotWorkInArea) s.statement).getAreaType() == areaType) {
+				IZone zone = ActionRobotWorkInArea.getArea(s);
+
+				if (zone != null) {
+					return zone;
 				}
 			}
 		}
@@ -973,7 +984,7 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	protected boolean interact(EntityPlayer player) {
 		ItemStack stack = player.getCurrentEquippedItem();
-		if(player.isSneaking() && stack != null && stack.getItem() == BuildCraftCore.wrenchItem) {
+		if (player.isSneaking() && stack != null && stack.getItem() == BuildCraftCore.wrenchItem) {
 			if (!worldObj.isRemote) {
 				convertToItems();
 			} else {

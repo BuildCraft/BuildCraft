@@ -8,30 +8,27 @@
  */
 package buildcraft.robotics.ai;
 
-import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.inventory.filters.IFluidFilter;
 
 public class AIRobotGotoStationAndLoadFluids extends AIRobot {
 
-	private IZone zone;
 	private IFluidFilter filter;
 
 	public AIRobotGotoStationAndLoadFluids(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotGotoStationAndLoadFluids(EntityRobotBase iRobot, IFluidFilter iFilter, IZone iZone) {
+	public AIRobotGotoStationAndLoadFluids(EntityRobotBase iRobot, IFluidFilter iFilter) {
 		this(iRobot);
 
-		zone = iZone;
 		filter = iFilter;
 	}
 
 	@Override
 	public void start() {
-		startDelegateAI(new AIRobotGotoStationToLoadFluids(robot, filter, zone));
+		startDelegateAI(new AIRobotGotoStationToLoadFluids(robot, filter));
 	}
 
 	@Override
