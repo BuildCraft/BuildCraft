@@ -9,13 +9,11 @@
 package buildcraft.robotics.ai;
 
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.core.lib.utils.BlockUtils;
 
 public class AIRobotPumpBlock extends AIRobot {
 
@@ -48,18 +46,13 @@ public class AIRobotPumpBlock extends AIRobot {
 		if (waited < 40) {
 			waited++;
 		} else {
-			Fluid fluid = FluidRegistry.lookupFluidForBlock(robot.worldObj.getBlock(blockToPump.x, blockToPump.y,
-					blockToPump.z));
-
-			if (fluid != null) {
-				pumped = robot.fill(ForgeDirection.UNKNOWN,
-						new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME), true);
-
-				if (pumped > 0) {
-					robot.worldObj.setBlockToAir(blockToPump.x, blockToPump.y, blockToPump.z);
+			FluidStack fluidStack = BlockUtils.drainBlock(robot.worldObj, blockToPump.x, blockToPump.y, blockToPump.z, false);
+			if (fluidStack != null) {
+				if (robot.fill(ForgeDirection.UNKNOWN, fluidStack, true) > 0) {
+					BlockUtils.drainBlock(robot.worldObj, blockToPump.x, blockToPump.y,
+							blockToPump.z, true);
 				}
 			}
-
 			terminate();
 		}
 

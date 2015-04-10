@@ -243,8 +243,12 @@ public class MappingRegistry {
 
 		for (Block b : idToBlock) {
 			NBTTagCompound sub = new NBTTagCompound();
-			sub.setString("name",
-					Block.blockRegistry.getNameForObject(b));
+			String name = Block.blockRegistry.getNameForObject(b);
+			if (name == null || name.length() == 0) {
+				BCLog.logger.error("Block " + b.getUnlocalizedName() + " (" + b.getClass().getName() + ") has an empty registry name! This is a bug!");
+			} else {
+				sub.setString("name", name);
+			}
 			blocksMapping.appendTag(sub);
 		}
 
@@ -254,8 +258,12 @@ public class MappingRegistry {
 
 		for (Item i : idToItem) {
 			NBTTagCompound sub = new NBTTagCompound();
-			sub.setString("name",
-					Item.itemRegistry.getNameForObject(i));
+			String name = Item.itemRegistry.getNameForObject(i);
+			if (name == null || name.length() == 0) {
+				BCLog.logger.error("Item " + i.getUnlocalizedName() + " (" + i.getClass().getName() + ") has an empty registry name! This is a bug!");
+			} else {
+				sub.setString("name", name);
+			}
 			itemsMapping.appendTag(sub);
 		}
 
@@ -278,6 +286,12 @@ public class MappingRegistry {
 
 		for (int i = 0; i < blocksMapping.tagCount(); ++i) {
 			NBTTagCompound sub = blocksMapping.getCompoundTagAt(i);
+			if (!sub.hasKey("name")) {
+				// Keeping the order correct
+				idToBlock.add(null);
+				BCLog.logger.log(Level.WARN, "Can't load a block - corrupt blueprint!");
+				continue;
+			}
 			String name = sub.getString("name");
 			Block b = null;
 			
@@ -299,6 +313,12 @@ public class MappingRegistry {
 
 		for (int i = 0; i < itemsMapping.tagCount(); ++i) {
 			NBTTagCompound sub = itemsMapping.getCompoundTagAt(i);
+			if (!sub.hasKey("name")) {
+				// Keeping the order correct
+				idToItem.add(null);
+				BCLog.logger.log(Level.WARN, "Can't load an item - corrupt blueprint!");
+				continue;
+			}
 			String name = sub.getString("name");
 			Item item = null;
 			
