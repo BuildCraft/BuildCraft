@@ -10,12 +10,15 @@ package buildcraft.transport.network;
 
 import java.util.BitSet;
 
+import buildcraft.transport.utils.FluidRenderData;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.core.network.PacketCoordinates;
@@ -31,8 +34,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
 	public static int FLUID_AMOUNT_BIT = 1;
 	public static int FLUID_DATA_NUM = 2;
 
-	public FluidStack[] renderCache = new FluidStack[ForgeDirection.values().length];
-	public int[] colorRenderCache = new int[ForgeDirection.values().length];
+	public FluidRenderData[] renderCache = new FluidRenderData[ForgeDirection.values().length];
 	public BitSet delta;
 
 	public PacketFluidUpdate(int xCoord, int yCoord, int zCoord) {
@@ -73,7 +75,6 @@ public class PacketFluidUpdate extends PacketCoordinates {
 		PipeTransportFluids transLiq = (PipeTransportFluids) pipe.pipe.transport;
 
 		renderCache = transLiq.renderCache;
-		colorRenderCache = transLiq.colorRenderCache;
 
 		byte[] dBytes = new byte[2];
 		data.readBytes(dBytes);
@@ -83,15 +84,17 @@ public class PacketFluidUpdate extends PacketCoordinates {
 
 		for (ForgeDirection dir : ForgeDirection.values()) {
 			if (delta.get(dir.ordinal() * FLUID_DATA_NUM + FLUID_ID_BIT)) {
+				int id = data.readShort();
 			    int amt = renderCache[dir.ordinal()] != null ? renderCache[dir.ordinal()].amount : 0;
-				renderCache[dir.ordinal()] = new FluidStack(data.readShort(), amt);
-				colorRenderCache[dir.ordinal()] = data.readInt();
+				int color = data.readInt();
+
+				renderCache[dir.ordinal()] = new FluidRenderData(id, amt, color);
 			}
+
 			if (delta.get(dir.ordinal() * FLUID_DATA_NUM + FLUID_AMOUNT_BIT)) {
-			    if (renderCache[dir.ordinal()] == null) {
-					renderCache[dir.ordinal()] = new FluidStack(0, 0);
-			    }
-		        renderCache[dir.ordinal()].amount = Math.min(transLiq.getCapacity(), data.readUnsignedShort());
+			    if (renderCache[dir.ordinal()] != null) {
+					renderCache[dir.ordinal()].amount = Math.min(transLiq.getCapacity(), data.readUnsignedShort());
+				}
 			}
 		}
 	}
@@ -105,12 +108,12 @@ public class PacketFluidUpdate extends PacketCoordinates {
 		data.writeBytes(dBytes);
 
 		for (ForgeDirection dir : ForgeDirection.values()) {
-			FluidStack liquid = renderCache[dir.ordinal()];
+			FluidRenderData liquid = renderCache[dir.ordinal()];
 
 			if (delta.get(dir.ordinal() * FLUID_DATA_NUM + FLUID_ID_BIT)) {
 				if (liquid != null) {
 					data.writeShort(liquid.fluidID);
-					data.writeInt(colorRenderCache[dir.ordinal()]);
+					data.writeInt(liquid.color);
 				} else {
 					data.writeShort(0);
 					data.writeInt(0xFFFFFF);
