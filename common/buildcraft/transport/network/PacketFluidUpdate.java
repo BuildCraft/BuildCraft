@@ -86,14 +86,18 @@ public class PacketFluidUpdate extends PacketCoordinates {
 			if (delta.get(dir.ordinal() * FLUID_DATA_NUM + FLUID_ID_BIT)) {
 				int id = data.readShort();
 			    int amt = renderCache[dir.ordinal()] != null ? renderCache[dir.ordinal()].amount : 0;
-				int color = data.readInt();
+				int color = id != 0 ? data.readInt() : 0xFFFFFF;
 
 				renderCache[dir.ordinal()] = new FluidRenderData(id, amt, color);
 			}
 
 			if (delta.get(dir.ordinal() * FLUID_DATA_NUM + FLUID_AMOUNT_BIT)) {
+				int amt = Math.min(transLiq.getCapacity(), data.readUnsignedShort());
+
 			    if (renderCache[dir.ordinal()] != null) {
-					renderCache[dir.ordinal()].amount = Math.min(transLiq.getCapacity(), data.readUnsignedShort());
+					renderCache[dir.ordinal()].amount = amt;
+				} else {
+					renderCache[dir.ordinal()] = new FluidRenderData(0, amt, 0xFFFFFF);
 				}
 			}
 		}
@@ -111,12 +115,11 @@ public class PacketFluidUpdate extends PacketCoordinates {
 			FluidRenderData liquid = renderCache[dir.ordinal()];
 
 			if (delta.get(dir.ordinal() * FLUID_DATA_NUM + FLUID_ID_BIT)) {
-				if (liquid != null) {
+				if (liquid != null && liquid.fluidID != 0) {
 					data.writeShort(liquid.fluidID);
 					data.writeInt(liquid.color);
 				} else {
 					data.writeShort(0);
-					data.writeInt(0xFFFFFF);
 				}
 			}
 			if (delta.get(dir.ordinal() * FLUID_DATA_NUM + FLUID_AMOUNT_BIT)) {

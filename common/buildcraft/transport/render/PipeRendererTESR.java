@@ -108,17 +108,23 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			return displayFluidLists.get(liquidId);
 		}
 
+		Fluid fluid = FluidRegistry.getFluid(liquidId);
+
+		if (fluid == null) {
+			return null;
+		}
+
 		DisplayFluidList d = new DisplayFluidList();
 		displayFluidLists.put(liquidId, d);
 
 		RenderInfo block = new RenderInfo();
 
-		Fluid fluid = FluidRegistry.getFluid(liquidId);
 		if (fluid.getBlock() != null) {
 			block.baseBlock = fluid.getBlock();
 		} else {
 			block.baseBlock = Blocks.water;
 		}
+
 		block.texture = fluid.getStillIcon();
 
 		float size = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
@@ -706,7 +712,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				continue;
 			}
 
-			DisplayFluidList d = getListFromBuffer(fluidRenderData, pipe.container.getWorldObj());
+			DisplayFluidList d = getDisplayFluidLists(fluidRenderData.fluidID, pipe.container.getWorldObj());
 
 			if (d == null) {
 				continue;
@@ -749,7 +755,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		FluidRenderData fluidRenderData = trans.renderCache[ForgeDirection.UNKNOWN.ordinal()];
 
 		if (fluidRenderData != null && fluidRenderData.amount > 0) {
-			DisplayFluidList d = getListFromBuffer(fluidRenderData, pipe.container.getWorldObj());
+			DisplayFluidList d = getDisplayFluidLists(fluidRenderData.fluidID, pipe.container.getWorldObj());
 
 			if (d != null) {
 				int stage = (int) ((float) fluidRenderData.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
@@ -770,16 +776,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		GL11.glPopAttrib();
 		GL11.glPopMatrix();
-	}
-
-	private DisplayFluidList getListFromBuffer(FluidRenderData stack, World world) {
-		int liquidId = stack.fluidID;
-
-		if (liquidId == 0) {
-			return null;
-		}
-
-		return getDisplayFluidLists(liquidId, world);
 	}
 
 	private void renderSolids(Pipe<PipeTransportItems> pipe, double x, double y, double z) {
