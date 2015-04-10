@@ -10,7 +10,6 @@ package buildcraft.transport.render;
 
 import java.util.HashMap;
 
-import buildcraft.transport.utils.FluidRenderData;
 import com.google.common.collect.Maps;
 
 import org.lwjgl.opengl.GL11;
@@ -56,6 +55,7 @@ import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.gates.GatePluggable;
+import buildcraft.transport.utils.FluidRenderData;
 
 public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	public static final float DISPLAY_MULTIPLIER = 0.1f;

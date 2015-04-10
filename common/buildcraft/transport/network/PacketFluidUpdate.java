@@ -10,16 +10,12 @@ package buildcraft.transport.network;
 
 import java.util.BitSet;
 
-import buildcraft.transport.utils.FluidRenderData;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.core.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
@@ -27,6 +23,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.core.utils.BitSetUtils;
 import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.TileGenericPipe;
+import buildcraft.transport.utils.FluidRenderData;
 
 public class PacketFluidUpdate extends PacketCoordinates {
 

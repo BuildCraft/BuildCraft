@@ -13,7 +13,6 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 
-import buildcraft.transport.utils.FluidRenderData;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 
@@ -43,6 +42,7 @@ import buildcraft.transport.pipes.PipeFluidsStone;
 import buildcraft.transport.pipes.PipeFluidsVoid;
 import buildcraft.transport.pipes.PipeFluidsWood;
 import buildcraft.transport.pipes.events.PipeEventFluid;
+import buildcraft.transport.utils.FluidRenderData;
 
 public class PipeTransportFluids extends PipeTransport implements IFluidHandler {
     public static final Map<Class<? extends Pipe<?>>, Integer> fluidCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
