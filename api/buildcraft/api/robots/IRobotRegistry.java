@@ -56,5 +56,5 @@ public interface IRobotRegistry {
 
 	void readFromNBT(NBTTagCompound nbt);
 
-	void markDirty();
+	void registryMarkDirty();
 }

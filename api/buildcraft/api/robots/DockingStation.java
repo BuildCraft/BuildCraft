@@ -101,7 +101,7 @@ public class DockingStation {
 			robotTaking = robot;
 			robotTakingId = robot.getRobotId();
 			getPipe().scheduleRenderUpdate();
-			registry.markDirty();
+			registry.registryMarkDirty();
 			robot.setMainStation(this);
 			registry.take(this, robot.getRobotId());
 
@@ -118,7 +118,7 @@ public class DockingStation {
 			robotTaking = robot;
 			robotTakingId = robot.getRobotId();
 			getPipe().scheduleRenderUpdate();
-			registry.markDirty();
+			registry.registryMarkDirty();
 			registry.take(this, robot.getRobotId());
 
 			return true;
@@ -131,7 +131,7 @@ public class DockingStation {
 		if (robotTaking == robot && !linkIsMain) {
 			IRobotRegistry registry = RobotManager.registryProvider.getRegistry(world);
 			unsafeRelease(robot);
-			registry.markDirty();
+			registry.registryMarkDirty();
 			registry.release(this, robot.getRobotId());
 		}
 	}

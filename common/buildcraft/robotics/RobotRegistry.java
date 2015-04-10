@@ -359,4 +359,13 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 			}
 		}
 	}
+
+	/**
+	 * This function is a wrapper for markDirty(), done this way due to
+	 * obfuscation issues.
+	 */
+	@Override
+	public void registryMarkDirty() {
+		markDirty();
+	}
 }
