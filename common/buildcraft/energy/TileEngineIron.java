@@ -315,18 +315,16 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 				break;
 			// Fluid Fuel amount
 			case 17:
+				tankFuelAmountCache = value;
 				if (tankFuel.getFluid() != null) {
 					tankFuel.getFluid().amount = value;
-				} else {
-					tankFuelAmountCache = value;
 				}
 				break;
 			// Fluid Coolant amount
 			case 18:
+				tankCoolantAmountCache = value;
 				if (tankCoolant.getFluid() != null) {
 					tankCoolant.getFluid().amount = value;
-				} else {
-					tankCoolantAmountCache = value;
 				}
 				break;
 			//Fluid Fuel color
