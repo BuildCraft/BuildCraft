@@ -2,6 +2,7 @@ package buildcraft.api.statements.v2;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.nbt.NBTTagCompound;
+import buildcraft.api.statements.v2.util.Click;
 
 /**
  * WARNING! Each StatementParameter is expected to be provided as a class

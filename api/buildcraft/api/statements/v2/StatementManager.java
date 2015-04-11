@@ -18,6 +18,7 @@ import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.api.statements.v2.tile.IOverrideStatements;
 
 public final class StatementManager {
 	public static Map<String, Statement> statements = new HashMap<String, Statement>();
@@ -117,6 +118,10 @@ public final class StatementManager {
 			}
 		}
 
+		if (container.getTile() instanceof IOverrideStatements) {
+			((IOverrideStatements) container.getTile()).overrideTriggers(result);
+		}
+
 		return result;
 	}
 
@@ -133,6 +138,10 @@ public final class StatementManager {
 					}
 				}
 			}
+		}
+
+		if (container.getTile() instanceof IOverrideStatements) {
+			((IOverrideStatements) container.getTile()).overrideActions(result);
 		}
 
 		return result;

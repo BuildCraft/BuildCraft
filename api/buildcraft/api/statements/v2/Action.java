@@ -8,11 +8,21 @@ public abstract class Action extends Statement {
 		super(target, uniqueTag);
 	}
 
-	public void activateActionInternal(IStatementContainer source) {
+	/**
+	 * Activates the action for an Internal target
+	 * @param container The statement container
+	 */
+	public void activateActionInternal(IStatementContainer container) {
 
 	}
 
-	public void activateActionExternal(IStatementContainer source, ForgeDirection side, TileEntity tile) {
+	/**
+	 * Activates the action for an External target
+	 * @param container The statement container
+	 * @param side The side the tile entity is on, relative to the container
+	 * @param tile The tile entity activated by the action
+	 */
+	public void activateActionExternal(IStatementContainer container, ForgeDirection side, TileEntity tile) {
 
 	}
 }

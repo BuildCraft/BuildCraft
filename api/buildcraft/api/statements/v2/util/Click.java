@@ -1,4 +1,4 @@
-package buildcraft.api.statements.v2;
+package buildcraft.api.statements.v2.util;
 
 import net.minecraft.entity.player.EntityPlayer;
 
