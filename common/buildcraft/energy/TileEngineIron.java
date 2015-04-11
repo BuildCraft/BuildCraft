@@ -18,6 +18,7 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
@@ -47,6 +48,8 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	public Tank tankCoolant = new Tank("tankCoolant", MAX_LIQUID, this);
 
 	private int burnTime = 0;
+	private int tankFuelAmountCache = 0;
+	private int tankCoolantAmountCache = 0;
 
 	private TankManager<Tank> tankManager = new TankManager<Tank>();
 	private IFuel currentFuel;
@@ -296,34 +299,34 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 		switch (id) {
 			// Fluid Fuel ID
 			case 15:
-				if (tankFuel.getFluid() == null) {
-					tankFuel.setFluid(new FluidStack(value, 0));
+				if (FluidRegistry.getFluid(value) != null) {
+					tankFuel.setFluid(new FluidStack(value, tankFuelAmountCache));
 				} else {
-					tankFuel.getFluid().fluidID = value;
+					tankFuel.setFluid(null);
 				}
 				break;
 			// Fluid Coolant ID
 			case 16:
-				if (tankCoolant.getFluid() == null) {
-					tankCoolant.setFluid(new FluidStack(value, 0));
+				if (FluidRegistry.getFluid(value) != null) {
+					tankCoolant.setFluid(new FluidStack(value, tankCoolantAmountCache));
 				} else {
-					tankCoolant.getFluid().fluidID = value;
+					tankCoolant.setFluid(null);
 				}
 				break;
 			// Fluid Fuel amount
 			case 17:
-				if (tankFuel.getFluid() == null) {
-					tankFuel.setFluid(new FluidStack(0, value));
-				} else {
+				if (tankFuel.getFluid() != null) {
 					tankFuel.getFluid().amount = value;
+				} else {
+					tankFuelAmountCache = value;
 				}
 				break;
 			// Fluid Coolant amount
 			case 18:
-				if (tankCoolant.getFluid() == null) {
-					tankCoolant.setFluid(new FluidStack(0, value));
-				} else {
+				if (tankCoolant.getFluid() != null) {
 					tankCoolant.getFluid().amount = value;
+				} else {
+					tankCoolantAmountCache = value;
 				}
 				break;
 			//Fluid Fuel color
@@ -340,8 +343,8 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	@Override
 	public void sendGUINetworkData(ContainerEngine containerEngine, ICrafting iCrafting) {
 		super.sendGUINetworkData(containerEngine, iCrafting);
-		iCrafting.sendProgressBarUpdate(containerEngine, 15, tankFuel.getFluid() != null ? tankFuel.getFluid().fluidID : 0);
-		iCrafting.sendProgressBarUpdate(containerEngine, 16, tankCoolant.getFluid() != null ? tankCoolant.getFluid().fluidID : 0);
+		iCrafting.sendProgressBarUpdate(containerEngine, 15, tankFuel.getFluid() != null && tankFuel.getFluid().getFluid() != null ? tankFuel.getFluid().getFluid().getID() : 0);
+		iCrafting.sendProgressBarUpdate(containerEngine, 16, tankCoolant.getFluid() != null && tankFuel.getFluid().getFluid() != null ? tankCoolant.getFluid().getFluid().getID() : 0);
 		iCrafting.sendProgressBarUpdate(containerEngine, 17, tankFuel.getFluid() != null ? tankFuel.getFluid().amount : 0);
 		iCrafting.sendProgressBarUpdate(containerEngine, 18, tankCoolant.getFluid() != null ? tankCoolant.getFluid().amount : 0);
 		iCrafting.sendProgressBarUpdate(containerEngine, 19, tankFuel.colorRenderCache);
