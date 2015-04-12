@@ -8,17 +8,26 @@
  */
 package buildcraft.robotics;
 
+import java.util.List;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
+import buildcraft.BuildCraftCore;
+import buildcraft.api.core.IZone;
+import buildcraft.api.items.IMapLocation;
 import buildcraft.api.items.INamedItem;
 import buildcraft.core.ItemMapLocation;
 import buildcraft.core.ZonePlan;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.SimpleInventory;
+import buildcraft.core.lib.network.Packet;
+import buildcraft.core.lib.network.command.CommandWriter;
+import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.robotics.gui.ContainerZonePlan;
 
 public class TileZonePlan extends TileBuildCraft implements IInventory {
 
@@ -35,7 +44,7 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 	private ZonePlan[] selectedAreas = new ZonePlan[16];
 	private int currentSelectedArea = 0;
 
-	private SimpleInventory inv = new SimpleInventory(2, "inv", 64);
+	private SimpleInventory inv = new SimpleInventory(3, "inv", 64);
 
 	@Override
 	public void initialize() {
@@ -132,6 +141,28 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 		mapName = NetworkUtils.readUTF(stream);
 	}
 
+	private void importMap(ItemStack stack) {
+		if (stack.getItem() instanceof IMapLocation) {
+			final IZone zone = ((IMapLocation) stack.getItem()).getZone(stack);
+			if (zone != null && zone instanceof ZonePlan) {
+				selectedAreas[currentSelectedArea] = (ZonePlan) zone;
+
+				for (EntityPlayer e : (List<EntityPlayer>) MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
+					if (e.openContainer != null && e.openContainer instanceof ContainerZonePlan
+							&& ((ContainerZonePlan) e.openContainer).getTile() == this) {
+						Packet p = new PacketCommand(e.openContainer, "areaLoaded", new CommandWriter() {
+							public void write(ByteBuf data) {
+								((ZonePlan) zone).writeData(data);
+							}
+						});
+
+						BuildCraftCore.instance.sendToPlayer(e, p);
+					}
+				}
+			}
+		}
+	}
+
 	public ZonePlan selectArea(int index) {
 		if (selectedAreas[index] == null) {
 			selectedAreas[index] = new ZonePlan();
@@ -170,6 +201,9 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 	public void setInventorySlotContents(int slotId, ItemStack itemstack) {
 		inv.setInventorySlotContents(slotId, itemstack);
 
+		if (!worldObj.isRemote && slotId == 2) {
+			importMap(itemstack);
+		}
 	}
 
 	@Override

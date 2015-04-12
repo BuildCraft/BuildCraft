@@ -120,7 +120,7 @@ public final class CoolantManager implements ICoolantManager {
 				return null;
 			}
 			int liquidAmount = (int) (stack.stackSize * liquid.fluidStack.amount * multiplier / solid.stack.stackSize);
-			return new FluidStack(liquid.fluidStack.fluidID, liquidAmount);
+			return new FluidStack(liquid.fluidStack.getFluid(), liquidAmount);
 		}
 	}
 }

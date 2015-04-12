@@ -18,6 +18,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
@@ -125,8 +126,8 @@ public class TankManager<T extends Tank> extends ForwardingList<T> implements IF
 	public void readData(ByteBuf data) {
 		for (Tank tank : tanks) {
 			int fluidId = data.readShort();
-			if (fluidId > 0) {
-				tank.setFluid(new FluidStack(fluidId, data.readInt()));
+			if (FluidRegistry.getFluid(fluidId) != null) {
+				tank.setFluid(new FluidStack(FluidRegistry.getFluid(fluidId), data.readInt()));
 				tank.colorRenderCache = data.readInt();
 			} else {
 				tank.setFluid(null);

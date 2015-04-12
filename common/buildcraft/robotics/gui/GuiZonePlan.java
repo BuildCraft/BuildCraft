@@ -26,6 +26,7 @@ import buildcraft.core.ZonePlan;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.gui.buttons.GuiBetterButton;
+import buildcraft.core.lib.gui.buttons.StandardButtonTextureSets;
 import buildcraft.core.lib.gui.tooltips.ToolTip;
 import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.network.command.CommandWriter;
@@ -135,7 +136,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	public void initGui() {
 		super.initGui();
 
-		tool = new GuiBetterButton(0, guiLeft + 5, guiTop + 20, 20, "+");
+		tool = new GuiBetterButton(0, guiLeft + 27, guiTop + 111, 15, StandardButtonTextureSets.SMALL_BUTTON, "+");
 		tool.setToolTip(new ToolTip(new ToolTipLine(StringUtils.localize("tip.tool.add"))));
 		buttonList.add(tool);
 
@@ -208,7 +209,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 			GL11.glEnable(GL11.GL_ALPHA_TEST);
 			drawTexturedModalRect(guiLeft + colorSelected.x, guiTop + colorSelected.y, 0, 228, 16, 16);
-			drawTexturedModalRect(guiLeft + 236, guiTop + 38, 16, 228, 8,
+			drawTexturedModalRect(guiLeft + 236, guiTop + 27, 16, 228, 8,
 					(int) ((zonePlan.progress / (float) TileZonePlan.CRAFT_TIME) * 27));
 		}
 	}
