@@ -342,7 +342,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	public void sendGUINetworkData(ContainerEngine containerEngine, ICrafting iCrafting) {
 		super.sendGUINetworkData(containerEngine, iCrafting);
 		iCrafting.sendProgressBarUpdate(containerEngine, 15, tankFuel.getFluid() != null && tankFuel.getFluid().getFluid() != null ? tankFuel.getFluid().getFluid().getID() : 0);
-		iCrafting.sendProgressBarUpdate(containerEngine, 16, tankCoolant.getFluid() != null && tankFuel.getFluid().getFluid() != null ? tankCoolant.getFluid().getFluid().getID() : 0);
+		iCrafting.sendProgressBarUpdate(containerEngine, 16, tankCoolant.getFluid() != null && tankCoolant.getFluid().getFluid() != null ? tankCoolant.getFluid().getFluid().getID() : 0);
 		iCrafting.sendProgressBarUpdate(containerEngine, 17, tankFuel.getFluid() != null ? tankFuel.getFluid().amount : 0);
 		iCrafting.sendProgressBarUpdate(containerEngine, 18, tankCoolant.getFluid() != null ? tankCoolant.getFluid().amount : 0);
 		iCrafting.sendProgressBarUpdate(containerEngine, 19, tankFuel.colorRenderCache);
