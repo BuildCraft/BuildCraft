@@ -268,7 +268,9 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 					station.robotTaking().setMainStation(null);
 				}
 			} else if (station.robotIdTaking() != EntityRobotBase.NULL_ROBOT_ID) {
-				stationsTakenByRobot.get(station.robotIdTaking()).remove(index);
+				if (stationsTakenByRobot.get(station.robotIdTaking()) != null) {
+					stationsTakenByRobot.get(station.robotIdTaking()).remove(index);
+				}
 			}
 
 			stations.remove(index);

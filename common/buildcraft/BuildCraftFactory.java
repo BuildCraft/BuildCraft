@@ -190,6 +190,8 @@ public class BuildCraftFactory extends BuildCraftMod {
 		BuildCraftCore.mainConfigManager.get("general.miningDepth").setMinValue(2).setMaxValue(256);
 		BuildCraftCore.mainConfigManager.register("general.pumpDimensionControl", DefaultProps.PUMP_DIMENSION_LIST, plc, ConfigManager.RestartRequirement.NONE);
 
+		reloadConfig(ConfigManager.RestartRequirement.GAME);
+
 		miningWellBlock = (BlockMiningWell) CompatHooks.INSTANCE.getBlock(BlockMiningWell.class);
 		CoreProxy.proxy.registerBlock(miningWellBlock.setBlockName("miningWellBlock"));
 
