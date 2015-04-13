@@ -56,6 +56,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	private InventoryCraftResult craftResult = new InventoryCraftResult();
 
 	private int[] bindings = new int[9];
+	private int[] bindingCounts = new int[9];
 
 	private int update = Utils.RANDOM.nextInt();
 
@@ -327,6 +328,9 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		progress += UPDATE_TIME;
 
 		for (int i = 0; i < 9; i++) {
+			bindingCounts[i] = 0;
+		}
+		for (int i = 0; i < 9; i++) {
 			ItemStack comparedStack = craftMatrix.getStackInSlot(i);
 			if (comparedStack == null || comparedStack.getItem() == null) {
 				bindings[i] = -1;
@@ -334,21 +338,43 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 			}
 
 			if (bindings[i] == -1 || !StackHelper.isMatchingItem(inputInv.getStackInSlot(bindings[i]), comparedStack, true, true)) {
-				// Scan for a new binding
 				boolean found = false;
 				for (int j = 0; j < 9; j++) {
 					if (j == bindings[i]) {
 						continue;
 					}
 
-					if (StackHelper.isMatchingItem(inputInv.getStackInSlot(j), comparedStack, true, false)) {
+					ItemStack inputInvStack = inputInv.getStackInSlot(j);
+
+					if (StackHelper.isMatchingItem(inputInvStack, comparedStack, true, false)
+							&& inputInvStack.stackSize > bindingCounts[j]) {
 						found = true;
 						bindings[i] = j;
+						bindingCounts[j]++;
 						break;
 					}
 				}
 				if (!found) {
+					craftMatrix.isJammed = true;
 					progress = 0;
+					return;
+				}
+			} else {
+				bindingCounts[bindings[i]]++;
+			}
+		}
+
+		for (int i = 0; i < 9; i++) {
+			if (bindingCounts[i] > 0) {
+				ItemStack stack = inputInv.getStackInSlot(i);
+				if (stack != null && stack.stackSize < bindingCounts[i]) {
+					// Do not break progress yet, instead give it a chance to rebuild
+					// It will quit when trying to find a valid binding to "fit in"
+					for (int j = 0; j < 9; j++) {
+						if (bindings[j] == i) {
+							bindings[j] = -1;
+						}
+					}
 					return;
 				}
 			}
@@ -360,16 +386,19 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 
 		progress = 0;
 
-		ItemStack result = craftMatrix.getRecipeOutput();
-		ItemStack resultInto = resultInv.getStackInSlot(0);
-
 		craftMatrix.setUseBindings(true);
-		craftSlot.onPickupFromSlot(getInternalPlayer().get(), result);
+		ItemStack result = craftMatrix.getRecipeOutput();
 
-		if (resultInto == null) {
-			resultInv.setInventorySlotContents(0, result);
-		} else {
-			resultInto.stackSize += result.stackSize;
+		if (result != null && result.stackSize > 0) {
+			ItemStack resultInto = resultInv.getStackInSlot(0);
+
+			craftSlot.onPickupFromSlot(getInternalPlayer().get(), result);
+
+			if (resultInto == null) {
+				resultInv.setInventorySlotContents(0, result);
+			} else {
+				resultInto.stackSize += result.stackSize;
+			}
 		}
 
 		craftMatrix.setUseBindings(false);
