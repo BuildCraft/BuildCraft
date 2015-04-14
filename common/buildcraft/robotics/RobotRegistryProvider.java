@@ -24,7 +24,7 @@ public class RobotRegistryProvider implements IRobotRegistryProvider {
 			newRegistry.world = world;
 
 			for (DockingStation d : newRegistry.stations.values()) {
-				((DockingStation) d).world = world;
+				d.world = world;
 			}
 
 			MinecraftForge.EVENT_BUS.register(newRegistry);

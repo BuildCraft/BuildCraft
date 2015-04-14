@@ -27,6 +27,7 @@ import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRobotRegistry;
 import buildcraft.api.robots.ResourceId;
+import buildcraft.api.robots.RobotManager;
 
 public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 
@@ -204,7 +205,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 					.clone();
 
 			for (StationIndex s : stationSet) {
-				DockingStation d = (DockingStation) stations.get(s);
+				DockingStation d = stations.get(s);
 
 				if (d != null) {
 					if (!d.canRelease()) {
@@ -316,6 +317,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 		for (Map.Entry<StationIndex, DockingStation> e : stations.entrySet()) {
 			NBTTagCompound cpt = new NBTTagCompound();
 			e.getValue().writeToNBT(cpt);
+			cpt.setString("stationType", RobotManager.getDockingStationName(e.getValue().getClass()));
 			stationList.appendTag(cpt);
 		}
 
@@ -340,13 +342,31 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 
 		for (int i = 0; i < stationList.tagCount(); ++i) {
 			NBTTagCompound cpt = stationList.getCompoundTagAt(i);
-			DockingStation station = new DockingStation();
-			station.readFromNBT(cpt);
 
-			registerStation(station);
+			Class<? extends DockingStation> cls = null;
 
-			if (station.linkedId() != EntityRobotBase.NULL_ROBOT_ID) {
-				take(station, station.linkedId());
+			if (!cpt.hasKey("stationType")) {
+				cls = DockingStationPipe.class;
+			} else {
+				cls = RobotManager.getDockingStationByName(cpt.getString("stationType"));
+				if (cls == null) {
+					BCLog.logger.error("Could not load docking station of type "
+							+ nbt.getString("stationType"));
+					continue;
+				}
+			}
+
+			try {
+				DockingStation station = cls.newInstance();
+				station.readFromNBT(cpt);
+
+				registerStation(station);
+
+				if (station.linkedId() != EntityRobotBase.NULL_ROBOT_ID) {
+					take(station, station.linkedId());
+				}
+			} catch (Exception e) {
+				BCLog.logger.error("Could not load docking station", e);
 			}
 		}
 	}

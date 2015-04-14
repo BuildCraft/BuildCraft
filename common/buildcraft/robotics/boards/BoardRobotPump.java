@@ -8,13 +8,10 @@
  */
 package buildcraft.robotics.boards;
 
-import java.util.ArrayList;
 import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.boards.RedstoneBoardRobot;
@@ -23,24 +20,21 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IWorldProperty;
 import buildcraft.api.robots.AIRobot;
-import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.ResourceIdBlock;
-import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.StatementParameterItemStack;
-import buildcraft.api.statements.StatementSlot;
+import buildcraft.core.lib.inventory.filters.IFluidFilter;
+import buildcraft.core.lib.inventory.filters.PassThroughFluidFilter;
 import buildcraft.core.lib.utils.IBlockFilter;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
 import buildcraft.robotics.ai.AIRobotGotoStationAndUnloadFluids;
 import buildcraft.robotics.ai.AIRobotPumpBlock;
 import buildcraft.robotics.ai.AIRobotSearchAndGotoBlock;
 import buildcraft.robotics.statements.ActionRobotFilter;
-import buildcraft.transport.gates.ActionIterator;
 
 public class BoardRobotPump extends RedstoneBoardRobot {
 
 	private BlockIndex blockFound;
-	private ArrayList<Fluid> fluidFilter = new ArrayList<Fluid>();
+	private IFluidFilter fluidFilter = null;
 
 	public BoardRobotPump(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -102,32 +96,14 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 	}
 
 	public void updateFilter() {
-		fluidFilter.clear();
-
-		DockingStation station = (DockingStation) robot.getLinkedStation();
-
-		for (StatementSlot slot : new ActionIterator(station.getPipe().getPipe())) {
-			if (slot.statement instanceof ActionRobotFilter) {
-				for (IStatementParameter p : slot.parameters) {
-					if (p != null && p instanceof StatementParameterItemStack) {
-						StatementParameterItemStack param = (StatementParameterItemStack) p;
-						ItemStack stack = param.getItemStack();
-
-						if (stack != null) {
-							FluidStack fluid = FluidContainerRegistry.getFluidForFilledItem(stack);
-
-							if (fluid != null) {
-								fluidFilter.add(fluid.getFluid());
-							}
-						}
-					}
-				}
-			}
+		fluidFilter = ActionRobotFilter.getGateFluidFilter(robot.getLinkedStation());
+		if (fluidFilter instanceof PassThroughFluidFilter) {
+			fluidFilter = null;
 		}
 	}
 
 	private boolean matchesGateFilter(World world, int x, int y, int z) {
-		if (fluidFilter.size() == 0) {
+		if (fluidFilter == null) {
 			return true;
 		}
 
@@ -138,13 +114,7 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 
         Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
 
-        for (Fluid f : fluidFilter) {
-            if (f.getID() == fluid.getID()) {
-                return true;
-            }
-        }
-
-        return false;
+        return fluidFilter.matches(fluid);
 	}
 
 }

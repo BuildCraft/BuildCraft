@@ -153,7 +153,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 	}
 
 	private RobotStationState renderState;
-	private DockingStation station;
+	private DockingStationPipe station;
 	private boolean isValid = false;
 
 	public RobotStationPluggable() {
@@ -199,7 +199,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 	public void validate(IPipeTile pipe, ForgeDirection direction) {
 		TileGenericPipe gPipe = (TileGenericPipe) pipe;
 		if (!isValid && !gPipe.getWorld().isRemote) {
-			station = (DockingStation)
+			station = (DockingStationPipe)
 					RobotManager.registryProvider.getRegistry(gPipe.getWorld()).getStation(
 					gPipe.xCoord,
 					gPipe.yCoord,
@@ -207,7 +207,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 					direction);
 
 			if (station == null) {
-				station = new DockingStation(gPipe, direction);
+				station = new DockingStationPipe(gPipe, direction);
 				RobotManager.registryProvider.getRegistry(gPipe.getWorld()).registerStation(station);
 			}
 

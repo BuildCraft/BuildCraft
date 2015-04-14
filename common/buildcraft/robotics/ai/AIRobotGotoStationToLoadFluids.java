@@ -8,22 +8,14 @@
  */
 package buildcraft.robotics.ai;
 
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.IFluidHandler;
-import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.inventory.filters.IFluidFilter;
 import buildcraft.robotics.IStationFilter;
-import buildcraft.robotics.statements.ActionRobotFilter;
-import buildcraft.robotics.statements.ActionStationProvideFluids;
 
 public class AIRobotGotoStationToLoadFluids extends AIRobot {
 
-	private IZone zone;
 	private IFluidFilter filter;
 
 	public AIRobotGotoStationToLoadFluids(EntityRobotBase iRobot) {
@@ -38,7 +30,8 @@ public class AIRobotGotoStationToLoadFluids extends AIRobot {
 
 	@Override
 	public void update() {
-		startDelegateAI(new AIRobotSearchAndGotoStation(robot, new StationFilter(), robot.getZoneToLoadUnload()));
+		startDelegateAI(new AIRobotSearchAndGotoStation(robot, new StationFilter(),
+				robot.getZoneToLoadUnload()));
 	}
 
 	@Override
@@ -53,31 +46,7 @@ public class AIRobotGotoStationToLoadFluids extends AIRobot {
 
 		@Override
 		public boolean matches(DockingStation station) {
-			if (!ActionRobotFilter.canInteractWithFluid(station, filter, ActionStationProvideFluids.class)) {
-				return false;
-			}
-
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
-						+ dir.offsetY, station.z()
-						+ dir.offsetZ);
-
-				if (nearbyTile != null && nearbyTile instanceof IFluidHandler) {
-					IFluidHandler handler = (IFluidHandler) nearbyTile;
-					FluidStack drainable = handler.drain(station.side, 1, false);
-
-					// TODO: there is no account taken for the filter on the
-					// gate here. See LoadFluid, GotoStationToLoad and Load for
-					// items as well.
-					if (drainable != null
-							&& filter.matches(drainable.getFluid())
-							&& robot.canFill(ForgeDirection.UNKNOWN, drainable.getFluid())) {
-						return true;
-					}
-				}
-			}
-
-			return false;
+			return AIRobotLoadFluids.load(robot, station, filter, false) > 0;
 		}
 
 	}

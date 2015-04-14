@@ -37,7 +37,7 @@ public class AIRobotFetchAndEquipItemStack extends AIRobot {
 
 	@Override
 	public void update() {
-		startDelegateAI(new AIRobotGotoStationToLoad(robot, filter));
+		startDelegateAI(new AIRobotGotoStationToLoad(robot, filter, 1));
 	}
 
 	@Override
@@ -61,14 +61,13 @@ public class AIRobotFetchAndEquipItemStack extends AIRobot {
 
 	private void equipItemStack() {
 		if (robot.getDockingStation() != null) {
-			DockingStation station = (DockingStation) robot.getDockingStation();
+			DockingStation station = robot.getDockingStation();
 
 			ItemStack itemFound = null;
 
 			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX,
-						station.y()
-								+ dir.offsetY, station.z() + dir.offsetZ);
+						station.y() + dir.offsetY, station.z() + dir.offsetZ);
 
 				if (nearbyTile != null && nearbyTile instanceof IInventory) {
 					ITransactor trans = Transactor.getTransactorFor(nearbyTile);

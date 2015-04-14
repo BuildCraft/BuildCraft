@@ -11,7 +11,6 @@ package buildcraft.robotics.ai;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.api.transport.IPipeTile;
 import buildcraft.robotics.IStationFilter;
 
 public class AIRobotRecharge extends AIRobot {
@@ -33,7 +32,7 @@ public class AIRobotRecharge extends AIRobot {
 		startDelegateAI(new AIRobotSearchAndGotoStation(robot, new IStationFilter() {
 			@Override
 			public boolean matches(DockingStation station) {
-				return station.getPipe().getPipeType() == IPipeTile.PipeType.POWER;
+				return station.providesPower();
 			}
 		}, null));
 	}

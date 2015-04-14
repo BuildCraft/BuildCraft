@@ -8,31 +8,26 @@
  */
 package buildcraft.robotics.ai;
 
-import net.minecraft.inventory.IInventory;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.lib.inventory.ITransactor;
-import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.robotics.IStationFilter;
-import buildcraft.robotics.statements.ActionRobotFilter;
-import buildcraft.robotics.statements.ActionStationProvideItems;
 
 public class AIRobotGotoStationToLoad extends AIRobot {
 
 	private IStackFilter filter;
+	private int quantity;
 
 	public AIRobotGotoStationToLoad(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotGotoStationToLoad(EntityRobotBase iRobot, IStackFilter iFilter) {
+	public AIRobotGotoStationToLoad(EntityRobotBase iRobot, IStackFilter iFilter, int iQuantity) {
 		this(iRobot);
 
 		filter = iFilter;
+		quantity = iQuantity;
 	}
 
 	@Override
@@ -52,25 +47,7 @@ public class AIRobotGotoStationToLoad extends AIRobot {
 
 		@Override
 		public boolean matches(DockingStation station) {
-			if (!ActionRobotFilter.canInteractWithItem(station, filter, ActionStationProvideItems.class)) {
-				return false;
-			}
-
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
-						+ dir.offsetY, station.z()
-						+ dir.offsetZ);
-
-				if (nearbyTile != null && nearbyTile instanceof IInventory) {
-					ITransactor trans = Transactor.getTransactorFor(nearbyTile);
-
-					if (trans.remove(filter, dir.getOpposite(), false) != null) {
-						return true;
-					}
-				}
-			}
-
-			return false;
+			return AIRobotLoad.load(robot, station, filter, quantity, false);
 		}
 
 	}

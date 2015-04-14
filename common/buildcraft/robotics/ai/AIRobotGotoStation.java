@@ -34,11 +34,13 @@ public class AIRobotGotoStation extends AIRobot {
 
 	@Override
 	public void start() {
-		DockingStation station = (DockingStation)
-				robot.getRegistry().getStation(stationIndex.x, stationIndex.y, stationIndex.z,
-				stationSide);
+		DockingStation station = robot.getRegistry().getStation(stationIndex.x, stationIndex.y,
+				stationIndex.z, stationSide);
 
-		if (station == null || station == robot.getDockingStation()) {
+		if (station == null) {
+			terminate();
+		} else if (station == robot.getDockingStation()) {
+			setSuccess(true);
 			terminate();
 		} else {
 			if (station.take(robot)) {
@@ -54,9 +56,8 @@ public class AIRobotGotoStation extends AIRobot {
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		DockingStation station = (DockingStation)
-				robot.getRegistry().getStation(stationIndex.x, stationIndex.y, stationIndex.z,
-						stationSide);
+		DockingStation station = robot.getRegistry().getStation(stationIndex.x, stationIndex.y,
+				stationIndex.z, stationSide);
 
 		if (station == null) {
 			terminate();

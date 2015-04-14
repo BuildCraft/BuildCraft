@@ -17,7 +17,6 @@ import net.minecraft.world.World;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
-import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.ResourceIdBlock;
 import buildcraft.api.statements.IStatementParameter;
@@ -30,7 +29,6 @@ import buildcraft.robotics.ai.AIRobotFetchAndEquipItemStack;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
 import buildcraft.robotics.ai.AIRobotSearchAndGotoBlock;
 import buildcraft.robotics.statements.ActionRobotFilter;
-import buildcraft.transport.gates.ActionIterator;
 
 public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 
@@ -112,9 +110,7 @@ public abstract class BoardRobotGenericBreakBlock extends RedstoneBoardRobot {
 		blockFilter.clear();
 		metaFilter.clear();
 
-		DockingStation station = (DockingStation) robot.getLinkedStation();
-
-		for (StatementSlot slot : new ActionIterator(station.getPipe().getPipe())) {
+		for (StatementSlot slot : robot.getLinkedStation().getActiveActions()) {
 			if (slot.statement instanceof ActionRobotFilter) {
 				for (IStatementParameter p : slot.parameters) {
 					if (p != null && p instanceof StatementParameterItemStack) {

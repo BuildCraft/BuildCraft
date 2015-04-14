@@ -8,8 +8,6 @@
  */
 package buildcraft.robotics.statements;
 
-import javax.print.Doc;
-
 import java.util.List;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
@@ -18,16 +16,15 @@ import buildcraft.api.core.BlockIndex;
 import buildcraft.api.items.IMapLocation;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
+import buildcraft.api.robots.IRobotRegistry;
 import buildcraft.api.robots.RobotManager;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
-import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.statements.BCStatement;
 import buildcraft.robotics.EntityRobot;
-import buildcraft.robotics.RobotRegistry;
 import buildcraft.robotics.RobotUtils;
 import buildcraft.robotics.ai.AIRobotGoAndLinkToDock;
 
@@ -49,14 +46,10 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 
 	@Override
 	public void actionActivate(IStatementContainer container, IStatementParameter[] parameters) {
-		if (!(container.getTile() instanceof IPipeTile)) {
-			return;
-		}
+		IRobotRegistry registry = RobotManager.registryProvider.getRegistry(container.getTile()
+				.getWorldObj());
 
-		IPipeTile tile = (IPipeTile) container.getTile();
-		RobotRegistry registry = (RobotRegistry) RobotManager.registryProvider.getRegistry(tile.getWorld());
-
-		List<DockingStation> stations = RobotUtils.getStations(tile);
+		List<DockingStation> stations = RobotUtils.getStations(container.getTile());
 
 		for (DockingStation station : stations) {
 			if (station.robotTaking() != null) {
@@ -70,29 +63,32 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 				DockingStation newStation = station;
 
 				if (parameters[0] != null) {
-					StatementParameterItemStack stackParam = (StatementParameterItemStack) parameters[0];
-					ItemStack item = stackParam.getItemStack();
-
-					if (item != null && item.getItem() instanceof IMapLocation) {
-						IMapLocation map = (IMapLocation) item.getItem();
-						BlockIndex index = map.getPoint(item);
-
-						if (index != null) {
-							ForgeDirection side = map.getPointSide(item);
-							DockingStation paramStation = (DockingStation)
-									registry.getStation(index.x,
-									index.y, index.z, side);
-
-							if (paramStation != null) {
-								newStation = paramStation;
-							}
-						}
-					}
+					newStation = getStation((StatementParameterItemStack) parameters[0], registry);
 				}
 
 				robot.overrideAI(new AIRobotGoAndLinkToDock(robot, newStation));
 			}
 		}
+	}
+
+	private DockingStation getStation(StatementParameterItemStack stackParam,
+			IRobotRegistry registry) {
+		ItemStack item = stackParam.getItemStack();
+
+		if (item != null && item.getItem() instanceof IMapLocation) {
+			IMapLocation map = (IMapLocation) item.getItem();
+			BlockIndex index = map.getPoint(item);
+
+			if (index != null) {
+				ForgeDirection side = map.getPointSide(item);
+				DockingStation paramStation = registry.getStation(index.x, index.y, index.z, side);
+
+				if (paramStation != null) {
+					return paramStation;
+				}
+			}
+		}
+		return null;
 	}
 
 	@Override

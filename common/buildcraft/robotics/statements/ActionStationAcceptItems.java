@@ -9,17 +9,17 @@
 package buildcraft.robotics.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.statements.StatementSlot;
+import buildcraft.api.transport.IInjectable;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.robotics.EntityRobot;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.TravelingItem;
 
 public class ActionStationAcceptItems extends ActionStationInputItems {
 
@@ -55,21 +55,31 @@ public class ActionStationAcceptItems extends ActionStationInputItems {
 			return false;
 		}
 
+		IInjectable injectable = station.getItemOutput();
+
+		if (injectable == null) {
+			return false;
+		}
+
+		ForgeDirection injectSide = station.side().getOpposite();
+
+		if (!injectable.canInjectItems(injectSide)) {
+			return false;
+		}
+
 		if (!doInsert) {
 			return true;
 		}
 
-		if (((Pipe) station.getPipe().getPipe()).transport instanceof PipeTransportItems) {
-			float cx = station.x() + 0.5F + 0.2F * station.side().offsetX;
-			float cy = station.y() + 0.5F + 0.2F * station.side().offsetY;
-			float cz = station.z() + 0.5F + 0.2F * station.side().offsetZ;
-
-			TravelingItem item = TravelingItem.make(cx, cy, cz, invSlot.getStackInSlot());
-
-			((PipeTransportItems) ((Pipe) station.getPipe().getPipe()).transport).injectItem(item, station.side().getOpposite());
-
-			invSlot.setStackInSlot(null);
-
+		ItemStack stack = invSlot.getStackInSlot();
+		int used = injectable.injectItem(stack, doInsert, injectSide, null);
+		if (used > 0) {
+			stack.stackSize -= used;
+			if (stack.stackSize > 0) {
+				invSlot.setStackInSlot(stack);
+			} else {
+				invSlot.setStackInSlot(null);
+			}
 			return true;
 		}
 

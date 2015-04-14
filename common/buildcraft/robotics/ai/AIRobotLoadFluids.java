@@ -8,7 +8,6 @@
  */
 package buildcraft.robotics.ai;
 
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -22,7 +21,6 @@ import buildcraft.robotics.statements.ActionStationProvideFluids;
 
 public class AIRobotLoadFluids extends AIRobot {
 
-	private int loaded = 0;
 	private int waitedCycles = 0;
 	private IFluidFilter filter;
 
@@ -34,6 +32,7 @@ public class AIRobotLoadFluids extends AIRobot {
 		this(iRobot);
 
 		filter = iFilter;
+		setSuccess(false);
 	}
 
 	@Override
@@ -41,51 +40,45 @@ public class AIRobotLoadFluids extends AIRobot {
 		waitedCycles++;
 
 		if (waitedCycles > 40) {
-			int previousLoaded = loaded;
-			doLoad();
-
-			if (loaded == previousLoaded) {
+			if (load(robot, robot.getDockingStation(), filter, true) == 0) {
 				terminate();
 			} else {
+				setSuccess(true);
 				waitedCycles = 0;
 			}
 		}
 	}
 
-	private void doLoad() {
-		if (robot.getDockingStation() != null) {
-			DockingStation station = (DockingStation) robot.getDockingStation();
-
-			if (!ActionRobotFilter.canInteractWithFluid(station, filter, ActionStationProvideFluids.class)) {
-				return;
-			}
-
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
-						+ dir.offsetY, station.z()
-						+ dir.offsetZ);
-
-				if (nearbyTile != null && nearbyTile instanceof IFluidHandler) {
-					IFluidHandler handler = (IFluidHandler) nearbyTile;
-					FluidStack drainable = handler.drain(station.side, FluidContainerRegistry.BUCKET_VOLUME, false);
-
-					if (drainable != null
-							&& filter.matches(drainable.getFluid())) {
-
-						drainable = drainable.copy();
-
-						int filled = robot.fill(ForgeDirection.UNKNOWN, drainable, true);
-
-						if (filled > 0) {
-							drainable.amount = filled;
-							handler.drain(station.side, drainable, true);
-							loaded += filled;
-							return;
-						}
-					}
-				}
-			}
+	public static int load(EntityRobotBase robot, DockingStation station, IFluidFilter filter,
+			boolean doLoad) {
+		if (station == null) {
+			return 0;
 		}
+
+		if (!ActionRobotFilter.canInteractWithFluid(station, filter,
+				ActionStationProvideFluids.class)) {
+			return 0;
+		}
+
+		IFluidHandler handler = station.getFluidInput();
+		if (handler == null) {
+			return 0;
+		}
+
+		FluidStack drainable = handler.drain(station.side, FluidContainerRegistry.BUCKET_VOLUME,
+				false);
+		if (drainable == null || !filter.matches(drainable.getFluid())) {
+			return 0;
+		}
+
+		drainable = drainable.copy();
+		int filled = robot.fill(ForgeDirection.UNKNOWN, drainable, doLoad);
+
+		if (filled > 0 && doLoad) {
+			drainable.amount = filled;
+			handler.drain(station.side, drainable, true);
+		}
+		return filled;
 	}
 
 	@Override
@@ -93,8 +86,4 @@ public class AIRobotLoadFluids extends AIRobot {
 		return 8;
 	}
 
-	@Override
-	public boolean success() {
-		return loaded > 0;
-	}
 }

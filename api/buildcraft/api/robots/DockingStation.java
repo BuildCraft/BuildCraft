@@ -8,14 +8,16 @@
  */
 package buildcraft.api.robots;
 
+import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.api.core.BlockIndex;
-import buildcraft.api.transport.IPipeTile;
+import buildcraft.api.statements.StatementSlot;
+import buildcraft.api.transport.IInjectable;
 
-public class DockingStation {
+public abstract class DockingStation {
 	public ForgeDirection side;
 	public World world;
 
@@ -25,18 +27,10 @@ public class DockingStation {
 	private boolean linkIsMain = false;
 
 	private BlockIndex index;
-	private IPipeTile pipe;
 
 	public DockingStation(BlockIndex iIndex, ForgeDirection iSide) {
 		index = iIndex;
 		side = iSide;
-	}
-
-	public DockingStation(IPipeTile iPipe, ForgeDirection iSide) {
-		index = new BlockIndex(iPipe.x(), iPipe.y(), iPipe.z());
-		pipe = iPipe;
-		side = iSide;
-		world = iPipe.getWorld();
 	}
 
 	public DockingStation() {
@@ -44,20 +38,6 @@ public class DockingStation {
 
 	public boolean isMainStation() {
 		return linkIsMain;
-	}
-
-	public IPipeTile getPipe() {
-		if (pipe == null) {
-			pipe = (IPipeTile) world.getTileEntity(index.x, index.y, index.z);
-		}
-
-		if (pipe == null || ((TileEntity) pipe).isInvalid()) {
-			// Inconsistency - remove this pipe from the registry.
-			RobotManager.registryProvider.getRegistry(world).removeStation(this);
-			pipe = null;
-		}
-
-		return pipe;
 	}
 
 	public int x() {
@@ -80,7 +60,8 @@ public class DockingStation {
 		if (robotTakingId == EntityRobotBase.NULL_ROBOT_ID) {
 			return null;
 		} else if (robotTaking == null) {
-			robotTaking = RobotManager.registryProvider.getRegistry(world).getLoadedRobot(robotTakingId);
+			robotTaking = RobotManager.registryProvider.getRegistry(world).getLoadedRobot(
+					robotTakingId);
 		}
 
 		return robotTaking;
@@ -100,7 +81,6 @@ public class DockingStation {
 			linkIsMain = true;
 			robotTaking = robot;
 			robotTakingId = robot.getRobotId();
-			getPipe().scheduleRenderUpdate();
 			registry.registryMarkDirty();
 			robot.setMainStation(this);
 			registry.take(this, robot.getRobotId());
@@ -117,7 +97,6 @@ public class DockingStation {
 			linkIsMain = false;
 			robotTaking = robot;
 			robotTakingId = robot.getRobotId();
-			getPipe().scheduleRenderUpdate();
 			registry.registryMarkDirty();
 			registry.take(this, robot.getRobotId());
 
@@ -145,7 +124,6 @@ public class DockingStation {
 			linkIsMain = false;
 			robotTaking = null;
 			robotTakingId = EntityRobotBase.NULL_ROBOT_ID;
-			getPipe().scheduleRenderUpdate();
 		}
 	}
 
@@ -159,7 +137,7 @@ public class DockingStation {
 	}
 
 	public void readFromNBT(NBTTagCompound nbt) {
-		index = new BlockIndex (nbt.getCompoundTag("index"));
+		index = new BlockIndex(nbt.getCompoundTag("index"));
 		side = ForgeDirection.values()[nbt.getByte("side")];
 		linkIsMain = nbt.getBoolean("isMain");
 		robotTakingId = nbt.getLong("robotId");
@@ -179,7 +157,8 @@ public class DockingStation {
 
 	@Override
 	public String toString() {
-		return "{" + index.x + ", " + index.y + ", " + index.z + ", " + side + " :" + robotTakingId + "}";
+		return "{" + index.x + ", " + index.y + ", " + index.z + ", " + side + " :" + robotTakingId
+				+ "}";
 	}
 
 	public boolean linkIsDocked() {
@@ -193,5 +172,35 @@ public class DockingStation {
 	public boolean canRelease() {
 		return !isMainStation() && !linkIsDocked();
 	}
-}
 
+	public boolean isInitialized() {
+		return true;
+	}
+
+	public abstract Iterable<StatementSlot> getActiveActions();
+
+	public IInjectable getItemOutput() {
+		return null;
+	}
+
+	public IInventory getItemInput() {
+		return null;
+	}
+
+	public IFluidHandler getFluidOutput() {
+		return null;
+	}
+
+	public IFluidHandler getFluidInput() {
+		return null;
+	}
+
+	public boolean providesPower() {
+		return false;
+	}
+
+	public IRequestProvider getRequestProvider() {
+		return null;
+	}
+
+}

@@ -8,17 +8,10 @@
  */
 package buildcraft.robotics.ai;
 
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.core.lib.inventory.filters.SimpleFluidFilter;
 import buildcraft.robotics.IStationFilter;
-import buildcraft.robotics.statements.ActionRobotFilter;
-import buildcraft.robotics.statements.ActionStationAcceptFluids;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeTransportFluids;
 
 public class AIRobotGotoStationToUnloadFluids extends AIRobot {
 
@@ -28,7 +21,8 @@ public class AIRobotGotoStationToUnloadFluids extends AIRobot {
 
 	@Override
 	public void update() {
-		startDelegateAI(new AIRobotSearchAndGotoStation(robot, new StationFilter(), robot.getZoneToLoadUnload()));
+		startDelegateAI(new AIRobotSearchAndGotoStation(robot, new StationFilter(),
+				robot.getZoneToLoadUnload()));
 	}
 
 	@Override
@@ -43,24 +37,7 @@ public class AIRobotGotoStationToUnloadFluids extends AIRobot {
 
 		@Override
 		public boolean matches(DockingStation station) {
-			if (!ActionRobotFilter.canInteractWithFluid(station,
-					new SimpleFluidFilter(robot.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid),
-					ActionStationAcceptFluids.class)) {
-				return false;
-			}
-
-			if (((Pipe) station.getPipe().getPipe()).transport instanceof PipeTransportFluids) {
-				PipeTransportFluids transport = (PipeTransportFluids) ((Pipe) station.getPipe().getPipe()).transport;
-				FluidStack drainable = robot.drain(ForgeDirection.UNKNOWN, 1, false);
-
-				int filledAmount = transport.fill(station.side, drainable, false);
-
-				if (filledAmount > 0) {
-					return true;
-				}
-			}
-
-			return false;
+			return AIRobotUnloadFluids.unload(robot, station, false) > 0;
 		}
 
 	}

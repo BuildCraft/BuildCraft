@@ -11,71 +11,70 @@ package buildcraft.robotics.ai;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.inventory.filters.SimpleFluidFilter;
 import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.robotics.statements.ActionStationAcceptFluids;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeTransportFluids;
 
 public class AIRobotUnloadFluids extends AIRobot {
 
-	private int unloaded = 0;
-
+	private int waitedCycles = 0;
 	public AIRobotUnloadFluids(EntityRobotBase iRobot) {
 		super(iRobot);
+		setSuccess(false);
 	}
 
 	@Override
 	public void update() {
-		int previousUnloaded = unloaded;
-		doLoad();
+		waitedCycles++;
 
-		if (unloaded == previousUnloaded) {
-			terminate();
+		if (waitedCycles > 40) {
+			if (unload(robot, robot.getDockingStation(), true) == 0) {
+				terminate();
+			} else {
+				waitedCycles = 0;
+				setSuccess(true);
+			}
 		}
 	}
 
-	private void doLoad() {
-		if (robot.getDockingStation() != null) {
-			DockingStation station = (DockingStation) robot.getDockingStation();
-
-			if (!ActionRobotFilter.canInteractWithFluid(station,
-					new SimpleFluidFilter(robot.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid),
-					ActionStationAcceptFluids.class)) {
-				return;
-			}
-
-			if (((Pipe) station.getPipe().getPipe()).transport instanceof PipeTransportFluids) {
-				PipeTransportFluids transport = (PipeTransportFluids) ((Pipe) station.getPipe().getPipe()).transport;
-				FluidStack drainable = robot.drain(ForgeDirection.UNKNOWN, FluidContainerRegistry.BUCKET_VOLUME,
-						false);
-
-				if (drainable != null) {
-					drainable = drainable.copy();
-
-					int filled = transport.fill(station.side, drainable, true);
-
-					if (filled > 0) {
-						drainable.amount = filled;
-						robot.drain(ForgeDirection.UNKNOWN, drainable, true);
-						unloaded += filled;
-						return;
-					}
-				}
-			}
+	public static int unload(EntityRobotBase robot, DockingStation station, boolean doUnload) {
+		if (station == null) {
+			return 0;
 		}
+
+		if (!ActionRobotFilter.canInteractWithFluid(station,
+				new SimpleFluidFilter(robot.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid),
+				ActionStationAcceptFluids.class)) {
+			return 0;
+		}
+
+		IFluidHandler fluidHandler = station.getFluidOutput();
+		if (fluidHandler == null) {
+			return 0;
+		}
+
+		FluidStack drainable = robot.drain(ForgeDirection.UNKNOWN,
+				FluidContainerRegistry.BUCKET_VOLUME, false);
+		if (drainable == null) {
+			return 0;
+		}
+
+		drainable = drainable.copy();
+		int filled = fluidHandler.fill(station.side, drainable, doUnload);
+
+		if (filled > 0 && doUnload) {
+			drainable.amount = filled;
+			robot.drain(ForgeDirection.UNKNOWN, drainable, true);
+		}
+		return filled;
 	}
 
 	@Override
 	public int getEnergyCost() {
 		return 10;
-	}
-
-	@Override
-	public boolean success() {
-		return unloaded > 0;
 	}
 }
