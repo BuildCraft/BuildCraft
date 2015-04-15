@@ -35,8 +35,8 @@ public class AIRobotSearchStation extends AIRobot {
 	@Override
 	public void start() {
 		if (robot.getDockingStation() != null
-				&& filter.matches((DockingStation) robot.getDockingStation())) {
-			targetStation = (DockingStation) robot.getDockingStation();
+				&& filter.matches(robot.getDockingStation())) {
+			targetStation = robot.getDockingStation();
 			terminate();
 			return;
 		}
@@ -44,14 +44,13 @@ public class AIRobotSearchStation extends AIRobot {
 		double potentialStationDistance = Float.MAX_VALUE;
 		DockingStation potentialStation = null;
 
-		for (DockingStation d : robot.getRegistry().getStations()) {
-			DockingStation station = (DockingStation) d;
+		for (DockingStation station : robot.getRegistry().getStations()) {
 
-			if (d.isTaken() && d.robotIdTaking() != robot.getRobotId()) {
+			if (station.isTaken() && station.robotIdTaking() != robot.getRobotId()) {
 				continue;
 			}
 
-			if (zone != null && !zone.contains(d.x(), d.y(), d.z())) {
+			if (zone != null && !zone.contains(station.x(), station.y(), station.z())) {
 				continue;
 			}
 
@@ -60,9 +59,9 @@ public class AIRobotSearchStation extends AIRobot {
 					continue;
 				}
 
-				double dx = robot.posX - d.x();
-				double dy = robot.posY - d.y();
-				double dz = robot.posZ - d.z();
+				double dx = robot.posX - station.x();
+				double dy = robot.posY - station.y();
+				double dz = robot.posZ - station.z();
 				double distance = dx * dx + dy * dy + dz * dz;
 
 				if (potentialStation == null || distance < potentialStationDistance) {

@@ -49,6 +49,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.robotics.BlockRequester;
 import buildcraft.robotics.BlockZonePlan;
 import buildcraft.robotics.BoardProgrammingRecipe;
+import buildcraft.robotics.DockingStationPipe;
 import buildcraft.robotics.EntityRobot;
 import buildcraft.robotics.ImplRedstoneBoardRegistry;
 import buildcraft.robotics.ItemRedstoneBoard;
@@ -142,6 +143,7 @@ import buildcraft.robotics.statements.ActionRobotFilterTool;
 import buildcraft.robotics.statements.ActionRobotGotoStation;
 import buildcraft.robotics.statements.ActionRobotWakeUp;
 import buildcraft.robotics.statements.ActionRobotWorkInArea;
+import buildcraft.robotics.statements.ActionRobotWorkInArea.AreaType;
 import buildcraft.robotics.statements.ActionStationAcceptFluids;
 import buildcraft.robotics.statements.ActionStationAcceptItems;
 import buildcraft.robotics.statements.ActionStationAllowCraft;
@@ -155,7 +157,6 @@ import buildcraft.robotics.statements.RobotsTriggerProvider;
 import buildcraft.robotics.statements.TriggerRobotInStation;
 import buildcraft.robotics.statements.TriggerRobotLinked;
 import buildcraft.robotics.statements.TriggerRobotSleep;
-import buildcraft.robotics.statements.ActionRobotWorkInArea.AreaType;
 import buildcraft.silicon.ItemRedstoneChipset;
 
 @Mod(name = "BuildCraft Robotics", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Robotics", dependencies = DefaultProps.DEPENDENCY_CORE)
@@ -342,6 +343,8 @@ public class BuildCraftRobotics extends BuildCraftMod {
 		RobotManager.registerAIRobot(AIRobotUnload.class, "aiRobotUnload", "buildcraft.core.robots.AIRobotUnload");
 		RobotManager.registerAIRobot(AIRobotUnloadFluids.class, "aiRobotUnloadFluids", "buildcraft.core.robots.AIRobotUnloadFluids");
 		RobotManager.registerAIRobot(AIRobotUseToolOnBlock.class, "aiRobotUseToolOnBlock", "buildcraft.core.robots.AIRobotUseToolOnBlock");
+
+		RobotManager.registerDockingStation(DockingStationPipe.class, "dockingStationPipe");
 
 		RoboticsProxy.proxy.registerRenderers();
 	}

@@ -105,7 +105,7 @@ public class AIRobotCraftWorkbench extends AIRobotCraftGeneric {
 				terminate();
 			}
 		} else if (ai instanceof AIRobotSearchAndGotoStation) {
-			if (new StationWorkbenchFilter().matches((DockingStation) robot.getDockingStation())) {
+			if (new StationWorkbenchFilter().matches(robot.getDockingStation())) {
 				craftingTimer = 40;
 			} else {
 				terminate();

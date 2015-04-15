@@ -10,8 +10,6 @@ package buildcraft.robotics.ai;
 
 import java.util.Collection;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
@@ -20,14 +18,12 @@ import buildcraft.api.robots.StackRequest;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.statements.StatementSlot;
-import buildcraft.api.transport.IPipe;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.robotics.IStationFilter;
 import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.robotics.statements.ActionStationRequestItems;
 import buildcraft.robotics.statements.ActionStationRequestItemsMachine;
-import buildcraft.transport.gates.ActionIterator;
 
 public class AIRobotSearchStackRequest extends AIRobot {
 
@@ -90,30 +86,25 @@ public class AIRobotSearchStackRequest extends AIRobot {
 			return null;
 		}
 
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y()
-					+ dir.offsetY, station.z()
-					+ dir.offsetZ);
+		IRequestProvider provider = station.getRequestProvider();
+		if (provider == null) {
+			return null;
+		}
 
-			if (nearbyTile instanceof IRequestProvider) {
-				IRequestProvider provider = (IRequestProvider) nearbyTile;
+		for (int i = 0; i < provider.getNumberOfRequests(); ++i) {
+			StackRequest requestFound = provider.getAvailableRequest(i);
 
-				for (int i = 0; i < provider.getNumberOfRequests(); ++i) {
-					StackRequest requestFound = provider.getAvailableRequest(i);
+			if (requestFound != null
+					&& !isBlacklisted(requestFound.stack)
+					&& filter.matches(requestFound.stack)) {
+				requestFound.station = station;
 
-					if (requestFound != null
-							&& !isBlacklisted(requestFound.stack)
-							&& filter.matches(requestFound.stack)) {
-						requestFound.station = station;
-
-						if (take) {
-							if (provider.takeRequest(i, robot)) {
-								return requestFound;
-							}
-						} else {
-							return requestFound;
-						}
+				if (take) {
+					if (provider.takeRequest(i, robot)) {
+						return requestFound;
 					}
+				} else {
+					return requestFound;
 				}
 			}
 		}
@@ -122,10 +113,7 @@ public class AIRobotSearchStackRequest extends AIRobot {
 	}
 
 	private StackRequest getOrderFromRequestingAction(DockingStation station) {
-		boolean actionFound = false;
-		IPipe pipe = station.getPipe().getPipe();
-
-		for (StatementSlot s : new ActionIterator(pipe)) {
+		for (StatementSlot s : station.getActiveActions()) {
 			if (s.statement instanceof ActionStationRequestItems) {
 				for (IStatementParameter p : s.parameters) {
 					StatementParameterItemStack param = (StatementParameterItemStack) p;

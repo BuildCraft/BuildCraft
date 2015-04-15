@@ -23,7 +23,6 @@ import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.core.lib.inventory.filters.PassThroughStackFilter;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.statements.BCStatement;
-import buildcraft.transport.gates.ActionIterator;
 
 public class ActionRobotFilterTool extends BCStatement implements IActionInternal {
 
@@ -59,7 +58,7 @@ public class ActionRobotFilterTool extends BCStatement implements IActionInterna
 	public static Collection<ItemStack> getGateFilterStacks(DockingStation station) {
 		ArrayList<ItemStack> result = new ArrayList<ItemStack>();
 
-		for (StatementSlot slot : new ActionIterator(((DockingStation) station).getPipe().getPipe())) {
+		for (StatementSlot slot : station.getActiveActions()) {
 			if (slot.statement instanceof ActionRobotFilterTool) {
 				for (IStatementParameter p : slot.parameters) {
 					if (p != null && p instanceof StatementParameterItemStack) {

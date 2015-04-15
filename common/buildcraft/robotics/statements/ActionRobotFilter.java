@@ -20,7 +20,6 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.statements.StatementSlot;
-import buildcraft.api.transport.IPipe;
 import buildcraft.core.lib.inventory.filters.ArrayFluidFilter;
 import buildcraft.core.lib.inventory.filters.ArrayStackOrListFilter;
 import buildcraft.core.lib.inventory.filters.IFluidFilter;
@@ -30,7 +29,6 @@ import buildcraft.core.lib.inventory.filters.PassThroughStackFilter;
 import buildcraft.core.lib.inventory.filters.StatementParameterStackFilter;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.statements.BCStatement;
-import buildcraft.transport.gates.ActionIterator;
 
 public class ActionRobotFilter extends BCStatement implements IActionInternal {
 
@@ -66,7 +64,7 @@ public class ActionRobotFilter extends BCStatement implements IActionInternal {
 	public static Collection<ItemStack> getGateFilterStacks(DockingStation station) {
 		ArrayList<ItemStack> result = new ArrayList<ItemStack>();
 
-		for (StatementSlot slot : new ActionIterator(((DockingStation) station).getPipe().getPipe())) {
+		for (StatementSlot slot : station.getActiveActions()) {
 			if (slot.statement instanceof ActionRobotFilter) {
 				for (IStatementParameter p : slot.parameters) {
 					if (p != null && p instanceof StatementParameterItemStack) {
@@ -107,9 +105,7 @@ public class ActionRobotFilter extends BCStatement implements IActionInternal {
 	public static boolean canInteractWithItem(DockingStation station, IStackFilter filter, Class<?> actionClass) {
 		boolean actionFound = false;
 
-		IPipe pipe = station.getPipe().getPipe();
-
-		for (StatementSlot s : new ActionIterator(pipe)) {
+		for (StatementSlot s : station.getActiveActions()) {
 			if (actionClass.isAssignableFrom(s.statement.getClass())) {
 				StatementParameterStackFilter param = new StatementParameterStackFilter(s.parameters);
 
@@ -125,9 +121,8 @@ public class ActionRobotFilter extends BCStatement implements IActionInternal {
 
 	public static boolean canInteractWithFluid(DockingStation station, IFluidFilter filter, Class<?> actionClass) {
 		boolean actionFound = false;
-		IPipe pipe = station.getPipe().getPipe();
 
-		for (StatementSlot s : new ActionIterator(pipe)) {
+		for (StatementSlot s : station.getActiveActions()) {
 			if (actionClass.isAssignableFrom(s.statement.getClass())) {
 				StatementParameterStackFilter param = new StatementParameterStackFilter(s.parameters);
 

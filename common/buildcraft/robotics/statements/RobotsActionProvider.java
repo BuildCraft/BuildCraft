@@ -13,23 +13,19 @@ import java.util.LinkedList;
 import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockWorkbench;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityFurnace;
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftRobotics;
 import buildcraft.api.robots.DockingStation;
-import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IActionProvider;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.transport.IPipeTile;
+import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.robotics.RobotUtils;
 import buildcraft.silicon.TileAssemblyTable;
-import buildcraft.transport.PipeTransportFluids;
-import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 
 public class RobotsActionProvider implements IActionProvider {
@@ -38,12 +34,14 @@ public class RobotsActionProvider implements IActionProvider {
 	public Collection<IActionInternal> getInternalActions(IStatementContainer container) {
 		LinkedList<IActionInternal> result = new LinkedList<IActionInternal>();
 		TileEntity tile = container.getTile();
-		
+
 		if (!(tile instanceof IPipeTile)) {
 			return result;
 		}
 
-		List<DockingStation> stations = RobotUtils.getStations(tile);
+		IPipeTile pipeTile = (IPipeTile) tile;
+
+		List<DockingStation> stations = RobotUtils.getStations(pipeTile);
 
 		if (stations.size() == 0) {
 			return result;
@@ -58,32 +56,32 @@ public class RobotsActionProvider implements IActionProvider {
 		result.add(BuildCraftRobotics.actionStationForbidRobot);
 		result.add(BuildCraftRobotics.actionStationForceRobot);
 
-		if (((TileGenericPipe) tile).pipe.transport instanceof PipeTransportItems) {
+		if (pipeTile.getPipeType() == PipeType.ITEM) {
 			result.add(BuildCraftRobotics.actionStationRequestItems);
 			result.add(BuildCraftRobotics.actionStationAcceptItems);
 		}
 
-		if (((TileGenericPipe) tile).pipe.transport instanceof PipeTransportFluids) {
+		if (pipeTile.getPipeType() == PipeType.FLUID) {
 			result.add(BuildCraftRobotics.actionStationAcceptFluids);
 		}
 
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			TileEntity sideTile = ((TileGenericPipe) tile).getTile(dir);
-			Block sideBlock = ((TileGenericPipe) tile).getBlock(dir);
+		for (DockingStation station : stations) {
+			TileEntity sideTile = ((TileGenericPipe) tile).getTile(station.side);
+			Block sideBlock = ((TileGenericPipe) tile).getBlock(station.side);
 
 			if (sideTile instanceof IPipeTile) {
 				continue;
 			}
-			
-			if (sideTile instanceof IInventory) {
+
+			if (station.getItemInput() != null) {
 				result.add(BuildCraftRobotics.actionStationProvideItems);
 			}
 
-			if (sideTile instanceof IFluidHandler) {
+			if (station.getFluidInput() != null) {
 				result.add(BuildCraftRobotics.actionStationProvideFluids);
 			}
 
-			if (sideTile instanceof IRequestProvider) {
+			if (station.getRequestProvider() != null) {
 				result.add(BuildCraftRobotics.actionStationMachineRequestItems);
 			}
 

@@ -9,20 +9,13 @@
 package buildcraft.robotics.ai;
 
 import net.minecraft.item.ItemStack;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.robots.AIRobot;
-import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.robots.StackRequest;
-import buildcraft.api.statements.StatementSlot;
-import buildcraft.api.transport.IPipe;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.filters.ArrayStackOrListFilter;
-import buildcraft.robotics.IStationFilter;
-import buildcraft.robotics.statements.ActionStationRequestItemsMachine;
-import buildcraft.transport.gates.ActionIterator;
 
 public class AIRobotDeliverRequested extends AIRobot {
 
@@ -84,31 +77,5 @@ public class AIRobotDeliverRequested extends AIRobot {
 	@Override
 	public boolean success() {
 		return delivered;
-	}
-
-	private class StationProviderFilter implements IStationFilter {
-
-		@Override
-		public boolean matches(DockingStation station) {
-			boolean actionFound = false;
-
-			IPipe pipe = station.getPipe().getPipe();
-
-			if (!station.index().nextTo(new BlockIndex(requested.requester))) {
-				return false;
-			}
-
-			for (StatementSlot s : new ActionIterator(pipe)) {
-				if (s.statement instanceof ActionStationRequestItemsMachine) {
-					actionFound = true;
-				}
-			}
-
-			if (!actionFound) {
-				return false;
-			}
-
-			return true;
-		}
 	}
 }

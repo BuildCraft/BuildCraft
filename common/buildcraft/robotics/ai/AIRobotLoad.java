@@ -10,7 +10,6 @@ package buildcraft.robotics.ai;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.robots.AIRobot;
@@ -52,59 +51,62 @@ public class AIRobotLoad extends AIRobot {
 		waitedCycles++;
 
 		if (waitedCycles > 40) {
-			doLoad();
+			setSuccess(load(robot, robot.getDockingStation(), filter, quantity, true));
 			terminate();
 		}
 	}
 
-	private void doLoad() {
-		if (robot.getDockingStation() != null) {
-			DockingStation station = (DockingStation) robot.getDockingStation();
+	public static boolean load(EntityRobotBase robot, DockingStation station, IStackFilter filter,
+			int quantity, boolean doLoad) {
+		if (station == null) {
+			return false;
+		}
 
-			int loaded = 0;
+		int loaded = 0;
 
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX,
-						station.y()
-								+ dir.offsetY, station.z() + dir.offsetZ);
+		IInventory tileInventory = station.getItemInput();
+		if (tileInventory == null) {
+			return false;
+		}
 
-				if (nearbyTile != null && nearbyTile instanceof IInventory) {
-					IInventory tileInventory = (IInventory) nearbyTile;
-					ITransactor robotTransactor = Transactor.getTransactorFor(robot);
+		for (IInvSlot slot : InventoryIterator.getIterable(tileInventory)) {
+			ItemStack stack = slot.getStackInSlot();
 
-					for (IInvSlot slot : InventoryIterator.getIterable(tileInventory, dir.getOpposite())) {
-						ItemStack stack = slot.getStackInSlot();
+			if (stack == null
+					|| !filter.matches(stack)
+					|| !ActionRobotFilter.canInteractWithItem(station, filter,
+							ActionStationProvideItems.class)) {
+				continue;
+			}
 
-						if (stack != null) {
-							if (ActionRobotFilter.canInteractWithItem(station, filter, ActionStationProvideItems.class)
-									&& filter.matches(stack)) {
+			ITransactor robotTransactor = Transactor.getTransactorFor(robot);
 
-								ITransactor t = Transactor.getTransactorFor(robot);
+			if (quantity == ANY_QUANTITY) {
+				ItemStack added = robotTransactor.add(slot.getStackInSlot(),
+						ForgeDirection.UNKNOWN, doLoad);
+				if (doLoad) {
+					slot.decreaseStackInSlot(added.stackSize);
+				}
+				return added.stackSize > 0;
+			} else {
+				ItemStack toAdd = slot.getStackInSlot().copy();
 
-								if (quantity == ANY_QUANTITY) {
-									ItemStack added = t.add(slot.getStackInSlot(), ForgeDirection.UNKNOWN, true);
-									slot.decreaseStackInSlot(added.stackSize);
-								} else {
-									ItemStack toAdd = slot.getStackInSlot().copy();
+				if (toAdd.stackSize > quantity - loaded) {
+					toAdd.stackSize = quantity - loaded;
+				}
 
-									if (toAdd.stackSize > quantity - loaded) {
-										toAdd.stackSize = quantity - loaded;
-									}
+				ItemStack added = robotTransactor.add(toAdd, ForgeDirection.UNKNOWN, doLoad);
+				if (doLoad) {
+					slot.decreaseStackInSlot(added.stackSize);
+				}
+				loaded += added.stackSize;
 
-									ItemStack added = t.add(toAdd, ForgeDirection.UNKNOWN, true);
-									slot.decreaseStackInSlot(added.stackSize);
-									loaded += added.stackSize;
-
-									if (quantity - loaded <= 0) {
-										return;
-									}
-								}
-							}
-						}
-					}
+				if (quantity - loaded <= 0) {
+					return true;
 				}
 			}
 		}
+		return false;
 	}
 
 	@Override

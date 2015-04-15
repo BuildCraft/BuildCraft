@@ -30,7 +30,7 @@ public class AIRobotGotoStationAndLoad extends AIRobot {
 
 	@Override
 	public void start() {
-		startDelegateAI(new AIRobotGotoStationToLoad(robot, filter));
+		startDelegateAI(new AIRobotGotoStationToLoad(robot, filter, quantity));
 	}
 
 	@Override
@@ -42,6 +42,9 @@ public class AIRobotGotoStationAndLoad extends AIRobot {
 				setSuccess(false);
 				terminate();
 			}
+		} else if (ai instanceof AIRobotGotoStationToLoad) {
+			setSuccess(ai.success());
+			terminate();
 		}
 	}
 }

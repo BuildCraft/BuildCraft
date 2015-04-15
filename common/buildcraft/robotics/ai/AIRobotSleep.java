@@ -9,11 +9,9 @@
 package buildcraft.robotics.ai;
 
 import buildcraft.api.robots.AIRobot;
-import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.robotics.statements.ActionRobotWakeUp;
-import buildcraft.transport.gates.ActionIterator;
 
 public class AIRobotSleep extends AIRobot {
 
@@ -26,7 +24,7 @@ public class AIRobotSleep extends AIRobot {
 
 	@Override
 	public void preempt(AIRobot ai) {
-		for (StatementSlot s : new ActionIterator(((DockingStation) robot.getLinkedStation()).getPipe().getPipe())) {
+		for (StatementSlot s :robot.getLinkedStation().getActiveActions()) {
 			if (s.statement instanceof ActionRobotWakeUp) {
 				terminate();
 			}

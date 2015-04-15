@@ -8,18 +8,10 @@
  */
 package buildcraft.robotics.ai;
 
-import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.api.core.IInvSlot;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.api.statements.StatementSlot;
-import buildcraft.api.transport.IPipe;
-import buildcraft.core.lib.inventory.InventoryIterator;
-import buildcraft.robotics.EntityRobot;
 import buildcraft.robotics.IStationFilter;
-import buildcraft.robotics.statements.ActionStationInputItems;
-import buildcraft.transport.gates.ActionIterator;
 
 public class AIRobotGotoStationToUnload extends AIRobot {
 
@@ -43,23 +35,7 @@ public class AIRobotGotoStationToUnload extends AIRobot {
 	private class StationInventory implements IStationFilter {
 		@Override
 		public boolean matches(DockingStation station) {
-			IPipe pipe = station.getPipe().getPipe();
-
-			for (IInvSlot robotSlot : InventoryIterator.getIterable(robot, ForgeDirection.UNKNOWN)) {
-				if (robotSlot.getStackInSlot() == null) {
-					continue;
-				}
-
-				for (StatementSlot s : new ActionIterator(pipe)) {
-					if (s.statement instanceof ActionStationInputItems) {
-						if (((ActionStationInputItems) s.statement).insert(station, (EntityRobot) robot, s, robotSlot, false)) {
-							return true;
-						}
-					}
-				}
-			}
-
-			return false;
+			return AIRobotUnload.unload(robot, station, false);
 		}
 	}
 

@@ -24,6 +24,8 @@ public abstract class RobotManager {
 		resourceIdNames = new HashMap<Class<? extends ResourceId>, String>();
 		resourceIdByNames = new HashMap<String, Class<? extends ResourceId>>();
 		resourceIdLegacyClassNames = new HashMap<String, Class<? extends ResourceId>>();
+		dockingStationNames = new HashMap<Class<? extends DockingStation>, String>();
+		dockingStationByNames = new HashMap<String, Class<? extends DockingStation>>();
 
 		registerResourceId(ResourceIdBlock.class, "resourceIdBlock", "buildcraft.core.robots.ResourceIdBlock");
 		registerResourceId(ResourceIdRequest.class, "resourceIdRequest", "buildcraft.core.robots.ResourceIdRequest");
@@ -36,6 +38,9 @@ public abstract class RobotManager {
 	private static Map<Class<? extends ResourceId>, String> resourceIdNames;
 	private static Map<String, Class<? extends ResourceId>> resourceIdByNames;
 	private static Map<String, Class<? extends ResourceId>> resourceIdLegacyClassNames;
+
+	private static Map<Class<? extends DockingStation>, String> dockingStationNames;
+	private static Map<String, Class<? extends DockingStation>> dockingStationByNames;
 
 	public static void registerAIRobot(Class<? extends AIRobot> aiRobot, String name) {
 		registerAIRobot(aiRobot, name, null);
@@ -87,5 +92,18 @@ public abstract class RobotManager {
 
 	public static Class<?> getResourceIdByLegacyClassName(String resourceIdLegacyClassName) {
 		return resourceIdLegacyClassNames.get(resourceIdLegacyClassName);
+	}
+
+	public static void registerDockingStation(Class<? extends DockingStation> dockingStation, String name) {
+		dockingStationByNames.put(name, dockingStation);
+		dockingStationNames.put(dockingStation, name);
+	}
+
+	public static Class<? extends DockingStation> getDockingStationByName(String dockingStationTypeName) {
+		return dockingStationByNames.get(dockingStationTypeName);
+	}
+
+	public static String getDockingStationName(Class<? extends DockingStation> dockingStation) {
+		return dockingStationNames.get(dockingStation);
 	}
 }

@@ -53,7 +53,6 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.RobotManager;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.tiles.IDebuggable;
-import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ItemWrench;
 import buildcraft.core.LaserData;
@@ -68,8 +67,6 @@ import buildcraft.robotics.ai.AIRobotShutdown;
 import buildcraft.robotics.ai.AIRobotSleep;
 import buildcraft.robotics.statements.ActionRobotWorkInArea;
 import buildcraft.robotics.statements.ActionRobotWorkInArea.AreaType;
-import buildcraft.transport.Pipe;
-import buildcraft.transport.gates.ActionIterator;
 
 public class EntityRobot extends EntityRobotBase implements
 		IEntityAdditionalSpawnData, IInventory, IFluidHandler, ICommandReceiver, IDebuggable {
@@ -315,8 +312,7 @@ public class EntityRobot extends EntityRobotBase implements
 						currentDockingStationSide);
 			}
 
-			if (linkedDockingStation == null ||
-					((Pipe) linkedDockingStation.getPipe().getPipe()).isInitialized()) {
+			if (linkedDockingStation == null || linkedDockingStation.isInitialized()) {
 				this.worldObj.theProfiler.startSection("bcRobotAIMainCycle");
 				mainAI.cycle();
 				this.worldObj.theProfiler.endSection();
@@ -330,16 +326,6 @@ public class EntityRobot extends EntityRobotBase implements
 
 		super.onEntityUpdate();
 		this.worldObj.theProfiler.endSection();
-	}
-
-	private boolean linkedToChargeStation() {
-		if (currentDockingStation == null) {
-			return false;
-		}
-		if (currentDockingStation.getPipe().getPipeType() != IPipeTile.PipeType.POWER) {
-			return false;
-		}
-		return true;
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -358,7 +344,7 @@ public class EntityRobot extends EntityRobotBase implements
                 worldObj,
                 posX + steamDx * 0.25, posY + steamDy * 0.25, posZ + steamDz * 0.25,
                 steamDx * 0.05, steamDy * 0.05, steamDz * 0.05,
-                energySpendPerCycle * 0.075F < 1 ? 1 : energySpendPerCycle * 0.075F));        
+                energySpendPerCycle * 0.075F < 1 ? 1 : energySpendPerCycle * 0.075F));
 	}
 
 	public void setRegularBoundingBox() {
@@ -586,7 +572,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public void dock(DockingStation station) {
-		currentDockingStation = (DockingStation) station;
+		currentDockingStation = station;
 
 		setSteamDirection(
 				currentDockingStation.side.offsetX,
@@ -901,8 +887,6 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	public void attackTargetEntityWithCurrentItem(Entity par1Entity) {
-		ItemStack stack = itemInUse;
-
 		if (par1Entity.canAttackWithItem()) {
 			if (!par1Entity.hitByEntity(this)) {
 				this.setLastAttacker(par1Entity);
@@ -915,7 +899,6 @@ public class EntityRobot extends EntityRobotBase implements
 				if (itemstack != null && object instanceof EntityLivingBase) {
 					itemstack.getItem().hitEntity(itemstack, (EntityLivingBase) object, this);
 				}
-
 			}
 		}
 	}
@@ -935,7 +918,7 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	private IZone getZone(AreaType areaType) {
-		for (StatementSlot s : new ActionIterator(linkedDockingStation.getPipe().getPipe())) {
+		for (StatementSlot s : linkedDockingStation.getActiveActions()) {
 			if (s.statement instanceof ActionRobotWorkInArea
 					&& ((ActionRobotWorkInArea) s.statement).getAreaType() == areaType) {
 				IZone zone = ActionRobotWorkInArea.getArea(s);
