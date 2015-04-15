@@ -142,7 +142,7 @@ gate.action.robot.work_in_area=Work in Area
 gate.action.robot.load_unload_area=Load/Unload in Area
 gate.action.robot.wakeup=Wake Up
 gate.action.station.forbid_robot=Forbid Robot
-gate.action.station.forbid_robot=Force Robot
+gate.action.station.force_robot=Force Robot
 gate.action.robot.filter=Filter
 gate.action.robot.filter_tool=Filter Tool
 
