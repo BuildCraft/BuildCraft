@@ -73,11 +73,11 @@ public class RobotsActionProvider implements IActionProvider {
 				continue;
 			}
 
-			if (station.getItemOutput() != null) {
+			if (station.getItemInput() != null) {
 				result.add(BuildCraftRobotics.actionStationProvideItems);
 			}
 
-			if (station.getFluidOutput() != null) {
+			if (station.getFluidInput() != null) {
 				result.add(BuildCraftRobotics.actionStationProvideFluids);
 			}
 

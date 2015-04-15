@@ -14,11 +14,12 @@ import buildcraft.api.robots.RobotManager;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.transport.IInjectable;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.core.lib.inventory.InventoryConcatenator;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.gates.ActionIterator;
+import buildcraft.transport.pipes.PipeFluidsWood;
+import buildcraft.transport.pipes.PipeItemsWood;
 
 public class DockingStationPipe extends DockingStation {
 
@@ -85,30 +86,45 @@ public class DockingStationPipe extends DockingStation {
 
 	@Override
 	public IInventory getItemInput() {
-		InventoryConcatenator inv = InventoryConcatenator.make();
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			TileEntity nearbyTile = getPipe().getWorld().getTileEntity(x() + dir.offsetX,
-					y() + dir.offsetY, z() + dir.offsetZ);
-			if (nearbyTile instanceof IInventory) {
-				inv = inv.add((IInventory) nearbyTile);
-			}
-		}
-		if (inv.getSizeInventory() > 0) {
-			return inv;
-		} else {
+		if (getPipe().getPipeType() != IPipeTile.PipeType.ITEM) {
 			return null;
 		}
+
+		if (!(getPipe().getPipe() instanceof PipeItemsWood)) {
+			return null;
+		}
+
+		int meta = ((TileEntity) getPipe()).getBlockMetadata();
+		ForgeDirection dir = ForgeDirection.getOrientation(meta);
+
+		TileEntity connectedTile = getPipe().getWorld().getTileEntity(x() + dir.offsetX,
+				y() + dir.offsetY, z() + dir.offsetZ);
+		if (connectedTile instanceof IInventory) {
+			return (IInventory) connectedTile;
+		}
+
+		return null;
 	}
 
 	@Override
 	public IFluidHandler getFluidInput() {
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-			TileEntity nearbyTile = getPipe().getWorld().getTileEntity(x() + dir.offsetX,
-					y() + dir.offsetY, z() + dir.offsetZ);
-			if (nearbyTile instanceof IFluidHandler) {
-				return (IFluidHandler) nearbyTile;
-			}
+		if (getPipe().getPipeType() != IPipeTile.PipeType.FLUID) {
+			return null;
 		}
+
+		if (!(getPipe().getPipe() instanceof PipeFluidsWood)) {
+			return null;
+		}
+
+		int meta = ((TileEntity) getPipe()).getBlockMetadata();
+		ForgeDirection dir = ForgeDirection.getOrientation(meta);
+
+		TileEntity connectedTile = getPipe().getWorld().getTileEntity(x() + dir.offsetX,
+				y() + dir.offsetY, z() + dir.offsetZ);
+		if (connectedTile instanceof IFluidHandler) {
+			return (IFluidHandler) connectedTile;
+		}
+
 		return null;
 	}
 
@@ -118,7 +134,7 @@ public class DockingStationPipe extends DockingStation {
 			return null;
 		}
 
-		return (IFluidHandler) getPipe();
+		return (IFluidHandler) ((Pipe) getPipe().getPipe()).transport;
 	}
 
 	@Override

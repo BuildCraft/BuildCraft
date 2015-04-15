@@ -35,7 +35,6 @@ public class AIRobotUnloadFluids extends AIRobot {
 			if (unload(robot, robot.getDockingStation(), true) == 0) {
 				terminate();
 			} else {
-				waitedCycles = 0;
 				setSuccess(true);
 			}
 		}
