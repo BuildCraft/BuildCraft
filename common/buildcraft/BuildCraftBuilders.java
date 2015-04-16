@@ -349,6 +349,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 				e.printStackTrace();
 			}
 		}
+
+		// Refresh the databases once all the library type handlers are registered
+		serverDB.refresh();
+		clientDB.refresh();
 	}
 
 	@Mod.EventHandler
