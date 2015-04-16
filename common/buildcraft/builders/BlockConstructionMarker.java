@@ -80,9 +80,10 @@ public class BlockConstructionMarker extends BlockMarker {
 		} else if (equipped instanceof ItemConstructionMarker) {
 			if (ItemConstructionMarker.linkStarted(entityplayer.getCurrentEquippedItem())) {
 				ItemConstructionMarker.link(entityplayer.getCurrentEquippedItem(), world, x, y, z);
+				return true;
 			}
 		}
 
-		return true;
+		return false;
 	}
 }

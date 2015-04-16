@@ -123,6 +123,10 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
 		}
 
 		LibraryId id = getId(stack);
+		if (id == null) {
+			return null;
+		}
+
 		NBTTagCompound nbt = BuildCraftBuilders.serverDB.load(id);
 		BlueprintBase base;
 		if (((IBlueprintItem) stack.getItem()).getType(stack) == IBlueprintItem.Type.TEMPLATE) {

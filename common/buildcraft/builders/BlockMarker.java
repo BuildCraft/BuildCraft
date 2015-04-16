@@ -97,7 +97,7 @@ public class BlockMarker extends BlockBuildCraft {
 		if (tile instanceof TileMarker) {
 			((TileMarker) tile).tryConnection();
 		}
-		return true;
+		return false;
 	}
 
 	@Override
