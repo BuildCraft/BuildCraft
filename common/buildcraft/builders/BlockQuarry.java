@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.factory;
+package buildcraft.builders;
 
 import java.util.ArrayList;
 import net.minecraft.block.Block;
@@ -19,8 +19,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import buildcraft.BuildCraftFactory;
+import buildcraft.BuildCraftBuilders;
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.BlockLEDHatchBase;
 
 public class BlockQuarry extends BlockLEDHatchBase {
 	public BlockQuarry() {
@@ -55,7 +56,7 @@ public class BlockQuarry extends BlockLEDHatchBase {
 
 		Block block = world.getBlock(i, j, k);
 
-		if (block != BuildCraftFactory.frameBlock) {
+		if (block != BuildCraftBuilders.frameBlock) {
 			return;
 		}
 
@@ -94,7 +95,7 @@ public class BlockQuarry extends BlockLEDHatchBase {
 
 	@Override
 	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
-		if (BuildCraftFactory.quarryOneTimeUse) {
+		if (BuildCraftBuilders.quarryOneTimeUse) {
 			return new ArrayList<ItemStack>();
 		}
 		return super.getDrops(world, x, y, z, metadata, fortune);
@@ -106,7 +107,7 @@ public class BlockQuarry extends BlockLEDHatchBase {
 			return;
 		}
 
-		BuildCraftFactory.frameBlock.removeNeighboringFrames(world, i, j, k);
+		BuildCraftBuilders.frameBlock.removeNeighboringFrames(world, i, j, k);
 
 		super.breakBlock(world, i, j, k, block, metadata);
 	}

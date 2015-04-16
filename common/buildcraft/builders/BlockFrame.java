@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.factory;
+package buildcraft.builders;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +45,7 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 		removeNeighboringFrames(world, x, y, z);
 	}
 
-	protected void removeNeighboringFrames(World world, int x, int y, int z) {
+	public void removeNeighboringFrames(World world, int x, int y, int z) {
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 			Block nBlock = world.getBlock(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
 			if (nBlock == this) {
@@ -206,6 +206,6 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 
 	@Override
 	public void registerBlockIcons(IIconRegister register) {
-		blockIcon = register.registerIcon("buildcraftfactory:frameBlock/default");
+		blockIcon = register.registerIcon("buildcraftbuilders:frameBlock/default");
 	}
 }

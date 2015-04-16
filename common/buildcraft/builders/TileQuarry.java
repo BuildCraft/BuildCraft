@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.factory;
+package buildcraft.builders;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -29,8 +29,9 @@ import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.ForgeDirection;
+import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftFactory;
+import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IAreaProvider;
@@ -146,7 +147,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	}
 
 	public boolean areChunksLoaded() {
-		if (BuildCraftFactory.quarryLoadsChunks) {
+		if (BuildCraftBuilders.quarryLoadsChunks) {
 			// Small optimization
 			return true;
 		}
@@ -333,7 +334,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		Integer[][] columnHeights = new Integer[builder.blueprint.sizeX - 2][builder.blueprint.sizeZ - 2];
 		boolean[][] blockedColumns = new boolean[builder.blueprint.sizeX - 2][builder.blueprint.sizeZ - 2];
 
-		for (int searchY = yCoord + 3; searchY >= Math.max(yCoord - BuildCraftFactory.miningDepth, 0); --searchY) {
+		for (int searchY = yCoord + 3; searchY >= yCoord; --searchY) {
 			int startX, endX, incX;
 
 			if (searchY % 2 == 0) {
@@ -517,8 +518,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	private void setBoundaries(boolean useDefaultI) {
 		boolean useDefault = useDefaultI;
 
-		if (BuildCraftFactory.quarryLoadsChunks && chunkTicket == null) {
-			chunkTicket = ForgeChunkManager.requestTicket(BuildCraftFactory.instance, worldObj, Type.NORMAL);
+		if (BuildCraftBuilders.quarryLoadsChunks && chunkTicket == null) {
+			chunkTicket = ForgeChunkManager.requestTicket(BuildCraftBuilders.instance, worldObj, Type.NORMAL);
 		}
 		if (chunkTicket != null) {
 			chunkTicket.getModData().setInteger("quarryX", xCoord);
@@ -606,7 +607,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 	private void initializeBlueprintBuilder() {
 		Blueprint bpt = ((FillerPattern) FillerManager.registry.getPattern("buildcraft:frame"))
-				.getBlueprint(box, worldObj, new IStatementParameter[0], BuildCraftFactory.frameBlock, 0);
+				.getBlueprint(box, worldObj, new IStatementParameter[0], BuildCraftBuilders.frameBlock, 0);
 
 		if (bpt != null) {
 			builder = new BptBuilderBlueprint(bpt, worldObj, box.xMin, yCoord, box.zMin);
@@ -697,7 +698,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	@Override
 	public ItemStack getStackInSlot(int i) {
 		if (frameProducer) {
-			return new ItemStack(BuildCraftFactory.frameBlock);
+			return new ItemStack(BuildCraftBuilders.frameBlock);
 		} else {
 			return null;
 		}
@@ -706,7 +707,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	@Override
 	public ItemStack decrStackSize(int i, int j) {
 		if (frameProducer) {
-			return new ItemStack(BuildCraftFactory.frameBlock, j);
+			return new ItemStack(BuildCraftBuilders.frameBlock, j);
 		} else {
 			return null;
 		}

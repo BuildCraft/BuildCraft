@@ -75,9 +75,13 @@ public class ConfigManager implements IModGuiFactory {
 			parent.setLanguageKey("config." + parent.getQualifiedName());
 			parent = parent.parent;
 		}
-
-		Property p = create(suffix, property);
-		c.put(suffix, p);
+		Property p;
+		if (c.get(suffix) != null) {
+			p = c.get(suffix);
+		} else {
+			p = create(suffix, property);
+			c.put(suffix, p);
+		}
 		p.comment = comment;
 		RestartRequirement r = restartRequirement;
 		p.setLanguageKey("config." + name);

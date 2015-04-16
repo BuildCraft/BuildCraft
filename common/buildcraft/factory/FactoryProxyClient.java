@@ -17,7 +17,6 @@ import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.lib.render.RenderVoid;
-import buildcraft.core.render.RenderBuilder;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingEntityBlocks.EntityRenderIndex;
 import buildcraft.factory.gui.GuiAutoCrafting;
@@ -26,10 +25,7 @@ import buildcraft.factory.render.RenderRefinery;
 import buildcraft.factory.render.RenderTank;
 
 public class FactoryProxyClient extends FactoryProxy {
-
 	public static IIcon pumpTexture;
-	public static IIcon drillTexture;
-	public static IIcon drillHeadTexture;
 
 	@Override
 	public void initializeTileEntities() {
@@ -48,13 +44,10 @@ public class FactoryProxyClient extends FactoryProxy {
 			ClientRegistry.bindTileEntitySpecialRenderer(TileHopper.class, new RenderHopper());
 			RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftFactory.hopperBlock, 0), new RenderHopper());
 		}
-
-		ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderBuilder());
 	}
 
 	@Override
 	public void initializeEntityRenders() {
-		RenderingRegistry.registerEntityRenderingHandler(EntityMechanicalArm.class, new RenderVoid());
 	}
 
 	@Override
@@ -73,20 +66,6 @@ public class FactoryProxyClient extends FactoryProxy {
 	public EntityBlock newPumpTube(World w) {
 		EntityBlock eb = super.newPumpTube(w);
 		eb.texture = pumpTexture;
-		return eb;
-	}
-
-	@Override
-	public EntityBlock newDrill(World w, double i, double j, double k, double l, double d, double e) {
-		EntityBlock eb = super.newDrill(w, i, j, k, l, d, e);
-		eb.texture = drillTexture;
-		return eb;
-	}
-
-	@Override
-	public EntityBlock newDrillHead(World w, double i, double j, double k, double l, double d, double e) {
-		EntityBlock eb = super.newDrillHead(w, i, j, k, l, d, e);
-		eb.texture = drillHeadTexture;
 		return eb;
 	}
 }

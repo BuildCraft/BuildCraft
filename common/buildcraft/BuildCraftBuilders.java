@@ -12,6 +12,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.List;
+import com.google.common.collect.Lists;
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.item.EntityMinecartChest;
 import net.minecraft.entity.item.EntityMinecartEmpty;
@@ -25,6 +29,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.stats.Achievement;
+import net.minecraft.world.World;
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -40,6 +45,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
 import buildcraft.api.blueprints.BlueprintDeployer;
@@ -60,10 +66,13 @@ import buildcraft.builders.BlockBlueprintLibrary;
 import buildcraft.builders.BlockBuilder;
 import buildcraft.builders.BlockConstructionMarker;
 import buildcraft.builders.BlockFiller;
+import buildcraft.builders.BlockFrame;
 import buildcraft.builders.BlockMarker;
 import buildcraft.builders.BlockPathMarker;
+import buildcraft.builders.BlockQuarry;
 import buildcraft.builders.BlueprintServerDatabase;
 import buildcraft.builders.BuilderProxy;
+import buildcraft.builders.BuilderProxyClient;
 import buildcraft.builders.BuildersGuiHandler;
 import buildcraft.builders.EventHandlerBuilders;
 import buildcraft.builders.HeuristicBlockDetection;
@@ -80,6 +89,7 @@ import buildcraft.builders.TileConstructionMarker;
 import buildcraft.builders.TileFiller;
 import buildcraft.builders.TileMarker;
 import buildcraft.builders.TilePathMarker;
+import buildcraft.builders.TileQuarry;
 import buildcraft.builders.blueprints.RealBlueprintDeployer;
 import buildcraft.builders.schematics.SchematicAir;
 import buildcraft.builders.schematics.SchematicBed;
@@ -93,6 +103,7 @@ import buildcraft.builders.schematics.SchematicFactoryEntity;
 import buildcraft.builders.schematics.SchematicFactoryMask;
 import buildcraft.builders.schematics.SchematicFarmland;
 import buildcraft.builders.schematics.SchematicFire;
+import buildcraft.core.builders.schematics.SchematicFree;
 import buildcraft.builders.schematics.SchematicGlassPane;
 import buildcraft.builders.schematics.SchematicGravel;
 import buildcraft.builders.schematics.SchematicHanging;
@@ -155,6 +166,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public static BlockArchitect architectBlock;
 	public static BlockBlueprintLibrary libraryBlock;
 	public static BlockUrbanist urbanistBlock;
+	public static BlockQuarry quarryBlock;
+	public static BlockFrame frameBlock;
 	public static ItemBlueprintTemplate templateItem;
 	public static ItemBlueprintStandard blueprintItem;
 
@@ -163,6 +176,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public static Achievement blueprintAchievement;
 	public static Achievement builderAchievement;
 	public static Achievement templateAchievement;
+	public static Achievement chunkDestroyerAchievement;
 
 	public static BlueprintServerDatabase serverDB;
 	public static LibraryDatabase clientDB;
@@ -170,7 +184,43 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public static boolean debugPrintSchematicList = false;
 	public static boolean dropBrokenBlocks = false;
 
+	public static boolean quarryLoadsChunks = true;
+	public static boolean quarryOneTimeUse = false;
+
 	private String blueprintServerDir, blueprintClientDir;
+
+	public class QuarryChunkloadCallback implements ForgeChunkManager.OrderedLoadingCallback {
+		@Override
+		public void ticketsLoaded(List<ForgeChunkManager.Ticket> tickets, World world) {
+			for (ForgeChunkManager.Ticket ticket : tickets) {
+				int quarryX = ticket.getModData().getInteger("quarryX");
+				int quarryY = ticket.getModData().getInteger("quarryY");
+				int quarryZ = ticket.getModData().getInteger("quarryZ");
+
+				Block block = world.getBlock(quarryX, quarryY, quarryZ);
+				if (block == quarryBlock) {
+					TileQuarry tq = (TileQuarry) world.getTileEntity(quarryX, quarryY, quarryZ);
+					tq.forceChunkLoading(ticket);
+				}
+			}
+		}
+
+		@Override
+		public List<ForgeChunkManager.Ticket> ticketsLoaded(List<ForgeChunkManager.Ticket> tickets, World world, int maxTicketCount) {
+			List<ForgeChunkManager.Ticket> validTickets = Lists.newArrayList();
+			for (ForgeChunkManager.Ticket ticket : tickets) {
+				int quarryX = ticket.getModData().getInteger("quarryX");
+				int quarryY = ticket.getModData().getInteger("quarryY");
+				int quarryZ = ticket.getModData().getInteger("quarryZ");
+
+				Block block = world.getBlock(quarryX, quarryY, quarryZ);
+				if (block == quarryBlock) {
+					validTickets.add(ticket);
+				}
+			}
+			return validTickets;
+		}
+	}
 
 	@Mod.EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
@@ -211,6 +261,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 			reloadConfig(ConfigManager.RestartRequirement.NONE);
 		} else {
+			quarryOneTimeUse = BuildCraftCore.mainConfigManager.get("general.quarry.oneTimeUse").getBoolean();
+			quarryLoadsChunks = BuildCraftCore.mainConfigManager.get("general.quarry.doChunkLoading").getBoolean();
+
 			blueprintClientDir = BuildCraftCore.mainConfigManager.get("blueprints.clientDatabaseDirectory").getString();
 			blueprintClientDir = JavaTools.stripSurroundingQuotes(replacePathVariables(blueprintClientDir));
 			clientDB.init(new String[] {
@@ -281,6 +334,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		HeuristicBlockDetection.start();
+		ForgeChunkManager.setForcedChunkLoadingCallback(instance, new QuarryChunkloadCallback());
 
 		if (debugPrintSchematicList) {
 			try {
@@ -456,6 +510,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(markerBlock, SchematicIgnore.class);
 		schemes.registerSchematicBlock(pathMarkerBlock, SchematicIgnore.class);
 		schemes.registerSchematicBlock(constructionMarkerBlock, SchematicIgnore.class);
+		schemes.registerSchematicBlock(frameBlock, SchematicFree.class);
 
 		// Factories required to save entities in world
 
@@ -474,6 +529,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		blueprintAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.blueprint", "blueprintAchievement", 11, 4, BuildCraftBuilders.blueprintItem, architectAchievement));
 		templateAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.template", "templateAchievement", 13, 4, BuildCraftBuilders.templateItem, blueprintAchievement));
 		libraryAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.blueprintLibrary", "blueprintLibraryAchievement", 15, 2, BuildCraftBuilders.libraryBlock, builderAchievement));
+		chunkDestroyerAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.chunkDestroyer", "chunkDestroyerAchievement", 9, 2, quarryBlock, BuildCraftCore.diamondGearAchievement));
 
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
@@ -492,6 +548,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		blueprintItem.setUnlocalizedName("blueprintItem");
 		CoreProxy.proxy.registerItem(blueprintItem);
 
+		quarryBlock = (BlockQuarry) CompatHooks.INSTANCE.getBlock(BlockQuarry.class);
+		CoreProxy.proxy.registerBlock(quarryBlock.setBlockName("machineBlock"));
+
 		markerBlock = (BlockMarker) CompatHooks.INSTANCE.getBlock(BlockMarker.class);
 		CoreProxy.proxy.registerBlock(markerBlock.setBlockName("markerBlock"));
 
@@ -504,6 +563,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		fillerBlock = (BlockFiller) CompatHooks.INSTANCE.getBlock(BlockFiller.class);
 		CoreProxy.proxy.registerBlock(fillerBlock.setBlockName("fillerBlock"));
+
+		frameBlock = new BlockFrame();
+		CoreProxy.proxy.registerBlock(frameBlock.setBlockName("frameBlock"));
 
 		builderBlock = (BlockBuilder) CompatHooks.INSTANCE.getBlock(BlockBuilder.class);
 		CoreProxy.proxy.registerBlock(builderBlock.setBlockName("builderBlock"));
@@ -520,6 +582,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 			CoreProxy.proxy.registerTileEntity(TileUrbanist.class, "net.minecraft.src.builders.TileUrbanist");
 		}
 
+		CoreProxy.proxy.registerTileEntity(TileQuarry.class, "Machine");
 		CoreProxy.proxy.registerTileEntity(TileMarker.class, "Marker");
 		CoreProxy.proxy.registerTileEntity(TileFiller.class, "Filler");
 		CoreProxy.proxy.registerTileEntity(TileBuilder.class, "net.minecraft.src.builders.TileBuilder");
@@ -562,6 +625,17 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	}
 
 	public static void loadRecipes() {
+		CoreProxy.proxy.addCraftingRecipe(
+				new ItemStack(quarryBlock),
+				"ipi",
+				"gig",
+				"dDd",
+				'i', "gearIron",
+				'p', "dustRedstone",
+				'g', "gearGold",
+				'd', "gearDiamond",
+				'D', Items.diamond_pickaxe);
+
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem, 1), "ppp", "pip", "ppp", 'i',
 			"dyeBlack", 'p', Items.paper);
 
@@ -591,7 +665,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 			new ItemStack(blueprintItem, 1));
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), "bbb", "bBb", "bbb", 'b',
-			new ItemStack(blueprintItem), 'B', Blocks.bookshelf);
+				new ItemStack(blueprintItem), 'B', Blocks.bookshelf);
 	}
 
 	@Mod.EventHandler
@@ -611,14 +685,12 @@ public class BuildCraftBuilders extends BuildCraftMod {
 			for (FillerPattern pattern : FillerPattern.patterns.values()) {
 				pattern.registerIcons(evt.map);
 			}
-		}
-	}
 
-	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public void textureHook(TextureStitchEvent.Pre event) {
-		if (event.map.getTextureType() == 1) {
-			UrbanistToolsIconProvider.INSTANCE.registerIcons(event.map);
+			TextureMap terrainTextures = evt.map;
+			BuilderProxyClient.drillTexture = terrainTextures.registerIcon("buildcraftbuilders:machineBlock/drill");
+			BuilderProxyClient.drillHeadTexture = terrainTextures.registerIcon("buildcraftbuilders:machineBlock/drill_head");
+		} else if (evt.map.getTextureType() == 1) {
+			UrbanistToolsIconProvider.INSTANCE.registerIcons(evt.map);
 		}
 	}
 
