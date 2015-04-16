@@ -10,6 +10,7 @@ package buildcraft.api.blueprints;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.apache.logging.log4j.Level;
 
@@ -211,7 +212,7 @@ public class MappingRegistry {
 
 		// Then, look at the nbt compound contained in this nbt (even if it's a
 		// stack) and checks for stacks in it.
-		for (Object keyO : nbt.func_150296_c()) {
+		for (Object keyO : new HashSet(nbt.func_150296_c())) {
 			String key = (String) keyO;
 
 			if (nbt.getTag(key) instanceof NBTTagCompound) {
