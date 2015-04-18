@@ -1,7 +1,5 @@
 package buildcraft.core.tablet;
 
-import java.util.ArrayList;
-import java.util.List;
 import cpw.mods.fml.relauncher.Side;
 import buildcraft.api.tablet.ITablet;
 import buildcraft.api.tablet.TabletBitmap;
@@ -21,7 +19,7 @@ public class TabletProgramMenu extends TabletProgram {
 	}
 
 	public void tick(float time) {
-		t+=time;
+		t += time;
 		if (!init && t > 2 && tablet.getSide() == Side.CLIENT) {
 			TabletBitmap bitmap = new TabletBitmap(244, 306);
 			try {
@@ -30,10 +28,10 @@ public class TabletProgramMenu extends TabletProgram {
 				TabletDrawUtils.drawRect(bitmap, 4, 4, 236, 280, 7);
 				int hxo = (244 - font.getStringWidth("Page 1")) / 2;
 				font.draw(bitmap, "Page 2/4", hxo, 287, 5);
-				int XO = 8;
+				int xo = 8;
 				int y = 8;
-				int W = 228;
-				String[] lines = TabletTextUtils.split(lorem, font, W, false);
+				int w = 228;
+				String[] lines = TabletTextUtils.split(lorem, font, w, false);
 				for (int i = 0; i < lines.length; i++) {
 					String line = lines[i];
 					String[] words = line.split(" ");
@@ -43,9 +41,9 @@ public class TabletProgramMenu extends TabletProgram {
 						for (String s : words) {
 							widthNoSpaces += font.getStringWidth(s);
 						}
-						justifyValue = (W - widthNoSpaces) / (float) (words.length - 1);
+						justifyValue = (w - widthNoSpaces) / (float) (words.length - 1);
 					}
-					float x = XO;
+					float x = xo;
 					for (String s: words) {
 						x += font.draw(bitmap, s, (int) x, y, 7);
 						x += justifyValue;

@@ -29,7 +29,7 @@ public class GuiTablet extends GuiScreen {
 	private final TabletClient tablet;
 	private int guiLeft, guiTop;
 	private long lastDate;
-	private float GL_SCALE = 1.0f;
+	private float glScale = 1.0f;
 	private int buttonState = 1;
 
 	public GuiTablet(EntityPlayer player) {
@@ -59,7 +59,7 @@ public class GuiTablet extends GuiScreen {
 		ScaledResolution currentRes = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
 		mc.gameSettings.guiScale = oldScale;
 
-		GL_SCALE = (float) (currentRes.getScaledWidth_double() / realRes.getScaledWidth_double());
+		glScale = (float) (currentRes.getScaledWidth_double() / realRes.getScaledWidth_double());
 
 		this.guiLeft = (currentRes.getScaledWidth() - X_SIZE) / 2;
 		this.guiTop = (currentRes.getScaledHeight() - Y_SIZE) / 2;
@@ -92,8 +92,8 @@ public class GuiTablet extends GuiScreen {
 
 	@Override
 	public void handleMouseInput() {
-		int x = (int) (Mouse.getEventX() * this.width / this.mc.displayWidth * GL_SCALE);
-		int y = (int) ((this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1) * GL_SCALE);
+		int x = (int) (Mouse.getEventX() * this.width / this.mc.displayWidth * glScale);
+		int y = (int) ((this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1) * glScale);
 		int k = Mouse.getEventButton();
 
 		if (k == 0) {
@@ -124,7 +124,7 @@ public class GuiTablet extends GuiScreen {
 
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		GL11.glPushMatrix();
-		GL11.glScalef(1.0F / GL_SCALE, 1.0F / GL_SCALE, 1.0F / GL_SCALE);
+		GL11.glScalef(1.0F / glScale, 1.0F / glScale, 1.0F / glScale);
 
 		bindTexture(TEXTURE);
 		drawTexturedModalRect(guiLeft, guiTop, 0, 0, X_SIZE, Y_SIZE);

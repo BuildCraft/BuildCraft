@@ -18,8 +18,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
-import buildcraft.core.GuiIds;
 import buildcraft.api.transport.IItemPipe;
+import buildcraft.core.GuiIds;
 import buildcraft.core.lib.block.BlockBuildCraft;
 
 public class BlockHopper extends BlockBuildCraft {

@@ -1,7 +1,6 @@
 package buildcraft.core.tablet.manager;
 
 import java.util.Date;
-import cpw.mods.fml.relauncher.Side;
 import buildcraft.core.tablet.TabletBase;
 
 public class TabletThread implements Runnable {

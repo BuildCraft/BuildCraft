@@ -1,8 +1,5 @@
 package buildcraft.api.tablet;
 
-import net.minecraft.nbt.NBTTagCompound;
-import cpw.mods.fml.relauncher.Side;
-
 public abstract class TabletProgramFactory {
 	/**
 	 * Create an instance of the tablet program specified by this Factory.

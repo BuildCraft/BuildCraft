@@ -24,8 +24,7 @@ public class BCConfigElement<T> extends ConfigElement<T> {
 	}
 
 	@Override
-	public List<IConfigElement> getChildElements()
-	{
+	public List<IConfigElement> getChildElements() {
 		if (!isProp) {
 			List<IConfigElement> elements = new ArrayList<IConfigElement>();
 			Iterator<ConfigCategory> ccI = cat.getChildren().iterator();
@@ -43,8 +42,7 @@ public class BCConfigElement<T> extends ConfigElement<T> {
 				}
 			}
 
-			while (pI.hasNext())
-			{
+			while (pI.hasNext()) {
 				ConfigElement<?> temp = getTypedElement(pI.next());
 				if (temp.showInGui()) {
 					elements.add(temp);

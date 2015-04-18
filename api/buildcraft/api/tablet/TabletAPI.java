@@ -3,12 +3,12 @@ package buildcraft.api.tablet;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TabletAPI {
+public final class TabletAPI {
+	private static final Map<String, TabletProgramFactory> programs = new HashMap<String, TabletProgramFactory>();
+
 	private TabletAPI() {
 
 	}
-
-	private static final Map<String, TabletProgramFactory> programs = new HashMap<String, TabletProgramFactory>();
 
 	public static void registerProgram(TabletProgramFactory factory) {
 		programs.put(factory.getName(), factory);

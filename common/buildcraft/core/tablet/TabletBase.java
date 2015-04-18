@@ -2,12 +2,9 @@ package buildcraft.core.tablet;
 
 import java.util.LinkedList;
 import net.minecraft.nbt.NBTTagCompound;
-import cpw.mods.fml.relauncher.Side;
-import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.tablet.ITablet;
 import buildcraft.api.tablet.TabletAPI;
-import buildcraft.api.tablet.TabletBitmap;
 import buildcraft.api.tablet.TabletProgram;
 import buildcraft.api.tablet.TabletProgramFactory;
 

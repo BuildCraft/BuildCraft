@@ -1,13 +1,12 @@
 package buildcraft.core.tablet.utils;
 
-import gnu.trove.map.TIntObjectMap;
-import gnu.trove.map.hash.TIntObjectHashMap;
-
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import buildcraft.api.tablet.TabletBitmap;
 
 public final class TabletFont {
@@ -90,9 +89,9 @@ public final class TabletFont {
 			if ("FAMI".equals(section)) {
 				this.family = readString(stream, sectionLength);
 			} else if ("WEIG".equals(section)) {
-				this.isBold = readString(stream, sectionLength).equals("bold");
+				this.isBold = "bold".equals(readString(stream, sectionLength));
 			} else if ("SLAN".equals(section)) {
-				this.isItalic = readString(stream, sectionLength).equals("italic");
+				this.isItalic = "italic".equals(readString(stream, sectionLength));
 			} else if ("PTSZ".equals(section)) {
 				this.pointSize = readUnsignedShort(stream);
 			} else if ("MAXW".equals(section)) {

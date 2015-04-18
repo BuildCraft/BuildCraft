@@ -13,8 +13,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import buildcraft.BuildCraftTransport;
-import buildcraft.core.GuiIds;
 import buildcraft.api.transport.IItemPipe;
+import buildcraft.core.GuiIds;
 import buildcraft.core.lib.block.BlockBuildCraft;
 
 public class BlockFilteredBuffer extends BlockBuildCraft {

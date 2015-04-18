@@ -41,13 +41,13 @@ public class TabletBitmap {
 				if (h >= width) {
 					break;
 				}
+
 				set(x + h, y + i, bitmap.get(h, i));
 			}
 		}
 	}
 
-	@Override
-	public TabletBitmap clone() {
+	public TabletBitmap duplicate() {
 		TabletBitmap cloned = new TabletBitmap(this.width, this.height);
 		cloned.data = this.data.clone();
 		return cloned;

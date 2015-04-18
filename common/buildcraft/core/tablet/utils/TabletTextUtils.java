@@ -3,7 +3,7 @@ package buildcraft.core.tablet.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TabletTextUtils {
+public final class TabletTextUtils {
 	private TabletTextUtils() {
 
 	}

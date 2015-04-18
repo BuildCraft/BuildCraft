@@ -3,7 +3,7 @@ package buildcraft.core.tablet.utils;
 import java.io.InputStream;
 import buildcraft.api.tablet.TabletBitmap;
 
-public class TabletBitmapLoader {
+public final class TabletBitmapLoader {
 	private TabletBitmapLoader() {
 
 	}

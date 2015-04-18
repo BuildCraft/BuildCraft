@@ -9,8 +9,6 @@
 package buildcraft.core.builders.schematics;
 
 import java.util.LinkedList;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;

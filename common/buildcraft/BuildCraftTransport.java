@@ -49,7 +49,6 @@ import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.core.JavaTools;
 import buildcraft.api.facades.FacadeAPI;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;

@@ -16,9 +16,20 @@ Additions:
 Improvements:
 * [#2599] Stripes pipes don't move forward when using a non-item pipe (asie)
 * [#2567] Emzuli Pipes support lists now (asie)
+* Improved the new Auto Workbench algorithm (asie)
 * Robot particle frequency is affected by Minecraft graphics settings (asie)
+* Tons of robot improvements and refactors (hea3ven)
 
 Bugfixes:
 * [#2603} Assembly Table crashes without Robotics (asie)
 * [#2602] NPE when comparing two StatementSlots (asie)
+* Error when loading a blueprint with invalid mappings (hea3ven)
 * Fixes to Fancy pipe connection rendering (asie)
+* Likely some robot bugfixes I don't know of (hea3ven)
+* Not being able to set blueprints to the construction markers (hea3ven)
+* Pump client-side entity spam (asie)
+
+Breaking changes:
+* Quarries are now part of Builders, not Factory.
+* Robots can now only provide items and fluids from wooden/emerald pipes.
+* The config file's name is different - it's main.cfg now - and we can't promise the config format not changing further as we go.

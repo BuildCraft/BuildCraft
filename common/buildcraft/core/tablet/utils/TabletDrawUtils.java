@@ -2,7 +2,7 @@ package buildcraft.core.tablet.utils;
 
 import buildcraft.api.tablet.TabletBitmap;
 
-public class TabletDrawUtils {
+public final class TabletDrawUtils {
 	private TabletDrawUtils() {
 
 	}

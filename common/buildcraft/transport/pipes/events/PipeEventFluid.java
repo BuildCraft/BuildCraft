@@ -1,6 +1,5 @@
 package buildcraft.transport.pipes.events;
 
-import java.util.List;
 import com.google.common.collect.Multiset;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;

@@ -43,11 +43,11 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 
 	protected void updateComparators() {
 		int co = calculateComparatorInputOverride();
-		TileTank tank = getBottomTank();
-		while (tank != null) {
-			tank.cachedComparatorOverride = co;
-			tank.hasUpdate = true;
-			tank = getTankAbove(tank);
+		TileTank uTank = getBottomTank();
+		while (uTank != null) {
+			uTank.cachedComparatorOverride = co;
+			uTank.hasUpdate = true;
+			uTank = getTankAbove(uTank);
 		}
 	}
 
@@ -296,7 +296,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	public int calculateComparatorInputOverride() {
 		FluidTankInfo[] info = getTankInfo(ForgeDirection.UNKNOWN);
 		if (info.length > 0 && info[0] != null && info[0].fluid != null) {
-			return (info[0].fluid.amount * 15 / info[0].capacity);
+			return info[0].fluid.amount * 15 / info[0].capacity;
 		} else {
 			return 0;
 		}
