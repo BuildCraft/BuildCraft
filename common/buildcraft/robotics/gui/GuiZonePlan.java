@@ -66,7 +66,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 	private float alpha = 0.8F;
 
-	private GuiBetterButton tool;
+	private GuiBetterButton tool, fsButton;
 
 	private List inventorySlots;
 	private List savedButtonList;
@@ -139,6 +139,9 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 		tool = new GuiBetterButton(0, guiLeft + 27, guiTop + 111, 15, StandardButtonTextureSets.SMALL_BUTTON, "+");
 		tool.setToolTip(new ToolTip(new ToolTipLine(StringUtils.localize("tip.tool.add"))));
 		buttonList.add(tool);
+		fsButton = new GuiBetterButton(1, guiLeft + 44, guiTop + 111, 20, StandardButtonTextureSets.SMALL_BUTTON, "FS");
+		fsButton.setToolTip(new ToolTip(new ToolTipLine(StringUtils.localize("tip.tool.fullscreen"))));
+		buttonList.add(fsButton);
 
 		savedButtonList = buttonList;
 
@@ -158,6 +161,10 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 				data.writeByte(zoomLevel);
 			}
 		}));
+	}
+
+	private boolean isFullscreen() {
+		return getContainer().mapTexture.height > 100;
 	}
 
 	@Override
@@ -202,7 +209,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 			GL11.glDisable(GL11.GL_BLEND);
 		}
 
-		if (getContainer().mapTexture.height <= 100) {
+		if (!isFullscreen()) {
 			drawBackgroundSlots();
 
 			bindTexture(texture);
@@ -217,7 +224,9 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	@Override
 	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
 		super.drawGuiContainerForegroundLayer(par1, par2);
-		textField.drawTextBox();
+		if (!isFullscreen()) {
+			textField.drawTextBox();
+		}
 	}
 
 	@Override
@@ -307,11 +316,37 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 		}
 	}
 
+	private void toFullscreen() {
+		mapWidth = this.mc.displayWidth;
+		mapHeight = this.mc.displayHeight;
+
+		getContainer().mapTexture = new DynamicTextureBC(mapWidth, mapHeight);
+		currentSelection = new DynamicTextureBC(mapWidth, mapHeight);
+
+		uploadMap();
+		refreshSelectedArea();
+
+		container.inventorySlots = new LinkedList();
+		buttonList = new LinkedList();
+	}
+
+	private void toWindowed() {
+		mapWidth = 213;
+		mapHeight = 100;
+
+		getContainer().mapTexture = new DynamicTextureBC(mapWidth, mapHeight);
+		currentSelection = new DynamicTextureBC(mapWidth, mapHeight);
+
+		uploadMap();
+		refreshSelectedArea();
+
+		container.inventorySlots = inventorySlots;
+		buttonList = savedButtonList;
+	}
+
 	@Override
 	protected void keyTyped(char carac, int val) {
-		super.keyTyped(carac, val);
-
-		if (textField.isFocused()) {
+		if (!isFullscreen() && textField.isFocused()) {
 			if (carac == 13 || carac == 27) {
 				textField.setFocused(false);
 			} else {
@@ -324,9 +359,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 				}));
 			}
 			return;
-		}
-
-		if (val == Keyboard.KEY_F5) {
+		} else if (val == Keyboard.KEY_F5) {
 			uploadMap();
 			refreshSelectedArea();
 		} else if (carac == '+' && zoomLevel > 1) {
@@ -337,30 +370,12 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 			zoomLevel++;
 			uploadMap();
 			refreshSelectedArea();
-		} else if (carac == 'm') {
-			mapWidth = 213;
-			mapHeight = 100;
-
-			getContainer().mapTexture = new DynamicTextureBC(mapWidth, mapHeight);
-			currentSelection = new DynamicTextureBC(mapWidth, mapHeight);
-
-			uploadMap();
-			refreshSelectedArea();
-
-			container.inventorySlots = inventorySlots;
-			buttonList = savedButtonList;
+		} else if (carac == 'm' || (carac == 27 && isFullscreen())) {
+			toWindowed();
 		} else if (carac == 'M') {
-			mapWidth = this.mc.displayWidth;
-			mapHeight = this.mc.displayHeight;
-
-			getContainer().mapTexture = new DynamicTextureBC(mapWidth, mapHeight);
-			currentSelection = new DynamicTextureBC(mapWidth, mapHeight);
-
-			uploadMap();
-			refreshSelectedArea();
-
-			container.inventorySlots = new LinkedList();
-			buttonList = new LinkedList();
+			toFullscreen();
+		} else {
+			super.keyTyped(carac, val);
 		}
 	}
 
@@ -423,6 +438,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 				tool.getToolTip().remove(0);
 				tool.getToolTip().add(new ToolTipLine(StringUtils.localize("tip.tool.add")));
 			}
+		} else if (button == fsButton) {
+			toFullscreen();
 		}
 	}
 

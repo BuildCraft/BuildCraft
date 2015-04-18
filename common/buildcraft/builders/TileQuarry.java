@@ -181,6 +181,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 			return;
 		}
 
+		createUtilsIfNeeded();
+
 		if (stage == Stage.BUILDING) {
 			if (builder != null && !builder.isDone(this)) {
 				builder.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord);
@@ -191,6 +193,10 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 			dig();
 		} else if (stage == Stage.IDLE) {
 			idling();
+
+			// We are sending a network packet update ONLY below.
+			// In this case, since idling() does it anyway, we should return.
+			return;
 		} else if (stage == Stage.MOVING) {
 			int energyUsed = this.getBattery().useEnergy(20, (int) Math.ceil(20 + getBattery().getEnergyStored() / 10), false);
 
@@ -200,9 +206,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 				// If it's raining or snowing above the head, slow down.
 				if (worldObj.isRaining()) {
-					int headBPX = (int) Math.floor(headPosX);
-					int headBPY = (int) Math.floor(headPosY);
-					int headBPZ = (int) Math.floor(headPosZ);
+					int headBPX = (int) headPosX;
+					int headBPY = (int) headPosY;
+					int headBPZ = (int) headPosZ;
 					if (worldObj.getHeightValue(headBPX, headBPZ) < headBPY) {
 						speed *= 0.7;
 					}
@@ -211,8 +217,6 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 				moveHead(speed);
 			}
 		}
-
-		createUtilsIfNeeded();
 
 		if (updateTracker.markTimeIfDelay(worldObj)) {
 			sendNetworkUpdate();
@@ -333,7 +337,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		Integer[][] columnHeights = new Integer[builder.blueprint.sizeX - 2][builder.blueprint.sizeZ - 2];
 		boolean[][] blockedColumns = new boolean[builder.blueprint.sizeX - 2][builder.blueprint.sizeZ - 2];
 
-		for (int searchY = yCoord + 3; searchY >= yCoord; --searchY) {
+		for (int searchY = yCoord + 3; searchY >= 1; --searchY) {
 			int startX, endX, incX;
 
 			if (searchY % 2 == 0) {

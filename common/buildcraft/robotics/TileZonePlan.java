@@ -142,7 +142,7 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 	}
 
 	private void importMap(ItemStack stack) {
-		if (stack.getItem() instanceof IMapLocation) {
+		if (stack != null && stack.getItem() instanceof IMapLocation) {
 			final IZone zone = ((IMapLocation) stack.getItem()).getZone(stack);
 			if (zone != null && zone instanceof ZonePlan) {
 				selectedAreas[currentSelectedArea] = (ZonePlan) zone;
