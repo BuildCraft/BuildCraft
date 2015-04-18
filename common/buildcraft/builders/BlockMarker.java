@@ -93,9 +93,14 @@ public class BlockMarker extends BlockBuildCraft {
 			return false;
 		}
 
+		if (entityplayer.isSneaking()) {
+			return false;
+		}
+
 		TileEntity tile = world.getTileEntity(i, j, k);
-		if (tile instanceof TileMarker) {
+		if (tile instanceof TileMarker && !(tile instanceof TileConstructionMarker)) {
 			((TileMarker) tile).tryConnection();
+			return true;
 		}
 		return false;
 	}
