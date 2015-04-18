@@ -131,9 +131,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 				+ "Entries are comma seperated, banned fluids have precedence over allowed ones."
 				+ "Default is \"+/*/*,+/-1/Lava\" - the second redundant entry (\"+/-1/lava\") is there to show the format.";
 
-		BuildCraftCore.mainConfigManager.register("general.quarry.oneTimeUse", false, "Should the quarry only be usable once after placing?", ConfigManager.RestartRequirement.NONE);
-		BuildCraftCore.mainConfigManager.register("general.miningDepth", 256, "Should the quarry only be usable once after placing?", ConfigManager.RestartRequirement.NONE);
-		BuildCraftCore.mainConfigManager.register("general.quarry.doChunkLoading", true, "Should the quarry only be usable once after placing?", ConfigManager.RestartRequirement.NONE);
+		BuildCraftCore.mainConfigManager.register("general.miningDepth", 256, "Should the mining well only be usable once after placing?", ConfigManager.RestartRequirement.NONE);
 
 		BuildCraftCore.mainConfigManager.get("general.miningDepth").setMinValue(2).setMaxValue(256);
 		BuildCraftCore.mainConfigManager.register("general.pumpDimensionControl", DefaultProps.PUMP_DIMENSION_LIST, plc, ConfigManager.RestartRequirement.NONE);
