@@ -190,7 +190,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	}
 
 	public boolean needsToBuild() {
-		return bluePrintBuilder != null && !bluePrintBuilder.isDone(this);
+		return !isInvalid() && bluePrintBuilder != null && !bluePrintBuilder.isDone(this);
 	}
 
 	public BptContext getContext () {

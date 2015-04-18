@@ -255,6 +255,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	public BuildingSlot reserveNextBlock(World world) {
 		if (buildList.size() != 0) {
 			BuildingSlot slot = internalGetNextBlock(world, null);
+			checkDone();
 
 			if (slot != null) {
 				slot.reserved = true;
