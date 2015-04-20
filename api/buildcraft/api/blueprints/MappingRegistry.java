@@ -244,11 +244,13 @@ public class MappingRegistry {
 
 		for (Block b : idToBlock) {
 			NBTTagCompound sub = new NBTTagCompound();
-			String name = Block.blockRegistry.getNameForObject(b);
-			if (name == null || name.length() == 0) {
-				BCLog.logger.error("Block " + b.getUnlocalizedName() + " (" + b.getClass().getName() + ") has an empty registry name! This is a bug!");
-			} else {
-				sub.setString("name", name);
+			if (b != null) {
+				String name = Block.blockRegistry.getNameForObject(b);
+				if (name == null || name.length() == 0) {
+					BCLog.logger.error("Block " + b.getUnlocalizedName() + " (" + b.getClass().getName() + ") has an empty registry name! This is a bug!");
+				} else {
+					sub.setString("name", name);
+				}
 			}
 			blocksMapping.appendTag(sub);
 		}
@@ -259,11 +261,13 @@ public class MappingRegistry {
 
 		for (Item i : idToItem) {
 			NBTTagCompound sub = new NBTTagCompound();
-			String name = Item.itemRegistry.getNameForObject(i);
-			if (name == null || name.length() == 0) {
-				BCLog.logger.error("Item " + i.getUnlocalizedName() + " (" + i.getClass().getName() + ") has an empty registry name! This is a bug!");
-			} else {
-				sub.setString("name", name);
+			if (i != null) {
+				String name = Item.itemRegistry.getNameForObject(i);
+				if (name == null || name.length() == 0) {
+					BCLog.logger.error("Item " + i.getUnlocalizedName() + " (" + i.getClass().getName() + ") has an empty registry name! This is a bug!");
+				} else {
+					sub.setString("name", name);
+				}
 			}
 			itemsMapping.appendTag(sub);
 		}
