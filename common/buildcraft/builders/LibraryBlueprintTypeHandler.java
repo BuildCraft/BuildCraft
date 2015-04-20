@@ -5,6 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.library.ILibraryTypeHandler;
 import buildcraft.core.blueprints.BlueprintBase;
+import buildcraft.core.blueprints.LibraryId;
 
 public class LibraryBlueprintTypeHandler implements ILibraryTypeHandler {
 	private final boolean isBlueprint;
@@ -39,7 +40,7 @@ public class LibraryBlueprintTypeHandler implements ILibraryTypeHandler {
 
 	@Override
 	public ItemStack load(ItemStack stack, NBTTagCompound compound) {
-		BlueprintBase blueprint = BlueprintBase.loadBluePrint(compound);
+		BlueprintBase blueprint = BlueprintBase.loadBluePrint((NBTTagCompound) compound.copy());
 		blueprint.id.name = compound.getString("__filename");
 		blueprint.id.extension = getFileExtension();
 		BuildCraftBuilders.serverDB.add(blueprint.id, compound);
@@ -48,15 +49,20 @@ public class LibraryBlueprintTypeHandler implements ILibraryTypeHandler {
 
 	@Override
 	public boolean store(ItemStack stack, NBTTagCompound compound) {
-		BlueprintBase blueprint = ItemBlueprint.loadBlueprint(stack);
-		if (blueprint != null) {
-			NBTTagCompound nbt = blueprint.getNBT();
-			for (Object o : nbt.func_150296_c()) {
-				compound.setTag((String) o, nbt.getTag((String) o));
-			}
-			blueprint.id.write(compound);
-			return true;
+		LibraryId id = ItemBlueprint.getId(stack);
+		if (id == null) {
+			return false;
 		}
-		return false;
+
+		NBTTagCompound nbt = BuildCraftBuilders.serverDB.load(id);
+		if (nbt == null) {
+			return false;
+		}
+
+		for (Object o : nbt.func_150296_c()) {
+			compound.setTag((String) o, nbt.getTag((String) o));
+		}
+		id.write(compound);
+		return true;
 	}
 }

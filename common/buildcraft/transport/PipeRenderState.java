@@ -51,7 +51,7 @@ public class PipeRenderState implements ISerializable {
 
 	@Override
 	public void writeData(ByteBuf data) {
-		data.writeByte(glassColor);
+		data.writeByte(glassColor < -1 ? -1 : glassColor);
 		pipeConnectionMatrix.writeData(data);
 		textureMatrix.writeData(data);
 		wireMatrix.writeData(data);

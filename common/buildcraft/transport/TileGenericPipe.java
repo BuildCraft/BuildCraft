@@ -443,8 +443,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	public boolean setPipeColor(int color) {
 		if (!worldObj.isRemote && color >= -1 && color < 16 && glassColor != color) {
-			glassColor = color;
 			renderState.glassColorDirty = true;
+			glassColor = color;
 			notifyBlockChanged();
 			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, blockType);
 			return true;
