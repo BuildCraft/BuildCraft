@@ -28,6 +28,7 @@ import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.gui.ContainerDummy;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.InventoryConcatenator;
 import buildcraft.core.lib.inventory.InventoryIterator;
@@ -89,12 +90,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		public boolean useBindings, isJammed;
 
 		public LocalInventoryCrafting() {
-			super(new Container() {
-				@Override
-				public boolean canInteractWith(EntityPlayer entityplayer) {
-					return false;
-				}
-			}, 3, 3);
+			super(new ContainerDummy(), 3, 3);
 		}
 
 		@Override

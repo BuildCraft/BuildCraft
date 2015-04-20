@@ -33,6 +33,7 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.Position;
 import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.items.IItemCustomPipeRender;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.CoreConstants;
@@ -802,9 +803,23 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		GL11.glPushMatrix();
 		GL11.glTranslatef((float) x, (float) y, (float) z);
 		GL11.glTranslatef(0, 0.25F, 0);
-		GL11.glScalef(renderScale, renderScale, renderScale);
-		dummyEntityItem.setEntityItemStack(itemstack);
-		customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
+		if (itemstack.getItem() instanceof IItemCustomPipeRender) {
+			IItemCustomPipeRender render = (IItemCustomPipeRender) itemstack.getItem();
+			float itemScale = render.getPipeRenderScale(itemstack);
+			GL11.glScalef(renderScale * itemScale, renderScale * itemScale, renderScale * itemScale);
+			itemScale = 1 / itemScale;
+
+			if (!render.renderItemInPipe(itemstack, x, y, z)) {
+				dummyEntityItem.setEntityItemStack(itemstack);
+				customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
+			}
+
+			GL11.glScalef(itemScale, itemScale, itemScale);
+		} else {
+			GL11.glScalef(renderScale, renderScale, renderScale);
+			dummyEntityItem.setEntityItemStack(itemstack);
+			customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
+		}
 
 		if (color != null) {
 			bindTexture(TextureMap.locationBlocksTexture);

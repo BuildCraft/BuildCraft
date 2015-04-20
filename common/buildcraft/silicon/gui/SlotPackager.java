@@ -6,14 +6,15 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core.lib.gui.slots;
+package buildcraft.silicon.gui;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import buildcraft.core.lib.gui.slots.SlotPhantom;
+import buildcraft.silicon.TilePackager;
 
-public class SlotWorkbench extends SlotPhantom {
-
-	public SlotWorkbench(IInventory iinventory, int slotIndex, int posX, int posY) {
+public class SlotPackager extends SlotPhantom {
+	public SlotPackager(IInventory iinventory, int slotIndex, int posX, int posY) {
 		super(iinventory, slotIndex, posX, posY);
 	}
 

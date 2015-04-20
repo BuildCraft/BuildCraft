@@ -33,6 +33,8 @@ public class ItemLaserTable extends ItemBlockBuildCraft {
                 return "tile.chargingTableBlock";
 			case 4:
 				return "tile.programmingTableBlock";
+			case 5:
+				return "tile.stampingTableBlock";
 		}
 		return super.getUnlocalizedName();
 	}

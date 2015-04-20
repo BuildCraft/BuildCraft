@@ -31,6 +31,7 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 				renderAssemblyTable(renderer, true, 0, 0, 0, bcBlock);
 				break;
 			case 1:
+			case 5:
 				renderAdvancedCraftingTable(renderer, true, 0, 0, 0, bcBlock);
 				break;
 			case 2:
@@ -53,6 +54,7 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 				renderAssemblyTable(renderer, false, x, y, z, bcBlock);
 				break;
 			case 1:
+			case 5:
 				renderAdvancedCraftingTable(renderer, false, x, y, z, bcBlock);
 				break;
 			case 2:

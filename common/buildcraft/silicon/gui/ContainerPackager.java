@@ -6,44 +6,45 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.factory.gui;
+package buildcraft.silicon.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ICrafting;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import buildcraft.core.lib.gui.BuildCraftContainer;
+import buildcraft.core.lib.gui.slots.IPhantomSlot;
 import buildcraft.core.lib.gui.slots.SlotOutput;
-import buildcraft.core.lib.gui.slots.SlotUntouchable;
-import buildcraft.factory.TileAutoWorkbench;
+import buildcraft.core.lib.gui.slots.SlotValidated;
+import buildcraft.silicon.TilePackager;
 
-public class ContainerAutoWorkbench extends BuildCraftContainer {
+public class ContainerPackager extends BuildCraftContainer {
+	private final TilePackager tile;
+	// private int lastProgress;
 
-	public IInventory craftResult;
-
-	private final TileAutoWorkbench tile;
-	private int lastProgress;
-	private ItemStack prevOutput;
-
-	public ContainerAutoWorkbench(InventoryPlayer inventoryplayer, TileAutoWorkbench t) {
+	public ContainerPackager(InventoryPlayer inventoryplayer, TilePackager t) {
 		super(t.getSizeInventory());
 
-		craftResult = new InventoryCraftResult();
 		this.tile = t;
-		addSlotToContainer(new SlotUntouchable(craftResult, 0, 93, 27));
-		addSlotToContainer(new SlotOutput(tile, TileAutoWorkbench.SLOT_RESULT, 124, 35));
-		for (int y = 0; y < 3; y++) {
-			for (int x = 0; x < 3; x++) {
-				addSlotToContainer(new SlotWorkbench(tile, 10 + x + y * 3, 30 + x * 18, 17 + y * 18));
-			}
-		}
+
+		// sort in order of shift-click!
+
+		addSlotToContainer(new SlotValidated(tile, 9, 124, 7));
 
 		for (int x = 0; x < 9; x++) {
 			addSlotToContainer(new Slot(tile, x, 8 + x * 18, 84));
 		}
+
+		for (int y = 0; y < 3; y++) {
+			for (int x = 0; x < 3; x++) {
+				addSlotToContainer(new SlotPackager(tile, 12 + x + y * 3, 30 + x * 18, 17 + y * 18));
+			}
+		}
+
+		addSlotToContainer(new Slot(tile, 10, 108, 31));
+		addSlotToContainer(new SlotOutput(tile, 11, 123, 59));
+
 
 		for (int y = 0; y < 3; y++) {
 			for (int x = 0; x < 9; x++) {
@@ -61,13 +62,13 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 	@Override
 	public void addCraftingToCrafters(ICrafting icrafting) {
 		super.addCraftingToCrafters(icrafting);
-		icrafting.sendProgressBarUpdate(this, 0, tile.progress);
+		//icrafting.sendProgressBarUpdate(this, 0, tile.progress);
 	}
 
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
-		for (int i = 0; i < crafters.size(); i++) {
+		/*for (int i = 0; i < crafters.size(); i++) {
 			ICrafting icrafting = (ICrafting) crafters.get(i);
 
 			if (lastProgress != tile.progress) {
@@ -81,31 +82,34 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 			onCraftMatrixChanged(tile.craftMatrix);
 		}
 
-		lastProgress = tile.progress;
+		lastProgress = tile.progress;*/
 	}
 
 	@Override
 	public void updateProgressBar(int id, int data) {
-		switch (id) {
+		/*switch (id) {
 			case 0:
 				tile.progress = data;
 				break;
+		}*/
+	}
+
+	@Override
+	public ItemStack slotClick(int slotNum, int mouseButton, int modifier, EntityPlayer player) {
+		ItemStack out = super.slotClick(slotNum, mouseButton, modifier, player);
+		Slot slot = slotNum < 0 ? null : (Slot) this.inventorySlots.get(slotNum);
+
+		if (slot instanceof SlotPackager) {
+			int idx = slot.getSlotIndex() - 12;
+			ItemStack stack = player != null && player.inventory != null ? player.inventory.getItemStack() : null;
+			if (stack == null) {
+				tile.setPatternSlot(idx, !tile.isPatternSlotSet(idx));
+			} else {
+				tile.setPatternSlot(idx, true);
+			}
+			tile.sendNetworkUpdate();
 		}
-	}
-
-	@Override
-	public final void onCraftMatrixChanged(IInventory inv) {
-		super.onCraftMatrixChanged(inv);
-		tile.craftMatrix.rebuildCache();
-		ItemStack output = tile.craftMatrix.getRecipeOutput();
-		craftResult.setInventorySlotContents(0, output);
-	}
-
-	@Override
-	public ItemStack slotClick(int i, int j, int modifier, EntityPlayer entityplayer) {
-		ItemStack stack = super.slotClick(i, j, modifier, entityplayer);
-		onCraftMatrixChanged(tile.craftMatrix);
-		return stack;
+		return out;
 	}
 
 	@Override

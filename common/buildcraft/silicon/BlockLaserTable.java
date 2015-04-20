@@ -26,7 +26,7 @@ import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.block.BlockBuildCraft;
 
 public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBlock {
-    protected static final int TABLE_MAX = 5;
+    protected static final int TABLE_MAX = 6;
 
 	public BlockLaserTable() {
 		super(Material.iron);
@@ -64,12 +64,6 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
 			return false;
 		}
 
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this, world.getBlockMetadata(i, j, k));
-		FMLCommonHandler.instance().bus().post(event);
-		if (event.isCanceled()) {
-			return false;
-		}
-
 		if (!world.isRemote) {
 			int meta = world.getBlockMetadata(i, j, k);
 			entityplayer.openGui(BuildCraftSilicon.instance, meta, world, i, j, k);
@@ -90,6 +84,8 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
                 return new TileChargingTable();
 			case 4:
 				return new TileProgrammingTable();
+			case 5:
+				return new TileStampingTable();
 		}
 		return null;
 	}
@@ -121,7 +117,8 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
 				"BuildCraft|Silicon:advancedCraftingTable",
 				"BuildCraft|Silicon:integrationTable",
 				"BuildCraft|Silicon:chargingTable",
-				"BuildCraft|Silicon:programmingTable"
+				"BuildCraft|Silicon:programmingTable",
+				"BuildCraft|Silicon:stampingTable"
 		};
 	}
 }

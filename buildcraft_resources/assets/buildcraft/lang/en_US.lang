@@ -321,6 +321,7 @@ item.Lens.name=Lens
 item.Filter.name=Filter
 item.debugger.name=Debugger
 item.debugger.warning=Use only for testing! Leaks secrets.
+item.package.name=Package
 
 itemGroup.buildcraft.boards=BuildCraft Robots
 itemGroup.buildcraft.main=BuildCraft
@@ -352,6 +353,7 @@ tile.libraryBlock.name=Electronic Library
 tile.machineBlock.name=Quarry
 tile.markerBlock.name=Land Mark
 tile.miningWellBlock.name=Mining Well
+tile.packagerBlock.name=Recipe Packager
 tile.pathMarkerBlock.name=Path Mark
 tile.plainPipeBlock.name=Mining Pipe
 tile.programmingTableBlock.name=Programming Table
@@ -360,6 +362,7 @@ tile.refineryBlock.name=Refinery
 tile.requester.name=Requester
 tile.spring.oil.name=Oil Spring
 tile.spring.water.name=Water Spring
+tile.stampingTableBlock.name=Stamping Table
 tile.tankBlock.name=Tank
 tile.zonePlan.name=Zone Planner
 

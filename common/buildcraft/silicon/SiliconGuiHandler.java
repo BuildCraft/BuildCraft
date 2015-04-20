@@ -16,12 +16,16 @@ import buildcraft.silicon.gui.ContainerAdvancedCraftingTable;
 import buildcraft.silicon.gui.ContainerAssemblyTable;
 import buildcraft.silicon.gui.ContainerChargingTable;
 import buildcraft.silicon.gui.ContainerIntegrationTable;
+import buildcraft.silicon.gui.ContainerPackager;
 import buildcraft.silicon.gui.ContainerProgrammingTable;
+import buildcraft.silicon.gui.ContainerStampingTable;
 import buildcraft.silicon.gui.GuiAdvancedCraftingTable;
 import buildcraft.silicon.gui.GuiAssemblyTable;
 import buildcraft.silicon.gui.GuiChargingTable;
 import buildcraft.silicon.gui.GuiIntegrationTable;
+import buildcraft.silicon.gui.GuiPackager;
 import buildcraft.silicon.gui.GuiProgrammingTable;
+import buildcraft.silicon.gui.GuiStampingTable;
 
 public class SiliconGuiHandler implements IGuiHandler {
 
@@ -68,6 +72,20 @@ public class SiliconGuiHandler implements IGuiHandler {
 				return null;
 			} else {
 				return new GuiProgrammingTable(player.inventory, (TileProgrammingTable) tile);
+			}
+
+		case 5:
+			if (!(tile instanceof TileStampingTable)) {
+				return null;
+			} else {
+				return new GuiStampingTable(player.inventory, (TileStampingTable) tile);
+			}
+
+		case 10:
+			if (!(tile instanceof TilePackager)) {
+				return null;
+			} else {
+				return new GuiPackager(player.inventory, (TilePackager) tile);
 			}
 
         default:
@@ -118,6 +136,20 @@ public class SiliconGuiHandler implements IGuiHandler {
 				return null;
 			} else {
 				return new ContainerProgrammingTable(player.inventory, (TileProgrammingTable) tile);
+			}
+
+		case 5:
+			if (!(tile instanceof TileStampingTable)) {
+				return null;
+			} else {
+				return new ContainerStampingTable(player.inventory, (TileStampingTable) tile);
+			}
+
+		case 10:
+			if (!(tile instanceof TilePackager)) {
+				return null;
+			} else {
+				return new ContainerPackager(player.inventory, (TilePackager) tile);
 			}
 
 		default:

@@ -12,6 +12,7 @@ import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.Random;
 import java.util.UUID;
 import com.mojang.authlib.GameProfile;
 import org.lwjgl.input.Mouse;
@@ -141,6 +142,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		Full, NoDynamic
 	}
 
+	public static Random random = new Random();
 	public static RenderMode render = RenderMode.Full;
 	public static boolean debugWorldgen = false;
 	public static boolean modifyWorld = false;
