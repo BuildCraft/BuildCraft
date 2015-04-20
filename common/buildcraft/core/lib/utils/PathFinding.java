@@ -32,7 +32,7 @@ public class PathFinding implements IIterableAlgorithm {
 	private IBlockFilter pathFound;
 	private IZone zone;
 	private double maxDistanceToEndSq = 0;
-	private float maxTotalDistance = 0;
+	private float maxTotalDistanceSq = 0;
 
 	private HashMap<BlockIndex, Node> openList = new HashMap<BlockIndex, PathFinding.Node>();
 	private HashMap<BlockIndex, Node> closedList = new HashMap<BlockIndex, PathFinding.Node>();
@@ -68,7 +68,7 @@ public class PathFinding implements IIterableAlgorithm {
 			float iMaxTotalDistance) {
 		this(iWorld, iStart, iEnd, iMaxDistanceToEnd);
 
-		maxTotalDistance = iMaxTotalDistance;
+		maxTotalDistanceSq = iMaxTotalDistance * iMaxTotalDistance;
 	}
 
 	@Override
@@ -154,7 +154,7 @@ public class PathFinding implements IIterableAlgorithm {
 
 					nextNode.totalWeight = nextNode.movementCost + nextNode.destinationCost;
 
-					if (maxTotalDistance > 0 && nextNode.totalWeight > maxTotalDistance) {
+					if (maxTotalDistanceSq > 0 && nextNode.totalWeight > maxTotalDistanceSq) {
 						if (!closedList.containsKey(nextNode.index)) {
 							closedList.put(nextNode.index, nextNode);
 						}

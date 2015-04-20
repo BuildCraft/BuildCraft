@@ -44,10 +44,6 @@ public class AIRobotSearchAndGotoBlock extends AIRobot {
 	}
 
 	@Override
-	public void update() {
-	}
-
-	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotSearchBlock) {
 			if (ai.success()) {
