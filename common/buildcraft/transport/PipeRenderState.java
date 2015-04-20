@@ -19,24 +19,34 @@ public class PipeRenderState implements ISerializable {
 	public final ConnectionMatrix pipeConnectionMatrix = new ConnectionMatrix();
 	public final TextureMatrix textureMatrix = new TextureMatrix();
 	public final WireMatrix wireMatrix = new WireMatrix();
-	public byte glassColor = -1;
+	protected boolean glassColorDirty = false;
+	private byte glassColor = -127;
 	
 	private boolean dirty = true;
 
 	public void clean() {
 		dirty = false;
+		glassColorDirty = false;
 		pipeConnectionMatrix.clean();
 		textureMatrix.clean();
 		wireMatrix.clean();
 	}
 
+	public byte getGlassColor() {
+		return glassColor;
+	}
+
+	public void setGlassColor(byte color) {
+		this.glassColor = color;
+	}
+
 	public boolean isDirty() {
-		return dirty || pipeConnectionMatrix.isDirty()
+		return dirty || pipeConnectionMatrix.isDirty() || glassColorDirty
 				|| textureMatrix.isDirty() || wireMatrix.isDirty();
 	}
 
 	public boolean needsRenderUpdate() {
-		return pipeConnectionMatrix.isDirty() || textureMatrix.isDirty();
+		return glassColorDirty || pipeConnectionMatrix.isDirty() || textureMatrix.isDirty();
 	}
 
 	@Override
@@ -49,7 +59,11 @@ public class PipeRenderState implements ISerializable {
 
 	@Override
 	public void readData(ByteBuf data) {
-		glassColor = data.readByte();
+		byte g = data.readByte();
+		if (g != glassColor) {
+			this.glassColor = g;
+			this.glassColorDirty = true;
+		}
 		pipeConnectionMatrix.readData(data);
 		textureMatrix.readData(data);
 		wireMatrix.readData(data);

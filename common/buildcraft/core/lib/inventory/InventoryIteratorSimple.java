@@ -72,6 +72,11 @@ class InventoryIteratorSimple implements Iterable<IInvSlot> {
 		}
 
 		@Override
+		public boolean isItemValidForSlot(ItemStack stack) {
+			return inv.isItemValidForSlot(slot, stack);
+		}
+
+		@Override
 		public ItemStack decreaseStackInSlot(int amount) {
 			return inv.decrStackSize(slot, amount);
 		}

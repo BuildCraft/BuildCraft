@@ -68,12 +68,17 @@ class InventoryIteratorSided implements Iterable<IInvSlot> {
 
         @Override
         public boolean canPutStackInSlot(ItemStack stack) {
-            return inv.canInsertItem(slot, stack, side);
+            return inv.canInsertItem(slot, stack, side) && inv.isItemValidForSlot(slot, stack);
         }
 
         @Override
         public boolean canTakeStackFromSlot(ItemStack stack) {
             return inv.canExtractItem(slot, stack, side);
+        }
+
+        @Override
+        public boolean isItemValidForSlot(ItemStack stack) {
+            return inv.isItemValidForSlot(slot, stack);
         }
 
         @Override

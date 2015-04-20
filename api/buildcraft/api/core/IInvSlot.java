@@ -22,6 +22,8 @@ public interface IInvSlot {
 
     boolean canTakeStackFromSlot(ItemStack stack);
 
+    boolean isItemValidForSlot(ItemStack stack);
+
 	ItemStack decreaseStackInSlot(int amount);
 
     ItemStack getStackInSlot();
