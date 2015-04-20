@@ -144,7 +144,7 @@ public abstract class BlueprintBase {
 		mainDir = mainDir.getRotation(ForgeDirection.UP);
 	}
 
-	public void writeToNBT(NBTTagCompound nbt) {
+	private void writeToNBTInternal(NBTTagCompound nbt) {
 		nbt.setString("version", Version.VERSION);
 
 		if (this instanceof Template) {
@@ -259,8 +259,7 @@ public abstract class BlueprintBase {
 		nbt.setInteger("z", z);
 		nbt.setByte("dir", (byte) dir.ordinal());
 
-		NBTTagCompound bptNBT = new NBTTagCompound();
-		bpt.writeToNBT(bptNBT);
+		NBTTagCompound bptNBT = getNBT();
 		nbt.setTag("bpt", bptNBT);
 
 		subBlueprintsNBT.add(nbt);
@@ -290,11 +289,21 @@ public abstract class BlueprintBase {
 		} else if (computeData == null) {
 			computeData = new ComputeDataThread();
 			computeData.nbt = new NBTTagCompound();
-			writeToNBT(computeData.nbt);
+			writeToNBTInternal(computeData.nbt);
 			computeData.start();
 		}
 
 		return null;
+	}
+
+	public synchronized NBTTagCompound getNBT() {
+		if (computeData == null) {
+			computeData = new ComputeDataThread();
+			computeData.nbt = new NBTTagCompound();
+			writeToNBTInternal(computeData.nbt);
+			computeData.start();
+		}
+		return computeData.nbt;
 	}
 
 	public BlueprintBase adjustToWorld(World world, int x, int y, int z, ForgeDirection o) {

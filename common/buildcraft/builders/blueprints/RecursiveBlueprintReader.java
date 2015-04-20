@@ -209,8 +209,7 @@ public class RecursiveBlueprintReader {
 	public void createBlueprint() {
 		writingBlueprint.id.name = architect.name;
 		writingBlueprint.author = architect.currentAuthorName;
-		NBTTagCompound nbt = new NBTTagCompound();
-		writingBlueprint.writeToNBT(nbt);
+		NBTTagCompound nbt = writingBlueprint.getNBT();
 		BuildCraftBuilders.serverDB.add(writingBlueprint.id, nbt);
 
 		if (parentBlueprint == null) {

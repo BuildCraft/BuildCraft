@@ -283,6 +283,11 @@ public class MappingRegistry {
 		}
 
 		nbt.setTag("entitiesMapping", entitiesMapping);
+
+		System.out.println("[W] idToItem size : " + idToItem.size());
+		for (Item i : idToItem) {
+			System.out.println("- " + (i != null ? i.toString() : "null"));
+		}
 	}
 
 	public void read (NBTTagCompound nbt) {
@@ -361,6 +366,11 @@ public class MappingRegistry {
 				idToEntity.add(null);
 				BCLog.logger.log(Level.WARN, "Can't load entity " + name);
 			}
+		}
+
+		System.out.println("[R] idToItem size : " + idToItem.size());
+		for (Item i : idToItem) {
+			System.out.println("- " + (i != null ? i.toString() : "null"));
 		}
 	}
 }

@@ -50,7 +50,10 @@ public class LibraryBlueprintTypeHandler implements ILibraryTypeHandler {
 	public boolean store(ItemStack stack, NBTTagCompound compound) {
 		BlueprintBase blueprint = ItemBlueprint.loadBlueprint(stack);
 		if (blueprint != null) {
-			blueprint.writeToNBT(compound);
+			NBTTagCompound nbt = blueprint.getNBT();
+			for (Object o : nbt.func_150296_c()) {
+				compound.setTag((String) o, nbt.getTag((String) o));
+			}
 			blueprint.id.write(compound);
 			return true;
 		}
