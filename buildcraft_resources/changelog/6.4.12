@@ -1,0 +1,13 @@
+Improvements:
+
+* [#2632] Filters on gates can be cleared by a mere click (asie)
+
+Bugs fixed:
+
+* [#2650] Server crash with Horizon pattern (asie)
+* [#2649] Server crash with Oil in Nether (asie)
+* [#2639] Dupe bug with finite liquids (asie)
+* [#2638] Wooden pipes massive power usage (asie)
+* [#2629] Stripes pipes cannot place blocks properly (asie)
+* Miscellanous builder/blueprint issues (asie)
+* Pump entity spam on the client side (asie)
