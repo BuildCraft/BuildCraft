@@ -667,9 +667,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		PipeTransportFluids trans = pipe.transport;
 
 		boolean needsRender = false;
+		FluidRenderData renderData = trans.renderCache;
 		for (int i = 0; i < 7; ++i) {
-			FluidRenderData renderData = trans.renderCache[i];
-			if (renderData != null && renderData.amount > 0) {
+			if (renderData.amount[i] > 0) {
 				needsRender = true;
 				break;
 			}
@@ -695,9 +695,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 			int i = side.ordinal();
 
-			FluidRenderData fluidRenderData = trans.renderCache[i];
+			FluidRenderData fluidRenderData = trans.renderCache;
 
-			if (fluidRenderData == null || fluidRenderData.amount <= 0) {
+			if (fluidRenderData.amount[i] <= 0) {
 				continue;
 			}
 
@@ -711,7 +711,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				continue;
 			}
 
-			int stage = (int) ((float) fluidRenderData.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
+			int stage = (int) ((float) fluidRenderData.amount[i] / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
 
 			GL11.glPushMatrix();
 			int list = 0;
@@ -745,13 +745,13 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			GL11.glPopMatrix();
 		}
 		// CENTER
-		FluidRenderData fluidRenderData = trans.renderCache[ForgeDirection.UNKNOWN.ordinal()];
+		FluidRenderData fluidRenderData = trans.renderCache;
 
-		if (fluidRenderData != null && fluidRenderData.amount > 0) {
+		if (fluidRenderData.amount[6] > 0) {
 			DisplayFluidList d = getDisplayFluidLists(fluidRenderData.fluidID, pipe.container.getWorldObj());
 
 			if (d != null) {
-				int stage = (int) ((float) fluidRenderData.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
+				int stage = (int) ((float) fluidRenderData.amount[6] / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
 
 				bindTexture(TextureMap.locationBlocksTexture);
 				RenderUtils.setGLColorFromInt(fluidRenderData.color);

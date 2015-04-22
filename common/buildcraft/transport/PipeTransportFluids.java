@@ -132,7 +132,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public PipeSection[] sections = new PipeSection[7];
 	public FluidStack fluidType;
 
-	public FluidRenderData[] renderCache = new FluidRenderData[orientations.length];
+	public FluidRenderData renderCache = new FluidRenderData();
 
 	private static final ForgeDirection[] directions = ForgeDirection.VALID_DIRECTIONS;
 	private static final ForgeDirection[] orientations = ForgeDirection.values();
@@ -220,7 +220,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			moveFluids();
 		}
 
-		if (true || networkSyncTracker.markTimeIfDelay(container.getWorldObj())) {
+		if (networkSyncTracker.markTimeIfDelay(container.getWorldObj())) {
 			boolean init = false;
 			if (++clientSyncCounter > BuildCraftCore.longUpdateFactor) {
 				clientSyncCounter = 0;
@@ -399,62 +399,38 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	 */
 	private PacketFluidUpdate computeFluidUpdate(boolean initPacket, boolean persistChange) {
 		boolean changed = false;
-		BitSet delta = new BitSet(PacketFluidUpdate.FLUID_DATA_NUM * ForgeDirection.VALID_DIRECTIONS.length);
+		BitSet delta = new BitSet(8);
 
 		if (initClient > 0) {
 			initClient--;
 			if (initClient == 1) {
 				changed = true;
-				delta.set(0, PacketFluidUpdate.FLUID_DATA_NUM * ForgeDirection.VALID_DIRECTIONS.length);
+				delta.set(0, 8);
 			}
 		}
 
-		FluidRenderData[] renderCacheCopy = this.renderCache.clone();
+		FluidRenderData renderCacheCopy = this.renderCache;
+
+		if ((fluidType == null && renderCacheCopy.fluidID != 0)
+				|| (fluidType != null && renderCacheCopy.fluidID != fluidType.getFluid().getID())) {
+			renderCache.fluidID = fluidType != null ? fluidType.getFluid().getID() : 0;
+			renderCache.color = fluidType != null ? fluidType.getFluid().getColor(fluidType) : 0;
+			delta.set(0);
+		}
 
 		for (ForgeDirection dir : orientations) {
-			FluidStack current = getStack(dir);
-			FluidStack prev = renderCacheCopy[dir.ordinal()] != null ? renderCacheCopy[dir.ordinal()].getFluidStack() : null;
-
-			if (current != null && current.getFluid() == null) {
-				continue;
-			}
-
-			if (prev == null && current == null) {
-				continue;
-			}
-
-			if (prev == null ^ current == null) {
-				changed = true;
-				if (current != null) {
-					renderCacheCopy[dir.ordinal()] = new FluidRenderData(current);
-				} else {
-					renderCacheCopy[dir.ordinal()] = null;
-				}
-				delta.set(dir.ordinal() * PacketFluidUpdate.FLUID_DATA_NUM + PacketFluidUpdate.FLUID_ID_BIT);
-				delta.set(dir.ordinal() * PacketFluidUpdate.FLUID_DATA_NUM + PacketFluidUpdate.FLUID_AMOUNT_BIT);
-				continue;
-			}
-
-			if (prev == null || current == null) {
-				continue;
-			}
-
-			if (!prev.equals(current) || initPacket) {
-				changed = true;
-				renderCacheCopy[dir.ordinal()] = new FluidRenderData(current);
-				delta.set(dir.ordinal() * PacketFluidUpdate.FLUID_DATA_NUM + PacketFluidUpdate.FLUID_ID_BIT);
-			}
-
-			int displayQty = (prev.amount * 4 + current.amount) / 5;
-			if (displayQty == 0 && current.amount > 0 || initPacket) {
-				displayQty = current.amount;
+			int pamount = renderCache.amount[dir.ordinal()];
+			int camount = sections[dir.ordinal()].amount;
+			int displayQty = (pamount * 4 + camount) / 5;
+			if (displayQty == 0 && camount > 0 || initPacket) {
+				displayQty = camount;
 			}
 			displayQty = Math.min(capacity, displayQty);
 
-			if (prev.amount != displayQty || initPacket) {
+			if (pamount != displayQty || initPacket) {
 				changed = true;
-				renderCacheCopy[dir.ordinal()].amount = displayQty;
-				delta.set(dir.ordinal() * PacketFluidUpdate.FLUID_DATA_NUM + PacketFluidUpdate.FLUID_AMOUNT_BIT);
+				renderCache.amount[dir.ordinal()] = displayQty;
+				delta.set(dir.ordinal() + 1);
 			}
 		}
 
@@ -606,7 +582,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			if (!container.isPipeConnected(direction)) {
 				sections[direction.ordinal()].reset();
 				transferState[direction.ordinal()] = TransferState.None;
-				renderCache[direction.ordinal()] = null;
+				renderCache.amount[direction.ordinal()] = 0;
 				canReceiveCache[direction.ordinal()] = false;
 			} else {
 				canReceiveCache[direction.ordinal()] = canReceiveFluid(direction);

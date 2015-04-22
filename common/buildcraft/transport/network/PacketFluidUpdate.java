@@ -22,12 +22,7 @@ import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.utils.FluidRenderData;
 
 public class PacketFluidUpdate extends PacketCoordinates {
-
-	public static int FLUID_ID_BIT = 0;
-	public static int FLUID_AMOUNT_BIT = 1;
-	public static int FLUID_DATA_NUM = 2;
-
-	public FluidRenderData[] renderCache = new FluidRenderData[ForgeDirection.values().length];
+	public FluidRenderData renderCache = new FluidRenderData();
 	public BitSet delta;
 
 	public PacketFluidUpdate(int xCoord, int yCoord, int zCoord) {
@@ -69,29 +64,20 @@ public class PacketFluidUpdate extends PacketCoordinates {
 
 		renderCache = transLiq.renderCache;
 
-		byte[] dBytes = new byte[2];
+		byte[] dBytes = new byte[1];
 		data.readBytes(dBytes);
 		delta = BitSetUtils.fromByteArray(dBytes);
 
 		// System.out.printf("read %d, %d, %d = %s, %s%n", posX, posY, posZ, Arrays.toString(dBytes), delta);
 
+		if (delta.get(0)) {
+			renderCache.fluidID = data.readShort();
+			renderCache.color = renderCache.fluidID != 0 ? data.readInt() : 0xFFFFFF;
+		}
+
 		for (ForgeDirection dir : ForgeDirection.values()) {
-			if (delta.get(dir.ordinal() * FLUID_DATA_NUM + FLUID_ID_BIT)) {
-				int id = data.readShort();
-			    int amt = renderCache[dir.ordinal()] != null ? renderCache[dir.ordinal()].amount : 0;
-				int color = id != 0 ? data.readInt() : 0xFFFFFF;
-
-				renderCache[dir.ordinal()] = new FluidRenderData(id, amt, color);
-			}
-
-			if (delta.get(dir.ordinal() * FLUID_DATA_NUM + FLUID_AMOUNT_BIT)) {
-				int amt = Math.min(transLiq.getCapacity(), data.readUnsignedShort());
-
-			    if (renderCache[dir.ordinal()] != null) {
-					renderCache[dir.ordinal()].amount = amt;
-				} else {
-					renderCache[dir.ordinal()] = new FluidRenderData(0, amt, 0xFFFFFF);
-				}
+			if (delta.get(dir.ordinal() + 1)) {
+				renderCache.amount[dir.ordinal()] = Math.min(transLiq.getCapacity(), data.readUnsignedByte());
 			}
 		}
 	}
@@ -100,27 +86,20 @@ public class PacketFluidUpdate extends PacketCoordinates {
 	public void writeData(ByteBuf data) {
 		super.writeData(data);
 
-		byte[] dBytes = BitSetUtils.toByteArray(delta, 2);
+		byte[] dBytes = BitSetUtils.toByteArray(delta, 1);
 		// System.out.printf("write %d, %d, %d = %s, %s%n", posX, posY, posZ, Arrays.toString(dBytes), delta);
 		data.writeBytes(dBytes);
 
-		for (ForgeDirection dir : ForgeDirection.values()) {
-			FluidRenderData liquid = renderCache[dir.ordinal()];
-
-			if (delta.get(dir.ordinal() * FLUID_DATA_NUM + FLUID_ID_BIT)) {
-				if (liquid != null && liquid.fluidID != 0) {
-					data.writeShort(liquid.fluidID);
-					data.writeInt(liquid.color);
-				} else {
-					data.writeShort(0);
-				}
+		if (delta.get(0)) {
+			data.writeShort(renderCache.fluidID);
+			if (renderCache.fluidID != 0) {
+				data.writeInt(renderCache.color);
 			}
-			if (delta.get(dir.ordinal() * FLUID_DATA_NUM + FLUID_AMOUNT_BIT)) {
-				if (liquid != null) {
-					data.writeShort(liquid.amount);
-				} else {
-					data.writeShort(0);
-				}
+		}
+
+		for (ForgeDirection dir : ForgeDirection.values()) {
+			if (delta.get(dir.ordinal() + 1)) {
+				data.writeByte(renderCache.amount[dir.ordinal()]);
 			}
 		}
 	}
