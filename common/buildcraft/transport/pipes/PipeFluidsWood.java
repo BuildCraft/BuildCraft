@@ -93,12 +93,12 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 			extractFluid((IFluidHandler) tile, ForgeDirection.getOrientation(container.getBlockMetadata()));
 
 			// We always subtract the flowRate to ensure that the buffer goes down reasonably quickly.
-			liquidToExtract -= transport.flowRate;
+			liquidToExtract -= transport.getFlowRate();
 		}
 	}
 
 	public int extractFluid(IFluidHandler fluidHandler, ForgeDirection side) {
-		int amount = liquidToExtract > transport.flowRate ? transport.flowRate : liquidToExtract;
+		int amount = liquidToExtract > transport.getFlowRate() ? transport.getFlowRate() : liquidToExtract;
 		FluidTankInfo tankInfo = transport.getTankInfo(side)[0];
 		FluidStack extracted;
 

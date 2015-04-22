@@ -17,6 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.ISerializable;
@@ -50,13 +51,15 @@ public class PipeFluidsEmerald extends PipeFluidsWood implements ISerializable {
 			return super.extractFluid(fluidHandler, side);
 		}
 
-		int flowRate = transport.flowRate;
+		int flowRate = transport.getFlowRate();
 		FluidStack toExtract = new FluidStack(targetFluid, liquidToExtract > flowRate ? flowRate : liquidToExtract);
 		FluidStack extracted = fluidHandler.drain(side.getOpposite(), toExtract, false);
 
 		if (extracted != null) {
 			toExtract.amount = transport.fill(side, extracted, true);
-			fluidHandler.drain(side.getOpposite(), toExtract, true);
+			if (toExtract.amount > 0) {
+				fluidHandler.drain(side.getOpposite(), toExtract, true);
+			}
 		}
 		return toExtract.amount;
 	}

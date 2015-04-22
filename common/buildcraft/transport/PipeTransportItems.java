@@ -46,11 +46,6 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 	public final TravelerSet items = new TravelerSet(this);
 
 	@Override
-	public void initialize() {
-		super.initialize();
-	}
-
-	@Override
 	public IPipeTile.PipeType getPipeType() {
 		return IPipeTile.PipeType.ITEM;
 	}

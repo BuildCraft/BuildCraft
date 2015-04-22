@@ -47,7 +47,7 @@ public class PipeFluidsSandstone extends Pipe<PipeTransportFluids> implements IP
 		if (!(container.getTile(from) instanceof IPipeTile)) {
 			return 0;
 		} else {
-			return transport.internalTanks[from.ordinal()].fill(resource, doFill);
+			return transport.sections[from.ordinal()].fill(resource.amount, doFill);
 		}
 	}
 
