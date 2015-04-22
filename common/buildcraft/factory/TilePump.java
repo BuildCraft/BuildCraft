@@ -405,6 +405,15 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
 	}
 
 	@Override
+	public void onChunkUnload() {
+		super.onChunkUnload();
+		if (tube != null) {
+			CoreProxy.proxy.removeEntity(tube);
+			tube = null;
+		}
+	}
+
+	@Override
 	public void validate() {
 		super.validate();
 	}

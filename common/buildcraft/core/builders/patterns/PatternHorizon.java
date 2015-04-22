@@ -34,7 +34,7 @@ public class PatternHorizon extends FillerPattern {
 
 		Template bpt = new Template(box.sizeX(), yMax - yMin + 1, box.sizeZ());
 
-		if (box.pMin().y > 0) {
+		if (box.sizeY() > 0) {
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
 					bpt.contents[x - xMin][0][z - zMin] = new SchematicMask(true);
