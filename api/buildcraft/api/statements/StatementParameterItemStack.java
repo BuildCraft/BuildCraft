@@ -7,7 +7,6 @@
  * as "LICENSE.API" in the BuildCraft source code distribution.
  */
 package buildcraft.api.statements;
-
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -32,6 +31,8 @@ public class StatementParameterItemStack implements IStatementParameter {
 		if (stack != null) {
 			this.stack = stack.copy();
 			this.stack.stackSize = 1;
+		} else {
+			this.stack = null;
 		}
 	}
 

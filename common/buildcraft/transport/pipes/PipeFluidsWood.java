@@ -161,7 +161,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 		}
 
 		int maxToReceive = (1000 - liquidToExtract) / ENERGY_MULTIPLIER;
-		int received = Math.max(maxReceive, maxToReceive);
+		int received = Math.min(maxReceive, maxToReceive);
 		if (!simulate) {
 			liquidToExtract += ENERGY_MULTIPLIER * received;
 		}

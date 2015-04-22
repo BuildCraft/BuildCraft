@@ -329,6 +329,7 @@ public class MappingRegistry {
 				BCLog.logger.log(Level.WARN, "Can't load an item - corrupt blueprint!");
 				continue;
 			}
+
 			String name = sub.getString("name");
 			Item item = null;
 			

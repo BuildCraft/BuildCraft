@@ -179,18 +179,22 @@ public final class BlockUtils {
 			int meta = world.getBlockMetadata(x, y, z);
 
 			if (block instanceof IFluidBlock) {
-				if (!((IFluidBlock) block).canDrain(world, x, y, z)) {
+				IFluidBlock fluidBlock = (IFluidBlock) block;
+				if (!fluidBlock.canDrain(world, x, y, z)) {
 					return null;
 				}
-			} else if (meta != 0) {
-				return null;
-			}
+				return fluidBlock.drain(world, x, y, z, doDrain);
+			} else {
+				if (meta != 0) {
+					return null;
+				}
 
-			if (doDrain) {
-				world.setBlockToAir(x, y, z);
-			}
+				if (doDrain) {
+					world.setBlockToAir(x, y, z);
+				}
 
-			return new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME);
+				return new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME);
+			}
 		} else {
 			return null;
 		}
