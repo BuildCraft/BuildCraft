@@ -20,6 +20,7 @@ import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.api.blueprints.BuilderAPI;
@@ -33,10 +34,12 @@ import buildcraft.core.builders.schematics.SchematicRotateMeta;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.ChannelHandler;
+import buildcraft.core.network.EntityIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.silicon.BlockLaser;
 import buildcraft.silicon.BlockLaserTable;
 import buildcraft.silicon.BlockPackager;
+import buildcraft.silicon.EntityPackage;
 import buildcraft.silicon.ItemLaserTable;
 import buildcraft.silicon.ItemPackage;
 import buildcraft.silicon.ItemRedstoneChipset;
@@ -105,6 +108,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		redstoneCrystal = (new ItemBuildCraft()).setUnlocalizedName("redstoneCrystal");
 		CoreProxy.proxy.registerItem(redstoneCrystal);
 		OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal));
+		EntityRegistry.registerModEntity(EntityPackage.class, "bcPackageThrowable", EntityIds.PACKAGE_THROWABLE, instance, 48, 10, true);
 	}
 
 	@Mod.EventHandler

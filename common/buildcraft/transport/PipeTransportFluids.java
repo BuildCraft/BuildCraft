@@ -353,7 +353,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	private short computeCurrentConnectionStatesAndTickFlows(short newTimeSlot) {
 		short outputCount = 0;
 
-		// Processes all internal tanks
+		// Processes all interna4al tanks
 		for (ForgeDirection direction : orientations) {
 			sections[direction.ordinal()].setTime(newTimeSlot);
 			sections[direction.ordinal()].moveFluids();

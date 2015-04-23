@@ -8,8 +8,13 @@
  */
 package buildcraft.silicon;
 
+import net.minecraft.client.renderer.entity.RenderSnowball;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.registry.EntityRegistry;
+import buildcraft.BuildCraftSilicon;
+import buildcraft.builders.EntityMechanicalArm;
+import buildcraft.core.lib.render.RenderVoid;
 import buildcraft.silicon.render.RenderLaserBlock;
 import buildcraft.silicon.render.RenderLaserTable;
 import buildcraft.silicon.render.RenderLaserTile;
@@ -24,5 +29,6 @@ public class SiliconProxyClient extends SiliconProxy {
 		RenderingRegistry.registerBlockHandler(new RenderLaserTable());
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileLaser.class, new RenderLaserTile());
+		RenderingRegistry.registerEntityRenderingHandler(EntityPackage.class, new RenderSnowball(BuildCraftSilicon.packageItem));
 	}
 }
