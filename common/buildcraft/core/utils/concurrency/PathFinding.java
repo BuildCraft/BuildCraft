@@ -240,7 +240,9 @@ public class PathFinding implements IIterableAlgorithm {
 					int y = from.index.y + dy;
 					int z = from.index.z + dz;
 
-					if (endReached(x, y, z)) {
+					if (y < 0) {
+						resultMoves[dx + 1][dy + 1][dz + 1] = 0;
+					} else if (endReached(x, y, z)) {
 						resultMoves[dx + 1][dy + 1][dz + 1] = 2;
 					} else if (!BuildCraftAPI.isSoftBlock(world, x, y, z)) {
 						resultMoves[dx + 1][dy + 1][dz + 1] = 0;
