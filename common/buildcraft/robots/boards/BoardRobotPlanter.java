@@ -13,6 +13,7 @@ import java.util.Collection;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemReed;
 import net.minecraft.item.ItemStack;
@@ -169,7 +170,7 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 	private static class ReedFilter implements IStackFilter {
 		@Override
 		public boolean matches(ItemStack stack) {
-			return stack.getItem() instanceof ItemReed;
+			return stack.getItem() == Items.reeds;
 		}
 	}
 
