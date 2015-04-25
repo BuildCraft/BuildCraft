@@ -413,7 +413,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			container.pipe.eventBus.handleEvent(PipeEventFluid.FindDest.class, new PipeEventFluid.FindDest(pushStack, realDirections));
 			for (ForgeDirection direction : realDirections) {
 				int available = internalTanks[direction.ordinal()].fill(testStack, false);
-				int ammountToPush = (int) (available / (double) flowRate / outputCount * Math.min(flowRate, totalAvailable));
+				int ammountToPush = (int) (available / (double) flowRate / outputCount * Math.min(flowRate * outputCount, totalAvailable));
 				if (ammountToPush < 1) {
 					ammountToPush++;
 				}
@@ -457,7 +457,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			// Move liquid from input sides to the center
 			if (transferState[dir.ordinal()] != TransferState.Output && inputPerTick[dir.ordinal()] > 0) {
 
-				int ammountToDrain = (int) ((double) inputPerTick[dir.ordinal()] / (double) flowRate / transferInCount * Math.min(flowRate, spaceAvailable));
+				int ammountToDrain = (int) ((double) inputPerTick[dir.ordinal()] / (double) flowRate / transferInCount * Math.min(flowRate * transferInCount, spaceAvailable));
 				if (ammountToDrain < 1) {
 					ammountToDrain++;
 				}
@@ -466,8 +466,6 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 				if (liquidToPush != null) {
 					int filled = internalTanks[ForgeDirection.UNKNOWN.ordinal()].fill(liquidToPush, true);
 					internalTanks[dir.ordinal()].drain(filled, true);
-//					if (filled > 0)
-//						FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord));
 				}
 			}
 		}

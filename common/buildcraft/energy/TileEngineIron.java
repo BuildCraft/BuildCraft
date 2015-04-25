@@ -260,16 +260,16 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 			cooling /= getBiomeTempScalar();
 			
 			if (cooling > extraHeat) {
+				// Prevent rounding issues if a 1mB cools more than the heat we have.
 				return;
 			}
 			
 			if (coolantAmount * cooling > extraHeat) {
-				tankCoolant.drain(Math.round(extraHeat / cooling), true);
-				heat -= extraHeat;
-			} else {
-				tankCoolant.drain(coolantAmount, true);
-				heat -= coolantAmount * cooling;
+				coolantAmount = (int) Math.floor(extraHeat / cooling);
 			}
+
+			tankCoolant.drain(coolantAmount, true);
+			heat -= coolantAmount * cooling;
 		}
 	}
 
