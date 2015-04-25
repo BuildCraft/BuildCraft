@@ -19,12 +19,15 @@ import buildcraft.builders.TileConstructionMarker;
 import buildcraft.core.builders.BuildingItem;
 import buildcraft.core.builders.BuildingSlot;
 import buildcraft.core.lib.inventory.filters.ArrayStackFilter;
+import buildcraft.robotics.ai.AIRobotDisposeItems;
 import buildcraft.robotics.ai.AIRobotGotoBlock;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
 import buildcraft.robotics.ai.AIRobotGotoStationAndLoad;
 import buildcraft.robotics.ai.AIRobotRecharge;
 
 public class BoardRobotBuilder extends RedstoneBoardRobot {
+
+	private static final int MAX_RANGE_SQ = 3 * 64 * 64;
 
 	private TileConstructionMarker markerToBuild;
 	private BuildingSlot currentBuildingSlot;
@@ -48,69 +51,76 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 		}
 
 		if (markerToBuild == null) {
-			double minDistance = Double.MAX_VALUE;
-
-			for (TileConstructionMarker marker : TileConstructionMarker.currentMarkers) {
-				if (marker.getWorldObj() == robot.worldObj && marker.needsToBuild()) {
-					double dx = robot.posX - marker.xCoord;
-					double dy = robot.posY - marker.yCoord;
-					double dz = robot.posZ - marker.zCoord;
-					double distance = dx * dx + dy * dy + dz * dz;
-
-					if (distance < minDistance) {
-						markerToBuild = marker;
-						minDistance = distance;
-					}
-				}
-			}
+			markerToBuild = findClosestMarker();
 
 			if (markerToBuild == null) {
-				startDelegateAI(new AIRobotGotoSleep(robot));
+				if (robot.containsItems()) {
+					startDelegateAI(new AIRobotDisposeItems(robot));
+				} else {
+					startDelegateAI(new AIRobotGotoSleep(robot));
+				}
 				return;
 			}
 		}
 
-		if (markerToBuild == null || !markerToBuild.needsToBuild()) {
+		if (!markerToBuild.needsToBuild()) {
 			markerToBuild = null;
-			// TODO: review what is this, maybe shutdown the robot
-			startDelegateAI(new AIRobot(robot));
+			currentBuildingSlot = null;
 			return;
 		}
 
 		if (currentBuildingSlot == null) {
 			currentBuildingSlot = markerToBuild.bluePrintBuilder.reserveNextSlot(robot.worldObj);
 
-			if (currentBuildingSlot != null) {
-				// The above may return null even if not done, if it's scanning
-				// for available blocks.
-				requirementsToLookFor = currentBuildingSlot.getRequirements(markerToBuild.getContext());
+			if (currentBuildingSlot == null) {
+				// No slots available yet
+				launchingDelay = 40;
+				return;
 			}
 
-			// TODO: what if there's more requirements that this robot can
-			// handle e.g. not enough free spots? If there's more than X slots
-			// found that can't be built, go to sleep.
 		}
 
-		if (requirementsToLookFor != null && requirementsToLookFor.size() > 0) {
+		if (requirementsToLookFor == null) {
+			if (robot.containsItems()) {
+				startDelegateAI(new AIRobotDisposeItems(robot));
+			}
+
+			requirementsToLookFor = currentBuildingSlot.getRequirements(markerToBuild
+					.getContext());
+
+			if (requirementsToLookFor == null) {
+				launchingDelay = 40;
+				return;
+			}
+
+			if (requirementsToLookFor.size() > 4) {
+				currentBuildingSlot.built = true;
+				currentBuildingSlot = null;
+				requirementsToLookFor = null;
+			}
+		}
+
+		if (requirementsToLookFor.size() > 0) {
 			startDelegateAI(new AIRobotGotoStationAndLoad(robot, new ArrayStackFilter(
 					requirementsToLookFor.getFirst()), requirementsToLookFor.getFirst().stackSize));
+			return;
 		}
 
-		if (currentBuildingSlot != null && requirementsToLookFor != null && requirementsToLookFor.size() == 0) {
+		if (requirementsToLookFor.size() == 0) {
 			if (currentBuildingSlot.stackConsumed == null) {
 				// Once all the element are in, if not already, use them to
 				// prepare the slot.
 				markerToBuild.bluePrintBuilder.useRequirements(robot, currentBuildingSlot);
 			}
 
-			if (robot.getEnergy() - currentBuildingSlot.getEnergyRequirement() < EntityRobotBase.SAFETY_ENERGY) {
+			if (!hasEnoughEnergy()) {
 				startDelegateAI(new AIRobotRecharge(robot));
 			} else {
 				startDelegateAI(new AIRobotGotoBlock(robot,
-					(int) currentBuildingSlot.getDestination().x,
-					(int) currentBuildingSlot.getDestination().y,
-					(int) currentBuildingSlot.getDestination().z,
-					8));
+						(int) currentBuildingSlot.getDestination().x,
+						(int) currentBuildingSlot.getDestination().y,
+						(int) currentBuildingSlot.getDestination().z,
+						8));
 			}
 			// TODO: take into account cases where the robot can't reach the
 			// destination - go to work on another block
@@ -131,16 +141,17 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 				return;
 			}
 
-			if (robot.getEnergy() - currentBuildingSlot.getEnergyRequirement() < EntityRobotBase.SAFETY_ENERGY) {
+			if (!hasEnoughEnergy()) {
 				startDelegateAI(new AIRobotRecharge(robot));
 				return;
 			}
 
 			robot.getBattery().extractEnergy(currentBuildingSlot.getEnergyRequirement(), false);
-			launchingDelay = currentBuildingSlot.getStacksToDisplay().size() * BuildingItem.ITEMS_SPACE;
-			markerToBuild.bluePrintBuilder.buildSlot
-					(robot.worldObj, markerToBuild, currentBuildingSlot,
-							robot.posX + 0.125F, robot.posY + 0.125F, robot.posZ + 0.125F);
+			launchingDelay = currentBuildingSlot.getStacksToDisplay().size()
+					* BuildingItem.ITEMS_SPACE;
+			markerToBuild.bluePrintBuilder.buildSlot(robot.worldObj, markerToBuild,
+					currentBuildingSlot, robot.posX + 0.125F, robot.posY + 0.125F,
+					robot.posZ + 0.125F);
 			currentBuildingSlot = null;
 			requirementsToLookFor = null;
 		}
@@ -159,4 +170,34 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 
 		launchingDelay = nbt.getInteger("launchingDelay");
 	}
+
+	private TileConstructionMarker findClosestMarker() {
+		double minDistance = Double.MAX_VALUE;
+		TileConstructionMarker minMarker = null;
+
+		for (TileConstructionMarker marker : TileConstructionMarker.currentMarkers) {
+			if (marker.getWorldObj() == robot.worldObj && marker.needsToBuild()) {
+				double dx = robot.posX - marker.xCoord;
+				double dy = robot.posY - marker.yCoord;
+				double dz = robot.posZ - marker.zCoord;
+				double distance = dx * dx + dy * dy + dz * dz;
+
+				if (distance < minDistance) {
+					minMarker = marker;
+					minDistance = distance;
+				}
+			}
+		}
+
+		if (minMarker != null && minDistance < MAX_RANGE_SQ) {
+			return minMarker;
+		} else {
+			return null;
+		}
+	}
+
+	private boolean hasEnoughEnergy() {
+		return robot.getEnergy() - currentBuildingSlot.getEnergyRequirement() > EntityRobotBase.SAFETY_ENERGY;
+	}
+
 }
