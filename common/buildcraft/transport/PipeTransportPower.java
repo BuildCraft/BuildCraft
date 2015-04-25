@@ -27,6 +27,7 @@ import buildcraft.api.power.IEngine;
 import buildcraft.api.power.IRedstoneEngine;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
+import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.transport.network.PacketPowerUpdate;
@@ -167,7 +168,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 				return pp;
 			}
 		}
-		return tiles[side];
+		return CompatHooks.INSTANCE.getEnergyProvider(tiles[side]);
 	}
 
 	@Override

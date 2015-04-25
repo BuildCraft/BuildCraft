@@ -97,7 +97,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 		public void reset() {
 			this.amount = 0;
-			incoming = new short[travelDelay];
+			incoming = new short[MAX_TRAVEL_DELAY];
 		}
 
 		/**
@@ -139,7 +139,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 	public FluidRenderData renderCache = new FluidRenderData();
 
-	private final SafeTimeTracker networkSyncTracker = new SafeTimeTracker(BuildCraftCore.updateFactor);
+	private final SafeTimeTracker networkSyncTracker = new SafeTimeTracker(BuildCraftCore.updateFactor / 2);
 	private final TransferState[] transferState = new TransferState[directions.length];
 	private final int[] inputPerTick = new int[directions.length];
 	private final short[] inputTTL = new short[]{0, 0, 0, 0, 0, 0};
@@ -148,7 +148,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	private final boolean[] canReceiveCache = new boolean[6];
 	private byte initClient = 0;
 	private int clientSyncCounter = 0;
-	private int capacity, flowRate, travelDelay;
+	private int capacity, flowRate;
+	private int travelDelay = MAX_TRAVEL_DELAY;
 
 	public enum TransferState {
 		None, Input, Output
@@ -280,7 +281,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 				}
 			}
 			if (!hasFluid) {
-				fluidType = null;
+				setFluidType(null);
 			}
 		}
 	}
@@ -303,7 +304,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		}
 
 		container.pipe.eventBus.handleEvent(PipeEventFluid.FindDest.class, new PipeEventFluid.FindDest(container.pipe, new FluidStack(fluidType, pushAmount), realDirections));
-		float min = Math.min(flowRate, totalAvailable) / (float) flowRate / realDirections.size();
+		float min = Math.min(flowRate * realDirections.size(), totalAvailable) / (float) flowRate / realDirections.size();
 
 		for (ForgeDirection direction : realDirections.elementSet()) {
 			int available = sections[direction.ordinal()].fill(testAmount, false);
@@ -322,8 +323,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 	private void moveToCenter() {
 		int transferInCount = 0;
-		int amountInCenter = sections[6].drain(flowRate, false);
-		int spaceAvailable = capacity - amountInCenter;
+		int spaceAvailable = capacity - sections[6].amount;
 
 		for (ForgeDirection dir : directions) {
 			inputPerTick[dir.ordinal()] = 0;
@@ -333,7 +333,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			}
 		}
 
-		float min = Math.min(flowRate, spaceAvailable) / (float) flowRate / transferInCount;
+		float min = Math.min(flowRate * transferInCount, spaceAvailable) / (float) flowRate / transferInCount;
 		for (ForgeDirection dir : directions) {
 			// Move liquid from input sides to the center
 			if (transferState[dir.ordinal()] != TransferState.Output && inputPerTick[dir.ordinal()] > 0) {
@@ -448,7 +448,10 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		}
 
 		return null;
+	}
 
+	private void setFluidType(FluidStack type) {
+		fluidType = type;
 	}
 
 	/**
@@ -490,9 +493,9 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		super.readFromNBT(nbttagcompound);
 
 		if (nbttagcompound.hasKey("fluid")) {
-			fluidType = FluidStack.loadFluidStackFromNBT(nbttagcompound.getCompoundTag("fluid"));
+			setFluidType(FluidStack.loadFluidStackFromNBT(nbttagcompound.getCompoundTag("fluid")));
 		} else {
-			fluidType = null;
+			setFluidType(null);
 		}
 
 		for (ForgeDirection direction : orientations) {
@@ -501,7 +504,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 				if (compound.hasKey("FluidType")) {
 					FluidStack stack = FluidStack.loadFluidStackFromNBT(compound);
 					if (fluidType == null) {
-						fluidType = stack;
+						setFluidType(stack);
 					}
 					if (stack.isFluidEqual(fluidType)) {
 						sections[direction.ordinal()].readFromNBT(compound);
@@ -556,7 +559,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 		if (doFill && filled > 0) {
 			if (fluidType == null) {
-				fluidType = new FluidStack(resource, 0);
+				setFluidType(new FluidStack(resource, 0));
 			}
 			if (from != ForgeDirection.UNKNOWN) {
 				transferState[from.ordinal()] = TransferState.Input;

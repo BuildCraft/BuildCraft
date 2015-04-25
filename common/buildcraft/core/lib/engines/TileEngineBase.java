@@ -25,6 +25,7 @@ import buildcraft.api.tiles.IHeatable;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
+import buildcraft.core.CompatHooks;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.core.lib.utils.ResourceUtils;
@@ -230,7 +231,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 
 		engineUpdate();
 
-		TileEntity tile = getTile(orientation);
+		Object tile = getEnergyProvider(orientation);
 
 		if (progressPart != 0) {
 			progress += getPistonSpeed();
@@ -267,8 +268,12 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 		}
 	}
 
+	public Object getEnergyProvider(ForgeDirection orientation) {
+		return CompatHooks.INSTANCE.getEnergyProvider(getTile(orientation));
+	}
+
 	private int getPowerToExtract() {
-		TileEntity tile = getTile(orientation);
+		Object tile = getEnergyProvider(orientation);
 
         if (tile instanceof IEngine) {
             IEngine engine = (IEngine) tile;
@@ -297,7 +302,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 	}
 
 	protected void sendPower() {
-		TileEntity tile = getTile(orientation);
+		Object tile = getEnergyProvider(orientation);
 		if (isPoweredTile(tile, orientation)) {
 			int extracted = getPowerToExtract();
 			if (extracted <= 0) {
@@ -359,7 +364,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 	}
 
 	public boolean isOrientationValid() {
-		TileEntity tile = getTile(orientation);
+		Object tile = getEnergyProvider(orientation);
 
 		return isPoweredTile(tile, orientation);
 	}
@@ -501,7 +506,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 		return extracted;
 	}
 
-	public boolean isPoweredTile(TileEntity tile, ForgeDirection side) {
+	public boolean isPoweredTile(Object tile, ForgeDirection side) {
 		if (tile == null) {
             return false;
         } else if (tile instanceof IEngine) {
