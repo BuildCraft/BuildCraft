@@ -171,7 +171,7 @@ public class TileStampingTable extends TileLaserTableBase implements IHasWork, I
     }
 
     @Override
-    public int[] getAccessibleSlotsFromSide(int p_94128_1_) {
+    public int[] getAccessibleSlotsFromSide(int side) {
         return SLOTS;
     }
 

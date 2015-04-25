@@ -1,9 +1,5 @@
 package buildcraft.transport.utils;
 
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
-
 public class FluidRenderData {
 	public int fluidID, color;
 	public int[] amount = new int[7];

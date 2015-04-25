@@ -11,7 +11,6 @@ package buildcraft.silicon.gui;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import buildcraft.core.lib.gui.slots.SlotPhantom;
-import buildcraft.silicon.TilePackager;
 
 public class SlotPackager extends SlotPhantom {
 	public SlotPackager(IInventory iinventory, int slotIndex, int posX, int posY) {

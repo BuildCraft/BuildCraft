@@ -42,6 +42,12 @@ public class BlockTank extends BlockBuildCraft {
 
 	@Override
 	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
+		TileEntity tile = world.getTileEntity(x, y, z);
+		if (tile != null && tile instanceof TileTank) {
+			TileTank tank = (TileTank) tile;
+			tank.onBlockBreak();
+		}
+
 		TileEntity tileAbove = world.getTileEntity(x, y + 1, z);
 		TileEntity tileBelow = world.getTileEntity(x, y - 1, z);
 

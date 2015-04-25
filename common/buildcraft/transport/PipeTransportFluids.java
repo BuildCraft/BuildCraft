@@ -10,6 +10,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
@@ -34,6 +35,21 @@ import buildcraft.transport.pipes.events.PipeEventFluid;
 import buildcraft.transport.utils.FluidRenderData;
 
 public class PipeTransportFluids extends PipeTransport implements IFluidHandler {
+	public static final Map<Class<? extends Pipe<?>>, Integer> fluidCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
+
+	/**
+	 * The amount of liquid contained by a pipe section. For simplicity, all
+	 * pipe sections are assumed to be of the same volume.
+	 */
+	public static int LIQUID_IN_PIPE = FluidContainerRegistry.BUCKET_VOLUME / 4;
+	public static int MAX_TRAVEL_DELAY = 12;
+	public static short INPUT_TTL = 60; // 100
+	public static short OUTPUT_TTL = 80; // 80
+	public static short OUTPUT_COOLDOWN = 30; // 30
+
+	private static final ForgeDirection[] directions = ForgeDirection.VALID_DIRECTIONS;
+	private static final ForgeDirection[] orientations = ForgeDirection.values();
+
 	public class PipeSection {
 		public int amount;
 
@@ -118,25 +134,11 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		}
 	}
 
-	public static final Map<Class<? extends Pipe<?>>, Integer> fluidCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
-
-	/**
-	 * The amount of liquid contained by a pipe section. For simplicity, all
-	 * pipe sections are assumed to be of the same volume.
-	 */
-	public static int LIQUID_IN_PIPE = FluidContainerRegistry.BUCKET_VOLUME / 4;
-	public static int MAX_TRAVEL_DELAY = 12;
-	public static short INPUT_TTL = 60; // 100
-	public static short OUTPUT_TTL = 80; // 80
-	public static short OUTPUT_COOLDOWN = 30; // 30
-
 	public PipeSection[] sections = new PipeSection[7];
 	public FluidStack fluidType;
 
 	public FluidRenderData renderCache = new FluidRenderData();
 
-	private static final ForgeDirection[] directions = ForgeDirection.VALID_DIRECTIONS;
-	private static final ForgeDirection[] orientations = ForgeDirection.values();
 	private final SafeTimeTracker networkSyncTracker = new SafeTimeTracker(BuildCraftCore.updateFactor);
 	private final TransferState[] transferState = new TransferState[directions.length];
 	private final int[] inputPerTick = new int[directions.length];
@@ -464,6 +466,22 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			return null;
 		} else {
 			return new FluidStack(fluidType, sections[direction.ordinal()].amount);
+		}
+	}
+
+	@Override
+	public void dropContents() {
+		if (fluidType != null) {
+			int totalAmount = 0;
+			for (int i = 0; i < 7; i++) {
+				totalAmount += sections[i].amount;
+			}
+			if (totalAmount > 0) {
+				FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(
+						new FluidStack(fluidType, totalAmount),
+						getWorld(), container.xCoord, container.yCoord, container.zCoord
+				));
+			}
 		}
 	}
 

@@ -1,6 +1,7 @@
 package buildcraft.robotics.map;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
+
 import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.core.INBTStoreable;
 

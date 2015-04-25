@@ -240,7 +240,7 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		if (slot == 9) {
-			return (stack == null || stack.getItem() == Items.paper || stack.getItem() instanceof ItemPackage);
+			return stack == null || stack.getItem() == Items.paper || stack.getItem() instanceof ItemPackage;
 		}
 		return visibleInventory.isItemValidForSlot(slot, stack);
 	}

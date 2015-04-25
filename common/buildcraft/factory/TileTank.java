@@ -15,6 +15,7 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -47,6 +48,15 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 			uTank.cachedComparatorOverride = co;
 			uTank.hasUpdate = true;
 			uTank = getTankAbove(uTank);
+		}
+	}
+
+	protected void onBlockBreak() {
+		if (!tank.isEmpty()) {
+			FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(
+					tank.getFluid(),
+					worldObj, xCoord, yCoord, zCoord
+			));
 		}
 	}
 

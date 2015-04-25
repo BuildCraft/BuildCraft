@@ -8,9 +8,7 @@
  */
 package buildcraft.transport.statements;
 
-import java.util.Collections;
 import java.util.Locale;
-import org.objectweb.asm.tree.MethodNode;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;

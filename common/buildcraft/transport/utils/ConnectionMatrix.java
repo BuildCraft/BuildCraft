@@ -8,9 +8,7 @@
  */
 package buildcraft.transport.utils;
 
-import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.common.util.ForgeDirection;
 

@@ -17,6 +17,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.transport.IInjectable;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.ITransactor;
@@ -200,6 +201,6 @@ public class TileHopper extends TileBuildCraft implements IInventory, IEnergyHan
 	@Override
 	public boolean canConnectEnergy(ForgeDirection side) {
 		// blocks up and down
-		return side.ordinal() >= 2;
+		return side.ordinal() >= 2 && !(getTile(side) instanceof IPipeTile);
 	}
 }

@@ -12,7 +12,9 @@ import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Set;
+
 import gnu.trove.map.hash.TLongObjectHashMap;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import buildcraft.core.lib.utils.NBTUtils;
