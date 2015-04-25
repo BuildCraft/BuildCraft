@@ -35,7 +35,7 @@ public class AIRobotMain extends AIRobot {
 			}
 		} else if (robot.getEnergy() < EntityRobotBase.SAFETY_ENERGY) {
 			if (!(ai instanceof AIRobotRecharge) && !(ai instanceof AIRobotShutdown)) {
-				if (rechargeCooldown-- == 0) {
+				if (rechargeCooldown-- <= 0) {
 					startDelegateAI(new AIRobotRecharge(robot));
 				}
 			}
