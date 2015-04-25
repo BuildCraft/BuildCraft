@@ -9,9 +9,7 @@
 package buildcraft;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -69,7 +67,6 @@ import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.silicon.ItemRedstoneChipset.Chipset;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.FacadePluggable;
@@ -87,6 +84,7 @@ import buildcraft.transport.TileFilteredBuffer;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TransportGuiHandler;
 import buildcraft.transport.TransportProxy;
+import buildcraft.transport.TransportSiliconRecipes;
 import buildcraft.transport.WireIconProvider;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateDefinition.GateLogic;
@@ -143,9 +141,7 @@ import buildcraft.transport.pluggable.ItemLens;
 import buildcraft.transport.pluggable.ItemPlug;
 import buildcraft.transport.pluggable.LensPluggable;
 import buildcraft.transport.pluggable.PlugPluggable;
-import buildcraft.transport.recipes.AdvancedFacadeRecipe;
 import buildcraft.transport.recipes.GateExpansionRecipe;
-import buildcraft.transport.recipes.GateLogicSwapRecipe;
 import buildcraft.transport.schematics.BptItemPipeFilters;
 import buildcraft.transport.schematics.BptPipeIron;
 import buildcraft.transport.schematics.BptPipeWooden;
@@ -508,9 +504,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 		PipeManager.registerPipePluggable(LensPluggable.class, "lens");
 		PipeManager.registerPipePluggable(PlugPluggable.class, "plug");
 
-		GateExpansions.registerExpansion(GateExpansionPulsar.INSTANCE, Chipset.PULSATING.getStack());
-		GateExpansions.registerExpansion(GateExpansionTimer.INSTANCE, Chipset.QUARTZ.getStack());
-		GateExpansions.registerExpansion(GateExpansionRedstoneFader.INSTANCE, Chipset.COMP.getStack());
+		GateExpansions.registerExpansion(GateExpansionPulsar.INSTANCE);
+		GateExpansions.registerExpansion(GateExpansionTimer.INSTANCE);
+		GateExpansions.registerExpansion(GateExpansionRedstoneFader.INSTANCE);
 		GateExpansions.registerExpansion(GateExpansionLightSensor.INSTANCE, new ItemStack(Blocks.daylight_detector));
 
 		if (BuildCraftCore.loadDefaultRecipes) {
@@ -649,8 +645,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 		
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(filteredBufferBlock, 1),
 				"wdw", "wcw", "wpw", 'w', "plankWood", 'd',
-			BuildCraftTransport.pipeItemsDiamond, 'c', Blocks.chest, 'p',
-			Blocks.piston);
+				BuildCraftTransport.pipeItemsDiamond, 'c', Blocks.chest, 'p',
+				Blocks.piston);
 
 		//Facade turning helper
 		GameRegistry.addRecipe(facadeItem.new FacadeRecipe());
@@ -660,7 +656,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		GameRegistry.addShapelessRecipe(new ItemStack(plugItem, 4), new ItemStack(pipeStructureCobblestone));
 
 		if (Loader.isModLoaded("BuildCraft|Silicon")) {
-			loadSiliconRecipes();
+			TransportSiliconRecipes.loadSiliconRecipes();
 		} else {
 			BCLog.logger.warn("**********************************************");
 			BCLog.logger.warn("*   You are using the BuildCraft Transport   *");
@@ -685,61 +681,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 				));
 			}
 		}
-	}
-
-	private static void loadSiliconRecipes() {
-		GameRegistry.addShapelessRecipe(new ItemStack(gateCopier, 1), new ItemStack(BuildCraftCore.wrenchItem), Chipset.RED.getStack(1));
-
-		// PIPE WIRE
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redWire", 5000, PipeWire.RED.getStack(8),
-				"dyeRed", "dustRedstone", "ingotIron");
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:blueWire", 5000, PipeWire.BLUE.getStack(8),
-				"dyeBlue", "dustRedstone", "ingotIron");
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:greenWire", 5000, PipeWire.GREEN.getStack(8),
-				"dyeGreen", "dustRedstone", "ingotIron");
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:yellowWire", 5000, PipeWire.YELLOW.getStack(8),
-				"dyeYellow", "dustRedstone", "ingotIron");
-
-		// Lenses, Filters
-		for (int i = 0; i < 16; i++) {
-			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:lens:" + i, 10000, new ItemStack(lensItem, 2, i),
-					ColorUtils.getOreDictionaryName(15 - i), "blockGlass", "ingotIron");
-			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:filter:" + i, 10000, new ItemStack(lensItem, 2, i + 16),
-					ColorUtils.getOreDictionaryName(15 - i), "blockGlass", Blocks.iron_bars);
-		}
-
-		// GATES
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:simpleGate", (int) Math.round(100000 * gateCostMultiplier),
-				ItemGate.makeGateItem(GateMaterial.REDSTONE, GateLogic.AND), Chipset.RED.getStack(),
-				PipeWire.RED.getStack());
-
-		addGateRecipe("Iron", (int) Math.round(200000 * gateCostMultiplier), GateMaterial.IRON, Chipset.IRON, PipeWire.RED, PipeWire.BLUE);
-		addGateRecipe("Gold", (int) Math.round(400000 * gateCostMultiplier), GateMaterial.GOLD, Chipset.GOLD, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
-		addGateRecipe("Quartz", (int) Math.round(600000 * gateCostMultiplier), GateMaterial.QUARTZ, Chipset.QUARTZ, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
-		addGateRecipe("Diamond", (int) Math.round(800000 * gateCostMultiplier), GateMaterial.DIAMOND, Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE,
-				PipeWire.GREEN, PipeWire.YELLOW);
-		addGateRecipe("Emerald", (int) Math.round(1200000 * gateCostMultiplier), GateMaterial.EMERALD, Chipset.EMERALD, PipeWire.RED, PipeWire.BLUE,
-				PipeWire.GREEN, PipeWire.YELLOW);
-
-		// REVERSAL RECIPE
-		BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateLogicSwapRecipe("buildcraft:gateSwap"));
-
-		// PHASED FACADE
-		BuildcraftRecipeRegistry.integrationTable.addRecipe(new AdvancedFacadeRecipe("buildcraft:advancedFacade"));
-	}
-
-	private static void addGateRecipe(String materialName, int energyCost, GateMaterial material, Chipset chipset,
-			PipeWire... pipeWire) {
-		List<ItemStack> temp = new ArrayList<ItemStack>();
-		temp.add(chipset.getStack());
-		for (PipeWire wire : pipeWire) {
-			temp.add(wire.getStack());
-		}
-		Object[] inputs = temp.toArray();
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:andGate" + materialName, energyCost,
-				ItemGate.makeGateItem(material, GateLogic.AND), inputs);
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:orGate" + materialName, energyCost,
-				ItemGate.makeGateItem(material, GateLogic.OR), inputs);
 	}
 
 	@Mod.EventHandler
