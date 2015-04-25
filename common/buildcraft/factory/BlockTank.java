@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -29,6 +30,7 @@ import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.inventory.InvUtils;
 
 public class BlockTank extends BlockBuildCraft {
+	private static final boolean DEBUG_MODE = false;
 	private IIcon textureStackedSide;
 
 	public BlockTank() {
@@ -168,6 +170,15 @@ public class BlockTank extends BlockBuildCraft {
 					}
 
 					return true;
+				}
+			}
+		} else if (DEBUG_MODE) {
+			TileEntity tile = world.getTileEntity(i, j, k);
+
+			if (tile instanceof TileTank) {
+				TileTank tank = (TileTank) tile;
+				if (tank.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid != null) {
+					entityplayer.addChatComponentMessage(new ChatComponentText("Amount: " + tank.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid.amount + " mB"));
 				}
 			}
 		}

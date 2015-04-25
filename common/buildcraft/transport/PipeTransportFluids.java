@@ -38,7 +38,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		public int amount;
 
 		private short currentTime = 0;
-		private short[] incoming = new short[travelDelay];
+		private short[] incoming = new short[MAX_TRAVEL_DELAY];
 
 		public int fill(int maxFill, boolean doFill) {
 			int amountToFill = Math.min(getMaxFillRate(), maxFill);
@@ -125,6 +125,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	 * pipe sections are assumed to be of the same volume.
 	 */
 	public static int LIQUID_IN_PIPE = FluidContainerRegistry.BUCKET_VOLUME / 4;
+	public static int MAX_TRAVEL_DELAY = 12;
 	public static short INPUT_TTL = 60; // 100
 	public static short OUTPUT_TTL = 80; // 80
 	public static short OUTPUT_COOLDOWN = 30; // 30
@@ -153,8 +154,10 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 	public PipeTransportFluids() {
 		for (ForgeDirection direction : directions) {
+			sections[direction.ordinal()] = new PipeSection();
 			transferState[direction.ordinal()] = TransferState.None;
 		}
+		sections[6] = new PipeSection();
 	}
 
 	public int getCapacity() {
@@ -168,10 +171,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public void initFromPipe(Class<? extends Pipe> pipeClass) {
 		capacity = LIQUID_IN_PIPE;
 		flowRate = fluidCapacities.get(pipeClass);
-		travelDelay = MathUtils.clamp(Math.round(16 / (flowRate / 10)), 1, 12);
-		for (ForgeDirection direction : orientations) {
-			sections[direction.ordinal()] = new PipeSection();
-		}
+		travelDelay = MathUtils.clamp(Math.round(16 / (flowRate / 10)), 1, MAX_TRAVEL_DELAY);
 	}
 
 	@Override
@@ -486,10 +486,10 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 						fluidType = stack;
 					}
 					if (stack.isFluidEqual(fluidType)) {
-						sections[direction.ordinal()].readFromNBT(nbttagcompound);
+						sections[direction.ordinal()].readFromNBT(compound);
 					}
 				} else {
-					sections[direction.ordinal()].readFromNBT(nbttagcompound);
+					sections[direction.ordinal()].readFromNBT(compound);
 				}
 			}
 			if (direction != ForgeDirection.UNKNOWN) {
@@ -502,18 +502,18 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		super.writeToNBT(nbttagcompound);
 
-		NBTTagCompound fluidTag = new NBTTagCompound();
 		if (fluidType != null) {
+			NBTTagCompound fluidTag = new NBTTagCompound();
 			fluidType.writeToNBT(fluidTag);
 			nbttagcompound.setTag("fluid", fluidTag);
-		}
 
-		for (ForgeDirection direction : orientations) {
-			NBTTagCompound subTag = new NBTTagCompound();
-			sections[direction.ordinal()].writeToNBT(subTag);
-			nbttagcompound.setTag("tank[" + direction.ordinal() + "]", subTag);
-			if (direction != ForgeDirection.UNKNOWN) {
-				nbttagcompound.setShort("transferState[" + direction.ordinal() + "]", (short) transferState[direction.ordinal()].ordinal());
+			for (ForgeDirection direction : orientations) {
+				NBTTagCompound subTag = new NBTTagCompound();
+				sections[direction.ordinal()].writeToNBT(subTag);
+				nbttagcompound.setTag("tank[" + direction.ordinal() + "]", subTag);
+				if (direction != ForgeDirection.UNKNOWN) {
+					nbttagcompound.setShort("transferState[" + direction.ordinal() + "]", (short) transferState[direction.ordinal()].ordinal());
+				}
 			}
 		}
 	}
