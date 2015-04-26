@@ -97,6 +97,7 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 				currentBuildingSlot.built = true;
 				currentBuildingSlot = null;
 				requirementsToLookFor = null;
+				return;
 			}
 		}
 

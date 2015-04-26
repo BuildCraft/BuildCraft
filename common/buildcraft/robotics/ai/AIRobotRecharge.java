@@ -15,11 +15,8 @@ import buildcraft.robotics.IStationFilter;
 
 public class AIRobotRecharge extends AIRobot {
 
-	private boolean success;
-
 	public AIRobotRecharge(EntityRobotBase iRobot) {
 		super(iRobot);
-		success = false;
 	}
 
 	@Override
@@ -55,14 +52,7 @@ public class AIRobotRecharge extends AIRobot {
 			if (!ai.success()) {
 				setSuccess(false);
 				terminate();
-			} else {
-				success = true;
 			}
 		}
-	}
-
-	@Override
-	public boolean success() {
-		return success;
 	}
 }
