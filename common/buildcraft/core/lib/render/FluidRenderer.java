@@ -114,7 +114,7 @@ public final class FluidRenderer {
 			liquidBlock.minZ = 0.01f;
 
 			liquidBlock.maxX = 0.99f;
-			liquidBlock.maxY = (float) s / (float) DISPLAY_STAGES;
+			liquidBlock.maxY = Math.max(s, 1) / (float) DISPLAY_STAGES;
 			liquidBlock.maxZ = 0.99f;
 
 			RenderEntityBlock.INSTANCE.renderBlock(liquidBlock);
