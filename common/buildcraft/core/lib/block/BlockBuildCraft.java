@@ -106,35 +106,6 @@ public abstract class BlockBuildCraft extends BlockContainer {
 			return true;
 		}
 
-		if (isRotatable()) {
-			if (!entityplayer.isSneaking()) {
-				Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-				if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, x, y, z)) {
-					int meta = world.getBlockMetadata(x, y, z);
-
-					switch (ForgeDirection.values()[meta & 7]) {
-						case WEST:
-							world.setBlockMetadataWithNotify(x, y, z, meta & 8 | ForgeDirection.SOUTH.ordinal(), 0);
-							break;
-						case EAST:
-							world.setBlockMetadataWithNotify(x, y, z, meta & 8 | ForgeDirection.NORTH.ordinal(), 0);
-							break;
-						case NORTH:
-							world.setBlockMetadataWithNotify(x, y, z, meta & 8 | ForgeDirection.WEST.ordinal(), 0);
-							break;
-						case SOUTH:
-						default:
-							world.setBlockMetadataWithNotify(x, y, z, meta & 8 | ForgeDirection.EAST.ordinal(), 0);
-							break;
-					}
-
-					world.markBlockForUpdate(x, y, z);
-					((IToolWrench) equipped).wrenchUsed(entityplayer, x, y, z);
-					return true;
-				}
-			}
-		}
-
 		return false;
 	}
 
