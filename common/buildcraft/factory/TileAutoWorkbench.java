@@ -413,13 +413,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		if (slot == SLOT_RESULT) {
 			return false;
 		}
-		if (stack == null) {
-			return false;
-		}
 		if (stack.getItem().hasContainerItem(stack)) {
-			return false;
-		}
-		if (getStackInSlot(slot) == null) {
 			return false;
 		}
 		return true;
