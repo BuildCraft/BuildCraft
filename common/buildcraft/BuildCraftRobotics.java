@@ -101,42 +101,25 @@ import buildcraft.robotics.ai.AIRobotStraightMoveTo;
 import buildcraft.robotics.ai.AIRobotUnload;
 import buildcraft.robotics.ai.AIRobotUnloadFluids;
 import buildcraft.robotics.ai.AIRobotUseToolOnBlock;
+import buildcraft.robotics.boards.BCBoardNBT;
 import buildcraft.robotics.boards.BoardRobotBomber;
-import buildcraft.robotics.boards.BoardRobotBomberNBT;
 import buildcraft.robotics.boards.BoardRobotBuilder;
-import buildcraft.robotics.boards.BoardRobotBuilderNBT;
 import buildcraft.robotics.boards.BoardRobotButcher;
-import buildcraft.robotics.boards.BoardRobotButcherNBT;
 import buildcraft.robotics.boards.BoardRobotCarrier;
-import buildcraft.robotics.boards.BoardRobotCarrierNBT;
 import buildcraft.robotics.boards.BoardRobotCrafter;
-import buildcraft.robotics.boards.BoardRobotCrafterNBT;
 import buildcraft.robotics.boards.BoardRobotDelivery;
-import buildcraft.robotics.boards.BoardRobotDeliveryNBT;
 import buildcraft.robotics.boards.BoardRobotFarmer;
-import buildcraft.robotics.boards.BoardRobotFarmerNBT;
 import buildcraft.robotics.boards.BoardRobotFluidCarrier;
-import buildcraft.robotics.boards.BoardRobotFluidCarrierNBT;
 import buildcraft.robotics.boards.BoardRobotHarvester;
-import buildcraft.robotics.boards.BoardRobotHarvesterNBT;
 import buildcraft.robotics.boards.BoardRobotKnight;
-import buildcraft.robotics.boards.BoardRobotKnightNBT;
 import buildcraft.robotics.boards.BoardRobotLeaveCutter;
-import buildcraft.robotics.boards.BoardRobotLeaveCutterNBT;
 import buildcraft.robotics.boards.BoardRobotLumberjack;
-import buildcraft.robotics.boards.BoardRobotLumberjackNBT;
 import buildcraft.robotics.boards.BoardRobotMiner;
-import buildcraft.robotics.boards.BoardRobotMinerNBT;
 import buildcraft.robotics.boards.BoardRobotPicker;
-import buildcraft.robotics.boards.BoardRobotPickerNBT;
 import buildcraft.robotics.boards.BoardRobotPlanter;
-import buildcraft.robotics.boards.BoardRobotPlanterNBT;
 import buildcraft.robotics.boards.BoardRobotPump;
-import buildcraft.robotics.boards.BoardRobotPumpNBT;
 import buildcraft.robotics.boards.BoardRobotShovelman;
-import buildcraft.robotics.boards.BoardRobotShovelmanNBT;
 import buildcraft.robotics.boards.BoardRobotStripes;
-import buildcraft.robotics.boards.BoardRobotStripesNBT;
 import buildcraft.robotics.map.MapManager;
 import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.robotics.statements.ActionRobotFilterTool;
@@ -231,34 +214,34 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
 		// Cheapest, dumbest robot types
 		// Those generally do very simple tasks
-		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotPickerNBT.instance, 8000);
-		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotCarrierNBT.instance, 8000);
-		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotFluidCarrierNBT.instance, 8000);
+		RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:boardRobotPicker", "picker", BoardRobotPicker.class, "green"), 8000);
+		RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:boardRobotCarrier", "carrier", BoardRobotCarrier.class, "green"), 8000);
+		RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:boardRobotFluidCarrier", "fluidCarrier", BoardRobotFluidCarrier.class, "green"), 8000);
 
 		// More expensive robot types
 		// Those generally handle block mining/harvesting/placement.
-		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotLumberjackNBT.instance, 32000);
-		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotHarvesterNBT.instance, 32000);
-		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotMinerNBT.instance, 32000);
-		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotPlanterNBT.instance, 32000);
-		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotFarmerNBT.instance, 32000);
-		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotLeaveCutterNBT.instance, 32000);
-		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotButcherNBT.instance, 32000);
-		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotShovelmanNBT.instance, 32000);
-		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotPumpNBT.instance, 32000);
+		RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:boardRobotLumberjack", "lumberjack", BoardRobotLumberjack.class, "blue"), 32000);
+		RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:boardRobotHarvester", "harvester", BoardRobotHarvester.class, "blue"), 32000);
+		RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:miner", "miner", BoardRobotMiner.class, "blue"), 32000);
+		RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:boardRobotPlanter", "planter", BoardRobotPlanter.class, "blue"), 32000);
+		RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:boardRobotFarmer", "farmer", BoardRobotFarmer.class, "blue"), 32000);
+		RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:leave_cutter", "leaveCutter", BoardRobotLeaveCutter.class, "blue"), 32000);
+		RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:boardRobotButcher", "butcher", BoardRobotButcher.class, "blue"), 32000);
+		RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:shovelman", "shovelman", BoardRobotShovelman.class, "blue"), 32000);
+		RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:boardRobotPump", "pump", BoardRobotPump.class, "blue"), 32000);
 
 		// Even more expensive
 		// These handle complex multi-step operations.
-		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotCrafterNBT.instance, 128000);
-		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotDeliveryNBT.instance, 128000);
-		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotKnightNBT.instance, 128000);
-		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotBomberNBT.instance, 128000);
-		RedstoneBoardRegistry.instance.registerBoardType(BoardRobotStripesNBT.instance, 128000);
+		RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:boardRobotCrafter", "crafter", BoardRobotCrafter.class, "blue"), 128000);
+		RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:boardRobotDelivery", "delivery", BoardRobotDelivery.class, "green"), 128000);
+		RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:boardRobotKnight", "knight", BoardRobotKnight.class, "red"), 128000);
+		RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:boardRobotBomber", "bomber", BoardRobotBomber.class, "red"), 128000);
+		RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:boardRobotStripes", "stripes", BoardRobotStripes.class, "yellow"), 128000);
 
 		// Most expensive
 		// Overpowered galore!
 		if (Loader.isModLoaded("BuildCraft|Builders")) {
-			RedstoneBoardRegistry.instance.registerBoardType(BoardRobotBuilderNBT.instance, 512000);
+			RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:boardRobotBuilder", "builder", BoardRobotBuilder.class, "yellow"), 512000);
 		}
 
 		StatementManager.registerActionProvider(new RobotsActionProvider());

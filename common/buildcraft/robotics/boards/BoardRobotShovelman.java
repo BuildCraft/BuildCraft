@@ -22,7 +22,7 @@ public class BoardRobotShovelman extends BoardRobotGenericBreakBlock {
 
 	@Override
 	public RedstoneBoardRobotNBT getNBTHandler() {
-		return BoardRobotShovelmanNBT.instance;
+		return BCBoardNBT.REGISTRY.get("shovelman");
 	}
 
 	@Override

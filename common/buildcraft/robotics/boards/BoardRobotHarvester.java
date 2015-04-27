@@ -27,7 +27,7 @@ public class BoardRobotHarvester extends BoardRobotGenericBreakBlock {
 
 	@Override
 	public RedstoneBoardRobotNBT getNBTHandler() {
-		return BoardRobotHarvesterNBT.instance;
+		return BCBoardNBT.REGISTRY.get("harvester");
 	}
 
 	@Override

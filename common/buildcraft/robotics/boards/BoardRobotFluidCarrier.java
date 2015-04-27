@@ -28,7 +28,7 @@ public class BoardRobotFluidCarrier extends RedstoneBoardRobot {
 
 	@Override
 	public RedstoneBoardRobotNBT getNBTHandler() {
-		return BoardRobotFluidCarrierNBT.instance;
+		return BCBoardNBT.REGISTRY.get("fluidCarrier");
 	}
 
 	@Override

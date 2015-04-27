@@ -57,16 +57,6 @@ public class BoardRobotPicker extends RedstoneBoardRobot {
 
 	@Override
 	public RedstoneBoardRobotNBT getNBTHandler() {
-		return BoardRobotPickerNBT.instance;
-	}
-
-	@Override
-	public void writeSelfToNBT(NBTTagCompound nbt) {
-		super.writeSelfToNBT(nbt);
-	}
-
-	@Override
-	public void loadSelfFromNBT(NBTTagCompound nbt) {
-		super.loadSelfFromNBT(nbt);
+		return BCBoardNBT.REGISTRY.get("picker");
 	}
 }

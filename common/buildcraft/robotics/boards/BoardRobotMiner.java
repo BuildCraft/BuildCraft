@@ -47,7 +47,7 @@ public class BoardRobotMiner extends BoardRobotGenericBreakBlock {
 
 	@Override
 	public RedstoneBoardRobotNBT getNBTHandler() {
-		return BoardRobotMinerNBT.instance;
+		return BCBoardNBT.REGISTRY.get("miner");
 	}
 
 	@Override

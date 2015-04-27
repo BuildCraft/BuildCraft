@@ -36,7 +36,7 @@ public class BoardRobotDelivery extends RedstoneBoardRobot {
 
 	@Override
 	public RedstoneBoardRobotNBT getNBTHandler() {
-		return BoardRobotDeliveryNBT.instance;
+		return BCBoardNBT.REGISTRY.get("delivery");
 	}
 
 	@Override

@@ -42,7 +42,7 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 
 	@Override
 	public RedstoneBoardRobotNBT getNBTHandler() {
-		return BoardRobotPumpNBT.instance;
+		return BCBoardNBT.REGISTRY.get("pump");
 	}
 
 	@Override

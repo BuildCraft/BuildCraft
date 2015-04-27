@@ -37,7 +37,7 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 
 	@Override
 	public RedstoneBoardRobotNBT getNBTHandler() {
-		return BoardRobotFarmerNBT.instance;
+		return BCBoardNBT.REGISTRY.get("farmer");
 	}
 
 	@Override

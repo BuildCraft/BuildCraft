@@ -27,7 +27,7 @@ public class BoardRobotLumberjack extends BoardRobotGenericBreakBlock {
 
 	@Override
 	public RedstoneBoardRobotNBT getNBTHandler() {
-		return BoardRobotLumberjackNBT.instance;
+		return BCBoardNBT.REGISTRY.get("lumberjack");
 	}
 
 	@Override

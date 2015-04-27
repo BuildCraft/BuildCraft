@@ -40,7 +40,7 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
 
 	@Override
 	public RedstoneBoardRobotNBT getNBTHandler() {
-		return BoardRobotBomberNBT.instance;
+		return BCBoardNBT.REGISTRY.get("bomber");
 	}
 
 	@Override

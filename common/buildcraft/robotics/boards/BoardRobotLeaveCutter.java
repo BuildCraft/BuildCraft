@@ -23,7 +23,7 @@ public class BoardRobotLeaveCutter extends BoardRobotGenericBreakBlock {
 
 	@Override
 	public RedstoneBoardRobotNBT getNBTHandler() {
-		return BoardRobotLeaveCutterNBT.instance;
+		return BCBoardNBT.REGISTRY.get("leaveCutter");
 	}
 
 	@Override

@@ -31,7 +31,7 @@ public class BoardRobotButcher extends RedstoneBoardRobot {
 
 	@Override
 	public RedstoneBoardRobotNBT getNBTHandler() {
-		return BoardRobotButcherNBT.instance;
+		return BCBoardNBT.REGISTRY.get("butcher");
 	}
 
 	@Override

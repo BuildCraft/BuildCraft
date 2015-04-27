@@ -34,7 +34,7 @@ public class BoardRobotStripes extends RedstoneBoardRobot {
 
 	@Override
 	public RedstoneBoardRobotNBT getNBTHandler() {
-		return BoardRobotStripesNBT.instance;
+		return BCBoardNBT.REGISTRY.get("stripes");
 	}
 
 	@Override
