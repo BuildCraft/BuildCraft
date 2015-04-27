@@ -50,7 +50,7 @@ public class BCBoardNBT extends RedstoneBoardRobotNBT {
 
 	@Override
 	public String getID() {
-		return "buildcraft:" + id;
+		return id;
 	}
 
 	@Override

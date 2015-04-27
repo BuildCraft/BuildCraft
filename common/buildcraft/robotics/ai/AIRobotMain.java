@@ -28,7 +28,7 @@ public class AIRobotMain extends AIRobot {
 
 	@Override
 	public void preempt(AIRobot ai) {
-		if (robot.getEnergy() <= EntityRobotBase.SHUTDOWN_ENERGY
+		if (robot.getEnergy() <= EntityRobotBase.SHUTDOWN_ENERGY && robot.canShutdown()
 				&& (robot.getDockingStation() == null || !robot.getDockingStation().providesPower())) {
 			if (!(ai instanceof AIRobotShutdown)) {
 				startDelegateAI(new AIRobotShutdown(robot));

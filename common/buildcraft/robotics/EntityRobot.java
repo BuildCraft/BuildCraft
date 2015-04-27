@@ -100,6 +100,7 @@ public class EntityRobot extends EntityRobotBase implements
 	private boolean needsUpdate = false;
 	private ItemStack[] inv = new ItemStack[4];
 	private FluidStack tank;
+	private int startupCooldown = 100;
 	private int maxFluid = FluidContainerRegistry.BUCKET_VOLUME * 4;
 	private ResourceLocation texture;
 
@@ -262,6 +263,10 @@ public class EntityRobot extends EntityRobotBase implements
 			ticksCharging--;
 		}
 
+		if (startupCooldown > 0) {
+			startupCooldown--;
+		}
+
 		if (!worldObj.isRemote) {
 			// The client-side sleep indicator should also display if the robot is charging.
 			// To not break gates and other things checking for sleep, this is done here.
@@ -298,7 +303,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 				if (linkedDockingStation == null
 						|| linkedDockingStation.robotTaking() != this) {
-					if (!(mainAI.getDelegateAI() instanceof AIRobotShutdown)) {
+					if (!(mainAI.getDelegateAI() instanceof AIRobotShutdown) && startupCooldown <= 0) {
 						mainAI.startDelegateAI(new AIRobotShutdown(this));
 					}
 				}
@@ -341,10 +346,15 @@ public class EntityRobot extends EntityRobotBase implements
 	@SideOnly(Side.CLIENT)
 	private void spawnEnergyFX() {
 	    Minecraft.getMinecraft().effectRenderer.addEffect(new EntityRobotEnergyParticle(
-                worldObj,
-                posX + steamDx * 0.25, posY + steamDy * 0.25, posZ + steamDz * 0.25,
-                steamDx * 0.05, steamDy * 0.05, steamDz * 0.05,
-                energySpendPerCycle * 0.075F < 1 ? 1 : energySpendPerCycle * 0.075F));
+				worldObj,
+				posX + steamDx * 0.25, posY + steamDy * 0.25, posZ + steamDz * 0.25,
+				steamDx * 0.05, steamDy * 0.05, steamDz * 0.05,
+				energySpendPerCycle * 0.075F < 1 ? 1 : energySpendPerCycle * 0.075F));
+	}
+
+	@Override
+	public boolean canShutdown() {
+		return startupCooldown <= 0;
 	}
 
 	public void setRegularBoundingBox() {
