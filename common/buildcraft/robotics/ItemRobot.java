@@ -16,6 +16,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -95,10 +96,18 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
 			if (nbt != null) {
 				nbt.addInformation(stack, player, list, advanced);
 			}
-		}
 
-		int energy = NBTUtils.getItemData(stack).getInteger("energy");
-		list.add(energy + "/" + EntityRobotBase.MAX_ENERGY + " RF");
+			int energy = NBTUtils.getItemData(stack).getInteger("energy");
+			int pct = (energy * 100 / EntityRobotBase.MAX_ENERGY);
+			String enInfo = pct + "% Charged";
+			if (energy == EntityRobotBase.MAX_ENERGY) {
+				enInfo = "Full Charge";
+			} else if (energy == 0) {
+				enInfo = "No Charge";
+			}
+			enInfo = (pct >= 80 ? EnumChatFormatting.GREEN : (pct >= 50 ? EnumChatFormatting.YELLOW : (pct >= 30 ? EnumChatFormatting.GOLD : (pct >= 20 ? EnumChatFormatting.RED : EnumChatFormatting.DARK_RED)))) + enInfo;
+			list.add(enInfo);
+		}
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import cpw.mods.fml.relauncher.Side;
@@ -54,7 +55,8 @@ public class BCBoardNBT extends RedstoneBoardRobotNBT {
 
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
-		list.add(StringUtils.localize("buildcraft.boardRobot" + upperName));
+		list.add(EnumChatFormatting.BOLD + StringUtils.localize("buildcraft.boardRobot" + upperName));
+		list.add(StringUtils.localize("buildcraft.boardRobot" + upperName + ".desc"));
 	}
 
 	@Override

@@ -19,6 +19,25 @@ buildcraft.boardRobotDelivery=Delivery
 buildcraft.boardRobotPump=Pump
 buildcraft.boardRobotStripes=Stripes
 
+buildcraft.boardRobotPicker.desc=Picks up items
+buildcraft.boardRobotLumberjack.desc=Breaks logs
+buildcraft.boardRobotPlanter.desc=Plants crops
+buildcraft.boardRobotLeaveCutter.desc=Cuts leaves
+buildcraft.boardRobotCarrier.desc=Moves items between inventories
+buildcraft.boardRobotFluidCarrier.desc=Moves fluids between tanks
+buildcraft.boardRobotBomber.desc=Bombs locations
+buildcraft.boardRobotKnight.desc=Fights mobs
+buildcraft.boardRobotMiner.desc=Mines ores
+buildcraft.boardRobotFarmer.desc=Farms animals
+buildcraft.boardRobotHarvester.desc=Harvests mature crops
+buildcraft.boardRobotShovelman.desc=Shovels area
+buildcraft.boardRobotButcher.desc=Fights animals
+buildcraft.boardRobotBuilder.desc=Builds structures
+buildcraft.boardRobotCrafter.desc=Crafts items
+buildcraft.boardRobotDelivery.desc=Delivers items upon request
+buildcraft.boardRobotPump.desc=Pumps out liquids
+buildcraft.boardRobotStripes.desc=Uhh... Stripes!
+
 chat.gateCopier.clear=Gate information cleared.
 chat.gateCopier.gateCopied=Copied gate information to copier.
 chat.gateCopier.gatePasted=Pasted copied data to gate.
