@@ -292,7 +292,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 					continue;
 				}
 
-				TileEntity tile = container.getTile(item.output);
+				TileEntity tile = container.getTile(item.output, true);
 
 				PipeEventItem.ReachedEnd event = new PipeEventItem.ReachedEnd(container.pipe, item, tile);
 				container.pipe.eventBus.handleEvent(PipeEventItem.ReachedEnd.class, event);

@@ -706,9 +706,13 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	@Override
 	public TileEntity getTile(ForgeDirection to) {
+		return getTile(to, false);
+	}
+
+	public TileEntity getTile(ForgeDirection to, boolean forceUpdate) {
 		TileBuffer[] cache = getTileCache();
 		if (cache != null) {
-			return cache[to.ordinal()].getTile();
+			return cache[to.ordinal()].getTile(forceUpdate);
 		} else {
 			return null;
 		}
@@ -801,7 +805,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 			TileBuffer t = cache[side.ordinal()];
 			// For blocks which are not loaded, keep the old connection value.
-			if (t.exists()) {
+			if (t.exists() || !initialized) {
 				t.refresh();
 
 				pipeConnectionsBuffer[side.ordinal()] = canPipeConnect(t.getTile(), side);

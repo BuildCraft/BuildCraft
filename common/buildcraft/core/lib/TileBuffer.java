@@ -43,10 +43,10 @@ public final class TileBuffer {
 			return;
 		}
 
-		block = BlockUtils.getBlock(world, x, y, z);
+		block = world.getBlock(x, y, z);
 
 		if (block != null && block.hasTileEntity(BlockUtils.getBlockMetadata(world, x, y, z))) {
-			tile = BlockUtils.getTileEntity(world, x, y, z);
+			tile = world.getTileEntity(x, y, z);
 		}
 	}
 
@@ -66,11 +66,15 @@ public final class TileBuffer {
 	}
 
 	public TileEntity getTile() {
+		return getTile(false);
+	}
+
+	public TileEntity getTile(boolean forceUpdate) {
 		if (tile != null && !tile.isInvalid()) {
 			return tile;
 		}
 
-		if (tracker.markTimeIfDelay(world)) {
+		if ((forceUpdate && tile.isInvalid()) || tracker.markTimeIfDelay(world)) {
 			refresh();
 
 			if (tile != null && !tile.isInvalid()) {

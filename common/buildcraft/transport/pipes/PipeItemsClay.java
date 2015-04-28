@@ -47,8 +47,6 @@ public class PipeItemsClay extends Pipe<PipeTransportItems> {
         LinkedList<ForgeDirection> nonPipesList = new LinkedList<ForgeDirection>();
         LinkedList<ForgeDirection> pipesList = new LinkedList<ForgeDirection>();
 
-        event.item.blacklist.add(event.item.input.getOpposite());
-
         for (ForgeDirection o : event.destinations) {
             if (!event.item.blacklist.contains(o) && container.pipe.outputOpen(o)) {
                 if (container.isPipeConnected(o)) {
