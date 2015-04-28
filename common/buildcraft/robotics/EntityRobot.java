@@ -45,6 +45,7 @@ import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
@@ -100,7 +101,6 @@ public class EntityRobot extends EntityRobotBase implements
 	private boolean needsUpdate = false;
 	private ItemStack[] inv = new ItemStack[4];
 	private FluidStack tank;
-	private int startupCooldown = 100;
 	private int maxFluid = FluidContainerRegistry.BUCKET_VOLUME * 4;
 	private ResourceLocation texture;
 
@@ -263,10 +263,6 @@ public class EntityRobot extends EntityRobotBase implements
 			ticksCharging--;
 		}
 
-		if (startupCooldown > 0) {
-			startupCooldown--;
-		}
-
 		if (!worldObj.isRemote) {
 			// The client-side sleep indicator should also display if the robot is charging.
 			// To not break gates and other things checking for sleep, this is done here.
@@ -303,7 +299,8 @@ public class EntityRobot extends EntityRobotBase implements
 
 				if (linkedDockingStation == null
 						|| linkedDockingStation.robotTaking() != this) {
-					if (!(mainAI.getDelegateAI() instanceof AIRobotShutdown) && startupCooldown <= 0) {
+					if (!(mainAI.getDelegateAI() instanceof AIRobotShutdown)) {
+						BCLog.logger.info("Shutting down robot " + this.toString() + " - no docking station");
 						mainAI.startDelegateAI(new AIRobotShutdown(this));
 					}
 				}
@@ -350,11 +347,6 @@ public class EntityRobot extends EntityRobotBase implements
 				posX + steamDx * 0.25, posY + steamDy * 0.25, posZ + steamDz * 0.25,
 				steamDx * 0.05, steamDy * 0.05, steamDz * 0.05,
 				energySpendPerCycle * 0.075F < 1 ? 1 : energySpendPerCycle * 0.075F));
-	}
-
-	@Override
-	public boolean canShutdown() {
-		return startupCooldown <= 0;
 	}
 
 	public void setRegularBoundingBox() {
@@ -1188,6 +1180,9 @@ public class EntityRobot extends EntityRobotBase implements
 		AIRobot aiRobot = mainAI;
 		while (aiRobot != null) {
 			info.add("- " + RobotManager.getAIRobotName(aiRobot.getClass()) + " (" + aiRobot.getEnergyCost() + " RF/t)");
+			if (aiRobot instanceof IDebuggable) {
+				((IDebuggable) aiRobot).getDebugInfo(info, side, debugger, player);
+			}
 			aiRobot = aiRobot.getDelegateAI();
 		}
 	}

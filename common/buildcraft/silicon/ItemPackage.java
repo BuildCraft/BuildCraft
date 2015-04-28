@@ -65,9 +65,9 @@ public class ItemPackage extends ItemBuildCraft {
 	public void addInformation(ItemStack stack, EntityPlayer player, List strings, boolean adv) {
 		NBTTagCompound tag = NBTUtils.getItemData(stack);
 		if (!tag.hasNoTags()) {
-			strings.add("|S0 |S1 |S2");
-			strings.add("|S3 |S4 |S5");
-			strings.add("|S6 |S7 |S8");
+			strings.add("SPECIAL:0");
+			strings.add("SPECIAL:1");
+			strings.add("SPECIAL:2");
 		}
 	}
 }

@@ -47,6 +47,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public static short OUTPUT_TTL = 80; // 80
 	public static short OUTPUT_COOLDOWN = 30; // 30
 
+	private static int NETWORK_SYNC_TICKS = BuildCraftCore.updateFactor / 2;
 	private static final ForgeDirection[] directions = ForgeDirection.VALID_DIRECTIONS;
 	private static final ForgeDirection[] orientations = ForgeDirection.values();
 
@@ -139,7 +140,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 	public FluidRenderData renderCache = new FluidRenderData();
 
-	private final SafeTimeTracker networkSyncTracker = new SafeTimeTracker(BuildCraftCore.updateFactor / 2);
+	private final SafeTimeTracker networkSyncTracker = new SafeTimeTracker(NETWORK_SYNC_TICKS);
 	private final TransferState[] transferState = new TransferState[directions.length];
 	private final int[] inputPerTick = new int[directions.length];
 	private final short[] inputTTL = new short[]{0, 0, 0, 0, 0, 0};
@@ -404,9 +405,10 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		BitSet delta = new BitSet(8);
 
 		if (initClient > 0) {
-			initClient--;
-			if (initClient == 1) {
+			initClient -= NETWORK_SYNC_TICKS;
+			if (initClient <= 1) {
 				changed = true;
+				initClient = 0;
 				delta.set(0, 8);
 			}
 		}
@@ -415,6 +417,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 		if ((fluidType == null && renderCacheCopy.fluidID != 0)
 				|| (fluidType != null && renderCacheCopy.fluidID != fluidType.getFluid().getID())) {
+			changed = true;
 			renderCache.fluidID = fluidType != null ? fluidType.getFluid().getID() : 0;
 			renderCache.color = fluidType != null ? fluidType.getFluid().getColor(fluidType) : 0;
 			delta.set(0);
@@ -461,7 +464,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public void sendDescriptionPacket() {
 		super.sendDescriptionPacket();
 
-		initClient = 6;
+		initClient = 60;
 	}
 
 	public FluidStack getStack(ForgeDirection direction) {

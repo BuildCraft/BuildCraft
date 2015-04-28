@@ -14,7 +14,6 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 
 public class AIRobotShutdown extends AIRobot {
-
 	private int skip;
 	private double motionX;
 	private double motionZ;

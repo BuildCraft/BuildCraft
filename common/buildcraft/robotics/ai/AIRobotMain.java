@@ -8,6 +8,7 @@
  */
 package buildcraft.robotics.ai;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 
@@ -28,9 +29,10 @@ public class AIRobotMain extends AIRobot {
 
 	@Override
 	public void preempt(AIRobot ai) {
-		if (robot.getEnergy() <= EntityRobotBase.SHUTDOWN_ENERGY && robot.canShutdown()
+		if (robot.getEnergy() <= EntityRobotBase.SHUTDOWN_ENERGY
 				&& (robot.getDockingStation() == null || !robot.getDockingStation().providesPower())) {
 			if (!(ai instanceof AIRobotShutdown)) {
+				BCLog.logger.info("Shutting down robot " + robot.toString() + " - no power");
 				startDelegateAI(new AIRobotShutdown(robot));
 			}
 		} else if (robot.getEnergy() < EntityRobotBase.SAFETY_ENERGY) {
