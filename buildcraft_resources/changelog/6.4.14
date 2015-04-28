@@ -1,0 +1,10 @@
+Additions:
+* FML remapping support for blueprints! Should support mod upgrades now. (asie)
+
+Bugs fixed:
+* [#2665] Missing localizations for hollow facades (asie)
+* [#2660] Planter filtering random items as reeds (hea3ven)
+* Gates on one pipe sharing their expansions (asie)
+* Incorrect fluid pipe speed (asie)
+* Robot error on void worlds or worlds with holes in bedrock (hea3ven)
+* Z-fighting on almost empty tanks (ljfa)

@@ -8,21 +8,12 @@
  */
 package buildcraft.api.blueprints;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.MultimapBuilder;
-import com.google.common.collect.Multiset;
-import com.google.common.eventbus.EventBus;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
@@ -33,7 +24,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagShort;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLModContainer;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
@@ -301,7 +291,7 @@ public class MappingRegistry {
 		nbt.setTag("entitiesMapping", entitiesMapping);
 	}
 
-	private final Object getMissingMappingFromFML(boolean isBlock, String name, int i) {
+	private Object getMissingMappingFromFML(boolean isBlock, String name, int i) {
 		String modName = name.split(":")[0];
 		if (Loader.isModLoaded(modName)) {
 			try {
