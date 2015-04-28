@@ -34,11 +34,9 @@ public class PipeTriggerProvider implements ITriggerProvider {
 		
 		boolean containsGate = false;
 
-		for (Gate gate : pipe.gates) {
-			if (gate != null) {
-				containsGate = true;
-				gate.addTriggers(result);
-			}
+		if (container instanceof Gate) {
+			containsGate = true;
+			((Gate) container).addTriggers(result);
 		}
 
 		switch (((TileGenericPipe) tile).getPipeType()) {
