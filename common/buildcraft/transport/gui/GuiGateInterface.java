@@ -9,6 +9,7 @@
 package buildcraft.transport.gui;
 
 import java.util.Iterator;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import net.minecraft.inventory.IInventory;
@@ -271,28 +272,30 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 
 			IStatement changed = null;
 
-			if (triggerSlot.getStatement() == null) {
-
-				if (k == 0) {
-					changed = container.getFirstTrigger();
-				} else {
-					changed = container.getLastTrigger();
-				}
-
+			if (isShiftKeyDown()) {
+				changed = null;
 			} else {
-				Iterator<IStatement> it = container.getTriggerIterator(k != 0);
-
-				for (; it.hasNext();) {
-					IStatement trigger = it.next();
-
-					if (!it.hasNext()) {
-						changed = null;
-						break;
+				if (triggerSlot.getStatement() == null) {
+					if (k == 0) {
+						changed = container.getFirstTrigger();
+					} else {
+						changed = container.getLastTrigger();
 					}
+				} else {
+					Iterator<IStatement> it = container.getTriggerIterator(k != 0);
 
-					if (trigger == triggerSlot.getStatement()) {
-						changed = it.next();
-						break;
+					for (; it.hasNext(); ) {
+						IStatement trigger = it.next();
+
+						if (!it.hasNext()) {
+							changed = null;
+							break;
+						}
+
+						if (trigger == triggerSlot.getStatement()) {
+							changed = it.next();
+							break;
+						}
 					}
 				}
 			}
@@ -314,28 +317,32 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			ActionSlot actionSlot = (ActionSlot) slot;
 
 			IStatement changed = null;
-			if (actionSlot.getStatement() == null) {
 
-				if (k == 0) {
-					changed = container.getFirstAction();
-				} else {
-					changed = container.getLastAction();
-				}
-
+			if (isShiftKeyDown()) {
+				changed = null;
 			} else {
-				Iterator<IStatement> it = container.getActionIterator(k != 0);
-
-				for (; it.hasNext();) {
-					IStatement action = it.next();
-
-					if (!it.hasNext()) {
-						changed = null;
-						break;
+				if (actionSlot.getStatement() == null) {
+					if (k == 0) {
+						changed = container.getFirstAction();
+					} else {
+						changed = container.getLastAction();
 					}
 
-					if (action == actionSlot.getStatement()) {
-						changed = it.next();
-						break;
+				} else {
+					Iterator<IStatement> it = container.getActionIterator(k != 0);
+
+					for (; it.hasNext(); ) {
+						IStatement action = it.next();
+
+						if (!it.hasNext()) {
+							changed = null;
+							break;
+						}
+
+						if (action == actionSlot.getStatement()) {
+							changed = it.next();
+							break;
+						}
 					}
 				}
 			}
