@@ -74,7 +74,7 @@ public final class TileBuffer {
 			return tile;
 		}
 
-		if ((forceUpdate && tile.isInvalid()) || tracker.markTimeIfDelay(world)) {
+		if ((forceUpdate && tile != null && tile.isInvalid()) || tracker.markTimeIfDelay(world)) {
 			refresh();
 
 			if (tile != null && !tile.isInvalid()) {

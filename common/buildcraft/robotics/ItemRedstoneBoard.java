@@ -14,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -39,7 +40,12 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 		NBTTagCompound cpt = NBTUtils.getItemData(stack);
 
 		if (cpt.hasKey("id") && !"<unknown>".equals(cpt.getString("id"))) {
-			RedstoneBoardRegistry.instance.getRedstoneBoard(cpt).addInformation(stack, player, list, advanced);
+			RedstoneBoardNBT board = RedstoneBoardRegistry.instance.getRedstoneBoard(cpt);
+			if (board != null) {
+				board.addInformation(stack, player, list, advanced);
+			} else {
+				list.add(EnumChatFormatting.BOLD + "Corrupt board!");
+			}
 		}
 	}
 
@@ -52,7 +58,12 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 		} else if ("<unknown>".equals(cpt.getString("id"))) {
 			itemIcon = icons[1];
 		} else {
-			itemIcon = RedstoneBoardRegistry.instance.getRedstoneBoard(cpt).getIcon(cpt);
+			RedstoneBoardNBT board = RedstoneBoardRegistry.instance.getRedstoneBoard(cpt);
+			if (board != null) {
+				itemIcon = board.getIcon(cpt);
+			} else {
+				itemIcon = icons[1];
+			}
 		}
 
 		return itemIcon;
