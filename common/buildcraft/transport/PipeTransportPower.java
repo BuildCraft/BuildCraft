@@ -44,12 +44,9 @@ import buildcraft.transport.pipes.PipePowerWood;
 public class PipeTransportPower extends PipeTransport implements IDebuggable {
 
 	public static final Map<Class<? extends Pipe<?>>, Integer> powerCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
-
+	
 	private static final int DISPLAY_SMOOTHING = 10;
 	private static final int OVERLOAD_TICKS = 60;
-
-	private final TileEntity[] tiles = new TileEntity[6];
-	private final Object[] providers = new Object[6];
 
 	public short[] displayPower = new short[6];
 	public int[] nextPowerQuery = new int[6];
@@ -60,6 +57,9 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	public int[] dbgEnergyInput = new int[6];
 	public int[] dbgEnergyOutput = new int[6];
 	public int[] dbgEnergyOffered = new int[6];
+
+	private final TileEntity[] tiles = new TileEntity[6];
+	private final Object[] providers = new Object[6];
 
 	private boolean needsInit = true;
 

@@ -9,7 +9,6 @@
 package buildcraft.transport.gui;
 
 import java.util.Iterator;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import net.minecraft.inventory.IInventory;
@@ -284,7 +283,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				} else {
 					Iterator<IStatement> it = container.getTriggerIterator(k != 0);
 
-					for (; it.hasNext(); ) {
+					for (; it.hasNext();) {
 						IStatement trigger = it.next();
 
 						if (!it.hasNext()) {
@@ -331,7 +330,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 				} else {
 					Iterator<IStatement> it = container.getActionIterator(k != 0);
 
-					for (; it.hasNext(); ) {
+					for (; it.hasNext();) {
 						IStatement action = it.next();
 
 						if (!it.hasNext()) {

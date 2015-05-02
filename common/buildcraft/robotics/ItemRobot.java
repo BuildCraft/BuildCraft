@@ -98,7 +98,7 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
 			}
 
 			int energy = NBTUtils.getItemData(stack).getInteger("energy");
-			int pct = (energy * 100 / EntityRobotBase.MAX_ENERGY);
+			int pct = energy * 100 / EntityRobotBase.MAX_ENERGY;
 			String enInfo = pct + "% Charged";
 			if (energy == EntityRobotBase.MAX_ENERGY) {
 				enInfo = "Full Charge";
