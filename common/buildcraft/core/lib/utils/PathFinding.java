@@ -15,7 +15,6 @@ import java.util.LinkedList;
 import net.minecraft.world.World;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.core.IZone;
 
 /**
  * This class implements a 3D path finding based on the A* algorithm, following
@@ -29,8 +28,6 @@ public class PathFinding implements IIterableAlgorithm {
 	private World world;
 	private BlockIndex start;
 	private BlockIndex end;
-	private IBlockFilter pathFound;
-	private IZone zone;
 	private double maxDistanceToEndSq = 0;
 	private float maxTotalDistanceSq = 0;
 
@@ -138,20 +135,7 @@ public class PathFinding implements IIterableAlgorithm {
 					}
 
 					nextNode.movementCost = from.movementCost + distanceSq(nextNode.index, from.index);
-
-					if (end != null) {
-						nextNode.destinationCost = distanceSq(nextNode.index, end);
-					} else if (zone != null) {
-						if (zone.contains(x, y, z)) {
-							nextNode.destinationCost = 0;
-						} else {
-							nextNode.destinationCost = zone.distanceToSquared(nextNode.index);
-
-						}
-					} else {
-						nextNode.destinationCost = 0;
-					}
-
+					nextNode.destinationCost = distanceSq(nextNode.index, end);
 					nextNode.totalWeight = nextNode.movementCost + nextNode.destinationCost;
 
 					if (maxTotalDistanceSq > 0 && nextNode.totalWeight > maxTotalDistanceSq) {
@@ -206,10 +190,6 @@ public class PathFinding implements IIterableAlgorithm {
 		public BlockIndex index;
 	}
 
-	private static double distance(BlockIndex i1, BlockIndex i2) {
-		return Math.sqrt(distanceSq(i1, i2));
-	}
-
 	private static double distanceSq(BlockIndex i1, BlockIndex i2) {
 		double dx = (double) i1.x - (double) i2.x;
 		double dy = (double) i1.y - (double) i2.y;
@@ -219,17 +199,11 @@ public class PathFinding implements IIterableAlgorithm {
 	}
 
 	private boolean endReached(int x, int y, int z) {
-		if (zone != null && !zone.contains(x, y, z)) {
-			return false;
-		} else if (pathFound != null) {
-			return pathFound.matches(world, x, y, z);
+		if (maxDistanceToEndSq == 0) {
+			return end.x == x && end.y == y && end.z == z;
 		} else {
-			if (maxDistanceToEndSq == 0) {
-				return end.x == x && end.y == y && end.z == z;
-			} else {
-				return BuildCraftAPI.isSoftBlock(world, x, y, z)
-						&& distanceSq(new BlockIndex(x, y, z), end) <= maxDistanceToEndSq;
-			}
+			return BuildCraftAPI.isSoftBlock(world, x, y, z)
+					&& distanceSq(new BlockIndex(x, y, z), end) <= maxDistanceToEndSq;
 		}
 	}
 

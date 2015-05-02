@@ -29,10 +29,10 @@ public class AIRobotSearchBlock extends AIRobot {
 		super(iRobot);
 
 		pathFound = iPathFound;
+		zone = iRobot.getZoneToWork();
 		if (!random) {
 			blockIter = new BlockScannerExpanding().iterator();
 		} else {
-			zone = iRobot.getZoneToWork();
 			if (zone != null) {
 				BlockIndex pos = new BlockIndex(iRobot);
 				blockIter = new BlockScannerZoneRandom(pos.x, pos.y, pos.z, iRobot.worldObj.rand, zone)

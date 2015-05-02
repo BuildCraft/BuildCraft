@@ -46,7 +46,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 	}
 
 	public AIRobotGotoBlock(EntityRobotBase robot, LinkedList<BlockIndex> iPath) {
-		super(robot);
+		this(robot);
 		path = iPath;
 		finalX = path.getLast().x;
 		finalY = path.getLast().y;
