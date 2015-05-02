@@ -16,6 +16,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -27,6 +28,7 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
@@ -249,6 +251,11 @@ public class EntityRobot extends EntityRobotBase implements
 		if (!worldObj.isRemote) {
 			getRegistry().registerRobot(this);
 		}
+	}
+
+	@Override
+	public String getCommandSenderName() {
+		return StatCollector.translateToLocal("item.robot.name");
 	}
 
 	@Override

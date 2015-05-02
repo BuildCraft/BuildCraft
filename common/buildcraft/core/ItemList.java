@@ -11,6 +11,7 @@ package buildcraft.core;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.WeakHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -30,6 +31,8 @@ import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.NBTUtils;
 
 public class ItemList extends ItemBuildCraft implements IList {
+	private static final WeakHashMap<ItemStack, StackLine[]> LINE_CACHE = new WeakHashMap<ItemStack, StackLine[]>();
+
 	public static class StackLine {
 		public boolean oreWildcard = false;
 		public boolean subitemsWildcard = false;
@@ -255,6 +258,10 @@ public class ItemList extends ItemBuildCraft implements IList {
 	}
 
 	public static StackLine[] getLines(ItemStack stack) {
+		if (LINE_CACHE.containsKey(stack)) {
+			return LINE_CACHE.get(stack);
+		}
+
 		StackLine[] result = new StackLine[6];
 
 		for (int i = 0; i < 6; ++i) {
@@ -268,6 +275,8 @@ public class ItemList extends ItemBuildCraft implements IList {
 				result[i].readFromNBT(nbt.getCompoundTag("line[" + i + "]"));
 			}
 		}
+
+		LINE_CACHE.put(stack, result);
 
 		return result;
 	}
@@ -292,9 +301,9 @@ public class ItemList extends ItemBuildCraft implements IList {
 	public boolean matches(ItemStack stackList, ItemStack item) {
 		StackLine[] lines = getLines(stackList);
 
-		for (StackLine line : lines) {
-			if (line != null) {
-				if (line.matches(item)) {
+		if (lines != null) {
+			for (int i = 0; i < lines.length; i++) {
+				if (lines[i] != null && lines[i].matches(item)) {
 					return true;
 				}
 			}

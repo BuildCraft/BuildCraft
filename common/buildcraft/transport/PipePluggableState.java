@@ -9,7 +9,7 @@ import buildcraft.transport.utils.ConnectionMatrix;
 
 public class PipePluggableState implements ISerializable {
 	private PipePluggable[] pluggables = new PipePluggable[6];
-	private ConnectionMatrix pluggableMatrix = new ConnectionMatrix();
+	private final ConnectionMatrix pluggableMatrix = new ConnectionMatrix();
 
 	public PipePluggableState() {
 

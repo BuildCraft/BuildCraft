@@ -261,10 +261,26 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 				continue;
 			}
 
-			Position motion = new Position(0, 0, 0, item.toCenter ? item.input : item.output);
-			motion.moveForwards(item.getSpeed());
-
-			item.movePosition(motion.x, motion.y, motion.z);
+			switch (item.toCenter ? item.input : item.output) {
+				case DOWN:
+					item.movePosition(0, -item.getSpeed(), 0);
+					break;
+				case UP:
+					item.movePosition(0, item.getSpeed(), 0);
+					break;
+				case WEST:
+					item.movePosition(-item.getSpeed(), 0, 0);
+					break;
+				case EAST:
+					item.movePosition(item.getSpeed(), 0, 0);
+					break;
+				case NORTH:
+					item.movePosition(0, 0, -item.getSpeed());
+					break;
+				case SOUTH:
+					item.movePosition(0, 0, item.getSpeed());
+					break;
+			}
 
 			if ((item.toCenter && middleReached(item)) || outOfBounds(item)) {
 				if (item.isCorrupted()) {

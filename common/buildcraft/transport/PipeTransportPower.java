@@ -48,10 +48,13 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	private static final int DISPLAY_SMOOTHING = 10;
 	private static final int OVERLOAD_TICKS = 60;
 
+	private final TileEntity[] tiles = new TileEntity[6];
+	private final Object[] providers = new Object[6];
+
 	public short[] displayPower = new short[6];
-	public int overload;
 	public int[] nextPowerQuery = new int[6];
 	public int[] internalNextPower = new int[6];
+	public int overload;
 	public int maxPower = 80;
 
 	public int[] dbgEnergyInput = new int[6];
@@ -59,7 +62,6 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	public int[] dbgEnergyOffered = new int[6];
 
 	private boolean needsInit = true;
-	private TileEntity[] tiles = new TileEntity[6];
 
 	private short[] prevDisplayPower = new short[6];
 
@@ -140,15 +142,17 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	}
 
     private void updateTile(ForgeDirection side) {
+		int o = side.ordinal();
         TileEntity tile = container.getTile(side);
         if (tile != null && container.isPipeConnected(side)) {
-            tiles[side.ordinal()] = tile;
+            tiles[o] = tile;
         } else {
-            tiles[side.ordinal()] = null;
-            internalPower[side.ordinal()] = 0;
-            internalNextPower[side.ordinal()] = 0;
-            displayPower[side.ordinal()] = 0;
+            tiles[o] = null;
+            internalPower[o] = 0;
+            internalNextPower[o] = 0;
+            displayPower[o] = 0;
         }
+		providers[o] = getEnergyProvider(o);
     }
 
 	private void init() {
@@ -196,7 +200,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 				int totalPowerQuery = 0;
 				for (int j = 0; j < 6; ++j) {
 					if (j != i && powerQuery[j] > 0) {
-						Object ep = getEnergyProvider(j);
+						Object ep = providers[j];
 						if (ep instanceof IPipeTile || ep instanceof IEnergyReceiver || ep instanceof IEnergyHandler) {
 							totalPowerQuery += powerQuery[j];
 						}
@@ -206,7 +210,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 				if (totalPowerQuery > 0) {
 					for (int j = 0; j < 6; ++j) {
 						if (j != i && powerQuery[j] > 0) {
-							Object ep = getEnergyProvider(j);
+							Object ep = providers[j];
 							int watts = Math.min(Math.round(internalPower[i] * powerQuery[j] / totalPowerQuery), internalPower[i]);
 
 							if (ep instanceof IPipeTile) {
@@ -263,7 +267,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 				continue;
 			}
 
-			Object tile = getEnergyProvider(dir.ordinal());
+			Object tile = providers[dir.ordinal()];
 
 			if (tile instanceof IPipeTile && ((Pipe<?>) ((IPipeTile) tile).getPipe()).transport instanceof PipeTransportPower) {
 				continue;
@@ -472,7 +476,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 			if (internalPower[i] > 0) {
 				for (int j = 0; j < 6; ++j) {
 					if (j != i && powerQuery[j] > 0) {
-						Object ep = getEnergyProvider(j);
+						Object ep = providers[j];
 						if (ep instanceof IPipeTile || ep instanceof IEnergyReceiver || ep instanceof IEnergyHandler) {
 							totalPowerQuery[i] += powerQuery[j];
 						}

@@ -49,19 +49,13 @@ public abstract class PipeEventItem extends PipeEvent {
 	}
 
 	public static class DropItem extends PipeEventItem {
-
 		public EntityItem entity;
-		public ForgeDirection direction = ForgeDirection.UNKNOWN;
+		public ForgeDirection direction;
 
 		public DropItem(Pipe pipe, TravelingItem item, EntityItem entity) {
 			super(pipe, item);
 			this.entity = entity;
-
-			if (item.output != ForgeDirection.UNKNOWN) {
-				this.direction = item.output;
-			} else {
-				this.direction = item.input;
-			}
+			this.direction = item.output != ForgeDirection.UNKNOWN ? item.output : item.input;
 		}
 	}
 
@@ -76,7 +70,6 @@ public abstract class PipeEventItem extends PipeEvent {
 	}
 
 	public static class AdjustSpeed extends PipeEventItem {
-
 		public boolean handled = false;
 
 		public AdjustSpeed(Pipe pipe, TravelingItem item) {

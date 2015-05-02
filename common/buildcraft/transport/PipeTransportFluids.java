@@ -304,20 +304,22 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			}
 		}
 
-		container.pipe.eventBus.handleEvent(PipeEventFluid.FindDest.class, new PipeEventFluid.FindDest(container.pipe, new FluidStack(fluidType, pushAmount), realDirections));
-		float min = Math.min(flowRate * realDirections.size(), totalAvailable) / (float) flowRate / realDirections.size();
+		if (realDirections.size() > 0) {
+			container.pipe.eventBus.handleEvent(PipeEventFluid.FindDest.class, new PipeEventFluid.FindDest(container.pipe, new FluidStack(fluidType, pushAmount), realDirections));
+			float min = Math.min(flowRate * realDirections.size(), totalAvailable) / (float) flowRate / realDirections.size();
 
-		for (ForgeDirection direction : realDirections.elementSet()) {
-			int available = sections[direction.ordinal()].fill(testAmount, false);
-			int amountToPush = (int) (available * min * realDirections.count(direction));
-			if (amountToPush < 1) {
-				amountToPush++;
-			}
+			for (ForgeDirection direction : realDirections.elementSet()) {
+				int available = sections[direction.ordinal()].fill(testAmount, false);
+				int amountToPush = (int) (available * min * realDirections.count(direction));
+				if (amountToPush < 1) {
+					amountToPush++;
+				}
 
-			amountToPush = sections[6].drain(amountToPush, false);
-			if (amountToPush > 0) {
-				int filled = sections[direction.ordinal()].fill(amountToPush, true);
-				sections[6].drain(filled, true);
+				amountToPush = sections[6].drain(amountToPush, false);
+				if (amountToPush > 0) {
+					int filled = sections[direction.ordinal()].fill(amountToPush, true);
+					sections[6].drain(filled, true);
+				}
 			}
 		}
 	}
