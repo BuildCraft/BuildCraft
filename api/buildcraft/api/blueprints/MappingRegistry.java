@@ -8,9 +8,7 @@
  */
 package buildcraft.api.blueprints;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -296,36 +294,6 @@ public class MappingRegistry {
 		for (Item i : idToItem) {
 			System.out.println("- " + (i != null ? i.toString() : "null"));
 		}
-	}
-
-	private final Object getMissingMappingFromFML(boolean isBlock, String name, int i) {
-		String modName = name.split(":")[0];
-		if (Loader.isModLoaded(modName)) {
-			try {
-				FMLMissingMappingsEvent.MissingMapping mapping = new FMLMissingMappingsEvent.MissingMapping(
-						(isBlock ? '\u0001' : '\u0020') + name, i
-				);
-				ListMultimap<String, FMLMissingMappingsEvent.MissingMapping> missingMapping
-						= ArrayListMultimap.create();
-				missingMapping.put(modName, mapping);
-				FMLMissingMappingsEvent event = new FMLMissingMappingsEvent(missingMapping);
-				for (ModContainer container : Loader.instance().getModList()) {
-					if (container instanceof FMLModContainer) {
-						event.applyModContainer(container);
-						((FMLModContainer) container).handleModStateEvent(event);
-						if (mapping.getAction() != FMLMissingMappingsEvent.Action.DEFAULT) {
-							break;
-						}
-					}
-				}
-				if (mapping.getAction() == FMLMissingMappingsEvent.Action.REMAP) {
-					return mapping.getTarget();
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return null;
 	}
 
 	private Object getMissingMappingFromFML(boolean isBlock, String name, int i) {
