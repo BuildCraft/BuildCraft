@@ -13,16 +13,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.MultimapBuilder;
-import com.google.common.collect.Multiset;
-import com.google.common.eventbus.EventBus;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
@@ -33,7 +26,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagShort;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLModContainer;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
@@ -307,6 +299,36 @@ public class MappingRegistry {
 	}
 
 	private final Object getMissingMappingFromFML(boolean isBlock, String name, int i) {
+		String modName = name.split(":")[0];
+		if (Loader.isModLoaded(modName)) {
+			try {
+				FMLMissingMappingsEvent.MissingMapping mapping = new FMLMissingMappingsEvent.MissingMapping(
+						(isBlock ? '\u0001' : '\u0020') + name, i
+				);
+				ListMultimap<String, FMLMissingMappingsEvent.MissingMapping> missingMapping
+						= ArrayListMultimap.create();
+				missingMapping.put(modName, mapping);
+				FMLMissingMappingsEvent event = new FMLMissingMappingsEvent(missingMapping);
+				for (ModContainer container : Loader.instance().getModList()) {
+					if (container instanceof FMLModContainer) {
+						event.applyModContainer(container);
+						((FMLModContainer) container).handleModStateEvent(event);
+						if (mapping.getAction() != FMLMissingMappingsEvent.Action.DEFAULT) {
+							break;
+						}
+					}
+				}
+				if (mapping.getAction() == FMLMissingMappingsEvent.Action.REMAP) {
+					return mapping.getTarget();
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
+	private Object getMissingMappingFromFML(boolean isBlock, String name, int i) {
 		String modName = name.split(":")[0];
 		if (Loader.isModLoaded(modName)) {
 			try {

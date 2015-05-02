@@ -181,7 +181,6 @@ import buildcraft.transport.stripes.StripesHandlerUse;
 
 @Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTransport extends BuildCraftMod {
-
 	@Mod.Instance("BuildCraft|Transport")
 	public static BuildCraftTransport instance;
 
