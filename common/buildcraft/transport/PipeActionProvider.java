@@ -21,6 +21,10 @@ public class PipeActionProvider implements IActionProvider {
 		Pipe<?> pipe = null;
 		if (container instanceof IGate) {
 			pipe = (Pipe<?>) ((IGate) container).getPipe();
+
+			if (container instanceof Gate) {
+				((Gate) container).addActions(result);
+			}
 		}
 
 		if (pipe == null) {
@@ -28,12 +32,6 @@ public class PipeActionProvider implements IActionProvider {
 		}
 		
 		result.addAll(pipe.getActions());
-
-		for (Gate gate : pipe.gates) {
-			if (gate != null) {
-				gate.addActions(result);
-			}
-		}
 		
 		return result;
 	}

@@ -86,7 +86,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 	public void updateEntity() {
 		super.updateEntity();
 
-		if (liquidToExtract == 0) {
+		if (liquidToExtract <= 0) {
 			return;
 		}
 
@@ -99,6 +99,10 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 
 			// We always subtract the flowRate to ensure that the buffer goes down reasonably quickly.
 			liquidToExtract -= transport.flowRate;
+
+			if (liquidToExtract < 0) {
+				liquidToExtract = 0;
+			}
 		}
 	}
 
@@ -166,7 +170,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 		}
 
 		int maxToReceive = (1000 - liquidToExtract) / ENERGY_MULTIPLIER;
-		int received = Math.max(maxReceive, maxToReceive);
+		int received = Math.min(maxReceive, maxToReceive);
 		if (!simulate) {
 			liquidToExtract += ENERGY_MULTIPLIER * received;
 		}

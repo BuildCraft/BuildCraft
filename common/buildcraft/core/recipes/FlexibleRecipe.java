@@ -207,7 +207,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 						amount -= fluid.amount;
 					}
 
-					result.usedFluids.add(new FluidStack(requirement.fluidID, amountUsed));
+					result.usedFluids.add(new FluidStack(requirement.getFluid(), amountUsed));
 				}
 
 				if (amount == 0) {

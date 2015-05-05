@@ -1056,7 +1056,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
-		if (tank != null && tank.fluidID == resource.fluidID) {
+		if (tank != null && tank.isFluidEqual(resource)) {
 			return drain(from, resource.amount, doDrain);
 		} else {
 			return null;
@@ -1096,14 +1096,14 @@ public class EntityRobot extends EntityRobotBase implements
 		return tank == null
 				|| tank.amount == 0
 				|| (tank.amount < maxFluid
-				&& tank.fluidID == fluid.getID());
+				&& tank.getFluid().getID() == fluid.getID());
 	}
 
 	@Override
 	public boolean canDrain(ForgeDirection from, Fluid fluid) {
 		return tank != null
 				&& tank.amount != 0
-				&& tank.fluidID == fluid.getID();
+				&& tank.getFluid().getID() == fluid.getID();
 	}
 
 	@Override

@@ -32,7 +32,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
@@ -56,6 +55,7 @@ import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.gates.GatePluggable;
+import buildcraft.transport.utils.FluidRenderData;
 
 public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	public static final float DISPLAY_MULTIPLIER = 0.1f;
@@ -108,17 +108,23 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			return displayFluidLists.get(liquidId);
 		}
 
+		Fluid fluid = FluidRegistry.getFluid(liquidId);
+
+		if (fluid == null) {
+			return null;
+		}
+
 		DisplayFluidList d = new DisplayFluidList();
 		displayFluidLists.put(liquidId, d);
 
 		RenderInfo block = new RenderInfo();
 
-		Fluid fluid = FluidRegistry.getFluid(liquidId);
 		if (fluid.getBlock() != null) {
 			block.baseBlock = fluid.getBlock();
 		} else {
 			block.baseBlock = Blocks.water;
 		}
+
 		block.texture = fluid.getStillIcon();
 
 		float size = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
@@ -669,8 +675,8 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		boolean needsRender = false;
 		for (int i = 0; i < 7; ++i) {
-			FluidStack fluidStack = trans.renderCache[i];
-			if (fluidStack != null && fluidStack.amount > 0) {
+			FluidRenderData renderData = trans.renderCache[i];
+			if (renderData != null && renderData.amount > 0) {
 				needsRender = true;
 				break;
 			}
@@ -696,9 +702,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 			int i = side.ordinal();
 
-			FluidStack fluidStack = trans.renderCache[i];
+			FluidRenderData fluidRenderData = trans.renderCache[i];
 
-			if (fluidStack == null || fluidStack.amount <= 0) {
+			if (fluidRenderData == null || fluidRenderData.amount <= 0) {
 				continue;
 			}
 
@@ -706,13 +712,13 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				continue;
 			}
 
-			DisplayFluidList d = getListFromBuffer(fluidStack, pipe.container.getWorldObj());
+			DisplayFluidList d = getDisplayFluidLists(fluidRenderData.fluidID, pipe.container.getWorldObj());
 
 			if (d == null) {
 				continue;
 			}
 
-			int stage = (int) ((float) fluidStack.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
+			int stage = (int) ((float) fluidRenderData.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
 
 			GL11.glPushMatrix();
 			int list = 0;
@@ -741,21 +747,21 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				default:
 			}
 			bindTexture(TextureMap.locationBlocksTexture);
-			RenderUtils.setGLColorFromInt(trans.colorRenderCache[i]);
+			RenderUtils.setGLColorFromInt(fluidRenderData.color);
 			GL11.glCallList(list);
 			GL11.glPopMatrix();
 		}
 		// CENTER
-		FluidStack fluidStack = trans.renderCache[ForgeDirection.UNKNOWN.ordinal()];
+		FluidRenderData fluidRenderData = trans.renderCache[ForgeDirection.UNKNOWN.ordinal()];
 
-		if (fluidStack != null && fluidStack.amount > 0) {
-			DisplayFluidList d = getListFromBuffer(fluidStack, pipe.container.getWorldObj());
+		if (fluidRenderData != null && fluidRenderData.amount > 0) {
+			DisplayFluidList d = getDisplayFluidLists(fluidRenderData.fluidID, pipe.container.getWorldObj());
 
 			if (d != null) {
-				int stage = (int) ((float) fluidStack.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
+				int stage = (int) ((float) fluidRenderData.amount / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
 
 				bindTexture(TextureMap.locationBlocksTexture);
-				RenderUtils.setGLColorFromInt(trans.colorRenderCache[ForgeDirection.UNKNOWN.ordinal()]);
+				RenderUtils.setGLColorFromInt(fluidRenderData.color);
 
 				if (above) {
 					GL11.glCallList(d.centerVertical[stage]);
@@ -770,17 +776,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		GL11.glPopAttrib();
 		GL11.glPopMatrix();
-	}
-
-	private DisplayFluidList getListFromBuffer(FluidStack stack, World world) {
-
-		int liquidId = stack.fluidID;
-
-		if (liquidId == 0) {
-			return null;
-		}
-
-		return getDisplayFluidLists(liquidId, world);
 	}
 
 	private void renderSolids(Pipe<PipeTransportItems> pipe, double x, double y, double z) {

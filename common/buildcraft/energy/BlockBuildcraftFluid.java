@@ -64,8 +64,8 @@ public class BlockBuildcraftFluid extends BlockFluidClassic {
 	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
 		super.onNeighborBlockChange(world, x, y, z, block);
 		if (flammable && world.provider.dimensionId == -1) {
-			world.newExplosion(null, x, y, z, 4F, true, true);
 			world.setBlockToAir(x, y, z);
+			world.newExplosion(null, x, y, z, 4F, true, true);
 		}
 	}
 

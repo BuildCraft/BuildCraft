@@ -42,6 +42,7 @@ import buildcraft.transport.pipes.PipeFluidsStone;
 import buildcraft.transport.pipes.PipeFluidsVoid;
 import buildcraft.transport.pipes.PipeFluidsWood;
 import buildcraft.transport.pipes.events.PipeEventFluid;
+import buildcraft.transport.utils.FluidRenderData;
 
 public class PipeTransportFluids extends PipeTransport implements IFluidHandler {
     public static final Map<Class<? extends Pipe<?>>, Integer> fluidCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
@@ -160,8 +161,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public byte initClient = 0;
 	public int travelDelay = 12;
 	public int flowRate;
-	public FluidStack[] renderCache = new FluidStack[orientations.length];
-	public int[] colorRenderCache = new int[orientations.length];
+	public FluidRenderData[] renderCache = new FluidRenderData[orientations.length];
 	public final PipeSection[] internalTanks = new PipeSection[orientations.length];
 	private final TransferState[] transferState = new TransferState[directions.length];
 	private final int[] inputPerTick = new int[directions.length];
@@ -258,12 +258,11 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			}
 		}
 
-		FluidStack[] renderCacheCopy = this.renderCache.clone();
-		int[] colorRenderCacheCopy = this.colorRenderCache.clone();
+		FluidRenderData[] renderCacheCopy = this.renderCache.clone();
 
 		for (ForgeDirection dir : orientations) {
 			FluidStack current = internalTanks[dir.ordinal()].getFluid();
-			FluidStack prev = renderCacheCopy[dir.ordinal()];
+			FluidStack prev = renderCacheCopy[dir.ordinal()] != null ? renderCacheCopy[dir.ordinal()].getFluidStack() : null;
 
 			if (current != null && current.getFluid() == null) {
 				continue;
@@ -276,11 +275,9 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			if (prev == null ^ current == null) {
 				changed = true;
 				if (current != null) {
-					renderCacheCopy[dir.ordinal()] = current.copy();
-					colorRenderCacheCopy[dir.ordinal()] = current.getFluid().getColor(current);
+					renderCacheCopy[dir.ordinal()] = new FluidRenderData(current);
 				} else {
 					renderCacheCopy[dir.ordinal()] = null;
-					colorRenderCacheCopy[dir.ordinal()] = 0xFFFFFF;
 				}
 				delta.set(dir.ordinal() * PacketFluidUpdate.FLUID_DATA_NUM + PacketFluidUpdate.FLUID_ID_BIT);
 				delta.set(dir.ordinal() * PacketFluidUpdate.FLUID_DATA_NUM + PacketFluidUpdate.FLUID_AMOUNT_BIT);
@@ -293,8 +290,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 			if (!prev.equals(current) || initPacket) {
 				changed = true;
-				renderCacheCopy[dir.ordinal()] = current;
-				colorRenderCacheCopy[dir.ordinal()] = current.getFluid().getColor(current);
+				renderCacheCopy[dir.ordinal()] = new FluidRenderData(current);
 				delta.set(dir.ordinal() * PacketFluidUpdate.FLUID_DATA_NUM + PacketFluidUpdate.FLUID_ID_BIT);
 			}
 
@@ -313,13 +309,11 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 		if (persistChange) {
 			this.renderCache = renderCacheCopy;
-			this.colorRenderCache = colorRenderCacheCopy;
 		}
 
 		if (changed || initPacket) {
 			PacketFluidUpdate packet = new PacketFluidUpdate(container.xCoord, container.yCoord, container.zCoord, initPacket);
 			packet.renderCache = renderCacheCopy;
-			packet.colorRenderCache = colorRenderCacheCopy;
 			packet.delta = delta;
 			return packet;
 		}
@@ -419,7 +413,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			container.pipe.eventBus.handleEvent(PipeEventFluid.FindDest.class, new PipeEventFluid.FindDest(pushStack, realDirections));
 			for (ForgeDirection direction : realDirections) {
 				int available = internalTanks[direction.ordinal()].fill(testStack, false);
-				int ammountToPush = (int) (available / (double) flowRate / outputCount * Math.min(flowRate, totalAvailable));
+				int ammountToPush = (int) (available / (double) flowRate / outputCount * Math.min(flowRate * outputCount, totalAvailable));
 				if (ammountToPush < 1) {
 					ammountToPush++;
 				}
@@ -463,7 +457,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			// Move liquid from input sides to the center
 			if (transferState[dir.ordinal()] != TransferState.Output && inputPerTick[dir.ordinal()] > 0) {
 
-				int ammountToDrain = (int) ((double) inputPerTick[dir.ordinal()] / (double) flowRate / transferInCount * Math.min(flowRate, spaceAvailable));
+				int ammountToDrain = (int) ((double) inputPerTick[dir.ordinal()] / (double) flowRate / transferInCount * Math.min(flowRate * transferInCount, spaceAvailable));
 				if (ammountToDrain < 1) {
 					ammountToDrain++;
 				}
@@ -472,8 +466,6 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 				if (liquidToPush != null) {
 					int filled = internalTanks[ForgeDirection.UNKNOWN.ordinal()].fill(liquidToPush, true);
 					internalTanks[dir.ordinal()].drain(filled, true);
-//					if (filled > 0)
-//						FluidEvent.fireEvent(new FluidMotionEvent(liquidToPush, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord));
 				}
 			}
 		}
@@ -528,7 +520,6 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 				internalTanks[direction.ordinal()].reset();
 				transferState[direction.ordinal()] = TransferState.None;
 				renderCache[direction.ordinal()] = null;
-				colorRenderCache[direction.ordinal()] = 0xFFFFFF;
 			}
 		}
 	}
