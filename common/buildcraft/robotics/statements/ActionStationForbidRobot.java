@@ -72,7 +72,9 @@ public class ActionStationForbidRobot extends BCStatement implements IActionInte
 				ItemStack stack = p.getItemStack();
 
 				if (stack != null && stack.getItem() instanceof ItemRobot) {
-					return ItemRobot.getRobotNBT(stack) == robot.getBoard().getNBTHandler();
+					if (ItemRobot.getRobotNBT(stack) == robot.getBoard().getNBTHandler()) {
+						return true;
+					}
 				}
 			}
 		}
