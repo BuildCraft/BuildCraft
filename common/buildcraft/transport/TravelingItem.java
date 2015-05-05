@@ -18,6 +18,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.IntHashMap;
 import net.minecraft.util.MathHelper;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -319,14 +320,14 @@ public class TravelingItem {
 
 	public static class TravelingItemCache {
 
-		private final Map<Integer, TravelingItem> itemCache = new MapMaker().weakValues().makeMap();
+		private final IntHashMap itemCache = new IntHashMap();
 
 		public void cache(TravelingItem item) {
-			itemCache.put(item.id, item);
+			itemCache.addKey(item.id, item);
 		}
 
 		public TravelingItem get(int id) {
-			return itemCache.get(id);
+			return (TravelingItem) itemCache.lookup(id);
 		}
 	}
 }
