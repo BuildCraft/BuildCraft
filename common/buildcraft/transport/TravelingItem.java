@@ -320,14 +320,14 @@ public class TravelingItem {
 
 	public static class TravelingItemCache {
 
-		private final IntHashMap itemCache = new IntHashMap();
+		private final Map<Integer, TravelingItem> itemCache = new MapMaker().weakValues().makeMap();
 
 		public void cache(TravelingItem item) {
-			itemCache.addKey(item.id, item);
+			itemCache.put(item.id, item);
 		}
 
 		public TravelingItem get(int id) {
-			return (TravelingItem) itemCache.lookup(id);
+			return itemCache.get(id);
 		}
 	}
 }
