@@ -20,10 +20,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import buildcraft.core.lib.utils.XorShift128Random;
 
 public class BlockSpring extends Block {
 
-	public static final Random rand = new Random();
+	public static final XorShift128Random rand = new XorShift128Random();
 
 	public enum EnumSpring {
 

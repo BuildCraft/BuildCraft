@@ -32,6 +32,7 @@ import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.utils.ResourceUtils;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.lib.utils.XorShift128Random;
 
 public abstract class BlockBuildCraft extends BlockContainer {
 	protected static boolean keepInventory = false;
@@ -45,7 +46,7 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	@SideOnly(Side.CLIENT)
 	public IIcon[][] icons;
 
-	protected final Random rand = new Random();
+	protected final XorShift128Random rand = new XorShift128Random();
 	protected int renderPass;
 
 	protected int maxPasses = 1;

@@ -50,7 +50,7 @@ import buildcraft.core.proxy.CoreProxy;
 
 public final class Utils {
 
-	public static final Random RANDOM = new Random();
+	public static final XorShift128Random RANDOM = new XorShift128Random();
 	private static final List<ForgeDirection> directions = new ArrayList<ForgeDirection>(Arrays.asList(ForgeDirection.VALID_DIRECTIONS));
 
 	/**

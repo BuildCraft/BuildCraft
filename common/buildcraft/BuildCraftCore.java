@@ -95,6 +95,7 @@ import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.XorShift128Random;
 import buildcraft.core.network.PacketHandlerCore;
 import buildcraft.core.properties.WorldPropertyIsDirt;
 import buildcraft.core.properties.WorldPropertyIsFarmland;
@@ -142,7 +143,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		Full, NoDynamic
 	}
 
-	public static Random random = new Random();
+	public static XorShift128Random random = new XorShift128Random();
 	public static RenderMode render = RenderMode.Full;
 	public static boolean debugWorldgen = false;
 	public static boolean modifyWorld = false;
