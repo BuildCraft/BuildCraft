@@ -156,6 +156,9 @@ public class DockingStationPipe extends DockingStation {
 
 	@Override
 	public boolean isInitialized() {
+		if (getPipe() == null || getPipe().getPipe() == null) {
+			return false;
+		}
 		return ((Pipe) getPipe().getPipe()).isInitialized();
 	}
 

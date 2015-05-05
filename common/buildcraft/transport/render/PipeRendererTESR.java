@@ -62,9 +62,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	public int[] displayPowerList = new int[POWER_STAGES];
 	public int[] displayPowerListOverload = new int[POWER_STAGES];
 
-	protected ModelBase model = new ModelBase() {
-	};
-
 	private final HashMap<Integer, DisplayFluidList> displayFluidLists = Maps.newHashMap();
 	private final int[] angleY = {0, 0, 270, 90, 0, 180};
 	private final int[] angleZ = {90, 270, 0, 0, 0, 0};
@@ -130,7 +127,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			// SIDE HORIZONTAL
 
 			d.sideHorizontal[s] = GLAllocation.generateDisplayLists(1);
-			GL11.glNewList(d.sideHorizontal[s], 4864 /* GL_COMPILE */);
+			GL11.glNewList(d.sideHorizontal[s], GL11.GL_COMPILE);
 
 			block.minX = 0.0F;
 			block.minZ = CoreConstants.PIPE_MIN_POS + 0.01F;
@@ -148,7 +145,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			// SIDE VERTICAL
 
 			d.sideVertical[s] = GLAllocation.generateDisplayLists(1);
-			GL11.glNewList(d.sideVertical[s], 4864 /* GL_COMPILE */);
+			GL11.glNewList(d.sideVertical[s], GL11.GL_COMPILE);
 
 			block.minY = CoreConstants.PIPE_MAX_POS - 0.01;
 			block.maxY = 1;
@@ -166,7 +163,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			// CENTER HORIZONTAL
 
 			d.centerHorizontal[s] = GLAllocation.generateDisplayLists(1);
-			GL11.glNewList(d.centerHorizontal[s], 4864 /* GL_COMPILE */);
+			GL11.glNewList(d.centerHorizontal[s], GL11.GL_COMPILE);
 
 			block.minX = CoreConstants.PIPE_MIN_POS + 0.01;
 			block.minZ = CoreConstants.PIPE_MIN_POS + 0.01;
@@ -184,7 +181,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			// CENTER VERTICAL
 
 			d.centerVertical[s] = GLAllocation.generateDisplayLists(1);
-			GL11.glNewList(d.centerVertical[s], 4864 /* GL_COMPILE */);
+			GL11.glNewList(d.centerVertical[s], GL11.GL_COMPILE);
 
 			block.minY = CoreConstants.PIPE_MIN_POS + 0.01;
 			block.maxY = CoreConstants.PIPE_MAX_POS - 0.01;
@@ -218,7 +215,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		for (int s = 0; s < POWER_STAGES; ++s) {
 			displayPowerList[s] = GLAllocation.generateDisplayLists(1);
-			GL11.glNewList(displayPowerList[s], 4864 /* GL_COMPILE */);
+			GL11.glNewList(displayPowerList[s], GL11.GL_COMPILE);
 
 			float minSize = 0.005F;
 
@@ -244,7 +241,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		for (int s = 0; s < POWER_STAGES; ++s) {
 			displayPowerListOverload[s] = GLAllocation.generateDisplayLists(1);
-			GL11.glNewList(displayPowerListOverload[s], 4864 /* GL_COMPILE */);
+			GL11.glNewList(displayPowerListOverload[s], GL11.GL_COMPILE);
 
 			float minSize = 0.005F;
 
@@ -800,35 +797,43 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		float renderScale = 0.7f;
 		ItemStack itemstack = travellingItem.getItemStack();
-		GL11.glPushMatrix();
-		GL11.glTranslatef((float) x, (float) y, (float) z);
-		GL11.glTranslatef(0, 0.25F, 0);
-		if (itemstack.getItem() instanceof IItemCustomPipeRender) {
-			IItemCustomPipeRender render = (IItemCustomPipeRender) itemstack.getItem();
-			float itemScale = render.getPipeRenderScale(itemstack);
-			GL11.glScalef(renderScale * itemScale, renderScale * itemScale, renderScale * itemScale);
-			itemScale = 1 / itemScale;
 
-			if (!render.renderItemInPipe(itemstack, x, y, z)) {
+		GL11.glPushMatrix();
+		GL11.glTranslatef((float) x, (float) y + 0.25F, (float) z);
+
+		if (travellingItem.hasDisplayList) {
+			GL11.glCallList(travellingItem.displayList);
+		} else {
+			travellingItem.displayList = GLAllocation.generateDisplayLists(1);
+			travellingItem.hasDisplayList = true;
+
+			GL11.glNewList(travellingItem.displayList, GL11.GL_COMPILE_AND_EXECUTE);
+			if (itemstack.getItem() instanceof IItemCustomPipeRender) {
+				IItemCustomPipeRender render = (IItemCustomPipeRender) itemstack.getItem();
+				float itemScale = render.getPipeRenderScale(itemstack);
+				GL11.glScalef(renderScale * itemScale, renderScale * itemScale, renderScale * itemScale);
+				itemScale = 1 / itemScale;
+
+				if (!render.renderItemInPipe(itemstack, x, y, z)) {
+					dummyEntityItem.setEntityItemStack(itemstack);
+					customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
+				}
+
+				GL11.glScalef(itemScale, itemScale, itemScale);
+			} else {
+				GL11.glScalef(renderScale, renderScale, renderScale);
 				dummyEntityItem.setEntityItemStack(itemstack);
 				customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
 			}
-
-			GL11.glScalef(itemScale, itemScale, itemScale);
-		} else {
-			GL11.glScalef(renderScale, renderScale, renderScale);
-			dummyEntityItem.setEntityItemStack(itemstack);
-			customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
+			GL11.glEndList();
 		}
 
 		if (color != null) {
-			bindTexture(TextureMap.locationBlocksTexture);
 			RenderInfo block = new RenderInfo();
 
-			block.texture = PipeIconProvider.TYPE.ItemBox.getIcon();
+			block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.ItemBox.ordinal());
 
 			float pix = 0.0625F;
-
 			float min = -4 * pix;
 			float max = 4 * pix;
 

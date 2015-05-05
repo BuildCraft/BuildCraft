@@ -41,6 +41,9 @@ public class TravelingItem {
 	public ForgeDirection input = ForgeDirection.UNKNOWN;
 	public ForgeDirection output = ForgeDirection.UNKNOWN;
 
+	public int displayList;
+	public boolean hasDisplayList;
+
 	protected float speed = 0.01F;
 
 	protected ItemStack itemStack;

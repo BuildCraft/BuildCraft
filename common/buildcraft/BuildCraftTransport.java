@@ -469,7 +469,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		BCCreativeTab.get("pipes").setIcon(new ItemStack(BuildCraftTransport.pipeItemsDiamond, 1));
 		BCCreativeTab.get("facades").setIcon(facadeItem.getFacadeForBlock(Blocks.brick_block, 0));
-		BCCreativeTab.get("gates").setIcon(ItemGate.makeGateItem(GateMaterial.DIAMOND, GateLogic.AND));
+		if (Loader.isModLoaded("BuildCraft|Silicon")) {
+			BCCreativeTab.get("gates").setIcon(ItemGate.makeGateItem(GateMaterial.DIAMOND, GateLogic.AND));
+		}
 
 		StatementManager.registerParameterClass(TriggerParameterSignal.class);
 		StatementManager.registerParameterClass(ActionParameterSignal.class);
