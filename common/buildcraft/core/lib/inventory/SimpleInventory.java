@@ -49,6 +49,9 @@ public class SimpleInventory implements IInventory, INBTStoreable {
 				markDirty();
 				return result;
 			}
+			if (contents[slotId].stackSize < count) {
+				return null;
+			}
 			ItemStack stack = contents[slotId];
 			setInventorySlotContents(slotId, null);
 			return stack;

@@ -1,5 +1,11 @@
 package buildcraft.silicon;
 
+import buildcraft.api.core.BCLog;
+import buildcraft.api.core.IInvSlot;
+import buildcraft.core.lib.inventory.InventoryIterator;
+import com.google.common.collect.HashMultiset;
+import com.google.common.collect.Multiset;
+import gnu.trove.map.hash.TObjectIntHashMap;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -15,14 +21,59 @@ import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class TilePackager extends TileBuildCraft implements ISidedInventory {
+	private class Requirement {
+		public final IInventory location;
+		public final int slot;
+
+		public Requirement(IInventory location, int slot) {
+			this.location = location;
+			this.slot = slot;
+		}
+
+		public boolean isValid() {
+			return location.getSizeInventory() > slot && (!(location instanceof TileEntity) || !((TileEntity) location).isInvalid());
+		}
+
+		public ItemStack getStack() {
+			return location.getStackInSlot(slot);
+		}
+
+		public ItemStack decrStackSize(int amount) {
+			return location.decrStackSize(slot, amount);
+		}
+
+		@Override
+		public boolean equals(Object other) {
+			if (other == null || !(other instanceof Requirement)) {
+				return false;
+			}
+
+			Requirement r = (Requirement) other;
+
+			return r.location.equals(this.location) && r.slot == this.slot;
+		}
+
+		@Override
+		public int hashCode() {
+			return location.hashCode() + (slot * 17);
+		}
+	}
 	private static final int[] SLOTS = Utils.createSlotArray(0, 12);
 
 	public SimpleInventory inventoryPublic = new SimpleInventory(12, "Packager", 64);
 	public SimpleInventory inventoryPattern = new SimpleInventory(9, "Packager", 64);
 	public IInventory visibleInventory = InventoryConcatenator.make().add(inventoryPublic).add(inventoryPattern);
 
+	private Requirement[] requirements = new Requirement[9];
 	private int patternsSet;
 	private int updateTime = BuildCraftCore.random.nextInt(5);
 
@@ -44,10 +95,27 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
 			return;
 		}
 
-		if ((updateTime++) % 5 == 0) {
+		if ((updateTime++) % 5 == 0 && patternsSet > 0) {
 			attemptCrafting(inventoryPublic.getStackInSlot(9));
 		}
 	}
+
+	private boolean validMissing(Requirement r, int missingCount) {
+		ItemStack inputStack = r.getStack();
+		if (inputStack != null && inputStack.stackSize >= missingCount) {
+			// Check if same type used elsewhere
+			for (int j = 0; j < 9; j++) {
+				ItemStack comparedStack = inventoryPattern.getStackInSlot(j);
+				if (isPatternSlotSet(j) && comparedStack != null && StackHelper.isMatchingItem(inputStack, comparedStack, true, false)) {
+					return false;
+				}
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 
 	private boolean attemptCrafting(ItemStack input) {
 		// STEP 0: Make sure the conditions are correct.
@@ -69,65 +137,206 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
 			}
 		}
 
-		// STEP 1: Find how many "missing patterns" we have,
-		// and find the first item matching this.
-		// Also, match all the non-missing patterns.
+		TObjectIntHashMap<Requirement> reqCounts = new TObjectIntHashMap<Requirement>(9);
 		int missingCount = 0;
-		int[] bindings = new int[9];
-		int[] usedItems = new int[9];
 
+		int filteredReqsToFulfill = 0;
+
+		// STEP 1: Verify all requirements and nullify ones which don't match.
+		// Also, add them to a Multimap so we can know which ones get used how often.
 		for (int i = 0; i < 9; i++) {
 			if (isPatternSlotSet(i)) {
 				ItemStack inputStack = inventoryPattern.getStackInSlot(i);
-				if (inputStack == null) {
-					missingCount++;
+				if (inputStack != null) {
+					filteredReqsToFulfill++;
 				} else {
-					boolean found = false;
-					for (int j = 0; j < 9; j++) {
-						ItemStack comparedStack = inventoryPublic.getStackInSlot(j);
-						if (comparedStack != null && usedItems[j] < comparedStack.stackSize
-							&& StackHelper.isMatchingItem(inputStack, comparedStack, true, false)) {
-							usedItems[j]++;
-							bindings[i] = j;
-							found = true;
-							break;
+					missingCount++;
+					requirements[i] = null;
+					continue;
+				}
+
+				Requirement r = requirements[i];
+				if (r == null) {
+					continue;
+				}
+				if (!r.isValid()) {
+					requirements[i] = null;
+					continue;
+				}
+				if (r.getStack() == null) {
+					requirements[i] = null;
+					continue;
+				}
+				if (inputStack != null) {
+					if (!StackHelper.isMatchingItem(inputStack, r.getStack(), true, false)) {
+						requirements[i] = null;
+						continue;
+					}
+				}
+				reqCounts.adjustOrPutValue(requirements[i], 1, 1);
+				filteredReqsToFulfill--;
+			} else {
+				requirements[i] = null;
+			}
+		}
+
+		// STEP 2: Verify that the counts are correct.
+		for (Requirement r : reqCounts.keys(new Requirement[reqCounts.size()])) {
+			if (r.getStack().stackSize < reqCounts.get(r)) {
+				int allowedAmount = 0;
+				for (int i = 0; i < 9; i++) {
+					if (requirements[i] != null && requirements[i].equals(r)) {
+						allowedAmount--;
+						if (allowedAmount < 0) {
+							requirements[i] = null;
+							filteredReqsToFulfill++;
 						}
 					}
-					if (!found) {
-						return false;
+				}
+				reqCounts.remove(r);
+			}
+		}
+
+		// STEP 3: Look for all filtered slots. We also use adjacent inventories for this.
+		// STEP 3a: Local
+		if (filteredReqsToFulfill > 0) {
+			for (int i = 0; i < 9; i++) {
+				if (filteredReqsToFulfill == 0) {
+					break;
+				}
+				if (isPatternSlotSet(i) && requirements[i] == null) {
+					ItemStack inputStack = inventoryPattern.getStackInSlot(i);
+					if (inputStack != null) {
+						for (int j = 0; j < 9; j++) {
+							ItemStack comparedStack = inventoryPublic.getStackInSlot(j);
+							if (comparedStack == null) {
+								continue;
+							}
+							Requirement r = new Requirement(this, j);
+							if (comparedStack.stackSize <= reqCounts.get(r)) {
+								continue;
+							}
+
+							if (StackHelper.isMatchingItem(inputStack, comparedStack, true, false)) {
+								requirements[i] = r;
+								filteredReqsToFulfill--;
+								reqCounts.adjustOrPutValue(r, 1, 1);
+								break;
+							}
+						}
 					}
 				}
 			}
 		}
 
-		// STEP 2: If we have any missings, find the first stack
-		// which is NOT used elsewhere AND has enough items.
+		// STEP 3b: Remote
+		Map<ForgeDirection, IInventory> invs = new HashMap<ForgeDirection, IInventory>();
+		if (filteredReqsToFulfill > 0 || missingCount > 0) {
+			for (int i = 2; i < 6; i++) {
+				TileEntity neighbor = getTile(ForgeDirection.getOrientation(i));
+				if (neighbor instanceof IInventory) {
+					invs.put(ForgeDirection.getOrientation(i), (IInventory) neighbor);
+				}
+			}
+		}
+
+		if (filteredReqsToFulfill > 0) {
+			for (ForgeDirection dir : invs.keySet()) {
+				if (filteredReqsToFulfill == 0) {
+					break;
+				}
+				IInventory inv = invs.get(dir);
+				Iterable<IInvSlot> iterator = InventoryIterator.getIterable(inv, dir);
+				for (IInvSlot slot : iterator) {
+					if (filteredReqsToFulfill == 0) {
+						break;
+					}
+					ItemStack comparedStack = slot.getStackInSlot();
+					if (comparedStack == null || !slot.canTakeStackFromSlot(comparedStack)) {
+						continue;
+					}
+					Requirement r = new Requirement(inv, slot.getIndex());
+					if (comparedStack.stackSize <= reqCounts.get(r)) {
+						continue;
+					}
+
+					for (int j = 0; j < 9; j++) {
+						ItemStack inputStack = inventoryPattern.getStackInSlot(j);
+						if (isPatternSlotSet(j) && requirements[j] == null && inputStack != null) {
+							if (StackHelper.isMatchingItem(inputStack, comparedStack, true, false)) {
+								filteredReqsToFulfill--;
+								requirements[j] = r;
+								reqCounts.adjustOrPutValue(r, 1, 1);
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		if (filteredReqsToFulfill > 0) {
+			return false;
+		}
+
+		// STEP 4: Find a matching missing.
+		boolean foundMissing = false;
+
 		if (missingCount > 0) {
-			int missingPos = -1;
 			for (int i = 0; i < 9; i++) {
-				if (usedItems[i] == 0) {
-					ItemStack comparedStack = inventoryPublic.getStackInSlot(i);
-					if (comparedStack != null && comparedStack.stackSize >= missingCount) {
-						missingPos = i;
+				Requirement r = new Requirement(this, i);
+				if (reqCounts.contains(r)) {
+					continue;
+				}
+				if (validMissing(r, missingCount)) {
+					foundMissing = true;
+					for (int j = 0; j < 9; j++) {
+						if (requirements[j] == null && isPatternSlotSet(j) && inventoryPattern.getStackInSlot(j) == null) {
+							requirements[j] = r;
+						}
+					}
+					reqCounts.adjustOrPutValue(r, missingCount, missingCount);
+					missingCount = 0;
+					break;
+				}
+			}
+		}
+
+		if (missingCount > 0) {
+			for (ForgeDirection dir : invs.keySet()) {
+				if (foundMissing) {
+					break;
+				}
+				IInventory inv = invs.get(dir);
+				Iterable<IInvSlot> iterator = InventoryIterator.getIterable(inv, dir);
+				for (IInvSlot slot : iterator) {
+					if (foundMissing) {
+						break;
+					}
+					Requirement r = new Requirement(inv, slot.getIndex());
+					if (reqCounts.contains(r)) {
+						continue;
+					}
+					if (validMissing(r, missingCount)) {
+						foundMissing = true;
+						for (int j = 0; j < 9; j++) {
+							if (requirements[j] == null && isPatternSlotSet(j) && inventoryPattern.getStackInSlot(j) == null) {
+								requirements[j] = r;
+							}
+						}
+						reqCounts.adjustOrPutValue(r, missingCount, missingCount);
+						missingCount = 0;
 						break;
 					}
 				}
 			}
-			if (missingPos < 0) {
-				return false;
-			} else {
-				for (int i = 0; i < 9; i++) {
-					if (isPatternSlotSet(i)) {
-						ItemStack inputStack = inventoryPattern.getStackInSlot(i);
-						if (inputStack == null) {
-							bindings[i] = missingPos;
-						}
-					}
-				}
-			}
 		}
 
-		// STEP 3: Craft and output.
+		if (missingCount > 0) {
+			return false;
+		}
+
+		// STEP 5: Craft and output.
 		ItemStack pkg;
 		if (input.getItem() instanceof ItemPackage) {
 			pkg = input.copy();
@@ -136,14 +345,29 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
 		}
 		NBTTagCompound pkgTag = NBTUtils.getItemData(pkg);
 
+		boolean broken = false;
+
 		for (int i = 0; i < 9; i++) {
 			if (isPatternSlotSet(i)) {
-				ItemStack usedStack = inventoryPublic.getStackInSlot(bindings[i]);
-				ItemStack output = usedStack.splitStack(1);
+				if (requirements[i] == null) {
+					BCLog.logger.error("(Recipe Packager) At " + xCoord + ", " + yCoord + ", " + zCoord + " requirement " + i + " was null! THIS SHOULD NOT HAPPEN!");
+					broken = true;
+					continue;
+				}
+				ItemStack usedStack = requirements[i].decrStackSize(1);
+				if (usedStack == null) {
+					BCLog.logger.error("(Recipe Packager) At " + xCoord + ", " + yCoord + ", " + zCoord + " stack at slot " + i + " was too small! THIS SHOULD NOT HAPPEN!");
+					broken = true;
+					continue;
+				}
 				NBTTagCompound itemTag = new NBTTagCompound();
-				output.writeToNBT(itemTag);
+				usedStack.writeToNBT(itemTag);
 				pkgTag.setTag("item" + i, itemTag);
 			}
+		}
+
+		if (broken) {
+			return false;
 		}
 
 		ItemPackage.update(pkg);
