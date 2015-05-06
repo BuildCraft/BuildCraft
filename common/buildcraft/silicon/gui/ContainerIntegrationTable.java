@@ -19,6 +19,12 @@ import buildcraft.core.lib.gui.slots.SlotValidated;
 import buildcraft.silicon.TileIntegrationTable;
 
 public class ContainerIntegrationTable extends BuildCraftContainer {
+	public static final int[] SLOT_X = {
+			44, 44, 68, 76, 68, 44, 20, 13, 20
+	};
+	public static final int[] SLOT_Y = {
+			49, 18, 25, 49, 73, 81, 73, 49, 25
+	};
 
 	private TileIntegrationTable table;
 
@@ -26,23 +32,21 @@ public class ContainerIntegrationTable extends BuildCraftContainer {
 		super(table.getSizeInventory());
 		this.table = table;
 
-		addSlot(new SlotValidated(table, TileIntegrationTable.SLOT_INPUT_A, 17, 28));
-		addSlot(new SlotValidated(table, TileIntegrationTable.SLOT_INPUT_B, 53, 28));
-		addSlot(new SlotOutput(table, TileIntegrationTable.SLOT_OUTPUT, 143, 44));
-		addSlot(new SlotUntouchable(table.getRecipeOutput(), 0, 116, 44));
-
-		for (int i = TileIntegrationTable.SLOT_OUTPUT + 1; i < 12; i++) {
-			addSlot(new Slot(table, i, 8 + (i - (TileIntegrationTable.SLOT_OUTPUT + 1)) * 18, 69));
+		for (int i = 0; i < 9; i++) {
+			addSlot(new SlotValidated(table, i, SLOT_X[i], SLOT_Y[i]));
 		}
+
+		addSlot(new SlotOutput(table, 9, 138, 49));
+		addSlot(new SlotUntouchable(table, 10, 104, 36));
 
 		for (int y = 0; y < 3; y++) {
 			for (int x = 0; x < 9; x++) {
-				addSlotToContainer(new Slot(playerInventory, x + y * 9 + 9, 8 + x * 18, 91 + y * 18));
+				addSlotToContainer(new Slot(playerInventory, x + y * 9 + 9, 8 + x * 18, 109 + y * 18));
 			}
 		}
 
 		for (int x = 0; x < 9; x++) {
-			addSlotToContainer(new Slot(playerInventory, x, 8 + x * 18, 149));
+			addSlotToContainer(new Slot(playerInventory, x, 8 + x * 18, 167));
 		}
 	}
 

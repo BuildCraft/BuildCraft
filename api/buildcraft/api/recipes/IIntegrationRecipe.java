@@ -10,10 +10,18 @@ package buildcraft.api.recipes;
 
 import net.minecraft.item.ItemStack;
 
-public interface IIntegrationRecipe extends IFlexibleRecipe<ItemStack> {
+import java.util.List;
 
-	boolean isValidInputA(ItemStack inputA);
+public interface IIntegrationRecipe {
+	int getEnergyCost();
+	List<ItemStack> getExampleInput();
+	List<List<ItemStack>> getExampleExpansions();
+	boolean isValidInput(ItemStack input);
+	boolean isValidExpansion(ItemStack expansion);
+	ItemStack craft(ItemStack input, List<ItemStack> expansions, boolean preview);
 
-	boolean isValidInputB(ItemStack inputB);
-
+	/**
+	 * @return -1 for no limit, a different number otherwise
+	 */
+	int getMaximumExpansionCount();
 }

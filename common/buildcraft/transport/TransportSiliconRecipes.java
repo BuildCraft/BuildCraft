@@ -2,6 +2,8 @@ package buildcraft.transport;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import buildcraft.transport.recipes.GateExpansionRecipe;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.common.Optional;
@@ -19,7 +21,6 @@ import buildcraft.transport.gates.GateExpansionRedstoneFader;
 import buildcraft.transport.gates.GateExpansionTimer;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.recipes.AdvancedFacadeRecipe;
-import buildcraft.transport.recipes.GateLogicSwapRecipe;
 
 public final class TransportSiliconRecipes {
 	private TransportSiliconRecipes() {
@@ -61,11 +62,8 @@ public final class TransportSiliconRecipes {
 		addGateRecipe("Emerald", (int) Math.round(1200000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.EMERALD, ItemRedstoneChipset.Chipset.EMERALD, PipeWire.RED, PipeWire.BLUE,
 				PipeWire.GREEN, PipeWire.YELLOW);
 
-		// REVERSAL RECIPE
-		BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateLogicSwapRecipe("buildcraft:gateSwap"));
-
-		// PHASED FACADE
-		BuildcraftRecipeRegistry.integrationTable.addRecipe(new AdvancedFacadeRecipe("buildcraft:advancedFacade"));
+		BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe());
+		BuildcraftRecipeRegistry.integrationTable.addRecipe(new AdvancedFacadeRecipe());
 
 		// This will only add recipes to the gate expansions.
 		GateExpansions.registerExpansion(GateExpansionPulsar.INSTANCE, ItemRedstoneChipset.Chipset.PULSATING.getStack());

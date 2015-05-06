@@ -8,45 +8,27 @@
  */
 package buildcraft.silicon;
 
-import net.minecraft.inventory.IInventory;
+import buildcraft.core.lib.inventory.InventoryMapper;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.FluidStack;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
-import buildcraft.api.recipes.CraftingResult;
-import buildcraft.api.recipes.IFlexibleCrafter;
-import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.api.recipes.IIntegrationRecipe;
 import buildcraft.core.lib.inventory.ITransactor;
-import buildcraft.core.lib.inventory.InventoryMapper;
-import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.utils.StringUtils;
 
-public class TileIntegrationTable extends TileLaserTableBase implements IFlexibleCrafter {
+import java.util.ArrayList;
+import java.util.List;
 
-	public static final int SLOT_INPUT_A = 0;
-	public static final int SLOT_INPUT_B = 1;
-	public static final int SLOT_OUTPUT = 2;
-	private static final int CYCLE_LENGTH = 32;
+public class TileIntegrationTable extends TileLaserTableBase {
+	public static final int SLOT_OUTPUT = 9;
+	private static final int CYCLE_LENGTH = 16;
 	private int tick = 0;
-	private SimpleInventory invRecipeOutput = new SimpleInventory(1, "integrationOutput", 64);
-	private InventoryMapper invOutput = new InventoryMapper(inv, SLOT_OUTPUT, 1, false);
-	private IFlexibleRecipe<ItemStack> activeRecipe;
-	private CraftingResult<ItemStack> craftingPreview;
-
-	public IInventory getRecipeOutput() {
-		return invRecipeOutput;
-	}
-
-	private ItemStack[] getComponents() {
-		ItemStack[] components = new ItemStack[9];
-		for (int i = SLOT_OUTPUT + 1; i < 12; i++) {
-			components[i - SLOT_OUTPUT - 1] = inv.getStackInSlot(i);
-		}
-		return components;
-	}
+	private IIntegrationRecipe activeRecipe;
+	private InventoryMapper mappedOutput = new InventoryMapper(this, SLOT_OUTPUT, 1, false);
+	private int maxExpCountClient;
 
 	@Override
 	public void initialize() {
@@ -63,7 +45,7 @@ public class TileIntegrationTable extends TileLaserTableBase implements IFlexibl
 			return;
 		}
 
-		if (activeRecipe == null || craftingPreview == null) {
+		if (activeRecipe == null) {
 			setEnergy(0);
 			return;
 		}
@@ -73,39 +55,83 @@ public class TileIntegrationTable extends TileLaserTableBase implements IFlexibl
 			return;
 		}
 
-		if (!isRoomForOutput(craftingPreview.crafted)) {
+		updateRecipeOutput();
+
+		ItemStack output = getStackInSlot(10);
+		if (!isRoomForOutput(output)) {
 			setEnergy(0);
 			return;
 		}
 
-		if (getEnergy() >= craftingPreview.energyCost) {
+		if (getEnergy() >= activeRecipe.getEnergyCost()) {
 			setEnergy(0);
-			craftingPreview = null;
 
-			CraftingResult<ItemStack> craftResult = activeRecipe.craft(this, false);
+			output = activeRecipe.craft(getStackInSlot(0), getExpansions(), false);
 
-			if (craftResult != null) {
-				ItemStack result = craftResult.crafted.copy();
+			if (output != null) {
+				ITransactor trans = Transactor.getTransactorFor(mappedOutput);
+				trans.add(output, ForgeDirection.UP, true);
 
-				ITransactor trans = Transactor.getTransactorFor(invOutput);
-				trans.add(result, ForgeDirection.UP, true);
+				ItemStack input = getStackInSlot(0);
+
+				if (input.stackSize > output.stackSize) {
+					input.stackSize -= output.stackSize;
+				} else {
+					setInventorySlotContents(0, null);
+				}
+
+				for (int i = 1; i < 9; i++) {
+					if (getStackInSlot(i) != null && getStackInSlot(i).stackSize == 0) {
+						setInventorySlotContents(i, null);
+					}
+				}
 			}
 		}
 	}
 
-	private void setNewActiveRecipe(ItemStack inputA, ItemStack inputB, ItemStack[] components) {
-		craftingPreview = null;
+	private List<ItemStack> getExpansions() {
+		List<ItemStack> expansions = new ArrayList<ItemStack>();
+		for (int i = 1; i < 9; i++) {
+			if (getStackInSlot(i) != null) {
+				expansions.add(getStackInSlot(i));
+			}
+		}
+		return expansions;
+	}
 
-		for (IIntegrationRecipe recipe : BuildcraftRecipeRegistry.integrationTable.getRecipes()) {
-			if (recipe.isValidInputA(inputA) && recipe.isValidInputB(inputB)) {
-				craftingPreview = recipe.craft(this, true);
+	private void updateRecipeOutput() {
+		if (activeRecipe == null) {
+			inv.setInventorySlotContents(10, null);
+			return;
+		}
 
-				if (craftingPreview != null) {
+		List<ItemStack> expansions = getExpansions();
+
+		if (expansions.size() == 0) {
+			return;
+		}
+
+		inv.setInventorySlotContents(10, activeRecipe.craft(getStackInSlot(0), expansions, true));
+	}
+
+	private void setNewActiveRecipe() {
+		ItemStack input = getStackInSlot(0);
+		if ((input != null && activeRecipe != null && activeRecipe.isValidInput(input)) || (input == null && activeRecipe == null)) {
+			return;
+		}
+
+		activeRecipe = null;
+
+		if (input != null && input.getItem() != null) {
+			for (IIntegrationRecipe recipe : BuildcraftRecipeRegistry.integrationTable.getRecipes()) {
+				if (recipe.isValidInput(input)) {
 					activeRecipe = recipe;
 					break;
 				}
 			}
 		}
+
+		sendNetworkUpdate();
 	}
 
 	private boolean isRoomForOutput(ItemStack output) {
@@ -120,12 +146,22 @@ public class TileIntegrationTable extends TileLaserTableBase implements IFlexibl
 	}
 
 	@Override
+	public void writeData(ByteBuf buf) {
+		buf.writeByte((byte) getMaxExpansionCount());
+	}
+
+	@Override
+	public void readData(ByteBuf buf) {
+		maxExpCountClient = buf.readByte();
+	}
+
+	public int getMaxExpansionCount() {
+		return worldObj.isRemote ? maxExpCountClient : (activeRecipe != null ? activeRecipe.getMaximumExpansionCount() : 0);
+	}
+
+	@Override
 	public int getRequiredEnergy() {
-		if (craftingPreview != null) {
-			return craftingPreview.energyCost;
-		} else {
-			return 0;
-		}
+		return hasWork() ? activeRecipe.getEnergyCost() : 0;
 	}
 
 	@Override
@@ -135,40 +171,25 @@ public class TileIntegrationTable extends TileLaserTableBase implements IFlexibl
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
-		switch (slot) {
-			case SLOT_INPUT_A:
-				return isValidInputA(stack);
-			case SLOT_INPUT_B:
-				return isValidInputB(stack);
-		}
-		return false;
-	}
-
-	private boolean isValidInputA(ItemStack stack) {
-		ItemStack inputB = inv.getStackInSlot(SLOT_INPUT_B);
-		for (IIntegrationRecipe recipe : BuildcraftRecipeRegistry.integrationTable.getRecipes()) {
-			if (recipe.isValidInputA(stack) && (inputB == null || recipe.isValidInputB(inputB))) {
-				return true;
+		if (slot == 0) {
+			return true;
+		} else if (activeRecipe == null) {
+			return false;
+		} else if (slot < 9) {
+			if (activeRecipe.getMaximumExpansionCount() > 0) {
+				if (slot > activeRecipe.getMaximumExpansionCount()) {
+					return false;
+				}
 			}
+			return activeRecipe.isValidExpansion(stack);
+		} else {
+			return false;
 		}
-		return false;
-	}
-
-	private boolean isValidInputB(ItemStack stack) {
-		ItemStack inputA = inv.getStackInSlot(SLOT_INPUT_A);
-
-		for (IIntegrationRecipe recipe : BuildcraftRecipeRegistry.integrationTable.getRecipes()) {
-			if (recipe.isValidInputB(stack) && (inputA == null || recipe.isValidInputA(inputA))) {
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	@Override
 	public int getSizeInventory() {
-		return 12;
+		return 11;
 	}
 
 	@Override
@@ -183,66 +204,47 @@ public class TileIntegrationTable extends TileLaserTableBase implements IFlexibl
 
     @Override
     public boolean hasWork() {
-		return craftingPreview != null;
+		for (int i = 1; i < 9; i++) {
+			if (getStackInSlot(i) != null) {
+				return activeRecipe != null;
+			}
+		}
+		return false;
     }
 
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
 		super.setInventorySlotContents(slot, stack);
 
-		updateRecipe();
+		if (slot == 0) {
+			updateRecipe();
+		}
+		if (slot < 9) {
+			updateRecipeOutput();
+		}
 	}
 
 	@Override
 	public ItemStack decrStackSize(int slot, int amount) {
 		ItemStack result = super.decrStackSize(slot, amount);
 
-		updateRecipe();
+		if (slot == 0) {
+			updateRecipe();
+		}
+		if (slot < 9) {
+			updateRecipeOutput();
+		}
 
 		return result;
 	}
 
+	@Override
+	public void markDirty() {
+		super.markDirty();
+		updateRecipeOutput();
+	}
+
 	private void updateRecipe() {
-		ItemStack inputA = inv.getStackInSlot(SLOT_INPUT_A);
-		ItemStack inputB = inv.getStackInSlot(SLOT_INPUT_B);
-		ItemStack[] components = getComponents();
-		setNewActiveRecipe(inputA, inputB, components);
-
-		if (craftingPreview != null) {
-			invRecipeOutput.setInventorySlotContents(0, craftingPreview.crafted);
-		} else {
-			invRecipeOutput.setInventorySlotContents(0, null);
-		}
+		setNewActiveRecipe();
 	}
-
-	@Override
-	public int getCraftingItemStackSize() {
-		return getSizeInventory() - 3;
-	}
-
-	@Override
-	public ItemStack getCraftingItemStack(int slotid) {
-		return getStackInSlot(slotid + 3);
-	}
-
-	@Override
-	public ItemStack decrCraftingItemStack(int slotid, int val) {
-		return decrStackSize(slotid + 3, val);
-	}
-
-	@Override
-	public FluidStack getCraftingFluidStack(int tankid) {
-		return null;
-	}
-
-	@Override
-	public FluidStack decrCraftingFluidStack(int tankid, int val) {
-		return null;
-	}
-
-	@Override
-	public int getCraftingFluidStackSize() {
-		return 0;
-	}
-
 }

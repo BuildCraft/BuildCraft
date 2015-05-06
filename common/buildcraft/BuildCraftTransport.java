@@ -522,10 +522,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public void postInit(FMLPostInitializationEvent evt) {
 		facadeItem.initialize();
 
-		if (Loader.isModLoaded("BuildCraft|Silicon")) {
-			postInitSilicon();
-		}
-
 		if (debugPrintFacadeList) {
 			try {
 				PrintWriter writer = new PrintWriter("FacadeDebug.txt", "UTF-8");
@@ -612,17 +608,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 		}
 		FMLCommonHandler.instance().bus().unregister(pipeExtensionListener);
 		pipeExtensionListener = null;
-	}
-
-	private void postInitSilicon() {
-		Map<IGateExpansion, ItemStack> recipes = GateExpansions.getRecipesForPostInit();
-		int recipeId = 0;
-
-		for (IGateExpansion expansion : recipes.keySet()) {
-			BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe("buildcraft:expansion_" + recipeId,
-					expansion, recipes.get(expansion)));
-			recipeId++;
-		}
 	}
 
 	public void loadRecipes() {

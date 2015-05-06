@@ -117,8 +117,10 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
 
 	public static ItemStack createRobotStack(ItemStack board, int energy) {
 		ItemStack robot = new ItemStack(BuildCraftRobotics.robotItem);
-		NBTUtils.getItemData(robot).setTag("board", NBTUtils.getItemData(board));
-		NBTUtils.getItemData(robot).setInteger("energy", energy);
+		if (board != null) {
+			NBTUtils.getItemData(robot).setTag("board", NBTUtils.getItemData(board));
+			NBTUtils.getItemData(robot).setInteger("energy", energy);
+		}
 
 		return robot;
 	}

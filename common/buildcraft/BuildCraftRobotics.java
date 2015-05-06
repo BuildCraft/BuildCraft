@@ -373,7 +373,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
 				'C', ItemRedstoneChipset.Chipset.GOLD.getStack());
 
 		BuildcraftRecipeRegistry.programmingTable.addRecipe(new BoardProgrammingRecipe());
-		BuildcraftRecipeRegistry.integrationTable.addRecipe(new RobotIntegrationRecipe("buildcraft:robotIntegration"));
+		BuildcraftRecipeRegistry.integrationTable.addRecipe(new RobotIntegrationRecipe());
 	}
 
 	@SubscribeEvent

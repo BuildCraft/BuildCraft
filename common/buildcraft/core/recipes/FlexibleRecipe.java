@@ -146,7 +146,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 
 		IFlexibleCrafter crafter = baseCrafter;
 		if (preview) {
-			crafter = new PreviewCrafter(baseCrafter);
+			crafter = new FakeFlexibleCrafter(baseCrafter);
 		}
 
 		CraftingResult<T> result = new CraftingResult<T>();
@@ -159,7 +159,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 			IStackFilter filter = new ArrayStackFilter(requirement);
 			int amount = requirement.stackSize;
 
-			if (consumeItems(crafter, result, filter, amount, false) != 0) {
+			if (consumeItems(crafter, result, filter, amount) != 0) {
 				return null;
 			}
 		}
@@ -170,7 +170,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 			IStackFilter filter = new ArrayStackFilter(requirements.toArray(new ItemStack[requirements.size()]));
 			int amount = requirements.get(0).stackSize;
 
-			if (consumeItems(crafter, result, filter, amount, false) != 0) {
+			if (consumeItems(crafter, result, filter, amount) != 0) {
 				return null;
 			}
 		}
@@ -230,7 +230,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 	}
 
 	private int consumeItems(IFlexibleCrafter crafter, CraftingResult<T> result, IStackFilter filter,
-			int amount, boolean preview) {
+			int amount) {
 		int expected = amount;
 
 		for (int slotid = 0; slotid < crafter.getCraftingItemStackSize(); ++slotid) {
@@ -240,21 +240,10 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 				ItemStack removed = null;
 
 				if (stack.stackSize >= expected) {
-					if (preview) {
-						removed = stack.copy();
-						removed.stackSize = expected;
-					} else {
-						removed = crafter.decrCraftingItemStack(slotid, expected);
-					}
-
+					removed = crafter.decrCraftingItemStack(slotid, expected);
 					expected = 0;
 				} else {
-					if (preview) {
-						removed = stack.copy();
-					} else {
-						removed = crafter.decrCraftingItemStack(slotid, stack.stackSize);
-					}
-
+					removed = crafter.decrCraftingItemStack(slotid, stack.stackSize);
 					expected -= removed.stackSize;
 				}
 

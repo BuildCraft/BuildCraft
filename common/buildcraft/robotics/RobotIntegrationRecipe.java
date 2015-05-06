@@ -8,39 +8,45 @@
  */
 package buildcraft.robotics;
 
+import buildcraft.core.recipes.IntegrationRecipeBC;
 import net.minecraft.item.ItemStack;
-import buildcraft.BuildCraftRobotics;
-import buildcraft.api.recipes.CraftingResult;
-import buildcraft.silicon.TileIntegrationTable;
-import buildcraft.silicon.recipes.IntegrationTableRecipe;
 
-public class RobotIntegrationRecipe extends IntegrationTableRecipe {
+import java.util.ArrayList;
+import java.util.List;
 
-	public RobotIntegrationRecipe(String id) {
-		setContents(id, new ItemStack(BuildCraftRobotics.robotItem), 10000, 0);
+public class RobotIntegrationRecipe extends IntegrationRecipeBC {
+	public RobotIntegrationRecipe() {
+		super(50000, 1);
 	}
 
 	@Override
-	public boolean isValidInputA(ItemStack inputA) {
-		return inputA != null && inputA.getItem() instanceof ItemRobot;
+	public List<ItemStack> generateExampleInput() {
+		ArrayList<ItemStack> example = new ArrayList<ItemStack>();
+		example.add(ItemRobot.createRobotStack(null, 0));
+		return example;
 	}
 
 	@Override
-	public boolean isValidInputB(ItemStack inputB) {
-		return inputB != null && inputB.getItem() instanceof ItemRedstoneBoard;
+	public List<List<ItemStack>> generateExampleExpansions() {
+		// TODO!
+		return null;
 	}
 
 	@Override
-	public CraftingResult<ItemStack> craft(TileIntegrationTable crafter, boolean preview, ItemStack inputA,
-			ItemStack inputB) {
-		CraftingResult<ItemStack> result = super.craft(crafter, preview, inputA, inputB);
+	public boolean isValidInput(ItemStack input) {
+		return input.getItem() instanceof ItemRobot;
+	}
 
-		if (result != null) {
-			result.crafted = ItemRobot.createRobotStack(inputB, 0);
+	@Override
+	public boolean isValidExpansion(ItemStack expansion) {
+		return expansion.getItem() instanceof ItemRedstoneBoard;
+	}
 
-			return result;
-		} else {
-			return null;
+	@Override
+	public ItemStack craft(ItemStack input, List<ItemStack> expansions, boolean preview) {
+		if (!preview) {
+			expansions.get(0).stackSize--;
 		}
+		return ItemRobot.createRobotStack(expansions.get(0), 0);
 	}
 }

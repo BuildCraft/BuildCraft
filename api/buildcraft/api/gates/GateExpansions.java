@@ -13,12 +13,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.common.collect.HashBiMap;
 import net.minecraft.item.ItemStack;
 
 public final class GateExpansions {
 	private static final Map<String, IGateExpansion> expansions = new HashMap<String, IGateExpansion>();
 	private static final ArrayList<IGateExpansion> expansionIDs = new ArrayList<IGateExpansion>();
-	private static final Map<IGateExpansion, ItemStack> recipes = new HashMap<IGateExpansion, ItemStack>();
+	private static final Map<IGateExpansion, ItemStack> recipes = HashBiMap.create();
 
 	private GateExpansions() {
 	}

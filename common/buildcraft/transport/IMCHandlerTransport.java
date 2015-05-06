@@ -45,9 +45,6 @@ public class IMCHandlerTransport extends IMCHandler {
 				failed = true;
 				return;
 			}
-			IntegrationRecipeManager.INSTANCE.addRecipe(new GateExpansionRecipe(
-					recipe.getString("id"), exp, is
-			));
 		}
 		if (failed) {
 			BCLog.logger.warn("Received invalid gate expansion recipe IMC message from mod %s!", msg.getSender());

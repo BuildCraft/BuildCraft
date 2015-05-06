@@ -25,7 +25,7 @@ public class GuiIntegrationTable extends GuiLaserTable {
 		super(playerInventory, new ContainerIntegrationTable(playerInventory, table), table, TEXTURE);
 		this.integrationTable = table;
 		xSize = 176;
-		ySize = 173;
+		ySize = 186;
 	}
 
 	@Override
@@ -54,8 +54,14 @@ public class GuiIntegrationTable extends GuiLaserTable {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		mc.renderEngine.bindTexture(TEXTURE);
 		if (integrationTable.getEnergy() > 0) {
-			int progress = integrationTable.getProgressScaled(98);
-			drawTexturedModalRect(guiLeft + 13, guiTop + 40, 0, flash ? 197 : 221, progress, 24);
+			int h = table.getProgressScaled(69);
+			drawTexturedModalRect(guiLeft + 164, guiTop + 18 + 74 - h, 176, 18, 4, h);
+		}
+		if (integrationTable.getMaxExpansionCount() > 0) {
+			for (int i = 8; i > integrationTable.getMaxExpansionCount(); i--) {
+				drawTexturedModalRect(guiLeft + ContainerIntegrationTable.SLOT_X[i] - 1, guiTop + ContainerIntegrationTable.SLOT_Y[i] - 1,
+						180, 17, 18, 18);
+			}
 		}
 	}
 }

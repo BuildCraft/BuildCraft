@@ -9,107 +9,95 @@
 package buildcraft.transport.recipes;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
+import java.util.List;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.facades.FacadeType;
 import buildcraft.api.facades.IFacadeItem;
-import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.transport.PipeWire;
-import buildcraft.silicon.ItemRedstoneChipset;
-import buildcraft.silicon.TileIntegrationTable;
-import buildcraft.silicon.recipes.IntegrationTableRecipe;
+import buildcraft.core.recipes.IntegrationRecipeBC;
 import buildcraft.transport.ItemFacade;
-import buildcraft.transport.ItemFacade.FacadeState;
 import buildcraft.transport.ItemPipeWire;
+import net.minecraft.item.ItemStack;
 
-public class AdvancedFacadeRecipe extends IntegrationTableRecipe {
-
-	public AdvancedFacadeRecipe(String id) {
-		setContents(id, new ItemFacade(), 50000, 0,
-				new ItemStack(BuildCraftTransport.pipeWire, 1, OreDictionary.WILDCARD_VALUE),
-				ItemRedstoneChipset.Chipset.RED.getStack());
+public class AdvancedFacadeRecipe extends IntegrationRecipeBC {
+	public AdvancedFacadeRecipe() {
+		super(25000, 2);
 	}
 
 	@Override
-	public boolean isValidInputA(ItemStack inputA) {
-		return inputA != null && inputA.getItem() instanceof ItemFacade;
+	public List<ItemStack> generateExampleInput() {
+		return ItemFacade.allFacades;
 	}
 
 	@Override
-	public boolean isValidInputB(ItemStack inputB) {
-		return inputB != null && (inputB.getItem() instanceof ItemFacade &&
-				((IFacadeItem) inputB.getItem()).getFacadeType(inputB) == FacadeType.Basic ||
-				inputB.getItem() == BuildCraftTransport.plugItem);
-	}
-
-	@Override
-	public CraftingResult<ItemStack> craft(TileIntegrationTable crafter, boolean preview, ItemStack inputA,
-			ItemStack inputB) {
-		CraftingResult<ItemStack> result = super.craft(crafter, preview, inputA, inputB);
-
-		if (result == null) {
-			return null;
+	public List<List<ItemStack>> generateExampleExpansions() {
+		List<List<ItemStack>> list = new ArrayList<List<ItemStack>>();
+		list.add(ItemFacade.allFacades);
+		List<ItemStack> pipeWires = new ArrayList<ItemStack>();
+		for (PipeWire wire : PipeWire.values()) {
+			pipeWires.add(wire.getStack());
 		}
+		list.add(pipeWires);
+		return list;
+	}
 
+	@Override
+	public boolean isValidInput(ItemStack input) {
+		return input.getItem() instanceof ItemFacade;
+	}
+
+	@Override
+	public boolean isValidExpansion(ItemStack expansion) {
+		return (expansion.getItem() instanceof ItemFacade &&
+				((IFacadeItem) expansion.getItem()).getFacadeType(expansion) == FacadeType.Basic) ||
+				expansion.getItem() == BuildCraftTransport.plugItem ||
+				expansion.getItem() == BuildCraftTransport.pipeWire;
+	}
+
+	@Override
+	public ItemStack craft(ItemStack input, List<ItemStack> expansions, boolean preview) {
 		PipeWire wire = null;
+		ItemStack facade = null;
 
-		for (ItemStack stack : result.usedItems) {
-			if (stack != null && stack.getItem() instanceof ItemPipeWire) {
+		for (ItemStack stack : expansions) {
+			if (wire == null && stack.getItem() instanceof ItemPipeWire) {
 				wire = PipeWire.fromOrdinal(stack.getItemDamage());
-				break;
+				if (!preview) {
+					stack.stackSize--;
+				}
+			} else if (facade == null && (stack.getItem() instanceof ItemFacade || stack.getItem() == BuildCraftTransport.pipeWire)) {
+				facade = stack;
+				if (!preview) {
+					stack.stackSize--;
+				}
 			}
 		}
 
-		if (wire != null) {
-			FacadeState[] states = ItemFacade.getFacadeStates(inputA);
-			FacadeState additionalState;
+		if (wire != null && facade != null) {
+			ItemFacade.FacadeState[] states = ItemFacade.getFacadeStates(input);
+			ItemFacade.FacadeState additionalState;
 
-			if (inputB.getItem() == BuildCraftTransport.plugItem) {
-				additionalState = FacadeState.createTransparent(wire);
+			if (facade.getItem() == BuildCraftTransport.plugItem) {
+				additionalState = ItemFacade.FacadeState.createTransparent(wire);
 			} else {
-				additionalState = ItemFacade.getFacadeStates(inputB)[0];
-				additionalState = FacadeState.create(additionalState.block, additionalState.metadata, wire);
+				additionalState = ItemFacade.getFacadeStates(facade)[0];
+				additionalState = ItemFacade.FacadeState.create(additionalState.block, additionalState.metadata, wire);
 			}
 
 			// if in states array exists state with the same wire just override it
 			for (int i = 0; i < states.length; i++) {
 				if (states[i].wire == wire) {
 					states[i] = additionalState;
-
-					result.energyCost = 20000;
-					result.crafted = ItemFacade.getFacade(states);
-
-					return result;
+					return ItemFacade.getFacade(states);
 				}
 			}
 
-			result.energyCost = 50000;
-			result.crafted = ItemFacade.getFacade(JavaTools.concat(states,
-					new FacadeState[] {additionalState}));
-
-			return result;
+			return ItemFacade.getFacade(JavaTools.concat(states,
+					new ItemFacade.FacadeState[]{additionalState}));
 		} else {
 			return null;
 		}
-	}
-
-	@Override
-	public Collection<Object> getInputs() {
-		ArrayList<Object> inputs = new ArrayList<Object>();
-
-		//inputs.add(ItemFacade.allFacades);
-		//inputs.add(ItemRedstoneChipset.Chipset.RED.getStack());
-
-		return inputs;
-	}
-
-	@Override
-	public Collection<Object> getOutput() {
-		ArrayList<Object> outputs = new ArrayList<Object>();
-
-		return outputs;
 	}
 }

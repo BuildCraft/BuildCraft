@@ -10,15 +10,7 @@ package buildcraft.api.recipes;
 
 import java.util.List;
 
-/**
- * The Integration Table's primary purpose is to modify an input item's NBT
- * data. As such its not a "traditional" type of recipe. Rather than predefined
- * inputs and outputs, it takes an input and transforms it.
- */
 public interface IIntegrationRecipeManager {
-	/**
-	 * Add an Integration Table recipe.
-	 */
 	void addRecipe(IIntegrationRecipe recipe);
 
 	List<? extends IIntegrationRecipe> getRecipes();

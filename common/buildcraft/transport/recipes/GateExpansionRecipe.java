@@ -9,87 +9,85 @@
 package buildcraft.transport.recipes;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import buildcraft.api.gates.GateExpansions;
+import buildcraft.core.recipes.IntegrationRecipeBC;
+import buildcraft.silicon.ItemRedstoneChipset;
+import buildcraft.transport.gates.GateDefinition;
+import com.google.common.collect.BiMap;
 import net.minecraft.item.ItemStack;
-import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.recipes.CraftingResult;
 import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.silicon.TileIntegrationTable;
-import buildcraft.silicon.recipes.IntegrationTableRecipe;
 import buildcraft.transport.gates.ItemGate;
 
-public class GateExpansionRecipe extends IntegrationTableRecipe {
+public class GateExpansionRecipe extends IntegrationRecipeBC {
+	private static final BiMap<IGateExpansion, ItemStack> recipes = (BiMap<IGateExpansion, ItemStack>) GateExpansions.getRecipesForPostInit();
 
-	private final IGateExpansion expansion;
-	private final ItemStack chipset;
-
-	public GateExpansionRecipe(String id, IGateExpansion expansion, ItemStack chipset) {
-		this.expansion = expansion;
-		this.chipset = chipset.copy();
-
-		setContents(id, BuildCraftTransport.pipeGate, 100000, 0);
+	public GateExpansionRecipe() {
+		super(25000);
 	}
 
 	@Override
-	public boolean isValidInputA(ItemStack inputA) {
-		if (inputA == null) {
-			return false;
-		} else if (!(inputA.getItem() instanceof ItemGate)) {
-			return false;
+	public boolean isValidInput(ItemStack input) {
+		return input.getItem() instanceof ItemGate;
+	}
+
+	@Override
+	public boolean isValidExpansion(ItemStack expansion) {
+		if (StackHelper.isMatchingItem(ItemRedstoneChipset.Chipset.RED.getStack(), expansion, true, true)) {
+			return true;
+		}
+		for (ItemStack s : recipes.values()) {
+			if (StackHelper.isMatchingItem(s, expansion, true, true)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public List<ItemStack> generateExampleInput() {
+		return Collections.unmodifiableList(ItemGate.getAllGates());
+	}
+
+	@Override
+	public List<List<ItemStack>> generateExampleExpansions() {
+		ArrayList<List<ItemStack>> list = new ArrayList<List<ItemStack>>();
+		ArrayList<ItemStack> list2 = new ArrayList<ItemStack>();
+		list2.addAll(recipes.values());
+		list.add(list2);
+		return list;
+	}
+
+	@Override
+	public ItemStack craft(ItemStack input, List<ItemStack> expansions, boolean preview) {
+		ItemStack output = input.copy();
+		int expansionsAdded = 0;
+
+		for (ItemStack chipset : expansions) {
+			if (StackHelper.isMatchingItem(ItemRedstoneChipset.Chipset.RED.getStack(), chipset, true, true)) {
+				ItemGate.setLogic(output, ItemGate.getLogic(output) == GateDefinition.GateLogic.AND ? GateDefinition.GateLogic.OR : GateDefinition.GateLogic.AND);
+				expansionsAdded++;
+				continue;
+			}
+			for (ItemStack expansion : recipes.values()) {
+				if (StackHelper.isMatchingItem(chipset, expansion, true, true) && !ItemGate.hasGateExpansion(output, recipes.inverse().get(expansion))) {
+					if (!preview) {
+						chipset.stackSize--;
+					}
+					ItemGate.addGateExpansion(output, recipes.inverse().get(expansion));
+					expansionsAdded++;
+					break;
+				}
+			}
+		}
+
+		if (expansionsAdded > 0) {
+			return output;
 		} else {
-			return !ItemGate.hasGateExpansion(inputA, expansion);
-		}
-	}
-
-	@Override
-	public boolean isValidInputB(ItemStack inputB) {
-		return StackHelper.isMatchingItem(inputB, chipset);
-	}
-
-	@Override
-	public CraftingResult<ItemStack> craft(TileIntegrationTable crafter, boolean preview, ItemStack inputA,
-			ItemStack inputB) {
-
-		if (inputA == null) {
 			return null;
 		}
-
-		CraftingResult<ItemStack> result = super.craft(crafter, preview, inputA, inputB);
-
-		if (result == null) {
-			return null;
-		}
-
-		ItemStack output = inputA;
-
-		output.stackSize = 1;
-		ItemGate.addGateExpansion(output, expansion);
-
-		result.crafted = output;
-
-		return result;
-	}
-
-	@Override
-	public Collection<Object> getInputs() {
-		ArrayList<Object> inputs = new ArrayList<Object>();
-
-		inputs.add(ItemGate.getAllGates());
-		inputs.add(chipset);
-
-		return inputs;
-	}
-
-	@Override
-	public Collection<Object> getOutput() {
-		ArrayList<Object> gates = new ArrayList<Object>();
-		for (ItemStack stack : ItemGate.getAllGates()) {
-			ItemStack newStack = stack.copy();
-			ItemGate.addGateExpansion(newStack, expansion);
-			gates.add(newStack);
-		}
-
-		return gates;
 	}
 }
