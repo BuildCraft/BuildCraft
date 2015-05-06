@@ -8,9 +8,12 @@
  */
 package buildcraft.silicon;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+
+import buildcraft.api.recipes.IFlexibleRecipeViewable;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
@@ -40,6 +43,7 @@ import buildcraft.core.recipes.AssemblyRecipeManager;
 public class TileAssemblyTable extends TileLaserTableBase implements IInventory, IFlexibleCrafter, ICommandReceiver {
 	public String currentRecipeId = "";
 	public IFlexibleRecipe<ItemStack> currentRecipe;
+	public HashMap<String, CraftingResult<ItemStack>> plannedOutputIcons = new HashMap<String, CraftingResult<ItemStack>>();
 	private HashSet<String> plannedOutput = new HashSet<String>();
 	private boolean queuedNetworkUpdate = false;
 
@@ -153,7 +157,35 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 			plannedOutput.add(NetworkUtils.readUTF(stream));
 		}
 
+		// Update plannedOutputIcons
+		generatePlannedOutputIcons();
+
 		currentRecipe = AssemblyRecipeManager.INSTANCE.getRecipe(currentRecipeId);
+	}
+
+	private void generatePlannedOutputIcons() {
+		for (String s : plannedOutput) {
+			IFlexibleRecipe<ItemStack> recipe = AssemblyRecipeManager.INSTANCE.getRecipe(s);
+			CraftingResult<ItemStack> result = recipe.craft(this, true);
+			if (result != null && result.usedItems != null && result.usedItems.size() > 0) {
+				plannedOutputIcons.put(s, result);
+			} else if (recipe instanceof IFlexibleRecipeViewable) {
+				// !! HACK !! TODO !! HACK !!
+				Object out = ((IFlexibleRecipeViewable) recipe).getOutput();
+				if (out instanceof ItemStack) {
+					result = new CraftingResult<ItemStack>();
+					result.crafted = (ItemStack) out;
+					result.recipe = recipe;
+					plannedOutputIcons.put(s, result);
+				}
+			}
+		}
+
+		for (String s : plannedOutputIcons.keySet().toArray(new String[plannedOutputIcons.size()])) {
+			if (!(plannedOutput.contains(s))) {
+				plannedOutputIcons.remove(s);
+			}
+		}
 	}
 
 	@Override
@@ -225,6 +257,9 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		} else {
 			currentRecipeId = "";
 		}
+
+		// Update plannedOutputIcons
+		generatePlannedOutputIcons();
 
 		if (worldObj != null && !worldObj.isRemote) {
 			queueNetworkUpdate();

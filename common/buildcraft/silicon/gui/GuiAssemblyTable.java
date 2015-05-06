@@ -8,8 +8,8 @@
  */
 package buildcraft.silicon.gui;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+
 import org.lwjgl.opengl.GL11;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -72,6 +72,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 	class RecipeSlot extends AdvancedSlot {
 		public CraftingResult<ItemStack> crafting;
+		public boolean craftable;
 
 		public RecipeSlot(int x, int y) {
 			super(GuiAssemblyTable.this, x, y);
@@ -104,14 +105,28 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 	}
 
 	public void updateRecipes() {
+		Set<String> addedRecipes = new HashSet<String>();
 		List<CraftingResult<ItemStack>> potentialRecipes = table.getPotentialOutputs();
 		Iterator<CraftingResult<ItemStack>> cur = potentialRecipes.iterator();
+		Collection<String> plannedIcons = table.plannedOutputIcons.keySet();
+		Iterator<String> cur2 = plannedIcons.iterator();
 
 		for (AdvancedSlot s : slots) {
 			if (cur.hasNext()) {
 				((RecipeSlot) s).crafting = cur.next();
+				((RecipeSlot) s).craftable = true;
+				addedRecipes.add(((RecipeSlot) s).crafting.recipe.getId());
 			} else {
-				((RecipeSlot) s).crafting = null;
+				String recipe = null;
+				while (cur2.hasNext() && (recipe == null || addedRecipes.contains(recipe))) {
+					recipe = cur2.next();
+				}
+				if (recipe != null && !addedRecipes.contains(recipe)) {
+					((RecipeSlot) s).crafting = table.plannedOutputIcons.get(recipe);
+					((RecipeSlot) s).craftable = false;
+				} else {
+					((RecipeSlot) s).crafting = null;
+				}
 			}
 		}
 	}
@@ -137,7 +152,9 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 			RecipeSlot slot = (RecipeSlot) slot2;
 
 			if (slot.crafting != null) {
-				if (table.isAssembling(slot.crafting.recipe)) {
+				if (!slot.craftable) {
+					drawTexturedModalRect(guiLeft + slot.x, guiTop + slot.y, 215, 1, 16, 16);
+				} else if (table.isAssembling(slot.crafting.recipe)) {
 					drawTexturedModalRect(guiLeft + slot.x, guiTop + slot.y, 196, 1, 16, 16);
 				} else if (table.isPlanned(slot.crafting.recipe)) {
 					drawTexturedModalRect(guiLeft + slot.x, guiTop + slot.y, 177, 1, 16, 16);
