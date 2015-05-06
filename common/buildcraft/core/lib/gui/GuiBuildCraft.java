@@ -545,7 +545,8 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		}
 
 		protected void drawIcon(IIcon icon, int x, int y) {
-
+			GL11.glDisable(GL11.GL_BLEND);
+			GL11.glEnable(GL11.GL_ALPHA_TEST);
 			GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0F);
 			drawTexturedModelRectFromIcon(x, y, icon, 16, 16);
 		}

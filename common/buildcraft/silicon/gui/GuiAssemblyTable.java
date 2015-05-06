@@ -95,9 +95,9 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 		xSize = 176;
 		ySize = 207;
 
-		for (int j = 0; j < 2; ++j) {
+		for (int j = 0; j < 3; ++j) {
 			for (int i = 0; i < 4; ++i) {
-				slots.add(new RecipeSlot(134 + 18 * j, 36 + 18 * i));
+				slots.add(new RecipeSlot(116 + 18 * j, 36 + 18 * i));
 			}
 		}
 
@@ -164,7 +164,7 @@ public class GuiAssemblyTable extends GuiAdvancedInterface {
 
 		int h = table.getProgressScaled(70);
 
-		drawTexturedModalRect(guiLeft + 95, guiTop + 36 + 70 - h, 176, 18, 4, h);
+		drawTexturedModalRect(guiLeft + 86, guiTop + 36 + 70 - h, 176, 18, 4, h);
 
 		drawBackgroundSlots();
 	}
