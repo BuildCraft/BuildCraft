@@ -11,11 +11,7 @@ package buildcraft.core.lib.network;
 import io.netty.buffer.ByteBuf;
 import buildcraft.api.core.ISerializable;
 
-public class PacketUpdate extends Packet {
-
-	public int posX;
-	public int posY;
-	public int posZ;
+public abstract class PacketUpdate extends Packet {
 	public ByteBuf stream;
 	public ISerializable payload;
 
@@ -25,15 +21,7 @@ public class PacketUpdate extends Packet {
 	}
 
 	public PacketUpdate(int packetId, ISerializable payload) {
-		this(packetId, 0, 0, 0, payload);
-	}
-
-	public PacketUpdate(int packetId, int posX, int posY, int posZ, ISerializable payload) {
 		this(packetId);
-
-		this.posX = posX;
-		this.posY = posY;
-		this.posZ = posZ;
 
 		this.payload = payload;
 	}
@@ -46,24 +34,24 @@ public class PacketUpdate extends Packet {
 	@Override
 	public void writeData(ByteBuf data) {
 		data.writeByte(packetId);
-		data.writeInt(posX);
-		data.writeShort(posY);
-		data.writeInt(posZ);
+		writeIdentificationData(data);
 
 		if (payload != null) {
 			payload.writeData(data);
 		}
 	}
 
+	public abstract void writeIdentificationData(ByteBuf data);
+
 	@Override
 	public void readData(ByteBuf data) {
 		packetId = data.readByte();
-		posX = data.readInt();
-		posY = data.readShort();
-		posZ = data.readInt();
+		readIdentificationData(data);
 
 		stream = data; // for further reading
 	}
+
+	public abstract void readIdentificationData(ByteBuf data);
 
 	@Override
 	public int getID() {

@@ -26,7 +26,8 @@ public class ChannelHandler extends FMLIndexedMessageToMessageCodec<Packet> {
 		addDiscriminator(5, PacketGuiWidget.class);
 		addDiscriminator(6, PacketUpdate.class);
 		addDiscriminator(7, PacketCommand.class);
-		maxDiscriminator = 8;
+		addDiscriminator(8, PacketEntityUpdate.class);
+		maxDiscriminator = 9;
     }
 
 	public void registerPacketType(Class<? extends Packet> packetType) {

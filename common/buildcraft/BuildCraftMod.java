@@ -12,6 +12,8 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
+
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
@@ -26,6 +28,7 @@ import cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget;
 import cpw.mods.fml.relauncher.Side;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.network.Packet;
+import net.minecraft.world.WorldServer;
 
 public class BuildCraftMod {
 	private static PacketSender sender = new PacketSender();
@@ -55,6 +58,27 @@ public class BuildCraftMod {
 
 		boolean isValid(EntityPlayer player) {
 			return this.player.equals(player);
+		}
+	}
+
+	class EntitySendRequest extends SendRequest {
+		Entity entity;
+
+		EntitySendRequest(BuildCraftMod source, Packet packet, Entity entity) {
+			super(source, packet);
+			this.entity = entity;
+		}
+
+		boolean isValid(EntityPlayer player) {
+			if (player.worldObj.equals(entity.worldObj)) {
+				if (player.worldObj instanceof WorldServer) {
+					return ((WorldServer) player.worldObj).getEntityTracker().getTrackingPlayers(entity).contains(player);
+				} else {
+					return true;
+				}
+			} else {
+				return false;
+			}
 		}
 	}
 
@@ -148,6 +172,10 @@ public class BuildCraftMod {
 
 	public void sendToWorld(Packet packet, World world) {
 		sender.add(new WorldSendRequest(this, packet, world.provider.dimensionId));
+	}
+
+	public void sendToEntity(Packet packet, Entity entity) {
+		sender.add(new EntitySendRequest(this, packet, entity));
 	}
 	
 	public void sendToPlayer(EntityPlayer entityplayer, Packet packet) {

@@ -8,9 +8,9 @@
  */
 package buildcraft.silicon.network;
 
+import buildcraft.core.lib.network.PacketHandler;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
@@ -21,16 +21,14 @@ import buildcraft.core.lib.network.PacketSlotChange;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.silicon.TileAdvancedCraftingTable;
-import buildcraft.silicon.TileAssemblyTable;
 
 @Sharable
-public class PacketHandlerSilicon extends SimpleChannelInboundHandler<Packet>  {
-
+public class PacketHandlerSilicon extends PacketHandler {
 	@Override
-	protected  void channelRead0(ChannelHandlerContext ctx, Packet packet) {
+	protected void channelRead0(ChannelHandlerContext ctx, Packet packet) {
+		super.channelRead0(ctx, packet);
 		try {
 			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
-
 			EntityPlayer player = CoreProxy.proxy.getPlayerFromNetHandler(netHandler);
 
 			int packetID = packet.getID();
@@ -39,30 +37,13 @@ public class PacketHandlerSilicon extends SimpleChannelInboundHandler<Packet>  {
 			case PacketIds.ADVANCED_WORKBENCH_SETSLOT:
 				onAdvancedWorkbenchSet(player, (PacketSlotChange) packet);
 				break;
-
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-
-	}
-
-	private TileAssemblyTable getAssemblyTable(World world, int x, int y, int z) {
-
-		if (!world.blockExists(x, y, z)) {
-			return null;
-		}
-
-		TileEntity tile = world.getTileEntity(x, y, z);
-		if (!(tile instanceof TileAssemblyTable)) {
-			return null;
-		}
-
-		return (TileAssemblyTable) tile;
 	}
 
 	private TileAdvancedCraftingTable getAdvancedWorkbench(World world, int x, int y, int z) {
-
 		if (!world.blockExists(x, y, z)) {
 			return null;
 		}
@@ -75,14 +56,7 @@ public class PacketHandlerSilicon extends SimpleChannelInboundHandler<Packet>  {
 		return (TileAdvancedCraftingTable) tile;
 	}
 
-	/**
-	 * Sets the packet into the advanced workbench
-	 *
-	 * @param player
-	 * @param packet1
-	 */
 	private void onAdvancedWorkbenchSet(EntityPlayer player, PacketSlotChange packet1) {
-
 		TileAdvancedCraftingTable tile = getAdvancedWorkbench(player.worldObj, packet1.posX, packet1.posY, packet1.posZ);
 		if (tile == null) {
 			return;

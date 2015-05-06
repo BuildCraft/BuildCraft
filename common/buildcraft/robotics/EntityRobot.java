@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.WeakHashMap;
+
+import buildcraft.api.robots.*;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -19,16 +21,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.IIcon;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
@@ -49,10 +47,6 @@ import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IZone;
-import buildcraft.api.robots.AIRobot;
-import buildcraft.api.robots.DockingStation;
-import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.api.robots.RobotManager;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.core.DefaultProps;
@@ -98,6 +92,7 @@ public class EntityRobot extends EntityRobotBase implements
 	public long lastUpdateTime = 0;
 
 	private DockingStation currentDockingStation;
+	private List<ItemStack> wearables = new ArrayList<ItemStack>();
 
 	private boolean needsUpdate = false;
 	private ItemStack[] inv = new ItemStack[4];
@@ -355,35 +350,9 @@ public class EntityRobot extends EntityRobotBase implements
 				energySpendPerCycle * 0.075F < 1 ? 1 : energySpendPerCycle * 0.075F));
 	}
 
-	public void setRegularBoundingBox() {
-		width = 0.5F;
-		height = 0.5F;
-
-		if (laser.isVisible) {
-			boundingBox.minX = Math.min(posX, laser.tail.x);
-			boundingBox.minY = Math.min(posY, laser.tail.y);
-			boundingBox.minZ = Math.min(posZ, laser.tail.z);
-
-			boundingBox.maxX = Math.max(posX, laser.tail.x);
-			boundingBox.maxY = Math.max(posY, laser.tail.y);
-			boundingBox.maxZ = Math.max(posZ, laser.tail.z);
-
-			boundingBox.minX--;
-			boundingBox.minY--;
-			boundingBox.minZ--;
-
-			boundingBox.maxX++;
-			boundingBox.maxY++;
-			boundingBox.maxZ++;
-		} else {
-			boundingBox.minX = posX - 0.25F;
-			boundingBox.minY = posY - 0.25F;
-			boundingBox.minZ = posZ - 0.25F;
-
-			boundingBox.maxX = posX + 0.25F;
-			boundingBox.maxY = posY + 0.25F;
-			boundingBox.maxZ = posZ + 0.25F;
-		}
+	@Override
+	public AxisAlignedBB getBoundingBox() {
+		return AxisAlignedBB.getBoundingBox(posX - 0.25F, posY - 0.25F, posZ - 0.25F, posX + 0.25F, posY + 0.25F, posZ + 0.25F);
 	}
 
 	public void setNullBoundingBox() {
@@ -404,16 +373,24 @@ public class EntityRobot extends EntityRobotBase implements
 		motionY = 0F;
 		motionZ = 0F;
 
-		setNullBoundingBox ();
+		setNullBoundingBox();
 	}
 
 	@Override
 	public void writeSpawnData(ByteBuf data) {
-
+		data.writeByte(wearables.size());
+		for (ItemStack s : wearables) {
+			NetworkUtils.writeStack(data, s);
+		}
 	}
 
 	@Override
 	public void readSpawnData(ByteBuf data) {
+		int amount = data.readUnsignedByte();
+		while (amount > 0) {
+			wearables.add(NetworkUtils.readStack(data));
+			amount--;
+		}
 		init();
 	}
 
@@ -496,6 +473,18 @@ public class EntityRobot extends EntityRobotBase implements
 			}
 		}
 
+		if (wearables.size() > 0) {
+			NBTTagList wearableList = new NBTTagList();
+
+			for (int i = 0; i < wearables.size(); i++) {
+				NBTTagCompound item = new NBTTagCompound();
+				wearables.get(i).writeToNBT(item);
+				wearableList.appendTag(item);
+			}
+
+			nbt.setTag("wearables", wearableList);
+		}
+
 		nbt.setTag("originalBoardNBT", originalBoardNBT);
 
 		NBTTagCompound ai = new NBTTagCompound();
@@ -539,6 +528,14 @@ public class EntityRobot extends EntityRobotBase implements
 		laser.readFromNBT(nbt.getCompoundTag("laser"));
 
 		battery.readFromNBT(nbt.getCompoundTag("battery"));
+
+		wearables.clear();
+		if (nbt.hasKey("wearables")) {
+			NBTTagList list = nbt.getTagList("wearables", 10);
+			for (int i = 0; i < list.tagCount(); i++) {
+				wearables.add(ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i)));
+			}
+		}
 
 		if (nbt.hasKey("itemInUse")) {
 			itemInUse = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("itemInUse"));
@@ -686,12 +683,12 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	public void updateClientSlot(final int slot) {
-		BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "clientSetInventory", new CommandWriter() {
+		BuildCraftCore.instance.sendToEntity(new PacketCommand(this, "clientSetInventory", new CommandWriter() {
 			public void write(ByteBuf data) {
 				data.writeShort(slot);
 				NetworkUtils.writeStack(data, inv[slot]);
 			}
-		}), worldObj);
+		}), this);
 	}
 
 	@Override
@@ -722,22 +719,22 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	public void setItemInUse(ItemStack stack) {
 		itemInUse = stack;
-		BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "clientSetItemInUse", new CommandWriter() {
+		BuildCraftCore.instance.sendToEntity(new PacketCommand(this, "clientSetItemInUse", new CommandWriter() {
 			public void write(ByteBuf data) {
 				NetworkUtils.writeStack(data, itemInUse);
 			}
-		}), worldObj);
+		}), this);
 	}
 
 	private void setSteamDirection(final int x, final int y, final int z) {
 		if (!worldObj.isRemote) {
-			BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "setSteamDirection", new CommandWriter() {
+			BuildCraftCore.instance.sendToEntity(new PacketCommand(this, "setSteamDirection", new CommandWriter() {
 				public void write(ByteBuf data) {
 					data.writeInt(x);
 					data.writeShort(y);
 					data.writeInt(z);
 				}
-			}), worldObj);
+			}), this);
 		} else {
 			Vec3 v = Vec3.createVectorHelper(x, y, z);
 			v = v.normalize();
@@ -769,6 +766,14 @@ public class EntityRobot extends EntityRobotBase implements
 				}
 			} else if ("setSteamDirection".equals(command)) {
 				setSteamDirection(stream.readInt(), stream.readShort(), stream.readInt());
+			} else if ("syncWearables".equals(command)) {
+				wearables.clear();
+
+				int amount = stream.readUnsignedByte();
+				while (amount > 0) {
+					wearables.add(NetworkUtils.readStack(stream));
+					amount--;
+				}
 			}
 		} else if (side.isServer()) {
 			EntityPlayer p = (EntityPlayer) sender;
@@ -847,11 +852,11 @@ public class EntityRobot extends EntityRobotBase implements
 	public void setItemActive(final boolean isActive) {
 		if (isActive != itemActive) {
 			itemActive = isActive;
-			BuildCraftCore.instance.sendToWorld(new PacketCommand(this, "setItemActive", new CommandWriter() {
+			BuildCraftCore.instance.sendToEntity(new PacketCommand(this, "setItemActive", new CommandWriter() {
 				public void write(ByteBuf data) {
 					data.writeBoolean(isActive);
 				}
-			}), worldObj);
+			}), this);
 		}
 	}
 
@@ -975,16 +980,47 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	protected boolean interact(EntityPlayer player) {
 		ItemStack stack = player.getCurrentEquippedItem();
-		if (player.isSneaking() && stack != null && stack.getItem() == BuildCraftCore.wrenchItem) {
+		if (stack == null || stack.getItem() == null) {
+			return super.interact(player);
+		}
+
+		if (player.isSneaking() && stack.getItem() == BuildCraftCore.wrenchItem) {
 			if (!worldObj.isRemote) {
 				convertToItems();
 			} else {
 				((ItemWrench) stack.getItem()).wrenchUsed(player, 0, 0, 0);
 			}
 			return true;
+		} else if (wearables.size() < 8 && stack.getItem() instanceof ItemArmor && ((ItemArmor) stack.getItem()).armorType == 0) {
+			if (!worldObj.isRemote) {
+				wearables.add(stack.splitStack(1));
+				syncWearablesToClient();
+			} else {
+				player.swingItem();
+			}
+			return true;
+		} else if (wearables.size() < 8 && stack.getItem() instanceof IRobotOverlayItem && ((IRobotOverlayItem) stack.getItem()).isValidRobotOverlay(stack)) {
+			if (!worldObj.isRemote) {
+				wearables.add(stack.splitStack(1));
+				syncWearablesToClient();
+			} else {
+				player.swingItem();
+			}
+			return true;
 		} else {
 			return super.interact(player);
 		}
+	}
+
+	private void syncWearablesToClient() {
+		BuildCraftCore.instance.sendToEntity(new PacketCommand(this, "syncWearables", new CommandWriter() {
+			public void write(ByteBuf data) {
+				data.writeByte(wearables.size());
+				for (ItemStack s : wearables) {
+					NetworkUtils.writeStack(data, s);
+				}
+			}
+		}), this);
 	}
 
 	private List<ItemStack> getDrops() {
@@ -1001,6 +1037,7 @@ public class EntityRobot extends EntityRobotBase implements
 				drops.add(element);
 			}
 		}
+		drops.addAll(wearables);
 		return drops;
 	}
 
@@ -1202,5 +1239,9 @@ public class EntityRobot extends EntityRobotBase implements
 		}
 
 		return energyReceived;
+	}
+
+	public List<ItemStack> getWearables() {
+		return wearables;
 	}
 }

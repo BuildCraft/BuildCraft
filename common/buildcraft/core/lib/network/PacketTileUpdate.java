@@ -8,27 +8,46 @@
  */
 package buildcraft.core.lib.network;
 
+import io.netty.buffer.ByteBuf;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.network.PacketIds;
 
 public class PacketTileUpdate extends PacketUpdate {
+	public int posX;
+	public int posY;
+	public int posZ;
 
 	public PacketTileUpdate() {
 		super(PacketIds.TILE_UPDATE);
 	}
 
 	public PacketTileUpdate(ISerializable tile) {
-		super(PacketIds.TILE_UPDATE);
+		this(PacketIds.TILE_UPDATE, tile);
+	}
+
+	public PacketTileUpdate(int packetId, ISerializable tile) {
+		super(packetId, tile);
 
 		TileEntity entity = (TileEntity) tile;
 		posX = entity.xCoord;
 		posY = entity.yCoord;
 		posZ = entity.zCoord;
+	}
 
-		this.isChunkDataPacket = true;
-		this.payload = tile;
+	@Override
+	public void writeIdentificationData(ByteBuf data) {
+		data.writeInt(posX);
+		data.writeShort(posY);
+		data.writeInt(posZ);
+	}
+
+	@Override
+	public void readIdentificationData(ByteBuf data) {
+		posX = data.readInt();
+		posY = data.readShort();
+		posZ = data.readInt();
 	}
 
 	public boolean targetExists(World world) {

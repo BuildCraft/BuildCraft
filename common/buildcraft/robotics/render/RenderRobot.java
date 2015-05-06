@@ -9,6 +9,10 @@
 package buildcraft.robotics.render;
 
 import java.util.Date;
+
+import buildcraft.api.robots.IRobotOverlayItem;
+import net.minecraft.client.renderer.entity.RenderBiped;
+import net.minecraft.item.ItemArmor;
 import org.lwjgl.opengl.GL11;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
@@ -41,7 +45,9 @@ public class RenderRobot extends Render implements IItemRenderer {
 
 	private ModelBase model = new ModelBase() {
 	};
-	private ModelRenderer box;
+	private ModelBase modelHelmet = new ModelBase() {
+	};
+	private ModelRenderer box, helmetBox;
 
 	public RenderRobot() {
 		customRenderItem = new RenderItem() {
@@ -59,9 +65,10 @@ public class RenderRobot extends Render implements IItemRenderer {
 
 		box = new ModelRenderer(model, 0, 0);
 		box.addBox(-4F, -4F, -4F, 8, 8, 8);
-		box.rotationPointX = 0;
-		box.rotationPointY = 0;
-		box.rotationPointZ = 0;
+		box.setRotationPoint(0.0F, 0.0F, 0.0F);
+		helmetBox = new ModelRenderer(modelHelmet, 0, 0);
+		helmetBox.addBox(-4F, -4F, -4F, 8, 8, 8);
+		helmetBox.setRotationPoint(0.0F, 0.0F, 0.0F);
 	}
 
 	@Override
@@ -151,6 +158,10 @@ public class RenderRobot extends Render implements IItemRenderer {
 			float storagePercent = (float) robot.getBattery().getEnergyStored() / (float) robot.getBattery().getMaxEnergyStored();
 			doRenderRobot(1F / 16F, renderManager.renderEngine, storagePercent, robot.isActive());
 		}
+
+		for (ItemStack s : robot.getWearables()) {
+			doRenderWearable(robot, renderManager.renderEngine, s);
+		}
 		
 		GL11.glPopMatrix();
 	}
@@ -205,6 +216,19 @@ public class RenderRobot extends Render implements IItemRenderer {
 		customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
 
 		GL11.glPopMatrix();
+	}
+
+	private void doRenderWearable(EntityRobot entity, TextureManager textureManager, ItemStack wearable) {
+		if (wearable.getItem() instanceof IRobotOverlayItem) {
+			((IRobotOverlayItem) wearable.getItem()).renderRobotOverlay(wearable, textureManager);
+		} else if (wearable.getItem() instanceof ItemArmor) {
+			GL11.glPushMatrix();
+			GL11.glScalef(1.125F, 1.125F, 1.125F);
+			GL11.glRotatef(180F, 0, 0, 1);
+			textureManager.bindTexture(RenderBiped.getArmorResource(entity, wearable, 0, null));
+			helmetBox.render(1 / 16F);
+			GL11.glPopMatrix();
+		}
 	}
 	
 	private void doRenderRobot(float factor, TextureManager texManager, float storagePercent, boolean isAsleep) {

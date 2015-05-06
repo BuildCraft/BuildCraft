@@ -12,6 +12,7 @@ import java.io.IOException;
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
@@ -41,6 +42,23 @@ public class PacketHandler extends SimpleChannelInboundHandler<Packet>  {
 		tile.readData(packet.stream);
 	}
 
+	private void onEntityUpdate(EntityPlayer player, PacketEntityUpdate packet) throws IOException {
+		World world = player.worldObj;
+
+		if (!packet.targetExists(world)) {
+			return;
+		}
+
+		Entity entity = packet.getTarget(world);
+
+		if (!(entity instanceof ISerializable)) {
+			return;
+		}
+
+		ISerializable payload = (ISerializable) entity;
+		payload.readData(packet.stream);
+	}
+
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, Packet packet) {
 		try {
@@ -52,6 +70,11 @@ public class PacketHandler extends SimpleChannelInboundHandler<Packet>  {
 			switch (packetID) {
 				case PacketIds.TILE_UPDATE: {
 					onTileUpdate(player, (PacketTileUpdate) packet);
+					break;
+				}
+
+				case PacketIds.ENTITY_UPDATE: {
+					onEntityUpdate(player, (PacketEntityUpdate) packet);
 					break;
 				}
 

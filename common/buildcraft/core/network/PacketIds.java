@@ -17,6 +17,7 @@ public final class PacketIds {
 	public static final int PIPE_POWER = 4;
 	public static final int PIPE_ITEMSTACK_REQUEST = 5;
 	public static final int PIPE_ITEMSTACK = 6;
+	public static final int ENTITY_UPDATE = 7;
 
 	public static final int DIAMOND_PIPE_SELECT = 31;
 	public static final int EMERALD_PIPE_SELECT = 32;
