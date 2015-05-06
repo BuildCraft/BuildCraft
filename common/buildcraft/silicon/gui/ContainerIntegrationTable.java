@@ -20,10 +20,10 @@ import buildcraft.silicon.TileIntegrationTable;
 
 public class ContainerIntegrationTable extends BuildCraftContainer {
 	public static final int[] SLOT_X = {
-			44, 44, 68, 76, 68, 44, 20, 13, 20
+			44, 44, 69, 69, 69, 44, 19, 19, 19
 	};
 	public static final int[] SLOT_Y = {
-			49, 18, 25, 49, 73, 81, 73, 49, 25
+			49, 24, 24, 49, 74, 74, 74, 49, 24
 	};
 
 	private TileIntegrationTable table;
@@ -37,7 +37,7 @@ public class ContainerIntegrationTable extends BuildCraftContainer {
 		}
 
 		addSlot(new SlotOutput(table, 9, 138, 49));
-		addSlot(new SlotUntouchable(table, 10, 104, 36));
+		addSlot(new SlotUntouchable(table, 10, 101, 36));
 
 		for (int y = 0; y < 3; y++) {
 			for (int x = 0; x < 9; x++) {
