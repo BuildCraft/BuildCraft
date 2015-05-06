@@ -8,18 +8,22 @@ import net.minecraft.world.IBlockAccess;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.core.lib.block.BlockBuildCraft;
+import org.lwjgl.opengl.GL11;
 
 public class RenderBlockComplex implements ISimpleBlockRenderingHandler {
 	private static final int[] Y_ROTATE = {3, 0, 1, 2};
 
 	@Override
 	public void renderInventoryBlock(Block block, int meta, int modelId, RenderBlocks renderer) {
+		GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
+		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 		BlockBuildCraft bcBlock = (BlockBuildCraft) block;
 		int pass = 0;
 		while (bcBlock.canRenderInPassBC(pass)) {
 			renderPassInventory(pass, bcBlock, meta, renderer);
 			pass++;
 		}
+		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 	}
 
 	private void renderPassInventory(int pass, BlockBuildCraft block, int meta, RenderBlocks renderer) {

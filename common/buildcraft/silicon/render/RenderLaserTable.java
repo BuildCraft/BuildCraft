@@ -11,10 +11,8 @@ import buildcraft.core.lib.render.FakeBlock;
 import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.core.lib.render.SubIcon;
 import buildcraft.silicon.SiliconProxy;
+import org.lwjgl.opengl.GL11;
 
-/**
- * Created by asie on 3/15/15.
- */
 public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 	private void workaround17(int x, int y, int z) {
 		Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
@@ -25,6 +23,8 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 
 	@Override
 	public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer) {
+		GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
+		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 		BlockBuildCraft bcBlock = (BlockBuildCraft) block;
 		switch (metadata) {
 			case 0:
@@ -44,6 +44,7 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 				renderProgrammingTable(renderer, true, 0, 0, 0, bcBlock);
 				break;
 		}
+		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 	}
 
 	@Override
@@ -111,13 +112,14 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 		}
 		IIcon base = block.getIcon(0, 3);
 		renderCube(renderer, isInv, x, y, z, 0.0625F, 0, 0.0625F, 14, 5, 14, 14, 19, base, 0x3d); // bottom (no top)
-		renderCube(renderer, isInv, x, y, z, 0, 0.3125F, 0, 16, 3, 16, 16, 0, base, 0x3f); // top
 
 		// sides (no top)
-		renderCube(renderer, isInv, x, y, z, 0, 0, 0, 3, 5, 3, 3, 6, base, 0x3d);
 		renderCube(renderer, isInv, x, y, z, 0.8125F, 0, 0, 3, 5, 3, 3, 6, base, 0x3d);
-		renderCube(renderer, isInv, x, y, z, 0, 0, 0.8125F, 3, 5, 3, 3, 6, base, 0x3d);
 		renderCube(renderer, isInv, x, y, z, 0.8125F, 0, 0.8125F, 3, 5, 3, 3, 6, base, 0x3d);
+		renderCube(renderer, isInv, x, y, z, 0, 0, 0.8125F, 3, 5, 3, 3, 6, base, 0x3d);
+		renderCube(renderer, isInv, x, y, z, 0, 0, 0, 3, 5, 3, 3, 6, base, 0x3d);
+
+		renderCube(renderer, isInv, x, y, z, 0, 0.3125F, 0, 16, 3, 16, 16, 0, base, 0x3f); // top
 	}
 
 	private void renderProgrammingTable(RenderBlocks renderer, boolean isInv, int x, int y, int z, BlockBuildCraft block) {
@@ -129,7 +131,6 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 			}
 		}
 		renderCube(renderer, isInv, x, y, z, 0.0625F, 0, 0.0625F, 14, 3, 14, 14, 23, base, 0x3f); // bottom (no top)
-		renderCube(renderer, isInv, x, y, z, 0.3125F, 0.1875F, 0.3125F, 6, 2, 6, 6, 40, base, 0x3e); // green inside
 
 		// sides (no top)
 		renderCube(renderer, isInv, x, y, z, 0, 0, 0, 4, 3, 4, 4, 0, base, 0x3d);
@@ -139,9 +140,13 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 
 		// sides (top)
 		renderCube(renderer, isInv, x, y, z, 0, 0.1875F, 0, 4, 5, 16, 16, 2, base, 0x3e);
-		renderCube(renderer, isInv, x, y, z, 0.75F, 0.1875F, 0, 4, 5, 16, 40, 43, base, 0x3e);
-		renderCube(renderer, isInv, x, y, z, 0.25F, 0.1875F, 0, 8, 5, 4, 28, 0, base, 0x0e);
 		renderCube(renderer, isInv, x, y, z, 0.25F, 0.1875F, 0.75F, 8, 5, 4, 28, 9, base, 0x0e);
+
+		renderCube(renderer, isInv, x, y, z, 0.3125F, 0.1875F, 0.3125F, 6, 2, 6, 6, 40, base, 0x3e); // green inside
+
+		renderCube(renderer, isInv, x, y, z, 0.25F, 0.1875F, 0, 8, 5, 4, 28, 0, base, 0x0e);
+		renderCube(renderer, isInv, x, y, z, 0.75F, 0.1875F, 0, 4, 5, 16, 40, 43, base, 0x3e);
+
 	}
 
 	private void renderIntegrationTable(RenderBlocks renderer, boolean isInv, int x, int y, int z, BlockBuildCraft block) {
@@ -151,7 +156,6 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 			return;
 		}
 		renderCube(renderer, isInv, x, y, z, 0, 0, 0, 16, 1, 16, 16, 21, base, 0x3f); // black bottom
-		renderCube(renderer, isInv, x, y, z, 0.3125F, 0.1875F, 0.3125F, 6, 4, 6, 6, 38, base, 0x3f); // yellow inside
 
 		// sides (no top)
 		renderCube(renderer, isInv, x, y, z, 0.0625F, 0.0625F, 0.0625F, 4, 2, 4, 4, 0, base, 0x3c);
@@ -161,9 +165,12 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 
 		// sides (top)
 		renderCube(renderer, isInv, x, y, z, 0, 0.1875F, 0, 5, 5, 16, 16, 0, base, 0x3f);
-		renderCube(renderer, isInv, x, y, z, 0.6875F, 0.1875F, 0, 5, 5, 16, 38, 43, base, 0x3f);
-		renderCube(renderer, isInv, x, y, z, 0.3125F, 0.1875F, 0, 6, 5, 5, 47, 0, base, 0x0f);
 		renderCube(renderer, isInv, x, y, z, 0.3125F, 0.1875F, 0.6875F, 6, 5, 5, 47, 10, base, 0x0f);
+
+		renderCube(renderer, isInv, x, y, z, 0.3125F, 0.1875F, 0.3125F, 6, 4, 6, 6, 38, base, 0x3f); // yellow inside
+
+		renderCube(renderer, isInv, x, y, z, 0.3125F, 0.1875F, 0, 6, 5, 5, 47, 0, base, 0x0f);
+		renderCube(renderer, isInv, x, y, z, 0.6875F, 0.1875F, 0, 5, 5, 16, 38, 43, base, 0x3f);
 	}
 
 	private void renderAdvancedCraftingTable(RenderBlocks renderer, boolean isInv, int x, int y, int z, BlockBuildCraft block) {
@@ -173,13 +180,14 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 		}
 		IIcon base = block.getIcon(0, 1);
 		renderCube(renderer, isInv, x, y, z, 0.125F, 0, 0.125F, 12, 3, 12, 12, 21, base, 0x3d); // bottom (no top)
-		renderCube(renderer, isInv, x, y, z, 0, 0.1875F, 0, 16, 5, 16, 16, 0, base, 0x3f); // top
 
 		// sides (no top)
 		renderCube(renderer, isInv, x, y, z, 0, 0, 0, 3, 3, 3, 3, 0, base, 0x3d);
-		renderCube(renderer, isInv, x, y, z, 0.8125F, 0, 0, 3, 3, 3, 3, 0, base, 0x3d);
 		renderCube(renderer, isInv, x, y, z, 0, 0, 0.8125F, 3, 3, 3, 3, 0, base, 0x3d);
+		renderCube(renderer, isInv, x, y, z, 0.8125F, 0, 0, 3, 3, 3, 3, 0, base, 0x3d);
 		renderCube(renderer, isInv, x, y, z, 0.8125F, 0, 0.8125F, 3, 3, 3, 3, 0, base, 0x3d);
+
+		renderCube(renderer, isInv, x, y, z, 0, 0.1875F, 0, 16, 5, 16, 16, 0, base, 0x3f); // top
 	}
 
 	@Override
