@@ -1198,7 +1198,6 @@ public class EntityRobot extends EntityRobotBase implements
 
 		// 5 RF/t is set as the "sleep threshold" for detecting charging.
 		if (!simulate && energyReceived > 5 && ticksCharging <= 25) {
-			System.out.println("ABOVE THRESHOLD - " + energyReceived);
 			ticksCharging += 5;
 		}
 
