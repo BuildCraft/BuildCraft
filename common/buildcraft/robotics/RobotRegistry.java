@@ -249,7 +249,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 		StationIndex index = new StationIndex(station);
 
 		if (stations.containsKey(index)) {
-			throw new InvalidParameterException("Station " + index + " already registerd");
+			throw new InvalidParameterException("Station " + index + " already registered");
 		} else {
 			stations.put(index, station);
 		}

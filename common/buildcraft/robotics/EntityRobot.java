@@ -432,7 +432,7 @@ public class EntityRobot extends EntityRobotBase implements
     public void writeEntityToNBT(NBTTagCompound nbt) {
 		super.writeEntityToNBT(nbt);
 
-		if (linkedDockingStation != null) {
+		if (linkedDockingStationIndex != null) {
 			NBTTagCompound linkedStationNBT = new NBTTagCompound();
 			NBTTagCompound linkedStationIndexNBT = new NBTTagCompound();
 			linkedDockingStationIndex.writeTo(linkedStationIndexNBT);
@@ -608,7 +608,6 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public void setMainStation(DockingStation station) {
-
 		if (linkedDockingStation != null && linkedDockingStation != station) {
 			linkedDockingStation.unsafeRelease(this);
 		}
