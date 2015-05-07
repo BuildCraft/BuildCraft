@@ -12,8 +12,10 @@ import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.Random;
 import java.util.UUID;
+
+import buildcraft.core.command.SubCommandVersion;
+import buildcraft.core.lib.commands.RootCommand;
 import com.mojang.authlib.GameProfile;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -69,7 +71,6 @@ import buildcraft.core.BCCreativeTab;
 import buildcraft.core.BlockBuildTool;
 import buildcraft.core.BlockEngine;
 import buildcraft.core.BlockSpring;
-import buildcraft.core.CommandBuildCraft;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.CoreGuiHandler;
 import buildcraft.core.CoreIconProvider;
@@ -143,6 +144,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		Full, NoDynamic
 	}
 
+	public static RootCommand commandBuildcraft = new RootCommand("buildcraft");
 	public static XorShift128Random random = new XorShift128Random();
 	public static RenderMode render = RenderMode.Full;
 	public static boolean debugWorldgen = false;
@@ -237,6 +239,9 @@ public class BuildCraftCore extends BuildCraftMod {
 		BCLog.initLog();
 
 		new BCCreativeTab("main");
+
+		commandBuildcraft.addAlias("bc");
+		commandBuildcraft.addChildCommand(new SubCommandVersion());
 
 		BuildcraftRecipeRegistry.assemblyTable = AssemblyRecipeManager.INSTANCE;
 		BuildcraftRecipeRegistry.integrationTable = IntegrationRecipeManager.INSTANCE;
@@ -441,7 +446,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void serverStarting(FMLServerStartingEvent event) {
-		event.registerServerCommand(new CommandBuildCraft());
+		event.registerServerCommand(commandBuildcraft);
 	}
 
 	@Mod.EventHandler
