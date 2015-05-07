@@ -16,6 +16,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.utils.BlockUtils;
+import buildcraft.core.utils.Utils;
 
 public final class TileBuffer {
 
@@ -58,21 +59,24 @@ public final class TileBuffer {
 		tracker.markTime(world);
 	}
 
-
-	public Block getBlock() {
-		if ((tile != null && tile.isInvalid()) || (tile == null && tracker.markTimeIfDelay(world))) {
+	private void tryRefresh() {
+		if (Utils.CAULDRON_DETECTED || (tile != null && tile.isInvalid()) || (tile == null && tracker.markTimeIfDelay(world))) {
 			refresh();
 		}
+	}
+
+	public Block getBlock() {
+		tryRefresh();
 
 		return block;
 	}
 
 	public TileEntity getTile() {
-		if (tile != null && !tile.isInvalid()) {
+		if (tile != null && !Utils.CAULDRON_DETECTED && !tile.isInvalid()) {
 			return tile;
 		}
 
-		if (tracker.markTimeIfDelay(world)) {
+		if (tracker.markTimeIfDelay(world) || Utils.CAULDRON_DETECTED) {
 			refresh();
 
 			if (tile != null && !tile.isInvalid()) {
@@ -84,7 +88,7 @@ public final class TileBuffer {
 	}
 
 	public boolean exists() {
-		if (tile != null && !tile.isInvalid()) {
+		if (tile != null && !Utils.CAULDRON_DETECTED && !tile.isInvalid()) {
 			return true;
 		}
 

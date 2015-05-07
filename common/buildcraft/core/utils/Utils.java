@@ -59,9 +59,20 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.energy.TileEngine;
 
 public final class Utils {
-
 	public static final Random RANDOM = new Random();
+	public static final boolean CAULDRON_DETECTED;
 	private static final List<ForgeDirection> directions = new ArrayList<ForgeDirection>(Arrays.asList(ForgeDirection.VALID_DIRECTIONS));
+
+	static {
+		boolean cauldron = false;
+		try {
+			cauldron = Utils.class.getClassLoader().loadClass("org.spigotmc.SpigotConfig") != null;
+		} catch (ClassNotFoundException e) {
+
+		}
+		CAULDRON_DETECTED = cauldron;
+	}
+
 
 	/**
 	 * Deactivate constructor

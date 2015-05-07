@@ -113,6 +113,7 @@ import buildcraft.core.statements.TriggerMachine;
 import buildcraft.core.statements.TriggerRedstoneInput;
 import buildcraft.core.utils.ColorUtils;
 import buildcraft.core.utils.CraftingHandler;
+import buildcraft.core.utils.Utils;
 import buildcraft.core.utils.WorldPropertyIsDirt;
 import buildcraft.core.utils.WorldPropertyIsFarmland;
 import buildcraft.core.utils.WorldPropertyIsFluidSource;
@@ -545,6 +546,28 @@ public class BuildCraftCore extends BuildCraftMod {
 	public void serverStarting(FMLServerStartingEvent event) {
 		serverThread = Thread.currentThread();
 		event.registerServerCommand(new CommandBuildCraft());
+
+		if (Utils.CAULDRON_DETECTED) {
+			BCLog.logger.warn("############################################");
+			BCLog.logger.warn("#                                          #");
+			BCLog.logger.warn("#  Cauldron has been detected! Please keep #");
+			BCLog.logger.warn("# in mind that BuildCraft does NOT support #");
+			BCLog.logger.warn("#   Cauldron and we do not promise to fix  #");
+			BCLog.logger.warn("#  bugs caused by its modifications to the #");
+			BCLog.logger.warn("#   Minecraft engine. Please reconsider.   #");
+			BCLog.logger.warn("#                                          #");
+			BCLog.logger.warn("#  Any lag caused by BuildCraft on top of  #");
+			BCLog.logger.warn("# Cauldron likely arises from our fixes to #");
+			BCLog.logger.warn("#  their bugs, so please don't report that #");
+			BCLog.logger.warn("#  either. Thanks for your attention! ~BC  #");
+			BCLog.logger.warn("#                                          #");
+			BCLog.logger.warn("############################################");
+
+			// To people reading that code and thinking we're lying:
+			// Cauldron does not invalidate tile entities properly, causing
+			// issues with our tile entity cache. That is the bug and that
+			// is also the reason for the extra lag caused when using Cauldron.
+		}
 	}
 
 	@SubscribeEvent
