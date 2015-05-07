@@ -59,43 +59,35 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
 			return;
 		}
 
-		if (this.getStackInSlot(0) == null || !currentRecipe.canCraft(this.getStackInSlot(0))) {
-			findRecipe();
-
-			if (currentRecipe == null) {
-				return;
-			}
+		if (this.getStackInSlot(0) == null) {
+			currentRecipe = null;
+			return;
 		}
 
 		if (optionId >= 0 && this.getStackInSlot(1) == null && getEnergy() >= currentRecipe.getEnergyCost(options.get(optionId))) {
-			setEnergy(0);
-
 			if (currentRecipe.canCraft(this.getStackInSlot(0))) {
 				ItemStack remaining = currentRecipe.craft(this.getStackInSlot(0), options.get(optionId));
-				this.decrStackSize(0, remaining.stackSize);
-
 				if (remaining != null && remaining.stackSize > 0) {
-					remaining.stackSize -= Utils
-							.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, remaining);
+					setEnergy(0);
+					this.decrStackSize(0, remaining.stackSize);
+
+					if (remaining.stackSize > 0) {
+						remaining.stackSize -= Utils
+								.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, remaining);
+					}
+
+					if (remaining.stackSize > 0) {
+						remaining.stackSize -= Utils.addToRandomInjectableAround(worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN, remaining);
+					}
+
+					if (remaining.stackSize > 0) {
+						this.setInventorySlotContents(1, remaining);
+					} else {
+						this.setInventorySlotContents(1, null);
+					}
 				}
-
-				if (remaining != null && remaining.stackSize > 0) {
-					remaining.stackSize -= Utils.addToRandomInjectableAround(worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN, remaining);
-				}
-
-				if (remaining != null && remaining.stackSize > 0) {
-					EntityItem entityitem = new EntityItem(worldObj, xCoord + 0.5, yCoord + 0.7, zCoord + 0.5,
-							remaining);
-
-					worldObj.spawnEntityInWorld(entityitem);
-				}
-
-				if (remaining != null && remaining.stackSize > 0) {
-					this.setInventorySlotContents(1, remaining);
-				}
-
-				findRecipe();
 			}
+			findRecipe();
 		}
 	}
 
@@ -174,6 +166,7 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
 			for (IProgrammingRecipe recipe : BuildcraftRecipeRegistry.programmingTable.getRecipes()) {
 				if (recipe.canCraft(getStackInSlot(0))) {
 					currentRecipeId = recipe.getId();
+					break;
 				}
 			}
 		}
@@ -216,7 +209,7 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
 
 	@Override
 	public boolean hasWork() {
-		return currentRecipe != null && optionId >= 0;
+		return currentRecipe != null && optionId >= 0 && this.getStackInSlot(1) == null;
 	}
 
 	@Override

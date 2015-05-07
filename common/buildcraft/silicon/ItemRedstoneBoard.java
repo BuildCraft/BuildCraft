@@ -79,8 +79,10 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(Item item, CreativeTabs par2CreativeTabs, List itemList) {
+		ItemStack stack = new ItemStack(BuildCraftRobotics.redstoneBoard);
+		itemList.add(stack);
 		for (RedstoneBoardNBT nbt : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
-			ItemStack stack = new ItemStack(BuildCraftSilicon.redstoneBoard);
+			stack = new ItemStack(BuildCraftSilicon.redstoneBoard);
 			NBTTagCompound nbtData = NBTUtils.getItemData(stack);
 			nbt.createBoard(nbtData);
 			itemList.add(stack.copy());

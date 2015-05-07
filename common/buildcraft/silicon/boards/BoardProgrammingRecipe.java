@@ -57,6 +57,6 @@ public class BoardProgrammingRecipe implements IProgrammingRecipe {
 
 	@Override
 	public ItemStack craft(ItemStack input, ItemStack option) {
-		return option;
+		return option.copy();
 	}
 }
