@@ -77,12 +77,10 @@ public class PacketFluidUpdate extends PacketCoordinates {
 		data.readBytes(dBytes);
 		delta = BitSetUtils.fromByteArray(dBytes);
 
-		// System.out.printf("read %d, %d, %d = %s, %s%n", posX, posY, posZ, Arrays.toString(dBytes), delta);
-
 		for (ForgeDirection dir : ForgeDirection.values()) {
 			if (delta.get(dir.ordinal() * FLUID_DATA_NUM + FLUID_ID_BIT)) {
 				int id = data.readShort();
-			    int amt = renderCache[dir.ordinal()] != null ? renderCache[dir.ordinal()].amount : 0;
+				int amt = renderCache[dir.ordinal()] != null ? renderCache[dir.ordinal()].amount : 0;
 				int color = id != 0 ? data.readInt() : 0xFFFFFF;
 
 				renderCache[dir.ordinal()] = new FluidRenderData(id, amt, color);
@@ -91,7 +89,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
 			if (delta.get(dir.ordinal() * FLUID_DATA_NUM + FLUID_AMOUNT_BIT)) {
 				int amt = Math.min(transLiq.getCapacity(), data.readUnsignedShort());
 
-			    if (renderCache[dir.ordinal()] != null) {
+				if (renderCache[dir.ordinal()] != null) {
 					renderCache[dir.ordinal()].amount = amt;
 				} else {
 					renderCache[dir.ordinal()] = new FluidRenderData(0, amt, 0xFFFFFF);

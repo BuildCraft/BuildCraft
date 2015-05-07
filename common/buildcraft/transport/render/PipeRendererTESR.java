@@ -26,6 +26,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.IntHashMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
@@ -72,7 +73,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	protected ModelBase model = new ModelBase() {
 	};
 
-	private final HashMap<Integer, DisplayFluidList> displayFluidLists = Maps.newHashMap();
+	private final IntHashMap displayFluidLists = new IntHashMap();
 	private final int[] angleY = {0, 0, 270, 90, 0, 180};
 	private final int[] angleZ = {90, 270, 0, 0, 0, 0};
 
@@ -104,8 +105,8 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	}
 
 	private DisplayFluidList getDisplayFluidLists(int liquidId, World world) {
-		if (displayFluidLists.containsKey(liquidId)) {
-			return displayFluidLists.get(liquidId);
+		if (displayFluidLists.containsItem(liquidId)) {
+			return (DisplayFluidList) displayFluidLists.lookup(liquidId);
 		}
 
 		Fluid fluid = FluidRegistry.getFluid(liquidId);
@@ -115,7 +116,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		}
 
 		DisplayFluidList d = new DisplayFluidList();
-		displayFluidLists.put(liquidId, d);
+		displayFluidLists.addKey(liquidId, d);
 
 		RenderInfo block = new RenderInfo();
 
