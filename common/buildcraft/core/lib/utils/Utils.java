@@ -49,9 +49,20 @@ import buildcraft.core.lib.network.Packet;
 import buildcraft.core.proxy.CoreProxy;
 
 public final class Utils {
-
+	public static final boolean CAULDRON_DETECTED;
 	public static final XorShift128Random RANDOM = new XorShift128Random();
 	private static final List<ForgeDirection> directions = new ArrayList<ForgeDirection>(Arrays.asList(ForgeDirection.VALID_DIRECTIONS));
+
+	static {
+		boolean cauldron = false;
+		try {
+			cauldron = Utils.class.getClassLoader().loadClass("org.spigotmc.SpigotConfig") != null;
+		} catch (ClassNotFoundException e) {
+
+		}
+		CAULDRON_DETECTED = cauldron;
+	}
+
 
 	/**
 	 * Deactivate constructor
