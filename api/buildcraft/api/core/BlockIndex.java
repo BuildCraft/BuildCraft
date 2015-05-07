@@ -99,7 +99,7 @@ public class BlockIndex implements Comparable<BlockIndex> {
 			return b.x == x && b.y == y && b.z == z;
 		}
 
-		return super.equals(obj);
+		return false;
 	}
 
 	@Override

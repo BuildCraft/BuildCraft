@@ -77,7 +77,8 @@ public class CommandHelpers {
 
     public static void printHelp(ICommandSender sender, IModCommand command) {
         ChatStyle header = new ChatStyle();
-        header.setColor(EnumChatFormatting.BLUE);
+        header.setColor(EnumChatFormatting.GRAY);
+        header.setBold(true);
         sendLocalizedChatMessage(sender, header, "command.buildcraft." + command.getFullCommandString().replace(" ", ".") + ".format", command.getFullCommandString());
         ChatStyle body = new ChatStyle();
         body.setColor(EnumChatFormatting.GRAY);

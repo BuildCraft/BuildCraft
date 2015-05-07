@@ -14,6 +14,7 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.UUID;
 
+import buildcraft.core.command.SubCommandChangelog;
 import buildcraft.core.command.SubCommandVersion;
 import buildcraft.core.lib.commands.RootCommand;
 import com.mojang.authlib.GameProfile;
@@ -243,6 +244,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
 		commandBuildcraft.addAlias("bc");
 		commandBuildcraft.addChildCommand(new SubCommandVersion());
+		commandBuildcraft.addChildCommand(new SubCommandChangelog());
 
 		BuildcraftRecipeRegistry.assemblyTable = AssemblyRecipeManager.INSTANCE;
 		BuildcraftRecipeRegistry.integrationTable = IntegrationRecipeManager.INSTANCE;

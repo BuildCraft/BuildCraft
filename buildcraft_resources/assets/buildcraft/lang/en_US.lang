@@ -496,5 +496,21 @@ bc_update.once=This message only displays once
 bc_update.again=Type '/buildcraft version' if you want to see it again
 
 command.buildcraft.version=BuildCraft %s for Minecraft %s (Latest: %s).
-command.buildcraft.versioninfo=Version information.
-command.buildcraft.available=Available Commands:
+command.buildcraft.changelog_header=Changelog for BuildCraft %s:
+
+command.buildcraft.aliases=Aliases: %s
+command.buildcraft.help=Type '%s' for help.
+command.buildcraft.list=Available Commands:
+command.buildcraft.permlevel=Permission level: %s
+command.buildcraft.noperms=You do not have permission to use this command.
+
+command.buildcraft.buildcraft.help=Various BuildCraft-related commands
+command.buildcraft.buildcraft.format=Format: /%s <sub-command>
+
+command.buildcraft.buildcraft.version.desc=- %s : Version Information
+command.buildcraft.buildcraft.version.help=Displays the current and latest BC version.
+command.buildcraft.buildcraft.version.format=Format: /%s
+
+command.buildcraft.buildcraft.changelog.desc=- %s : Changelog
+command.buildcraft.buildcraft.changelog.help=Displays the latest BC chanelog.
+command.buildcraft.buildcraft.changelog.format=Format: /%s

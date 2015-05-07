@@ -18,6 +18,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.event.FMLInterModComms;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.StatCollector;
 import net.minecraftforge.common.config.Property;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;
@@ -243,16 +245,17 @@ public class Version implements Runnable {
 	}
 
 	public static void displayChangelog(ICommandSender sender) {
+		sender.addChatMessage(new ChatComponentText(EnumChatFormatting.GRAY + "" + EnumChatFormatting.BOLD
+				+ StatCollector.translateToLocalFormatted("command.buildcraft.changelog_header", getRecommendedVersion())));
 		int nb = 0;
 		for (String updateLine : Version.getChangelog()) {
-			sender.addChatMessage(new ChatComponentText("\u00A79" + updateLine));
-
-			nb++;
-
-			if (nb > 3) {
-				sender.addChatMessage(new ChatComponentText("\u00A79[...]"));
-				break;
+			String colour = "\u00A79";
+			if (updateLine.startsWith("*")) {
+				colour = "\u00A7f";
+			} else if (updateLine.trim().endsWith(":")) {
+				colour = "\u00A76";
 			}
+			sender.addChatMessage(new ChatComponentText(colour + updateLine));
 		}
 	}
 
