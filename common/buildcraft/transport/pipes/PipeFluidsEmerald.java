@@ -16,7 +16,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
 
@@ -47,13 +46,13 @@ public class PipeFluidsEmerald extends PipeFluidsWood implements ISerializable {
 
 	@Override
 	public int extractFluid(IFluidHandler fluidHandler, ForgeDirection side) {
-		Fluid targetFluid = FluidUtils.getFluidFromItemStack(filters.getStackInSlot(0));
-		if (targetFluid == null) {
+		FluidStack targetFluidStack = FluidUtils.getFluidStackFromItemStack(filters.getStackInSlot(0));
+		if (targetFluidStack == null) {
 			return super.extractFluid(fluidHandler, side);
 		}
 
 		int flowRate = transport.getFlowRate();
-		FluidStack toExtract = new FluidStack(targetFluid, liquidToExtract > flowRate ? flowRate : liquidToExtract);
+		FluidStack toExtract = new FluidStack(targetFluidStack, liquidToExtract > flowRate ? flowRate : liquidToExtract);
 		FluidStack extracted = fluidHandler.drain(side.getOpposite(), toExtract, false);
 
 		if (extracted != null) {
