@@ -11,6 +11,8 @@ package buildcraft;
 import java.io.PrintWriter;
 import java.util.LinkedList;
 import java.util.Map;
+
+import buildcraft.transport.stripes.*;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -165,19 +167,6 @@ import buildcraft.transport.statements.TriggerPipeContents;
 import buildcraft.transport.statements.TriggerPipeContents.PipeContents;
 import buildcraft.transport.statements.TriggerPipeSignal;
 import buildcraft.transport.statements.TriggerRedstoneFaderInput;
-import buildcraft.transport.stripes.PipeExtensionListener;
-import buildcraft.transport.stripes.StripesHandlerArrow;
-import buildcraft.transport.stripes.StripesHandlerBucket;
-import buildcraft.transport.stripes.StripesHandlerDispenser;
-import buildcraft.transport.stripes.StripesHandlerEntityInteract;
-import buildcraft.transport.stripes.StripesHandlerHoe;
-import buildcraft.transport.stripes.StripesHandlerMinecartDestroy;
-import buildcraft.transport.stripes.StripesHandlerPipeWires;
-import buildcraft.transport.stripes.StripesHandlerPipes;
-import buildcraft.transport.stripes.StripesHandlerPlaceBlock;
-import buildcraft.transport.stripes.StripesHandlerRightClick;
-import buildcraft.transport.stripes.StripesHandlerShears;
-import buildcraft.transport.stripes.StripesHandlerUse;
 
 @Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTransport extends BuildCraftMod {
@@ -481,6 +470,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		// Item use stripes handlers
 		PipeManager.registerStripesHandler(new StripesHandlerRightClick(), -32768);
 		PipeManager.registerStripesHandler(new StripesHandlerDispenser(), -49152);
+		PipeManager.registerStripesHandler(new StripesHandlerPlant(), 0);
 		PipeManager.registerStripesHandler(new StripesHandlerBucket(), 0);
 		PipeManager.registerStripesHandler(new StripesHandlerArrow(), 0);
 		PipeManager.registerStripesHandler(new StripesHandlerShears(), 0);
