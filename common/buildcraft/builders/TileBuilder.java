@@ -8,10 +8,8 @@
  */
 package buildcraft.builders;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.*;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -620,7 +618,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		return getStackInSlot(0) != null && getStackInSlot(0).getItem() instanceof ItemBlueprint;
 	}
 
-	public Collection<ItemStack> getNeededItems() {
+	public List<ItemStack> getNeededItems() {
 		return requiredToBuild;
 	}
 
