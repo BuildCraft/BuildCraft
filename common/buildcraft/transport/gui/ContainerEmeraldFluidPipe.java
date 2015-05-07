@@ -11,6 +11,7 @@ package buildcraft.transport.gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.slots.SlotPhantom;
 import buildcraft.transport.pipes.PipeFluidsEmerald;

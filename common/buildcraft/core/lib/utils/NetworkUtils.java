@@ -2,7 +2,9 @@ package buildcraft.core.lib.utils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;

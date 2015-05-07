@@ -9,8 +9,10 @@
 package buildcraft.core.render;
 
 import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
+
 import buildcraft.core.Box;
 import buildcraft.core.LaserData;
 

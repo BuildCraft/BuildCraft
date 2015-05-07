@@ -9,7 +9,6 @@
 package buildcraft.api.transport;
 
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.common.util.ForgeDirection;
 
 public interface IStripesActivator {

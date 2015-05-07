@@ -10,11 +10,13 @@ package buildcraft.core.builders.patterns;
 
 import java.util.Map;
 import java.util.TreeMap;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.Loader;
+
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.statements.IStatement;

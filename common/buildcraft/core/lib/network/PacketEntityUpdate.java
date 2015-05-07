@@ -8,12 +8,13 @@
  */
 package buildcraft.core.lib.network;
 
+import io.netty.buffer.ByteBuf;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.world.World;
+
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.network.PacketIds;
-import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.Entity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 
 public class PacketEntityUpdate extends PacketUpdate {
 	public int entityId;

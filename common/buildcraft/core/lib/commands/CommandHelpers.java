@@ -12,21 +12,31 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.*;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.ChatStyle;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
-public class CommandHelpers {
+public final class CommandHelpers {
+    private CommandHelpers() {
+
+    }
+
     public static World getWorld(ICommandSender sender, IModCommand command, String[] args, int worldArgIndex) {
         // Handle passed in world argument
-        if (worldArgIndex < args.length)
+        if (worldArgIndex < args.length) {
             try {
                 int dim = Integer.parseInt(args[worldArgIndex]);
                 World world = MinecraftServer.getServer().worldServerForDimension(dim);
-                if (world != null)
+                if (world != null) {
                     return world;
+                }
             } catch (Exception ex) {
                 throwWrongUsage(sender, command);
             }
+        }
         return getWorld(sender, command);
     }
 
@@ -68,8 +78,9 @@ public class CommandHelpers {
     }
 
     public static void processChildCommand(ICommandSender sender, SubCommand child, String[] args) {
-        if (!sender.canCommandSenderUseCommand(child.getRequiredPermissionLevel(), child.getFullCommandString()))
+        if (!sender.canCommandSenderUseCommand(child.getRequiredPermissionLevel(), child.getFullCommandString())) {
             throw new WrongUsageException(StatCollector.translateToLocal("command.buildcraft.noperms"));
+        }
         String[] newargs = new String[args.length - 1];
         System.arraycopy(args, 1, newargs, 0, newargs.length);
         child.processCommand(sender, newargs);
@@ -99,7 +110,7 @@ public class CommandHelpers {
 
     public static boolean processStandardCommands(ICommandSender sender, IModCommand command, String[] args) {
         if (args.length >= 1) {
-            if (args[0].equals("help")) {
+            if ("help".equals(args[0])) {
                 command.printHelp(sender);
                 return true;
             }
@@ -114,13 +125,15 @@ public class CommandHelpers {
     }
 
     public static boolean matches(String commandName, IModCommand command) {
-        if (commandName.equals(command.getCommandName()))
+        if (commandName.equals(command.getCommandName())) {
             return true;
-        else if (command.getCommandAliases() != null)
+        } else if (command.getCommandAliases() != null) {
             for (String alias : command.getCommandAliases()) {
-                if (commandName.equals(alias))
+                if (commandName.equals(alias)) {
                     return true;
+                }
             }
+        }
         return false;
     }
 }

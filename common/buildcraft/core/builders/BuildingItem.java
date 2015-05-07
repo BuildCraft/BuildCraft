@@ -10,13 +10,16 @@ package buildcraft.core.builders;
 
 import java.util.Date;
 import java.util.LinkedList;
+
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.Constants;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;

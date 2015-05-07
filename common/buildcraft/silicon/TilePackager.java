@@ -1,33 +1,31 @@
 package buildcraft.silicon;
 
-import buildcraft.api.core.BCLog;
-import buildcraft.api.core.IInvSlot;
-import buildcraft.core.lib.inventory.InventoryIterator;
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multiset;
-import gnu.trove.map.hash.TObjectIntHashMap;
+import java.util.HashMap;
+import java.util.Map;
+
 import io.netty.buffer.ByteBuf;
+import gnu.trove.map.hash.TObjectIntHashMap;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftSilicon;
+import buildcraft.api.core.BCLog;
+import buildcraft.api.core.IInvSlot;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.InventoryConcatenator;
+import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class TilePackager extends TileBuildCraft implements ISidedInventory {
 	private class Requirement {

@@ -11,8 +11,10 @@ package buildcraft.robotics.statements;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftRobotics;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.statements.IStatementContainer;

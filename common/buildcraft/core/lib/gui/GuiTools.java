@@ -9,7 +9,9 @@
 package buildcraft.core.lib.gui;
 
 import java.util.List;
+
 import net.minecraft.client.gui.FontRenderer;
+
 import buildcraft.core.lib.gui.buttons.GuiBetterButton;
 
 public final class GuiTools {

@@ -8,10 +8,14 @@
  */
 package buildcraft.core.lib.commands;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
-
-import java.util.*;
 
 public class RootCommand extends CommandBase implements IModCommand {
     public final String name;
@@ -63,10 +67,10 @@ public class RootCommand extends CommandBase implements IModCommand {
 
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
-        if (!CommandHelpers.processStandardCommands(sender, this, args))
+        if (!CommandHelpers.processStandardCommands(sender, this, args)) {
             CommandHelpers.throwWrongUsage(sender, this);
+        }
     }
-
 
     @Override
     public String getFullCommandString() {

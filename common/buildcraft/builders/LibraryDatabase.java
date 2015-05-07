@@ -18,7 +18,9 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
+
 import net.minecraft.nbt.NBTTagCompound;
+
 import buildcraft.api.core.BCLog;
 import buildcraft.api.library.LibraryAPI;
 import buildcraft.core.blueprints.LibraryId;

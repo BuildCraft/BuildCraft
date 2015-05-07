@@ -9,7 +9,9 @@
 package buildcraft.transport.statements;
 
 import java.util.Locale;
+
 import net.minecraft.client.renderer.texture.IIconRegister;
+
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;

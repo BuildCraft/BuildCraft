@@ -10,6 +10,7 @@ package buildcraft.core.properties;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;

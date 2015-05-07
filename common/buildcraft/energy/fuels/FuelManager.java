@@ -11,7 +11,9 @@ package buildcraft.energy.fuels;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+
 import net.minecraftforge.fluids.Fluid;
+
 import buildcraft.api.fuels.IFuel;
 import buildcraft.api.fuels.IFuelManager;
 

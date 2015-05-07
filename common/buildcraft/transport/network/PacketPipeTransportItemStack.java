@@ -9,7 +9,9 @@
 package buildcraft.transport.network;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.item.ItemStack;
+
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.network.PacketIds;

@@ -9,9 +9,11 @@
 package buildcraft.factory;
 
 import java.lang.reflect.Method;
+
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import cpw.mods.fml.client.registry.ClientRegistry;
+
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.EntityBlock;

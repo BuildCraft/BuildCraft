@@ -11,6 +11,7 @@ package buildcraft.core;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.util.IIcon;
+
 import buildcraft.BuildCraftCore;
 
 public class BlockBuildTool extends Block {

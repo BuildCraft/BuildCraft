@@ -10,6 +10,7 @@ package buildcraft.core.lib.inventory;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+
 import buildcraft.api.recipes.IFlexibleCrafter;
 
 public class CrafterCopy implements IFlexibleCrafter {

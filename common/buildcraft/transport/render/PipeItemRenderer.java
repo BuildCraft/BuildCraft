@@ -9,6 +9,7 @@
 package buildcraft.transport.render;
 
 import org.lwjgl.opengl.GL11;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -17,6 +18,7 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.client.IItemRenderer;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.render.FakeBlock;

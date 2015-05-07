@@ -1,6 +1,7 @@
 package buildcraft.transport.pipes.events;
 
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.transport.Pipe;
 
 public abstract class PipeEventPower extends PipeEvent {

@@ -11,6 +11,7 @@ package buildcraft.energy.worldgen;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.block.BlockStaticLiquid;
@@ -28,6 +29,7 @@ import net.minecraftforge.event.terraingen.PopulateChunkEvent.Populate.EventType
 import net.minecraftforge.event.terraingen.TerrainGen;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.IFluidBlock;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftEnergy;
 

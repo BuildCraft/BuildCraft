@@ -1,7 +1,6 @@
 package buildcraft.api.transport.pluggable;
 
 import net.minecraft.client.renderer.RenderBlocks;
-
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.render.ITextureStates;

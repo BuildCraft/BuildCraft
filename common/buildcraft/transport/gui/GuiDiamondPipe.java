@@ -9,8 +9,10 @@
 package buildcraft.transport.gui;
 
 import org.lwjgl.opengl.GL11;
+
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.utils.StringUtils;

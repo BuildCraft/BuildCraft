@@ -3,6 +3,7 @@ package buildcraft.core.config;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import cpw.mods.fml.client.config.IConfigElement;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.ConfigElement;

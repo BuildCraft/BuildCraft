@@ -9,12 +9,14 @@
 package buildcraft.core.render;
 
 import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.core.StackAtPosition;
 import buildcraft.core.builders.BuildingItem;

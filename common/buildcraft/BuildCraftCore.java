@@ -14,13 +14,11 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.UUID;
 
-import buildcraft.core.command.SubCommandChangelog;
-import buildcraft.core.command.SubCommandVersion;
-import buildcraft.core.lib.commands.RootCommand;
 import com.mojang.authlib.GameProfile;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.client.renderer.GLAllocation;
@@ -51,6 +49,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.oredict.OreDictionary;
+
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
@@ -90,8 +89,11 @@ import buildcraft.core.TickHandlerCore;
 import buildcraft.core.TileEngineWood;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.SchematicRegistry;
+import buildcraft.core.command.SubCommandChangelog;
+import buildcraft.core.command.SubCommandVersion;
 import buildcraft.core.config.BuildCraftConfiguration;
 import buildcraft.core.config.ConfigManager;
+import buildcraft.core.lib.commands.RootCommand;
 import buildcraft.core.lib.engines.ItemEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.network.ChannelHandler;

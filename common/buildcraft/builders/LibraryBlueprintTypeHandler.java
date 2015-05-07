@@ -2,6 +2,7 @@ package buildcraft.builders;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.library.ILibraryTypeHandler;
 import buildcraft.core.blueprints.BlueprintBase;

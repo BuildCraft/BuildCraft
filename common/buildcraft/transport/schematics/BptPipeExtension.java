@@ -9,7 +9,9 @@
 package buildcraft.transport.schematics;
 
 import java.util.HashMap;
+
 import net.minecraft.item.Item;
+
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
 

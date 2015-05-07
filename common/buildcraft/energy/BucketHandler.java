@@ -10,6 +10,7 @@ package buildcraft.energy;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

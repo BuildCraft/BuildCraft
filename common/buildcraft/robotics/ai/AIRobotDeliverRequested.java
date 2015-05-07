@@ -9,6 +9,7 @@
 package buildcraft.robotics.ai;
 
 import net.minecraft.item.ItemStack;
+
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;

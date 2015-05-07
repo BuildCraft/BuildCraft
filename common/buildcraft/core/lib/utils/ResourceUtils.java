@@ -1,6 +1,7 @@
 package buildcraft.core.lib.utils;
 
 import java.io.IOException;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.client.renderer.texture.TextureMap;

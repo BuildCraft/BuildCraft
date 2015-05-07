@@ -15,6 +15,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.GuiIds;

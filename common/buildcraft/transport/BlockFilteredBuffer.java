@@ -12,6 +12,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IItemPipe;
 import buildcraft.core.GuiIds;

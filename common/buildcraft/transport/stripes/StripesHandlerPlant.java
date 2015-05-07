@@ -1,13 +1,14 @@
 package buildcraft.transport.stripes;
 
-import buildcraft.api.transport.IStripesActivator;
-import buildcraft.api.transport.IStripesHandler;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.api.transport.IStripesActivator;
+import buildcraft.api.transport.IStripesHandler;
 
 public class StripesHandlerPlant implements IStripesHandler {
     @Override

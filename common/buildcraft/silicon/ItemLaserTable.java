@@ -10,6 +10,7 @@ package buildcraft.silicon;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+
 import buildcraft.core.lib.items.ItemBlockBuildCraft;
 
 public class ItemLaserTable extends ItemBlockBuildCraft {

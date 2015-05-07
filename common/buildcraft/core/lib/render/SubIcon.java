@@ -17,7 +17,7 @@ public class SubIcon implements IIcon {
 	public SubIcon(IIcon icon, int u, int v, int w, int h) {
 		iw = icon.getIconWidth();
 		ih = icon.getIconHeight();
-		if (Minecraft.getMinecraft().gameSettings.anisotropicFiltering > 1){
+		if (Minecraft.getMinecraft().gameSettings.anisotropicFiltering > 1) {
 			iw -= 16;
 			ih -= 16;
 		}

@@ -1,6 +1,7 @@
 package buildcraft.silicon;
 
 import java.lang.ref.WeakReference;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryCrafting;
@@ -11,6 +12,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldServer;
 import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.lib.gui.ContainerDummy;

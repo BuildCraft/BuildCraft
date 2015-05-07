@@ -10,6 +10,7 @@ package buildcraft.robotics.boards;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.AIRobot;

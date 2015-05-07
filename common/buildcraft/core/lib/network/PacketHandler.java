@@ -9,15 +9,18 @@
 package buildcraft.core.lib.network;
 
 import java.io.IOException;
+
 import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.network.NetworkRegistry;
+
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.network.PacketIds;

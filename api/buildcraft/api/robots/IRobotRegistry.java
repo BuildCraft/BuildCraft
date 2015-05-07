@@ -11,7 +11,6 @@ package buildcraft.api.robots;
 import java.util.Collection;
 
 import net.minecraft.nbt.NBTTagCompound;
-
 import net.minecraftforge.common.util.ForgeDirection;
 
 public interface IRobotRegistry {

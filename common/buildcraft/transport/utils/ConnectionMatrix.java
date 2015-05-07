@@ -9,7 +9,9 @@
 package buildcraft.transport.utils;
 
 import java.util.Set;
+
 import io.netty.buffer.ByteBuf;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 public class ConnectionMatrix {

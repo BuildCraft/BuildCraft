@@ -12,14 +12,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.common.collect.BiMap;
+
+import net.minecraft.item.ItemStack;
+
 import buildcraft.api.gates.GateExpansions;
+import buildcraft.api.gates.IGateExpansion;
+import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.recipes.IntegrationRecipeBC;
 import buildcraft.silicon.ItemRedstoneChipset;
 import buildcraft.transport.gates.GateDefinition;
-import com.google.common.collect.BiMap;
-import net.minecraft.item.ItemStack;
-import buildcraft.api.gates.IGateExpansion;
-import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.transport.gates.ItemGate;
 
 public class GateExpansionRecipe extends IntegrationRecipeBC {

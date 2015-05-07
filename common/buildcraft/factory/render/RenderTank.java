@@ -9,9 +9,11 @@
 package buildcraft.factory.render;
 
 import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.FluidStack;
+
 import buildcraft.core.lib.render.FluidRenderer;
 import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.factory.TileTank;

@@ -13,8 +13,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import buildcraft.api.recipes.IFlexibleRecipeViewable;
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -26,10 +26,12 @@ import cpw.mods.fml.relauncher.Side;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
+import buildcraft.api.recipes.IFlexibleRecipeViewable;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.RobotManager;
 import buildcraft.core.lib.network.command.CommandWriter;

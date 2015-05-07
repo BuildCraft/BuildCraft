@@ -1,7 +1,9 @@
 package buildcraft.transport;
 
 import java.util.LinkedList;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.PipePluggable;

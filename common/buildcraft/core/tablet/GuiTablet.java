@@ -1,13 +1,16 @@
 package buildcraft.core.tablet;
 
 import java.util.Date;
+
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+
 import buildcraft.api.tablet.TabletBitmap;
 import buildcraft.core.lib.render.DynamicTextureBC;
 import buildcraft.core.tablet.manager.TabletManagerClient;

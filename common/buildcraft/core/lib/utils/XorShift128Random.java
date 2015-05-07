@@ -19,7 +19,7 @@ public class XorShift128Random {
 		long s1 = s[0];
 		long s0 = s[1];
 		s[0] = s0;
-		s1 ^= (s1 << 23);
+		s1 ^= s1 << 23;
 		s[1] = (s1 ^ s0 ^ (s1 >> 17) ^ (s0 >> 26)) + s0;
 		return s[1];
 	}

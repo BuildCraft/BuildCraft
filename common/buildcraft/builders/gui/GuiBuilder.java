@@ -8,20 +8,20 @@
  */
 package buildcraft.builders.gui;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.builders.TileBuilder;
 import buildcraft.core.lib.fluids.Tank;
-import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.gui.ItemSlot;
 import buildcraft.core.lib.network.command.CommandWriter;
@@ -91,7 +91,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
 
 				// render scrollbar
 				drawTexturedModalRect(guiLeft + 172, guiTop + 17, 18, 0, 6, 108);
-				int sbPixelPosition = (sbPosition * (108 - 13) / sbLength);
+				int sbPixelPosition = sbPosition * 95 / sbLength;
 				drawTexturedModalRect(guiLeft + 172, guiTop + 17 + sbPixelPosition, 24, 0, 6, 14);
 			} else {
 				sbPosition = 0;

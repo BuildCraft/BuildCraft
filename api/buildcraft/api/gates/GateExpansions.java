@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.HashBiMap;
+
 import net.minecraft.item.ItemStack;
 
 public final class GateExpansions {

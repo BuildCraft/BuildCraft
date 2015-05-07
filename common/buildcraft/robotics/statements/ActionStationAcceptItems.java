@@ -11,6 +11,7 @@ package buildcraft.robotics.statements;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.statements.IStatementParameter;

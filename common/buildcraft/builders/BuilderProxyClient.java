@@ -12,6 +12,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+
 import buildcraft.builders.urbanism.TileUrbanist;
 import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.lib.render.RenderVoid;

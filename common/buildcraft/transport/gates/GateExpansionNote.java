@@ -9,6 +9,7 @@
 package buildcraft.transport.gates;
 
 import net.minecraft.tileentity.TileEntity;
+
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGateExpansion;
 

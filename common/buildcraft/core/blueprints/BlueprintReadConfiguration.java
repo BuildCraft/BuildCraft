@@ -9,7 +9,9 @@
 package buildcraft.core.blueprints;
 
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.nbt.NBTTagCompound;
+
 import buildcraft.api.core.ISerializable;
 
 public class BlueprintReadConfiguration implements ISerializable {

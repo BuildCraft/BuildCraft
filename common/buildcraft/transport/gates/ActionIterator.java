@@ -9,7 +9,9 @@
 package buildcraft.transport.gates;
 
 import java.util.Iterator;
+
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.transport.IPipe;
 import buildcraft.transport.Gate;

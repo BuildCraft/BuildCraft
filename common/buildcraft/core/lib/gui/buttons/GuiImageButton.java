@@ -10,7 +10,9 @@
 package buildcraft.core.lib.gui.buttons;
 
 import java.util.ArrayList;
+
 import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;

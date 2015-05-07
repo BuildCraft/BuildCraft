@@ -9,7 +9,9 @@
 package buildcraft.robotics.boards;
 
 import java.util.ArrayList;
+
 import net.minecraft.item.ItemStack;
+
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.robots.AIRobot;

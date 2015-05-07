@@ -1,12 +1,14 @@
 package buildcraft.silicon.render;
 
 import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+
 import buildcraft.core.lib.utils.NBTUtils;
 
 public class PackageFontRenderer extends FontRenderer {

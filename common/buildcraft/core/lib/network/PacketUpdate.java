@@ -9,6 +9,7 @@
 package buildcraft.core.lib.network;
 
 import io.netty.buffer.ByteBuf;
+
 import buildcraft.api.core.ISerializable;
 
 public abstract class PacketUpdate extends Packet {

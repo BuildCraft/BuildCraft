@@ -9,6 +9,7 @@
 package buildcraft.transport;
 
 import io.netty.buffer.ByteBuf;
+
 import buildcraft.api.core.ISerializable;
 import buildcraft.transport.utils.ConnectionMatrix;
 import buildcraft.transport.utils.TextureMatrix;

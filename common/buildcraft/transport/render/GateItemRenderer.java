@@ -9,7 +9,9 @@
 package buildcraft.transport.render;
 
 import java.util.Random;
+
 import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -18,6 +20,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraftforge.client.IItemRenderer;
+
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.transport.gates.ItemGate;
 

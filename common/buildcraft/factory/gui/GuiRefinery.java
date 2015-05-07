@@ -9,11 +9,13 @@
 package buildcraft.factory.gui;
 
 import org.lwjgl.opengl.GL11;
+
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.core.lib.gui.FluidSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;

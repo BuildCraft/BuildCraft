@@ -8,19 +8,21 @@
  */
 package buildcraft.silicon;
 
-import buildcraft.core.lib.inventory.InventoryMapper;
+import java.util.ArrayList;
+import java.util.List;
+
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IIntegrationRecipe;
 import buildcraft.core.lib.inventory.ITransactor;
+import buildcraft.core.lib.inventory.InventoryMapper;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.utils.StringUtils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class TileIntegrationTable extends TileLaserTableBase {
 	public static final int SLOT_OUTPUT = 9;

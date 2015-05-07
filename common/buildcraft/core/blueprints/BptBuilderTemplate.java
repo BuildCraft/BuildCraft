@@ -9,9 +9,11 @@
 package buildcraft.core.blueprints;
 
 import java.util.LinkedList;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.core.BuildCraftAPI;

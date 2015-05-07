@@ -9,8 +9,10 @@
 package buildcraft.silicon.gui;
 
 import org.lwjgl.opengl.GL11;
+
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
+
 import buildcraft.silicon.TileAdvancedCraftingTable;
 
 public class GuiAdvancedCraftingTable extends GuiLaserTable {

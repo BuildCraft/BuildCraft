@@ -10,9 +10,7 @@ package buildcraft;
 
 import java.io.PrintWriter;
 import java.util.LinkedList;
-import java.util.Map;
 
-import buildcraft.transport.stripes.*;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -45,6 +43,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
+
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.EnumColor;
@@ -52,7 +51,6 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.facades.FacadeAPI;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementManager;
@@ -143,7 +141,6 @@ import buildcraft.transport.pluggable.ItemLens;
 import buildcraft.transport.pluggable.ItemPlug;
 import buildcraft.transport.pluggable.LensPluggable;
 import buildcraft.transport.pluggable.PlugPluggable;
-import buildcraft.transport.recipes.GateExpansionRecipe;
 import buildcraft.transport.schematics.BptItemPipeFilters;
 import buildcraft.transport.schematics.BptPipeIron;
 import buildcraft.transport.schematics.BptPipeWooden;
@@ -167,6 +164,20 @@ import buildcraft.transport.statements.TriggerPipeContents;
 import buildcraft.transport.statements.TriggerPipeContents.PipeContents;
 import buildcraft.transport.statements.TriggerPipeSignal;
 import buildcraft.transport.statements.TriggerRedstoneFaderInput;
+import buildcraft.transport.stripes.PipeExtensionListener;
+import buildcraft.transport.stripes.StripesHandlerArrow;
+import buildcraft.transport.stripes.StripesHandlerBucket;
+import buildcraft.transport.stripes.StripesHandlerDispenser;
+import buildcraft.transport.stripes.StripesHandlerEntityInteract;
+import buildcraft.transport.stripes.StripesHandlerHoe;
+import buildcraft.transport.stripes.StripesHandlerMinecartDestroy;
+import buildcraft.transport.stripes.StripesHandlerPipeWires;
+import buildcraft.transport.stripes.StripesHandlerPipes;
+import buildcraft.transport.stripes.StripesHandlerPlaceBlock;
+import buildcraft.transport.stripes.StripesHandlerPlant;
+import buildcraft.transport.stripes.StripesHandlerRightClick;
+import buildcraft.transport.stripes.StripesHandlerShears;
+import buildcraft.transport.stripes.StripesHandlerUse;
 
 @Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTransport extends BuildCraftMod {

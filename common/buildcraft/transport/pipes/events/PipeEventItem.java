@@ -9,9 +9,11 @@
 package buildcraft.transport.pipes.events;
 
 import java.util.List;
+
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TravelingItem;
 

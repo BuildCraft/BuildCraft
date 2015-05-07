@@ -2,6 +2,7 @@ package buildcraft.core.tablet;
 
 import net.minecraft.nbt.NBTTagCompound;
 import cpw.mods.fml.relauncher.Side;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.tablet.TabletBitmap;
 

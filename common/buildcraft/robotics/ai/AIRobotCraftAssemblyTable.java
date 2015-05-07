@@ -9,10 +9,12 @@
 package buildcraft.robotics.ai;
 
 import java.util.ArrayList;
+
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.recipes.CraftingResult;

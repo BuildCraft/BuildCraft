@@ -9,7 +9,6 @@
 package buildcraft.api.core.render;
 
 import net.minecraft.world.IBlockAccess;
-
 import net.minecraftforge.common.util.ForgeDirection;
 
 /*

@@ -11,8 +11,10 @@ package buildcraft.core.lib.network;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.network.PacketIds;
 

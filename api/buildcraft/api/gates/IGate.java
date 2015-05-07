@@ -9,6 +9,7 @@
 package buildcraft.api.gates;
 
 import java.util.List;
+
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementSlot;

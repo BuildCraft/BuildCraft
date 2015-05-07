@@ -1,11 +1,12 @@
 package buildcraft.core.command;
 
-import buildcraft.core.Version;
-import buildcraft.core.lib.commands.SubCommand;
-import buildcraft.core.proxy.CoreProxy;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.StatCollector;
+
+import buildcraft.core.Version;
+import buildcraft.core.lib.commands.SubCommand;
+import buildcraft.core.proxy.CoreProxy;
 
 public class SubCommandVersion extends SubCommand {
     public SubCommandVersion() {

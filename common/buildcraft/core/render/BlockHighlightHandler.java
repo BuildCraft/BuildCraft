@@ -9,6 +9,7 @@
 package buildcraft.core.render;
 
 import org.lwjgl.opengl.GL11;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
@@ -19,6 +20,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
+
 import buildcraft.core.lib.render.ICustomHighlight;
 
 public class BlockHighlightHandler {

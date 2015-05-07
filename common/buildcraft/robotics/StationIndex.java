@@ -10,6 +10,7 @@ package buildcraft.robotics;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.DockingStation;
 

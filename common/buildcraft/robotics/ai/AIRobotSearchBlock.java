@@ -2,7 +2,9 @@ package buildcraft.robotics.ai;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+
 import net.minecraft.nbt.NBTTagCompound;
+
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;

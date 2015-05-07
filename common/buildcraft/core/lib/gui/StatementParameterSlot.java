@@ -2,6 +2,7 @@ package buildcraft.core.lib.gui;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
 

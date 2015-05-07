@@ -10,12 +10,14 @@ package buildcraft.builders.urbanism;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.core.Box;
 import buildcraft.core.builders.patterns.FillerPattern;

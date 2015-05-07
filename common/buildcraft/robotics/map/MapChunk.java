@@ -3,6 +3,7 @@ package buildcraft.robotics.map;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.chunk.Chunk;
+
 import buildcraft.api.core.BCLog;
 
 public class MapChunk {

@@ -9,6 +9,7 @@
 package buildcraft.core.builders.patterns;
 
 import net.minecraft.world.World;
+
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;

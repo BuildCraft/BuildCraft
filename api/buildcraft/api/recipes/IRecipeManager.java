@@ -10,8 +10,6 @@ package buildcraft.api.recipes;
 
 import java.util.Collection;
 
-import net.minecraft.item.ItemStack;
-
 public interface IRecipeManager<T> {
 
 	/**

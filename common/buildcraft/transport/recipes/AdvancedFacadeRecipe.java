@@ -11,6 +11,8 @@ package buildcraft.transport.recipes;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.item.ItemStack;
+
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.facades.FacadeType;
@@ -19,7 +21,6 @@ import buildcraft.api.transport.PipeWire;
 import buildcraft.core.recipes.IntegrationRecipeBC;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemPipeWire;
-import net.minecraft.item.ItemStack;
 
 public class AdvancedFacadeRecipe extends IntegrationRecipeBC {
 	public AdvancedFacadeRecipe() {

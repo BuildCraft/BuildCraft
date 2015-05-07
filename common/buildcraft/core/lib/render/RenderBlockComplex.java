@@ -1,14 +1,16 @@
 package buildcraft.core.lib.render;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.core.lib.block.BlockBuildCraft;
-import org.lwjgl.opengl.GL11;
 
 public class RenderBlockComplex implements ISimpleBlockRenderingHandler {
 	private static final int[] Y_ROTATE = {3, 0, 1, 2};

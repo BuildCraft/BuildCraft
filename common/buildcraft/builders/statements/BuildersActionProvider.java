@@ -11,8 +11,10 @@ package buildcraft.builders.statements;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.statements.IActionExternal;

@@ -10,15 +10,12 @@ package buildcraft.core.recipes;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import buildcraft.api.recipes.IRecipeManager;
+
 import buildcraft.api.recipes.IFlexibleRecipe;
+import buildcraft.api.recipes.IRecipeManager;
 
 public class RecipeManager<T> implements IRecipeManager<T> {
 	private BiMap<String, IFlexibleRecipe<T>> recipes = HashBiMap.create();

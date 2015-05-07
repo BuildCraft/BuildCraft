@@ -8,11 +8,12 @@
  */
 package buildcraft.robotics;
 
-import buildcraft.core.recipes.IntegrationRecipeBC;
-import net.minecraft.item.ItemStack;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import net.minecraft.item.ItemStack;
+
+import buildcraft.core.recipes.IntegrationRecipeBC;
 
 public class RobotIntegrationRecipe extends IntegrationRecipeBC {
 	public RobotIntegrationRecipe() {

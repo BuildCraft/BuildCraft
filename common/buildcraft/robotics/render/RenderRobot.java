@@ -10,23 +10,25 @@ package buildcraft.robotics.render;
 
 import java.util.Date;
 
-import buildcraft.api.robots.IRobotOverlayItem;
-import net.minecraft.client.renderer.entity.RenderBiped;
-import net.minecraft.item.ItemArmor;
 import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer;
+
 import buildcraft.BuildCraftRobotics;
+import buildcraft.api.robots.IRobotOverlayItem;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.lib.render.RenderUtils;

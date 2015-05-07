@@ -12,7 +12,9 @@ import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+
 import com.google.common.collect.Lists;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -27,6 +29,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
+
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.power.ILaserTarget;

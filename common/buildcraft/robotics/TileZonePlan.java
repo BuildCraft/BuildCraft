@@ -9,12 +9,15 @@
 package buildcraft.robotics;
 
 import java.util.List;
+
 import io.netty.buffer.ByteBuf;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IZone;
 import buildcraft.api.items.IMapLocation;

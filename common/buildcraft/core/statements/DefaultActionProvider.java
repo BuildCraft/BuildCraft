@@ -10,8 +10,10 @@ package buildcraft.core.statements;
 
 import java.util.Collection;
 import java.util.LinkedList;
+
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.statements.IActionExternal;

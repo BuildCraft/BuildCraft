@@ -3,6 +3,7 @@ package buildcraft.core.recipes;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+
 import buildcraft.api.core.BCLog;
 import buildcraft.api.recipes.IProgrammingRecipe;
 import buildcraft.api.recipes.IProgrammingRecipeManager;

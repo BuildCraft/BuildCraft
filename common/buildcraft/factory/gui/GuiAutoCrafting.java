@@ -9,9 +9,11 @@
 package buildcraft.factory.gui;
 
 import org.lwjgl.opengl.GL11;
+
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
 import buildcraft.core.lib.gui.GuiBuildCraft;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.factory.TileAutoWorkbench;

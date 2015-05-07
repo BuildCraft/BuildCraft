@@ -9,6 +9,7 @@
 package buildcraft.robotics.ai;
 
 import net.minecraft.util.MathHelper;
+
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;

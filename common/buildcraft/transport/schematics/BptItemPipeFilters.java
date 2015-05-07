@@ -10,6 +10,7 @@ package buildcraft.transport.schematics;
 
 import net.minecraft.item.Item;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.core.lib.inventory.SimpleInventory;

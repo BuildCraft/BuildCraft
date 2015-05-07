@@ -1,6 +1,7 @@
 package buildcraft.core.lib;
 
 import net.minecraft.nbt.NBTTagCompound;
+
 import cofh.api.energy.IEnergyStorage;
 
 public class RFBattery implements IEnergyStorage {

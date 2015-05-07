@@ -10,6 +10,7 @@ package buildcraft.energy.worldgen;
 
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.layer.GenLayer;
+
 import buildcraft.BuildCraftEnergy;
 
 public class GenLayerAddOilOcean extends GenLayerBiomeReplacer {

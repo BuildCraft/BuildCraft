@@ -10,6 +10,7 @@ package buildcraft.core.proxy;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -28,6 +29,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.ICoreProxy;
 import buildcraft.core.CompatHooks;

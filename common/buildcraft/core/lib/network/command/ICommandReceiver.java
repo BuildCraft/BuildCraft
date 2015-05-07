@@ -9,6 +9,7 @@
 package buildcraft.core.lib.network.command;
 
 import io.netty.buffer.ByteBuf;
+
 import cpw.mods.fml.relauncher.Side;
 
 public interface ICommandReceiver {

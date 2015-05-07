@@ -10,6 +10,7 @@ package buildcraft.core.recipes;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import buildcraft.api.recipes.IIntegrationRecipe;
 import buildcraft.api.recipes.IIntegrationRecipeManager;
 

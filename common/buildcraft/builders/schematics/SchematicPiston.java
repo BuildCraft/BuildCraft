@@ -9,7 +9,9 @@
 package buildcraft.builders.schematics;
 
 import java.util.LinkedList;
+
 import net.minecraft.item.ItemStack;
+
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.core.builders.schematics.SchematicRotateMeta;
 

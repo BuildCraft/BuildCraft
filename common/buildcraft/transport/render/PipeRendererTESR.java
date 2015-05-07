@@ -8,10 +8,8 @@
  */
 package buildcraft.transport.render;
 
-import java.util.HashMap;
-import com.google.common.collect.Maps;
 import org.lwjgl.opengl.GL11;
-import net.minecraft.client.model.ModelBase;
+
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -28,6 +26,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.BuildCraftTransport;

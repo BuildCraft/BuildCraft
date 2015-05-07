@@ -11,7 +11,6 @@ package buildcraft.api.recipes;
 import java.util.ArrayList;
 
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.fluids.FluidStack;
 
 public class CraftingResult<T> {

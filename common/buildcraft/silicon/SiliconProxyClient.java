@@ -11,6 +11,7 @@ package buildcraft.silicon;
 import net.minecraft.client.renderer.entity.RenderSnowball;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+
 import buildcraft.BuildCraftSilicon;
 import buildcraft.silicon.render.RenderLaserBlock;
 import buildcraft.silicon.render.RenderLaserTable;

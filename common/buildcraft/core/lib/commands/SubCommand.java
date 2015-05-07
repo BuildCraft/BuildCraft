@@ -8,10 +8,14 @@
  */
 package buildcraft.core.lib.commands;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
-
-import java.util.*;
 
 public abstract class SubCommand implements IModCommand {
     public enum PermLevel {
@@ -69,14 +73,15 @@ public abstract class SubCommand implements IModCommand {
     }
 
     @Override
-    public List addTabCompletionOptions(ICommandSender p_71516_1_, String[] p_71516_2_) {
+    public List addTabCompletionOptions(ICommandSender sender, String[] text) {
         return null;
     }
 
     @Override
     public final void processCommand(ICommandSender sender, String[] args) {
-        if (!CommandHelpers.processStandardCommands(sender, this, args))
+        if (!CommandHelpers.processStandardCommands(sender, this, args)) {
             processSubCommand(sender, args);
+        }
     }
 
     public void processSubCommand(ICommandSender sender, String[] args) {

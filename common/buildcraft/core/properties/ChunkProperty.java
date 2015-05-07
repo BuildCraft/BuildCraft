@@ -9,6 +9,7 @@
 package buildcraft.core.properties;
 
 import java.util.BitSet;
+
 import net.minecraft.world.IBlockAccess;
 
 public class ChunkProperty {
