@@ -14,7 +14,7 @@ import java.util.LinkedList;
 public class BuildingSlotIterator {
 	private static int ITERATIONS_MAX = 500;
 
-	private LinkedList<BuildingSlotBlock> buildList;
+	private final LinkedList<BuildingSlotBlock> buildList;
 	private Iterator<BuildingSlotBlock> current;
 	private int nbIterations;
 
