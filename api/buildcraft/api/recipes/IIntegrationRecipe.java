@@ -16,6 +16,7 @@ public interface IIntegrationRecipe {
 	int getEnergyCost();
 	List<ItemStack> getExampleInput();
 	List<List<ItemStack>> getExampleExpansions();
+	List<ItemStack> getExampleOutput();
 	boolean isValidInput(ItemStack input);
 	boolean isValidExpansion(ItemStack expansion);
 	ItemStack craft(ItemStack input, List<ItemStack> expansions, boolean preview);

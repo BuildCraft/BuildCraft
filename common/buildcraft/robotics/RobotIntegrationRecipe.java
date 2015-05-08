@@ -13,6 +13,10 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 
+import buildcraft.BuildCraftRobotics;
+import buildcraft.api.boards.RedstoneBoardNBT;
+import buildcraft.api.boards.RedstoneBoardRegistry;
+import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.recipes.IntegrationRecipeBC;
 
 public class RobotIntegrationRecipe extends IntegrationRecipeBC {
@@ -29,8 +33,26 @@ public class RobotIntegrationRecipe extends IntegrationRecipeBC {
 
 	@Override
 	public List<List<ItemStack>> generateExampleExpansions() {
-		// TODO!
-		return null;
+		ArrayList<List<ItemStack>> list = new ArrayList<List<ItemStack>>();
+		ArrayList<ItemStack> example = new ArrayList<ItemStack>();
+		for (RedstoneBoardNBT nbt : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
+			ItemStack stack = new ItemStack(BuildCraftRobotics.redstoneBoard);
+			nbt.createBoard(NBTUtils.getItemData(stack));
+			example.add(stack);
+		}
+		list.add(example);
+		return list;
+	}
+
+	@Override
+	public List<ItemStack> generateExampleOutput() {
+		ArrayList<ItemStack> example = new ArrayList<ItemStack>();
+		for (RedstoneBoardNBT nbt : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
+			ItemStack stack = new ItemStack(BuildCraftRobotics.redstoneBoard);
+			nbt.createBoard(NBTUtils.getItemData(stack));
+			example.add(ItemRobot.createRobotStack(stack, 0));
+		}
+		return example;
 	}
 
 	@Override

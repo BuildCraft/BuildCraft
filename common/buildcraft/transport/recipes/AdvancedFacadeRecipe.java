@@ -33,6 +33,11 @@ public class AdvancedFacadeRecipe extends IntegrationRecipeBC {
 	}
 
 	@Override
+	public List<ItemStack> generateExampleOutput() {
+		return ItemFacade.allFacades;
+	}
+
+	@Override
 	public List<List<ItemStack>> generateExampleExpansions() {
 		List<List<ItemStack>> list = new ArrayList<List<ItemStack>>();
 		list.add(ItemFacade.allFacades);

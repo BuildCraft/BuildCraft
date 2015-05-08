@@ -10,6 +10,7 @@ import buildcraft.api.recipes.IIntegrationRecipe;
 public abstract class IntegrationRecipeBC implements IIntegrationRecipe {
     private final int energyCost, maxExpansionCount;
     private SoftReference<List<ItemStack>> exampleInputs;
+    private SoftReference<List<ItemStack>> exampleOutputs;
     private SoftReference<List<List<ItemStack>>> exampleExpansions;
 
     public IntegrationRecipeBC(int energyCost) {
@@ -22,6 +23,7 @@ public abstract class IntegrationRecipeBC implements IIntegrationRecipe {
     }
 
     public abstract List<ItemStack> generateExampleInput();
+    public abstract List<ItemStack> generateExampleOutput();
     public abstract List<List<ItemStack>> generateExampleExpansions();
 
     @Override
@@ -45,6 +47,15 @@ public abstract class IntegrationRecipeBC implements IIntegrationRecipe {
         }
         exampleExpansions = new SoftReference<List<List<ItemStack>>>(generateExampleExpansions());
         return exampleExpansions.get();
+    }
+
+    @Override
+    public List<ItemStack> getExampleOutput() {
+        if (exampleOutputs != null && exampleOutputs.get() != null) {
+            return exampleOutputs.get();
+        }
+        exampleOutputs = new SoftReference<List<ItemStack>>(generateExampleOutput());
+        return exampleOutputs.get();
     }
 
     @Override
