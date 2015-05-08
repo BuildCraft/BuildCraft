@@ -100,6 +100,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 	public ItemStack itemInUse;
 	public float itemAngle1 = 0;
+	public float renderItemAngle1 = 0;
 	public float itemAngle2 = 0;
 	public boolean itemActive = false;
 	public float itemActiveStage = 0;
@@ -837,8 +838,9 @@ public class EntityRobot extends EntityRobotBase implements
 		int robotY = (int) Math.floor(posY);
 		int robotZ = (int) Math.floor(posZ);
 
-		if (z != robotZ || x != robotX)
+		if (z != robotZ || x != robotX) {
 			itemAngle1 = (float) Math.atan2(z - robotZ, x - robotX);
+		}
 		itemAngle2 = 0;
 
 		if (robotY < y) {

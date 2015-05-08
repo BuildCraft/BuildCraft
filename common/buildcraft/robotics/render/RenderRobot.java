@@ -85,6 +85,9 @@ public class RenderRobot extends Render implements IItemRenderer {
 		GL11.glPushMatrix();
 		GL11.glTranslated(x, y, z);
 
+		float robotYaw = getSmoothYaw(robot);
+		GL11.glRotatef((-robotYaw / (2f * (float) Math.PI) * 360f) + 180f, 0.0f, 1.0f, 0.0f);
+
 		if (robot.getStackInSlot(0) != null) {
 			GL11.glPushMatrix();
 			GL11.glTranslatef(-0.125F, 0, -0.125F);
@@ -120,7 +123,6 @@ public class RenderRobot extends Render implements IItemRenderer {
 		if (robot.itemInUse != null) {
 			GL11.glPushMatrix();
 
-			GL11.glRotatef((float) (-robot.itemAngle1 / (2 * Math.PI) * 360) + 180, 0, 1, 0);
 			GL11.glRotatef((float) (robot.itemAngle2 / (2 * Math.PI) * 360), 0, 0, 1);
 
 			if (robot.itemActive) {
@@ -161,7 +163,6 @@ public class RenderRobot extends Render implements IItemRenderer {
 		if (robot.getTexture() != null) {
 			renderManager.renderEngine.bindTexture(robot.getTexture());
 			float storagePercent = (float) robot.getBattery().getEnergyStored() / (float) robot.getBattery().getMaxEnergyStored();
-			box.rotateAngleY = -robot.itemAngle1;
 			doRenderRobot(1F / 16F, renderManager.renderEngine, storagePercent, robot.isActive());
 		}
 
@@ -170,6 +171,35 @@ public class RenderRobot extends Render implements IItemRenderer {
 		}
 		
 		GL11.glPopMatrix();
+	}
+
+	private float getSmoothYaw(EntityRobot robot) {
+		if (robot.itemAngle1 == robot.renderItemAngle1) {
+			return robot.itemAngle1;
+		}
+
+		float step = 0;
+		if (robot.itemAngle1 < robot.renderItemAngle1) {
+			step = (robot.itemAngle1 - robot.renderItemAngle1 <= Math.PI) ? -0.25f : 0.25f;
+		} else {
+			step = (robot.renderItemAngle1 - robot.itemAngle1 < Math.PI) ? -0.25f : 0.25f;
+		}
+		robot.renderItemAngle1 += step;
+		if (robot.renderItemAngle1 >= Math.PI) {
+			step *= -1;
+			robot.renderItemAngle1 -= (float) Math.PI;
+		}
+		if (robot.renderItemAngle1 <= -Math.PI) {
+			step *= -1;
+			robot.renderItemAngle1 += (float) Math.PI;
+		}
+
+		if ((step < 0 && robot.renderItemAngle1 < robot.itemAngle1) ||
+				(step > 0 && robot.itemAngle1 < robot.renderItemAngle1)) {
+			robot.renderItemAngle1 = robot.itemAngle1;
+		}
+
+		return robot.renderItemAngle1;
 	}
 
 	@Override
@@ -225,7 +255,6 @@ public class RenderRobot extends Render implements IItemRenderer {
 	}
 
 	private void doRenderWearable(EntityRobot entity, TextureManager textureManager, ItemStack wearable) {
-		float robotYaw = 90f + entity.itemAngle1 * 180f / (float)Math.PI;
 		if (wearable.getItem() instanceof IRobotOverlayItem) {
 			((IRobotOverlayItem) wearable.getItem()).renderRobotOverlay(wearable, textureManager);
 		} else if (wearable.getItem() instanceof ItemArmor) {
@@ -234,11 +263,12 @@ public class RenderRobot extends Render implements IItemRenderer {
 			GL11.glTranslatef(0.0f, -0.25f, 0.0f);
 			GL11.glRotatef(180F, 0, 0, 1);
 			textureManager.bindTexture(RenderBiped.getArmorResource(entity, wearable, 0, null));
-			ModelBiped model = ForgeHooksClient.getArmorModel(entity, wearable, 0, null);
-			if (model != null)
-				model.render(entity, 0, 0, 0, robotYaw, 0, 1 / 16F);
-			else
+			ModelBiped armorModel = ForgeHooksClient.getArmorModel(entity, wearable, 0, null);
+			if (armorModel != null) {
+				armorModel.render(entity, 0, 0, 0, -90f, 0, 1 / 16F);
+			} else {
 				helmetBox.render(1 / 16F);
+			}
 			GL11.glPopMatrix();
 		}
 	}
