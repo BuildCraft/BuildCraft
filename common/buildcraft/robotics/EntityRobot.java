@@ -34,9 +34,11 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -831,30 +833,29 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public void aimItemAt(int x, int y, int z) {
-		itemAngle1 = (float) Math.atan2(z - Math.floor(posZ),
-				x - Math.floor(posX));
+		int robotX = (int) Math.floor(posX);
+		int robotY = (int) Math.floor(posY);
+		int robotZ = (int) Math.floor(posZ);
 
+		if (z != robotZ || x != robotX)
+			itemAngle1 = (float) Math.atan2(z - robotZ, x - robotX);
 		itemAngle2 = 0;
 
-		if (Math.floor(posY) < y) {
+		if (robotY < y) {
 			itemAngle2 = (float) -Math.PI / 4;
 
-			if (Math.floor(posX) == x && Math.floor(posZ) == z) {
+			if (robotX == x && robotZ == z) {
 				itemAngle2 -= (float) Math.PI / 4;
 			}
-		} else if (Math.floor(posY) > y) {
+		} else if (robotY > y) {
 			itemAngle2 = (float) Math.PI / 2;
 
-			if (Math.floor(posX) == x && Math.floor(posZ) == z) {
+			if (robotX == x && robotZ == z) {
 				itemAngle2 += (float) Math.PI / 4;
 			}
 		}
 
-		int xComp = (int) Math.floor(posX);
-		int yComp = (int) Math.floor(posY);
-		int zComp = (int) Math.floor(posZ);
-
-		setSteamDirection(xComp - x, yComp - y, zComp - z);
+		setSteamDirection(robotX - x, robotY - y, robotZ - z);
 
 		updateDataServer();
 	}

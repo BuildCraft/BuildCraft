@@ -13,6 +13,7 @@ import java.util.Date;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.Render;
@@ -25,6 +26,8 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.IItemRenderer;
 
 import buildcraft.BuildCraftRobotics;
@@ -158,6 +161,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 		if (robot.getTexture() != null) {
 			renderManager.renderEngine.bindTexture(robot.getTexture());
 			float storagePercent = (float) robot.getBattery().getEnergyStored() / (float) robot.getBattery().getMaxEnergyStored();
+			box.rotateAngleY = -robot.itemAngle1;
 			doRenderRobot(1F / 16F, renderManager.renderEngine, storagePercent, robot.isActive());
 		}
 
@@ -221,14 +225,20 @@ public class RenderRobot extends Render implements IItemRenderer {
 	}
 
 	private void doRenderWearable(EntityRobot entity, TextureManager textureManager, ItemStack wearable) {
+		float robotYaw = 90f + entity.itemAngle1 * 180f / (float)Math.PI;
 		if (wearable.getItem() instanceof IRobotOverlayItem) {
 			((IRobotOverlayItem) wearable.getItem()).renderRobotOverlay(wearable, textureManager);
 		} else if (wearable.getItem() instanceof ItemArmor) {
 			GL11.glPushMatrix();
-			GL11.glScalef(1.125F, 1.125F, 1.125F);
+			GL11.glScalef(1.0125F, 1.0125F, 1.0125F);
+			GL11.glTranslatef(0.0f, -0.25f, 0.0f);
 			GL11.glRotatef(180F, 0, 0, 1);
 			textureManager.bindTexture(RenderBiped.getArmorResource(entity, wearable, 0, null));
-			helmetBox.render(1 / 16F);
+			ModelBiped model = ForgeHooksClient.getArmorModel(entity, wearable, 0, null);
+			if (model != null)
+				model.render(entity, 0, 0, 0, robotYaw, 0, 1 / 16F);
+			else
+				helmetBox.render(1 / 16F);
 			GL11.glPopMatrix();
 		}
 	}
