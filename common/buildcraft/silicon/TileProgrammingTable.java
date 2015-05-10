@@ -10,7 +10,6 @@ package buildcraft.silicon;
 
 import java.util.List;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;

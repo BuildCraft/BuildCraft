@@ -1,0 +1,4 @@
+Bugs fixed:
+* [#2554] Broken Programming Table logic (asie)
+* add-assembly-recipe IMC not working (asie)
+* Emerald fluid pipes not filtering NBT liquids properly (asie)

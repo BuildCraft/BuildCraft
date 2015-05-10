@@ -8,10 +8,6 @@
  */
 package buildcraft.transport.render;
 
-import java.util.HashMap;
-
-import com.google.common.collect.Maps;
-
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.model.ModelBase;
