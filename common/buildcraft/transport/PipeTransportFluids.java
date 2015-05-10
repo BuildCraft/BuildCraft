@@ -469,7 +469,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public void sendDescriptionPacket() {
 		super.sendDescriptionPacket();
 
-		initClient = 60;
+		initClient = 6;
 	}
 
 	public FluidStack getStack(ForgeDirection direction) {
