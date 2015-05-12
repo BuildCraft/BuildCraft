@@ -9,6 +9,8 @@
 package buildcraft.robotics.ai;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.MathHelper;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.BlockIndex;
@@ -69,6 +71,12 @@ public class AIRobotGotoStation extends AIRobot {
 					stationIndex.z + 0.5F + stationSide.offsetZ * 0.5F));
 		} else {
 			setSuccess(true);
+			if (stationSide.offsetY == 0) {
+				robot.aimItemAt(stationIndex.x + 2 * stationSide.offsetX, stationIndex.y,
+						stationIndex.z + 2 * stationSide.offsetZ);
+			} else {
+				robot.aimItemAt(MathHelper.floor_float(robot.getAimYaw() / 90f) * 90f + 180f, robot.getAimPitch());
+			}
 			robot.dock(station);
 			terminate();
 		}

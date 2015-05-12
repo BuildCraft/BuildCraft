@@ -14,9 +14,11 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import net.minecraftforge.fluids.IFluidHandler;
 
 import cofh.api.energy.IEnergyStorage;
+
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.core.IZone;
 
@@ -41,7 +43,13 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 
 	public abstract RedstoneBoardRobot getBoard();
 
+	public abstract void aimItemAt(float yaw, float pitch);
+
 	public abstract void aimItemAt(int x, int y, int z);
+
+	public abstract float getAimYaw();
+
+	public abstract float getAimPitch();
 
 	public abstract int getEnergy();
 

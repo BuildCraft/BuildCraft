@@ -78,15 +78,15 @@ public class RenderRobot extends Render implements IItemRenderer {
 
 	@Override
 	public void doRender(Entity entity, double x, double y, double z, float f, float f1) {
-		doRender((EntityRobot) entity, x, y, z);
+		doRender((EntityRobot) entity, x, y, z, f1);
 	}
 
-	private void doRender(EntityRobot robot, double x, double y, double z) {
+	private void doRender(EntityRobot robot, double x, double y, double z, float partialTicks) {
 		GL11.glPushMatrix();
 		GL11.glTranslated(x, y, z);
 
-		float robotYaw = getSmoothYaw(robot);
-		GL11.glRotatef((-robotYaw / (2f * (float) Math.PI) * 360f) + 180f, 0.0f, 1.0f, 0.0f);
+		float robotYaw = this.interpolateRotation(robot.prevRenderYawOffset, robot.renderYawOffset, partialTicks);
+		GL11.glRotatef(-robotYaw, 0.0f, 1.0f, 0.0f);
 
 		if (robot.getStackInSlot(0) != null) {
 			GL11.glPushMatrix();
@@ -123,7 +123,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 		if (robot.itemInUse != null) {
 			GL11.glPushMatrix();
 
-			GL11.glRotatef((float) (robot.itemAngle2 / (2 * Math.PI) * 360), 0, 0, 1);
+			GL11.glRotatef(robot.itemAngle2, 0, 0, 1);
 
 			if (robot.itemActive) {
 				long newDate = new Date().getTime();
@@ -171,35 +171,6 @@ public class RenderRobot extends Render implements IItemRenderer {
 		}
 		
 		GL11.glPopMatrix();
-	}
-
-	private float getSmoothYaw(EntityRobot robot) {
-		if (robot.itemAngle1 == robot.renderItemAngle1) {
-			return robot.itemAngle1;
-		}
-
-		float step = 0;
-		if (robot.itemAngle1 < robot.renderItemAngle1) {
-			step = (robot.itemAngle1 - robot.renderItemAngle1 <= Math.PI) ? -0.25f : 0.25f;
-		} else {
-			step = (robot.renderItemAngle1 - robot.itemAngle1 < Math.PI) ? -0.25f : 0.25f;
-		}
-		robot.renderItemAngle1 += step;
-		if (robot.renderItemAngle1 >= Math.PI) {
-			step *= -1;
-			robot.renderItemAngle1 -= (float) Math.PI;
-		}
-		if (robot.renderItemAngle1 <= -Math.PI) {
-			step *= -1;
-			robot.renderItemAngle1 += (float) Math.PI;
-		}
-
-		if ((step < 0 && robot.renderItemAngle1 < robot.itemAngle1) ||
-				(step > 0 && robot.itemAngle1 < robot.renderItemAngle1)) {
-			robot.renderItemAngle1 = robot.itemAngle1;
-		}
-
-		return robot.renderItemAngle1;
 	}
 
 	@Override
@@ -302,5 +273,19 @@ public class RenderRobot extends Render implements IItemRenderer {
 
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
 		}
+
+	}
+
+	private float interpolateRotation(float prevRot, float rot, float partialTicks) {
+		float angle;
+
+		for (angle = rot - prevRot; angle < -180.0F; angle += 360.0F) {
+		}
+
+		while (angle >= 180.0F) {
+			angle -= 360.0F;
+		}
+
+		return prevRot + partialTicks * angle;
 	}
 }
