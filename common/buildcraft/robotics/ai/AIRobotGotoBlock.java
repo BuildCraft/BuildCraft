@@ -38,7 +38,6 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 		finalX = x;
 		finalY = y;
 		finalZ = z;
-		robot.aimItemAt((int) Math.floor(finalX), (int) Math.floor(finalY), (int) Math.floor(finalZ));
 	}
 
 	public AIRobotGotoBlock(EntityRobotBase robot, int x, int y, int z, double iMaxDistance) {
@@ -53,7 +52,6 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 		finalX = path.getLast().x;
 		finalY = path.getLast().y;
 		finalZ = path.getLast().z;
-		robot.aimItemAt((int) Math.floor(finalX), (int) Math.floor(finalY), (int) Math.floor(finalZ));
 		setNextInPath();
 	}
 
@@ -118,6 +116,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 			BlockIndex next = path.getFirst();
 			setDestination(robot, next.x + 0.5F, next.y + 0.5F, next.z + 0.5F);
 			prevDistance = Double.MAX_VALUE;
+			robot.aimItemAt(next.x, next.y, next.z);
 		}
 	}
 

@@ -30,13 +30,16 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -98,6 +101,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 	public ItemStack itemInUse;
 	public float itemAngle1 = 0;
+	public float renderItemAngle1 = 0;
 	public float itemAngle2 = 0;
 	public boolean itemActive = false;
 	public float itemActiveStage = 0;
@@ -290,6 +294,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 		if (worldObj.isRemote) {
 			updateDataClient();
+			updateRotationYaw(60.0f);
 			updateEnergyFX();
 		}
 
@@ -341,6 +346,10 @@ public class EntityRobot extends EntityRobotBase implements
 
 		super.onEntityUpdate();
 		this.worldObj.theProfiler.endSection();
+	}
+
+	@Override
+	protected void updateEntityActionState() {
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -830,33 +839,76 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public void aimItemAt(int x, int y, int z) {
-		itemAngle1 = (float) Math.atan2(z - Math.floor(posZ),
-				x - Math.floor(posX));
+	public float getAimYaw() {
+		return itemAngle1;
+	}
 
-		itemAngle2 = 0;
+	@Override
+	public float getAimPitch() {
+		return itemAngle2;
+	}
 
-		if (Math.floor(posY) < y) {
-			itemAngle2 = (float) -Math.PI / 4;
-
-			if (Math.floor(posX) == x && Math.floor(posZ) == z) {
-				itemAngle2 -= (float) Math.PI / 4;
-			}
-		} else if (Math.floor(posY) > y) {
-			itemAngle2 = (float) Math.PI / 2;
-
-			if (Math.floor(posX) == x && Math.floor(posZ) == z) {
-				itemAngle2 += (float) Math.PI / 4;
-			}
-		}
-
-		int xComp = (int) Math.floor(posX);
-		int yComp = (int) Math.floor(posY);
-		int zComp = (int) Math.floor(posZ);
-
-		setSteamDirection(xComp - x, yComp - y, zComp - z);
+	@Override
+	public void aimItemAt(float yaw, float pitch) {
+		itemAngle1 = yaw;
+		itemAngle2 = pitch;
 
 		updateDataServer();
+	}
+
+	@Override
+	public void aimItemAt(int x, int y, int z) {
+		int deltaX = x - (int) Math.floor(posX);
+		int deltaY = y - (int) Math.floor(posY);
+		int deltaZ = z - (int) Math.floor(posZ);
+
+		if (deltaX != 0 || deltaZ != 0) {
+			itemAngle1 = (float) (Math.atan2(deltaZ, deltaX) * 180f / Math.PI) + 180f;
+		}
+		double d3 = MathHelper.sqrt_double(deltaX * deltaX + deltaZ * deltaZ);
+		itemAngle2 = (float) (-(Math.atan2(deltaY, d3) * 180.0D / Math.PI));
+
+		setSteamDirection(deltaX, deltaY, deltaZ);
+
+		updateDataServer();
+	}
+
+	private void updateRotationYaw(float maxStep) {
+		float step = MathHelper.wrapAngleTo180_float(itemAngle1 - rotationYaw);
+
+		if (step > maxStep) {
+			step = maxStep;
+		}
+
+		if (step < -maxStep) {
+			step = -maxStep;
+		}
+
+		rotationYaw = rotationYaw + step;
+	}
+
+	@Override
+	protected float func_110146_f(float targetYaw, float dist) {
+		if (worldObj.isRemote) {
+	        float f2 = MathHelper.wrapAngleTo180_float(this.rotationYaw - this.renderYawOffset);
+	        this.renderYawOffset += f2 * 0.5F;
+	        float f3 = MathHelper.wrapAngleTo180_float(this.rotationYaw - this.renderYawOffset);
+	        boolean flag = f3 < -90.0F || f3 >= 90.0F;
+
+	        this.renderYawOffset = this.rotationYaw - f3;
+
+	        if (f3 * f3 > 2500.0F) {
+	            this.renderYawOffset += f3 * 0.2F;
+	        }
+
+	        float newDist = dist;
+	        if (flag) {
+	            newDist *= -1.0F;
+	        }
+
+	        return newDist;
+		}
+		return 0;
 	}
 
 	@Override

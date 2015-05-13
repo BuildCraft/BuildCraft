@@ -13,6 +13,7 @@ import java.util.Date;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.Render;
@@ -25,6 +26,8 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.IItemRenderer;
 
 import buildcraft.BuildCraftRobotics;
@@ -75,12 +78,15 @@ public class RenderRobot extends Render implements IItemRenderer {
 
 	@Override
 	public void doRender(Entity entity, double x, double y, double z, float f, float f1) {
-		doRender((EntityRobot) entity, x, y, z);
+		doRender((EntityRobot) entity, x, y, z, f1);
 	}
 
-	private void doRender(EntityRobot robot, double x, double y, double z) {
+	private void doRender(EntityRobot robot, double x, double y, double z, float partialTicks) {
 		GL11.glPushMatrix();
 		GL11.glTranslated(x, y, z);
+
+		float robotYaw = this.interpolateRotation(robot.prevRenderYawOffset, robot.renderYawOffset, partialTicks);
+		GL11.glRotatef(-robotYaw, 0.0f, 1.0f, 0.0f);
 
 		if (robot.getStackInSlot(0) != null) {
 			GL11.glPushMatrix();
@@ -117,8 +123,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 		if (robot.itemInUse != null) {
 			GL11.glPushMatrix();
 
-			GL11.glRotatef((float) (-robot.itemAngle1 / (2 * Math.PI) * 360) + 180, 0, 1, 0);
-			GL11.glRotatef((float) (robot.itemAngle2 / (2 * Math.PI) * 360), 0, 0, 1);
+			GL11.glRotatef(robot.itemAngle2, 0, 0, 1);
 
 			if (robot.itemActive) {
 				long newDate = new Date().getTime();
@@ -225,10 +230,16 @@ public class RenderRobot extends Render implements IItemRenderer {
 			((IRobotOverlayItem) wearable.getItem()).renderRobotOverlay(wearable, textureManager);
 		} else if (wearable.getItem() instanceof ItemArmor) {
 			GL11.glPushMatrix();
-			GL11.glScalef(1.125F, 1.125F, 1.125F);
+			GL11.glScalef(1.0125F, 1.0125F, 1.0125F);
+			GL11.glTranslatef(0.0f, -0.25f, 0.0f);
 			GL11.glRotatef(180F, 0, 0, 1);
 			textureManager.bindTexture(RenderBiped.getArmorResource(entity, wearable, 0, null));
-			helmetBox.render(1 / 16F);
+			ModelBiped armorModel = ForgeHooksClient.getArmorModel(entity, wearable, 0, null);
+			if (armorModel != null) {
+				armorModel.render(entity, 0, 0, 0, -90f, 0, 1 / 16F);
+			} else {
+				helmetBox.render(1 / 16F);
+			}
 			GL11.glPopMatrix();
 		}
 	}
@@ -262,5 +273,19 @@ public class RenderRobot extends Render implements IItemRenderer {
 
 			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastBrightnessX, lastBrightnessY);
 		}
+
+	}
+
+	private float interpolateRotation(float prevRot, float rot, float partialTicks) {
+		float angle;
+
+		for (angle = rot - prevRot; angle < -180.0F; angle += 360.0F) {
+		}
+
+		while (angle >= 180.0F) {
+			angle -= 360.0F;
+		}
+
+		return prevRot + partialTicks * angle;
 	}
 }

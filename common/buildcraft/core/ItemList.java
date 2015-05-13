@@ -200,7 +200,7 @@ public class ItemList extends ItemBuildCraft implements IList {
 				return oreMatch(stacks[0], item);
 			} else {
 				for (ItemStack stack : stacks) {
-					if (stack != null && StackHelper.isMatchingItem(stacks[0], item, true, false)) {
+					if (stack != null && StackHelper.isMatchingItem(stack, item, true, false)) {
 						return true;
 					}
 				}
