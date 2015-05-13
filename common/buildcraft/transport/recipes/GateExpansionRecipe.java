@@ -37,7 +37,7 @@ public class GateExpansionRecipe extends IntegrationRecipeBC {
 	}
 
 	@Override
-	public boolean isValidExpansion(ItemStack expansion) {
+	public boolean isValidExpansion(ItemStack input, ItemStack expansion) {
 		if (StackHelper.isMatchingItem(ItemRedstoneChipset.Chipset.RED.getStack(), expansion, true, true)) {
 			return true;
 		}

@@ -158,7 +158,7 @@ public class TileIntegrationTable extends TileLaserTableBase {
 	}
 
 	public int getMaxExpansionCount() {
-		return worldObj.isRemote ? maxExpCountClient : (activeRecipe != null ? activeRecipe.getMaximumExpansionCount() : 0);
+		return worldObj.isRemote ? maxExpCountClient : (activeRecipe != null ? activeRecipe.getMaximumExpansionCount(getStackInSlot(0)) : 0);
 	}
 
 	@Override
@@ -178,12 +178,12 @@ public class TileIntegrationTable extends TileLaserTableBase {
 		} else if (activeRecipe == null) {
 			return false;
 		} else if (slot < 9) {
-			if (activeRecipe.getMaximumExpansionCount() > 0) {
-				if (slot > activeRecipe.getMaximumExpansionCount()) {
+			if (activeRecipe.getMaximumExpansionCount(getStackInSlot(0)) > 0) {
+				if (slot > activeRecipe.getMaximumExpansionCount(getStackInSlot(0))) {
 					return false;
 				}
 			}
-			return activeRecipe.isValidExpansion(stack);
+			return activeRecipe.isValidExpansion(getStackInSlot(0), stack);
 		} else {
 			return false;
 		}

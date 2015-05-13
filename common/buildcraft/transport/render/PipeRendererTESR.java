@@ -829,6 +829,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		}
 
 		if (color != null) {
+			bindTexture(TextureMap.locationBlocksTexture);
 			RenderInfo block = new RenderInfo();
 
 			block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.ItemBox.ordinal());

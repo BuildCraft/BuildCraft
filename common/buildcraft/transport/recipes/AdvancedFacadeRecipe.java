@@ -55,7 +55,7 @@ public class AdvancedFacadeRecipe extends IntegrationRecipeBC {
 	}
 
 	@Override
-	public boolean isValidExpansion(ItemStack expansion) {
+	public boolean isValidExpansion(ItemStack input, ItemStack expansion) {
 		return (expansion.getItem() instanceof ItemFacade &&
 				((IFacadeItem) expansion.getItem()).getFacadeType(expansion) == FacadeType.Basic) ||
 				expansion.getItem() == BuildCraftTransport.plugItem ||

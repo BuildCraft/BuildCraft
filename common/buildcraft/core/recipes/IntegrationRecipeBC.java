@@ -59,7 +59,7 @@ public abstract class IntegrationRecipeBC implements IIntegrationRecipe {
     }
 
     @Override
-    public int getMaximumExpansionCount() {
+    public int getMaximumExpansionCount(ItemStack input) {
         return maxExpansionCount;
     }
 }

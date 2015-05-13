@@ -18,11 +18,11 @@ public interface IIntegrationRecipe {
 	List<List<ItemStack>> getExampleExpansions();
 	List<ItemStack> getExampleOutput();
 	boolean isValidInput(ItemStack input);
-	boolean isValidExpansion(ItemStack expansion);
+	boolean isValidExpansion(ItemStack input, ItemStack expansion);
 	ItemStack craft(ItemStack input, List<ItemStack> expansions, boolean preview);
 
 	/**
 	 * @return -1 for no limit, a different number otherwise
 	 */
-	int getMaximumExpansionCount();
+	int getMaximumExpansionCount(ItemStack input);
 }

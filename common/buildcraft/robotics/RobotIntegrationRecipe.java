@@ -61,7 +61,7 @@ public class RobotIntegrationRecipe extends IntegrationRecipeBC {
 	}
 
 	@Override
-	public boolean isValidExpansion(ItemStack expansion) {
+	public boolean isValidExpansion(ItemStack input, ItemStack expansion) {
 		return expansion.getItem() instanceof ItemRedstoneBoard;
 	}
 
