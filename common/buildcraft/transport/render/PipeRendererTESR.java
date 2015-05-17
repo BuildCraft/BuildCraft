@@ -503,7 +503,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		GL11.glTranslatef((float) x, (float) y, (float) z);
 
 		IIcon lightIcon;
-		IIcon gateIcon = gate.getLogic().getGateIcon();
 		if (gate.isLit) {
 			lightIcon = gate.getLogic().getIconLit();
 		} else {
@@ -512,13 +511,13 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		float translateCenter = 0;
 
-		// Render base gate
-		//renderGate(gateIcon, 0, 0.1F, 0, 0, direction, false);
-		renderGate(lightIcon, 0, 0.1F, 0, 0, direction, gate.isLit);
+		renderGate(lightIcon, 0, 0.1F, 0, 0, direction, gate.isLit, 1);
 
 		float pulseStage = gate.getPulseStage() * 2F;
 
 		if (gate.isPulsing || pulseStage != 0) {
+			IIcon gateIcon = gate.getLogic().getGateIcon();
+
 			// Render pulsing gate
 			float amplitude = 0.10F;
 			float start = 0.01F;
@@ -529,23 +528,23 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				translateCenter = amplitude - ((pulseStage - 1F) * amplitude) + start;
 			}
 
-			renderGate(gateIcon, 0, 0.13F, translateCenter, translateCenter, direction, false);
-			renderGate(lightIcon, 0, 0.13F, translateCenter, translateCenter, direction, gate.isLit);
+			renderGate(gateIcon, 0, 0.13F, translateCenter, translateCenter, direction, false, 2);
+			renderGate(lightIcon, 0, 0.13F, translateCenter, translateCenter, direction, gate.isLit, 0);
 		}
 
 		IIcon materialIcon = gate.getMaterial().getIconBlock();
 		if (materialIcon != null) {
-			renderGate(materialIcon, 1, 0.13F, translateCenter, translateCenter, direction, false);
+			renderGate(materialIcon, 1, 0.13F, translateCenter, translateCenter, direction, false, 1);
 		}
 
 		for (IGateExpansion expansion : gate.getExpansions()) {
-			renderGate(expansion.getOverlayBlock(), 2, 0.13F, translateCenter, translateCenter, direction, false);
+			renderGate(expansion.getOverlayBlock(), 2, 0.13F, translateCenter, translateCenter, direction, false, 0);
 		}
 
 		GL11.glPopMatrix();
 	}
 
-	private static void renderGate(IIcon icon, int layer, float trim, float translateCenter, float extraDepth, ForgeDirection direction, boolean isLit) {
+	private static void renderGate(IIcon icon, int layer, float trim, float translateCenter, float extraDepth, ForgeDirection direction, boolean isLit, int sideRenderingMode) {
 		RenderInfo renderBox = new RenderInfo();
 		renderBox.texture = icon;
 
@@ -563,23 +562,35 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		zeroState[2][0] = min;
 		zeroState[2][1] = max;
 
-		GL11.glPushMatrix();
 
-		float xt = direction.offsetX * translateCenter, yt = direction.offsetY * translateCenter, zt = direction.offsetZ
-				* translateCenter;
+		if (translateCenter != 0) {
+			GL11.glPushMatrix();
+			float xt = direction.offsetX * translateCenter, yt = direction.offsetY * translateCenter, zt = direction.offsetZ
+					* translateCenter;
 
-		GL11.glTranslatef(xt, yt, zt);
+			GL11.glTranslatef(xt, yt, zt);
+		}
 
 		float[][] rotated = MatrixTranformations.deepClone(zeroState);
 		MatrixTranformations.transform(rotated, direction);
 
-		if (layer != 0) {
-			renderBox.setRenderSingleSide(direction.ordinal());
+		switch (sideRenderingMode) {
+			case 0:
+				renderBox.setRenderSingleSide(direction.ordinal());
+				break;
+			case 1:
+				renderBox.setRenderSingleSide(direction.ordinal());
+				renderBox.renderSide[direction.ordinal() ^ 1] = true;
+				break;
+			case 2:
+				break;
 		}
 
 		renderBox.setBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
 		renderLitBox(renderBox, isLit);
-		GL11.glPopMatrix();
+		if (translateCenter != 0) {
+			GL11.glPopMatrix();
+		}
 	}
 	
 	private static void renderLitBox(RenderInfo info, boolean isLit) {
