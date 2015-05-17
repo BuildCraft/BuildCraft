@@ -9,7 +9,7 @@
     Description: none
 -->
 <module name="Checker">	
-  <property name="severity" value="error"/>
+  <property name="severity" value="warning"/>
   <module name="SuppressionCommentFilter">
     <property name="offCommentFormat" value="CHECKSTYLE.OFF\: ([\w\|]+)"/>
     <property name="onCommentFormat" value="CHECKSTYLE.ON\: ([\w\|]+)"/>
