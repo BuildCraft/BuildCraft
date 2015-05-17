@@ -12,6 +12,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -33,6 +34,7 @@ import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.Position;
+import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.items.IItemCustomPipeRender;
 import buildcraft.api.transport.IPipeTile;
@@ -469,6 +471,32 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		}
 	}
 
+	public static void renderGateStatic(RenderBlocks renderblocks, ForgeDirection direction, GatePluggable gate, ITextureStates blockStateMachine, int x, int y, int z) {
+		blockStateMachine.getTextureState().set(gate.getLogic().getGateIcon());
+
+		float trim = 0.1F;
+		float[][] zeroState = new float[3][2];
+		float min = CoreConstants.PIPE_MIN_POS + trim / 2F;
+		float max = CoreConstants.PIPE_MAX_POS - trim / 2F;
+
+		// X START - END
+		zeroState[0][0] = min;
+		zeroState[0][1] = max;
+		// Y START - END
+		zeroState[1][0] = CoreConstants.PIPE_MIN_POS - 0.10F;
+		zeroState[1][1] = CoreConstants.PIPE_MIN_POS + 0.001F;
+		// Z START - END
+		zeroState[2][0] = min;
+		zeroState[2][1] = max;
+
+		float[][] rotated = MatrixTranformations.deepClone(zeroState);
+		MatrixTranformations.transform(rotated, direction);
+
+		blockStateMachine.setRenderAllSides();
+		renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
+		renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
+	}
+
 	public static void renderGate(double x, double y, double z, GatePluggable gate, ForgeDirection direction) {
 		GL11.glPushMatrix();
 		GL11.glColor3f(1, 1, 1);
@@ -485,7 +513,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		float translateCenter = 0;
 
 		// Render base gate
-		renderGate(gateIcon, 0, 0.1F, 0, 0, direction, false);
+		//renderGate(gateIcon, 0, 0.1F, 0, 0, direction, false);
 		renderGate(lightIcon, 0, 0.1F, 0, 0, direction, gate.isLit);
 
 		float pulseStage = gate.getPulseStage() * 2F;

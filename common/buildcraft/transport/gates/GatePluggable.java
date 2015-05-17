@@ -4,6 +4,7 @@ import java.util.Set;
 
 import io.netty.buffer.ByteBuf;
 
+import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -12,6 +13,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.transport.IPipe;
@@ -26,8 +28,8 @@ import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.render.PipeRendererTESR;
 
 public class GatePluggable extends PipePluggable {
-	private static class GatePluggableRenderer implements IPipePluggableDynamicRenderer {
-		public static final IPipePluggableDynamicRenderer INSTANCE = new GatePluggableRenderer();
+	private static class GatePluggableRenderer implements IPipePluggableRenderer, IPipePluggableDynamicRenderer {
+		public static final GatePluggableRenderer INSTANCE = new GatePluggableRenderer();
 
 		private GatePluggableRenderer() {
 
@@ -36,6 +38,13 @@ public class GatePluggable extends PipePluggable {
 		@Override
 		public void renderPluggable(IPipe pipe, ForgeDirection side, PipePluggable pipePluggable, double x, double y, double z) {
 			PipeRendererTESR.renderGate(x, y, z, (GatePluggable) pipePluggable, side);
+		}
+
+		@Override
+		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, ForgeDirection side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
+			if (renderPass == 0) {
+				PipeRendererTESR.renderGateStatic(renderblocks, side, (GatePluggable) pipePluggable, blockStateMachine, x, y, z);
+			}
 		}
 	}
 	public GateDefinition.GateMaterial material;
@@ -228,7 +237,7 @@ public class GatePluggable extends PipePluggable {
 
 	@Override
 	public IPipePluggableRenderer getRenderer() {
-		return null;
+		return GatePluggableRenderer.INSTANCE;
 	}
 
 	@Override
