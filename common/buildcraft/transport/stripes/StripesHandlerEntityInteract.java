@@ -70,6 +70,8 @@ public class StripesHandlerEntityInteract implements IStripesHandler {
 			activator.sendItem(stack, direction.getOpposite());
 		}
 
+		player.setCurrentItemOrArmor(0, null);
+
 		return successful;
 	}
 
