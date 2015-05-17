@@ -512,5 +512,5 @@ command.buildcraft.buildcraft.version.help=Displays the current and latest BC ve
 command.buildcraft.buildcraft.version.format=Format: /%s
 
 command.buildcraft.buildcraft.changelog.desc=- %s : Changelog
-command.buildcraft.buildcraft.changelog.help=Displays the latest BC chanelog.
+command.buildcraft.buildcraft.changelog.help=Displays the latest BC changelog.
 command.buildcraft.buildcraft.changelog.format=Format: /%s
