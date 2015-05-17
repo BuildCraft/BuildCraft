@@ -40,8 +40,12 @@ public class StripesHandlerShears implements IStripesHandler {
 				List<ItemStack> drops = shearableBlock.onSheared(stack, world, x, y, z,
 						EnchantmentHelper.getEnchantmentLevel(Enchantment.fortune.effectId, stack));
 				world.setBlockToAir(x, y, z);
-				stack.damageItem(1, player);
-				activator.sendItem(stack, direction.getOpposite());
+				if (stack.attemptDamageItem(1, player.getRNG())) {
+					stack.stackSize--;
+				}
+				if (stack.stackSize > 0) {
+					activator.sendItem(stack, direction.getOpposite());
+				}
 				for (ItemStack dropStack : drops) {
 					activator.sendItem(dropStack, direction.getOpposite());
 				}
