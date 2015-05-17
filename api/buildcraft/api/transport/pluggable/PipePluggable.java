@@ -56,6 +56,11 @@ public abstract class PipePluggable implements INBTStoreable, ISerializable {
 	@SideOnly(Side.CLIENT)
 	public abstract IPipePluggableRenderer getRenderer();
 
+	@SideOnly(Side.CLIENT)
+	public IPipePluggableDynamicRenderer getDynamicRenderer() {
+		return null;
+	}
+
 	public boolean requiresRenderUpdate(PipePluggable old) {
 		return true;
 	}

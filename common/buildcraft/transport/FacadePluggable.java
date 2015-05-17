@@ -3,19 +3,38 @@ package buildcraft.transport;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.api.core.render.ITextureStates;
+import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
+import buildcraft.transport.render.FacadeRenderHelper;
 
 public class FacadePluggable extends PipePluggable implements IFacadePluggable {
+	public static class FacadePluggableRenderer implements IPipePluggableRenderer {
+		public static final IPipePluggableRenderer INSTANCE = new FacadePluggableRenderer();
+		private static final float zFightOffset = 1 / 4096.0F;
+
+		private FacadePluggableRenderer() {
+
+		}
+
+		@Override
+		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, ForgeDirection side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
+			FacadeRenderHelper.pipeFacadeRenderer(renderblocks, blockStateMachine, pipe.getTile(), x, y, z, side, (IFacadePluggable) pipePluggable);
+		}
+	}
+
+
 	public ItemFacade.FacadeState[] states;
 	private ItemFacade.FacadeState activeState;
 
@@ -113,7 +132,7 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
 
 	@Override
 	public IPipePluggableRenderer getRenderer() {
-		return null;
+		return FacadePluggableRenderer.INSTANCE;
 	}
 
 	@Override

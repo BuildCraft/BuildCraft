@@ -14,15 +14,30 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
+import buildcraft.api.transport.pluggable.IPipePluggableDynamicRenderer;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.Gate;
 import buildcraft.transport.TileGenericPipe;
+import buildcraft.transport.render.PipeRendererTESR;
 
 public class GatePluggable extends PipePluggable {
+	private static class GatePluggableRenderer implements IPipePluggableDynamicRenderer {
+		public static final IPipePluggableDynamicRenderer INSTANCE = new GatePluggableRenderer();
+
+		private GatePluggableRenderer() {
+
+		}
+
+		@Override
+		public void renderPluggable(IPipe pipe, ForgeDirection side, PipePluggable pipePluggable, double x, double y, double z) {
+			PipeRendererTESR.renderGate(x, y, z, (GatePluggable) pipePluggable, side);
+		}
+	}
 	public GateDefinition.GateMaterial material;
 	public GateDefinition.GateLogic logic;
 	public IGateExpansion[] expansions;
@@ -211,10 +226,14 @@ public class GatePluggable extends PipePluggable {
 		return AxisAlignedBB.getBoundingBox(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
 	}
 
-	// TODO: Port Gates to the Pluggable render system
 	@Override
 	public IPipePluggableRenderer getRenderer() {
 		return null;
+	}
+
+	@Override
+	public IPipePluggableDynamicRenderer getDynamicRenderer() {
+		return GatePluggableRenderer.INSTANCE;
 	}
 
 	public float getPulseStage() {

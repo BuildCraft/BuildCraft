@@ -28,8 +28,13 @@ public class LensPluggable extends PipePluggable {
 	protected IPipeTile container;
 	private ForgeDirection side;
 
-	public class LensPluggableRenderer implements IPipePluggableRenderer {
+	private static class LensPluggableRenderer implements IPipePluggableRenderer {
+		public static final IPipePluggableRenderer INSTANCE = new LensPluggableRenderer();
 		private static final float zFightOffset = 1 / 4096.0F;
+
+		private LensPluggableRenderer() {
+
+		}
 
 		@Override
 		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, ForgeDirection side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
@@ -53,7 +58,7 @@ public class LensPluggable extends PipePluggable {
 				blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeLensOverlay.ordinal()));
 				((FakeBlock) blockStateMachine).setColor(ColorUtils.getRGBColor(15 - ((LensPluggable) pipePluggable).color));
 			} else {
-				if (isFilter) {
+				if (((LensPluggable) pipe).isFilter) {
 					blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeFilter.ordinal()));
 				} else {
 					blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeLens.ordinal()));
@@ -120,7 +125,7 @@ public class LensPluggable extends PipePluggable {
 
 	@Override
 	public IPipePluggableRenderer getRenderer() {
-		return new LensPluggableRenderer();
+		return LensPluggableRenderer.INSTANCE;
 	}
 
 	@Override

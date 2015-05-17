@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
@@ -36,6 +37,7 @@ import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.items.IItemCustomPipeRender;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
+import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.render.RenderEntityBlock;
 import buildcraft.core.lib.render.RenderEntityBlock.RenderInfo;
@@ -275,7 +277,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		}
 
 		renderGatesWires(pipe, x, y, z);
-		renderGates(pipe, x, y, z);
+		renderPluggables(pipe, x, y, z);
 
 		IPipeTile.PipeType pipeType = pipe.getPipeType();
 
@@ -456,20 +458,21 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();
 	}
 
-	private void renderGates(TileGenericPipe pipe, double x, double y, double z) {
+	private void renderPluggables(TileGenericPipe pipe, double x, double y, double z) {
+		TileEntityRendererDispatcher.instance.field_147553_e.bindTexture(TextureMap.locationBlocksTexture);
+
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			if (pipe.getPipePluggable(direction) instanceof GatePluggable) {
-				renderGate(pipe, x, y, z, (GatePluggable) pipe.getPipePluggable(direction), direction);
+			PipePluggable pluggable = pipe.getPipePluggable(direction);
+			if (pluggable != null && pluggable.getDynamicRenderer() != null) {
+				pluggable.getDynamicRenderer().renderPluggable(pipe.getPipe(), direction, pluggable, x, y, z);
 			}
 		}
 	}
 
-	private void renderGate(TileGenericPipe pipe, double x, double y, double z, GatePluggable gate, ForgeDirection direction) {
+	public static void renderGate(double x, double y, double z, GatePluggable gate, ForgeDirection direction) {
 		GL11.glPushMatrix();
 		GL11.glColor3f(1, 1, 1);
 		GL11.glTranslatef((float) x, (float) y, (float) z);
-
-		bindTexture(TextureMap.locationBlocksTexture);
 
 		IIcon lightIcon;
 		IIcon gateIcon = gate.getLogic().getGateIcon();
@@ -482,8 +485,8 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		float translateCenter = 0;
 
 		// Render base gate
-		renderGate(pipe, gateIcon, 0, 0.1F, 0, 0, direction, false);
-		renderGate(pipe, lightIcon, 0, 0.1F, 0, 0, direction, gate.isLit);
+		renderGate(gateIcon, 0, 0.1F, 0, 0, direction, false);
+		renderGate(lightIcon, 0, 0.1F, 0, 0, direction, gate.isLit);
 
 		float pulseStage = gate.getPulseStage() * 2F;
 
@@ -498,23 +501,23 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				translateCenter = amplitude - ((pulseStage - 1F) * amplitude) + start;
 			}
 
-			renderGate(pipe, gateIcon, 0, 0.13F, translateCenter, translateCenter, direction, false);
-			renderGate(pipe, lightIcon, 0, 0.13F, translateCenter, translateCenter, direction, gate.isLit);
+			renderGate(gateIcon, 0, 0.13F, translateCenter, translateCenter, direction, false);
+			renderGate(lightIcon, 0, 0.13F, translateCenter, translateCenter, direction, gate.isLit);
 		}
 
 		IIcon materialIcon = gate.getMaterial().getIconBlock();
 		if (materialIcon != null) {
-			renderGate(pipe, materialIcon, 1, 0.13F, translateCenter, translateCenter, direction, false);
+			renderGate(materialIcon, 1, 0.13F, translateCenter, translateCenter, direction, false);
 		}
 
 		for (IGateExpansion expansion : gate.getExpansions()) {
-			renderGate(pipe, expansion.getOverlayBlock(), 2, 0.13F, translateCenter, translateCenter, direction, false);
+			renderGate(expansion.getOverlayBlock(), 2, 0.13F, translateCenter, translateCenter, direction, false);
 		}
 
 		GL11.glPopMatrix();
 	}
 
-	private void renderGate(TileGenericPipe tile, IIcon icon, int layer, float trim, float translateCenter, float extraDepth, ForgeDirection direction, boolean isLit) {
+	private static void renderGate(IIcon icon, int layer, float trim, float translateCenter, float extraDepth, ForgeDirection direction, boolean isLit) {
 		RenderInfo renderBox = new RenderInfo();
 		renderBox.texture = icon;
 
@@ -551,7 +554,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();
 	}
 	
-	private void renderLitBox(RenderInfo info, boolean isLit) {
+	private static void renderLitBox(RenderInfo info, boolean isLit) {
 		RenderEntityBlock.INSTANCE.renderBlock(info);
 
 		float lastX = OpenGlHelper.lastBrightnessX;

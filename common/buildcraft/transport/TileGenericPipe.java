@@ -799,7 +799,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		return pluggable.isBlocking(this, side);
 	}
 
-	private void computeConnections() {
+	protected void computeConnections() {
 		TileBuffer[] cache = getTileCache();
 		if (cache == null) {
 			return;
@@ -941,7 +941,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		return true;
 	}
 
-	private void updateCoreState() {
+	protected void updateCoreState() {
 	}
 
 	public boolean hasEnabledFacade(ForgeDirection direction) {

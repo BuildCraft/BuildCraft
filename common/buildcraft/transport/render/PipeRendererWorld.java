@@ -19,7 +19,6 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IIconProvider;
-import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
@@ -155,10 +154,6 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 		renderblocks.setRenderBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 
-		// Facade renderer handles rendering in both passes
-		pipeFacadeRenderer(renderblocks, fakeBlock, tile, state, x, y, z);
-		//block.setRenderAllSides();//Start fresh
-
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 			if (tile.hasPipePluggable(dir)) {
 				PipePluggable p = tile.getPipePluggable(dir);
@@ -205,10 +200,6 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		stateHost.setRenderMask((mask & 0x15) << 1 | (mask & 0x2a) >> 1); // pairwise swapped mask
 		renderblocks.setRenderBounds(dim[5], dim[3], dim[4], dim[2], dim[0], dim[1]);
 		renderblocks.renderStandardBlock(stateHost, x, y, z);
-	}
-
-	private void pipeFacadeRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, TileGenericPipe tile, PipeRenderState state, int x, int y, int z) {
-		FacadeRenderHelper.pipeFacadeRenderer(renderblocks, blockStateMachine, tile, state, x, y, z);
 	}
 
 	@Override
