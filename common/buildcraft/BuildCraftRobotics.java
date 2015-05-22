@@ -18,6 +18,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
+
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -30,6 +31,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -110,6 +112,7 @@ import buildcraft.robotics.boards.BoardRobotButcher;
 import buildcraft.robotics.boards.BoardRobotCarrier;
 import buildcraft.robotics.boards.BoardRobotCrafter;
 import buildcraft.robotics.boards.BoardRobotDelivery;
+import buildcraft.robotics.boards.BoardRobotEmpty;
 import buildcraft.robotics.boards.BoardRobotFarmer;
 import buildcraft.robotics.boards.BoardRobotFluidCarrier;
 import buildcraft.robotics.boards.BoardRobotHarvester;
@@ -122,6 +125,7 @@ import buildcraft.robotics.boards.BoardRobotPlanter;
 import buildcraft.robotics.boards.BoardRobotPump;
 import buildcraft.robotics.boards.BoardRobotShovelman;
 import buildcraft.robotics.boards.BoardRobotStripes;
+import buildcraft.robotics.boards.RedstoneBoardRobotEmptyNBT;
 import buildcraft.robotics.map.MapManager;
 import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.robotics.statements.ActionRobotFilterTool;
@@ -214,6 +218,8 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
 		RedstoneBoardRegistry.instance = new ImplRedstoneBoardRegistry();
 
+		RedstoneBoardRegistry.instance.setEmptyRobotBoard(RedstoneBoardRobotEmptyNBT.instance);
+
 		// Cheapest, dumbest robot types
 		// Those generally do very simple tasks
 		RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:boardRobotPicker", "picker", BoardRobotPicker.class, "green"), 8000);
@@ -270,6 +276,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
 		RobotManager.registryProvider = new RobotRegistryProvider();
 
 		RobotManager.registerAIRobot(AIRobotMain.class, "aiRobotMain", "buildcraft.core.robots.AIRobotMain");
+		RobotManager.registerAIRobot(BoardRobotEmpty.class, "boardRobotEmpty");
 		RobotManager.registerAIRobot(BoardRobotBomber.class, "boardRobotBomber", "buildcraft.core.robots.boards.BoardRobotBomber");
 		if (Loader.isModLoaded("BuildCraft|Builders")) {
 			RobotManager.registerAIRobot(BoardRobotBuilder.class, "boardRobotBuilder", "buildcraft.core.robots.boards.BoardRobotBuilder");

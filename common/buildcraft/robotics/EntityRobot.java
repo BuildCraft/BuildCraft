@@ -49,7 +49,6 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.BuildCraftRobotics;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobot;
@@ -71,7 +70,6 @@ import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.robotics.ai.AIRobotMain;
 import buildcraft.robotics.ai.AIRobotShutdown;
@@ -95,7 +93,6 @@ public class EntityRobot extends EntityRobotBase implements
 
 	public boolean isDocked = false;
 
-	public NBTTagCompound originalBoardNBT;
 	public RedstoneBoardRobot board;
 	public AIRobotMain mainAI;
 
@@ -135,11 +132,10 @@ public class EntityRobot extends EntityRobotBase implements
 	private int steamDy = -1;
 	private int steamDz = 0;
 
-	public EntityRobot(World world, NBTTagCompound boardNBT) {
+	public EntityRobot(World world, RedstoneBoardRobotNBT boardNBT) {
 		this(world);
 
-		originalBoardNBT = boardNBT;
-		board = (RedstoneBoardRobot) RedstoneBoardRegistry.instance.getRedstoneBoard(boardNBT).create(boardNBT, this);
+		board = boardNBT.create(this);
 		dataWatcher.updateObject(16, board.getNBTHandler().getID());
 
 		if (!world.isRemote) {
@@ -506,8 +502,6 @@ public class EntityRobot extends EntityRobotBase implements
 			nbt.setTag("wearables", wearableList);
 		}
 
-		nbt.setTag("originalBoardNBT", originalBoardNBT);
-
 		NBTTagCompound ai = new NBTTagCompound();
 		mainAI.writeToNBT(ai);
 		nbt.setTag("mainAI", ai);
@@ -567,8 +561,6 @@ public class EntityRobot extends EntityRobotBase implements
 			inv[i] = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("inv[" + i + "]"));
 		}
 
-		originalBoardNBT = nbt.getCompoundTag("originalBoardNBT");
-
 		NBTTagCompound ai = nbt.getCompoundTag("mainAI");
 		mainAI = (AIRobotMain) AIRobot.loadAI(ai, this);
 
@@ -576,6 +568,10 @@ public class EntityRobot extends EntityRobotBase implements
 			board = (RedstoneBoardRobot) AIRobot.loadAI(nbt.getCompoundTag("board"), this);
 		} else {
 			board = (RedstoneBoardRobot) mainAI.getDelegateAI();
+		}
+
+		if (board == null) {
+			board = RedstoneBoardRegistry.instance.getEmptyRobotBoard().create(this);
 		}
 
 		dataWatcher.updateObject(16, board.getNBTHandler().getID());
@@ -1088,10 +1084,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 	private List<ItemStack> getDrops() {
 		List<ItemStack> drops = new ArrayList<ItemStack>();
-		ItemStack robotStack = new ItemStack(BuildCraftRobotics.robotItem);
-		NBTUtils.getItemData(robotStack).setTag("board", originalBoardNBT);
-		NBTUtils.getItemData(robotStack).setInteger("energy", battery.getEnergyStored());
-		drops.add(robotStack);
+		drops.add(ItemRobot.createRobotStack(board.getNBTHandler(), battery.getEnergyStored()));
 		if (itemInUse != null) {
 			drops.add(itemInUse);
 		}

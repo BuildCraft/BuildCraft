@@ -62,7 +62,7 @@ public class BCBoardNBT extends RedstoneBoardRobotNBT {
 	}
 
 	@Override
-	public RedstoneBoardRobot create(NBTTagCompound nbt, EntityRobotBase robot) {
+	public RedstoneBoardRobot create(EntityRobotBase robot) {
 		try {
 			return boardInit.newInstance(robot);
 		} catch (Exception e) {
