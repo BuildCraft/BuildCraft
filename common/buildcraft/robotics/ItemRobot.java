@@ -46,11 +46,14 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
 
 	public EntityRobot createRobot(ItemStack stack, World world) {
 		try {
-			NBTTagCompound nbt = NBTUtils.getItemData(stack);
+			NBTTagCompound nbt = getNBT(stack);
 
-			NBTTagCompound boardCpt = nbt.getCompoundTag("board");
-			EntityRobot robot = new EntityRobot(world, boardCpt);
-			robot.getBattery().setEnergy(nbt.getInteger("energy"));
+			RedstoneBoardRobotNBT robotNBT = getRobotNBT(nbt);
+			if (robotNBT == RedstoneBoardRegistry.instance.getEmptyRobotBoard()) {
+				return null;
+			}
+			EntityRobot robot = new EntityRobot(world, robotNBT);
+			robot.getBattery().setEnergy(getEnergy(nbt));
 
 			return robot;
 		} catch (Throwable e) {
@@ -59,47 +62,27 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
 		}
 	}
 
-	public static RedstoneBoardNBT getRobotNBT(ItemStack stack) {
-		try {
-			NBTTagCompound nbt = NBTUtils.getItemData(stack);
+	public static RedstoneBoardRobotNBT getRobotNBT(ItemStack stack) {
+		return getRobotNBT(getNBT(stack));
+	}
 
-			NBTTagCompound boardCpt = nbt.getCompoundTag("board");
-			return RedstoneBoardRegistry.instance.getRedstoneBoard(boardCpt);
-		} catch (Throwable e) {
-			e.printStackTrace();
-			return null;
-		}
+	public static int getEnergy(ItemStack stack) {
+		return getEnergy(getNBT(stack));
 	}
 
 	public ResourceLocation getTextureRobot(ItemStack stack) {
-		NBTTagCompound nbt = NBTUtils.getItemData(stack);
-
-		if (!nbt.hasKey("board")) {
-			return EntityRobot.ROBOT_BASE;
-		} else {
-			NBTTagCompound board = nbt.getCompoundTag("board");
-			RedstoneBoardNBT<?> boardNBT = RedstoneBoardRegistry.instance.getRedstoneBoard(board);
-
-			if (boardNBT instanceof RedstoneBoardRobotNBT) {
-				return ((RedstoneBoardRobotNBT) boardNBT).getRobotTexture();
-			} else {
-				return EntityRobot.ROBOT_BASE;
-			}
-		}
+		return getRobotNBT(stack).getRobotTexture();
 	}
 
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
-		NBTTagCompound cpt = NBTUtils.getItemData(stack).getCompoundTag("board");
+		NBTTagCompound cpt = getNBT(stack);
+		RedstoneBoardRobotNBT boardNBT = getRobotNBT(cpt);
 
-		if (cpt.hasKey("id") && !"<unknown>".equals(cpt.getString("id"))) {
-			RedstoneBoardNBT<?> nbt = RedstoneBoardRegistry.instance.getRedstoneBoard(cpt);
+		if (boardNBT != RedstoneBoardRegistry.instance.getEmptyRobotBoard()) {
+			boardNBT.addInformation(stack, player, list, advanced);
 
-			if (nbt != null) {
-				nbt.addInformation(stack, player, list, advanced);
-			}
-
-			int energy = NBTUtils.getItemData(stack).getInteger("energy");
+			int energy = getEnergy(cpt);
 			int pct = energy * 100 / EntityRobotBase.MAX_ENERGY;
 			String enInfo = pct + "% Charged";
 			if (energy == EntityRobotBase.MAX_ENERGY) {
@@ -118,12 +101,16 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
 	}
 
 	public static ItemStack createRobotStack(ItemStack board, int energy) {
-		ItemStack robot = new ItemStack(BuildCraftRobotics.robotItem);
-		if (board != null) {
-			NBTUtils.getItemData(robot).setTag("board", NBTUtils.getItemData(board));
-			NBTUtils.getItemData(robot).setInteger("energy", energy);
-		}
+		return createRobotStack((RedstoneBoardRobotNBT) ItemRedstoneBoard.getBoardNBT(board),
+				energy);
+	}
 
+	public static ItemStack createRobotStack(RedstoneBoardRobotNBT board, int energy) {
+		ItemStack robot = new ItemStack(BuildCraftRobotics.robotItem);
+		NBTTagCompound boardCpt = new NBTTagCompound();
+		board.createBoard(boardCpt);
+		NBTUtils.getItemData(robot).setTag("board", boardCpt);
+		NBTUtils.getItemData(robot).setInteger("energy", energy);
 		return robot;
 	}
 
@@ -131,58 +118,53 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(Item item, CreativeTabs par2CreativeTabs, List itemList) {
-		itemList.add(new ItemStack(BuildCraftRobotics.robotItem));
+		itemList.add(createRobotStack(RedstoneBoardRegistry.instance.getEmptyRobotBoard(), 0));
 
-		for (RedstoneBoardNBT nbt : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
-			ItemStack boardStack = new ItemStack(BuildCraftRobotics.redstoneBoard);
-			NBTTagCompound nbtData = NBTUtils.getItemData(boardStack);
-			nbt.createBoard(nbtData);
-
-			ItemStack robotStack = createRobotStack(boardStack, 0);
-			itemList.add(robotStack.copy());
-
-			robotStack = createRobotStack(boardStack, EntityRobotBase.MAX_ENERGY);
-			itemList.add(robotStack.copy());
+		for (RedstoneBoardNBT boardNBT : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
+			if (boardNBT instanceof RedstoneBoardRobotNBT) {
+				RedstoneBoardRobotNBT robotNBT = (RedstoneBoardRobotNBT) boardNBT;
+				itemList.add(createRobotStack(robotNBT, 0));
+				itemList.add(createRobotStack(robotNBT, EntityRobotBase.MAX_ENERGY));
+			}
 		}
 	}
 
 	@Override
 	public int receiveEnergy(ItemStack container, int maxReceive, boolean simulate) {
-		if (!container.hasTagCompound()) {
+		NBTTagCompound cpt = getNBT(container);
+		if (getRobotNBT(cpt) == RedstoneBoardRegistry.instance.getEmptyRobotBoard()) {
 			return 0;
 		}
-		int currentEnergy = container.getTagCompound().getInteger("energy");
+		int currentEnergy = getEnergy(cpt);
 		int energyReceived = Math.min(EntityRobotBase.MAX_ENERGY - currentEnergy, maxReceive);
 		if (!simulate) {
-			container.getTagCompound().setInteger("energy", currentEnergy + energyReceived);
+			setEnergy(cpt, currentEnergy + energyReceived);
 		}
 		return energyReceived;
 	}
 
 	@Override
 	public int extractEnergy(ItemStack container, int maxExtract, boolean simulate) {
-		if (!container.hasTagCompound()) {
+		NBTTagCompound cpt = getNBT(container);
+		if (getRobotNBT(cpt) == RedstoneBoardRegistry.instance.getEmptyRobotBoard()) {
 			return 0;
 		}
-		int currentEnergy = container.getTagCompound().getInteger("energy");
+		int currentEnergy = getEnergy(cpt);
 		int energyExtracted = Math.min(currentEnergy, maxExtract);
 		if (!simulate) {
-			container.getTagCompound().setInteger("energy", currentEnergy - energyExtracted);
+			setEnergy(cpt, currentEnergy - energyExtracted);
 		}
 		return energyExtracted;
 	}
 
 	@Override
 	public int getEnergyStored(ItemStack container) {
-		if (!container.hasTagCompound()) {
-			return 0;
-		}
-		return container.getTagCompound().getInteger("energy");
+		return getEnergy(container);
 	}
 
 	@Override
 	public int getMaxEnergyStored(ItemStack container) {
-		if (!container.hasTagCompound()) {
+		if (getRobotNBT(container) == RedstoneBoardRegistry.instance.getEmptyRobotBoard()) {
 			return 0;
 		}
 		return EntityRobotBase.MAX_ENERGY;
@@ -210,10 +192,11 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
 				DockingStation station = pluggable.getStation();
 
 				if (!station.isTaken()) {
-					if (ItemRobot.getRobotNBT(currentItem) == null) {
+					RedstoneBoardRobotNBT robotNBT = ItemRobot.getRobotNBT(currentItem);
+					if (robotNBT == RedstoneBoardRegistry.instance.getEmptyRobotBoard()) {
 						return true;
 					}
-					RobotPlacementEvent robotEvent = new RobotPlacementEvent(player, ((NBTTagCompound) currentItem.stackTagCompound.getTag("board")).getString("id"));
+					RobotPlacementEvent robotEvent = new RobotPlacementEvent(player, robotNBT.getID());
 					FMLCommonHandler.instance().bus().post(robotEvent);
 					if (robotEvent.isCanceled()) {
 						return true;
@@ -243,5 +226,26 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
 			}
 		}
 		return false;
+	}
+
+	private static NBTTagCompound getNBT(ItemStack stack) {
+		NBTTagCompound cpt = NBTUtils.getItemData(stack);
+		if (!cpt.hasKey("board")) {
+			RedstoneBoardRegistry.instance.getEmptyRobotBoard().createBoard(cpt);
+		}
+		return cpt;
+	}
+
+	private static RedstoneBoardRobotNBT getRobotNBT(NBTTagCompound cpt) {
+		NBTTagCompound boardCpt = cpt.getCompoundTag("board");
+		return (RedstoneBoardRobotNBT) RedstoneBoardRegistry.instance.getRedstoneBoard(boardCpt);
+	}
+
+	private static int getEnergy(NBTTagCompound cpt) {
+		return cpt.getInteger("energy");
+	}
+
+	private static void setEnergy(NBTTagCompound cpt, int energy) {
+		cpt.setInteger("energy", energy);
 	}
 }

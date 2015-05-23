@@ -16,7 +16,11 @@ import buildcraft.api.robots.EntityRobotBase;
 public abstract class RedstoneBoardRobotNBT extends RedstoneBoardNBT<EntityRobotBase> {
 
 	@Override
-	public abstract RedstoneBoardRobot create(NBTTagCompound nbt, EntityRobotBase robot);
+	public RedstoneBoardRobot create(NBTTagCompound nbt, EntityRobotBase robot) {
+		return create(robot);
+	}
+
+	public abstract RedstoneBoardRobot create(EntityRobotBase robot);
 
 	public abstract ResourceLocation getRobotTexture();
 

@@ -15,8 +15,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -34,65 +34,57 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 
 	@Override
 	public int getItemStackLimit(ItemStack stack) {
-		return NBTUtils.getItemData(stack).hasKey("id") ? 1 : 16;
+		return getBoardNBT(stack) != RedstoneBoardRegistry.instance.getEmptyRobotBoard() ? 1 : 16;
 	}
 
 	@Override
 	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
-		NBTTagCompound cpt = NBTUtils.getItemData(stack);
-
-		if (cpt.hasKey("id") && !"<unknown>".equals(cpt.getString("id"))) {
-			RedstoneBoardNBT board = RedstoneBoardRegistry.instance.getRedstoneBoard(cpt);
-			if (board != null) {
-				board.addInformation(stack, player, list, advanced);
-			} else {
-				list.add(EnumChatFormatting.BOLD + "Corrupt board!");
-			}
-		}
+		RedstoneBoardNBT board = getBoardNBT(stack);
+		board.addInformation(stack, player, list, advanced);
 	}
 
 	@Override
 	public IIcon getIconIndex(ItemStack stack) {
-		NBTTagCompound cpt = NBTUtils.getItemData(stack);
-
-		if (!cpt.hasKey("id")) {
-			itemIcon = icons[0];
-		} else if ("<unknown>".equals(cpt.getString("id"))) {
-			itemIcon = icons[1];
-		} else {
-			RedstoneBoardNBT board = RedstoneBoardRegistry.instance.getRedstoneBoard(cpt);
-			if (board != null) {
-				itemIcon = board.getIcon(cpt);
-			} else {
-				itemIcon = icons[1];
-			}
-		}
-
-		return itemIcon;
+		NBTTagCompound cpt = getNBT(stack);
+		return getBoardNBT(cpt).getIcon(cpt);
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public String[] getIconNames() {
-		return new String[]{ "board/clean", "board/unknown" };
+		return new String[] {"board/clean"};
 	}
-
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(Item item, CreativeTabs par2CreativeTabs, List itemList) {
-		ItemStack stack = new ItemStack(BuildCraftRobotics.redstoneBoard);
-		itemList.add(stack);
-		for (RedstoneBoardNBT nbt : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
-			stack = new ItemStack(BuildCraftRobotics.redstoneBoard);
-			NBTTagCompound nbtData = NBTUtils.getItemData(stack);
-			nbt.createBoard(nbtData);
-			itemList.add(stack.copy());
+		itemList.add(createStack(RedstoneBoardRegistry.instance.getEmptyRobotBoard()));
+		for (RedstoneBoardNBT boardNBT : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
+			itemList.add(createStack(boardNBT));
 		}
 	}
 
-	public static boolean isClean(ItemStack stack) {
-		return !stack.hasTagCompound() || !stack.getTagCompound().hasKey("id");
+	public static ItemStack createStack(RedstoneBoardNBT boardNBT) {
+		ItemStack stack = new ItemStack(BuildCraftRobotics.redstoneBoard);
+		NBTTagCompound nbtData = NBTUtils.getItemData(stack);
+		boardNBT.createBoard(nbtData);
+		return stack;
+	}
+
+	public static RedstoneBoardNBT getBoardNBT(ItemStack stack) {
+		return getBoardNBT(getNBT(stack));
+	}
+
+	private static NBTTagCompound getNBT(ItemStack stack) {
+		NBTTagCompound cpt = NBTUtils.getItemData(stack);
+		if (!cpt.hasKey("id")) {
+			RedstoneBoardRegistry.instance.getEmptyRobotBoard().createBoard(cpt);
+		}
+		return cpt;
+	}
+
+	private static RedstoneBoardNBT getBoardNBT(NBTTagCompound cpt) {
+		return RedstoneBoardRegistry.instance.getRedstoneBoard(cpt);
 	}
 }

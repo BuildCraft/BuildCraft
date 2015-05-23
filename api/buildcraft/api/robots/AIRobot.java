@@ -191,12 +191,14 @@ public class AIRobot {
 				} else {
 					aiRobotClass = RobotManager.getAIRobotByName(sub.getString("aiName"));
 				}
-				delegateAI = (AIRobot) aiRobotClass.getConstructor(EntityRobotBase.class)
-						.newInstance(robot);
+				if (aiRobotClass != null) {
+					delegateAI = (AIRobot) aiRobotClass.getConstructor(EntityRobotBase.class)
+							.newInstance(robot);
 
-				if (delegateAI.canLoadFromNBT()) {
-					delegateAI.parentAI = this;
-					delegateAI.loadFromNBT(sub);
+					if (delegateAI.canLoadFromNBT()) {
+						delegateAI.parentAI = this;
+						delegateAI.loadFromNBT(sub);
+					}
 				}
 			} catch (Throwable e) {
 				e.printStackTrace();
@@ -215,9 +217,11 @@ public class AIRobot {
 			} else {
 				aiRobotClass = RobotManager.getAIRobotByName(nbt.getString("aiName"));
 			}
-			ai = (AIRobot) aiRobotClass.getConstructor(EntityRobotBase.class)
-					.newInstance(robot);
-			ai.loadFromNBT(nbt);
+			if (aiRobotClass != null) {
+				ai = (AIRobot) aiRobotClass.getConstructor(EntityRobotBase.class)
+						.newInstance(robot);
+				ai.loadFromNBT(nbt);
+			}
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}

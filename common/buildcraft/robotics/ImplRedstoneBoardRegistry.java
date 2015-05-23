@@ -18,6 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.BuildCraftRobotics;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
+import buildcraft.api.boards.RedstoneBoardRobotNBT;
 
 public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 	private static class BoardFactory {
@@ -26,6 +27,7 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 	}
 
 	private HashMap<String, BoardFactory> boards = new HashMap<String, BoardFactory>();
+	private RedstoneBoardRobotNBT emptyRobotBoardNBT;
 
 	@Override
 	public void registerBoardType(RedstoneBoardNBT<?> redstoneBoardNBT, int energyCost) {
@@ -46,6 +48,16 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 	}
 
 	@Override
+	public void setEmptyRobotBoard(RedstoneBoardRobotNBT redstoneBoardNBT) {
+		emptyRobotBoardNBT = redstoneBoardNBT;
+	}
+
+	@Override
+	public RedstoneBoardRobotNBT getEmptyRobotBoard() {
+		return emptyRobotBoardNBT;
+	}
+
+	@Override
 	public RedstoneBoardNBT<?> getRedstoneBoard(NBTTagCompound nbt) {
 		return getRedstoneBoard(nbt.getString("id"));
 	}
@@ -57,12 +69,13 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 		if (factory != null) {
 			return factory.boardNBT;
 		} else {
-			return null;
+			return emptyRobotBoardNBT;
 		}
 	}
 
 	@Override
 	public void registerIcons(IIconRegister par1IconRegister) {
+		emptyRobotBoardNBT.registerIcons(par1IconRegister);
 		for (BoardFactory f : boards.values()) {
 			f.boardNBT.registerIcons(par1IconRegister);
 		}
@@ -83,4 +96,5 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
 	public int getEnergyCost(RedstoneBoardNBT<?> board) {
 		return boards.get(board.getID()).energyCost;
 	}
+
 }

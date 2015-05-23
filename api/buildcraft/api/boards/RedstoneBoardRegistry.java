@@ -32,6 +32,10 @@ public abstract class RedstoneBoardRegistry {
 	 */
 	public abstract void registerBoardClass(RedstoneBoardNBT<?> redstoneBoardNBT, float probability);
 
+	public abstract void setEmptyRobotBoard(RedstoneBoardRobotNBT redstoneBoardNBT);
+
+	public abstract RedstoneBoardRobotNBT getEmptyRobotBoard();
+
 	public abstract RedstoneBoardNBT getRedstoneBoard(NBTTagCompound nbt);
 
 	public abstract RedstoneBoardNBT<?> getRedstoneBoard(String id);
