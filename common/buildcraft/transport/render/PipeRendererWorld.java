@@ -200,6 +200,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		stateHost.setRenderMask((mask & 0x15) << 1 | (mask & 0x2a) >> 1); // pairwise swapped mask
 		renderblocks.setRenderBounds(dim[5], dim[3], dim[4], dim[2], dim[0], dim[1]);
 		renderblocks.renderStandardBlock(stateHost, x, y, z);
+		stateHost.setRenderAllSides();
 	}
 
 	@Override

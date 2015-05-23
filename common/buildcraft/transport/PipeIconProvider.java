@@ -137,13 +137,14 @@ public class PipeIconProvider implements IIconProvider {
 		PipeLens("pipeLens"),
 		PipeFilter("pipeFilter"),
 		PipeLensOverlay("pipeLensOverlay"),
+		PipePlug("pipePlug"),
 		//
 		TransparentFacade("transparent_facade"),
 		Transparent("core:misc/transparent"),
 		//
-		PipePowerAdapterTop("pipePowerAdapterTop"),
+		/* PipePowerAdapterTop("pipePowerAdapterTop"),
 		PipePowerAdapterSide("pipePowerAdapterSide"),
-		PipePowerAdapterBottom("pipePowerAdapterBottom"),
+		PipePowerAdapterBottom("pipePowerAdapterBottom"), */
 		//
 		ItemBox("itemBox");
 		public static final TYPE[] VALUES = values();

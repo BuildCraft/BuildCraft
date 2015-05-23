@@ -33,47 +33,6 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 	public class RobotStationPluggableRenderer implements IPipePluggableRenderer {
 		private float zFightOffset = 1 / 4096.0F;
 
-		private void robotStationPartRender(RenderBlocks renderblocks, RobotStationState state,
-												ForgeDirection side, ITextureStates blockStateMachine, int x, int y, int z,
-												float xStart, float xEnd, float yStart, float yEnd, float zStart,
-												float zEnd) {
-
-			float[][] zeroState = new float[3][2];
-			// X START - END
-			zeroState[0][0] = xStart + zFightOffset;
-			zeroState[0][1] = xEnd - zFightOffset;
-			// Y START - END
-			zeroState[1][0] = yStart;
-			zeroState[1][1] = yEnd;
-			// Z START - END
-			zeroState[2][0] = zStart + zFightOffset;
-			zeroState[2][1] = zEnd - zFightOffset;
-
-			switch (state) {
-				case None:
-				case Available:
-					blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider
-							.getIcon(PipeIconProvider.TYPE.PipeRobotStation.ordinal()));
-					break;
-				case Reserved:
-					blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider
-							.getIcon(PipeIconProvider.TYPE.PipeRobotStationReserved.ordinal()));
-					break;
-				case Linked:
-					blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider
-							.getIcon(PipeIconProvider.TYPE.PipeRobotStationLinked.ordinal()));
-					break;
-			}
-
-			float[][] rotated = MatrixTranformations.deepClone(zeroState);
-			MatrixTranformations.transform(rotated, side);
-
-			renderblocks.setRenderBounds(rotated[0][0], rotated[1][0],
-					rotated[2][0], rotated[0][1], rotated[1][1],
-					rotated[2][1]);
-			renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
-		}
-
 		@Override
 		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, ForgeDirection side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
 			if (renderPass != 0) {
@@ -81,47 +40,6 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 			}
 
 			RobotStationState state = ((RobotStationPluggable) pipePluggable).renderState;
-
-			//float width = 0.075F;
-
-			robotStationPartRender (renderblocks, state, side, blockStateMachine, x, y, z,
-					0.45F, 0.55F,
-					0.0F, 0.224F,
-					0.45F, 0.55F);
-
-
-		/*pipeRobotStationPartRender (renderblocks, block, state, x, y, z,
-				0.25F, 0.75F,
-				0.025F, 0.224F,
-				0.25F, 0.25F + width);
-
-		pipeRobotStationPartRender (renderblocks, block, state, x, y, z,
-				0.25F, 0.75F,
-				0.025F, 0.224F,
-				0.75F - width, 0.75F);
-
-		pipeRobotStationPartRender (renderblocks, block, state, x, y, z,
-				0.25F, 0.25F + width,
-				0.025F, 0.224F,
-				0.25F + width, 0.75F - width);
-
-		pipeRobotStationPartRender (renderblocks, block, state, x, y, z,
-				0.75F - width, 0.75F,
-				0.025F, 0.224F,
-				0.25F + width, 0.75F - width);*/
-
-			float[][] zeroState = new float[3][2];
-
-
-			// X START - END
-			zeroState[0][0] = 0.25F + zFightOffset;
-			zeroState[0][1] = 0.75F - zFightOffset;
-			// Y START - END
-			zeroState[1][0] = 0.225F;
-			zeroState[1][1] = 0.251F;
-			// Z START - END
-			zeroState[2][0] = 0.25F + zFightOffset;
-			zeroState[2][1] = 0.75F - zFightOffset;
 
 			switch(state) {
 				case None:
@@ -139,7 +57,37 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 					break;
 			}
 
+
+			float[][] zeroState = new float[3][2];
+			// X START - END
+			zeroState[0][0] = 0.4325F;
+			zeroState[0][1] = 0.5675F;
+			// Y START - END
+			zeroState[1][0] = 0F;
+			zeroState[1][1] = 0.1875F + zFightOffset;
+			// Z START - END
+			zeroState[2][0] = 0.4325F;
+			zeroState[2][1] = 0.5675F;
+
 			float[][] rotated = MatrixTranformations.deepClone(zeroState);
+			MatrixTranformations.transform(rotated, side);
+
+			renderblocks.setRenderBounds(rotated[0][0], rotated[1][0],
+					rotated[2][0], rotated[0][1], rotated[1][1],
+					rotated[2][1]);
+			renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
+
+			// X START - END
+			zeroState[0][0] = 0.25F;
+			zeroState[0][1] = 0.75F;
+			// Y START - END
+			zeroState[1][0] = 0.1875F;
+			zeroState[1][1] = 0.25F + zFightOffset;
+			// Z START - END
+			zeroState[2][0] = 0.25F;
+			zeroState[2][1] = 0.75F;
+
+			rotated = MatrixTranformations.deepClone(zeroState);
 			MatrixTranformations.transform(rotated, side);
 
 			renderblocks.setRenderBounds(rotated[0][0], rotated[1][0],
@@ -148,7 +96,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 			renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
 		}
 	}
-	public static enum RobotStationState {
+	public enum RobotStationState {
 		None,
 		Available,
 		Reserved,
