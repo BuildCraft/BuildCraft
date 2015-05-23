@@ -27,7 +27,7 @@ public class RobotIntegrationRecipe extends IntegrationRecipeBC {
 	@Override
 	public List<ItemStack> generateExampleInput() {
 		ArrayList<ItemStack> example = new ArrayList<ItemStack>();
-		example.add(ItemRobot.createRobotStack(null, 0));
+		example.add(ItemRobot.createRobotStack(RedstoneBoardRegistry.instance.getEmptyRobotBoard(), 0));
 		return example;
 	}
 
