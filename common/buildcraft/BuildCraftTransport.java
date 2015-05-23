@@ -261,6 +261,7 @@ public class BuildCraftTransport extends BuildCraftMod {
     public static IActionInternal[] actionValve = new IActionInternal[4];
 
     public static boolean debugPrintFacadeList = false;
+	public static boolean usePipeLoss = true;
 
 	public static float gateCostMultiplier = 1.0F;
 

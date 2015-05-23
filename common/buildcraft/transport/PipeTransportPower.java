@@ -44,17 +44,18 @@ import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
 
 public class PipeTransportPower extends PipeTransport implements IDebuggable {
-
 	public static final Map<Class<? extends Pipe<?>>, Integer> powerCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
+	public static final Map<Class<? extends Pipe<?>>, Float> powerResistances = new HashMap<Class<? extends Pipe<?>>, Float>();
 	
 	private static final int DISPLAY_SMOOTHING = 10;
 	private static final int OVERLOAD_TICKS = 60;
 
 	public short[] displayPower = new short[6];
 	public int[] nextPowerQuery = new int[6];
-	public int[] internalNextPower = new int[6];
+	public double[] internalNextPower = new double[6];
 	public int overload;
 	public int maxPower = 80;
+	public float powerResistance;
 
 	public int[] dbgEnergyInput = new int[6];
 	public int[] dbgEnergyOutput = new int[6];
@@ -70,7 +71,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	private int[] powerQuery = new int[6];
 
 	private long currentDate;
-	private int[] internalPower = new int[6];
+	private double[] internalPower = new double[6];
 
 	private SafeTimeTracker tracker = new SafeTimeTracker(2 * BuildCraftCore.updateFactor);
 
@@ -86,7 +87,12 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	}
 
 	public void initFromPipe(Class<? extends Pipe> pipeClass) {
-		maxPower = powerCapacities.get(pipeClass);
+		if (BuildCraftTransport.usePipeLoss) {
+			maxPower = 10240;
+			powerResistance = powerResistances.get(pipeClass);
+		} else {
+			maxPower = powerCapacities.get(pipeClass);
+		}
 	}
 
 	@Override
@@ -213,7 +219,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 					for (int j = 0; j < 6; ++j) {
 						if (j != i && powerQuery[j] > 0) {
 							Object ep = providers[j];
-							int watts = Math.min(Math.round(internalPower[i] * powerQuery[j] / totalPowerQuery), internalPower[i]);
+							double watts = Math.min(internalPower[i] * powerQuery[j] / totalPowerQuery, internalPower[i]);
 
 							if (ep instanceof IPipeTile) {
 								Pipe<?> nearbyPipe = (Pipe<?>) ((IPipeTile) ep).getPipe();
@@ -223,22 +229,25 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 										watts);
 								internalPower[i] -= watts;
 								dbgEnergyOutput[j] += watts;
-							} else if (ep instanceof IEnergyHandler) {
-								IEnergyHandler handler = (IEnergyHandler) ep;
-								if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
-									watts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
-											watts, false);
+							} else {
+								int iWatts = (int) watts;
+								if (ep instanceof IEnergyHandler) {
+									IEnergyHandler handler = (IEnergyHandler) ep;
+									if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
+										watts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
+												iWatts, false);
+									}
+									internalPower[i] -= iWatts;
+									dbgEnergyOutput[j] += iWatts;
+								} else if (ep instanceof IEnergyReceiver) {
+									IEnergyReceiver handler = (IEnergyReceiver) ep;
+									if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
+										watts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
+												iWatts, false);
+									}
+									internalPower[i] -= iWatts;
+									dbgEnergyOutput[j] += iWatts;
 								}
-								internalPower[i] -= watts;
-								dbgEnergyOutput[j] += watts;
-							} else if (ep instanceof IEnergyReceiver) {
-								IEnergyReceiver handler = (IEnergyReceiver) ep;
-								if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
-									watts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
-											watts, false);
-								}
-								internalPower[i] -= watts;
-								dbgEnergyOutput[j] += watts;
 							}
 
 							displayPower[j] += watts;
@@ -349,7 +358,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 			powerQuery = nextPowerQuery;
 			nextPowerQuery = new int[6];
 
-			int[] next = internalPower;
+			double[] next = internalPower;
 			internalPower = internalNextPower;
 			internalNextPower = next;
 		}
@@ -360,8 +369,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	 * All power input MUST go through designated input pipes, such as Wooden
 	 * Power Pipes or a subclass thereof.
 	 */
-	public int receiveEnergy(ForgeDirection from, int iVal) {
-		int val = iVal;
+	public double receiveEnergy(ForgeDirection from, double val) {
 		int side = from.ordinal();
 
 		step();
@@ -369,16 +377,21 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 		dbgEnergyOffered[side] += val;
 
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
-			int ret = ((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from, val);
+			double ret = ((IPipeTransportPowerHook) this.container.pipe).receiveEnergy(from, (int) val);
 			if (ret >= 0) {
 				return ret;
 			}
 		}
+
 		if (internalNextPower[side] > maxPower) {
 			return 0;
 		}
 
-		internalNextPower[side] += val;
+		if (BuildCraftTransport.usePipeLoss) {
+			internalNextPower[side] += val * (1.0F - powerResistance);
+		} else {
+			internalNextPower[side] += val;
+		}
 
 		if (internalNextPower[side] > maxPower) {
 			val -= internalNextPower[side] - maxPower;
@@ -428,8 +441,8 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 		for (int i = 0; i < 6; ++i) {
 			nbttagcompound.setInteger("powerQuery[" + i + "]", powerQuery[i]);
 			nbttagcompound.setInteger("nextPowerQuery[" + i + "]", nextPowerQuery[i]);
-			nbttagcompound.setInteger("internalPower[" + i + "]", internalPower[i]);
-			nbttagcompound.setInteger("internalNextPower[" + i + "]", internalNextPower[i]);
+			nbttagcompound.setDouble("internalPower[" + i + "]", internalPower[i]);
+			nbttagcompound.setDouble("internalNextPower[" + i + "]", internalNextPower[i]);
 		}
 	}
 
@@ -463,6 +476,16 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 		powerCapacities.put(PipePowerGold.class, 2560);
 		powerCapacities.put(PipePowerEmerald.class, 2560);
 		powerCapacities.put(PipePowerDiamond.class, 10240);
+
+		powerResistances.put(PipePowerCobblestone.class, 0.05F);
+		powerResistances.put(PipePowerStone.class, 0.025F);
+		powerResistances.put(PipePowerWood.class, 0.0F);
+		powerResistances.put(PipePowerSandstone.class, 0.0125F);
+		powerResistances.put(PipePowerQuartz.class, 0.0125F);
+		powerResistances.put(PipePowerIron.class, 0.0125F);
+		powerResistances.put(PipePowerGold.class, 0.003125F);
+		powerResistances.put(PipePowerEmerald.class, 0.0F);
+		powerResistances.put(PipePowerDiamond.class, 0.0F);
 	}
 
 	@Override

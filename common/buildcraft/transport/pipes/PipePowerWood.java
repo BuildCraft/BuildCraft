@@ -34,7 +34,6 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 
 public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTransportPowerHook, IEnergyHandler, IRedstoneEngineReceiver, IDebuggable {
-
 	public final boolean[] powerSources = new boolean[6];
 
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipePowerWood_Standard.ordinal();
@@ -144,7 +143,8 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 					continue;
 				}
 
-				battery.setEnergy(battery.getEnergyStored() - transport.receiveEnergy(o, energyToRemove));
+				// PipePowerWood's resistance is 0, so this is fine.
+				battery.setEnergy(battery.getEnergyStored() - (int) transport.receiveEnergy(o, energyToRemove));
 			}
 		}
 

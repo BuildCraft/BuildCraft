@@ -18,6 +18,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.BuildCraftTransport;
 import buildcraft.core.lib.utils.StringUtils;
 
 @SideOnly(Side.CLIENT)
@@ -26,7 +27,7 @@ public final class PipeToolTipManager {
 	private static final Map<Class<? extends Pipe<?>>, String> toolTips = new HashMap<Class<? extends Pipe<?>>, String>();
 
 	static {
-		if (!BuildCraftCore.hidePowerNumbers) {
+		if (!BuildCraftCore.hidePowerNumbers && !BuildCraftTransport.usePipeLoss) {
 			for (Map.Entry<Class<? extends Pipe<?>>, Integer> pipe : PipeTransportPower.powerCapacities.entrySet()) {
 				PipeToolTipManager.addToolTip(pipe.getKey(), String.format("%d RF/t", pipe.getValue()));
 			}
