@@ -51,14 +51,18 @@ public class LensPluggable extends PipePluggable {
 			zeroState[2][1] = 0.8125F;
 
 			if (renderPass == 1) {
+				blockStateMachine.setRenderMask(1 << side.ordinal() | (1 << (side.ordinal() ^ 1)));
+
 				for (int i = 0; i < 3; i++) {
 					zeroState[i][0] += zFightOffset;
 					zeroState[i][1] -= zFightOffset;
 				}
 				blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeLensOverlay.ordinal()));
 				((FakeBlock) blockStateMachine).setColor(ColorUtils.getRGBColor(15 - ((LensPluggable) pipePluggable).color));
+
+				blockStateMachine.setRenderAllSides();
 			} else {
-				if (((LensPluggable) pipe).isFilter) {
+				if (((LensPluggable) pipePluggable).isFilter) {
 					blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeFilter.ordinal()));
 				} else {
 					blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeLens.ordinal()));

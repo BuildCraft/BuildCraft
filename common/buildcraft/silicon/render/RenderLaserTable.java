@@ -94,6 +94,7 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 			renderer.renderStandardBlock(block, xPos, yPos, zPos);
 		}
 		block.getTextureState().pushArray();
+		block.setRenderMask(0x3F);
 	}
 
 	private void renderAssemblyTable(RenderBlocks renderer, boolean isInv, int x, int y, int z, BlockBuildCraft block) {
