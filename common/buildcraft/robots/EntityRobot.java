@@ -48,6 +48,7 @@ import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IZone;
 import buildcraft.api.core.SafeTimeTracker;
@@ -288,13 +289,21 @@ public class EntityRobot extends EntityRobotBase implements
 						linkedDockingStationIndex.z,
 						linkedDockingStationSide);
 
-				if (linkedDockingStation == null
-						|| linkedDockingStation.robotTaking() != this) {
-					// Error at load time, the expected linked stations is not
-					// properly set, kill this robot.
-
+				if (linkedDockingStation == null) {
 					setDead();
 					return;
+				}
+				if(linkedDockingStation.robotTaking() != this) {
+					if (linkedDockingStation.robotIdTaking() == robotId) {
+						BCLog.logger.warn("A robot entity was not properly unloaded");
+						((DockingStation)linkedDockingStation).invalidateRobotTakingEntity();
+					}
+					if(linkedDockingStation.robotTaking() != this) {
+						// Error at load time, the expected linked stations is not
+						// properly set, kill this robot.
+						setDead();
+						return;
+					}
 				}
 			}
 
@@ -952,20 +961,22 @@ public class EntityRobot extends EntityRobotBase implements
 				mainAI.abort();
 			}
 
-			ItemStack robotStack = new ItemStack (BuildCraftSilicon.robotItem);
-			NBTUtils.getItemData(robotStack).setTag("board", originalBoardNBT);
-			NBTUtils.getItemData(robotStack).setInteger("energy", battery.getEnergyStored());
-			entityDropItem(robotStack, 0);
-			if (itemInUse != null) {
-				entityDropItem(itemInUse, 0);
-			}
-			for (ItemStack element : inv) {
-				if (element != null) {
-					entityDropItem(element, 0);
+			if (getRegistry().getLoadedRobot(robotId) == this) {
+				ItemStack robotStack = new ItemStack (BuildCraftSilicon.robotItem);
+				NBTUtils.getItemData(robotStack).setTag("board", originalBoardNBT);
+				NBTUtils.getItemData(robotStack).setInteger("energy", battery.getEnergyStored());
+				entityDropItem(robotStack, 0);
+				if (itemInUse != null) {
+					entityDropItem(itemInUse, 0);
 				}
-			}
+				for (ItemStack element : inv) {
+					if (element != null) {
+						entityDropItem(element, 0);
+					}
+				}
 
-			getRegistry().killRobot(this);
+				getRegistry().killRobot(this);
+			}
 		}
 
 		super.setDead();
