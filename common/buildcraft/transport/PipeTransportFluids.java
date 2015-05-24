@@ -118,7 +118,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		}
 
 		public int getMaxFillRate() {
-			return Math.min(capacity - amount, flowRate - incoming[currentTime]);
+			return Math.min(getCapacity() - amount, flowRate - incoming[currentTime]);
 		}
 
 		public void readFromNBT(NBTTagCompound compoundTag) {
@@ -329,7 +329,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 	private void moveToCenter() {
 		int transferInCount = 0;
-		int spaceAvailable = capacity - sections[6].amount;
+		int spaceAvailable = getCapacity() - sections[6].amount;
 
 		for (ForgeDirection dir : directions) {
 			inputPerTick[dir.ordinal()] = 0;
@@ -435,7 +435,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			if (displayQty == 0 && camount > 0 || initPacket) {
 				displayQty = camount;
 			}
-			displayQty = Math.min(capacity, displayQty);
+			displayQty = Math.min(getCapacity(), displayQty);
 
 			if (pamount != displayQty || initPacket) {
 				changed = true;
