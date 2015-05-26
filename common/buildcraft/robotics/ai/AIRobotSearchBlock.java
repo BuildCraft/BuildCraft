@@ -25,9 +25,11 @@ public class AIRobotSearchBlock extends AIRobot {
 	private IterableAlgorithmRunner blockScannerJob;
 	private IBlockFilter pathFound;
 	private Iterator<BlockIndex> blockIter;
+	private double maxDistanceToEnd;
 	private IZone zone;
 
-	public AIRobotSearchBlock(EntityRobotBase iRobot, boolean random, IBlockFilter iPathFound) {
+	public AIRobotSearchBlock(EntityRobotBase iRobot, boolean random, IBlockFilter iPathFound,
+			double iMaxDistanceToEnd) {
 		super(iRobot);
 
 		pathFound = iPathFound;
@@ -45,12 +47,13 @@ public class AIRobotSearchBlock extends AIRobot {
 		}
 		blockFound = null;
 		path = null;
+		maxDistanceToEnd = iMaxDistanceToEnd;
 	}
 
 	@Override
 	public void start() {
 		blockScanner = new PathFindingSearch(robot.worldObj, new BlockIndex(
-				robot), blockIter, pathFound, 96, zone);
+				robot), blockIter, pathFound, maxDistanceToEnd, 96, zone);
 		blockScannerJob = new IterableAlgorithmRunner(blockScanner);
 		blockScannerJob.start();
 	}

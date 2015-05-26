@@ -35,14 +35,17 @@ public class PathFindingSearch implements IIterableAlgorithm {
 	private float maxDistance;
 	private Iterator<BlockIndex> blockIter;
 
+	private double maxDistanceToEnd;
+
 	public PathFindingSearch(World iWorld, BlockIndex iStart,
 			Iterator<BlockIndex> iBlockIter, IBlockFilter iPathFound,
-			float iMaxDistance, IZone iZone) {
+			double iMaxDistanceToEnd, float iMaxDistance, IZone iZone) {
 		world = iWorld;
 		start = iStart;
 		pathFound = iPathFound;
 
 		maxDistance = iMaxDistance;
+		maxDistanceToEnd = iMaxDistanceToEnd;
 		zone = iZone;
 		blockIter = iBlockIter;
 
@@ -69,7 +72,7 @@ public class PathFindingSearch implements IIterableAlgorithm {
 					start.z + delta.z);
 			if (isLoadedChunk(block.x, block.z)) {
 				if (isTarget(block)) {
-					pathFinders.add(new PathFinding(world, start, block, 0, maxDistance));
+					pathFinders.add(new PathFinding(world, start, block, maxDistanceToEnd, maxDistance));
 				}
 			}
 

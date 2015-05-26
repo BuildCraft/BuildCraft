@@ -62,7 +62,7 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 							&& !robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z));
 				}
 			};
-			startDelegateAI(new AIRobotSearchAndGotoBlock(robot, true, blockFilter));
+			startDelegateAI(new AIRobotSearchAndGotoBlock(robot, true, blockFilter, 1));
 		}
 	}
 

@@ -18,10 +18,11 @@ import buildcraft.core.lib.utils.IBlockFilter;
 
 public class AIRobotSearchAndGotoBlock extends AIRobot {
 
-	protected BlockIndex blockFound;
+	private BlockIndex blockFound;
 
 	private IBlockFilter filter;
 	private boolean random;
+	private double maxDistanceToEnd;
 
 	public AIRobotSearchAndGotoBlock(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -32,16 +33,23 @@ public class AIRobotSearchAndGotoBlock extends AIRobot {
 		filter = null;
 	}
 
-	public AIRobotSearchAndGotoBlock(EntityRobotBase iRobot, boolean iRandom, IBlockFilter iPathFound) {
+	public AIRobotSearchAndGotoBlock(EntityRobotBase iRobot, boolean iRandom,
+			IBlockFilter iPathFound) {
+		this(iRobot, iRandom, iPathFound, 0);
+	}
+
+	public AIRobotSearchAndGotoBlock(EntityRobotBase iRobot, boolean iRandom,
+			IBlockFilter iPathFound, double iMaxDistanceToEnd) {
 		this(iRobot);
 
 		random = iRandom;
 		filter = iPathFound;
+		maxDistanceToEnd = iMaxDistanceToEnd;
 	}
 
 	@Override
 	public void start() {
-		startDelegateAI(new AIRobotSearchBlock(robot, random, filter));
+		startDelegateAI(new AIRobotSearchBlock(robot, random, filter, maxDistanceToEnd));
 	}
 
 	@Override
