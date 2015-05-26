@@ -10,12 +10,15 @@ package buildcraft.robotics.ai;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.proxy.CoreProxy;
 
 public class AIRobotUseToolOnBlock extends AIRobot {
@@ -46,21 +49,28 @@ public class AIRobotUseToolOnBlock extends AIRobot {
 		if (useCycles > 40) {
 			ItemStack stack = robot.getHeldItem();
 
-			if (robot.getHeldItem().isItemStackDamageable()) {
-				robot.getHeldItem().damageItem(1, robot);
+			EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj)
+					.get();
+			if (stack.getItem().onItemUse(stack, player, robot.worldObj, useToBlock.x,
+					useToBlock.y, useToBlock.z, ForgeDirection.UP.ordinal(), 0, 0, 0)) {
+				if (robot.getHeldItem().isItemStackDamageable()) {
+					robot.getHeldItem().damageItem(1, robot);
 
-				if (robot.getHeldItem().getItemDamage() >= robot.getHeldItem().getMaxDamage()) {
+					if (robot.getHeldItem().getItemDamage() >= robot.getHeldItem().getMaxDamage()) {
+						robot.setItemInUse(null);
+					}
+				} else {
 					robot.setItemInUse(null);
 				}
 			} else {
-				robot.setItemInUse(null);
-			}
-
-			EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj)
-					.get();
-			if (!stack.getItem().onItemUse(stack, player, robot.worldObj, useToBlock.x,
-					useToBlock.y, useToBlock.z, ForgeDirection.UP.ordinal(), 0, 0, 0)) {
 				setSuccess(false);
+				if (!robot.getHeldItem().isItemStackDamageable()) {
+					BlockUtils.dropItem((WorldServer) robot.worldObj,
+							MathHelper.floor_double(robot.posX),
+							MathHelper.floor_double(robot.posY),
+							MathHelper.floor_double(robot.posZ), 6000, stack);
+					robot.setItemInUse(null);
+				}
 			}
 
 			terminate();
