@@ -25,6 +25,7 @@ import buildcraft.robotics.statements.ActionRobotFilterTool;
 public class AIRobotFetchAndEquipItemStack extends AIRobot {
 
 	private IStackFilter filter;
+	private int delay = 0;
 
 	public AIRobotFetchAndEquipItemStack(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -38,7 +39,18 @@ public class AIRobotFetchAndEquipItemStack extends AIRobot {
 
 	@Override
 	public void update() {
-		startDelegateAI(new AIRobotGotoStationToLoad(robot, filter, 1));
+		if (robot.getDockingStation() == null) {
+			startDelegateAI(new AIRobotGotoStationToLoad(robot, filter, 1));
+		} else {
+			if (delay++ > 40) {
+				if (equipItemStack()) {
+					terminate();
+				} else {
+					delay = 0;
+					startDelegateAI(new AIRobotGotoStationToLoad(robot, filter, 1));
+				}
+			}
+		}
 	}
 
 	@Override
@@ -51,16 +63,14 @@ public class AIRobotFetchAndEquipItemStack extends AIRobot {
 				abort();
 				return;
 			}
-			if (ai.success()) {
-				equipItemStack();
-			} else {
+			if (!ai.success()) {
 				setSuccess(false);
+				terminate();
 			}
-			terminate();
 		}
 	}
 
-	private void equipItemStack() {
+	private boolean equipItemStack() {
 		if (robot.getDockingStation() != null) {
 			DockingStation station = robot.getDockingStation();
 
@@ -83,9 +93,9 @@ public class AIRobotFetchAndEquipItemStack extends AIRobot {
 
 			if (itemFound != null) {
 				robot.setItemInUse(itemFound);
-			} else {
-				setSuccess(false);
+				return true;
 			}
 		}
+		return false;
 	}
 }
