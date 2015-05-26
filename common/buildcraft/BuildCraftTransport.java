@@ -261,7 +261,7 @@ public class BuildCraftTransport extends BuildCraftMod {
     public static IActionInternal[] actionValve = new IActionInternal[4];
 
     public static boolean debugPrintFacadeList = false;
-	public static boolean usePipeLoss = true;
+	public static boolean usePipeLoss = false;
 
 	public static float gateCostMultiplier = 1.0F;
 
@@ -288,6 +288,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 		}
 
 		try {
+			BuildCraftCore.mainConfigManager.register("experimental.kinesisPowerLossOnTravel", false, "Should kinesis pipes lose power over distance (think IC2 or BC pre-3.7)?", ConfigManager.RestartRequirement.WORLD);
+
 			BuildCraftCore.mainConfigManager.register("general.pipes.hardness", DefaultProps.PIPES_DURABILITY, "How hard to break should a pipe be?", ConfigManager.RestartRequirement.NONE);
 			BuildCraftCore.mainConfigManager.register("general.pipes.baseFluidRate", DefaultProps.PIPES_FLUIDS_BASE_FLOW_RATE, "What should the base flow rate of a fluid pipe be?", ConfigManager.RestartRequirement.GAME)
 					.setMinValue(1).setMaxValue(40);
@@ -552,6 +554,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 			reloadConfig(ConfigManager.RestartRequirement.WORLD);
 		} else if (restartType == ConfigManager.RestartRequirement.WORLD) {
+			usePipeLoss = BuildCraftCore.mainConfigManager.get("experimental.kinesisPowerLossOnTravel").getBoolean();
+
 			reloadConfig(ConfigManager.RestartRequirement.NONE);
 		} else {
 			pipeDurability = (float) BuildCraftCore.mainConfigManager.get("general.pipes.hardness").getDouble();

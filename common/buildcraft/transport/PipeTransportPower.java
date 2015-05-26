@@ -369,8 +369,9 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	 * All power input MUST go through designated input pipes, such as Wooden
 	 * Power Pipes or a subclass thereof.
 	 */
-	public double receiveEnergy(ForgeDirection from, double val) {
+	public double receiveEnergy(ForgeDirection from, double tVal) {
 		int side = from.ordinal();
+		double val = tVal;
 
 		step();
 

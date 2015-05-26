@@ -8,9 +8,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class CropManager {
-
+public final class CropManager {
 	private static List<ICropHandler> handlers = new ArrayList<ICropHandler>();
+
+	private CropManager() {
+
+	}
 
 	public static void registerHandler(ICropHandler cropHandler) {
 		handlers.add(cropHandler);
@@ -27,8 +30,9 @@ public class CropManager {
 
 	public static boolean canSustainPlant(World world, ItemStack seed, int x, int y, int z) {
 		for (ICropHandler cropHandler : handlers) {
-			if (cropHandler.isSeed(seed) && cropHandler.canSustainPlant(world, seed, x, y, z))
+			if (cropHandler.isSeed(seed) && cropHandler.canSustainPlant(world, seed, x, y, z)) {
 				return true;
+			}
 		}
 		return false;
 	}

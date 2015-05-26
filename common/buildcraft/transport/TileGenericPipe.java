@@ -351,18 +351,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	@Override
 	public void updateEntity() {
-		if (attachPluggables) {
-			attachPluggables = false;
-			// Attach callback
-			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-				if (sideProperties.pluggables[i] != null) {
-					pipe.eventBus.registerHandler(sideProperties.pluggables[i]);
-					sideProperties.pluggables[i].onAttachedPipe(this, ForgeDirection.getOrientation(i));
-				}
-			}
-			notifyBlockChanged();
-		}
-
 		if (!worldObj.isRemote) {
 			if (deletePipe) {
 				worldObj.setBlockToAir(xCoord, yCoord, zCoord);
@@ -375,6 +363,18 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 			if (!initialized) {
 				initialize(pipe);
 			}
+		}
+
+		if (attachPluggables) {
+			attachPluggables = false;
+			// Attach callback
+			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+				if (sideProperties.pluggables[i] != null) {
+					pipe.eventBus.registerHandler(sideProperties.pluggables[i]);
+					sideProperties.pluggables[i].onAttachedPipe(this, ForgeDirection.getOrientation(i));
+				}
+			}
+			notifyBlockChanged();
 		}
 
 		if (!BlockGenericPipe.isValid(pipe)) {

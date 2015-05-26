@@ -28,7 +28,7 @@ import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.render.PipeRendererTESR;
 
 public class GatePluggable extends PipePluggable {
-	private static class GatePluggableRenderer implements IPipePluggableRenderer, IPipePluggableDynamicRenderer {
+	private static final class GatePluggableRenderer implements IPipePluggableRenderer, IPipePluggableDynamicRenderer {
 		public static final GatePluggableRenderer INSTANCE = new GatePluggableRenderer();
 
 		private GatePluggableRenderer() {

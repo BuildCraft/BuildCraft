@@ -28,7 +28,7 @@ public class LensPluggable extends PipePluggable {
 	protected IPipeTile container;
 	private ForgeDirection side;
 
-	private static class LensPluggableRenderer implements IPipePluggableRenderer {
+	private static final class LensPluggableRenderer implements IPipePluggableRenderer {
 		public static final IPipePluggableRenderer INSTANCE = new LensPluggableRenderer();
 		private static final float zFightOffset = 1 / 4096.0F;
 

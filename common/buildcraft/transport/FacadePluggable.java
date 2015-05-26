@@ -20,9 +20,8 @@ import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.render.FacadeRenderHelper;
 
 public class FacadePluggable extends PipePluggable implements IFacadePluggable {
-	public static class FacadePluggableRenderer implements IPipePluggableRenderer {
+	public static final class FacadePluggableRenderer implements IPipePluggableRenderer {
 		public static final IPipePluggableRenderer INSTANCE = new FacadePluggableRenderer();
-		private static final float zFightOffset = 1 / 4096.0F;
 
 		private FacadePluggableRenderer() {
 
