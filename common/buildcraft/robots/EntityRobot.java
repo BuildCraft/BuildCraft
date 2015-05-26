@@ -293,12 +293,12 @@ public class EntityRobot extends EntityRobotBase implements
 					setDead();
 					return;
 				}
-				if(linkedDockingStation.robotTaking() != this) {
+				if (linkedDockingStation.robotTaking() != this) {
 					if (linkedDockingStation.robotIdTaking() == robotId) {
 						BCLog.logger.warn("A robot entity was not properly unloaded");
-						((DockingStation)linkedDockingStation).invalidateRobotTakingEntity();
+						((DockingStation) linkedDockingStation).invalidateRobotTakingEntity();
 					}
-					if(linkedDockingStation.robotTaking() != this) {
+					if (linkedDockingStation.robotTaking() != this) {
 						// Error at load time, the expected linked stations is not
 						// properly set, kill this robot.
 						setDead();

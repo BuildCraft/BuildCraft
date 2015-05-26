@@ -1,0 +1,4 @@
+Bugs fixed:
+* [#2726] Crash with TileGenericPipe (asie)
+* [#2715] Attempt RailCraft anchor robot fix (hea3ven) (fixed in a different manner in 7.0.x)
+* Shears dupe bug (asie)
