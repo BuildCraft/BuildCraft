@@ -8,15 +8,16 @@
  */
 package buildcraft.robotics.boards;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.robotics.ai.AIRobotHarvest;
 
-public class BoardRobotHarvester extends BoardRobotGenericBreakBlock {
+public class BoardRobotHarvester extends BoardRobotGenericSearchBlock {
 
 	public BoardRobotHarvester(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -32,12 +33,24 @@ public class BoardRobotHarvester extends BoardRobotGenericBreakBlock {
 	}
 
 	@Override
-	public boolean isExpectedTool(ItemStack stack) {
-		return true;
+	public boolean isExpectedBlock(World world, int x, int y, int z) {
+		return BuildCraftAPI.getWorldProperty("harvestable").get(world, x, y, z);
 	}
 
 	@Override
-	public boolean isExpectedBlock(World world, int x, int y, int z) {
-		return BuildCraftAPI.getWorldProperty("harvestable").get(world, x, y, z);
+	public void update() {
+		if (blockFound() != null) {
+			startDelegateAI(new AIRobotHarvest(robot, blockFound()));
+		} else {
+			super.update();
+		}
+	}
+
+	@Override
+	public void delegateAIEnded(AIRobot ai) {
+		if (ai instanceof AIRobotHarvest) {
+			releaseBlockFound(ai.success());
+		}
+		super.delegateAIEnded(ai);
 	}
 }

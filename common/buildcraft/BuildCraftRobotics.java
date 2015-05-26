@@ -84,6 +84,7 @@ import buildcraft.robotics.ai.AIRobotGotoStationToLoad;
 import buildcraft.robotics.ai.AIRobotGotoStationToLoadFluids;
 import buildcraft.robotics.ai.AIRobotGotoStationToUnload;
 import buildcraft.robotics.ai.AIRobotGotoStationToUnloadFluids;
+import buildcraft.robotics.ai.AIRobotHarvest;
 import buildcraft.robotics.ai.AIRobotLoad;
 import buildcraft.robotics.ai.AIRobotLoadFluids;
 import buildcraft.robotics.ai.AIRobotMain;
@@ -309,6 +310,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
 		RobotManager.registerAIRobot(AIRobotGotoStationToLoadFluids.class, "aiRobotGotoStationToLoadFluids", "buildcraft.core.robots.AIRobotGotoStationToLoadFluids");
 		RobotManager.registerAIRobot(AIRobotGotoStationToUnload.class, "aiRobotGotoStationToUnload", "buildcraft.core.robots.AIRobotGotoStationToUnload");
 		RobotManager.registerAIRobot(AIRobotGotoStationToUnloadFluids.class, "aiRobotGotoStationToUnloadFluids", "buildcraft.core.robots.AIRobotGotoStationToUnloadFluids");
+		RobotManager.registerAIRobot(AIRobotHarvest.class, "aiRobotHarvest");
 		RobotManager.registerAIRobot(AIRobotLoad.class, "aiRobotLoad", "buildcraft.core.robots.AIRobotLoad");
 		RobotManager.registerAIRobot(AIRobotLoadFluids.class, "aiRobotLoadFluids", "buildcraft.core.robots.AIRobotLoadFluids");
 		RobotManager.registerAIRobot(AIRobotPumpBlock.class, "aiRobotPumpBlock", "buildcraft.core.robots.AIRobotPumpBlock");

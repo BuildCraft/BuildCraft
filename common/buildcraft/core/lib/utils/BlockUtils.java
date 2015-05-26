@@ -76,6 +76,18 @@ public final class BlockUtils {
 	}
 
 	public static boolean breakBlock(WorldServer world, int x, int y, int z, int forcedLifespan) {
+		List<ItemStack> items = new ArrayList<ItemStack>();
+
+		if (breakBlock(world, x, y, z, items)) {
+			for (ItemStack item : items) {
+				dropItem(world, x, y, z, forcedLifespan, item);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean breakBlock(WorldServer world, int x, int y, int z, List<ItemStack> drops) {
 		BreakEvent breakEvent = new BreakEvent(x, y, z, world, world.getBlock(x, y, z),
 				world.getBlockMetadata(x, y, z), CoreProxy.proxy.getBuildCraftPlayer(world).get());
 		MinecraftForge.EVENT_BUS.post(breakEvent);
@@ -84,14 +96,10 @@ public final class BlockUtils {
 			return false;
 		}
 
-		if (!world.isAirBlock(x, y, z) && !world.isRemote && world.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
-			List<ItemStack> items = getItemStackFromBlock(world, x, y, z);
-
-			for (ItemStack item : items) {
-				dropItem(world, x, y, z, forcedLifespan, item);
-			}
+		if (!world.isAirBlock(x, y, z) && !world.isRemote
+				&& world.getGameRules().getGameRuleBooleanValue("doTileDrops")) {
+			drops.addAll(getItemStackFromBlock(world, x, y, z));
 		}
-
 		world.setBlockToAir(x, y, z);
 
 		return true;

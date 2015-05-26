@@ -15,6 +15,7 @@ import java.nio.IntBuffer;
 import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
+
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
@@ -29,6 +30,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.IIcon;
+
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -42,6 +44,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.IPlantable;
@@ -56,6 +59,7 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.IWorldProperty;
+import buildcraft.api.crops.CropManager;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
@@ -93,6 +97,8 @@ import buildcraft.core.command.SubCommandChangelog;
 import buildcraft.core.command.SubCommandVersion;
 import buildcraft.core.config.BuildCraftConfiguration;
 import buildcraft.core.config.ConfigManager;
+import buildcraft.core.crops.CropHandlerPlantable;
+import buildcraft.core.crops.CropHandlerReeds;
 import buildcraft.core.lib.commands.RootCommand;
 import buildcraft.core.lib.engines.ItemEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
@@ -426,6 +432,9 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildCraftAPI.softBlocks.add(Blocks.air);
 
 		FMLCommonHandler.instance().bus().register(new TickHandlerCore());
+
+		CropManager.registerHandler(new CropHandlerPlantable());
+		CropManager.registerHandler(new CropHandlerReeds());
 
 		BuildCraftAPI.registerWorldProperty("soft", new WorldPropertyIsSoft());
 		BuildCraftAPI.registerWorldProperty("wood", new WorldPropertyIsWood());
