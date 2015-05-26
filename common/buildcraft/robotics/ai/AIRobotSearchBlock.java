@@ -71,7 +71,8 @@ public class AIRobotSearchBlock extends AIRobot {
 			path = blockScanner.getResult();
 
 			if (path != null && path.size() > 0) {
-				blockFound = path.removeLast();
+				path.removeLast();
+				blockFound = blockScanner.getResultTarget();
 			} else {
 				path = null;
 			}

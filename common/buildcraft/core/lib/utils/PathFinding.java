@@ -109,6 +109,10 @@ public class PathFinding implements IIterableAlgorithm {
 		}
 	}
 
+	public BlockIndex end() {
+		return end;
+	}
+
 	private Node iterate(Node from) {
 		openList.remove(from.index);
 		closedList.put(from.index, from);

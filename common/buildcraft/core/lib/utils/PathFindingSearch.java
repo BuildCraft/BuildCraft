@@ -147,6 +147,15 @@ public class PathFindingSearch implements IIterableAlgorithm {
 		return new LinkedList<BlockIndex>();
 	}
 
+	public BlockIndex getResultTarget() {
+		for (PathFinding pathFinding : pathFinders) {
+			if (pathFinding.isDone()) {
+				return pathFinding.end();
+			}
+		}
+		return null;
+	}
+
 	private boolean reserve(BlockIndex block) {
 		synchronized (reservations) {
 			if (!reservations.containsKey(world.provider.dimensionId)) {
