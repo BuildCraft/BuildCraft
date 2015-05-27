@@ -90,6 +90,7 @@ public class GateExpansionRecipe extends IntegrationRecipeBC {
 	@Override
 	public ItemStack craft(ItemStack input, List<ItemStack> expansions, boolean preview) {
 		ItemStack output = input.copy();
+		output.stackSize = 1;
 		int expansionsAdded = 0;
 
 		for (ItemStack chipset : expansions) {
