@@ -29,6 +29,7 @@ public class TileIntegrationTable extends TileLaserTableBase {
 	private static final int CYCLE_LENGTH = 16;
 	private int tick = 0;
 	private IIntegrationRecipe activeRecipe;
+	private boolean activeRecipeValid = false;
 	private InventoryMapper mappedOutput = new InventoryMapper(this, SLOT_OUTPUT, 1, false);
 	private int maxExpCountClient;
 
@@ -47,7 +48,7 @@ public class TileIntegrationTable extends TileLaserTableBase {
 			return;
 		}
 
-		if (activeRecipe == null) {
+		if (activeRecipe == null || !activeRecipeValid) {
 			setEnergy(0);
 			return;
 		}
@@ -110,10 +111,14 @@ public class TileIntegrationTable extends TileLaserTableBase {
 		List<ItemStack> expansions = getExpansions();
 
 		if (expansions.size() == 0) {
+			activeRecipeValid = false;
+			inv.setInventorySlotContents(10, null);
 			return;
 		}
 
-		inv.setInventorySlotContents(10, activeRecipe.craft(getStackInSlot(0), expansions, true));
+		ItemStack output = activeRecipe.craft(getStackInSlot(0), expansions, true);
+		activeRecipeValid = output != null;
+		inv.setInventorySlotContents(10, output);
 	}
 
 	private void setNewActiveRecipe() {
@@ -123,6 +128,7 @@ public class TileIntegrationTable extends TileLaserTableBase {
 		}
 
 		activeRecipe = null;
+		activeRecipeValid = false;
 
 		if (input != null && input.getItem() != null) {
 			for (IIntegrationRecipe recipe : BuildcraftRecipeRegistry.integrationTable.getRecipes()) {
@@ -206,12 +212,7 @@ public class TileIntegrationTable extends TileLaserTableBase {
 
     @Override
     public boolean hasWork() {
-		for (int i = 1; i < 9; i++) {
-			if (getStackInSlot(i) != null) {
-				return activeRecipe != null;
-			}
-		}
-		return false;
+		return activeRecipeValid;
     }
 
 	@Override
