@@ -1040,6 +1040,10 @@ public class EntityRobot extends EntityRobotBase implements
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
 		int result = 0;
 
+		if (tank != null && !tank.isFluidEqual(resource)) {
+			return 0;
+		}
+
 		if (tank == null) {
 			tank = new FluidStack(resource.getFluid(), 0);
 		}
