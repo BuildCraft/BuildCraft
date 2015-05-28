@@ -289,10 +289,10 @@ public class MappingRegistry {
 
 		nbt.setTag("entitiesMapping", entitiesMapping);
 
-		System.out.println("[W] idToItem size : " + idToItem.size());
-		for (Item i : idToItem) {
-			System.out.println("- " + (i != null ? i.toString() : "null"));
-		}
+//		System.out.println("[W] idToItem size : " + idToItem.size());
+//		for (Item i : idToItem) {
+//			System.out.println("- " + (i != null ? i.toString() : "null"));
+//		}
 	}
 
 	private Object getMissingMappingFromFML(boolean isBlock, String name, int i) {
@@ -418,9 +418,9 @@ public class MappingRegistry {
 			}
 		}
 
-		System.out.println("[R] idToItem size : " + idToItem.size());
-		for (Item i : idToItem) {
-			System.out.println("- " + (i != null ? i.toString() : "null"));
-		}
+//		System.out.println("[R] idToItem size : " + idToItem.size());
+//		for (Item i : idToItem) {
+//			System.out.println("- " + (i != null ? i.toString() : "null"));
+//		}
 	}
 }

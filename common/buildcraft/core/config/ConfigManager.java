@@ -21,7 +21,9 @@ public class ConfigManager implements IModGuiFactory {
 			super(parentScreen, new ArrayList<IConfigElement>(), "BuildCraft|Core", "config", false, false, I18n.format("config.buildcraft"));
 
 			for (String s : config.getCategoryNames()) {
-				configElements.add(new BCConfigElement(config.getCategory(s)));
+				if (!s.contains(".")) {
+					configElements.add(new BCConfigElement(config.getCategory(s)));
+				}
 			}
 		}
 	}
@@ -43,9 +45,13 @@ public class ConfigManager implements IModGuiFactory {
 	}
 
 	public Property get(String iName) {
-		String prefix = iName.substring(0, iName.lastIndexOf("."));
-		ConfigCategory c = config.getCategory(prefix);
-		return c.get(iName.substring(iName.lastIndexOf(".") + 1));
+		int sep = iName.lastIndexOf(".");
+		return get(iName.substring(0, sep), iName.substring(sep + 1));
+	}
+
+	public Property get(String catName, String propName) {
+		ConfigCategory c = config.getCategory(catName);
+		return c.get(propName);
 	}
 
 	private Property create(String s, Object o) {
@@ -66,29 +72,33 @@ public class ConfigManager implements IModGuiFactory {
 		return p;
 	}
 
-	public Property register(String name, Object property, String comment, RestartRequirement restartRequirement) {
-		String prefix = name.substring(0, name.lastIndexOf("."));
-		String suffix = name.substring(name.lastIndexOf(".") + 1);
-
-		ConfigCategory c = config.getCategory(prefix);
+	public Property register(String catName, String propName, Object property, String comment, RestartRequirement restartRequirement) {
+		ConfigCategory c = config.getCategory(catName);
 		ConfigCategory parent = c;
 		while (parent != null) {
 			parent.setLanguageKey("config." + parent.getQualifiedName());
 			parent = parent.parent;
 		}
 		Property p;
-		if (c.get(suffix) != null) {
-			p = c.get(suffix);
+		if (c.get(propName) != null) {
+			p = c.get(propName);
 		} else {
-			p = create(suffix, property);
-			c.put(suffix, p);
+			p = create(propName, property);
+			c.put(propName, p);
 		}
 		p.comment = comment;
 		RestartRequirement r = restartRequirement;
-		p.setLanguageKey("config." + name);
+		p.setLanguageKey("config." + catName + "." + propName);
 		p.setRequiresWorldRestart(r == RestartRequirement.WORLD);
 		p.setRequiresMcRestart(r == RestartRequirement.GAME);
 		return p;
+	}
+
+	public Property register(String name, Object property, String comment, RestartRequirement restartRequirement) {
+		String prefix = name.substring(0, name.lastIndexOf("."));
+		String suffix = name.substring(name.lastIndexOf(".") + 1);
+
+		return register(prefix, suffix, property, comment, restartRequirement);
 	}
 
 	@Override

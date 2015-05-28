@@ -19,6 +19,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 
+import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -48,6 +49,7 @@ import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
+import buildcraft.core.config.ConfigManager;
 import buildcraft.core.network.EntityIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.robotics.BlockRequester;
@@ -190,10 +192,9 @@ public class BuildCraftRobotics extends BuildCraftMod {
 	public void preInit(FMLPreInitializationEvent evt) {
 		new BCCreativeTab("boards");
 
-		blacklistedRobots = new ArrayList<String>();
-		blacklistedRobots.addAll(Arrays.asList(BuildCraftCore.mainConfiguration.get("general", "boards.blacklist", new String[]{}).getStringList()));
+		BuildCraftCore.mainConfigManager.register("general", "boards.blacklist", new String[]{}, "Blacklisted robots boards", ConfigManager.RestartRequirement.GAME);
 
-		BuildCraftCore.mainConfiguration.save();
+		reloadConfig(ConfigManager.RestartRequirement.GAME);
 
 		robotItem = new ItemRobot().setUnlocalizedName("robot");
 		CoreProxy.proxy.registerItem(robotItem);
@@ -420,5 +421,27 @@ public class BuildCraftRobotics extends BuildCraftMod {
 	@Mod.EventHandler
 	public void processRequests(FMLInterModComms.IMCEvent event) {
 		InterModComms.processIMC(event);
+	}
+
+	public void reloadConfig(ConfigManager.RestartRequirement restartType) {
+		if (restartType == ConfigManager.RestartRequirement.GAME) {
+			blacklistedRobots = new ArrayList<String>();
+			blacklistedRobots.addAll(Arrays.asList(BuildCraftCore.mainConfigManager.get("general",
+					"boards.blacklist").getStringList()));
+			reloadConfig(ConfigManager.RestartRequirement.WORLD);
+		} else if (restartType == ConfigManager.RestartRequirement.WORLD) {
+			reloadConfig(ConfigManager.RestartRequirement.NONE);
+		} else {
+			if (BuildCraftCore.mainConfiguration.hasChanged()) {
+				BuildCraftCore.mainConfiguration.save();
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) {
+		if ("BuildCraft|Core".equals(event.modID)) {
+			reloadConfig(event.isWorldRunning ? ConfigManager.RestartRequirement.NONE : ConfigManager.RestartRequirement.WORLD);
+		}
 	}
 }

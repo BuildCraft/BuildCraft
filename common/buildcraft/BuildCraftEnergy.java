@@ -21,6 +21,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.world.biome.BiomeGenBase;
+
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -34,6 +35,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
@@ -55,6 +57,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.config.ConfigManager;
+import buildcraft.core.config.ConfigManager.RestartRequirement;
 import buildcraft.core.lib.block.BlockBuildCraftFluid;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.engines.TileEngineBase.EnergyStage;
@@ -120,40 +123,44 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		BuildcraftFuelRegistry.fuel = FuelManager.INSTANCE;
 		BuildcraftFuelRegistry.coolant = CoolantManager.INSTANCE;
 
-		int oilDesertBiomeId = BuildCraftCore.mainConfiguration.get("worldgen.biomes", "biomeOilDesert", DefaultProps.BIOME_OIL_DESERT).getInt(DefaultProps.BIOME_OIL_DESERT);
-		int oilOceanBiomeId = BuildCraftCore.mainConfiguration.get("worldgen.biomes", "biomeOilOcean", DefaultProps.BIOME_OIL_OCEAN).getInt(DefaultProps.BIOME_OIL_OCEAN);
+		// TODO: Reload configs without having to close the game
+		int oilDesertBiomeId = BuildCraftCore.mainConfigManager.register("worldgen.biomes",
+				"biomeOilDesert", DefaultProps.BIOME_OIL_DESERT, "The id for the Oil Desert biome",
+				RestartRequirement.GAME).getInt();
+		int oilOceanBiomeId = BuildCraftCore.mainConfigManager.register("worldgen.biomes",
+				"biomeOilOcean", DefaultProps.BIOME_OIL_OCEAN, "The id for the Oil Ocean biome",
+				RestartRequirement.GAME).getInt();
 
 		BuildCraftCore.mainConfigManager.register("worldgen.spawnOilSprings", true, "Should I spawn oil springs?", ConfigManager.RestartRequirement.GAME);
 		BuildCraftCore.mainConfigManager.register("worldgen.oilWellGenerationRate", 1.0D, "How high should be the probability of an oil well generating?", ConfigManager.RestartRequirement.NONE);
 
 		setBiomeList(
 				OilPopulate.INSTANCE.surfaceDepositBiomes,
-				BuildCraftCore.mainConfiguration
-						.get("worldgen.biomes", "increasedOilIDs",
+				BuildCraftCore.mainConfigManager
+						.register("worldgen.biomes", "increasedOilIDs",
 								new String[] {BiomeDictionary.Type.SANDY.toString(), BiomeGenBase.taiga.biomeName},
-								"IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have increased oil generation rates."));
+								"IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have increased oil generation rates.", RestartRequirement.GAME));
 
 		setBiomeList(
 				OilPopulate.INSTANCE.excessiveBiomes,
-				BuildCraftCore.mainConfiguration
-				.get("worldgen.biomes",
-								"excessiveOilIDs",
+				BuildCraftCore.mainConfigManager
+						.register("worldgen.biomes", "excessiveOilIDs",
 								new String[] {},
-								"IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have GREATLY increased oil generation rates."));
+								"IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have GREATLY increased oil generation rates.", RestartRequirement.GAME));
 
 		setBiomeList(OilPopulate.INSTANCE.excludedBiomes,
-                BuildCraftCore.mainConfiguration
-				.get("worldgen.biomes", "excludeOilIDs",
-						new String[]{BiomeGenBase.sky.biomeName, BiomeGenBase.hell.biomeName},
-						"IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that are excluded from generating oil."));
+				BuildCraftCore.mainConfigManager
+						.register("worldgen.biomes", "excludeOilIDs",
+								new String[]{BiomeGenBase.sky.biomeName, BiomeGenBase.hell.biomeName},
+								"IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that are excluded from generating oil.", RestartRequirement.GAME));
 
-		double fuelLavaMultiplier = BuildCraftCore.mainConfiguration.get("general", "fuel.lava.combustion", 1.0F, "adjust energy value of Lava in Combustion Engines").getDouble(1.0F);
-		double fuelOilMultiplier = BuildCraftCore.mainConfiguration.get("general", "fuel.oil.combustion", 1.0F, "adjust energy value of Oil in Combustion Engines").getDouble(1.0F);
-		double fuelFuelMultiplier = BuildCraftCore.mainConfiguration.get("general", "fuel.fuel.combustion", 1.0F, "adjust energy value of Fuel in Combustion Engines").getDouble(1.0F);
+		double fuelLavaMultiplier = BuildCraftCore.mainConfigManager.register("general", "fuel.lava.combustion", 1.0F, "adjust energy value of Lava in Combustion Engines", RestartRequirement.GAME).getDouble();
+		double fuelOilMultiplier = BuildCraftCore.mainConfigManager.register("general", "fuel.oil.combustion", 1.0F, "adjust energy value of Oil in Combustion Engines", RestartRequirement.GAME).getDouble();
+		double fuelFuelMultiplier = BuildCraftCore.mainConfigManager.register("general", "fuel.fuel.combustion", 1.0F, "adjust energy value of Fuel in Combustion Engines", RestartRequirement.GAME).getDouble();
 
-		int fuelLavaEnergyOutput = BuildCraftCore.mainConfiguration.get("general", "fuel.lava.combustion.energyOutput", 20, "adjust output energy by Lava in Combustion Engines").getInt(20);
-		int fuelOilEnergyOutput = BuildCraftCore.mainConfiguration.get("general", "fuel.oil.combustion.energyOutput", 30, "adjust output energy by Oil in Combustion Engines").getInt(30);
-		int fuelFuelEnergyOutput = BuildCraftCore.mainConfiguration.get("general", "fuel.fuel.combustion.energyOutput", 60, "adjust output energy by Fuel in Combustion Engines").getInt(60);
+		int fuelLavaEnergyOutput = BuildCraftCore.mainConfigManager.register("general", "fuel.lava.combustion.energyOutput", 20, "adjust output energy by Lava in Combustion Engines", RestartRequirement.GAME).getInt();
+		int fuelOilEnergyOutput = BuildCraftCore.mainConfigManager.register("general", "fuel.oil.combustion.energyOutput", 30, "adjust output energy by Oil in Combustion Engines", RestartRequirement.GAME).getInt();
+		int fuelFuelEnergyOutput = BuildCraftCore.mainConfigManager.register("general", "fuel.fuel.combustion.energyOutput", 60, "adjust output energy by Fuel in Combustion Engines", RestartRequirement.GAME).getInt();
 
 		BuildCraftCore.mainConfiguration.save();
 

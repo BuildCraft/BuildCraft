@@ -79,6 +79,7 @@ config.general=General
 config.general.pipes=Pipes
 config.blueprints=Blueprints
 config.power=Power Usage
+config.experimental=Experimental
 config.display=Display
 config.worldgen=World Generation
 config.network=Networking
@@ -92,15 +93,31 @@ config.display.colorBlindMode=Colorblind mode
 config.display.hideFluidValues=Hide fluid numbers
 config.display.hidePowerValues=Hide power numbers
 
+config.experimental.kinesisPowerLossOnTravel=Kinesis pipes power perdition
+
+config.general.boards.blacklist=Robot blacklist
 config.general.pumpsConsumeWater=Pumps consume water
 config.general.updateCheck=Check for updates
+config.general.fuel.fuel.combustion=Combustion engine fuel multiplier
+config.general.fuel.lava.combustion=Combustion engine lava multiplier
+config.general.fuel.oil.combustion=Combustion engine oil multiplier
+config.general.fuel.fuel.combustion.energyOutput=Combustion engine fuel output
+config.general.fuel.lava.combustion.energyOutput=Combustion engine lava output
+config.general.fuel.oil.combustion.energyOutput=Combustion engine oil output
 config.general.itemLifespan=Item lifespan (seconds)
 config.general.canEnginesExplode=Engines explode
 config.general.oilCanBurn=Burning oil
 config.general.oilIsDense=Dense oil
+config.general.pipes.baseFluidRate=Base flow rate
+config.general.pipes.facadeBlacklist=Facade blacklist
+config.general.pipes.facadeBlacklistAsWhitelist=Invert facade blacklist
+config.general.pipes.facadeNoLaserRecipe=Add facade recipe without laser
+config.general.pipes.hardness=Hardness
+config.general.pipes.slimeballWaterproofRecipe=Add slimeball sealant recipe
 config.general.quarry=Quarry Options
 config.general.quarry.oneTimeUse=One-time use
 config.general.quarry.doChunkLoading=Automatic chunk loading
+config.general.markerRange=Range of markers
 config.general.miningDepth=Maximum relative mining depth
 config.general.pumpDimensionControl=Pump dimension control
 
@@ -109,10 +126,17 @@ config.network.updateFactor=Packet sending factor (ticks)
 
 config.power.miningUsageMultiplier=Mining usage multiplier
 config.power.chipsetCostMultiplier=Chipset cost multiplier
+config.power.gateCostMultiplier=Gate cost multiplier
 
 config.worldgen.enable=Enable
+config.worldgen.generateWaterSprings=Spawn water springs
 config.worldgen.oilWellGenerationRate=Oil well generation rate
 config.worldgen.spawnOilSprings=Spawn oil springs
+config.worldgen.biomes.biomeOilDesert=Oil Desert biome id
+config.worldgen.biomes.biomeOilOcean=Oil Ocean biome id
+config.worldgen.biomes.excessiveOilIDs=Biomes with excessive oil
+config.worldgen.biomes.excludeOilIDs=Biomes without oil
+config.worldgen.biomes.increasedOilIDs=Biomes with increased oil
 
 
 direction.north=North

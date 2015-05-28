@@ -148,7 +148,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static BuildCraftCore instance;
 
 	public static final boolean NONRELEASED_BLOCKS = true;
-	public static final boolean TABLET_TESTING = true;
+	public static final boolean TABLET_TESTING = false;
 
 	public enum RenderMode {
 		Full, NoDynamic
