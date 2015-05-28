@@ -329,22 +329,22 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 			CoreProxy.proxy.registerBlock(genericPipeBlock.setBlockName("pipeBlock"), ItemBlock.class);
 
-			pipeItemsWood = buildPipe(PipeItemsWood.class, "Wooden Transport Pipe", BCCreativeTab.get("pipes"), "plankWood", Blocks.glass, "plankWood");
-			pipeItemsEmerald = buildPipe(PipeItemsEmerald.class, "Emerald Transport Pipe", BCCreativeTab.get("pipes"), "gemEmerald", Blocks.glass, "gemEmerald");
-			pipeItemsCobblestone = buildPipe(PipeItemsCobblestone.class, "Cobblestone Transport Pipe", BCCreativeTab.get("pipes"), "cobblestone", Blocks.glass, "cobblestone");
-			pipeItemsStone = buildPipe(PipeItemsStone.class, "Stone Transport Pipe", BCCreativeTab.get("pipes"), "stone", Blocks.glass, "stone");
-			pipeItemsQuartz = buildPipe(PipeItemsQuartz.class, "Quartz Transport Pipe", BCCreativeTab.get("pipes"), "blockQuartz", Blocks.glass, "blockQuartz");
-			pipeItemsIron = buildPipe(PipeItemsIron.class, "Iron Transport Pipe", BCCreativeTab.get("pipes"), "ingotIron", Blocks.glass, "ingotIron");
-			pipeItemsGold = buildPipe(PipeItemsGold.class, "Golden Transport Pipe", BCCreativeTab.get("pipes"), "ingotGold", Blocks.glass, "ingotGold");
-			pipeItemsDiamond = buildPipe(PipeItemsDiamond.class, "Diamond Transport Pipe", BCCreativeTab.get("pipes"), "gemDiamond", Blocks.glass, "gemDiamond");
-			pipeItemsObsidian = buildPipe(PipeItemsObsidian.class, "Obsidian Transport Pipe", BCCreativeTab.get("pipes"), Blocks.obsidian, Blocks.glass, Blocks.obsidian);
-			pipeItemsLapis = buildPipe(PipeItemsLapis.class, "Lapis Transport Pipe", BCCreativeTab.get("pipes"), "blockLapis", Blocks.glass, "blockLapis");
-			pipeItemsDaizuli = buildPipe(PipeItemsDaizuli.class, "Daizuli Transport Pipe", BCCreativeTab.get("pipes"), "blockLapis", Blocks.glass, "gemDiamond");
-			pipeItemsSandstone = buildPipe(PipeItemsSandstone.class, "Sandstone Transport Pipe", BCCreativeTab.get("pipes"), Blocks.sandstone, Blocks.glass, Blocks.sandstone);
-			pipeItemsVoid = buildPipe(PipeItemsVoid.class, "Void Transport Pipe", BCCreativeTab.get("pipes"), "dyeBlack", Blocks.glass, "dustRedstone");
-			pipeItemsEmzuli = buildPipe(PipeItemsEmzuli.class, "Emzuli Transport Pipe", BCCreativeTab.get("pipes"), "blockLapis", Blocks.glass, "gemEmerald");
-			pipeItemsStripes = buildPipe(PipeItemsStripes.class, "Stripes Transport Pipe", BCCreativeTab.get("pipes"), "gearGold", Blocks.glass, "gearGold");
-            pipeItemsClay = buildPipe(PipeItemsClay.class, "Clay Transport Pipe", BCCreativeTab.get("pipes"), Blocks.clay, Blocks.glass, Blocks.clay);
+			pipeItemsWood = buildPipe(PipeItemsWood.class, "Wooden Transport Pipe", BCCreativeTab.get("pipes"), "plankWood", "blockGlassColorless", "plankWood");
+			pipeItemsEmerald = buildPipe(PipeItemsEmerald.class, "Emerald Transport Pipe", BCCreativeTab.get("pipes"), "gemEmerald", "blockGlassColorless", "gemEmerald");
+			pipeItemsCobblestone = buildPipe(PipeItemsCobblestone.class, "Cobblestone Transport Pipe", BCCreativeTab.get("pipes"), "cobblestone", "blockGlassColorless", "cobblestone");
+			pipeItemsStone = buildPipe(PipeItemsStone.class, "Stone Transport Pipe", BCCreativeTab.get("pipes"), "stone", "blockGlassColorless", "stone");
+			pipeItemsQuartz = buildPipe(PipeItemsQuartz.class, "Quartz Transport Pipe", BCCreativeTab.get("pipes"), "blockQuartz", "blockGlassColorless", "blockQuartz");
+			pipeItemsIron = buildPipe(PipeItemsIron.class, "Iron Transport Pipe", BCCreativeTab.get("pipes"), "ingotIron", "blockGlassColorless", "ingotIron");
+			pipeItemsGold = buildPipe(PipeItemsGold.class, "Golden Transport Pipe", BCCreativeTab.get("pipes"), "ingotGold", "blockGlassColorless", "ingotGold");
+			pipeItemsDiamond = buildPipe(PipeItemsDiamond.class, "Diamond Transport Pipe", BCCreativeTab.get("pipes"), "gemDiamond", "blockGlassColorless", "gemDiamond");
+			pipeItemsObsidian = buildPipe(PipeItemsObsidian.class, "Obsidian Transport Pipe", BCCreativeTab.get("pipes"), Blocks.obsidian, "blockGlassColorless", Blocks.obsidian);
+			pipeItemsLapis = buildPipe(PipeItemsLapis.class, "Lapis Transport Pipe", BCCreativeTab.get("pipes"), "blockLapis", "blockGlassColorless", "blockLapis");
+			pipeItemsDaizuli = buildPipe(PipeItemsDaizuli.class, "Daizuli Transport Pipe", BCCreativeTab.get("pipes"), "blockLapis", "blockGlassColorless", "gemDiamond");
+			pipeItemsSandstone = buildPipe(PipeItemsSandstone.class, "Sandstone Transport Pipe", BCCreativeTab.get("pipes"), Blocks.sandstone, "blockGlassColorless", Blocks.sandstone);
+			pipeItemsVoid = buildPipe(PipeItemsVoid.class, "Void Transport Pipe", BCCreativeTab.get("pipes"), "dyeBlack", "blockGlassColorless", "dustRedstone");
+			pipeItemsEmzuli = buildPipe(PipeItemsEmzuli.class, "Emzuli Transport Pipe", BCCreativeTab.get("pipes"), "blockLapis", "blockGlassColorless", "gemEmerald");
+			pipeItemsStripes = buildPipe(PipeItemsStripes.class, "Stripes Transport Pipe", BCCreativeTab.get("pipes"), "gearGold", "blockGlassColorless", "gearGold");
+            pipeItemsClay = buildPipe(PipeItemsClay.class, "Clay Transport Pipe", BCCreativeTab.get("pipes"), Blocks.clay, "blockGlassColorless", Blocks.clay);
 
 			pipeFluidsWood = buildPipe(PipeFluidsWood.class, "Wooden Waterproof Pipe", BCCreativeTab.get("pipes"), pipeWaterproof, pipeItemsWood);
 			pipeFluidsCobblestone = buildPipe(PipeFluidsCobblestone.class, "Cobblestone Waterproof Pipe", BCCreativeTab.get("pipes"), pipeWaterproof, pipeItemsCobblestone);
@@ -690,10 +690,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 		if (ingredients.length == 3) {
 			for (int i = 0; i < 17; i++) {
 				PipeRecipe recipe = new PipeRecipe();
-				ItemStack glass;
+				Object glass;
 
 				if (i == 0) {
-					glass = new ItemStack(Blocks.glass);
+					glass = ingredients[1];
 				} else {
 					glass = new ItemStack(Blocks.stained_glass, 1, i - 1);
 				}
