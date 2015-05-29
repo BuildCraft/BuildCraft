@@ -173,7 +173,11 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		}
 
 		if (stage == Stage.DONE) {
-			return;
+			if (mode == Mode.Loop) {
+				stage = Stage.IDLE;
+			} else {
+				return;
+			}
 		}
 
 		if (!areChunksLoaded()) {
@@ -901,7 +905,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 	@Override
 	public boolean acceptsControlMode(Mode mode) {
-		return mode == Mode.Off || mode == Mode.On;
+		return mode == Mode.Off || mode == Mode.On || mode == Mode.Loop;
 	}
 
 	@Override
