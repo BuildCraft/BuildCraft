@@ -16,8 +16,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.common.util.Constants;
 
+import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
@@ -29,6 +32,7 @@ import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.Position;
 import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.core.lib.utils.BlockUtils;
 
 public class BuildingSlotBlock extends BuildingSlot {
 
@@ -56,7 +60,11 @@ public class BuildingSlotBlock extends BuildingSlot {
 	public void writeToWorld(IBuilderContext context) {
 		if (mode == Mode.ClearIfInvalid) {
 			if (!getSchematic().isAlreadyBuilt(context, x, y, z)) {
-				context.world().setBlockToAir(x, y, z);
+				if (BuildCraftBuilders.dropBrokenBlocks) {
+					BlockUtils.breakBlock((WorldServer) context.world(), x, y, z);
+				} else {
+					context.world().setBlockToAir(x, y, z);
+				}
 			}
 		} else {
 			try {

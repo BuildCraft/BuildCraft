@@ -78,6 +78,7 @@ color.yellow=Yellow
 config.general=General
 config.general.pipes=Pipes
 config.blueprints=Blueprints
+config.builders=Builders
 config.power=Power Usage
 config.experimental=Experimental
 config.display=Display
@@ -88,6 +89,8 @@ config.buildcraft=BuildCraft Configuration
 config.blueprints.clientDatabaseDirectory=Client directory
 config.blueprints.excludedMods=Excluded mods
 config.blueprints.excludedBlocks=Excluded blocks
+
+config.builders.dropBrokenBlocks=Drop broken blocks
 
 config.display.colorBlindMode=Colorblind mode
 config.display.hideFluidValues=Hide fluid numbers

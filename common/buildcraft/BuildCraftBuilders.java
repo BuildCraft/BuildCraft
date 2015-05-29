@@ -239,6 +239,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		BuildCraftCore.mainConfigManager.register("general.quarry.oneTimeUse", false, "Should the quarry only be usable once after placing?", ConfigManager.RestartRequirement.NONE);
 		BuildCraftCore.mainConfigManager.register("general.quarry.doChunkLoading", true, "Should the quarry keep the chunks it is working on loaded?", ConfigManager.RestartRequirement.NONE);
 
+		BuildCraftCore.mainConfigManager.register("builders.dropBrokenBlocks", false, "Should the builder and filler drop the cleared blocks?", ConfigManager.RestartRequirement.NONE);
+
 		BuildCraftCore.mainConfigManager.get("blueprints.serverDatabaseDirectory").setShowInGui(false);
 		BuildCraftCore.mainConfigManager.get("general.markerRange").setMinValue(8).setMaxValue(64);
 
@@ -277,6 +279,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 			}, blueprintClientDir);
 
 			DefaultProps.MARKER_RANGE = BuildCraftCore.mainConfigManager.get("general.markerRange").getInt();
+
+			dropBrokenBlocks = BuildCraftCore.mainConfigManager.get("builders.dropBrokenBlocks").getBoolean();
 
 			if (BuildCraftCore.mainConfiguration.hasChanged()) {
 				BuildCraftCore.mainConfiguration.save();
