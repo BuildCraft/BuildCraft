@@ -122,11 +122,16 @@ public class CoreProxyClient extends CoreProxy {
 			for (IBlockState state : (List<IBlockState>) block.getBlockState().getValidStates()) {
 				String type = "";
 				for (IProperty property : (Collection<IProperty>) state.getProperties().keySet()) {
+				    if (type.length() != 0)
+				        type += ",";
 					type += property.getName() + "=";
-					if (state.getValue(property) instanceof Integer) {
-						type += ((Integer) state.getValue(property)).intValue();
+					Object value = state.getValue(property);
+					if (value instanceof Integer) {
+						type += ((Integer) value).intValue();
+					} else if (value instanceof Boolean) {
+					    type += ((Boolean) value).toString();
 					} else {
-						type += ((IStringSerializable) state.getValue(property)).getName();
+						type += ((IStringSerializable) value).getName();
 					}
 				}
 				Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(block), block.damageDropped(state), new ModelResourceLocation(Utils.getBlockName(block), type.toLowerCase()));

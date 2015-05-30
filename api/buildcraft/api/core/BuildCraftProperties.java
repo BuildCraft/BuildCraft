@@ -1,5 +1,6 @@
 package buildcraft.api.core;
 
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
@@ -7,6 +8,7 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.enums.EnumColor;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumLaserTableType;
+import buildcraft.api.enums.EnumMachineState;
 import buildcraft.api.enums.EnumSpring;
 
 public final class BuildCraftProperties {
@@ -23,6 +25,8 @@ public final class BuildCraftProperties {
 	public static final PropertyEnum LASER_TABLE_TYPE = PropertyEnum.create("type", EnumLaserTableType.class);
 	
 	public static final PropertyInteger PIPE_DATA = PropertyInteger.create("data", 0, 15);
+
+	public static final PropertyEnum MACHINE_STATE = PropertyEnum.create("state", EnumMachineState.class);
 
 	/**
 	 * Deactivate constructor
