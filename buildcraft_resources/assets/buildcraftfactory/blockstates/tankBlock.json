@@ -1,6 +1,6 @@
 {
     "variants": {
-        "normal": { "model": "buildcraftfactory:tank_bottom" },
-        "staced=true": { "model": "buildcraftfactory:tank" }
+        "joined_below=false": { "model": "buildcraftfactory:tank_bottom" },
+        "joined_below=true": { "model": "buildcraftfactory:tank" }
     }
 }

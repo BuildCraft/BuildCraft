@@ -1,5 +1,6 @@
 package buildcraft.api.core;
 
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
@@ -26,6 +27,8 @@ public final class BuildCraftProperties {
 	public static final PropertyInteger PIPE_DATA = PropertyInteger.create("data", 0, 15);
 
 	public static final PropertyEnum MACHINE_STATE = PropertyEnum.create("state", EnumMachineState.class);
+	
+	public static final PropertyBool JOINED_BELOW = PropertyBool.create("joined_below");
 
 	// Unlisted properties
 	public static final PropertyDouble FLUID_HEIGHT_NE = new PropertyDouble("height_ne", 0, 1);

@@ -15,6 +15,7 @@ import java.util.Random;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockState;
@@ -47,6 +48,8 @@ public abstract class BlockBuildCraft extends BlockContainer {
 
 	public static final PropertyEnum COLOR_PROP = BuildCraftProperties.BLOCK_COLOR;
 	public static final PropertyEnum MACHINE_STATE = BuildCraftProperties.MACHINE_STATE;
+	
+	public static final PropertyBool JOINED_BELOW = BuildCraftProperties.JOINED_BELOW;
 
 	protected final IProperty[] properties;
 	protected final HashBiMap<Integer, IBlockState> validStates = HashBiMap.create();
