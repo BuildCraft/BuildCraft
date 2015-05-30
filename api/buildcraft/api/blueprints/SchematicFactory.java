@@ -10,13 +10,15 @@ package buildcraft.api.blueprints;
 
 import java.util.HashMap;
 
+import com.google.common.collect.Maps;
+
 import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class SchematicFactory<S extends Schematic> {
 
-	private static final HashMap<String, SchematicFactory<?>> factories = new HashMap<String, SchematicFactory<?>>();
+	private static final HashMap<String, SchematicFactory<? extends Schematic>> factories = Maps.newHashMap();
 
-	private static final HashMap<Class<? extends Schematic>, SchematicFactory<?>> schematicToFactory = new HashMap<Class<? extends Schematic>, SchematicFactory<?>>();
+	private static final HashMap<Class<? extends Schematic>, SchematicFactory<?>> schematicToFactory = Maps.newHashMap();
 
 	protected abstract S loadSchematicFromWorldNBT(NBTTagCompound nbt, MappingRegistry registry)
 			throws MappingNotFoundException;
