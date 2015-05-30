@@ -10,6 +10,7 @@ package buildcraft.factory;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -24,7 +25,7 @@ import buildcraft.core.utils.Utils;
 public class BlockPump extends BlockBuildCraft {
 
 	public BlockPump() {
-		super(Material.iron);
+		super(Material.iron, new IProperty[]{MACHINE_STATE});
 	}
 
 	@Override
