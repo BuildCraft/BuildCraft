@@ -1,6 +1,6 @@
 {
     "variants": {
-         "facing=east,state=off":  { "model": "buildcraftbuilders:builder_off" },
+        "facing=east,state=off":  { "model": "buildcraftbuilders:builder_off" },
         "facing=south,state=off":  { "model": "buildcraftbuilders:builder_off", "y": 90 },
         "facing=west,state=off":  { "model": "buildcraftbuilders:builder_off", "y": 180 },
         "facing=north,state=off":  { "model": "buildcraftbuilders:builder_off", "y": 270 },

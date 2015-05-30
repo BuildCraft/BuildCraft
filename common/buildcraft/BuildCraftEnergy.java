@@ -10,25 +10,18 @@ package buildcraft;
 
 import java.util.Set;
 
-import org.apache.logging.log4j.Level;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLInterModComms;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
@@ -38,6 +31,18 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import org.apache.logging.log4j.Level;
+
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.JavaTools;
@@ -52,19 +57,9 @@ import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.network.BuildCraftChannelHandler;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.energy.BlockBuildcraftFluid;
-import buildcraft.energy.BlockEnergyEmitter;
-import buildcraft.energy.BlockEnergyReceiver;
-import buildcraft.energy.BlockEngine;
-import buildcraft.energy.BucketHandler;
-import buildcraft.energy.EnergyProxy;
-import buildcraft.energy.GuiHandler;
-import buildcraft.energy.ItemBucketBuildcraft;
-import buildcraft.energy.ItemEngine;
-import buildcraft.energy.SchematicEngine;
-import buildcraft.energy.TileEnergyEmitter;
-import buildcraft.energy.TileEnergyReceiver;
-import buildcraft.energy.TileEngine;
+import buildcraft.core.render.FluidBlockModel;
+import buildcraft.core.utils.TextureMapHelper;
+import buildcraft.energy.*;
 import buildcraft.energy.TileEngine.EnergyStage;
 import buildcraft.energy.statements.EnergyStatementProvider;
 import buildcraft.energy.statements.TriggerEngineHeat;
@@ -111,6 +106,19 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	private static Fluid buildcraftFluidOil;
 	private static Fluid buildcraftFluidFuel;
 	private static Fluid buildcraftFluidRedPlasma;
+	
+	@SideOnly(Side.CLIENT)
+	private TextureAtlasSprite oilStillSprite;	
+	@SideOnly(Side.CLIENT)
+	private TextureAtlasSprite oilFlowSprite;	
+	@SideOnly(Side.CLIENT)
+	private TextureAtlasSprite fuelStillSprite;	
+	@SideOnly(Side.CLIENT)
+	private TextureAtlasSprite fuelFlowSprite;	
+	@SideOnly(Side.CLIENT)
+	private TextureAtlasSprite redPlasmaStillSprite;	
+	@SideOnly(Side.CLIENT)
+	private TextureAtlasSprite redPlasmaFlowSprite;
 
 
 	@Mod.EventHandler
@@ -270,6 +278,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		}
 
 		MinecraftForge.EVENT_BUS.register(this);
+		
+		EnergyProxy.proxy.registerBlockRenderers();
 	}
 
 	private void setBiomeList(Set<Integer> list, Property configuration) {
@@ -329,28 +339,46 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			loadRecipes();
 		}
 
-		EnergyProxy.proxy.registerBlockRenderers();
 		EnergyProxy.proxy.registerTileEntities();
 	}
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
-		
 		if (BuildCraftCore.modifyWorld) {
 			MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
 			MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializer());
 		}
 	}
 
-	/*@SubscribeEvent
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void onTextureStitch(TextureStitchEvent.Pre event) {
+		if (event.map == Minecraft.getMinecraft().getTextureMapBlocks()) {
+			oilStillSprite = TextureMapHelper.registerSprite(event.map, "buildcraft:blocks/fluids/oil_still");
+			oilFlowSprite = TextureMapHelper.registerSprite(event.map, "buildcraft:blocks/fluids/oil_flow");
+			fuelStillSprite = TextureMapHelper.registerSprite(event.map, "buildcraft:blocks/fluids/fuel_still");
+			fuelFlowSprite = TextureMapHelper.registerSprite(event.map, "buildcraft:blocks/fluids/fuel_flow");
+			redPlasmaStillSprite = TextureMapHelper.registerSprite(event.map, "buildcraft:blocks/fluids/redPlasma_still");
+			redPlasmaFlowSprite = TextureMapHelper.registerSprite(event.map, "buildcraft:blocks/fluids/redPlasma_flow");
+		}
+	}
+	
+	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void textureHook(TextureStitchEvent.Post event) {
-		if (event.map.getTextureType() == 0) {
-			buildcraftFluidOil.setIcons(blockOil.getBlockTextureFromSide(1), blockOil.getBlockTextureFromSide(2));
-			buildcraftFluidFuel.setIcons(blockFuel.getBlockTextureFromSide(1), blockFuel.getBlockTextureFromSide(2));
-			buildcraftFluidRedPlasma.setIcons(blockRedPlasma.getBlockTextureFromSide(1), blockRedPlasma.getBlockTextureFromSide(2));
+		if (event.map == Minecraft.getMinecraft().getTextureMapBlocks()) {
+			buildcraftFluidOil.setIcons(oilStillSprite, oilFlowSprite);
+			buildcraftFluidFuel.setIcons(fuelStillSprite, fuelFlowSprite);
+			buildcraftFluidRedPlasma.setIcons(redPlasmaStillSprite, redPlasmaFlowSprite);
 		}
-	}*/
+	}
+	
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void onModelBakeEvent(ModelBakeEvent event) {
+		event.modelRegistry.putObject(new ModelResourceLocation("buildcraftenergy:blockFuel", "normal"), new FluidBlockModel());
+		event.modelRegistry.putObject(new ModelResourceLocation("buildcraftenergy:blockOil", "normal"), new FluidBlockModel());
+	}
 
 	public static void loadRecipes() {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 0),

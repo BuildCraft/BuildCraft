@@ -1,5 +1,8 @@
 {
     "variants": {
-        "normal":  { "model": "buildcraftbuilders:blueprintLibrary" }
+        "facing=east":  { "model": "buildcraftbuilders:blueprintLibrary" },
+        "facing=south":  { "model": "buildcraftbuilders:blueprintLibrary", "y": 90 },
+        "facing=west":  { "model": "buildcraftbuilders:blueprintLibrary", "y": 180 },
+        "facing=north":  { "model": "buildcraftbuilders:blueprintLibrary", "y": 270 }
     }
 }

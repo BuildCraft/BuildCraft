@@ -23,10 +23,6 @@ import buildcraft.core.utils.Utils;
 
 public class BlockPump extends BlockBuildCraft {
 
-	/*private IIcon textureTop;
-	private IIcon textureBottom;
-	private IIcon textureSide;*/
-
 	public BlockPump() {
 		super(Material.iron);
 	}
@@ -35,18 +31,6 @@ public class BlockPump extends BlockBuildCraft {
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TilePump();
 	}
-
-	/*@Override
-	public IIcon getIcon(int i, int j) {
-		switch (i) {
-			case 0:
-				return textureBottom;
-			case 1:
-				return textureTop;
-			default:
-				return textureSide;
-		}
-	}*/
 
 	@Override
 	public void breakBlock(World world, BlockPos pos, IBlockState state) {
@@ -88,12 +72,4 @@ public class BlockPump extends BlockBuildCraft {
 			((TilePump) tile).onNeighborBlockChange(block);
 		}
 	}
-
-	/*@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		textureTop = par1IconRegister.registerIcon("buildcraft:pump_top");
-		textureBottom = par1IconRegister.registerIcon("buildcraft:pump_bottom");
-		textureSide = par1IconRegister.registerIcon("buildcraft:pump_side");
-	}*/
 }

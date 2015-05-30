@@ -9,8 +9,11 @@
 package buildcraft.builders;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -21,15 +24,21 @@ import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.GuiIds;
+import buildcraft.core.utils.Utils;
 
 public class BlockBlueprintLibrary extends BlockBuildCraft {
 
-	/*private IIcon textureTop;
-    private IIcon textureSide;*/
-
     public BlockBlueprintLibrary() {
-		super(Material.wood, CreativeTabBuildCraft.BLOCKS);
+		super(Material.wood, CreativeTabBuildCraft.BLOCKS, new IProperty[]{FACING_PROP});
 	}
+    
+    @Override
+	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entityliving, ItemStack stack) {
+		super.onBlockPlacedBy(world, pos, state, entityliving, stack);
+        EnumFacing orientation = Utils.get2dOrientation(entityliving);
+
+        world.setBlockState(pos, state.withProperty(FACING_PROP, orientation.getOpposite()), 1);
+    }
 
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing face, float par7, float par8, float par9) {
@@ -60,22 +69,4 @@ public class BlockBlueprintLibrary extends BlockBuildCraft {
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileBlueprintLibrary();
 	}
-
-	/*@Override
-	public IIcon getIcon(int i, int j) {
-		switch (i) {
-		case 0:
-		case 1:
-			return textureTop;
-		default:
-			return textureSide;
-		}
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-	    textureTop = par1IconRegister.registerIcon("buildcraft:library_topbottom");
-        textureSide = par1IconRegister.registerIcon("buildcraft:library_side");
-	}*/
 }

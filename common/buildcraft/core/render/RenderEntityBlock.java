@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
@@ -56,7 +57,7 @@ public final class RenderEntityBlock extends Render {
 		public double maxZ;
 		public IBlockState blockState = Blocks.sand.getDefaultState();
 		public ResourceLocation resource;
-		//public IIcon texture = null;
+		public TextureAtlasSprite texture = null;
 		//public IIcon[] textureArray = null;
 		public boolean[] renderSide = new boolean[6];
 		public float light = -1f;
@@ -156,6 +157,8 @@ public final class RenderEntityBlock extends Render {
 		if(entity.blockState != null)
 			util.blockState = entity.blockState;
 		util.resource = entity.resource;
+		if (entity.texture != null)
+			util.texture = entity.texture;
 
 		for (int iBase = 0; iBase < entity.iSize; ++iBase) {
 			for (int jBase = 0; jBase < entity.jSize; ++jBase) {

@@ -1,12 +1,12 @@
 {
     "parent": "block/cube",
     "textures": {
-        "particle": "buildcraft:blocks/architect_back",
-        "down": "buildcraft:blocks/architect_bottom",
-        "up": "buildcraft:blocks/architect_top",
-        "north": "buildcraft:blocks/architect_rightSide",
-        "east": "buildcraft:blocks/architect_front",
-        "south": "buildcraft:blocks/architect_leftSide",
-        "west": "buildcraft:blocks/architect_back"
+        "particle": "buildcraft:blocks/architect/back",
+        "down": "buildcraft:blocks/architect/bottom",
+        "up": "buildcraft:blocks/architect/top",
+        "north": "buildcraft:blocks/architect/right",
+        "east": "buildcraft:blocks/architect/front",
+        "south": "buildcraft:blocks/architect/left",
+        "west": "buildcraft:blocks/architect/back"
     }
 }

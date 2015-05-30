@@ -273,6 +273,10 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
 		lasers = new EntityBlock[12];
 		Origin o = origin;
+		
+		if (origin.vectO.pos == null) {
+			origin.vectO.pos = getPos();
+		}
 
 		if (!origin.vect[0].isSet()) {
 			o.xMin = origin.vectO.pos.getX();

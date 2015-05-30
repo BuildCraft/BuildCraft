@@ -1,0 +1,7 @@
+{
+    "parent": "block/cube_all",
+    "textures": {
+        "all": "buildcraft:fluids/fuel_still",
+        "flowing": "buildcraft:fluids/fuel_flow"
+    }
+}

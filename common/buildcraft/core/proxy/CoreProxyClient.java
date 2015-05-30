@@ -162,15 +162,15 @@ public class CoreProxyClient extends CoreProxy {
 		EntityBlock eb = super.newEntityBlock(world, i, j, k, iSize, jSize, kSize, laserKind);
 		switch (laserKind) {
 		case Blue:
-			//eb.texture = BuildCraftCore.blueLaserTexture;
+			eb.texture = BuildCraftCore.blueLaserTexture;
 			break;
 
 		case Red:
-			//eb.texture = BuildCraftCore.redLaserTexture;
+			eb.texture = BuildCraftCore.redLaserTexture;
 			break;
 
 		case Stripes:
-			//eb.texture = BuildCraftCore.stripesLaserTexture;
+			eb.texture = BuildCraftCore.stripesLaserTexture;
 			break;
 		}
 		return eb;

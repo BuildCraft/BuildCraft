@@ -1,9 +1,18 @@
 {
     "variants": {
-        "facing=up": { "model": "buildcraftfactory:quarry" },
-        "facing=east": { "model": "buildcraftfactory:quarry" },
-        "facing=south": { "model": "buildcraftfactory:quarry", "y": 90 },
-        "facing=west": { "model": "buildcraftfactory:quarry", "y": 180 },
-        "facing=north": { "model": "buildcraftfactory:quarry", "y": 270 }
+        "facing=east,state=off":  { "model": "buildcraftfactory:quarry_off" },
+        "facing=south,state=off":  { "model": "buildcraftfactory:quarry_off", "y": 90 },
+        "facing=west,state=off":  { "model": "buildcraftfactory:quarry_off", "y": 180 },
+        "facing=north,state=off":  { "model": "buildcraftfactory:quarry_off", "y": 270 },
+        
+        "facing=east,state=on":  { "model": "buildcraftfactory:quarry_on" },
+        "facing=south,state=on":  { "model": "buildcraftfactory:quarry_on", "y": 90 },
+        "facing=west,state=on":  { "model": "buildcraftfactory:quarry_on", "y": 180 },
+        "facing=north,state=on":  { "model": "buildcraftfactory:quarry_on", "y": 270 },
+        
+         "facing=east,state=done":  { "model": "buildcraftfactory:quarry_done" },
+        "facing=south,state=done":  { "model": "buildcraftfactory:quarry_done", "y": 90 },
+        "facing=west,state=done":  { "model": "buildcraftfactory:quarry_done", "y": 180 },
+        "facing=north,state=done":  { "model": "buildcraftfactory:quarry_done", "y": 270 }
     }
 }

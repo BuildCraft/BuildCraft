@@ -1,12 +1,12 @@
 {
     "parent": "block/cube",
     "textures": {
-        "particle": "buildcraft:blocks/library_side",
-        "down": "buildcraft:blocks/library_topbottom",
-        "up": "buildcraft:blocks/library_topbottom",
-        "north": "buildcraft:blocks/library_side",
-        "east": "buildcraft:blocks/library_side",
-        "south": "buildcraft:blocks/library_side",
-        "west": "buildcraft:blocks/library_side"
+        "particle": "buildcraft:blocks/blueprint_library/side",
+        "down": "buildcraft:blocks/blueprint_library/bottom",
+        "up": "buildcraft:blocks/blueprint_library/top",
+        "north": "buildcraft:blocks/blueprint_library/right",
+        "east": "buildcraft:blocks/blueprint_library/front",
+        "south": "buildcraft:blocks/blueprint_library/left",
+        "west": "buildcraft:blocks/blueprint_library/back"
     }
 }
