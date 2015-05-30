@@ -3,6 +3,7 @@
         "normal": { "model": "buildcraftbuilders:marker" },
         "inventory": { "model": "buildcraftbuilders:marker" },
         "facing=up":  { "model": "buildcraftbuilders:marker" },
+        "facing=down":  { "model": "buildcraftbuilders:marker", "x": 180 },
         "facing=east":  { "model": "buildcraftbuilders:marker_wall" },
         "facing=south":  { "model": "buildcraftbuilders:marker_wall", "y": 90 },
         "facing=west":  { "model": "buildcraftbuilders:marker_wall", "y": 180 },

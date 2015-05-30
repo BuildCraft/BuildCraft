@@ -239,7 +239,7 @@ public class BlueprintDatabase {
 	public static BlueprintBase load(byte[] data) {
 		try {
 			//Ugly but will probably work
-			NBTTagCompound nbt = CompressedStreamTools.func_152456_a(new DataInputStream(new ByteArrayInputStream(data)), NBTSizeTracker.INFINITE);
+			NBTTagCompound nbt = CompressedStreamTools.read(new DataInputStream(new ByteArrayInputStream(data)), NBTSizeTracker.INFINITE);
 
 			BlueprintBase blueprint = BlueprintBase.loadBluePrint(nbt);
 			blueprint.setData(data);

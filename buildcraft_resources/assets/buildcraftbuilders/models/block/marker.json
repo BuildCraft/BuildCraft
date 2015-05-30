@@ -1,6 +1,6 @@
 {
     "parent": "block/torch",
     "textures": {
-        "torch": "buildcraft:blocks/blockMarker"
+        "torch": "buildcraft:blocks/marker/volume"
     }
 }

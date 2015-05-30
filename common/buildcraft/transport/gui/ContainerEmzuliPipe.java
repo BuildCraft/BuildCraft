@@ -68,8 +68,8 @@ public class ContainerEmzuliPipe extends BuildCraftContainer {
 	}
 
 	@Override
-	public void addCraftingToCrafters(ICrafting player) {
-		super.addCraftingToCrafters(player);
+	public void onCraftGuiOpened(ICrafting player) {
+		super.onCraftGuiOpened(player);
 		for (int slot = 0; slot < pipe.slotColors.length; slot++) {
 			prevSlotColors[slot] = pipe.slotColors[slot];
 			player.sendProgressBarUpdate(this, slot, pipe.slotColors[slot]);

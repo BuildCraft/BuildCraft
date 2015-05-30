@@ -114,7 +114,7 @@ public final class InventoryConcatenator implements IInventory {
 	}
 
 	@Override
-	public String getName() {
+	public String getCommandSenderName() {
 		return "";
 	}
 

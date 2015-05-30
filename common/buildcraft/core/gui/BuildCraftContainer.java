@@ -70,8 +70,8 @@ public abstract class BuildCraftContainer extends Container {
 	}
 
 	@Override
-	public void addCraftingToCrafters(ICrafting player) {
-		super.addCraftingToCrafters(player);
+	public void onCraftGuiOpened(ICrafting player) {
+		super.onCraftGuiOpened(player);
 		for (Widget widget : widgets) {
 			widget.initWidget(player);
 		}

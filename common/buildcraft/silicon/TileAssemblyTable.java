@@ -23,7 +23,9 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.common.util.Constants;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.fluids.FluidStack;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.CraftingResult;
@@ -360,7 +362,6 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		return 0;
 	}
 
-	@Override
 	public String getName() {
 		return "tile.assemblyTableBlock.name";
 	}

@@ -40,8 +40,8 @@ public class BuildingSlotEntity extends BuildingSlot {
 	@Override
 	public Position getDestination () {
 		NBTTagList nbttaglist = schematic.entityNBT.getTagList("Pos", 6);
-		Position pos = new Position(nbttaglist.getDouble(0),
-				nbttaglist.getDouble(1), nbttaglist.getDouble(2));
+		Position pos = new Position(nbttaglist.getDoubleAt(0),
+				nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
 
 		return pos;
 	}

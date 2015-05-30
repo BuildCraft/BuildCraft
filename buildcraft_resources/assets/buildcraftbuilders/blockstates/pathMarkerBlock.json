@@ -3,6 +3,7 @@
         "normal": { "model": "buildcraftbuilders:pathMarker" },
         "inventory": { "model": "buildcraftbuilders:pathMarker" },
         "facing=up":  { "model": "buildcraftbuilders:pathMarker" },
+        "facing=down":  { "model": "buildcraftbuilders:pathMarker", "x": 180 },
         "facing=east":  { "model": "buildcraftbuilders:pathMarker_wall" },
         "facing=south":  { "model": "buildcraftbuilders:pathMarker_wall", "y": 90 },
         "facing=west":  { "model": "buildcraftbuilders:pathMarker_wall", "y": 180 },
