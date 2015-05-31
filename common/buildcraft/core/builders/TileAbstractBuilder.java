@@ -8,8 +8,11 @@
  */
 package buildcraft.core.builders;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,7 +41,7 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 
 	public LinkedList<LaserData> pathLasers = new LinkedList<LaserData> ();
 
-	public ArrayList<BuildingItem> buildersInAction = new ArrayList<BuildingItem>();
+	public List<BuildingItem> buildersInAction = Collections.synchronizedList(Lists.<BuildingItem> newArrayList());
 
 	private int rfPrev = 0;
 	private int rfUnchangedCycles = 0;
@@ -90,11 +93,13 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 
 		BuildingItem toRemove = null;
 
-		for (BuildingItem i : buildersInAction) {
-			i.update();
+		synchronized (buildersInAction) {
+			for (BuildingItem i : buildersInAction) {
+				i.update();
 
-			if (i.isDone) {
-				toRemove = i;
+				if (i.isDone) {
+					toRemove = i;
+				}
 			}
 		}
 
@@ -121,11 +126,11 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 	}
 
 	@Override
-	public ArrayList<BuildingItem> getBuilders() {
+	public List<BuildingItem> getBuilders() {
 		return buildersInAction;
 	}
 
-	public LinkedList<LaserData> getPathLaser() {
+	public List<LaserData> getPathLaser() {
 		return pathLasers;
 	}
 

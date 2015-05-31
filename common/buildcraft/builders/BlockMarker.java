@@ -33,7 +33,6 @@ import buildcraft.core.ItemMapLocation;
 import buildcraft.core.utils.Utils;
 
 public class BlockMarker extends BlockBuildCraft {
-
 	
 	public BlockMarker() {
 		super(Material.circuits, new PropertyEnum[]{FACING_6_PROP});
@@ -154,8 +153,8 @@ public class BlockMarker extends BlockBuildCraft {
 	}
 
 	private void dropTorchIfCantStay(World world, BlockPos pos, IBlockState state) {
-		EnumFacing side = (EnumFacing)state.getValue(FACING_6_PROP);
-		System.out.println("SIDE IS " + side.name());
+		EnumFacing side = (EnumFacing) state.getValue(FACING_6_PROP);
+		EnumFacing opposite = side.getOpposite();
 		if (!canPlaceBlockOnSide(world, pos, side)) {
 			dropBlockAsItem(world, pos, state, 0);
 			world.setBlockToAir(pos);

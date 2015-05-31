@@ -44,7 +44,7 @@ public class RenderBuilder extends RenderBoxProvider {
 						RenderLaser
 								.doRenderLaser(tileentity.getWorld(),
 										TileEntityRendererDispatcher.instance.renderEngine,
-										laser, EntityLaser.LASER_TEXTURES[4]);
+										laser, EntityLaser.LASER_BLUE);
 						GL11.glPopMatrix();
 					}
 				}

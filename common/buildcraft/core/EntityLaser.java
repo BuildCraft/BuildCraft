@@ -10,36 +10,55 @@ package buildcraft.core;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.Position;
 
-public abstract class EntityLaser extends Entity {
-
-	public static final ResourceLocation[] LASER_TEXTURES = new ResourceLocation[]{
-		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png"),
-		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_2.png"),
-		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_3.png"),
-		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_4.png"),
-		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/stripes.png"),
-		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/blue_stripes.png")};
-
+public class EntityLaser extends Entity {
+	
+	public static final ResourceLocation LASER_RED = new ResourceLocation("buildcraft:textures/entities/laser_1.png");
+	public static final ResourceLocation LASER_YELLOW = new ResourceLocation("buildcraft:textures/entities/laser_2.png");
+	public static final ResourceLocation LASER_GREEN =new ResourceLocation("buildcraft:textures/entities/laser_3.png");
+	public static final ResourceLocation LASER_BLUE =new ResourceLocation("buildcraft:textures/entities/laser_4.png");
+	
+	public static final ResourceLocation LASER_STRIPES_BLUE =new ResourceLocation("buildcraft:textures/entities/blue_stripes.png");
+	public static final ResourceLocation LASER_STRIPES_YELLOW =new ResourceLocation("buildcraft:textures/entities/stripes.png");
+	
 	public LaserData data = new LaserData();
 
 	protected boolean needsUpdate = true;
 	
-	public AxisAlignedBB boundingBox;
+	private final ResourceLocation laserTexture;
+	
+	public static ResourceLocation getTextureFromLaserKind(LaserKind kind) {
+		switch (kind) {
+			case Blue:
+				return LASER_BLUE;
+			case Red:
+				return LASER_RED;
+			case Stripes:
+				return LASER_STRIPES_YELLOW;
+			default:
+				return LASER_STRIPES_BLUE;
+		}
+	}
 
 	public EntityLaser(World world) {
-		super(world);
-
-		data.head = new Position(0, 0, 0);
-		data.tail = new Position(0, 0, 0);
+		this(world, new Position(0, 0, 0), new Position(0, 0, 0));
 	}
 
 	public EntityLaser(World world, Position head, Position tail) {
-
+		this(world, head, tail, LASER_RED);
+	}
+	
+	public EntityLaser(World world, Position head, Position tail, LaserKind kind) {
+		this(world, head, tail, getTextureFromLaserKind(kind));
+	}
+	
+	public EntityLaser(World world, Position head, Position tail, ResourceLocation laserTexture) {
 		super(world);
 
 		data.head = head;
@@ -47,8 +66,12 @@ public abstract class EntityLaser extends Entity {
 
 		setPositionAndRotation(head.x, head.y, head.z, 0, 0);
 		setSize(10, 10);
+		
+		this.laserTexture = laserTexture;
+		
+		BCLog.logger.info("Created EntityLaser @ head = " + head + ", tail = " + tail + ", texture = " + laserTexture);
 	}
-
+	
 	@Override
 	protected void entityInit() {
 		preventEntitySpawning = false;
@@ -67,7 +90,6 @@ public abstract class EntityLaser extends Entity {
 
 	@Override
 	public void onUpdate() {
-
 		if (data.head == null || data.tail == null) {
 			return;
 		}
@@ -77,14 +99,15 @@ public abstract class EntityLaser extends Entity {
 			needsUpdate = false;
 		}
 
-		//if (worldObj.isRemote) {
-		//	updateDataClient();
-		//}
+		if (worldObj.isRemote) {
+			updateDataClient();
+		}
 		
-		//TODO (1.8): Avoid Object Overflow
-		boundingBox = new AxisAlignedBB(Math.min(data.head.x, data.tail.x), Math.min(data.head.y, data.tail.y) - 1.0D, 
+		// TODO (1.8): Avoid Object Overflow
+		// Err... what?
+		setEntityBoundingBox(new AxisAlignedBB(Math.min(data.head.x, data.tail.x), Math.min(data.head.y, data.tail.y) - 1.0D, 
 				Math.min(data.head.z, data.tail.z) - 1.0D,  Math.max(data.head.x, data.tail.x) + 1.0D, 
-				Math.max(data.head.y, data.tail.y) + 1.0D , Math.max(data.head.z, data.tail.z) + 1.0D);
+				Math.max(data.head.y, data.tail.y) + 1.0D , Math.max(data.head.z, data.tail.z) + 1.0D));
 
 		data.update();
 	}
@@ -134,7 +157,9 @@ public abstract class EntityLaser extends Entity {
 		return data.isVisible;
 	}
 
-	public abstract ResourceLocation getTexture();
+	public ResourceLocation getTexture() {
+		return laserTexture;
+	}
 
 	protected int encodeDouble(double d) {
 		return (int) (d * 8192);
@@ -145,6 +170,9 @@ public abstract class EntityLaser extends Entity {
 	}
 
 	// The read/write to nbt seem to be useless
+	
+	// Yes it is- we never want to persist this entity.
+	
 	@Override
 	protected void readEntityFromNBT(NBTTagCompound nbt) {
 
@@ -161,7 +189,6 @@ public abstract class EntityLaser extends Entity {
 
 	@Override
 	protected void writeEntityToNBT(NBTTagCompound nbt) {
-
 		nbt.setDouble("headX", data.head.x);
 		nbt.setDouble("headY", data.head.y);
 		nbt.setDouble("headZ", data.head.z);
@@ -173,7 +200,7 @@ public abstract class EntityLaser extends Entity {
 
 	// Workaround for the laser's posY loosing it's precision e.g 103.5 becomes 104
 	public Position renderOffset() {
-		return new Position(data.head.x - posX, data.head.y - posY, data.head.z - posZ);
+		return new Position(0.5, 0.5, 0.5);
 	}
 
 	@Override

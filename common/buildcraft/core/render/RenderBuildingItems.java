@@ -37,8 +37,10 @@ public class RenderBuildingItems {
 		GL11.glTranslated(-tile.getPos().getX(), -tile.getPos().getY(), -tile.getPos().getZ());
 
 		if (provider.getBuilders() != null) {
-			for (BuildingItem i : provider.getBuilders()) {
-				doRenderItem(i, 1.0F);
+			synchronized (provider.getBuilders()) {
+				for (BuildingItem i : provider.getBuilders()) {
+					doRenderItem(i, 1.0F);
+				}
 			}
 		}
 
@@ -62,7 +64,7 @@ public class RenderBuildingItems {
 				GL11.glScalef(renderScale, renderScale, renderScale);
 				dummyEntityItem.setEntityItemStack(s.stack);
 				//TODO (1.8): Render
-				//customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
+//				customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
 
 				GL11.glPopMatrix();
 			}

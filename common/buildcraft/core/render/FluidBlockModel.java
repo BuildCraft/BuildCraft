@@ -23,6 +23,10 @@ import buildcraft.core.fluids.FluidHelper;
 
 import com.google.common.collect.Maps;
 
+/**
+ * The fluid rendering setup associated with this class was originally created by kirderf1 for www.github.com/mraof/minestuck
+ * When copying this code, please keep this comment or refer back to the original source in another way, if possible.
+ */
 public class FluidBlockModel implements ISmartBlockModel {
 	private static final double RENDER_OFFSET = 0.001;
 
@@ -36,8 +40,7 @@ public class FluidBlockModel implements ISmartBlockModel {
 		double heightSE = extState.getValue(FluidHelper.HEIGHT_SE);
 		double heightNE = extState.getValue(FluidHelper.HEIGHT_NE);
 		double flow = extState.getValue(FluidHelper.FLOW_DIRECTION);
-		throw new Error("CALL ME >:(");
-//		return getModel((BlockFluidBase) state.getBlock(), Arrays.asList(heightSE, heightSW, heightNW, heightNE, flow));
+		return getModel((BlockFluidBase) state.getBlock(), Arrays.asList(heightSE, heightSW, heightNW, heightNE, flow));
 	}
 
 	private SimpleBakedModel getModel(BlockFluidBase block, List<Double> param) {

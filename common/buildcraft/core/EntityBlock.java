@@ -37,6 +37,7 @@ public class EntityBlock extends Entity {
 		preventEntitySpawning = false;
 		noClip = true;
 		isImmuneToFire = true;
+		ignoreFrustumCheck = true;
 	}
 
 	public EntityBlock(World world, double xPos, double yPos, double zPos) {

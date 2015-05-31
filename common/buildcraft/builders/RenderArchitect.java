@@ -42,7 +42,7 @@ public class RenderArchitect extends RenderBoxProvider {
 					RenderLaser
 							.doRenderLaserWave(tileentity.getWorld(),
 									TileEntityRendererDispatcher.instance.renderEngine,
-									laser, EntityLaser.LASER_TEXTURES[3]);
+									laser, EntityLaser.LASER_BLUE);
 
 					GL11.glPopMatrix();
 				}

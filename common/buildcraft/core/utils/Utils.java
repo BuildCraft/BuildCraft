@@ -39,6 +39,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import buildcraft.api.core.IAreaProvider;
@@ -47,6 +48,7 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityBlock;
+import buildcraft.core.EntityLaser;
 import buildcraft.core.IDropControlInventory;
 import buildcraft.core.IFramePipeConnection;
 import buildcraft.core.LaserData;
@@ -223,54 +225,18 @@ public final class Utils {
 		return null;
 	}
 
-	public static EntityBlock createLaser(World world, Position p1, Position p2, LaserKind kind) {
+	public static EntityLaser createLaser(World world, Position p1, Position p2, LaserKind kind) {
 		if (p1.equals(p2)) {
 			return null;
 		}
-
-		double iSize = p2.x - p1.x;
-		double jSize = p2.y - p1.y;
-		double kSize = p2.z - p1.z;
-
-		double i = p1.x;
-		double j = p1.y;
-		double k = p1.z;
-
-		if (iSize != 0) {
-			i += 0.5;
-			j += 0.45;
-			k += 0.45;
-
-			jSize = 0.10;
-			kSize = 0.10;
-		} else if (jSize != 0) {
-			i += 0.45;
-			j += 0.5;
-			k += 0.45;
-
-			iSize = 0.10;
-			kSize = 0.10;
-		} else if (kSize != 0) {
-			i += 0.45;
-			j += 0.45;
-			k += 0.5;
-
-			iSize = 0.10;
-			jSize = 0.10;
-		}
-
-		EntityBlock block = CoreProxy.proxy.newEntityBlock(world, i, j, k, iSize, jSize, kSize, kind);
-		block.setBrightness(210);
-
-		world.spawnEntityInWorld(block);
-
-		return block;
+		EntityLaser laser = new EntityLaser(world, p1, p2, kind);
+		world.spawnEntityInWorld(laser);
+		return laser;
 	}
-
-	public static EntityBlock[] createLaserBox(World world, double xMin, double yMin, double zMin, double xMax, double yMax, double zMax, LaserKind kind) {
-		EntityBlock[] lasers = new EntityBlock[12];
+	
+	public static EntityLaser[] createLaserBox(World world, double xMin, double yMin, double zMin, double xMax, double yMax, double zMax, LaserKind kind) {
+		EntityLaser[] lasers = new EntityLaser[12];
 		Position[] p = new Position[8];
-
 		p[0] = new Position(xMin, yMin, zMin);
 		p[1] = new Position(xMax, yMin, zMin);
 		p[2] = new Position(xMin, yMax, zMin);
@@ -540,6 +506,14 @@ public final class Utils {
 	public static BlockPos readBlockPos(NBTTagCompound compound) {
 		return new BlockPos(compound.getInteger("x"), compound.getShort("y"), compound.getInteger("z"));
 	}
+	
+	public static BlockPos move(BlockPos pos, EnumFacing direction) {
+        int x = direction.getAxis() == Axis.X ? 1 : 0;
+        int y = direction.getAxis() == Axis.Y ? 1 : 0;
+        int z = direction.getAxis() == Axis.Z ? 1 : 0;
+        return pos.add(x, y, z);
+    }
+	
 	/**
 	 * This subprogram transforms a packet into a FML packet to be send in the
 	 * minecraft default packet mechanism. This always use BC-CORE as a

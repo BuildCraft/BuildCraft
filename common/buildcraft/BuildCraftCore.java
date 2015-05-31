@@ -146,17 +146,11 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Item wrenchItem;
 	public static Item mapLocationItem;
 	public static Item listItem;
-	@SideOnly(Side.CLIENT)
-	public static TextureAtlasSprite redLaserTexture;
-	@SideOnly(Side.CLIENT)
-	public static TextureAtlasSprite blueLaserTexture;
-	@SideOnly(Side.CLIENT)
-	public static TextureAtlasSprite stripesLaserTexture;
-	@SideOnly(Side.CLIENT)
-	public static TextureAtlasSprite transparentTexture;
+	
 	public static int blockByEntityModel;
 	public static int legacyPipeModel;
 	public static int markerModel;
+	
 	public static ITriggerExternal triggerMachineActive = new TriggerMachine(true);
 	public static ITriggerExternal triggerMachineInactive = new TriggerMachine(false);
 	public static IStatement triggerEnergyHigh = new TriggerEnergy(true);
@@ -351,8 +345,6 @@ public class BuildCraftCore extends BuildCraftMod {
 			loadRecipes();
 		}
 		EntityRegistry.registerModEntity(EntityRobot.class, "bcRobot", EntityIds.ROBOT, instance, 50, 1, true);
-		EntityList.stringToClassMapping.remove("BuildCraftCore.bcLaser");
-		EntityList.stringToClassMapping.remove("BuildCraftCore.bcEnergyLaser");
 
 		FMLCommonHandler.instance().bus().register(new CraftingHandler());
 
@@ -406,26 +398,6 @@ public class BuildCraftCore extends BuildCraftMod {
 	public void serverStarting(FMLServerStartingEvent event) {
 		serverThread = Thread.currentThread();
 		event.registerServerCommand(new CommandBuildCraft());
-	}
-
-	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public void onModelBakeEvent(ModelBakeEvent event) {
-		redLaserTexture = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("buildcraft:blockRedLaser");
-		blueLaserTexture = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("buildcraft:blockBlueLaser");
-		stripesLaserTexture = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("buildcraft:blockStripesLaser");
-		transparentTexture = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("buildcraft:blockTransparentLaser");
-	}
-	
-	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public void onTextureStitch(TextureStitchEvent.Pre event) {
-		if (event.map == Minecraft.getMinecraft().getTextureMapBlocks()) {
-			redLaserTexture = TextureMapHelper.registerSprite(event.map, "buildcraft:blocks/blockRedLaser");
-			blueLaserTexture = TextureMapHelper.registerSprite(event.map, "buildcraft:blocks/blockBlueLaser");
-			stripesLaserTexture = TextureMapHelper.registerSprite(event.map, "buildcraft:blocks/blockStripesLaser");
-			transparentTexture = TextureMapHelper.registerSprite(event.map, "buildcraft:blocks/blockTransparentLaser");
-		}
 	}
 
 	public void loadRecipes() {

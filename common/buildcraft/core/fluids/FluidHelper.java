@@ -18,9 +18,7 @@ import buildcraft.api.core.PropertyDouble;
  * recommended that you override the getExtendedState() method in your block and just return
  * FluidHelper.getExtendedState()
  * 
- * Original implementation by kirderf1, currently license is not known?
- * 
- * TODO BEFORE RELEASE: AQUIRE PERMISSION OR WRITE A DIFFERENT VERSION */
+ * Original implementation by kirderf1 () */
 public class FluidHelper {
 	public static final PropertyDouble HEIGHT_NE = BuildCraftProperties.FLUID_HEIGHT_NE;
 	public static final PropertyDouble HEIGHT_NW = BuildCraftProperties.FLUID_HEIGHT_NW;

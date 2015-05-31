@@ -39,9 +39,11 @@ import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftSilicon;
 import buildcraft.api.enums.EnumColor;
 import buildcraft.core.EntityBlock;
+import buildcraft.core.EntityLaser;
 import buildcraft.core.ItemBuildCraft;
 import buildcraft.core.LaserKind;
 import buildcraft.core.render.RenderEntityBlock;
+import buildcraft.core.render.RenderLaser;
 import buildcraft.core.render.RenderRobot;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingMarkers;
@@ -149,31 +151,13 @@ public class CoreProxyClient extends CoreProxy {
 	public void initializeEntityRendering() {
 		RenderingRegistry.registerEntityRenderingHandler(EntityBlock.class, RenderEntityBlock.INSTANCE);
 		RenderingRegistry.registerEntityRenderingHandler(EntityRobot.class, new RenderRobot());
+		RenderingRegistry.registerEntityRenderingHandler(EntityLaser.class, new RenderLaser());
 	}
 
 	/* BUILDCRAFT PLAYER */
 	@Override
 	public String playerName() {
 		return FMLClientHandler.instance().getClient().thePlayer.getDisplayName().getFormattedText();
-	}
-
-	@Override
-	public EntityBlock newEntityBlock(World world, double i, double j,	double k, double iSize, double jSize, double kSize, LaserKind laserKind) {
-		EntityBlock eb = super.newEntityBlock(world, i, j, k, iSize, jSize, kSize, laserKind);
-		switch (laserKind) {
-		case Blue:
-			eb.texture = BuildCraftCore.blueLaserTexture;
-			break;
-
-		case Red:
-			eb.texture = BuildCraftCore.redLaserTexture;
-			break;
-
-		case Stripes:
-			eb.texture = BuildCraftCore.stripesLaserTexture;
-			break;
-		}
-		return eb;
 	}
 
 	/**
