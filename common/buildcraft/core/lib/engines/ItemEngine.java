@@ -10,6 +10,7 @@ package buildcraft.core.lib.engines;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IIcon;
 
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBlockBuildCraft;
@@ -33,5 +34,10 @@ public class ItemEngine extends ItemBlockBuildCraft {
 	@Override
 	public String getUnlocalizedName(ItemStack itemstack) {
 		return engineBlock.getUnlocalizedName(itemstack.getItemDamage());
+	}
+
+	@Override
+	public IIcon getIconIndex(ItemStack stack) {
+		return null;
 	}
 }
