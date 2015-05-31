@@ -24,8 +24,8 @@ import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.core.lib.utils.IBlockFilter;
 import buildcraft.robotics.ai.AIRobotFetchAndEquipItemStack;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
+import buildcraft.robotics.ai.AIRobotPlant;
 import buildcraft.robotics.ai.AIRobotSearchAndGotoBlock;
-import buildcraft.robotics.ai.AIRobotUseToolOnBlock;
 import buildcraft.robotics.statements.ActionRobotFilter;
 
 public class BoardRobotPlanter extends RedstoneBoardRobot {
@@ -71,11 +71,11 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 		if (ai instanceof AIRobotSearchAndGotoBlock) {
 			if (ai.success()) {
 				blockFound = ((AIRobotSearchAndGotoBlock) ai).getBlockFound();
-				startDelegateAI(new AIRobotUseToolOnBlock(robot, blockFound));
+				startDelegateAI(new AIRobotPlant(robot, blockFound));
 			} else {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
-		} else if (ai instanceof AIRobotUseToolOnBlock) {
+		} else if (ai instanceof AIRobotPlant) {
 			releaseBlockFound();
 		} else if (ai instanceof AIRobotFetchAndEquipItemStack) {
 			if (robot.getHeldItem() == null) {

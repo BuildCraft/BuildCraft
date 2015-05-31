@@ -10,6 +10,7 @@ package buildcraft.robotics.ai;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldServer;
 
@@ -51,8 +52,8 @@ public class AIRobotUseToolOnBlock extends AIRobot {
 
 			EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj)
 					.get();
-			if (stack.getItem().onItemUse(stack, player, robot.worldObj, useToBlock.x,
-					useToBlock.y, useToBlock.z, ForgeDirection.UP.ordinal(), 0, 0, 0)) {
+			if (BlockUtils.useItemOnBlock(robot.worldObj, player, stack, useToBlock.x,
+					useToBlock.y, useToBlock.z, ForgeDirection.UP)) {
 				if (robot.getHeldItem().isItemStackDamageable()) {
 					robot.getHeldItem().damageItem(1, robot);
 
@@ -85,5 +86,30 @@ public class AIRobotUseToolOnBlock extends AIRobot {
 	@Override
 	public int getEnergyCost() {
 		return 8;
+	}
+
+	@Override
+	public boolean canLoadFromNBT() {
+		return true;
+	}
+
+	@Override
+	public void writeSelfToNBT(NBTTagCompound nbt) {
+		super.writeSelfToNBT(nbt);
+
+		if (useToBlock != null) {
+			NBTTagCompound sub = new NBTTagCompound();
+			useToBlock.writeTo(sub);
+			nbt.setTag("blockFound", sub);
+		}
+	}
+
+	@Override
+	public void loadSelfFromNBT(NBTTagCompound nbt) {
+		super.loadSelfFromNBT(nbt);
+
+		if (nbt.hasKey("blockFound")) {
+			useToBlock = new BlockIndex (nbt.getCompoundTag("blockFound"));
+		}
 	}
 }
