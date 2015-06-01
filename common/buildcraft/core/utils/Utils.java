@@ -507,13 +507,6 @@ public final class Utils {
 		return new BlockPos(compound.getInteger("x"), compound.getShort("y"), compound.getInteger("z"));
 	}
 	
-	public static BlockPos move(BlockPos pos, EnumFacing direction) {
-        int x = direction.getAxis() == Axis.X ? 1 : 0;
-        int y = direction.getAxis() == Axis.Y ? 1 : 0;
-        int z = direction.getAxis() == Axis.Z ? 1 : 0;
-        return pos.add(x, y, z);
-    }
-	
 	/**
 	 * This subprogram transforms a packet into a FML packet to be send in the
 	 * minecraft default packet mechanism. This always use BC-CORE as a

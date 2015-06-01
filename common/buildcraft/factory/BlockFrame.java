@@ -119,7 +119,7 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 	@Override
 	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
 		for (Entry<EnumFacing, PropertyBoolUnlisted> entry : FACING_PROPS.entrySet()) {
-			boolean connects = Utils.checkLegacyPipesConnections(world, pos, Utils.move(pos, entry.getKey()));
+			boolean connects = Utils.checkLegacyPipesConnections(world, pos, pos.offset(entry.getKey()));
 			state = state.withProperty(entry.getValue(), connects);
 		}
         return state;

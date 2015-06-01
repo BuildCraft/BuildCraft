@@ -189,11 +189,23 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 	
 	@Override
 	public void update() {
-		// DEBUG CODE! REMOVE!
-		// TODO (1.8) Why does TileMarker constantly delete the laser entities? (or make them invisible or... something)
-		createLasers();
-		
+		super.update();
 		readDataDelayed();
+	}
+	
+	public void removeConnections() {
+		if (lasers != null) {
+			for (EntityLaser entity : lasers) {
+				if (entity != null) {
+					CoreProxy.proxy.removeEntity(entity);
+				}
+			}
+			lasers = null;
+		}
+		if (origin.isSet()) {
+			origin = new Origin();
+			origin.vectO = new TileWrapper(pos);
+		}
 	}
 
 	public void tryConnection() {
@@ -202,9 +214,9 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		}
 
 		for (int j = 0; j < 3; ++j) {
-			if (!origin.isSet() || !origin.vect[j].isSet()) {
+//			if (!origin.isSet() || !origin.vect[j].isSet()) {
 				setVect(j);
-			}
+//			}
 		}
 
 		sendNetworkUpdate();
@@ -266,7 +278,6 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 			origin.vect[n] = new TileWrapper(marker.pos);
 		}
 
-		// That just returns 'this' right?
 		origin.vectO.getMarker(worldObj).createLasers();
 		updateSignals();
 		marker.updateSignals();
@@ -408,19 +419,8 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 			for (TileWrapper m : o.vect) {
 				TileMarker mark = m.getMarker(worldObj);
 
-				if (mark != null) {
-					if (mark.lasers != null) {
-						for (EntityLaser entity : mark.lasers) {
-							if (entity != null) {
-								entity.setDead();
-							}
-						}
-						mark.lasers = null;
-					}
-
-					if (mark != this) {
-						mark.origin = new Origin();
-					}
+				if (mark != null && mark != this) {
+					mark.removeConnections();
 				}
 			}
 

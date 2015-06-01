@@ -27,6 +27,7 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.world.IWorldNameable;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.ISynchronizedTile;

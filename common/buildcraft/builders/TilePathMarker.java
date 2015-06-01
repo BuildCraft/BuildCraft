@@ -16,8 +16,8 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-
 import net.minecraft.util.BlockPos;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.Position;
 import buildcraft.core.LaserData;
 
@@ -188,7 +188,6 @@ public class TilePathMarker extends TileMarker {
 	@Override
 	public void initialize() {
 		super.initialize();
-
 		if (!worldObj.isRemote && !isFullyConnected()) {
 			availableMarkers.add(this);
 		}

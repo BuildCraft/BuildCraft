@@ -10,7 +10,6 @@ package buildcraft.builders;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -25,7 +24,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.util.EnumFacing;
-import buildcraft.BuildCraftCore;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CreativeTabBuildCraft;
@@ -36,7 +34,7 @@ public class BlockMarker extends BlockBuildCraft {
 	
 	public BlockMarker() {
 		super(Material.circuits, new PropertyEnum[]{FACING_6_PROP});
-
+		setDefaultState(getDefaultState().withProperty(FACING_6_PROP, EnumFacing.UP));
 		setLightLevel(0.5F);
 		setHardness(0.0F);
 		setCreativeTab(CreativeTabBuildCraft.ITEMS.get());
@@ -44,8 +42,7 @@ public class BlockMarker extends BlockBuildCraft {
 
 	public static boolean canPlaceTorch(World world, BlockPos pos, EnumFacing side) {
 		Block block = world.getBlockState(pos).getBlock();
-		// TODO: Check if isFullCube is correct
-		return (block.isOpaqueCube() || block.isFullCube() || block.isSideSolid(world, pos, side));
+		return (block.isOpaqueCube() || block.isSideSolid(world, pos, side));
 	}
 
 	private AxisAlignedBB getBoundingBox(EnumFacing dir) {
@@ -154,7 +151,6 @@ public class BlockMarker extends BlockBuildCraft {
 
 	private void dropTorchIfCantStay(World world, BlockPos pos, IBlockState state) {
 		EnumFacing side = (EnumFacing) state.getValue(FACING_6_PROP);
-		EnumFacing opposite = side.getOpposite();
 		if (!canPlaceBlockOnSide(world, pos, side)) {
 			dropBlockAsItem(world, pos, state, 0);
 			world.setBlockToAir(pos);

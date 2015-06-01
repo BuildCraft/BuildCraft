@@ -126,6 +126,7 @@ public class RenderLaser extends Render {
 			return;
 		}
 
+
 		GL11.glPushMatrix();
 
 		GL11.glTranslated(laser.head.x, laser.head.y, laser.head.z);
@@ -163,7 +164,7 @@ public class RenderLaser extends Render {
 		if (!laser.isVisible || texture == null) {
 			return;
 		}
-
+		
 		GL11.glPushMatrix();
 
 		GL11.glTranslated(laser.head.x, laser.head.y, laser.head.z);
