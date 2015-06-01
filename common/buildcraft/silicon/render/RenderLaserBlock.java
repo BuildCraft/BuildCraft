@@ -17,7 +17,7 @@ import net.minecraft.world.IBlockAccess;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.core.CoreConstants;
+import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.silicon.SiliconProxy;
 
 public class RenderLaserBlock implements ISimpleBlockRenderingHandler {
@@ -33,7 +33,6 @@ public class RenderLaserBlock implements ISimpleBlockRenderingHandler {
 
 	@Override
 	public boolean renderWorldBlock(IBlockAccess iblockaccess, int x, int y, int z, Block block, int l, RenderBlocks renderblocks) {
-
 		int meta = iblockaccess.getBlockMetadata(x, y, z);
 
 		if (meta == ForgeDirection.EAST.ordinal()) {
@@ -105,56 +104,18 @@ public class RenderLaserBlock implements ISimpleBlockRenderingHandler {
 		renderblocks.uvRotateBottom = 0;
 
 		return true;
-
 	}
 
 	@Override
 	public void renderInventoryBlock(Block block, int i, int j, RenderBlocks renderblocks) {
-		block.setBlockBounds(CoreConstants.PIPE_MIN_POS, 0.0F, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, 1.0F, CoreConstants.PIPE_MAX_POS);
 		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
-		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1, 4F / 16F, 1);
-		renderblocks.setRenderBoundsFromBlock(block);
-		renderBlockInInv(renderblocks, block, 0);
+		renderblocks.setRenderBounds(0.0F, 0.0F, 0.0F, 1, 4F / 16F, 1);
+		RenderUtils.drawBlockItem(renderblocks, Tessellator.instance, block, 1);
 
-		block.setBlockBounds(5F / 16F, 4F / 16F, 5F / 16F, 11F / 16F, 13F / 16F, 11F / 16F);
-		renderblocks.setRenderBoundsFromBlock(block);
-		renderBlockInInv(renderblocks, block, 1);
+		renderblocks.setRenderBounds(5F / 16F, 4F / 16F, 5F / 16F, 11F / 16F, 13F / 16F, 11F / 16F);
+		RenderUtils.drawBlockItem(renderblocks, Tessellator.instance, block, 1);
 
 		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-		block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-	}
-
-	private void renderBlockInInv(RenderBlocks renderblocks, Block block, int i) {
-		Tessellator tessellator = Tessellator.instance;
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(0.0F, -1F, 0.0F);
-		renderblocks.renderFaceYNeg(block, 0.0D, 0.0D, 0.0D, block.getIcon(0, i));
-		tessellator.draw();
-
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(0.0F, 1.0F, 0.0F);
-		renderblocks.renderFaceYPos(block, 0.0D, 0.0D, 0.0D, block.getIcon(1, i));
-		tessellator.draw();
-
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(0.0F, 0.0F, -1F);
-		renderblocks.renderFaceZNeg(block, 0.0D, 0.0D, 0.0D, block.getIcon(2, i));
-		tessellator.draw();
-
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(0.0F, 0.0F, 1.0F);
-		renderblocks.renderFaceZPos(block, 0.0D, 0.0D, 0.0D, block.getIcon(3, i));
-		tessellator.draw();
-
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(-1F, 0.0F, 0.0F);
-		renderblocks.renderFaceXNeg(block, 0.0D, 0.0D, 0.0D, block.getIcon(4, i));
-		tessellator.draw();
-
-		tessellator.startDrawingQuads();
-		tessellator.setNormal(1.0F, 0.0F, 0.0F);
-		renderblocks.renderFaceXPos(block, 0.0D, 0.0D, 0.0D, block.getIcon(5, i));
-		tessellator.draw();
 	}
 }
