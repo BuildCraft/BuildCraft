@@ -14,6 +14,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.api.core.BuildCraftProperties;
 
 public class SchematicBed extends SchematicBlock {
 
@@ -38,7 +39,7 @@ public class SchematicBed extends SchematicBlock {
 
 	@Override
 	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
-		context.world().setBlockState(pos, state.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD), 0);
+		context.world().setBlockState(pos, state.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD));
 		BlockPos feetPos = pos.offset(getFace(), -1);
 		context.world().setBlockState(feetPos, state.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT));
 	}

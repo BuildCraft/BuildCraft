@@ -25,7 +25,7 @@ public class SchematicFluid extends SchematicBlock {
 
 	@Override
 	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		if (getMetaData() == 0) {
+		if (getLevel() == 0) {
 			requirements.add(fluidItem);
 		}
 	}
@@ -37,7 +37,7 @@ public class SchematicFluid extends SchematicBlock {
 
 	@Override
 	public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
-		if (getMetaData() == 0) {
+		if (getLevel() == 0) {
 			return state == context.world().getBlockState(pos) && ((Integer) context.world().getBlockState(pos).getValue(BlockLiquid.LEVEL)) == 0;
 		} else {
 			return state == context.world().getBlockState(pos);
@@ -51,19 +51,19 @@ public class SchematicFluid extends SchematicBlock {
 
 	@Override
 	public boolean doNotBuild() {
-		return getMetaData() != 0;
+		return getLevel() != 0;
 	}
 
 	@Override
 	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
-		if (getMetaData() == 0) {
+		if (getLevel() == 0) {
 			context.world().setBlockState(pos, state, 3);
 		}
 	}
 
 	@Override
 	public void postProcessing(IBuilderContext context, BlockPos pos) {
-		if (getMetaData() != 0) {
+		if (getLevel() != 0) {
 			context.world().setBlockState(pos, state, 3);
 		}
 	}
@@ -81,8 +81,7 @@ public class SchematicFluid extends SchematicBlock {
 		return 1 * BuilderAPI.BUILD_ENERGY;
 	}
 	
-	@Override
-	public int getMetaData() {
+	public int getLevel() {
 		return (Integer) state.getValue(BlockLiquid.LEVEL);
 	}
 }

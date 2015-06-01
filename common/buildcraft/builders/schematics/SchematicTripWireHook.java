@@ -21,8 +21,8 @@ public class SchematicTripWireHook extends SchematicBlock {
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
-		int pos = getMetaData() & 3;
-		int others = getMetaData() - pos;
+		int pos = getLevel() & 3;
+		int others = getLevel() - pos;
 
 		switch (pos) {
 		case 0:

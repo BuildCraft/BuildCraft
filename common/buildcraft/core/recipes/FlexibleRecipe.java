@@ -45,6 +45,8 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 		setContents(id, output, iEnergyCost, craftingTime, input);
 	}
 
+	// TODO: rework this to have different methods depending on the input. Maybe.
+	@SuppressWarnings("unchecked")
 	public void setContents(String iid, Object ioutput, int iEnergyCost, long iCraftingTime, Object... input) {
 		id = iid;
 
@@ -77,7 +79,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 			} else if (i instanceof FluidStack) {
 				inputFluids.add((FluidStack) i);
 			} else if (i instanceof List) {
-				inputItemsWithAlternatives.add((List) i);
+				inputItemsWithAlternatives.add((List<ItemStack>) i);
 			} else if (i instanceof String) {
 				inputItemsWithAlternatives.add(OreDictionary.getOres((String) i));
 			} else {

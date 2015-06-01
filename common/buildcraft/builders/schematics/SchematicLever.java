@@ -14,7 +14,7 @@ public class SchematicLever extends SchematicWallSide {
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
-		int meta = getMetaData();
+		int meta = getLevel();
 		int status = meta - (meta & 7);
 
 		meta -= status;

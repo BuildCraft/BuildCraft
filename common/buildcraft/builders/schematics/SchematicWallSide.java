@@ -20,7 +20,7 @@ public class SchematicWallSide extends SchematicBlock {
 		final int zPos = 4;
 		final int zNeg = 3;
 
-		int meta = getMetaData();
+		int meta = getLevel();
 		
 		switch (meta) {
 		case xPos:

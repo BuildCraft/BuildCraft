@@ -13,7 +13,6 @@ import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -109,7 +108,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
     }
 
 	public void drawStack(ItemStack item, int x, int y) {
-		Minecraft mc = Minecraft.getMinecraft();
+//		Minecraft mc = Minecraft.getMinecraft();
 
 		if (item != null) {
 			GL11.glEnable(GL11.GL_LIGHTING);

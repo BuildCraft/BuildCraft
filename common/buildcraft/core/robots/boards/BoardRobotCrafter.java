@@ -9,7 +9,6 @@
 package buildcraft.core.robots.boards;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Map;
 
 import net.minecraft.item.ItemStack;
@@ -18,17 +17,14 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
-
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
-
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.api.robots.IDockingStation;
 import buildcraft.api.robots.StackRequest;
 import buildcraft.core.inventory.StackHelper;
 import buildcraft.core.recipes.AssemblyRecipeManager;
@@ -48,7 +44,8 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 
 	private ItemStack order;
 	private ArrayList<ItemStack> craftingBlacklist = new ArrayList<ItemStack>();
-	private HashSet<IDockingStation> reservedStations = new HashSet<IDockingStation>();
+	// TOOD: remove this if necessary
+//	private HashSet<IDockingStation> reservedStations = new HashSet<IDockingStation>();
 	private StackRequest currentRequest = null;
 
 	public BoardRobotCrafter(EntityRobotBase iRobot) {
@@ -96,7 +93,7 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 			return;
 		}
 
-		CraftingResult craftingResult = lookForAssemblyTableRecipe(order);
+		CraftingResult<ItemStack> craftingResult = lookForAssemblyTableRecipe(order);
 
 		if (craftingResult != null) {
 			startDelegateAI(new AIRobotCraftAssemblyTable(robot, craftingResult));
@@ -169,9 +166,10 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 
 	private ItemStack lookForFurnaceRecipe(ItemStack order) {
 		for (Object o : FurnaceRecipes.instance().getSmeltingList().entrySet()) {
-			Map.Entry e = (Map.Entry) o;
-			ItemStack input = (ItemStack) e.getKey();
-			ItemStack output = (ItemStack) e.getValue();
+			@SuppressWarnings("unchecked")
+			Map.Entry<ItemStack, ItemStack> e = (Map.Entry<ItemStack, ItemStack>) o;
+			ItemStack input = e.getKey();
+			ItemStack output =  e.getValue();
 
 			if (StackHelper.isMatchingItem(output, order)) {
 				return input;
@@ -181,9 +179,9 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 		return null;
 	}
 
-	private CraftingResult<?> lookForAssemblyTableRecipe(ItemStack order) {
-		for (IFlexibleRecipe r : AssemblyRecipeManager.INSTANCE.getRecipes()) {
-			CraftingResult<?> result = r.canCraft(order);
+	private CraftingResult<ItemStack> lookForAssemblyTableRecipe(ItemStack order) {
+		for (IFlexibleRecipe<ItemStack> r : AssemblyRecipeManager.INSTANCE.getRecipes()) {
+			CraftingResult<ItemStack> result = r.canCraft(order);
 
 			if (result != null) {
 				return result;
@@ -193,13 +191,14 @@ public class BoardRobotCrafter extends RedstoneBoardRobot {
 		return null;
 	}
 
-	private boolean isBlacklisted(ItemStack stack) {
-		for (ItemStack black : craftingBlacklist) {
-			if (StackHelper.isMatchingItem(stack, black)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
+	// TODO: Remove this if necessary
+//	private boolean isBlacklisted(ItemStack stack) {
+//		for (ItemStack black : craftingBlacklist) {
+//			if (StackHelper.isMatchingItem(stack, black)) {
+//				return true;
+//			}
+//		}
+//
+//		return false;
+//	}
 }

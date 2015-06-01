@@ -25,6 +25,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.BlockFluidBase;
 import buildcraft.api.core.BuildCraftProperties;
+import buildcraft.core.BlockBuildCraft;
 
 public class SchematicBlock extends SchematicBlockBase {
 
@@ -192,13 +193,9 @@ public class SchematicBlock extends SchematicBlockBase {
 		return (EnumFacing) state.getValue(BuildCraftProperties.BLOCK_FACING);
 	}
 	
-	@Deprecated
-	public int getMetaData() {
-		return getFace().getIndex();
-	}
-	
-	@Deprecated
-	public void setMetaData(int newValue) {
-		state = state.withProperty(BuildCraftProperties.BLOCK_FACING, EnumFacing.getFront(newValue));
+	@Override
+	// Pretty much all blocks rotate this way now
+	public void rotateLeft(IBuilderContext context) {
+		state = state.withProperty(BlockBuildCraft.FACING_PROP, getFace().rotateY());
 	}
 }

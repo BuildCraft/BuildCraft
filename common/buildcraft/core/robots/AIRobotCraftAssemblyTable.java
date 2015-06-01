@@ -9,15 +9,14 @@
 package buildcraft.core.robots;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.robots.AIRobot;
@@ -49,7 +48,7 @@ public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 		super(iRobot);
 	}
 
-	public AIRobotCraftAssemblyTable(EntityRobotBase iRobot, CraftingResult craftingResult) {
+	public AIRobotCraftAssemblyTable(EntityRobotBase iRobot, CraftingResult<ItemStack> craftingResult) {
 		super(iRobot);
 
 		expectedResult = craftingResult;
@@ -168,7 +167,8 @@ public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 
 		IInventory inv = new InventoryCopy(robot);
 
-		for (Object tmp : items) {
+		for (int index = 0; index <items.length; index++) {
+			Object tmp = items[index];
 			if (tmp == null) {
 				continue;
 			}
@@ -180,10 +180,14 @@ public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 				ItemStack stack = (ItemStack) tmp;
 				qty = stack.stackSize;
 				filter = new ArrayStackFilter(stack);
-			} else {
-				ArrayList<ItemStack> stacks = (ArrayList<ItemStack>) tmp;
+			} else if (tmp instanceof List) {
+				@SuppressWarnings("unchecked")
+				List<ItemStack> stacks = (List<ItemStack>) tmp;
 				qty = stacks.get(0).stackSize;
 				filter = new ArrayStackFilter(stacks.toArray(new ItemStack[stacks.size()]));
+			}
+			else {
+				throw new IllegalArgumentException("The item at index "+index+" was not a known type! (" + tmp.getClass() + ")");
 			}
 
 			for (IInvSlot s : InventoryIterator.getIterable(inv)) {
@@ -214,13 +218,9 @@ public class AIRobotCraftAssemblyTable extends AIRobotCraftGeneric {
 					ActionStationAllowCraft.class)) {
 				return false;
 			}
-
-			for (EnumFacing dir : EnumFacing.values()) {
-				if (getUsableAssemblyTable(station.pos()) != null) {
-					return true;
-				}
+			if (getUsableAssemblyTable(station.pos()) != null) {
+				return true;
 			}
-
 			return false;
 		}
 	}

@@ -10,9 +10,9 @@ package buildcraft.api.blueprints;
 
 import java.util.HashMap;
 
-import com.google.common.collect.Maps;
-
 import net.minecraft.nbt.NBTTagCompound;
+
+import com.google.common.collect.Maps;
 
 public abstract class SchematicFactory<S extends Schematic> {
 
@@ -43,14 +43,18 @@ public abstract class SchematicFactory<S extends Schematic> {
 		factories.put(factory.getClass().getCanonicalName(), factory);
 	}
 
-	public static SchematicFactory getFactory(Class<? extends Schematic> clas) {
-		Class superClass = clas.getSuperclass();
+	// Unfortunately we cannot use generics properly as clas.getSuperclass() returns <? super T> instead of 
+	// <? extends Schemtic as we want it to>
+	@SuppressWarnings("rawtypes")
+	public static SchematicFactory getFactory(Class clas) {
+		Class<?> superClass = clas.getSuperclass();
 
 		if (schematicToFactory.containsKey(clas)) {
-			return schematicToFactory.get(clas);
+			return  schematicToFactory.get(clas);
 		} else if (superClass != null) {
 			return getFactory(superClass);
-		} else {
+		}
+		else {
 			return null;
 		}
 	}

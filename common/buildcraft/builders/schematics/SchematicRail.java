@@ -23,7 +23,7 @@ public class SchematicRail extends SchematicBlock {
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
-		int meta = getMetaData();
+		int meta = getLevel();
 		switch (meta) {
 		case 0:
 			meta = 1;
@@ -69,7 +69,7 @@ public class SchematicRail extends SchematicBlock {
 
 	@Override
 	public void postProcessing(IBuilderContext context, BlockPos pos) {
-		context.world().setBlockState(pos, state.withProperty(BlockRail.SHAPE, EnumRailDirection.byMetadata(getMetaData())), 3);
+		context.world().setBlockState(pos, state.withProperty(BlockRail.SHAPE, EnumRailDirection.byMetadata(getLevel())), 3);
 	}
 	
 	@Override

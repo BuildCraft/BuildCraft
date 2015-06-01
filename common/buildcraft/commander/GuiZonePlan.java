@@ -14,6 +14,8 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
+import com.google.common.collect.Lists;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
@@ -331,8 +333,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 			uploadMap();
 			refreshSelectedArea();
-			container.inventorySlots = new LinkedList();
-			buttonList = new LinkedList();
+			container.inventorySlots = Lists.newLinkedList();
+			buttonList = Lists.newLinkedList();
 		}
 	}
 

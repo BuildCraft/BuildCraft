@@ -21,8 +21,8 @@ public class BptPipeWooden extends BptPipeExtension {
 
 	@Override
 	public void rotateLeft(SchematicTile slot, IBuilderContext context) {
-		int orientation = slot.getMetaData() & 7;
-		int others = slot.getMetaData() - orientation;
+		int orientation = slot.getLevel() & 7;
+		int others = slot.getLevel() - orientation;
 
 		slot.setMetaData(EnumFacing.values()[orientation].rotateY().ordinal() + others);
 	}

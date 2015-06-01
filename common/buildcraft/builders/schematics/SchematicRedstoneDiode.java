@@ -35,7 +35,7 @@ public class SchematicRedstoneDiode extends SchematicBlock {
 
 	@Override
 	public void rotateLeft(IBuilderContext context) {
-		int meta = getMetaData();
+		int meta = getLevel();
 		int step = meta - (meta & 3);
 
 		switch (meta - step) {

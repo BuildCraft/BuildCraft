@@ -15,6 +15,7 @@ import net.minecraft.util.BlockPos;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 
+@Deprecated
 public class SchematicPumpkin extends SchematicBlock {
 
 	@Override
@@ -31,23 +32,4 @@ public class SchematicPumpkin extends SchematicBlock {
 	public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
 		return state.getBlock() == context.world().getBlockState(pos).getBlock();
 	}
-
-	@Override
-	public void rotateLeft(IBuilderContext context) {
-		switch (getMetaData()) {
-		case 0:
-			setMetaData(1);
-			break;
-		case 1:
-			setMetaData(2);
-			break;
-		case 2:
-			setMetaData(3);
-			break;
-		case 3:
-			setMetaData(0);
-			break;
-		}
-	}
-
 }

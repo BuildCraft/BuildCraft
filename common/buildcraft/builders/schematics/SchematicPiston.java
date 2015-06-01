@@ -24,7 +24,7 @@ public class SchematicPiston extends SchematicRotate {
 
 	@Override
 	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
-		int localMeta = getMetaData() & 7;
+		int localMeta = getLevel() & 7;
 
 		context.world().setBlockState(pos, state.withProperty(BlockPistonBase.FACING, EnumFacing.getFront(localMeta)), 1);
 	}

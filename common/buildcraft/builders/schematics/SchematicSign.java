@@ -38,14 +38,14 @@ public class SchematicSign extends SchematicTile {
 	@Override
 	public void rotateLeft(IBuilderContext context) {
 		if (!isWall) {
-			double angle = (getMetaData() * 360.0) / 16.0;
+			double angle = (getLevel() * 360.0) / 16.0;
 			angle += 90.0;
 			if (angle >= 360) {
 				angle -= 360;
 			}
 			setMetaData((int) (angle / 360.0 * 16.0));
 		} else {
-			setMetaData(EnumFacing.values()[getMetaData()].getIndex());
+			setMetaData(EnumFacing.values()[getLevel()].getIndex());
 		}
 	}
 }
