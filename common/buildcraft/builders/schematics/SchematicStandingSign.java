@@ -6,26 +6,31 @@ package buildcraft.builders.schematics;
 
 import java.util.LinkedList;
 
-import net.minecraft.init.Blocks;
+import net.minecraft.block.BlockStandingSign;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.api.blueprints.SchematicTile;
 
-public class SchematicStone extends SchematicBlock {
-
+public class SchematicStandingSign extends SchematicTile {
 	@Override
 	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(Blocks.stone, 1, Blocks.stone.getMetaFromState(state)));
+		requirements.add(new ItemStack(Items.sign));
 	}
 
 	@Override
 	public void storeRequirements(IBuilderContext context, BlockPos pos) {
-
+		// cancel requirements reading
 	}
 
 	@Override
-	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
-		context.world().setBlockState(pos, state, 3);
+	public void rotateLeft(IBuilderContext context) {
+		int rotation = (Integer) state.getValue(BlockStandingSign.ROTATION);
+		rotation += 4;
+		if (rotation >= 16) {
+			rotation -= 16;
+		}
+		state = state.withProperty(BlockStandingSign.ROTATION, rotation);
 	}
 }

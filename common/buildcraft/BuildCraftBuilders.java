@@ -13,13 +13,6 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
-import net.minecraft.block.BlockChest;
-import net.minecraft.block.BlockDispenser;
-import net.minecraft.block.BlockDropper;
-import net.minecraft.block.BlockFenceGate;
-import net.minecraft.block.BlockFurnace;
-import net.minecraft.block.BlockLadder;
-import net.minecraft.block.BlockTrapDoor;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.item.EntityMinecartChest;
 import net.minecraft.entity.item.EntityMinecartEmpty;
@@ -29,22 +22,16 @@ import net.minecraft.entity.item.EntityMinecartTNT;
 import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
-import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -55,6 +42,7 @@ import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.blueprints.SchematicMask;
+import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.filler.FillerManager;
@@ -83,54 +71,16 @@ import buildcraft.builders.TileFiller;
 import buildcraft.builders.TileMarker;
 import buildcraft.builders.TilePathMarker;
 import buildcraft.builders.blueprints.BlueprintDatabase;
-import buildcraft.builders.schematics.SchematicAir;
-import buildcraft.builders.schematics.SchematicBed;
-import buildcraft.builders.schematics.SchematicBlockCreative;
-import buildcraft.builders.schematics.SchematicCactus;
-import buildcraft.builders.schematics.SchematicCustomStack;
-import buildcraft.builders.schematics.SchematicDirt;
-import buildcraft.builders.schematics.SchematicDoor;
-import buildcraft.builders.schematics.SchematicEnderChest;
-import buildcraft.builders.schematics.SchematicFactoryBlock;
-import buildcraft.builders.schematics.SchematicFactoryEntity;
-import buildcraft.builders.schematics.SchematicFactoryMask;
-import buildcraft.builders.schematics.SchematicFarmland;
-import buildcraft.builders.schematics.SchematicFire;
-import buildcraft.builders.schematics.SchematicGlassPane;
-import buildcraft.builders.schematics.SchematicGravel;
-import buildcraft.builders.schematics.SchematicHanging;
-import buildcraft.builders.schematics.SchematicIgnore;
-import buildcraft.builders.schematics.SchematicLever;
-import buildcraft.builders.schematics.SchematicMinecart;
-import buildcraft.builders.schematics.SchematicPiston;
-import buildcraft.builders.schematics.SchematicPortal;
-import buildcraft.builders.schematics.SchematicPumpkin;
-import buildcraft.builders.schematics.SchematicRail;
-import buildcraft.builders.schematics.SchematicRedstoneDiode;
-import buildcraft.builders.schematics.SchematicRedstoneLamp;
-import buildcraft.builders.schematics.SchematicRedstoneWire;
-import buildcraft.builders.schematics.SchematicRotate;
-import buildcraft.builders.schematics.SchematicSeeds;
-import buildcraft.builders.schematics.SchematicSign;
-import buildcraft.builders.schematics.SchematicSkull;
-import buildcraft.builders.schematics.SchematicStairs;
-import buildcraft.builders.schematics.SchematicStandalone;
-import buildcraft.builders.schematics.SchematicStone;
-import buildcraft.builders.schematics.SchematicTileCreative;
-import buildcraft.builders.schematics.SchematicTripWireHook;
-import buildcraft.builders.schematics.SchematicWallSide;
+import buildcraft.builders.schematics.*;
 import buildcraft.builders.statements.ActionFiller;
 import buildcraft.builders.statements.BuildersActionProvider;
 import buildcraft.builders.urbanism.BlockUrbanist;
 import buildcraft.builders.urbanism.TileUrbanist;
-import buildcraft.builders.urbanism.UrbanistToolsIconProvider;
-import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.RealBlueprintDeployer;
 import buildcraft.core.blueprints.SchematicRegistry;
-import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.builders.patterns.FillerRegistry;
 import buildcraft.core.builders.patterns.PatternBox;
 import buildcraft.core.builders.patterns.PatternClear;
@@ -308,21 +258,20 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(Blocks.melon_stem, SchematicSeeds.class, Items.melon_seeds);
 		schemes.registerSchematicBlock(Blocks.nether_wart, SchematicSeeds.class, Items.nether_wart);
 
-		schemes.registerSchematicBlock(Blocks.torch, SchematicWallSide.class);
-		schemes.registerSchematicBlock(Blocks.redstone_torch, SchematicWallSide.class);
-		schemes.registerSchematicBlock(Blocks.unlit_redstone_torch, SchematicWallSide.class);
+		schemes.registerSchematicBlock(Blocks.torch, SchematicBlock.class);
+		schemes.registerSchematicBlock(Blocks.redstone_torch, SchematicBlock.class);
+		schemes.registerSchematicBlock(Blocks.unlit_redstone_torch, SchematicBlock.class);// TODO Check if this needs the normal redstone torch!
 
-		schemes.registerSchematicBlock(Blocks.tripwire_hook, SchematicTripWireHook.class);
+		schemes.registerSchematicBlock(Blocks.tripwire_hook, SchematicBlock.class);
 
 		schemes.registerSchematicBlock(Blocks.skull, SchematicSkull.class);
 
-		schemes.registerSchematicBlock(Blocks.ladder, SchematicRotate.class, BlockLadder.FACING);
-		schemes.registerSchematicBlock(Blocks.acacia_fence_gate, SchematicRotate.class, BlockFenceGate.FACING);
-		schemes.registerSchematicBlock(Blocks.birch_fence_gate, SchematicRotate.class, BlockFenceGate.FACING);
-		schemes.registerSchematicBlock(Blocks.dark_oak_fence_gate, SchematicRotate.class, BlockFenceGate.FACING);
-		schemes.registerSchematicBlock(Blocks.jungle_fence_gate, SchematicRotate.class, BlockFenceGate.FACING);
-		schemes.registerSchematicBlock(Blocks.oak_fence_gate, SchematicRotate.class, BlockFenceGate.FACING);
-		schemes.registerSchematicBlock(Blocks.spruce_fence_gate, SchematicRotate.class, BlockFenceGate.FACING);
+//		schemes.registerSchematicBlock(Blocks.acacia_fence_gate, SchematicRotate.class, BlockFenceGate.FACING);
+//		schemes.registerSchematicBlock(Blocks.birch_fence_gate, SchematicRotate.class, BlockFenceGate.FACING);
+//		schemes.registerSchematicBlock(Blocks.dark_oak_fence_gate, SchematicRotate.class, BlockFenceGate.FACING);
+//		schemes.registerSchematicBlock(Blocks.jungle_fence_gate, SchematicRotate.class, BlockFenceGate.FACING);
+//		schemes.registerSchematicBlock(Blocks.oak_fence_gate, SchematicRotate.class, BlockFenceGate.FACING);
+//		schemes.registerSchematicBlock(Blocks.spruce_fence_gate, SchematicRotate.class, BlockFenceGate.FACING);
 
 		// TODO!
 
@@ -332,22 +281,21 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(Blocks.quartz_block, SchematicRotate.class, new int[]{4, 3, 4, 3}, true);
 		schemes.registerSchematicBlock(Blocks.hopper, SchematicRotate.class, new int[]{2, 5, 3, 4}, true);
 		schemes.registerSchematicBlock(Blocks.anvil, SchematicRotate.class, new int[]{0, 1, 2, 3}, true);
+		*/
+		schemes.registerSchematicBlock(Blocks.vine, SchematicVine.class);
 
-		schemes.registerSchematicBlock(Blocks.vine, SchematicRotate.class, new int[]{1, 4, 8, 2}, false);*/
-		schemes.registerSchematicBlock(Blocks.trapdoor, SchematicRotate.class, BlockTrapDoor.FACING);
-
-		schemes.registerSchematicBlock(Blocks.furnace, SchematicRotate.class, BlockFurnace.FACING);
-		schemes.registerSchematicBlock(Blocks.lit_furnace, SchematicRotate.class, BlockFurnace.FACING);
-		schemes.registerSchematicBlock(Blocks.chest, SchematicRotate.class, BlockChest.FACING);
-		schemes.registerSchematicBlock(Blocks.dispenser, SchematicRotate.class, BlockDispenser.FACING);
-		schemes.registerSchematicBlock(Blocks.dropper, SchematicRotate.class, BlockDropper.FACING);
+		schemes.registerSchematicBlock(Blocks.furnace, SchematicTile.class);
+		schemes.registerSchematicBlock(Blocks.lit_furnace, SchematicTile.class);
+		schemes.registerSchematicBlock(Blocks.chest, SchematicTile.class);
+		schemes.registerSchematicBlock(Blocks.dispenser, SchematicTile.class);
+		schemes.registerSchematicBlock(Blocks.dropper, SchematicTile.class);
 
 		schemes.registerSchematicBlock(Blocks.ender_chest, SchematicEnderChest.class);
 
 
-		schemes.registerSchematicBlock(Blocks.wooden_button, SchematicLever.class);
-		schemes.registerSchematicBlock(Blocks.stone_button, SchematicLever.class);
-		schemes.registerSchematicBlock(Blocks.lever, SchematicLever.class);
+//		schemes.registerSchematicBlock(Blocks.wooden_button, SchematicLever.class);
+//		schemes.registerSchematicBlock(Blocks.stone_button, SchematicLever.class);
+//		schemes.registerSchematicBlock(Blocks.lever, SchematicLever.class);
 
 		schemes.registerSchematicBlock(Blocks.stone, SchematicStone.class);
 		schemes.registerSchematicBlock(Blocks.gold_ore, SchematicStone.class);
@@ -365,10 +313,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(Blocks.cake, SchematicCustomStack.class, new ItemStack(Items.cake));
 		schemes.registerSchematicBlock(Blocks.glowstone, SchematicCustomStack.class, new ItemStack(Blocks.glowstone));
 
-		schemes.registerSchematicBlock(Blocks.powered_repeater, SchematicRedstoneDiode.class, Items.repeater);
-		schemes.registerSchematicBlock(Blocks.unpowered_repeater, SchematicRedstoneDiode.class, Items.repeater);
-		schemes.registerSchematicBlock(Blocks.powered_comparator, SchematicRedstoneDiode.class, Items.comparator);
-		schemes.registerSchematicBlock(Blocks.unpowered_comparator, SchematicRedstoneDiode.class, Items.comparator);
+		schemes.registerSchematicBlock(Blocks.powered_repeater, SchematicCustomStack.class, new ItemStack(Items.repeater));
+		schemes.registerSchematicBlock(Blocks.unpowered_repeater, SchematicCustomStack.class, new ItemStack(Items.repeater));
+		schemes.registerSchematicBlock(Blocks.powered_comparator, SchematicCustomStack.class, new ItemStack(Items.comparator));
+		schemes.registerSchematicBlock(Blocks.unpowered_comparator, SchematicCustomStack.class, new ItemStack(Items.comparator));
 
 		schemes.registerSchematicBlock(Blocks.redstone_lamp, SchematicRedstoneLamp.class);
 		schemes.registerSchematicBlock(Blocks.lit_redstone_lamp, SchematicRedstoneLamp.class);
@@ -376,24 +324,24 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(Blocks.glass_pane, SchematicGlassPane.class);
 		schemes.registerSchematicBlock(Blocks.stained_glass_pane, SchematicGlassPane.class);
 
-		schemes.registerSchematicBlock(Blocks.piston, SchematicPiston.class);
-		schemes.registerSchematicBlock(Blocks.piston_extension, SchematicPiston.class);
-		schemes.registerSchematicBlock(Blocks.sticky_piston, SchematicPiston.class);
+		schemes.registerSchematicBlock(Blocks.piston, SchematicTile.class);
+		schemes.registerSchematicBlock(Blocks.piston_extension, SchematicTile.class);
+		schemes.registerSchematicBlock(Blocks.sticky_piston, SchematicTile.class);
 
-		schemes.registerSchematicBlock(Blocks.lit_pumpkin, SchematicPumpkin.class);
+//		schemes.registerSchematicBlock(Blocks.lit_pumpkin, SchematicPumpkin.class);
 
-		schemes.registerSchematicBlock(Blocks.oak_stairs, SchematicStairs.class);
-		schemes.registerSchematicBlock(Blocks.stone_stairs, SchematicStairs.class);
-		schemes.registerSchematicBlock(Blocks.brick_stairs, SchematicStairs.class);
-		schemes.registerSchematicBlock(Blocks.stone_brick_stairs, SchematicStairs.class);
-		schemes.registerSchematicBlock(Blocks.nether_brick_stairs, SchematicStairs.class);
-		schemes.registerSchematicBlock(Blocks.sandstone_stairs, SchematicStairs.class);
-		schemes.registerSchematicBlock(Blocks.spruce_stairs, SchematicStairs.class);
-		schemes.registerSchematicBlock(Blocks.birch_stairs, SchematicStairs.class);
-		schemes.registerSchematicBlock(Blocks.jungle_stairs, SchematicStairs.class);
-		schemes.registerSchematicBlock(Blocks.quartz_stairs, SchematicStairs.class);
-		schemes.registerSchematicBlock(Blocks.acacia_stairs, SchematicStairs.class);
-		schemes.registerSchematicBlock(Blocks.dark_oak_stairs, SchematicStairs.class);
+		schemes.registerSchematicBlock(Blocks.oak_stairs, SchematicStandalone.class);
+		schemes.registerSchematicBlock(Blocks.stone_stairs, SchematicStandalone.class);
+		schemes.registerSchematicBlock(Blocks.brick_stairs, SchematicStandalone.class);
+		schemes.registerSchematicBlock(Blocks.stone_brick_stairs, SchematicStandalone.class);
+		schemes.registerSchematicBlock(Blocks.nether_brick_stairs, SchematicStandalone.class);
+		schemes.registerSchematicBlock(Blocks.sandstone_stairs, SchematicStandalone.class);
+		schemes.registerSchematicBlock(Blocks.spruce_stairs, SchematicStandalone.class);
+		schemes.registerSchematicBlock(Blocks.birch_stairs, SchematicStandalone.class);
+		schemes.registerSchematicBlock(Blocks.jungle_stairs, SchematicStandalone.class);
+		schemes.registerSchematicBlock(Blocks.quartz_stairs, SchematicStandalone.class);
+		schemes.registerSchematicBlock(Blocks.acacia_stairs, SchematicStandalone.class);
+		schemes.registerSchematicBlock(Blocks.dark_oak_stairs, SchematicStandalone.class);
 
 		schemes.registerSchematicBlock(Blocks.acacia_door, SchematicDoor.class, new ItemStack(Items.acacia_door));
 		schemes.registerSchematicBlock(Blocks.birch_door, SchematicDoor.class, new ItemStack(Items.birch_door));
@@ -405,8 +353,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		schemes.registerSchematicBlock(Blocks.bed, SchematicBed.class);
 
-		schemes.registerSchematicBlock(Blocks.wall_sign, SchematicSign.class, true);
-		schemes.registerSchematicBlock(Blocks.standing_sign, SchematicSign.class, false);
+		schemes.registerSchematicBlock(Blocks.wall_sign, SchematicTile.class);
+		schemes.registerSchematicBlock(Blocks.standing_sign, SchematicStandingSign.class);
 
 		schemes.registerSchematicBlock(Blocks.portal, SchematicPortal.class);
 
@@ -449,12 +397,12 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		// BuildCraft blocks
 
-		schemes.registerSchematicBlock(architectBlock, SchematicRotate.class, BlockBuildCraft.FACING_PROP);
-		schemes.registerSchematicBlock(builderBlock, SchematicRotate.class, BlockBuildCraft.FACING_PROP);
+		schemes.registerSchematicBlock(architectBlock, SchematicTile.class);
+		schemes.registerSchematicBlock(builderBlock, SchematicTile.class);
 
-		schemes.registerSchematicBlock(markerBlock, SchematicWallSide.class);
-		schemes.registerSchematicBlock(pathMarkerBlock, SchematicWallSide.class);
-		schemes.registerSchematicBlock(constructionMarkerBlock, SchematicWallSide.class);
+//		schemes.registerSchematicBlock(markerBlock, SchematicWallSide.class);
+//		schemes.registerSchematicBlock(pathMarkerBlock, SchematicWallSide.class);
+//		schemes.registerSchematicBlock(constructionMarkerBlock, SchematicWallSide.class);
 
 		// Factories required to save entities in world
 
