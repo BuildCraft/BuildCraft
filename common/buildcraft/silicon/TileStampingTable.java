@@ -3,6 +3,7 @@ package buildcraft.silicon;
 import java.lang.ref.WeakReference;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.SlotCrafting;
@@ -11,12 +12,10 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldServer;
 import cpw.mods.fml.common.FMLCommonHandler;
-import net.minecraftforge.common.util.ForgeDirection;
 
-import buildcraft.api.core.IInvSlot;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.lib.gui.ContainerDummy;
-import buildcraft.core.lib.inventory.InventoryIterator;
+import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.CraftingUtils;
 import buildcraft.core.lib.utils.NBTUtils;
@@ -31,21 +30,11 @@ public class TileStampingTable extends TileLaserTableBase implements IHasWork, I
         }
 
         private IRecipe findRecipe() {
-            for (IInvSlot slot : InventoryIterator.getIterable(this, ForgeDirection.UP)) {
-                ItemStack stack = slot.getStackInSlot();
-                if (stack == null) {
-                    continue;
-                }
-                if (stack.getItem().hasContainerItem(stack)) {
-                    return null;
-                }
-            }
-
             return CraftingUtils.findMatchingRecipe(this, worldObj);
         }
     }
 
-    private static final int[] SLOTS = Utils.createSlotArray(0, 2);
+    private static final int[] SLOTS = Utils.createSlotArray(0, 5);
     private SlotCrafting craftSlot;
     private final LocalInventoryCrafting crafting = new LocalInventoryCrafting();
 
@@ -113,6 +102,39 @@ public class TileStampingTable extends TileLaserTableBase implements IHasWork, I
 
             craftSlot.onPickupFromSlot(getInternalPlayer().get(), result);
 
+            IInventory playerInv = getInternalPlayer().get().inventory;
+
+            for (int i = 0; i < playerInv.getSizeInventory(); i++) {
+                if (playerInv.getStackInSlot(i) != null) {
+                    ItemStack output = playerInv.getStackInSlot(i);
+
+                    for (int j = 2; j < 5; j++) {
+                        ItemStack target = getStackInSlot(j);
+
+                        if (target == null) {
+                            setInventorySlotContents(j, output);
+                            output.stackSize = 0;
+                            break;
+                        } else {
+                            output.stackSize -= StackHelper.mergeStacks(output, input, true);
+                            if (output.stackSize == 0) {
+                                break;
+                            }
+                        }
+                    }
+
+                    if (output.stackSize > 0) {
+                        output.stackSize -= Utils.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, output);
+                    }
+
+                    if (output.stackSize > 0) {
+                        InvUtils.dropItems(worldObj, output, xCoord, yCoord + 1, zCoord);
+                    }
+
+                    playerInv.setInventorySlotContents(i, null);
+                }
+            }
+
             if (resultInto == null) {
                 setInventorySlotContents(1, result);
             } else {
@@ -154,7 +176,7 @@ public class TileStampingTable extends TileLaserTableBase implements IHasWork, I
 
     @Override
     public int getSizeInventory() {
-        return 2;
+        return 5;
     }
 
     @Override
@@ -184,6 +206,6 @@ public class TileStampingTable extends TileLaserTableBase implements IHasWork, I
 
     @Override
     public boolean canExtractItem(int slot, ItemStack stack, int side) {
-        return slot == 1;
+        return slot >= 1;
     }
 }
