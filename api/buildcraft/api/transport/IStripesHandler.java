@@ -14,7 +14,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public interface IStripesHandler {
-	public static enum StripesHandlerType {
+	enum StripesHandlerType {
 		ITEM_USE,
 		BLOCK_BREAK
 	}

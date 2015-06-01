@@ -6,7 +6,7 @@
  * Please check the contents of the license, which should be located
  * as "LICENSE.API" in the BuildCraft source code distribution.
  */
-@API(apiVersion = "1.2", owner = "BuildCraftAPI|core", provides = "BuildCraftAPI|robotics")
+@API(apiVersion = "2.0", owner = "BuildCraftAPI|core", provides = "BuildCraftAPI|robotics")
 package buildcraft.api.robots;
 import cpw.mods.fml.common.API;
 
