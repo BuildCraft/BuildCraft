@@ -8,14 +8,14 @@
  */
 package buildcraft.core.blueprints;
 
-import java.util.ArrayList;
+import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-
 import net.minecraft.util.EnumFacing;
-
 import buildcraft.core.Box;
 
 public class RecursiveBlueprintBuilder {
@@ -24,18 +24,18 @@ public class RecursiveBlueprintBuilder {
 	private BlueprintBase blueprint;
 	private RecursiveBlueprintBuilder current;
 	private int nextSubBlueprint = 0;
-	private ArrayList<NBTTagCompound> subBlueprints = new ArrayList<NBTTagCompound>();
-	private BlockPos pos;
-	private EnumFacing dir;
-	private World world;
-	private Box box = new Box();
+	private List<NBTTagCompound> subBlueprints = Lists.newArrayList();
+	private final BlockPos pos;
+	private final EnumFacing dir;
+	private final World world;
+	private final Box box = new Box();
 
 	public RecursiveBlueprintBuilder(BlueprintBase iBlueprint, World iWorld, BlockPos pos,
 			EnumFacing iDir) {
 		blueprint = iBlueprint;
 		subBlueprints = iBlueprint.subBlueprintsNBT;
 		world = iWorld;
-		pos = this.pos;
+		this.pos = pos;
 		dir = iDir;
 	}
 

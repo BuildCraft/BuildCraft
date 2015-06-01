@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.blueprints;
 
 import java.io.ByteArrayInputStream;
@@ -30,22 +26,21 @@ import buildcraft.builders.blueprints.BlueprintId.Kind;
 import buildcraft.core.blueprints.BlueprintBase;
 
 public class BlueprintDatabase {
+	/** Blueprint file extension */
 	private static final String BPT_EXTENSION = ".bpt";
+	/** Template file extension */
 	private static final String TPL_EXTENSION = ".tpl";
 	private static final int PAGE_SIZE = 12;
-
-	private final int bufferSize = 8192;
 	private File outputDir;
 	private File[] inputDirs;
 
 	private Set<BlueprintId> blueprintIds;
-	private BlueprintId [] pages = new BlueprintId [0];
+	private BlueprintId[] pages = new BlueprintId[0];
 
-	/**
-	 * Initialize the blueprint database.
+	/** Initialize the blueprint database.
 	 *
-	 * @param inputPaths directories to read the blueprints from.
-	 */
+	 * @param inputPaths
+	 *            directories to read the blueprints from. */
 	public void init(String[] inputPaths, String outputPath) {
 		outputDir = new File(outputPath);
 
@@ -67,12 +62,11 @@ public class BlueprintDatabase {
 		loadIndex(inputDirs);
 	}
 
-	/**
-	 * Add a blueprint to the database and save it to disk.
+	/** Add a blueprint to the database and save it to disk.
 	 *
-	 * @param blueprint blueprint to add
-	 * @return id for the added blueprint
-	 */
+	 * @param blueprint
+	 *            blueprint to add
+	 * @return id for the added blueprint */
 	public BlueprintId add(BlueprintBase blueprint) {
 		BlueprintId id = save(blueprint);
 
@@ -84,7 +78,7 @@ public class BlueprintDatabase {
 		return id;
 	}
 
-	public void deleteBlueprint (BlueprintId id) {
+	public void deleteBlueprint(BlueprintId id) {
 		File blueprintFile = getBlueprintFile(id);
 
 		if (blueprintFile != null) {
@@ -95,18 +89,23 @@ public class BlueprintDatabase {
 		}
 	}
 
-	private BlueprintId save(BlueprintBase blueprint) {
-		blueprint.id.generateUniqueId(blueprint.getData());
-
+	private BlueprintId save(final BlueprintBase blueprint) {
+		byte[] data = blueprint.getData();
+		blueprint.id.generateUniqueId(data);
+		
 		BlueprintId id = blueprint.id;
+		
+		BCLog.logger.info("Writing "+id.name+" to disk, with "+data.length+" bytes");
+		
 		File blueprintFile = getBlueprintFile(id, outputDir);
 
 		if (!blueprintFile.exists()) {
 			try {
 				FileOutputStream f = new FileOutputStream(blueprintFile);
-				f.write(blueprint.getData());
+				f.write(data);
 				f.close();
-			} catch (IOException ex) {
+			}
+			catch (IOException ex) {
 				BCLog.logger.error(String.format("Failed to save Blueprint file: %s %s", blueprintFile.getName(), ex.getMessage()));
 			}
 		}
@@ -119,7 +118,8 @@ public class BlueprintDatabase {
 
 		if (id.kind == Kind.Blueprint) {
 			name = String.format(Locale.ENGLISH, "%s" + BPT_EXTENSION, id.toString());
-		} else {
+		}
+		else {
 			name = String.format(Locale.ENGLISH, "%s" + TPL_EXTENSION, id.toString());
 		}
 
@@ -139,7 +139,8 @@ public class BlueprintDatabase {
 
 		if (id.kind == Kind.Blueprint) {
 			name = String.format(Locale.ENGLISH, "%s" + BPT_EXTENSION, id.toString());
-		} else {
+		}
+		else {
 			name = String.format(Locale.ENGLISH, "%s" + TPL_EXTENSION, id.toString());
 		}
 
@@ -179,14 +180,16 @@ public class BlueprintDatabase {
 
 					id.name = prefix;
 					id.uniqueId = BlueprintId.toBytes(suffix.substring(0, suffix.length() - 4));
-				} else {
+				}
+				else {
 					id.name = fileName.substring(0, dotIndex);
 					id.uniqueId = new byte[0];
 				}
 
 				if (extension.equals(BPT_EXTENSION)) {
 					id.kind = Kind.Blueprint;
-				} else {
+				}
+				else {
 					id.kind = Kind.Template;
 				}
 
@@ -199,7 +202,7 @@ public class BlueprintDatabase {
 		}
 	}
 
-	public boolean exists (BlueprintId id) {
+	public boolean exists(BlueprintId id) {
 		return blueprintIds.contains(id);
 	}
 
@@ -208,7 +211,7 @@ public class BlueprintDatabase {
 			return null;
 		}
 
-		BlueprintBase bpt = load (getBlueprintFile(id));
+		BlueprintBase bpt = load(getBlueprintFile(id));
 
 		if (bpt != null) {
 			bpt.id = id;
@@ -217,18 +220,20 @@ public class BlueprintDatabase {
 		return bpt;
 	}
 
-	public static BlueprintBase load (File blueprintFile) {
+	public static BlueprintBase load(File blueprintFile) {
 		if (blueprintFile != null && blueprintFile.exists()) {
 			try {
 				FileInputStream f = new FileInputStream(blueprintFile);
-				byte [] data = new byte [(int) blueprintFile.length()];
-				f.read (data);
+				byte[] data = new byte[(int) blueprintFile.length()];
+				f.read(data);
 				f.close();
 
 				return load(data);
-			} catch (FileNotFoundException e) {
+			}
+			catch (FileNotFoundException e) {
 				e.printStackTrace();
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
@@ -238,21 +243,23 @@ public class BlueprintDatabase {
 
 	public static BlueprintBase load(byte[] data) {
 		try {
-			//Ugly but will probably work
-			NBTTagCompound nbt = CompressedStreamTools.read(new DataInputStream(new ByteArrayInputStream(data)), NBTSizeTracker.INFINITE);
+			// Ugly but will probably work
+			BCLog.logger.info("Loading a blueprint file of "+data.length+" bytes");
+			NBTTagCompound nbt = CompressedStreamTools.readCompressed(new DataInputStream(new ByteArrayInputStream(data)));
 
 			BlueprintBase blueprint = BlueprintBase.loadBluePrint(nbt);
 			blueprint.setData(data);
 
 			return blueprint;
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		return null;
 	}
 
-	public ArrayList<BlueprintId> getPage (int pageId) {
+	public ArrayList<BlueprintId> getPage(int pageId) {
 		ArrayList<BlueprintId> result = new ArrayList<BlueprintId>();
 
 		if (pageId < 0) {
@@ -261,8 +268,9 @@ public class BlueprintDatabase {
 
 		for (int i = pageId * PAGE_SIZE; i < pageId * PAGE_SIZE + PAGE_SIZE; ++i) {
 			if (i < pages.length) {
-				result.add(pages [i]);
-			} else {
+				result.add(pages[i]);
+			}
+			else {
 				break;
 			}
 		}
@@ -270,7 +278,7 @@ public class BlueprintDatabase {
 		return result;
 	}
 
-	public int getPageNumber () {
+	public int getPageNumber() {
 		return (int) Math.ceil((float) blueprintIds.size() / (float) PAGE_SIZE);
 	}
 }

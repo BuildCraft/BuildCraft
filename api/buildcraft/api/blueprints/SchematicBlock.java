@@ -192,10 +192,12 @@ public class SchematicBlock extends SchematicBlockBase {
 		return (EnumFacing) state.getValue(BuildCraftProperties.BLOCK_FACING);
 	}
 	
+	@Deprecated
 	public int getMetaData() {
 		return getFace().getIndex();
 	}
 	
+	@Deprecated
 	public void setMetaData(int newValue) {
 		state = state.withProperty(BuildCraftProperties.BLOCK_FACING, EnumFacing.getFront(newValue));
 	}
