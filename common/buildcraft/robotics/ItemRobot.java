@@ -100,11 +100,6 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
 		// cancels default BC icon registering
 	}
 
-	public static ItemStack createRobotStack(ItemStack board, int energy) {
-		return createRobotStack((RedstoneBoardRobotNBT) ItemRedstoneBoard.getBoardNBT(board),
-				energy);
-	}
-
 	public static ItemStack createRobotStack(RedstoneBoardRobotNBT board, int energy) {
 		ItemStack robot = new ItemStack(BuildCraftRobotics.robotItem);
 		NBTTagCompound boardCpt = new NBTTagCompound();
