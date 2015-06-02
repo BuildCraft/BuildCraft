@@ -1,5 +1,5 @@
 {
-    "parent": "minecraft:block/cube_all",
+    "parent": "minecraft:buildcraftcore:block/default_cube_all",
     "textures": {
 	"particle": "buildcraft:blocks/floodGate_side",
         "up": "buildcraft:blocks/floodGate_top",
