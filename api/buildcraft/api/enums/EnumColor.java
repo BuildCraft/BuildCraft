@@ -107,11 +107,11 @@ public enum EnumColor implements IStringSerializable {
 		0xe4e4e4};
 
 	@SideOnly(Side.CLIENT)
-	private static final ResourceLocation ICON_SHEET = new ResourceLocation("buildcraft", "textures/gui/sheet_brushes.png");
+	private static ResourceLocation ICON_SHEET;
 
 	@SideOnly(Side.CLIENT)
 	private static SheetIcon[] brushIcons;
-
+	
 	public int getDarkHex() {
 		return DARK_HEX[ordinal()];
 	}
@@ -198,12 +198,19 @@ public enum EnumColor implements IStringSerializable {
 	public static void registerIcons() {
 		brushIcons = new SheetIcon[16];
 		for (EnumColor c : values()) {
-			brushIcons[c.ordinal()] = new SheetIcon(ICON_SHEET, c.ordinal() * 16, 0);
+			brushIcons[c.ordinal()] = new SheetIcon(getIconSheet(), c.ordinal() * 16, 0);
 		}
 	}
 
 	@SideOnly(Side.CLIENT)
 	public SheetIcon getIcon() {
 		return brushIcons [ordinal()];
+	}
+
+	@SideOnly(Side.CLIENT)
+	private static ResourceLocation getIconSheet() {
+		if (ICON_SHEET == null)
+			ICON_SHEET  = new ResourceLocation("buildcraft", "textures/gui/sheet_brushes.png");
+		return ICON_SHEET;
 	}
 }

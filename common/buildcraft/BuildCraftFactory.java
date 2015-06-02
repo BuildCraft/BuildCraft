@@ -325,6 +325,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 	}
 
 	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
 	public void onModelBakeEvent(ModelBakeEvent event) {
 		FactoryProxy.proxy.initializeModels(event);
 	}

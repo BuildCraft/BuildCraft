@@ -16,6 +16,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.SheetIcon;
 import buildcraft.api.filler.IFillerPattern;
@@ -32,11 +34,12 @@ public abstract class FillerPattern implements IFillerPattern {
 	public static final Map<String, FillerPattern> patterns = new TreeMap<String, FillerPattern>();
 	private static final ResourceLocation PATTERN_ICONS = new ResourceLocation("buildcraft", "textures/gui/sheet_fillerPatterns.png");
 	private final String tag;
+	
+	@SideOnly(Side.CLIENT)
 	private SheetIcon icon;
 
 	public FillerPattern(String tag) {
 		this.tag = tag;
-		this.icon = new SheetIcon(PATTERN_ICONS, getIconPosition() & 15, getIconPosition() >> 4);
 		patterns.put(getUniqueTag (), this);
 	}
 
@@ -53,7 +56,10 @@ public abstract class FillerPattern implements IFillerPattern {
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public SheetIcon getIcon() {
+		if (icon == null)
+			icon = new SheetIcon(PATTERN_ICONS, getIconPosition() & 15, getIconPosition() >> 4);
 		return icon;
 	}
 
