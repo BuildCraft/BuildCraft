@@ -1,0 +1,7 @@
+{
+    "parent": "buildcraftcore:block/default_cube_all",
+    "textures": {
+        "all": "buildcraft:fluids/oil_still",
+        "flowing": "buildcraft:fluids/oil_flow"
+    }
+}

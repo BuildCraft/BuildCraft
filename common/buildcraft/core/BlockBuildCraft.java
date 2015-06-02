@@ -8,6 +8,8 @@
  */
 package buildcraft.core;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.BlockContainer;
@@ -16,7 +18,6 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -26,7 +27,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -34,6 +34,9 @@ import buildcraft.api.core.BuildCraftProperties;
 import buildcraft.api.events.BlockPlacedDownEvent;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.utils.Utils;
+
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Lists;
 
 public abstract class BlockBuildCraft extends BlockContainer {
 
@@ -44,10 +47,13 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	public static final PropertyDirection FACING_6_PROP = BuildCraftProperties.BLOCK_FACING_6;
 
 	public static final PropertyEnum COLOR_PROP = BuildCraftProperties.BLOCK_COLOR;
+	public static final PropertyEnum MACHINE_STATE = BuildCraftProperties.MACHINE_STATE;
+	
+	public static final PropertyBool JOINED_BELOW = BuildCraftProperties.JOINED_BELOW;
 
 	protected final IProperty[] properties;
+	protected final HashBiMap<Integer, IBlockState> validStates = HashBiMap.create();
 
-	private final int[] propertySizes;
 	private final BlockState myBlockState;
 
 	protected BlockBuildCraft(Material material) {
@@ -68,27 +74,36 @@ public abstract class BlockBuildCraft extends BlockContainer {
 		setHardness(5F);
 
 		this.properties = properties;
-		this.propertySizes = new int[properties.length];
 
 		this.myBlockState = createBlockState();
 
 		IBlockState defaultState = getBlockState().getBaseState();
-		for (int i = 0; i < properties.length; i++) {
-			try {
-				if (properties[i] instanceof PropertyBool) {
-					propertySizes[i] = 2;
-				} else if (properties[i] instanceof PropertyInteger) {
-					// HACK! Only allows 4-bit integers
-					propertySizes[i] = 16;
-				} else if (properties[i].getValueClass().isEnum()) {
-					propertySizes[i] = ((Enum[]) properties[i].getValueClass().getMethod("values").invoke(null)).length;
-				}
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-			Object o = properties[i].getAllowedValues().iterator().next();
-			defaultState = defaultState.withProperty(properties[i], (Comparable) o);
+
+		int total = 1;
+		List<IBlockState> tempValidStates = Lists.newArrayList();
+		tempValidStates.add(defaultState);
+		for (IProperty prop: properties) {
+		    total *= prop.getAllowedValues().size();
+		    if (total > 16)
+		        throw new IllegalArgumentException("Cannot have more than 16 properties in a block!");
+		    Collection<Comparable<?>> allowedValues = prop.getAllowedValues();
+		    defaultState = defaultState.withProperty(prop, allowedValues.iterator().next());
+
+		    List<IBlockState> newValidStates = Lists.newArrayList();
+		    for (IBlockState state: tempValidStates) {
+		        for (Comparable<?> comp : allowedValues) {
+		            newValidStates.add(state.withProperty(prop, comp));
+		        }
+		    }
+		    tempValidStates = newValidStates;
 		}
+
+		int i = 0;
+		for (IBlockState state: tempValidStates) {
+		    validStates.put(i, state);
+	        i++;
+		}
+
 		setDefaultState(defaultState);
 	}
 
@@ -110,48 +125,12 @@ public abstract class BlockBuildCraft extends BlockContainer {
 
 	@Override
 	public int getMetaFromState(IBlockState state) {
-		int mul = 1;
-		int val = 0;
-		for (int i = 0; i < properties.length; i++) {
-			if (properties[i] instanceof PropertyInteger) {
-				val += ((Integer) state.getValue(properties[i])).intValue();
-			} else if (properties[i] instanceof PropertyBool) {
-				val += ((Boolean) state.getValue(properties[i])).booleanValue() ? 1 : 0;
-			} else {
-				val += ((Enum) state.getValue(properties[i])).ordinal() * mul;
-			}
-			mul *= propertySizes[i];
-		}
-		return val;
+	    return validStates.inverse().get(state);
 	}
 
 	@Override
 	public IBlockState getStateFromMeta(int meta) {
-		IBlockState state = getDefaultState();
-		int mul = 1;
-		int prevMul = 1;
-		int val = meta;
-		for (int i = 0; i < properties.length; i++) {
-			mul *= propertySizes[i];
-			int enumVal = val % mul;
-			val -= enumVal;
-			val /= prevMul;
-			try {
-				if (properties[i] instanceof PropertyInteger) {
-					state = state.withProperty(properties[i], val);
-				} else if (properties[i] instanceof PropertyBool) {
-					state = state.withProperty(properties[i], val > 0);
-				} else if (properties[i].getValueClass() == EnumFacing.class) {
-					state = state.withProperty(properties[i], EnumFacing.getFront(enumVal));
-				} else {
-					state = state.withProperty(properties[i], ((Enum[]) properties[i].getValueClass().getMethod("values").invoke(null))[enumVal]);
-				}
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-			prevMul = mul;
-		}
-		return state;
+		return validStates.get(meta);
 	}
 
 	@Override

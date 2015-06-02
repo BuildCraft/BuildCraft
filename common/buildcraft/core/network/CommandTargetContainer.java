@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 
 public class CommandTargetContainer extends CommandTarget {
 	@Override
-	public Class getHandledClass() {
+	public Class<?> getHandledClass() {
 		return Container.class;
 	}
 

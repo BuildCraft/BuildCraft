@@ -111,17 +111,7 @@ import buildcraft.core.statements.TriggerInventory;
 import buildcraft.core.statements.TriggerInventoryLevel;
 import buildcraft.core.statements.TriggerMachine;
 import buildcraft.core.statements.TriggerRedstoneInput;
-import buildcraft.core.utils.ColorUtils;
-import buildcraft.core.utils.CraftingHandler;
-import buildcraft.core.utils.WorldPropertyIsDirt;
-import buildcraft.core.utils.WorldPropertyIsFarmland;
-import buildcraft.core.utils.WorldPropertyIsFluidSource;
-import buildcraft.core.utils.WorldPropertyIsHarvestable;
-import buildcraft.core.utils.WorldPropertyIsLeaf;
-import buildcraft.core.utils.WorldPropertyIsOre;
-import buildcraft.core.utils.WorldPropertyIsShoveled;
-import buildcraft.core.utils.WorldPropertyIsSoft;
-import buildcraft.core.utils.WorldPropertyIsWood;
+import buildcraft.core.utils.*;
 import buildcraft.energy.fuels.CoolantManager;
 import buildcraft.energy.fuels.FuelManager;
 
@@ -156,17 +146,11 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Item wrenchItem;
 	public static Item mapLocationItem;
 	public static Item listItem;
-	@SideOnly(Side.CLIENT)
-	public static TextureAtlasSprite redLaserTexture;
-	@SideOnly(Side.CLIENT)
-	public static TextureAtlasSprite blueLaserTexture;
-	@SideOnly(Side.CLIENT)
-	public static TextureAtlasSprite stripesLaserTexture;
-	@SideOnly(Side.CLIENT)
-	public static TextureAtlasSprite transparentTexture;
+	
 	public static int blockByEntityModel;
 	public static int legacyPipeModel;
 	public static int markerModel;
+	
 	public static ITriggerExternal triggerMachineActive = new TriggerMachine(true);
 	public static ITriggerExternal triggerMachineInactive = new TriggerMachine(false);
 	public static IStatement triggerEnergyHigh = new TriggerEnergy(true);
@@ -361,8 +345,6 @@ public class BuildCraftCore extends BuildCraftMod {
 			loadRecipes();
 		}
 		EntityRegistry.registerModEntity(EntityRobot.class, "bcRobot", EntityIds.ROBOT, instance, 50, 1, true);
-		EntityList.stringToClassMapping.remove("BuildCraftCore.bcLaser");
-		EntityList.stringToClassMapping.remove("BuildCraftCore.bcEnergyLaser");
 
 		FMLCommonHandler.instance().bus().register(new CraftingHandler());
 
@@ -416,15 +398,6 @@ public class BuildCraftCore extends BuildCraftMod {
 	public void serverStarting(FMLServerStartingEvent event) {
 		serverThread = Thread.currentThread();
 		event.registerServerCommand(new CommandBuildCraft());
-	}
-
-	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public void onModelBakeEvent(ModelBakeEvent event) {
-		BuildCraftCore.redLaserTexture = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("buildcraft:blockRedLaser");
-		BuildCraftCore.blueLaserTexture = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("buildcraft:blockBlueLaser");
-		BuildCraftCore.stripesLaserTexture = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("buildcraft:blockStripesLaser");
-		BuildCraftCore.transparentTexture = Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite("buildcraft:blockTransparentLaser");
 	}
 
 	public void loadRecipes() {

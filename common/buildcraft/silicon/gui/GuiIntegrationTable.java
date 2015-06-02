@@ -48,7 +48,7 @@ public class GuiIntegrationTable extends GuiLaserTable {
 		drawLedgers(par1, par2);
 
 
-		String title = table.getName();
+		String title = table.getDisplayName().getFormattedText();
 		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
 	}
 

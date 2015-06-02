@@ -64,7 +64,7 @@ public class PacketNBT extends PacketCoordinates {
 		
 		try {
 			//Ugly but will probably work
-			this.nbttagcompound = CompressedStreamTools.func_152456_a(new DataInputStream(new ByteArrayInputStream(Utils.readByteArray(data))), NBTSizeTracker.INFINITE);
+			this.nbttagcompound = CompressedStreamTools.read(new DataInputStream(new ByteArrayInputStream(Utils.readByteArray(data))), NBTSizeTracker.INFINITE);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

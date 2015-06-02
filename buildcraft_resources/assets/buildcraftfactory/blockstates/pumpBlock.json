@@ -1,5 +1,7 @@
 {
     "variants": {
-        "normal": { "model": "buildcraftfactory:pump" }
+        "state=off": { "model": "buildcraftfactory:pump_off" },
+        "state=on": { "model": "buildcraftfactory:pump_on" },
+        "state=done": { "model": "buildcraftfactory:pump_done" }
     }
 }

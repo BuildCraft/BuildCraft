@@ -1,11 +1,12 @@
 {
     "variants": {
         "normal": { "model": "buildcraftbuilders:marker" },
-        "inventory": { "model": "buildcraftbuilders:marker" },
+        "inventory": { "model": "buildcraftbuilders:marker", "x": 270 },
         "facing=up":  { "model": "buildcraftbuilders:marker" },
-        "facing=east":  { "model": "buildcraftbuilders:marker_wall" },
-        "facing=south":  { "model": "buildcraftbuilders:marker_wall", "y": 90 },
-        "facing=west":  { "model": "buildcraftbuilders:marker_wall", "y": 180 },
-        "facing=north":  { "model": "buildcraftbuilders:marker_wall", "y": 270 }
+        "facing=down":  { "model": "buildcraftbuilders:marker", "x": 180 },
+        "facing=east":  { "model": "buildcraftbuilders:marker", "y": 90, "x": 90 },
+        "facing=south":  { "model": "buildcraftbuilders:marker", "y": 180, "x": 90 },
+        "facing=west":  { "model": "buildcraftbuilders:marker", "y": 270, "x": 90 },
+        "facing=north":  { "model": "buildcraftbuilders:marker", "x": 90 }
     }
 }

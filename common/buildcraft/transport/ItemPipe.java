@@ -167,7 +167,5 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe, IModelRegiste
 	}
 
 	@Override
-	public void registerModels() {
-
-	}
+	public void registerModels() {}
 }

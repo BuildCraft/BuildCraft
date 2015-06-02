@@ -50,7 +50,7 @@ public abstract class IntegrationTableRecipe extends FlexibleRecipe<ItemStack> i
 	}
 
 	@Override
-	public CraftingResult canCraft(ItemStack expectedOutput) {
+	public CraftingResult<ItemStack> canCraft(ItemStack expectedOutput) {
 		return null;
 	}
 }

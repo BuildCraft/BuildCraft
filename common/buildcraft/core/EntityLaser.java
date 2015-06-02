@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
 
 import net.minecraft.entity.Entity;
@@ -13,33 +9,51 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.Position;
 
-public abstract class EntityLaser extends Entity {
+public class EntityLaser extends Entity {
 
-	public static final ResourceLocation[] LASER_TEXTURES = new ResourceLocation[]{
-		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_1.png"),
-		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_2.png"),
-		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_3.png"),
-		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/laser_4.png"),
-		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/stripes.png"),
-		new ResourceLocation("buildcraft", DefaultProps.TEXTURE_PATH_ENTITIES + "/blue_stripes.png")};
+	public static final ResourceLocation LASER_RED = new ResourceLocation("buildcraft:textures/entities/laser_1.png");
+	public static final ResourceLocation LASER_YELLOW = new ResourceLocation("buildcraft:textures/entities/laser_2.png");
+	public static final ResourceLocation LASER_GREEN = new ResourceLocation("buildcraft:textures/entities/laser_3.png");
+	public static final ResourceLocation LASER_BLUE = new ResourceLocation("buildcraft:textures/entities/laser_4.png");
 
-	public LaserData data = new LaserData();
+	public static final ResourceLocation LASER_STRIPES_BLUE = new ResourceLocation("buildcraft:textures/entities/blue_stripes.png");
+	public static final ResourceLocation LASER_STRIPES_YELLOW = new ResourceLocation("buildcraft:textures/entities/stripes.png");
+
+	public final LaserData data = new LaserData();
 
 	protected boolean needsUpdate = true;
-	
-	public AxisAlignedBB boundingBox;
+
+	private final ResourceLocation laserTexture;
+
+	public static ResourceLocation getTextureFromLaserKind(LaserKind kind) {
+		switch (kind) {
+			case Blue:
+				return LASER_BLUE;
+			case Red:
+				return LASER_RED;
+			case Stripes:
+				return LASER_STRIPES_YELLOW;
+			default:
+				return LASER_STRIPES_BLUE;
+		}
+	}
 
 	public EntityLaser(World world) {
-		super(world);
-
-		data.head = new Position(0, 0, 0);
-		data.tail = new Position(0, 0, 0);
+		this(world, new Position(0, 0, 0), new Position(0, 0, 0));
 	}
 
 	public EntityLaser(World world, Position head, Position tail) {
+		this(world, head, tail, LASER_RED);
+	}
 
+	public EntityLaser(World world, Position head, Position tail, LaserKind kind) {
+		this(world, head, tail, getTextureFromLaserKind(kind));
+	}
+
+	public EntityLaser(World world, Position head, Position tail, ResourceLocation laserTexture) {
 		super(world);
 
 		data.head = head;
@@ -47,6 +61,8 @@ public abstract class EntityLaser extends Entity {
 
 		setPositionAndRotation(head.x, head.y, head.z, 0, 0);
 		setSize(10, 10);
+
+		this.laserTexture = laserTexture;
 	}
 
 	@Override
@@ -54,70 +70,39 @@ public abstract class EntityLaser extends Entity {
 		preventEntitySpawning = false;
 		noClip = true;
 		isImmuneToFire = true;
-
-		dataWatcher.addObject(8, Integer.valueOf(0));
-		dataWatcher.addObject(9, Integer.valueOf(0));
-		dataWatcher.addObject(10, Integer.valueOf(0));
-		dataWatcher.addObject(11, Integer.valueOf(0));
-		dataWatcher.addObject(12, Integer.valueOf(0));
-		dataWatcher.addObject(13, Integer.valueOf(0));
-
-		dataWatcher.addObject(14, Byte.valueOf((byte) 0));
+		dataWatcher.addObject(8, Byte.valueOf((byte) 1));
 	}
 
 	@Override
 	public void onUpdate() {
-
 		if (data.head == null || data.tail == null) {
 			return;
 		}
-
+		
 		if (!worldObj.isRemote && needsUpdate) {
 			updateDataServer();
 			needsUpdate = false;
 		}
 
-		//if (worldObj.isRemote) {
-		//	updateDataClient();
-		//}
-		
-		//TODO (1.8): Avoid Object Overflow
-		boundingBox = new AxisAlignedBB(Math.min(data.head.x, data.tail.x), Math.min(data.head.y, data.tail.y) - 1.0D, 
-				Math.min(data.head.z, data.tail.z) - 1.0D,  Math.max(data.head.x, data.tail.x) + 1.0D, 
-				Math.max(data.head.y, data.tail.y) + 1.0D , Math.max(data.head.z, data.tail.z) + 1.0D);
+		if (worldObj.isRemote) {
+			updateDataClient();
+		}
+
+		// TODO (1.8): Avoid Object Overflow
+		// Err... what?
+		setEntityBoundingBox(new AxisAlignedBB(Math.min(data.head.x, data.tail.x), Math.min(data.head.y, data.tail.y) - 1.0D, Math.min(data.head.z,
+			data.tail.z) - 1.0D, Math.max(data.head.x, data.tail.x) + 1.0D, Math.max(data.head.y, data.tail.y) + 1.0D, Math.max(data.head.z,
+			data.tail.z) + 1.0D));
 
 		data.update();
 	}
 
 	protected void updateDataClient() {
-		data.head.x = decodeDouble(dataWatcher.getWatchableObjectInt(8));
-		data.head.y = decodeDouble(dataWatcher.getWatchableObjectInt(9));
-		data.head.z = decodeDouble(dataWatcher.getWatchableObjectInt(10));
-		data.tail.x = decodeDouble(dataWatcher.getWatchableObjectInt(11));
-		data.tail.y = decodeDouble(dataWatcher.getWatchableObjectInt(12));
-		data.tail.z = decodeDouble(dataWatcher.getWatchableObjectInt(13));
-
-		data.isVisible = dataWatcher.getWatchableObjectByte(14) == 1;
+		data.isVisible = dataWatcher.getWatchableObjectByte(8) == 1;
 	}
 
 	protected void updateDataServer() {
-		dataWatcher.updateObject(8, Integer.valueOf(encodeDouble(data.head.x)));
-		dataWatcher.updateObject(9, Integer.valueOf(encodeDouble(data.head.y)));
-		dataWatcher.updateObject(10, Integer.valueOf(encodeDouble(data.head.z)));
-		dataWatcher.updateObject(11, Integer.valueOf(encodeDouble(data.tail.x)));
-		dataWatcher.updateObject(12, Integer.valueOf(encodeDouble(data.tail.y)));
-		dataWatcher.updateObject(13, Integer.valueOf(encodeDouble(data.tail.z)));
-
-		dataWatcher.updateObject(14, Byte.valueOf((byte) (data.isVisible ? 1 : 0)));
-	}
-
-	public void setPositions(Position head, Position tail) {
-		data.head = head;
-		data.tail = tail;
-
-		setPositionAndRotation(head.x, head.y, head.z, 0, 0);
-
-		needsUpdate = true;
+		dataWatcher.updateObject(8, Byte.valueOf((byte) (data.isVisible ? 1 : 0)));
 	}
 
 	public void show() {
@@ -134,7 +119,9 @@ public abstract class EntityLaser extends Entity {
 		return data.isVisible;
 	}
 
-	public abstract ResourceLocation getTexture();
+	public ResourceLocation getTexture() {
+		return laserTexture;
+	}
 
 	protected int encodeDouble(double d) {
 		return (int) (d * 8192);
@@ -145,9 +132,11 @@ public abstract class EntityLaser extends Entity {
 	}
 
 	// The read/write to nbt seem to be useless
+
+	// Yes it is- we never want to persist this entity.
+
 	@Override
 	protected void readEntityFromNBT(NBTTagCompound nbt) {
-
 		double headX = nbt.getDouble("headX");
 		double headY = nbt.getDouble("headZ");
 		double headZ = nbt.getDouble("headY");
@@ -161,7 +150,6 @@ public abstract class EntityLaser extends Entity {
 
 	@Override
 	protected void writeEntityToNBT(NBTTagCompound nbt) {
-
 		nbt.setDouble("headX", data.head.x);
 		nbt.setDouble("headY", data.head.y);
 		nbt.setDouble("headZ", data.head.z);
@@ -173,7 +161,7 @@ public abstract class EntityLaser extends Entity {
 
 	// Workaround for the laser's posY loosing it's precision e.g 103.5 becomes 104
 	public Position renderOffset() {
-		return new Position(data.head.x - posX, data.head.y - posY, data.head.z - posZ);
+		return new Position(0.5, 0.5, 0.5);
 	}
 
 	@Override

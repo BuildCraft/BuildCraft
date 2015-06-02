@@ -1,6 +1,5 @@
 {
     "variants": {
-        "facing=up":  { "model": "buildcraftbuilders:architectTable" },
         "facing=east":  { "model": "buildcraftbuilders:architectTable" },
         "facing=south":  { "model": "buildcraftbuilders:architectTable", "y": 90 },
         "facing=west":  { "model": "buildcraftbuilders:architectTable", "y": 180 },

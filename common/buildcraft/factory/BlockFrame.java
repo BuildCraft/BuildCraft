@@ -9,19 +9,21 @@
 package buildcraft.factory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -29,26 +31,53 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import buildcraft.core.BlockBuildCraft;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import buildcraft.core.CoreConstants;
-import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.IFramePipeConnection;
+import buildcraft.core.utils.PropertyBoolUnlisted;
 import buildcraft.core.utils.Utils;
+
+import com.google.common.collect.Maps;
 
 public class BlockFrame extends Block implements IFramePipeConnection {
 
-	public static PropertyBool UP_PROP = PropertyBool.create("up");
-	public static PropertyBool DOWN_PROP = PropertyBool.create("down");
-	public static PropertyBool WEST_PROP = PropertyBool.create("west");
-	public static PropertyBool EAST_PROP = PropertyBool.create("east");
-	public static PropertyBool NORTH_PROP = PropertyBool.create("north");
-	public static PropertyBool SOUTH_PROP = PropertyBool.create("south");
+	public static final PropertyBoolUnlisted UP_PROP = new PropertyBoolUnlisted("up");
+	public static final PropertyBoolUnlisted DOWN_PROP = new PropertyBoolUnlisted("down");
+	public static final PropertyBoolUnlisted WEST_PROP = new PropertyBoolUnlisted("west");
+	public static final PropertyBoolUnlisted EAST_PROP = new PropertyBoolUnlisted("east");
+	public static final PropertyBoolUnlisted NORTH_PROP =new PropertyBoolUnlisted("north");
+	public static final PropertyBoolUnlisted SOUTH_PROP = new PropertyBoolUnlisted("south");
+	
+	public static final Map<EnumFacing, PropertyBoolUnlisted> FACING_PROPS;
+	
+	static {
+		Map<EnumFacing, PropertyBoolUnlisted> map = Maps.newEnumMap(EnumFacing.class);
+
+		map.put(EnumFacing.DOWN, DOWN_PROP);
+		map.put(EnumFacing.UP, UP_PROP);
+
+		map.put(EnumFacing.EAST, EAST_PROP);
+		map.put(EnumFacing.WEST, WEST_PROP);
+
+		map.put(EnumFacing.NORTH, NORTH_PROP);
+		map.put(EnumFacing.SOUTH, SOUTH_PROP);
+
+		FACING_PROPS = Collections.unmodifiableMap(map);
+	}
 	
 	
 	public BlockFrame() {
 		super(Material.glass);
 		setHardness(0.5F);
 	}
+	
+	@Override
+	protected BlockState createBlockState() {
+		IUnlistedProperty<?>[] props = new IUnlistedProperty[] { 
+			UP_PROP, DOWN_PROP, WEST_PROP, EAST_PROP, NORTH_PROP, SOUTH_PROP};
+        return new ExtendedBlockState(this, new IProperty[0], props);
+    }
 
 	@Override
 	public void breakBlock(World world, BlockPos pos, IBlockState state) {
@@ -86,6 +115,15 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 	public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
 		return new ArrayList<ItemStack>();
 	}
+	
+	@Override
+	public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
+		for (Entry<EnumFacing, PropertyBoolUnlisted> entry : FACING_PROPS.entrySet()) {
+			boolean connects = Utils.checkLegacyPipesConnections(world, pos, pos.offset(entry.getKey()));
+			state = state.withProperty(entry.getValue(), connects);
+		}
+        return state;
+    }
 
 	@Override
 	public AxisAlignedBB getCollisionBoundingBox(World world, BlockPos pos, IBlockState state) {
@@ -209,28 +247,4 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 	public void getSubBlocks(Item item, CreativeTabs tab, List list) {
 		list.add(new ItemStack(this));
 	}
-	
-	public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block neighborBlock){
-		boolean oldUp = (Boolean) state.getValue(UP_PROP);
-		boolean oldDown = (Boolean) state.getValue(DOWN_PROP);
-		boolean oldNorth = (Boolean) state.getValue(NORTH_PROP);
-		boolean oldSouth = (Boolean) state.getValue(SOUTH_PROP);
-		boolean oldEast = (Boolean) state.getValue(EAST_PROP);
-		boolean oldWest = (Boolean) state.getValue(WEST_PROP);
-		Object newOrientation = null;
-		boolean up = Utils.checkLegacyPipesConnections(world, pos, pos.up());
-		boolean down = Utils.checkLegacyPipesConnections(world, pos, pos.down());
-		boolean north = Utils.checkLegacyPipesConnections(world, pos, pos.north());
-		boolean south = Utils.checkLegacyPipesConnections(world, pos, pos.south());
-		boolean east = Utils.checkLegacyPipesConnections(world, pos, pos.east());
-		boolean west = Utils.checkLegacyPipesConnections(world, pos, pos.west());
-		
-//		if(oldUp != up)
-//		else if(oldDown != down)
-//		else if(oldNorth != north)
-//		else if(oldSouth != south)
-//		else if(oldEast != east)
-//		else if
-	}
-
 }

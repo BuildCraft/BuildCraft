@@ -1,0 +1,12 @@
+{
+    "parent": "buildcraftcore:block/default_cube",
+    "textures": {
+        "particle": "buildcraft:blocks/filler/side",
+        "down": "buildcraft:blocks/filler/bottom",
+        "up": "buildcraft:blocks/filler/top",
+        "north": "buildcraft:blocks/filler/side",
+        "east": "buildcraft:blocks/filler/front_off",
+        "south": "buildcraft:blocks/filler/side",
+        "west": "buildcraft:blocks/filler/side"
+    }
+}

@@ -119,6 +119,8 @@ public final class FluidRenderer {
 			liquidBlock.maxX = 0.99f;
 			liquidBlock.maxY = (float) s / (float) DISPLAY_STAGES;
 			liquidBlock.maxZ = 0.99f;
+			
+			//TODO: Fix RenderEntityBlock attempting to render the fluid block!
 
 			RenderEntityBlock.INSTANCE.renderBlock(liquidBlock, world, 0, 0, 0, false, true);
 

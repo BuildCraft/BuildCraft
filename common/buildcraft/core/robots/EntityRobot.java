@@ -611,11 +611,6 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public String getName() {
-		return null;
-	}
-
-	@Override
 	public boolean hasCustomName() {
 		return false;
 	}

@@ -53,7 +53,6 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory {
 		inventoryStorage.setInventorySlotContents(slotId, itemStack);
 	}
 
-	@Override
 	public String getName() {
 		return inventoryStorage.getName();
 	}
@@ -147,10 +146,5 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory {
 	@Override
 	public boolean hasCustomName() {
 		return false;
-	}
-
-	@Override
-	public IChatComponent getDisplayName() {
-		return new ChatComponentText(this.getName());
 	}
 }

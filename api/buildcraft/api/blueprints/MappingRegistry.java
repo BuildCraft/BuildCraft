@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * The BuildCraft API is distributed under the terms of the MIT License.
- * Please check the contents of the license, which should be located
- * as "LICENSE.API" in the BuildCraft source code distribution.
- */
+ * The BuildCraft API is distributed under the terms of the MIT License. Please check the contents of the license, which
+ * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.api.blueprints;
 
 import java.util.ArrayList;
@@ -36,14 +32,14 @@ public class MappingRegistry {
 	public HashMap<Class<? extends Entity>, Integer> entityToId = new HashMap<Class<? extends Entity>, Integer>();
 	public ArrayList<Class<? extends Entity>> idToEntity = new ArrayList<Class<? extends Entity>>();
 
-	private void registerItem (Item item) {
+	private void registerItem(Item item) {
 		if (!itemToId.containsKey(item)) {
 			idToItem.add(item);
 			itemToId.put(item, idToItem.size() - 1);
 		}
 	}
 
-	private void registerBlock (Block block) {
+	private void registerBlock(Block block) {
 		if (!blockToId.containsKey(block)) {
 			idToBlock.add(block);
 			blockToId.put(block, idToBlock.size() - 1);
@@ -107,7 +103,7 @@ public class MappingRegistry {
 
 	public int getIdForBlock(Block block) {
 		if (!blockToId.containsKey(block)) {
-			registerBlock (block);
+			registerBlock(block);
 		}
 
 		return blockToId.get(block);
@@ -141,37 +137,27 @@ public class MappingRegistry {
 
 	public int getIdForEntity(Class<? extends Entity> entity) {
 		if (!entityToId.containsKey(entity)) {
-			registerEntity (entity);
+			registerEntity(entity);
 		}
 
 		return entityToId.get(entity);
 	}
 
-	/**
-	 * Relocates a stack nbt from the world referential to the registry
-	 * referential.
-	 */
+	/** Relocates a stack nbt from the world referential to the registry referential. */
 	public void stackToRegistry(NBTTagCompound nbt) {
 		Item item = Item.getItemById(nbt.getShort("id"));
 		nbt.setShort("id", (short) getIdForItem(item));
 	}
 
-	/**
-	 * Relocates a stack nbt from the registry referential to the world
-	 * referential.
-	 */
+	/** Relocates a stack nbt from the registry referential to the world referential. */
 	public void stackToWorld(NBTTagCompound nbt) throws MappingNotFoundException {
 		Item item = getItemForId(nbt.getShort("id"));
 		nbt.setShort("id", (short) Item.getIdFromItem(item));
 	}
 
 	private boolean isStackLayout(NBTTagCompound nbt) {
-		return nbt.hasKey("id") &&
-				nbt.hasKey("Count") &&
-				nbt.hasKey("Damage") &&
-				nbt.getTag("id") instanceof NBTTagShort &&
-				nbt.getTag("Count") instanceof NBTTagByte &&
-				nbt.getTag("Damage") instanceof NBTTagShort;
+		return nbt.hasKey("id") && nbt.hasKey("Count") && nbt.hasKey("Damage") && nbt.getTag("id") instanceof NBTTagShort
+			&& nbt.getTag("Count") instanceof NBTTagByte && nbt.getTag("Damage") instanceof NBTTagShort;
 	}
 
 	public void scanAndTranslateStacksToRegistry(NBTTagCompound nbt) {
@@ -238,13 +224,13 @@ public class MappingRegistry {
 		}
 	}
 
-	public void write (NBTTagCompound nbt) {
+	public void write(NBTTagCompound nbt) {
 		NBTTagList blocksMapping = new NBTTagList();
 
 		for (Block b : idToBlock) {
 			NBTTagCompound sub = new NBTTagCompound();
-			sub.setString("name",
-					((ResourceLocation) Block.blockRegistry.getNameForObject(b)).getResourcePath());
+			String name = ((ResourceLocation) Block.blockRegistry.getNameForObject(b)).toString();
+			sub.setString("name", name);
 			blocksMapping.appendTag(sub);
 		}
 
@@ -254,9 +240,13 @@ public class MappingRegistry {
 
 		for (Item i : idToItem) {
 			NBTTagCompound sub = new NBTTagCompound();
-			sub.setString("name",
-					((ResourceLocation) Item.itemRegistry.getNameForObject(i)).getResourcePath());
-			itemsMapping.appendTag(sub);
+			ResourceLocation location = (ResourceLocation) Item.itemRegistry.getNameForObject(i);
+			if (location != null) {
+				sub.setString("name", location.getResourcePath());
+				itemsMapping.appendTag(sub);
+			} else {
+				BCLog.logger.warn("Failed to find a name for " + i + ", it will not persist");
+			}
 		}
 
 		nbt.setTag("itemsMapping", itemsMapping);
@@ -272,19 +262,15 @@ public class MappingRegistry {
 		nbt.setTag("entitiesMapping", entitiesMapping);
 	}
 
-	public void read (NBTTagCompound nbt) {
-		NBTTagList blocksMapping = nbt.getTagList("blocksMapping",
-				Constants.NBT.TAG_COMPOUND);
+	@SuppressWarnings("unchecked")
+	public void read(NBTTagCompound nbt) {
+		NBTTagList blocksMapping = nbt.getTagList("blocksMapping", Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < blocksMapping.tagCount(); ++i) {
 			NBTTagCompound sub = blocksMapping.getCompoundTagAt(i);
 			String name = sub.getString("name");
-			Block b = null;
-			
-			if (Block.blockRegistry.containsKey(name)) {
-				b = (Block) Block.blockRegistry.getObject(name);
-			}
-			
+			Block b = (Block) Block.blockRegistry.getObject(new ResourceLocation(name));
+
 			if (b != null) {
 				registerBlock(b);
 			} else {
@@ -294,18 +280,17 @@ public class MappingRegistry {
 			}
 		}
 
-		NBTTagList itemsMapping = nbt.getTagList("itemsMapping",
-				Constants.NBT.TAG_COMPOUND);
+		NBTTagList itemsMapping = nbt.getTagList("itemsMapping", Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < itemsMapping.tagCount(); ++i) {
 			NBTTagCompound sub = itemsMapping.getCompoundTagAt(i);
 			String name = sub.getString("name");
 			Item item = null;
-			
+
 			if (Item.itemRegistry.containsKey(name)) {
 				item = (Item) Item.itemRegistry.getObject(name);
 			}
-			
+
 			if (item != null) {
 				registerItem(item);
 			} else {
@@ -315,8 +300,7 @@ public class MappingRegistry {
 			}
 		}
 
-		NBTTagList entitiesMapping = nbt.getTagList("entitiesMapping",
-				Constants.NBT.TAG_COMPOUND);
+		NBTTagList entitiesMapping = nbt.getTagList("entitiesMapping", Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < entitiesMapping.tagCount(); ++i) {
 			NBTTagCompound sub = entitiesMapping.getCompoundTagAt(i);

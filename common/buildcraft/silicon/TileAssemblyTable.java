@@ -14,16 +14,13 @@ import java.util.List;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.common.util.Constants;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.CraftingResult;
@@ -37,7 +34,6 @@ import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.core.robots.EntityRobot;
 import buildcraft.core.robots.ResourceIdAssemblyTable;
 import buildcraft.core.robots.RobotRegistry;
-import buildcraft.core.utils.StringUtils;
 import buildcraft.core.utils.Utils;
 
 public class TileAssemblyTable extends TileLaserTableBase implements IInventory, IFlexibleCrafter, ICommandReceiver {
@@ -48,7 +44,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 	public List<CraftingResult<ItemStack>> getPotentialOutputs() {
 		List<CraftingResult<ItemStack>> result = new LinkedList<CraftingResult<ItemStack>>();
 
-		for (IFlexibleRecipe recipe : AssemblyRecipeManager.INSTANCE.getRecipes()) {
+		for (IFlexibleRecipe<ItemStack> recipe : AssemblyRecipeManager.INSTANCE.getRecipes()) {
 			CraftingResult<ItemStack> r = recipe.craft(this, true);
 
 			if (r != null) {
@@ -197,7 +193,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		}
 	}
 
-	public boolean isPlanned(IFlexibleRecipe recipe) {
+	public boolean isPlanned(IFlexibleRecipe<ItemStack> recipe) {
 		if (recipe == null) {
 			return false;
 		}
@@ -205,7 +201,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		return plannedOutput.contains(recipe.getId());
 	}
 
-	public boolean isAssembling(IFlexibleRecipe recipe) {
+	public boolean isAssembling(IFlexibleRecipe<ItemStack> recipe) {
 		return recipe != null && recipe == currentRecipe;
 	}
 
@@ -360,7 +356,6 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		return 0;
 	}
 
-	@Override
 	public String getName() {
 		return "tile.assemblyTableBlock.name";
 	}

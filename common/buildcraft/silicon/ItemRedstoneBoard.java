@@ -31,9 +31,6 @@ import buildcraft.core.utils.NBTUtils;
 
 public class ItemRedstoneBoard extends ItemBuildCraft {
 
-	/*public IIcon cleanBoard;
-	public IIcon unknownBoard;*/
-
 	public ItemRedstoneBoard() {
 		super(CreativeTabBuildCraft.BOARDS);
 	}
@@ -52,30 +49,6 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 		}
 	}
 
-	/*@Override
-	public IIcon getIconIndex(ItemStack stack) {
-		NBTTagCompound cpt = NBTUtils.getItemData(stack);
-
-		if (!cpt.hasKey("id")) {
-			itemIcon = cleanBoard;
-		} else if ("<unknown>".equals(cpt.getString("id"))) {
-			itemIcon = unknownBoard;
-		} else {
-			itemIcon = RedstoneBoardRegistry.instance.getRedstoneBoard(cpt).getIcon(cpt);
-		}
-
-		return itemIcon;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister) {
-		cleanBoard = par1IconRegister.registerIcon("buildcraft:board_clean");
-		unknownBoard = par1IconRegister.registerIcon("buildcraft:board_unknown");
-
-		RedstoneBoardRegistry.instance.registerIcons(par1IconRegister);
-	}*/
-
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	@SideOnly(Side.CLIENT)
@@ -89,6 +62,7 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 	}
 	
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void registerModels() {
 		//List to contains all NBT variants
 		List<String> variants = new ArrayList<String>();

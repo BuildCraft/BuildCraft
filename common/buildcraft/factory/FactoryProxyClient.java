@@ -30,9 +30,9 @@ import buildcraft.factory.render.RenderTank;
 
 public class FactoryProxyClient extends FactoryProxy {
 
-	public static ResourceLocation pumpTexture = new ResourceLocation("buildcraft:pump_tube");
-	public static ResourceLocation drillTexture = new ResourceLocation("buildcraft:blockDrillTexture");
-	public static ResourceLocation drillHeadTexture = new ResourceLocation("buildcraft:blockDrillHeadTexture");
+	public static ResourceLocation pumpTexture = new ResourceLocation("buildcraft:textures/blocks/pump/tube.png");
+	public static ResourceLocation drillTexture = new ResourceLocation("buildcraft:textures/blocks/quarry/drill.png");
+	public static ResourceLocation drillHeadTexture = new ResourceLocation("buildcraft:textures/blocks/quarry/drill_head.png");
 
 	@Override
 	public void initializeModels(ModelBakeEvent event) {
@@ -87,7 +87,7 @@ public class FactoryProxyClient extends FactoryProxy {
 	@Override
 	public EntityBlock newDrill(World w, double i, double j, double k, double l, double d, double e) {
 		EntityBlock eb = super.newDrill(w, i, j, k, l, d, e);
-//		eb.resource = drillTexture;
+		eb.resource =new ResourceLocation("minecraft:textures/blocks/gold_block.png");//= drillTexture;
 		return eb;
 	}
 
@@ -95,7 +95,7 @@ public class FactoryProxyClient extends FactoryProxy {
 	public EntityBlock newDrillHead(World w, double i, double j, double k, double l, double d, double e) {
 		EntityBlock eb = super.newDrillHead(w, i, j, k, l, d, e);
 		eb.blockState = Blocks.diamond_block.getDefaultState();
-//		eb.resource = drillHeadTexture;
+		eb.resource = new ResourceLocation("minecraft:textures/blocks/diamond_block.png");// drillHeadTexture;
 		return eb;
 	}
 }

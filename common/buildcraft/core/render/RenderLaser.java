@@ -20,6 +20,7 @@ import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.Position;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
@@ -109,7 +110,8 @@ public class RenderLaser extends Render {
 		GL11.glDisable(GL11.GL_LIGHTING);
 
 		Position offset = laser.renderOffset();
-		GL11.glTranslated(x + offset.x, y + offset.y, z + offset.z);
+		GL11.glTranslated(offset.x, offset.y, offset.z);
+		GL11.glTranslated(x - laser.data.head.x, y - laser.data.head.y, z - laser.data.head.z);
 
 		// FIXME: WARNING! not using getBox (laser) will kill laser movement.
 		// we can use some other method for the animation though.
@@ -123,6 +125,7 @@ public class RenderLaser extends Render {
 		if (!laser.isVisible || texture == null) {
 			return;
 		}
+
 
 		GL11.glPushMatrix();
 
@@ -157,13 +160,11 @@ public class RenderLaser extends Render {
 		GL11.glPopMatrix();
 	}
 
-
-
 	public static void doRenderLaser(World world, TextureManager textureManager, LaserData laser, ResourceLocation texture) {
 		if (!laser.isVisible || texture == null) {
 			return;
 		}
-
+		
 		GL11.glPushMatrix();
 
 		GL11.glTranslated(laser.head.x, laser.head.y, laser.head.z);

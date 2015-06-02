@@ -12,6 +12,7 @@ import java.util.HashSet;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -20,19 +21,23 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.Packet;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.world.IWorldNameable;
+import net.minecraft.world.World;
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.network.BuildCraftPacket;
 import buildcraft.core.network.ISynchronizedTile;
 import buildcraft.core.network.PacketTileUpdate;
 import buildcraft.core.utils.Utils;
 
-public abstract class TileBuildCraft extends TileEntity implements IEnergyHandler, ISynchronizedTile, ISerializable, IUpdatePlayerListBox {
+public abstract class TileBuildCraft extends TileEntity implements IEnergyHandler, ISynchronizedTile, ISerializable, IUpdatePlayerListBox, IWorldNameable {
     protected TileBuffer[] cache;
 	protected HashSet<EntityPlayer> guiWatchers = new HashSet<EntityPlayer>();
 
@@ -218,16 +223,23 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 
 	// Helpers for overriding
 
+    @Override
 	public boolean hasCustomName() {
 		return false;
 	}
+	
+	public String getName() {
+		return "";
+	}
 
+	@Override
 	public IChatComponent getDisplayName() {
-		if (this instanceof IInventory) {
-			return new ChatComponentTranslation(((IInventory) this).getName());
-		} else {
-			return null;
-		}
+		return new ChatComponentTranslation(getName());
+	}
+	
+	@Override
+	public String getCommandSenderName() {
+		return "";
 	}
 
 	public int getField(int id) {
@@ -249,4 +261,9 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
 		return worldObj.getTileEntity(pos) == this && entityplayer.getDistanceSq(pos) <= 64.0D;
 	}
+	
+	@Override
+	public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate) {
+        return oldState.getBlock() != newSate.getBlock();
+    }
 }

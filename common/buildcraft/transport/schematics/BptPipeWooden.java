@@ -12,6 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
+import buildcraft.api.core.BuildCraftProperties;
 
 public class BptPipeWooden extends BptPipeExtension {
 
@@ -21,10 +22,13 @@ public class BptPipeWooden extends BptPipeExtension {
 
 	@Override
 	public void rotateLeft(SchematicTile slot, IBuilderContext context) {
-		int orientation = slot.getMetaData() & 7;
-		int others = slot.getMetaData() - orientation;
-
-		slot.setMetaData(EnumFacing.values()[orientation].rotateY().ordinal() + others);
+		// TODO: Convert Pipes to have states better defined. (Split PIPE_DATA into FACING and POWERED)
+		int index = (Integer) slot.state.getValue(BuildCraftProperties.PIPE_DATA);
+		int orientation = index % 6;
+		int extra = index / 6;
+		EnumFacing facing = EnumFacing.VALUES[orientation];
+		EnumFacing newFacing = facing.rotateY();
+		int newIndex = newFacing.getIndex() + extra * 6;
+		slot.state = slot.state.withProperty(BuildCraftProperties.PIPE_DATA, newIndex);
 	}
-
 }

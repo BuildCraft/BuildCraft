@@ -62,7 +62,7 @@ public abstract class ResourceId {
 
 	public static ResourceId load(NBTTagCompound nbt) {
 		try {
-			Class clas = Class.forName(nbt.getString("class"));
+			Class<?> clas = Class.forName(nbt.getString("class"));
 
 			ResourceId id = (ResourceId) clas.newInstance();
 			id.readFromNBT(nbt);

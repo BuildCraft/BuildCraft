@@ -10,6 +10,7 @@ package buildcraft.factory;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -23,30 +24,14 @@ import buildcraft.core.utils.Utils;
 
 public class BlockPump extends BlockBuildCraft {
 
-	/*private IIcon textureTop;
-	private IIcon textureBottom;
-	private IIcon textureSide;*/
-
 	public BlockPump() {
-		super(Material.iron);
+		super(Material.iron, new IProperty[]{MACHINE_STATE});
 	}
 
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TilePump();
 	}
-
-	/*@Override
-	public IIcon getIcon(int i, int j) {
-		switch (i) {
-			case 0:
-				return textureBottom;
-			case 1:
-				return textureTop;
-			default:
-				return textureSide;
-		}
-	}*/
 
 	@Override
 	public void breakBlock(World world, BlockPos pos, IBlockState state) {
@@ -88,12 +73,4 @@ public class BlockPump extends BlockBuildCraft {
 			((TilePump) tile).onNeighborBlockChange(block);
 		}
 	}
-
-	/*@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		textureTop = par1IconRegister.registerIcon("buildcraft:pump_top");
-		textureBottom = par1IconRegister.registerIcon("buildcraft:pump_bottom");
-		textureSide = par1IconRegister.registerIcon("buildcraft:pump_side");
-	}*/
 }

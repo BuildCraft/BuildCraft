@@ -18,9 +18,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
-
 import net.minecraftforge.common.util.Constants;
-
 import buildcraft.core.utils.INBTTagable;
 
 public class SimpleInventory implements IInventory, INBTTagable {
@@ -72,11 +70,6 @@ public class SimpleInventory implements IInventory, INBTTagable {
 			itemstack.stackSize = this.getInventoryStackLimit();
 		}
 		markDirty();
-	}
-
-	@Override
-	public String getName() {
-		return name;
 	}
 
 	@Override
@@ -200,9 +193,18 @@ public class SimpleInventory implements IInventory, INBTTagable {
 	public boolean hasCustomName() {
 		return false;
 	}
+	
+	public String getName() {
+		return name;
+	}
 
 	@Override
 	public IChatComponent getDisplayName() {
 		return new ChatComponentText(getName());
+	}
+
+	@Override
+	public String getCommandSenderName() {
+		return null;
 	}
 }

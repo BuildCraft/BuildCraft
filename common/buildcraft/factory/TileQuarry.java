@@ -583,7 +583,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 				break;
 			}
 
-			box.initialize(xMin, pos.getX(), zMin, xMin + xSize - 1, pos.getX() + ySize - 1, zMin + zSize - 1);
+			box.initialize(xMin, pos.getY(), zMin, xMin + xSize - 1, pos.getY() + ySize - 1, zMin + zSize - 1);
 		}
 
 		a.removeFromWorld();

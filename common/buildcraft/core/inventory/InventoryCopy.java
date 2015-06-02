@@ -72,11 +72,6 @@ public class InventoryCopy implements IInventory {
 	}
 
 	@Override
-	public String getName() {
-		return orignal.getName();
-	}
-
-	@Override
 	public boolean hasCustomName() {
 		return orignal.hasCustomName();
 	}
@@ -141,5 +136,10 @@ public class InventoryCopy implements IInventory {
 	@Override
 	public void markDirty() {
 
+	}
+
+	@Override
+	public String getCommandSenderName() {
+		return orignal.getCommandSenderName();
 	}
 }

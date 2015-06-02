@@ -20,10 +20,10 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
-
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.common.util.Constants;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
@@ -320,7 +320,6 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		subLasers.add(laser);
 	}
 
-	@Override
 	public String getName() {
 		return "Template";
 	}

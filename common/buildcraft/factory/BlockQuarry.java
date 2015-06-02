@@ -33,12 +33,8 @@ import buildcraft.core.utils.Utils;
 
 public class BlockQuarry extends BlockBuildCraft {
 
-	/*IIcon textureTop;
-	IIcon textureFront;
-	IIcon textureSide;*/
-
 	public BlockQuarry() {
-		super(Material.iron, new PropertyEnum[]{FACING_6_PROP});
+		super(Material.iron, new PropertyEnum[]{FACING_PROP, MACHINE_STATE});
 
 		setHardness(10F);
 		setResistance(10F);
@@ -62,25 +58,6 @@ public class BlockQuarry extends BlockBuildCraft {
 			}
 		}
 	}
-
-	/*@Override
-	public IIcon getIcon(int i, int j) {
-		// If no metadata is set, then this is an icon.
-		if (j == 0 && i == 3) {
-			return textureFront;
-		}
-
-		if (i == j && i > 1) {
-			return textureFront;
-		}
-
-		switch (i) {
-			case 1:
-				return textureTop;
-			default:
-				return textureSide;
-		}
-	}*/
 
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {

@@ -59,8 +59,8 @@ public class SchematicEntity extends Schematic {
 	@Override
 	public void translateToBlueprint(Translation transform) {
 		NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
-		Position pos = new Position(nbttaglist.getDouble(0),
-				nbttaglist.getDouble(1), nbttaglist.getDouble(2));
+		Position pos = new Position(nbttaglist.getDoubleAt(0),
+				nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
 		pos = transform.translate(pos);
 
 		entityNBT.setTag("Pos",
@@ -70,8 +70,8 @@ public class SchematicEntity extends Schematic {
 	@Override
 	public void translateToWorld(Translation transform) {
 		NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
-		Position pos = new Position(nbttaglist.getDouble(0),
-				nbttaglist.getDouble(1), nbttaglist.getDouble(2));
+		Position pos = new Position(nbttaglist.getDoubleAt(0),
+				nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
 		pos = transform.translate(pos);
 
 		entityNBT.setTag("Pos",
@@ -95,19 +95,19 @@ public class SchematicEntity extends Schematic {
 	@Override
 	public void rotateLeft(IBuilderContext context) {
 		NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
-		Position pos = new Position(nbttaglist.getDouble(0),
-				nbttaglist.getDouble(1), nbttaglist.getDouble(2));
+		Position pos = new Position(nbttaglist.getDoubleAt(0),
+				nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
 		pos = context.rotatePositionLeft(pos);
 		entityNBT.setTag("Pos",
 				this.newDoubleNBTList(pos.x, pos.y, pos.z));
 
 		nbttaglist = entityNBT.getTagList("Rotation", 5);
-		float yaw = nbttaglist.getFloat(0);
+		float yaw = nbttaglist.getFloatAt(0);
 		yaw += 90;
 		entityNBT.setTag(
 				"Rotation",
 				this.newFloatNBTList(yaw,
-						nbttaglist.getFloat(1)));
+						nbttaglist.getFloatAt(1)));
 	}
 
 	@Override
@@ -193,8 +193,8 @@ public class SchematicEntity extends Schematic {
 
 	public boolean isAlreadyBuilt(IBuilderContext context) {
 		NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
-		Position newPosition = new Position(nbttaglist.getDouble(0),
-				nbttaglist.getDouble(1), nbttaglist.getDouble(2));
+		Position newPosition = new Position(nbttaglist.getDoubleAt(0),
+				nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
 
 		for (Object o : context.world().loadedEntityList) {
 			Entity e = (Entity) o;

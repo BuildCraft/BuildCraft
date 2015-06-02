@@ -8,11 +8,11 @@
  */
 package buildcraft.core.builders;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface IBuildingItemsProvider {
 
-	ArrayList<BuildingItem> getBuilders();
+	List<BuildingItem> getBuilders();
 
 	void addAndLaunchBuildingItem(BuildingItem item);
 }

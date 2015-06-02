@@ -10,8 +10,13 @@ package buildcraft.builders;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -31,12 +36,9 @@ import buildcraft.core.utils.Utils;
 public class BlockFiller extends BlockBuildCraft {
 
 	public IFillerPattern currentPattern;
-	/*private IIcon textureSides;
-	private IIcon textureTopOn;
-	private IIcon textureTopOff;*/
 
 	public BlockFiller() {
-		super(Material.iron);
+		super(Material.iron, new IProperty[]{FACING_PROP, MACHINE_STATE} );
 
 		setHardness(5F);
 		setCreativeTab(CreativeTabBuildCraft.BLOCKS.get());
@@ -63,37 +65,13 @@ public class BlockFiller extends BlockBuildCraft {
 
 	}
 
-	/*@Override
-	public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
-		int m = world.getBlockMetadata(x, y, z);
-		TileEntity tile = world.getTileEntity(x, y, z);
-
-		if (tile != null && tile instanceof TileFiller) {
-			TileFiller filler = (TileFiller) tile;
-			if (side == 1 || side == 0) {
-				if (!filler.hasWork()) {
-					return textureTopOff;
-				} else {
-					return textureTopOn;
-				}
-			} else if (filler.currentPattern != null) {
-				return filler.currentPattern.getIcon();
-			} else {
-				return textureSides;
-			}
-		}
-
-		return getIcon(side, m);
-	}
-
 	@Override
-	public IIcon getIcon(int i, int j) {
-		if (i == 0 || i == 1) {
-			return textureTopOn;
-		} else {
-			return textureSides;
-		}
-	}*/
+	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entityliving, ItemStack stack) {
+		super.onBlockPlacedBy(world, pos, state, entityliving, stack);
+        EnumFacing orientation = Utils.get2dOrientation(entityliving);
+
+        world.setBlockState(pos, state.withProperty(FACING_PROP, orientation.getOpposite()), 1);
+    }
 
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {
@@ -105,14 +83,6 @@ public class BlockFiller extends BlockBuildCraft {
 		Utils.preDestroyBlock(world, pos, state);
 		super.breakBlock(world, pos, state);
 	}
-
-	/*@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-	    textureTopOn = par1IconRegister.registerIcon("buildcraft:blockFillerTopOn");
-        textureTopOff = par1IconRegister.registerIcon("buildcraft:blockFillerTopOff");
-        textureSides = par1IconRegister.registerIcon("buildcraft:blockFillerSides");
-	}*/
 
 
 	@Override

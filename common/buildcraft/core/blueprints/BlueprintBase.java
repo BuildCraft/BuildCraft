@@ -51,8 +51,7 @@ public abstract class BlueprintBase {
 
 	protected MappingRegistry mapping = new MappingRegistry();
 
-	private ComputeDataThread computeData;
-	private byte [] data;
+	private byte[] data;
 	private EnumFacing mainDir = EnumFacing.EAST;
 
 	public BlueprintBase() {
@@ -270,39 +269,32 @@ public abstract class BlueprintBase {
 		subBlueprintsNBT.add(nbt);
 	}
 
-	class ComputeDataThread extends Thread {
-		public NBTTagCompound nbt;
-
-		@Override
-		public void run () {
-			try {
-				ByteArrayOutputStream out = new ByteArrayOutputStream();
-				CompressedStreamTools.writeCompressed(nbt, out);
-				out.flush();
-				BlueprintBase.this.setData(out.toByteArray());
-				out.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 	/**
 	 * This function will return the binary data associated to this blueprint.
 	 * This data is computed asynchronously. If the data is not yet available,
 	 * null will be returned.
 	 */
-	public synchronized byte[] getData() {
+	public byte[] getData() {
 		if (data != null) {
 			return data;
-		} else if (computeData == null) {
-			computeData = new ComputeDataThread();
-			computeData.nbt = new NBTTagCompound();
-			writeToNBT(computeData.nbt);
-			computeData.start();
+		} else {
+			NBTTagCompound nbt = new NBTTagCompound();
+			writeToNBT(nbt);
+			try {
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				CompressedStreamTools.writeCompressed(nbt, out);
+				out.flush();
+				data = out.toByteArray();
+				out.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return data;
 		}
-
-		return null;
+	}
+	
+	public void setData(byte[] data) {
+		this.data = data;
 	}
 
 	public static BlueprintBase instantiate(ItemStack stack, World world, BlockPos pos, EnumFacing o) {
@@ -348,10 +340,6 @@ public abstract class BlueprintBase {
 		translateToWorld(transform);
 
 		return this;
-	}
-
-	public synchronized void setData(byte[] b) {
-		data = b;
 	}
 
 	public abstract void loadContents(NBTTagCompound nbt) throws BptError;

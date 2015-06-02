@@ -32,12 +32,8 @@ import buildcraft.core.utils.Utils;
 
 public class BlockBuilder extends BlockBuildCraft {
 
-	/*IIcon blockTextureTop;
-	IIcon blockTextureSide;
-	IIcon blockTextureFront;*/
-
 	public BlockBuilder() {
-		super(Material.iron, new PropertyEnum[]{FACING_PROP});
+		super(Material.iron, new PropertyEnum[]{FACING_PROP, MACHINE_STATE});
 		setHardness(5F);
 	}
 
@@ -45,24 +41,6 @@ public class BlockBuilder extends BlockBuildCraft {
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileBuilder();
 	}
-
-	/*@Override
-	public IIcon getIcon(int i, int j) {
-		if (j == 0 && i == 3) {
-			return blockTextureFront;
-		}
-
-		if (i == j) {
-			return blockTextureFront;
-		}
-
-		switch (i) {
-			case 1:
-				return blockTextureTop;
-			default:
-				return blockTextureSide;
-		}
-	}*/
 
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing side, float hitX, float hitY, float hitZ) {
@@ -133,15 +111,6 @@ public class BlockBuilder extends BlockBuildCraft {
 		Utils.preDestroyBlock(world, pos, state);
 		super.breakBlock(world, pos, state);
 	}
-
-	/*@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		blockTextureTop = par1IconRegister.registerIcon("buildcraft:builder_top");
-		blockTextureSide = par1IconRegister.registerIcon("buildcraft:builder_side");
-		blockTextureFront = par1IconRegister.registerIcon("buildcraft:builder_front");
-	}*/
-
 
 	@Override
 	public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {

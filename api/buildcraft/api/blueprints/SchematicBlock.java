@@ -1,14 +1,11 @@
-/**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * The BuildCraft API is distributed under the terms of the MIT License.
- * Please check the contents of the license, which should be located
- * as "LICENSE.API" in the BuildCraft source code distribution.
- */
+ * The BuildCraft API is distributed under the terms of the MIT License. Please check the contents of the license, which
+ * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.api.blueprints;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,12 +13,14 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.BlockFluidBase;
 import buildcraft.api.core.BuildCraftProperties;
@@ -31,15 +30,12 @@ public class SchematicBlock extends SchematicBlockBase {
 	public IBlockState state = null;
 	public BuildingPermission defaultPermission = BuildingPermission.ALL;
 
-	/**
-	 * This field contains requirements for a given block when stored in the
-	 * blueprint. Modders can either rely on this list or compute their own int
-	 * Schematic.
-	 */
-	public ItemStack [] storedRequirements = new ItemStack [0];
+	/** This field contains requirements for a given block when stored in the blueprint. Modders can either rely on this
+	 * list or compute their own int Schematic. */
+	public ItemStack[] storedRequirements = new ItemStack[0];
 
 	private boolean doNotUse = false;
-	
+
 	@Override
 	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
 		if (state != null) {
@@ -71,7 +67,7 @@ public class SchematicBlock extends SchematicBlockBase {
 			List<ItemStack> req = state.getBlock().getDrops(context.world(), pos, state, 0);
 
 			if (req != null) {
-				storedRequirements = new ItemStack [req.size()];
+				storedRequirements = new ItemStack[req.size()];
 				req.toArray(storedRequirements);
 			}
 		}
@@ -86,7 +82,7 @@ public class SchematicBlock extends SchematicBlockBase {
 	}
 
 	@Override
-	public void readSchematicFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
+	public void readSchematicFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		super.readSchematicFromNBT(nbt, registry);
 
 		readBlockFromNBT(nbt, registry);
@@ -96,7 +92,7 @@ public class SchematicBlock extends SchematicBlockBase {
 	}
 
 	@Override
-	public BuildingStage getBuildStage () {
+	public BuildingStage getBuildStage() {
 		Block block = state.getBlock();
 		if (block instanceof BlockFalling) {
 			return BuildingStage.SUPPORTED;
@@ -113,16 +109,16 @@ public class SchematicBlock extends SchematicBlockBase {
 	public BuildingPermission getBuildingPermission() {
 		return defaultPermission;
 	}
-	
+
 	// Utility functions
 	protected void setBlockInWorld(IBuilderContext context, BlockPos pos) {
 		context.world().setBlockState(pos, state, 3);
 	}
-	
+
 	public boolean doNotUse() {
 		return doNotUse;
 	}
-	
+
 	protected void readBlockFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		try {
 			Block block = registry.getBlockForId(nbt.getInteger("blockId"));
@@ -131,7 +127,7 @@ public class SchematicBlock extends SchematicBlockBase {
 			doNotUse = true;
 		}
 	}
-	
+
 	protected void readRequirementsFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		if (nbt.hasKey("rq")) {
 			NBTTagList rq = nbt.getTagList("rq", Constants.NBT.TAG_COMPOUND);
@@ -159,12 +155,12 @@ public class SchematicBlock extends SchematicBlockBase {
 			storedRequirements = new ItemStack[0];
 		}
 	}
-	
+
 	protected void writeBlockToNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		nbt.setInteger("blockId", registry.getIdForBlock(state.getBlock()));
 		nbt.setInteger("blockMeta", state.getBlock().getMetaFromState(state));
 	}
-	
+
 	protected void writeRequirementsToNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		if (storedRequirements.length > 0) {
 			NBTTagList rq = new NBTTagList();
@@ -191,12 +187,22 @@ public class SchematicBlock extends SchematicBlockBase {
 	public EnumFacing getFace() {
 		return (EnumFacing) state.getValue(BuildCraftProperties.BLOCK_FACING);
 	}
-	
-	public int getMetaData() {
-		return getFace().getIndex();
-	}
-	
-	public void setMetaData(int newValue) {
-		state = state.withProperty(BuildCraftProperties.BLOCK_FACING, EnumFacing.getFront(newValue));
+
+	// Pretty much all blocks (that rotate) rotate this way now
+	@Override
+	public void rotateLeft(IBuilderContext context) {
+		@SuppressWarnings("unchecked")
+		Collection<IProperty> props = state.getPropertyNames();
+		for (IProperty prop : props) {
+			if (BuildCraftProperties.BLOCK_FACING.getName().equals(prop.getName())) {
+				EnumFacing face = getFace();
+				if (face.getAxis() == Axis.Y) {
+					// Don't attempt to rotate if its facing up or down
+					break;
+				}
+				state = state.withProperty(BuildCraftProperties.BLOCK_FACING, face.rotateY());
+				break;
+			}
+		}
 	}
 }

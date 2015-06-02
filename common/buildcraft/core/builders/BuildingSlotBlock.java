@@ -158,8 +158,9 @@ public class BuildingSlotBlock extends BuildingSlot {
 
 		if (schematic != null) {
 			NBTTagCompound schematicNBT = new NBTTagCompound();
-			SchematicFactory.getFactory(schematic.getClass())
-					.saveSchematicToWorldNBT(schematicNBT, schematic, registry);
+			@SuppressWarnings("unchecked")
+			SchematicFactory<SchematicBlockBase> factory = SchematicFactory.getFactory(schematic.getClass());
+			factory	.saveSchematicToWorldNBT(schematicNBT, schematic, registry);
 			nbt.setTag("schematic", schematicNBT);
 		}
 

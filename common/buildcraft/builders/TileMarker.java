@@ -14,12 +14,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-
 import buildcraft.BuildCraftBuilders;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.Position;
-import buildcraft.core.EntityBlock;
+import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserKind;
 import buildcraft.core.TileBuildCraft;
 import buildcraft.core.proxy.CoreProxy;
@@ -122,8 +122,10 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
 	private Position initVectO;
 	private Position[] initVect;
-	private EntityBlock[] lasers;
-	private EntityBlock[] signals;
+	private EntityLaser[] lasers;
+	private EntityLaser[] signals;
+	
+	private ByteBuf stream = null;
 
 	public void updateSignals() {
 		if (!worldObj.isRemote) {
@@ -134,7 +136,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
 	private void switchSignals() {
 		if (signals != null) {
-			for (EntityBlock b : signals) {
+			for (EntityLaser b : signals) {
 				if (b != null) {
 					CoreProxy.proxy.removeEntity(b);
 				}
@@ -142,7 +144,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 			signals = null;
 		}
 		if (showSignals) {
-			signals = new EntityBlock[6];
+			signals = new EntityLaser[6];
 			if (!origin.isSet() || !origin.vect[0].isSet()) {
 				signals[0] = Utils.createLaser(worldObj, new Position(pos.getX(), pos.getY(), pos.getZ()), new Position(pos.getX() + maxSize - 1, pos.getY(), pos.getZ()),
 						LaserKind.Blue);
@@ -184,6 +186,27 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 			}
 		}
 	}
+	
+	@Override
+	public void update() {
+		super.update();
+		readDataDelayed();
+	}
+	
+	public void removeConnections() {
+		if (lasers != null) {
+			for (EntityLaser entity : lasers) {
+				if (entity != null) {
+					CoreProxy.proxy.removeEntity(entity);
+				}
+			}
+			lasers = null;
+		}
+		if (origin.isSet()) {
+			origin = new Origin();
+			origin.vectO = new TileWrapper(pos);
+		}
+	}
 
 	public void tryConnection() {
 		if (worldObj.isRemote) {
@@ -191,9 +214,9 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		}
 
 		for (int j = 0; j < 3; ++j) {
-			if (!origin.isSet() || !origin.vect[j].isSet()) {
+//			if (!origin.isSet() || !origin.vect[j].isSet()) {
 				setVect(j);
-			}
+//			}
 		}
 
 		sendNetworkUpdate();
@@ -204,7 +227,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
 		if (!origin.isSet() || !origin.vect[n].isSet()) {
 			for (int j = 1; j < maxSize; ++j) {
-				coords.add(n == 0 ? j : 0, n == 1 ? j : 0, n == 2 ? j : 0);
+				coords = coords.add(n == 0 ? j : 0, n == 1 ? j : 0, n == 2 ? j : 0);
 
 				Block block = worldObj.getBlockState(coords).getBlock();
 
@@ -216,7 +239,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 					}
 				}
 
-				coords.add(n == 0 ? (-2 * j) : 0, n == 1 ? (-2 * j) : 0, n == 2 ? (-2 * j) : 0);
+				coords = coords.add(n == 0 ? (-2 * j) : 0, n == 1 ? (-2 * j) : 0, n == 2 ? (-2 * j) : 0);
 
 				block = worldObj.getBlockState(coords).getBlock();
 
@@ -228,7 +251,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 					}
 				}
 
-				coords.add(n == 0 ? j : 0, n == 1 ? j : 0, n == 2 ? j : 0);
+				coords = coords.add(n == 0 ? j : 0, n == 1 ? j : 0, n == 2 ? j : 0);
 			}
 		}
 	}
@@ -264,15 +287,19 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
 	private void createLasers() {
 		if (lasers != null) {
-			for (EntityBlock entity : lasers) {
+			for (EntityLaser entity : lasers) {
 				if (entity != null) {
 					CoreProxy.proxy.removeEntity(entity);
 				}
 			}
 		}
 
-		lasers = new EntityBlock[12];
+		lasers = new EntityLaser[12];
 		Origin o = origin;
+		
+		if (origin.vectO.pos == null) {
+			return;
+		}
 
 		if (!origin.vect[0].isSet()) {
 			o.xMin = origin.vectO.pos.getX();
@@ -367,6 +394,13 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 	@Override
 	public void destroy() {
 		TileMarker markerOrigin = null;
+		
+		if (lasers != null)
+			for (EntityLaser entity : lasers) {
+				if (entity != null) {
+					entity.setDead();
+				}
+			}
 
 		if (origin.isSet()) {
 			markerOrigin = origin.vectO.getMarker(worldObj);
@@ -374,7 +408,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 			Origin o = origin;
 
 			if (markerOrigin != null && markerOrigin.lasers != null) {
-				for (EntityBlock entity : markerOrigin.lasers) {
+				for (EntityLaser entity : markerOrigin.lasers) {
 					if (entity != null) {
 						entity.setDead();
 					}
@@ -385,19 +419,8 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 			for (TileWrapper m : o.vect) {
 				TileMarker mark = m.getMarker(worldObj);
 
-				if (mark != null) {
-					if (mark.lasers != null) {
-						for (EntityBlock entity : mark.lasers) {
-							if (entity != null) {
-								entity.setDead();
-							}
-						}
-						mark.lasers = null;
-					}
-
-					if (mark != this) {
-						mark.origin = new Origin();
-					}
+				if (mark != null && mark != this) {
+					mark.removeConnections();
 				}
 			}
 
@@ -418,7 +441,7 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		}
 
 		if (signals != null) {
-			for (EntityBlock block : signals) {
+			for (EntityLaser block : signals) {
 				if (block != null) {
 					block.setDead();
 				}
@@ -495,11 +518,23 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 		origin.writeData(stream);
 		stream.writeBoolean(showSignals);
 	}
-
+	 
+	// Delaying the read data and entity creation seems to avoid the concurrent 
+	// modification exception thrown by RenderGlobal.renderEntitys
+	 
 	@Override
 	public void readData(ByteBuf stream) {
+		this.stream = stream;
+	}
+	
+	public void readDataDelayed() {
+		if (stream == null)
+			return;
+		
 		origin.readData(stream);
 		showSignals = stream.readBoolean();
+		
+		stream = null;
 
 		switchSignals();
 
@@ -517,5 +552,4 @@ public class TileMarker extends TileBuildCraft implements IAreaProvider {
 
 		createLasers();
 	}
-
 }

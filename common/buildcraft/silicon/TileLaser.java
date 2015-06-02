@@ -308,13 +308,13 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 		double avg = powerAverage / POWER_AVERAGING;
 
 		if (avg <= 1.0) {
-			return EntityLaser.LASER_TEXTURES[0];
+			return EntityLaser.LASER_RED;
 		} else if (avg <= 2.0) {
-			return EntityLaser.LASER_TEXTURES[1];
+			return EntityLaser.LASER_YELLOW;
 		} else if (avg <= 3.0) {
-			return EntityLaser.LASER_TEXTURES[2];
+			return EntityLaser.LASER_GREEN;
 		} else {
-			return EntityLaser.LASER_TEXTURES[3];
+			return EntityLaser.LASER_BLUE;
 		}
 	}
 

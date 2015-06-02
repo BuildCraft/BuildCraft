@@ -18,7 +18,7 @@ import net.minecraft.world.WorldServer;
 import buildcraft.api.core.BuildCraftAPI;
 
 public class SchematicMask extends SchematicBlockBase {
-
+	/** True of the block should be a solid block (stone, grass or a furnace) and false if it shouldn't (flowers, air or vines) */
 	public boolean isConcrete = true;
 
 	public SchematicMask () {

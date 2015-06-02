@@ -15,21 +15,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockBuildTool extends Block {
-
-	//private IIcon texture;
-
 	public BlockBuildTool() {
 		super(Material.iron);
 	}
-
-	/*@Override
-	public IIcon getIcon(int i, int j) {
-		return texture;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-        texture = par1IconRegister.registerIcon("buildcraft:blockRedLaser");
-	}*/
 }

@@ -9,8 +9,9 @@
 package buildcraft.factory;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -30,16 +31,20 @@ import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.core.BlockBuildCraft;
 import buildcraft.core.CreativeTabBuildCraft;
 import buildcraft.core.inventory.InvUtils;
+import buildcraft.core.utils.Utils;
 
 public class BlockTank extends BlockBuildCraft {
 
 	public BlockTank() {
-		super(Material.glass);
+		super(Material.glass,new IProperty[]{JOINED_BELOW});
+		// Default to JOINED_BELOW being false
+		setDefaultState(getDefaultState().cycleProperty(JOINED_BELOW));
+		
 		setBlockBounds(0.125F, 0F, 0.125F, 0.875F, 1F, 0.875F);
 		setHardness(0.5F);
 		setCreativeTab(CreativeTabBuildCraft.BLOCKS.get());
 	}
-
+	
 	@Override
 	public boolean isFullCube() { return false; }
 
@@ -58,34 +63,6 @@ public class BlockTank extends BlockBuildCraft {
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileTank();
 	}
-
-	/*@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int par1, int par2) {
-		switch (par1) {
-			case 0:
-			case 1:
-				return textureTop;
-			default:
-				return textureBottomSide;
-		}
-	}
-
-	@SuppressWarnings({"all"})
-	@Override
-	public IIcon getIcon(IBlockAccess iblockaccess, int i, int j, int k, int l) {
-		switch (l) {
-			case 0:
-			case 1:
-				return textureTop;
-			default:
-				if (iblockaccess.getBlock(i, j - 1, k) == this) {
-					return textureStackedSide;
-				} else {
-					return textureBottomSide;
-				}
-		}
-	}*/
 
 	@Override
 	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing side, float hitX, float hitY, float hitZ) {
@@ -190,14 +167,6 @@ public class BlockTank extends BlockBuildCraft {
 		}
 	}
 
-	/*@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		textureStackedSide = par1IconRegister.registerIcon("buildcraft:tank_stacked_side");
-		textureBottomSide = par1IconRegister.registerIcon("buildcraft:tank_bottom_side");
-		textureTop = par1IconRegister.registerIcon("buildcraft:tank_top");
-	}*/
-
 	@Override
 	public int getLightValue(IBlockAccess world, BlockPos pos) {
 		TileEntity tile = world.getTileEntity(pos);
@@ -208,5 +177,29 @@ public class BlockTank extends BlockBuildCraft {
 		}
 
 		return super.getLightValue(world, pos);
+	}
+	
+	@Override
+	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entityliving, ItemStack stack) {
+		super.onBlockPlacedBy(world, pos, state, entityliving, stack);
+
+		IBlockState below = world.getBlockState(pos.down());
+		world.setBlockState(pos, state.withProperty(JOINED_BELOW, below.getBlock() == this));
+
+		IBlockState above = world.getBlockState(pos.up());
+		if (above.getBlock() == this) {
+			world.setBlockState(pos.up(), above.withProperty(JOINED_BELOW, true));
+		}
+	}
+	
+	@Override
+	public void breakBlock(World world, BlockPos pos, IBlockState state) {
+		Utils.preDestroyBlock(world, pos, state);
+		super.breakBlock(world, pos, state);
+
+		IBlockState above = world.getBlockState(pos.up());
+		if (above.getBlock() == this) {
+			world.setBlockState(pos.up(), above.withProperty(JOINED_BELOW, false));
+		}
 	}
 }
