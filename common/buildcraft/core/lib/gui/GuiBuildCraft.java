@@ -85,7 +85,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		InventoryPlayer playerInv = this.mc.thePlayer.inventory;
 
 		if (playerInv.getItemStack() == null) {
-			drawToolTips(container.getWidgets(), mouseX, mouseY);
+			drawToolTips(container.getWidgets(), mouseX - left, mouseY - top);
 			drawToolTips(buttonList, mouseX, mouseY);
 			drawToolTips(inventorySlots.inventorySlots, mouseX, mouseY);
 		}
