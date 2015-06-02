@@ -7,6 +7,8 @@ package buildcraft.api.blueprints;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.logging.log4j.Level;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
@@ -16,8 +18,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagShort;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
-
-import org.apache.logging.log4j.Level;
 
 import buildcraft.api.core.BCLog;
 
@@ -62,8 +62,7 @@ public class MappingRegistry {
 
 		if (result == null) {
 			throw new MappingNotFoundException("no item mapping at position " + id);
-		}
-		else {
+		} else {
 			return result;
 		}
 	}
@@ -97,8 +96,7 @@ public class MappingRegistry {
 
 		if (result == null) {
 			throw new MappingNotFoundException("no block mapping at position " + id);
-		}
-		else {
+		} else {
 			return result;
 		}
 	}
@@ -132,8 +130,7 @@ public class MappingRegistry {
 
 		if (result == null) {
 			throw new MappingNotFoundException("no entity mapping at position " + id);
-		}
-		else {
+		} else {
 			return result;
 		}
 	}
@@ -206,8 +203,7 @@ public class MappingRegistry {
 			if (nbt.getTag(key) instanceof NBTTagCompound) {
 				try {
 					scanAndTranslateStacksToWorld(nbt.getCompoundTag(key));
-				}
-				catch (MappingNotFoundException e) {
+				} catch (MappingNotFoundException e) {
 					nbt.removeTag(key);
 				}
 			}
@@ -219,8 +215,7 @@ public class MappingRegistry {
 					for (int i = list.tagCount() - 1; i >= 0; --i) {
 						try {
 							scanAndTranslateStacksToWorld(list.getCompoundTagAt(i));
-						}
-						catch (MappingNotFoundException e) {
+						} catch (MappingNotFoundException e) {
 							list.removeTag(i);
 						}
 					}
@@ -249,8 +244,7 @@ public class MappingRegistry {
 			if (location != null) {
 				sub.setString("name", location.getResourcePath());
 				itemsMapping.appendTag(sub);
-			}
-			else {
+			} else {
 				BCLog.logger.warn("Failed to find a name for " + i + ", it will not persist");
 			}
 		}
@@ -279,8 +273,7 @@ public class MappingRegistry {
 
 			if (b != null) {
 				registerBlock(b);
-			}
-			else {
+			} else {
 				// Keeping the order correct
 				idToBlock.add(null);
 				BCLog.logger.log(Level.WARN, "Can't load block " + name);
@@ -300,8 +293,7 @@ public class MappingRegistry {
 
 			if (item != null) {
 				registerItem(item);
-			}
-			else {
+			} else {
 				// Keeping the order correct
 				idToItem.add(null);
 				BCLog.logger.log(Level.WARN, "Can't load item " + name);
@@ -317,15 +309,13 @@ public class MappingRegistry {
 
 			try {
 				e = (Class<? extends Entity>) Class.forName(name);
-			}
-			catch (ClassNotFoundException e1) {
+			} catch (ClassNotFoundException e1) {
 				e1.printStackTrace();
 			}
 
 			if (e != null) {
 				registerEntity(e);
-			}
-			else {
+			} else {
 				// Keeping the order correct
 				idToEntity.add(null);
 				BCLog.logger.log(Level.WARN, "Can't load entity " + name);

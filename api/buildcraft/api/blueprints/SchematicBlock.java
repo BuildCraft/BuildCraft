@@ -41,8 +41,7 @@ public class SchematicBlock extends SchematicBlockBase {
 		if (state != null) {
 			if (storedRequirements.length != 0) {
 				Collections.addAll(requirements, storedRequirements);
-			}
-			else {
+			} else {
 				requirements.add(getItemStack(state));
 			}
 		}
@@ -97,14 +96,11 @@ public class SchematicBlock extends SchematicBlockBase {
 		Block block = state.getBlock();
 		if (block instanceof BlockFalling) {
 			return BuildingStage.SUPPORTED;
-		}
-		else if (block instanceof BlockFluidBase || block instanceof BlockLiquid) {
+		} else if (block instanceof BlockFluidBase || block instanceof BlockLiquid) {
 			return BuildingStage.EXPANDING;
-		}
-		else if (block.isOpaqueCube()) {
+		} else if (block.isOpaqueCube()) {
 			return BuildingStage.STANDALONE;
-		}
-		else {
+		} else {
 			return BuildingStage.SUPPORTED;
 		}
 	}
@@ -127,8 +123,7 @@ public class SchematicBlock extends SchematicBlockBase {
 		try {
 			Block block = registry.getBlockForId(nbt.getInteger("blockId"));
 			state = block.getStateFromMeta(nbt.getInteger("blockMeta"));
-		}
-		catch (MappingNotFoundException e) {
+		} catch (MappingNotFoundException e) {
 			doNotUse = true;
 		}
 	}
@@ -144,23 +139,19 @@ public class SchematicBlock extends SchematicBlockBase {
 					if (sub.getInteger("id") >= 0) {
 						registry.stackToWorld(sub);
 						rqs.add(ItemStack.loadItemStackFromNBT(sub));
-					}
-					else {
+					} else {
 						defaultPermission = BuildingPermission.CREATIVE_ONLY;
 					}
-				}
-				catch (MappingNotFoundException e) {
+				} catch (MappingNotFoundException e) {
 					defaultPermission = BuildingPermission.CREATIVE_ONLY;
-				}
-				catch (Throwable t) {
+				} catch (Throwable t) {
 					t.printStackTrace();
 					defaultPermission = BuildingPermission.CREATIVE_ONLY;
 				}
 			}
 
 			storedRequirements = rqs.toArray(new ItemStack[rqs.size()]);
-		}
-		else {
+		} else {
 			storedRequirements = new ItemStack[0];
 		}
 	}

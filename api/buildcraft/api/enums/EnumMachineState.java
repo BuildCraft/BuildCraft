@@ -1,20 +1,21 @@
 package buildcraft.api.enums;
 
-import buildcraft.api.core.BuildCraftProperties;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.IStringSerializable;
 
+import buildcraft.api.core.BuildCraftProperties;
+
 public enum EnumMachineState implements IStringSerializable {
-    OFF,
-    ON,
-    DONE;
+	OFF,
+	ON,
+	DONE;
 
-    public static EnumMachineState getType(IBlockState state) {
-        return (EnumMachineState) state.getValue(BuildCraftProperties.MACHINE_STATE);
-    }
+	public static EnumMachineState getType(IBlockState state) {
+		return (EnumMachineState) state.getValue(BuildCraftProperties.MACHINE_STATE);
+	}
 
-    @Override
-    public String getName() {
-        return name();
-    }
+	@Override
+	public String getName() {
+		return name();
+	}
 }
