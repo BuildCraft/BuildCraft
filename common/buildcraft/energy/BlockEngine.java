@@ -289,20 +289,4 @@ public class BlockEngine extends BlockBuildCraft implements ICustomHighlight, IM
 		ModelHelper.registerItemModel(item, 2, "iron");
 		ModelHelper.registerItemModel(item, 3, "creative");
 	}
-
-	/*@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int side, int meta) {
-		switch (meta) {
-			case 0:
-				return woodTexture;
-			case 1:
-				return stoneTexture;
-			case 2:
-				return ironTexture;
-			default:
-				return null;
-		}
-	}*/
-
 }

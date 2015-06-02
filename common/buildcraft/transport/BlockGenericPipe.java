@@ -1357,6 +1357,5 @@ public class BlockGenericPipe extends BlockBuildCraft implements IModelRegister 
 
 	@Override
 	public void registerModels() {
-
 	}
 }

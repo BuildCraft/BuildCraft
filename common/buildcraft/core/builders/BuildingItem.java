@@ -22,6 +22,7 @@ import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.Position;
 import buildcraft.core.StackAtPosition;
@@ -273,6 +274,9 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 	public void setStacksToDisplay(LinkedList<ItemStack> stacks) {
 		if (stacks != null) {
 			for (ItemStack s : stacks) {
+				if (s == null) {
+					BCLog.logger.warn("This needs looking at! This is a bug!",new Throwable("Item stack was null!"));
+				}
 				for (int i = 0; i < s.stackSize; ++i) {
 					StackAtPosition sPos = new StackAtPosition();
 					sPos.stack = s.copy();
@@ -308,5 +312,14 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 		for (StackAtPosition s: stacksToDisplay) {
 			s.writeData(stream);
 		}
+	}
+
+	@Override
+	public String toString() {
+		// Auto-generated
+		return "BuildingItem [origin=" + origin + ", destination=" + destination + ", stacksToDisplay=" + stacksToDisplay + ", posDisplay="
+			+ posDisplay + ", isDone=" + isDone + ", slotToBuild=" + slotToBuild + ", context=" + context + ", receivedProgress=" + receivedProgress
+			+ ", previousUpdate=" + previousUpdate + ", lifetimeDisplay=" + lifetimeDisplay + ", maxLifetime=" + maxLifetime + ", initialized="
+			+ initialized + ", vx=" + vx + ", vy=" + vy + ", vz=" + vz + ", maxHeight=" + maxHeight + ", lifetime=" + lifetime + "]";
 	}
 }

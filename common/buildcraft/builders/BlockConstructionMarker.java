@@ -51,12 +51,6 @@ public class BlockConstructionMarker extends BlockMarker {
 		super.breakBlock(world, pos, state);
 	}
 
-	/*@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
-		blockIcon = par1IconRegister.registerIcon("buildcraft:constructMarker");
-	}*/
-
 	@Override
 	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entityliving, ItemStack stack) {
 		super.onBlockPlacedBy(world, pos, state, entityliving, stack);

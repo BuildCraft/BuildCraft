@@ -28,4 +28,10 @@ public class StackAtPosition implements ISerializable {
 	public void writeData(ByteBuf stream) {
 		Utils.writeStack(stream, stack);
 	}
+
+	@Override
+	public String toString() {
+		// Auto-generated
+		return "StackAtPosition [stack=" + stack + ", pos=" + pos + ", display=" + display + "]";
+	}
 }
