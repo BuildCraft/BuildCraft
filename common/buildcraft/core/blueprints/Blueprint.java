@@ -281,7 +281,7 @@ public class Blueprint extends BlueprintBase {
 
 	@Override
 	public ItemStack getStack () {
-		ItemStack stack = new ItemStack(BuildCraftBuilders.blueprintItem, 1);
+		ItemStack stack = new ItemStack(BuildCraftBuilders.blueprintItem, 1, 1);
 		NBTTagCompound nbt = NBTUtils.getItemData(stack);
 		id.write (nbt);
 		nbt.setString("author", author);

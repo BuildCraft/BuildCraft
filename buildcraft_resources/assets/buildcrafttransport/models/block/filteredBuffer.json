@@ -1,5 +1,5 @@
 {
-    "parent": "minecraft:buildcraftcore:block/default_cube_all",
+    "parent": "buildcraftcore:block/default_cube_all",
     "textures": {
         "all": "buildcraft:blocks/filteredBuffer_all"
     }

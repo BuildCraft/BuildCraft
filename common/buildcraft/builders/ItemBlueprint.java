@@ -10,11 +10,11 @@ package buildcraft.builders;
 
 import java.util.List;
 
-import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.builders.blueprints.BlueprintId;
@@ -31,8 +31,9 @@ public abstract class ItemBlueprint extends ItemBuildCraft {
 		super(CreativeTabBuildCraft.ITEMS);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
+	public void addInformation(ItemStack stack, EntityPlayer player, @SuppressWarnings("rawtypes") List list, boolean advanced) {
 		if (NBTUtils.getItemData(stack).hasKey("name")) {
 			String name = NBTUtils.getItemData(stack).getString("name");
 
@@ -96,14 +97,5 @@ public abstract class ItemBlueprint extends ItemBuildCraft {
 	public void registerModels() {
 		ModelHelper.registerItemModel(this, 0, "");
 		ModelHelper.registerItemModel(this, 1, "Used");
-	}
-
-	@Override
-	public net.minecraft.client.resources.model.ModelResourceLocation getModel(ItemStack stack, EntityPlayer player, int useRemaining) {
-		if (NBTUtils.getItemData(stack).hasKey("name")) {
-			return ModelHelper.getItemResourceLocation(stack.getItem(), "Used");
-		} else {
-			return null;
-		}
 	}
 }

@@ -1,5 +1,5 @@
 {
-    "parent": "minecraft:buildcraftcore:block/default_cube_all",
+    "parent": "buildcraftcore:block/default_cube_all",
     "textures": {
 	"particle": "buildcraft:blocks/miningwell_side",
         "up": "buildcraft:blocks/miningwell_top",

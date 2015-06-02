@@ -292,7 +292,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 				byte[] data = Utils.readByteArray(stream);
 
 				try {
-					NBTTagCompound nbt = CompressedStreamTools.read(new DataInputStream(new ByteArrayInputStream(data)), NBTSizeTracker.INFINITE);
+					NBTTagCompound nbt = CompressedStreamTools.readCompressed(new DataInputStream(new ByteArrayInputStream(data)));
 					BlueprintBase bpt = BlueprintBase.loadBluePrint(nbt);
 					bpt.setData(data);
 					bpt.id = id;
@@ -323,7 +323,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 				}
 			} else if ("uploadServerEnd".equals(command)) {
 				try {
-					NBTTagCompound nbt = CompressedStreamTools.read(new DataInputStream(new ByteArrayInputStream(blueprintDownload)), NBTSizeTracker.INFINITE);
+					NBTTagCompound nbt = CompressedStreamTools.readCompressed(new DataInputStream(new ByteArrayInputStream(blueprintDownload)));
 					BlueprintBase bpt = BlueprintBase.loadBluePrint(nbt);
 					bpt.setData(blueprintDownload);
 					bpt.id = blueprintDownloadId;
