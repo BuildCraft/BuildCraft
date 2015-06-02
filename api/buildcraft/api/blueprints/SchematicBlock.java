@@ -24,7 +24,6 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.BlockFluidBase;
 import buildcraft.api.core.BuildCraftProperties;
-import buildcraft.core.BlockBuildCraft;
 
 public class SchematicBlock extends SchematicBlockBase {
 
@@ -204,13 +203,13 @@ public class SchematicBlock extends SchematicBlockBase {
 		@SuppressWarnings("unchecked")
 		Collection<IProperty> props = state.getPropertyNames();
 		for (IProperty prop : props) {
-			if (BlockBuildCraft.FACING_PROP.getName().equals(prop.getName())) {
+			if (BuildCraftProperties.BLOCK_FACING.getName().equals(prop.getName())) {
 				EnumFacing face = getFace();
 				if (face.getAxis() == Axis.Y) {
 					// Don't attempt to rotate if its facing up or down
 					break;
 				}
-				state = state.withProperty(BlockBuildCraft.FACING_PROP, face.rotateY());
+				state = state.withProperty(BuildCraftProperties.BLOCK_FACING, face.rotateY());
 				break;
 			}
 		}
