@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
+import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.builders.TileConstructionMarker;
@@ -178,17 +179,27 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 		double minDistance = Double.MAX_VALUE;
 		TileConstructionMarker minMarker = null;
 
-		for (TileConstructionMarker marker : TileConstructionMarker.currentMarkers) {
-			if (marker.getWorldObj() == robot.worldObj && marker.needsToBuild()) {
-				double dx = robot.posX - marker.xCoord;
-				double dy = robot.posY - marker.yCoord;
-				double dz = robot.posZ - marker.zCoord;
-				double distance = dx * dx + dy * dy + dz * dz;
+		IZone zone = robot.getZoneToWork();
 
-				if (distance < minDistance) {
-					minMarker = marker;
-					minDistance = distance;
-				}
+		for (TileConstructionMarker marker : TileConstructionMarker.currentMarkers) {
+			if (marker.getWorldObj() != robot.worldObj) {
+				continue;
+			}
+			if (!marker.needsToBuild()) {
+				continue;
+			}
+			if (zone != null && !zone.contains(marker.xCoord, marker.yCoord, marker.zCoord)) {
+				continue;
+			}
+
+			double dx = robot.posX - marker.xCoord;
+			double dy = robot.posY - marker.yCoord;
+			double dz = robot.posZ - marker.zCoord;
+			double distance = dx * dx + dy * dy + dz * dz;
+
+			if (distance < minDistance) {
+				minMarker = marker;
+				minDistance = distance;
 			}
 		}
 
