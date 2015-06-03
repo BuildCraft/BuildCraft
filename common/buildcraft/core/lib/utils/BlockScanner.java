@@ -11,12 +11,12 @@ package buildcraft.core.lib.utils;
 import java.util.Iterator;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.core.Box;
 
-public class BlockScanner implements Iterable<BlockIndex> {
+public class BlockScanner implements Iterable<BlockPos> {
 
 	Box box = new Box ();
 	World world;
@@ -25,7 +25,7 @@ public class BlockScanner implements Iterable<BlockIndex> {
 	int iterationsPerCycle;
 	int blocksDone = 0;
 
-	class BlockIt implements Iterator<BlockIndex> {
+	class BlockIt implements Iterator<BlockPos> {
 
 		int it = 0;
 
@@ -35,8 +35,8 @@ public class BlockScanner implements Iterable<BlockIndex> {
 		}
 
 		@Override
-		public BlockIndex next() {
-			BlockIndex index = new BlockIndex(x, y, z);
+		public BlockPos next() {
+			BlockPos index = new BlockPos(x, y, z);
 			it++;
 			blocksDone++;
 
@@ -77,7 +77,7 @@ public class BlockScanner implements Iterable<BlockIndex> {
 	}
 
 	@Override
-	public Iterator<BlockIndex> iterator() {
+	public Iterator<BlockPos> iterator() {
 		return new BlockIt();
 	}
 

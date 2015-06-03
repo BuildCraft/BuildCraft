@@ -8,17 +8,17 @@
  */
 package buildcraft.robotics.ai;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.BlockUtils;
 
 public class AIRobotPumpBlock extends AIRobot {
 
-	private BlockIndex blockToPump;
+	private BlockPos blockToPump;
 	private long waited = 0;
 	private int pumped = 0;
 
@@ -26,7 +26,7 @@ public class AIRobotPumpBlock extends AIRobot {
 		super(iRobot);
 	}
 
-	public AIRobotPumpBlock(EntityRobotBase iRobot, BlockIndex iBlockToPump) {
+	public AIRobotPumpBlock(EntityRobotBase iRobot, BlockPos iBlockToPump) {
 		this(iRobot);
 
 		blockToPump = iBlockToPump;

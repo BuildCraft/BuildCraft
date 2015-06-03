@@ -9,8 +9,7 @@
 package buildcraft.api.robots;
 
 import net.minecraft.tileentity.TileEntity;
-
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 
 public class ResourceIdBlock extends ResourceId {
 
@@ -19,15 +18,15 @@ public class ResourceIdBlock extends ResourceId {
 	}
 
 	public ResourceIdBlock(int x, int y, int z) {
-		index = new BlockIndex(x, y, z);
+		pos = new BlockPos(x, y, z);
 	}
 
-	public ResourceIdBlock(BlockIndex iIndex) {
-		index = iIndex;
+	public ResourceIdBlock(BlockPos iIndex) {
+		pos = iIndex;
 	}
 
 	public ResourceIdBlock(TileEntity tile) {
-		index = new BlockIndex(tile);
+		pos = tile.getPos();
 	}
 
 }

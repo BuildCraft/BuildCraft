@@ -3,10 +3,10 @@ package buildcraft.robotics;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.IFluidHandler;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
@@ -52,7 +52,7 @@ public class DockingStationPipe extends DockingStation {
 	}
 
 	public DockingStationPipe(IPipeTile iPipe, EnumFacing side) {
-		super(new BlockIndex(iPipe.x(), iPipe.y(), iPipe.z()), side);
+		super(new BlockPos(iPipe.x(), iPipe.y(), iPipe.z()), side);
 		pipe = iPipe;
 		world = iPipe.getWorld();
 	}

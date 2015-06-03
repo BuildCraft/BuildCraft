@@ -11,11 +11,11 @@ package buildcraft.robotics.ai;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldServer;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.BlockUtils;
@@ -23,14 +23,14 @@ import buildcraft.core.proxy.CoreProxy;
 
 public class AIRobotUseToolOnBlock extends AIRobot {
 
-	private BlockIndex useToBlock;
+	private BlockPos useToBlock;
 	private int useCycles = 0;
 
 	public AIRobotUseToolOnBlock(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotUseToolOnBlock(EntityRobotBase iRobot, BlockIndex index) {
+	public AIRobotUseToolOnBlock(EntityRobotBase iRobot, BlockPos index) {
 		this(iRobot);
 
 		useToBlock = index;
@@ -108,7 +108,7 @@ public class AIRobotUseToolOnBlock extends AIRobot {
 		super.loadSelfFromNBT(nbt);
 
 		if (nbt.hasKey("blockFound")) {
-			useToBlock = new BlockIndex (nbt.getCompoundTag("blockFound"));
+			useToBlock = new BlockPos (nbt.getCompoundTag("blockFound"));
 		}
 	}
 }

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
+ * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
  *
  * The BuildCraft API is distributed under the terms of the MIT License.
@@ -10,15 +10,16 @@ package buildcraft.api.blueprints;
 
 import java.util.LinkedList;
 
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.WorldServer;
 
 import buildcraft.api.core.BuildCraftAPI;
 
 public class SchematicMask extends SchematicBlockBase {
-
+	/** True of the block should be a solid block (stone, grass or a furnace) and false if it shouldn't (flowers, air or vines) */
 	public boolean isConcrete = true;
 
 	public SchematicMask () {
@@ -30,32 +31,32 @@ public class SchematicMask extends SchematicBlockBase {
 	}
 
 	@Override
-	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
+	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
 		if (isConcrete) {
-			if (stacks.size() == 0 || !BuildCraftAPI.isSoftBlock(context.world(), x, y, z)) {
+			if (stacks.size() == 0 || !BuildCraftAPI.isSoftBlock(context.world(), pos)) {
 				return;
 			} else {
 				ItemStack stack = stacks.getFirst();
 
 				// force the block to be air block, in case it's just a soft
 				// block which replacement is not straightforward
-				context.world().setBlock(x, y, z, Blocks.air, 0, 3);
+				context.world().setBlockToAir(pos);
 
-				stack.tryPlaceItemIntoWorld(
+				stack.onItemUse(
 						BuildCraftAPI.proxy.getBuildCraftPlayer((WorldServer) context.world()).get(),
-						context.world(), x, y, z, 1, 0.0f, 0.0f, 0.0f);
+						context.world(), pos, EnumFacing.UP, 0.0f, 0.0f, 0.0f);
 			}
 		} else {
-			context.world().setBlock(x, y, z, Blocks.air, 0, 3);
+			context.world().setBlockToAir(pos);
 		}
 	}
 
 	@Override
-	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
+	public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
 		if (isConcrete) {
-			return !BuildCraftAPI.isSoftBlock(context.world(), x, y, z);
+			return !BuildCraftAPI.isSoftBlock(context.world(), pos);
 		} else {
-			return BuildCraftAPI.isSoftBlock(context.world(), x, y, z);
+			return BuildCraftAPI.isSoftBlock(context.world(), pos);
 		}
 	}
 

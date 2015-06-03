@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -38,45 +40,42 @@ public final class CropManager {
 		return defaultHandler.isSeed(stack);
 	}
 
-	public static boolean canSustainPlant(World world, ItemStack seed, int x, int y, int z) {
+	public static boolean canSustainPlant(World world, ItemStack seed, BlockPos pos) {
 		for (ICropHandler cropHandler : handlers) {
-			if (cropHandler.isSeed(seed) && cropHandler.canSustainPlant(world, seed, x, y, z)) {
+			if (cropHandler.isSeed(seed) && cropHandler.canSustainPlant(world, seed, pos)) {
 				return true;
 			}
 		}
-		return defaultHandler.canSustainPlant(world, seed, x, y, z);
+		return defaultHandler.canSustainPlant(world, seed, pos);
 	}
 
-	public static boolean plantCrop(World world, EntityPlayer player, ItemStack seed, int x, int y,
-			int z) {
+	public static boolean plantCrop(World world, EntityPlayer player, ItemStack seed, BlockPos pos) {
 		for (ICropHandler cropHandler : handlers) {
-			if (cropHandler.isSeed(seed) && cropHandler.canSustainPlant(world, seed, x, y, z)
-					&& cropHandler.plantCrop(world, player, seed, x, y, z)) {
+			if (cropHandler.isSeed(seed) && cropHandler.canSustainPlant(world, seed, pos)
+					&& cropHandler.plantCrop(world, player, seed, pos)) {
 				return true;
 			}
 		}
-		return defaultHandler.plantCrop(world, player, seed, x, y, z);
+		return defaultHandler.plantCrop(world, player, seed, pos);
 	}
 
-	public static boolean isMature(IBlockAccess blockAccess, Block block, int meta, int x, int y,
-			int z) {
+	public static boolean isMature(IBlockAccess blockAccess, IBlockState state, BlockPos pos) {
 		for (ICropHandler cropHandler : handlers) {
-			if (cropHandler.isMature(blockAccess, block, meta, x, y, z)) {
+			if (cropHandler.isMature(blockAccess, state, pos)) {
 				return true;
 			}
 		}
-		return defaultHandler.isMature(blockAccess, block, meta, x, y, z);
+		return defaultHandler.isMature(blockAccess, state, pos);
 	}
 
-	public static boolean harvestCrop(World world, int x, int y, int z, List<ItemStack> drops) {
+	public static boolean harvestCrop(World world, BlockPos pos, List<ItemStack> drops) {
 		for (ICropHandler cropHandler : handlers) {
-			Block block = world.getBlock(x, y, z);
-			int meta = world.getBlockMetadata(x, y, z);
-			if (cropHandler.isMature(world, block, meta, x, y, z)) {
-				return cropHandler.harvestCrop(world, x, y, z, drops);
+			IBlockState state = world.getBlockState(pos);
+			if (cropHandler.isMature(world, state, pos)) {
+				return cropHandler.harvestCrop(world, pos, drops);
 			}
 		}
-		return defaultHandler.harvestCrop(world, x, y, z, drops);
+		return defaultHandler.harvestCrop(world, pos, drops);
 	}
 
 }

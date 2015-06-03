@@ -19,6 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
@@ -33,7 +34,6 @@ import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
 import buildcraft.core.Box;
@@ -260,7 +260,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 			for (int i = 0; i < clearList.tagCount(); ++i) {
 				NBTTagCompound cpt = clearList.getCompoundTagAt(i);
-				BlockIndex o = new BlockIndex(cpt);
+				BlockPos o = new BlockPos(cpt);
 				markLocationUsed(o.x, o.y, o.z);
 			}
 		}
@@ -270,7 +270,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
 			for (int i = 0; i < builtList.tagCount(); ++i) {
 				NBTTagCompound cpt = builtList.getCompoundTagAt(i);
-				BlockIndex o = new BlockIndex(cpt);
+				BlockPos o = new BlockPos(cpt);
 				markLocationUsed(o.x, o.y, o.z);
 			}
 		}

@@ -10,11 +10,11 @@ package buildcraft.robotics.boards;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.ResourceIdBlock;
@@ -27,7 +27,7 @@ import buildcraft.robotics.ai.AIRobotStripesHandler;
 
 public class BoardRobotStripes extends RedstoneBoardRobot {
 
-	private BlockIndex blockFound;
+	private BlockPos blockFound;
 
 	public BoardRobotStripes(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -106,7 +106,7 @@ public class BoardRobotStripes extends RedstoneBoardRobot {
 		super.loadSelfFromNBT(nbt);
 
 		if (nbt.hasKey("blockFound")) {
-			blockFound = new BlockIndex(nbt.getCompoundTag("blockFound"));
+			blockFound = new BlockPos(nbt.getCompoundTag("blockFound"));
 		}
 	}
 }

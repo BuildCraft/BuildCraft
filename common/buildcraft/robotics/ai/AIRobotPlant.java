@@ -2,10 +2,10 @@ package buildcraft.robotics.ai;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldServer;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.crops.CropManager;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
@@ -13,14 +13,14 @@ import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.proxy.CoreProxy;
 
 public class AIRobotPlant extends AIRobot {
-	private BlockIndex blockFound;
+	private BlockPos blockFound;
 	private int delay = 0;
 
 	public AIRobotPlant(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotPlant(EntityRobotBase iRobot, BlockIndex iBlockFound) {
+	public AIRobotPlant(EntityRobotBase iRobot, BlockPos iBlockFound) {
 		this(iRobot);
 
 		blockFound = iBlockFound;
@@ -83,7 +83,7 @@ public class AIRobotPlant extends AIRobot {
 		super.loadSelfFromNBT(nbt);
 
 		if (nbt.hasKey("blockFound")) {
-			blockFound = new BlockIndex (nbt.getCompoundTag("blockFound"));
+			blockFound = new BlockPos (nbt.getCompoundTag("blockFound"));
 		}
 	}
 }

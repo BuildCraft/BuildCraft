@@ -163,19 +163,19 @@ public final class StatementManager {
 		return null;
 	}
 	
-	/**
-	 * Generally, this function should be called by every mod implementing
-	 * the Statements API ***as a container*** (that is, adding its own gates)
-	 * on the client side from a given Item of choice.
-	 */
-	@SideOnly(Side.CLIENT)
-	public static void registerIcons(IIconRegister register) {
-		for (IStatement statement : statements.values()) {
-			statement.registerIcons(register);
-		}
-
-		for (Class<? extends IStatementParameter> parameter : parameters.values()) {
-			createParameter(parameter).registerIcons(register);
-		}
-	}
+//	/**
+//	 * Generally, this function should be called by every mod implementing
+//	 * the Statements API ***as a container*** (that is, adding its own gates)
+//	 * on the client side from a given Item of choice.
+//	 */
+//	@SideOnly(Side.CLIENT)
+//	public static void registerIcons(IIconRegister register) {
+//		for (IStatement statement : statements.values()) {
+//			statement.registerIcons(register);
+//		}
+//
+//		for (Class<? extends IStatementParameter> parameter : parameters.values()) {
+//			createParameter(parameter).registerIcons(register);
+//		}
+//	}
 }

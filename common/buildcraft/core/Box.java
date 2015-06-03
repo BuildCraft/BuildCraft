@@ -17,8 +17,8 @@ import java.util.Random;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.ISerializable;
@@ -122,13 +122,13 @@ public class Box implements IBox, ISerializable {
 		initialize(centerX - size, centerY - size, centerZ - size, centerX + size, centerY + size, centerZ + size);
 	}
 
-	public List<BlockIndex> getBlocksInArea() {
-		List<BlockIndex> blocks = new ArrayList<BlockIndex>();
+	public List<BlockPos> getBlocksInArea() {
+		List<BlockPos> blocks = new ArrayList<BlockPos>();
 
 		for (float x = xMin; x <= xMax; x++) {
 			for (float y = yMin; y <= yMax; y++) {
 				for (float z = zMin; z <= zMax; z++) {
-					blocks.add(new BlockIndex((int) x, (int) y, (int) z));
+					blocks.add(new BlockPos((int) x, (int) y, (int) z));
 				}
 			}
 		}
@@ -162,7 +162,7 @@ public class Box implements IBox, ISerializable {
 		return contains((int) p.x, (int) p.y, (int) p.z);
 	}
 
-	public boolean contains(BlockIndex i) {
+	public boolean contains(BlockPos i) {
 		return contains(i.x, i.y, i.z);
 	}
 
@@ -324,7 +324,7 @@ public class Box implements IBox, ISerializable {
 		return this;
 	}
 
-	public Box extendToEncompass(BlockIndex toBeContained) {
+	public Box extendToEncompass(BlockPos toBeContained) {
 		if (toBeContained.x < xMin) {
 			xMin = toBeContained.x - 1;
 		}
@@ -353,12 +353,12 @@ public class Box implements IBox, ISerializable {
 	}
 
 	@Override
-	public double distanceTo(BlockIndex index) {
+	public double distanceTo(BlockPos index) {
 		return Math.sqrt(distanceToSquared(index));
 	}
 
 	@Override
-	public double distanceToSquared(BlockIndex index) {
+	public double distanceToSquared(BlockPos index) {
 		int dx = index.x - (xMin + (xMax - xMin + 1));
 		int dy = index.y - (yMin + (yMax - yMin + 1));
 		int dz = index.z - (zMin + (zMax - zMin + 1));
@@ -367,12 +367,12 @@ public class Box implements IBox, ISerializable {
 	}
 
 	@Override
-	public BlockIndex getRandomBlockIndex(Random rand) {
+	public BlockPos getRandomBlockPos(Random rand) {
 		int x = (xMax > xMin) ? xMin + rand.nextInt(xMax - xMin + 1) : xMin;
 		int y = (yMax > yMin) ? yMin + rand.nextInt(yMax - yMin + 1) : yMin;
 		int z = (zMax > zMin) ? zMin + rand.nextInt(zMax - zMin + 1) : zMin;
 
-		return new BlockIndex(x, y, z);
+		return new BlockPos(x, y, z);
 
 	}
 

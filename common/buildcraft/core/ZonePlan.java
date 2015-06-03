@@ -16,9 +16,9 @@ import java.util.Random;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.IZone;
 
@@ -93,12 +93,12 @@ public class ZonePlan implements IZone, ISerializable {
 	}
 
 	@Override
-	public double distanceTo(BlockIndex index) {
+	public double distanceTo(BlockPos index) {
 		return Math.sqrt(distanceToSquared(index));
 	}
 
 	@Override
-	public double distanceToSquared(BlockIndex index) {
+	public double distanceToSquared(BlockPos index) {
 		double maxSqrDistance = Double.MAX_VALUE;
 
 		for (Map.Entry<ChunkIndex, ZoneChunk> e : chunkMapping.entrySet()) {
@@ -124,7 +124,7 @@ public class ZonePlan implements IZone, ISerializable {
 	}
 
 	@Override
-	public BlockIndex getRandomBlockIndex(Random rand) {
+	public BlockPos getRandomBlockPos(Random rand) {
 		if (chunkMapping.size() == 0) {
 			return null;
 		}
@@ -133,7 +133,7 @@ public class ZonePlan implements IZone, ISerializable {
 
 		for (Map.Entry<ChunkIndex, ZoneChunk> e : chunkMapping.entrySet()) {
 			if (chunkId == 0) {
-				BlockIndex i = e.getValue().getRandomBlockIndex(rand);
+				BlockPos i = e.getValue().getRandomBlockPos(rand);
 				i.x = (e.getKey().x << 4) + i.x;
 				i.z = (e.getKey().z << 4) + i.z;
 

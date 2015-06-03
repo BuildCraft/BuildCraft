@@ -11,6 +11,7 @@ package buildcraft.api.core;
 import java.util.Locale;
 import java.util.Random;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -103,9 +104,12 @@ public enum EnumColor {
 		0xD943C6,
 		0xEA7835,
 		0xe4e4e4};
+	
+	@SideOnly(Side.CLIENT)
+	private static ResourceLocation iconSheet;
 
 	@SideOnly(Side.CLIENT)
-	private static IIcon[] brushIcons;
+	private static SheetIcon[] brushIcons;
 
 	public int getDarkHex() {
 		return DARK_HEX[ordinal()];
@@ -189,12 +193,24 @@ public enum EnumColor {
 		return b.toString().trim();
 	}
 
-	public static void setIconArray(IIcon[] icons) {
-		brushIcons = icons;
+	@SideOnly(Side.CLIENT)
+	public static void registerIcons() {
+		brushIcons = new SheetIcon[16];
+		for (EnumColor c : values()) {
+			brushIcons[c.ordinal()] = new SheetIcon(getIconSheet(), c.ordinal() * 16, 0);
+		}
 	}
 
 	@SideOnly(Side.CLIENT)
-	public IIcon getIcon() {
-		return brushIcons [ordinal()];
+	public SheetIcon getIcon() {
+		return brushIcons[ordinal()];
+	}
+
+	@SideOnly(Side.CLIENT)
+	private static ResourceLocation getIconSheet() {
+		if (iconSheet == null) {
+			iconSheet = new ResourceLocation("buildcraft", "textures/gui/sheet_brushes.png");
+		}
+		return iconSheet;
 	}
 }

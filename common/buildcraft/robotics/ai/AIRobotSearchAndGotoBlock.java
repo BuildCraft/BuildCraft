@@ -9,8 +9,8 @@
 package buildcraft.robotics.ai;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.ResourceIdBlock;
@@ -18,7 +18,7 @@ import buildcraft.core.lib.utils.IBlockFilter;
 
 public class AIRobotSearchAndGotoBlock extends AIRobot {
 
-	private BlockIndex blockFound;
+	private BlockPos blockFound;
 
 	private IBlockFilter filter;
 	private boolean random;
@@ -86,7 +86,7 @@ public class AIRobotSearchAndGotoBlock extends AIRobot {
 		}
 	}
 
-	public BlockIndex getBlockFound() {
+	public BlockPos getBlockFound() {
 		return blockFound;
 	}
 
@@ -111,7 +111,7 @@ public class AIRobotSearchAndGotoBlock extends AIRobot {
 		super.loadSelfFromNBT(nbt);
 
 		if (nbt.hasKey("indexStored")) {
-			blockFound = new BlockIndex (nbt.getCompoundTag("indexStored"));
+			blockFound = new BlockPos (nbt.getCompoundTag("indexStored"));
 		}
 	}
 }

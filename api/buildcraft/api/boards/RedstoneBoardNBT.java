@@ -15,8 +15,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public abstract class RedstoneBoardNBT<T> {
 
@@ -28,11 +26,11 @@ public abstract class RedstoneBoardNBT<T> {
 
 	public abstract IRedstoneBoard<T> create(NBTTagCompound nbt, T object);
 
-	@SideOnly(Side.CLIENT)
-	public abstract void registerIcons(IIconRegister iconRegister);
-
-	@SideOnly(Side.CLIENT)
-	public abstract IIcon getIcon(NBTTagCompound nbt);
+//	@SideOnly(Side.CLIENT)
+//	public abstract void registerIcons(IIconRegister iconRegister);
+//
+//	@SideOnly(Side.CLIENT)
+//	public abstract IIcon getIcon(NBTTagCompound nbt);
 
 	public void createBoard(NBTTagCompound nbt) {
 		nbt.setString("id", getID());

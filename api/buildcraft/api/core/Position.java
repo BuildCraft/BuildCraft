@@ -1,17 +1,14 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * The BuildCraft API is distributed under the terms of the MIT License.
- * Please check the contents of the license, which should be located
- * as "LICENSE.API" in the BuildCraft source code distribution.
- */
+ * The BuildCraft API is distributed under the terms of the MIT License. Please check the contents of the license, which
+ * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.api.core;
 
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
 public class Position implements ISerializable {
@@ -23,14 +20,14 @@ public class Position implements ISerializable {
 		x = 0;
 		y = 0;
 		z = 0;
-		orientation = EnumFacing.UNKNOWN;
+		orientation = null;
 	}
 
 	public Position(double ci, double cj, double ck) {
 		x = ci;
 		y = cj;
 		z = ck;
-		orientation = EnumFacing.UNKNOWN;
+		orientation = null;
 	}
 
 	public Position(double ci, double cj, double ck, EnumFacing corientation) {
@@ -38,10 +35,6 @@ public class Position implements ISerializable {
 		y = cj;
 		z = ck;
 		orientation = corientation;
-
-		if (orientation == null) {
-			orientation = EnumFacing.UNKNOWN;
-		}
 	}
 
 	public Position(Position p) {
@@ -56,34 +49,34 @@ public class Position implements ISerializable {
 	}
 
 	public Position(TileEntity tile) {
-		x = tile.xCoord;
-		y = tile.yCoord;
-		z = tile.zCoord;
-		orientation = EnumFacing.UNKNOWN;
+		x = tile.getPos().getX();
+		y = tile.getPos().getY();
+		z = tile.getPos().getZ();
+		orientation = null;
 	}
 
-	public Position(BlockIndex index) {
-		x = index.x;
-		y = index.y;
-		z = index.z;
-		orientation = EnumFacing.UNKNOWN;
+	public Position(BlockPos index) {
+		x = index.getX();
+		y = index.getY();
+		z = index.getZ();
+		orientation = null;
 	}
 
 	public void moveRight(double step) {
 		switch (orientation) {
-		case SOUTH:
-			x = x - step;
-			break;
-		case NORTH:
-			x = x + step;
-			break;
-		case EAST:
-			z = z + step;
-			break;
-		case WEST:
-			z = z - step;
-			break;
-		default:
+			case SOUTH:
+				x = x - step;
+				break;
+			case NORTH:
+				x = x + step;
+				break;
+			case EAST:
+				z = z + step;
+				break;
+			case WEST:
+				z = z - step;
+				break;
+			default:
 		}
 	}
 
@@ -93,25 +86,25 @@ public class Position implements ISerializable {
 
 	public void moveForwards(double step) {
 		switch (orientation) {
-		case UP:
-			y = y + step;
-			break;
-		case DOWN:
-			y = y - step;
-			break;
-		case SOUTH:
-			z = z + step;
-			break;
-		case NORTH:
-			z = z - step;
-			break;
-		case EAST:
-			x = x + step;
-			break;
-		case WEST:
-			x = x - step;
-			break;
-		default:
+			case UP:
+				y = y + step;
+				break;
+			case DOWN:
+				y = y - step;
+				break;
+			case SOUTH:
+				z = z + step;
+				break;
+			case NORTH:
+				z = z - step;
+				break;
+			case EAST:
+				x = x + step;
+				break;
+			case WEST:
+				x = x - step;
+				break;
+			default:
 		}
 	}
 
@@ -121,13 +114,13 @@ public class Position implements ISerializable {
 
 	public void moveUp(double step) {
 		switch (orientation) {
-		case SOUTH:
-		case NORTH:
-		case EAST:
-		case WEST:
-			y = y + step;
-			break;
-		default:
+			case SOUTH:
+			case NORTH:
+			case EAST:
+			case WEST:
+				y = y + step;
+				break;
+			default:
 		}
 
 	}
@@ -138,7 +131,7 @@ public class Position implements ISerializable {
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
 		if (orientation == null) {
-			orientation = EnumFacing.UNKNOWN;
+			orientation = EnumFacing.NORTH;
 		}
 
 		nbttagcompound.setDouble("i", x);
@@ -151,7 +144,7 @@ public class Position implements ISerializable {
 		x = nbttagcompound.getDouble("i");
 		y = nbttagcompound.getDouble("j");
 		z = nbttagcompound.getDouble("k");
-		orientation = EnumFacing.values() [nbttagcompound.getByte("orientation")];
+		orientation = EnumFacing.values()[nbttagcompound.getByte("orientation")];
 	}
 
 	@Override
@@ -182,7 +175,12 @@ public class Position implements ISerializable {
 		x = stream.readDouble();
 		y = stream.readDouble();
 		z = stream.readDouble();
-		orientation = EnumFacing.getOrientation(stream.readByte());
+		byte b = stream.readByte();
+		if (b != 6) {
+			orientation = EnumFacing.values()[b];
+		} else {
+			orientation = null;
+		}
 	}
 
 	@Override
@@ -190,7 +188,7 @@ public class Position implements ISerializable {
 		stream.writeDouble(x);
 		stream.writeDouble(y);
 		stream.writeDouble(z);
-		stream.writeByte(orientation.ordinal());
+		stream.writeByte(orientation == null ? 6 : orientation.ordinal());
 	}
 
 	@Override

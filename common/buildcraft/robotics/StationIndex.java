@@ -9,14 +9,14 @@
 package buildcraft.robotics;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.DockingStation;
 
 public class StationIndex {
 
-	public BlockIndex index = new BlockIndex();
+	public BlockPos index = new BlockPos();
 	public EnumFacing side = EnumFacing.UNKNOWN;
 
 	protected StationIndex() {
@@ -24,7 +24,7 @@ public class StationIndex {
 
 	public StationIndex(EnumFacing iSide, int x, int y, int z) {
 		side = iSide;
-		index = new BlockIndex(x, y, z);
+		index = new BlockPos(x, y, z);
 	}
 
 	public StationIndex(DockingStation station) {
@@ -57,7 +57,7 @@ public class StationIndex {
 	}
 
 	protected void readFromNBT(NBTTagCompound nbt) {
-		index = new BlockIndex(nbt.getCompoundTag("index"));
+		index = new BlockPos(nbt.getCompoundTag("index"));
 		side = EnumFacing.values()[nbt.getByte("side")];
 	}
 }

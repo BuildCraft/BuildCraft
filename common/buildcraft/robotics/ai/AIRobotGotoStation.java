@@ -9,17 +9,17 @@
 package buildcraft.robotics.ai;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 
 public class AIRobotGotoStation extends AIRobot {
 
-	private BlockIndex stationIndex;
+	private BlockPos stationIndex;
 	private EnumFacing stationSide;
 
 	public AIRobotGotoStation(EntityRobotBase iRobot) {
@@ -96,7 +96,7 @@ public class AIRobotGotoStation extends AIRobot {
 
 	@Override
 	public void loadSelfFromNBT(NBTTagCompound nbt) {
-		stationIndex = new BlockIndex(nbt.getCompoundTag("stationIndex"));
+		stationIndex = new BlockPos(nbt.getCompoundTag("stationIndex"));
 		stationSide = EnumFacing.values()[nbt.getByte("stationSide")];
 	}
 }

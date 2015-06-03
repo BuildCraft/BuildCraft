@@ -3,9 +3,9 @@ package buildcraft.api.items;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.IZone;
 
@@ -24,7 +24,7 @@ public interface IMapLocation extends INamedItem {
 	 * @param stack
 	 * @return The point representing the map location.
 	 */
-	BlockIndex getPoint(ItemStack stack);
+	BlockPos getPoint(ItemStack stack);
 
 	/**
 	 * This function can be used for SPOT and AREA types.
@@ -45,10 +45,10 @@ public interface IMapLocation extends INamedItem {
 	/**
 	 * This function can be used for SPOT and PATH types.
 	 * @param stack
-	 * @return A list of BlockIndexes representing the path the Map Location
+	 * @return A list of BlockPoses representing the path the Map Location
 	 * stores.
 	 */
-	List<BlockIndex> getPath(ItemStack stack);
+	List<BlockPos> getPath(ItemStack stack);
 
 	/**
 	 * This function can be used for SPOT types only.

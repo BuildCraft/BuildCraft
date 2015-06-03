@@ -15,9 +15,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IZone;
 
@@ -25,20 +25,20 @@ public class PathFindingSearch implements IIterableAlgorithm {
 
 	public static int PATH_ITERATIONS = 1000;
 
-	private static HashMap<Integer, HashSet<BlockIndex>> reservations = new HashMap<Integer, HashSet<BlockIndex>>();
+	private static HashMap<Integer, HashSet<BlockPos>> reservations = new HashMap<Integer, HashSet<BlockPos>>();
 
 	private World world;
-	private BlockIndex start;
+	private BlockPos start;
 	private List<PathFinding> pathFinders;
 	private IBlockFilter pathFound;
 	private IZone zone;
 	private float maxDistance;
-	private Iterator<BlockIndex> blockIter;
+	private Iterator<BlockPos> blockIter;
 
 	private double maxDistanceToEnd;
 
-	public PathFindingSearch(World iWorld, BlockIndex iStart,
-			Iterator<BlockIndex> iBlockIter, IBlockFilter iPathFound,
+	public PathFindingSearch(World iWorld, BlockPos iStart,
+			Iterator<BlockPos> iBlockIter, IBlockFilter iPathFound,
 			double iMaxDistanceToEnd, float iMaxDistance, IZone iZone) {
 		world = iWorld;
 		start = iStart;
@@ -66,8 +66,8 @@ public class PathFindingSearch implements IIterableAlgorithm {
 				return;
 			}
 
-			BlockIndex delta = blockIter.next();
-			BlockIndex block = new BlockIndex(start.x + delta.x,
+			BlockPos delta = blockIter.next();
+			BlockPos block = new BlockPos(start.x + delta.x,
 					((start.y + delta.y) > 0) ? start.y + delta.y : 0,
 					start.z + delta.z);
 			if (isLoadedChunk(block.x, block.z)) {
@@ -82,7 +82,7 @@ public class PathFindingSearch implements IIterableAlgorithm {
 		}
 	}
 
-	private boolean isTarget(BlockIndex block) {
+	private boolean isTarget(BlockPos block) {
 		if (zone != null && !zone.contains(block.x, block.y, block.z)) {
 			return false;
 		}
@@ -91,7 +91,7 @@ public class PathFindingSearch implements IIterableAlgorithm {
 		}
 		synchronized (reservations) {
 			if (reservations.containsKey(world.provider.dimensionId)) {
-				HashSet<BlockIndex> dimReservations = reservations
+				HashSet<BlockPos> dimReservations = reservations
 						.get(world.provider.dimensionId);
 				if (dimReservations.contains(block)) {
 					return false;
@@ -117,7 +117,7 @@ public class PathFindingSearch implements IIterableAlgorithm {
 		for (PathFinding pathFinding : new ArrayList<PathFinding>(pathFinders)) {
 			pathFinding.iterate(itNumber / pathFinders.size());
 			if (pathFinding.isDone()) {
-				LinkedList<BlockIndex> path = pathFinding.getResult();
+				LinkedList<BlockPos> path = pathFinding.getResult();
 				if (path != null && path.size() > 0) {
 					if (reserve(path.getLast())) {
 						return;
@@ -138,16 +138,16 @@ public class PathFindingSearch implements IIterableAlgorithm {
 		return !blockIter.hasNext();
 	}
 
-	public LinkedList<BlockIndex> getResult() {
+	public LinkedList<BlockPos> getResult() {
 		for (PathFinding pathFinding : pathFinders) {
 			if (pathFinding.isDone()) {
 				return pathFinding.getResult();
 			}
 		}
-		return new LinkedList<BlockIndex>();
+		return new LinkedList<BlockPos>();
 	}
 
-	public BlockIndex getResultTarget() {
+	public BlockPos getResultTarget() {
 		for (PathFinding pathFinding : pathFinders) {
 			if (pathFinding.isDone()) {
 				return pathFinding.end();
@@ -156,13 +156,13 @@ public class PathFindingSearch implements IIterableAlgorithm {
 		return null;
 	}
 
-	private boolean reserve(BlockIndex block) {
+	private boolean reserve(BlockPos block) {
 		synchronized (reservations) {
 			if (!reservations.containsKey(world.provider.dimensionId)) {
 				reservations.put(world.provider.dimensionId,
-						new HashSet<BlockIndex>());
+						new HashSet<BlockPos>());
 			}
-			HashSet<BlockIndex> dimReservations = reservations
+			HashSet<BlockPos> dimReservations = reservations
 					.get(world.provider.dimensionId);
 			if (dimReservations.contains(block)) {
 				return false;
@@ -172,7 +172,7 @@ public class PathFindingSearch implements IIterableAlgorithm {
 		}
 	}
 
-	public void unreserve(BlockIndex block) {
+	public void unreserve(BlockPos block) {
 		synchronized (reservations) {
 			if (reservations.containsKey(world.provider.dimensionId)) {
 				reservations.get(world.provider.dimensionId).remove(block);

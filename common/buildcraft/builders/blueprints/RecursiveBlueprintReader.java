@@ -11,11 +11,11 @@ package buildcraft.builders.blueprints;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.Translation;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.builders.ItemBlueprint;
 import buildcraft.builders.ItemBlueprintStandard;
 import buildcraft.builders.ItemBlueprintTemplate;
@@ -101,7 +101,7 @@ public class RecursiveBlueprintReader {
 		if (done) {
 			return;
 		} else if (currentSubReader == null && subIndex < architect.subBlueprints.size()) {
-			BlockIndex subBlock = architect.subBlueprints.get(subIndex);
+			BlockPos subBlock = architect.subBlueprints.get(subIndex);
 
 			TileEntity subTile = architect.getWorldObj().getTileEntity(subBlock.x, subBlock.y,
 					subBlock.z);
@@ -156,7 +156,7 @@ public class RecursiveBlueprintReader {
 				subIndex++;
 			}
 		} else if (blockScanner != null && blockScanner.blocksLeft() != 0) {
-			for (BlockIndex index : blockScanner) {
+			for (BlockPos index : blockScanner) {
 				writingBlueprint.readFromWorld(writingContext, architect,
 						index.x, index.y, index.z);
 			}

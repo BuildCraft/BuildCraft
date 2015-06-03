@@ -13,9 +13,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 
 /**
@@ -28,21 +28,21 @@ public class PathFinding implements IIterableAlgorithm {
 	public static int PATH_ITERATIONS = 1000;
 
 	private World world;
-	private BlockIndex start;
-	private BlockIndex end;
+	private BlockPos start;
+	private BlockPos end;
 	private double maxDistanceToEndSq = 0;
 	private float maxTotalDistanceSq = 0;
 
-	private HashMap<BlockIndex, Node> openList = new HashMap<BlockIndex, PathFinding.Node>();
-	private HashMap<BlockIndex, Node> closedList = new HashMap<BlockIndex, PathFinding.Node>();
+	private HashMap<BlockPos, Node> openList = new HashMap<BlockPos, PathFinding.Node>();
+	private HashMap<BlockPos, Node> closedList = new HashMap<BlockPos, PathFinding.Node>();
 
 	private Node nextIteration;
 
-	private LinkedList<BlockIndex> result;
+	private LinkedList<BlockPos> result;
 
 	private boolean endReached = false;
 
-	public PathFinding(World iWorld, BlockIndex iStart, BlockIndex iEnd) {
+	public PathFinding(World iWorld, BlockPos iStart, BlockPos iEnd) {
 		world = iWorld;
 		start = iStart;
 		end = iEnd;
@@ -57,13 +57,13 @@ public class PathFinding implements IIterableAlgorithm {
 		nextIteration = startNode;
 	}
 
-	public PathFinding(World iWorld, BlockIndex iStart, BlockIndex iEnd, double iMaxDistanceToEnd) {
+	public PathFinding(World iWorld, BlockPos iStart, BlockPos iEnd, double iMaxDistanceToEnd) {
 		this(iWorld, iStart, iEnd);
 
 		maxDistanceToEndSq = iMaxDistanceToEnd * iMaxDistanceToEnd;
 	}
 
-	public PathFinding(World iWorld, BlockIndex iStart, BlockIndex iEnd, double iMaxDistanceToEnd,
+	public PathFinding(World iWorld, BlockPos iStart, BlockPos iEnd, double iMaxDistanceToEnd,
 			float iMaxTotalDistance) {
 		this(iWorld, iStart, iEnd, iMaxDistanceToEnd);
 
@@ -82,7 +82,7 @@ public class PathFinding implements IIterableAlgorithm {
 			}
 
 			if (endReached) {
-				result = new LinkedList<BlockIndex>();
+				result = new LinkedList<BlockPos>();
 
 				while (nextIteration != null) {
 					result.addFirst(nextIteration.index);
@@ -101,15 +101,15 @@ public class PathFinding implements IIterableAlgorithm {
 		return nextIteration == null;
 	}
 
-	public LinkedList<BlockIndex> getResult() {
+	public LinkedList<BlockPos> getResult() {
 		if (result != null) {
 			return result;
 		} else {
-			return new LinkedList<BlockIndex>();
+			return new LinkedList<BlockPos>();
 		}
 	}
 
-	public BlockIndex end() {
+	public BlockPos end() {
 		return end;
 	}
 
@@ -133,7 +133,7 @@ public class PathFinding implements IIterableAlgorithm {
 
 					Node nextNode = new Node();
 					nextNode.parent = from;
-					nextNode.index = new BlockIndex(x, y, z);
+					nextNode.index = new BlockPos(x, y, z);
 
 					if (resultMoves[dx + 1][dy + 1][dz + 1] == 2) {
 						endReached = true;
@@ -193,10 +193,10 @@ public class PathFinding implements IIterableAlgorithm {
 		public double movementCost;
 		public double destinationCost;
 		public double totalWeight;
-		public BlockIndex index;
+		public BlockPos index;
 	}
 
-	private static double distanceSq(BlockIndex i1, BlockIndex i2) {
+	private static double distanceSq(BlockPos i1, BlockPos i2) {
 		double dx = (double) i1.x - (double) i2.x;
 		double dy = (double) i1.y - (double) i2.y;
 		double dz = (double) i1.z - (double) i2.z;
@@ -209,7 +209,7 @@ public class PathFinding implements IIterableAlgorithm {
 			return end.x == x && end.y == y && end.z == z;
 		} else {
 			return BuildCraftAPI.isSoftBlock(world, x, y, z)
-					&& distanceSq(new BlockIndex(x, y, z), end) <= maxDistanceToEndSq;
+					&& distanceSq(new BlockPos(x, y, z), end) <= maxDistanceToEndSq;
 		}
 	}
 

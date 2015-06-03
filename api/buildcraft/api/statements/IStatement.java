@@ -8,9 +8,6 @@
  */
 package buildcraft.api.statements;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 public interface IStatement {
 	/**
 	 * Every statement needs a unique tag, it should be in the format of
@@ -19,12 +16,6 @@ public interface IStatement {
 	 * @return the unique id
 	 */
 	String getUniqueTag();
-
-	@SideOnly(Side.CLIENT)
-	IIcon getIcon();
-
-	@SideOnly(Side.CLIENT)
-	void registerIcons(IIconRegister iconRegister);
 
 	/**
 	 * Return the maximum number of parameter this statement can have, 0 if none.

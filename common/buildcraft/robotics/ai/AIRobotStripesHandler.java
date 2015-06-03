@@ -10,10 +10,10 @@ package buildcraft.robotics.ai;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.WorldServer;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.Position;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
@@ -25,14 +25,14 @@ import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.proxy.CoreProxy;
 
 public class AIRobotStripesHandler extends AIRobot implements IStripesActivator {
-	private BlockIndex useToBlock;
+	private BlockPos useToBlock;
 	private int useCycles = 0;
 
 	public AIRobotStripesHandler(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotStripesHandler(EntityRobotBase iRobot, BlockIndex index) {
+	public AIRobotStripesHandler(EntityRobotBase iRobot, BlockPos index) {
 		this(iRobot);
 
 		useToBlock = index;

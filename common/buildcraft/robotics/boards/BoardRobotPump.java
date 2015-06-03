@@ -9,6 +9,7 @@
 package buildcraft.robotics.boards;
 
 import net.minecraft.block.Block;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
@@ -17,7 +18,6 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IWorldProperty;
 import buildcraft.api.robots.AIRobot;
@@ -34,7 +34,7 @@ import buildcraft.robotics.statements.ActionRobotFilter;
 
 public class BoardRobotPump extends RedstoneBoardRobot {
 
-	private BlockIndex blockFound;
+	private BlockPos blockFound;
 	private IFluidFilter fluidFilter = null;
 
 	public BoardRobotPump(EntityRobotBase iRobot) {

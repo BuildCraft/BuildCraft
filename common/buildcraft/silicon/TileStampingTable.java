@@ -155,7 +155,7 @@ public class TileStampingTable extends TileLaserTableBase implements IHasWork, I
         if (stack != null && stack.getItem() != null) {
             if (stack.getItem() instanceof ItemPackage) {
                 // tagMap size
-                return 400 * NBTUtils.getItemData(stack).func_150296_c().size();
+                return 400 * NBTUtils.getItemData(stack).getKeySet().size();
             } else {
                 return 400;
             }

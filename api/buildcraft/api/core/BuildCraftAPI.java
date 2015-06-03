@@ -9,18 +9,21 @@
 package buildcraft.api.core;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Set;
 
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+
 import net.minecraft.block.Block;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public final class BuildCraftAPI {
 
 	public static ICoreProxy proxy;
 
-	public static final Set<Block> softBlocks = new HashSet<Block>();
-	public static final HashMap<String, IWorldProperty> worldProperties = new HashMap<String, IWorldProperty>();
+	public static final Set<Block> softBlocks = Sets.newHashSet();
+	public static final HashMap<String, IWorldProperty> worldProperties =Maps.newHashMap();
 
 	/**
 	 * Deactivate constructor
@@ -39,7 +42,7 @@ public final class BuildCraftAPI {
 		worldProperties.put(name, property);
 	}
 
-	public static boolean isSoftBlock(World world, int x, int y, int z) {
-		return worldProperties.get("soft").get(world, x, y, z);
+	public static boolean isSoftBlock(World world, BlockPos pos) {
+		return worldProperties.get("soft").get(world, pos);
 	}
 }

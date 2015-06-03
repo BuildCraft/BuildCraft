@@ -9,14 +9,14 @@
 package buildcraft.api.robots;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.core.BlockIndex;
+import buildcraft.api.core.BCLog;
 
 public abstract class ResourceId {
-
-	public BlockIndex index = new BlockIndex();
-	public EnumFacing side = EnumFacing.UNKNOWN;
+	public BlockPos pos = BlockPos.ORIGIN;
+	public EnumFacing side = null;
 	public int localId = 0;
 
 	protected ResourceId() {
@@ -30,27 +30,41 @@ public abstract class ResourceId {
 
 		ResourceId compareId = (ResourceId) obj;
 
-		return index.equals(compareId.index)
+		return pos.equals(compareId.pos)
 				&& side == compareId.side
 				&& localId == compareId.localId;
 	}
 
 	@Override
 	public int hashCode() {
-		return (((index != null ? index.hashCode() : 0) * 37) + (side != null ? side.ordinal() : 0) * 37) + localId;
+		return (((pos != null ? pos.hashCode() : 0) * 37) + (side != null ? side.ordinal() : 0) * 37) + localId;
 	}
 
 	public void writeToNBT(NBTTagCompound nbt) {
-		NBTTagCompound indexNBT = new NBTTagCompound();
-		index.writeTo(indexNBT);
-		nbt.setTag("index", indexNBT);
+		nbt.setIntArray("pos", new int[] { pos.getX(), pos.getY(), pos.getZ() });
 		nbt.setByte("side", (byte) side.ordinal());
 		nbt.setInteger("localId", localId);
 		nbt.setString("resourceName", RobotManager.getResourceIdName(getClass()));
 	}
 
 	protected void readFromNBT(NBTTagCompound nbt) {
-		index = new BlockIndex(nbt.getCompoundTag("index"));
+		if (nbt.hasKey("index")) {
+			// For compatibility with older versions of minecraft and buildcraft
+			NBTTagCompound indexNBT = nbt.getCompoundTag("index");
+			int x = indexNBT.getInteger("i");
+			int y = indexNBT.getInteger("j");
+			int z = indexNBT.getInteger("k");
+			pos = new BlockPos(x, y, z);
+		} else {
+			int[] array = nbt.getIntArray("pos");
+			if (array.length == 3) {
+				pos = new BlockPos(array[0], array[1], array[2]);
+			} else if (array.length != 0) {
+				BCLog.logger.warn("Found an integer array that wwas not the right length! (" + array + ")");
+			} else {
+				BCLog.logger.warn("Did not find any integer positions! This is a bug!");
+			}
+		}
 		side = EnumFacing.values()[nbt.getByte("side")];
 		localId = nbt.getInteger("localId");
 	}

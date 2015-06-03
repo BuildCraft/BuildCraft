@@ -8,9 +8,9 @@
  */
 package buildcraft.robotics.ai;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
@@ -20,7 +20,7 @@ public class AIRobotSearchRandomGroundBlock extends AIRobot {
 
 	private static final int MAX_ATTEMPTS = 4096;
 
-	public BlockIndex blockFound;
+	public BlockPos blockFound;
 
 	private int range;
 	private IBlockFilter filter;
@@ -62,14 +62,14 @@ public class AIRobotSearchRandomGroundBlock extends AIRobot {
 			x = (int) (MathHelper.cos(a) * r + Math.floor(robot.posX));
 			z = (int) (MathHelper.sin(a) * r + Math.floor(robot.posZ));
 		} else {
-			BlockIndex b = zone.getRandomBlockIndex(robot.worldObj.rand);
+			BlockPos b = zone.getRandomBlockPos(robot.worldObj.rand);
 			x = b.x;
 			z = b.z;
 		}
 
 		for (int y = robot.worldObj.getHeight(); y >= 0; --y) {
 			if (filter.matches(robot.worldObj, x, y, z)) {
-				blockFound = new BlockIndex(x, y, z);
+				blockFound = new BlockPos(x, y, z);
 				terminate();
 				return;
 			} else if (!robot.worldObj.isAirBlock(x, y, z)) {

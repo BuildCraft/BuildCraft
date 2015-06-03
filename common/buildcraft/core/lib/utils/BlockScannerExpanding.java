@@ -2,16 +2,16 @@ package buildcraft.core.lib.utils;
 
 import java.util.Iterator;
 
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
 
-public class BlockScannerExpanding implements Iterable<BlockIndex> {
+public class BlockScannerExpanding implements Iterable<BlockPos> {
 
 	private int searchRadius;
 	private int searchX;
 	private int searchY;
 	private int searchZ;
 
-	class BlockIt implements Iterator<BlockIndex> {
+	class BlockIt implements Iterator<BlockPos> {
 
 		@Override
 		public boolean hasNext() {
@@ -19,11 +19,11 @@ public class BlockScannerExpanding implements Iterable<BlockIndex> {
 		}
 
 		@Override
-		public BlockIndex next() {
+		public BlockPos next() {
 			// Step through each block in a hollow cube of size (searchRadius * 2 -1), if done
 			// add 1 to the radius and start over.
 
-			BlockIndex next = new BlockIndex(searchX, searchY, searchZ);
+			BlockPos next = new BlockPos(searchX, searchY, searchZ);
 
 			// Step to the next Y
 			if (Math.abs(searchX) == searchRadius || Math.abs(searchZ) == searchRadius) {
@@ -67,7 +67,7 @@ public class BlockScannerExpanding implements Iterable<BlockIndex> {
 	}
 
 	@Override
-	public Iterator<BlockIndex> iterator() {
+	public Iterator<BlockPos> iterator() {
 		return new BlockIt();
 	}
 

@@ -23,20 +23,13 @@ public interface IStatementParameter {
 	 */
 	String getUniqueTag();
 	
-	@SideOnly(Side.CLIENT)
-	IIcon getIcon();
+//	@SideOnly(Side.CLIENT)
+//	IIcon getIcon();
 
 	ItemStack getItemStack();
 
-	/**
-	 * Something that is initially unintuitive: you HAVE to
-	 * keep your icons as static variables, due to the fact
-	 * that every IStatementParameter is instantiated upon creation,
-	 * in opposition to IStatements which are singletons (due to the
-	 * fact that they, unlike Parameters, store no additional data)
-	 */
-	@SideOnly(Side.CLIENT)
-	void registerIcons(IIconRegister iconRegister);
+//	@SideOnly(Side.CLIENT)
+//	void registerIcons(IIconRegister iconRegister);
 	
 	/**
 	 * Return the parameter description in the UI

@@ -16,9 +16,9 @@ import java.util.LinkedList;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IPathProvider;
 import buildcraft.api.core.Position;
 import buildcraft.core.DefaultProps;
@@ -143,23 +143,23 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
 		}
 	}
 
-	public LinkedList<BlockIndex> getPath() {
-		HashSet<BlockIndex> visitedPaths = new HashSet<BlockIndex>();
-		LinkedList<BlockIndex> res = new LinkedList<BlockIndex>();
+	public LinkedList<BlockPos> getPath() {
+		HashSet<BlockPos> visitedPaths = new HashSet<BlockPos>();
+		LinkedList<BlockPos> res = new LinkedList<BlockPos>();
 
 		TilePathMarker nextTile = this;
 
 		while (nextTile != null) {
-			BlockIndex b = new BlockIndex(nextTile.xCoord, nextTile.yCoord, nextTile.zCoord);
+			BlockPos b = new BlockPos(nextTile.xCoord, nextTile.yCoord, nextTile.zCoord);
 
 			visitedPaths.add(b);
 			res.add(b);
 
 			if (nextTile.links[0] != null
-					&& !visitedPaths.contains(new BlockIndex(nextTile.links[0].xCoord, nextTile.links[0].yCoord, nextTile.links[0].zCoord))) {
+					&& !visitedPaths.contains(new BlockPos(nextTile.links[0].xCoord, nextTile.links[0].yCoord, nextTile.links[0].zCoord))) {
 				nextTile = nextTile.links[0];
 			} else if (nextTile.links[1] != null
-					&& !visitedPaths.contains(new BlockIndex(nextTile.links[1].xCoord, nextTile.links[1].yCoord, nextTile.links[1].zCoord))) {
+					&& !visitedPaths.contains(new BlockPos(nextTile.links[1].xCoord, nextTile.links[1].yCoord, nextTile.links[1].zCoord))) {
 				nextTile = nextTile.links[1];
 			} else {
 				nextTile = null;

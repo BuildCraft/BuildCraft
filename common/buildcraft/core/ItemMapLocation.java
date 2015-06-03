@@ -16,13 +16,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.IPathProvider;
@@ -77,7 +77,7 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 			}
 			case 2: {
 				NBTTagList pathNBT = cpt.getTagList("path", Constants.NBT.TAG_COMPOUND);
-				BlockIndex first = new BlockIndex(pathNBT.getCompoundTagAt(0));
+				BlockPos first = new BlockPos(pathNBT.getCompoundTagAt(0));
 
 				int x = first.x;
 				int y = first.y;
@@ -127,7 +127,7 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 
 			NBTTagList pathNBT = new NBTTagList();
 
-			for (BlockIndex index : ((IPathProvider) tile).getPath()) {
+			for (BlockPos index : ((IPathProvider) tile).getPath()) {
 				NBTTagCompound nbt = new NBTTagCompound();
 				index.writeTo(nbt);
 				pathNBT.appendTag(nbt);
@@ -204,11 +204,11 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 	}
 
 	@Override
-	public BlockIndex getPoint(ItemStack item) {
+	public BlockPos getPoint(ItemStack item) {
 		NBTTagCompound cpt = NBTUtils.getItemData(item);
 
 		if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
-			return new BlockIndex(cpt.getInteger("x"), cpt.getInteger("y"), cpt.getInteger("z"));
+			return new BlockPos(cpt.getInteger("x"), cpt.getInteger("y"), cpt.getInteger("z"));
 		} else {
 			return null;
 		}
@@ -233,19 +233,19 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 	}
 
 	@Override
-	public List<BlockIndex> getPath(ItemStack item) {
+	public List<BlockPos> getPath(ItemStack item) {
 		NBTTagCompound cpt = NBTUtils.getItemData(item);
 
 		if (cpt.hasKey("kind") && cpt.getByte("kind") == 2) {
-			List<BlockIndex> indexList = new ArrayList<BlockIndex>();
+			List<BlockPos> indexList = new ArrayList<BlockPos>();
 			NBTTagList pathNBT = cpt.getTagList("path", Constants.NBT.TAG_COMPOUND);
 			for (int i = 0; i < pathNBT.tagCount(); i++) {
-				indexList.add(new BlockIndex(pathNBT.getCompoundTagAt(i)));
+				indexList.add(new BlockPos(pathNBT.getCompoundTagAt(i)));
 			}
 			return indexList;
 		} else if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
-			List<BlockIndex> indexList = new ArrayList<BlockIndex>();
-			indexList.add(new BlockIndex(cpt.getInteger("x"), cpt.getInteger("y"), cpt.getInteger("z")));
+			List<BlockPos> indexList = new ArrayList<BlockPos>();
+			indexList.add(new BlockPos(cpt.getInteger("x"), cpt.getInteger("y"), cpt.getInteger("z")));
 			return indexList;
 		} else {
 			return null;

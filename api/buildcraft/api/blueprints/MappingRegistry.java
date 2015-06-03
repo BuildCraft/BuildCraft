@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * The BuildCraft API is distributed under the terms of the MIT License.
- * Please check the contents of the license, which should be located
- * as "LICENSE.API" in the BuildCraft source code distribution.
- */
+ * The BuildCraft API is distributed under the terms of the MIT License. Please check the contents of the license, which
+ * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.api.blueprints;
 
 import java.util.ArrayList;
@@ -29,6 +25,7 @@ import net.minecraftforge.fml.common.FMLModContainer;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.api.core.BCLog;
 
@@ -43,14 +40,14 @@ public class MappingRegistry {
 	public HashMap<Class<? extends Entity>, Integer> entityToId = new HashMap<Class<? extends Entity>, Integer>();
 	public ArrayList<Class<? extends Entity>> idToEntity = new ArrayList<Class<? extends Entity>>();
 
-	private void registerItem (Item item) {
+	private void registerItem(Item item) {
 		if (!itemToId.containsKey(item)) {
 			idToItem.add(item);
 			itemToId.put(item, idToItem.size() - 1);
 		}
 	}
 
-	private void registerBlock (Block block) {
+	private void registerBlock(Block block) {
 		if (!blockToId.containsKey(block)) {
 			idToBlock.add(block);
 			blockToId.put(block, idToBlock.size() - 1);
@@ -114,7 +111,7 @@ public class MappingRegistry {
 
 	public int getIdForBlock(Block block) {
 		if (!blockToId.containsKey(block)) {
-			registerBlock (block);
+			registerBlock(block);
 		}
 
 		return blockToId.get(block);
@@ -148,37 +145,27 @@ public class MappingRegistry {
 
 	public int getIdForEntity(Class<? extends Entity> entity) {
 		if (!entityToId.containsKey(entity)) {
-			registerEntity (entity);
+			registerEntity(entity);
 		}
 
 		return entityToId.get(entity);
 	}
 
-	/**
-	 * Relocates a stack nbt from the world referential to the registry
-	 * referential.
-	 */
+	/** Relocates a stack nbt from the world referential to the registry referential. */
 	public void stackToRegistry(NBTTagCompound nbt) {
 		Item item = Item.getItemById(nbt.getShort("id"));
 		nbt.setShort("id", (short) getIdForItem(item));
 	}
 
-	/**
-	 * Relocates a stack nbt from the registry referential to the world
-	 * referential.
-	 */
+	/** Relocates a stack nbt from the registry referential to the world referential. */
 	public void stackToWorld(NBTTagCompound nbt) throws MappingNotFoundException {
 		Item item = getItemForId(nbt.getShort("id"));
 		nbt.setShort("id", (short) Item.getIdFromItem(item));
 	}
 
 	private boolean isStackLayout(NBTTagCompound nbt) {
-		return nbt.hasKey("id") &&
-				nbt.hasKey("Count") &&
-				nbt.hasKey("Damage") &&
-				nbt.getTag("id") instanceof NBTTagShort &&
-				nbt.getTag("Count") instanceof NBTTagByte &&
-				nbt.getTag("Damage") instanceof NBTTagShort;
+		return nbt.hasKey("id") && nbt.hasKey("Count") && nbt.hasKey("Damage") && nbt.getTag("id") instanceof NBTTagShort
+			&& nbt.getTag("Count") instanceof NBTTagByte && nbt.getTag("Damage") instanceof NBTTagShort;
 	}
 
 	public void scanAndTranslateStacksToRegistry(NBTTagCompound nbt) {
@@ -190,7 +177,7 @@ public class MappingRegistry {
 
 		// Then, look at the nbt compound contained in this nbt (even if it's a
 		// stack) and checks for stacks in it.
-		for (Object keyO : nbt.func_150296_c()) {
+		for (Object keyO : nbt.getKeySet()) {
 			String key = (String) keyO;
 
 			if (nbt.getTag(key) instanceof NBTTagCompound) {
@@ -200,7 +187,7 @@ public class MappingRegistry {
 			if (nbt.getTag(key) instanceof NBTTagList) {
 				NBTTagList list = (NBTTagList) nbt.getTag(key);
 
-				if (list.func_150303_d() == Constants.NBT.TAG_COMPOUND) {
+				if (list.getTagType() == Constants.NBT.TAG_COMPOUND) {
 					for (int i = 0; i < list.tagCount(); ++i) {
 						scanAndTranslateStacksToRegistry(list.getCompoundTagAt(i));
 					}
@@ -218,7 +205,7 @@ public class MappingRegistry {
 
 		// Then, look at the nbt compound contained in this nbt (even if it's a
 		// stack) and checks for stacks in it.
-		for (Object keyO : new HashSet(nbt.func_150296_c())) {
+		for (Object keyO : new HashSet(nbt.getKeySet())) {
 			String key = (String) keyO;
 
 			if (nbt.getTag(key) instanceof NBTTagCompound) {
@@ -232,7 +219,7 @@ public class MappingRegistry {
 			if (nbt.getTag(key) instanceof NBTTagList) {
 				NBTTagList list = (NBTTagList) nbt.getTag(key);
 
-				if (list.func_150303_d() == Constants.NBT.TAG_COMPOUND) {
+				if (list.getTagType() == Constants.NBT.TAG_COMPOUND) {
 					for (int i = list.tagCount() - 1; i >= 0; --i) {
 						try {
 							scanAndTranslateStacksToWorld(list.getCompoundTagAt(i));
@@ -245,17 +232,24 @@ public class MappingRegistry {
 		}
 	}
 
-	public void write (NBTTagCompound nbt) {
+	public void write(NBTTagCompound nbt) {
 		NBTTagList blocksMapping = new NBTTagList();
 
 		for (Block b : idToBlock) {
 			NBTTagCompound sub = new NBTTagCompound();
 			if (b != null) {
-				String name = Block.blockRegistry.getNameForObject(b);
-				if (name == null || name.length() == 0) {
-					BCLog.logger.error("Block " + b.getUnlocalizedName() + " (" + b.getClass().getName() + ") has an empty registry name! This is a bug!");
+				Object obj = Block.blockRegistry.getNameForObject(b);
+				if (obj == null) {
+					BCLog.logger.error("Block " + b.getUnlocalizedName() + " (" + b.getClass().getName()
+						+ ") does not have a registry name! This is a bug!");
 				} else {
-					sub.setString("name", name);
+					String name = obj.toString();
+					if (name == null || name.length() == 0) {
+						BCLog.logger.error("Block " + b.getUnlocalizedName() + " (" + b.getClass().getName()
+							+ ") has an empty registry name! This is a bug!");
+					} else {
+						sub.setString("name", name);
+					}
 				}
 			}
 			blocksMapping.appendTag(sub);
@@ -268,11 +262,18 @@ public class MappingRegistry {
 		for (Item i : idToItem) {
 			NBTTagCompound sub = new NBTTagCompound();
 			if (i != null) {
-				String name = Item.itemRegistry.getNameForObject(i);
-				if (name == null || name.length() == 0) {
-					BCLog.logger.error("Item " + i.getUnlocalizedName() + " (" + i.getClass().getName() + ") has an empty registry name! This is a bug!");
+				Object obj = Item.itemRegistry.getNameForObject(i);
+				if (obj == null) {
+					BCLog.logger.error("Item " + i.getUnlocalizedName() + " (" + i.getClass().getName()
+						+ ") does not have a registry name! This is a bug!");
 				} else {
-					sub.setString("name", name);
+					String name = obj.toString();
+					if (name == null || name.length() == 0) {
+						BCLog.logger.error("Item " + i.getUnlocalizedName() + " (" + i.getClass().getName()
+							+ ") has an empty registry name! This is a bug!");
+					} else {
+						sub.setString("name", name);
+					}
 				}
 			}
 			itemsMapping.appendTag(sub);
@@ -290,21 +291,19 @@ public class MappingRegistry {
 
 		nbt.setTag("entitiesMapping", entitiesMapping);
 
-//		System.out.println("[W] idToItem size : " + idToItem.size());
-//		for (Item i : idToItem) {
-//			System.out.println("- " + (i != null ? i.toString() : "null"));
-//		}
+		// System.out.println("[W] idToItem size : " + idToItem.size());
+		// for (Item i : idToItem) {
+		// System.out.println("- " + (i != null ? i.toString() : "null"));
+		// }
 	}
 
 	private Object getMissingMappingFromFML(boolean isBlock, String name, int i) {
 		String modName = name.split(":")[0];
 		if (Loader.isModLoaded(modName)) {
 			try {
-				FMLMissingMappingsEvent.MissingMapping mapping = new FMLMissingMappingsEvent.MissingMapping(
-						(isBlock ? '\u0001' : '\u0020') + name, i
-				);
-				ListMultimap<String, FMLMissingMappingsEvent.MissingMapping> missingMapping
-						= ArrayListMultimap.create();
+				FMLMissingMappingsEvent.MissingMapping mapping =
+					new FMLMissingMappingsEvent.MissingMapping(isBlock ? GameRegistry.Type.BLOCK : GameRegistry.Type.ITEM, name, i);
+				ListMultimap<String, FMLMissingMappingsEvent.MissingMapping> missingMapping = ArrayListMultimap.create();
 				missingMapping.put(modName, mapping);
 				FMLMissingMappingsEvent event = new FMLMissingMappingsEvent(missingMapping);
 				for (ModContainer container : Loader.instance().getModList()) {
@@ -326,9 +325,8 @@ public class MappingRegistry {
 		return null;
 	}
 
-	public void read (NBTTagCompound nbt) {
-		NBTTagList blocksMapping = nbt.getTagList("blocksMapping",
-				Constants.NBT.TAG_COMPOUND);
+	public void read(NBTTagCompound nbt) {
+		NBTTagList blocksMapping = nbt.getTagList("blocksMapping", Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < blocksMapping.tagCount(); ++i) {
 			NBTTagCompound sub = blocksMapping.getCompoundTagAt(i);
@@ -347,11 +345,11 @@ public class MappingRegistry {
 					BCLog.logger.info("Remapped " + name + " to " + Block.blockRegistry.getNameForObject(b));
 				}
 			}
-			
+
 			if (b == null && Block.blockRegistry.containsKey(name)) {
 				b = (Block) Block.blockRegistry.getObject(name);
 			}
-			
+
 			if (b != null) {
 				registerBlock(b);
 			} else {
@@ -361,8 +359,7 @@ public class MappingRegistry {
 			}
 		}
 
-		NBTTagList itemsMapping = nbt.getTagList("itemsMapping",
-				Constants.NBT.TAG_COMPOUND);
+		NBTTagList itemsMapping = nbt.getTagList("itemsMapping", Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < itemsMapping.tagCount(); ++i) {
 			NBTTagCompound sub = itemsMapping.getCompoundTagAt(i);
@@ -386,7 +383,7 @@ public class MappingRegistry {
 			if (item == null && Item.itemRegistry.containsKey(name)) {
 				item = (Item) Item.itemRegistry.getObject(name);
 			}
-			
+
 			if (item != null) {
 				registerItem(item);
 			} else {
@@ -396,8 +393,7 @@ public class MappingRegistry {
 			}
 		}
 
-		NBTTagList entitiesMapping = nbt.getTagList("entitiesMapping",
-				Constants.NBT.TAG_COMPOUND);
+		NBTTagList entitiesMapping = nbt.getTagList("entitiesMapping", Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < entitiesMapping.tagCount(); ++i) {
 			NBTTagCompound sub = entitiesMapping.getCompoundTagAt(i);
@@ -419,9 +415,9 @@ public class MappingRegistry {
 			}
 		}
 
-//		System.out.println("[R] idToItem size : " + idToItem.size());
-//		for (Item i : idToItem) {
-//			System.out.println("- " + (i != null ? i.toString() : "null"));
-//		}
+		// System.out.println("[R] idToItem size : " + idToItem.size());
+		// for (Item i : idToItem) {
+		// System.out.println("- " + (i != null ? i.toString() : "null"));
+		// }
 	}
 }

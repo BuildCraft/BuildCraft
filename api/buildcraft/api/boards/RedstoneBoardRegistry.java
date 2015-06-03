@@ -39,7 +39,7 @@ public abstract class RedstoneBoardRegistry {
 
 	public abstract RedstoneBoardNBT<?> getRedstoneBoard(String id);
 
-	public abstract void registerIcons(IIconRegister par1IconRegister);
+//	public abstract void registerIcons(IIconRegister par1IconRegister);
 
 	public abstract Collection<RedstoneBoardNBT<?>> getAllBoardNBTs();
 

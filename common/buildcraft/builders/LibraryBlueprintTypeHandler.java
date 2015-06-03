@@ -60,7 +60,7 @@ public class LibraryBlueprintTypeHandler implements ILibraryTypeHandler {
 			return false;
 		}
 
-		for (Object o : nbt.func_150296_c()) {
+		for (Object o : nbt.getKeySet()) {
 			compound.setTag((String) o, nbt.getTag((String) o));
 		}
 		id.write(compound);

@@ -27,6 +27,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.EnumFacing;
@@ -51,7 +52,6 @@ import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
@@ -82,10 +82,10 @@ public class EntityRobot extends EntityRobotBase implements
 
 	public LaserData laser = new LaserData();
 	public DockingStation linkedDockingStation;
-	public BlockIndex linkedDockingStationIndex;
+	public BlockPos linkedDockingStationIndex;
 	public EnumFacing linkedDockingStationSide;
 
-	public BlockIndex currentDockingStationIndex;
+	public BlockPos currentDockingStationIndex;
 	public EnumFacing currentDockingStationSide;
 
 	public boolean isDocked = false;
@@ -539,13 +539,13 @@ public class EntityRobot extends EntityRobotBase implements
 
 		if (nbt.hasKey("linkedStation")) {
 			NBTTagCompound linkedStationNBT = nbt.getCompoundTag("linkedStation");
-			linkedDockingStationIndex = new BlockIndex(linkedStationNBT.getCompoundTag("index"));
+			linkedDockingStationIndex = new BlockPos(linkedStationNBT.getCompoundTag("index"));
 			linkedDockingStationSide = EnumFacing.values()[linkedStationNBT.getByte("side")];
 		}
 
 		if (nbt.hasKey("currentStation")) {
 			NBTTagCompound currentStationNBT = nbt.getCompoundTag("currentStation");
-			currentDockingStationIndex = new BlockIndex(currentStationNBT.getCompoundTag("index"));
+			currentDockingStationIndex = new BlockPos(currentStationNBT.getCompoundTag("index"));
 			currentDockingStationSide = EnumFacing.values()[currentStationNBT.getByte("side")];
 
 		}
@@ -1175,7 +1175,7 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	public ItemStack receiveItem(TileEntity tile, ItemStack stack) {
 		if (currentDockingStation != null
-				&& currentDockingStation.index().nextTo(new BlockIndex(tile))
+				&& currentDockingStation.index().nextTo(new BlockPos(tile))
 				&& mainAI != null) {
 
 			return mainAI.getActiveAI().receiveItem(stack);

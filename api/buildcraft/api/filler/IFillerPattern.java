@@ -11,5 +11,5 @@ package buildcraft.api.filler;
 import buildcraft.api.statements.IStatement;
 
 public interface IFillerPattern extends IStatement {
-	IIcon getBlockOverlay();
+//	Object getBlockOverlay();
 }

@@ -18,6 +18,7 @@ import java.util.TreeMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
@@ -27,7 +28,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.fluids.Tank;
@@ -38,9 +38,9 @@ import buildcraft.core.lib.utils.Utils;
 public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	public static final int[] REBUILD_DELAY = new int[8];
 	public static final int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 2;
-	private final TreeMap<Integer, Deque<BlockIndex>> pumpLayerQueues = new TreeMap<Integer, Deque<BlockIndex>>();
-	private final Set<BlockIndex> visitedBlocks = new HashSet<BlockIndex>();
-	private Deque<BlockIndex> fluidsFound = new LinkedList<BlockIndex>();
+	private final TreeMap<Integer, Deque<BlockPos>> pumpLayerQueues = new TreeMap<Integer, Deque<BlockPos>>();
+	private final Set<BlockPos> visitedBlocks = new HashSet<BlockPos>();
+	private Deque<BlockPos> fluidsFound = new LinkedList<BlockPos>();
 	private final Tank tank = new Tank("tank", MAX_LIQUID, this);
 	private int rebuildDelay;
 	private int tick = Utils.RANDOM.nextInt();
@@ -94,7 +94,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 					}
 					rebuildQueue();
 				}
-				BlockIndex index = getNextIndexToFill(true);
+				BlockPos index = getNextIndexToFill(true);
 
 				if (index != null && placeFluid(index.x, index.y, index.z, fluid)) {
 					tank.drain(FluidContainerRegistry.BUCKET_VOLUME, true);
@@ -129,19 +129,19 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		return false;
 	}
 
-	private BlockIndex getNextIndexToFill(boolean remove) {
+	private BlockPos getNextIndexToFill(boolean remove) {
 		if (pumpLayerQueues.isEmpty()) {
 			return null;
 		}
 
-		Deque<BlockIndex> bottomLayer = pumpLayerQueues.firstEntry().getValue();
+		Deque<BlockPos> bottomLayer = pumpLayerQueues.firstEntry().getValue();
 
 		if (bottomLayer != null) {
 			if (bottomLayer.isEmpty()) {
 				pumpLayerQueues.pollFirstEntry();
 			}
 			if (remove) {
-				BlockIndex index = bottomLayer.pollFirst();
+				BlockPos index = bottomLayer.pollFirst();
 				return index;
 			}
 			return bottomLayer.peekFirst();
@@ -150,10 +150,10 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		return null;
 	}
 
-	private Deque<BlockIndex> getLayerQueue(int layer) {
-		Deque<BlockIndex> pumpQueue = pumpLayerQueues.get(layer);
+	private Deque<BlockPos> getLayerQueue(int layer) {
+		Deque<BlockPos> pumpQueue = pumpLayerQueues.get(layer);
 		if (pumpQueue == null) {
-			pumpQueue = new LinkedList<BlockIndex>();
+			pumpQueue = new LinkedList<BlockPos>();
 			pumpLayerQueues.put(layer, pumpQueue);
 		}
 		return pumpQueue;
@@ -177,10 +177,10 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 			return;
 		}
 		while (!fluidsFound.isEmpty()) {
-			Deque<BlockIndex> fluidsToExpand = fluidsFound;
-			fluidsFound = new LinkedList<BlockIndex>();
+			Deque<BlockPos> fluidsToExpand = fluidsFound;
+			fluidsFound = new LinkedList<BlockPos>();
 
-			for (BlockIndex index : fluidsToExpand) {
+			for (BlockPos index : fluidsToExpand) {
 				queueAdjacent(index.x, index.y, index.z);
 			}
 		}
@@ -202,7 +202,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
         if (y < 0 || y > 255) {
             return;
         }
-		BlockIndex index = new BlockIndex(x, y, z);
+		BlockPos index = new BlockPos(x, y, z);
 		if (visitedBlocks.add(index)) {
 			if ((x - xCoord) * (x - xCoord) + (z - zCoord) * (z - zCoord) > 64 * 64) {
 				return;

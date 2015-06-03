@@ -11,9 +11,9 @@ package buildcraft.robotics.statements;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.items.IMapLocation;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
@@ -78,7 +78,7 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 
 		if (item != null && item.getItem() instanceof IMapLocation) {
 			IMapLocation map = (IMapLocation) item.getItem();
-			BlockIndex index = map.getPoint(item);
+			BlockPos index = map.getPoint(item);
 
 			if (index != null) {
 				EnumFacing side = map.getPointSide(item);

@@ -32,6 +32,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -45,7 +46,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.blocks.IColorRemovable;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.events.PipePlacedEvent;
 import buildcraft.api.items.IMapLocation;
 import buildcraft.api.tools.IToolWrench;
@@ -66,7 +66,7 @@ import buildcraft.transport.render.PipeRendererWorld;
 public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable {
 
 	public static Map<Item, Class<? extends Pipe>> pipes = new HashMap<Item, Class<? extends Pipe>>();
-	public static Map<BlockIndex, Pipe<?>> pipeRemoved = new HashMap<BlockIndex, Pipe<?>>();
+	public static Map<BlockPos, Pipe<?>> pipeRemoved = new HashMap<BlockPos, Pipe<?>>();
 
 	private static long lastRemovedDate = -1;
 
@@ -413,7 +413,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 			pipeRemoved.clear();
 		}
 
-		pipeRemoved.put(new BlockIndex(x, y, z), pipe);
+		pipeRemoved.put(new BlockPos(x, y, z), pipe);
 		world.removeTileEntity(x, y, z);
 		if (pipe != null) {
 			updateNeighbourSignalState(pipe);
@@ -437,7 +437,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		Pipe<?> pipe = getPipe(world, x, y, z);
 
 		if (pipe == null) {
-			pipe = pipeRemoved.get(new BlockIndex(x, y, z));
+			pipe = pipeRemoved.get(new BlockPos(x, y, z));
 		}
 		
 		if (pipe != null) {
@@ -463,7 +463,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		Pipe<?> pipe = getPipe(world, i, j, k);
 
 		if (pipe == null) {
-			pipe = pipeRemoved.get(new BlockIndex(i, j, k));
+			pipe = pipeRemoved.get(new BlockPos(i, j, k));
 		}
 
 		if (pipe != null) {

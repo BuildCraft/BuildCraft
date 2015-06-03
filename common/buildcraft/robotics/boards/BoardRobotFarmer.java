@@ -11,11 +11,11 @@ package buildcraft.robotics.boards;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IWorldProperty;
 import buildcraft.api.robots.AIRobot;
@@ -30,7 +30,7 @@ import buildcraft.robotics.ai.AIRobotUseToolOnBlock;
 
 public class BoardRobotFarmer extends RedstoneBoardRobot {
 
-	private BlockIndex blockFound;
+	private BlockPos blockFound;
 
 	public BoardRobotFarmer(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -109,7 +109,7 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
 		super.loadSelfFromNBT(nbt);
 
 		if (nbt.hasKey("blockFound")) {
-			blockFound = new BlockIndex(nbt.getCompoundTag("blockFound"));
+			blockFound = new BlockPos(nbt.getCompoundTag("blockFound"));
 		}
 	}
 

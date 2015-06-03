@@ -3,10 +3,11 @@ package buildcraft.core.lib.utils;
 import java.util.Iterator;
 import java.util.Random;
 
-import buildcraft.api.core.BlockIndex;
+import net.minecraft.util.BlockPos;
+
 import buildcraft.api.core.IZone;
 
-public class BlockScannerZoneRandom implements Iterable<BlockIndex> {
+public class BlockScannerZoneRandom implements Iterable<BlockPos> {
 
 	private Random rand;
 	private IZone zone;
@@ -14,7 +15,7 @@ public class BlockScannerZoneRandom implements Iterable<BlockIndex> {
 	private int y;
 	private int z;
 
-	class BlockIt implements Iterator<BlockIndex> {
+	class BlockIt implements Iterator<BlockPos> {
 
 		@Override
 		public boolean hasNext() {
@@ -22,9 +23,9 @@ public class BlockScannerZoneRandom implements Iterable<BlockIndex> {
 		}
 
 		@Override
-		public BlockIndex next() {
-			BlockIndex block = zone.getRandomBlockIndex(rand);
-			return new BlockIndex(block.x - x, block.y - y, block.z - z);
+		public BlockPos next() {
+			BlockPos block = zone.getRandomBlockPos(rand);
+			return new BlockPos(block.x - x, block.y - y, block.z - z);
 		}
 
 		@Override
@@ -41,7 +42,7 @@ public class BlockScannerZoneRandom implements Iterable<BlockIndex> {
 	}
 
 	@Override
-	public Iterator<BlockIndex> iterator() {
+	public Iterator<BlockPos> iterator() {
 		return new BlockIt();
 	}
 

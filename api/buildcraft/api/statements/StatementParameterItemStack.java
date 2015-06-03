@@ -14,10 +14,10 @@ public class StatementParameterItemStack implements IStatementParameter {
 	
 	protected ItemStack stack;
 
-	@Override
-	public IIcon getIcon() {
-		return null;
-	}
+//	@Override
+//	public IIcon getIcon() {
+//		return null;
+//	}
 
 	@Override
 	public ItemStack getItemStack() {
@@ -74,10 +74,10 @@ public class StatementParameterItemStack implements IStatementParameter {
 		return "buildcraft:stack";
 	}
 
-	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		
-	}
+//	@Override
+//	public void registerIcons(IIconRegister iconRegister) {
+//		
+//	}
 
 	@Override
 	public IStatementParameter rotateLeft() {

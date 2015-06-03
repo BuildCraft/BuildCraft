@@ -1,20 +1,17 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.api.robots;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidHandler;
 
-import buildcraft.api.core.BlockIndex;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.transport.IInjectable;
 
@@ -27,30 +24,21 @@ public abstract class DockingStation {
 
 	private boolean linkIsMain = false;
 
-	private BlockIndex index;
+	private BlockPos pos;
 
-	public DockingStation(BlockIndex iIndex, EnumFacing iSide) {
-		index = iIndex;
+	public DockingStation(BlockPos iIndex, EnumFacing iSide) {
+		pos = iIndex;
 		side = iSide;
 	}
 
-	public DockingStation() {
-	}
+	public DockingStation() {}
 
 	public boolean isMainStation() {
 		return linkIsMain;
 	}
 
-	public int x() {
-		return index.x;
-	}
-
-	public int y() {
-		return index.y;
-	}
-
-	public int z() {
-		return index.z;
+	public BlockPos getPos() {
+		return pos;
 	}
 
 	public EnumFacing side() {
@@ -61,8 +49,7 @@ public abstract class DockingStation {
 		if (robotTakingId == EntityRobotBase.NULL_ROBOT_ID) {
 			return null;
 		} else if (robotTaking == null) {
-			robotTaking = RobotManager.registryProvider.getRegistry(world).getLoadedRobot(
-					robotTakingId);
+			robotTaking = RobotManager.registryProvider.getRegistry(world).getLoadedRobot(robotTakingId);
 		}
 
 		return robotTaking;
@@ -116,10 +103,7 @@ public abstract class DockingStation {
 		}
 	}
 
-	/**
-	 * Same a release but doesn't clear the registry (presumably called from the
-	 * registry).
-	 */
+	/** Same a release but doesn't clear the registry (presumably called from the registry). */
 	public void unsafeRelease(EntityRobotBase robot) {
 		if (robotTaking == robot) {
 			linkIsMain = false;
@@ -129,16 +113,30 @@ public abstract class DockingStation {
 	}
 
 	public void writeToNBT(NBTTagCompound nbt) {
-		NBTTagCompound indexNBT = new NBTTagCompound();
-		index.writeTo(indexNBT);
-		nbt.setTag("index", indexNBT);
+		nbt.setIntArray("pos", new int[] { getPos().getX(), getPos().getY(), getPos().getZ() });
 		nbt.setByte("side", (byte) side.ordinal());
 		nbt.setBoolean("isMain", linkIsMain);
 		nbt.setLong("robotId", robotTakingId);
 	}
 
 	public void readFromNBT(NBTTagCompound nbt) {
-		index = new BlockIndex(nbt.getCompoundTag("index"));
+		if (nbt.hasKey("index")) {
+			// For compatibility with older versions of minecraft and buildcraft
+			NBTTagCompound indexNBT = nbt.getCompoundTag("index");
+			int x = indexNBT.getInteger("i");
+			int y = indexNBT.getInteger("j");
+			int z = indexNBT.getInteger("k");
+			pos = new BlockPos(x, y, z);
+		} else {
+			int[] array = nbt.getIntArray("pos");
+			if (array.length == 3) {
+				pos = new BlockPos(array[0], array[1], array[2]);
+			} else if (array.length != 0) {
+				BCLog.logger.warn("Found an integer array that wwas not the right length! (" + array + ")");
+			} else {
+				BCLog.logger.warn("Did not find any integer positions! This is a bug!");
+			}
+		}
 		side = EnumFacing.values()[nbt.getByte("side")];
 		linkIsMain = nbt.getBoolean("isMain");
 		robotTakingId = nbt.getLong("robotId");
@@ -152,14 +150,13 @@ public abstract class DockingStation {
 		return robotTakingId;
 	}
 
-	public BlockIndex index() {
-		return index;
+	public BlockPos index() {
+		return pos;
 	}
 
 	@Override
 	public String toString() {
-		return "{" + index.x + ", " + index.y + ", " + index.z + ", " + side + " :" + robotTakingId
-				+ "}";
+		return "{" + pos + ", " + side + " :" + robotTakingId + "}";
 	}
 
 	public boolean linkIsDocked() {

@@ -5,10 +5,10 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldServer;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.crops.CropManager;
 import buildcraft.api.robots.AIRobot;
@@ -17,14 +17,14 @@ import buildcraft.core.lib.utils.BlockUtils;
 
 public class AIRobotHarvest extends AIRobot {
 
-	private BlockIndex blockFound;
+	private BlockPos blockFound;
 	private int delay = 0;
 
 	public AIRobotHarvest(EntityRobotBase iRobot) {
 		super(iRobot);
 	}
 
-	public AIRobotHarvest(EntityRobotBase iRobot, BlockIndex iBlockFound) {
+	public AIRobotHarvest(EntityRobotBase iRobot, BlockPos iBlockFound) {
 		super(iRobot);
 		blockFound = iBlockFound;
 	}
@@ -75,7 +75,7 @@ public class AIRobotHarvest extends AIRobot {
 		super.loadSelfFromNBT(nbt);
 
 		if (nbt.hasKey("blockFound")) {
-			blockFound = new BlockIndex(nbt.getCompoundTag("blockFound"));
+			blockFound = new BlockPos(nbt.getCompoundTag("blockFound"));
 		}
 	}
 }

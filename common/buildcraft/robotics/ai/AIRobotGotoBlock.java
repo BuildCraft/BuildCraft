@@ -12,9 +12,9 @@ import java.util.LinkedList;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.IterableAlgorithmRunner;
 import buildcraft.core.lib.utils.PathFinding;
@@ -23,11 +23,11 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 
 	private PathFinding pathSearch;
 	private IterableAlgorithmRunner pathSearchJob;
-	private LinkedList<BlockIndex> path;
+	private LinkedList<BlockPos> path;
 	private double prevDistance = Double.MAX_VALUE;
 	private float finalX, finalY, finalZ;
 	private double maxDistance = 0;
-	private BlockIndex lastBlockInPath;
+	private BlockPos lastBlockInPath;
 
 	public AIRobotGotoBlock(EntityRobotBase iRobot) {
 		super(iRobot);
@@ -46,7 +46,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 		maxDistance = iMaxDistance;
 	}
 
-	public AIRobotGotoBlock(EntityRobotBase robot, LinkedList<BlockIndex> iPath) {
+	public AIRobotGotoBlock(EntityRobotBase robot, LinkedList<BlockPos> iPath) {
 		this(robot);
 		path = iPath;
 		finalX = path.getLast().x;
@@ -63,8 +63,8 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 	@Override
 	public void update() {
 		if (path == null && pathSearch == null) {
-			pathSearch = new PathFinding(robot.worldObj, new BlockIndex((int) Math.floor(robot.posX),
-					(int) Math.floor(robot.posY), (int) Math.floor(robot.posZ)), new BlockIndex(
+			pathSearch = new PathFinding(robot.worldObj, new BlockPos((int) Math.floor(robot.posX),
+					(int) Math.floor(robot.posY), (int) Math.floor(robot.posZ)), new BlockPos(
 					(int) Math.floor(finalX), (int) Math.floor(finalY), (int) Math.floor(finalZ)), maxDistance);
 
 			pathSearchJob = new IterableAlgorithmRunner(pathSearch, 100);
@@ -113,7 +113,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 
 	private void setNextInPath() {
 		if (path.size() > 0) {
-			BlockIndex next = path.getFirst();
+			BlockPos next = path.getFirst();
 			setDestination(robot, next.x + 0.5F, next.y + 0.5F, next.z + 0.5F);
 			prevDistance = Double.MAX_VALUE;
 			robot.aimItemAt(next.x, next.y, next.z);
@@ -147,7 +147,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 		if (path != null) {
 			NBTTagList pathList = new NBTTagList();
 
-			for (BlockIndex i : path) {
+			for (BlockPos i : path) {
 				NBTTagCompound subNBT = new NBTTagCompound();
 				i.writeTo(subNBT);
 				pathList.appendTag(subNBT);
@@ -169,10 +169,10 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 		if (nbt.hasKey("path")) {
 			NBTTagList pathList = nbt.getTagList("path", Constants.NBT.TAG_COMPOUND);
 
-			path = new LinkedList<BlockIndex>();
+			path = new LinkedList<BlockPos>();
 
 			for (int i = 0; i < pathList.tagCount(); ++i) {
-				path.add(new BlockIndex(pathList.getCompoundTagAt(i)));
+				path.add(new BlockPos(pathList.getCompoundTagAt(i)));
 			}
 
 			setNextInPath();

@@ -12,11 +12,11 @@ import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.ForgeHooks;
 
 import buildcraft.api.blueprints.BuilderAPI;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.BlockUtils;
@@ -24,7 +24,7 @@ import buildcraft.core.proxy.CoreProxy;
 
 public class AIRobotBreak extends AIRobot {
 
-	private BlockIndex blockToBreak;
+	private BlockPos blockToBreak;
 	private float blockDamage = 0;
 
 	private Block block;
@@ -36,7 +36,7 @@ public class AIRobotBreak extends AIRobot {
 		super(iRobot);
 	}
 
-	public AIRobotBreak(EntityRobotBase iRobot, BlockIndex iBlockToBreak) {
+	public AIRobotBreak(EntityRobotBase iRobot, BlockPos iBlockToBreak) {
 		this(iRobot);
 
 		blockToBreak = iBlockToBreak;
@@ -154,7 +154,7 @@ public class AIRobotBreak extends AIRobot {
 		super.loadSelfFromNBT(nbt);
 
 		if (nbt.hasKey("blockToBreak")) {
-			blockToBreak = new BlockIndex(nbt.getCompoundTag("blockToBreak"));
+			blockToBreak = new BlockPos(nbt.getCompoundTag("blockToBreak"));
 		}
 	}
 }

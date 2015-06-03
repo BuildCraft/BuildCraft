@@ -20,11 +20,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
 import buildcraft.builders.blueprints.RecursiveBlueprintReader;
@@ -52,7 +52,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 	public LinkedList<LaserData> subLasers = new LinkedList<LaserData>();
 
-	public ArrayList<BlockIndex> subBlueprints = new ArrayList<BlockIndex>();
+	public ArrayList<BlockPos> subBlueprints = new ArrayList<BlockPos>();
 
 	private SimpleInventory inv = new SimpleInventory(2, "Architect", 1);
 
@@ -168,7 +168,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		NBTTagList subBptList = nbt.getTagList("subBlueprints", Constants.NBT.TAG_COMPOUND);
 
 		for (int i = 0; i < subBptList.tagCount(); ++i) {
-			BlockIndex index = new BlockIndex(subBptList.getCompoundTagAt(i));
+			BlockPos index = new BlockPos(subBptList.getCompoundTagAt(i));
 
 			addSubBlueprint(index);
 		}
@@ -195,7 +195,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 		NBTTagList subBptList = new NBTTagList();
 
-		for (BlockIndex b : subBlueprints) {
+		for (BlockPos b : subBlueprints) {
 			NBTTagCompound subBpt = new NBTTagCompound();
 			b.writeTo(subBpt);
 			subBptList.appendTag(subBpt);
@@ -325,12 +325,12 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	}
 
 	public void addSubBlueprint(TileEntity sub) {
-		addSubBlueprint(new BlockIndex(sub));
+		addSubBlueprint(new BlockPos(sub));
 
 		sendNetworkUpdate();
 	}
 
-	private void addSubBlueprint(BlockIndex index) {
+	private void addSubBlueprint(BlockPos index) {
 		subBlueprints.add(index);
 
 		LaserData laser = new LaserData(new Position(index), new Position(this));
