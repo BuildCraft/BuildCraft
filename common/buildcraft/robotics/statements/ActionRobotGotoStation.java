@@ -10,9 +10,8 @@ package buildcraft.robotics.statements;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.items.IMapLocation;
@@ -82,7 +81,7 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 			BlockIndex index = map.getPoint(item);
 
 			if (index != null) {
-				ForgeDirection side = map.getPointSide(item);
+				EnumFacing side = map.getPointSide(item);
 				DockingStation paramStation = registry.getStation(index.x, index.y, index.z, side);
 
 				if (paramStation != null) {

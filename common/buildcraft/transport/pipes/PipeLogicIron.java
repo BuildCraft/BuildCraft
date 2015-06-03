@@ -12,7 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.lib.TileBuffer;
@@ -41,14 +41,14 @@ public abstract class PipeLogicIron {
 		int meta = pipe.container.getBlockMetadata();
 
 		for (int i = meta + 1; i <= meta + 6; ++i) {
-			ForgeDirection facing = ForgeDirection.getOrientation(i % 6);
+			EnumFacing facing = EnumFacing.getOrientation(i % 6);
 			if (setFacing(facing)) {
 				return;
 			}
 		}
 	}
 
-	private boolean isValidFacing(ForgeDirection side) {
+	private boolean isValidFacing(EnumFacing side) {
 		if (!pipe.container.isPipeConnected(side)) {
 			return false;
 		}
@@ -80,7 +80,7 @@ public abstract class PipeLogicIron {
 		switchPosition();
 	}
 
-	public boolean setFacing(ForgeDirection facing) {
+	public boolean setFacing(EnumFacing facing) {
 		if (facing.ordinal() != pipe.container.getBlockMetadata() && isValidFacing(facing)) {
 			pipe.container.getWorldObj().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, facing.ordinal(), 3);
 			pipe.container.scheduleRenderUpdate();
@@ -102,11 +102,11 @@ public abstract class PipeLogicIron {
 		return false;
 	}
 
-	public ForgeDirection getOutputDirection() {
-		return ForgeDirection.getOrientation(pipe.container.getBlockMetadata());
+	public EnumFacing getOutputDirection() {
+		return EnumFacing.getOrientation(pipe.container.getBlockMetadata());
 	}
 
-	public boolean outputOpen(ForgeDirection to) {
+	public boolean outputOpen(EnumFacing to) {
 		return to.ordinal() == pipe.container.getBlockMetadata();
 	}
 }

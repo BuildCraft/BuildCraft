@@ -8,7 +8,7 @@
  */
 package buildcraft.transport;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public interface IPipeConnectionForced {
 
@@ -18,5 +18,5 @@ public interface IPipeConnectionForced {
 	 * @param with
 	 * @return TRUE to block an override. FALSE to allow overrides.
 	*/
-	boolean ignoreConnectionOverrides(ForgeDirection with);
+	boolean ignoreConnectionOverrides(EnumFacing with);
 }

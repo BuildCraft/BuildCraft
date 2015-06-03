@@ -17,8 +17,8 @@ import net.minecraft.entity.item.EntityMinecartContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
@@ -37,7 +37,7 @@ public class StripesHandlerMinecartDestroy implements IStripesHandler {
 
 	@Override
 	public boolean handle(World world, int x, int y, int z,
-			ForgeDirection direction, ItemStack stack, EntityPlayer player,
+			EnumFacing direction, ItemStack stack, EntityPlayer player,
 			IStripesActivator activator) {
 		AxisAlignedBB box = AxisAlignedBB.getBoundingBox(x, y, z, x + 1, y + 1,	z + 1);
 		List entities = world.getEntitiesWithinAABBExcludingEntity(null, box);

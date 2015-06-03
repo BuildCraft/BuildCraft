@@ -8,7 +8,7 @@
  */
 package buildcraft.robotics.ai;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
@@ -47,7 +47,7 @@ public class AIRobotUnloadFluids extends AIRobot {
 		}
 
 		if (!ActionRobotFilter.canInteractWithFluid(station,
-				new SimpleFluidFilter(robot.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid),
+				new SimpleFluidFilter(robot.getTankInfo(EnumFacing.UNKNOWN)[0].fluid),
 				ActionStationAcceptFluids.class)) {
 			return 0;
 		}
@@ -57,7 +57,7 @@ public class AIRobotUnloadFluids extends AIRobot {
 			return 0;
 		}
 
-		FluidStack drainable = robot.drain(ForgeDirection.UNKNOWN,
+		FluidStack drainable = robot.drain(EnumFacing.UNKNOWN,
 				FluidContainerRegistry.BUCKET_VOLUME, false);
 		if (drainable == null) {
 			return 0;
@@ -68,7 +68,7 @@ public class AIRobotUnloadFluids extends AIRobot {
 
 		if (filled > 0 && doUnload) {
 			drainable.amount = filled;
-			robot.drain(ForgeDirection.UNKNOWN, drainable, true);
+			robot.drain(EnumFacing.UNKNOWN, drainable, true);
 		}
 		return filled;
 	}

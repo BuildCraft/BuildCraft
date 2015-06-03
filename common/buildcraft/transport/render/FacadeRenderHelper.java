@@ -9,10 +9,8 @@
 package buildcraft.transport.render;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.render.ITextureStates;
@@ -84,7 +82,7 @@ public final class FacadeRenderHelper {
 		zOffsets[5] = 0;
 	}
 
-	private static void setRenderBounds(RenderBlocks renderblocks, float[][] rotated, ForgeDirection side) {
+	private static void setRenderBounds(RenderBlocks renderblocks, float[][] rotated, EnumFacing side) {
 		renderblocks.setRenderBounds(
 				rotated[0][0] + xOffsets[side.ordinal()],
 				rotated[1][0] + yOffsets[side.ordinal()],
@@ -94,7 +92,7 @@ public final class FacadeRenderHelper {
 				rotated[2][1] - zOffsets[side.ordinal()]);
 	}
 
-	public static void pipeFacadeRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, IPipeTile tile, int x, int y, int z, ForgeDirection direction, IFacadePluggable pluggable) {
+	public static void pipeFacadeRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, IPipeTile tile, int x, int y, int z, EnumFacing direction, IFacadePluggable pluggable) {
 		ITextureStates textureManager = blockStateMachine;
 		IIcon[] textures = ((TextureStateManager) textureManager.getTextureState()).popArray();
 
@@ -107,7 +105,7 @@ public final class FacadeRenderHelper {
 			if (renderBlock.canRenderInPass(PipeRendererWorld.renderPass)) {
 				int renderMeta = pluggable.getCurrentMetadata();
 
-				for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+				for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
 					textures[side.ordinal()] = renderBlock.getIcon(
 							facadeBlockAccess, tile.x(), tile.y(), tile.z(), side.ordinal()
 					);

@@ -1,17 +1,17 @@
 package buildcraft.robotics;
 
-import java.util.List;
-
 import io.netty.buffer.ByteBuf;
 
-import net.minecraft.client.renderer.RenderBlocks;
+import java.util.List;
+
+import cofh.api.energy.IEnergyReceiver;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
-import cofh.api.energy.IEnergyReceiver;
 import buildcraft.BuildCraftRobotics;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.render.ITextureStates;
@@ -34,7 +34,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 		private float zFightOffset = 1 / 4096.0F;
 
 		@Override
-		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, ForgeDirection side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
+		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, EnumFacing side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
 			if (renderPass != 0) {
 				return;
 			}
@@ -132,7 +132,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 	}
 
 	@Override
-	public boolean isBlocking(IPipeTile pipe, ForgeDirection direction) {
+	public boolean isBlocking(IPipeTile pipe, EnumFacing direction) {
 		return true;
 	}
 
@@ -147,7 +147,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 	}
 
 	@Override
-	public void validate(IPipeTile pipe, ForgeDirection direction) {
+	public void validate(IPipeTile pipe, EnumFacing direction) {
 		TileGenericPipe gPipe = (TileGenericPipe) pipe;
 		if (!isValid && !gPipe.getWorld().isRemote) {
 			station = (DockingStationPipe)
@@ -167,7 +167,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox(ForgeDirection side) {
+	public AxisAlignedBB getBoundingBox(EnumFacing side) {
 		float[][] bounds = new float[3][2];
 		// X START - END
 		bounds[0][0] = 0.25F;
@@ -215,12 +215,12 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 	}
 
 	@Override
-	public PipePluggable createPipePluggable(IPipe pipe, ForgeDirection side, ItemStack stack) {
+	public PipePluggable createPipePluggable(IPipe pipe, EnumFacing side, ItemStack stack) {
 		return new RobotStationPluggable();
 	}
 
 	@Override
-	public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
+	public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
 		if (station != null && station.robotTaking() != null && station.robotTaking().getBattery() != null
 				&& station.robotTaking().getDockingStation() == station) {
 			return ((EntityRobot) station.robotTaking()).receiveEnergy(maxReceive, simulate);
@@ -229,29 +229,29 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 	}
 
 	@Override
-	public int getEnergyStored(ForgeDirection from) {
+	public int getEnergyStored(EnumFacing from) {
 		return 0;
 	}
 
 	@Override
-	public int getMaxEnergyStored(ForgeDirection from) {
+	public int getMaxEnergyStored(EnumFacing from) {
 		return 0;
 	}
 
 	@Override
-	public boolean canConnectEnergy(ForgeDirection from) {
+	public boolean canConnectEnergy(EnumFacing from) {
 		return true;
 	}
 
 	@Override
-	public void getDebugInfo(List<String> info, ForgeDirection side, ItemStack debugger, EntityPlayer player) {
+	public void getDebugInfo(List<String> info, EnumFacing side, ItemStack debugger, EntityPlayer player) {
 		if (station == null) {
 			info.add("RobotStationPluggable: No station found!");
 		} else {
 			refreshRenderState();
 			info.add("Docking Station (side " + side.name() + ", " + renderState.name() + ")");
 			if (station.robotTaking() != null && station.robotTaking() instanceof IDebuggable) {
-				((IDebuggable) station.robotTaking()).getDebugInfo(info, ForgeDirection.UNKNOWN, debugger, player);
+				((IDebuggable) station.robotTaking()).getDebugInfo(info, EnumFacing.UNKNOWN, debugger, player);
 			}
 		}
 	}

@@ -10,8 +10,8 @@ package buildcraft.factory;
 
 import io.netty.buffer.ByteBuf;
 
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftFactory;
@@ -157,7 +157,7 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 
 	@Override
 	public ConnectOverride overridePipeConnection(IPipeTile.PipeType type,
-			ForgeDirection with) {
+			EnumFacing with) {
 		if (with.ordinal() == worldObj.getBlockMetadata(xCoord, yCoord, zCoord)) {
 			return ConnectOverride.DISCONNECT;
 		}

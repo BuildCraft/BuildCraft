@@ -11,8 +11,8 @@ package buildcraft.transport.gates;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.GateExpansions;
@@ -30,11 +30,11 @@ public final class GateFactory {
 	private GateFactory() {
 	}
 
-	public static Gate makeGate(Pipe<?> pipe, GateMaterial material, GateLogic logic, ForgeDirection direction) {
+	public static Gate makeGate(Pipe<?> pipe, GateMaterial material, GateLogic logic, EnumFacing direction) {
 		return new Gate(pipe, material, logic, direction);
 	}
 
-	public static Gate makeGate(Pipe<?> pipe, ItemStack stack, ForgeDirection direction) {
+	public static Gate makeGate(Pipe<?> pipe, ItemStack stack, EnumFacing direction) {
 		if (stack == null || stack.stackSize <= 0 || !(stack.getItem() instanceof ItemGate)) {
 			return null;
 		}
@@ -51,7 +51,7 @@ public final class GateFactory {
 	public static Gate makeGate(Pipe<?> pipe, NBTTagCompound nbt) {
 		GateMaterial material = GateMaterial.REDSTONE;
 		GateLogic logic = GateLogic.AND;
-		ForgeDirection direction = ForgeDirection.UNKNOWN;
+		EnumFacing direction = EnumFacing.UNKNOWN;
 
 		// Legacy Support
 		if (nbt.hasKey("Kind")) {
@@ -94,7 +94,7 @@ public final class GateFactory {
 			}
 		}
 		if (nbt.hasKey("direction")) {
-			direction = ForgeDirection.getOrientation(nbt.getInteger("direction"));
+			direction = EnumFacing.getOrientation(nbt.getInteger("direction"));
 		}
 
 		Gate gate = makeGate(pipe, material, logic, direction);

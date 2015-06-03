@@ -17,7 +17,7 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.ISerializable;
@@ -95,7 +95,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
 	}
 
 	@Override
-	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, ForgeDirection from) {
+	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, EnumFacing from) {
 		if (inventory == null) {
 			return null;
 		}
@@ -110,7 +110,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
 		return checkExtractFiltered(sidedInventory, doRemove, from);
 	}
 
-	private ItemStack[] checkExtractFiltered(ISidedInventory inventory, boolean doRemove, ForgeDirection from) {
+	private ItemStack[] checkExtractFiltered(ISidedInventory inventory, boolean doRemove, EnumFacing from) {
 		for (int k : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
 			ItemStack stack = inventory.getStackInSlot(k);
 
@@ -145,7 +145,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
 		return null;
 	}
 
-	private ItemStack[] checkExtractRoundRobin(ISidedInventory inventory, boolean doRemove, ForgeDirection from) {
+	private ItemStack[] checkExtractRoundRobin(ISidedInventory inventory, boolean doRemove, EnumFacing from) {
 		for (int i : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
 			ItemStack stack = inventory.getStackInSlot(i);
 

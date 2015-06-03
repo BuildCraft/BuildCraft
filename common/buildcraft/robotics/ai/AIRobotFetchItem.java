@@ -10,7 +10,7 @@ package buildcraft.robotics.ai;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
@@ -58,7 +58,7 @@ public class AIRobotFetchItem extends AIRobot {
 				TransactorSimple inventoryInsert = new TransactorSimple(robot);
 
 				target.getEntityItem().stackSize -= inventoryInsert.inject(
-						target.getEntityItem(), ForgeDirection.UNKNOWN,
+						target.getEntityItem(), EnumFacing.UNKNOWN,
 						true);
 
 				if (target.getEntityItem().stackSize <= 0) {
@@ -122,7 +122,7 @@ public class AIRobotFetchItem extends AIRobot {
 				} else {
 					EntityItem item = (EntityItem) e;
 
-					if (inventoryInsert.inject(item.getEntityItem(), ForgeDirection.UNKNOWN, false) > 0) {
+					if (inventoryInsert.inject(item.getEntityItem(), EnumFacing.UNKNOWN, false) > 0) {
 						if (target == null) {
 							previousDistance = sqrDistance;
 							target = item;

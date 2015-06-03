@@ -8,10 +8,10 @@
  */
 package buildcraft.transport;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 
 public interface IPipeTransportFluidsHook {
 
-	int fill(ForgeDirection from, FluidStack resource, boolean doFill);
+	int fill(EnumFacing from, FluidStack resource, boolean doFill);
 }

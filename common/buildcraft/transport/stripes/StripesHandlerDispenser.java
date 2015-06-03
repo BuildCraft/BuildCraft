@@ -10,8 +10,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IStripesActivator;
@@ -23,9 +23,9 @@ public class StripesHandlerDispenser implements IStripesHandler {
 	public class Source implements IBlockSource {
 		private final World world;
 		private final int x, y, z;
-		private final ForgeDirection side;
+		private final EnumFacing side;
 
-		public Source(World world, int x, int y, int z, ForgeDirection side) {
+		public Source(World world, int x, int y, int z, EnumFacing side) {
 			this.world = world;
 			this.x = x;
 			this.y = y;
@@ -101,7 +101,7 @@ public class StripesHandlerDispenser implements IStripesHandler {
 	}
 
 	@Override
-	public boolean handle(World world, int x, int y, int z, ForgeDirection direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
+	public boolean handle(World world, int x, int y, int z, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
 		Position origin = new Position(x, y, z, direction);
 		origin.moveBackwards(1.0D);
 

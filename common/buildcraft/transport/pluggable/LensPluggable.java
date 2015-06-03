@@ -2,11 +2,10 @@ package buildcraft.transport.pluggable;
 
 import io.netty.buffer.ByteBuf;
 
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
@@ -26,7 +25,7 @@ public class LensPluggable extends PipePluggable {
 	public int color;
 	public boolean isFilter;
 	protected IPipeTile container;
-	private ForgeDirection side;
+	private EnumFacing side;
 
 	private static final class LensPluggableRenderer implements IPipePluggableRenderer {
 		public static final IPipePluggableRenderer INSTANCE = new LensPluggableRenderer();
@@ -37,7 +36,7 @@ public class LensPluggable extends PipePluggable {
 		}
 
 		@Override
-		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, ForgeDirection side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
+		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, EnumFacing side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
 			float[][] zeroState = new float[3][2];
 
 			// X START - END
@@ -89,7 +88,7 @@ public class LensPluggable extends PipePluggable {
 	}
 
 	@Override
-	public void validate(IPipeTile pipe, ForgeDirection direction) {
+	public void validate(IPipeTile pipe, EnumFacing direction) {
 		this.container = pipe;
 		this.side = direction;
 	}
@@ -97,7 +96,7 @@ public class LensPluggable extends PipePluggable {
 	@Override
 	public void invalidate() {
 		this.container = null;
-		this.side = ForgeDirection.UNKNOWN;
+		this.side = EnumFacing.UNKNOWN;
 	}
 
 	@Override
@@ -106,12 +105,12 @@ public class LensPluggable extends PipePluggable {
 	}
 
 	@Override
-	public boolean isBlocking(IPipeTile pipe, ForgeDirection direction) {
+	public boolean isBlocking(IPipeTile pipe, EnumFacing direction) {
 		return false;
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox(ForgeDirection side) {
+	public AxisAlignedBB getBoundingBox(EnumFacing side) {
 		float[][] bounds = new float[3][2];
 		// X START - END
 		bounds[0][0] = 0.25F - 0.0625F;

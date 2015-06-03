@@ -13,9 +13,9 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.items.IMapLocation;
@@ -32,7 +32,7 @@ public class BlockMarker extends BlockBuildCraft {
 		setCreativeTab(BCCreativeTab.get("main"));
 	}
 
-	public static boolean canPlaceTorch(World world, int x, int y, int z, ForgeDirection side) {
+	public static boolean canPlaceTorch(World world, int x, int y, int z, EnumFacing side) {
 		Block block = world.getBlock(x, y, z);
 		return block != null && (block.renderAsNormalBlock() && block.isOpaqueCube() || block.isSideSolid(world, x, y, z, side));
 	}
@@ -41,7 +41,7 @@ public class BlockMarker extends BlockBuildCraft {
 		double w = 0.15;
 		double h = 0.65;
 
-		ForgeDirection dir = ForgeDirection.getOrientation(meta);
+		EnumFacing dir = EnumFacing.getOrientation(meta);
 		switch (dir) {
 			case DOWN:
 				return AxisAlignedBB.getBoundingBox(0.5F - w, 1F - h, 0.5F - w, 0.5F + w, 1F, 0.5F + w);
@@ -132,7 +132,7 @@ public class BlockMarker extends BlockBuildCraft {
 
 	@Override
 	public boolean canPlaceBlockOnSide(World world, int x, int y, int z, int side) {
-		ForgeDirection dir = ForgeDirection.getOrientation(side);
+		EnumFacing dir = EnumFacing.getOrientation(side);
 		return canPlaceTorch(world, x - dir.offsetX, y - dir.offsetY, z - dir.offsetZ, dir);
 	}
 

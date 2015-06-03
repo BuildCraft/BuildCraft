@@ -1,9 +1,10 @@
 package buildcraft.silicon;
 
+import cofh.api.energy.IEnergyContainerItem;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import cofh.api.energy.IEnergyContainerItem;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.lib.utils.StringUtils;
 

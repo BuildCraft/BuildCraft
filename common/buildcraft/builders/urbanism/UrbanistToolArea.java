@@ -11,7 +11,6 @@ package buildcraft.builders.urbanism;
 import org.lwjgl.input.Mouse;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 
 class UrbanistToolArea extends UrbanistTool {

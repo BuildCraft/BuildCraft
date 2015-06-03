@@ -23,7 +23,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.particle.EntityDiggingFX;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,7 +32,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
@@ -42,7 +41,6 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.blocks.IColorRemovable;
@@ -72,7 +70,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
 	private static long lastRemovedDate = -1;
 
-	private static final ForgeDirection[] DIR_VALUES = ForgeDirection.values();
+	private static final EnumFacing[] DIR_VALUES = EnumFacing.values();
 
 	public static enum Part {
 		Pipe,
@@ -83,9 +81,9 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		public final Part hitPart;
 		public final MovingObjectPosition movingObjectPosition;
 		public final AxisAlignedBB boundingBox;
-		public final ForgeDirection sideHit;
+		public final EnumFacing sideHit;
 
-		RaytraceResult(Part hitPart, MovingObjectPosition movingObjectPosition, AxisAlignedBB boundingBox, ForgeDirection side) {
+		RaytraceResult(Part hitPart, MovingObjectPosition movingObjectPosition, AxisAlignedBB boundingBox, EnumFacing side) {
 			this.hitPart = hitPart;
 			this.movingObjectPosition = movingObjectPosition;
 			this.boundingBox = boundingBox;
@@ -142,7 +140,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, EnumFacing side) {
 		TileEntity tile = world.getTileEntity(x, y, z);
 
 		if (tile instanceof ISolidSideTile) {
@@ -167,64 +165,64 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		if (tile1 instanceof TileGenericPipe) {
 			TileGenericPipe tileG = (TileGenericPipe) tile1;
 
-			if (tileG.isPipeConnected(ForgeDirection.WEST)) {
+			if (tileG.isPipeConnected(EnumFacing.WEST)) {
 				setBlockBounds(0.0F, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
-			if (tileG.isPipeConnected(ForgeDirection.EAST)) {
+			if (tileG.isPipeConnected(EnumFacing.EAST)) {
 				setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, 1.0F, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
-			if (tileG.isPipeConnected(ForgeDirection.DOWN)) {
+			if (tileG.isPipeConnected(EnumFacing.DOWN)) {
 				setBlockBounds(CoreConstants.PIPE_MIN_POS, 0.0F, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
-			if (tileG.isPipeConnected(ForgeDirection.UP)) {
+			if (tileG.isPipeConnected(EnumFacing.UP)) {
 				setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, 1.0F, CoreConstants.PIPE_MAX_POS);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
-			if (tileG.isPipeConnected(ForgeDirection.NORTH)) {
+			if (tileG.isPipeConnected(EnumFacing.NORTH)) {
 				setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, 0.0F, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
-			if (tileG.isPipeConnected(ForgeDirection.SOUTH)) {
+			if (tileG.isPipeConnected(EnumFacing.SOUTH)) {
 				setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, 1.0F);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
 			float facadeThickness = TransportConstants.FACADE_THICKNESS;
 
-			if (tileG.hasEnabledFacade(ForgeDirection.EAST)) {
+			if (tileG.hasEnabledFacade(EnumFacing.EAST)) {
 				setBlockBounds(1 - facadeThickness, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
-			if (tileG.hasEnabledFacade(ForgeDirection.WEST)) {
+			if (tileG.hasEnabledFacade(EnumFacing.WEST)) {
 				setBlockBounds(0.0F, 0.0F, 0.0F, facadeThickness, 1.0F, 1.0F);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
-			if (tileG.hasEnabledFacade(ForgeDirection.UP)) {
+			if (tileG.hasEnabledFacade(EnumFacing.UP)) {
 				setBlockBounds(0.0F, 1 - facadeThickness, 0.0F, 1.0F, 1.0F, 1.0F);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
-			if (tileG.hasEnabledFacade(ForgeDirection.DOWN)) {
+			if (tileG.hasEnabledFacade(EnumFacing.DOWN)) {
 				setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, facadeThickness, 1.0F);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
-			if (tileG.hasEnabledFacade(ForgeDirection.SOUTH)) {
+			if (tileG.hasEnabledFacade(EnumFacing.SOUTH)) {
 				setBlockBounds(0.0F, 0.0F, 1 - facadeThickness, 1.0F, 1.0F, 1.0F);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
 
-			if (tileG.hasEnabledFacade(ForgeDirection.NORTH)) {
+			if (tileG.hasEnabledFacade(EnumFacing.NORTH)) {
 				setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, facadeThickness);
 				super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
 			}
@@ -301,13 +299,13 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		 */
 		MovingObjectPosition[] hits = new MovingObjectPosition[31];
 		AxisAlignedBB[] boxes = new AxisAlignedBB[31];
-		ForgeDirection[] sideHit = new ForgeDirection[31];
-		Arrays.fill(sideHit, ForgeDirection.UNKNOWN);
+		EnumFacing[] sideHit = new EnumFacing[31];
+		Arrays.fill(sideHit, EnumFacing.UNKNOWN);
 
 		// pipe
 
-		for (ForgeDirection side : DIR_VALUES) {
-			if (side == ForgeDirection.UNKNOWN || tileG.isPipeConnected(side)) {
+		for (EnumFacing side : DIR_VALUES) {
+			if (side == EnumFacing.UNKNOWN || tileG.isPipeConnected(side)) {
 				AxisAlignedBB bb = getPipeBoundingBox(side);
 				setBlockBounds(bb);
 				boxes[side.ordinal()] = bb;
@@ -318,7 +316,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
 		// pluggables
 
-		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
 			if (tileG.getPipePluggable(side) != null) {
 				AxisAlignedBB bb = tileG.getPipePluggable(side).getBoundingBox(side);
 				setBlockBounds(bb);
@@ -372,11 +370,11 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		setBlockBounds((float) bb.minX, (float) bb.minY, (float) bb.minZ, (float) bb.maxX, (float) bb.maxY, (float) bb.maxZ);
 	}
 
-	private AxisAlignedBB getPipeBoundingBox(ForgeDirection side) {
+	private AxisAlignedBB getPipeBoundingBox(EnumFacing side) {
 		float min = CoreConstants.PIPE_MIN_POS;
 		float max = CoreConstants.PIPE_MAX_POS;
 
-		if (side == ForgeDirection.UNKNOWN) {
+		if (side == EnumFacing.UNKNOWN) {
 			return AxisAlignedBB.getBoundingBox(min, min, min, max, max, max);
 		}
 
@@ -520,8 +518,8 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 			pipe.container.scheduleNeighborChange();
 			pipe.container.redstoneInput = 0;
 			
-			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
-				ForgeDirection d = ForgeDirection.getOrientation(i);
+			for (int i = 0; i < EnumFacing.VALID_DIRECTIONS.length; i++) {
+				EnumFacing d = EnumFacing.getOrientation(i);
 				pipe.container.redstoneInputSide[i] = getRedstoneInputToPipe(world, x, y, z, d);
 				if (pipe.container.redstoneInput < pipe.container.redstoneInputSide[i]) {
 					pipe.container.redstoneInput = pipe.container.redstoneInputSide[i];
@@ -531,12 +529,12 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 	}
 	
 	private int getRedstoneInputToPipe(World world, int x, int y, int z,
-			ForgeDirection d) {
+			EnumFacing d) {
 		int i = d.ordinal();
 		int input = world.isBlockProvidingPowerTo(x + d.offsetX, y + d.offsetY, z + d.offsetZ, i);
 		if (input == 0) {
 			input = world.getIndirectPowerLevelTo(x + d.offsetX, y + d.offsetY, z + d.offsetZ, i);
-			if (input == 0 && d != ForgeDirection.DOWN) {
+			if (input == 0 && d != EnumFacing.DOWN) {
 				Block block = world.getBlock(x + d.offsetX, y + d.offsetY, z + d.offsetZ);
 				if (block instanceof BlockRedstoneWire) {
 					return world.getBlockMetadata(x + d.offsetX, y + d.offsetY, z + d.offsetZ);
@@ -584,7 +582,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 			// Right click while sneaking with empty hand to strip equipment
 			// from the pipe.
 			if (player.isSneaking() && currentItem == null) {
-				if (stripEquipment(world, x, y, z, player, pipe, ForgeDirection.getOrientation(side))) {
+				if (stripEquipment(world, x, y, z, player, pipe, EnumFacing.getOrientation(side))) {
 					return true;
 				}
 			} else if (currentItem == null) {
@@ -625,7 +623,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 				}
 				return true;
 			} else if (currentItem.getItem() instanceof IPipePluggableItem) {
-				if (addOrStripPipePluggable(world, x, y, z, currentItem, player, ForgeDirection.getOrientation(side), pipe)) {
+				if (addOrStripPipePluggable(world, x, y, z, currentItem, player, EnumFacing.getOrientation(side), pipe)) {
 					return true;
 				}
 			}
@@ -650,10 +648,10 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		return false;
 	}
 
-	private boolean addOrStripPipePluggable(World world, int x, int y, int z, ItemStack stack, EntityPlayer player, ForgeDirection side, Pipe<?> pipe) {
+	private boolean addOrStripPipePluggable(World world, int x, int y, int z, ItemStack stack, EntityPlayer player, EnumFacing side, Pipe<?> pipe) {
 		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 
-		ForgeDirection placementSide = rayTraceResult != null && rayTraceResult.sideHit != ForgeDirection.UNKNOWN ? rayTraceResult.sideHit : side;
+		EnumFacing placementSide = rayTraceResult != null && rayTraceResult.sideHit != EnumFacing.UNKNOWN ? rayTraceResult.sideHit : side;
 
 		IPipePluggableItem pluggableItem = (IPipePluggableItem) stack.getItem();
 		PipePluggable pluggable = pluggableItem.createPipePluggable(pipe, placementSide, stack);
@@ -731,10 +729,10 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		return false;
 	}
 
-	private boolean stripEquipment(World world, int x, int y, int z, EntityPlayer player, Pipe<?> pipe, ForgeDirection side) {
+	private boolean stripEquipment(World world, int x, int y, int z, EntityPlayer player, Pipe<?> pipe, EnumFacing side) {
 		if (!world.isRemote) {
 			// Try to strip pluggables first
-			ForgeDirection nSide = side;
+			EnumFacing nSide = side;
 
 			RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 			if (rayTraceResult != null && rayTraceResult.hitPart != Part.Pipe) {
@@ -1012,7 +1010,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 	}
 
 	@Override
-	public boolean recolourBlock(World world, int x, int y, int z, ForgeDirection side, int colour) {
+	public boolean recolourBlock(World world, int x, int y, int z, EnumFacing side, int colour) {
 		TileGenericPipe pipeTile = (TileGenericPipe) world.getTileEntity(x, y, z);
 		if (!pipeTile.hasBlockingPluggable(side)) {
 			return pipeTile.setPipeColor(colour);
@@ -1022,7 +1020,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 	}
 
 	@Override
-	public boolean removeColorFromBlock(World world, int x, int y, int z, ForgeDirection side) {
+	public boolean removeColorFromBlock(World world, int x, int y, int z, EnumFacing side) {
 		TileGenericPipe pipeTile = (TileGenericPipe) world.getTileEntity(x, y, z);
 		if (!pipeTile.hasBlockingPluggable(side)) {
 			return pipeTile.setPipeColor(-1);

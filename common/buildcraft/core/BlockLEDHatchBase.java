@@ -2,10 +2,8 @@ package buildcraft.core;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.transport.IPipeTile;
@@ -44,7 +42,7 @@ public abstract class BlockLEDHatchBase extends BlockBuildCraft {
 	public IIcon getIcon(IBlockAccess access, int x, int y, int z, int side) {
 		// The quarry's pipe connection method has no idea about "sides".
 		if (renderPass == 1) {
-			return Utils.isPipeConnected(access, x, y, z, ForgeDirection.getOrientation(side), IPipeTile.PipeType.ITEM) ? itemHatch : BuildCraftCore.transparentTexture;
+			return Utils.isPipeConnected(access, x, y, z, EnumFacing.getOrientation(side), IPipeTile.PipeType.ITEM) ? itemHatch : BuildCraftCore.transparentTexture;
 		} else {
 			return super.getIcon(access, x, y, z, side);
 		}

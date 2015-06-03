@@ -8,9 +8,9 @@
  */
 package buildcraft.robotics;
 
-import java.util.List;
-
 import io.netty.buffer.ByteBuf;
+
+import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;

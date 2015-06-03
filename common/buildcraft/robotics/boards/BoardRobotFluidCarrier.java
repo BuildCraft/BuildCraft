@@ -8,7 +8,7 @@
  */
 package buildcraft.robotics.boards;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
@@ -56,7 +56,7 @@ public class BoardRobotFluidCarrier extends RedstoneBoardRobot {
 	}
 
 	private boolean robotHasFluid() {
-		FluidStack tank = robot.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid;
+		FluidStack tank = robot.getTankInfo(EnumFacing.UNKNOWN)[0].fluid;
 		return tank != null && tank.amount > 0;
 	}
 }

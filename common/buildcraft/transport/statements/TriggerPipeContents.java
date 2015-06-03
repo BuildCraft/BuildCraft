@@ -10,13 +10,12 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
@@ -102,7 +101,7 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
 			}
 
 			if (kind == PipeContents.empty) {
-				for (FluidTankInfo b : transportFluids.getTankInfo(ForgeDirection.UNKNOWN)) {
+				for (FluidTankInfo b : transportFluids.getTankInfo(EnumFacing.UNKNOWN)) {
 					if (b.fluid != null && b.fluid.amount != 0) {
 						return false;
 					}
@@ -110,7 +109,7 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
 
 				return true;
 			} else {
-				for (FluidTankInfo b : transportFluids.getTankInfo(ForgeDirection.UNKNOWN)) {
+				for (FluidTankInfo b : transportFluids.getTankInfo(EnumFacing.UNKNOWN)) {
 					if (b.fluid != null && b.fluid.amount != 0) {
 						if (searchedFluid == null || searchedFluid.isFluidEqual(b.fluid)) {
 							return true;

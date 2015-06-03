@@ -1,10 +1,10 @@
 package buildcraft.silicon;
 
+import gnu.trove.map.hash.TObjectIntHashMap;
+import io.netty.buffer.ByteBuf;
+
 import java.util.HashMap;
 import java.util.Map;
-
-import io.netty.buffer.ByteBuf;
-import gnu.trove.map.hash.TObjectIntHashMap;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -13,7 +13,7 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftSilicon;
@@ -228,18 +228,18 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
 		}
 
 		// STEP 3b: Remote
-		Map<ForgeDirection, IInventory> invs = new HashMap<ForgeDirection, IInventory>();
+		Map<EnumFacing, IInventory> invs = new HashMap<EnumFacing, IInventory>();
 		if (filteredReqsToFulfill > 0 || missingCount > 0) {
 			for (int i = 2; i < 6; i++) {
-				TileEntity neighbor = getTile(ForgeDirection.getOrientation(i));
+				TileEntity neighbor = getTile(EnumFacing.getOrientation(i));
 				if (neighbor instanceof IInventory) {
-					invs.put(ForgeDirection.getOrientation(i), (IInventory) neighbor);
+					invs.put(EnumFacing.getOrientation(i), (IInventory) neighbor);
 				}
 			}
 		}
 
 		if (filteredReqsToFulfill > 0) {
-			for (ForgeDirection dir : invs.keySet()) {
+			for (EnumFacing dir : invs.keySet()) {
 				if (filteredReqsToFulfill == 0) {
 					break;
 				}
@@ -301,7 +301,7 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
 		}
 
 		if (missingCount > 0) {
-			for (ForgeDirection dir : invs.keySet()) {
+			for (EnumFacing dir : invs.keySet()) {
 				if (foundMissing) {
 					break;
 				}

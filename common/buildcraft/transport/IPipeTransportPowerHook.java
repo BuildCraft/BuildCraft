@@ -8,7 +8,7 @@
  */
 package buildcraft.transport;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public interface IPipeTransportPowerHook {
 
@@ -17,10 +17,10 @@ public interface IPipeTransportPowerHook {
 	 *
 	 * @return The amount of power used, or -1 for default behavior.
 	 */
-	int receiveEnergy(ForgeDirection from, int val);
+	int receiveEnergy(EnumFacing from, int val);
 
 	/**
 	 * Override default requested power.
 	 */
-	int requestEnergy(ForgeDirection from, int amount);
+	int requestEnergy(EnumFacing from, int amount);
 }

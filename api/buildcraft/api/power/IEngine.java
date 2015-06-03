@@ -8,7 +8,7 @@
  */
 package buildcraft.api.power;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 /**
  * Engines should implement this interface if they want to support
@@ -22,15 +22,15 @@ public interface IEngine {
      * @param side
      * @return
      */
-    boolean canReceiveFromEngine(ForgeDirection side);
+    boolean canReceiveFromEngine(EnumFacing side);
 
     /**
      * Receives energy from an engine.
-     * See {@link cofh.api.energy.IEnergyHandler#receiveEnergy(ForgeDirection, int, boolean)}
+     * See {@link cofh.api.energy.IEnergyHandler#receiveEnergy(EnumFacing, int, boolean)}
      * @param side The side the engine is receiving energy from.
      * @param energy The amount of energy given to the engine.
      * @param simulate True if the energy should not actually be added.
      * @return The amount of energy used by the engine.
      */
-    int receiveEnergyFromEngine(ForgeDirection side, int energy, boolean simulate);
+    int receiveEnergyFromEngine(EnumFacing side, int energy, boolean simulate);
 }

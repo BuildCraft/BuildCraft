@@ -17,7 +17,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.BuildCraftBuilders;

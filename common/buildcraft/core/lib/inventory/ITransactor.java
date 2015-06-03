@@ -9,7 +9,7 @@
 package buildcraft.core.lib.inventory;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.core.lib.inventory.filters.IStackFilter;
 
@@ -23,7 +23,7 @@ public interface ITransactor {
 	 * @param doAdd
 	 * @return The ItemStack, with stackSize equal to amount moved.
 	 */
-	ItemStack add(ItemStack stack, ForgeDirection orientation, boolean doAdd);
+	ItemStack add(ItemStack stack, EnumFacing orientation, boolean doAdd);
 
 	/**
 	 * Removes and returns a single item from the inventory matching the filter.
@@ -32,5 +32,5 @@ public interface ITransactor {
 	 * @param orientation
 	 * @param doRemove
 	 */
-	ItemStack remove(IStackFilter filter, ForgeDirection orientation, boolean doRemove);
+	ItemStack remove(IStackFilter filter, EnumFacing orientation, boolean doRemove);
 }

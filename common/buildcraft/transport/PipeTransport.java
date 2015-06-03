@@ -15,8 +15,8 @@ import java.util.List;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.utils.BitSetUtils;
@@ -25,11 +25,11 @@ public abstract class PipeTransport {
 
 	public TileGenericPipe container;
 
-	protected boolean[] inputsOpen = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
-	protected boolean[] outputsOpen = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
+	protected boolean[] inputsOpen = new boolean[EnumFacing.VALID_DIRECTIONS.length];
+	protected boolean[] outputsOpen = new boolean[EnumFacing.VALID_DIRECTIONS.length];
 
 	public PipeTransport() {
-		for (int b = 0; b < ForgeDirection.VALID_DIRECTIONS.length; b++) {
+		for (int b = 0; b < EnumFacing.VALID_DIRECTIONS.length; b++) {
 			inputsOpen[b] = true;
 			outputsOpen[b] = true;
 		}
@@ -46,7 +46,7 @@ public abstract class PipeTransport {
 			BitSet inputBuf = BitSetUtils.fromByteArray(new byte[] {nbt.getByte("inputOpen")});
 			BitSet outputBuf = BitSetUtils.fromByteArray(new byte[] {nbt.getByte("outputOpen")});
 
-			for (int b = 0; b < ForgeDirection.VALID_DIRECTIONS.length; b++) {
+			for (int b = 0; b < EnumFacing.VALID_DIRECTIONS.length; b++) {
 				inputsOpen[b] = inputBuf.get(b);
 				outputsOpen[b] = outputBuf.get(b);
 			}
@@ -54,10 +54,10 @@ public abstract class PipeTransport {
 	}
 
 	public void writeToNBT(NBTTagCompound nbt) {
-		BitSet inputBuf = new BitSet(ForgeDirection.VALID_DIRECTIONS.length);
-		BitSet outputBuf = new BitSet(ForgeDirection.VALID_DIRECTIONS.length);
+		BitSet inputBuf = new BitSet(EnumFacing.VALID_DIRECTIONS.length);
+		BitSet outputBuf = new BitSet(EnumFacing.VALID_DIRECTIONS.length);
 
-	    for (int b = 0; b < ForgeDirection.VALID_DIRECTIONS.length; b++) {
+	    for (int b = 0; b < EnumFacing.VALID_DIRECTIONS.length; b++) {
 			if (inputsOpen[b]) {
 				inputBuf.set(b, true);
 			} else {
@@ -82,7 +82,7 @@ public abstract class PipeTransport {
 	    this.container = tile;
 	}
 
-	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
+	public boolean canPipeConnect(TileEntity tile, EnumFacing side) {
 	    return true;
 	}
 
@@ -95,22 +95,22 @@ public abstract class PipeTransport {
 	public void initialize() {
 	}
 
-	public boolean inputOpen(ForgeDirection from) {
+	public boolean inputOpen(EnumFacing from) {
 	    return inputsOpen[from.ordinal()];
 	}
 
-	public boolean outputOpen(ForgeDirection to) {
+	public boolean outputOpen(EnumFacing to) {
 	    return outputsOpen[to.ordinal()];
 	}
 
-	public void allowInput(ForgeDirection from, boolean allow) {
-		if (from != ForgeDirection.UNKNOWN) {
+	public void allowInput(EnumFacing from, boolean allow) {
+		if (from != EnumFacing.UNKNOWN) {
 			inputsOpen[from.ordinal()] = allow;
 		}
 	}
 
-	public void allowOutput(ForgeDirection to, boolean allow) {
-		if (to != ForgeDirection.UNKNOWN) {
+	public void allowOutput(EnumFacing to, boolean allow) {
+		if (to != EnumFacing.UNKNOWN) {
 			outputsOpen[to.ordinal()] = allow;
 		}
 	}

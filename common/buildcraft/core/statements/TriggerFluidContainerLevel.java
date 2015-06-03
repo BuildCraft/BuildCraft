@@ -10,9 +10,8 @@ package buildcraft.core.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -55,7 +54,7 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
 	}
 
 	@Override
-	public boolean isTriggerActive(TileEntity tile, ForgeDirection side, IStatementContainer statementContainer, IStatementParameter[] parameters) {
+	public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer statementContainer, IStatementParameter[] parameters) {
 		if (tile instanceof IFluidHandler) {
 			IFluidHandler container = (IFluidHandler) tile;
 

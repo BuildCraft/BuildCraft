@@ -10,8 +10,8 @@ package buildcraft.core.lib;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.lib.utils.BlockUtils;
@@ -102,7 +102,7 @@ public final class TileBuffer {
 		TileBuffer[] buffer = new TileBuffer[6];
 
 		for (int i = 0; i < 6; i++) {
-			ForgeDirection d = ForgeDirection.getOrientation(i);
+			EnumFacing d = EnumFacing.getOrientation(i);
 			buffer[i] = new TileBuffer(world, x + d.offsetX, y + d.offsetY, z + d.offsetZ, loadUnloaded);
 		}
 

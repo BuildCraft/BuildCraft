@@ -10,8 +10,8 @@ package buildcraft.api.robots;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.api.core.BlockIndex;
@@ -19,7 +19,7 @@ import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.transport.IInjectable;
 
 public abstract class DockingStation {
-	public ForgeDirection side;
+	public EnumFacing side;
 	public World world;
 
 	private long robotTakingId = EntityRobotBase.NULL_ROBOT_ID;
@@ -29,7 +29,7 @@ public abstract class DockingStation {
 
 	private BlockIndex index;
 
-	public DockingStation(BlockIndex iIndex, ForgeDirection iSide) {
+	public DockingStation(BlockIndex iIndex, EnumFacing iSide) {
 		index = iIndex;
 		side = iSide;
 	}
@@ -53,7 +53,7 @@ public abstract class DockingStation {
 		return index.z;
 	}
 
-	public ForgeDirection side() {
+	public EnumFacing side() {
 		return side;
 	}
 
@@ -139,7 +139,7 @@ public abstract class DockingStation {
 
 	public void readFromNBT(NBTTagCompound nbt) {
 		index = new BlockIndex(nbt.getCompoundTag("index"));
-		side = ForgeDirection.values()[nbt.getByte("side")];
+		side = EnumFacing.values()[nbt.getByte("side")];
 		linkIsMain = nbt.getBoolean("isMain");
 		robotTakingId = nbt.getLong("robotId");
 	}

@@ -10,17 +10,18 @@ package buildcraft.transport.pipes;
 
 import java.util.List;
 
+import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyProvider;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
 
-import cofh.api.energy.IEnergyHandler;
-import cofh.api.energy.IEnergyProvider;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.power.IRedstoneEngine;
@@ -59,8 +60,8 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
-		if (direction != ForgeDirection.UNKNOWN && powerSources[direction.ordinal()]) {
+	public int getIconIndex(EnumFacing direction) {
+		if (direction != EnumFacing.UNKNOWN && powerSources[direction.ordinal()]) {
 			return solidIconIndex;
 		} else {
 			return standardIconIndex;
@@ -73,7 +74,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 
 		sources = 0;
 
-		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing o : EnumFacing.VALID_DIRECTIONS) {
 			boolean oldPowerSource = powerSources[o.ordinal()];
 					
 			if (!container.isPipeConnected(o)) {
@@ -113,7 +114,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 			int energyMaxExtract = Math.min(battery.getMaxEnergyExtract(), battery.getMaxEnergyStored() - battery.getEnergyStored());
 			energyMaxExtract /= sources;
 
-			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+			for (EnumFacing o : EnumFacing.VALID_DIRECTIONS) {
 				if (!powerSources[o.ordinal()]) {
 					continue;
 				}
@@ -138,7 +139,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 		energyToRemove /= sources;
 
 		if (battery.getEnergyStored() > 0) {
-			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+			for (EnumFacing o : EnumFacing.VALID_DIRECTIONS) {
 				if (!powerSources[o.ordinal()]) {
 					continue;
 				}
@@ -160,7 +161,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 		battery.writeToNBT(batteryNBT);
 		data.setTag("battery", batteryNBT);
 
-		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+		for (int i = 0; i < EnumFacing.VALID_DIRECTIONS.length; i++) {
 			data.setBoolean("powerSources[" + i + "]", powerSources[i]);
 		}
 	}
@@ -170,18 +171,18 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 		super.readFromNBT(data);
 		battery.readFromNBT(data.getCompoundTag("battery"));
 
-		for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
+		for (int i = 0; i < EnumFacing.VALID_DIRECTIONS.length; i++) {
 			powerSources[i] = data.getBoolean("powerSources[" + i + "]");
 		}
 	}
 
 	@Override
-	public int receiveEnergy(ForgeDirection from, int val) {
+	public int receiveEnergy(EnumFacing from, int val) {
 		return -1;
 	}
 
 	@Override
-	public int requestEnergy(ForgeDirection from, int amount) {
+	public int requestEnergy(EnumFacing from, int amount) {
 		if (container.getTile(from) instanceof IPipeTile) {
 			requestedEnergy += amount;
 			return amount;
@@ -191,12 +192,12 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 	}
 
 	@Override
-	public boolean canConnectEnergy(ForgeDirection from) {
+	public boolean canConnectEnergy(EnumFacing from) {
 		return true;
 	}
 
 	@Override
-	public int receiveEnergy(ForgeDirection from, int maxReceive,
+	public int receiveEnergy(EnumFacing from, int maxReceive,
 			boolean simulate) {
 		if (from.ordinal() < 6 && container.getNeighborTile(from) instanceof IRedstoneEngine) {
 			allowExtraction = true;
@@ -210,28 +211,28 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 	}
 
 	@Override
-	public int extractEnergy(ForgeDirection from, int maxExtract,
+	public int extractEnergy(EnumFacing from, int maxExtract,
 			boolean simulate) {
 		return 0;
 	}
 
 	@Override
-	public int getEnergyStored(ForgeDirection from) {
+	public int getEnergyStored(EnumFacing from) {
 		return battery.getEnergyStored();
 	}
 
 	@Override
-	public int getMaxEnergyStored(ForgeDirection from) {
+	public int getMaxEnergyStored(EnumFacing from) {
 		return battery.getMaxEnergyStored();
 	}
 
 	@Override
-	public boolean canConnectRedstoneEngine(ForgeDirection side) {
+	public boolean canConnectRedstoneEngine(EnumFacing side) {
 		return true;
 	}
 
 	@Override
-	public void getDebugInfo(List<String> info, ForgeDirection side, ItemStack debugger, EntityPlayer player) {
+	public void getDebugInfo(List<String> info, EnumFacing side, ItemStack debugger, EntityPlayer player) {
 		info.add("Power Acceptor");
 		info.add("- requestedEnergy: " + requestedEnergy);
 		info.add("- lastRequestedEnergy: " + lastRequestedEnergy);

@@ -10,11 +10,10 @@ package buildcraft.core.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IStatementContainer;
@@ -38,7 +37,7 @@ public class ActionMachineControl extends BCStatement implements IActionExternal
 	}
 
 	@Override
-	public void actionActivate(TileEntity target, ForgeDirection side,
+	public void actionActivate(TileEntity target, EnumFacing side,
 			IStatementContainer source, IStatementParameter[] parameters) {
 		if (target instanceof IControllable) {
 			((IControllable) target).setControlMode(mode);

@@ -8,7 +8,6 @@
  */
 package buildcraft.builders.urbanism;
 
-import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 
 class UrbanistToolErase extends UrbanistTool {

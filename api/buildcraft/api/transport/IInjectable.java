@@ -1,12 +1,12 @@
 package buildcraft.api.transport;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.EnumColor;
 
 public interface IInjectable {
-	boolean canInjectItems(ForgeDirection from);
+	boolean canInjectItems(EnumFacing from);
 
 	/**
 	 * Offers an ItemStack for 3addition to the pipe. Will be rejected if the
@@ -19,5 +19,5 @@ public interface IInjectable {
 	 * @param color The color of the item to be added to the pipe, or null for no color.
 	 * @return Amount of items used from the passed stack.
 	 */
-	int injectItem(ItemStack stack, boolean doAdd, ForgeDirection from, EnumColor color);
+	int injectItem(ItemStack stack, boolean doAdd, EnumFacing from, EnumColor color);
 }

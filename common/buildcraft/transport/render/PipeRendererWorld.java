@@ -11,12 +11,10 @@ package buildcraft.transport.render;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockChest;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.fml.client.registry.ISimpleBlockRenderingHandler;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
@@ -60,7 +58,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				resetToCenterDimensions(dim);
 				
 				if (renderPass == 0) {
-					fakeBlock.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.UNKNOWN)));
+					fakeBlock.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(EnumFacing.UNKNOWN)));
 				} else {
 					fakeBlock.getTextureState().set(PipeIconProvider.TYPE.PipeStainedOverlay.getIcon());
 				}
@@ -92,7 +90,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				
 				// render sub block
 				if (renderPass == 0) {
-					fakeBlock.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(ForgeDirection.VALID_DIRECTIONS[dir])));
+					fakeBlock.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(EnumFacing.VALID_DIRECTIONS[dir])));
 				} else {
 					fakeBlock.getTextureState().set(PipeIconProvider.TYPE.PipeStainedOverlay.getIcon());
 				}
@@ -101,7 +99,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 				// Render connecting block
 				if (Minecraft.getMinecraft().gameSettings.fancyGraphics) {
-					ForgeDirection side = ForgeDirection.getOrientation(dir);
+					EnumFacing side = EnumFacing.getOrientation(dir);
 					int px = x + side.offsetX;
 					int py = y + side.offsetY;
 					int pz = z + side.offsetZ;
@@ -154,7 +152,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 		renderblocks.setRenderBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing dir : EnumFacing.VALID_DIRECTIONS) {
 			if (tile.hasPipePluggable(dir)) {
 				PipePluggable p = tile.getPipePluggable(dir);
 				IPipePluggableRenderer r = p.getRenderer();

@@ -16,14 +16,14 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.SafeTimeTracker;
@@ -298,7 +298,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 
 	/* ITANKCONTAINER */
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		int used = 0;
 		FluidStack resourceUsing = resource.copy();
 
@@ -316,7 +316,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, int maxEmpty, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, int maxEmpty, boolean doDrain) {
 		FluidStack r = result.drain(maxEmpty, doDrain);
 
 		updateRecipe();
@@ -340,7 +340,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
 		if (resource == null || !resource.isFluidEqual(result.getFluid())) {
 			return null;
 		}
@@ -348,7 +348,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection direction) {
+	public FluidTankInfo[] getTankInfo(EnumFacing direction) {
 		return tankManager.getTankInfo(direction);
 	}
 
@@ -373,12 +373,12 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	}
 
 	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
+	public boolean canFill(EnumFacing from, Fluid fluid) {
 		return true;
 	}
 
 	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
 		return true;
 	}
 

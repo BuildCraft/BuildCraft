@@ -10,8 +10,8 @@ package buildcraft.api.transport;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 public interface IStripesHandler {
 	enum StripesHandlerType {
@@ -23,6 +23,6 @@ public interface IStripesHandler {
 	
 	boolean shouldHandle(ItemStack stack);
 	
-	boolean handle(World world, int x, int y, int z, ForgeDirection direction,
+	boolean handle(World world, int x, int y, int z, EnumFacing direction,
 			ItemStack stack, EntityPlayer player, IStripesActivator activator);
 }

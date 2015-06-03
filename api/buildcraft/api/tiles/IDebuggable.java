@@ -4,7 +4,7 @@ import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 /**
  * I would like to ask that this interface is not called by any
@@ -22,5 +22,5 @@ public interface IDebuggable {
 	 * @param debugger The debugger ItemStack used.
 	 * @param player The player querying the debug information.
 	 */
-	void getDebugInfo(List<String> info, ForgeDirection side, ItemStack debugger, EntityPlayer player);
+	void getDebugInfo(List<String> info, EnumFacing side, ItemStack debugger, EntityPlayer player);
 }

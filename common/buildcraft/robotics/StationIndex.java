@@ -9,7 +9,7 @@
 package buildcraft.robotics;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.DockingStation;
@@ -17,12 +17,12 @@ import buildcraft.api.robots.DockingStation;
 public class StationIndex {
 
 	public BlockIndex index = new BlockIndex();
-	public ForgeDirection side = ForgeDirection.UNKNOWN;
+	public EnumFacing side = EnumFacing.UNKNOWN;
 
 	protected StationIndex() {
 	}
 
-	public StationIndex(ForgeDirection iSide, int x, int y, int z) {
+	public StationIndex(EnumFacing iSide, int x, int y, int z) {
 		side = iSide;
 		index = new BlockIndex(x, y, z);
 	}
@@ -58,6 +58,6 @@ public class StationIndex {
 
 	protected void readFromNBT(NBTTagCompound nbt) {
 		index = new BlockIndex(nbt.getCompoundTag("index"));
-		side = ForgeDirection.values()[nbt.getByte("side")];
+		side = EnumFacing.values()[nbt.getByte("side")];
 	}
 }

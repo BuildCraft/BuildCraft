@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;
@@ -37,7 +37,7 @@ public class DefaultActionProvider implements IActionProvider {
 	}
 
 	@Override
-	public Collection<IActionExternal> getExternalActions(ForgeDirection side, TileEntity tile) {
+	public Collection<IActionExternal> getExternalActions(EnumFacing side, TileEntity tile) {
 		LinkedList<IActionExternal> res = new LinkedList<IActionExternal>();
 
 		try {

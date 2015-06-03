@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftRobotics;
 import buildcraft.api.robots.DockingStation;
@@ -40,7 +40,7 @@ public class RobotsTriggerProvider implements ITriggerProvider {
 	}
 
 	@Override
-	public Collection<ITriggerExternal> getExternalTriggers(ForgeDirection side, TileEntity tile) {
+	public Collection<ITriggerExternal> getExternalTriggers(EnumFacing side, TileEntity tile) {
 		return null;
 	}
 }

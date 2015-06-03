@@ -12,9 +12,9 @@ import java.util.LinkedList;
 
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
@@ -40,16 +40,16 @@ public class PipeItemsClay extends Pipe<PipeTransportItems> {
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
+	public int getIconIndex(EnumFacing direction) {
 		return PipeIconProvider.TYPE.PipeItemsClay.ordinal();
 	}
 
     @PipeEventPriority(priority = -200)
     public void eventHandler(PipeEventItem.FindDest event) {
-        LinkedList<ForgeDirection> nonPipesList = new LinkedList<ForgeDirection>();
-        LinkedList<ForgeDirection> pipesList = new LinkedList<ForgeDirection>();
+        LinkedList<EnumFacing> nonPipesList = new LinkedList<EnumFacing>();
+        LinkedList<EnumFacing> pipesList = new LinkedList<EnumFacing>();
 
-        for (ForgeDirection o : event.destinations) {
+        for (EnumFacing o : event.destinations) {
             if (!event.item.blacklist.contains(o) && container.pipe.outputOpen(o)) {
                 if (container.isPipeConnected(o)) {
                     TileEntity entity = container.getTile(o);

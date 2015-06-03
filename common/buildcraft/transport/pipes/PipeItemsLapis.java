@@ -14,9 +14,9 @@ import java.util.LinkedList;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
@@ -46,7 +46,7 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
+	public int getIconIndex(EnumFacing direction) {
 		if (container == null) {
 			return PipeIconProvider.TYPE.PipeItemsLapis_Black.ordinal();
 		}

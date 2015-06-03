@@ -15,7 +15,7 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftEnergy;
 import buildcraft.core.GuiIds;
@@ -46,7 +46,7 @@ public class TileEngineStone extends TileEngineWithInventory {
 	}
 
 	@Override
-	public boolean onBlockActivated(EntityPlayer player, ForgeDirection side) {
+	public boolean onBlockActivated(EntityPlayer player, EnumFacing side) {
 		if (super.onBlockActivated(player, side)) {
 			return true;
 		}

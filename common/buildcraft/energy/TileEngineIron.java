@@ -13,8 +13,8 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -69,7 +69,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	}
 
 	@Override
-	public boolean onBlockActivated(EntityPlayer player, ForgeDirection side) {
+	public boolean onBlockActivated(EntityPlayer player, EnumFacing side) {
 		if (super.onBlockActivated(player, side)) {
 			return true;
 		}
@@ -216,8 +216,8 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 			}
 
 			if (liquid != null) {
-				if (fill(ForgeDirection.UNKNOWN, liquid, false) == liquid.amount) {
-					fill(ForgeDirection.UNKNOWN, liquid, true);
+				if (fill(EnumFacing.UNKNOWN, liquid, false) == liquid.amount) {
+					fill(EnumFacing.UNKNOWN, liquid, true);
 					setInventorySlotContents(0, InvUtils.consumeItem(stack));
 				}
 			}
@@ -356,12 +356,12 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
 	/* ITANKCONTAINER */
 	@Override
-	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
 		return tankFuel.drain(maxDrain, doDrain);
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
 		if (resource == null) {
 			return null;
 		}
@@ -375,12 +375,12 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	}
 
 	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
 		return from != orientation;
 	}
 
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		if (BuildcraftFuelRegistry.coolant.getCoolant(resource.getFluid()) != null) {
 			return tankCoolant.fill(resource, doFill);
 		} else if (BuildcraftFuelRegistry.fuel.getFuel(resource.getFluid()) != null) {
@@ -395,14 +395,14 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	}
 
 	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
+	public boolean canFill(EnumFacing from, Fluid fluid) {
 		return from != orientation &&
                 (BuildcraftFuelRegistry.coolant.getCoolant(fluid) != null ||
                         BuildcraftFuelRegistry.fuel.getFuel(fluid) != null);
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection direction) {
+	public FluidTankInfo[] getTankInfo(EnumFacing direction) {
         return tankManager.getTankInfo(direction);
 	}
 
@@ -414,7 +414,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 			return true;
 		} else {
 			FluidStack fluidStack = FluidContainerRegistry.getFluidForFilledItem(itemstack);
-			return fluidStack != null && canFill(ForgeDirection.UNKNOWN, fluidStack.getFluid());
+			return fluidStack != null && canFill(EnumFacing.UNKNOWN, fluidStack.getFluid());
 		}
 	}
 

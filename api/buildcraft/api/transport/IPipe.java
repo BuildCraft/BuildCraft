@@ -8,16 +8,16 @@
  */
 package buildcraft.api.transport;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.gates.IGate;
 
 public interface IPipe {
 	IPipeTile getTile();
 
-	IGate getGate(ForgeDirection side);
+	IGate getGate(EnumFacing side);
 	
-	boolean hasGate(ForgeDirection side);
+	boolean hasGate(EnumFacing side);
 	
 	boolean isWired(PipeWire wire);
 	

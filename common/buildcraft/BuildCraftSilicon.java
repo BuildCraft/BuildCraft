@@ -37,25 +37,8 @@ import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.network.EntityIds;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.silicon.BlockLaser;
-import buildcraft.silicon.BlockLaserTable;
-import buildcraft.silicon.BlockPackager;
-import buildcraft.silicon.EntityPackage;
-import buildcraft.silicon.ItemLaserTable;
-import buildcraft.silicon.ItemPackage;
-import buildcraft.silicon.ItemRedstoneChipset;
+import buildcraft.silicon.*;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
-import buildcraft.silicon.ResourceIdAssemblyTable;
-import buildcraft.silicon.SiliconGuiHandler;
-import buildcraft.silicon.SiliconProxy;
-import buildcraft.silicon.TileAdvancedCraftingTable;
-import buildcraft.silicon.TileAssemblyTable;
-import buildcraft.silicon.TileChargingTable;
-import buildcraft.silicon.TileIntegrationTable;
-import buildcraft.silicon.TileLaser;
-import buildcraft.silicon.TilePackager;
-import buildcraft.silicon.TileProgrammingTable;
-import buildcraft.silicon.TileStampingTable;
 import buildcraft.silicon.network.PacketHandlerSilicon;
 
 @Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon", dependencies = DefaultProps.DEPENDENCY_CORE)

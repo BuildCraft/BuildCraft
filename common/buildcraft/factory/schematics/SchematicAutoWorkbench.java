@@ -13,7 +13,7 @@ import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftFactory;
 import buildcraft.api.blueprints.IBuilderContext;
@@ -32,7 +32,7 @@ public class SchematicAutoWorkbench extends SchematicTile {
 			ArrayList<ItemStack> rqs = new ArrayList<ItemStack>();
 			rqs.add(new ItemStack(BuildCraftFactory.autoWorkbenchBlock));
 
-			for (IInvSlot slot : InventoryIterator.getIterable(autoWb.craftMatrix, ForgeDirection.UP)) {
+			for (IInvSlot slot : InventoryIterator.getIterable(autoWb.craftMatrix, EnumFacing.UP)) {
 				ItemStack stack = slot.getStackInSlot();
 				if (stack != null) {
 					stack = stack.copy();
@@ -59,7 +59,7 @@ public class SchematicAutoWorkbench extends SchematicTile {
 
 		TileAutoWorkbench autoWb = getTile(context, x, y, z);
 		if (autoWb != null) {
-			for (IInvSlot slot : InventoryIterator.getIterable(autoWb.craftMatrix, ForgeDirection.UP)) {
+			for (IInvSlot slot : InventoryIterator.getIterable(autoWb.craftMatrix, EnumFacing.UP)) {
 				ItemStack stack = slot.getStackInSlot();
 				if (stack != null) {
 					stack.stackSize = 1;

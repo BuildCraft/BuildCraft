@@ -11,10 +11,9 @@ package buildcraft.robotics.ai;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldServer;
-
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
@@ -53,7 +52,7 @@ public class AIRobotUseToolOnBlock extends AIRobot {
 			EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj)
 					.get();
 			if (BlockUtils.useItemOnBlock(robot.worldObj, player, stack, useToBlock.x,
-					useToBlock.y, useToBlock.z, ForgeDirection.UP)) {
+					useToBlock.y, useToBlock.z, EnumFacing.UP)) {
 				if (robot.getHeldItem().isItemStackDamageable()) {
 					robot.getHeldItem().damageItem(1, robot);
 

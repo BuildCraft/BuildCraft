@@ -3,10 +3,8 @@ package buildcraft.core.lib.utils;
 import java.io.IOException;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.IResource;
-import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
 public final class ResourceUtils {

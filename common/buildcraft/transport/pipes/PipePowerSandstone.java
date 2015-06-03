@@ -10,9 +10,9 @@ package buildcraft.transport.pipes;
 
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
@@ -36,17 +36,17 @@ public class PipePowerSandstone extends Pipe<PipeTransportPower> implements IPip
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
+	public int getIconIndex(EnumFacing direction) {
 		return PipeIconProvider.TYPE.PipePowerSandstone.ordinal();
 	}
 
     @Override
-    public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
+    public boolean canPipeConnect(TileEntity tile, EnumFacing side) {
         return (tile instanceof IPipeTile) && super.canPipeConnect(tile, side);
     }
 
     @Override
-    public boolean ignoreConnectionOverrides(ForgeDirection with) {
+    public boolean ignoreConnectionOverrides(EnumFacing with) {
         return true;
     }
 }

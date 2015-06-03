@@ -8,11 +8,11 @@
  */
 package buildcraft.core;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;

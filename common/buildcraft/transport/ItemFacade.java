@@ -14,7 +14,6 @@ import java.util.List;
 import com.google.common.base.Strings;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryCrafting;
@@ -23,14 +22,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.JavaTools;
@@ -604,7 +603,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 	}
 
 	@Override
-	public PipePluggable createPipePluggable(IPipe pipe, ForgeDirection side, ItemStack stack) {
+	public PipePluggable createPipePluggable(IPipe pipe, EnumFacing side, ItemStack stack) {
 		return new FacadePluggable(getFacadeStates(stack));
 	}
 }

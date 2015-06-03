@@ -1,8 +1,8 @@
 package buildcraft.core.tablet;
 
-import java.io.IOException;
-
 import io.netty.buffer.ByteBuf;
+
+import java.io.IOException;
 
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;

@@ -8,15 +8,15 @@
  */
 package buildcraft.transport.pluggable;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
+import cofh.api.energy.IEnergyHandler;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
 
-import cofh.api.energy.IEnergyHandler;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
@@ -52,7 +52,7 @@ public class ItemPowerAdapter extends ItemBuildCraft implements IPipePluggableIt
     }
 
 	@Override
-	public PipePluggable createPipePluggable(IPipe pipe, ForgeDirection side, ItemStack stack) {
+	public PipePluggable createPipePluggable(IPipe pipe, EnumFacing side, ItemStack stack) {
 		if (pipe.getTile().getPipeType() != IPipeTile.PipeType.POWER && pipe instanceof IEnergyHandler) {
 			return new PowerAdapterPluggable();
 		} else {

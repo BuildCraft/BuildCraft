@@ -10,7 +10,7 @@ package buildcraft.robotics.ai;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.robots.AIRobot;
@@ -84,7 +84,7 @@ public class AIRobotLoad extends AIRobot {
 
 			if (quantity == ANY_QUANTITY) {
 				ItemStack added = robotTransactor.add(slot.getStackInSlot(),
-						ForgeDirection.UNKNOWN, doLoad);
+						EnumFacing.UNKNOWN, doLoad);
 				if (doLoad) {
 					slot.decreaseStackInSlot(added.stackSize);
 				}
@@ -96,7 +96,7 @@ public class AIRobotLoad extends AIRobot {
 					toAdd.stackSize = quantity - loaded;
 				}
 
-				ItemStack added = robotTransactor.add(toAdd, ForgeDirection.UNKNOWN, doLoad);
+				ItemStack added = robotTransactor.add(toAdd, EnumFacing.UNKNOWN, doLoad);
 				if (doLoad) {
 					slot.decreaseStackInSlot(added.stackSize);
 				}

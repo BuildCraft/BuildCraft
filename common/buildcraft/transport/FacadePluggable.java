@@ -3,12 +3,11 @@ package buildcraft.transport;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.transport.IPipe;
@@ -28,7 +27,7 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
 		}
 
 		@Override
-		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, ForgeDirection side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
+		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, EnumFacing side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
 			FacadeRenderHelper.pipeFacadeRenderer(renderblocks, blockStateMachine, pipe.getTile(), x, y, z, side, (IFacadePluggable) pipePluggable);
 		}
 	}
@@ -80,7 +79,7 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
 	}
 
 	@Override
-	public boolean isBlocking(IPipeTile pipe, ForgeDirection direction) {
+	public boolean isBlocking(IPipeTile pipe, EnumFacing direction) {
 		return !isHollow();
 	}
 
@@ -108,7 +107,7 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox(ForgeDirection side) {
+	public AxisAlignedBB getBoundingBox(EnumFacing side) {
 		float[][] bounds = new float[3][2];
 		// X START - END
 		bounds[0][0] = 0.0F;
@@ -125,7 +124,7 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
 	}
 
 	@Override
-	public boolean isSolidOnSide(IPipeTile pipe, ForgeDirection direction) {
+	public boolean isSolidOnSide(IPipeTile pipe, EnumFacing direction) {
 		return !isHollow();
 	}
 

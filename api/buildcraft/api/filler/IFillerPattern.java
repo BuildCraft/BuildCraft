@@ -8,8 +8,6 @@
  */
 package buildcraft.api.filler;
 
-import net.minecraft.util.IIcon;
-
 import buildcraft.api.statements.IStatement;
 
 public interface IFillerPattern extends IStatement {

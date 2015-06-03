@@ -8,9 +8,8 @@
  */
 package buildcraft.core.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -34,7 +33,7 @@ public class TriggerMachine extends BCStatement implements ITriggerExternal {
 	}
 
 	@Override
-	public boolean isTriggerActive(TileEntity tile, ForgeDirection side, IStatementContainer container, IStatementParameter[] parameters) {
+	public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer container, IStatementParameter[] parameters) {
 		if (tile instanceof IHasWork) {
 			IHasWork machine = (IHasWork) tile;
 

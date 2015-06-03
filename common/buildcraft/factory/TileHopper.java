@@ -8,14 +8,15 @@
  */
 package buildcraft.factory;
 
+import cofh.api.energy.IEnergyHandler;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
-import cofh.api.energy.IEnergyHandler;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.transport.IInjectable;
 import buildcraft.api.transport.IPipeTile;
@@ -66,7 +67,7 @@ public class TileHopper extends TileBuildCraft implements IInventory, IEnergyHan
 			return;
 		}
 
-		TileEntity outputTile = getTile(ForgeDirection.DOWN);
+		TileEntity outputTile = getTile(EnumFacing.DOWN);
 
 		ITransactor transactor = Transactor.getTransactorFor(outputTile);
 		
@@ -88,7 +89,7 @@ public class TileHopper extends TileBuildCraft implements IInventory, IEnergyHan
 				}
 
 				if (stackToOutput != null) {
-					int used = ((IInjectable) outputTile).injectItem(stackToOutput, true, ForgeDirection.UP, null);
+					int used = ((IInjectable) outputTile).injectItem(stackToOutput, true, EnumFacing.UP, null);
 					if (used > 0) {
 						decrStackSize(internalSlot, 1);
 					}
@@ -105,7 +106,7 @@ public class TileHopper extends TileBuildCraft implements IInventory, IEnergyHan
 			}
 			
 			ItemStack clonedStack = stackInSlot.copy().splitStack(1);
-			if (transactor.add(clonedStack, ForgeDirection.UP, true).stackSize > 0) {
+			if (transactor.add(clonedStack, EnumFacing.UP, true).stackSize > 0) {
 				inventory.decrStackSize(internalSlot, 1);
 				return;
 			}
@@ -189,7 +190,7 @@ public class TileHopper extends TileBuildCraft implements IInventory, IEnergyHan
 	}
 
 	@Override
-	public boolean canConnectRedstoneEngine(ForgeDirection side) {
+	public boolean canConnectRedstoneEngine(EnumFacing side) {
 		// blocks up and down
 		return side.ordinal() >= 2;
 	}
@@ -200,7 +201,7 @@ public class TileHopper extends TileBuildCraft implements IInventory, IEnergyHan
 	}
 
 	@Override
-	public boolean canConnectEnergy(ForgeDirection side) {
+	public boolean canConnectEnergy(EnumFacing side) {
 		// blocks up and down
 		return side.ordinal() >= 2 && !(getTile(side) instanceof IPipeTile);
 	}

@@ -11,7 +11,7 @@ package buildcraft.builders.blueprints;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.Translation;
@@ -111,7 +111,7 @@ public class RecursiveBlueprintReader {
 				currentSubReader = new RecursiveBlueprintReader(subArchitect, writingBlueprint);
 			} else if (subTile instanceof TileConstructionMarker || subTile instanceof TileBuilder) {
 				BlueprintBase blueprint = null;
-				ForgeDirection orientation = ForgeDirection.EAST;
+				EnumFacing orientation = EnumFacing.EAST;
 
 				if (subTile instanceof TileConstructionMarker) {
 					TileConstructionMarker marker = (TileConstructionMarker) subTile;
@@ -120,7 +120,7 @@ public class RecursiveBlueprintReader {
 				} else if (subTile instanceof TileBuilder) {
 					TileBuilder builder = (TileBuilder) subTile;
 					blueprint = ItemBlueprint.loadBlueprint(builder.getStackInSlot(0));
-					orientation = ForgeDirection.values()[architect.getWorldObj().getBlockMetadata(subBlock.x, subBlock.y,
+					orientation = EnumFacing.values()[architect.getWorldObj().getBlockMetadata(subBlock.x, subBlock.y,
 							subBlock.z)].getOpposite();
 				}
 
@@ -146,7 +146,7 @@ public class RecursiveBlueprintReader {
 								currentSubReader.architect.xCoord - architect.getBox().xMin,
 								currentSubReader.architect.yCoord - architect.getBox().yMin,
 								currentSubReader.architect.zCoord - architect.getBox().zMin,
-								ForgeDirection.values()[
+								EnumFacing.values()[
 								currentSubReader.architect.getWorldObj().getBlockMetadata(
 										currentSubReader.architect.xCoord,
 										currentSubReader.architect.yCoord,
@@ -175,23 +175,23 @@ public class RecursiveBlueprintReader {
 
 				writingBlueprint.translateToBlueprint(transform);
 
-				ForgeDirection o = ForgeDirection.values()[architect.getWorldObj().getBlockMetadata(
+				EnumFacing o = EnumFacing.values()[architect.getWorldObj().getBlockMetadata(
 						architect.xCoord, architect.yCoord, architect.zCoord)].getOpposite();
 
 				writingBlueprint.rotate = architect.readConfiguration.rotate;
 				writingBlueprint.excavate = architect.readConfiguration.excavate;
 
 				if (writingBlueprint.rotate) {
-					if (o == ForgeDirection.EAST) {
+					if (o == EnumFacing.EAST) {
 						// Do nothing
-					} else if (o == ForgeDirection.SOUTH) {
+					} else if (o == EnumFacing.SOUTH) {
 						writingBlueprint.rotateLeft(writingContext);
 						writingBlueprint.rotateLeft(writingContext);
 						writingBlueprint.rotateLeft(writingContext);
-					} else if (o == ForgeDirection.WEST) {
+					} else if (o == EnumFacing.WEST) {
 						writingBlueprint.rotateLeft(writingContext);
 						writingBlueprint.rotateLeft(writingContext);
-					} else if (o == ForgeDirection.NORTH) {
+					} else if (o == EnumFacing.NORTH) {
 						writingBlueprint.rotateLeft(writingContext);
 					}
 				}

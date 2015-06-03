@@ -9,7 +9,7 @@
 package buildcraft.transport.schematics;
 
 import net.minecraft.item.Item;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
@@ -25,7 +25,7 @@ public class BptPipeIron extends BptPipeExtension {
 		int orientation = slot.meta & 7;
 		int others = slot.meta - orientation;
 
-		slot.meta = ForgeDirection.values()[orientation].getRotation(ForgeDirection.UP).ordinal() + others;
+		slot.meta = EnumFacing.values()[orientation].getRotation(EnumFacing.UP).ordinal() + others;
 	}
 
 }

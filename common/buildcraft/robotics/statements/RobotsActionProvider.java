@@ -14,8 +14,7 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
-
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftRobotics;
 import buildcraft.api.robots.DockingStation;
@@ -90,7 +89,7 @@ public class RobotsActionProvider implements IActionProvider {
 	}
 
 	@Override
-	public Collection<IActionExternal> getExternalActions(ForgeDirection side, TileEntity tile) {
+	public Collection<IActionExternal> getExternalActions(EnumFacing side, TileEntity tile) {
 		return null;
 	}
 

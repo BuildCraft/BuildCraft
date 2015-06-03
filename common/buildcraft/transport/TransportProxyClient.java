@@ -11,10 +11,10 @@ package buildcraft.transport;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
-import net.minecraftforge.client.MinecraftForgeClient;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.transport.render.FacadeItemRenderer;

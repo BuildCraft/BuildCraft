@@ -2,7 +2,7 @@ package buildcraft.transport;
 
 import io.netty.buffer.ByteBuf;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.transport.PipeManager;
@@ -24,7 +24,7 @@ public class PipePluggableState implements ISerializable {
 	public void setPluggables(PipePluggable[] pluggables) {
 		this.pluggables = pluggables;
 		this.pluggableMatrix.clean();
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing dir : EnumFacing.VALID_DIRECTIONS) {
 			this.pluggableMatrix.setConnected(dir, pluggables[dir.ordinal()] != null);
 		}
 	}
@@ -43,7 +43,7 @@ public class PipePluggableState implements ISerializable {
 	@Override
 	public void readData(ByteBuf data) {
 		this.pluggableMatrix.readData(data);
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing dir : EnumFacing.VALID_DIRECTIONS) {
 			if (this.pluggableMatrix.isConnected(dir)) {
 				try {
 					PipePluggable p = PipeManager.pipePluggables.get(data.readUnsignedShort()).newInstance();

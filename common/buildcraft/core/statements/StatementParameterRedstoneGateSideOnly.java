@@ -1,9 +1,7 @@
 package buildcraft.core.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IIcon;
 
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;

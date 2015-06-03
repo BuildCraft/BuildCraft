@@ -8,9 +8,7 @@
  */
 package buildcraft.api.gates;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 
 public interface IGateExpansion {
 

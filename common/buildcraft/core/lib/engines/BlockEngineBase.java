@@ -17,12 +17,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.events.BlockInteractionEvent;
@@ -60,7 +60,7 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, EnumFacing side) {
 		TileEntity tile = world.getTileEntity(x, y, z);
 
 		if (tile instanceof TileEngineBase) {
@@ -71,7 +71,7 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
 	}
 
 	@Override
-	public boolean rotateBlock(World world, int x, int y, int z, ForgeDirection axis) {
+	public boolean rotateBlock(World world, int x, int y, int z, EnumFacing axis) {
 		TileEntity tile = world.getTileEntity(x, y, z);
 
 		if (tile instanceof TileEngineBase) {
@@ -99,7 +99,7 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
 		}
 
 		if (tile instanceof TileEngineBase) {
-			return ((TileEngineBase) tile).onBlockActivated(player, ForgeDirection.getOrientation(side));
+			return ((TileEngineBase) tile).onBlockActivated(player, EnumFacing.getOrientation(side));
 		}
 
 		return false;
@@ -169,7 +169,7 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
 		TileEntity tile = world.getTileEntity(x, y, z);
 		if (tile instanceof TileEngineBase) {
 			TileEngineBase engine = (TileEngineBase) tile;
-			engine.orientation = ForgeDirection.UP;
+			engine.orientation = EnumFacing.UP;
 			if (!engine.isOrientationValid()) {
 				engine.switchOrientation(true);
 			}

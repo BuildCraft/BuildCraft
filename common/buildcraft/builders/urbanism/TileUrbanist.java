@@ -8,9 +8,9 @@
  */
 package buildcraft.builders.urbanism;
 
-import java.util.ArrayList;
-
 import io.netty.buffer.ByteBuf;
+
+import java.util.ArrayList;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;

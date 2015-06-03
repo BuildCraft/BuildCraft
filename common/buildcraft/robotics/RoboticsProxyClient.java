@@ -8,9 +8,9 @@
  */
 package buildcraft.robotics;
 
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.client.MinecraftForgeClient;
 
 import buildcraft.BuildCraftRobotics;
 import buildcraft.robotics.render.RenderRobot;

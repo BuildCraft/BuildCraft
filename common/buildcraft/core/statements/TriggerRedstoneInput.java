@@ -8,8 +8,7 @@
  */
 package buildcraft.core.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -51,7 +50,7 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
 	@Override
 	public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
 		if (container instanceof IRedstoneStatementContainer) {
-			int level = ((IRedstoneStatementContainer) container).getRedstoneInput(ForgeDirection.UNKNOWN);
+			int level = ((IRedstoneStatementContainer) container).getRedstoneInput(EnumFacing.UNKNOWN);
 			if (parameters.length > 0 && parameters[0] instanceof StatementParameterRedstoneGateSideOnly &&
 					((StatementParameterRedstoneGateSideOnly) parameters[0]).isOn &&
 					container instanceof ISidedStatementContainer) {

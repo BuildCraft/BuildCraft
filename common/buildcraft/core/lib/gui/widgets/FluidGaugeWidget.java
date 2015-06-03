@@ -8,7 +8,6 @@
  */
 package buildcraft.core.lib.gui.widgets;
 
-import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.core.lib.fluids.Tank;

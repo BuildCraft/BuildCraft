@@ -17,12 +17,12 @@ import java.util.Map;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.world.ChunkEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.robots.DockingStation;
@@ -229,7 +229,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 	}
 
 	@Override
-	public synchronized DockingStation getStation(int x, int y, int z, ForgeDirection side) {
+	public synchronized DockingStation getStation(int x, int y, int z, EnumFacing side) {
 		StationIndex index = new StationIndex(side, x, y, z);
 
 		if (stations.containsKey(index)) {

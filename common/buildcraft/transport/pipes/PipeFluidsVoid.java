@@ -9,10 +9,10 @@
 package buildcraft.transport.pipes;
 
 import net.minecraft.item.Item;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
@@ -36,12 +36,12 @@ public class PipeFluidsVoid extends Pipe<PipeTransportFluids> implements IPipeTr
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
+	public int getIconIndex(EnumFacing direction) {
 		return PipeIconProvider.TYPE.PipeFluidsVoid.ordinal();
 	}
 
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		return resource.amount;
 	}
 }

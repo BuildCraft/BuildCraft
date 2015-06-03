@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import net.minecraftforge.fml.client.config.IConfigElement;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fml.client.config.IConfigElement;
 
 public class BCConfigElement<T> extends ConfigElement<T> {
 	private ConfigCategory cat;

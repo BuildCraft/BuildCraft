@@ -9,11 +9,11 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Position;
@@ -31,13 +31,13 @@ public class PipeExtensionListener {
 	private class PipeExtensionRequest {
 		public ItemStack stack;
 		public int x, y, z;
-		public ForgeDirection o;
+		public EnumFacing o;
 		public IStripesActivator h;
 	}
 
 	private final Map<World, HashSet<PipeExtensionRequest>> requests = new HashMap<World, HashSet<PipeExtensionRequest>>();
 
-	public void requestPipeExtension(ItemStack stack, World world, int x, int y, int z, ForgeDirection o, IStripesActivator h) {
+	public void requestPipeExtension(ItemStack stack, World world, int x, int y, int z, EnumFacing o, IStripesActivator h) {
 		if (world.isRemote) {
 			return;
 		}
@@ -136,7 +136,7 @@ public class PipeExtensionListener {
 		}
 	}
 
-	private void sendItem(PipeTransportItems transport, ItemStack itemStack, ForgeDirection direction) {
+	private void sendItem(PipeTransportItems transport, ItemStack itemStack, EnumFacing direction) {
 		TravelingItem newItem = TravelingItem.make(
 				transport.container.xCoord + 0.5,
 				transport.container.yCoord + TransportUtils.getPipeFloorOf(itemStack),

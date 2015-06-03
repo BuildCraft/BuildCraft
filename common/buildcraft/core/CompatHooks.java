@@ -10,9 +10,9 @@ package buildcraft.core;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.transport.IInjectable;
 
@@ -40,15 +40,15 @@ public class CompatHooks {
 
 	}
 
-	public IInjectable getInjectableWrapper(TileEntity tile, ForgeDirection side) {
+	public IInjectable getInjectableWrapper(TileEntity tile, EnumFacing side) {
 		return null;
 	}
 
-	public Block getVisualBlock(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+	public Block getVisualBlock(IBlockAccess world, int x, int y, int z, EnumFacing side) {
 		return null;
 	}
 
-	public int getVisualMeta(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+	public int getVisualMeta(IBlockAccess world, int x, int y, int z, EnumFacing side) {
 		return -1;
 	}
 

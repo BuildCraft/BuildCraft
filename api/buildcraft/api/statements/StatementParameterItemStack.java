@@ -7,10 +7,8 @@
  * as "LICENSE.API" in the BuildCraft source code distribution.
  */
 package buildcraft.api.statements;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IIcon;
 
 public class StatementParameterItemStack implements IStatementParameter {
 	

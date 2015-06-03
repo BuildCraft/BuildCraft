@@ -8,13 +8,13 @@
  */
 package buildcraft.transport.network;
 
-import java.util.BitSet;
-
 import io.netty.buffer.ByteBuf;
 
+import java.util.BitSet;
+
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.core.lib.network.PacketCoordinates;
 import buildcraft.core.lib.utils.BitSetUtils;
@@ -78,7 +78,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
 			renderCache.color = renderCache.fluidID != 0 ? data.readInt() : 0xFFFFFF;
 		}
 
-		for (ForgeDirection dir : ForgeDirection.values()) {
+		for (EnumFacing dir : EnumFacing.values()) {
 			if (delta.get(dir.ordinal() + 1)) {
 				renderCache.amount[dir.ordinal()] = Math.min(transLiq.getCapacity(), data.readUnsignedByte());
 			}
@@ -100,7 +100,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
 			}
 		}
 
-		for (ForgeDirection dir : ForgeDirection.values()) {
+		for (EnumFacing dir : EnumFacing.values()) {
 			if (delta.get(dir.ordinal() + 1)) {
 				data.writeByte(renderCache.amount[dir.ordinal()]);
 			}

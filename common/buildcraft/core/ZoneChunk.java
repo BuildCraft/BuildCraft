@@ -8,10 +8,10 @@
  */
 package buildcraft.core;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.BitSet;
 import java.util.Random;
-
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTTagCompound;
 

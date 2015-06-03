@@ -10,11 +10,10 @@ package buildcraft.core.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.statements.IStatementContainer;
@@ -52,7 +51,7 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
 	}
 
 	@Override
-	public boolean isTriggerActive(TileEntity tile, ForgeDirection side, IStatementContainer container, IStatementParameter[] parameters) {
+	public boolean isTriggerActive(TileEntity tile, EnumFacing side, IStatementContainer container, IStatementParameter[] parameters) {
 		ItemStack searchedStack = null;
 
 		if (parameters != null && parameters.length >= 1 && parameters[0] != null) {

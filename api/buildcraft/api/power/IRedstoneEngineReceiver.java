@@ -8,9 +8,9 @@
  */
 package buildcraft.api.power;
 
-import net.minecraftforge.common.util.ForgeDirection;
-
 import cofh.api.energy.IEnergyReceiver;
+
+import net.minecraft.util.EnumFacing;
 
 /**
  * Implement this on tiles that you wish to be able to receive Redstone Engine
@@ -26,5 +26,5 @@ public interface IRedstoneEngineReceiver extends IEnergyReceiver {
 	 * @param side
 	 * @return
 	 */
-	boolean canConnectRedstoneEngine(ForgeDirection side);
+	boolean canConnectRedstoneEngine(EnumFacing side);
 }

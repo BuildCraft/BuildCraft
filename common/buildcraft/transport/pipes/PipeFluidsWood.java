@@ -9,18 +9,18 @@
 package buildcraft.transport.pipes;
 
 import io.netty.buffer.ByteBuf;
+import cofh.api.energy.IEnergyHandler;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.ISerializable;
@@ -76,7 +76,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 
 	private TileEntity getConnectingTile() {
 		int meta = container.getBlockMetadata();
-		return meta >= 6 ? null : container.getTile(ForgeDirection.getOrientation(meta));
+		return meta >= 6 ? null : container.getTile(EnumFacing.getOrientation(meta));
 	}
 
 	@Override
@@ -92,7 +92,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 		if (tile == null || !(tile instanceof IFluidHandler)) {
 			liquidToExtract = 0;
 		} else {
-			extractFluid((IFluidHandler) tile, ForgeDirection.getOrientation(container.getBlockMetadata()));
+			extractFluid((IFluidHandler) tile, EnumFacing.getOrientation(container.getBlockMetadata()));
 
 			// We always subtract the flowRate to ensure that the buffer goes down reasonably quickly.
 			liquidToExtract -= transport.getFlowRate();
@@ -103,7 +103,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 		}
 	}
 
-	public int extractFluid(IFluidHandler fluidHandler, ForgeDirection side) {
+	public int extractFluid(IFluidHandler fluidHandler, EnumFacing side) {
 		int amount = liquidToExtract > transport.getFlowRate() ? transport.getFlowRate() : liquidToExtract;
 		FluidTankInfo tankInfo = transport.getTankInfo(side)[0];
 		FluidStack extracted;
@@ -133,8 +133,8 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
-		if (direction == ForgeDirection.UNKNOWN) {
+	public int getIconIndex(EnumFacing direction) {
+		if (direction == EnumFacing.UNKNOWN) {
 			return standardIconIndex;
 		} else {
 			int metadata = container.getBlockMetadata();
@@ -148,18 +148,18 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 	}
 
 	@Override
-	public boolean outputOpen(ForgeDirection to) {
+	public boolean outputOpen(EnumFacing to) {
 		int meta = container.getBlockMetadata();
 		return super.outputOpen(to) && meta != to.ordinal();
 	}
 
 	@Override
-	public boolean canConnectEnergy(ForgeDirection from) {
+	public boolean canConnectEnergy(EnumFacing from) {
 		return true;
 	}
 
 	@Override
-	public int receiveEnergy(ForgeDirection from, int maxReceive,
+	public int receiveEnergy(EnumFacing from, int maxReceive,
 			boolean simulate) {
 		TileEntity tile = getConnectingTile();
 		if (tile == null || !(tile instanceof IFluidHandler)) {
@@ -175,18 +175,18 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 	}
 
 	@Override
-	public int extractEnergy(ForgeDirection from, int maxExtract,
+	public int extractEnergy(EnumFacing from, int maxExtract,
 			boolean simulate) {
 		return 0;
 	}
 
 	@Override
-	public int getEnergyStored(ForgeDirection from) {
+	public int getEnergyStored(EnumFacing from) {
 		return 0;
 	}
 
 	@Override
-	public int getMaxEnergyStored(ForgeDirection from) {
+	public int getMaxEnergyStored(EnumFacing from) {
 		return 1000 / ENERGY_MULTIPLIER;
 	}
 

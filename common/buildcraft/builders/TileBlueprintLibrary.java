@@ -8,10 +8,10 @@
  */
 package buildcraft.builders;
 
+import io.netty.buffer.ByteBuf;
+
 import java.io.IOException;
 import java.util.ArrayList;
-
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;

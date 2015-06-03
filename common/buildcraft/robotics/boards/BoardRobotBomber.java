@@ -11,8 +11,8 @@ package buildcraft.robotics.boards;
 import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
@@ -85,7 +85,7 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
 		} else if (ai instanceof AIRobotGotoBlock) {
 			if (ai.success()) {
 				ITransactor t = Transactor.getTransactorFor(robot);
-				ItemStack stack = t.remove(TNT_FILTER, ForgeDirection.UNKNOWN, true);
+				ItemStack stack = t.remove(TNT_FILTER, EnumFacing.UNKNOWN, true);
 
 				if (stack != null && stack.stackSize > 0) {
 					EntityTNTPrimed tnt = new EntityTNTPrimed(robot.worldObj, robot.posX + 0.25,

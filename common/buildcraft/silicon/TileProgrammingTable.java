@@ -8,17 +8,17 @@
  */
 package buildcraft.silicon;
 
-import java.util.List;
-
 import io.netty.buffer.ByteBuf;
+
+import java.util.List;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
@@ -80,7 +80,7 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
 					}
 
 					if (remaining.stackSize > 0) {
-						remaining.stackSize -= Utils.addToRandomInjectableAround(worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN, remaining);
+						remaining.stackSize -= Utils.addToRandomInjectableAround(worldObj, xCoord, yCoord, zCoord, EnumFacing.UNKNOWN, remaining);
 					}
 
 					if (remaining.stackSize > 0) {

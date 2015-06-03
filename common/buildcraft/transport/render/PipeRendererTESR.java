@@ -12,7 +12,6 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -22,10 +21,9 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IntHashMap;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
@@ -329,32 +327,32 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		boolean foundX = false, foundY = false, foundZ = false;
 
-		if (state.wireMatrix.isWireConnected(color, ForgeDirection.WEST)) {
+		if (state.wireMatrix.isWireConnected(color, EnumFacing.WEST)) {
 			minX = 0;
 			foundX = true;
 		}
 
-		if (state.wireMatrix.isWireConnected(color, ForgeDirection.EAST)) {
+		if (state.wireMatrix.isWireConnected(color, EnumFacing.EAST)) {
 			maxX = 1;
 			foundX = true;
 		}
 
-		if (state.wireMatrix.isWireConnected(color, ForgeDirection.DOWN)) {
+		if (state.wireMatrix.isWireConnected(color, EnumFacing.DOWN)) {
 			minY = 0;
 			foundY = true;
 		}
 
-		if (state.wireMatrix.isWireConnected(color, ForgeDirection.UP)) {
+		if (state.wireMatrix.isWireConnected(color, EnumFacing.UP)) {
 			maxY = 1;
 			foundY = true;
 		}
 
-		if (state.wireMatrix.isWireConnected(color, ForgeDirection.NORTH)) {
+		if (state.wireMatrix.isWireConnected(color, EnumFacing.NORTH)) {
 			minZ = 0;
 			foundZ = true;
 		}
 
-		if (state.wireMatrix.isWireConnected(color, ForgeDirection.SOUTH)) {
+		if (state.wireMatrix.isWireConnected(color, EnumFacing.SOUTH)) {
 			maxZ = 1;
 			foundZ = true;
 		}
@@ -463,7 +461,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	private void renderPluggables(TileGenericPipe pipe, double x, double y, double z) {
 		TileEntityRendererDispatcher.instance.field_147553_e.bindTexture(TextureMap.locationBlocksTexture);
 
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing direction : EnumFacing.VALID_DIRECTIONS) {
 			PipePluggable pluggable = pipe.getPipePluggable(direction);
 			if (pluggable != null && pluggable.getDynamicRenderer() != null) {
 				pluggable.getDynamicRenderer().renderPluggable(pipe.getPipe(), direction, pluggable, x, y, z);
@@ -471,7 +469,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		}
 	}
 
-	public static void renderGateStatic(RenderBlocks renderblocks, ForgeDirection direction, GatePluggable gate, ITextureStates blockStateMachine, int x, int y, int z) {
+	public static void renderGateStatic(RenderBlocks renderblocks, EnumFacing direction, GatePluggable gate, ITextureStates blockStateMachine, int x, int y, int z) {
 		blockStateMachine.getTextureState().set(gate.getLogic().getGateIcon());
 
 		float trim = 0.1F;
@@ -497,7 +495,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
 	}
 
-	public static void renderGate(double x, double y, double z, GatePluggable gate, ForgeDirection direction) {
+	public static void renderGate(double x, double y, double z, GatePluggable gate, EnumFacing direction) {
 		GL11.glPushMatrix();
 		GL11.glColor3f(1, 1, 1);
 		GL11.glTranslatef((float) x, (float) y, (float) z);
@@ -544,7 +542,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		GL11.glPopMatrix();
 	}
 
-	private static void renderGate(IIcon icon, int layer, float trim, float translateCenter, float extraDepth, ForgeDirection direction, boolean isLit, int sideRenderingMode) {
+	private static void renderGate(IIcon icon, int layer, float trim, float translateCenter, float extraDepth, EnumFacing direction, boolean isLit, int sideRenderingMode) {
 		RenderInfo renderBox = new RenderInfo();
 		renderBox.texture = icon;
 
@@ -613,12 +611,12 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, lastX, lastY);
 	}
 
-	public boolean isOpenOrientation(PipeRenderState state, ForgeDirection direction) {
+	public boolean isOpenOrientation(PipeRenderState state, EnumFacing direction) {
 		int connections = 0;
 
-		ForgeDirection targetOrientation = ForgeDirection.UNKNOWN;
+		EnumFacing targetOrientation = EnumFacing.UNKNOWN;
 
-		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing o : EnumFacing.VALID_DIRECTIONS) {
 			if (state.pipeConnectionMatrix.isConnected(o)) {
 
 				connections++;
@@ -677,7 +675,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		/*bindTexture(STRIPES_TEXTURE);
 
 		for (int side = 0; side < 6; side += 2) {
-			if (pipe.container.isPipeConnected(ForgeDirection.values()[side])) {
+			if (pipe.container.isPipeConnected(EnumFacing.values()[side])) {
 				GL11.glPushMatrix();
 
 				GL11.glTranslatef(0.5F, 0.5F, 0.5F);
@@ -731,7 +729,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		boolean sides = false, above = false;
 
-		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
 			int i = side.ordinal();
 
 			FluidRenderData fluidRenderData = trans.renderCache;
@@ -755,7 +753,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			GL11.glPushMatrix();
 			int list = 0;
 
-			switch (ForgeDirection.VALID_DIRECTIONS[i]) {
+			switch (EnumFacing.VALID_DIRECTIONS[i]) {
 				case UP:
 					above = true;
 					list = d.sideVertical[stage];

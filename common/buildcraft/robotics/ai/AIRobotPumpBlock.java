@@ -8,7 +8,7 @@
  */
 package buildcraft.robotics.ai;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.core.BlockIndex;
@@ -49,7 +49,7 @@ public class AIRobotPumpBlock extends AIRobot {
 		} else {
 			FluidStack fluidStack = BlockUtils.drainBlock(robot.worldObj, blockToPump.x, blockToPump.y, blockToPump.z, false);
 			if (fluidStack != null) {
-				if (robot.fill(ForgeDirection.UNKNOWN, fluidStack, true) > 0) {
+				if (robot.fill(EnumFacing.UNKNOWN, fluidStack, true) > 0) {
 					BlockUtils.drainBlock(robot.worldObj, blockToPump.x, blockToPump.y,
 							blockToPump.z, true);
 				}

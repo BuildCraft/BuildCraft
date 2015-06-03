@@ -16,9 +16,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntityChest;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IInvSlot;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
@@ -31,7 +31,7 @@ public final class InvUtils {
 	private InvUtils() {
 	}
 
-	public static int countItems(IInventory inv, ForgeDirection side, IStackFilter filter) {
+	public static int countItems(IInventory inv, EnumFacing side, IStackFilter filter) {
 		int count = 0;
 		for (IInvSlot slot : InventoryIterator.getIterable(inv, side)) {
 			ItemStack stack = slot.getStackInSlot();
@@ -42,7 +42,7 @@ public final class InvUtils {
 		return count;
 	}
 
-	public static boolean containsItem(IInventory inv, ForgeDirection side, IStackFilter filter) {
+	public static boolean containsItem(IInventory inv, EnumFacing side, IStackFilter filter) {
 		for (IInvSlot slot : InventoryIterator.getIterable(inv, side)) {
 			ItemStack stack = slot.getStackInSlot();
 			if (stack != null && filter.matches(stack)) {
@@ -59,7 +59,7 @@ public final class InvUtils {
 	 * @param dest The IInventory
 	 * @return true if room for stack
 	 */
-	public static boolean isRoomForStack(ItemStack stack, ForgeDirection side, IInventory dest) {
+	public static boolean isRoomForStack(ItemStack stack, EnumFacing side, IInventory dest) {
 		if (stack == null || dest == null) {
 			return false;
 		}
@@ -76,7 +76,7 @@ public final class InvUtils {
 	 *            an IStackFilter to match against
 	 * @return null if nothing was moved, the stack moved otherwise
 	 */
-	public static ItemStack moveOneItem(IInventory source, ForgeDirection output, IInventory dest, ForgeDirection intput, IStackFilter filter) {
+	public static ItemStack moveOneItem(IInventory source, EnumFacing output, IInventory dest, EnumFacing intput, IStackFilter filter) {
 		ITransactor imSource = Transactor.getTransactorFor(source);
 		ItemStack stack = imSource.remove(filter, output, false);
 		if (stack != null) {

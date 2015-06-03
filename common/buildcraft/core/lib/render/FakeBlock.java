@@ -10,11 +10,10 @@ package buildcraft.core.lib.render;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.render.ITextureStates;
 
@@ -55,7 +54,7 @@ public final class FakeBlock extends Block implements ITextureStates {
 		return textureState.isSided() ? textureState.getTextureArray()[side] : textureState.getTexture();
 	}
 	@Override
-	public void setRenderSide(ForgeDirection side, boolean render) {
+	public void setRenderSide(EnumFacing side, boolean render) {
 		if (render) {
 			renderMask |= 1 << side.ordinal();
 		} else {

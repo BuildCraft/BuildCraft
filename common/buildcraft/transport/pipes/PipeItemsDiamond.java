@@ -8,9 +8,9 @@
  */
 package buildcraft.transport.pipes;
 
-import java.util.Iterator;
-
 import io.netty.buffer.ByteBuf;
+
+import java.util.Iterator;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,9 +18,9 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
@@ -77,7 +77,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
+	public int getIconIndex(EnumFacing direction) {
 		switch (direction) {
 			case UNKNOWN:
 				return PipeIconProvider.TYPE.PipeItemsDiamond_Center.ordinal();
@@ -119,7 +119,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
 	}
 
 	private boolean findDest(PipeEventItem.FindDest event) {
-		for (ForgeDirection dir : event.destinations) {
+		for (EnumFacing dir : event.destinations) {
 			if (filters.filterCounts[dir.ordinal()] > 0) {
 				for (int slot = 0; slot < 9; ++slot) {
 					int v = dir.ordinal() * 9 + slot;
@@ -159,7 +159,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
 			}
 		}
 
-		Iterator<ForgeDirection> i = event.destinations.iterator();
+		Iterator<EnumFacing> i = event.destinations.iterator();
 		while (i.hasNext()) {
 			if (filters.filterCounts[i.next().ordinal()] > 0) {
 				i.remove();

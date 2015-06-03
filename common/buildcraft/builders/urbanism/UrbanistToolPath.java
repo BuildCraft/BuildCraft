@@ -8,7 +8,6 @@
  */
 package buildcraft.builders.urbanism;
 
-import net.minecraft.util.IIcon;
 
 class UrbanistToolPath extends UrbanistTool {
 	@Override

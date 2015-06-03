@@ -11,7 +11,6 @@ package buildcraft.api.core;
 import java.util.Locale;
 import java.util.Random;
 
-import net.minecraft.util.IIcon;
 import net.minecraft.util.StatCollector;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;

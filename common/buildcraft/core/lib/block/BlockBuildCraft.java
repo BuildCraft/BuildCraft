@@ -11,19 +11,17 @@ package buildcraft.core.lib.block;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.events.BlockInteractionEvent;
@@ -87,7 +85,7 @@ public abstract class BlockBuildCraft extends BlockContainer {
 		TileEntity tile = world.getTileEntity(x, y, z);
 
 		if (isRotatable()) {
-			ForgeDirection orientation = Utils.get2dOrientation(entity);
+			EnumFacing orientation = Utils.get2dOrientation(entity);
 			world.setBlockMetadataWithNotify(x, y, z, world.getBlockMetadata(x, y, z) & 8 | orientation.getOpposite().ordinal(), 1);
 		}
 
@@ -126,24 +124,24 @@ public abstract class BlockBuildCraft extends BlockContainer {
 
 
 	@Override
-	public boolean rotateBlock(World world, int x, int y, int z, ForgeDirection axis) {
+	public boolean rotateBlock(World world, int x, int y, int z, EnumFacing axis) {
 		if (isRotatable()) {
 			// TODO: Actually look at the axis parameter
 			int meta = world.getBlockMetadata(x, y, z);
 
-			switch (ForgeDirection.getOrientation(meta)) {
+			switch (EnumFacing.getOrientation(meta)) {
 				case WEST:
-					world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.SOUTH.ordinal(), 3);
+					world.setBlockMetadataWithNotify(x, y, z, EnumFacing.SOUTH.ordinal(), 3);
 					break;
 				case EAST:
-					world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.NORTH.ordinal(), 3);
+					world.setBlockMetadataWithNotify(x, y, z, EnumFacing.NORTH.ordinal(), 3);
 					break;
 				case NORTH:
-					world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.WEST.ordinal(), 3);
+					world.setBlockMetadataWithNotify(x, y, z, EnumFacing.WEST.ordinal(), 3);
 					break;
 				case SOUTH:
 				default:
-					world.setBlockMetadataWithNotify(x, y, z, ForgeDirection.EAST.ordinal(), 3);
+					world.setBlockMetadataWithNotify(x, y, z, EnumFacing.EAST.ordinal(), 3);
 					break;
 			}
 			world.markBlockForUpdate(x, y, z);

@@ -8,16 +8,16 @@
  */
 package buildcraft.core.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
-
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
+
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
@@ -27,9 +27,9 @@ import buildcraft.core.lib.utils.StringUtils;
 public class TriggerEnergy extends BCStatement implements ITriggerInternal {
 	public static class Neighbor {
 		public TileEntity tile;
-		public ForgeDirection side;
+		public EnumFacing side;
 
-		public Neighbor(TileEntity tile, ForgeDirection side) {
+		public Neighbor(TileEntity tile, EnumFacing side) {
 			this.tile = tile;
 			this.side = side;
 		}
@@ -48,7 +48,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
 		return StringUtils.localize("gate.trigger.machine.energyStored." + (high ? "high" : "low"));
 	}
 
-	private boolean isTriggeredEnergyHandler(IEnergyConnection connection, ForgeDirection side) {
+	private boolean isTriggeredEnergyHandler(IEnergyConnection connection, EnumFacing side) {
 		int energyStored, energyMaxStored;
 
 		if (connection instanceof IEnergyHandler) {
@@ -75,12 +75,12 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
 		return false;
 	}
 
-	protected static boolean isTriggered(Object tile, ForgeDirection side) {
+	protected static boolean isTriggered(Object tile, EnumFacing side) {
 		return (tile instanceof IEnergyHandler || tile instanceof IEnergyProvider || tile instanceof IEnergyReceiver)
 			&& (((IEnergyConnection) tile).canConnectEnergy(side.getOpposite()));
 	}
 
-	protected boolean isActive(Object tile, ForgeDirection side) {
+	protected boolean isActive(Object tile, EnumFacing side) {
 		if (isTriggered(tile, side)) {
 				return isTriggeredEnergyHandler((IEnergyConnection) tile, side.getOpposite());
 		}
@@ -108,7 +108,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
 	public boolean isTriggerActive(IStatementContainer source, IStatementParameter[] parameters) {
 		// Internal check
 		if (isTriggeringPipe(source.getTile())) {
-			return isActive(((IPipeTile) source.getTile()).getPipe(), ForgeDirection.UNKNOWN);
+			return isActive(((IPipeTile) source.getTile()).getPipe(), EnumFacing.UNKNOWN);
 		}
 
 		Neighbor triggeringNeighbor = getTriggeringNeighbor(source.getTile());
@@ -120,14 +120,14 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
 
 	public static Neighbor getTriggeringNeighbor(TileEntity parent) {
 		if (parent instanceof IPipeTile) {
-			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
 				TileEntity tile = ((IPipeTile) parent).getNeighborTile(side);
 				if (tile != null && isTriggered(tile, side)) {
 					return new Neighbor(tile, side);
 				}
 			}
 		} else {
-			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
 				TileEntity tile = parent.getWorldObj().getTileEntity(
 						parent.xCoord + side.offsetX,
 						parent.yCoord + side.offsetY,

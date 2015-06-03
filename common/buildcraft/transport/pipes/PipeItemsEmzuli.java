@@ -8,11 +8,11 @@
  */
 package buildcraft.transport.pipes;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.LinkedList;
-
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,7 +20,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.EnumColor;
@@ -86,7 +86,7 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 	 * on the position of the pipe.
 	 */
 	@Override
-	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, ForgeDirection from) {
+	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, EnumFacing from) {
 
 		if (activeFlags.isEmpty()) {
 			return null;
@@ -109,7 +109,7 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 	}
 
 	@Override
-	public ItemStack checkExtractGeneric(net.minecraft.inventory.ISidedInventory inventory, boolean doRemove, ForgeDirection from) {
+	public ItemStack checkExtractGeneric(net.minecraft.inventory.ISidedInventory inventory, boolean doRemove, EnumFacing from) {
 		for (int i : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
 			ItemStack stack = inventory.getStackInSlot(i);
 			if (stack != null && stack.stackSize > 0) {

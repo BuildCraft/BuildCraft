@@ -11,7 +11,7 @@ package buildcraft.transport.pipes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.lib.TileBuffer;
@@ -27,17 +27,17 @@ public abstract class PipeLogicWood {
 
 	private void switchSource() {
 		int meta = pipe.container.getBlockMetadata();
-		ForgeDirection newFacing = null;
+		EnumFacing newFacing = null;
 
 		for (int i = meta + 1; i <= meta + 6; ++i) {
-			ForgeDirection facing = ForgeDirection.getOrientation(i % 6);
+			EnumFacing facing = EnumFacing.getOrientation(i % 6);
 			if (isValidFacing(facing)) {
 				newFacing = facing;
 				break;
 			}
 		}
 		if (newFacing == null) {
-			newFacing = ForgeDirection.UNKNOWN;
+			newFacing = EnumFacing.UNKNOWN;
 		}
 
 		if (newFacing.ordinal() != meta) {
@@ -52,14 +52,14 @@ public abstract class PipeLogicWood {
 		if (meta > 5) {
 			switchSource();
 		} else {
-			ForgeDirection facing = ForgeDirection.getOrientation(meta);
+			EnumFacing facing = EnumFacing.getOrientation(meta);
 			if (!isValidFacing(facing)) {
 				switchSource();
 			}
 		}
 	}
 
-	private boolean isValidFacing(ForgeDirection side) {
+	private boolean isValidFacing(EnumFacing side) {
 		TileBuffer[] tileBuffer = pipe.container.getTileCache();
 		if (tileBuffer == null) {
 			return true;

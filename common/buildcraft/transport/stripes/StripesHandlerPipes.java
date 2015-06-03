@@ -10,9 +10,9 @@ package buildcraft.transport.stripes;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Position;
@@ -38,7 +38,7 @@ public class StripesHandlerPipes implements IStripesHandler {
 
 	@Override
 	public boolean handle(World world, int x, int y, int z,
-			ForgeDirection direction, ItemStack stack, EntityPlayer player,
+			EnumFacing direction, ItemStack stack, EntityPlayer player,
 			IStripesActivator activator) {
 
 		if (!(stack.getItem() instanceof ItemPipe) || (stack.getItem() == BuildCraftTransport.pipeItemsStripes)) {

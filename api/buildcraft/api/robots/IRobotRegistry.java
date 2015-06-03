@@ -11,7 +11,7 @@ package buildcraft.api.robots;
 import java.util.Collection;
 
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public interface IRobotRegistry {
 
@@ -39,7 +39,7 @@ public interface IRobotRegistry {
 
 	void releaseResources(EntityRobotBase robot);
 
-	DockingStation getStation(int x, int y, int z, ForgeDirection side);
+	DockingStation getStation(int x, int y, int z, EnumFacing side);
 
 	Collection<DockingStation> getStations();
 

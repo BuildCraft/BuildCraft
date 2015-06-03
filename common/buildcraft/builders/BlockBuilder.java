@@ -12,10 +12,9 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.core.BCCreativeTab;
@@ -61,7 +60,7 @@ public class BlockBuilder extends BlockBuildCraft {
 			}
 
 			return true;
-		} else if (builder != null && TankUtils.handleRightClick(builder, ForgeDirection.UNKNOWN, entityplayer, true, false)) {
+		} else if (builder != null && TankUtils.handleRightClick(builder, EnumFacing.UNKNOWN, entityplayer, true, false)) {
 			return true;
 		} else {
 			if (!world.isRemote) {
@@ -78,7 +77,7 @@ public class BlockBuilder extends BlockBuildCraft {
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, EnumFacing side) {
 		return false;
 	}
 

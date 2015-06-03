@@ -12,17 +12,15 @@ import java.util.List;
 import java.util.Locale;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.blocks.IColorRemovable;
 import buildcraft.api.core.EnumColor;
@@ -104,7 +102,7 @@ public class ItemPaintbrush extends ItemBuildCraft {
 		}
 
 		if (dye >= 0) {
-			if (block.recolourBlock(world, x, y, z, ForgeDirection.getOrientation(side), 15 - dye)) {
+			if (block.recolourBlock(world, x, y, z, EnumFacing.getOrientation(side), 15 - dye)) {
 				player.swingItem();
 				setDamage(stack, getDamage(stack) + 1);
 				return !world.isRemote;
@@ -112,7 +110,7 @@ public class ItemPaintbrush extends ItemBuildCraft {
 		} else {
 			// NOTE: Clean paintbrushes never damage.
 			if (block instanceof IColorRemovable) {
-				if (((IColorRemovable) block).removeColorFromBlock(world, x, y, z, ForgeDirection.getOrientation(side))) {
+				if (((IColorRemovable) block).removeColorFromBlock(world, x, y, z, EnumFacing.getOrientation(side))) {
 					player.swingItem();
 					return !world.isRemote;
 				}

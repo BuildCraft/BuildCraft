@@ -12,7 +12,7 @@ import java.util.List;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TravelingItem;
@@ -52,20 +52,20 @@ public abstract class PipeEventItem extends PipeEvent {
 
 	public static class DropItem extends PipeEventItem {
 		public EntityItem entity;
-		public ForgeDirection direction;
+		public EnumFacing direction;
 
 		public DropItem(Pipe pipe, TravelingItem item, EntityItem entity) {
 			super(pipe, item);
 			this.entity = entity;
-			this.direction = item.output != ForgeDirection.UNKNOWN ? item.output : item.input;
+			this.direction = item.output != EnumFacing.UNKNOWN ? item.output : item.input;
 		}
 	}
 
 	public static class FindDest extends PipeEventItem {
-		public final List<ForgeDirection> destinations;
+		public final List<EnumFacing> destinations;
 		public boolean shuffle = true;
 
-		public FindDest(Pipe pipe, TravelingItem item, List<ForgeDirection> destinations) {
+		public FindDest(Pipe pipe, TravelingItem item, List<EnumFacing> destinations) {
 			super(pipe, item);
 			this.destinations = destinations;
 		}

@@ -8,17 +8,18 @@
  */
 package buildcraft.transport.pipes;
 
+import cofh.api.energy.IEnergyHandler;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
 
-import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
@@ -81,8 +82,8 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
-		if (direction == ForgeDirection.UNKNOWN) {
+	public int getIconIndex(EnumFacing direction) {
+		if (direction == EnumFacing.UNKNOWN) {
 			return standardIconIndex;
 		} else {
 			int metadata = container.getBlockMetadata();
@@ -124,7 +125,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 			int meta = container.getBlockMetadata();
 
 			if (meta <= 5) {
-				ForgeDirection side = ForgeDirection.getOrientation(meta);
+				EnumFacing side = EnumFacing.getOrientation(meta);
 				TileEntity tile = container.getTile(side);
 
 				if (tile instanceof IInventory) {
@@ -155,7 +156,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 			return;
 		}
 
-		ForgeDirection side = ForgeDirection.getOrientation(meta);
+		EnumFacing side = EnumFacing.getOrientation(meta);
 		TileEntity tile = container.getTile(side);
 
 		if (tile instanceof IInventory) {
@@ -195,7 +196,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 	 * inventory, null if none. On certain cases, the extractable slot depends
 	 * on the position of the pipe.
 	 */
-	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, ForgeDirection from) {
+	public ItemStack[] checkExtract(IInventory inventory, boolean doRemove, EnumFacing from) {
 		IInventory inv = InvUtils.getInventory(inventory);
 		ItemStack result = checkExtractGeneric(inv, doRemove, from);
 
@@ -206,11 +207,11 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 		return null;
 	}
 
-	public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, ForgeDirection from) {
+	public ItemStack checkExtractGeneric(IInventory inventory, boolean doRemove, EnumFacing from) {
 		return checkExtractGeneric(InventoryWrapper.getWrappedInventory(inventory), doRemove, from);
 	}
 
-	public ItemStack checkExtractGeneric(ISidedInventory inventory, boolean doRemove, ForgeDirection from) {
+	public ItemStack checkExtractGeneric(ISidedInventory inventory, boolean doRemove, EnumFacing from) {
 		if (inventory == null) {
 			return null;
 		}
@@ -238,29 +239,29 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 	}
 
 	@Override
-	public boolean canConnectEnergy(ForgeDirection from) {
+	public boolean canConnectEnergy(EnumFacing from) {
 		return true;
 	}
 
 	@Override
-	public int receiveEnergy(ForgeDirection from, int maxReceive,
+	public int receiveEnergy(EnumFacing from, int maxReceive,
 			boolean simulate) {
 		return battery.receiveEnergy(maxReceive, simulate);
 	}
 
 	@Override
-	public int extractEnergy(ForgeDirection from, int maxExtract,
+	public int extractEnergy(EnumFacing from, int maxExtract,
 			boolean simulate) {
 		return 0;
 	}
 
 	@Override
-	public int getEnergyStored(ForgeDirection from) {
+	public int getEnergyStored(EnumFacing from) {
 		return battery.getEnergyStored();
 	}
 
 	@Override
-	public int getMaxEnergyStored(ForgeDirection from) {
+	public int getMaxEnergyStored(EnumFacing from) {
 		return battery.getMaxEnergyStored();
 	}
 }

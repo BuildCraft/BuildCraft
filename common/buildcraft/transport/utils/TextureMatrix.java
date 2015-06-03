@@ -10,18 +10,18 @@ package buildcraft.transport.utils;
 
 import io.netty.buffer.ByteBuf;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public class TextureMatrix {
 
 	private final int[] iconIndexes = new int[7];
 	private boolean dirty = false;
 
-	public int getTextureIndex(ForgeDirection direction) {
+	public int getTextureIndex(EnumFacing direction) {
 		return iconIndexes[direction.ordinal()];
 	}
 
-	public void setIconIndex(ForgeDirection direction, int value) {
+	public void setIconIndex(EnumFacing direction, int value) {
 		if (iconIndexes[direction.ordinal()] != value) {
 			iconIndexes[direction.ordinal()] = value;
 			dirty = true;

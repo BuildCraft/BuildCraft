@@ -6,10 +6,10 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.world.BlockEvent;
 
 import buildcraft.BuildCraftCore;
@@ -46,7 +46,7 @@ public class BlockMiner {
 
 		// Second, try to add to adjacent pipes
 		if (stack.stackSize > 0) {
-			stack.stackSize -= Utils.addToRandomInjectableAround(owner.getWorldObj(), owner.xCoord, owner.yCoord, owner.zCoord, ForgeDirection.UNKNOWN, stack);
+			stack.stackSize -= Utils.addToRandomInjectableAround(owner.getWorldObj(), owner.xCoord, owner.yCoord, owner.zCoord, EnumFacing.UNKNOWN, stack);
 		}
 
 		// Lastly, throw the object away

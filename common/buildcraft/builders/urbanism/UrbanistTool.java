@@ -10,7 +10,6 @@ package buildcraft.builders.urbanism;
 
 import java.util.ArrayList;
 
-import net.minecraft.util.IIcon;
 import net.minecraft.util.MovingObjectPosition;
 
 import buildcraft.core.lib.gui.AdvancedSlot;

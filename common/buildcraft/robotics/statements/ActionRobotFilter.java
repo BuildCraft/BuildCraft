@@ -11,7 +11,6 @@ package buildcraft.robotics.statements;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;

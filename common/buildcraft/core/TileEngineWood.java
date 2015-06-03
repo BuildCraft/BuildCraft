@@ -9,8 +9,8 @@
 package buildcraft.core;
 
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.power.IRedstoneEngine;
 import buildcraft.api.power.IRedstoneEngineReceiver;
@@ -85,7 +85,7 @@ public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
 	}
 
 	@Override
-	public ConnectOverride overridePipeConnection(IPipeTile.PipeType type, ForgeDirection with) {
+	public ConnectOverride overridePipeConnection(IPipeTile.PipeType type, EnumFacing with) {
 		return ConnectOverride.DISCONNECT;
 	}
 
@@ -111,7 +111,7 @@ public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
 
 	// TODO: HACK
 	@Override
-	public boolean canConnectEnergy(ForgeDirection from) {
+	public boolean canConnectEnergy(EnumFacing from) {
 		return false;
 	}
 

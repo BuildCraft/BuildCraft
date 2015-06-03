@@ -9,9 +9,9 @@
 package buildcraft.transport.pipes;
 
 import net.minecraft.item.Item;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
@@ -32,7 +32,7 @@ public class PipeItemsCobblestone extends Pipe {
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
+	public int getIconIndex(EnumFacing direction) {
 		return PipeIconProvider.TYPE.PipeItemsCobbleStone.ordinal();
 	}
 }

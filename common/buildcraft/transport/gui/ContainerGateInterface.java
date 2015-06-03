@@ -8,13 +8,13 @@
  */
 package buildcraft.transport.gui;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.TreeSet;
-
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;

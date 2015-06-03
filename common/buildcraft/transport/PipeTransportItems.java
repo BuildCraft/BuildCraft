@@ -24,8 +24,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
@@ -80,14 +80,14 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 		double y = MathUtils.clamp(item.yCoord, container.yCoord + 0.01, container.yCoord + 0.99);
 		double z = MathUtils.clamp(item.zCoord, container.zCoord + 0.01, container.zCoord + 0.99);
 
-		if (item.input != ForgeDirection.UP && item.input != ForgeDirection.DOWN) {
+		if (item.input != EnumFacing.UP && item.input != EnumFacing.DOWN) {
 			y = container.yCoord + TransportUtils.getPipeFloorOf(item.getItemStack());
 		}
 
 		item.setPosition(x, y, z);
 	}
 
-	public void injectItem(TravelingItem item, ForgeDirection inputOrientation) {
+	public void injectItem(TravelingItem item, EnumFacing inputOrientation) {
 		if (item.isCorrupted()) {
 			// Safe guard - if for any reason the item is corrupted at this
 			// stage, avoid adding it to the pipe to avoid further exceptions.
@@ -177,11 +177,11 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 		}
 	}
 
-	public ForgeDirection resolveDestination(TravelingItem data) {
-		List<ForgeDirection> validDestinations = getPossibleMovements(data);
+	public EnumFacing resolveDestination(TravelingItem data) {
+		List<EnumFacing> validDestinations = getPossibleMovements(data);
 
 		if (validDestinations.isEmpty()) {
-			return ForgeDirection.UNKNOWN;
+			return EnumFacing.UNKNOWN;
 		}
 
 		return validDestinations.get(0);
@@ -191,15 +191,15 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 	 * Returns a list of all possible movements, that is to say adjacent
 	 * implementers of IPipeEntry or TileEntityChest.
 	 */
-	public List<ForgeDirection> getPossibleMovements(TravelingItem item) {
-		LinkedList<ForgeDirection> result = new LinkedList<ForgeDirection>();
+	public List<EnumFacing> getPossibleMovements(TravelingItem item) {
+		LinkedList<EnumFacing> result = new LinkedList<EnumFacing>();
 
 		item.blacklist.add(item.input.getOpposite());
 
-		EnumSet<ForgeDirection> sides = EnumSet.complementOf(item.blacklist);
-		sides.remove(ForgeDirection.UNKNOWN);
+		EnumSet<EnumFacing> sides = EnumSet.complementOf(item.blacklist);
+		sides.remove(EnumFacing.UNKNOWN);
 
-		for (ForgeDirection o : sides) {
+		for (EnumFacing o : sides) {
 			if (container.pipe.outputOpen(o) && canReceivePipeObjects(o, item)) {
 				result.add(o);
 			}
@@ -221,7 +221,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 		return result;
 	}
 
-	private boolean canReceivePipeObjects(ForgeDirection o, TravelingItem item) {
+	private boolean canReceivePipeObjects(EnumFacing o, TravelingItem item) {
 		TileEntity entity = container.getTile(o);
 
 		if (!container.isPipeConnected(o)) {
@@ -296,7 +296,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 				// Reajusting to the middle
 				item.setPosition(container.xCoord + 0.5, container.yCoord + TransportUtils.getPipeFloorOf(item.getItemStack()), container.zCoord + 0.5);
 
-				if (item.output == ForgeDirection.UNKNOWN) {
+				if (item.output == EnumFacing.UNKNOWN) {
 					if (items.scheduleRemoval(item)) {
 						dropItem(item);
 					}
@@ -371,7 +371,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 		}
 
 		final EntityItem entity = event.entity;
-		ForgeDirection direction = item.input;
+		EnumFacing direction = item.input;
 		entity.setPosition(entity.posX + direction.offsetX * 0.5d,
 				entity.posY + direction.offsetY * 0.5d,
 				entity.posZ + direction.offsetZ * 0.5d);
@@ -507,7 +507,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 	}
 
 	@Override
-	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
+	public boolean canPipeConnect(TileEntity tile, EnumFacing side) {
 		if (tile instanceof IPipeTile) {
 			Pipe<?> pipe2 = (Pipe<?>) ((IPipeTile) tile).getPipe();
 			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportItems)) {
@@ -573,7 +573,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 	}
 
 	@Override
-	public void getDebugInfo(List<String> info, ForgeDirection side, ItemStack debugger, EntityPlayer player) {
+	public void getDebugInfo(List<String> info, EnumFacing side, ItemStack debugger, EntityPlayer player) {
 		info.add("PipeTransportItems");
 		info.add("- Items: " + getNumberOfStacks() + "/" + MAX_PIPE_STACKS + " (" + getNumberOfItems() + "/" + MAX_PIPE_ITEMS + ")");
 	}

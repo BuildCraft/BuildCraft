@@ -8,15 +8,7 @@
  */
 package buildcraft.core.blueprints;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 import java.util.Map.Entry;
 
 import com.google.common.collect.HashMultiset;
@@ -28,9 +20,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -506,7 +498,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				continue;
 			}
 
-			for (IInvSlot slotInv : InventoryIterator.getIterable(new InventoryCopy(builder), ForgeDirection.UNKNOWN)) {
+			for (IInvSlot slotInv : InventoryIterator.getIterable(new InventoryCopy(builder), EnumFacing.UNKNOWN)) {
 				if (!builder.isBuildingMaterialSlot(slotInv.getIndex())) {
 					continue;
 				}
@@ -587,7 +579,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				continue;
 			}
 
-			for (IInvSlot slotInv : InventoryIterator.getIterable(inv, ForgeDirection.UNKNOWN)) {
+			for (IInvSlot slotInv : InventoryIterator.getIterable(inv, EnumFacing.UNKNOWN)) {
 				if (inv instanceof TileAbstractBuilder &&
 						!((TileAbstractBuilder) inv).isBuildingMaterialSlot(slotInv.getIndex())) {
 					continue;

@@ -14,8 +14,8 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 
 import buildcraft.BuildCraftCore;
@@ -77,7 +77,7 @@ public class BlockRefinery extends BlockBuildCraft {
 
 		if (current != null && current.getItem() != Items.bucket) {
 			if (!world.isRemote) {
-				if (TankUtils.handleRightClick((TileRefinery) tile, ForgeDirection.getOrientation(side), player, true, false)) {
+				if (TankUtils.handleRightClick((TileRefinery) tile, EnumFacing.getOrientation(side), player, true, false)) {
 					return true;
 				}
 			} else if (FluidContainerRegistry.isContainer(current)) {

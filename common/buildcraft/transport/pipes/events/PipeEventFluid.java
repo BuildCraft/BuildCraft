@@ -2,7 +2,7 @@ package buildcraft.transport.pipes.events;
 
 import com.google.common.collect.Multiset;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.transport.Pipe;
@@ -16,9 +16,9 @@ public abstract class PipeEventFluid extends PipeEvent {
 	}
 
 	public static class FindDest extends PipeEventFluid {
-		public final Multiset<ForgeDirection> destinations;
+		public final Multiset<EnumFacing> destinations;
 
-		public FindDest(Pipe pipe, FluidStack fluidStack, Multiset<ForgeDirection> destinations) {
+		public FindDest(Pipe pipe, FluidStack fluidStack, Multiset<EnumFacing> destinations) {
 			super(pipe, fluidStack);
 			this.destinations = destinations;
 		}

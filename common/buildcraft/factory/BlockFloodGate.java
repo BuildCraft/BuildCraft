@@ -10,14 +10,12 @@ package buildcraft.factory;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.lib.block.BlockBuildCraft;
@@ -57,7 +55,7 @@ public class BlockFloodGate extends BlockBuildCraft {
 				if (side == 1) {
 					floodGate.rebuildQueue();
 				} else {
-					floodGate.switchSide(ForgeDirection.getOrientation(side));
+					floodGate.switchSide(EnumFacing.getOrientation(side));
 				}
 
 				((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);

@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IActionExternal;
@@ -36,7 +36,7 @@ public class PipeActionProvider implements IActionProvider {
 	}
 
 	@Override
-	public Collection<IActionExternal> getExternalActions(ForgeDirection side, TileEntity tile) {
+	public Collection<IActionExternal> getExternalActions(EnumFacing side, TileEntity tile) {
 		return null;
 	}
 

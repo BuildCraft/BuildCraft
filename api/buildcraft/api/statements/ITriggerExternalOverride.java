@@ -1,6 +1,6 @@
 package buildcraft.api.statements;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 /**
  * This interface can be used by tiles to override external trigger
@@ -13,5 +13,5 @@ public interface ITriggerExternalOverride {
 		TRUE, FALSE, IGNORE
 	}
 
-	Result override(ForgeDirection side, IStatementContainer source, IStatementParameter[] parameters);
+	Result override(EnumFacing side, IStatementContainer source, IStatementParameter[] parameters);
 }

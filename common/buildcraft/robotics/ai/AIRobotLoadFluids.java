@@ -8,7 +8,7 @@
  */
 package buildcraft.robotics.ai;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidHandler;
@@ -73,7 +73,7 @@ public class AIRobotLoadFluids extends AIRobot {
 		}
 
 		drainable = drainable.copy();
-		int filled = robot.fill(ForgeDirection.UNKNOWN, drainable, doLoad);
+		int filled = robot.fill(EnumFacing.UNKNOWN, drainable, doLoad);
 
 		if (filled > 0 && doLoad) {
 			drainable.amount = filled;

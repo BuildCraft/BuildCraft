@@ -8,9 +8,9 @@
  */
 package buildcraft.core.lib.network.command;
 
-import java.util.ArrayList;
-
 import io.netty.buffer.ByteBuf;
+
+import java.util.ArrayList;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.FMLCommonHandler;

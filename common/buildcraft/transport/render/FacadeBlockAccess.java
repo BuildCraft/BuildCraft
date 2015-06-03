@@ -3,9 +3,9 @@ package buildcraft.transport.render;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
@@ -14,9 +14,9 @@ import buildcraft.core.CompatHooks;
 
 public class FacadeBlockAccess implements IBlockAccess {
 	private final IBlockAccess world;
-	private final ForgeDirection side;
+	private final EnumFacing side;
 
-	public FacadeBlockAccess(IBlockAccess world, ForgeDirection side) {
+	public FacadeBlockAccess(IBlockAccess world, EnumFacing side) {
 		this.world = world;
 		this.side = side;
 	}
@@ -92,7 +92,7 @@ public class FacadeBlockAccess implements IBlockAccess {
 	}
 
 	@Override
-	public boolean isSideSolid(int x, int y, int z, ForgeDirection side, boolean def) {
+	public boolean isSideSolid(int x, int y, int z, EnumFacing side, boolean def) {
 		return world.isSideSolid(x, y, z, side, def);
 	}
 }

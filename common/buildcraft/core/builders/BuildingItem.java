@@ -8,10 +8,10 @@
  */
 package buildcraft.core.builders;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.Date;
 import java.util.LinkedList;
-
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;

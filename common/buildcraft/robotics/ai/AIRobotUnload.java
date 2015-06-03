@@ -9,7 +9,7 @@
 package buildcraft.robotics.ai;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.robots.AIRobot;
@@ -53,7 +53,7 @@ public class AIRobotUnload extends AIRobot {
 			return false;
 		}
 
-		for (IInvSlot robotSlot : InventoryIterator.getIterable(robot, ForgeDirection.UNKNOWN)) {
+		for (IInvSlot robotSlot : InventoryIterator.getIterable(robot, EnumFacing.UNKNOWN)) {
 			if (robotSlot.getStackInSlot() == null) {
 				continue;
 			}
@@ -64,7 +64,7 @@ public class AIRobotUnload extends AIRobot {
 				return false;
 			}
 
-			ForgeDirection injectSide = station.side().getOpposite();
+			EnumFacing injectSide = station.side().getOpposite();
 
 			ItemStack stack = robotSlot.getStackInSlot();
 			int used = output.injectItem(stack, doUnload, injectSide, null);

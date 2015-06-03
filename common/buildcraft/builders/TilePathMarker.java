@@ -8,11 +8,11 @@
  */
 package buildcraft.builders;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;

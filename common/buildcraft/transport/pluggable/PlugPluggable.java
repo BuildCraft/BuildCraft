@@ -2,11 +2,10 @@ package buildcraft.transport.pluggable;
 
 import io.netty.buffer.ByteBuf;
 
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.render.ITextureStates;
@@ -23,7 +22,7 @@ public class PlugPluggable extends PipePluggable {
 		private float zFightOffset = 1 / 4096.0F;
 
 		@Override
-		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, ForgeDirection side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
+		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, EnumFacing side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
 			if (renderPass != 0) {
 				return;
 			}
@@ -86,12 +85,12 @@ public class PlugPluggable extends PipePluggable {
 	}
 
 	@Override
-	public boolean isBlocking(IPipeTile pipe, ForgeDirection direction) {
+	public boolean isBlocking(IPipeTile pipe, EnumFacing direction) {
 		return true;
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox(ForgeDirection side) {
+	public AxisAlignedBB getBoundingBox(EnumFacing side) {
 		float[][] bounds = new float[3][2];
 		// X START - END
 		bounds[0][0] = 0.25F;

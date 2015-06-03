@@ -11,7 +11,7 @@ package buildcraft.core;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
@@ -23,7 +23,7 @@ public class SchematicEngine extends SchematicTile {
 	public void rotateLeft(IBuilderContext context) {
 		int o = tileNBT.getInteger("orientation");
 
-		o = ForgeDirection.values()[o].getRotation(ForgeDirection.UP).ordinal();
+		o = EnumFacing.values()[o].getRotation(EnumFacing.UP).ordinal();
 
 		tileNBT.setInteger("orientation", o);
 	}
@@ -48,7 +48,7 @@ public class SchematicEngine extends SchematicTile {
 
 		TileEngineBase engine = (TileEngineBase) context.world().getTileEntity(x, y, z);
 
-		engine.orientation = ForgeDirection.getOrientation(tileNBT.getInteger("orientation"));
+		engine.orientation = EnumFacing.getOrientation(tileNBT.getInteger("orientation"));
 		engine.sendNetworkUpdate();
 	}
 
@@ -57,7 +57,7 @@ public class SchematicEngine extends SchematicTile {
 		TileEngineBase engine = (TileEngineBase) context.world().getTileEntity(x, y, z);
 
 		if (engine != null) {
-			engine.orientation = ForgeDirection.getOrientation(tileNBT.getInteger("orientation"));
+			engine.orientation = EnumFacing.getOrientation(tileNBT.getInteger("orientation"));
 			engine.sendNetworkUpdate();
 			context.world().markBlockForUpdate(x, y, z);
 			context.world().notifyBlocksOfNeighborChange(x, y, z, block);

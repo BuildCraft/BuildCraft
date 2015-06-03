@@ -8,13 +8,14 @@
  */
 package buildcraft.builders;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
@@ -24,13 +25,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
@@ -582,7 +583,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		if (useDefault) {
 			int xMin, zMin;
 
-			ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite();
+			EnumFacing o = EnumFacing.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite();
 
 			switch (o) {
 			case EAST:
@@ -914,7 +915,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	}
 
 	@Override
-	public ConnectOverride overridePipeConnection(IPipeTile.PipeType type, ForgeDirection with) {
+	public ConnectOverride overridePipeConnection(IPipeTile.PipeType type, EnumFacing with) {
 		if (with.ordinal() == worldObj.getBlockMetadata(xCoord, yCoord, zCoord)) {
 			return ConnectOverride.DISCONNECT;
 		}

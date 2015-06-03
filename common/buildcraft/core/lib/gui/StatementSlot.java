@@ -2,7 +2,6 @@ package buildcraft.core.lib.gui;
 
 import java.util.ArrayList;
 
-import net.minecraft.util.IIcon;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 

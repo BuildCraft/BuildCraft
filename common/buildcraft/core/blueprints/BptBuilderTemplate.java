@@ -11,8 +11,8 @@ package buildcraft.core.blueprints;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.SchematicBlockBase;
@@ -137,7 +137,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 
 		IInvSlot firstSlotToConsume = null;
 
-		for (IInvSlot invSlot : InventoryIterator.getIterable(builder, ForgeDirection.UNKNOWN)) {
+		for (IInvSlot invSlot : InventoryIterator.getIterable(builder, EnumFacing.UNKNOWN)) {
 			if (!builder.isBuildingMaterialSlot(invSlot.getIndex())) {
 				continue;
 			}

@@ -18,10 +18,10 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.EnumColor;
@@ -35,14 +35,14 @@ public class TravelingItem {
 	public static final InsertionHandler DEFAULT_INSERTION_HANDLER = new InsertionHandler();
 	private static int maxId = 0;
 
-	public final EnumSet<ForgeDirection> blacklist = EnumSet.noneOf(ForgeDirection.class);
+	public final EnumSet<EnumFacing> blacklist = EnumSet.noneOf(EnumFacing.class);
 
 	public double xCoord, yCoord, zCoord;
 	public final int id;
 	public boolean toCenter = true;
 	public EnumColor color;
-	public ForgeDirection input = ForgeDirection.UNKNOWN;
-	public ForgeDirection output = ForgeDirection.UNKNOWN;
+	public EnumFacing input = EnumFacing.UNKNOWN;
+	public EnumFacing output = EnumFacing.UNKNOWN;
 
 	public int displayList;
 	public boolean hasDisplayList;
@@ -161,8 +161,8 @@ public class TravelingItem {
 	public void reset() {
 		toCenter = true;
 		blacklist.clear();
-		input = ForgeDirection.UNKNOWN;
-		output = ForgeDirection.UNKNOWN;
+		input = EnumFacing.UNKNOWN;
+		output = EnumFacing.UNKNOWN;
 	}
 
 	/* SAVING & LOADING */
@@ -173,8 +173,8 @@ public class TravelingItem {
 		setItemStack(ItemStack.loadItemStackFromNBT(data.getCompoundTag("Item")));
 
 		toCenter = data.getBoolean("toCenter");
-		input = ForgeDirection.getOrientation(data.getByte("input"));
-		output = ForgeDirection.getOrientation(data.getByte("output"));
+		input = EnumFacing.getOrientation(data.getByte("input"));
+		output = EnumFacing.getOrientation(data.getByte("output"));
 
 		byte c = data.getByte("color");
 		if (c != -1) {

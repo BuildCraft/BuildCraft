@@ -7,8 +7,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.core.lib.items.ItemBuildCraft;
@@ -33,7 +33,7 @@ public class ItemDebugger extends ItemBuildCraft {
 		TileEntity tile = world.getTileEntity(x, y, z);
 		if (tile instanceof IDebuggable) {
 			ArrayList<String> info = new ArrayList<String>();
-			((IDebuggable) tile).getDebugInfo(info, ForgeDirection.getOrientation(side), stack, player);
+			((IDebuggable) tile).getDebugInfo(info, EnumFacing.getOrientation(side), stack, player);
 			for (String s : info) {
 				player.addChatComponentMessage(new ChatComponentText(s));
 			}

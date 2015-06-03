@@ -20,16 +20,12 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S27PacketExplosion;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.ChunkPosition;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
-
-import net.minecraftforge.fml.common.FMLCommonHandler;
-
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.fluids.Fluid;
@@ -37,6 +33,7 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.blueprints.BuilderAPI;
@@ -311,7 +308,7 @@ public final class BlockUtils {
 	}
 
 	public static boolean useItemOnBlock(World world, EntityPlayer player, ItemStack stack, int x,
-			int y, int z, ForgeDirection direction) {
+			int y, int z, EnumFacing direction) {
 		boolean done = stack.getItem().onItemUseFirst(stack, player, world, x, y, z,
 				direction.ordinal(), 0.5F, 0.5F, 0.5F);
 

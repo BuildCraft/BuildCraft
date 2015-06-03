@@ -17,9 +17,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.tools.IToolWrench;
@@ -67,9 +67,9 @@ public class BlockQuarry extends BlockLEDHatchBase {
 		if ((meta & 8) == 0) {
 			world.setBlockMetadataWithNotify(i, j, k, meta | 8, 0);
 
-			ForgeDirection[] dirs = ForgeDirection.VALID_DIRECTIONS;
+			EnumFacing[] dirs = EnumFacing.VALID_DIRECTIONS;
 
-			for (ForgeDirection dir : dirs) {
+			for (EnumFacing dir : dirs) {
 				switch (dir) {
 				case UP:
 						searchFrames(world, i, j + 1, k);
@@ -146,7 +146,7 @@ public class BlockQuarry extends BlockLEDHatchBase {
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
+	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, EnumFacing side) {
 		return false;
 	}
 

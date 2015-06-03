@@ -4,8 +4,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
@@ -24,7 +24,7 @@ public class StripesHandlerArrow implements IStripesHandler {
 
 	@Override
 	public boolean handle(World world, int x, int y, int z,
-			ForgeDirection direction, ItemStack stack, EntityPlayer player,
+			EnumFacing direction, ItemStack stack, EntityPlayer player,
 			IStripesActivator activator) {
 
 		EntityArrow entityArrow = new EntityArrow(world, player, 0);

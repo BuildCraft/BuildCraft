@@ -3,7 +3,7 @@ package buildcraft.robotics;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.IDockingStationProvider;
@@ -23,7 +23,7 @@ public final class RobotUtils {
 
 		if (tile instanceof IPipeTile) {
 			IPipeTile pipeTile = (IPipeTile) tile;
-			for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
+			for (EnumFacing d : EnumFacing.VALID_DIRECTIONS) {
 				if (pipeTile.getPipePluggable(d) instanceof IDockingStationProvider) {
 					IDockingStationProvider pluggable = (IDockingStationProvider) pipeTile.getPipePluggable(d);
 					stations.add(pluggable.getStation());

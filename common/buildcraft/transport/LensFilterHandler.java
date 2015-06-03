@@ -2,7 +2,7 @@ package buildcraft.transport;
 
 import java.util.LinkedList;
 
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
@@ -15,12 +15,12 @@ public class LensFilterHandler {
 	@PipeEventPriority(priority = -100)
 	public void eventHandler(PipeEventItem.FindDest event) {
 		IPipeTile container = event.pipe.getTile();
-		LinkedList<ForgeDirection> correctColored = new LinkedList<ForgeDirection>();
-		LinkedList<ForgeDirection> notColored = new LinkedList<ForgeDirection>();
+		LinkedList<EnumFacing> correctColored = new LinkedList<EnumFacing>();
+		LinkedList<EnumFacing> notColored = new LinkedList<EnumFacing>();
 		boolean encounteredColor = false;
 		int myColor = event.item.color == null ? -1 : event.item.color.ordinal();
 
-		for (ForgeDirection dir: event.destinations) {
+		for (EnumFacing dir: event.destinations) {
 			int sideColor = -1;
 
 			// Get the side's color

@@ -19,9 +19,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
-import net.minecraftforge.common.config.Property;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;

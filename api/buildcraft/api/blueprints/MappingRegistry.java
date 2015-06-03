@@ -14,6 +14,7 @@ import java.util.HashSet;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
@@ -23,11 +24,11 @@ import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagShort;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLModContainer;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.ModContainer;
 import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
-import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BCLog;
 

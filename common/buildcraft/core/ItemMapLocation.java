@@ -11,18 +11,16 @@ package buildcraft.core;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
@@ -61,7 +59,7 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 				int x = cpt.getInteger("x");
 				int y = cpt.getInteger("y");
 				int z = cpt.getInteger("z");
-				ForgeDirection side = ForgeDirection.values()[cpt.getByte("side")];
+				EnumFacing side = EnumFacing.values()[cpt.getByte("side")];
 
 				list.add(StringUtils.localize("{" + x + ", " + y + ", " + z + ", " + side + "}"));
 				break;
@@ -195,13 +193,13 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 	}
 
 	@Override
-	public ForgeDirection getPointSide(ItemStack item) {
+	public EnumFacing getPointSide(ItemStack item) {
 		NBTTagCompound cpt = NBTUtils.getItemData(item);
 
 		if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
-			return ForgeDirection.values()[cpt.getByte("side")];
+			return EnumFacing.values()[cpt.getByte("side")];
 		} else {
-			return ForgeDirection.UNKNOWN;
+			return EnumFacing.UNKNOWN;
 		}
 	}
 

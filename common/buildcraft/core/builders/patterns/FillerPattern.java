@@ -12,8 +12,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Loader;
 

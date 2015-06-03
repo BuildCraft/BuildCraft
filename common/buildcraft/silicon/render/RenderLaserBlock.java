@@ -11,11 +11,9 @@ package buildcraft.silicon.render;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.fml.client.registry.ISimpleBlockRenderingHandler;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.silicon.SiliconProxy;
@@ -35,7 +33,7 @@ public class RenderLaserBlock implements ISimpleBlockRenderingHandler {
 	public boolean renderWorldBlock(IBlockAccess iblockaccess, int x, int y, int z, Block block, int l, RenderBlocks renderblocks) {
 		int meta = iblockaccess.getBlockMetadata(x, y, z);
 
-		if (meta == ForgeDirection.EAST.ordinal()) {
+		if (meta == EnumFacing.EAST.ordinal()) {
 			renderblocks.uvRotateEast = 2;
 			renderblocks.uvRotateWest = 1;
 			renderblocks.uvRotateTop = 1;
@@ -46,7 +44,7 @@ public class RenderLaserBlock implements ISimpleBlockRenderingHandler {
 
 			renderblocks.setRenderBounds(4F / 16F, 5F / 16F, 5F / 16F, 13F / 16F, 11F / 16F, 11F / 16F);
 			renderblocks.renderStandardBlock(block, x, y, z);
-		} else if (meta == ForgeDirection.WEST.ordinal()) {
+		} else if (meta == EnumFacing.WEST.ordinal()) {
 			renderblocks.uvRotateEast = 1;
 			renderblocks.uvRotateWest = 2;
 			renderblocks.uvRotateTop = 2;
@@ -57,7 +55,7 @@ public class RenderLaserBlock implements ISimpleBlockRenderingHandler {
 
 			renderblocks.setRenderBounds(1F - 13F / 16F, 5F / 16F, 5F / 16F, 1F - 4F / 16F, 11F / 16F, 11F / 16F);
 			renderblocks.renderStandardBlock(block, x, y, z);
-		} else if (meta == ForgeDirection.NORTH.ordinal()) {
+		} else if (meta == EnumFacing.NORTH.ordinal()) {
 			renderblocks.uvRotateSouth = 1;
 			renderblocks.uvRotateNorth = 2;
 
@@ -66,7 +64,7 @@ public class RenderLaserBlock implements ISimpleBlockRenderingHandler {
 
 			renderblocks.setRenderBounds(5F / 16F, 5F / 16F, 1F - 13F / 16F, 11F / 16F, 11F / 16F, 1F - 4F / 16F);
 			renderblocks.renderStandardBlock(block, x, y, z);
-		} else if (meta == ForgeDirection.SOUTH.ordinal()) {
+		} else if (meta == EnumFacing.SOUTH.ordinal()) {
 			renderblocks.uvRotateSouth = 2;
 			renderblocks.uvRotateNorth = 1;
 			renderblocks.uvRotateTop = 3;
@@ -77,7 +75,7 @@ public class RenderLaserBlock implements ISimpleBlockRenderingHandler {
 
 			renderblocks.setRenderBounds(5F / 16F, 5F / 16F, 4F / 16F, 11F / 16F, 11F / 16F, 13F / 16F);
 			renderblocks.renderStandardBlock(block, x, y, z);
-		} else if (meta == ForgeDirection.DOWN.ordinal()) {
+		} else if (meta == EnumFacing.DOWN.ordinal()) {
 			renderblocks.uvRotateEast = 3;
 			renderblocks.uvRotateWest = 3;
 			renderblocks.uvRotateSouth = 3;
@@ -88,7 +86,7 @@ public class RenderLaserBlock implements ISimpleBlockRenderingHandler {
 
 			renderblocks.setRenderBounds(5F / 16F, 1F - 13F / 16F, 5F / 16F, 11F / 16F, 1F - 4F / 16F, 11F / 16F);
 			renderblocks.renderStandardBlock(block, x, y, z);
-		} else if (meta == ForgeDirection.UP.ordinal()) {
+		} else if (meta == EnumFacing.UP.ordinal()) {
 			renderblocks.setRenderBounds(0.0F, 0.0F, 0.0F, 1, 0.25, 1);
 			renderblocks.renderStandardBlock(block, x, y, z);
 

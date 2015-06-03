@@ -20,8 +20,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.power.IRedstoneEngine;
@@ -76,12 +76,12 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 	}
 
 	@Override
-	public boolean canConnectRedstoneEngine(ForgeDirection side) {
+	public boolean canConnectRedstoneEngine(EnumFacing side) {
 		return true;
 	}
 
 	@Override
-	public boolean canConnectEnergy(ForgeDirection side) {
+	public boolean canConnectEnergy(EnumFacing side) {
 		TileEntity tile = worldObj.getTileEntity(xCoord + side.offsetX, yCoord + side.offsetY, zCoord + side.offsetZ);
 		return tile instanceof IRedstoneEngine;
 	}
@@ -118,7 +118,7 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 		}
 
 		private IRecipe findRecipe() {
-			for (IInvSlot slot : InventoryIterator.getIterable(this, ForgeDirection.UP)) {
+			for (IInvSlot slot : InventoryIterator.getIterable(this, EnumFacing.UP)) {
 				ItemStack stack = slot.getStackInSlot();
 				if (stack == null) {
 					continue;

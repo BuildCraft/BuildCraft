@@ -8,9 +8,8 @@
  */
 package buildcraft.robotics.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.robots.DockingStation;
@@ -62,7 +61,7 @@ public class ActionStationAcceptItems extends ActionStationInputItems {
 			return false;
 		}
 
-		ForgeDirection injectSide = station.side().getOpposite();
+		EnumFacing injectSide = station.side().getOpposite();
 
 		if (!injectable.canInjectItems(injectSide)) {
 			return false;

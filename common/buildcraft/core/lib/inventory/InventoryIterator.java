@@ -10,7 +10,7 @@ package buildcraft.core.lib.inventory;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.IInvSlot;
 
@@ -23,7 +23,7 @@ public final class InventoryIterator {
 	}
 
 	public static Iterable<IInvSlot> getIterable(IInventory inv) {
-		return getIterable(inv, ForgeDirection.UNKNOWN);
+		return getIterable(inv, EnumFacing.UNKNOWN);
 	}
 
 	/**
@@ -33,7 +33,7 @@ public final class InventoryIterator {
 	 * @param side
 	 * @return Iterable
 	 */
-	public static Iterable<IInvSlot> getIterable(IInventory inv, ForgeDirection side) {
+	public static Iterable<IInvSlot> getIterable(IInventory inv, EnumFacing side) {
 		if (inv instanceof ISidedInventory) {
 			return new InventoryIteratorSided((ISidedInventory) inv, side);
 		}

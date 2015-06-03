@@ -8,12 +8,12 @@
  */
 package buildcraft.silicon;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
@@ -21,11 +21,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.CraftingResult;
@@ -114,7 +114,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 				}
 
 				if (remaining != null && remaining.stackSize > 0) {
-					remaining.stackSize -= Utils.addToRandomInjectableAround(worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN, remaining);
+					remaining.stackSize -= Utils.addToRandomInjectableAround(worldObj, xCoord, yCoord, zCoord, EnumFacing.UNKNOWN, remaining);
 				}
 
 				if (remaining != null && remaining.stackSize > 0) {

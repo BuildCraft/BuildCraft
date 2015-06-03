@@ -8,11 +8,11 @@
  */
 package buildcraft.core;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;

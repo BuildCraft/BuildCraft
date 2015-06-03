@@ -1,17 +1,16 @@
 package buildcraft.transport.gates;
 
-import java.util.Set;
-
 import io.netty.buffer.ByteBuf;
 
-import net.minecraft.client.renderer.RenderBlocks;
+import java.util.Set;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.gates.GateExpansions;
@@ -36,12 +35,12 @@ public class GatePluggable extends PipePluggable {
 		}
 
 		@Override
-		public void renderPluggable(IPipe pipe, ForgeDirection side, PipePluggable pipePluggable, double x, double y, double z) {
+		public void renderPluggable(IPipe pipe, EnumFacing side, PipePluggable pipePluggable, double x, double y, double z) {
 			PipeRendererTESR.renderGate(x, y, z, (GatePluggable) pipePluggable, side);
 		}
 
 		@Override
-		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, ForgeDirection side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
+		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, EnumFacing side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
 			if (renderPass == 0) {
 				PipeRendererTESR.renderGateStatic(renderblocks, side, (GatePluggable) pipePluggable, blockStateMachine, x, y, z);
 			}
@@ -140,7 +139,7 @@ public class GatePluggable extends PipePluggable {
 	}
 
 	@Override
-	public void update(IPipeTile pipe, ForgeDirection direction) {
+	public void update(IPipeTile pipe, EnumFacing direction) {
 		if (isPulsing || pulseStage > 0.11F) {
 			// if it is moving, or is still in a moved state, then complete
 			// the current movement
@@ -151,7 +150,7 @@ public class GatePluggable extends PipePluggable {
 	}
 
 	@Override
-	public void onAttachedPipe(IPipeTile pipe, ForgeDirection direction) {
+	public void onAttachedPipe(IPipeTile pipe, EnumFacing direction) {
 		TileGenericPipe pipeReal = (TileGenericPipe) pipe;
 		if (!pipeReal.getWorld().isRemote) {
 			if (instantiatedGate != null) {
@@ -172,7 +171,7 @@ public class GatePluggable extends PipePluggable {
 	}
 
 	@Override
-	public void onDetachedPipe(IPipeTile pipe, ForgeDirection direction) {
+	public void onDetachedPipe(IPipeTile pipe, EnumFacing direction) {
 		TileGenericPipe pipeReal = (TileGenericPipe) pipe;
 		if (!pipeReal.getWorld().isRemote) {
 			Gate gate = pipeReal.pipe.gates[direction.ordinal()];
@@ -185,7 +184,7 @@ public class GatePluggable extends PipePluggable {
 	}
 
 	@Override
-	public boolean isBlocking(IPipeTile pipe, ForgeDirection direction) {
+	public boolean isBlocking(IPipeTile pipe, EnumFacing direction) {
 		return true;
 	}
 
@@ -216,7 +215,7 @@ public class GatePluggable extends PipePluggable {
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox(ForgeDirection side) {
+	public AxisAlignedBB getBoundingBox(EnumFacing side) {
 		float min = CoreConstants.PIPE_MIN_POS + 0.05F;
 		float max = CoreConstants.PIPE_MAX_POS - 0.05F;
 

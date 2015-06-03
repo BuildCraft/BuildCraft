@@ -9,9 +9,9 @@
 package buildcraft.api.transport;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 public interface IStripesActivator {
-	void sendItem(ItemStack itemStack, ForgeDirection direction);
-	void dropItem(ItemStack itemStack, ForgeDirection direction);
+	void sendItem(ItemStack itemStack, EnumFacing direction);
+	void dropItem(ItemStack itemStack, EnumFacing direction);
 }

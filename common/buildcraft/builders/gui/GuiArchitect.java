@@ -8,9 +8,10 @@
  */
 package buildcraft.builders.gui;
 
+import io.netty.buffer.ByteBuf;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;

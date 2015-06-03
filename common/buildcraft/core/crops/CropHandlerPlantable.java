@@ -13,12 +13,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-
 import net.minecraftforge.common.IPlantable;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.crops.ICropHandler;
 import buildcraft.core.lib.utils.BlockUtils;
@@ -44,13 +43,13 @@ public class CropHandlerPlantable implements ICropHandler {
 	@Override
 	public boolean canSustainPlant(World world, ItemStack seed, int x, int y, int z) {
 		if (seed.getItem() instanceof IPlantable) {
-			return world.getBlock(x, y, z).canSustainPlant(world, x, y, z, ForgeDirection.UP,
+			return world.getBlock(x, y, z).canSustainPlant(world, x, y, z, EnumFacing.UP,
 					(IPlantable) seed.getItem())
 					&& world.isAirBlock(x, y + 1, z);
 		} else {
 			Block block = world.getBlock(x, y, z);
 			IPlantable plantable = (IPlantable) ((ItemBlock) seed.getItem()).field_150939_a;
-			return block.canSustainPlant(world, x, y, z, ForgeDirection.UP, plantable)
+			return block.canSustainPlant(world, x, y, z, EnumFacing.UP, plantable)
 					&& block != ((ItemBlock) seed.getItem()).field_150939_a
 					&& world.isAirBlock(x, y + 1, z);
 		}
@@ -58,7 +57,7 @@ public class CropHandlerPlantable implements ICropHandler {
 
 	@Override
 	public boolean plantCrop(World world, EntityPlayer player, ItemStack seed, int x, int y, int z) {
-		return BlockUtils.useItemOnBlock(world, player, seed, x, y, z, ForgeDirection.UP);
+		return BlockUtils.useItemOnBlock(world, player, seed, x, y, z, EnumFacing.UP);
 	}
 
 	@Override

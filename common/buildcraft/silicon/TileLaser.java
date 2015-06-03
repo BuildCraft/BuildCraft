@@ -8,16 +8,16 @@
  */
 package buildcraft.silicon;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.LinkedList;
 import java.util.List;
-
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
@@ -155,7 +155,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 		int maxY = yCoord + 5;
 		int maxZ = zCoord + 5;
 
-		switch (ForgeDirection.getOrientation(meta)) {
+		switch (EnumFacing.getOrientation(meta)) {
 			case WEST:
 				maxX = xCoord;
 				break;
@@ -216,7 +216,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 		int meta = getBlockMetadata();
 		double px = 0, py = 0, pz = 0;
 
-		switch (ForgeDirection.getOrientation(meta)) {
+		switch (EnumFacing.getOrientation(meta)) {
 
 			case WEST:
 				px = -LASER_OFFSET;

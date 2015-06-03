@@ -13,15 +13,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cofh.api.energy.IEnergyConnection;
+import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyReceiver;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
-import cofh.api.energy.IEnergyConnection;
-import cofh.api.energy.IEnergyHandler;
-import cofh.api.energy.IEnergyReceiver;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
@@ -96,7 +97,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	}
 
 	@Override
-	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
+	public boolean canPipeConnect(TileEntity tile, EnumFacing side) {
 		if (tile instanceof IPipeTile) {
 			Pipe<?> pipe2 = (Pipe<?>) ((IPipeTile) tile).getPipe();
 			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportPower)) {
@@ -123,7 +124,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 		return false;
 	}
 
-	public boolean isPowerSource(TileEntity tile, ForgeDirection side) {
+	public boolean isPowerSource(TileEntity tile, EnumFacing side) {
 		if (tile instanceof TileBuildCraft && !(tile instanceof IEngine)) {
 			// Disregard non-engine BC tiles.
 			// While this, of course, does nothing to work with other mods,
@@ -144,12 +145,12 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	@Override
 	public void onNeighborBlockChange(int blockId) {
 		super.onNeighborBlockChange(blockId);
-        for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+        for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
             updateTile(side);
         }
 	}
 
-    private void updateTile(ForgeDirection side) {
+    private void updateTile(EnumFacing side) {
 		int o = side.ordinal();
         TileEntity tile = container.getTile(side);
         if (tile != null && container.isPipeConnected(side)) {
@@ -166,14 +167,14 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	private void init() {
 		if (needsInit) {
 			needsInit = false;
-            for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+            for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
                 updateTile(side);
             }
 		}
 	}
 
 	private Object getEnergyProvider(int side) {
-		ForgeDirection fs = ForgeDirection.getOrientation(side);
+		EnumFacing fs = EnumFacing.getOrientation(side);
 		if (container.hasPipePluggable(fs)) {
 			Object pp = container.getPipePluggable(fs);
 			if (pp instanceof IEnergyReceiver) {
@@ -193,7 +194,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 
 		init();
 
-        for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+        for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
             if (tiles[side.ordinal()] != null && tiles[side.ordinal()].isInvalid()) {
                 updateTile(side);
             }
@@ -225,7 +226,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 								Pipe<?> nearbyPipe = (Pipe<?>) ((IPipeTile) ep).getPipe();
 								PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyPipe.transport;
 								watts = nearbyTransport.receiveEnergy(
-										ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
+										EnumFacing.VALID_DIRECTIONS[j].getOpposite(),
 										watts);
 								internalPower[i] -= watts;
 								dbgEnergyOutput[j] += watts;
@@ -233,16 +234,16 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 								int iWatts = (int) watts;
 								if (ep instanceof IEnergyHandler) {
 									IEnergyHandler handler = (IEnergyHandler) ep;
-									if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
-										watts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
+									if (handler.canConnectEnergy(EnumFacing.VALID_DIRECTIONS[j].getOpposite())) {
+										watts = handler.receiveEnergy(EnumFacing.VALID_DIRECTIONS[j].getOpposite(),
 												iWatts, false);
 									}
 									internalPower[i] -= iWatts;
 									dbgEnergyOutput[j] += iWatts;
 								} else if (ep instanceof IEnergyReceiver) {
 									IEnergyReceiver handler = (IEnergyReceiver) ep;
-									if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
-										watts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
+									if (handler.canConnectEnergy(EnumFacing.VALID_DIRECTIONS[j].getOpposite())) {
+										watts = handler.receiveEnergy(EnumFacing.VALID_DIRECTIONS[j].getOpposite(),
 												iWatts, false);
 									}
 									internalPower[i] -= iWatts;
@@ -273,7 +274,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 		}
 
 		// Compute the tiles requesting energy that are not power pipes
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing dir : EnumFacing.VALID_DIRECTIONS) {
 			if (!outputOpen(dir)) {
 				continue;
 			}
@@ -306,7 +307,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 		int[] transferQuery = new int[6];
 		for (int i = 0; i < 6; ++i) {
 			transferQuery[i] = 0;
-			if (!inputOpen(ForgeDirection.getOrientation(i))) {
+			if (!inputOpen(EnumFacing.getOrientation(i))) {
 				continue;
 			}
 			for (int j = 0; j < 6; ++j) {
@@ -327,7 +328,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 						continue;
 					}
 					PipeTransportPower nearbyTransport = (PipeTransportPower) ((Pipe) nearbyTile.getPipe()).transport;
-					nearbyTransport.requestEnergy(ForgeDirection.VALID_DIRECTIONS[i].getOpposite(), transferQuery[i]);
+					nearbyTransport.requestEnergy(EnumFacing.VALID_DIRECTIONS[i].getOpposite(), transferQuery[i]);
 				}
 			}
 		}
@@ -369,7 +370,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	 * All power input MUST go through designated input pipes, such as Wooden
 	 * Power Pipes or a subclass thereof.
 	 */
-	public double receiveEnergy(ForgeDirection from, double tVal) {
+	public double receiveEnergy(EnumFacing from, double tVal) {
 		int side = from.ordinal();
 		double val = tVal;
 
@@ -407,7 +408,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 		return val;
 	}
 
-	public void requestEnergy(ForgeDirection from, int amount) {
+	public void requestEnergy(EnumFacing from, int amount) {
 		step();
 		
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
@@ -490,7 +491,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	}
 
 	@Override
-	public void getDebugInfo(List<String> info, ForgeDirection side, ItemStack debugger, EntityPlayer player) {
+	public void getDebugInfo(List<String> info, EnumFacing side, ItemStack debugger, EntityPlayer player) {
 		info.add("PipeTransportPower (" + maxPower + " RF/t)");
 		info.add("- internalPower: " + Arrays.toString(internalPower) + " <- " + Arrays.toString(internalNextPower));
 		info.add("- powerQuery: " + Arrays.toString(powerQuery) + " <- " + Arrays.toString(nextPowerQuery));

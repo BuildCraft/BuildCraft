@@ -8,11 +8,9 @@
  */
 package buildcraft.core.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.IIcon;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
@@ -25,7 +23,7 @@ public class StatementParameterDirection implements IStatementParameter {
 
     private static IIcon[] icons;
     
-	public ForgeDirection direction = ForgeDirection.UNKNOWN;
+	public EnumFacing direction = EnumFacing.UNKNOWN;
     
 	public StatementParameterDirection() {
 		
@@ -38,7 +36,7 @@ public class StatementParameterDirection implements IStatementParameter {
 
 	@Override
 	public IIcon getIcon() {
-	    if (direction == ForgeDirection.UNKNOWN) {
+	    if (direction == EnumFacing.UNKNOWN) {
 	    	return null;
 	    } else {
 	    	return icons[direction.ordinal()];
@@ -49,12 +47,12 @@ public class StatementParameterDirection implements IStatementParameter {
 	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
 		if (source.getTile() instanceof IPipeTile) {
 			for (int i = 0; i < 6; i++) {
-				direction = ForgeDirection.getOrientation((direction.ordinal() + (mouse.getButton() > 0 ? -1 : 1)) % 6);
+				direction = EnumFacing.getOrientation((direction.ordinal() + (mouse.getButton() > 0 ? -1 : 1)) % 6);
 				if (((IPipeTile) source.getTile()).isPipeConnected(direction)) {
 					return;
 				}
 			}
-			direction = ForgeDirection.UNKNOWN;
+			direction = EnumFacing.UNKNOWN;
 		}
 	}
 
@@ -66,9 +64,9 @@ public class StatementParameterDirection implements IStatementParameter {
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 	    if (nbt.hasKey("direction")) {
-	    	direction = ForgeDirection.getOrientation(nbt.getByte("direction"));
+	    	direction = EnumFacing.getOrientation(nbt.getByte("direction"));
 	    } else {
-	    	direction = ForgeDirection.UNKNOWN;
+	    	direction = EnumFacing.UNKNOWN;
 	    }
 	}
 
@@ -83,7 +81,7 @@ public class StatementParameterDirection implements IStatementParameter {
 
 	@Override
 	public String getDescription() {
-		if (direction == ForgeDirection.UNKNOWN) {
+		if (direction == EnumFacing.UNKNOWN) {
 			return "";
 		} else {
 			return StringUtils.localize("direction." + direction.name().toLowerCase());
@@ -110,7 +108,7 @@ public class StatementParameterDirection implements IStatementParameter {
 	@Override
 	public IStatementParameter rotateLeft() {
 		StatementParameterDirection d = new StatementParameterDirection();
-		d.direction = direction.getRotation(ForgeDirection.UP);
+		d.direction = direction.getRotation(EnumFacing.UP);
 		return d;
 	}
 }

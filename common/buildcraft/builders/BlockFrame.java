@@ -14,17 +14,16 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.CoreConstants;
@@ -48,7 +47,7 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 	}
 
 	public void removeNeighboringFrames(World world, int x, int y, int z) {
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing dir : EnumFacing.VALID_DIRECTIONS) {
 			Block nBlock = world.getBlock(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
 			if (nBlock == this) {
 				world.setBlockToAir(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);

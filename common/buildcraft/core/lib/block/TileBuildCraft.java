@@ -8,9 +8,11 @@
  */
 package buildcraft.core.lib.block;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.HashSet;
 
-import io.netty.buffer.ByteBuf;
+import cofh.api.energy.IEnergyHandler;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
@@ -18,9 +20,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
-import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.tiles.IControllable;
@@ -173,12 +174,12 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 	}
 
 	@Override
-	public boolean canConnectEnergy(ForgeDirection from) {
+	public boolean canConnectEnergy(EnumFacing from) {
 		return battery != null;
 	}
 
 	@Override
-	public int receiveEnergy(ForgeDirection from, int maxReceive,
+	public int receiveEnergy(EnumFacing from, int maxReceive,
 			boolean simulate) {
 		if (battery != null && this.canConnectEnergy(from)) {
 			int received = battery.receiveEnergy(maxReceive - receivedTick, simulate);
@@ -195,7 +196,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 	/**
 	 * If you want to use this, implement IEnergyProvider.
 	 */
-	public int extractEnergy(ForgeDirection from, int maxExtract,
+	public int extractEnergy(EnumFacing from, int maxExtract,
 			boolean simulate) {
 		if (battery != null && this.canConnectEnergy(from)) {
 			int extracted = battery.extractEnergy(maxExtract - extractedTick, simulate);
@@ -209,7 +210,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 	}
 
 	@Override
-	public int getEnergyStored(ForgeDirection from) {
+	public int getEnergyStored(EnumFacing from) {
 		if (battery != null && this.canConnectEnergy(from)) {
 			return battery.getEnergyStored();
 		} else {
@@ -218,7 +219,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 	}
 
 	@Override
-	public int getMaxEnergyStored(ForgeDirection from) {
+	public int getMaxEnergyStored(EnumFacing from) {
 		if (battery != null && this.canConnectEnergy(from)) {
 			return battery.getMaxEnergyStored();
 		} else {
@@ -234,14 +235,14 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 		this.battery = battery;
 	}
 
-    public Block getBlock(ForgeDirection side) {
+    public Block getBlock(EnumFacing side) {
         if (cache == null) {
             cache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
         }
         return cache[side.ordinal()].getBlock();
     }
 
-    public TileEntity getTile(ForgeDirection side) {
+    public TileEntity getTile(EnumFacing side) {
         if (cache == null) {
             cache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
         }

@@ -10,20 +10,18 @@ package buildcraft.factory;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.BCCreativeTab;
@@ -106,7 +104,7 @@ public class BlockTank extends BlockBuildCraft {
 					FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(current);
 					// Handle filled containers
 					if (liquid != null) {
-						int qty = tank.fill(ForgeDirection.UNKNOWN, liquid, true);
+						int qty = tank.fill(EnumFacing.UNKNOWN, liquid, true);
 
 						if (qty != 0 && !BuildCraftCore.debugWorldgen && !entityplayer.capabilities.isCreativeMode) {
 							if (current.stackSize > 1) {
@@ -124,7 +122,7 @@ public class BlockTank extends BlockBuildCraft {
 
 						// Handle empty containers
 					} else {
-						FluidStack available = tank.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid;
+						FluidStack available = tank.getTankInfo(EnumFacing.UNKNOWN)[0].fluid;
 
 						if (available != null) {
 							ItemStack filled = FluidContainerRegistry.fillFluidContainer(available, current);
@@ -145,7 +143,7 @@ public class BlockTank extends BlockBuildCraft {
 									}
 								}
 
-								tank.drain(ForgeDirection.UNKNOWN, liquid.amount, true);
+								tank.drain(EnumFacing.UNKNOWN, liquid.amount, true);
 
 								return true;
 							}
@@ -159,19 +157,19 @@ public class BlockTank extends BlockBuildCraft {
 					if (!world.isRemote) {
 						IFluidContainerItem container = (IFluidContainerItem) current.getItem();
 						FluidStack liquid = container.getFluid(current);
-						FluidStack tankLiquid = tank.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid;
+						FluidStack tankLiquid = tank.getTankInfo(EnumFacing.UNKNOWN)[0].fluid;
 						boolean mustDrain = liquid == null || liquid.amount == 0;
 						boolean mustFill = tankLiquid == null || tankLiquid.amount == 0;
 						if (mustDrain && mustFill) {
 							// Both are empty, do nothing
 						} else if (mustDrain || !entityplayer.isSneaking()) {
-							liquid = tank.drain(ForgeDirection.UNKNOWN, 1000, false);
+							liquid = tank.drain(EnumFacing.UNKNOWN, 1000, false);
 							int qtyToFill = container.fill(current, liquid, true);
-							tank.drain(ForgeDirection.UNKNOWN, qtyToFill, true);
+							tank.drain(EnumFacing.UNKNOWN, qtyToFill, true);
 						} else if (mustFill || entityplayer.isSneaking()) {
 							if (liquid != null && liquid.amount > 0) {
-								int qty = tank.fill(ForgeDirection.UNKNOWN, liquid, false);
-								tank.fill(ForgeDirection.UNKNOWN, container.drain(current, qty, true), true);
+								int qty = tank.fill(EnumFacing.UNKNOWN, liquid, false);
+								tank.fill(EnumFacing.UNKNOWN, container.drain(current, qty, true), true);
 							}
 						}
 					}
@@ -184,8 +182,8 @@ public class BlockTank extends BlockBuildCraft {
 
 			if (tile instanceof TileTank) {
 				TileTank tank = (TileTank) tile;
-				if (tank.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid != null) {
-					entityplayer.addChatComponentMessage(new ChatComponentText("Amount: " + tank.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid.amount + " mB"));
+				if (tank.getTankInfo(EnumFacing.UNKNOWN)[0].fluid != null) {
+					entityplayer.addChatComponentMessage(new ChatComponentText("Amount: " + tank.getTankInfo(EnumFacing.UNKNOWN)[0].fluid.amount + " mB"));
 				}
 			}
 		}

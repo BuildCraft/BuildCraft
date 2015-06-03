@@ -10,8 +10,8 @@ package buildcraft.robotics.ai;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.Position;
@@ -51,7 +51,7 @@ public class AIRobotStripesHandler extends AIRobot implements IStripesActivator 
 		if (useCycles > 60) {
 			ItemStack stack = robot.getHeldItem();
 
-			ForgeDirection direction = ForgeDirection.NORTH;
+			EnumFacing direction = EnumFacing.NORTH;
 
 			Position p = new Position(useToBlock.x, useToBlock.y, useToBlock.z);
 
@@ -87,13 +87,13 @@ public class AIRobotStripesHandler extends AIRobot implements IStripesActivator 
 	}
 
 	@Override
-	public void sendItem(ItemStack stack, ForgeDirection direction) {
+	public void sendItem(ItemStack stack, EnumFacing direction) {
 		InvUtils.dropItems(robot.worldObj, stack, (int) Math.floor(robot.posX),
 				(int) Math.floor(robot.posY), (int) Math.floor(robot.posZ));
 	}
 
 	@Override
-	public void dropItem(ItemStack stack, ForgeDirection direction) {
+	public void dropItem(ItemStack stack, EnumFacing direction) {
 		sendItem(stack, direction);
 	}
 }

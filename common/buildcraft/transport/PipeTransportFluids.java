@@ -9,7 +9,7 @@ import com.google.common.collect.Multiset;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidEvent;
@@ -24,16 +24,7 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.transport.network.PacketFluidUpdate;
-import buildcraft.transport.pipes.PipeFluidsCobblestone;
-import buildcraft.transport.pipes.PipeFluidsDiamond;
-import buildcraft.transport.pipes.PipeFluidsEmerald;
-import buildcraft.transport.pipes.PipeFluidsGold;
-import buildcraft.transport.pipes.PipeFluidsIron;
-import buildcraft.transport.pipes.PipeFluidsQuartz;
-import buildcraft.transport.pipes.PipeFluidsSandstone;
-import buildcraft.transport.pipes.PipeFluidsStone;
-import buildcraft.transport.pipes.PipeFluidsVoid;
-import buildcraft.transport.pipes.PipeFluidsWood;
+import buildcraft.transport.pipes.*;
 import buildcraft.transport.pipes.events.PipeEventFluid;
 import buildcraft.transport.utils.FluidRenderData;
 
@@ -51,8 +42,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public static short OUTPUT_COOLDOWN = 30; // 30
 
 	private static int NETWORK_SYNC_TICKS = BuildCraftCore.updateFactor / 2;
-	private static final ForgeDirection[] directions = ForgeDirection.VALID_DIRECTIONS;
-	private static final ForgeDirection[] orientations = ForgeDirection.values();
+	private static final EnumFacing[] directions = EnumFacing.VALID_DIRECTIONS;
+	private static final EnumFacing[] orientations = EnumFacing.values();
 
 	public class PipeSection {
 		public int amount;
@@ -160,7 +151,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	}
 
 	public PipeTransportFluids() {
-		for (ForgeDirection direction : directions) {
+		for (EnumFacing direction : directions) {
 			sections[direction.ordinal()] = new PipeSection();
 			transferState[direction.ordinal()] = TransferState.None;
 		}
@@ -185,7 +176,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public void initialize() {
 		super.initialize();
 		
-		for (ForgeDirection d : directions) {
+		for (EnumFacing d : directions) {
 			canReceiveCache[d.ordinal()] = canReceiveFluid(d);
 		}
 	}
@@ -195,7 +186,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		return IPipeTile.PipeType.FLUID;
 	}
 
-	private boolean canReceiveFluid(ForgeDirection o) {
+	private boolean canReceiveFluid(EnumFacing o) {
 		TileEntity tile = container.getTile(o);
 
 		if (!container.isPipeConnected(o)) {
@@ -254,7 +245,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		// Move liquid from the non-center to the connected output blocks
 		boolean pushed = false;
 		if (outputCount > 0) {
-			for (ForgeDirection o : directions) {
+			for (EnumFacing o : directions) {
 				if (transferState[o.ordinal()] == TransferState.Output) {
 					TileEntity target = this.container.getTile(o);
 					if (!(target instanceof IFluidHandler)) {
@@ -300,8 +291,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 		int testAmount = flowRate;
 		// Move liquid from the center to the output sides
-		Multiset<ForgeDirection> realDirections = HashMultiset.create(6);
-		for (ForgeDirection direction : directions) {
+		Multiset<EnumFacing> realDirections = HashMultiset.create(6);
+		for (EnumFacing direction : directions) {
 			if (transferState[direction.ordinal()] == TransferState.Output) {
 				realDirections.add(direction);
 			}
@@ -311,7 +302,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			container.pipe.eventBus.handleEvent(PipeEventFluid.FindDest.class, new PipeEventFluid.FindDest(container.pipe, new FluidStack(fluidType, pushAmount), realDirections));
 			float min = Math.min(flowRate * realDirections.size(), totalAvailable) / (float) flowRate / realDirections.size();
 
-			for (ForgeDirection direction : realDirections.elementSet()) {
+			for (EnumFacing direction : realDirections.elementSet()) {
 				int available = sections[direction.ordinal()].fill(testAmount, false);
 				int amountToPush = (int) (available * min * realDirections.count(direction));
 				if (amountToPush < 1) {
@@ -331,7 +322,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		int transferInCount = 0;
 		int spaceAvailable = capacity - sections[6].amount;
 
-		for (ForgeDirection dir : directions) {
+		for (EnumFacing dir : directions) {
 			inputPerTick[dir.ordinal()] = 0;
 			if (transferState[dir.ordinal()] != TransferState.Output) {
 				inputPerTick[dir.ordinal()] = sections[dir.ordinal()].drain(flowRate, false);
@@ -340,7 +331,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		}
 
 		float min = Math.min(flowRate * transferInCount, spaceAvailable) / (float) flowRate / transferInCount;
-		for (ForgeDirection dir : directions) {
+		for (EnumFacing dir : directions) {
 			// Move liquid from input sides to the center
 			if (transferState[dir.ordinal()] != TransferState.Output && inputPerTick[dir.ordinal()] > 0) {
 
@@ -362,11 +353,11 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		short outputCount = 0;
 
 		// Processes all interna4al tanks
-		for (ForgeDirection direction : orientations) {
+		for (EnumFacing direction : orientations) {
 			sections[direction.ordinal()].setTime(newTimeSlot);
 			sections[direction.ordinal()].moveFluids();
 			// Input processing
-			if (direction == ForgeDirection.UNKNOWN) {
+			if (direction == EnumFacing.UNKNOWN) {
 				continue;
 			}
 			if (transferState[direction.ordinal()] == TransferState.Input) {
@@ -428,7 +419,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			delta.set(0);
 		}
 
-		for (ForgeDirection dir : orientations) {
+		for (EnumFacing dir : orientations) {
 			int pamount = renderCache.amount[dir.ordinal()];
 			int camount = sections[dir.ordinal()].amount;
 			int displayQty = (pamount * 4 + camount) / 5;
@@ -472,7 +463,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		initClient = 6;
 	}
 
-	public FluidStack getStack(ForgeDirection direction) {
+	public FluidStack getStack(EnumFacing direction) {
 		if (fluidType == null) {
 			return null;
 		} else {
@@ -506,7 +497,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			setFluidType(null);
 		}
 
-		for (ForgeDirection direction : orientations) {
+		for (EnumFacing direction : orientations) {
 			if (nbttagcompound.hasKey("tank[" + direction.ordinal() + "]")) {
 				NBTTagCompound compound = nbttagcompound.getCompoundTag("tank[" + direction.ordinal() + "]");
 				if (compound.hasKey("FluidType")) {
@@ -521,7 +512,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 					sections[direction.ordinal()].readFromNBT(compound);
 				}
 			}
-			if (direction != ForgeDirection.UNKNOWN) {
+			if (direction != EnumFacing.UNKNOWN) {
 				transferState[direction.ordinal()] = TransferState.values()[nbttagcompound.getShort("transferState[" + direction.ordinal() + "]")];
 			}
 		}
@@ -536,11 +527,11 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			fluidType.writeToNBT(fluidTag);
 			nbttagcompound.setTag("fluid", fluidTag);
 
-			for (ForgeDirection direction : orientations) {
+			for (EnumFacing direction : orientations) {
 				NBTTagCompound subTag = new NBTTagCompound();
 				sections[direction.ordinal()].writeToNBT(subTag);
 				nbttagcompound.setTag("tank[" + direction.ordinal() + "]", subTag);
-				if (direction != ForgeDirection.UNKNOWN) {
+				if (direction != EnumFacing.UNKNOWN) {
 					nbttagcompound.setShort("transferState[" + direction.ordinal() + "]", (short) transferState[direction.ordinal()].ordinal());
 				}
 			}
@@ -548,8 +539,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	}
 
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-		if (from != ForgeDirection.UNKNOWN && !inputOpen(from)) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
+		if (from != EnumFacing.UNKNOWN && !inputOpen(from)) {
 			return 0;
 		}
 
@@ -569,7 +560,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			if (fluidType == null) {
 				setFluidType(new FluidStack(resource, 0));
 			}
-			if (from != ForgeDirection.UNKNOWN) {
+			if (from != EnumFacing.UNKNOWN) {
 				transferState[from.ordinal()] = TransferState.Input;
 				inputTTL[from.ordinal()] = INPUT_TTL;
 			}
@@ -579,27 +570,27 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
 		return null;
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
 		return null;
 	}
 
 	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
+	public boolean canFill(EnumFacing from, Fluid fluid) {
 		return inputOpen(from);
 	}
 
 	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
 		return false;
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+	public FluidTankInfo[] getTankInfo(EnumFacing from) {
 		return new FluidTankInfo[]{new FluidTankInfo(fluidType, sections[from.ordinal()].amount)};
 	}
 
@@ -607,7 +598,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public void onNeighborBlockChange(int blockId) {
 		super.onNeighborBlockChange(blockId);
 
-		for (ForgeDirection direction : directions) {
+		for (EnumFacing direction : directions) {
 			if (!container.isPipeConnected(direction)) {
 				sections[direction.ordinal()].reset();
 				transferState[direction.ordinal()] = TransferState.None;
@@ -620,7 +611,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	}
 
 	@Override
-	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
+	public boolean canPipeConnect(TileEntity tile, EnumFacing side) {
 		if (tile instanceof IPipeTile) {
 			Pipe<?> pipe2 = (Pipe<?>) ((IPipeTile) tile).getPipe();
 			if (BlockGenericPipe.isValid(pipe2) && !(pipe2.transport instanceof PipeTransportFluids)) {

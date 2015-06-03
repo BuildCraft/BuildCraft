@@ -22,23 +22,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.statements.IActionExternal;
-import buildcraft.api.statements.IActionInternal;
-import buildcraft.api.statements.IActionReceptor;
-import buildcraft.api.statements.IStatement;
-import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.ITriggerExternal;
-import buildcraft.api.statements.ITriggerExternalOverride;
-import buildcraft.api.statements.ITriggerInternal;
-import buildcraft.api.statements.StatementManager;
-import buildcraft.api.statements.StatementParameterItemStack;
-import buildcraft.api.statements.StatementSlot;
+import buildcraft.api.statements.*;
 import buildcraft.api.statements.containers.IRedstoneStatementContainer;
 import buildcraft.api.statements.containers.ISidedStatementContainer;
 import buildcraft.api.transport.IPipe;
@@ -80,13 +70,13 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 	 * state of the renderer, and update moveStage accordingly.
 	 */
 	public boolean isPulsing = false;
-	private ForgeDirection direction;
+	private EnumFacing direction;
 
 	private HashMultiset<IStatement> statementCounts = HashMultiset.create();
 	private int[] actionGroups = new int [] {0, 1, 2, 3, 4, 5, 6, 7};
 
 	// / CONSTRUCTOR
-	public Gate(Pipe<?> pipe, GateMaterial material, GateLogic logic, ForgeDirection direction) {
+	public Gate(Pipe<?> pipe, GateMaterial material, GateLogic logic, EnumFacing direction) {
 		this.pipe = pipe;
 		this.material = material;
 		this.logic = logic;
@@ -114,7 +104,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 		// HUGE HACK! TODO - Remove in an API rewrite by adding
 		// ways for actions to fix their state on removal.
 		if (actions[position] instanceof ActionValve && pipe != null && pipe.transport != null) {
-			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
 				pipe.transport.allowInput(side, true);
 				pipe.transport.allowOutput(side, true);
 			}
@@ -153,11 +143,11 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 		return actionParameters[action][param];
 	}
 
-	public ForgeDirection getDirection() {
+	public EnumFacing getDirection() {
 		return direction;
 	}
 
-	public void setDirection(ForgeDirection direction) {
+	public void setDirection(EnumFacing direction) {
 		this.direction = direction;
 	}
 
@@ -469,7 +459,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 			if (action instanceof IActionInternal) {
 				((IActionInternal) action).actionActivate(this, slot.parameters);
 			} else if (action instanceof IActionExternal) {
-				for (ForgeDirection side: ForgeDirection.VALID_DIRECTIONS) {
+				for (EnumFacing side: EnumFacing.VALID_DIRECTIONS) {
 					TileEntity tile = this.getPipe().getTile().getNeighborTile(side);
 					if (tile != null) {
 						((IActionExternal) action).actionActivate(tile, side, this, slot.parameters);
@@ -484,7 +474,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 				continue;
 			}
 
-			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
 				TileEntity tile = pipe.container.getTile(side);
 				if (tile instanceof IActionReceptor) {
 					IActionReceptor recept = (IActionReceptor) tile;
@@ -529,7 +519,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 				return true;
 			}
 		} else if (trigger instanceof ITriggerExternal) {
-			for (ForgeDirection side: ForgeDirection.VALID_DIRECTIONS) {
+			for (EnumFacing side: EnumFacing.VALID_DIRECTIONS) {
 				TileEntity tile = this.getPipe().getTile().getNeighborTile(side);
 				if (tile != null) {
 					if (tile instanceof ITriggerExternalOverride) {
@@ -576,7 +566,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 		ArrayList<IStatement> allTriggers = new ArrayList<IStatement>(64);
 		allTriggers.addAll(StatementManager.getInternalTriggers(this));
 		
-		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing o : EnumFacing.VALID_DIRECTIONS) {
 			TileEntity tile = pipe.container.getTile(o);
 			allTriggers.addAll(StatementManager.getExternalTriggers(o, tile));
 		}
@@ -601,7 +591,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 		ArrayList<IStatement> allActions = new ArrayList<IStatement>(64);
 		allActions.addAll(StatementManager.getInternalActions(this));
 		
-		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing o : EnumFacing.VALID_DIRECTIONS) {
 			TileEntity tile = pipe.container.getTile(o);
 			allActions.addAll(StatementManager.getExternalActions(o, tile));
 		}
@@ -654,7 +644,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 	}
 
 	@Override
-	public ForgeDirection getSide() {
+	public EnumFacing getSide() {
 		return direction;
 	}
 
@@ -695,17 +685,17 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 	}
 
 	@Override
-	public int getRedstoneInput(ForgeDirection side) {
-		return side == ForgeDirection.UNKNOWN ? pipe.container.redstoneInput : pipe.container.redstoneInputSide[side.ordinal()];
+	public int getRedstoneInput(EnumFacing side) {
+		return side == EnumFacing.UNKNOWN ? pipe.container.redstoneInput : pipe.container.redstoneInputSide[side.ordinal()];
 	}
 
 	@Override
-	public boolean setRedstoneOutput(ForgeDirection side, int value) {
-		if (side != this.getSide() && side != ForgeDirection.UNKNOWN) {
+	public boolean setRedstoneOutput(EnumFacing side, int value) {
+		if (side != this.getSide() && side != EnumFacing.UNKNOWN) {
 			return false;
 		}
 
-		setRedstoneOutput(side != ForgeDirection.UNKNOWN, value);
+		setRedstoneOutput(side != EnumFacing.UNKNOWN, value);
 		return true;
 	}
 }

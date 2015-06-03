@@ -11,8 +11,8 @@ package buildcraft.api.transport;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.EnumColor;
 import buildcraft.api.transport.pluggable.PipePluggable;
@@ -38,25 +38,25 @@ public interface IPipeTile extends IInjectable {
 	 * @param with
 	 * @return true if connect
 	 */
-	boolean isPipeConnected(ForgeDirection with);
+	boolean isPipeConnected(EnumFacing with);
 
-	Block getNeighborBlock(ForgeDirection dir);
-	TileEntity getNeighborTile(ForgeDirection dir);
-	IPipe getNeighborPipe(ForgeDirection dir);
+	Block getNeighborBlock(EnumFacing dir);
+	TileEntity getNeighborTile(EnumFacing dir);
+	IPipe getNeighborPipe(EnumFacing dir);
 	
 	IPipe getPipe();
 	int getPipeColor();
 
-	PipePluggable getPipePluggable(ForgeDirection direction); // Now in IPluggableProvider
-	boolean hasPipePluggable(ForgeDirection direction); // Now in IPluggableProvider
-	boolean hasBlockingPluggable(ForgeDirection direction);
+	PipePluggable getPipePluggable(EnumFacing direction); // Now in IPluggableProvider
+	boolean hasPipePluggable(EnumFacing direction); // Now in IPluggableProvider
+	boolean hasBlockingPluggable(EnumFacing direction);
 
 	void scheduleNeighborChange();
 	void scheduleRenderUpdate();
 
 	// For compatibility with BC 6.2.x and below
-	int injectItem(ItemStack stack, boolean doAdd, ForgeDirection from, EnumColor color);
+	int injectItem(ItemStack stack, boolean doAdd, EnumFacing from, EnumColor color);
 
 	@Deprecated // Now in IInjectable
-	int injectItem(ItemStack stack, boolean doAdd, ForgeDirection from);
+	int injectItem(ItemStack stack, boolean doAdd, EnumFacing from);
 }

@@ -14,8 +14,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.tools.IToolWrench;
@@ -37,7 +37,7 @@ public class TileEngineCreative extends TileEngineBase {
 	}
 
 	@Override
-	public boolean onBlockActivated(EntityPlayer player, ForgeDirection side) {
+	public boolean onBlockActivated(EntityPlayer player, EnumFacing side) {
 		if (!getWorldObj().isRemote) {
 			Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
 

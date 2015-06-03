@@ -6,10 +6,9 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IStripesActivator;
@@ -31,7 +30,7 @@ public class StripesHandlerUse implements IStripesHandler {
 
 	@Override
 	public boolean handle(World world, int x, int y, int z,
-			ForgeDirection direction, ItemStack stack, EntityPlayer player,
+			EnumFacing direction, ItemStack stack, EntityPlayer player,
 			IStripesActivator activator) {
 		Position target = new Position(x, y, z, direction);
 		target.moveForwards(1.0D);

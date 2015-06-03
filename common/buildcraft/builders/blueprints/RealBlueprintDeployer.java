@@ -10,8 +10,8 @@ package buildcraft.builders.blueprints;
 
 import java.io.File;
 
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.blueprints.BlueprintDeployer;
 import buildcraft.api.blueprints.Translation;
@@ -27,33 +27,33 @@ public class RealBlueprintDeployer extends BlueprintDeployer {
 
 	@Override
 	public void deployBlueprint(World world, int x, int y, int z,
-			ForgeDirection dir, File file) {
+			EnumFacing dir, File file) {
 
 		deployBlueprint(world, x, y, z, dir, (Blueprint) BlueprintBase.loadBluePrint(LibraryDatabase.load(file)));
 	}
 
 	@Override
 	public void deployBlueprintFromFileStream(World world, int x, int y, int z,
-			ForgeDirection dir, byte [] data) {
+			EnumFacing dir, byte [] data) {
 
 		deployBlueprint(world, x, y, z, dir, (Blueprint) BlueprintBase.loadBluePrint(NBTUtils.load(data)));
 	}
 
-	private void deployBlueprint(World world, int x, int y, int z, ForgeDirection dir, Blueprint bpt) {
+	private void deployBlueprint(World world, int x, int y, int z, EnumFacing dir, Blueprint bpt) {
 		bpt.id = new LibraryId();
 		bpt.id.extension = "bpt";
 
 		BptContext context = bpt.getContext(world, bpt.getBoxForPos(x, y, z));
 
 		if (bpt.rotate) {
-			if (dir == ForgeDirection.EAST) {
+			if (dir == EnumFacing.EAST) {
 				// Do nothing
-			} else if (dir == ForgeDirection.SOUTH) {
+			} else if (dir == EnumFacing.SOUTH) {
 				bpt.rotateLeft(context);
-			} else if (dir == ForgeDirection.WEST) {
+			} else if (dir == EnumFacing.WEST) {
 				bpt.rotateLeft(context);
 				bpt.rotateLeft(context);
-			} else if (dir == ForgeDirection.NORTH) {
+			} else if (dir == EnumFacing.NORTH) {
 				bpt.rotateLeft(context);
 				bpt.rotateLeft(context);
 				bpt.rotateLeft(context);

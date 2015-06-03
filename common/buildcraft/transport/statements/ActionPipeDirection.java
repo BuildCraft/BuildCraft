@@ -10,8 +10,7 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.statements.IActionInternal;
@@ -22,9 +21,9 @@ import buildcraft.core.statements.BCStatement;
 
 public class ActionPipeDirection extends BCStatement implements IActionInternal {
 
-	public final ForgeDirection direction;
+	public final EnumFacing direction;
 
-	public ActionPipeDirection(ForgeDirection direction) {
+	public ActionPipeDirection(EnumFacing direction) {
 		super("buildcraft:pipe.dir." + direction.name().toLowerCase(Locale.ENGLISH), "buildcraft.pipe.dir." + direction.name().toLowerCase(Locale.ENGLISH));
 
 		this.direction = direction;
@@ -42,7 +41,7 @@ public class ActionPipeDirection extends BCStatement implements IActionInternal 
 
 	@Override
 	public IStatement rotateLeft() {
-		return BuildCraftTransport.actionPipeDirection[direction.getRotation(ForgeDirection.UP).ordinal()];
+		return BuildCraftTransport.actionPipeDirection[direction.getRotation(EnumFacing.UP).ordinal()];
 	}
 
 	@Override

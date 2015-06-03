@@ -3,7 +3,7 @@ package buildcraft.robotics;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.api.core.BlockIndex;
@@ -26,12 +26,12 @@ public class DockingStationPipe extends DockingStation {
 
 	private IInjectable injectablePipe = new IInjectable() {
 		@Override
-		public boolean canInjectItems(ForgeDirection from) {
+		public boolean canInjectItems(EnumFacing from) {
 			return true;
 		}
 
 		@Override
-		public int injectItem(ItemStack stack, boolean doAdd, ForgeDirection from, EnumColor color) {
+		public int injectItem(ItemStack stack, boolean doAdd, EnumFacing from, EnumColor color) {
 			if (doAdd) {
 				float cx = x() + 0.5F + 0.2F * side().offsetX;
 				float cy = y() + 0.5F + 0.2F * side().offsetY;
@@ -51,7 +51,7 @@ public class DockingStationPipe extends DockingStation {
 		// Loading later from NBT
 	}
 
-	public DockingStationPipe(IPipeTile iPipe, ForgeDirection side) {
+	public DockingStationPipe(IPipeTile iPipe, EnumFacing side) {
 		super(new BlockIndex(iPipe.x(), iPipe.y(), iPipe.z()), side);
 		pipe = iPipe;
 		world = iPipe.getWorld();
@@ -96,7 +96,7 @@ public class DockingStationPipe extends DockingStation {
 		}
 
 		int meta = ((TileEntity) getPipe()).getBlockMetadata();
-		ForgeDirection dir = ForgeDirection.getOrientation(meta);
+		EnumFacing dir = EnumFacing.getOrientation(meta);
 
 		TileEntity connectedTile = getPipe().getWorld().getTileEntity(x() + dir.offsetX,
 				y() + dir.offsetY, z() + dir.offsetZ);
@@ -118,7 +118,7 @@ public class DockingStationPipe extends DockingStation {
 		}
 
 		int meta = ((TileEntity) getPipe()).getBlockMetadata();
-		ForgeDirection dir = ForgeDirection.getOrientation(meta);
+		EnumFacing dir = EnumFacing.getOrientation(meta);
 
 		TileEntity connectedTile = getPipe().getWorld().getTileEntity(x() + dir.offsetX,
 				y() + dir.offsetY, z() + dir.offsetZ);
@@ -145,7 +145,7 @@ public class DockingStationPipe extends DockingStation {
 
 	@Override
 	public IRequestProvider getRequestProvider() {
-		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing dir : EnumFacing.VALID_DIRECTIONS) {
 			TileEntity nearbyTile = getPipe().getWorld().getTileEntity(x() + dir.offsetX,
 					y() + dir.offsetY, z() + dir.offsetZ);
 			if (nearbyTile instanceof IRequestProvider) {

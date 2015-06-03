@@ -15,8 +15,8 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
@@ -27,12 +27,12 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 	private static final float[] angleMap = new float[6];
 
 	static {
-		angleMap[ForgeDirection.EAST.ordinal()] = (float) -Math.PI / 2;
-		angleMap[ForgeDirection.WEST.ordinal()] = (float) Math.PI / 2;
-		angleMap[ForgeDirection.UP.ordinal()] = 0;
-		angleMap[ForgeDirection.DOWN.ordinal()] = (float) Math.PI;
-		angleMap[ForgeDirection.SOUTH.ordinal()] = (float) Math.PI / 2;
-		angleMap[ForgeDirection.NORTH.ordinal()] = (float) -Math.PI / 2;
+		angleMap[EnumFacing.EAST.ordinal()] = (float) -Math.PI / 2;
+		angleMap[EnumFacing.WEST.ordinal()] = (float) Math.PI / 2;
+		angleMap[EnumFacing.UP.ordinal()] = 0;
+		angleMap[EnumFacing.DOWN.ordinal()] = (float) Math.PI;
+		angleMap[EnumFacing.SOUTH.ordinal()] = (float) Math.PI / 2;
+		angleMap[EnumFacing.NORTH.ordinal()] = (float) -Math.PI / 2;
 	}
 
 	private ModelBase model = new ModelBase() {
@@ -87,7 +87,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 	@Override
 	public void inventoryRender(double x, double y, double z, float f, float f1) {
-		render(0.25F, ForgeDirection.UP, baseTexture, chamberTexture, trunkTexture, x, y, z);
+		render(0.25F, EnumFacing.UP, baseTexture, chamberTexture, trunkTexture, x, y, z);
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 		}
 	}
 
-	private void render(float progress, ForgeDirection orientation, ResourceLocation baseTexture, ResourceLocation chamberTexture, ResourceLocation trunkTexture, double x, double y, double z) {
+	private void render(float progress, EnumFacing orientation, ResourceLocation baseTexture, ResourceLocation chamberTexture, ResourceLocation trunkTexture, double x, double y, double z) {
 
 		if (BuildCraftCore.render == RenderMode.NoDynamic) {
 			return;

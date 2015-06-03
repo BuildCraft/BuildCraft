@@ -11,7 +11,7 @@ package buildcraft.transport;
 import java.util.LinkedList;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.ITriggerExternal;
@@ -63,7 +63,7 @@ public class PipeTriggerProvider implements ITriggerProvider {
 	}
 
 	@Override
-	public LinkedList<ITriggerExternal> getExternalTriggers(ForgeDirection side, TileEntity tile) {
+	public LinkedList<ITriggerExternal> getExternalTriggers(EnumFacing side, TileEntity tile) {
 		LinkedList<ITriggerExternal> result = new LinkedList<ITriggerExternal>();
 
 		return result;

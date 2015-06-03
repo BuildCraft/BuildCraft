@@ -8,13 +8,13 @@
  */
 package buildcraft.core.lib.utils;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
@@ -23,12 +23,12 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
@@ -53,7 +53,7 @@ import buildcraft.core.proxy.CoreProxy;
 public final class Utils {
 	public static final boolean CAULDRON_DETECTED;
 	public static final XorShift128Random RANDOM = new XorShift128Random();
-	private static final List<ForgeDirection> directions = new ArrayList<ForgeDirection>(Arrays.asList(ForgeDirection.VALID_DIRECTIONS));
+	private static final List<EnumFacing> directions = new ArrayList<EnumFacing>(Arrays.asList(EnumFacing.VALID_DIRECTIONS));
 
 	static {
 		boolean cauldron = false;
@@ -85,7 +85,7 @@ public final class Utils {
 	 */
 	public static int addToRandomInventoryAround(World world, int x, int y, int z, ItemStack stack) {
 		Collections.shuffle(directions);
-		for (ForgeDirection orientation : directions) {
+		for (EnumFacing orientation : directions) {
 			Position pos = new Position(x, y, z, orientation);
 			pos.moveForwards(1.0);
 
@@ -103,9 +103,9 @@ public final class Utils {
 	 * Returns the cardinal direction of the entity depending on its
 	 * rotationYaw
 	 */
-	public static ForgeDirection get2dOrientation(EntityLivingBase entityliving) {
-		ForgeDirection[] orientationTable = { ForgeDirection.SOUTH,
-				ForgeDirection.WEST, ForgeDirection.NORTH, ForgeDirection.EAST };
+	public static EnumFacing get2dOrientation(EntityLivingBase entityliving) {
+		EnumFacing[] orientationTable = { EnumFacing.SOUTH,
+				EnumFacing.WEST, EnumFacing.NORTH, EnumFacing.EAST };
 		int orientationIndex = MathHelper.floor_double((entityliving.rotationYaw + 45.0) / 90.0) & 3;
 		return orientationTable[orientationIndex];
 	}
@@ -117,11 +117,11 @@ public final class Utils {
 	 * isn't used again so that entities doesn't go backwards. Returns true if
 	 * successful, false otherwise.
 	 */
-	public static int addToRandomInjectableAround(World world, int x, int y, int z, ForgeDirection from, ItemStack stack) {
+	public static int addToRandomInjectableAround(World world, int x, int y, int z, EnumFacing from, ItemStack stack) {
 		List<IInjectable> possiblePipes = new ArrayList<IInjectable>();
-		List<ForgeDirection> pipeDirections = new ArrayList<ForgeDirection>();
+		List<EnumFacing> pipeDirections = new ArrayList<EnumFacing>();
 
-		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
 			if (from.getOpposite() == side) {
 				continue;
 			}
@@ -317,20 +317,20 @@ public final class Utils {
 			return false;
 		}
 
-		ForgeDirection o = ForgeDirection.UNKNOWN;
+		EnumFacing o = EnumFacing.UNKNOWN;
 
 		if (tile1.xCoord - 1 == tile2.xCoord) {
-			o = ForgeDirection.WEST;
+			o = EnumFacing.WEST;
 		} else if (tile1.xCoord + 1 == tile2.xCoord) {
-			o = ForgeDirection.EAST;
+			o = EnumFacing.EAST;
 		} else if (tile1.yCoord - 1 == tile2.yCoord) {
-			o = ForgeDirection.DOWN;
+			o = EnumFacing.DOWN;
 		} else if (tile1.yCoord + 1 == tile2.yCoord) {
-			o = ForgeDirection.UP;
+			o = EnumFacing.UP;
 		} else if (tile1.zCoord - 1 == tile2.zCoord) {
-			o = ForgeDirection.NORTH;
+			o = EnumFacing.NORTH;
 		} else if (tile1.zCoord + 1 == tile2.zCoord) {
-			o = ForgeDirection.SOUTH;
+			o = EnumFacing.SOUTH;
 		}
 
 		if (tile1 instanceof IPipeTile && !((IPipeTile) tile1).isPipeConnected(o)) {
@@ -365,7 +365,7 @@ public final class Utils {
 
 	}
 
-	public static boolean isPipeConnected(IBlockAccess access, int x, int y, int z, ForgeDirection dir, IPipeTile.PipeType type) {
+	public static boolean isPipeConnected(IBlockAccess access, int x, int y, int z, EnumFacing dir, IPipeTile.PipeType type) {
 		TileEntity tile = access.getTileEntity(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
 		return tile instanceof IPipeTile && ((IPipeTile) tile).getPipeType() == type && ((IPipeTile) tile).isPipeConnected(dir.getOpposite());
 	}

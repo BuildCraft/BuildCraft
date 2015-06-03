@@ -8,13 +8,13 @@
  */
 package buildcraft.silicon;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IIntegrationRecipe;
@@ -73,7 +73,7 @@ public class TileIntegrationTable extends TileLaserTableBase {
 
 			if (output != null) {
 				ITransactor trans = Transactor.getTransactorFor(mappedOutput);
-				trans.add(output, ForgeDirection.UP, true);
+				trans.add(output, EnumFacing.UP, true);
 
 				ItemStack input = getStackInSlot(0);
 

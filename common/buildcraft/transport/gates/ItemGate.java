@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -21,12 +20,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.StatCollector;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansions;
@@ -249,7 +247,7 @@ public class ItemGate extends ItemBuildCraft implements IPipePluggableItem {
 	}
 
 	@Override
-	public PipePluggable createPipePluggable(IPipe pipe, ForgeDirection side, ItemStack stack) {
+	public PipePluggable createPipePluggable(IPipe pipe, EnumFacing side, ItemStack stack) {
 		Pipe<?> realPipe = (Pipe<?>) pipe;
 
 		return new GatePluggable(GateFactory.makeGate(realPipe, stack, side));

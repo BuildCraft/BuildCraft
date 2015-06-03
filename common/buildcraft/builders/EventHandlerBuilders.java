@@ -8,10 +8,10 @@
  */
 package buildcraft.builders;
 
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.event.world.WorldEvent;
 
 public class EventHandlerBuilders {
 

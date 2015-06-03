@@ -12,7 +12,7 @@ import java.util.LinkedList;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
@@ -26,7 +26,7 @@ import buildcraft.api.tiles.IHasWork;
 
 public class DefaultTriggerProvider implements ITriggerProvider {
 	@Override
-	public LinkedList<ITriggerExternal> getExternalTriggers(ForgeDirection side, TileEntity tile) {
+	public LinkedList<ITriggerExternal> getExternalTriggers(EnumFacing side, TileEntity tile) {
 		LinkedList<ITriggerExternal> res = new LinkedList<ITriggerExternal>();
 
 		if (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0) {

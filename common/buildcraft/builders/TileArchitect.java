@@ -8,10 +8,10 @@
  */
 package buildcraft.builders;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
-
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -20,8 +20,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BlockIndex;

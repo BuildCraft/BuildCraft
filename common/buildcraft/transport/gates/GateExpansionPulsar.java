@@ -10,11 +10,12 @@ package buildcraft.transport.gates;
 
 import java.util.List;
 
+import cofh.api.energy.IEnergyHandler;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
-import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGate;
@@ -100,7 +101,7 @@ public final class GateExpansionPulsar extends GateExpansionBuildcraft implement
 
 			if (pipeTile instanceof IEnergyHandler && (!singlePulse || !hasPulsed)) {
 				gate.setPulsing(true);
-				((IEnergyHandler) pipeTile).receiveEnergy(ForgeDirection.UNKNOWN, Math.min(1 << (count - 1), 64) * 10,
+				((IEnergyHandler) pipeTile).receiveEnergy(EnumFacing.UNKNOWN, Math.min(1 << (count - 1), 64) * 10,
 						false);
 				hasPulsed = true;
 			} else {

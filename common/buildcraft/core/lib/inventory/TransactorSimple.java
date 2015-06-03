@@ -13,7 +13,7 @@ import java.util.List;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.IInvSlot;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
@@ -27,7 +27,7 @@ public class TransactorSimple extends Transactor {
 	}
 
 	@Override
-	public int inject(ItemStack stack, ForgeDirection orientation, boolean doAdd) {
+	public int inject(ItemStack stack, EnumFacing orientation, boolean doAdd) {
 		List<IInvSlot> filledSlots = new ArrayList<IInvSlot>(inventory.getSizeInventory());
 		List<IInvSlot> emptySlots = new ArrayList<IInvSlot>(inventory.getSizeInventory());
 		for (IInvSlot slot : InventoryIterator.getIterable(inventory, orientation)) {
@@ -115,7 +115,7 @@ public class TransactorSimple extends Transactor {
 	}
 
 	@Override
-	public ItemStack remove(IStackFilter filter, ForgeDirection orientation, boolean doRemove) {
+	public ItemStack remove(IStackFilter filter, EnumFacing orientation, boolean doRemove) {
 		for (IInvSlot slot : InventoryIterator.getIterable(inventory, orientation)) {
 			ItemStack stack = slot.getStackInSlot();
 			if (stack != null && slot.canTakeStackFromSlot(stack) && filter.matches(stack)) {

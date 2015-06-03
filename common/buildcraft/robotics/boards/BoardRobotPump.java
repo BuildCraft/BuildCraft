@@ -9,8 +9,8 @@
 package buildcraft.robotics.boards;
 
 import net.minecraft.block.Block;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -49,7 +49,7 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 	@Override
 	public void update() {
 		final IWorldProperty isFluidSource = BuildCraftAPI.getWorldProperty("fluidSource");
-		FluidStack tank = robot.getTankInfo(ForgeDirection.UNKNOWN)[0].fluid;
+		FluidStack tank = robot.getTankInfo(EnumFacing.UNKNOWN)[0].fluid;
 
 		if (tank != null && tank.amount > 0) {
 			startDelegateAI(new AIRobotGotoStationAndUnloadFluids(robot));

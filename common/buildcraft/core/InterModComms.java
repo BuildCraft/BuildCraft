@@ -16,9 +16,9 @@ import java.util.Set;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.event.FMLInterModComms.IMCEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms.IMCMessage;
-import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.core.recipes.AssemblyRecipeManager;

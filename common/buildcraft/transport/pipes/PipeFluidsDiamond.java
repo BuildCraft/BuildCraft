@@ -8,10 +8,10 @@
  */
 package buildcraft.transport.pipes;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.HashSet;
 import java.util.Set;
-
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,10 +19,10 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
@@ -88,7 +88,7 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
 	}
 
 	@Override
-    public int getIconIndex(ForgeDirection direction) {
+    public int getIconIndex(EnumFacing direction) {
         switch (direction) {
             case UNKNOWN:
                 return PipeIconProvider.TYPE.PipeFluidsDiamond_Center.ordinal();
@@ -131,12 +131,12 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
 
 	public void eventHandler(PipeEventFluid.FindDest event) {
 		Fluid fluidInTank = event.fluidStack.getFluid();
-        Set<ForgeDirection> originalDestinations = new HashSet<ForgeDirection>();
+        Set<EnumFacing> originalDestinations = new HashSet<EnumFacing>();
         originalDestinations.addAll(event.destinations.elementSet());
         boolean isFiltered = true;
         int[] filterCount = new int[6];
 
-		for (ForgeDirection dir : originalDestinations) {
+		for (EnumFacing dir : originalDestinations) {
 			if (container.isPipeConnected(dir) && filters.filteredDirections[dir.ordinal()]) {
 				for (int slot = dir.ordinal() * 9; slot < dir.ordinal() * 9 + 9; ++slot) {
 					if (filters.fluids[slot] != null && filters.fluids[slot].getID() == fluidInTank.getID()) {
@@ -150,13 +150,13 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
         event.destinations.clear();
 
         if (!isFiltered) {
-            for (ForgeDirection to : originalDestinations) {
+            for (EnumFacing to : originalDestinations) {
                 if (!filters.filteredDirections[to.ordinal()]) {
                     event.destinations.add(to);
                 }
             }
         } else {
-            for (ForgeDirection to : originalDestinations) {
+            for (EnumFacing to : originalDestinations) {
                 if (filterCount[to.ordinal()] > 0) {
                     event.destinations.add(to, filterCount[to.ordinal()]);
                 }

@@ -13,20 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
-import buildcraft.silicon.gui.ContainerAdvancedCraftingTable;
-import buildcraft.silicon.gui.ContainerAssemblyTable;
-import buildcraft.silicon.gui.ContainerChargingTable;
-import buildcraft.silicon.gui.ContainerIntegrationTable;
-import buildcraft.silicon.gui.ContainerPackager;
-import buildcraft.silicon.gui.ContainerProgrammingTable;
-import buildcraft.silicon.gui.ContainerStampingTable;
-import buildcraft.silicon.gui.GuiAdvancedCraftingTable;
-import buildcraft.silicon.gui.GuiAssemblyTable;
-import buildcraft.silicon.gui.GuiChargingTable;
-import buildcraft.silicon.gui.GuiIntegrationTable;
-import buildcraft.silicon.gui.GuiPackager;
-import buildcraft.silicon.gui.GuiProgrammingTable;
-import buildcraft.silicon.gui.GuiStampingTable;
+import buildcraft.silicon.gui.*;
 
 public class SiliconGuiHandler implements IGuiHandler {
 

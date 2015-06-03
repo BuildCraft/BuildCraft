@@ -8,10 +8,9 @@
  */
 package buildcraft.core.statements;
 
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
@@ -64,7 +63,7 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
 	public void actionActivate(IStatementContainer source,
 			IStatementParameter[] parameters) {
 		if (source instanceof IRedstoneStatementContainer) {
-			ForgeDirection side = ForgeDirection.UNKNOWN;
+			EnumFacing side = EnumFacing.UNKNOWN;
 			if (source instanceof ISidedStatementContainer && isSideOnly(parameters)) {
 				side = ((ISidedStatementContainer) source).getSide();
 			}

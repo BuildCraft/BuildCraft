@@ -3,7 +3,7 @@ package buildcraft.api.items;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IBox;
@@ -55,5 +55,5 @@ public interface IMapLocation extends INamedItem {
 	 * @param stack
 	 * @return The side of the spot.
 	 */
-	ForgeDirection getPointSide(ItemStack stack);
+	EnumFacing getPointSide(ItemStack stack);
 }

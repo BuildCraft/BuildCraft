@@ -14,10 +14,10 @@ import java.util.LinkedList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
@@ -40,7 +40,7 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
+	public int getIconIndex(EnumFacing direction) {
 		if (container == null) {
 			return PipeIconProvider.TYPE.PipePowerIronM128.ordinal();
 		}

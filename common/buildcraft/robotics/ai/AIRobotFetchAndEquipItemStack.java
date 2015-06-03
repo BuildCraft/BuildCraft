@@ -11,7 +11,7 @@ package buildcraft.robotics.ai;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
@@ -76,7 +76,7 @@ public class AIRobotFetchAndEquipItemStack extends AIRobot {
 
 			ItemStack itemFound = null;
 
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			for (EnumFacing dir : EnumFacing.VALID_DIRECTIONS) {
 				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX,
 						station.y() + dir.offsetY, station.z() + dir.offsetZ);
 

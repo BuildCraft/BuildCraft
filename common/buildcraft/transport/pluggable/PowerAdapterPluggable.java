@@ -1,14 +1,13 @@
 package buildcraft.transport.pluggable;
 
 import io.netty.buffer.ByteBuf;
+import cofh.api.energy.IEnergyHandler;
 
-import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 
-import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.transport.IPipe;
@@ -25,7 +24,7 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
 		private float zFightOffset = 1 / 4096.0F;
 
 		@Override
-		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, ForgeDirection side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
+		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, EnumFacing side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
 			if (renderPass != 0) {
 				return;
 			}
@@ -74,7 +73,7 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
 	}
 
 	@Override
-	public void validate(IPipeTile pipe, ForgeDirection direction) {
+	public void validate(IPipeTile pipe, EnumFacing direction) {
 		this.container = pipe;
 	}
 
@@ -99,12 +98,12 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
 	}
 
 	@Override
-	public boolean isBlocking(IPipeTile pipe, ForgeDirection direction) {
+	public boolean isBlocking(IPipeTile pipe, EnumFacing direction) {
 		return true;
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox(ForgeDirection side) {
+	public AxisAlignedBB getBoundingBox(EnumFacing side) {
 		float[][] bounds = new float[3][2];
 		// X START - END
 		bounds[0][0] = 0.1875F;
@@ -136,7 +135,7 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
 	}
 
 	@Override
-	public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
+	public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
 		int maxR = Math.min(40, maxReceive);
 		if (container instanceof IEnergyHandler) {
 			int energyCanReceive = ((IEnergyHandler) container).receiveEnergy(from, maxR, true);
@@ -150,12 +149,12 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
 	}
 
 	@Override
-	public int extractEnergy(ForgeDirection from, int maxExtract, boolean simulate) {
+	public int extractEnergy(EnumFacing from, int maxExtract, boolean simulate) {
 		return 0;
 	}
 
 	@Override
-	public int getEnergyStored(ForgeDirection from) {
+	public int getEnergyStored(EnumFacing from) {
 		if (container instanceof IEnergyHandler) {
 			return ((IEnergyHandler) container).getEnergyStored(from);
 		} else {
@@ -164,7 +163,7 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
 	}
 
 	@Override
-	public int getMaxEnergyStored(ForgeDirection from) {
+	public int getMaxEnergyStored(EnumFacing from) {
 		if (container instanceof IEnergyHandler) {
 			return ((IEnergyHandler) container).getMaxEnergyStored(from);
 		} else {
@@ -173,7 +172,7 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
 	}
 
 	@Override
-	public boolean canConnectEnergy(ForgeDirection from) {
+	public boolean canConnectEnergy(EnumFacing from) {
 		return true;
 	}
 }

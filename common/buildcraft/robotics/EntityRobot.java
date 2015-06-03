@@ -8,12 +8,12 @@
  */
 package buildcraft.robotics;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.WeakHashMap;
-
-import io.netty.buffer.ByteBuf;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -29,24 +29,21 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.IIcon;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-
-import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.boards.RedstoneBoardNBT;
@@ -86,10 +83,10 @@ public class EntityRobot extends EntityRobotBase implements
 	public LaserData laser = new LaserData();
 	public DockingStation linkedDockingStation;
 	public BlockIndex linkedDockingStationIndex;
-	public ForgeDirection linkedDockingStationSide;
+	public EnumFacing linkedDockingStationSide;
 
 	public BlockIndex currentDockingStationIndex;
-	public ForgeDirection currentDockingStationSide;
+	public EnumFacing currentDockingStationSide;
 
 	public boolean isDocked = false;
 
@@ -543,13 +540,13 @@ public class EntityRobot extends EntityRobotBase implements
 		if (nbt.hasKey("linkedStation")) {
 			NBTTagCompound linkedStationNBT = nbt.getCompoundTag("linkedStation");
 			linkedDockingStationIndex = new BlockIndex(linkedStationNBT.getCompoundTag("index"));
-			linkedDockingStationSide = ForgeDirection.values()[linkedStationNBT.getByte("side")];
+			linkedDockingStationSide = EnumFacing.values()[linkedStationNBT.getByte("side")];
 		}
 
 		if (nbt.hasKey("currentStation")) {
 			NBTTagCompound currentStationNBT = nbt.getCompoundTag("currentStation");
 			currentDockingStationIndex = new BlockIndex(currentStationNBT.getCompoundTag("index"));
-			currentDockingStationSide = ForgeDirection.values()[currentStationNBT.getByte("side")];
+			currentDockingStationSide = EnumFacing.values()[currentStationNBT.getByte("side")];
 
 		}
 
@@ -648,7 +645,7 @@ public class EntityRobot extends EntityRobotBase implements
 			linkedDockingStationSide = linkedDockingStation.side();
 		} else {
 			linkedDockingStationIndex = null;
-			linkedDockingStationSide = ForgeDirection.UNKNOWN;
+			linkedDockingStationSide = EnumFacing.UNKNOWN;
 		}
 	}
 
@@ -1188,7 +1185,7 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		int result = 0;
 
 		if (tank != null && !tank.isFluidEqual(resource)) {
@@ -1221,7 +1218,7 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
 		if (tank != null && tank.isFluidEqual(resource)) {
 			return drain(from, resource.amount, doDrain);
 		} else {
@@ -1230,7 +1227,7 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
 		FluidStack result = null;
 
 		if (tank == null) {
@@ -1258,7 +1255,7 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
+	public boolean canFill(EnumFacing from, Fluid fluid) {
 		return tank == null
 				|| tank.amount == 0
 				|| (tank.amount < maxFluid
@@ -1266,14 +1263,14 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
 		return tank != null
 				&& tank.amount != 0
 				&& tank.getFluid().getID() == fluid.getID();
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+	public FluidTankInfo[] getTankInfo(EnumFacing from) {
 		return new FluidTankInfo[] {new FluidTankInfo(tank, maxFluid)};
 	}
 
@@ -1289,7 +1286,7 @@ public class EntityRobot extends EntityRobotBase implements
     }
 
 	@Override
-	public void getDebugInfo(List<String> info, ForgeDirection side, ItemStack debugger, EntityPlayer player) {
+	public void getDebugInfo(List<String> info, EnumFacing side, ItemStack debugger, EntityPlayer player) {
 		info.add("Robot " + board.getNBTHandler().getID() + " (" + getBattery().getEnergyStored() + "/" + getBattery().getMaxEnergyStored() + " RF)");
 		info.add(String.format("Position: %.2f, %.2f, %.2f", posX, posY, posZ));
 		info.add("AI tree:");

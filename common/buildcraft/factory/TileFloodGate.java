@@ -8,17 +8,17 @@
  */
 package buildcraft.factory;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import java.util.TreeMap;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -192,7 +192,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		}
 		for (int i = 0; i < 6; i++) {
 			if (i != 1 && !blockedSides[i]) {
-				ForgeDirection dir = ForgeDirection.getOrientation(i);
+				EnumFacing dir = EnumFacing.getOrientation(i);
 				queueForFilling(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
 			}
 		}
@@ -273,7 +273,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		}
 	}
 
-	public void switchSide(ForgeDirection side) {
+	public void switchSide(EnumFacing side) {
 		System.out.println("Csides=" + side.ordinal() + "=" + blockedSides[side.ordinal()]);
 		if (side.ordinal() != 1) {
 			blockedSides[side.ordinal()] = !blockedSides[side.ordinal()];
@@ -298,32 +298,32 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 
 	// IFluidHandler implementation.
 	@Override
-	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
+	public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
 		return tank.fill(resource, doFill);
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, int maxDrain, boolean doDrain) {
 		return null;
 	}
 
 	@Override
-	public FluidStack drain(ForgeDirection from, FluidStack resource, boolean doDrain) {
+	public FluidStack drain(EnumFacing from, FluidStack resource, boolean doDrain) {
 		return null;
 	}
 
 	@Override
-	public boolean canFill(ForgeDirection from, Fluid fluid) {
+	public boolean canFill(EnumFacing from, Fluid fluid) {
 		return true;
 	}
 
 	@Override
-	public boolean canDrain(ForgeDirection from, Fluid fluid) {
+	public boolean canDrain(EnumFacing from, Fluid fluid) {
 		return false;
 	}
 
 	@Override
-	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
+	public FluidTankInfo[] getTankInfo(EnumFacing from) {
 		return new FluidTankInfo[]{tank.getInfo()};
 	}
 

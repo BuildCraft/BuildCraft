@@ -3,8 +3,8 @@ package buildcraft.transport.stripes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IStripesActivator;
@@ -24,7 +24,7 @@ public class StripesHandlerPipeWires implements IStripesHandler {
 	}
 
 	@Override
-	public boolean handle(World world, int x, int y, int z, ForgeDirection direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
+	public boolean handle(World world, int x, int y, int z, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
 		int pipesToTry = 8;
 		int pipeWireColor = stack.getItemDamage();
 

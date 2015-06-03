@@ -15,9 +15,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
@@ -83,13 +83,13 @@ public class PipeItemsIron extends Pipe<PipeTransportItems> {
 	}
 
 	@Override
-	public boolean outputOpen(ForgeDirection to) {
+	public boolean outputOpen(EnumFacing to) {
 		return super.outputOpen(to) && logic.outputOpen(to);
 	}
 
 	@Override
-	public int getIconIndex(ForgeDirection direction) {
-		if (direction == ForgeDirection.UNKNOWN) {
+	public int getIconIndex(EnumFacing direction) {
+		if (direction == EnumFacing.UNKNOWN) {
 			return standardIconIndex;
 		} else {
 			int metadata = container.getBlockMetadata();
@@ -123,7 +123,7 @@ public class PipeItemsIron extends Pipe<PipeTransportItems> {
 	@Override
 	public LinkedList<IActionInternal> getActions() {
 		LinkedList<IActionInternal> action = super.getActions();
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
+		for (EnumFacing direction : EnumFacing.VALID_DIRECTIONS) {
 			if (container.isPipeConnected(direction)) {
 				action.add(BuildCraftTransport.actionPipeDirection[direction.ordinal()]);
 			}
