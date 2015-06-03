@@ -94,7 +94,7 @@ public final class FacadeRenderHelper {
 				rotated[2][1] - zOffsets[side.ordinal()]);
 	}
 
-	public static void pipeFacadeRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, IPipeTile tile, int x, int y, int z, ForgeDirection direction, IFacadePluggable pluggable) {
+	public static void pipeFacadeRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, IPipeTile tile, int renderPass, int x, int y, int z, ForgeDirection direction, IFacadePluggable pluggable) {
 		ITextureStates textureManager = blockStateMachine;
 		IIcon[] textures = ((TextureStateManager) textureManager.getTextureState()).popArray();
 
@@ -104,7 +104,7 @@ public final class FacadeRenderHelper {
 			IBlockAccess facadeBlockAccess = new FacadeBlockAccess(tile.getWorld(), direction);
 
 			// If the facade is meant to render in the current pass
-			if (renderBlock.canRenderInPass(PipeRendererWorld.renderPass)) {
+			if (renderBlock.canRenderInPass(renderPass)) {
 				int renderMeta = pluggable.getCurrentMetadata();
 
 				for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
@@ -200,7 +200,7 @@ public final class FacadeRenderHelper {
 		textureManager.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal())); // Structure Pipe
 
 		// Always render connectors in pass 0
-		if (PipeRendererWorld.renderPass == 0 && !pluggable.isHollow()) {
+		if (renderPass == 0 && !pluggable.isHollow()) {
 			float[][] rotated = MatrixTranformations.deepClone(zeroStateSupport);
 			MatrixTranformations.transform(rotated, direction);
 
