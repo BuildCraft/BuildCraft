@@ -311,11 +311,17 @@ public class EntityRobot extends EntityRobotBase implements
 							linkedDockingStationSide);
 				}
 
-				if (linkedDockingStation == null
-						|| linkedDockingStation.robotTaking() != this) {
-					if (!(mainAI.getDelegateAI() instanceof AIRobotShutdown)) {
-						BCLog.logger.info("Shutting down robot " + this.toString() + " - no docking station");
-						mainAI.startDelegateAI(new AIRobotShutdown(this));
+				if (linkedDockingStation == null) {
+					shutdown("no docking station");
+				} else {
+					if (linkedDockingStation.robotTaking() != this) {
+						if (linkedDockingStation.robotIdTaking() == robotId) {
+							BCLog.logger.warn("A robot entity was not properly unloaded");
+							linkedDockingStation.invalidateRobotTakingEntity();
+						}
+						if (linkedDockingStation.robotTaking() != this) {
+							shutdown("wrong docking station");
+						}
 					}
 				}
 			}
@@ -383,6 +389,13 @@ public class EntityRobot extends EntityRobotBase implements
 		boundingBox.maxX = posX;
 		boundingBox.maxY = posY;
 		boundingBox.maxZ = posZ;
+	}
+
+	private void shutdown(String reason) {
+		if (!(mainAI.getDelegateAI() instanceof AIRobotShutdown)) {
+			BCLog.logger.info("Shutting down robot " + this.toString() + " - " + reason);
+			mainAI.startDelegateAI(new AIRobotShutdown(this));
+		}
 	}
 
 	private void iterateBehaviorDocked() {

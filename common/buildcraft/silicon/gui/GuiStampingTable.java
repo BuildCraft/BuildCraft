@@ -27,7 +27,7 @@ public class GuiStampingTable extends GuiLaserTable {
 		super(playerInventory, new ContainerStampingTable(playerInventory, table), table, TEXTURE);
 		this.integrationTable = table;
 		xSize = 176;
-		ySize = 132;
+		ySize = 151;
 	}
 
 	@Override

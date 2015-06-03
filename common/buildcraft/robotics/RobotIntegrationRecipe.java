@@ -16,6 +16,8 @@ import net.minecraft.item.ItemStack;
 import buildcraft.BuildCraftRobotics;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
+import buildcraft.api.boards.RedstoneBoardRobotNBT;
+import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.recipes.IntegrationRecipeBC;
 
@@ -48,9 +50,7 @@ public class RobotIntegrationRecipe extends IntegrationRecipeBC {
 	public List<ItemStack> generateExampleOutput() {
 		ArrayList<ItemStack> example = new ArrayList<ItemStack>();
 		for (RedstoneBoardNBT nbt : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
-			ItemStack stack = new ItemStack(BuildCraftRobotics.redstoneBoard);
-			nbt.createBoard(NBTUtils.getItemData(stack));
-			example.add(ItemRobot.createRobotStack(stack, 0));
+			example.add(ItemRobot.createRobotStack((RedstoneBoardRobotNBT) nbt, 0));
 		}
 		return example;
 	}
@@ -70,6 +70,12 @@ public class RobotIntegrationRecipe extends IntegrationRecipeBC {
 		if (!preview) {
 			expansions.get(0).stackSize--;
 		}
-		return ItemRobot.createRobotStack(expansions.get(0), 0);
+		RedstoneBoardRobotNBT boardNBT = (RedstoneBoardRobotNBT) ItemRedstoneBoard.getBoardNBT(expansions.get(0));
+
+		int energy = ItemRobot.getEnergy(input);
+		if (energy == 0) {
+			energy = EntityRobotBase.SAFETY_ENERGY;
+		}
+		return ItemRobot.createRobotStack(boardNBT, energy);
 	}
 }

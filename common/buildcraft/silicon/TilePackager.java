@@ -475,7 +475,26 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
 	@Override
 	public boolean canInsertItem(int slot, ItemStack stack, int side) {
 		if (side >= 2) {
-			return slot < 9;
+			if (slot >= 9) {
+				return false;
+			}
+			ItemStack slotStack = inventoryPublic.getStackInSlot(slot);
+			if (StackHelper.canStacksMerge(stack, slotStack)) {
+				return true;
+			}
+
+			for (int i = 0; i < 9; i++) {
+				if (isPatternSlotSet(i)) {
+					ItemStack inputStack = inventoryPattern.getStackInSlot(i);
+					if (inputStack == null) {
+						return true;
+					}
+					if (StackHelper.isMatchingItem(inputStack, stack, true, false)) {
+						return true;
+					}
+				}
+			}
+			return false;
 		} else {
 			return slot == 9;
 		}

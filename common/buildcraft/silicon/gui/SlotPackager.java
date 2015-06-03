@@ -20,7 +20,7 @@ public class SlotPackager extends SlotPhantom {
 
 	@Override
 	public boolean isItemValid(ItemStack stack) {
-		return stack != null && !stack.getItem().hasContainerItem(stack);
+		return stack != null;
 	}
 
 	@Override

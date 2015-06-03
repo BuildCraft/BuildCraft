@@ -433,7 +433,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
 		FMLCommonHandler.instance().bus().register(new TickHandlerCore());
 
-		CropManager.registerHandler(new CropHandlerPlantable());
+		CropManager.setDefaultHandler(new CropHandlerPlantable());
 		CropManager.registerHandler(new CropHandlerReeds());
 
 		BuildCraftAPI.registerWorldProperty("soft", new WorldPropertyIsSoft());

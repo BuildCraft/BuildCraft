@@ -33,7 +33,6 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 				renderAssemblyTable(renderer, true, 0, 0, 0, bcBlock);
 				break;
 			case 1:
-			case 5:
 				renderAdvancedCraftingTable(renderer, true, 0, 0, 0, bcBlock);
 				break;
 			case 2:
@@ -44,6 +43,9 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 				break;
 			case 4:
 				renderProgrammingTable(renderer, true, 0, 0, 0, bcBlock);
+				break;
+			case 5:
+				renderStampingTable(renderer, true, 0, 0, 0, bcBlock);
 				break;
 		}
 		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
@@ -57,7 +59,6 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 				renderAssemblyTable(renderer, false, x, y, z, bcBlock);
 				break;
 			case 1:
-			case 5:
 				renderAdvancedCraftingTable(renderer, false, x, y, z, bcBlock);
 				break;
 			case 2:
@@ -68,6 +69,9 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 				break;
 			case 4:
 				renderProgrammingTable(renderer, false, x, y, z, bcBlock);
+				break;
+			case 5:
+				renderStampingTable(renderer, false, x, y, z, bcBlock);
 				break;
 		}
 		return true;
@@ -182,6 +186,23 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 			return;
 		}
 		IIcon base = block.getIcon(0, 1);
+		renderCube(renderer, isInv, x, y, z, 0.125F, 0, 0.125F, 12, 3, 12, 12, 21, base, 0x3d); // bottom (no top)
+
+		// sides (no top)
+		renderCube(renderer, isInv, x, y, z, 0, 0, 0, 3, 3, 3, 3, 0, base, 0x3d);
+		renderCube(renderer, isInv, x, y, z, 0, 0, 0.8125F, 3, 3, 3, 3, 0, base, 0x3d);
+		renderCube(renderer, isInv, x, y, z, 0.8125F, 0, 0, 3, 3, 3, 3, 0, base, 0x3d);
+		renderCube(renderer, isInv, x, y, z, 0.8125F, 0, 0.8125F, 3, 3, 3, 3, 0, base, 0x3d);
+
+		renderCube(renderer, isInv, x, y, z, 0, 0.1875F, 0, 16, 5, 16, 16, 0, base, 0x3f); // top
+	}
+
+	private void renderStampingTable(RenderBlocks renderer, boolean isInv, int x, int y, int z, BlockBuildCraft block) {
+		if (!isInv && block.getCurrentRenderPass() != 0) {
+			workaround17(x, y, z);
+			return;
+		}
+		IIcon base = block.getIcon(0, 5);
 		renderCube(renderer, isInv, x, y, z, 0.125F, 0, 0.125F, 12, 3, 12, 12, 21, base, 0x3d); // bottom (no top)
 
 		// sides (no top)

@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 public final class CropManager {
 	private static List<ICropHandler> handlers = new ArrayList<ICropHandler>();
+	private static ICropHandler defaultHandler;
 
 	private CropManager() {
 
@@ -19,13 +21,21 @@ public final class CropManager {
 		handlers.add(cropHandler);
 	}
 
+	public static void setDefaultHandler(ICropHandler cropHandler) {
+		defaultHandler = cropHandler;
+	}
+
+	public static ICropHandler getDefaultHandler() {
+		return defaultHandler;
+	}
+
 	public static boolean isSeed(ItemStack stack) {
 		for (ICropHandler cropHandler : handlers) {
 			if (cropHandler.isSeed(stack)) {
 				return true;
 			}
 		}
-		return false;
+		return defaultHandler.isSeed(stack);
 	}
 
 	public static boolean canSustainPlant(World world, ItemStack seed, int x, int y, int z) {
@@ -34,7 +44,18 @@ public final class CropManager {
 				return true;
 			}
 		}
-		return false;
+		return defaultHandler.canSustainPlant(world, seed, x, y, z);
+	}
+
+	public static boolean plantCrop(World world, EntityPlayer player, ItemStack seed, int x, int y,
+			int z) {
+		for (ICropHandler cropHandler : handlers) {
+			if (cropHandler.isSeed(seed) && cropHandler.canSustainPlant(world, seed, x, y, z)
+					&& cropHandler.plantCrop(world, player, seed, x, y, z)) {
+				return true;
+			}
+		}
+		return defaultHandler.plantCrop(world, player, seed, x, y, z);
 	}
 
 	public static boolean isMature(IBlockAccess blockAccess, Block block, int meta, int x, int y,
@@ -44,7 +65,7 @@ public final class CropManager {
 				return true;
 			}
 		}
-		return false;
+		return defaultHandler.isMature(blockAccess, block, meta, x, y, z);
 	}
 
 	public static boolean harvestCrop(World world, int x, int y, int z, List<ItemStack> drops) {
@@ -55,7 +76,7 @@ public final class CropManager {
 				return cropHandler.harvestCrop(world, x, y, z, drops);
 			}
 		}
-		return false;
+		return defaultHandler.harvestCrop(world, x, y, z, drops);
 	}
 
 }

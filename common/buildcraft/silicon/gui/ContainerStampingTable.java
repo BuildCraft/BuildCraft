@@ -28,15 +28,18 @@ public class ContainerStampingTable extends BuildCraftContainer {
 
 		addSlot(new SlotValidated(table, 0, 15, 18));
 		addSlot(new SlotOutput(table, 1, 143, 18));
+		addSlot(new SlotOutput(table, 2, 111, 45));
+		addSlot(new SlotOutput(table, 3, 129, 45));
+		addSlot(new SlotOutput(table, 4, 147, 45));
 
 		for (int y = 0; y < 3; y++) {
 			for (int x = 0; x < 9; x++) {
-				addSlotToContainer(new Slot(playerInventory, x + y * 9 + 9, 8 + x * 18, 50 + y * 18));
+				addSlotToContainer(new Slot(playerInventory, x + y * 9 + 9, 8 + x * 18, 69 + y * 18));
 			}
 		}
 
 		for (int x = 0; x < 9; x++) {
-			addSlotToContainer(new Slot(playerInventory, x, 8 + x * 18, 108));
+			addSlotToContainer(new Slot(playerInventory, x, 8 + x * 18, 127));
 		}
 	}
 

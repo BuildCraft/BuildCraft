@@ -13,9 +13,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockWorkbench;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityFurnace;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftRobotics;
@@ -27,7 +26,6 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.robotics.RobotUtils;
-import buildcraft.silicon.TileAssemblyTable;
 import buildcraft.transport.TileGenericPipe;
 
 public class RobotsActionProvider implements IActionProvider {
@@ -85,12 +83,6 @@ public class RobotsActionProvider implements IActionProvider {
 
 			if (station.getRequestProvider() != null) {
 				result.add(BuildCraftRobotics.actionStationMachineRequestItems);
-			}
-
-			if (sideTile instanceof TileEntityFurnace
-					|| sideTile instanceof TileAssemblyTable
-					|| sideBlock instanceof BlockWorkbench) {
-				result.add(BuildCraftRobotics.actionRobotAllowCraft);
 			}
 		}
 

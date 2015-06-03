@@ -9,6 +9,7 @@ import net.minecraft.block.BlockFlower;
 import net.minecraft.block.BlockMelon;
 import net.minecraft.block.BlockMushroom;
 import net.minecraft.block.BlockTallGrass;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -56,6 +57,11 @@ public class CropHandlerPlantable implements ICropHandler {
 	}
 
 	@Override
+	public boolean plantCrop(World world, EntityPlayer player, ItemStack seed, int x, int y, int z) {
+		return BlockUtils.useItemOnBlock(world, player, seed, x, y, z, ForgeDirection.UP);
+	}
+
+	@Override
 	public boolean isMature(IBlockAccess blockAccess, Block block, int meta, int x, int y, int z) {
 		if (block == null) {
 			return false;
@@ -89,5 +95,4 @@ public class CropHandlerPlantable implements ICropHandler {
 		}
 		return false;
 	}
-
 }

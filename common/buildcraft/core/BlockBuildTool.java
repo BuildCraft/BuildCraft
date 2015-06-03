@@ -10,6 +10,7 @@ package buildcraft.core;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.util.IIcon;
 
 import buildcraft.BuildCraftCore;
@@ -17,6 +18,10 @@ import buildcraft.BuildCraftCore;
 public class BlockBuildTool extends Block {
 	public BlockBuildTool() {
 		super(Material.iron);
+	}
+
+	@Override
+	public void registerBlockIcons(IIconRegister itemRegister) {
 	}
 
 	@Override

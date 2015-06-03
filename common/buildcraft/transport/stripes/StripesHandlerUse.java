@@ -6,12 +6,15 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
+import buildcraft.core.lib.utils.BlockUtils;
 
 public class StripesHandlerUse implements IStripesHandler {
 	public static final List<Item> items = new ArrayList<Item>();
@@ -33,21 +36,15 @@ public class StripesHandlerUse implements IStripesHandler {
 		Position target = new Position(x, y, z, direction);
 		target.moveForwards(1.0D);
 
-		boolean done = stack.getItem().onItemUseFirst(stack, player, world,
-				(int) target.x, (int) target.y, (int) target.z,
-				direction.getOpposite().ordinal(), 0.5F, 0.5F, 0.5F);
-
-		if (!done) {
-			done = stack.getItem().onItemUse(stack, player, world,
-					(int) target.x, (int) target.y, (int) target.z,
-					direction.getOpposite().ordinal(), 0.5F, 0.5F, 0.5F);
+		if (BlockUtils.useItemOnBlock(world, player, stack, MathHelper.floor_double(target.x),
+				MathHelper.floor_double(target.y), MathHelper.floor_double(target.z),
+				direction.getOpposite())) {
+			if (stack.stackSize > 0) {
+				activator.sendItem(stack, direction.getOpposite());
+			}
+			return true;
 		}
-
-		if (stack.stackSize > 0) {
-			activator.sendItem(stack, direction.getOpposite());
-		}
-
-		return done;
+		return false;
 	}
 
 }

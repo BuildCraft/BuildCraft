@@ -25,8 +25,11 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
+
 import cpw.mods.fml.common.FMLCommonHandler;
+
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.fluids.Fluid;
@@ -305,5 +308,17 @@ public final class BlockUtils {
 		} else {
 			return world.getBlockMetadata(x, y, z);
 		}
+	}
+
+	public static boolean useItemOnBlock(World world, EntityPlayer player, ItemStack stack, int x,
+			int y, int z, ForgeDirection direction) {
+		boolean done = stack.getItem().onItemUseFirst(stack, player, world, x, y, z,
+				direction.ordinal(), 0.5F, 0.5F, 0.5F);
+
+		if (!done) {
+			done = stack.getItem().onItemUse(stack, player, world, x, y, z, direction.ordinal(),
+					0.5F, 0.5F, 0.5F);
+		}
+		return done;
 	}
 }
