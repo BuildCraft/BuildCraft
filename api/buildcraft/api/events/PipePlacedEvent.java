@@ -9,7 +9,7 @@
 package buildcraft.api.events;
 
 import net.minecraft.entity.player.EntityPlayer;
-import cpw.mods.fml.common.eventhandler.Event;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 public class PipePlacedEvent extends Event {
 	public EntityPlayer player;

@@ -8,5 +8,5 @@
  */
 @API(apiVersion = "1.2", owner = "BuildCraftAPI|core", provides = "BuildCraftAPI|tiles")
 package buildcraft.api.tiles;
-import cpw.mods.fml.common.API;
+import net.minecraftforge.fml.common.API;
 

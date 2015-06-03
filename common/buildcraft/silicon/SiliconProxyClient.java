@@ -9,8 +9,8 @@
 package buildcraft.silicon;
 
 import net.minecraft.client.renderer.entity.RenderSnowball;
-import cpw.mods.fml.client.registry.ClientRegistry;
-import cpw.mods.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 import buildcraft.BuildCraftSilicon;
 import buildcraft.silicon.render.RenderLaserBlock;

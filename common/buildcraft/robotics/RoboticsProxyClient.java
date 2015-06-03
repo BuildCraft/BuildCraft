@@ -8,8 +8,8 @@
  */
 package buildcraft.robotics;
 
-import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.Loader;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.client.MinecraftForgeClient;
 
 import buildcraft.BuildCraftRobotics;

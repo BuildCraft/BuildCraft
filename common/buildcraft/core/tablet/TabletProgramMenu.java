@@ -1,6 +1,6 @@
 package buildcraft.core.tablet;
 
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.tablet.ITablet;
 import buildcraft.api.tablet.TabletBitmap;

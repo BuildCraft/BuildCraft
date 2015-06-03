@@ -1,7 +1,7 @@
 package buildcraft.api.tablet;
 
 import net.minecraft.nbt.NBTTagCompound;
-import cpw.mods.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.Side;
 
 public interface ITablet {
 	Side getSide();

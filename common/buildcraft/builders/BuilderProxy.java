@@ -9,7 +9,7 @@
 package buildcraft.builders;
 
 import net.minecraft.world.World;
-import cpw.mods.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.SidedProxy;
 
 import buildcraft.core.lib.EntityBlock;
 

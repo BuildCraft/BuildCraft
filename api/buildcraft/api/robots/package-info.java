@@ -8,5 +8,5 @@
  */
 @API(apiVersion = "2.0", owner = "BuildCraftAPI|core", provides = "BuildCraftAPI|robotics")
 package buildcraft.api.robots;
-import cpw.mods.fml.common.API;
+import net.minecraftforge.fml.common.API;
 

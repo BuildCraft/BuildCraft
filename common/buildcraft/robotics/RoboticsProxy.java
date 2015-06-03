@@ -8,7 +8,7 @@
  */
 package buildcraft.robotics;
 
-import cpw.mods.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.SidedProxy;
 
 public class RoboticsProxy {
 	@SidedProxy(clientSide = "buildcraft.robotics.RoboticsProxyClient", serverSide = "buildcraft.robotics.RoboticsProxy")

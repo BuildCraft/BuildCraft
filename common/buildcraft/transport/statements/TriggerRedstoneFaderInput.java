@@ -9,8 +9,8 @@
 package buildcraft.transport.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;

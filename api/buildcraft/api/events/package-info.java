@@ -8,5 +8,5 @@
  */
 @API(apiVersion = "1.0", owner = "BuildCraftAPI|core", provides = "BuildCraftAPI|events")
 package buildcraft.api.events;
-import cpw.mods.fml.common.API;
+import net.minecraftforge.fml.common.API;
 

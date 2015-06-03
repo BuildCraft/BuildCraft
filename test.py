@@ -22,6 +22,6 @@ shutil.rmtree ("world", True)
 shutil.copytree ("../base/world", "world")
 shutil.copy ("../base/server.properties", "server.properties")
 
-command = "java -Xincgc -Xmx1024M -Xms1024M -classpath \"" + classpath + "\" cpw.mods.fml.relauncher.ServerLaunchWrapper --nogui --world world --test test.seq --quit"
+command = "java -Xincgc -Xmx1024M -Xms1024M -classpath \"" + classpath + "\" net.minecraftforge.fml.relauncher.ServerLaunchWrapper --nogui --world world --test test.seq --quit"
 print command
 os.system (command)

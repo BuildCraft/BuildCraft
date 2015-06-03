@@ -11,7 +11,7 @@ package buildcraft.core;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
-import cpw.mods.fml.common.Loader;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.transport.IInjectable;
