@@ -80,16 +80,6 @@ public class CoreProxyClient extends CoreProxy {
 
 	@Override
 	public void initializeRendering() {
-		BuildCraftCore.blockByEntityModel = RenderingRegistry.getNextAvailableRenderId();
-		BuildCraftCore.legacyPipeModel = RenderingRegistry.getNextAvailableRenderId();
-		BuildCraftCore.markerModel = RenderingRegistry.getNextAvailableRenderId();
-		BuildCraftCore.complexBlockModel = RenderingRegistry.getNextAvailableRenderId();
-
-		RenderingRegistry.registerBlockHandler(new RenderingEntityBlocks());
-		RenderingRegistry.registerBlockHandler(BuildCraftCore.legacyPipeModel, new RenderingEntityBlocks());
-		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
-		RenderingRegistry.registerBlockHandler(BuildCraftCore.complexBlockModel, new RenderBlockComplex());
-
 		//TODO Update me to grab differing trunk textures
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEngineBase.class, new RenderEngine());
 		for (int i = 0; i < BuildCraftCore.engineBlock.getEngineCount(); i++) {
@@ -105,26 +95,7 @@ public class CoreProxyClient extends CoreProxy {
 	/* BUILDCRAFT PLAYER */
 	@Override
 	public String playerName() {
-		return FMLClientHandler.instance().getClient().thePlayer.getDisplayName();
-	}
-
-	@Override
-	public EntityBlock newEntityBlock(World world, double i, double j,	double k, double iSize, double jSize, double kSize, LaserKind laserKind) {
-		EntityBlock eb = super.newEntityBlock(world, i, j, k, iSize, jSize, kSize, laserKind);
-		switch (laserKind) {
-		case Blue:
-			eb.texture = BuildCraftCore.blueLaserTexture;
-			break;
-
-		case Red:
-			eb.texture = BuildCraftCore.redLaserTexture;
-			break;
-
-		case Stripes:
-			eb.texture = BuildCraftCore.stripesLaserTexture;
-			break;
-		}
-		return eb;
+		return FMLClientHandler.instance().getClient().thePlayer.getDisplayNameString();
 	}
 
 	/**

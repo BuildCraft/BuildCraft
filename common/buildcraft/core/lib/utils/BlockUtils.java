@@ -259,22 +259,6 @@ public final class BlockUtils {
 		return chunk;
 	}
 
-	public static TileEntity getTileEntity(World world, int x, int y, int z) {
-		return getTileEntity(world, x, y, z, false);
-	}
-
-	public static TileEntity getTileEntity(World world, int x, int y, int z, boolean force) {
-		if (!force) {
-			if (y < 0 || y > 255) {
-				return null;
-			}
-			Chunk chunk = getChunkUnforced(world, x >> 4, z >> 4);
-			return chunk != null ? chunk.getTileEntityUnsafe(x & 15, y, z & 15) : null;
-		} else {
-			return world.getTileEntity(x, y, z);
-		}
-	}
-
 	public static Block getBlock(World world, int x, int y, int z) {
 		return getBlock(world, x, y, z, false);
 	}

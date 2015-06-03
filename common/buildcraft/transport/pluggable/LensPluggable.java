@@ -8,8 +8,8 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.BuildCraftTransport;
-import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.render.ITextureStates;
+import buildcraft.api.enums.EnumColor;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;

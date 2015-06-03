@@ -11,7 +11,7 @@ package buildcraft.robotics;
 import net.minecraftforge.fml.common.SidedProxy;
 
 public class RoboticsProxy {
-	@SidedProxy(clientSide = "buildcraft.robotics.RoboticsProxyClient", serverSide = "buildcraft.robotics.RoboticsProxy")
+//	@SidedProxy(clientSide = "buildcraft.robotics.RoboticsProxyClient", serverSide = "buildcraft.robotics.RoboticsProxy")
 	public static RoboticsProxy proxy;
 
 	public void registerRenderers() {

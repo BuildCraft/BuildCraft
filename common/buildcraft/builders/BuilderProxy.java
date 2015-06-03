@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.SidedProxy;
 import buildcraft.core.lib.EntityBlock;
 
 public class BuilderProxy {
-	@SidedProxy(clientSide = "buildcraft.builders.BuilderProxyClient", serverSide = "buildcraft.builders.BuilderProxy")
+//	@SidedProxy(clientSide = "buildcraft.builders.BuilderProxyClient", serverSide = "buildcraft.builders.BuilderProxy")
 	public static BuilderProxy proxy;
 
 	public void registerClientHook() {

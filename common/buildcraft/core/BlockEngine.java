@@ -18,7 +18,7 @@ public class BlockEngine extends BlockEngineBase {
 
 	public BlockEngine() {
 		super();
-		setBlockName("engineBlock");
+		setUnlocalizedName("engineBlock");
 
 		engineTiles = new ArrayList<Class<? extends TileEngineBase>>(16);
 		names = new ArrayList<String>(16);

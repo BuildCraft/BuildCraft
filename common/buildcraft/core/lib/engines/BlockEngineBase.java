@@ -13,10 +13,12 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -24,7 +26,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
-import buildcraft.BuildCraftCore;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.transport.IItemPipe;
 import buildcraft.core.lib.block.BlockBuildCraft;
@@ -32,12 +33,12 @@ import buildcraft.core.lib.render.ICustomHighlight;
 
 public abstract class BlockEngineBase extends BlockBuildCraft implements ICustomHighlight {
 	private static final AxisAlignedBB[][] boxes = {
-			{AxisAlignedBB.getBoundingBox(0.0, 0.5, 0.0, 1.0, 1.0, 1.0), AxisAlignedBB.getBoundingBox(0.25, 0.0, 0.25, 0.75, 0.5, 0.75)}, // -Y
-			{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.0, 1.0, 0.5, 1.0), AxisAlignedBB.getBoundingBox(0.25, 0.5, 0.25, 0.75, 1.0, 0.75)}, // +Y
-			{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.5, 1.0, 1.0, 1.0), AxisAlignedBB.getBoundingBox(0.25, 0.25, 0.0, 0.75, 0.75, 0.5)}, // -Z
-			{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.0, 1.0, 1.0, 0.5), AxisAlignedBB.getBoundingBox(0.25, 0.25, 0.5, 0.75, 0.75, 1.0)}, // +Z
-			{AxisAlignedBB.getBoundingBox(0.5, 0.0, 0.0, 1.0, 1.0, 1.0), AxisAlignedBB.getBoundingBox(0.0, 0.25, 0.25, 0.5, 0.75, 0.75)}, // -X
-			{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.0, 0.5, 1.0, 1.0), AxisAlignedBB.getBoundingBox(0.5, 0.25, 0.25, 1.0, 0.75, 0.75)} // +X
+			{new AxisAlignedBB(0.0, 0.5, 0.0, 1.0, 1.0, 1.0), new AxisAlignedBB(0.25, 0.0, 0.25, 0.75, 0.5, 0.75)}, // -Y
+			{new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0), new AxisAlignedBB(0.25, 0.5, 0.25, 0.75, 1.0, 0.75)}, // +Y
+			{new AxisAlignedBB(0.0, 0.0, 0.5, 1.0, 1.0, 1.0), new AxisAlignedBB(0.25, 0.25, 0.0, 0.75, 0.75, 0.5)}, // -Z
+			{new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 0.5), new AxisAlignedBB(0.25, 0.25, 0.5, 0.75, 0.75, 1.0)}, // +Z
+			{new AxisAlignedBB(0.5, 0.0, 0.0, 1.0, 1.0, 1.0), new AxisAlignedBB(0.0, 0.25, 0.25, 0.5, 0.75, 0.75)}, // -X
+			{new AxisAlignedBB(0.0, 0.0, 0.0, 0.5, 1.0, 1.0), new AxisAlignedBB(0.5, 0.25, 0.25, 1.0, 0.75, 0.75)} // +X
 	};
 
 	public BlockEngineBase() {
@@ -49,19 +50,20 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
 		return false;
 	}
 
-	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
-	}
+//	@Override
+//	public boolean renderAsNormalBlock() {
+//		return false;
+//	}
 
 	@Override
 	public int getRenderType() {
-		return BuildCraftCore.blockByEntityModel;
+		return 3;
 	}
 
 	@Override
-	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, EnumFacing side) {
-		TileEntity tile = world.getTileEntity(x, y, z);
+	public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
+		//TODO (AlexIIL) Move TileEngineBase.orientation to blockState
+		TileEntity tile = world.getTileEntity(pos);
 
 		if (tile instanceof TileEngineBase) {
 			return ((TileEngineBase) tile).orientation.getOpposite() == side;
@@ -71,21 +73,10 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
 	}
 
 	@Override
-	public boolean rotateBlock(World world, int x, int y, int z, EnumFacing axis) {
-		TileEntity tile = world.getTileEntity(x, y, z);
+	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float par7, float par8, float par9) {
+		TileEntity tile = world.getTileEntity(pos);
 
-		if (tile instanceof TileEngineBase) {
-			return ((TileEngineBase) tile).switchOrientation(false);
-		} else {
-			return false;
-		}
-	}
-
-	@Override
-	public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer player, int side, float par7, float par8, float par9) {
-		TileEntity tile = world.getTileEntity(i, j, k);
-
-		BlockInteractionEvent event = new BlockInteractionEvent(player, this, world.getBlockMetadata(i, j, k));
+		BlockInteractionEvent event = new BlockInteractionEvent(player, state);
 		FMLCommonHandler.instance().bus().post(event);
 		if (event.isCanceled()) {
 			return false;
@@ -99,7 +90,7 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
 		}
 
 		if (tile instanceof TileEngineBase) {
-			return ((TileEngineBase) tile).onBlockActivated(player, EnumFacing.getOrientation(side));
+			return ((TileEngineBase) tile).onBlockActivated(player, side);
 		}
 
 		return false;
@@ -107,30 +98,30 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public void addCollisionBoxesToList(World wrd, int x, int y, int z, AxisAlignedBB mask, List list, Entity ent) {
-		TileEntity tile = wrd.getTileEntity(x, y, z);
+	public void addCollisionBoxesToList(World wrd, BlockPos pos, IBlockState state, AxisAlignedBB mask, List list, Entity ent) {
+		TileEntity tile = wrd.getTileEntity(pos);
 		if (tile instanceof TileEngineBase) {
 			AxisAlignedBB[] aabbs = boxes[((TileEngineBase) tile).orientation.ordinal()];
 			for (AxisAlignedBB aabb : aabbs) {
-				AxisAlignedBB aabbTmp = aabb.getOffsetBoundingBox(x, y, z);
+				AxisAlignedBB aabbTmp = aabb.offset(pos.getX(), pos.getY(), pos.getZ());
 				if (mask.intersectsWith(aabbTmp)) {
 					list.add(aabbTmp);
 				}
 			}
 		} else {
-			super.addCollisionBoxesToList(wrd, x, y, z, mask, list, ent);
+			super.addCollisionBoxesToList(wrd, pos, state, mask, list, ent);
 		}
 	}
 
-	@Override
-	public AxisAlignedBB[] getBoxes(World wrd, int x, int y, int z, EntityPlayer player) {
-		TileEntity tile = wrd.getTileEntity(x, y, z);
-		if (tile instanceof TileEngineBase) {
-			return boxes[((TileEngineBase) tile).orientation.ordinal()];
-		} else {
-			return new AxisAlignedBB[]{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.0, 1.0, 1.0, 1.0)};
-		}
-	}
+//	@Override
+//	public AxisAlignedBB[] getBoxes(World wrd, BlockPos pos, EntityPlayer player) {
+//		TileEntity tile = wrd.getTileEntity(x, y, z);
+//		if (tile instanceof TileEngineBase) {
+//			return boxes[((TileEngineBase) tile).orientation.ordinal()];
+//		} else {
+//			return new AxisAlignedBB[]{AxisAlignedBB.getBoundingBox(0.0, 0.0, 0.0, 1.0, 1.0, 1.0)};
+//		}
+//	}
 
 	@Override
 	public double getExpansion() {
@@ -138,8 +129,8 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
 	}
 
 	@Override
-	public MovingObjectPosition collisionRayTrace(World wrd, int x, int y, int z, Vec3 origin, Vec3 direction) {
-		TileEntity tile = wrd.getTileEntity(x, y, z);
+	public MovingObjectPosition collisionRayTrace(World wrd, BlockPos pos, Vec3 origin, Vec3 direction) {
+		TileEntity tile = wrd.getTileEntity(pos);
 		if (tile instanceof TileEngineBase) {
 			AxisAlignedBB[] aabbs = boxes[((TileEngineBase) tile).orientation.ordinal()];
 			MovingObjectPosition closest = null;
@@ -153,14 +144,9 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
 					}
 				}
 			}
-			if (closest != null) {
-				closest.blockX = x;
-				closest.blockY = y;
-				closest.blockZ = z;
-			}
 			return closest;
 		} else {
-			return super.collisionRayTrace(wrd, x, y, z, origin, direction);
+			return super.collisionRayTrace(wrd, pos, origin, direction);
 		}
 	}
 

@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.utils;
 
 import io.netty.buffer.ByteBuf;
@@ -17,12 +13,16 @@ import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
@@ -38,22 +38,21 @@ import buildcraft.api.transport.IInjectable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
+import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
 import buildcraft.core.LaserKind;
 import buildcraft.core.internal.IDropControlInventory;
 import buildcraft.core.internal.IFramePipeConnection;
-import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.network.Packet;
-import buildcraft.core.proxy.CoreProxy;
 
 public final class Utils {
 	public static final boolean CAULDRON_DETECTED;
 	public static final XorShift128Random RANDOM = new XorShift128Random();
-	private static final List<EnumFacing> directions = new ArrayList<EnumFacing>(Arrays.asList(EnumFacing.VALID_DIRECTIONS));
+	private static final List<EnumFacing> directions = new ArrayList<EnumFacing>(Arrays.asList(EnumFacing.VALUES));
 
 	static {
 		boolean cauldron = false;
@@ -65,33 +64,25 @@ public final class Utils {
 		CAULDRON_DETECTED = cauldron;
 	}
 
+	/** Deactivate constructor */
+	private Utils() {}
 
-	/**
-	 * Deactivate constructor
-	 */
-	private Utils() {
-	}
-
-	/**
-	 * Tries to add the passed stack to any valid inventories around the given
-	 * coordinates.
+	/** Tries to add the passed stack to any valid inventories around the given coordinates.
 	 *
 	 * @param stack
 	 * @param world
 	 * @param x
 	 * @param y
 	 * @param z
-	 * @return amount used
-	 */
-	public static int addToRandomInventoryAround(World world, int x, int y, int z, ItemStack stack) {
+	 * @return amount used */
+	public static int addToRandomInventoryAround(World world, BlockPos pos, ItemStack stack) {
 		Collections.shuffle(directions);
 		for (EnumFacing orientation : directions) {
-			Position pos = new Position(x, y, z, orientation);
-			pos.moveForwards(1.0);
+			BlockPos newpos = pos.offset(orientation);
 
-			TileEntity tileInventory = BlockUtils.getTileEntity(world, (int) pos.x, (int) pos.y, (int) pos.z);
-			ITransactor transactor = Transactor.getTransactorFor(tileInventory);
-			if (transactor != null && !(tileInventory instanceof IEngine) && transactor.add(stack, orientation.getOpposite(), false).stackSize > 0) {
+			TileEntity tile = world.getTileEntity(newpos);
+			ITransactor transactor = Transactor.getTransactorFor(tile);
+			if (transactor != null && !(tile instanceof IEngine) && transactor.add(stack, orientation.getOpposite(), false).stackSize > 0) {
 				return transactor.add(stack, orientation.getOpposite(), true).stackSize;
 			}
 		}
@@ -99,38 +90,28 @@ public final class Utils {
 
 	}
 
-	/**
-	 * Returns the cardinal direction of the entity depending on its
-	 * rotationYaw
-	 */
+	/** Returns the cardinal direction of the entity depending on its rotationYaw */
 	public static EnumFacing get2dOrientation(EntityLivingBase entityliving) {
-		EnumFacing[] orientationTable = { EnumFacing.SOUTH,
-				EnumFacing.WEST, EnumFacing.NORTH, EnumFacing.EAST };
+		EnumFacing[] orientationTable = { EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.NORTH, EnumFacing.EAST };
 		int orientationIndex = MathHelper.floor_double((entityliving.rotationYaw + 45.0) / 90.0) & 3;
 		return orientationTable[orientationIndex];
 	}
 
-	/**
-	 * Look around the tile given in parameter in all 6 position, tries to add
-	 * the items to a random injectable tile around. Will make sure that the location
-	 * from which the items are coming from (identified by the from parameter)
-	 * isn't used again so that entities doesn't go backwards. Returns true if
-	 * successful, false otherwise.
-	 */
-	public static int addToRandomInjectableAround(World world, int x, int y, int z, EnumFacing from, ItemStack stack) {
+	/** Look around the tile given in parameter in all 6 position, tries to add the items to a random injectable tile
+	 * around. Will make sure that the location from which the items are coming from (identified by the from parameter)
+	 * isn't used again so that entities doesn't go backwards. Returns true if successful, false otherwise. */
+	public static int addToRandomInjectableAround(World world, BlockPos pos, EnumFacing from, ItemStack stack) {
 		List<IInjectable> possiblePipes = new ArrayList<IInjectable>();
 		List<EnumFacing> pipeDirections = new ArrayList<EnumFacing>();
 
-		for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
+		for (EnumFacing side : EnumFacing.VALUES) {
 			if (from.getOpposite() == side) {
 				continue;
 			}
 
-			Position pos = new Position(x, y, z, side);
+			BlockPos newpos = pos.offset(side);
 
-			pos.moveForwards(1.0);
-
-			TileEntity tile = BlockUtils.getTileEntity(world, (int) pos.x, (int) pos.y, (int) pos.z);
+			TileEntity tile = world.getTileEntity(newpos);
 
 			if (tile instanceof IInjectable) {
 				if (!((IInjectable) tile).canInjectItems(side.getOpposite())) {
@@ -158,13 +139,13 @@ public final class Utils {
 		return 0;
 	}
 
-	public static void dropTryIntoPlayerInventory(World world, int x, int y, int z, ItemStack stack, EntityPlayer player) {
+	public static void dropTryIntoPlayerInventory(World world, BlockPos pos, ItemStack stack, EntityPlayer player) {
 		if (player != null && player.inventory.addItemStackToInventory(stack)) {
 			if (player instanceof EntityPlayerMP) {
 				((EntityPlayerMP) player).sendContainerToPlayer(player.inventoryContainer);
 			}
 		}
-		InvUtils.dropItems(world, stack, x, y, z);
+		InvUtils.dropItems(world, stack, pos);
 	}
 
 	public static IAreaProvider getNearbyAreaProvider(World world, int i, int j, int k) {
@@ -177,52 +158,18 @@ public final class Utils {
 		return null;
 	}
 
-	public static EntityBlock createLaser(World world, Position p1, Position p2, LaserKind kind) {
+	public static EntityLaser createLaser(World world, Position p1, Position p2, LaserKind kind) {
 		if (p1.equals(p2)) {
 			return null;
 		}
-
-		double iSize = p2.x - p1.x;
-		double jSize = p2.y - p1.y;
-		double kSize = p2.z - p1.z;
-
-		double i = p1.x;
-		double j = p1.y;
-		double k = p1.z;
-
-		if (iSize != 0) {
-			i += 0.5;
-			j += 0.45;
-			k += 0.45;
-
-			jSize = 0.10;
-			kSize = 0.10;
-		} else if (jSize != 0) {
-			i += 0.45;
-			j += 0.5;
-			k += 0.45;
-
-			iSize = 0.10;
-			kSize = 0.10;
-		} else if (kSize != 0) {
-			i += 0.45;
-			j += 0.45;
-			k += 0.5;
-
-			iSize = 0.10;
-			jSize = 0.10;
-		}
-
-		EntityBlock block = CoreProxy.proxy.newEntityBlock(world, i, j, k, iSize, jSize, kSize, kind);
-		block.setBrightness(210);
-
+		EntityLaser block = new EntityLaser(world, p1, p2, kind);
 		world.spawnEntityInWorld(block);
-
 		return block;
 	}
 
-	public static EntityBlock[] createLaserBox(World world, double xMin, double yMin, double zMin, double xMax, double yMax, double zMax, LaserKind kind) {
-		EntityBlock[] lasers = new EntityBlock[12];
+	public static EntityLaser[] createLaserBox(World world, double xMin, double yMin, double zMin, double xMax, double yMax, double zMax,
+			LaserKind kind) {
+		EntityLaser[] lasers = new EntityLaser[12];
 		Position[] p = new Position[8];
 
 		p[0] = new Position(xMin, yMin, zMin);
@@ -263,28 +210,28 @@ public final class Utils {
 		p[6] = new Position(xMin, yMax, zMax);
 		p[7] = new Position(xMax, yMax, zMax);
 
-		lasers[0] = new LaserData (p[0], p[1]);
-		lasers[1] = new LaserData (p[0], p[2]);
-		lasers[2] = new LaserData (p[2], p[3]);
-		lasers[3] = new LaserData (p[1], p[3]);
-		lasers[4] = new LaserData (p[4], p[5]);
-		lasers[5] = new LaserData (p[4], p[6]);
-		lasers[6] = new LaserData (p[5], p[7]);
-		lasers[7] = new LaserData (p[6], p[7]);
-		lasers[8] = new LaserData (p[0], p[4]);
-		lasers[9] = new LaserData (p[1], p[5]);
-		lasers[10] = new LaserData (p[2], p[6]);
-		lasers[11] = new LaserData (p[3], p[7]);
+		lasers[0] = new LaserData(p[0], p[1]);
+		lasers[1] = new LaserData(p[0], p[2]);
+		lasers[2] = new LaserData(p[2], p[3]);
+		lasers[3] = new LaserData(p[1], p[3]);
+		lasers[4] = new LaserData(p[4], p[5]);
+		lasers[5] = new LaserData(p[4], p[6]);
+		lasers[6] = new LaserData(p[5], p[7]);
+		lasers[7] = new LaserData(p[6], p[7]);
+		lasers[8] = new LaserData(p[0], p[4]);
+		lasers[9] = new LaserData(p[1], p[5]);
+		lasers[10] = new LaserData(p[2], p[6]);
+		lasers[11] = new LaserData(p[3], p[7]);
 
 		return lasers;
 	}
 
-	public static void preDestroyBlock(World world, int i, int j, int k) {
-		TileEntity tile = BlockUtils.getTileEntity(world, i, j, k);
+	public static void preDestroyBlock(World world, BlockPos pos) {
+		TileEntity tile = world.getTileEntity(pos);
 
 		if (tile instanceof IInventory && !world.isRemote) {
 			if (!(tile instanceof IDropControlInventory) || ((IDropControlInventory) tile).doDrop()) {
-				InvUtils.dropItems(world, (IInventory) tile, i, j, k);
+				InvUtils.dropItems(world, (IInventory) tile, pos);
 				InvUtils.wipeInventory((IInventory) tile);
 			}
 		}
@@ -317,20 +264,17 @@ public final class Utils {
 			return false;
 		}
 
-		EnumFacing o = EnumFacing.UNKNOWN;
+		EnumFacing o = null;
 
-		if (tile1.xCoord - 1 == tile2.xCoord) {
-			o = EnumFacing.WEST;
-		} else if (tile1.xCoord + 1 == tile2.xCoord) {
-			o = EnumFacing.EAST;
-		} else if (tile1.yCoord - 1 == tile2.yCoord) {
-			o = EnumFacing.DOWN;
-		} else if (tile1.yCoord + 1 == tile2.yCoord) {
-			o = EnumFacing.UP;
-		} else if (tile1.zCoord - 1 == tile2.zCoord) {
-			o = EnumFacing.NORTH;
-		} else if (tile1.zCoord + 1 == tile2.zCoord) {
-			o = EnumFacing.SOUTH;
+		for (EnumFacing facing : EnumFacing.VALUES) {
+			if (tile1.getPos().offset(facing).equals(tile2.getPos())) {
+				o = facing;
+				break;
+			}
+		}
+		
+		if (o == null) {
+			return false;
 		}
 
 		if (tile1 instanceof IPipeTile && !((IPipeTile) tile1).isPipeConnected(o)) {
@@ -344,20 +288,23 @@ public final class Utils {
 		return true;
 	}
 
-	public static boolean checkLegacyPipesConnections(IBlockAccess blockAccess, int x1, int y1, int z1, int x2, int y2, int z2) {
+	/** Not required? */
+	// TODO (AlexIIL) CHECK IF THIS IS REQUIRED
+	@Deprecated
+	public static boolean checkLegacyPipesConnections(IBlockAccess blockAccess, BlockPos bp1, BlockPos bp2) {
 
-		Block b1 = blockAccess.getBlock(x1, y1, z1);
-		Block b2 = blockAccess.getBlock(x2, y2, z2);
+		IBlockState b1 = blockAccess.getBlockState(bp1);
+		IBlockState b2 = blockAccess.getBlockState(bp2);
 
 		if (!(b1 instanceof IFramePipeConnection) && !(b2 instanceof IFramePipeConnection)) {
 			return false;
 		}
 
-		if (b1 instanceof IFramePipeConnection && !((IFramePipeConnection) b1).isPipeConnected(blockAccess, x1, y1, z1, x2, y2, z2)) {
+		if (b1 instanceof IFramePipeConnection && !((IFramePipeConnection) b1).isPipeConnected(blockAccess, bp1, bp2)) {
 			return false;
 		}
 
-		if (b2 instanceof IFramePipeConnection && !((IFramePipeConnection) b2).isPipeConnected(blockAccess, x2, y2, z2, x1, y1, z1)) {
+		if (b2 instanceof IFramePipeConnection && !((IFramePipeConnection) b2).isPipeConnected(blockAccess, bp2, bp1)) {
 			return false;
 		}
 
@@ -365,8 +312,8 @@ public final class Utils {
 
 	}
 
-	public static boolean isPipeConnected(IBlockAccess access, int x, int y, int z, EnumFacing dir, IPipeTile.PipeType type) {
-		TileEntity tile = access.getTileEntity(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
+	public static boolean isPipeConnected(IBlockAccess access, BlockPos pos, EnumFacing dir, IPipeTile.PipeType type) {
+		TileEntity tile = access.getTileEntity(pos.offset(dir));
 		return tile instanceof IPipeTile && ((IPipeTile) tile).getPipeType() == type && ((IPipeTile) tile).isPipeConnected(dir.getOpposite());
 	}
 
@@ -378,22 +325,34 @@ public final class Utils {
 		return slots;
 	}
 
-	/**
-	 * This subprogram transforms a packet into a FML packet to be send in the
-	 * minecraft default packet mechanism. This always use BC-CORE as a
-	 * channel, and as a result, should use discriminators declared there.
+	/** This subprogram transforms a packet into a FML packet to be send in the minecraft default packet mechanism. This
+	 * always use BC-CORE as a channel, and as a result, should use discriminators declared there.
 	 *
-	 * WARNING! The implementation of this subprogram relies on the internal
-	 * behavior of #FMLIndexedMessageToMessageCodec (in particular the encode
-	 * member). It is probably opening a maintenance issue and should be
-	 * replaced eventually by some more solid mechanism.
-	 */
-	public static FMLProxyPacket toPacket (Packet packet, int discriminator) {
+	 * WARNING! The implementation of this subprogram relies on the internal behavior of
+	 * #FMLIndexedMessageToMessageCodec (in particular the encode member). It is probably opening a maintenance issue
+	 * and should be replaced eventually by some more solid mechanism. */
+	public static FMLProxyPacket toPacket(Packet packet, int discriminator) {
 		ByteBuf buf = Unpooled.buffer();
 
 		buf.writeByte((byte) discriminator);
 		packet.writeData(buf);
 
-		return new FMLProxyPacket(buf, DefaultProps.NET_CHANNEL_NAME + "-CORE");
+		return new FMLProxyPacket(new PacketBuffer(buf), DefaultProps.NET_CHANNEL_NAME + "-CORE");
+	}
+	
+	public static String getNameForItem(Item item) {
+		Object obj = Item.itemRegistry.getNameForObject(item);
+		if (obj == null) {
+			return null;
+		}
+		return obj.toString();
+	}
+	
+	public static String getNameForBlock(Block item) {
+		Object obj = Block.blockRegistry.getNameForObject(item);
+		if (obj == null) {
+			return null;
+		}
+		return obj.toString();
 	}
 }

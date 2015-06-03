@@ -19,8 +19,6 @@ public abstract class BCStatement implements IStatement {
 
 	protected final String uniqueTag;
 
-	protected IIcon icon;
-
 	/**
 	 * UniqueTag accepts multiple possible tags, use this feature to migrate to
 	 * more standardized tags if needed, otherwise just pass a single string.
@@ -40,17 +38,6 @@ public abstract class BCStatement implements IStatement {
 		return uniqueTag;
 	}
 	
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon() {
-		return icon;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister iconRegister) {
-	}
-
 	@Override
 	public int maxParameters() {
 		return 0;

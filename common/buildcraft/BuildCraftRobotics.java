@@ -58,7 +58,7 @@ import buildcraft.robotics.statements.*;
 import buildcraft.robotics.statements.ActionRobotWorkInArea.AreaType;
 import buildcraft.silicon.ItemRedstoneChipset;
 
-@Mod(name = "BuildCraft Robotics", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Robotics", dependencies = DefaultProps.DEPENDENCY_CORE)
+//@Mod(name = "BuildCraft Robotics", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Robotics", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftRobotics extends BuildCraftMod {
 	@Mod.Instance("BuildCraft|Robotics")
 	public static BuildCraftRobotics instance;

@@ -6,6 +6,8 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.api.enums.EnumColor;
+
 public final class BuildCraftProperties {
 
 	public static final PropertyDirection BLOCK_FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);

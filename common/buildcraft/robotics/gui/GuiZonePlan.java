@@ -23,7 +23,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.BuildCraftCore;
-import buildcraft.api.core.EnumColor;
+import buildcraft.api.enums.EnumColor;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.ZonePlan;
 import buildcraft.core.lib.gui.AdvancedSlot;

@@ -33,9 +33,8 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.ICoreProxy;
 import buildcraft.core.CompatHooks;
-import buildcraft.core.LaserKind;
-import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.lib.items.ItemBlockBuildCraft;
+import buildcraft.core.lib.utils.Utils;
 
 public class CoreProxy implements ICoreProxy {
 
@@ -103,15 +102,18 @@ public class CoreProxy implements ICoreProxy {
 
 	@SuppressWarnings("unchecked")
 	public void addCraftingRecipe(ItemStack result, Object... recipe) {
-		String name = Item.itemRegistry.getNameForObject(result.getItem());
-
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(result, recipe));
+		String name = Utils.getNameForItem(result.getItem());
+		if (name != null) {
+			CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(result, recipe));
+		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void addShapelessRecipe(ItemStack result, Object... recipe) {
-		String name = Item.itemRegistry.getNameForObject(result.getItem());
-
-		CraftingManager.getInstance().getRecipeList().add(new ShapelessOreRecipe(result, recipe));
+		String name = Utils.getNameForItem(result.getItem());
+		if (name != null) {
+			CraftingManager.getInstance().getRecipeList().add(new ShapelessOreRecipe(result, recipe));
+		}
 	}
 
 	public String playerName() {
@@ -154,10 +156,6 @@ public class CoreProxy implements ICoreProxy {
 		}
 
 		return CoreProxy.buildCraftPlayer;
-	}
-
-	public EntityBlock newEntityBlock(World world, double i, double j, double k, double iSize, double jSize, double kSize, LaserKind laserKind) {
-		return new EntityBlock(world, i, j, k, iSize, jSize, kSize);
 	}
 
 	/**

@@ -10,7 +10,7 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import buildcraft.api.core.EnumColor;
+import buildcraft.api.enums.EnumColor;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;

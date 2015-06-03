@@ -13,7 +13,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 
-import buildcraft.api.core.EnumColor;
+import buildcraft.api.enums.EnumColor;
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.network.PacketIds;
 import buildcraft.transport.TravelingItem;

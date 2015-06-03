@@ -21,6 +21,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.S3FPacketCustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
@@ -92,26 +93,25 @@ public class BuildCraftMod {
 		}
 
 		boolean isValid(EntityPlayer player) {
-			return player.worldObj.provider.dimensionId == dimensionId;
+			return player.worldObj.provider.getDimensionId() == dimensionId;
 		}
 	}
 
 	class LocationSendRequest extends SendRequest {
 		final int dimensionId;
-		final int x, y, z, md;
+		final int md;
+		final BlockPos pos;
 
-		LocationSendRequest(BuildCraftMod source, Packet packet, int dimensionId, int x, int y, int z, int md) {
+		LocationSendRequest(BuildCraftMod source, Packet packet, int dimensionId, BlockPos pos, int md) {
 			super(source, packet);
 			this.dimensionId = dimensionId;
-			this.x = x;
-			this.y = y;
-			this.z = z;
+			this.pos = pos;
 			this.md = md * md;
 		}
 
 		boolean isValid(EntityPlayer player) {
-			return dimensionId == player.worldObj.provider.dimensionId
-					&& player.getDistanceSq(x, y, z) <= md;
+			return dimensionId == player.worldObj.provider.getDimensionId()
+					&& player.getDistanceSq(pos.getX(), pos.getY(), pos.getZ()) <= md;
 		}
 	}
 
@@ -143,7 +143,7 @@ public class BuildCraftMod {
 								continue;
 							}
 
-							manager.scheduleOutboundPacket(p);
+							manager.sendPacket(p);
 						}
 					}
 				}
@@ -159,12 +159,12 @@ public class BuildCraftMod {
 		senderThread.start();
 	}
 
-	public void sendToPlayers(Packet packet, World world, int x, int y, int z, int maxDistance) {
-		sender.add(new LocationSendRequest(this, packet, world.provider.dimensionId, x, y, z, maxDistance));
+	public void sendToPlayers(Packet packet, World world, BlockPos pos, int maxDistance) {
+		sender.add(new LocationSendRequest(this, packet, world.provider.getDimensionId(), pos, maxDistance));
 	}
 
 	public void sendToPlayersNear(Packet packet, TileEntity tileEntity, int maxDistance) {
-		sender.add(new LocationSendRequest(this, packet, tileEntity.getWorldObj().provider.dimensionId, tileEntity.xCoord, tileEntity.yCoord, tileEntity.zCoord, maxDistance));
+		sender.add(new LocationSendRequest(this, packet, tileEntity.getWorld().provider.getDimensionId(), tileEntity.getPos(), maxDistance));
 	}
 
 	public void sendToPlayersNear(Packet packet, TileEntity tileEntity) {
@@ -172,7 +172,7 @@ public class BuildCraftMod {
 	}
 
 	public void sendToWorld(Packet packet, World world) {
-		sender.add(new WorldSendRequest(this, packet, world.provider.dimensionId));
+		sender.add(new WorldSendRequest(this, packet, world.provider.getDimensionId()));
 	}
 
 	public void sendToEntity(Packet packet, Entity entity) {

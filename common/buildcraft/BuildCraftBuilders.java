@@ -87,7 +87,7 @@ import buildcraft.core.builders.schematics.SchematicWallSide;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.proxy.CoreProxy;
 
-@Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
+//@Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftBuilders extends BuildCraftMod {
 
 	@Mod.Instance("BuildCraft|Builders")

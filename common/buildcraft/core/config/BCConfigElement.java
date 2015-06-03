@@ -9,7 +9,7 @@ import net.minecraftforge.common.config.ConfigElement;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.config.IConfigElement;
 
-public class BCConfigElement<T> extends ConfigElement<T> {
+public class BCConfigElement<T> extends ConfigElement {
 	private ConfigCategory cat;
 	private boolean isProp;
 
@@ -44,7 +44,7 @@ public class BCConfigElement<T> extends ConfigElement<T> {
 			}
 
 			while (pI.hasNext()) {
-				ConfigElement<?> temp = getTypedElement(pI.next());
+				ConfigElement temp = new ConfigElement(pI.next());
 				if (temp.showInGui()) {
 					elements.add(temp);
 				}

@@ -8,14 +8,26 @@
  */
 package buildcraft.core.lib.block;
 
+import java.util.Collection;
+import java.util.List;
+
+import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Lists;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockState;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -24,6 +36,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.BuildCraftProperties;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.events.BlockPlacedDownEvent;
 import buildcraft.api.tiles.IHasWork;
@@ -41,9 +54,6 @@ public abstract class BlockBuildCraft extends BlockContainer {
 			{5, 4, 3, 2}
 	};
 
-	@SideOnly(Side.CLIENT)
-	public IIcon[][] icons;
-
 	protected final XorShift128Random rand = new XorShift128Random();
 	protected int renderPass;
 
@@ -52,24 +62,110 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	private boolean rotatable = false;
 	private boolean alphaPass = false;
 
+
+	public static final PropertyDirection FACING_PROP = BuildCraftProperties.BLOCK_FACING;
+	public static final PropertyDirection FACING_6_PROP = BuildCraftProperties.BLOCK_FACING_6;
+
+	public static final PropertyEnum COLOR_PROP = BuildCraftProperties.BLOCK_COLOR;
+//	public static final PropertyEnum MACHINE_STATE = BuildCraftProperties.MACHINE_STATE;
+//	public static final PropertyUnlistedEnum<EnumFillerPattern> FILLER_PATTERN = BuildCraftProperties.FILLER_PATTERN;
+
+	public static final PropertyBool JOINED_BELOW = BuildCraftProperties.JOINED_BELOW;
+
+	protected final IProperty[] properties;
+	protected final HashBiMap<Integer, IBlockState> validStates = HashBiMap.create();
+
+	private final BlockState myBlockState;
+
 	protected BlockBuildCraft(Material material) {
-		this(material, BCCreativeTab.get("main"));
+		this(material, BCCreativeTab.get("main"), new IProperty[0], new IProperty[0]);
 	}
 
-	protected BlockBuildCraft(Material material, CreativeTabs creativeTab) {
+	protected BlockBuildCraft(Material material, BCCreativeTab creativeTab) {
+		this(material, creativeTab, new IProperty[0], new IProperty[0]);
+	}
+
+	protected BlockBuildCraft(Material material, IProperty[] properties) {
+		this(material,BCCreativeTab.get("main"), properties, new IProperty[0]);
+	}
+	
+	protected BlockBuildCraft(Material material, IProperty[] properties, IProperty[] nonMetaProperties) {
+		this(material, BCCreativeTab.get("main"), properties, nonMetaProperties);
+	}
+
+	protected BlockBuildCraft(Material material, BCCreativeTab bcCreativeTab, IProperty[] properties, IProperty[] nonMetaProperties) {
 		super(material);
-		setCreativeTab(creativeTab);
+		setCreativeTab(bcCreativeTab);
 		setHardness(5F);
+
+		this.properties = properties;
+
+		this.myBlockState = createBlockState();
+
+		IBlockState defaultState = getBlockState().getBaseState();
+
+		int total = 1;
+		List<IBlockState> tempValidStates = Lists.newArrayList();
+		tempValidStates.add(defaultState);
+		for (IProperty prop : properties) {
+			total *= prop.getAllowedValues().size();
+			if (total > 16)
+				throw new IllegalArgumentException("Cannot have more than 16 properties in a block!");
+			
+			if (prop == FACING_6_PROP || prop == FACING_PROP) {
+				rotatable = true;
+			}
+			
+			Collection<Comparable<?>> allowedValues = prop.getAllowedValues();
+			defaultState = defaultState.withProperty(prop, allowedValues.iterator().next());
+
+			List<IBlockState> newValidStates = Lists.newArrayList();
+			for (IBlockState state : tempValidStates) {
+				for (Comparable<?> comp : allowedValues) {
+					newValidStates.add(state.withProperty(prop, comp));
+				}
+			}
+			tempValidStates = newValidStates;
+		}
+
+		int i = 0;
+		for (IBlockState state : tempValidStates) {
+			validStates.put(i, state);
+			i++;
+		}
+		
+		setDefaultState(defaultState);
+	}
+
+	@Override
+	public BlockState getBlockState() {
+		return this.myBlockState;
+	}
+
+	@Override
+	protected BlockState createBlockState() {
+		if (properties == null) {
+			// Will be overridden later
+			return new BlockState(this, new IProperty[] {});
+		}
+
+		return new BlockState(this, properties);
+	}
+
+	@Override
+	public int getMetaFromState(IBlockState state) {
+		return validStates.inverse().get(state);
+	}
+
+	@Override
+	public IBlockState getStateFromMeta(int meta) {
+		return validStates.get(meta);
 	}
 
 	public boolean hasAlphaPass() { return alphaPass; }
 
 	public boolean isRotatable() {
 		return rotatable;
-	}
-
-	public void setRotatable(boolean rotatable) {
-		this.rotatable = rotatable;
 	}
 
 	public void setAlphaPass(boolean alphaPass) { this.alphaPass = alphaPass; }
@@ -79,14 +175,14 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {
-		super.onBlockPlacedBy(world, x, y, z, entity, stack);
-		FMLCommonHandler.instance().bus().post(new BlockPlacedDownEvent((EntityPlayer) entity, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z), x, y, z));
-		TileEntity tile = world.getTileEntity(x, y, z);
+	public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack stack) {
+		super.onBlockPlacedBy(world, pos, state, entity, stack);
+		FMLCommonHandler.instance().bus().post(new BlockPlacedDownEvent((EntityPlayer) entity, pos, state));
+		TileEntity tile = world.getTileEntity(pos);
 
 		if (isRotatable()) {
 			EnumFacing orientation = Utils.get2dOrientation(entity);
-			world.setBlockMetadataWithNotify(x, y, z, world.getBlockMetadata(x, y, z) & 8 | orientation.getOpposite().ordinal(), 1);
+			world.setBlockState(pos, state.withProperty(FACING_PROP, orientation.getOpposite()));
 		}
 
 		if (tile instanceof TileBuildCraft) {
@@ -95,9 +191,8 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7,
-									float par8, float par9) {
-		BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+	  public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ) {
+		BlockInteractionEvent event = new BlockInteractionEvent(player, this);
 		FMLCommonHandler.instance().bus().post(event);
 		if (event.isCanceled()) {
 			return true;
@@ -107,131 +202,21 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
-		Utils.preDestroyBlock(world, x, y, z);
-		super.breakBlock(world, x, y, z, block, par6);
+	public void breakBlock(World world, BlockPos pos, IBlockState state) {
+		Utils.preDestroyBlock(world, pos);
+		super.breakBlock(world, pos, state);
 	}
 
 	@Override
-	public int getLightValue(IBlockAccess world, int x, int y, int z) {
-		TileEntity tile = world.getTileEntity(x, y, z);
+	public int getLightValue(IBlockAccess world, BlockPos pos) {
+		TileEntity tile = world.getTileEntity(pos);
 		if (tile instanceof IHasWork && ((IHasWork) tile).hasWork()) {
-			return super.getLightValue(world, x, y, z) + 8;
+			return super.getLightValue(world, pos) + 8;
 		} else {
-			return super.getLightValue(world, x, y, z);
+			return super.getLightValue(world, pos);
 		}
 	}
 
-
-	@Override
-	public boolean rotateBlock(World world, int x, int y, int z, EnumFacing axis) {
-		if (isRotatable()) {
-			// TODO: Actually look at the axis parameter
-			int meta = world.getBlockMetadata(x, y, z);
-
-			switch (EnumFacing.getOrientation(meta)) {
-				case WEST:
-					world.setBlockMetadataWithNotify(x, y, z, EnumFacing.SOUTH.ordinal(), 3);
-					break;
-				case EAST:
-					world.setBlockMetadataWithNotify(x, y, z, EnumFacing.NORTH.ordinal(), 3);
-					break;
-				case NORTH:
-					world.setBlockMetadataWithNotify(x, y, z, EnumFacing.WEST.ordinal(), 3);
-					break;
-				case SOUTH:
-				default:
-					world.setBlockMetadataWithNotify(x, y, z, EnumFacing.EAST.ordinal(), 3);
-					break;
-			}
-			world.markBlockForUpdate(x, y, z);
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	@SideOnly(Side.CLIENT)
-	public IIcon getIconAbsolute(IBlockAccess access, int x, int y, int z, int side, int metadata) {
-		return getIconAbsolute(side, metadata);
-	}
-
-	@SideOnly(Side.CLIENT)
-	public IIcon getIconAbsolute(int side, int metadata) {
-		return icons[metadata] == null ? icons[0][side] : icons[metadata][side];
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(IBlockAccess access, int x, int y, int z, int side) {
-		IIcon icon;
-		int metadata = access.getBlockMetadata(x, y, z);
-		if (isRotatable()) {
-			if (side < 2) {
-				icon = getIconAbsolute(access, x, y, z, side, metadata & 8);
-			} else {
-				int front = metadata >= 2 && metadata <= 5 ? metadata : 3;
-				icon = getIconAbsolute(access, x, y, z, SIDE_TEXTURING_LOCATIONS[(front - 2) % 4][(side - 2) % 4], metadata & 8);
-			}
-		} else {
-			icon = getIconAbsolute(access, x, y, z, side, metadata);
-		}
-		return icon != null ? icon : BuildCraftCore.transparentTexture;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIcon(int side, int metadata) {
-		if (isRotatable()) {
-			if (side < 2) {
-				return getIconAbsolute(side, metadata & 8);
-			}
-
-			int front = getFrontSide(metadata);
-			return getIconAbsolute(SIDE_TEXTURING_LOCATIONS[(front - 2) % 4][(side - 2) % 4], metadata & 8);
-		} else {
-			return getIconAbsolute(side, metadata);
-		}
-	}
-
-	@SideOnly(Side.CLIENT)
-	protected void registerIconsForMeta(int meta, String blockName, IIconRegister register) {
-		icons[meta] = new IIcon[6];
-		String name = ResourceUtils.getObjectPrefix(blockName);
-		icons[meta][0] = ResourceUtils.getIconPriority(register, name, new String[] {
-				"bottom", "topbottom", "default"
-		});
-		icons[meta][1] = ResourceUtils.getIconPriority(register, name, new String[] {
-				"top", "topbottom", "default"
-		});
-		icons[meta][2] = ResourceUtils.getIconPriority(register, name, new String[] {
-				"front", "frontback", "side", "default"
-		});
-		icons[meta][3] = ResourceUtils.getIconPriority(register, name, new String[] {
-				"back", "frontback", "side", "default"
-		});
-		icons[meta][4] = ResourceUtils.getIconPriority(register, name, new String[] {
-				"left", "leftright", "side", "default"
-		});
-		icons[meta][5] = ResourceUtils.getIconPriority(register, name, new String[] {
-				"right", "leftright", "side", "default"
-		});
-	}
-
-	@SideOnly(Side.CLIENT)
-	public String[] getIconBlockNames() {
-		return new String[] {Block.blockRegistry.getNameForObject(this)};
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister register) {
-		icons = new IIcon[16][];
-		String[] iconBlockNames = getIconBlockNames();
-		for (int i = 0; i < iconBlockNames.length; i++) {
-			registerIconsForMeta(i, iconBlockNames[i], register);
-		}
-	}
 
 	public boolean canRenderInPassBC(int pass) {
 		if (pass >= maxPasses) {
@@ -244,21 +229,8 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	}
 
 	@Override
-	public boolean canRenderInPass(int pass) {
-		if (alphaPass) {
-			renderPass = pass;
-		}
-		return pass == 0 || alphaPass;
-	}
-
-	@SideOnly(Side.CLIENT)
-	public int getRenderBlockPass() {
-		return hasAlphaPass() ? 1 : 0;
-	}
-
-	@Override
 	public int getRenderType() {
-		return (maxPasses > 1 || isRotatable()) ? BuildCraftCore.complexBlockModel : 0;
+		return 3;
 	}
 
 	public int getCurrentRenderPass() {

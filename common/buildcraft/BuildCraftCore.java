@@ -30,7 +30,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
@@ -53,10 +52,9 @@ import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.core.EnumColor;
-import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.IWorldProperty;
 import buildcraft.api.crops.CropManager;
+import buildcraft.api.enums.EnumColor;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
@@ -106,7 +104,7 @@ import buildcraft.core.tablet.TabletProgramMenuFactory;
 import buildcraft.core.tablet.manager.TabletManagerClient;
 import buildcraft.core.tablet.manager.TabletManagerServer;
 
-@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.7.10,1.8)", dependencies = "required-after:Forge@[10.13.2.1236,)", guiFactory = "buildcraft.core.config.ConfigManager")
+@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.8]", dependencies = "required-after:Forge@[11.14.2.1427]", guiFactory = "buildcraft.core.config.ConfigManager")
 public class BuildCraftCore extends BuildCraftMod {
 	@Mod.Instance("BuildCraft|Core")
 	public static BuildCraftCore instance;
@@ -147,20 +145,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Item paintbrushItem;
 	public static ItemList listItem;
 	public static ItemTablet tabletItem;
-	@SideOnly(Side.CLIENT)
-	public static IIcon redLaserTexture;
-	@SideOnly(Side.CLIENT)
-	public static IIcon blueLaserTexture;
-	@SideOnly(Side.CLIENT)
-	public static IIcon stripesLaserTexture;
-	@SideOnly(Side.CLIENT)
-	public static IIcon transparentTexture;
-	@SideOnly(Side.CLIENT)
-	public static IIconProvider iconProvider;
-	public static int blockByEntityModel;
-	public static int complexBlockModel;
-	public static int legacyPipeModel;
-	public static int markerModel;
+
 	public static ITriggerExternal triggerMachineActive = new TriggerMachine(true);
 	public static ITriggerExternal triggerMachineInactive = new TriggerMachine(false);
 	public static IStatement triggerEnergyHigh = new TriggerEnergy(true);
@@ -265,7 +250,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
 			if (BuildCraftCore.modifyWorld) {
 				BlockSpring.EnumSpring.WATER.canGen = BuildCraftCore.mainConfigManager.get("worldgen.generateWaterSprings").getBoolean();
-				springBlock = new BlockSpring().setBlockName("eternalSpring");
+				springBlock = new BlockSpring().setUnlocalizedName("eternalSpring");
 				CoreProxy.proxy.registerBlock(springBlock, ItemSpring.class);
 			}
 
@@ -299,7 +284,7 @@ public class BuildCraftCore extends BuildCraftMod {
 			}
 
 			buildToolBlock = new BlockBuildTool();
-			buildToolBlock.setBlockName("buildToolBlock");
+			buildToolBlock.setUnlocalizedName("buildToolBlock");
 			CoreProxy.proxy.registerBlock(buildToolBlock);
 
 			engineBlock = (BlockEngine) CompatHooks.INSTANCE.getBlock(BlockEngine.class);
@@ -453,20 +438,6 @@ public class BuildCraftCore extends BuildCraftMod {
 	public void serverStopping(FMLServerStoppingEvent event) {
 		TabletManagerClient.INSTANCE.onServerStopping();
 		TabletManagerServer.INSTANCE.onServerStopping();
-	}
-
-	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public void textureHook(TextureStitchEvent.Pre event) {
-		if (event.map.getTextureType() == 1) {
-			iconProvider = new CoreIconProvider();
-			iconProvider.registerIcons(event.map);
-		} else if (event.map.getTextureType() == 0) {
-			BuildCraftCore.redLaserTexture = event.map.registerIcon("buildcraftcore:laserBox/blockRedLaser");
-			BuildCraftCore.blueLaserTexture = event.map.registerIcon("buildcraftcore:laserBox/blockBlueLaser");
-			BuildCraftCore.stripesLaserTexture = event.map.registerIcon("buildcraftcore:laserBox/blockStripesLaser");
-			BuildCraftCore.transparentTexture = event.map.registerIcon("buildcraftcore:misc/transparent");
-		}
 	}
 
 	public void reloadConfig(ConfigManager.RestartRequirement restartType) {
