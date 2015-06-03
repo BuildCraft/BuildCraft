@@ -135,7 +135,6 @@ import buildcraft.robotics.statements.ActionRobotWorkInArea;
 import buildcraft.robotics.statements.ActionRobotWorkInArea.AreaType;
 import buildcraft.robotics.statements.ActionStationAcceptFluids;
 import buildcraft.robotics.statements.ActionStationAcceptItems;
-import buildcraft.robotics.statements.ActionStationAllowCraft;
 import buildcraft.robotics.statements.ActionStationForbidRobot;
 import buildcraft.robotics.statements.ActionStationProvideFluids;
 import buildcraft.robotics.statements.ActionStationProvideItems;
@@ -171,7 +170,6 @@ public class BuildCraftRobotics extends BuildCraftMod {
 	public static IActionInternal actionRobotLoadUnloadArea = new ActionRobotWorkInArea(AreaType.LOAD_UNLOAD);
 	public static IActionInternal actionRobotFilter = new ActionRobotFilter();
 	public static IActionInternal actionRobotFilterTool = new ActionRobotFilterTool();
-	public static IActionInternal actionRobotAllowCraft = new ActionStationAllowCraft();
 	public static IActionInternal actionStationRequestItems = new ActionStationRequestItems();
 	public static IActionInternal actionStationProvideItems = new ActionStationProvideItems();
 	public static IActionInternal actionStationAcceptFluids = new ActionStationAcceptFluids();
