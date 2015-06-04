@@ -9,12 +9,15 @@
 package buildcraft.builders;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftBuilders;
@@ -24,16 +27,21 @@ import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.fluids.TankUtils;
 
 public class BlockBuilder extends BlockBuildCraft {
-
-	IIcon blockTextureTop;
-	IIcon blockTextureSide;
-	IIcon blockTextureFront;
+	@SideOnly(Side.CLIENT)
+	public IIcon blockTopOn;
 
 	public BlockBuilder() {
 		super(Material.iron);
 		setHardness(5F);
 		setCreativeTab(BCCreativeTab.get("main"));
 		setRotatable(true);
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void registerBlockIcons(IIconRegister register) {
+		super.registerBlockIcons(register);
+		blockTopOn = register.registerIcon("buildcraftbuilders:builderBlock/top_on");
 	}
 
 	@Override

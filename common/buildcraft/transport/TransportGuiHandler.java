@@ -16,6 +16,7 @@ import net.minecraft.world.World;
 import cpw.mods.fml.common.network.IGuiHandler;
 
 import buildcraft.api.core.BCLog;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.GuiIds;
 import buildcraft.transport.gui.ContainerDiamondPipe;
 import buildcraft.transport.gui.ContainerEmeraldFluidPipe;
@@ -49,31 +50,31 @@ public class TransportGuiHandler implements IGuiHandler {
 				return new ContainerFilteredBuffer(player.inventory, filteredBuffer);
 			}
 
-			if (!(tile instanceof TileGenericPipe)) {
+			if (!(tile instanceof IPipeTile)) {
 				return null;
 			}
 
-			TileGenericPipe pipe = (TileGenericPipe) tile;
+			IPipeTile pipe = (IPipeTile) tile;
 
-			if (pipe.pipe == null) {
+			if (pipe.getPipe() == null) {
 				return null;
 			}
 
 			switch (id) {
 				case GuiIds.PIPE_DIAMOND:
-					return new ContainerDiamondPipe(player.inventory, (IDiamondPipe) pipe.pipe);
+					return new ContainerDiamondPipe(player.inventory, (IDiamondPipe) pipe.getPipe());
 
 				case GuiIds.PIPE_EMERALD_ITEM:
-					return new ContainerEmeraldPipe(player.inventory, (PipeItemsEmerald) pipe.pipe);
+					return new ContainerEmeraldPipe(player.inventory, (PipeItemsEmerald) pipe.getPipe());
 
 				case GuiIds.PIPE_LOGEMERALD_ITEM:
-					return new ContainerEmzuliPipe(player.inventory, (PipeItemsEmzuli) pipe.pipe);
+					return new ContainerEmzuliPipe(player.inventory, (PipeItemsEmzuli) pipe.getPipe());
 
 				case GuiIds.PIPE_EMERALD_FLUID:
-					return new ContainerEmeraldFluidPipe(player.inventory, (PipeFluidsEmerald) pipe.pipe);
+					return new ContainerEmeraldFluidPipe(player.inventory, (PipeFluidsEmerald) pipe.getPipe());
 
 				case GuiIds.GATES:
-					return new ContainerGateInterface(player.inventory, pipe.pipe);
+					return new ContainerGateInterface(player.inventory, pipe.getPipe());
 
 				default:
 					return null;

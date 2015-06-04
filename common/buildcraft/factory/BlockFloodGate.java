@@ -17,6 +17,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.tools.IToolWrench;
@@ -78,6 +80,7 @@ public class BlockFloodGate extends BlockBuildCraft {
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister register) {
 		super.registerBlockIcons(register);
 		valve = register.registerIcon("buildcraftfactory:floodGateBlock/valve");
@@ -85,6 +88,7 @@ public class BlockFloodGate extends BlockBuildCraft {
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
 		if (renderPass == 1) {
 			if (side != 1) {
@@ -100,6 +104,7 @@ public class BlockFloodGate extends BlockBuildCraft {
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public IIcon getIcon(int side, int metadata) {
 		if (renderPass == 1) {
 			if (side == 1) {

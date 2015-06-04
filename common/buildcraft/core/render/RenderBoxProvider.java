@@ -20,7 +20,6 @@ import buildcraft.core.internal.IBoxProvider;
 import buildcraft.core.internal.IBoxesProvider;
 
 public class RenderBoxProvider extends TileEntitySpecialRenderer {
-
 	private static final ResourceLocation LASER_RED = new ResourceLocation("buildcraftcore:textures/laserBeams/laser_1.png");
 	private static final ResourceLocation LASER_YELLOW = new ResourceLocation("buildcraftcore:textures/laserBeams/laser_2.png");
 	private static final ResourceLocation LASER_GREEN = new ResourceLocation("buildcraftcore:textures/laserBeams/laser_3.png");

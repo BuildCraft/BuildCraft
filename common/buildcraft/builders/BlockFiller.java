@@ -18,10 +18,10 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.core.BCCreativeTab;
-import buildcraft.core.BlockBuildCraftLED;
 import buildcraft.core.GuiIds;
+import buildcraft.core.lib.block.BlockBuildCraft;
 
-public class BlockFiller extends BlockBuildCraftLED {
+public class BlockFiller extends BlockBuildCraft {
 	public BlockFiller() {
 		super(Material.iron);
 

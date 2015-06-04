@@ -23,9 +23,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.BlockLEDHatchBase;
+import buildcraft.core.BlockHatched;
 
-public class BlockQuarry extends BlockLEDHatchBase {
+public class BlockQuarry extends BlockHatched {
 	public BlockQuarry() {
 		super(Material.iron);
 

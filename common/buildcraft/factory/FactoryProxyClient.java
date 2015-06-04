@@ -8,18 +8,15 @@
  */
 package buildcraft.factory;
 
-import java.lang.reflect.Method;
-
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import cpw.mods.fml.client.registry.ClientRegistry;
 
 import buildcraft.BuildCraftFactory;
-import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.EntityBlock;
+import buildcraft.core.render.RenderLEDTile;
 import buildcraft.core.render.RenderingEntityBlocks;
 import buildcraft.core.render.RenderingEntityBlocks.EntityRenderIndex;
-import buildcraft.factory.gui.GuiAutoCrafting;
 import buildcraft.factory.render.RenderHopper;
 import buildcraft.factory.render.RenderRefinery;
 import buildcraft.factory.render.RenderTank;
@@ -44,22 +41,13 @@ public class FactoryProxyClient extends FactoryProxy {
 			ClientRegistry.bindTileEntitySpecialRenderer(TileHopper.class, new RenderHopper());
 			RenderingEntityBlocks.blockByEntityRenders.put(new EntityRenderIndex(BuildCraftFactory.hopperBlock, 0), new RenderHopper());
 		}
+
+		ClientRegistry.bindTileEntitySpecialRenderer(TileMiningWell.class, new RenderLEDTile(BuildCraftFactory.miningWellBlock));
+		ClientRegistry.bindTileEntitySpecialRenderer(TilePump.class, new RenderLEDTile(BuildCraftFactory.pumpBlock));
 	}
 
 	@Override
 	public void initializeEntityRenders() {
-	}
-
-	@Override
-	public void initializeNEIIntegration() {
-		try {
-			Class<?> neiRenderer = Class.forName("codechicken.nei.DefaultOverlayRenderer");
-			Method method = neiRenderer.getMethod("registerGuiOverlay", Class.class, String.class, int.class, int.class);
-			method.invoke(null, GuiAutoCrafting.class, "crafting", 5, 11);
-			BCLog.logger.debug("NEI detected, adding NEI overlay");
-		} catch (Exception e) {
-			BCLog.logger.debug("NEI not detected.");
-		}
 	}
 
 	@Override

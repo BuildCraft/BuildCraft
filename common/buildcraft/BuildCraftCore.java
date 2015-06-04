@@ -123,6 +123,7 @@ import buildcraft.core.recipes.IntegrationRecipeManager;
 import buildcraft.core.recipes.ProgrammingRecipeManager;
 import buildcraft.core.recipes.RefineryRecipeManager;
 import buildcraft.core.render.BlockHighlightHandler;
+import buildcraft.core.render.RenderLEDTile;
 import buildcraft.core.statements.ActionMachineControl;
 import buildcraft.core.statements.ActionRedstoneOutput;
 import buildcraft.core.statements.DefaultActionProvider;
@@ -502,6 +503,7 @@ public class BuildCraftCore extends BuildCraftMod {
 			BuildCraftCore.blueLaserTexture = event.map.registerIcon("buildcraftcore:laserBox/blockBlueLaser");
 			BuildCraftCore.stripesLaserTexture = event.map.registerIcon("buildcraftcore:laserBox/blockStripesLaser");
 			BuildCraftCore.transparentTexture = event.map.registerIcon("buildcraftcore:misc/transparent");
+			RenderLEDTile.registerBlockIcons(event.map);
 		}
 	}
 
