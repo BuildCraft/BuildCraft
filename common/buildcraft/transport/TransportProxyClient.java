@@ -36,8 +36,7 @@ public class TransportProxyClient extends TransportProxy {
 	@Override
 	public void registerTileEntities() {
 		super.registerTileEntities();
-		PipeRendererTESR rp = new PipeRendererTESR();
-		ClientRegistry.bindTileEntitySpecialRenderer(TileGenericPipe.class, rp);
+		ClientRegistry.bindTileEntitySpecialRenderer(TileGenericPipe.class, PipeRendererTESR.INSTANCE);
 	}
 
 	@Override

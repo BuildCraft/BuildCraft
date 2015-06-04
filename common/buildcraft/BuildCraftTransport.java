@@ -141,6 +141,7 @@ import buildcraft.transport.pluggable.ItemLens;
 import buildcraft.transport.pluggable.ItemPlug;
 import buildcraft.transport.pluggable.LensPluggable;
 import buildcraft.transport.pluggable.PlugPluggable;
+import buildcraft.transport.render.PipeRendererTESR;
 import buildcraft.transport.schematics.BptItemPipeFilters;
 import buildcraft.transport.schematics.BptPipeIron;
 import buildcraft.transport.schematics.BptPipeWooden;
@@ -597,6 +598,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 			for (IGateExpansion expansion : GateExpansions.getExpansions()) {
 				expansion.registerBlockOverlay(event.map);
 			}
+
+			PipeRendererTESR.INSTANCE.onTextureReload();
 		}
 	}
 

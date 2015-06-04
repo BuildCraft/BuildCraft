@@ -57,6 +57,8 @@ import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.utils.FluidRenderData;
 
 public class PipeRendererTESR extends TileEntitySpecialRenderer {
+	public static final PipeRendererTESR INSTANCE = new PipeRendererTESR();
+
 	public static final float DISPLAY_MULTIPLIER = 0.1f;
 	public static final int POWER_STAGES = 100;
 
@@ -82,7 +84,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		public int[] centerVertical = new int[LIQUID_STAGES];
 	}
 
-	public PipeRendererTESR() {
+	private PipeRendererTESR() {
 		customRenderItem = new RenderItem() {
 			@Override
 			public boolean shouldBob() {
@@ -95,6 +97,18 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			}
 		};
 		customRenderItem.setRenderManager(RenderManager.instance);
+	}
+
+	public void onTextureReload() {
+		if (initialized) {
+			for (int i = 0; i < POWER_STAGES; i++) {
+				GL11.glDeleteLists(displayPowerList[i], 1);
+				GL11.glDeleteLists(displayPowerListOverload[i], 1);
+			}
+		}
+		displayFluidLists.clearMap();
+		
+		initialized = false;
 	}
 
 	private DisplayFluidList getDisplayFluidLists(int liquidId, World world) {
