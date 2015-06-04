@@ -15,6 +15,7 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.robotics.ai.AIRobotBreak;
 import buildcraft.robotics.ai.AIRobotFetchAndEquipItemStack;
+import buildcraft.robotics.ai.AIRobotSleep;
 
 public abstract class BoardRobotGenericBreakBlock extends BoardRobotGenericSearchBlock {
 
@@ -42,7 +43,11 @@ public abstract class BoardRobotGenericBreakBlock extends BoardRobotGenericSearc
 
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotBreak) {
+		if (ai instanceof AIRobotFetchAndEquipItemStack) {
+			if (!ai.success()) {
+				startDelegateAI(new AIRobotSleep(robot));
+			}
+		} else if (ai instanceof AIRobotBreak) {
 			releaseBlockFound(ai.success());
 		}
 		super.delegateAIEnded(ai);

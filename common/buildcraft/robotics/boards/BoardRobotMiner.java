@@ -32,7 +32,9 @@ public class BoardRobotMiner extends BoardRobotGenericBreakBlock {
 		super.delegateAIEnded(ai);
 
 		if (ai instanceof AIRobotFetchAndEquipItemStack) {
-			detectHarvestLevel();
+			if (ai.success()) {
+				detectHarvestLevel();
+			}
 		}
 	}
 

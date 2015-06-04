@@ -78,7 +78,7 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
 		} else if (ai instanceof AIRobotPlant) {
 			releaseBlockFound();
 		} else if (ai instanceof AIRobotFetchAndEquipItemStack) {
-			if (robot.getHeldItem() == null) {
+			if (!ai.success()) {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
 		}
