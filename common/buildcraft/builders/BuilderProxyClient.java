@@ -38,18 +38,23 @@ public class BuilderProxyClient extends BuilderProxy {
 		super.registerBlockRenderers();
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileUrbanist.class, new RenderBoxProvider());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect.class, new RenderArchitect());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderBuilder());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder.class, new RenderBuilderTile());
 		ClientRegistry.bindTileEntitySpecialRenderer(TilePathMarker.class, new RenderPathMarker());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileConstructionMarker.class, new RenderConstructionMarker());
 
-		ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect.class, new RenderLEDTile(BuildCraftBuilders.architectBlock));
-		ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderLEDTile(BuildCraftBuilders.fillerBlock));
+		ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderMultiTESR(new TileEntitySpecialRenderer[] {
+				new RenderLEDTile(BuildCraftBuilders.fillerBlock),
+				new RenderBuilder()
+		}));
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderMultiTESR(new TileEntitySpecialRenderer[] {
 				new RenderLEDTile(BuildCraftBuilders.quarryBlock),
 				new RenderBuilder()
+		}));
+
+		ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect.class, new RenderMultiTESR(new TileEntitySpecialRenderer[] {
+				new RenderLEDTile(BuildCraftBuilders.architectBlock),
+				new RenderArchitect()
 		}));
 
 		RenderingRegistry.registerEntityRenderingHandler(EntityMechanicalArm.class, new RenderVoid());

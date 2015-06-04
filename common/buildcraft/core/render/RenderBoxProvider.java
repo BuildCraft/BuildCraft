@@ -38,8 +38,6 @@ public class RenderBoxProvider extends TileEntitySpecialRenderer {
 		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-		GL11.glPushMatrix();
 		GL11.glTranslated(-tileentity.xCoord, -tileentity.yCoord, -tileentity.zCoord);
 		GL11.glTranslated(x, y, z);
 
@@ -60,8 +58,6 @@ public class RenderBoxProvider extends TileEntitySpecialRenderer {
 					getTexture(b.kind), b);
 			}
 		}
-
-		GL11.glPopMatrix();
 
 		GL11.glPopAttrib();
 		GL11.glPopMatrix();
