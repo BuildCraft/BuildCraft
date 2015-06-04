@@ -298,8 +298,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 			BuildCraftCore.mainConfigManager.register("general.pipes.slimeballWaterproofRecipe", false, "Should I enable an alternate Waterproof recipe, based on slimeballs?", ConfigManager.RestartRequirement.GAME);
 			BuildCraftCore.mainConfigManager.register("power.gateCostMultiplier", 1.0D, "What should be the multiplier of all gate power costs?", ConfigManager.RestartRequirement.GAME);
 			BuildCraftCore.mainConfigManager.register("general.pipes.facadeBlacklist", new String[] {
-					Block.blockRegistry.getNameForObject(Blocks.bedrock),
-					Block.blockRegistry.getNameForObject(Blocks.command_block),
 					Block.blockRegistry.getNameForObject(Blocks.end_portal_frame),
 					Block.blockRegistry.getNameForObject(Blocks.grass),
 					Block.blockRegistry.getNameForObject(Blocks.leaves),
