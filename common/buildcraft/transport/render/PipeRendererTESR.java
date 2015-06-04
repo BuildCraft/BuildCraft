@@ -107,7 +107,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			}
 		}
 		displayFluidLists.clearMap();
-		
+
 		initialized = false;
 	}
 
