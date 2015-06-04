@@ -72,7 +72,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 		box.addBox(-4F, -4F, -4F, 8, 8, 8);
 		box.setRotationPoint(0.0F, 0.0F, 0.0F);
 		helmetBox = new ModelRenderer(modelHelmet, 0, 0);
-		helmetBox.addBox(-4F, -4F, -4F, 8, 8, 8);
+		helmetBox.addBox(-4F, -8F, -4F, 8, 8, 8);
 		helmetBox.setRotationPoint(0.0F, 0.0F, 0.0F);
 	}
 
@@ -238,6 +238,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 			if (armorModel != null) {
 				armorModel.render(entity, 0, 0, 0, -90f, 0, 1 / 16F);
 			} else {
+				GL11.glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
 				helmetBox.render(1 / 16F);
 			}
 			GL11.glPopMatrix();
