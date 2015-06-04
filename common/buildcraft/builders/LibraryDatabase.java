@@ -132,7 +132,7 @@ public class LibraryDatabase {
 			public boolean accept(File dir, String name) {
 				int dotIndex = name.lastIndexOf('.') + 1;
 				String extension = name.substring(dotIndex);
-				return LibraryAPI.getHandler(extension) != null;
+				return LibraryAPI.getHandlerFor(extension) != null;
 			}
 		};
 

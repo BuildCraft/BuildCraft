@@ -4,22 +4,21 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import buildcraft.api.library.ILibraryTypeHandler;
+import buildcraft.api.library.LibraryTypeHandlerNBT;
 import buildcraft.core.lib.utils.NBTUtils;
 
-public class LibraryBookTypeHandler implements ILibraryTypeHandler {
+public class LibraryBookTypeHandler extends LibraryTypeHandlerNBT {
+	public LibraryBookTypeHandler() {
+		super("book");
+	}
+
 	@Override
-	public boolean isHandler(ItemStack stack, boolean store) {
-		if (store) {
+	public boolean isHandler(ItemStack stack, HandlerType type) {
+		if (type == HandlerType.STORE) {
 			return stack.getItem() == Items.written_book;
 		} else {
 			return stack.getItem() == Items.writable_book || stack.getItem() == Items.written_book;
 		}
-	}
-
-	@Override
-	public String getFileExtension() {
-		return "book";
 	}
 
 	@Override
