@@ -65,9 +65,9 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 		if (path == null && pathSearch == null) {
 			pathSearch = new PathFinding(robot.worldObj, new BlockIndex((int) Math.floor(robot.posX),
 					(int) Math.floor(robot.posY), (int) Math.floor(robot.posZ)), new BlockIndex(
-					(int) Math.floor(finalX), (int) Math.floor(finalY), (int) Math.floor(finalZ)), maxDistance);
+					(int) Math.floor(finalX), (int) Math.floor(finalY), (int) Math.floor(finalZ)), maxDistance, 96);
 
-			pathSearchJob = new IterableAlgorithmRunner(pathSearch, 100);
+			pathSearchJob = new IterableAlgorithmRunner(pathSearch, 50);
 			pathSearchJob.start();
 		} else if (path != null) {
 			double distance = robot.getDistance(nextX, nextY, nextZ);
