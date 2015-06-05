@@ -142,6 +142,25 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
 		return false;
 	}
 
+	private void clearDest(PipeEventItem.FindDest event) {
+		for (ForgeDirection dir : event.destinations) {
+			if (filters.filterCounts[dir.ordinal()] > 0) {
+				for (int slot = 0; slot < 9; ++slot) {
+					int v = dir.ordinal() * 9 + slot;
+					if ((usedFilters & (1 << v)) == 0) {
+						continue;
+					}
+
+					ItemStack filter = getFilters().getStackInSlot(v);
+
+					if (StackHelper.isMatchingItemOrList(filter, event.item.getItemStack())) {
+						usedFilters ^= 1 << v;
+					}
+				}
+			}
+		}
+	}
+
 	@PipeEventPriority(priority = -4194304)
 	public void eventHandler(PipeEventItem.FindDest event) {
 		// We're running last and we can safely assume that nothing else
@@ -153,7 +172,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
 		}
 
 		if (usedFilters != 0) {
-			usedFilters = 0;
+			clearDest(event);
 			if (findDest(event)) {
 				return;
 			}
