@@ -65,8 +65,7 @@ public class CropHandlerPlantable implements ICropHandler {
 	public boolean isMature(IBlockAccess blockAccess, Block block, int meta, int x, int y, int z) {
 		if (block == null) {
 			return false;
-		} else if (block instanceof BlockFlower
-				|| block instanceof BlockTallGrass
+		} else if (block instanceof BlockTallGrass
 				|| block instanceof BlockMelon
 				|| block instanceof BlockMushroom
 				|| block instanceof BlockDoublePlant
