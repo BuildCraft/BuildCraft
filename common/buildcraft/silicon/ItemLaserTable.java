@@ -8,8 +8,16 @@
  */
 package buildcraft.silicon;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.StatCollector;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 import buildcraft.core.lib.items.ItemBlockBuildCraft;
 
@@ -38,6 +46,14 @@ public class ItemLaserTable extends ItemBlockBuildCraft {
 				return "tile.stampingTableBlock";
 		}
 		return super.getUnlocalizedName();
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void addInformation(ItemStack stack, EntityPlayer player, List strings, boolean adv) {
+		if (stack.getItemDamage() == 1) {
+			strings.add(EnumChatFormatting.DARK_RED + StatCollector.translateToLocal("tip.deprecated"));
+		}
 	}
 
 	@Override

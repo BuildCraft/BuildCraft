@@ -33,6 +33,7 @@ import net.minecraft.util.IIcon;
 
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -78,6 +79,7 @@ import buildcraft.core.BlockSpring;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.CoreGuiHandler;
 import buildcraft.core.CoreIconProvider;
+import buildcraft.core.CoreSiliconRecipes;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.ItemDebugger;
@@ -516,7 +518,6 @@ public class BuildCraftCore extends BuildCraftMod {
 
 			reloadConfig(ConfigManager.RestartRequirement.WORLD);
 		} else if (restartType == ConfigManager.RestartRequirement.WORLD) {
-
 			reloadConfig(ConfigManager.RestartRequirement.NONE);
 		} else {
 			hideFluidNumbers = mainConfigManager.get("display.hideFluidValues").getBoolean();
@@ -561,8 +562,6 @@ public class BuildCraftCore extends BuildCraftMod {
 		CoreProxy.proxy.addCraftingRecipe(
 				new ItemStack(diamondGearItem), " I ", "IGI", " I ", 'I', "gemDiamond", 'G', "gearGold");
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(mapLocationItem), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y', "dyeYellow");
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(listItem), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y',
-				"dyeGreen");
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 0),
 				"www", " g ", "GpG", 'w', "plankWood", 'g', "blockGlass", 'G',
@@ -576,6 +575,13 @@ public class BuildCraftCore extends BuildCraftMod {
 			NBTUtils.getItemData(outputStack).setByte("color", (byte) i);
 			CoreProxy.proxy.addShapelessRecipe(outputStack, paintbrushItem, EnumColor.fromId(i).getDye());
 		}
+
+		if (Loader.isModLoaded("BuildCraft|Silicon")) {
+			CoreSiliconRecipes.loadSiliconRecipes();
+		} else {
+			CoreProxy.proxy.addCraftingRecipe(new ItemStack(listItem), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y',
+					"dyeGreen");
+		}
 	}
 
 	@Mod.EventHandler
@@ -588,7 +594,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public void renderLast (RenderWorldLastEvent evt) {
 		// TODO: while the urbanist is deactivated, this code can be dormant.
 		// it happens to be very expensive at run time, so we need some way
-		// to operate it only when releval (e.g. in the cycle following a
+		// to operate it only when relevant (e.g. in the cycle following a
 		// click request).
 		if (NONRELEASED_BLOCKS) {
 			return;
