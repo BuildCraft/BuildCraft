@@ -41,7 +41,11 @@ public final class FakeBlock extends Block implements ITextureStates {
 	public int colorMultiplier(IBlockAccess blockAccess, int x, int y, int z) {
 		return colorMultiplier;
 	}
-	
+
+	public int getColor() {
+		return colorMultiplier;
+	}
+
 	public void setColor(int color) {
 		this.colorMultiplier = color;
 	}

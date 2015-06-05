@@ -197,10 +197,17 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 		stateHost.setRenderMask(mask);
 		renderblocks.setRenderBounds(dim[2], dim[0], dim[1], dim[5], dim[3], dim[4]);
 		renderblocks.renderStandardBlock(stateHost, x, y, z);
+
+		int c = stateHost.getBlockColor();
+		int r = (c & 0xFF0000) >> 1;
+		int g = (c & 0x00FF00) >> 1;
+		int b = (c & 0x0000FF) >> 1;
+		stateHost.setColor((r & 0xFF0000) | (g & 0x00FF00) | b);
 		stateHost.setRenderMask((mask & 0x15) << 1 | (mask & 0x2a) >> 1); // pairwise swapped mask
 		renderblocks.setRenderBounds(dim[5], dim[3], dim[4], dim[2], dim[0], dim[1]);
 		renderblocks.renderStandardBlock(stateHost, x, y, z);
 		stateHost.setRenderAllSides();
+		stateHost.setColor(c);
 	}
 
 	@Override
