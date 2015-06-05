@@ -26,7 +26,6 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
-import buildcraft.api.robots.RobotManager;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
@@ -45,7 +44,6 @@ import buildcraft.silicon.ItemLaserTable;
 import buildcraft.silicon.ItemPackage;
 import buildcraft.silicon.ItemRedstoneChipset;
 import buildcraft.silicon.ItemRedstoneChipset.Chipset;
-import buildcraft.silicon.ResourceIdAssemblyTable;
 import buildcraft.silicon.SiliconGuiHandler;
 import buildcraft.silicon.SiliconProxy;
 import buildcraft.silicon.TileAdvancedCraftingTable;
@@ -109,6 +107,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		redstoneCrystal = (new ItemBuildCraft()).setUnlocalizedName("redstoneCrystal");
 		CoreProxy.proxy.registerItem(redstoneCrystal);
 		OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal));
+
 		EntityRegistry.registerModEntity(EntityPackage.class, "bcPackageThrowable", EntityIds.PACKAGE_THROWABLE, instance, 48, 10, true);
 	}
 
@@ -134,8 +133,6 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		CoreProxy.proxy.registerTileEntity(TileStampingTable.class, "buildcraft.TileStampingTable");
 
 		BuilderAPI.schematicRegistry.registerSchematicBlock(laserBlock, SchematicRotateMeta.class, new int[] {2, 5, 3, 4}, true);
-
-		RobotManager.registerResourceId(ResourceIdAssemblyTable.class, "resourceIdAssemblyTable", "buildcraft.core.robots.ResourceIdAssemblyTable");
 
 		timeForSomeLogicAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.timeForSomeLogic", "timeForSomeLogicAchievement", 9, -2, assemblyTableBlock, BuildCraftCore.diamondGearAchievement));
 		tinglyLaserAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.tinglyLaser", "tinglyLaserAchievement", 11, -2, laserBlock, timeForSomeLogicAchievement));

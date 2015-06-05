@@ -15,13 +15,13 @@ import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
 import buildcraft.BuildCraftBuilders;
+import buildcraft.builders.render.RenderBuilderTile;
 import buildcraft.builders.urbanism.TileUrbanist;
 import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.lib.render.RenderMultiTESR;
 import buildcraft.core.lib.render.RenderVoid;
 import buildcraft.core.render.RenderBoxProvider;
 import buildcraft.core.render.RenderBuilder;
-import buildcraft.builders.render.RenderBuilderTile;
 import buildcraft.core.render.RenderLEDTile;
 
 public class BuilderProxyClient extends BuilderProxy {

@@ -19,7 +19,7 @@ public final class LibraryAPI {
 	}
 
 	public static LibraryTypeHandler getHandlerFor(String extension) {
-		for(LibraryTypeHandler h : handlers) {
+		for (LibraryTypeHandler h : handlers) {
 			if (h.isInputExtension(extension)) {
 				return h;
 			}

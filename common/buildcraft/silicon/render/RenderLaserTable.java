@@ -81,9 +81,11 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 		int xI = (int) (xB * 16.0F);
 		int yI = 16 - (int) (yB * 16.0F) - h;
 		int zI = (int) (zB * 16.0F);
+
 		FakeBlock block = FakeBlock.INSTANCE;
 		block.setRenderMask(mask);
 		block.setColor(0xFFFFFF);
+
 		IIcon[] icons = block.getTextureState().popArray();
 		icons[0] = new SubIcon(base, topX + w - xI, topY - zI, 16, 16);
 		icons[1] = new SubIcon(base, topX - xI, topY - zI, 16, 16);
@@ -91,6 +93,7 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 		icons[3] = new SubIcon(base, topX + w + d - xI, topY + d - yI, 16, 16);
 		icons[4] = new SubIcon(base, topX - d - zI, topY + d - yI, 16, 16);
 		icons[5] = new SubIcon(base, topX + w - zI, topY + d - yI, 16, 16);
+
 		renderer.setRenderBounds(xB, yB, zB, xB + (w / 16.0F), yB + (h / 16.0F), zB + (d / 16.0F));
 		if (isInventory) {
 			RenderUtils.drawBlockItem(renderer, Tessellator.instance, block, 0);

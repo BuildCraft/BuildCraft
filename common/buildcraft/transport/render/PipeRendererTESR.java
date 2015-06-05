@@ -77,14 +77,13 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	private boolean initialized = false;
 
 	private class DisplayFluidList {
-
 		public int[] sideHorizontal = new int[LIQUID_STAGES];
 		public int[] sideVertical = new int[LIQUID_STAGES];
 		public int[] centerHorizontal = new int[LIQUID_STAGES];
 		public int[] centerVertical = new int[LIQUID_STAGES];
 	}
 
-	private PipeRendererTESR() {
+	protected PipeRendererTESR() {
 		customRenderItem = new RenderItem() {
 			@Override
 			public boolean shouldBob() {
