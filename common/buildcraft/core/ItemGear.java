@@ -10,10 +10,11 @@ package buildcraft.core;
 
 import buildcraft.core.lib.items.ItemBuildCraft;
 
+@Deprecated
 public class ItemGear extends ItemBuildCraft {
 
 	public ItemGear() {
-		
+		// REALLY? Just replace this with BlockBuildCraft dammit
 	}
 
 }

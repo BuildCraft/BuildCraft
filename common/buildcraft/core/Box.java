@@ -47,8 +47,8 @@ public class Box implements IBox, ISerializable {
 	}
 
 	public Box(TileEntity e) {
-		initialize(e.xCoord, e.yCoord, e.zCoord, e.xCoord + 1, e.yCoord + 1,
-				e.zCoord + 1);
+		initialize(e.getPos().getX(), e.getPos().getY(), e.getPos().getZ(), e.getPos().getX() + 1, e.getPos().getY() + 1,
+				e.getPos().getZ() + 1);
 	}
 
 	public Box(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {
@@ -163,7 +163,7 @@ public class Box implements IBox, ISerializable {
 	}
 
 	public boolean contains(BlockPos i) {
-		return contains(i.x, i.y, i.z);
+		return contains(i.getX(), i.getY(), i.getZ());
 	}
 
 	@Override
@@ -292,7 +292,7 @@ public class Box implements IBox, ISerializable {
 	}
 
 	public AxisAlignedBB getBoundingBox() {
-		return AxisAlignedBB.getBoundingBox(xMin, yMin, zMin,
+		return new AxisAlignedBB(xMin, yMin, zMin,
 				xMax, yMax, zMax);
 	}
 
@@ -325,28 +325,28 @@ public class Box implements IBox, ISerializable {
 	}
 
 	public Box extendToEncompass(BlockPos toBeContained) {
-		if (toBeContained.x < xMin) {
-			xMin = toBeContained.x - 1;
+		if (toBeContained.getX() < xMin) {
+			xMin = toBeContained.getX() - 1;
 		}
 
-		if (toBeContained.y < yMin) {
-			yMin = toBeContained.y - 1;
+		if (toBeContained.getY() < yMin) {
+			yMin = toBeContained.getY() - 1;
 		}
 
-		if (toBeContained.z < zMin) {
-			zMin = toBeContained.z - 1;
+		if (toBeContained.getZ() < zMin) {
+			zMin = toBeContained.getZ() - 1;
 		}
 
-		if (toBeContained.x > xMax) {
-			xMax = toBeContained.x + 1;
+		if (toBeContained.getX() > xMax) {
+			xMax = toBeContained.getX() + 1;
 		}
 
-		if (toBeContained.y > yMax) {
-			yMax = toBeContained.y + 1;
+		if (toBeContained.getY() > yMax) {
+			yMax = toBeContained.getY() + 1;
 		}
 
-		if (toBeContained.z > zMax) {
-			zMax = toBeContained.z + 1;
+		if (toBeContained.getZ() > zMax) {
+			zMax = toBeContained.getZ() + 1;
 		}
 
 		return this;
@@ -359,9 +359,9 @@ public class Box implements IBox, ISerializable {
 
 	@Override
 	public double distanceToSquared(BlockPos index) {
-		int dx = index.x - (xMin + (xMax - xMin + 1));
-		int dy = index.y - (yMin + (yMax - yMin + 1));
-		int dz = index.z - (zMin + (zMax - zMin + 1));
+		int dx = index.getX() - (xMin + (xMax - xMin + 1));
+		int dy = index.getY() - (yMin + (yMax - yMin + 1));
+		int dz = index.getZ() - (zMin + (zMax - zMin + 1));
 
 		return dx * dx + dy * dy + dz * dz;
 	}

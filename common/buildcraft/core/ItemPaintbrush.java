@@ -14,9 +14,11 @@ import java.util.Locale;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -55,33 +57,6 @@ public class ItemPaintbrush extends ItemBuildCraft {
 	}
 
 	@Override
-	public String[] getIconNames() {
-		String[] names = new String[17];
-		names[0] = "paintbrush/clean";
-		for (int i = 0; i < 16; i++) {
-			names[1 + i] = "paintbrush/" + EnumColor.fromId(i).name().toLowerCase(Locale.ENGLISH);
-		}
-		return names;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister) {
-		super.registerIcons(par1IconRegister);
-
-		IIcon[] brushColors = new IIcon[16];
-		System.arraycopy(icons, 1, brushColors, 0, 16);
-		EnumColor.setIconArray(brushColors);
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public IIcon getIconIndex(ItemStack stack) {
-		this.itemIcon = icons[(getColor(stack) + 1) % icons.length];
-		return itemIcon;
-	}
-
-	@Override
 	public String getItemStackDisplayName(ItemStack stack) {
 		String base = super.getItemStackDisplayName(stack);
 		int dye = getColor(stack);
@@ -93,16 +68,17 @@ public class ItemPaintbrush extends ItemBuildCraft {
 	}
 
 	@Override
-	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
 		int dye = getColor(stack);
-		Block block = world.getBlock(x, y, z);
+		Block block = world.getBlockState(pos).getBlock();
 
 		if (block == null) {
 			return false;
 		}
 
 		if (dye >= 0) {
-			if (block.recolourBlock(world, x, y, z, EnumFacing.getOrientation(side), 15 - dye)) {
+			// TODO (ALEXIIL) is this right? Test paintbrushes!
+			if (block.recolorBlock(world, pos, side, EnumDyeColor.byMetadata(15 - dye))) {
 				player.swingItem();
 				setDamage(stack, getDamage(stack) + 1);
 				return !world.isRemote;
@@ -110,7 +86,7 @@ public class ItemPaintbrush extends ItemBuildCraft {
 		} else {
 			// NOTE: Clean paintbrushes never damage.
 			if (block instanceof IColorRemovable) {
-				if (((IColorRemovable) block).removeColorFromBlock(world, x, y, z, EnumFacing.getOrientation(side))) {
+				if (((IColorRemovable) block).removeColorFromBlock(world, pos, side)) {
 					player.swingItem();
 					return !world.isRemote;
 				}
@@ -132,7 +108,7 @@ public class ItemPaintbrush extends ItemBuildCraft {
 	}
 
 	@Override
-	public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
+	public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player) {
 		return true;
 	}
 }

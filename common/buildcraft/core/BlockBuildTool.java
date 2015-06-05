@@ -17,13 +17,4 @@ public class BlockBuildTool extends Block {
 	public BlockBuildTool() {
 		super(Material.iron);
 	}
-
-	@Override
-	public void registerBlockIcons(IIconRegister itemRegister) {
-	}
-
-	@Override
-	public IIcon getIcon(int i, int j) {
-		return BuildCraftCore.redLaserTexture;
-	}
 }

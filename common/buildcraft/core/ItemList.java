@@ -118,8 +118,8 @@ public class ItemList extends ItemBuildCraft implements IList {
 				return base == matched;
 			} else if (base.getClass() == matched.getClass()) {
 				if (base instanceof ItemBlock) {
-					Block baseBlock = ((ItemBlock) base).field_150939_a;
-					Block matchedBlock = ((ItemBlock) matched).field_150939_a;
+					Block baseBlock = ((ItemBlock) base).block;
+					Block matchedBlock = ((ItemBlock) matched).block;
 
 					if (baseBlock.getClass() == Block.class) {
 						return baseBlock == matchedBlock;
@@ -212,16 +212,6 @@ public class ItemList extends ItemBuildCraft implements IList {
 	public ItemList() {
 		super();
 		setMaxStackSize(1);
-	}
-
-	@Override
-	public IIcon getIconIndex(ItemStack stack) {
-		return icons[NBTUtils.getItemData(stack).hasKey("written") ? 1 : 0];
-	}
-
-	@Override
-	public String[] getIconNames() {
-		return new String[]{ "list/clean", "list/used" };
 	}
 
 	@Override

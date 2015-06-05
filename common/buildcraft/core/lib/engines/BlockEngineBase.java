@@ -151,7 +151,8 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
 	}
 
 	@Override
-	public void onPostBlockPlaced(World world, int x, int y, int z, int par5) {
+	public void onPostBlockPlaced(World world, BlockPos pos, IBlockState state) {
+		super.onBlockPlacedBy(world, pos, state, entity, stack);
 		TileEntity tile = world.getTileEntity(x, y, z);
 		if (tile instanceof TileEngineBase) {
 			TileEngineBase engine = (TileEngineBase) tile;

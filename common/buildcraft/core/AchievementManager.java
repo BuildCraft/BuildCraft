@@ -15,7 +15,7 @@ public class AchievementManager {
 	}
 
 	public Achievement registerAchievement(Achievement a) {
-		page.getAchievements().add(a.registerStat());
+		page.getAchievements().add(a);
 		return a;
 	}
 

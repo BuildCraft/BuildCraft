@@ -32,9 +32,21 @@ import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.StringUtils;
 
+// META_DATA:
+// 0:Clean (no data)
+// 1:Spot
+// 2:Area
+// 3:Path
+// 4:Zone
+
+// NBT Saved Tag "kind"
+// 0: Spot
+// 1: Area
+// 2: Path
 public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 	public ItemMapLocation() {
 		super(BCCreativeTab.get("main"));
+
 	}
 
 	@Override
@@ -77,11 +89,11 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 			}
 			case 2: {
 				NBTTagList pathNBT = cpt.getTagList("path", Constants.NBT.TAG_COMPOUND);
-				BlockPos first = new BlockPos(pathNBT.getCompoundTagAt(0));
+				BlockPos first = NBTUtils.readBlockPos(pathNBT);
 
-				int x = first.x;
-				int y = first.y;
-				int z = first.z;
+				int x = first.getX();
+				int y = first.getY();
+				int z = first.getZ();
 
 				list.add(StringUtils.localize("{" + x + ", " + y + ", " + z + "} + " + pathNBT.tagCount() + " elements"));
 				break;
@@ -93,33 +105,10 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 		}
 	}
 
-	@Override
-	public IIcon getIconIndex(ItemStack stack) {
-		NBTTagCompound cpt = NBTUtils.getItemData(stack);
-
-		if (!cpt.hasKey("kind")) {
-			return icons[0];
-		} else {
-			return getIconFromDamage(cpt.getByte("kind") + 1);
-		}
-	}
 
 	@Override
-	public String[] getIconNames() {
-		return new String[]{ "mapLocation/clean", "mapLocation/spot", "mapLocation/area", "mapLocation/path", "mapLocation/zone" };
-	}
-
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister par1IconRegister) {
-		super.registerIcons(par1IconRegister);
-	}
-
-	@Override
-	public boolean onItemUse(ItemStack stack, EntityPlayer par2EntityPlayer, World world, int x,
-			int y, int z, int side, float par8, float par9, float par10) {
-		TileEntity tile = world.getTileEntity(x, y, z);
+	public boolean onItemUse(ItemStack stack, EntityPlayer par2EntityPlayer, World world, BlockPos pos, EnumFacing side, float par8, float par9, float par10) {
+		TileEntity tile = world.getTileEntity(pos);
 		NBTTagCompound cpt = NBTUtils.getItemData(stack);
 
 		if (tile instanceof IPathProvider) {
@@ -128,9 +117,7 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 			NBTTagList pathNBT = new NBTTagList();
 
 			for (BlockPos index : ((IPathProvider) tile).getPath()) {
-				NBTTagCompound nbt = new NBTTagCompound();
-				index.writeTo(nbt);
-				pathNBT.appendTag(nbt);
+				pathNBT.appendTag(NBTUtils.writeBlockPos(index));
 			}
 
 			cpt.setTag("path", pathNBT);
@@ -149,10 +136,10 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 		} else {
 			cpt.setByte("kind", (byte) 0);
 
-			cpt.setByte("side", (byte) side);
-			cpt.setInteger("x", x);
-			cpt.setInteger("y", y);
-			cpt.setInteger("z", z);
+			cpt.setByte("side", (byte) side.getIndex());
+			cpt.setInteger("x", pos.getX());
+			cpt.setInteger("y", pos.getY());
+			cpt.setInteger("z", pos.getZ());
 		}
 
 		return true;
@@ -199,7 +186,7 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 		if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {
 			return EnumFacing.values()[cpt.getByte("side")];
 		} else {
-			return EnumFacing.UNKNOWN;
+			return null;
 		}
 	}
 
@@ -240,7 +227,7 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 			List<BlockPos> indexList = new ArrayList<BlockPos>();
 			NBTTagList pathNBT = cpt.getTagList("path", Constants.NBT.TAG_COMPOUND);
 			for (int i = 0; i < pathNBT.tagCount(); i++) {
-				indexList.add(new BlockPos(pathNBT.getCompoundTagAt(i)));
+				indexList.add(NBTUtils.readBlockPos(pathNBT.getCompoundTagAt(i)));
 			}
 			return indexList;
 		} else if (cpt.hasKey("kind") && cpt.getByte("kind") == 0) {

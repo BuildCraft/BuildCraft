@@ -102,8 +102,8 @@ public class ZonePlan implements IZone, ISerializable {
 		double maxSqrDistance = Double.MAX_VALUE;
 
 		for (Map.Entry<ChunkIndex, ZoneChunk> e : chunkMapping.entrySet()) {
-			double dx = (e.getKey().x << 4 + 8) - index.x;
-			double dz = (e.getKey().x << 4 + 8) - index.z;
+			double dx = (e.getKey().x << 4 + 8) - index.getX();
+			double dz = (e.getKey().x << 4 + 8) - index.getZ();
 
 			double sqrDistance = dx * dx + dz * dz;
 
@@ -134,10 +134,10 @@ public class ZonePlan implements IZone, ISerializable {
 		for (Map.Entry<ChunkIndex, ZoneChunk> e : chunkMapping.entrySet()) {
 			if (chunkId == 0) {
 				BlockPos i = e.getValue().getRandomBlockPos(rand);
-				i.x = (e.getKey().x << 4) + i.x;
-				i.z = (e.getKey().z << 4) + i.z;
+				int x = (e.getKey().x << 4) + i.getX();
+				int z = (e.getKey().z << 4) + i.getZ();
 
-				return i;
+				return new BlockPos(x, i.getY(), z);
 			}
 
 			chunkId--;
