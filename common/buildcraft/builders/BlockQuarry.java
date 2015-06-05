@@ -149,14 +149,4 @@ public class BlockQuarry extends BlockHatched {
 	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
 		return false;
 	}
-
-	@Override
-	public int getIconGlowLevel(IBlockAccess access, int x, int y, int z) {
-		if (renderPass < 2) {
-			return -1;
-		} else {
-			TileQuarry tile = (TileQuarry) access.getTileEntity(x, y, z);
-			return tile.getIconGlowLevel(renderPass);
-		}
-	}
 }

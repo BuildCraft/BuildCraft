@@ -30,7 +30,6 @@ public class RenderLEDTile extends TileEntitySpecialRenderer {
 	public static void registerBlockIcons(IIconRegister register) {
 		for (Block b : iconMap.keySet().toArray(new Block[iconMap.keySet().size()])) {
 			// TODO (7.1): The count of icons is hardcoded here. Consider adding a better way.
-			IIcon[] array = new IIcon[2];
 			String base = ResourceUtils.getObjectPrefix(Block.blockRegistry.getNameForObject(b));
 			iconMap.put(b, new IIcon[] {
 					register.registerIcon(base + "/led_red"),

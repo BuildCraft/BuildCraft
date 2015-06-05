@@ -16,6 +16,7 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.builders.render.RenderBuilderTile;
+import buildcraft.builders.render.RenderFiller;
 import buildcraft.builders.urbanism.TileUrbanist;
 import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.lib.render.RenderMultiTESR;
@@ -44,7 +45,7 @@ public class BuilderProxyClient extends BuilderProxy {
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderMultiTESR(new TileEntitySpecialRenderer[] {
 				new RenderLEDTile(BuildCraftBuilders.fillerBlock),
-				new RenderBuilder()
+				new RenderFiller()
 		}));
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderMultiTESR(new TileEntitySpecialRenderer[] {
