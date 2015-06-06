@@ -27,4 +27,9 @@ public class SlotPackager extends SlotPhantom {
 	public boolean canShift() {
 		return false;
 	}
+
+	@Override
+	public int getSlotStackLimit() {
+		return 1;
+	}
 }
