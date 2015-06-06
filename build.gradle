@@ -39,27 +39,24 @@ minecraft {
 
 // configure  the source folders
 sourceSets {
-    main {
-        java {
-            srcDir 'common'
-            // exclude 'some exclusion'
-            // include 'some inclusion'
-        }
-        resources {
-            srcDir 'buildcraft_resources'
-            def l10n = file('../BuildCraft-Localization')
+    core {
+    	java {
+    		srcDir 'src/core/java'
+    	}
+    	resources {
+    		srcDir 'src/core/resources'
+    		def l10n = file('../BuildCraft-Localization')
             if(l10n.exists())
                 srcDir l10n
-            exclude '**/.md' // exclude readme from localization repo
-            // exclude 'some exclusion'
-            // include 'some inclusion'
-        }
+            exclude '**/.md'
+    	}
     }
-    api {
-		java {
-			srcDir 'api'
-		}
-    }
+    builders
+    energy
+    factory
+    robotics
+    silicon
+    transport
 }
 
 processResources
