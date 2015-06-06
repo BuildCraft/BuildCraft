@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib;
 
 import net.minecraft.block.Block;
@@ -19,93 +15,93 @@ import buildcraft.core.lib.utils.Utils;
 
 public final class TileBuffer {
 
-	private Block block = null;
-	private TileEntity tile;
+    private Block block = null;
+    private TileEntity tile;
 
-	private final SafeTimeTracker tracker = new SafeTimeTracker(20, 5);
-	private final World world;
-	private final int x, y, z;
-	private final boolean loadUnloaded;
+    private final SafeTimeTracker tracker = new SafeTimeTracker(20, 5);
+    private final World world;
+    private final int x, y, z;
+    private final boolean loadUnloaded;
 
-	public TileBuffer(World world, int x, int y, int z, boolean loadUnloaded) {
-		this.world = world;
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		this.loadUnloaded = loadUnloaded;
+    public TileBuffer(World world, int x, int y, int z, boolean loadUnloaded) {
+        this.world = world;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.loadUnloaded = loadUnloaded;
 
-		refresh();
-	}
+        refresh();
+    }
 
-	public void refresh() {
-		tile = null;
-		block = null;
+    public void refresh() {
+        tile = null;
+        block = null;
 
-		if (!loadUnloaded && !world.blockExists(x, y, z)) {
-			return;
-		}
+        if (!loadUnloaded && !world.blockExists(x, y, z)) {
+            return;
+        }
 
-		block = world.getBlock(x, y, z);
+        block = world.getBlock(x, y, z);
 
-		if (block != null && block.hasTileEntity(BlockUtils.getBlockMetadata(world, x, y, z))) {
-			tile = world.getTileEntity(x, y, z);
-		}
-	}
+        if (block != null && block.hasTileEntity(BlockUtils.getBlockMetadata(world, x, y, z))) {
+            tile = world.getTileEntity(x, y, z);
+        }
+    }
 
-	public void set(Block block, TileEntity tile) {
-		this.block = block;
-		this.tile = tile;
-		tracker.markTime(world);
-	}
+    public void set(Block block, TileEntity tile) {
+        this.block = block;
+        this.tile = tile;
+        tracker.markTime(world);
+    }
 
-	private void tryRefresh() {
-		if (Utils.CAULDRON_DETECTED || (tile != null && tile.isInvalid()) || (tile == null && tracker.markTimeIfDelay(world))) {
-			refresh();
-		}
-	}
+    private void tryRefresh() {
+        if (Utils.CAULDRON_DETECTED || (tile != null && tile.isInvalid()) || (tile == null && tracker.markTimeIfDelay(world))) {
+            refresh();
+        }
+    }
 
-	public Block getBlock() {
-		tryRefresh();
+    public Block getBlock() {
+        tryRefresh();
 
-		return block;
-	}
+        return block;
+    }
 
-	public TileEntity getTile() {
-		return getTile(false);
-	}
+    public TileEntity getTile() {
+        return getTile(false);
+    }
 
-	public TileEntity getTile(boolean forceUpdate) {
-		if (!Utils.CAULDRON_DETECTED && tile != null && !tile.isInvalid()) {
-			return tile;
-		}
+    public TileEntity getTile(boolean forceUpdate) {
+        if (!Utils.CAULDRON_DETECTED && tile != null && !tile.isInvalid()) {
+            return tile;
+        }
 
-		if (Utils.CAULDRON_DETECTED || (forceUpdate && tile != null && tile.isInvalid()) || tracker.markTimeIfDelay(world)) {
-			refresh();
+        if (Utils.CAULDRON_DETECTED || (forceUpdate && tile != null && tile.isInvalid()) || tracker.markTimeIfDelay(world)) {
+            refresh();
 
-			if (tile != null && !tile.isInvalid()) {
-				return tile;
-			}
-		}
+            if (tile != null && !tile.isInvalid()) {
+                return tile;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	public boolean exists() {
-		if (tile != null && !Utils.CAULDRON_DETECTED && !tile.isInvalid()) {
-			return true;
-		}
+    public boolean exists() {
+        if (tile != null && !Utils.CAULDRON_DETECTED && !tile.isInvalid()) {
+            return true;
+        }
 
-		return world.blockExists(x, y, z);
-	}
+        return world.blockExists(x, y, z);
+    }
 
-	public static TileBuffer[] makeBuffer(World world, int x, int y, int z, boolean loadUnloaded) {
-		TileBuffer[] buffer = new TileBuffer[6];
+    public static TileBuffer[] makeBuffer(World world, int x, int y, int z, boolean loadUnloaded) {
+        TileBuffer[] buffer = new TileBuffer[6];
 
-		for (int i = 0; i < 6; i++) {
-			EnumFacing d = EnumFacing.getOrientation(i);
-			buffer[i] = new TileBuffer(world, x + d.offsetX, y + d.offsetY, z + d.offsetZ, loadUnloaded);
-		}
+        for (int i = 0; i < 6; i++) {
+            EnumFacing d = EnumFacing.getOrientation(i);
+            buffer[i] = new TileBuffer(world, x + d.offsetX, y + d.offsetY, z + d.offsetZ, loadUnloaded);
+        }
 
-		return buffer;
-	}
+        return buffer;
+    }
 }

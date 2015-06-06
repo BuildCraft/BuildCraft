@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.proxy;
 
 import java.util.List;
@@ -34,77 +30,76 @@ import buildcraft.core.render.RenderingEntityBlocks;
 
 public class CoreProxyClient extends CoreProxy {
 
-	/* INSTANCES */
-	@Override
-	public Object getClient() {
-		return FMLClientHandler.instance().getClient();
-	}
+    /* INSTANCES */
+    @Override
+    public Object getClient() {
+        return FMLClientHandler.instance().getClient();
+    }
 
-	@Override
-	public World getClientWorld() {
-		return FMLClientHandler.instance().getClient().theWorld;
-	}
+    @Override
+    public World getClientWorld() {
+        return FMLClientHandler.instance().getClient().theWorld;
+    }
 
-	/* ENTITY HANDLING */
-	@Override
-	public void removeEntity(Entity entity) {
-		super.removeEntity(entity);
+    /* ENTITY HANDLING */
+    @Override
+    public void removeEntity(Entity entity) {
+        super.removeEntity(entity);
 
-		if (entity.worldObj.isRemote) {
-			((WorldClient) entity.worldObj).removeEntityFromWorld(entity.getEntityId());
-		}
-	}
+        if (entity.worldObj.isRemote) {
+            ((WorldClient) entity.worldObj).removeEntityFromWorld(entity.getEntityId());
+        }
+    }
 
-	/* WRAPPER */
-	@SuppressWarnings("rawtypes")
-	@Override
-	public void feedSubBlocks(Block block, CreativeTabs tab, List itemList) {
-		if (block == null) {
-			return;
-		}
+    /* WRAPPER */
+    @SuppressWarnings("rawtypes")
+    @Override
+    public void feedSubBlocks(Block block, CreativeTabs tab, List itemList) {
+        if (block == null) {
+            return;
+        }
 
-		block.getSubBlocks(Item.getItemFromBlock(block), tab, itemList);
-	}
+        block.getSubBlocks(Item.getItemFromBlock(block), tab, itemList);
+    }
 
-	@Override
-	public String getItemDisplayName(ItemStack stack) {
-		if (stack.getItem() == null) {
-			return "";
-		}
+    @Override
+    public String getItemDisplayName(ItemStack stack) {
+        if (stack.getItem() == null) {
+            return "";
+        }
 
-		return stack.getDisplayName();
-	}
+        return stack.getDisplayName();
+    }
 
-	@Override
-	public void initializeRendering() {
-		//TODO Update me to grab differing trunk textures
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEngineBase.class, new RenderEngine());
-		for (int i = 0; i < BuildCraftCore.engineBlock.getEngineCount(); i++) {
-			RenderingEntityBlocks.blockByEntityRenders.put(new RenderingEntityBlocks.EntityRenderIndex(BuildCraftCore.engineBlock, i), new RenderEngine((TileEngineBase) BuildCraftCore.engineBlock.createTileEntity(null, i)));
-		}
-	}
+    @Override
+    public void initializeRendering() {
+        // TODO Update me to grab differing trunk textures
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEngineBase.class, new RenderEngine());
+        for (int i = 0; i < BuildCraftCore.engineBlock.getEngineCount(); i++) {
+            RenderingEntityBlocks.blockByEntityRenders.put(new RenderingEntityBlocks.EntityRenderIndex(BuildCraftCore.engineBlock, i),
+                new RenderEngine((TileEngineBase) BuildCraftCore.engineBlock.createTileEntity(null, i)));
+        }
+    }
 
-	@Override
-	public void initializeEntityRendering() {
-		RenderingRegistry.registerEntityRenderingHandler(EntityBlock.class, RenderEntityBlock.INSTANCE);
-	}
+    @Override
+    public void initializeEntityRendering() {
+        RenderingRegistry.registerEntityRenderingHandler(EntityBlock.class, RenderEntityBlock.INSTANCE);
+    }
 
-	/* BUILDCRAFT PLAYER */
-	@Override
-	public String playerName() {
-		return FMLClientHandler.instance().getClient().thePlayer.getDisplayNameString();
-	}
+    /* BUILDCRAFT PLAYER */
+    @Override
+    public String playerName() {
+        return FMLClientHandler.instance().getClient().thePlayer.getDisplayNameString();
+    }
 
-	/**
-	 * This function returns either the player from the handler if it's on the
-	 * server, or directly from the minecraft instance if it's the client.
-	 */
-	@Override
-	public EntityPlayer getPlayerFromNetHandler (INetHandler handler) {
-		if (handler instanceof NetHandlerPlayServer) {
-			return ((NetHandlerPlayServer) handler).playerEntity;
-		} else {
-			return Minecraft.getMinecraft().thePlayer;
-		}
-	}
+    /** This function returns either the player from the handler if it's on the server, or directly from the minecraft
+     * instance if it's the client. */
+    @Override
+    public EntityPlayer getPlayerFromNetHandler(INetHandler handler) {
+        if (handler instanceof NetHandlerPlayServer) {
+            return ((NetHandlerPlayServer) handler).playerEntity;
+        } else {
+            return Minecraft.getMinecraft().thePlayer;
+        }
+    }
 }

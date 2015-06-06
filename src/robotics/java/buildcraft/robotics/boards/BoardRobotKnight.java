@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.boards;
 
 import net.minecraft.entity.Entity;
@@ -27,46 +23,46 @@ import buildcraft.robotics.ai.AIRobotSearchEntity;
 
 public class BoardRobotKnight extends RedstoneBoardRobot {
 
-	public BoardRobotKnight(EntityRobotBase iRobot) {
-		super(iRobot);
-	}
+    public BoardRobotKnight(EntityRobotBase iRobot) {
+        super(iRobot);
+    }
 
-	@Override
-	public RedstoneBoardRobotNBT getNBTHandler() {
-		return BCBoardNBT.REGISTRY.get("knight");
-	}
+    @Override
+    public RedstoneBoardRobotNBT getNBTHandler() {
+        return BCBoardNBT.REGISTRY.get("knight");
+    }
 
-	@Override
-	public final void update() {
-		if (robot.getHeldItem() == null) {
-			startDelegateAI(new AIRobotFetchAndEquipItemStack(robot, new IStackFilter() {
-				@Override
-				public boolean matches(ItemStack stack) {
-					return stack.getItem() instanceof ItemSword;
-				}
-			}));
-		} else {
-			startDelegateAI(new AIRobotSearchEntity(robot, new IEntityFilter() {
-				@Override
-				public boolean matches(Entity entity) {
-					return (entity instanceof IMob) || (entity instanceof EntityWolf && ((EntityWolf) entity).isAngry());
-				}
-			}, 250, robot.getZoneToWork()));
-		}
-	}
+    @Override
+    public final void update() {
+        if (robot.getHeldItem() == null) {
+            startDelegateAI(new AIRobotFetchAndEquipItemStack(robot, new IStackFilter() {
+                @Override
+                public boolean matches(ItemStack stack) {
+                    return stack.getItem() instanceof ItemSword;
+                }
+            }));
+        } else {
+            startDelegateAI(new AIRobotSearchEntity(robot, new IEntityFilter() {
+                @Override
+                public boolean matches(Entity entity) {
+                    return (entity instanceof IMob) || (entity instanceof EntityWolf && ((EntityWolf) entity).isAngry());
+                }
+            }, 250, robot.getZoneToWork()));
+        }
+    }
 
-	@Override
-	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotFetchAndEquipItemStack) {
-			if (!ai.success()) {
-				startDelegateAI(new AIRobotGotoSleep(robot));
-			}
-		} else if (ai instanceof AIRobotSearchEntity) {
-			if (ai.success()) {
-				startDelegateAI(new AIRobotAttack(robot, ((AIRobotSearchEntity) ai).target));
-			} else {
-				startDelegateAI(new AIRobotGotoSleep(robot));
-			}
-		}
-	}
+    @Override
+    public void delegateAIEnded(AIRobot ai) {
+        if (ai instanceof AIRobotFetchAndEquipItemStack) {
+            if (!ai.success()) {
+                startDelegateAI(new AIRobotGotoSleep(robot));
+            }
+        } else if (ai instanceof AIRobotSearchEntity) {
+            if (ai.success()) {
+                startDelegateAI(new AIRobotAttack(robot, ((AIRobotSearchEntity) ai).target));
+            } else {
+                startDelegateAI(new AIRobotGotoSleep(robot));
+            }
+        }
+    }
 }

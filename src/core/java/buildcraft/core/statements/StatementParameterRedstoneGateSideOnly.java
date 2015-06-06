@@ -9,65 +9,64 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.core.lib.utils.StringUtils;
 
-public class StatementParameterRedstoneGateSideOnly implements
-		IStatementParameter {
+public class StatementParameterRedstoneGateSideOnly implements IStatementParameter {
 
-	private static IIcon icon;
-	
-	public boolean isOn = false;
-	
-	public StatementParameterRedstoneGateSideOnly() {
-		
-	}
-	
-	@Override
-	public ItemStack getItemStack() {
-		return null;
-	}
+    private static IIcon icon;
 
-	@Override
-	public IIcon getIcon() {
-		if (!isOn) {
-			return null;
-		} else {
-			return icon;
-		}
-	}
+    public boolean isOn = false;
 
-	@Override
-	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
-		isOn = !isOn;
-	}
+    public StatementParameterRedstoneGateSideOnly() {
 
-	@Override
-	public void writeToNBT(NBTTagCompound compound) {
-		compound.setByte("isOn", isOn ? (byte) 1 : (byte) 0);
-	}
+    }
 
-	@Override
-	public void readFromNBT(NBTTagCompound compound) {
-		if (compound.hasKey("isOn")) {
-			isOn = compound.getByte("isOn") == 1;
-		}
-	}
+    @Override
+    public ItemStack getItemStack() {
+        return null;
+    }
 
-	@Override
-	public String getDescription() {
-		return isOn ? StringUtils.localize("gate.parameter.redstone.gateSideOnly") : "";
-	}
+    @Override
+    public IIcon getIcon() {
+        if (!isOn) {
+            return null;
+        } else {
+            return icon;
+        }
+    }
 
-	@Override
-	public String getUniqueTag() {
-		return "buildcraft:redstoneGateSideOnly";
-	}
+    @Override
+    public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+        isOn = !isOn;
+    }
 
-	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraftcore:triggers/redstone_gate_side_only");
-	}
+    @Override
+    public void writeToNBT(NBTTagCompound compound) {
+        compound.setByte("isOn", isOn ? (byte) 1 : (byte) 0);
+    }
 
-	@Override
-	public IStatementParameter rotateLeft() {
-		return this;
-	}
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        if (compound.hasKey("isOn")) {
+            isOn = compound.getByte("isOn") == 1;
+        }
+    }
+
+    @Override
+    public String getDescription() {
+        return isOn ? StringUtils.localize("gate.parameter.redstone.gateSideOnly") : "";
+    }
+
+    @Override
+    public String getUniqueTag() {
+        return "buildcraft:redstoneGateSideOnly";
+    }
+
+    @Override
+    public void registerIcons(IIconRegister iconRegister) {
+        icon = iconRegister.registerIcon("buildcraftcore:triggers/redstone_gate_side_only");
+    }
+
+    @Override
+    public IStatementParameter rotateLeft() {
+        return this;
+    }
 }

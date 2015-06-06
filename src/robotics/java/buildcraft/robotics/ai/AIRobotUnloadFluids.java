@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.ai;
 
 import net.minecraft.util.EnumFacing;
@@ -22,59 +18,58 @@ import buildcraft.robotics.statements.ActionStationAcceptFluids;
 
 public class AIRobotUnloadFluids extends AIRobot {
 
-	private int waitedCycles = 0;
-	public AIRobotUnloadFluids(EntityRobotBase iRobot) {
-		super(iRobot);
-		setSuccess(false);
-	}
+    private int waitedCycles = 0;
 
-	@Override
-	public void update() {
-		waitedCycles++;
+    public AIRobotUnloadFluids(EntityRobotBase iRobot) {
+        super(iRobot);
+        setSuccess(false);
+    }
 
-		if (waitedCycles > 40) {
-			if (unload(robot, robot.getDockingStation(), true) == 0) {
-				terminate();
-			} else {
-				setSuccess(true);
-			}
-		}
-	}
+    @Override
+    public void update() {
+        waitedCycles++;
 
-	public static int unload(EntityRobotBase robot, DockingStation station, boolean doUnload) {
-		if (station == null) {
-			return 0;
-		}
+        if (waitedCycles > 40) {
+            if (unload(robot, robot.getDockingStation(), true) == 0) {
+                terminate();
+            } else {
+                setSuccess(true);
+            }
+        }
+    }
 
-		if (!ActionRobotFilter.canInteractWithFluid(station,
-				new SimpleFluidFilter(robot.getTankInfo(EnumFacing.UNKNOWN)[0].fluid),
-				ActionStationAcceptFluids.class)) {
-			return 0;
-		}
+    public static int unload(EntityRobotBase robot, DockingStation station, boolean doUnload) {
+        if (station == null) {
+            return 0;
+        }
 
-		IFluidHandler fluidHandler = station.getFluidOutput();
-		if (fluidHandler == null) {
-			return 0;
-		}
+        if (!ActionRobotFilter.canInteractWithFluid(station, new SimpleFluidFilter(robot.getTankInfo(EnumFacing.UNKNOWN)[0].fluid),
+            ActionStationAcceptFluids.class)) {
+            return 0;
+        }
 
-		FluidStack drainable = robot.drain(EnumFacing.UNKNOWN,
-				FluidContainerRegistry.BUCKET_VOLUME, false);
-		if (drainable == null) {
-			return 0;
-		}
+        IFluidHandler fluidHandler = station.getFluidOutput();
+        if (fluidHandler == null) {
+            return 0;
+        }
 
-		drainable = drainable.copy();
-		int filled = fluidHandler.fill(station.side, drainable, doUnload);
+        FluidStack drainable = robot.drain(EnumFacing.UNKNOWN, FluidContainerRegistry.BUCKET_VOLUME, false);
+        if (drainable == null) {
+            return 0;
+        }
 
-		if (filled > 0 && doUnload) {
-			drainable.amount = filled;
-			robot.drain(EnumFacing.UNKNOWN, drainable, true);
-		}
-		return filled;
-	}
+        drainable = drainable.copy();
+        int filled = fluidHandler.fill(station.side, drainable, doUnload);
 
-	@Override
-	public int getEnergyCost() {
-		return 10;
-	}
+        if (filled > 0 && doUnload) {
+            drainable.amount = filled;
+            robot.drain(EnumFacing.UNKNOWN, drainable, true);
+        }
+        return filled;
+    }
+
+    @Override
+    public int getEnergyCost() {
+        return 10;
+    }
 }

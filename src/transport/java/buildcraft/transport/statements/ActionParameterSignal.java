@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.statements;
 
 import java.util.Locale;
@@ -22,98 +18,98 @@ import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.transport.Gate;
 
 public class ActionParameterSignal implements IStatementParameter {
-	
-	private static IIcon[] icons;
-	
-	public PipeWire color = null;
 
-	public ActionParameterSignal() {
+    private static IIcon[] icons;
 
-	}
+    public PipeWire color = null;
 
-	@Override
-	public IIcon getIcon() {
-		if (color == null) {
-			return null;
-		} else {
-			return icons[color.ordinal()];
-		}
-	}
+    public ActionParameterSignal() {
 
-	@Override
-	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
-		int maxColor = 4;
-		if (source instanceof Gate) {
-			maxColor = ((Gate) source).material.maxWireColor;
-		}
+    }
 
-		if (color == null) {
-			color = mouse.getButton() == 0 ? PipeWire.RED : PipeWire.values()[maxColor - 1];
-		} else if (color == (mouse.getButton() == 0 ? PipeWire.values()[maxColor - 1] : PipeWire.RED)) {
-			color = null;
-		} else {
-			do {
-				color = PipeWire.values()[(mouse.getButton() == 0 ? color.ordinal() + 1 : color.ordinal() - 1) & 3];
-			} while (color.ordinal() >= maxColor);
-		}
-	}
+    @Override
+    public IIcon getIcon() {
+        if (color == null) {
+            return null;
+        } else {
+            return icons[color.ordinal()];
+        }
+    }
 
-	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
-		if (color != null) {
-			nbt.setByte("color", (byte) color.ordinal());
-		}
-	}
+    @Override
+    public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+        int maxColor = 4;
+        if (source instanceof Gate) {
+            maxColor = ((Gate) source).material.maxWireColor;
+        }
 
-	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
-		if (nbt.hasKey("color")) {
-			color = PipeWire.values()[nbt.getByte("color")];
-		}
-	}
+        if (color == null) {
+            color = mouse.getButton() == 0 ? PipeWire.RED : PipeWire.values()[maxColor - 1];
+        } else if (color == (mouse.getButton() == 0 ? PipeWire.values()[maxColor - 1] : PipeWire.RED)) {
+            color = null;
+        } else {
+            do {
+                color = PipeWire.values()[(mouse.getButton() == 0 ? color.ordinal() + 1 : color.ordinal() - 1) & 3];
+            } while (color.ordinal() >= maxColor);
+        }
+    }
 
-	@Override
-	public boolean equals(Object object) {
-		if (object instanceof ActionParameterSignal) {
-			ActionParameterSignal param = (ActionParameterSignal) object;
+    @Override
+    public void writeToNBT(NBTTagCompound nbt) {
+        if (color != null) {
+            nbt.setByte("color", (byte) color.ordinal());
+        }
+    }
 
-			return param.color == color;
-		} else {
-			return false;
-		}
-	}
-	
-	@Override
-	public String getDescription() {
-		if (color == null) {
-			return null;
-		}
-		return String.format(StringUtils.localize("gate.action.pipe.wire"), StringUtils.localize("color." + color.name().toLowerCase(Locale.ENGLISH)));
-	}
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        if (nbt.hasKey("color")) {
+            color = PipeWire.values()[nbt.getByte("color")];
+        }
+    }
 
-	@Override
-	public String getUniqueTag() {
-		return "buildcraft:pipeWireAction";
-	}
+    @Override
+    public boolean equals(Object object) {
+        if (object instanceof ActionParameterSignal) {
+            ActionParameterSignal param = (ActionParameterSignal) object;
 
-	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		icons = new IIcon[] {
-				iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_red_active"),
-				iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_blue_active"),
-				iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_green_active"),
-				iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_yellow_active")
-		};
+            return param.color == color;
+        } else {
+            return false;
+        }
+    }
 
-	}
+    @Override
+    public String getDescription() {
+        if (color == null) {
+            return null;
+        }
+        return String
+            .format(StringUtils.localize("gate.action.pipe.wire"), StringUtils.localize("color." + color.name().toLowerCase(Locale.ENGLISH)));
+    }
 
-	@Override
-	public IStatementParameter rotateLeft() {
-		return this;
-	}
+    @Override
+    public String getUniqueTag() {
+        return "buildcraft:pipeWireAction";
+    }
 
-	@Override
-	public ItemStack getItemStack() {
-		return null;
-	}
+    @Override
+    public void registerIcons(IIconRegister iconRegister) {
+        icons =
+            new IIcon[] { iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_red_active"),
+                iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_blue_active"),
+                iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_green_active"),
+                iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_yellow_active") };
+
+    }
+
+    @Override
+    public IStatementParameter rotateLeft() {
+        return this;
+    }
+
+    @Override
+    public ItemStack getItemStack() {
+        return null;
+    }
 }

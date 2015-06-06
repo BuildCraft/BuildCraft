@@ -17,65 +17,62 @@ import buildcraft.core.lib.utils.BlockUtils;
 
 public class AIRobotHarvest extends AIRobot {
 
-	private BlockPos blockFound;
-	private int delay = 0;
+    private BlockPos blockFound;
+    private int delay = 0;
 
-	public AIRobotHarvest(EntityRobotBase iRobot) {
-		super(iRobot);
-	}
+    public AIRobotHarvest(EntityRobotBase iRobot) {
+        super(iRobot);
+    }
 
-	public AIRobotHarvest(EntityRobotBase iRobot, BlockPos iBlockFound) {
-		super(iRobot);
-		blockFound = iBlockFound;
-	}
+    public AIRobotHarvest(EntityRobotBase iRobot, BlockPos iBlockFound) {
+        super(iRobot);
+        blockFound = iBlockFound;
+    }
 
-	@Override
-	public void update() {
-		if (blockFound == null) {
-			setSuccess(false);
-			terminate();
-			return;
-		}
+    @Override
+    public void update() {
+        if (blockFound == null) {
+            setSuccess(false);
+            terminate();
+            return;
+        }
 
-		if (delay++ > 20) {
-			if (!BuildCraftAPI.getWorldProperty("harvestable").get(robot.worldObj, blockFound.x,
-					blockFound.y, blockFound.z)) {
-				setSuccess(false);
-				terminate();
-				return;
-			}
-			List<ItemStack> drops = new ArrayList<ItemStack>();
-			if (!CropManager.harvestCrop(robot.worldObj, blockFound.x, blockFound.y, blockFound.z,
-					drops)) {
-				setSuccess(false);
-				terminate();
-				return;
-			}
-			for (ItemStack stack : drops) {
-				BlockUtils.dropItem((WorldServer) robot.worldObj,
-						MathHelper.floor_double(robot.posX), MathHelper.floor_double(robot.posY),
-						MathHelper.floor_double(robot.posZ), 6000, stack);
-			}
-		}
-	}
+        if (delay++ > 20) {
+            if (!BuildCraftAPI.getWorldProperty("harvestable").get(robot.worldObj, blockFound.x, blockFound.y, blockFound.z)) {
+                setSuccess(false);
+                terminate();
+                return;
+            }
+            List<ItemStack> drops = new ArrayList<ItemStack>();
+            if (!CropManager.harvestCrop(robot.worldObj, blockFound.x, blockFound.y, blockFound.z, drops)) {
+                setSuccess(false);
+                terminate();
+                return;
+            }
+            for (ItemStack stack : drops) {
+                BlockUtils.dropItem((WorldServer) robot.worldObj, MathHelper.floor_double(robot.posX), MathHelper.floor_double(robot.posY),
+                    MathHelper.floor_double(robot.posZ), 6000, stack);
+            }
+        }
+    }
 
-	@Override
-	public void writeSelfToNBT(NBTTagCompound nbt) {
-		super.writeSelfToNBT(nbt);
+    @Override
+    public void writeSelfToNBT(NBTTagCompound nbt) {
+        super.writeSelfToNBT(nbt);
 
-		if (blockFound != null) {
-			NBTTagCompound sub = new NBTTagCompound();
-			blockFound.writeTo(sub);
-			nbt.setTag("blockFound", sub);
-		}
-	}
+        if (blockFound != null) {
+            NBTTagCompound sub = new NBTTagCompound();
+            blockFound.writeTo(sub);
+            nbt.setTag("blockFound", sub);
+        }
+    }
 
-	@Override
-	public void loadSelfFromNBT(NBTTagCompound nbt) {
-		super.loadSelfFromNBT(nbt);
+    @Override
+    public void loadSelfFromNBT(NBTTagCompound nbt) {
+        super.loadSelfFromNBT(nbt);
 
-		if (nbt.hasKey("blockFound")) {
-			blockFound = new BlockPos(nbt.getCompoundTag("blockFound"));
-		}
-	}
+        if (nbt.hasKey("blockFound")) {
+            blockFound = new BlockPos(nbt.getCompoundTag("blockFound"));
+        }
+    }
 }

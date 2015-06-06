@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.statements;
 
 import java.util.Locale;
@@ -19,27 +15,26 @@ import buildcraft.core.statements.BCStatement;
 
 public class ActionExtractionPreset extends BCStatement implements IActionInternal {
 
-	public final EnumColor color;
+    public final EnumColor color;
 
-	public ActionExtractionPreset(EnumColor color) {
-		super("buildcraft:extraction.preset." + color.getTag(), "buildcraft.extraction.preset." + color.getTag());
+    public ActionExtractionPreset(EnumColor color) {
+        super("buildcraft:extraction.preset." + color.getTag(), "buildcraft.extraction.preset." + color.getTag());
 
-		this.color = color;
-	}
+        this.color = color;
+    }
 
-	@Override
-	public String getDescription() {
-		return String.format(StringUtils.localize("gate.action.extraction"), color.getName());
-	}
+    @Override
+    public String getDescription() {
+        return String.format(StringUtils.localize("gate.action.extraction"), color.getName());
+    }
 
-	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcrafttransport:triggers/extraction_preset_" + color.name().toLowerCase(Locale.ENGLISH));
-	}
+    @Override
+    public void registerIcons(IIconRegister iconRegister) {
+        icon = iconRegister.registerIcon("buildcrafttransport:triggers/extraction_preset_" + color.name().toLowerCase(Locale.ENGLISH));
+    }
 
-	@Override
-	public void actionActivate(IStatementContainer source,
-			IStatementParameter[] parameters) {
-		
-	}
+    @Override
+    public void actionActivate(IStatementContainer source, IStatementParameter[] parameters) {
+
+    }
 }

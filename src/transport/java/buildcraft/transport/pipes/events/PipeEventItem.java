@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes.events;
 
 import java.util.List;
@@ -19,63 +15,63 @@ import buildcraft.transport.TravelingItem;
 
 public abstract class PipeEventItem extends PipeEvent {
 
-	public final TravelingItem item;
+    public final TravelingItem item;
 
-	public PipeEventItem(Pipe pipe, TravelingItem item) {
-		super(pipe);
-		this.item = item;
-	}
+    public PipeEventItem(Pipe pipe, TravelingItem item) {
+        super(pipe);
+        this.item = item;
+    }
 
-	public static class Entered extends PipeEventItem {
-		public boolean cancelled = false;
+    public static class Entered extends PipeEventItem {
+        public boolean cancelled = false;
 
-		public Entered(Pipe pipe, TravelingItem item) {
-			super(pipe, item);
-		}
-	}
+        public Entered(Pipe pipe, TravelingItem item) {
+            super(pipe, item);
+        }
+    }
 
-	public static class ReachedCenter extends PipeEventItem {
-		public ReachedCenter(Pipe pipe, TravelingItem item) {
-			super(pipe, item);
-		}
-	}
+    public static class ReachedCenter extends PipeEventItem {
+        public ReachedCenter(Pipe pipe, TravelingItem item) {
+            super(pipe, item);
+        }
+    }
 
-	public static class ReachedEnd extends PipeEventItem {
-		public final TileEntity dest;
-		public boolean handled = false;
+    public static class ReachedEnd extends PipeEventItem {
+        public final TileEntity dest;
+        public boolean handled = false;
 
-		public ReachedEnd(Pipe pipe, TravelingItem item, TileEntity dest) {
-			super(pipe, item);
-			this.dest = dest;
-		}
-	}
+        public ReachedEnd(Pipe pipe, TravelingItem item, TileEntity dest) {
+            super(pipe, item);
+            this.dest = dest;
+        }
+    }
 
-	public static class DropItem extends PipeEventItem {
-		public EntityItem entity;
-		public EnumFacing direction;
+    public static class DropItem extends PipeEventItem {
+        public EntityItem entity;
+        public EnumFacing direction;
 
-		public DropItem(Pipe pipe, TravelingItem item, EntityItem entity) {
-			super(pipe, item);
-			this.entity = entity;
-			this.direction = item.output != EnumFacing.UNKNOWN ? item.output : item.input;
-		}
-	}
+        public DropItem(Pipe pipe, TravelingItem item, EntityItem entity) {
+            super(pipe, item);
+            this.entity = entity;
+            this.direction = item.output != EnumFacing.UNKNOWN ? item.output : item.input;
+        }
+    }
 
-	public static class FindDest extends PipeEventItem {
-		public final List<EnumFacing> destinations;
-		public boolean shuffle = true;
+    public static class FindDest extends PipeEventItem {
+        public final List<EnumFacing> destinations;
+        public boolean shuffle = true;
 
-		public FindDest(Pipe pipe, TravelingItem item, List<EnumFacing> destinations) {
-			super(pipe, item);
-			this.destinations = destinations;
-		}
-	}
+        public FindDest(Pipe pipe, TravelingItem item, List<EnumFacing> destinations) {
+            super(pipe, item);
+            this.destinations = destinations;
+        }
+    }
 
-	public static class AdjustSpeed extends PipeEventItem {
-		public boolean handled = false;
+    public static class AdjustSpeed extends PipeEventItem {
+        public boolean handled = false;
 
-		public AdjustSpeed(Pipe pipe, TravelingItem item) {
-			super(pipe, item);
-		}
-	}
+        public AdjustSpeed(Pipe pipe, TravelingItem item) {
+            super(pipe, item);
+        }
+    }
 }

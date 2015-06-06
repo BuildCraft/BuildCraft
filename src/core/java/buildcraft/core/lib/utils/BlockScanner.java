@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.utils;
 
 import java.util.Iterator;
@@ -18,95 +14,94 @@ import buildcraft.core.Box;
 
 public class BlockScanner implements Iterable<BlockPos> {
 
-	Box box = new Box ();
-	World world;
+    Box box = new Box();
+    World world;
 
-	int x, y, z;
-	int iterationsPerCycle;
-	int blocksDone = 0;
+    int x, y, z;
+    int iterationsPerCycle;
+    int blocksDone = 0;
 
-	class BlockIt implements Iterator<BlockPos> {
+    class BlockIt implements Iterator<BlockPos> {
 
-		int it = 0;
+        int it = 0;
 
-		@Override
-		public boolean hasNext() {
-			return z <= box.zMax && it <= iterationsPerCycle;
-		}
+        @Override
+        public boolean hasNext() {
+            return z <= box.zMax && it <= iterationsPerCycle;
+        }
 
-		@Override
-		public BlockPos next() {
-			BlockPos index = new BlockPos(x, y, z);
-			it++;
-			blocksDone++;
+        @Override
+        public BlockPos next() {
+            BlockPos index = new BlockPos(x, y, z);
+            it++;
+            blocksDone++;
 
-			if (x < box.xMax) {
-				x++;
-			} else {
-				x = box.xMin;
+            if (x < box.xMax) {
+                x++;
+            } else {
+                x = box.xMin;
 
-				if (y < box.yMax) {
-					y++;
-				} else {
-					y = box.yMin;
+                if (y < box.yMax) {
+                    y++;
+                } else {
+                    y = box.yMin;
 
-					z++;
-				}
-			}
+                    z++;
+                }
+            }
 
-			return index;
-		}
+            return index;
+        }
 
-		@Override
-		public void remove() {
+        @Override
+        public void remove() {
 
-		}
-	}
+        }
+    }
 
-	public  BlockScanner (Box box, World world, int iterationsPreCycle) {
-		this.box = box;
-		this.world = world;
-		this.iterationsPerCycle = iterationsPreCycle;
+    public BlockScanner(Box box, World world, int iterationsPreCycle) {
+        this.box = box;
+        this.world = world;
+        this.iterationsPerCycle = iterationsPreCycle;
 
-		x = box.xMin;
-		y = box.yMin;
-		z = box.zMin;
-	}
+        x = box.xMin;
+        y = box.yMin;
+        z = box.zMin;
+    }
 
-	public  BlockScanner () {
-	}
+    public BlockScanner() {}
 
-	@Override
-	public Iterator<BlockPos> iterator() {
-		return new BlockIt();
-	}
+    @Override
+    public Iterator<BlockPos> iterator() {
+        return new BlockIt();
+    }
 
-	public int totalBlocks () {
-		return box.sizeX() * box.sizeY() * box.sizeZ();
-	}
+    public int totalBlocks() {
+        return box.sizeX() * box.sizeY() * box.sizeZ();
+    }
 
-	public int blocksLeft () {
-		return totalBlocks() - blocksDone;
-	}
+    public int blocksLeft() {
+        return totalBlocks() - blocksDone;
+    }
 
-	public void writeToNBT (NBTTagCompound nbt) {
-		nbt.setInteger("x", x);
-		nbt.setInteger("y", y);
-		nbt.setInteger("z", z);
-		nbt.setInteger("blocksDone", blocksDone);
-		nbt.setInteger("iterationsPerCycle", iterationsPerCycle);
-		NBTTagCompound boxNBT = new NBTTagCompound();
-		box.writeToNBT(boxNBT);
-		nbt.setTag("box", boxNBT);
-	}
+    public void writeToNBT(NBTTagCompound nbt) {
+        nbt.setInteger("x", x);
+        nbt.setInteger("y", y);
+        nbt.setInteger("z", z);
+        nbt.setInteger("blocksDone", blocksDone);
+        nbt.setInteger("iterationsPerCycle", iterationsPerCycle);
+        NBTTagCompound boxNBT = new NBTTagCompound();
+        box.writeToNBT(boxNBT);
+        nbt.setTag("box", boxNBT);
+    }
 
-	public void readFromNBT (NBTTagCompound nbt) {
-		x = nbt.getInteger("x");
-		y = nbt.getInteger("y");
-		z = nbt.getInteger("z");
-		blocksDone = nbt.getInteger("blocksDone");
-		iterationsPerCycle = nbt.getInteger("iterationsPerCycle");
-		box.initialize(nbt.getCompoundTag("box"));
-	}
+    public void readFromNBT(NBTTagCompound nbt) {
+        x = nbt.getInteger("x");
+        y = nbt.getInteger("y");
+        z = nbt.getInteger("z");
+        blocksDone = nbt.getInteger("blocksDone");
+        iterationsPerCycle = nbt.getInteger("iterationsPerCycle");
+        box.initialize(nbt.getCompoundTag("box"));
+    }
 
 }

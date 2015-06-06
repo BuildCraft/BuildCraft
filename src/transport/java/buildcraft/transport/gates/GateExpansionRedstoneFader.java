@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.gates;
 
 import java.util.Arrays;
@@ -13,41 +9,41 @@ import java.util.List;
 
 import net.minecraft.tileentity.TileEntity;
 
-import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.ITriggerInternal;
+import buildcraft.transport.BuildCraftTransport;
 
 public final class GateExpansionRedstoneFader extends GateExpansionBuildcraft implements IGateExpansion {
 
-	public static GateExpansionRedstoneFader INSTANCE = new GateExpansionRedstoneFader();
+    public static GateExpansionRedstoneFader INSTANCE = new GateExpansionRedstoneFader();
 
-	private GateExpansionRedstoneFader() {
-		super("fader");
-	}
+    private GateExpansionRedstoneFader() {
+        super("fader");
+    }
 
-	@Override
-	public GateExpansionController makeController(TileEntity pipeTile) {
-		return new GateExpansionControllerRedstoneFader(pipeTile);
-	}
+    @Override
+    public GateExpansionController makeController(TileEntity pipeTile) {
+        return new GateExpansionControllerRedstoneFader(pipeTile);
+    }
 
-	private class GateExpansionControllerRedstoneFader extends GateExpansionController {
+    private class GateExpansionControllerRedstoneFader extends GateExpansionController {
 
-		public GateExpansionControllerRedstoneFader(TileEntity pipeTile) {
-			super(GateExpansionRedstoneFader.this, pipeTile);
-		}
+        public GateExpansionControllerRedstoneFader(TileEntity pipeTile) {
+            super(GateExpansionRedstoneFader.this, pipeTile);
+        }
 
-		@Override
-		public void addTriggers(List<ITriggerInternal> list) {
-			super.addTriggers(list);
-			list.addAll(Arrays.asList(BuildCraftTransport.triggerRedstoneLevel));
-		}
+        @Override
+        public void addTriggers(List<ITriggerInternal> list) {
+            super.addTriggers(list);
+            list.addAll(Arrays.asList(BuildCraftTransport.triggerRedstoneLevel));
+        }
 
-		@Override
-		public void addActions(List<IActionInternal> list) {
-			super.addActions(list);
-			list.addAll(Arrays.asList(BuildCraftTransport.actionRedstoneLevel));
-		}
-	}
+        @Override
+        public void addActions(List<IActionInternal> list) {
+            super.addActions(list);
+            list.addAll(Arrays.asList(BuildCraftTransport.actionRedstoneLevel));
+        }
+    }
 }

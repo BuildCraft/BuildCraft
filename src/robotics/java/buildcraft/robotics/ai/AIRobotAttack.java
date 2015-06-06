@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.ai;
 
 import net.minecraft.entity.Entity;
@@ -17,74 +13,72 @@ import buildcraft.robotics.EntityRobot;
 
 public class AIRobotAttack extends AIRobot {
 
-	private Entity target;
+    private Entity target;
 
-	private int delay = 10;
+    private int delay = 10;
 
-	public AIRobotAttack(EntityRobotBase iRobot) {
-		super(iRobot);
-	}
+    public AIRobotAttack(EntityRobotBase iRobot) {
+        super(iRobot);
+    }
 
-	public AIRobotAttack(EntityRobotBase iRobot, Entity iTarget) {
-		this(iRobot);
+    public AIRobotAttack(EntityRobotBase iRobot, Entity iTarget) {
+        this(iRobot);
 
-		target = iTarget;
-	}
+        target = iTarget;
+    }
 
-	@Override
-	public void preempt(AIRobot ai) {
-		if (ai instanceof AIRobotGotoBlock) {
-			// target may become null in the event of a load. In that case, just
-			// go to the expected location.
-			if (target != null && robot.getDistanceToEntity(target) <= 2.0) {
-				abortDelegateAI();
-				robot.setItemActive(true);
-			}
-		}
-	}
+    @Override
+    public void preempt(AIRobot ai) {
+        if (ai instanceof AIRobotGotoBlock) {
+            // target may become null in the event of a load. In that case, just
+            // go to the expected location.
+            if (target != null && robot.getDistanceToEntity(target) <= 2.0) {
+                abortDelegateAI();
+                robot.setItemActive(true);
+            }
+        }
+    }
 
-	@Override
-	public void update() {
-		if (target.isDead) {
-			terminate();
-			return;
-		}
+    @Override
+    public void update() {
+        if (target.isDead) {
+            terminate();
+            return;
+        }
 
-		if (robot.getDistanceToEntity(target) > 2.0) {
-			startDelegateAI(new AIRobotGotoBlock(robot, (int) Math.floor(target.posX),
-					(int) Math.floor(target.posY), (int) Math.floor(target.posZ)));
-			robot.setItemActive(false);
+        if (robot.getDistanceToEntity(target) > 2.0) {
+            startDelegateAI(new AIRobotGotoBlock(robot, (int) Math.floor(target.posX), (int) Math.floor(target.posY), (int) Math.floor(target.posZ)));
+            robot.setItemActive(false);
 
-			return;
-		}
+            return;
+        }
 
-		delay++;
+        delay++;
 
-		if (delay > 20) {
-			delay = 0;
-			((EntityRobot) robot).attackTargetEntityWithCurrentItem(target);
-			robot.aimItemAt((int) Math.floor(target.posX), (int) Math.floor(target.posY),
-					(int) Math.floor(target.posZ));
-		}
-	}
+        if (delay > 20) {
+            delay = 0;
+            ((EntityRobot) robot).attackTargetEntityWithCurrentItem(target);
+            robot.aimItemAt((int) Math.floor(target.posX), (int) Math.floor(target.posY), (int) Math.floor(target.posZ));
+        }
+    }
 
-	@Override
-	public void end() {
-		robot.setItemActive(false);
-	}
+    @Override
+    public void end() {
+        robot.setItemActive(false);
+    }
 
-	@Override
-	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotGotoBlock) {
-			if (!ai.success()) {
-				robot.unreachableEntityDetected(target);
-			}
-			terminate();
-		}
-	}
+    @Override
+    public void delegateAIEnded(AIRobot ai) {
+        if (ai instanceof AIRobotGotoBlock) {
+            if (!ai.success()) {
+                robot.unreachableEntityDetected(target);
+            }
+            terminate();
+        }
+    }
 
-	@Override
-	public int getEnergyCost() {
-		return BuilderAPI.BREAK_ENERGY * 2 / 20;
-	}
+    @Override
+    public int getEnergyCost() {
+        return BuilderAPI.BREAK_ENERGY * 2 / 20;
+    }
 }

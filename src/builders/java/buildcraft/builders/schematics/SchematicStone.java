@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.schematics;
 
 import java.util.LinkedList;
@@ -19,25 +15,25 @@ import buildcraft.api.blueprints.SchematicBlock;
 
 public class SchematicStone extends SchematicBlock {
 
-	@Override
-	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(Blocks.stone));
-	}
+    @Override
+    public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+        requirements.add(new ItemStack(Blocks.stone));
+    }
 
-	@Override
-	public void storeRequirements(IBuilderContext context, int x, int y, int z) {
+    @Override
+    public void storeRequirements(IBuilderContext context, int x, int y, int z) {
 
-	}
+    }
 
-	@Override
-	public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
-		context.world().setBlock(x, y, z, Blocks.stone, 0, 3);
-	}
+    @Override
+    public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
+        context.world().setBlock(x, y, z, Blocks.stone, 0, 3);
+    }
 
-	@Override
-	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
-		Block block = context.world().getBlock(x, y, z);
+    @Override
+    public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
+        Block block = context.world().getBlock(x, y, z);
 
-		return block == Blocks.stone;
-	}
+        return block == Blocks.stone;
+    }
 }

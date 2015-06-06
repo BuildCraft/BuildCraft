@@ -23,7 +23,9 @@ public abstract class IntegrationRecipeBC implements IIntegrationRecipe {
     }
 
     public abstract List<ItemStack> generateExampleInput();
+
     public abstract List<ItemStack> generateExampleOutput();
+
     public abstract List<List<ItemStack>> generateExampleExpansions();
 
     @Override

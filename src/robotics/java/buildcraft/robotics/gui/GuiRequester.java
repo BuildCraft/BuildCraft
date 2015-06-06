@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.gui;
 
 import net.minecraft.inventory.IInventory;
@@ -14,86 +10,85 @@ import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
-import buildcraft.robotics.TileRequester;
+import buildcraft.robotics.tile.TileRequester;
 
 public class GuiRequester extends GuiAdvancedInterface {
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftrobotics:textures/gui/requester_gui.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftrobotics:textures/gui/requester_gui.png");
 
-	private TileRequester requester;
+    private TileRequester requester;
 
-	private IInventory playerInventory;
+    private IInventory playerInventory;
 
-	private static class RequestSlot extends AdvancedSlot {
+    private static class RequestSlot extends AdvancedSlot {
 
-		private ItemStack item;
-		private int index;
+        private ItemStack item;
+        private int index;
 
-		public RequestSlot(GuiAdvancedInterface gui, int iIndex, int x, int y) {
-			super(gui, x, y);
+        public RequestSlot(GuiAdvancedInterface gui, int iIndex, int x, int y) {
+            super(gui, x, y);
 
-			index = iIndex;
-		}
+            index = iIndex;
+        }
 
-		public void setItem(ItemStack itemStack) {
-			TileRequester requester = ((GuiRequester) gui).requester;
+        public void setItem(ItemStack itemStack) {
+            TileRequester requester = ((GuiRequester) gui).requester;
 
-			if (itemStack != null) {
-				item = itemStack.copy();
-			} else {
-				item = null;
-			}
+            if (itemStack != null) {
+                item = itemStack.copy();
+            } else {
+                item = null;
+            }
 
-			requester.setRequest(index, itemStack);
-			((GuiRequester) gui).getContainer().getRequestList();
-		}
+            requester.setRequest(index, itemStack);
+            ((GuiRequester) gui).getContainer().getRequestList();
+        }
 
-		@Override
-		public ItemStack getItemStack() {
-			ContainerRequester requester = ((GuiRequester) gui).getContainer();
+        @Override
+        public ItemStack getItemStack() {
+            ContainerRequester requester = ((GuiRequester) gui).getContainer();
 
-			return requester.requests[index];
-		}
-	}
+            return requester.requests[index];
+        }
+    }
 
-	public GuiRequester(IInventory iPlayerInventory, TileRequester iRequester) {
-		super(new ContainerRequester(iPlayerInventory, iRequester), iPlayerInventory, TEXTURE);
+    public GuiRequester(IInventory iPlayerInventory, TileRequester iRequester) {
+        super(new ContainerRequester(iPlayerInventory, iRequester), iPlayerInventory, TEXTURE);
 
-		getContainer().gui = this;
-		getContainer().getRequestList();
+        getContainer().gui = this;
+        getContainer().getRequestList();
 
-		xSize = 196;
-		ySize = 181;
+        xSize = 196;
+        ySize = 181;
 
-		requester = iRequester;
-		playerInventory = iPlayerInventory;
+        requester = iRequester;
+        playerInventory = iPlayerInventory;
 
-		for (int x = 0; x < 4; ++x) {
-			for (int y = 0; y < 5; ++y) {
-				slots.add(new RequestSlot(this, x * 5 + y, 9 + 18 * x, 7 + 18 * y));
-			}
-		}
-	}
+        for (int x = 0; x < 4; ++x) {
+            for (int y = 0; y < 5; ++y) {
+                slots.add(new RequestSlot(this, x * 5 + y, 9 + 18 * x, 7 + 18 * y));
+            }
+        }
+    }
 
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
+        super.drawGuiContainerBackgroundLayer(f, x, y);
 
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		super.drawGuiContainerBackgroundLayer(f, x, y);
+        drawBackgroundSlots();
+    }
 
-		drawBackgroundSlots();
-	}
+    @Override
+    protected void slotClicked(AdvancedSlot slot, int mouseButton) {
+        super.slotClicked(slot, mouseButton);
 
-	@Override
-	protected void slotClicked(AdvancedSlot slot, int mouseButton) {
-		super.slotClicked(slot, mouseButton);
+        if (slot instanceof RequestSlot) {
+            ((RequestSlot) slot).setItem(mc.thePlayer.inventory.getItemStack());
+        }
+    }
 
-		if (slot instanceof RequestSlot) {
-			((RequestSlot) slot).setItem(mc.thePlayer.inventory.getItemStack());
-		}
-	}
-
-	@Override
-	public ContainerRequester getContainer() {
-		return (ContainerRequester) super.getContainer();
-	}
+    @Override
+    public ContainerRequester getContainer() {
+        return (ContainerRequester) super.getContainer();
+    }
 }

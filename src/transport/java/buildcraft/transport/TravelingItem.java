@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
 import java.util.EnumSet;
@@ -23,313 +19,313 @@ import net.minecraft.util.MathHelper;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.BuildCraftCore;
 import buildcraft.api.core.Position;
 import buildcraft.api.enums.EnumColor;
+import buildcraft.core.BuildCraftCore;
 import buildcraft.core.lib.inventory.StackHelper;
 
 public class TravelingItem {
 
-	public static final TravelingItemCache serverCache = new TravelingItemCache();
-	public static final TravelingItemCache clientCache = new TravelingItemCache();
-	public static final InsertionHandler DEFAULT_INSERTION_HANDLER = new InsertionHandler();
-	private static int maxId = 0;
+    public static final TravelingItemCache serverCache = new TravelingItemCache();
+    public static final TravelingItemCache clientCache = new TravelingItemCache();
+    public static final InsertionHandler DEFAULT_INSERTION_HANDLER = new InsertionHandler();
+    private static int maxId = 0;
 
-	public final EnumSet<EnumFacing> blacklist = EnumSet.noneOf(EnumFacing.class);
+    public final EnumSet<EnumFacing> blacklist = EnumSet.noneOf(EnumFacing.class);
 
-	public double xCoord, yCoord, zCoord;
-	public final int id;
-	public boolean toCenter = true;
-	public EnumColor color;
-	public EnumFacing input = EnumFacing.UNKNOWN;
-	public EnumFacing output = EnumFacing.UNKNOWN;
+    public double xCoord, yCoord, zCoord;
+    public final int id;
+    public boolean toCenter = true;
+    public EnumColor color;
+    public EnumFacing input = EnumFacing.UNKNOWN;
+    public EnumFacing output = EnumFacing.UNKNOWN;
 
-	public int displayList;
-	public boolean hasDisplayList;
+    public int displayList;
+    public boolean hasDisplayList;
 
-	protected float speed = 0.01F;
+    protected float speed = 0.01F;
 
-	protected ItemStack itemStack;
-	protected TileEntity container;
-	protected NBTTagCompound extraData;
-	protected InsertionHandler insertionHandler = DEFAULT_INSERTION_HANDLER;
+    protected ItemStack itemStack;
+    protected TileEntity container;
+    protected NBTTagCompound extraData;
+    protected InsertionHandler insertionHandler = DEFAULT_INSERTION_HANDLER;
 
-	/* CONSTRUCTORS */
-	protected TravelingItem(int id) {
-		this.id = id;
-	}
+    /* CONSTRUCTORS */
+    protected TravelingItem(int id) {
+        this.id = id;
+    }
 
-	public static TravelingItem make(int id) {
-		TravelingItem item = new TravelingItem(id);
-		getCache().cache(item);
-		return item;
-	}
+    public static TravelingItem make(int id) {
+        TravelingItem item = new TravelingItem(id);
+        getCache().cache(item);
+        return item;
+    }
 
-	public static TravelingItem make() {
-		return make(maxId < Short.MAX_VALUE ? ++maxId : (maxId = Short.MIN_VALUE));
-	}
+    public static TravelingItem make() {
+        return make(maxId < Short.MAX_VALUE ? ++maxId : (maxId = Short.MIN_VALUE));
+    }
 
-	public static TravelingItem make(double x, double y, double z, ItemStack stack) {
-		TravelingItem item = make();
-		item.xCoord = x;
-		item.yCoord = y;
-		item.zCoord = z;
-		item.itemStack = stack.copy();
-		return item;
-	}
+    public static TravelingItem make(double x, double y, double z, ItemStack stack) {
+        TravelingItem item = make();
+        item.xCoord = x;
+        item.yCoord = y;
+        item.zCoord = z;
+        item.itemStack = stack.copy();
+        return item;
+    }
 
-	public static TravelingItem make(NBTTagCompound nbt) {
-		TravelingItem item = make();
-		item.readFromNBT(nbt);
-		return item;
-	}
+    public static TravelingItem make(NBTTagCompound nbt) {
+        TravelingItem item = make();
+        item.readFromNBT(nbt);
+        return item;
+    }
 
-	public static TravelingItemCache getCache() {
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-			return clientCache;
-		}
-		return serverCache;
-	}
+    public static TravelingItemCache getCache() {
+        if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+            return clientCache;
+        }
+        return serverCache;
+    }
 
-	/* GETTING & SETTING */
-	public void setPosition(double x, double y, double z) {
-		this.xCoord = x;
-		this.yCoord = y;
-		this.zCoord = z;
-	}
+    /* GETTING & SETTING */
+    public void setPosition(double x, double y, double z) {
+        this.xCoord = x;
+        this.yCoord = y;
+        this.zCoord = z;
+    }
 
-	public void movePosition(double x, double y, double z) {
-		this.xCoord += x;
-		this.yCoord += y;
-		this.zCoord += z;
-	}
+    public void movePosition(double x, double y, double z) {
+        this.xCoord += x;
+        this.yCoord += y;
+        this.zCoord += z;
+    }
 
-	public float getSpeed() {
-		return speed;
-	}
+    public float getSpeed() {
+        return speed;
+    }
 
-	public void setSpeed(float speed) {
-		this.speed = speed;
-	}
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
 
-	public ItemStack getItemStack() {
-		return itemStack;
-	}
+    public ItemStack getItemStack() {
+        return itemStack;
+    }
 
-	public void setItemStack(ItemStack item) {
-		this.itemStack = item;
-	}
+    public void setItemStack(ItemStack item) {
+        this.itemStack = item;
+    }
 
-	public TileEntity getContainer() {
-		return container;
-	}
+    public TileEntity getContainer() {
+        return container;
+    }
 
-	public void setContainer(TileEntity container) {
-		this.container = container;
-	}
+    public void setContainer(TileEntity container) {
+        this.container = container;
+    }
 
-	public NBTTagCompound getExtraData() {
-		if (extraData == null) {
-			extraData = new NBTTagCompound();
-		}
-		return extraData;
-	}
+    public NBTTagCompound getExtraData() {
+        if (extraData == null) {
+            extraData = new NBTTagCompound();
+        }
+        return extraData;
+    }
 
-	public boolean hasExtraData() {
-		return extraData != null;
-	}
+    public boolean hasExtraData() {
+        return extraData != null;
+    }
 
-	@Deprecated
-	public void setInsetionHandler(InsertionHandler handler) {
-		if (handler == null) {
-			return;
-		}
-		this.insertionHandler = handler;
-	}
+    @Deprecated
+    public void setInsetionHandler(InsertionHandler handler) {
+        if (handler == null) {
+            return;
+        }
+        this.insertionHandler = handler;
+    }
 
-	public void setInsertionHandler(InsertionHandler handler) {
-		if (handler == null) {
-			return;
-		}
-		this.insertionHandler = handler;
-	}
+    public void setInsertionHandler(InsertionHandler handler) {
+        if (handler == null) {
+            return;
+        }
+        this.insertionHandler = handler;
+    }
 
-	public InsertionHandler getInsertionHandler() {
-		return insertionHandler;
-	}
+    public InsertionHandler getInsertionHandler() {
+        return insertionHandler;
+    }
 
-	public void reset() {
-		toCenter = true;
-		blacklist.clear();
-		input = EnumFacing.UNKNOWN;
-		output = EnumFacing.UNKNOWN;
-	}
+    public void reset() {
+        toCenter = true;
+        blacklist.clear();
+        input = EnumFacing.UNKNOWN;
+        output = EnumFacing.UNKNOWN;
+    }
 
-	/* SAVING & LOADING */
-	public void readFromNBT(NBTTagCompound data) {
-		setPosition(data.getDouble("x"), data.getDouble("y"), data.getDouble("z"));
+    /* SAVING & LOADING */
+    public void readFromNBT(NBTTagCompound data) {
+        setPosition(data.getDouble("x"), data.getDouble("y"), data.getDouble("z"));
 
-		setSpeed(data.getFloat("speed"));
-		setItemStack(ItemStack.loadItemStackFromNBT(data.getCompoundTag("Item")));
+        setSpeed(data.getFloat("speed"));
+        setItemStack(ItemStack.loadItemStackFromNBT(data.getCompoundTag("Item")));
 
-		toCenter = data.getBoolean("toCenter");
-		input = EnumFacing.getOrientation(data.getByte("input"));
-		output = EnumFacing.getOrientation(data.getByte("output"));
+        toCenter = data.getBoolean("toCenter");
+        input = EnumFacing.getOrientation(data.getByte("input"));
+        output = EnumFacing.getOrientation(data.getByte("output"));
 
-		byte c = data.getByte("color");
-		if (c != -1) {
-			color = EnumColor.fromId(c);
-		}
+        byte c = data.getByte("color");
+        if (c != -1) {
+            color = EnumColor.fromId(c);
+        }
 
-		if (data.hasKey("extraData")) {
-			extraData = data.getCompoundTag("extraData");
-		}
-	}
+        if (data.hasKey("extraData")) {
+            extraData = data.getCompoundTag("extraData");
+        }
+    }
 
-	public void writeToNBT(NBTTagCompound data) {
-		data.setDouble("x", xCoord);
-		data.setDouble("y", yCoord);
-		data.setDouble("z", zCoord);
-		data.setFloat("speed", getSpeed());
-		NBTTagCompound itemStackTag = new NBTTagCompound();
-		getItemStack().writeToNBT(itemStackTag);
-		data.setTag("Item", itemStackTag);
+    public void writeToNBT(NBTTagCompound data) {
+        data.setDouble("x", xCoord);
+        data.setDouble("y", yCoord);
+        data.setDouble("z", zCoord);
+        data.setFloat("speed", getSpeed());
+        NBTTagCompound itemStackTag = new NBTTagCompound();
+        getItemStack().writeToNBT(itemStackTag);
+        data.setTag("Item", itemStackTag);
 
-		data.setBoolean("toCenter", toCenter);
-		data.setByte("input", (byte) input.ordinal());
-		data.setByte("output", (byte) output.ordinal());
+        data.setBoolean("toCenter", toCenter);
+        data.setByte("input", (byte) input.ordinal());
+        data.setByte("output", (byte) output.ordinal());
 
-		data.setByte("color", color != null ? (byte) color.ordinal() : -1);
+        data.setByte("color", color != null ? (byte) color.ordinal() : -1);
 
-		if (extraData != null) {
-			data.setTag("extraData", extraData);
-		}
-	}
+        if (extraData != null) {
+            data.setTag("extraData", extraData);
+        }
+    }
 
-	public EntityItem toEntityItem() {
-		if (container != null && !container.getWorldObj().isRemote) {
-			if (getItemStack().stackSize <= 0) {
-				return null;
-			}
+    public EntityItem toEntityItem() {
+        if (container != null && !container.getWorldObj().isRemote) {
+            if (getItemStack().stackSize <= 0) {
+                return null;
+            }
 
-			Position motion = new Position(0, 0, 0, output);
-			motion.moveForwards(0.1 + getSpeed() * 2F);
+            Position motion = new Position(0, 0, 0, output);
+            motion.moveForwards(0.1 + getSpeed() * 2F);
 
-			EntityItem entity = new EntityItem(container.getWorldObj(), xCoord, yCoord, zCoord, getItemStack());
-			entity.lifespan = BuildCraftCore.itemLifespan * 20;
-			entity.delayBeforeCanPickup = 10;
+            EntityItem entity = new EntityItem(container.getWorldObj(), xCoord, yCoord, zCoord, getItemStack());
+            entity.lifespan = BuildCraftCore.itemLifespan * 20;
+            entity.delayBeforeCanPickup = 10;
 
-			float f3 = 0.00F + container.getWorldObj().rand.nextFloat() * 0.04F - 0.02F;
-			entity.motionX = (float) container.getWorldObj().rand.nextGaussian() * f3 + motion.x;
-			entity.motionY = (float) container.getWorldObj().rand.nextGaussian() * f3 + motion.y;
-			entity.motionZ = (float) container.getWorldObj().rand.nextGaussian() * f3 + +motion.z;
-			return entity;
-		}
-		return null;
-	}
+            float f3 = 0.00F + container.getWorldObj().rand.nextFloat() * 0.04F - 0.02F;
+            entity.motionX = (float) container.getWorldObj().rand.nextGaussian() * f3 + motion.x;
+            entity.motionY = (float) container.getWorldObj().rand.nextGaussian() * f3 + motion.y;
+            entity.motionZ = (float) container.getWorldObj().rand.nextGaussian() * f3 + +motion.z;
+            return entity;
+        }
+        return null;
+    }
 
-	public float getEntityBrightness(float f) {
-		int i = MathHelper.floor_double(xCoord);
-		int j = MathHelper.floor_double(zCoord);
-		if (container != null && container.getWorldObj().blockExists(i, 128 / 2, j)) {
-			double d = 0.66000000000000003D;
-			int k = MathHelper.floor_double(yCoord + d);
-			return container.getWorldObj().getLightBrightness(i, k, j);
-		} else {
-			return 0.0F;
-		}
-	}
+    public float getEntityBrightness(float f) {
+        int i = MathHelper.floor_double(xCoord);
+        int j = MathHelper.floor_double(zCoord);
+        if (container != null && container.getWorldObj().blockExists(i, 128 / 2, j)) {
+            double d = 0.66000000000000003D;
+            int k = MathHelper.floor_double(yCoord + d);
+            return container.getWorldObj().getLightBrightness(i, k, j);
+        } else {
+            return 0.0F;
+        }
+    }
 
-	public boolean isCorrupted() {
-		return itemStack == null || itemStack.stackSize <= 0 || itemStack.getItem() == null;
-	}
+    public boolean isCorrupted() {
+        return itemStack == null || itemStack.stackSize <= 0 || itemStack.getItem() == null;
+    }
 
-	public boolean canBeGroupedWith(TravelingItem otherItem) {
-		if (otherItem == this) {
-			return false;
-		}
-		if (toCenter != otherItem.toCenter) {
-			return false;
-		}
-		if (output != otherItem.output) {
-			return false;
-		}
-		if (color != otherItem.color) {
-			return false;
-		}
-		if (hasExtraData() || otherItem.hasExtraData()) {
-			return false;
-		}
-		if (insertionHandler != DEFAULT_INSERTION_HANDLER) {
-			return false;
-		}
-		if (!blacklist.equals(otherItem.blacklist)) {
-			return false;
-		}
-		if (otherItem.isCorrupted()) {
-			return false;
-		}
-		return StackHelper.canStacksMerge(itemStack, otherItem.itemStack);
-	}
+    public boolean canBeGroupedWith(TravelingItem otherItem) {
+        if (otherItem == this) {
+            return false;
+        }
+        if (toCenter != otherItem.toCenter) {
+            return false;
+        }
+        if (output != otherItem.output) {
+            return false;
+        }
+        if (color != otherItem.color) {
+            return false;
+        }
+        if (hasExtraData() || otherItem.hasExtraData()) {
+            return false;
+        }
+        if (insertionHandler != DEFAULT_INSERTION_HANDLER) {
+            return false;
+        }
+        if (!blacklist.equals(otherItem.blacklist)) {
+            return false;
+        }
+        if (otherItem.isCorrupted()) {
+            return false;
+        }
+        return StackHelper.canStacksMerge(itemStack, otherItem.itemStack);
+    }
 
-	public boolean tryMergeInto(TravelingItem otherItem) {
-		if (!canBeGroupedWith(otherItem)) {
-			return false;
-		}
-		if (StackHelper.mergeStacks(itemStack, otherItem.itemStack, false) == itemStack.stackSize) {
-			StackHelper.mergeStacks(itemStack, otherItem.itemStack, true);
-			itemStack.stackSize = 0;
-			return true;
-		}
-		return false;
-	}
+    public boolean tryMergeInto(TravelingItem otherItem) {
+        if (!canBeGroupedWith(otherItem)) {
+            return false;
+        }
+        if (StackHelper.mergeStacks(itemStack, otherItem.itemStack, false) == itemStack.stackSize) {
+            StackHelper.mergeStacks(itemStack, otherItem.itemStack, true);
+            itemStack.stackSize = 0;
+            return true;
+        }
+        return false;
+    }
 
-	public boolean ignoreWeight() {
-		return false;
-	}
+    public boolean ignoreWeight() {
+        return false;
+    }
 
-	@Override
-	public int hashCode() {
-		return this.id;
-	}
+    @Override
+    public int hashCode() {
+        return this.id;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == null) {
-			return false;
-		}
-		if (getClass() != obj.getClass()) {
-			return false;
-		}
-		final TravelingItem other = (TravelingItem) obj;
-		if (this.id != other.id) {
-			return false;
-		}
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final TravelingItem other = (TravelingItem) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        return true;
+    }
 
-	@Override
-	public String toString() {
-		return "TravelingItem: " + id;
-	}
+    @Override
+    public String toString() {
+        return "TravelingItem: " + id;
+    }
 
-	public static class InsertionHandler {
+    public static class InsertionHandler {
 
-		public boolean canInsertItem(TravelingItem item, IInventory inv) {
-			return true;
-		}
-	}
+        public boolean canInsertItem(TravelingItem item, IInventory inv) {
+            return true;
+        }
+    }
 
-	public static class TravelingItemCache {
+    public static class TravelingItemCache {
 
-		private final Map<Integer, TravelingItem> itemCache = new MapMaker().weakValues().makeMap();
+        private final Map<Integer, TravelingItem> itemCache = new MapMaker().weakValues().makeMap();
 
-		public void cache(TravelingItem item) {
-			itemCache.put(item.id, item);
-		}
+        public void cache(TravelingItem item) {
+            itemCache.put(item.id, item);
+        }
 
-		public TravelingItem get(int id) {
-			return itemCache.get(id);
-		}
-	}
+        public TravelingItem get(int id) {
+            return itemCache.get(id);
+        }
+    }
 }

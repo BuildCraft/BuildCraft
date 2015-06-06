@@ -27,236 +27,237 @@ import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.render.PipeRendererTESR;
 
 public class GatePluggable extends PipePluggable {
-	private static final class GatePluggableRenderer implements IPipePluggableRenderer, IPipePluggableDynamicRenderer {
-		public static final GatePluggableRenderer INSTANCE = new GatePluggableRenderer();
+    private static final class GatePluggableRenderer implements IPipePluggableRenderer, IPipePluggableDynamicRenderer {
+        public static final GatePluggableRenderer INSTANCE = new GatePluggableRenderer();
 
-		private GatePluggableRenderer() {
+        private GatePluggableRenderer() {
 
-		}
+        }
 
-		@Override
-		public void renderPluggable(IPipe pipe, EnumFacing side, PipePluggable pipePluggable, double x, double y, double z) {
-			PipeRendererTESR.renderGate(x, y, z, (GatePluggable) pipePluggable, side);
-		}
+        @Override
+        public void renderPluggable(IPipe pipe, EnumFacing side, PipePluggable pipePluggable, double x, double y, double z) {
+            PipeRendererTESR.renderGate(x, y, z, (GatePluggable) pipePluggable, side);
+        }
 
-		@Override
-		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, EnumFacing side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
-			if (renderPass == 0) {
-				PipeRendererTESR.renderGateStatic(renderblocks, side, (GatePluggable) pipePluggable, blockStateMachine, x, y, z);
-			}
-		}
-	}
-	public GateDefinition.GateMaterial material;
-	public GateDefinition.GateLogic logic;
-	public IGateExpansion[] expansions;
-	public boolean isLit, isPulsing;
+        @Override
+        public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, EnumFacing side, PipePluggable pipePluggable,
+                ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
+            if (renderPass == 0) {
+                PipeRendererTESR.renderGateStatic(renderblocks, side, (GatePluggable) pipePluggable, blockStateMachine, x, y, z);
+            }
+        }
+    }
 
-	public Gate realGate, instantiatedGate;
-	private float pulseStage;
+    public GateDefinition.GateMaterial material;
+    public GateDefinition.GateLogic logic;
+    public IGateExpansion[] expansions;
+    public boolean isLit, isPulsing;
 
-	public GatePluggable() {
-	}
+    public Gate realGate, instantiatedGate;
+    private float pulseStage;
 
-	public GatePluggable(Gate gate) {
-		instantiatedGate = gate;
-		initFromGate(gate);
-	}
+    public GatePluggable() {}
 
-	private void initFromGate(Gate gate) {
-		this.material = gate.material;
-		this.logic = gate.logic;
+    public GatePluggable(Gate gate) {
+        instantiatedGate = gate;
+        initFromGate(gate);
+    }
 
-		Set<IGateExpansion> gateExpansions = gate.expansions.keySet();
-		this.expansions = gateExpansions.toArray(new IGateExpansion[gateExpansions.size()]);
-	}
+    private void initFromGate(Gate gate) {
+        this.material = gate.material;
+        this.logic = gate.logic;
 
-	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
-		nbt.setByte(ItemGate.NBT_TAG_MAT, (byte) material.ordinal());
-		nbt.setByte(ItemGate.NBT_TAG_LOGIC, (byte) logic.ordinal());
+        Set<IGateExpansion> gateExpansions = gate.expansions.keySet();
+        this.expansions = gateExpansions.toArray(new IGateExpansion[gateExpansions.size()]);
+    }
 
-		NBTTagList expansionsList = nbt.getTagList(ItemGate.NBT_TAG_EX, Constants.NBT.TAG_STRING);
-		for (IGateExpansion expansion : expansions) {
-			expansionsList.appendTag(new NBTTagString(expansion.getUniqueIdentifier()));
-		}
-		nbt.setTag(ItemGate.NBT_TAG_EX, expansionsList);
-	}
+    @Override
+    public void writeToNBT(NBTTagCompound nbt) {
+        nbt.setByte(ItemGate.NBT_TAG_MAT, (byte) material.ordinal());
+        nbt.setByte(ItemGate.NBT_TAG_LOGIC, (byte) logic.ordinal());
 
-	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
-		material = GateDefinition.GateMaterial.fromOrdinal(nbt.getByte(ItemGate.NBT_TAG_MAT));
-		logic = GateDefinition.GateLogic.fromOrdinal(nbt.getByte(ItemGate.NBT_TAG_LOGIC));
+        NBTTagList expansionsList = nbt.getTagList(ItemGate.NBT_TAG_EX, Constants.NBT.TAG_STRING);
+        for (IGateExpansion expansion : expansions) {
+            expansionsList.appendTag(new NBTTagString(expansion.getUniqueIdentifier()));
+        }
+        nbt.setTag(ItemGate.NBT_TAG_EX, expansionsList);
+    }
 
-		NBTTagList expansionsList = nbt.getTagList(ItemGate.NBT_TAG_EX, Constants.NBT.TAG_STRING);
-		final int expansionsSize = expansionsList.tagCount();
-		expansions = new IGateExpansion[expansionsSize];
-		for (int i = 0; i < expansionsSize; i++) {
-			expansions[i] = GateExpansions.getExpansion(expansionsList.getStringTagAt(i));
-		}
-	}
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        material = GateDefinition.GateMaterial.fromOrdinal(nbt.getByte(ItemGate.NBT_TAG_MAT));
+        logic = GateDefinition.GateLogic.fromOrdinal(nbt.getByte(ItemGate.NBT_TAG_LOGIC));
 
-	@Override
-	public void writeData(ByteBuf buf) {
-		buf.writeByte(material.ordinal());
-		buf.writeByte(logic.ordinal());
-		buf.writeBoolean(realGate != null ? realGate.isGateActive() : false);
-		buf.writeBoolean(realGate != null ? realGate.isGatePulsing() : false);
+        NBTTagList expansionsList = nbt.getTagList(ItemGate.NBT_TAG_EX, Constants.NBT.TAG_STRING);
+        final int expansionsSize = expansionsList.tagCount();
+        expansions = new IGateExpansion[expansionsSize];
+        for (int i = 0; i < expansionsSize; i++) {
+            expansions[i] = GateExpansions.getExpansion(expansionsList.getStringTagAt(i));
+        }
+    }
 
-		final int expansionsSize = expansions.length;
-		buf.writeInt(expansionsSize);
-		for (IGateExpansion expansion : expansions) {
-			buf.writeShort(GateExpansions.getExpansionID(expansion));
-		}
-	}
+    @Override
+    public void writeData(ByteBuf buf) {
+        buf.writeByte(material.ordinal());
+        buf.writeByte(logic.ordinal());
+        buf.writeBoolean(realGate != null ? realGate.isGateActive() : false);
+        buf.writeBoolean(realGate != null ? realGate.isGatePulsing() : false);
 
-	@Override
-	public void readData(ByteBuf buf) {
-		material = GateDefinition.GateMaterial.fromOrdinal(buf.readByte());
-		logic = GateDefinition.GateLogic.fromOrdinal(buf.readByte());
-		isLit = buf.readBoolean();
-		isPulsing = buf.readBoolean();
+        final int expansionsSize = expansions.length;
+        buf.writeInt(expansionsSize);
+        for (IGateExpansion expansion : expansions) {
+            buf.writeShort(GateExpansions.getExpansionID(expansion));
+        }
+    }
 
-		final int expansionsSize = buf.readInt();
-		expansions = new IGateExpansion[expansionsSize];
-		for (int i = 0; i < expansionsSize; i++) {
-			expansions[i] = GateExpansions.getExpansionByID(buf.readUnsignedShort());
-		}
-	}
+    @Override
+    public void readData(ByteBuf buf) {
+        material = GateDefinition.GateMaterial.fromOrdinal(buf.readByte());
+        logic = GateDefinition.GateLogic.fromOrdinal(buf.readByte());
+        isLit = buf.readBoolean();
+        isPulsing = buf.readBoolean();
 
-	@Override
-	public boolean requiresRenderUpdate(PipePluggable o) {
-		// rendered by TESR
-		return false;
-	}
+        final int expansionsSize = buf.readInt();
+        expansions = new IGateExpansion[expansionsSize];
+        for (int i = 0; i < expansionsSize; i++) {
+            expansions[i] = GateExpansions.getExpansionByID(buf.readUnsignedShort());
+        }
+    }
 
-	@Override
-	public ItemStack[] getDropItems(IPipeTile pipe) {
-		ItemStack gate = ItemGate.makeGateItem(material, logic);
-		for (IGateExpansion expansion : expansions) {
-			ItemGate.addGateExpansion(gate, expansion);
-		}
-		return new ItemStack[] { gate };
-	}
+    @Override
+    public boolean requiresRenderUpdate(PipePluggable o) {
+        // rendered by TESR
+        return false;
+    }
 
-	@Override
-	public void update(IPipeTile pipe, EnumFacing direction) {
-		if (isPulsing || pulseStage > 0.11F) {
-			// if it is moving, or is still in a moved state, then complete
-			// the current movement
-			pulseStage = (pulseStage + 0.01F) % 1F;
-		} else {
-			pulseStage = 0;
-		}
-	}
+    @Override
+    public ItemStack[] getDropItems(IPipeTile pipe) {
+        ItemStack gate = ItemGate.makeGateItem(material, logic);
+        for (IGateExpansion expansion : expansions) {
+            ItemGate.addGateExpansion(gate, expansion);
+        }
+        return new ItemStack[] { gate };
+    }
 
-	@Override
-	public void onAttachedPipe(IPipeTile pipe, EnumFacing direction) {
-		TileGenericPipe pipeReal = (TileGenericPipe) pipe;
-		if (!pipeReal.getWorld().isRemote) {
-			if (instantiatedGate != null) {
-				pipeReal.pipe.gates[direction.ordinal()] = instantiatedGate;
-			} else {
-				Gate gate = pipeReal.pipe.gates[direction.ordinal()];
-				if (gate == null || gate.material != material || gate.logic != logic) {
-					pipeReal.pipe.gates[direction.ordinal()] = GateFactory.makeGate(pipeReal.pipe, material, logic, direction);
-					for (IGateExpansion expansion : expansions) {
-						pipeReal.pipe.gates[direction.ordinal()].addGateExpansion(expansion);
-					}
-					pipeReal.scheduleRenderUpdate();
-				}
-			}
+    @Override
+    public void update(IPipeTile pipe, EnumFacing direction) {
+        if (isPulsing || pulseStage > 0.11F) {
+            // if it is moving, or is still in a moved state, then complete
+            // the current movement
+            pulseStage = (pulseStage + 0.01F) % 1F;
+        } else {
+            pulseStage = 0;
+        }
+    }
 
-			realGate = pipeReal.pipe.gates[direction.ordinal()];
-		}
-	}
+    @Override
+    public void onAttachedPipe(IPipeTile pipe, EnumFacing direction) {
+        TileGenericPipe pipeReal = (TileGenericPipe) pipe;
+        if (!pipeReal.getWorld().isRemote) {
+            if (instantiatedGate != null) {
+                pipeReal.pipe.gates[direction.ordinal()] = instantiatedGate;
+            } else {
+                Gate gate = pipeReal.pipe.gates[direction.ordinal()];
+                if (gate == null || gate.material != material || gate.logic != logic) {
+                    pipeReal.pipe.gates[direction.ordinal()] = GateFactory.makeGate(pipeReal.pipe, material, logic, direction);
+                    for (IGateExpansion expansion : expansions) {
+                        pipeReal.pipe.gates[direction.ordinal()].addGateExpansion(expansion);
+                    }
+                    pipeReal.scheduleRenderUpdate();
+                }
+            }
 
-	@Override
-	public void onDetachedPipe(IPipeTile pipe, EnumFacing direction) {
-		TileGenericPipe pipeReal = (TileGenericPipe) pipe;
-		if (!pipeReal.getWorld().isRemote) {
-			Gate gate = pipeReal.pipe.gates[direction.ordinal()];
-			if (gate != null) {
-				gate.resetGate();
-				pipeReal.pipe.gates[direction.ordinal()] = null;
-			}
-			pipeReal.scheduleRenderUpdate();
-		}
-	}
+            realGate = pipeReal.pipe.gates[direction.ordinal()];
+        }
+    }
 
-	@Override
-	public boolean isBlocking(IPipeTile pipe, EnumFacing direction) {
-		return true;
-	}
+    @Override
+    public void onDetachedPipe(IPipeTile pipe, EnumFacing direction) {
+        TileGenericPipe pipeReal = (TileGenericPipe) pipe;
+        if (!pipeReal.getWorld().isRemote) {
+            Gate gate = pipeReal.pipe.gates[direction.ordinal()];
+            if (gate != null) {
+                gate.resetGate();
+                pipeReal.pipe.gates[direction.ordinal()] = null;
+            }
+            pipeReal.scheduleRenderUpdate();
+        }
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (obj == this) {
-			return true;
-		}
-		if (!(obj instanceof GatePluggable)) {
-			return false;
-		}
-		GatePluggable o = (GatePluggable) obj;
-		if (o.material.ordinal() != material.ordinal()) {
-			return false;
-		}
-		if (o.logic.ordinal() != logic.ordinal()) {
-			return false;
-		}
-		if (o.expansions.length != expansions.length) {
-			return false;
-		}
-		for (int i = 0; i < expansions.length; i++) {
-			if (o.expansions[i] != expansions[i]) {
-				return false;
-			}
-		}
-		return true;
-	}
+    @Override
+    public boolean isBlocking(IPipeTile pipe, EnumFacing direction) {
+        return true;
+    }
 
-	@Override
-	public AxisAlignedBB getBoundingBox(EnumFacing side) {
-		float min = CoreConstants.PIPE_MIN_POS + 0.05F;
-		float max = CoreConstants.PIPE_MAX_POS - 0.05F;
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof GatePluggable)) {
+            return false;
+        }
+        GatePluggable o = (GatePluggable) obj;
+        if (o.material.ordinal() != material.ordinal()) {
+            return false;
+        }
+        if (o.logic.ordinal() != logic.ordinal()) {
+            return false;
+        }
+        if (o.expansions.length != expansions.length) {
+            return false;
+        }
+        for (int i = 0; i < expansions.length; i++) {
+            if (o.expansions[i] != expansions[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-		float[][] bounds = new float[3][2];
-		// X START - END
-		bounds[0][0] = min;
-		bounds[0][1] = max;
-		// Y START - END
-		bounds[1][0] = CoreConstants.PIPE_MIN_POS - 0.10F;
-		bounds[1][1] = CoreConstants.PIPE_MIN_POS;
-		// Z START - END
-		bounds[2][0] = min;
-		bounds[2][1] = max;
+    @Override
+    public AxisAlignedBB getBoundingBox(EnumFacing side) {
+        float min = CoreConstants.PIPE_MIN_POS + 0.05F;
+        float max = CoreConstants.PIPE_MAX_POS - 0.05F;
 
-		MatrixTranformations.transform(bounds, side);
-		return AxisAlignedBB.getBoundingBox(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
-	}
+        float[][] bounds = new float[3][2];
+        // X START - END
+        bounds[0][0] = min;
+        bounds[0][1] = max;
+        // Y START - END
+        bounds[1][0] = CoreConstants.PIPE_MIN_POS - 0.10F;
+        bounds[1][1] = CoreConstants.PIPE_MIN_POS;
+        // Z START - END
+        bounds[2][0] = min;
+        bounds[2][1] = max;
 
-	@Override
-	public IPipePluggableRenderer getRenderer() {
-		return GatePluggableRenderer.INSTANCE;
-	}
+        MatrixTranformations.transform(bounds, side);
+        return AxisAlignedBB.getBoundingBox(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
+    }
 
-	@Override
-	public IPipePluggableDynamicRenderer getDynamicRenderer() {
-		return GatePluggableRenderer.INSTANCE;
-	}
+    @Override
+    public IPipePluggableRenderer getRenderer() {
+        return GatePluggableRenderer.INSTANCE;
+    }
 
-	public float getPulseStage() {
-		return pulseStage;
-	}
+    @Override
+    public IPipePluggableDynamicRenderer getDynamicRenderer() {
+        return GatePluggableRenderer.INSTANCE;
+    }
 
-	public GateDefinition.GateMaterial getMaterial() {
-		return material;
-	}
+    public float getPulseStage() {
+        return pulseStage;
+    }
 
-	public GateDefinition.GateLogic getLogic() {
-		return logic;
-	}
+    public GateDefinition.GateMaterial getMaterial() {
+        return material;
+    }
 
-	public IGateExpansion[] getExpansions() {
-		return expansions;
-	}
+    public GateDefinition.GateLogic getLogic() {
+        return logic;
+    }
+
+    public IGateExpansion[] getExpansions() {
+        return expansions;
+    }
 }

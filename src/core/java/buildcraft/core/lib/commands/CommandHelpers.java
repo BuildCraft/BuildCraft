@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.commands;
 
 import net.minecraft.command.ICommandSender;
@@ -62,13 +58,11 @@ public final class CommandHelpers {
         sender.addChatMessage(chat);
     }
 
-    /**
-     Avoid using this function if at all possible. Commands are processed on the server,
-     which has no localization information.
-
-     @param sender
-     @param message
-     */
+    /** Avoid using this function if at all possible. Commands are processed on the server, which has no localization
+     * information.
+     * 
+     * @param sender
+     * @param message */
     public static void sendChatMessage(ICommandSender sender, String message) {
         sender.addChatMessage(new ChatComponentText(message));
     }
@@ -90,11 +84,13 @@ public final class CommandHelpers {
         ChatStyle header = new ChatStyle();
         header.setColor(EnumChatFormatting.GRAY);
         header.setBold(true);
-        sendLocalizedChatMessage(sender, header, "command.buildcraft." + command.getFullCommandString().replace(" ", ".") + ".format", command.getFullCommandString());
+        sendLocalizedChatMessage(sender, header, "command.buildcraft." + command.getFullCommandString().replace(" ", ".") + ".format", command
+            .getFullCommandString());
         ChatStyle body = new ChatStyle();
         body.setColor(EnumChatFormatting.GRAY);
         if (command.getCommandAliases().size() > 0) {
-            sendLocalizedChatMessage(sender, body, "command.buildcraft.aliases", command.getCommandAliases().toString().replace("[", "").replace("]", ""));
+            sendLocalizedChatMessage(sender, body, "command.buildcraft.aliases", command.getCommandAliases().toString().replace("[", "").replace("]",
+                ""));
         }
         if (command.getRequiredPermissionLevel() > 0) {
             sendLocalizedChatMessage(sender, body, "command.buildcraft.permlevel", command.getRequiredPermissionLevel());
@@ -103,7 +99,8 @@ public final class CommandHelpers {
         if (!command.getChildren().isEmpty()) {
             sendLocalizedChatMessage(sender, "command.buildcraft.list");
             for (SubCommand child : command.getChildren()) {
-                sendLocalizedChatMessage(sender, "command.buildcraft." + child.getFullCommandString().replace(" ", ".") + ".desc", child.getCommandName());
+                sendLocalizedChatMessage(sender, "command.buildcraft." + child.getFullCommandString().replace(" ", ".") + ".desc", child
+                    .getCommandName());
             }
         }
     }

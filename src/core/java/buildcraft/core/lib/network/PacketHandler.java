@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.network;
 
 import io.netty.channel.ChannelHandler.Sharable;
@@ -27,90 +23,90 @@ import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
 
 @Sharable
-public class PacketHandler extends SimpleChannelInboundHandler<Packet>  {
-	private void onTileUpdate(EntityPlayer player, PacketTileUpdate packet) throws IOException {
-		World world = player.worldObj;
+public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
+    private void onTileUpdate(EntityPlayer player, PacketTileUpdate packet) throws IOException {
+        World world = player.worldObj;
 
-		if (!packet.targetExists(world)) {
-			return;
-		}
+        if (!packet.targetExists(world)) {
+            return;
+        }
 
-		TileEntity entity = packet.getTarget(world);
+        TileEntity entity = packet.getTarget(world);
 
-		if (!(entity instanceof ISerializable)) {
-			return;
-		}
+        if (!(entity instanceof ISerializable)) {
+            return;
+        }
 
-		ISerializable tile = (ISerializable) entity;
-		tile.readData(packet.stream);
-	}
+        ISerializable tile = (ISerializable) entity;
+        tile.readData(packet.stream);
+    }
 
-	private void onEntityUpdate(EntityPlayer player, PacketEntityUpdate packet) throws IOException {
-		World world = player.worldObj;
+    private void onEntityUpdate(EntityPlayer player, PacketEntityUpdate packet) throws IOException {
+        World world = player.worldObj;
 
-		if (!packet.targetExists(world)) {
-			return;
-		}
+        if (!packet.targetExists(world)) {
+            return;
+        }
 
-		Entity entity = packet.getTarget(world);
+        Entity entity = packet.getTarget(world);
 
-		if (!(entity instanceof ISerializable)) {
-			return;
-		}
+        if (!(entity instanceof ISerializable)) {
+            return;
+        }
 
-		ISerializable payload = (ISerializable) entity;
-		payload.readData(packet.stream);
-	}
+        ISerializable payload = (ISerializable) entity;
+        payload.readData(packet.stream);
+    }
 
-	@Override
-	protected void channelRead0(ChannelHandlerContext ctx, Packet packet) {
-		try {
-			INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
-			EntityPlayer player = CoreProxy.proxy.getPlayerFromNetHandler(netHandler);
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, Packet packet) {
+        try {
+            INetHandler netHandler = ctx.channel().attr(NetworkRegistry.NET_HANDLER).get();
+            EntityPlayer player = CoreProxy.proxy.getPlayerFromNetHandler(netHandler);
 
-			int packetID = packet.getID();
+            int packetID = packet.getID();
 
-			switch (packetID) {
-				case PacketIds.TILE_UPDATE: {
-					onTileUpdate(player, (PacketTileUpdate) packet);
-					break;
-				}
+            switch (packetID) {
+                case PacketIds.TILE_UPDATE: {
+                    onTileUpdate(player, (PacketTileUpdate) packet);
+                    break;
+                }
 
-				case PacketIds.ENTITY_UPDATE: {
-					onEntityUpdate(player, (PacketEntityUpdate) packet);
-					break;
-				}
+                case PacketIds.ENTITY_UPDATE: {
+                    onEntityUpdate(player, (PacketEntityUpdate) packet);
+                    break;
+                }
 
-				case PacketIds.COMMAND: {
-					((PacketCommand) packet).handle(player);
-					break;
-				}
+                case PacketIds.COMMAND: {
+                    ((PacketCommand) packet).handle(player);
+                    break;
+                }
 
-				case PacketIds.STATE_UPDATE: {
-					PacketTileState pkt = (PacketTileState) packet;
-					World world = player.worldObj;
+                case PacketIds.STATE_UPDATE: {
+                    PacketTileState pkt = (PacketTileState) packet;
+                    World world = player.worldObj;
 
-					TileEntity tile = world.getTileEntity(pkt.posX, pkt.posY, pkt.posZ);
+                    TileEntity tile = world.getTileEntity(pkt.posX, pkt.posY, pkt.posZ);
 
-					if (tile instanceof ISyncedTile) {
-						pkt.applyStates((ISyncedTile) tile);
-					}
+                    if (tile instanceof ISyncedTile) {
+                        pkt.applyStates((ISyncedTile) tile);
+                    }
 
-					break;
-				}
+                    break;
+                }
 
-				case PacketIds.GUI_RETURN: {
-					// action will have happened already at read time
-					break;
-				}
+                case PacketIds.GUI_RETURN: {
+                    // action will have happened already at read time
+                    break;
+                }
 
-				case PacketIds.GUI_WIDGET: {
-					// action will have happened already at read time
-					break;
-				}
-			}
-			} catch (Exception ex) {
-				ex.printStackTrace();
-			}
-	}
+                case PacketIds.GUI_WIDGET: {
+                    // action will have happened already at read time
+                    break;
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 }

@@ -22,60 +22,60 @@ import buildcraft.core.lib.items.ItemBuildCraft;
 
 public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 
-	private final Set<Class<? extends Block>> shiftRotations = new HashSet<Class<? extends Block>>();
+    private final Set<Class<? extends Block>> shiftRotations = new HashSet<Class<? extends Block>>();
 
-	public ItemWrench() {
-		super();
+    public ItemWrench() {
+        super();
 
-		setFull3D();
-		setMaxStackSize(1);
-		shiftRotations.add(BlockLever.class);
-		shiftRotations.add(BlockButton.class);
-		shiftRotations.add(BlockChest.class);
-		setHarvestLevel("wrench", 0);
-	}
+        setFull3D();
+        setMaxStackSize(1);
+        shiftRotations.add(BlockLever.class);
+        shiftRotations.add(BlockButton.class);
+        shiftRotations.add(BlockChest.class);
+        setHarvestLevel("wrench", 0);
+    }
 
-	private boolean isShiftRotation(Class<? extends Block> cls) {
-		for (Class<? extends Block> shift : shiftRotations) {
-			if (shift.isAssignableFrom(cls)) {
-				return true;
-			}
-		}
-		return false;
-	}
+    private boolean isShiftRotation(Class<? extends Block> cls) {
+        for (Class<? extends Block> shift : shiftRotations) {
+            if (shift.isAssignableFrom(cls)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	@Override
-	public boolean
-			onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
-		Block block = world.getBlockState(pos).getBlock();
+    @Override
+    public boolean
+            onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
+        Block block = world.getBlockState(pos).getBlock();
 
-		if (block == null) {
-			return false;
-		}
+        if (block == null) {
+            return false;
+        }
 
-		if (player.isSneaking() != isShiftRotation(block.getClass())) {
-			return false;
-		}
+        if (player.isSneaking() != isShiftRotation(block.getClass())) {
+            return false;
+        }
 
-		if (block.rotateBlock(world, pos, side)) {
-			player.swingItem();
-			return !world.isRemote;
-		}
-		return false;
-	}
+        if (block.rotateBlock(world, pos, side)) {
+            player.swingItem();
+            return !world.isRemote;
+        }
+        return false;
+    }
 
-	@Override
-	public boolean canWrench(EntityPlayer player, int x, int y, int z) {
-		return true;
-	}
+    @Override
+    public boolean canWrench(EntityPlayer player, int x, int y, int z) {
+        return true;
+    }
 
-	@Override
-	public void wrenchUsed(EntityPlayer player, int x, int y, int z) {
-		player.swingItem();
-	}
+    @Override
+    public void wrenchUsed(EntityPlayer player, int x, int y, int z) {
+        player.swingItem();
+    }
 
-	@Override
-	public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player) {
-		return true;
-	}
+    @Override
+    public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player) {
+        return true;
+    }
 }

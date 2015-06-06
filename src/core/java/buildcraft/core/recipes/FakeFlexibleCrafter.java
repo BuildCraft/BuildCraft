@@ -5,9 +5,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.recipes.IFlexibleCrafter;
 
-/**
- * Use this class for simulated crafts.
- */
+/** Use this class for simulated crafts. */
 public class FakeFlexibleCrafter implements IFlexibleCrafter {
     private final IFlexibleCrafter original;
     private int[] usedItems, usedFluids;

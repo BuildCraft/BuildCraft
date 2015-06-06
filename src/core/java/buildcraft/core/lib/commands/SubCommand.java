@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.commands;
 
 import java.util.ArrayList;
@@ -19,7 +15,8 @@ import net.minecraft.command.ICommandSender;
 
 public abstract class SubCommand implements IModCommand {
     public enum PermLevel {
-        EVERYONE(0), ADMIN(2);
+        EVERYONE(0),
+        ADMIN(2);
         int permLevel;
 
         PermLevel(int permLevel) {

@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.builders.patterns;
 
 import java.util.Map;
@@ -29,151 +25,143 @@ import buildcraft.core.lib.utils.StringUtils;
 
 public abstract class FillerPattern implements IFillerPattern {
 
-	public static final Map<String, FillerPattern> patterns = new TreeMap<String, FillerPattern>();
-	private final String tag;
-	private IIcon icon, blockIcon;
+    public static final Map<String, FillerPattern> patterns = new TreeMap<String, FillerPattern>();
+    private final String tag;
+    private IIcon icon, blockIcon;
 
-	public FillerPattern(String tag) {
-		this.tag = tag;
-		patterns.put(getUniqueTag(), this);
-	}
+    public FillerPattern(String tag) {
+        this.tag = tag;
+        patterns.put(getUniqueTag(), this);
+    }
 
-	@Override
-	public String getDescription() {
-		return StringUtils.localize("fillerpattern." + tag);
-	}
+    @Override
+    public String getDescription() {
+        return StringUtils.localize("fillerpattern." + tag);
+    }
 
-	@Override
-	public IStatementParameter createParameter(int index) {
-		return null;
-	}
+    @Override
+    public IStatementParameter createParameter(int index) {
+        return null;
+    }
 
-	@Override
-	public IStatement rotateLeft() {
-		return this;
-	}
+    @Override
+    public IStatement rotateLeft() {
+        return this;
+    }
 
-	@Override
-	public String getUniqueTag() {
-		return "buildcraft:" + tag;
-	}
+    @Override
+    public String getUniqueTag() {
+        return "buildcraft:" + tag;
+    }
 
-	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraftcore:fillerPatterns/" + tag);
-		if (Loader.isModLoaded("BuildCraft|Builders")) {
-			blockIcon = iconRegister.registerIcon("buildcraftbuilders:fillerBlockIcons/" + tag);
-		}
-	}
+    @Override
+    public void registerIcons(IIconRegister iconRegister) {
+        icon = iconRegister.registerIcon("buildcraftcore:fillerPatterns/" + tag);
+        if (Loader.isModLoaded("BuildCraft|Builders")) {
+            blockIcon = iconRegister.registerIcon("buildcraftbuilders:fillerBlockIcons/" + tag);
+        }
+    }
 
-	@Override
-	public IIcon getIcon() {
-		return icon;
-	}
+    @Override
+    public IIcon getIcon() {
+        return icon;
+    }
 
-	@Override
-	public IIcon getBlockOverlay() {
-		return blockIcon;
-	}
+    @Override
+    public IIcon getBlockOverlay() {
+        return blockIcon;
+    }
 
-	@Override
-	public int maxParameters() {
-		return 0;
-	}
+    @Override
+    public int maxParameters() {
+        return 0;
+    }
 
-	@Override
-	public int minParameters() {
-		return 0;
-	}
+    @Override
+    public int minParameters() {
+        return 0;
+    }
 
-	@Override
-	public String toString() {
-		return "Pattern: " + getUniqueTag();
-	}
+    @Override
+    public String toString() {
+        return "Pattern: " + getUniqueTag();
+    }
 
-	/**
-	 * Generates a filling in a given area
-	 */
-	public static void fill(int xMin, int yMin, int zMin, int xMax, int yMax,
-			int zMax, Template template) {
+    /** Generates a filling in a given area */
+    public static void fill(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Template template) {
 
-		for (int y = yMin; y <= yMax; ++y) {
-			for (int x = xMin; x <= xMax; ++x) {
-				for (int z = zMin; z <= zMax; ++z) {
-					if (isValid(x, y, z, template)) {
-						template.contents[x][y][z] = new SchematicMask(true);
-					}
-				}
-			}
-		}
-	}
+        for (int y = yMin; y <= yMax; ++y) {
+            for (int x = xMin; x <= xMax; ++x) {
+                for (int z = zMin; z <= zMax; ++z) {
+                    if (isValid(x, y, z, template)) {
+                        template.contents[x][y][z] = new SchematicMask(true);
+                    }
+                }
+            }
+        }
+    }
 
-	/**
-	 * Generates an empty in a given area
-	 */
-	public static void empty(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Template template) {
-		int lastX = Integer.MAX_VALUE, lastY = Integer.MAX_VALUE, lastZ = Integer.MAX_VALUE;
+    /** Generates an empty in a given area */
+    public static void empty(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Template template) {
+        int lastX = Integer.MAX_VALUE, lastY = Integer.MAX_VALUE, lastZ = Integer.MAX_VALUE;
 
-		for (int y = yMax; y >= yMin; y--) {
-			for (int x = xMin; x <= xMax; ++x) {
-				for (int z = zMin; z <= zMax; ++z) {
-					if (isValid(x, y, z, template)) {
-						template.contents[x][y][z] = null;
-					}
-				}
-			}
-		}
-	}
+        for (int y = yMax; y >= yMin; y--) {
+            for (int x = xMin; x <= xMax; ++x) {
+                for (int z = zMin; z <= zMax; ++z) {
+                    if (isValid(x, y, z, template)) {
+                        template.contents[x][y][z] = null;
+                    }
+                }
+            }
+        }
+    }
 
-	/**
-	 * Generates a flatten in a given area
-	 */
-	public static void flatten(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Template template) {
-		int lastX = Integer.MAX_VALUE, lastY = Integer.MAX_VALUE, lastZ = Integer.MAX_VALUE;
+    /** Generates a flatten in a given area */
+    public static void flatten(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Template template) {
+        int lastX = Integer.MAX_VALUE, lastY = Integer.MAX_VALUE, lastZ = Integer.MAX_VALUE;
 
-		for (int x = xMin; x <= xMax; ++x) {
-			for (int z = zMin; z <= zMax; ++z) {
-				for (int y = yMax; y >= yMin; --y) {
-					if (isValid(x, y, z, template)) {
-						template.contents [x][y][z] = new SchematicMask(true);
-					}
-				}
-			}
-		}
-	}
+        for (int x = xMin; x <= xMax; ++x) {
+            for (int z = zMin; z <= zMax; ++z) {
+                for (int y = yMax; y >= yMin; --y) {
+                    if (isValid(x, y, z, template)) {
+                        template.contents[x][y][z] = new SchematicMask(true);
+                    }
+                }
+            }
+        }
+    }
 
-	public abstract Template getTemplate (Box box, World world, IStatementParameter[] parameters);
+    public abstract Template getTemplate(Box box, World world, IStatementParameter[] parameters);
 
-	public Blueprint getBlueprint (Box box, World world, IStatementParameter[] parameters, Block block, int meta) {
-		Blueprint result = new Blueprint (box.sizeX(), box.sizeY(), box.sizeZ());
+    public Blueprint getBlueprint(Box box, World world, IStatementParameter[] parameters, Block block, int meta) {
+        Blueprint result = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
 
-		try {
-			Template tmpl = getTemplate(box, world, parameters);
+        try {
+            Template tmpl = getTemplate(box, world, parameters);
 
-			for (int x = 0; x < box.sizeX(); ++x) {
-				for (int y = 0; y < box.sizeY(); ++y) {
-					for (int z = 0; z < box.sizeZ(); ++z) {
-						if (tmpl.contents[x][y][z] != null) {
-							result.contents[x][y][z] = SchematicRegistry.INSTANCE
-									.createSchematicBlock(block, meta);
-						}
+            for (int x = 0; x < box.sizeX(); ++x) {
+                for (int y = 0; y < box.sizeY(); ++y) {
+                    for (int z = 0; z < box.sizeZ(); ++z) {
+                        if (tmpl.contents[x][y][z] != null) {
+                            result.contents[x][y][z] = SchematicRegistry.INSTANCE.createSchematicBlock(block, meta);
+                        }
 
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	public BptBuilderTemplate getTemplateBuilder (Box box, World world, IStatementParameter[] parameters) {
-		return new BptBuilderTemplate(getTemplate(box, world, parameters), world, box.xMin, box.yMin, box.zMin);
-	}
+    public BptBuilderTemplate getTemplateBuilder(Box box, World world, IStatementParameter[] parameters) {
+        return new BptBuilderTemplate(getTemplate(box, world, parameters), world, box.xMin, box.yMin, box.zMin);
+    }
 
-	private static boolean isValid (int x, int y, int z, BlueprintBase bpt) {
-		return x >= 0 && y >= 0 && z >= 0 && x < bpt.sizeX && y < bpt.sizeY && z < bpt.sizeZ;
-	}
+    private static boolean isValid(int x, int y, int z, BlueprintBase bpt) {
+        return x >= 0 && y >= 0 && z >= 0 && x < bpt.sizeX && y < bpt.sizeY && z < bpt.sizeZ;
+    }
 }

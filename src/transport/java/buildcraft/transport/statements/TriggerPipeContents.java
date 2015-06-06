@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.statements;
 
 import java.util.Locale;
@@ -33,131 +29,131 @@ import buildcraft.transport.TravelingItem;
 
 public class TriggerPipeContents extends BCStatement implements ITriggerInternal {
 
-	public enum PipeContents {
-		empty,
-		containsItems,
-		containsFluids,
-		containsEnergy,
-		requestsEnergy,
-		tooMuchEnergy;
-		public ITriggerInternal trigger;
-	}
+    public enum PipeContents {
+        empty,
+        containsItems,
+        containsFluids,
+        containsEnergy,
+        requestsEnergy,
+        tooMuchEnergy;
+        public ITriggerInternal trigger;
+    }
 
-	private PipeContents kind;
+    private PipeContents kind;
 
-	public TriggerPipeContents(PipeContents kind) {
-		super("buildcraft:pipe.contents." + kind.name().toLowerCase(Locale.ENGLISH), "buildcraft.pipe.contents." + kind.name());
-		this.kind = kind;
-		kind.trigger = this;
-	}
+    public TriggerPipeContents(PipeContents kind) {
+        super("buildcraft:pipe.contents." + kind.name().toLowerCase(Locale.ENGLISH), "buildcraft.pipe.contents." + kind.name());
+        this.kind = kind;
+        kind.trigger = this;
+    }
 
-	@Override
-	public int maxParameters() {
-		switch (kind) {
-		case containsItems:
-		case containsFluids:
-			return 1;
-		default:
-			return 0;
-		}
-	}
+    @Override
+    public int maxParameters() {
+        switch (kind) {
+            case containsItems:
+            case containsFluids:
+                return 1;
+            default:
+                return 0;
+        }
+    }
 
-	@Override
-	public String getDescription() {
-		return StringUtils.localize("gate.trigger.pipe." + kind.name());
-	}
+    @Override
+    public String getDescription() {
+        return StringUtils.localize("gate.trigger.pipe." + kind.name());
+    }
 
-	@Override
-	public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
-		if (!(container instanceof IGate)) {
-			return false;
-		}
-		
-		Pipe<?> pipe = (Pipe<?>) ((IGate) container).getPipe();
-		IStatementParameter parameter = parameters[0];
+    @Override
+    public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
+        if (!(container instanceof IGate)) {
+            return false;
+        }
 
-		if (pipe.transport instanceof PipeTransportItems) {
-			PipeTransportItems transportItems = (PipeTransportItems) pipe.transport;
-			if (kind == PipeContents.empty) {
-				return transportItems.items.isEmpty();
-			} else if (kind == PipeContents.containsItems) {
-				if (parameter != null && parameter.getItemStack() != null) {
-					for (TravelingItem item : transportItems.items) {
-						if (StackHelper.isMatchingItemOrList(parameter.getItemStack(), item.getItemStack())) {
-							return true;
-						}
-					}
-				} else {
-					return !transportItems.items.isEmpty();
-				}
-			}
-		} else if (pipe.transport instanceof PipeTransportFluids) {
-			PipeTransportFluids transportFluids = (PipeTransportFluids) pipe.transport;
+        Pipe<?> pipe = (Pipe<?>) ((IGate) container).getPipe();
+        IStatementParameter parameter = parameters[0];
 
-			FluidStack searchedFluid = null;
+        if (pipe.transport instanceof PipeTransportItems) {
+            PipeTransportItems transportItems = (PipeTransportItems) pipe.transport;
+            if (kind == PipeContents.empty) {
+                return transportItems.items.isEmpty();
+            } else if (kind == PipeContents.containsItems) {
+                if (parameter != null && parameter.getItemStack() != null) {
+                    for (TravelingItem item : transportItems.items) {
+                        if (StackHelper.isMatchingItemOrList(parameter.getItemStack(), item.getItemStack())) {
+                            return true;
+                        }
+                    }
+                } else {
+                    return !transportItems.items.isEmpty();
+                }
+            }
+        } else if (pipe.transport instanceof PipeTransportFluids) {
+            PipeTransportFluids transportFluids = (PipeTransportFluids) pipe.transport;
 
-			if (parameter != null && parameter.getItemStack() != null) {
-				searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItemStack());
-			}
+            FluidStack searchedFluid = null;
 
-			if (kind == PipeContents.empty) {
-				for (FluidTankInfo b : transportFluids.getTankInfo(EnumFacing.UNKNOWN)) {
-					if (b.fluid != null && b.fluid.amount != 0) {
-						return false;
-					}
-				}
+            if (parameter != null && parameter.getItemStack() != null) {
+                searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItemStack());
+            }
 
-				return true;
-			} else {
-				for (FluidTankInfo b : transportFluids.getTankInfo(EnumFacing.UNKNOWN)) {
-					if (b.fluid != null && b.fluid.amount != 0) {
-						if (searchedFluid == null || searchedFluid.isFluidEqual(b.fluid)) {
-							return true;
-						}
-					}
-				}
+            if (kind == PipeContents.empty) {
+                for (FluidTankInfo b : transportFluids.getTankInfo(EnumFacing.UNKNOWN)) {
+                    if (b.fluid != null && b.fluid.amount != 0) {
+                        return false;
+                    }
+                }
 
-				return false;
-			}
-		} else if (pipe.transport instanceof PipeTransportPower) {
-			PipeTransportPower transportPower = (PipeTransportPower) pipe.transport;
+                return true;
+            } else {
+                for (FluidTankInfo b : transportFluids.getTankInfo(EnumFacing.UNKNOWN)) {
+                    if (b.fluid != null && b.fluid.amount != 0) {
+                        if (searchedFluid == null || searchedFluid.isFluidEqual(b.fluid)) {
+                            return true;
+                        }
+                    }
+                }
 
-			switch (kind) {
-				case empty:
-					for (double s : transportPower.displayPower) {
-						if (s > 1e-4) {
-							return false;
-						}
-					}
+                return false;
+            }
+        } else if (pipe.transport instanceof PipeTransportPower) {
+            PipeTransportPower transportPower = (PipeTransportPower) pipe.transport;
 
-					return true;
-				case containsEnergy:
-					for (double s : transportPower.displayPower) {
-						if (s > 1e-4) {
-							return true;
-						}
-					}
+            switch (kind) {
+                case empty:
+                    for (double s : transportPower.displayPower) {
+                        if (s > 1e-4) {
+                            return false;
+                        }
+                    }
 
-					return false;
-				case requestsEnergy:
-					return transportPower.isQueryingPower();
-				default:
-				case tooMuchEnergy:
-					return transportPower.isOverloaded();
-			}
-		}
+                    return true;
+                case containsEnergy:
+                    for (double s : transportPower.displayPower) {
+                        if (s > 1e-4) {
+                            return true;
+                        }
+                    }
 
-		return false;
-	}
-	
-	@Override
-	public IStatementParameter createParameter(int index) {
-		return new StatementParameterItemStack();
-	}
+                    return false;
+                case requestsEnergy:
+                    return transportPower.isQueryingPower();
+                default:
+                case tooMuchEnergy:
+                    return transportPower.isOverloaded();
+            }
+        }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipecontents_" + kind.name().toLowerCase(Locale.ENGLISH));
-	}
+        return false;
+    }
+
+    @Override
+    public IStatementParameter createParameter(int index) {
+        return new StatementParameterItemStack();
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void registerIcons(IIconRegister iconRegister) {
+        icon = iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipecontents_" + kind.name().toLowerCase(Locale.ENGLISH));
+    }
 }

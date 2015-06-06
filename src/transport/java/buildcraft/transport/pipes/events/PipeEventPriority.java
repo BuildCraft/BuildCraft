@@ -8,5 +8,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface PipeEventPriority {
-	int priority() default 0;
+    int priority() default 0;
 }

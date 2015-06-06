@@ -9,53 +9,53 @@ import net.minecraft.world.World;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
-import buildcraft.transport.ItemPipeWire;
 import buildcraft.transport.TileGenericPipe;
+import buildcraft.transport.item.ItemPipeWire;
 
 public class StripesHandlerPipeWires implements IStripesHandler {
-	@Override
-	public StripesHandlerType getType() {
-		return StripesHandlerType.ITEM_USE;
-	}
+    @Override
+    public StripesHandlerType getType() {
+        return StripesHandlerType.ITEM_USE;
+    }
 
-	@Override
-	public boolean shouldHandle(ItemStack stack) {
-		return stack.getItem() instanceof ItemPipeWire;
-	}
+    @Override
+    public boolean shouldHandle(ItemStack stack) {
+        return stack.getItem() instanceof ItemPipeWire;
+    }
 
-	@Override
-	public boolean handle(World world, int x, int y, int z, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-		int pipesToTry = 8;
-		int pipeWireColor = stack.getItemDamage();
+    @Override
+    public boolean handle(World world, int x, int y, int z, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
+        int pipesToTry = 8;
+        int pipeWireColor = stack.getItemDamage();
 
-		Position p = new Position(x, y, z);
-		p.orientation = direction;
+        Position p = new Position(x, y, z);
+        p.orientation = direction;
 
-		while (pipesToTry > 0) {
-			p.moveBackwards(1.0);
+        while (pipesToTry > 0) {
+            p.moveBackwards(1.0);
 
-			TileEntity tile = world.getTileEntity((int) p.x, (int) p.y, (int) p.z);
-			if (tile instanceof TileGenericPipe) {
-				TileGenericPipe pipeTile = (TileGenericPipe) tile;
+            TileEntity tile = world.getTileEntity((int) p.x, (int) p.y, (int) p.z);
+            if (tile instanceof TileGenericPipe) {
+                TileGenericPipe pipeTile = (TileGenericPipe) tile;
 
-				if (!pipeTile.pipe.wireSet[pipeWireColor]) {
-					pipeTile.pipe.wireSet[pipeWireColor] = true;
-					pipeTile.pipe.signalStrength[pipeWireColor] = 0;
+                if (!pipeTile.pipe.wireSet[pipeWireColor]) {
+                    pipeTile.pipe.wireSet[pipeWireColor] = true;
+                    pipeTile.pipe.signalStrength[pipeWireColor] = 0;
 
-					pipeTile.pipe.updateSignalState();
-					pipeTile.scheduleRenderUpdate();
-					world.notifyBlocksOfNeighborChange(pipeTile.xCoord, pipeTile.yCoord, pipeTile.zCoord, pipeTile.getBlock());
-					return true;
-				} else {
-					pipesToTry--;
-					continue;
-				}
-			} else {
-				// Not a pipe, don't follow chain
-				break;
-			}
-		}
+                    pipeTile.pipe.updateSignalState();
+                    pipeTile.scheduleRenderUpdate();
+                    world.notifyBlocksOfNeighborChange(pipeTile.xCoord, pipeTile.yCoord, pipeTile.zCoord, pipeTile.getBlock());
+                    return true;
+                } else {
+                    pipesToTry--;
+                    continue;
+                }
+            } else {
+                // Not a pipe, don't follow chain
+                break;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 }

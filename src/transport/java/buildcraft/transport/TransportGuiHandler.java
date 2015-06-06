@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
 import org.apache.logging.log4j.Level;
@@ -24,101 +20,101 @@ import buildcraft.transport.pipes.PipeItemsEmzuli;
 
 public class TransportGuiHandler implements IGuiHandler {
 
-	@Override
-	public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-		try {
-			if (!world.blockExists(x, y, z)) {
-				return null;
-			}
+    @Override
+    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+        try {
+            if (!world.blockExists(x, y, z)) {
+                return null;
+            }
 
-			TileEntity tile = world.getTileEntity(x, y, z);
+            TileEntity tile = world.getTileEntity(x, y, z);
 
-			if (tile instanceof TileFilteredBuffer) {
-				TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;
-				return new ContainerFilteredBuffer(player.inventory, filteredBuffer);
-			}
+            if (tile instanceof TileFilteredBuffer) {
+                TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;
+                return new ContainerFilteredBuffer(player.inventory, filteredBuffer);
+            }
 
-			if (!(tile instanceof TileGenericPipe)) {
-				return null;
-			}
+            if (!(tile instanceof TileGenericPipe)) {
+                return null;
+            }
 
-			TileGenericPipe pipe = (TileGenericPipe) tile;
+            TileGenericPipe pipe = (TileGenericPipe) tile;
 
-			if (pipe.pipe == null) {
-				return null;
-			}
+            if (pipe.pipe == null) {
+                return null;
+            }
 
-			switch (id) {
-				case GuiIds.PIPE_DIAMOND:
-					return new ContainerDiamondPipe(player.inventory, (IDiamondPipe) pipe.pipe);
+            switch (id) {
+                case GuiIds.PIPE_DIAMOND:
+                    return new ContainerDiamondPipe(player.inventory, (IDiamondPipe) pipe.pipe);
 
-				case GuiIds.PIPE_EMERALD_ITEM:
-					return new ContainerEmeraldPipe(player.inventory, (PipeItemsEmerald) pipe.pipe);
+                case GuiIds.PIPE_EMERALD_ITEM:
+                    return new ContainerEmeraldPipe(player.inventory, (PipeItemsEmerald) pipe.pipe);
 
-				case GuiIds.PIPE_LOGEMERALD_ITEM:
-					return new ContainerEmzuliPipe(player.inventory, (PipeItemsEmzuli) pipe.pipe);
+                case GuiIds.PIPE_LOGEMERALD_ITEM:
+                    return new ContainerEmzuliPipe(player.inventory, (PipeItemsEmzuli) pipe.pipe);
 
-				case GuiIds.PIPE_EMERALD_FLUID:
-					return new ContainerEmeraldFluidPipe(player.inventory, (PipeFluidsEmerald) pipe.pipe);
+                case GuiIds.PIPE_EMERALD_FLUID:
+                    return new ContainerEmeraldFluidPipe(player.inventory, (PipeFluidsEmerald) pipe.pipe);
 
-				case GuiIds.GATES:
-					return new ContainerGateInterface(player.inventory, pipe.pipe);
+                case GuiIds.GATES:
+                    return new ContainerGateInterface(player.inventory, pipe.pipe);
 
-				default:
-					return null;
-			}
-		} catch (Exception ex) {
-			BCLog.logger.log(Level.ERROR, "Failed to open GUI", ex);
-		}
-		return null;
-	}
+                default:
+                    return null;
+            }
+        } catch (Exception ex) {
+            BCLog.logger.log(Level.ERROR, "Failed to open GUI", ex);
+        }
+        return null;
+    }
 
-	@Override
-	public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-		try {
-			if (!world.blockExists(x, y, z)) {
-				return null;
-			}
+    @Override
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+        try {
+            if (!world.blockExists(x, y, z)) {
+                return null;
+            }
 
-			TileEntity tile = world.getTileEntity(x, y, z);
+            TileEntity tile = world.getTileEntity(x, y, z);
 
-			if (tile instanceof TileFilteredBuffer) {
-				TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;
-				return new GuiFilteredBuffer(player.inventory, filteredBuffer);
-			}
+            if (tile instanceof TileFilteredBuffer) {
+                TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;
+                return new GuiFilteredBuffer(player.inventory, filteredBuffer);
+            }
 
-			if (!(tile instanceof TileGenericPipe)) {
-				return null;
-			}
+            if (!(tile instanceof TileGenericPipe)) {
+                return null;
+            }
 
-			TileGenericPipe pipe = (TileGenericPipe) tile;
+            TileGenericPipe pipe = (TileGenericPipe) tile;
 
-			if (pipe.pipe == null) {
-				return null;
-			}
+            if (pipe.pipe == null) {
+                return null;
+            }
 
-			switch (id) {
-				case GuiIds.PIPE_DIAMOND:
-					return new GuiDiamondPipe(player.inventory, (IDiamondPipe) pipe.pipe);
+            switch (id) {
+                case GuiIds.PIPE_DIAMOND:
+                    return new GuiDiamondPipe(player.inventory, (IDiamondPipe) pipe.pipe);
 
-				case GuiIds.PIPE_EMERALD_ITEM:
-					return new GuiEmeraldPipe(player.inventory, (PipeItemsEmerald) pipe.pipe);
+                case GuiIds.PIPE_EMERALD_ITEM:
+                    return new GuiEmeraldPipe(player.inventory, (PipeItemsEmerald) pipe.pipe);
 
-				case GuiIds.PIPE_LOGEMERALD_ITEM:
-					return new GuiEmzuliPipe(player.inventory, (PipeItemsEmzuli) pipe.pipe);
+                case GuiIds.PIPE_LOGEMERALD_ITEM:
+                    return new GuiEmzuliPipe(player.inventory, (PipeItemsEmzuli) pipe.pipe);
 
-				case GuiIds.PIPE_EMERALD_FLUID:
-					return new GuiEmeraldFluidPipe(player.inventory, (PipeFluidsEmerald) pipe.pipe);
+                case GuiIds.PIPE_EMERALD_FLUID:
+                    return new GuiEmeraldFluidPipe(player.inventory, (PipeFluidsEmerald) pipe.pipe);
 
-				case GuiIds.GATES:
-					return new GuiGateInterface(player.inventory, pipe.pipe);
+                case GuiIds.GATES:
+                    return new GuiGateInterface(player.inventory, pipe.pipe);
 
-				default:
-					return null;
-			}
-		} catch (Exception ex) {
-			BCLog.logger.log(Level.ERROR, "Failed to open GUI", ex);
-		}
-		return null;
-	}
+                default:
+                    return null;
+            }
+        } catch (Exception ex) {
+            BCLog.logger.log(Level.ERROR, "Failed to open GUI", ex);
+        }
+        return null;
+    }
 }

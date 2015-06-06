@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.render;
 
 import java.util.Arrays;
@@ -25,191 +21,191 @@ import buildcraft.core.lib.EntityBlock;
 
 public final class RenderEntityBlock extends Render {
 
-	public static RenderEntityBlock INSTANCE = new RenderEntityBlock();
-	protected RenderBlocks renderBlocks;
+    public static RenderEntityBlock INSTANCE = new RenderEntityBlock();
+    protected RenderBlocks renderBlocks;
 
-	private RenderEntityBlock() {
-		renderBlocks = field_147909_c;
-	}
+    private RenderEntityBlock() {
+        renderBlocks = field_147909_c;
+    }
 
-	@Override
-	protected ResourceLocation getEntityTexture(Entity entity) {
-		throw new UnsupportedOperationException("Not supported yet.");
-	}
+    @Override
+    protected ResourceLocation getEntityTexture(Entity entity) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 
-	public static class RenderInfo {
+    public static class RenderInfo {
 
-		public double minX;
-		public double minY;
-		public double minZ;
-		public double maxX;
-		public double maxY;
-		public double maxZ;
-		public Block baseBlock = Blocks.sand;
-		public IIcon texture = null;
-		public IIcon[] textureArray = null;
-		public boolean[] renderSide = new boolean[6];
-		public float light = -1f;
-		public int brightness = -1;
+        public double minX;
+        public double minY;
+        public double minZ;
+        public double maxX;
+        public double maxY;
+        public double maxZ;
+        public Block baseBlock = Blocks.sand;
+        public IIcon texture = null;
+        public IIcon[] textureArray = null;
+        public boolean[] renderSide = new boolean[6];
+        public float light = -1f;
+        public int brightness = -1;
 
-		public RenderInfo() {
-			setRenderAllSides();
-		}
+        public RenderInfo() {
+            setRenderAllSides();
+        }
 
-		public RenderInfo(Block template, IIcon[] texture) {
-			this();
-			this.baseBlock = template;
-			this.textureArray = texture;
-		}
+        public RenderInfo(Block template, IIcon[] texture) {
+            this();
+            this.baseBlock = template;
+            this.textureArray = texture;
+        }
 
-		public RenderInfo(float minX, float minY, float minZ, float maxX, float maxY, float maxZ) {
-			this();
-			setBounds(minX, minY, minZ, maxX, maxY, maxZ);
-		}
+        public RenderInfo(float minX, float minY, float minZ, float maxX, float maxY, float maxZ) {
+            this();
+            setBounds(minX, minY, minZ, maxX, maxY, maxZ);
+        }
 
-		public float getBlockBrightness(IBlockAccess iblockaccess, int i, int j, int k) {
-			return baseBlock.getMixedBrightnessForBlock(iblockaccess, i, j, k);
-		}
+        public float getBlockBrightness(IBlockAccess iblockaccess, int i, int j, int k) {
+            return baseBlock.getMixedBrightnessForBlock(iblockaccess, i, j, k);
+        }
 
-		public final void setBounds(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
-			this.minX = minX;
-			this.minY = minY;
-			this.minZ = minZ;
-			this.maxX = maxX;
-			this.maxY = maxY;
-			this.maxZ = maxZ;
-		}
+        public final void setBounds(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
+            this.minX = minX;
+            this.minY = minY;
+            this.minZ = minZ;
+            this.maxX = maxX;
+            this.maxY = maxY;
+            this.maxZ = maxZ;
+        }
 
-		public final void setRenderSingleSide(int side) {
-			Arrays.fill(renderSide, false);
-			renderSide[side] = true;
-		}
+        public final void setRenderSingleSide(int side) {
+            Arrays.fill(renderSide, false);
+            renderSide[side] = true;
+        }
 
-		public final void setRenderAllSides() {
-			Arrays.fill(renderSide, true);
-		}
+        public final void setRenderAllSides() {
+            Arrays.fill(renderSide, true);
+        }
 
-		public void rotate() {
-			double temp = minX;
-			minX = minZ;
-			minZ = temp;
+        public void rotate() {
+            double temp = minX;
+            minX = minZ;
+            minZ = temp;
 
-			temp = maxX;
-			maxX = maxZ;
-			maxZ = temp;
-		}
+            temp = maxX;
+            maxX = maxZ;
+            maxZ = temp;
+        }
 
-		public void reverseX() {
-			double temp = minX;
-			minX = 1 - maxX;
-			maxX = 1 - temp;
-		}
+        public void reverseX() {
+            double temp = minX;
+            minX = 1 - maxX;
+            maxX = 1 - temp;
+        }
 
-		public void reverseZ() {
-			double temp = minZ;
-			minZ = 1 - maxZ;
-			maxZ = 1 - temp;
-		}
+        public void reverseZ() {
+            double temp = minZ;
+            minZ = 1 - maxZ;
+            maxZ = 1 - temp;
+        }
 
-		public IIcon getBlockTextureFromSide(int i) {
-			if (texture != null) {
-				return texture;
-			}
+        public IIcon getBlockTextureFromSide(int i) {
+            if (texture != null) {
+                return texture;
+            }
 
-			int index = i;
+            int index = i;
 
-			if (textureArray == null || textureArray.length == 0) {
-				return baseBlock.getBlockTextureFromSide(index);
-			} else {
-				if (index >= textureArray.length) {
-					index = 0;
-				}
+            if (textureArray == null || textureArray.length == 0) {
+                return baseBlock.getBlockTextureFromSide(index);
+            } else {
+                if (index >= textureArray.length) {
+                    index = 0;
+                }
 
-				return textureArray[index];
-			}
-		}
-	}
+                return textureArray[index];
+            }
+        }
+    }
 
-	@Override
-	public void doRender(Entity entity, double x, double y, double z, float f, float f1) {
-		doRenderBlock((EntityBlock) entity, x, y, z);
-	}
+    @Override
+    public void doRender(Entity entity, double x, double y, double z, float f, float f1) {
+        doRenderBlock((EntityBlock) entity, x, y, z);
+    }
 
-	public void doRenderBlock(EntityBlock entity, double x, double y, double z) {
-		if (entity.isDead) {
-			return;
-		}
+    public void doRenderBlock(EntityBlock entity, double x, double y, double z) {
+        if (entity.isDead) {
+            return;
+        }
 
-		shadowSize = entity.shadowSize;
-		RenderInfo util = new RenderInfo();
-		util.texture = entity.texture;
-		bindTexture(TextureMap.locationBlocksTexture);
+        shadowSize = entity.shadowSize;
+        RenderInfo util = new RenderInfo();
+        util.texture = entity.texture;
+        bindTexture(TextureMap.locationBlocksTexture);
 
-		for (int iBase = 0; iBase < entity.iSize; ++iBase) {
-			for (int jBase = 0; jBase < entity.jSize; ++jBase) {
-				for (int kBase = 0; kBase < entity.kSize; ++kBase) {
+        for (int iBase = 0; iBase < entity.iSize; ++iBase) {
+            for (int jBase = 0; jBase < entity.jSize; ++jBase) {
+                for (int kBase = 0; kBase < entity.kSize; ++kBase) {
 
-					util.minX = 0;
-					util.minY = 0;
-					util.minZ = 0;
+                    util.minX = 0;
+                    util.minY = 0;
+                    util.minZ = 0;
 
-					double remainX = entity.iSize - iBase;
-					double remainY = entity.jSize - jBase;
-					double remainZ = entity.kSize - kBase;
+                    double remainX = entity.iSize - iBase;
+                    double remainY = entity.jSize - jBase;
+                    double remainZ = entity.kSize - kBase;
 
-					util.maxX = remainX > 1.0 ? 1.0 : remainX;
-					util.maxY = remainY > 1.0 ? 1.0 : remainY;
-					util.maxZ = remainZ > 1.0 ? 1.0 : remainZ;
+                    util.maxX = remainX > 1.0 ? 1.0 : remainX;
+                    util.maxY = remainY > 1.0 ? 1.0 : remainY;
+                    util.maxZ = remainZ > 1.0 ? 1.0 : remainZ;
 
-					GL11.glPushMatrix();
-					GL11.glTranslatef((float) x, (float) y, (float) z);
-					GL11.glRotatef(entity.rotationX, 1, 0, 0);
-					GL11.glRotatef(entity.rotationY, 0, 1, 0);
-					GL11.glRotatef(entity.rotationZ, 0, 0, 1);
-					GL11.glTranslatef(iBase, jBase, kBase);
+                    GL11.glPushMatrix();
+                    GL11.glTranslatef((float) x, (float) y, (float) z);
+                    GL11.glRotatef(entity.rotationX, 1, 0, 0);
+                    GL11.glRotatef(entity.rotationY, 0, 1, 0);
+                    GL11.glRotatef(entity.rotationZ, 0, 0, 1);
+                    GL11.glTranslatef(iBase, jBase, kBase);
 
-					renderBlock(util);
-					GL11.glPopMatrix();
+                    renderBlock(util);
+                    GL11.glPopMatrix();
 
-				}
-			}
-		}
-	}
+                }
+            }
+        }
+    }
 
-	public void renderBlock(RenderInfo info) {
-		Tessellator tessellator = Tessellator.instance;
-		tessellator.startDrawingQuads();
-		
-		renderBlocks.setRenderBounds(info.minX, info.minY, info.minZ, info.maxX, info.maxY, info.maxZ);
+    public void renderBlock(RenderInfo info) {
+        Tessellator tessellator = Tessellator.instance;
+        tessellator.startDrawingQuads();
 
-		if (info.brightness != -1) {
-			tessellator.setBrightness(info.brightness << 4);
-		}
+        renderBlocks.setRenderBounds(info.minX, info.minY, info.minZ, info.maxX, info.maxY, info.maxZ);
 
-		if (info.renderSide[0]) {
-			tessellator.setNormal(0, -1, 0);
-			renderBlocks.renderFaceYNeg(info.baseBlock, 0, 0, 0, info.getBlockTextureFromSide(0));
-		}
-		if (info.renderSide[1]) {
-			tessellator.setNormal(0, 1, 0);
-			renderBlocks.renderFaceYPos(info.baseBlock, 0, 0, 0, info.getBlockTextureFromSide(1));
-		}
-		if (info.renderSide[2]) {
-			tessellator.setNormal(0, 0, -1);
-			renderBlocks.renderFaceZNeg(info.baseBlock, 0, 0, 0, info.getBlockTextureFromSide(2));
-		}
-		if (info.renderSide[3]) {
-			tessellator.setNormal(0, 0, 1);
-			renderBlocks.renderFaceZPos(info.baseBlock, 0, 0, 0, info.getBlockTextureFromSide(3));
-		}
-		if (info.renderSide[4]) {
-			tessellator.setNormal(-1, 0, 0);
-			renderBlocks.renderFaceXNeg(info.baseBlock, 0, 0, 0, info.getBlockTextureFromSide(4));
-		}
-		if (info.renderSide[5]) {
-			tessellator.setNormal(1, 0, 0);
-			renderBlocks.renderFaceXPos(info.baseBlock, 0, 0, 0, info.getBlockTextureFromSide(5));
-		}
-		tessellator.draw();
-	}
+        if (info.brightness != -1) {
+            tessellator.setBrightness(info.brightness << 4);
+        }
+
+        if (info.renderSide[0]) {
+            tessellator.setNormal(0, -1, 0);
+            renderBlocks.renderFaceYNeg(info.baseBlock, 0, 0, 0, info.getBlockTextureFromSide(0));
+        }
+        if (info.renderSide[1]) {
+            tessellator.setNormal(0, 1, 0);
+            renderBlocks.renderFaceYPos(info.baseBlock, 0, 0, 0, info.getBlockTextureFromSide(1));
+        }
+        if (info.renderSide[2]) {
+            tessellator.setNormal(0, 0, -1);
+            renderBlocks.renderFaceZNeg(info.baseBlock, 0, 0, 0, info.getBlockTextureFromSide(2));
+        }
+        if (info.renderSide[3]) {
+            tessellator.setNormal(0, 0, 1);
+            renderBlocks.renderFaceZPos(info.baseBlock, 0, 0, 0, info.getBlockTextureFromSide(3));
+        }
+        if (info.renderSide[4]) {
+            tessellator.setNormal(-1, 0, 0);
+            renderBlocks.renderFaceXNeg(info.baseBlock, 0, 0, 0, info.getBlockTextureFromSide(4));
+        }
+        if (info.renderSide[5]) {
+            tessellator.setNormal(1, 0, 0);
+            renderBlocks.renderFaceXPos(info.baseBlock, 0, 0, 0, info.getBlockTextureFromSide(5));
+        }
+        tessellator.draw();
+    }
 }

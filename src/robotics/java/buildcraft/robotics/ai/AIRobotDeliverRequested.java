@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.ai;
 
 import net.minecraft.item.ItemStack;
@@ -20,63 +16,60 @@ import buildcraft.core.lib.inventory.filters.ArrayStackOrListFilter;
 
 public class AIRobotDeliverRequested extends AIRobot {
 
-	private StackRequest requested;
-	private boolean delivered = false;
+    private StackRequest requested;
+    private boolean delivered = false;
 
-	public AIRobotDeliverRequested(EntityRobotBase iRobot) {
-		super(iRobot);
-	}
+    public AIRobotDeliverRequested(EntityRobotBase iRobot) {
+        super(iRobot);
+    }
 
-	public AIRobotDeliverRequested(EntityRobotBase robot, StackRequest request) {
-		this(robot);
+    public AIRobotDeliverRequested(EntityRobotBase robot, StackRequest request) {
+        this(robot);
 
-		requested = request;
-	}
+        requested = request;
+    }
 
-	@Override
-	public void start() {
-		startDelegateAI(new AIRobotGotoStation(robot, requested.station));
-	}
+    @Override
+    public void start() {
+        startDelegateAI(new AIRobotGotoStation(robot, requested.station));
+    }
 
-	@Override
-	public void delegateAIEnded(AIRobot ai) {
-		if (ai instanceof AIRobotGotoStation) {
-			if (!ai.success()) {
-				terminate();
-				return;
-			}
+    @Override
+    public void delegateAIEnded(AIRobot ai) {
+        if (ai instanceof AIRobotGotoStation) {
+            if (!ai.success()) {
+                terminate();
+                return;
+            }
 
-			IInvSlot slot = InvUtils.getItem(robot, new ArrayStackOrListFilter(requested.stack));
+            IInvSlot slot = InvUtils.getItem(robot, new ArrayStackOrListFilter(requested.stack));
 
-			if (slot == null) {
-				terminate();
-				return;
-			}
+            if (slot == null) {
+                terminate();
+                return;
+            }
 
-			if (requested.requester != null) {
-				ItemStack newStack = ((IRequestProvider)
-					requested.requester).provideItemsForRequest(requested.index,
-							slot.getStackInSlot().copy());
+            if (requested.requester != null) {
+                ItemStack newStack = ((IRequestProvider) requested.requester).provideItemsForRequest(requested.index, slot.getStackInSlot().copy());
 
-				if (newStack == null || newStack.stackSize != slot.getStackInSlot().stackSize) {
-					delivered = true;
-					slot.setStackInSlot(newStack);
-				}
+                if (newStack == null || newStack.stackSize != slot.getStackInSlot().stackSize) {
+                    delivered = true;
+                    slot.setStackInSlot(newStack);
+                }
 
-				terminate();
-			} else {
-				startDelegateAI(new AIRobotUnload(robot));
-				return;
-			}
-		} else if (ai instanceof AIRobotUnload) {
-			delivered = ai.success();
-			terminate();
-		}
-	}
+                terminate();
+            } else {
+                startDelegateAI(new AIRobotUnload(robot));
+                return;
+            }
+        } else if (ai instanceof AIRobotUnload) {
+            delivered = ai.success();
+            terminate();
+        }
+    }
 
-
-	@Override
-	public boolean success() {
-		return delivered;
-	}
+    @Override
+    public boolean success() {
+        return delivered;
+    }
 }

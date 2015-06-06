@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.network;
 
 import io.netty.buffer.ByteBuf;
@@ -20,110 +16,109 @@ import buildcraft.transport.TravelingItem;
 
 public class PacketPipeTransportTraveler extends Packet {
 
-	public int posX;
-	public int posY;
-	public int posZ;
+    public int posX;
+    public int posY;
+    public int posZ;
 
-	private TravelingItem item;
-	private boolean forceStackRefresh;
-	private int entityId;
-	private EnumFacing input;
-	private EnumFacing output;
-	private EnumColor color;
-	private float itemX;
-	private float itemY;
-	private float itemZ;
-	private float speed;
+    private TravelingItem item;
+    private boolean forceStackRefresh;
+    private int entityId;
+    private EnumFacing input;
+    private EnumFacing output;
+    private EnumColor color;
+    private float itemX;
+    private float itemY;
+    private float itemZ;
+    private float speed;
 
-	public PacketPipeTransportTraveler() {
-	}
+    public PacketPipeTransportTraveler() {}
 
-	public PacketPipeTransportTraveler(TravelingItem item, boolean forceStackRefresh) {
-		this.item = item;
-		this.forceStackRefresh = forceStackRefresh;
-	}
+    public PacketPipeTransportTraveler(TravelingItem item, boolean forceStackRefresh) {
+        this.item = item;
+        this.forceStackRefresh = forceStackRefresh;
+    }
 
-	@Override
-	public void writeData(ByteBuf data) {
-		data.writeFloat((float) item.xCoord);
-		data.writeFloat((float) item.yCoord);
-		data.writeFloat((float) item.zCoord);
+    @Override
+    public void writeData(ByteBuf data) {
+        data.writeFloat((float) item.xCoord);
+        data.writeFloat((float) item.yCoord);
+        data.writeFloat((float) item.zCoord);
 
-		data.writeShort(item.id);
+        data.writeShort(item.id);
 
-		byte flags = (byte) ((item.output.ordinal() & 7) | ((item.input.ordinal() & 7) << 3) | (forceStackRefresh ? 64 : 0));
-		data.writeByte(flags);
+        byte flags = (byte) ((item.output.ordinal() & 7) | ((item.input.ordinal() & 7) << 3) | (forceStackRefresh ? 64 : 0));
+        data.writeByte(flags);
 
-		data.writeByte(item.color != null ? item.color.ordinal() : -1);
+        data.writeByte(item.color != null ? item.color.ordinal() : -1);
 
-		data.writeFloat(item.getSpeed());
-	}
+        data.writeFloat(item.getSpeed());
+    }
 
-	@Override
-	public void readData(ByteBuf data) {
-		this.itemX = data.readFloat();
-		this.itemY = data.readFloat();
-		this.itemZ = data.readFloat();
+    @Override
+    public void readData(ByteBuf data) {
+        this.itemX = data.readFloat();
+        this.itemY = data.readFloat();
+        this.itemZ = data.readFloat();
 
-		posX = MathHelper.floor_float(itemX);
-		posY = MathHelper.floor_float(itemY);
-		posZ = MathHelper.floor_float(itemZ);
+        posX = MathHelper.floor_float(itemX);
+        posY = MathHelper.floor_float(itemY);
+        posZ = MathHelper.floor_float(itemZ);
 
-		this.entityId = data.readShort();
+        this.entityId = data.readShort();
 
-		int flags = data.readUnsignedByte();
+        int flags = data.readUnsignedByte();
 
-		this.input = EnumFacing.getOrientation((flags >> 3) & 7);
-		this.output = EnumFacing.getOrientation(flags & 7);
+        this.input = EnumFacing.getOrientation((flags >> 3) & 7);
+        this.output = EnumFacing.getOrientation(flags & 7);
 
-		byte c = data.readByte();
-		if (c != -1) {
-			this.color = EnumColor.fromId(c);
-		}
+        byte c = data.readByte();
+        if (c != -1) {
+            this.color = EnumColor.fromId(c);
+        }
 
-		this.speed = data.readFloat();
+        this.speed = data.readFloat();
 
-		this.forceStackRefresh = (flags & 0x40) > 0;
-	}
+        this.forceStackRefresh = (flags & 0x40) > 0;
+    }
 
-	public int getTravelingEntityId() {
-		return entityId;
-	}
+    public int getTravelingEntityId() {
+        return entityId;
+    }
 
-	public EnumFacing getInputOrientation() {
-		return input;
-	}
+    public EnumFacing getInputOrientation() {
+        return input;
+    }
 
-	public EnumFacing getOutputOrientation() {
-		return output;
-	}
+    public EnumFacing getOutputOrientation() {
+        return output;
+    }
 
-	public EnumColor getColor() {
-		return color;
-	}
+    public EnumColor getColor() {
+        return color;
+    }
 
-	public double getItemX() {
-		return itemX;
-	}
+    public double getItemX() {
+        return itemX;
+    }
 
-	public double getItemY() {
-		return itemY;
-	}
+    public double getItemY() {
+        return itemY;
+    }
 
-	public double getItemZ() {
-		return itemZ;
-	}
+    public double getItemZ() {
+        return itemZ;
+    }
 
-	public float getSpeed() {
-		return speed;
-	}
+    public float getSpeed() {
+        return speed;
+    }
 
-	public boolean forceStackRefresh() {
-		return forceStackRefresh;
-	}
+    public boolean forceStackRefresh() {
+        return forceStackRefresh;
+    }
 
-	@Override
-	public int getID() {
-		return PacketIds.PIPE_TRAVELER;
-	}
+    @Override
+    public int getID() {
+        return PacketIds.PIPE_TRAVELER;
+    }
 }

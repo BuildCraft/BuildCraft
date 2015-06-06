@@ -24,169 +24,165 @@ import buildcraft.transport.pipes.PipeItemsWood;
 
 public class DockingStationPipe extends DockingStation {
 
-	private IInjectable injectablePipe = new IInjectable() {
-		@Override
-		public boolean canInjectItems(EnumFacing from) {
-			return true;
-		}
+    private IInjectable injectablePipe = new IInjectable() {
+        @Override
+        public boolean canInjectItems(EnumFacing from) {
+            return true;
+        }
 
-		@Override
-		public int injectItem(ItemStack stack, boolean doAdd, EnumFacing from, EnumColor color) {
-			if (doAdd) {
-				float cx = x() + 0.5F + 0.2F * side().offsetX;
-				float cy = y() + 0.5F + 0.2F * side().offsetY;
-				float cz = z() + 0.5F + 0.2F * side().offsetZ;
-				TravelingItem item = TravelingItem.make(cx, cy, cz, stack);
+        @Override
+        public int injectItem(ItemStack stack, boolean doAdd, EnumFacing from, EnumColor color) {
+            if (doAdd) {
+                float cx = x() + 0.5F + 0.2F * side().offsetX;
+                float cy = y() + 0.5F + 0.2F * side().offsetY;
+                float cz = z() + 0.5F + 0.2F * side().offsetZ;
+                TravelingItem item = TravelingItem.make(cx, cy, cz, stack);
 
-				((PipeTransportItems) ((Pipe) getPipe().getPipe()).transport)
-						.injectItem(item, from);
-			}
-			return stack.stackSize;
-		}
-	};
+                ((PipeTransportItems) ((Pipe) getPipe().getPipe()).transport).injectItem(item, from);
+            }
+            return stack.stackSize;
+        }
+    };
 
-	private IPipeTile pipe;
+    private IPipeTile pipe;
 
-	public DockingStationPipe() {
-		// Loading later from NBT
-	}
+    public DockingStationPipe() {
+        // Loading later from NBT
+    }
 
-	public DockingStationPipe(IPipeTile iPipe, EnumFacing side) {
-		super(new BlockPos(iPipe.x(), iPipe.y(), iPipe.z()), side);
-		pipe = iPipe;
-		world = iPipe.getWorld();
-	}
+    public DockingStationPipe(IPipeTile iPipe, EnumFacing side) {
+        super(new BlockPos(iPipe.x(), iPipe.y(), iPipe.z()), side);
+        pipe = iPipe;
+        world = iPipe.getWorld();
+    }
 
-	public IPipeTile getPipe() {
-		if (pipe == null) {
-			pipe = (IPipeTile) world.getTileEntity(x(), y(), z());
-		}
+    public IPipeTile getPipe() {
+        if (pipe == null) {
+            pipe = (IPipeTile) world.getTileEntity(x(), y(), z());
+        }
 
-		if (pipe == null || ((TileEntity) pipe).isInvalid()) {
-			// Inconsistency - remove this pipe from the registry.
-			RobotManager.registryProvider.getRegistry(world).removeStation(this);
-			pipe = null;
-		}
+        if (pipe == null || ((TileEntity) pipe).isInvalid()) {
+            // Inconsistency - remove this pipe from the registry.
+            RobotManager.registryProvider.getRegistry(world).removeStation(this);
+            pipe = null;
+        }
 
-		return pipe;
-	}
+        return pipe;
+    }
 
-	@Override
-	public Iterable<StatementSlot> getActiveActions() {
-		return new ActionIterator(getPipe().getPipe());
-	}
+    @Override
+    public Iterable<StatementSlot> getActiveActions() {
+        return new ActionIterator(getPipe().getPipe());
+    }
 
-	@Override
-	public IInjectable getItemOutput() {
-		if (getPipe().getPipeType() != IPipeTile.PipeType.ITEM) {
-			return null;
-		}
+    @Override
+    public IInjectable getItemOutput() {
+        if (getPipe().getPipeType() != IPipeTile.PipeType.ITEM) {
+            return null;
+        }
 
-		return injectablePipe;
-	}
+        return injectablePipe;
+    }
 
-	@Override
-	public IInventory getItemInput() {
-		if (getPipe().getPipeType() != IPipeTile.PipeType.ITEM) {
-			return null;
-		}
+    @Override
+    public IInventory getItemInput() {
+        if (getPipe().getPipeType() != IPipeTile.PipeType.ITEM) {
+            return null;
+        }
 
-		if (!(getPipe().getPipe() instanceof PipeItemsWood)) {
-			return null;
-		}
+        if (!(getPipe().getPipe() instanceof PipeItemsWood)) {
+            return null;
+        }
 
-		int meta = ((TileEntity) getPipe()).getBlockMetadata();
-		EnumFacing dir = EnumFacing.getOrientation(meta);
+        int meta = ((TileEntity) getPipe()).getBlockMetadata();
+        EnumFacing dir = EnumFacing.getOrientation(meta);
 
-		TileEntity connectedTile = getPipe().getWorld().getTileEntity(x() + dir.offsetX,
-				y() + dir.offsetY, z() + dir.offsetZ);
-		if (connectedTile instanceof IInventory) {
-			return (IInventory) connectedTile;
-		}
+        TileEntity connectedTile = getPipe().getWorld().getTileEntity(x() + dir.offsetX, y() + dir.offsetY, z() + dir.offsetZ);
+        if (connectedTile instanceof IInventory) {
+            return (IInventory) connectedTile;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	public IFluidHandler getFluidInput() {
-		if (getPipe().getPipeType() != IPipeTile.PipeType.FLUID) {
-			return null;
-		}
+    @Override
+    public IFluidHandler getFluidInput() {
+        if (getPipe().getPipeType() != IPipeTile.PipeType.FLUID) {
+            return null;
+        }
 
-		if (!(getPipe().getPipe() instanceof PipeFluidsWood)) {
-			return null;
-		}
+        if (!(getPipe().getPipe() instanceof PipeFluidsWood)) {
+            return null;
+        }
 
-		int meta = ((TileEntity) getPipe()).getBlockMetadata();
-		EnumFacing dir = EnumFacing.getOrientation(meta);
+        int meta = ((TileEntity) getPipe()).getBlockMetadata();
+        EnumFacing dir = EnumFacing.getOrientation(meta);
 
-		TileEntity connectedTile = getPipe().getWorld().getTileEntity(x() + dir.offsetX,
-				y() + dir.offsetY, z() + dir.offsetZ);
-		if (connectedTile instanceof IFluidHandler) {
-			return (IFluidHandler) connectedTile;
-		}
+        TileEntity connectedTile = getPipe().getWorld().getTileEntity(x() + dir.offsetX, y() + dir.offsetY, z() + dir.offsetZ);
+        if (connectedTile instanceof IFluidHandler) {
+            return (IFluidHandler) connectedTile;
+        }
 
-		return null;
-	}
+        return null;
+    }
 
-	@Override
-	public IFluidHandler getFluidOutput() {
-		if (getPipe().getPipeType() != IPipeTile.PipeType.FLUID) {
-			return null;
-		}
+    @Override
+    public IFluidHandler getFluidOutput() {
+        if (getPipe().getPipeType() != IPipeTile.PipeType.FLUID) {
+            return null;
+        }
 
-		return (IFluidHandler) ((Pipe) getPipe().getPipe()).transport;
-	}
+        return (IFluidHandler) ((Pipe) getPipe().getPipe()).transport;
+    }
 
-	@Override
-	public boolean providesPower() {
-		return getPipe().getPipeType() == IPipeTile.PipeType.POWER;
-	}
+    @Override
+    public boolean providesPower() {
+        return getPipe().getPipeType() == IPipeTile.PipeType.POWER;
+    }
 
-	@Override
-	public IRequestProvider getRequestProvider() {
-		for (EnumFacing dir : EnumFacing.VALID_DIRECTIONS) {
-			TileEntity nearbyTile = getPipe().getWorld().getTileEntity(x() + dir.offsetX,
-					y() + dir.offsetY, z() + dir.offsetZ);
-			if (nearbyTile instanceof IRequestProvider) {
-				return (IRequestProvider) nearbyTile;
-			}
-		}
-		return null;
-	}
+    @Override
+    public IRequestProvider getRequestProvider() {
+        for (EnumFacing dir : EnumFacing.VALID_DIRECTIONS) {
+            TileEntity nearbyTile = getPipe().getWorld().getTileEntity(x() + dir.offsetX, y() + dir.offsetY, z() + dir.offsetZ);
+            if (nearbyTile instanceof IRequestProvider) {
+                return (IRequestProvider) nearbyTile;
+            }
+        }
+        return null;
+    }
 
-	@Override
-	public boolean isInitialized() {
-		if (getPipe() == null || getPipe().getPipe() == null) {
-			return false;
-		}
-		return ((Pipe) getPipe().getPipe()).isInitialized();
-	}
+    @Override
+    public boolean isInitialized() {
+        if (getPipe() == null || getPipe().getPipe() == null) {
+            return false;
+        }
+        return ((Pipe) getPipe().getPipe()).isInitialized();
+    }
 
-	@Override
-	public boolean take(EntityRobotBase robot) {
-		boolean result = super.take(robot);
-		if (result) {
-			getPipe().scheduleRenderUpdate();
-		}
-		return result;
-	}
+    @Override
+    public boolean take(EntityRobotBase robot) {
+        boolean result = super.take(robot);
+        if (result) {
+            getPipe().scheduleRenderUpdate();
+        }
+        return result;
+    }
 
-	@Override
-	public boolean takeAsMain(EntityRobotBase robot) {
-		boolean result = super.takeAsMain(robot);
-		if (result) {
-			getPipe().scheduleRenderUpdate();
-		}
-		return result;
-	}
+    @Override
+    public boolean takeAsMain(EntityRobotBase robot) {
+        boolean result = super.takeAsMain(robot);
+        if (result) {
+            getPipe().scheduleRenderUpdate();
+        }
+        return result;
+    }
 
-	@Override
-	public void unsafeRelease(EntityRobotBase robot) {
-		super.unsafeRelease(robot);
-		if (robotTaking() == null) {
-			getPipe().scheduleRenderUpdate();
-		}
-	}
+    @Override
+    public void unsafeRelease(EntityRobotBase robot) {
+        super.unsafeRelease(robot);
+        if (robotTaking() == null) {
+            getPipe().scheduleRenderUpdate();
+        }
+    }
 
 }

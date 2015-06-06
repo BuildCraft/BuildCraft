@@ -19,116 +19,113 @@ import buildcraft.core.lib.utils.PathFindingSearch;
 
 public class AIRobotSearchBlock extends AIRobot {
 
-	public BlockPos blockFound;
-	public LinkedList<BlockPos> path;
-	private PathFindingSearch blockScanner = null;
-	private IterableAlgorithmRunner blockScannerJob;
-	private IBlockFilter pathFound;
-	private Iterator<BlockPos> blockIter;
-	private double maxDistanceToEnd;
-	private IZone zone;
+    public BlockPos blockFound;
+    public LinkedList<BlockPos> path;
+    private PathFindingSearch blockScanner = null;
+    private IterableAlgorithmRunner blockScannerJob;
+    private IBlockFilter pathFound;
+    private Iterator<BlockPos> blockIter;
+    private double maxDistanceToEnd;
+    private IZone zone;
 
-	public AIRobotSearchBlock(EntityRobotBase iRobot, boolean random, IBlockFilter iPathFound,
-			double iMaxDistanceToEnd) {
-		super(iRobot);
+    public AIRobotSearchBlock(EntityRobotBase iRobot, boolean random, IBlockFilter iPathFound, double iMaxDistanceToEnd) {
+        super(iRobot);
 
-		pathFound = iPathFound;
-		zone = iRobot.getZoneToWork();
-		if (!random) {
-			blockIter = new BlockScannerExpanding().iterator();
-		} else {
-			if (zone != null) {
-				BlockPos pos = new BlockPos(iRobot);
-				blockIter = new BlockScannerZoneRandom(pos.x, pos.y, pos.z, iRobot.worldObj.rand, zone)
-						.iterator();
-			} else {
-				blockIter = new BlockScannerRandom(iRobot.worldObj.rand, 64).iterator();
-			}
-		}
-		blockFound = null;
-		path = null;
-		maxDistanceToEnd = iMaxDistanceToEnd;
-	}
+        pathFound = iPathFound;
+        zone = iRobot.getZoneToWork();
+        if (!random) {
+            blockIter = new BlockScannerExpanding().iterator();
+        } else {
+            if (zone != null) {
+                BlockPos pos = new BlockPos(iRobot);
+                blockIter = new BlockScannerZoneRandom(pos.x, pos.y, pos.z, iRobot.worldObj.rand, zone).iterator();
+            } else {
+                blockIter = new BlockScannerRandom(iRobot.worldObj.rand, 64).iterator();
+            }
+        }
+        blockFound = null;
+        path = null;
+        maxDistanceToEnd = iMaxDistanceToEnd;
+    }
 
-	@Override
-	public void start() {
-		blockScanner = new PathFindingSearch(robot.worldObj, new BlockPos(
-				robot), blockIter, pathFound, maxDistanceToEnd, 96, zone);
-		blockScannerJob = new IterableAlgorithmRunner(blockScanner);
-		blockScannerJob.start();
-	}
+    @Override
+    public void start() {
+        blockScanner = new PathFindingSearch(robot.worldObj, new BlockPos(robot), blockIter, pathFound, maxDistanceToEnd, 96, zone);
+        blockScannerJob = new IterableAlgorithmRunner(blockScanner);
+        blockScannerJob.start();
+    }
 
-	@Override
-	public void update() {
-		if (blockScannerJob == null) {
-			// This is probably due to a load from NBT. Abort the ai in
-			// that case, since there's no filter to analyze either.
-			abort();
-			return;
-		}
+    @Override
+    public void update() {
+        if (blockScannerJob == null) {
+            // This is probably due to a load from NBT. Abort the ai in
+            // that case, since there's no filter to analyze either.
+            abort();
+            return;
+        }
 
-		if (blockScannerJob.isDone()) {
-			path = blockScanner.getResult();
+        if (blockScannerJob.isDone()) {
+            path = blockScanner.getResult();
 
-			if (path != null && path.size() > 0) {
-				path.removeLast();
-				blockFound = blockScanner.getResultTarget();
-			} else {
-				path = null;
-			}
+            if (path != null && path.size() > 0) {
+                path.removeLast();
+                blockFound = blockScanner.getResultTarget();
+            } else {
+                path = null;
+            }
 
-			terminate();
-		}
-	}
+            terminate();
+        }
+    }
 
-	@Override
-	public void end() {
-		if (blockScannerJob != null) {
-			blockScannerJob.terminate();
-		}
-	}
+    @Override
+    public void end() {
+        if (blockScannerJob != null) {
+            blockScannerJob.terminate();
+        }
+    }
 
-	@Override
-	public boolean success() {
-		return blockFound != null;
-	}
+    @Override
+    public boolean success() {
+        return blockFound != null;
+    }
 
-	@Override
-	public void writeSelfToNBT(NBTTagCompound nbt) {
-		super.writeSelfToNBT(nbt);
+    @Override
+    public void writeSelfToNBT(NBTTagCompound nbt) {
+        super.writeSelfToNBT(nbt);
 
-		if (blockFound != null) {
-			NBTTagCompound sub = new NBTTagCompound();
-			blockFound.writeTo(sub);
-			nbt.setTag("blockFound", sub);
-		}
-	}
+        if (blockFound != null) {
+            NBTTagCompound sub = new NBTTagCompound();
+            blockFound.writeTo(sub);
+            nbt.setTag("blockFound", sub);
+        }
+    }
 
-	@Override
-	public void loadSelfFromNBT(NBTTagCompound nbt) {
-		super.loadSelfFromNBT(nbt);
+    @Override
+    public void loadSelfFromNBT(NBTTagCompound nbt) {
+        super.loadSelfFromNBT(nbt);
 
-		if (nbt.hasKey("blockFound")) {
-			blockFound = new BlockPos(nbt.getCompoundTag("blockFound"));
-		}
-	}
+        if (nbt.hasKey("blockFound")) {
+            blockFound = new BlockPos(nbt.getCompoundTag("blockFound"));
+        }
+    }
 
-	public boolean takeResource() {
-		boolean taken = false;
-		if (robot.getRegistry().take(new ResourceIdBlock(blockFound), robot)) {
-			taken = true;
-		}
-		unreserve();
-		return taken;
-	}
+    public boolean takeResource() {
+        boolean taken = false;
+        if (robot.getRegistry().take(new ResourceIdBlock(blockFound), robot)) {
+            taken = true;
+        }
+        unreserve();
+        return taken;
+    }
 
-	public void unreserve() {
-		blockScanner.unreserve(blockFound);
-	}
+    public void unreserve() {
+        blockScanner.unreserve(blockFound);
+    }
 
-	@Override
-	public int getEnergyCost() {
-		return 2;
-	}
+    @Override
+    public int getEnergyCost() {
+        return 2;
+    }
 
 }

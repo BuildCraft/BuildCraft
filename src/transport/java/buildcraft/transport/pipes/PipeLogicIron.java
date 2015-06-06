@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,93 +16,96 @@ import buildcraft.transport.Pipe;
 
 public abstract class PipeLogicIron {
 
-	protected final Pipe<?> pipe;
-	private boolean lastPower = false;
+    protected final Pipe<?> pipe;
+    private boolean lastPower = false;
 
-	public PipeLogicIron(Pipe<?> pipe) {
-		this.pipe = pipe;
-	}
+    public PipeLogicIron(Pipe<?> pipe) {
+        this.pipe = pipe;
+    }
 
-	public void switchOnRedstone() {
-		boolean currentPower = pipe.container.getWorldObj().isBlockIndirectlyGettingPowered(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+    public void switchOnRedstone() {
+        boolean currentPower =
+            pipe.container.getWorldObj().isBlockIndirectlyGettingPowered(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
 
-		if (currentPower != lastPower) {
-			switchPosition();
+        if (currentPower != lastPower) {
+            switchPosition();
 
-			lastPower = currentPower;
-		}
-	}
+            lastPower = currentPower;
+        }
+    }
 
-	private void switchPosition() {
-		int meta = pipe.container.getBlockMetadata();
+    private void switchPosition() {
+        int meta = pipe.container.getBlockMetadata();
 
-		for (int i = meta + 1; i <= meta + 6; ++i) {
-			EnumFacing facing = EnumFacing.getOrientation(i % 6);
-			if (setFacing(facing)) {
-				return;
-			}
-		}
-	}
+        for (int i = meta + 1; i <= meta + 6; ++i) {
+            EnumFacing facing = EnumFacing.getOrientation(i % 6);
+            if (setFacing(facing)) {
+                return;
+            }
+        }
+    }
 
-	private boolean isValidFacing(EnumFacing side) {
-		if (!pipe.container.isPipeConnected(side)) {
-			return false;
-		}
+    private boolean isValidFacing(EnumFacing side) {
+        if (!pipe.container.isPipeConnected(side)) {
+            return false;
+        }
 
-		TileBuffer[] tileBuffer = pipe.container.getTileCache();
+        TileBuffer[] tileBuffer = pipe.container.getTileCache();
 
-		if (tileBuffer == null) {
-			return true;
-		} else if (!tileBuffer[side.ordinal()].exists()) {
-			return true;
-		}
+        if (tileBuffer == null) {
+            return true;
+        } else if (!tileBuffer[side.ordinal()].exists()) {
+            return true;
+        }
 
-		TileEntity tile = tileBuffer[side.ordinal()].getTile();
-		return isValidOutputTile(tile);
-	}
+        TileEntity tile = tileBuffer[side.ordinal()].getTile();
+        return isValidOutputTile(tile);
+    }
 
     protected boolean isValidOutputTile(TileEntity tile) {
         return !(tile instanceof IInventory && ((IInventory) tile).getInventoryStackLimit() == 0) && isValidConnectingTile(tile);
     }
 
-	protected abstract boolean isValidConnectingTile(TileEntity tile);
+    protected abstract boolean isValidConnectingTile(TileEntity tile);
 
-	public void initialize() {
-		lastPower = pipe.container.getWorldObj().isBlockIndirectlyGettingPowered(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
-	}
+    public void initialize() {
+        lastPower = pipe.container.getWorldObj().isBlockIndirectlyGettingPowered(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+    }
 
-	public void onBlockPlaced() {
-		pipe.container.getWorldObj().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, 1, 3);
-		switchPosition();
-	}
+    public void onBlockPlaced() {
+        pipe.container.getWorldObj().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, 1, 3);
+        switchPosition();
+    }
 
-	public boolean setFacing(EnumFacing facing) {
-		if (facing.ordinal() != pipe.container.getBlockMetadata() && isValidFacing(facing)) {
-			pipe.container.getWorldObj().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, facing.ordinal(), 3);
-			pipe.container.scheduleRenderUpdate();
-			return true;
-		}
-		return false;
-	}
+    public boolean setFacing(EnumFacing facing) {
+        if (facing.ordinal() != pipe.container.getBlockMetadata() && isValidFacing(facing)) {
+            pipe.container.getWorldObj().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord,
+                facing.ordinal(), 3);
+            pipe.container.scheduleRenderUpdate();
+            return true;
+        }
+        return false;
+    }
 
-	public boolean blockActivated(EntityPlayer entityplayer) {
-		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord)) {
-			switchPosition();
-			pipe.container.scheduleRenderUpdate();
-			((IToolWrench) equipped).wrenchUsed(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+    public boolean blockActivated(EntityPlayer entityplayer) {
+        Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
+        if (equipped instanceof IToolWrench
+            && ((IToolWrench) equipped).canWrench(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord)) {
+            switchPosition();
+            pipe.container.scheduleRenderUpdate();
+            ((IToolWrench) equipped).wrenchUsed(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
 
-			return true;
-		}
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	public EnumFacing getOutputDirection() {
-		return EnumFacing.getOrientation(pipe.container.getBlockMetadata());
-	}
+    public EnumFacing getOutputDirection() {
+        return EnumFacing.getOrientation(pipe.container.getBlockMetadata());
+    }
 
-	public boolean outputOpen(EnumFacing to) {
-		return to.ordinal() == pipe.container.getBlockMetadata();
-	}
+    public boolean outputOpen(EnumFacing to) {
+        return to.ordinal() == pipe.container.getBlockMetadata();
+    }
 }

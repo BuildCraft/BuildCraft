@@ -10,62 +10,62 @@ import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.core.lib.utils.StringUtils;
 
 public class PatternParameterYDir implements IStatementParameter {
-	private static IIcon iconUp, iconDown;
+    private static IIcon iconUp, iconDown;
 
-	public boolean up = false;
+    public boolean up = false;
 
-	public PatternParameterYDir() {
-		super();
-	}
+    public PatternParameterYDir() {
+        super();
+    }
 
-	public PatternParameterYDir(boolean up) {
-		this();
-		this.up = up;
-	}
+    public PatternParameterYDir(boolean up) {
+        this();
+        this.up = up;
+    }
 
-	@Override
-	public String getUniqueTag() {
-		return "buildcraft:fillerParameterYDir";
-	}
+    @Override
+    public String getUniqueTag() {
+        return "buildcraft:fillerParameterYDir";
+    }
 
-	@Override
-	public IIcon getIcon() {
-		return up ? iconUp : iconDown;
-	}
+    @Override
+    public IIcon getIcon() {
+        return up ? iconUp : iconDown;
+    }
 
-	@Override
-	public ItemStack getItemStack() {
-		return null;
-	}
+    @Override
+    public ItemStack getItemStack() {
+        return null;
+    }
 
-	@Override
-	public void registerIcons(IIconRegister iconRegister) {
-		iconUp = iconRegister.registerIcon("buildcraftcore:fillerParameters/arrow_up");
-		iconDown = iconRegister.registerIcon("buildcraftcore:fillerParameters/arrow_down");
-	}
+    @Override
+    public void registerIcons(IIconRegister iconRegister) {
+        iconUp = iconRegister.registerIcon("buildcraftcore:fillerParameters/arrow_up");
+        iconDown = iconRegister.registerIcon("buildcraftcore:fillerParameters/arrow_down");
+    }
 
-	@Override
-	public String getDescription() {
-		return StringUtils.localize("direction." + (up ? "up" : "down"));
-	}
+    @Override
+    public String getDescription() {
+        return StringUtils.localize("direction." + (up ? "up" : "down"));
+    }
 
-	@Override
-	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
-		up = !up;
-	}
+    @Override
+    public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+        up = !up;
+    }
 
-	@Override
-	public void readFromNBT(NBTTagCompound compound) {
-		up = compound.getBoolean("up");
-	}
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        up = compound.getBoolean("up");
+    }
 
-	@Override
-	public void writeToNBT(NBTTagCompound compound) {
-		compound.setBoolean("up", up);
-	}
+    @Override
+    public void writeToNBT(NBTTagCompound compound) {
+        compound.setBoolean("up", up);
+    }
 
-	@Override
-	public IStatementParameter rotateLeft() {
-		return null;
-	}
+    @Override
+    public IStatementParameter rotateLeft() {
+        return null;
+    }
 }

@@ -1,22 +1,15 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.inventory;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
-/**
- * Wrapper class used to specify part of an existing inventory to be treated as
- * a complete inventory. Used primarily to map a side of an ISidedInventory, but
- * it is also helpful for complex inventories such as the Tunnel Bore.
- */
+/** Wrapper class used to specify part of an existing inventory to be treated as a complete inventory. Used primarily to
+ * map a side of an ISidedInventory, but it is also helpful for complex inventories such as the Tunnel Bore. */
 public class InventoryMapper implements IInventory {
 
     private final IInventory inv;
@@ -25,14 +18,11 @@ public class InventoryMapper implements IInventory {
     private int stackSizeLimit = -1;
     private boolean checkItems = true;
 
-    /**
-     * Creates a new InventoryMapper
+    /** Creates a new InventoryMapper
      *
      * @param inv The backing inventory
      * @param start The starting index
-     * @param size The size of the new inventory, take care not to exceed the
-     * end of the backing inventory
-     */
+     * @param size The size of the new inventory, take care not to exceed the end of the backing inventory */
     public InventoryMapper(IInventory inv, int start, int size) {
         this(inv, start, size, true);
     }
@@ -110,13 +100,13 @@ public class InventoryMapper implements IInventory {
         return true;
     }
 
-	@Override
-	public boolean hasCustomInventoryName() {
-		return inv.hasCustomInventoryName();
-	}
+    @Override
+    public boolean hasCustomInventoryName() {
+        return inv.hasCustomInventoryName();
+    }
 
-	@Override
-	public void markDirty() {
-		inv.markDirty();
-	}
+    @Override
+    public void markDirty() {
+        inv.markDirty();
+    }
 }

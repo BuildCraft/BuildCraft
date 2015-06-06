@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.gui;
 
 import io.netty.buffer.ByteBuf;
@@ -18,8 +14,8 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.BuildCraftCore;
-import buildcraft.builders.TileArchitect;
+import buildcraft.builders.tile.TileArchitect;
+import buildcraft.core.BuildCraftCore;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.blueprints.BlueprintReadConfiguration;
 import buildcraft.core.lib.gui.GuiBuildCraft;
@@ -33,148 +29,141 @@ import buildcraft.core.lib.utils.StringUtils;
 
 public class GuiArchitect extends GuiBuildCraft {
 
-	private static final int TEXT_X = 90;
-	private static final int TEXT_Y = 62;
-	private static final int TEXT_WIDTH = 156;
-	private static final int TEXT_HEIGHT = 12;
+    private static final int TEXT_X = 90;
+    private static final int TEXT_Y = 62;
+    private static final int TEXT_WIDTH = 156;
+    private static final int TEXT_HEIGHT = 12;
 
-	private static final ResourceLocation TEXTURE = new ResourceLocation(
-			"buildcraftbuilders:textures/gui/architect_gui.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/architect_gui.png");
 
-	private TileArchitect architect;
+    private TileArchitect architect;
 
-	private GuiBetterButton optionRotate;
-	private GuiBetterButton optionExcavate;
-	private GuiBetterButton optionAllowCreative;
+    private GuiBetterButton optionRotate;
+    private GuiBetterButton optionExcavate;
+    private GuiBetterButton optionAllowCreative;
 
-	private GuiTextField textField;
+    private GuiTextField textField;
 
-	public GuiArchitect(EntityPlayer player, TileArchitect architect) {
-		super(new ContainerArchitect(player, architect), architect, TEXTURE);
-		this.architect = architect;
-		xSize = 256;
-		ySize = 166;
-	}
+    public GuiArchitect(EntityPlayer player, TileArchitect architect) {
+        super(new ContainerArchitect(player, architect), architect, TEXTURE);
+        this.architect = architect;
+        xSize = 256;
+        ySize = 166;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public void initGui() {
-		super.initGui();
+    @SuppressWarnings("unchecked")
+    @Override
+    public void initGui() {
+        super.initGui();
 
-		Keyboard.enableRepeatEvents(true);
+        Keyboard.enableRepeatEvents(true);
 
-		optionRotate = new GuiBetterButton(0, guiLeft + 5, guiTop + 30, 79, "");
-		buttonList.add(optionRotate);
+        optionRotate = new GuiBetterButton(0, guiLeft + 5, guiTop + 30, 79, "");
+        buttonList.add(optionRotate);
 
-		optionExcavate = new GuiBetterButton(1, guiLeft + 5, guiTop + 55, 79, "");
-		buttonList.add(optionExcavate);
+        optionExcavate = new GuiBetterButton(1, guiLeft + 5, guiTop + 55, 79, "");
+        buttonList.add(optionExcavate);
 
-		optionAllowCreative = new GuiBetterButton(2, guiLeft + 5, guiTop + 80, 79, "");
-		optionAllowCreative.setToolTip(new ToolTip(500,
-				new ToolTipLine(StringUtils.localize("tile.architect.tooltip.allowCreative.1")),
-				new ToolTipLine(StringUtils.localize("tile.architect.tooltip.allowCreative.2"))
-		));
-		buttonList.add(optionAllowCreative);
-		
-		textField = new GuiTextField(this.fontRendererObj, TEXT_X, TEXT_Y, TEXT_WIDTH, TEXT_HEIGHT);
-		textField.setMaxStringLength(DefaultProps.MAX_NAME_SIZE);
-		textField.setText(architect.name);
-		textField.setFocused(true);
+        optionAllowCreative = new GuiBetterButton(2, guiLeft + 5, guiTop + 80, 79, "");
+        optionAllowCreative.setToolTip(new ToolTip(500, new ToolTipLine(StringUtils.localize("tile.architect.tooltip.allowCreative.1")),
+            new ToolTipLine(StringUtils.localize("tile.architect.tooltip.allowCreative.2"))));
+        buttonList.add(optionAllowCreative);
 
-		updateButtons();
-	}
+        textField = new GuiTextField(this.fontRendererObj, TEXT_X, TEXT_Y, TEXT_WIDTH, TEXT_HEIGHT);
+        textField.setMaxStringLength(DefaultProps.MAX_NAME_SIZE);
+        textField.setText(architect.name);
+        textField.setFocused(true);
 
-	@Override
-	public void onGuiClosed() {
-		Keyboard.enableRepeatEvents(false);
-	}
+        updateButtons();
+    }
 
-	@Override
-	protected void actionPerformed(GuiButton button) {
-		BlueprintReadConfiguration conf = architect.readConfiguration;
+    @Override
+    public void onGuiClosed() {
+        Keyboard.enableRepeatEvents(false);
+    }
 
-		if (button == optionRotate) {
-			conf.rotate = !conf.rotate;
-		} else if (button == optionExcavate) {
-			conf.excavate = !conf.excavate;
-		} else if (button == optionAllowCreative) {
-			conf.allowCreative = !conf.allowCreative;
-		}
+    @Override
+    protected void actionPerformed(GuiButton button) {
+        BlueprintReadConfiguration conf = architect.readConfiguration;
 
-		architect.rpcSetConfiguration(conf);
+        if (button == optionRotate) {
+            conf.rotate = !conf.rotate;
+        } else if (button == optionExcavate) {
+            conf.excavate = !conf.excavate;
+        } else if (button == optionAllowCreative) {
+            conf.allowCreative = !conf.allowCreative;
+        }
 
-		updateButtons();
-	}
+        architect.rpcSetConfiguration(conf);
 
-	private void updateButtons () {
-		BlueprintReadConfiguration conf = architect.readConfiguration;
+        updateButtons();
+    }
 
-		if (conf.rotate) {
-			optionRotate.displayString = StringUtils.localize("tile.architect.rotate");
-		} else {
-			optionRotate.displayString =  StringUtils.localize("tile.architect.norotate");
-		}
+    private void updateButtons() {
+        BlueprintReadConfiguration conf = architect.readConfiguration;
 
-		if (conf.excavate) {
-			optionExcavate.displayString = StringUtils.localize("tile.architect.excavate");
-		} else {
-			optionExcavate.displayString =  StringUtils.localize("tile.architect.noexcavate");
-		}
+        if (conf.rotate) {
+            optionRotate.displayString = StringUtils.localize("tile.architect.rotate");
+        } else {
+            optionRotate.displayString = StringUtils.localize("tile.architect.norotate");
+        }
 
-		if (conf.allowCreative) {
-			optionAllowCreative.displayString = StringUtils.localize("tile.architect.allowCreative");
-		} else {
-			optionAllowCreative.displayString =  StringUtils.localize("tile.architect.noallowCreative");
-		}
-	}
+        if (conf.excavate) {
+            optionExcavate.displayString = StringUtils.localize("tile.architect.excavate");
+        } else {
+            optionExcavate.displayString = StringUtils.localize("tile.architect.noexcavate");
+        }
 
-	@Override
-	protected void drawGuiContainerForegroundLayer(int par1, int par2) {
-		String title = StringUtils.localize("tile.architectBlock.name");
-		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
+        if (conf.allowCreative) {
+            optionAllowCreative.displayString = StringUtils.localize("tile.architect.allowCreative");
+        } else {
+            optionAllowCreative.displayString = StringUtils.localize("tile.architect.noallowCreative");
+        }
+    }
 
-		/*
-		 * if (editMode && ((new Date()).getTime() / 100) % 8 >= 4) {
-		 * fontRendererObj.drawString(architect.name + "|", 131, 62, 0x404040);
-		 * } else { fontRendererObj.drawString(architect.name, 131, 62,
-		 * 0x404040); }
-		 */
+    @Override
+    protected void drawGuiContainerForegroundLayer(int par1, int par2) {
+        String title = StringUtils.localize("tile.architectBlock.name");
+        fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
 
-		textField.drawTextBox();
-	}
+        /* if (editMode && ((new Date()).getTime() / 100) % 8 >= 4) { fontRendererObj.drawString(architect.name + "|",
+         * 131, 62, 0x404040); } else { fontRendererObj.drawString(architect.name, 131, 62, 0x404040); } */
 
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		mc.renderEngine.bindTexture(TEXTURE);
-		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-		int i1 = ((ContainerArchitect) container).computingTime;
-		drawTexturedModalRect(guiLeft + 159, guiTop + 34, 0, 166, i1 + 1, 16);
-	}
+        textField.drawTextBox();
+    }
 
-	@Override
-	protected void mouseClicked(int i, int j, int k) {
-		super.mouseClicked(i, j, k);
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        mc.renderEngine.bindTexture(TEXTURE);
+        drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+        int i1 = ((ContainerArchitect) container).computingTime;
+        drawTexturedModalRect(guiLeft + 159, guiTop + 34, 0, 166, i1 + 1, 16);
+    }
 
-		textField.mouseClicked(i - guiLeft, j - guiTop, k);
-	}
+    @Override
+    protected void mouseClicked(int i, int j, int k) {
+        super.mouseClicked(i, j, k);
 
-	@Override
-	protected void keyTyped(char c, int i) {
-		if (textField.isFocused()) {
-			if (c == 13 || c == 27) {
-				textField.setFocused(false);
-			} else {
-				textField.textboxKeyTyped(c, i);
-				final String text = textField.getText();
-				BuildCraftCore.instance.sendToServer(new PacketCommand(architect, "setName", new CommandWriter() {
-					public void write(ByteBuf data) {
-						NetworkUtils.writeUTF(data, text);
-					}
-				}));
-			}
-		} else {
-			super.keyTyped(c, i);
-		}
-	}
+        textField.mouseClicked(i - guiLeft, j - guiTop, k);
+    }
+
+    @Override
+    protected void keyTyped(char c, int i) {
+        if (textField.isFocused()) {
+            if (c == 13 || c == 27) {
+                textField.setFocused(false);
+            } else {
+                textField.textboxKeyTyped(c, i);
+                final String text = textField.getText();
+                BuildCraftCore.instance.sendToServer(new PacketCommand(architect, "setName", new CommandWriter() {
+                    public void write(ByteBuf data) {
+                        NetworkUtils.writeUTF(data, text);
+                    }
+                }));
+            }
+        } else {
+            super.keyTyped(c, i);
+        }
+    }
 }

@@ -12,66 +12,64 @@ import buildcraft.core.lib.utils.ResourceUtils;
 import buildcraft.core.lib.utils.Utils;
 
 public abstract class BlockLEDHatchBase extends BlockBuildCraft {
-	private IIcon[] led;
-	private IIcon itemHatch;
+    private IIcon[] led;
+    private IIcon itemHatch;
 
-	protected BlockLEDHatchBase(Material material) {
-		super(material);
+    protected BlockLEDHatchBase(Material material) {
+        super(material);
 
-		setRotatable(true);
-		setPassCount(4);
-	}
+        setRotatable(true);
+        setPassCount(4);
+    }
 
-	@Override
-	public int getLightValue(IBlockAccess world, int x, int y, int z) {
-		return 1;
-	}
+    @Override
+    public int getLightValue(IBlockAccess world, int x, int y, int z) {
+        return 1;
+    }
 
-	@Override
-	public void registerBlockIcons(IIconRegister register) {
-		super.registerBlockIcons(register);
-		String base = ResourceUtils.getObjectPrefix(Block.blockRegistry.getNameForObject(this));
-		led = new IIcon[] {
-				register.registerIcon(base + "/led_red"),
-				register.registerIcon(base + "/led_green")
-		};
-		itemHatch = register.registerIcon(base + "/item_hatch");
-	}
+    @Override
+    public void registerBlockIcons(IIconRegister register) {
+        super.registerBlockIcons(register);
+        String base = ResourceUtils.getObjectPrefix(Block.blockRegistry.getNameForObject(this));
+        led = new IIcon[] { register.registerIcon(base + "/led_red"), register.registerIcon(base + "/led_green") };
+        itemHatch = register.registerIcon(base + "/item_hatch");
+    }
 
-	@Override
-	public IIcon getIcon(IBlockAccess access, int x, int y, int z, int side) {
-		// The quarry's pipe connection method has no idea about "sides".
-		if (renderPass == 1) {
-			return Utils.isPipeConnected(access, x, y, z, EnumFacing.getOrientation(side), IPipeTile.PipeType.ITEM) ? itemHatch : BuildCraftCore.transparentTexture;
-		} else {
-			return super.getIcon(access, x, y, z, side);
-		}
-	}
+    @Override
+    public IIcon getIcon(IBlockAccess access, int x, int y, int z, int side) {
+        // The quarry's pipe connection method has no idea about "sides".
+        if (renderPass == 1) {
+            return Utils.isPipeConnected(access, x, y, z, EnumFacing.getOrientation(side), IPipeTile.PipeType.ITEM) ? itemHatch
+                : BuildCraftCore.transparentTexture;
+        } else {
+            return super.getIcon(access, x, y, z, side);
+        }
+    }
 
-	@Override
-	public IIcon getIconAbsolute(IBlockAccess access, int x, int y, int z, int side, int meta) {
-		if (renderPass == 0) {
-			return super.getIconAbsolute(access, x, y, z, side, meta);
-		} else if (renderPass == 1) {
-			return null;
-		} else {
-			return side == 2 ? led[renderPass - 2] : null;
-		}
-	}
+    @Override
+    public IIcon getIconAbsolute(IBlockAccess access, int x, int y, int z, int side, int meta) {
+        if (renderPass == 0) {
+            return super.getIconAbsolute(access, x, y, z, side, meta);
+        } else if (renderPass == 1) {
+            return null;
+        } else {
+            return side == 2 ? led[renderPass - 2] : null;
+        }
+    }
 
-	@Override
-	public IIcon getIconAbsolute(int side, int meta) {
-		if (renderPass == 0) {
-			return super.getIconAbsolute(side, meta);
-		} else if (renderPass == 1) {
-			return side == 1 ? itemHatch : null;
-		} else {
-			return side == 2 ? led[renderPass - 2] : null;
-		}
-	}
+    @Override
+    public IIcon getIconAbsolute(int side, int meta) {
+        if (renderPass == 0) {
+            return super.getIconAbsolute(side, meta);
+        } else if (renderPass == 1) {
+            return side == 1 ? itemHatch : null;
+        } else {
+            return side == 2 ? led[renderPass - 2] : null;
+        }
+    }
 
-	@Override
-	public boolean renderAsNormalBlock() {
-		return false;
-	}
+    @Override
+    public boolean renderAsNormalBlock() {
+        return false;
+    }
 }

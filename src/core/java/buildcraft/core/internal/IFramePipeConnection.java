@@ -8,5 +8,5 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 
 public interface IFramePipeConnection {
-	boolean isPipeConnected(IBlockAccess blockAccess, BlockPos pos1, BlockPos pos2);
+    boolean isPipeConnected(IBlockAccess blockAccess, BlockPos pos1, BlockPos pos2);
 }

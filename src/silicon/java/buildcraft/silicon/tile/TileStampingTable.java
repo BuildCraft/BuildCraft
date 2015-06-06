@@ -22,6 +22,7 @@ import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.silicon.item.ItemPackage;
 
 public class TileStampingTable extends TileLaserTableBase implements IHasWork, ISidedInventory {
     private class LocalInventoryCrafting extends InventoryCrafting {
@@ -92,9 +93,8 @@ public class TileStampingTable extends TileLaserTableBase implements IHasWork, I
                     this.setInventorySlotContents(1, input);
                 }
                 return;
-            } else if (resultInto != null &&
-                    (!StackHelper.canStacksMerge(result, resultInto) ||
-                    resultInto.stackSize + result.stackSize > result.getMaxStackSize())) {
+            } else if (resultInto != null
+                && (!StackHelper.canStacksMerge(result, resultInto) || resultInto.stackSize + result.stackSize > result.getMaxStackSize())) {
                 return;
             }
 

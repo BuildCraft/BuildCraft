@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.ai;
 
 import net.minecraft.item.ItemStack;
@@ -23,69 +19,67 @@ import buildcraft.robotics.statements.ActionStationInputItems;
 
 public class AIRobotUnload extends AIRobot {
 
-	private int waitedCycles = 0;
+    private int waitedCycles = 0;
 
-	public AIRobotUnload(EntityRobotBase iRobot) {
-		super(iRobot);
-	}
+    public AIRobotUnload(EntityRobotBase iRobot) {
+        super(iRobot);
+    }
 
-	@Override
-	public void update() {
-		waitedCycles++;
+    @Override
+    public void update() {
+        waitedCycles++;
 
-		if (waitedCycles > 40) {
-			if (unload(robot, robot.getDockingStation(), true)) {
-				waitedCycles = 0;
-			} else {
-				setSuccess(!robot.containsItems());
-				terminate();
-			}
-		}
-	}
+        if (waitedCycles > 40) {
+            if (unload(robot, robot.getDockingStation(), true)) {
+                waitedCycles = 0;
+            } else {
+                setSuccess(!robot.containsItems());
+                terminate();
+            }
+        }
+    }
 
-	public static boolean unload(EntityRobotBase robot, DockingStation station, boolean doUnload) {
-		if (station == null) {
-			return false;
-		}
+    public static boolean unload(EntityRobotBase robot, DockingStation station, boolean doUnload) {
+        if (station == null) {
+            return false;
+        }
 
-		IInjectable output = station.getItemOutput();
-		if (output == null) {
-			return false;
-		}
+        IInjectable output = station.getItemOutput();
+        if (output == null) {
+            return false;
+        }
 
-		for (IInvSlot robotSlot : InventoryIterator.getIterable(robot, EnumFacing.UNKNOWN)) {
-			if (robotSlot.getStackInSlot() == null) {
-				continue;
-			}
+        for (IInvSlot robotSlot : InventoryIterator.getIterable(robot, EnumFacing.UNKNOWN)) {
+            if (robotSlot.getStackInSlot() == null) {
+                continue;
+            }
 
-			if (!ActionRobotFilter
-					.canInteractWithItem(station, new ArrayStackFilter(robotSlot.getStackInSlot()),
-							ActionStationInputItems.class)) {
-				return false;
-			}
+            if (!ActionRobotFilter.canInteractWithItem(station, new ArrayStackFilter(robotSlot.getStackInSlot()), ActionStationInputItems.class)) {
+                return false;
+            }
 
-			EnumFacing injectSide = station.side().getOpposite();
+            EnumFacing injectSide = station.side().getOpposite();
 
-			ItemStack stack = robotSlot.getStackInSlot();
-			int used = output.injectItem(stack, doUnload, injectSide, null);
-			if (used > 0) {
-				if (doUnload) {
-					stack.stackSize -= used;
-					if (stack.stackSize > 0) {
-						robotSlot.setStackInSlot(stack);
-					} else {
-						robotSlot.setStackInSlot(null);
-					}
-				}
-				return true;
-			}
-		}
+            ItemStack stack = robotSlot.getStackInSlot();
+            int used = output.injectItem(stack, doUnload, injectSide, null);
+            if (used > 0) {
+                if (doUnload) {
+                    stack.stackSize -= used;
+                    if (stack.stackSize > 0) {
+                        robotSlot.setStackInSlot(stack);
+                    } else {
+                        robotSlot.setStackInSlot(null);
+                    }
+                }
+                return true;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	@Override
-	public int getEnergyCost() {
-		return 10;
-	}
+    @Override
+    public int getEnergyCost() {
+        return 10;
+    }
 }

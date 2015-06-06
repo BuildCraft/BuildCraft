@@ -17,7 +17,7 @@ public class SubCommandVersion extends SubCommand {
     public void processSubCommand(ICommandSender sender, String[] args) {
         String colour = Version.isOutdated() ? "\u00A7c" : "\u00A7a";
 
-        sender.addChatMessage(new ChatComponentText(String.format(colour + StatCollector.translateToLocal("command.buildcraft.version"), Version.getVersion(),
-                CoreProxy.proxy.getMinecraftVersion(), Version.getRecommendedVersion())));
+        sender.addChatMessage(new ChatComponentText(String.format(colour + StatCollector.translateToLocal("command.buildcraft.version"), Version
+            .getVersion(), CoreProxy.proxy.getMinecraftVersion(), Version.getRecommendedVersion())));
     }
 }

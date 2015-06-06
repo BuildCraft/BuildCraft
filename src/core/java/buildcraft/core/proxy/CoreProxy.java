@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.proxy;
 
 import java.lang.ref.WeakReference;
@@ -38,135 +34,130 @@ import buildcraft.core.lib.utils.Utils;
 
 public class CoreProxy implements ICoreProxy {
 
-	@SidedProxy(clientSide = "buildcraft.core.proxy.CoreProxyClient", serverSide = "buildcraft.core.proxy.CoreProxy")
-	public static CoreProxy proxy;
+    @SidedProxy(clientSide = "buildcraft.core.proxy.CoreProxyClient", serverSide = "buildcraft.core.proxy.CoreProxy")
+    public static CoreProxy proxy;
 
-	/* BUILDCRAFT PLAYER */
-	protected static WeakReference<EntityPlayer> buildCraftPlayer = new WeakReference<EntityPlayer>(null);
+    /* BUILDCRAFT PLAYER */
+    protected static WeakReference<EntityPlayer> buildCraftPlayer = new WeakReference<EntityPlayer>(null);
 
-	public String getMinecraftVersion() {
-		return Loader.instance().getMinecraftModContainer().getVersion();
-	}
+    public String getMinecraftVersion() {
+        return Loader.instance().getMinecraftModContainer().getVersion();
+    }
 
-	/* INSTANCES */
-	public Object getClient() {
-		return null;
-	}
+    /* INSTANCES */
+    public Object getClient() {
+        return null;
+    }
 
-	public World getClientWorld() {
-		return null;
-	}
+    public World getClientWorld() {
+        return null;
+    }
 
-	/* ENTITY HANDLING */
-	public void removeEntity(Entity entity) {
-		entity.worldObj.removeEntity(entity);
-	}
+    /* ENTITY HANDLING */
+    public void removeEntity(Entity entity) {
+        entity.worldObj.removeEntity(entity);
+    }
 
-	/* WRAPPER */
-	@SuppressWarnings("rawtypes")
-	public void feedSubBlocks(Block block, CreativeTabs tab, List itemList) {
-	}
+    /* WRAPPER */
+    @SuppressWarnings("rawtypes")
+    public void feedSubBlocks(Block block, CreativeTabs tab, List itemList) {}
 
-	public String getItemDisplayName(ItemStack newStack) {
-		return "";
-	}
+    public String getItemDisplayName(ItemStack newStack) {
+        return "";
+    }
 
-	/* GFX */
-	public void initializeRendering() {
-	}
+    /* GFX */
+    public void initializeRendering() {}
 
-	public void initializeEntityRendering() {
-	}
+    public void initializeEntityRendering() {}
 
-	/* REGISTRATION */
-	public void registerBlock(Block block) {
-		registerBlock(block, ItemBlockBuildCraft.class);
-	}
+    /* REGISTRATION */
+    public void registerBlock(Block block) {
+        registerBlock(block, ItemBlockBuildCraft.class);
+    }
 
-	public void registerBlock(Block block, Class<? extends ItemBlock> item) {
-		GameRegistry.registerBlock(block, item, block.getUnlocalizedName().replace("tile.", ""));
-	}
+    public void registerBlock(Block block, Class<? extends ItemBlock> item) {
+        GameRegistry.registerBlock(block, item, block.getUnlocalizedName().replace("tile.", ""));
+    }
 
-	public void registerItem(Item item) {
-		GameRegistry.registerItem(item, item.getUnlocalizedName().replace("item.", ""));
-	}
+    public void registerItem(Item item) {
+        GameRegistry.registerItem(item, item.getUnlocalizedName().replace("item.", ""));
+    }
 
-	@SuppressWarnings({"rawtypes", "unchecked"})
-	public void registerTileEntity(Class clas, String ident) {
-		GameRegistry.registerTileEntity(CompatHooks.INSTANCE.getTile(clas), ident);
-	}
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public void registerTileEntity(Class clas, String ident) {
+        GameRegistry.registerTileEntity(CompatHooks.INSTANCE.getTile(clas), ident);
+    }
 
-	public void onCraftingPickup(World world, EntityPlayer player, ItemStack stack) {
-		stack.onCrafting(world, player, stack.stackSize);
-	}
+    public void onCraftingPickup(World world, EntityPlayer player, ItemStack stack) {
+        stack.onCrafting(world, player, stack.stackSize);
+    }
 
-	@SuppressWarnings("unchecked")
-	public void addCraftingRecipe(ItemStack result, Object... recipe) {
-		String name = Utils.getNameForItem(result.getItem());
-		if (name != null) {
-			CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(result, recipe));
-		}
-	}
+    @SuppressWarnings("unchecked")
+    public void addCraftingRecipe(ItemStack result, Object... recipe) {
+        String name = Utils.getNameForItem(result.getItem());
+        if (name != null) {
+            CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(result, recipe));
+        }
+    }
 
-	@SuppressWarnings("unchecked")
-	public void addShapelessRecipe(ItemStack result, Object... recipe) {
-		String name = Utils.getNameForItem(result.getItem());
-		if (name != null) {
-			CraftingManager.getInstance().getRecipeList().add(new ShapelessOreRecipe(result, recipe));
-		}
-	}
+    @SuppressWarnings("unchecked")
+    public void addShapelessRecipe(ItemStack result, Object... recipe) {
+        String name = Utils.getNameForItem(result.getItem());
+        if (name != null) {
+            CraftingManager.getInstance().getRecipeList().add(new ShapelessOreRecipe(result, recipe));
+        }
+    }
 
-	public String playerName() {
-		return "";
-	}
+    public String playerName() {
+        return "";
+    }
 
-	private WeakReference<EntityPlayer> createNewPlayer(WorldServer world) {
-		EntityPlayer player = FakePlayerFactory.get(world, BuildCraftCore.gameProfile);
+    private WeakReference<EntityPlayer> createNewPlayer(WorldServer world) {
+        EntityPlayer player = FakePlayerFactory.get(world, BuildCraftCore.gameProfile);
 
-		return new WeakReference<EntityPlayer>(player);
-	}
+        return new WeakReference<EntityPlayer>(player);
+    }
 
-	private WeakReference<EntityPlayer> createNewPlayer(WorldServer world, int x, int y, int z) {
-		EntityPlayer player = FakePlayerFactory.get(world, BuildCraftCore.gameProfile);
-		player.posX = x;
-		player.posY = y;
-		player.posZ = z;
-		return new WeakReference<EntityPlayer>(player);
-	}
+    private WeakReference<EntityPlayer> createNewPlayer(WorldServer world, int x, int y, int z) {
+        EntityPlayer player = FakePlayerFactory.get(world, BuildCraftCore.gameProfile);
+        player.posX = x;
+        player.posY = y;
+        player.posZ = z;
+        return new WeakReference<EntityPlayer>(player);
+    }
 
-	@Override
-	public final WeakReference<EntityPlayer> getBuildCraftPlayer(WorldServer world) {
-		if (CoreProxy.buildCraftPlayer.get() == null) {
-			CoreProxy.buildCraftPlayer = createNewPlayer(world);
-		} else {
-			CoreProxy.buildCraftPlayer.get().worldObj = world;
-		}
+    @Override
+    public final WeakReference<EntityPlayer> getBuildCraftPlayer(WorldServer world) {
+        if (CoreProxy.buildCraftPlayer.get() == null) {
+            CoreProxy.buildCraftPlayer = createNewPlayer(world);
+        } else {
+            CoreProxy.buildCraftPlayer.get().worldObj = world;
+        }
 
-		return CoreProxy.buildCraftPlayer;
-	}
+        return CoreProxy.buildCraftPlayer;
+    }
 
-	public final WeakReference<EntityPlayer> getBuildCraftPlayer(WorldServer world, int x, int y, int z) {
-		if (CoreProxy.buildCraftPlayer.get() == null) {
-			CoreProxy.buildCraftPlayer = createNewPlayer(world, x, y, z);
-		} else {
-			CoreProxy.buildCraftPlayer.get().worldObj = world;
-			CoreProxy.buildCraftPlayer.get().posX = x;
-			CoreProxy.buildCraftPlayer.get().posY = y;
-			CoreProxy.buildCraftPlayer.get().posZ = z;
-		}
+    public final WeakReference<EntityPlayer> getBuildCraftPlayer(WorldServer world, int x, int y, int z) {
+        if (CoreProxy.buildCraftPlayer.get() == null) {
+            CoreProxy.buildCraftPlayer = createNewPlayer(world, x, y, z);
+        } else {
+            CoreProxy.buildCraftPlayer.get().worldObj = world;
+            CoreProxy.buildCraftPlayer.get().posX = x;
+            CoreProxy.buildCraftPlayer.get().posY = y;
+            CoreProxy.buildCraftPlayer.get().posZ = z;
+        }
 
-		return CoreProxy.buildCraftPlayer;
-	}
+        return CoreProxy.buildCraftPlayer;
+    }
 
-	/**
-	 * This function returns either the player from the handler if it's on the
-	 * server, or directly from the minecraft instance if it's the client.
-	 */
-	public EntityPlayer getPlayerFromNetHandler (INetHandler handler) {
-		if (handler instanceof NetHandlerPlayServer) {
-			return ((NetHandlerPlayServer) handler).playerEntity;
-		} else {
-			return null;
-		}
-	}
+    /** This function returns either the player from the handler if it's on the server, or directly from the minecraft
+     * instance if it's the client. */
+    public EntityPlayer getPlayerFromNetHandler(INetHandler handler) {
+        if (handler instanceof NetHandlerPlayServer) {
+            return ((NetHandlerPlayServer) handler).playerEntity;
+        } else {
+            return null;
+        }
+    }
 }

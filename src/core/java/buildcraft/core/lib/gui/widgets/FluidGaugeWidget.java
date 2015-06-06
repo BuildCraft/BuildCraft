@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.gui.widgets;
 
 import net.minecraftforge.fluids.FluidStack;
@@ -32,18 +28,18 @@ public class FluidGaugeWidget extends Widget {
     @Override
     public void draw(GuiBuildCraft gui, int guiX, int guiY, int mouseX, int mouseY) {
         if (tank == null) {
-			return;
-		}
+            return;
+        }
         FluidStack fluidStack = tank.getFluid();
         if (fluidStack == null || fluidStack.amount <= 0 || fluidStack.getFluid() == null) {
-			return;
-		}
+            return;
+        }
 
         IIcon liquidIcon = FluidRenderer.getFluidTexture(fluidStack, false);
 
-		if (liquidIcon == null) {
+        if (liquidIcon == null) {
             return;
-		}
+        }
 
         float scale = Math.min(fluidStack.amount, tank.getCapacity()) / (float) tank.getCapacity();
 

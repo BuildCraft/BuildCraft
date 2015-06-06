@@ -14,158 +14,158 @@ import buildcraft.api.core.Position;
 
 public class EntityLaser extends Entity {
 
-	public static final ResourceLocation LASER_RED = new ResourceLocation("buildcraft:textures/entities/laser_1.png");
-	public static final ResourceLocation LASER_YELLOW = new ResourceLocation("buildcraft:textures/entities/laser_2.png");
-	public static final ResourceLocation LASER_GREEN = new ResourceLocation("buildcraft:textures/entities/laser_3.png");
-	public static final ResourceLocation LASER_BLUE = new ResourceLocation("buildcraft:textures/entities/laser_4.png");
+    public static final ResourceLocation LASER_RED = new ResourceLocation("buildcraft:textures/entities/laser_1.png");
+    public static final ResourceLocation LASER_YELLOW = new ResourceLocation("buildcraft:textures/entities/laser_2.png");
+    public static final ResourceLocation LASER_GREEN = new ResourceLocation("buildcraft:textures/entities/laser_3.png");
+    public static final ResourceLocation LASER_BLUE = new ResourceLocation("buildcraft:textures/entities/laser_4.png");
 
-	public static final ResourceLocation LASER_STRIPES_BLUE = new ResourceLocation("buildcraft:textures/entities/blue_stripes.png");
-	public static final ResourceLocation LASER_STRIPES_YELLOW = new ResourceLocation("buildcraft:textures/entities/stripes.png");
+    public static final ResourceLocation LASER_STRIPES_BLUE = new ResourceLocation("buildcraft:textures/entities/blue_stripes.png");
+    public static final ResourceLocation LASER_STRIPES_YELLOW = new ResourceLocation("buildcraft:textures/entities/stripes.png");
 
-	public final LaserData data = new LaserData();
+    public final LaserData data = new LaserData();
 
-	protected boolean needsUpdate = true;
+    protected boolean needsUpdate = true;
 
-	private final ResourceLocation laserTexture;
+    private final ResourceLocation laserTexture;
 
-	public static ResourceLocation getTextureFromLaserKind(LaserKind kind) {
-		switch (kind) {
-			case Blue:
-				return LASER_BLUE;
-			case Red:
-				return LASER_RED;
-			case Stripes:
-				return LASER_STRIPES_YELLOW;
-			default:
-				return LASER_STRIPES_BLUE;
-		}
-	}
+    public static ResourceLocation getTextureFromLaserKind(LaserKind kind) {
+        switch (kind) {
+            case Blue:
+                return LASER_BLUE;
+            case Red:
+                return LASER_RED;
+            case Stripes:
+                return LASER_STRIPES_YELLOW;
+            default:
+                return LASER_STRIPES_BLUE;
+        }
+    }
 
-	public EntityLaser(World world) {
-		this(world, new Position(0, 0, 0), new Position(0, 0, 0));
-	}
+    public EntityLaser(World world) {
+        this(world, new Position(0, 0, 0), new Position(0, 0, 0));
+    }
 
-	public EntityLaser(World world, Position head, Position tail) {
-		this(world, head, tail, LASER_RED);
-	}
+    public EntityLaser(World world, Position head, Position tail) {
+        this(world, head, tail, LASER_RED);
+    }
 
-	public EntityLaser(World world, Position head, Position tail, LaserKind kind) {
-		this(world, head, tail, getTextureFromLaserKind(kind));
-	}
+    public EntityLaser(World world, Position head, Position tail, LaserKind kind) {
+        this(world, head, tail, getTextureFromLaserKind(kind));
+    }
 
-	public EntityLaser(World world, Position head, Position tail, ResourceLocation laserTexture) {
-		super(world);
+    public EntityLaser(World world, Position head, Position tail, ResourceLocation laserTexture) {
+        super(world);
 
-		data.head = head;
-		data.tail = tail;
+        data.head = head;
+        data.tail = tail;
 
-		setPositionAndRotation(head.x, head.y, head.z, 0, 0);
-		setSize(10, 10);
+        setPositionAndRotation(head.x, head.y, head.z, 0, 0);
+        setSize(10, 10);
 
-		this.laserTexture = laserTexture;
-	}
+        this.laserTexture = laserTexture;
+    }
 
-	@Override
-	protected void entityInit() {
-		preventEntitySpawning = false;
-		noClip = true;
-		isImmuneToFire = true;
-		dataWatcher.addObject(8, Byte.valueOf((byte) 1));
-	}
+    @Override
+    protected void entityInit() {
+        preventEntitySpawning = false;
+        noClip = true;
+        isImmuneToFire = true;
+        dataWatcher.addObject(8, Byte.valueOf((byte) 1));
+    }
 
-	@Override
-	public void onUpdate() {
-		if (data.head == null || data.tail == null) {
-			return;
-		}
-		
-		if (!worldObj.isRemote && needsUpdate) {
-			updateDataServer();
-			needsUpdate = false;
-		}
+    @Override
+    public void onUpdate() {
+        if (data.head == null || data.tail == null) {
+            return;
+        }
 
-		if (worldObj.isRemote) {
-			updateDataClient();
-		}
+        if (!worldObj.isRemote && needsUpdate) {
+            updateDataServer();
+            needsUpdate = false;
+        }
 
-		// TODO (1.8): Avoid Object Overflow
-		// Err... what?
-		setEntityBoundingBox(new AxisAlignedBB(Math.min(data.head.x, data.tail.x), Math.min(data.head.y, data.tail.y) - 1.0D, Math.min(data.head.z,
-			data.tail.z) - 1.0D, Math.max(data.head.x, data.tail.x) + 1.0D, Math.max(data.head.y, data.tail.y) + 1.0D, Math.max(data.head.z,
-			data.tail.z) + 1.0D));
+        if (worldObj.isRemote) {
+            updateDataClient();
+        }
 
-		data.update();
-	}
+        // TODO (1.8): Avoid Object Overflow
+        // Err... what?
+        setEntityBoundingBox(new AxisAlignedBB(Math.min(data.head.x, data.tail.x), Math.min(data.head.y, data.tail.y) - 1.0D, Math.min(data.head.z,
+            data.tail.z) - 1.0D, Math.max(data.head.x, data.tail.x) + 1.0D, Math.max(data.head.y, data.tail.y) + 1.0D, Math.max(data.head.z,
+            data.tail.z) + 1.0D));
 
-	protected void updateDataClient() {
-		data.isVisible = dataWatcher.getWatchableObjectByte(8) == 1;
-	}
+        data.update();
+    }
 
-	protected void updateDataServer() {
-		dataWatcher.updateObject(8, Byte.valueOf((byte) (data.isVisible ? 1 : 0)));
-	}
+    protected void updateDataClient() {
+        data.isVisible = dataWatcher.getWatchableObjectByte(8) == 1;
+    }
 
-	public void show() {
-		data.isVisible = true;
-		needsUpdate = true;
-	}
+    protected void updateDataServer() {
+        dataWatcher.updateObject(8, Byte.valueOf((byte) (data.isVisible ? 1 : 0)));
+    }
 
-	public void hide() {
-		data.isVisible = false;
-		needsUpdate = true;
-	}
+    public void show() {
+        data.isVisible = true;
+        needsUpdate = true;
+    }
 
-	public boolean isVisible() {
-		return data.isVisible;
-	}
+    public void hide() {
+        data.isVisible = false;
+        needsUpdate = true;
+    }
 
-	public ResourceLocation getTexture() {
-		return laserTexture;
-	}
+    public boolean isVisible() {
+        return data.isVisible;
+    }
 
-	protected int encodeDouble(double d) {
-		return (int) (d * 8192);
-	}
+    public ResourceLocation getTexture() {
+        return laserTexture;
+    }
 
-	protected double decodeDouble(int i) {
-		return i / 8192D;
-	}
+    protected int encodeDouble(double d) {
+        return (int) (d * 8192);
+    }
 
-	// The read/write to nbt seem to be useless
+    protected double decodeDouble(int i) {
+        return i / 8192D;
+    }
 
-	// Yes it is- we never want to persist this entity.
+    // The read/write to nbt seem to be useless
 
-	@Override
-	protected void readEntityFromNBT(NBTTagCompound nbt) {
-		double headX = nbt.getDouble("headX");
-		double headY = nbt.getDouble("headZ");
-		double headZ = nbt.getDouble("headY");
-		data.head = new Position(headX, headY, headZ);
+    // Yes it is- we never want to persist this entity.
 
-		double tailX = nbt.getDouble("tailX");
-		double tailY = nbt.getDouble("tailZ");
-		double tailZ = nbt.getDouble("tailY");
-		data.tail = new Position(tailX, tailY, tailZ);
-	}
+    @Override
+    protected void readEntityFromNBT(NBTTagCompound nbt) {
+        double headX = nbt.getDouble("headX");
+        double headY = nbt.getDouble("headZ");
+        double headZ = nbt.getDouble("headY");
+        data.head = new Position(headX, headY, headZ);
 
-	@Override
-	protected void writeEntityToNBT(NBTTagCompound nbt) {
-		nbt.setDouble("headX", data.head.x);
-		nbt.setDouble("headY", data.head.y);
-		nbt.setDouble("headZ", data.head.z);
+        double tailX = nbt.getDouble("tailX");
+        double tailY = nbt.getDouble("tailZ");
+        double tailZ = nbt.getDouble("tailY");
+        data.tail = new Position(tailX, tailY, tailZ);
+    }
 
-		nbt.setDouble("tailX", data.tail.x);
-		nbt.setDouble("tailY", data.tail.y);
-		nbt.setDouble("tailZ", data.tail.z);
-	}
+    @Override
+    protected void writeEntityToNBT(NBTTagCompound nbt) {
+        nbt.setDouble("headX", data.head.x);
+        nbt.setDouble("headY", data.head.y);
+        nbt.setDouble("headZ", data.head.z);
 
-	// Workaround for the laser's posY loosing it's precision e.g 103.5 becomes 104
-	public Position renderOffset() {
-		return new Position(0.5, 0.5, 0.5);
-	}
+        nbt.setDouble("tailX", data.tail.x);
+        nbt.setDouble("tailY", data.tail.y);
+        nbt.setDouble("tailZ", data.tail.z);
+    }
 
-	@Override
-	public int getBrightnessForRender(float par1) {
-		return 210;
-	}
+    // Workaround for the laser's posY loosing it's precision e.g 103.5 becomes 104
+    public Position renderOffset() {
+        return new Position(0.5, 0.5, 0.5);
+    }
+
+    @Override
+    public int getBrightnessForRender(float par1) {
+        return 210;
+    }
 }
