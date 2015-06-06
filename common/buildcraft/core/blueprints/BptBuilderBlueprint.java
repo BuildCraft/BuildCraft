@@ -38,7 +38,6 @@ import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.StackKey;
