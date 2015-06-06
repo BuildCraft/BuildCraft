@@ -15,20 +15,24 @@ Improvements:
 * LEDs and filler pattern icons now use TESRs for less refresh lag (asie)
 * Pipes have been color-corrected (asie)
 * Pipes now have better insides shading/depth (asie)
+* Diamond pipes can now keep track of multiple round-robin sorts at the same time (asie)
 * Charging table texture fixed to not be brighter than the rest (asie)
+* Lists are now more expensive - though the "improvement" of this is debatable (asie)
 
 Removals:
 
 * Lava in Combustion Engine. Use the Stirling Engine (asie)
+* Flower handling for harvesters. Caused bugs (hea3ven)
 
 Bugs fixed:
 
+* [#2746] Fix invalid random number generation code (asie)
 * [#2741] Fix the rendering of helmets on robots (hea3ven)
 * [#2730] Fix integration table using energy when it has an invalid recipe (hea3ven)
 * [#2694] Fix client/server desync on the gate copier item (hea3ven)
 * Fix gate expansion recipe ignoring the input's stack size (hea3ven)
 * Fix planters dropping items in stead of planting (hea3ven)
-* Fix laser texture (asie)
+* Fix laser block texture (asie)
 * Use the OreDict for the pipes recipes (ganymedes01)
 * Fix robots not keeping their energy when being reprogrammed (hea3ven)
 * Fix the builder robot not respecting the working area (hea3ven)
