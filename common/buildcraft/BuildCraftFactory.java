@@ -38,6 +38,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.builders.schematics.SchematicFree;
+import buildcraft.core.builders.schematics.SchematicRotateMeta;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.network.PacketHandler;
@@ -108,7 +109,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 		BuilderAPI.schematicRegistry.registerSchematicBlock(refineryBlock, SchematicRefinery.class);
 		BuilderAPI.schematicRegistry.registerSchematicBlock(tankBlock, SchematicTileIgnoreState.class);
 		BuilderAPI.schematicRegistry.registerSchematicBlock(pumpBlock, SchematicPump.class);
-		BuilderAPI.schematicRegistry.registerSchematicBlock(miningWellBlock, SchematicTileIgnoreState.class);
+		BuilderAPI.schematicRegistry.registerSchematicBlock(miningWellBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 		BuilderAPI.schematicRegistry.registerSchematicBlock(floodGateBlock, SchematicTileIgnoreState.class);
 		BuilderAPI.schematicRegistry.registerSchematicBlock(autoWorkbenchBlock, SchematicAutoWorkbench.class);
 		BuilderAPI.schematicRegistry.registerSchematicBlock(hopperBlock, SchematicTile.class);
