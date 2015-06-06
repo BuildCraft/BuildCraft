@@ -70,12 +70,7 @@ public class AIRobotUnload extends AIRobot {
 			int used = output.injectItem(stack, doUnload, injectSide, null);
 			if (used > 0) {
 				if (doUnload) {
-					stack.stackSize -= used;
-					if (stack.stackSize > 0) {
-						robotSlot.setStackInSlot(stack);
-					} else {
-						robotSlot.setStackInSlot(null);
-					}
+					robotSlot.decreaseStackInSlot(used);
 				}
 				return true;
 			}

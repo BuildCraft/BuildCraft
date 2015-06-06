@@ -608,6 +608,10 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				itemPos.moveBackwards(0.4);
 
 				TravelingItem pipedItem = TravelingItem.make(itemPos.x, itemPos.y, itemPos.z, payload);
+				if (pipedItem.isCorrupted()) {
+					return 0;
+				}
+
 				pipedItem.color = color;
 				((PipeTransportItems) pipe.transport).injectItem(pipedItem, itemPos.orientation);
 			}
