@@ -96,7 +96,7 @@ public abstract class PipeLogicWood {
 		return false;
 	}
 
-	public void onNeighborBlockChange(int blockId) {
+	public void onNeighborBlockChange() {
 		if (!pipe.container.getWorldObj().isRemote) {
 			switchSourceIfNeeded();
 		}

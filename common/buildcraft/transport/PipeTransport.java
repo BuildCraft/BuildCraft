@@ -86,7 +86,7 @@ public abstract class PipeTransport {
 	    return true;
 	}
 
-	public void onNeighborBlockChange(int blockId) {
+	public void onNeighborChange(ForgeDirection direction) {
 	}
 
 	public void onBlockPlaced() {

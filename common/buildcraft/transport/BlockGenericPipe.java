@@ -529,6 +529,24 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 			}
 		}
 	}
+
+	@Override
+	public void onNeighborChange(IBlockAccess world, int x, int y, int z, int nx, int ny, int nz) {
+		int ox = nx - x;
+		int oy = ny - y;
+		int oz = nz - z;
+
+		TileEntity tile = world.getTileEntity(x, y, z);
+
+		if (tile instanceof TileGenericPipe) {
+			for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
+				if (d.offsetX == ox && d.offsetY == oy && d.offsetZ == oz) {
+					((TileGenericPipe) tile).scheduleNeighborChange(d);
+					return;
+				}
+			}
+		}
+	}
 	
 	private int getRedstoneInputToPipe(World world, int x, int y, int z,
 			ForgeDirection d) {

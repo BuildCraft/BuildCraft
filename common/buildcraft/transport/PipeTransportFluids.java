@@ -604,18 +604,16 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	}
 
 	@Override
-	public void onNeighborBlockChange(int blockId) {
-		super.onNeighborBlockChange(blockId);
+	public void onNeighborChange(ForgeDirection direction) {
+		super.onNeighborChange(direction);
 
-		for (ForgeDirection direction : directions) {
-			if (!container.isPipeConnected(direction)) {
-				sections[direction.ordinal()].reset();
-				transferState[direction.ordinal()] = TransferState.None;
-				renderCache.amount[direction.ordinal()] = 0;
-				canReceiveCache[direction.ordinal()] = false;
-			} else {
-				canReceiveCache[direction.ordinal()] = canReceiveFluid(direction);
-			}
+		if (!container.isPipeConnected(direction)) {
+			sections[direction.ordinal()].reset();
+			transferState[direction.ordinal()] = TransferState.None;
+			renderCache.amount[direction.ordinal()] = 0;
+			canReceiveCache[direction.ordinal()] = false;
+		} else {
+			canReceiveCache[direction.ordinal()] = canReceiveFluid(direction);
 		}
 	}
 

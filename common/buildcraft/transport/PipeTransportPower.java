@@ -142,11 +142,9 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	}
 
 	@Override
-	public void onNeighborBlockChange(int blockId) {
-		super.onNeighborBlockChange(blockId);
-        for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-            updateTile(side);
-        }
+	public void onNeighborChange(ForgeDirection side) {
+		super.onNeighborChange(side);
+		updateTile(side);
 	}
 
     private void updateTile(ForgeDirection side) {
