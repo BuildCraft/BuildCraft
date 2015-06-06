@@ -84,6 +84,7 @@ public class AIRobotFetchItem extends AIRobot {
 
 			if (!ai.success()) {
 				robot.unreachableEntityDetected(target);
+				setSuccess(false);
 				terminate();
 			}
 		}
