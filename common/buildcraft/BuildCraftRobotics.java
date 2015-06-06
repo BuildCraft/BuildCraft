@@ -142,6 +142,7 @@ import buildcraft.robotics.statements.ActionStationRequestItems;
 import buildcraft.robotics.statements.ActionStationRequestItemsMachine;
 import buildcraft.robotics.statements.RobotsActionProvider;
 import buildcraft.robotics.statements.RobotsTriggerProvider;
+import buildcraft.robotics.statements.StatementParameterRobot;
 import buildcraft.robotics.statements.TriggerRobotInStation;
 import buildcraft.robotics.statements.TriggerRobotLinked;
 import buildcraft.robotics.statements.TriggerRobotSleep;
@@ -175,7 +176,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
 	public static IActionInternal actionStationAcceptFluids = new ActionStationAcceptFluids();
 	public static IActionInternal actionStationProvideFluids = new ActionStationProvideFluids();
 	public static IActionInternal actionStationForceRobot = new ActionStationForbidRobot(true);
-	public static IActionInternal actionStationForbidRobot = new ActionStationForbidRobot(true);
+	public static IActionInternal actionStationForbidRobot = new ActionStationForbidRobot(false);
 	public static IActionInternal actionStationAcceptItems = new ActionStationAcceptItems();
 	public static IActionInternal actionStationMachineRequestItems = new ActionStationRequestItemsMachine();
 
@@ -248,6 +249,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
 			RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:boardRobotBuilder", "builder", BoardRobotBuilder.class, "yellow"), 512000);
 		}
 
+		StatementManager.registerParameterClass(StatementParameterRobot.class);
 		StatementManager.registerActionProvider(new RobotsActionProvider());
 		StatementManager.registerTriggerProvider(new RobotsTriggerProvider());
 	}
