@@ -106,14 +106,14 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
     public boolean onBlockActivated(EntityPlayer player, EnumFacing side) {
         if (!player.worldObj.isRemote && player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof IToolWrench) {
             IToolWrench wrench = (IToolWrench) player.getCurrentEquippedItem().getItem();
-            if (wrench.canWrench(player, xCoord, yCoord, zCoord)) {
+            if (wrench.canWrench(player, pos)) {
                 if (getEnergyStage() == EnergyStage.OVERHEAT && !Utils.isFakePlayer(player)) {
                     energyStage = computeEnergyStage();
                     sendNetworkUpdate();
                 }
                 checkOrientation = true;
 
-                wrench.wrenchUsed(player, xCoord, yCoord, zCoord);
+                wrench.wrenchUsed(player, pos);
                 return true;
             }
         }
@@ -162,8 +162,8 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
     public void overheat() {
         this.isPumping = false;
         if (BuildCraftCore.canEnginesExplode) {
-            worldObj.createExplosion(null, xCoord, yCoord, zCoord, 3, true);
-            worldObj.setBlockToAir(xCoord, yCoord, zCoord);
+            worldObj.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 3, true);
+            worldObj.setBlockToAir(pos);
         }
     }
 
@@ -195,8 +195,8 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
     }
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
 
         if (worldObj.isRemote) {
             if (progressPart != 0) {
@@ -365,15 +365,15 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
     }
 
     private boolean switchOrientationDo(boolean pipesOnly) {
-        for (int i = orientation.ordinal() + 1; i <= orientation.ordinal() + 6; ++i) {
-            EnumFacing o = EnumFacing.VALID_DIRECTIONS[i % 6];
+        for (int i = orientation.getIndex() + 1; i <= orientation.getIndex() + 6; ++i) {
+            EnumFacing o = EnumFacing.VALUES[i % 6];
 
             TileEntity tile = getTile(o);
 
             if ((!pipesOnly || tile instanceof IPipeTile) && isPoweredTile(tile, o)) {
                 orientation = o;
-                worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-                worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, worldObj.getBlock(xCoord, yCoord, zCoord));
+                worldObj.markBlockForUpdate(pos);
+                worldObj.notifyNeighborsOfStateChange(pos, worldObj.getBlockState(pos).getBlock());
 
                 return true;
             }
@@ -398,7 +398,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
     public void readFromNBT(NBTTagCompound data) {
         super.readFromNBT(data);
 
-        orientation = EnumFacing.getOrientation(data.getByte("orientation"));
+        orientation = EnumFacing.values()[data.getByte("orientation")];
         progress = data.getFloat("progress");
         energy = data.getInteger("energy");
         heat = data.getFloat("heat");
@@ -419,7 +419,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
         int flags = stream.readUnsignedByte();
         energyStage = EnergyStage.values()[flags & 0x07];
         isPumping = (flags & 0x08) != 0;
-        orientation = EnumFacing.getOrientation(stream.readByte());
+        orientation = EnumFacing.values()[stream.readByte()];
     }
 
     @Override
@@ -533,7 +533,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
     }
 
     public void checkRedstonePower() {
-        isRedstonePowered = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+        isRedstonePowered = worldObj.isBlockIndirectlyGettingPowered(pos) > 0;
     }
 
     public void onNeighborUpdate() {

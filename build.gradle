@@ -86,7 +86,7 @@ ext.moduleDependencies = [
                            		"factory": ["core"],
                               	"silicon": ["core"],
                             	"transport": ["core"]
-                        	]
+                        ]
 
 println "modules:"
 modules.each { module ->
@@ -119,7 +119,7 @@ sourceSets {
 			def l10n = file('../BuildCraft-Localization')
             if(l10n.exists())
            	    srcDir l10n
-            exclude '**/.md' // exclude readme from localization repo
+            exclude "**/.md" // exclude readme from localization repo
 		}
 	}
 }
@@ -145,7 +145,7 @@ checkstyle {
 	configFile = file('guidelines/buildcraft.checkstyle')
 }
 
-checkstyleApi.exclude 'cofh/**'
+checkstyleApi.exclude "cofh/**"
 
 // make sure all of these happen when we run build
 build.dependsOn sourceJar, javadocJar, deobfJar, apiJar

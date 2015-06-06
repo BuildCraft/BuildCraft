@@ -15,8 +15,8 @@ import buildcraft.core.lib.engines.BlockEngineBase;
 import buildcraft.core.lib.engines.TileEngineBase;
 
 public class BlockEngine extends BlockEngineBase {
-    private final ArrayList<Class<? extends TileEngineBase>> engineTiles;
-    private final ArrayList<String> names;
+    private final List<Class<? extends TileEngineBase>> engineTiles;
+    private final List<String> names;
 
     public BlockEngine() {
         super();

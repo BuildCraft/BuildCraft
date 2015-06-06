@@ -4,30 +4,28 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 
 public final class TileBuffer {
 
-    private Block block = null;
+    private IBlockState state = null;
     private TileEntity tile;
 
     private final SafeTimeTracker tracker = new SafeTimeTracker(20, 5);
     private final World world;
-    private final int x, y, z;
+    private final BlockPos pos;
     private final boolean loadUnloaded;
 
-    public TileBuffer(World world, int x, int y, int z, boolean loadUnloaded) {
+    public TileBuffer(World world, BlockPos pos, boolean loadUnloaded) {
         this.world = world;
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.pos = pos;
         this.loadUnloaded = loadUnloaded;
 
         refresh();
@@ -35,21 +33,21 @@ public final class TileBuffer {
 
     public void refresh() {
         tile = null;
-        block = null;
+        state = null;
 
-        if (!loadUnloaded && !world.blockExists(x, y, z)) {
+        if (!loadUnloaded && world.isAirBlock(pos)) {
             return;
         }
 
-        block = world.getBlock(x, y, z);
+        state = world.getBlockState(pos);
 
-        if (block != null && block.hasTileEntity(BlockUtils.getBlockMetadata(world, x, y, z))) {
-            tile = world.getTileEntity(x, y, z);
+        if (state != null && state.getBlock().hasTileEntity(state)) {
+            tile = world.getTileEntity(pos);
         }
     }
 
-    public void set(Block block, TileEntity tile) {
-        this.block = block;
+    public void set(IBlockState state, TileEntity tile) {
+        this.state = state;
         this.tile = tile;
         tracker.markTime(world);
     }
@@ -60,10 +58,10 @@ public final class TileBuffer {
         }
     }
 
-    public Block getBlock() {
+    public IBlockState getBlockState() {
         tryRefresh();
 
-        return block;
+        return state;
     }
 
     public TileEntity getTile() {
@@ -91,15 +89,15 @@ public final class TileBuffer {
             return true;
         }
 
-        return world.blockExists(x, y, z);
+        return !world.isAirBlock(pos);
     }
 
-    public static TileBuffer[] makeBuffer(World world, int x, int y, int z, boolean loadUnloaded) {
+    public static TileBuffer[] makeBuffer(World world, BlockPos pos, boolean loadUnloaded) {
         TileBuffer[] buffer = new TileBuffer[6];
 
         for (int i = 0; i < 6; i++) {
-            EnumFacing d = EnumFacing.getOrientation(i);
-            buffer[i] = new TileBuffer(world, x + d.offsetX, y + d.offsetY, z + d.offsetZ, loadUnloaded);
+            EnumFacing d = EnumFacing.values()[i];
+            buffer[i] = new TileBuffer(world, pos.offset(d), loadUnloaded);
         }
 
         return buffer;

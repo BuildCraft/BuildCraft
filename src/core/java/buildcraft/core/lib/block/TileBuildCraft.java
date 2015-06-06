@@ -10,7 +10,7 @@ import java.util.HashSet;
 
 import cofh.api.energy.IEnergyHandler;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -157,7 +157,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 
     @Override
     public int hashCode() {
-        return (xCoord * 37 + yCoord) * 37 + zCoord;
+        return pos.hashCode();
     }
 
     @Override
@@ -223,16 +223,16 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
         this.battery = battery;
     }
 
-    public Block getBlock(EnumFacing side) {
+    public IBlockState getBlockState(EnumFacing side) {
         if (cache == null) {
-            cache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
+            cache = TileBuffer.makeBuffer(worldObj, pos, false);
         }
-        return cache[side.ordinal()].getBlock();
+        return cache[side.ordinal()].getBlockState();
     }
 
     public TileEntity getTile(EnumFacing side) {
         if (cache == null) {
-            cache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
+            cache = TileBuffer.makeBuffer(worldObj, pos, false);
         }
         return cache[side.ordinal()].getTile();
     }

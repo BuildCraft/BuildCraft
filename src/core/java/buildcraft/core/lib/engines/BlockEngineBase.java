@@ -9,6 +9,7 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -41,18 +42,13 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
         };
 
     public BlockEngineBase() {
-        super(Material.iron);
+        super(Material.iron, new IProperty[] { ENGINE_TYPE });
     }
 
     @Override
     public boolean isOpaqueCube() {
         return false;
     }
-
-    // @Override
-    // public boolean renderAsNormalBlock() {
-    // return false;
-    // }
 
     @Override
     public int getRenderType() {
@@ -61,7 +57,6 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
 
     @Override
     public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
-        // TODO (AlexIIL) Move TileEngineBase.orientation to blockState
         TileEntity tile = world.getTileEntity(pos);
 
         if (tile instanceof TileEngineBase) {
