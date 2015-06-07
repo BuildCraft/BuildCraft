@@ -90,8 +90,15 @@ this repository will have to be rejected.
 
 Add the following to your build.gradle file:
 ```
+repositories {
+    ivy {
+        name "BuildCraft"
+        artifactPattern "http://www.mod-buildcraft.com/releases/BuildCraft/[revision]/[module]-[revision]-[classifier].[ext]"
+    }
+}
+
 dependencies {
-    compile 'com.mod-buildcraft:buildcraft:6.1.8:dev'
+    compile name: "buildcraft", version: "7.0.7", classifier: "dev"
 }
 ```
-Where `6.1.8` is the desired version of BuildCraft.
+Where `7.0.7` is the desired version of BuildCraft.
