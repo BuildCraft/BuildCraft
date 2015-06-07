@@ -63,9 +63,9 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 	}
 
 	@Override
-	public void onNeighborChange(ForgeDirection direction) {
+	public void onNeighborBlockChange(int blockId) {
 		logic.onNeighborBlockChange();
-		super.onNeighborChange(direction);
+		super.onNeighborBlockChange(blockId);
 	}
 
 	@Override

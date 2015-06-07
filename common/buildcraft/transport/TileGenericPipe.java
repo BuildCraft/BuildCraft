@@ -406,6 +406,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 					computeConnection(ForgeDirection.getOrientation(i));
 				}
 			}
+			pipe.onNeighborBlockChange(0);
 			blockNeighborChange = false;
 			refreshRenderState = true;
 		}

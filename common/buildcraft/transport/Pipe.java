@@ -88,8 +88,10 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public void onBlockPlacedBy(EntityLivingBase placer) {
 	}
 
-	public void onNeighborChange(ForgeDirection direction) {
-		transport.onNeighborChange(direction);
+	public void onNeighborBlockChange(int blockId) {
+		for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
+			transport.onNeighborChange(d);
+		}
 	}
 
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {

@@ -65,9 +65,9 @@ public class PipeItemsIron extends Pipe<PipeTransportItems> {
 	}
 
 	@Override
-	public void onNeighborChange(ForgeDirection direction) {
+	public void onNeighborBlockChange(int blockId) {
 		logic.switchOnRedstone();
-		super.onNeighborChange(direction);
+		super.onNeighborBlockChange(blockId);
 	}
 
 	@Override
