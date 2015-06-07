@@ -1,25 +1,23 @@
 package buildcraft.core.lib.render;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
-public class SubIcon implements IIcon {
-    private final IIcon icon;
+public class SubIcon extends TextureAtlasSprite {
+    private final TextureAtlasSprite icon;
     private float u, v;
     private final int w, h;
     private float uScale, vScale;
     private int iw, ih;
 
-    public SubIcon(IIcon icon, int u, int v) {
+    public SubIcon(TextureAtlasSprite icon, int u, int v) {
         this(icon, u, v, 16, 16);
     }
 
-    public SubIcon(IIcon icon, int u, int v, int w, int h) {
+    public SubIcon(TextureAtlasSprite icon, int u, int v, int w, int h) {
+        super("Wut");
         iw = icon.getIconWidth();
         ih = icon.getIconHeight();
-        if (Minecraft.getMinecraft().gameSettings.anisotropicFiltering > 1) {
-            iw -= 16;
-            ih -= 16;
-        }
         this.icon = icon;
         this.uScale = icon.getMaxU() - icon.getMinU();
         this.vScale = icon.getMaxV() - icon.getMinV();

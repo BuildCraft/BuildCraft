@@ -6,6 +6,7 @@ package buildcraft.transport;
 
 import java.util.List;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -18,7 +19,7 @@ import buildcraft.core.lib.items.ItemBuildCraft;
 
 public class ItemPipeWire extends ItemBuildCraft {
 
-    private IIcon[] icons;
+    private TextureAtlasSprite[] icons;
 
     public ItemPipeWire() {
         super();
@@ -29,7 +30,7 @@ public class ItemPipeWire extends ItemBuildCraft {
     }
 
     @Override
-    public IIcon getIconFromDamage(int damage) {
+    public TextureAtlasSprite getIconFromDamage(int damage) {
         return icons[damage];
     }
 
@@ -49,8 +50,8 @@ public class ItemPipeWire extends ItemBuildCraft {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister par1IconRegister) {
-        icons = new IIcon[PipeWire.VALUES.length];
+    public void registerIcons(TextureAtlasSpriteRegister par1IconRegister) {
+        icons = new TextureAtlasSprite[PipeWire.VALUES.length];
         for (PipeWire pipeWire : PipeWire.VALUES) {
             icons[pipeWire.ordinal()] = par1IconRegister.registerIcon("buildcrafttransport:pipeWire/" + pipeWire.getColor().toLowerCase());
         }

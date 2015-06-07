@@ -5,13 +5,14 @@
 package buildcraft.builders.blueprints;
 
 import net.minecraft.inventory.IInventory;
+import net.minecraft.util.BlockPos;
 
 public interface IBlueprintBuilderAgent {
 
-    boolean breakBlock(int x, int y, int z);
+    boolean breakBlock(BlockPos pos);
 
     IInventory getInventory();
 
-    boolean buildBlock(int x, int y, int z);
+    boolean buildBlock(BlockPos pos);
 
 }

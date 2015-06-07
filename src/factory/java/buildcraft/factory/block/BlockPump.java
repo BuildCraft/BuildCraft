@@ -6,9 +6,11 @@ package buildcraft.factory;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -17,7 +19,7 @@ import buildcraft.core.block.BlockBuildCraftLED;
 import buildcraft.factory.tile.TilePump;
 
 public class BlockPump extends BlockBuildCraftLED {
-    private IIcon[] led;
+    private TextureAtlasSprite[] led;
 
     public BlockPump() {
         super(Material.iron);
@@ -59,26 +61,26 @@ public class BlockPump extends BlockBuildCraftLED {
     }
 
     @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-        super.onNeighborBlockChange(world, x, y, z, block);
-        TileEntity tile = world.getTileEntity(x, y, z);
+    public void onNeighborBlockChange(World world, BlockPos pos, Block block) {
+        super.onNeighborBlockChange(world, pos, block);
+        TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TilePump) {
             ((TilePump) tile).onNeighborBlockChange(block);
         }
     }
 
     @Override
-    public int getIconGlowLevel(IBlockAccess access, int x, int y, int z) {
+    public int getIconGlowLevel(IBlockAccess access, BlockPos pos) {
         if (renderPass < 1) {
             return -1;
         } else {
-            TilePump tile = (TilePump) access.getTileEntity(x, y, z);
+            TilePump tile = (TilePump) access.getTileEntity(pos);
             return tile.getIconGlowLevel(renderPass);
         }
     }
 
     @Override
-    public int getLightValue(IBlockAccess world, int x, int y, int z) {
+    public int getLightValue(IBlockAccess world, BlockPos pos) {
         return 1;
     }
 }

@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IChatComponent;
 
 public abstract class InventoryWrapper implements ISidedInventory {
 
@@ -44,11 +45,6 @@ public abstract class InventoryWrapper implements ISidedInventory {
     }
 
     @Override
-    public String getInventoryName() {
-        return inventory.getInventoryName();
-    }
-
-    @Override
     public int getInventoryStackLimit() {
         return inventory.getInventoryStackLimit();
     }
@@ -64,13 +60,13 @@ public abstract class InventoryWrapper implements ISidedInventory {
     }
 
     @Override
-    public void openInventory() {
-        inventory.openInventory();
+    public void openInventory(EntityPlayer player) {
+        inventory.openInventory(player);
     }
 
     @Override
-    public void closeInventory() {
-        inventory.closeInventory();
+    public void closeInventory(EntityPlayer player) {
+        inventory.closeInventory(player);
     }
 
     @Override
@@ -78,9 +74,38 @@ public abstract class InventoryWrapper implements ISidedInventory {
         return inventory.isItemValidForSlot(slotIndex, itemstack);
     }
 
+    public boolean hasCustomName() {
+        return inventory.hasCustomName();
+    }
+    
     @Override
-    public boolean hasCustomInventoryName() {
-        return inventory.hasCustomInventoryName();
+    public int getField(int id) {
+        return inventory.getField(id);
+    }
+
+    @Override
+    public void setField(int id, int value) {
+        inventory.setField(id, value);
+    }
+
+    @Override
+    public int getFieldCount() {
+        return inventory.getFieldCount();
+    }
+
+    @Override
+    public void clear() {
+        inventory.clear();
+    }
+
+    @Override
+    public String getCommandSenderName() {
+        return inventory.getCommandSenderName();
+    }
+
+    @Override
+    public IChatComponent getDisplayName() {
+        return inventory.getDisplayName();
     }
 
     /* STATIC HELPER */

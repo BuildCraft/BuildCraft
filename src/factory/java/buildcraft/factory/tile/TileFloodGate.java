@@ -99,22 +99,22 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
         }
     }
 
-    private boolean placeFluid(int x, int y, int z, Fluid fluid) {
-        Block block = BlockUtils.getBlock(worldObj, x, y, z);
+    private boolean placeFluid(BlockPos pos, Fluid fluid) {
+        Block block = BlockUtils.getBlock(worldObj, pos);
 
-        if (canPlaceFluidAt(block, x, y, z)) {
+        if (canPlaceFluidAt(block, pos)) {
             boolean placed;
             Block b = TankUtils.getFluidBlock(fluid, true);
 
             if (b instanceof BlockFluidBase) {
                 BlockFluidBase blockFluid = (BlockFluidBase) b;
-                placed = worldObj.setBlock(x, y, z, b, blockFluid.getMaxRenderHeightMeta(), 3);
+                placed = worldObj.setBlock(pos, b, blockFluid.getMaxRenderHeightMeta(), 3);
             } else {
-                placed = worldObj.setBlock(x, y, z, b);
+                placed = worldObj.setBlock(pos, b);
             }
 
             if (placed) {
-                queueAdjacent(x, y, z);
+                queueAdjacent(pos);
                 expandQueue();
             }
 
@@ -179,7 +179,7 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
         }
     }
 
-    public void queueAdjacent(int x, int y, int z) {
+    public void queueAdjacent(BlockPos pos) {
         if (tank.getFluidType() == null) {
             return;
         }
@@ -191,28 +191,28 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
         }
     }
 
-    public void queueForFilling(int x, int y, int z) {
+    public void queueForFilling(BlockPos pos) {
         if (y < 0 || y > 255) {
             return;
         }
-        BlockPos index = new BlockPos(x, y, z);
+        BlockPos index = new BlockPos(pos);
         if (visitedBlocks.add(index)) {
             if ((x - xCoord) * (x - xCoord) + (z - zCoord) * (z - zCoord) > 64 * 64) {
                 return;
             }
 
-            Block block = BlockUtils.getBlock(worldObj, x, y, z);
+            Block block = BlockUtils.getBlock(worldObj, pos);
             if (BlockUtils.getFluid(block) == tank.getFluidType()) {
                 fluidsFound.add(index);
             }
-            if (canPlaceFluidAt(block, x, y, z)) {
+            if (canPlaceFluidAt(block, pos)) {
                 getLayerQueue(y).addLast(index);
             }
         }
     }
 
-    private boolean canPlaceFluidAt(Block block, int x, int y, int z) {
-        return BuildCraftAPI.isSoftBlock(worldObj, x, y, z) && !BlockUtils.isFullFluidBlock(block, worldObj, x, y, z);
+    private boolean canPlaceFluidAt(Block block, BlockPos pos) {
+        return BuildCraftAPI.isSoftBlock(worldObj, pos) && !BlockUtils.isFullFluidBlock(block, worldObj, pos);
     }
 
     public void onNeighborBlockChange(Block block) {

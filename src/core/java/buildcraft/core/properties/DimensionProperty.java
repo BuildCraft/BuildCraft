@@ -4,9 +4,10 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.properties;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.LongHashMap;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.IWorldAccess;
@@ -27,9 +28,9 @@ public class DimensionProperty implements IWorldAccess {
         worldProperty = iProp;
     }
 
-    public synchronized boolean get(int x, int y, int z) {
-        int xChunk = x >> 4;
-        int zChunk = z >> 4;
+    public synchronized boolean get(BlockPos pos) {
+        int xChunk = pos.getX() >> 4;
+        int zChunk = pos.getZ() >> 4;
 
         if (world.getChunkProvider().chunkExists(xChunk, zChunk)) {
             long chunkId = ChunkCoordIntPair.chunkXZ2Int(xChunk, zChunk);
@@ -42,7 +43,7 @@ public class DimensionProperty implements IWorldAccess {
                 property = (ChunkProperty) chunkMapping.getValueByKey(chunkId);
             }
 
-            return property.get(x & 0xF, y, z & 0xF);
+            return property.get(pos.getX() & 0xF, pos.getY(), pos.getZ() & 0xF);
         } else {
             return false;
         }
@@ -53,10 +54,10 @@ public class DimensionProperty implements IWorldAccess {
             for (int x = 0; x < 16; ++x) {
                 for (int y = 0; y < worldHeight; ++y) {
                     for (int z = 0; z < 16; ++z) {
-                        Block block = chunk.getBlock(x, y, z);
-                        int meta = chunk.getBlockMetadata(x, y, z);
+                        BlockPos pos = new BlockPos(chunk.xPosition * 16 + x, y, chunk.zPosition * 16 + z);
+                        IBlockState state = chunk.getBlockState(pos);
 
-                        boolean prop = worldProperty.get(world, block, meta, chunk.xPosition * 16 + x, y, chunk.zPosition * 16 + z);
+                        boolean prop = worldProperty.get(world, state, pos);
                         property.set(x, y, z, prop);
                     }
                 }
@@ -65,25 +66,21 @@ public class DimensionProperty implements IWorldAccess {
     }
 
     @Override
-    public synchronized void markBlockForUpdate(int x, int y, int z) {
-        int xChunk = x >> 4;
-        int zChunk = z >> 4;
+    public synchronized void markBlockForUpdate(BlockPos pos) {
+        int xChunk = pos.getX() >> 4;
+        int zChunk = pos.getZ() >> 4;
         if (world.getChunkProvider().chunkExists(xChunk, zChunk)) {
             long chunkId = ChunkCoordIntPair.chunkXZ2Int(xChunk, zChunk);
 
             if (chunkMapping.containsItem(chunkId)) {
                 ChunkProperty property = (ChunkProperty) chunkMapping.getValueByKey(chunkId);
+                IBlockState state = world.getBlockState(pos);
 
-                Block block = world.getBlock(x, y, z);
-                int meta = world.getBlockMetadata(x, y, z);
-                boolean prop = worldProperty.get(world, block, meta, x, y, z);
-                property.set(x & 0xF, y, z & 0xF, prop);
+                boolean prop = worldProperty.get(world, state, pos);
+                property.set(pos.getX() & 0xF, pos.getY(), pos.getZ() & 0xF, prop);
             }
         }
     }
-
-    @Override
-    public void markBlockForRenderUpdate(int var1, int var2, int var3) {}
 
     @Override
     public void markBlockRangeForRenderUpdate(int x1, int y1, int z1, int x2, int y2, int z2) {}
@@ -94,32 +91,32 @@ public class DimensionProperty implements IWorldAccess {
     @Override
     public void playSoundToNearExcept(EntityPlayer var1, String var2, double var3, double var5, double var7, float var9, float var10) {}
 
-    @Override
-    public void spawnParticle(String var1, double var2, double var4, double var6, double var8, double var10, double var12) {}
-
-    @Override
-    public void onEntityCreate(Entity var1) {}
-
-    @Override
-    public void onEntityDestroy(Entity var1) {}
-
-    @Override
-    public void playRecord(String var1, int var2, int var3, int var4) {}
-
-    @Override
-    public void broadcastSound(int var1, int var2, int var3, int var4, int var5) {}
-
-    @Override
-    public void playAuxSFX(EntityPlayer var1, int var2, int var3, int var4, int var5, int var6) {}
-
-    @Override
-    public void destroyBlockPartially(int var1, int var2, int var3, int var4, int var5) {}
-
-    @Override
-    public void onStaticEntitiesChanged() {}
-
     public void clear() {
         world.removeWorldAccess(this);
     }
 
+    @Override
+    public void notifyLightSet(BlockPos pos) {}
+
+    @Override
+    public void spawnParticle(int particleID, boolean p_180442_2_, double xCoord, double yCoord, double zCoord, double xOffset, double yOffset,
+            double zOffset, int... p_180442_15_) {}
+
+    @Override
+    public void onEntityAdded(Entity entityIn) {}
+
+    @Override
+    public void onEntityRemoved(Entity entityIn) {}
+
+    @Override
+    public void playRecord(String recordName, BlockPos blockPosIn) {}
+
+    @Override
+    public void broadcastSound(int p_180440_1_, BlockPos p_180440_2_, int p_180440_3_) {}
+
+    @Override
+    public void playAusSFX(EntityPlayer player, int sfxType, BlockPos blockPosIn, int p_180439_4_) {}
+
+    @Override
+    public void sendBlockBreakProgress(int breakerId, BlockPos pos, int progress) {}
 }

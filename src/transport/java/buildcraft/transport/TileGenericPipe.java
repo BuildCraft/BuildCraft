@@ -19,6 +19,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -942,7 +943,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     }
 
     @SideOnly(Side.CLIENT)
-    public IIconProvider getPipeIcons() {
+    public TextureAtlasSpriteProvider getPipeIcons() {
         if (pipe == null) {
             return null;
         }
@@ -1065,7 +1066,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     }
 
     @Override
-    public boolean shouldRefresh(Block oldBlock, Block newBlock, int oldMeta, int newMeta, World world, int x, int y, int z) {
+    public boolean shouldRefresh(Block oldBlock, Block newBlock, int oldMeta, int newMeta, World world, BlockPos pos) {
         return oldBlock != newBlock;
     }
 

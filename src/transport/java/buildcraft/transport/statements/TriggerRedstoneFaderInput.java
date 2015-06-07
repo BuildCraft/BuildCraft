@@ -50,7 +50,7 @@ public class TriggerRedstoneFaderInput extends BCStatement implements ITriggerIn
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister iconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
         icon = iconRegister.registerIcon(String.format("buildcrafttransport:triggers/redstone_%02d", level));
     }
 

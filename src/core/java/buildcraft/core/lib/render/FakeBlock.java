@@ -6,6 +6,8 @@ package buildcraft.core.lib.render;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.relauncher.Side;
@@ -31,7 +33,7 @@ public final class FakeBlock extends Block implements ITextureStates {
     }
 
     @Override
-    public int colorMultiplier(IBlockAccess blockAccess, int x, int y, int z) {
+    public int colorMultiplier(IBlockAccess blockAccess, BlockPos pos, int renderPass) {
         return colorMultiplier;
     }
 
@@ -44,10 +46,10 @@ public final class FakeBlock extends Block implements ITextureStates {
         return textureState;
     }
 
-    @Override
-    public IIcon getIcon(int side, int meta) {
-        return textureState.isSided() ? textureState.getTextureArray()[side] : textureState.getTexture();
-    }
+//    @Override
+//    public TextureAtlasSprite getIcon(int side, int meta) {
+//        return textureState.isSided() ? textureState.getTextureArray()[side] : textureState.getTexture();
+//    }
 
     @Override
     public void setRenderSide(EnumFacing side, boolean render) {
@@ -75,7 +77,7 @@ public final class FakeBlock extends Block implements ITextureStates {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side) {
+    public boolean shouldSideBeRendered(IBlockAccess blockAccess, BlockPos pos, int side) {
         return (renderMask & (1 << side)) != 0;
     }
 }

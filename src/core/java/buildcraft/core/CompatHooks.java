@@ -6,6 +6,7 @@ package buildcraft.core;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.fml.common.Loader;
@@ -40,11 +41,11 @@ public class CompatHooks {
         return null;
     }
 
-    public Block getVisualBlock(IBlockAccess world, int x, int y, int z, EnumFacing side) {
+    public Block getVisualBlock(IBlockAccess world, BlockPos pos, EnumFacing side) {
         return null;
     }
 
-    public int getVisualMeta(IBlockAccess world, int x, int y, int z, EnumFacing side) {
+    public int getVisualMeta(IBlockAccess world, BlockPos pos, EnumFacing side) {
         return -1;
     }
 

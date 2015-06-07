@@ -9,7 +9,6 @@
 package buildcraft.api.robots;
 
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockPos;
 
 public class ResourceIdRequest extends ResourceId {
 

@@ -111,6 +111,8 @@ public final class NBTUtils {
                     int y = nbt.getInteger("y");
                     int z = nbt.getInteger("z");
                     pos = new BlockPos(x, y, z);
+                } else if (nbt.hasKey("pos")) {
+                    return readBlockPos(nbt.getTag("pos"));
                 } else {
                     BCLog.logger.warn("Attempted to read a block positions from a compound tag without the correct sub-tags! (" + base + ")",
                         new Throwable());

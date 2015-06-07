@@ -4,10 +4,11 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.utils;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public interface IBlockFilter {
 
-    boolean matches(World world, int x, int y, int z);
+    boolean matches(World world, BlockPos pos);
 
 }

@@ -7,6 +7,7 @@ package buildcraft.core.builders.schematics;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
@@ -24,17 +25,17 @@ public class SchematicIgnore extends SchematicBlock {
     }
 
     @Override
-    public void initializeFromObjectAt(IBuilderContext context, int x, int y, int z) {
+    public void initializeFromObjectAt(IBuilderContext context, BlockPos pos) {
 
     }
 
     @Override
-    public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
+    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
 
     }
 
     @Override
-    public void storeRequirements(IBuilderContext context, int x, int y, int z) {
+    public void storeRequirements(IBuilderContext context, BlockPos pos) {
 
     }
 

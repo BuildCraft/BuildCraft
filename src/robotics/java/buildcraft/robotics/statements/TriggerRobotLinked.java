@@ -28,7 +28,7 @@ public class TriggerRobotLinked extends BCStatement implements ITriggerInternal 
     }
 
     @Override
-    public void registerIcons(IIconRegister iconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
         icon = iconRegister.registerIcon("buildcraftrobotics:triggers/trigger_robot_" + (reserved ? "reserved" : "linked"));
     }
 

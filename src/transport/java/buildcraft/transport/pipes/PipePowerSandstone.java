@@ -26,7 +26,7 @@ public class PipePowerSandstone extends Pipe<PipeTransportPower> implements IPip
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIconProvider getIconProvider() {
+    public TextureAtlasSpriteProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 

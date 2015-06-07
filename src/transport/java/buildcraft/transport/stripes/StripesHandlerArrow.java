@@ -4,6 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
@@ -23,7 +24,7 @@ public class StripesHandlerArrow implements IStripesHandler {
     }
 
     @Override
-    public boolean handle(World world, int x, int y, int z, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
+    public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
 
         EntityArrow entityArrow = new EntityArrow(world, player, 0);
         entityArrow.setPosition(x + 0.5d, y + 0.5d, z + 0.5d);

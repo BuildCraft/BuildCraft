@@ -6,9 +6,11 @@ package buildcraft.factory;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
@@ -27,7 +29,7 @@ import buildcraft.factory.tile.TileTank;
 
 public class BlockTank extends BlockBuildCraft {
     private static final boolean DEBUG_MODE = false;
-    private IIcon textureStackedSide;
+    private TextureAtlasSprite textureStackedSide;
 
     public BlockTank() {
         super(Material.glass);
@@ -37,8 +39,8 @@ public class BlockTank extends BlockBuildCraft {
     }
 
     @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
-        TileEntity tile = world.getTileEntity(x, y, z);
+    public void breakBlock(World world, BlockPos pos, Block block, int par6) {
+        TileEntity tile = world.getTileEntity(pos);
         if (tile != null && tile instanceof TileTank) {
             TileTank tank = (TileTank) tile;
             tank.onBlockBreak();
@@ -47,7 +49,7 @@ public class BlockTank extends BlockBuildCraft {
         TileEntity tileAbove = world.getTileEntity(x, y + 1, z);
         TileEntity tileBelow = world.getTileEntity(x, y - 1, z);
 
-        super.breakBlock(world, x, y, z, block, par6);
+        super.breakBlock(world, pos, block, par6);
 
         if (tileAbove instanceof TileTank) {
             ((TileTank) tileAbove).updateComparators();
@@ -75,7 +77,7 @@ public class BlockTank extends BlockBuildCraft {
 
     @SuppressWarnings({ "all" })
     @Override
-    public IIcon getIconAbsolute(IBlockAccess iblockaccess, int i, int j, int k, int side, int metadata) {
+    public TextureAtlasSprite getIconAbsolute(IBlockAccess iblockaccess, int i, int j, int k, int side, int metadata) {
         if (side >= 2 && iblockaccess.getBlock(i, j - 1, k) == this) {
             return textureStackedSide;
         } else {
@@ -193,31 +195,31 @@ public class BlockTank extends BlockBuildCraft {
     }
 
     @Override
-    public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side) {
+    public boolean shouldSideBeRendered(IBlockAccess world, BlockPos pos, int side) {
         if (side <= 1) {
-            return world.getBlock(x, y, z) != this;
+            return world.getBlock(pos) != this;
         } else {
-            return super.shouldSideBeRendered(world, x, y, z, side);
+            return super.shouldSideBeRendered(world, pos, side);
         }
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerBlockIcons(IIconRegister par1IconRegister) {
+    public void registerBlockIcons(TextureAtlasSpriteRegister par1IconRegister) {
         super.registerBlockIcons(par1IconRegister);
         textureStackedSide = par1IconRegister.registerIcon("buildcraftfactory:tankBlock/side_stacked");
     }
 
     @Override
-    public int getLightValue(IBlockAccess world, int x, int y, int z) {
-        TileEntity tile = world.getTileEntity(x, y, z);
+    public int getLightValue(IBlockAccess world, BlockPos pos) {
+        TileEntity tile = world.getTileEntity(pos);
 
         if (tile instanceof TileTank) {
             TileTank tank = (TileTank) tile;
             return tank.getFluidLightLevel();
         }
 
-        return super.getLightValue(world, x, y, z);
+        return super.getLightValue(world, pos);
     }
 
     @Override
@@ -226,8 +228,8 @@ public class BlockTank extends BlockBuildCraft {
     }
 
     @Override
-    public int getComparatorInputOverride(World world, int x, int y, int z, int side) {
-        TileEntity tile = world.getTileEntity(x, y, z);
+    public int getComparatorInputOverride(World world, BlockPos pos, int side) {
+        TileEntity tile = world.getTileEntity(pos);
 
         if (tile instanceof TileTank) {
             TileTank tank = (TileTank) tile;

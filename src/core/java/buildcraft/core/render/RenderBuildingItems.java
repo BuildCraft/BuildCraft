@@ -1,4 +1,4 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
@@ -6,74 +6,44 @@ package buildcraft.core.render;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.tileentity.TileEntity;
 
-import buildcraft.core.BuildCraftCore;
+import buildcraft.api.core.BCLog;
 import buildcraft.core.StackAtPosition;
 import buildcraft.core.builders.BuildingItem;
 import buildcraft.core.builders.IBuildingItemsProvider;
 
 public class RenderBuildingItems {
 
-    private final EntityItem dummyEntityItem = new EntityItem(null);
-    private final RenderItem customRenderItem;
-
-    // optimization - buildToolBlocks are the most often appearing ones
-    private Item buildToolItem;
-    private int buildToolGlList;
+    private final RenderItem renderItem;
 
     public RenderBuildingItems() {
-        customRenderItem = new RenderItem() {
-            @Override
-            public boolean shouldBob() {
-                return false;
-            }
-
-            @Override
-            public boolean shouldSpreadItems() {
-                return false;
-            }
-        };
-        customRenderItem.setRenderManager(RenderManager.instance);
+        renderItem = Minecraft.getMinecraft().getRenderItem();
     }
 
     public void render(TileEntity tile, double x, double y, double z) {
+
         IBuildingItemsProvider provider = (IBuildingItemsProvider) tile;
         GL11.glPushMatrix();
 
         GL11.glTranslated(x, y, z);
-        GL11.glTranslated(-tile.xCoord, -tile.yCoord, -tile.zCoord);
+        GL11.glTranslated(-tile.getPos().getX(), -tile.getPos().getY(), -tile.getPos().getZ());
 
         if (provider.getBuilders() != null) {
-            for (BuildingItem i : provider.getBuilders()) {
-                doRenderItem(i, 1.0F);
+            synchronized (provider.getBuilders()) {
+                for (BuildingItem i : provider.getBuilders()) {
+                    doRenderItem(i, 1.0F);
+                }
             }
         }
 
         GL11.glPopMatrix();
     }
 
-    public void renderToList(ItemStack stack, int list) {
-        GL11.glNewList(list, GL11.GL_COMPILE_AND_EXECUTE);
-
-        float renderScale = 0.7f;
-        GL11.glScalef(renderScale, renderScale, renderScale);
-        dummyEntityItem.setEntityItemStack(stack);
-        customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
-        GL11.glEndList();
-    }
-
     private void doRenderItem(BuildingItem i, float light) {
-        if (buildToolItem == null) {
-            buildToolItem = Item.getItemFromBlock(BuildCraftCore.buildToolBlock);
-            buildToolGlList = GL11.glGenLists(1);
-            renderToList(new ItemStack(buildToolItem), buildToolGlList);
-        }
         if (i == null) {
             return;
         }
@@ -82,17 +52,21 @@ public class RenderBuildingItems {
 
         for (StackAtPosition s : i.getStacks()) {
             if (s.display) {
+                float renderScale = 0.7f;
                 GL11.glPushMatrix();
-                GL11.glTranslatef((float) s.pos.x, (float) s.pos.y + 0.25F, (float) s.pos.z);
-
-                if (s.stack.getItem() == buildToolItem) {
-                    GL11.glCallList(buildToolGlList);
-                } else if (!s.generatedListId) {
-                    s.generatedListId = true;
-                    s.glListId = GL11.glGenLists(1);
-                    renderToList(s.stack, s.glListId);
+                GL11.glTranslatef((float) s.pos.x, (float) s.pos.y, (float) s.pos.z);
+                GL11.glTranslatef(0, 0.25F, 0);
+                GL11.glScalef(renderScale, renderScale, renderScale);
+                if (s.stack != null) {
+                    @SuppressWarnings("deprecation")
+                    IBakedModel model = renderItem.getItemModelMesher().getItemModel(s.stack);
+                    if (model != null) {
+                        renderItem.renderItemModel(s.stack);
+                    } else {
+                        BCLog.logger.warn("Model was null for " + s.stack);
+                    }
                 } else {
-                    GL11.glCallList(s.glListId);
+                    BCLog.logger.warn("ItemStack was null for " + s + ", " + i);
                 }
 
                 GL11.glPopMatrix();

@@ -22,7 +22,7 @@ public class PipeItemsCobblestone extends Pipe {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIconProvider getIconProvider() {
+    public TextureAtlasSpriteProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 

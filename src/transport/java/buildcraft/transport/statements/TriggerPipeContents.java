@@ -153,7 +153,7 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister iconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
         icon = iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipecontents_" + kind.name().toLowerCase(Locale.ENGLISH));
     }
 }

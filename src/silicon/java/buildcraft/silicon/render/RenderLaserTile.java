@@ -21,7 +21,7 @@ public class RenderLaserTile extends TileEntitySpecialRenderer {
 
         if (laser != null) {
             GL11.glPushMatrix();
-            GL11.glTranslated(x, y, z);
+            GL11.glTranslated(pos);
             GL11.glTranslated(-tileentity.xCoord, -tileentity.yCoord, -tileentity.zCoord);
 
             GL11.glPushMatrix();

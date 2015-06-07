@@ -6,7 +6,8 @@ package buildcraft.core.properties;
 
 import java.util.HashMap;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -17,12 +18,12 @@ public abstract class WorldProperty implements IWorldProperty {
     public HashMap<Integer, DimensionProperty> properties = new HashMap<Integer, DimensionProperty>();
 
     @Override
-    public synchronized boolean get(World world, int x, int y, int z) {
-        return getDimension(world).get(x, y, z);
+    public synchronized boolean get(World world, BlockPos pos) {
+        return getDimension(world).get(pos);
     }
 
     private DimensionProperty getDimension(World world) {
-        int id = world.provider.dimensionId * 2;
+        int id = world.provider.getDimensionId() * 2;
 
         if (world.isRemote) {
             id++;
@@ -49,5 +50,5 @@ public abstract class WorldProperty implements IWorldProperty {
         properties.clear();
     }
 
-    protected abstract boolean get(IBlockAccess blockAccess, Block block, int meta, int x, int y, int z);
+    protected abstract boolean get(IBlockAccess blockAccess, IBlockState state, BlockPos pos);
 }

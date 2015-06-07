@@ -13,6 +13,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -93,11 +94,11 @@ public class BlockQuarry extends BlockLEDHatchBase {
     }
 
     @Override
-    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
+    public ArrayList<ItemStack> getDrops(World world, BlockPos pos, int metadata, int fortune) {
         if (BuildCraftBuilders.quarryOneTimeUse) {
             return new ArrayList<ItemStack>();
         }
-        return super.getDrops(world, x, y, z, metadata, fortune);
+        return super.getDrops(world, pos, metadata, fortune);
     }
 
     @Override
@@ -143,16 +144,16 @@ public class BlockQuarry extends BlockLEDHatchBase {
     }
 
     @Override
-    public boolean isSideSolid(IBlockAccess world, int x, int y, int z, EnumFacing side) {
+    public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
         return false;
     }
 
     @Override
-    public int getIconGlowLevel(IBlockAccess access, int x, int y, int z) {
+    public int getIconGlowLevel(IBlockAccess access, BlockPos pos) {
         if (renderPass < 2) {
             return -1;
         } else {
-            TileQuarry tile = (TileQuarry) access.getTileEntity(x, y, z);
+            TileQuarry tile = (TileQuarry) access.getTileEntity(pos);
             return tile.getIconGlowLevel(renderPass);
         }
     }

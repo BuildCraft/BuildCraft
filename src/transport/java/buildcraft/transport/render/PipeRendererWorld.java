@@ -9,6 +9,7 @@ import net.minecraft.block.BlockChest;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 
@@ -28,9 +29,9 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
     public static int renderPass = -1;
     public static float zFightOffset = 1F / 4096F;
 
-    public void renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, TileGenericPipe tile, int x, int y, int z) {
+    public void renderPipe(RenderBlocks renderblocks, IBlockAccess iblockaccess, TileGenericPipe tile, BlockPos pos) {
         PipeRenderState state = tile.renderState;
-        IIconProvider icons = tile.getPipeIcons();
+        TextureAtlasSpriteProvider icons = tile.getPipeIcons();
         FakeBlock fakeBlock = FakeBlock.INSTANCE;
         int glassColor = tile.getPipeColor();
 
@@ -60,7 +61,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
                 fixForRenderPass(dim);
 
-                renderTwoWayBlock(renderblocks, fakeBlock, x, y, z, dim, connectivity ^ 0x3f);
+                renderTwoWayBlock(renderblocks, fakeBlock, pos, dim, connectivity ^ 0x3f);
             }
 
             // render the connecting pipe faces
@@ -91,7 +92,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
                     fakeBlock.getTextureState().set(PipeIconProvider.TYPE.PipeStainedOverlay.getIcon());
                 }
 
-                renderTwoWayBlock(renderblocks, fakeBlock, x, y, z, dim, renderMask);
+                renderTwoWayBlock(renderblocks, fakeBlock, pos, dim, renderMask);
 
                 // Render connecting block
                 if (Minecraft.getMinecraft().gameSettings.fancyGraphics) {
@@ -143,7 +144,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
                 PipePluggable p = tile.getPipePluggable(dir);
                 IPipePluggableRenderer r = p.getRenderer();
                 if (r != null) {
-                    r.renderPluggable(renderblocks, tile.getPipe(), dir, p, fakeBlock, renderPass, x, y, z);
+                    r.renderPluggable(renderblocks, tile.getPipe(), dir, p, fakeBlock, renderPass, pos);
                 }
             }
         }
@@ -172,15 +173,15 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
     }
 
     /** Render a block with normal and inverted vertex order so back face culling doesn't have any effect. */
-    private void renderTwoWayBlock(RenderBlocks renderblocks, FakeBlock stateHost, int x, int y, int z, float[] dim, int mask) {
+    private void renderTwoWayBlock(RenderBlocks renderblocks, FakeBlock stateHost, BlockPos pos, float[] dim, int mask) {
         assert mask != 0;
 
         stateHost.setRenderMask(mask);
         renderblocks.setRenderBounds(dim[2], dim[0], dim[1], dim[5], dim[3], dim[4]);
-        renderblocks.renderStandardBlock(stateHost, x, y, z);
+        renderblocks.renderStandardBlock(stateHost, pos);
         stateHost.setRenderMask((mask & 0x15) << 1 | (mask & 0x2a) >> 1); // pairwise swapped mask
         renderblocks.setRenderBounds(dim[5], dim[3], dim[4], dim[2], dim[0], dim[1]);
-        renderblocks.renderStandardBlock(stateHost, x, y, z);
+        renderblocks.renderStandardBlock(stateHost, pos);
         stateHost.setRenderAllSides();
     }
 
@@ -190,20 +191,20 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
     }
 
     @Override
-    public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
-        TileEntity tile = world.getTileEntity(x, y, z);
+    public boolean renderWorldBlock(IBlockAccess world, BlockPos pos, Block block, int modelId, RenderBlocks renderer) {
+        TileEntity tile = world.getTileEntity(pos);
 
         // Here to prevent Minecraft from crashing when nothing renders on a render pass
         // (rarely in pass 0, often in pass 1)
         // This is a 1.7 bug.
-        Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
-        Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
-        Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
-        Tessellator.instance.addVertexWithUV(x, y, z, 0, 0);
+        Tessellator.instance.addVertexWithUV(pos, 0, 0);
+        Tessellator.instance.addVertexWithUV(pos, 0, 0);
+        Tessellator.instance.addVertexWithUV(pos, 0, 0);
+        Tessellator.instance.addVertexWithUV(pos, 0, 0);
 
         if (tile instanceof TileGenericPipe) {
             TileGenericPipe pipeTile = (TileGenericPipe) tile;
-            renderPipe(renderer, world, pipeTile, x, y, z);
+            renderPipe(renderer, world, pipeTile, pos);
         }
 
         return true;

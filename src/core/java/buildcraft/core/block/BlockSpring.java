@@ -14,8 +14,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.enums.EnumSpring;
 import buildcraft.core.BCCreativeTab;
@@ -46,22 +44,23 @@ public class BlockSpring extends BlockBuildCraftBase {
 
     @Override
     public int damageDropped(IBlockState state) {
-        return 1;
+        return SPRING_TYPE.getValue(state).ordinal();
     }
 
     @Override
     public void updateTick(World world, BlockPos pos, IBlockState state, Random random) {
-        assertSpring(world, pos);
+        assertSpring(world, pos, state);
     }
 
     // @Override
-    // public void onNeighborBlockChange(World world, int x, int y, int z, int blockid) {
-    // assertSpring(world, x, y, z);
+    // public void onNeighborBlockChange(World world, BlockPos pos, int blockid) {
+    // assertSpring(world, pos);
     // }
+
     @Override
     public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
         super.onBlockAdded(world, pos, state);
-        world.scheduleUpdate(pos, this, getValue(state, SPRING_TYPE).tickRate);
+        world.scheduleUpdate(pos, this, SPRING_TYPE.getValue(state).tickRate);
     }
 
     private void assertSpring(World world, BlockPos pos, IBlockState state) {
@@ -76,18 +75,12 @@ public class BlockSpring extends BlockBuildCraftBase {
         if (spring.chance != -1 && rand.nextInt(spring.chance) != 0) {
             return;
         }
-        world.setBlockState(pos.up(), spring.liquidBlock.getDefaultState());
+        world.setBlockState(pos.up(), spring.liquidBlock);
     }
 
     // Prevents updates on chunk generation
-    @Override
-    public boolean func_149698_L() {
-        return false;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerBlockIcons(IIconRegister par1IconRegister) {
-        blockIcon = par1IconRegister.registerIcon("bedrock");
-    }
+    // @Override
+    // public boolean func_149698_L() {
+    // return false;
+    // }
 }

@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
@@ -412,7 +413,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     }
 
     @Override
-    public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
+    public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player) {
         // Simply send shift click to the pipe / mod block.
         return true;
     }
@@ -564,7 +565,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister par1IconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister par1IconRegister) {
         // NOOP
     }
 

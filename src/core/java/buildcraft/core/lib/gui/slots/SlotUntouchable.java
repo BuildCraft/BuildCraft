@@ -38,7 +38,7 @@ public class SlotUntouchable extends SlotBase implements IPhantomSlot {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public boolean func_111238_b() {
+    public boolean canBeHovered() {
         return false;
     }
 }

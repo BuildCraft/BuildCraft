@@ -29,7 +29,7 @@ public class ActionPowerLimiter extends BCStatement implements IActionInternal {
     }
 
     @Override
-    public void registerIcons(IIconRegister iconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
         icon = iconRegister.registerIcon("buildcrafttransport:triggers/trigger_limiter_" + limit.name().toLowerCase(Locale.ENGLISH));
     }
 

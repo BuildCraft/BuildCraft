@@ -94,11 +94,6 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
     }
 
     @Override
-    public void registerIcons(IIconRegister register) {
-        icon = register.registerIcon("buildcraftcore:triggers/trigger_inventory_" + type.name().toLowerCase());
-    }
-
-    @Override
     public IStatementParameter createParameter(int index) {
         return new StatementParameterItemStack();
     }

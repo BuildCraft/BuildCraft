@@ -8,6 +8,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 
@@ -26,8 +27,8 @@ public class RenderLaserBlock implements ISimpleBlockRenderingHandler {
     }
 
     @Override
-    public boolean renderWorldBlock(IBlockAccess iblockaccess, int x, int y, int z, Block block, int l, RenderBlocks renderblocks) {
-        int meta = iblockaccess.getBlockMetadata(x, y, z);
+    public boolean renderWorldBlock(IBlockAccess iblockaccess, BlockPos pos, Block block, int l, RenderBlocks renderblocks) {
+        int meta = iblockaccess.getBlockMetadata(pos);
 
         if (meta == EnumFacing.EAST.ordinal()) {
             renderblocks.uvRotateEast = 2;
@@ -36,10 +37,10 @@ public class RenderLaserBlock implements ISimpleBlockRenderingHandler {
             renderblocks.uvRotateBottom = 2;
 
             renderblocks.setRenderBounds(0.0F, 0.0F, 0.0F, 4F / 16F, 1, 1);
-            renderblocks.renderStandardBlock(block, x, y, z);
+            renderblocks.renderStandardBlock(block, pos);
 
             renderblocks.setRenderBounds(4F / 16F, 5F / 16F, 5F / 16F, 13F / 16F, 11F / 16F, 11F / 16F);
-            renderblocks.renderStandardBlock(block, x, y, z);
+            renderblocks.renderStandardBlock(block, pos);
         } else if (meta == EnumFacing.WEST.ordinal()) {
             renderblocks.uvRotateEast = 1;
             renderblocks.uvRotateWest = 2;
@@ -47,19 +48,19 @@ public class RenderLaserBlock implements ISimpleBlockRenderingHandler {
             renderblocks.uvRotateBottom = 1;
 
             renderblocks.setRenderBounds(1F - 4F / 16F, 0.0F, 0.0F, 1, 1, 1);
-            renderblocks.renderStandardBlock(block, x, y, z);
+            renderblocks.renderStandardBlock(block, pos);
 
             renderblocks.setRenderBounds(1F - 13F / 16F, 5F / 16F, 5F / 16F, 1F - 4F / 16F, 11F / 16F, 11F / 16F);
-            renderblocks.renderStandardBlock(block, x, y, z);
+            renderblocks.renderStandardBlock(block, pos);
         } else if (meta == EnumFacing.NORTH.ordinal()) {
             renderblocks.uvRotateSouth = 1;
             renderblocks.uvRotateNorth = 2;
 
             renderblocks.setRenderBounds(0.0F, 0.0F, 1F - 4F / 16F, 1, 1, 1);
-            renderblocks.renderStandardBlock(block, x, y, z);
+            renderblocks.renderStandardBlock(block, pos);
 
             renderblocks.setRenderBounds(5F / 16F, 5F / 16F, 1F - 13F / 16F, 11F / 16F, 11F / 16F, 1F - 4F / 16F);
-            renderblocks.renderStandardBlock(block, x, y, z);
+            renderblocks.renderStandardBlock(block, pos);
         } else if (meta == EnumFacing.SOUTH.ordinal()) {
             renderblocks.uvRotateSouth = 2;
             renderblocks.uvRotateNorth = 1;
@@ -67,10 +68,10 @@ public class RenderLaserBlock implements ISimpleBlockRenderingHandler {
             renderblocks.uvRotateBottom = 3;
 
             renderblocks.setRenderBounds(0.0F, 0.0F, 0.0F, 1, 1, 4F / 16F);
-            renderblocks.renderStandardBlock(block, x, y, z);
+            renderblocks.renderStandardBlock(block, pos);
 
             renderblocks.setRenderBounds(5F / 16F, 5F / 16F, 4F / 16F, 11F / 16F, 11F / 16F, 13F / 16F);
-            renderblocks.renderStandardBlock(block, x, y, z);
+            renderblocks.renderStandardBlock(block, pos);
         } else if (meta == EnumFacing.DOWN.ordinal()) {
             renderblocks.uvRotateEast = 3;
             renderblocks.uvRotateWest = 3;
@@ -78,16 +79,16 @@ public class RenderLaserBlock implements ISimpleBlockRenderingHandler {
             renderblocks.uvRotateNorth = 3;
 
             renderblocks.setRenderBounds(0.0F, 1.0F - 4F / 16F, 0.0F, 1.0F, 1.0F, 1.0F);
-            renderblocks.renderStandardBlock(block, x, y, z);
+            renderblocks.renderStandardBlock(block, pos);
 
             renderblocks.setRenderBounds(5F / 16F, 1F - 13F / 16F, 5F / 16F, 11F / 16F, 1F - 4F / 16F, 11F / 16F);
-            renderblocks.renderStandardBlock(block, x, y, z);
+            renderblocks.renderStandardBlock(block, pos);
         } else if (meta == EnumFacing.UP.ordinal()) {
             renderblocks.setRenderBounds(0.0F, 0.0F, 0.0F, 1, 0.25, 1);
-            renderblocks.renderStandardBlock(block, x, y, z);
+            renderblocks.renderStandardBlock(block, pos);
 
             renderblocks.setRenderBounds(5F / 16F, 4F / 16F, 5F / 16F, 11F / 16F, 13F / 16F, 11F / 16F);
-            renderblocks.renderStandardBlock(block, x, y, z);
+            renderblocks.renderStandardBlock(block, pos);
         }
 
         renderblocks.uvRotateEast = 0;

@@ -105,7 +105,7 @@ public final class Utils {
         List<EnumFacing> pipeDirections = new ArrayList<EnumFacing>();
 
         for (EnumFacing side : EnumFacing.VALUES) {
-            if (from.getOpposite() == side) {
+            if (side.getOpposite() == from) {
                 continue;
             }
 
@@ -148,9 +148,9 @@ public final class Utils {
         InvUtils.dropItems(world, stack, pos);
     }
 
-    public static IAreaProvider getNearbyAreaProvider(World world, int i, int j, int k) {
+    public static IAreaProvider getNearbyAreaProvider(World world, BlockPos pos) {
         for (TileEntity t : (List<TileEntity>) world.loadedTileEntityList) {
-            if (t instanceof ITileAreaProvider && ((ITileAreaProvider) t).isValidFromLocation(i, j, k)) {
+            if (t instanceof ITileAreaProvider && ((ITileAreaProvider) t).isValidFromLocation(pos)) {
                 return (IAreaProvider) t;
             }
         }
@@ -348,8 +348,8 @@ public final class Utils {
         return obj.toString();
     }
 
-    public static String getNameForBlock(Block item) {
-        Object obj = Block.blockRegistry.getNameForObject(item);
+    public static String getNameForBlock(Block block) {
+        Object obj = Block.blockRegistry.getNameForObject(block);
         if (obj == null) {
             return null;
         }

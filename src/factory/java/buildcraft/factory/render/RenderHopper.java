@@ -45,12 +45,12 @@ public class RenderHopper extends TileEntitySpecialRenderer implements IInventor
 
     @Override
     public void inventoryRender(double x, double y, double z, float f, float f1) {
-        render(x, y, z);
+        render(pos);
     }
 
     @Override
     public void renderTileEntityAt(TileEntity var1, double x, double y, double z, float f) {
-        render(x, y, z);
+        render(pos);
     }
 
     private void render(double x, double y, double z) {
@@ -59,7 +59,7 @@ public class RenderHopper extends TileEntitySpecialRenderer implements IInventor
         }
 
         GL11.glPushMatrix();
-        GL11.glTranslated(x, y, z);
+        GL11.glTranslated(pos);
         bindTexture(HOPPER_TEXTURE);
         top.render((float) (1.0 / 16.0));
         bottom.render((float) (1.0 / 16.0));

@@ -5,9 +5,11 @@
 package buildcraft.builders;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -19,7 +21,7 @@ import buildcraft.core.GuiIds;
 import buildcraft.core.block.BlockBuildCraftLED;
 
 public class BlockArchitect extends BlockBuildCraftLED {
-    private IIcon[] led;
+    private TextureAtlasSprite[] led;
 
     public BlockArchitect() {
         super(Material.iron);
@@ -32,19 +34,19 @@ public class BlockArchitect extends BlockBuildCraftLED {
     }
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-        if (super.onBlockActivated(world, x, y, z, entityplayer, par6, par7, par8, par9)) {
+    public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+        if (super.onBlockActivated(world, pos, entityplayer, par6, par7, par8, par9)) {
             return true;
         }
 
         Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
         if (equipped instanceof ItemConstructionMarker) {
-            ItemConstructionMarker.link(entityplayer.getCurrentEquippedItem(), world, x, y, z);
+            ItemConstructionMarker.link(entityplayer.getCurrentEquippedItem(), world, pos);
 
             return true;
         } else {
             if (!world.isRemote) {
-                entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.ARCHITECT_TABLE, world, x, y, z);
+                entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.ARCHITECT_TABLE, world, pos);
             }
             return true;
         }
@@ -56,22 +58,22 @@ public class BlockArchitect extends BlockBuildCraftLED {
     }
 
     @Override
-    public boolean isSideSolid(IBlockAccess world, int x, int y, int z, EnumFacing side) {
+    public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
         return false;
     }
 
     @Override
-    public int getIconGlowLevel(IBlockAccess access, int x, int y, int z) {
+    public int getIconGlowLevel(IBlockAccess access, BlockPos pos) {
         if (renderPass < 1) {
             return -1;
         } else {
-            TileArchitect tile = (TileArchitect) access.getTileEntity(x, y, z);
+            TileArchitect tile = (TileArchitect) access.getTileEntity(pos);
             return tile.getIconGlowLevel(renderPass);
         }
     }
 
     @Override
-    public int getLightValue(IBlockAccess world, int x, int y, int z) {
+    public int getLightValue(IBlockAccess world, BlockPos pos) {
         return 1;
     }
 }

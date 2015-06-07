@@ -51,6 +51,7 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IWorldProperty;
 import buildcraft.api.crops.CropManager;
 import buildcraft.api.enums.EnumColor;
+import buildcraft.api.enums.EnumSpring;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
@@ -72,7 +73,6 @@ import buildcraft.core.config.ConfigManager;
 import buildcraft.core.crops.CropHandlerPlantable;
 import buildcraft.core.crops.CropHandlerReeds;
 import buildcraft.core.item.ItemDebugger;
-import buildcraft.core.item.ItemGear;
 import buildcraft.core.item.ItemList;
 import buildcraft.core.item.ItemMapLocation;
 import buildcraft.core.item.ItemPaintbrush;
@@ -81,6 +81,7 @@ import buildcraft.core.item.ItemWrench;
 import buildcraft.core.lib.commands.RootCommand;
 import buildcraft.core.lib.engines.ItemEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
+import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.NBTUtils;
@@ -267,28 +268,28 @@ public class BuildCraftCore extends BuildCraftMod {
             CoreProxy.proxy.registerItem(debuggerItem);
 
             if (BuildCraftCore.modifyWorld) {
-                BlockSpring.EnumSpring.WATER.canGen = BuildCraftCore.mainConfigManager.get("worldgen.generateWaterSprings").getBoolean();
+                EnumSpring.WATER.canGen = BuildCraftCore.mainConfigManager.get("worldgen.generateWaterSprings").getBoolean();
                 springBlock = new BlockSpring().setUnlocalizedName("eternalSpring");
                 CoreProxy.proxy.registerBlock(springBlock, ItemSpring.class);
             }
 
-            woodenGearItem = (new ItemGear()).setUnlocalizedName("woodenGearItem");
+            woodenGearItem = (new ItemBuildCraft()).setUnlocalizedName("woodenGearItem");
             CoreProxy.proxy.registerItem(woodenGearItem);
             OreDictionary.registerOre("gearWood", new ItemStack(woodenGearItem));
 
-            stoneGearItem = (new ItemGear()).setUnlocalizedName("stoneGearItem");
+            stoneGearItem = (new ItemBuildCraft()).setUnlocalizedName("stoneGearItem");
             CoreProxy.proxy.registerItem(stoneGearItem);
             OreDictionary.registerOre("gearStone", new ItemStack(stoneGearItem));
 
-            ironGearItem = (new ItemGear()).setUnlocalizedName("ironGearItem");
+            ironGearItem = (new ItemBuildCraft()).setUnlocalizedName("ironGearItem");
             CoreProxy.proxy.registerItem(ironGearItem);
             OreDictionary.registerOre("gearIron", new ItemStack(ironGearItem));
 
-            goldGearItem = (new ItemGear()).setUnlocalizedName("goldGearItem");
+            goldGearItem = (new ItemBuildCraft()).setUnlocalizedName("goldGearItem");
             CoreProxy.proxy.registerItem(goldGearItem);
             OreDictionary.registerOre("gearGold", new ItemStack(goldGearItem));
 
-            diamondGearItem = (new ItemGear()).setUnlocalizedName("diamondGearItem");
+            diamondGearItem = (new ItemBuildCraft()).setUnlocalizedName("diamondGearItem");
             CoreProxy.proxy.registerItem(diamondGearItem);
             OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));
 

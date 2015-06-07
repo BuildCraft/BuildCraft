@@ -208,7 +208,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
         if (fluidOil.getBlock() == null) {
             blockOil = new BlockBuildCraftFluid(fluidOil, Material.water, MapColor.blackColor).setFlammability(0);
-            blockOil.setBlockName("blockOil").setLightOpacity(8);
+            blockOil.setUnlocalizedName("blockOil").setLightOpacity(8);
             CoreProxy.proxy.registerBlock(blockOil);
             fluidOil.setBlock(blockOil);
 
@@ -232,7 +232,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
             blockFuel =
                 new BlockBuildCraftFluid(fluidFuel, Material.water, MapColor.yellowColor).setFlammable(true).setFlammability(5).setParticleColor(
                     0.7F, 0.7F, 0.0F);
-            blockFuel.setBlockName("blockFuel").setLightOpacity(3);
+            blockFuel.setUnlocalizedName("blockFuel").setLightOpacity(3);
             CoreProxy.proxy.registerBlock(blockFuel);
             fluidFuel.setBlock(blockFuel);
         } else {
@@ -242,7 +242,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
         if (fluidRedPlasma.getBlock() == null) {
             blockRedPlasma =
                 new BlockBuildCraftFluid(fluidRedPlasma, Material.water, MapColor.redColor).setFlammable(false).setParticleColor(0.9F, 0, 0);
-            blockRedPlasma.setBlockName("blockRedPlasma");
+            blockRedPlasma.setUnlocalizedName("blockRedPlasma");
             CoreProxy.proxy.registerBlock(blockRedPlasma);
             fluidRedPlasma.setBlock(blockRedPlasma);
         } else {

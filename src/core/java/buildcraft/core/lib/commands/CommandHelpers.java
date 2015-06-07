@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.commands;
 
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,7 +21,7 @@ public final class CommandHelpers {
 
     }
 
-    public static World getWorld(ICommandSender sender, IModCommand command, String[] args, int worldArgIndex) {
+    public static World getWorld(ICommandSender sender, IModCommand command, String[] args, int worldArgIndex) throws CommandException {
         // Handle passed in world argument
         if (worldArgIndex < args.length) {
             try {
@@ -71,7 +72,7 @@ public final class CommandHelpers {
         throw new WrongUsageException(String.format(StatCollector.translateToLocal("command.buildcraft.help"), command.getCommandUsage(sender)));
     }
 
-    public static void processChildCommand(ICommandSender sender, SubCommand child, String[] args) {
+    public static void processChildCommand(ICommandSender sender, SubCommand child, String[] args) throws CommandException {
         if (!sender.canCommandSenderUseCommand(child.getRequiredPermissionLevel(), child.getFullCommandString())) {
             throw new WrongUsageException(StatCollector.translateToLocal("command.buildcraft.noperms"));
         }
@@ -105,7 +106,7 @@ public final class CommandHelpers {
         }
     }
 
-    public static boolean processStandardCommands(ICommandSender sender, IModCommand command, String[] args) {
+    public static boolean processStandardCommands(ICommandSender sender, IModCommand command, String[] args) throws CommandException {
         if (args.length >= 1) {
             if ("help".equals(args[0])) {
                 command.printHelp(sender);

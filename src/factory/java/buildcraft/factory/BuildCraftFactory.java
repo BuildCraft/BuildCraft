@@ -142,28 +142,28 @@ public class BuildCraftFactory extends BuildCraftMod {
         reloadConfig(ConfigManager.RestartRequirement.GAME);
 
         miningWellBlock = (BlockMiningWell) CompatHooks.INSTANCE.getBlock(BlockMiningWell.class);
-        CoreProxy.proxy.registerBlock(miningWellBlock.setBlockName("miningWellBlock"));
+        CoreProxy.proxy.registerBlock(miningWellBlock.setUnlocalizedName("miningWellBlock"));
 
         plainPipeBlock = new BlockPlainPipe();
-        CoreProxy.proxy.registerBlock(plainPipeBlock.setBlockName("plainPipeBlock"));
+        CoreProxy.proxy.registerBlock(plainPipeBlock.setUnlocalizedName("plainPipeBlock"));
 
         autoWorkbenchBlock = (BlockAutoWorkbench) CompatHooks.INSTANCE.getBlock(BlockAutoWorkbench.class);
-        CoreProxy.proxy.registerBlock(autoWorkbenchBlock.setBlockName("autoWorkbenchBlock"));
+        CoreProxy.proxy.registerBlock(autoWorkbenchBlock.setUnlocalizedName("autoWorkbenchBlock"));
 
         tankBlock = (BlockTank) CompatHooks.INSTANCE.getBlock(BlockTank.class);
-        CoreProxy.proxy.registerBlock(tankBlock.setBlockName("tankBlock"));
+        CoreProxy.proxy.registerBlock(tankBlock.setUnlocalizedName("tankBlock"));
 
         pumpBlock = (BlockPump) CompatHooks.INSTANCE.getBlock(BlockPump.class);
-        CoreProxy.proxy.registerBlock(pumpBlock.setBlockName("pumpBlock"));
+        CoreProxy.proxy.registerBlock(pumpBlock.setUnlocalizedName("pumpBlock"));
 
         floodGateBlock = (BlockFloodGate) CompatHooks.INSTANCE.getBlock(BlockFloodGate.class);
-        CoreProxy.proxy.registerBlock(floodGateBlock.setBlockName("floodGateBlock"));
+        CoreProxy.proxy.registerBlock(floodGateBlock.setUnlocalizedName("floodGateBlock"));
 
         refineryBlock = (BlockRefinery) CompatHooks.INSTANCE.getBlock(BlockRefinery.class);
-        CoreProxy.proxy.registerBlock(refineryBlock.setBlockName("refineryBlock"));
+        CoreProxy.proxy.registerBlock(refineryBlock.setUnlocalizedName("refineryBlock"));
 
         hopperBlock = (BlockHopper) CompatHooks.INSTANCE.getBlock(BlockHopper.class);
-        CoreProxy.proxy.registerBlock(hopperBlock.setBlockName("blockHopper"));
+        CoreProxy.proxy.registerBlock(hopperBlock.setUnlocalizedName("blockHopper"));
 
         FactoryProxy.proxy.initializeEntityRenders();
 

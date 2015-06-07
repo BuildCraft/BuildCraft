@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.gui.widgets;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.core.lib.fluids.Tank;
@@ -35,7 +36,7 @@ public class FluidGaugeWidget extends Widget {
             return;
         }
 
-        IIcon liquidIcon = FluidRenderer.getFluidTexture(fluidStack, false);
+        TextureAtlasSprite liquidIcon = FluidRenderer.getFluidTexture(fluidStack, false);
 
         if (liquidIcon == null) {
             return;
@@ -47,7 +48,7 @@ public class FluidGaugeWidget extends Widget {
 
         for (int col = 0; col < w / 16; col++) {
             for (int row = 0; row <= h / 16; row++) {
-                gui.drawTexturedModelRectFromIcon(guiX + x + col * 16, guiY + y + row * 16 - 1, liquidIcon, 16, 16);
+                gui.drawTexturedModalRect(guiX + x + col * 16, guiY + y + row * 16 - 1, liquidIcon, 16, 16);
             }
         }
 

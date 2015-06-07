@@ -5,11 +5,13 @@
 package buildcraft.builders;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -23,10 +25,10 @@ import buildcraft.core.lib.utils.NBTUtils;
 public class ItemConstructionMarker extends ItemBlock {
 
     @SideOnly(Side.CLIENT)
-    public IIcon iconBase;
+    public TextureAtlasSprite iconBase;
 
     @SideOnly(Side.CLIENT)
-    public IIcon iconRecording;
+    public TextureAtlasSprite iconRecording;
 
     public ItemConstructionMarker(Block block) {
         super(block);
@@ -36,7 +38,7 @@ public class ItemConstructionMarker extends ItemBlock {
         return NBTUtils.getItemData(marker).hasKey("x");
     }
 
-    public static void link(ItemStack marker, World world, int x, int y, int z) {
+    public static void link(ItemStack marker, World world, BlockPos pos) {
         NBTTagCompound nbt = NBTUtils.getItemData(marker);
 
         if (nbt.hasKey("x")) {
@@ -46,13 +48,13 @@ public class ItemConstructionMarker extends ItemBlock {
 
             TileEntity tile1 = world.getTileEntity(ox, oy, oz);
 
-            if (!new Position(ox, oy, oz).isClose(new Position(x, y, z), 64)) {
+            if (!new Position(ox, oy, oz).isClose(new Position(pos), 64)) {
                 return;
             }
 
             if (tile1 != null && (tile1 instanceof TileArchitect)) {
                 TileArchitect architect = (TileArchitect) tile1;
-                TileEntity tile2 = world.getTileEntity(x, y, z);
+                TileEntity tile2 = world.getTileEntity(pos);
 
                 if (tile1 != tile2 && tile2 != null) {
                     if (tile2 instanceof TileArchitect || tile2 instanceof TileConstructionMarker || tile2 instanceof TileBuilder) {
@@ -74,7 +76,7 @@ public class ItemConstructionMarker extends ItemBlock {
     }
 
     @Override
-    public IIcon getIconIndex(ItemStack marker) {
+    public TextureAtlasSprite getIconIndex(ItemStack marker) {
         NBTTagCompound nbt = NBTUtils.getItemData(marker);
 
         if (nbt.hasKey("x")) {
@@ -88,7 +90,7 @@ public class ItemConstructionMarker extends ItemBlock {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister par1IconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister par1IconRegister) {
         super.registerIcons(par1IconRegister);
 
         iconBase = par1IconRegister.registerIcon("buildcraftbuilders:constructionMarkerBlock/default");
@@ -96,9 +98,9 @@ public class ItemConstructionMarker extends ItemBlock {
     }
 
     @Override
-    public boolean onItemUse(ItemStack marker, EntityPlayer player, World world, int x, int y, int z, int side, float par8, float par9, float par10) {
+    public boolean onItemUse(ItemStack marker, EntityPlayer player, World world, BlockPos pos, int side, float par8, float par9, float par10) {
 
-        TileEntity tile = world.getTileEntity(x, y, z);
+        TileEntity tile = world.getTileEntity(pos);
         NBTTagCompound nbt = NBTUtils.getItemData(marker);
 
         if (nbt.hasKey("x") && !(tile instanceof TileBuilder || tile instanceof TileArchitect || tile instanceof TileConstructionMarker)) {
@@ -109,7 +111,7 @@ public class ItemConstructionMarker extends ItemBlock {
 
             return true;
         } else {
-            return super.onItemUse(marker, player, world, x, y, z, side, par8, par9, par10);
+            return super.onItemUse(marker, player, world, pos, side, par8, par9, par10);
         }
     }
 }

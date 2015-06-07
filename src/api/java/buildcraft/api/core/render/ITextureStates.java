@@ -14,7 +14,7 @@ public interface ITextureStates extends ICullable {
 
 	ITextureStateManager getTextureState();
 	
-//	IIcon getIcon(int side, int meta);
+//	TextureAtlasSprite getIcon(int side, int meta);
 	
 	Block getBlock();
 	

@@ -15,6 +15,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -34,15 +35,15 @@ public class BlockFrame extends Block implements IFramePipeConnection {
     }
 
     @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
+    public void breakBlock(World world, BlockPos pos, Block block, int meta) {
         if (world.isRemote) {
             return;
         }
 
-        removeNeighboringFrames(world, x, y, z);
+        removeNeighboringFrames(world, pos);
     }
 
-    public void removeNeighboringFrames(World world, int x, int y, int z) {
+    public void removeNeighboringFrames(World world, BlockPos pos) {
         for (EnumFacing dir : EnumFacing.VALID_DIRECTIONS) {
             Block nBlock = world.getBlock(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
             if (nBlock == this) {
@@ -67,7 +68,7 @@ public class BlockFrame extends Block implements IFramePipeConnection {
     }
 
     @Override
-    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
+    public ArrayList<ItemStack> getDrops(World world, BlockPos pos, int metadata, int fortune) {
         return new ArrayList<ItemStack>();
     }
 
@@ -213,7 +214,7 @@ public class BlockFrame extends Block implements IFramePipeConnection {
     }
 
     @Override
-    public void registerBlockIcons(IIconRegister register) {
+    public void registerBlockIcons(TextureAtlasSpriteRegister register) {
         blockIcon = register.registerIcon("buildcraftbuilders:frameBlock/default");
     }
 }

@@ -1,10 +1,12 @@
 package buildcraft.transport;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -29,28 +31,28 @@ public class ItemGateCopier extends ItemBuildCraft {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIcon getIconIndex(ItemStack i) {
+    public TextureAtlasSprite getIconIndex(ItemStack i) {
         NBTTagCompound cpt = NBTUtils.getItemData(i);
         this.itemIcon = cpt.hasKey("logic") ? icons[1] : icons[0];
         return this.itemIcon;
     }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, int side, float hitX, float hitY, float hitZ) {
         if (world.isRemote) {
             return true;
         }
 
         boolean isCopying = !player.isSneaking();
-        Block block = world.getBlock(x, y, z);
-        TileEntity tile = world.getTileEntity(x, y, z);
+        Block block = world.getBlock(pos);
+        TileEntity tile = world.getTileEntity(pos);
         NBTTagCompound data = NBTUtils.getItemData(stack);
         Gate gate = null;
 
         if (tile == null || !(tile instanceof TileGenericPipe) || !(block instanceof BlockGenericPipe)) {
             isCopying = true;
         } else {
-            RaytraceResult rayTraceResult = ((BlockGenericPipe) block).doRayTrace(world, x, y, z, player);
+            RaytraceResult rayTraceResult = ((BlockGenericPipe) block).doRayTrace(world, pos, player);
 
             if (rayTraceResult != null && rayTraceResult.boundingBox != null && rayTraceResult.hitPart == Part.Pluggable) {
                 PipePluggable pluggable = ((TileGenericPipe) tile).getPipePluggable(rayTraceResult.sideHit);

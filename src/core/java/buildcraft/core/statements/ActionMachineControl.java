@@ -8,8 +8,6 @@ import java.util.Locale;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IStatementContainer;
@@ -37,11 +35,5 @@ public class ActionMachineControl extends BCStatement implements IActionExternal
         if (target instanceof IControllable) {
             ((IControllable) target).setControlMode(mode);
         }
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister register) {
-        icon = register.registerIcon("buildcraftcore:triggers/action_machinecontrol_" + mode.name().toLowerCase());
     }
 }

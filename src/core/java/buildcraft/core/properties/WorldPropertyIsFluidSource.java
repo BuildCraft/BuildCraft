@@ -6,13 +6,26 @@ package buildcraft.core.properties;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraft.world.World;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidBlock;
 
 public class WorldPropertyIsFluidSource extends WorldProperty {
 
     @Override
-    public boolean get(IBlockAccess blockAccess, Block block, int meta, int x, int y, int z) {
-        return (block instanceof BlockLiquid || block instanceof BlockFluidBase) && meta == 0;
+    public boolean get(IBlockAccess blockAccess, IBlockState state, BlockPos pos) {
+        Block block = state.getBlock();
+        if (block instanceof BlockLiquid) {
+            return (Integer) state.getValue(BlockLiquid.LEVEL) == 0;
+        } else if (block instanceof IFluidBlock) {
+            FluidStack fluid = ((IFluidBlock) block).drain((World) blockAccess, pos, false);
+            return fluid != null && fluid.amount > 0;
+
+        } else {
+            return false;
+        }
     }
 }

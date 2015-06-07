@@ -7,6 +7,7 @@ package buildcraft.factory.schematics;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.blueprints.IBuilderContext;
@@ -21,7 +22,7 @@ public class SchematicRefinery extends SchematicTile {
     }
 
     @Override
-    public void storeRequirements(IBuilderContext context, int x, int y, int z) {
+    public void storeRequirements(IBuilderContext context, BlockPos pos) {
 
     }
 
@@ -31,8 +32,8 @@ public class SchematicRefinery extends SchematicTile {
     }
 
     @Override
-    public void initializeFromObjectAt(IBuilderContext context, int x, int y, int z) {
-        super.initializeFromObjectAt(context, x, y, z);
+    public void initializeFromObjectAt(IBuilderContext context, BlockPos pos) {
+        super.initializeFromObjectAt(context, pos);
 
         tileNBT.removeTag("tank1");
         tileNBT.removeTag("tank2");
@@ -41,14 +42,14 @@ public class SchematicRefinery extends SchematicTile {
     }
 
     @Override
-    public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
+    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
         // to support refineries coming from older blueprints
         tileNBT.removeTag("tank1");
         tileNBT.removeTag("tank2");
         tileNBT.removeTag("result");
         tileNBT.removeTag("mjStored");
 
-        super.placeInWorld(context, x, y, z, stacks);
+        super.placeInWorld(context, pos, stacks);
     }
 
 }

@@ -62,8 +62,10 @@ public class PathFindingSearch implements IIterableAlgorithm {
             }
 
             BlockPos delta = blockIter.next();
-            BlockPos block = new BlockPos(start.x + delta.x, ((start.y + delta.y) > 0) ? start.y + delta.y : 0, start.z + delta.z);
-            if (isLoadedChunk(block.x, block.z)) {
+            BlockPos block =
+                new BlockPos(start.getX() + delta.getX(), ((start.getY() + delta.getY()) > 0) ? start.getY() + delta.getY() : 0, start.getZ()
+                    + delta.getZ());
+            if (isLoadedChunk(block.getX(), block.getZ())) {
                 if (isTarget(block)) {
                     pathFinders.add(new PathFinding(world, start, block, maxDistanceToEnd, maxDistance));
                 }
@@ -76,23 +78,23 @@ public class PathFindingSearch implements IIterableAlgorithm {
     }
 
     private boolean isTarget(BlockPos block) {
-        if (zone != null && !zone.contains(block.x, block.y, block.z)) {
+        if (zone != null && !zone.contains(block.getX(), block.getY(), block.getZ())) {
             return false;
         }
-        if (!pathFound.matches(world, block.x, block.y, block.z)) {
+        if (!pathFound.matches(world, block)) {
             return false;
         }
         synchronized (reservations) {
-            if (reservations.containsKey(world.provider.dimensionId)) {
-                HashSet<BlockPos> dimReservations = reservations.get(world.provider.dimensionId);
+            if (reservations.containsKey(world.provider.getDimensionId())) {
+                HashSet<BlockPos> dimReservations = reservations.get(world.provider.getDimensionId());
                 if (dimReservations.contains(block)) {
                     return false;
                 }
             }
         }
-        if (!BuildCraftAPI.isSoftBlock(world, block.x - 1, block.y, block.z) && !BuildCraftAPI.isSoftBlock(world, block.x + 1, block.y, block.z)
-            && !BuildCraftAPI.isSoftBlock(world, block.x, block.y, block.z - 1) && !BuildCraftAPI.isSoftBlock(world, block.x, block.y, block.z + 1)
-            && !BuildCraftAPI.isSoftBlock(world, block.x, block.y - 1, block.z) && !BuildCraftAPI.isSoftBlock(world, block.x, block.y + 1, block.z)) {
+        if (!BuildCraftAPI.isSoftBlock(world, block.west()) && !BuildCraftAPI.isSoftBlock(world, block.east())
+            && !BuildCraftAPI.isSoftBlock(world, block.north()) && !BuildCraftAPI.isSoftBlock(world, block.south())
+            && !BuildCraftAPI.isSoftBlock(world, block.down()) && !BuildCraftAPI.isSoftBlock(world, block.up())) {
             return false;
         }
         return true;
@@ -147,10 +149,10 @@ public class PathFindingSearch implements IIterableAlgorithm {
 
     private boolean reserve(BlockPos block) {
         synchronized (reservations) {
-            if (!reservations.containsKey(world.provider.dimensionId)) {
-                reservations.put(world.provider.dimensionId, new HashSet<BlockPos>());
+            if (!reservations.containsKey(world.provider.getDimensionId())) {
+                reservations.put(world.provider.getDimensionId(), new HashSet<BlockPos>());
             }
-            HashSet<BlockPos> dimReservations = reservations.get(world.provider.dimensionId);
+            HashSet<BlockPos> dimReservations = reservations.get(world.provider.getDimensionId());
             if (dimReservations.contains(block)) {
                 return false;
             }
@@ -161,8 +163,8 @@ public class PathFindingSearch implements IIterableAlgorithm {
 
     public void unreserve(BlockPos block) {
         synchronized (reservations) {
-            if (reservations.containsKey(world.provider.dimensionId)) {
-                reservations.get(world.provider.dimensionId).remove(block);
+            if (reservations.containsKey(world.provider.getDimensionId())) {
+                reservations.get(world.provider.getDimensionId()).remove(block);
             }
         }
     }

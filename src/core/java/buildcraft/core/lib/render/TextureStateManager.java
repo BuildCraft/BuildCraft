@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.render;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -14,16 +15,16 @@ import buildcraft.api.core.render.ITextureStateManager;
 @SideOnly(Side.CLIENT)
 public final class TextureStateManager implements ITextureStateManager {
 
-    private IIcon currentTexture;
-    private IIcon[] textureArray;
-    private IIcon[] textureArrayCache;
+    private TextureAtlasSprite currentTexture;
+    private TextureAtlasSprite[] textureArray;
+    private TextureAtlasSprite[] textureArrayCache;
 
-    public TextureStateManager(IIcon placeholder) {
+    public TextureStateManager(TextureAtlasSprite placeholder) {
         currentTexture = placeholder;
-        textureArrayCache = new IIcon[6];
+        textureArrayCache = new TextureAtlasSprite[6];
     }
 
-    public IIcon[] popArray() {
+    public TextureAtlasSprite[] popArray() {
         textureArray = textureArrayCache;
         return textureArrayCache; // Thread safety. Seriously.
     }
@@ -32,11 +33,11 @@ public final class TextureStateManager implements ITextureStateManager {
         textureArray = null;
     }
 
-    public IIcon getTexture() {
+    public TextureAtlasSprite getTexture() {
         return currentTexture;
     }
 
-    public IIcon[] getTextureArray() {
+    public TextureAtlasSprite[] getTextureArray() {
         return textureArray;
     }
 
@@ -44,7 +45,7 @@ public final class TextureStateManager implements ITextureStateManager {
         return textureArray != null;
     }
 
-    public void set(IIcon icon) {
+    public void set(TextureAtlasSprite icon) {
         currentTexture = icon;
     }
 }

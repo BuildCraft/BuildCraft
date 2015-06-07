@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.statements;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
@@ -29,7 +30,7 @@ public class ActionFiller extends BCStatement implements IActionExternal {
     }
 
     @Override
-    public IIcon getIcon() {
+    public TextureAtlasSprite getIcon() {
         return pattern.getIcon();
     }
 

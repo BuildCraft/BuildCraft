@@ -4,10 +4,11 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.urbanism;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public final class UrbanistToolsIconProvider implements IIconProvider {
+public final class UrbanistToolsIconProvider implements TextureAtlasSpriteProvider {
 
     public static UrbanistToolsIconProvider INSTANCE = new UrbanistToolsIconProvider();
     public static final int Tool_Block_Place = 0;
@@ -19,19 +20,19 @@ public final class UrbanistToolsIconProvider implements IIconProvider {
 
     public static final int MAX = 6;
     @SideOnly(Side.CLIENT)
-    private final IIcon[] icons = new IIcon[MAX];
+    private final TextureAtlasSprite[] icons = new TextureAtlasSprite[MAX];
 
     private UrbanistToolsIconProvider() {}
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIcon getIcon(int iconIndex) {
+    public TextureAtlasSprite getIcon(int iconIndex) {
         return icons[iconIndex];
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister iconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
         icons[UrbanistToolsIconProvider.Tool_Block_Place] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_block");
         icons[UrbanistToolsIconProvider.Tool_Block_Erase] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_erase");
         icons[UrbanistToolsIconProvider.Tool_Area] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_area");

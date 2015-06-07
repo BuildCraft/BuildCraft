@@ -8,6 +8,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPotion;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
@@ -28,7 +29,7 @@ public class StripesHandlerRightClick implements IStripesHandler {
     }
 
     @Override
-    public boolean handle(World world, int x, int y, int z, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
+    public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
         ItemStack remainingStack = stack.getItem().onItemRightClick(stack, world, player);
         activator.sendItem(remainingStack, direction.getOpposite());
         return true;

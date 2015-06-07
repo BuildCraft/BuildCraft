@@ -29,7 +29,7 @@ public class ActionExtractionPreset extends BCStatement implements IActionIntern
     }
 
     @Override
-    public void registerIcons(IIconRegister iconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
         icon = iconRegister.registerIcon("buildcrafttransport:triggers/extraction_preset_" + color.name().toLowerCase(Locale.ENGLISH));
     }
 

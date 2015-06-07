@@ -18,11 +18,11 @@ public interface IGateExpansion {
 
 	GateExpansionController makeController(TileEntity pipeTile);
 
-//	void registerBlockOverlay(IIconRegister iconRegister);
+//	void registerBlockOverlay(TextureAtlasSpriteRegister iconRegister);
 
-//	void registerItemOverlay(IIconRegister iconRegister);
+//	void registerItemOverlay(TextureAtlasSpriteRegister iconRegister);
 
-//	IIcon getOverlayBlock();
+//	TextureAtlasSprite getOverlayBlock();
 
-//	IIcon getOverlayItem();
+//	TextureAtlasSprite getOverlayItem();
 }

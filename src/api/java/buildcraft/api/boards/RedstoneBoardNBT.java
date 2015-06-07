@@ -27,10 +27,10 @@ public abstract class RedstoneBoardNBT<T> {
 	public abstract IRedstoneBoard<T> create(NBTTagCompound nbt, T object);
 
 //	@SideOnly(Side.CLIENT)
-//	public abstract void registerIcons(IIconRegister iconRegister);
+//	public abstract void registerIcons(TextureAtlasSpriteRegister iconRegister);
 //
 //	@SideOnly(Side.CLIENT)
-//	public abstract IIcon getIcon(NBTTagCompound nbt);
+//	public abstract TextureAtlasSprite getIcon(NBTTagCompound nbt);
 
 	public void createBoard(NBTTagCompound nbt) {
 		nbt.setString("id", getID());

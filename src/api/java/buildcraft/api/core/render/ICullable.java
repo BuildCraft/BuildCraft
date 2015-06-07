@@ -8,6 +8,7 @@
  */
 package buildcraft.api.core.render;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 
@@ -25,7 +26,7 @@ public interface ICullable {
 	
 	void setRenderAllSides();
 	
-	boolean shouldSideBeRendered(IBlockAccess blockAccess, int x, int y, int z, int side);
+	boolean shouldSideBeRendered(IBlockAccess blockAccess, BlockPos pos, int side);
 	
 	void setRenderMask(int mask);	
 	

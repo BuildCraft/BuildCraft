@@ -11,6 +11,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 
 public class RootCommand extends CommandBase implements IModCommand {
@@ -62,7 +63,7 @@ public class RootCommand extends CommandBase implements IModCommand {
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] args) {
+    public void processCommand(ICommandSender sender, String[] args) throws CommandException {
         if (!CommandHelpers.processStandardCommands(sender, this, args)) {
             CommandHelpers.throwWrongUsage(sender, this);
         }

@@ -7,15 +7,14 @@ package buildcraft.core.lib.network;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.network.PacketIds;
 
 public class PacketTileUpdate extends PacketUpdate {
-    public int posX;
-    public int posY;
-    public int posZ;
+    public BlockPos pos;
 
     public PacketTileUpdate() {
         super(PacketIds.TILE_UPDATE);
@@ -29,31 +28,27 @@ public class PacketTileUpdate extends PacketUpdate {
         super(packetId, tile);
 
         TileEntity entity = (TileEntity) tile;
-        posX = entity.xCoord;
-        posY = entity.yCoord;
-        posZ = entity.zCoord;
+        pos = entity.getPos();
     }
 
     @Override
     public void writeIdentificationData(ByteBuf data) {
-        data.writeInt(posX);
-        data.writeShort(posY);
-        data.writeInt(posZ);
+        data.writeInt(pos.getX());
+        data.writeInt(pos.getY());
+        data.writeInt(pos.getZ());
     }
 
     @Override
     public void readIdentificationData(ByteBuf data) {
-        posX = data.readInt();
-        posY = data.readShort();
-        posZ = data.readInt();
+        pos = new BlockPos(data.readInt(), data.readInt(), data.readInt());
     }
 
     public boolean targetExists(World world) {
-        return world.blockExists(posX, posY, posZ);
+        return !world.isAirBlock(pos);
     }
 
     public TileEntity getTarget(World world) {
-        return world.getTileEntity(posX, posY, posZ);
+        return world.getTileEntity(pos);
     }
 
 }

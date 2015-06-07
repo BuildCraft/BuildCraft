@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.gui;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -15,6 +16,8 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
@@ -113,7 +116,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
         if (fluid == null || fluid.getFluid() == null) {
             return;
         }
-        IIcon icon = fluid.getFluid().getIcon(fluid);
+        TextureAtlasSprite icon = fluid.getFluid().getIcon(fluid);
 
         if (icon == null) {
             icon =
@@ -148,13 +151,14 @@ public abstract class GuiBuildCraft extends GuiContainer {
     }
 
     // The magic is here
-    private void drawCutIcon(IIcon icon, int x, int y, int width, int height, int cut) {
-        Tessellator tess = Tessellator.instance;
-        tess.startDrawingQuads();
-        tess.addVertexWithUV(x, y + height, zLevel, icon.getMinU(), icon.getInterpolatedV(height));
-        tess.addVertexWithUV(x + width, y + height, zLevel, icon.getInterpolatedU(width), icon.getInterpolatedV(height));
-        tess.addVertexWithUV(x + width, y + cut, zLevel, icon.getInterpolatedU(width), icon.getInterpolatedV(cut));
-        tess.addVertexWithUV(x, y + cut, zLevel, icon.getMinU(), icon.getInterpolatedV(cut));
+    private void drawCutIcon(TextureAtlasSprite icon, int x, int y, int width, int height, int cut) {
+        Tessellator tess = Tessellator.getInstance();
+        WorldRenderer wr = tess.getWorldRenderer();
+        wr.startDrawingQuads();
+        wr.addVertexWithUV(x, y + height, zLevel, icon.getMinU(), icon.getInterpolatedV(height));
+        wr.addVertexWithUV(x + width, y + height, zLevel, icon.getInterpolatedU(width), icon.getInterpolatedV(height));
+        wr.addVertexWithUV(x + width, y + cut, zLevel, icon.getInterpolatedU(width), icon.getInterpolatedV(cut));
+        wr.addVertexWithUV(x, y + cut, zLevel, icon.getMinU(), icon.getInterpolatedV(cut));
         tess.draw();
     }
 
@@ -210,7 +214,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 
     // / MOUSE CLICKS
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         int mX = mouseX - guiLeft;
         int mY = mouseY - guiTop;
 
@@ -248,8 +252,8 @@ public abstract class GuiBuildCraft extends GuiContainer {
     }
 
     @Override
-    protected void mouseMovedOrUp(int mouseX, int mouseY, int eventType) {
-        super.mouseMovedOrUp(mouseX, mouseY, eventType);
+    protected void mouseReleased(int mouseX, int mouseY, int eventType) {
+        super.mouseReleased(mouseX, mouseY, eventType);
 
         int mX = mouseX - guiLeft;
         int mY = mouseY - guiTop;
@@ -536,11 +540,11 @@ public abstract class GuiBuildCraft extends GuiContainer {
             GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0F);
         }
 
-        protected void drawIcon(IIcon icon, int x, int y) {
+        protected void drawIcon(TextureAtlasSprite icon, int x, int y) {
             GL11.glDisable(GL11.GL_BLEND);
             GL11.glEnable(GL11.GL_ALPHA_TEST);
             GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0F);
-            drawTexturedModelRectFromIcon(x, y, icon, 16, 16);
+            drawTexturedModalRect(x, y, icon, 16, 16);
         }
     }
 

@@ -43,7 +43,7 @@ public class EntityPackage extends EntityThrowable {
 
     @Override
     protected void onImpact(MovingObjectPosition target) {
-        double x, y, z;
+        double pos;
         if (target.typeOfHit == MovingObjectPosition.MovingObjectType.ENTITY) {
             x = target.entityHit.posX;
             y = target.entityHit.posY;

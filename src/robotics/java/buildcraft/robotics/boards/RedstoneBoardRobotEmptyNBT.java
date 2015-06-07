@@ -2,6 +2,7 @@ package buildcraft.robotics.boards;
 
 import java.util.List;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,7 +18,7 @@ import buildcraft.robotics.EntityRobot;
 public class RedstoneBoardRobotEmptyNBT extends RedstoneBoardRobotNBT {
 
     public static RedstoneBoardRobotEmptyNBT instance = new RedstoneBoardRobotEmptyNBT();
-    private IIcon icon;
+    private TextureAtlasSprite icon;
 
     @Override
     public RedstoneBoardRobot create(EntityRobotBase robot) {
@@ -39,13 +40,13 @@ public class RedstoneBoardRobotEmptyNBT extends RedstoneBoardRobotNBT {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister iconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
         icon = iconRegister.registerIcon("buildcraftrobotics:board/clean");
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIcon getIcon(NBTTagCompound nbt) {
+    public TextureAtlasSprite getIcon(NBTTagCompound nbt) {
         return icon;
     }
 

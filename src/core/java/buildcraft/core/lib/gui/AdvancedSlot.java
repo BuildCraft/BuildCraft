@@ -7,6 +7,7 @@ package buildcraft.core.lib.gui;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -50,12 +51,12 @@ public abstract class AdvancedSlot {
         }
     }
 
-    public IIcon getIcon() {
+    public TextureAtlasSprite getIcon() {
         return null;
     }
 
     public ResourceLocation getTexture() {
-        return TextureMap.locationItemsTexture;
+        return TextureMap.locationBlocksTexture;
     }
 
     public ItemStack getItemStack() {
@@ -89,7 +90,7 @@ public abstract class AdvancedSlot {
             GL11.glEnable(GL11.GL_ALPHA_TEST);
             GL11.glEnable(GL11.GL_BLEND);
 
-            gui.drawTexturedModelRectFromIcon(cornerX + x, cornerY + y, getIcon(), 16, 16);
+            gui.drawTexturedModalRect(cornerX + x, cornerY + y, getIcon(), 16, 16);
 
             GL11.glEnable(GL11.GL_LIGHTING);
             GL11.glDisable(GL11.GL_ALPHA_TEST);

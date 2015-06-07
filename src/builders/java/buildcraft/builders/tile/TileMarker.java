@@ -9,6 +9,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.core.ISerializable;
@@ -25,7 +26,7 @@ import buildcraft.core.proxy.CoreProxy;
 public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
     public static class TileWrapper implements ISerializable {
 
-        public int x, y, z;
+        public int pos;
         private TileMarker marker;
 
         public TileWrapper() {
@@ -34,7 +35,7 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
             z = Integer.MAX_VALUE;
         }
 
-        public TileWrapper(int x, int y, int z) {
+        public TileWrapper(BlockPos pos) {
             this.x = x;
             this.y = y;
             this.z = z;
@@ -50,7 +51,7 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
             }
 
             if (marker == null) {
-                TileEntity tile = world.getTileEntity(x, y, z);
+                TileEntity tile = world.getTileEntity(pos);
                 if (tile instanceof TileMarker) {
                     marker = (TileMarker) tile;
                 }
@@ -536,7 +537,7 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
     }
 
     @Override
-    public boolean isValidFromLocation(int x, int y, int z) {
+    public boolean isValidFromLocation(BlockPos pos) {
         // Rules:
         // - one or two, but not three, of the coordinates must be equal to the marker's location
         // - one of the coordinates must be either -1 or 1 away

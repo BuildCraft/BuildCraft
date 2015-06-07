@@ -8,6 +8,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.IShearable;
@@ -28,16 +29,16 @@ public class StripesHandlerShears implements IStripesHandler {
     }
 
     @Override
-    public boolean handle(World world, int x, int y, int z, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-        Block block = world.getBlock(x, y, z);
+    public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
+        Block block = world.getBlock(pos);
 
         if (block instanceof IShearable) {
             IShearable shearableBlock = (IShearable) block;
-            if (shearableBlock.isShearable(stack, world, x, y, z)) {
-                world.playSoundEffect(x, y, z, Block.soundTypeGrass.getBreakSound(), 1, 1);
+            if (shearableBlock.isShearable(stack, world, pos)) {
+                world.playSoundEffect(pos, Block.soundTypeGrass.getBreakSound(), 1, 1);
                 List<ItemStack> drops =
-                    shearableBlock.onSheared(stack, world, x, y, z, EnchantmentHelper.getEnchantmentLevel(Enchantment.fortune.effectId, stack));
-                world.setBlockToAir(x, y, z);
+                    shearableBlock.onSheared(stack, world, pos, EnchantmentHelper.getEnchantmentLevel(Enchantment.fortune.effectId, stack));
+                world.setBlockToAir(pos);
                 if (stack.attemptDamageItem(1, player.getRNG())) {
                     stack.stackSize--;
                 }

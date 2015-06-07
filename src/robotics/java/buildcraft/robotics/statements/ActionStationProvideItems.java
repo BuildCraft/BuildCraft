@@ -23,7 +23,7 @@ public class ActionStationProvideItems extends BCStatement implements IActionInt
     }
 
     @Override
-    public void registerIcons(IIconRegister iconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
         icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_station_provide_items");
     }
 

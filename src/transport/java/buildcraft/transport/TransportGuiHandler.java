@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Level;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
@@ -21,13 +22,13 @@ import buildcraft.transport.pipes.PipeItemsEmzuli;
 public class TransportGuiHandler implements IGuiHandler {
 
     @Override
-    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+    public Object getServerGuiElement(int id, EntityPlayer player, World world, BlockPos pos) {
         try {
-            if (!world.blockExists(x, y, z)) {
+            if (!world.blockExists(pos)) {
                 return null;
             }
 
-            TileEntity tile = world.getTileEntity(x, y, z);
+            TileEntity tile = world.getTileEntity(pos);
 
             if (tile instanceof TileFilteredBuffer) {
                 TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;
@@ -70,13 +71,13 @@ public class TransportGuiHandler implements IGuiHandler {
     }
 
     @Override
-    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, BlockPos pos) {
         try {
-            if (!world.blockExists(x, y, z)) {
+            if (!world.blockExists(pos)) {
                 return null;
             }
 
-            TileEntity tile = world.getTileEntity(x, y, z);
+            TileEntity tile = world.getTileEntity(pos);
 
             if (tile instanceof TileFilteredBuffer) {
                 TileFilteredBuffer filteredBuffer = (TileFilteredBuffer) tile;

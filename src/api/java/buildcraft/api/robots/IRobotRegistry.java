@@ -11,6 +11,7 @@ package buildcraft.api.robots;
 import java.util.Collection;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
 public interface IRobotRegistry {
@@ -39,7 +40,7 @@ public interface IRobotRegistry {
 
 	void releaseResources(EntityRobotBase robot);
 
-	DockingStation getStation(int x, int y, int z, EnumFacing side);
+	DockingStation getStation(BlockPos pos, EnumFacing side);
 
 	Collection<DockingStation> getStations();
 

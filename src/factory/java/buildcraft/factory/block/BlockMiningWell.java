@@ -7,6 +7,7 @@ package buildcraft.factory;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -24,12 +25,12 @@ public class BlockMiningWell extends BlockLEDHatchBase {
     }
 
     @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int meta) {
-        super.breakBlock(world, x, y, z, block, meta);
-        removePipes(world, x, y, z);
+    public void breakBlock(World world, BlockPos pos, Block block, int meta) {
+        super.breakBlock(world, pos, block, meta);
+        removePipes(world, pos);
     }
 
-    public void removePipes(World world, int x, int y, int z) {
+    public void removePipes(World world, BlockPos pos) {
         for (int depth = y - 1; depth > 0; depth--) {
             Block pipe = world.getBlock(x, depth, z);
             if (pipe != BuildCraftFactory.plainPipeBlock) {
@@ -45,11 +46,11 @@ public class BlockMiningWell extends BlockLEDHatchBase {
     }
 
     @Override
-    public int getIconGlowLevel(IBlockAccess access, int x, int y, int z) {
+    public int getIconGlowLevel(IBlockAccess access, BlockPos pos) {
         if (renderPass < 2) {
             return -1;
         } else {
-            TileMiningWell tile = (TileMiningWell) access.getTileEntity(x, y, z);
+            TileMiningWell tile = (TileMiningWell) access.getTileEntity(pos);
             return tile.getIconGlowLevel(renderPass);
         }
     }

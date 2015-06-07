@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.gui;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 
@@ -29,7 +30,7 @@ public class FluidSlot extends AdvancedSlot {
     }
 
     @Override
-    public IIcon getIcon() {
+    public TextureAtlasSprite getIcon() {
         return FluidRenderer.getFluidTexture(fluid, false);
     }
 

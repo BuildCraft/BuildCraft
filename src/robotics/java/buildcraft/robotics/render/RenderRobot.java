@@ -69,12 +69,12 @@ public class RenderRobot extends Render implements IItemRenderer {
 
     @Override
     public void doRender(Entity entity, double x, double y, double z, float f, float f1) {
-        doRender((EntityRobot) entity, x, y, z, f1);
+        doRender((EntityRobot) entity, pos, f1);
     }
 
     private void doRender(EntityRobot robot, double x, double y, double z, float partialTicks) {
         GL11.glPushMatrix();
-        GL11.glTranslated(x, y, z);
+        GL11.glTranslated(pos);
 
         float robotYaw = this.interpolateRotation(robot.prevRenderYawOffset, robot.renderYawOffset, partialTicks);
         GL11.glRotatef(-robotYaw, 0.0f, 1.0f, 0.0f);

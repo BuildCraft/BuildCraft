@@ -123,7 +123,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIconProvider getIconProvider() {
+    public TextureAtlasSpriteProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 

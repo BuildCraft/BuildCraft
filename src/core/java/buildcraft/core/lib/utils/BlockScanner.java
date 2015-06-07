@@ -17,7 +17,7 @@ public class BlockScanner implements Iterable<BlockPos> {
     Box box = new Box();
     World world;
 
-    int x, y, z;
+    BlockPos pos;
     int iterationsPerCycle;
     int blocksDone = 0;
 
@@ -27,26 +27,24 @@ public class BlockScanner implements Iterable<BlockPos> {
 
         @Override
         public boolean hasNext() {
-            return z <= box.zMax && it <= iterationsPerCycle;
+            return pos.getZ() <= box.zMax && it <= iterationsPerCycle;
         }
 
         @Override
         public BlockPos next() {
-            BlockPos index = new BlockPos(x, y, z);
+            BlockPos index = new BlockPos(pos);
             it++;
             blocksDone++;
 
-            if (x < box.xMax) {
-                x++;
+            if (pos.getX() < box.xMax) {
+                pos = pos.east();
             } else {
-                x = box.xMin;
+                pos = new BlockPos(box.xMin, pos.getY(), pos.getZ());
 
-                if (y < box.yMax) {
-                    y++;
+                if (pos.getY() < box.yMax) {
+                    pos = pos.up();
                 } else {
-                    y = box.yMin;
-
-                    z++;
+                    pos = new BlockPos(pos.getX(), box.yMax, pos.getZ() + 1);
                 }
             }
 
@@ -63,10 +61,7 @@ public class BlockScanner implements Iterable<BlockPos> {
         this.box = box;
         this.world = world;
         this.iterationsPerCycle = iterationsPreCycle;
-
-        x = box.xMin;
-        y = box.yMin;
-        z = box.zMin;
+        pos = new BlockPos(box.xMin, box.yMin, box.zMin);
     }
 
     public BlockScanner() {}
@@ -85,9 +80,7 @@ public class BlockScanner implements Iterable<BlockPos> {
     }
 
     public void writeToNBT(NBTTagCompound nbt) {
-        nbt.setInteger("x", x);
-        nbt.setInteger("y", y);
-        nbt.setInteger("z", z);
+        nbt.setTag("pos", NBTUtils.writeBlockPos(pos));
         nbt.setInteger("blocksDone", blocksDone);
         nbt.setInteger("iterationsPerCycle", iterationsPerCycle);
         NBTTagCompound boxNBT = new NBTTagCompound();
@@ -96,9 +89,7 @@ public class BlockScanner implements Iterable<BlockPos> {
     }
 
     public void readFromNBT(NBTTagCompound nbt) {
-        x = nbt.getInteger("x");
-        y = nbt.getInteger("y");
-        z = nbt.getInteger("z");
+        pos = NBTUtils.readBlockPos(nbt.getTag("pos"));
         blocksDone = nbt.getInteger("blocksDone");
         iterationsPerCycle = nbt.getInteger("iterationsPerCycle");
         box.initialize(nbt.getCompoundTag("box"));

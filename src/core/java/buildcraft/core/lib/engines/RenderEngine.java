@@ -73,7 +73,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
         this.baseTexture = baseTexture;
         this.chamberTexture = chamberTexture;
         this.trunkTexture = trunkTexture;
-        field_147501_a = TileEntityRendererDispatcher.instance;
+        rendererDispatcher = TileEntityRendererDispatcher.instance;
     }
 
     public RenderEngine(TileEngineBase engine) {
@@ -86,7 +86,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
     }
 
     @Override
-    public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
+    public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int wtfIsThis) {
         TileEngineBase engine = (TileEngineBase) tileentity;
 
         if (engine != null) {
@@ -122,7 +122,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
         float translatefact = step / 16;
 
         float[] angle = { 0, 0, 0 };
-        float[] translate = { orientation.offsetX, orientation.offsetY, orientation.offsetZ };
+        float[] translate = { orientation.getFrontOffsetX(), orientation.getFrontOffsetY(), orientation.getFrontOffsetZ() };
 
         switch (orientation) {
             case EAST:

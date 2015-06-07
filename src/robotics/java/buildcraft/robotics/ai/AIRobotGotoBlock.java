@@ -29,15 +29,15 @@ public class AIRobotGotoBlock extends AIRobotGoto {
         super(iRobot);
     }
 
-    public AIRobotGotoBlock(EntityRobotBase robot, int x, int y, int z) {
+    public AIRobotGotoBlock(EntityRobotBase robot, BlockPos pos) {
         this(robot);
         finalX = x;
         finalY = y;
         finalZ = z;
     }
 
-    public AIRobotGotoBlock(EntityRobotBase robot, int x, int y, int z, double iMaxDistance) {
-        this(robot, x, y, z);
+    public AIRobotGotoBlock(EntityRobotBase robot, BlockPos pos, double iMaxDistance) {
+        this(robot, pos);
 
         maxDistance = iMaxDistance;
     }

@@ -6,12 +6,13 @@ package buildcraft.builders.urbanism;
 
 import java.util.ArrayList;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.MovingObjectPosition;
 
 import buildcraft.core.lib.gui.AdvancedSlot;
 
 class UrbanistTool {
-    public IIcon getIcon() {
+    public TextureAtlasSprite getIcon() {
         return null;
     }
 

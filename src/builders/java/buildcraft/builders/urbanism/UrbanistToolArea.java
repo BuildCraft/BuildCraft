@@ -7,17 +7,18 @@ package buildcraft.builders.urbanism;
 import org.lwjgl.input.Mouse;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.MovingObjectPosition;
 
 class UrbanistToolArea extends UrbanistTool {
 
     private int step = 0;
     private int startX, startY, startZ;
-    private int x, y, z;
+    private int pos;
     private float baseY = 0;
 
     @Override
-    public IIcon getIcon() {
+    public TextureAtlasSprite getIcon() {
         return UrbanistToolsIconProvider.INSTANCE.getIcon(UrbanistToolsIconProvider.Tool_Area);
     }
 
@@ -37,7 +38,7 @@ class UrbanistToolArea extends UrbanistTool {
             startY = y;
             startZ = z;
 
-            gui.urbanist.rpcCreateFrame(x, y, z);
+            gui.urbanist.rpcCreateFrame(pos);
 
             step = 1;
         } else if (step == 1) {
@@ -46,7 +47,7 @@ class UrbanistToolArea extends UrbanistTool {
         } else if (step == 2) {
             step = 0;
 
-            areaSet(gui, startX, startY, startZ, x, y, z);
+            areaSet(gui, startX, startY, startZ, pos);
         }
     }
 
@@ -60,13 +61,13 @@ class UrbanistToolArea extends UrbanistTool {
             x = pos.blockX;
             z = pos.blockZ;
 
-            gui.urbanist.rpcMoveFrame(x, y, z);
+            gui.urbanist.rpcMoveFrame(pos);
         } else if (step == 2) {
             float ydiff = (float) Mouse.getY() / (float) Minecraft.getMinecraft().displayHeight;
 
             y = (int) (startY + (ydiff - baseY) * 50);
 
-            gui.urbanist.rpcMoveFrame(x, y, z);
+            gui.urbanist.rpcMoveFrame(pos);
         }
     }
 }

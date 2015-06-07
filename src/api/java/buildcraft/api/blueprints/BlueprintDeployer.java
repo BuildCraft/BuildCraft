@@ -20,11 +20,11 @@ public abstract class BlueprintDeployer {
 	 * BuildCraft not installed should check for this value to be not null. */
 	public static BlueprintDeployer instance;
 
-	/** Deploy the contents of the blueprints as if the builder was located at {x, y, z} facing the direction dir. */
+	/** Deploy the contents of the blueprints as if the builder was located at {pos} facing the direction dir. */
 	public abstract void deployBlueprint(World world, BlockPos pos, EnumFacing facing, File file);
 
-	/** Deploy the contents of the byte array as if the builder was located at {x, y, z} facing the direction dir. */
+	/** Deploy the contents of the byte array as if the builder was located at {pos} facing the direction dir. */
 
-	public abstract void deployBlueprintFromFileStream(World world, int x, int y, int z, EnumFacing dir, byte[] data);
+	public abstract void deployBlueprintFromFileStream(World world, BlockPos pos, EnumFacing dir, byte[] data);
 
 }

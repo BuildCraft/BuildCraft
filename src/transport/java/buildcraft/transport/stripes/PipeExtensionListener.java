@@ -9,6 +9,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -28,14 +29,14 @@ import buildcraft.transport.utils.TransportUtils;
 public class PipeExtensionListener {
     private class PipeExtensionRequest {
         public ItemStack stack;
-        public int x, y, z;
+        public int pos;
         public EnumFacing o;
         public IStripesActivator h;
     }
 
     private final Map<World, HashSet<PipeExtensionRequest>> requests = new HashMap<World, HashSet<PipeExtensionRequest>>();
 
-    public void requestPipeExtension(ItemStack stack, World world, int x, int y, int z, EnumFacing o, IStripesActivator h) {
+    public void requestPipeExtension(ItemStack stack, World world, BlockPos pos, EnumFacing o, IStripesActivator h) {
         if (world.isRemote) {
             return;
         }

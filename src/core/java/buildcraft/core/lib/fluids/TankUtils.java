@@ -87,7 +87,7 @@ public final class TankUtils {
 
     public static void pushFluidToConsumers(IFluidTank tank, int flowCap, TileBuffer[] tileBuffer) {
         int amountToPush = flowCap;
-        for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing side : EnumFacing.VALUES) {
             FluidStack fluidStack = tank.drain(amountToPush, false);
             if (fluidStack != null && fluidStack.amount > 0) {
                 TileEntity tile = tileBuffer[side.ordinal()].getTile();

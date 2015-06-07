@@ -24,8 +24,8 @@ public class BlockScannerZoneRandom implements Iterable<BlockPos> {
 
         @Override
         public BlockPos next() {
-            BlockPos block = zone.getRandomBlockPos(rand);
-            return new BlockPos(block.x - x, block.y - y, block.z - z);
+            BlockPos pos = zone.getRandomBlockPos(rand);
+            return new BlockPos(pos.getX() - x, pos.getY() - y, pos.getZ() - z);
         }
 
         @Override

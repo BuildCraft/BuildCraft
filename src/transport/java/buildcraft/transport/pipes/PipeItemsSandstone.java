@@ -25,7 +25,7 @@ public class PipeItemsSandstone extends Pipe implements IPipeConnectionForced {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIconProvider getIconProvider() {
+    public TextureAtlasSpriteProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 

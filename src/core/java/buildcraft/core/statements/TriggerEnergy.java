@@ -11,8 +11,6 @@ import cofh.api.energy.IEnergyReceiver;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -94,17 +92,17 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
         return false;
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister iconRegister) {
-        icon = iconRegister.registerIcon("buildcraftcore:triggers/trigger_energy_storage_" + (high ? "high" : "low"));
-    }
+    // @Override
+    // @SideOnly(Side.CLIENT)
+    // public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
+    // icon = iconRegister.registerIcon("buildcraftcore:triggers/trigger_energy_storage_" + (high ? "high" : "low"));
+    // }
 
     @Override
     public boolean isTriggerActive(IStatementContainer source, IStatementParameter[] parameters) {
         // Internal check
         if (isTriggeringPipe(source.getTile())) {
-            return isActive(((IPipeTile) source.getTile()).getPipe(), EnumFacing.UNKNOWN);
+            return isActive(((IPipeTile) source.getTile()).getPipe(), null);
         }
 
         Neighbor triggeringNeighbor = getTriggeringNeighbor(source.getTile());
@@ -116,16 +114,15 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
 
     public static Neighbor getTriggeringNeighbor(TileEntity parent) {
         if (parent instanceof IPipeTile) {
-            for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
+            for (EnumFacing side : EnumFacing.VALUES) {
                 TileEntity tile = ((IPipeTile) parent).getNeighborTile(side);
                 if (tile != null && isTriggered(tile, side)) {
                     return new Neighbor(tile, side);
                 }
             }
         } else {
-            for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
-                TileEntity tile =
-                    parent.getWorldObj().getTileEntity(parent.xCoord + side.offsetX, parent.yCoord + side.offsetY, parent.zCoord + side.offsetZ);
+            for (EnumFacing side : EnumFacing.VALUES) {
+                TileEntity tile = parent.getWorld().getTileEntity(parent.getPos().offset(side));
                 if (tile != null && isTriggered(tile, side)) {
                     return new Neighbor(tile, side);
                 }

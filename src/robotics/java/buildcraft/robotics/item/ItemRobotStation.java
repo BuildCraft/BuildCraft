@@ -6,6 +6,7 @@ package buildcraft.robotics;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -30,13 +31,13 @@ public class ItemRobotStation extends ItemBuildCraft implements IPipePluggableIt
     }
 
     @Override
-    public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
+    public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player) {
         return true;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister par1IconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister par1IconRegister) {
         // NOOP
     }
 

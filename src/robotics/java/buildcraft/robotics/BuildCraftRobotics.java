@@ -123,11 +123,11 @@ public class BuildCraftRobotics extends BuildCraftMod {
         CoreProxy.proxy.registerItem(redstoneBoard);
 
         zonePlanBlock = (BlockZonePlan) CompatHooks.INSTANCE.getBlock(BlockZonePlan.class);
-        zonePlanBlock.setBlockName("zonePlan");
+        zonePlanBlock.setUnlocalizedName("zonePlan");
         CoreProxy.proxy.registerBlock(zonePlanBlock);
 
         requesterBlock = (BlockRequester) CompatHooks.INSTANCE.getBlock(BlockRequester.class);
-        requesterBlock.setBlockName("requester");
+        requesterBlock.setUnlocalizedName("requester");
         CoreProxy.proxy.registerBlock(requesterBlock);
 
         RedstoneBoardRegistry.instance = new ImplRedstoneBoardRegistry();

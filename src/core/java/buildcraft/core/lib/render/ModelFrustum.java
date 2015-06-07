@@ -126,9 +126,9 @@ public class ModelFrustum {
     }
 
     /** Draw the six sided box defined by this ModelBox */
-    public void render(Tessellator par1Tessellator, float par2) {
+    public void render(Tessellator tessellator, float par2) {
         for (TexturedQuad element : this.quadList) {
-            element.draw(par1Tessellator, par2);
+            element.draw(tessellator.getWorldRenderer(), par2);
         }
     }
 }

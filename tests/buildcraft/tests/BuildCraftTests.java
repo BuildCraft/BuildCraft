@@ -64,11 +64,11 @@ public class BuildCraftTests extends BuildCraftMod {
 	public void preInit(FMLPreInitializationEvent evt) {
 		blockTestPathfinding = new BlockTestPathfinding();
 		CoreProxy.proxy.registerBlock(blockTestPathfinding);
-		blockTestPathfinding.setBlockName("testPathFinding");
+		blockTestPathfinding.setUnlocalizedName("testPathFinding");
 		CoreProxy.proxy.registerTileEntity(TileTestPathfinding.class, "net.minecraft.src.builders.TileTestPathfinding");
 
 		blockTestCase = new BlockTestCase();
-		blockTestCase.setBlockName("testCase");
+		blockTestCase.setUnlocalizedName("testCase");
 		CoreProxy.proxy.registerBlock(blockTestCase);
 		CoreProxy.proxy.registerTileEntity(TileTestCase.class, "buildcraft.tests.testcase.TileTestCase");
 

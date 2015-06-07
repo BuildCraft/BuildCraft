@@ -7,6 +7,7 @@ package buildcraft.transport.stripes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
@@ -27,11 +28,11 @@ public class StripesHandlerPlaceBlock implements IStripesHandler {
     }
 
     @Override
-    public boolean handle(World world, int x, int y, int z, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-        if (!world.isAirBlock(x, y, z) && stack.tryPlaceItemIntoWorld(player, world, x, y, z, 1, 0.0f, 0.0f, 0.0f)) {
+    public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
+        if (!world.isAirBlock(pos) && stack.tryPlaceItemIntoWorld(player, world, pos, 1, 0.0f, 0.0f, 0.0f)) {
             return true;
-        } else if (world.isAirBlock(x, y, z)) {
-            Position src = new Position(x, y, z);
+        } else if (world.isAirBlock(pos)) {
+            Position src = new Position(pos);
             src.orientation = direction;
             src.moveBackwards(1.0D);
             if (stack.tryPlaceItemIntoWorld(player, world, (int) src.x, (int) src.y, (int) src.z, direction.ordinal(), 0.0f, 0.0f, 0.0f)) {

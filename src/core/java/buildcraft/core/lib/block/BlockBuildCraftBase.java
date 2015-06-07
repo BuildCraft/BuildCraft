@@ -9,9 +9,6 @@ import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.properties.PropertyDirection;
-import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -22,30 +19,29 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.property.IUnlistedProperty;
 
 import buildcraft.api.core.BuildCraftProperties;
+import buildcraft.api.enums.EnumColor;
+import buildcraft.api.enums.EnumEngineType;
+import buildcraft.api.enums.EnumSpring;
 import buildcraft.api.properties.BuildCraftProperty;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.utils.Utils;
 
 public abstract class BlockBuildCraftBase extends Block {
 
-    public static final PropertyDirection FACING_PROP = BuildCraftProperties.BLOCK_FACING;
-    public static final PropertyDirection FACING_6_PROP = BuildCraftProperties.BLOCK_FACING_6;
+    public static final BuildCraftProperty<EnumFacing> FACING_PROP = BuildCraftProperties.BLOCK_FACING;
+    public static final BuildCraftProperty<EnumFacing> FACING_6_PROP = BuildCraftProperties.BLOCK_FACING_6;
 
-    public static final PropertyEnum ENGINE_TYPE = BuildCraftProperties.ENGINE_TYPE;
-    public static final PropertyEnum COLOR_PROP = BuildCraftProperties.BLOCK_COLOR;
-    public static final PropertyEnum SPRING_TYPE = BuildCraftProperties.SPRING_TYPE;
+    public static final BuildCraftProperty<EnumEngineType> ENGINE_TYPE = BuildCraftProperties.ENGINE_TYPE;
+    public static final BuildCraftProperty<EnumColor> COLOR_PROP = BuildCraftProperties.BLOCK_COLOR;
+    public static final BuildCraftProperty<EnumSpring> SPRING_TYPE = BuildCraftProperties.SPRING_TYPE;
 
-    public static final PropertyBool JOINED_BELOW = BuildCraftProperties.JOINED_BELOW;
+    public static final BuildCraftProperty<Boolean> JOINED_BELOW = BuildCraftProperties.JOINED_BELOW;
 
     protected final IProperty[] properties;
     protected final HashBiMap<Integer, IBlockState> validStates = HashBiMap.create();
     protected final BlockState myBlockState;
 
     private boolean rotatable = false;
-
-    public static <T> T getValue(IBlockState state, BuildCraftProperty<T> prop) {
-        return BuildCraftProperties.getValue(state, prop);
-    }
 
     protected BlockBuildCraftBase(Material material) {
         this(material, BCCreativeTab.get("main"), new IProperty[0], new IUnlistedProperty[0]);

@@ -8,6 +8,7 @@
  */
 package buildcraft.api.statements;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
@@ -23,13 +24,13 @@ public interface IStatementParameter {
 	 */
 	String getUniqueTag();
 	
-//	@SideOnly(Side.CLIENT)
-//	IIcon getIcon();
+	@SideOnly(Side.CLIENT)
+	TextureAtlasSprite getIcon();
 
 	ItemStack getItemStack();
 
 //	@SideOnly(Side.CLIENT)
-//	void registerIcons(IIconRegister iconRegister);
+//	void registerIcons(TextureAtlasSpriteRegister iconRegister);
 	
 	/**
 	 * Return the parameter description in the UI

@@ -5,8 +5,10 @@
 package buildcraft.builders;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -45,11 +47,11 @@ public class BlockFiller extends BlockBuildCraftLED {
     }
 
     @Override
-    public int getIconGlowLevel(IBlockAccess access, int x, int y, int z) {
+    public int getIconGlowLevel(IBlockAccess access, BlockPos pos) {
         if (renderPass == 0 || renderPass == 3) {
             return -1;
         } else {
-            TileFiller tile = (TileFiller) access.getTileEntity(x, y, z);
+            TileFiller tile = (TileFiller) access.getTileEntity(pos);
             return tile.getIconGlowLevel(renderPass);
         }
     }
@@ -65,22 +67,22 @@ public class BlockFiller extends BlockBuildCraftLED {
     }
 
     @Override
-    public boolean isSideSolid(IBlockAccess world, int x, int y, int z, EnumFacing side) {
+    public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
         return false;
     }
 
     @Override
-    public int getLightValue(IBlockAccess world, int x, int y, int z) {
+    public int getLightValue(IBlockAccess world, BlockPos pos) {
         return 1;
     }
 
     @Override
-    public IIcon getIconAbsolute(IBlockAccess access, int x, int y, int z, int side, int meta) {
+    public TextureAtlasSprite getIconAbsolute(IBlockAccess access, BlockPos pos, int side, int meta) {
         if (renderPass < 3) {
-            return super.getIconAbsolute(access, x, y, z, side, meta);
+            return super.getIconAbsolute(access, pos, side, meta);
         } else {
             if (side == 2) {
-                TileEntity tile = access.getTileEntity(x, y, z);
+                TileEntity tile = access.getTileEntity(pos);
                 if (tile instanceof TileFiller && ((TileFiller) tile).currentPattern != null) {
                     return ((TileFiller) tile).currentPattern.getBlockOverlay();
                 }
@@ -90,7 +92,7 @@ public class BlockFiller extends BlockBuildCraftLED {
     }
 
     @Override
-    public IIcon getIconAbsolute(int side, int meta) {
+    public TextureAtlasSprite getIconAbsolute(int side, int meta) {
         if (renderPass < 3) {
             return super.getIconAbsolute(side, meta);
         } else {

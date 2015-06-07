@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -20,6 +21,7 @@ import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.JavaTools;
+import buildcraft.core.lib.utils.Utils;
 
 public final class SchematicRegistry implements ISchematicRegistry {
 
@@ -91,22 +93,23 @@ public final class SchematicRegistry implements ISchematicRegistry {
     }
 
     public void registerSchematicBlock(Block block, Class<? extends Schematic> clazz, Object... params) {
-        for (int i = 0; i < 16; i++) {
-            registerSchematicBlock(block, i, clazz, params);
+        for (Object obj : block.getBlockState().getValidStates()) {
+            registerSchematicBlock((IBlockState) obj, clazz, params);
         }
     }
 
-    public void registerSchematicBlock(Block block, int meta, Class<? extends Schematic> clazz, Object... params) {
-        if (block == null || Block.blockRegistry.getNameForObject(block) == null || "null".equals(Block.blockRegistry.getNameForObject(block))) {
-            BCLog.logger.warn("Builder: Mod tried to register block '" + (block != null ? block.getClass().getName() : "null")
+    public void registerSchematicBlock(IBlockState state, Class<? extends Schematic> clazz, Object... params) {
+        String name = Utils.getNameForBlock(state.getBlock());
+        if (name == null || "null".equals(name)) {
+            BCLog.logger.warn("Builder: Mod tried to register block '" + (state != null ? state.getBlock().getClass().getName() : "null")
                 + "' schematic with a null name! Ignoring.");
             return;
         }
-        if (schematicBlocks.containsKey(toStringKey(block, meta))) {
-            throw new RuntimeException("Builder: Block " + Block.blockRegistry.getNameForObject(block) + " is already associated with a schematic.");
+        if (schematicBlocks.containsKey(toStringKey(state))) {
+            throw new RuntimeException("Builder: Block " + name + " is already associated with a schematic.");
         }
 
-        schematicBlocks.put(toStringKey(block, meta), new SchematicConstructor(clazz, params));
+        schematicBlocks.put(toStringKey(state), new SchematicConstructor(clazz, params));
     }
 
     public void registerSchematicEntity(Class<? extends Entity> entityClass, Class<? extends SchematicEntity> schematicClass, Object... params) {
@@ -116,12 +119,12 @@ public final class SchematicRegistry implements ISchematicRegistry {
         schematicEntities.put(entityClass, new SchematicConstructor(schematicClass, params));
     }
 
-    public SchematicBlock createSchematicBlock(Block block, int metadata) {
-        if (block == null || metadata < 0 || metadata >= 16) {
+    public SchematicBlock createSchematicBlock(IBlockState state) {
+        if (state == null) {
             return null;
         }
 
-        SchematicConstructor c = schematicBlocks.get(toStringKey(block, metadata));
+        SchematicConstructor c = schematicBlocks.get(toStringKey(state));
 
         if (c == null) {
             return null;
@@ -129,7 +132,7 @@ public final class SchematicRegistry implements ISchematicRegistry {
 
         try {
             SchematicBlock s = (SchematicBlock) c.newInstance();
-            s.block = block;
+            s.state = state;
             return s;
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -167,13 +170,14 @@ public final class SchematicRegistry implements ISchematicRegistry {
         return null;
     }
 
-    public boolean isSupported(Block block, int metadata) {
-        return schematicBlocks.containsKey(toStringKey(block, metadata));
+    @Override
+    public boolean isSupported(IBlockState state) {
+        return schematicBlocks.containsKey(toStringKey(state));
     }
 
-    public boolean isAllowedForBuilding(Block block, int metadata) {
-        String name = Block.blockRegistry.getNameForObject(block);
-        return isSupported(block, metadata) && !blocksForbidden.contains(name) && !modsForbidden.contains(name.split(":", 2)[0]);
+    public boolean isAllowedForBuilding(IBlockState state) {
+        String name = Utils.getNameForBlock(state.getBlock());
+        return isSupported(state) && !blocksForbidden.contains(name) && !modsForbidden.contains(name.split(":", 2)[0]);
     }
 
     public void readConfiguration(Configuration conf) {
@@ -201,7 +205,7 @@ public final class SchematicRegistry implements ISchematicRegistry {
         }
     }
 
-    private String toStringKey(Block block, int meta) {
-        return Block.blockRegistry.getNameForObject(block) + ":" + meta;
+    private String toStringKey(IBlockState state) {
+        return state.toString();
     }
 }

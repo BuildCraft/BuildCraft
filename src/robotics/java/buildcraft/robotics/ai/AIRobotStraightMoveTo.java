@@ -10,7 +10,7 @@ public class AIRobotStraightMoveTo extends AIRobotGoto {
 
     private double prevDistance = Double.MAX_VALUE;
 
-    private float x, y, z;
+    private float pos;
 
     public AIRobotStraightMoveTo(EntityRobotBase iRobot) {
         super(iRobot);
@@ -27,7 +27,7 @@ public class AIRobotStraightMoveTo extends AIRobotGoto {
     @Override
     public void start() {
         robot.undock();
-        setDestination(robot, x, y, z);
+        setDestination(robot, pos);
     }
 
     @Override

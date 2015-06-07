@@ -30,9 +30,4 @@ public class ItemEngine extends ItemBlockBuildCraft {
     public String getUnlocalizedName(ItemStack itemstack) {
         return engineBlock.getUnlocalizedName(itemstack.getItemDamage());
     }
-
-    @Override
-    public IIcon getIconIndex(ItemStack stack) {
-        return null;
-    }
 }

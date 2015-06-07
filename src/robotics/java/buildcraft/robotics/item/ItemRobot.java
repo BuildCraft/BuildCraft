@@ -14,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -97,7 +98,7 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
     }
 
     @Override
-    public void registerIcons(IIconRegister par1IconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister par1IconRegister) {
         // cancels default BC icon registering
     }
 
@@ -167,21 +168,21 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
     }
 
     @Override
-    public boolean onItemUse(ItemStack currentItem, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY,
+    public boolean onItemUse(ItemStack currentItem, EntityPlayer player, World world, BlockPos pos, int side, float hitX, float hitY,
             float hitZ) {
         if (!world.isRemote) {
-            Block b = world.getBlock(x, y, z);
+            Block b = world.getBlock(pos);
             if (!(b instanceof BlockGenericPipe)) {
                 return false;
             }
 
-            Pipe<?> pipe = BlockGenericPipe.getPipe(world, x, y, z);
+            Pipe<?> pipe = BlockGenericPipe.getPipe(world, pos);
             if (pipe == null) {
                 return false;
             }
 
             BlockGenericPipe pipeBlock = (BlockGenericPipe) b;
-            BlockGenericPipe.RaytraceResult rayTraceResult = pipeBlock.doRayTrace(world, x, y, z, player);
+            BlockGenericPipe.RaytraceResult rayTraceResult = pipeBlock.doRayTrace(world, pos, player);
 
             if (rayTraceResult != null && rayTraceResult.hitPart == BlockGenericPipe.Part.Pluggable
                 && pipe.container.getPipePluggable(rayTraceResult.sideHit) instanceof RobotStationPluggable) {

@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayerFactory;
@@ -119,11 +120,11 @@ public class CoreProxy implements ICoreProxy {
         return new WeakReference<EntityPlayer>(player);
     }
 
-    private WeakReference<EntityPlayer> createNewPlayer(WorldServer world, int x, int y, int z) {
+    private WeakReference<EntityPlayer> createNewPlayer(WorldServer world, BlockPos pos) {
         EntityPlayer player = FakePlayerFactory.get(world, BuildCraftCore.gameProfile);
-        player.posX = x;
-        player.posY = y;
-        player.posZ = z;
+        player.posX = pos.getX();
+        player.posY = pos.getY();
+        player.posZ = pos.getZ();
         return new WeakReference<EntityPlayer>(player);
     }
 
@@ -138,14 +139,14 @@ public class CoreProxy implements ICoreProxy {
         return CoreProxy.buildCraftPlayer;
     }
 
-    public final WeakReference<EntityPlayer> getBuildCraftPlayer(WorldServer world, int x, int y, int z) {
+    public final WeakReference<EntityPlayer> getBuildCraftPlayer(WorldServer world, BlockPos pos) {
         if (CoreProxy.buildCraftPlayer.get() == null) {
-            CoreProxy.buildCraftPlayer = createNewPlayer(world, x, y, z);
+            CoreProxy.buildCraftPlayer = createNewPlayer(world, pos);
         } else {
             CoreProxy.buildCraftPlayer.get().worldObj = world;
-            CoreProxy.buildCraftPlayer.get().posX = x;
-            CoreProxy.buildCraftPlayer.get().posY = y;
-            CoreProxy.buildCraftPlayer.get().posZ = z;
+            CoreProxy.buildCraftPlayer.get().posX = pos.getX();
+            CoreProxy.buildCraftPlayer.get().posY = pos.getY();
+            CoreProxy.buildCraftPlayer.get().posZ = pos.getZ();
         }
 
         return CoreProxy.buildCraftPlayer;

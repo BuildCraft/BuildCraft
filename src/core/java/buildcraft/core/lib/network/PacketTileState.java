@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.minecraft.util.BlockPos;
+
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.network.PacketIds;
 
@@ -35,9 +37,9 @@ public class PacketTileState extends PacketCoordinates {
 
     /** Constructor for outgoing packets
      *
-     * @param x, y, z - the coordinates the tile to sync */
-    public PacketTileState(int x, int y, int z) {
-        super(PacketIds.STATE_UPDATE, x, y, z);
+     * @param pos - the coordinates the tile to sync */
+    public PacketTileState(BlockPos pos) {
+        super(PacketIds.STATE_UPDATE, pos);
         isChunkDataPacket = true;
     }
 

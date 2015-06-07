@@ -16,6 +16,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.core.Box;
@@ -109,51 +110,51 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
             int z = stream.readInt();
 
             if (side.isServer() && "setBlock".equals(command)) {
-                worldObj.setBlock(x, y, z, Blocks.brick_block);
+                worldObj.setBlock(pos, Blocks.brick_block);
             } else if (side.isServer() && "eraseBlock".equals(command)) {
-                // tasks.add(new UrbanistTaskErase(this, x, y, z));
+                // tasks.add(new UrbanistTaskErase(this, pos));
             } else if ("createFrame".equals(command)) {
-                createFrame(x, y, z);
+                createFrame(pos);
             } else if ("moveFrame".equals(command)) {
-                moveFrame(x, y, z);
+                moveFrame(pos);
             }
         }
     }
 
-    public void rpcEraseBlock(int x, int y, int z) {
-        BuildCraftCore.instance.sendToServer(createXYZPacket("eraseBlock", x, y, z));
+    public void rpcEraseBlock(BlockPos pos) {
+        BuildCraftCore.instance.sendToServer(createXYZPacket("eraseBlock", pos));
     }
 
-    public void createFrame(int x, int y, int z) {
+    public void createFrame(BlockPos pos) {
         isCreatingFrame = true;
         AnchoredBox a = new AnchoredBox();
-        a.box = new Box(x, y, z, x, y + 2, z);
+        a.box = new Box(pos, x, y + 2, z);
         a.x1 = x;
         a.y1 = y;
         a.z1 = z;
         frames.add(a);
     }
 
-    public void rpcCreateFrame(int x, int y, int z) {
+    public void rpcCreateFrame(BlockPos pos) {
         p2x = x;
         p2y = y;
         p2z = z;
 
         // TODO: this is OK in SMP, but the frame actually needs to be
         // broadcasted to all players
-        createFrame(x, y, z);
-        BuildCraftCore.instance.sendToServer(createXYZPacket("createFrame", x, y, z));
+        createFrame(pos);
+        BuildCraftCore.instance.sendToServer(createXYZPacket("createFrame", pos));
     }
 
-    public void moveFrame(int x, int y, int z) {
+    public void moveFrame(BlockPos pos) {
         if (isCreatingFrame) {
             if (frames.size() > 0) {
-                frames.get(frames.size() - 1).setP2(x, y, z);
+                frames.get(frames.size() - 1).setP2(pos);
             }
         }
     }
 
-    public void rpcMoveFrame(int x, int y, int z) {
+    public void rpcMoveFrame(BlockPos pos) {
         if (p2x != x || p2y != y || p2z != z) {
             p2x = x;
             p2y = y;
@@ -161,8 +162,8 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
 
             // TODO: this is OK in SMP, but the frame actually needs to be
             // broadcasted to all players
-            moveFrame(x, y, z);
-            BuildCraftCore.instance.sendToServer(createXYZPacket("moveFrame", x, y, z));
+            moveFrame(pos);
+            BuildCraftCore.instance.sendToServer(createXYZPacket("moveFrame", pos));
         }
     }
 

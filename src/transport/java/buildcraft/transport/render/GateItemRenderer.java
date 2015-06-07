@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
@@ -63,7 +64,7 @@ public class GateItemRenderer implements IItemRenderer {
         GL11.glPopMatrix();
     }
 
-    private void renderLayerIn3D(IIcon icon) {
+    private void renderLayerIn3D(TextureAtlasSprite icon) {
         if (icon == null) {
             return;
         }
@@ -155,7 +156,7 @@ public class GateItemRenderer implements IItemRenderer {
         GL11.glPushMatrix();
         GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_ALPHA_TEST); // In certain cases gets disabled by this point
-        IIcon icon = ItemGate.getLogic(stack).getIconItem();
+        TextureAtlasSprite icon = ItemGate.getLogic(stack).getIconItem();
         renderItem.renderIcon(0, 0, icon, 16, 16);
 
         if (type == ItemRenderType.ENTITY) {

@@ -126,7 +126,7 @@ public abstract class DockingStation {
 			int x = indexNBT.getInteger("i");
 			int y = indexNBT.getInteger("j");
 			int z = indexNBT.getInteger("k");
-			pos = new BlockPos(x, y, z);
+			pos = new BlockPos(pos);
 		} else {
 			int[] array = nbt.getIntArray("pos");
 			if (array.length == 3) {

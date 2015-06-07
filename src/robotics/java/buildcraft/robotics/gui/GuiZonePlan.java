@@ -15,6 +15,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
 
@@ -83,7 +84,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
         }
 
         @Override
-        public IIcon getIcon() {
+        public TextureAtlasSprite getIcon() {
             return color.getIcon();
         }
 

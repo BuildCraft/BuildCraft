@@ -9,6 +9,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.core.GuiIds;
@@ -42,8 +43,8 @@ public class BlockZonePlan extends BlockBuildCraft {
     }
 
     @Override
-    public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {
-        super.onBlockPlacedBy(world, x, y, z, entity, stack);
+    public void onBlockPlacedBy(World world, BlockPos pos, EntityLivingBase entity, ItemStack stack) {
+        super.onBlockPlacedBy(world, pos, entity, stack);
 
         if (!world.isRemote) {
             int r = TileZonePlan.RESOLUTION >> 4;

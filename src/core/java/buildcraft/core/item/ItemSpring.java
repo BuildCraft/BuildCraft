@@ -9,7 +9,7 @@ import java.util.Locale;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 
-import buildcraft.core.block.BlockSpring;
+import buildcraft.api.enums.EnumSpring;
 import buildcraft.core.lib.items.ItemBlockBuildCraft;
 
 public class ItemSpring extends ItemBlockBuildCraft {
@@ -22,6 +22,7 @@ public class ItemSpring extends ItemBlockBuildCraft {
 
     @Override
     public String getUnlocalizedName(ItemStack stack) {
-        return "tile.spring." + BlockSpring.EnumSpring.fromMeta(stack.getItemDamage()).name().toLowerCase(Locale.ENGLISH);
+        EnumSpring type = EnumSpring.VALUES[stack.getItemDamage()];
+        return "tile.spring." + type.name().toLowerCase(Locale.ROOT);
     }
 }

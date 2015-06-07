@@ -5,6 +5,8 @@
 package buildcraft.transport.render;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 
@@ -81,10 +83,10 @@ public final class FacadeRenderHelper {
             - zOffsets[side.ordinal()]);
     }
 
-    public static void pipeFacadeRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, IPipeTile tile, int x, int y, int z,
+    public static void pipeFacadeRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, IPipeTile tile, BlockPos pos,
             EnumFacing direction, IFacadePluggable pluggable) {
         ITextureStates textureManager = blockStateMachine;
-        IIcon[] textures = ((TextureStateManager) textureManager.getTextureState()).popArray();
+        TextureAtlasSprite[] textures = ((TextureStateManager) textureManager.getTextureState()).popArray();
 
         Block renderBlock = pluggable.getCurrentBlock();
 
@@ -135,7 +137,7 @@ public final class FacadeRenderHelper {
                     rotated[2][1] = CoreConstants.PIPE_MIN_POS - zFightOffset * 2;
                     MatrixTranformations.transform(rotated, direction);
                     setRenderBounds(renderblocks, rotated, direction);
-                    renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
+                    renderblocks.renderStandardBlock(blockStateMachine.getBlock(), pos);
 
                     rotated = MatrixTranformations.deepClone(zeroStateFacade);
                     rotated[0][0] = CoreConstants.PIPE_MIN_POS - zFightOffset * 4;
@@ -143,27 +145,27 @@ public final class FacadeRenderHelper {
                     rotated[2][0] = CoreConstants.PIPE_MAX_POS + zFightOffset * 2;
                     MatrixTranformations.transform(rotated, direction);
                     setRenderBounds(renderblocks, rotated, direction);
-                    renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
+                    renderblocks.renderStandardBlock(blockStateMachine.getBlock(), pos);
 
                     rotated = MatrixTranformations.deepClone(zeroStateFacade);
                     rotated[0][0] = 0.0F;
                     rotated[0][1] = CoreConstants.PIPE_MIN_POS - zFightOffset * 2;
                     MatrixTranformations.transform(rotated, direction);
                     setRenderBounds(renderblocks, rotated, direction);
-                    renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
+                    renderblocks.renderStandardBlock(blockStateMachine.getBlock(), pos);
 
                     rotated = MatrixTranformations.deepClone(zeroStateFacade);
                     rotated[0][0] = CoreConstants.PIPE_MAX_POS + zFightOffset * 2;
                     rotated[0][1] = 1F;
                     MatrixTranformations.transform(rotated, direction);
                     setRenderBounds(renderblocks, rotated, direction);
-                    renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
+                    renderblocks.renderStandardBlock(blockStateMachine.getBlock(), pos);
                     renderblocks.field_152631_f = false;
                 } else { // Solid facade
                     float[][] rotated = MatrixTranformations.deepClone(zeroStateFacade);
                     MatrixTranformations.transform(rotated, direction);
                     setRenderBounds(renderblocks, rotated, direction);
-                    renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
+                    renderblocks.renderStandardBlock(blockStateMachine.getBlock(), pos);
                 }
                 ((FakeBlock) blockStateMachine.getBlock()).setColor(0xFFFFFF);
 
@@ -193,7 +195,7 @@ public final class FacadeRenderHelper {
             MatrixTranformations.transform(rotated, direction);
 
             renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-            renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
+            renderblocks.renderStandardBlock(blockStateMachine.getBlock(), pos);
         }
     }
 }

@@ -4,9 +4,11 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.statements;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
@@ -17,9 +19,9 @@ import buildcraft.core.lib.utils.StringUtils;
 
 public class StatementParameterDirection implements IStatementParameter {
 
-    private static IIcon[] icons;
+    private static TextureAtlasSprite[] icons;
 
-    public EnumFacing direction = EnumFacing.UNKNOWN;
+    public EnumFacing direction = null;
 
     public StatementParameterDirection() {
 
@@ -31,8 +33,8 @@ public class StatementParameterDirection implements IStatementParameter {
     }
 
     @Override
-    public IIcon getIcon() {
-        if (direction == EnumFacing.UNKNOWN) {
+    public TextureAtlasSprite getIcon() {
+        if (direction == null) {
             return null;
         } else {
             return icons[direction.ordinal()];
@@ -43,12 +45,12 @@ public class StatementParameterDirection implements IStatementParameter {
     public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
         if (source.getTile() instanceof IPipeTile) {
             for (int i = 0; i < 6; i++) {
-                direction = EnumFacing.getOrientation((direction.ordinal() + (mouse.getButton() > 0 ? -1 : 1)) % 6);
+                direction = EnumFacing.VALUES[(direction.ordinal() + (mouse.getButton() > 0 ? -1 : 1)) % 6];
                 if (((IPipeTile) source.getTile()).isPipeConnected(direction)) {
                     return;
                 }
             }
-            direction = EnumFacing.UNKNOWN;
+            direction = null;
         }
     }
 
@@ -60,9 +62,9 @@ public class StatementParameterDirection implements IStatementParameter {
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
         if (nbt.hasKey("direction")) {
-            direction = EnumFacing.getOrientation(nbt.getByte("direction"));
+            direction = EnumFacing.VALUES[nbt.getByte("direction")];
         } else {
-            direction = EnumFacing.UNKNOWN;
+            direction = null;
         }
     }
 
@@ -77,7 +79,7 @@ public class StatementParameterDirection implements IStatementParameter {
 
     @Override
     public String getDescription() {
-        if (direction == EnumFacing.UNKNOWN) {
+        if (direction == null) {
             return "";
         } else {
             return StringUtils.localize("direction." + direction.name().toLowerCase());
@@ -89,21 +91,23 @@ public class StatementParameterDirection implements IStatementParameter {
         return "buildcraft:pipeActionDirection";
     }
 
-    @Override
-    public void registerIcons(IIconRegister iconRegister) {
-        icons =
-            new IIcon[] { iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_down"),
-                iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_up"),
-                iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_north"),
-                iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_south"),
-                iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_west"),
-                iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_east") };
-    }
+    // @Override
+    // public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
+    // icons =
+    // new TextureAtlasSprite[] { iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_down"),
+    // iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_up"),
+    // iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_north"),
+    // iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_south"),
+    // iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_west"),
+    // iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_east") };
+    // }
 
     @Override
     public IStatementParameter rotateLeft() {
         StatementParameterDirection d = new StatementParameterDirection();
-        d.direction = direction.getRotation(EnumFacing.UP);
+        if (d.direction != null && d.direction.getAxis() != Axis.Y) {
+            d.direction = d.direction.rotateY();
+        }
         return d;
     }
 }

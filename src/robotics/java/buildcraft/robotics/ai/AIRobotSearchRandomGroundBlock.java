@@ -64,11 +64,11 @@ public class AIRobotSearchRandomGroundBlock extends AIRobot {
         }
 
         for (int y = robot.worldObj.getHeight(); y >= 0; --y) {
-            if (filter.matches(robot.worldObj, x, y, z)) {
-                blockFound = new BlockPos(x, y, z);
+            if (filter.matches(robot.worldObj, pos)) {
+                blockFound = new BlockPos(pos);
                 terminate();
                 return;
-            } else if (!robot.worldObj.isAirBlock(x, y, z)) {
+            } else if (!robot.worldObj.isAirBlock(pos)) {
                 return;
             }
         }

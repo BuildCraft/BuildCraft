@@ -10,6 +10,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -53,12 +54,12 @@ public class BlockRefinery extends BlockBuildCraft {
     }
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
-        if (super.onBlockActivated(world, x, y, z, player, side, hitX, hitY, hitZ)) {
+    public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
+        if (super.onBlockActivated(world, pos, player, side, hitX, hitY, hitZ)) {
             return true;
         }
 
-        TileEntity tile = world.getTileEntity(x, y, z);
+        TileEntity tile = world.getTileEntity(pos);
 
         if (!(tile instanceof TileRefinery)) {
             return false;
@@ -66,9 +67,9 @@ public class BlockRefinery extends BlockBuildCraft {
 
         ItemStack current = player.getCurrentEquippedItem();
         Item equipped = current != null ? current.getItem() : null;
-        if (player.isSneaking() && equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, x, y, z)) {
+        if (player.isSneaking() && equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, pos)) {
             ((TileRefinery) tile).resetFilters();
-            ((IToolWrench) equipped).wrenchUsed(player, x, y, z);
+            ((IToolWrench) equipped).wrenchUsed(player, pos);
             return true;
         }
 
@@ -83,7 +84,7 @@ public class BlockRefinery extends BlockBuildCraft {
         }
 
         if (!world.isRemote) {
-            player.openGui(BuildCraftFactory.instance, GuiIds.REFINERY, world, x, y, z);
+            player.openGui(BuildCraftFactory.instance, GuiIds.REFINERY, world, pos);
         }
 
         return true;

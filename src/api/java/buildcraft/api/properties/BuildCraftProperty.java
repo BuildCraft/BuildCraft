@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.IStringSerializable;
 import net.minecraftforge.common.property.IUnlistedProperty;
 
@@ -119,5 +120,10 @@ public class BuildCraftProperty<T> implements IProperty, IUnlistedProperty<T> {
         } else {
             return value.toString();
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public T getValue(IBlockState state) {
+        return (T) state.getValue(this);
     }
 }

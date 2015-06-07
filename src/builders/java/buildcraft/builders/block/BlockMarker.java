@@ -9,6 +9,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -30,9 +31,9 @@ public class BlockMarker extends BlockBuildCraft {
         setCreativeTab(BCCreativeTab.get("main"));
     }
 
-    public static boolean canPlaceTorch(World world, int x, int y, int z, EnumFacing side) {
-        Block block = world.getBlock(x, y, z);
-        return block != null && (block.renderAsNormalBlock() && block.isOpaqueCube() || block.isSideSolid(world, x, y, z, side));
+    public static boolean canPlaceTorch(World world, BlockPos pos, EnumFacing side) {
+        Block block = world.getBlock(pos);
+        return block != null && (block.renderAsNormalBlock() && block.isOpaqueCube() || block.isSideSolid(world, pos, side));
     }
 
     private AxisAlignedBB getBoundingBox(int meta) {
@@ -57,16 +58,16 @@ public class BlockMarker extends BlockBuildCraft {
     }
 
     @Override
-    public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int x, int y, int z) {
-        int meta = world.getBlockMetadata(x, y, z);
+    public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, BlockPos pos) {
+        int meta = world.getBlockMetadata(pos);
         AxisAlignedBB bBox = getBoundingBox(meta);
-        bBox.offset(x, y, z);
+        bBox.offset(pos);
         return bBox;
     }
 
     @Override
-    public void setBlockBoundsBasedOnState(IBlockAccess world, int x, int y, int z) {
-        int meta = world.getBlockMetadata(x, y, z);
+    public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
+        int meta = world.getBlockMetadata(pos);
         AxisAlignedBB bb = getBoundingBox(meta);
         setBlockBounds((float) bb.minX, (float) bb.minY, (float) bb.minZ, (float) bb.maxX, (float) bb.maxY, (float) bb.maxZ);
     }
@@ -119,36 +120,36 @@ public class BlockMarker extends BlockBuildCraft {
     }
 
     @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-        TileEntity tile = world.getTileEntity(x, y, z);
+    public void onNeighborBlockChange(World world, BlockPos pos, Block block) {
+        TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileMarker) {
             ((TileMarker) tile).updateSignals();
         }
-        dropTorchIfCantStay(world, x, y, z);
+        dropTorchIfCantStay(world, pos);
     }
 
     @Override
-    public boolean canPlaceBlockOnSide(World world, int x, int y, int z, int side) {
+    public boolean canPlaceBlockOnSide(World world, BlockPos pos, int side) {
         EnumFacing dir = EnumFacing.getOrientation(side);
         return canPlaceTorch(world, x - dir.offsetX, y - dir.offsetY, z - dir.offsetZ, dir);
     }
 
     @Override
-    public int onBlockPlaced(World world, int x, int y, int z, int side, float par6, float par7, float par8, int meta) {
+    public int onBlockPlaced(World world, BlockPos pos, int side, float par6, float par7, float par8, int meta) {
         return side;
     }
 
     @Override
-    public void onBlockAdded(World world, int x, int y, int z) {
-        super.onBlockAdded(world, x, y, z);
-        dropTorchIfCantStay(world, x, y, z);
+    public void onBlockAdded(World world, BlockPos pos) {
+        super.onBlockAdded(world, pos);
+        dropTorchIfCantStay(world, pos);
     }
 
-    private void dropTorchIfCantStay(World world, int x, int y, int z) {
-        int meta = world.getBlockMetadata(x, y, z);
-        if (!canPlaceBlockOnSide(world, x, y, z, meta)) {
-            dropBlockAsItem(world, x, y, z, 0, 0);
-            world.setBlockToAir(x, y, z);
+    private void dropTorchIfCantStay(World world, BlockPos pos) {
+        int meta = world.getBlockMetadata(pos);
+        if (!canPlaceBlockOnSide(world, pos, meta)) {
+            dropBlockAsItem(world, pos, 0, 0);
+            world.setBlockToAir(pos);
         }
     }
 }

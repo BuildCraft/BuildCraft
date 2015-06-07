@@ -59,7 +59,7 @@ public class ActionSignalOutput extends BCStatement implements IActionInternal {
     }
 
     @Override
-    public void registerIcons(IIconRegister register) {
+    public void registerIcons(TextureAtlasSpriteRegister register) {
         icon = register.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_" + color.name().toLowerCase() + "_active");
     }
 }

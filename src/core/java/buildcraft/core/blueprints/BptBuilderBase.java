@@ -8,10 +8,12 @@ import java.util.BitSet;
 
 import org.apache.logging.log4j.Level;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
@@ -40,6 +42,7 @@ import buildcraft.core.builders.IBuildingItemsProvider;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.lib.utils.BitSetUtils;
 import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.proxy.CoreProxy;
 
 public abstract class BptBuilderBase implements IAreaProvider {
@@ -48,16 +51,14 @@ public abstract class BptBuilderBase implements IAreaProvider {
     public BptContext context;
     protected BitSet usedLocations;
     protected boolean done;
-    protected int x, y, z;
+    protected BlockPos pos;
     protected boolean initialized = false;
 
     private long nextBuildDate = 0;
 
-    public BptBuilderBase(BlueprintBase bluePrint, World world, int x, int y, int z) {
+    public BptBuilderBase(BlueprintBase bluePrint, World world, BlockPos pos) {
         this.blueprint = bluePrint;
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.pos = pos;
         this.usedLocations = new BitSet(bluePrint.sizeX * bluePrint.sizeY * bluePrint.sizeZ);
         done = false;
 
@@ -68,16 +69,20 @@ public abstract class BptBuilderBase implements IAreaProvider {
     }
 
     protected boolean isLocationUsed(int i, int j, int k) {
-        int xCoord = i - x + blueprint.anchorX;
-        int yCoord = j - y + blueprint.anchorY;
-        int zCoord = k - z + blueprint.anchorZ;
+        int xCoord = i - pos.getX() + blueprint.anchorX;
+        int yCoord = j - pos.getY() + blueprint.anchorY;
+        int zCoord = k - pos.getZ() + blueprint.anchorZ;
         return usedLocations.get((zCoord * blueprint.sizeY + yCoord) * blueprint.sizeX + xCoord);
     }
 
+    protected void markLocationUsed(BlockPos pos) {
+        markLocationUsed(pos.getX(), pos.getY(), pos.getZ());
+    }
+
     protected void markLocationUsed(int i, int j, int k) {
-        int xCoord = i - x + blueprint.anchorX;
-        int yCoord = j - y + blueprint.anchorY;
-        int zCoord = k - z + blueprint.anchorZ;
+        int xCoord = i - pos.getX() + blueprint.anchorX;
+        int yCoord = j - pos.getY() + blueprint.anchorY;
+        int zCoord = k - pos.getZ() + blueprint.anchorZ;
         usedLocations.set((zCoord * blueprint.sizeY + yCoord) * blueprint.sizeX + xCoord, true);
     }
 
@@ -117,7 +122,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
         if (slot != null) {
             slot.built = true;
             BuildingItem i = new BuildingItem();
-            i.origin = new Position(x, y, z);
+            i.origin = new Position(pos);
             i.destination = slot.getDestination();
             i.slotToBuild = slot;
             i.context = getContext();
@@ -138,32 +143,32 @@ public abstract class BptBuilderBase implements IAreaProvider {
 
     @Override
     public int xMin() {
-        return x - blueprint.anchorX;
+        return pos.getX() - blueprint.anchorX;
     }
 
     @Override
     public int yMin() {
-        return y - blueprint.anchorY;
+        return pos.getY() - blueprint.anchorY;
     }
 
     @Override
     public int zMin() {
-        return z - blueprint.anchorZ;
+        return pos.getZ() - blueprint.anchorZ;
     }
 
     @Override
     public int xMax() {
-        return x + blueprint.sizeX - blueprint.anchorX - 1;
+        return pos.getX() + blueprint.sizeX - blueprint.anchorX - 1;
     }
 
     @Override
     public int yMax() {
-        return y + blueprint.sizeY - blueprint.anchorY - 1;
+        return pos.getY() + blueprint.sizeY - blueprint.anchorY - 1;
     }
 
     @Override
     public int zMax() {
-        return z + blueprint.sizeZ - blueprint.anchorZ - 1;
+        return pos.getZ() + blueprint.sizeZ - blueprint.anchorZ - 1;
     }
 
     @Override
@@ -172,7 +177,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
     }
 
     public AxisAlignedBB getBoundingBox() {
-        return AxisAlignedBB.getBoundingBox(xMin(), yMin(), zMin(), xMax(), yMax(), zMax());
+        return new AxisAlignedBB(xMin(), yMin(), zMin(), xMax(), yMax(), zMax());
     }
 
     public void postProcessing(World world) {
@@ -188,7 +193,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
     }
 
     private int getBlockBreakEnergy(BuildingSlotBlock slot) {
-        return BlockUtils.computeBlockBreakEnergy(context.world(), slot.x, slot.y, slot.z);
+        return BlockUtils.computeBlockBreakEnergy(context.world(), slot.pos);
     }
 
     protected final boolean canDestroy(TileAbstractBuilder builder, IBuilderContext context, BuildingSlotBlock slot) {
@@ -252,9 +257,9 @@ public abstract class BptBuilderBase implements IAreaProvider {
             NBTTagList clearList = nbt.getTagList("clearList", Constants.NBT.TAG_COMPOUND);
 
             for (int i = 0; i < clearList.tagCount(); ++i) {
-                NBTTagCompound cpt = clearList.getCompoundTagAt(i);
-                BlockPos o = new BlockPos(cpt);
-                markLocationUsed(o.x, o.y, o.z);
+                NBTBase cpt = clearList.get(i);
+                BlockPos o = NBTUtils.readBlockPos(cpt);
+                markLocationUsed(o.getX(), o.getY(), o.getZ());
             }
         }
 
@@ -262,31 +267,29 @@ public abstract class BptBuilderBase implements IAreaProvider {
             NBTTagList builtList = nbt.getTagList("builtList", Constants.NBT.TAG_COMPOUND);
 
             for (int i = 0; i < builtList.tagCount(); ++i) {
-                NBTTagCompound cpt = builtList.getCompoundTagAt(i);
-                BlockPos o = new BlockPos(cpt);
-                markLocationUsed(o.x, o.y, o.z);
+                NBTBase cpt = builtList.get(i);
+                BlockPos o = NBTUtils.readBlockPos(cpt);
+                markLocationUsed(o.getX(), o.getY(), o.getZ());
             }
         }
     }
 
-    protected boolean isBlockBreakCanceled(World world, int x, int y, int z) {
-        if (!world.isAirBlock(x, y, z)) {
+    protected boolean isBlockBreakCanceled(World world, BlockPos pos) {
+        if (!world.isAirBlock(pos)) {
             BlockEvent.BreakEvent breakEvent =
-                new BlockEvent.BreakEvent(x, y, z, world, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z), CoreProxy.proxy
-                    .getBuildCraftPlayer((WorldServer) world).get());
+                new BlockEvent.BreakEvent(world, pos, world.getBlockState(pos), CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world).get());
             MinecraftForge.EVENT_BUS.post(breakEvent);
             return breakEvent.isCanceled();
         }
         return false;
     }
 
-    protected boolean isBlockPlaceCanceled(World world, int x, int y, int z, SchematicBlockBase schematic) {
-        Block block = schematic instanceof SchematicBlock ? ((SchematicBlock) schematic).block : Blocks.stone;
-        int meta = schematic instanceof SchematicBlock ? ((SchematicBlock) schematic).meta : 0;
+    protected boolean isBlockPlaceCanceled(World world, BlockPos pos, SchematicBlockBase schematic) {
+        IBlockState state = schematic instanceof SchematicBlock ? ((SchematicBlock) schematic).state : Blocks.stone.getDefaultState();
 
-        BlockEvent.PlaceEvent placeEvent =
-            new BlockEvent.PlaceEvent(new BlockSnapshot(world, x, y, z, block, meta), Blocks.air, CoreProxy.proxy.getBuildCraftPlayer(
-                (WorldServer) world, x, y, z).get());
+        EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world, pos).get();
+
+        BlockEvent.PlaceEvent placeEvent = new BlockEvent.PlaceEvent(new BlockSnapshot(world, pos, state), Blocks.air.getDefaultState(), player);
 
         MinecraftForge.EVENT_BUS.post(placeEvent);
         return placeEvent.isCanceled();

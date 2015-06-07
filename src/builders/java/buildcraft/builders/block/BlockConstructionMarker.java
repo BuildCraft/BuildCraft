@@ -11,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.builders.item.ItemBlueprint;
@@ -27,9 +28,9 @@ public class BlockConstructionMarker extends BlockMarker {
     }
 
     @Override
-    public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
-        Utils.preDestroyBlock(world, x, y, z);
-        TileConstructionMarker marker = (TileConstructionMarker) world.getTileEntity(x, y, z);
+    public void breakBlock(World world, BlockPos pos, Block block, int par6) {
+        Utils.preDestroyBlock(world, pos);
+        TileConstructionMarker marker = (TileConstructionMarker) world.getTileEntity(pos);
         if (marker != null && marker.itemBlueprint != null && !world.isRemote) {
             float f1 = 0.7F;
             double d = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
@@ -39,7 +40,7 @@ public class BlockConstructionMarker extends BlockMarker {
             itemToDrop.delayBeforeCanPickup = 10;
             world.spawnEntityInWorld(itemToDrop);
         }
-        super.breakBlock(world, x, y, z, block, par6);
+        super.breakBlock(world, pos, block, par6);
     }
 
     @Override
@@ -51,12 +52,12 @@ public class BlockConstructionMarker extends BlockMarker {
     }
 
     @Override
-    public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-        if (super.onBlockActivated(world, x, y, z, entityplayer, par6, par7, par8, par9)) {
+    public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+        if (super.onBlockActivated(world, pos, entityplayer, par6, par7, par8, par9)) {
             return true;
         }
 
-        TileConstructionMarker marker = (TileConstructionMarker) world.getTileEntity(x, y, z);
+        TileConstructionMarker marker = (TileConstructionMarker) world.getTileEntity(pos);
 
         Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
 
@@ -76,7 +77,7 @@ public class BlockConstructionMarker extends BlockMarker {
             }
         } else if (equipped instanceof ItemConstructionMarker) {
             if (ItemConstructionMarker.linkStarted(entityplayer.getCurrentEquippedItem())) {
-                ItemConstructionMarker.link(entityplayer.getCurrentEquippedItem(), world, x, y, z);
+                ItemConstructionMarker.link(entityplayer.getCurrentEquippedItem(), world, pos);
                 return true;
             }
         }

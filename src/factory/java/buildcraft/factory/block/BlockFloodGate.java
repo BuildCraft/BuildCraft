@@ -6,9 +6,11 @@ package buildcraft.factory;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -18,7 +20,7 @@ import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.factory.tile.TileFloodGate;
 
 public class BlockFloodGate extends BlockBuildCraft {
-    private IIcon valve, transparent;
+    private TextureAtlasSprite valve, transparent;
 
     public BlockFloodGate() {
         super(Material.iron);
@@ -64,38 +66,38 @@ public class BlockFloodGate extends BlockBuildCraft {
     }
 
     @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-        super.onNeighborBlockChange(world, x, y, z, block);
-        TileEntity tile = world.getTileEntity(x, y, z);
+    public void onNeighborBlockChange(World world, BlockPos pos, Block block) {
+        super.onNeighborBlockChange(world, pos, block);
+        TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileFloodGate) {
             ((TileFloodGate) tile).onNeighborBlockChange(block);
         }
     }
 
     @Override
-    public void registerBlockIcons(IIconRegister register) {
+    public void registerBlockIcons(TextureAtlasSpriteRegister register) {
         super.registerBlockIcons(register);
         valve = register.registerIcon("buildcraftfactory:floodGateBlock/valve");
         transparent = register.registerIcon("buildcraftcore:misc/transparent");
     }
 
     @Override
-    public IIcon getIcon(IBlockAccess world, int x, int y, int z, int side) {
+    public TextureAtlasSprite getIcon(IBlockAccess world, BlockPos pos, int side) {
         if (renderPass == 1) {
             if (side != 1) {
-                TileEntity tile = world.getTileEntity(x, y, z);
+                TileEntity tile = world.getTileEntity(pos);
                 if (tile instanceof TileFloodGate) {
                     return ((TileFloodGate) tile).isSideBlocked(side) ? transparent : valve;
                 }
             }
             return transparent;
         } else {
-            return super.getIcon(world, x, y, z, side);
+            return super.getIcon(world, pos, side);
         }
     }
 
     @Override
-    public IIcon getIcon(int side, int metadata) {
+    public TextureAtlasSprite getIcon(int side, int metadata) {
         if (renderPass == 1) {
             if (side == 1) {
                 return null;

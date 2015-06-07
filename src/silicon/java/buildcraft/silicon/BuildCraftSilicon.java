@@ -28,7 +28,6 @@ import buildcraft.core.BuildCraftMod;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
-import buildcraft.core.builders.schematics.SchematicRotateMeta;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.ChannelHandler;
@@ -81,15 +80,15 @@ public class BuildCraftSilicon extends BuildCraftMod {
         }
 
         laserBlock = (BlockLaser) CompatHooks.INSTANCE.getBlock(BlockLaser.class);
-        laserBlock.setBlockName("laserBlock");
+        laserBlock.setUnlocalizedName("laserBlock");
         CoreProxy.proxy.registerBlock(laserBlock);
 
         assemblyTableBlock = (BlockLaserTable) CompatHooks.INSTANCE.getBlock(BlockLaserTable.class);
-        assemblyTableBlock.setBlockName("laserTableBlock");
+        assemblyTableBlock.setUnlocalizedName("laserTableBlock");
         CoreProxy.proxy.registerBlock(assemblyTableBlock, ItemLaserTable.class);
 
         packagerBlock = (BlockPackager) CompatHooks.INSTANCE.getBlock(BlockPackager.class);
-        packagerBlock.setBlockName("packagerBlock");
+        packagerBlock.setUnlocalizedName("packagerBlock");
         CoreProxy.proxy.registerBlock(packagerBlock);
 
         redstoneChipset = new ItemRedstoneChipset();

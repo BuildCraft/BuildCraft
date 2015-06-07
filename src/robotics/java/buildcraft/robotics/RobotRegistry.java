@@ -13,6 +13,7 @@ import java.util.Map;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
@@ -223,8 +224,8 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
     }
 
     @Override
-    public synchronized DockingStation getStation(int x, int y, int z, EnumFacing side) {
-        StationIndex index = new StationIndex(side, x, y, z);
+    public synchronized DockingStation getStation(BlockPos pos, EnumFacing side) {
+        StationIndex index = new StationIndex(side, pos);
 
         if (stations.containsKey(index)) {
             return stations.get(index);

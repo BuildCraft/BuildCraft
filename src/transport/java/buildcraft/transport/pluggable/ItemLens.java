@@ -6,10 +6,12 @@ package buildcraft.transport.pluggable;
 
 import java.util.List;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -31,7 +33,7 @@ public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIcon getIconFromDamageForRenderPass(int meta, int pass) {
+    public TextureAtlasSprite getIconFromDamageForRenderPass(int meta, int pass) {
         return icons[meta >= 16 ? (1 + (pass & 1)) : (1 - (pass & 1))];
     }
 
@@ -58,7 +60,7 @@ public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
     }
 
     @Override
-    public boolean doesSneakBypassUse(World world, int x, int y, int z, EntityPlayer player) {
+    public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player) {
         return true;
     }
 

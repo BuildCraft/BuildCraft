@@ -26,7 +26,7 @@ public class PipeFluidsVoid extends Pipe<PipeTransportFluids> implements IPipeTr
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIconProvider getIconProvider() {
+    public TextureAtlasSpriteProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 

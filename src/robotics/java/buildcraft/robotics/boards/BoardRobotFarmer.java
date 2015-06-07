@@ -50,8 +50,8 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
         } else {
             startDelegateAI(new AIRobotSearchAndGotoBlock(robot, false, new IBlockFilter() {
                 @Override
-                public boolean matches(World world, int x, int y, int z) {
-                    return isDirt.get(world, x, y, z) && !robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z)) && isAirAbove(world, x, y, z);
+                public boolean matches(World world, BlockPos pos) {
+                    return isDirt.get(world, pos) && !robot.getRegistry().isTaken(new ResourceIdBlock(pos)) && isAirAbove(world, pos);
                 }
             }));
         }
@@ -107,7 +107,7 @@ public class BoardRobotFarmer extends RedstoneBoardRobot {
         }
     }
 
-    private boolean isAirAbove(World world, int x, int y, int z) {
+    private boolean isAirAbove(World world, BlockPos pos) {
         synchronized (world) {
             return world.isAirBlock(x, y + 1, z);
         }

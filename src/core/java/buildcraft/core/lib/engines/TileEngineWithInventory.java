@@ -9,6 +9,9 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IChatComponent;
 
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.utils.Utils;
@@ -55,25 +58,14 @@ public abstract class TileEngineWithInventory extends TileEngineBase implements 
     }
 
     @Override
-    public String getInventoryName() {
-        return "Engine";
-    }
-
-    @Override
     public int getInventoryStackLimit() {
         return 64;
     }
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-        return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
+        return worldObj.getTileEntity(pos) == this;
     }
-
-    @Override
-    public void openInventory() {}
-
-    @Override
-    public void closeInventory() {}
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
@@ -90,8 +82,8 @@ public abstract class TileEngineWithInventory extends TileEngineBase implements 
     // ISidedInventory
 
     @Override
-    public int[] getAccessibleSlotsFromSide(int side) {
-        if (side == orientation.ordinal()) {
+    public int[] getSlotsForFace(EnumFacing side) {
+        if (side == orientation) {
             return new int[0];
         } else {
             return defaultSlotArray;
@@ -99,12 +91,33 @@ public abstract class TileEngineWithInventory extends TileEngineBase implements 
     }
 
     @Override
-    public boolean canInsertItem(int slot, ItemStack stack, int side) {
-        return side != orientation.ordinal();
+    public boolean canInsertItem(int slot, ItemStack stack, EnumFacing side) {
+        return side != orientation;
     }
 
     @Override
-    public boolean canExtractItem(int slot, ItemStack stack, int side) {
-        return side != orientation.ordinal();
+    public boolean canExtractItem(int slot, ItemStack stack, EnumFacing side) {
+        return side != orientation;
     }
+
+    @Override
+    public String getCommandSenderName() {
+        return "Engine";
+    }
+
+    @Override
+    public boolean hasCustomName() {
+        return true;
+    }
+
+    @Override
+    public IChatComponent getDisplayName() {
+        return new ChatComponentText("Engine");
+    }
+
+    @Override
+    public void openInventory(EntityPlayer player) {}
+
+    @Override
+    public void closeInventory(EntityPlayer player) {}
 }

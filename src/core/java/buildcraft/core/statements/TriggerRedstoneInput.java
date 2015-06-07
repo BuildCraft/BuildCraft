@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.statements;
 
-import net.minecraft.util.EnumFacing;
-
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
@@ -47,7 +45,7 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
     @Override
     public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
         if (container instanceof IRedstoneStatementContainer) {
-            int level = ((IRedstoneStatementContainer) container).getRedstoneInput(EnumFacing.UNKNOWN);
+            int level = ((IRedstoneStatementContainer) container).getRedstoneInput(null);
             if (parameters.length > 0 && parameters[0] instanceof StatementParameterRedstoneGateSideOnly
                 && ((StatementParameterRedstoneGateSideOnly) parameters[0]).isOn && container instanceof ISidedStatementContainer) {
                 level = ((IRedstoneStatementContainer) container).getRedstoneInput(((ISidedStatementContainer) container).getSide());
@@ -57,10 +55,5 @@ public class TriggerRedstoneInput extends BCStatement implements ITriggerInterna
         } else {
             return false;
         }
-    }
-
-    @Override
-    public void registerIcons(IIconRegister register) {
-        icon = register.registerIcon("buildcraftcore:triggers/trigger_redstoneinput_" + (active ? "active" : "inactive"));
     }
 }

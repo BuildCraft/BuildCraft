@@ -154,7 +154,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
     }
 
     @Override
-    public IIconProvider getIconProvider() {
+    public TextureAtlasSpriteProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 

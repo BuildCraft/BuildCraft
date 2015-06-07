@@ -27,7 +27,7 @@ public class TriggerRobotInStation extends BCStatement implements ITriggerIntern
     }
 
     @Override
-    public void registerIcons(IIconRegister iconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
         icon = iconRegister.registerIcon("buildcraftrobotics:triggers/trigger_robot_in_station");
     }
 

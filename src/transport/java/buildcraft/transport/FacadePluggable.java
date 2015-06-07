@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
 
@@ -29,8 +30,8 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
 
         @Override
         public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, EnumFacing side, PipePluggable pipePluggable,
-                ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
-            FacadeRenderHelper.pipeFacadeRenderer(renderblocks, blockStateMachine, pipe.getTile(), x, y, z, side, (IFacadePluggable) pipePluggable);
+                ITextureStates blockStateMachine, int renderPass, BlockPos pos) {
+            FacadeRenderHelper.pipeFacadeRenderer(renderblocks, blockStateMachine, pipe.getTile(), pos, side, (IFacadePluggable) pipePluggable);
         }
     }
 

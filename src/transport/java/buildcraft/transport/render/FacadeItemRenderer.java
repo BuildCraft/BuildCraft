@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
 
@@ -28,8 +29,8 @@ public class FacadeItemRenderer implements IItemRenderer {
 
     private int renderState = 0;
 
-    private IIcon tryGetBlockIcon(Block block, int side, int decodedMeta) {
-        IIcon icon = RenderUtils.tryGetBlockIcon(block, side, decodedMeta);
+    private TextureAtlasSprite tryGetBlockIcon(Block block, int side, int decodedMeta) {
+        TextureAtlasSprite icon = RenderUtils.tryGetBlockIcon(block, side, decodedMeta);
 
         if (icon == null) {
             icon = PipeIconProvider.TYPE.TransparentFacade.getIcon();
@@ -39,12 +40,12 @@ public class FacadeItemRenderer implements IItemRenderer {
     }
 
     private void drawHollowCube(Tessellator tessellator, RenderBlocks render, Block block, int decodedMeta) {
-        IIcon icon0 = tryGetBlockIcon(block, 0, decodedMeta);
-        IIcon icon1 = tryGetBlockIcon(block, 1, decodedMeta);
-        IIcon icon2 = tryGetBlockIcon(block, 2, decodedMeta);
-        IIcon icon3 = tryGetBlockIcon(block, 3, decodedMeta);
-        IIcon icon4 = tryGetBlockIcon(block, 4, decodedMeta);
-        IIcon icon5 = tryGetBlockIcon(block, 5, decodedMeta);
+        TextureAtlasSprite icon0 = tryGetBlockIcon(block, 0, decodedMeta);
+        TextureAtlasSprite icon1 = tryGetBlockIcon(block, 1, decodedMeta);
+        TextureAtlasSprite icon2 = tryGetBlockIcon(block, 2, decodedMeta);
+        TextureAtlasSprite icon3 = tryGetBlockIcon(block, 3, decodedMeta);
+        TextureAtlasSprite icon4 = tryGetBlockIcon(block, 4, decodedMeta);
+        TextureAtlasSprite icon5 = tryGetBlockIcon(block, 5, decodedMeta);
 
         float width = 1 - TransportConstants.FACADE_THICKNESS;
         float cavity = (CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS) / 2F;
@@ -165,7 +166,7 @@ public class FacadeItemRenderer implements IItemRenderer {
         // Render StructurePipe
         if (!hollow) {
             block = BuildCraftTransport.genericPipeBlock;
-            IIcon textureID = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal()); // Structure
+            TextureAtlasSprite textureID = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal()); // Structure
                                                                                                                                                // pipe
 
             render.setRenderBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS,

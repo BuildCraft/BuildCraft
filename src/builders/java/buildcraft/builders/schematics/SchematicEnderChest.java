@@ -1,4 +1,4 @@
-/** Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
@@ -9,30 +9,20 @@ import java.util.LinkedList;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 
 import buildcraft.api.blueprints.IBuilderContext;
-import buildcraft.core.builders.schematics.SchematicRotateMeta;
+import buildcraft.api.blueprints.SchematicTile;
 
-public class SchematicEnderChest extends SchematicRotateMeta {
+public class SchematicEnderChest extends SchematicTile {
+	@Override
+	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+		requirements.add(new ItemStack(Blocks.obsidian, 8));
+		requirements.add(new ItemStack(Items.ender_eye, 1));
+	}
 
-    public SchematicEnderChest() {
-        super(new int[] { 2, 5, 3, 4 }, true);
-    }
-
-    @Override
-    public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-        requirements.add(new ItemStack(Blocks.obsidian, 8));
-        requirements.add(new ItemStack(Items.ender_eye, 1));
-    }
-
-    @Override
-    public void storeRequirements(IBuilderContext context, int x, int y, int z) {
-        // cancel requirements reading
-    }
-
-    @Override
-    public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
-        return block == context.world().getBlock(x, y, z);
-    }
-
+	@Override
+	public void storeRequirements(IBuilderContext context, BlockPos pos) {
+		// cancel requirements reading
+	}
 }

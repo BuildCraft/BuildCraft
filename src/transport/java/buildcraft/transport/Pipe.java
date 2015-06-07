@@ -110,11 +110,11 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
         return getIconIndex(EnumFacing.UNKNOWN);
     }
 
-    /** Should return the IIconProvider that provides icons for this pipe
+    /** Should return the TextureAtlasSpriteProvider that provides icons for this pipe
      *
      * @return An array of icons */
     @SideOnly(Side.CLIENT)
-    public abstract IIconProvider getIconProvider();
+    public abstract TextureAtlasSpriteProvider getIconProvider();
 
     /** Should return the index in the array returned by GetTextureIcons() for a specified direction
      *

@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.recipes.IAssemblyRecipeManager;
@@ -21,8 +20,9 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 
     @Override
     public void addRecipe(String id, int energyCost, ItemStack output, Object... input) {
-        String name = Item.itemRegistry.getNameForObject(output.getItem());
-
+        if (output == null) {
+            throw new IllegalArgumentException("Cannot have a null output!");
+        }
         addRecipe(id, new FlexibleRecipe<ItemStack>(id, output, energyCost, 0, input));
     }
 
@@ -48,7 +48,7 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
         return assemblyRecipes.values();
     }
 
-    public IFlexibleRecipe getRecipe(String id) {
+    public IFlexibleRecipe<ItemStack> getRecipe(String id) {
         return assemblyRecipes.get(id);
     }
 

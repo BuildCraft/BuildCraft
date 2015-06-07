@@ -6,6 +6,7 @@ package buildcraft.robotics;
 
 import java.util.List;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -38,7 +39,7 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
     }
 
     @Override
-    public IIcon getIconIndex(ItemStack stack) {
+    public TextureAtlasSprite getIconIndex(ItemStack stack) {
         NBTTagCompound cpt = getNBT(stack);
         return getBoardNBT(cpt).getIcon(cpt);
     }

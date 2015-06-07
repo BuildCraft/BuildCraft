@@ -3,6 +3,7 @@ package buildcraft.transport.render;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -22,13 +23,13 @@ public class FacadeBlockAccess implements IBlockAccess {
     }
 
     @Override
-    public Block getBlock(int x, int y, int z) {
-        Block compatBlock = CompatHooks.INSTANCE.getVisualBlock(world, x, y, z, side);
+    public Block getBlock(BlockPos pos) {
+        Block compatBlock = CompatHooks.INSTANCE.getVisualBlock(world, pos, side);
         if (compatBlock != null) {
             return compatBlock;
         }
 
-        TileEntity tile = world.getTileEntity(x, y, z);
+        TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof IPipeTile) {
             PipePluggable p = ((IPipeTile) tile).getPipePluggable(side);
             if (p instanceof IFacadePluggable) {
@@ -39,23 +40,23 @@ public class FacadeBlockAccess implements IBlockAccess {
     }
 
     @Override
-    public TileEntity getTileEntity(int x, int y, int z) {
+    public TileEntity getTileEntity(BlockPos pos) {
         return null;
     }
 
     @Override
-    public int getLightBrightnessForSkyBlocks(int x, int y, int z, int a) {
+    public int getLightBrightnessForSkyBlocks(BlockPos pos, int a) {
         return 0;
     }
 
     @Override
-    public int getBlockMetadata(int x, int y, int z) {
-        int compatMeta = CompatHooks.INSTANCE.getVisualMeta(world, x, y, z, side);
+    public int getBlockMetadata(BlockPos pos) {
+        int compatMeta = CompatHooks.INSTANCE.getVisualMeta(world, pos, side);
         if (compatMeta >= 0) {
             return compatMeta;
         }
 
-        TileEntity tile = world.getTileEntity(x, y, z);
+        TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof IPipeTile) {
             PipePluggable p = ((IPipeTile) tile).getPipePluggable(side);
             if (p instanceof IFacadePluggable) {
@@ -67,13 +68,13 @@ public class FacadeBlockAccess implements IBlockAccess {
     }
 
     @Override
-    public int isBlockProvidingPowerTo(int x, int y, int z, int side) {
+    public int isBlockProvidingPowerTo(BlockPos pos, int side) {
         return 0;
     }
 
     @Override
-    public boolean isAirBlock(int x, int y, int z) {
-        return !(world.getTileEntity(x, y, z) instanceof IPipeTile);
+    public boolean isAirBlock(BlockPos pos) {
+        return !(world.getTileEntity(pos) instanceof IPipeTile);
     }
 
     @Override
@@ -92,7 +93,7 @@ public class FacadeBlockAccess implements IBlockAccess {
     }
 
     @Override
-    public boolean isSideSolid(int x, int y, int z, EnumFacing side, boolean def) {
-        return world.isSideSolid(x, y, z, side, def);
+    public boolean isSideSolid(BlockPos pos, EnumFacing side, boolean def) {
+        return world.isSideSolid(pos, side, def);
     }
 }

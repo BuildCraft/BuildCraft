@@ -51,7 +51,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIconProvider getIconProvider() {
+    public TextureAtlasSpriteProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 

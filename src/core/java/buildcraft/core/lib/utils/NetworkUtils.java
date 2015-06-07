@@ -2,13 +2,14 @@ package buildcraft.core.lib.utils;
 
 import io.netty.buffer.ByteBuf;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
 
 public final class NetworkUtils {
@@ -48,7 +49,9 @@ public final class NetworkUtils {
 
     public static void writeNBT(ByteBuf data, NBTTagCompound nbt) {
         try {
-            byte[] compressed = CompressedStreamTools.compress(nbt);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            CompressedStreamTools.writeCompressed(nbt, baos);
+            byte[] compressed = baos.toByteArray();
             data.writeInt(compressed.length);
             data.writeBytes(compressed);
         } catch (IOException e) {
@@ -61,7 +64,8 @@ public final class NetworkUtils {
             int length = data.readInt();
             byte[] compressed = new byte[length];
             data.readBytes(compressed);
-            return CompressedStreamTools.func_152457_a(compressed, NBTSizeTracker.field_152451_a);
+            ByteArrayInputStream bais = new ByteArrayInputStream(compressed);
+            return CompressedStreamTools.readCompressed(bais);
         } catch (IOException e) {
             e.printStackTrace();
             return null;

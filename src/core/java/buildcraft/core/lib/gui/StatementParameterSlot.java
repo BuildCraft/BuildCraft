@@ -1,5 +1,6 @@
 package buildcraft.core.lib.gui;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.statements.IStatementParameter;
@@ -47,7 +48,7 @@ public abstract class StatementParameterSlot extends AdvancedSlot {
     }
 
     @Override
-    public IIcon getIcon() {
+    public TextureAtlasSprite getIcon() {
         IStatementParameter parameter = getParameter();
 
         if (parameter != null) {

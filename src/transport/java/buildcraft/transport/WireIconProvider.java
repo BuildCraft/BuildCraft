@@ -4,10 +4,11 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class WireIconProvider implements IIconProvider {
+public class WireIconProvider implements TextureAtlasSpriteProvider {
 
     public static final int Texture_Red_Dark = 0;
     public static final int Texture_Red_Lit = 1;
@@ -21,18 +22,18 @@ public class WireIconProvider implements IIconProvider {
     public static final int MAX = 8;
 
     @SideOnly(Side.CLIENT)
-    private IIcon[] icons;
+    private TextureAtlasSprite[] icons;
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIcon getIcon(int pipeIconIndex) {
+    public TextureAtlasSprite getIcon(int pipeIconIndex) {
         return icons[pipeIconIndex];
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister iconRegister) {
-        icons = new IIcon[MAX];
+    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
+        icons = new TextureAtlasSprite[MAX];
 
         icons[WireIconProvider.Texture_Red_Dark] = iconRegister.registerIcon("buildcraftcore:misc/texture_red_dark");
         icons[WireIconProvider.Texture_Red_Lit] = iconRegister.registerIcon("buildcraftcore:misc/texture_red_lit");

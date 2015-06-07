@@ -4,12 +4,13 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.BuildCraftCore;
 
-public class PipeIconProvider implements IIconProvider {
+public class PipeIconProvider implements TextureAtlasSpriteProvider {
 
     public enum TYPE {
 
@@ -142,7 +143,7 @@ public class PipeIconProvider implements IIconProvider {
         public static final TYPE[] VALUES = values();
         private final String iconTag;
         private final String iconTagColorBlind;
-        private IIcon icon;
+        private TextureAtlasSprite icon;
 
         private TYPE(String iconTag, String iconTagColorBlind) {
             this.iconTag = iconTag;
@@ -153,7 +154,7 @@ public class PipeIconProvider implements IIconProvider {
             this(iconTag, iconTag);
         }
 
-        private void registerIcon(IIconRegister iconRegister) {
+        private void registerIcon(TextureAtlasSpriteRegister iconRegister) {
             String name = BuildCraftCore.colorBlindMode ? iconTagColorBlind : iconTag;
             if (name.indexOf(":") < 0) {
                 name = "transport:pipes/" + name;
@@ -161,14 +162,14 @@ public class PipeIconProvider implements IIconProvider {
             icon = iconRegister.registerIcon("buildcraft" + name);
         }
 
-        public IIcon getIcon() {
+        public TextureAtlasSprite getIcon() {
             return icon;
         }
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIcon getIcon(int pipeIconIndex) {
+    public TextureAtlasSprite getIcon(int pipeIconIndex) {
         if (pipeIconIndex == -1) {
             return null;
         }
@@ -177,7 +178,7 @@ public class PipeIconProvider implements IIconProvider {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister iconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
         for (TYPE type : TYPE.VALUES) {
             type.registerIcon(iconRegister);
         }

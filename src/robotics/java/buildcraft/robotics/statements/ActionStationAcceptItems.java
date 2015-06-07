@@ -30,7 +30,7 @@ public class ActionStationAcceptItems extends ActionStationInputItems {
     }
 
     @Override
-    public void registerIcons(IIconRegister iconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
         icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_station_accept_items");
     }
 

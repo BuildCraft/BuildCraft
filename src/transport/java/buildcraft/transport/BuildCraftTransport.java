@@ -75,7 +75,6 @@ import buildcraft.transport.gates.GateExpansionTimer;
 import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.gates.ItemGate;
 import buildcraft.transport.item.ItemFacade;
-import buildcraft.transport.item.ItemFacade.FacadeRecipe;
 import buildcraft.transport.item.ItemGateCopier;
 import buildcraft.transport.item.ItemPipe;
 import buildcraft.transport.item.ItemPipeWire;
@@ -192,8 +191,8 @@ public class BuildCraftTransport extends BuildCraftMod {
     private static LinkedList<PipeRecipe> pipeRecipes = new LinkedList<PipeRecipe>();
     private static ChannelHandler transportChannelHandler;
 
-    public IIconProvider pipeIconProvider = new PipeIconProvider();
-    public IIconProvider wireIconProvider = new WireIconProvider();
+    public TextureAtlasSpriteProvider pipeIconProvider = new PipeIconProvider();
+    public TextureAtlasSpriteProvider wireIconProvider = new WireIconProvider();
 
     private static class PipeRecipe {
         boolean isShapeless = false; // pipe recipes come shaped and unshaped.
@@ -240,7 +239,7 @@ public class BuildCraftTransport extends BuildCraftMod {
             reloadConfig(ConfigManager.RestartRequirement.GAME);
 
             filteredBufferBlock = new BlockFilteredBuffer();
-            CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));
+            CoreProxy.proxy.registerBlock(filteredBufferBlock.setUnlocalizedName("filteredBufferBlock"));
 
             pipeWaterproof = new ItemBuildCraft();
 
@@ -249,7 +248,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
             genericPipeBlock = (BlockGenericPipe) CompatHooks.INSTANCE.getBlock(BlockGenericPipe.class);
 
-            CoreProxy.proxy.registerBlock(genericPipeBlock.setBlockName("pipeBlock"), ItemBlock.class);
+            CoreProxy.proxy.registerBlock(genericPipeBlock.setUnlocalizedName("pipeBlock"), ItemBlock.class);
 
             pipeItemsWood =
                 buildPipe(PipeItemsWood.class, "Wooden Transport Pipe", BCCreativeTab.get("pipes"), "plankWood", "blockGlassColorless", "plankWood");

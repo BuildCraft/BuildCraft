@@ -11,6 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.blueprints.BuildingPermission;
@@ -31,8 +32,8 @@ public class SchematicPipe extends SchematicTile {
     private BuildingPermission permission = BuildingPermission.ALL;
 
     @Override
-    public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
-        Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
+    public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
+        Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), pos);
 
         if (BlockGenericPipe.isValid(pipe)) {
             return pipe.item == Item.getItemById(tileNBT.getInteger("pipeId"));
@@ -130,21 +131,21 @@ public class SchematicPipe extends SchematicTile {
     }
 
     @Override
-    public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
+    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
         tileNBT.setInteger("x", x);
         tileNBT.setInteger("y", y);
         tileNBT.setInteger("z", z);
 
-        context.world().setBlock(x, y, z, block, meta, 3);
+        context.world().setBlock(pos, block, meta, 3);
 
-        TileEntity tile = context.world().getTileEntity(x, y, z);
+        TileEntity tile = context.world().getTileEntity(pos);
         tile.readFromNBT(tileNBT);
     }
 
     @Override
-    public void initializeFromObjectAt(IBuilderContext context, int x, int y, int z) {
-        TileEntity tile = context.world().getTileEntity(x, y, z);
-        Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
+    public void initializeFromObjectAt(IBuilderContext context, BlockPos pos) {
+        TileEntity tile = context.world().getTileEntity(pos);
+        Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), pos);
 
         if (BlockGenericPipe.isValid(pipe)) {
             tile.writeToNBT(tileNBT);
@@ -168,8 +169,8 @@ public class SchematicPipe extends SchematicTile {
     }
 
     @Override
-    public void storeRequirements(IBuilderContext context, int x, int y, int z) {
-        Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), x, y, z);
+    public void storeRequirements(IBuilderContext context, BlockPos pos) {
+        Pipe<?> pipe = BlockGenericPipe.getPipe(context.world(), pos);
 
         if (BlockGenericPipe.isValid(pipe)) {
             ArrayList<ItemStack> items = pipe.computeItemDrop();
@@ -180,7 +181,7 @@ public class SchematicPipe extends SchematicTile {
     }
 
     @Override
-    public void postProcessing(IBuilderContext context, int x, int y, int z) {
+    public void postProcessing(IBuilderContext context, BlockPos pos) {
         Item pipeItem = Item.getItemById(tileNBT.getInteger("pipeId"));
 
         if (BptPipeExtension.contains(pipeItem)) {

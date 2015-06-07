@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.util.BlockPos;
 
 public abstract class SubCommand implements IModCommand {
     public enum PermLevel {
@@ -70,18 +72,13 @@ public abstract class SubCommand implements IModCommand {
     }
 
     @Override
-    public List addTabCompletionOptions(ICommandSender sender, String[] text) {
-        return null;
-    }
-
-    @Override
-    public final void processCommand(ICommandSender sender, String[] args) {
+    public final void processCommand(ICommandSender sender, String[] args) throws CommandException {
         if (!CommandHelpers.processStandardCommands(sender, this, args)) {
             processSubCommand(sender, args);
         }
     }
 
-    public void processSubCommand(ICommandSender sender, String[] args) {
+    public void processSubCommand(ICommandSender sender, String[] args) throws CommandException {
         CommandHelpers.throwWrongUsage(sender, this);
     }
 
@@ -127,5 +124,10 @@ public abstract class SubCommand implements IModCommand {
     @Override
     public int compareTo(Object command) {
         return this.compareTo((ICommand) command);
+    }
+    
+    @Override
+    public List<?> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
+        return null;
     }
 }

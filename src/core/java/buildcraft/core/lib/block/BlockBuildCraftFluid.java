@@ -9,8 +9,10 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -21,15 +23,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.lib.render.EntityDropParticleFX;
-import buildcraft.core.lib.utils.ResourceUtils;
 
 public class BlockBuildCraftFluid extends BlockFluidClassic {
 
     protected float particleRed;
     protected float particleGreen;
     protected float particleBlue;
-    @SideOnly(Side.CLIENT)
-    protected IIcon[] theIcon;
     protected boolean flammable;
     protected boolean dense = false;
     protected int flammability = 0;
@@ -42,30 +41,16 @@ public class BlockBuildCraftFluid extends BlockFluidClassic {
     }
 
     @Override
-    public IIcon getIcon(int side, int meta) {
-        return side != 0 && side != 1 ? this.theIcon[1] : this.theIcon[0];
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerBlockIcons(IIconRegister iconRegister) {
-        String prefix = ResourceUtils.getObjectPrefix(Block.blockRegistry.getNameForObject(this));
-        prefix = prefix.substring(0, prefix.indexOf(":") + 1) + "fluids/";
-        this.theIcon =
-            new IIcon[] { iconRegister.registerIcon(prefix + fluidName + "_still"), iconRegister.registerIcon(prefix + fluidName + "_flow") };
-    }
-
-    @Override
-    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-        super.onNeighborBlockChange(world, x, y, z, block);
-        if (flammable && world.provider.dimensionId == -1) {
-            world.setBlockToAir(x, y, z);
-            world.newExplosion(null, x, y, z, 4F, true, true);
+    public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block block) {
+        super.onNeighborBlockChange(world, pos, state, block);
+        if (flammable && world.provider.getDimensionId() == -1) {
+            world.setBlockToAir(pos);
+            world.newExplosion(null, pos.getX(), pos.getY(), pos.getZ(), 4F, true, true);
         }
     }
 
     @Override
-    public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
+    public void onEntityCollidedWithBlock(World world, BlockPos pos, Entity entity) {
         if (!dense || entity == null) {
             return;
         }
@@ -97,22 +82,22 @@ public class BlockBuildCraftFluid extends BlockFluidClassic {
     }
 
     @Override
-    public int getFireSpreadSpeed(IBlockAccess world, int x, int y, int z, EnumFacing face) {
+    public int getFireSpreadSpeed(IBlockAccess world, BlockPos pos, EnumFacing face) {
         return flammable ? 300 : 0;
     }
 
     @Override
-    public int getFlammability(IBlockAccess world, int x, int y, int z, EnumFacing face) {
+    public int getFlammability(IBlockAccess world, BlockPos pos, EnumFacing face) {
         return flammability;
     }
 
     @Override
-    public boolean isFlammable(IBlockAccess world, int x, int y, int z, EnumFacing face) {
+    public boolean isFlammable(IBlockAccess world, BlockPos pos, EnumFacing face) {
         return flammable;
     }
 
     @Override
-    public boolean isFireSource(World world, int x, int y, int z, EnumFacing side) {
+    public boolean isFireSource(World world, BlockPos pos, EnumFacing side) {
         return flammable && flammability == 0;
     }
 
@@ -125,15 +110,15 @@ public class BlockBuildCraftFluid extends BlockFluidClassic {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void randomDisplayTick(World world, int x, int y, int z, Random rand) {
-        super.randomDisplayTick(world, x, y, z, rand);
+    public void randomDisplayTick(World world, BlockPos pos, IBlockState state, Random rand) {
+        super.randomDisplayTick(world, pos, state, rand);
 
-        if (rand.nextInt(10) == 0 && World.doesBlockHaveSolidTopSurface(world, x, y - 1, z)
-            && !world.getBlock(x, y - 2, z).getMaterial().blocksMovement()) {
+        if (rand.nextInt(10) == 0 && World.doesBlockHaveSolidTopSurface(world, pos.down())
+            && !world.getBlockState(pos.down(2)).getBlock().getMaterial().blocksMovement()) {
 
-            double px = x + rand.nextFloat();
-            double py = y - 1.05D;
-            double pz = z + rand.nextFloat();
+            double px = pos.getX() + rand.nextFloat();
+            double py = pos.getY() - 1.05D;
+            double pz = pos.getZ() + rand.nextFloat();
 
             EntityFX fx = new EntityDropParticleFX(world, px, py, pz, particleRed, particleGreen, particleBlue);
             FMLClientHandler.instance().getClient().effectRenderer.addEffect(fx);
@@ -141,23 +126,23 @@ public class BlockBuildCraftFluid extends BlockFluidClassic {
     }
 
     @Override
-    public boolean canDisplace(IBlockAccess world, int x, int y, int z) {
-        if (world.getBlock(x, y, z).getMaterial().isLiquid()) {
+    public boolean canDisplace(IBlockAccess world, BlockPos pos) {
+        if (world.getBlockState(pos).getBlock().getMaterial().isLiquid()) {
             return false;
         }
-        return super.canDisplace(world, x, y, z);
+        return super.canDisplace(world, pos);
     }
 
     @Override
-    public boolean displaceIfPossible(World world, int x, int y, int z) {
-        if (world.getBlock(x, y, z).getMaterial().isLiquid()) {
+    public boolean displaceIfPossible(World world, BlockPos pos) {
+        if (world.getBlockState(pos).getBlock().getMaterial().isLiquid()) {
             return false;
         }
-        return super.displaceIfPossible(world, x, y, z);
+        return super.displaceIfPossible(world, pos);
     }
 
     @Override
-    public MapColor getMapColor(int meta) {
+    public MapColor getMapColor(IBlockState state) {
         return mapColor;
     }
 }

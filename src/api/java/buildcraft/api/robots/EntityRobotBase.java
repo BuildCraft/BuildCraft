@@ -15,6 +15,7 @@ import net.minecraft.entity.EntityLiving;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.IFluidHandler;
 
@@ -44,7 +45,7 @@ public abstract class EntityRobotBase extends EntityLiving implements IInventory
 
 	public abstract void aimItemAt(float yaw, float pitch);
 
-	public abstract void aimItemAt(int x, int y, int z);
+	public abstract void aimItemAt(BlockPos pos);
 
 	public abstract float getAimYaw();
 

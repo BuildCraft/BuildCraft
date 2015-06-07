@@ -8,8 +8,8 @@ import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
 
 public class SchematicAir extends SchematicBlock {
-    @Override
-    public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+	@Override
+	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
 
-    }
+	}
 }

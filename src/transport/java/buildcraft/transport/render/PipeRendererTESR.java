@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
@@ -272,18 +273,18 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
             return;
         }
 
-        renderGatesWires(pipe, x, y, z);
-        renderPluggables(pipe, x, y, z);
+        renderGatesWires(pipe, pos);
+        renderPluggables(pipe, pos);
 
         IPipeTile.PipeType pipeType = pipe.getPipeType();
 
         // do not use switch. we will be transitioning away from the enum
         if (pipeType == IPipeTile.PipeType.ITEM) {
-            renderSolids(pipe.pipe, x, y, z, f);
+            renderSolids(pipe.pipe, pos, f);
         } else if (pipeType == IPipeTile.PipeType.FLUID) {
-            renderFluids(pipe.pipe, x, y, z);
+            renderFluids(pipe.pipe, pos);
         } else if (pipeType == IPipeTile.PipeType.POWER) {
-            renderPower(pipe.pipe, x, y, z);
+            renderPower(pipe.pipe, pos);
         } /*
            * else if (pipeType == PipeType.STRUCTURE) { // no object to render in a structure pipe; } */
     }
@@ -292,19 +293,19 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
         PipeRenderState state = pipe.renderState;
 
         if (state.wireMatrix.hasWire(PipeWire.RED)) {
-            pipeWireRender(pipe, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MIN_POS, PipeWire.RED, x, y, z);
+            pipeWireRender(pipe, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MIN_POS, PipeWire.RED, pos);
         }
 
         if (state.wireMatrix.hasWire(PipeWire.BLUE)) {
-            pipeWireRender(pipe, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, PipeWire.BLUE, x, y, z);
+            pipeWireRender(pipe, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, PipeWire.BLUE, pos);
         }
 
         if (state.wireMatrix.hasWire(PipeWire.GREEN)) {
-            pipeWireRender(pipe, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, PipeWire.GREEN, x, y, z);
+            pipeWireRender(pipe, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, PipeWire.GREEN, pos);
         }
 
         if (state.wireMatrix.hasWire(PipeWire.YELLOW)) {
-            pipeWireRender(pipe, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, PipeWire.YELLOW, x, y, z);
+            pipeWireRender(pipe, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, PipeWire.YELLOW, pos);
         }
     }
 
@@ -459,7 +460,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
         for (EnumFacing direction : EnumFacing.VALID_DIRECTIONS) {
             PipePluggable pluggable = pipe.getPipePluggable(direction);
             if (pluggable != null && pluggable.getDynamicRenderer() != null) {
-                pluggable.getDynamicRenderer().renderPluggable(pipe.getPipe(), direction, pluggable, x, y, z);
+                pluggable.getDynamicRenderer().renderPluggable(pipe.getPipe(), direction, pluggable, pos);
             }
         }
     }
@@ -488,7 +489,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
         blockStateMachine.setRenderAllSides();
         renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-        renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
+        renderblocks.renderStandardBlock(blockStateMachine.getBlock(), pos);
     }
 
     public static void renderGate(double x, double y, double z, GatePluggable gate, EnumFacing direction) {
@@ -496,7 +497,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
         GL11.glColor3f(1, 1, 1);
         GL11.glTranslatef((float) x, (float) y, (float) z);
 
-        IIcon lightIcon;
+        TextureAtlasSprite lightIcon;
         if (gate.isLit) {
             lightIcon = gate.getLogic().getIconLit();
         } else {
@@ -510,7 +511,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
         float pulseStage = gate.getPulseStage() * 2F;
 
         if (gate.isPulsing || pulseStage != 0) {
-            IIcon gateIcon = gate.getLogic().getGateIcon();
+            TextureAtlasSprite gateIcon = gate.getLogic().getGateIcon();
 
             // Render pulsing gate
             float amplitude = 0.10F;
@@ -526,7 +527,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
             renderGate(lightIcon, 0, 0.13F, translateCenter, translateCenter, direction, gate.isLit, 0);
         }
 
-        IIcon materialIcon = gate.getMaterial().getIconBlock();
+        TextureAtlasSprite materialIcon = gate.getMaterial().getIconBlock();
         if (materialIcon != null) {
             renderGate(materialIcon, 1, 0.13F, translateCenter, translateCenter, direction, false, 1);
         }
@@ -538,7 +539,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
         GL11.glPopMatrix();
     }
 
-    private static void renderGate(IIcon icon, int layer, float trim, float translateCenter, float extraDepth, EnumFacing direction, boolean isLit,
+    private static void renderGate(TextureAtlasSprite icon, int layer, float trim, float translateCenter, float extraDepth, EnumFacing direction, boolean isLit,
             int sideRenderingMode) {
         RenderInfo renderBox = new RenderInfo();
         renderBox.texture = icon;
@@ -834,7 +835,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
                 GL11.glScalef(renderScale * itemScale, renderScale * itemScale, renderScale * itemScale);
                 itemScale = 1 / itemScale;
 
-                if (!render.renderItemInPipe(itemstack, x, y, z)) {
+                if (!render.renderItemInPipe(itemstack, pos)) {
                     dummyEntityItem.setEntityItemStack(itemstack);
                     customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
                 }

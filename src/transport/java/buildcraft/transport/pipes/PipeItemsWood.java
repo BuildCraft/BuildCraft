@@ -72,7 +72,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIconProvider getIconProvider() {
+    public TextureAtlasSpriteProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 
@@ -183,7 +183,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
     }
 
     protected TravelingItem makeItem(double x, double y, double z, ItemStack stack) {
-        return TravelingItem.make(x, y, z, stack);
+        return TravelingItem.make(pos, stack);
     }
 
     /** Return the itemstack that can be if something can be extracted from this inventory, null if none. On certain

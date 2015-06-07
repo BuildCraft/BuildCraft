@@ -1,5 +1,6 @@
 package buildcraft.core.statements;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -11,7 +12,7 @@ import buildcraft.core.lib.utils.StringUtils;
 
 public class StatementParameterRedstoneGateSideOnly implements IStatementParameter {
 
-    private static IIcon icon;
+    private static TextureAtlasSprite icon;
 
     public boolean isOn = false;
 
@@ -25,7 +26,7 @@ public class StatementParameterRedstoneGateSideOnly implements IStatementParamet
     }
 
     @Override
-    public IIcon getIcon() {
+    public TextureAtlasSprite getIcon() {
         if (!isOn) {
             return null;
         } else {
@@ -60,10 +61,10 @@ public class StatementParameterRedstoneGateSideOnly implements IStatementParamet
         return "buildcraft:redstoneGateSideOnly";
     }
 
-    @Override
-    public void registerIcons(IIconRegister iconRegister) {
-        icon = iconRegister.registerIcon("buildcraftcore:triggers/redstone_gate_side_only");
-    }
+    // @Override
+    // public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
+    // icon = iconRegister.registerIcon("buildcraftcore:triggers/redstone_gate_side_only");
+    // }
 
     @Override
     public IStatementParameter rotateLeft() {

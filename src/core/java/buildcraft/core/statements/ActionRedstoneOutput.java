@@ -5,8 +5,6 @@
 package buildcraft.core.statements;
 
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
@@ -58,7 +56,7 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
     @Override
     public void actionActivate(IStatementContainer source, IStatementParameter[] parameters) {
         if (source instanceof IRedstoneStatementContainer) {
-            EnumFacing side = EnumFacing.UNKNOWN;
+            EnumFacing side = null;
             if (source instanceof ISidedStatementContainer && isSideOnly(parameters)) {
                 side = ((ISidedStatementContainer) source).getSide();
             }
@@ -68,11 +66,5 @@ public class ActionRedstoneOutput extends BCStatement implements IActionInternal
 
     protected int getSignalLevel() {
         return 15;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister register) {
-        icon = register.registerIcon("buildcraftcore:triggers/action_redstoneoutput");
     }
 }

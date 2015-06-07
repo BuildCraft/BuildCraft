@@ -18,7 +18,7 @@ public class FluidHandlerCopy implements IFluidHandler {
     public FluidHandlerCopy(IFluidHandler orignal) {
         this.orignal = orignal;
 
-        FluidTankInfo[] originalInfo = orignal.getTankInfo(EnumFacing.UNKNOWN);
+        FluidTankInfo[] originalInfo = orignal.getTankInfo(null);
 
         contents = new FluidTankInfo[originalInfo.length];
 

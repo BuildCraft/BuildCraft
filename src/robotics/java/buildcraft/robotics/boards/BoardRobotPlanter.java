@@ -53,8 +53,8 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
             final ItemStack itemStack = robot.getHeldItem();
             IBlockFilter blockFilter = new IBlockFilter() {
                 @Override
-                public boolean matches(World world, int x, int y, int z) {
-                    return isPlantable(itemStack, world, x, y, z) && !robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z));
+                public boolean matches(World world, BlockPos pos) {
+                    return isPlantable(itemStack, world, pos) && !robot.getRegistry().isTaken(new ResourceIdBlock(pos));
                 }
             };
             startDelegateAI(new AIRobotSearchAndGotoBlock(robot, true, blockFilter, 1));
@@ -86,9 +86,9 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
         }
     }
 
-    private boolean isPlantable(ItemStack seed, World world, int x, int y, int z) {
+    private boolean isPlantable(ItemStack seed, World world, BlockPos pos) {
         synchronized (world) {
-            return CropManager.canSustainPlant(world, seed, x, y, z);
+            return CropManager.canSustainPlant(world, seed, pos);
         }
     }
 

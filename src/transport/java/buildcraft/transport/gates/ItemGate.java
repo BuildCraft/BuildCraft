@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -218,13 +219,13 @@ public class ItemGate extends ItemBuildCraft implements IPipePluggableItem {
     }
 
     @Override
-    public IIcon getIconIndex(ItemStack stack) {
+    public TextureAtlasSprite getIconIndex(ItemStack stack) {
         return getLogic(stack).getIconItem();
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister iconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
         for (GateDefinition.GateMaterial material : GateDefinition.GateMaterial.VALUES) {
             material.registerItemIcon(iconRegister);
         }

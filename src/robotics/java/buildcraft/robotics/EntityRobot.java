@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.WeakHashMap;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -743,7 +744,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
                 }
             }), this);
         } else {
-            Vec3 v = Vec3.createVectorHelper(x, y, z);
+            Vec3 v = Vec3.createVectorHelper(pos);
             v = v.normalize();
 
             steamDx = (int) v.xCoord;
@@ -841,7 +842,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     }
 
     @Override
-    public void aimItemAt(int x, int y, int z) {
+    public void aimItemAt(BlockPos pos) {
         int deltaX = x - (int) Math.floor(posX);
         int deltaY = y - (int) Math.floor(posY);
         int deltaZ = z - (int) Math.floor(posZ);
@@ -1243,8 +1244,8 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     }
 
     @SideOnly(Side.CLIENT)
-    public IIcon getItemIcon(ItemStack stack, int renderPass) {
-        IIcon iicon = super.getItemIcon(stack, renderPass);
+    public TextureAtlasSprite getItemIcon(ItemStack stack, int renderPass) {
+        TextureAtlasSprite iicon = super.getItemIcon(stack, renderPass);
 
         if (iicon == null) {
             iicon = stack.getItem().getIcon(stack, renderPass, null, itemInUse, 0);

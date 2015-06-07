@@ -7,6 +7,7 @@ package buildcraft.core.lib.inventory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IChatComponent;
 
 /** Wrapper class used to specify part of an existing inventory to be treated as a complete inventory. Used primarily to
  * map a side of an ISidedInventory, but it is also helpful for complex inventories such as the Tunnel Bore. */
@@ -59,8 +60,8 @@ public class InventoryMapper implements IInventory {
     }
 
     @Override
-    public String getInventoryName() {
-        return inv.getInventoryName();
+    public String getCommandSenderName() {
+        return inv.getCommandSenderName();
     }
 
     public void setStackSizeLimit(int limit) {
@@ -78,13 +79,13 @@ public class InventoryMapper implements IInventory {
     }
 
     @Override
-    public void openInventory() {
-        inv.openInventory();
+    public void openInventory(EntityPlayer player) {
+        inv.openInventory(player);
     }
 
     @Override
-    public void closeInventory() {
-        inv.closeInventory();
+    public void closeInventory(EntityPlayer player) {
+        inv.closeInventory(player);
     }
 
     @Override
@@ -101,12 +102,33 @@ public class InventoryMapper implements IInventory {
     }
 
     @Override
-    public boolean hasCustomInventoryName() {
-        return inv.hasCustomInventoryName();
+    public boolean hasCustomName() {
+        return inv.hasCustomName();
     }
 
     @Override
     public void markDirty() {
         inv.markDirty();
     }
+
+    @Override
+    public IChatComponent getDisplayName() {
+        return null;
+    }
+
+    @Override
+    public int getField(int id) {
+        return 0;
+    }
+
+    @Override
+    public void setField(int id, int value) {}
+
+    @Override
+    public int getFieldCount() {
+        return 0;
+    }
+
+    @Override
+    public void clear() {}
 }

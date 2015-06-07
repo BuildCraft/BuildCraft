@@ -9,10 +9,12 @@ import java.util.List;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -32,7 +34,7 @@ import buildcraft.transport.block.BlockGenericPipe;
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
     @SideOnly(Side.CLIENT)
-    private IIconProvider iconProvider;
+    private TextureAtlasSpriteProvider iconProvider;
     private int pipeIconIndex;
 
     protected ItemPipe(BCCreativeTab creativeTab) {
@@ -42,7 +44,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
     }
 
     @Override
-    public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int sideI, float par8, float par9,
+    public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, BlockPos pos, int sideI, float par8, float par9,
             float par10) {
         int side = sideI;
         Block block = BuildCraftTransport.genericPipeBlock;
@@ -110,7 +112,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
     }
 
     @SideOnly(Side.CLIENT)
-    public void setPipesIcons(IIconProvider iconProvider) {
+    public void setPipesIcons(TextureAtlasSpriteProvider iconProvider) {
         this.iconProvider = iconProvider;
     }
 
@@ -120,7 +122,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIcon getIconFromDamage(int par1) {
+    public TextureAtlasSprite getIconFromDamage(int par1) {
         if (iconProvider != null) { // invalid pipes won't have this set
             return iconProvider.getIcon(pipeIconIndex);
         } else {
@@ -130,7 +132,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister par1IconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister par1IconRegister) {
         // NOOP
     }
 

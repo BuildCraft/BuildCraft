@@ -29,7 +29,7 @@ public class PipeFluidsSandstone extends Pipe<PipeTransportFluids> implements IP
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIconProvider getIconProvider() {
+    public TextureAtlasSpriteProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 

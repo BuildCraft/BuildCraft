@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.statements;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -28,13 +29,13 @@ public class ActionRedstoneFaderOutput extends ActionRedstoneOutput implements I
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIcon getIcon() {
+    public TextureAtlasSprite getIcon() {
         return icon;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister iconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
         icon = iconRegister.registerIcon(String.format("buildcrafttransport:triggers/redstone_%02d", level));
     }
 

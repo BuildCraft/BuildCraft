@@ -155,8 +155,8 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
         }
     }
 
-    private boolean isBlocked(int x, int y, int z) {
-        Material mat = BlockUtils.getBlock(worldObj, x, y, z).getMaterial();
+    private boolean isBlocked(BlockPos pos) {
+        Material mat = BlockUtils.getBlock(worldObj, pos).getMaterial();
 
         return mat.blocksMovement();
     }
@@ -248,7 +248,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
         int x = xCoord;
         int y = aimY;
         int z = zCoord;
-        Fluid pumpingFluid = BlockUtils.getFluid(BlockUtils.getBlock(worldObj, x, y, z));
+        Fluid pumpingFluid = BlockUtils.getFluid(BlockUtils.getBlock(worldObj, pos));
 
         if (pumpingFluid == null) {
             return;
@@ -261,7 +261,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
         Set<BlockPos> visitedBlocks = new HashSet<BlockPos>();
         Deque<BlockPos> fluidsFound = new LinkedList<BlockPos>();
 
-        queueForPumping(x, y, z, visitedBlocks, fluidsFound, pumpingFluid);
+        queueForPumping(pos, visitedBlocks, fluidsFound, pumpingFluid);
 
         // long timeoutTime = System.nanoTime() + 10000;
 
@@ -286,28 +286,28 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
         }
     }
 
-    public void queueForPumping(int x, int y, int z, Set<BlockPos> visitedBlocks, Deque<BlockPos> fluidsFound, Fluid pumpingFluid) {
-        BlockPos index = new BlockPos(x, y, z);
+    public void queueForPumping(BlockPos pos, Set<BlockPos> visitedBlocks, Deque<BlockPos> fluidsFound, Fluid pumpingFluid) {
+        BlockPos index = new BlockPos(pos);
         if (visitedBlocks.add(index)) {
             if ((x - xCoord) * (x - xCoord) + (z - zCoord) * (z - zCoord) > 64 * 64) {
                 return;
             }
 
-            Block block = BlockUtils.getBlock(worldObj, x, y, z);
+            Block block = BlockUtils.getBlock(worldObj, pos);
 
             if (BlockUtils.getFluid(block) == pumpingFluid) {
                 fluidsFound.add(index);
             }
 
-            if (canDrainBlock(block, x, y, z, pumpingFluid)) {
+            if (canDrainBlock(block, pos, pumpingFluid)) {
                 getLayerQueue(y).add(index);
                 numFluidBlocksFound++;
             }
         }
     }
 
-    private boolean isPumpableFluid(int x, int y, int z) {
-        Fluid fluid = BlockUtils.getFluid(BlockUtils.getBlock(worldObj, x, y, z));
+    private boolean isPumpableFluid(BlockPos pos) {
+        Fluid fluid = BlockUtils.getFluid(BlockUtils.getBlock(worldObj, pos));
 
         if (fluid == null) {
             return false;
@@ -318,12 +318,12 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
         }
     }
 
-    private boolean canDrainBlock(Block block, int x, int y, int z, Fluid fluid) {
+    private boolean canDrainBlock(Block block, BlockPos pos, Fluid fluid) {
         if (!isFluidAllowed(fluid)) {
             return false;
         }
 
-        FluidStack fluidStack = BlockUtils.drainBlock(block, worldObj, x, y, z, false);
+        FluidStack fluidStack = BlockUtils.drainBlock(block, worldObj, pos, false);
 
         if (fluidStack == null || fluidStack.amount <= 0) {
             return false;

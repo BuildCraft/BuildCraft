@@ -6,6 +6,7 @@ package buildcraft.transport.gates;
 
 import java.util.Locale;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -42,9 +43,9 @@ public final class GateDefinition {
         public final int numActionParameters;
         public final int maxWireColor;
         @SideOnly(Side.CLIENT)
-        private IIcon iconBlock;
+        private TextureAtlasSprite iconBlock;
         @SideOnly(Side.CLIENT)
-        private IIcon iconItem;
+        private TextureAtlasSprite iconItem;
 
         private GateMaterial(String guiFile, int guiHeight, int numSlots, int triggerParameterSlots, int actionParameterSlots, int maxWireColor) {
             this.guiFile = new ResourceLocation("buildcrafttransport:textures/gui/" + guiFile);
@@ -56,12 +57,12 @@ public final class GateDefinition {
         }
 
         @SideOnly(Side.CLIENT)
-        public IIcon getIconBlock() {
+        public TextureAtlasSprite getIconBlock() {
             return iconBlock;
         }
 
         @SideOnly(Side.CLIENT)
-        public IIcon getIconItem() {
+        public TextureAtlasSprite getIconItem() {
             return iconItem;
         }
 
@@ -70,14 +71,14 @@ public final class GateDefinition {
         }
 
         @SideOnly(Side.CLIENT)
-        public void registerBlockIcon(IIconRegister iconRegister) {
+        public void registerBlockIcon(TextureAtlasSpriteRegister iconRegister) {
             if (this != REDSTONE) {
                 iconBlock = iconRegister.registerIcon("buildcrafttransport:gates/gate_material_" + getTag());
             }
         }
 
         @SideOnly(Side.CLIENT)
-        public void registerItemIcon(IIconRegister iconRegister) {
+        public void registerItemIcon(TextureAtlasSpriteRegister iconRegister) {
             if (this != REDSTONE) {
                 iconItem = iconRegister.registerIcon("buildcrafttransport:gates/gate_material_" + getTag());
             }
@@ -98,34 +99,34 @@ public final class GateDefinition {
         public static final GateLogic[] VALUES = values();
 
         @SideOnly(Side.CLIENT)
-        private IIcon iconLit;
+        private TextureAtlasSprite iconLit;
 
         @SideOnly(Side.CLIENT)
-        private IIcon iconDark;
+        private TextureAtlasSprite iconDark;
 
         @SideOnly(Side.CLIENT)
-        private IIcon iconItem;
+        private TextureAtlasSprite iconItem;
 
         @SideOnly(Side.CLIENT)
-        private IIcon iconGate;
+        private TextureAtlasSprite iconGate;
 
         @SideOnly(Side.CLIENT)
-        public IIcon getIconLit() {
+        public TextureAtlasSprite getIconLit() {
             return iconLit;
         }
 
         @SideOnly(Side.CLIENT)
-        public IIcon getIconDark() {
+        public TextureAtlasSprite getIconDark() {
             return iconDark;
         }
 
         @SideOnly(Side.CLIENT)
-        public IIcon getGateIcon() {
+        public TextureAtlasSprite getGateIcon() {
             return iconGate;
         }
 
         @SideOnly(Side.CLIENT)
-        public IIcon getIconItem() {
+        public TextureAtlasSprite getIconItem() {
             return iconItem;
         }
 
@@ -134,7 +135,7 @@ public final class GateDefinition {
         }
 
         @SideOnly(Side.CLIENT)
-        public void registerBlockIcon(IIconRegister iconRegister) {
+        public void registerBlockIcon(TextureAtlasSpriteRegister iconRegister) {
             iconLit = iconRegister.registerIcon("buildcrafttransport:gates/gate_" + getTag() + "_lit");
             iconDark = iconRegister.registerIcon("buildcrafttransport:gates/gate_" + getTag() + "_dark");
 
@@ -142,7 +143,7 @@ public final class GateDefinition {
         }
 
         @SideOnly(Side.CLIENT)
-        public void registerItemIcon(IIconRegister iconRegister) {
+        public void registerItemIcon(TextureAtlasSpriteRegister iconRegister) {
             iconItem = iconRegister.registerIcon("buildcrafttransport:gates/gate_logic_" + getTag());
         }
 

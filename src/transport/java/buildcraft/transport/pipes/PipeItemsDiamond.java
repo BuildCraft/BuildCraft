@@ -68,7 +68,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIconProvider getIconProvider() {
+    public TextureAtlasSpriteProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 

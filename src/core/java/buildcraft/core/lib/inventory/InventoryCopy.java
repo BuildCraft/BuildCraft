@@ -7,6 +7,7 @@ package buildcraft.core.lib.inventory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IChatComponent;
 
 /** Creates a deep copy of an existing IInventory.
  *
@@ -14,11 +15,11 @@ import net.minecraft.item.ItemStack;
  * inventory. */
 public class InventoryCopy implements IInventory {
 
-    private IInventory orignal;
+    private IInventory original;
     private ItemStack[] contents;
 
     public InventoryCopy(IInventory orignal) {
-        this.orignal = orignal;
+        this.original = orignal;
         contents = new ItemStack[orignal.getSizeInventory()];
         for (int i = 0; i < contents.length; i++) {
             ItemStack stack = orignal.getStackInSlot(i);
@@ -65,13 +66,8 @@ public class InventoryCopy implements IInventory {
     }
 
     @Override
-    public String getInventoryName() {
-        return orignal.getInventoryName();
-    }
-
-    @Override
     public int getInventoryStackLimit() {
-        return orignal.getInventoryStackLimit();
+        return original.getInventoryStackLimit();
     }
 
     @Override
@@ -80,19 +76,13 @@ public class InventoryCopy implements IInventory {
     }
 
     @Override
-    public void openInventory() {}
-
-    @Override
-    public void closeInventory() {}
-
-    @Override
     public ItemStack getStackInSlotOnClosing(int slot) {
-        return orignal.getStackInSlotOnClosing(slot);
+        return original.getStackInSlotOnClosing(slot);
     }
 
     @Override
     public boolean isItemValidForSlot(int slot, ItemStack stack) {
-        return orignal.isItemValidForSlot(slot, stack);
+        return original.isItemValidForSlot(slot, stack);
     }
 
     public ItemStack[] getItemStacks() {
@@ -100,12 +90,44 @@ public class InventoryCopy implements IInventory {
     }
 
     @Override
-    public boolean hasCustomInventoryName() {
+    public void markDirty() {
+
+    }
+
+    @Override
+    public String getCommandSenderName() {
+        return original.getCommandSenderName();
+    }
+
+    @Override
+    public boolean hasCustomName() {
         return false;
     }
 
     @Override
-    public void markDirty() {
-
+    public IChatComponent getDisplayName() {
+        return original.getDisplayName();
     }
+
+    @Override
+    public void openInventory(EntityPlayer player) {}
+
+    @Override
+    public void closeInventory(EntityPlayer player) {}
+
+    @Override
+    public int getField(int id) {
+        return 0;
+    }
+
+    @Override
+    public void setField(int id, int value) {}
+
+    @Override
+    public int getFieldCount() {
+        return 0;
+    }
+
+    @Override
+    public void clear() {}
 }

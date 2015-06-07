@@ -86,7 +86,7 @@ public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
                     PacketTileState pkt = (PacketTileState) packet;
                     World world = player.worldObj;
 
-                    TileEntity tile = world.getTileEntity(pkt.posX, pkt.posY, pkt.posZ);
+                    TileEntity tile = world.getTileEntity(pkt.pos);
 
                     if (tile instanceof ISyncedTile) {
                         pkt.applyStates((ISyncedTile) tile);

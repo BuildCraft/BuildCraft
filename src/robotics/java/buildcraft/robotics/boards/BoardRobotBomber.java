@@ -7,6 +7,7 @@ package buildcraft.robotics.boards;
 import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
@@ -55,8 +56,8 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
         } else {
             startDelegateAI(new AIRobotSearchRandomGroundBlock(robot, 100, new IBlockFilter() {
                 @Override
-                public boolean matches(World world, int x, int y, int z) {
-                    return y < world.getActualHeight() - flyingHeight && !world.isAirBlock(x, y, z);
+                public boolean matches(World world, BlockPos pos) {
+                    return y < world.getActualHeight() - flyingHeight && !world.isAirBlock(pos);
                 }
             }, robot.getZoneToWork()));
         }

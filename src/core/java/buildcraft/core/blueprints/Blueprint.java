@@ -7,12 +7,14 @@ package buildcraft.core.blueprints;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.blueprints.BuildingPermission;
@@ -67,38 +69,36 @@ public class Blueprint extends BlueprintBase {
     }
 
     @Override
-    public void readFromWorld(IBuilderContext context, TileEntity anchorTile, int x, int y, int z) {
+    public void readFromWorld(IBuilderContext context, TileEntity anchorTile, BlockPos pos) {
         BptContext bptContext = (BptContext) context;
-        Block block = anchorTile.getWorldObj().getBlock(x, y, z);
-        int meta = anchorTile.getWorldObj().getBlockMetadata(x, y, z);
+        IBlockState state = anchorTile.getWorld().getBlockState(pos);
 
-        if (context.world().isAirBlock(x, y, z)) {
+        if (context.world().isAirBlock(pos)) {
             // Although no schematic will be returned for the block "air" by
             // the registry, there can be other blocks considered as air. This
             // will make sure that they don't get recorded.
             return;
         }
 
-        SchematicBlock slot = SchematicRegistry.INSTANCE.createSchematicBlock(block, meta);
+        SchematicBlock slot = SchematicRegistry.INSTANCE.createSchematicBlock(state);
 
         if (slot == null) {
             return;
         }
 
-        int posX = (int) (x - context.surroundingBox().pMin().x);
-        int posY = (int) (y - context.surroundingBox().pMin().y);
-        int posZ = (int) (z - context.surroundingBox().pMin().z);
+        int posX = (int) (pos.getX() - context.surroundingBox().pMin().x);
+        int posY = (int) (pos.getY() - context.surroundingBox().pMin().y);
+        int posZ = (int) (pos.getZ() - context.surroundingBox().pMin().z);
 
-        slot.block = block;
-        slot.meta = meta;
+        slot.state = state;
 
-        if (!SchematicRegistry.INSTANCE.isSupported(block, meta)) {
+        if (!SchematicRegistry.INSTANCE.isSupported(state)) {
             return;
         }
 
         try {
-            slot.initializeFromObjectAt(context, x, y, z);
-            slot.storeRequirements(context, x, y, z);
+            slot.initializeFromObjectAt(context, pos);
+            slot.storeRequirements(context, pos);
             contents[posX][posY][posZ] = slot;
         } catch (Throwable t) {
             // Defensive code against errors in implementers
@@ -225,7 +225,7 @@ public class Blueprint extends BlueprintBase {
 
                         if (block != null) {
                             int meta = cpt.getInteger("blockMeta");
-                            contents[x][y][z] = SchematicRegistry.INSTANCE.createSchematicBlock(block, meta);
+                            contents[x][y][z] = SchematicRegistry.INSTANCE.createSchematicBlock(block.getStateFromMeta(meta));
                             if (contents[x][y][z] != null) {
                                 contents[x][y][z].readSchematicFromNBT(cpt, mapping);
 

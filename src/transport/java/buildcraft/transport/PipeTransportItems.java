@@ -80,7 +80,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
             y = container.yCoord + TransportUtils.getPipeFloorOf(item.getItemStack());
         }
 
-        item.setPosition(x, y, z);
+        item.setPosition(pos);
     }
 
     public void injectItem(TravelingItem item, EnumFacing inputOrientation) {

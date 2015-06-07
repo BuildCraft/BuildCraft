@@ -78,7 +78,7 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIconProvider getIconProvider() {
+    public TextureAtlasSpriteProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 

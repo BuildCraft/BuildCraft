@@ -6,6 +6,7 @@ package buildcraft.factory;
 
 import java.lang.reflect.Method;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
@@ -22,7 +23,7 @@ import buildcraft.factory.tile.TileRefinery;
 import buildcraft.factory.tile.TileTank;
 
 public class FactoryProxyClient extends FactoryProxy {
-    public static IIcon pumpTexture;
+    public static TextureAtlasSprite pumpTexture;
 
     @Override
     public void initializeTileEntities() {

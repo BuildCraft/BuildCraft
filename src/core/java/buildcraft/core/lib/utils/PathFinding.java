@@ -119,9 +119,9 @@ public class PathFinding implements IIterableAlgorithm {
                         continue;
                     }
 
-                    int x = from.index.x + dx;
-                    int y = from.index.y + dy;
-                    int z = from.index.z + dz;
+                    int x = from.index.getX() + dx;
+                    int y = from.index.getY() + dy;
+                    int z = from.index.getZ() + dz;
 
                     Node nextNode = new Node();
                     nextNode.parent = from;
@@ -189,18 +189,19 @@ public class PathFinding implements IIterableAlgorithm {
     }
 
     private static double distanceSq(BlockPos i1, BlockPos i2) {
-        double dx = (double) i1.x - (double) i2.x;
-        double dy = (double) i1.y - (double) i2.y;
-        double dz = (double) i1.z - (double) i2.z;
+        double dx = (double) i1.getX() - (double) i2.getX();
+        double dy = (double) i1.getY() - (double) i2.getY();
+        double dz = (double) i1.getZ() - (double) i2.getZ();
 
         return dx * dx + dy * dy + dz * dz;
     }
 
     private boolean endReached(int x, int y, int z) {
         if (maxDistanceToEndSq == 0) {
-            return end.x == x && end.y == y && end.z == z;
+            return end.getX() == x && end.getY() == y && end.getZ() == z;
         } else {
-            return BuildCraftAPI.isSoftBlock(world, x, y, z) && distanceSq(new BlockPos(x, y, z), end) <= maxDistanceToEndSq;
+            BlockPos pos = new BlockPos(x, y, z);
+            return BuildCraftAPI.isSoftBlock(world, pos) && distanceSq(new BlockPos(pos), end) <= maxDistanceToEndSq;
         }
     }
 
@@ -210,15 +211,15 @@ public class PathFinding implements IIterableAlgorithm {
         for (int dx = -1; dx <= +1; ++dx) {
             for (int dy = -1; dy <= +1; ++dy) {
                 for (int dz = -1; dz <= +1; ++dz) {
-                    int x = from.index.x + dx;
-                    int y = from.index.y + dy;
-                    int z = from.index.z + dz;
+                    int x = from.index.getX() + dx;
+                    int y = from.index.getY() + dy;
+                    int z = from.index.getZ() + dz;
 
                     if (y < 0) {
                         resultMoves[dx + 1][dy + 1][dz + 1] = 0;
                     } else if (endReached(x, y, z)) {
                         resultMoves[dx + 1][dy + 1][dz + 1] = 2;
-                    } else if (!BuildCraftAPI.isSoftBlock(world, x, y, z)) {
+                    } else if (!BuildCraftAPI.isSoftBlock(world, new BlockPos(x, y, z))) {
                         resultMoves[dx + 1][dy + 1][dz + 1] = 0;
                     } else {
                         resultMoves[dx + 1][dy + 1][dz + 1] = 1;

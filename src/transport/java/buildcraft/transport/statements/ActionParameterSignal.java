@@ -6,6 +6,7 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -19,7 +20,7 @@ import buildcraft.transport.Gate;
 
 public class ActionParameterSignal implements IStatementParameter {
 
-    private static IIcon[] icons;
+    private static TextureAtlasSprite[] icons;
 
     public PipeWire color = null;
 
@@ -28,7 +29,7 @@ public class ActionParameterSignal implements IStatementParameter {
     }
 
     @Override
-    public IIcon getIcon() {
+    public TextureAtlasSprite getIcon() {
         if (color == null) {
             return null;
         } else {
@@ -94,9 +95,9 @@ public class ActionParameterSignal implements IStatementParameter {
     }
 
     @Override
-    public void registerIcons(IIconRegister iconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
         icons =
-            new IIcon[] { iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_red_active"),
+            new TextureAtlasSprite[] { iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_red_active"),
                 iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_blue_active"),
                 iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_green_active"),
                 iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_yellow_active") };

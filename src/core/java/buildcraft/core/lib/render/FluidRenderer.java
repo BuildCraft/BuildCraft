@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
@@ -33,18 +34,18 @@ public final class FluidRenderer {
 
     }
 
-    public static IIcon getFluidTexture(FluidStack fluidStack, boolean flowing) {
+    public static TextureAtlasSprite getFluidTexture(FluidStack fluidStack, boolean flowing) {
         if (fluidStack == null) {
             return null;
         }
         return getFluidTexture(fluidStack.getFluid(), flowing);
     }
 
-    public static IIcon getFluidTexture(Fluid fluid, boolean flowing) {
+    public static TextureAtlasSprite getFluidTexture(Fluid fluid, boolean flowing) {
         if (fluid == null) {
             return null;
         }
-        IIcon icon = flowing ? fluid.getFlowingIcon() : fluid.getStillIcon();
+        TextureAtlasSprite icon = flowing ? fluid.getFlowingIcon() : fluid.getStillIcon();
         if (icon == null) {
             icon =
                 ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
@@ -89,10 +90,10 @@ public final class FluidRenderer {
         diplayLists = new int[DISPLAY_STAGES];
 
         if (fluid.getBlock() != null) {
-            liquidBlock.baseBlock = fluid.getBlock();
+            liquidBlock.blockState = fluid.getBlock().getDefaultState();
             liquidBlock.texture = getFluidTexture(fluidStack, flowing);
         } else {
-            liquidBlock.baseBlock = Blocks.water;
+            liquidBlock.blockState = Blocks.water.getDefaultState();
             liquidBlock.texture = getFluidTexture(fluidStack, flowing);
         }
 
@@ -104,7 +105,7 @@ public final class FluidRenderer {
 
         for (int s = 0; s < DISPLAY_STAGES; ++s) {
             diplayLists[s] = GLAllocation.generateDisplayLists(1);
-            GL11.glNewList(diplayLists[s], 4864 /* GL_COMPILE */);
+            GL11.glNewList(diplayLists[s], GL11.GL_COMPILE);
 
             liquidBlock.minX = 0.01f;
             liquidBlock.minY = 0;

@@ -8,29 +8,31 @@ import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public class CommandTargetTile extends CommandTarget {
     @Override
-    public Class getHandledClass() {
+    public Class<?> getHandledClass() {
         return TileEntity.class;
     }
 
     @Override
     public void write(ByteBuf data, Object target) {
         TileEntity tile = (TileEntity) target;
-        data.writeInt(tile.xCoord);
-        data.writeShort(tile.yCoord);
-        data.writeInt(tile.zCoord);
+        data.writeInt(tile.getPos().getX());
+        data.writeInt(tile.getPos().getY());
+        data.writeInt(tile.getPos().getZ());
     }
 
     @Override
     public ICommandReceiver handle(EntityPlayer player, ByteBuf data, World world) {
         int posX = data.readInt();
-        int posY = data.readShort();
+        int posY = data.readInt();
         int posZ = data.readInt();
-        if (world.blockExists(posX, posY, posZ)) {
-            TileEntity tile = world.getTileEntity(posX, posY, posZ);
+        BlockPos pos = new BlockPos(posX, posY, posZ);
+        if (!world.isAirBlock(pos)) {
+            TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof ICommandReceiver) {
                 return (ICommandReceiver) tile;
             }

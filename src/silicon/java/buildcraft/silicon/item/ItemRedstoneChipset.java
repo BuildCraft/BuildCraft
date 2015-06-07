@@ -7,6 +7,7 @@ package buildcraft.silicon;
 import java.util.List;
 import java.util.Locale;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -30,7 +31,7 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
         COMP,
         EMERALD;
         public static final Chipset[] VALUES = values();
-        private IIcon icon;
+        private TextureAtlasSprite icon;
 
         public String getChipsetName() {
             return "redstone_" + name().toLowerCase(Locale.ENGLISH) + "_chipset";
@@ -59,7 +60,7 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
     }
 
     @Override
-    public IIcon getIconFromDamage(int damage) {
+    public TextureAtlasSprite getIconFromDamage(int damage) {
         return Chipset.fromOrdinal(damage).icon;
     }
 
@@ -79,7 +80,7 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister par1IconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister par1IconRegister) {
         for (Chipset chipset : Chipset.VALUES) {
             chipset.icon = par1IconRegister.registerIcon("buildcraftsilicon:chipset/" + chipset.getChipsetName());
         }

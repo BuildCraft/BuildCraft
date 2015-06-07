@@ -40,7 +40,7 @@ public class TriggerLightSensor extends BCStatement implements ITriggerInternal 
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister iconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
         icon = iconRegister.registerIcon("buildcrafttransport:triggers/trigger_light_" + (bright ? "bright" : "dark"));
     }
 }

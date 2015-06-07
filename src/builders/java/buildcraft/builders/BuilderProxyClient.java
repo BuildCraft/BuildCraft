@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -24,8 +25,8 @@ import buildcraft.core.render.RenderBoxProvider;
 import buildcraft.core.render.RenderBuilder;
 
 public class BuilderProxyClient extends BuilderProxy {
-    public static IIcon drillTexture;
-    public static IIcon drillHeadTexture;
+    public static TextureAtlasSprite drillTexture;
+    public static TextureAtlasSprite drillHeadTexture;
 
     @Override
     public void registerClientHook() {

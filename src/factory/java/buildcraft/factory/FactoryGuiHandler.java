@@ -6,6 +6,7 @@ package buildcraft.factory;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 
@@ -23,13 +24,13 @@ import buildcraft.factory.tile.TileRefinery;
 public class FactoryGuiHandler implements IGuiHandler {
 
     @Override
-    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, BlockPos pos) {
 
-        if (!world.blockExists(x, y, z)) {
+        if (!world.blockExists(pos)) {
             return null;
         }
 
-        TileEntity tile = world.getTileEntity(x, y, z);
+        TileEntity tile = world.getTileEntity(pos);
 
         switch (id) {
 
@@ -60,13 +61,13 @@ public class FactoryGuiHandler implements IGuiHandler {
     }
 
     @Override
-    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+    public Object getServerGuiElement(int id, EntityPlayer player, World world, BlockPos pos) {
 
-        if (!world.blockExists(x, y, z)) {
+        if (!world.blockExists(pos)) {
             return null;
         }
 
-        TileEntity tile = world.getTileEntity(x, y, z);
+        TileEntity tile = world.getTileEntity(pos);
 
         switch (id) {
 

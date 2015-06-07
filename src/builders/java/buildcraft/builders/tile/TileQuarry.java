@@ -20,6 +20,7 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
@@ -820,7 +821,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         return new int[] { targetX, targetY, targetZ };
     }
 
-    private void setTarget(int x, int y, int z) {
+    private void setTarget(BlockPos pos) {
         this.targetX = x;
         this.targetY = y;
         this.targetZ = z;

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
@@ -48,7 +49,7 @@ class UrbanistToolFiller extends UrbanistToolArea {
 
         @SideOnly(Side.CLIENT)
         @Override
-        public IIcon getIcon() {
+        public TextureAtlasSprite getIcon() {
             if (index < patterns.size()) {
                 return getPattern().getIcon();
             } else {
@@ -83,7 +84,7 @@ class UrbanistToolFiller extends UrbanistToolArea {
     }
 
     @Override
-    public IIcon getIcon() {
+    public TextureAtlasSprite getIcon() {
         return UrbanistToolsIconProvider.INSTANCE.getIcon(UrbanistToolsIconProvider.Tool_Filler);
     }
 

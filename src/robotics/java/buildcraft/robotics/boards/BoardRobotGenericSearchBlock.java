@@ -33,7 +33,7 @@ public abstract class BoardRobotGenericSearchBlock extends RedstoneBoardRobot {
 
     /** This function has to be derived in a thread safe manner, as it may be called from parallel jobs. In particular,
      * world should not be directly used, only through WorldProperty class and subclasses. */
-    public abstract boolean isExpectedBlock(World world, int x, int y, int z);
+    public abstract boolean isExpectedBlock(World world, BlockPos pos);
 
     @Override
     public void update() {
@@ -41,9 +41,9 @@ public abstract class BoardRobotGenericSearchBlock extends RedstoneBoardRobot {
 
         startDelegateAI(new AIRobotSearchAndGotoBlock(robot, false, new IBlockFilter() {
             @Override
-            public boolean matches(World world, int x, int y, int z) {
-                if (isExpectedBlock(world, x, y, z) && !robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z))) {
-                    return matchesGateFilter(world, x, y, z);
+            public boolean matches(World world, BlockPos pos) {
+                if (isExpectedBlock(world, pos) && !robot.getRegistry().isTaken(new ResourceIdBlock(pos))) {
+                    return matchesGateFilter(world, pos);
                 } else {
                     return false;
                 }
@@ -100,7 +100,7 @@ public abstract class BoardRobotGenericSearchBlock extends RedstoneBoardRobot {
         }
     }
 
-    protected boolean matchesGateFilter(World world, int x, int y, int z) {
+    protected boolean matchesGateFilter(World world, BlockPos pos) {
         if (blockFilter.size() == 0) {
             return true;
         }
@@ -108,8 +108,8 @@ public abstract class BoardRobotGenericSearchBlock extends RedstoneBoardRobot {
         Block block;
         int meta;
         synchronized (world) {
-            block = world.getBlock(x, y, z);
-            meta = world.getBlockMetadata(x, y, z);
+            block = world.getBlock(pos);
+            meta = world.getBlockMetadata(pos);
         }
 
         for (int i = 0; i < blockFilter.size(); ++i) {

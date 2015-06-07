@@ -32,7 +32,7 @@ public class ActionPipeDirection extends BCStatement implements IActionInternal 
     }
 
     @Override
-    public void registerIcons(IIconRegister iconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
         icon = iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_" + direction.name().toLowerCase(Locale.ENGLISH));
     }
 

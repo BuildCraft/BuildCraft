@@ -69,7 +69,7 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 
     @Override
     protected TravelingItem makeItem(double x, double y, double z, ItemStack stack) {
-        TravelingItem item = super.makeItem(x, y, z, stack);
+        TravelingItem item = super.makeItem(pos, stack);
         int color = slotColors[currentFilter % filterCount];
         if (color > 0) {
             item.color = EnumColor.fromId(color - 1);

@@ -293,12 +293,12 @@ public final class BlockUtils {
     }
 
     // Meta is hidden internally, so we shouldn't even try
-    // public static int getBlockMetadata(World world, int x, int y, int z) {
-    // return getBlockMetadata(world, x, y, z, false);
+    // public static int getBlockMetadata(World world, BlockPos pos) {
+    // return getBlockMetadata(world, pos, false);
     //
     // }
 
-    // public static int getBlockMetadata(World world, int x, int y, int z, boolean force) {
+    // public static int getBlockMetadata(World world, BlockPos pos, boolean force) {
     // if (!force) {
     // if (y < 0 || y > 255) {
     // return 0;
@@ -306,7 +306,7 @@ public final class BlockUtils {
     // Chunk chunk = getChunkUnforced(world, x >> 4, z >> 4);
     // return chunk != null ? chunk.getBlockMetadata(x & 15, y, z & 15) : 0;
     // } else {
-    // return world.getBlockMetadata(x, y, z);
+    // return world.getBlockMetadata(pos);
     // }
     // }
 

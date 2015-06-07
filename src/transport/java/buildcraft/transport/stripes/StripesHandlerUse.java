@@ -6,6 +6,7 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
@@ -29,8 +30,8 @@ public class StripesHandlerUse implements IStripesHandler {
     }
 
     @Override
-    public boolean handle(World world, int x, int y, int z, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-        Position target = new Position(x, y, z, direction);
+    public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
+        Position target = new Position(pos, direction);
         target.moveForwards(1.0D);
 
         if (BlockUtils.useItemOnBlock(world, player, stack, MathHelper.floor_double(target.x), MathHelper.floor_double(target.y), MathHelper

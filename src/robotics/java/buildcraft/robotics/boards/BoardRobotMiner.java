@@ -6,6 +6,7 @@ package buildcraft.robotics.boards;
 
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
@@ -53,8 +54,8 @@ public class BoardRobotMiner extends BoardRobotGenericBreakBlock {
     }
 
     @Override
-    public boolean isExpectedBlock(World world, int x, int y, int z) {
-        return BuildCraftAPI.getWorldProperty("ore@hardness=" + Math.min(MAX_HARVEST_LEVEL, harvestLevel)).get(world, x, y, z);
+    public boolean isExpectedBlock(World world, BlockPos pos) {
+        return BuildCraftAPI.getWorldProperty("ore@hardness=" + Math.min(MAX_HARVEST_LEVEL, harvestLevel)).get(world, pos);
     }
 
 }

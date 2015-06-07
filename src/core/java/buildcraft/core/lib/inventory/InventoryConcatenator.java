@@ -10,6 +10,7 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.IChatComponent;
 
 /** Allows you to deal with multiple inventories through a single interface. */
 public final class InventoryConcatenator implements IInventory {
@@ -57,11 +58,6 @@ public final class InventoryConcatenator implements IInventory {
     }
 
     @Override
-    public String getInventoryName() {
-        return "";
-    }
-
-    @Override
     public int getInventoryStackLimit() {
         return 64;
     }
@@ -72,19 +68,8 @@ public final class InventoryConcatenator implements IInventory {
     }
 
     @Override
-    public void openInventory() {}
-
-    @Override
-    public void closeInventory() {}
-
-    @Override
     public boolean isItemValidForSlot(int slot, ItemStack stack) {
         return invMap.get(slot).isItemValidForSlot(slotMap.get(slot), stack);
-    }
-
-    @Override
-    public boolean hasCustomInventoryName() {
-        return false;
     }
 
     @Override
@@ -93,4 +78,41 @@ public final class InventoryConcatenator implements IInventory {
             inv.markDirty();
         }
     }
+
+    @Override
+    public String getCommandSenderName() {
+        return null;
+    }
+
+    @Override
+    public boolean hasCustomName() {
+        return false;
+    }
+
+    @Override
+    public IChatComponent getDisplayName() {
+        return null;
+    }
+
+    @Override
+    public void openInventory(EntityPlayer player) {}
+
+    @Override
+    public void closeInventory(EntityPlayer player) {}
+
+    @Override
+    public int getField(int id) {
+        return 0;
+    }
+
+    @Override
+    public void setField(int id, int value) {}
+
+    @Override
+    public int getFieldCount() {
+        return 0;
+    }
+
+    @Override
+    public void clear() {}
 }

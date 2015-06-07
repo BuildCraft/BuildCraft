@@ -107,10 +107,10 @@ public class TriggerFluidContainer extends BCStatement implements ITriggerExtern
         return false;
     }
 
-    @Override
-    public void registerIcons(IIconRegister register) {
-        icon = register.registerIcon("buildcraftcore:triggers/trigger_liquidcontainer_" + state.name().toLowerCase());
-    }
+    // @Override
+    // public void registerIcons(TextureAtlasSpriteRegister register) {
+    // icon = register.registerIcon("buildcraftcore:triggers/trigger_liquidcontainer_" + state.name().toLowerCase());
+    // }
 
     @Override
     public IStatementParameter createParameter(int index) {

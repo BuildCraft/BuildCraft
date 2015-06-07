@@ -1,12 +1,10 @@
 package buildcraft.api.core;
 
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.enums.EnumColor;
 import buildcraft.api.enums.EnumEngineType;
+import buildcraft.api.enums.EnumFillerPattern;
 import buildcraft.api.enums.EnumLaserTableType;
 import buildcraft.api.enums.EnumMachineState;
 import buildcraft.api.enums.EnumSpring;
@@ -22,9 +20,9 @@ public final class BuildCraftProperties {
     public static final BuildCraftProperty<EnumLaserTableType> LASER_TABLE_TYPE = BuildCraftProperty.create("type", EnumLaserTableType.class);
     public static final BuildCraftProperty<EnumMachineState> MACHINE_STATE = BuildCraftProperty.create("state", EnumMachineState.class);
 
-    public static final BuildCraftProperty<Integer> PIPE_DATA = BuildCraftProperty.create("data", 0, 15, 1);
+    public static final BuildCraftProperty<Integer> PIPE_DATA = BuildCraftProperty.create("data", 0, 15);
 
-    public static final PropertyBool JOINED_BELOW = PropertyBool.create("joined_below");
+    public static final BuildCraftProperty<Boolean> JOINED_BELOW = BuildCraftProperty.create("joined_below", false);
 
     // Unlisted properties
     // public static final PropertyDouble FLUID_HEIGHT_NE = new PropertyDouble("height_ne", 0, 1);
@@ -33,8 +31,7 @@ public final class BuildCraftProperties {
     // public static final PropertyDouble FLUID_HEIGHT_SW = new PropertyDouble("height_sw", 0, 1);
     // public static final PropertyDouble FLUID_FLOW_DIRECTION = new PropertyDouble("direction",
     // Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-    // public static final PropertyUnlistedEnum<EnumFillerPattern> FILLER_PATTERN = new
-    // PropertyUnlistedEnum<EnumFillerPattern>("pattern", EnumFillerPattern.class);
+    public static final BuildCraftProperty<EnumFillerPattern> FILLER_PATTERN = BuildCraftProperty.create("pattern", EnumFillerPattern.class);
 
     // Block state setting flags -these are used by World.markAndNotifyBlock and World.setBlockState. These flags can be
     // added together to pass the additions
@@ -57,9 +54,4 @@ public final class BuildCraftProperties {
 
     /** Deactivate constructor */
     private BuildCraftProperties() {}
-
-    @SuppressWarnings("unchecked")
-    public static <T> T getValue(IBlockState state, IProperty prop) {
-        return (T) state.getValue(prop);
-    }
 }

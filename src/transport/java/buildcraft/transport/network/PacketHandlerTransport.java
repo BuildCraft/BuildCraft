@@ -10,6 +10,7 @@ import io.netty.channel.ChannelHandlerContext;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
@@ -135,12 +136,12 @@ public class PacketHandlerTransport extends PacketHandler {
      * @param x
      * @param y
      * @param z */
-    private TileGenericPipe getPipe(World world, int x, int y, int z) {
-        if (!world.blockExists(x, y, z)) {
+    private TileGenericPipe getPipe(World world, BlockPos pos) {
+        if (!world.blockExists(pos)) {
             return null;
         }
 
-        TileEntity tile = world.getTileEntity(x, y, z);
+        TileEntity tile = world.getTileEntity(pos);
         if (!(tile instanceof TileGenericPipe)) {
             return null;
         }

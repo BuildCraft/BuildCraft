@@ -29,7 +29,7 @@ public class ActionPipeColor extends BCStatement implements IActionInternal {
     }
 
     @Override
-    public void registerIcons(IIconRegister iconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
         icon = iconRegister.registerIcon("buildcraftcore:paintbrush/" + color.name().toLowerCase(Locale.ENGLISH));
     }
 

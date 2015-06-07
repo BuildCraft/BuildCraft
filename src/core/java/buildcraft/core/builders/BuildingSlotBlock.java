@@ -11,7 +11,9 @@ import java.util.List;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 
@@ -28,10 +30,11 @@ import buildcraft.api.core.Position;
 import buildcraft.builders.BuildCraftBuilders;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.core.lib.utils.NBTUtils;
 
 public class BuildingSlotBlock extends BuildingSlot {
 
-    public int x, y, z;
+    public BlockPos pos;
     public SchematicBlockBase schematic;
 
     public enum Mode {
@@ -55,28 +58,28 @@ public class BuildingSlotBlock extends BuildingSlot {
     @Override
     public void writeToWorld(IBuilderContext context) {
         if (mode == Mode.ClearIfInvalid) {
-            if (!getSchematic().isAlreadyBuilt(context, x, y, z)) {
+            if (!getSchematic().isAlreadyBuilt(context, pos)) {
                 if (BuildCraftBuilders.dropBrokenBlocks) {
-                    BlockUtils.breakBlock((WorldServer) context.world(), x, y, z);
+                    BlockUtils.breakBlock((WorldServer) context.world(), pos);
                 } else {
-                    context.world().setBlockToAir(x, y, z);
+                    context.world().setBlockToAir(pos);
                 }
             }
         } else {
             try {
-                getSchematic().placeInWorld(context, x, y, z, stackConsumed);
+                getSchematic().placeInWorld(context, pos, stackConsumed);
 
                 // This is slightly hackish, but it's a very important way to verify
                 // the stored requirements.
 
-                if (!context.world().isAirBlock(x, y, z) && getSchematic().getBuildingPermission() == BuildingPermission.ALL
+                if (!context.world().isAirBlock(pos) && getSchematic().getBuildingPermission() == BuildingPermission.ALL
                     && getSchematic() instanceof SchematicBlock) {
                     SchematicBlock sb = (SchematicBlock) getSchematic();
                     // Copy the old array of stored requirements.
                     ItemStack[] oldRequirementsArray = sb.storedRequirements;
                     List<ItemStack> oldRequirements = Arrays.asList(oldRequirementsArray);
                     sb.storedRequirements = new ItemStack[0];
-                    sb.storeRequirements(context, x, y, z);
+                    sb.storeRequirements(context, pos);
                     for (ItemStack s : sb.storedRequirements) {
                         boolean contains = false;
                         for (ItemStack ss : oldRequirements) {
@@ -88,9 +91,9 @@ public class BuildingSlotBlock extends BuildingSlot {
                         if (!contains) {
                             BCLog.logger
                                 .warn("Blueprint has MISMATCHING REQUIREMENTS! Potential corrupted/hacked blueprint! Removed mismatched block.");
-                            BCLog.logger.warn("Location: " + x + ", " + y + ", " + z + " - ItemStack: " + s.toString());
-                            context.world().removeTileEntity(x, y, z);
-                            context.world().setBlockToAir(x, y, z);
+                            BCLog.logger.warn("Location: " + pos + " - ItemStack: " + s.toString());
+                            context.world().removeTileEntity(pos);
+                            context.world().setBlockToAir(pos);
                             return;
                         }
                     }
@@ -105,21 +108,21 @@ public class BuildingSlotBlock extends BuildingSlot {
                 // the world, we're logging the problem and setting the block to
                 // air.
 
-                TileEntity e = context.world().getTileEntity(x, y, z);
+                TileEntity e = context.world().getTileEntity(pos);
 
-                if (e != null) {
-                    e.updateEntity();
+                if (e != null && e instanceof IUpdatePlayerListBox) {
+                    ((IUpdatePlayerListBox) e).update();
                 }
             } catch (Throwable t) {
                 t.printStackTrace();
-                context.world().setBlockToAir(x, y, z);
+                context.world().setBlockToAir(pos);
             }
         }
     }
 
     @Override
     public void postProcessing(IBuilderContext context) {
-        getSchematic().postProcessing(context, x, y, z);
+        getSchematic().postProcessing(context, pos);
     }
 
     @Override
@@ -137,27 +140,26 @@ public class BuildingSlotBlock extends BuildingSlot {
 
     @Override
     public Position getDestination() {
-        return new Position(x + 0.5, y + 0.5, z + 0.5);
+        return new Position(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
     }
 
     @Override
     public void writeCompleted(IBuilderContext context, double complete) {
+        // TODO (TEST) Make sure that you can use pos.hashCode() to use the position properly!
         if (mode == Mode.ClearIfInvalid) {
-            context.world().destroyBlockInWorldPartially(0, x, y, z, (int) (complete * 10.0F) - 1);
+            context.world().sendBlockBreakProgress(pos.hashCode(), pos, (int) (complete * 10.0F) - 1);
         }
     }
 
     @Override
     public boolean isAlreadyBuilt(IBuilderContext context) {
-        return schematic.isAlreadyBuilt(context, x, y, z);
+        return schematic.isAlreadyBuilt(context, pos);
     }
 
     @Override
     public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
         nbt.setByte("mode", (byte) mode.ordinal());
-        nbt.setInteger("x", x);
-        nbt.setInteger("y", y);
-        nbt.setInteger("z", z);
+        nbt.setTag("pos", NBTUtils.writeBlockPos(pos));
 
         if (schematic != null) {
             NBTTagCompound schematicNBT = new NBTTagCompound();
@@ -181,9 +183,7 @@ public class BuildingSlotBlock extends BuildingSlot {
     @Override
     public void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) throws MappingNotFoundException {
         mode = Mode.values()[nbt.getByte("mode")];
-        x = nbt.getInteger("x");
-        y = nbt.getInteger("y");
-        z = nbt.getInteger("z");
+        pos = NBTUtils.readBlockPos(nbt);
 
         if (nbt.hasKey("schematic")) {
             schematic = (SchematicBlockBase) SchematicFactory.createSchematicFromWorldNBT(nbt.getCompoundTag("schematic"), registry);

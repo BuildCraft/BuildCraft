@@ -17,9 +17,9 @@ public class StationIndex {
 
     protected StationIndex() {}
 
-    public StationIndex(EnumFacing iSide, int x, int y, int z) {
+    public StationIndex(EnumFacing iSide, BlockPos pos) {
         side = iSide;
-        index = new BlockPos(x, y, z);
+        index = new BlockPos(pos);
     }
 
     public StationIndex(DockingStation station) {

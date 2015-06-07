@@ -9,6 +9,7 @@ import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.blueprints.IBuilderContext;
@@ -22,8 +23,8 @@ import buildcraft.factory.tile.TileAutoWorkbench;
 public class SchematicAutoWorkbench extends SchematicTile {
 
     @Override
-    public void storeRequirements(IBuilderContext context, int x, int y, int z) {
-        TileAutoWorkbench autoWb = getTile(context, x, y, z);
+    public void storeRequirements(IBuilderContext context, BlockPos pos) {
+        TileAutoWorkbench autoWb = getTile(context, pos);
         if (autoWb != null) {
             ArrayList<ItemStack> rqs = new ArrayList<ItemStack>();
             rqs.add(new ItemStack(BuildCraftFactory.autoWorkbenchBlock));
@@ -42,17 +43,17 @@ public class SchematicAutoWorkbench extends SchematicTile {
     }
 
     @Override
-    public void initializeFromObjectAt(IBuilderContext context, int x, int y, int z) {
-        super.initializeFromObjectAt(context, x, y, z);
+    public void initializeFromObjectAt(IBuilderContext context, BlockPos pos) {
+        super.initializeFromObjectAt(context, pos);
 
         tileNBT.removeTag("Items");
     }
 
     @Override
-    public void placeInWorld(IBuilderContext context, int x, int y, int z, LinkedList<ItemStack> stacks) {
-        super.placeInWorld(context, x, y, z, stacks);
+    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+        super.placeInWorld(context, pos, stacks);
 
-        TileAutoWorkbench autoWb = getTile(context, x, y, z);
+        TileAutoWorkbench autoWb = getTile(context, pos);
         if (autoWb != null) {
             for (IInvSlot slot : InventoryIterator.getIterable(autoWb.craftMatrix, EnumFacing.UP)) {
                 ItemStack stack = slot.getStackInSlot();
@@ -68,8 +69,8 @@ public class SchematicAutoWorkbench extends SchematicTile {
         return BuildingStage.STANDALONE;
     }
 
-    private TileAutoWorkbench getTile(IBuilderContext context, int x, int y, int z) {
-        TileEntity tile = context.world().getTileEntity(x, y, z);
+    private TileAutoWorkbench getTile(IBuilderContext context, BlockPos pos) {
+        TileEntity tile = context.world().getTileEntity(pos);
         if (tile != null && tile instanceof TileAutoWorkbench) {
             return (TileAutoWorkbench) tile;
         }

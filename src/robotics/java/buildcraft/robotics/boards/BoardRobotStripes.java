@@ -46,8 +46,8 @@ public class BoardRobotStripes extends RedstoneBoardRobot {
         } else {
             startDelegateAI(new AIRobotSearchAndGotoBlock(robot, true, new IBlockFilter() {
                 @Override
-                public boolean matches(World world, int x, int y, int z) {
-                    return world.getBlock(x, y, z).isAir(world, x, y, z) && !robot.getRegistry().isTaken(new ResourceIdBlock(x, y, z));
+                public boolean matches(World world, BlockPos pos) {
+                    return world.getBlock(pos).isAir(world, pos) && !robot.getRegistry().isTaken(new ResourceIdBlock(pos));
                 }
             }));
         }

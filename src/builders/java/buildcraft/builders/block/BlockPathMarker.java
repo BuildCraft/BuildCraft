@@ -2,9 +2,11 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.builders;
+package buildcraft.builders.block;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -14,7 +16,7 @@ import buildcraft.builders.tile.TilePathMarker;
 
 public class BlockPathMarker extends BlockMarker {
 
-    private IIcon activeMarker;
+    private TextureAtlasSprite activeMarker;
 
     public BlockPathMarker() {}
 
@@ -24,8 +26,8 @@ public class BlockPathMarker extends BlockMarker {
     }
 
     @Override
-    public IIcon getIconAbsolute(IBlockAccess iblockaccess, int x, int y, int z, int side, int metadata) {
-        TilePathMarker marker = (TilePathMarker) iblockaccess.getTileEntity(x, y, z);
+    public TextureAtlasSprite getIconAbsolute(IBlockAccess iblockaccess, BlockPos pos, int side, int metadata) {
+        TilePathMarker marker = (TilePathMarker) iblockaccess.getTileEntity(pos);
 
         if (side == 1 || (marker != null && marker.tryingToConnect)) {
             return activeMarker;
@@ -36,7 +38,7 @@ public class BlockPathMarker extends BlockMarker {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerBlockIcons(IIconRegister par1IconRegister) {
+    public void registerBlockIcons(TextureAtlasSpriteRegister par1IconRegister) {
         super.registerBlockIcons(par1IconRegister);
         activeMarker = par1IconRegister.registerIcon("buildcraftbuilders:pathMarkerBlock/active");
     }

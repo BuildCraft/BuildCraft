@@ -44,7 +44,7 @@ public abstract class BlockBuildCraft extends BlockBuildCraftBase implements ITi
         this(material, creativeTab, new IProperty[0], new IUnlistedProperty<?>[0]);
     }
 
-    protected BlockBuildCraft(Material material, IProperty[] properties) {
+    protected BlockBuildCraft(Material material, IProperty... properties) {
         this(material, BCCreativeTab.get("main"), properties, new IUnlistedProperty<?>[0]);
     }
 
@@ -125,7 +125,7 @@ public abstract class BlockBuildCraft extends BlockBuildCraftBase implements ITi
         return -1;
     }
 
-    public int getIconGlowLevel(IBlockAccess access, int x, int y, int z) {
+    public int getIconGlowLevel(IBlockAccess access, BlockPos pos) {
         return getIconGlowLevel();
     }
 

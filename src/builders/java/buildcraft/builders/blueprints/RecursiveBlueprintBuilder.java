@@ -25,7 +25,7 @@ public class RecursiveBlueprintBuilder {
     private RecursiveBlueprintBuilder current;
     private int nextSubBlueprint = 0;
     private ArrayList<NBTTagCompound> subBlueprints = new ArrayList<NBTTagCompound>();
-    private int x, y, z;
+    private int pos;
     private EnumFacing dir;
     private World world;
     private Box box = new Box();
@@ -42,16 +42,16 @@ public class RecursiveBlueprintBuilder {
 
     public BptBuilderBase nextBuilder() {
         if (!returnedThis) {
-            blueprint.adjustToWorld(world, x, y, z, dir);
+            blueprint.adjustToWorld(world, pos, dir);
 
             returnedThis = true;
 
             BptBuilderBase builder;
 
             if (blueprint instanceof Blueprint) {
-                builder = new BptBuilderBlueprint((Blueprint) blueprint, world, x, y, z);
+                builder = new BptBuilderBlueprint((Blueprint) blueprint, world, pos);
             } else if (blueprint instanceof Template) {
-                builder = new BptBuilderTemplate(blueprint, world, x, y, z);
+                builder = new BptBuilderTemplate(blueprint, world, pos);
             } else {
                 return null;
             }

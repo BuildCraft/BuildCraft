@@ -22,7 +22,7 @@ public class ActionSingleEnergyPulse extends BCStatement implements IActionInter
     }
 
     @Override
-    public void registerIcons(IIconRegister iconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
         icon = iconRegister.registerIcon("buildcrafttransport:triggers/action_single_pulsar");
     }
 

@@ -4,14 +4,16 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.gates;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.core.lib.utils.StringUtils;
 
 public abstract class GateExpansionBuildcraft implements IGateExpansion {
 
     private final String tag;
-    private IIcon iconBlock;
-    private IIcon iconItem;
+    private TextureAtlasSprite iconBlock;
+    private TextureAtlasSprite iconItem;
 
     public GateExpansionBuildcraft(String tag) {
         this.tag = tag;
@@ -28,22 +30,22 @@ public abstract class GateExpansionBuildcraft implements IGateExpansion {
     }
 
     @Override
-    public void registerBlockOverlay(IIconRegister iconRegister) {
+    public void registerBlockOverlay(TextureAtlasSpriteRegister iconRegister) {
         iconBlock = iconRegister.registerIcon("buildcrafttransport:gates/gate_expansion_" + tag);
     }
 
     @Override
-    public void registerItemOverlay(IIconRegister iconRegister) {
+    public void registerItemOverlay(TextureAtlasSpriteRegister iconRegister) {
         iconItem = iconRegister.registerIcon("buildcrafttransport:gates/gate_expansion_" + tag);
     }
 
     @Override
-    public IIcon getOverlayBlock() {
+    public TextureAtlasSprite getOverlayBlock() {
         return iconBlock;
     }
 
     @Override
-    public IIcon getOverlayItem() {
+    public TextureAtlasSprite getOverlayItem() {
         return iconItem;
     }
 }

@@ -21,12 +21,10 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
-import buildcraft.core.BuildCraftCore;
 import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.lib.engines.RenderEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.render.RenderEntityBlock;
-import buildcraft.core.render.RenderingEntityBlocks;
 
 public class CoreProxyClient extends CoreProxy {
 
@@ -75,10 +73,6 @@ public class CoreProxyClient extends CoreProxy {
     public void initializeRendering() {
         // TODO Update me to grab differing trunk textures
         ClientRegistry.bindTileEntitySpecialRenderer(TileEngineBase.class, new RenderEngine());
-        for (int i = 0; i < BuildCraftCore.engineBlock.getEngineCount(); i++) {
-            RenderingEntityBlocks.blockByEntityRenders.put(new RenderingEntityBlocks.EntityRenderIndex(BuildCraftCore.engineBlock, i),
-                new RenderEngine((TileEngineBase) BuildCraftCore.engineBlock.createTileEntity(null, i)));
-        }
     }
 
     @Override

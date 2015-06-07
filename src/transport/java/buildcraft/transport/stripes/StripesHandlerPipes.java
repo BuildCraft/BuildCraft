@@ -6,6 +6,7 @@ package buildcraft.transport.stripes;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -33,13 +34,13 @@ public class StripesHandlerPipes implements IStripesHandler {
     }
 
     @Override
-    public boolean handle(World world, int x, int y, int z, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
+    public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
 
         if (!(stack.getItem() instanceof ItemPipe) || (stack.getItem() == BuildCraftTransport.pipeItemsStripes)) {
             return false;
         }
 
-        Position p = new Position(x, y, z, direction);
+        Position p = new Position(pos, direction);
         p.moveBackwards(1.0D);
 
         Pipe<?> pipe = BlockGenericPipe.createPipe(stack.getItem());
@@ -50,7 +51,7 @@ public class StripesHandlerPipes implements IStripesHandler {
             // Fluid/power pipe, place in front instead
 
             stack.getItem().onItemUse(stack, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world, (int) p.x, (int) p.y, (int) p.z).get(), world,
-                x, y, z, 1, 0, 0, 0);
+                pos, 1, 0, 0, 0);
         }
         return true;
     }

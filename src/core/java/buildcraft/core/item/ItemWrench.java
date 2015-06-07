@@ -65,12 +65,12 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
     }
 
     @Override
-    public boolean canWrench(EntityPlayer player, int x, int y, int z) {
+    public boolean canWrench(EntityPlayer player, BlockPos pos) {
         return true;
     }
 
     @Override
-    public void wrenchUsed(EntityPlayer player, int x, int y, int z) {
+    public void wrenchUsed(EntityPlayer player, BlockPos pos) {
         player.swingItem();
     }
 

@@ -36,7 +36,7 @@ public class ItemBucketBuildcraft extends ItemBucket {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(IIconRegister par1IconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister par1IconRegister) {
         this.itemIcon = par1IconRegister.registerIcon("buildcraftenergy:" + iconName);
     }
 }

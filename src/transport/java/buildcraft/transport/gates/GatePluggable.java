@@ -9,6 +9,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
 
@@ -36,14 +37,14 @@ public class GatePluggable extends PipePluggable {
 
         @Override
         public void renderPluggable(IPipe pipe, EnumFacing side, PipePluggable pipePluggable, double x, double y, double z) {
-            PipeRendererTESR.renderGate(x, y, z, (GatePluggable) pipePluggable, side);
+            PipeRendererTESR.renderGate(pos, (GatePluggable) pipePluggable, side);
         }
 
         @Override
         public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, EnumFacing side, PipePluggable pipePluggable,
-                ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
+                ITextureStates blockStateMachine, int renderPass, BlockPos pos) {
             if (renderPass == 0) {
-                PipeRendererTESR.renderGateStatic(renderblocks, side, (GatePluggable) pipePluggable, blockStateMachine, x, y, z);
+                PipeRendererTESR.renderGateStatic(renderblocks, side, (GatePluggable) pipePluggable, blockStateMachine, pos);
             }
         }
     }

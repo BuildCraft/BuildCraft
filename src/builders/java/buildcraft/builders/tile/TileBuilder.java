@@ -241,7 +241,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
         for (int x = xCoord - 1; x <= xCoord + 1; ++x) {
             for (int y = yCoord - 1; y <= yCoord + 1; ++y) {
                 for (int z = zCoord - 1; z <= zCoord + 1; ++z) {
-                    TileEntity tile = worldObj.getTileEntity(x, y, z);
+                    TileEntity tile = worldObj.getTileEntity(pos);
 
                     if (tile instanceof TilePathMarker) {
                         path = ((TilePathMarker) tile).getPath();
@@ -297,19 +297,19 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
     }
 
     @Deprecated
-    public BptBuilderBase instanciateBluePrintBuilder(int x, int y, int z, EnumFacing o) {
+    public BptBuilderBase instanciateBluePrintBuilder(BlockPos pos, EnumFacing o) {
         BlueprintBase bpt = instanciateBlueprint();
         if (bpt == null) {
             return null;
         }
 
-        bpt = bpt.adjustToWorld(worldObj, x, y, z, o);
+        bpt = bpt.adjustToWorld(worldObj, pos, o);
 
         if (bpt != null) {
             if (getStackInSlot(0).getItem() instanceof ItemBlueprintStandard) {
-                return new BptBuilderBlueprint((Blueprint) bpt, worldObj, x, y, z);
+                return new BptBuilderBlueprint((Blueprint) bpt, worldObj, pos);
             } else if (getStackInSlot(0).getItem() instanceof ItemBlueprintTemplate) {
-                return new BptBuilderTemplate(bpt, worldObj, x, y, z);
+                return new BptBuilderTemplate(bpt, worldObj, pos);
             }
         }
         return null;

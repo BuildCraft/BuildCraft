@@ -15,17 +15,17 @@ import buildcraft.api.core.IInvSlot;
 class InventoryIteratorSided implements Iterable<IInvSlot> {
 
     private final ISidedInventory inv;
-    private final int side;
+    private final EnumFacing side;
 
     InventoryIteratorSided(ISidedInventory inv, EnumFacing side) {
         this.inv = inv;
-        this.side = side.ordinal();
+        this.side = side;
     }
 
     @Override
     public Iterator<IInvSlot> iterator() {
         return new Iterator<IInvSlot>() {
-            int[] slots = inv.getAccessibleSlotsFromSide(side);
+            int[] slots = inv.getSlotsForFace(side);
             int index = 0;
 
             @Override

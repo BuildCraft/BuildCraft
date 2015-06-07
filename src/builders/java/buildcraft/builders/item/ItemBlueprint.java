@@ -6,6 +6,7 @@ package buildcraft.builders;
 
 import java.util.List;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -86,7 +87,7 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
     }
 
     @Override
-    public IIcon getIconIndex(ItemStack stack) {
+    public TextureAtlasSprite getIconIndex(ItemStack stack) {
         if (!NBTUtils.getItemData(stack).hasKey("name")) {
             itemIcon = icons[0];
         } else {

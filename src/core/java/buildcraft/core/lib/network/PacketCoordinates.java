@@ -6,37 +6,32 @@ package buildcraft.core.lib.network;
 
 import io.netty.buffer.ByteBuf;
 
+import net.minecraft.util.BlockPos;
+
 public abstract class PacketCoordinates extends Packet {
 
-    public int posX;
-    public int posY;
-    public int posZ;
-
+    public BlockPos pos;
     private int id;
 
     public PacketCoordinates() {}
 
-    public PacketCoordinates(int id, int x, int y, int z) {
+    public PacketCoordinates(int id, BlockPos pos) {
         this.id = id;
-        this.posX = x;
-        this.posY = y;
-        this.posZ = z;
+        this.pos = pos;
     }
 
     @Override
     public void writeData(ByteBuf data) {
         data.writeByte(id);
-        data.writeInt(posX);
-        data.writeShort(posY);
-        data.writeInt(posZ);
+        data.writeInt(pos.getX());
+        data.writeInt(pos.getY());
+        data.writeInt(pos.getZ());
     }
 
     @Override
     public void readData(ByteBuf data) {
         id = data.readByte();
-        posX = data.readInt();
-        posY = data.readShort();
-        posZ = data.readInt();
+        pos = new BlockPos(data.readInt(), data.readInt(), data.readInt());
     }
 
     @Override

@@ -36,7 +36,7 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIconProvider getIconProvider() {
+    public TextureAtlasSpriteProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 

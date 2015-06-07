@@ -7,10 +7,12 @@ package buildcraft.silicon;
 import java.util.List;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -43,8 +45,8 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
     }
 
     @Override
-    public AxisAlignedBB[] getBoxes(World wrd, int x, int y, int z, EntityPlayer player) {
-        return boxes[wrd.getBlockMetadata(x, y, z)];
+    public AxisAlignedBB[] getBoxes(World wrd, BlockPos pos, EntityPlayer player) {
+        return boxes[wrd.getBlockMetadata(pos)];
     }
 
     @Override
@@ -53,11 +55,11 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
     }
 
     @Override
-    public MovingObjectPosition collisionRayTrace(World wrd, int x, int y, int z, Vec3 origin, Vec3 direction) {
-        AxisAlignedBB[] aabbs = boxes[wrd.getBlockMetadata(x, y, z)];
+    public MovingObjectPosition collisionRayTrace(World wrd, BlockPos pos, Vec3 origin, Vec3 direction) {
+        AxisAlignedBB[] aabbs = boxes[wrd.getBlockMetadata(pos)];
         MovingObjectPosition closest = null;
         for (AxisAlignedBB aabb : aabbs) {
-            MovingObjectPosition mop = aabb.getOffsetBoundingBox(x, y, z).calculateIntercept(origin, direction);
+            MovingObjectPosition mop = aabb.getOffsetBoundingBox(pos).calculateIntercept(origin, direction);
             if (mop != null) {
                 if (closest != null && mop.hitVec.distanceTo(origin) < closest.hitVec.distanceTo(origin)) {
                     closest = mop;
@@ -76,10 +78,10 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void addCollisionBoxesToList(World wrd, int x, int y, int z, AxisAlignedBB mask, List list, Entity ent) {
-        AxisAlignedBB[] aabbs = boxes[wrd.getBlockMetadata(x, y, z)];
+    public void addCollisionBoxesToList(World wrd, BlockPos pos, AxisAlignedBB mask, List list, Entity ent) {
+        AxisAlignedBB[] aabbs = boxes[wrd.getBlockMetadata(pos)];
         for (AxisAlignedBB aabb : aabbs) {
-            AxisAlignedBB aabbTmp = aabb.getOffsetBoundingBox(x, y, z);
+            AxisAlignedBB aabbTmp = aabb.getOffsetBoundingBox(pos);
             if (mask.intersectsWith(aabbTmp)) {
                 list.add(aabbTmp);
             }
@@ -108,13 +110,13 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIcon getIcon(IBlockAccess access, int x, int y, int z, int side) {
-        return getIcon(side, access.getBlockMetadata(x, y, z));
+    public TextureAtlasSprite getIcon(IBlockAccess access, BlockPos pos, int side) {
+        return getIcon(side, access.getBlockMetadata(pos));
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIcon getIcon(int i, int j) {
+    public TextureAtlasSprite getIcon(int i, int j) {
         if (i == (j ^ 1)) {
             return icons[0][0];
         } else if (i == j) {
@@ -125,8 +127,8 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
     }
 
     @Override
-    public int onBlockPlaced(World world, int x, int y, int z, int side, float par6, float par7, float par8, int meta) {
-        super.onBlockPlaced(world, x, y, z, side, par6, par7, par8, meta);
+    public int onBlockPlaced(World world, BlockPos pos, int side, float par6, float par7, float par8, int meta) {
+        super.onBlockPlaced(world, pos, side, par6, par7, par8, meta);
 
         int retMeta = meta;
 
@@ -138,12 +140,12 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
     }
 
     @Override
-    public boolean isSideSolid(IBlockAccess world, int x, int y, int z, EnumFacing side) {
+    public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
         return false;
     }
 
     @Override
-    public boolean shouldSideBeRendered(IBlockAccess world, int x, int y, int z, int side) {
+    public boolean shouldSideBeRendered(IBlockAccess world, BlockPos pos, int side) {
         return true;
     }
 }

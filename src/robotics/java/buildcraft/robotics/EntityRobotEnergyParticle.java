@@ -15,11 +15,11 @@ public class EntityRobotEnergyParticle extends EntityFX {
     private float smokeParticleScale;
 
     public EntityRobotEnergyParticle(World world, double x, double y, double z, double vx, double vy, double vz) {
-        this(world, x, y, z, vx, vy, vz, 1.0F);
+        this(world, pos, vx, vy, vz, 1.0F);
     }
 
     public EntityRobotEnergyParticle(World world, double x, double y, double z, double vx, double vy, double vz, float size) {
-        super(world, x, y, z, vx, vy, vz);
+        super(world, pos, vx, vy, vz);
         this.motionX *= 0.10000000149011612D;
         this.motionY *= 0.10000000149011612D;
         this.motionZ *= 0.10000000149011612D;

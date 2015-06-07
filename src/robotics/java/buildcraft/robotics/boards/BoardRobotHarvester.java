@@ -5,6 +5,7 @@
 package buildcraft.robotics.boards;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
@@ -29,8 +30,8 @@ public class BoardRobotHarvester extends BoardRobotGenericSearchBlock {
     }
 
     @Override
-    public boolean isExpectedBlock(World world, int x, int y, int z) {
-        return BuildCraftAPI.getWorldProperty("harvestable").get(world, x, y, z);
+    public boolean isExpectedBlock(World world, BlockPos pos) {
+        return BuildCraftAPI.getWorldProperty("harvestable").get(world, pos);
     }
 
     @Override

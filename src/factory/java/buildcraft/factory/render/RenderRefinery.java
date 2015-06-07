@@ -57,13 +57,13 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 
     @Override
     public void inventoryRender(double x, double y, double z, float f, float f1) {
-        render(null, x, y, z);
+        render(null, pos);
     }
 
     @Override
     public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
 
-        render((TileRefinery) tileentity, x, y, z);
+        render((TileRefinery) tileentity, pos);
     }
 
     private void render(TileRefinery tile, double x, double y, double z) {

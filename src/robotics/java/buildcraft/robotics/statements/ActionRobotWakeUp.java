@@ -22,7 +22,7 @@ public class ActionRobotWakeUp extends BCStatement implements IActionInternal {
     }
 
     @Override
-    public void registerIcons(IIconRegister iconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
         icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_robot_wakeup");
     }
 

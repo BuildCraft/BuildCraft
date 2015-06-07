@@ -42,7 +42,7 @@ public class RenderPathMarker extends TileEntitySpecialRenderer {
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-            GL11.glTranslated(x, y, z);
+            GL11.glTranslated(pos);
             GL11.glTranslated(-tileentity.xCoord, -tileentity.yCoord, -tileentity.zCoord);
 
             for (LaserData laser : marker.lasers) {

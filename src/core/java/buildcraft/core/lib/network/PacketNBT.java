@@ -6,11 +6,13 @@ package buildcraft.core.lib.network;
 
 import io.netty.buffer.ByteBuf;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 
 import buildcraft.api.core.BCLog;
 
@@ -20,8 +22,8 @@ public class PacketNBT extends PacketCoordinates {
 
     public PacketNBT() {}
 
-    public PacketNBT(int id, NBTTagCompound nbttagcompound, int xCoord, int yCoord, int zCoord) {
-        super(id, xCoord, yCoord, zCoord);
+    public PacketNBT(int id, NBTTagCompound nbttagcompound, BlockPos pos) {
+        super(id, pos);
         this.nbttagcompound = nbttagcompound;
     }
 
@@ -30,7 +32,9 @@ public class PacketNBT extends PacketCoordinates {
         super.writeData(data);
 
         try {
-            byte[] compressed = CompressedStreamTools.compress(nbttagcompound);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            CompressedStreamTools.writeCompressed(nbttagcompound, baos);
+            byte[] compressed = baos.toByteArray();
             if (compressed.length > 65535) {
                 BCLog.logger.error("NBT data is too large (" + compressed.length + " > 65535)! Please report!");
             }
@@ -50,7 +54,7 @@ public class PacketNBT extends PacketCoordinates {
         data.readBytes(compressed);
 
         try {
-            this.nbttagcompound = CompressedStreamTools.func_152457_a(compressed, NBTSizeTracker.field_152451_a);
+            this.nbttagcompound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(compressed));
         } catch (IOException e) {
             e.printStackTrace();
         }

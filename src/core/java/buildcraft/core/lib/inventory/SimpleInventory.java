@@ -12,6 +12,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.INBTStoreable;
@@ -71,11 +73,6 @@ public class SimpleInventory implements IInventory, INBTStoreable {
     }
 
     @Override
-    public String getInventoryName() {
-        return name;
-    }
-
-    @Override
     public int getInventoryStackLimit() {
         return stackLimit;
     }
@@ -84,12 +81,6 @@ public class SimpleInventory implements IInventory, INBTStoreable {
     public boolean isUseableByPlayer(EntityPlayer entityplayer) {
         return true;
     }
-
-    @Override
-    public void openInventory() {}
-
-    @Override
-    public void closeInventory() {}
 
     @Override
     public void readFromNBT(NBTTagCompound data) {
@@ -162,8 +153,8 @@ public class SimpleInventory implements IInventory, INBTStoreable {
     }
 
     @Override
-    public boolean hasCustomInventoryName() {
-        return false;
+    public boolean hasCustomName() {
+        return true;
     }
 
     @Override
@@ -172,4 +163,36 @@ public class SimpleInventory implements IInventory, INBTStoreable {
             handler.markDirty();
         }
     }
+
+    @Override
+    public String getCommandSenderName() {
+        return name;
+    }
+
+    @Override
+    public IChatComponent getDisplayName() {
+        return new ChatComponentText(name);
+    }
+
+    @Override
+    public void openInventory(EntityPlayer player) {}
+
+    @Override
+    public void closeInventory(EntityPlayer player) {}
+
+    @Override
+    public int getField(int id) {
+        return 0;
+    }
+
+    @Override
+    public void setField(int id, int value) {}
+
+    @Override
+    public int getFieldCount() {
+        return 0;
+    }
+
+    @Override
+    public void clear() {}
 }

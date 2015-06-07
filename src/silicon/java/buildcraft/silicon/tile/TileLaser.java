@@ -185,8 +185,8 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
         for (int y = minY; y <= maxY; ++y) {
             for (int x = minX; x <= maxX; ++x) {
                 for (int z = minZ; z <= maxZ; ++z) {
-                    if (BlockUtils.getBlock(worldObj, x, y, z) instanceof ILaserTargetBlock) {
-                        TileEntity tile = BlockUtils.getTileEntity(worldObj, x, y, z);
+                    if (BlockUtils.getBlock(worldObj, pos) instanceof ILaserTargetBlock) {
+                        TileEntity tile = BlockUtils.getTileEntity(worldObj, pos);
 
                         if (tile instanceof ILaserTarget) {
                             ILaserTarget table = (ILaserTarget) tile;

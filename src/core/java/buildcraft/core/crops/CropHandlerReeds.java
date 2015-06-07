@@ -2,10 +2,11 @@ package buildcraft.core.crops;
 
 import java.util.List;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -20,22 +21,22 @@ public class CropHandlerReeds implements ICropHandler {
     }
 
     @Override
-    public boolean canSustainPlant(World world, ItemStack seed, int x, int y, int z) {
-        return CropManager.getDefaultHandler().canSustainPlant(world, seed, x, y, z);
+    public boolean canSustainPlant(World world, ItemStack seed, BlockPos pos) {
+        return CropManager.getDefaultHandler().canSustainPlant(world, seed, pos);
     }
 
     @Override
-    public boolean plantCrop(World world, EntityPlayer player, ItemStack seed, int x, int y, int z) {
-        return CropManager.getDefaultHandler().plantCrop(world, player, seed, x, y, z);
+    public boolean plantCrop(World world, EntityPlayer player, ItemStack seed, BlockPos pos) {
+        return CropManager.getDefaultHandler().plantCrop(world, player, seed, pos);
     }
 
     @Override
-    public boolean isMature(IBlockAccess blockAccess, Block block, int meta, int x, int y, int z) {
+    public boolean isMature(IBlockAccess blockAccess, IBlockState state, BlockPos pos) {
         return false;
     }
 
     @Override
-    public boolean harvestCrop(World world, int x, int y, int z, List<ItemStack> drops) {
+    public boolean harvestCrop(World world, BlockPos pos, List<ItemStack> drops) {
         return false;
     }
 }

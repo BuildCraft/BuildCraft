@@ -41,7 +41,7 @@ public class TriggerClockTimer extends BCStatement implements ITriggerInternal {
     }
 
     @Override
-    public void registerIcons(IIconRegister iconRegister) {
+    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
         icon = iconRegister.registerIcon("buildcrafttransport:triggers/trigger_timer_" + time.name().toLowerCase(Locale.ENGLISH));
     }
 

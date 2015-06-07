@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.builders.patterns;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.api.blueprints.SchematicMask;
@@ -45,6 +46,6 @@ public class PatternFlatten extends FillerPattern {
     public BptBuilderTemplate getTemplateBuilder(Box box, World world, IStatementParameter[] parameters) {
         int yMin = box.pMin().y > 0 ? (int) box.pMin().y - 1 : 0;
 
-        return new BptBuilderTemplate(getTemplate(box, world, parameters), world, box.xMin, yMin, box.zMin);
+        return new BptBuilderTemplate(getTemplate(box, world, parameters), world, new BlockPos(box.xMin, yMin, box.zMin));
     }
 }

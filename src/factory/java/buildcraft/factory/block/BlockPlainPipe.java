@@ -14,6 +14,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -66,17 +67,17 @@ public class BlockPlainPipe extends Block implements IFramePipeConnection {
     }
 
     @Override
-    public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
+    public ArrayList<ItemStack> getDrops(World world, BlockPos pos, int metadata, int fortune) {
         return new ArrayList<ItemStack>();
     }
 
     @Override
-    public boolean isLadder(IBlockAccess world, int x, int y, int z, EntityLivingBase entity) {
+    public boolean isLadder(IBlockAccess world, BlockPos pos, EntityLivingBase entity) {
         return true;
     }
 
     @Override
-    public void registerBlockIcons(IIconRegister register) {
+    public void registerBlockIcons(TextureAtlasSpriteRegister register) {
         blockIcon = register.registerIcon("buildcraftfactory:plainPipeBlock/default");
     }
 }

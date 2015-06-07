@@ -6,6 +6,7 @@ import cofh.api.energy.IEnergyHandler;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.core.render.ITextureStates;
@@ -25,7 +26,7 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
 
         @Override
         public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, EnumFacing side, PipePluggable pipePluggable,
-                ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
+                ITextureStates blockStateMachine, int renderPass, BlockPos pos) {
             if (renderPass != 0) {
                 return;
             }
@@ -50,7 +51,7 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
             MatrixTranformations.transform(rotated, side);
 
             renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-            renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
+            renderblocks.renderStandardBlock(blockStateMachine.getBlock(), pos);
 
             // X START - END
             zeroState[0][0] = 0.25F + 0.125F / 2 + zFightOffset;
@@ -69,7 +70,7 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
             MatrixTranformations.transform(rotated, side);
 
             renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-            renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
+            renderblocks.renderStandardBlock(blockStateMachine.getBlock(), pos);
         }
     }
 

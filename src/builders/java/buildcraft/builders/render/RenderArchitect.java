@@ -19,7 +19,7 @@ public class RenderArchitect extends RenderBoxProvider {
 
     @Override
     public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
-        super.renderTileEntityAt(tileentity, x, y, z, f);
+        super.renderTileEntityAt(tileentity, pos, f);
 
         TileArchitect architect = (TileArchitect) tileentity;
 
@@ -31,7 +31,7 @@ public class RenderArchitect extends RenderBoxProvider {
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-            GL11.glTranslated(x, y, z);
+            GL11.glTranslated(pos);
             GL11.glTranslated(-tileentity.xCoord, -tileentity.yCoord, -tileentity.zCoord);
 
             for (LaserData laser : architect.subLasers) {

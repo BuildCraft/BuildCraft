@@ -123,7 +123,7 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements ISeria
 
     @Override
     @SideOnly(Side.CLIENT)
-    public IIconProvider getIconProvider() {
+    public TextureAtlasSpriteProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 

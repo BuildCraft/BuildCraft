@@ -1,5 +1,6 @@
 package buildcraft.core.builders.patterns;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -10,8 +11,6 @@ import buildcraft.api.statements.StatementMouseClick;
 import buildcraft.core.lib.utils.StringUtils;
 
 public class PatternParameterYDir implements IStatementParameter {
-    private static IIcon iconUp, iconDown;
-
     public boolean up = false;
 
     public PatternParameterYDir() {
@@ -29,19 +28,8 @@ public class PatternParameterYDir implements IStatementParameter {
     }
 
     @Override
-    public IIcon getIcon() {
-        return up ? iconUp : iconDown;
-    }
-
-    @Override
     public ItemStack getItemStack() {
         return null;
-    }
-
-    @Override
-    public void registerIcons(IIconRegister iconRegister) {
-        iconUp = iconRegister.registerIcon("buildcraftcore:fillerParameters/arrow_up");
-        iconDown = iconRegister.registerIcon("buildcraftcore:fillerParameters/arrow_down");
     }
 
     @Override
@@ -66,6 +54,12 @@ public class PatternParameterYDir implements IStatementParameter {
 
     @Override
     public IStatementParameter rotateLeft() {
+        return null;
+    }
+
+    @Override
+    public TextureAtlasSprite getIcon() {
+        // return Minecraft.getMinecraft().getTextureManager().getTexture(new ResourceLocation("TODO"));
         return null;
     }
 }

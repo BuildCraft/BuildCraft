@@ -5,6 +5,7 @@
 package buildcraft.builders.urbanism;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.ResourceLocation;
 
 class UrbanistToolBlock extends UrbanistTool {
@@ -14,7 +15,7 @@ class UrbanistToolBlock extends UrbanistTool {
     private static final int GUI_TEXTURE_HEIGHT = 210;
 
     @Override
-    public IIcon getIcon() {
+    public TextureAtlasSprite getIcon() {
         return UrbanistToolsIconProvider.INSTANCE.getIcon(UrbanistToolsIconProvider.Tool_Block_Place);
     }
 

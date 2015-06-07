@@ -10,9 +10,11 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.Constants;
 
@@ -158,10 +160,11 @@ public class BuildingItem implements IBuildingItem, ISerializable {
             int destX = (int) Math.floor(destination.x);
             int destY = (int) Math.floor(destination.y);
             int destZ = (int) Math.floor(destination.z);
-            Block block = context.world().getBlock(destX, destY, destZ);
-            int meta = context.world().getBlockMetadata(destX, destY, destZ);
+            BlockPos dest = new BlockPos(destX, destY, destZ);
+            
+            IBlockState state = context.world().getBlockState(dest);
 
-            context.world().playAuxSFXAtEntity(null, 2001, destX, destY, destZ, Block.getIdFromBlock(block) + (meta << 12));
+            context.world().playAuxSFXAtEntity(null, 2001, dest, Block.getStateId(state));
 
             /* if (BlockUtil.isToughBlock(context.world(), destX, destY, destZ)) { BlockUtil.breakBlock(context.world(),
              * destX, destY, destZ, BuildCraftBuilders.fillerLifespanTough); } else {

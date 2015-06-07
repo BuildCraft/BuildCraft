@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.blueprints;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -12,7 +13,9 @@ import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.common.util.Constants;
@@ -115,7 +118,9 @@ public abstract class BlueprintBase {
         for (NBTTagCompound sub : subBlueprintsNBT) {
             EnumFacing dir = EnumFacing.values()[sub.getByte("dir")];
 
-            dir = dir.getRotation(EnumFacing.UP);
+            if (dir.getAxis() != Axis.Y) {
+                dir = dir.rotateY();
+            }
 
             Position pos = new Position(sub.getInteger("x"), sub.getInteger("y"), sub.getInteger("z"));
             Position np = context.rotatePositionLeft(pos);
@@ -138,7 +143,9 @@ public abstract class BlueprintBase {
         sizeX = sizeZ;
         sizeZ = tmp;
 
-        mainDir = mainDir.getRotation(EnumFacing.UP);
+        if (mainDir.getAxis() != Axis.Y) {
+            mainDir = mainDir.rotateY();
+        }
     }
 
     private void writeToNBTInternal(NBTTagCompound nbt) {
@@ -229,13 +236,13 @@ public abstract class BlueprintBase {
         }
     }
 
-    public Box getBoxForPos(int x, int y, int z) {
-        int xMin = x - anchorX;
-        int yMin = y - anchorY;
-        int zMin = z - anchorZ;
-        int xMax = x + sizeX - anchorX - 1;
-        int yMax = y + sizeY - anchorY - 1;
-        int zMax = z + sizeZ - anchorZ - 1;
+    public Box getBoxForPos(BlockPos pos) {
+        int xMin = pos.getX() - anchorX;
+        int yMin = pos.getY() - anchorY;
+        int zMin = pos.getZ() - anchorZ;
+        int xMax = pos.getX() + sizeX - anchorX - 1;
+        int yMax = pos.getY() + sizeY - anchorY - 1;
+        int zMax = pos.getZ() + sizeZ - anchorZ - 1;
 
         Box res = new Box();
         res.initialize(xMin, yMin, zMin, xMax, yMax, zMax);
@@ -248,12 +255,12 @@ public abstract class BlueprintBase {
         return new BptContext(world, box, mapping);
     }
 
-    public void addSubBlueprint(BlueprintBase bpt, int x, int y, int z, EnumFacing dir) {
+    public void addSubBlueprint(BlueprintBase bpt, BlockPos pos, EnumFacing dir) {
         NBTTagCompound nbt = new NBTTagCompound();
 
-        nbt.setInteger("x", x);
-        nbt.setInteger("y", y);
-        nbt.setInteger("z", z);
+        nbt.setInteger("x", pos.getX());
+        nbt.setInteger("y", pos.getY());
+        nbt.setInteger("z", pos.getZ());
         nbt.setByte("dir", (byte) dir.ordinal());
 
         NBTTagCompound bptNBT = getNBT();
@@ -268,7 +275,9 @@ public abstract class BlueprintBase {
         @Override
         public void run() {
             try {
-                BlueprintBase.this.setData(CompressedStreamTools.compress(nbt));
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                CompressedStreamTools.writeCompressed(nbt, baos);
+                BlueprintBase.this.setData(baos.toByteArray());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -300,13 +309,13 @@ public abstract class BlueprintBase {
         return computeData.nbt;
     }
 
-    public BlueprintBase adjustToWorld(World world, int x, int y, int z, EnumFacing o) {
+    public BlueprintBase adjustToWorld(World world, BlockPos pos, EnumFacing o) {
         if (buildingPermission == BuildingPermission.NONE
             || (buildingPermission == BuildingPermission.CREATIVE_ONLY && world.getWorldInfo().getGameType() != GameType.CREATIVE)) {
             return null;
         }
 
-        BptContext context = getContext(world, getBoxForPos(x, y, z));
+        BptContext context = getContext(world, getBoxForPos(pos));
 
         if (rotate) {
             if (o == EnumFacing.EAST) {
@@ -325,9 +334,9 @@ public abstract class BlueprintBase {
 
         Translation transform = new Translation();
 
-        transform.x = x - anchorX;
-        transform.y = y - anchorY;
-        transform.z = z - anchorZ;
+        transform.x = pos.getX() - anchorX;
+        transform.y = pos.getY() - anchorY;
+        transform.z = pos.getZ() - anchorZ;
 
         translateToWorld(transform);
 
@@ -342,7 +351,7 @@ public abstract class BlueprintBase {
 
     public abstract void saveContents(NBTTagCompound nbt);
 
-    public abstract void readFromWorld(IBuilderContext context, TileEntity anchorTile, int x, int y, int z);
+    public abstract void readFromWorld(IBuilderContext context, TileEntity anchorTile, BlockPos pos);
 
     public abstract ItemStack getStack();
 

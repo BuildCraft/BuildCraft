@@ -10,6 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
@@ -22,10 +23,10 @@ public class StripesHandlerDispenser implements IStripesHandler {
 
     public class Source implements IBlockSource {
         private final World world;
-        private final int x, y, z;
+        private final int pos;
         private final EnumFacing side;
 
-        public Source(World world, int x, int y, int z, EnumFacing side) {
+        public Source(World world, BlockPos pos, EnumFacing side) {
             this.world = world;
             this.x = x;
             this.y = y;
@@ -70,7 +71,7 @@ public class StripesHandlerDispenser implements IStripesHandler {
 
         @Override
         public TileEntity getBlockTileEntity() {
-            return world.getTileEntity(x, y, z);
+            return world.getTileEntity(pos);
         }
 
         @Override
@@ -101,8 +102,8 @@ public class StripesHandlerDispenser implements IStripesHandler {
     }
 
     @Override
-    public boolean handle(World world, int x, int y, int z, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-        Position origin = new Position(x, y, z, direction);
+    public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
+        Position origin = new Position(pos, direction);
         origin.moveBackwards(1.0D);
 
         IBlockSource source = new Source(world, (int) origin.x, (int) origin.y, (int) origin.z, direction);

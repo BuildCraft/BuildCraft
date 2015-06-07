@@ -10,7 +10,7 @@ package buildcraft.tests.testcase;
 
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.client.renderer.texture.TextureAtlasSpriteRegister;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -37,7 +37,7 @@ public class BlockTestCase extends BlockContainer {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerBlockIcons(IIconRegister par1IconRegister) {
+	public void registerBlockIcons(TextureAtlasSpriteRegister par1IconRegister) {
 		this.blockIcon = par1IconRegister.registerIcon("buildcraft:testcase");
 	}
 
