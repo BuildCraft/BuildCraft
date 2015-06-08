@@ -231,7 +231,7 @@ public class ItemList extends ItemBuildCraft implements IList {
     public static void saveLine(ItemStack stack, StackLine line, int index) {
         NBTTagCompound nbt = NBTUtils.getItemData(stack);
 
-        nbt.setBoolean("written", true);
+        stack.setItemDamage(1);
 
         NBTTagCompound lineNBT = new NBTTagCompound();
         line.writeToNBT(lineNBT);
@@ -257,7 +257,7 @@ public class ItemList extends ItemBuildCraft implements IList {
 
         NBTTagCompound nbt = NBTUtils.getItemData(stack);
 
-        if (nbt.hasKey("written")) {
+        if (stack.getItemDamage() == 1) {
             for (int i = 0; i < 6; ++i) {
                 result[i].readFromNBT(nbt.getCompoundTag("line[" + i + "]"));
             }

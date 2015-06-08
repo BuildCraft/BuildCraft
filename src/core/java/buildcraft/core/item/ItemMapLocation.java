@@ -88,7 +88,6 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
                 break;
             }
             default: {
-                strings.add(cpt + "");
                 break;
             }
         }
