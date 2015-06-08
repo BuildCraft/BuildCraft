@@ -2,7 +2,7 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft;
+package buildcraft.robotics;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -62,7 +62,7 @@ import buildcraft.robotics.tile.TileZonePlan;
 import buildcraft.silicon.BuildCraftSilicon;
 import buildcraft.silicon.item.ItemRedstoneChipset;
 
-// @Mod(name = "BuildCraft Robotics", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Robotics",
+// @Mod(name = "BuildCraft Robotics", version = Version.VERSION, useMetadata = false, modid = "BuildCraftRobotics",
 // dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftRobotics extends BuildCraftMod {
     @Mod.Instance("BuildCraft|Robotics")

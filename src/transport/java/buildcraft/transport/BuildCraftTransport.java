@@ -2,7 +2,7 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft;
+package buildcraft.transport;
 
 import java.io.PrintWriter;
 import java.util.LinkedList;
@@ -99,7 +99,7 @@ import buildcraft.transport.statements.TriggerClockTimer.Time;
 import buildcraft.transport.statements.TriggerPipeContents.PipeContents;
 import buildcraft.transport.stripes.*;
 
-// @Mod(version = Version.VERSION, modid = "BuildCraft|Transport", name = "Buildcraft Transport", dependencies =
+// @Mod(version = Version.VERSION, modid = "BuildCraftTransport", name = "Buildcraft Transport", dependencies =
 // DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftTransport extends BuildCraftMod {
     @Mod.Instance("BuildCraft|Transport")

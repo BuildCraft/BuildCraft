@@ -5,14 +5,17 @@ import java.util.List;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import buildcraft.core.lib.engines.BlockEngineBase;
 import buildcraft.core.lib.engines.TileEngineBase;
+import buildcraft.core.lib.utils.IModelRegister;
+import buildcraft.core.lib.utils.ModelHelper;
 
-public class BlockEngine extends BlockEngineBase {
+public class BlockEngine extends BlockEngineBase implements IModelRegister {
     private final List<Class<? extends TileEngineBase>> engineTiles;
     private final List<String> names;
 
@@ -61,4 +64,13 @@ public class BlockEngine extends BlockEngineBase {
     // public AxisAlignedBB[] getBoxes(World wrd, BlockPos pos, EntityPlayer player) {
     // return null;
     // }
+
+    @Override
+    public void registerModels() {
+        Item item = ItemBlock.getItemFromBlock(this);
+        ModelHelper.registerItemModel(item, 0, "wood");
+        ModelHelper.registerItemModel(item, 1, "stone");
+        ModelHelper.registerItemModel(item, 2, "iron");
+        ModelHelper.registerItemModel(item, 3, "creative");
+    }
 }

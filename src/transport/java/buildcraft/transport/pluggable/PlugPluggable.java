@@ -41,7 +41,7 @@ public class PlugPluggable extends PipePluggable {
             zeroState[2][0] = 0.25F + zFightOffset;
             zeroState[2][1] = 0.75F - zFightOffset;
 
-            blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipePlug.ordinal())); // Structure
+            blockStateMachine.getTextureState().setToStack(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipePlug.ordinal())); // Structure
                                                                                                                                                       // Pipe
 
             float[][] rotated = MatrixTranformations.deepClone(zeroState);

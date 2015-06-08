@@ -50,7 +50,7 @@ import buildcraft.silicon.tile.TilePackager;
 import buildcraft.silicon.tile.TileProgrammingTable;
 import buildcraft.silicon.tile.TileStampingTable;
 
-// @Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon",
+// @Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraftSilicon",
 // dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftSilicon extends BuildCraftMod {
     @Mod.Instance("BuildCraft|Silicon")

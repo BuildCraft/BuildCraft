@@ -84,7 +84,6 @@ import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.utils.ColorUtils;
-import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.lib.utils.XorShift128Random;
 import buildcraft.core.network.PacketHandlerCore;
@@ -110,10 +109,10 @@ import buildcraft.core.tablet.TabletProgramMenuFactory;
 import buildcraft.core.tablet.manager.TabletManagerClient;
 import buildcraft.core.tablet.manager.TabletManagerServer;
 
-@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.8]",
+@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraftCore", acceptedMinecraftVersions = "[1.8]",
         dependencies = "required-after:Forge@[11.14.2.1427]", guiFactory = "buildcraft.core.config.ConfigManager")
 public class BuildCraftCore extends BuildCraftMod {
-    @Mod.Instance("BuildCraft|Core")
+    @Mod.Instance("BuildCraftCore")
     public static BuildCraftCore instance;
 
     public static final boolean NONRELEASED_BLOCKS = true;
@@ -150,7 +149,7 @@ public class BuildCraftCore extends BuildCraftMod {
     public static Item wrenchItem;
     public static Item mapLocationItem;
     public static Item debuggerItem;
-    public static Item paintbrushItem;
+    public static ItemPaintbrush paintbrushItem;
     public static ItemList listItem;
     public static ItemTablet tabletItem;
 
@@ -293,7 +292,8 @@ public class BuildCraftCore extends BuildCraftMod {
             CoreProxy.proxy.registerItem(diamondGearItem);
             OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));
 
-            paintbrushItem = (new ItemPaintbrush()).setUnlocalizedName("paintbrush");
+            paintbrushItem = new ItemPaintbrush();
+            paintbrushItem.setUnlocalizedName("paintbrush");
             CoreProxy.proxy.registerItem(paintbrushItem);
 
             if (TABLET_TESTING) {
@@ -523,8 +523,7 @@ public class BuildCraftCore extends BuildCraftMod {
             Blocks.wool, 1, 0), 'i', Items.string);
 
         for (int i = 0; i < 16; i++) {
-            ItemStack outputStack = new ItemStack(paintbrushItem);
-            NBTUtils.getItemData(outputStack).setByte("color", (byte) i);
+            ItemStack outputStack = paintbrushItem.getItemStack(EnumColor.VALUES[i]);
             CoreProxy.proxy.addShapelessRecipe(outputStack, paintbrushItem, EnumColor.fromId(i).getDye());
         }
     }

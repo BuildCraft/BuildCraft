@@ -7,6 +7,7 @@ import java.util.List;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.property.IUnlistedProperty;
 
 import buildcraft.api.core.BCLog;
@@ -33,18 +34,21 @@ public class BuildCraftProperty<T> implements IProperty, IUnlistedProperty<T> {
         return new BuildCraftProperty<Boolean>(name, Boolean.class, new Boolean[] { first, !first });
     }
 
+    /** first and last are both inclusive values (use 0, 4 to create an array of [0, 1, 2, 3, 4]) */
     public static BuildCraftProperty<Integer> create(String name, int first, int last) {
         return create(name, first, last, 1);
     }
 
+    /** first and last are both inclusive values (use 0, 12, 3 to create an array of [0, 3, 6, 9, 12]) */
     public static BuildCraftProperty<Integer> create(String name, int first, int last, int difference) {
         int actualDiff = Math.abs(difference);
-        Integer[] array = new Integer[Math.abs(first - last) / actualDiff];
+        int number = MathHelper.floor_float(Math.abs(first - last) / (float) actualDiff + 1);
+        Integer[] array = new Integer[number];
         int addedDiff = actualDiff * (first > last ? -1 : 1);
-        BCLog.logger.info("create<Integer>(" + first + ", " + last + ", " + difference + ")");
-        for (int i = 0; i <= array.length; i++) {
-            array[i] = first + (first - last) / addedDiff * i;
-            BCLog.logger.info("  " + array[i]);
+        int current = first;
+        for (int i = 0; i < array.length; i++) {
+            array[i] = current;
+            current += addedDiff;
         }
         return new BuildCraftProperty<Integer>(name, Integer.class, array);
     }

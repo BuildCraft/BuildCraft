@@ -58,17 +58,17 @@ public class LensPluggable extends PipePluggable {
                     zeroState[i][0] += zFightOffset;
                     zeroState[i][1] -= zFightOffset;
                 }
-                blockStateMachine.getTextureState().set(
+                blockStateMachine.getTextureState().setToStack(
                     BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeLensOverlay.ordinal()));
                 ((FakeBlock) blockStateMachine).setColor(ColorUtils.getRGBColor(15 - ((LensPluggable) pipePluggable).color));
 
                 blockStateMachine.setRenderAllSides();
             } else {
                 if (((LensPluggable) pipePluggable).isFilter) {
-                    blockStateMachine.getTextureState().set(
+                    blockStateMachine.getTextureState().setToStack(
                         BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeFilter.ordinal()));
                 } else {
-                    blockStateMachine.getTextureState().set(
+                    blockStateMachine.getTextureState().setToStack(
                         BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeLens.ordinal()));
                 }
             }

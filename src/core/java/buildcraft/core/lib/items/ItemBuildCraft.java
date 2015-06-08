@@ -11,8 +11,10 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.core.BCCreativeTab;
+import buildcraft.core.lib.utils.IModelRegister;
+import buildcraft.core.lib.utils.ModelHelper;
 
-public class ItemBuildCraft extends Item {
+public class ItemBuildCraft extends Item implements IModelRegister {
     private boolean passSneakClick = false;
 
     public ItemBuildCraft() {
@@ -33,5 +35,9 @@ public class ItemBuildCraft extends Item {
     @Override
     public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player) {
         return passSneakClick;
+    }
+
+    public void registerModels() {
+        ModelHelper.registerItemModel(this, 0, "");
     }
 }

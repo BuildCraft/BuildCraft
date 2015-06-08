@@ -44,15 +44,15 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
             switch (state) {
                 case None:
                 case Available:
-                    blockStateMachine.getTextureState().set(
+                    blockStateMachine.getTextureState().setToStack(
                         BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeRobotStation.ordinal()));
                     break;
                 case Reserved:
-                    blockStateMachine.getTextureState().set(
+                    blockStateMachine.getTextureState().setToStack(
                         BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeRobotStationReserved.ordinal()));
                     break;
                 case Linked:
-                    blockStateMachine.getTextureState().set(
+                    blockStateMachine.getTextureState().setToStack(
                         BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeRobotStationLinked.ordinal()));
                     break;
             }

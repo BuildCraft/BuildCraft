@@ -467,7 +467,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
     public static void renderGateStatic(RenderBlocks renderblocks, EnumFacing direction, GatePluggable gate, ITextureStates blockStateMachine, int x,
             int y, int z) {
-        blockStateMachine.getTextureState().set(gate.getLogic().getGateIcon());
+        blockStateMachine.getTextureState().setToStack(gate.getLogic().getGateIcon());
 
         float trim = 0.1F;
         float[][] zeroState = new float[3][2];

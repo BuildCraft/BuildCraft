@@ -54,7 +54,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
                 resetToCenterDimensions(dim);
 
                 if (renderPass == 0) {
-                    fakeBlock.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(EnumFacing.UNKNOWN)));
+                    fakeBlock.getTextureState().setToStack(icons.getIcon(state.textureMatrix.getTextureIndex(EnumFacing.UNKNOWN)));
                 } else {
                     fakeBlock.getTextureState().set(PipeIconProvider.TYPE.PipeStainedOverlay.getIcon());
                 }
@@ -87,7 +87,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
                 // render sub block
                 if (renderPass == 0) {
-                    fakeBlock.getTextureState().set(icons.getIcon(state.textureMatrix.getTextureIndex(EnumFacing.VALID_DIRECTIONS[dir])));
+                    fakeBlock.getTextureState().setToStack(icons.getIcon(state.textureMatrix.getTextureIndex(EnumFacing.VALID_DIRECTIONS[dir])));
                 } else {
                     fakeBlock.getTextureState().set(PipeIconProvider.TYPE.PipeStainedOverlay.getIcon());
                 }

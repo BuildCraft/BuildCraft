@@ -4,27 +4,44 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.proxy;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.util.IStringSerializable;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
+import buildcraft.api.enums.EnumColor;
 import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.lib.engines.RenderEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.render.RenderEntityBlock;
+import buildcraft.core.lib.utils.IModelRegister;
+import buildcraft.core.lib.utils.Utils;
 
 public class CoreProxyClient extends CoreProxy {
 
@@ -73,11 +90,66 @@ public class CoreProxyClient extends CoreProxy {
     public void initializeRendering() {
         // TODO Update me to grab differing trunk textures
         ClientRegistry.bindTileEntitySpecialRenderer(TileEngineBase.class, new RenderEngine());
+
     }
 
     @Override
     public void initializeEntityRendering() {
         RenderingRegistry.registerEntityRenderingHandler(EntityBlock.class, RenderEntityBlock.INSTANCE);
+        EnumColor.registerIcons();
+
+        for (Block block : blocksToRegisterRenderersFor) {
+            if (block instanceof IModelRegister) {
+                ((IModelRegister) block).registerModels();
+                continue;
+            }
+
+            IBlockState defaultState = block.getDefaultState();
+            Multimap<Integer, IBlockState> metaStateMap = ArrayListMultimap.create();
+            Map<IBlockState, String> stateTypeMap = Maps.newHashMap();
+
+            for (IBlockState state : (List<IBlockState>) block.getBlockState().getValidStates()) {
+                String type = "";
+                for (IProperty property : (Collection<IProperty>) state.getProperties().keySet()) {
+                    if (type.length() != 0)
+                        type += ",";
+                    type += property.getName() + "=";
+                    Object value = state.getValue(property);
+                    if (value instanceof Integer) {
+                        type += ((Integer) value).intValue();
+                    } else if (value instanceof Boolean) {
+                        type += ((Boolean) value).toString();
+                    } else {
+                        type += ((IStringSerializable) value).getName();
+                    }
+                }
+                stateTypeMap.put(state, type);
+                metaStateMap.put(block.damageDropped(state), state);
+                ModelBakery.addVariantName(Item.getItemFromBlock(block), type.toLowerCase());
+            }
+            for (Entry<Integer, Collection<IBlockState>> entry : metaStateMap.asMap().entrySet()) {
+                Collection<IBlockState> blockStates = entry.getValue();
+                if (blockStates.isEmpty())
+                    continue;
+                if (blockStates.contains(defaultState)) {
+                    registerBlockItemModel(defaultState, entry.getKey(), stateTypeMap.get(defaultState));
+                } else {
+                    IBlockState state = blockStates.iterator().next();
+                    registerBlockItemModel(state, entry.getKey(), stateTypeMap.get(state));
+                }
+            }
+        }
+        for (Item item : itemsToRegisterRenderersFor) {
+            if (item instanceof IModelRegister) {
+                ((IModelRegister) item).registerModels();
+            }
+        }
+    }
+
+    private void registerBlockItemModel(IBlockState state, int meta, String type) {
+        Block block = state.getBlock();
+        ModelResourceLocation location = new ModelResourceLocation(Utils.getNameForBlock(block), type.toLowerCase());
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(block), meta, location);
     }
 
     /* BUILDCRAFT PLAYER */
@@ -95,5 +167,20 @@ public class CoreProxyClient extends CoreProxy {
         } else {
             return Minecraft.getMinecraft().thePlayer;
         }
+    }
+
+    private LinkedList<Block> blocksToRegisterRenderersFor = new LinkedList<Block>();
+    private LinkedList<Item> itemsToRegisterRenderersFor = new LinkedList<Item>();
+
+    @Override
+    public void registerBlock(Block block, Class<? extends ItemBlock> item) {
+        super.registerBlock(block, item);
+        blocksToRegisterRenderersFor.add(block);
+    }
+
+    @Override
+    public void registerItem(Item item) {
+        super.registerItem(item);
+        itemsToRegisterRenderersFor.add(item);
     }
 }

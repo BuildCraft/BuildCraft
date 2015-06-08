@@ -26,6 +26,7 @@ import buildcraft.core.BuildCraftCore;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.items.ItemBuildCraft;
+import buildcraft.core.lib.utils.ModelHelper;
 import buildcraft.core.lib.utils.NBTUtils;
 
 public class ItemList extends ItemBuildCraft implements IList {
@@ -296,5 +297,11 @@ public class ItemList extends ItemBuildCraft implements IList {
         }
 
         return false;
+    }
+
+    @Override
+    public void registerModels() {
+        ModelHelper.registerItemModel(this, 0, "");
+        ModelHelper.registerItemModel(this, 1, "Used");
     }
 }

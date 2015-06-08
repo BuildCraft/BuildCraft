@@ -58,7 +58,7 @@ import buildcraft.factory.tile.TilePump;
 import buildcraft.factory.tile.TileRefinery;
 import buildcraft.factory.tile.TileTank;
 
-// @Mod(name = "BuildCraft Factory", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Factory",
+// @Mod(name = "BuildCraft Factory", version = Version.VERSION, useMetadata = false, modid = "BuildCraftFactory",
 // dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftFactory extends BuildCraftMod {
 

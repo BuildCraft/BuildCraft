@@ -185,7 +185,7 @@ public final class FacadeRenderHelper {
         ((TextureStateManager) textureManager.getTextureState()).pushArray();
         blockStateMachine.setRenderAllSides();
 
-        textureManager.getTextureState().set(
+        textureManager.getTextureState().setToStack(
             BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal())); // Structure
                                                                                                                               // Pipe
 
