@@ -98,7 +98,7 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 		if (isInventory) {
 			RenderUtils.drawBlockItem(renderer, Tessellator.instance, block, 0);
 		} else {
-			renderer.renderStandardBlock(block, xPos, yPos, zPos);
+			renderer.renderStandardBlockWithColorMultiplier(block, xPos, yPos, zPos, 1.0f, 1.0f, 1.0f);
 		}
 		block.getTextureState().pushArray();
 		block.setRenderMask(0x3F);

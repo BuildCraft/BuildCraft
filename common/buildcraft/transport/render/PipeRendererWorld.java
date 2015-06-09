@@ -190,23 +190,21 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	 */
 	private void renderTwoWayBlock(RenderBlocks renderblocks, FakeBlock stateHost, int x, int y, int z, float[] dim, int mask) {
 		assert mask != 0;
+
+		int c = stateHost.getBlockColor();
+		float r = ((c & 0xFF0000) >> 16) / 255.0f;
+		float g = ((c & 0x00FF00) >> 8) / 255.0f;
+		float b = (c & 0x0000FF) / 255.0f;
 		
 		stateHost.setRenderMask(mask);
 		renderblocks.setRenderBounds(dim[2], dim[0], dim[1], dim[5], dim[3], dim[4]);
-		renderblocks.renderStandardBlock(stateHost, x, y, z);
-
-		int c = stateHost.getBlockColor();
-		int r = (c & 0xFF0000) * 2 / 3;
-		int g = (c & 0x00FF00) * 2 / 3;
-		int b = (c & 0x0000FF) * 2 / 3;
-		stateHost.setColor((r & 0xFF0000) | (g & 0x00FF00) | b);
+		renderblocks.renderStandardBlockWithColorMultiplier(stateHost, x, y, z, r, g, b);
 
 		stateHost.setRenderMask((mask & 0x15) << 1 | (mask & 0x2a) >> 1); // pairwise swapped mask
 		renderblocks.setRenderBounds(dim[5], dim[3], dim[4], dim[2], dim[0], dim[1]);
-		renderblocks.renderStandardBlock(stateHost, x, y, z);
+		renderblocks.renderStandardBlockWithColorMultiplier(stateHost, x, y, z, r * 0.67f, g * 0.67f, b * 0.67f);
 
 		stateHost.setRenderAllSides();
-		stateHost.setColor(c);
 	}
 
 	@Override
