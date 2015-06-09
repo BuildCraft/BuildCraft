@@ -48,11 +48,11 @@ public abstract class BlockBuildCraft extends BlockBuildCraftBase implements ITi
         this(material, BCCreativeTab.get("main"), properties, new IUnlistedProperty<?>[0]);
     }
 
-    protected BlockBuildCraft(Material material, IProperty[] properties, IUnlistedProperty<?>[] nonMetaProperties) {
+    protected BlockBuildCraft(Material material, IProperty[] properties, IUnlistedProperty<?>... nonMetaProperties) {
         this(material, BCCreativeTab.get("main"), properties, nonMetaProperties);
     }
 
-    protected BlockBuildCraft(Material material, BCCreativeTab bcCreativeTab, IProperty[] properties, IUnlistedProperty<?>[] nonMetaProperties) {
+    protected BlockBuildCraft(Material material, BCCreativeTab bcCreativeTab, IProperty[] properties, IUnlistedProperty<?>... nonMetaProperties) {
         super(material, bcCreativeTab, properties, nonMetaProperties);
     }
 

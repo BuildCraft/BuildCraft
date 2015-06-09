@@ -19,6 +19,7 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.api.core.StackKey;
+import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.fuels.ICoolant;
 import buildcraft.api.fuels.IFuel;
@@ -128,7 +129,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
     @Override
     public boolean isBurning() {
-        if (getEnergyStage() == EnergyStage.OVERHEAT) {
+        if (getEnergyStage() == EnumEnergyStage.OVERHEAT) {
             return false;
         }
 
@@ -190,7 +191,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
     @Override
     public void updateHeat() {
-        if (energyStage == EnergyStage.OVERHEAT && heat > MIN_HEAT) {
+        if (energyStage == EnumEnergyStage.OVERHEAT && heat > MIN_HEAT) {
             heat -= COOLDOWN_RATE;
         }
     }

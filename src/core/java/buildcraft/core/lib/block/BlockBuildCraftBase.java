@@ -16,10 +16,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 
 import buildcraft.api.core.BuildCraftProperties;
 import buildcraft.api.enums.EnumColor;
+import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumSpring;
 import buildcraft.api.properties.BuildCraftProperty;
@@ -34,10 +36,13 @@ public abstract class BlockBuildCraftBase extends Block {
     public static final BuildCraftProperty<EnumEngineType> ENGINE_TYPE = BuildCraftProperties.ENGINE_TYPE;
     public static final BuildCraftProperty<EnumColor> COLOR_PROP = BuildCraftProperties.BLOCK_COLOR;
     public static final BuildCraftProperty<EnumSpring> SPRING_TYPE = BuildCraftProperties.SPRING_TYPE;
+    public static final BuildCraftProperty<EnumEnergyStage> ENERGY_STAGE = BuildCraftProperties.ENERGY_STAGE;
 
     public static final BuildCraftProperty<Boolean> JOINED_BELOW = BuildCraftProperties.JOINED_BELOW;
+    public static final BuildCraftProperty<Boolean> MOVING = BuildCraftProperties.MOVING;
 
     protected final IProperty[] properties;
+    protected final IUnlistedProperty<?>[] nonMetaProperties;
     protected final HashBiMap<Integer, IBlockState> validStates = HashBiMap.create();
     protected final BlockState myBlockState;
 
@@ -64,6 +69,7 @@ public abstract class BlockBuildCraftBase extends Block {
         setCreativeTab(bcCreativeTab);
         setHardness(5F);
         this.properties = properties;
+        this.nonMetaProperties = nonMetaProperties;
 
         this.myBlockState = createBlockState();
 
@@ -114,7 +120,7 @@ public abstract class BlockBuildCraftBase extends Block {
             return new BlockState(this, new IProperty[] {});
         }
 
-        return new BlockState(this, properties);
+        return new ExtendedBlockState(this, properties, nonMetaProperties);
     }
 
     @Override

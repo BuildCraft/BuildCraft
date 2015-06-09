@@ -11,19 +11,19 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerExternal;
 import buildcraft.core.lib.engines.TileEngineBase;
-import buildcraft.core.lib.engines.TileEngineBase.EnergyStage;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.statements.BCStatement;
 
 public class TriggerEngineHeat extends BCStatement implements ITriggerExternal {
 
-    public EnergyStage stage;
+    public EnumEnergyStage stage;
 
-    public TriggerEngineHeat(EnergyStage stage) {
+    public TriggerEngineHeat(EnumEnergyStage stage) {
         super("buildcraft:engine.stage." + stage.name().toLowerCase(Locale.ENGLISH), "buildcraft.engine.stage."
             + stage.name().toLowerCase(Locale.ENGLISH));
 

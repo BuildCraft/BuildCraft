@@ -13,6 +13,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.FakePlayer;
 
+import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.PowerMode;
@@ -23,8 +24,8 @@ public class TileEngineCreative extends TileEngineBase {
     private PowerMode powerMode = PowerMode.M2;
 
     @Override
-    protected EnergyStage computeEnergyStage() {
-        return EnergyStage.BLUE;
+    protected EnumEnergyStage computeEnergyStage() {
+        return EnumEnergyStage.BLUE;
     }
 
     @Override

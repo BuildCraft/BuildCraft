@@ -8,17 +8,16 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.BuildCraftCore.RenderMode;
-import buildcraft.core.lib.render.IInventoryRenderer;
 
-public class RenderEngine extends TileEntitySpecialRenderer implements IInventoryRenderer {
+public class RenderEngine extends TileEntitySpecialRenderer {
 
     private static final float[] angleMap = new float[6];
 
@@ -37,10 +36,6 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
     private ModelRenderer trunk;
     private ModelRenderer movingBox;
     private ModelRenderer chamber;
-
-    private ResourceLocation baseTexture;
-    private ResourceLocation chamberTexture;
-    private ResourceLocation trunkTexture;
 
     public RenderEngine() {
         box = new ModelRenderer(model, 0, 1);
@@ -66,23 +61,6 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
         chamber.rotationPointX = 8F;
         chamber.rotationPointY = 8F;
         chamber.rotationPointZ = 8F;
-    }
-
-    public RenderEngine(ResourceLocation baseTexture, ResourceLocation chamberTexture, ResourceLocation trunkTexture) {
-        this();
-        this.baseTexture = baseTexture;
-        this.chamberTexture = chamberTexture;
-        this.trunkTexture = trunkTexture;
-        rendererDispatcher = TileEntityRendererDispatcher.instance;
-    }
-
-    public RenderEngine(TileEngineBase engine) {
-        this(engine.getBaseTexture(), engine.getChamberTexture(), engine.getTrunkTexture(TileEngineBase.EnergyStage.BLUE));
-    }
-
-    @Override
-    public void inventoryRender(double x, double y, double z, float f, float f1) {
-        render(0.25F, EnumFacing.UP, baseTexture, chamberTexture, trunkTexture, x, y, z);
     }
 
     @Override

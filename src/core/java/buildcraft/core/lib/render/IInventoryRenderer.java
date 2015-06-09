@@ -5,6 +5,7 @@
 package buildcraft.core.lib.render;
 
 /** This interface is used to provide special renders of tiles in the player inventory. */
+@Deprecated
 public interface IInventoryRenderer {
     void inventoryRender(double x, double y, double z, float f, float f1);
 }

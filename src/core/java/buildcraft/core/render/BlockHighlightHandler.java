@@ -11,7 +11,9 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.client.event.DrawBlockHighlightEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
@@ -25,25 +27,35 @@ public class BlockHighlightHandler {
     @SubscribeEvent
     public void handleBlockHighlight(DrawBlockHighlightEvent e) {
         if (e.target.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
-            int x = (int) e.target.hitVec.xCoord;
-            int y = (int) e.target.hitVec.yCoord;
-            int z = (int) e.target.hitVec.zCoord;
+            int x = MathHelper.floor_double(e.target.hitVec.xCoord);
+            int y = MathHelper.floor_double(e.target.hitVec.yCoord);
+            int z = MathHelper.floor_double(e.target.hitVec.zCoord);
+
             BlockPos pos = new BlockPos(x, y, z);
             Block block = e.player.worldObj.getBlockState(pos).getBlock();
+
             if (block instanceof ICustomHighlight) {
                 AxisAlignedBB[] aabbs = ((ICustomHighlight) block).getBoxes(e.player.worldObj, pos, e.player);
+                Vec3 nPos = e.player.getPositionEyes(e.partialTicks).subtract(0, e.player.getEyeHeight(), 0);
 
-                pos = e.player.getPosition();
+                // Highlight "breathing"
+                long millis = System.currentTimeMillis();
+                float expansion = (millis % 5000) / 2500F - 1;
+                expansion *= Math.PI * 2;
+                expansion = (MathHelper.sin(expansion) + 1) / 2;
+
                 GL11.glEnable(GL11.GL_BLEND);
-                OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+                OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
                 GL11.glColor4f(0.0F, 0.0F, 0.0F, 0.4F);
-                GL11.glLineWidth(2.0F);
+                GL11.glLineWidth(2F);
                 GL11.glDisable(GL11.GL_TEXTURE_2D);
                 GL11.glDepthMask(false);
                 double exp = ((ICustomHighlight) block).getExpansion();
+                exp += expansion / 32D;
+                nPos = nPos.subtract(x, y, z);
                 for (AxisAlignedBB aabb : aabbs) {
-                    RenderGlobal
-                        .drawOutlinedBoundingBox(aabb.expand(exp, exp, exp).offset(x, y, z).offset(-pos.getX(), -pos.getY(), -pos.getZ()), -1);
+                    AxisAlignedBB changed = aabb.expand(exp, exp, exp).offset(-nPos.xCoord, -nPos.yCoord, -nPos.zCoord);
+                    RenderGlobal.drawOutlinedBoundingBox(changed, -1);
                 }
                 GL11.glDepthMask(true);
                 GL11.glEnable(GL11.GL_TEXTURE_2D);

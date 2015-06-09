@@ -17,6 +17,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.power.IEngine;
 import buildcraft.api.tiles.IHeatable;
 import buildcraft.api.tools.IToolWrench;
@@ -37,15 +38,6 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
     public static final ResourceLocation TRUNK_RED_TEXTURE = new ResourceLocation("buildcraftcore:textures/blocks/engine/trunk_red.png");
     public static final ResourceLocation TRUNK_OVERHEAT_TEXTURE = new ResourceLocation("buildcraftcore:textures/blocks/engine/trunk_overheat.png");
 
-    public enum EnergyStage {
-        BLUE,
-        GREEN,
-        YELLOW,
-        RED,
-        OVERHEAT;
-        public static final EnergyStage[] VALUES = values();
-    }
-
     public static final float MIN_HEAT = 20;
     public static final float IDEAL_HEAT = 100;
     public static final float MAX_HEAT = 250;
@@ -54,7 +46,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
     public float progress;
     public int energy;
     public float heat = MIN_HEAT;
-    public EnergyStage energyStage = EnergyStage.BLUE;
+    public EnumEnergyStage energyStage = EnumEnergyStage.BLUE;
     public EnumFacing orientation = EnumFacing.UP;
 
     protected int progressPart = 0;
@@ -82,7 +74,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
         return new ResourceLocation(getResourcePrefix() + "/chamber.png");
     }
 
-    public ResourceLocation getTrunkTexture(EnergyStage stage) {
+    public ResourceLocation getTrunkTexture(EnumEnergyStage stage) {
         if (ResourceUtils.resourceExists(getResourcePrefix() + "/trunk.png")) {
             return new ResourceLocation(getResourcePrefix() + "/trunk.png");
         }
@@ -107,7 +99,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
         if (!player.worldObj.isRemote && player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof IToolWrench) {
             IToolWrench wrench = (IToolWrench) player.getCurrentEquippedItem().getItem();
             if (wrench.canWrench(player, pos)) {
-                if (getEnergyStage() == EnergyStage.OVERHEAT && !Utils.isFakePlayer(player)) {
+                if (getEnergyStage() == EnumEnergyStage.OVERHEAT && !Utils.isFakePlayer(player)) {
                     energyStage = computeEnergyStage();
                     sendNetworkUpdate();
                 }
@@ -124,32 +116,32 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
         return ((double) energy) / getMaxEnergy();
     }
 
-    protected EnergyStage computeEnergyStage() {
+    protected EnumEnergyStage computeEnergyStage() {
         float energyLevel = getHeatLevel();
         if (energyLevel < 0.25f) {
-            return EnergyStage.BLUE;
+            return EnumEnergyStage.BLUE;
         } else if (energyLevel < 0.5f) {
-            return EnergyStage.GREEN;
+            return EnumEnergyStage.GREEN;
         } else if (energyLevel < 0.75f) {
-            return EnergyStage.YELLOW;
+            return EnumEnergyStage.YELLOW;
         } else if (energyLevel < 1f) {
-            return EnergyStage.RED;
+            return EnumEnergyStage.RED;
         } else {
-            return EnergyStage.OVERHEAT;
+            return EnumEnergyStage.OVERHEAT;
         }
     }
 
-    public final EnergyStage getEnergyStage() {
+    public final EnumEnergyStage getEnergyStage() {
         if (!worldObj.isRemote) {
-            if (energyStage == EnergyStage.OVERHEAT) {
+            if (energyStage == EnumEnergyStage.OVERHEAT) {
                 return energyStage;
             }
 
-            EnergyStage newStage = computeEnergyStage();
+            EnumEnergyStage newStage = computeEnergyStage();
 
             if (energyStage != newStage) {
                 energyStage = newStage;
-                if (energyStage == EnergyStage.OVERHEAT) {
+                if (energyStage == EnumEnergyStage.OVERHEAT) {
                     overheat();
                 }
                 sendNetworkUpdate();
@@ -224,7 +216,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
         updateHeat();
         getEnergyStage();
 
-        if (getEnergyStage() == EnergyStage.OVERHEAT) {
+        if (getEnergyStage() == EnumEnergyStage.OVERHEAT) {
             this.energy = Math.max(this.energy - 50, 0);
             return;
         }
@@ -417,7 +409,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
     @Override
     public void readData(ByteBuf stream) {
         int flags = stream.readUnsignedByte();
-        energyStage = EnergyStage.values()[flags & 0x07];
+        energyStage = EnumEnergyStage.values()[flags & 0x07];
         isPumping = (flags & 0x08) != 0;
         orientation = EnumFacing.values()[stream.readByte()];
     }
@@ -460,7 +452,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
     public abstract boolean isBurning();
 
     public void addEnergy(int addition) {
-        if (getEnergyStage() == EnergyStage.OVERHEAT) {
+        if (getEnergyStage() == EnumEnergyStage.OVERHEAT) {
             return;
         }
 

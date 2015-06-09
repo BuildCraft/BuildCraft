@@ -9,7 +9,6 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -26,6 +25,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
+import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.transport.IItemPipe;
 import buildcraft.core.lib.block.BlockBuildCraft;
@@ -42,7 +42,7 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
         };
 
     public BlockEngineBase() {
-        super(Material.iron, new IProperty[] { ENGINE_TYPE });
+        super(Material.iron, ENGINE_TYPE);
     }
 
     @Override
@@ -52,7 +52,7 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
 
     @Override
     public int getRenderType() {
-        return 3;
+        return -1;
     }
 
     @Override
@@ -130,7 +130,8 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
             AxisAlignedBB[] aabbs = boxes[((TileEngineBase) tile).orientation.ordinal()];
             MovingObjectPosition closest = null;
             for (AxisAlignedBB aabb : aabbs) {
-                MovingObjectPosition mop = aabb.offset(pos.getX(), pos.getY(), pos.getZ()).calculateIntercept(origin, direction);
+                MovingObjectPosition mop =
+                    aabb.offset(pos.getX(), pos.getY(), pos.getZ()).expand(-0.01, -0.01, -0.01).calculateIntercept(origin, direction);
                 if (mop != null) {
                     if (closest != null && mop.hitVec.distanceTo(origin) < closest.hitVec.distanceTo(origin)) {
                         closest = mop;
@@ -175,7 +176,7 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
         int y = pos.getY();
         int z = pos.getZ();
 
-        if (((TileEngineBase) tile).getEnergyStage() == TileEngineBase.EnergyStage.OVERHEAT) {
+        if (((TileEngineBase) tile).getEnergyStage() == EnumEnergyStage.OVERHEAT) {
             for (int f = 0; f < 16; f++) {
                 world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, x + 0.4F + (random.nextFloat() * 0.2F), y + (random.nextFloat() * 0.5F), z + 0.4F
                     + (random.nextFloat() * 0.2F), random.nextFloat() * 0.04F - 0.02F, random.nextFloat() * 0.05F + 0.02F,
@@ -205,7 +206,7 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
 
     @Override
     public TileEntity createNewTileEntity(World world, int metadata) {
-        return null;
+        return createTileEntity(world, metadata);
     }
 
     public abstract String getUnlocalizedName(int metadata);

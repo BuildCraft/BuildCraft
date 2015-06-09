@@ -130,4 +130,17 @@ public class BuildCraftProperty<T> implements IProperty, IUnlistedProperty<T> {
     public T getValue(IBlockState state) {
         return (T) state.getValue(this);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("BuildCraftProperty [name=");
+        builder.append(name);
+        builder.append(", clazz=");
+        builder.append(clazz);
+        builder.append(", values=");
+        builder.append(values);
+        builder.append("]");
+        return builder.toString();
+    }
 }

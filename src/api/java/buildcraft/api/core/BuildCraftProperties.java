@@ -3,6 +3,7 @@ package buildcraft.api.core;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.enums.EnumColor;
+import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumFillerPattern;
 import buildcraft.api.enums.EnumLaserTableType;
@@ -19,10 +20,12 @@ public final class BuildCraftProperties {
     public static final BuildCraftProperty<EnumEngineType> ENGINE_TYPE = BuildCraftProperty.create("type", EnumEngineType.class);
     public static final BuildCraftProperty<EnumLaserTableType> LASER_TABLE_TYPE = BuildCraftProperty.create("type", EnumLaserTableType.class);
     public static final BuildCraftProperty<EnumMachineState> MACHINE_STATE = BuildCraftProperty.create("state", EnumMachineState.class);
+    public static final BuildCraftProperty<EnumEnergyStage> ENERGY_STAGE = BuildCraftProperty.create("stage", EnumEnergyStage.class);
 
     public static final BuildCraftProperty<Integer> PIPE_DATA = BuildCraftProperty.create("data", 0, 15);
 
     public static final BuildCraftProperty<Boolean> JOINED_BELOW = BuildCraftProperty.create("joined_below", false);
+    public static final BuildCraftProperty<Boolean> MOVING = BuildCraftProperty.create("moving", false);
 
     // Unlisted properties
     // public static final PropertyDouble FLUID_HEIGHT_NE = new PropertyDouble("height_ne", 0, 1);

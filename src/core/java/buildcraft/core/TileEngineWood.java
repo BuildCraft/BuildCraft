@@ -8,6 +8,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
+import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.power.IRedstoneEngine;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.transport.IPipeTile;
@@ -19,12 +20,12 @@ public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
 
     @Override
     public String getResourcePrefix() {
-        return "buildcraftcore:textures/blocks/engineWood";
+        return "buildcraftcore:textures/blocks/engine/wood";
     }
 
     @Override
-    public ResourceLocation getTrunkTexture(EnergyStage stage) {
-        return super.getTrunkTexture(stage == EnergyStage.RED && progress < 0.5 ? EnergyStage.YELLOW : stage);
+    public ResourceLocation getTrunkTexture(EnumEnergyStage stage) {
+        return super.getTrunkTexture(stage == EnumEnergyStage.RED && progress < 0.5 ? EnumEnergyStage.YELLOW : stage);
     }
 
     @Override
@@ -38,16 +39,16 @@ public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
     }
 
     @Override
-    protected EnergyStage computeEnergyStage() {
+    protected EnumEnergyStage computeEnergyStage() {
         double energyLevel = getEnergyLevel();
         if (energyLevel < 0.33f) {
-            return EnergyStage.BLUE;
+            return EnumEnergyStage.BLUE;
         } else if (energyLevel < 0.66f) {
-            return EnergyStage.GREEN;
+            return EnumEnergyStage.GREEN;
         } else if (energyLevel < 0.75f) {
-            return EnergyStage.YELLOW;
+            return EnumEnergyStage.YELLOW;
         } else {
-            return EnergyStage.RED;
+            return EnumEnergyStage.RED;
         }
     }
 
