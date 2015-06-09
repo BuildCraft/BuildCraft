@@ -1058,7 +1058,12 @@ public class EntityRobot extends EntityRobotBase implements
 
 		if (player.isSneaking() && stack.getItem() == BuildCraftCore.wrenchItem) {
 			if (!worldObj.isRemote) {
-				convertToItems();
+				if (wearables.size() > 0) {
+					entityDropItem(wearables.remove(wearables.size() - 1), 0);
+					syncWearablesToClient();
+				} else {
+					convertToItems();
+				}
 			} else {
 				((ItemWrench) stack.getItem()).wrenchUsed(player, 0, 0, 0);
 			}
