@@ -129,7 +129,6 @@ public class BuildCraftMod {
 
 				while (!packets.isEmpty()) {
 					SendRequest r = packets.remove();
-					S3FPacketCustomPayload packetCustomPayload = new S3FPacketCustomPayload();
 					net.minecraft.network.Packet p = r.source.channels.get(Side.SERVER).generatePacketFrom(r.packet);
 					List<EntityPlayerMP> playerList = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
 					for (EntityPlayerMP player : playerList.toArray(new EntityPlayerMP[playerList.size()])) {

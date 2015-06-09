@@ -84,7 +84,7 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements ISeria
 	}
 
 	@Override
-	public boolean blockActivated(EntityPlayer player) {
+	public boolean blockActivated(EntityPlayer player, ForgeDirection side) {
 		if (player.isSneaking()) {
 			Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
 			if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, container.xCoord, container.yCoord, container.zCoord)) {
@@ -100,7 +100,7 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements ISeria
 			return true;
 		}
 
-		return logic.blockActivated(player);
+		return logic.blockActivated(player, side);
 	}
 
 	@Override

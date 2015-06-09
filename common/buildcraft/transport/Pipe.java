@@ -77,6 +77,11 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		}
 	}
 
+	public boolean blockActivated(EntityPlayer player, ForgeDirection side) {
+		return false;
+	}
+
+	@Deprecated
 	public boolean blockActivated(EntityPlayer entityplayer) {
 		return false;
 	}
