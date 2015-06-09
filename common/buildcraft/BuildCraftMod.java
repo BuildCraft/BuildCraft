@@ -11,7 +11,7 @@ package buildcraft;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -116,7 +116,7 @@ public class BuildCraftMod {
 	}
 
 	static class PacketSender implements Runnable {
-		private Queue<SendRequest> packets = new ConcurrentLinkedDeque<SendRequest>();
+		private Queue<SendRequest> packets = new ConcurrentLinkedQueue<SendRequest>();
 
 		@Override
 		public void run() {
@@ -131,7 +131,8 @@ public class BuildCraftMod {
 					SendRequest r = packets.remove();
 					S3FPacketCustomPayload packetCustomPayload = new S3FPacketCustomPayload();
 					net.minecraft.network.Packet p = r.source.channels.get(Side.SERVER).generatePacketFrom(r.packet);
-					for (EntityPlayerMP player : (List<EntityPlayerMP>) MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
+					List<EntityPlayerMP> playerList = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
+					for (EntityPlayerMP player : playerList.toArray(new EntityPlayerMP[playerList.size()])) {
 						if (r.isValid(player)) {
 							NetHandlerPlayServer handler = player.playerNetServerHandler;
 							if (handler == null) {
@@ -182,16 +183,6 @@ public class BuildCraftMod {
 	public void sendToPlayer(EntityPlayer entityplayer, Packet packet) {
 		sender.add(new PlayerSendRequest(this, packet, entityplayer));
 	}
-
-	/* public void sendToAll(Packet packet) {
-		try {
-			channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
-					.set(FMLOutboundHandler.OutboundTarget.ALL);
-			channels.get(Side.SERVER).writeOutbound(packet);
-		} catch (Throwable t) {
-			BCLog.logger.log(Level.WARN, "sendToAll crash", t);
-		}
-	} */
 
 	public void sendToServer(Packet packet) {
 		try {
