@@ -88,9 +88,7 @@ public class CoreProxyClient extends CoreProxy {
 
     @Override
     public void initializeRendering() {
-        // TODO Update me to grab differing trunk textures
         ClientRegistry.bindTileEntitySpecialRenderer(TileEngineBase.class, new RenderEngine());
-
     }
 
     @Override

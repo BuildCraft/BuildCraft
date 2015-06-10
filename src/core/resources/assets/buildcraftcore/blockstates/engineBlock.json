@@ -1,0 +1,8 @@
+{
+	"variants": {
+		"type=wood": { "model": "buildcraftcore:engineBlockWood" },
+		"type=iron": { "model": "buildcraftcore:engineBlockIron" },
+		"type=stone": { "model": "buildcraftcore:engineBlockStone" },
+		"type=creative": { "model": "buildcraftcore:engineBlockCreative" }
+	}
+}

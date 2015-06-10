@@ -13,8 +13,11 @@ import net.minecraftforge.fml.client.IModGuiFactory;
 import net.minecraftforge.fml.client.config.GuiConfig;
 import net.minecraftforge.fml.client.config.IConfigElement;
 
+import buildcraft.core.BuildCraftMod;
+
 public class ConfigManager implements IModGuiFactory {
     public static Configuration config;
+    private final BuildCraftMod mod;
 
     public static class GuiConfigManager extends GuiConfig {
         public GuiConfigManager(GuiScreen parentScreen) {
@@ -34,12 +37,14 @@ public class ConfigManager implements IModGuiFactory {
         GAME;
     }
 
+    /** Needed for forge IModGuiFactory */
     public ConfigManager() {
-
+        mod = null;
     }
 
-    public ConfigManager(Configuration c) {
-        this.config = c;
+    public ConfigManager(Configuration c, BuildCraftMod mod) {
+        config = c;
+        this.mod = mod;
     }
 
     public ConfigCategory getCat(String name) {
@@ -93,6 +98,7 @@ public class ConfigManager implements IModGuiFactory {
         p.setLanguageKey("config." + catName + "." + propName);
         p.setRequiresWorldRestart(r == RestartRequirement.WORLD);
         p.setRequiresMcRestart(r == RestartRequirement.GAME);
+        mod.putOption(catName + "." + propName, p);
         return p;
     }
 

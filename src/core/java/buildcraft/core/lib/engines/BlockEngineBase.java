@@ -52,7 +52,7 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
 
     @Override
     public int getRenderType() {
-        return -1;
+        return 3;
     }
 
     @Override
@@ -130,8 +130,9 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
             AxisAlignedBB[] aabbs = boxes[((TileEngineBase) tile).orientation.ordinal()];
             MovingObjectPosition closest = null;
             for (AxisAlignedBB aabb : aabbs) {
-                MovingObjectPosition mop =
-                    aabb.offset(pos.getX(), pos.getY(), pos.getZ()).expand(-0.01, -0.01, -0.01).calculateIntercept(origin, direction);
+                aabb = aabb.offset(pos.getX(), pos.getY(), pos.getZ()).expand(-0.01, -0.01, -0.01);
+
+                MovingObjectPosition mop = aabb.calculateIntercept(origin, direction);
                 if (mop != null) {
                     if (closest != null && mop.hitVec.distanceTo(origin) < closest.hitVec.distanceTo(origin)) {
                         closest = mop;
@@ -140,7 +141,11 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
                     }
                 }
             }
-            return closest;
+            if (closest == null) {
+                return null;
+            } else {
+                return new MovingObjectPosition(closest.hitVec, closest.sideHit, pos);
+            }
         } else {
             return super.collisionRayTrace(wrd, pos, origin, direction);
         }

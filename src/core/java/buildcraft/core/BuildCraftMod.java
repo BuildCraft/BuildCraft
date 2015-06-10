@@ -6,8 +6,11 @@ package buildcraft.core;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedDeque;
+
+import com.google.common.collect.Maps;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,18 +23,21 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.network.FMLEmbeddedChannel;
 import net.minecraftforge.fml.common.network.FMLOutboundHandler;
 import net.minecraftforge.fml.common.network.FMLOutboundHandler.OutboundTarget;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.core.IBuildCraftMod;
 import buildcraft.core.lib.network.Packet;
 
-public class BuildCraftMod {
+public class BuildCraftMod implements IBuildCraftMod {
     private static PacketSender sender = new PacketSender();
     private static Thread senderThread = new Thread(sender);
 
     public EnumMap<Side, FMLEmbeddedChannel> channels;
+    protected Map<String, Property> options = Maps.newHashMap();
 
     abstract static class SendRequest {
         final Packet packet;
@@ -188,5 +194,18 @@ public class BuildCraftMod {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Property getOption(String name) {
+        if (options.containsKey(name)) {
+            return options.get(name);
+        }
+        return null;
+    }
+
+    /** WaRNING: INTERNAL USE ONLY! */
+    public void putOption(String name, Property value) {
+        options.put(name, value);
     }
 }

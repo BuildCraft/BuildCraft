@@ -26,8 +26,9 @@ import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.ConfigAccessor;
+import buildcraft.api.core.ConfigAccessor.Mod;
 import buildcraft.api.core.Position;
-import buildcraft.builders.BuildCraftBuilders;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.NBTUtils;
@@ -59,7 +60,7 @@ public class BuildingSlotBlock extends BuildingSlot {
     public void writeToWorld(IBuilderContext context) {
         if (mode == Mode.ClearIfInvalid) {
             if (!getSchematic().isAlreadyBuilt(context, pos)) {
-                if (BuildCraftBuilders.dropBrokenBlocks) {
+                if (ConfigAccessor.getBoolean(Mod.BUILDERS, "builders.dropBrokenBlocks", false)) {
                     BlockUtils.breakBlock((WorldServer) context.world(), pos);
                 } else {
                     context.world().setBlockToAir(pos);
