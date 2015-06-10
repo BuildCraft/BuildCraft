@@ -2,7 +2,7 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.builders;
+package buildcraft.builders.block;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,8 +22,8 @@ public class BlockBlueprintLibrary extends BlockBuildCraft {
     }
 
     @Override
-    public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-        if (super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9)) {
+    public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+        if (super.onBlockActivated(world, pos, entityplayer, par6, par7, par8, par9)) {
             return true;
         }
 
@@ -31,10 +31,10 @@ public class BlockBlueprintLibrary extends BlockBuildCraft {
             return false;
         }
 
-        TileEntity tile = world.getTileEntity(i, j, k);
+        TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileBlueprintLibrary) {
             if (!world.isRemote) {
-                entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BLUEPRINT_LIBRARY, world, i, j, k);
+                entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BLUEPRINT_LIBRARY, world, pos);
             }
         }
 

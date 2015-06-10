@@ -1,13 +1,12 @@
 package buildcraft.core.block;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
 import buildcraft.core.lib.block.BlockBuildCraft;
 
 // TODO (CHECK) Is this class required?
 public abstract class BlockBuildCraftLED extends BlockBuildCraft {
-//    private TextureAtlasSprite[] led;
+    // private TextureAtlasSprite[] led;
 
     protected BlockBuildCraftLED(Material material) {
         super(material);

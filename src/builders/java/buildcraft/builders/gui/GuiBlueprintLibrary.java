@@ -111,8 +111,8 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
     }
 
     @Override
-    protected void mouseClicked(int i, int j, int k) {
-        super.mouseClicked(i, j, k);
+    protected void mouseClicked(BlockPos pos) {
+        super.mouseClicked(pos);
 
         int x = i - guiLeft;
         int y = j - guiTop;

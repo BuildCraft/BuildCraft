@@ -29,9 +29,9 @@ public class BlockUrbanist extends BlockBuildCraft {
     }
 
     @Override
-    public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+    public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
         if (!world.isRemote) {
-            entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.URBANIST, world, i, j, k);
+            entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.URBANIST, world, pos);
         }
 
         BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);

@@ -6,5 +6,5 @@ import net.minecraft.util.EnumFacing;
 import buildcraft.api.transport.IPipe;
 
 public interface IPipePluggableItem {
-	PipePluggable createPipePluggable(IPipe pipe, EnumFacing side, ItemStack stack);
+    PipePluggable createPipePluggable(IPipe pipe, EnumFacing side, ItemStack stack);
 }

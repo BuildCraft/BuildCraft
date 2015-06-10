@@ -50,14 +50,14 @@ public class BuilderProxyClient extends BuilderProxy {
 
     @Override
     public EntityBlock newDrill(World w, double i, double j, double k, double l, double d, double e) {
-        EntityBlock eb = super.newDrill(w, i, j, k, l, d, e);
+        EntityBlock eb = super.newDrill(w, pos, l, d, e);
         eb.texture = drillTexture;
         return eb;
     }
 
     @Override
     public EntityBlock newDrillHead(World w, double i, double j, double k, double l, double d, double e) {
-        EntityBlock eb = super.newDrillHead(w, i, j, k, l, d, e);
+        EntityBlock eb = super.newDrillHead(w, pos, l, d, e);
         eb.texture = drillHeadTexture;
         return eb;
     }

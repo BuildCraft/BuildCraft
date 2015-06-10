@@ -77,7 +77,7 @@ public abstract class InventoryWrapper implements ISidedInventory {
     public boolean hasCustomName() {
         return inventory.hasCustomName();
     }
-    
+
     @Override
     public int getField(int id) {
         return inventory.getField(id);

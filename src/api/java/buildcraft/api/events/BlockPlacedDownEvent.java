@@ -12,13 +12,13 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Cancelable
 public class BlockPlacedDownEvent extends Event {
-	public final EntityPlayer player;
-	public final IBlockState state;
-	public final BlockPos pos;
+    public final EntityPlayer player;
+    public final IBlockState state;
+    public final BlockPos pos;
 
-	public BlockPlacedDownEvent(EntityPlayer player, BlockPos pos, IBlockState state) {
-		this.player = player;
-		this.state = state;
-		this.pos = pos;
-	}
+    public BlockPlacedDownEvent(EntityPlayer player, BlockPos pos, IBlockState state) {
+        this.player = player;
+        this.state = state;
+        this.pos = pos;
+    }
 }

@@ -2,7 +2,7 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.builders;
+package buildcraft.builders.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
@@ -44,10 +44,10 @@ public class BlockConstructionMarker extends BlockMarker {
     }
 
     @Override
-    public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
-        super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
+    public void onBlockPlacedBy(World world, BlockPos pos, EntityLivingBase entityliving, ItemStack stack) {
+        super.onBlockPlacedBy(world, pos, entityliving, stack);
 
-        TileConstructionMarker tile = (TileConstructionMarker) world.getTileEntity(i, j, k);
+        TileConstructionMarker tile = (TileConstructionMarker) world.getTileEntity(pos);
         tile.direction = Utils.get2dOrientation(entityliving);
     }
 

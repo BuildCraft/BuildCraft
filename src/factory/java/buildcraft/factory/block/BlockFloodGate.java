@@ -33,8 +33,8 @@ public class BlockFloodGate extends BlockBuildCraft {
     }
 
     @Override
-    public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int side, float par7, float par8, float par9) {
-        if (super.onBlockActivated(world, i, j, k, entityplayer, side, par7, par8, par9)) {
+    public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer entityplayer, int side, float par7, float par8, float par9) {
+        if (super.onBlockActivated(world, pos, entityplayer, side, par7, par8, par9)) {
             return true;
         }
 
@@ -43,13 +43,13 @@ public class BlockFloodGate extends BlockBuildCraft {
             return false;
         }
 
-        TileEntity tile = world.getTileEntity(i, j, k);
+        TileEntity tile = world.getTileEntity(pos);
 
         if (tile instanceof TileFloodGate) {
             TileFloodGate floodGate = (TileFloodGate) tile;
             // Restart the flood gate if it's a wrench
             Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-            if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
+            if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pos)) {
                 System.out.println("pre=" + side);
                 if (side == 1) {
                     floodGate.rebuildQueue();
@@ -57,7 +57,7 @@ public class BlockFloodGate extends BlockBuildCraft {
                     floodGate.switchSide(EnumFacing.getOrientation(side));
                 }
 
-                ((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
+                ((IToolWrench) equipped).wrenchUsed(entityplayer, pos);
                 return true;
             }
         }

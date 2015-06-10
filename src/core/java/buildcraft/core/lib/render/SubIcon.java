@@ -1,6 +1,5 @@
 package buildcraft.core.lib.render;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
 public class SubIcon extends TextureAtlasSprite {

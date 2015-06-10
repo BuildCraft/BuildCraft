@@ -77,7 +77,7 @@ public class BlockTank extends BlockBuildCraft {
 
     @SuppressWarnings({ "all" })
     @Override
-    public TextureAtlasSprite getIconAbsolute(IBlockAccess iblockaccess, int i, int j, int k, int side, int metadata) {
+    public TextureAtlasSprite getIconAbsolute(IBlockAccess iblockaccess, BlockPos pos, int side, int metadata) {
         if (side >= 2 && iblockaccess.getBlock(i, j - 1, k) == this) {
             return textureStackedSide;
         } else {
@@ -86,15 +86,15 @@ public class BlockTank extends BlockBuildCraft {
     }
 
     @Override
-    public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-        if (super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9)) {
+    public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+        if (super.onBlockActivated(world, pos, entityplayer, par6, par7, par8, par9)) {
             return true;
         }
 
         ItemStack current = entityplayer.inventory.getCurrentItem();
 
         if (current != null) {
-            TileEntity tile = world.getTileEntity(i, j, k);
+            TileEntity tile = world.getTileEntity(pos);
 
             if (tile instanceof TileTank) {
                 TileTank tank = (TileTank) tile;
@@ -180,7 +180,7 @@ public class BlockTank extends BlockBuildCraft {
                 }
             }
         } else if (DEBUG_MODE) {
-            TileEntity tile = world.getTileEntity(i, j, k);
+            TileEntity tile = world.getTileEntity(pos);
 
             if (tile instanceof TileTank) {
                 TileTank tank = (TileTank) tile;

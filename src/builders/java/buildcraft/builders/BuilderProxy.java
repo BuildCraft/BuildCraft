@@ -5,12 +5,12 @@
 package buildcraft.builders;
 
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.SidedProxy;
 
 import buildcraft.core.lib.EntityBlock;
 
 public class BuilderProxy {
-    // @SidedProxy(clientSide = "buildcraft.builders.BuilderProxyClient", serverSide =
-    // "buildcraft.builders.BuilderProxy")
+    @SidedProxy(clientSide = "buildcraft.builders.BuilderProxyClient", serverSide = "buildcraft.builders.BuilderProxy")
     public static BuilderProxy proxy;
 
     public void registerClientHook() {
@@ -22,10 +22,10 @@ public class BuilderProxy {
     }
 
     public EntityBlock newDrill(World w, double i, double j, double k, double l, double d, double e) {
-        return new EntityBlock(w, i, j, k, l, d, e);
+        return new EntityBlock(w, pos, l, d, e);
     }
 
     public EntityBlock newDrillHead(World w, double i, double j, double k, double l, double d, double e) {
-        return new EntityBlock(w, i, j, k, l, d, e);
+        return new EntityBlock(w, pos, l, d, e);
     }
 }

@@ -13,7 +13,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.BuildCraftCore.RenderMode;
 

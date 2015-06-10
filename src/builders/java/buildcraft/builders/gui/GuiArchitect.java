@@ -142,8 +142,8 @@ public class GuiArchitect extends GuiBuildCraft {
     }
 
     @Override
-    protected void mouseClicked(int i, int j, int k) {
-        super.mouseClicked(i, j, k);
+    protected void mouseClicked(BlockPos pos) {
+        super.mouseClicked(pos);
 
         textField.mouseClicked(i - guiLeft, j - guiTop, k);
     }

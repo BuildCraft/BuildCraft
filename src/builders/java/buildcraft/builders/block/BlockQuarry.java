@@ -2,12 +2,13 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.builders;
+package buildcraft.builders.block;
 
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -33,10 +34,10 @@ public class BlockQuarry extends BlockLEDHatchBase {
     }
 
     @Override
-    public void onBlockPlacedBy(World world, int i, int j, int k, EntityLivingBase entityliving, ItemStack stack) {
-        super.onBlockPlacedBy(world, i, j, k, entityliving, stack);
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entityliving, ItemStack stack) {
+        super.onBlockPlacedBy(world, pos, state, entityliving, stack);
         if (entityliving instanceof EntityPlayer) {
-            TileEntity tile = world.getTileEntity(i, j, k);
+            TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileQuarry) {
                 ((TileQuarry) tile).placedBy = (EntityPlayer) entityliving;
             }
@@ -48,22 +49,22 @@ public class BlockQuarry extends BlockLEDHatchBase {
         return new TileQuarry();
     }
 
-    public void searchFrames(World world, int i, int j, int k) {
+    public void searchFrames(World world, BlockPos pos) {
         int width2 = 1;
         if (!world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2)) {
             return;
         }
 
-        Block block = world.getBlock(i, j, k);
+        Block block = world.getBlock(pos);
 
         if (block != BuildCraftBuilders.frameBlock) {
             return;
         }
 
-        int meta = world.getBlockMetadata(i, j, k);
+        int meta = world.getBlockMetadata(pos);
 
         if ((meta & 8) == 0) {
-            world.setBlockMetadataWithNotify(i, j, k, meta | 8, 0);
+            world.setBlockMetadataWithNotify(pos, meta | 8, 0);
 
             EnumFacing[] dirs = EnumFacing.VALID_DIRECTIONS;
 
@@ -76,10 +77,10 @@ public class BlockQuarry extends BlockLEDHatchBase {
                         searchFrames(world, i, j - 1, k);
                         break;
                     case SOUTH:
-                        searchFrames(world, i, j, k + 1);
+                        searchFrames(world, pos + 1);
                         break;
                     case NORTH:
-                        searchFrames(world, i, j, k - 1);
+                        searchFrames(world, pos - 1);
                         break;
                     case EAST:
                         searchFrames(world, i + 1, j, k);
@@ -102,23 +103,23 @@ public class BlockQuarry extends BlockLEDHatchBase {
     }
 
     @Override
-    public void breakBlock(World world, int i, int j, int k, Block block, int metadata) {
+    public void breakBlock(World world, BlockPos pos, Block block, int metadata) {
         if (world.isRemote) {
             return;
         }
 
-        BuildCraftBuilders.frameBlock.removeNeighboringFrames(world, i, j, k);
+        BuildCraftBuilders.frameBlock.removeNeighboringFrames(world, pos);
 
-        super.breakBlock(world, i, j, k, block, metadata);
+        super.breakBlock(world, pos, block, metadata);
     }
 
     @Override
-    public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-        if (super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9)) {
+    public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+        if (super.onBlockActivated(world, pos, entityplayer, par6, par7, par8, par9)) {
             return true;
         }
 
-        TileQuarry tile = (TileQuarry) world.getTileEntity(i, j, k);
+        TileQuarry tile = (TileQuarry) world.getTileEntity(pos);
 
         // Drop through if the player is sneaking
         if (entityplayer.isSneaking()) {
@@ -127,10 +128,10 @@ public class BlockQuarry extends BlockLEDHatchBase {
 
         // Restart the quarry if its a wrench
         Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-        if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
+        if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pos)) {
 
             tile.reinitalize();
-            ((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
+            ((IToolWrench) equipped).wrenchUsed(entityplayer, pos);
             return true;
 
         }

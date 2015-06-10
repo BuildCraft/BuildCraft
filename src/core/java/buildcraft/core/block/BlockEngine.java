@@ -3,7 +3,6 @@ package buildcraft.core.block;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -69,10 +68,10 @@ public class BlockEngine extends BlockEngineBase implements IModelRegister {
     @Override
     public void registerModels() {
         Item item = ItemBlock.getItemFromBlock(this);
-//        ModelBakery.addVariantName(item, "wood");
-//        ModelBakery.addVariantName(item, "stone");
-//        ModelBakery.addVariantName(item, "iron");
-//        ModelBakery.addVariantName(item, "creative");
+        // ModelBakery.addVariantName(item, "wood");
+        // ModelBakery.addVariantName(item, "stone");
+        // ModelBakery.addVariantName(item, "iron");
+        // ModelBakery.addVariantName(item, "creative");
         ModelHelper.registerItemModel(item, 0, "wood");
         ModelHelper.registerItemModel(item, 1, "stone");
         ModelHelper.registerItemModel(item, 2, "iron");

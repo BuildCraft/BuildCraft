@@ -4,9 +4,7 @@ import java.util.List;
 
 import net.minecraft.util.BlockPos;
 
-/**
- * To be implemented by TileEntities able to provide a path on the world, typically BuildCraft path markers.
- */
+/** To be implemented by TileEntities able to provide a path on the world, typically BuildCraft path markers. */
 public interface IPathProvider {
-	List<BlockPos> getPath();
+    List<BlockPos> getPath();
 }

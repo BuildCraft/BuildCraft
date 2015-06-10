@@ -161,81 +161,81 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
     @SuppressWarnings("rawtypes")
     @Override
-    public void addCollisionBoxesToList(World world, int i, int j, int k, AxisAlignedBB axisalignedbb, List arraylist, Entity par7Entity) {
+    public void addCollisionBoxesToList(World world, BlockPos pos, AxisAlignedBB axisalignedbb, List arraylist, Entity par7Entity) {
         setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS,
             CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS);
-        super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+        super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
 
-        TileEntity tile1 = world.getTileEntity(i, j, k);
+        TileEntity tile1 = world.getTileEntity(pos);
         if (tile1 instanceof TileGenericPipe) {
             TileGenericPipe tileG = (TileGenericPipe) tile1;
 
             if (tileG.isPipeConnected(EnumFacing.WEST)) {
                 setBlockBounds(0.0F, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS,
                     CoreConstants.PIPE_MAX_POS);
-                super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+                super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
             }
 
             if (tileG.isPipeConnected(EnumFacing.EAST)) {
                 setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, 1.0F, CoreConstants.PIPE_MAX_POS,
                     CoreConstants.PIPE_MAX_POS);
-                super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+                super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
             }
 
             if (tileG.isPipeConnected(EnumFacing.DOWN)) {
                 setBlockBounds(CoreConstants.PIPE_MIN_POS, 0.0F, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS,
                     CoreConstants.PIPE_MAX_POS);
-                super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+                super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
             }
 
             if (tileG.isPipeConnected(EnumFacing.UP)) {
                 setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, 1.0F,
                     CoreConstants.PIPE_MAX_POS);
-                super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+                super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
             }
 
             if (tileG.isPipeConnected(EnumFacing.NORTH)) {
                 setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, 0.0F, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS,
                     CoreConstants.PIPE_MAX_POS);
-                super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+                super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
             }
 
             if (tileG.isPipeConnected(EnumFacing.SOUTH)) {
                 setBlockBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS,
                     CoreConstants.PIPE_MAX_POS, 1.0F);
-                super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+                super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
             }
 
             float facadeThickness = TransportConstants.FACADE_THICKNESS;
 
             if (tileG.hasEnabledFacade(EnumFacing.EAST)) {
                 setBlockBounds(1 - facadeThickness, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
-                super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+                super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
             }
 
             if (tileG.hasEnabledFacade(EnumFacing.WEST)) {
                 setBlockBounds(0.0F, 0.0F, 0.0F, facadeThickness, 1.0F, 1.0F);
-                super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+                super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
             }
 
             if (tileG.hasEnabledFacade(EnumFacing.UP)) {
                 setBlockBounds(0.0F, 1 - facadeThickness, 0.0F, 1.0F, 1.0F, 1.0F);
-                super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+                super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
             }
 
             if (tileG.hasEnabledFacade(EnumFacing.DOWN)) {
                 setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, facadeThickness, 1.0F);
-                super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+                super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
             }
 
             if (tileG.hasEnabledFacade(EnumFacing.SOUTH)) {
                 setBlockBounds(0.0F, 0.0F, 1 - facadeThickness, 1.0F, 1.0F, 1.0F);
-                super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+                super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
             }
 
             if (tileG.hasEnabledFacade(EnumFacing.NORTH)) {
                 setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, facadeThickness);
-                super.addCollisionBoxesToList(world, i, j, k, axisalignedbb, arraylist, par7Entity);
+                super.addCollisionBoxesToList(world, pos, axisalignedbb, arraylist, par7Entity);
             }
         }
         setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
@@ -464,14 +464,14 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     }
 
     @Override
-    public void dropBlockAsItemWithChance(World world, int i, int j, int k, int l, float f, int dmg) {
+    public void dropBlockAsItemWithChance(World world, BlockPos pos, int l, float f, int dmg) {
         if (world.isRemote) {
             return;
         }
-        Pipe<?> pipe = getPipe(world, i, j, k);
+        Pipe<?> pipe = getPipe(world, pos);
 
         if (pipe == null) {
-            pipe = pipeRemoved.get(new BlockPos(i, j, k));
+            pipe = pipeRemoved.get(new BlockPos(pos));
         }
 
         if (pipe != null) {
@@ -480,9 +480,9 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
             if (k1 != null) {
                 pipe.dropContents();
                 for (ItemStack is : pipe.computeItemDrop()) {
-                    dropBlockAsItem(world, i, j, k, is);
+                    dropBlockAsItem(world, pos, is);
                 }
-                dropBlockAsItem(world, i, j, k, new ItemStack(k1, 1, pipe.container.getItemMetadata()));
+                dropBlockAsItem(world, pos, new ItemStack(k1, 1, pipe.container.getItemMetadata()));
             }
         }
     }
@@ -770,10 +770,10 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     }
 
     @Override
-    public void onEntityCollidedWithBlock(World world, int i, int j, int k, Entity entity) {
-        super.onEntityCollidedWithBlock(world, i, j, k, entity);
+    public void onEntityCollidedWithBlock(World world, BlockPos pos, Entity entity) {
+        super.onEntityCollidedWithBlock(world, pos, entity);
 
-        Pipe<?> pipe = getPipe(world, i, j, k);
+        Pipe<?> pipe = getPipe(world, pos);
 
         if (isValid(pipe)) {
             pipe.onEntityCollidedWithBlock(entity);
@@ -808,8 +808,8 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     }
 
     @Override
-    public int isProvidingWeakPower(IBlockAccess world, int i, int j, int k, int l) {
-        Pipe<?> pipe = getPipe(world, i, j, k);
+    public int isProvidingWeakPower(IBlockAccess world, BlockPos pos, int l) {
+        Pipe<?> pipe = getPipe(world, pos);
 
         if (isValid(pipe)) {
             return pipe.isIndirectlyPoweringTo(l);
@@ -820,8 +820,8 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
     @SuppressWarnings({ "all" })
     @Override
-    public void randomDisplayTick(World world, int i, int j, int k, Random random) {
-        Pipe pipe = getPipe(world, i, j, k);
+    public void randomDisplayTick(World world, BlockPos pos, Random random) {
+        Pipe pipe = getPipe(world, pos);
 
         if (isValid(pipe)) {
             pipe.randomDisplayTick(random);
@@ -863,28 +863,28 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         return null;
     }
 
-    public static boolean placePipe(Pipe<?> pipe, World world, int i, int j, int k, Block block, int meta, EntityPlayer player) {
+    public static boolean placePipe(Pipe<?> pipe, World world, BlockPos pos, Block block, int meta, EntityPlayer player) {
         if (world.isRemote) {
             return true;
         }
 
-        boolean placed = world.setBlock(i, j, k, block, meta, 3);
+        boolean placed = world.setBlock(pos, block, meta, 3);
 
         if (placed) {
-            TileEntity tile = world.getTileEntity(i, j, k);
+            TileEntity tile = world.getTileEntity(pos);
             if (tile instanceof TileGenericPipe) {
                 TileGenericPipe tilePipe = (TileGenericPipe) tile;
                 tilePipe.initialize(pipe);
                 tilePipe.sendUpdateToClient();
-                FMLCommonHandler.instance().bus().post(new PipePlacedEvent(player, pipe.item.getUnlocalizedName(), i, j, k));
+                FMLCommonHandler.instance().bus().post(new PipePlacedEvent(player, pipe.item.getUnlocalizedName(), pos));
             }
         }
 
         return placed;
     }
 
-    public static Pipe<?> getPipe(IBlockAccess blockAccess, int i, int j, int k) {
-        TileEntity tile = blockAccess.getTileEntity(i, j, k);
+    public static Pipe<?> getPipe(IBlockAccess blockAccess, BlockPos pos) {
+        TileEntity tile = blockAccess.getTileEntity(pos);
 
         if (tile instanceof IPipeTile && !tile.isInvalid()) {
             IPipe pipe = ((IPipeTile) tile).getPipe();
@@ -1045,8 +1045,8 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     }
 
     @Override
-    public TextureAtlasSprite getIcon(IBlockAccess world, int i, int j, int k, int side) {
-        TileEntity tile = world.getTileEntity(i, j, k);
+    public TextureAtlasSprite getIcon(IBlockAccess world, BlockPos pos, int side) {
+        TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileGenericPipe) {
             Pipe pipe = (Pipe) ((TileGenericPipe) tile).getPipe();
             return pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());

@@ -53,12 +53,12 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
         int j = y;
         int k = z;
 
-        Block worldBlock = world.getBlock(i, j, k);
+        Block worldBlock = world.getBlock(pos);
 
         if (worldBlock == Blocks.snow) {
             side = 1;
         } else if (worldBlock != Blocks.vine && worldBlock != Blocks.tallgrass && worldBlock != Blocks.deadbush
-            && (worldBlock == null || !worldBlock.isReplaceable(world, i, j, k))) {
+            && (worldBlock == null || !worldBlock.isReplaceable(world, pos))) {
             if (side == 0) {
                 j--;
             }
@@ -83,19 +83,19 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
             return false;
         }
 
-        if (world.canPlaceEntityOnSide(block, i, j, k, false, side, entityplayer, itemstack)) {
+        if (world.canPlaceEntityOnSide(block, pos, false, side, entityplayer, itemstack)) {
             Pipe<?> pipe = BlockGenericPipe.createPipe(this);
 
             if (pipe == null) {
-                BCLog.logger.log(Level.WARN, "Pipe failed to create during placement at {0},{1},{2}", i, j, k);
+                BCLog.logger.log(Level.WARN, "Pipe failed to create during placement at {0},{1},{2}", pos);
                 return true;
             }
 
-            if (BlockGenericPipe.placePipe(pipe, world, i, j, k, block, 0, entityplayer)) {
-                block.onBlockPlacedBy(world, i, j, k, entityplayer, itemstack);
+            if (BlockGenericPipe.placePipe(pipe, world, pos, block, 0, entityplayer)) {
+                block.onBlockPlacedBy(world, pos, entityplayer, itemstack);
 
                 if (!world.isRemote) {
-                    TileEntity tile = world.getTileEntity(i, j, k);
+                    TileEntity tile = world.getTileEntity(pos);
                     ((TileGenericPipe) tile).initializeFromItemMetadata(itemstack.getItemDamage());
                 }
 

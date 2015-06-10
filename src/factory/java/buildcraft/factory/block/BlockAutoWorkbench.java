@@ -22,8 +22,8 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
     }
 
     @Override
-    public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-        if (super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9)) {
+    public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+        if (super.onBlockActivated(world, pos, entityplayer, par6, par7, par8, par9)) {
             return true;
         }
 
@@ -38,7 +38,7 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
         }
 
         if (!world.isRemote) {
-            entityplayer.openGui(BuildCraftFactory.instance, GuiIds.AUTO_CRAFTING_TABLE, world, i, j, k);
+            entityplayer.openGui(BuildCraftFactory.instance, GuiIds.AUTO_CRAFTING_TABLE, world, pos);
         }
 
         return true;

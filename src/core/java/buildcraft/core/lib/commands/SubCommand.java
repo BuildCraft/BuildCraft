@@ -125,7 +125,7 @@ public abstract class SubCommand implements IModCommand {
     public int compareTo(Object command) {
         return this.compareTo((ICommand) command);
     }
-    
+
     @Override
     public List<?> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
         return null;

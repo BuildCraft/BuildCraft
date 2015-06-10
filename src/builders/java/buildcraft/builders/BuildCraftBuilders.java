@@ -27,6 +27,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.stats.Achievement;
+import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.ForgeChunkManager;
@@ -56,6 +57,8 @@ import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.ConfigAccessor;
+import buildcraft.api.core.ConfigAccessor.EMod;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
@@ -66,6 +69,8 @@ import buildcraft.builders.block.BlockBlueprintLibrary;
 import buildcraft.builders.block.BlockBuilder;
 import buildcraft.builders.block.BlockConstructionMarker;
 import buildcraft.builders.block.BlockFiller;
+import buildcraft.builders.block.BlockFrame;
+import buildcraft.builders.block.BlockMarker;
 import buildcraft.builders.block.BlockPathMarker;
 import buildcraft.builders.block.BlockQuarry;
 import buildcraft.builders.blueprints.RealBlueprintDeployer;
@@ -74,7 +79,14 @@ import buildcraft.builders.item.ItemBlueprintTemplate;
 import buildcraft.builders.item.ItemConstructionMarker;
 import buildcraft.builders.schematics.*;
 import buildcraft.builders.statements.BuildersActionProvider;
+import buildcraft.builders.tile.TileArchitect;
+import buildcraft.builders.tile.TileBlueprintLibrary;
+import buildcraft.builders.tile.TileBuilder;
+import buildcraft.builders.tile.TileConstructionMarker;
+import buildcraft.builders.tile.TileFiller;
+import buildcraft.builders.tile.TileMarker;
 import buildcraft.builders.tile.TilePathMarker;
+import buildcraft.builders.tile.TileQuarry;
 import buildcraft.builders.urbanism.BlockUrbanist;
 import buildcraft.builders.urbanism.TileUrbanist;
 import buildcraft.builders.urbanism.UrbanistToolsIconProvider;
@@ -83,6 +95,7 @@ import buildcraft.core.BuildCraftMod;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
+import buildcraft.core.Version;
 import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.builders.patterns.*;
 import buildcraft.core.builders.schematics.SchematicBlockCreative;
@@ -92,8 +105,8 @@ import buildcraft.core.builders.schematics.SchematicTileCreative;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.proxy.CoreProxy;
 
-// @Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraftBuilders",
-// dependencies = DefaultProps.DEPENDENCY_CORE)
+@Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraftBuilders",
+        dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftBuilders extends BuildCraftMod {
 
     @Mod.Instance("BuildCraft|Builders")
@@ -137,10 +150,11 @@ public class BuildCraftBuilders extends BuildCraftMod {
                 int quarryX = ticket.getModData().getInteger("quarryX");
                 int quarryY = ticket.getModData().getInteger("quarryY");
                 int quarryZ = ticket.getModData().getInteger("quarryZ");
+                BlockPos pos = new BlockPos(quarryX, quarryY, quarryZ);
 
-                Block block = world.getBlock(quarryX, quarryY, quarryZ);
+                Block block = world.getBlockState(pos).getBlock();
                 if (block == quarryBlock) {
-                    TileQuarry tq = (TileQuarry) world.getTileEntity(quarryX, quarryY, quarryZ);
+                    TileQuarry tq = (TileQuarry) world.getTileEntity(pos);
                     tq.forceChunkLoading(ticket);
                 }
             }
@@ -153,8 +167,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
                 int quarryX = ticket.getModData().getInteger("quarryX");
                 int quarryY = ticket.getModData().getInteger("quarryY");
                 int quarryZ = ticket.getModData().getInteger("quarryZ");
+                BlockPos pos = new BlockPos(quarryX, quarryY, quarryZ);
 
-                Block block = world.getBlock(quarryX, quarryY, quarryZ);
+                Block block = world.getBlockState(pos).getBlock();
                 if (block == quarryBlock) {
                     validTickets.add(ticket);
                 }
@@ -165,6 +180,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
     @Mod.EventHandler
     public void loadConfiguration(FMLPreInitializationEvent evt) {
+        ConfigAccessor.addMod(EMod.BUILDERS, this);
+
         BuildCraftCore.mainConfigManager.register("blueprints.serverDatabaseDirectory", "\"$MINECRAFT" + File.separator + "config" + File.separator
             + "buildcraft" + File.separator + "blueprints" + File.separator + "server\"",
             "Location for the server blueprint database (used by all blueprint items).", ConfigManager.RestartRequirement.WORLD);
@@ -632,21 +649,21 @@ public class BuildCraftBuilders extends BuildCraftMod {
         TilePathMarker.clearAvailableMarkersList();
     }
 
-    @SubscribeEvent
-    @SideOnly(Side.CLIENT)
-    public void loadTextures(TextureStitchEvent.Pre evt) {
-        if (evt.map.getTextureType() == 0) {
-            for (FillerPattern pattern : FillerPattern.patterns.values()) {
-                pattern.registerIcons(evt.map);
-            }
-
-            TextureMap terrainTextures = evt.map;
-            BuilderProxyClient.drillTexture = terrainTextures.registerIcon("buildcraftbuilders:machineBlock/drill");
-            BuilderProxyClient.drillHeadTexture = terrainTextures.registerIcon("buildcraftbuilders:machineBlock/drill_head");
-        } else if (evt.map.getTextureType() == 1) {
-            UrbanistToolsIconProvider.INSTANCE.registerIcons(evt.map);
-        }
-    }
+//    @SubscribeEvent
+//    @SideOnly(Side.CLIENT)
+//    public void loadTextures(TextureStitchEvent.Pre evt) {
+//        if (evt.map.getTextureType() == 0) {
+//            for (FillerPattern pattern : FillerPattern.patterns.values()) {
+//                pattern.registerIcons(evt.map);
+//            }
+//
+//            TextureMap terrainTextures = evt.map;
+//            BuilderProxyClient.drillTexture = terrainTextures.registerIcon("buildcraftbuilders:machineBlock/drill");
+//            BuilderProxyClient.drillHeadTexture = terrainTextures.registerIcon("buildcraftbuilders:machineBlock/drill_head");
+//        } else if (evt.map.getTextureType() == 1) {
+//            UrbanistToolsIconProvider.INSTANCE.registerIcons(evt.map);
+//        }
+//    }
 
     @Mod.EventHandler
     public void whiteListAppliedEnergetics(FMLInitializationEvent event) {

@@ -57,8 +57,8 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
     }
 
     @Override
-    public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-        if (super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9)) {
+    public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+        if (super.onBlockActivated(world, pos, entityplayer, par6, par7, par8, par9)) {
             return true;
         }
 
@@ -68,8 +68,8 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
         }
 
         if (!world.isRemote) {
-            int meta = world.getBlockMetadata(i, j, k);
-            entityplayer.openGui(BuildCraftSilicon.instance, meta, world, i, j, k);
+            int meta = world.getBlockMetadata(pos);
+            entityplayer.openGui(BuildCraftSilicon.instance, meta, world, pos);
         }
         return true;
     }

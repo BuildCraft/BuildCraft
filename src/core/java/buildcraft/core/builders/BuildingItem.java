@@ -161,7 +161,7 @@ public class BuildingItem implements IBuildingItem, ISerializable {
             int destY = (int) Math.floor(destination.y);
             int destZ = (int) Math.floor(destination.z);
             BlockPos dest = new BlockPos(destX, destY, destZ);
-            
+
             IBlockState state = context.world().getBlockState(dest);
 
             context.world().playAuxSFXAtEntity(null, 2001, dest, Block.getStateId(state));

@@ -197,7 +197,7 @@ public final class RenderEntityBlock extends Render {
 
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer renderer = tessellator.getWorldRenderer();
-        BlockRendererDispatcher renderBlocks = Minecraft.getMinecraft().getBlockRendererDispatcher();
+        // BlockRendererDispatcher renderBlocks = Minecraft.getMinecraft().getBlockRendererDispatcher();
         renderer.startDrawingQuads();
         renderer.setVertexFormat(DefaultVertexFormats.BLOCK);
         renderer.setTranslation(-x, -y, -z);
@@ -211,8 +211,8 @@ public final class RenderEntityBlock extends Render {
         GlStateManager.translate(-x, -y, -z);
         // GlStateManager.scale(1 / 16D, 1 / 16D, 1 / 16D);
         // GlStateManager.scale(info.maxX - info.minX, info.maxY - info.minY, info.maxZ - info.minZ);
-        IBlockState state = info.blockState;
-        // FIXME: CHange RenderEntityBlock in some way
+        // IBlockState state = info.blockState;
+        // FIXME: Change RenderEntityBlock in some way. Perhaps remove it entirely?
         // DebugWorldAccessor.getDebugWorld().world = blockAccess;
         // renderBlocks.renderBlock(state, DebugWorldAccessor.getPositionForBlockState(state),
         // DebugWorldAccessor.getDebugWorld(), renderer);

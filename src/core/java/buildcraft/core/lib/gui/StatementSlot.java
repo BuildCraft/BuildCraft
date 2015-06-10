@@ -35,11 +35,11 @@ public abstract class StatementSlot extends AdvancedSlot {
     public TextureAtlasSprite getIcon() {
         IStatement stmt = getStatement();
 
-//        if (stmt != null) {
-//            return stmt.getIcon();
-//        } else {
-            return null;
-//        }
+        // if (stmt != null) {
+        // return stmt.getIcon();
+        // } else {
+        return null;
+        // }
     }
 
     @Override

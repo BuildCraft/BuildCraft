@@ -114,8 +114,8 @@ public class GuiTester extends GuiContainer {
 	}
 
 	@Override
-	protected void mouseClicked(int i, int j, int k) {
-		super.mouseClicked(i, j, k);
+	protected void mouseClicked(BlockPos pos) {
+		super.mouseClicked(pos);
 
 		int xMin = (width - xSize) / 2;
 		int yMin = (height - ySize) / 2;

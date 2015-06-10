@@ -58,8 +58,8 @@ public class GuiRefinery extends GuiAdvancedInterface {
     }
 
     @Override
-    protected void mouseClicked(int i, int j, int k) {
-        super.mouseClicked(i, j, k);
+    protected void mouseClicked(BlockPos pos) {
+        super.mouseClicked(pos);
 
         int position = getSlotIndexAtLocation(i, j);
 

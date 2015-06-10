@@ -48,6 +48,8 @@ import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftAPI;
+import buildcraft.api.core.ConfigAccessor;
+import buildcraft.api.core.ConfigAccessor.EMod;
 import buildcraft.api.core.IWorldProperty;
 import buildcraft.api.crops.CropManager;
 import buildcraft.api.enums.EnumColor;
@@ -203,6 +205,7 @@ public class BuildCraftCore extends BuildCraftMod {
     @Mod.EventHandler
     public void loadConfiguration(FMLPreInitializationEvent evt) {
         BCLog.initLog();
+        ConfigAccessor.addMod(EMod.CORE, this);
 
         new BCCreativeTab("main");
 

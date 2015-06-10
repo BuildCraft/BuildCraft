@@ -16,15 +16,15 @@ import net.minecraft.world.World;
  * BuildCraft is installed. */
 public abstract class BlueprintDeployer {
 
-	/** The deployed instantiated by BuildCraft. This is set by the BuildCraft builder mod. Mods that want to work with
-	 * BuildCraft not installed should check for this value to be not null. */
-	public static BlueprintDeployer instance;
+    /** The deployed instantiated by BuildCraft. This is set by the BuildCraft builder mod. Mods that want to work with
+     * BuildCraft not installed should check for this value to be not null. */
+    public static BlueprintDeployer instance;
 
-	/** Deploy the contents of the blueprints as if the builder was located at {pos} facing the direction dir. */
-	public abstract void deployBlueprint(World world, BlockPos pos, EnumFacing facing, File file);
+    /** Deploy the contents of the blueprints as if the builder was located at {pos} facing the direction dir. */
+    public abstract void deployBlueprint(World world, BlockPos pos, EnumFacing facing, File file);
 
-	/** Deploy the contents of the byte array as if the builder was located at {pos} facing the direction dir. */
+    /** Deploy the contents of the byte array as if the builder was located at {pos} facing the direction dir. */
 
-	public abstract void deployBlueprintFromFileStream(World world, BlockPos pos, EnumFacing dir, byte[] data);
+    public abstract void deployBlueprintFromFileStream(World world, BlockPos pos, EnumFacing dir, byte[] data);
 
 }

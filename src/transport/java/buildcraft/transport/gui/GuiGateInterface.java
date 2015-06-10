@@ -369,11 +369,11 @@ public class GuiGateInterface extends GuiAdvancedInterface {
     }
 
     @Override
-    protected void mouseClicked(int i, int j, int k) {
+    protected void mouseClicked(BlockPos pos) {
         if (gate == null) {
             return;
         }
-        super.mouseClicked(i, j, k);
+        super.mouseClicked(pos);
 
         AdvancedSlot slot = getSlotAtLocation(i, j);
 

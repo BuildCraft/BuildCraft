@@ -105,7 +105,7 @@ public final class NBTUtils {
                     int i = nbt.getInteger("i");
                     int j = nbt.getInteger("j");
                     int k = nbt.getInteger("k");
-                    pos = new BlockPos(i, j, k);
+                    pos = new BlockPos(pos);
                 } else if (nbt.hasKey("x")) {
                     int x = nbt.getInteger("x");
                     int y = nbt.getInteger("y");

@@ -6,7 +6,6 @@ package buildcraft.core.lib.render;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
@@ -46,10 +45,10 @@ public final class FakeBlock extends Block implements ITextureStates {
         return textureState;
     }
 
-//    @Override
-//    public TextureAtlasSprite getIcon(int side, int meta) {
-//        return textureState.isSided() ? textureState.getTextureArray()[side] : textureState.getTexture();
-//    }
+    // @Override
+    // public TextureAtlasSprite getIcon(int side, int meta) {
+    // return textureState.isSided() ? textureState.getTextureArray()[side] : textureState.getTexture();
+    // }
 
     @Override
     public void setRenderSide(EnumFacing side, boolean render) {

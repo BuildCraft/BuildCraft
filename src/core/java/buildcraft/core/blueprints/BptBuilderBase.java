@@ -68,21 +68,27 @@ public abstract class BptBuilderBase implements IAreaProvider {
         context = bluePrint.getContext(world, box);
     }
 
-    protected boolean isLocationUsed(int i, int j, int k) {
-        int xCoord = i - pos.getX() + blueprint.anchorX;
-        int yCoord = j - pos.getY() + blueprint.anchorY;
-        int zCoord = k - pos.getZ() + blueprint.anchorZ;
+    @Deprecated
+    protected boolean isLocationUsed(int x, int y, int z) {
+        return isLocationUsed(new BlockPos(x, y, z));
+    }
+
+    protected boolean isLocationUsed(BlockPos toTest) {
+        int xCoord = toTest.getX() - pos.getX() + blueprint.anchorX;
+        int yCoord = toTest.getY() - pos.getY() + blueprint.anchorY;
+        int zCoord = toTest.getZ() - pos.getZ() + blueprint.anchorZ;
         return usedLocations.get((zCoord * blueprint.sizeY + yCoord) * blueprint.sizeX + xCoord);
     }
 
-    protected void markLocationUsed(BlockPos pos) {
-        markLocationUsed(pos.getX(), pos.getY(), pos.getZ());
+    @Deprecated
+    protected void markLocationUsed(int x, int y, int z) {
+        markLocationUsed(new BlockPos(x, y, z));
     }
 
-    protected void markLocationUsed(int i, int j, int k) {
-        int xCoord = i - pos.getX() + blueprint.anchorX;
-        int yCoord = j - pos.getY() + blueprint.anchorY;
-        int zCoord = k - pos.getZ() + blueprint.anchorZ;
+    protected void markLocationUsed(BlockPos toMark) {
+        int xCoord = toMark.getX() - pos.getX() + blueprint.anchorX;
+        int yCoord = toMark.getY() - pos.getY() + blueprint.anchorY;
+        int zCoord = toMark.getZ() - pos.getZ() + blueprint.anchorZ;
         usedLocations.set((zCoord * blueprint.sizeY + yCoord) * blueprint.sizeX + xCoord, true);
     }
 

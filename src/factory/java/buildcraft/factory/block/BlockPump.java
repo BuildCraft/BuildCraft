@@ -31,12 +31,12 @@ public class BlockPump extends BlockBuildCraftLED {
     }
 
     @Override
-    public boolean onBlockActivated(World world, int i, int j, int k, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-        if (super.onBlockActivated(world, i, j, k, entityplayer, par6, par7, par8, par9)) {
+    public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+        if (super.onBlockActivated(world, pos, entityplayer, par6, par7, par8, par9)) {
             return true;
         }
 
-        TileEntity tile = world.getTileEntity(i, j, k);
+        TileEntity tile = world.getTileEntity(pos);
 
         if (tile instanceof TilePump) {
             TilePump pump = (TilePump) tile;
@@ -48,11 +48,11 @@ public class BlockPump extends BlockBuildCraftLED {
 
             // Restart the quarry if its a wrench
             Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-            if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
+            if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pos)) {
 
                 pump.tank.reset();
                 pump.rebuildQueue();
-                ((IToolWrench) equipped).wrenchUsed(entityplayer, i, j, k);
+                ((IToolWrench) equipped).wrenchUsed(entityplayer, pos);
                 return true;
             }
         }
