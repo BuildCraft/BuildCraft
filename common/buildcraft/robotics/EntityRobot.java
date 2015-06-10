@@ -11,7 +11,12 @@ package buildcraft.robotics;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.WeakHashMap;
+
+import com.google.common.collect.Iterables;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 
 import io.netty.buffer.ByteBuf;
 
@@ -22,9 +27,12 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemSkull;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTUtil;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
@@ -33,6 +41,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.StatCollector;
+import net.minecraft.util.StringUtils;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
@@ -41,6 +50,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -1084,8 +1094,57 @@ public class EntityRobot extends EntityRobotBase implements
 				player.swingItem();
 			}
 			return true;
+		} else if (wearables.size() < 8 && stack.getItem() instanceof ItemSkull) {
+			if (!worldObj.isRemote) {
+				ItemStack skullStack =stack.splitStack(1);
+				initSkullItem(skullStack);
+				wearables.add(skullStack);
+				syncWearablesToClient();
+			} else {
+				player.swingItem();
+			}
+			return true;
 		} else {
 			return super.interact(player);
+		}
+	}
+
+	private void initSkullItem(ItemStack skullStack) {
+		if (skullStack.hasTagCompound()) {
+			NBTTagCompound nbttagcompound = skullStack.getTagCompound();
+			GameProfile gameProfile = null;
+
+			if (nbttagcompound.hasKey("SkullOwner", NBT.TAG_COMPOUND)) {
+				gameProfile = NBTUtil.func_152459_a(nbttagcompound.getCompoundTag("SkullOwner"));
+			} else if (nbttagcompound.hasKey("SkullOwner", NBT.TAG_STRING)
+					&& !StringUtils.isNullOrEmpty(nbttagcompound.getString("SkullOwner"))) {
+				gameProfile = new GameProfile((UUID) null, nbttagcompound.getString("SkullOwner"));
+			}
+			if (!StringUtils.isNullOrEmpty(gameProfile.getName())) {
+				if (!gameProfile.isComplete()
+						|| !gameProfile.getProperties().containsKey("textures")) {
+					gameProfile = MinecraftServer.getServer().func_152358_ax()
+							.func_152655_a(gameProfile.getName());
+
+					if (gameProfile != null) {
+						Property property = (Property) Iterables.getFirst(gameProfile
+								.getProperties().get("textures"), (Object) null);
+
+						if (property == null) {
+							gameProfile = MinecraftServer.getServer().func_147130_as()
+									.fillProfileProperties(gameProfile, true);
+						}
+					}
+				}
+			}
+			if (gameProfile != null && gameProfile.isComplete()
+					&& gameProfile.getProperties().containsKey("textures")) {
+				NBTTagCompound profileNBT = new NBTTagCompound();
+				NBTUtil.func_152460_a(profileNBT, gameProfile);
+				nbttagcompound.setTag("SkullOwner", profileNBT);
+			} else {
+				nbttagcompound.removeTag("SkullOwner");
+			}
 		}
 	}
 

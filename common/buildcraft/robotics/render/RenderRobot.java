@@ -9,6 +9,10 @@
 package buildcraft.robotics.render;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.mojang.authlib.GameProfile;
 
 import org.lwjgl.opengl.GL11;
 
@@ -21,10 +25,14 @@ import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.tileentity.TileEntitySkullRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemSkull;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.client.ForgeHooksClient;
@@ -53,6 +61,8 @@ public class RenderRobot extends Render implements IItemRenderer {
 	private ModelBase modelHelmet = new ModelBase() {
 	};
 	private ModelRenderer box, helmetBox;
+
+	private Map<String, GameProfile> gameProfileCache = new HashMap<String, GameProfile>();
 
 	public RenderRobot() {
 		customRenderItem = new RenderItem() {
@@ -242,9 +252,31 @@ public class RenderRobot extends Render implements IItemRenderer {
 				helmetBox.render(1 / 16F);
 			}
 			GL11.glPopMatrix();
+		} else if (wearable.getItem() instanceof ItemSkull) {
+			doRenderSkull(wearable);
 		}
 	}
-	
+
+	private void doRenderSkull(ItemStack wearable) {
+		GL11.glPushMatrix();
+		GL11.glScalef(1.0125F, 1.0125F, 1.0125F);
+		GameProfile gameProfile = null;
+		if (wearable.hasTagCompound()) {
+			NBTTagCompound nbt = wearable.getTagCompound();
+			if (nbt.hasKey("Name")) {
+				gameProfile = gameProfileCache.get(nbt.getString("Name"));
+			} else if (nbt.hasKey("SkullOwner")) {
+				gameProfile = NBTUtil.func_152459_a(nbt.getCompoundTag("SkullOwner"));
+				nbt.setString("Name", gameProfile.getName());
+				gameProfileCache.put(gameProfile.getName(), gameProfile);
+			}
+		}
+
+		TileEntitySkullRenderer.field_147536_b.func_152674_a(-0.5F, -0.25F, -0.5F, 1, -90.0F,
+				wearable.getItemDamage(), gameProfile);
+		GL11.glPopMatrix();
+	}
+
 	private void doRenderRobot(float factor, TextureManager texManager, float storagePercent, boolean isAsleep) {
 		box.render(factor);
 
