@@ -2,17 +2,21 @@ package buildcraft.robotics.map;
 
 import java.io.File;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.google.common.collect.HashBiMap;
 
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 
 public class MapManager implements Runnable {
 	private final HashBiMap<World, MapWorld> worldMap = HashBiMap.create();
+	private final Set<MapChunkLoadRequest> chunkLoadRequests = new HashSet<MapChunkLoadRequest>();
 	private final File location;
 	private boolean stop = false;
 
@@ -97,6 +101,24 @@ public class MapManager implements Runnable {
 			} catch (Exception e) {
 
 			}
+		}
+	}
+
+	@SubscribeEvent
+	public void serverTickEnd(TickEvent.ServerTickEvent event) {
+		if (event.phase == TickEvent.Phase.END) {
+			synchronized (chunkLoadRequests) {
+				for (MapChunkLoadRequest r : chunkLoadRequests) {
+					r.world.updateChunk(r.x, r.z);
+				}
+				chunkLoadRequests.clear();
+			}
+		}
+	}
+
+	public void loadChunkForUpdate(MapWorld mapWorld, int x, int z) {
+		synchronized (chunkLoadRequests) {
+			chunkLoadRequests.add(new MapChunkLoadRequest(mapWorld, x, z));
 		}
 	}
 }

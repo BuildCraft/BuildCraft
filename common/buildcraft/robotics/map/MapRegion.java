@@ -57,7 +57,9 @@ public class MapRegion implements INBTStoreable {
 			MapChunk chunk = chunks.get(i);
 			if (chunk != null) {
 				NBTTagCompound chunkNBT = new NBTTagCompound();
-				chunk.writeToNBT(chunkNBT);
+				synchronized (chunk) {
+					chunk.writeToNBT(chunkNBT);
+				}
 				tag.setTag("r" + i, chunkNBT);
 			}
 		}

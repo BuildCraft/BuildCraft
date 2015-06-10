@@ -18,6 +18,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.client.event.ConfigChangedEvent;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -391,6 +392,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
 			managerThread.interrupt();
 
 			MinecraftForge.EVENT_BUS.unregister(manager);
+			FMLCommonHandler.instance().bus().unregister(manager);
 		}
 
 		managerThread = null;
@@ -412,6 +414,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
 		managerThread.start();
 
 		MinecraftForge.EVENT_BUS.register(manager);
+		FMLCommonHandler.instance().bus().register(manager);
 	}
 
 	@Mod.EventHandler

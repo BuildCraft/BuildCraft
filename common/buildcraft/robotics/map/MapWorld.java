@@ -18,6 +18,7 @@ import gnu.trove.map.hash.TLongObjectHashMap;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
+import buildcraft.BuildCraftRobotics;
 import buildcraft.core.lib.utils.NBTUtils;
 
 public class MapWorld {
@@ -117,8 +118,9 @@ public class MapWorld {
 	}
 
 	public void queueChunkForUpdate(int x, int z, int priority) {
-		long id = getXzId(x, z);
-		queuedChunks.add(new QueuedXZ(x, z, priority));
+		synchronized (queuedChunks) {
+			queuedChunks.add(new QueuedXZ(x, z, priority));
+		}
 	}
 
 	public void queueChunkForUpdateIfEmpty(int x, int z, int priority) {
@@ -128,27 +130,30 @@ public class MapWorld {
 	}
 
 	public void updateChunkInQueue() {
-		if (queuedChunks.size() == 0) {
-			return;
-		}
-
-		QueuedXZ q = queuedChunks.remove();
-		if (q == null) {
-			return;
-		}
-
-		if (!world.getChunkProvider().chunkExists(q.x, q.z)) {
-			long now = (new Date()).getTime();
-			if (now - lastForcedChunkLoad < 1000) {
-				q.p++; // Increase priority so it gets looked at later
-				queuedChunks.add(q);
+		synchronized (queuedChunks) {
+			if (queuedChunks.size() == 0) {
 				return;
-			} else {
-				lastForcedChunkLoad = now;
 			}
-		}
 
-		updateChunk(q.x, q.z);
+			QueuedXZ q = queuedChunks.remove();
+			if (q == null) {
+				return;
+			}
+
+			if (!world.getChunkProvider().chunkExists(q.x, q.z)) {
+				long now = (new Date()).getTime();
+				if (now - lastForcedChunkLoad < 3000) {
+					q.p++; // Increase priority so it gets looked at later
+					queuedChunks.add(q);
+					return;
+				} else {
+					lastForcedChunkLoad = now;
+					BuildCraftRobotics.manager.loadChunkForUpdate(this, q.x, q.z);
+				}
+			}
+
+			updateChunk(q.x, q.z);
+		}
 	}
 
 	public void save() {
@@ -186,12 +191,18 @@ public class MapWorld {
 		return chunk.getColor(x & 15, z & 15);
 	}
 
-	protected void updateChunk(int x, int z) {
+	public void updateChunk(int x, int z) {
 		MapChunk chunk = getChunk(x, z);
-		chunk.update(world.getChunkFromChunkCoords(x, z));
-		regionUpdateSet.add(new QueuedXZ(x >> 4, z >> 4, 0));
+		synchronized (chunk) {
+			chunk.update(world.getChunkFromChunkCoords(x, z));
+		}
+		synchronized (regionUpdateSet) {
+			regionUpdateSet.add(new QueuedXZ(x >> 4, z >> 4, 0));
+		}
 
 		// priority does not matter - see equals
-		queuedChunks.remove(new QueuedXZ(x, z, 0));
+		synchronized (queuedChunks) {
+			queuedChunks.remove(new QueuedXZ(x, z, 0));
+		}
 	}
 }
