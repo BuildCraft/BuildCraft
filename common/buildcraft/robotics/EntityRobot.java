@@ -571,7 +571,10 @@ public class EntityRobot extends EntityRobotBase implements
 		if (nbt.hasKey("wearables")) {
 			NBTTagList list = nbt.getTagList("wearables", 10);
 			for (int i = 0; i < list.tagCount(); i++) {
-				wearables.add(ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i)));
+				ItemStack stack = ItemStack.loadItemStackFromNBT(list.getCompoundTagAt(i));
+				if (stack != null) {
+					wearables.add(stack);
+				}
 			}
 		}
 
