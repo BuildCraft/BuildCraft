@@ -12,9 +12,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
-
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftRobotics;
@@ -26,7 +24,6 @@ import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IPipeTile.PipeType;
 import buildcraft.robotics.RobotUtils;
-import buildcraft.transport.TileGenericPipe;
 
 public class RobotsActionProvider implements IActionProvider {
 
@@ -66,13 +63,6 @@ public class RobotsActionProvider implements IActionProvider {
 		}
 
 		for (DockingStation station : stations) {
-			TileEntity sideTile = ((TileGenericPipe) tile).getTile(station.side);
-			Block sideBlock = ((TileGenericPipe) tile).getBlock(station.side);
-
-			if (sideTile instanceof IPipeTile) {
-				continue;
-			}
-
 			if (station.getItemInput() != null) {
 				result.add(BuildCraftRobotics.actionStationProvideItems);
 			}

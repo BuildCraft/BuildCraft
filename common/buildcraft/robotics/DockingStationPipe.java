@@ -37,6 +37,9 @@ public class DockingStationPipe extends DockingStation {
 				float cy = y() + 0.5F + 0.2F * side().offsetY;
 				float cz = z() + 0.5F + 0.2F * side().offsetZ;
 				TravelingItem item = TravelingItem.make(cx, cy, cz, stack);
+				if (item.isCorrupted()) {
+					return 0;
+				}
 
 				((PipeTransportItems) ((Pipe) getPipe().getPipe()).transport)
 						.injectItem(item, from);
@@ -48,7 +51,7 @@ public class DockingStationPipe extends DockingStation {
 	private IPipeTile pipe;
 
 	public DockingStationPipe() {
-		// Loading later from NBT
+		// Loading later from NBT - DO NOT TOUCH!
 	}
 
 	public DockingStationPipe(IPipeTile iPipe, ForgeDirection side) {
@@ -189,4 +192,8 @@ public class DockingStationPipe extends DockingStation {
 		}
 	}
 
+	@Override
+	public void onChunkUnload() {
+		pipe = null;
+	}
 }

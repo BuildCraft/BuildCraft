@@ -17,8 +17,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.stats.Achievement;
-
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
@@ -32,7 +30,6 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -179,9 +176,6 @@ public class BuildCraftRobotics extends BuildCraftMod {
 	public static IActionInternal actionStationForbidRobot = new ActionStationForbidRobot(false);
 	public static IActionInternal actionStationAcceptItems = new ActionStationAcceptItems();
 	public static IActionInternal actionStationMachineRequestItems = new ActionStationRequestItemsMachine();
-
-	public static Achievement timeForSomeLogicAchievement;
-	public static Achievement tinglyLaserAchievement;
 
 	public static List<String> blacklistedRobots;
 
@@ -343,7 +337,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
 				"PRP",
 				"C C",
 				'P', "ingotIron",
-				'R', BuildCraftSilicon.redstoneCrystal,
+				'R', "crystalRedstone",
 				'C', ItemRedstoneChipset.Chipset.DIAMOND.getStack());
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(redstoneBoard),

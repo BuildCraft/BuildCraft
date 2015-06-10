@@ -666,25 +666,29 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		int[] displayList = pow.overload > 0 ? displayPowerListOverload : displayPowerList;
 
 		for (int side = 0; side < 6; ++side) {
-			GL11.glPushMatrix();
-
-			GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-			GL11.glRotatef(angleY[side], 0, 1, 0);
-			GL11.glRotatef(angleZ[side], 0, 0, 1);
-			float scale = 1.0F - side * 0.0001F;
-			GL11.glScalef(scale, scale, scale);
-			GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
-
 			short stage = pow.displayPower[side];
 			if (stage >= 1) {
+				if (!pipe.container.isPipeConnected(ForgeDirection.getOrientation(side))) {
+					continue;
+				}
+
+				GL11.glPushMatrix();
+
+				GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+				GL11.glRotatef(angleY[side], 0, 1, 0);
+				GL11.glRotatef(angleZ[side], 0, 0, 1);
+				float scale = 1.0F - side * 0.0001F;
+				GL11.glScalef(scale, scale, scale);
+				GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
+
 				if (stage < displayList.length) {
 					GL11.glCallList(displayList[stage]);
 				} else {
 					GL11.glCallList(displayList[displayList.length - 1]);
 				}
-			}
 
-			GL11.glPopMatrix();
+				GL11.glPopMatrix();
+			}
 		}
 
 		/*bindTexture(STRIPES_TEXTURE);

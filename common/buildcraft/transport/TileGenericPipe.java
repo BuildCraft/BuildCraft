@@ -546,6 +546,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	public void initialize(Pipe<?> pipe) {
+		initialized = false;
+
 		this.blockType = getBlockType();
 
 		if (pipe == null) {

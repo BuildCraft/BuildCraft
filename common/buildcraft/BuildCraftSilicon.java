@@ -106,7 +106,9 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
 		redstoneCrystal = (new ItemBuildCraft()).setUnlocalizedName("redstoneCrystal");
 		CoreProxy.proxy.registerItem(redstoneCrystal);
-		OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal));
+
+		OreDictionary.registerOre("redstoneCrystal", new ItemStack(redstoneCrystal)); // Deprecated
+		OreDictionary.registerOre("crystalRedstone", new ItemStack(redstoneCrystal));
 
 		EntityRegistry.registerModEntity(EntityPackage.class, "bcPackageThrowable", EntityIds.PACKAGE_THROWABLE, instance, 48, 10, true);
 	}

@@ -51,6 +51,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public static short OUTPUT_COOLDOWN = 30; // 30
 
 	private static int NETWORK_SYNC_TICKS = BuildCraftCore.updateFactor / 2;
+	private static byte CLIENT_INIT_DELAY = (byte) 6;
 	private static final ForgeDirection[] directions = ForgeDirection.VALID_DIRECTIONS;
 	private static final ForgeDirection[] orientations = ForgeDirection.values();
 
@@ -410,7 +411,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		BitSet delta = new BitSet(8);
 
 		if (initClient > 0) {
-			initClient -= NETWORK_SYNC_TICKS;
+			initClient--;
 			if (initClient <= 1) {
 				changed = true;
 				initClient = 0;
@@ -469,7 +470,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public void sendDescriptionPacket() {
 		super.sendDescriptionPacket();
 
-		initClient = 6;
+		initClient = CLIENT_INIT_DELAY;
 	}
 
 	public FluidStack getStack(ForgeDirection direction) {

@@ -26,6 +26,7 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.StatementSlot;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.IStripesHandler;
 import buildcraft.api.transport.IStripesHandler.StripesHandlerType;
 import buildcraft.api.transport.IStripesPipe;
@@ -36,7 +37,6 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
-import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.statements.ActionPipeDirection;
@@ -177,10 +177,10 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 
 	@Override
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
-		if (tile instanceof TileGenericPipe) {
-			TileGenericPipe tilePipe = (TileGenericPipe) tile;
+		if (tile instanceof IPipeTile) {
+			IPipeTile tilePipe = (IPipeTile) tile;
 
-			if (tilePipe.pipe instanceof PipeItemsStripes) {
+			if (tilePipe.getPipe() instanceof PipeItemsStripes) {
 				return false;
 			}
 		}

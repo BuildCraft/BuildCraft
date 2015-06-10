@@ -53,6 +53,11 @@ public class AIRobotUnload extends AIRobot {
 			return false;
 		}
 
+		ForgeDirection injectSide = station.side().getOpposite();
+		if (!output.canInjectItems(injectSide)) {
+			return false;
+		}
+
 		for (IInvSlot robotSlot : InventoryIterator.getIterable(robot, ForgeDirection.UNKNOWN)) {
 			if (robotSlot.getStackInSlot() == null) {
 				continue;
@@ -64,10 +69,9 @@ public class AIRobotUnload extends AIRobot {
 				return false;
 			}
 
-			ForgeDirection injectSide = station.side().getOpposite();
-
 			ItemStack stack = robotSlot.getStackInSlot();
 			int used = output.injectItem(stack, doUnload, injectSide, null);
+
 			if (used > 0) {
 				if (doUnload) {
 					robotSlot.decreaseStackInSlot(used);

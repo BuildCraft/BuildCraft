@@ -381,6 +381,11 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 					robot.onChunkUnload();
 				}
 			}
+			for (DockingStation station : new ArrayList<DockingStation>(stations.values())) {
+				if (!world.blockExists(station.x(), station.y(), station.z())) {
+					station.onChunkUnload();
+				}
+			}
 		}
 	}
 

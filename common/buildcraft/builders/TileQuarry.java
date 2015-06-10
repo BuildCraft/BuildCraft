@@ -582,7 +582,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		if (useDefault) {
 			int xMin, zMin;
 
-			ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite();
+			int dir = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+			ForgeDirection o = ForgeDirection.getOrientation(dir > 6 ? 6 : dir).getOpposite();
 
 			switch (o) {
 			case EAST:

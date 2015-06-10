@@ -20,6 +20,8 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import net.minecraftforge.oredict.OreDictionary;
+
 import buildcraft.BuildCraftSilicon;
 import buildcraft.core.lib.items.ItemBuildCraft;
 
@@ -94,6 +96,7 @@ public class ItemRedstoneChipset extends ItemBuildCraft {
 	public void registerItemStacks() {
 		for (Chipset chipset : Chipset.VALUES) {
 			GameRegistry.registerCustomItemStack(chipset.getChipsetName(), chipset.getStack());
+			OreDictionary.registerOre("chipset" + chipset.name().toUpperCase().substring(0, 1) + chipset.name().toLowerCase().substring(1), chipset.getStack());
 		}
 	}
 }

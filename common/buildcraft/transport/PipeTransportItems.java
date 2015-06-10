@@ -321,7 +321,6 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 				if (handleItem && items.scheduleRemoval(item)) {
 					handleTileReached(item, tile);
 				}
-
 			}
 		}
 		items.iterating = false;
