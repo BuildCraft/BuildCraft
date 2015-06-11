@@ -51,7 +51,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public static short OUTPUT_COOLDOWN = 30; // 30
 
 	private static int NETWORK_SYNC_TICKS = BuildCraftCore.updateFactor / 2;
-	private static byte CLIENT_INIT_DELAY = (byte) 6;
+	private static byte CLIENT_INIT_DELAY = (byte) 12;
 	private static final ForgeDirection[] directions = ForgeDirection.VALID_DIRECTIONS;
 	private static final ForgeDirection[] orientations = ForgeDirection.values();
 
