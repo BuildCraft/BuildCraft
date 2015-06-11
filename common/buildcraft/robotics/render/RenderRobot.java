@@ -37,6 +37,7 @@ import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.IItemRenderer;
+import net.minecraftforge.common.util.Constants.NBT;
 
 import buildcraft.BuildCraftRobotics;
 import buildcraft.api.robots.IRobotOverlayItem;
@@ -60,7 +61,9 @@ public class RenderRobot extends Render implements IItemRenderer {
 	};
 	private ModelBase modelHelmet = new ModelBase() {
 	};
-	private ModelRenderer box, helmetBox;
+	private ModelBase modelSkullOverlay = new ModelBase() {
+	};
+	private ModelRenderer box, helmetBox, skullOverlayBox;
 
 	private Map<String, GameProfile> gameProfileCache = new HashMap<String, GameProfile>();
 
@@ -84,6 +87,9 @@ public class RenderRobot extends Render implements IItemRenderer {
 		helmetBox = new ModelRenderer(modelHelmet, 0, 0);
 		helmetBox.addBox(-4F, -8F, -4F, 8, 8, 8);
 		helmetBox.setRotationPoint(0.0F, 0.0F, 0.0F);
+		skullOverlayBox = new ModelRenderer(modelSkullOverlay, 32, 0);
+		skullOverlayBox.addBox(-4.0F, -8.0F, -4.0F, 8, 8, 8, 0.5F);
+		skullOverlayBox.setRotationPoint(0.0F, 0.0F, 0.0F);
 	}
 
 	@Override
@@ -265,7 +271,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 			NBTTagCompound nbt = wearable.getTagCompound();
 			if (nbt.hasKey("Name")) {
 				gameProfile = gameProfileCache.get(nbt.getString("Name"));
-			} else if (nbt.hasKey("SkullOwner")) {
+			} else if (nbt.hasKey("SkullOwner", NBT.TAG_COMPOUND)) {
 				gameProfile = NBTUtil.func_152459_a(nbt.getCompoundTag("SkullOwner"));
 				nbt.setString("Name", gameProfile.getName());
 				gameProfileCache.put(gameProfile.getName(), gameProfile);
@@ -274,6 +280,12 @@ public class RenderRobot extends Render implements IItemRenderer {
 
 		TileEntitySkullRenderer.field_147536_b.func_152674_a(-0.5F, -0.25F, -0.5F, 1, -90.0F,
 				wearable.getItemDamage(), gameProfile);
+		if (gameProfile != null) {
+			GL11.glTranslatef(0.0f, -0.25f, 0.0f);
+			GL11.glRotatef(180F, 0, 0, 1);
+			GL11.glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
+			skullOverlayBox.render(1 / 16f);
+		}
 		GL11.glPopMatrix();
 	}
 
