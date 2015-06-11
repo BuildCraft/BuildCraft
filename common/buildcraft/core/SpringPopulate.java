@@ -25,10 +25,9 @@ public class SpringPopulate {
 
 	@SubscribeEvent
 	public void populate(PopulateChunkEvent.Post event) {
-
 		boolean doGen = TerrainGen.populate(event.chunkProvider, event.world, event.rand, event.chunkX, event.chunkZ, event.hasVillageGenerated, PopulateChunkEvent.Populate.EventType.CUSTOM);
 
-		if (!doGen) {
+		if (!doGen || !BlockSpring.EnumSpring.WATER.canGen) {
 			event.setResult(Result.ALLOW);
 			return;
 		}
@@ -55,43 +54,30 @@ public class SpringPopulate {
 		int posX = x + random.nextInt(16);
 		int posZ = z + random.nextInt(16);
 
-		for (int i = 8; i >= 0; i--) {
+		for (int i = 0; i < 5; i++) {
 			Block candidate = world.getBlock(posX, i, posZ);
 
 			if (candidate != Blocks.bedrock) {
 				continue;
 			}
 
-			world.setBlock(posX, i, posZ, BuildCraftCore.springBlock);
+			// Handle flat bedrock maps
+			int y = i > 0 ? i : i - 1;
 
-			for (int j = i + 2; j < world.getActualHeight() - 10; j++) {
-				if (!boreToSurface(world, posX, j, posZ)) {
-					if (world.isAirBlock(posX, j, posZ)) {
-						world.setBlock(posX, j, posZ, Blocks.water);
-					}
+			int toGround = 50 - random.nextInt(25);
 
+			world.setBlock(posX, y + 1, posZ, BuildCraftCore.springBlock);
+
+			for (int j = y + 2; j < toGround; j++) {
+				if (world.isAirBlock(posX, j, posZ)) {
+					world.setBlock(posX, j, posZ, Blocks.water);
 					break;
+				} else {
+					world.setBlock(posX, j, posZ, Blocks.water);
 				}
 			}
 
 			break;
 		}
-	}
-
-	private boolean boreToSurface(World world, int x, int y, int z) {
-		if (world.isAirBlock(x, y, z)) {
-			return false;
-		}
-
-		Block existing = world.getBlock(x, y, z);
-		if (existing != Blocks.stone
-				&& existing != Blocks.dirt
-				&& existing != Blocks.gravel
-				&& existing != Blocks.grass) {
-			return false;
-		}
-
-		world.setBlock(x, y, z, Blocks.water);
-		return true;
 	}
 }
