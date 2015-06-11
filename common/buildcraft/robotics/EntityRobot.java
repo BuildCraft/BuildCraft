@@ -1099,7 +1099,7 @@ public class EntityRobot extends EntityRobotBase implements
 			return true;
 		} else if (wearables.size() < 8 && stack.getItem() instanceof ItemSkull) {
 			if (!worldObj.isRemote) {
-				ItemStack skullStack =stack.splitStack(1);
+				ItemStack skullStack = stack.splitStack(1);
 				initSkullItem(skullStack);
 				wearables.add(skullStack);
 				syncWearablesToClient();

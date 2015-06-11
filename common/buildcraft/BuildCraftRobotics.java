@@ -183,11 +183,14 @@ public class BuildCraftRobotics extends BuildCraftMod {
 	public static MapManager manager;
 	private static Thread managerThread;
 
+	private boolean noThreadedZoneMapGen;
+
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
 		new BCCreativeTab("boards");
 
 		BuildCraftCore.mainConfigManager.register("general", "boards.blacklist", new String[]{}, "Blacklisted robots boards", ConfigManager.RestartRequirement.GAME);
+		BuildCraftCore.mainConfigManager.register("experimental", "disableThreadedZoneMapGen", false, "If you're getting frequent EntityTracker crashes, report and turn this on! The option will be removed when we're sure we resolved the bug.\nDO NOT turn this option on if you're not experiencing any issues as it WILL cause slower game performance.", ConfigManager.RestartRequirement.GAME);
 
 		reloadConfig(ConfigManager.RestartRequirement.GAME);
 
@@ -386,9 +389,12 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void serverUnload(FMLServerStoppingEvent event) {
-		if (managerThread != null) {
+		if (manager != null) {
 			manager.stop();
 			manager.saveAllWorlds();
+		}
+
+		if (managerThread != null) {
 			managerThread.interrupt();
 
 			MinecraftForge.EVENT_BUS.unregister(manager);
@@ -409,9 +415,11 @@ public class BuildCraftRobotics extends BuildCraftMod {
 			e.printStackTrace();
 		}
 
-		manager = new MapManager(f);
-		managerThread = new Thread(manager);
-		managerThread.start();
+		manager = new MapManager(f, !noThreadedZoneMapGen);
+		if (noThreadedZoneMapGen) {
+			managerThread = new Thread(manager);
+			managerThread.start();
+		}
 
 		MinecraftForge.EVENT_BUS.register(manager);
 		FMLCommonHandler.instance().bus().register(manager);
@@ -424,6 +432,8 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
 	public void reloadConfig(ConfigManager.RestartRequirement restartType) {
 		if (restartType == ConfigManager.RestartRequirement.GAME) {
+			noThreadedZoneMapGen = BuildCraftCore.mainConfigManager.get("experimental.disableThreadedZoneMapGen").getBoolean();
+
 			blacklistedRobots = new ArrayList<String>();
 			blacklistedRobots.addAll(Arrays.asList(BuildCraftCore.mainConfigManager.get("general",
 					"boards.blacklist").getStringList()));

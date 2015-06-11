@@ -2,8 +2,6 @@ package buildcraft.robotics.map;
 
 import java.io.File;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import com.google.common.collect.HashBiMap;
 
@@ -17,11 +15,13 @@ import net.minecraftforge.event.world.ChunkEvent;
 public class MapManager implements Runnable {
 	private final HashBiMap<World, MapWorld> worldMap = HashBiMap.create();
 	private final File location;
+	private final boolean isThreaded;
 	private boolean stop = false;
 	private long lastSaveTime;
 
-	public MapManager(File location) {
+	public MapManager(File location, boolean isThreaded) {
 		this.location = location;
+		this.isThreaded = isThreaded;
 	}
 
 	public void stop() {
@@ -39,6 +39,17 @@ public class MapManager implements Runnable {
 			}
 		}
 		return worldMap.get(world);
+	}
+
+	@SubscribeEvent
+	public void serverTick(TickEvent.ServerTickEvent event) {
+		if (!isThreaded && event.phase == TickEvent.Phase.END) {
+			synchronized (worldMap) {
+				for (MapWorld world : worldMap.values()) {
+					world.updateChunkInQueue();
+				}
+			}
+		}
 	}
 
 	@SubscribeEvent

@@ -41,7 +41,6 @@ public class SpringPopulate {
 	}
 
 	private void doPopulate(World world, Random random, int x, int z) {
-
 		// A spring will be generated every 40th chunk.
 		if (random.nextFloat() > 0.025f) {
 			return;
