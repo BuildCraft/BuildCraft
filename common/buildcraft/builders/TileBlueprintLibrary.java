@@ -23,8 +23,10 @@ import cpw.mods.fml.relauncher.Side;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
-import buildcraft.api.library.ILibraryTypeHandler;
 import buildcraft.api.library.LibraryAPI;
+import buildcraft.api.library.LibraryTypeHandler;
+import buildcraft.api.library.LibraryTypeHandlerByteArray;
+import buildcraft.api.library.LibraryTypeHandlerNBT;
 import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.SimpleInventory;
@@ -88,7 +90,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 			pageId++;
 		}
 
-		setCurrentPage(BuildCraftBuilders.clientDB.getPage (pageId));
+		setCurrentPage(BuildCraftBuilders.clientDB.getPage(pageId));
 	}
 
 	public void pagePrev () {
@@ -161,7 +163,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 		inv.setInventorySlotContents(i, itemstack);
 
 		if (i == 0) {
-			if (getStackInSlot(0) != null && findHandler(0, true) != null) {
+			if (getStackInSlot(0) != null && findHandler(0, LibraryTypeHandler.HandlerType.STORE) != null) {
 				progressIn = 1;
 			} else {
 				progressIn = 0;
@@ -169,7 +171,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 		}
 
 		if (i == 2) {
-			if (getStackInSlot(2) != null && findHandler(2, false) != null) {
+			if (getStackInSlot(2) != null && findHandler(2, LibraryTypeHandler.HandlerType.LOAD) != null) {
 				progressOut = 1;
 			} else {
 				progressOut = 0;
@@ -210,11 +212,11 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 	public void closeInventory() {
 	}
 
-	private ILibraryTypeHandler findHandler(int slot, boolean store) {
+	private LibraryTypeHandler findHandler(int slot, LibraryTypeHandler.HandlerType type) {
 		ItemStack stack = getStackInSlot(slot);
 
-		for (ILibraryTypeHandler h : LibraryAPI.getHandlerSet()) {
-			if (h.isHandler(stack, store)) {
+		for (LibraryTypeHandler h : LibraryAPI.getHandlerSet()) {
+			if (h.isHandler(stack, type)) {
 				return h;
 			}
 		}
@@ -245,15 +247,25 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 		// On progress IN, we'll download the blueprint from the server to the
 		// client, and then store it to the client.
 		if (progressIn == 100 && getStackInSlot(1) == null) {
-			final NBTTagCompound nbt = new NBTTagCompound();
-			ILibraryTypeHandler handler = findHandler(0, true);
+			LibraryTypeHandler handler = findHandler(0, LibraryTypeHandler.HandlerType.STORE);
 
 			if (handler == null) {
 				uploadingPlayer = null;
 				return;
 			}
 
-			if (!handler.store(getStackInSlot(0), nbt)) {
+			byte[] data = null;
+
+			if (handler instanceof LibraryTypeHandlerNBT) {
+				final NBTTagCompound nbt = new NBTTagCompound();
+				if (((LibraryTypeHandlerNBT) handler).store(getStackInSlot(0), nbt)) {
+					data = NBTUtils.save(nbt);
+				}
+			} else if (handler instanceof LibraryTypeHandlerByteArray) {
+				data = ((LibraryTypeHandlerByteArray) handler).store(getStackInSlot(0));
+			}
+
+			if (data == null) {
 				uploadingPlayer = null;
 				return;
 			}
@@ -261,18 +273,18 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 			setInventorySlotContents(1, getStackInSlot(0));
 			setInventorySlotContents(0, null);
 
+			final byte[] dataOut = data;
 			final LibraryId id = new LibraryId();
 			id.name = handler.getName(getStackInSlot(1));
-			id.extension = handler.getFileExtension();
+			id.extension = handler.getOutputExtension();
 
 			if (uploadingPlayer != null) {
 				BuildCraftCore.instance.sendToPlayer(uploadingPlayer, new PacketCommand(this, "downloadBlueprintToClient",
 						new CommandWriter() {
 					public void write(ByteBuf data) {
-						byte[] bytes = NBTUtils.save(nbt);
-						id.generateUniqueId(bytes);
+						id.generateUniqueId(dataOut);
 						id.writeData(data);
-						NetworkUtils.writeByteArray(data, bytes);
+						NetworkUtils.writeByteArray(data, dataOut);
 					}
 				}));
 				uploadingPlayer = null;
@@ -336,7 +348,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 				byte[] data = NetworkUtils.readByteArray(stream);
 
 				try {
-					ILibraryTypeHandler handler = LibraryAPI.getHandler(id.extension);
+					LibraryTypeHandler handler = LibraryAPI.getHandlerFor(id.extension);
 					if (handler == null) {
 						return;
 					}
@@ -368,11 +380,23 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 				}
 			} else if ("uploadServerEnd".equals(command)) {
 				try {
-					NBTTagCompound nbt = CompressedStreamTools.func_152457_a(blueprintDownload, NBTSizeTracker.field_152451_a);
-					ItemStack output = LibraryAPI.getHandler(blueprintDownloadId.extension).load(getStackInSlot(2), nbt);
+					LibraryTypeHandler handler = LibraryAPI.getHandlerFor(blueprintDownloadId.extension);
 
-					setInventorySlotContents(3, output);
-					setInventorySlotContents(2, null);
+					if (handler != null) {
+						ItemStack output = null;
+
+						if (handler instanceof LibraryTypeHandlerNBT) {
+							NBTTagCompound nbt = CompressedStreamTools.func_152457_a(blueprintDownload, NBTSizeTracker.field_152451_a);
+							output = ((LibraryTypeHandlerNBT) handler).load(getStackInSlot(2), nbt);
+						} else if (handler instanceof LibraryTypeHandlerByteArray) {
+							output = ((LibraryTypeHandlerByteArray) handler).load(getStackInSlot(2), blueprintDownload);
+						}
+
+						if (output != null) {
+							setInventorySlotContents(3, output);
+							setInventorySlotContents(2, null);
+						}
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -396,11 +420,11 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 		}));
 	}
 
-	private boolean isOutputConsistent () {
+	private boolean isOutputConsistent() {
 		if (selected == -1 || getStackInSlot(2) == null) {
 			return false;
 		}
 
-		return LibraryAPI.getHandler(currentPage.get(selected).extension).isHandler(getStackInSlot(2), false);
+		return LibraryAPI.getHandlerFor(currentPage.get(selected).extension).isHandler(getStackInSlot(2), LibraryTypeHandler.HandlerType.LOAD);
 	}
 }

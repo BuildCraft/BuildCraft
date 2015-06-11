@@ -65,14 +65,14 @@ public class PipeFluidsEmerald extends PipeFluidsWood implements ISerializable {
 	}
 
 	@Override
-	public boolean blockActivated(EntityPlayer entityplayer) {
+	public boolean blockActivated(EntityPlayer entityplayer, ForgeDirection side) {
 		if (entityplayer.getCurrentEquippedItem() != null) {
 			if (Block.getBlockFromItem(entityplayer.getCurrentEquippedItem().getItem()) instanceof BlockGenericPipe) {
 				return false;
 			}
 		}
 
-		if (super.blockActivated(entityplayer)) {
+		if (super.blockActivated(entityplayer, side)) {
 			return true;
 		}
 

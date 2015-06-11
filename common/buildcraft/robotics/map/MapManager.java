@@ -8,18 +8,20 @@ import com.google.common.collect.HashBiMap;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 
 public class MapManager implements Runnable {
 	private final HashBiMap<World, MapWorld> worldMap = HashBiMap.create();
 	private final File location;
+	private final boolean isThreaded;
 	private boolean stop = false;
-
 	private long lastSaveTime;
 
-	public MapManager(File location) {
+	public MapManager(File location, boolean isThreaded) {
 		this.location = location;
+		this.isThreaded = isThreaded;
 	}
 
 	public void stop() {
@@ -40,6 +42,17 @@ public class MapManager implements Runnable {
 	}
 
 	@SubscribeEvent
+	public void serverTick(TickEvent.ServerTickEvent event) {
+		if (!isThreaded && event.phase == TickEvent.Phase.END) {
+			synchronized (worldMap) {
+				for (MapWorld world : worldMap.values()) {
+					world.updateChunkInQueue();
+				}
+			}
+		}
+	}
+
+	@SubscribeEvent
 	public void chunkLoaded(ChunkEvent.Load event) {
 		MapWorld world = getWorld(event.getChunk().worldObj);
 		if (world != null) {
@@ -52,7 +65,10 @@ public class MapManager implements Runnable {
 		Chunk chunk = placeEvent.world.getChunkFromBlockCoords(placeEvent.x, placeEvent.z);
 		MapWorld world = getWorld(placeEvent.world);
 		if (world != null) {
-			world.queueChunkForUpdate(chunk.xPosition, chunk.zPosition, 512);
+			int hv = placeEvent.world.getHeightValue(placeEvent.x, placeEvent.z);
+			if (placeEvent.y >= (hv - 4)) {
+				world.queueChunkForUpdate(chunk.xPosition, chunk.zPosition, 512);
+			}
 		}
 	}
 
@@ -61,7 +77,10 @@ public class MapManager implements Runnable {
 		Chunk chunk = placeEvent.world.getChunkFromBlockCoords(placeEvent.x, placeEvent.z);
 		MapWorld world = getWorld(placeEvent.world);
 		if (world != null) {
-			world.queueChunkForUpdate(chunk.xPosition, chunk.zPosition, 512);
+			int hv = placeEvent.world.getHeightValue(placeEvent.x, placeEvent.z);
+			if (placeEvent.y >= (hv - 4)) {
+				world.queueChunkForUpdate(chunk.xPosition, chunk.zPosition, 512);
+			}
 		}
 	}
 
@@ -93,7 +112,7 @@ public class MapManager implements Runnable {
 			}
 
 			try {
-				Thread.sleep(50 * worldMap.size());
+				Thread.sleep(20 * worldMap.size());
 			} catch (Exception e) {
 
 			}

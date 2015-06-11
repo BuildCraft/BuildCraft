@@ -11,14 +11,13 @@ package buildcraft;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.S3FPacketCustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
@@ -30,6 +29,7 @@ import cpw.mods.fml.relauncher.Side;
 
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.network.Packet;
+import buildcraft.core.lib.utils.ThreadSafeUtils;
 
 public class BuildCraftMod {
 	private static PacketSender sender = new PacketSender();
@@ -116,7 +116,7 @@ public class BuildCraftMod {
 	}
 
 	static class PacketSender implements Runnable {
-		private Queue<SendRequest> packets = new ConcurrentLinkedDeque<SendRequest>();
+		private Queue<SendRequest> packets = new ConcurrentLinkedQueue<SendRequest>();
 
 		@Override
 		public void run() {
@@ -129,9 +129,9 @@ public class BuildCraftMod {
 
 				while (!packets.isEmpty()) {
 					SendRequest r = packets.remove();
-					S3FPacketCustomPayload packetCustomPayload = new S3FPacketCustomPayload();
-					net.minecraft.network.Packet p = r.source.channels.get(Side.SERVER).generatePacketFrom(r.packet);
-					for (EntityPlayerMP player : (List<EntityPlayerMP>) MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
+					net.minecraft.network.Packet p = ThreadSafeUtils.generatePacketFrom(r.packet, r.source.channels.get(Side.SERVER));
+					List<EntityPlayerMP> playerList = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
+					for (EntityPlayerMP player : playerList.toArray(new EntityPlayerMP[playerList.size()])) {
 						if (r.isValid(player)) {
 							NetHandlerPlayServer handler = player.playerNetServerHandler;
 							if (handler == null) {
@@ -182,16 +182,6 @@ public class BuildCraftMod {
 	public void sendToPlayer(EntityPlayer entityplayer, Packet packet) {
 		sender.add(new PlayerSendRequest(this, packet, entityplayer));
 	}
-
-	/* public void sendToAll(Packet packet) {
-		try {
-			channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET)
-					.set(FMLOutboundHandler.OutboundTarget.ALL);
-			channels.get(Side.SERVER).writeOutbound(packet);
-		} catch (Throwable t) {
-			BCLog.logger.log(Level.WARN, "sendToAll crash", t);
-		}
-	} */
 
 	public void sendToServer(Packet packet) {
 		try {

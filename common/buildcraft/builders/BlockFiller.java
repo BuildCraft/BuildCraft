@@ -11,24 +11,22 @@ package buildcraft.builders;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.core.BCCreativeTab;
-import buildcraft.core.BlockBuildCraftLED;
 import buildcraft.core.GuiIds;
+import buildcraft.core.lib.block.BlockBuildCraft;
 
-public class BlockFiller extends BlockBuildCraftLED {
+public class BlockFiller extends BlockBuildCraft {
 	public BlockFiller() {
 		super(Material.iron);
 
 		setHardness(5F);
 		setCreativeTab(BCCreativeTab.get("main"));
 		setRotatable(true);
-		setPassCount(4);
 	}
 
 	@Override
@@ -49,16 +47,6 @@ public class BlockFiller extends BlockBuildCraftLED {
 	}
 
 	@Override
-	public int getIconGlowLevel(IBlockAccess access, int x, int y, int z) {
-		if (renderPass == 0 || renderPass == 3) {
-			return -1;
-		} else {
-			TileFiller tile = (TileFiller) access.getTileEntity(x, y, z);
-			return tile.getIconGlowLevel(renderPass);
-		}
-	}
-
-	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileFiller();
 	}
@@ -76,29 +64,5 @@ public class BlockFiller extends BlockBuildCraftLED {
 	@Override
 	public int getLightValue(IBlockAccess world, int x, int y, int z) {
 		return 1;
-	}
-
-	@Override
-	public IIcon getIconAbsolute(IBlockAccess access, int x, int y, int z, int side, int meta) {
-		if (renderPass < 3) {
-			return super.getIconAbsolute(access, x, y, z, side, meta);
-		} else {
-			if (side == 2) {
-				TileEntity tile = access.getTileEntity(x, y, z);
-				if (tile instanceof TileFiller && ((TileFiller) tile).currentPattern != null) {
-					return ((TileFiller) tile).currentPattern.getBlockOverlay();
-				}
-			}
-			return null;
-		}
-	}
-
-	@Override
-	public IIcon getIconAbsolute(int side, int meta) {
-		if (renderPass < 3) {
-			return super.getIconAbsolute(side, meta);
-		} else {
-			return null;
-		}
 	}
 }

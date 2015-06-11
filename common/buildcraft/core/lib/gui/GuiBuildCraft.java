@@ -85,9 +85,9 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		InventoryPlayer playerInv = this.mc.thePlayer.inventory;
 
 		if (playerInv.getItemStack() == null) {
-			drawToolTips(container.getWidgets(), mouseX - left, mouseY - top);
-			drawToolTips(buttonList, mouseX, mouseY);
-			drawToolTips(inventorySlots.inventorySlots, mouseX, mouseY);
+			drawToolTips(container.getWidgets(), mouseX - left, mouseY - top, left, top);
+			drawToolTips(buttonList, mouseX, mouseY, 0, 0);
+			drawToolTips(inventorySlots.inventorySlots, mouseX, mouseY, 0, 0);
 		}
 
 		GL11.glPopMatrix();
@@ -95,7 +95,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 
-	private void drawToolTips(Collection<?> objects, int mouseX, int mouseY) {
+	private void drawToolTips(Collection<?> objects, int mouseX, int mouseY, int offsetX, int offsetY) {
 		for (Object obj : objects) {
 			if (!(obj instanceof IToolTipProvider)) {
 				continue;
@@ -112,7 +112,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 			tips.onTick(mouseOver);
 			if (mouseOver && tips.isReady()) {
 				tips.refresh();
-				drawToolTips(tips, mouseX, mouseY);
+				drawToolTips(tips, mouseX + offsetX, mouseY + offsetY);
 			}
 		}
 	}

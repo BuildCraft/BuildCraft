@@ -54,15 +54,15 @@ import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.internal.IDropControlInventory;
+import buildcraft.core.internal.ILEDProvider;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.utils.BlockMiner;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 
-public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory, IDropControlInventory, IPipeConnection, IControllable {
-
-	private static enum Stage {
+public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory, IDropControlInventory, IPipeConnection, IControllable, ILEDProvider {
+	private enum Stage {
 		BUILDING,
 		DIGGING,
 		MOVING,
@@ -134,13 +134,13 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 	private void createArm() {
 		worldObj.spawnEntityInWorld
-		(new EntityMechanicalArm(worldObj,
-				box.xMin + CoreConstants.PIPE_MAX_POS,
-				yCoord + box.sizeY () - 1 + CoreConstants.PIPE_MIN_POS,
-				box.zMin + CoreConstants.PIPE_MAX_POS,
-				box.sizeX () - 2 + CoreConstants.PIPE_MIN_POS * 2,
-				box.sizeZ() - 2 + CoreConstants.PIPE_MIN_POS * 2,
-				this));
+				(new EntityMechanicalArm(worldObj,
+						box.xMin + CoreConstants.PIPE_MAX_POS,
+						yCoord + box.sizeY() - 1 + CoreConstants.PIPE_MIN_POS,
+						box.zMin + CoreConstants.PIPE_MAX_POS,
+						box.sizeX() - 2 + CoreConstants.PIPE_MIN_POS * 2,
+						box.sizeZ() - 2 + CoreConstants.PIPE_MIN_POS * 2,
+						this));
 	}
 
 	// Callback from the arm once it's created
@@ -582,7 +582,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		if (useDefault) {
 			int xMin, zMin;
 
-			ForgeDirection o = ForgeDirection.values()[worldObj.getBlockMetadata(xCoord, yCoord, zCoord)].getOpposite();
+			int dir = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+			ForgeDirection o = ForgeDirection.getOrientation(dir > 6 ? 6 : dir).getOpposite();
 
 			switch (o) {
 			case EAST:
@@ -863,16 +864,6 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		}
 	}
 
-	public int getIconGlowLevel(int renderPass) {
-		if (renderPass == 2) { // Red LED
-			return ledState & 15;
-		} else if (renderPass == 3) { // Green LED
-			return (ledState >> 4) > 0 ? 15 : 0;
-		} else {
-			return -1;
-		}
-	}
-
 	@Override
 	public boolean hasCustomInventoryName() {
 		return false;
@@ -919,5 +910,14 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 			return ConnectOverride.DISCONNECT;
 		}
 		return type == IPipeTile.PipeType.ITEM ? ConnectOverride.CONNECT : ConnectOverride.DEFAULT;
+	}
+
+	@Override
+	public int getLEDLevel(int led) {
+		if (led == 0) { // Red LED
+			return ledState & 15;
+		} else { // Green LED
+			return (ledState >> 4) > 0 ? 15 : 0;
+		}
 	}
 }

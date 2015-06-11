@@ -56,8 +56,8 @@ public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 	}
 
 	@Override
-	public boolean blockActivated(EntityPlayer entityplayer) {
-		return logic.blockActivated(entityplayer);
+	public boolean blockActivated(EntityPlayer entityplayer, ForgeDirection side) {
+		return logic.blockActivated(entityplayer, side);
 	}
 
 	@Override

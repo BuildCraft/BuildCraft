@@ -18,10 +18,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftBuilders;
-import buildcraft.core.BlockBuildCraftLED;
 import buildcraft.core.GuiIds;
+import buildcraft.core.lib.block.BlockBuildCraft;
 
-public class BlockArchitect extends BlockBuildCraftLED {
+public class BlockArchitect extends BlockBuildCraft {
 	private IIcon[] led;
 
 	public BlockArchitect() {
@@ -62,16 +62,6 @@ public class BlockArchitect extends BlockBuildCraftLED {
 	@Override
 	public boolean isSideSolid(IBlockAccess world, int x, int y, int z, ForgeDirection side) {
 		return false;
-	}
-
-	@Override
-	public int getIconGlowLevel(IBlockAccess access, int x, int y, int z) {
-		if (renderPass < 1) {
-			return -1;
-		} else {
-			TileArchitect tile = (TileArchitect) access.getTileEntity(x, y, z);
-			return tile.getIconGlowLevel(renderPass);
-		}
 	}
 
 	@Override

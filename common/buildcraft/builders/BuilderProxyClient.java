@@ -8,16 +8,22 @@
  */
 package buildcraft.builders;
 
+import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
+import buildcraft.BuildCraftBuilders;
+import buildcraft.builders.render.RenderBuilderTile;
+import buildcraft.builders.render.RenderFiller;
 import buildcraft.builders.urbanism.TileUrbanist;
 import buildcraft.core.lib.EntityBlock;
+import buildcraft.core.lib.render.RenderMultiTESR;
 import buildcraft.core.lib.render.RenderVoid;
 import buildcraft.core.render.RenderBoxProvider;
 import buildcraft.core.render.RenderBuilder;
+import buildcraft.core.render.RenderLEDTile;
 
 public class BuilderProxyClient extends BuilderProxy {
 	public static IIcon drillTexture;
@@ -32,13 +38,25 @@ public class BuilderProxyClient extends BuilderProxy {
 	public void registerBlockRenderers() {
 		super.registerBlockRenderers();
 
-		ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderBuilder());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileUrbanist.class, new RenderBoxProvider());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect.class, new RenderArchitect());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderBuilder());
-		ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder.class, new RenderBuilder());
+		ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder.class, new RenderBuilderTile());
 		ClientRegistry.bindTileEntitySpecialRenderer(TilePathMarker.class, new RenderPathMarker());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileConstructionMarker.class, new RenderConstructionMarker());
+
+		ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderMultiTESR(new TileEntitySpecialRenderer[] {
+				new RenderLEDTile(BuildCraftBuilders.fillerBlock),
+				new RenderFiller()
+		}));
+
+		ClientRegistry.bindTileEntitySpecialRenderer(TileQuarry.class, new RenderMultiTESR(new TileEntitySpecialRenderer[] {
+				new RenderLEDTile(BuildCraftBuilders.quarryBlock),
+				new RenderBuilder()
+		}));
+
+		ClientRegistry.bindTileEntitySpecialRenderer(TileArchitect.class, new RenderMultiTESR(new TileEntitySpecialRenderer[] {
+				new RenderLEDTile(BuildCraftBuilders.architectBlock),
+				new RenderArchitect()
+		}));
 
 		RenderingRegistry.registerEntityRenderingHandler(EntityMechanicalArm.class, new RenderVoid());
 	}

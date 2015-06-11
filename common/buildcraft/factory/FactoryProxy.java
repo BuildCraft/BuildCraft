@@ -23,9 +23,6 @@ public class FactoryProxy {
 	public void initializeEntityRenders() {
 	}
 
-	public void initializeNEIIntegration() {
-	}
-
 	public EntityBlock newPumpTube(World w) {
         return new EntityBlock(w);
     }

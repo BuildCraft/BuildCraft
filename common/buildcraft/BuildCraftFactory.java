@@ -38,6 +38,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.builders.schematics.SchematicFree;
+import buildcraft.core.builders.schematics.SchematicRotateMeta;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.network.PacketHandler;
@@ -86,6 +87,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 	public static Achievement refineAndRedefineAchievement;
 
 	public static int miningDepth = 256;
+	public static boolean pumpsNeedRealPower = false;
 	public static PumpDimensionList pumpDimensionList;
 
 	@Mod.EventHandler
@@ -107,7 +109,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 		BuilderAPI.schematicRegistry.registerSchematicBlock(refineryBlock, SchematicRefinery.class);
 		BuilderAPI.schematicRegistry.registerSchematicBlock(tankBlock, SchematicTileIgnoreState.class);
 		BuilderAPI.schematicRegistry.registerSchematicBlock(pumpBlock, SchematicPump.class);
-		BuilderAPI.schematicRegistry.registerSchematicBlock(miningWellBlock, SchematicTileIgnoreState.class);
+		BuilderAPI.schematicRegistry.registerSchematicBlock(miningWellBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 		BuilderAPI.schematicRegistry.registerSchematicBlock(floodGateBlock, SchematicTileIgnoreState.class);
 		BuilderAPI.schematicRegistry.registerSchematicBlock(autoWorkbenchBlock, SchematicAutoWorkbench.class);
 		BuilderAPI.schematicRegistry.registerSchematicBlock(hopperBlock, SchematicTile.class);
@@ -136,6 +138,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 
 		BuildCraftCore.mainConfigManager.get("general.miningDepth").setMinValue(2).setMaxValue(256);
 		BuildCraftCore.mainConfigManager.register("general.pumpDimensionControl", DefaultProps.PUMP_DIMENSION_LIST, plc, ConfigManager.RestartRequirement.NONE);
+		BuildCraftCore.mainConfigManager.register("general.pumpsNeedRealPower", false, "Do pumps need real (non-redstone) power?", ConfigManager.RestartRequirement.WORLD);
 
 		reloadConfig(ConfigManager.RestartRequirement.GAME);
 
@@ -256,6 +259,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 			reloadConfig(ConfigManager.RestartRequirement.NONE);
 		} else {
 			miningDepth = BuildCraftCore.mainConfigManager.get("general.miningDepth").getInt();
+			pumpsNeedRealPower = BuildCraftCore.mainConfigManager.get("general.pumpsNeedRealPower").getBoolean();
 			pumpDimensionList = new PumpDimensionList(BuildCraftCore.mainConfigManager.get("general.pumpDimensionControl").getString());
 
 			if (BuildCraftCore.mainConfiguration.hasChanged()) {

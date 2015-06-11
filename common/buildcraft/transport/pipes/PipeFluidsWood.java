@@ -58,13 +58,13 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 	}
 
 	@Override
-	public boolean blockActivated(EntityPlayer entityplayer) {
-		return logic.blockActivated(entityplayer);
+	public boolean blockActivated(EntityPlayer entityplayer, ForgeDirection side) {
+		return logic.blockActivated(entityplayer, side);
 	}
 
 	@Override
 	public void onNeighborBlockChange(int blockId) {
-		logic.onNeighborBlockChange(blockId);
+		logic.onNeighborBlockChange();
 		super.onNeighborBlockChange(blockId);
 	}
 

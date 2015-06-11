@@ -26,7 +26,7 @@ public final class RenderBox {
 
 	public static void doRender(TextureManager t, ResourceLocation texture, Box box) {
 		GL11.glPushMatrix();
-		GL11.glDisable(2896 /* GL_LIGHTING */);
+		GL11.glDisable(GL11.GL_LIGHTING);
 
 		box.createLaserData();
 
@@ -38,7 +38,7 @@ public final class RenderBox {
 			GL11.glPopMatrix();
 		}
 
-		GL11.glEnable(2896 /* GL_LIGHTING */);
+		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glPopMatrix();
 	}
 

@@ -36,13 +36,22 @@ public abstract class PipeLogicWood {
 				break;
 			}
 		}
+
 		if (newFacing == null) {
 			newFacing = ForgeDirection.UNKNOWN;
 		}
 
-		if (newFacing.ordinal() != meta) {
-			pipe.container.getWorldObj().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, newFacing.ordinal(), 3);
-			pipe.container.scheduleRenderUpdate();
+		setSource(newFacing);
+	}
+
+	private void setSource(ForgeDirection newFacing) {
+		if (newFacing == ForgeDirection.UNKNOWN || isValidFacing(newFacing)) {
+			int meta = pipe.container.getBlockMetadata();
+
+			if (newFacing.ordinal() != meta) {
+				pipe.container.getWorldObj().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, newFacing.ordinal(), 3);
+				pipe.container.scheduleRenderUpdate();
+			}
 		}
 	}
 
@@ -85,10 +94,14 @@ public abstract class PipeLogicWood {
 		}
 	}
 
-	public boolean blockActivated(EntityPlayer entityplayer) {
+	public boolean blockActivated(EntityPlayer entityplayer, ForgeDirection side) {
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
 		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord)) {
-			switchSource();
+			if (side != ForgeDirection.UNKNOWN) {
+				setSource(side);
+			} else {
+				switchSource();
+			}
 			((IToolWrench) equipped).wrenchUsed(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
 			return true;
 		}
@@ -96,7 +109,7 @@ public abstract class PipeLogicWood {
 		return false;
 	}
 
-	public void onNeighborBlockChange(int blockId) {
+	public void onNeighborBlockChange() {
 		if (!pipe.container.getWorldObj().isRemote) {
 			switchSourceIfNeeded();
 		}

@@ -41,17 +41,17 @@ public final class RenderEntityBlock extends Render {
 
 	public static class RenderInfo {
 
-		public double minX;
-		public double minY;
-		public double minZ;
-		public double maxX;
-		public double maxY;
-		public double maxZ;
+		public double minX = 0.0F;
+		public double minY = 0.0F;
+		public double minZ = 0.0F;
+		public double maxX = 1.0F;
+		public double maxY = 1.0F;
+		public double maxZ = 1.0F;
 		public Block baseBlock = Blocks.sand;
 		public IIcon texture = null;
 		public IIcon[] textureArray = null;
 		public boolean[] renderSide = new boolean[6];
-		public float light = -1f;
+		public int light = -1;
 		public int brightness = -1;
 
 		public RenderInfo() {
@@ -184,7 +184,9 @@ public final class RenderEntityBlock extends Render {
 		
 		renderBlocks.setRenderBounds(info.minX, info.minY, info.minZ, info.maxX, info.maxY, info.maxZ);
 
-		if (info.brightness != -1) {
+		if (info.light != -1) {
+			tessellator.setBrightness(info.light << 20 | info.light << 4);
+		} else if (info.brightness != -1) {
 			tessellator.setBrightness(info.brightness << 4);
 		}
 

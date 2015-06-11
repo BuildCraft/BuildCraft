@@ -43,8 +43,6 @@ import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.core.proxy.CoreProxy;
 
 public final class BlockUtils {
-	private static Chunk lastChunk;
-
 	/**
 	 * Deactivate constructor
 	 */
@@ -244,24 +242,6 @@ public final class BlockUtils {
 	/**
 	 * The following functions let you avoid unnecessary chunk loads, which is nice.
 	 */
-
-	private static Chunk getChunkUnforced(World world, int x, int z) {
-		Chunk chunk = lastChunk;
-		if (chunk != null) {
-			if (chunk.isChunkLoaded) {
-				if (chunk.worldObj == world && chunk.xPosition == x && chunk.zPosition == z) {
-					return chunk;
-				}
-			} else {
-				lastChunk = null;
-			}
-		}
-
-		chunk = world.getChunkProvider().chunkExists(x, z) ? world.getChunkProvider().provideChunk(x, z) : null;
-		lastChunk = chunk;
-		return chunk;
-	}
-
 	public static TileEntity getTileEntity(World world, int x, int y, int z) {
 		return getTileEntity(world, x, y, z, false);
 	}
@@ -271,7 +251,7 @@ public final class BlockUtils {
 			if (y < 0 || y > 255) {
 				return null;
 			}
-			Chunk chunk = getChunkUnforced(world, x >> 4, z >> 4);
+			Chunk chunk = ThreadSafeUtils.getChunk(world, x >> 4, z >> 4);
 			return chunk != null ? chunk.getTileEntityUnsafe(x & 15, y, z & 15) : null;
 		} else {
 			return world.getTileEntity(x, y, z);
@@ -287,7 +267,7 @@ public final class BlockUtils {
 			if (y < 0 || y > 255) {
 				return Blocks.air;
 			}
-			Chunk chunk = getChunkUnforced(world, x >> 4, z >> 4);
+			Chunk chunk = ThreadSafeUtils.getChunk(world, x >> 4, z >> 4);
 			return chunk != null ? chunk.getBlock(x & 15, y, z & 15) : Blocks.air;
 		} else {
 			return world.getBlock(x, y, z);
@@ -303,7 +283,7 @@ public final class BlockUtils {
 			if (y < 0 || y > 255) {
 				return 0;
 			}
-			Chunk chunk = getChunkUnforced(world, x >> 4, z >> 4);
+			Chunk chunk = ThreadSafeUtils.getChunk(world, x >> 4, z >> 4);
 			return chunk != null ? chunk.getBlockMetadata(x & 15, y, z & 15) : 0;
 		} else {
 			return world.getBlockMetadata(x, y, z);

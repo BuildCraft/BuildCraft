@@ -33,6 +33,7 @@ import buildcraft.core.Box.Kind;
 import buildcraft.core.LaserData;
 import buildcraft.core.blueprints.BlueprintReadConfiguration;
 import buildcraft.core.internal.IBoxProvider;
+import buildcraft.core.internal.ILEDProvider;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.network.Packet;
@@ -42,8 +43,7 @@ import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
 
-public class TileArchitect extends TileBuildCraft implements IInventory, IBoxProvider, ICommandReceiver {
-
+public class TileArchitect extends TileBuildCraft implements IInventory, IBoxProvider, ICommandReceiver, ILEDProvider {
 	public String currentAuthorName = "";
 
 	public Box box = new Box();
@@ -346,13 +346,8 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		subLasers.add(laser);
 	}
 
-	public int getIconGlowLevel(int renderPass) {
-		if (renderPass == 1) { // Red LED
-			return isProcessing ? 15 : 0;
-		} else if (renderPass == 2) { // Green LED
-			return box != null && box.isInitialized() ? 15 : 0;
-		} else {
-			return -1;
-		}
+	@Override
+	public int getLEDLevel(int led) {
+		return (led == 0 ? isProcessing : box != null && box.isInitialized()) ? 15 : 0;
 	}
 }

@@ -18,9 +18,9 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import buildcraft.api.tools.IToolWrench;
-import buildcraft.core.BlockBuildCraftLED;
+import buildcraft.core.lib.block.BlockBuildCraft;
 
-public class BlockPump extends BlockBuildCraftLED {
+public class BlockPump extends BlockBuildCraft {
 	private IIcon[] led;
 
 	public BlockPump() {
@@ -68,16 +68,6 @@ public class BlockPump extends BlockBuildCraftLED {
 		TileEntity tile = world.getTileEntity(x, y, z);
 		if (tile instanceof TilePump) {
 			((TilePump) tile).onNeighborBlockChange(block);
-		}
-	}
-
-	@Override
-	public int getIconGlowLevel(IBlockAccess access, int x, int y, int z) {
-		if (renderPass < 1) {
-			return -1;
-		} else {
-			TilePump tile = (TilePump) access.getTileEntity(x, y, z);
-			return tile.getIconGlowLevel(renderPass);
 		}
 	}
 

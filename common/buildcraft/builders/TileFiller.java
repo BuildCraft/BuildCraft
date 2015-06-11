@@ -32,6 +32,7 @@ import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.builders.patterns.PatternFill;
+import buildcraft.core.internal.ILEDProvider;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
@@ -39,8 +40,7 @@ import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
 
-public class TileFiller extends TileAbstractBuilder implements IHasWork, IControllable, ICommandReceiver, IStatementContainer {
-
+public class TileFiller extends TileAbstractBuilder implements IHasWork, IControllable, ICommandReceiver, IStatementContainer, ILEDProvider {
 	private static int POWER_ACTIVATION = 500;
 
 	public FillerPattern currentPattern = PatternFill.INSTANCE;
@@ -409,5 +409,10 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 		} else {
 			return -1;
 		}
+	}
+
+	@Override
+	public int getLEDLevel(int led) {
+		return (led == 0 ? done : buildersInAction.size() > 0) ? 15 : 0;
 	}
 }

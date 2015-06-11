@@ -3,7 +3,6 @@ package buildcraft.silicon;
 import java.lang.ref.WeakReference;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.SlotCrafting;
@@ -102,18 +101,17 @@ public class TileStampingTable extends TileLaserTableBase implements IHasWork, I
 
             craftSlot.onPickupFromSlot(getInternalPlayer().get(), result);
 
-            IInventory playerInv = getInternalPlayer().get().inventory;
+            ItemStack[] playerInv = getInternalPlayer().get().inventory.mainInventory;
 
-            for (int i = 0; i < playerInv.getSizeInventory(); i++) {
-                if (playerInv.getStackInSlot(i) != null) {
-                    ItemStack output = playerInv.getStackInSlot(i);
-
-                    for (int j = 2; j < 5; j++) {
+            for (int i = 0; i < playerInv.length; i++) {
+                if (playerInv[i] != null) {
+                    ItemStack output = playerInv[i];
+                    for (int j = 2; j <= 4; j++) {
                         ItemStack target = getStackInSlot(j);
 
                         if (target == null) {
                             setInventorySlotContents(j, output);
-                            output.stackSize = 0;
+                            playerInv[i] = null;
                             break;
                         } else {
                             output.stackSize -= StackHelper.mergeStacks(output, input, true);
@@ -131,7 +129,7 @@ public class TileStampingTable extends TileLaserTableBase implements IHasWork, I
                         InvUtils.dropItems(worldObj, output, xCoord, yCoord + 1, zCoord);
                     }
 
-                    playerInv.setInventorySlotContents(i, null);
+                    playerInv[i] = null;
                 }
             }
 

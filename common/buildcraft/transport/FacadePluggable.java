@@ -29,7 +29,7 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
 
 		@Override
 		public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, ForgeDirection side, PipePluggable pipePluggable, ITextureStates blockStateMachine, int renderPass, int x, int y, int z) {
-			FacadeRenderHelper.pipeFacadeRenderer(renderblocks, blockStateMachine, pipe.getTile(), x, y, z, side, (IFacadePluggable) pipePluggable);
+			FacadeRenderHelper.pipeFacadeRenderer(renderblocks, blockStateMachine, pipe.getTile(), renderPass, x, y, z, side, (IFacadePluggable) pipePluggable);
 		}
 	}
 

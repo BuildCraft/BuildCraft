@@ -204,4 +204,7 @@ public abstract class DockingStation {
 		return null;
 	}
 
+	public void onChunkUnload() {
+
+	}
 }

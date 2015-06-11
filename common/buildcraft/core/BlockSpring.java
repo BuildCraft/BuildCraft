@@ -29,7 +29,6 @@ public class BlockSpring extends Block {
 	public static final XorShift128Random rand = new XorShift128Random();
 
 	public enum EnumSpring {
-
 		WATER(5, -1, Blocks.water),
 		OIL(6000, 8, null); // Set in BuildCraftEnergy
 		public static final EnumSpring[] VALUES = values();

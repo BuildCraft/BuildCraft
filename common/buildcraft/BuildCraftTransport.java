@@ -141,6 +141,7 @@ import buildcraft.transport.pluggable.ItemLens;
 import buildcraft.transport.pluggable.ItemPlug;
 import buildcraft.transport.pluggable.LensPluggable;
 import buildcraft.transport.pluggable.PlugPluggable;
+import buildcraft.transport.render.PipeRendererTESR;
 import buildcraft.transport.schematics.BptItemPipeFilters;
 import buildcraft.transport.schematics.BptPipeIron;
 import buildcraft.transport.schematics.BptPipeWooden;
@@ -297,8 +298,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 			BuildCraftCore.mainConfigManager.register("general.pipes.slimeballWaterproofRecipe", false, "Should I enable an alternate Waterproof recipe, based on slimeballs?", ConfigManager.RestartRequirement.GAME);
 			BuildCraftCore.mainConfigManager.register("power.gateCostMultiplier", 1.0D, "What should be the multiplier of all gate power costs?", ConfigManager.RestartRequirement.GAME);
 			BuildCraftCore.mainConfigManager.register("general.pipes.facadeBlacklist", new String[] {
-					Block.blockRegistry.getNameForObject(Blocks.bedrock),
-					Block.blockRegistry.getNameForObject(Blocks.command_block),
 					Block.blockRegistry.getNameForObject(Blocks.end_portal_frame),
 					Block.blockRegistry.getNameForObject(Blocks.grass),
 					Block.blockRegistry.getNameForObject(Blocks.leaves),
@@ -597,6 +596,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 			for (IGateExpansion expansion : GateExpansions.getExpansions()) {
 				expansion.registerBlockOverlay(event.map);
 			}
+
+			PipeRendererTESR.INSTANCE.onTextureReload();
 		}
 	}
 

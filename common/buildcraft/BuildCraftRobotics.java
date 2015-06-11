@@ -17,9 +17,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.stats.Achievement;
-
 import cpw.mods.fml.client.event.ConfigChangedEvent;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -32,7 +31,6 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -142,6 +140,7 @@ import buildcraft.robotics.statements.ActionStationRequestItems;
 import buildcraft.robotics.statements.ActionStationRequestItemsMachine;
 import buildcraft.robotics.statements.RobotsActionProvider;
 import buildcraft.robotics.statements.RobotsTriggerProvider;
+import buildcraft.robotics.statements.StatementParameterRobot;
 import buildcraft.robotics.statements.TriggerRobotInStation;
 import buildcraft.robotics.statements.TriggerRobotLinked;
 import buildcraft.robotics.statements.TriggerRobotSleep;
@@ -175,23 +174,23 @@ public class BuildCraftRobotics extends BuildCraftMod {
 	public static IActionInternal actionStationAcceptFluids = new ActionStationAcceptFluids();
 	public static IActionInternal actionStationProvideFluids = new ActionStationProvideFluids();
 	public static IActionInternal actionStationForceRobot = new ActionStationForbidRobot(true);
-	public static IActionInternal actionStationForbidRobot = new ActionStationForbidRobot(true);
+	public static IActionInternal actionStationForbidRobot = new ActionStationForbidRobot(false);
 	public static IActionInternal actionStationAcceptItems = new ActionStationAcceptItems();
 	public static IActionInternal actionStationMachineRequestItems = new ActionStationRequestItemsMachine();
-
-	public static Achievement timeForSomeLogicAchievement;
-	public static Achievement tinglyLaserAchievement;
 
 	public static List<String> blacklistedRobots;
 
 	public static MapManager manager;
 	private static Thread managerThread;
 
+	private boolean noThreadedZoneMapGen;
+
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
 		new BCCreativeTab("boards");
 
 		BuildCraftCore.mainConfigManager.register("general", "boards.blacklist", new String[]{}, "Blacklisted robots boards", ConfigManager.RestartRequirement.GAME);
+		BuildCraftCore.mainConfigManager.register("experimental", "disableThreadedZoneMapGen", false, "If you're getting frequent EntityTracker crashes, report and turn this on! The option will be removed when we're sure we resolved the bug.\nDO NOT turn this option on if you're not experiencing any issues as it WILL cause slower game performance.", ConfigManager.RestartRequirement.GAME);
 
 		reloadConfig(ConfigManager.RestartRequirement.GAME);
 
@@ -248,6 +247,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
 			RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:boardRobotBuilder", "builder", BoardRobotBuilder.class, "yellow"), 512000);
 		}
 
+		StatementManager.registerParameterClass(StatementParameterRobot.class);
 		StatementManager.registerActionProvider(new RobotsActionProvider());
 		StatementManager.registerTriggerProvider(new RobotsTriggerProvider());
 	}
@@ -341,7 +341,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
 				"PRP",
 				"C C",
 				'P', "ingotIron",
-				'R', BuildCraftSilicon.redstoneCrystal,
+				'R', "crystalRedstone",
 				'C', ItemRedstoneChipset.Chipset.DIAMOND.getStack());
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(redstoneBoard),
@@ -389,12 +389,16 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void serverUnload(FMLServerStoppingEvent event) {
-		if (managerThread != null) {
+		if (manager != null) {
 			manager.stop();
 			manager.saveAllWorlds();
+		}
+
+		if (managerThread != null) {
 			managerThread.interrupt();
 
 			MinecraftForge.EVENT_BUS.unregister(manager);
+			FMLCommonHandler.instance().bus().unregister(manager);
 		}
 
 		managerThread = null;
@@ -411,11 +415,14 @@ public class BuildCraftRobotics extends BuildCraftMod {
 			e.printStackTrace();
 		}
 
-		manager = new MapManager(f);
-		managerThread = new Thread(manager);
-		managerThread.start();
+		manager = new MapManager(f, !noThreadedZoneMapGen);
+		if (noThreadedZoneMapGen) {
+			managerThread = new Thread(manager);
+			managerThread.start();
+		}
 
 		MinecraftForge.EVENT_BUS.register(manager);
+		FMLCommonHandler.instance().bus().register(manager);
 	}
 
 	@Mod.EventHandler
@@ -425,6 +432,8 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
 	public void reloadConfig(ConfigManager.RestartRequirement restartType) {
 		if (restartType == ConfigManager.RestartRequirement.GAME) {
+			noThreadedZoneMapGen = BuildCraftCore.mainConfigManager.get("experimental.disableThreadedZoneMapGen").getBoolean();
+
 			blacklistedRobots = new ArrayList<String>();
 			blacklistedRobots.addAll(Arrays.asList(BuildCraftCore.mainConfigManager.get("general",
 					"boards.blacklist").getStringList()));

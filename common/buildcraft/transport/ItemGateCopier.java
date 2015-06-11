@@ -11,6 +11,9 @@ import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.NBTUtils;
@@ -41,22 +44,29 @@ public class ItemGateCopier extends ItemBuildCraft {
 		}
 		
 		boolean isCopying = !player.isSneaking();
-		Block block = world.getBlock(x, y, z);
 		TileEntity tile = world.getTileEntity(x, y, z);
 		NBTTagCompound data = NBTUtils.getItemData(stack);
+		PipePluggable pluggable = null;
 		Gate gate = null;
 		
-		if (tile == null || !(tile instanceof TileGenericPipe) || !(block instanceof BlockGenericPipe)) {
+		if (tile == null || !(tile instanceof IPipeTile)) {
 			isCopying = true;
 		} else {
-			RaytraceResult rayTraceResult = ((BlockGenericPipe) block).doRayTrace(world, x, y, z, player);
+			Block block = world.getBlock(x, y, z);
 
-			if (rayTraceResult != null && rayTraceResult.boundingBox != null && rayTraceResult.hitPart == Part.Pluggable) {
-				PipePluggable pluggable = ((TileGenericPipe) tile).getPipePluggable(rayTraceResult.sideHit);
-				if (pluggable instanceof GatePluggable) {
-					gate = ((TileGenericPipe) tile).pipe.gates[rayTraceResult.sideHit.ordinal()];
+			if (tile instanceof TileGenericPipe && block instanceof BlockGenericPipe) {
+				RaytraceResult rayTraceResult = ((BlockGenericPipe) block).doRayTrace(world, x, y, z, player);
+
+				if (rayTraceResult != null && rayTraceResult.boundingBox != null && rayTraceResult.hitPart == Part.Pluggable) {
+					pluggable = ((TileGenericPipe) tile).getPipePluggable(rayTraceResult.sideHit);
 				}
+			} else {
+				pluggable = ((IPipeTile) tile).getPipePluggable(ForgeDirection.getOrientation(side));
 			}
+		}
+
+		if (pluggable instanceof GatePluggable) {
+			gate = ((GatePluggable) pluggable).realGate;
 		}
 		
 		if (isCopying) {

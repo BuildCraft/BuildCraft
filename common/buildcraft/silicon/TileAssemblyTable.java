@@ -32,8 +32,6 @@ import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
 import buildcraft.api.recipes.IFlexibleRecipeViewable;
-import buildcraft.api.robots.EntityRobotBase;
-import buildcraft.api.robots.RobotManager;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
@@ -98,15 +96,6 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 
 			if (currentRecipe.canBeCrafted(this)) {
 				ItemStack remaining = currentRecipe.craft(this, false).crafted.copy();
-
-				if (RobotManager.registryProvider != null) {
-					EntityRobotBase robot = RobotManager.registryProvider.getRegistry(worldObj)
-							.robotTaking(new ResourceIdAssemblyTable(this));
-
-					if (robot != null) {
-						remaining = robot.receiveItem(this, remaining);
-					}
-				}
 
 				if (remaining != null && remaining.stackSize > 0) {
 					remaining.stackSize -= Utils

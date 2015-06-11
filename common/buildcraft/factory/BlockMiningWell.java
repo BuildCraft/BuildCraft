@@ -11,13 +11,12 @@ package buildcraft.factory;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import buildcraft.BuildCraftFactory;
-import buildcraft.core.BlockLEDHatchBase;
+import buildcraft.core.BlockHatched;
 
-public class BlockMiningWell extends BlockLEDHatchBase {
+public class BlockMiningWell extends BlockHatched {
 	public BlockMiningWell() {
 		super(Material.ground);
 
@@ -45,15 +44,5 @@ public class BlockMiningWell extends BlockLEDHatchBase {
 	@Override
 	public TileEntity createNewTileEntity(World world, int metadata) {
 		return new TileMiningWell();
-	}
-
-	@Override
-	public int getIconGlowLevel(IBlockAccess access, int x, int y, int z) {
-		if (renderPass < 2) {
-			return -1;
-		} else {
-			TileMiningWell tile = (TileMiningWell) access.getTileEntity(x, y, z);
-			return tile.getIconGlowLevel(renderPass);
-		}
 	}
 }

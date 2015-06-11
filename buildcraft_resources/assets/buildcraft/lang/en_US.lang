@@ -102,10 +102,8 @@ config.general.boards.blacklist=Robot blacklist
 config.general.pumpsConsumeWater=Pumps consume water
 config.general.updateCheck=Check for updates
 config.general.fuel.fuel.combustion=Combustion engine fuel multiplier
-config.general.fuel.lava.combustion=Combustion engine lava multiplier
 config.general.fuel.oil.combustion=Combustion engine oil multiplier
 config.general.fuel.fuel.combustion.energyOutput=Combustion engine fuel output
-config.general.fuel.lava.combustion.energyOutput=Combustion engine lava output
 config.general.fuel.oil.combustion.energyOutput=Combustion engine oil output
 config.general.itemLifespan=Item lifespan (seconds)
 config.general.canEnginesExplode=Engines explode
@@ -117,6 +115,7 @@ config.general.pipes.facadeBlacklistAsWhitelist=Invert facade blacklist
 config.general.pipes.facadeNoLaserRecipe=Add facade recipe without laser
 config.general.pipes.hardness=Hardness
 config.general.pipes.slimeballWaterproofRecipe=Add slimeball sealant recipe
+config.general.pumpsNeedRealPower=Pumps need real power
 config.general.quarry=Quarry Options
 config.general.quarry.oneTimeUse=One-time use
 config.general.quarry.doChunkLoading=Automatic chunk loading
@@ -460,6 +459,7 @@ tip.PipePowerIron=Selectable Limiter Pipe
 tip.PipePowerSandstone=Only connects to other pipes
 tip.PipePowerWood=Power Input Pipe
 tip.PipeStructureCobblestone=Support pipe
+tip.deprecated=Deprecated
 
 tip.shift.PipeFluidsDiamond=GUI accepts any fluid containers
 tip.shift.PipeFluidsEmerald=GUI accepts any fluid container
@@ -469,6 +469,7 @@ tip.shift.PipeItemsEmzuli=Set extraction preset filters in GUI\nA preset can pai
 tip.shift.PipeItemsLapis=Sneak-click to change color
 tip.shift.PipeItemsObsidian=Power with an engine\nMore power - greater distance
 tip.shift.PipePowerIron=Change the limit with a wrench or gates
+
 
 tip.tool.add=Add
 tip.tool.fullscreen=Fullscreen

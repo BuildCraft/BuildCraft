@@ -34,6 +34,7 @@ import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.CoreConstants;
+import buildcraft.core.internal.ILEDProvider;
 import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.TileBuffer;
@@ -44,7 +45,7 @@ import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 
-public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler, IRedstoneEngineReceiver {
+public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler, IRedstoneEngineReceiver, ILEDProvider {
 
 	public static final int REBUID_DELAY = 512;
 	public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 16;
@@ -483,16 +484,15 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
 
 	@Override
 	public boolean canConnectRedstoneEngine(ForgeDirection side) {
-		return true;
+		return !BuildCraftFactory.pumpsNeedRealPower;
 	}
 
-	public int getIconGlowLevel(int renderPass) {
-		if (renderPass == 1) { // Red LED
+	@Override
+	public int getLEDLevel(int led) {
+		if (led == 0) { // Red LED
 			return ledState & 15;
-		} else if (renderPass == 2) { // Green LED
+		} else { // Green LED
 			return (ledState >> 4) > 0 ? 15 : 0;
-		} else {
-			return -1;
 		}
 	}
 }

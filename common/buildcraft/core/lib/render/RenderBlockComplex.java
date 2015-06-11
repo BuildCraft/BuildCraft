@@ -5,7 +5,6 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
@@ -34,12 +33,7 @@ public class RenderBlockComplex implements ISimpleBlockRenderingHandler {
 			renderer.uvRotateBottom = Y_ROTATE[block.getFrontSide(meta) - 2];
 		}
 
-		if (block.getIconGlowLevel() >= 0) {
-			Tessellator.instance.setBrightness(block.getIconGlowLevel() << 4);
-			RenderUtils.drawBlockItem(renderer, Tessellator.instance, block, meta);
-		} else {
-			RenderUtils.drawBlockItem(renderer, Tessellator.instance, block, meta);
-		}
+		RenderUtils.drawBlockItem(renderer, Tessellator.instance, block, meta);
 
 		renderer.uvRotateTop = 0;
 		renderer.uvRotateBottom = 0;
@@ -59,38 +53,7 @@ public class RenderBlockComplex implements ISimpleBlockRenderingHandler {
 				block.getBlockBoundsMaxY() + pDouble,
 				block.getBlockBoundsMaxZ() + pDouble);
 
-		if (block.getIconGlowLevel(world, x, y, z) >= 0) {
-			Tessellator.instance.setBrightness(block.getIconGlowLevel(world, x, y, z) << 4);
-			Tessellator.instance.setColorOpaque_F(1.0F, 1.0F, 1.0F);
-			IIcon icon;
-
-			icon = block.getIcon(world, x, y, z, 0);
-			if (icon != BuildCraftCore.transparentTexture && (renderer.renderAllFaces || block.shouldSideBeRendered(world, x, y - 1, z, 0))) {
-				renderer.renderFaceYNeg(block, x, y, z, icon);
-			}
-			icon = block.getIcon(world, x, y, z, 1);
-			if (icon != BuildCraftCore.transparentTexture && (renderer.renderAllFaces || block.shouldSideBeRendered(world, x, y + 1, z, 1))) {
-				renderer.renderFaceYPos(block, x, y, z, icon);
-			}
-			icon = block.getIcon(world, x, y, z, 2);
-			if (icon != BuildCraftCore.transparentTexture && (renderer.renderAllFaces || block.shouldSideBeRendered(world, x, y, z - 1, 2))) {
-				renderer.renderFaceZNeg(block, x, y, z, icon);
-			}
-			icon = block.getIcon(world, x, y, z, 3);
-			if (icon != BuildCraftCore.transparentTexture && (renderer.renderAllFaces || block.shouldSideBeRendered(world, x, y, z + 1, 3))) {
-				renderer.renderFaceZPos(block, x, y, z, icon);
-			}
-			icon = block.getIcon(world, x, y, z, 4);
-			if (icon != BuildCraftCore.transparentTexture && (renderer.renderAllFaces || block.shouldSideBeRendered(world, x - 1, y, z, 4))) {
-				renderer.renderFaceXNeg(block, x, y, z, icon);
-			}
-			icon = block.getIcon(world, x, y, z, 5);
-			if (icon != BuildCraftCore.transparentTexture && (renderer.renderAllFaces || block.shouldSideBeRendered(world, x + 1, y, z, 5))) {
-				renderer.renderFaceXPos(block, x, y, z, icon);
-			}
-		} else {
-			renderer.renderStandardBlock(block, x, y, z);
-		}
+		renderer.renderStandardBlock(block, x, y, z);
 
 		renderer.uvRotateTop = 0;
 		renderer.uvRotateBottom = 0;

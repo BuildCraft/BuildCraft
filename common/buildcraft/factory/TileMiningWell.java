@@ -21,12 +21,13 @@ import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.transport.IPipeConnection;
 import buildcraft.api.transport.IPipeTile;
+import buildcraft.core.internal.ILEDProvider;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.BlockMiner;
 import buildcraft.core.lib.utils.BlockUtils;
 
-public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeConnection, IControllable {
+public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeConnection, IControllable, ILEDProvider {
 	private boolean isDigging = true;
 	private BlockMiner miner;
 	private int ledState;
@@ -140,16 +141,6 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 		}
 	}
 
-	public int getIconGlowLevel(int renderPass) {
-		if (renderPass == 2) { // Red LED
-			return ledState & 15;
-		} else if (renderPass == 3) { // Green LED
-			return (ledState >> 4) > 0 ? 15 : 0;
-		} else {
-			return -1;
-		}
-	}
-
 	@Override
 	public boolean hasWork() {
 		return isDigging;
@@ -167,5 +158,14 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 	@Override
 	public boolean acceptsControlMode(Mode mode) {
 		return mode == Mode.Off || mode == Mode.On;
+	}
+
+	@Override
+	public int getLEDLevel(int led) {
+		if (led == 0) { // Red LED
+			return ledState & 15;
+		} else { // Green LED
+			return (ledState >> 4) > 0 ? 15 : 0;
+		}
 	}
 }

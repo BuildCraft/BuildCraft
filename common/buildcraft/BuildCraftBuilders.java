@@ -259,7 +259,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 	public void reloadConfig(ConfigManager.RestartRequirement restartType) {
 		if (restartType == ConfigManager.RestartRequirement.GAME) {
-
 			reloadConfig(ConfigManager.RestartRequirement.WORLD);
 		} else if (restartType == ConfigManager.RestartRequirement.WORLD) {
 			blueprintServerDir = BuildCraftCore.mainConfigManager.get("blueprints.serverDatabaseDirectory").getString();

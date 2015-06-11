@@ -41,10 +41,12 @@ public class MapRegion implements INBTStoreable {
 	public void readFromNBT(NBTTagCompound tag) {
 		chunks.clear();
 
-		for (int i = 0; i < 256; i++) {
-			if (tag.hasKey("r" + i)) {
-				MapChunk chunk = new MapChunk(tag.getCompoundTag("r" + i));
-				chunks.put(i, chunk);
+		if (tag != null) {
+			for (int i = 0; i < 256; i++) {
+				if (tag.hasKey("r" + i)) {
+					MapChunk chunk = new MapChunk(tag.getCompoundTag("r" + i));
+					chunks.put(i, chunk);
+				}
 			}
 		}
 	}
@@ -55,7 +57,9 @@ public class MapRegion implements INBTStoreable {
 			MapChunk chunk = chunks.get(i);
 			if (chunk != null) {
 				NBTTagCompound chunkNBT = new NBTTagCompound();
-				chunk.writeToNBT(chunkNBT);
+				synchronized (chunk) {
+					chunk.writeToNBT(chunkNBT);
+				}
 				tag.setTag("r" + i, chunkNBT);
 			}
 		}

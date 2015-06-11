@@ -406,7 +406,10 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						if (builder == null) {
 							return slot;
 						} else if (checkRequirements(builder, slot.schematic)) {
-							if (isBlockPlaceCanceled(world, slot.x, slot.y, slot.z, slot.schematic)) {
+							if (!BuildCraftAPI.isSoftBlock(world, slot.x, slot.y,
+									slot.z)) {
+								continue; // Can't build yet, wait (#2751)
+							} else if (isBlockPlaceCanceled(world, slot.x, slot.y, slot.z, slot.schematic)) {
 								// Forge does not allow us to place a block in
 								// this position.
 								iterator.remove();

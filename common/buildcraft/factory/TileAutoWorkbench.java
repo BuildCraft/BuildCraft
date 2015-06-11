@@ -428,7 +428,20 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
 
 	@Override
 	public boolean canInsertItem(int slot, ItemStack stack, int side) {
-		return slot < 9;
+		if (slot >= 9) {
+			return false;
+		}
+		ItemStack slotStack = inv.getStackInSlot(slot);
+		if (StackHelper.canStacksMerge(stack, slotStack)) {
+			return true;
+		}
+		for (int i = 0; i < 9; i++) {
+			ItemStack inputStack = craftMatrix.getStackInSlot(i);
+			if (inputStack != null && StackHelper.isMatchingItem(inputStack, stack, true, false)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

@@ -132,7 +132,7 @@ public class LibraryDatabase {
 			public boolean accept(File dir, String name) {
 				int dotIndex = name.lastIndexOf('.') + 1;
 				String extension = name.substring(dotIndex);
-				return LibraryAPI.getHandler(extension) != null;
+				return LibraryAPI.getHandlerFor(extension) != null;
 			}
 		};
 
@@ -157,7 +157,7 @@ public class LibraryDatabase {
 					String suffix = fileName.substring(sepIndex + 1);
 
 					id.name = prefix;
-					id.uniqueId = LibraryId.toBytes(suffix.substring(0, suffix.length() - 4));
+					id.uniqueId = LibraryId.toBytes(suffix.substring(0, suffix.length() - (extension.length() + 1)));
 				} else {
 					id.name = fileName.substring(0, dotIndex);
 					id.uniqueId = new byte[0];

@@ -154,11 +154,9 @@ public class BuildCraftEnergy extends BuildCraftMod {
 								new String[]{BiomeGenBase.sky.biomeName, BiomeGenBase.hell.biomeName},
 								"IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that are excluded from generating oil.", RestartRequirement.GAME));
 
-		double fuelLavaMultiplier = BuildCraftCore.mainConfigManager.register("general", "fuel.lava.combustion", 1.0F, "adjust energy value of Lava in Combustion Engines", RestartRequirement.GAME).getDouble();
 		double fuelOilMultiplier = BuildCraftCore.mainConfigManager.register("general", "fuel.oil.combustion", 1.0F, "adjust energy value of Oil in Combustion Engines", RestartRequirement.GAME).getDouble();
 		double fuelFuelMultiplier = BuildCraftCore.mainConfigManager.register("general", "fuel.fuel.combustion", 1.0F, "adjust energy value of Fuel in Combustion Engines", RestartRequirement.GAME).getDouble();
 
-		int fuelLavaEnergyOutput = BuildCraftCore.mainConfigManager.register("general", "fuel.lava.combustion.energyOutput", 20, "adjust output energy by Lava in Combustion Engines", RestartRequirement.GAME).getInt();
 		int fuelOilEnergyOutput = BuildCraftCore.mainConfigManager.register("general", "fuel.oil.combustion.energyOutput", 30, "adjust output energy by Oil in Combustion Engines", RestartRequirement.GAME).getInt();
 		int fuelFuelEnergyOutput = BuildCraftCore.mainConfigManager.register("general", "fuel.fuel.combustion.energyOutput", 60, "adjust output energy by Fuel in Combustion Engines", RestartRequirement.GAME).getInt();
 
@@ -285,7 +283,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		BuildcraftRecipeRegistry.refinery.addRecipe("buildcraft:fuel", new FluidStack(fluidOil, 1), new FluidStack(
 				fluidFuel, 1), 120, 1);
 
-		BuildcraftFuelRegistry.fuel.addFuel(FluidRegistry.LAVA, fuelLavaEnergyOutput, (int) (6000 * fuelLavaMultiplier));
 		BuildcraftFuelRegistry.fuel.addFuel(fluidOil, fuelOilEnergyOutput, (int) (5000 * fuelOilMultiplier));
 		BuildcraftFuelRegistry.fuel.addFuel(fluidFuel, fuelFuelEnergyOutput, (int) (25000 * fuelFuelMultiplier));
 

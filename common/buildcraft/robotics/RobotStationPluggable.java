@@ -26,7 +26,6 @@ import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.PipeIconProvider;
-import buildcraft.transport.TileGenericPipe;
 
 public class RobotStationPluggable extends PipePluggable implements IPipePluggableItem, IEnergyReceiver, IDebuggable,
 		IDockingStationProvider {
@@ -148,18 +147,17 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 
 	@Override
 	public void validate(IPipeTile pipe, ForgeDirection direction) {
-		TileGenericPipe gPipe = (TileGenericPipe) pipe;
-		if (!isValid && !gPipe.getWorld().isRemote) {
+		if (!isValid && !pipe.getWorld().isRemote) {
 			station = (DockingStationPipe)
-					RobotManager.registryProvider.getRegistry(gPipe.getWorld()).getStation(
-					gPipe.xCoord,
-					gPipe.yCoord,
-					gPipe.zCoord,
+					RobotManager.registryProvider.getRegistry(pipe.getWorld()).getStation(
+					pipe.x(),
+					pipe.y(),
+					pipe.z(),
 					direction);
 
 			if (station == null) {
-				station = new DockingStationPipe(gPipe, direction);
-				RobotManager.registryProvider.getRegistry(gPipe.getWorld()).registerStation(station);
+				station = new DockingStationPipe(pipe, direction);
+				RobotManager.registryProvider.getRegistry(pipe.getWorld()).registerStation(station);
 			}
 
 			isValid = true;

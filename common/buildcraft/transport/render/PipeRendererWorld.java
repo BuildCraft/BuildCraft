@@ -64,9 +64,9 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 				} else {
 					fakeBlock.getTextureState().set(PipeIconProvider.TYPE.PipeStainedOverlay.getIcon());
 				}
-				
+
 				fixForRenderPass(dim);
-				
+
 				renderTwoWayBlock(renderblocks, fakeBlock, x, y, z, dim, connectivity ^ 0x3f);
 			}
 	
@@ -110,7 +110,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
 						double[] blockBB;
 						if (block instanceof BlockChest) {
-							// work around what sems to be a vanilla bug?
+							// work around what seems to be a vanilla bug?
 							blockBB = new double[]{
 									0, 0.0625F, 0.0625F,
 									0.875F, 0.9375F, 0.9375F
@@ -180,10 +180,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	private void resetToCenterDimensions(float[] dim) {
 		for (int i = 0; i < 3; i++) {
 			dim[i] = CoreConstants.PIPE_MIN_POS;
-		}
-
-		for (int i = 3; i < 6; i++) {
-			dim[i] = CoreConstants.PIPE_MAX_POS;
+			dim[i + 3] = CoreConstants.PIPE_MAX_POS;
 		}
 	}
 
@@ -193,13 +190,20 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	 */
 	private void renderTwoWayBlock(RenderBlocks renderblocks, FakeBlock stateHost, int x, int y, int z, float[] dim, int mask) {
 		assert mask != 0;
+
+		int c = stateHost.getBlockColor();
+		float r = ((c & 0xFF0000) >> 16) / 255.0f;
+		float g = ((c & 0x00FF00) >> 8) / 255.0f;
+		float b = (c & 0x0000FF) / 255.0f;
 		
 		stateHost.setRenderMask(mask);
 		renderblocks.setRenderBounds(dim[2], dim[0], dim[1], dim[5], dim[3], dim[4]);
-		renderblocks.renderStandardBlock(stateHost, x, y, z);
+		renderblocks.renderStandardBlockWithColorMultiplier(stateHost, x, y, z, r, g, b);
+
 		stateHost.setRenderMask((mask & 0x15) << 1 | (mask & 0x2a) >> 1); // pairwise swapped mask
 		renderblocks.setRenderBounds(dim[5], dim[3], dim[4], dim[2], dim[0], dim[1]);
-		renderblocks.renderStandardBlock(stateHost, x, y, z);
+		renderblocks.renderStandardBlockWithColorMultiplier(stateHost, x, y, z, r * 0.67f, g * 0.67f, b * 0.67f);
+
 		stateHost.setRenderAllSides();
 	}
 

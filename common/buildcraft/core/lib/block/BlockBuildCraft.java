@@ -267,14 +267,6 @@ public abstract class BlockBuildCraft extends BlockContainer {
 		return renderPass;
 	}
 
-	public int getIconGlowLevel() {
-		return -1;
-	}
-
-	public int getIconGlowLevel(IBlockAccess access, int x, int y, int z) {
-		return getIconGlowLevel();
-	}
-
 	public int getFrontSide(int meta) {
 		if (!isRotatable()) {
 			return -1;

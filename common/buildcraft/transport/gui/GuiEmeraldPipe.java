@@ -34,17 +34,12 @@ public class GuiEmeraldPipe extends GuiBuildCraft implements IButtonClickEventLi
 	private GuiImageButton blackListButton;
 	private GuiImageButton roundRobinButton;
 
-	private IInventory playerInventory;
-	private IInventory filterInventory;
 	private PipeItemsEmerald pipe;
 
 	public GuiEmeraldPipe(IInventory playerInventory, PipeItemsEmerald pipe) {
 		super(new ContainerEmeraldPipe(playerInventory, pipe), pipe.getFilters(), TEXTURE);
 
 		this.pipe = pipe;
-
-		this.playerInventory = playerInventory;
-		this.filterInventory = pipe.getFilters();
 
 		xSize = 175;
 		ySize = 161;

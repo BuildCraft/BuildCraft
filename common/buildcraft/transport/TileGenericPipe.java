@@ -81,6 +81,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	protected boolean deletePipe = false;
 	protected boolean sendClientUpdate = false;
 	protected boolean blockNeighborChange = false;
+	protected int blockNeighborChangedSides = 0;
 	protected boolean refreshRenderState = false;
 	protected boolean pipeBound = false;
 	protected boolean resyncGateExpansions = false;
@@ -399,7 +400,12 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		}
 
 		if (blockNeighborChange) {
-			computeConnections();
+			for (int i = 0; i < 6; i++) {
+				if ((blockNeighborChangedSides & (1 << i)) != 0) {
+					blockNeighborChangedSides ^= 1 << i;
+					computeConnection(ForgeDirection.getOrientation(i));
+				}
+			}
 			pipe.onNeighborBlockChange(0);
 			blockNeighborChange = false;
 			refreshRenderState = true;
@@ -540,6 +546,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	public void initialize(Pipe<?> pipe) {
+		initialized = false;
+
 		this.blockType = getBlockType();
 
 		if (pipe == null) {
@@ -588,6 +596,12 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	public void scheduleNeighborChange() {
 		blockNeighborChange = true;
+		blockNeighborChangedSides = 0x3F;
+	}
+
+	public void scheduleNeighborChange(ForgeDirection direction) {
+		blockNeighborChange = true;
+		blockNeighborChangedSides |= direction == ForgeDirection.UNKNOWN ? 0x3F : (1 << direction.ordinal());
 	}
 
 	@Override
@@ -608,6 +622,10 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				itemPos.moveBackwards(0.4);
 
 				TravelingItem pipedItem = TravelingItem.make(itemPos.x, itemPos.y, itemPos.z, payload);
+				if (pipedItem.isCorrupted()) {
+					return 0;
+				}
+
 				pipedItem.color = color;
 				((PipeTransportItems) pipe.transport).injectItem(pipedItem, itemPos.orientation);
 			}
@@ -800,19 +818,23 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 	}
 
 	protected void computeConnections() {
+		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			computeConnection(side);
+		}
+	}
+
+	protected void computeConnection(ForgeDirection side) {
 		TileBuffer[] cache = getTileCache();
 		if (cache == null) {
 			return;
 		}
 
-		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-			TileBuffer t = cache[side.ordinal()];
-			// For blocks which are not loaded, keep the old connection value.
-			if (t.exists() || !initialized) {
-				t.refresh();
+		TileBuffer t = cache[side.ordinal()];
+		// For blocks which are not loaded, keep the old connection value.
+		if (t.exists() || !initialized) {
+			t.refresh();
 
-				pipeConnectionsBuffer[side.ordinal()] = canPipeConnect(t.getTile(), side);
-			}
+			pipeConnectionsBuffer[side.ordinal()] = canPipeConnect(t.getTile(), side);
 		}
 	}
 

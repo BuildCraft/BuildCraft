@@ -82,7 +82,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 		}
 
 		if (hasUpdate) {
-			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, blockType);
+			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
 			hasUpdate = false;
 		}
 

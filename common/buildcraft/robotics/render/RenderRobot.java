@@ -9,6 +9,10 @@
 package buildcraft.robotics.render;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.mojang.authlib.GameProfile;
 
 import org.lwjgl.opengl.GL11;
 
@@ -21,14 +25,19 @@ import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.tileentity.TileEntitySkullRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemSkull;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.util.ResourceLocation;
 
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.IItemRenderer;
+import net.minecraftforge.common.util.Constants.NBT;
 
 import buildcraft.BuildCraftRobotics;
 import buildcraft.api.robots.IRobotOverlayItem;
@@ -52,7 +61,11 @@ public class RenderRobot extends Render implements IItemRenderer {
 	};
 	private ModelBase modelHelmet = new ModelBase() {
 	};
-	private ModelRenderer box, helmetBox;
+	private ModelBase modelSkullOverlay = new ModelBase() {
+	};
+	private ModelRenderer box, helmetBox, skullOverlayBox;
+
+	private Map<String, GameProfile> gameProfileCache = new HashMap<String, GameProfile>();
 
 	public RenderRobot() {
 		customRenderItem = new RenderItem() {
@@ -72,8 +85,11 @@ public class RenderRobot extends Render implements IItemRenderer {
 		box.addBox(-4F, -4F, -4F, 8, 8, 8);
 		box.setRotationPoint(0.0F, 0.0F, 0.0F);
 		helmetBox = new ModelRenderer(modelHelmet, 0, 0);
-		helmetBox.addBox(-4F, -4F, -4F, 8, 8, 8);
+		helmetBox.addBox(-4F, -8F, -4F, 8, 8, 8);
 		helmetBox.setRotationPoint(0.0F, 0.0F, 0.0F);
+		skullOverlayBox = new ModelRenderer(modelSkullOverlay, 32, 0);
+		skullOverlayBox.addBox(-4.0F, -8.0F, -4.0F, 8, 8, 8, 0.5F);
+		skullOverlayBox.setRotationPoint(0.0F, 0.0F, 0.0F);
 	}
 
 	@Override
@@ -238,12 +254,41 @@ public class RenderRobot extends Render implements IItemRenderer {
 			if (armorModel != null) {
 				armorModel.render(entity, 0, 0, 0, -90f, 0, 1 / 16F);
 			} else {
+				GL11.glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
 				helmetBox.render(1 / 16F);
 			}
 			GL11.glPopMatrix();
+		} else if (wearable.getItem() instanceof ItemSkull) {
+			doRenderSkull(wearable);
 		}
 	}
-	
+
+	private void doRenderSkull(ItemStack wearable) {
+		GL11.glPushMatrix();
+		GL11.glScalef(1.0125F, 1.0125F, 1.0125F);
+		GameProfile gameProfile = null;
+		if (wearable.hasTagCompound()) {
+			NBTTagCompound nbt = wearable.getTagCompound();
+			if (nbt.hasKey("Name")) {
+				gameProfile = gameProfileCache.get(nbt.getString("Name"));
+			} else if (nbt.hasKey("SkullOwner", NBT.TAG_COMPOUND)) {
+				gameProfile = NBTUtil.func_152459_a(nbt.getCompoundTag("SkullOwner"));
+				nbt.setString("Name", gameProfile.getName());
+				gameProfileCache.put(gameProfile.getName(), gameProfile);
+			}
+		}
+
+		TileEntitySkullRenderer.field_147536_b.func_152674_a(-0.5F, -0.25F, -0.5F, 1, -90.0F,
+				wearable.getItemDamage(), gameProfile);
+		if (gameProfile != null) {
+			GL11.glTranslatef(0.0f, -0.25f, 0.0f);
+			GL11.glRotatef(180F, 0, 0, 1);
+			GL11.glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
+			skullOverlayBox.render(1 / 16f);
+		}
+		GL11.glPopMatrix();
+	}
+
 	private void doRenderRobot(float factor, TextureManager texManager, float storagePercent, boolean isAsleep) {
 		box.render(factor);
 

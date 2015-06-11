@@ -57,6 +57,8 @@ import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.utils.FluidRenderData;
 
 public class PipeRendererTESR extends TileEntitySpecialRenderer {
+	public static final PipeRendererTESR INSTANCE = new PipeRendererTESR();
+
 	public static final float DISPLAY_MULTIPLIER = 0.1f;
 	public static final int POWER_STAGES = 100;
 
@@ -75,14 +77,13 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	private boolean initialized = false;
 
 	private class DisplayFluidList {
-
 		public int[] sideHorizontal = new int[LIQUID_STAGES];
 		public int[] sideVertical = new int[LIQUID_STAGES];
 		public int[] centerHorizontal = new int[LIQUID_STAGES];
 		public int[] centerVertical = new int[LIQUID_STAGES];
 	}
 
-	public PipeRendererTESR() {
+	protected PipeRendererTESR() {
 		customRenderItem = new RenderItem() {
 			@Override
 			public boolean shouldBob() {
@@ -95,6 +96,18 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			}
 		};
 		customRenderItem.setRenderManager(RenderManager.instance);
+	}
+
+	public void onTextureReload() {
+		if (initialized) {
+			for (int i = 0; i < POWER_STAGES; i++) {
+				GL11.glDeleteLists(displayPowerList[i], 1);
+				GL11.glDeleteLists(displayPowerListOverload[i], 1);
+			}
+		}
+		displayFluidLists.clearMap();
+
+		initialized = false;
 	}
 
 	private DisplayFluidList getDisplayFluidLists(int liquidId, World world) {
@@ -653,25 +666,29 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		int[] displayList = pow.overload > 0 ? displayPowerListOverload : displayPowerList;
 
 		for (int side = 0; side < 6; ++side) {
-			GL11.glPushMatrix();
-
-			GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-			GL11.glRotatef(angleY[side], 0, 1, 0);
-			GL11.glRotatef(angleZ[side], 0, 0, 1);
-			float scale = 1.0F - side * 0.0001F;
-			GL11.glScalef(scale, scale, scale);
-			GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
-
 			short stage = pow.displayPower[side];
 			if (stage >= 1) {
+				if (!pipe.container.isPipeConnected(ForgeDirection.getOrientation(side))) {
+					continue;
+				}
+
+				GL11.glPushMatrix();
+
+				GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+				GL11.glRotatef(angleY[side], 0, 1, 0);
+				GL11.glRotatef(angleZ[side], 0, 0, 1);
+				float scale = 1.0F - side * 0.0001F;
+				GL11.glScalef(scale, scale, scale);
+				GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
+
 				if (stage < displayList.length) {
 					GL11.glCallList(displayList[stage]);
 				} else {
 					GL11.glCallList(displayList[displayList.length - 1]);
 				}
-			}
 
-			GL11.glPopMatrix();
+				GL11.glPopMatrix();
+			}
 		}
 
 		/*bindTexture(STRIPES_TEXTURE);

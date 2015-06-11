@@ -4,29 +4,25 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.BuildCraftBuilders;
-import buildcraft.api.library.ILibraryTypeHandler;
+import buildcraft.api.library.LibraryTypeHandlerNBT;
 import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.LibraryId;
 
-public class LibraryBlueprintTypeHandler implements ILibraryTypeHandler {
+public class LibraryBlueprintTypeHandler extends LibraryTypeHandlerNBT {
 	private final boolean isBlueprint;
 
 	public LibraryBlueprintTypeHandler(boolean isBlueprint) {
+		super(isBlueprint ? "bpt" : "tpl");
 		this.isBlueprint = isBlueprint;
 	}
 
 	@Override
-	public boolean isHandler(ItemStack stack, boolean store) {
+	public boolean isHandler(ItemStack stack, HandlerType type) {
 		if (isBlueprint) {
 			return stack.getItem() instanceof ItemBlueprintStandard;
 		} else {
 			return stack.getItem() instanceof ItemBlueprintTemplate;
 		}
-	}
-
-	@Override
-	public String getFileExtension() {
-		return isBlueprint ? "bpt" : "tpl";
 	}
 
 	@Override
@@ -43,7 +39,7 @@ public class LibraryBlueprintTypeHandler implements ILibraryTypeHandler {
 	public ItemStack load(ItemStack stack, NBTTagCompound compound) {
 		BlueprintBase blueprint = BlueprintBase.loadBluePrint((NBTTagCompound) compound.copy());
 		blueprint.id.name = compound.getString("__filename");
-		blueprint.id.extension = getFileExtension();
+		blueprint.id.extension = getOutputExtension();
 		BuildCraftBuilders.serverDB.add(blueprint.id, compound);
 		return blueprint.getStack();
 	}

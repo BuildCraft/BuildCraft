@@ -77,6 +77,11 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		}
 	}
 
+	public boolean blockActivated(EntityPlayer player, ForgeDirection side) {
+		return false;
+	}
+
+	@Deprecated
 	public boolean blockActivated(EntityPlayer entityplayer) {
 		return false;
 	}
@@ -89,8 +94,9 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	}
 
 	public void onNeighborBlockChange(int blockId) {
-		transport.onNeighborBlockChange(blockId);
-
+		for (ForgeDirection d : ForgeDirection.VALID_DIRECTIONS) {
+			transport.onNeighborChange(d);
+		}
 	}
 
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
