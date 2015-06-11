@@ -56,14 +56,14 @@ public class SpringPopulate {
 		int posX = x + random.nextInt(16);
 		int posZ = z + random.nextInt(16);
 
-		for (int i = 0; i < 5; i++) {
+		for (int i = 8; i >= 0; i--) {
 			Block candidate = world.getBlock(posX, i, posZ);
 
 			if (candidate != Blocks.bedrock) {
 				continue;
 			}
 
-			world.setBlock(posX, i + 1, posZ, BuildCraftCore.springBlock);
+			world.setBlock(posX, i, posZ, BuildCraftCore.springBlock);
 
 			for (int j = i + 2; j < world.getActualHeight() - 10; j++) {
 				if (!boreToSurface(world, posX, j, posZ)) {
