@@ -16,10 +16,8 @@ import net.minecraftforge.event.world.ChunkEvent;
 
 public class MapManager implements Runnable {
 	private final HashBiMap<World, MapWorld> worldMap = HashBiMap.create();
-	private final Set<MapChunkLoadRequest> chunkLoadRequests = new HashSet<MapChunkLoadRequest>();
 	private final File location;
 	private boolean stop = false;
-
 	private long lastSaveTime;
 
 	public MapManager(File location) {
@@ -56,7 +54,10 @@ public class MapManager implements Runnable {
 		Chunk chunk = placeEvent.world.getChunkFromBlockCoords(placeEvent.x, placeEvent.z);
 		MapWorld world = getWorld(placeEvent.world);
 		if (world != null) {
-			world.queueChunkForUpdate(chunk.xPosition, chunk.zPosition, 512);
+			int hv = placeEvent.world.getHeightValue(placeEvent.x, placeEvent.z);
+			if (placeEvent.y >= (hv - 4)) {
+				world.queueChunkForUpdate(chunk.xPosition, chunk.zPosition, 512);
+			}
 		}
 	}
 
@@ -65,7 +66,10 @@ public class MapManager implements Runnable {
 		Chunk chunk = placeEvent.world.getChunkFromBlockCoords(placeEvent.x, placeEvent.z);
 		MapWorld world = getWorld(placeEvent.world);
 		if (world != null) {
-			world.queueChunkForUpdate(chunk.xPosition, chunk.zPosition, 512);
+			int hv = placeEvent.world.getHeightValue(placeEvent.x, placeEvent.z);
+			if (placeEvent.y >= (hv - 4)) {
+				world.queueChunkForUpdate(chunk.xPosition, chunk.zPosition, 512);
+			}
 		}
 	}
 
@@ -97,28 +101,10 @@ public class MapManager implements Runnable {
 			}
 
 			try {
-				Thread.sleep(50 * worldMap.size());
+				Thread.sleep(20 * worldMap.size());
 			} catch (Exception e) {
 
 			}
-		}
-	}
-
-	@SubscribeEvent
-	public void serverTickEnd(TickEvent.ServerTickEvent event) {
-		if (event.phase == TickEvent.Phase.END) {
-			synchronized (chunkLoadRequests) {
-				for (MapChunkLoadRequest r : chunkLoadRequests) {
-					r.world.updateChunk(r.x, r.z);
-				}
-				chunkLoadRequests.clear();
-			}
-		}
-	}
-
-	public void loadChunkForUpdate(MapWorld mapWorld, int x, int z) {
-		synchronized (chunkLoadRequests) {
-			chunkLoadRequests.add(new MapChunkLoadRequest(mapWorld, x, z));
 		}
 	}
 }

@@ -20,6 +20,7 @@ import net.minecraft.world.World;
 
 import buildcraft.BuildCraftRobotics;
 import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.ThreadSafeUtils;
 
 public class MapWorld {
 	private final World world;
@@ -27,8 +28,6 @@ public class MapWorld {
 	private final Set<QueuedXZ> regionUpdateSet = new HashSet<QueuedXZ>();
 	private final Queue<QueuedXZ> queuedChunks;
 	private final File location;
-
-	private long lastForcedChunkLoad;
 
 	private class QueuedXZ {
 		int x, z, p;
@@ -140,19 +139,9 @@ public class MapWorld {
 				return;
 			}
 
-			if (!world.getChunkProvider().chunkExists(q.x, q.z)) {
-				long now = (new Date()).getTime();
-				if (now - lastForcedChunkLoad < 3000) {
-					q.p++; // Increase priority so it gets looked at later
-					queuedChunks.add(q);
-					return;
-				} else {
-					lastForcedChunkLoad = now;
-					BuildCraftRobotics.manager.loadChunkForUpdate(this, q.x, q.z);
-				}
+			if (world.getChunkProvider().chunkExists(q.x, q.z)) {
+				updateChunk(q.x, q.z);
 			}
-
-			updateChunk(q.x, q.z);
 		}
 	}
 
@@ -191,14 +180,10 @@ public class MapWorld {
 		return chunk.getColor(x & 15, z & 15);
 	}
 
-	public void updateChunk(int x, int z) {
+	private void updateChunk(int x, int z) {
 		MapChunk chunk = getChunk(x, z);
-		synchronized (chunk) {
-			chunk.update(world.getChunkFromChunkCoords(x, z));
-		}
-		synchronized (regionUpdateSet) {
-			regionUpdateSet.add(new QueuedXZ(x >> 4, z >> 4, 0));
-		}
+		chunk.update(ThreadSafeUtils.getChunk(world, x, z));
+		regionUpdateSet.add(new QueuedXZ(x >> 4, z >> 4, 0));
 
 		// priority does not matter - see equals
 		synchronized (queuedChunks) {
