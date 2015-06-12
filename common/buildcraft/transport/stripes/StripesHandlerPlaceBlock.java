@@ -41,6 +41,10 @@ public class StripesHandlerPlaceBlock implements IStripesHandler {
 			src.orientation = direction;
 			src.moveBackwards(1.0D);
 			if (stack.tryPlaceItemIntoWorld(player, world, (int) src.x, (int) src.y, (int) src.z, direction.ordinal(), 0.0f, 0.0f, 0.0f)) {
+				if (stack.stackSize > 0) {
+					activator.sendItem(stack, direction.getOpposite());
+				}
+				
 				return true;
 			}
 		}
