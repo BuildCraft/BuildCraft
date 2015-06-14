@@ -20,7 +20,7 @@ public final class ThreadSafeUtils {
 
 	}
 
-	private static Chunk getChunkHacky(World world, int x, int z) {
+	public static Chunk getChunk(World world, int x, int z) {
 		Chunk chunk;
 		chunk = lastChunk.get();
 

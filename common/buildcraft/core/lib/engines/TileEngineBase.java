@@ -383,7 +383,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 		for (int i = orientation.ordinal() + 1; i <= orientation.ordinal() + 6; ++i) {
 			ForgeDirection o = ForgeDirection.VALID_DIRECTIONS[i % 6];
 
-			TileEntity tile = getTile(o);
+			Object tile = getEnergyProvider(o);
 
 			if ((!pipesOnly || tile instanceof IPipeTile) && isPoweredTile(tile, o)) {
 				orientation = o;
