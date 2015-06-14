@@ -44,7 +44,7 @@ public class StripesHandlerPlaceBlock implements IStripesHandler {
 				if (stack.stackSize > 0) {
 					activator.sendItem(stack, direction.getOpposite());
 				}
-				
+
 				return true;
 			}
 		}

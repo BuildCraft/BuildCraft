@@ -20,16 +20,7 @@ public final class ThreadSafeUtils {
 
 	}
 
-	/**
-	 * This function will NOT load a chunk - it will only get one.
-	 * Chunk loading is not fully threadsafe. Therefore, this function is
-	 * also useful for faster chunk lookups.
-	 * @param world
-	 * @param x
-	 * @param z
-	 * @return
-	 */
-	public static Chunk getChunk(World world, int x, int z) {
+	private static Chunk getChunkHacky(World world, int x, int z) {
 		Chunk chunk;
 		chunk = lastChunk.get();
 
@@ -45,7 +36,8 @@ public final class ThreadSafeUtils {
 
 		IChunkProvider provider = world.getChunkProvider();
 		// These probably won't guarantee full thread safety, but it's our best bets.
-		if (provider instanceof ChunkProviderServer) {
+		if (!Utils.CAULDRON_DETECTED && provider instanceof ChunkProviderServer) {
+			// Slight optimization
 			chunk = (Chunk) ((ChunkProviderServer) provider).loadedChunkHashMap.getValueByKey(ChunkCoordIntPair.chunkXZ2Int(x, z));
 		} else {
 			chunk = provider.chunkExists(x, z) ? provider.provideChunk(x, z) : null;

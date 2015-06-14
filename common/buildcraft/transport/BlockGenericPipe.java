@@ -622,8 +622,12 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 				}
 
 				RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
-				ForgeDirection hitSide = rayTraceResult.hitPart == Part.Pipe ? rayTraceResult.sideHit : ForgeDirection.UNKNOWN;
-				return pipe.blockActivated(player, hitSide);
+				if (rayTraceResult != null) {
+					ForgeDirection hitSide = rayTraceResult.hitPart == Part.Pipe ? rayTraceResult.sideHit : ForgeDirection.UNKNOWN;
+					return pipe.blockActivated(player, hitSide);
+				} else {
+					return false;
+				}
 			} else if (currentItem.getItem() instanceof IMapLocation) {
 				// We want to be able to record pipe locations
 				return false;
@@ -671,8 +675,10 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 					return true;
 				}
 
-				ForgeDirection hitSide = rayTraceResult.hitPart == Part.Pipe ? rayTraceResult.sideHit : ForgeDirection.UNKNOWN;
-				return pipe.blockActivated(player, hitSide);
+				if (rayTraceResult != null) {
+					ForgeDirection hitSide = rayTraceResult.hitPart == Part.Pipe ? rayTraceResult.sideHit : ForgeDirection.UNKNOWN;
+					return pipe.blockActivated(player, hitSide);
+				}
 			}
 		}
 
