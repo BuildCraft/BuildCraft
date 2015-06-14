@@ -25,10 +25,10 @@ import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlockBase;
-import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.Box;
 import buildcraft.core.Version;
+import buildcraft.core.lib.utils.Utils;
 
 public abstract class BlueprintBase {
 
@@ -64,7 +64,7 @@ public abstract class BlueprintBase {
         anchorZ = 0;
     }
 
-    public void translateToBlueprint(Translation transform) {
+    public void translateToBlueprint(Vec3 transform) {
         for (int x = 0; x < sizeX; ++x) {
             for (int y = 0; y < sizeY; ++y) {
                 for (int z = 0; z < sizeZ; ++z) {
@@ -76,7 +76,7 @@ public abstract class BlueprintBase {
         }
     }
 
-    public void translateToWorld(Translation transform) {
+    public void translateToWorld(Vec3 transform) {
         for (int x = 0; x < sizeX; ++x) {
             for (int y = 0; y < sizeY; ++y) {
                 for (int z = 0; z < sizeZ; ++z) {
@@ -125,8 +125,8 @@ public abstract class BlueprintBase {
             Vec3 pos = new Vec3(sub.getInteger("x"), sub.getInteger("y"), sub.getInteger("z"));
             Vec3 np = context.rotatePositionLeft(pos);
 
-            sub.setInteger("x", (int) np.x);
-            sub.setInteger("z", (int) np.z);
+            sub.setInteger("x", (int) np.xCoord);
+            sub.setInteger("z", (int) np.zCoord);
             sub.setByte("dir", (byte) dir.ordinal());
 
             NBTTagCompound bpt = sub.getCompoundTag("bpt");
@@ -332,11 +332,7 @@ public abstract class BlueprintBase {
             }
         }
 
-        Translation transform = new Translation();
-
-        transform.x = pos.getX() - anchorX;
-        transform.y = pos.getY() - anchorY;
-        transform.z = pos.getZ() - anchorZ;
+        Vec3 transform = Utils.convert(pos).subtract(new Vec3(anchorX, anchorY, anchorZ));
 
         translateToWorld(transform);
 

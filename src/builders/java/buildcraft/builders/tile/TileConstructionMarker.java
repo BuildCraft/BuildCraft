@@ -36,6 +36,7 @@ import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.core.lib.utils.Utils;
 
 // TODO: Create and implement "IBlueprintProvider" for robots to get Blueprints from
 public class TileConstructionMarker extends TileBuildCraft implements IBuildingItemsProvider, IBoxProvider, ICommandReceiver {
@@ -109,11 +110,10 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
         }
 
         if (laser == null && direction != null) {
+            Vec3 point5 = new Vec3(0.5, 0.5, 0.5);
             laser = new LaserData();
-            laser.head = new Vec3(pos).add(Vec3.POINT_5);
-            laser.tail =
-                new Vec3(xCoord + 0.5F + direction.offsetX * 0.5F, yCoord + 0.5F + direction.offsetY * 0.5F, zCoord + 0.5F + direction.offsetZ
-                    * 0.5F);
+            laser.head = Utils.convert(pos).add(point5);
+            laser.tail = laser.head.add(Utils.convert(direction, 0.5));
             laser.isVisible = true;
             sendNetworkUpdate();
         }

@@ -151,7 +151,7 @@ public class Box implements IBox, ISerializable {
     }
 
     public boolean contains(Vec3 p) {
-        return contains((int) p.x, (int) p.y, (int) p.z);
+        return contains((int) p.xCoord, (int) p.yCoord, (int) p.zCoord);
     }
 
     public boolean contains(BlockPos i) {
@@ -167,7 +167,7 @@ public class Box implements IBox, ISerializable {
     public Vec3 pMax() {
         return new Vec3(xMax, yMax, zMax);
     }
-    
+
     public int sizeX() {
         return xMax - xMin + 1;
     }
@@ -288,28 +288,28 @@ public class Box implements IBox, ISerializable {
     }
 
     public Box extendToEncompass(Vec3 toBeContained) {
-        if (toBeContained.x < xMin) {
-            xMin = (int) toBeContained.x - 1;
+        if (toBeContained.xCoord < xMin) {
+            xMin = (int) toBeContained.xCoord - 1;
         }
 
-        if (toBeContained.y < yMin) {
-            yMin = (int) toBeContained.y - 1;
+        if (toBeContained.yCoord < yMin) {
+            yMin = (int) toBeContained.yCoord - 1;
         }
 
-        if (toBeContained.z < zMin) {
-            zMin = (int) toBeContained.z - 1;
+        if (toBeContained.zCoord < zMin) {
+            zMin = (int) toBeContained.zCoord - 1;
         }
 
-        if (toBeContained.x > xMax) {
-            xMax = (int) toBeContained.x + 1;
+        if (toBeContained.xCoord > xMax) {
+            xMax = (int) toBeContained.xCoord + 1;
         }
 
-        if (toBeContained.y > yMax) {
-            yMax = (int) toBeContained.y + 1;
+        if (toBeContained.yCoord > yMax) {
+            yMax = (int) toBeContained.yCoord + 1;
         }
 
-        if (toBeContained.z > zMax) {
-            zMax = (int) toBeContained.z + 1;
+        if (toBeContained.zCoord > zMax) {
+            zMax = (int) toBeContained.zCoord + 1;
         }
 
         return this;

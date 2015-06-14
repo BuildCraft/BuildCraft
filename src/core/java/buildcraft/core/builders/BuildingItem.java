@@ -25,6 +25,9 @@ import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.StackAtPosition;
+import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.core.lib.utils.Utils;
 
 public class BuildingItem implements IBuildingItem, ISerializable {
 
@@ -42,61 +45,65 @@ public class BuildingItem implements IBuildingItem, ISerializable {
     private float lifetimeDisplay = 0;
     private float maxLifetime = 0;
     private boolean initialized = false;
+    /** Velocity */
+    private Vec3 velocity;
+    @Deprecated
     private double vx, vy, vz;
     private double maxHeight;
     private float lifetime = 0;
 
     public void initialize() {
         if (!initialized) {
-            double dx = destination.x - origin.x;
-            double dy = destination.y - origin.y;
-            double dz = destination.z - origin.z;
-
-            double size = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            Vec3 vec = destination.subtract(origin);
+            double size = vec.lengthVector();
 
             maxLifetime = (float) size * 4;
 
-            // maxHeight = 5.0 + (destination.y - origin.y) / 2.0;
-
             maxHeight = size / 2;
+
+            // The below computation is a much simpler version of the long commented out code. Hopefully it works :P
+
+            velocity = Utils.multiply(vec, 1 / maxLifetime);
 
             // the below computation is an approximation of the distance to
             // travel for the object. It really follows a sinus, but we compute
             // the size of a triangle for simplification.
 
-            Vec3 middle = new Vec3();
-            middle.x = (destination.x + origin.x) / 2;
-            middle.y = (destination.y + origin.y) / 2;
-            middle.z = (destination.z + origin.z) / 2;
-
-            Vec3 top = new Vec3();
-            top.x = middle.x;
-            top.y = middle.y + maxHeight;
-            top.z = middle.z;
-
-            Vec3 originToTop = new Vec3();
-            originToTop.x = top.x - origin.x;
-            originToTop.y = top.y - origin.y;
-            originToTop.z = top.z - origin.z;
-
-            Vec3 destinationToTop = new Vec3();
-            destinationToTop.x = destination.x - origin.x;
-            destinationToTop.y = destination.y - origin.y;
-            destinationToTop.z = destination.z - origin.z;
-
-            double d1 = Math.sqrt(originToTop.x * originToTop.x + originToTop.y * originToTop.y + originToTop.z * originToTop.z);
-
-            double d2 =
-                Math.sqrt(destinationToTop.x * destinationToTop.x + destinationToTop.y * destinationToTop.y + destinationToTop.z * destinationToTop.z);
-
-            d1 = d1 / size * maxLifetime;
-            d2 = d2 / size * maxLifetime;
-
-            maxLifetime = (float) d1 + (float) d2;
-
-            vx = dx / maxLifetime;
-            vy = dy / maxLifetime;
-            vz = dz / maxLifetime;
+            // Vec3 middle = new Vec3();
+            // middle.x = (destination.x + origin.x) / 2;
+            // middle.y = (destination.y + origin.y) / 2;
+            // middle.z = (destination.z + origin.z) / 2;
+            //
+            // Vec3 top = new Vec3();
+            // top.x = middle.x;
+            // top.y = middle.y + maxHeight;
+            // top.z = middle.z;
+            //
+            // Vec3 originToTop = new Vec3();
+            // originToTop.x = top.x - origin.x;
+            // originToTop.y = top.y - origin.y;
+            // originToTop.z = top.z - origin.z;
+            //
+            // Vec3 destinationToTop = new Vec3();
+            // destinationToTop.x = destination.x - origin.x;
+            // destinationToTop.y = destination.y - origin.y;
+            // destinationToTop.z = destination.z - origin.z;
+            //
+            // double d1 = Math.sqrt(originToTop.x * originToTop.x + originToTop.y * originToTop.y + originToTop.z *
+            // originToTop.z);
+            //
+            // double d2 =
+            // Math.sqrt(destinationToTop.x * destinationToTop.x + destinationToTop.y * destinationToTop.y +
+            // destinationToTop.z * destinationToTop.z);
+            //
+            // d1 = d1 / size * maxLifetime;
+            // d2 = d2 / size * maxLifetime;
+            //
+            // maxLifetime = (float) d1 + (float) d2;
+            //
+            // vx = dx / maxLifetime;
+            // vy = dy / maxLifetime;
+            // vz = dz / maxLifetime;
 
             if (stacksToDisplay.size() == 0) {
                 StackAtPosition sPos = new StackAtPosition();
@@ -109,13 +116,8 @@ public class BuildingItem implements IBuildingItem, ISerializable {
     }
 
     public Vec3 getDisplayPosition(float time) {
-        Vec3 result = new Vec3();
-
-        result.x = origin.x + vx * time;
-        result.y = origin.y + vy * time + MathHelper.sin(time / maxLifetime * (float) Math.PI) * maxHeight;
-        result.z = origin.z + vz * time;
-
-        return result;
+        Vec3 pos = origin.add(Utils.multiply(velocity, time));
+        return pos.addVector(0, MathHelper.sin(time / maxLifetime * (float) Math.PI) * maxHeight, 0);
     }
 
     public void update() {
@@ -157,10 +159,7 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 
     private void build() {
         if (slotToBuild != null) {
-            int destX = (int) Math.floor(destination.x);
-            int destY = (int) Math.floor(destination.y);
-            int destZ = (int) Math.floor(destination.z);
-            BlockPos dest = new BlockPos(destX, destY, destZ);
+            BlockPos dest = new BlockPos(destination);
 
             IBlockState state = context.world().getBlockState(dest);
 
@@ -199,14 +198,8 @@ public class BuildingItem implements IBuildingItem, ISerializable {
     }
 
     public void writeToNBT(NBTTagCompound nbt) {
-        NBTTagCompound originNBT = new NBTTagCompound();
-        origin.writeToNBT(originNBT);
-        nbt.setTag("origin", originNBT);
-
-        NBTTagCompound destinationNBT = new NBTTagCompound();
-        destination.writeToNBT(destinationNBT);
-        nbt.setTag("destination", destinationNBT);
-
+        nbt.setTag("origin", NBTUtils.writeVec3(origin));
+        nbt.setTag("destination", NBTUtils.writeVec3(destination));
         nbt.setFloat("lifetime", lifetime);
 
         NBTTagList items = new NBTTagList();
@@ -239,8 +232,8 @@ public class BuildingItem implements IBuildingItem, ISerializable {
     }
 
     public void readFromNBT(NBTTagCompound nbt) throws MappingNotFoundException {
-        origin = new Vec3(nbt.getCompoundTag("origin"));
-        destination = new Vec3(nbt.getCompoundTag("destination"));
+        origin = NBTUtils.readVec3(nbt, "origin");
+        destination = NBTUtils.readVec3(nbt, "destination");
         lifetime = nbt.getFloat("lifetime");
 
         NBTTagList items = nbt.getTagList("items", Constants.NBT.TAG_COMPOUND);
@@ -278,10 +271,8 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 
     @Override
     public void readData(ByteBuf stream) {
-        origin = new Vec3();
-        destination = new Vec3();
-        origin.readData(stream);
-        destination.readData(stream);
+        origin = NetworkUtils.readVec3(stream);
+        destination = NetworkUtils.readVec3(stream);
         lifetime = stream.readFloat();
         stacksToDisplay.clear();
         int size = stream.readUnsignedShort();
@@ -294,8 +285,8 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 
     @Override
     public void writeData(ByteBuf stream) {
-        origin.writeData(stream);
-        destination.writeData(stream);
+        NetworkUtils.writeVec3(stream, origin);
+        NetworkUtils.writeVec3(stream, destination);
         stream.writeFloat(lifetime);
         stream.writeShort(stacksToDisplay.size());
         for (StackAtPosition s : stacksToDisplay) {

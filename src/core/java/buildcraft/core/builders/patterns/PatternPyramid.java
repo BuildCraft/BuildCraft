@@ -33,13 +33,13 @@ public class PatternPyramid extends FillerPattern {
 
     @Override
     public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
-        int xMin = (int) box.pMin().x;
-        int yMin = (int) box.pMin().y;
-        int zMin = (int) box.pMin().z;
+        int xMin = (int) box.pMin().xCoord;
+        int yMin = (int) box.pMin().yCoord;
+        int zMin = (int) box.pMin().zCoord;
 
-        int xMax = (int) box.pMax().x;
-        int yMax = (int) box.pMax().y;
-        int zMax = (int) box.pMax().z;
+        int xMax = (int) box.pMax().xCoord;
+        int yMax = (int) box.pMax().yCoord;
+        int zMax = (int) box.pMax().zCoord;
 
         Template bpt = new Template(xMax - xMin + 1, yMax - yMin + 1, zMax - zMin + 1);
 

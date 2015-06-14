@@ -9,9 +9,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.BuildCraftProperties;
 import buildcraft.builders.BuildCraftBuilders;
 import buildcraft.builders.item.ItemBlueprint;
@@ -25,6 +25,7 @@ import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.blueprints.Template;
 import buildcraft.core.lib.utils.BlockScanner;
+import buildcraft.core.lib.utils.Utils;
 
 public class RecursiveBlueprintReader {
 
@@ -121,7 +122,8 @@ public class RecursiveBlueprintReader {
                 }
 
                 if (blueprint != null) {
-                    writingBlueprint.addSubBlueprint(blueprint, subTile.getPos().subtract(architect.getBox().pMin().toBlockPos()), orientation);
+                    BlockPos nPos = subTile.getPos().subtract(Utils.convertFloor(architect.getBox().pMin()));
+                    writingBlueprint.addSubBlueprint(blueprint, nPos, orientation);
                 }
 
                 subIndex++;
@@ -135,7 +137,7 @@ public class RecursiveBlueprintReader {
 
             EnumFacing facing = BuildCraftProperties.BLOCK_FACING.getValue(world.getBlockState(currentSubReader.architect.getPos()));
 
-            BlockPos pos = currentSubReader.architect.getPos().subtract(architect.getBox().pMin().toBlockPos());
+            BlockPos pos = currentSubReader.architect.getPos().subtract(Utils.convertFloor(architect.getBox().pMin()));
 
             if (currentSubReader.isDone()) {
                 writingBlueprint.addSubBlueprint(currentSubReader.getBlueprint(), pos, facing);
@@ -153,11 +155,7 @@ public class RecursiveBlueprintReader {
             if (blockScanner.blocksLeft() == 0) {
                 writingBlueprint.readEntitiesFromWorld(writingContext, architect);
 
-                Translation transform = new Translation();
-
-                transform.x = -writingContext.surroundingBox().pMin().x;
-                transform.y = -writingContext.surroundingBox().pMin().y;
-                transform.z = -writingContext.surroundingBox().pMin().z;
+                Vec3 transform = new Vec3(0, 0, 0).subtract(writingContext.surroundingBox().pMin());
 
                 writingBlueprint.translateToBlueprint(transform);
 

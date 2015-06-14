@@ -22,6 +22,7 @@ import buildcraft.builders.tile.TileArchitect;
 import buildcraft.builders.tile.TileBuilder;
 import buildcraft.builders.tile.TileConstructionMarker;
 import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.Utils;
 
 public class ItemConstructionMarker extends ItemBlock {
 
@@ -49,7 +50,8 @@ public class ItemConstructionMarker extends ItemBlock {
 
             TileEntity tile1 = world.getTileEntity(new BlockPos(ox, oy, oz));
 
-            if (!new Vec3(ox, oy, oz).isClose(new Vec3(pos), 64)) {
+            // TODO (CHECK) is this right?
+            if (!(new Vec3(ox, oy, oz).squareDistanceTo(Utils.convert(pos)) > 64)) {
                 return;
             }
 

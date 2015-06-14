@@ -27,7 +27,7 @@ public class BptContext implements IBuilderContext {
 
     @Override
     public Vec3 rotatePositionLeft(Vec3 pos) {
-        return new Vec3((box.sizeZ() - 1) - pos.z, pos.y, pos.x);
+        return new Vec3((box.sizeZ() - 1) - pos.zCoord, pos.yCoord, pos.xCoord);
     }
 
     @Override

@@ -9,11 +9,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.Utils;
 
 /** Use the template system to describe fillers */
 public class Template extends BlueprintBase {
@@ -30,9 +32,10 @@ public class Template extends BlueprintBase {
 
     @Override
     public void readFromWorld(IBuilderContext context, TileEntity anchorTile, BlockPos pos) {
-        int posX = (int) (pos.getX() - context.surroundingBox().pMin().x);
-        int posY = (int) (pos.getY() - context.surroundingBox().pMin().y);
-        int posZ = (int) (pos.getZ() - context.surroundingBox().pMin().z);
+        Vec3 nPos = Utils.convert(pos).subtract(context.surroundingBox().pMin());
+        int posX = (int) nPos.xCoord;
+        int posY = (int) nPos.yCoord;
+        int posZ = (int) nPos.zCoord;
 
         if (!BuildCraftAPI.isSoftBlock(anchorTile.getWorld(), pos)) {
             contents[posX][posY][posZ] = new SchematicMask(true);

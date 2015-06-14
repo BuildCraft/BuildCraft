@@ -47,21 +47,20 @@ public class SchematicEntity extends Schematic {
     }
 
     @Override
-    public void translateToBlueprint(Translation transform) {
+    public void translateToBlueprint(Vec3 transform) {
         NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
         Vec3 pos = new Vec3(nbttaglist.getDoubleAt(0), nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
-        pos = transform.translate(pos);
-
-        entityNBT.setTag("Pos", this.newDoubleNBTList(pos.x, pos.y, pos.z));
+        pos = pos.add(transform);
+        entityNBT.setTag("Pos", this.newDoubleNBTList(pos.xCoord, pos.yCoord, pos.zCoord));
     }
 
     @Override
-    public void translateToWorld(Translation transform) {
+    public void translateToWorld(Vec3 transform) {
         NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
         Vec3 pos = new Vec3(nbttaglist.getDoubleAt(0), nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
-        pos = transform.translate(pos);
+        pos = pos.add(transform);
 
-        entityNBT.setTag("Pos", this.newDoubleNBTList(pos.x, pos.y, pos.z));
+        entityNBT.setTag("Pos", this.newDoubleNBTList(pos.xCoord, pos.yCoord, pos.zCoord));
     }
 
     @Override
@@ -83,7 +82,7 @@ public class SchematicEntity extends Schematic {
         NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
         Vec3 pos = new Vec3(nbttaglist.getDoubleAt(0), nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
         pos = context.rotatePositionLeft(pos);
-        entityNBT.setTag("Pos", this.newDoubleNBTList(pos.x, pos.y, pos.z));
+        entityNBT.setTag("Pos", this.newDoubleNBTList(pos.xCoord, pos.yCoord, pos.zCoord));
 
         nbttaglist = entityNBT.getTagList("Rotation", 5);
         float yaw = nbttaglist.getFloatAt(0);
@@ -176,7 +175,7 @@ public class SchematicEntity extends Schematic {
 
             Vec3 existingPositon = new Vec3(e.posX, e.posY, e.posZ);
 
-            if (existingPositon.isClose(newPosition, 0.1F)) {
+            if (existingPositon.distanceTo(newPosition) <= 0.1) {
                 return true;
             }
         }

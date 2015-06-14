@@ -15,6 +15,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.blueprints.BuildingPermission;
@@ -22,7 +23,6 @@ import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
-import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.utils.NBTUtils;
 
@@ -51,7 +51,7 @@ public class Blueprint extends BlueprintBase {
     }
 
     @Override
-    public void translateToBlueprint(Translation transform) {
+    public void translateToBlueprint(Vec3 transform) {
         super.translateToBlueprint(transform);
 
         for (SchematicEntity e : entities) {
@@ -60,7 +60,7 @@ public class Blueprint extends BlueprintBase {
     }
 
     @Override
-    public void translateToWorld(Translation transform) {
+    public void translateToWorld(Vec3 transform) {
         super.translateToWorld(transform);
 
         for (SchematicEntity e : entities) {
@@ -86,9 +86,9 @@ public class Blueprint extends BlueprintBase {
             return;
         }
 
-        int posX = (int) (pos.getX() - context.surroundingBox().pMin().x);
-        int posY = (int) (pos.getY() - context.surroundingBox().pMin().y);
-        int posZ = (int) (pos.getZ() - context.surroundingBox().pMin().z);
+        int posX = (int) (pos.getX() - context.surroundingBox().pMin().xCoord);
+        int posY = (int) (pos.getY() - context.surroundingBox().pMin().yCoord);
+        int posZ = (int) (pos.getZ() - context.surroundingBox().pMin().zCoord);
 
         slot.state = state;
 
@@ -127,11 +127,8 @@ public class Blueprint extends BlueprintBase {
     @Override
     public void readEntitiesFromWorld(IBuilderContext context, TileEntity anchorTile) {
         BptContext bptContext = (BptContext) context;
-        Translation transform = new Translation();
-
-        transform.x = -context.surroundingBox().pMin().x;
-        transform.y = -context.surroundingBox().pMin().y;
-        transform.z = -context.surroundingBox().pMin().z;
+        // Should this be used somewhere?
+        Vec3 transform = new Vec3(0, 0, 0).subtract(context.surroundingBox().pMin());
 
         for (Object o : context.world().loadedEntityList) {
             Entity e = (Entity) o;

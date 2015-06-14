@@ -103,8 +103,8 @@ public class RenderLaser extends Render {
         GL11.glDisable(GL11.GL_LIGHTING);
 
         Vec3 offset = laser.renderOffset();
-        GL11.glTranslated(offset.x, offset.y, offset.z);
-        GL11.glTranslated(x - laser.data.head.x, y - laser.data.head.y, z - laser.data.head.z);
+        GL11.glTranslated(offset.xCoord, offset.yCoord, offset.zCoord);
+        GL11.glTranslated(x - laser.data.head.xCoord, y - laser.data.head.yCoord, z - laser.data.head.zCoord);
 
         // FIXME: WARNING! not using getBox (laser) will kill laser movement.
         // we can use some other method for the animation though.
@@ -121,7 +121,7 @@ public class RenderLaser extends Render {
 
         GL11.glPushMatrix();
 
-        GL11.glTranslated(laser.head.x, laser.head.y, laser.head.z);
+        GL11.glTranslated(laser.head.xCoord, laser.head.yCoord, laser.head.zCoord);
         laser.update();
 
         GL11.glRotatef((float) laser.angleZ, 0, 1, 0);
@@ -159,7 +159,7 @@ public class RenderLaser extends Render {
 
         GL11.glPushMatrix();
 
-        GL11.glTranslated(laser.head.x, laser.head.y, laser.head.z);
+        GL11.glTranslated(laser.head.xCoord, laser.head.yCoord, laser.head.zCoord);
         laser.update();
 
         GL11.glRotatef((float) laser.angleZ, 0, 1, 0);

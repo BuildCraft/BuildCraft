@@ -54,7 +54,7 @@ public class RenderBuildingItems {
             if (s.display) {
                 float renderScale = 0.7f;
                 GL11.glPushMatrix();
-                GL11.glTranslatef((float) s.pos.x, (float) s.pos.y, (float) s.pos.z);
+                GL11.glTranslatef((float) s.pos.xCoord, (float) s.pos.yCoord, (float) s.pos.zCoord);
                 GL11.glTranslatef(0, 0.25F, 0);
                 GL11.glScalef(renderScale, renderScale, renderScale);
                 if (s.stack != null) {

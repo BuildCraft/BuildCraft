@@ -58,7 +58,7 @@ public class EntityLaser extends Entity {
         data.head = head;
         data.tail = tail;
 
-        setPositionAndRotation(head.x, head.y, head.z, 0, 0);
+        setPositionAndRotation(head.xCoord, head.yCoord, head.zCoord, 0, 0);
         setSize(10, 10);
 
         this.laserTexture = laserTexture;
@@ -89,9 +89,9 @@ public class EntityLaser extends Entity {
 
         // TODO (1.8): Avoid Object Overflow
         // Err... what?
-        setEntityBoundingBox(new AxisAlignedBB(Math.min(data.head.x, data.tail.x), Math.min(data.head.y, data.tail.y) - 1.0D, Math.min(data.head.z,
-            data.tail.z) - 1.0D, Math.max(data.head.x, data.tail.x) + 1.0D, Math.max(data.head.y, data.tail.y) + 1.0D, Math.max(data.head.z,
-            data.tail.z) + 1.0D));
+        setEntityBoundingBox(new AxisAlignedBB(Math.min(data.head.xCoord, data.tail.xCoord), Math.min(data.head.yCoord, data.tail.yCoord) - 1.0D, Math.min(data.head.zCoord,
+            data.tail.zCoord) - 1.0D, Math.max(data.head.xCoord, data.tail.xCoord) + 1.0D, Math.max(data.head.yCoord, data.tail.yCoord) + 1.0D, Math.max(data.head.zCoord,
+            data.tail.zCoord) + 1.0D));
 
         data.update();
     }
@@ -149,13 +149,13 @@ public class EntityLaser extends Entity {
 
     @Override
     protected void writeEntityToNBT(NBTTagCompound nbt) {
-        nbt.setDouble("headX", data.head.x);
-        nbt.setDouble("headY", data.head.y);
-        nbt.setDouble("headZ", data.head.z);
+        nbt.setDouble("headX", data.head.xCoord);
+        nbt.setDouble("headY", data.head.yCoord);
+        nbt.setDouble("headZ", data.head.zCoord);
 
-        nbt.setDouble("tailX", data.tail.x);
-        nbt.setDouble("tailY", data.tail.y);
-        nbt.setDouble("tailZ", data.tail.z);
+        nbt.setDouble("tailX", data.tail.xCoord);
+        nbt.setDouble("tailY", data.tail.yCoord);
+        nbt.setDouble("tailZ", data.tail.zCoord);
     }
 
     // Workaround for the laser's posY loosing it's precision e.g 103.5 becomes 104

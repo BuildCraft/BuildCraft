@@ -24,6 +24,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
+import net.minecraft.util.Vec3i;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
@@ -331,8 +332,6 @@ public final class Utils {
         return obj.toString();
     }
 
-    // WORLD HELPER
-
     /** Checks between a min and max all the chunks inbetween actually exist. Args: world, minX, minY, minZ, maxX, maxY,
      * maxZ */
     public static boolean checkChunksExist(World world, int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
@@ -354,5 +353,25 @@ public final class Utils {
         } else {
             return false;
         }
+    }
+
+    public static Vec3 convert(Vec3i vec3i) {
+        return new Vec3(vec3i.getX(), vec3i.getY(), vec3i.getZ());
+    }
+
+    public static Vec3 convert(EnumFacing face) {
+        return new Vec3(face.getFrontOffsetX(), face.getFrontOffsetY(), face.getFrontOffsetZ());
+    }
+
+    public static Vec3 convert(EnumFacing face, double size) {
+        return multiply(convert(face), size);
+    }
+
+    public static Vec3i convertFloor(Vec3 vec) {
+        return new Vec3i(vec.xCoord, vec.yCoord, vec.zCoord);
+    }
+
+    public static Vec3 multiply(Vec3 vec, double multiple) {
+        return new Vec3(vec.xCoord * multiple, vec.yCoord * multiple, vec.zCoord * multiple);
     }
 }

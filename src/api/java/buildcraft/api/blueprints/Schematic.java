@@ -10,6 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 
 import buildcraft.api.core.IInvSlot;
 
@@ -91,12 +92,12 @@ public abstract class Schematic {
     }
 
     /** Applies translations to all positions in the schematic to center in the blueprint referential */
-    public void translateToBlueprint(Translation transform) {
+    public void translateToBlueprint(Vec3 transform) {
 
     }
 
     /** Apply translations to all positions in the schematic to center in the builder referential */
-    public void translateToWorld(Translation transform) {
+    public void translateToWorld(Vec3 transform) {
 
     }
 
