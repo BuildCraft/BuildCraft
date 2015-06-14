@@ -1,0 +1,21 @@
+Additions:
+
+* New filler parameters: Center for Pyramids and Direction for Stairs (asie)
+* Support for inventory Minecarts in the obsidian pipe - partially a bugfix (asie)
+
+Improvements:
+
+* Tweaks to water spring generation (asie)
+
+Bugs fixed:
+
+* [#2801] Internal server crash on certain pipe removal cases (asie)
+* [#2800, others] Fluid pipe network sync (this time hopefully for real) (asie)
+* [#2799] Cauldron crash on server startup (asie)
+* [#2798] Crashing when rightclickling with wrench (asie)
+* [#2796] Invalid height for stairs in Filler (asie)
+* [#2792] Obsidian pipes not using up energy for items (asie)
+* Fix buckets in stripes pipes not working with custom air blocks (asie)
+* Fix stripes pipes eating unplaced blocks in a large stack (asie)
+* Fix tooltip rendering in filler GUI (asie)
+
