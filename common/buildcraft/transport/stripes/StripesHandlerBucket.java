@@ -42,8 +42,7 @@ public class StripesHandlerBucket implements IStripesHandler {
 	public boolean handle(World world, int x, int y, int z,
 			ForgeDirection direction, ItemStack stack, EntityPlayer player,
 			IStripesActivator activator) {
-		Block block = world.getBlock(x, y, z);
-		if (block == Blocks.air) {
+		if (world.isAirBlock(x, y, z)) {
 			Block underblock = world.getBlock(x, y - 1, z);
 
 			if (((ItemBucket) stack.getItem()).tryPlaceContainedLiquid(world, x, y - 1, z)) {
