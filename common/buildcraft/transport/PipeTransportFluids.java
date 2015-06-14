@@ -51,7 +51,6 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public static short OUTPUT_COOLDOWN = 30; // 30
 
 	private static int NETWORK_SYNC_TICKS = BuildCraftCore.updateFactor / 2;
-	private static byte CLIENT_INIT_DELAY = (byte) 12;
 	private static final ForgeDirection[] directions = ForgeDirection.VALID_DIRECTIONS;
 	private static final ForgeDirection[] orientations = ForgeDirection.values();
 
@@ -119,7 +118,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		}
 
 		public int getMaxFillRate() {
-			return Math.min(capacity - amount, flowRate - incoming[currentTime]);
+			return Math.min(getCapacity() - amount, flowRate - incoming[currentTime]);
 		}
 
 		public void readFromNBT(NBTTagCompound compoundTag) {
@@ -151,7 +150,6 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	private final short[] outputTTL = new short[]{OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL, OUTPUT_TTL};
 	private final short[] outputCooldown = new short[]{0, 0, 0, 0, 0, 0};
 	private final boolean[] canReceiveCache = new boolean[6];
-	private byte initClient = 0;
 	private int clientSyncCounter = 0;
 	private int capacity, flowRate;
 	private int travelDelay = MAX_TRAVEL_DELAY;
@@ -168,6 +166,10 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		sections[6] = new PipeSection();
 	}
 
+	/**
+	 * This value has to be the same on client and server!
+	 * @return
+	 */
 	public int getCapacity() {
 		return capacity;
 	}
@@ -230,7 +232,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 		if (networkSyncTracker.markTimeIfDelay(container.getWorldObj())) {
 			boolean init = false;
-			if (++clientSyncCounter > BuildCraftCore.longUpdateFactor) {
+			if (++clientSyncCounter > BuildCraftCore.longUpdateFactor * 2) {
 				clientSyncCounter = 0;
 				init = true;
 			}
@@ -330,7 +332,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 	private void moveToCenter() {
 		int transferInCount = 0;
-		int spaceAvailable = capacity - sections[6].amount;
+		int spaceAvailable = getCapacity() - sections[6].amount;
 
 		for (ForgeDirection dir : directions) {
 			inputPerTick[dir.ordinal()] = 0;
@@ -410,18 +412,9 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		boolean changed = false;
 		BitSet delta = new BitSet(8);
 
-		if (initClient > 0) {
-			initClient--;
-			if (initClient <= 1) {
-				changed = true;
-				initClient = 0;
-				delta.set(0, 8);
-			}
-		}
-
 		FluidRenderData renderCacheCopy = this.renderCache;
 
-		if ((fluidType == null && renderCacheCopy.fluidID != 0)
+		if (initPacket || (fluidType == null && renderCacheCopy.fluidID != 0)
 				|| (fluidType != null && renderCacheCopy.fluidID != fluidType.getFluid().getID())) {
 			changed = true;
 			renderCache.fluidID = fluidType != null ? fluidType.getFluid().getID() : 0;
@@ -436,7 +429,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			if (displayQty == 0 && camount > 0 || initPacket) {
 				displayQty = camount;
 			}
-			displayQty = Math.min(capacity, displayQty);
+			displayQty = Math.min(getCapacity(), displayQty);
 
 			if (pamount != displayQty || initPacket) {
 				changed = true;
@@ -450,7 +443,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		}
 
 		if (changed || initPacket) {
-			PacketFluidUpdate packet = new PacketFluidUpdate(container.xCoord, container.yCoord, container.zCoord, initPacket);
+			PacketFluidUpdate packet = new PacketFluidUpdate(container.xCoord, container.yCoord, container.zCoord, initPacket, getCapacity() > 255);
 			packet.renderCache = renderCacheCopy;
 			packet.delta = delta;
 			return packet;
@@ -470,7 +463,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public void sendDescriptionPacket() {
 		super.sendDescriptionPacket();
 
-		initClient = CLIENT_INIT_DELAY;
+		PacketFluidUpdate update = computeFluidUpdate(true, true);
+		BuildCraftTransport.instance.sendToPlayers(update, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 	}
 
 	public FluidStack getStack(ForgeDirection direction) {

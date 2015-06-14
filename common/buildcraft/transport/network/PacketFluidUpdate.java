@@ -16,25 +16,28 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.network.PacketCoordinates;
 import buildcraft.core.lib.utils.BitSetUtils;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportFluids;
-import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.utils.FluidRenderData;
 
 public class PacketFluidUpdate extends PacketCoordinates {
 	public FluidRenderData renderCache = new FluidRenderData();
 	public BitSet delta;
+	private boolean largeFluidCapacity;
 
 	public PacketFluidUpdate(int xCoord, int yCoord, int zCoord) {
 		super(PacketIds.PIPE_LIQUID, xCoord, yCoord, zCoord);
 	}
 
-	public PacketFluidUpdate(int xCoord, int yCoord, int zCoord, boolean chunkPacket) {
+	public PacketFluidUpdate(int xCoord, int yCoord, int zCoord, boolean chunkPacket, boolean largeFluidCapacity) {
 		super(PacketIds.PIPE_LIQUID, xCoord, yCoord, zCoord);
 		this.isChunkDataPacket = chunkPacket;
+		this.largeFluidCapacity = largeFluidCapacity;
 	}
 
 	public PacketFluidUpdate() {
@@ -50,28 +53,29 @@ public class PacketFluidUpdate extends PacketCoordinates {
 		}
 
 		TileEntity entity = world.getTileEntity(posX, posY, posZ);
-		if (!(entity instanceof TileGenericPipe)) {
+		if (!(entity instanceof IPipeTile)) {
 			return;
 		}
 
-		TileGenericPipe pipe = (TileGenericPipe) entity;
-		if (pipe.pipe == null) {
+		IPipeTile pipeTile = (IPipeTile) entity;
+		if (!(pipeTile.getPipe() instanceof Pipe)) {
 			return;
 		}
 
-		if (!(pipe.pipe.transport instanceof PipeTransportFluids)) {
+		Pipe pipe = (Pipe) pipeTile.getPipe();
+
+		if (!(pipe.transport instanceof PipeTransportFluids)) {
 			return;
 		}
 
-		PipeTransportFluids transLiq = (PipeTransportFluids) pipe.pipe.transport;
+		PipeTransportFluids transLiq = (PipeTransportFluids) pipe.transport;
 
+		this.largeFluidCapacity = transLiq.getCapacity() > 255;
 		renderCache = transLiq.renderCache;
 
 		byte[] dBytes = new byte[1];
 		data.readBytes(dBytes);
 		delta = BitSetUtils.fromByteArray(dBytes);
-
-		// System.out.printf("read %d, %d, %d = %s, %s%n", posX, posY, posZ, Arrays.toString(dBytes), delta);
 
 		if (delta.get(0)) {
 			renderCache.fluidID = data.readShort();
@@ -80,7 +84,8 @@ public class PacketFluidUpdate extends PacketCoordinates {
 
 		for (ForgeDirection dir : ForgeDirection.values()) {
 			if (delta.get(dir.ordinal() + 1)) {
-				renderCache.amount[dir.ordinal()] = Math.min(transLiq.getCapacity(), data.readUnsignedByte());
+				renderCache.amount[dir.ordinal()] = Math.min(transLiq.getCapacity(),
+						largeFluidCapacity ? data.readUnsignedShort() : data.readUnsignedByte());
 			}
 		}
 	}
@@ -90,7 +95,6 @@ public class PacketFluidUpdate extends PacketCoordinates {
 		super.writeData(data);
 
 		byte[] dBytes = BitSetUtils.toByteArray(delta, 1);
-		// System.out.printf("write %d, %d, %d = %s, %s%n", posX, posY, posZ, Arrays.toString(dBytes), delta);
 		data.writeBytes(dBytes);
 
 		if (delta.get(0)) {
@@ -102,7 +106,11 @@ public class PacketFluidUpdate extends PacketCoordinates {
 
 		for (ForgeDirection dir : ForgeDirection.values()) {
 			if (delta.get(dir.ordinal() + 1)) {
-				data.writeByte(renderCache.amount[dir.ordinal()]);
+				if (largeFluidCapacity) {
+					data.writeShort(renderCache.amount[dir.ordinal()]);
+				} else {
+					data.writeByte(renderCache.amount[dir.ordinal()]);
+				}
 			}
 		}
 	}
