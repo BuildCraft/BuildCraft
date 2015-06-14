@@ -10,10 +10,10 @@ import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import buildcraft.api.core.ISerializable;
-import buildcraft.api.core.Position;
 import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.builders.BuildCraftBuilders;
 import buildcraft.core.DefaultProps;
@@ -127,8 +127,8 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
     public Origin origin = new Origin();
     public boolean showSignals = false;
 
-    private Position initVectO;
-    private Position[] initVect;
+    private Vec3 initVectO;
+    private Vec3[] initVect;
     private EntityBlock[] lasers;
     private EntityBlock[] signals;
 
@@ -152,28 +152,28 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
             signals = new EntityBlock[6];
             if (!origin.isSet() || !origin.vect[0].isSet()) {
                 signals[0] =
-                    Utils.createLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord + DefaultProps.MARKER_RANGE - 1, yCoord,
+                    Utils.createLaser(worldObj, new Vec3(xCoord, yCoord, zCoord), new Vec3(xCoord + DefaultProps.MARKER_RANGE - 1, yCoord,
                         zCoord), LaserKind.Blue);
                 signals[1] =
-                    Utils.createLaser(worldObj, new Position(xCoord - DefaultProps.MARKER_RANGE + 1, yCoord, zCoord), new Position(xCoord, yCoord,
+                    Utils.createLaser(worldObj, new Vec3(xCoord - DefaultProps.MARKER_RANGE + 1, yCoord, zCoord), new Vec3(xCoord, yCoord,
                         zCoord), LaserKind.Blue);
             }
 
             if (!origin.isSet() || !origin.vect[1].isSet()) {
                 signals[2] =
-                    Utils.createLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord, yCoord + DefaultProps.MARKER_RANGE - 1,
+                    Utils.createLaser(worldObj, new Vec3(xCoord, yCoord, zCoord), new Vec3(xCoord, yCoord + DefaultProps.MARKER_RANGE - 1,
                         zCoord), LaserKind.Blue);
                 signals[3] =
-                    Utils.createLaser(worldObj, new Position(xCoord, yCoord - DefaultProps.MARKER_RANGE + 1, zCoord), new Position(xCoord, yCoord,
+                    Utils.createLaser(worldObj, new Vec3(xCoord, yCoord - DefaultProps.MARKER_RANGE + 1, zCoord), new Vec3(xCoord, yCoord,
                         zCoord), LaserKind.Blue);
             }
 
             if (!origin.isSet() || !origin.vect[2].isSet()) {
                 signals[4] =
-                    Utils.createLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord, yCoord, zCoord + DefaultProps.MARKER_RANGE
+                    Utils.createLaser(worldObj, new Vec3(xCoord, yCoord, zCoord), new Vec3(xCoord, yCoord, zCoord + DefaultProps.MARKER_RANGE
                         - 1), LaserKind.Blue);
                 signals[5] =
-                    Utils.createLaser(worldObj, new Position(xCoord, yCoord, zCoord - DefaultProps.MARKER_RANGE + 1), new Position(xCoord, yCoord,
+                    Utils.createLaser(worldObj, new Vec3(xCoord, yCoord, zCoord - DefaultProps.MARKER_RANGE + 1), new Vec3(xCoord, yCoord,
                         zCoord), LaserKind.Blue);
             }
         }
@@ -476,12 +476,12 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
         super.readFromNBT(nbttagcompound);
 
         if (nbttagcompound.hasKey("vectO")) {
-            initVectO = new Position(nbttagcompound.getCompoundTag("vectO"));
-            initVect = new Position[3];
+            initVectO = new Vec3(nbttagcompound.getCompoundTag("vectO"));
+            initVect = new Vec3[3];
 
             for (int i = 0; i < 3; ++i) {
                 if (nbttagcompound.hasKey("vect" + i)) {
-                    initVect[i] = new Position(nbttagcompound.getCompoundTag("vect" + i));
+                    initVect[i] = new Vec3(nbttagcompound.getCompoundTag("vect" + i));
                 }
             }
         }
@@ -494,13 +494,13 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
         if (origin.isSet() && origin.vectO.getMarker(worldObj) == this) {
             NBTTagCompound vectO = new NBTTagCompound();
 
-            new Position(origin.vectO.getMarker(worldObj)).writeToNBT(vectO);
+            new Vec3(origin.vectO.getMarker(worldObj)).writeToNBT(vectO);
             nbttagcompound.setTag("vectO", vectO);
 
             for (int i = 0; i < 3; ++i) {
                 if (origin.vect[i].isSet()) {
                     NBTTagCompound vect = new NBTTagCompound();
-                    new Position(origin.vect[i].x, origin.vect[i].y, origin.vect[i].z).writeToNBT(vect);
+                    new Vec3(origin.vect[i].x, origin.vect[i].y, origin.vect[i].z).writeToNBT(vect);
                     nbttagcompound.setTag("vect" + i, vect);
                 }
             }

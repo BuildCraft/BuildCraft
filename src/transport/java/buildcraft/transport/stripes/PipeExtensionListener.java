@@ -11,12 +11,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import buildcraft.api.core.Position;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.BuildCraftTransport;
@@ -60,7 +60,7 @@ public class PipeExtensionListener {
             HashSet<PipeExtensionRequest> rSet = requests.get(event.world);
             World w = event.world;
             for (PipeExtensionRequest r : rSet) {
-                Position target = new Position(r.x, r.y, r.z);
+                Vec3 target = new Vec3(r.x, r.y, r.z);
                 target.orientation = r.o;
 
                 boolean retract = r.stack.getItem() == BuildCraftTransport.pipeItemsVoid;

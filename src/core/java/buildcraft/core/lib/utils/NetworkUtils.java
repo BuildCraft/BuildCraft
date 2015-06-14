@@ -11,6 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.Vec3;
 
 public final class NetworkUtils {
     private NetworkUtils() {
@@ -113,5 +114,18 @@ public final class NetworkUtils {
         byte[] data = new byte[stream.readInt()];
         stream.readBytes(data, 0, data.length);
         return data;
+    }
+
+    public static void writeVec3(ByteBuf stream, Vec3 vector) {
+        stream.writeDouble(vector.xCoord);
+        stream.writeDouble(vector.yCoord);
+        stream.writeDouble(vector.zCoord);
+    }
+
+    public static Vec3 readVec3(ByteBuf stream) {
+        double x = stream.readDouble();
+        double y = stream.readDouble();
+        double z = stream.readDouble();
+        return new Vec3(x, y, z);
     }
 }

@@ -21,6 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
@@ -33,7 +34,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.ISerializable;
-import buildcraft.api.core.Position;
 import buildcraft.api.enums.EnumColor;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.power.IRedstoneEngineReceiver;
@@ -592,7 +592,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof PipeTransportItems && isPipeConnected(from) && pipe.inputOpen(from)) {
 
             if (doAdd) {
-                Position itemPos = new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5, from.getOpposite());
+                Vec3 itemPos = new Vec3(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5, from.getOpposite());
                 itemPos.moveBackwards(0.4);
 
                 TravelingItem pipedItem = TravelingItem.make(itemPos.x, itemPos.y, itemPos.z, payload);

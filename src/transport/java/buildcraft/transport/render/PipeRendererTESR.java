@@ -20,11 +20,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IntHashMap;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
-import buildcraft.api.core.Position;
 import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.enums.EnumColor;
 import buildcraft.api.gates.IGateExpansion;
@@ -799,7 +799,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
                 break;
             }
 
-            Position motion = new Position(0, 0, 0, item.toCenter ? item.input : item.output);
+            Vec3 motion = new Vec3(0, 0, 0, item.toCenter ? item.input : item.output);
             motion.moveForwards(item.getSpeed() * f);
 
             doRenderItem(item, x + item.xCoord - pipe.container.xCoord + motion.x, y + item.yCoord - pipe.container.yCoord + motion.y, z

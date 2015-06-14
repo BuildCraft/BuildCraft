@@ -14,11 +14,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.ISerializable;
-import buildcraft.api.core.Position;
 import buildcraft.core.lib.utils.Utils;
 
 public class Box implements IBox, ISerializable {
@@ -150,7 +150,7 @@ public class Box implements IBox, ISerializable {
         return x >= xMin && x <= xMax && y >= yMin && y <= yMax && z >= zMin && z <= zMax;
     }
 
-    public boolean contains(Position p) {
+    public boolean contains(Vec3 p) {
         return contains((int) p.x, (int) p.y, (int) p.z);
     }
 
@@ -159,13 +159,13 @@ public class Box implements IBox, ISerializable {
     }
 
     @Override
-    public Position pMin() {
-        return new Position(xMin, yMin, zMin);
+    public Vec3 pMin() {
+        return new Vec3(xMin, yMin, zMin);
     }
 
     @Override
-    public Position pMax() {
-        return new Position(xMax, yMax, zMax);
+    public Vec3 pMax() {
+        return new Vec3(xMax, yMax, zMax);
     }
     
     public int sizeX() {
@@ -287,7 +287,7 @@ public class Box implements IBox, ISerializable {
         return new AxisAlignedBB(xMin, yMin, zMin, xMax, yMax, zMax);
     }
 
-    public Box extendToEncompass(Position toBeContained) {
+    public Box extendToEncompass(Vec3 toBeContained) {
         if (toBeContained.x < xMin) {
             xMin = (int) toBeContained.x - 1;
         }

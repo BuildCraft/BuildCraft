@@ -14,6 +14,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.Constants;
 
@@ -28,7 +29,6 @@ import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.ConfigAccessor;
 import buildcraft.api.core.ConfigAccessor.EMod;
-import buildcraft.api.core.Position;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.NBTUtils;
@@ -140,8 +140,8 @@ public class BuildingSlotBlock extends BuildingSlot {
     }
 
     @Override
-    public Position getDestination() {
-        return new Position(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+    public Vec3 getDestination() {
+        return new Vec3(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
     }
 
     @Override

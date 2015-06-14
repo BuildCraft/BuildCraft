@@ -16,10 +16,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.core.Position;
 import buildcraft.api.enums.EnumColor;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.lib.inventory.StackHelper;
@@ -208,7 +208,7 @@ public class TravelingItem {
                 return null;
             }
 
-            Position motion = new Position(0, 0, 0, output);
+            Vec3 motion = new Vec3(0, 0, 0, output);
             motion.moveForwards(0.1 + getSpeed() * 2F);
 
             EntityItem entity = new EntityItem(container.getWorldObj(), xCoord, yCoord, zCoord, getItemStack());

@@ -14,8 +14,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Vec3;
 
-import buildcraft.api.core.Position;
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.power.ILaserTarget;
 import buildcraft.api.power.ILaserTargetBlock;
@@ -58,8 +58,8 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
         }
 
         laser.isVisible = false;
-        laser.head = new Position(xCoord, yCoord, zCoord);
-        laser.tail = new Position(xCoord, yCoord, zCoord);
+        laser.head = new Vec3(xCoord, yCoord, zCoord);
+        laser.tail = new Vec3(xCoord, yCoord, zCoord);
         laser.isGlowing = true;
     }
 
@@ -235,9 +235,9 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
                 break;
         }
 
-        Position head = new Position(xCoord + 0.5 + px, yCoord + 0.5 + py, zCoord + 0.5 + pz);
-        Position tail =
-            new Position(laserTarget.getXCoord() + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F, laserTarget.getYCoord() + 9F / 16F, laserTarget
+        Vec3 head = new Vec3(xCoord + 0.5 + px, yCoord + 0.5 + py, zCoord + 0.5 + pz);
+        Vec3 tail =
+            new Vec3(laserTarget.getXCoord() + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F, laserTarget.getYCoord() + 9F / 16F, laserTarget
                 .getZCoord()
                 + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F);
 

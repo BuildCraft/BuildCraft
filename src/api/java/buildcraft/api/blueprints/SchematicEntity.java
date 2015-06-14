@@ -16,9 +16,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagFloat;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.Constants;
-
-import buildcraft.api.core.Position;
 
 public class SchematicEntity extends Schematic {
     public Class<? extends Entity> entity;
@@ -50,7 +49,7 @@ public class SchematicEntity extends Schematic {
     @Override
     public void translateToBlueprint(Translation transform) {
         NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
-        Position pos = new Position(nbttaglist.getDoubleAt(0), nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
+        Vec3 pos = new Vec3(nbttaglist.getDoubleAt(0), nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
         pos = transform.translate(pos);
 
         entityNBT.setTag("Pos", this.newDoubleNBTList(pos.x, pos.y, pos.z));
@@ -59,7 +58,7 @@ public class SchematicEntity extends Schematic {
     @Override
     public void translateToWorld(Translation transform) {
         NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
-        Position pos = new Position(nbttaglist.getDoubleAt(0), nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
+        Vec3 pos = new Vec3(nbttaglist.getDoubleAt(0), nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
         pos = transform.translate(pos);
 
         entityNBT.setTag("Pos", this.newDoubleNBTList(pos.x, pos.y, pos.z));
@@ -82,7 +81,7 @@ public class SchematicEntity extends Schematic {
     @Override
     public void rotateLeft(IBuilderContext context) {
         NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
-        Position pos = new Position(nbttaglist.getDoubleAt(0), nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
+        Vec3 pos = new Vec3(nbttaglist.getDoubleAt(0), nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
         pos = context.rotatePositionLeft(pos);
         entityNBT.setTag("Pos", this.newDoubleNBTList(pos.x, pos.y, pos.z));
 
@@ -170,12 +169,12 @@ public class SchematicEntity extends Schematic {
 
     public boolean isAlreadyBuilt(IBuilderContext context) {
         NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
-        Position newPosition = new Position(nbttaglist.getDoubleAt(0), nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
+        Vec3 newPosition = new Vec3(nbttaglist.getDoubleAt(0), nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
 
         for (Object o : context.world().loadedEntityList) {
             Entity e = (Entity) o;
 
-            Position existingPositon = new Position(e.posX, e.posY, e.posZ);
+            Vec3 existingPositon = new Vec3(e.posX, e.posY, e.posZ);
 
             if (existingPositon.isClose(newPosition, 0.1F)) {
                 return true;

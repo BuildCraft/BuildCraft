@@ -14,9 +14,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.core.Position;
 import buildcraft.builders.item.ItemBlueprint;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
@@ -42,7 +42,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 
     public static HashSet<TileConstructionMarker> currentMarkers = new HashSet<TileConstructionMarker>();
 
-    public EnumFacing direction = EnumFacing.UNKNOWN;
+    public EnumFacing direction = null;
 
     public LaserData laser;
     public ItemStack itemBlueprint;
@@ -73,8 +73,8 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
     }
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
 
         BuildingItem toRemove = null;
 
@@ -97,9 +97,9 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
         if (itemBlueprint != null && ItemBlueprint.getId(itemBlueprint) != null && bluePrintBuilder == null) {
             BlueprintBase bpt = ItemBlueprint.loadBlueprint(itemBlueprint);
             if (bpt != null && bpt instanceof Blueprint) {
-                bpt = bpt.adjustToWorld(worldObj, xCoord, yCoord, zCoord, direction);
+                bpt = bpt.adjustToWorld(worldObj, pos, direction);
 
-                bluePrintBuilder = new BptBuilderBlueprint((Blueprint) bpt, worldObj, xCoord, yCoord, zCoord);
+                bluePrintBuilder = new BptBuilderBlueprint((Blueprint) bpt, worldObj, pos);
                 bptContext = bluePrintBuilder.getContext();
                 box.initialize(bluePrintBuilder);
                 sendNetworkUpdate();
@@ -108,11 +108,11 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
             }
         }
 
-        if (laser == null && direction != EnumFacing.UNKNOWN) {
+        if (laser == null && direction != null) {
             laser = new LaserData();
-            laser.head = new Position(xCoord + 0.5F, yCoord + 0.5F, zCoord + 0.5F);
+            laser.head = new Vec3(pos).add(Vec3.POINT_5);
             laser.tail =
-                new Position(xCoord + 0.5F + direction.offsetX * 0.5F, yCoord + 0.5F + direction.offsetY * 0.5F, zCoord + 0.5F + direction.offsetZ
+                new Vec3(xCoord + 0.5F + direction.offsetX * 0.5F, yCoord + 0.5F + direction.offsetY * 0.5F, zCoord + 0.5F + direction.offsetZ
                     * 0.5F);
             laser.isVisible = true;
             sendNetworkUpdate();

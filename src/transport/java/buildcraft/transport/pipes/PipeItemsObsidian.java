@@ -18,10 +18,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.Position;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.Transactor;
@@ -77,8 +77,8 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
         if (orientation == EnumFacing.UNKNOWN) {
             return null;
         }
-        Position p1 = new Position(container.xCoord, container.yCoord, container.zCoord, orientation);
-        Position p2 = new Position(container.xCoord, container.yCoord, container.zCoord, orientation);
+        Vec3 p1 = new Vec3(container.xCoord, container.yCoord, container.zCoord, orientation);
+        Vec3 p2 = new Vec3(container.xCoord, container.yCoord, container.zCoord, orientation);
 
         switch (orientation) {
             case EAST:
@@ -133,8 +133,8 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
                 break;
         }
 
-        Position min = p1.min(p2);
-        Position max = p1.max(p2);
+        Vec3 min = p1.min(p2);
+        Vec3 max = p1.max(p2);
 
         return new AxisAlignedBB(min.x, min.y, min.z, max.x, max.y, max.z);
     }

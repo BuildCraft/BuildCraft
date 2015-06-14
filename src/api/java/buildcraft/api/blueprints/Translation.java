@@ -5,8 +5,7 @@
 package buildcraft.api.blueprints;
 
 import net.minecraft.util.BlockPos;
-
-import buildcraft.api.core.Position;
+import net.minecraft.util.Vec3;
 
 // Could this be MutableBlockPos?
 public class Translation {
@@ -15,8 +14,8 @@ public class Translation {
     public double y = 0;
     public double z = 0;
 
-    public Position translate(Position p) {
-        Position p2 = new Position(p);
+    public Vec3 translate(Vec3 p) {
+        Vec3 p2 = new Vec3(p);
 
         p2.x = p.x + x;
         p2.y = p.y + y;

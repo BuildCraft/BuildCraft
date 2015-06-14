@@ -78,19 +78,30 @@ public abstract class BlockBuildCraftBase extends Block {
         List<BuildCraftProperty<?>> metas = Lists.newArrayList();
         List<BuildCraftProperty<?>> nonMetas = Lists.newArrayList();
 
+        int total = 1;
+        for (BuildCraftProperty<?> prop : properties) {
+            total *= prop.getAllowedValues().size();
+
+            if (total > 16) {
+                nonMetas.add(prop);
+            } else {
+                metas.add(prop);
+            }
+        }
+
+        this.properties = metas.toArray(new BuildCraftProperty<?>[0]);
+        this.nonMetaProperties = nonMetas.toArray(new BuildCraftProperty<?>[0]);
+
         this.myBlockState = createBlockState();
 
         IBlockState defaultState = getBlockState().getBaseState();
 
-        int total = 1;
         List<IBlockState> tempValidStates = Lists.newArrayList();
         tempValidStates.add(defaultState);
         boolean canRotate = false;
         boolean canSixRotate = false;
 
         for (BuildCraftProperty<?> prop : properties) {
-            total *= prop.getAllowedValues().size();
-
             if (prop == FACING_PROP) {
                 canRotate = true;
             }
@@ -99,11 +110,8 @@ public abstract class BlockBuildCraftBase extends Block {
                 canSixRotate = true;
             }
 
-            if (total > 16) {
-                nonMetas.add(prop);
-                continue;
-            } else {
-                metas.add(prop);
+            if (nonMetas.contains(prop)) {
+                break;
             }
 
             Collection<? extends Comparable<?>> allowedValues = prop.getAllowedValues();
@@ -117,9 +125,6 @@ public abstract class BlockBuildCraftBase extends Block {
             }
             tempValidStates = newValidStates;
         }
-
-        this.properties = metas.toArray(new BuildCraftProperty<?>[0]);
-        this.nonMetaProperties = nonMetas.toArray(new BuildCraftProperty<?>[0]);
 
         horizontallyRotatable = canRotate;
         allRotatable = canSixRotate;

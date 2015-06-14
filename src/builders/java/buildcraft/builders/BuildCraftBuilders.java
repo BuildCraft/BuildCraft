@@ -104,7 +104,7 @@ import buildcraft.core.proxy.CoreProxy;
         dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftBuilders extends BuildCraftMod {
 
-    @Mod.Instance("BuildCraft|Builders")
+    @Mod.Instance("BuildCraftBuilders")
     public static BuildCraftBuilders instance;
 
     public static BlockMarker markerBlock;

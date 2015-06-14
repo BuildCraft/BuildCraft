@@ -13,11 +13,11 @@ import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.Vec3;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.Translation;
-import buildcraft.api.core.Position;
 
 public class SchematicMinecart extends SchematicEntity {
 
@@ -32,7 +32,7 @@ public class SchematicMinecart extends SchematicEntity {
 		super.translateToBlueprint(transform);
 
 		NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
-		Position pos = new Position(nbttaglist.getDoubleAt(0),
+		Vec3 pos = new Vec3(nbttaglist.getDoubleAt(0),
 				nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
 		pos.x -= 0.5;
 		pos.z -= 0.5;
@@ -45,7 +45,7 @@ public class SchematicMinecart extends SchematicEntity {
 		super.translateToWorld(transform);
 
 		NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
-		Position pos = new Position(nbttaglist.getDoubleAt(0),
+		Vec3 pos = new Vec3(nbttaglist.getDoubleAt(0),
 				nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
 		pos.x += 0.5;
 		pos.z += 0.5;
@@ -63,13 +63,13 @@ public class SchematicMinecart extends SchematicEntity {
 	@Override
 	public boolean isAlreadyBuilt(IBuilderContext context) {
 		NBTTagList nbttaglist = entityNBT.getTagList("Pos", 6);
-		Position newPosition = new Position(nbttaglist.getDoubleAt(0),
+		Vec3 newPosition = new Vec3(nbttaglist.getDoubleAt(0),
 				nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
 
 		for (Object o : context.world().loadedEntityList) {
 			Entity e = (Entity) o;
 
-			Position existingPositon = new Position(e.posX, e.posY, e.posZ);
+			Vec3 existingPositon = new Vec3(e.posX, e.posY, e.posZ);
 
 			if (e instanceof EntityMinecart) {
 				if (existingPositon.isClose(newPosition, 0.1F)) {

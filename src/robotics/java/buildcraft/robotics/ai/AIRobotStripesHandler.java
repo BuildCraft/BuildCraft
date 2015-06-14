@@ -8,9 +8,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.WorldServer;
 
-import buildcraft.api.core.Position;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.transport.IStripesActivator;
@@ -49,7 +49,7 @@ public class AIRobotStripesHandler extends AIRobot implements IStripesActivator 
 
             EnumFacing direction = EnumFacing.NORTH;
 
-            Position p = new Position(useToBlock.x, useToBlock.y, useToBlock.z);
+            Vec3 p = new Vec3(useToBlock.x, useToBlock.y, useToBlock.z);
 
             EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj, (int) p.x, (int) p.y, (int) p.z).get();
             player.rotationPitch = 0;

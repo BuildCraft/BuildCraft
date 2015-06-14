@@ -1,10 +1,10 @@
 package buildcraft.transport.statements;
 
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.Position;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.ITriggerInternal;
@@ -29,7 +29,7 @@ public class TriggerLightSensor extends BCStatement implements ITriggerInternal 
     @Override
     public boolean isTriggerActive(IStatementContainer source, IStatementParameter[] parameters) {
         TileEntity tile = source.getTile();
-        Position pos = new Position(tile);
+        Vec3 pos = new Vec3(tile);
         pos.orientation = ((ISidedStatementContainer) source).getSide();
         pos.moveForwards(1.0);
 

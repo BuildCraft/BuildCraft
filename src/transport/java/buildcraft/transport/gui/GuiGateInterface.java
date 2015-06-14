@@ -10,6 +10,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.inventory.IInventory;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.statements.IStatement;

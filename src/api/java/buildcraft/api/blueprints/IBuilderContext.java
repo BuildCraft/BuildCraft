@@ -4,15 +4,15 @@
  * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.api.blueprints;
 
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import buildcraft.api.core.IBox;
-import buildcraft.api.core.Position;
 
 /** This interface provide contextual information when building or initializing blueprint slots. */
 public interface IBuilderContext {
 
-    Position rotatePositionLeft(Position pos);
+    Vec3 rotatePositionLeft(Vec3 pos);
 
     IBox surroundingBox();
 

@@ -13,11 +13,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.Position;
 import buildcraft.builders.tile.TileArchitect;
 import buildcraft.builders.tile.TileBuilder;
 import buildcraft.builders.tile.TileConstructionMarker;
@@ -49,7 +49,7 @@ public class ItemConstructionMarker extends ItemBlock {
 
             TileEntity tile1 = world.getTileEntity(new BlockPos(ox, oy, oz));
 
-            if (!new Position(ox, oy, oz).isClose(new Position(pos), 64)) {
+            if (!new Vec3(ox, oy, oz).isClose(new Vec3(pos), 64)) {
                 return;
             }
 

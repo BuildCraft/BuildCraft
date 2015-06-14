@@ -16,6 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
 import net.minecraftforge.common.util.Constants;
@@ -26,7 +27,6 @@ import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.BCLog;
-import buildcraft.api.core.Position;
 import buildcraft.core.Box;
 import buildcraft.core.Version;
 
@@ -122,8 +122,8 @@ public abstract class BlueprintBase {
                 dir = dir.rotateY();
             }
 
-            Position pos = new Position(sub.getInteger("x"), sub.getInteger("y"), sub.getInteger("z"));
-            Position np = context.rotatePositionLeft(pos);
+            Vec3 pos = new Vec3(sub.getInteger("x"), sub.getInteger("y"), sub.getInteger("z"));
+            Vec3 np = context.rotatePositionLeft(pos);
 
             sub.setInteger("x", (int) np.x);
             sub.setInteger("z", (int) np.z);

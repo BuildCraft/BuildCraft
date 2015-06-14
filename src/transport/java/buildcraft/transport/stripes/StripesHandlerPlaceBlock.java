@@ -9,9 +9,9 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-import buildcraft.api.core.Position;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
 
@@ -32,7 +32,7 @@ public class StripesHandlerPlaceBlock implements IStripesHandler {
         if (!world.isAirBlock(pos) && stack.tryPlaceItemIntoWorld(player, world, pos, 1, 0.0f, 0.0f, 0.0f)) {
             return true;
         } else if (world.isAirBlock(pos)) {
-            Position src = new Position(pos);
+            Vec3 src = new Vec3(pos);
             src.orientation = direction;
             src.moveBackwards(1.0D);
             if (stack.tryPlaceItemIntoWorld(player, world, (int) src.x, (int) src.y, (int) src.z, direction.ordinal(), 0.0f, 0.0f, 0.0f)) {

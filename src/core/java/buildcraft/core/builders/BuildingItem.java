@@ -16,13 +16,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.core.ISerializable;
-import buildcraft.api.core.Position;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.StackAtPosition;
 
@@ -30,7 +30,7 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 
     public static int ITEMS_SPACE = 2;
 
-    public Position origin, destination;
+    public Vec3 origin, destination;
     public LinkedList<StackAtPosition> stacksToDisplay = new LinkedList<StackAtPosition>();
 
     public boolean isDone = false;
@@ -64,22 +64,22 @@ public class BuildingItem implements IBuildingItem, ISerializable {
             // travel for the object. It really follows a sinus, but we compute
             // the size of a triangle for simplification.
 
-            Position middle = new Position();
+            Vec3 middle = new Vec3();
             middle.x = (destination.x + origin.x) / 2;
             middle.y = (destination.y + origin.y) / 2;
             middle.z = (destination.z + origin.z) / 2;
 
-            Position top = new Position();
+            Vec3 top = new Vec3();
             top.x = middle.x;
             top.y = middle.y + maxHeight;
             top.z = middle.z;
 
-            Position originToTop = new Position();
+            Vec3 originToTop = new Vec3();
             originToTop.x = top.x - origin.x;
             originToTop.y = top.y - origin.y;
             originToTop.z = top.z - origin.z;
 
-            Position destinationToTop = new Position();
+            Vec3 destinationToTop = new Vec3();
             destinationToTop.x = destination.x - origin.x;
             destinationToTop.y = destination.y - origin.y;
             destinationToTop.z = destination.z - origin.z;
@@ -108,8 +108,8 @@ public class BuildingItem implements IBuildingItem, ISerializable {
         }
     }
 
-    public Position getDisplayPosition(float time) {
-        Position result = new Position();
+    public Vec3 getDisplayPosition(float time) {
+        Vec3 result = new Vec3();
 
         result.x = origin.x + vx * time;
         result.y = origin.y + vy * time + MathHelper.sin(time / maxLifetime * (float) Math.PI) * maxHeight;
@@ -239,8 +239,8 @@ public class BuildingItem implements IBuildingItem, ISerializable {
     }
 
     public void readFromNBT(NBTTagCompound nbt) throws MappingNotFoundException {
-        origin = new Position(nbt.getCompoundTag("origin"));
-        destination = new Position(nbt.getCompoundTag("destination"));
+        origin = new Vec3(nbt.getCompoundTag("origin"));
+        destination = new Vec3(nbt.getCompoundTag("destination"));
         lifetime = nbt.getFloat("lifetime");
 
         NBTTagList items = nbt.getTagList("items", Constants.NBT.TAG_COMPOUND);
@@ -278,8 +278,8 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 
     @Override
     public void readData(ByteBuf stream) {
-        origin = new Position();
-        destination = new Position();
+        origin = new Vec3();
+        destination = new Vec3();
         origin.readData(stream);
         destination.readData(stream);
         lifetime = stream.readFloat();

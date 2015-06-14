@@ -10,13 +10,13 @@ import java.util.LinkedList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.Vec3;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.SchematicFactory;
-import buildcraft.api.core.Position;
 
 public class BuildingSlotEntity extends BuildingSlot {
 
@@ -32,9 +32,9 @@ public class BuildingSlotEntity extends BuildingSlot {
     }
 
     @Override
-    public Position getDestination() {
+    public Vec3 getDestination() {
         NBTTagList nbttaglist = schematic.entityNBT.getTagList("Pos", 6);
-        Position pos = new Position(nbttaglist.getDoubleAt(0), nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
+        Vec3 pos = new Vec3(nbttaglist.getDoubleAt(0), nbttaglist.getDoubleAt(1), nbttaglist.getDoubleAt(2));
 
         return pos;
     }

@@ -16,9 +16,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.WorldServer;
 
-import buildcraft.api.core.Position;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.transport.IStripesHandler;
@@ -64,7 +64,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
             direction = event.direction;
         }
 
-        Position p = new Position(container.xCoord, container.yCoord, container.zCoord, direction);
+        Vec3 p = new Vec3(container.xCoord, container.yCoord, container.zCoord, direction);
         p.moveForwards(1.0);
 
         ItemStack stack = event.entity.getEntityItem();
@@ -112,7 +112,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 
     @Override
     public void dropItem(ItemStack itemStack, EnumFacing direction) {
-        Position p = new Position(container.xCoord, container.yCoord, container.zCoord, direction);
+        Vec3 p = new Vec3(container.xCoord, container.yCoord, container.zCoord, direction);
         p.moveForwards(1.0);
 
         InvUtils.dropItems(getWorld(), itemStack, (int) p.x, (int) p.y, (int) p.z);
@@ -145,8 +145,8 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 
     @Override
     public void sendItem(ItemStack itemStack, EnumFacing direction) {
-        Position pos =
-            new Position(container.xCoord + 0.5, container.yCoord + TransportUtils.getPipeFloorOf(itemStack), container.zCoord + 0.5, direction);
+        Vec3 pos =
+            new Vec3(container.xCoord + 0.5, container.yCoord + TransportUtils.getPipeFloorOf(itemStack), container.zCoord + 0.5, direction);
         pos.moveBackwards(0.25D);
 
         TravelingItem newItem = TravelingItem.make(pos.x, pos.y, pos.z, itemStack);
@@ -195,7 +195,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
         }
 
         if (o != EnumFacing.UNKNOWN) {
-            Position p = new Position(container.xCoord, container.yCoord, container.zCoord, o);
+            Vec3 p = new Vec3(container.xCoord, container.yCoord, container.zCoord, o);
             p.moveForwards(1.0);
 
             if (!BlockUtils.isUnbreakableBlock(getWorld(), (int) p.x, (int) p.y, (int) p.z)) {

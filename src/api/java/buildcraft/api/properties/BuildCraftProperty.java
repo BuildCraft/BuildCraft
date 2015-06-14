@@ -10,14 +10,12 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.property.IUnlistedProperty;
 
-import buildcraft.api.core.BCLog;
-
 /** This class exists primarily to allow for a property to be used as either a normal IProperty, or an IUnlistedProperty.
  * It also exists to give IProperty's generic types. */
 public class BuildCraftProperty<T extends Comparable<T>> implements IProperty, IUnlistedProperty<T> {
     private final String name;
     private final Class<T> clazz;
-    private final Collection<T> values;
+    private final List<T> values;
 
     public static <E extends Enum<E>> BuildCraftProperty<E> create(String name, Class<E> enumeration) {
         List<E> values = Arrays.asList(enumeration.getEnumConstants());
@@ -61,10 +59,8 @@ public class BuildCraftProperty<T extends Comparable<T>> implements IProperty, I
         double actualDiff = Math.abs(difference);
         Double[] array = new Double[(int) (Math.abs(first - last) / actualDiff)];
         double addedDiff = actualDiff * (first > last ? -1 : 1);
-        BCLog.logger.info("create<Integer>(" + first + ", " + last + ", " + difference + ")");
         for (int i = 0; i <= array.length; i++) {
             array[i] = first + (first - last) / addedDiff * i;
-            BCLog.logger.info("  " + array[i]);
         }
         return new BuildCraftProperty<Double>(name, Double.class, array);
     }
@@ -73,7 +69,7 @@ public class BuildCraftProperty<T extends Comparable<T>> implements IProperty, I
         this(name, clazz, Arrays.asList(values));
     }
 
-    public BuildCraftProperty(String name, Class<T> clazz, Collection<T> values) {
+    public BuildCraftProperty(String name, Class<T> clazz, List<T> values) {
         this.name = name;
         this.values = values;
         this.clazz = clazz;

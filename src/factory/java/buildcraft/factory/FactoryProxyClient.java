@@ -12,8 +12,6 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.EntityBlock;
-import buildcraft.core.render.RenderingEntityBlocks;
-import buildcraft.core.render.RenderingEntityBlocks.EntityRenderIndex;
 import buildcraft.factory.gui.GuiAutoCrafting;
 import buildcraft.factory.render.RenderHopper;
 import buildcraft.factory.render.RenderRefinery;

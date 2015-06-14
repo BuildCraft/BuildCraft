@@ -5,9 +5,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-import buildcraft.api.core.Position;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
 import buildcraft.transport.TileGenericPipe;
@@ -29,7 +29,7 @@ public class StripesHandlerPipeWires implements IStripesHandler {
         int pipesToTry = 8;
         int pipeWireColor = stack.getItemDamage();
 
-        Position p = new Position(pos);
+        Vec3 p = new Vec3(pos);
         p.orientation = direction;
 
         while (pipesToTry > 0) {

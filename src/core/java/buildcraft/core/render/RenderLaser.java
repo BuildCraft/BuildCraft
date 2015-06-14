@@ -14,9 +14,9 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-import buildcraft.api.core.Position;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
 import buildcraft.core.lib.render.RenderEntityBlock;
@@ -102,7 +102,7 @@ public class RenderLaser extends Render {
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
         GL11.glDisable(GL11.GL_LIGHTING);
 
-        Position offset = laser.renderOffset();
+        Vec3 offset = laser.renderOffset();
         GL11.glTranslated(offset.x, offset.y, offset.z);
         GL11.glTranslated(x - laser.data.head.x, y - laser.data.head.y, z - laser.data.head.z);
 

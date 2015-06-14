@@ -8,12 +8,12 @@ import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.Vec3;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.Schematic;
-import buildcraft.api.core.Position;
 
 public abstract class BuildingSlot {
 
@@ -39,7 +39,7 @@ public abstract class BuildingSlot {
         return new LinkedList<ItemStack>();
     }
 
-    public abstract Position getDestination();
+    public abstract Vec3 getDestination();
 
     public void addStackConsumed(ItemStack stack) {
         if (stackConsumed == null) {

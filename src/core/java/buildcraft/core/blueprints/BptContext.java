@@ -4,12 +4,12 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.blueprints;
 
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.core.IBox;
-import buildcraft.api.core.Position;
 import buildcraft.core.Box;
 
 public class BptContext implements IBuilderContext {
@@ -26,8 +26,8 @@ public class BptContext implements IBuilderContext {
     }
 
     @Override
-    public Position rotatePositionLeft(Position pos) {
-        return new Position((box.sizeZ() - 1) - pos.z, pos.y, pos.x);
+    public Vec3 rotatePositionLeft(Vec3 pos) {
+        return new Vec3((box.sizeZ() - 1) - pos.z, pos.y, pos.x);
     }
 
     @Override

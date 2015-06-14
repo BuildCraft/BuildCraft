@@ -13,8 +13,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagIntArray;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 
 import buildcraft.api.core.BCLog;
 
@@ -105,7 +108,7 @@ public final class NBTUtils {
                     int i = nbt.getInteger("i");
                     int j = nbt.getInteger("j");
                     int k = nbt.getInteger("k");
-                    pos = new BlockPos(pos);
+                    pos = new BlockPos(i, j, k);
                 } else if (nbt.hasKey("x")) {
                     int x = nbt.getInteger("x");
                     int y = nbt.getInteger("y");
@@ -122,5 +125,21 @@ public final class NBTUtils {
         }
         BCLog.logger.warn("Attempted to read a block position from an invalid tag! (" + base + ")", new Throwable());
         return BlockPos.ORIGIN;
+    }
+
+    public static NBTTagList writeVec3(Vec3 vec3) {
+        NBTTagList list = new NBTTagList();
+        list.appendTag(new NBTTagDouble(vec3.xCoord));
+        list.appendTag(new NBTTagDouble(vec3.yCoord));
+        list.appendTag(new NBTTagDouble(vec3.zCoord));
+        return list;
+    }
+
+    public static Vec3 readVec3(NBTTagCompound nbt, String tagName) {
+        return readVec3(nbt.getTagList(tagName, DOUBLE));
+    }
+
+    public static Vec3 readVec3(NBTTagList list) {
+        return new Vec3(list.getDoubleAt(0), list.getDoubleAt(1), list.getDoubleAt(2));
     }
 }

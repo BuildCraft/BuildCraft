@@ -13,10 +13,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.Position;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.inventory.InvUtils;
@@ -171,7 +171,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
                     continue;
                 }
 
-                Position entityPos = new Position(tile.xCoord + 0.5, tile.yCoord + 0.5, tile.zCoord + 0.5, side.getOpposite());
+                Vec3 entityPos = new Vec3(tile.xCoord + 0.5, tile.yCoord + 0.5, tile.zCoord + 0.5, side.getOpposite());
 
                 entityPos.moveForwards(0.6);
 

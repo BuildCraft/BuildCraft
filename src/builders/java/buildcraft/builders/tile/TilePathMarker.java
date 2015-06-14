@@ -13,10 +13,10 @@ import java.util.LinkedList;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import buildcraft.api.core.IPathProvider;
-import buildcraft.api.core.Position;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
 
@@ -62,7 +62,7 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
         }
 
         LaserData laser =
-            new LaserData(new Position(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5), new Position(pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5,
+            new LaserData(new Vec3(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5), new Vec3(pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5,
                 pathMarker.zCoord + 0.5));
 
         LaserData laser2 = new LaserData(laser.head, laser.tail);

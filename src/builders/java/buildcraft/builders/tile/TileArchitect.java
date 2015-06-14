@@ -17,13 +17,11 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.core.Position;
 import buildcraft.builders.blueprints.RecursiveBlueprintReader;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
@@ -325,7 +323,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
     private void addSubBlueprint(BlockPos index) {
         subBlueprints.add(index);
 
-        LaserData laser = new LaserData(new Position(index), new Position(this));
+        LaserData laser = new LaserData(new Vec3(index), new Vec3(this));
 
         laser.head.x += 0.5F;
         laser.head.y += 0.5F;

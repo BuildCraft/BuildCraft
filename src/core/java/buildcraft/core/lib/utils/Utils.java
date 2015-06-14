@@ -23,13 +23,13 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.common.network.internal.FMLProxyPacket;
 
 import buildcraft.api.core.IAreaProvider;
-import buildcraft.api.core.Position;
 import buildcraft.api.power.IEngine;
 import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.api.transport.IInjectable;
@@ -157,7 +157,7 @@ public final class Utils {
         return null;
     }
 
-    public static EntityLaser createLaser(World world, Position p1, Position p2, LaserKind kind) {
+    public static EntityLaser createLaser(World world, Vec3 p1, Vec3 p2, LaserKind kind) {
         if (p1.equals(p2)) {
             return null;
         }
@@ -169,16 +169,16 @@ public final class Utils {
     public static EntityLaser[] createLaserBox(World world, double xMin, double yMin, double zMin, double xMax, double yMax, double zMax,
             LaserKind kind) {
         EntityLaser[] lasers = new EntityLaser[12];
-        Position[] p = new Position[8];
+        Vec3[] p = new Vec3[8];
 
-        p[0] = new Position(xMin, yMin, zMin);
-        p[1] = new Position(xMax, yMin, zMin);
-        p[2] = new Position(xMin, yMax, zMin);
-        p[3] = new Position(xMax, yMax, zMin);
-        p[4] = new Position(xMin, yMin, zMax);
-        p[5] = new Position(xMax, yMin, zMax);
-        p[6] = new Position(xMin, yMax, zMax);
-        p[7] = new Position(xMax, yMax, zMax);
+        p[0] = new Vec3(xMin, yMin, zMin);
+        p[1] = new Vec3(xMax, yMin, zMin);
+        p[2] = new Vec3(xMin, yMax, zMin);
+        p[3] = new Vec3(xMax, yMax, zMin);
+        p[4] = new Vec3(xMin, yMin, zMax);
+        p[5] = new Vec3(xMax, yMin, zMax);
+        p[6] = new Vec3(xMin, yMax, zMax);
+        p[7] = new Vec3(xMax, yMax, zMax);
 
         lasers[0] = Utils.createLaser(world, p[0], p[1], kind);
         lasers[1] = Utils.createLaser(world, p[0], p[2], kind);
@@ -198,16 +198,16 @@ public final class Utils {
 
     public static LaserData[] createLaserDataBox(double xMin, double yMin, double zMin, double xMax, double yMax, double zMax) {
         LaserData[] lasers = new LaserData[12];
-        Position[] p = new Position[8];
+        Vec3[] p = new Vec3[8];
 
-        p[0] = new Position(xMin, yMin, zMin);
-        p[1] = new Position(xMax, yMin, zMin);
-        p[2] = new Position(xMin, yMax, zMin);
-        p[3] = new Position(xMax, yMax, zMin);
-        p[4] = new Position(xMin, yMin, zMax);
-        p[5] = new Position(xMax, yMin, zMax);
-        p[6] = new Position(xMin, yMax, zMax);
-        p[7] = new Position(xMax, yMax, zMax);
+        p[0] = new Vec3(xMin, yMin, zMin);
+        p[1] = new Vec3(xMax, yMin, zMin);
+        p[2] = new Vec3(xMin, yMax, zMin);
+        p[3] = new Vec3(xMax, yMax, zMin);
+        p[4] = new Vec3(xMin, yMin, zMax);
+        p[5] = new Vec3(xMax, yMin, zMax);
+        p[6] = new Vec3(xMin, yMax, zMax);
+        p[7] = new Vec3(xMax, yMax, zMax);
 
         lasers[0] = new LaserData(p[0], p[1]);
         lasers[1] = new LaserData(p[0], p[2]);

@@ -21,10 +21,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.api.core.Position;
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
@@ -392,8 +392,8 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
             || item.yCoord < container.yCoord - 1 || item.zCoord > container.zCoord + 2 || item.zCoord < container.zCoord - 1;
     }
 
-    public Position getPosition() {
-        return new Position(container.xCoord, container.yCoord, container.zCoord);
+    public Vec3 getPosition() {
+        return new Vec3(container.xCoord, container.yCoord, container.zCoord);
     }
 
     @Override
