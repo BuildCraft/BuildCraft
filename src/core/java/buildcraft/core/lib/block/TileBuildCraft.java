@@ -10,6 +10,8 @@ import java.util.HashSet;
 
 import cofh.api.energy.IEnergyHandler;
 
+import org.apache.commons.lang3.StringUtils;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -272,4 +274,8 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
     }
 
     public void clear() {}
+
+    public boolean hasCustomName() {
+        return !StringUtils.isEmpty(getInventoryName());
+    }
 }

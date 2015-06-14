@@ -64,7 +64,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
             return;
         }
 
-        IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord, zCoord);
+        IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, pos);
 
         if (a != null) {
             box.initialize(a);
@@ -77,7 +77,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
         }
 
         if (currentPattern != null && currentTemplate == null && box.isInitialized()) {
-            currentTemplate = currentPattern.getTemplateBuilder(box, getWorldObj(), patternParameters);
+            currentTemplate = currentPattern.getTemplateBuilder(box, getWorld(), patternParameters);
             context = currentTemplate.getContext();
         }
 
@@ -89,8 +89,8 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
     }
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
 
         if (worldObj.isRemote) {
             return;
@@ -119,12 +119,12 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
         }
 
         if (currentPattern != null && currentTemplate == null) {
-            currentTemplate = currentPattern.getTemplateBuilder(box, getWorldObj(), patternParameters);
+            currentTemplate = currentPattern.getTemplateBuilder(box, getWorld(), patternParameters);
             context = currentTemplate.getContext();
         }
 
         if (currentTemplate != null) {
-            currentTemplate.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord);
+            currentTemplate.buildNextSlot(worldObj, this, pos.getX(), pos.getY(), pos.getZ());
 
             if (currentTemplate.isDone(this)) {
                 done = true;
@@ -235,11 +235,11 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-        if (worldObj.getTileEntity(xCoord, yCoord, zCoord) != this) {
+        if (worldObj.getTileEntity(pos) != this) {
             return false;
         }
 
-        return entityplayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D) <= 64D;
+        return entityplayer.getDistanceSq(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) <= 64D;
     }
 
     @Override
@@ -310,7 +310,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
         readParametersFromNBT(parameterData);
         setPattern(pattern);
 
-        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        worldObj.markBlockForUpdate(pos);
     }
 
     @Override
@@ -319,10 +319,10 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
     }
 
     @Override
-    public void openInventory() {}
+    public void openInventory(EntityPlayer player) {}
 
     @Override
-    public void closeInventory() {}
+    public void closeInventory(EntityPlayer player) {}
 
     @Override
     public boolean isItemValidForSlot(int slot, ItemStack stack) {
@@ -347,11 +347,6 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
             NBTTagCompound patternData = NetworkUtils.readNBT(stream);
             readParametersFromNBT(patternData);
         }
-    }
-
-    @Override
-    public boolean hasCustomInventoryName() {
-        return false;
     }
 
     @Override

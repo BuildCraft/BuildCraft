@@ -154,7 +154,7 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
     public void readFromNBT(NBTTagCompound nbt) {
         super.readFromNBT(nbt);
 
-        direction = EnumFacing.getOrientation(nbt.getByte("direction"));
+        direction = EnumFacing.VALUES[(nbt.getByte("direction"))];
 
         if (nbt.hasKey("itemBlueprint")) {
             itemBlueprint = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("itemBlueprint"));

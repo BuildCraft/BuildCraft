@@ -67,6 +67,7 @@ import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.core.lib.utils.Utils;
 
 public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluidHandler, IRequestProvider, IControllable {
 
@@ -277,7 +278,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
         for (BlockPos b : path) {
             if (previous != null) {
                 Vec3 point5 = new Vec3(0.5, 0.5, 0.5);
-                LaserData laser = new LaserData(new Vec3(previous).add(point5), new Vec3(b).add(point5));
+                LaserData laser = new LaserData(Utils.convert(previous).add(point5), Utils.convert(b).add(point5));
 
                 pathLasers.add(laser);
             }

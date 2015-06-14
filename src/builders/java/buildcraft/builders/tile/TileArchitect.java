@@ -323,29 +323,14 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
     private void addSubBlueprint(BlockPos index) {
         subBlueprints.add(index);
 
-        LaserData laser = new LaserData(new Vec3(index), new Vec3(this));
+        Vec3 point5 = new Vec3(0.5, 0.5, 0.5);
 
-        laser.head.x += 0.5F;
-        laser.head.y += 0.5F;
-        laser.head.z += 0.5F;
-
-        laser.tail.x += 0.5F;
-        laser.tail.y += 0.5F;
-        laser.tail.z += 0.5F;
+        LaserData laser = new LaserData(Utils.convert(index).add(point5), Utils.convert(this.getPos()).add(point5));
 
         subLasers.add(laser);
     }
 
-    public int getIconGlowLevel(int renderPass) {
-        if (renderPass == 1) { // Red LED
-            return isProcessing ? 15 : 0;
-        } else if (renderPass == 2) { // Green LED
-            return box != null && box.isInitialized() ? 15 : 0;
-        } else {
-            return -1;
-        }
-    }
-
+    @Override
     public String getInventoryName() {
         return "Template";
     }

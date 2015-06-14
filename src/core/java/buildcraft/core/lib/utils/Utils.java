@@ -149,7 +149,7 @@ public final class Utils {
     }
 
     public static IAreaProvider getNearbyAreaProvider(World world, BlockPos pos) {
-        for (TileEntity t : (List<TileEntity>) world.loadedTileEntityList) {
+        for (Object t : world.loadedTileEntityList) {
             if (t instanceof ITileAreaProvider && ((ITileAreaProvider) t).isValidFromLocation(pos)) {
                 return (IAreaProvider) t;
             }
@@ -367,8 +367,10 @@ public final class Utils {
         return multiply(convert(face), size);
     }
 
-    public static Vec3i convertFloor(Vec3 vec) {
-        return new Vec3i(vec.xCoord, vec.yCoord, vec.zCoord);
+    // We always return BlockPos instead of Vec3i as it will be usable in all situations that Vec3i is, and all the ones
+    // that require BlockPos
+    public static BlockPos convertFloor(Vec3 vec) {
+        return new BlockPos(vec.xCoord, vec.yCoord, vec.zCoord);
     }
 
     public static Vec3 multiply(Vec3 vec, double multiple) {

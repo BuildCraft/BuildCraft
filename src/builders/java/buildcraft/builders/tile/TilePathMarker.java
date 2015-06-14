@@ -19,6 +19,7 @@ import net.minecraft.world.World;
 import buildcraft.api.core.IPathProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
+import buildcraft.core.lib.utils.Utils;
 
 public class TilePathMarker extends TileMarker implements IPathProvider {
     // A list with the pathMarkers that aren't fully connected
@@ -60,10 +61,9 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
         if (worldObj.isRemote) {
             return;
         }
+        Vec3 point5 = new Vec3(0.5, 0.5, 0.5);
 
-        LaserData laser =
-            new LaserData(new Vec3(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5), new Vec3(pathMarker.xCoord + 0.5, pathMarker.yCoord + 0.5,
-                pathMarker.zCoord + 0.5));
+        LaserData laser = new LaserData(Utils.convert(pos).add(point5), Utils.convert(pos).add(point5));
 
         LaserData laser2 = new LaserData(laser.head, laser.tail);
         laser2.isVisible = false;
@@ -79,14 +79,11 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
 
         for (TilePathMarker t : availableMarkers) {
             if (t == this || t == this.links[0] || t == this.links[1]
-                || t.getWorldObj().provider.dimensionId != this.getWorldObj().provider.dimensionId) {
+                || t.getWorld().provider.getDimensionId() != this.getWorld().provider.getDimensionId()) {
                 continue;
             }
 
-            int dx = this.xCoord - t.xCoord;
-            int dy = this.yCoord - t.yCoord;
-            int dz = this.zCoord - t.zCoord;
-            distance = dx * dx + dy * dy + dz * dz;
+            distance = pos.distanceSq(t.pos);
 
             if (distance > DefaultProps.MARKER_RANGE * DefaultProps.MARKER_RANGE) {
                 continue;
@@ -115,8 +112,8 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
     }
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
 
         if (worldObj.isRemote) {
             return;
@@ -132,7 +129,7 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
             tryingToConnect = false;
 
             sendNetworkUpdate();
-            getWorldObj().markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+            getWorld().markBlockRangeForRenderUpdate(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());
         }
     }
 
@@ -143,16 +140,12 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
         TilePathMarker nextTile = this;
 
         while (nextTile != null) {
-            BlockPos b = new BlockPos(nextTile.xCoord, nextTile.yCoord, nextTile.zCoord);
+            visitedPaths.add(nextTile.pos);
+            res.add(nextTile.pos);
 
-            visitedPaths.add(b);
-            res.add(b);
-
-            if (nextTile.links[0] != null
-                && !visitedPaths.contains(new BlockPos(nextTile.links[0].xCoord, nextTile.links[0].yCoord, nextTile.links[0].zCoord))) {
+            if (nextTile.links[0] != null && !visitedPaths.contains(nextTile.links[0].pos)) {
                 nextTile = nextTile.links[0];
-            } else if (nextTile.links[1] != null
-                && !visitedPaths.contains(new BlockPos(nextTile.links[1].xCoord, nextTile.links[1].yCoord, nextTile.links[1].zCoord))) {
+            } else if (nextTile.links[1] != null && !visitedPaths.contains(nextTile.links[1].pos)) {
                 nextTile = nextTile.links[1];
             } else {
                 nextTile = null;
@@ -188,7 +181,7 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
         }
 
         if (loadLink0) {
-            TileEntity e0 = worldObj.getTileEntity(x0, y0, z0);
+            TileEntity e0 = worldObj.getTileEntity(new BlockPos(x0, y0, z0));
 
             if (links[0] != e0 && links[1] != e0 && e0 instanceof TilePathMarker) {
                 createLaserAndConnect((TilePathMarker) e0);
@@ -198,7 +191,7 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
         }
 
         if (loadLink1) {
-            TileEntity e1 = worldObj.getTileEntity(x1, y1, z1);
+            TileEntity e1 = worldObj.getTileEntity(new BlockPos(x1, y1, z1));
 
             if (links[0] != e1 && links[1] != e1 && e1 instanceof TilePathMarker) {
                 createLaserAndConnect((TilePathMarker) e1);
@@ -254,15 +247,15 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
         super.writeToNBT(nbttagcompound);
 
         if (links[0] != null) {
-            nbttagcompound.setInteger("x0", links[0].xCoord);
-            nbttagcompound.setInteger("y0", links[0].yCoord);
-            nbttagcompound.setInteger("z0", links[0].zCoord);
+            nbttagcompound.setInteger("x0", links[0].pos.getX());
+            nbttagcompound.setInteger("y0", links[0].pos.getY());
+            nbttagcompound.setInteger("z0", links[0].pos.getZ());
         }
 
         if (links[1] != null) {
-            nbttagcompound.setInteger("x1", links[1].xCoord);
-            nbttagcompound.setInteger("y1", links[1].yCoord);
-            nbttagcompound.setInteger("z1", links[1].zCoord);
+            nbttagcompound.setInteger("x1", links[1].pos.getX());
+            nbttagcompound.setInteger("y1", links[1].pos.getY());
+            nbttagcompound.setInteger("z1", links[1].pos.getZ());
         }
     }
 
@@ -278,7 +271,7 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
     public static void clearAvailableMarkersList(World w) {
         for (Iterator<TilePathMarker> it = availableMarkers.iterator(); it.hasNext();) {
             TilePathMarker t = it.next();
-            if (t.getWorldObj().provider.dimensionId != w.provider.dimensionId) {
+            if (t.getWorld().provider.getDimensionId() != w.provider.getDimensionId()) {
                 it.remove();
             }
         }
@@ -304,7 +297,7 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
         tryingToConnect = (flags & 4) != 0;
 
         if (previousState != tryingToConnect) {
-            worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+            worldObj.markBlockForUpdate(pos);
         }
     }
 

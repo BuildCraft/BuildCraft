@@ -124,7 +124,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
             if (findTarget(false)) {
                 if (box != null && ((headPosX < box.xMin || headPosX > box.xMax) || (headPosZ < box.zMin || headPosZ > box.zMax))) {
-                    setHead(box.xMin + 1, yCoord + 2, box.zMin + 1);
+                    setHead(box.xMin + 1, pos.getY() + 2, box.zMin + 1);
                 }
             }
         } else {
@@ -133,7 +133,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     }
 
     private void createArm() {
-        worldObj.spawnEntityInWorld(new EntityMechanicalArm(worldObj, box.xMin + CoreConstants.PIPE_MAX_POS, yCoord + box.sizeY() - 1
+        worldObj.spawnEntityInWorld(new EntityMechanicalArm(worldObj, box.xMin + CoreConstants.PIPE_MAX_POS, pos.getY() + box.sizeY() - 1
             + CoreConstants.PIPE_MIN_POS, box.zMin + CoreConstants.PIPE_MAX_POS, box.sizeX() - 2 + CoreConstants.PIPE_MIN_POS * 2, box.sizeZ() - 2
             + CoreConstants.PIPE_MIN_POS * 2, this));
     }
@@ -150,13 +150,14 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         }
 
         // Each chunk covers the full height, so we only check one of them per height.
+        // TODO (CHECK): Isn't this a really bad way of checking if chunks are loaded as it only checks the corners?
         return worldObj.blockExists(box.xMin, box.yMax, box.zMin) && worldObj.blockExists(box.xMax, box.yMax, box.zMin)
             && worldObj.blockExists(box.xMin, box.yMax, box.zMax) && worldObj.blockExists(box.xMax, box.yMax, box.zMax);
     }
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
 
         if (worldObj.isRemote) {
             if (stage != Stage.DONE) {
