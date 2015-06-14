@@ -80,10 +80,11 @@ jar {
 
 ext.modules = [ "core", "builders", "energy", "factory", "robotics", "silicon", "transport" ]
 ext.moduleDependencies = [  
-								"core":[], 
+				"core":[], 
                             	"builders":["core"],
                             	"energy": ["core"],
-                           		"factory": ["core"],
+                           	"factory": ["core"],
+				"robotics": ["core"]
                               	"silicon": ["core"],
                             	"transport": ["core"]
                         ]
