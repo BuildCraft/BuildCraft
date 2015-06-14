@@ -26,32 +26,30 @@ public class RenderArchitect extends RenderBoxProvider {
 
 		TileArchitect architect = (TileArchitect) tileentity;
 
-		if (architect != null) {
-			GL11.glPushMatrix();
-			GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-			GL11.glEnable(GL11.GL_CULL_FACE);
-			GL11.glEnable(GL11.GL_LIGHTING);
-			GL11.glEnable(GL11.GL_BLEND);
-			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glPushMatrix();
+		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glEnable(GL11.GL_LIGHTING);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-			GL11.glTranslated(x, y, z);
-			GL11.glTranslated(-tileentity.xCoord, -tileentity.yCoord, -tileentity.zCoord);
+		GL11.glTranslated(x, y, z);
+		GL11.glTranslated(-tileentity.xCoord, -tileentity.yCoord, -tileentity.zCoord);
 
-			for (LaserData laser : architect.subLasers) {
-				if (laser != null) {
-					GL11.glPushMatrix();
-					RenderLaser
-							.doRenderLaserWave(
-									TileEntityRendererDispatcher.instance.field_147553_e,
-									laser, EntityLaser.LASER_TEXTURES[3]);
+		for (LaserData laser : architect.subLasers) {
+			if (laser != null) {
+				GL11.glPushMatrix();
+				RenderLaser
+						.doRenderLaserWave(
+								TileEntityRendererDispatcher.instance.field_147553_e,
+								laser, EntityLaser.LASER_TEXTURES[3]);
 
-					GL11.glPopMatrix();
-				}
+				GL11.glPopMatrix();
 			}
-
-			GL11.glPopAttrib();
-			GL11.glPopMatrix();
 		}
+
+		GL11.glPopAttrib();
+		GL11.glPopMatrix();
 	}
 
 }

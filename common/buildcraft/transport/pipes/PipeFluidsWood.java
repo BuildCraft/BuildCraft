@@ -108,7 +108,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 		FluidTankInfo tankInfo = transport.getTankInfo(side)[0];
 		FluidStack extracted;
 
-		if (tankInfo.fluid != null && tankInfo.fluid != null) {
+		if (tankInfo.fluid != null) {
 			extracted = fluidHandler.drain(side.getOpposite(), new FluidStack(tankInfo.fluid, amount), false);
 		} else {
 			extracted = fluidHandler.drain(side.getOpposite(), amount, false);

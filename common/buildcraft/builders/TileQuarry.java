@@ -123,7 +123,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 			}
 
 			if (findTarget(false)) {
-				if (box != null && ((headPosX < box.xMin || headPosX > box.xMax) || (headPosZ < box.zMin || headPosZ > box.zMax))) {
+				if ((headPosX < box.xMin || headPosX > box.xMax) || (headPosZ < box.zMin || headPosZ > box.zMax)) {
 					setHead(box.xMin + 1, yCoord + 2, box.zMin + 1);
 				}
 			}
@@ -205,7 +205,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 			// In this case, since idling() does it anyway, we should return.
 			return;
 		} else if (stage == Stage.MOVING) {
-			int energyUsed = this.getBattery().useEnergy(20, (int) Math.ceil(20 + getBattery().getEnergyStored() / 10), false);
+			int energyUsed = this.getBattery().useEnergy(20, (int) Math.ceil(20D + (double) getBattery().getEnergyStored() / 10), false);
 
 			if (energyUsed >= 20) {
 

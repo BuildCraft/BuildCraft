@@ -662,11 +662,9 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			return new PacketCommand(this, "setItemRequirements", new CommandWriter() {
 				public void write(ByteBuf data) {
 					data.writeShort(items.size());
-					if (items != null) {
-						for (ItemStack rb : items) {
-							NetworkUtils.writeStack(data, rb);
-							data.writeShort(rb.stackSize);
-						}
+					for (ItemStack rb : items) {
+						NetworkUtils.writeStack(data, rb);
+						data.writeShort(rb.stackSize);
 					}
 				}
 			});

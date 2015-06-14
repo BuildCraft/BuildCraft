@@ -103,10 +103,6 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 			return;
 		}
 
-		if (sources == 0) {
-			return;
-		}
-
 		if (allowExtraction) {
 			allowExtraction = false;
 
