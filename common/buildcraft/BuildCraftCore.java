@@ -15,7 +15,6 @@ import java.nio.IntBuffer;
 import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
-
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
@@ -30,7 +29,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.IIcon;
-
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
@@ -45,7 +43,6 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.IPlantable;
@@ -105,6 +102,7 @@ import buildcraft.core.builders.patterns.PatternFill;
 import buildcraft.core.builders.patterns.PatternFlatten;
 import buildcraft.core.builders.patterns.PatternFrame;
 import buildcraft.core.builders.patterns.PatternHorizon;
+import buildcraft.core.builders.patterns.PatternParameterCenter;
 import buildcraft.core.builders.patterns.PatternParameterXZDir;
 import buildcraft.core.builders.patterns.PatternParameterYDir;
 import buildcraft.core.builders.patterns.PatternPyramid;
@@ -451,6 +449,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
 		StatementManager.registerParameterClass(PatternParameterYDir.class);
 		StatementManager.registerParameterClass(PatternParameterXZDir.class);
+		StatementManager.registerParameterClass(PatternParameterCenter.class);
 	}
 
 	@Mod.EventHandler

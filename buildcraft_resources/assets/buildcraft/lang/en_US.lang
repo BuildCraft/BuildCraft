@@ -147,6 +147,16 @@ direction.south=South
 direction.up=Top
 direction.down=Bottom
 
+direction.center.0=North-West
+direction.center.1=North
+direction.center.2=North-East
+direction.center.3=West
+direction.center.4=Center
+direction.center.5=East
+direction.center.6=South-West
+direction.center.7=South
+direction.center.8=South-East
+
 fillerpattern.clear=Clear
 fillerpattern.fill=Fill
 fillerpattern.flatten=Flatten

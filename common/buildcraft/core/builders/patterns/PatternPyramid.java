@@ -16,23 +16,35 @@ import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
 
 public class PatternPyramid extends FillerPattern {
+	private static final int[] MODIFIERS = {
+			0x0101,
+			0x1101,
+			0x1001,
+			0x0111,
+			0x1111,
+			0x1011,
+			0x0110,
+			0x1110,
+			0x1010
+	};
+
 	public PatternPyramid() {
 		super("pyramid");
 	}
 
 	@Override
 	public int maxParameters() {
-		return 1;
+		return 2;
 	}
 
 	@Override
 	public int minParameters() {
-		return 1;
+		return 2;
 	}
 
 	@Override
 	public IStatementParameter createParameter(int index) {
-		return new PatternParameterYDir(true);
+		return index == 1 ? new PatternParameterCenter(4) : new PatternParameterYDir(true);
 	}
 
 	@Override
@@ -47,18 +59,25 @@ public class PatternPyramid extends FillerPattern {
 
 		Template bpt = new Template(xMax - xMin + 1, yMax - yMin + 1, zMax - zMin + 1);
 
-		int xSize = xMax - xMin + 1;
-		int zSize = zMax - zMin + 1;
-
-		int step = 0;
+		int[] modifiers = new int[4];
 		int height;
 		int stepY;
 
-		if (parameters[0] != null && !(((PatternParameterYDir) parameters[0]).up)) {
+		if (parameters.length >= 1 && parameters[0] != null && !(((PatternParameterYDir) parameters[0]).up)) {
 			stepY = -1;
 		} else {
 			stepY = 1;
 		}
+
+		int center = 4;
+		if (parameters.length >= 2 && parameters[1] != null) {
+			center = ((PatternParameterCenter) parameters[1]).getDirection();
+		}
+
+		modifiers[0] = (MODIFIERS[center] >> 12) & 1;
+		modifiers[1] = (MODIFIERS[center] >> 8) & 1;
+		modifiers[2] = (MODIFIERS[center] >> 4) & 1;
+		modifiers[3] = (MODIFIERS[center]) & 1;
 
 		if (stepY == 1) {
 			height = yMin;
@@ -66,15 +85,27 @@ public class PatternPyramid extends FillerPattern {
 			height = yMax;
 		}
 
-		while (step <= xSize / 2 && step <= zSize / 2 && height >= yMin && height <= yMax) {
-			for (int x = xMin + step; x <= xMax - step; ++x) {
-				for (int z = zMin + step; z <= zMax - step; ++z) {
-					bpt.contents [x - xMin][height - yMin][z - zMin] = new SchematicMask(true);
+		int x1 = xMin;
+		int x2 = xMax;
+		int z1 = zMin;
+		int z2 = zMax;
+
+		while (height >= yMin && height <= yMax) {
+			for (int x = x1; x <= x2; ++x) {
+				for (int z = z1; z <= z2; ++z) {
+					bpt.contents[x - xMin][height - yMin][z - zMin] = new SchematicMask(true);
 				}
 			}
 
-			step++;
+			x1 += modifiers[0];
+			x2 -= modifiers[1];
+			z1 += modifiers[2];
+			z2 -= modifiers[3];
 			height += stepY;
+
+			if (x1 > x2 || z1 > z2) {
+				break;
+			}
 		}
 
 		return bpt;
