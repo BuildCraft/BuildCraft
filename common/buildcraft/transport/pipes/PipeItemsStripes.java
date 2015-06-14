@@ -44,7 +44,6 @@ import buildcraft.transport.utils.TransportUtils;
 
 public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnergyHandler, IStripesPipe {
 	private ForgeDirection actionDir = ForgeDirection.UNKNOWN;
-	private float currentSpeed;
 
 	public PipeItemsStripes(Item item) {
 		super(new PipeTransportItems(), item);
@@ -68,7 +67,6 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 		if (direction == ForgeDirection.UNKNOWN) {
 			direction = event.direction;
 		}
-		currentSpeed = event.item.getSpeed();
 		
 		Position p = new Position(container.xCoord, container.yCoord,
 				container.zCoord, direction);
@@ -164,7 +162,6 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 		pos.moveBackwards(0.25D);
 
 		TravelingItem newItem = TravelingItem.make(pos.x, pos.y, pos.z, itemStack);
-		newItem.setSpeed(Math.min(0.01F, currentSpeed - 0.005F));
 
 		transport.injectItem(newItem, direction);
 	}
