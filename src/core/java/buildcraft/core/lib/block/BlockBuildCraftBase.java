@@ -11,10 +11,15 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
@@ -23,10 +28,10 @@ import buildcraft.api.core.BuildCraftProperties;
 import buildcraft.api.enums.EnumColor;
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.enums.EnumEngineType;
+import buildcraft.api.enums.EnumFillerPattern;
 import buildcraft.api.enums.EnumSpring;
 import buildcraft.api.properties.BuildCraftProperty;
 import buildcraft.core.BCCreativeTab;
-import buildcraft.core.lib.utils.Utils;
 
 public abstract class BlockBuildCraftBase extends Block {
 
@@ -37,39 +42,41 @@ public abstract class BlockBuildCraftBase extends Block {
     public static final BuildCraftProperty<EnumColor> COLOR_PROP = BuildCraftProperties.BLOCK_COLOR;
     public static final BuildCraftProperty<EnumSpring> SPRING_TYPE = BuildCraftProperties.SPRING_TYPE;
     public static final BuildCraftProperty<EnumEnergyStage> ENERGY_STAGE = BuildCraftProperties.ENERGY_STAGE;
+    public static final BuildCraftProperty<EnumFillerPattern> FILLER_PATTERN = BuildCraftProperties.FILLER_PATTERN;
 
     public static final BuildCraftProperty<Boolean> JOINED_BELOW = BuildCraftProperties.JOINED_BELOW;
     public static final BuildCraftProperty<Boolean> MOVING = BuildCraftProperties.MOVING;
+    public static final BuildCraftProperty<Boolean> LED_POWER = BuildCraftProperties.LED_POWER;
+    public static final BuildCraftProperty<Boolean> LED_ACTIVE = BuildCraftProperties.LED_ACTIVE;
 
     protected final IProperty[] properties;
     protected final IUnlistedProperty<?>[] nonMetaProperties;
     protected final HashBiMap<Integer, IBlockState> validStates = HashBiMap.create();
     protected final BlockState myBlockState;
 
-    private boolean rotatable = false;
+    /** True if this block can rotate in any of the horizontal directions */
+    public final boolean horizontallyRotatable;
+    /** True if this block can rotate in any of the six facing directions */
+    public final boolean allRotatable;
 
     protected BlockBuildCraftBase(Material material) {
-        this(material, BCCreativeTab.get("main"), new IProperty[0], new IUnlistedProperty[0]);
+        this(material, BCCreativeTab.get("main"), new BuildCraftProperty<?>[0]);
     }
 
     protected BlockBuildCraftBase(Material material, BCCreativeTab creativeTab) {
-        this(material, creativeTab, new IProperty[0], new IUnlistedProperty[0]);
+        this(material, creativeTab, new BuildCraftProperty<?>[0]);
     }
 
-    protected BlockBuildCraftBase(Material material, IProperty... properties) {
-        this(material, BCCreativeTab.get("main"), properties, new IUnlistedProperty[0]);
+    protected BlockBuildCraftBase(Material material, BuildCraftProperty<?>... properties) {
+        this(material, BCCreativeTab.get("main"), properties);
     }
 
-    protected BlockBuildCraftBase(Material material, IProperty[] properties, IUnlistedProperty<?>[] nonMetaProperties) {
-        this(material, BCCreativeTab.get("main"), properties, nonMetaProperties);
-    }
-
-    protected BlockBuildCraftBase(Material material, BCCreativeTab bcCreativeTab, IProperty[] properties, IUnlistedProperty<?>[] nonMetaProperties) {
+    protected BlockBuildCraftBase(Material material, BCCreativeTab bcCreativeTab, BuildCraftProperty<?>... properties) {
         super(material);
         setCreativeTab(bcCreativeTab);
         setHardness(5F);
-        this.properties = properties;
-        this.nonMetaProperties = nonMetaProperties;
+        List<BuildCraftProperty<?>> metas = Lists.newArrayList();
+        List<BuildCraftProperty<?>> nonMetas = Lists.newArrayList();
 
         this.myBlockState = createBlockState();
 
@@ -78,12 +85,28 @@ public abstract class BlockBuildCraftBase extends Block {
         int total = 1;
         List<IBlockState> tempValidStates = Lists.newArrayList();
         tempValidStates.add(defaultState);
-        for (IProperty prop : properties) {
-            total *= prop.getAllowedValues().size();
-            if (total > 16)
-                throw new IllegalArgumentException("Cannot have more than 16 properties in a block!");
+        boolean canRotate = false;
+        boolean canSixRotate = false;
 
-            Collection<Comparable<?>> allowedValues = prop.getAllowedValues();
+        for (BuildCraftProperty<?> prop : properties) {
+            total *= prop.getAllowedValues().size();
+
+            if (prop == FACING_PROP) {
+                canRotate = true;
+            }
+            if (prop == FACING_6_PROP) {
+                canRotate = true;
+                canSixRotate = true;
+            }
+
+            if (total > 16) {
+                nonMetas.add(prop);
+                continue;
+            } else {
+                metas.add(prop);
+            }
+
+            Collection<? extends Comparable<?>> allowedValues = prop.getAllowedValues();
             defaultState = defaultState.withProperty(prop, allowedValues.iterator().next());
 
             List<IBlockState> newValidStates = Lists.newArrayList();
@@ -95,6 +118,12 @@ public abstract class BlockBuildCraftBase extends Block {
             tempValidStates = newValidStates;
         }
 
+        this.properties = metas.toArray(new BuildCraftProperty<?>[0]);
+        this.nonMetaProperties = nonMetas.toArray(new BuildCraftProperty<?>[0]);
+
+        horizontallyRotatable = canRotate;
+        allRotatable = canSixRotate;
+
         int i = 0;
         for (IBlockState state : tempValidStates) {
             validStates.put(i, state);
@@ -102,10 +131,6 @@ public abstract class BlockBuildCraftBase extends Block {
         }
 
         setDefaultState(defaultState);
-    }
-
-    public boolean isRotatable() {
-        return rotatable;
     }
 
     @Override
@@ -134,10 +159,99 @@ public abstract class BlockBuildCraftBase extends Block {
     }
 
     @Override
+    public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta,
+            EntityLivingBase placer) {
+        if (allRotatable) {// TODO (CHECK): Is this guaranteeable for all blocks that have 6 facing directions
+            return getDefaultState().withProperty(FACING_6_PROP, facing);
+        } else {
+            return getDefaultState();
+        }
+    }
+
+    @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack stack) {
-        if (isRotatable()) {
-            EnumFacing orientation = Utils.get2dOrientation(entity);
+        // If it was allRotatable the vertical direction would have been taken into account above
+        if (horizontallyRotatable && !allRotatable) {
+            EnumFacing orientation = entity.getHorizontalFacing();
             world.setBlockState(pos, state.withProperty(FACING_PROP, orientation.getOpposite()));
         }
+    }
+
+    public AxisAlignedBB getBox(IBlockAccess world, BlockPos pos, IBlockState state) {
+        return new AxisAlignedBB(0, 0, 0, 1, 1, 1);
+    }
+
+    public AxisAlignedBB[] getBoxes(IBlockAccess world, BlockPos pos, IBlockState state) {
+        return new AxisAlignedBB[] { getBox(world, pos, state) };
+    }
+
+    @Override
+    public MovingObjectPosition collisionRayTrace(World world, BlockPos pos, Vec3 origin, Vec3 direction) {
+        IBlockState state = world.getBlockState(pos);
+        AxisAlignedBB[] aabbs = getBoxes(world, pos, state);
+        MovingObjectPosition closest = null;
+        for (AxisAlignedBB aabb : aabbs) {
+            aabb = aabb.offset(pos.getX(), pos.getY(), pos.getZ()).expand(-0.01, -0.01, -0.01);
+
+            MovingObjectPosition mop = aabb.calculateIntercept(origin, direction);
+            if (mop != null) {
+                if (closest != null && mop.hitVec.distanceTo(origin) < closest.hitVec.distanceTo(origin)) {
+                    closest = mop;
+                } else {
+                    closest = mop;
+                }
+            }
+        }
+        if (closest == null) {
+            return null;
+        } else {
+            return new MovingObjectPosition(closest.hitVec, closest.sideHit, pos);
+        }
+    }
+
+    @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public void addCollisionBoxesToList(World world, BlockPos pos, IBlockState state, AxisAlignedBB mask, List list, Entity par7Entity) {
+        if (!isCollidable()) {
+            return;
+        } else {
+            for (AxisAlignedBB bb : getBoxes(world, pos, state)) {
+                bb = bb.offset(pos.getX(), pos.getY(), pos.getZ());
+                if (mask.intersectsWith(bb)) {
+                    list.add(bb);
+                }
+            }
+        }
+    }
+
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(World world, BlockPos pos, IBlockState state) {
+        if (isCollidable()) {
+            return getBox(world, pos, state).offset(pos.getX(), pos.getY(), pos.getZ());
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public AxisAlignedBB getSelectedBoundingBox(World world, BlockPos pos) {
+        return getBox(world, pos, world.getBlockState(pos)).offset(pos.getX(), pos.getY(), pos.getZ());
+    }
+
+    @Override
+    public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
+        AxisAlignedBB[] bbs = getBoxes(world, pos, world.getBlockState(pos));
+        AxisAlignedBB bb = bbs[0];
+        for (int i = 1; i < bbs.length; i++) {
+            bb = bb.union(bbs[i]);
+        }
+
+        minX = bb.minX;
+        minY = bb.minY;
+        minZ = bb.minZ;
+
+        maxX = bb.maxX;
+        maxY = bb.maxY;
+        maxZ = bb.maxZ;
     }
 }

@@ -6,6 +6,7 @@ package buildcraft.builders.tile;
 
 import io.netty.buffer.ByteBuf;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -13,7 +14,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -190,14 +190,14 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-        return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
+        return worldObj.getTileEntity(pos) == this;
     }
 
     @Override
-    public void openInventory() {}
+    public void openInventory(EntityPlayer player) {}
 
     @Override
-    public void closeInventory() {}
+    public void closeInventory(EntityPlayer player) {}
 
     private ILibraryTypeHandler findHandler(int slot, boolean store) {
         ItemStack stack = getStackInSlot(slot);
@@ -212,8 +212,8 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
     }
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
 
         if (worldObj.isRemote) {
             return;
@@ -274,7 +274,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
     }
 
     @Override
-    public boolean hasCustomInventoryName() {
+    public boolean hasCustomName() {
         return false;
     }
 
@@ -326,7 +326,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
                         return;
                     }
 
-                    NBTTagCompound nbt = CompressedStreamTools.func_152457_a(data, NBTSizeTracker.field_152451_a);
+                    NBTTagCompound nbt = CompressedStreamTools.readCompressed(new ByteArrayInputStream(data));
                     BuildCraftBuilders.clientDB.add(id, nbt);
                     setCurrentPage(BuildCraftBuilders.clientDB.getPage(pageId));
                 } catch (IOException e) {
@@ -353,7 +353,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
                 }
             } else if ("uploadServerEnd".equals(command)) {
                 try {
-                    NBTTagCompound nbt = CompressedStreamTools.func_152457_a(blueprintDownload, NBTSizeTracker.field_152451_a);
+                    NBTTagCompound nbt = CompressedStreamTools.readCompressed(new ByteArrayInputStream(blueprintDownload));
                     ItemStack output = LibraryAPI.getHandler(blueprintDownloadId.extension).load(getStackInSlot(2), nbt);
 
                     setInventorySlotContents(3, output);

@@ -7,6 +7,7 @@ package buildcraft.builders.blueprints;
 import java.util.ArrayList;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
@@ -25,18 +26,16 @@ public class RecursiveBlueprintBuilder {
     private RecursiveBlueprintBuilder current;
     private int nextSubBlueprint = 0;
     private ArrayList<NBTTagCompound> subBlueprints = new ArrayList<NBTTagCompound>();
-    private int pos;
+    private BlockPos pos;
     private EnumFacing dir;
     private World world;
     private Box box = new Box();
 
-    public RecursiveBlueprintBuilder(BlueprintBase iBlueprint, World iWorld, int iX, int iY, int iZ, EnumFacing iDir) {
+    public RecursiveBlueprintBuilder(BlueprintBase iBlueprint, World iWorld, BlockPos pos, EnumFacing iDir) {
         blueprint = iBlueprint;
         subBlueprints = iBlueprint.subBlueprintsNBT;
         world = iWorld;
-        x = iX;
-        y = iY;
-        z = iZ;
+        this.pos = pos;
         dir = iDir;
     }
 
@@ -85,7 +84,7 @@ public class RecursiveBlueprintBuilder {
 
         EnumFacing nbtDir = EnumFacing.values()[nbt.getByte("dir")];
 
-        current = new RecursiveBlueprintBuilder(bpt, world, nx, ny, nz, nbtDir);
+        current = new RecursiveBlueprintBuilder(bpt, world, new BlockPos(nx, ny, nz), nbtDir);
         nextSubBlueprint++;
 
         return current.nextBuilder();

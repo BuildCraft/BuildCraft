@@ -30,8 +30,8 @@ public class ActionFiller extends BCStatement implements IActionExternal {
     }
 
     @Override
-    public TextureAtlasSprite getIcon() {
-        return pattern.getIcon();
+    public TextureAtlasSprite getGuiSprite() {
+        return pattern.getGuiSprite();
     }
 
     @Override

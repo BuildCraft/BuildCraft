@@ -241,7 +241,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         if (miner.hasMined()) {
             // Collect any lost items laying around
             double[] head = getHead();
-            AxisAlignedBB axis = AxisAlignedBB.getBoundingBox(head[0] - 2, head[1] - 2, head[2] - 2, head[0] + 3, head[1] + 3, head[2] + 3);
+            AxisAlignedBB axis = new AxisAlignedBB(head[0] - 2, head[1] - 2, head[2] - 2, head[0] + 3, head[1] + 3, head[2] + 3);
             List result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
             for (int ii = 0; ii < result.size(); ii++) {
                 if (result.get(ii) instanceof EntityItem) {

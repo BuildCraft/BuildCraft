@@ -361,7 +361,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     @Override
     public AxisAlignedBB getBoundingBox() {
-        return AxisAlignedBB.getBoundingBox(posX - 0.25F, posY - 0.25F, posZ - 0.25F, posX + 0.25F, posY + 0.25F, posZ + 0.25F);
+        return new AxisAlignedBB(posX - 0.25F, posY - 0.25F, posZ - 0.25F, posX + 0.25F, posY + 0.25F, posZ + 0.25F);
     }
 
     public void setNullBoundingBox() {

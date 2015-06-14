@@ -17,6 +17,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.relauncher.Side;
 
@@ -35,6 +37,7 @@ import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
+import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
 
@@ -60,8 +63,8 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
     }
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
 
         if (!worldObj.isRemote) {
             if (reader != null) {
@@ -82,7 +85,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
         if (!worldObj.isRemote) {
             if (!box.isInitialized()) {
-                IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, xCoord, yCoord, zCoord);
+                IAreaProvider a = Utils.getNearbyAreaProvider(worldObj, pos);
 
                 if (a != null) {
                     box.initialize(a);
@@ -129,18 +132,13 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
     }
 
     @Override
-    public String getInventoryName() {
-        return "Template";
-    }
-
-    @Override
     public int getInventoryStackLimit() {
         return 1;
     }
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-        return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
+        return worldObj.getTileEntity(pos) == this;
     }
 
     @Override
@@ -163,7 +161,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
         NBTTagList subBptList = nbt.getTagList("subBlueprints", Constants.NBT.TAG_COMPOUND);
 
         for (int i = 0; i < subBptList.tagCount(); ++i) {
-            BlockPos index = new BlockPos(subBptList.getCompoundTagAt(i));
+            BlockPos index = NBTUtils.readBlockPos(subBptList.getCompoundTagAt(i));
 
             addSubBlueprint(index);
         }
@@ -191,9 +189,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
         NBTTagList subBptList = new NBTTagList();
 
         for (BlockPos b : subBlueprints) {
-            NBTTagCompound subBpt = new NBTTagCompound();
-            b.writeTo(subBpt);
-            subBptList.appendTag(subBpt);
+            subBptList.appendTag(NBTUtils.writeBlockPos(b));
         }
 
         nbt.setTag("subBlueprints", subBptList);
@@ -219,7 +215,8 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
         boolean newIsProcessing = stream.readBoolean();
         if (newIsProcessing != isProcessing) {
             isProcessing = newIsProcessing;
-            worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+            worldObj.markBlockRangeForRenderUpdate(getPos().getX(), getPos().getY(), getPos().getZ(), getPos().getX(), getPos().getY(), getPos()
+                .getZ());
         }
 
         int size = stream.readUnsignedShort();
@@ -238,7 +235,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
     }
 
     private void initializeComputing() {
-        if (getWorldObj().isRemote) {
+        if (getWorld().isRemote) {
             return;
         }
 
@@ -255,13 +252,13 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
     }
 
     @Override
-    public void openInventory() {}
+    public void openInventory(EntityPlayer player) {}
 
     @Override
-    public void closeInventory() {}
+    public void closeInventory(EntityPlayer player) {}
 
     @Override
-    public boolean hasCustomInventoryName() {
+    public boolean hasCustomName() {
         return true;
     }
 
@@ -320,7 +317,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
     }
 
     public void addSubBlueprint(TileEntity sub) {
-        addSubBlueprint(new BlockPos(sub));
+        addSubBlueprint(sub.getPos());
 
         sendNetworkUpdate();
     }
@@ -349,5 +346,9 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
         } else {
             return -1;
         }
+    }
+
+    public String getInventoryName() {
+        return "Template";
     }
 }

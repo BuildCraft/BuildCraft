@@ -57,9 +57,9 @@ public class RealBlueprintDeployer extends BlueprintDeployer {
 
         Translation transform = new Translation();
 
-        transform.x = x - bpt.anchorX;
-        transform.y = y - bpt.anchorY;
-        transform.z = z - bpt.anchorZ;
+        transform.x = pos.getX() - bpt.anchorX;
+        transform.y = pos.getY() - bpt.anchorY;
+        transform.z = pos.getZ() - bpt.anchorZ;
 
         bpt.translateToWorld(transform);
 

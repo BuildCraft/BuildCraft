@@ -8,8 +8,15 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.filler.IFillerPattern;
@@ -27,10 +34,16 @@ public abstract class FillerPattern implements IFillerPattern {
 
     public static final Map<String, FillerPattern> patterns = new TreeMap<String, FillerPattern>();
     private final String tag;
+    private final ResourceLocation location;
+
+    @SideOnly(Side.CLIENT)
+    private TextureAtlasSprite sprite = null;
 
     public FillerPattern(String tag) {
         this.tag = tag;
         patterns.put(getUniqueTag(), this);
+        location = new ResourceLocation("buildcraftcore:items/fillerPatterns/" + tag);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Override
@@ -144,5 +157,16 @@ public abstract class FillerPattern implements IFillerPattern {
 
     private static boolean isValid(int x, int y, int z, BlueprintBase bpt) {
         return x >= 0 && y >= 0 && z >= 0 && x < bpt.sizeX && y < bpt.sizeY && z < bpt.sizeZ;
+    }
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void stitchTextures(TextureStitchEvent.Pre event) {
+        sprite = event.map.registerSprite(location);
+    }
+
+    @Override
+    public TextureAtlasSprite getGuiSprite() {
+        return sprite;
     }
 }

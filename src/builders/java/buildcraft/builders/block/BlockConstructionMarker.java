@@ -4,7 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.block;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -12,6 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 import buildcraft.builders.item.ItemBlueprint;
@@ -28,7 +29,7 @@ public class BlockConstructionMarker extends BlockMarker {
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, Block block, int par6) {
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
         Utils.preDestroyBlock(world, pos);
         TileConstructionMarker marker = (TileConstructionMarker) world.getTileEntity(pos);
         if (marker != null && marker.itemBlueprint != null && !world.isRemote) {
@@ -36,24 +37,25 @@ public class BlockConstructionMarker extends BlockMarker {
             double d = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
             double d1 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
             double d2 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
-            EntityItem itemToDrop = new EntityItem(world, x + d, y + d1, z + d2, marker.itemBlueprint);
-            itemToDrop.delayBeforeCanPickup = 10;
+            EntityItem itemToDrop = new EntityItem(world, pos.getX() + d, pos.getY() + d1, pos.getZ() + d2, marker.itemBlueprint);
+            itemToDrop.setDefaultPickupDelay();
             world.spawnEntityInWorld(itemToDrop);
         }
-        super.breakBlock(world, pos, block, par6);
+        super.breakBlock(world, pos, state);
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, EntityLivingBase entityliving, ItemStack stack) {
-        super.onBlockPlacedBy(world, pos, entityliving, stack);
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entityliving, ItemStack stack) {
+        super.onBlockPlacedBy(world, pos, state, entityliving, stack);
 
         TileConstructionMarker tile = (TileConstructionMarker) world.getTileEntity(pos);
         tile.direction = Utils.get2dOrientation(entityliving);
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-        if (super.onBlockActivated(world, pos, entityplayer, par6, par7, par8, par9)) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing face, float hitX, float hitY,
+            float hitZ) {
+        if (super.onBlockActivated(world, pos, state, entityplayer, face, hitX, hitY, hitZ)) {
             return true;
         }
 

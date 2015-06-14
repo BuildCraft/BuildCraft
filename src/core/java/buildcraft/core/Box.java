@@ -167,7 +167,7 @@ public class Box implements IBox, ISerializable {
     public Position pMax() {
         return new Position(xMax, yMax, zMax);
     }
-
+    
     public int sizeX() {
         return xMax - xMin + 1;
     }

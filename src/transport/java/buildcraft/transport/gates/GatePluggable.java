@@ -233,7 +233,7 @@ public class GatePluggable extends PipePluggable {
         bounds[2][1] = max;
 
         MatrixTranformations.transform(bounds, side);
-        return AxisAlignedBB.getBoundingBox(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
+        return new AxisAlignedBB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
     }
 
     @Override

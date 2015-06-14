@@ -37,6 +37,7 @@ import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
 
+// TODO: Create and implement "IBlueprintProvider" for robots to get Blueprints from
 public class TileConstructionMarker extends TileBuildCraft implements IBuildingItemsProvider, IBoxProvider, ICommandReceiver {
 
     public static HashSet<TileConstructionMarker> currentMarkers = new HashSet<TileConstructionMarker>();

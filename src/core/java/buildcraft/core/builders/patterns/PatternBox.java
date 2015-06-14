@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.builders.patterns;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
 import buildcraft.api.statements.IStatementParameter;

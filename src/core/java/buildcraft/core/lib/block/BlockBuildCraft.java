@@ -6,7 +6,6 @@ package buildcraft.core.lib.block;
 
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,11 +15,11 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.events.BlockPlacedDownEvent;
+import buildcraft.api.properties.BuildCraftProperty;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.utils.Utils;
@@ -37,23 +36,19 @@ public abstract class BlockBuildCraft extends BlockBuildCraftBase implements ITi
     private boolean alphaPass = false;
 
     protected BlockBuildCraft(Material material) {
-        this(material, BCCreativeTab.get("main"), new IProperty[0], new IUnlistedProperty<?>[0]);
+        this(material, BCCreativeTab.get("main"), new BuildCraftProperty<?>[0]);
     }
 
     protected BlockBuildCraft(Material material, BCCreativeTab creativeTab) {
-        this(material, creativeTab, new IProperty[0], new IUnlistedProperty<?>[0]);
+        this(material, creativeTab, new BuildCraftProperty<?>[0]);
     }
 
-    protected BlockBuildCraft(Material material, IProperty... properties) {
-        this(material, BCCreativeTab.get("main"), properties, new IUnlistedProperty<?>[0]);
+    protected BlockBuildCraft(Material material, BuildCraftProperty<?>... properties) {
+        this(material, BCCreativeTab.get("main"), properties);
     }
 
-    protected BlockBuildCraft(Material material, IProperty[] properties, IUnlistedProperty<?>... nonMetaProperties) {
-        this(material, BCCreativeTab.get("main"), properties, nonMetaProperties);
-    }
-
-    protected BlockBuildCraft(Material material, BCCreativeTab bcCreativeTab, IProperty[] properties, IUnlistedProperty<?>... nonMetaProperties) {
-        super(material, bcCreativeTab, properties, nonMetaProperties);
+    protected BlockBuildCraft(Material material, BCCreativeTab bcCreativeTab, BuildCraftProperty<?>... properties) {
+        super(material, bcCreativeTab, properties);
     }
 
     public boolean hasAlphaPass() {
@@ -119,20 +114,5 @@ public abstract class BlockBuildCraft extends BlockBuildCraftBase implements ITi
 
     public int getCurrentRenderPass() {
         return renderPass;
-    }
-
-    public int getIconGlowLevel() {
-        return -1;
-    }
-
-    public int getIconGlowLevel(IBlockAccess access, BlockPos pos) {
-        return getIconGlowLevel();
-    }
-
-    public int getFrontSide(int meta) {
-        if (!isRotatable()) {
-            return -1;
-        }
-        return meta >= 2 && meta <= 5 ? meta : 3;
     }
 }

@@ -14,7 +14,7 @@ import buildcraft.api.core.BCLog;
 
 /** This class exists primarily to allow for a property to be used as either a normal IProperty, or an IUnlistedProperty.
  * It also exists to give IProperty's generic types. */
-public class BuildCraftProperty<T> implements IProperty, IUnlistedProperty<T> {
+public class BuildCraftProperty<T extends Comparable<T>> implements IProperty, IUnlistedProperty<T> {
     private final String name;
     private final Class<T> clazz;
     private final Collection<T> values;
@@ -85,7 +85,7 @@ public class BuildCraftProperty<T> implements IProperty, IUnlistedProperty<T> {
     }
 
     @Override
-    public Collection<T> getAllowedValues() {
+    public Collection<? extends Comparable<T>> getAllowedValues() {
         return values;
     }
 

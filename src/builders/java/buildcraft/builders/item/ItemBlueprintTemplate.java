@@ -2,18 +2,13 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.builders;
+package buildcraft.builders.item;
 
 import net.minecraft.item.ItemStack;
 
 public class ItemBlueprintTemplate extends ItemBlueprint {
     public ItemBlueprintTemplate() {
         super();
-    }
-
-    @Override
-    public String getIconType() {
-        return "template";
     }
 
     @Override

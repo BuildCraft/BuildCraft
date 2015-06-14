@@ -7,6 +7,7 @@ package buildcraft.core.render;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.util.AxisAlignedBB;
@@ -32,10 +33,11 @@ public class BlockHighlightHandler {
             int z = MathHelper.floor_double(e.target.hitVec.zCoord);
 
             BlockPos pos = new BlockPos(x, y, z);
-            Block block = e.player.worldObj.getBlockState(pos).getBlock();
+            IBlockState state = e.player.worldObj.getBlockState(pos);
+            Block block = state.getBlock();
 
             if (block instanceof ICustomHighlight) {
-                AxisAlignedBB[] aabbs = ((ICustomHighlight) block).getBoxes(e.player.worldObj, pos, e.player);
+                AxisAlignedBB[] aabbs = ((ICustomHighlight) block).getBoxes(e.player.worldObj, pos, state);
                 Vec3 nPos = e.player.getPositionEyes(e.partialTicks).subtract(0, e.player.getEyeHeight(), 0);
 
                 // Highlight "breathing"

@@ -9,8 +9,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 
 import buildcraft.api.blueprints.Translation;
+import buildcraft.api.core.BuildCraftProperties;
 import buildcraft.builders.BuildCraftBuilders;
 import buildcraft.builders.item.ItemBlueprint;
 import buildcraft.builders.item.ItemBlueprintStandard;
@@ -48,7 +50,7 @@ public class RecursiveBlueprintReader {
         ItemStack stack = architect.getStackInSlot(0);
 
         if (stack != null && stack.getItem() instanceof ItemBlueprint && architect.box.isInitialized()) {
-            blockScanner = new BlockScanner(architect.box, architect.getWorldObj(), SCANNER_ITERATION);
+            blockScanner = new BlockScanner(architect.box, architect.getWorld(), SCANNER_ITERATION);
 
             if (stack.getItem() instanceof ItemBlueprintStandard) {
                 writingBlueprint = new Blueprint(architect.box.sizeX(), architect.box.sizeY(), architect.box.sizeZ());
@@ -56,14 +58,14 @@ public class RecursiveBlueprintReader {
                 writingBlueprint = new Template(architect.box.sizeX(), architect.box.sizeY(), architect.box.sizeZ());
             }
 
-            writingContext = writingBlueprint.getContext(architect.getWorldObj(), architect.box);
+            writingContext = writingBlueprint.getContext(architect.getWorld(), architect.box);
             writingContext.readConfiguration = architect.readConfiguration;
 
             writingBlueprint.id.name = architect.name;
             writingBlueprint.author = architect.currentAuthorName;
-            writingBlueprint.anchorX = architect.xCoord - architect.box.xMin;
-            writingBlueprint.anchorY = architect.yCoord - architect.box.yMin;
-            writingBlueprint.anchorZ = architect.zCoord - architect.box.zMin;
+            writingBlueprint.anchorX = architect.getPos().getX() - architect.box.xMin;
+            writingBlueprint.anchorY = architect.getPos().getY() - architect.box.yMin;
+            writingBlueprint.anchorZ = architect.getPos().getZ() - architect.box.zMin;
         } else {
             done = true;
         }
@@ -74,7 +76,7 @@ public class RecursiveBlueprintReader {
         architect = iArchitect;
 
         if (architect.box.isInitialized()) {
-            blockScanner = new BlockScanner(architect.box, architect.getWorldObj(), SCANNER_ITERATION);
+            blockScanner = new BlockScanner(architect.box, architect.getWorld(), SCANNER_ITERATION);
 
             if (parentBlueprint instanceof Blueprint) {
                 writingBlueprint = new Blueprint(architect.box.sizeX(), architect.box.sizeY(), architect.box.sizeZ());
@@ -82,14 +84,14 @@ public class RecursiveBlueprintReader {
                 writingBlueprint = new Template(architect.box.sizeX(), architect.box.sizeY(), architect.box.sizeZ());
             }
 
-            writingContext = writingBlueprint.getContext(architect.getWorldObj(), architect.box);
+            writingContext = writingBlueprint.getContext(architect.getWorld(), architect.box);
             writingContext.readConfiguration = architect.readConfiguration;
 
             writingBlueprint.id.name = architect.name;
             writingBlueprint.author = architect.currentAuthorName;
-            writingBlueprint.anchorX = architect.xCoord - architect.box.xMin;
-            writingBlueprint.anchorY = architect.yCoord - architect.box.yMin;
-            writingBlueprint.anchorZ = architect.zCoord - architect.box.zMin;
+            writingBlueprint.anchorX = architect.getPos().getX() - architect.box.xMin;
+            writingBlueprint.anchorY = architect.getPos().getY() - architect.box.yMin;
+            writingBlueprint.anchorZ = architect.getPos().getZ() - architect.box.zMin;
         }
     }
 
@@ -99,7 +101,7 @@ public class RecursiveBlueprintReader {
         } else if (currentSubReader == null && subIndex < architect.subBlueprints.size()) {
             BlockPos subBlock = architect.subBlueprints.get(subIndex);
 
-            TileEntity subTile = architect.getWorldObj().getTileEntity(subBlock.x, subBlock.y, subBlock.z);
+            TileEntity subTile = architect.getWorld().getTileEntity(subBlock);
 
             if (subTile instanceof TileArchitect) {
                 TileArchitect subArchitect = (TileArchitect) subTile;
@@ -115,12 +117,11 @@ public class RecursiveBlueprintReader {
                 } else if (subTile instanceof TileBuilder) {
                     TileBuilder builder = (TileBuilder) subTile;
                     blueprint = ItemBlueprint.loadBlueprint(builder.getStackInSlot(0));
-                    orientation = EnumFacing.values()[architect.getWorldObj().getBlockMetadata(subBlock.x, subBlock.y, subBlock.z)].getOpposite();
+                    orientation = BuildCraftProperties.BLOCK_FACING.getValue(architect.getWorld().getBlockState(subBlock)).getOpposite();
                 }
 
                 if (blueprint != null) {
-                    writingBlueprint.addSubBlueprint(blueprint, subTile.xCoord - architect.getBox().xMin, subTile.yCoord - architect.getBox().yMin,
-                        subTile.zCoord - architect.getBox().zMin, orientation);
+                    writingBlueprint.addSubBlueprint(blueprint, subTile.getPos().subtract(architect.getBox().pMin().toBlockPos()), orientation);
                 }
 
                 subIndex++;
@@ -130,18 +131,21 @@ public class RecursiveBlueprintReader {
         } else if (currentSubReader != null) {
             currentSubReader.iterate();
 
+            World world = currentSubReader.architect.getWorld();
+
+            EnumFacing facing = BuildCraftProperties.BLOCK_FACING.getValue(world.getBlockState(currentSubReader.architect.getPos()));
+
+            BlockPos pos = currentSubReader.architect.getPos().subtract(architect.getBox().pMin().toBlockPos());
+
             if (currentSubReader.isDone()) {
-                writingBlueprint.addSubBlueprint(currentSubReader.getBlueprint(), currentSubReader.architect.xCoord - architect.getBox().xMin,
-                    currentSubReader.architect.yCoord - architect.getBox().yMin, currentSubReader.architect.zCoord - architect.getBox().zMin,
-                    EnumFacing.values()[currentSubReader.architect.getWorldObj().getBlockMetadata(currentSubReader.architect.xCoord,
-                        currentSubReader.architect.yCoord, currentSubReader.architect.zCoord)].getOpposite());
+                writingBlueprint.addSubBlueprint(currentSubReader.getBlueprint(), pos, facing);
 
                 currentSubReader = null;
                 subIndex++;
             }
         } else if (blockScanner != null && blockScanner.blocksLeft() != 0) {
             for (BlockPos index : blockScanner) {
-                writingBlueprint.readFromWorld(writingContext, architect, index.x, index.y, index.z);
+                writingBlueprint.readFromWorld(writingContext, architect, index);
             }
 
             computingTime = 1 - (float) blockScanner.blocksLeft() / (float) blockScanner.totalBlocks();
@@ -157,8 +161,7 @@ public class RecursiveBlueprintReader {
 
                 writingBlueprint.translateToBlueprint(transform);
 
-                EnumFacing o =
-                    EnumFacing.values()[architect.getWorldObj().getBlockMetadata(architect.xCoord, architect.yCoord, architect.zCoord)].getOpposite();
+                EnumFacing o = BuildCraftProperties.BLOCK_FACING.getValue(architect.getWorld().getBlockState(architect.getPos()));
 
                 writingBlueprint.rotate = architect.readConfiguration.rotate;
                 writingBlueprint.excavate = architect.readConfiguration.excavate;

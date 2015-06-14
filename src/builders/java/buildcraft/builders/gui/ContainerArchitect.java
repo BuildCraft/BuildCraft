@@ -42,8 +42,8 @@ public class ContainerArchitect extends BuildCraftContainer {
     // FIXME: This is not called anymore
 
     @Override
-    public void addCraftingToCrafters(ICrafting icrafting) {
-        super.addCraftingToCrafters(icrafting);
+    public void onCraftGuiOpened(ICrafting icrafting) {
+        super.onCraftGuiOpened(icrafting);
         icrafting.sendProgressBarUpdate(this, 0, architect.getComputingProgressScaled(24));
     }
 

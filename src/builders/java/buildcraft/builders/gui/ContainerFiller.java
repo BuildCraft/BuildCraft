@@ -31,7 +31,7 @@ public class ContainerFiller extends BuildCraftContainer {
         @Override
         public void draw(GuiBuildCraft gui, int guiX, int guiY, int mouseX, int mouseY) {
             gui.bindTexture(TextureMap.locationBlocksTexture);
-            gui.drawTexturedModelRectFromIcon(guiX + x, guiY + y, tile.currentPattern.getIcon(), 16, 16);
+            gui.drawTexturedModalRect(guiX + x, guiY + y, tile.currentPattern.getGuiSprite(), 16, 16);
         }
     }
 

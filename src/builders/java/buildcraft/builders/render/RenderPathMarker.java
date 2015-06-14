@@ -2,10 +2,11 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.builders;
+package buildcraft.builders.render;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -31,7 +32,7 @@ public class RenderPathMarker extends TileEntitySpecialRenderer {
     }
 
     @Override
-    public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
+    public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int aThing) {
         TilePathMarker marker = (TilePathMarker) tileentity;
 
         if (marker != null) {
@@ -42,13 +43,14 @@ public class RenderPathMarker extends TileEntitySpecialRenderer {
             GL11.glEnable(GL11.GL_BLEND);
             GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-            GL11.glTranslated(pos);
-            GL11.glTranslated(-tileentity.xCoord, -tileentity.yCoord, -tileentity.zCoord);
+            GL11.glTranslated(x, y, z);
+            GL11.glTranslated(-tileentity.getPos().getX(), -tileentity.getPos().getY(), -tileentity.getPos().getZ());
 
             for (LaserData laser : marker.lasers) {
                 if (laser != null) {
                     GL11.glPushMatrix();
-                    RenderLaser.doRenderLaser(TileEntityRendererDispatcher.instance.field_147553_e, laser, EntityLaser.LASER_TEXTURES[3]);
+                    RenderLaser.doRenderLaser(TileEntityRendererDispatcher.instance.worldObj, Minecraft.getMinecraft().renderEngine, laser,
+                        EntityLaser.LASER_BLUE);
                     GL11.glPopMatrix();
                 }
             }

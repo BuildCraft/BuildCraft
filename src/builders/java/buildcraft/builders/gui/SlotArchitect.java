@@ -25,7 +25,7 @@ public class SlotArchitect extends SlotBase {
     @Override
     public void onSlotChanged() {
         if (slot == 0) {
-            architect.currentAuthorName = player.getDisplayName();
+            architect.currentAuthorName = player.getDisplayNameString();
         }
 
         this.inventory.markDirty();

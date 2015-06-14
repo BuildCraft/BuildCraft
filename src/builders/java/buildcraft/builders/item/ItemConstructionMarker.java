@@ -2,7 +2,7 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.builders;
+package buildcraft.builders.item;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -46,7 +47,7 @@ public class ItemConstructionMarker extends ItemBlock {
             int oy = nbt.getInteger("y");
             int oz = nbt.getInteger("z");
 
-            TileEntity tile1 = world.getTileEntity(ox, oy, oz);
+            TileEntity tile1 = world.getTileEntity(new BlockPos(ox, oy, oz));
 
             if (!new Position(ox, oy, oz).isClose(new Position(pos), 64)) {
                 return;
@@ -70,35 +71,14 @@ public class ItemConstructionMarker extends ItemBlock {
             }
         }
 
-        nbt.setInteger("x", x);
-        nbt.setInteger("y", y);
-        nbt.setInteger("z", z);
+        nbt.setInteger("x", pos.getX());
+        nbt.setInteger("y", pos.getY());
+        nbt.setInteger("z", pos.getZ());
     }
 
     @Override
-    public TextureAtlasSprite getIconIndex(ItemStack marker) {
-        NBTTagCompound nbt = NBTUtils.getItemData(marker);
-
-        if (nbt.hasKey("x")) {
-            itemIcon = iconRecording;
-        } else {
-            itemIcon = iconBase;
-        }
-
-        return itemIcon;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureAtlasSpriteRegister par1IconRegister) {
-        super.registerIcons(par1IconRegister);
-
-        iconBase = par1IconRegister.registerIcon("buildcraftbuilders:constructionMarkerBlock/default");
-        iconRecording = par1IconRegister.registerIcon("buildcraftbuilders:constructionMarkerBlock/recording");
-    }
-
-    @Override
-    public boolean onItemUse(ItemStack marker, EntityPlayer player, World world, BlockPos pos, int side, float par8, float par9, float par10) {
+    public boolean
+            onItemUse(ItemStack marker, EntityPlayer player, World world, BlockPos pos, EnumFacing facing, float par8, float par9, float par10) {
 
         TileEntity tile = world.getTileEntity(pos);
         NBTTagCompound nbt = NBTUtils.getItemData(marker);
@@ -111,7 +91,7 @@ public class ItemConstructionMarker extends ItemBlock {
 
             return true;
         } else {
-            return super.onItemUse(marker, player, world, pos, side, par8, par9, par10);
+            return super.onItemUse(marker, player, world, pos, facing, par8, par9, par10);
         }
     }
 }

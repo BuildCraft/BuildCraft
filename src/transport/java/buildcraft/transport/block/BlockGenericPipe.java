@@ -383,7 +383,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         float max = CoreConstants.PIPE_MAX_POS;
 
         if (side == EnumFacing.UNKNOWN) {
-            return AxisAlignedBB.getBoundingBox(min, min, min, max, max, max);
+            return new AxisAlignedBB(min, min, min, max, max, max);
         }
 
         float[][] bounds = new float[3][2];
@@ -398,7 +398,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         bounds[2][1] = max;
 
         MatrixTranformations.transform(bounds, side);
-        return AxisAlignedBB.getBoundingBox(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
+        return new AxisAlignedBB(bounds[0][0], bounds[1][0], bounds[2][0], bounds[0][1], bounds[1][1], bounds[2][1]);
     }
 
     public static void removePipe(Pipe<?> pipe) {

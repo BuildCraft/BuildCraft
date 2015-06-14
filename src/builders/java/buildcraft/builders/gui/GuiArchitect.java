@@ -6,6 +6,8 @@ package buildcraft.builders.gui;
 
 import io.netty.buffer.ByteBuf;
 
+import java.io.IOException;
+
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -69,7 +71,7 @@ public class GuiArchitect extends GuiBuildCraft {
             new ToolTipLine(StringUtils.localize("tile.architect.tooltip.allowCreative.2"))));
         buttonList.add(optionAllowCreative);
 
-        textField = new GuiTextField(this.fontRendererObj, TEXT_X, TEXT_Y, TEXT_WIDTH, TEXT_HEIGHT);
+        textField = new GuiTextField(0, this.fontRendererObj, TEXT_X, TEXT_Y, TEXT_WIDTH, TEXT_HEIGHT);
         textField.setMaxStringLength(DefaultProps.MAX_NAME_SIZE);
         textField.setText(architect.name);
         textField.setFocused(true);
@@ -142,14 +144,14 @@ public class GuiArchitect extends GuiBuildCraft {
     }
 
     @Override
-    protected void mouseClicked(BlockPos pos) {
-        super.mouseClicked(pos);
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
 
-        textField.mouseClicked(i - guiLeft, j - guiTop, k);
+        textField.mouseClicked(mouseX - guiLeft, mouseY - guiTop, mouseButton);
     }
 
     @Override
-    protected void keyTyped(char c, int i) {
+    protected void keyTyped(char c, int i) throws IOException {
         if (textField.isFocused()) {
             if (c == 13 || c == 27) {
                 textField.setFocused(false);

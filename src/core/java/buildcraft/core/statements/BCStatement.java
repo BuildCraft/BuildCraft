@@ -4,6 +4,14 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.statements;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;
@@ -11,6 +19,10 @@ import buildcraft.api.statements.StatementManager;
 public abstract class BCStatement implements IStatement {
 
     protected final String uniqueTag;
+    private final ResourceLocation location;
+
+    @SideOnly(Side.CLIENT)
+    private TextureAtlasSprite sprite = null;
 
     /** UniqueTag accepts multiple possible tags, use this feature to migrate to more standardized tags if needed,
      * otherwise just pass a single string. The first passed string will be the one used when saved to disk.
@@ -21,6 +33,8 @@ public abstract class BCStatement implements IStatement {
         for (String tag : uniqueTag) {
             StatementManager.statements.put(tag, this);
         }
+        location = new ResourceLocation("buildcraftcore:items/triggers/" + uniqueTag);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Override
@@ -51,5 +65,17 @@ public abstract class BCStatement implements IStatement {
     @Override
     public IStatementParameter createParameter(int index) {
         return null;
+    }
+    
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void stitchTextures(TextureStitchEvent.Pre event) {
+        sprite = event.map.registerSprite(location);
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public TextureAtlasSprite getGuiSprite() {
+        return sprite;
     }
 }

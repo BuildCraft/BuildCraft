@@ -4,14 +4,14 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.render;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public interface ICustomHighlight {
 
-    AxisAlignedBB[] getBoxes(World wrd, BlockPos pos, EntityPlayer player);
+    AxisAlignedBB[] getBoxes(World wrd, BlockPos pos, IBlockState state);
 
     double getExpansion();
 }

@@ -2,7 +2,7 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.builders;
+package buildcraft.builders.item;
 
 import java.util.List;
 
@@ -77,24 +77,6 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
     @Override
     public int getItemStackLimit(ItemStack stack) {
         return NBTUtils.getItemData(stack).hasKey("name") ? 1 : 16;
-    }
-
-    public abstract String getIconType();
-
-    @Override
-    public String[] getIconNames() {
-        return new String[] { getIconType() + "/clean", getIconType() + "/used" };
-    }
-
-    @Override
-    public TextureAtlasSprite getIconIndex(ItemStack stack) {
-        if (!NBTUtils.getItemData(stack).hasKey("name")) {
-            itemIcon = icons[0];
-        } else {
-            itemIcon = icons[1];
-        }
-
-        return itemIcon;
     }
 
     public static LibraryId getId(ItemStack stack) {

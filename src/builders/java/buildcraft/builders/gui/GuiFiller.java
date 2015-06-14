@@ -4,6 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.gui;
 
+import java.io.IOException;
+
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
@@ -80,7 +82,7 @@ public class GuiFiller extends GuiAdvancedInterface {
     }
 
     @Override
-    protected void actionPerformed(GuiButton button) {
+    protected void actionPerformed(GuiButton button) throws IOException {
         super.actionPerformed(button);
 
         if (button.id == 0) {
@@ -93,7 +95,7 @@ public class GuiFiller extends GuiAdvancedInterface {
     }
 
     @Override
-    protected void mouseClicked(int x, int y, int k) {
+    protected void mouseClicked(int x, int y, int k) throws IOException {
         super.mouseClicked(x, y, k);
 
         AdvancedSlot slot = getSlotAtLocation(x, y);

@@ -5,8 +5,8 @@
 package buildcraft.builders.block;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
@@ -22,11 +22,11 @@ import net.minecraft.world.World;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.builders.BuildCraftBuilders;
 import buildcraft.builders.tile.TileQuarry;
-import buildcraft.core.block.BlockLEDHatchBase;
+import buildcraft.core.lib.block.BlockBuildCraft;
 
-public class BlockQuarry extends BlockLEDHatchBase {
+public class BlockQuarry extends BlockBuildCraft {
     public BlockQuarry() {
-        super(Material.iron);
+        super(Material.iron, FACING_PROP);
 
         setHardness(10F);
         setResistance(10F);
@@ -49,73 +49,76 @@ public class BlockQuarry extends BlockLEDHatchBase {
         return new TileQuarry();
     }
 
-    public void searchFrames(World world, BlockPos pos) {
-        int width2 = 1;
-        if (!world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2)) {
-            return;
-        }
-
-        Block block = world.getBlock(pos);
-
-        if (block != BuildCraftBuilders.frameBlock) {
-            return;
-        }
-
-        int meta = world.getBlockMetadata(pos);
-
-        if ((meta & 8) == 0) {
-            world.setBlockMetadataWithNotify(pos, meta | 8, 0);
-
-            EnumFacing[] dirs = EnumFacing.VALID_DIRECTIONS;
-
-            for (EnumFacing dir : dirs) {
-                switch (dir) {
-                    case UP:
-                        searchFrames(world, i, j + 1, k);
-                        break;
-                    case DOWN:
-                        searchFrames(world, i, j - 1, k);
-                        break;
-                    case SOUTH:
-                        searchFrames(world, pos + 1);
-                        break;
-                    case NORTH:
-                        searchFrames(world, pos - 1);
-                        break;
-                    case EAST:
-                        searchFrames(world, i + 1, j, k);
-                        break;
-                    case WEST:
-                    default:
-                        searchFrames(world, i - 1, j, k);
-                        break;
-                }
-            }
-        }
-    }
+    // public void searchFrames(World world, BlockPos pos) {
+    // int width2 = 1;
+    // int i = pos.getX();
+    // int j = pos.getY();
+    // int k = pos.getZ();
+    // if (!Utils.checkChunksExist(world, i - width2, j - width2, k - width2, i + width2, j + width2, k + width2)) {
+    // return;
+    // }
+    //
+    // IBlockState state = world.getBlockState(pos);
+    // Block block = state.getBlock();
+    //
+    // if (block != BuildCraftBuilders.frameBlock) {
+    // return;
+    // }
+    //
+    // if ((meta & 8) == 0) {
+    // world.setBlockMetadataWithNotify(pos, meta | 8, 0);
+    //
+    // EnumFacing[] dirs = EnumFacing.VALID_DIRECTIONS;
+    //
+    // for (EnumFacing dir : dirs) {
+    // switch (dir) {
+    // case UP:
+    // searchFrames(world, i, j + 1, k);
+    // break;
+    // case DOWN:
+    // searchFrames(world, i, j - 1, k);
+    // break;
+    // case SOUTH:
+    // searchFrames(world, pos + 1);
+    // break;
+    // case NORTH:
+    // searchFrames(world, pos - 1);
+    // break;
+    // case EAST:
+    // searchFrames(world, i + 1, j, k);
+    // break;
+    // case WEST:
+    // default:
+    // searchFrames(world, i - 1, j, k);
+    // break;
+    // }
+    // }
+    // }
+    // }
 
     @Override
-    public ArrayList<ItemStack> getDrops(World world, BlockPos pos, int metadata, int fortune) {
+    public List<ItemStack> getDrops(IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
         if (BuildCraftBuilders.quarryOneTimeUse) {
             return new ArrayList<ItemStack>();
         }
-        return super.getDrops(world, pos, metadata, fortune);
+        return super.getDrops(world, pos, state, fortune);
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, Block block, int metadata) {
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
         if (world.isRemote) {
             return;
         }
 
         BuildCraftBuilders.frameBlock.removeNeighboringFrames(world, pos);
 
-        super.breakBlock(world, pos, block, metadata);
+        super.breakBlock(world, pos, state);
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-        if (super.onBlockActivated(world, pos, entityplayer, par6, par7, par8, par9)) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing facing, float hitX,
+            float hitY, float hitZ) {
+        if (super.onBlockActivated(world, pos, state, entityplayer, facing, hitX, hitY, hitZ)) {
             return true;
         }
 
@@ -140,22 +143,7 @@ public class BlockQuarry extends BlockLEDHatchBase {
     }
 
     @Override
-    public boolean renderAsNormalBlock() {
-        return false;
-    }
-
-    @Override
     public boolean isSideSolid(IBlockAccess world, BlockPos pos, EnumFacing side) {
         return false;
-    }
-
-    @Override
-    public int getIconGlowLevel(IBlockAccess access, BlockPos pos) {
-        if (renderPass < 2) {
-            return -1;
-        } else {
-            TileQuarry tile = (TileQuarry) access.getTileEntity(pos);
-            return tile.getIconGlowLevel(renderPass);
-        }
     }
 }

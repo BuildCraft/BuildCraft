@@ -5,6 +5,7 @@
 package buildcraft.builders.block;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -17,7 +18,6 @@ import net.minecraft.world.World;
 import buildcraft.builders.BuildCraftBuilders;
 import buildcraft.builders.item.ItemConstructionMarker;
 import buildcraft.builders.tile.TileBuilder;
-import buildcraft.core.BCCreativeTab;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.fluids.TankUtils;
@@ -29,10 +29,8 @@ public class BlockBuilder extends BlockBuildCraft {
     TextureAtlasSprite blockTextureFront;
 
     public BlockBuilder() {
-        super(Material.iron);
+        super(Material.iron, FACING_PROP);
         setHardness(5F);
-        setCreativeTab(BCCreativeTab.get("main"));
-        setRotatable(true);
     }
 
     @Override
@@ -41,8 +39,9 @@ public class BlockBuilder extends BlockBuildCraft {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-        if (super.onBlockActivated(world, pos, entityplayer, par6, par7, par8, par9)) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing side, float hitX, float hitY,
+            float hitZ) {
+        if (super.onBlockActivated(world, pos, state, entityplayer, side, hitX, hitY, hitZ)) {
             return true;
         }
 
@@ -60,20 +59,15 @@ public class BlockBuilder extends BlockBuildCraft {
             }
 
             return true;
-        } else if (builder != null && TankUtils.handleRightClick(builder, EnumFacing.UNKNOWN, entityplayer, true, false)) {
+        } else if (builder != null && TankUtils.handleRightClick(builder, null, entityplayer, true, false)) {
             return true;
         } else {
             if (!world.isRemote) {
-                entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BUILDER, world, pos);
+                entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.BUILDER, world, pos.getX(), pos.getY(), pos.getZ());
             }
 
             return true;
         }
-    }
-
-    @Override
-    public boolean renderAsNormalBlock() {
-        return false;
     }
 
     @Override

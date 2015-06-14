@@ -410,7 +410,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
                 }
             }
             if (dropBlueprint) {
-                InvUtils.dropItems(getWorldObj(), getStackInSlot(0), xCoord, yCoord, zCoord);
+                InvUtils.dropItems(getWorld(), getStackInSlot(0), xCoord, yCoord, zCoord);
             }
 
             setInventorySlotContents(0, null);
@@ -551,14 +551,14 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
     }
 
     @Override
-    public void openInventory() {}
+    public void openInventory(EntityPlayer player) {}
 
     @Override
-    public void closeInventory() {}
+    public void closeInventory(EntityPlayer player) {}
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
 
         if (worldObj.isRemote) {
             return;
@@ -575,7 +575,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
         iterateBpt(false);
 
         if (mode != Mode.Off) {
-            if (getWorldObj().getWorldInfo().getGameType() == GameType.CREATIVE) {
+            if (getWorld().getWorldInfo().getGameType() == GameType.CREATIVE) {
                 build();
             } else if (getBattery().getEnergyStored() > POWER_ACTIVATION) {
                 build();
@@ -629,7 +629,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
                 if (id < 0 || id >= fluidTanks.length) {
                     return;
                 }
-                if (isUseableByPlayer(player) && player.getDistanceSq(xCoord, yCoord, zCoord) <= 64) {
+                if (isUseableByPlayer(player) && player.getDistanceSq(pos) <= 64) {
                     fluidTanks[id].setFluid(null);
                     sendNetworkUpdate();
                 }
@@ -661,7 +661,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
     }
 
     @Override
-    public boolean hasCustomInventoryName() {
+    public boolean hasCustomName() {
         return false;
     }
 
@@ -693,7 +693,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
     public void build() {
         if (currentBuilder != null) {
-            if (currentBuilder.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord)) {
+            if (currentBuilder.buildNextSlot(worldObj, this, pos.getX(), pos.getY(), pos.getZ())) {
                 updateRequirements();
             }
         }
@@ -882,7 +882,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
             }
 
             ITransactor t = Transactor.getTransactorFor(this);
-            ItemStack added = t.add(toAdd, EnumFacing.UNKNOWN, true);
+            ItemStack added = t.add(toAdd, null, true);
 
             if (added.stackSize >= stack.stackSize) {
                 return null;

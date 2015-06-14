@@ -4,6 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.gui;
 
+import java.io.IOException;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.gui.GuiButton;
@@ -111,11 +113,10 @@ public class GuiBlueprintLibrary extends GuiBuildCraft {
     }
 
     @Override
-    protected void mouseClicked(BlockPos pos) {
-        super.mouseClicked(pos);
-
-        int x = i - guiLeft;
-        int y = j - guiTop;
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+        int x = mouseX - guiLeft;
+        int y = mouseY - guiTop;
 
         if (x >= 8 && x <= 88) {
             int ySlot = (y - 24) / 9;

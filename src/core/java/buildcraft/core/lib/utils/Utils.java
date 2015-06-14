@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -24,7 +23,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.FakePlayer;
@@ -42,7 +40,6 @@ import buildcraft.core.EntityLaser;
 import buildcraft.core.LaserData;
 import buildcraft.core.LaserKind;
 import buildcraft.core.internal.IDropControlInventory;
-import buildcraft.core.internal.IFramePipeConnection;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.InvUtils;
@@ -91,10 +88,12 @@ public final class Utils {
     }
 
     /** Returns the cardinal direction of the entity depending on its rotationYaw */
+    @Deprecated
     public static EnumFacing get2dOrientation(EntityLivingBase entityliving) {
-        EnumFacing[] orientationTable = { EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.NORTH, EnumFacing.EAST };
-        int orientationIndex = MathHelper.floor_double((entityliving.rotationYaw + 45.0) / 90.0) & 3;
-        return orientationTable[orientationIndex];
+        return entityliving.getHorizontalFacing();
+        // EnumFacing[] orientationTable = { EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.NORTH, EnumFacing.EAST };
+        // int orientationIndex = MathHelper.floor_double((entityliving.rotationYaw + 45.0) / 90.0) & 3;
+        // return orientationTable[orientationIndex];
     }
 
     /** Look around the tile given in parameter in all 6 position, tries to add the items to a random injectable tile
@@ -288,30 +287,6 @@ public final class Utils {
         return true;
     }
 
-    /** Not required? */
-    // TODO (AlexIIL) CHECK IF THIS IS REQUIRED
-    @Deprecated
-    public static boolean checkLegacyPipesConnections(IBlockAccess blockAccess, BlockPos bp1, BlockPos bp2) {
-
-        IBlockState b1 = blockAccess.getBlockState(bp1);
-        IBlockState b2 = blockAccess.getBlockState(bp2);
-
-        if (!(b1 instanceof IFramePipeConnection) && !(b2 instanceof IFramePipeConnection)) {
-            return false;
-        }
-
-        if (b1 instanceof IFramePipeConnection && !((IFramePipeConnection) b1).isPipeConnected(blockAccess, bp1, bp2)) {
-            return false;
-        }
-
-        if (b2 instanceof IFramePipeConnection && !((IFramePipeConnection) b2).isPipeConnected(blockAccess, bp2, bp1)) {
-            return false;
-        }
-
-        return true;
-
-    }
-
     public static boolean isPipeConnected(IBlockAccess access, BlockPos pos, EnumFacing dir, IPipeTile.PipeType type) {
         TileEntity tile = access.getTileEntity(pos.offset(dir));
         return tile instanceof IPipeTile && ((IPipeTile) tile).getPipeType() == type && ((IPipeTile) tile).isPipeConnected(dir.getOpposite());
@@ -354,5 +329,30 @@ public final class Utils {
             return null;
         }
         return obj.toString();
+    }
+
+    // WORLD HELPER
+
+    /** Checks between a min and max all the chunks inbetween actually exist. Args: world, minX, minY, minZ, maxX, maxY,
+     * maxZ */
+    public static boolean checkChunksExist(World world, int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
+        if (maxY >= 0 && minY < 256) {
+            minX >>= 4;
+            minZ >>= 4;
+            maxX >>= 4;
+            maxZ >>= 4;
+
+            for (int var7 = minX; var7 <= maxX; ++var7) {
+                for (int var8 = minZ; var8 <= maxZ; ++var8) {
+                    if (!world.getChunkProvider().chunkExists(var7, var8)) {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        } else {
+            return false;
+        }
     }
 }

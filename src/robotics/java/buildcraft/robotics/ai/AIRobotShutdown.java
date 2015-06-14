@@ -54,7 +54,7 @@ public class AIRobotShutdown extends AIRobot {
     }
 
     private AxisAlignedBB getRobotBox() {
-        return AxisAlignedBB.getBoundingBox(robot.posX - 0.25d, robot.posY - 0.25d, robot.posZ - 0.25d, robot.posX + 0.25d, robot.posY + 0.25d,
+        return new AxisAlignedBB(robot.posX - 0.25d, robot.posY - 0.25d, robot.posZ - 0.25d, robot.posX + 0.25d, robot.posY + 0.25d,
             robot.posZ + 0.25d);
     }
 

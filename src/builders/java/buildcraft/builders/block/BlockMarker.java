@@ -6,6 +6,8 @@ package buildcraft.builders.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
@@ -17,64 +19,46 @@ import net.minecraft.world.World;
 import buildcraft.api.items.IMapLocation;
 import buildcraft.builders.tile.TileConstructionMarker;
 import buildcraft.builders.tile.TileMarker;
-import buildcraft.core.BCCreativeTab;
-import buildcraft.core.BuildCraftCore;
 import buildcraft.core.lib.block.BlockBuildCraft;
 
 public class BlockMarker extends BlockBuildCraft {
 
     public BlockMarker() {
-        super(Material.circuits);
+        super(Material.circuits, FACING_6_PROP);
 
         setLightLevel(0.5F);
         setHardness(0.0F);
-        setCreativeTab(BCCreativeTab.get("main"));
     }
 
     public static boolean canPlaceTorch(World world, BlockPos pos, EnumFacing side) {
-        Block block = world.getBlock(pos);
-        return block != null && (block.renderAsNormalBlock() && block.isOpaqueCube() || block.isSideSolid(world, pos, side));
+        Block block = world.getBlockState(pos).getBlock();
+        return (block.isOpaqueCube() || block.isSideSolid(world, pos, side));
     }
 
-    private AxisAlignedBB getBoundingBox(int meta) {
+    @Override
+    public AxisAlignedBB getBox(IBlockAccess world, BlockPos pos, IBlockState state) {
         double w = 0.15;
         double h = 0.65;
-
-        EnumFacing dir = EnumFacing.getOrientation(meta);
+        EnumFacing dir = FACING_PROP.getValue(state);
         switch (dir) {
             case DOWN:
-                return AxisAlignedBB.getBoundingBox(0.5F - w, 1F - h, 0.5F - w, 0.5F + w, 1F, 0.5F + w);
+                return new AxisAlignedBB(0.5F - w, 1F - h, 0.5F - w, 0.5F + w, 1F, 0.5F + w);
             case UP:
-                return AxisAlignedBB.getBoundingBox(0.5F - w, 0F, 0.5F - w, 0.5F + w, h, 0.5F + w);
+                return new AxisAlignedBB(0.5F - w, 0F, 0.5F - w, 0.5F + w, h, 0.5F + w);
             case SOUTH:
-                return AxisAlignedBB.getBoundingBox(0.5F - w, 0.5F - w, 0F, 0.5F + w, 0.5F + w, h);
+                return new AxisAlignedBB(0.5F - w, 0.5F - w, 0F, 0.5F + w, 0.5F + w, h);
             case NORTH:
-                return AxisAlignedBB.getBoundingBox(0.5F - w, 0.5F - w, 1 - h, 0.5F + w, 0.5F + w, 1);
+                return new AxisAlignedBB(0.5F - w, 0.5F - w, 1 - h, 0.5F + w, 0.5F + w, 1);
             case EAST:
-                return AxisAlignedBB.getBoundingBox(0F, 0.5F - w, 0.5F - w, h, 0.5F + w, 0.5F + w);
+                return new AxisAlignedBB(0F, 0.5F - w, 0.5F - w, h, 0.5F + w, 0.5F + w);
             default:
-                return AxisAlignedBB.getBoundingBox(1 - h, 0.5F - w, 0.5F - w, 1F, 0.5F + w, 0.5F + w);
+                return new AxisAlignedBB(1 - h, 0.5F - w, 0.5F - w, 1F, 0.5F + w, 0.5F + w);
         }
     }
 
     @Override
-    public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, BlockPos pos) {
-        int meta = world.getBlockMetadata(pos);
-        AxisAlignedBB bBox = getBoundingBox(meta);
-        bBox.offset(pos);
-        return bBox;
-    }
-
-    @Override
-    public void setBlockBoundsBasedOnState(IBlockAccess world, BlockPos pos) {
-        int meta = world.getBlockMetadata(pos);
-        AxisAlignedBB bb = getBoundingBox(meta);
-        setBlockBounds((float) bb.minX, (float) bb.minY, (float) bb.minZ, (float) bb.maxX, (float) bb.maxY, (float) bb.maxZ);
-    }
-
-    @Override
-    public int getRenderType() {
-        return BuildCraftCore.markerModel;
+    public boolean isCollidable() {
+        return false;
     }
 
     @Override
@@ -83,16 +67,17 @@ public class BlockMarker extends BlockBuildCraft {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-        if (super.onBlockActivated(world, pos, entityplayer, par6, par7, par8, par9)) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing face, float hitX, float hitY,
+            float hitZ) {
+        if (super.onBlockActivated(world, pos, state, player, face, hitX, hitY, hitZ)) {
             return true;
         }
 
-        if (entityplayer.inventory.getCurrentItem() != null && entityplayer.inventory.getCurrentItem().getItem() instanceof IMapLocation) {
+        if (player.inventory.getCurrentItem() != null && player.inventory.getCurrentItem().getItem() instanceof IMapLocation) {
             return false;
         }
 
-        if (entityplayer.isSneaking()) {
+        if (player.isSneaking()) {
             return false;
         }
 
@@ -105,50 +90,34 @@ public class BlockMarker extends BlockBuildCraft {
     }
 
     @Override
-    public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, BlockPos pos) {
-        return null;
-    }
-
-    @Override
     public boolean isOpaqueCube() {
         return false;
     }
 
     @Override
-    public boolean renderAsNormalBlock() {
-        return false;
-    }
-
-    @Override
-    public void onNeighborBlockChange(World world, BlockPos pos, Block block) {
+    public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block block) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileMarker) {
             ((TileMarker) tile).updateSignals();
         }
-        dropTorchIfCantStay(world, pos);
+        dropTorchIfCantStay(world, pos, state);
     }
 
     @Override
-    public boolean canPlaceBlockOnSide(World world, BlockPos pos, int side) {
-        EnumFacing dir = EnumFacing.getOrientation(side);
-        return canPlaceTorch(world, x - dir.offsetX, y - dir.offsetY, z - dir.offsetZ, dir);
+    public boolean canPlaceBlockOnSide(World world, BlockPos pos, EnumFacing side) {
+        return canPlaceTorch(world, pos.offset(side, -1), side);
     }
 
     @Override
-    public int onBlockPlaced(World world, BlockPos pos, int side, float par6, float par7, float par8, int meta) {
-        return side;
+    public void onBlockAdded(World world, BlockPos pos, IBlockState state) {
+        super.onBlockAdded(world, pos, state);
+        dropTorchIfCantStay(world, pos, state);
     }
 
-    @Override
-    public void onBlockAdded(World world, BlockPos pos) {
-        super.onBlockAdded(world, pos);
-        dropTorchIfCantStay(world, pos);
-    }
-
-    private void dropTorchIfCantStay(World world, BlockPos pos) {
-        int meta = world.getBlockMetadata(pos);
-        if (!canPlaceBlockOnSide(world, pos, meta)) {
-            dropBlockAsItem(world, pos, 0, 0);
+    private void dropTorchIfCantStay(World world, BlockPos pos, IBlockState state) {
+        EnumFacing side = FACING_6_PROP.getValue(state);
+        if (!canPlaceBlockOnSide(world, pos, side)) {
+            dropBlockAsItem(world, pos, state, 0);
             world.setBlockToAir(pos);
         }
     }

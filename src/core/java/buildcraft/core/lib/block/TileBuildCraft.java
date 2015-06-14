@@ -17,7 +17,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IChatComponent;
 
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.tiles.IControllable;
@@ -244,4 +246,30 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
     public void setControlMode(IControllable.Mode mode) {
         this.mode = mode;
     }
+
+    // IInventory
+
+    public int getField(int id) {
+        return 0;
+    }
+
+    public void setField(int id, int value) {}
+
+    public int getFieldCount() {
+        return 0;
+    }
+
+    public String getInventoryName() {
+        return "";
+    }
+
+    public String getCommandSenderName() {
+        return getInventoryName();
+    }
+
+    public IChatComponent getDisplayName() {
+        return new ChatComponentText(getInventoryName());
+    }
+
+    public void clear() {}
 }

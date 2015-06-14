@@ -4,8 +4,11 @@
  * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.api.blueprints;
 
+import net.minecraft.util.BlockPos;
+
 import buildcraft.api.core.Position;
 
+// Could this be MutableBlockPos?
 public class Translation {
 
     public double x = 0;
@@ -20,6 +23,10 @@ public class Translation {
         p2.z = p.z + z;
 
         return p2;
+    }
+
+    public BlockPos translate(BlockPos pos) {
+        return pos.add(x, y, z);
     }
 
     @Override

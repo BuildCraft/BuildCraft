@@ -4,13 +4,11 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.engines;
 
-import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -19,8 +17,6 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -92,63 +88,18 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public void addCollisionBoxesToList(World wrd, BlockPos pos, IBlockState state, AxisAlignedBB mask, List list, Entity ent) {
-        TileEntity tile = wrd.getTileEntity(pos);
-        if (tile instanceof TileEngineBase) {
-            AxisAlignedBB[] aabbs = boxes[((TileEngineBase) tile).orientation.ordinal()];
-            for (AxisAlignedBB aabb : aabbs) {
-                AxisAlignedBB aabbTmp = aabb.offset(pos.getX(), pos.getY(), pos.getZ());
-                if (mask.intersectsWith(aabbTmp)) {
-                    list.add(aabbTmp);
-                }
-            }
-        } else {
-            super.addCollisionBoxesToList(wrd, pos, state, mask, list, ent);
-        }
-    }
-
-    @Override
-    public AxisAlignedBB[] getBoxes(World wrd, BlockPos pos, EntityPlayer player) {
-        TileEntity tile = wrd.getTileEntity(pos);
+    public AxisAlignedBB[] getBoxes(World world, BlockPos pos, IBlockState state) {
+        TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileEngineBase) {
             return boxes[((TileEngineBase) tile).orientation.ordinal()];
         } else {
-            return new AxisAlignedBB[] { new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0) };
+            return super.getBoxes(world, pos, state);
         }
     }
 
     @Override
     public double getExpansion() {
         return 0.0075;
-    }
-
-    @Override
-    public MovingObjectPosition collisionRayTrace(World wrd, BlockPos pos, Vec3 origin, Vec3 direction) {
-        TileEntity tile = wrd.getTileEntity(pos);
-        if (tile instanceof TileEngineBase) {
-            AxisAlignedBB[] aabbs = boxes[((TileEngineBase) tile).orientation.ordinal()];
-            MovingObjectPosition closest = null;
-            for (AxisAlignedBB aabb : aabbs) {
-                aabb = aabb.offset(pos.getX(), pos.getY(), pos.getZ()).expand(-0.01, -0.01, -0.01);
-
-                MovingObjectPosition mop = aabb.calculateIntercept(origin, direction);
-                if (mop != null) {
-                    if (closest != null && mop.hitVec.distanceTo(origin) < closest.hitVec.distanceTo(origin)) {
-                        closest = mop;
-                    } else {
-                        closest = mop;
-                    }
-                }
-            }
-            if (closest == null) {
-                return null;
-            } else {
-                return new MovingObjectPosition(closest.hitVec, closest.sideHit, pos);
-            }
-        } else {
-            return super.collisionRayTrace(wrd, pos, origin, direction);
-        }
     }
 
     @Override

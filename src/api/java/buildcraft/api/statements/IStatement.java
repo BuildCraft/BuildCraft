@@ -4,6 +4,10 @@
  * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.api.statements;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
 public interface IStatement {
     /** Every statement needs a unique tag, it should be in the format of "&lt;modid&gt;:&lt;name&gt;.
      *
@@ -24,4 +28,9 @@ public interface IStatement {
 
     /** This returns the statement after a left rotation. Used in particular in blueprints orientation. */
     IStatement rotateLeft();
+
+    /** This should return the icon for this statement, suitable for rending directly into a GUI. This should refer to a
+     * texture on the map block texture map. */
+    @SideOnly(Side.CLIENT)
+    TextureAtlasSprite getGuiSprite();
 }
