@@ -62,39 +62,37 @@ public class RenderConstructionMarker extends RenderBoxProvider {
 
 		TileConstructionMarker marker = (TileConstructionMarker) tileentity;
 
-		if (marker != null) {
+		GL11.glPushMatrix();
+		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glEnable(GL11.GL_LIGHTING);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+		GL11.glTranslated(x, y, z);
+		GL11.glTranslated(-tileentity.xCoord, -tileentity.yCoord, -tileentity.zCoord);
+
+		if (marker.laser != null) {
 			GL11.glPushMatrix();
-			GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-			GL11.glEnable(GL11.GL_CULL_FACE);
-			GL11.glEnable(GL11.GL_LIGHTING);
-			GL11.glEnable(GL11.GL_BLEND);
-			GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-			GL11.glTranslated(x, y, z);
-			GL11.glTranslated(-tileentity.xCoord, -tileentity.yCoord, -tileentity.zCoord);
-
-			if (marker.laser != null) {
-				GL11.glPushMatrix();
-				RenderLaser
-						.doRenderLaser(
-								TileEntityRendererDispatcher.instance.field_147553_e,
-								marker.laser, EntityLaser.LASER_TEXTURES[4]);
-				GL11.glPopMatrix();
-			}
-
-			if (marker.itemBlueprint != null) {
-				doRenderItem(marker.itemBlueprint,
-					marker.xCoord + 0.5F,
-					marker.yCoord + 0.2F,
-					marker.zCoord + 0.5F);
-			}
-
-			//GL11.glEnable(GL11.GL_LIGHTING);
-			GL11.glPopAttrib();
+			RenderLaser
+					.doRenderLaser(
+							TileEntityRendererDispatcher.instance.field_147553_e,
+							marker.laser, EntityLaser.LASER_TEXTURES[4]);
 			GL11.glPopMatrix();
-
-			renderItems.render(tileentity, x, y, z);
 		}
+
+		if (marker.itemBlueprint != null) {
+			doRenderItem(marker.itemBlueprint,
+				marker.xCoord + 0.5F,
+				marker.yCoord + 0.2F,
+				marker.zCoord + 0.5F);
+		}
+
+		//GL11.glEnable(GL11.GL_LIGHTING);
+		GL11.glPopAttrib();
+		GL11.glPopMatrix();
+
+		renderItems.render(tileentity, x, y, z);
 	}
 
 	public void doRenderItem(ItemStack stack, double x, double y, double z) {

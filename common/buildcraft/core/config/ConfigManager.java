@@ -37,7 +37,7 @@ public class ConfigManager implements IModGuiFactory {
 	}
 
 	public ConfigManager(Configuration c) {
-		this.config = c;
+		config = c;
 	}
 
 	public ConfigCategory getCat(String name) {

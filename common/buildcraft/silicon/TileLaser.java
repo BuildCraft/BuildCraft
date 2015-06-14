@@ -100,13 +100,16 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 			return;
 		}
 
-		// We have a table and can work, so we create a laser if
-		// necessary.
-		laser.isVisible = true;
+		// We have a laser
+		if (laser != null) {
+			// We have a table and can work, so we create a laser if
+			// necessary.
+			laser.isVisible = true;
 
-		// We have a laser and may update it
-		if (laser != null && canUpdateLaser()) {
-			updateLaser();
+			// We may update laser
+			if (canUpdateLaser()) {
+				updateLaser();
+			}
 		}
 
 		// Consume power and transfer it to the table.

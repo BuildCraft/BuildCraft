@@ -12,11 +12,12 @@ import buildcraft.transport.PipeIconProvider;
 
 public class PipePowerEmerald extends PipePowerWood {
 
-	protected int standardIconIndex = PipeIconProvider.TYPE.PipePowerEmerald_Standard.ordinal();
-	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllEmerald_Solid.ordinal();
-
 	public PipePowerEmerald(Item item) {
 		super(item);
+		
+		standardIconIndex = PipeIconProvider.TYPE.PipePowerEmerald_Standard.ordinal();
+		
+		solidIconIndex = PipeIconProvider.TYPE.PipeAllEmerald_Solid.ordinal();
 		
 		battery = new RFBattery(2560 * 50, 2560, 0);
 		

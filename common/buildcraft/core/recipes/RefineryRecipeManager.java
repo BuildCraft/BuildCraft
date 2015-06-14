@@ -42,7 +42,6 @@ public final class RefineryRecipeManager implements IRefineryRecipeManager {
 	@Override
 	public void addRecipe(String id, FluidStack ingredient1, FluidStack ingredient2, FluidStack result, int energy,
 			int delay) {
-		String name = result.getFluid().getName();
 
 		if (ingredient1 == null || ingredient2 == null || result == null) {
 			BCLog.logger.warn("Rejected refinery recipe " + id + " due to a null FluidStack!");

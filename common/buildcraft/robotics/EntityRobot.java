@@ -1123,7 +1123,7 @@ public class EntityRobot extends EntityRobotBase implements
 					&& !StringUtils.isNullOrEmpty(nbttagcompound.getString("SkullOwner"))) {
 				gameProfile = new GameProfile((UUID) null, nbttagcompound.getString("SkullOwner"));
 			}
-			if (!StringUtils.isNullOrEmpty(gameProfile.getName())) {
+			if (gameProfile != null && !StringUtils.isNullOrEmpty(gameProfile.getName())) {
 				if (!gameProfile.isComplete()
 						|| !gameProfile.getProperties().containsKey("textures")) {
 					gameProfile = MinecraftServer.getServer().func_152358_ax()

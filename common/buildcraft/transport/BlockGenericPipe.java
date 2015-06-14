@@ -415,10 +415,8 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 			pipeRemoved.clear();
 		}
 
-		if (pipe != null) {
-			pipeRemoved.put(new BlockIndex(x, y, z), pipe);
-			updateNeighbourSignalState(pipe);
-		}
+		pipeRemoved.put(new BlockIndex(x, y, z), pipe);
+		updateNeighbourSignalState(pipe);
 		world.removeTileEntity(x, y, z);
 	}
 
