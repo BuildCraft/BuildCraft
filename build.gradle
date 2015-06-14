@@ -84,7 +84,7 @@ ext.moduleDependencies = [
                             	"builders":["core"],
                             	"energy": ["core"],
                            	"factory": ["core"],
-				"robotics": ["core"]
+				"robotics": ["core"],
                               	"silicon": ["core"],
                             	"transport": ["core"]
                         ]
