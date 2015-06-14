@@ -127,10 +127,14 @@ public class GuiFiller extends GuiAdvancedInterface {
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mx, int my) {
+		super.drawGuiContainerForegroundLayer(mx, my);
+
 		String title = StringUtils.localize("tile.fillerBlock.name");
 		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
 		fontRendererObj.drawString(StringUtils.localize("gui.filling.resources"), 8, 74, 0x404040);
 		fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, 142, 0x404040);
 		GuiTools.drawCenteredString(fontRendererObj, filler.currentPattern.getDescription(), 56);
+
+		drawTooltipForSlotAt(mx, my);
 	}
 }
