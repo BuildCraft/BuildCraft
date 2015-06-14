@@ -58,10 +58,7 @@ import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.blueprints.SchematicMask;
-import buildcraft.api.core.BCLog;
 import buildcraft.api.core.JavaTools;
-import buildcraft.api.filler.FillerManager;
-import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.library.LibraryAPI;
 import buildcraft.api.statements.StatementManager;
 import buildcraft.builders.BlockArchitect;
@@ -134,17 +131,6 @@ import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.builders.patterns.FillerPattern;
-import buildcraft.core.builders.patterns.FillerRegistry;
-import buildcraft.core.builders.patterns.PatternBox;
-import buildcraft.core.builders.patterns.PatternClear;
-import buildcraft.core.builders.patterns.PatternCylinder;
-import buildcraft.core.builders.patterns.PatternFill;
-import buildcraft.core.builders.patterns.PatternFlatten;
-import buildcraft.core.builders.patterns.PatternFrame;
-import buildcraft.core.builders.patterns.PatternHorizon;
-import buildcraft.core.builders.patterns.PatternParameterYDir;
-import buildcraft.core.builders.patterns.PatternPyramid;
-import buildcraft.core.builders.patterns.PatternStairs;
 import buildcraft.core.builders.schematics.SchematicBlockCreative;
 import buildcraft.core.builders.schematics.SchematicFree;
 import buildcraft.core.builders.schematics.SchematicIgnore;
@@ -612,28 +598,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		MinecraftForge.EVENT_BUS.register(this);
 		FMLCommonHandler.instance().bus().register(this);
 
-		// Create filler registry
-		try {
-			FillerManager.registry = new FillerRegistry();
-
-			// INIT FILLER PATTERNS
-			FillerManager.registry.addPattern(PatternFill.INSTANCE);
-			FillerManager.registry.addPattern(new PatternFlatten());
-			FillerManager.registry.addPattern(new PatternHorizon());
-			FillerManager.registry.addPattern(new PatternClear());
-			FillerManager.registry.addPattern(new PatternBox());
-			FillerManager.registry.addPattern(new PatternPyramid());
-			FillerManager.registry.addPattern(new PatternStairs());
-			FillerManager.registry.addPattern(new PatternCylinder());
-			FillerManager.registry.addPattern(new PatternFrame());
-		} catch (Error error) {
-			BCLog.logErrorAPI("Buildcraft", error, IFillerPattern.class);
-			throw error;
-		}
-
 		StatementManager.registerActionProvider(new BuildersActionProvider());
-
-		StatementManager.registerParameterClass(PatternParameterYDir.class);
 	}
 
 	public static void loadRecipes() {

@@ -140,7 +140,6 @@ config.worldgen.biomes.excessiveOilIDs=Biomes with excessive oil
 config.worldgen.biomes.excludeOilIDs=Biomes without oil
 config.worldgen.biomes.increasedOilIDs=Biomes with increased oil
 
-
 direction.north=North
 direction.west=West
 direction.east=East

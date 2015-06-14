@@ -61,6 +61,8 @@ import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.IWorldProperty;
 import buildcraft.api.crops.CropManager;
+import buildcraft.api.filler.FillerManager;
+import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
@@ -95,6 +97,18 @@ import buildcraft.core.TickHandlerCore;
 import buildcraft.core.TileEngineWood;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.SchematicRegistry;
+import buildcraft.core.builders.patterns.FillerRegistry;
+import buildcraft.core.builders.patterns.PatternBox;
+import buildcraft.core.builders.patterns.PatternClear;
+import buildcraft.core.builders.patterns.PatternCylinder;
+import buildcraft.core.builders.patterns.PatternFill;
+import buildcraft.core.builders.patterns.PatternFlatten;
+import buildcraft.core.builders.patterns.PatternFrame;
+import buildcraft.core.builders.patterns.PatternHorizon;
+import buildcraft.core.builders.patterns.PatternParameterXZDir;
+import buildcraft.core.builders.patterns.PatternParameterYDir;
+import buildcraft.core.builders.patterns.PatternPyramid;
+import buildcraft.core.builders.patterns.PatternStairs;
 import buildcraft.core.command.SubCommandChangelog;
 import buildcraft.core.command.SubCommandVersion;
 import buildcraft.core.config.BuildCraftConfiguration;
@@ -415,6 +429,28 @@ public class BuildCraftCore extends BuildCraftMod {
 		MinecraftForge.EVENT_BUS.register(TabletManagerServer.INSTANCE);
 
 		TabletAPI.registerProgram(new TabletProgramMenuFactory());
+
+		// Create filler registry
+		try {
+			FillerManager.registry = new FillerRegistry();
+
+			// INIT FILLER PATTERNS
+			FillerManager.registry.addPattern(PatternFill.INSTANCE);
+			FillerManager.registry.addPattern(new PatternFlatten());
+			FillerManager.registry.addPattern(new PatternHorizon());
+			FillerManager.registry.addPattern(new PatternClear());
+			FillerManager.registry.addPattern(new PatternBox());
+			FillerManager.registry.addPattern(new PatternPyramid());
+			FillerManager.registry.addPattern(new PatternStairs());
+			FillerManager.registry.addPattern(new PatternCylinder());
+			FillerManager.registry.addPattern(new PatternFrame());
+		} catch (Error error) {
+			BCLog.logErrorAPI("Buildcraft", error, IFillerPattern.class);
+			throw error;
+		}
+
+		StatementManager.registerParameterClass(PatternParameterYDir.class);
+		StatementManager.registerParameterClass(PatternParameterXZDir.class);
 	}
 
 	@Mod.EventHandler
