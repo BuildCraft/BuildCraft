@@ -94,6 +94,7 @@ import buildcraft.core.TickHandlerCore;
 import buildcraft.core.TileEngineWood;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.SchematicRegistry;
+import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.builders.patterns.FillerRegistry;
 import buildcraft.core.builders.patterns.PatternBox;
 import buildcraft.core.builders.patterns.PatternClear;
@@ -103,6 +104,7 @@ import buildcraft.core.builders.patterns.PatternFlatten;
 import buildcraft.core.builders.patterns.PatternFrame;
 import buildcraft.core.builders.patterns.PatternHorizon;
 import buildcraft.core.builders.patterns.PatternParameterCenter;
+import buildcraft.core.builders.patterns.PatternParameterHollow;
 import buildcraft.core.builders.patterns.PatternParameterXZDir;
 import buildcraft.core.builders.patterns.PatternParameterYDir;
 import buildcraft.core.builders.patterns.PatternPyramid;
@@ -450,6 +452,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		StatementManager.registerParameterClass(PatternParameterYDir.class);
 		StatementManager.registerParameterClass(PatternParameterXZDir.class);
 		StatementManager.registerParameterClass(PatternParameterCenter.class);
+		StatementManager.registerParameterClass(PatternParameterHollow.class);
 	}
 
 	@Mod.EventHandler
@@ -532,6 +535,10 @@ public class BuildCraftCore extends BuildCraftMod {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void textureHook(TextureStitchEvent.Pre event) {
+		for (FillerPattern pattern : FillerPattern.patterns.values()) {
+			pattern.registerIcons(event.map);
+		}
+
 		if (event.map.getTextureType() == 1) {
 			iconProvider = new CoreIconProvider();
 			iconProvider.registerIcons(event.map);

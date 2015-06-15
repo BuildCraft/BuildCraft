@@ -166,6 +166,8 @@ fillerpattern.stairs=Stairs
 fillerpattern.box=Box
 fillerpattern.cylinder=Cylinder
 fillerpattern.frame=Frame
+fillerpattern.parameter.hollow=Hollow
+fillerpattern.parameter.filled=Filled
 
 fluid.oil=Oil
 fluid.fuel=Fuel

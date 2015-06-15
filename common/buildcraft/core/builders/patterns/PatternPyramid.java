@@ -93,7 +93,7 @@ public class PatternPyramid extends FillerPattern {
 		while (height >= yMin && height <= yMax) {
 			for (int x = x1; x <= x2; ++x) {
 				for (int z = z1; z <= z2; ++z) {
-					bpt.contents[x - xMin][height - yMin][z - zMin] = new SchematicMask(true);
+					bpt.put(x - xMin, height - yMin, z - zMin, new SchematicMask(true));
 				}
 			}
 
