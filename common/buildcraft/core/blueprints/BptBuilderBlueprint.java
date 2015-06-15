@@ -59,7 +59,7 @@ import buildcraft.core.lib.utils.BlockUtils;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
 
-	public ArrayList<ItemStack> neededItems = new ArrayList<ItemStack>();
+	public ArrayList<RequirementItemStack> neededItems = new ArrayList<RequirementItemStack>();
 
 	protected HashSet<Integer> builtEntities = new HashSet<Integer>();
 
@@ -702,33 +702,31 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		for (Entry<StackKey, Integer> e : computeStacks.entrySet()) {
-			ItemStack newStack = e.getKey().stack.copy();
-			newStack.stackSize = e.getValue();
-
-			neededItems.add(newStack);
+			neededItems.add(new RequirementItemStack(e.getKey().stack.copy(), e.getValue()));
 		}
 
-		Collections.sort (neededItems, new Comparator<ItemStack>() {
+		Collections.sort(neededItems, new Comparator<RequirementItemStack>() {
 			@Override
-			public int compare(ItemStack o1, ItemStack o2) {
-				if (o1.stackSize > o2.stackSize) {
-					return -1;
-				} else if (o1.stackSize < o2.stackSize) {
-					return 1;
-				} else if (Item.getIdFromItem(o1.getItem()) > Item.getIdFromItem(o2.getItem())) {
-					return -1;
-				}  else if (Item.getIdFromItem(o1.getItem()) < Item.getIdFromItem(o2.getItem())) {
-					return 1;
-				}  else if (o1.getItemDamage() > o2.getItemDamage()) {
-					return -1;
-				} else if (o1.getItemDamage() < o2.getItemDamage()) {
-					return 1;
+			public int compare(RequirementItemStack o1, RequirementItemStack o2) {
+				if (o1.size != o2.size) {
+					return o1.size < o2.size ? 1 : -1;
 				} else {
-					return 0;
+					ItemStack os1 = o1.stack;
+					ItemStack os2 = o2.stack;
+					if (Item.getIdFromItem(os1.getItem()) > Item.getIdFromItem(os2.getItem())) {
+						return -1;
+					} else if (Item.getIdFromItem(os1.getItem()) < Item.getIdFromItem(os2.getItem())) {
+						return 1;
+					} else if (os1.getItemDamage() > os2.getItemDamage()) {
+						return -1;
+					} else if (os1.getItemDamage() < os2.getItemDamage()) {
+						return 1;
+					} else {
+						return 0;
+					}
 				}
 			}
 		});
-
 	}
 
 	@Override

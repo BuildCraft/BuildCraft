@@ -16,6 +16,7 @@ import java.util.List;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -33,6 +34,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.Position;
@@ -52,6 +54,7 @@ import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.blueprints.BptBuilderTemplate;
+import buildcraft.core.blueprints.RequirementItemStack;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.fluids.TankManager;
@@ -84,7 +87,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	private BptBuilderBase currentBuilder;
 	private RecursiveBlueprintBuilder recursiveBuilder;
 	private LinkedList<BlockIndex> path;
-	private ArrayList<ItemStack> requiredToBuild;
+	private ArrayList<RequirementItemStack> requiredToBuild;
 	private NBTTagCompound initNBT = null;
 	private boolean done = true;
 	private boolean isBuilding = false;
@@ -623,7 +626,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		return getStackInSlot(0) != null && getStackInSlot(0).getItem() instanceof ItemBlueprint;
 	}
 
-	public List<ItemStack> getNeededItems() {
+	public List<RequirementItemStack> getNeededItems() {
 		return requiredToBuild;
 	}
 
@@ -634,12 +637,24 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			if ("clearItemRequirements".equals(command)) {
 				requiredToBuild = null;
 			} else if ("setItemRequirements".equals(command)) {
-				int size = stream.readUnsignedShort();
-				requiredToBuild = new ArrayList<ItemStack>();
+				int size = stream.readUnsignedMedium();
+				requiredToBuild = new ArrayList<RequirementItemStack>();
 				for (int i = 0; i < size; i++) {
-					ItemStack stack = NetworkUtils.readStack(stream);
-					stack.stackSize = Math.min(999, stream.readUnsignedShort());
-					requiredToBuild.add(stack);
+					int itemId = stream.readUnsignedShort();
+					int itemDamage = stream.readShort();
+					int stackSize = stream.readUnsignedMedium();
+					boolean hasCompound = stackSize >= 0x800000;
+
+					ItemStack stack = new ItemStack(Item.getItemById(itemId), 1, itemDamage);
+					if (hasCompound) {
+						stack.setTagCompound(NetworkUtils.readNBT(stream));
+					}
+
+					if (stack != null && stack.getItem() != null){
+						requiredToBuild.add(new RequirementItemStack(stack, stackSize & 0x7FFFFF));
+					} else {
+						BCLog.logger.error("Corrupt ItemStack in TileBuilder.receiveCommand! This should not happen! (ID " + itemId + ", damage " + itemDamage + ")");
+					}
 				}
 			}
 		} else if (side.isServer()) {
@@ -657,14 +672,18 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		}
 	}
 
-	private Packet getItemRequirementsPacket(final ArrayList<ItemStack> items) {
+	private Packet getItemRequirementsPacket(final List<RequirementItemStack> items) {
 		if (items != null) {
 			return new PacketCommand(this, "setItemRequirements", new CommandWriter() {
 				public void write(ByteBuf data) {
-					data.writeShort(items.size());
-					for (ItemStack rb : items) {
-						NetworkUtils.writeStack(data, rb);
-						data.writeShort(rb.stackSize);
+					data.writeMedium(items.size());
+					for (RequirementItemStack rb : items) {
+						data.writeShort(Item.getIdFromItem(rb.stack.getItem()));
+						data.writeShort(rb.stack.getItemDamage());
+						data.writeMedium((rb.stack.hasTagCompound() ? 0x800000 : 0x000000) | Math.min(0x7FFFFF, rb.size));
+						if (rb.stack.hasTagCompound()) {
+							NetworkUtils.writeNBT(data, rb.stack.getTagCompound());
+						}
 					}
 				}
 			});
@@ -718,7 +737,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	}
 
 	public void updateRequirements() {
-		ArrayList<ItemStack> reqCopy = null;
+		List<RequirementItemStack> reqCopy = null;
 		if (currentBuilder instanceof BptBuilderBlueprint) {
 			currentBuilder.initialize();
 			reqCopy = ((BptBuilderBlueprint) currentBuilder).neededItems;
@@ -730,7 +749,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	}
 	
 	public void updateRequirements(EntityPlayer caller) {
-		ArrayList<ItemStack> reqCopy = null;
+		List<RequirementItemStack> reqCopy = null;
 		if (currentBuilder instanceof BptBuilderBlueprint) {
 			currentBuilder.initialize();
 			reqCopy = ((BptBuilderBlueprint) currentBuilder).neededItems;
@@ -843,9 +862,9 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 				return null;
 			}
 
-			ItemStack requirement = bpt.neededItems.get(i);
+			RequirementItemStack requirement = bpt.neededItems.get(i);
 
-			int qty = quantityMissing(requirement);
+			int qty = quantityMissing(requirement.stack, requirement.size);
 
 			if (qty <= 0) {
 				return null;
@@ -855,7 +874,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 			request.index = i;
 			request.requester = this;
-			request.stack = requirement;
+			request.stack = requirement.stack;
 
 			return request;
 		}
@@ -885,9 +904,9 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 				return stack;
 			}
 
-			ItemStack requirement = bpt.neededItems.get(i);
+			RequirementItemStack requirement = bpt.neededItems.get(i);
 
-			int qty = quantityMissing(requirement);
+			int qty = quantityMissing(requirement.stack, requirement.size);
 
 			if (qty <= 0) {
 				return stack;
@@ -911,8 +930,8 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		}
 	}
 
-	private int quantityMissing(ItemStack requirement) {
-		int left = requirement.stackSize;
+	private int quantityMissing(ItemStack requirement, int amount) {
+		int left = amount <= 0 ? requirement.stackSize : amount;
 
 		for (IInvSlot slot : InventoryIterator.getIterable(this)) {
 			if (slot.getStackInSlot() != null) {
