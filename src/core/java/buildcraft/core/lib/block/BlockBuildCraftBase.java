@@ -24,6 +24,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.common.property.IUnlistedProperty;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftProperties;
 import buildcraft.api.enums.EnumColor;
 import buildcraft.api.enums.EnumEnergyStage;
@@ -136,6 +137,17 @@ public abstract class BlockBuildCraftBase extends Block {
         }
 
         setDefaultState(defaultState);
+
+        // Temporary. Used for debugging early on.
+        BCLog.logger.info("Created the block " + getUnlocalizedName() + " as " + getClass().getSimpleName());
+
+        for (BuildCraftProperty<?> prop : properties) {
+            if (metas.contains(prop)) {
+                BCLog.logger.info("  The value of " + prop.getName() + " is saved to disk");
+            } else {
+                BCLog.logger.info("  The value of " + prop.getName() + " is implied by surroundings and is temparary");
+            }
+        }
     }
 
     @Override

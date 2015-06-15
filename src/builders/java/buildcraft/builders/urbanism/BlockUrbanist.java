@@ -5,6 +5,7 @@
 package buildcraft.builders.urbanism;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -29,12 +30,13 @@ public class BlockUrbanist extends BlockBuildCraft {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing side, float par7, float par8,
+            float par9) {
         if (!world.isRemote) {
-            entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.URBANIST, world, pos);
+            entityplayer.openGui(BuildCraftBuilders.instance, GuiIds.URBANIST, world, pos.getX(), pos.getY(), pos.getZ());
         }
 
-        BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, this);
+        BlockInteractionEvent event = new BlockInteractionEvent(entityplayer, state);
         FMLCommonHandler.instance().bus().post(event);
         if (event.isCanceled()) {
             return false;
@@ -47,11 +49,6 @@ public class BlockUrbanist extends BlockBuildCraft {
     @Override
     public TileEntity createNewTileEntity(World var1, int var2) {
         return new TileUrbanist();
-    }
-
-    @Override
-    public boolean renderAsNormalBlock() {
-        return false;
     }
 
     @Override

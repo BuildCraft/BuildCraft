@@ -33,7 +33,7 @@ public abstract class BCStatement implements IStatement {
         for (String tag : uniqueTag) {
             StatementManager.statements.put(tag, this);
         }
-        location = new ResourceLocation("buildcraftcore:items/triggers/" + uniqueTag);
+        location = new ResourceLocation("buildcraftcore:items/triggers/" + this.uniqueTag);
         MinecraftForge.EVENT_BUS.register(this);
     }
 
@@ -66,7 +66,7 @@ public abstract class BCStatement implements IStatement {
     public IStatementParameter createParameter(int index) {
         return null;
     }
-    
+
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void stitchTextures(TextureStitchEvent.Pre event) {

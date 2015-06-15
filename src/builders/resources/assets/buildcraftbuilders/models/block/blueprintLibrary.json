@@ -1,0 +1,12 @@
+{
+    "parent": "buildcraftcore:block/default_cube",
+    "textures": {
+        "particle": "buildcraftbuilders:blocks/blueprint_library/side",
+        "down": "buildcraftbuilders:blocks/blueprint_library/bottom",
+        "up": "buildcraftbuilders:blocks/blueprint_library/top",
+        "north": "buildcraftbuilders:blocks/blueprint_library/right",
+        "east": "buildcraftbuilders:blocks/blueprint_library/front",
+        "south": "buildcraftbuilders:blocks/blueprint_library/left",
+        "west": "buildcraftbuilders:blocks/blueprint_library/back"
+    }
+}

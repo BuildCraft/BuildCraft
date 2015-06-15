@@ -9,7 +9,7 @@ import io.netty.buffer.ByteBuf;
 import java.util.ArrayList;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
@@ -36,7 +36,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
 
     public ArrayList<AnchoredBox> frames = new ArrayList<AnchoredBox>();
 
-    private EntityLivingBase player;
+    private Entity player;
     private int thirdPersonView = 0;
     private double posX, posY, posZ;
     private float yaw;
@@ -52,7 +52,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
             if (urbanist == null) {
                 urbanist = new EntityUrbanist(worldObj);
                 worldObj.spawnEntityInWorld(urbanist);
-                player = Minecraft.getMinecraft().renderViewEntity;
+                player = Minecraft.getMinecraft().getRenderViewEntity();
 
                 urbanist.copyLocationAndAnglesFrom(player);
                 urbanist.tile = this;
@@ -61,7 +61,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
                 urbanist.rotationYaw = 0;
                 urbanist.rotationPitch = 0;
 
-                Minecraft.getMinecraft().renderViewEntity = urbanist;
+                Minecraft.getMinecraft().setRenderViewEntity(urbanist);
                 thirdPersonView = Minecraft.getMinecraft().gameSettings.thirdPersonView;
                 Minecraft.getMinecraft().gameSettings.thirdPersonView = 8;
 
@@ -78,16 +78,16 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
     }
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
     }
 
-    private Packet createXYZPacket(String name, final int x, final int y, final int z) {
+    private Packet createXYZPacket(String name, final BlockPos pos) {
         return new PacketCommand(this, name, new CommandWriter() {
             public void write(ByteBuf data) {
-                data.writeInt(x);
-                data.writeShort(y);
-                data.writeInt(z);
+                data.writeInt(pos.getX());
+                data.writeShort(pos.getY());
+                data.writeInt(pos.getZ());
             }
         });
     }
@@ -108,9 +108,10 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
             int x = stream.readInt();
             int y = stream.readInt();
             int z = stream.readInt();
+            BlockPos pos = new BlockPos(x, y, z);
 
             if (side.isServer() && "setBlock".equals(command)) {
-                worldObj.setBlock(pos, Blocks.brick_block);
+                worldObj.setBlockState(pos, Blocks.brick_block.getDefaultState());
             } else if (side.isServer() && "eraseBlock".equals(command)) {
                 // tasks.add(new UrbanistTaskErase(this, pos));
             } else if ("createFrame".equals(command)) {
@@ -128,17 +129,17 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
     public void createFrame(BlockPos pos) {
         isCreatingFrame = true;
         AnchoredBox a = new AnchoredBox();
-        a.box = new Box(pos, x, y + 2, z);
-        a.x1 = x;
-        a.y1 = y;
-        a.z1 = z;
+        a.box = new Box(pos, pos.up(2));
+        a.x1 = pos.getX();
+        a.y1 = pos.getY();
+        a.z1 = pos.getZ();
         frames.add(a);
     }
 
     public void rpcCreateFrame(BlockPos pos) {
-        p2x = x;
-        p2y = y;
-        p2z = z;
+        p2x = pos.getX();
+        p2y = pos.getY();
+        p2z = pos.getZ();
 
         // TODO: this is OK in SMP, but the frame actually needs to be
         // broadcasted to all players
@@ -149,16 +150,16 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
     public void moveFrame(BlockPos pos) {
         if (isCreatingFrame) {
             if (frames.size() > 0) {
-                frames.get(frames.size() - 1).setP2(pos);
+                frames.get(frames.size() - 1).setP2(pos.getX(), pos.getY(), pos.getZ());
             }
         }
     }
 
     public void rpcMoveFrame(BlockPos pos) {
-        if (p2x != x || p2y != y || p2z != z) {
-            p2x = x;
-            p2y = y;
-            p2z = z;
+        if (p2x != pos.getX() || p2y != pos.getY() || p2z != pos.getZ()) {
+            p2x = pos.getX();
+            p2y = pos.getY();
+            p2z = pos.getZ();
 
             // TODO: this is OK in SMP, but the frame actually needs to be
             // broadcasted to all players
@@ -209,7 +210,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
     }
 
     public void destroyUrbanistEntity() {
-        Minecraft.getMinecraft().renderViewEntity = player;
+        Minecraft.getMinecraft().setRenderViewEntity(player);
         Minecraft.getMinecraft().gameSettings.thirdPersonView = thirdPersonView;
         worldObj.removeEntity(urbanist);
         urbanist.setDead();
@@ -245,7 +246,7 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
     }
 
     @Override
-    public boolean hasCustomInventoryName() {
+    public boolean hasCustomName() {
         return false;
     }
 
@@ -260,10 +261,10 @@ public class TileUrbanist extends TileBuildCraft implements IInventory, IBoxesPr
     }
 
     @Override
-    public void openInventory() {}
+    public void openInventory(EntityPlayer player) {}
 
     @Override
-    public void closeInventory() {}
+    public void closeInventory(EntityPlayer player) {}
 
     @Override
     public boolean isItemValidForSlot(int var1, ItemStack var2) {

@@ -4,6 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.urbanism;
 
+import java.io.IOException;
+
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -159,7 +161,7 @@ public class GuiUrbanist extends GuiAdvancedInterface {
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
 
         if (!onInterface(mouseX, mouseY)) {
@@ -194,7 +196,7 @@ public class GuiUrbanist extends GuiAdvancedInterface {
     }
 
     @Override
-    public void handleMouseInput() {
+    public void handleMouseInput() throws IOException {
         super.handleMouseInput();
 
         int x = Mouse.getEventX() * this.width / this.mc.displayWidth;

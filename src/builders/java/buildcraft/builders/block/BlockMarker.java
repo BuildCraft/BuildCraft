@@ -12,8 +12,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.items.IMapLocation;
 import buildcraft.builders.tile.TileConstructionMarker;
@@ -24,7 +27,7 @@ public class BlockMarker extends BlockBuildCraft {
 
     public BlockMarker() {
         super(Material.circuits, FACING_6_PROP);
-
+        setDefaultState(getDefaultState().withProperty(FACING_6_PROP, EnumFacing.UP));
         setLightLevel(0.5F);
         setHardness(0.0F);
     }
@@ -38,7 +41,7 @@ public class BlockMarker extends BlockBuildCraft {
     public AxisAlignedBB getBox(IBlockAccess world, BlockPos pos, IBlockState state) {
         double w = 0.15;
         double h = 0.65;
-        EnumFacing dir = FACING_PROP.getValue(state);
+        EnumFacing dir = FACING_6_PROP.getValue(state);
         switch (dir) {
             case DOWN:
                 return new AxisAlignedBB(0.5F - w, 1F - h, 0.5F - w, 0.5F + w, 1F, 0.5F + w);
@@ -94,6 +97,11 @@ public class BlockMarker extends BlockBuildCraft {
     }
 
     @Override
+    public boolean isFullCube() {
+        return false;
+    }
+
+    @Override
     public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block block) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileMarker) {
@@ -119,5 +127,11 @@ public class BlockMarker extends BlockBuildCraft {
             dropBlockAsItem(world, pos, state, 0);
             world.setBlockToAir(pos);
         }
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public EnumWorldBlockLayer getBlockLayer() {
+        return EnumWorldBlockLayer.CUTOUT;
     }
 }

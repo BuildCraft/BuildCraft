@@ -21,6 +21,7 @@ import buildcraft.api.core.IBox;
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.lib.utils.Utils;
 
+// TODO (PASS 2): Convert fields to BlockPos
 public class Box implements IBox, ISerializable {
     public enum Kind {
         LASER_RED,
@@ -44,6 +45,10 @@ public class Box implements IBox, ISerializable {
 
     public Box(TileEntity e) {
         initialize(e.getPos().getX(), e.getPos().getY(), e.getPos().getZ(), e.getPos().getX() + 1, e.getPos().getY() + 1, e.getPos().getZ() + 1);
+    }
+
+    public Box(BlockPos min, BlockPos max) {
+        this(min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ());
     }
 
     public Box(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax) {

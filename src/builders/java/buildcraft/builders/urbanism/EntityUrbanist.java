@@ -13,6 +13,7 @@ import org.lwjgl.input.Keyboard;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
@@ -31,7 +32,7 @@ public class EntityUrbanist extends EntityLivingBase {
     private static FloatBuffer winZ = ByteBuffer.allocateDirect(1 * 4).asFloatBuffer();
     private static FloatBuffer pos = ByteBuffer.allocateDirect(3 * 4).asFloatBuffer();
 
-    public EntityLivingBase player;
+    public Entity player;
     public TileUrbanist tile;
 
     /** To be used only in debug sessions to adjust the mouse pointer parameters. */
@@ -50,7 +51,7 @@ public class EntityUrbanist extends EntityLivingBase {
     public void onUpdate() {
         Vec3 look = this.getLook(1.0F).normalize();
 
-        Vec3 worldUp = Vec3.createVectorHelper(0, 1, 0);
+        Vec3 worldUp = new Vec3(0, 1, 0);
         Vec3 side = worldUp.crossProduct(look).normalize();
         Vec3 forward = side.crossProduct(worldUp).normalize();
 
@@ -105,24 +106,15 @@ public class EntityUrbanist extends EntityLivingBase {
     }
 
     @Override
-    public void setCurrentItemOrArmor(int i, ItemStack itemstack) {
-
-    }
-
-    @Override
-    public ItemStack[] getLastActiveItems() {
-        return null;
-    }
+    public void setCurrentItemOrArmor(int i, ItemStack itemstack) {}
 
     public MovingObjectPosition rayTraceMouse() {
         double distance = 1000;
 
-        Vec3 localPos = this.getPosition(1.0F);
+        Vec3 localPos = getPositionVector();
         Vec3 look = this.getLook(1.0F).normalize();
 
-        localPos.xCoord += BuildCraftCore.diffX;
-        localPos.yCoord += BuildCraftCore.diffY;
-        localPos.zCoord += BuildCraftCore.diffZ;
+        localPos = localPos.addVector(BuildCraftCore.diffX, BuildCraftCore.diffY, BuildCraftCore.diffZ);
 
         Vec3 vec32 = localPos.addVector(look.xCoord * distance, look.yCoord * distance, look.zCoord * distance);
 
@@ -141,15 +133,13 @@ public class EntityUrbanist extends EntityLivingBase {
             // worldObj.spawnEntityInWorld(laser);
             // }
 
-            localPos = this.getPosition(1.0F);
-            localPos.xCoord += BuildCraftCore.diffX;
-            localPos.yCoord += BuildCraftCore.diffY + 0.1F;
-            localPos.zCoord += BuildCraftCore.diffZ;
+            localPos = this.getPositionVector();
+
+            localPos = localPos.addVector(BuildCraftCore.diffX, BuildCraftCore.diffY + 0.5, BuildCraftCore.diffZ);
 
             look = this.getLook(1.0F).normalize();
 
-            Vec3 aimed =
-                Vec3.createVectorHelper(localPos.xCoord + look.xCoord * 200, localPos.yCoord + look.yCoord * 200, localPos.zCoord + look.zCoord * 200);
+            Vec3 aimed = new Vec3(localPos.xCoord + look.xCoord * 200, localPos.yCoord + look.yCoord * 200, localPos.zCoord + look.zCoord * 200);
 
             // laser.setPositions(
             // new Position(pos.xCoord, pos.yCoord, pos.zCoord),
@@ -166,6 +156,16 @@ public class EntityUrbanist extends EntityLivingBase {
     @Override
     public ItemStack getEquipmentInSlot(int var1) {
         return null;
+    }
+
+    @Override
+    public ItemStack getCurrentArmor(int slotIn) {
+        return null;
+    }
+
+    @Override
+    public ItemStack[] getInventory() {
+        return new ItemStack[0];
     }
 
 }

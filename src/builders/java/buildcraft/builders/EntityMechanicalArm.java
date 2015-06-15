@@ -50,7 +50,7 @@ public class EntityMechanicalArm extends Entity {
         updatePosition();
     }
 
-    void setHead(double x, double y, double z) {
+    public void setHead(double x, double y, double z) {
         this.headX = (int) (x * 32D);
         this.headY = (int) (y * 32D);
         this.headZ = (int) (z * 32D);
