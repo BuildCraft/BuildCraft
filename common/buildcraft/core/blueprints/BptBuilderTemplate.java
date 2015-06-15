@@ -50,7 +50,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 							continue;
 						}
 
-						SchematicBlockBase slot = blueprint.contents[i][j][k];
+						SchematicBlockBase slot = blueprint.get(i, j, k);
 
 						if (slot == null && !isLocationUsed(xCoord, yCoord, zCoord)) {
 							BuildingSlotBlock b = new BuildingSlotBlock();
@@ -80,7 +80,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 						continue;
 					}
 
-					SchematicBlockBase slot = blueprint.contents[i][j][k];
+					SchematicBlockBase slot = blueprint.get(i, j, k);
 
 					if (slot != null && !isLocationUsed(xCoord, yCoord, zCoord)) {
 						BuildingSlotBlock b = new BuildingSlotBlock();

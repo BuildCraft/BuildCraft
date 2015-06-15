@@ -1,10 +1,11 @@
 Additions:
 
-* New filler parameters: Center for Pyramids and Direction for Stairs (asie)
+* New filler parameters: Hollow for Cylinders, Center for Pyramids and Direction for Stairs (asie)
 * Support for inventory Minecarts in the obsidian pipe - partially a bugfix (asie)
 
 Improvements:
 
+* Optimizations to Builder/Filler code (asie)
 * Tweaks to water spring generation (asie)
 
 Bugs fixed:
@@ -16,6 +17,6 @@ Bugs fixed:
 * [#2796] Invalid height for stairs in Filler (asie)
 * [#2792] Obsidian pipes not using up energy for items (asie)
 * Fix buckets in stripes pipes not working with custom air blocks (asie)
+* Fix filler pattern icon render in gates (asie)
 * Fix stripes pipes eating unplaced blocks in a large stack (asie)
 * Fix tooltip rendering in filler GUI (asie)
-

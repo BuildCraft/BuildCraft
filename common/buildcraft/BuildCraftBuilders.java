@@ -659,10 +659,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	@SideOnly(Side.CLIENT)
 	public void loadTextures(TextureStitchEvent.Pre evt) {
 		if (evt.map.getTextureType() == 0) {
-			for (FillerPattern pattern : FillerPattern.patterns.values()) {
-				pattern.registerIcons(evt.map);
-			}
-
 			TextureMap terrainTextures = evt.map;
 			BuilderProxyClient.drillTexture = terrainTextures.registerIcon("buildcraftbuilders:machineBlock/drill");
 			BuilderProxyClient.drillHeadTexture = terrainTextures.registerIcon("buildcraftbuilders:machineBlock/drill_head");
