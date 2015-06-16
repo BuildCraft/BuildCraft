@@ -13,7 +13,6 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.util.ResourceLocation;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -22,8 +21,6 @@ import buildcraft.core.lib.gui.tooltips.ToolTip;
 
 @SideOnly(Side.CLIENT)
 public class GuiBetterButton extends GuiButton implements IToolTipProvider {
-
-	public static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation("buildcraftcore:textures/gui/buttons.png");
 	protected final IButtonTextureSet texture;
 	private ToolTip toolTip;
 
@@ -63,7 +60,7 @@ public class GuiBetterButton extends GuiButton implements IToolTipProvider {
 	}
 
 	protected void bindButtonTextures(Minecraft minecraft) {
-		minecraft.renderEngine.bindTexture(BUTTON_TEXTURES);
+		minecraft.renderEngine.bindTexture(texture.getTexture());
 	}
 
 	@Override
@@ -92,8 +89,9 @@ public class GuiBetterButton extends GuiButton implements IToolTipProvider {
 		return toolTip;
 	}
 
-	public void setToolTip(ToolTip tips) {
+	public GuiBetterButton setToolTip(ToolTip tips) {
 		this.toolTip = tips;
+		return this;
 	}
 
 	@Override
