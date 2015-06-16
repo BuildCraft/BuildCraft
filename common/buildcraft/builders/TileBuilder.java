@@ -650,7 +650,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 						stack.setTagCompound(NetworkUtils.readNBT(stream));
 					}
 
-					if (stack != null && stack.getItem() != null){
+					if (stack != null && stack.getItem() != null) {
 						requiredToBuild.add(new RequirementItemStack(stack, stackSize & 0x7FFFFF));
 					} else {
 						BCLog.logger.error("Corrupt ItemStack in TileBuilder.receiveCommand! This should not happen! (ID " + itemId + ", damage " + itemDamage + ")");
