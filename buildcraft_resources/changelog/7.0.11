@@ -4,6 +4,7 @@ Additions:
 
 Improvements:
 
+* Color correction in colorblind diamond pipe GUI for easier color distinction (asie - with input from BevoLJ)
 * Tooltips in Emerald Transport Pipe (asie)
 
 Bugs fixed:
