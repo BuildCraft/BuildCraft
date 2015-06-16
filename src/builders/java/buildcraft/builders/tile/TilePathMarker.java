@@ -63,7 +63,7 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
         }
         Vec3 point5 = new Vec3(0.5, 0.5, 0.5);
 
-        LaserData laser = new LaserData(Utils.convert(pos).add(point5), Utils.convert(pos).add(point5));
+        LaserData laser = new LaserData(Utils.convert(pos).add(point5), Utils.convert(pathMarker.pos).add(point5));
 
         LaserData laser2 = new LaserData(laser.head, laser.tail);
         laser2.isVisible = false;
@@ -77,20 +77,20 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
         TilePathMarker nearestAvailable = null;
         double nearestDistance = 0, distance;
 
-        for (TilePathMarker t : availableMarkers) {
-            if (t == this || t == this.links[0] || t == this.links[1]
-                || t.getWorld().provider.getDimensionId() != this.getWorld().provider.getDimensionId()) {
+        for (TilePathMarker available : availableMarkers) {
+            if (available == this || available == this.links[0] || available == this.links[1]
+                || available.getWorld().provider.getDimensionId() != this.getWorld().provider.getDimensionId()) {
                 continue;
             }
 
-            distance = pos.distanceSq(t.pos);
+            distance = pos.distanceSq(available.pos);
 
             if (distance > DefaultProps.MARKER_RANGE * DefaultProps.MARKER_RANGE) {
                 continue;
             }
 
             if (nearestAvailable == null || distance < nearestDistance) {
-                nearestAvailable = t;
+                nearestAvailable = available;
                 nearestDistance = distance;
             }
         }

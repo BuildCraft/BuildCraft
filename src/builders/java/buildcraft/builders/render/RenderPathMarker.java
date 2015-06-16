@@ -48,10 +48,8 @@ public class RenderPathMarker extends TileEntitySpecialRenderer {
 
             for (LaserData laser : marker.lasers) {
                 if (laser != null) {
-                    GL11.glPushMatrix();
                     RenderLaser.doRenderLaser(TileEntityRendererDispatcher.instance.worldObj, Minecraft.getMinecraft().renderEngine, laser,
                         EntityLaser.LASER_BLUE);
-                    GL11.glPopMatrix();
                 }
             }
 
