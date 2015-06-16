@@ -241,6 +241,10 @@ public abstract class BlockBuildCraftBase extends Block {
         }
     }
 
+    public boolean canCollideCheck(IBlockState state, boolean hitIfLiquid) {
+        return true;
+    }
+
     @Override
     public AxisAlignedBB getCollisionBoundingBox(World world, BlockPos pos, IBlockState state) {
         if (isCollidable()) {

@@ -59,12 +59,6 @@ public class BlockEngine extends BlockEngineBase implements IModelRegister {
         return engineTiles.size();
     }
 
-    // TODO: (CHECK) is this right?
-    // @Override
-    // public AxisAlignedBB[] getBoxes(World wrd, BlockPos pos, EntityPlayer player) {
-    // return null;
-    // }
-
     @Override
     public void registerModels() {
         Item item = ItemBlock.getItemFromBlock(this);

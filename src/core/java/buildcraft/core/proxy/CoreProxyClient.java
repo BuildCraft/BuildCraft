@@ -36,12 +36,14 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 import buildcraft.api.enums.EnumColor;
+import buildcraft.core.EntityLaser;
 import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.lib.engines.RenderEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.render.RenderEntityBlock;
 import buildcraft.core.lib.utils.IModelRegister;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.render.RenderLaser;
 
 public class CoreProxyClient extends CoreProxy {
 
@@ -94,6 +96,7 @@ public class CoreProxyClient extends CoreProxy {
     @Override
     public void initializeEntityRendering() {
         RenderingRegistry.registerEntityRenderingHandler(EntityBlock.class, RenderEntityBlock.INSTANCE);
+        RenderingRegistry.registerEntityRenderingHandler(EntityLaser.class, new RenderLaser());
         EnumColor.registerIcons();
 
         for (Block block : blocksToRegisterRenderersFor) {

@@ -88,7 +88,7 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
     }
 
     @Override
-    public AxisAlignedBB[] getBoxes(World world, BlockPos pos, IBlockState state) {
+    public AxisAlignedBB[] getBoxes(IBlockAccess world, BlockPos pos, IBlockState state) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileEngineBase) {
             return boxes[((TileEngineBase) tile).orientation.ordinal()];

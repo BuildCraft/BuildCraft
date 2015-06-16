@@ -13,13 +13,13 @@ import net.minecraft.world.World;
 
 public class EntityLaser extends Entity {
 
-    public static final ResourceLocation LASER_RED = new ResourceLocation("buildcraft:textures/entities/laser_1.png");
-    public static final ResourceLocation LASER_YELLOW = new ResourceLocation("buildcraft:textures/entities/laser_2.png");
-    public static final ResourceLocation LASER_GREEN = new ResourceLocation("buildcraft:textures/entities/laser_3.png");
-    public static final ResourceLocation LASER_BLUE = new ResourceLocation("buildcraft:textures/entities/laser_4.png");
+    public static final ResourceLocation LASER_RED = new ResourceLocation("buildcraftcore:textures/lasers/red.png");
+    public static final ResourceLocation LASER_YELLOW = new ResourceLocation("buildcraftcore:textures/lasers/yellow.png");
+    public static final ResourceLocation LASER_GREEN = new ResourceLocation("buildcraftcore:textures/lasers/green.png");
+    public static final ResourceLocation LASER_BLUE = new ResourceLocation("buildcraftcore:textures/lasers/blue.png");
 
-    public static final ResourceLocation LASER_STRIPES_BLUE = new ResourceLocation("buildcraft:textures/entities/blue_stripes.png");
-    public static final ResourceLocation LASER_STRIPES_YELLOW = new ResourceLocation("buildcraft:textures/entities/stripes.png");
+    public static final ResourceLocation LASER_STRIPES_BLUE = new ResourceLocation("buildcraftcore:textures/lasers/stripes_blue.png");
+    public static final ResourceLocation LASER_STRIPES_YELLOW = new ResourceLocation("buildcraftcore:textures/lasers/stripes_yellow.png");
 
     public final LaserData data = new LaserData();
 
@@ -89,9 +89,9 @@ public class EntityLaser extends Entity {
 
         // TODO (1.8): Avoid Object Overflow
         // Err... what?
-        setEntityBoundingBox(new AxisAlignedBB(Math.min(data.head.xCoord, data.tail.xCoord), Math.min(data.head.yCoord, data.tail.yCoord) - 1.0D, Math.min(data.head.zCoord,
-            data.tail.zCoord) - 1.0D, Math.max(data.head.xCoord, data.tail.xCoord) + 1.0D, Math.max(data.head.yCoord, data.tail.yCoord) + 1.0D, Math.max(data.head.zCoord,
-            data.tail.zCoord) + 1.0D));
+        setEntityBoundingBox(new AxisAlignedBB(Math.min(data.head.xCoord, data.tail.xCoord), Math.min(data.head.yCoord, data.tail.yCoord) - 1.0D,
+            Math.min(data.head.zCoord, data.tail.zCoord) - 1.0D, Math.max(data.head.xCoord, data.tail.xCoord) + 1.0D, Math.max(data.head.yCoord,
+                data.tail.yCoord) + 1.0D, Math.max(data.head.zCoord, data.tail.zCoord) + 1.0D));
 
         data.update();
     }

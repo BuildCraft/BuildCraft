@@ -7,11 +7,11 @@ package buildcraft.core.lib.render;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.IBlockAccess;
 
 public interface ICustomHighlight {
 
-    AxisAlignedBB[] getBoxes(World wrd, BlockPos pos, IBlockState state);
+    AxisAlignedBB[] getBoxes(IBlockAccess wrd, BlockPos pos, IBlockState state);
 
     double getExpansion();
 }
