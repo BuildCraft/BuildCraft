@@ -13,6 +13,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.filler.FillerManager;
@@ -30,6 +31,8 @@ import buildcraft.core.lib.gui.buttons.ButtonTextureSet;
 import buildcraft.core.lib.gui.buttons.GuiBetterButton;
 import buildcraft.core.lib.gui.buttons.IButtonTextureSet;
 import buildcraft.core.lib.gui.buttons.StandardButtonTextureSets;
+import buildcraft.core.lib.gui.tooltips.ToolTip;
+import buildcraft.core.lib.gui.tooltips.ToolTipLine;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.StringUtils;
@@ -82,6 +85,13 @@ public class GuiFiller extends GuiAdvancedInterface {
 		return filler.isExcavate() ? EXCAVATE_ON : EXCAVATE_OFF;
 	}
 
+	private GuiBetterButton getExcavateButton() {
+		return new GuiBetterButton(2, guiLeft + 150, guiTop + 30, 16, getExcavateTexture(), "")
+				.setToolTip(new ToolTip(500, new ToolTipLine(
+						StatCollector.translateToLocal("tip.filler.excavate." + (filler.isExcavate() ? "on" : "off"))
+				)));
+	}
+
 	@Override
 	public void initGui() {
 		super.initGui();
@@ -91,8 +101,7 @@ public class GuiFiller extends GuiAdvancedInterface {
 				StandardButtonTextureSets.LEFT_BUTTON, ""));
 		buttonList.add(new GuiBetterButton(1, guiLeft + 38 + 16 + 8, guiTop + 30, 10,
 				StandardButtonTextureSets.RIGHT_BUTTON, ""));
-		buttonList.add(new GuiBetterButton(2, guiLeft + 150, guiTop + 30, 16,
-				getExcavateTexture(), ""));
+		buttonList.add(getExcavateButton());
 
 		slots.clear();
 		for (int i = 0; i < 4; i++) {
@@ -111,8 +120,7 @@ public class GuiFiller extends GuiAdvancedInterface {
 		} else if (button.id == 2) {
 			filler.setExcavate(!filler.isExcavate());
 
-			buttonList.set(2, new GuiBetterButton(2, guiLeft + 150, guiTop + 30, 16,
-					getExcavateTexture(), ""));
+			buttonList.set(2, getExcavateButton());
 
 			BuildCraftCore.instance.sendToServer(new PacketCommand(filler, "setFlags", new CommandWriter() {
 				public void write(ByteBuf data) {

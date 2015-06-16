@@ -19,10 +19,12 @@ import net.minecraft.util.ResourceLocation;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import buildcraft.core.lib.gui.tooltips.IToolTipProvider;
+import buildcraft.core.lib.gui.tooltips.ToolTip;
+
 
 @SideOnly(Side.CLIENT)
-public class GuiImageButton extends GuiButton implements IButtonClickEventTrigger {
-
+public class GuiImageButton extends GuiButton implements IButtonClickEventTrigger, IToolTipProvider {
 	public enum ButtonImage {
 		BLANK(1, 19),
 		WHITE_LIST(19, 19),
@@ -52,6 +54,7 @@ public class GuiImageButton extends GuiButton implements IButtonClickEventTrigge
 	private ArrayList<IButtonClickEventListener> listeners = new ArrayList<IButtonClickEventListener>();
 	private ButtonImage image = ButtonImage.BLANK;
 	private boolean active = false;
+	private ToolTip toolTip;
 
 	public GuiImageButton(int id, int x, int y, ButtonImage image) {
 		super(id, x, y, SIZE, SIZE, "");
@@ -142,5 +145,25 @@ public class GuiImageButton extends GuiButton implements IButtonClickEventTrigge
 
 	private boolean isMouseOverButton(int mouseX, int mouseY) {
 		return mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + SIZE && mouseY < yPosition + SIZE;
+	}
+
+	@Override
+	public ToolTip getToolTip() {
+		return toolTip;
+	}
+
+	public GuiImageButton setToolTip(ToolTip tips) {
+		this.toolTip = tips;
+		return this;
+	}
+
+	@Override
+	public boolean isToolTipVisible() {
+		return visible;
+	}
+
+	@Override
+	public boolean isMouseOver(int mouseX, int mouseY) {
+		return isMouseOverButton(mouseX, mouseY);
 	}
 }
