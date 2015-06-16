@@ -6,7 +6,6 @@ package buildcraft.builders.block;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
@@ -22,7 +21,6 @@ import buildcraft.core.GuiIds;
 import buildcraft.core.lib.block.BlockBuildCraft;
 
 public class BlockArchitect extends BlockBuildCraft {
-    private TextureAtlasSprite[] led;
 
     public BlockArchitect() {
         super(Material.iron, FACING_PROP);

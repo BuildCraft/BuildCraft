@@ -1,0 +1,16 @@
+{
+	"elements":[
+		{
+			"from":[-2, 13, 5]
+			"to":[0, 16, 6],
+			"faces":{
+				"down":  { "texture":"#led", "uv":[0, 0, 16, 16] },
+                "up":    { "texture":"#led", "uv":[0, 0, 16, 16] },
+                "north": { "texture":"#led", "uv":[0, 0, 16, 16] },
+                "south": { "texture":"#led", "uv":[0, 0, 16, 16] },
+                "west":  { "texture":"#led", "uv":[0, 0, 16, 16] },
+                "east":  { "texture":"#led", "uv":[0, 0, 16, 16] }
+			}
+		}
+	]
+}

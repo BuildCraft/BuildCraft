@@ -5,7 +5,7 @@
         "down": "buildcraftbuilders:blocks/filler/bottom",
         "up": "buildcraftbuilders:blocks/filler/top",
         "north": "buildcraftbuilders:blocks/filler/side",
-        "east": "buildcraftbuilders:blocks/filler/front_off",
+        "east": "buildcraftbuilders:blocks/filler/front",
         "south": "buildcraftbuilders:blocks/filler/side",
         "west": "buildcraftbuilders:blocks/filler/side"
     }
