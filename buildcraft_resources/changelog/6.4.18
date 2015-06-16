@@ -1,0 +1,7 @@
+Bugs fixed:
+
+* [#2801] Internal server crash on certain pipe removal cases (asie)
+* [#2792] Obsidian pipes not using up energy for items (asie)
+* Fix buckets in stripes pipes not working with custom air blocks (asie)
+* Fix stripes pipes eating unplaced blocks in a large stack (asie)
+* Fix filler GUI tooltip rendering (asie)
