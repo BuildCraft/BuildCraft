@@ -1,19 +1,24 @@
 {
 	"forge_marker": 1,
+	"defaults": {
+		"textures": {
+			"particle":"buildcraftbuilders:blocks/filler/top"
+		}
+	},
     "variants": {
         "facing": {
-        	"east": { "submodel":"buildcraftbuilders:filler" },
+        	"east":  { "submodel":"buildcraftbuilders:filler" },
         	"south": { "submodel":"buildcraftbuilders:filler", "y": 90 },
-        	"west": { "submodel":"buildcraftbuilders:filler", "y": 180 },
+        	"west":  { "submodel":"buildcraftbuilders:filler", "y": 180 },
         	"north": { "submodel":"buildcraftbuilders:filler", "y": 270 }
         },
         "led_active": {
-        	"true": { "submodel":"buildcraftbuilders:filler_led_active_on" },
+        	"true":  { "submodel":"buildcraftbuilders:filler_led_active_on" },
         	"false": { "submodel":"buildcraftbuilders:filler_led_active_off" }
         },
         "led_power": {
-        	"true": {},
-        	"false": {}
+        	"true":  { "submodel":"buildcraftbuilders:filler_led_power_on" },
+        	"false": { "submodel":"buildcraftbuilders:filler_led_power_off" }
         }
     }
 }

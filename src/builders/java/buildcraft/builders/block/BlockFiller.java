@@ -12,10 +12,10 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.IExtendedBlockState;
 
-import buildcraft.builders.BuildCraftBuilders;
 import buildcraft.builders.tile.TileFiller;
-import buildcraft.core.GuiIds;
+import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.lib.block.BlockBuildCraft;
 
 public class BlockFiller extends BlockBuildCraft {
@@ -34,11 +34,12 @@ public class BlockFiller extends BlockBuildCraft {
         }
 
         if (player.isSneaking()) {
-            return false;
+            // return false;
         }
 
         if (!world.isRemote) {
-            player.openGui(BuildCraftBuilders.instance, GuiIds.FILLER, world, pos.getX(), pos.getY(), pos.getZ());
+            world.setBlockState(pos, state.cycleProperty(player.isSneaking() ? LED_ACTIVE : LED_POWER));
+            // player.openGui(BuildCraftBuilders.instance, GuiIds.FILLER, world, pos.getX(), pos.getY(), pos.getZ());
         }
         return true;
 
@@ -57,5 +58,23 @@ public class BlockFiller extends BlockBuildCraft {
     @Override
     public int getLightValue(IBlockAccess world, BlockPos pos) {
         return 1;
+    }
+
+    @Override
+    public IBlockState getExtendedState(IBlockState state, IBlockAccess access, BlockPos pos) {
+        TileEntity tile = access.getTileEntity(pos);
+        if (tile instanceof TileFiller) {
+            FillerPattern pattern = ((TileFiller) tile).currentPattern;
+            if (pattern == null) {
+                return state;
+            } else if (state instanceof IExtendedBlockState) {
+                state = ((IExtendedBlockState) state).withProperty(FILLER_PATTERN.asUnlistedProperty(), pattern.type);
+                return state;
+            } else {
+                return state;
+            }
+        } else {
+            return state;
+        }
     }
 }

@@ -6,6 +6,7 @@ package buildcraft.core.builders.patterns;
 
 import net.minecraft.world.World;
 
+import buildcraft.api.enums.EnumFillerPattern;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
@@ -13,7 +14,7 @@ import buildcraft.core.blueprints.Template;
 public class PatternClear extends FillerPattern {
 
     public PatternClear() {
-        super("clear");
+        super("clear", EnumFillerPattern.CLEAR);
     }
 
     @Override

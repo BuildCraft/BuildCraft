@@ -139,4 +139,14 @@ public class BuildCraftProperty<T extends Comparable<T>> implements IProperty, I
         builder.append("]");
         return builder.toString();
     }
+
+    // Helper methods for arguments
+
+    public IProperty asMetaProperty() {
+        return this;
+    }
+
+    public IUnlistedProperty<T> asUnlistedProperty() {
+        return this;
+    }
 }

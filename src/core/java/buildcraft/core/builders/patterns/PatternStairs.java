@@ -6,6 +6,7 @@ package buildcraft.core.builders.patterns;
 
 import net.minecraft.world.World;
 
+import buildcraft.api.enums.EnumFillerPattern;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.core.Box;
 import buildcraft.core.blueprints.Template;
@@ -18,7 +19,7 @@ public class PatternStairs extends FillerPattern {
     private int param4 = 0;
 
     public PatternStairs() {
-        super("stairs");
+        super("stairs", EnumFillerPattern.STAIRS);
     }
 
     @Override

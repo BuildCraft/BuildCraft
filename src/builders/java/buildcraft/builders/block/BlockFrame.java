@@ -5,6 +5,7 @@
 package buildcraft.builders.block;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 import com.google.common.collect.Lists;
@@ -13,6 +14,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
@@ -52,7 +54,7 @@ public class BlockFrame extends BlockBuildCraftBase {
 
         @Override
         public String getName() {
-            return name();
+            return name().toLowerCase(Locale.ROOT);
         }
     }
 
@@ -112,9 +114,12 @@ public class BlockFrame extends BlockBuildCraftBase {
     public void getSubBlocks(Item item, CreativeTabs tab, List list) {
         list.add(new ItemStack(this));
     }
+    
+    @Override
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing face, float par7, float par8,
+            float par9) {
+        world.setBlockState(pos, state.cycleProperty(CONNECTIONS));
+        return true;
+    }
 
-    // @Override
-    // public void registerBlockIcons(TextureAtlasSpriteRegister register) {
-    // blockIcon = register.registerIcon("buildcraftbuilders:frameBlock/default");
-    // }
 }

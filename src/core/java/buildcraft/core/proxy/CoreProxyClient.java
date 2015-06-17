@@ -16,6 +16,7 @@ import com.google.common.collect.Multimap;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
@@ -31,10 +32,14 @@ import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.ExtendedBlockState;
+import net.minecraftforge.common.property.IExtendedBlockState;
+import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.api.enums.EnumColor;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.lib.EntityBlock;
@@ -108,6 +113,10 @@ public class CoreProxyClient extends CoreProxy {
             IBlockState defaultState = block.getDefaultState();
             Multimap<Integer, IBlockState> metaStateMap = ArrayListMultimap.create();
             Map<IBlockState, String> stateTypeMap = Maps.newHashMap();
+            BlockState blockState = block.getBlockState();
+            if (blockState instanceof ExtendedBlockState) {
+//                blockState.
+            }
 
             for (IBlockState state : (List<IBlockState>) block.getBlockState().getValidStates()) {
                 String type = "";
@@ -120,8 +129,30 @@ public class CoreProxyClient extends CoreProxy {
                         type += ((Integer) value).intValue();
                     } else if (value instanceof Boolean) {
                         type += ((Boolean) value).toString();
-                    } else {
+                    } else if (value instanceof IStringSerializable) {
                         type += ((IStringSerializable) value).getName();
+                    } else {
+                        type += value.toString();
+                    }
+                }
+                if (state instanceof IExtendedBlockState) {
+                    IExtendedBlockState extState = (IExtendedBlockState) state;
+                    for (IUnlistedProperty<?> property : extState.getUnlistedProperties().keySet()) {
+                        if (type.length() != 0)
+                            type += ",";
+                        type += property.getName() + "=";
+                        Object value = extState.getValue(property);
+                        if (value == null) {
+                            BCLog.logger.info("VALUE WAS NULL! (" + property + ")");
+                        } else if (value instanceof Integer) {
+                            type += ((Integer) value).intValue();
+                        } else if (value instanceof Boolean) {
+                            type += ((Boolean) value).toString();
+                        } else if (value instanceof IStringSerializable) {
+                            type += ((IStringSerializable) value).getName();
+                        } else {
+                            type += value.toString();
+                        }
                     }
                 }
                 stateTypeMap.put(state, type);

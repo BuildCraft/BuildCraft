@@ -19,6 +19,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.blueprints.SchematicMask;
+import buildcraft.api.enums.EnumFillerPattern;
 import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
@@ -33,14 +34,16 @@ import buildcraft.core.lib.utils.StringUtils;
 public abstract class FillerPattern implements IFillerPattern {
 
     public static final Map<String, FillerPattern> patterns = new TreeMap<String, FillerPattern>();
+    public final EnumFillerPattern type;
     private final String tag;
     private final ResourceLocation location;
 
     @SideOnly(Side.CLIENT)
     private TextureAtlasSprite sprite = null;
 
-    public FillerPattern(String tag) {
+    public FillerPattern(String tag, EnumFillerPattern type) {
         this.tag = tag;
+        this.type = type;
         patterns.put(getUniqueTag(), this);
         location = new ResourceLocation("buildcraftcore:items/fillerPatterns/" + tag);
         MinecraftForge.EVENT_BUS.register(this);
