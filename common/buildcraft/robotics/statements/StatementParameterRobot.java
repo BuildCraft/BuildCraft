@@ -22,25 +22,21 @@ public class StatementParameterRobot extends StatementParameterItemStack {
 	@Override
 	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack,
 			StatementMouseClick mouse) {
-		if (stack != null) {
-			if (stack.getItem() instanceof ItemRobot) {
-				super.onClick(source, stmt, stack, mouse);
-			} else {
-				this.stack = null;
-			}
-		} else {
+		 if (stack == null && (this.stack == null || this.stack.getItem() instanceof ItemRobot)) {
 			RedstoneBoardRobotNBT nextBoard = getNextBoard(mouse);
 			if (nextBoard != null) {
 				this.stack = ItemRobot.createRobotStack(nextBoard, 0);
 			} else {
 				this.stack = null;
 			}
+		} else {
+			super.onClick(source, stmt, stack, mouse);
 		}
 	}
 
 	private RedstoneBoardRobotNBT getNextBoard(StatementMouseClick mouse) {
 		Collection<RedstoneBoardNBT<?>> boards = RedstoneBoardRegistry.instance.getAllBoardNBTs();
-		if (this.stack == null) {
+		if (this.stack == null || !(this.stack.getItem() instanceof ItemRobot)) {
 			if (mouse.getButton() == 0) {
 				return (RedstoneBoardRobotNBT) Iterables.getFirst(boards, null);
 			} else {

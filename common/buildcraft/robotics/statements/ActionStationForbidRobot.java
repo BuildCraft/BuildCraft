@@ -17,8 +17,10 @@ import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementSlot;
+import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.statements.BCStatement;
+import buildcraft.robotics.EntityRobot;
 import buildcraft.robotics.ItemRobot;
 
 public class ActionStationForbidRobot extends BCStatement implements IActionInternal {
@@ -71,9 +73,17 @@ public class ActionStationForbidRobot extends BCStatement implements IActionInte
 			if (p != null) {
 				ItemStack stack = p.getItemStack();
 
-				if (stack != null && stack.getItem() instanceof ItemRobot) {
-					if (ItemRobot.getRobotNBT(stack) == robot.getBoard().getNBTHandler()) {
-						return true;
+				if (stack != null) {
+					if (stack.getItem() instanceof ItemRobot) {
+						if (ItemRobot.getRobotNBT(stack) == robot.getBoard().getNBTHandler()) {
+							return true;
+						}
+					} else if (robot instanceof EntityRobot) {
+						for (ItemStack target : ((EntityRobot) robot).getWearables()) {
+							if (target != null && StackHelper.isMatchingItem(stack, target, true, true)) {
+								return true;
+							}
+						}
 					}
 				}
 			}
