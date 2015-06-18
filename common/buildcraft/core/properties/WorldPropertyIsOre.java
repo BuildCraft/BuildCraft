@@ -10,12 +10,14 @@ package buildcraft.core.properties;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -56,12 +58,26 @@ public class WorldPropertyIsOre extends WorldProperty {
 		if (block == null) {
 			return false;
 		} else {
-			ItemStack stack = new ItemStack(block, 1, meta);
 
-			if (stack.getItem() != null) {
-				for (int id : OreDictionary.getOreIDs(stack)) {
-					if (ores.contains(id)) {
-						return true;
+			List<ItemStack> itemsDropped = new ArrayList<ItemStack>();
+			//Check for blocks that drop an item that is an ore
+			//On the off-chance blockAccess isn't a world, just get the itemstack from the block
+			if (blockAccess instanceof World) {
+				itemsDropped.addAll(block.getDrops((World) blockAccess, x, y, z, blockAccess.getBlockMetadata(x, y, z), 0));
+				
+				//Make sure we grab things like redstone ore
+				itemsDropped.add(new ItemStack(block, 1, meta));
+			} else {
+				ItemStack stack = new ItemStack(block, 1, meta);
+				itemsDropped.add(stack);
+			}
+			
+			for (ItemStack stack : itemsDropped) {
+				if (stack.getItem() != null) {
+					for (int id : OreDictionary.getOreIDs(stack)) {
+						if (ores.contains(id)) {
+							return true;
+						}
 					}
 				}
 			}
