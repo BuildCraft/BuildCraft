@@ -589,6 +589,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
             FillerManager.registry = new FillerRegistry();
 
             // INIT FILLER PATTERNS
+            FillerManager.registry.addPattern(PatternNone.INSTANCE);
             FillerManager.registry.addPattern(PatternFill.INSTANCE);
             FillerManager.registry.addPattern(new PatternFlatten());
             FillerManager.registry.addPattern(new PatternHorizon());
@@ -598,6 +599,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
             FillerManager.registry.addPattern(new PatternStairs());
             FillerManager.registry.addPattern(new PatternCylinder());
             FillerManager.registry.addPattern(new PatternFrame());
+
         } catch (Error error) {
             BCLog.logErrorAPI("Buildcraft", error, IFillerPattern.class);
             throw error;

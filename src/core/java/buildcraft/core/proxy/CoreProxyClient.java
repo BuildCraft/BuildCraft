@@ -33,13 +33,10 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.world.World;
 import net.minecraftforge.common.property.ExtendedBlockState;
-import net.minecraftforge.common.property.IExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.api.enums.EnumColor;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.lib.EntityBlock;
@@ -115,7 +112,7 @@ public class CoreProxyClient extends CoreProxy {
             Map<IBlockState, String> stateTypeMap = Maps.newHashMap();
             BlockState blockState = block.getBlockState();
             if (blockState instanceof ExtendedBlockState) {
-//                blockState.
+                // blockState.
             }
 
             for (IBlockState state : (List<IBlockState>) block.getBlockState().getValidStates()) {
@@ -132,27 +129,7 @@ public class CoreProxyClient extends CoreProxy {
                     } else if (value instanceof IStringSerializable) {
                         type += ((IStringSerializable) value).getName();
                     } else {
-                        type += value.toString();
-                    }
-                }
-                if (state instanceof IExtendedBlockState) {
-                    IExtendedBlockState extState = (IExtendedBlockState) state;
-                    for (IUnlistedProperty<?> property : extState.getUnlistedProperties().keySet()) {
-                        if (type.length() != 0)
-                            type += ",";
-                        type += property.getName() + "=";
-                        Object value = extState.getValue(property);
-                        if (value == null) {
-                            BCLog.logger.info("VALUE WAS NULL! (" + property + ")");
-                        } else if (value instanceof Integer) {
-                            type += ((Integer) value).intValue();
-                        } else if (value instanceof Boolean) {
-                            type += ((Boolean) value).toString();
-                        } else if (value instanceof IStringSerializable) {
-                            type += ((IStringSerializable) value).getName();
-                        } else {
-                            type += value.toString();
-                        }
+                        type += value.toString().toLowerCase();
                     }
                 }
                 stateTypeMap.put(state, type);

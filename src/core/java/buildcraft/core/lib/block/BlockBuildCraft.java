@@ -101,18 +101,4 @@ public abstract class BlockBuildCraft extends BlockBuildCraftBase implements ITi
             return super.getLightValue(world, pos);
         }
     }
-
-    public boolean canRenderInPassBC(int pass) {
-        if (pass >= maxPasses) {
-            renderPass = 0;
-            return false;
-        } else {
-            renderPass = pass;
-            return true;
-        }
-    }
-
-    public int getCurrentRenderPass() {
-        return renderPass;
-    }
 }

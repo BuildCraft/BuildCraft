@@ -7,18 +7,30 @@
 	},
     "variants": {
         "facing": {
-        	"east":  { "submodel":"buildcraftbuilders:filler" },
-        	"south": { "submodel":"buildcraftbuilders:filler", "y": 90 },
-        	"west":  { "submodel":"buildcraftbuilders:filler", "y": 180 },
-        	"north": { "submodel":"buildcraftbuilders:filler", "y": 270 }
+        	"east":  { "submodel":"buildcraftbuilders:filler/main" },
+        	"south": { "submodel":"buildcraftbuilders:filler/main", "y": 90 },
+        	"west":  { "submodel":"buildcraftbuilders:filler/main", "y": 180 },
+        	"north": { "submodel":"buildcraftbuilders:filler/main", "y": 270 }
         },
         "led_active": {
-        	"true":  { "submodel":"buildcraftbuilders:filler_led_active_on" },
-        	"false": { "submodel":"buildcraftbuilders:filler_led_active_off" }
+        	"true":  { "submodel":"buildcraftbuilders:filler/led_active_on" },
+        	"false": { "submodel":"buildcraftbuilders:filler/led_active_off" }
         },
         "led_power": {
-        	"true":  { "submodel":"buildcraftbuilders:filler_led_power_on" },
-        	"false": { "submodel":"buildcraftbuilders:filler_led_power_off" }
+        	"true":  { "submodel":"buildcraftbuilders:filler/led_power_on" },
+        	"false": { "submodel":"buildcraftbuilders:filler/led_power_off" }
+        },
+        "pattern": {
+        	"none":     { "submodel":"buildcraftbuilders:filler/pattern_none" },
+        	"box":      { "submodel":"buildcraftbuilders:filler/pattern_box" },
+        	"clear":    { "submodel":"buildcraftbuilders:filler/pattern_clear" },
+        	"cylinder": { "submodel":"buildcraftbuilders:filler/pattern_cylinder" },
+    		"fill":     { "submodel":"buildcraftbuilders:filler/pattern_fill" },
+    		"flatten":  { "submodel":"buildcraftbuilders:filler/pattern_flatten" },
+    		"frame":    { "submodel":"buildcraftbuilders:filler/pattern_frame" },
+    		"horizon":  { "submodel":"buildcraftbuilders:filler/pattern_horizon" },
+    		"pyramid":  { "submodel":"buildcraftbuilders:filler/pattern_pyramid" },
+    		"stairs":   { "submodel":"buildcraftbuilders:filler/pattern_stairs" }
         }
     }
 }

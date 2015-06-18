@@ -1,10 +1,15 @@
 package buildcraft.core.lib.block;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+import org.apache.commons.lang3.StringUtils;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -21,8 +26,6 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.property.ExtendedBlockState;
-import net.minecraftforge.common.property.IUnlistedProperty;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BuildCraftProperties;
@@ -50,9 +53,10 @@ public abstract class BlockBuildCraftBase extends Block {
     public static final BuildCraftProperty<Boolean> LED_POWER = BuildCraftProperties.LED_POWER;
     public static final BuildCraftProperty<Boolean> LED_ACTIVE = BuildCraftProperties.LED_ACTIVE;
 
-    protected final IProperty[] properties;
-    protected final IUnlistedProperty<?>[] nonMetaProperties;
-    protected final HashBiMap<Integer, IBlockState> validStates = HashBiMap.create();
+    protected final BuildCraftProperty<?>[] properties;
+    protected final BuildCraftProperty<?>[] nonMetaProperties;
+    protected final Map<Integer, IBlockState> intToState = Maps.newHashMap();
+    protected final Map<IBlockState, Integer> stateToInt = Maps.newHashMap();
     protected final BlockState myBlockState;
 
     /** True if this block can rotate in any of the horizontal directions */
@@ -97,8 +101,9 @@ public abstract class BlockBuildCraftBase extends Block {
 
         IBlockState defaultState = getBlockState().getBaseState();
 
-        List<IBlockState> tempValidStates = Lists.newArrayList();
-        tempValidStates.add(defaultState);
+        // TODO: Make this have the full listed state have all the non-meta states too.
+        Map<IBlockState, Integer> tempValidStates = Maps.newHashMap();
+        tempValidStates.put(defaultState, 0);
         boolean canRotate = false;
         boolean canSixRotate = false;
 
@@ -111,17 +116,24 @@ public abstract class BlockBuildCraftBase extends Block {
                 canSixRotate = true;
             }
 
-            if (nonMetas.contains(prop)) {
-                break;
-            }
+            // if (nonMetas.contains(prop)) {
+            // break;
+            // }
 
             Collection<? extends Comparable<?>> allowedValues = prop.getAllowedValues();
             defaultState = defaultState.withProperty(prop, allowedValues.iterator().next());
 
-            List<IBlockState> newValidStates = Lists.newArrayList();
-            for (IBlockState state : tempValidStates) {
+            Map<IBlockState, Integer> newValidStates = Maps.newHashMap();
+            int mul = metas.contains(prop) ? allowedValues.size() : 1;
+            for (Entry<IBlockState, Integer> entry : tempValidStates.entrySet()) {
+                int index = 0;
+                Collections.sort((List) allowedValues);
                 for (Comparable<?> comp : allowedValues) {
-                    newValidStates.add(state.withProperty(prop, comp));
+                    int pos = entry.getValue() * mul + index;
+                    newValidStates.put(entry.getKey().withProperty(prop, comp), pos);
+                    if (mul > 1) {
+                        index++;
+                    }
                 }
             }
             tempValidStates = newValidStates;
@@ -130,10 +142,22 @@ public abstract class BlockBuildCraftBase extends Block {
         horizontallyRotatable = canRotate;
         allRotatable = canSixRotate;
 
-        int i = 0;
-        for (IBlockState state : tempValidStates) {
-            validStates.put(i, state);
-            i++;
+        for (Entry<IBlockState, Integer> entry : tempValidStates.entrySet()) {
+            int i = entry.getValue();
+            stateToInt.put(entry.getKey(), i);
+            if (!intToState.containsKey(i)) {
+                intToState.put(i, entry.getKey());
+            }
+        }
+
+        BCLog.logger.info("Int -> State: ");
+        for (Entry<Integer, IBlockState> entry : intToState.entrySet()) {
+            BCLog.logger.info("  " + entry.getKey() + " -> " + entry.getValue());
+        }
+
+        BCLog.logger.info("State -> Int: ");
+        for (Entry<IBlockState, Integer> entry : stateToInt.entrySet()) {
+            BCLog.logger.info("  " + entry.getKey() + " -> " + entry.getValue());
         }
 
         setDefaultState(defaultState);
@@ -162,17 +186,24 @@ public abstract class BlockBuildCraftBase extends Block {
             return new BlockState(this, new IProperty[] {});
         }
 
-        return new ExtendedBlockState(this, properties, nonMetaProperties);
+        IProperty[] props = new IProperty[properties.length + nonMetaProperties.length];
+        for (int i = 0; i < properties.length; i++) {
+            props[i] = properties[i];
+        }
+        for (int i = 0; i < nonMetaProperties.length; i++) {
+            props[properties.length + i] = nonMetaProperties[i];
+        }
+        return new BlockState(this, props);
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return validStates.inverse().get(state);
+        return stateToInt.get(state);
     }
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return validStates.get(meta);
+        return intToState.get(meta);
     }
 
     @Override

@@ -33,7 +33,10 @@ public class GuiFiller extends GuiAdvancedInterface {
 
         @Override
         public IStatementParameter getParameter() {
-            if (slot >= instance.filler.patternParameters.length) {
+            if (slot >= instance.
+                    filler.
+                    patternParameters.
+                    length) {
                 return null;
             } else {
                 return instance.filler.patternParameters[slot];

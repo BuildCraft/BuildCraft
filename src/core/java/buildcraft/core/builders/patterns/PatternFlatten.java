@@ -17,7 +17,7 @@ import buildcraft.core.blueprints.Template;
 public class PatternFlatten extends FillerPattern {
 
     public PatternFlatten() {
-        super("flatten", EnumFillerPattern.FLATTERN);
+        super("flatten", EnumFillerPattern.FLATTEN);
     }
 
     @Override

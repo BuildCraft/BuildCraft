@@ -27,7 +27,7 @@ import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.builders.patterns.FillerPattern;
-import buildcraft.core.builders.patterns.PatternFill;
+import buildcraft.core.builders.patterns.PatternNone;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
@@ -39,7 +39,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 
     private static int POWER_ACTIVATION = 500;
 
-    public FillerPattern currentPattern = PatternFill.INSTANCE;
+    public FillerPattern currentPattern = PatternNone.INSTANCE;
     public IStatementParameter[] patternParameters;
 
     private BptBuilderTemplate currentTemplate;
@@ -54,6 +54,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
     public TileFiller() {
         inv.addListener(this);
         box.kind = Kind.STRIPES;
+        initPatternParameters();
     }
 
     @Override
@@ -178,7 +179,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
         }
 
         if (currentPattern == null) {
-            currentPattern = PatternFill.INSTANCE;
+            currentPattern = PatternNone.INSTANCE;
         }
 
         if (nbt.hasKey("pp")) {

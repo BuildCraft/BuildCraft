@@ -8,14 +8,19 @@ public enum EnumFillerPattern implements IStringSerializable {
     CLEAR,
     CYLINDER,
     FILL,
-    FLATTERN,
+    FLATTEN,
     FRAME,
     HORIZON,
     PYRAMID,
     STAIRS;
 
     @Override
+    public String toString() {
+        return getName();
+    }
+
+    @Override
     public String getName() {
-        return name();
+        return name().toLowerCase();
     }
 }
