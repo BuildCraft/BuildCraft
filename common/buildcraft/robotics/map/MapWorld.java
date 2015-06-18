@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import gnu.trove.iterator.TLongIterator;
 import gnu.trove.map.hash.TLongLongHashMap;
 import gnu.trove.set.hash.TLongHashSet;
 
@@ -86,12 +85,13 @@ public class MapWorld {
 	}
 
 	public void save() {
-		TLongIterator i = updatedChunks.iterator();
+		long[] chunkList;
+		synchronized (updatedChunks) {
+			chunkList = updatedChunks.toArray();
+			updatedChunks.clear();
+		}
 
-		while (i.hasNext()) {
-			long id = i.next();
-			i.remove();
-
+		for (long id : chunkList) {
 			MapRegion region = (MapRegion) regionMap.getValueByKey(id);
 			if (region == null) {
 				continue;
@@ -140,7 +140,9 @@ public class MapWorld {
 		MapChunk chunk = getChunk(rchunk.xPosition, rchunk.zPosition);
 		chunk.update(rchunk);
 		updatedChunks.add(id);
-		timeToUpdate.remove(rchunk);
+		synchronized (timeToUpdate) {
+			timeToUpdate.remove(rchunk);
+		}
 		regionUpdateTime.put(id, (new Date()).getTime());
 	}
 
@@ -149,6 +151,8 @@ public class MapWorld {
 	}
 
 	public void updateChunkDelayed(Chunk chunk, byte time) {
-		timeToUpdate.put(chunk, new Integer(time));
+		synchronized (timeToUpdate) {
+			timeToUpdate.put(chunk, new Integer(time));
+		}
 	}
 }
