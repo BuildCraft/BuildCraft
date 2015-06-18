@@ -63,7 +63,7 @@ public class TriggerRobotInStation extends BCStatement implements ITriggerIntern
 				EntityRobot robot = (EntityRobot) station.robotTaking();
 
 				if (robot.getDockingStation() == station) {
-					if (parameters.length > 0) {
+					if (parameters.length > 0 && parameters[0] != null && parameters[0].getItemStack() != null) {
 						if (StatementParameterRobot.matches(parameters[0], robot)) {
 							return true;
 						}

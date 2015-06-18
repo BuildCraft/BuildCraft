@@ -58,21 +58,14 @@ public class WorldPropertyIsOre extends WorldProperty {
 		if (block == null) {
 			return false;
 		} else {
+			List<ItemStack> toCheck = new ArrayList<ItemStack>();
+			toCheck.add(new ItemStack(block, 1, meta));
 
-			List<ItemStack> itemsDropped = new ArrayList<ItemStack>();
-			//Check for blocks that drop an item that is an ore
-			//On the off-chance blockAccess isn't a world, just get the itemstack from the block
-			if (blockAccess instanceof World) {
-				itemsDropped.addAll(block.getDrops((World) blockAccess, x, y, z, blockAccess.getBlockMetadata(x, y, z), 0));
-				
-				//Make sure we grab things like redstone ore
-				itemsDropped.add(new ItemStack(block, 1, meta));
-			} else {
-				ItemStack stack = new ItemStack(block, 1, meta);
-				itemsDropped.add(stack);
+			if (block.hasTileEntity(meta) && blockAccess instanceof World) {
+				toCheck.addAll(block.getDrops((World) blockAccess, x, y, z, blockAccess.getBlockMetadata(x, y, z), 0));
 			}
 			
-			for (ItemStack stack : itemsDropped) {
+			for (ItemStack stack : toCheck) {
 				if (stack.getItem() != null) {
 					for (int id : OreDictionary.getOreIDs(stack)) {
 						if (ores.contains(id)) {
