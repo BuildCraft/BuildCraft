@@ -1,0 +1,10 @@
+Additions:
+
+* Leather/dyed armour support on robots (asie)
+* Make mining robots work with GregTech ores (zmaster587, asie)
+* Robots can now be filtered in Force/Forbid by wearable, not just by type (asie)
+
+Bugs fixed:
+
+* [#2820] CME in map generation (asie)
+* Zone planner maps not generating (asie)

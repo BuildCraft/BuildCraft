@@ -249,6 +249,13 @@ public class RenderRobot extends Render implements IItemRenderer {
 			GL11.glScalef(1.0125F, 1.0125F, 1.0125F);
 			GL11.glTranslatef(0.0f, -0.25f, 0.0f);
 			GL11.glRotatef(180F, 0, 0, 1);
+
+			int color = wearable.getItem().getColorFromItemStack(wearable, 0);
+			if (color != 16777215) {
+				GL11.glPushAttrib(GL11.GL_COLOR_BUFFER_BIT);
+				GL11.glColor3ub((byte) (color >> 16), (byte) ((color >> 8) & 255), (byte) (color & 255));
+			}
+
 			textureManager.bindTexture(RenderBiped.getArmorResource(entity, wearable, 0, null));
 			ModelBiped armorModel = ForgeHooksClient.getArmorModel(entity, wearable, 0, null);
 			if (armorModel != null) {
@@ -256,6 +263,10 @@ public class RenderRobot extends Render implements IItemRenderer {
 			} else {
 				GL11.glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
 				helmetBox.render(1 / 16F);
+			}
+
+			if (color != 16777215) {
+				GL11.glPopAttrib();
 			}
 			GL11.glPopMatrix();
 		} else if (wearable.getItem() instanceof ItemSkull) {
