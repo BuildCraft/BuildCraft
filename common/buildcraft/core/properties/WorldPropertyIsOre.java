@@ -59,13 +59,15 @@ public class WorldPropertyIsOre extends WorldProperty {
 			return false;
 		} else {
 
-			List<ItemStack> itemsDropped;
+			List<ItemStack> itemsDropped = new ArrayList<ItemStack>();
 			//Check for blocks that drop an item that is an ore
 			//On the off-chance blockAccess isn't a world, just get the itemstack from the block
 			if (blockAccess instanceof World) {
-				itemsDropped = block.getDrops((World) blockAccess, x, y, z, blockAccess.getBlockMetadata(x, y, z), 0);
+				itemsDropped.addAll(block.getDrops((World) blockAccess, x, y, z, blockAccess.getBlockMetadata(x, y, z), 0));
+				
+				//Make sure we grab things like redstone ore
+				itemsDropped.add(new ItemStack(block, 1, meta));
 			} else {
-				itemsDropped = new ArrayList<ItemStack>();
 				ItemStack stack = new ItemStack(block, 1, meta);
 				itemsDropped.add(stack);
 			}
