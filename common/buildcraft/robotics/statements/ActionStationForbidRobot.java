@@ -9,7 +9,6 @@
 package buildcraft.robotics.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
-import net.minecraft.item.ItemStack;
 
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
@@ -17,11 +16,8 @@ import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementSlot;
-import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.statements.BCStatement;
-import buildcraft.robotics.EntityRobot;
-import buildcraft.robotics.ItemRobot;
 
 public class ActionStationForbidRobot extends BCStatement implements IActionInternal {
 	private final boolean invert;
@@ -70,22 +66,8 @@ public class ActionStationForbidRobot extends BCStatement implements IActionInte
 
 	public static boolean isForbidden(StatementSlot slot, EntityRobotBase robot) {
 		for (IStatementParameter p : slot.parameters) {
-			if (p != null) {
-				ItemStack stack = p.getItemStack();
-
-				if (stack != null) {
-					if (stack.getItem() instanceof ItemRobot) {
-						if (ItemRobot.getRobotNBT(stack) == robot.getBoard().getNBTHandler()) {
-							return true;
-						}
-					} else if (robot instanceof EntityRobot) {
-						for (ItemStack target : ((EntityRobot) robot).getWearables()) {
-							if (target != null && StackHelper.isMatchingItem(stack, target, true, true)) {
-								return true;
-							}
-						}
-					}
-				}
+			if (StatementParameterRobot.matches(p, robot)) {
+				return true;
 			}
 		}
 
