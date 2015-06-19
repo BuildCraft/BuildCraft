@@ -17,7 +17,7 @@ import buildcraft.core.lib.utils.StringUtils;
 
 public abstract class GuiEngine extends GuiBuildCraft {
 
-    private static final ResourceLocation ITEM_TEXTURE = TextureMap.locationItemsTexture;
+    private static final ResourceLocation TEXTURES = TextureMap.locationBlocksTexture;
 
     protected class EngineLedger extends Ledger {
 
@@ -39,8 +39,9 @@ public abstract class GuiEngine extends GuiBuildCraft {
             drawBackground(x, y);
 
             // Draw icon
-            Minecraft.getMinecraft().renderEngine.bindTexture(ITEM_TEXTURE);
-            drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
+            Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURES);
+            // TODO (PASS 1): Fix GUI icons using random textures
+//            drawIcon(BuildCraftCore.iconProvider.getIcon(CoreIconProvider.ENERGY), x + 3, y + 4);
 
             if (!isFullyOpened()) {
                 return;

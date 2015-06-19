@@ -209,7 +209,7 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
     // Inner class to speed upp gradient computations
     // (array access is a lot slower than member access)
     private static class Grad {
-        double pos, w;
+        double x, y, z, w;
 
         Grad(double x, double y, double z) {
             this.x = x;

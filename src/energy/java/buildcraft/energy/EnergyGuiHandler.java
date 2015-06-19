@@ -21,9 +21,10 @@ import buildcraft.energy.tile.TileEngineStone;
 public class EnergyGuiHandler implements IGuiHandler {
 
     @Override
-    public Object getClientGuiElement(int id, EntityPlayer player, World world, BlockPos pos) {
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 
-        if (!world.blockExists(pos)) {
+        BlockPos pos = new BlockPos(x, y, z);
+        if (world.isAirBlock(pos)) {
             return null;
         }
 
@@ -48,9 +49,10 @@ public class EnergyGuiHandler implements IGuiHandler {
     }
 
     @Override
-    public Object getServerGuiElement(int id, EntityPlayer player, World world, BlockPos pos) {
+    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 
-        if (!world.blockExists(pos)) {
+        BlockPos pos = new BlockPos(x,y,z);
+        if (world.isAirBlock(pos)) {
             return null;
         }
 

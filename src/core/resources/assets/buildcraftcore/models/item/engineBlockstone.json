@@ -1,9 +1,9 @@
 {
 	"parent":"buildcraftcore:item/engineBlock",
 	"textures":{
-		"particle":"buildcraftcore:blocks/engine/inv/wood/back",
-		"base":"buildcraftcore:blocks/engine/inv/wood/back",
-		"front":"buildcraftcore:blocks/engine/inv/wood/side",
+		"particle":"buildcraftenergy:blocks/engine/inv/stone/back",
+		"base":"buildcraftenergy:blocks/engine/inv/stone/back",
+		"front":"buildcraftenergy:blocks/engine/inv/stone/side",
 		"chamber":"buildcraftcore:blocks/engine/inv/chamber_base",
 		"trunk":"buildcraftcore:blocks/engine/inv/trunk_blue"
 	}

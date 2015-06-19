@@ -7,17 +7,11 @@ package buildcraft.energy;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBucket;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.BCCreativeTab;
 
 public class ItemBucketBuildcraft extends ItemBucket {
-
-    private String iconName;
-
     public ItemBucketBuildcraft(Block block) {
         this(block, BCCreativeTab.get("main"));
     }
@@ -26,17 +20,5 @@ public class ItemBucketBuildcraft extends ItemBucket {
         super(block);
         setContainerItem(Items.bucket);
         setCreativeTab(creativeTab);
-    }
-
-    @Override
-    public Item setUnlocalizedName(String par1Str) {
-        iconName = par1Str;
-        return super.setUnlocalizedName(par1Str);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureAtlasSpriteRegister par1IconRegister) {
-        this.itemIcon = par1IconRegister.registerIcon("buildcraftenergy:" + iconName);
     }
 }

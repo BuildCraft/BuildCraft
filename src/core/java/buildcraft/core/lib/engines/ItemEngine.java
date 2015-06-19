@@ -7,6 +7,7 @@ package buildcraft.core.lib.engines;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBlockBuildCraft;
 

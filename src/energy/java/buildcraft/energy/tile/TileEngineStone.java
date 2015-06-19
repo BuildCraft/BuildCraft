@@ -2,7 +2,7 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.energy;
+package buildcraft.energy.tile;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -38,7 +38,7 @@ public class TileEngineStone extends TileEngineWithInventory {
 
     @Override
     public String getResourcePrefix() {
-        return "buildcraftenergy:textures/blocks/engineStone";
+        return "buildcraftenergy:textures/blocks/engine/stone";
     }
 
     @Override
@@ -47,7 +47,7 @@ public class TileEngineStone extends TileEngineWithInventory {
             return true;
         }
         if (!worldObj.isRemote) {
-            player.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_STONE, worldObj, xCoord, yCoord, zCoord);
+            player.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_STONE, worldObj, pos.getX(), pos.getY(), pos.getZ());
         }
         return true;
     }
@@ -161,7 +161,7 @@ public class TileEngineStone extends TileEngineWithInventory {
     }
 
     @Override
-    public boolean hasCustomInventoryName() {
+    public boolean hasCustomName() {
         return false;
     }
 }

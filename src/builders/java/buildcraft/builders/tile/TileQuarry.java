@@ -612,6 +612,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     }
 
     private void initializeBlueprintBuilder() {
+        PatternQuarryFrame pqf = PatternQuarryFrame.INSTANCE;
+
         Blueprint bpt =
             ((FillerPattern) FillerManager.registry.getPattern("buildcraft:frame")).getBlueprint(box, worldObj, new IStatementParameter[0],
                 BuildCraftBuilders.frameBlock.getDefaultState());

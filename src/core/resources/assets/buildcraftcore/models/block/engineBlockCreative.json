@@ -1,0 +1,6 @@
+{
+	"parent":"buildcraftcore:block/empty",
+	"textures": {
+		"particle": "buildcraftcore:blocks/engine/inv/creative/back"
+	}
+}

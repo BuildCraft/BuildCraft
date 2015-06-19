@@ -9,8 +9,6 @@ import java.util.Map.Entry;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import org.apache.commons.lang3.StringUtils;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -101,7 +99,6 @@ public abstract class BlockBuildCraftBase extends Block {
 
         IBlockState defaultState = getBlockState().getBaseState();
 
-        // TODO: Make this have the full listed state have all the non-meta states too.
         Map<IBlockState, Integer> tempValidStates = Maps.newHashMap();
         tempValidStates.put(defaultState, 0);
         boolean canRotate = false;
@@ -115,10 +112,6 @@ public abstract class BlockBuildCraftBase extends Block {
                 canRotate = true;
                 canSixRotate = true;
             }
-
-            // if (nonMetas.contains(prop)) {
-            // break;
-            // }
 
             Collection<? extends Comparable<?>> allowedValues = prop.getAllowedValues();
             defaultState = defaultState.withProperty(prop, allowedValues.iterator().next());
@@ -150,6 +143,9 @@ public abstract class BlockBuildCraftBase extends Block {
             }
         }
 
+        // Temporary. Used for debugging early on.
+        BCLog.logger.info("Created the block " + getUnlocalizedName() + " as " + getClass().getSimpleName());
+
         BCLog.logger.info("Int -> State: ");
         for (Entry<Integer, IBlockState> entry : intToState.entrySet()) {
             BCLog.logger.info("  " + entry.getKey() + " -> " + entry.getValue());
@@ -161,9 +157,6 @@ public abstract class BlockBuildCraftBase extends Block {
         }
 
         setDefaultState(defaultState);
-
-        // Temporary. Used for debugging early on.
-        BCLog.logger.info("Created the block " + getUnlocalizedName() + " as " + getClass().getSimpleName());
 
         for (BuildCraftProperty<?> prop : properties) {
             if (metas.contains(prop)) {
@@ -209,10 +202,10 @@ public abstract class BlockBuildCraftBase extends Block {
     @Override
     public IBlockState onBlockPlaced(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta,
             EntityLivingBase placer) {
-        if (allRotatable) {// TODO (CHECK): Is this guaranteeable for all blocks that have 6 facing directions
-            return getDefaultState().withProperty(FACING_6_PROP, facing);
+        if (allRotatable) {// TODO (CHECK): Do we want to do this for all blocks that have 6 facing directions
+            return getStateFromMeta(meta).withProperty(FACING_6_PROP, facing);
         } else {
-            return getDefaultState();
+            return getStateFromMeta(meta);
         }
     }
 

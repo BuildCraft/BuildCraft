@@ -4,10 +4,11 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.energy;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.block.Block;
+import com.google.common.collect.Maps;
+
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
@@ -19,7 +20,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public final class BucketHandler {
 
     public static BucketHandler INSTANCE = new BucketHandler();
-    public Map<Block, Item> buckets = new HashMap<Block, Item>();
+    public Map<IBlockState, Item> buckets = Maps.newHashMap();
 
     private BucketHandler() {}
 
@@ -36,12 +37,12 @@ public final class BucketHandler {
     }
 
     private ItemStack fillCustomBucket(World world, MovingObjectPosition pos) {
-        Block block = world.getBlock(pos.blockX, pos.blockY, pos.blockZ);
+        IBlockState state = world.getBlockState(pos.getBlockPos());
 
-        Item bucket = buckets.get(block);
+        Item bucket = buckets.get(state);
 
-        if (bucket != null && world.getBlockMetadata(pos.blockX, pos.blockY, pos.blockZ) == 0) {
-            world.setBlockToAir(pos.blockX, pos.blockY, pos.blockZ);
+        if (bucket != null) {
+            world.setBlockToAir(pos.getBlockPos());
             return new ItemStack(bucket);
         } else {
             return null;

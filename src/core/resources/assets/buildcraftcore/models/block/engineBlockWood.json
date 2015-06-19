@@ -1,18 +1,6 @@
 {
-	"elements": [
-		{   "from": [ 0, 0, 0 ],
-            "to": [ 0, 0, 0 ],
-            "faces": {
-                "down":  { "texture": "#down", "cullface": "down" },
-                "up":    { "texture": "#up", "cullface": "up" },
-                "north": { "texture": "#north", "cullface": "north" },
-                "south": { "texture": "#south", "cullface": "south" },
-                "west":  { "texture": "#west", "cullface": "west" },
-                "east":  { "texture": "#east", "cullface": "east" }
-            }
-        }
-    ],
+	"parent":"buildcraftcore:block/empty",
 	"textures": {
-		"particle": "buildcraftcore:blocks/engine/inv/wood/back"
+		"particle":"buildcraftcore:blocks/engine/inv/wood/back"
 	}
 }

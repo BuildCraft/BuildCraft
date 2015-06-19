@@ -12,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.block.BlockStaticLiquid;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.pattern.BlockHelper;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -70,7 +71,7 @@ public final class OilPopulate {
         int x = chunkX * 16 + 8 + rand.nextInt(16);
         int z = chunkZ * 16 + 8 + rand.nextInt(16);
 
-        BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
+        BiomeGenBase biome = world.getBiomeGenForCoords(new BlockPos(x, 0, z));
 
         // Do not generate oil in the End or Nether
         if (excludedBiomes.contains(biome.biomeID)) {
@@ -145,7 +146,8 @@ public final class OilPopulate {
                         int distance = poolX * poolX + poolY * poolY + poolZ * poolZ;
 
                         if (distance <= radiusSq) {
-                            world.setBlock(poolX + wellX, poolY + wellY, poolZ + wellZ, BuildCraftEnergy.blockOil, 0, distance == radiusSq ? 3 : 2);
+                            BlockPos pos = new BlockPos(poolX + wellX, poolY + wellY, poolZ + wellZ);
+                            world.setBlockState(pos, BuildCraftEnergy.blockOil.getDefaultState(), distance == radiusSq ? 3 : 2);
                         }
                     }
                 }
@@ -204,23 +206,23 @@ public final class OilPopulate {
         }
     }
 
-    public void generateSurfaceDeposit(World world, Random rand, BlockPos pos, int radius) {
+    public void generateSurfaceDeposit(World world, Random rand, int x, int y, int z, int radius) {
         BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
         generateSurfaceDeposit(world, rand, biome, pos, radius);
     }
 
-    private void generateSurfaceDeposit(World world, Random rand, BiomeGenBase biome, BlockPos pos, int radius) {
+    private void generateSurfaceDeposit(World world, Random rand, BiomeGenBase biome, int x, int y, int z, int radius) {
         int depth = rand.nextDouble() < 0.5 ? 1 : 2;
 
         // Center
-        setOilColumnForLake(world, biome, pos, depth, 2);
+        setOilColumnForLake(world, biome, x, y, z, depth, 2);
 
         // Generate tendrils, from the center outward
         for (int w = 1; w <= radius; ++w) {
             float proba = (float) (radius - w + 4) / (float) (radius + 4);
 
-            setOilWithProba(world, biome, rand, proba, pos + w, depth);
-            setOilWithProba(world, biome, rand, proba, pos - w, depth);
+            setOilWithProba(world, biome, rand, proba, x, y, z + w, depth);
+            setOilWithProba(world, biome, rand, proba, x, y, z - w, depth);
             setOilWithProba(world, biome, rand, proba, x + w, y, z, depth);
             setOilWithProba(world, biome, rand, proba, x - w, y, z, depth);
 
@@ -250,23 +252,25 @@ public final class OilPopulate {
         }
     }
 
-    private boolean isReplaceableFluid(World world, BlockPos pos) {
-        Block block = world.getBlock(pos);
+    private boolean isReplaceableFluid(World world, int x, int y, int z) {
+        Block block = world.getBlockState(new BlockPos(x, y, z)).getBlock();
         return (block instanceof BlockStaticLiquid || block instanceof BlockFluidBase || block instanceof IFluidBlock)
             && block.getMaterial() != Material.lava;
     }
 
-    private boolean isOil(World world, BlockPos pos) {
-        Block block = world.getBlock(pos);
+    private boolean isOil(World world, int x, int y, int z) {
+        Block block = world.getBlockState(new BlockPos(x, y, z)).getBlock();
         return block == BuildCraftEnergy.blockOil;
     }
 
-    private boolean isReplaceableForLake(World world, BiomeGenBase biome, BlockPos pos) {
+    @SuppressWarnings("unchecked")
+    private boolean isReplaceableForLake(World world, BiomeGenBase biome, int x, int y, int z) {
+        BlockPos pos = new BlockPos(x, y, z);
         if (world.isAirBlock(pos)) {
             return true;
         }
 
-        Block block = world.getBlock(pos);
+        Block block = world.getBlockState(pos).getBlock();
 
         if (block == biome.fillerBlock || block == biome.topBlock) {
             return true;
@@ -276,7 +280,7 @@ public final class OilPopulate {
             return true;
         }
 
-        if (block.isReplaceableOreGen(world, pos, Blocks.stone)) {
+        if (block.isReplaceableOreGen(world, pos, BlockHelper.forBlock(Blocks.stone))) {
             return true;
         }
 
@@ -291,25 +295,25 @@ public final class OilPopulate {
         return false;
     }
 
-    private boolean isOilAdjacent(World world, BlockPos pos) {
-        return isOil(world, x + 1, y, z) || isOil(world, x - 1, y, z) || isOil(world, pos + 1) || isOil(world, pos - 1);
+    private boolean isOilAdjacent(World world, int x, int y, int z) {
+        return isOil(world, x + 1, y, z) || isOil(world, x - 1, y, z) || isOil(world, x, y, z + 1) || isOil(world, x, y, z - 1);
     }
 
-    private boolean isOilSurrounded(World world, BlockPos pos) {
-        return isOil(world, x + 1, y, z) && isOil(world, x - 1, y, z) && isOil(world, pos + 1) && isOil(world, pos - 1);
+    private boolean isOilSurrounded(World world, int x, int y, int z) {
+        return isOil(world, x + 1, y, z) && isOil(world, x - 1, y, z) && isOil(world, x, y, z + 1) && isOil(world, x, y, z - 1);
     }
 
-    private void setOilWithProba(World world, BiomeGenBase biome, Random rand, float proba, BlockPos pos, int depth) {
-        if (rand.nextFloat() <= proba && !world.isAirBlock(x, y - depth - 1, z)) {
-            if (isOilAdjacent(world, pos)) {
-                setOilColumnForLake(world, biome, pos, depth, 3);
+    private void setOilWithProba(World world, BiomeGenBase biome, Random rand, float proba, int x, int y, int z, int depth) {
+        if (rand.nextFloat() <= proba && !world.isAirBlock(new BlockPos(x, y - depth - 1, z))) {
+            if (isOilAdjacent(world, x, y, z)) {
+                setOilColumnForLake(world, biome, x, y, z, depth, 3);
             }
         }
     }
 
-    private void setOilColumnForLake(World world, BiomeGenBase biome, BlockPos pos, int depth, int update) {
+    private void setOilColumnForLake(World world, BiomeGenBase biome, int x, int y, int z, int depth, int update) {
         if (isReplaceableForLake(world, biome, x, y + 1, z)) {
-            if (!world.isAirBlock(x, y + 2, z)) {
+            if (!world.isAirBlock(new BlockPos(x, y + 2, z))) {
                 return;
             }
             if (isReplaceableFluid(world, pos) || world.isSideSolid(x, y - 1, z, EnumFacing.UP)) {
@@ -370,7 +374,7 @@ public final class OilPopulate {
         return -1;
     }
 
-    private double surfaceDeviation(World world, BlockPos pos, int radius) {
+    private double surfaceDeviation(World world, int x, int y, int z, int radius) {
         int diameter = radius * 2;
         double centralTendancy = y;
         double deviation = 0;

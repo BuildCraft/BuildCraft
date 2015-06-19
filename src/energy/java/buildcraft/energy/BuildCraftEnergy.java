@@ -17,7 +17,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
@@ -36,13 +35,14 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.ConfigAccessor;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.core.StackKey;
+import buildcraft.api.core.ConfigAccessor.EMod;
 import buildcraft.api.enums.EnumEnergyStage;
+import buildcraft.api.enums.EnumSpring;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.statements.ITriggerExternal;
@@ -51,7 +51,7 @@ import buildcraft.core.BuildCraftCore;
 import buildcraft.core.BuildCraftMod;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
-import buildcraft.core.block.BlockSpring;
+import buildcraft.core.Version;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.config.ConfigManager.RestartRequirement;
 import buildcraft.core.lib.block.BlockBuildCraftFluid;
@@ -71,11 +71,11 @@ import buildcraft.energy.worldgen.BiomeGenOilOcean;
 import buildcraft.energy.worldgen.BiomeInitializer;
 import buildcraft.energy.worldgen.OilPopulate;
 
-// @Mod(name = "BuildCraft Energy", version = Version.VERSION, useMetadata = false, modid = "BuildCraftEnergy",
-// dependencies = DefaultProps.DEPENDENCY_CORE)
+@Mod(name = "BuildCraft Energy", version = Version.VERSION, useMetadata = false, modid = "BuildCraftEnergy",
+        dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftEnergy extends BuildCraftMod {
 
-    @Mod.Instance("BuildCraft|Energy")
+    @Mod.Instance("BuildCraftEnergy")
     public static BuildCraftEnergy instance;
 
     public static boolean spawnOilSprings = true;
@@ -111,6 +111,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
+        ConfigAccessor.addMod(EMod.ENERGY, this);
+        
         BuildcraftFuelRegistry.fuel = FuelManager.INSTANCE;
         BuildcraftFuelRegistry.coolant = CoolantManager.INSTANCE;
 
@@ -224,8 +226,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
         if (blockOil != null) {
             spawnOilSprings = BuildCraftCore.mainConfigManager.get("worldgen.spawnOilSprings").getBoolean(true);
-            BlockSpring.EnumSpring.OIL.canGen = spawnOilSprings;
-            BlockSpring.EnumSpring.OIL.liquidBlock = blockOil;
+            EnumSpring.OIL.canGen = spawnOilSprings;
+            EnumSpring.OIL.liquidBlock = blockOil.getDefaultState();
         }
 
         if (fluidFuel.getBlock() == null) {
@@ -279,10 +281,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
         // BucketHandler ensures empty buckets fill with the correct liquid.
         if (blockOil != null) {
-            BucketHandler.INSTANCE.buckets.put(blockOil, bucketOil);
+            BucketHandler.INSTANCE.buckets.put(blockOil.getDefaultState(), bucketOil);
         }
         if (blockFuel != null) {
-            BucketHandler.INSTANCE.buckets.put(blockFuel, bucketFuel);
+            BucketHandler.INSTANCE.buckets.put(blockFuel.getDefaultState(), bucketFuel);
         }
         MinecraftForge.EVENT_BUS.register(BucketHandler.INSTANCE);
 
@@ -394,22 +396,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
         if (BuildCraftCore.modifyWorld) {
             MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
             MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializer());
-        }
-    }
-
-    @SubscribeEvent
-    @SideOnly(Side.CLIENT)
-    public void textureHook(TextureStitchEvent.Post event) {
-        if (event.map.getTextureType() == 0) {
-            if (buildcraftFluidOil != null) {
-                buildcraftFluidOil.setIcons(blockOil.getBlockTextureFromSide(1), blockOil.getBlockTextureFromSide(2));
-            }
-            if (buildcraftFluidFuel != null) {
-                buildcraftFluidFuel.setIcons(blockFuel.getBlockTextureFromSide(1), blockFuel.getBlockTextureFromSide(2));
-            }
-            if (buildcraftFluidRedPlasma != null) {
-                buildcraftFluidRedPlasma.setIcons(blockRedPlasma.getBlockTextureFromSide(1), blockRedPlasma.getBlockTextureFromSide(2));
-            }
         }
     }
 

@@ -6,9 +6,11 @@ package buildcraft.builders.block;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Random;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -20,41 +22,81 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.properties.BuildCraftProperty;
+import buildcraft.builders.schematics.SchematicFrame;
 import buildcraft.core.lib.block.BlockBuildCraftBase;
 
 public class BlockFrame extends BlockBuildCraftBase {
+    private static final Map<EnumFacing[], EFrameConnection> connectionMap = Maps.newHashMap();
 
     public enum EFrameConnection implements IStringSerializable {
-        UP_DOWN(new AxisAlignedBB(0.25, 0, 0.25, 0.75, 1, 0.75)),
-        EAST_WEST(new AxisAlignedBB(0, 0.25, 0.25, 1, 0.75, 0.75)),
-        NORTH_SOUTH(new AxisAlignedBB(0.25, 0.25, 0, 0.75, 0.75, 1)),
+        UP_DOWN(EnumFacing.UP, EnumFacing.DOWN),
+        EAST_WEST(EnumFacing.EAST, EnumFacing.WEST),
+        NORTH_SOUTH(EnumFacing.NORTH, EnumFacing.SOUTH),
 
-        NORTH_EAST_UP(new AxisAlignedBB(0.25, 0.25, 0.25, 1, 1, 1)),
-        NORTH_EAST_DOWN(new AxisAlignedBB(0.25, 0, 0.25, 1, 0.75, 1)),
+        NORTH_EAST_UP(EnumFacing.NORTH, EnumFacing.EAST, EnumFacing.UP),
+        NORTH_EAST_DOWN(EnumFacing.NORTH, EnumFacing.EAST, EnumFacing.DOWN),
 
-        NORTH_WEST_UP(new AxisAlignedBB(0, 0.25, 0.25, 0.75, 1, 1)),
-        NORTH_WEST_DOWN(new AxisAlignedBB(0, 0, 0.25, 0.75, 0.75, 1)),
+        NORTH_WEST_UP(EnumFacing.NORTH, EnumFacing.WEST, EnumFacing.UP),
+        NORTH_WEST_DOWN(EnumFacing.NORTH, EnumFacing.WEST, EnumFacing.DOWN),
 
-        SOUTH_EAST_UP(new AxisAlignedBB(0.25, 0.25, 0.25, 1, 1, 1)),
-        SOUTH_EAST_DOWN(new AxisAlignedBB(0.25, 0, 0.25, 1, 0.75, 1)),
+        SOUTH_EAST_UP(EnumFacing.SOUTH, EnumFacing.EAST, EnumFacing.UP),
+        SOUTH_EAST_DOWN(EnumFacing.SOUTH, EnumFacing.EAST, EnumFacing.DOWN),
 
-        SOUTH_WEST_UP(new AxisAlignedBB(0, 0.25, 0.25, 0.75, 1, 1)),
-        SOUTH_WEST_DOWN(new AxisAlignedBB(0, 0, 0.25, 0.75, 0.75, 1));
+        SOUTH_WEST_UP(EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.UP),
+        SOUTH_WEST_DOWN(EnumFacing.SOUTH, EnumFacing.WEST, EnumFacing.DOWN);
 
         final AxisAlignedBB boundingBox;
+        private final EnumFacing[] facings;
+        private EFrameConnection left;
+        private SchematicFrame schematic;
 
-        EFrameConnection(AxisAlignedBB bb) {
+        EFrameConnection(EnumFacing... facings) {
+            this.facings = facings;
+            AxisAlignedBB bb = new AxisAlignedBB(0.25, 0.25, 0.25, 0.75, 0.75, 0.75);
+            for (EnumFacing face : facings) {
+                bb = bb.addCoord(face.getFrontOffsetX() * 0.25, face.getFrontOffsetY() * 0.25, face.getFrontOffsetZ() * 0.25);
+            }
             boundingBox = bb;
+            connectionMap.put(facings, this);
         }
 
         @Override
         public String getName() {
             return name().toLowerCase(Locale.ROOT);
+        }
+
+        public EFrameConnection rotateLeft() {
+            if (left != null) {
+                return left;
+            }
+            EnumFacing[] nArray = new EnumFacing[facings.length];
+            int i = 0;
+            for (EnumFacing face : facings) {
+                if (face.getAxis() != Axis.Y) {
+                    nArray[i] = face.rotateAround(Axis.Y);
+                } else {
+                    nArray[i] = face;
+                }
+                i++;
+            }
+            left = connectionMap.get(nArray);
+            return left;
+        }
+
+        public SchematicFrame getSchematic() {
+            if (schematic == null) {
+                schematic = new SchematicFrame(this);
+            }
+            return schematic;
         }
     }
 
@@ -63,6 +105,7 @@ public class BlockFrame extends BlockBuildCraftBase {
     public BlockFrame() {
         super(Material.glass, CONNECTIONS);
         setHardness(0.5F);
+        setLightOpacity(0);
     }
 
     @Override
@@ -86,6 +129,11 @@ public class BlockFrame extends BlockBuildCraftBase {
 
     @Override
     public boolean isOpaqueCube() {
+        return false;
+    }
+
+    @Override
+    public boolean isFullCube() {
         return false;
     }
 
@@ -114,12 +162,9 @@ public class BlockFrame extends BlockBuildCraftBase {
     public void getSubBlocks(Item item, CreativeTabs tab, List list) {
         list.add(new ItemStack(this));
     }
-    
-    @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing face, float par7, float par8,
-            float par9) {
-        world.setBlockState(pos, state.cycleProperty(CONNECTIONS));
-        return true;
-    }
 
+    @SideOnly(Side.CLIENT)
+    public EnumWorldBlockLayer getBlockLayer() {
+        return EnumWorldBlockLayer.CUTOUT;
+    }
 }

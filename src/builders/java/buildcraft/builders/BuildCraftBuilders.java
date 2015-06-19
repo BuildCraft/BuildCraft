@@ -479,8 +479,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
         schemes.registerSchematicBlock(architectBlock, SchematicTile.class);
         schemes.registerSchematicBlock(builderBlock, SchematicTile.class);
 
-        // TODO (BUILDERS): Add a SchematicFrame for frame blocks.
-
         // schemes.registerSchematicBlock(markerBlock, SchematicWallSide.class);
         // schemes.registerSchematicBlock(pathMarkerBlock, SchematicWallSide.class);
         // schemes.registerSchematicBlock(constructionMarkerBlock, SchematicWallSide.class);

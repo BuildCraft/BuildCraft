@@ -8,8 +8,6 @@ import java.util.Locale;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.statements.IStatementContainer;
@@ -46,9 +44,10 @@ public class TriggerEngineHeat extends BCStatement implements ITriggerExternal {
         return false;
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        icon = iconRegister.registerIcon("buildcraftenergy:triggers/trigger_engineheat_" + stage.name().toLowerCase(Locale.ENGLISH));
-    }
+    // @Override
+    // @SideOnly(Side.CLIENT)
+    // public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
+    // icon = iconRegister.registerIcon("buildcraftenergy:triggers/trigger_engineheat_" +
+    // stage.name().toLowerCase(Locale.ENGLISH));
+    // }
 }

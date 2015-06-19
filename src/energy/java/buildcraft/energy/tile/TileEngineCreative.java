@@ -2,7 +2,7 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.energy;
+package buildcraft.energy.tile;
 
 import io.netty.buffer.ByteBuf;
 
@@ -30,15 +30,15 @@ public class TileEngineCreative extends TileEngineBase {
 
     @Override
     public String getResourcePrefix() {
-        return "buildcraftenergy:textures/blocks/engineCreative";
+        return "buildcraftenergy:textures/blocks/engine/creative";
     }
 
     @Override
     public boolean onBlockActivated(EntityPlayer player, EnumFacing side) {
-        if (!getWorldObj().isRemote) {
+        if (!getWorld().isRemote) {
             Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
 
-            if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, xCoord, yCoord, zCoord)) {
+            if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, pos)) {
                 powerMode = powerMode.getNext();
                 energy = 0;
 
@@ -54,7 +54,7 @@ public class TileEngineCreative extends TileEngineBase {
 
                 sendNetworkUpdate();
 
-                ((IToolWrench) equipped).wrenchUsed(player, xCoord, yCoord, zCoord);
+                ((IToolWrench) equipped).wrenchUsed(player, pos);
                 return true;
             }
         }

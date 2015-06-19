@@ -1,0 +1,10 @@
+{
+	"parent":"buildcraftcore:item/engineBlock",
+	"textures":{
+		"particle":"buildcraftenergy:blocks/engine/inv/creative/back",
+		"base":"buildcraftenergy:blocks/engine/inv/creative/back",
+		"front":"buildcraftenergy:blocks/engine/inv/creative/side",
+		"chamber":"buildcraftcore:blocks/engine/inv/chamber_base",
+		"trunk":"buildcraftcore:blocks/engine/inv/trunk_creative"
+	}
+}

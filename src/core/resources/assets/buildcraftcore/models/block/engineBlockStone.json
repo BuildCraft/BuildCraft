@@ -1,6 +1,6 @@
 {
 	"parent":"buildcraftcore:block/empty",
 	"textures": {
-		"particle":"buildcraftenergy:blocks/engine/inv/iron/back"
+		"particle":"buildcraftenergy:blocks/engine/inv/stone/back"
 	}
 }

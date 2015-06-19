@@ -2,7 +2,7 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.energy;
+package buildcraft.energy.tile;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
@@ -62,7 +62,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
     @Override
     public String getResourcePrefix() {
-        return "buildcraftenergy:textures/blocks/engineIron";
+        return "buildcraftenergy:textures/blocks/engine/iron";
     }
 
     @Override
@@ -87,7 +87,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
             }
         }
         if (!worldObj.isRemote) {
-            player.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_IRON, worldObj, xCoord, yCoord, zCoord);
+            player.openGui(BuildCraftEnergy.instance, GuiIds.ENGINE_IRON, worldObj, pos.getX(), pos.getY(), pos.getZ());
         }
         return true;
     }
@@ -113,7 +113,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 
     private float getBiomeTempScalar() {
         if (biomeCache == null) {
-            biomeCache = worldObj.getBiomeGenForCoords(xCoord, zCoord);
+            biomeCache = worldObj.getBiomeGenForCoords(pos);
         }
         float tempScalar = biomeCache.temperature - 1.0F;
         tempScalar *= 0.5F;
@@ -213,8 +213,8 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
             }
 
             if (liquid != null) {
-                if (fill(EnumFacing.UNKNOWN, liquid, false) == liquid.amount) {
-                    fill(EnumFacing.UNKNOWN, liquid, true);
+                if (fill(null, liquid, false) == liquid.amount) {
+                    fill(null, liquid, true);
                     setInventorySlotContents(0, InvUtils.consumeItem(stack));
                 }
             }
@@ -412,7 +412,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
             return true;
         } else {
             FluidStack fluidStack = FluidContainerRegistry.getFluidForFilledItem(itemstack);
-            return fluidStack != null && canFill(EnumFacing.UNKNOWN, fluidStack.getFluid());
+            return fluidStack != null && canFill(null, fluidStack.getFluid());
         }
     }
 
@@ -449,7 +449,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
     }
 
     @Override
-    public boolean hasCustomInventoryName() {
+    public boolean hasCustomName() {
         return false;
     }
 }
