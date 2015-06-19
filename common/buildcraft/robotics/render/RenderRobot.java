@@ -260,14 +260,21 @@ public class RenderRobot extends Render implements IItemRenderer {
 			ModelBiped armorModel = ForgeHooksClient.getArmorModel(entity, wearable, 0, null);
 			if (armorModel != null) {
 				armorModel.render(entity, 0, 0, 0, -90f, 0, 1 / 16F);
+
+				if (color != 16777215) {
+					GL11.glPopAttrib();
+				}
 			} else {
 				GL11.glRotatef(-90.0f, 0.0f, 1.0f, 0.0f);
 				helmetBox.render(1 / 16F);
+
+				if (color != 16777215) {
+					GL11.glPopAttrib();
+				}
+				this.bindTexture(RenderBiped.getArmorResource(entity, wearable, 0, "overlay"));
+				helmetBox.render(1/16f);
 			}
 
-			if (color != 16777215) {
-				GL11.glPopAttrib();
-			}
 			GL11.glPopMatrix();
 		} else if (wearable.getItem() instanceof ItemSkull) {
 			doRenderSkull(wearable);
