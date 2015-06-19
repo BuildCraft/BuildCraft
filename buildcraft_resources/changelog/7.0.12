@@ -1,10 +1,17 @@
 Additions:
 
-* Leather/dyed armour support on robots (asie)
+* Leather/dyed helmet support on robots (asie)
 * Make mining robots work with GregTech ores (zmaster587, asie)
 * Robots can now be filtered in Force/Forbid by wearable, not just by type (asie)
+
+Improvements:
+
+* Rendering helmet overlays on robots is now supported (hea3ven)
+* The builder robot will not pick up materials in creative worlds (hea3ven)
 
 Bugs fixed:
 
 * [#2820] CME in map generation (asie)
+* Fix planter robots not freeing reserved blocks (hea3ven)
+* NPE in Builder robot (hea3ven)
 * Zone planner maps not generating (asie)
