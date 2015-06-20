@@ -138,6 +138,8 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
     private EntityLaser[] lasers;
     private EntityLaser[] signals;
 
+    private ByteBuf stream = null;
+    
     public void updateSignals() {
         if (!worldObj.isRemote) {
             showSignals = worldObj.isBlockIndirectlyGettingPowered(pos) > 0;
@@ -174,6 +176,12 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
                 signals[5] = Utils.createLaser(worldObj, cPos.addVector(0, 0, -rangePlus), cPos, LaserKind.Blue);
             }
         }
+    }
+    
+    @Override
+    public void update() {
+        super.update();
+        readDataDelayed();
     }
 
     @Override
@@ -511,6 +519,13 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
 
     @Override
     public void readData(ByteBuf stream) {
+        this.stream = stream;
+    }
+    
+    public void readDataDelayed() {
+        if (stream == null) {
+            return;
+        }
         origin.readData(stream);
         showSignals = stream.readBoolean();
 
