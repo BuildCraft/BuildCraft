@@ -29,11 +29,7 @@ public abstract class BlockBuildCraft extends BlockBuildCraftBase implements ITi
     protected static boolean keepInventory = false;
 
     protected final XorShift128Random rand = new XorShift128Random();
-    protected int renderPass;
-
-    protected int maxPasses = 1;
-
-    private boolean alphaPass = false;
+    private final boolean hasPowerLed;
 
     protected BlockBuildCraft(Material material) {
         this(material, BCCreativeTab.get("main"), new BuildCraftProperty<?>[0]);
@@ -49,18 +45,20 @@ public abstract class BlockBuildCraft extends BlockBuildCraftBase implements ITi
 
     protected BlockBuildCraft(Material material, BCCreativeTab bcCreativeTab, BuildCraftProperty<?>... properties) {
         super(material, bcCreativeTab, properties);
+        hasPowerLed = propertyList.contains(LED_POWER);
     }
 
-    public boolean hasAlphaPass() {
-        return alphaPass;
-    }
-
-    public void setAlphaPass(boolean alphaPass) {
-        this.alphaPass = alphaPass;
-    }
-
-    public void setPassCount(int maxPasses) {
-        this.maxPasses = maxPasses;
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess access, BlockPos pos) {
+        if (!hasPowerLed) {
+            return state;
+        }
+        TileBuildCraft tile = (TileBuildCraft) access.getTileEntity(pos);
+        if (tile == null) {
+            return state;
+        } else {
+            return state.withProperty(LED_POWER, tile.ledPower);
+        }
     }
 
     @Override

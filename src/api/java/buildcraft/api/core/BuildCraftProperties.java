@@ -23,11 +23,11 @@ public final class BuildCraftProperties {
     public static final BuildCraftProperty<EnumEnergyStage> ENERGY_STAGE = BuildCraftProperty.create("stage", EnumEnergyStage.class);
 
     public static final BuildCraftProperty<Integer> PIPE_DATA = BuildCraftProperty.create("data", 0, 15);
+    public static final BuildCraftProperty<Integer> LED_POWER = BuildCraftProperty.create("led_power", 0, 3);
 
     public static final BuildCraftProperty<Boolean> JOINED_BELOW = BuildCraftProperty.create("joined_below", false);
     public static final BuildCraftProperty<Boolean> MOVING = BuildCraftProperty.create("moving", false);
-    public static final BuildCraftProperty<Boolean> LED_POWER = BuildCraftProperty.create("led_power", false);
-    public static final BuildCraftProperty<Boolean> LED_ACTIVE = BuildCraftProperty.create("led_active",false);
+    public static final BuildCraftProperty<Boolean> LED_ACTIVE = BuildCraftProperty.create("led_active", false);
 
     // Unlisted properties
     // public static final PropertyDouble FLUID_HEIGHT_NE = new PropertyDouble("height_ne", 0, 1);

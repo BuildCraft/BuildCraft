@@ -20,6 +20,7 @@ import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagShort;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLModContainer;
 import net.minecraftforge.fml.common.Loader;
@@ -337,17 +338,18 @@ public class MappingRegistry {
                 continue;
             }
             String name = sub.getString("name");
+            ResourceLocation location = new ResourceLocation(name);
             Block b = null;
 
-            if (!Block.blockRegistry.containsKey(name) && name.contains(":")) {
+            if (!Block.blockRegistry.containsKey(location) && name.contains(":")) {
                 b = (Block) getMissingMappingFromFML(true, name, i);
                 if (b != null) {
                     BCLog.logger.info("Remapped " + name + " to " + Block.blockRegistry.getNameForObject(b));
                 }
             }
 
-            if (b == null && Block.blockRegistry.containsKey(name)) {
-                b = (Block) Block.blockRegistry.getObject(name);
+            if (b == null && Block.blockRegistry.containsKey(location)) {
+                b = (Block) Block.blockRegistry.getObject(location);
             }
 
             if (b != null) {
@@ -371,17 +373,18 @@ public class MappingRegistry {
             }
 
             String name = sub.getString("name");
+            ResourceLocation location = new ResourceLocation(name);
             Item item = null;
 
-            if (!Item.itemRegistry.containsKey(name) && name.contains(":")) {
+            if (!Item.itemRegistry.containsKey(location) && name.contains(":")) {
                 item = (Item) getMissingMappingFromFML(false, name, i);
                 if (item != null) {
                     BCLog.logger.info("Remapped " + name + " to " + Item.itemRegistry.getNameForObject(item));
                 }
             }
 
-            if (item == null && Item.itemRegistry.containsKey(name)) {
-                item = (Item) Item.itemRegistry.getObject(name);
+            if (item == null && Item.itemRegistry.containsKey(location)) {
+                item = (Item) Item.itemRegistry.getObject(location);
             }
 
             if (item != null) {

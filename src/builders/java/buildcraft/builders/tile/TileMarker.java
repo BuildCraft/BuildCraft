@@ -544,6 +544,8 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
         }
 
         createLasers();
+        
+        stream = null;
     }
 
     @Override

@@ -8,13 +8,14 @@ import org.lwjgl.input.Mouse;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 
 class UrbanistToolArea extends UrbanistTool {
 
     private int step = 0;
-    private int startX, startY, startZ;
-    private int pos;
+    private BlockPos start;
+    private BlockPos pos;
     private float baseY = 0;
 
     @Override
@@ -30,15 +31,11 @@ class UrbanistToolArea extends UrbanistTool {
     @Override
     public void worldClicked(GuiUrbanist gui, MovingObjectPosition pos) {
         if (step == 0) {
-            x = pos.blockX;
-            y = pos.blockY + 1;
-            z = pos.blockZ;
+            this.pos = pos.getBlockPos().up();
 
-            startX = x;
-            startY = y;
-            startZ = z;
+            start = pos.getBlockPos();
 
-            gui.urbanist.rpcCreateFrame(pos);
+            gui.urbanist.rpcCreateFrame(this.pos);
 
             step = 1;
         } else if (step == 1) {
@@ -47,11 +44,11 @@ class UrbanistToolArea extends UrbanistTool {
         } else if (step == 2) {
             step = 0;
 
-            areaSet(gui, startX, startY, startZ, pos);
+            areaSet(gui, start, this.pos);
         }
     }
 
-    public void areaSet(GuiUrbanist urbanist, int x1, int y1, int z1, int x2, int y2, int z2) {
+    public void areaSet(GuiUrbanist urbanist, BlockPos start, BlockPos end) {
 
     }
 

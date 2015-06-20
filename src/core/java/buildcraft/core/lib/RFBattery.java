@@ -1,6 +1,10 @@
 package buildcraft.core.lib;
 
+import java.util.List;
+
 import cofh.api.energy.IEnergyStorage;
+
+import com.google.common.collect.Lists;
 
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -93,5 +97,20 @@ public class RFBattery implements IEnergyStorage {
         } else if (energy > maxEnergy) {
             energy = maxEnergy;
         }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("RFBattery [energy=");
+        builder.append(energy);
+        builder.append(", maxEnergy=");
+        builder.append(maxEnergy);
+        builder.append(", maxReceive=");
+        builder.append(maxReceive);
+        builder.append(", maxExtract=");
+        builder.append(maxExtract);
+        builder.append("]");
+        return builder.toString();
     }
 }

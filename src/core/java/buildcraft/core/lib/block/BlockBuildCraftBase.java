@@ -48,11 +48,12 @@ public abstract class BlockBuildCraftBase extends Block {
 
     public static final BuildCraftProperty<Boolean> JOINED_BELOW = BuildCraftProperties.JOINED_BELOW;
     public static final BuildCraftProperty<Boolean> MOVING = BuildCraftProperties.MOVING;
-    public static final BuildCraftProperty<Boolean> LED_POWER = BuildCraftProperties.LED_POWER;
+    public static final BuildCraftProperty<Integer> LED_POWER = BuildCraftProperties.LED_POWER;
     public static final BuildCraftProperty<Boolean> LED_ACTIVE = BuildCraftProperties.LED_ACTIVE;
 
     protected final BuildCraftProperty<?>[] properties;
     protected final BuildCraftProperty<?>[] nonMetaProperties;
+    protected final List<BuildCraftProperty<?>> propertyList;
     protected final Map<Integer, IBlockState> intToState = Maps.newHashMap();
     protected final Map<IBlockState, Integer> stateToInt = Maps.newHashMap();
     protected final BlockState myBlockState;
@@ -165,6 +166,11 @@ public abstract class BlockBuildCraftBase extends Block {
                 BCLog.logger.info("  The value of " + prop.getName() + " is implied by surroundings and is temparary");
             }
         }
+
+        List<BuildCraftProperty<?>> allProperties = Lists.newArrayList();
+        allProperties.addAll(metas);
+        allProperties.addAll(nonMetas);
+        propertyList = Collections.unmodifiableList(allProperties);
     }
 
     @Override

@@ -7,6 +7,7 @@ package buildcraft.core.lib.block;
 import io.netty.buffer.ByteBuf;
 
 import java.util.HashSet;
+import java.util.List;
 
 import cofh.api.energy.IEnergyHandler;
 
@@ -19,12 +20,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.world.World;
 
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.tiles.IControllable;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.RFBattery;
@@ -36,7 +40,7 @@ import buildcraft.core.lib.utils.Utils;
 /** For future maintainers: This class intentionally does not implement just every interface out there. For some of them
  * (such as IControllable), we expect the tiles supporting it to implement it - but TileBuildCraft provides all the
  * underlying functionality to stop code repetition. */
-public abstract class TileBuildCraft extends TileEntity implements IEnergyHandler, ISerializable, IUpdatePlayerListBox {
+public abstract class TileBuildCraft extends TileEntity implements IEnergyHandler, ISerializable, IUpdatePlayerListBox, IDebuggable {
     protected TileBuffer[] cache;
     protected HashSet<EntityPlayer> guiWatchers = new HashSet<EntityPlayer>();
     protected IControllable.Mode mode;
@@ -47,6 +51,8 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 
     private int receivedTick, extractedTick;
     private long worldTimeEnergyReceive;
+    /** Used at the client for the power LED brightness */
+    public int ledPower = 0;
 
     public String getOwner() {
         return owner;
@@ -74,6 +80,19 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
         if (battery != null) {
             receivedTick = 0;
             extractedTick = 0;
+
+            if (!worldObj.isRemote) {
+                int prePower = ledPower;
+                int stored = battery.getEnergyStored();
+                int max = battery.getMaxEnergyStored();
+                ledPower = 0;
+                if (stored != 0) {
+                    ledPower = stored * 2 / max + 1;
+                }
+                if (prePower != ledPower) {
+                    sendNetworkUpdate();
+                }
+            }
         }
     }
 
@@ -110,12 +129,12 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
         }
     }
 
-    public void writeData(ByteBuf stream) {
-
+     public void writeData(ByteBuf stream) {
+        stream.writeByte(ledPower);
     }
 
     public void readData(ByteBuf stream) {
-
+        ledPower = stream.readByte();
     }
 
     public Packet getPacketUpdate() {
@@ -125,6 +144,11 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
     @Override
     public net.minecraft.network.Packet getDescriptionPacket() {
         return Utils.toPacket(getPacketUpdate(), 0);
+    }
+
+    @Override
+    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newSate) {
+        return oldState.getBlock() != newSate.getBlock();
     }
 
     @Override
@@ -247,6 +271,13 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 
     public void setControlMode(IControllable.Mode mode) {
         this.mode = mode;
+    }
+
+    // Debug
+    public void getDebugInfo(List<String> info, EnumFacing side, ItemStack debugger, EntityPlayer player) {
+        // TODO (PASS 3): REMOVE THIS DEBUG METHOD!
+        info.add("Battery = " + battery);
+        info.add("LED power = " + ledPower);
     }
 
     // IInventory

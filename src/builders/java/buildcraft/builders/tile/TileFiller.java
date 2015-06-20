@@ -13,6 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
 
+import buildcraft.api.core.BuildCraftProperties;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.statements.IStatementContainer;
@@ -109,11 +110,11 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
             return;
         }
 
-        boolean oldDone = done;
+        boolean oldDone = isDone();
 
-        if (done) {
+        if (isDone()) {
             if (mode == Mode.Loop) {
-                done = false;
+                setDone(false);
             } else {
                 return;
             }
@@ -128,12 +129,12 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
             currentTemplate.buildNextSlot(worldObj, this, pos.getX(), pos.getY(), pos.getZ());
 
             if (currentTemplate.isDone(this)) {
-                done = true;
+                setDone(true);
                 currentTemplate = null;
             }
         }
 
-        if (oldDone != done) {
+        if (oldDone != isDone()) {
             sendNetworkUpdate();
         }
     }
@@ -192,7 +193,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
             box.initialize(nbt.getCompoundTag("box"));
         }
 
-        done = nbt.getBoolean("done");
+        setDone(nbt.getBoolean("done"));
 
         // The rest of load has to be done upon initialize.
         initNBT = (NBTTagCompound) nbt.getCompoundTag("bpt").copy();
@@ -212,7 +213,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
         box.writeToNBT(boxStore);
         nbt.setTag("box", boxStore);
 
-        nbt.setBoolean("done", done);
+        nbt.setBoolean("done", isDone());
 
         NBTTagCompound bptNBT = new NBTTagCompound();
 
@@ -260,7 +261,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
         if (pattern != null && currentPattern != pattern) {
             currentPattern = pattern;
             currentTemplate = null;
-            done = false;
+            setDone(false);
             initPatternParameters();
             sendNetworkUpdate();
         }
@@ -293,8 +294,9 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 
     @Override
     public void writeData(ByteBuf data) {
+        super.writeData(data);
         box.writeData(data);
-        data.writeBoolean(done);
+        data.writeBoolean(isDone());
         NetworkUtils.writeUTF(data, currentPattern.getUniqueTag());
 
         NBTTagCompound parameterData = new NBTTagCompound();
@@ -304,8 +306,9 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 
     @Override
     public void readData(ByteBuf data) {
+        super.readData(data);
         box.readData(data);
-        done = data.readBoolean();
+        setDone(data.readBoolean());
         FillerPattern pattern = (FillerPattern) FillerManager.registry.getPattern(NetworkUtils.readUTF(data));
         NBTTagCompound parameterData = NetworkUtils.readNBT(data);
         readParametersFromNBT(parameterData);
@@ -316,7 +319,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 
     @Override
     public boolean hasWork() {
-        return !done && mode != Mode.Off;
+        return !isDone() && mode != Mode.Off;
     }
 
     @Override
@@ -385,13 +388,25 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
         }));
     }
 
+    @Deprecated
     public int getIconGlowLevel(int renderPass) {
         if (renderPass == 1) { // Red LED
-            return done ? 15 : 0;
+            return isDone() ? 15 : 0;
         } else if (renderPass == 2) { // Green LED
             return 0;
         } else {
             return -1;
+        }
+    }
+
+    private boolean isDone() {
+        return done;
+    }
+
+    private void setDone(boolean done) {
+        this.done = done;
+        if (worldObj != null) {
+            worldObj.setBlockState(pos, worldObj.getBlockState(pos).withProperty(BuildCraftProperties.LED_ACTIVE, done));
         }
     }
 }

@@ -10,6 +10,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import buildcraft.api.tiles.IDebuggable;
 import buildcraft.core.lib.items.ItemBuildCraft;
@@ -25,18 +26,14 @@ public class ItemDebugger extends ItemBuildCraft {
     }
 
     @Override
-    public boolean
-            onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (world.isRemote) {
-            return false;
-        }
-
+    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof IDebuggable) {
             ArrayList<String> info = new ArrayList<String>();
+            String effSide = FMLCommonHandler.instance().getEffectiveSide().name().substring(0, 1) + ":";
             ((IDebuggable) tile).getDebugInfo(info, side, stack, player);
             for (String s : info) {
-                player.addChatComponentMessage(new ChatComponentText(s));
+                player.addChatComponentMessage(new ChatComponentText(effSide + s));
             }
             return true;
         }

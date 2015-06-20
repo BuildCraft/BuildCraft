@@ -17,8 +17,10 @@
         	"false": { "submodel":"buildcraftbuilders:filler/led_active_off" }
         },
         "led_power": {
-        	"true":  { "submodel":"buildcraftbuilders:filler/led_power_on" },
-        	"false": { "submodel":"buildcraftbuilders:filler/led_power_off" }
+        	"0": { "submodel":"buildcraftbuilders:filler/led_power_0" },
+        	"1": { "submodel":"buildcraftbuilders:filler/led_power_1" },
+        	"2": { "submodel":"buildcraftbuilders:filler/led_power_2" },
+        	"3": { "submodel":"buildcraftbuilders:filler/led_power_3" }
         },
         "pattern": {
         	"none":     { "submodel":"buildcraftbuilders:filler/pattern_none" },

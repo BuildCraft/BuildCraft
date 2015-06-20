@@ -24,10 +24,8 @@ import buildcraft.core.lib.block.BlockBuildCraft;
 
 public class BlockFiller extends BlockBuildCraft {
     public BlockFiller() {
-        super(Material.iron, FACING_PROP, LED_POWER, LED_ACTIVE, FILLER_PATTERN);
-
+        super(Material.iron, FACING_PROP, LED_ACTIVE, LED_POWER, FILLER_PATTERN);
         setHardness(5F);
-        setPassCount(4);
     }
 
     @Override
@@ -65,6 +63,7 @@ public class BlockFiller extends BlockBuildCraft {
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess access, BlockPos pos) {
+        state = super.getActualState(state, access, pos);
         TileEntity tile = access.getTileEntity(pos);
         if (tile instanceof TileFiller) {
             FillerPattern pattern = ((TileFiller) tile).currentPattern;

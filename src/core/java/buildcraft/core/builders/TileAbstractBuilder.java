@@ -7,9 +7,11 @@ package buildcraft.core.builders;
 import io.netty.buffer.ByteBuf;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Set;
+
+import com.google.common.collect.Sets;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -34,7 +36,7 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 
     public LinkedList<LaserData> pathLasers = new LinkedList<LaserData>();
 
-    public HashSet<BuildingItem> buildersInAction = new HashSet<BuildingItem>();
+    public Set<BuildingItem> buildersInAction = Sets.newConcurrentHashSet();
 
     private int rfPrev = 0;
     private int rfUnchangedCycles = 0;
@@ -153,6 +155,7 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 
     @Override
     public void readData(ByteBuf stream) {
+        super.readData(stream);
         int size = stream.readUnsignedShort();
         pathLasers.clear();
         for (int i = 0; i < size; i++) {
@@ -164,6 +167,7 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 
     @Override
     public void writeData(ByteBuf stream) {
+        super.writeData(stream);
         stream.writeShort(pathLasers.size());
         for (LaserData ld : pathLasers) {
             ld.writeData(stream);
