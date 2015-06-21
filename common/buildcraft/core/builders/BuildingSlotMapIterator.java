@@ -34,12 +34,15 @@ public class BuildingSlotMapIterator {
 		this.slots = slots;
 		this.impIterator = slots.keySet().iterator();
 		this.buildStageOccurences = buildStageOccurences;
-		this.isCreative = builder.getWorldObj().getWorldInfo().getGameType() == WorldSettings.GameType.CREATIVE;
+		this.isCreative = builder == null
+				|| builder.getWorldObj().getWorldInfo().getGameType() == WorldSettings.GameType.CREATIVE;
 
 		// Generate available pairs
-		availablePairs.add(new BuilderItemMetaPair(null));
-		for (int i = 0; i < builder.getSizeInventory(); i++) {
-			availablePairs.add(new BuilderItemMetaPair(builder.getStackInSlot(i)));
+		if (builder != null) {
+			availablePairs.add(new BuilderItemMetaPair(null));
+			for (int i = 0; i < builder.getSizeInventory(); i++) {
+				availablePairs.add(new BuilderItemMetaPair(builder.getStackInSlot(i)));
+			}
 		}
 
 		findNewCurrent();

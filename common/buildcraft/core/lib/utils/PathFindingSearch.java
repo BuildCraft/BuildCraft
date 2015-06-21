@@ -119,7 +119,7 @@ public class PathFindingSearch implements IIterableAlgorithm {
 			if (pathFinding.isDone()) {
 				LinkedList<BlockIndex> path = pathFinding.getResult();
 				if (path != null && path.size() > 0) {
-					if (reserve(path.getLast())) {
+					if (reserve(pathFinding.end())) {
 						return;
 					}
 				}
