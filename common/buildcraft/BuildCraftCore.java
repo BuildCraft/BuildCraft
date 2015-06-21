@@ -542,6 +542,8 @@ public class BuildCraftCore extends BuildCraftMod {
 		if (event.map.getTextureType() == 1) {
 			iconProvider = new CoreIconProvider();
 			iconProvider.registerIcons(event.map);
+
+			StatementManager.registerIcons(event.map);
 		} else if (event.map.getTextureType() == 0) {
 			BuildCraftCore.redLaserTexture = event.map.registerIcon("buildcraftcore:laserBox/blockRedLaser");
 			BuildCraftCore.blueLaserTexture = event.map.registerIcon("buildcraftcore:laserBox/blockBlueLaser");

@@ -244,8 +244,6 @@ public class ItemGate extends ItemBuildCraft implements IPipePluggableItem {
 		for (IGateExpansion expansion : GateExpansions.getExpansions()) {
 			expansion.registerItemOverlay(iconRegister);
 		}
-		
-		StatementManager.registerIcons(iconRegister);
 	}
 
 	@Override

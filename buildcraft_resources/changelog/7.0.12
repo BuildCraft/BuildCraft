@@ -6,5 +6,8 @@ Additions:
 
 Bugs fixed:
 
+* [#2828] Filler crash without Transport (asie)
+* [#2822] Stamper eats items that should not used up (asie)
 * [#2820] CME in map generation (asie)
 * Zone planner maps not generating (asie)
+
