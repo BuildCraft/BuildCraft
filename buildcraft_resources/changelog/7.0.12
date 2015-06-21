@@ -7,6 +7,7 @@ Additions:
 Improvements:
 
 * Rendering helmet overlays on robots is now supported (hea3ven)
+* The Accept Items action now supports Lists (asie)
 * The builder robot will not pick up materials in creative worlds (hea3ven)
 
 Bugs fixed:
