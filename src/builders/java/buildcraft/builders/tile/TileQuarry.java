@@ -36,8 +36,6 @@ import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.BuildCraftProperties;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.SafeTimeTracker;
-import buildcraft.api.filler.FillerManager;
-import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.transport.IPipeConnection;
@@ -53,7 +51,6 @@ import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
 import buildcraft.core.builders.TileAbstractBuilder;
-import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.internal.IDropControlInventory;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.utils.BlockMiner;
@@ -118,7 +115,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
             }
         }
 
-        if (stage != Stage.BUILDING) {
+        if (getStage() != Stage.BUILDING) {
             box.isVisible = false;
 
             if (arm == null) {
@@ -160,16 +157,16 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         super.update();
 
         if (worldObj.isRemote) {
-            if (stage != Stage.DONE) {
+            if (getStage() != Stage.DONE) {
                 moveHead(speed);
             }
 
             return;
         }
 
-        if (stage == Stage.DONE) {
+        if (getStage() == Stage.DONE) {
             if (mode == Mode.Loop) {
-                stage = Stage.IDLE;
+                setStage(Stage.IDLE);
             } else {
                 return;
             }
@@ -179,27 +176,27 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
             return;
         }
 
-        if (mode == Mode.Off && stage != Stage.MOVING) {
+        if (mode == Mode.Off && getStage() != Stage.MOVING) {
             return;
         }
 
         createUtilsIfNeeded();
 
-        if (stage == Stage.BUILDING) {
+        if (getStage() == Stage.BUILDING) {
             if (builder != null && !builder.isDone(this)) {
                 builder.buildNextSlot(worldObj, this, pos.getX(), pos.getY(), pos.getZ());
             } else {
-                stage = Stage.IDLE;
+                setStage(Stage.IDLE);
             }
-        } else if (stage == Stage.DIGGING) {
+        } else if (getStage() == Stage.DIGGING) {
             dig();
-        } else if (stage == Stage.IDLE) {
+        } else if (getStage() == Stage.IDLE) {
             idling();
 
             // We are sending a network packet update ONLY below.
             // In this case, since idling() does it anyway, we should return.
             return;
-        } else if (stage == Stage.MOVING) {
+        } else if (getStage() == Stage.MOVING) {
             int energyUsed = this.getBattery().useEnergy(20, (int) Math.ceil(20 + getBattery().getEnergyStored() / 10), false);
 
             if (energyUsed >= 20) {
@@ -232,7 +229,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
         if (miner == null) {
             // Hmm.
-            stage = Stage.IDLE;
+            setStage(Stage.IDLE);
             return;
         }
 
@@ -243,6 +240,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
             // Collect any lost items laying around
             double[] head = getHead();
             AxisAlignedBB axis = new AxisAlignedBB(head[0] - 2, head[1] - 2, head[2] - 2, head[0] + 3, head[1] + 3, head[2] + 3);
+            @SuppressWarnings("rawtypes")
             List result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
             for (int ii = 0; ii < result.size(); ii++) {
                 if (result.get(ii) instanceof EntityItem) {
@@ -260,7 +258,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
                 }
             }
 
-            stage = Stage.IDLE;
+            setStage(Stage.IDLE);
             miner = null;
         }
     }
@@ -272,9 +270,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
                 setTarget(new BlockPos(box.xMin + 1, pos.getY() + 2, box.zMin + 1));
             }
 
-            stage = Stage.DONE;
+            setStage(Stage.DONE);
         } else {
-            stage = Stage.MOVING;
+            setStage(Stage.MOVING);
         }
 
         movingHorizontally = true;
@@ -468,7 +466,6 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         nbttagcompound.setTag("bpt", bptNBT);
     }
 
-    @SuppressWarnings("rawtypes")
     public void positionReached() {
         if (worldObj.isRemote) {
             return;
@@ -477,9 +474,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         BlockPos pos = new BlockPos(targetX, targetY - 1, targetZ);
         if (isQuarriableBlock(pos)) {
             miner = new BlockMiner(worldObj, this, pos);
-            stage = Stage.DIGGING;
+            setStage(Stage.DIGGING);
         } else {
-            stage = Stage.IDLE;
+            setStage(Stage.IDLE);
         }
     }
 
@@ -520,7 +517,21 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
     @Override
     public boolean hasWork() {
-        return stage != Stage.DONE;
+        return getStage() != Stage.DONE;
+    }
+
+    private Stage getStage() {
+        return stage;
+    }
+
+    private void setStage(Stage stage) {
+        this.stage = stage;
+        IBlockState state = worldObj.getBlockState(pos);
+        if (stage == Stage.DONE) {
+            worldObj.setBlockState(pos, state.withProperty(BuildCraftProperties.LED_DONE, true));
+        } else if (BuildCraftProperties.LED_DONE.getValue(state) == true) {
+            worldObj.setBlockState(pos, state.withProperty(BuildCraftProperties.LED_DONE, false));
+        }
     }
 
     private void setBoundaries(boolean useDefaultI) {
@@ -614,15 +625,11 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     private void initializeBlueprintBuilder() {
         PatternQuarryFrame pqf = PatternQuarryFrame.INSTANCE;
 
-        Blueprint bpt =
-            ((FillerPattern) FillerManager.registry.getPattern("buildcraft:frame")).getBlueprint(box, worldObj, new IStatementParameter[0],
-                BuildCraftBuilders.frameBlock.getDefaultState());
+        Blueprint bpt = pqf.getBlueprint(box, worldObj);
         // TODO (PASS 1): Fix this to make it work properly with the new frame mechanics
 
-        if (bpt != null) {
-            builder = new BptBuilderBlueprint(bpt, worldObj, new BlockPos(box.xMin, pos.getY(), box.zMin));
-            stage = Stage.BUILDING;
-        }
+        builder = new BptBuilderBlueprint(bpt, worldObj, new BlockPos(box.xMin, pos.getY(), box.zMin));
+        setStage(Stage.BUILDING);
     }
 
     @Override
@@ -637,14 +644,11 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         stream.writeDouble(headPosZ);
         stream.writeFloat((float) speed);
         stream.writeFloat((float) headTrajectory);
-        int flags = stage.ordinal();
+        int flags = getStage().ordinal();
         flags |= movingHorizontally ? 0x10 : 0;
         flags |= movingVertically ? 0x20 : 0;
         stream.writeByte(flags);
-
-        ledState =
-            (hasWork() && mode != Mode.Off && getTicksSinceEnergyReceived() < 12 ? 16 : 0)
-                | (getBattery().getEnergyStored() * 15 / getBattery().getMaxEnergyStored());
+        ledState = (getBattery().getEnergyStored() * 3 / getBattery().getMaxEnergyStored());
         stream.writeByte(ledState);
     }
 
@@ -661,7 +665,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         speed = stream.readFloat();
         headTrajectory = stream.readFloat();
         int flags = stream.readUnsignedByte();
-        stage = Stage.values()[flags & 0x07];
+        setStage(Stage.values()[flags & 0x07]);
         movingHorizontally = (flags & 0x10) != 0;
         movingVertically = (flags & 0x20) != 0;
         int newLedState = stream.readUnsignedByte();

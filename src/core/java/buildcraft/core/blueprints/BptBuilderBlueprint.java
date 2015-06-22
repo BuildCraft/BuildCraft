@@ -313,9 +313,9 @@ public class BptBuilderBlueprint extends BptBuilderBase {
         BuildingSlotBlock slot;
 
         while ((slot = iterator.next()) != null) {
-            if (world.isAirBlock(slot.pos)) {
-                continue;
-            }
+//            if (world.isAirBlock(slot.pos)) {
+//                continue;
+//            }
 
             boolean skipped = false;
 

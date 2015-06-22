@@ -29,7 +29,7 @@ public class BlockBuilder extends BlockBuildCraft {
     TextureAtlasSprite blockTextureFront;
 
     public BlockBuilder() {
-        super(Material.iron, FACING_PROP);
+        super(Material.iron, FACING_PROP, LED_DONE, LED_POWER);
         setHardness(5F);
     }
 

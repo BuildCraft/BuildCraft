@@ -134,7 +134,7 @@ public class CoreProxyClient extends CoreProxy {
                 }
                 stateTypeMap.put(state, type);
                 metaStateMap.put(block.damageDropped(state), state);
-                ModelBakery.addVariantName(Item.getItemFromBlock(block), type.toLowerCase());
+//                ModelBakery.addVariantName(Item.getItemFromBlock(block), type.toLowerCase());
             }
             for (Entry<Integer, Collection<IBlockState>> entry : metaStateMap.asMap().entrySet()) {
                 Collection<IBlockState> blockStates = entry.getValue();

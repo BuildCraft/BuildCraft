@@ -13,6 +13,7 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.BlockTorch;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
@@ -185,8 +186,8 @@ public class SchematicBlock extends SchematicBlockBase {
         return getItemStack(state, 1);
     }
 
-    public EnumFacing getFace() {
-        return (EnumFacing) state.getValue(BuildCraftProperties.BLOCK_FACING);
+    public EnumFacing getFace(IProperty prop) {
+        return (EnumFacing) state.getValue(prop);
     }
 
     // Pretty much all blocks (that rotate) rotate this way now
@@ -196,12 +197,17 @@ public class SchematicBlock extends SchematicBlockBase {
         Collection<IProperty> props = state.getPropertyNames();
         for (IProperty prop : props) {
             if (BuildCraftProperties.BLOCK_FACING.getName().equals(prop.getName())) {
-                EnumFacing face = getFace();
+                boolean six = prop.getAllowedValues().contains(EnumFacing.UP) || prop.getAllowedValues().contains(EnumFacing.DOWN);
+                IProperty property = six ? BuildCraftProperties.BLOCK_FACING_6 : BuildCraftProperties.BLOCK_FACING;
+                if (state.getBlock() instanceof BlockTorch) {
+                    property = BlockTorch.FACING;
+                }
+                EnumFacing face = getFace(property);
                 if (face.getAxis() == Axis.Y) {
                     // Don't attempt to rotate if its facing up or down
                     break;
                 }
-                state = state.withProperty(BuildCraftProperties.BLOCK_FACING, face.rotateY());
+                state = state.withProperty(property, face.rotateY());
                 break;
             }
         }

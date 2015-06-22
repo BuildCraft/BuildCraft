@@ -53,6 +53,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
     private long worldTimeEnergyReceive;
     /** Used at the client for the power LED brightness */
     public int ledPower = 0;
+    public boolean ledActive = false;
 
     public String getOwner() {
         return owner;

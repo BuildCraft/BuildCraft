@@ -1,5 +1,9 @@
 package buildcraft.api.core;
 
+import java.util.Map;
+
+import com.google.common.collect.Maps;
+
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.enums.EnumColor;
@@ -27,7 +31,16 @@ public final class BuildCraftProperties {
 
     public static final BuildCraftProperty<Boolean> JOINED_BELOW = BuildCraftProperty.create("joined_below", false);
     public static final BuildCraftProperty<Boolean> MOVING = BuildCraftProperty.create("moving", false);
-    public static final BuildCraftProperty<Boolean> LED_ACTIVE = BuildCraftProperty.create("led_active", false);
+    public static final BuildCraftProperty<Boolean> LED_DONE = BuildCraftProperty.create("led_active", false);
+
+    public static final BuildCraftProperty<Boolean> CONNECTED_UP = BuildCraftProperty.create("connected_up", false);
+    public static final BuildCraftProperty<Boolean> CONNECTED_DOWN = BuildCraftProperty.create("connected_down", false);
+    public static final BuildCraftProperty<Boolean> CONNECTED_EAST = BuildCraftProperty.create("connected_east", false);
+    public static final BuildCraftProperty<Boolean> CONNECTED_WEST = BuildCraftProperty.create("connected_west", false);
+    public static final BuildCraftProperty<Boolean> CONNECTED_NORTH = BuildCraftProperty.create("connected_north", false);
+    public static final BuildCraftProperty<Boolean> CONNECTED_SOUTH = BuildCraftProperty.create("connected_south", false);
+
+    public static final Map<EnumFacing, BuildCraftProperty<Boolean>> CONNECTED_MAP;
 
     // Unlisted properties
     // public static final PropertyDouble FLUID_HEIGHT_NE = new PropertyDouble("height_ne", 0, 1);
@@ -56,6 +69,17 @@ public final class BuildCraftProperties {
     public static final int MARK_THIS_AND_NEIGHBOURS = UPDATE_NEIGHBOURS + MARK_BLOCK_FOR_UPDATE;
     /** This will update everything about this block. */
     public static final int UPDATE_ALL = UPDATE_NEIGHBOURS + MARK_BLOCK_FOR_UPDATE + UPDATE_EVEN_CLIENT;
+
+    static {
+        Map<EnumFacing, BuildCraftProperty<Boolean>> map = Maps.newEnumMap(EnumFacing.class);
+        map.put(EnumFacing.DOWN, CONNECTED_DOWN);
+        map.put(EnumFacing.UP, CONNECTED_UP);
+        map.put(EnumFacing.EAST, CONNECTED_EAST);
+        map.put(EnumFacing.WEST, CONNECTED_WEST);
+        map.put(EnumFacing.NORTH, CONNECTED_NORTH);
+        map.put(EnumFacing.SOUTH, CONNECTED_SOUTH);
+        CONNECTED_MAP = Maps.immutableEnumMap(map);
+    }
 
     /** Deactivate constructor */
     private BuildCraftProperties() {}

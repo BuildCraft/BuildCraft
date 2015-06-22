@@ -18,6 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
@@ -42,7 +43,6 @@ import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.lib.utils.BitSetUtils;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.NBTUtils;
-import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 
 public abstract class BptBuilderBase implements IAreaProvider {
@@ -128,7 +128,7 @@ public abstract class BptBuilderBase implements IAreaProvider {
         if (slot != null) {
             slot.built = true;
             BuildingItem i = new BuildingItem();
-            i.origin = Utils.convert(pos);
+            i.origin = new Vec3(x, y, z);
             i.destination = slot.getDestination();
             i.slotToBuild = slot;
             i.context = getContext();

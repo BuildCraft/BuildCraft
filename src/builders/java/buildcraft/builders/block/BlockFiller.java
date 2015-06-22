@@ -24,7 +24,7 @@ import buildcraft.core.lib.block.BlockBuildCraft;
 
 public class BlockFiller extends BlockBuildCraft {
     public BlockFiller() {
-        super(Material.iron, FACING_PROP, LED_ACTIVE, LED_POWER, FILLER_PATTERN);
+        super(Material.iron, FACING_PROP, LED_DONE, LED_POWER, FILLER_PATTERN);
         setHardness(5F);
     }
 

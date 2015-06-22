@@ -297,9 +297,9 @@ public class BuildCraftEnergy extends BuildCraftMod {
         BuildcraftFuelRegistry.coolant.addCoolant(FluidRegistry.WATER, 0.0023f);
         BuildcraftFuelRegistry.coolant.addSolidCoolant(StackKey.stack(Blocks.ice), StackKey.fluid(FluidRegistry.WATER), 2f);
 
-        BuildCraftCore.engineBlock.registerTile(TileEngineStone.class, "tile.engineStone");
-        BuildCraftCore.engineBlock.registerTile(TileEngineIron.class, "tile.engineIron");
-        BuildCraftCore.engineBlock.registerTile(TileEngineCreative.class, "tile.engineCreative");
+        BuildCraftCore.engineBlock.registerTile(TileEngineStone.class, "buildcraft.energy.engineStone");
+        BuildCraftCore.engineBlock.registerTile(TileEngineIron.class, "buildcraft.energy.engineIron");
+        BuildCraftCore.engineBlock.registerTile(TileEngineCreative.class, "buildcraft.energy.engineCreative");
 
         InterModComms.registerHandler(new IMCHandlerEnergy());
 
@@ -394,7 +394,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent evt) {
         if (BuildCraftCore.modifyWorld) {
-            MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
+//            MinecraftForge.EVENT_BUS.register(OilPopulate.INSTANCE);
             MinecraftForge.TERRAIN_GEN_BUS.register(new BiomeInitializer());
         }
     }

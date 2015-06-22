@@ -23,10 +23,13 @@ import buildcraft.api.tools.IToolWrench;
 import buildcraft.builders.BuildCraftBuilders;
 import buildcraft.builders.tile.TileQuarry;
 import buildcraft.core.lib.block.BlockBuildCraft;
+import buildcraft.core.lib.utils.Utils;
 
 public class BlockQuarry extends BlockBuildCraft {
     public BlockQuarry() {
-        super(Material.iron, FACING_PROP);
+        // Connected_Direction is used for the pipe connected model
+        super(Material.iron, FACING_PROP, LED_DONE, LED_POWER, CONNECTED_UP, CONNECTED_DOWN, CONNECTED_EAST, CONNECTED_WEST, CONNECTED_NORTH,
+            CONNECTED_SOUTH);
 
         setHardness(10F);
         setResistance(10F);
@@ -47,6 +50,24 @@ public class BlockQuarry extends BlockBuildCraft {
     @Override
     public TileEntity createNewTileEntity(World world, int metadata) {
         return new TileQuarry();
+    }
+
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess access, BlockPos pos) {
+        state = super.getActualState(state, access, pos);
+        TileEntity tile = access.getTileEntity(pos);
+        if (tile == null | !(tile instanceof TileQuarry)) {
+            return state;
+        }
+        TileQuarry quarry = (TileQuarry) tile;
+        
+        for (EnumFacing face : EnumFacing.VALUES) {
+            TileEntity other = access.getTileEntity(pos.offset(face));
+            boolean hasPipe = Utils.checkPipesConnections(quarry, other);
+            state = state.withProperty(CONNECTED_MAP.get(face), hasPipe);
+        }
+
+        return state;
     }
 
     // public void searchFrames(World world, BlockPos pos) {

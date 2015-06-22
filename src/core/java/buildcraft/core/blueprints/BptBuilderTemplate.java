@@ -152,9 +152,9 @@ public class BptBuilderTemplate extends BptBuilderBase {
                 break;
             }
 
-            if (world.isAirBlock(slot.pos)) {
-                continue;
-            }
+//            if (world.isAirBlock(slot.pos)) {
+//                continue;
+//            }
 
             if (canDestroy(builder, context, slot)) {
                 if (BlockUtils.isUnbreakableBlock(world, slot.pos) || isBlockBreakCanceled(world, slot.pos)

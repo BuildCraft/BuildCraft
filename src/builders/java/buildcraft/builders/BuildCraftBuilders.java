@@ -532,7 +532,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
         CoreProxy.proxy.registerItem(blueprintItem);
 
         quarryBlock = (BlockQuarry) CompatHooks.INSTANCE.getBlock(BlockQuarry.class);
-        CoreProxy.proxy.registerBlock(quarryBlock.setUnlocalizedName("machineBlock"));
+        CoreProxy.proxy.registerBlock(quarryBlock.setUnlocalizedName("quarryBlock"));
 
         markerBlock = (BlockMarker) CompatHooks.INSTANCE.getBlock(BlockMarker.class);
         CoreProxy.proxy.registerBlock(markerBlock.setUnlocalizedName("markerBlock"));
@@ -561,17 +561,17 @@ public class BuildCraftBuilders extends BuildCraftMod {
         if (!BuildCraftCore.NONRELEASED_BLOCKS) {
             urbanistBlock = new BlockUrbanist();
             CoreProxy.proxy.registerBlock(urbanistBlock.setUnlocalizedName("urbanistBlock"));
-            CoreProxy.proxy.registerTileEntity(TileUrbanist.class, "net.minecraft.src.builders.TileUrbanist");
+            CoreProxy.proxy.registerTileEntity(TileUrbanist.class, "buildcraft.builders.Urbanist");
         }
 
-        CoreProxy.proxy.registerTileEntity(TileQuarry.class, "Machine");
-        CoreProxy.proxy.registerTileEntity(TileMarker.class, "Marker");
-        CoreProxy.proxy.registerTileEntity(TileFiller.class, "Filler");
-        CoreProxy.proxy.registerTileEntity(TileBuilder.class, "net.minecraft.src.builders.TileBuilder");
-        CoreProxy.proxy.registerTileEntity(TileArchitect.class, "net.minecraft.src.builders.TileTemplate");
-        CoreProxy.proxy.registerTileEntity(TilePathMarker.class, "net.minecraft.src.builders.TilePathMarker");
-        CoreProxy.proxy.registerTileEntity(TileConstructionMarker.class, "net.minecraft.src.builders.TileConstructionMarker");
-        CoreProxy.proxy.registerTileEntity(TileBlueprintLibrary.class, "net.minecraft.src.builders.TileBlueprintLibrary");
+        CoreProxy.proxy.registerTileEntity(TileQuarry.class, "buildcraft.builders.Quarry");
+        CoreProxy.proxy.registerTileEntity(TileMarker.class, "buildcraft.builders.Marker");
+        CoreProxy.proxy.registerTileEntity(TileFiller.class, "buildcraft.builders.Filler");
+        CoreProxy.proxy.registerTileEntity(TileBuilder.class, "buildcraft.builders.Builder");
+        CoreProxy.proxy.registerTileEntity(TileArchitect.class, "buildcraft.builders.Architect");
+        CoreProxy.proxy.registerTileEntity(TilePathMarker.class, "buildcraft.builders.PathMarker");
+        CoreProxy.proxy.registerTileEntity(TileConstructionMarker.class, "buildcraft.builders.ConstructionMarker");
+        CoreProxy.proxy.registerTileEntity(TileBlueprintLibrary.class, "buildcraft.builders.BlueprintLibrary");
 
         SchematicRegistry.INSTANCE.readConfiguration(BuildCraftCore.mainConfiguration);
 
@@ -680,7 +680,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
     @Mod.EventHandler
     public void remap(FMLMissingMappingsEvent event) {
         for (FMLMissingMappingsEvent.MissingMapping mapping : event.get()) {
-            if (mapping.name.equals("BuildCraft|Builders:buildToolBlock") || mapping.name.equals("BuildCraft|Builders:null")) {
+            if (mapping.name.equals("BuildCraftBuilders:buildToolBlock") || mapping.name.equals("BuildCraftBuilders:null")) {
                 if (mapping.type == GameRegistry.Type.ITEM) {
                     mapping.remap(Item.getItemFromBlock(BuildCraftCore.buildToolBlock));
                 } else {

@@ -23,7 +23,7 @@ import buildcraft.core.lib.block.BlockBuildCraft;
 public class BlockArchitect extends BlockBuildCraft {
 
     public BlockArchitect() {
-        super(Material.iron, FACING_PROP, LED_ACTIVE, LED_POWER);
+        super(Material.iron, FACING_PROP);
     }
 
     @Override

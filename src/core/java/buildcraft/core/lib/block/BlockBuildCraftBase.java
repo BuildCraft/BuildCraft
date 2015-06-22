@@ -49,7 +49,16 @@ public abstract class BlockBuildCraftBase extends Block {
     public static final BuildCraftProperty<Boolean> JOINED_BELOW = BuildCraftProperties.JOINED_BELOW;
     public static final BuildCraftProperty<Boolean> MOVING = BuildCraftProperties.MOVING;
     public static final BuildCraftProperty<Integer> LED_POWER = BuildCraftProperties.LED_POWER;
-    public static final BuildCraftProperty<Boolean> LED_ACTIVE = BuildCraftProperties.LED_ACTIVE;
+    public static final BuildCraftProperty<Boolean> LED_DONE = BuildCraftProperties.LED_DONE;
+
+    public static final BuildCraftProperty<Boolean> CONNECTED_UP = BuildCraftProperties.CONNECTED_UP;
+    public static final BuildCraftProperty<Boolean> CONNECTED_DOWN = BuildCraftProperties.CONNECTED_DOWN;
+    public static final BuildCraftProperty<Boolean> CONNECTED_EAST = BuildCraftProperties.CONNECTED_EAST;
+    public static final BuildCraftProperty<Boolean> CONNECTED_WEST = BuildCraftProperties.CONNECTED_WEST;
+    public static final BuildCraftProperty<Boolean> CONNECTED_NORTH = BuildCraftProperties.CONNECTED_NORTH;
+    public static final BuildCraftProperty<Boolean> CONNECTED_SOUTH = BuildCraftProperties.CONNECTED_SOUTH;
+
+    public static final Map<EnumFacing, BuildCraftProperty<Boolean>> CONNECTED_MAP = BuildCraftProperties.CONNECTED_MAP;
 
     protected final BuildCraftProperty<?>[] properties;
     protected final BuildCraftProperty<?>[] nonMetaProperties;
@@ -153,8 +162,17 @@ public abstract class BlockBuildCraftBase extends Block {
         }
 
         BCLog.logger.info("State -> Int: ");
+        int num = stateToInt.size();
+        int cap = num - 10;
         for (Entry<IBlockState, Integer> entry : stateToInt.entrySet()) {
-            BCLog.logger.info("  " + entry.getKey() + " -> " + entry.getValue());
+            if (num == cap) {
+                BCLog.logger.info("");
+                BCLog.logger.info("  (" + num + " more)");
+                BCLog.logger.info("");
+            } else if (num > cap) {
+                BCLog.logger.info("  " + entry.getKey() + " -> " + entry.getValue());
+            }
+            num--;
         }
 
         setDefaultState(defaultState);

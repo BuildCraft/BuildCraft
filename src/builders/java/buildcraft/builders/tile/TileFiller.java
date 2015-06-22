@@ -406,7 +406,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
     private void setDone(boolean done) {
         this.done = done;
         if (worldObj != null) {
-            worldObj.setBlockState(pos, worldObj.getBlockState(pos).withProperty(BuildCraftProperties.LED_ACTIVE, done));
+            worldObj.setBlockState(pos, worldObj.getBlockState(pos).withProperty(BuildCraftProperties.LED_DONE, done));
         }
     }
 }
