@@ -1,6 +1,6 @@
 Additions:
 
-* Leather/dyed helmet support on robots (asie)
+* [#2819] Leather/dyed helmet support on robots (asie)
 * Make mining robots work with GregTech ores (zmaster587, asie)
 * Robots can now be filtered in Force/Forbid by wearable, not just by type (asie)
 
@@ -12,6 +12,7 @@ Improvements:
 
 Bugs fixed:
 
+* [#2833] Stained Glass Panes in schematics always white (asie)
 * [#2828] Filler crash without Transport (asie)
 * [#2822] Stamper eats items that should not used up (asie)
 * [#2820] CME in map generation (asie)

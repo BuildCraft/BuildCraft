@@ -11,6 +11,6 @@ public class ContainerDummy extends Container {
 	}
 
 	@Override
-	public void onCraftMatrixChanged(IInventory p_75130_1_) {
+	public void onCraftMatrixChanged(IInventory inventory) {
 	}
 }

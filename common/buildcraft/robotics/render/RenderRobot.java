@@ -272,7 +272,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 					GL11.glPopAttrib();
 				}
 				this.bindTexture(RenderBiped.getArmorResource(entity, wearable, 0, "overlay"));
-				helmetBox.render(1/16f);
+				helmetBox.render(1 / 16F);
 			}
 
 			GL11.glPopMatrix();
