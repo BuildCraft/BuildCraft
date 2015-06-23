@@ -35,6 +35,7 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLInterModComms;
+import net.minecraftforge.fml.common.event.FMLMissingMappingsEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
@@ -311,8 +312,10 @@ public class BuildCraftCore extends BuildCraftMod {
 
             engineBlock = (BlockEngine) CompatHooks.INSTANCE.getBlock(BlockEngine.class);
             CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);
-            engineBlock.registerTile((Class<? extends TileEngineBase>) CompatHooks.INSTANCE.getTile(TileEngineWood.class), "buildcraft.core.engineWood");
-            CoreProxy.proxy.registerTileEntity(TileEngineWood.class, "buildcraft.core.engine.wood");
+            engineBlock.registerTile((Class<? extends TileEngineBase>) CompatHooks.INSTANCE.getTile(TileEngineWood.class),
+                "buildcraft.core.engine.wood");
+            CoreProxy.proxy.registerTileEntity(TileEngineWood.class, "buildcraft.core.engine.wood",
+                "net.minecraft.src.buildcraft.energy.TileEngineWood");
 
             FMLCommonHandler.instance().bus().register(this);
             MinecraftForge.EVENT_BUS.register(this);
@@ -378,8 +381,8 @@ public class BuildCraftCore extends BuildCraftMod {
 
         BCCreativeTab.get("main").setIcon(new ItemStack(BuildCraftCore.wrenchItem, 1));
 
-        EntityList.stringToClassMapping.remove("BuildCraft|Core.bcLaser");
-        EntityList.stringToClassMapping.remove("BuildCraft|Core.bcEnergyLaser");
+        EntityList.stringToClassMapping.remove("BuildCraftCore.bcLaser");
+        EntityList.stringToClassMapping.remove("BuildCraftCore.bcEnergyLaser");
 
         BuilderAPI.schematicRegistry.registerSchematicBlock(engineBlock, SchematicEngine.class);
 
@@ -592,6 +595,62 @@ public class BuildCraftCore extends BuildCraftMod {
     public void cleanRegistries(WorldEvent.Unload unload) {
         for (IWorldProperty property : BuildCraftAPI.worldProperties.values()) {
             property.clear();
+        }
+    }
+
+    // 1.7.10 migration
+    @Mod.EventHandler
+    public void remap(FMLMissingMappingsEvent event) {
+        for (FMLMissingMappingsEvent.MissingMapping mapping : event.getAll()) {
+            String name = mapping.name;
+            // Modid changed from BuildCraft|Module to BuildCraftModule
+            if (name.startsWith("BuildCraft|")) {
+                name = name.replace("BuildCraft|", "BuildCraft");
+            }
+
+            // Special cases where we broke something
+            if (name.equals("BuildCraftBuilders:machineBlock")) {
+                name = "BuildCraftBuilders:quarryBlock";
+            }
+
+            // If we did nothing to it, ignore it
+            if (name.equals(mapping.name)) {
+                continue;
+            }
+
+            // After changing the name, remap it to something else
+            Throwable error = null;
+            switch (mapping.type) {
+                case BLOCK: {
+                    try {
+                        mapping.remap(Block.getBlockFromName(name));
+                        continue;
+                    } catch (Throwable t) {
+                        error = t;
+                    }
+                    continue;
+                }
+                case ITEM: {
+                    try {
+                        mapping.remap(Item.getByNameOrId(name));
+                        continue;
+                    } catch (Throwable t) {
+                        error = t;
+                    }
+
+                }
+            }
+
+            if (error != null) {
+                BCLog.logger.error("Could not remap a block correctly- did a programmer do something wrong "
+                    + "or is there actually an issue with the mapping?");
+                BCLog.logger.error("Old name = " + mapping.name);
+                BCLog.logger.error("New name = " + name);
+                BCLog.logger.error("ID = " + mapping.id);
+                BCLog.logger.error("Type = " + mapping.type);
+                BCLog.logger.error("Error:", error);
+                mapping.fail();
+            }
         }
     }
 }

@@ -163,7 +163,7 @@ public abstract class BlockBuildCraftBase extends Block {
 
         BCLog.logger.info("State -> Int: ");
         int num = stateToInt.size();
-        int cap = num - 10;
+        int cap = num - 17;
         for (Entry<IBlockState, Integer> entry : stateToInt.entrySet()) {
             if (num == cap) {
                 BCLog.logger.info("");

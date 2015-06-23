@@ -239,7 +239,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
     @SubscribeEvent
     public void onConfigChanged(ConfigChangedEvent.PostConfigChangedEvent event) {
-        if ("BuildCraft|Core".equals(event.modID)) {
+        if ("BuildCraftCore".equals(event.modID)) {
             reloadConfig(event.isWorldRunning ? ConfigManager.RestartRequirement.NONE : ConfigManager.RestartRequirement.WORLD);
         }
     }
@@ -561,17 +561,21 @@ public class BuildCraftBuilders extends BuildCraftMod {
         if (!BuildCraftCore.NONRELEASED_BLOCKS) {
             urbanistBlock = new BlockUrbanist();
             CoreProxy.proxy.registerBlock(urbanistBlock.setUnlocalizedName("urbanistBlock"));
-            CoreProxy.proxy.registerTileEntity(TileUrbanist.class, "buildcraft.builders.Urbanist");
+            CoreProxy.proxy.registerTileEntity(TileUrbanist.class, "buildcraft.builders.Urbanist", "net.minecraft.src.builders.TileUrbanist");
         }
 
-        CoreProxy.proxy.registerTileEntity(TileQuarry.class, "buildcraft.builders.Quarry");
-        CoreProxy.proxy.registerTileEntity(TileMarker.class, "buildcraft.builders.Marker");
-        CoreProxy.proxy.registerTileEntity(TileFiller.class, "buildcraft.builders.Filler");
-        CoreProxy.proxy.registerTileEntity(TileBuilder.class, "buildcraft.builders.Builder");
-        CoreProxy.proxy.registerTileEntity(TileArchitect.class, "buildcraft.builders.Architect");
-        CoreProxy.proxy.registerTileEntity(TilePathMarker.class, "buildcraft.builders.PathMarker");
-        CoreProxy.proxy.registerTileEntity(TileConstructionMarker.class, "buildcraft.builders.ConstructionMarker");
-        CoreProxy.proxy.registerTileEntity(TileBlueprintLibrary.class, "buildcraft.builders.BlueprintLibrary");
+        // 1.7.10 migration code- the alternative tile entities should be removed at some point, probably when we
+        // abandon 1.7.10 and move to a new major release in 1.8+
+        CoreProxy.proxy.registerTileEntity(TileQuarry.class, "buildcraft.builders.Quarry", "Machine");
+        CoreProxy.proxy.registerTileEntity(TileMarker.class, "buildcraft.builders.Marker", "Marker");
+        CoreProxy.proxy.registerTileEntity(TileFiller.class, "buildcraft.builders.Filler", "Filler");
+        CoreProxy.proxy.registerTileEntity(TileBuilder.class, "buildcraft.builders.Builder", "net.minecraft.src.builders.TileBuilder");
+        CoreProxy.proxy.registerTileEntity(TileArchitect.class, "buildcraft.builders.Architect", "net.minecraft.src.builders.TileTemplate");
+        CoreProxy.proxy.registerTileEntity(TilePathMarker.class, "buildcraft.builders.PathMarker", "net.minecraft.src.builders.TilePathMarker");
+        CoreProxy.proxy.registerTileEntity(TileConstructionMarker.class, "buildcraft.builders.ConstructionMarker",
+            "net.minecraft.src.builders.TileConstructionMarker");
+        CoreProxy.proxy.registerTileEntity(TileBlueprintLibrary.class, "buildcraft.builders.BlueprintLibrary",
+            "net.minecraft.src.builders.TileBlueprintLibrary");
 
         SchematicRegistry.INSTANCE.readConfiguration(BuildCraftCore.mainConfiguration);
 

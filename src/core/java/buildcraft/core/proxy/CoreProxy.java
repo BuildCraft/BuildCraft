@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -86,9 +87,12 @@ public class CoreProxy implements ICoreProxy {
         GameRegistry.registerItem(item, item.getUnlocalizedName().replace("item.", ""));
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public void registerTileEntity(Class clas, String ident) {
+    public void registerTileEntity(Class<? extends TileEntity> clas, String ident) {
         GameRegistry.registerTileEntity(CompatHooks.INSTANCE.getTile(clas), ident);
+    }
+
+    public void registerTileEntity(Class<? extends TileEntity> clas, String id, String... alternatives) {
+        GameRegistry.registerTileEntityWithAlternatives(CompatHooks.INSTANCE.getTile(clas), id, alternatives);
     }
 
     public void onCraftingPickup(World world, EntityPlayer player, ItemStack stack) {
