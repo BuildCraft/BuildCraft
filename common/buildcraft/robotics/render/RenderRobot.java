@@ -269,10 +269,10 @@ public class RenderRobot extends Render implements IItemRenderer {
 				helmetBox.render(1 / 16F);
 
 				if (color != 16777215) {
+					this.bindTexture(RenderBiped.getArmorResource(entity, wearable, 0, "overlay"));
+					helmetBox.render(1 / 16F);
 					GL11.glPopAttrib();
 				}
-				this.bindTexture(RenderBiped.getArmorResource(entity, wearable, 0, "overlay"));
-				helmetBox.render(1 / 16F);
 			}
 
 			GL11.glPopMatrix();
