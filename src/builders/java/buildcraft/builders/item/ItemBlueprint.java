@@ -19,6 +19,7 @@ import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.blueprints.Template;
 import buildcraft.core.lib.items.ItemBuildCraft;
+import buildcraft.core.lib.utils.ModelHelper;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.StringUtils;
 
@@ -113,5 +114,11 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
         base.readFromNBT(nbt);
         base.id = id;
         return base;
+    }
+
+    @Override
+    public void registerModels() {
+        ModelHelper.registerItemModel(this, 0, "");
+        ModelHelper.registerItemModel(this, 1, "Used");
     }
 }

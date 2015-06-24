@@ -55,16 +55,15 @@ class UrbanistToolArea extends UrbanistTool {
     @Override
     public void worldMoved(GuiUrbanist gui, MovingObjectPosition pos) {
         if (step == 1) {
-            x = pos.blockX;
-            z = pos.blockZ;
+            this.pos = new BlockPos(pos.getBlockPos().getX(), this.pos.getY(), pos.getBlockPos().getX());
 
-            gui.urbanist.rpcMoveFrame(pos);
+            gui.urbanist.rpcMoveFrame(this.pos);
         } else if (step == 2) {
             float ydiff = (float) Mouse.getY() / (float) Minecraft.getMinecraft().displayHeight;
 
-            y = (int) (startY + (ydiff - baseY) * 50);
+            this.pos = new BlockPos(this.pos.getX(), (int) (start.getY() + (ydiff - baseY) * 50), this.pos.getZ());
 
-            gui.urbanist.rpcMoveFrame(pos);
+            gui.urbanist.rpcMoveFrame(this.pos);
         }
     }
 }

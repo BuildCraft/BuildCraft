@@ -8,7 +8,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public final class UrbanistToolsIconProvider implements TextureAtlasSpriteProvider {
+// TODO (PASS 1): Register Urbanist textures
+public final class UrbanistToolsIconProvider { // implements TextureAtlasSpriteProvider {
 
     public static UrbanistToolsIconProvider INSTANCE = new UrbanistToolsIconProvider();
     public static final int Tool_Block_Place = 0;
@@ -24,20 +25,20 @@ public final class UrbanistToolsIconProvider implements TextureAtlasSpriteProvid
 
     private UrbanistToolsIconProvider() {}
 
-    @Override
+//    @Override
     @SideOnly(Side.CLIENT)
     public TextureAtlasSprite getIcon(int iconIndex) {
         return icons[iconIndex];
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        icons[UrbanistToolsIconProvider.Tool_Block_Place] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_block");
-        icons[UrbanistToolsIconProvider.Tool_Block_Erase] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_erase");
-        icons[UrbanistToolsIconProvider.Tool_Area] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_area");
-        icons[UrbanistToolsIconProvider.Tool_Path] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_path");
-        icons[UrbanistToolsIconProvider.Tool_Filler] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_filler");
-        icons[UrbanistToolsIconProvider.Tool_Blueprint] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_blueprint");
-    }
+//    @Override
+//    @SideOnly(Side.CLIENT)
+//    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
+//        icons[UrbanistToolsIconProvider.Tool_Block_Place] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_block");
+//        icons[UrbanistToolsIconProvider.Tool_Block_Erase] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_erase");
+//        icons[UrbanistToolsIconProvider.Tool_Area] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_area");
+//        icons[UrbanistToolsIconProvider.Tool_Path] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_path");
+//        icons[UrbanistToolsIconProvider.Tool_Filler] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_filler");
+//        icons[UrbanistToolsIconProvider.Tool_Blueprint] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_blueprint");
+//    }
 }

@@ -83,11 +83,11 @@ public class Template extends BlueprintBase {
 
     @Override
     public ItemStack getStack() {
-        Item item = (Item) Item.itemRegistry.getObject("BuildCraftBuilders:templateItem");
+        Item item = (Item) Item.itemRegistry.getObject("BuildCraft|Builders:templateItem");
         if (item == null) {
             throw new Error("Could not find the template item! Did you attempt to use this without buildcraft builders installed?");
         }
-        ItemStack stack = new ItemStack(item, 1);
+        ItemStack stack = new ItemStack(item, 1, 1);
         NBTTagCompound nbt = NBTUtils.getItemData(stack);
         id.write(nbt);
         nbt.setString("author", author);

@@ -18,10 +18,10 @@ public final class ModelHelper {
     }
 
     public static ModelResourceLocation getItemResourceLocation(Item item, String suffix) {
-        return new ModelResourceLocation(Utils.getNameForItem(item) + suffix, "inventory");
+        return new ModelResourceLocation(Utils.getNameForItem(item).replace("|", "") + suffix, "inventory");
     }
 
     public static Object getBlockResourceLocation(Block block) {
-        return new ModelResourceLocation(Utils.getNameForBlock(block));
+        return new ModelResourceLocation(Utils.getNameForBlock(block).replace("|", ""));
     }
 }

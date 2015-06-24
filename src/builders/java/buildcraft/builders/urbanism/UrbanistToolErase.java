@@ -21,6 +21,6 @@ class UrbanistToolErase extends UrbanistTool {
 
     @Override
     public void worldClicked(GuiUrbanist gui, MovingObjectPosition pos) {
-        gui.urbanist.rpcEraseBlock(pos.blockX, pos.blockY, pos.blockZ);
+        gui.urbanist.rpcEraseBlock(pos.getBlockPos());
     }
 }

@@ -10,6 +10,7 @@ import java.util.LinkedList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -51,7 +52,7 @@ class UrbanistToolFiller extends UrbanistToolArea {
         @Override
         public TextureAtlasSprite getIcon() {
             if (index < patterns.size()) {
-                return getPattern().getIcon();
+                return getPattern().getGuiSprite();
             } else {
                 return null;
             }
@@ -149,12 +150,11 @@ class UrbanistToolFiller extends UrbanistToolArea {
     }
 
     @Override
-    public void areaSet(GuiUrbanist gui, int x1, int y1, int z1, int x2, int y2, int z2) {
-        super.areaSet(gui, x1, y1, z1, x2, y2, z2);
+    public void areaSet(GuiUrbanist gui, BlockPos start, BlockPos end) {
+        super.areaSet(gui, start, end);
 
         if (selection != -1) {
-            Box box = new Box();
-            box.initialize(x1, y1, z1, x2, y2, z2);
+            Box box = new Box(start, end);
 
             gui.urbanist.rpcStartFiller(fillerSlots.get(selection).getPattern().getUniqueTag(), box);
         }

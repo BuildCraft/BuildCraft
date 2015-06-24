@@ -286,11 +286,11 @@ public class Blueprint extends BlueprintBase {
 
     @Override
     public ItemStack getStack() {
-        Item item = (Item) Item.itemRegistry.getObject("BuildCraftBuilders:blueprintItem");
+        Item item = (Item) Item.itemRegistry.getObject("BuildCraft|Builders:blueprintItem");
         if (item == null) {
             throw new Error("Could not find the blueprint item! Did you attempt to use this without buildcraft builders installed?");
         }
-        ItemStack stack = new ItemStack(item, 1);
+        ItemStack stack = new ItemStack(item, 1, 1);
         NBTTagCompound nbt = NBTUtils.getItemData(stack);
         id.write(nbt);
         nbt.setString("author", author);
