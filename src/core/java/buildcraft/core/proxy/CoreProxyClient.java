@@ -15,12 +15,10 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -30,8 +28,8 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
-import net.minecraft.util.IStringSerializable;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.property.ExtendedBlockState;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
@@ -39,6 +37,7 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
 import buildcraft.api.enums.EnumColor;
 import buildcraft.core.EntityLaser;
+import buildcraft.core.client.BuildCraftStateMapper;
 import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.lib.engines.RenderEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
@@ -116,25 +115,25 @@ public class CoreProxyClient extends CoreProxy {
             }
 
             for (IBlockState state : (List<IBlockState>) block.getBlockState().getValidStates()) {
-                String type = "";
-                for (IProperty property : (Collection<IProperty>) state.getProperties().keySet()) {
-                    if (type.length() != 0)
-                        type += ",";
-                    type += property.getName() + "=";
-                    Object value = state.getValue(property);
-                    if (value instanceof Integer) {
-                        type += ((Integer) value).intValue();
-                    } else if (value instanceof Boolean) {
-                        type += ((Boolean) value).toString();
-                    } else if (value instanceof IStringSerializable) {
-                        type += ((IStringSerializable) value).getName();
-                    } else {
-                        type += value.toString().toLowerCase();
-                    }
-                }
+                String type = BuildCraftStateMapper.getPropertyString(state);
+                // for (IProperty property : (Collection<IProperty>) state.getProperties().keySet()) {
+                // if (type.length() != 0)
+                // type += ",";
+                // type += property.getName() + "=";
+                // Object value = state.getValue(property);
+                // if (value instanceof Integer) {
+                // type += ((Integer) value).intValue();
+                // } else if (value instanceof Boolean) {
+                // type += ((Boolean) value).toString();
+                // } else if (value instanceof IStringSerializable) {
+                // type += ((IStringSerializable) value).getName();
+                // } else {
+                // type += value.toString().toLowerCase();
+                // }
+                // }
                 stateTypeMap.put(state, type);
                 metaStateMap.put(block.damageDropped(state), state);
-//                ModelBakery.addVariantName(Item.getItemFromBlock(block), type.toLowerCase());
+                // ModelBakery.addVariantName(Item.getItemFromBlock(block), type.toLowerCase());
             }
             for (Entry<Integer, Collection<IBlockState>> entry : metaStateMap.asMap().entrySet()) {
                 Collection<IBlockState> blockStates = entry.getValue();
@@ -157,7 +156,7 @@ public class CoreProxyClient extends CoreProxy {
 
     private void registerBlockItemModel(IBlockState state, int meta, String type) {
         Block block = state.getBlock();
-        ModelResourceLocation location = new ModelResourceLocation(Utils.getNameForBlock(block), type.toLowerCase());
+        ModelResourceLocation location = new ModelResourceLocation(Utils.getNameForBlock(block).replace("|", ""), type.toLowerCase());
         Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(block), meta, location);
     }
 
@@ -185,6 +184,7 @@ public class CoreProxyClient extends CoreProxy {
     public void registerBlock(Block block, Class<? extends ItemBlock> item) {
         super.registerBlock(block, item);
         blocksToRegisterRenderersFor.add(block);
+        ModelLoader.setCustomStateMapper(block, BuildCraftStateMapper.INSTANCE);
     }
 
     @Override

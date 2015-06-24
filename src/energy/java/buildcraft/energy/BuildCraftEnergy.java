@@ -71,11 +71,11 @@ import buildcraft.energy.worldgen.BiomeGenOilOcean;
 import buildcraft.energy.worldgen.BiomeInitializer;
 import buildcraft.energy.worldgen.OilPopulate;
 
-@Mod(name = "BuildCraft Energy", version = Version.VERSION, useMetadata = false, modid = "BuildCraftEnergy",
+@Mod(name = "BuildCraft Energy", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Energy",
         dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftEnergy extends BuildCraftMod {
 
-    @Mod.Instance("BuildCraftEnergy")
+    @Mod.Instance("BuildCraft|Energy")
     public static BuildCraftEnergy instance;
 
     public static boolean spawnOilSprings = true;

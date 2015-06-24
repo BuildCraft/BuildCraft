@@ -112,10 +112,10 @@ import buildcraft.core.tablet.TabletProgramMenuFactory;
 import buildcraft.core.tablet.manager.TabletManagerClient;
 import buildcraft.core.tablet.manager.TabletManagerServer;
 
-@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraftCore", acceptedMinecraftVersions = "[1.8]",
+@Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.8]",
         dependencies = "required-after:Forge@[11.14.3.1450]", guiFactory = "buildcraft.core.config.ConfigManager")
 public class BuildCraftCore extends BuildCraftMod {
-    @Mod.Instance("BuildCraftCore")
+    @Mod.Instance("BuildCraft|Core")
     public static BuildCraftCore instance;
 
     public static final boolean NONRELEASED_BLOCKS = true;
@@ -381,8 +381,8 @@ public class BuildCraftCore extends BuildCraftMod {
 
         BCCreativeTab.get("main").setIcon(new ItemStack(BuildCraftCore.wrenchItem, 1));
 
-        EntityList.stringToClassMapping.remove("BuildCraftCore.bcLaser");
-        EntityList.stringToClassMapping.remove("BuildCraftCore.bcEnergyLaser");
+        EntityList.stringToClassMapping.remove("BuildCraft|Core.bcLaser");
+        EntityList.stringToClassMapping.remove("BuildCraft|Core.bcEnergyLaser");
 
         BuilderAPI.schematicRegistry.registerSchematicBlock(engineBlock, SchematicEngine.class);
 
@@ -603,14 +603,10 @@ public class BuildCraftCore extends BuildCraftMod {
     public void remap(FMLMissingMappingsEvent event) {
         for (FMLMissingMappingsEvent.MissingMapping mapping : event.getAll()) {
             String name = mapping.name;
-            // Modid changed from BuildCraft|Module to BuildCraftModule
-            if (name.startsWith("BuildCraft|")) {
-                name = name.replace("BuildCraft|", "BuildCraft");
-            }
 
             // Special cases where we broke something
-            if (name.equals("BuildCraftBuilders:machineBlock")) {
-                name = "BuildCraftBuilders:quarryBlock";
+            if (name.equals("buildcraf|tbuilders:machineBlock")) {
+                name = "buildcraft|builders:quarryBlock";
             }
 
             // If we did nothing to it, ignore it

@@ -12,7 +12,7 @@ public final class ModelHelper {
     }
 
     public static void registerItemModel(Item item, int metadata, String suffix) {
-        String type = Utils.getNameForItem(item) + suffix;
+        String type = Utils.getNameForItem(item).replace("|", "") + suffix;
         Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(item, metadata, new ModelResourceLocation(type, "inventory"));
         ModelBakery.addVariantName(item, type);
     }
