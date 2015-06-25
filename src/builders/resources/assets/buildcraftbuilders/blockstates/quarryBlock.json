@@ -12,7 +12,7 @@
         	"west":  { "submodel":"buildcraftbuilders:quarry/main", "y": 180 },
         	"north": { "submodel":"buildcraftbuilders:quarry/main", "y": 270 }
         },
-        "led_active": {
+        "led_done": {
         	"true":  { "submodel":"buildcraftbuilders:quarry/led_active_on" },
         	"false": { "submodel":"buildcraftbuilders:quarry/led_active_off" }
         },

@@ -49,7 +49,7 @@ public class BlockConstructionMarker extends BlockMarker {
         super.onBlockPlacedBy(world, pos, state, entityliving, stack);
 
         TileConstructionMarker tile = (TileConstructionMarker) world.getTileEntity(pos);
-        tile.direction = Utils.get2dOrientation(entityliving);
+        tile.direction = entityliving.getHorizontalFacing();
     }
 
     @Override

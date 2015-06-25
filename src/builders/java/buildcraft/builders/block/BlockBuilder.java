@@ -29,8 +29,18 @@ public class BlockBuilder extends BlockBuildCraft {
     TextureAtlasSprite blockTextureFront;
 
     public BlockBuilder() {
-        super(Material.iron, FACING_PROP, LED_DONE, LED_POWER);
+        super(Material.iron, FACING_PROP, LED_DONE, LED_POWER, BLUEPRINT_TYPE);
         setHardness(5F);
+    }
+
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess access, BlockPos pos) {
+        state = super.getActualState(state, access, pos);
+        TileEntity tile = access.getTileEntity(pos);
+        if (tile != null && tile instanceof TileBuilder) {
+            state = state.withProperty(BLUEPRINT_TYPE, ((TileBuilder) tile).getType());
+        }
+        return state;
     }
 
     @Override

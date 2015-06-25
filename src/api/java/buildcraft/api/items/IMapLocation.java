@@ -22,8 +22,9 @@ public interface IMapLocation extends INamedItem {
 
         public static MapLocationType getFromStack(ItemStack stack) {
             int dam = stack.getItemDamage();
-            if (dam < 0 || dam >= values().length)
+            if (dam < 0 || dam >= values().length) {
                 return MapLocationType.CLEAN;
+            }
             return values()[dam];
         }
 

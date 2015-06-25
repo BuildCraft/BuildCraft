@@ -26,12 +26,13 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.api.core.BuildCraftProperties;
+import buildcraft.api.enums.EnumBlueprintType;
 import buildcraft.api.enums.EnumColor;
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumFillerPattern;
 import buildcraft.api.enums.EnumSpring;
+import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.properties.BuildCraftProperty;
 import buildcraft.core.BCCreativeTab;
 
@@ -45,6 +46,7 @@ public abstract class BlockBuildCraftBase extends Block {
     public static final BuildCraftProperty<EnumSpring> SPRING_TYPE = BuildCraftProperties.SPRING_TYPE;
     public static final BuildCraftProperty<EnumEnergyStage> ENERGY_STAGE = BuildCraftProperties.ENERGY_STAGE;
     public static final BuildCraftProperty<EnumFillerPattern> FILLER_PATTERN = BuildCraftProperties.FILLER_PATTERN;
+    public static final BuildCraftProperty<EnumBlueprintType> BLUEPRINT_TYPE = BuildCraftProperties.BLUEPRINT_TYPE;
 
     public static final BuildCraftProperty<Boolean> JOINED_BELOW = BuildCraftProperties.JOINED_BELOW;
     public static final BuildCraftProperty<Boolean> MOVING = BuildCraftProperties.MOVING;

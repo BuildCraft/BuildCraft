@@ -14,13 +14,13 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+        classpath "net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT"
     }
 }
 
-apply plugin: 'forge' // adds the forge dependency
-apply plugin: 'maven' // for uploading to a maven repo
-apply plugin: 'checkstyle'
+apply plugin: "forge" // adds the forge dependency
+apply plugin: "maven" // for uploading to a maven repo
+apply plugin: "checkstyle"
 
 version = "7.0.5"
 group= "com.mod-buildcraft"
@@ -33,8 +33,8 @@ minecraft {
     runDir = "run" // the directory for ForgeGradle to run Minecraft in
 
     // replacing stuff in the source
-    replace '@VERSION@', project.version
-    replace '@MC_VERSION@', version
+    replace "@VERSION@", project.version
+    replace "@MC_VERSION@", version
 }
 
 // --------------------
@@ -44,7 +44,7 @@ minecraft {
 // add a source jar
 task sourceJar(type: Jar) {
     from sourceSets.api.allSource
-    classifier = 'sources'
+    classifier = "sources"
 }
 
 // add api classes to javadoc
@@ -54,19 +54,19 @@ javadoc {
 
 // add a javadoc jar
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from 'build/docs/javadoc'
+    classifier = "javadoc"
+    from "build/docs/javadoc"
 }
 
 // because the normal output has been made to be obfuscated
 task deobfJar(type: Jar) {
     from sourceSets.api.output
-    classifier = 'dev'
+    classifier = "dev"
 }
 
 task apiJar(type: Jar) {
     from sourceSets.api.output
-    classifier = 'api'
+    classifier = "api"
 }
 
 // add api classes to main package
@@ -80,11 +80,11 @@ jar {
 
 ext.modules = [ "core", "builders", "energy", "factory", "robotics", "silicon", "transport" ]
 ext.moduleDependencies = [  
-				"core":[], 
+				                "core":[], 
                             	"builders":["core"],
                             	"energy": ["core"],
-                           	"factory": ["core"],
-				"robotics": ["core"],
+                           	    "factory": ["core"],
+				                "robotics": ["core"],
                               	"silicon": ["core"],
                             	"transport": ["core"]
                         ]
@@ -105,19 +105,24 @@ modules.each { module ->
         sourceSets[module].compileClasspath += sourceSets[dependant].output
         println "    depends on " + dependant
     }
+    task (module + "DeobfJar", type: Jar) {
+        from sourceSets[module].output
+        classifier = module + "-dev"
+    }
     task (module + "Jar", type: Jar) {
         from sourceSets[module].output // TODO: Find out what to use instead of "output" for the module jars
         classifier = module
     }
     tasks.sourceJar.from sourceSets[module].allSource
-    tasks.deobfJar.from sourceSets[module].output
+    tasks.deobfJar.from sourceSets[module].output // TODO: Find out what to use instead of "output" for the full jar
     build.dependsOn tasks[module + "Jar"]
+    build.dependsOn tasks[module + "DeobfJar"]
 }
 
 sourceSets {
 	core {
 		resources {
-			def l10n = file('../BuildCraft-Localization')
+			def l10n = file("../BuildCraft-Localization")
             if(l10n.exists())
            	    srcDir l10n
             exclude "**/.md" // exclude readme from localization repo

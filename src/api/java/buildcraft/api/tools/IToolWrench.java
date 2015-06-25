@@ -23,6 +23,6 @@ public interface IToolWrench {
      * the ItemStack that was used, check player.inventory.getCurrentItem()
      *
      * @param player - The player doing the wrenching
-     * @param xpos - The position of the block being wrenched */
+     * @param pos - The position of the block being wrenched */
     void wrenchUsed(EntityPlayer player, BlockPos pos);
 }

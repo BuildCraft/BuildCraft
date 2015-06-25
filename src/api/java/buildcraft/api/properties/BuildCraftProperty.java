@@ -16,6 +16,16 @@ public class BuildCraftProperty<T extends Comparable<T>> implements IProperty, I
     private final String name;
     private final Class<T> clazz;
     private final List<T> values;
+    
+    public BuildCraftProperty(String name, Class<T> clazz, T[] values) {
+        this(name, clazz, Arrays.asList(values));
+    }
+
+    public BuildCraftProperty(String name, Class<T> clazz, List<T> values) {
+        this.name = name;
+        this.values = values;
+        this.clazz = clazz;
+    }
 
     public static <E extends Enum<E>> BuildCraftProperty<E> create(String name, Class<E> enumeration) {
         List<E> values = Arrays.asList(enumeration.getEnumConstants());
@@ -63,16 +73,6 @@ public class BuildCraftProperty<T extends Comparable<T>> implements IProperty, I
             array[i] = first + (first - last) / addedDiff * i;
         }
         return new BuildCraftProperty<Double>(name, Double.class, array);
-    }
-
-    public BuildCraftProperty(String name, Class<T> clazz, T[] values) {
-        this(name, clazz, Arrays.asList(values));
-    }
-
-    public BuildCraftProperty(String name, Class<T> clazz, List<T> values) {
-        this.name = name;
-        this.values = values;
-        this.clazz = clazz;
     }
 
     @Override

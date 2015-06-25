@@ -12,7 +12,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-import buildcraft.api.core.BuildCraftProperties;
+import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.builders.BuildCraftBuilders;
 import buildcraft.builders.item.ItemBlueprint;
 import buildcraft.builders.item.ItemBlueprintStandard;

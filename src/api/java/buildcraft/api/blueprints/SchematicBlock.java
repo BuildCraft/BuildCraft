@@ -25,7 +25,7 @@ import net.minecraft.util.EnumFacing.Axis;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.BlockFluidBase;
 
-import buildcraft.api.core.BuildCraftProperties;
+import buildcraft.api.properties.BuildCraftProperties;
 
 public class SchematicBlock extends SchematicBlockBase {
 

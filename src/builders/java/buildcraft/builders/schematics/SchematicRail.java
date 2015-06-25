@@ -16,7 +16,7 @@ import net.minecraft.util.BlockPos;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
-import buildcraft.api.core.BuildCraftProperties;
+import buildcraft.api.properties.BuildCraftProperties;
 
 public class SchematicRail extends SchematicBlock {
 	private static final IBlockState defaultDirection = Blocks.rail.getDefaultState().withProperty(BlockRail.SHAPE, EnumRailDirection.NORTH_SOUTH);

@@ -33,9 +33,9 @@ import net.minecraftforge.common.util.FakePlayer;
 
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.BuildCraftAPI;
-import buildcraft.api.core.BuildCraftProperties;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.transport.IPipeConnection;

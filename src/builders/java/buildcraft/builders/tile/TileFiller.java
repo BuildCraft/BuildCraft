@@ -13,9 +13,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.core.BuildCraftProperties;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.filler.FillerManager;
+import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementManager;

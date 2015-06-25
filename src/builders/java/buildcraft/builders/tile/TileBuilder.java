@@ -30,8 +30,10 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 
-import buildcraft.api.core.BuildCraftProperties;
 import buildcraft.api.core.IInvSlot;
+import buildcraft.api.enums.EnumBlueprintType;
+import buildcraft.api.items.IBlueprintItem;
+import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.robots.ResourceIdRequest;
@@ -929,5 +931,20 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
         super.readData(stream);
         box.readData(stream);
         fluidTank.readData(stream);
+    }
+
+    public EnumBlueprintType getType() {
+        ItemStack stack = getStackInSlot(0);
+        if (stack == null || !(stack.getItem() instanceof ItemBlueprint)) {
+            return EnumBlueprintType.NONE;
+        }
+        IBlueprintItem.Type type = ((IBlueprintItem) stack.getItem()).getType(stack);
+        if (type == IBlueprintItem.Type.BLUEPRINT) {
+            return EnumBlueprintType.BLUEPRINT;
+        } else if (type == IBlueprintItem.Type.TEMPLATE) {
+            return EnumBlueprintType.TEMPLATE;
+        } else {
+            return EnumBlueprintType.NONE;
+        }
     }
 }

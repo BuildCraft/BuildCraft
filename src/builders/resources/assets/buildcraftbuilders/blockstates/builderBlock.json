@@ -1,18 +1,31 @@
 {
+	"forge_marker":1,
+	"defaults": {
+		"textures": {
+			"particle":"buildcraftbuilders:blocks/builder/top"
+		}
+	},
     "variants": {
-        "facing=east,state=off":  { "model": "buildcraftbuilders:builder_off" },
-        "facing=south,state=off":  { "model": "buildcraftbuilders:builder_off", "y": 90 },
-        "facing=west,state=off":  { "model": "buildcraftbuilders:builder_off", "y": 180 },
-        "facing=north,state=off":  { "model": "buildcraftbuilders:builder_off", "y": 270 },
-        
-        "facing=east,state=on":  { "model": "buildcraftbuilders:builder_on" },
-        "facing=south,state=on":  { "model": "buildcraftbuilders:builder_on", "y": 90 },
-        "facing=west,state=on":  { "model": "buildcraftbuilders:builder_on", "y": 180 },
-        "facing=north,state=on":  { "model": "buildcraftbuilders:builder_on", "y": 270 },
-        
-         "facing=east,state=done":  { "model": "buildcraftbuilders:builder_done" },
-        "facing=south,state=done":  { "model": "buildcraftbuilders:builder_done", "y": 90 },
-        "facing=west,state=done":  { "model": "buildcraftbuilders:builder_done", "y": 180 },
-        "facing=north,state=done":  { "model": "buildcraftbuilders:builder_done", "y": 270 }
+		"facing": {
+			"east":  { "submodel":"buildcraftbuilders:builder/main" },
+			"south": { "submodel":"buildcraftbuilders:builder/main", "y":90 },
+			"west":  { "submodel":"buildcraftbuilders:builder/main", "y":180 },
+			"north": { "submodel":"buildcraftbuilders:builder/main", "y":270 }
+		},
+		"led_power": {
+		    "0": {},
+		    "1": {},
+		    "2": {},
+		    "3": {}
+		},
+		"led_done": {
+		    "false": {},
+		    "true":  {}
+		},
+		"blueprint_type": {
+		    "none": { "submodel":"buildcraftbuilders:builder/slot_empty" },
+		    "blueprint": {},
+		    "template":  {}
+		}
     }
 }

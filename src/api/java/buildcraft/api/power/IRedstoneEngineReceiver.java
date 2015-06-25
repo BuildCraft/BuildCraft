@@ -4,9 +4,9 @@
  * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.api.power;
 
-import cofh.api.energy.IEnergyReceiver;
-
 import net.minecraft.util.EnumFacing;
+
+import cofh.api.energy.IEnergyReceiver;
 
 /** Implement this on tiles that you wish to be able to receive Redstone Engine (low-power) energy.
  *
