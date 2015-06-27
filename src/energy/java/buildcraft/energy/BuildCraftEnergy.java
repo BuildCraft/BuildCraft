@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.MapColor;
-import net.minecraft.block.material.Material;
+import net.minecraft.block.material.MaterialLiquid;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -92,6 +92,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
     public static Item bucketFuel;
     public static Item bucketRedPlasma;
     public static Item fuel;
+
+    public static MaterialLiquid materialOil;
+    public static MaterialLiquid materialFuel;
+    public static MaterialLiquid materialRedPlasma;
 
     public static Achievement engineAchievement1;
     public static Achievement engineAchievement2;
@@ -218,7 +222,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
         fluidRedPlasma = FluidRegistry.getFluid("redplasma");
 
         if (fluidOil.getBlock() == null) {
-            blockOil = new BlockBuildCraftFluid(fluidOil, Material.water, MapColor.blackColor).setFlammability(0);
+            materialOil = new MaterialBuildCraftLiquid(MapColor.blackColor);
+            blockOil = new BlockBuildCraftFluid(fluidOil, materialOil).setFlammability(0);
             blockOil.setUnlocalizedName("blockOil").setLightOpacity(8);
             CoreProxy.proxy.registerBlock(blockOil);
             fluidOil.setBlock(blockOil);
@@ -240,9 +245,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
         }
 
         if (fluidFuel.getBlock() == null) {
-            blockFuel =
-                new BlockBuildCraftFluid(fluidFuel, Material.water, MapColor.yellowColor).setFlammable(true).setFlammability(5).setParticleColor(
-                    0.7F, 0.7F, 0.0F);
+            materialFuel = new MaterialBuildCraftLiquid(MapColor.yellowColor);
+            blockFuel = new BlockBuildCraftFluid(fluidFuel, materialFuel).setFlammable(true).setFlammability(5).setParticleColor(0.7F, 0.7F, 0.0F);
             blockFuel.setUnlocalizedName("blockFuel").setLightOpacity(3);
             CoreProxy.proxy.registerBlock(blockFuel);
             fluidFuel.setBlock(blockFuel);
@@ -251,8 +255,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
         }
 
         if (fluidRedPlasma.getBlock() == null) {
-            blockRedPlasma =
-                new BlockBuildCraftFluid(fluidRedPlasma, Material.water, MapColor.redColor).setFlammable(false).setParticleColor(0.9F, 0, 0);
+            materialRedPlasma = new MaterialBuildCraftLiquid(MapColor.redColor);
+            blockRedPlasma = new BlockBuildCraftFluid(fluidRedPlasma, materialRedPlasma).setFlammable(false).setParticleColor(0.9F, 0, 0);
             blockRedPlasma.setUnlocalizedName("blockRedPlasma");
             CoreProxy.proxy.registerBlock(blockRedPlasma);
             fluidRedPlasma.setBlock(blockRedPlasma);

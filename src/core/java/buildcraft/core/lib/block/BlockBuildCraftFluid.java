@@ -37,12 +37,9 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
     protected boolean flammable;
     protected boolean dense = false;
     protected int flammability = 0;
-    private MapColor mapColor;
 
-    public BlockBuildCraftFluid(Fluid fluid, Material material, MapColor iMapColor) {
+    public BlockBuildCraftFluid(Fluid fluid, Material material) {
         super(fluid, material);
-
-        mapColor = iMapColor;
     }
 
     @Override
@@ -144,11 +141,6 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
             return false;
         }
         return super.displaceIfPossible(world, pos);
-    }
-
-    @Override
-    public MapColor getMapColor(IBlockState state) {
-        return mapColor;
     }
 
     @Override
