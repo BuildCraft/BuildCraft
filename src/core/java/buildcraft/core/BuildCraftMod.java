@@ -8,7 +8,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.google.common.collect.Maps;
 
@@ -116,7 +116,7 @@ public class BuildCraftMod implements IBuildCraftMod {
     }
 
     static class PacketSender implements Runnable {
-        private Queue<SendRequest> packets = new ConcurrentLinkedDeque<SendRequest>();
+        private Queue<SendRequest> packets = new ConcurrentLinkedQueue<SendRequest>();
 
         @Override
         public void run() {

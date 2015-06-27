@@ -11,20 +11,26 @@ import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.particle.EntityFX;
+import net.minecraft.client.renderer.block.statemap.StateMapperBase;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fluids.BlockFluidClassic;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.render.EntityDropParticleFX;
+import buildcraft.core.lib.utils.ICustomStateMapper;
+import buildcraft.core.lib.utils.Utils;
 
-public class BlockBuildCraftFluid extends BlockFluidClassic {
+public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomStateMapper {
 
     protected float particleRed;
     protected float particleGreen;
@@ -144,5 +150,17 @@ public class BlockBuildCraftFluid extends BlockFluidClassic {
     @Override
     public MapColor getMapColor(IBlockState state) {
         return mapColor;
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void setCusomStateMappers() {
+        final ModelResourceLocation loc = new ModelResourceLocation(Utils.getNameForBlock(this).replace("|", ""), "fluid");
+        ModelLoader.setCustomStateMapper(this, new StateMapperBase() {
+            @Override
+            protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
+                return loc;
+            }
+        });
     }
 }

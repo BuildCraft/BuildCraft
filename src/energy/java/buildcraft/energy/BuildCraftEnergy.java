@@ -16,6 +16,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
@@ -38,9 +39,9 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.ConfigAccessor;
+import buildcraft.api.core.ConfigAccessor.EMod;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.core.StackKey;
-import buildcraft.api.core.ConfigAccessor.EMod;
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.enums.EnumSpring;
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
@@ -112,7 +113,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
         ConfigAccessor.addMod(EMod.ENERGY, this);
-        
+
         BuildcraftFuelRegistry.fuel = FuelManager.INSTANCE;
         BuildcraftFuelRegistry.coolant = CoolantManager.INSTANCE;
 
@@ -183,9 +184,13 @@ public class BuildCraftEnergy extends BuildCraftMod {
             biomeOilOcean = BiomeGenOilOcean.makeBiome(oilOceanBiomeId);
         }
 
+        String fluidTextureBase = "buildcraftenergy:blocks/fluids/";
+
         // Oil and fuel
         if (!FluidRegistry.isFluidRegistered("oil")) {
-            buildcraftFluidOil = new Fluid("oil").setDensity(800).setViscosity(10000);
+            buildcraftFluidOil =
+                new Fluid("oil", new ResourceLocation(fluidTextureBase + "oil_still"), new ResourceLocation(fluidTextureBase + "oil_flow"));
+            buildcraftFluidOil.setDensity(800).setViscosity(10000);
             FluidRegistry.registerFluid(buildcraftFluidOil);
         } else {
             BCLog.logger.warn("Not using BuildCraft oil - issues might occur!");
@@ -193,7 +198,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
         fluidOil = FluidRegistry.getFluid("oil");
 
         if (!FluidRegistry.isFluidRegistered("fuel")) {
-            buildcraftFluidFuel = new Fluid("fuel");
+            buildcraftFluidFuel =
+                new Fluid("fuel", new ResourceLocation(fluidTextureBase + "fuel_still"), new ResourceLocation(fluidTextureBase + "fuel_flow"));
             FluidRegistry.registerFluid(buildcraftFluidFuel);
         } else {
             BCLog.logger.warn("Not using BuildCraft fuel - issues might occur!");
@@ -201,7 +207,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
         fluidFuel = FluidRegistry.getFluid("fuel");
 
         if (!FluidRegistry.isFluidRegistered("redplasma")) {
-            buildcraftFluidRedPlasma = new Fluid("redplasma").setDensity(10000).setViscosity(10000).setLuminosity(30);
+            buildcraftFluidRedPlasma =
+                new Fluid("redplasma", new ResourceLocation(fluidTextureBase + "redplasma_still"), new ResourceLocation(fluidTextureBase
+                    + "redplasma_flow"));
+            buildcraftFluidRedPlasma.setDensity(10000).setViscosity(10000).setLuminosity(30);
             FluidRegistry.registerFluid(buildcraftFluidRedPlasma);
         } else {
             BCLog.logger.warn("Not using BuildCraft red plasma - issues might occur!");
