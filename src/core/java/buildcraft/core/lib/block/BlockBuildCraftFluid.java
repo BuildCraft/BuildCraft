@@ -25,7 +25,6 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.render.EntityDropParticleFX;
 import buildcraft.core.lib.utils.ICustomStateMapper;
 import buildcraft.core.lib.utils.Utils;

@@ -10,8 +10,10 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemBucket;
 
 import buildcraft.core.BCCreativeTab;
+import buildcraft.core.lib.utils.IModelRegister;
+import buildcraft.core.lib.utils.ModelHelper;
 
-public class ItemBucketBuildcraft extends ItemBucket {
+public class ItemBucketBuildcraft extends ItemBucket implements IModelRegister {
     public ItemBucketBuildcraft(Block block) {
         this(block, BCCreativeTab.get("main"));
     }
@@ -20,5 +22,10 @@ public class ItemBucketBuildcraft extends ItemBucket {
         super(block);
         setContainerItem(Items.bucket);
         setCreativeTab(creativeTab);
+    }
+
+    @Override
+    public void registerModels() {
+        ModelHelper.registerItemModel(this, 0, "");
     }
 }
