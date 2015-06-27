@@ -142,7 +142,7 @@ public class BuildCraftCore extends BuildCraftMod {
     public static ConfigManager mainConfigManager;
 
     public static BlockEngine engineBlock;
-    public static Block springBlock;
+    public static BlockSpring springBlock;
     public static BlockBuildTool buildToolBlock;
     public static Item woodenGearItem;
     public static Item stoneGearItem;
@@ -272,7 +272,8 @@ public class BuildCraftCore extends BuildCraftMod {
 
             if (BuildCraftCore.modifyWorld) {
                 EnumSpring.WATER.canGen = BuildCraftCore.mainConfigManager.get("worldgen.generateWaterSprings").getBoolean();
-                springBlock = new BlockSpring().setUnlocalizedName("eternalSpring");
+                springBlock = new BlockSpring();
+                springBlock.setUnlocalizedName("eternalSpring");
                 CoreProxy.proxy.registerBlock(springBlock, ItemSpring.class);
             }
 

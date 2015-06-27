@@ -12,6 +12,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.block.BlockStaticLiquid;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.block.state.pattern.BlockHelper;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
@@ -28,6 +29,8 @@ import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
+import buildcraft.api.enums.EnumSpring;
+import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.energy.BuildCraftEnergy;
 
@@ -177,19 +180,24 @@ public final class OilPopulate {
                 baseY = wellY;
             }
 
-            if (makeSpring && world.getBlock(wellX, baseY, wellZ) == Blocks.bedrock) {
-                world.setBlock(wellX, baseY, wellZ, BuildCraftCore.springBlock, 1, 3);
+            BlockPos well = new BlockPos(wellX, baseY, wellZ);
+
+            if (makeSpring && world.getBlockState(well).getBlock() == Blocks.bedrock) {
+                IBlockState state = BuildCraftCore.springBlock.getDefaultState();
+                state = state.withProperty(BuildCraftProperties.SPRING_TYPE, EnumSpring.OIL);
+                world.setBlockState(well, state, 3);
             }
-            for (int y = baseY + 1; y <= maxHeight; ++y) {
-                world.setBlock(wellX, y, wellZ, BuildCraftEnergy.blockOil, 0, 3);
+            IBlockState oil = BuildCraftEnergy.blockOil.getDefaultState();
+            for (int y = 1; y <= maxHeight - baseY; ++y) {
+                world.setBlockState(well.up(y), oil, 3);
             }
 
             if (type == GenType.LARGE) {
-                for (int y = wellY; y <= maxHeight - wellHeight / 2; ++y) {
-                    world.setBlock(wellX + 1, y, wellZ, BuildCraftEnergy.blockOil, 0, 3);
-                    world.setBlock(wellX - 1, y, wellZ, BuildCraftEnergy.blockOil, 0, 3);
-                    world.setBlock(wellX, y, wellZ + 1, BuildCraftEnergy.blockOil, 0, 3);
-                    world.setBlock(wellX, y, wellZ - 1, BuildCraftEnergy.blockOil, 0, 3);
+                for (int y = 0; y <= maxHeight - wellHeight / 2 - wellY; ++y) {
+                    world.setBlockState(well.up(y).west(), oil, 3);
+                    world.setBlockState(well.up(y).east(), oil, 3);
+                    world.setBlockState(well.up(y).north(), oil, 3);
+                    world.setBlockState(well.up(y).south(), oil, 3);
                 }
             }
 
@@ -198,8 +206,9 @@ public final class OilPopulate {
             int lakeX = x;
             int lakeZ = z;
             int lakeY = groundLevel;
+            BlockPos lake = new BlockPos(x, groundLevel, z);
 
-            Block block = world.getBlock(lakeX, lakeY, lakeZ);
+            Block block = world.getBlockState(lake).getBlock();
             if (block == biome.topBlock) {
                 generateSurfaceDeposit(world, rand, biome, lakeX, lakeY, lakeZ, 5 + rand.nextInt(10));
             }
@@ -207,8 +216,8 @@ public final class OilPopulate {
     }
 
     public void generateSurfaceDeposit(World world, Random rand, int x, int y, int z, int radius) {
-        BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
-        generateSurfaceDeposit(world, rand, biome, pos, radius);
+        BiomeGenBase biome = world.getBiomeGenForCoords(new BlockPos(x, y, z));
+        generateSurfaceDeposit(world, rand, biome, x, y, z, radius);
     }
 
     private void generateSurfaceDeposit(World world, Random rand, BiomeGenBase biome, int x, int y, int z, int radius) {
@@ -252,8 +261,8 @@ public final class OilPopulate {
         }
     }
 
-    private boolean isReplaceableFluid(World world, int x, int y, int z) {
-        Block block = world.getBlockState(new BlockPos(x, y, z)).getBlock();
+    private boolean isReplaceableFluid(World world, BlockPos pos) {
+        Block block = world.getBlockState(pos).getBlock();
         return (block instanceof BlockStaticLiquid || block instanceof BlockFluidBase || block instanceof IFluidBlock)
             && block.getMaterial() != Material.lava;
     }
@@ -316,27 +325,31 @@ public final class OilPopulate {
             if (!world.isAirBlock(new BlockPos(x, y + 2, z))) {
                 return;
             }
-            if (isReplaceableFluid(world, pos) || world.isSideSolid(x, y - 1, z, EnumFacing.UP)) {
-                world.setBlock(pos, BuildCraftEnergy.blockOil, 0, update);
+            BlockPos pos = new BlockPos(x, y, z);
+            if (isReplaceableFluid(world, pos) || world.isSideSolid(pos.down(), EnumFacing.UP)) {
+                world.setBlockState(pos, BuildCraftEnergy.blockOil.getDefaultState(), update);
             } else {
                 return;
             }
-            if (!world.isAirBlock(x, y + 1, z)) {
-                world.setBlock(x, y + 1, z, Blocks.air, 0, update);
+            if (!world.isAirBlock(pos.up())) {
+                world.setBlockToAir(pos.up());
             }
 
             for (int d = 1; d <= depth - 1; d++) {
-                if (isReplaceableFluid(world, x, y - d, z) || !world.isSideSolid(x, y - d - 1, z, EnumFacing.UP)) {
+                BlockPos down = pos.down(d);
+                if (isReplaceableFluid(world, down) || !world.isSideSolid(down.down(), EnumFacing.UP)) {
                     return;
                 }
-                world.setBlock(x, y - d, z, BuildCraftEnergy.blockOil, 0, 2);
+                world.setBlockState(down, BuildCraftEnergy.blockOil.getDefaultState(), 2);
             }
         }
     }
 
     private int getTopBlock(World world, int x, int z) {
-        Chunk chunk = world.getChunkFromBlockCoords(x, z);
+        BlockPos pos = new BlockPos(x, 0, z);
+        Chunk chunk = world.getChunkFromBlockCoords(pos);
         int y = chunk.getTopFilledSegment() + 15;
+        pos = pos.up(y);
 
         int trimmedX = x & 15;
         int trimmedZ = z & 15;
