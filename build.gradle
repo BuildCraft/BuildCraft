@@ -20,7 +20,7 @@ buildscript {
 
 apply plugin: "forge" // adds the forge dependency
 apply plugin: "maven" // for uploading to a maven repo
-apply plugin: "checkstyle"
+//apply plugin: "checkstyle"
 
 version = "7.0.5"
 group= "com.mod-buildcraft"
@@ -147,11 +147,11 @@ processResources
     }
 }
 
-checkstyle {
-	configFile = file('guidelines/buildcraft.checkstyle')
-}
+//checkstyle {
+//	configFile = file('guidelines/buildcraft.checkstyle')
+//}
 
-checkstyleApi.exclude "cofh/**"
+//checkstyleApi.exclude "cofh/**"
 
 // make sure all of these happen when we run build
 build.dependsOn sourceJar, javadocJar, deobfJar, apiJar
