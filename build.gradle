@@ -28,7 +28,7 @@ archivesBaseName = "buildcraft" // the name that all artifacts will use as a bas
 
 minecraft {
     mappings = "stable_16"
-    version = "1.8-10.13.4.1481" // McVersion-ForgeVersion     this variable is later changed to contain only the MC version, while the apiVersion variable is used for the forge version.  Yeah its stupid, and will be changed eventually.
+    version = "1.8-11.14.3.1486" // McVersion-ForgeVersion     this variable is later changed to contain only the MC version, while the apiVersion variable is used for the forge version.  Yeah its stupid, and will be changed eventually.
 
     runDir = "run" // the directory for ForgeGradle to run Minecraft in
 
