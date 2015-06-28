@@ -26,6 +26,7 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.IIcon;
@@ -121,8 +122,12 @@ import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.OreDictionaryCache;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.lib.utils.XorShift128Random;
+import buildcraft.core.list.ListMatchHandlerClass;
+import buildcraft.core.list.ListMatchHandlerOreDictionary;
+import buildcraft.core.list.ListRegistry;
 import buildcraft.core.network.PacketHandlerCore;
 import buildcraft.core.properties.WorldPropertyIsDirt;
 import buildcraft.core.properties.WorldPropertyIsFarmland;
@@ -453,6 +458,9 @@ public class BuildCraftCore extends BuildCraftMod {
 		StatementManager.registerParameterClass(PatternParameterXZDir.class);
 		StatementManager.registerParameterClass(PatternParameterCenter.class);
 		StatementManager.registerParameterClass(PatternParameterHollow.class);
+
+		ListRegistry.registerHandler(new ListMatchHandlerClass());
+		ListMatchHandlerClass.itemClasses.add(ItemFood.class);
 	}
 
 	@Mod.EventHandler
@@ -497,6 +505,13 @@ public class BuildCraftCore extends BuildCraftMod {
 				actionControl[mode.ordinal()] = new ActionMachineControl(mode);
 			}
 		}
+
+		MinecraftForge.EVENT_BUS.register(OreDictionaryCache.INSTANCE);
+		for (String s : OreDictionary.getOreNames()) {
+			OreDictionaryCache.INSTANCE.registerName(s);
+		}
+
+		ListRegistry.registerHandler(new ListMatchHandlerOreDictionary());
 	}
 
 	@Mod.EventHandler

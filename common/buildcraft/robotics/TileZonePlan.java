@@ -23,7 +23,6 @@ import buildcraft.api.core.IZone;
 import buildcraft.api.items.IMapLocation;
 import buildcraft.api.items.INamedItem;
 import buildcraft.core.ItemMapLocation;
-import buildcraft.core.ZonePlan;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.network.Packet;

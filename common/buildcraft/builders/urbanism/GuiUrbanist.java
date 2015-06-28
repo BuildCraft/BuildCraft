@@ -129,7 +129,7 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 			tools [selectedTool].drawGuiContainerBackgroundLayer(this, f, x, y);
 		}
 
-		drawBackgroundSlots();
+		drawBackgroundSlots(x, y);
 
 		if (selectedTool != -1) {
 			tools [selectedTool].drawSelection(this, f, x, y);

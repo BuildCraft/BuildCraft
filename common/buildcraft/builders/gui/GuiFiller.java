@@ -155,7 +155,7 @@ public class GuiFiller extends GuiAdvancedInterface {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int mx, int my) {
 		super.drawGuiContainerBackgroundLayer(f, mx, my);
-		drawBackgroundSlots();
+		drawBackgroundSlots(mx, my);
 	}
 
 	@Override

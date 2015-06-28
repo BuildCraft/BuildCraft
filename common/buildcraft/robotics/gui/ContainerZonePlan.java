@@ -18,7 +18,7 @@ import cpw.mods.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftRobotics;
-import buildcraft.core.ZonePlan;
+import buildcraft.robotics.ZonePlan;
 import buildcraft.core.lib.gui.BuildCraftContainer;
 import buildcraft.core.lib.gui.slots.SlotOutput;
 import buildcraft.core.lib.network.command.CommandWriter;

@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core;
+package buildcraft.robotics;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +21,7 @@ import net.minecraftforge.common.util.Constants;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.IZone;
+import buildcraft.core.ChunkIndex;
 
 public class ZonePlan implements IZone, ISerializable {
 	private HashMap<ChunkIndex, ZoneChunk> chunkMapping = new HashMap<ChunkIndex, ZoneChunk>();
