@@ -310,9 +310,8 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
 				if (item.output == ForgeDirection.UNKNOWN) {
 					// TODO: Figure out why this is actually happening.
-					if (items.scheduleRemoval(item)) {
-						dropItem(item);
-					}
+					items.scheduleRemoval(item);
+					BCLog.logger.warn("Glitched item [Output direction UNKNOWN] removed from world @ " + container.x() + ", " + container.y() + ", " + container.z() + "!");
 					continue;
 				}
 
@@ -440,7 +439,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
 		NBTTagList nbttaglist = new NBTTagList();
 
-		for (TravelingItem item : items) {
+		for (TravelingItem item : items.toArray(new TravelingItem[items.size()])) {
 			NBTTagCompound dataTag = new NBTTagCompound();
 			nbttaglist.appendTag(dataTag);
 			item.writeToNBT(dataTag);

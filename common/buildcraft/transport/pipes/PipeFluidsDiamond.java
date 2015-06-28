@@ -182,13 +182,14 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
     @Override
     public void writeData(ByteBuf data) {
         NBTTagCompound nbt = new NBTTagCompound();
-        writeToNBT(nbt);
+        filters.writeToNBT(nbt);
         NetworkUtils.writeNBT(data, nbt);
     }
 
     @Override
     public void readData(ByteBuf data) {
         NBTTagCompound nbt = NetworkUtils.readNBT(data);
-        readFromNBT(nbt);
+        filters.readFromNBT(nbt);
+        filters.markDirty();
     }
 }
