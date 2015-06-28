@@ -47,11 +47,11 @@ public class GuiListNew extends GuiAdvancedInterface {
 		super(new ContainerListNew(iPlayer), iPlayer.inventory, TEXTURE_BASE);
 
 		xSize = 176;
-		ySize = 206;
+		ySize = 192;
 
 		for (int sy = 0; sy < ListHandlerNew.HEIGHT; sy++) {
 			for (int sx = 0; sx < ListHandlerNew.WIDTH; sx++) {
-				slots.add(new ListSlot(this, 8 + sx * 18, 46 + sy * 33, sy, sx));
+				slots.add(new ListSlot(this, 8 + sx * 18, 32 + sy * 33, sy, sx));
 			}
 		}
 

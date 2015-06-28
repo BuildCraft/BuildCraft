@@ -34,12 +34,12 @@ public class ContainerListNew extends BuildCraftContainer implements ICommandRec
 
 		for (int sy = 0; sy < 3; sy++) {
 			for (int sx = 0; sx < 9; sx++) {
-				addSlotToContainer(new Slot(player.inventory, sx + sy * 9 + 9, 8 + sx * 18, 118 + sy * 18));
+				addSlotToContainer(new Slot(player.inventory, sx + sy * 9 + 9, 8 + sx * 18, 103 + sy * 18));
 			}
 		}
 
 		for (int sx = 0; sx < 9; sx++) {
-			addSlotToContainer(new Slot(player.inventory, sx, 8 + sx * 18, 176));
+			addSlotToContainer(new Slot(player.inventory, sx, 8 + sx * 18, 161));
 		}
 	}
 
