@@ -280,92 +280,88 @@ public class BuildCraftCore extends BuildCraftMod {
 		
 		mainConfiguration = new BuildCraftConfiguration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.cfg"));
 		mainConfigManager = new ConfigManager(mainConfiguration);
-		try {
-			mainConfiguration.load();
+		mainConfiguration.load();
 
-			mainConfigManager.getCat("debug").setShowInGui(false);
-			mainConfigManager.getCat("vars").setShowInGui(false);
+		mainConfigManager.getCat("debug").setShowInGui(false);
+		mainConfigManager.getCat("vars").setShowInGui(false);
 
-			mainConfigManager.register("general.updateCheck", true, "Should I check the BuildCraft version on startup?", ConfigManager.RestartRequirement.NONE);
-			mainConfigManager.register("display.hidePowerValues", false, "Should all power values (RF, RF/t) be hidden?", ConfigManager.RestartRequirement.NONE);
-			mainConfigManager.register("display.hideFluidValues", false, "Should all fluid values (mB, mB/t) be hidden?", ConfigManager.RestartRequirement.NONE);
-			mainConfigManager.register("general.itemLifespan", 60, "How long, in seconds, should items stay on the ground? (Vanilla = 300, default = 60)", ConfigManager.RestartRequirement.NONE)
-				.setMinValue(5);
-			mainConfigManager.register("network.updateFactor", 10, "How often, in ticks, should network update packets be sent? Increasing this might help network performance.", ConfigManager.RestartRequirement.GAME)
-				.setMinValue(1);
-			mainConfigManager.register("network.longUpdateFactor", 40, "How often, in ticks, should full network sync packets be sent? Increasing this might help network performance.", ConfigManager.RestartRequirement.GAME)
-				.setMinValue(1);
-			mainConfigManager.register("general.canEnginesExplode", false, "Should engines explode upon overheat?", ConfigManager.RestartRequirement.NONE);
-			mainConfigManager.register("worldgen.enable", true, "Should BuildCraft generate anything in the world?", ConfigManager.RestartRequirement.GAME);
-			mainConfigManager.register("general.pumpsConsumeWater", false, "Should pumps consume water? Enabling this might cause performance issues!", ConfigManager.RestartRequirement.NONE);
-			mainConfigManager.register("power.miningUsageMultiplier", 1.0D, "What should the multiplier of all mining-related power usage be?", ConfigManager.RestartRequirement.NONE);
-			mainConfigManager.register("display.colorBlindMode", false, "Should I enable colorblind mode?", ConfigManager.RestartRequirement.GAME);
-			mainConfigManager.register("worldgen.generateWaterSprings", true, "Should BuildCraft generate water springs?", ConfigManager.RestartRequirement.GAME);
+		mainConfigManager.register("general.updateCheck", true, "Should I check the BuildCraft version on startup?", ConfigManager.RestartRequirement.NONE);
+		mainConfigManager.register("display.hidePowerValues", false, "Should all power values (RF, RF/t) be hidden?", ConfigManager.RestartRequirement.NONE);
+		mainConfigManager.register("display.hideFluidValues", false, "Should all fluid values (mB, mB/t) be hidden?", ConfigManager.RestartRequirement.NONE);
+		mainConfigManager.register("general.itemLifespan", 60, "How long, in seconds, should items stay on the ground? (Vanilla = 300, default = 60)", ConfigManager.RestartRequirement.NONE)
+			.setMinValue(5);
+		mainConfigManager.register("network.updateFactor", 10, "How often, in ticks, should network update packets be sent? Increasing this might help network performance.", ConfigManager.RestartRequirement.GAME)
+			.setMinValue(1);
+		mainConfigManager.register("network.longUpdateFactor", 40, "How often, in ticks, should full network sync packets be sent? Increasing this might help network performance.", ConfigManager.RestartRequirement.GAME)
+			.setMinValue(1);
+		mainConfigManager.register("general.canEnginesExplode", false, "Should engines explode upon overheat?", ConfigManager.RestartRequirement.NONE);
+		mainConfigManager.register("worldgen.enable", true, "Should BuildCraft generate anything in the world?", ConfigManager.RestartRequirement.GAME);
+		mainConfigManager.register("general.pumpsConsumeWater", false, "Should pumps consume water? Enabling this might cause performance issues!", ConfigManager.RestartRequirement.NONE);
+		mainConfigManager.register("power.miningUsageMultiplier", 1.0D, "What should the multiplier of all mining-related power usage be?", ConfigManager.RestartRequirement.NONE);
+		mainConfigManager.register("display.colorBlindMode", false, "Should I enable colorblind mode?", ConfigManager.RestartRequirement.GAME);
+		mainConfigManager.register("worldgen.generateWaterSprings", true, "Should BuildCraft generate water springs?", ConfigManager.RestartRequirement.GAME);
 
-			reloadConfig(ConfigManager.RestartRequirement.GAME);
+		reloadConfig(ConfigManager.RestartRequirement.GAME);
 
-			wrenchItem = (new ItemWrench()).setUnlocalizedName("wrenchItem");
-			CoreProxy.proxy.registerItem(wrenchItem);
+		wrenchItem = (new ItemWrench()).setUnlocalizedName("wrenchItem");
+		CoreProxy.proxy.registerItem(wrenchItem);
 
-			mapLocationItem = (new ItemMapLocation()).setUnlocalizedName("mapLocation");
-			CoreProxy.proxy.registerItem(mapLocationItem);
+		mapLocationItem = (new ItemMapLocation()).setUnlocalizedName("mapLocation");
+		CoreProxy.proxy.registerItem(mapLocationItem);
 
-			listItem = (ItemList) ((new ItemList()).setUnlocalizedName("list"));
-			CoreProxy.proxy.registerItem(listItem);
+		listItem = (ItemList) (new ItemList()).setUnlocalizedName("list");
+		CoreProxy.proxy.registerItem(listItem);
 
-			debuggerItem = (ItemDebugger) ((new ItemDebugger())).setUnlocalizedName("debugger");
-			CoreProxy.proxy.registerItem(debuggerItem);
+		debuggerItem = (new ItemDebugger()).setUnlocalizedName("debugger");
+		CoreProxy.proxy.registerItem(debuggerItem);
 
-			if (BuildCraftCore.modifyWorld) {
-				BlockSpring.EnumSpring.WATER.canGen = BuildCraftCore.mainConfigManager.get("worldgen.generateWaterSprings").getBoolean();
-				springBlock = new BlockSpring().setBlockName("eternalSpring");
-				CoreProxy.proxy.registerBlock(springBlock, ItemSpring.class);
-			}
-
-			woodenGearItem = (new ItemGear()).setUnlocalizedName("woodenGearItem");
-			CoreProxy.proxy.registerItem(woodenGearItem);
-			OreDictionary.registerOre("gearWood", new ItemStack(woodenGearItem));
-
-			stoneGearItem = (new ItemGear()).setUnlocalizedName("stoneGearItem");
-			CoreProxy.proxy.registerItem(stoneGearItem);
-			OreDictionary.registerOre("gearStone", new ItemStack(stoneGearItem));
-
-			ironGearItem = (new ItemGear()).setUnlocalizedName("ironGearItem");
-			CoreProxy.proxy.registerItem(ironGearItem);
-			OreDictionary.registerOre("gearIron", new ItemStack(ironGearItem));
-
-			goldGearItem = (new ItemGear()).setUnlocalizedName("goldGearItem");
-			CoreProxy.proxy.registerItem(goldGearItem);
-			OreDictionary.registerOre("gearGold", new ItemStack(goldGearItem));
-
-			diamondGearItem = (new ItemGear()).setUnlocalizedName("diamondGearItem");
-			CoreProxy.proxy.registerItem(diamondGearItem);
-			OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));
-
-			paintbrushItem = (new ItemPaintbrush()).setUnlocalizedName("paintbrush");
-			CoreProxy.proxy.registerItem(paintbrushItem);
-
-			if (TABLET_TESTING) {
-				tabletItem = new ItemTablet();
-				tabletItem.setUnlocalizedName("tablet");
-				CoreProxy.proxy.registerItem(tabletItem);
-			}
-
-			buildToolBlock = new BlockBuildTool();
-			buildToolBlock.setBlockName("buildToolBlock");
-			CoreProxy.proxy.registerBlock(buildToolBlock);
-
-			engineBlock = (BlockEngine) CompatHooks.INSTANCE.getBlock(BlockEngine.class);
-			CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);
-			engineBlock.registerTile((Class<? extends TileEngineBase>) CompatHooks.INSTANCE.getTile(TileEngineWood.class), "tile.engineWood");
-			CoreProxy.proxy.registerTileEntity(TileEngineWood.class, "net.minecraft.src.buildcraft.energy.TileEngineWood");
-
-			FMLCommonHandler.instance().bus().register(this);
-			MinecraftForge.EVENT_BUS.register(this);
-			MinecraftForge.EVENT_BUS.register(new BlockHighlightHandler());
-		} finally {
+		if (BuildCraftCore.modifyWorld) {
+			BlockSpring.EnumSpring.WATER.canGen = BuildCraftCore.mainConfigManager.get("worldgen.generateWaterSprings").getBoolean();
+			springBlock = new BlockSpring().setBlockName("eternalSpring");
+			CoreProxy.proxy.registerBlock(springBlock, ItemSpring.class);
 		}
 
+		woodenGearItem = (new ItemGear()).setUnlocalizedName("woodenGearItem");
+		CoreProxy.proxy.registerItem(woodenGearItem);
+		OreDictionary.registerOre("gearWood", new ItemStack(woodenGearItem));
+
+		stoneGearItem = (new ItemGear()).setUnlocalizedName("stoneGearItem");
+		CoreProxy.proxy.registerItem(stoneGearItem);
+		OreDictionary.registerOre("gearStone", new ItemStack(stoneGearItem));
+
+		ironGearItem = (new ItemGear()).setUnlocalizedName("ironGearItem");
+		CoreProxy.proxy.registerItem(ironGearItem);
+		OreDictionary.registerOre("gearIron", new ItemStack(ironGearItem));
+
+		goldGearItem = (new ItemGear()).setUnlocalizedName("goldGearItem");
+		CoreProxy.proxy.registerItem(goldGearItem);
+		OreDictionary.registerOre("gearGold", new ItemStack(goldGearItem));
+
+		diamondGearItem = (new ItemGear()).setUnlocalizedName("diamondGearItem");
+		CoreProxy.proxy.registerItem(diamondGearItem);
+		OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));
+
+		paintbrushItem = (new ItemPaintbrush()).setUnlocalizedName("paintbrush");
+		CoreProxy.proxy.registerItem(paintbrushItem);
+
+		if (TABLET_TESTING) {
+			tabletItem = new ItemTablet();
+			tabletItem.setUnlocalizedName("tablet");
+			CoreProxy.proxy.registerItem(tabletItem);
+		}
+
+		buildToolBlock = new BlockBuildTool();
+		buildToolBlock.setBlockName("buildToolBlock");
+		CoreProxy.proxy.registerBlock(buildToolBlock);
+
+		engineBlock = (BlockEngine) CompatHooks.INSTANCE.getBlock(BlockEngine.class);
+		CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);
+		engineBlock.registerTile((Class<? extends TileEngineBase>) CompatHooks.INSTANCE.getTile(TileEngineWood.class), "tile.engineWood");
+		CoreProxy.proxy.registerTileEntity(TileEngineWood.class, "net.minecraft.src.buildcraft.energy.TileEngineWood");
+
+		FMLCommonHandler.instance().bus().register(this);
+		MinecraftForge.EVENT_BUS.register(this);
+		MinecraftForge.EVENT_BUS.register(new BlockHighlightHandler());
 	}
 
 	@Mod.EventHandler

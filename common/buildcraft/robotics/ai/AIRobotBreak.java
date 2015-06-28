@@ -115,12 +115,11 @@ public class AIRobotBreak extends AIRobot {
 
 		if (f > 1.0F) {
 			int i = EnchantmentHelper.getEfficiencyModifier(robot);
-			ItemStack itemstack = usingItem;
 
-			if (i > 0 && itemstack != null) {
+			if (i > 0) {
 				float f1 = i * i + 1;
 
-				boolean canHarvest = ForgeHooks.canToolHarvestBlock(block, meta, itemstack);
+				boolean canHarvest = ForgeHooks.canToolHarvestBlock(block, meta, usingItem);
 
 				if (!canHarvest && f <= 1.0F) {
 					f += f1 * 0.08F;

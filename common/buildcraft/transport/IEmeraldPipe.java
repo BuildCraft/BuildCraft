@@ -4,11 +4,11 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public interface IEmeraldPipe extends IFilteredPipe {
 
-	public enum FilterMode {
+	enum FilterMode {
 		WHITE_LIST, BLACK_LIST, ROUND_ROBIN
 	}
 
-	public class EmeraldPipeSettings {
+	class EmeraldPipeSettings {
 		private FilterMode filterMode;
 
 		public EmeraldPipeSettings(FilterMode defaultMode) {

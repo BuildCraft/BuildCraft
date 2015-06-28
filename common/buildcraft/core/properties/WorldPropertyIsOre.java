@@ -22,8 +22,7 @@ import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.oredict.OreDictionary;
 
 public class WorldPropertyIsOre extends WorldProperty {
-
-	public HashSet<Integer> ores = new HashSet<Integer>();
+	private final HashSet<Integer> ores = new HashSet<Integer>();
 
 	public WorldPropertyIsOre(int harvestLevel) {
 		initBlockHarvestTools();

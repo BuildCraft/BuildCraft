@@ -103,14 +103,10 @@ public class CoreProxy implements ICoreProxy {
 
 	@SuppressWarnings("unchecked")
 	public void addCraftingRecipe(ItemStack result, Object... recipe) {
-		String name = Item.itemRegistry.getNameForObject(result.getItem());
-
 		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(result, recipe));
 	}
 
 	public void addShapelessRecipe(ItemStack result, Object... recipe) {
-		String name = Item.itemRegistry.getNameForObject(result.getItem());
-
 		CraftingManager.getInstance().getRecipeList().add(new ShapelessOreRecipe(result, recipe));
 	}
 

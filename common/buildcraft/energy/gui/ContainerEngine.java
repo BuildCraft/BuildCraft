@@ -48,8 +48,8 @@ public class ContainerEngine extends BuildCraftContainer {
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
 
-		for (int i = 0; i < crafters.size(); i++) {
-			engine.sendGUINetworkData(this, (ICrafting) crafters.get(i));
+		for (Object crafter : crafters) {
+			engine.sendGUINetworkData(this, (ICrafting) crafter);
 		}
 	}
 

@@ -16,7 +16,7 @@ public enum LockButtonState implements IMultiButtonState {
 	public static final LockButtonState[] VALUES = values();
 	private final IButtonTextureSet texture;
 
-	private LockButtonState(IButtonTextureSet texture) {
+	LockButtonState(IButtonTextureSet texture) {
 		this.texture = texture;
 	}
 

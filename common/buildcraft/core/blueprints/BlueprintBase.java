@@ -79,17 +79,17 @@ public abstract class BlueprintBase {
 	}
 
 	public void translateToBlueprint(Translation transform) {
-		for (int i = 0; i < contents.length; i++) {
-			if (contents[i] != null) {
-				contents[i].translateToBlueprint(transform);
+		for (SchematicBlockBase content : contents) {
+			if (content != null) {
+				content.translateToBlueprint(transform);
 			}
 		}
 	}
 
 	public void translateToWorld(Translation transform) {
-		for (int i = 0; i < contents.length; i++) {
-			if (contents[i] != null) {
-				contents[i].translateToWorld(transform);
+		for (SchematicBlockBase content : contents) {
+			if (content != null) {
+				content.translateToWorld(transform);
 			}
 		}
 	}

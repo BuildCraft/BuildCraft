@@ -249,9 +249,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 			double[] head = getHead();
 			AxisAlignedBB axis = AxisAlignedBB.getBoundingBox(head[0] - 2, head[1] - 2, head[2] - 2, head[0] + 3, head[1] + 3, head[2] + 3);
 			List result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
-			for (int ii = 0; ii < result.size(); ii++) {
-				if (result.get(ii) instanceof EntityItem) {
-					EntityItem entity = (EntityItem) result.get(ii);
+			for (Object aResult : result) {
+				if (aResult instanceof EntityItem) {
+					EntityItem entity = (EntityItem) aResult;
 					if (entity.isDead) {
 						continue;
 					}

@@ -133,7 +133,7 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
 		Fluid fluidInTank = event.fluidStack.getFluid();
         Set<ForgeDirection> originalDestinations = new HashSet<ForgeDirection>();
         originalDestinations.addAll(event.destinations.elementSet());
-        boolean isFiltered = true;
+        boolean isFiltered = false;
         int[] filterCount = new int[6];
 
 		for (ForgeDirection dir : originalDestinations) {

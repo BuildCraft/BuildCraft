@@ -42,7 +42,7 @@ public class AIRobotGotoStationAndLoad extends AIRobot {
 				setSuccess(false);
 				terminate();
 			}
-		} else if (ai instanceof AIRobotGotoStationToLoad) {
+		} else if (ai instanceof AIRobotLoad) {
 			setSuccess(ai.success());
 			terminate();
 		}

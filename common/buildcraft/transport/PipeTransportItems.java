@@ -230,9 +230,6 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
 		if (entity instanceof IPipeTile) {
 			Pipe<?> pipe = (Pipe<?>) ((IPipeTile) entity).getPipe();
-			if (pipe == null || pipe.transport == null) {
-				return false;
-			}
 
 			if (pipe == null || pipe.transport == null) {
 				return false;

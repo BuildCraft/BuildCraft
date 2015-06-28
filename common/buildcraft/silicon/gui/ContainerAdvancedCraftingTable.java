@@ -67,8 +67,8 @@ public class ContainerAdvancedCraftingTable extends BuildCraftContainer {
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
-		for (int i = 0; i < crafters.size(); i++) {
-			workbench.sendGUINetworkData(this, (ICrafting) crafters.get(i));
+		for (Object crafter : crafters) {
+			workbench.sendGUINetworkData(this, (ICrafting) crafter);
 		}
 	}
 

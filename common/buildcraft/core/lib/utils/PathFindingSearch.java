@@ -23,9 +23,8 @@ import buildcraft.api.core.IZone;
 
 public class PathFindingSearch implements IIterableAlgorithm {
 
-	public static int PATH_ITERATIONS = 1000;
-
-	private static HashMap<Integer, HashSet<BlockIndex>> reservations = new HashMap<Integer, HashSet<BlockIndex>>();
+	public static final int PATH_ITERATIONS = 1000;
+	private static final HashMap<Integer, HashSet<BlockIndex>> reservations = new HashMap<Integer, HashSet<BlockIndex>>();
 
 	private World world;
 	private BlockIndex start;
