@@ -439,7 +439,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
 		NBTTagList nbttaglist = new NBTTagList();
 
-		for (TravelingItem item : items.toArray(new TravelingItem[items.size()])) {
+		for (TravelingItem item : items) {
 			NBTTagCompound dataTag = new NBTTagCompound();
 			nbttaglist.appendTag(dataTag);
 			item.writeToNBT(dataTag);
