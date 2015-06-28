@@ -311,6 +311,14 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 					continue;
 				}
 
+				if (item.output == ForgeDirection.UNKNOWN) {
+					// TODO: Figure out why this is actually happening.
+					if (items.scheduleRemoval(item)) {
+						dropItem(item);
+					}
+					continue;
+				}
+
 				TileEntity tile = container.getTile(item.output, true);
 
 				PipeEventItem.ReachedEnd event = new PipeEventItem.ReachedEnd(container.pipe, item, tile);
