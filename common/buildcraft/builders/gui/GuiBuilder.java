@@ -22,6 +22,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.builders.TileBuilder;
 import buildcraft.core.blueprints.RequirementItemStack;
 import buildcraft.core.lib.fluids.Tank;
+import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
@@ -113,8 +114,8 @@ public class GuiBuilder extends GuiAdvancedInterface {
 		} else {
 			sbPosition = 0;
 			sbLength = 0;
-			for (int s = 0; s < slots.size(); s++) {
-				((BuilderRequirementSlot) slots.get(s)).stack = null;
+			for (AdvancedSlot slot : slots) {
+				((BuilderRequirementSlot) slot).stack = null;
 			}
 			for (GuiButton b : (List<GuiButton>) buttonList) {
 				b.visible = false;

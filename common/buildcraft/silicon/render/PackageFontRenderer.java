@@ -26,7 +26,7 @@ public class PackageFontRenderer extends FontRenderer {
 
 	@Override
 	public int getStringWidth(String s) {
-		if (s.indexOf("SPECIAL:") < 0) {
+		if (!s.contains("SPECIAL:")) {
 			return realRenderer.getStringWidth(s);
 		}
 
@@ -35,7 +35,7 @@ public class PackageFontRenderer extends FontRenderer {
 
 	@Override
 	public int drawString(String s, int x, int y, int color, boolean shadow) {
-		if (s.indexOf("SPECIAL:") < 0) {
+		if (!s.contains("SPECIAL:")) {
 			return realRenderer.drawString(s, x, y, color, shadow);
 		}
 

@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.recipes.IAssemblyRecipeManager;
@@ -25,8 +24,6 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 
 	@Override
 	public void addRecipe(String id, int energyCost, ItemStack output, Object... input) {
-		String name = Item.itemRegistry.getNameForObject(output.getItem());
-
 		addRecipe(id, new FlexibleRecipe<ItemStack>(id, output, energyCost, 0, input));
 	}
 

@@ -18,7 +18,7 @@ public enum StandardButtonTextureSets implements IButtonTextureSet {
 	public static final ResourceLocation BUTTON_TEXTURES = new ResourceLocation("buildcraftcore:textures/gui/buttons.png");
 	private final int x, y, height, width;
 
-	private StandardButtonTextureSets(int x, int y, int height, int width) {
+	StandardButtonTextureSets(int x, int y, int height, int width) {
 		this.x = x;
 		this.y = y;
 		this.height = height;

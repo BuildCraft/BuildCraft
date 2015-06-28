@@ -110,7 +110,6 @@ public class GateItemRenderer implements IItemRenderer {
 			if (count > 0) {
 				float offsetX = (rand.nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
 				float offsetY = (rand.nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
-				float z = (rand.nextFloat() * 2.0F - 1.0F) * 0.3F / 0.5F;
 				GL11.glTranslatef(offsetX, offsetY, offsetZ);
 			} else {
 				GL11.glTranslatef(0f, 0f, offsetZ);

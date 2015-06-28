@@ -56,8 +56,8 @@ public class ContainerArchitect extends BuildCraftContainer {
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
 
-		for (int i = 0; i < crafters.size(); i++) {
-			ICrafting icrafting = (ICrafting) crafters.get(i);
+		for (Object crafter : crafters) {
+			ICrafting icrafting = (ICrafting) crafter;
 			if (computingTime != architect.getComputingProgressScaled(24)) {
 				icrafting.sendProgressBarUpdate(this, 0, architect.getComputingProgressScaled(24));
 			}

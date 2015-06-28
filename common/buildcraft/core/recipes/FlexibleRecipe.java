@@ -186,7 +186,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 				FluidStack fluid = crafter.getCraftingFluidStack(tankid);
 
 				if (fluid != null && fluid.isFluidEqual(requirement)) {
-					int amountUsed = 0;
+					int amountUsed;
 
 					if (fluid.amount > amount) {
 						amountUsed = amount;
@@ -239,7 +239,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 			ItemStack stack = crafter.getCraftingItemStack(slotid);
 
 			if (stack != null && filter.matches(stack)) {
-				ItemStack removed = null;
+				ItemStack removed;
 
 				if (stack.stackSize >= expected) {
 					removed = crafter.decrCraftingItemStack(slotid, expected);

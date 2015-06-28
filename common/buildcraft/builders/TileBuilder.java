@@ -161,12 +161,8 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 				AxisAlignedBB boundingBox = bpt.getBoundingBox();
 
 				if (oldBoundingBox == null || !collision(oldBoundingBox, boundingBox)) {
-
 					oldBoundingBox = boundingBox;
-
-					if (bpt != null) {
-						return bpt;
-					}
+					return bpt;
 				}
 
 				ix += cx;
@@ -301,7 +297,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	}
 
 	public BlueprintBase instanciateBlueprint() {
-		BlueprintBase bpt = null;
+		BlueprintBase bpt;
 
 		try {
 			bpt = ItemBlueprint.loadBlueprint(getStackInSlot(0));
@@ -650,7 +646,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 						stack.setTagCompound(NetworkUtils.readNBT(stream));
 					}
 
-					if (stack != null && stack.getItem() != null) {
+					if (stack.getItem() != null) {
 						requiredToBuild.add(new RequirementItemStack(stack, stackSize & 0x7FFFFF));
 					} else {
 						BCLog.logger.error("Corrupt ItemStack in TileBuilder.receiveCommand! This should not happen! (ID " + itemId + ", damage " + itemDamage + ")");

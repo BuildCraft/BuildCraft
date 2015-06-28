@@ -84,8 +84,8 @@ public class ContainerEmzuliPipe extends BuildCraftContainer {
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
 
-		for (int i = 0; i < crafters.size(); ++i) {
-			ICrafting player = (ICrafting) crafters.get(i);
+		for (Object crafter : crafters) {
+			ICrafting player = (ICrafting) crafter;
 
 			for (int slot = 0; slot < pipe.slotColors.length; slot++) {
 				if (prevSlotColors[slot] != pipe.slotColors[slot]) {

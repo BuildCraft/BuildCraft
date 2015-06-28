@@ -27,9 +27,9 @@ public class ActionRobotWorkInArea extends BCStatement implements IActionInterna
 		WORK("work_in_area"),
 		LOAD_UNLOAD("load_unload_area");
 
-		private String name;
+		private final String name;
 
-		private AreaType(String iName) {
+		AreaType(String iName) {
 			name = iName;
 		}
 
@@ -46,7 +46,7 @@ public class ActionRobotWorkInArea extends BCStatement implements IActionInterna
 		}
 	}
 
-	private AreaType areaType;
+	private final AreaType areaType;
 
 	public ActionRobotWorkInArea(AreaType iAreaType) {
 		super(iAreaType.getTag());

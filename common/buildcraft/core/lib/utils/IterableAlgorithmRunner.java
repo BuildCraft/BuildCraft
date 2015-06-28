@@ -38,12 +38,11 @@ public class IterableAlgorithmRunner extends Thread {
 				}
 
 				long startTime = new Date().getTime();
-				long elapsedtime = 0;
 
 				pathFinding.iterate();
 
-				elapsedtime = new Date().getTime() - startTime;
-				double timeToWait = elapsedtime * 1.5;
+				long elapsedTime = new Date().getTime() - startTime;
+				double timeToWait = elapsedTime * 1.5;
 				sleep((long) timeToWait);
 			}
 		} catch (Throwable t) {

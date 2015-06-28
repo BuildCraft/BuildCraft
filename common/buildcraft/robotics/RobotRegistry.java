@@ -345,7 +345,7 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 		for (int i = 0; i < stationList.tagCount(); ++i) {
 			NBTTagCompound cpt = stationList.getCompoundTagAt(i);
 
-			Class<? extends DockingStation> cls = null;
+			Class<? extends DockingStation> cls;
 
 			if (!cpt.hasKey("stationType")) {
 				cls = DockingStationPipe.class;

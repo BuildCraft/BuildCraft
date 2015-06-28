@@ -91,10 +91,10 @@ public class ListHandlerNew {
 		public NBTTagCompound toNBT() {
 			NBTTagCompound data = new NBTTagCompound();
 			NBTTagList stackList = new NBTTagList();
-			for (int i = 0; i < stacks.length; i++) {
+			for (ItemStack stack1 : stacks) {
 				NBTTagCompound stack = new NBTTagCompound();
-				if (stacks[i] != null) {
-					stacks[i].writeToNBT(stack);
+				if (stack1 != null) {
+					stack1.writeToNBT(stack);
 				}
 				stackList.appendTag(stack);
 			}

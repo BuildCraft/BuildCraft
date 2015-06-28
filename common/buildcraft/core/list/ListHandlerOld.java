@@ -233,8 +233,8 @@ public class ListHandlerOld {
 		StackLine[] lines = getLines(stackList);
 
 		if (lines != null) {
-			for (int i = 0; i < lines.length; i++) {
-				if (lines[i] != null && lines[i].matches(item)) {
+			for (StackLine line : lines) {
+				if (line != null && line.matches(item)) {
 					return true;
 				}
 			}

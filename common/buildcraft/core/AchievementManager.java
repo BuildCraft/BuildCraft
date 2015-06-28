@@ -7,7 +7,7 @@ import cpw.mods.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.common.AchievementPage;
 
 public class AchievementManager {
-	public AchievementPage page;
+	public final AchievementPage page;
 
 	public AchievementManager(String name) {
 		page = new AchievementPage(name);

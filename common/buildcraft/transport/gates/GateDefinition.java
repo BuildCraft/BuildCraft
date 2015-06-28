@@ -32,7 +32,7 @@ public final class GateDefinition {
 		}
 	}
 
-	public static enum GateMaterial {
+	public enum GateMaterial {
 
 		REDSTONE("gate_interface_1.png", 146, 1, 0, 0, 1),
 		IRON("gate_interface_2.png", 164, 2, 0, 0, 2),
@@ -53,8 +53,8 @@ public final class GateDefinition {
 		@SideOnly(Side.CLIENT)
 		private IIcon iconItem;
 
-		private GateMaterial(String guiFile, int guiHeight, int numSlots, int triggerParameterSlots,
-				int actionParameterSlots, int maxWireColor) {
+		GateMaterial(String guiFile, int guiHeight, int numSlots, int triggerParameterSlots,
+					 int actionParameterSlots, int maxWireColor) {
 			this.guiFile = new ResourceLocation("buildcrafttransport:textures/gui/" + guiFile);
 			this.guiHeight = guiHeight;
 			this.numSlots = numSlots;
@@ -99,7 +99,7 @@ public final class GateDefinition {
 		}
 	}
 
-	public static enum GateLogic {
+	public enum GateLogic {
 
 		AND, OR;
 		public static final GateLogic[] VALUES = values();

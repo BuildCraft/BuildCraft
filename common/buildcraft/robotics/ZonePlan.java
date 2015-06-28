@@ -24,7 +24,7 @@ import buildcraft.api.core.IZone;
 import buildcraft.core.ChunkIndex;
 
 public class ZonePlan implements IZone, ISerializable {
-	private HashMap<ChunkIndex, ZoneChunk> chunkMapping = new HashMap<ChunkIndex, ZoneChunk>();
+	private final HashMap<ChunkIndex, ZoneChunk> chunkMapping = new HashMap<ChunkIndex, ZoneChunk>();
 
 	public boolean get(int x, int z) {
 		int xChunk = x >> 4;

@@ -152,7 +152,7 @@ public class MapWorld {
 
 	public void updateChunkDelayed(Chunk chunk, byte time) {
 		synchronized (timeToUpdate) {
-			timeToUpdate.put(chunk, new Integer(time));
+			timeToUpdate.put(chunk, (int) time);
 		}
 	}
 }

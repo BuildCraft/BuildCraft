@@ -110,7 +110,9 @@ public class ItemGateCopier extends ItemBuildCraft {
 				player.addChatMessage(new ChatComponentTranslation("chat.gateCopier.warning.load"));
 			}
 
-			((TileGenericPipe) tile).sendUpdateToClient();
+			if (tile instanceof TileGenericPipe) {
+				((TileGenericPipe) tile).sendUpdateToClient();
+			}
 			player.addChatMessage(new ChatComponentTranslation("chat.gateCopier.gatePasted"));	
 			return true;
 		}

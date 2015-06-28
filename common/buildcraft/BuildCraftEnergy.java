@@ -422,7 +422,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 	}
 
 	private int findUnusedBiomeID(String biomeName) {
-		int freeBiomeID = 0;
+		int freeBiomeID;
 		// code to find a free biome
 		for (int i = 1; i < 256; i++) {
 			if (BiomeGenBase.getBiomeGenArray()[i] == null) {

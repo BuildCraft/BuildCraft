@@ -22,7 +22,7 @@ import buildcraft.transport.Gate;
 
 public class ActionSignalOutput extends BCStatement implements IActionInternal {
 
-	public PipeWire color;
+	public final PipeWire color;
 
 	public ActionSignalOutput(PipeWire color) {
 		super("buildcraft:pipe.wire.output." + color.name().toLowerCase(Locale.ENGLISH), "buildcraft.pipe.wire.output." + color.name().toLowerCase(Locale.ENGLISH));

@@ -10,7 +10,7 @@ public final class MapUtils {
 	}
 
 	public static int getXFromID(long id) {
-		return (int) ((id >> 24) & 0xFFFFFFFF);
+		return (int) (id >> 24);
 	}
 
 	public static int getZFromID(long id) {

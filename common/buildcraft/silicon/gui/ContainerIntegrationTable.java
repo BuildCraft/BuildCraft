@@ -59,8 +59,8 @@ public class ContainerIntegrationTable extends BuildCraftContainer {
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
-		for (int i = 0; i < crafters.size(); i++) {
-			table.sendGUINetworkData(this, (ICrafting) crafters.get(i));
+		for (Object crafter : crafters) {
+			table.sendGUINetworkData(this, (ICrafting) crafter);
 		}
 	}
 
