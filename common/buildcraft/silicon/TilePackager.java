@@ -1,5 +1,6 @@
 package buildcraft.silicon;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -228,7 +229,7 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
 		}
 
 		// STEP 3b: Remote
-		Map<ForgeDirection, IInventory> invs = new HashMap<ForgeDirection, IInventory>();
+		Map<ForgeDirection, IInventory> invs = new EnumMap<ForgeDirection, IInventory>(ForgeDirection.class);
 		if (filteredReqsToFulfill > 0 || missingCount > 0) {
 			for (int i = 2; i < 6; i++) {
 				TileEntity neighbor = getTile(ForgeDirection.getOrientation(i));

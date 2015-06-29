@@ -64,7 +64,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	protected HashSet<Integer> builtEntities = new HashSet<Integer>();
 
 	private HashMap<BuilderItemMetaPair, List<BuildingSlotBlock>> buildList = new HashMap<BuilderItemMetaPair, List<BuildingSlotBlock>>();
-	private Multiset<Integer> buildStageOccurences = HashMultiset.create();
+	private int[] buildStageOccurences;
 	private LinkedList<BuildingSlotEntity> entityList = new LinkedList<BuildingSlotEntity>();
 	private LinkedList<BuildingSlot> postProcessing = new LinkedList<BuildingSlot>();
 	private BuildingSlotMapIterator iterator;
@@ -268,8 +268,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 	private int getBuildListCount() {
 		int out = 0;
-		for (int i = 0; i < 4; i++) {
-			out += buildStageOccurences.count(i);
+		for (int i = 0; i < buildStageOccurences.length; i++) {
+			out += buildStageOccurences[i];
 		}
 		return out;
 	}
@@ -297,7 +297,14 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				buildList.put(imp, new ArrayList<BuildingSlotBlock>());
 			}
 			buildList.get(imp).add(b);
-			buildStageOccurences.add(b.buildStage);
+			if (buildStageOccurences == null) {
+				buildStageOccurences = new int[Math.max(4, b.buildStage + 1)];
+			} else if (buildStageOccurences.length <= b.buildStage) {
+				int[] newBSO = new int[b.buildStage + 1];
+				System.arraycopy(buildStageOccurences, 0, newBSO, 0, buildStageOccurences.length);
+				buildStageOccurences = newBSO;
+			}
+			buildStageOccurences[b.buildStage]++;
 		}
 	}
 
@@ -340,7 +347,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			boolean skipped = false;
 
 			for (int i = 0; i < slot.buildStage; i++) {
-				if (buildStageOccurences.count(i) > 0) {
+				if (buildStageOccurences[i] > 0) {
 					iterator.skipList();
 					skipped = true;
 					break;
