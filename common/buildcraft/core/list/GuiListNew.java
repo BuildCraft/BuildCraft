@@ -8,6 +8,11 @@
  */
 package buildcraft.core.list;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -16,12 +21,17 @@ import buildcraft.BuildCraftCore;
 import buildcraft.core.ItemList;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
+import buildcraft.core.lib.gui.buttons.GuiImageButton;
+import buildcraft.core.lib.gui.buttons.IButtonClickEventListener;
+import buildcraft.core.lib.gui.buttons.IButtonClickEventTrigger;
+import buildcraft.core.lib.inventory.StackHelper;
 
-public class GuiListNew extends GuiAdvancedInterface {
-
+public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEventListener {
 	private static final ResourceLocation TEXTURE_BASE = new ResourceLocation(
 			"buildcraftcore:textures/gui/list_new.png");
+	private static final int BUTTON_COUNT = 3;
 
+	private final Map<Integer, Map<ListMatchHandler.Type, List<ItemStack>>> exampleCache = new HashMap<Integer, Map<ListMatchHandler.Type, List<ItemStack>>>();
 	private GuiTextField textField;
 	private EntityPlayer player;
 
@@ -39,8 +49,66 @@ public class GuiListNew extends GuiAdvancedInterface {
 		@Override
 		public ItemStack getItemStack() {
 			ContainerListNew container = (ContainerListNew) gui.getContainer();
-			return container.lines[lineIndex].getStack(slotIndex);
+			if (slotIndex == 0 || !container.lines[lineIndex].isOneStackMode()) {
+				return container.lines[lineIndex].getStack(slotIndex);
+			} else {
+				List<ItemStack> data = ((GuiListNew) gui).getExamplesList(lineIndex, container.lines[lineIndex].getSortingType());
+				if (data.size() >= slotIndex) {
+					return data.get(slotIndex - 1);
+				} else {
+					return null;
+				}
+			}
 		}
+
+		@Override
+		public void drawSprite(int cornerX, int cornerY) {
+			if (!shouldDrawHighlight()) {
+				Minecraft.getMinecraft().renderEngine.bindTexture(TEXTURE_BASE);
+				gui.drawTexturedModalRect(cornerX + x, cornerY + y, 176, 0, 16, 16);
+			}
+
+			super.drawSprite(cornerX, cornerY);
+		}
+
+		@Override
+		public boolean shouldDrawHighlight() {
+			ContainerListNew container = (ContainerListNew) gui.getContainer();
+			return slotIndex == 0 || !container.lines[lineIndex].isOneStackMode();
+		}
+	}
+
+	private void clearExamplesCache(int lineId) {
+		Map<ListMatchHandler.Type, List<ItemStack>> exampleList = exampleCache.get(lineId);
+		if (exampleList != null) {
+			exampleList.clear();
+		}
+	}
+
+	private List<ItemStack> getExamplesList(int lineId, ListMatchHandler.Type type) {
+		Map<ListMatchHandler.Type, List<ItemStack>> exampleList = exampleCache.get(lineId);
+		if (exampleList == null) {
+			exampleList = new HashMap<ListMatchHandler.Type, List<ItemStack>>();
+			exampleCache.put(lineId, exampleList);
+		}
+
+		ContainerListNew container = (ContainerListNew) getContainer();
+
+		if (!exampleList.containsKey(type)) {
+			List<ItemStack> examples = container.lines[lineId].getExamples();
+			ItemStack input = container.lines[lineId].stacks[0];
+			if (input != null) {
+				List<ItemStack> repetitions = new ArrayList<ItemStack>();
+				for (ItemStack is : examples) {
+					if (StackHelper.isMatchingItem(input, is, true, false)) {
+						repetitions.add(is);
+					}
+				}
+				examples.removeAll(repetitions);
+			}
+			exampleList.put(type, examples);
+		}
+		return exampleList.get(type);
 	}
 
 	public GuiListNew(EntityPlayer iPlayer) {
@@ -49,18 +117,40 @@ public class GuiListNew extends GuiAdvancedInterface {
 		xSize = 176;
 		ySize = 192;
 
-		for (int sy = 0; sy < ListHandlerNew.HEIGHT; sy++) {
-			for (int sx = 0; sx < ListHandlerNew.WIDTH; sx++) {
-				slots.add(new ListSlot(this, 8 + sx * 18, 32 + sy * 33, sy, sx));
-			}
-		}
-
 		player = iPlayer;
 	}
 
 	@Override
 	public void initGui() {
 		super.initGui();
+
+		exampleCache.clear();
+		slots.clear();
+		buttonList.clear();
+
+		for (int sy = 0; sy < ListHandlerNew.HEIGHT; sy++) {
+			for (int sx = 0; sx < ListHandlerNew.WIDTH; sx++) {
+				slots.add(new ListSlot(this, 8 + sx * 18, 32 + sy * 33, sy, sx));
+			}
+			int bOff = sy * BUTTON_COUNT;
+			int bOffX = this.guiLeft + 8 + ListHandlerNew.WIDTH * 18 - BUTTON_COUNT * 11;
+			int bOffY = this.guiTop + 32 + sy * 33 + 18;
+
+			buttonList.add(new GuiImageButton(bOff + 0, bOffX, bOffY, 11, TEXTURE_BASE, 176, 16, 176, 28));
+			buttonList.add(new GuiImageButton(bOff + 1, bOffX + 11, bOffY, 11, TEXTURE_BASE, 176, 16, 185, 28));
+			buttonList.add(new GuiImageButton(bOff + 2, bOffX + 22, bOffY, 11, TEXTURE_BASE, 176, 16, 194, 28));
+		}
+
+		for (Object o : buttonList) {
+			GuiImageButton b = ((GuiImageButton) o);
+			int lineId = b.id / BUTTON_COUNT;
+			int buttonId = b.id % BUTTON_COUNT;
+			if (((ContainerListNew) getContainer()).lines[lineId].getOption(buttonId)) {
+				b.activate();
+			}
+
+			b.registerListener(this);
+		}
 
 		textField = new GuiTextField(this.fontRendererObj, 10, 10, 156, 12);
 		textField.setMaxStringLength(32);
@@ -106,9 +196,20 @@ public class GuiListNew extends GuiAdvancedInterface {
 
 		if (slot instanceof ListSlot) {
 			container.setStack(((ListSlot) slot).lineIndex, ((ListSlot) slot).slotIndex, mc.thePlayer.inventory.getItemStack());
+			clearExamplesCache(((ListSlot) slot).lineIndex);
 		}
 
 		textField.mouseClicked(x - guiLeft, y - guiTop, b);
+	}
+
+	@Override
+	public void handleButtonClick(IButtonClickEventTrigger sender, int id) {
+		int buttonId = id % BUTTON_COUNT;
+		int lineId = id / BUTTON_COUNT;
+
+		ContainerListNew container = (ContainerListNew) getContainer();
+		container.switchButton(lineId, buttonId);
+		clearExamplesCache(lineId);
 	}
 
 	@Override

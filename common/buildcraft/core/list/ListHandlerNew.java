@@ -1,5 +1,7 @@
 package buildcraft.core.list;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
@@ -55,7 +57,7 @@ public class ListHandlerNew {
 				}
 
 				List<ListMatchHandler> handlers = ListRegistry.getHandlers();
-				ListMatchHandler.Type type = byType ? (byMaterial ? ListMatchHandler.Type.CLASS : ListMatchHandler.Type.TYPE) : ListMatchHandler.Type.MATERIAL;
+				ListMatchHandler.Type type = getSortingType();
 				for (ListMatchHandler h : handlers) {
 					if (h.matches(type, stacks[0], target, precise)) {
 						return true;
@@ -69,6 +71,10 @@ public class ListHandlerNew {
 				}
 			}
 			return false;
+		}
+
+		public ListMatchHandler.Type getSortingType() {
+			return byType ? (byMaterial ? ListMatchHandler.Type.CLASS : ListMatchHandler.Type.TYPE) : ListMatchHandler.Type.MATERIAL;
 		}
 
 		public static Line fromNBT(NBTTagCompound data) {
@@ -118,6 +124,22 @@ public class ListHandlerNew {
 
 		public ItemStack getStack(int i) {
 			return i >= 0 && i < stacks.length ? stacks[i] : null;
+		}
+
+		public List<ItemStack> getExamples() {
+			List<ItemStack> stackList = new ArrayList<ItemStack>();
+			if (stacks[0] != null) {
+				List<ListMatchHandler> handlers = ListRegistry.getHandlers();
+				ListMatchHandler.Type type = getSortingType();
+				for (ListMatchHandler h : handlers) {
+					List<ItemStack> examples = h.getClientExamples(type, stacks[0]);
+					if (examples != null) {
+						stackList.addAll(examples);
+					}
+				}
+				Collections.shuffle(stackList);
+			}
+			return stackList;
 		}
 	}
 

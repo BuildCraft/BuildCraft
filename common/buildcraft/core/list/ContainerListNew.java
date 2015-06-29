@@ -64,7 +64,7 @@ public class ContainerListNew extends BuildCraftContainer implements ICommandRec
 	}
 
 	public void switchButton(final int lineIndex, final int button) {
-		lines[lineIndex].toggleOption(lineIndex);
+		lines[lineIndex].toggleOption(button);
 		ListHandlerNew.saveLines(player.getCurrentEquippedItem(), lines);
 
 		if (player.worldObj.isRemote) {
