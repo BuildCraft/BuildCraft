@@ -6,7 +6,6 @@ package buildcraft.factory.block;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -27,7 +26,6 @@ import buildcraft.factory.tile.TileTank;
 
 public class BlockTank extends BlockBuildCraft {
     private static final boolean DEBUG_MODE = false;
-    private TextureAtlasSprite textureStackedSide;
 
     public BlockTank() {
         super(Material.glass, JOINED_BELOW);
@@ -44,13 +42,14 @@ public class BlockTank extends BlockBuildCraft {
             tank.onBlockBreak();
         }
 
-        TileEntity tileAbove = world.getTileEntity(x, y + 1, z);
-        TileEntity tileBelow = world.getTileEntity(x, y - 1, z);
+        TileEntity tileAbove = world.getTileEntity(pos.up());
+        TileEntity tileBelow = world.getTileEntity(pos.down());
 
-        super.breakBlock(world, pos, block, par6);
+        super.breakBlock(world, pos, state);
 
         if (tileAbove instanceof TileTank) {
             ((TileTank) tileAbove).updateComparators();
+            world.setBlockState(pos.up(), world.getBlockState(pos.up()).withProperty(JOINED_BELOW, false));
         }
 
         if (tileBelow instanceof TileTank) {
@@ -69,7 +68,8 @@ public class BlockTank extends BlockBuildCraft {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing side, float par7, float par8, float par9) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing side, float par7, float par8,
+            float par9) {
         if (super.onBlockActivated(world, pos, state, entityplayer, side, par7, par8, par9)) {
             return true;
         }
