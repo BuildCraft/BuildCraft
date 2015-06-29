@@ -588,7 +588,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         if (useDefault) {
             int xMin, zMin;
 
-            EnumFacing face = BuildCraftProperties.BLOCK_FACING.getValue(worldObj.getBlockState(pos));
+            EnumFacing face = BuildCraftProperties.BLOCK_FACING.getValue(worldObj.getBlockState(pos)).getOpposite();
 
             switch (face) {
                 case EAST:
