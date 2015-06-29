@@ -1,0 +1,11 @@
+Improvements:
+
+* [#2846] Make Blueprints removable from Construction Markers (asie)
+* Code optimizations (asie)
+
+Bugs fixed:
+
+* [#2850] Random ArrayIndexOutOfBoundException (asie - not a true fix, it will however give you a console warning if this is caught again; it's very rare)
+* [#2849] Graphical Glitch on Assembly Table when using Texture Packs (asie)
+* [#2835] Robot helmet overlay rendering incorrectly (hea3ven)
+* Crashes in item pipe packet sending (asie)

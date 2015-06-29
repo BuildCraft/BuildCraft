@@ -16,7 +16,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
+import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 
 public class BlockConstructionMarker extends BlockMarker {
@@ -31,17 +34,23 @@ public class BlockConstructionMarker extends BlockMarker {
 	@Override
 	public void breakBlock(World world, int x, int y, int z, Block block, int par6) {
 		Utils.preDestroyBlock(world, x, y, z);
+		dropMarkerIfPresent(world, x, y, z, true);
+		super.breakBlock(world, x, y, z, block, par6);
+	}
+
+	private boolean dropMarkerIfPresent(World world, int x, int y, int z, boolean onBreak) {
 		TileConstructionMarker marker = (TileConstructionMarker) world.getTileEntity(x, y, z);
 		if (marker != null && marker.itemBlueprint != null && !world.isRemote) {
-			float f1 = 0.7F;
-			double d = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
-			double d1 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
-			double d2 = (world.rand.nextFloat() * f1) + (1.0F - f1) * 0.5D;
-			EntityItem itemToDrop = new EntityItem(world, x + d, y + d1, z + d2, marker.itemBlueprint);
-			itemToDrop.delayBeforeCanPickup = 10;
-			world.spawnEntityInWorld(itemToDrop);
+			BlockUtils.dropItem((WorldServer) world, x, y, z, 6000, marker.itemBlueprint);
+			marker.itemBlueprint = null;
+			if (!onBreak) {
+				marker.bluePrintBuilder = null;
+				marker.bptContext = null;
+				marker.sendNetworkUpdate();
+			}
+			return true;
 		}
-		super.breakBlock(world, x, y, z, block, par6);
+		return false;
 	}
 
 	@Override
@@ -83,6 +92,8 @@ public class BlockConstructionMarker extends BlockMarker {
 				ItemConstructionMarker.link(entityplayer.getCurrentEquippedItem(), world, x, y, z);
 				return true;
 			}
+		} else if ((equipped == null || equipped instanceof IToolWrench) && entityplayer.isSneaking()) {
+			return dropMarkerIfPresent(world, x, y, z, false);
 		}
 
 		return false;
