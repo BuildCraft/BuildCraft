@@ -2,7 +2,7 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.factory;
+package buildcraft.factory.tile;
 
 import io.netty.buffer.ByteBuf;
 
@@ -39,7 +39,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
         updateComparators();
     }
 
-    protected void updateComparators() {
+    public void updateComparators() {
         int co = calculateComparatorInputOverride();
         TileTank uTank = getBottomTank();
         while (uTank != null) {
@@ -49,22 +49,22 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
         }
     }
 
-    protected void onBlockBreak() {
+    public void onBlockBreak() {
         if (!tank.isEmpty()) {
-            FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(tank.getFluid(), worldObj, xCoord, yCoord, zCoord));
+            FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(tank.getFluid(), worldObj, pos));
         }
     }
 
     /* UPDATING */
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
 
         if (worldObj.isRemote) {
             int lightValue = getFluidLightLevel();
             if (prevLightValue != lightValue) {
                 prevLightValue = lightValue;
-                worldObj.updateLightByType(EnumSkyBlock.Block, xCoord, yCoord, zCoord);
+                worldObj.setLightFor(EnumSkyBlock.BLOCK, pos, lightValue);
             }
             return;
         }
@@ -75,7 +75,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
         }
 
         if (hasUpdate) {
-            worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, blockType);
+            worldObj.notifyBlockOfStateChange(pos, blockType);
             hasUpdate = false;
         }
 
@@ -296,7 +296,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
     }
 
     public int calculateComparatorInputOverride() {
-        FluidTankInfo[] info = getTankInfo(EnumFacing.UNKNOWN);
+        FluidTankInfo[] info = getTankInfo(null);
         if (info.length > 0 && info[0] != null && info[0].fluid != null) {
             return info[0].fluid.amount * 15 / info[0].capacity;
         } else {

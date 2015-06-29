@@ -101,7 +101,7 @@ public class LensPluggable extends PipePluggable {
     @Override
     public void invalidate() {
         this.container = null;
-        this.side = EnumFacing.UNKNOWN;
+        this.side = null;
     }
 
     @Override

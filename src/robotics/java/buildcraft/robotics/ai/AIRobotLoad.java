@@ -75,7 +75,7 @@ public class AIRobotLoad extends AIRobot {
             ITransactor robotTransactor = Transactor.getTransactorFor(robot);
 
             if (quantity == ANY_QUANTITY) {
-                ItemStack added = robotTransactor.add(slot.getStackInSlot(), EnumFacing.UNKNOWN, doLoad);
+                ItemStack added = robotTransactor.add(slot.getStackInSlot(), null, doLoad);
                 if (doLoad) {
                     slot.decreaseStackInSlot(added.stackSize);
                 }
@@ -87,7 +87,7 @@ public class AIRobotLoad extends AIRobot {
                     toAdd.stackSize = quantity - loaded;
                 }
 
-                ItemStack added = robotTransactor.add(toAdd, EnumFacing.UNKNOWN, doLoad);
+                ItemStack added = robotTransactor.add(toAdd, null, doLoad);
                 if (doLoad) {
                     slot.decreaseStackInSlot(added.stackSize);
                 }

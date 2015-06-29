@@ -241,7 +241,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
             refreshRenderState();
             info.add("Docking Station (side " + side.name() + ", " + renderState.name() + ")");
             if (station.robotTaking() != null && station.robotTaking() instanceof IDebuggable) {
-                ((IDebuggable) station.robotTaking()).getDebugInfo(info, EnumFacing.UNKNOWN, debugger, player);
+                ((IDebuggable) station.robotTaking()).getDebugInfo(info, null, debugger, player);
             }
         }
     }

@@ -13,7 +13,7 @@ import buildcraft.api.robots.DockingStation;
 public class StationIndex {
 
     public BlockPos index = new BlockPos();
-    public EnumFacing side = EnumFacing.UNKNOWN;
+    public EnumFacing side = null;
 
     protected StationIndex() {}
 

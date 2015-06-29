@@ -109,7 +109,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
                 }
 
                 if (remaining != null && remaining.stackSize > 0) {
-                    remaining.stackSize -= Utils.addToRandomInjectableAround(worldObj, xCoord, yCoord, zCoord, EnumFacing.UNKNOWN, remaining);
+                    remaining.stackSize -= Utils.addToRandomInjectableAround(worldObj, xCoord, yCoord, zCoord, null, remaining);
                 }
 
                 if (remaining != null && remaining.stackSize > 0) {

@@ -75,7 +75,7 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
                     }
 
                     if (remaining.stackSize > 0) {
-                        remaining.stackSize -= Utils.addToRandomInjectableAround(worldObj, xCoord, yCoord, zCoord, EnumFacing.UNKNOWN, remaining);
+                        remaining.stackSize -= Utils.addToRandomInjectableAround(worldObj, xCoord, yCoord, zCoord, null, remaining);
                     }
 
                     if (remaining.stackSize > 0) {

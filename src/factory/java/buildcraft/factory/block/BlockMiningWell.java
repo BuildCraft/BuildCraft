@@ -2,19 +2,21 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.factory;
+package buildcraft.factory.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.factory.BuildCraftFactory;
 import buildcraft.factory.tile.TileMiningWell;
 
-public class BlockMiningWell extends BlockLEDHatchBase {
+public class BlockMiningWell extends BlockBuildCraft {
     public BlockMiningWell() {
         super(Material.ground);
 
@@ -40,7 +42,7 @@ public class BlockMiningWell extends BlockLEDHatchBase {
     }
 
     @Override
-    public TileEntity createNewTileEntity(World world, int metadata) {
+    public TileEntity createNewTileEntity(World world, int meta) {
         return new TileMiningWell();
     }
 

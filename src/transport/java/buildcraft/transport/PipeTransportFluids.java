@@ -357,7 +357,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
             sections[direction.ordinal()].setTime(newTimeSlot);
             sections[direction.ordinal()].moveFluids();
             // Input processing
-            if (direction == EnumFacing.UNKNOWN) {
+            if (direction == null) {
                 continue;
             }
             if (transferState[direction.ordinal()] == TransferState.Input) {
@@ -505,7 +505,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
                     sections[direction.ordinal()].readFromNBT(compound);
                 }
             }
-            if (direction != EnumFacing.UNKNOWN) {
+            if (direction != null) {
                 transferState[direction.ordinal()] = TransferState.values()[nbttagcompound.getShort("transferState[" + direction.ordinal() + "]")];
             }
         }
@@ -524,7 +524,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
                 NBTTagCompound subTag = new NBTTagCompound();
                 sections[direction.ordinal()].writeToNBT(subTag);
                 nbttagcompound.setTag("tank[" + direction.ordinal() + "]", subTag);
-                if (direction != EnumFacing.UNKNOWN) {
+                if (direction != null) {
                     nbttagcompound.setShort("transferState[" + direction.ordinal() + "]", (short) transferState[direction.ordinal()].ordinal());
                 }
             }
@@ -533,7 +533,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
     @Override
     public int fill(EnumFacing from, FluidStack resource, boolean doFill) {
-        if (from != EnumFacing.UNKNOWN && !inputOpen(from)) {
+        if (from != null && !inputOpen(from)) {
             return 0;
         }
 
@@ -553,7 +553,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
             if (fluidType == null) {
                 setFluidType(new FluidStack(resource, 0));
             }
-            if (from != EnumFacing.UNKNOWN) {
+            if (from != null) {
                 transferState[from.ordinal()] = TransferState.Input;
                 inputTTL[from.ordinal()] = INPUT_TTL;
             }

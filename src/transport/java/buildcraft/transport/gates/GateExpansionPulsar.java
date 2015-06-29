@@ -97,7 +97,7 @@ public final class GateExpansionPulsar extends GateExpansionBuildcraft implement
 
             if (pipeTile instanceof IEnergyHandler && (!singlePulse || !hasPulsed)) {
                 gate.setPulsing(true);
-                ((IEnergyHandler) pipeTile).receiveEnergy(EnumFacing.UNKNOWN, Math.min(1 << (count - 1), 64) * 10, false);
+                ((IEnergyHandler) pipeTile).receiveEnergy(null, Math.min(1 << (count - 1), 64) * 10, false);
                 hasPulsed = true;
             } else {
                 gate.setPulsing(true);

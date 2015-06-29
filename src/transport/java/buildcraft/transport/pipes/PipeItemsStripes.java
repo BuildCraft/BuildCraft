@@ -39,7 +39,7 @@ import buildcraft.transport.statements.ActionPipeDirection;
 import buildcraft.transport.utils.TransportUtils;
 
 public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnergyHandler, IStripesPipe {
-    private EnumFacing actionDir = EnumFacing.UNKNOWN;
+    private EnumFacing actionDir = null;
 
     public PipeItemsStripes(Item item) {
         super(new PipeTransportItems(), item);
@@ -60,7 +60,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
         }
 
         EnumFacing direction = actionDir;
-        if (direction == EnumFacing.UNKNOWN) {
+        if (direction == null) {
             direction = event.direction;
         }
 
@@ -133,7 +133,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
     protected void actionsActivated(Collection<StatementSlot> actions) {
         super.actionsActivated(actions);
 
-        actionDir = EnumFacing.UNKNOWN;
+        actionDir = null;
 
         for (StatementSlot action : actions) {
             if (action.statement instanceof ActionPipeDirection) {
@@ -190,11 +190,11 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
         }
 
         EnumFacing o = actionDir;
-        if (o == EnumFacing.UNKNOWN) {
+        if (o == null) {
             o = getOpenOrientation();
         }
 
-        if (o != EnumFacing.UNKNOWN) {
+        if (o != null) {
             Vec3 p = new Vec3(container.xCoord, container.yCoord, container.zCoord, o);
             p.moveForwards(1.0);
 

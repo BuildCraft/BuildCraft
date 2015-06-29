@@ -78,7 +78,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 
     @Override
     public int getIconIndex(EnumFacing direction) {
-        if (direction == EnumFacing.UNKNOWN) {
+        if (direction == null) {
             return standardIconIndex;
         } else {
             int metadata = container.getBlockMetadata();

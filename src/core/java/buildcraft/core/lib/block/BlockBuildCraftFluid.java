@@ -52,7 +52,7 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
     }
 
     @Override
-    public void onEntityCollidedWithBlock(World world, BlockPos pos, Entity entity) {
+    public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity) {
         if (!dense || entity == null) {
             return;
         }

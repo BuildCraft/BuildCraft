@@ -675,16 +675,16 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 
     @Override
     public int getRedstoneInput(EnumFacing side) {
-        return side == EnumFacing.UNKNOWN ? pipe.container.redstoneInput : pipe.container.redstoneInputSide[side.ordinal()];
+        return side == null ? pipe.container.redstoneInput : pipe.container.redstoneInputSide[side.ordinal()];
     }
 
     @Override
     public boolean setRedstoneOutput(EnumFacing side, int value) {
-        if (side != this.getSide() && side != EnumFacing.UNKNOWN) {
+        if (side != this.getSide() && side != null) {
             return false;
         }
 
-        setRedstoneOutput(side != EnumFacing.UNKNOWN, value);
+        setRedstoneOutput(side != null, value);
         return true;
     }
 }

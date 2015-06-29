@@ -308,12 +308,12 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         MovingObjectPosition[] hits = new MovingObjectPosition[31];
         AxisAlignedBB[] boxes = new AxisAlignedBB[31];
         EnumFacing[] sideHit = new EnumFacing[31];
-        Arrays.fill(sideHit, EnumFacing.UNKNOWN);
+        Arrays.fill(sideHit, null);
 
         // pipe
 
         for (EnumFacing side : DIR_VALUES) {
-            if (side == EnumFacing.UNKNOWN || tileG.isPipeConnected(side)) {
+            if (side == null || tileG.isPipeConnected(side)) {
                 AxisAlignedBB bb = getPipeBoundingBox(side);
                 setBlockBounds(bb);
                 boxes[side.ordinal()] = bb;
@@ -382,7 +382,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         float min = CoreConstants.PIPE_MIN_POS;
         float max = CoreConstants.PIPE_MAX_POS;
 
-        if (side == EnumFacing.UNKNOWN) {
+        if (side == null) {
             return new AxisAlignedBB(min, min, min, max, max, max);
         }
 
@@ -658,7 +658,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     private boolean addOrStripPipePluggable(World world, BlockPos pos, ItemStack stack, EntityPlayer player, EnumFacing side, Pipe<?> pipe) {
         RaytraceResult rayTraceResult = doRayTrace(world, pos, player);
 
-        EnumFacing placementSide = rayTraceResult != null && rayTraceResult.sideHit != EnumFacing.UNKNOWN ? rayTraceResult.sideHit : side;
+        EnumFacing placementSide = rayTraceResult != null && rayTraceResult.sideHit != null ? rayTraceResult.sideHit : side;
 
         IPipePluggableItem pluggableItem = (IPipePluggableItem) stack.getItem();
         PipePluggable pluggable = pluggableItem.createPipePluggable(pipe, placementSide, stack);

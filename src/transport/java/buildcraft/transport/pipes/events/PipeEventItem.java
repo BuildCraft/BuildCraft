@@ -53,7 +53,7 @@ public abstract class PipeEventItem extends PipeEvent {
         public DropItem(Pipe pipe, TravelingItem item, EntityItem entity) {
             super(pipe, item);
             this.entity = entity;
-            this.direction = item.output != EnumFacing.UNKNOWN ? item.output : item.input;
+            this.direction = item.output != null ? item.output : item.input;
         }
     }
 

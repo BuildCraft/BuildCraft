@@ -44,7 +44,7 @@ public final class GateFactory {
     public static Gate makeGate(Pipe<?> pipe, NBTTagCompound nbt) {
         GateMaterial material = GateMaterial.REDSTONE;
         GateLogic logic = GateLogic.AND;
-        EnumFacing direction = EnumFacing.UNKNOWN;
+        EnumFacing direction = null;
 
         // Legacy Support
         if (nbt.hasKey("Kind")) {

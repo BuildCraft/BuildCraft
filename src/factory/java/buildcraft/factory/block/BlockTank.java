@@ -2,10 +2,10 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.factory;
+package buildcraft.factory.block;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -18,8 +18,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.BuildCraftCore;
@@ -32,14 +30,14 @@ public class BlockTank extends BlockBuildCraft {
     private TextureAtlasSprite textureStackedSide;
 
     public BlockTank() {
-        super(Material.glass);
+        super(Material.glass, JOINED_BELOW);
         setBlockBounds(0.125F, 0F, 0.125F, 0.875F, 1F, 0.875F);
         setHardness(0.5F);
         setCreativeTab(BCCreativeTab.get("main"));
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, Block block, int par6) {
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile != null && tile instanceof TileTank) {
             TileTank tank = (TileTank) tile;
@@ -61,11 +59,6 @@ public class BlockTank extends BlockBuildCraft {
     }
 
     @Override
-    public boolean renderAsNormalBlock() {
-        return false;
-    }
-
-    @Override
     public boolean isOpaqueCube() {
         return false;
     }
@@ -75,19 +68,9 @@ public class BlockTank extends BlockBuildCraft {
         return new TileTank();
     }
 
-    @SuppressWarnings({ "all" })
     @Override
-    public TextureAtlasSprite getIconAbsolute(IBlockAccess iblockaccess, BlockPos pos, int side, int metadata) {
-        if (side >= 2 && iblockaccess.getBlock(i, j - 1, k) == this) {
-            return textureStackedSide;
-        } else {
-            return super.getIconAbsolute(side, metadata);
-        }
-    }
-
-    @Override
-    public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-        if (super.onBlockActivated(world, pos, entityplayer, par6, par7, par8, par9)) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing side, float par7, float par8, float par9) {
+        if (super.onBlockActivated(world, pos, state, entityplayer, side, par7, par8, par9)) {
             return true;
         }
 
@@ -103,7 +86,7 @@ public class BlockTank extends BlockBuildCraft {
                     FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(current);
                     // Handle filled containers
                     if (liquid != null) {
-                        int qty = tank.fill(EnumFacing.UNKNOWN, liquid, true);
+                        int qty = tank.fill(null, liquid, true);
 
                         if (qty != 0 && !BuildCraftCore.debugWorldgen && !entityplayer.capabilities.isCreativeMode) {
                             if (current.stackSize > 1) {
@@ -122,7 +105,7 @@ public class BlockTank extends BlockBuildCraft {
 
                         // Handle empty containers
                     } else {
-                        FluidStack available = tank.getTankInfo(EnumFacing.UNKNOWN)[0].fluid;
+                        FluidStack available = tank.getTankInfo(null)[0].fluid;
 
                         if (available != null) {
                             ItemStack filled = FluidContainerRegistry.fillFluidContainer(available, current);
@@ -145,7 +128,7 @@ public class BlockTank extends BlockBuildCraft {
                                     }
                                 }
 
-                                tank.drain(EnumFacing.UNKNOWN, liquid.amount, true);
+                                tank.drain(null, liquid.amount, true);
 
                                 return true;
                             }
@@ -159,19 +142,19 @@ public class BlockTank extends BlockBuildCraft {
                     if (!world.isRemote) {
                         IFluidContainerItem container = (IFluidContainerItem) current.getItem();
                         FluidStack liquid = container.getFluid(current);
-                        FluidStack tankLiquid = tank.getTankInfo(EnumFacing.UNKNOWN)[0].fluid;
+                        FluidStack tankLiquid = tank.getTankInfo(null)[0].fluid;
                         boolean mustDrain = liquid == null || liquid.amount == 0;
                         boolean mustFill = tankLiquid == null || tankLiquid.amount == 0;
                         if (mustDrain && mustFill) {
                             // Both are empty, do nothing
                         } else if (mustDrain || !entityplayer.isSneaking()) {
-                            liquid = tank.drain(EnumFacing.UNKNOWN, 1000, false);
+                            liquid = tank.drain(null, 1000, false);
                             int qtyToFill = container.fill(current, liquid, true);
-                            tank.drain(EnumFacing.UNKNOWN, qtyToFill, true);
+                            tank.drain(null, qtyToFill, true);
                         } else if (mustFill || entityplayer.isSneaking()) {
                             if (liquid != null && liquid.amount > 0) {
-                                int qty = tank.fill(EnumFacing.UNKNOWN, liquid, false);
-                                tank.fill(EnumFacing.UNKNOWN, container.drain(current, qty, true), true);
+                                int qty = tank.fill(null, liquid, false);
+                                tank.fill(null, container.drain(current, qty, true), true);
                             }
                         }
                     }
@@ -184,9 +167,8 @@ public class BlockTank extends BlockBuildCraft {
 
             if (tile instanceof TileTank) {
                 TileTank tank = (TileTank) tile;
-                if (tank.getTankInfo(EnumFacing.UNKNOWN)[0].fluid != null) {
-                    entityplayer.addChatComponentMessage(new ChatComponentText("Amount: " + tank.getTankInfo(EnumFacing.UNKNOWN)[0].fluid.amount
-                        + " mB"));
+                if (tank.getTankInfo(null)[0].fluid != null) {
+                    entityplayer.addChatComponentMessage(new ChatComponentText("Amount: " + tank.getTankInfo(null)[0].fluid.amount + " mB"));
                 }
             }
         }
@@ -195,19 +177,12 @@ public class BlockTank extends BlockBuildCraft {
     }
 
     @Override
-    public boolean shouldSideBeRendered(IBlockAccess world, BlockPos pos, int side) {
-        if (side <= 1) {
-            return world.getBlock(pos) != this;
+    public boolean shouldSideBeRendered(IBlockAccess world, BlockPos pos, EnumFacing side) {
+        if (side.getAxis() == EnumFacing.Axis.Y) {
+            return world.getBlockState(pos).getBlock() != this;
         } else {
             return super.shouldSideBeRendered(world, pos, side);
         }
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerBlockIcons(TextureAtlasSpriteRegister par1IconRegister) {
-        super.registerBlockIcons(par1IconRegister);
-        textureStackedSide = par1IconRegister.registerIcon("buildcraftfactory:tankBlock/side_stacked");
     }
 
     @Override
@@ -228,7 +203,7 @@ public class BlockTank extends BlockBuildCraft {
     }
 
     @Override
-    public int getComparatorInputOverride(World world, BlockPos pos, int side) {
+    public int getComparatorInputOverride(World world, BlockPos pos) {
         TileEntity tile = world.getTileEntity(pos);
 
         if (tile instanceof TileTank) {

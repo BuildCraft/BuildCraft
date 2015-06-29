@@ -45,7 +45,7 @@ public class AIRobotPumpBlock extends AIRobot {
         } else {
             FluidStack fluidStack = BlockUtils.drainBlock(robot.worldObj, blockToPump.x, blockToPump.y, blockToPump.z, false);
             if (fluidStack != null) {
-                if (robot.fill(EnumFacing.UNKNOWN, fluidStack, true) > 0) {
+                if (robot.fill(null, fluidStack, true) > 0) {
                     BlockUtils.drainBlock(robot.worldObj, blockToPump.x, blockToPump.y, blockToPump.z, true);
                 }
             }

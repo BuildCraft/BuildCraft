@@ -2,7 +2,7 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft;
+package buildcraft.factory;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureMap;
@@ -34,6 +34,7 @@ import buildcraft.core.BuildCraftMod;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
+import buildcraft.core.Version;
 import buildcraft.core.builders.schematics.SchematicFree;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.network.ChannelHandler;
@@ -41,6 +42,7 @@ import buildcraft.core.lib.network.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.block.BlockAutoWorkbench;
 import buildcraft.factory.block.BlockFloodGate;
+import buildcraft.factory.block.BlockHopper;
 import buildcraft.factory.block.BlockMiningWell;
 import buildcraft.factory.block.BlockPlainPipe;
 import buildcraft.factory.block.BlockPump;
@@ -50,16 +52,10 @@ import buildcraft.factory.schematics.SchematicAutoWorkbench;
 import buildcraft.factory.schematics.SchematicPump;
 import buildcraft.factory.schematics.SchematicRefinery;
 import buildcraft.factory.schematics.SchematicTileIgnoreState;
-import buildcraft.factory.tile.TileAutoWorkbench;
-import buildcraft.factory.tile.TileFloodGate;
-import buildcraft.factory.tile.TileHopper;
 import buildcraft.factory.tile.TileMiningWell;
-import buildcraft.factory.tile.TilePump;
-import buildcraft.factory.tile.TileRefinery;
-import buildcraft.factory.tile.TileTank;
 
-// @Mod(name = "BuildCraft Factory", version = Version.VERSION, useMetadata = false, modid = "BuildCraftFactory",
-// dependencies = DefaultProps.DEPENDENCY_CORE)
+ @Mod(name = "BuildCraft Factory", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Factory",
+ dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftFactory extends BuildCraftMod {
 
     @Mod.Instance("BuildCraft|Factory")
@@ -73,7 +69,7 @@ public class BuildCraftFactory extends BuildCraftMod {
     public static BlockTank tankBlock;
     public static BlockRefinery refineryBlock;
     public static BlockHopper hopperBlock;
-
+ 
     public static Achievement aLotOfCraftingAchievement;
     public static Achievement straightDownAchievement;
     public static Achievement refineAndRedefineAchievement;

@@ -107,7 +107,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
     /** Should return the textureindex used by the Pipe Item Renderer, as this is done client-side the default
      * implementation might not work if your getTextureIndex(Orienations.Unknown) has logic. Then override this */
     public int getIconIndexForItem() {
-        return getIconIndex(EnumFacing.UNKNOWN);
+        return getIconIndex(null);
     }
 
     /** Should return the TextureAtlasSpriteProvider that provides icons for this pipe
@@ -492,7 +492,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
     public EnumFacing getOpenOrientation() {
         int connectionsNum = 0;
 
-        EnumFacing targetOrientation = EnumFacing.UNKNOWN;
+        EnumFacing targetOrientation = null;
 
         for (EnumFacing o : EnumFacing.VALID_DIRECTIONS) {
             if (container.isPipeConnected(o)) {
@@ -506,7 +506,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
         }
 
         if (connectionsNum > 1 || connectionsNum == 0) {
-            return EnumFacing.UNKNOWN;
+            return null;
         }
 
         return targetOrientation.getOpposite();
@@ -537,7 +537,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
     @Override
     public IGate getGate(EnumFacing side) {
-        if (side == EnumFacing.UNKNOWN) {
+        if (side == null) {
             return null;
         }
 

@@ -37,8 +37,8 @@ public class TravelingItem {
     public final int id;
     public boolean toCenter = true;
     public EnumColor color;
-    public EnumFacing input = EnumFacing.UNKNOWN;
-    public EnumFacing output = EnumFacing.UNKNOWN;
+    public EnumFacing input = null;
+    public EnumFacing output = null;
 
     public int displayList;
     public boolean hasDisplayList;
@@ -157,8 +157,8 @@ public class TravelingItem {
     public void reset() {
         toCenter = true;
         blacklist.clear();
-        input = EnumFacing.UNKNOWN;
-        output = EnumFacing.UNKNOWN;
+        input = null;
+        output = null;
     }
 
     /* SAVING & LOADING */

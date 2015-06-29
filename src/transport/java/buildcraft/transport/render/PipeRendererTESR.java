@@ -610,7 +610,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
     public boolean isOpenOrientation(PipeRenderState state, EnumFacing direction) {
         int connections = 0;
 
-        EnumFacing targetOrientation = EnumFacing.UNKNOWN;
+        EnumFacing targetOrientation = null;
 
         for (EnumFacing o : EnumFacing.VALID_DIRECTIONS) {
             if (state.pipeConnectionMatrix.isConnected(o)) {

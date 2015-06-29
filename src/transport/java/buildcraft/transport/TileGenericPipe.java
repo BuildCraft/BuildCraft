@@ -884,7 +884,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     }
 
     public boolean hasFacade(EnumFacing direction) {
-        if (direction == null || direction == EnumFacing.UNKNOWN) {
+        if (direction == null || direction == null) {
             return false;
         } else {
             return sideProperties.pluggables[direction.ordinal()] instanceof IFacadePluggable;
@@ -892,7 +892,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     }
 
     public boolean hasGate(EnumFacing direction) {
-        if (direction == null || direction == EnumFacing.UNKNOWN) {
+        if (direction == null || direction == null) {
             return false;
         } else {
             return sideProperties.pluggables[direction.ordinal()] instanceof GatePluggable;
@@ -908,7 +908,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
             return false;
         }
 
-        if (direction == null || direction == EnumFacing.UNKNOWN) {
+        if (direction == null || direction == null) {
             return false;
         }
 
@@ -1086,7 +1086,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
 
     @Override
     public PipePluggable getPipePluggable(EnumFacing side) {
-        if (side == null || side == EnumFacing.UNKNOWN) {
+        if (side == null || side == null) {
             return null;
         }
 
@@ -1095,7 +1095,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
 
     @Override
     public boolean hasPipePluggable(EnumFacing side) {
-        if (side == null || side == EnumFacing.UNKNOWN) {
+        if (side == null || side == null) {
             return false;
         }
 

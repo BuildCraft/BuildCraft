@@ -30,7 +30,7 @@ public class PipePowerEmerald extends PipePowerWood {
 
     @Override
     public int getIconIndex(EnumFacing direction) {
-        if (direction != EnumFacing.UNKNOWN && powerSources[direction.ordinal()]) {
+        if (direction != null && powerSources[direction.ordinal()]) {
             return solidIconIndex;
         } else {
             return standardIconIndex;

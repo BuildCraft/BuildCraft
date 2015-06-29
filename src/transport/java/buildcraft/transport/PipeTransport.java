@@ -96,13 +96,13 @@ public abstract class PipeTransport {
     }
 
     public void allowInput(EnumFacing from, boolean allow) {
-        if (from != EnumFacing.UNKNOWN) {
+        if (from != null) {
             inputsOpen[from.ordinal()] = allow;
         }
     }
 
     public void allowOutput(EnumFacing to, boolean allow) {
-        if (to != EnumFacing.UNKNOWN) {
+        if (to != null) {
             outputsOpen[to.ordinal()] = allow;
         }
     }

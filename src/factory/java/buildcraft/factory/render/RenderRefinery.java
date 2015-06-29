@@ -8,7 +8,6 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -16,11 +15,10 @@ import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.render.FluidRenderer;
-import buildcraft.core.lib.render.IInventoryRenderer;
 import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.factory.tile.TileRefinery;
 
-public class RenderRefinery extends TileEntitySpecialRenderer implements IInventoryRenderer {
+public class RenderRefinery extends TileEntitySpecialRenderer {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftfactory:textures/blocks/refineryBlock/refinery.png");
     private static final float pixel = (float) (1.0 / 16.0);
@@ -47,8 +45,6 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
             magnet[i].rotationPointZ = 8;
 
         }
-
-        field_147501_a = TileEntityRendererDispatcher.instance;
     }
 
     public RenderRefinery(String baseTexture) {
@@ -56,14 +52,9 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
     }
 
     @Override
-    public void inventoryRender(double x, double y, double z, float f, float f1) {
-        render(null, pos);
-    }
+    public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int arg) {
 
-    @Override
-    public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
-
-        render((TileRefinery) tileentity, pos);
+        render((TileRefinery) tileentity, x, y, z);
     }
 
     private void render(TileRefinery tile, double x, double y, double z) {

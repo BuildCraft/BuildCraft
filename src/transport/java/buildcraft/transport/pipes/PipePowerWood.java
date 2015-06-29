@@ -56,7 +56,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 
     @Override
     public int getIconIndex(EnumFacing direction) {
-        if (direction != EnumFacing.UNKNOWN && powerSources[direction.ordinal()]) {
+        if (direction != null && powerSources[direction.ordinal()]) {
             return solidIconIndex;
         } else {
             return standardIconIndex;

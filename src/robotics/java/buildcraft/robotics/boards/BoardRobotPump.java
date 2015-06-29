@@ -45,7 +45,7 @@ public class BoardRobotPump extends RedstoneBoardRobot {
     @Override
     public void update() {
         final IWorldProperty isFluidSource = BuildCraftAPI.getWorldProperty("fluidSource");
-        FluidStack tank = robot.getTankInfo(EnumFacing.UNKNOWN)[0].fluid;
+        FluidStack tank = robot.getTankInfo(null)[0].fluid;
 
         if (tank != null && tank.amount > 0) {
             startDelegateAI(new AIRobotGotoStationAndUnloadFluids(robot));

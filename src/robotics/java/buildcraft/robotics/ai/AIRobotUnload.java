@@ -49,7 +49,7 @@ public class AIRobotUnload extends AIRobot {
             return false;
         }
 
-        for (IInvSlot robotSlot : InventoryIterator.getIterable(robot, EnumFacing.UNKNOWN)) {
+        for (IInvSlot robotSlot : InventoryIterator.getIterable(robot, null)) {
             if (robotSlot.getStackInSlot() == null) {
                 continue;
             }

@@ -78,7 +78,7 @@ public class ActionValve extends BCStatement implements IActionInternal {
             if (parameters[0] != null && parameters[0] instanceof StatementParameterDirection) {
                 EnumFacing side = ((StatementParameterDirection) parameters[0]).direction;
 
-                if (side != EnumFacing.UNKNOWN) {
+                if (side != null) {
                     transport.allowInput(side, state.inputOpen);
                     transport.allowOutput(side, state.outputOpen);
                 }

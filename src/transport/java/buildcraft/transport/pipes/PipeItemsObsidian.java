@@ -74,7 +74,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
     }
 
     private AxisAlignedBB getSuckingBox(EnumFacing orientation, int distance) {
-        if (orientation == EnumFacing.UNKNOWN) {
+        if (orientation == null) {
             return null;
         }
         Vec3 p1 = new Vec3(container.xCoord, container.yCoord, container.zCoord, orientation);
@@ -199,7 +199,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 
         EnumFacing orientation = getOpenOrientation().getOpposite();
 
-        if (orientation != EnumFacing.UNKNOWN) {
+        if (orientation != null) {
             container.getWorldObj().playSoundAtEntity(entity, "random.pop", 0.2F,
                 ((container.getWorldObj().rand.nextFloat() - container.getWorldObj().rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
 

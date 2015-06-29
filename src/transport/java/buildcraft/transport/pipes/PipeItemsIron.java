@@ -84,7 +84,7 @@ public class PipeItemsIron extends Pipe<PipeTransportItems> {
 
     @Override
     public int getIconIndex(EnumFacing direction) {
-        if (direction == EnumFacing.UNKNOWN) {
+        if (direction == null) {
             return standardIconIndex;
         } else {
             int metadata = container.getBlockMetadata();

@@ -97,7 +97,7 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
             }
 
             if (kind == PipeContents.empty) {
-                for (FluidTankInfo b : transportFluids.getTankInfo(EnumFacing.UNKNOWN)) {
+                for (FluidTankInfo b : transportFluids.getTankInfo(null)) {
                     if (b.fluid != null && b.fluid.amount != 0) {
                         return false;
                     }
@@ -105,7 +105,7 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
 
                 return true;
             } else {
-                for (FluidTankInfo b : transportFluids.getTankInfo(EnumFacing.UNKNOWN)) {
+                for (FluidTankInfo b : transportFluids.getTankInfo(null)) {
                     if (b.fluid != null && b.fluid.amount != 0) {
                         if (searchedFluid == null || searchedFluid.isFluidEqual(b.fluid)) {
                             return true;

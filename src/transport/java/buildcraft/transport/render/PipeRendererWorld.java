@@ -54,7 +54,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
                 resetToCenterDimensions(dim);
 
                 if (renderPass == 0) {
-                    fakeBlock.getTextureState().setToStack(icons.getIcon(state.textureMatrix.getTextureIndex(EnumFacing.UNKNOWN)));
+                    fakeBlock.getTextureState().setToStack(icons.getIcon(state.textureMatrix.getTextureIndex(null)));
                 } else {
                     fakeBlock.getTextureState().set(PipeIconProvider.TYPE.PipeStainedOverlay.getIcon());
                 }

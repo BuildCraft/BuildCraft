@@ -43,7 +43,7 @@ public class AIRobotUnloadFluids extends AIRobot {
             return 0;
         }
 
-        if (!ActionRobotFilter.canInteractWithFluid(station, new SimpleFluidFilter(robot.getTankInfo(EnumFacing.UNKNOWN)[0].fluid),
+        if (!ActionRobotFilter.canInteractWithFluid(station, new SimpleFluidFilter(robot.getTankInfo(null)[0].fluid),
             ActionStationAcceptFluids.class)) {
             return 0;
         }
@@ -53,7 +53,7 @@ public class AIRobotUnloadFluids extends AIRobot {
             return 0;
         }
 
-        FluidStack drainable = robot.drain(EnumFacing.UNKNOWN, FluidContainerRegistry.BUCKET_VOLUME, false);
+        FluidStack drainable = robot.drain(null, FluidContainerRegistry.BUCKET_VOLUME, false);
         if (drainable == null) {
             return 0;
         }
@@ -63,7 +63,7 @@ public class AIRobotUnloadFluids extends AIRobot {
 
         if (filled > 0 && doUnload) {
             drainable.amount = filled;
-            robot.drain(EnumFacing.UNKNOWN, drainable, true);
+            robot.drain(null, drainable, true);
         }
         return filled;
     }

@@ -630,7 +630,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
             linkedDockingStationSide = linkedDockingStation.side();
         } else {
             linkedDockingStationIndex = null;
-            linkedDockingStationSide = EnumFacing.UNKNOWN;
+            linkedDockingStationSide = null;
         }
     }
 

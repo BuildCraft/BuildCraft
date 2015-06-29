@@ -66,7 +66,7 @@ public class AIRobotLoadFluids extends AIRobot {
         }
 
         drainable = drainable.copy();
-        int filled = robot.fill(EnumFacing.UNKNOWN, drainable, doLoad);
+        int filled = robot.fill(null, drainable, doLoad);
 
         if (filled > 0 && doLoad) {
             drainable.amount = filled;

@@ -177,7 +177,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         List<EnumFacing> validDestinations = getPossibleMovements(data);
 
         if (validDestinations.isEmpty()) {
-            return EnumFacing.UNKNOWN;
+            return null;
         }
 
         return validDestinations.get(0);
@@ -190,7 +190,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         item.blacklist.add(item.input.getOpposite());
 
         EnumSet<EnumFacing> sides = EnumSet.complementOf(item.blacklist);
-        sides.remove(EnumFacing.UNKNOWN);
+        sides.remove(null);
 
         for (EnumFacing o : sides) {
             if (container.pipe.outputOpen(o) && canReceivePipeObjects(o, item)) {
@@ -290,7 +290,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
                 item.setPosition(container.xCoord + 0.5, container.yCoord + TransportUtils.getPipeFloorOf(item.getItemStack()),
                     container.zCoord + 0.5);
 
-                if (item.output == EnumFacing.UNKNOWN) {
+                if (item.output == null) {
                     if (items.scheduleRemoval(item)) {
                         dropItem(item);
                     }

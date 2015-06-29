@@ -86,7 +86,7 @@ public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
 
     @Override
     public int getIconIndex(EnumFacing direction) {
-        if (direction == EnumFacing.UNKNOWN) {
+        if (direction == null) {
             return standardIconIndex;
         }
         if (container != null && container.getBlockMetadata() == direction.ordinal()) {

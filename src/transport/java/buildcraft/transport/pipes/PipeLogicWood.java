@@ -33,7 +33,7 @@ public abstract class PipeLogicWood {
             }
         }
         if (newFacing == null) {
-            newFacing = EnumFacing.UNKNOWN;
+            newFacing = null;
         }
 
         if (newFacing.ordinal() != meta) {
