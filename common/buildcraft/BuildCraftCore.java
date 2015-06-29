@@ -126,6 +126,7 @@ import buildcraft.core.lib.utils.OreDictionaryCache;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.lib.utils.XorShift128Random;
 import buildcraft.core.list.ListMatchHandlerClass;
+import buildcraft.core.list.ListMatchHandlerFluid;
 import buildcraft.core.list.ListMatchHandlerOreDictionary;
 import buildcraft.core.list.ListRegistry;
 import buildcraft.core.network.PacketHandlerCore;
@@ -456,6 +457,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		StatementManager.registerParameterClass(PatternParameterHollow.class);
 
 		ListRegistry.registerHandler(new ListMatchHandlerClass());
+		ListRegistry.registerHandler(new ListMatchHandlerFluid());
 		ListMatchHandlerClass.itemClasses.add(ItemFood.class);
 	}
 

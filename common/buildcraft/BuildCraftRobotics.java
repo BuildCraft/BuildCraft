@@ -16,6 +16,7 @@ import java.util.List;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -49,6 +50,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.config.ConfigManager;
+import buildcraft.core.list.ListMatchHandlerClass;
 import buildcraft.core.network.EntityIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.robotics.BlockRequester;
@@ -146,6 +148,7 @@ import buildcraft.robotics.statements.TriggerRobotInStation;
 import buildcraft.robotics.statements.TriggerRobotLinked;
 import buildcraft.robotics.statements.TriggerRobotSleep;
 import buildcraft.silicon.ItemRedstoneChipset;
+import buildcraft.transport.ItemPipe;
 
 @Mod(name = "BuildCraft Robotics", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Robotics", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftRobotics extends BuildCraftMod {
@@ -331,6 +334,8 @@ public class BuildCraftRobotics extends BuildCraftMod {
 		RobotManager.registerDockingStation(DockingStationPipe.class, "dockingStationPipe");
 
 		RoboticsProxy.proxy.registerRenderers();
+
+		ListMatchHandlerClass.itemClasses.add(ItemRobot.class);
 	}
 
 	public static void loadRecipes() {
