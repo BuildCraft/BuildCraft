@@ -22,7 +22,7 @@ public class BuildingSlotMapIterator {
 	private static final int MAX_PER_ITEM = 80;
 	private final Map<BuilderItemMetaPair, List<BuildingSlotBlock>> slots;
 	private final Set<BuilderItemMetaPair> availablePairs = new HashSet<BuilderItemMetaPair>();
-	private final Multiset<Integer> buildStageOccurences;
+	private final int[] buildStageOccurences;
 	private final boolean isCreative;
 	private Iterator<BuilderItemMetaPair> impIterator;
 	private BuilderItemMetaPair pair;
@@ -30,7 +30,7 @@ public class BuildingSlotMapIterator {
 	private int position, returnsThisCurrent;
 
 	public BuildingSlotMapIterator(Map<BuilderItemMetaPair, List<BuildingSlotBlock>> slots, TileAbstractBuilder builder,
-								   Multiset<Integer> buildStageOccurences) {
+								   int[] buildStageOccurences) {
 		this.slots = slots;
 		this.impIterator = slots.keySet().iterator();
 		this.buildStageOccurences = buildStageOccurences;
@@ -82,7 +82,7 @@ public class BuildingSlotMapIterator {
 	}
 
 	public void remove() {
-		buildStageOccurences.remove(current.get(position).buildStage);
+		buildStageOccurences[current.get(position).buildStage]--;
 		current.set(position, null);
 	}
 

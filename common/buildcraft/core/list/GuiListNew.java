@@ -9,6 +9,7 @@
 package buildcraft.core.list;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,7 +89,7 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
 	private List<ItemStack> getExamplesList(int lineId, ListMatchHandler.Type type) {
 		Map<ListMatchHandler.Type, List<ItemStack>> exampleList = exampleCache.get(lineId);
 		if (exampleList == null) {
-			exampleList = new HashMap<ListMatchHandler.Type, List<ItemStack>>();
+			exampleList = new EnumMap<ListMatchHandler.Type, List<ItemStack>>(ListMatchHandler.Type.class);
 			exampleCache.put(lineId, exampleList);
 		}
 
