@@ -4,7 +4,9 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.inventory;
 
-import java.util.LinkedList;
+import java.util.List;
+
+import com.google.common.collect.Lists;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -23,7 +25,10 @@ public class SimpleInventory implements IInventory, INBTStoreable {
     private final ItemStack[] contents;
     private final String name;
     private final int stackLimit;
-    private final LinkedList<TileEntity> listener = new LinkedList<TileEntity>();
+    /** Used to update tile entities about whenever something changed so that it must save */
+    private final List<TileEntity> listener = Lists.newLinkedList();
+    /** Used to update a tile entities about exactly WHAT changed, when it changed */
+    private final List<IInventoryListener> listeners = Lists.newLinkedList();
 
     public SimpleInventory(int size, String invName, int invStackLimit) {
         contents = new ItemStack[size];
@@ -45,7 +50,12 @@ public class SimpleInventory implements IInventory, INBTStoreable {
     public ItemStack decrStackSize(int slotId, int count) {
         if (slotId < contents.length && contents[slotId] != null) {
             if (contents[slotId].stackSize > count) {
+                ItemStack before = contents[slotId];
+                if (before != null) {
+                    before = before.copy();
+                }
                 ItemStack result = contents[slotId].splitStack(count);
+                updateListeners(slotId, before, contents[slotId]);
                 markDirty();
                 return result;
             }
@@ -64,11 +74,16 @@ public class SimpleInventory implements IInventory, INBTStoreable {
         if (slotId >= contents.length) {
             return;
         }
+        ItemStack before = contents[slotId];
+        if (before != null) {
+            before = before.copy();
+        }
         contents[slotId] = itemstack;
 
         if (itemstack != null && itemstack.stackSize > this.getInventoryStackLimit()) {
             itemstack.stackSize = this.getInventoryStackLimit();
         }
+        updateListeners(slotId, before, itemstack);
         markDirty();
     }
 
@@ -195,4 +210,18 @@ public class SimpleInventory implements IInventory, INBTStoreable {
 
     @Override
     public void clear() {}
+
+    /** Add a listener to receive changes to the inventory */
+    public void addInvListener(IInventoryListener listener) {
+        if (listener == null) {
+            throw new IllegalArgumentException("You cannot add a null listener!", new Throwable("Change this!"));
+        }
+        listeners.add(listener);
+    }
+
+    public void updateListeners(int slot, ItemStack before, ItemStack after) {
+        for (IInventoryListener listener : listeners) {
+            listener.onChange(slot, before, after);
+        }
+    }
 }

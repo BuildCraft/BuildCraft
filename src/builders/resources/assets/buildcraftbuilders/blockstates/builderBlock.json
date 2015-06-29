@@ -7,10 +7,21 @@
 	},
     "variants": {
 		"facing": {
-			"east":  { "submodel":"buildcraftbuilders:builder/main" },
-			"south": { "submodel":"buildcraftbuilders:builder/main", "y":90 },
-			"west":  { "submodel":"buildcraftbuilders:builder/main", "y":180 },
-			"north": { "submodel":"buildcraftbuilders:builder/main", "y":270 }
+			"east": {
+				"model":"buildcraftbuilders:builder/main"
+			},
+			"south": {
+				"model":"buildcraftbuilders:builder/main",
+				"y":90
+			},
+			"west": {
+				"model":"buildcraftbuilders:builder/main",
+				"y":180
+			},
+			"north": {
+				"model":"buildcraftbuilders:builder/main",
+				"y":270
+			}
 		},
 		"led_power": {
 		    "0": {},
@@ -23,9 +34,9 @@
 		    "true":  {}
 		},
 		"blueprint_type": {
-		    "none": { "submodel":"buildcraftbuilders:builder/slot_empty" },
-		    "blueprint": {},
-		    "template":  {}
+		    "none":      { "submodel":"buildcraftbuilders:builder/slot_empty" },
+		    "blueprint": { "submodel":"buildcraftbuilders:builder/slot_blueprint" },
+		    "template":  { "submodel":"buildcraftbuilders:builder/slot_template" }
 		}
     }
 }

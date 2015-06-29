@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.blueprints.BuildingPermission;
+import buildcraft.api.enums.EnumBlueprintType;
 import buildcraft.api.items.IBlueprintItem;
 import buildcraft.builders.BuildCraftBuilders;
 import buildcraft.core.BCCreativeTab;
@@ -106,7 +107,7 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
 
         NBTTagCompound nbt = BuildCraftBuilders.serverDB.load(id);
         BlueprintBase base;
-        if (((IBlueprintItem) stack.getItem()).getType(stack) == IBlueprintItem.Type.TEMPLATE) {
+        if (((IBlueprintItem) stack.getItem()).getType(stack) == EnumBlueprintType.TEMPLATE) {
             base = new Template();
         } else {
             base = new Blueprint();

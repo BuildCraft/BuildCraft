@@ -2,11 +2,8 @@ package buildcraft.api.items;
 
 import net.minecraft.item.ItemStack;
 
-public interface IBlueprintItem extends INamedItem {
-    public enum Type {
-        TEMPLATE,
-        BLUEPRINT;
-    }
+import buildcraft.api.enums.EnumBlueprintType;
 
-    Type getType(ItemStack stack);
+public interface IBlueprintItem extends INamedItem {
+    EnumBlueprintType getType(ItemStack stack);
 }

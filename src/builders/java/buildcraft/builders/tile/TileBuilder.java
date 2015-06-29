@@ -32,7 +32,6 @@ import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.enums.EnumBlueprintType;
-import buildcraft.api.items.IBlueprintItem;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
@@ -58,6 +57,7 @@ import buildcraft.core.blueprints.BptBuilderTemplate;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.fluids.TankManager;
+import buildcraft.core.lib.inventory.IInventoryListener;
 import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.InventoryIterator;
@@ -71,7 +71,7 @@ import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
 
-public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluidHandler, IRequestProvider, IControllable {
+public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluidHandler, IRequestProvider, IControllable, IInventoryListener {
 
     private static int POWER_ACTIVATION = 500;
 
@@ -90,6 +90,8 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
     private NBTTagCompound initNBT = null;
     private boolean done = true;
     private boolean isBuilding = false;
+    /** A cached value used at the client for the block state */
+    private EnumBlueprintType type = EnumBlueprintType.NONE;
 
     private class PathIterator {
 
@@ -208,6 +210,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
         super();
 
         box.kind = Kind.STRIPES;
+        inv.addInvListener(this);
     }
 
     @Override
@@ -590,7 +593,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
         }
         isBuilding = this.isBuildingBlueprint();
 
-        if (done) {
+        if (done) {// TODO (PASS 3): This is useless right? Is/was this needed for anything?
             return;
         } else if (getBattery().getEnergyStored() < 25) {
             return;
@@ -924,6 +927,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
         super.writeData(stream);
         box.writeData(stream);
         fluidTank.writeData(stream);
+        stream.writeByte(getType().ordinal());
     }
 
     @Override
@@ -931,20 +935,29 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
         super.readData(stream);
         box.readData(stream);
         fluidTank.readData(stream);
+        byte type = stream.readByte();
+        EnumBlueprintType old = this.type;
+        this.type = EnumBlueprintType.valueOf(type);
+        if (old != this.type) {
+            // Needed because BLUEPRINT_TYPE is not part of the integer block meta, so we must tell minecraft that this
+            // changed ourselves
+            worldObj.markBlockRangeForRenderUpdate(pos, pos);
+        }
     }
 
     public EnumBlueprintType getType() {
-        ItemStack stack = getStackInSlot(0);
-        if (stack == null || !(stack.getItem() instanceof ItemBlueprint)) {
-            return EnumBlueprintType.NONE;
-        }
-        IBlueprintItem.Type type = ((IBlueprintItem) stack.getItem()).getType(stack);
-        if (type == IBlueprintItem.Type.BLUEPRINT) {
-            return EnumBlueprintType.BLUEPRINT;
-        } else if (type == IBlueprintItem.Type.TEMPLATE) {
-            return EnumBlueprintType.TEMPLATE;
-        } else {
-            return EnumBlueprintType.NONE;
+        return type;
+    }
+
+    @Override
+    public void onChange(int slot, ItemStack before, ItemStack after) {
+        if (slot == 0 && worldObj != null && !worldObj.isRemote) {
+            EnumBlueprintType beforeType = EnumBlueprintType.getType(before);
+            EnumBlueprintType afterType = EnumBlueprintType.getType(after);
+            if (beforeType != afterType) {
+                type = afterType;
+                sendNetworkUpdate();
+            }
         }
     }
 }

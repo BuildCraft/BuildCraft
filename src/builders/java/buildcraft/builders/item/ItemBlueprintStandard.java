@@ -6,13 +6,15 @@ package buildcraft.builders.item;
 
 import net.minecraft.item.ItemStack;
 
+import buildcraft.api.enums.EnumBlueprintType;
+
 public class ItemBlueprintStandard extends ItemBlueprint {
     public ItemBlueprintStandard() {
         super();
     }
 
     @Override
-    public Type getType(ItemStack stack) {
-        return Type.BLUEPRINT;
+    public EnumBlueprintType getType(ItemStack stack) {
+        return EnumBlueprintType.BLUEPRINT;
     }
 }
