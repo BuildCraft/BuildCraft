@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.builders;
+package buildcraft.core;
 
 import io.netty.buffer.ByteBuf;
 
@@ -15,12 +15,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import buildcraft.BuildCraftBuilders;
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.Position;
 import buildcraft.api.tiles.ITileAreaProvider;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.LaserKind;
 import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.Utils;
@@ -222,7 +220,7 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
 
 				Block block = worldObj.getBlock(coords[0], coords[1], coords[2]);
 
-				if (block == BuildCraftBuilders.markerBlock) {
+				if (block == BuildCraftCore.markerBlock) {
 					TileMarker marker = (TileMarker) worldObj.getTileEntity(coords[0], coords[1], coords[2]);
 
 					if (linkTo(marker, n)) {
@@ -235,7 +233,7 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
 
 				block = worldObj.getBlock(coords[0], coords[1], coords[2]);
 
-				if (block == BuildCraftBuilders.markerBlock) {
+				if (block == BuildCraftCore.markerBlock) {
 					TileMarker marker = (TileMarker) worldObj.getTileEntity(coords[0], coords[1], coords[2]);
 
 					if (linkTo(marker, n)) {
@@ -459,13 +457,13 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
 			if (m.isSet()) {
 				worldObj.setBlockToAir(m.x, m.y, m.z);
 
-				BuildCraftBuilders.markerBlock.dropBlockAsItem(worldObj, m.x, m.y, m.z, 0, 0);
+				BuildCraftCore.markerBlock.dropBlockAsItem(worldObj, m.x, m.y, m.z, 0, 0);
 			}
 		}
 
 		worldObj.setBlockToAir(o.vectO.x, o.vectO.y, o.vectO.z);
 
-		BuildCraftBuilders.markerBlock.dropBlockAsItem(worldObj, o.vectO.x, o.vectO.y, o.vectO.z, 0, 0);
+		BuildCraftCore.markerBlock.dropBlockAsItem(worldObj, o.vectO.x, o.vectO.y, o.vectO.z, 0, 0);
 	}
 
 	@Override

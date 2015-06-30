@@ -49,6 +49,7 @@ import buildcraft.builders.blueprints.RecursiveBlueprintBuilder;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.LaserData;
+import buildcraft.core.TilePathMarker;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptBuilderBase;
@@ -259,7 +260,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 						for (BlockIndex b : path) {
 							worldObj.setBlockToAir(b.x, b.y, b.z);
 
-							BuildCraftBuilders.pathMarkerBlock.dropBlockAsItem(
+							BuildCraftCore.pathMarkerBlock.dropBlockAsItem(
 									worldObj, b.x, b.y, b.z,
 									0, 0);
 						}

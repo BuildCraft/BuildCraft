@@ -67,14 +67,11 @@ import buildcraft.builders.BlockBuilder;
 import buildcraft.builders.BlockConstructionMarker;
 import buildcraft.builders.BlockFiller;
 import buildcraft.builders.BlockFrame;
-import buildcraft.builders.BlockMarker;
-import buildcraft.builders.BlockPathMarker;
 import buildcraft.builders.BlockQuarry;
 import buildcraft.builders.BlueprintServerDatabase;
 import buildcraft.builders.BuilderProxy;
 import buildcraft.builders.BuilderProxyClient;
 import buildcraft.builders.BuildersGuiHandler;
-import buildcraft.builders.EventHandlerBuilders;
 import buildcraft.builders.HeuristicBlockDetection;
 import buildcraft.builders.ItemBlueprintStandard;
 import buildcraft.builders.ItemBlueprintTemplate;
@@ -87,8 +84,8 @@ import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.builders.TileBuilder;
 import buildcraft.builders.TileConstructionMarker;
 import buildcraft.builders.TileFiller;
-import buildcraft.builders.TileMarker;
-import buildcraft.builders.TilePathMarker;
+import buildcraft.core.TileMarker;
+import buildcraft.core.TilePathMarker;
 import buildcraft.builders.TileQuarry;
 import buildcraft.builders.blueprints.RealBlueprintDeployer;
 import buildcraft.builders.schematics.SchematicAir;
@@ -146,8 +143,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	@Mod.Instance("BuildCraft|Builders")
 	public static BuildCraftBuilders instance;
 
-	public static BlockMarker markerBlock;
-	public static BlockPathMarker pathMarkerBlock;
 	public static BlockConstructionMarker constructionMarkerBlock;
 	public static BlockFiller fillerBlock;
 	public static BlockBuilder builderBlock;
@@ -350,11 +345,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
-		// Register gui handler
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new BuildersGuiHandler());
-
-		// Register save handler
-		MinecraftForge.EVENT_BUS.register(new EventHandlerBuilders());
 
 		// Standard blocks
 		ISchematicRegistry schemes = BuilderAPI.schematicRegistry;
@@ -503,9 +494,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(architectBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 		schemes.registerSchematicBlock(builderBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 
-		// Landmarks are often caught incorrectly, making building them counter-productive.
-		schemes.registerSchematicBlock(markerBlock, SchematicIgnore.class);
-		schemes.registerSchematicBlock(pathMarkerBlock, SchematicIgnore.class);
 		schemes.registerSchematicBlock(constructionMarkerBlock, SchematicIgnore.class);
 		schemes.registerSchematicBlock(frameBlock, SchematicFree.class);
 
@@ -547,12 +535,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		quarryBlock = (BlockQuarry) CompatHooks.INSTANCE.getBlock(BlockQuarry.class);
 		CoreProxy.proxy.registerBlock(quarryBlock.setBlockName("machineBlock"));
-
-		markerBlock = (BlockMarker) CompatHooks.INSTANCE.getBlock(BlockMarker.class);
-		CoreProxy.proxy.registerBlock(markerBlock.setBlockName("markerBlock"));
-
-		pathMarkerBlock = (BlockPathMarker) CompatHooks.INSTANCE.getBlock(BlockPathMarker.class);
-		CoreProxy.proxy.registerBlock(pathMarkerBlock.setBlockName("pathMarkerBlock"));
 
 		constructionMarkerBlock = (BlockConstructionMarker) CompatHooks.INSTANCE.getBlock(BlockConstructionMarker.class);
 		CoreProxy.proxy.registerBlock(constructionMarkerBlock.setBlockName("constructionMarkerBlock"),
@@ -618,25 +600,19 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), "ppp", "pip", "ppp", 'i',
 			new ItemStack(Items.dye, 1, 4), 'p', Items.paper);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), "l ", "r ", 'l',
-			new ItemStack(Items.dye, 1, 4), 'r', Blocks.redstone_torch);
-
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pathMarkerBlock, 1), "l ", "r ", 'l',
-			"dyeGreen", 'r', Blocks.redstone_torch);
-
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(constructionMarkerBlock, 1), "l ", "r ", 'l',
 				"gearGold", 'r', Blocks.redstone_torch);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock, 1), "btb", "ycy", "gCg", 'b',
-			"dyeBlack", 't', markerBlock, 'y', "dyeYellow",
+			"dyeBlack", 't', BuildCraftCore.markerBlock, 'y', "dyeYellow",
 			'c', Blocks.crafting_table, 'g', "gearGold", 'C', Blocks.chest);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), "btb", "ycy", "gCg", 'b',
-			"dyeBlack", 't', markerBlock, 'y', "dyeYellow",
+			"dyeBlack", 't', BuildCraftCore.markerBlock, 'y', "dyeYellow",
 			'c', Blocks.crafting_table, 'g', "gearDiamond", 'C', Blocks.chest);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), "btb", "ycy", "gCg", 'b',
-			"dyeBlack", 't', markerBlock, 'y', "dyeYellow",
+			"dyeBlack", 't', BuildCraftCore.markerBlock, 'y', "dyeYellow",
 			'c', Blocks.crafting_table, 'g', "gearDiamond", 'C',
 			new ItemStack(blueprintItem, 1));
 
@@ -668,16 +644,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void whiteListAppliedEnergetics(FMLInitializationEvent event) {
-		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
-		//		TileMarker.class.getCanonicalName());
-		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
-		//		TileFiller.class.getCanonicalName());
-		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
-		//		TileBuilder.class.getCanonicalName());
-		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
-		//		TileArchitect.class.getCanonicalName());
-		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
-		//		TilePathMarker.class.getCanonicalName());
 		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
 				TileBlueprintLibrary.class.getCanonicalName());
 	}
@@ -691,6 +657,18 @@ public class BuildCraftBuilders extends BuildCraftMod {
 					mapping.remap(Item.getItemFromBlock(BuildCraftCore.buildToolBlock));
 				} else {
 					mapping.remap(BuildCraftCore.buildToolBlock);
+				}
+			} else if (mapping.name.equals("BuildCraft|Builders:markerBlock")) {
+				if (mapping.type == GameRegistry.Type.ITEM) {
+					mapping.remap(Item.getItemFromBlock(BuildCraftCore.markerBlock));
+				} else {
+					mapping.remap(BuildCraftCore.markerBlock);
+				}
+			} else if (mapping.name.equals("BuildCraft|Builders:pathMarkerBlock")) {
+				if (mapping.type == GameRegistry.Type.ITEM) {
+					mapping.remap(Item.getItemFromBlock(BuildCraftCore.pathMarkerBlock));
+				} else {
+					mapping.remap(BuildCraftCore.pathMarkerBlock);
 				}
 			}
 		}

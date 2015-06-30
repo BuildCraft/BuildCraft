@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.builders;
+package buildcraft.core;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,8 +21,6 @@ import net.minecraft.world.World;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IPathProvider;
 import buildcraft.api.core.Position;
-import buildcraft.core.DefaultProps;
-import buildcraft.core.LaserData;
 
 public class TilePathMarker extends TileMarker implements IPathProvider {
 	// A list with the pathMarkers that aren't fully connected
@@ -275,6 +273,7 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
 
 	@Override
 	public void onChunkUnload() {
+		super.onChunkUnload();
 		availableMarkers.remove(this);
 	}
 
@@ -285,7 +284,7 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
 	public static void clearAvailableMarkersList(World w) {
 		for (Iterator<TilePathMarker> it = availableMarkers.iterator(); it.hasNext();) {
 			TilePathMarker t = it.next();
-			if (t.getWorldObj().provider.dimensionId != w.provider.dimensionId) {
+			if (t.getWorldObj().provider.dimensionId == w.provider.dimensionId) {
 				it.remove();
 			}
 		}
