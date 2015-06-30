@@ -42,7 +42,6 @@ public class AIRobotSearchRandomGroundBlock extends AIRobot {
 	@Override
 	public void update() {
 		if (filter == null) {
-			// defensive code
 			terminate();
 		}
 

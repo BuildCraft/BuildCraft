@@ -38,6 +38,11 @@ public class AIRobotLoadFluids extends AIRobot {
 
 	@Override
 	public void update() {
+		if (filter == null) {
+			terminate();
+			return;
+		}
+
 		waitedCycles++;
 
 		if (waitedCycles > 40) {

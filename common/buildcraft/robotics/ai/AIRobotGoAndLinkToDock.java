@@ -8,6 +8,11 @@
  */
 package buildcraft.robotics.ai;
 
+import net.minecraft.nbt.NBTTagCompound;
+
+import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
@@ -59,6 +64,33 @@ public class AIRobotGoAndLinkToDock extends AIRobot {
 				robot.dock(station);
 			}
 			terminate();
+		}
+	}
+
+	@Override
+	public boolean canLoadFromNBT() {
+		return true;
+	}
+
+	@Override
+	public void writeSelfToNBT(NBTTagCompound nbt) {
+		super.writeSelfToNBT(nbt);
+
+		NBTTagCompound indexNBT = new NBTTagCompound();
+		station.index().writeTo(indexNBT);
+		nbt.setTag("stationIndex", indexNBT);
+		nbt.setByte("stationSide", (byte) station.side().ordinal());
+	}
+
+	@Override
+	public void loadSelfFromNBT(NBTTagCompound nbt) {
+		if (nbt.hasKey("stationIndex")) {
+			BlockIndex index = new BlockIndex(nbt.getCompoundTag("stationIndex"));
+			ForgeDirection side = ForgeDirection.values()[nbt.getByte("stationSide")];
+
+			station = robot.getRegistry().getStation(index.x, index.y, index.z, side);
+		} else {
+			station = robot.getLinkedStation();
 		}
 	}
 }
