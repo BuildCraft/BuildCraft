@@ -46,6 +46,12 @@ public class AIRobotStripesHandler extends AIRobot implements IStripesActivator 
 
 	@Override
 	public void update() {
+		if (useToBlock == null) {
+			setSuccess(false);
+			terminate();
+			return;
+		}
+
 		useCycles++;
 
 		if (useCycles > 60) {
