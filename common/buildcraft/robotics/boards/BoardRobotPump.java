@@ -82,7 +82,7 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 			} else {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
-		} else if (ai instanceof AIRobotPumpBlock){
+		} else if (ai instanceof AIRobotPumpBlock) {
 			releaseBlockFound();
 		} else if (ai instanceof AIRobotGotoStationAndUnloadFluids) {
 
