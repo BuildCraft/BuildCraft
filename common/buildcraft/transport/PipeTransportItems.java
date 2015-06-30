@@ -308,6 +308,13 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 					continue;
 				}
 
+				if (item.output == ForgeDirection.UNKNOWN) {
+					// TODO: Figure out why this is actually happening.
+					items.scheduleRemoval(item);
+					BCLog.logger.warn("Glitched item [Output direction UNKNOWN] removed from world @ " + container.x() + ", " + container.y() + ", " + container.z() + "!");
+					continue;
+				}
+
 				TileEntity tile = container.getTile(item.output, true);
 
 				PipeEventItem.ReachedEnd event = new PipeEventItem.ReachedEnd(container.pipe, item, tile);

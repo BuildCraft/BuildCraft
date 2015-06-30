@@ -1,7 +1,6 @@
 package buildcraft.silicon;
 
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 
 import io.netty.buffer.ByteBuf;

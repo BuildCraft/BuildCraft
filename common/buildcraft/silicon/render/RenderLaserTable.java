@@ -87,12 +87,12 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
 		block.setColor(0xFFFFFF);
 
 		IIcon[] icons = block.getTextureState().popArray();
-		icons[0] = new SubIcon(base, topX + w - xI, topY - zI, 16, 16);
-		icons[1] = new SubIcon(base, topX - xI, topY - zI, 16, 16);
-		icons[2] = new SubIcon(base, topX - xI, topY + d - yI, 16, 16);
-		icons[3] = new SubIcon(base, topX + w + d - xI, topY + d - yI, 16, 16);
-		icons[4] = new SubIcon(base, topX - d - zI, topY + d - yI, 16, 16);
-		icons[5] = new SubIcon(base, topX + w - zI, topY + d - yI, 16, 16);
+		icons[0] = new SubIcon(base, topX + w - xI, topY - zI, 16, 16, 64);
+		icons[1] = new SubIcon(base, topX - xI, topY - zI, 16, 16, 64);
+		icons[2] = new SubIcon(base, topX - xI, topY + d - yI, 16, 16, 64);
+		icons[3] = new SubIcon(base, topX + w + d - xI, topY + d - yI, 16, 16, 64);
+		icons[4] = new SubIcon(base, topX - d - zI, topY + d - yI, 16, 16, 64);
+		icons[5] = new SubIcon(base, topX + w - zI, topY + d - yI, 16, 16, 64);
 
 		renderer.setRenderBounds(xB, yB, zB, xB + (w / 16.0F), yB + (h / 16.0F), zB + (d / 16.0F));
 		if (isInventory) {
