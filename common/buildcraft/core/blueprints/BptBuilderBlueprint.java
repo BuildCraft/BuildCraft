@@ -19,9 +19,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map.Entry;
 
-import com.google.common.collect.HashMultiset;
-import com.google.common.collect.Multiset;
-
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;

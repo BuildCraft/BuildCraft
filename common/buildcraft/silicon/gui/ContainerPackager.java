@@ -42,7 +42,7 @@ public class ContainerPackager extends BuildCraftContainer {
 			}
 		}
 
-		addSlotToContainer(new Slot(tile, 10, 108, 31));
+		// addSlotToContainer(new Slot(tile, 10, 108, 31));
 		addSlotToContainer(new SlotOutput(tile, 11, 123, 59));
 
 

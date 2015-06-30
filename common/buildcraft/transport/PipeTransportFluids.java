@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.collect.EnumMultiset;
-import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 
 import net.minecraft.nbt.NBTTagCompound;
