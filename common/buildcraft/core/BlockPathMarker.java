@@ -8,6 +8,7 @@
  */
 package buildcraft.core;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
@@ -15,6 +16,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import buildcraft.core.lib.utils.ResourceUtils;
 
 public class BlockPathMarker extends BlockMarker {
 
@@ -43,6 +45,6 @@ public class BlockPathMarker extends BlockMarker {
 	@SideOnly(Side.CLIENT)
 	public void registerBlockIcons(IIconRegister par1IconRegister) {
 		super.registerBlockIcons(par1IconRegister);
-		activeMarker = par1IconRegister.registerIcon("buildcraftbuilders:pathMarkerBlock/active");
+		activeMarker = par1IconRegister.registerIcon(ResourceUtils.getObjectPrefix(Block.blockRegistry.getNameForObject(this)) + "/active");
 	}
 }

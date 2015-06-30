@@ -174,6 +174,10 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		int mX = mouseX - guiLeft;
 		int mY = mouseY - guiTop;
 
+		drawWidgets(mX, mY);
+	}
+
+	protected void drawWidgets(int mX, int mY) {
 		for (Widget widget : container.getWidgets()) {
 			if (widget.hidden) {
 				continue;

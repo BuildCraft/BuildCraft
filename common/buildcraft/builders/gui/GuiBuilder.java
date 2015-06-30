@@ -24,6 +24,7 @@ import buildcraft.core.blueprints.RequirementItemStack;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
+import buildcraft.core.lib.gui.widgets.ScrollbarWidget;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.StringUtils;
@@ -34,8 +35,6 @@ public class GuiBuilder extends GuiAdvancedInterface {
 	private IInventory playerInventory;
 	private TileBuilder builder;
 	private GuiButton selectedButton;
-	private int sbPosition, sbLength;
-	private boolean sbInside;
 
 	public GuiBuilder(IInventory playerInventory, TileBuilder builder) {
 		super(new ContainerBuilder(playerInventory, builder), builder, BLUEPRINT_TEXTURE);
@@ -51,6 +50,10 @@ public class GuiBuilder extends GuiAdvancedInterface {
 				slots.set(i * 4 + j, new BuilderRequirementSlot(this, 179 + j * 18, 18 + i * 18));
 			}
 		}
+	}
+
+	private ContainerBuilder getContainerBuilder() {
+		return (ContainerBuilder) getContainer();
 	}
 
 	@Override
@@ -70,6 +73,8 @@ public class GuiBuilder extends GuiAdvancedInterface {
 
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
+		// We cannot do super here due to some crazy shenanigans with a dynamically
+		// resized GUI.
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		boolean isBlueprint = builder.getStackInSlot(0) != null;
 
@@ -84,21 +89,13 @@ public class GuiBuilder extends GuiAdvancedInterface {
 
 		if (needs != null) {
 			if (needs.size() > slots.size()) {
-				sbLength = (needs.size() - slots.size() + 3) / 4;
-				if (sbPosition >= sbLength) {
-					sbPosition = sbLength;
-				}
-
-				// render scrollbar
-				drawTexturedModalRect(guiLeft + 172, guiTop + 17, 18, 0, 6, 108);
-				int sbPixelPosition = sbPosition * 95 / sbLength;
-				drawTexturedModalRect(guiLeft + 172, guiTop + 17 + sbPixelPosition, 24, 0, 6, 14);
+				getContainerBuilder().scrollbarWidget.hidden = false;
+				getContainerBuilder().scrollbarWidget.setLength((needs.size() - slots.size() + 3) / 4);
 			} else {
-				sbPosition = 0;
-				sbLength = 0;
+				getContainerBuilder().scrollbarWidget.hidden = true;
 			}
 
-			int offset = sbPosition * 4;
+			int offset = getContainerBuilder().scrollbarWidget.getPosition() * 4;
 			for (int s = 0; s < slots.size(); s++) {
 				int ts = offset + s;
 				if (ts >= needs.size()) {
@@ -112,8 +109,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
 				b.visible = true;
 			}
 		} else {
-			sbPosition = 0;
-			sbLength = 0;
+			getContainerBuilder().scrollbarWidget.hidden = true;
 			for (AdvancedSlot slot : slots) {
 				((BuilderRequirementSlot) slot).stack = null;
 			}
@@ -121,6 +117,8 @@ public class GuiBuilder extends GuiAdvancedInterface {
 				b.visible = false;
 			}
 		}
+
+		drawWidgets(x, y);
 
 		if (isBlueprint) {
 			drawBackgroundSlots(x, y);
@@ -144,49 +142,8 @@ public class GuiBuilder extends GuiAdvancedInterface {
 	}
 
 	@Override
-	public void mouseClicked(int mouseX, int mouseY, int button) {
-		int guiX = mouseX - guiLeft;
-		int guiY = mouseY - guiTop;
-		if (sbLength > 0 && button == 0) {
-			if (guiX >= 172 && guiX < 178 && guiY >= 17 && guiY < 125) {
-				sbInside = true;
-				updateToSbHeight(guiY - 17);
-			}
-		}
-		super.mouseClicked(mouseX, mouseY, button);
-	}
-
-	private void updateToSbHeight(int h) {
-		int hFrac = (h * sbLength + 54) / 108;
-		sbPosition = hFrac;
-	}
-
-	@Override
-	protected void mouseClickMove(int x, int y, int button, long time) {
-		super.mouseClickMove(x, y, button, time);
-		if (sbInside && button == 0) {
-			int guiY = y - guiTop;
-			if (sbLength > 0) {
-				if (guiY >= 17 && guiY < 125) {
-					updateToSbHeight(guiY - 17);
-				}
-			}
-		}
-	}
-
-	@Override
 	protected void mouseMovedOrUp(int mouseX, int mouseY, int eventType) {
 		super.mouseMovedOrUp(mouseX, mouseY, eventType);
-		if (sbInside && eventType == 0) {
-			int guiY = mouseY - guiTop;
-			if (sbLength > 0) {
-				if (guiY >= 17 && guiY < 125) {
-					updateToSbHeight(guiY - 17);
-					sbInside = false;
-				}
-			}
-		}
-
 		if (this.selectedButton != null && eventType == 0) {
 			this.selectedButton.mouseReleased(mouseX, mouseY);
 			this.selectedButton = null;
