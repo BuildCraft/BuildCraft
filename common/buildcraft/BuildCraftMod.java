@@ -27,6 +27,7 @@ import cpw.mods.fml.common.network.FMLOutboundHandler;
 import cpw.mods.fml.common.network.FMLOutboundHandler.OutboundTarget;
 import cpw.mods.fml.relauncher.Side;
 
+import buildcraft.api.core.BCLog;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.utils.ThreadSafeUtils;
@@ -128,23 +129,28 @@ public class BuildCraftMod {
 				}
 
 				while (!packets.isEmpty()) {
-					SendRequest r = packets.remove();
-					net.minecraft.network.Packet p = ThreadSafeUtils.generatePacketFrom(r.packet, r.source.channels.get(Side.SERVER));
-					List<EntityPlayerMP> playerList = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
-					for (EntityPlayerMP player : playerList.toArray(new EntityPlayerMP[playerList.size()])) {
-						if (r.isValid(player)) {
-							NetHandlerPlayServer handler = player.playerNetServerHandler;
-							if (handler == null) {
-								continue;
-							}
+					try {
+						SendRequest r = packets.remove();
+						net.minecraft.network.Packet p = ThreadSafeUtils.generatePacketFrom(r.packet, r.source.channels.get(Side.SERVER));
+						List<EntityPlayerMP> playerList = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
+						for (EntityPlayerMP player : playerList.toArray(new EntityPlayerMP[playerList.size()])) {
+							if (r.isValid(player)) {
+								NetHandlerPlayServer handler = player.playerNetServerHandler;
+								if (handler == null) {
+									continue;
+								}
 
-							NetworkManager manager = handler.netManager;
-							if (manager == null || !manager.isChannelOpen()) {
-								continue;
-							}
+								NetworkManager manager = handler.netManager;
+								if (manager == null || !manager.isChannelOpen()) {
+									continue;
+								}
 
-							manager.scheduleOutboundPacket(p);
+								manager.scheduleOutboundPacket(p);
+							}
 						}
+					} catch (Exception e) {
+						BCLog.logger.error("The BuildCraft packet sender thread raised an exception! Please report to GitHub.");
+						e.printStackTrace();
 					}
 				}
 			}

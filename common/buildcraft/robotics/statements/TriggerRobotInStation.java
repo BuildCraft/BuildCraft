@@ -38,6 +38,23 @@ public class TriggerRobotInStation extends BCStatement implements ITriggerIntern
 	}
 
 	@Override
+	public int minParameters() {
+		return 0;
+	}
+
+	@Override
+	public int maxParameters() {
+		//return 1;
+		// TODO: Discuss whether we actually want to allow parameters here.
+		return 0;
+	}
+
+	@Override
+	public IStatementParameter createParameter(int index) {
+		return new StatementParameterRobot();
+	}
+
+	@Override
 	public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {
 		List<DockingStation> stations = RobotUtils.getStations(container.getTile());
 
@@ -46,7 +63,13 @@ public class TriggerRobotInStation extends BCStatement implements ITriggerIntern
 				EntityRobot robot = (EntityRobot) station.robotTaking();
 
 				if (robot.getDockingStation() == station) {
-					return true;
+					if (parameters.length > 0 && parameters[0] != null && parameters[0].getItemStack() != null) {
+						if (StatementParameterRobot.matches(parameters[0], robot)) {
+							return true;
+						}
+					} else {
+						return true;
+					}
 				}
 			}
 		}

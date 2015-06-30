@@ -79,17 +79,17 @@ public abstract class BlueprintBase {
 	}
 
 	public void translateToBlueprint(Translation transform) {
-		for (int i = 0; i < contents.length; i++) {
-			if (contents[i] != null) {
-				contents[i].translateToBlueprint(transform);
+		for (SchematicBlockBase content : contents) {
+			if (content != null) {
+				content.translateToBlueprint(transform);
 			}
 		}
 	}
 
 	public void translateToWorld(Translation transform) {
-		for (int i = 0; i < contents.length; i++) {
-			if (contents[i] != null) {
-				contents[i].translateToWorld(transform);
+		for (SchematicBlockBase content : contents) {
+			if (content != null) {
+				content.translateToWorld(transform);
 			}
 		}
 	}
@@ -100,7 +100,7 @@ public abstract class BlueprintBase {
 		for (int x = 0; x < sizeZ; ++x) {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeX; ++z) {
-					int pos = toArrayPos(x, y, z);
+					int pos = (y * sizeX + z) * sizeZ + x;
 					newContents[pos] = contents[toArrayPos(z, y, (sizeZ - 1) - x)];
 
 					if (newContents[pos] != null) {

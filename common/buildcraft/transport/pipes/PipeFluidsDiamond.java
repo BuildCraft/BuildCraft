@@ -133,7 +133,7 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
 		Fluid fluidInTank = event.fluidStack.getFluid();
         Set<ForgeDirection> originalDestinations = new HashSet<ForgeDirection>();
         originalDestinations.addAll(event.destinations.elementSet());
-        boolean isFiltered = true;
+        boolean isFiltered = false;
         int[] filterCount = new int[6];
 
 		for (ForgeDirection dir : originalDestinations) {
@@ -182,13 +182,14 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
     @Override
     public void writeData(ByteBuf data) {
         NBTTagCompound nbt = new NBTTagCompound();
-        writeToNBT(nbt);
+        filters.writeToNBT(nbt);
         NetworkUtils.writeNBT(data, nbt);
     }
 
     @Override
     public void readData(ByteBuf data) {
         NBTTagCompound nbt = NetworkUtils.readNBT(data);
-        readFromNBT(nbt);
+        filters.readFromNBT(nbt);
+        filters.markDirty();
     }
 }

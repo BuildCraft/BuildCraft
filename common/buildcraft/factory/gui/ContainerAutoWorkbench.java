@@ -68,8 +68,8 @@ public class ContainerAutoWorkbench extends BuildCraftContainer {
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
-		for (int i = 0; i < crafters.size(); i++) {
-			ICrafting icrafting = (ICrafting) crafters.get(i);
+		for (Object crafter : crafters) {
+			ICrafting icrafting = (ICrafting) crafter;
 
 			if (lastProgress != tile.progress) {
 				icrafting.sendProgressBarUpdate(this, 0, tile.progress);

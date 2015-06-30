@@ -207,13 +207,17 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems> implements IDiamo
 	@Override
 	public void writeData(ByteBuf data) {
 		NBTTagCompound nbt = new NBTTagCompound();
-		writeToNBT(nbt);
+		filters.writeToNBT(nbt);
+		nbt.setLong("usedFilters", usedFilters);
 		NetworkUtils.writeNBT(data, nbt);
 	}
 
 	@Override
 	public void readData(ByteBuf data) {
 		NBTTagCompound nbt = NetworkUtils.readNBT(data);
-		readFromNBT(nbt);
+		filters.readFromNBT(nbt);
+		if (nbt.hasKey("usedFilters")) {
+			usedFilters = nbt.getLong("usedFilters");
+		}
 	}
 }

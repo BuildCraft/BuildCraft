@@ -51,16 +51,16 @@ public final class TransportSiliconRecipes {
 		}
 
 		// GATES
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:simpleGate", (int) Math.round(100000 * BuildCraftTransport.gateCostMultiplier),
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:simpleGate", Math.round(100000 * BuildCraftTransport.gateCostMultiplier),
 				ItemGate.makeGateItem(GateDefinition.GateMaterial.REDSTONE, GateDefinition.GateLogic.AND), ItemRedstoneChipset.Chipset.RED.getStack(),
 				PipeWire.RED.getStack());
 
-		addGateRecipe("Iron", (int) Math.round(200000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.IRON, ItemRedstoneChipset.Chipset.IRON, PipeWire.RED, PipeWire.BLUE);
-		addGateRecipe("Gold", (int) Math.round(400000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.GOLD, ItemRedstoneChipset.Chipset.GOLD, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
-		addGateRecipe("Quartz", (int) Math.round(600000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.QUARTZ, ItemRedstoneChipset.Chipset.QUARTZ, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
-		addGateRecipe("Diamond", (int) Math.round(800000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.DIAMOND, ItemRedstoneChipset.Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE,
+		addGateRecipe("Iron", Math.round(200000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.IRON, ItemRedstoneChipset.Chipset.IRON, PipeWire.RED, PipeWire.BLUE);
+		addGateRecipe("Gold", Math.round(400000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.GOLD, ItemRedstoneChipset.Chipset.GOLD, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
+		addGateRecipe("Quartz", Math.round(600000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.QUARTZ, ItemRedstoneChipset.Chipset.QUARTZ, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
+		addGateRecipe("Diamond", Math.round(800000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.DIAMOND, ItemRedstoneChipset.Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE,
 				PipeWire.GREEN, PipeWire.YELLOW);
-		addGateRecipe("Emerald", (int) Math.round(1200000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.EMERALD, ItemRedstoneChipset.Chipset.EMERALD, PipeWire.RED, PipeWire.BLUE,
+		addGateRecipe("Emerald", Math.round(1200000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.EMERALD, ItemRedstoneChipset.Chipset.EMERALD, PipeWire.RED, PipeWire.BLUE,
 				PipeWire.GREEN, PipeWire.YELLOW);
 
 		BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe());

@@ -25,7 +25,6 @@ import buildcraft.core.render.RenderBuildingItems;
 import buildcraft.core.render.RenderLaser;
 
 public class RenderConstructionMarker extends RenderBoxProvider {
-
 	private final RenderBuildingItems renderItems = new RenderBuildingItems();
 
 	private final EntityItem dummyEntityItem = new EntityItem(null);

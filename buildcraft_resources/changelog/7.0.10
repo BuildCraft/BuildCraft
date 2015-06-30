@@ -5,6 +5,7 @@ Additions:
 
 Improvements:
 
+* Builders now show the amount of required items up to 99K instead of 999 (asie)
 * Optimizations to Builder/Filler code (asie)
 * Tweaks to water spring generation (asie)
 

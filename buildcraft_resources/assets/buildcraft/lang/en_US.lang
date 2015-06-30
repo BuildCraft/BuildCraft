@@ -472,6 +472,9 @@ tip.PipePowerWood=Power Input Pipe
 tip.PipeStructureCobblestone=Support pipe
 tip.deprecated=Deprecated
 
+tip.filler.excavate.on=Excavate
+tip.filler.excavate.off=Do Not Excavate
+
 tip.shift.PipeFluidsDiamond=GUI accepts any fluid containers
 tip.shift.PipeFluidsEmerald=GUI accepts any fluid container
 tip.shift.PipeItemsClay=Prioritizes machines and chests\nover neighbouring pipes.
@@ -481,6 +484,9 @@ tip.shift.PipeItemsLapis=Sneak-click to change color
 tip.shift.PipeItemsObsidian=Power with an engine\nMore power - greater distance
 tip.shift.PipePowerIron=Change the limit with a wrench or gates
 
+tip.PipeItemsEmerald.whitelist=Whitelist
+tip.PipeItemsEmerald.blacklist=Blacklist
+tip.PipeItemsEmerald.roundrobin=Round Robin (In Order)
 
 tip.tool.add=Add
 tip.tool.fullscreen=Fullscreen

@@ -74,7 +74,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
 	private static final ForgeDirection[] DIR_VALUES = ForgeDirection.values();
 
-	public static enum Part {
+	public enum Part {
 		Pipe,
 		Pluggable
 	}
@@ -485,10 +485,9 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		return null;
 	}
 
-	@SideOnly(Side.CLIENT)
 	@Override
-	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
-		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, Minecraft.getMinecraft().thePlayer);
+	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z, EntityPlayer player) {
+		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 
 		if (rayTraceResult != null && rayTraceResult.boundingBox != null) {
 			switch (rayTraceResult.hitPart) {

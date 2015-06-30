@@ -36,7 +36,7 @@ public class ActionValve extends BCStatement implements IActionInternal {
 		public final boolean inputOpen;
 		public final boolean outputOpen;
 	
-		private ValveState(boolean in, boolean out) {
+		ValveState(boolean in, boolean out) {
 		    inputOpen = in;
 		    outputOpen = out;
 		}

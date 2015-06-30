@@ -119,7 +119,8 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 		if (extracted != null) {
 			inserted = transport.fill(side, extracted, true);
 			if (inserted > 0) {
-				fluidHandler.drain(side.getOpposite(), new FluidStack(extracted.getFluid(), inserted), true);
+				extracted.amount = inserted;
+				fluidHandler.drain(side.getOpposite(), extracted, true);
 			}
 		}
 		

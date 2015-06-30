@@ -4,7 +4,7 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.collect.HashMultiset;
+import com.google.common.collect.EnumMultiset;
 import com.google.common.collect.Multiset;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -303,7 +303,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 		int testAmount = flowRate;
 		// Move liquid from the center to the output sides
-		Multiset<ForgeDirection> realDirections = HashMultiset.create(6);
+		Multiset<ForgeDirection> realDirections = EnumMultiset.create(ForgeDirection.class);
 		for (ForgeDirection direction : directions) {
 			if (transferState[direction.ordinal()] == TransferState.Output) {
 				realDirections.add(direction);

@@ -45,7 +45,7 @@ public class AIRobotAttack extends AIRobot {
 
 	@Override
 	public void update() {
-		if (target.isDead) {
+		if (target == null || target.isDead) {
 			terminate();
 			return;
 		}

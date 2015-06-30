@@ -27,7 +27,7 @@ import buildcraft.core.lib.items.ItemBuildCraft;
 
 public class ItemRedstoneChipset extends ItemBuildCraft {
 
-	public static enum Chipset {
+	public enum Chipset {
 
 		RED,
 		IRON,

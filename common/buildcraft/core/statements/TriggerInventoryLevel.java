@@ -32,7 +32,7 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
 		BELOW25(0.25F), BELOW50(0.5F), BELOW75(0.75F);
 		public final float level;
 
-		private TriggerType(float level) {
+		TriggerType(float level) {
 			this.level = level;
 		}
 	}

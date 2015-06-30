@@ -130,7 +130,6 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.SchematicRegistry;
-import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.builders.schematics.SchematicBlockCreative;
 import buildcraft.core.builders.schematics.SchematicFree;
 import buildcraft.core.builders.schematics.SchematicIgnore;

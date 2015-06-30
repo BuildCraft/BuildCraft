@@ -19,10 +19,10 @@ import net.minecraft.world.chunk.Chunk;
 
 public class DimensionProperty implements IWorldAccess {
 
-	private LongHashMap chunkMapping = new LongHashMap();
-	private World world;
-	private int worldHeight;
-	private WorldProperty worldProperty;
+	private final LongHashMap chunkMapping = new LongHashMap();
+	private final World world;
+	private final int worldHeight;
+	private final WorldProperty worldProperty;
 
 	public DimensionProperty(World iWorld, WorldProperty iProp) {
 		world = iWorld;

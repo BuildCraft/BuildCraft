@@ -1,0 +1,22 @@
+Additions:
+
+* [#2819] Leather/dyed helmet support on robots (asie)
+* Make mining robots work with GregTech ores (zmaster587, asie)
+* Robots can now be filtered in Force/Forbid by wearable, not just by type (asie)
+
+Improvements:
+
+* Rendering helmet overlays on robots is now supported (hea3ven)
+* The Accept Items action now supports Lists (asie)
+* The builder robot will not pick up materials in creative worlds (hea3ven)
+
+Bugs fixed:
+
+* [#2833] Stained Glass Panes in schematics always white (asie)
+* [#2828] Filler crash without Transport (asie)
+* [#2822] Stamper eats items that should not used up (asie)
+* [#2820] CME in map generation (asie)
+* Fix planter robots not freeing reserved blocks (hea3ven)
+* NPE in Builder robot (hea3ven)
+* Zone planner maps not generating (asie)
+
