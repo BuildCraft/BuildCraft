@@ -48,6 +48,7 @@ import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -65,6 +66,7 @@ import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IZone;
+import buildcraft.api.events.RobotEvent;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
@@ -987,8 +989,7 @@ public class EntityRobot extends EntityRobotBase implements
 		if (par1Entity.canAttackWithItem()) {
 			if (!par1Entity.hitByEntity(this)) {
 				this.setLastAttacker(par1Entity);
-				boolean flag2 = par1Entity.attackEntityFrom(new EntityDamageSource("robot", this), 2.0F);
-
+				
 				EnchantmentHelper.func_151385_b(this, par1Entity);
 				ItemStack itemstack = itemInUse;
 				Object object = par1Entity;
@@ -1065,10 +1066,22 @@ public class EntityRobot extends EntityRobotBase implements
 	protected boolean interact(EntityPlayer player) {
 		ItemStack stack = player.getCurrentEquippedItem();
 		if (stack == null || stack.getItem() == null) {
-			return super.interact(player);
+			return false;
+		}
+
+		RobotEvent.Interact robotInteractEvent = new RobotEvent.Interact(this, player, stack);
+		MinecraftForge.EVENT_BUS.post(robotInteractEvent);
+		if (robotInteractEvent.isCanceled()) {
+			return false;
 		}
 
 		if (player.isSneaking() && stack.getItem() == BuildCraftCore.wrenchItem) {
+			RobotEvent.Dismantle robotDismantleEvent = new RobotEvent.Dismantle(this, player);
+			MinecraftForge.EVENT_BUS.post(robotDismantleEvent);
+			if (robotDismantleEvent.isCanceled()) {
+				return false;
+			}
+
 			if (!worldObj.isRemote) {
 				if (wearables.size() > 0) {
 					entityDropItem(wearables.remove(wearables.size() - 1), 0);

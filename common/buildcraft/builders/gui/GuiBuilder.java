@@ -24,7 +24,6 @@ import buildcraft.core.blueprints.RequirementItemStack;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
-import buildcraft.core.lib.gui.widgets.ScrollbarWidget;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.StringUtils;
@@ -47,7 +46,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
 
 		for (int i = 0; i < 6; ++i) {
 			for (int j = 0; j < 4; ++j) {
-				slots.set(i * 4 + j, new BuilderRequirementSlot(this, 179 + j * 18, 18 + i * 18));
+				slots.set(i * 4 + j, new SlotBuilderRequirement(this, 179 + j * 18, 18 + i * 18));
 			}
 		}
 	}
@@ -99,9 +98,9 @@ public class GuiBuilder extends GuiAdvancedInterface {
 			for (int s = 0; s < slots.size(); s++) {
 				int ts = offset + s;
 				if (ts >= needs.size()) {
-					((BuilderRequirementSlot) slots.get(s)).stack = null;
+					((SlotBuilderRequirement) slots.get(s)).stack = null;
 				} else {
-					((BuilderRequirementSlot) slots.get(s)).stack = needs.get(ts);
+					((SlotBuilderRequirement) slots.get(s)).stack = needs.get(ts);
 				}
 			}
 
@@ -111,7 +110,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
 		} else {
 			getContainerBuilder().scrollbarWidget.hidden = true;
 			for (AdvancedSlot slot : slots) {
-				((BuilderRequirementSlot) slot).stack = null;
+				((SlotBuilderRequirement) slot).stack = null;
 			}
 			for (GuiButton b : (List<GuiButton>) buttonList) {
 				b.visible = false;

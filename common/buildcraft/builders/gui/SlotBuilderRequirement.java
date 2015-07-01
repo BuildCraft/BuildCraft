@@ -6,10 +6,10 @@ import buildcraft.core.blueprints.RequirementItemStack;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 
-public class BuilderRequirementSlot extends AdvancedSlot {
+public class SlotBuilderRequirement extends AdvancedSlot {
 	public RequirementItemStack stack;
 
-	public BuilderRequirementSlot(GuiAdvancedInterface gui, int x, int y) {
+	public SlotBuilderRequirement(GuiAdvancedInterface gui, int x, int y) {
 		super(gui, x, y);
 	}
 

@@ -38,11 +38,13 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.world.BlockEvent;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.blocks.IColorRemovable;
@@ -893,9 +895,18 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		return null;
 	}
 
-	public static boolean placePipe(Pipe<?> pipe, World world, int i, int j, int k, Block block, int meta, EntityPlayer player) {
+	public static boolean placePipe(Pipe<?> pipe, World world, int i, int j, int k, Block block, int meta, EntityPlayer player, ForgeDirection side) {
 		if (world.isRemote) {
 			return true;
+		}
+
+		Block placedAgainst = world.getBlock(i + side.getOpposite().offsetX, j + side.getOpposite().offsetY, k + side.getOpposite().offsetZ);
+		BlockEvent.PlaceEvent placeEvent = new BlockEvent.PlaceEvent(
+				new BlockSnapshot(world, i, j, k, block, meta), placedAgainst, player
+		);
+		MinecraftForge.EVENT_BUS.post(placeEvent);
+		if (placeEvent.isCanceled()) {
+			return false;
 		}
 
 		boolean placed = world.setBlock(i, j, k, block, meta, 3);
@@ -906,7 +917,6 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 				TileGenericPipe tilePipe = (TileGenericPipe) tile;
 				tilePipe.initialize(pipe);
 				tilePipe.sendUpdateToClient();
-				FMLCommonHandler.instance().bus().post(new PipePlacedEvent(player, pipe.item.getUnlocalizedName(), i, j, k));
 			}
 		}
 
