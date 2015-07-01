@@ -126,7 +126,7 @@ import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.NBTUtils;
-import buildcraft.core.lib.utils.OreDictionaryCache;
+import buildcraft.core.list.ListOreDictionaryCache;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.lib.utils.XorShift128Random;
 import buildcraft.core.list.ListMatchHandlerClass;
@@ -475,6 +475,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
+		OreDictionary.registerOre("dustTinyRedstone", Blocks.fence_gate);
 		BCLog.logger.info("BuildCraft's fake player: UUID = " + gameProfile.getId().toString() + ", name = '" + gameProfile.getName() + "'!");
 
 		for (Object o : Block.blockRegistry) {
@@ -520,9 +521,9 @@ public class BuildCraftCore extends BuildCraftMod {
 			}
 		}
 
-		MinecraftForge.EVENT_BUS.register(OreDictionaryCache.INSTANCE);
+		MinecraftForge.EVENT_BUS.register(ListOreDictionaryCache.INSTANCE);
 		for (String s : OreDictionary.getOreNames()) {
-			OreDictionaryCache.INSTANCE.registerName(s);
+			ListOreDictionaryCache.INSTANCE.registerName(s);
 		}
 
 		ListRegistry.registerHandler(new ListMatchHandlerOreDictionary());
