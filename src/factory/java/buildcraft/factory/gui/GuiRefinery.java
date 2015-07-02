@@ -4,6 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory.gui;
 
+import java.io.IOException;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.entity.player.InventoryPlayer;
@@ -59,13 +61,13 @@ public class GuiRefinery extends GuiAdvancedInterface {
     }
 
     @Override
-    protected void mouseClicked(BlockPos pos) {
-        super.mouseClicked(pos);
+    protected void mouseClicked(int x, int y, int mouse) throws IOException {
+        super.mouseClicked(x, y, mouse);
 
-        int position = getSlotIndexAtLocation(i, j);
+        int position = getSlotIndexAtLocation(x, y);
 
         if (position >= 0 && position < 2) {
-            if (k == 0) {
+            if (mouse == 0) {
                 if (!isShiftKeyDown()) {
                     FluidStack liquid = FluidContainerRegistry.getFluidForFilledItem(mc.thePlayer.inventory.getItemStack());
 

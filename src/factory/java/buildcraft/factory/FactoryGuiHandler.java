@@ -12,21 +12,23 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 
 import buildcraft.core.GuiIds;
 import buildcraft.factory.gui.ContainerAutoWorkbench;
-import buildcraft.factory.gui.ContainerHopper;
+import buildcraft.factory.gui.ContainerChute;
 import buildcraft.factory.gui.ContainerRefinery;
 import buildcraft.factory.gui.GuiAutoCrafting;
-import buildcraft.factory.gui.GuiHopper;
+import buildcraft.factory.gui.GuiChute;
 import buildcraft.factory.gui.GuiRefinery;
 import buildcraft.factory.tile.TileAutoWorkbench;
-import buildcraft.factory.tile.TileHopper;
+import buildcraft.factory.tile.TileChute;
 import buildcraft.factory.tile.TileRefinery;
 
 public class FactoryGuiHandler implements IGuiHandler {
 
     @Override
-    public Object getClientGuiElement(int id, EntityPlayer player, World world, BlockPos pos) {
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 
-        if (!world.blockExists(pos)) {
+        BlockPos pos = new BlockPos(x, y, z);
+
+        if (world.isAirBlock(pos)) {
             return null;
         }
 
@@ -49,10 +51,10 @@ public class FactoryGuiHandler implements IGuiHandler {
                 }
 
             case GuiIds.HOPPER:
-                if (!(tile instanceof TileHopper)) {
+                if (!(tile instanceof TileChute)) {
                     return null;
                 } else {
-                    return new GuiHopper(player.inventory, (TileHopper) tile);
+                    return new GuiChute(player.inventory, (TileChute) tile);
                 }
 
             default:
@@ -61,9 +63,11 @@ public class FactoryGuiHandler implements IGuiHandler {
     }
 
     @Override
-    public Object getServerGuiElement(int id, EntityPlayer player, World world, BlockPos pos) {
+    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 
-        if (!world.blockExists(pos)) {
+        BlockPos pos = new BlockPos(x, y, z);
+
+        if (world.isAirBlock(pos)) {
             return null;
         }
 
@@ -86,10 +90,10 @@ public class FactoryGuiHandler implements IGuiHandler {
                 }
 
             case GuiIds.HOPPER:
-                if (!(tile instanceof TileHopper)) {
+                if (!(tile instanceof TileChute)) {
                     return null;
                 } else {
-                    return new ContainerHopper(player.inventory, (TileHopper) tile);
+                    return new ContainerChute(player.inventory, (TileChute) tile);
                 }
 
             default:

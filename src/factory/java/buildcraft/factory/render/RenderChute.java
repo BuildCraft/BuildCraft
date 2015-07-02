@@ -9,17 +9,15 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.BuildCraftCore.RenderMode;
-import buildcraft.core.lib.render.IInventoryRenderer;
 import buildcraft.core.lib.render.ModelFrustum;
 
-public class RenderHopper extends TileEntitySpecialRenderer implements IInventoryRenderer {
+public class RenderChute extends TileEntitySpecialRenderer {
 
     private static final ResourceLocation HOPPER_TEXTURE = new ResourceLocation("buildcraftfactory:textures/blocks/hopperBlock/top.png");
     private static final ResourceLocation HOPPER_MIDDLE_TEXTURE = new ResourceLocation("buildcraftfactory:textures/blocks/hopperBlock/middle.png");
@@ -28,7 +26,7 @@ public class RenderHopper extends TileEntitySpecialRenderer implements IInventor
     private final ModelFrustum middle;
     private final ModelRenderer bottom;
 
-    public RenderHopper() {
+    public RenderChute() {
         top = new ModelRenderer(model, 0, 0);
         top.addBox(-8F, 1F, -8F, 16, 7, 16);
         top.rotationPointX = 8F;
@@ -40,17 +38,11 @@ public class RenderHopper extends TileEntitySpecialRenderer implements IInventor
         bottom.rotationPointX = 8F;
         bottom.rotationPointY = 8F;
         bottom.rotationPointZ = 8F;
-        field_147501_a = TileEntityRendererDispatcher.instance;
     }
 
     @Override
-    public void inventoryRender(double x, double y, double z, float f, float f1) {
-        render(pos);
-    }
-
-    @Override
-    public void renderTileEntityAt(TileEntity var1, double x, double y, double z, float f) {
-        render(pos);
+    public void renderTileEntityAt(TileEntity var1, double x, double y, double z, float f, int whatisthisidonteven) {
+        render(x, y, z);
     }
 
     private void render(double x, double y, double z) {
@@ -59,14 +51,14 @@ public class RenderHopper extends TileEntitySpecialRenderer implements IInventor
         }
 
         GL11.glPushMatrix();
-        GL11.glTranslated(pos);
+        GL11.glTranslated(x, y, z);
         bindTexture(HOPPER_TEXTURE);
         top.render((float) (1.0 / 16.0));
         bottom.render((float) (1.0 / 16.0));
         bindTexture(HOPPER_MIDDLE_TEXTURE);
         GL11.glTranslated(0.005, 0, 0.005);
         GL11.glScaled(0.99, 1, 0.99);
-        middle.render(Tessellator.instance, 1F / 16F);
+        middle.render(Tessellator.getInstance(), 1F / 16F);
 
         GL11.glPopMatrix();
     }

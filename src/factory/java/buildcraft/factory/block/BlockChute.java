@@ -5,37 +5,28 @@
 package buildcraft.factory.block;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.transport.IItemPipe;
-import buildcraft.core.BuildCraftCore;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.factory.BuildCraftFactory;
-import buildcraft.factory.tile.TileHopper;
+import buildcraft.factory.tile.TileChute;
 
-public class BlockHopper extends BlockBuildCraft {
+public class BlockChute extends BlockBuildCraft {
 
-    private static TextureAtlasSprite icon;
-
-    public BlockHopper() {
+    public BlockChute() {
         super(Material.iron);
     }
 
     @Override
     public TileEntity createNewTileEntity(World world, int metadata) {
-        return new TileHopper();
-    }
-
-    @Override
-    public boolean renderAsNormalBlock() {
-        return false;
+        return new TileChute();
     }
 
     @Override
@@ -44,13 +35,9 @@ public class BlockHopper extends BlockBuildCraft {
     }
 
     @Override
-    public int getRenderType() {
-        return BuildCraftCore.blockByEntityModel;
-    }
-
-    @Override
-    public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-        if (super.onBlockActivated(world, pos, entityplayer, par6, par7, par8, par9)) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing face, float par7, float par8,
+            float par9) {
+        if (super.onBlockActivated(world, pos, state, entityplayer, face, par7, par8, par9)) {
             return true;
         }
 
@@ -65,21 +52,9 @@ public class BlockHopper extends BlockBuildCraft {
         }
 
         if (!world.isRemote) {
-            entityplayer.openGui(BuildCraftFactory.instance, GuiIds.HOPPER, world, pos);
+            entityplayer.openGui(BuildCraftFactory.instance, GuiIds.HOPPER, world, pos.getX(), pos.getY(), pos.getZ());
         }
 
         return true;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerBlockIcons(TextureAtlasSpriteRegister par1IconRegister) {
-        icon = par1IconRegister.registerIcon("buildcraftfactory:hopperBlock/bottom");
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public TextureAtlasSprite getIconAbsolute(int par1, int par2) {
-        return icon;
     }
 }

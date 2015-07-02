@@ -10,14 +10,14 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 
 import buildcraft.core.lib.gui.BuildCraftContainer;
-import buildcraft.factory.tile.TileHopper;
+import buildcraft.factory.tile.TileChute;
 
-public class ContainerHopper extends BuildCraftContainer {
+public class ContainerChute extends BuildCraftContainer {
 
     IInventory playerIInventory;
-    TileHopper hopper;
+    TileChute hopper;
 
-    public ContainerHopper(InventoryPlayer inventory, TileHopper tile) {
+    public ContainerChute(InventoryPlayer inventory, TileChute tile) {
         super(tile.getSizeInventory());
         playerIInventory = inventory;
         hopper = tile;

@@ -12,6 +12,7 @@ import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
+import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.factory.BuildCraftFactory;
 
 public class SchematicRefinery extends SchematicTile {
@@ -28,7 +29,8 @@ public class SchematicRefinery extends SchematicTile {
 
     @Override
     public void rotateLeft(IBuilderContext context) {
-        meta = EnumFacing.values()[meta].getRotation(EnumFacing.UP).ordinal();
+        EnumFacing face = BuildCraftProperties.BLOCK_FACING.getValue(state).rotateY();
+        state = state.withProperty(BuildCraftProperties.BLOCK_FACING, face);
     }
 
     @Override

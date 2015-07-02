@@ -10,14 +10,14 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.factory.tile.TileHopper;
+import buildcraft.factory.tile.TileChute;
 
-public class GuiHopper extends GuiContainer {
+public class GuiChute extends GuiContainer {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftfactory:textures/gui/hopper_gui.png");
 
-    public GuiHopper(InventoryPlayer inventory, TileHopper tile) {
-        super(new ContainerHopper(inventory, tile));
+    public GuiChute(InventoryPlayer inventory, TileChute tile) {
+        super(new ContainerChute(inventory, tile));
     }
 
     @Override

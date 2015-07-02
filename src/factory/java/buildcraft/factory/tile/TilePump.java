@@ -68,8 +68,8 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
     }
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
 
         if (powered) {
             pumpLayerQueues.clear();
@@ -144,7 +144,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
     }
 
     public void onNeighborBlockChange(Block block) {
-        boolean p = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+        boolean p = worldObj.isBlockIndirectlyGettingPowered(pos) > 0;
 
         if (powered != p) {
             powered = p;
@@ -163,7 +163,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
 
     private void pushToConsumers() {
         if (cache == null) {
-            cache = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, false);
+            cache = TileBuffer.makeBuffer(worldObj, pos, false);
         }
 
         TankUtils.pushFluidToConsumers(tank, 400, cache);

@@ -47,7 +47,7 @@ public class ContainerRefinery extends BuildCraftContainer {
 
         refinery.setFilter(slot, filter);
 
-        if (refinery.getWorldObj().isRemote) {
+        if (refinery.getWorld().isRemote) {
             CommandWriter payload = new CommandWriter() {
                 @Override
                 public void write(ByteBuf data) {

@@ -5,9 +5,11 @@
 package buildcraft.factory.block;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 import buildcraft.api.transport.IItemPipe;
@@ -23,8 +25,8 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-        if (super.onBlockActivated(world, pos, entityplayer, par6, par7, par8, par9)) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing face, float par7, float par8, float par9) {
+        if (super.onBlockActivated(world, pos, state, entityplayer, face, par7, par8, par9)) {
             return true;
         }
 
@@ -39,7 +41,7 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
         }
 
         if (!world.isRemote) {
-            entityplayer.openGui(BuildCraftFactory.instance, GuiIds.AUTO_CRAFTING_TABLE, world, pos);
+            entityplayer.openGui(BuildCraftFactory.instance, GuiIds.AUTO_CRAFTING_TABLE, world, pos.getX(), pos.getY(), pos.getZ());
         }
 
         return true;

@@ -6,6 +6,7 @@ package buildcraft.factory.block;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -24,7 +25,6 @@ public class BlockFloodGate extends BlockBuildCraft {
 
     public BlockFloodGate() {
         super(Material.iron);
-        setPassCount(2);
     }
 
     @Override
@@ -33,8 +33,9 @@ public class BlockFloodGate extends BlockBuildCraft {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer entityplayer, int side, float par7, float par8, float par9) {
-        if (super.onBlockActivated(world, pos, entityplayer, side, par7, par8, par9)) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing side, float par7, float par8,
+            float par9) {
+        if (super.onBlockActivated(world, pos, state, entityplayer, side, par7, par8, par9)) {
             return true;
         }
 
@@ -51,10 +52,10 @@ public class BlockFloodGate extends BlockBuildCraft {
             Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
             if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pos)) {
                 System.out.println("pre=" + side);
-                if (side == 1) {
+                if (side == EnumFacing.UP) {
                     floodGate.rebuildQueue();
                 } else {
-                    floodGate.switchSide(EnumFacing.getOrientation(side));
+                    floodGate.switchSide(side);
                 }
 
                 ((IToolWrench) equipped).wrenchUsed(entityplayer, pos);
@@ -66,45 +67,11 @@ public class BlockFloodGate extends BlockBuildCraft {
     }
 
     @Override
-    public void onNeighborBlockChange(World world, BlockPos pos, Block block) {
-        super.onNeighborBlockChange(world, pos, block);
+    public void onNeighborBlockChange(World world, BlockPos pos, IBlockState state, Block block) {
+        super.onNeighborBlockChange(world, pos, state, block);
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileFloodGate) {
             ((TileFloodGate) tile).onNeighborBlockChange(block);
-        }
-    }
-
-    @Override
-    public void registerBlockIcons(TextureAtlasSpriteRegister register) {
-        super.registerBlockIcons(register);
-        valve = register.registerIcon("buildcraftfactory:floodGateBlock/valve");
-        transparent = register.registerIcon("buildcraftcore:misc/transparent");
-    }
-
-    @Override
-    public TextureAtlasSprite getIcon(IBlockAccess world, BlockPos pos, int side) {
-        if (renderPass == 1) {
-            if (side != 1) {
-                TileEntity tile = world.getTileEntity(pos);
-                if (tile instanceof TileFloodGate) {
-                    return ((TileFloodGate) tile).isSideBlocked(side) ? transparent : valve;
-                }
-            }
-            return transparent;
-        } else {
-            return super.getIcon(world, pos, side);
-        }
-    }
-
-    @Override
-    public TextureAtlasSprite getIcon(int side, int metadata) {
-        if (renderPass == 1) {
-            if (side == 1) {
-                return null;
-            }
-            return valve;
-        } else {
-            return super.getIcon(side, metadata);
         }
     }
 }

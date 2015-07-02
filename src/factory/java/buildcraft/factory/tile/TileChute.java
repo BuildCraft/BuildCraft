@@ -2,9 +2,7 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.factory;
-
-import cofh.api.energy.IEnergyHandler;
+package buildcraft.factory.tile;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -12,6 +10,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+
+import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.transport.IInjectable;
@@ -22,9 +22,9 @@ import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.Transactor;
 
-public class TileHopper extends TileBuildCraft implements IInventory, IEnergyHandler, IRedstoneEngineReceiver {
+public class TileChute extends TileBuildCraft implements IInventory, IEnergyHandler, IRedstoneEngineReceiver {
 
-    private final SimpleInventory inventory = new SimpleInventory(4, "Hopper", 64);
+    private final SimpleInventory inventory = new SimpleInventory(4, "Chute", 64);
     private boolean isEmpty;
 
     @Override
@@ -56,8 +56,8 @@ public class TileHopper extends TileBuildCraft implements IInventory, IEnergyHan
     }
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
         if (worldObj.isRemote || isEmpty || worldObj.getTotalWorldTime() % 2 != 0) {
             return;
         }
@@ -151,7 +151,7 @@ public class TileHopper extends TileBuildCraft implements IInventory, IEnergyHan
 
     @Override
     public String getInventoryName() {
-        return inventory.getInventoryName();
+        return inventory.getCommandSenderName();
     }
 
     @Override
@@ -161,15 +161,15 @@ public class TileHopper extends TileBuildCraft implements IInventory, IEnergyHan
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer entityPlayer) {
-        return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this
-            && entityPlayer.getDistanceSq(xCoord + 0.5D, yCoord + 0.5D, zCoord + 0.5D) <= 64.0D;
+        return worldObj.getTileEntity(pos) == this
+            && entityPlayer.getDistanceSq(pos) <= 64.0D;
     }
 
     @Override
-    public void openInventory() {}
+    public void openInventory(EntityPlayer player) {}
 
     @Override
-    public void closeInventory() {}
+    public void closeInventory(EntityPlayer player) {}
 
     @Override
     public boolean isItemValidForSlot(int i, ItemStack itemstack) {
@@ -177,7 +177,7 @@ public class TileHopper extends TileBuildCraft implements IInventory, IEnergyHan
     }
 
     @Override
-    public boolean hasCustomInventoryName() {
+    public boolean hasCustomName() {
         return false;
     }
 

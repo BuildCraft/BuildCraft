@@ -48,6 +48,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
     public TankManager<SingleUseTank> tankManager = new TankManager<SingleUseTank>(tanks[0], tanks[1], result);
     public float animationSpeed = 1;
     private short animationStage = 0;
+    // TODO (PASS 1): Change this to either not be deprecated, or something else?
     private SafeTimeTracker time = new SafeTimeTracker();
 
     private SafeTimeTracker updateNetworkTime = new SafeTimeTracker(BuildCraftCore.updateFactor);
@@ -95,7 +96,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-        return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
+        return worldObj.getTileEntity(pos) == this;
     }
 
     @Override
@@ -104,8 +105,8 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
     }
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
 
         if (worldObj.isRemote) {
             simpleAnimationIterate();
@@ -246,10 +247,10 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
     }
 
     @Override
-    public void openInventory() {}
+    public void openInventory(EntityPlayer player) {}
 
     @Override
-    public void closeInventory() {}
+    public void closeInventory(EntityPlayer player) {}
 
     public void resetFilters() {
         for (SingleUseTank tank : tankManager) {
@@ -318,7 +319,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
         currentRecipe = null;
         craftingResult = null;
 
-        for (IFlexibleRecipe recipe : RefineryRecipeManager.INSTANCE.getRecipes()) {
+        for (IFlexibleRecipe<FluidStack> recipe : RefineryRecipeManager.INSTANCE.getRecipes()) {
             craftingResult = recipe.craft(this, true);
 
             if (craftingResult != null) {
@@ -373,7 +374,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
     }
 
     @Override
-    public boolean hasCustomInventoryName() {
+    public boolean hasCustomName() {
         return false;
     }
 

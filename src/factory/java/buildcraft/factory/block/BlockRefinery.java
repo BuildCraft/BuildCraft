@@ -5,6 +5,7 @@
 package buildcraft.factory.block;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -17,7 +18,6 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.BCCreativeTab;
-import buildcraft.core.BuildCraftCore;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.fluids.TankUtils;
@@ -26,11 +26,10 @@ import buildcraft.factory.tile.TileRefinery;
 
 public class BlockRefinery extends BlockBuildCraft {
     public BlockRefinery() {
-        super(Material.iron);
+        super(Material.iron, FACING_PROP);
 
         setHardness(5F);
         setCreativeTab(BCCreativeTab.get("main"));
-        setRotatable(true);
     }
 
     @Override
@@ -39,23 +38,14 @@ public class BlockRefinery extends BlockBuildCraft {
     }
 
     @Override
-    public boolean renderAsNormalBlock() {
-        return false;
-    }
-
-    @Override
-    public int getRenderType() {
-        return BuildCraftCore.blockByEntityModel;
-    }
-
-    @Override
     public TileEntity createNewTileEntity(World world, int metadata) {
         return new TileRefinery();
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
-        if (super.onBlockActivated(world, pos, player, side, hitX, hitY, hitZ)) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY,
+            float hitZ) {
+        if (super.onBlockActivated(world, pos, state, player, side, hitX, hitY, hitZ)) {
             return true;
         }
 
@@ -75,7 +65,7 @@ public class BlockRefinery extends BlockBuildCraft {
 
         if (current != null && current.getItem() != Items.bucket) {
             if (!world.isRemote) {
-                if (TankUtils.handleRightClick((TileRefinery) tile, EnumFacing.getOrientation(side), player, true, false)) {
+                if (TankUtils.handleRightClick((TileRefinery) tile, side, player, true, false)) {
                     return true;
                 }
             } else if (FluidContainerRegistry.isContainer(current)) {
@@ -84,7 +74,7 @@ public class BlockRefinery extends BlockBuildCraft {
         }
 
         if (!world.isRemote) {
-            player.openGui(BuildCraftFactory.instance, GuiIds.REFINERY, world, pos);
+            player.openGui(BuildCraftFactory.instance, GuiIds.REFINERY, world, pos.getX(), pos.getY(), pos.getZ());
         }
 
         return true;

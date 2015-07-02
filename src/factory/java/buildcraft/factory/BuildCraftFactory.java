@@ -5,13 +5,11 @@
 package buildcraft.factory;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -24,8 +22,6 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.SchematicTile;
@@ -42,7 +38,7 @@ import buildcraft.core.lib.network.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.block.BlockAutoWorkbench;
 import buildcraft.factory.block.BlockFloodGate;
-import buildcraft.factory.block.BlockHopper;
+import buildcraft.factory.block.BlockChute;
 import buildcraft.factory.block.BlockMiningWell;
 import buildcraft.factory.block.BlockPlainPipe;
 import buildcraft.factory.block.BlockPump;
@@ -52,10 +48,16 @@ import buildcraft.factory.schematics.SchematicAutoWorkbench;
 import buildcraft.factory.schematics.SchematicPump;
 import buildcraft.factory.schematics.SchematicRefinery;
 import buildcraft.factory.schematics.SchematicTileIgnoreState;
+import buildcraft.factory.tile.TileAutoWorkbench;
+import buildcraft.factory.tile.TileChute;
+import buildcraft.factory.tile.TileFloodGate;
 import buildcraft.factory.tile.TileMiningWell;
+import buildcraft.factory.tile.TilePump;
+import buildcraft.factory.tile.TileRefinery;
+import buildcraft.factory.tile.TileTank;
 
- @Mod(name = "BuildCraft Factory", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Factory",
- dependencies = DefaultProps.DEPENDENCY_CORE)
+@Mod(name = "BuildCraft Factory", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Factory",
+        dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftFactory extends BuildCraftMod {
 
     @Mod.Instance("BuildCraft|Factory")
@@ -68,8 +70,8 @@ public class BuildCraftFactory extends BuildCraftMod {
     public static BlockFloodGate floodGateBlock;
     public static BlockTank tankBlock;
     public static BlockRefinery refineryBlock;
-    public static BlockHopper hopperBlock;
- 
+    public static BlockChute chuteBlock;
+
     public static Achievement aLotOfCraftingAchievement;
     public static Achievement straightDownAchievement;
     public static Achievement refineAndRedefineAchievement;
@@ -84,13 +86,13 @@ public class BuildCraftFactory extends BuildCraftMod {
         // EntityRegistry.registerModEntity(EntityMechanicalArm.class, "bcMechanicalArm", EntityIds.MECHANICAL_ARM,
         // instance, 50, 1, true);
 
-        CoreProxy.proxy.registerTileEntity(TileMiningWell.class, "MiningWell");
-        CoreProxy.proxy.registerTileEntity(TileAutoWorkbench.class, "AutoWorkbench");
-        CoreProxy.proxy.registerTileEntity(TilePump.class, "net.minecraft.src.buildcraft.factory.TilePump");
-        CoreProxy.proxy.registerTileEntity(TileFloodGate.class, "net.minecraft.src.buildcraft.factory.TileFloodGate");
-        CoreProxy.proxy.registerTileEntity(TileTank.class, "net.minecraft.src.buildcraft.factory.TileTank");
-        CoreProxy.proxy.registerTileEntity(TileRefinery.class, "net.minecraft.src.buildcraft.factory.Refinery");
-        CoreProxy.proxy.registerTileEntity(TileHopper.class, "net.minecraft.src.buildcraft.factory.TileHopper");
+        CoreProxy.proxy.registerTileEntity(TileMiningWell.class, "buildcraft.factory.MiningWell", "MiningWell");
+        CoreProxy.proxy.registerTileEntity(TileAutoWorkbench.class, "buildcraft.factory.AutoWorkbench", "AutoWorkbench");
+        CoreProxy.proxy.registerTileEntity(TilePump.class, "buildcraft.factory.Pump", "net.minecraft.src.buildcraft.factory.TilePump");
+        CoreProxy.proxy.registerTileEntity(TileFloodGate.class, "buildcraft.factory.FloodGate", "net.minecraft.src.buildcraft.factory.TileFloodGate");
+        CoreProxy.proxy.registerTileEntity(TileTank.class, "buildcraft.factory.Tank", "net.minecraft.src.buildcraft.factory.TileTank");
+        CoreProxy.proxy.registerTileEntity(TileRefinery.class, "buildcraft.factory.Refinery", "net.minecraft.src.buildcraft.factory.Refinery");
+        CoreProxy.proxy.registerTileEntity(TileChute.class, "buildcraft.factory.Chute", "net.minecraft.src.buildcraft.factory.TileHopper");
 
         FactoryProxy.proxy.initializeTileEntities();
 
@@ -100,7 +102,7 @@ public class BuildCraftFactory extends BuildCraftMod {
         BuilderAPI.schematicRegistry.registerSchematicBlock(miningWellBlock, SchematicTileIgnoreState.class);
         BuilderAPI.schematicRegistry.registerSchematicBlock(floodGateBlock, SchematicTileIgnoreState.class);
         BuilderAPI.schematicRegistry.registerSchematicBlock(autoWorkbenchBlock, SchematicAutoWorkbench.class);
-        BuilderAPI.schematicRegistry.registerSchematicBlock(hopperBlock, SchematicTile.class);
+        BuilderAPI.schematicRegistry.registerSchematicBlock(chuteBlock, SchematicTile.class);
         BuilderAPI.schematicRegistry.registerSchematicBlock(plainPipeBlock, SchematicFree.class);
 
         aLotOfCraftingAchievement =
@@ -158,8 +160,8 @@ public class BuildCraftFactory extends BuildCraftMod {
         refineryBlock = (BlockRefinery) CompatHooks.INSTANCE.getBlock(BlockRefinery.class);
         CoreProxy.proxy.registerBlock(refineryBlock.setUnlocalizedName("refineryBlock"));
 
-        hopperBlock = (BlockHopper) CompatHooks.INSTANCE.getBlock(BlockHopper.class);
-        CoreProxy.proxy.registerBlock(hopperBlock.setUnlocalizedName("blockHopper"));
+        chuteBlock = (BlockChute) CompatHooks.INSTANCE.getBlock(BlockChute.class);
+        CoreProxy.proxy.registerBlock(chuteBlock.setUnlocalizedName("blockChute"));
 
         FactoryProxy.proxy.initializeEntityRenders();
 
@@ -193,10 +195,10 @@ public class BuildCraftFactory extends BuildCraftMod {
                 "gearDiamond", 'R', Blocks.redstone_torch);
         }
 
-        if (hopperBlock != null) {
-            CoreProxy.proxy.addCraftingRecipe(new ItemStack(hopperBlock), "ICI", " G ", 'I', "ingotIron", 'C', Blocks.chest, 'G', "gearStone");
+        if (chuteBlock != null) {
+            CoreProxy.proxy.addCraftingRecipe(new ItemStack(chuteBlock), "ICI", " G ", 'I', "ingotIron", 'C', Blocks.chest, 'G', "gearStone");
 
-            CoreProxy.proxy.addShapelessRecipe(new ItemStack(hopperBlock), Blocks.hopper, "gearStone");
+            CoreProxy.proxy.addShapelessRecipe(new ItemStack(chuteBlock), Blocks.hopper, "gearStone");
         }
 
         if (floodGateBlock != null) {
@@ -232,15 +234,6 @@ public class BuildCraftFactory extends BuildCraftMod {
         InterModComms.processIMC(event);
     }
 
-    @SubscribeEvent
-    @SideOnly(Side.CLIENT)
-    public void loadTextures(TextureStitchEvent.Pre evt) {
-        if (evt.map.getTextureType() == 0) {
-            TextureMap terrainTextures = evt.map;
-            FactoryProxyClient.pumpTexture = terrainTextures.registerIcon("buildcraftfactory:pumpBlock/tube");
-        }
-    }
-
     @Mod.EventHandler
     public void whiteListAppliedEnergetics(FMLInitializationEvent event) {
         // FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
@@ -251,18 +244,18 @@ public class BuildCraftFactory extends BuildCraftMod {
         FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial", TileFloodGate.class.getCanonicalName());
         FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial", TileTank.class.getCanonicalName());
         FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial", TileRefinery.class.getCanonicalName());
-        FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial", TileHopper.class.getCanonicalName());
+        FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial", TileChute.class.getCanonicalName());
     }
 
     @Mod.EventHandler
     public void remap(FMLMissingMappingsEvent event) {
         for (FMLMissingMappingsEvent.MissingMapping mapping : event.get()) {
-            if (mapping.name.equals("BuildCraft|Factory:machineBlock")) {
+            if (mapping.name.equals("BuildCraft|Factory:machineBlock") || mapping.name.equals("BuildCraft|Factory:quarryBlock")) {
                 if (Loader.isModLoaded("BuildCraft|Builders")) {
                     if (mapping.type == GameRegistry.Type.BLOCK) {
-                        mapping.remap(Block.getBlockFromName("BuildCraft|Builders:machineBlock"));
+                        mapping.remap(Block.getBlockFromName("BuildCraft|Builders:quarryBlock"));
                     } else if (mapping.type == GameRegistry.Type.ITEM) {
-                        mapping.remap(Item.getItemFromBlock(Block.getBlockFromName("BuildCraft|Builders:machineBlock")));
+                        mapping.remap(Item.getItemFromBlock(Block.getBlockFromName("BuildCraft|Builders:quarryBlock")));
                     }
                 } else {
                     mapping.warn();
@@ -277,6 +270,8 @@ public class BuildCraftFactory extends BuildCraftMod {
                 } else {
                     mapping.ignore();
                 }
+            } else if (mapping.name.equals("BuildCraft|Factory:hopperBlock")) {
+                mapping.remap(Block.getBlockFromName("BuildCraft|Factory:chuteBlock"));
             }
         }
     }

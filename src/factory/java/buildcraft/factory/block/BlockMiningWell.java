@@ -9,7 +9,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import buildcraft.core.lib.block.BlockBuildCraft;
@@ -26,33 +25,24 @@ public class BlockMiningWell extends BlockBuildCraft {
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, Block block, int meta) {
-        super.breakBlock(world, pos, block, meta);
+    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+        super.breakBlock(world, pos, state);
         removePipes(world, pos);
     }
 
     public void removePipes(World world, BlockPos pos) {
-        for (int depth = y - 1; depth > 0; depth--) {
-            Block pipe = world.getBlock(x, depth, z);
-            if (pipe != BuildCraftFactory.plainPipeBlock) {
+        for (int y = 1; y < pos.getY(); y++) {
+            BlockPos down = pos.down(y);
+            Block block = world.getBlockState(down).getBlock();
+            if (block != BuildCraftFactory.plainPipeBlock) {
                 break;
             }
-            world.setBlockToAir(x, depth, z);
+            world.setBlockToAir(down);
         }
     }
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
         return new TileMiningWell();
-    }
-
-    @Override
-    public int getIconGlowLevel(IBlockAccess access, BlockPos pos) {
-        if (renderPass < 2) {
-            return -1;
-        } else {
-            TileMiningWell tile = (TileMiningWell) access.getTileEntity(pos);
-            return tile.getIconGlowLevel(renderPass);
-        }
     }
 }

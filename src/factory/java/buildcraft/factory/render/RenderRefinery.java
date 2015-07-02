@@ -6,13 +6,16 @@ package buildcraft.factory.render;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidStack;
 
+import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.render.FluidRenderer;
 import buildcraft.core.lib.render.RenderUtils;
@@ -82,21 +85,10 @@ public class RenderRefinery extends TileEntitySpecialRenderer {
 
             anim = tile.getAnimationStage();
 
-            angle = 0;
-            switch (tile.getWorldObj().getBlockMetadata(tile.xCoord, tile.yCoord, tile.zCoord)) {
-                case 2:
-                    angle = 90;
-                    break;
-                case 3:
-                    angle = 270;
-                    break;
-                case 4:
-                    angle = 180;
-                    break;
-                case 5:
-                    angle = 0;
-                    break;
-            }
+            IBlockState state = tile.getWorld().getBlockState(tile.getPos());
+            EnumFacing face = BuildCraftProperties.BLOCK_FACING.getValue(state);
+
+            angle = (face.getIndex() - 2) * 90;
 
             if (tile.animationSpeed <= 1) {
                 theMagnet = magnet[0];
@@ -172,7 +164,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer {
             GL11.glScalef(0.5F, 1, 0.5F);
 
             if (liquid1 != null && liquid1.amount > 0) {
-                int[] list1 = FluidRenderer.getFluidDisplayLists(liquid1, tile.getWorldObj(), false);
+                int[] list1 = FluidRenderer.getFluidDisplayLists(liquid1, tile.getWorld(), false);
 
                 if (list1 != null) {
                     bindTexture(FluidRenderer.getFluidSheet(liquid1));
@@ -182,7 +174,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer {
             }
 
             if (liquid2 != null && liquid2.amount > 0) {
-                int[] list2 = FluidRenderer.getFluidDisplayLists(liquid2, tile.getWorldObj(), false);
+                int[] list2 = FluidRenderer.getFluidDisplayLists(liquid2, tile.getWorld(), false);
 
                 if (list2 != null) {
                     GL11.glPushMatrix();
@@ -195,7 +187,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer {
             }
 
             if (liquidResult != null && liquidResult.amount > 0) {
-                int[] list3 = FluidRenderer.getFluidDisplayLists(liquidResult, tile.getWorldObj(), false);
+                int[] list3 = FluidRenderer.getFluidDisplayLists(liquidResult, tile.getWorld(), false);
 
                 if (list3 != null) {
                     GL11.glPushMatrix();

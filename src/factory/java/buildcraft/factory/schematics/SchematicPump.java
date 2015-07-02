@@ -35,7 +35,7 @@ public class SchematicPump extends SchematicTile {
 
     @Override
     public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
-        context.world().setBlock(pos, block, 0, 3);
+        context.world().setBlockState(pos, state, 3);
     }
 
     @Override
