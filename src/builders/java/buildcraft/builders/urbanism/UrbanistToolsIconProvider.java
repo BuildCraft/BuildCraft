@@ -5,11 +5,13 @@
 package buildcraft.builders.urbanism;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 // TODO (PASS 1): Register Urbanist textures
-public final class UrbanistToolsIconProvider { // implements TextureAtlasSpriteProvider {
+public final class UrbanistToolsIconProvider {
 
     public static UrbanistToolsIconProvider INSTANCE = new UrbanistToolsIconProvider();
     public static final int Tool_Block_Place = 0;
@@ -25,20 +27,22 @@ public final class UrbanistToolsIconProvider { // implements TextureAtlasSpriteP
 
     private UrbanistToolsIconProvider() {}
 
-//    @Override
     @SideOnly(Side.CLIENT)
     public TextureAtlasSprite getIcon(int iconIndex) {
         return icons[iconIndex];
     }
 
-//    @Override
-//    @SideOnly(Side.CLIENT)
-//    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-//        icons[UrbanistToolsIconProvider.Tool_Block_Place] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_block");
-//        icons[UrbanistToolsIconProvider.Tool_Block_Erase] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_erase");
-//        icons[UrbanistToolsIconProvider.Tool_Area] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_area");
-//        icons[UrbanistToolsIconProvider.Tool_Path] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_path");
-//        icons[UrbanistToolsIconProvider.Tool_Filler] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_filler");
-//        icons[UrbanistToolsIconProvider.Tool_Blueprint] = iconRegister.registerIcon("buildcraftbuilders:icons/urbanist_blueprint");
-//    }
+    @SideOnly(Side.CLIENT)
+    public void registerSprites(TextureMap terrainTextures) {
+        icons[UrbanistToolsIconProvider.Tool_Block_Place] =
+            terrainTextures.registerSprite(new ResourceLocation("buildcraftbuilders:icons/urbanist_block"));
+        icons[UrbanistToolsIconProvider.Tool_Block_Erase] =
+            terrainTextures.registerSprite(new ResourceLocation("buildcraftbuilders:icons/urbanist_erase"));
+        icons[UrbanistToolsIconProvider.Tool_Area] = terrainTextures.registerSprite(new ResourceLocation("buildcraftbuilders:icons/urbanist_area"));
+        icons[UrbanistToolsIconProvider.Tool_Path] = terrainTextures.registerSprite(new ResourceLocation("buildcraftbuilders:icons/urbanist_path"));
+        icons[UrbanistToolsIconProvider.Tool_Filler] =
+            terrainTextures.registerSprite(new ResourceLocation("buildcraftbuilders:icons/urbanist_filler"));
+        icons[UrbanistToolsIconProvider.Tool_Blueprint] =
+            terrainTextures.registerSprite(new ResourceLocation("buildcraftbuilders:icons/urbanist_blueprint"));
+    }
 }

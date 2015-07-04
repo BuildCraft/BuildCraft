@@ -26,8 +26,9 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import buildcraft.core.lib.EntityBlock;
+import buildcraft.core.lib.EntityResizableCube;
 
+@Deprecated
 public final class RenderEntityBlock extends Render {
     public static RenderEntityBlock INSTANCE = new RenderEntityBlock();
 
@@ -51,7 +52,7 @@ public final class RenderEntityBlock extends Render {
         public IBlockState blockState = Blocks.sand.getDefaultState();
         public ResourceLocation resource;
         public TextureAtlasSprite texture = null;
-        // public IIcon[] textureArray = null;
+        public TextureAtlasSprite[] textureArray = null;
         public boolean[] renderSide = new boolean[6];
         public float light = -1f;
         public int brightness = -1;
@@ -60,10 +61,10 @@ public final class RenderEntityBlock extends Render {
             setRenderAllSides();
         }
 
-        public RenderInfo(IBlockState state /* ,*IIcon[] texture */) {
+        public RenderInfo(IBlockState state, TextureAtlasSprite[] texture) {
             this();
             this.blockState = state;
-            // this.textureArray = texture;
+            this.textureArray = texture;
         }
 
         public RenderInfo(float minX, float minY, float minZ, float maxX, float maxY, float maxZ) {
@@ -118,10 +119,10 @@ public final class RenderEntityBlock extends Render {
 
     @Override
     public void doRender(Entity entity, double i, double j, double k, float f, float f1) {
-        doRenderBlock((EntityBlock) entity, i, j, k);
+        doRenderBlock((EntityResizableCube) entity, i, j, k);
     }
 
-    public void doRenderBlock(EntityBlock entity, double i, double j, double k) {
+    public void doRenderBlock(EntityResizableCube entity, double i, double j, double k) {
         if (entity.isDead) {
             return;
         }
@@ -176,6 +177,7 @@ public final class RenderEntityBlock extends Render {
         }
     }
 
+    /** Render a render info by its state, ignoring any textures you might have set */
     public void renderBlock(RenderInfo info) {
         BlockRendererDispatcher renderBlocks = Minecraft.getMinecraft().getBlockRendererDispatcher();
         @SuppressWarnings("deprecation")
@@ -190,6 +192,7 @@ public final class RenderEntityBlock extends Render {
         renderBlock(info, blockAccess, x, y, z, new BlockPos(x, y, z), doLight, doTessellating);
     }
 
+    /** Render 6 sides according to the lengths that have been set in the render info */
     public void renderBlock(RenderInfo info, IBlockAccess blockAccess, double x, double y, double z, BlockPos lightPos, boolean doLight,
             boolean doTessellating) {
 

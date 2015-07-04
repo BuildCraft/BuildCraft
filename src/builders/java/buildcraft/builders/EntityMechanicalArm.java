@@ -11,7 +11,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.builders.tile.TileQuarry;
-import buildcraft.core.lib.EntityBlock;
+import buildcraft.core.lib.EntityResizableCube;
 
 public class EntityMechanicalArm extends Entity {
 
@@ -26,7 +26,7 @@ public class EntityMechanicalArm extends Entity {
     private boolean inProgressionXZ = false;
     private boolean inProgressionY = false;
     private int headX, headY, headZ;
-    private EntityBlock xArm, yArm, zArm, head;
+    private EntityResizableCube xArm, yArm, zArm, head;
 
     public EntityMechanicalArm(World world) {
         super(world);

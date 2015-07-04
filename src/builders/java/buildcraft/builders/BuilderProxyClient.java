@@ -19,7 +19,7 @@ import buildcraft.builders.tile.TileFiller;
 import buildcraft.builders.tile.TilePathMarker;
 import buildcraft.builders.tile.TileQuarry;
 import buildcraft.builders.urbanism.TileUrbanist;
-import buildcraft.core.lib.EntityBlock;
+import buildcraft.core.lib.EntityResizableCube;
 import buildcraft.core.lib.render.RenderVoid;
 import buildcraft.core.render.RenderBoxProvider;
 import buildcraft.core.render.RenderBuilder;
@@ -49,15 +49,15 @@ public class BuilderProxyClient extends BuilderProxy {
     }
 
     @Override
-    public EntityBlock newDrill(World w, double i, double j, double k, double l, double d, double e) {
-        EntityBlock eb = super.newDrill(w, i, j, k, l, d, e);
+    public EntityResizableCube newDrill(World w, double i, double j, double k, double l, double d, double e) {
+        EntityResizableCube eb = super.newDrill(w, i, j, k, l, d, e);
         eb.texture = drillTexture;
         return eb;
     }
 
     @Override
-    public EntityBlock newDrillHead(World w, double i, double j, double k, double l, double d, double e) {
-        EntityBlock eb = super.newDrillHead(w, i, j, k, l, d, e);
+    public EntityResizableCube newDrillHead(World w, double i, double j, double k, double l, double d, double e) {
+        EntityResizableCube eb = super.newDrillHead(w, i, j, k, l, d, e);
         eb.texture = drillHeadTexture;
         return eb;
     }

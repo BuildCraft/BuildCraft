@@ -14,7 +14,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class EntityBlock extends Entity {
+// TODO (PASS 0): Rewrite to allow for specifying texture for each side + dimensions, to + from etc...
+public class EntityResizableCube extends Entity {
 
     public float shadowSize = 0;
     public float rotationX = 0;
@@ -25,10 +26,28 @@ public class EntityBlock extends Entity {
     public ResourceLocation resource;
     public IBlockState blockState;
 
+    /** The texture that is used for all sides of the cube */
     @SideOnly(Side.CLIENT)
     public TextureAtlasSprite texture;
 
-    public EntityBlock(World world) {
+    /** This should be a size 6 array of textures for each side. If a texture is null, it is not rendered. */
+    @SideOnly(Side.CLIENT)
+    public TextureAtlasSprite[] textures;
+
+    /** An array containing the rotation of the textures for each of the sides. 0 is none, 1 is 90 degrees clockwise etc. */
+    @SideOnly(Side.CLIENT)
+    public int[] textureRotations;
+
+    /** The size of the texture before going back to the start. */
+    @SideOnly(Side.CLIENT)
+    public int textureXSize = 16, textureYSize = 16, textureZSize = 16;
+
+    /** An array containing the flips of the textures for each of the sides. False is none, true is flipped once
+     * vertically. */
+    @SideOnly(Side.CLIENT)
+    public boolean[] textureFlips;
+
+    public EntityResizableCube(World world) {
         super(world);
         preventEntitySpawning = false;
         noClip = true;
@@ -36,12 +55,12 @@ public class EntityBlock extends Entity {
         ignoreFrustumCheck = true;
     }
 
-    public EntityBlock(World world, double xPos, double yPos, double zPos) {
+    public EntityResizableCube(World world, double xPos, double yPos, double zPos) {
         super(world);
         setPositionAndRotation(xPos, yPos, zPos, 0, 0);
     }
 
-    public EntityBlock(World world, double i, double j, double k, double iSize, double jSize, double kSize) {
+    public EntityResizableCube(World world, double i, double j, double k, double iSize, double jSize, double kSize) {
         this(world);
         this.iSize = iSize;
         this.jSize = jSize;

@@ -13,6 +13,7 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.item.EntityMinecartChest;
 import net.minecraft.entity.item.EntityMinecartEmpty;
@@ -27,7 +28,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
@@ -43,6 +46,8 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.blueprints.BlueprintDeployer;
 import buildcraft.api.blueprints.BuilderAPI;
@@ -85,6 +90,7 @@ import buildcraft.builders.tile.TilePathMarker;
 import buildcraft.builders.tile.TileQuarry;
 import buildcraft.builders.urbanism.BlockUrbanist;
 import buildcraft.builders.urbanism.TileUrbanist;
+import buildcraft.builders.urbanism.UrbanistToolsIconProvider;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.BuildCraftMod;
 import buildcraft.core.CompatHooks;
@@ -650,21 +656,14 @@ public class BuildCraftBuilders extends BuildCraftMod {
         TilePathMarker.clearAvailableMarkersList();
     }
 
-    // @SubscribeEvent
-    // @SideOnly(Side.CLIENT)
-    // public void loadTextures(TextureStitchEvent.Pre evt) {
-    // if (evt.map.getTextureType() == 0) {
-    // for (FillerPattern pattern : FillerPattern.patterns.values()) {
-    // pattern.registerIcons(evt.map);
-    // }
-    //
-    // TextureMap terrainTextures = evt.map;
-    // BuilderProxyClient.drillTexture = terrainTextures.registerIcon("buildcraftbuilders:machineBlock/drill");
-    // BuilderProxyClient.drillHeadTexture = terrainTextures.registerIcon("buildcraftbuilders:machineBlock/drill_head");
-    // } else if (evt.map.getTextureType() == 1) {
-    // UrbanistToolsIconProvider.INSTANCE.registerIcons(evt.map);
-    // }
-    // }
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void loadTextures(TextureStitchEvent.Pre evt) {
+        TextureMap terrainTextures = evt.map;
+        BuilderProxyClient.drillTexture = terrainTextures.registerSprite(new ResourceLocation("buildcraftbuilders:blocks/quarry/drill"));
+        BuilderProxyClient.drillHeadTexture = terrainTextures.registerSprite(new ResourceLocation("buildcraftbuilders:blocks/quarry/drill_head"));
+        UrbanistToolsIconProvider.INSTANCE.registerSprites(terrainTextures);
+    }
 
     @Mod.EventHandler
     public void whiteListAppliedEnergetics(FMLInitializationEvent event) {

@@ -14,6 +14,7 @@ import java.util.TreeMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -29,7 +30,7 @@ import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.CoreConstants;
-import buildcraft.core.lib.EntityBlock;
+import buildcraft.core.lib.EntityResizableCube;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.TileBuffer;
 import buildcraft.core.lib.block.TileBuildCraft;
@@ -47,7 +48,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
     public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 16;
     public SingleUseTank tank = new SingleUseTank("tank", MAX_LIQUID, this);
 
-    private EntityBlock tube;
+    private EntityResizableCube tube;
     private TreeMap<Integer, Deque<BlockPos>> pumpLayerQueues = new TreeMap<Integer, Deque<BlockPos>>();
     private double tubeY = Double.NaN;
     private int aimY = 0;
@@ -111,13 +112,13 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
 
         BlockPos index = getNextIndexToPump(false);
 
-        FluidStack fluidToPump = index != null ? BlockUtils.drainBlock(worldObj, index.x, index.y, index.z, false) : null;
+        FluidStack fluidToPump = index != null ? BlockUtils.drainBlock(worldObj, index, false) : null;
         if (fluidToPump != null) {
             if (isFluidAllowed(fluidToPump.getFluid()) && tank.fill(fluidToPump, false) == fluidToPump.amount) {
                 if (getBattery().useEnergy(100, 100, false) > 0) {
                     if (fluidToPump.getFluid() != FluidRegistry.WATER || BuildCraftCore.consumeWaterSources || numFluidBlocksFound < 9) {
                         index = getNextIndexToPump(true);
-                        BlockUtils.drainBlock(worldObj, index.x, index.y, index.z, true);
+                        BlockUtils.drainBlock(worldObj, index, true);
                     }
 
                     tank.fill(fluidToPump, true);
@@ -130,11 +131,12 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
                 rebuildQueue();
 
                 if (getNextIndexToPump(false) == null) {
-                    for (int y = yCoord - 1; y > 0; --y) {
-                        if (isPumpableFluid(xCoord, y, zCoord)) {
-                            aimY = y;
+                    for (int y = 1; y < pos.getY(); y++) {
+                        BlockPos pos2 = pos.down(y);
+                        if (isPumpableFluid(pos2)) {
+                            aimY = pos2.getY();
                             return;
-                        } else if (isBlocked(xCoord, y, zCoord)) {
+                        } else if (isBlocked(pos2)) {
                             return;
                         }
                     }
@@ -176,13 +178,13 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
             if (!Double.isNaN(tubeY)) {
                 tube.posY = tubeY;
             } else {
-                tube.posY = yCoord;
+                tube.posY = pos.getY();
             }
 
             tubeY = tube.posY;
 
             if (aimY == 0) {
-                aimY = yCoord;
+                aimY = pos.getY();
             }
 
             setTubePosition();
@@ -245,9 +247,10 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
     public void rebuildQueue() {
         numFluidBlocksFound = 0;
         pumpLayerQueues.clear();
-        int x = xCoord;
+        int x = pos.getX();
         int y = aimY;
-        int z = zCoord;
+        int z = pos.getZ();
+        BlockPos pos = new BlockPos(x, y, z);
         Fluid pumpingFluid = BlockUtils.getFluid(BlockUtils.getBlock(worldObj, pos));
 
         if (pumpingFluid == null) {
@@ -270,11 +273,11 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
             fluidsFound = new LinkedList<BlockPos>();
 
             for (BlockPos index : fluidsToExpand) {
-                queueForPumping(index.x, index.y + 1, index.z, visitedBlocks, fluidsFound, pumpingFluid);
-                queueForPumping(index.x + 1, index.y, index.z, visitedBlocks, fluidsFound, pumpingFluid);
-                queueForPumping(index.x - 1, index.y, index.z, visitedBlocks, fluidsFound, pumpingFluid);
-                queueForPumping(index.x, index.y, index.z + 1, visitedBlocks, fluidsFound, pumpingFluid);
-                queueForPumping(index.x, index.y, index.z - 1, visitedBlocks, fluidsFound, pumpingFluid);
+                queueForPumping(index.up(), visitedBlocks, fluidsFound, pumpingFluid);
+                queueForPumping(index.east(), visitedBlocks, fluidsFound, pumpingFluid);
+                queueForPumping(index.west(), visitedBlocks, fluidsFound, pumpingFluid);
+                queueForPumping(index.north(), visitedBlocks, fluidsFound, pumpingFluid);
+                queueForPumping(index.south(), visitedBlocks, fluidsFound, pumpingFluid);
 
                 if (pumpingFluid == FluidRegistry.WATER && !BuildCraftCore.consumeWaterSources && numFluidBlocksFound >= 9) {
                     return;
@@ -289,18 +292,18 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
     public void queueForPumping(BlockPos pos, Set<BlockPos> visitedBlocks, Deque<BlockPos> fluidsFound, Fluid pumpingFluid) {
         BlockPos index = new BlockPos(pos);
         if (visitedBlocks.add(index)) {
-            if ((x - xCoord) * (x - xCoord) + (z - zCoord) * (z - zCoord) > 64 * 64) {
+            if ((pos.getX() - this.pos.getX()) * (pos.getX() - this.pos.getX()) + (pos.getZ() - this.pos.getZ()) * (pos.getZ() - this.pos.getZ()) > 64 * 64) {
                 return;
             }
 
-            Block block = BlockUtils.getBlock(worldObj, pos);
+            IBlockState state = BlockUtils.getBlockState(worldObj, pos);
 
-            if (BlockUtils.getFluid(block) == pumpingFluid) {
+            if (BlockUtils.getFluid(state.getBlock()) == pumpingFluid) {
                 fluidsFound.add(index);
             }
 
-            if (canDrainBlock(block, pos, pumpingFluid)) {
-                getLayerQueue(y).add(index);
+            if (canDrainBlock(state, pos, pumpingFluid)) {
+                getLayerQueue(pos.getY()).add(index);
                 numFluidBlocksFound++;
             }
         }
@@ -318,12 +321,12 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
         }
     }
 
-    private boolean canDrainBlock(Block block, BlockPos pos, Fluid fluid) {
+    private boolean canDrainBlock(IBlockState state, BlockPos pos, Fluid fluid) {
         if (!isFluidAllowed(fluid)) {
             return false;
         }
 
-        FluidStack fluidStack = BlockUtils.drainBlock(block, worldObj, pos, false);
+        FluidStack fluidStack = BlockUtils.drainBlock(state, worldObj, pos, false);
 
         if (fluidStack == null || fluidStack.amount <= 0) {
             return false;
@@ -333,7 +336,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
     }
 
     private boolean isFluidAllowed(Fluid fluid) {
-        return BuildCraftFactory.pumpDimensionList.isFluidAllowed(fluid, worldObj.provider.dimensionId);
+        return BuildCraftFactory.pumpDimensionList.isFluidAllowed(fluid, worldObj.provider.getDimensionId());
     }
 
     @Override
@@ -361,7 +364,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
         if (tube != null) {
             data.setFloat("tubeY", (float) tube.posY);
         } else {
-            data.setFloat("tubeY", yCoord);
+            data.setFloat("tubeY", pos.getY());
         }
     }
 
@@ -370,7 +373,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
         BlockPos next = getNextIndexToPump(false);
 
         if (next != null) {
-            return isPumpableFluid(next.x, next.y, next.z);
+            return isPumpableFluid(next);
         } else {
             return false;
         }
@@ -390,11 +393,12 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
         aimY = data.readShort();
         tubeY = data.readFloat();
         powered = data.readBoolean();
+        
 
         int newLedState = data.readUnsignedByte();
         if (newLedState != ledState) {
             ledState = newLedState;
-            worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+            worldObj.markBlockRangeForRenderUpdate(pos, pos);
         }
 
         setTubePosition();
@@ -404,9 +408,9 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
         if (tube != null) {
             tube.iSize = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
             tube.kSize = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
-            tube.jSize = yCoord - tube.posY;
+            tube.jSize = pos.getY() - tube.posY;
 
-            tube.setPosition(xCoord + CoreConstants.PIPE_MIN_POS, tubeY, zCoord + CoreConstants.PIPE_MIN_POS);
+            tube.setPosition(pos.getX() + CoreConstants.PIPE_MIN_POS, tubeY, pos.getZ() + CoreConstants.PIPE_MIN_POS);
         }
     }
 

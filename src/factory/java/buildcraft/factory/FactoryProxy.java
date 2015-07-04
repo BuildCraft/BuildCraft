@@ -7,7 +7,7 @@ package buildcraft.factory;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.SidedProxy;
 
-import buildcraft.core.lib.EntityBlock;
+import buildcraft.core.lib.EntityResizableCube;
 
 public class FactoryProxy {
     @SidedProxy(clientSide = "buildcraft.factory.FactoryProxyClient", serverSide = "buildcraft.factory.FactoryProxy")
@@ -19,7 +19,7 @@ public class FactoryProxy {
 
     public void initializeNEIIntegration() {}
 
-    public EntityBlock newPumpTube(World w) {
-        return new EntityBlock(w);
+    public EntityResizableCube newPumpTube(World w) {
+        return new EntityResizableCube(w);
     }
 }

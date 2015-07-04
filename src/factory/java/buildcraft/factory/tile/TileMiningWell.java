@@ -2,7 +2,7 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.factory;
+package buildcraft.factory.tile;
 
 import io.netty.buffer.ByteBuf;
 
@@ -38,8 +38,8 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
     /** Dig the next available piece of land if not done. As soon as it reaches bedrock, lava or goes below 0, it's
      * considered done. */
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
 
         if (worldObj.isRemote) {
             return;
