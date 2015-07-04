@@ -8,6 +8,7 @@
  */
 package buildcraft.core;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -25,7 +26,7 @@ import buildcraft.api.core.Position;
 public class TilePathMarker extends TileMarker implements IPathProvider {
 	// A list with the pathMarkers that aren't fully connected
 	// It only contains markers within the loaded chunks
-	private static LinkedList<TilePathMarker> availableMarkers = new LinkedList<TilePathMarker>();
+	private static ArrayList<TilePathMarker> availableMarkers = new ArrayList<TilePathMarker>();
 
 	public int x0, y0, z0, x1, y1, z1;
 	public boolean loadLink0 = false;
@@ -141,9 +142,10 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
 		}
 	}
 
-	public LinkedList<BlockIndex> getPath() {
+	@Override
+	public ArrayList<BlockIndex> getPath() {
 		HashSet<BlockIndex> visitedPaths = new HashSet<BlockIndex>();
-		LinkedList<BlockIndex> res = new LinkedList<BlockIndex>();
+		ArrayList<BlockIndex> res = new ArrayList<BlockIndex>();
 
 		TilePathMarker nextTile = this;
 

@@ -37,6 +37,7 @@ import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IInvSlot;
+import buildcraft.api.core.IPathProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
@@ -87,7 +88,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	private SimpleInventory inv = new SimpleInventory(28, "Builder", 64);
 	private BptBuilderBase currentBuilder;
 	private RecursiveBlueprintBuilder recursiveBuilder;
-	private LinkedList<BlockIndex> path;
+	private List<BlockIndex> path;
 	private ArrayList<RequirementItemStack> requiredToBuild;
 	private NBTTagCompound initNBT = null;
 	private boolean done = true;
@@ -254,15 +255,19 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 				for (int z = zCoord - 1; z <= zCoord + 1; ++z) {
 					TileEntity tile = worldObj.getTileEntity(x, y, z);
 
-					if (tile instanceof TilePathMarker) {
-						path = ((TilePathMarker) tile).getPath();
+					if (tile instanceof IPathProvider) {
+						path = ((IPathProvider) tile).getPath();
 
-						for (BlockIndex b : path) {
-							worldObj.setBlockToAir(b.x, b.y, b.z);
+						// TODO (7.1): Add API method for IPathProviders to remove
+						// themselves from world like IAreaProviders.
+						if (tile instanceof TilePathMarker) {
+							for (BlockIndex b : path) {
+								BuildCraftBuilders.pathMarkerBlock.dropBlockAsItem(
+										worldObj, b.x, b.y, b.z,
+										0, 0);
 
-							BuildCraftCore.pathMarkerBlock.dropBlockAsItem(
-									worldObj, b.x, b.y, b.z,
-									0, 0);
+								worldObj.setBlockToAir(b.x, b.y, b.z);
+							}
 						}
 
 						break;
