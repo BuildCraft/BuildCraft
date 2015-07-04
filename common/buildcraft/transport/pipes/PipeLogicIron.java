@@ -89,6 +89,11 @@ public abstract class PipeLogicIron {
 		return false;
 	}
 
+	@Deprecated
+	public boolean blockActivated(EntityPlayer entityplayer) {
+		return blockActivated(entityplayer, ForgeDirection.UNKNOWN);
+	}
+
 	public boolean blockActivated(EntityPlayer entityplayer, ForgeDirection side) {
 		Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
 		if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord)) {

@@ -169,7 +169,7 @@ public class BlockTank extends BlockBuildCraft {
 							int qtyToFill = container.fill(current, liquid, true);
 							tank.drain(ForgeDirection.UNKNOWN, qtyToFill, true);
 						} else if (mustFill || entityplayer.isSneaking()) {
-							if (liquid != null && liquid.amount > 0) {
+							if (liquid.amount > 0) {
 								int qty = tank.fill(ForgeDirection.UNKNOWN, liquid, false);
 								tank.fill(ForgeDirection.UNKNOWN, container.drain(current, qty, true), true);
 							}

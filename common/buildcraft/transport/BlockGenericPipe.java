@@ -38,11 +38,13 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.world.BlockEvent;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.blocks.IColorRemovable;
@@ -74,7 +76,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
 	private static final ForgeDirection[] DIR_VALUES = ForgeDirection.values();
 
-	public static enum Part {
+	public enum Part {
 		Pipe,
 		Pluggable
 	}
@@ -416,10 +418,8 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		}
 
 		pipeRemoved.put(new BlockIndex(x, y, z), pipe);
+		updateNeighbourSignalState(pipe);
 		world.removeTileEntity(x, y, z);
-		if (pipe != null) {
-			updateNeighbourSignalState(pipe);
-		}
 	}
 
 	@Override
@@ -487,10 +487,9 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		return null;
 	}
 
-	@SideOnly(Side.CLIENT)
 	@Override
-	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
-		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, Minecraft.getMinecraft().thePlayer);
+	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z, EntityPlayer player) {
+		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 
 		if (rayTraceResult != null && rayTraceResult.boundingBox != null) {
 			switch (rayTraceResult.hitPart) {
@@ -622,8 +621,12 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 				}
 
 				RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
-				ForgeDirection hitSide = rayTraceResult.hitPart == Part.Pipe ? rayTraceResult.sideHit : ForgeDirection.UNKNOWN;
-				return pipe.blockActivated(player, hitSide);
+				if (rayTraceResult != null) {
+					ForgeDirection hitSide = rayTraceResult.hitPart == Part.Pipe ? rayTraceResult.sideHit : ForgeDirection.UNKNOWN;
+					return pipe.blockActivated(player, hitSide);
+				} else {
+					return false;
+				}
 			} else if (currentItem.getItem() instanceof IMapLocation) {
 				// We want to be able to record pipe locations
 				return false;
@@ -671,8 +674,10 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 					return true;
 				}
 
-				ForgeDirection hitSide = rayTraceResult.hitPart == Part.Pipe ? rayTraceResult.sideHit : ForgeDirection.UNKNOWN;
-				return pipe.blockActivated(player, hitSide);
+				if (rayTraceResult != null) {
+					ForgeDirection hitSide = rayTraceResult.hitPart == Part.Pipe ? rayTraceResult.sideHit : ForgeDirection.UNKNOWN;
+					return pipe.blockActivated(player, hitSide);
+				}
 			}
 		}
 
@@ -890,9 +895,18 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		return null;
 	}
 
-	public static boolean placePipe(Pipe<?> pipe, World world, int i, int j, int k, Block block, int meta, EntityPlayer player) {
+	public static boolean placePipe(Pipe<?> pipe, World world, int i, int j, int k, Block block, int meta, EntityPlayer player, ForgeDirection side) {
 		if (world.isRemote) {
 			return true;
+		}
+
+		Block placedAgainst = world.getBlock(i + side.getOpposite().offsetX, j + side.getOpposite().offsetY, k + side.getOpposite().offsetZ);
+		BlockEvent.PlaceEvent placeEvent = new BlockEvent.PlaceEvent(
+				new BlockSnapshot(world, i, j, k, block, meta), placedAgainst, player
+		);
+		MinecraftForge.EVENT_BUS.post(placeEvent);
+		if (placeEvent.isCanceled()) {
+			return false;
 		}
 
 		boolean placed = world.setBlock(i, j, k, block, meta, 3);
@@ -903,7 +917,6 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 				TileGenericPipe tilePipe = (TileGenericPipe) tile;
 				tilePipe.initialize(pipe);
 				tilePipe.sendUpdateToClient();
-				FMLCommonHandler.instance().bus().post(new PipePlacedEvent(player, pipe.item.getUnlocalizedName(), i, j, k));
 			}
 		}
 

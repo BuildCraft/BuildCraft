@@ -123,7 +123,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 			}
 
 			if (findTarget(false)) {
-				if (box != null && ((headPosX < box.xMin || headPosX > box.xMax) || (headPosZ < box.zMin || headPosZ > box.zMax))) {
+				if ((headPosX < box.xMin || headPosX > box.xMax) || (headPosZ < box.zMin || headPosZ > box.zMax)) {
 					setHead(box.xMin + 1, yCoord + 2, box.zMin + 1);
 				}
 			}
@@ -205,7 +205,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 			// In this case, since idling() does it anyway, we should return.
 			return;
 		} else if (stage == Stage.MOVING) {
-			int energyUsed = this.getBattery().useEnergy(20, (int) Math.ceil(20 + getBattery().getEnergyStored() / 10), false);
+			int energyUsed = this.getBattery().useEnergy(20, (int) Math.ceil(20D + (double) getBattery().getEnergyStored() / 10), false);
 
 			if (energyUsed >= 20) {
 
@@ -249,9 +249,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 			double[] head = getHead();
 			AxisAlignedBB axis = AxisAlignedBB.getBoundingBox(head[0] - 2, head[1] - 2, head[2] - 2, head[0] + 3, head[1] + 3, head[2] + 3);
 			List result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
-			for (int ii = 0; ii < result.size(); ii++) {
-				if (result.get(ii) instanceof EntityItem) {
-					EntityItem entity = (EntityItem) result.get(ii);
+			for (Object aResult : result) {
+				if (aResult instanceof EntityItem) {
+					EntityItem entity = (EntityItem) aResult;
 					if (entity.isDead) {
 						continue;
 					}

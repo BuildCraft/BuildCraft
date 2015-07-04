@@ -24,7 +24,7 @@ public abstract class ResourceId {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj.getClass() != getClass()) {
+		if (obj == null || obj.getClass() != getClass()) {
 			return false;
 		}
 

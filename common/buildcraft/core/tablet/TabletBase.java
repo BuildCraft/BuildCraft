@@ -11,7 +11,7 @@ import buildcraft.api.tablet.TabletProgram;
 import buildcraft.api.tablet.TabletProgramFactory;
 
 public abstract class TabletBase implements ITablet {
-	protected LinkedList<TabletProgram> programs = new LinkedList<TabletProgram>();
+	protected final LinkedList<TabletProgram> programs = new LinkedList<TabletProgram>();
 
 	protected TabletBase() {
 

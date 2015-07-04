@@ -13,9 +13,10 @@ import java.util.List;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityMinecartChest;
+import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
@@ -144,7 +145,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 	}
 
 	@Override
-	public void updateEntity () {
+	public void updateEntity() {
 		super.updateEntity();
 
 		if (battery.getEnergyStored() > 0) {
@@ -173,20 +174,19 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 				return true;
 			}
 
-			if (distance == 1 && entity instanceof EntityMinecartChest) {
-				EntityMinecartChest cart = (EntityMinecartChest) entity;
+			if (distance == 1 && entity instanceof EntityMinecart && entity instanceof IInventory) {
+				EntityMinecart cart = (EntityMinecart) entity;
 				if (!cart.isDead) {
 					ITransactor trans = Transactor.getTransactorFor(cart);
 					ForgeDirection openOrientation = getOpenOrientation();
 					ItemStack stack = trans.remove(StackFilter.ALL, openOrientation, false);
 
 					if (stack != null && battery.useEnergy(10, 10, false) > 0) {
-						trans.remove(StackFilter.ALL, openOrientation, true);
-						EntityItem entityitem = new EntityItem(container.getWorldObj(), cart.posX, cart.posY + 0.3F, cart.posZ, stack);
-						entityitem.delayBeforeCanPickup = 10;
-						container.getWorldObj().spawnEntityInWorld(entityitem);
-						pullItemIntoPipe(entityitem, 1);
-
+						stack = trans.remove(StackFilter.ALL, openOrientation, true);
+						if (stack != null) {
+							TravelingItem item = TravelingItem.make(container.xCoord + 0.5, container.yCoord + TransportUtils.getPipeFloorOf(stack), container.zCoord + 0.5, stack);
+							transport.injectItem(item, openOrientation.getOpposite());
+						}
 						return true;
 					}
 				}
@@ -206,7 +206,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 		if (orientation != ForgeDirection.UNKNOWN) {
 			container.getWorldObj().playSoundAtEntity(entity, "random.pop", 0.2F, ((container.getWorldObj().rand.nextFloat() - container.getWorldObj().rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
 
-			ItemStack stack = null;
+			ItemStack stack;
 
 			double speed = 0.01F;
 
@@ -228,6 +228,8 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 				} else {
 					stack = contained.splitStack(energyUsed / distance / 10);
 				}
+
+				battery.useEnergy(energyUsed, energyUsed, false);
 
 				speed = Math.sqrt(item.motionX * item.motionX + item.motionY * item.motionY + item.motionZ * item.motionZ);
 				speed = speed / 2F - 0.05;

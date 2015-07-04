@@ -66,6 +66,7 @@ import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.utils.ColorUtils;
+import buildcraft.core.list.ListMatchHandlerClass;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
@@ -539,6 +540,11 @@ public class BuildCraftTransport extends BuildCraftMod {
 				e.printStackTrace();
 			}
 		}
+
+		ListMatchHandlerClass.itemClasses.add(ItemPipe.class);
+		ListMatchHandlerClass.itemClasses.add(ItemGate.class);
+		ListMatchHandlerClass.itemClasses.add(ItemFacade.class);
+		ListMatchHandlerClass.itemClasses.add(ItemPipeWire.class);
 	}
 
 	public void reloadConfig(ConfigManager.RestartRequirement restartType) {

@@ -33,6 +33,7 @@ import buildcraft.api.items.IMapLocation;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.robotics.ZonePlan;
 
 public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 	public ItemMapLocation() {

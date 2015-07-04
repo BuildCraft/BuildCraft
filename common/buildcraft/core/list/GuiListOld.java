@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core.gui;
+package buildcraft.core.list;
 
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.entity.player.EntityPlayer;
@@ -18,7 +18,7 @@ import buildcraft.core.ItemList;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 
-public class GuiList extends GuiAdvancedInterface {
+public class GuiListOld extends GuiAdvancedInterface {
 
 	private static final ResourceLocation TEXTURE_BASE = new ResourceLocation(
 			"buildcraftcore:textures/gui/list.png");
@@ -37,13 +37,9 @@ public class GuiList extends GuiAdvancedInterface {
 
 		@Override
 		public ItemStack getItemStack() {
-			ContainerList container = (ContainerList) gui.getContainer();
+			ContainerListOld container = (ContainerListOld) gui.getContainer();
 
-			if (container.lines[lineIndex].getStack(0) != null) {
-				return container.lines[lineIndex].getStack(0);
-			} else {
-				return null;
-			}
+			return container.lines[lineIndex].getStack(0);
 		}
 	}
 
@@ -60,17 +56,13 @@ public class GuiList extends GuiAdvancedInterface {
 
 		@Override
 		public ItemStack getItemStack() {
-			ContainerList container = (ContainerList) gui.getContainer();
+			ContainerListOld container = (ContainerListOld) gui.getContainer();
 
 			if (slotIndex == 6 && container.lines[lineIndex].getStack(7) != null) {
 				return null;
 			}
 
-			if (container.lines[lineIndex].getStack(slotIndex) != null) {
-				return container.lines[lineIndex].getStack(slotIndex);
-			} else {
-				return null;
-			}
+			return container.lines[lineIndex].getStack(slotIndex);
 		}
 	}
 
@@ -94,16 +86,16 @@ public class GuiList extends GuiAdvancedInterface {
 		}
 	}
 
-	public GuiList(EntityPlayer iPlayer) {
-		super(new ContainerList(iPlayer), iPlayer.inventory, TEXTURE_BASE);
+	public GuiListOld(EntityPlayer iPlayer) {
+		super(new ContainerListOld(iPlayer), iPlayer.inventory, TEXTURE_BASE);
 
 		xSize = 176;
 		ySize = 241;
 
-		for (int sy = 0; sy < 6; ++sy) {
+		for (int sy = 0; sy < 6; sy++) {
 			slots.add(new MainSlot(this, 44, 31 + sy * 18, sy));
 
-			for (int sx = 1; sx < 7; ++sx) {
+			for (int sx = 1; sx < 7; sx++) {
 				slots.add(new SecondarySlot(this, 44 + sx * 18, 31 + sy * 18, sy, sx));
 			}
 
@@ -128,7 +120,7 @@ public class GuiList extends GuiAdvancedInterface {
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		super.drawGuiContainerBackgroundLayer(f, x, y);
 
-		ContainerList container = (ContainerList) getContainer();
+		ContainerListOld container = (ContainerListOld) getContainer();
 
 		bindTexture(TEXTURE_BASE);
 
@@ -154,7 +146,7 @@ public class GuiList extends GuiAdvancedInterface {
 			}
 		}
 
-		drawBackgroundSlots();
+		drawBackgroundSlots(x, y);
 
 		bindTexture(TEXTURE_BASE);
 
@@ -192,7 +184,7 @@ public class GuiList extends GuiAdvancedInterface {
 		}
 
 		AdvancedSlot slot = getSlotAtLocation(x, y);
-		ContainerList container = (ContainerList) getContainer();
+		ContainerListOld container = (ContainerListOld) getContainer();
 
 		if (slot instanceof MainSlot) {
 			container.setStack(((MainSlot) slot).lineIndex, 0, mc.thePlayer.inventory.getItemStack());
@@ -215,9 +207,7 @@ public class GuiList extends GuiAdvancedInterface {
 				textField.setFocused(false);
 			} else {
 				textField.textboxKeyTyped(c, i);
-				((ContainerList) container).setLabel(textField.getText());
-				// RPCHandler.rpcServer(architect, "handleClientSetName",
-				// textField.getText());
+				((ContainerListOld) container).setLabel(textField.getText());
 			}
 		} else {
 			super.keyTyped(c, i);

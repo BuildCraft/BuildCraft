@@ -9,7 +9,9 @@
 package buildcraft.robotics.boards;
 
 import net.minecraft.block.Block;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -80,8 +82,9 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 			} else {
 				startDelegateAI(new AIRobotGotoSleep(robot));
 			}
-		} else if (ai instanceof AIRobotGotoStationAndUnloadFluids) {
+		} else if (ai instanceof AIRobotPumpBlock) {
 			releaseBlockFound();
+		} else if (ai instanceof AIRobotGotoStationAndUnloadFluids) {
 
 			if (!ai.success()) {
 				startDelegateAI(new AIRobotGotoSleep(robot));
@@ -118,4 +121,27 @@ public class BoardRobotPump extends RedstoneBoardRobot {
         return fluidFilter.matches(fluid);
 	}
 
+	@Override
+	public boolean canLoadFromNBT() {
+		return true;
+	}
+
+	@Override
+	public void writeSelfToNBT(NBTTagCompound nbt) {
+		super.writeSelfToNBT(nbt);
+		if (blockFound != null) {
+			NBTTagCompound sub = new NBTTagCompound();
+			blockFound.writeTo(sub);
+			nbt.setTag("blockFound", sub);
+		}
+	}
+
+	@Override
+	public void loadSelfFromNBT(NBTTagCompound nbt) {
+		super.loadSelfFromNBT(nbt);
+
+		if (nbt.hasKey("blockFound")) {
+			blockFound = new BlockIndex(nbt.getCompoundTag("blockFound"));
+		}
+	}
 }

@@ -11,7 +11,6 @@ package buildcraft.core.lib.gui;
 import net.minecraft.item.ItemStack;
 
 public class ItemSlot extends AdvancedSlot {
-
 	public ItemStack stack;
 
 	public ItemSlot(GuiAdvancedInterface gui, int x, int y) {

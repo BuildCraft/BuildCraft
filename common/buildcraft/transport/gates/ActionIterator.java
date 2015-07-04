@@ -17,7 +17,7 @@ import buildcraft.api.transport.IPipe;
 import buildcraft.transport.Gate;
 
 public class ActionIterator implements Iterable<StatementSlot> {
-	private IPipe pipe;
+	private final IPipe pipe;
 
 	public ActionIterator(IPipe iPipe) {
 		pipe = iPipe;

@@ -36,7 +36,7 @@ public class BlockSpring extends Block {
 		public Block liquidBlock;
 		public boolean canGen = true;
 
-		private EnumSpring(int tickRate, int chance, Block liquidBlock) {
+		EnumSpring(int tickRate, int chance, Block liquidBlock) {
 			this.tickRate = tickRate;
 			this.chance = chance;
 			this.liquidBlock = liquidBlock;

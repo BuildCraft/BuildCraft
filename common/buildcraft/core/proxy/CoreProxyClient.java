@@ -27,6 +27,8 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.LaserKind;
+import buildcraft.core.RenderPathMarker;
+import buildcraft.core.TilePathMarker;
 import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.lib.engines.RenderEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
@@ -89,6 +91,7 @@ public class CoreProxyClient extends CoreProxy {
 		RenderingRegistry.registerBlockHandler(BuildCraftCore.legacyPipeModel, new RenderingEntityBlocks());
 		RenderingRegistry.registerBlockHandler(new RenderingMarkers());
 		RenderingRegistry.registerBlockHandler(BuildCraftCore.complexBlockModel, new RenderBlockComplex());
+		ClientRegistry.bindTileEntitySpecialRenderer(TilePathMarker.class, new RenderPathMarker());
 
 		//TODO Update me to grab differing trunk textures
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEngineBase.class, new RenderEngine());

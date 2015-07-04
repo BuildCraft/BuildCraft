@@ -140,13 +140,22 @@ config.worldgen.biomes.excessiveOilIDs=Biomes with excessive oil
 config.worldgen.biomes.excludeOilIDs=Biomes without oil
 config.worldgen.biomes.increasedOilIDs=Biomes with increased oil
 
-
 direction.north=North
 direction.west=West
 direction.east=East
 direction.south=South
 direction.up=Top
 direction.down=Bottom
+
+direction.center.0=North-West
+direction.center.1=North
+direction.center.2=North-East
+direction.center.3=West
+direction.center.4=Center
+direction.center.5=East
+direction.center.6=South-West
+direction.center.7=South
+direction.center.8=South-East
 
 fillerpattern.clear=Clear
 fillerpattern.fill=Fill
@@ -157,6 +166,8 @@ fillerpattern.stairs=Stairs
 fillerpattern.box=Box
 fillerpattern.cylinder=Cylinder
 fillerpattern.frame=Frame
+fillerpattern.parameter.hollow=Hollow
+fillerpattern.parameter.filled=Filled
 
 fluid.oil=Oil
 fluid.fuel=Fuel
@@ -180,7 +191,7 @@ gate.action.station.accept_items=Accept Items
 gate.action.station.request_items=Request Items
 gate.action.station.drop_items_in_pipe=Drop Items In Pipe
 gate.action.station.allow_craft=Allow Craft
-gate.action.station.provide_machine_request=Provide Computed Items
+gate.action.station.provide_machine_request=Request Needed Items
 gate.action.station.accept_fluids=Accept Fluids
 gate.action.station.povide_fluids=Provide Fluids
 gate.action.robot.work_in_area=Work in Area
@@ -461,6 +472,9 @@ tip.PipePowerWood=Power Input Pipe
 tip.PipeStructureCobblestone=Support pipe
 tip.deprecated=Deprecated
 
+tip.filler.excavate.on=Excavate
+tip.filler.excavate.off=Do Not Excavate
+
 tip.shift.PipeFluidsDiamond=GUI accepts any fluid containers
 tip.shift.PipeFluidsEmerald=GUI accepts any fluid container
 tip.shift.PipeItemsClay=Prioritizes machines and chests\nover neighbouring pipes.
@@ -470,6 +484,9 @@ tip.shift.PipeItemsLapis=Sneak-click to change color
 tip.shift.PipeItemsObsidian=Power with an engine\nMore power - greater distance
 tip.shift.PipePowerIron=Change the limit with a wrench or gates
 
+tip.PipeItemsEmerald.whitelist=Whitelist
+tip.PipeItemsEmerald.blacklist=Blacklist
+tip.PipeItemsEmerald.roundrobin=Round Robin (In Order)
 
 tip.tool.add=Add
 tip.tool.fullscreen=Fullscreen

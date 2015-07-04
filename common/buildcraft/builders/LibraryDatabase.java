@@ -15,6 +15,8 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
@@ -205,25 +207,7 @@ public class LibraryDatabase {
 		return null;
 	}
 
-	public ArrayList<LibraryId> getPage (int pageId) {
-		ArrayList<LibraryId> result = new ArrayList<LibraryId>();
-
-		if (pageId < 0) {
-			return result;
-		}
-
-		for (int i = pageId * PAGE_SIZE; i < pageId * PAGE_SIZE + PAGE_SIZE; ++i) {
-			if (i < pages.length) {
-				result.add(pages [i]);
-			} else {
-				break;
-			}
-		}
-
-		return result;
-	}
-
-	public int getPageNumber () {
-		return (int) Math.ceil((float) blueprintIds.size() / (float) PAGE_SIZE);
+	public List<LibraryId> getBlueprintIds() {
+		return Collections.unmodifiableList(new ArrayList<LibraryId>(blueprintIds));
 	}
 }

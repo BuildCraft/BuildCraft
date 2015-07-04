@@ -15,7 +15,6 @@ import java.nio.IntBuffer;
 import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
-
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
@@ -27,10 +26,10 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.IIcon;
-
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
@@ -45,7 +44,6 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.IPlantable;
@@ -61,6 +59,8 @@ import buildcraft.api.core.EnumColor;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.IWorldProperty;
 import buildcraft.api.crops.CropManager;
+import buildcraft.api.filler.FillerManager;
+import buildcraft.api.filler.IFillerPattern;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
@@ -75,6 +75,8 @@ import buildcraft.core.AchievementManager;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.BlockBuildTool;
 import buildcraft.core.BlockEngine;
+import buildcraft.core.BlockMarker;
+import buildcraft.core.BlockPathMarker;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.CoreGuiHandler;
@@ -93,8 +95,25 @@ import buildcraft.core.SchematicEngine;
 import buildcraft.core.SpringPopulate;
 import buildcraft.core.TickHandlerCore;
 import buildcraft.core.TileEngineWood;
+import buildcraft.core.TilePathMarker;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.SchematicRegistry;
+import buildcraft.core.builders.patterns.FillerPattern;
+import buildcraft.core.builders.patterns.FillerRegistry;
+import buildcraft.core.builders.patterns.PatternBox;
+import buildcraft.core.builders.patterns.PatternClear;
+import buildcraft.core.builders.patterns.PatternCylinder;
+import buildcraft.core.builders.patterns.PatternFill;
+import buildcraft.core.builders.patterns.PatternFlatten;
+import buildcraft.core.builders.patterns.PatternFrame;
+import buildcraft.core.builders.patterns.PatternHorizon;
+import buildcraft.core.builders.patterns.PatternParameterCenter;
+import buildcraft.core.builders.patterns.PatternParameterHollow;
+import buildcraft.core.builders.patterns.PatternParameterXZDir;
+import buildcraft.core.builders.patterns.PatternParameterYDir;
+import buildcraft.core.builders.patterns.PatternPyramid;
+import buildcraft.core.builders.patterns.PatternStairs;
+import buildcraft.core.builders.schematics.SchematicIgnore;
 import buildcraft.core.command.SubCommandChangelog;
 import buildcraft.core.command.SubCommandVersion;
 import buildcraft.core.config.BuildCraftConfiguration;
@@ -107,8 +126,13 @@ import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.list.ListOreDictionaryCache;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.lib.utils.XorShift128Random;
+import buildcraft.core.list.ListMatchHandlerClass;
+import buildcraft.core.list.ListMatchHandlerFluid;
+import buildcraft.core.list.ListMatchHandlerOreDictionary;
+import buildcraft.core.list.ListRegistry;
 import buildcraft.core.network.PacketHandlerCore;
 import buildcraft.core.properties.WorldPropertyIsDirt;
 import buildcraft.core.properties.WorldPropertyIsFarmland;
@@ -173,6 +197,8 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static ConfigManager mainConfigManager;
 
 	public static BlockEngine engineBlock;
+	public static BlockMarker markerBlock;
+	public static BlockPathMarker pathMarkerBlock;
 	public static Block springBlock;
 	public static BlockBuildTool buildToolBlock;
 	public static Item woodenGearItem;
@@ -263,95 +289,97 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildcraftRecipeRegistry.programmingTable = ProgrammingRecipeManager.INSTANCE;
 
 		BuilderAPI.schematicRegistry = SchematicRegistry.INSTANCE;
-		
+
 		mainConfiguration = new BuildCraftConfiguration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.cfg"));
 		mainConfigManager = new ConfigManager(mainConfiguration);
-		try {
-			mainConfiguration.load();
+		mainConfiguration.load();
 
-			mainConfigManager.getCat("debug").setShowInGui(false);
-			mainConfigManager.getCat("vars").setShowInGui(false);
+		mainConfigManager.getCat("debug").setShowInGui(false);
+		mainConfigManager.getCat("vars").setShowInGui(false);
 
-			mainConfigManager.register("general.updateCheck", true, "Should I check the BuildCraft version on startup?", ConfigManager.RestartRequirement.NONE);
-			mainConfigManager.register("display.hidePowerValues", false, "Should all power values (RF, RF/t) be hidden?", ConfigManager.RestartRequirement.NONE);
-			mainConfigManager.register("display.hideFluidValues", false, "Should all fluid values (mB, mB/t) be hidden?", ConfigManager.RestartRequirement.NONE);
-			mainConfigManager.register("general.itemLifespan", 60, "How long, in seconds, should items stay on the ground? (Vanilla = 300, default = 60)", ConfigManager.RestartRequirement.NONE)
-				.setMinValue(5);
-			mainConfigManager.register("network.updateFactor", 10, "How often, in ticks, should network update packets be sent? Increasing this might help network performance.", ConfigManager.RestartRequirement.GAME)
-				.setMinValue(1);
-			mainConfigManager.register("network.longUpdateFactor", 40, "How often, in ticks, should full network sync packets be sent? Increasing this might help network performance.", ConfigManager.RestartRequirement.GAME)
-				.setMinValue(1);
-			mainConfigManager.register("general.canEnginesExplode", false, "Should engines explode upon overheat?", ConfigManager.RestartRequirement.NONE);
-			mainConfigManager.register("worldgen.enable", true, "Should BuildCraft generate anything in the world?", ConfigManager.RestartRequirement.GAME);
-			mainConfigManager.register("general.pumpsConsumeWater", false, "Should pumps consume water? Enabling this might cause performance issues!", ConfigManager.RestartRequirement.NONE);
-			mainConfigManager.register("power.miningUsageMultiplier", 1.0D, "What should the multiplier of all mining-related power usage be?", ConfigManager.RestartRequirement.NONE);
-			mainConfigManager.register("display.colorBlindMode", false, "Should I enable colorblind mode?", ConfigManager.RestartRequirement.GAME);
-			mainConfigManager.register("worldgen.generateWaterSprings", true, "Should BuildCraft generate water springs?", ConfigManager.RestartRequirement.GAME);
+		mainConfigManager.register("general.updateCheck", true, "Should I check the BuildCraft version on startup?", ConfigManager.RestartRequirement.NONE);
+		mainConfigManager.register("display.hidePowerValues", false, "Should all power values (RF, RF/t) be hidden?", ConfigManager.RestartRequirement.NONE);
+		mainConfigManager.register("display.hideFluidValues", false, "Should all fluid values (mB, mB/t) be hidden?", ConfigManager.RestartRequirement.NONE);
+		mainConfigManager.register("general.itemLifespan", 60, "How long, in seconds, should items stay on the ground? (Vanilla = 300, default = 60)", ConfigManager.RestartRequirement.NONE)
+			.setMinValue(5);
+		mainConfigManager.register("network.updateFactor", 10, "How often, in ticks, should network update packets be sent? Increasing this might help network performance.", ConfigManager.RestartRequirement.GAME)
+			.setMinValue(1);
+		mainConfigManager.register("network.longUpdateFactor", 40, "How often, in ticks, should full network sync packets be sent? Increasing this might help network performance.", ConfigManager.RestartRequirement.GAME)
+			.setMinValue(1);
+		mainConfigManager.register("general.canEnginesExplode", false, "Should engines explode upon overheat?", ConfigManager.RestartRequirement.NONE);
+		mainConfigManager.register("worldgen.enable", true, "Should BuildCraft generate anything in the world?", ConfigManager.RestartRequirement.GAME);
+		mainConfigManager.register("general.pumpsConsumeWater", false, "Should pumps consume water? Enabling this might cause performance issues!", ConfigManager.RestartRequirement.NONE);
+		mainConfigManager.register("power.miningUsageMultiplier", 1.0D, "What should the multiplier of all mining-related power usage be?", ConfigManager.RestartRequirement.NONE);
+		mainConfigManager.register("display.colorBlindMode", false, "Should I enable colorblind mode?", ConfigManager.RestartRequirement.GAME);
+		mainConfigManager.register("worldgen.generateWaterSprings", true, "Should BuildCraft generate water springs?", ConfigManager.RestartRequirement.GAME);
 
-			reloadConfig(ConfigManager.RestartRequirement.GAME);
+		reloadConfig(ConfigManager.RestartRequirement.GAME);
 
-			wrenchItem = (new ItemWrench()).setUnlocalizedName("wrenchItem");
-			CoreProxy.proxy.registerItem(wrenchItem);
+		wrenchItem = (new ItemWrench()).setUnlocalizedName("wrenchItem");
+		CoreProxy.proxy.registerItem(wrenchItem);
 
-			mapLocationItem = (new ItemMapLocation()).setUnlocalizedName("mapLocation");
-			CoreProxy.proxy.registerItem(mapLocationItem);
+		mapLocationItem = (new ItemMapLocation()).setUnlocalizedName("mapLocation");
+		CoreProxy.proxy.registerItem(mapLocationItem);
 
-			listItem = (ItemList) ((new ItemList()).setUnlocalizedName("list"));
-			CoreProxy.proxy.registerItem(listItem);
+		listItem = (ItemList) (new ItemList()).setUnlocalizedName("list");
+		CoreProxy.proxy.registerItem(listItem);
 
-			debuggerItem = (ItemDebugger) ((new ItemDebugger())).setUnlocalizedName("debugger");
-			CoreProxy.proxy.registerItem(debuggerItem);
+		debuggerItem = (new ItemDebugger()).setUnlocalizedName("debugger");
+		CoreProxy.proxy.registerItem(debuggerItem);
 
-			if (BuildCraftCore.modifyWorld) {
-				BlockSpring.EnumSpring.WATER.canGen = BuildCraftCore.mainConfigManager.get("worldgen.generateWaterSprings").getBoolean();
-				springBlock = new BlockSpring().setBlockName("eternalSpring");
-				CoreProxy.proxy.registerBlock(springBlock, ItemSpring.class);
-			}
-
-			woodenGearItem = (new ItemGear()).setUnlocalizedName("woodenGearItem");
-			CoreProxy.proxy.registerItem(woodenGearItem);
-			OreDictionary.registerOre("gearWood", new ItemStack(woodenGearItem));
-
-			stoneGearItem = (new ItemGear()).setUnlocalizedName("stoneGearItem");
-			CoreProxy.proxy.registerItem(stoneGearItem);
-			OreDictionary.registerOre("gearStone", new ItemStack(stoneGearItem));
-
-			ironGearItem = (new ItemGear()).setUnlocalizedName("ironGearItem");
-			CoreProxy.proxy.registerItem(ironGearItem);
-			OreDictionary.registerOre("gearIron", new ItemStack(ironGearItem));
-
-			goldGearItem = (new ItemGear()).setUnlocalizedName("goldGearItem");
-			CoreProxy.proxy.registerItem(goldGearItem);
-			OreDictionary.registerOre("gearGold", new ItemStack(goldGearItem));
-
-			diamondGearItem = (new ItemGear()).setUnlocalizedName("diamondGearItem");
-			CoreProxy.proxy.registerItem(diamondGearItem);
-			OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));
-
-			paintbrushItem = (new ItemPaintbrush()).setUnlocalizedName("paintbrush");
-			CoreProxy.proxy.registerItem(paintbrushItem);
-
-			if (TABLET_TESTING) {
-				tabletItem = new ItemTablet();
-				tabletItem.setUnlocalizedName("tablet");
-				CoreProxy.proxy.registerItem(tabletItem);
-			}
-
-			buildToolBlock = new BlockBuildTool();
-			buildToolBlock.setBlockName("buildToolBlock");
-			CoreProxy.proxy.registerBlock(buildToolBlock);
-
-			engineBlock = (BlockEngine) CompatHooks.INSTANCE.getBlock(BlockEngine.class);
-			CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);
-			engineBlock.registerTile((Class<? extends TileEngineBase>) CompatHooks.INSTANCE.getTile(TileEngineWood.class), "tile.engineWood");
-			CoreProxy.proxy.registerTileEntity(TileEngineWood.class, "net.minecraft.src.buildcraft.energy.TileEngineWood");
-
-			FMLCommonHandler.instance().bus().register(this);
-			MinecraftForge.EVENT_BUS.register(this);
-			MinecraftForge.EVENT_BUS.register(new BlockHighlightHandler());
-		} finally {
+		if (BuildCraftCore.modifyWorld) {
+			BlockSpring.EnumSpring.WATER.canGen = BuildCraftCore.mainConfigManager.get("worldgen.generateWaterSprings").getBoolean();
+			springBlock = new BlockSpring().setBlockName("eternalSpring");
+			CoreProxy.proxy.registerBlock(springBlock, ItemSpring.class);
 		}
 
+		woodenGearItem = (new ItemGear()).setUnlocalizedName("woodenGearItem");
+		CoreProxy.proxy.registerItem(woodenGearItem);
+		OreDictionary.registerOre("gearWood", new ItemStack(woodenGearItem));
+
+		stoneGearItem = (new ItemGear()).setUnlocalizedName("stoneGearItem");
+		CoreProxy.proxy.registerItem(stoneGearItem);
+		OreDictionary.registerOre("gearStone", new ItemStack(stoneGearItem));
+
+		ironGearItem = (new ItemGear()).setUnlocalizedName("ironGearItem");
+		CoreProxy.proxy.registerItem(ironGearItem);
+		OreDictionary.registerOre("gearIron", new ItemStack(ironGearItem));
+
+		goldGearItem = (new ItemGear()).setUnlocalizedName("goldGearItem");
+		CoreProxy.proxy.registerItem(goldGearItem);
+		OreDictionary.registerOre("gearGold", new ItemStack(goldGearItem));
+
+		diamondGearItem = (new ItemGear()).setUnlocalizedName("diamondGearItem");
+		CoreProxy.proxy.registerItem(diamondGearItem);
+		OreDictionary.registerOre("gearDiamond", new ItemStack(diamondGearItem));
+
+		paintbrushItem = (new ItemPaintbrush()).setUnlocalizedName("paintbrush");
+		CoreProxy.proxy.registerItem(paintbrushItem);
+
+		if (TABLET_TESTING) {
+			tabletItem = new ItemTablet();
+			tabletItem.setUnlocalizedName("tablet");
+			CoreProxy.proxy.registerItem(tabletItem);
+		}
+
+		buildToolBlock = new BlockBuildTool();
+		buildToolBlock.setBlockName("buildToolBlock");
+		CoreProxy.proxy.registerBlock(buildToolBlock);
+
+		engineBlock = (BlockEngine) CompatHooks.INSTANCE.getBlock(BlockEngine.class);
+		CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);
+		engineBlock.registerTile((Class<? extends TileEngineBase>) CompatHooks.INSTANCE.getTile(TileEngineWood.class), "tile.engineWood");
+		CoreProxy.proxy.registerTileEntity(TileEngineWood.class, "net.minecraft.src.buildcraft.energy.TileEngineWood");
+
+		markerBlock = (BlockMarker) CompatHooks.INSTANCE.getBlock(BlockMarker.class);
+		CoreProxy.proxy.registerBlock(markerBlock.setBlockName("markerBlock"));
+
+		pathMarkerBlock = (BlockPathMarker) CompatHooks.INSTANCE.getBlock(BlockPathMarker.class);
+		CoreProxy.proxy.registerBlock(pathMarkerBlock.setBlockName("pathMarkerBlock"));
+
+		FMLCommonHandler.instance().bus().register(this);
+		MinecraftForge.EVENT_BUS.register(this);
+		MinecraftForge.EVENT_BUS.register(new BlockHighlightHandler());
 	}
 
 	@Mod.EventHandler
@@ -415,10 +443,39 @@ public class BuildCraftCore extends BuildCraftMod {
 		MinecraftForge.EVENT_BUS.register(TabletManagerServer.INSTANCE);
 
 		TabletAPI.registerProgram(new TabletProgramMenuFactory());
+
+		// Create filler registry
+		try {
+			FillerManager.registry = new FillerRegistry();
+
+			// INIT FILLER PATTERNS
+			FillerManager.registry.addPattern(PatternFill.INSTANCE);
+			FillerManager.registry.addPattern(new PatternFlatten());
+			FillerManager.registry.addPattern(new PatternHorizon());
+			FillerManager.registry.addPattern(new PatternClear());
+			FillerManager.registry.addPattern(new PatternBox());
+			FillerManager.registry.addPattern(new PatternPyramid());
+			FillerManager.registry.addPattern(new PatternStairs());
+			FillerManager.registry.addPattern(new PatternCylinder());
+			FillerManager.registry.addPattern(new PatternFrame());
+		} catch (Error error) {
+			BCLog.logErrorAPI("Buildcraft", error, IFillerPattern.class);
+			throw error;
+		}
+
+		StatementManager.registerParameterClass(PatternParameterYDir.class);
+		StatementManager.registerParameterClass(PatternParameterXZDir.class);
+		StatementManager.registerParameterClass(PatternParameterCenter.class);
+		StatementManager.registerParameterClass(PatternParameterHollow.class);
+
+		ListRegistry.registerHandler(new ListMatchHandlerClass());
+		ListRegistry.registerHandler(new ListMatchHandlerFluid());
+		ListMatchHandlerClass.itemClasses.add(ItemFood.class);
 	}
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
+		OreDictionary.registerOre("dustTinyRedstone", Blocks.fence_gate);
 		BCLog.logger.info("BuildCraft's fake player: UUID = " + gameProfile.getId().toString() + ", name = '" + gameProfile.getName() + "'!");
 
 		for (Object o : Block.blockRegistry) {
@@ -450,7 +507,11 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildCraftAPI.registerWorldProperty("shoveled", new WorldPropertyIsShoveled());
 		BuildCraftAPI.registerWorldProperty("dirt", new WorldPropertyIsDirt());
 		BuildCraftAPI.registerWorldProperty("fluidSource", new WorldPropertyIsFluidSource());
-		
+
+		// Landmarks are often caught incorrectly, making building them counter-productive.
+		SchematicRegistry.INSTANCE.registerSchematicBlock(markerBlock, SchematicIgnore.class);
+		SchematicRegistry.INSTANCE.registerSchematicBlock(pathMarkerBlock, SchematicIgnore.class);
+
 		ColorUtils.initialize();
 		
 		actionControl = new IActionExternal[IControllable.Mode.values().length];
@@ -459,6 +520,13 @@ public class BuildCraftCore extends BuildCraftMod {
 				actionControl[mode.ordinal()] = new ActionMachineControl(mode);
 			}
 		}
+
+		MinecraftForge.EVENT_BUS.register(ListOreDictionaryCache.INSTANCE);
+		for (String s : OreDictionary.getOreNames()) {
+			ListOreDictionaryCache.INSTANCE.registerName(s);
+		}
+
+		ListRegistry.registerHandler(new ListMatchHandlerOreDictionary());
 	}
 
 	@Mod.EventHandler
@@ -497,9 +565,15 @@ public class BuildCraftCore extends BuildCraftMod {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void textureHook(TextureStitchEvent.Pre event) {
+		for (FillerPattern pattern : FillerPattern.patterns.values()) {
+			pattern.registerIcons(event.map);
+		}
+
 		if (event.map.getTextureType() == 1) {
 			iconProvider = new CoreIconProvider();
 			iconProvider.registerIcons(event.map);
+
+			StatementManager.registerIcons(event.map);
 		} else if (event.map.getTextureType() == 0) {
 			BuildCraftCore.redLaserTexture = event.map.registerIcon("buildcraftcore:laserBox/blockRedLaser");
 			BuildCraftCore.blueLaserTexture = event.map.registerIcon("buildcraftcore:laserBox/blockBlueLaser");
@@ -566,6 +640,12 @@ public class BuildCraftCore extends BuildCraftMod {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 0),
 				"www", " g ", "GpG", 'w', "plankWood", 'g', "blockGlass", 'G',
 				"gearWood", 'p', Blocks.piston);
+
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), "l ", "r ", 'l',
+				new ItemStack(Items.dye, 1, 4), 'r', Blocks.redstone_torch);
+
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pathMarkerBlock, 1), "l ", "r ", 'l',
+				"dyeGreen", 'r', Blocks.redstone_torch);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(paintbrushItem), " iw", " gi", "s  ",
 				's', "stickWood", 'g', "gearWood", 'w', new ItemStack(Blocks.wool, 1, 0), 'i', Items.string);
@@ -648,9 +728,12 @@ public class BuildCraftCore extends BuildCraftMod {
 	}
 
 	@SubscribeEvent
-	public void cleanRegistries(WorldEvent.Unload unload) {
+	public void cleanRegistries(WorldEvent.Unload event) {
 		for (IWorldProperty property : BuildCraftAPI.worldProperties.values()) {
 			property.clear();
+		}
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+			TilePathMarker.clearAvailableMarkersList(event.world);
 		}
 	}
 }

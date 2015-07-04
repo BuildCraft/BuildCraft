@@ -3,6 +3,7 @@ package buildcraft.silicon;
 import java.lang.ref.WeakReference;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.SlotCrafting;
@@ -46,19 +47,64 @@ public class TileStampingTable extends TileLaserTableBase implements IHasWork, I
         return CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, xCoord, yCoord + 1, zCoord);
     }
 
+    private void handleLeftoverItems(IInventory items) {
+        for (int i = 0; i < items.getSizeInventory(); i++) {
+            if (items.getStackInSlot(i) != null) {
+                ItemStack output = items.getStackInSlot(i);
+
+                if (output.stackSize <= 0) {
+                    items.setInventorySlotContents(i, null);
+                    continue;
+                }
+
+                boolean inserted = false;
+
+                for (int j = 2; j <= 4; j++) {
+                    ItemStack target = getStackInSlot(j);
+
+                    if (target == null || target.stackSize <= 0) {
+                        setInventorySlotContents(j, output);
+                        inserted = true;
+                        break;
+                    } else {
+                        output.stackSize -= StackHelper.mergeStacks(output, target, true);
+                        if (output.stackSize == 0) {
+                            inserted = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!inserted) {
+                    if (output.stackSize > 0) {
+                        output.stackSize -= Utils.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, output);
+
+                        if (output.stackSize > 0) {
+                            InvUtils.dropItems(worldObj, output, xCoord, yCoord + 1, zCoord);
+                        }
+                    }
+                }
+
+                items.setInventorySlotContents(i, null);
+            }
+        }
+    }
+
     @Override
     public void updateEntity() {
         super.updateEntity();
 
-        if (getEnergy() >= getRequiredEnergy()) {
+        if (getEnergy() >= getRequiredEnergy() && getEnergy() > 0) {
             ItemStack input = this.getStackInSlot(0);
 
             if (input == null) {
                 return;
             }
 
+            EntityPlayer internalPlayer = getInternalPlayer().get();
+
             if (craftSlot == null) {
-                craftSlot = new SlotCrafting(getInternalPlayer().get(), crafting, this, 1, 0, 0);
+                craftSlot = new SlotCrafting(internalPlayer, crafting, this, 1, 0, 0);
             }
 
             if (input.getItem() instanceof ItemPackage) {
@@ -99,39 +145,9 @@ public class TileStampingTable extends TileLaserTableBase implements IHasWork, I
 
             addEnergy(-getRequiredEnergy());
 
-            craftSlot.onPickupFromSlot(getInternalPlayer().get(), result);
-
-            ItemStack[] playerInv = getInternalPlayer().get().inventory.mainInventory;
-
-            for (int i = 0; i < playerInv.length; i++) {
-                if (playerInv[i] != null) {
-                    ItemStack output = playerInv[i];
-                    for (int j = 2; j <= 4; j++) {
-                        ItemStack target = getStackInSlot(j);
-
-                        if (target == null) {
-                            setInventorySlotContents(j, output);
-                            playerInv[i] = null;
-                            break;
-                        } else {
-                            output.stackSize -= StackHelper.mergeStacks(output, input, true);
-                            if (output.stackSize == 0) {
-                                break;
-                            }
-                        }
-                    }
-
-                    if (output.stackSize > 0) {
-                        output.stackSize -= Utils.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, output);
-                    }
-
-                    if (output.stackSize > 0) {
-                        InvUtils.dropItems(worldObj, output, xCoord, yCoord + 1, zCoord);
-                    }
-
-                    playerInv[i] = null;
-                }
-            }
+            craftSlot.onPickupFromSlot(internalPlayer, result);
+            handleLeftoverItems(crafting);
+            handleLeftoverItems(internalPlayer.inventory);
 
             if (resultInto == null) {
                 setInventorySlotContents(1, result);

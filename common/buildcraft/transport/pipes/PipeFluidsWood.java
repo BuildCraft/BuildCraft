@@ -108,7 +108,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 		FluidTankInfo tankInfo = transport.getTankInfo(side)[0];
 		FluidStack extracted;
 
-		if (tankInfo.fluid != null && tankInfo.fluid != null) {
+		if (tankInfo.fluid != null) {
 			extracted = fluidHandler.drain(side.getOpposite(), new FluidStack(tankInfo.fluid, amount), false);
 		} else {
 			extracted = fluidHandler.drain(side.getOpposite(), amount, false);
@@ -119,7 +119,8 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 		if (extracted != null) {
 			inserted = transport.fill(side, extracted, true);
 			if (inserted > 0) {
-				fluidHandler.drain(side.getOpposite(), new FluidStack(extracted.getFluid(), inserted), true);
+				extracted.amount = inserted;
+				fluidHandler.drain(side.getOpposite(), extracted, true);
 			}
 		}
 		

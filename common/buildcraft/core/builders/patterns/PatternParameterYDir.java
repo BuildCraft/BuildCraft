@@ -42,8 +42,8 @@ public class PatternParameterYDir implements IStatementParameter {
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		iconUp = iconRegister.registerIcon("buildcraftcore:fillerParameters/arrow_up");
-		iconDown = iconRegister.registerIcon("buildcraftcore:fillerParameters/arrow_down");
+		iconUp = iconRegister.registerIcon("buildcraftcore:fillerParameters/stairs_ascend");
+		iconDown = iconRegister.registerIcon("buildcraftcore:fillerParameters/stairs_descend");
 	}
 
 	@Override
@@ -68,6 +68,6 @@ public class PatternParameterYDir implements IStatementParameter {
 
 	@Override
 	public IStatementParameter rotateLeft() {
-		return null;
+		return this;
 	}
 }

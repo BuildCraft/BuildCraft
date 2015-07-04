@@ -23,6 +23,7 @@ import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.api.blueprints.SchematicBlockBase;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.blueprints.Translation;
 import buildcraft.api.core.BCLog;
@@ -103,7 +104,7 @@ public class Blueprint extends BlueprintBase {
 		try {
 			slot.initializeFromObjectAt(context, x, y, z);
 			slot.storeRequirements(context, x, y, z);
-			contents[posX][posY][posZ] = slot;
+			put(posX, posY, posZ, slot);
 		} catch (Throwable t) {
 			// Defensive code against errors in implementers
 			t.printStackTrace();
@@ -119,7 +120,7 @@ public class Blueprint extends BlueprintBase {
 						buildingPermission = BuildingPermission.CREATIVE_ONLY;
 					}
 				} else {
-					contents[posX][posY][posZ] = null;
+					put(posX, posY, posZ, null);
 				}
 				break;
 			case NONE:
@@ -174,11 +175,12 @@ public class Blueprint extends BlueprintBase {
 		for (int x = 0; x < sizeX; ++x) {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
+					SchematicBlockBase schematic = get(x, y, z);
 					NBTTagCompound cpt = new NBTTagCompound();
 
-					if (contents [x][y][z] != null) {
-						contents[x][y][z].idsToBlueprint(mapping);
-						contents[x][y][z].writeSchematicToNBT(cpt, mapping);
+					if (schematic != null) {
+						schematic.idsToBlueprint(mapping);
+						schematic.writeSchematicToNBT(cpt, mapping);
 					}
 
 					nbtContents.appendTag(cpt);
@@ -231,14 +233,14 @@ public class Blueprint extends BlueprintBase {
 
 						if (block != null) {
 							int meta = cpt.getInteger("blockMeta");
-							contents[x][y][z] = SchematicRegistry.INSTANCE.createSchematicBlock(block, meta);
-							if (contents[x][y][z] != null) {
-								contents[x][y][z].readSchematicFromNBT(cpt, mapping);
+							SchematicBlockBase schematic = SchematicRegistry.INSTANCE.createSchematicBlock(block, meta);
+							if (schematic != null) {
+								schematic.readSchematicFromNBT(cpt, mapping);
 	
-								if (!contents[x][y][z].doNotUse()) {
-									contents[x][y][z].idsToWorld(mapping);
+								if (!schematic.doNotUse()) {
+									schematic.idsToWorld(mapping);
 	
-									switch (contents[x][y][z].getBuildingPermission()) {
+									switch (schematic.getBuildingPermission()) {
 									case ALL:
 										break;
 									case CREATIVE_ONLY:
@@ -251,16 +253,17 @@ public class Blueprint extends BlueprintBase {
 										break;
 									}
 								} else {
-									contents[x][y][z] = null;
+									schematic = null;
 									isComplete = false;
 								}
 							}
+							put(x, y, z, schematic);
 						} else {
-							contents[x][y][z] = null;
+							put(x, y, z, null);
 							isComplete = false;
 						}
 					} else {
-						contents[x][y][z] = null;
+						put(x, y, z, null);
 					}
 				}
 			}

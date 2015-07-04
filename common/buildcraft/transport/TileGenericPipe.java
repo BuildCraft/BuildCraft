@@ -148,13 +148,15 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 					} else {
 						pluggableClass = PipeManager.getPluggableByName(pluggableData.getString("pluggableName"));
 					}
-					if (!PipePluggable.class.isAssignableFrom(pluggableClass)) {
-						BCLog.logger.warn("Wrong pluggable class: " + pluggableClass);
-						continue;
+					if (pluggableClass != null) {
+						if (!PipePluggable.class.isAssignableFrom(pluggableClass)) {
+							BCLog.logger.warn("Wrong pluggable class: " + pluggableClass);
+							continue;
+						}
+						PipePluggable pluggable = (PipePluggable) pluggableClass.newInstance();
+						pluggable.readFromNBT(pluggableData);
+						pluggables[i] = pluggable;
 					}
-					PipePluggable pluggable = (PipePluggable) pluggableClass.newInstance();
-					pluggable.readFromNBT(pluggableData);
-					pluggables[i] = pluggable;
 				} catch (Exception e) {
 					BCLog.logger.warn("Failed to load side state");
 					e.printStackTrace();
@@ -1014,7 +1016,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 					break;
 				}
 
-				if (pipe == null && coreState.pipeId != 0) {
+				if (coreState.pipeId != 0) {
 					initialize(BlockGenericPipe.createPipe((Item) Item.itemRegistry.getObjectById(coreState.pipeId)));
 				}
 

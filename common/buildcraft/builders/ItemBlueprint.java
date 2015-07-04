@@ -49,14 +49,14 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
 			String name = NBTUtils.getItemData(stack).getString("name");
 
 			if ("".equals(name)) {
-				list.add(String.format(StringUtils.localize("item.blueprint.unnamed")));
+				list.add(StringUtils.localize("item.blueprint.unnamed"));
 			} else {
-				list.add(String.format (name));
+				list.add(name);
 			}
 
-			list.add(String.format(StringUtils.localize("item.blueprint.author")
+			list.add(StringUtils.localize("item.blueprint.author")
 					+ " "
-					+ NBTUtils.getItemData(stack).getString("author")));
+					+ NBTUtils.getItemData(stack).getString("author"));
 		} else {
 			list.add(StringUtils.localize("item.blueprint.blank"));
 		}
@@ -65,9 +65,9 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
 			BuildingPermission p = BuildingPermission.values()[NBTUtils.getItemData(stack).getByte("permission")];
 
 			if (p == BuildingPermission.CREATIVE_ONLY) {
-				list.add(String.format(StringUtils.localize("item.blueprint.creative_only")));
+				list.add(StringUtils.localize("item.blueprint.creative_only"));
 			} else if (p == BuildingPermission.NONE) {
-				list.add(String.format(StringUtils.localize("item.blueprint.no_build")));
+				list.add(StringUtils.localize("item.blueprint.no_build"));
 			}
 		}
 
@@ -75,7 +75,7 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
 			boolean isComplete = NBTUtils.getItemData(stack).getBoolean("isComplete");
 
 			if (!isComplete) {
-				list.add(String.format(StringUtils.localize("item.blueprint.incomplete")));
+				list.add(StringUtils.localize("item.blueprint.incomplete"));
 			}
 		}
 	}

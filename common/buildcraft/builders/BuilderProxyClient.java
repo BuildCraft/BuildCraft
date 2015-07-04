@@ -40,7 +40,6 @@ public class BuilderProxyClient extends BuilderProxy {
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileUrbanist.class, new RenderBoxProvider());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder.class, new RenderBuilderTile());
-		ClientRegistry.bindTileEntitySpecialRenderer(TilePathMarker.class, new RenderPathMarker());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileConstructionMarker.class, new RenderConstructionMarker());
 
 		ClientRegistry.bindTileEntitySpecialRenderer(TileFiller.class, new RenderMultiTESR(new TileEntitySpecialRenderer[] {

@@ -80,7 +80,7 @@ public class GuiRequester extends GuiAdvancedInterface {
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		super.drawGuiContainerBackgroundLayer(f, x, y);
 
-		drawBackgroundSlots();
+		drawBackgroundSlots(x, y);
 	}
 
 	@Override

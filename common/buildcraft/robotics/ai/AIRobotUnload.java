@@ -17,7 +17,7 @@ import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.transport.IInjectable;
 import buildcraft.core.lib.inventory.InventoryIterator;
-import buildcraft.core.lib.inventory.filters.ArrayStackFilter;
+import buildcraft.core.lib.inventory.filters.ArrayStackOrListFilter;
 import buildcraft.robotics.statements.ActionRobotFilter;
 import buildcraft.robotics.statements.ActionStationInputItems;
 
@@ -64,7 +64,7 @@ public class AIRobotUnload extends AIRobot {
 			}
 
 			if (!ActionRobotFilter
-					.canInteractWithItem(station, new ArrayStackFilter(robotSlot.getStackInSlot()),
+					.canInteractWithItem(station, new ArrayStackOrListFilter(robotSlot.getStackInSlot()),
 							ActionStationInputItems.class)) {
 				return false;
 			}

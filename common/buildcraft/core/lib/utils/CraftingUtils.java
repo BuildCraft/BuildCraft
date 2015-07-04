@@ -75,10 +75,10 @@ public final class CraftingUtils {
 			// End repair recipe handler
 
         	List recipes = CraftingManager.getInstance().getRecipeList();
-			for (int index = 0; index < recipes.size(); ++index) {
-                IRecipe currentRecipe = (IRecipe) recipes.get(index);
+            for (Object recipe : recipes) {
+                IRecipe currentRecipe = (IRecipe) recipe;
 
-				if (currentRecipe.matches(par1InventoryCrafting, par2World)) {
+                if (currentRecipe.matches(par1InventoryCrafting, par2World)) {
                     return currentRecipe;
                 }
             }

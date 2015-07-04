@@ -112,8 +112,11 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 				// Disregard engines for this.
 				return false;
 			}
-			if (tile instanceof IEnergyHandler || tile instanceof IEnergyReceiver) {
-				IEnergyConnection handler = (IEnergyConnection) tile;
+
+			Object provider = CompatHooks.INSTANCE.getEnergyProvider(tile);
+
+			if (provider instanceof IEnergyHandler || provider instanceof IEnergyReceiver) {
+				IEnergyConnection handler = (IEnergyConnection) provider;
 				if (handler.canConnectEnergy(side.getOpposite())) {
 					return true;
 				}

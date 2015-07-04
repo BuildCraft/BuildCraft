@@ -265,7 +265,7 @@ public class GuiGateInterface extends GuiAdvancedInterface {
 			}
 		}
 
-		drawBackgroundSlots();
+		drawBackgroundSlots(x, y);
 	}
 
 	private void doSlotClick(AdvancedSlot slot, int k) {

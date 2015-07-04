@@ -8,6 +8,8 @@
  */
 package buildcraft.robotics.ai;
 
+import net.minecraft.nbt.NBTTagCompound;
+
 import buildcraft.api.robots.EntityRobotBase;
 
 public class AIRobotStraightMoveTo extends AIRobotGoto {
@@ -50,6 +52,31 @@ public class AIRobotStraightMoveTo extends AIRobotGoto {
 			robot.posZ = z;
 
 			terminate();
+		}
+	}
+
+	@Override
+	public boolean canLoadFromNBT() {
+		return true;
+	}
+
+	@Override
+	public void writeSelfToNBT(NBTTagCompound nbt) {
+		super.writeSelfToNBT(nbt);
+
+		nbt.setFloat("x", x);
+		nbt.setFloat("y", y);
+		nbt.setFloat("z", z);
+	}
+
+	@Override
+	public void loadSelfFromNBT(NBTTagCompound nbt) {
+		super.loadSelfFromNBT(nbt);
+
+		if (nbt.hasKey("x")) {
+			x = nbt.getFloat("x");
+			y = nbt.getFloat("y");
+			z = nbt.getFloat("z");
 		}
 	}
 }

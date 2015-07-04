@@ -174,6 +174,10 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		int mX = mouseX - guiLeft;
 		int mY = mouseY - guiTop;
 
+		drawWidgets(mX, mY);
+	}
+
+	protected void drawWidgets(int mX, int mY) {
 		for (Widget widget : container.getWidgets()) {
 			if (widget.hidden) {
 				continue;
@@ -370,8 +374,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 			int xShift = ((gui.width - gui.xSize) / 2) + gui.xSize;
 			int yShift = ((gui.height - gui.ySize) / 2) + 8;
 
-			for (int i = 0; i < ledgers.size(); i++) {
-				Ledger ledger = ledgers.get(i);
+			for (Ledger ledger : ledgers) {
 				if (!ledger.isVisible()) {
 					continue;
 				}
@@ -389,8 +392,7 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		}
 
 		protected void drawLedgers(int mouseX, int mouseY) {
-
-			int xPos = 8;
+			int yPos = 8;
 			for (Ledger ledger : ledgers) {
 
 				ledger.update();
@@ -398,8 +400,8 @@ public abstract class GuiBuildCraft extends GuiContainer {
 					continue;
 				}
 
-				ledger.draw(xSize, xPos);
-				xPos += ledger.getHeight();
+				ledger.draw(xSize, yPos);
+				yPos += ledger.getHeight();
 			}
 
 			Ledger ledger = getAtPosition(mouseX, mouseY);

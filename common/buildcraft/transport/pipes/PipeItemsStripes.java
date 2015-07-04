@@ -162,6 +162,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 		pos.moveBackwards(0.25D);
 
 		TravelingItem newItem = TravelingItem.make(pos.x, pos.y, pos.z, itemStack);
+
 		transport.injectItem(newItem, direction);
 	}
 

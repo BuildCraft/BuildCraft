@@ -25,7 +25,7 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.EnumColor;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.ZonePlan;
+import buildcraft.robotics.ZonePlan;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.gui.buttons.GuiBetterButton;
@@ -213,7 +213,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 		}
 
 		if (!isFullscreen()) {
-			drawBackgroundSlots();
+			drawBackgroundSlots(x, y);
 
 			bindTexture(texture);
 

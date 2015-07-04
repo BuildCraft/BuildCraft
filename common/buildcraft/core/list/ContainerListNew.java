@@ -6,15 +6,13 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.core.gui;
+package buildcraft.core.list;
 
 import io.netty.buffer.ByteBuf;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.relauncher.Side;
-
 import buildcraft.BuildCraftCore;
 import buildcraft.core.ItemList;
 import buildcraft.core.lib.gui.BuildCraftContainer;
@@ -23,26 +21,25 @@ import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
 
-public class ContainerList extends BuildCraftContainer implements ICommandReceiver {
-
-	public ItemList.StackLine[] lines;
+public class ContainerListNew extends BuildCraftContainer implements ICommandReceiver {
+	public ListHandlerNew.Line[] lines;
 	private EntityPlayer player;
 
-	public ContainerList(EntityPlayer iPlayer) {
+	public ContainerListNew(EntityPlayer iPlayer) {
 		super(iPlayer.inventory.getSizeInventory());
 
 		player = iPlayer;
 
-		lines = ItemList.getLines(player.getCurrentEquippedItem());
+		lines = ListHandlerNew.getLines(player.getCurrentEquippedItem());
 
 		for (int sy = 0; sy < 3; sy++) {
 			for (int sx = 0; sx < 9; sx++) {
-				addSlotToContainer(new Slot(player.inventory, sx + sy * 9 + 9, 8 + sx * 18, 153 + sy * 18));
+				addSlotToContainer(new Slot(player.inventory, sx + sy * 9 + 9, 8 + sx * 18, 103 + sy * 18));
 			}
 		}
 
 		for (int sx = 0; sx < 9; sx++) {
-			addSlotToContainer(new Slot(player.inventory, sx, 8 + sx * 18, 211));
+			addSlotToContainer(new Slot(player.inventory, sx, 8 + sx * 18, 161));
 		}
 	}
 
@@ -53,7 +50,7 @@ public class ContainerList extends BuildCraftContainer implements ICommandReceiv
 
 	public void setStack(final int lineIndex, final int slotIndex, final ItemStack stack) {
 		lines[lineIndex].setStack(slotIndex, stack);
-		ItemList.saveLine(player.getCurrentEquippedItem(), lines[lineIndex], lineIndex);
+		ListHandlerNew.saveLines(player.getCurrentEquippedItem(), lines);
 
 		if (player.worldObj.isRemote) {
 			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setStack", new CommandWriter() {
@@ -67,15 +64,8 @@ public class ContainerList extends BuildCraftContainer implements ICommandReceiv
 	}
 
 	public void switchButton(final int lineIndex, final int button) {
-		if (button == 0) {
-			lines[lineIndex].oreWildcard = false;
-			lines[lineIndex].subitemsWildcard = !lines[lineIndex].subitemsWildcard;
-		} else if (button == 1 && lines[lineIndex].isOre) {
-			lines[lineIndex].subitemsWildcard = false;
-			lines[lineIndex].oreWildcard = !lines[lineIndex].oreWildcard;
-		}
-
-		ItemList.saveLine(player.getCurrentEquippedItem(), lines[lineIndex], lineIndex);
+		lines[lineIndex].toggleOption(button);
+		ListHandlerNew.saveLines(player.getCurrentEquippedItem(), lines);
 
 		if (player.worldObj.isRemote) {
 			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "switchButton", new CommandWriter() {

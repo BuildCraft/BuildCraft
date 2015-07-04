@@ -11,7 +11,6 @@ package buildcraft.robotics;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.WeakHashMap;
 
 import com.google.common.collect.Iterables;
@@ -49,6 +48,7 @@ import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -66,6 +66,7 @@ import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IZone;
+import buildcraft.api.events.RobotEvent;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
@@ -180,16 +181,16 @@ public class EntityRobot extends EntityRobotBase implements
 		isImmuneToFire = true;
 		this.func_110163_bv(); // persistenceRequired = true
 
-		dataWatcher.addObject(12, Float.valueOf(0));
-		dataWatcher.addObject(13, Float.valueOf(0));
-		dataWatcher.addObject(14, Float.valueOf(0));
-		dataWatcher.addObject(15, Byte.valueOf((byte) 0));
+		dataWatcher.addObject(12, (float) 0);
+		dataWatcher.addObject(13, (float) 0);
+		dataWatcher.addObject(14, (float) 0);
+		dataWatcher.addObject(15, (byte) 0);
 		dataWatcher.addObject(16, "");
-		dataWatcher.addObject(17, Float.valueOf(0));
-		dataWatcher.addObject(18, Float.valueOf(0));
-		dataWatcher.addObject(19, Integer.valueOf(0));
-		dataWatcher.addObject(20, Byte.valueOf((byte) 0));
-		dataWatcher.addObject(21, Integer.valueOf(0));
+		dataWatcher.addObject(17, (float) 0);
+		dataWatcher.addObject(18, (float) 0);
+		dataWatcher.addObject(19, 0);
+		dataWatcher.addObject(20, (byte) 0);
+		dataWatcher.addObject(21, 0);
 	}
 
 	protected void updateDataClient() {
@@ -213,12 +214,12 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	protected void updateDataServer() {
-		dataWatcher.updateObject(12, Float.valueOf((float) laser.tail.x));
-		dataWatcher.updateObject(13, Float.valueOf((float) laser.tail.y));
-		dataWatcher.updateObject(14, Float.valueOf((float) laser.tail.z));
-		dataWatcher.updateObject(15, Byte.valueOf((byte) (laser.isVisible ? 1 : 0)));
-		dataWatcher.updateObject(17, Float.valueOf(itemAngle1));
-		dataWatcher.updateObject(18, Float.valueOf(itemAngle2));
+		dataWatcher.updateObject(12, (float) laser.tail.x);
+		dataWatcher.updateObject(13, (float) laser.tail.y);
+		dataWatcher.updateObject(14, (float) laser.tail.z);
+		dataWatcher.updateObject(15, (byte) (laser.isVisible ? 1 : 0));
+		dataWatcher.updateObject(17, itemAngle1);
+		dataWatcher.updateObject(18, itemAngle2);
 	}
 
 	public boolean isActive() {
@@ -289,7 +290,7 @@ public class EntityRobot extends EntityRobotBase implements
 		if (!worldObj.isRemote) {
 			// The client-side sleep indicator should also display if the robot is charging.
 			// To not break gates and other things checking for sleep, this is done here.
-			dataWatcher.updateObject(20, Byte.valueOf((byte) ((isActive() && ticksCharging == 0) ? 1 : 0)));
+			dataWatcher.updateObject(20, (byte) ((isActive() && ticksCharging == 0) ? 1 : 0));
 			dataWatcher.updateObject(21, getEnergy());
 
 			if (needsUpdate) {
@@ -516,9 +517,9 @@ public class EntityRobot extends EntityRobotBase implements
 		if (wearables.size() > 0) {
 			NBTTagList wearableList = new NBTTagList();
 
-			for (int i = 0; i < wearables.size(); i++) {
+			for (ItemStack wearable : wearables) {
 				NBTTagCompound item = new NBTTagCompound();
-				wearables.get(i).writeToNBT(item);
+				wearable.writeToNBT(item);
 				wearableList.appendTag(item);
 			}
 
@@ -988,8 +989,7 @@ public class EntityRobot extends EntityRobotBase implements
 		if (par1Entity.canAttackWithItem()) {
 			if (!par1Entity.hitByEntity(this)) {
 				this.setLastAttacker(par1Entity);
-				boolean flag2 = par1Entity.attackEntityFrom(new EntityDamageSource("robot", this), 2.0F);
-
+				
 				EnchantmentHelper.func_151385_b(this, par1Entity);
 				ItemStack itemstack = itemInUse;
 				Object object = par1Entity;
@@ -1066,10 +1066,22 @@ public class EntityRobot extends EntityRobotBase implements
 	protected boolean interact(EntityPlayer player) {
 		ItemStack stack = player.getCurrentEquippedItem();
 		if (stack == null || stack.getItem() == null) {
-			return super.interact(player);
+			return false;
+		}
+
+		RobotEvent.Interact robotInteractEvent = new RobotEvent.Interact(this, player, stack);
+		MinecraftForge.EVENT_BUS.post(robotInteractEvent);
+		if (robotInteractEvent.isCanceled()) {
+			return false;
 		}
 
 		if (player.isSneaking() && stack.getItem() == BuildCraftCore.wrenchItem) {
+			RobotEvent.Dismantle robotDismantleEvent = new RobotEvent.Dismantle(this, player);
+			MinecraftForge.EVENT_BUS.post(robotDismantleEvent);
+			if (robotDismantleEvent.isCanceled()) {
+				return false;
+			}
+
 			if (!worldObj.isRemote) {
 				if (wearables.size() > 0) {
 					entityDropItem(wearables.remove(wearables.size() - 1), 0);
@@ -1121,9 +1133,9 @@ public class EntityRobot extends EntityRobotBase implements
 				gameProfile = NBTUtil.func_152459_a(nbttagcompound.getCompoundTag("SkullOwner"));
 			} else if (nbttagcompound.hasKey("SkullOwner", NBT.TAG_STRING)
 					&& !StringUtils.isNullOrEmpty(nbttagcompound.getString("SkullOwner"))) {
-				gameProfile = new GameProfile((UUID) null, nbttagcompound.getString("SkullOwner"));
+				gameProfile = new GameProfile(null, nbttagcompound.getString("SkullOwner"));
 			}
-			if (!StringUtils.isNullOrEmpty(gameProfile.getName())) {
+			if (gameProfile != null && !StringUtils.isNullOrEmpty(gameProfile.getName())) {
 				if (!gameProfile.isComplete()
 						|| !gameProfile.getProperties().containsKey("textures")) {
 					gameProfile = MinecraftServer.getServer().func_152358_ax()

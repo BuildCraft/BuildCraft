@@ -8,6 +8,8 @@
  */
 package buildcraft.core.lib.gui.buttons;
 
+import net.minecraft.util.ResourceLocation;
+
 public interface IButtonTextureSet {
 
 	int getX();
@@ -17,4 +19,6 @@ public interface IButtonTextureSet {
 	int getHeight();
 
 	int getWidth();
+
+	ResourceLocation getTexture();
 }

@@ -36,13 +36,13 @@ public class AIRobotGotoStationAndLoad extends AIRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoStationToLoad) {
-			if (ai.success()) {
+			if (filter != null && ai.success()) {
 				startDelegateAI(new AIRobotLoad(robot, filter, quantity));
 			} else {
 				setSuccess(false);
 				terminate();
 			}
-		} else if (ai instanceof AIRobotGotoStationToLoad) {
+		} else if (ai instanceof AIRobotLoad) {
 			setSuccess(ai.success());
 			terminate();
 		}

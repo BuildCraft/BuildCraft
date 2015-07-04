@@ -29,7 +29,7 @@ public class ConfigManager implements IModGuiFactory {
 	}
 
 	public enum RestartRequirement {
-		NONE, WORLD, GAME;
+		NONE, WORLD, GAME
 	}
 
 	public ConfigManager() {
@@ -37,7 +37,7 @@ public class ConfigManager implements IModGuiFactory {
 	}
 
 	public ConfigManager(Configuration c) {
-		this.config = c;
+		config = c;
 	}
 
 	public ConfigCategory getCat(String name) {
@@ -55,7 +55,7 @@ public class ConfigManager implements IModGuiFactory {
 	}
 
 	private Property create(String s, Object o) {
-		Property p = null;
+		Property p;
 		if (o instanceof Integer) {
 			p = new Property(s, o.toString(), Property.Type.INTEGER);
 		} else if (o instanceof String) {

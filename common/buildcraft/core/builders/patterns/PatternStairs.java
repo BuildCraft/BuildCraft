@@ -16,28 +16,23 @@ import buildcraft.core.blueprints.Template;
 
 public class PatternStairs extends FillerPattern {
 
-	// TODO: These parameters need to be settable from the filler
-	private int param2 = 0;
-	private int param3 = 0;
-	private int param4 = 0;
-
 	public PatternStairs() {
 		super("stairs");
 	}
 
 	@Override
 	public int maxParameters() {
-		return 1;
+		return 2;
 	}
 
 	@Override
 	public int minParameters() {
-		return 1;
+		return 2;
 	}
 
 	@Override
 	public IStatementParameter createParameter(int index) {
-		return new PatternParameterYDir(true);
+		return index == 1 ? new PatternParameterXZDir(0) : new PatternParameterYDir(true);
 	}
 
 	@Override
@@ -55,25 +50,22 @@ public class PatternStairs extends FillerPattern {
 
 		Template template = new Template (box.sizeX(), box.sizeY(), box.sizeZ());
 
-		int height;
-		int heightStep;
-		int dimX = 0;
-		int dimZ = 0;
+		int height, heightStep;
 
-		if (parameters[0] != null && !(((PatternParameterYDir) parameters[0]).up)) {
-			height = yMin;
+		if (parameters.length >= 1 && parameters[0] != null && !(((PatternParameterYDir) parameters[0]).up)) {
+			height = Math.max(yMin, yMax - Math.max(xMax, zMax));
 			heightStep = 1;
 		} else {
-			height = yMax;
+			height = Math.min(yMax, Math.max(xMax, zMax));
 			heightStep = -1;
 		}
 
-		int kind = 0;
+		int param2 = 0;
+		if (parameters.length >= 2 && parameters[1] != null) {
+			param2 = ((PatternParameterXZDir) parameters[1]).getDirection();
+		}
 
 		int[] steps = new int[] {0, 0, 0, 0};
-
-		int x = 0, z = 0;
-		int stepDiagX = 0, stepDiagZ = 0;
 
 		if (param2 == 0) {
 			steps[0] = 1;
@@ -83,133 +75,39 @@ public class PatternStairs extends FillerPattern {
 			steps[2] = 1;
 		} else if (param2 == 3) {
 			steps[3] = 1;
-		} else {
-			kind = 1;
-
-			if (param3 == 0) {
-				x = xMin;
-			} else if (param3 == 1) {
-				x = xMax;
-			} else if (param3 == 2) {
-				// no change
-			}
-
-			if (param4 == 0) {
-				z = zMin;
-			} else if (param4 == 1) {
-				z = zMax;
-			} else if (param4 == 2) {
-				// no change
-			}
-
-			if (heightStep == 1) {
-				stepDiagX = -1;
-				dimX = sizeX - 1;
-
-				stepDiagZ = -1;
-				dimZ = sizeZ - 1;
-			} else {
-				stepDiagX = 1;
-				dimX = 0;
-
-				stepDiagZ = 1;
-				dimZ = 0;
-			}
 		}
 
-		int x1 = 0, x2 = 0, z1 = 0, z2 = 0;
+		int x1 = xMin, x2 = xMax, z1 = zMin, z2 = zMax;
 
-		x1 = xMin;
-		x2 = xMax;
-
-		z1 = zMin;
-		z2 = zMax;
-
-		if (heightStep == -1) {
-			if (steps[0] == 1) {
-				x1 = xMax - sizeX + 1;
-				x2 = x1;
-			}
-
-			if (steps[1] == 1) {
-				x2 = xMin + sizeX - 1;
-				x1 = x2;
-			}
-
-			if (steps[2] == 1) {
-				z1 = zMax - sizeZ + 1;
-				z2 = z1;
-			}
-
-			if (steps[3] == 1) {
-				z2 = zMin + sizeZ - 1;
-				z1 = z2;
-			}
+		if (steps[0] == 1) {
+			x1 = xMax - sizeX + 1;
+			x2 = x1;
 		}
 
-		if (kind == 0) {
-			while (x2 - x1 + 1 > 0 && z2 - z1 + 1 > 0 && x2 - x1 < sizeX && z2 - z1 < sizeZ && height >= yMin && height <= yMax) {
-				fill(x1, height, z1, x2, height, z2, template);
+		if (steps[1] == 1) {
+			x2 = xMin + sizeX - 1;
+			x1 = x2;
+		}
 
-				if (heightStep == 1) {
-					x1 += steps[0];
-					x2 -= steps[1];
-					z1 += steps[2];
-					z2 -= steps[3];
-				} else {
-					x2 += steps[0];
-					x1 -= steps[1];
-					z2 += steps[2];
-					z1 -= steps[3];
-				}
+		if (steps[2] == 1) {
+			z1 = zMax - sizeZ + 1;
+			z2 = z1;
+		}
 
-				height += heightStep;
-			}
-		} else if (kind == 1) {
-			while (dimX >= 0 && dimX < sizeX && dimZ >= 0 && dimZ < sizeZ && height >= yMin && height <= yMax) {
+		if (steps[3] == 1) {
+			z2 = zMin + sizeZ - 1;
+			z1 = z2;
+		}
 
-				if (heightStep == 1) {
-					if (param3 == 1) {
-						x1 = x - sizeX + 1;
-						x2 = x1 + dimX;
-					} else {
-						x2 = x + sizeX - 1;
-						x1 = x2 - dimX;
-					}
+		while (x2 - x1 + 1 > 0 && z2 - z1 + 1 > 0 && x2 - x1 < sizeX && z2 - z1 < sizeZ && height >= yMin && height <= yMax) {
+			fill(x1, height, z1, x2, height, z2, template);
 
-					if (param4 == 1) {
-						z1 = z - sizeZ + 1;
-						z2 = z1 + dimZ;
-					} else {
-						z2 = z + sizeZ - 1;
-						z1 = z2 - dimZ;
-					}
-				} else if (heightStep == -1) {
-					if (param3 == 0) {
-						x1 = x;
-						x2 = x1 + dimX;
-					} else {
-						x2 = x;
-						x1 = x2 - dimX;
-					}
+			x2 += steps[0];
+			x1 -= steps[1];
+			z2 += steps[2];
+			z1 -= steps[3];
 
-					if (param3 == 1) {
-						z1 = z;
-						z2 = z1 + dimZ;
-					} else {
-						z2 = z;
-						z1 = z2 - dimZ;
-					}
-
-				}
-
-				fill(x1, height, z1, x2, height, z2, template);
-
-				dimX += stepDiagX;
-				dimZ += stepDiagZ;
-
-				height += heightStep;
-			}
+			height += heightStep;
 		}
 
 		return template;

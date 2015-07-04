@@ -8,10 +8,14 @@
  */
 package buildcraft.builders.gui;
 
+import io.netty.buffer.ByteBuf;
+
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementParameter;
@@ -23,8 +27,14 @@ import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.gui.GuiTools;
 import buildcraft.core.lib.gui.StatementParameterSlot;
 import buildcraft.core.lib.gui.StatementSlot;
+import buildcraft.core.lib.gui.buttons.ButtonTextureSet;
 import buildcraft.core.lib.gui.buttons.GuiBetterButton;
+import buildcraft.core.lib.gui.buttons.IButtonTextureSet;
 import buildcraft.core.lib.gui.buttons.StandardButtonTextureSets;
+import buildcraft.core.lib.gui.tooltips.ToolTip;
+import buildcraft.core.lib.gui.tooltips.ToolTipLine;
+import buildcraft.core.lib.network.command.CommandWriter;
+import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.StringUtils;
 
 public class GuiFiller extends GuiAdvancedInterface {
@@ -49,6 +59,8 @@ public class GuiFiller extends GuiAdvancedInterface {
 	}
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/filler.png");
+	private static final IButtonTextureSet EXCAVATE_OFF = new ButtonTextureSet(240, -16, 16, 16, TEXTURE);
+	private static final IButtonTextureSet EXCAVATE_ON = new ButtonTextureSet(224, -16, 16, 16, TEXTURE);
 	private final IInventory playerInventory;
 	private final TileFiller filler;
 	private final GuiFiller instance;
@@ -69,6 +81,17 @@ public class GuiFiller extends GuiAdvancedInterface {
 		ySize = 240;
 	}
 
+	private IButtonTextureSet getExcavateTexture() {
+		return filler.isExcavate() ? EXCAVATE_ON : EXCAVATE_OFF;
+	}
+
+	private GuiBetterButton getExcavateButton() {
+		return new GuiBetterButton(2, guiLeft + 150, guiTop + 30, 16, getExcavateTexture(), "")
+				.setToolTip(new ToolTip(500, new ToolTipLine(
+						StatCollector.translateToLocal("tip.filler.excavate." + (filler.isExcavate() ? "on" : "off"))
+				)));
+	}
+
 	@Override
 	public void initGui() {
 		super.initGui();
@@ -78,6 +101,7 @@ public class GuiFiller extends GuiAdvancedInterface {
 				StandardButtonTextureSets.LEFT_BUTTON, ""));
 		buttonList.add(new GuiBetterButton(1, guiLeft + 38 + 16 + 8, guiTop + 30, 10,
 				StandardButtonTextureSets.RIGHT_BUTTON, ""));
+		buttonList.add(getExcavateButton());
 
 		slots.clear();
 		for (int i = 0; i < 4; i++) {
@@ -93,6 +117,16 @@ public class GuiFiller extends GuiAdvancedInterface {
 			filler.currentPattern = (FillerPattern) FillerManager.registry.getPreviousPattern(filler.currentPattern);
 		} else if (button.id == 1) {
 			filler.currentPattern = (FillerPattern) FillerManager.registry.getNextPattern(filler.currentPattern);
+		} else if (button.id == 2) {
+			filler.setExcavate(!filler.isExcavate());
+
+			buttonList.set(2, getExcavateButton());
+
+			BuildCraftCore.instance.sendToServer(new PacketCommand(filler, "setFlags", new CommandWriter() {
+				public void write(ByteBuf data) {
+					data.writeBoolean(filler.isExcavate());
+				}
+			}));
 		}
 
 		filler.rpcSetPatternFromString(filler.currentPattern.getUniqueTag());
@@ -121,15 +155,19 @@ public class GuiFiller extends GuiAdvancedInterface {
 	@Override
 	protected void drawGuiContainerBackgroundLayer(float f, int mx, int my) {
 		super.drawGuiContainerBackgroundLayer(f, mx, my);
-		drawBackgroundSlots();
+		drawBackgroundSlots(mx, my);
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mx, int my) {
+		super.drawGuiContainerForegroundLayer(mx, my);
+
 		String title = StringUtils.localize("tile.fillerBlock.name");
 		fontRendererObj.drawString(title, getCenteredOffset(title), 6, 0x404040);
 		fontRendererObj.drawString(StringUtils.localize("gui.filling.resources"), 8, 74, 0x404040);
 		fontRendererObj.drawString(StringUtils.localize("gui.inventory"), 8, 142, 0x404040);
 		GuiTools.drawCenteredString(fontRendererObj, filler.currentPattern.getDescription(), 56);
+
+		drawTooltipForSlotAt(mx, my);
 	}
 }

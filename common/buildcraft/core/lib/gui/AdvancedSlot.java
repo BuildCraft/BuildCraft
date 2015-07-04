@@ -90,15 +90,15 @@ public abstract class AdvancedSlot {
 			mc.renderEngine.bindTexture(getTexture());
 			//System.out.printf("Drawing advanced sprite %s (%d,%d) at %d %d\n", getIcon().getIconName(), getIcon().getOriginX(),getIcon().getOriginY(),cornerX + x, cornerY + y);
 
+			GL11.glPushAttrib(GL11.GL_LIGHTING_BIT | GL11.GL_COLOR_BUFFER_BIT);
+
 			GL11.glDisable(GL11.GL_LIGHTING); // Make sure that render states are reset, an ItemStack can derp them up.
 			GL11.glEnable(GL11.GL_ALPHA_TEST);
 			GL11.glEnable(GL11.GL_BLEND);
 
 			gui.drawTexturedModelRectFromIcon(cornerX + x, cornerY + y, getIcon(), 16, 16);
 
-			GL11.glEnable(GL11.GL_LIGHTING);
-			GL11.glDisable(GL11.GL_ALPHA_TEST);
-			GL11.glDisable(GL11.GL_BLEND);
+			GL11.glPopAttrib();
 		}
 
 	}
@@ -108,9 +108,14 @@ public abstract class AdvancedSlot {
 		int cornerY = (gui.height - gui.getYSize()) / 2;
 
 		gui.drawStack(item, cornerX + x, cornerY + y);
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 	}
 
 	public void selected () {
 
+	}
+
+	public boolean shouldDrawHighlight() {
+		return true;
 	}
 }

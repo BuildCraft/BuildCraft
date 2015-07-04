@@ -40,7 +40,7 @@ public class Template extends BlueprintBase {
 		int posZ = (int) (z - context.surroundingBox().pMin().z);
 
 		if (!BuildCraftAPI.isSoftBlock(anchorTile.getWorldObj(), x, y, z)) {
-			contents[posX][posY][posZ] = new SchematicMask(true);
+			put(posX, posY, posZ, new SchematicMask(true));
 		}
 	}
 
@@ -56,7 +56,7 @@ public class Template extends BlueprintBase {
 		for (int x = 0; x < sizeX; ++x) {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
-					data [ind] = (byte) ((contents[x][y][z] == null) ? 0 : 1);
+					data [ind] = (byte) ((get(x, y, z) == null) ? 0 : 1);
 					ind++;
 				}
 			}
@@ -74,7 +74,7 @@ public class Template extends BlueprintBase {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
 					if (data [ind] == 1) {
-						contents[x][y][z] = new SchematicMask(true);
+						put(x, y, z, new SchematicMask(true));
 					}
 
 					ind++;
