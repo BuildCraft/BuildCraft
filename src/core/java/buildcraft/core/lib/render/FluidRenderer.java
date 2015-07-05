@@ -7,31 +7,48 @@ package buildcraft.core.lib.render;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-import buildcraft.core.lib.render.RenderEntityBlock.RenderInfo;
+import buildcraft.core.lib.EntityResizableCuboid;
 
 public final class FluidRenderer {
 
     public static final int DISPLAY_STAGES = 100;
-    private static final ResourceLocation BLOCK_TEXTURE = TextureMap.locationBlocksTexture;
     private static Map<Fluid, int[]> flowingRenderCache = new HashMap<Fluid, int[]>();
     private static Map<Fluid, int[]> stillRenderCache = new HashMap<Fluid, int[]>();
-    private static final RenderInfo liquidBlock = new RenderInfo();
+
+    private static Map<Fluid, TextureAtlasSprite> flowingTextureMap = Maps.newHashMap();
+    private static Map<Fluid, TextureAtlasSprite> stillTextureMap = Maps.newHashMap();
+    private static TextureAtlasSprite missingIcon = null;
 
     /** Deactivate default constructor */
     private FluidRenderer() {
 
+    }
+
+    public static void initFluidTextures(TextureMap map) {
+        // Because Fluid.getStillIcon is Deprecated and the fluid registry doesn't register icons properly (forge bug or
+        // intentional?)
+        missingIcon = map.getMissingSprite();
+
+        flowingTextureMap.clear();
+        stillTextureMap.clear();
+
+        for (Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
+            flowingTextureMap.put(fluid, map.registerSprite(fluid.getFlowing()));
+            stillTextureMap.put(fluid, map.registerSprite(fluid.getStill()));
+        }
     }
 
     public static TextureAtlasSprite getFluidTexture(FluidStack fluidStack, boolean flowing) {
@@ -45,23 +62,19 @@ public final class FluidRenderer {
         if (fluid == null) {
             return null;
         }
-        TextureAtlasSprite icon = flowing ? fluid.getFlowingIcon() : fluid.getStillIcon();
+
+        Map<Fluid, TextureAtlasSprite> map = flowing ? flowingTextureMap : stillTextureMap;
+
+        if (!map.containsKey(fluid)) {
+            return missingIcon;
+        }
+
+        TextureAtlasSprite icon = map.get(fluid);
+
         if (icon == null) {
-            icon =
-                ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
+            icon = missingIcon;
         }
         return icon;
-    }
-
-    public static ResourceLocation getFluidSheet(FluidStack liquid) {
-        if (liquid == null) {
-            return BLOCK_TEXTURE;
-        }
-        return getFluidSheet(liquid.getFluid());
-    }
-
-    public static ResourceLocation getFluidSheet(Fluid liquid) {
-        return BLOCK_TEXTURE;
     }
 
     public static void setColorForFluidStack(FluidStack fluidstack) {
@@ -89,41 +102,33 @@ public final class FluidRenderer {
 
         diplayLists = new int[DISPLAY_STAGES];
 
-        if (fluid.getBlock() != null) {
-            liquidBlock.blockState = fluid.getBlock().getDefaultState();
-            liquidBlock.texture = getFluidTexture(fluidStack, flowing);
-        } else {
-            liquidBlock.blockState = Blocks.water.getDefaultState();
-            liquidBlock.texture = getFluidTexture(fluidStack, flowing);
-        }
-
         cache.put(fluid, diplayLists);
 
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_CULL_FACE);
+        GlStateManager.disableLighting();
+        GlStateManager.disableBlend();
+        GlStateManager.disableCull();
 
         for (int s = 0; s < DISPLAY_STAGES; ++s) {
             diplayLists[s] = GLAllocation.generateDisplayLists(1);
             GL11.glNewList(diplayLists[s], GL11.GL_COMPILE);
 
-            liquidBlock.minX = 0.01f;
-            liquidBlock.minY = 0;
-            liquidBlock.minZ = 0.01f;
+            EntityResizableCuboid ent = new EntityResizableCuboid(null);
+            ent.iSize = 0.98;
+            ent.jSize = (Math.max(s, 1) / (float) DISPLAY_STAGES) * 0.98;
+            ent.kSize = 0.98;
+            ent.texture = getFluidTexture(fluidStack, flowing);
 
-            liquidBlock.maxX = 0.99f;
-            liquidBlock.maxY = Math.max(s, 1) / (float) DISPLAY_STAGES;
-            liquidBlock.maxZ = 0.99f;
-
-            RenderEntityBlock.INSTANCE.renderBlock(liquidBlock);
+            GL11.glTranslated(0.01, 0.01, 0.01);
+            RenderResizableCuboid.INSTANCE.renderCube(ent);
+            GL11.glTranslated(-0.01, -0.01, -0.01);
 
             GL11.glEndList();
         }
 
-        GL11.glColor4f(1, 1, 1, 1);
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glEnable(GL11.GL_LIGHTING);
+        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.enableLighting();
+        GlStateManager.enableBlend();
+        GlStateManager.enableCull();
 
         return diplayLists;
     }

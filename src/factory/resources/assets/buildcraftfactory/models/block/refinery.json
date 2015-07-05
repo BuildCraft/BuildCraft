@@ -1,0 +1,6 @@
+{
+	"parent":"buildcraftcore:block/empty",
+	"textures": {
+		"particle":"buildcraftfactory:blocks/refinery/default"
+	}
+}

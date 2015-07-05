@@ -26,6 +26,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
@@ -86,6 +87,7 @@ import buildcraft.core.lib.engines.ItemEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.ChannelHandler;
+import buildcraft.core.lib.render.FluidRenderer;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.lib.utils.XorShift128Random;
@@ -649,5 +651,11 @@ public class BuildCraftCore extends BuildCraftMod {
                 mapping.fail();
             }
         }
+    }
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void loadTextures(TextureStitchEvent.Pre evt) {
+        FluidRenderer.initFluidTextures(evt.map);
     }
 }

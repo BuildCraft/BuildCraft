@@ -45,7 +45,7 @@ public class RenderResizableCuboid extends Render {
         GL11.glPopMatrix();
     }
 
-    private void renderCube(EntityResizableCuboid cube) {
+    public void renderCube(EntityResizableCuboid cube) {
         TextureAtlasSprite[] sprites = cube.textures;
         if (sprites == null) {
             sprites = new TextureAtlasSprite[6];

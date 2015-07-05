@@ -5,11 +5,14 @@
 package buildcraft.factory;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -22,9 +25,13 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.SchematicTile;
+import buildcraft.builders.BuilderProxyClient;
+import buildcraft.builders.urbanism.UrbanistToolsIconProvider;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.BuildCraftMod;
 import buildcraft.core.CompatHooks;
@@ -274,5 +281,12 @@ public class BuildCraftFactory extends BuildCraftMod {
                 mapping.remap(Block.getBlockFromName("BuildCraft|Factory:chuteBlock"));
             }
         }
+    }
+    
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void loadTextures(TextureStitchEvent.Pre evt) {
+        TextureMap terrainTextures = evt.map;
+        FactoryProxyClient.pumpTexture = terrainTextures.registerSprite(new ResourceLocation("buildcraftfactory:blocks/pump/tube"));
     }
 }

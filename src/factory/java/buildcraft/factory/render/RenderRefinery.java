@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -23,7 +24,7 @@ import buildcraft.factory.tile.TileRefinery;
 
 public class RenderRefinery extends TileEntitySpecialRenderer {
 
-    private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftfactory:textures/blocks/refineryBlock/refinery.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftfactory:textures/blocks/refinery/refinery.png");
     private static final float pixel = (float) (1.0 / 16.0);
     private final ModelRenderer tank;
     private final ModelRenderer[] magnet = new ModelRenderer[4];
@@ -167,7 +168,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer {
                 int[] list1 = FluidRenderer.getFluidDisplayLists(liquid1, tile.getWorld(), false);
 
                 if (list1 != null) {
-                    bindTexture(FluidRenderer.getFluidSheet(liquid1));
+                    bindTexture(TextureMap.locationBlocksTexture);
                     RenderUtils.setGLColorFromInt(color1);
                     GL11.glCallList(list1[getDisplayListIndex(tile.tanks[0])]);
                 }
@@ -179,7 +180,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer {
                 if (list2 != null) {
                     GL11.glPushMatrix();
                     GL11.glTranslatef(0, 0, 1);
-                    bindTexture(FluidRenderer.getFluidSheet(liquid2));
+                    bindTexture(TextureMap.locationBlocksTexture);
                     RenderUtils.setGLColorFromInt(color2);
                     GL11.glCallList(list2[getDisplayListIndex(tile.tanks[1])]);
                     GL11.glPopMatrix();
@@ -192,7 +193,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer {
                 if (list3 != null) {
                     GL11.glPushMatrix();
                     GL11.glTranslatef(1, 0, 0.5F);
-                    bindTexture(FluidRenderer.getFluidSheet(liquidResult));
+                    bindTexture(TextureMap.locationBlocksTexture);
                     RenderUtils.setGLColorFromInt(colorResult);
                     GL11.glCallList(list3[getDisplayListIndex(tile.result)]);
                     GL11.glPopMatrix();

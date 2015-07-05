@@ -19,8 +19,8 @@ import buildcraft.core.lib.render.ModelFrustum;
 
 public class RenderChute extends TileEntitySpecialRenderer {
 
-    private static final ResourceLocation HOPPER_TEXTURE = new ResourceLocation("buildcraftfactory:textures/blocks/hopperBlock/top.png");
-    private static final ResourceLocation HOPPER_MIDDLE_TEXTURE = new ResourceLocation("buildcraftfactory:textures/blocks/hopperBlock/middle.png");
+    private static final ResourceLocation HOPPER_TEXTURE = new ResourceLocation("buildcraftfactory:textures/blocks/chute/top.png");
+    private static final ResourceLocation HOPPER_MIDDLE_TEXTURE = new ResourceLocation("buildcraftfactory:textures/blocks/chute/middle.png");
     private ModelBase model = new ModelBase() {};
     private final ModelRenderer top;
     private final ModelFrustum middle;

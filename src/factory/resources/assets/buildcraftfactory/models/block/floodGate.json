@@ -1,0 +1,12 @@
+{
+    "parent": "buildcraftcore:block/default_cube_all",
+    "textures": {
+	"particle": "buildcraftfactory:blocks/floodGate/side",
+        "up": "buildcraftfactory:blocks/floodGate/top",
+        "down": "buildcraftfactory:blocks/floodGate/bottom",
+        "north": "buildcraftfactory:blocks/floodGate/side",
+        "east": "buildcraftfactory:blocks/floodGate/side",
+        "south": "buildcraftfactory:blocks/floodGate/side",
+        "west": "buildcraftfactory:blocks/floodGate/side"
+    }
+}

@@ -180,7 +180,6 @@ public final class RenderEntityBlock extends Render {
     /** Render a render info by its state, ignoring any textures you might have set */
     public void renderBlock(RenderInfo info) {
         BlockRendererDispatcher renderBlocks = Minecraft.getMinecraft().getBlockRendererDispatcher();
-        @SuppressWarnings("deprecation")
         IBakedModel model = renderBlocks.getBlockModelShapes().getModelForState(info.blockState);
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
         worldRenderer.startDrawingQuads();

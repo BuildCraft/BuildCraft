@@ -6,17 +6,21 @@ package buildcraft.factory.block;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidContainerItem;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.BuildCraftCore;
@@ -54,6 +58,22 @@ public class BlockTank extends BlockBuildCraft {
 
         if (tileBelow instanceof TileTank) {
             ((TileTank) tileBelow).updateComparators();
+        }
+    }
+
+    @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack stack) {
+        super.onBlockPlacedBy(world, pos, state, entity, stack);
+
+        IBlockState stateAbove = world.getBlockState(pos.up());
+        IBlockState stateBelow = world.getBlockState(pos.down());
+
+        if (stateAbove.getBlock() == this) {
+            world.setBlockState(pos.up(), stateAbove.withProperty(JOINED_BELOW, true));
+        }
+
+        if (stateBelow.getBlock() == this) {
+            world.setBlockState(pos, state.withProperty(JOINED_BELOW, true));
         }
     }
 
@@ -212,5 +232,10 @@ public class BlockTank extends BlockBuildCraft {
         }
 
         return 0;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public EnumWorldBlockLayer getBlockLayer() {
+        return EnumWorldBlockLayer.CUTOUT;
     }
 }

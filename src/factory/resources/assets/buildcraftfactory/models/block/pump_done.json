@@ -1,0 +1,12 @@
+{
+    "parent": "buildcraftcore:block/default_cube_all",
+    "textures": {
+		"particle": "buildcraftfactory:blocks/pump/side_done",
+        "up": "buildcraftfactory:blocks/pump/top",
+        "down": "buildcraftfactory:blocks/pump/bottom",
+        "north": "buildcraftfactory:blocks/pump/side_done",
+        "east": "buildcraftfactory:blocks/pump/side_done",
+        "south": "buildcraftfactory:blocks/pump/side_done",
+        "west": "buildcraftfactory:blocks/pump/side_done"
+    }
+}
