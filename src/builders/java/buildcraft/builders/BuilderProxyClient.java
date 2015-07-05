@@ -5,6 +5,7 @@
 package buildcraft.builders;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
@@ -19,7 +20,7 @@ import buildcraft.builders.tile.TileFiller;
 import buildcraft.builders.tile.TilePathMarker;
 import buildcraft.builders.tile.TileQuarry;
 import buildcraft.builders.urbanism.TileUrbanist;
-import buildcraft.core.lib.EntityResizableCube;
+import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.render.RenderVoid;
 import buildcraft.core.render.RenderBoxProvider;
 import buildcraft.core.render.RenderBuilder;
@@ -49,16 +50,34 @@ public class BuilderProxyClient extends BuilderProxy {
     }
 
     @Override
-    public EntityResizableCube newDrill(World w, double i, double j, double k, double l, double d, double e) {
-        EntityResizableCube eb = super.newDrill(w, i, j, k, l, d, e);
-        eb.texture = drillTexture;
-        return eb;
+    public EntityResizableCuboid newDrill(World w, double i, double j, double k, double l, double d, double e) {
+        EntityResizableCuboid cuboid = super.newDrill(w, i, j, k, l, d, e);
+        cuboid.texture = drillTexture;
+        cuboid.makeClient();
+        // Special casing for the arms
+        if (l == 1) {// X-arm (East - West)
+            cuboid.textureOffsetX = 8;
+            // Don't render the caps
+            cuboid.textures[EnumFacing.WEST.ordinal()] = null;
+            cuboid.textures[EnumFacing.EAST.ordinal()] = null;
+        } else if (e == 1) {// Z-arm (North - South)
+            cuboid.textureOffsetZ = 8;
+            // Don't render the caps
+            cuboid.textures[EnumFacing.NORTH.ordinal()] = null;
+            cuboid.textures[EnumFacing.SOUTH.ordinal()] = null;
+        }
+        return cuboid;
     }
 
     @Override
-    public EntityResizableCube newDrillHead(World w, double i, double j, double k, double l, double d, double e) {
-        EntityResizableCube eb = super.newDrillHead(w, i, j, k, l, d, e);
-        eb.texture = drillHeadTexture;
-        return eb;
+    public EntityResizableCuboid newDrillHead(World w, double i, double j, double k, double l, double d, double e) {
+        EntityResizableCuboid cuboid = super.newDrillHead(w, i, j, k, l, d, e);
+        cuboid.texture = drillHeadTexture;
+        cuboid.makeClient();
+        cuboid.textureFlips[2] = 2;
+        cuboid.textureFlips[3] = 2;
+        cuboid.textureFlips[4] = 2;
+        cuboid.textureFlips[5] = 2;
+        return cuboid;
     }
 }

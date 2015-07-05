@@ -30,7 +30,7 @@ import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.CoreConstants;
-import buildcraft.core.lib.EntityResizableCube;
+import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.TileBuffer;
 import buildcraft.core.lib.block.TileBuildCraft;
@@ -48,7 +48,7 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
     public static int MAX_LIQUID = FluidContainerRegistry.BUCKET_VOLUME * 16;
     public SingleUseTank tank = new SingleUseTank("tank", MAX_LIQUID, this);
 
-    private EntityResizableCube tube;
+    private EntityResizableCuboid tube;
     private TreeMap<Integer, Deque<BlockPos>> pumpLayerQueues = new TreeMap<Integer, Deque<BlockPos>>();
     private double tubeY = Double.NaN;
     private int aimY = 0;

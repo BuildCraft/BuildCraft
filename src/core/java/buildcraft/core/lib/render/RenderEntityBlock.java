@@ -26,7 +26,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-import buildcraft.core.lib.EntityResizableCube;
+import buildcraft.core.lib.EntityResizableCuboid;
 
 @Deprecated
 public final class RenderEntityBlock extends Render {
@@ -119,10 +119,10 @@ public final class RenderEntityBlock extends Render {
 
     @Override
     public void doRender(Entity entity, double i, double j, double k, float f, float f1) {
-        doRenderBlock((EntityResizableCube) entity, i, j, k);
+        doRenderBlock((EntityResizableCuboid) entity, i, j, k);
     }
 
-    public void doRenderBlock(EntityResizableCube entity, double i, double j, double k) {
+    public void doRenderBlock(EntityResizableCuboid entity, double i, double j, double k) {
         if (entity.isDead) {
             return;
         }

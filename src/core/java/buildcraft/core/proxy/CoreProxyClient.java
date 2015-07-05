@@ -36,11 +36,11 @@ import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import buildcraft.api.enums.EnumColor;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.client.BuildCraftStateMapper;
-import buildcraft.core.lib.EntityResizableCube;
+import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.core.lib.engines.RenderEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.render.RenderEntityBlock;
-import buildcraft.core.lib.render.RenderResizableCube;
+import buildcraft.core.lib.render.RenderResizableCuboid;
 import buildcraft.core.lib.utils.ICustomStateMapper;
 import buildcraft.core.lib.utils.IModelRegister;
 import buildcraft.core.lib.utils.Utils;
@@ -96,7 +96,7 @@ public class CoreProxyClient extends CoreProxy {
 
     @Override
     public void initializeEntityRendering() {
-        RenderingRegistry.registerEntityRenderingHandler(EntityResizableCube.class, RenderResizableCube.INSTANCE);
+        RenderingRegistry.registerEntityRenderingHandler(EntityResizableCuboid.class, RenderResizableCuboid.INSTANCE);
         RenderingRegistry.registerEntityRenderingHandler(EntityLaser.class, new RenderLaser());
         EnumColor.registerIcons();
 

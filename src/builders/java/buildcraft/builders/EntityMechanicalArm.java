@@ -11,7 +11,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import buildcraft.builders.tile.TileQuarry;
-import buildcraft.core.lib.EntityResizableCube;
+import buildcraft.core.lib.EntityResizableCuboid;
 
 public class EntityMechanicalArm extends Entity {
 
@@ -26,7 +26,7 @@ public class EntityMechanicalArm extends Entity {
     private boolean inProgressionXZ = false;
     private boolean inProgressionY = false;
     private int headX, headY, headZ;
-    private EntityResizableCube xArm, yArm, zArm, head;
+    private EntityResizableCuboid xArm, yArm, zArm, head;
 
     public EntityMechanicalArm(World world) {
         super(world);
@@ -131,7 +131,7 @@ public class EntityMechanicalArm extends Entity {
         this.yArm.jSize = yRoot - headT[1] - 1;
         this.yArm.setPosition(headT[0] + 0.25, headT[1] + 1, headT[2] + 0.25);
         this.zArm.setPosition(headT[0] + 0.25, yRoot, zRoot);
-        this.head.setPosition(headT[0] + 0.4, headT[1], headT[2] + 0.4);
+        this.head.setPosition(headT[0] + 0.4, headT[1] - 0.01, headT[2] + 0.4);
     }
 
     @Override

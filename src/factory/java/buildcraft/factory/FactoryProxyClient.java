@@ -11,7 +11,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 import buildcraft.api.core.BCLog;
-import buildcraft.core.lib.EntityResizableCube;
+import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.factory.gui.GuiAutoCrafting;
 import buildcraft.factory.render.RenderChute;
 import buildcraft.factory.render.RenderRefinery;
@@ -56,8 +56,8 @@ public class FactoryProxyClient extends FactoryProxy {
     }
 
     @Override
-    public EntityResizableCube newPumpTube(World w) {
-        EntityResizableCube eb = super.newPumpTube(w);
+    public EntityResizableCuboid newPumpTube(World w) {
+        EntityResizableCuboid eb = super.newPumpTube(w);
         eb.texture = pumpTexture;
         return eb;
     }

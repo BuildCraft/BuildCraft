@@ -4,6 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib;
 
+import java.util.Arrays;
+
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.Entity;
@@ -15,7 +17,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 // TODO (PASS 0): Rewrite to allow for specifying texture for each side + dimensions, to + from etc...
-public class EntityResizableCube extends Entity {
+public class EntityResizableCuboid extends Entity {
 
     public float shadowSize = 0;
     public float rotationX = 0;
@@ -34,20 +36,34 @@ public class EntityResizableCube extends Entity {
     @SideOnly(Side.CLIENT)
     public TextureAtlasSprite[] textures;
 
-    /** An array containing the rotation of the textures for each of the sides. 0 is none, 1 is 90 degrees clockwise etc. */
+    /** Where the texture is considered to start. Essentially is used to point the position of the starting point of the
+     * texture */
     @SideOnly(Side.CLIENT)
-    public int[] textureRotations;
+    public int textureStartX = 0, textureStartY = 0, textureStartZ = 0;
 
     /** The size of the texture before going back to the start. */
     @SideOnly(Side.CLIENT)
-    public int textureXSize = 16, textureYSize = 16, textureZSize = 16;
+    public int textureSizeX = 16, textureSizeY = 16, textureSizeZ = 16;
 
-    /** An array containing the flips of the textures for each of the sides. False is none, true is flipped once
-     * vertically. */
+    /** What the texture should be offset by. Essentially where should the texture start from. (However it repeats back
+     * around to 0 on the texture)
+     * <p>
+     * For example, a 1 dimensional texture that looks like this:
+     * <p>
+     * 0123
+     * <p>
+     * With textureOffsetX set to 2 (and a textureXSize of 4) would repeat like this:
+     * <p>
+     * 230123 */
     @SideOnly(Side.CLIENT)
-    public boolean[] textureFlips;
+    public int textureOffsetX = 0, textureOffsetY = 0, textureOffsetZ = 0;
 
-    public EntityResizableCube(World world) {
+    /** An array containing the flips of the textures for each of the sides. 0 is none, 1 flips the U's and 2 flips the
+     * V's (3 flips both) */
+    @SideOnly(Side.CLIENT)
+    public int[] textureFlips;
+
+    public EntityResizableCuboid(World world) {
         super(world);
         preventEntitySpawning = false;
         noClip = true;
@@ -55,12 +71,12 @@ public class EntityResizableCube extends Entity {
         ignoreFrustumCheck = true;
     }
 
-    public EntityResizableCube(World world, double xPos, double yPos, double zPos) {
+    public EntityResizableCuboid(World world, double xPos, double yPos, double zPos) {
         super(world);
         setPositionAndRotation(xPos, yPos, zPos, 0, 0);
     }
 
-    public EntityResizableCube(World world, double i, double j, double k, double iSize, double jSize, double kSize) {
+    public EntityResizableCuboid(World world, double i, double j, double k, double iSize, double jSize, double kSize) {
         this(world);
         this.iSize = iSize;
         this.jSize = jSize;
@@ -69,6 +85,18 @@ public class EntityResizableCube extends Entity {
         this.motionX = 0.0;
         this.motionY = 0.0;
         this.motionZ = 0.0;
+    }
+
+    /** A simple method to initialise all client side only variables if they have not already been initialised. */
+    @SideOnly(Side.CLIENT)
+    public void makeClient() {
+        if (textures == null) {
+            textures = new TextureAtlasSprite[6];
+            Arrays.fill(textures, texture);
+        }
+        if (textureFlips == null) {
+            textureFlips = new int[6];
+        }
     }
 
     @Override
