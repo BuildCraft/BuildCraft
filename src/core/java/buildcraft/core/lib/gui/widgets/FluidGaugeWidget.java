@@ -5,6 +5,7 @@
 package buildcraft.core.lib.gui.widgets;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.core.lib.fluids.Tank;
@@ -44,7 +45,7 @@ public class FluidGaugeWidget extends Widget {
 
         float scale = Math.min(fluidStack.amount, tank.getCapacity()) / (float) tank.getCapacity();
 
-        gui.bindTexture(FluidRenderer.getFluidSheet(fluidStack));
+        gui.bindTexture(TextureMap.locationBlocksTexture);
 
         for (int col = 0; col < w / 16; col++) {
             for (int row = 0; row <= h / 16; row++) {

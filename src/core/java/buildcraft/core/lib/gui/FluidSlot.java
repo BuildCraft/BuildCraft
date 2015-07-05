@@ -5,6 +5,7 @@
 package buildcraft.core.lib.gui;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.Fluid;
 
@@ -36,6 +37,6 @@ public class FluidSlot extends AdvancedSlot {
 
     @Override
     public ResourceLocation getTexture() {
-        return FluidRenderer.getFluidSheet(fluid);
+        return TextureMap.locationBlocksTexture;
     }
 }
