@@ -6,11 +6,13 @@ package buildcraft.factory.tile;
 
 import io.netty.buffer.ByteBuf;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.api.transport.IPipeConnection;
@@ -67,24 +69,24 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
         if (miner == null) {
             World world = worldObj;
 
-            int depth = pos.getY() - 1;
+            BlockPos search = pos.down();
 
-            while (world.getBlockState(xCoord, depth, zCoord) == BuildCraftFactory.plainPipeBlock) {
-                depth = depth - 1;
+            while (world.getBlockState(search).getBlock() == BuildCraftFactory.plainPipeBlock) {
+                search = search.down();
             }
 
-            if (depth < 1 || depth < yCoord - BuildCraftFactory.miningDepth || !BlockUtils.canChangeBlock(world, xCoord, depth, zCoord)) {
+            if (search.getY() < 1 || search.getY() < pos.getY() - BuildCraftFactory.miningDepth || !BlockUtils.canChangeBlock(world, search)) {
                 isDigging = false;
                 // Drain energy, because at 0 energy this will stop doing calculations.
                 getBattery().useEnergy(0, 10, false);
                 return;
             }
 
-            if (world.isAirBlock(xCoord, depth, zCoord) || world.getBlock(xCoord, depth, zCoord).isReplaceable(world, xCoord, depth, zCoord)) {
+            if (world.isAirBlock(search) || world.getBlockState(search).getBlock().isReplaceable(world, search)) {
                 ticksSinceAction = 0;
-                world.setBlock(xCoord, depth, zCoord, BuildCraftFactory.plainPipeBlock);
+                world.setBlockState(search, BuildCraftFactory.plainPipeBlock.getDefaultState());
             } else {
-                miner = new BlockMiner(world, this, xCoord, depth, zCoord);
+                miner = new BlockMiner(world, this, search);
             }
         }
 
@@ -110,8 +112,8 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
         if (miner != null) {
             miner.invalidate();
         }
-        if (worldObj != null && yCoord > 2) {
-            BuildCraftFactory.miningWellBlock.removePipes(worldObj, xCoord, yCoord, zCoord);
+        if (worldObj != null && pos.getY() > 2) {
+            BuildCraftFactory.miningWellBlock.removePipes(worldObj, pos);
         }
     }
 
@@ -130,7 +132,7 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
         int newLedState = stream.readUnsignedByte();
         if (newLedState != ledState) {
             ledState = newLedState;
-            worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+            worldObj.markBlockRangeForRenderUpdate(pos, pos);
         }
     }
 
@@ -151,7 +153,7 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 
     @Override
     public ConnectOverride overridePipeConnection(IPipeTile.PipeType type, EnumFacing with) {
-        if (with.ordinal() == worldObj.getBlockMetadata(xCoord, yCoord, zCoord)) {
+        if (BuildCraftProperties.BLOCK_FACING.getValue(worldObj.getBlockState(pos)) == with) {
             return ConnectOverride.DISCONNECT;
         }
         return type == IPipeTile.PipeType.ITEM ? ConnectOverride.CONNECT : ConnectOverride.DEFAULT;
