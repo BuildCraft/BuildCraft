@@ -230,7 +230,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
             BuildCraftCore.mainConfigManager.register("general.oilCanBurn", true, "Should oil burn when lit on fire?",
                 ConfigManager.RestartRequirement.NONE);
-            BuildCraftCore.mainConfigManager.register("general.oilIsDense", true, "Should oil be dense and drag entities down?",
+            BuildCraftCore.mainConfigManager.register("general.oilIsDense", true, "Should oil be dense and push enties up?",
                 ConfigManager.RestartRequirement.NONE);
         } else {
             blockOil = fluidOil.getBlock();

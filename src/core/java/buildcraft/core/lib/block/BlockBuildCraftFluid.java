@@ -7,7 +7,6 @@ package buildcraft.core.lib.block;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.particle.EntityFX;
@@ -53,19 +52,20 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
 
     @Override
     public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity) {
-        if (!dense || entity == null) {
+        if (entity == null) {
             return;
         }
 
-        entity.motionY = Math.min(0.0, entity.motionY);
-
-        if (entity.motionY < -0.05) {
-            entity.motionY *= 0.05;
-        }
-
         entity.motionX = Math.max(-0.05, Math.min(0.05, entity.motionX * 0.05));
-        entity.motionY -= 0.05;
         entity.motionZ = Math.max(-0.05, Math.min(0.05, entity.motionZ * 0.05));
+
+        if (!dense) {
+            return;
+        }
+        if (entity.posY < pos.getY() + getQuantaPercentage(world, pos) - 0.5 && entity.motionY < 0.1) {
+            entity.motionY = 0.1;
+            entity.fallDistance = 0;
+        }
     }
 
     public BlockBuildCraftFluid setDense(boolean dense) {
