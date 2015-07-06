@@ -38,8 +38,6 @@ public final class FluidRenderer {
     }
 
     public static void initFluidTextures(TextureMap map) {
-        // Because Fluid.getStillIcon is Deprecated and the fluid registry doesn't register icons properly (forge bug or
-        // intentional?)
         missingIcon = map.getMissingSprite();
 
         stillTextureMap.clear();
@@ -47,10 +45,20 @@ public final class FluidRenderer {
 
         for (Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
             if (fluid.getStill() != null) {
-                stillTextureMap.put(fluid, map.registerSprite(fluid.getStill()));
+                String still = fluid.getStill().toString();
+                if (map.getTextureExtry(still) != null) {
+                    stillTextureMap.put(fluid, map.getTextureExtry(still));
+                } else {
+                    stillTextureMap.put(fluid, map.registerSprite(fluid.getStill()));
+                }
             }
             if (fluid.getFlowing() != null) {
-                flowingTextureMap.put(fluid, map.registerSprite(fluid.getFlowing()));
+                String flow = fluid.getFlowing().toString();
+                if (map.getTextureExtry(flow) != null) {
+                    flowingTextureMap.put(fluid, map.getTextureExtry(flow));
+                } else {
+                    flowingTextureMap.put(fluid, map.registerSprite(fluid.getStill()));
+                }
             }
         }
     }

@@ -655,7 +655,7 @@ public class BuildCraftCore extends BuildCraftMod {
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
-    public void loadTextures(TextureStitchEvent.Pre evt) {
+    public void loadTextures(TextureStitchEvent.Post evt) {
         FluidRenderer.initFluidTextures(evt.map);
     }
 }
