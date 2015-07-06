@@ -30,8 +30,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.blueprints.SchematicTile;
-import buildcraft.builders.BuilderProxyClient;
-import buildcraft.builders.urbanism.UrbanistToolsIconProvider;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.BuildCraftMod;
 import buildcraft.core.CompatHooks;
@@ -44,8 +42,8 @@ import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.network.PacketHandler;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.block.BlockAutoWorkbench;
-import buildcraft.factory.block.BlockFloodGate;
 import buildcraft.factory.block.BlockChute;
+import buildcraft.factory.block.BlockFloodGate;
 import buildcraft.factory.block.BlockMiningWell;
 import buildcraft.factory.block.BlockPlainPipe;
 import buildcraft.factory.block.BlockPump;
@@ -282,7 +280,7 @@ public class BuildCraftFactory extends BuildCraftMod {
             }
         }
     }
-    
+
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void loadTextures(TextureStitchEvent.Pre evt) {

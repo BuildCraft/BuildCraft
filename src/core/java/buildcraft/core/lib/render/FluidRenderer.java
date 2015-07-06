@@ -28,8 +28,8 @@ public final class FluidRenderer {
     private static Map<Fluid, int[]> flowingRenderCache = new HashMap<Fluid, int[]>();
     private static Map<Fluid, int[]> stillRenderCache = new HashMap<Fluid, int[]>();
 
-    private static Map<Fluid, TextureAtlasSprite> flowingTextureMap = Maps.newHashMap();
     private static Map<Fluid, TextureAtlasSprite> stillTextureMap = Maps.newHashMap();
+    private static Map<Fluid, TextureAtlasSprite> flowingTextureMap = Maps.newHashMap();
     private static TextureAtlasSprite missingIcon = null;
 
     /** Deactivate default constructor */
@@ -42,12 +42,16 @@ public final class FluidRenderer {
         // intentional?)
         missingIcon = map.getMissingSprite();
 
-        flowingTextureMap.clear();
         stillTextureMap.clear();
+        flowingTextureMap.clear();
 
         for (Fluid fluid : FluidRegistry.getRegisteredFluids().values()) {
-            flowingTextureMap.put(fluid, map.registerSprite(fluid.getFlowing()));
-            stillTextureMap.put(fluid, map.registerSprite(fluid.getStill()));
+            if (fluid.getStill() != null) {
+                stillTextureMap.put(fluid, map.registerSprite(fluid.getStill()));
+            }
+            if (fluid.getFlowing() != null) {
+                flowingTextureMap.put(fluid, map.registerSprite(fluid.getFlowing()));
+            }
         }
     }
 
