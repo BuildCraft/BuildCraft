@@ -23,10 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.IGate;
@@ -41,6 +38,8 @@ import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.statements.ActionValve.ValveState;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public abstract class Pipe<T extends PipeTransport> implements IDropControlInventory, IPipe {
 	public int[] signalStrength = new int[]{0, 0, 0, 0};
@@ -53,6 +52,10 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 	private boolean internalUpdateScheduled = false;
 	private boolean initialized = false;
+
+	protected void setInternalUpdateScheduled(boolean internalUpdateScheduled) {
+		this.internalUpdateScheduled = internalUpdateScheduled;
+	}
 
 	private ArrayList<ActionState> actionStates = new ArrayList<ActionState>();
 
@@ -221,7 +224,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		initialized = true;
 	}
 
-	private void readNearbyPipesSignal(PipeWire color) {
+	protected void readNearbyPipesSignal(PipeWire color) {
 		boolean foundBiggerSignal = false;
 
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
@@ -265,7 +268,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		}
 	}
 
-	private void updateSignalStateForColor(PipeWire wire) {
+	protected void updateSignalStateForColor(PipeWire wire) {
 		if (!wireSet[wire.ordinal()]) {
 			return;
 		}
@@ -304,7 +307,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		}
 	}
 
-	private boolean receiveSignal(int signal, PipeWire color) {
+	protected boolean receiveSignal(int signal, PipeWire color) {
 		if (container.getWorldObj() == null) {
 			return false;
 		}
