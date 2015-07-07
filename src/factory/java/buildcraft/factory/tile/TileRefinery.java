@@ -37,14 +37,14 @@ import buildcraft.core.recipes.RefineryRecipeManager;
 
 public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInventory, IHasWork, IFlexibleCrafter, ICommandReceiver {
 
-    public static int LIQUID_PER_SLOT = FluidContainerRegistry.BUCKET_VOLUME * 4;
+    public static int FLUID_PER_SLOT = FluidContainerRegistry.BUCKET_VOLUME * 4;
 
     public IFlexibleRecipe<FluidStack> currentRecipe;
     public CraftingResult<FluidStack> craftingResult;
 
-    public SingleUseTank[] tanks = { new SingleUseTank("tank1", LIQUID_PER_SLOT, this), new SingleUseTank("tank2", LIQUID_PER_SLOT, this) };
+    public SingleUseTank[] tanks = { new SingleUseTank("tank1", FLUID_PER_SLOT, this), new SingleUseTank("tank2", FLUID_PER_SLOT, this) };
 
-    public SingleUseTank result = new SingleUseTank("result", LIQUID_PER_SLOT, this);
+    public SingleUseTank result = new SingleUseTank("result", FLUID_PER_SLOT, this);
     public TankManager<SingleUseTank> tankManager = new TankManager<SingleUseTank>(tanks[0], tanks[1], result);
     public float animationSpeed = 1;
     private short animationStage = 0;
@@ -145,31 +145,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
             CraftingResult<FluidStack> r = currentRecipe.craft(this, false);
             result.fill(r.crafted.copy(), true);
         }
-    }
-
-    private boolean containsInput(FluidStack ingredient) {
-        if (ingredient == null) {
-            return true;
-        }
-
-        return (tanks[0].getFluid() != null && tanks[0].getFluid().containsFluid(ingredient))
-            || (tanks[1].getFluid() != null && tanks[1].getFluid().containsFluid(ingredient));
-    }
-
-    private boolean consumeInput(FluidStack liquid) {
-        if (liquid == null) {
-            return true;
-        }
-
-        if (tanks[0].getFluid() != null && tanks[0].getFluid().containsFluid(liquid)) {
-            tanks[0].drain(liquid.amount, true);
-            return true;
-        } else if (tanks[1].getFluid() != null && tanks[1].getFluid().containsFluid(liquid)) {
-            tanks[1].drain(liquid.amount, true);
-            return true;
-        }
-
-        return false;
     }
 
     @Override

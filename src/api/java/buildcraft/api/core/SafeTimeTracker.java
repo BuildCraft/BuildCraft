@@ -14,7 +14,7 @@ public class SafeTimeTracker {
     private long lastRandomDelay = 0;
     private long internalDelay = 1;
 
-    /** @deprecated should use constructors with parameters instead */
+    /** Only use this if the delay time changes (say, if you use this to determine when a refining should be complete */
     public SafeTimeTracker() {
 
     }
@@ -36,9 +36,7 @@ public class SafeTimeTracker {
         return markTimeIfDelay(world, internalDelay);
     }
 
-    /** Return true if a given delay has passed since last time marked was called successfully.
-     *
-     * @deprecated should use the constructor with a delay instead, and call this function without a parameter */
+    /** Return true if a given delay has passed since last time marked was called successfully. */
     public boolean markTimeIfDelay(World world, long delay) {
         if (world == null) {
             return false;
