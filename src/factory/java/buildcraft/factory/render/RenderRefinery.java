@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
@@ -104,8 +105,9 @@ public class RenderRefinery extends TileEntitySpecialRenderer {
 
         GL11.glPushMatrix();
         GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-        GL11.glEnable(GL11.GL_LIGHTING);
-        GL11.glDisable(GL11.GL_CULL_FACE);
+        GlStateManager.enableLighting();
+        GlStateManager.disableCull();
+        GlStateManager.enableAlpha();
 
         GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
         GL11.glScalef(0.99F, 0.99F, 0.99F);
@@ -156,10 +158,10 @@ public class RenderRefinery extends TileEntitySpecialRenderer {
 
         if (tile != null) {
             GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-            GL11.glEnable(GL11.GL_CULL_FACE);
-            GL11.glDisable(GL11.GL_LIGHTING);
-            GL11.glEnable(GL11.GL_BLEND);
-            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.enableCull();
+            GlStateManager.disableLighting();
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
             GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
             GL11.glScalef(0.5F, 1, 0.5F);
@@ -204,6 +206,10 @@ public class RenderRefinery extends TileEntitySpecialRenderer {
 
         GL11.glPopAttrib();
         GL11.glPopMatrix();
+
+        GlStateManager.enableLighting();
+        GlStateManager.disableCull();
+        GlStateManager.disableAlpha();
     }
 
     private int getDisplayListIndex(Tank tank) {
