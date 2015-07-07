@@ -95,9 +95,8 @@ public final class TileBuffer {
     public static TileBuffer[] makeBuffer(World world, BlockPos pos, boolean loadUnloaded) {
         TileBuffer[] buffer = new TileBuffer[6];
 
-        for (int i = 0; i < 6; i++) {
-            EnumFacing d = EnumFacing.values()[i];
-            buffer[i] = new TileBuffer(world, pos.offset(d), loadUnloaded);
+        for (EnumFacing face : EnumFacing.VALUES) {
+            buffer[face.ordinal()] = new TileBuffer(world, pos.offset(face), loadUnloaded);
         }
 
         return buffer;

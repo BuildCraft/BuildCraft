@@ -7,7 +7,6 @@ package buildcraft.factory.block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -66,10 +65,16 @@ public class BlockRefinery extends BlockBuildCraft {
             return true;
         }
 
-        if (current != null && current.getItem() != Items.bucket) {
+        if (current != null) {
             if (!world.isRemote) {
-                if (TankUtils.handleRightClick((TileRefinery) tile, side, player, true, false)) {
-                    return true;
+                if (FluidContainerRegistry.isEmptyContainer(current)) {
+                    if (TankUtils.handleRightClick((TileRefinery) tile, side, player, false, true)) {
+                        return true;
+                    }
+                } else if (FluidContainerRegistry.isFilledContainer(current)) {
+                    if (TankUtils.handleRightClick((TileRefinery) tile, side, player, true, false)) {
+                        return true;
+                    }
                 }
             } else if (FluidContainerRegistry.isContainer(current)) {
                 return true;
@@ -82,7 +87,7 @@ public class BlockRefinery extends BlockBuildCraft {
 
         return true;
     }
-    
+
     @SideOnly(Side.CLIENT)
     public EnumWorldBlockLayer getBlockLayer() {
         return EnumWorldBlockLayer.CUTOUT;

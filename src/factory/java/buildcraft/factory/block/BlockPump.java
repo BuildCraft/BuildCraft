@@ -47,7 +47,7 @@ public class BlockPump extends BlockBuildCraft {
                 return false;
             }
 
-            // Restart the quarry if its a wrench
+            // Restart the pump if its a wrench
             Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
             if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pos)) {
 
