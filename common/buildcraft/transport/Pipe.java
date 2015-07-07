@@ -224,7 +224,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		initialized = true;
 	}
 
-	private void readNearbyPipesSignal(PipeWire color) {
+	protected void readNearbyPipesSignal(PipeWire color) {
 		boolean foundBiggerSignal = false;
 
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
