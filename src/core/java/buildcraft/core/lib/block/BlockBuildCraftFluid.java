@@ -15,6 +15,7 @@ import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
@@ -50,14 +51,30 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
         }
     }
 
+    private double within(double current, double maximum) {
+        return Math.max(-maximum, Math.min(current, maximum));
+    }
+
     @Override
     public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity) {
         if (entity == null) {
             return;
         }
 
-        entity.motionX = Math.max(-0.05, Math.min(0.05, entity.motionX * 0.05));
-        entity.motionZ = Math.max(-0.05, Math.min(0.05, entity.motionZ * 0.05));
+        Vec3 acc = new Vec3(0, 0, 0);
+        acc = modifyAcceleration(world, pos, entity, acc);
+        Vec3 accDir = new Vec3(0, 0, 0);
+        if (acc.lengthVector() > 0) {
+            acc = acc.normalize();
+            double multiplier = 0.07;
+            accDir = new Vec3(acc.xCoord * multiplier, acc.yCoord * multiplier, acc.zCoord * multiplier);
+        }
+
+        double within = 0.05;
+
+        entity.motionX = within(entity.motionX, within) + accDir.xCoord;
+        entity.motionY = within(entity.motionY, within) + accDir.yCoord;
+        entity.motionZ = within(entity.motionZ, within) + accDir.zCoord;
 
         if (!dense) {
             return;
