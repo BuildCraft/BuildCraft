@@ -62,7 +62,10 @@ public class DockingStationPipe extends DockingStation {
 
 	public IPipeTile getPipe() {
 		if (pipe == null) {
-			pipe = (IPipeTile) world.getTileEntity(x(), y(), z());
+			TileEntity tile = world.getTileEntity(x(), y(), z());
+			if (tile instanceof IPipeTile) {
+				pipe = (IPipeTile) tile;
+			}
 		}
 
 		if (pipe == null || ((TileEntity) pipe).isInvalid()) {
