@@ -150,22 +150,26 @@ public class LibraryDatabase {
 				int sepIndex = fileName.lastIndexOf(LibraryId.BPT_SEP_CHARACTER);
 				int dotIndex = fileName.lastIndexOf('.');
 
-				String extension = fileName.substring(dotIndex + 1);
+				if (dotIndex > 0) {
+					String extension = fileName.substring(dotIndex + 1);
 
-				if (sepIndex > 0) {
-					String prefix = fileName.substring(0, sepIndex);
-					String suffix = fileName.substring(sepIndex + 1);
+					if (sepIndex > 0) {
+						String prefix = fileName.substring(0, sepIndex);
+						String suffix = fileName.substring(sepIndex + 1);
 
-					id.name = prefix;
-					id.uniqueId = LibraryId.toBytes(suffix.substring(0, suffix.length() - (extension.length() + 1)));
+						id.name = prefix;
+						id.uniqueId = LibraryId.toBytes(suffix.substring(0, suffix.length() - (extension.length() + 1)));
+					} else {
+						id.name = fileName.substring(0, dotIndex);
+						id.uniqueId = new byte[0];
+					}
+					id.extension = extension;
+
+					if (!blueprintIds.contains(id)) {
+						blueprintIds.add(id);
+					}
 				} else {
-					id.name = fileName.substring(0, dotIndex);
-					id.uniqueId = new byte[0];
-				}
-				id.extension = extension;
-
-				if (!blueprintIds.contains(id)) {
-					blueprintIds.add(id);
+					BCLog.logger.warn("Found incorrectly named (no extension) blueprint file: '%s'!", fileName);
 				}
 			}
 
