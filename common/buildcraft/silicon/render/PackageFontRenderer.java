@@ -47,18 +47,22 @@ public class PackageFontRenderer extends FontRenderer {
 
 			if (pkgTag.hasKey("item" + slotPos)) {
 				ItemStack slotStack = ItemStack.loadItemStackFromNBT(pkgTag.getCompoundTag("item" + slotPos));
-				GL11.glTranslatef(0.0F, 0.0F, 32.0F);
-				GL11.glScalef(0.5F, 0.5F, 0.5F);
-				FontRenderer font = slotStack.getItem().getFontRenderer(slotStack);
-				itemRender.zLevel = 200.0F;
+				if (slotStack != null) {
+					GL11.glTranslatef(0.0F, 0.0F, 32.0F);
+					GL11.glScalef(0.5F, 0.5F, 0.5F);
+					FontRenderer font = slotStack.getItem().getFontRenderer(slotStack);
+					itemRender.zLevel = 200.0F;
 
-				if (font == null || font instanceof PackageFontRenderer) {
-					font = Minecraft.getMinecraft().fontRenderer;
+					if (font == null || font instanceof PackageFontRenderer) {
+						font = Minecraft.getMinecraft().fontRenderer;
+					}
+
+					itemRender.renderItemAndEffectIntoGUI(font, this.mc.getTextureManager(), slotStack, rx * 2, y * 2);
+					itemRender.renderItemOverlayIntoGUI(font, this.mc.getTextureManager(), slotStack, rx * 2, y * 2);
+					itemRender.zLevel = 0.0F;
+				} else {
+					realRenderer.drawString("X", rx, y, 0xFF0000);
 				}
-
-				itemRender.renderItemAndEffectIntoGUI(font, this.mc.getTextureManager(), slotStack, rx * 2, y * 2);
-				itemRender.renderItemOverlayIntoGUI(font, this.mc.getTextureManager(), slotStack, rx * 2, y * 2);
-				itemRender.zLevel = 0.0F;
 			}
 
 			rx += 7;
