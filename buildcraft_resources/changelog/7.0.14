@@ -1,0 +1,10 @@
+Bugs fixed:
+
+* [#2878] Robot NPE for robots prior to 7.0.13 fix (asie)
+* [#2877] Survival blueprint crash (asie)
+* [#2841] Another crash with Oil in the Nether (asie)
+* [#2831] Robots sinking through the ground (hea3ven)
+* Allow Builders to use arbitrary IPathProviders (asie)
+* Block breaking robots sleeping in mid air (hea3ven)
+* Incorrect Request Needed Items action name (asie)
+* Robots ignoring gate config on their linked station when equipping items (hea3ven)

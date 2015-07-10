@@ -265,8 +265,10 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 	private int getBuildListCount() {
 		int out = 0;
-		for (int i = 0; i < buildStageOccurences.length; i++) {
-			out += buildStageOccurences[i];
+		if (buildStageOccurences != null) {
+			for (int i = 0; i < buildStageOccurences.length; i++) {
+				out += buildStageOccurences[i];
+			}
 		}
 		return out;
 	}
