@@ -489,7 +489,6 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildCraftAPI.softBlocks.add(Blocks.snow);
 		BuildCraftAPI.softBlocks.add(Blocks.vine);
 		BuildCraftAPI.softBlocks.add(Blocks.fire);
-		BuildCraftAPI.softBlocks.add(Blocks.air);
 
 		FMLCommonHandler.instance().bus().register(new TickHandlerCore());
 

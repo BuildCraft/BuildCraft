@@ -186,7 +186,7 @@ public class BlockBuildCraftFluid extends BlockFluidClassic {
 	}
 
 	@Override
-	public boolean canDropFromExplosion(Explosion p_149659_1_) {
+	public boolean canDropFromExplosion(Explosion explosion) {
 		return false;
 	}
 }
