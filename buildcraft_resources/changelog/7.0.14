@@ -1,3 +1,7 @@
+Improvements:
+
+* Quarries now dig through light fluids and stop on dense fluids. Behaviour might change later, so watch out! (asie)
+
 Bugs fixed:
 
 * [#2880] Try to fix fluid pipe bug (asie)

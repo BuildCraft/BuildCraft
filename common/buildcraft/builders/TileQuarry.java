@@ -17,6 +17,7 @@ import com.google.common.collect.Sets;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -31,6 +32,7 @@ import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.IFluidBlock;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
@@ -374,7 +376,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 						if (!BlockUtils.canChangeBlock(block, worldObj, bx, by, bz)) {
 							blockedColumns[searchX][searchZ] = true;
-						} else if (!BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz)) {
+						} else if (!BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz) && !(block instanceof BlockLiquid) && !(block instanceof IFluidBlock)) {
 							visitList.add(new int[]{bx, by, bz});
 						}
 
@@ -470,7 +472,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	private boolean isQuarriableBlock(int bx, int by, int bz) {
 		Block block = worldObj.getBlock(bx, by, bz);
 		return BlockUtils.canChangeBlock(block, worldObj, bx, by, bz)
-				&& !BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz);
+				&& !BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz)
+				&& !(block instanceof BlockLiquid) && !(block instanceof IFluidBlock);
 	}
 
 	@Override
