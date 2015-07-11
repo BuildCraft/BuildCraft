@@ -226,9 +226,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 			return;
 		}
 
-		if (fluidType != null) {
-			moveFluids();
-		}
+		moveFluids();
 
 		if (networkSyncTracker.markTimeIfDelay(container.getWorldObj())) {
 			boolean init = false;
@@ -245,17 +243,22 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	}
 
 	private void moveFluids() {
-		short newTimeSlot = (short) (container.getWorldObj().getTotalWorldTime() % travelDelay);
-		short outputCount = computeCurrentConnectionStatesAndTickFlows(newTimeSlot > 0 && newTimeSlot < travelDelay ? newTimeSlot : 0);
+		if (fluidType != null) {
+			short newTimeSlot = (short) (container.getWorldObj().getTotalWorldTime() % travelDelay);
+			int outputCount = computeCurrentConnectionStatesAndTickFlows(newTimeSlot > 0 && newTimeSlot < travelDelay ? newTimeSlot : 0);
 
-		moveFromPipe(outputCount);
-		moveFromCenter();
-		moveToCenter();
+			if (fluidType != null) {
+				moveFromPipe(outputCount);
+				moveFromCenter();
+				moveToCenter();
+			}
+		} else {
+			computeTTLs();
+		}
 	}
 
-	private void moveFromPipe(short outputCount) {
+	private void moveFromPipe(int outputCount) {
 		// Move liquid from the non-center to the connected output blocks
-		boolean pushed = false;
 		if (outputCount > 0) {
 			for (ForgeDirection o : directions) {
 				if (transferState[o.ordinal()] == TransferState.Output) {
@@ -270,25 +273,11 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 					if (liquidToPush.amount > 0) {
 						int filled = ((IFluidHandler) target).fill(o.getOpposite(), liquidToPush, true);
 						section.drain(filled, true);
-						pushed = true;
 						if (filled <= 0) {
 							outputTTL[o.ordinal()]--;
 						}
 					}
 				}
-			}
-		}
-
-		if (pushed) {
-			boolean hasFluid = false;
-			for (PipeSection s: sections) {
-				if (s.amount > 0) {
-					hasFluid = true;
-					break;
-				}
-			}
-			if (!hasFluid) {
-				setFluidType(null);
 			}
 		}
 	}
@@ -361,43 +350,76 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		}
 	}
 
-	private short computeCurrentConnectionStatesAndTickFlows(short newTimeSlot) {
-		short outputCount = 0;
+	private void computeTTLs() {
+		for (int i = 0; i < 6; i++) {
+			if (transferState[i] == TransferState.Input) {
+				if (inputTTL[i] > 0) {
+					inputTTL[i]--;
+				} else {
+					transferState[i] = TransferState.None;
+				}
+			}
 
-		// Processes all interna4al tanks
+			if (outputCooldown[i] > 0) {
+				outputCooldown[i]--;
+			} else {
+				if (outputTTL[i] > 0) {
+					outputTTL[i]--;
+				} else {
+					transferState[i] = TransferState.None;
+				}
+			}
+		}
+	}
+
+	private int computeCurrentConnectionStatesAndTickFlows(short newTimeSlot) {
+		int outputCount = 0;
+		int fluidAmount = 0;
+
+		// Processes all internal tanks
 		for (ForgeDirection direction : orientations) {
-			sections[direction.ordinal()].setTime(newTimeSlot);
-			sections[direction.ordinal()].moveFluids();
+			int dirI = direction.ordinal();
+			PipeSection section = sections[dirI];
+
+			fluidAmount += section.amount;
+			section.setTime(newTimeSlot);
+			section.moveFluids();
+
 			// Input processing
 			if (direction == ForgeDirection.UNKNOWN) {
 				continue;
 			}
-			if (transferState[direction.ordinal()] == TransferState.Input) {
-				inputTTL[direction.ordinal()]--;
-				if (inputTTL[direction.ordinal()] <= 0) {
-					transferState[direction.ordinal()] = TransferState.None;
+			if (transferState[dirI] == TransferState.Input) {
+				inputTTL[dirI]--;
+				if (inputTTL[dirI] <= 0) {
+					transferState[dirI] = TransferState.None;
 				}
 				continue;
 			}
 			if (!container.pipe.outputOpen(direction)) {
-				transferState[direction.ordinal()] = TransferState.None;
+				transferState[dirI] = TransferState.None;
 				continue;
 			}
-			if (outputCooldown[direction.ordinal()] > 0) {
-				outputCooldown[direction.ordinal()]--;
+			if (outputCooldown[dirI] > 0) {
+				outputCooldown[dirI]--;
 				continue;
 			}
-			if (outputTTL[direction.ordinal()] <= 0) {
-				transferState[direction.ordinal()] = TransferState.None;
-				outputCooldown[direction.ordinal()] = OUTPUT_COOLDOWN;
-				outputTTL[direction.ordinal()] = OUTPUT_TTL;
+			if (outputTTL[dirI] <= 0) {
+				transferState[dirI] = TransferState.None;
+				outputCooldown[dirI] = OUTPUT_COOLDOWN;
+				outputTTL[dirI] = OUTPUT_TTL;
 				continue;
 			}
-			if (canReceiveCache[direction.ordinal()] && outputOpen(direction)) {
-				transferState[direction.ordinal()] = TransferState.Output;
+			if (canReceiveCache[dirI] && outputOpen(direction)) {
+				transferState[dirI] = TransferState.Output;
 				outputCount++;
 			}
 		}
+
+		if (fluidAmount == 0) {
+			setFluidType(null);
+		}
+
 		return outputCount;
 	}
 
