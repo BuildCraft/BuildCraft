@@ -119,6 +119,7 @@ public final class BlockUtils {
 		world.spawnEntityInWorld(entityitem);
 	}
 
+	@Deprecated
 	public static boolean isAnObstructingBlock(Block block, World world, int x, int y, int z) {
 		if (block == null || block.isAir(world, x, y, z)) {
 			return false;
