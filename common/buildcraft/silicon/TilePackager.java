@@ -20,12 +20,10 @@ import buildcraft.BuildCraftSilicon;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.core.lib.block.TileBuildCraft;
-import buildcraft.core.lib.inventory.InventoryConcatenator;
 import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.NBTUtils;
-import buildcraft.core.lib.utils.Utils;
 
 public class TilePackager extends TileBuildCraft implements ISidedInventory {
 	private class Requirement {
@@ -65,11 +63,12 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
 			return location.hashCode() + (slot * 17);
 		}
 	}
-	private static final int[] SLOTS = Utils.createSlotArray(0, 12);
+
+	// Slot 10 is currently missing. Left in for backwards compat.
+	private static final int[] SLOTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 11};
 
 	public SimpleInventory inventoryPublic = new SimpleInventory(12, "Packager", 64);
 	public SimpleInventory inventoryPattern = new SimpleInventory(9, "Packager", 64);
-	public IInventory visibleInventory = InventoryConcatenator.make().add(inventoryPublic).add(inventoryPattern);
 
 	private Requirement[] requirements = new Requirement[9];
 	private int patternsSet;
@@ -406,27 +405,27 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
 
 	@Override
 	public int getSizeInventory() {
-		return visibleInventory.getSizeInventory();
+		return inventoryPublic.getSizeInventory();
 	}
 
 	@Override
 	public ItemStack getStackInSlot(int slot) {
-		return visibleInventory.getStackInSlot(slot);
+		return inventoryPublic.getStackInSlot(slot);
 	}
 
 	@Override
 	public ItemStack decrStackSize(int slot, int amount) {
-		return visibleInventory.decrStackSize(slot, amount);
+		return inventoryPublic.decrStackSize(slot, amount);
 	}
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slot) {
-		return visibleInventory.getStackInSlotOnClosing(slot);
+		return inventoryPublic.getStackInSlotOnClosing(slot);
 	}
 
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
-		visibleInventory.setInventorySlotContents(slot, stack);
+		inventoryPublic.setInventorySlotContents(slot, stack);
 	}
 
 	@Override
@@ -446,17 +445,17 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer player) {
-		return visibleInventory.isUseableByPlayer(player);
+		return inventoryPublic.isUseableByPlayer(player);
 	}
 
 	@Override
 	public void openInventory() {
-		visibleInventory.openInventory();
+		inventoryPublic.openInventory();
 	}
 
 	@Override
 	public void closeInventory() {
-		visibleInventory.closeInventory();
+		inventoryPublic.closeInventory();
 	}
 
 	@Override
@@ -464,7 +463,7 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
 		if (slot == 9) {
 			return stack == null || stack.getItem() == Items.paper || stack.getItem() instanceof ItemPackage;
 		}
-		return visibleInventory.isItemValidForSlot(slot, stack);
+		return inventoryPublic.isItemValidForSlot(slot, stack);
 	}
 
 	@Override
