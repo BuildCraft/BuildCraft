@@ -25,6 +25,7 @@ public class RenderChute extends TileEntitySpecialRenderer {
     private final ModelRenderer top;
     private final ModelFrustum middle;
     private final ModelRenderer bottom;
+    private final boolean thisisstupid = true;
 
     public RenderChute() {
         top = new ModelRenderer(model, 0, 0);
@@ -50,6 +51,9 @@ public class RenderChute extends TileEntitySpecialRenderer {
             return;
         }
 
+        if (thisisstupid){
+            return;}
+        
         GL11.glPushMatrix();
         GL11.glTranslated(x, y, z);
         bindTexture(HOPPER_TEXTURE);

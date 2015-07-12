@@ -103,6 +103,7 @@ public class BlockFrame extends BlockBuildCraftBase {
 
     public BlockFrame() {
         super(Material.glass, CONNECTIONS);
+        setCreativeTab(null);
         setHardness(0.5F);
         setLightOpacity(0);
     }

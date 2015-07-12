@@ -608,7 +608,7 @@ public class BuildCraftCore extends BuildCraftMod {
             String name = mapping.name;
 
             // Special cases where we broke something
-            if (name.equals("buildcraf|tbuilders:machineBlock")) {
+            if (name.equals("buildcraft|builders:machineBlock")) {
                 name = "buildcraft|builders:quarryBlock";
             }
 

@@ -7,6 +7,8 @@ package buildcraft.factory.block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
@@ -15,10 +17,12 @@ import net.minecraft.world.World;
 import buildcraft.api.transport.IItemPipe;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.block.BlockBuildCraft;
+import buildcraft.core.lib.utils.IModelRegister;
+import buildcraft.core.lib.utils.ModelHelper;
 import buildcraft.factory.BuildCraftFactory;
 import buildcraft.factory.tile.TileChute;
 
-public class BlockChute extends BlockBuildCraft {
+public class BlockChute extends BlockBuildCraft implements IModelRegister {
 
     public BlockChute() {
         super(Material.iron);
@@ -56,5 +60,13 @@ public class BlockChute extends BlockBuildCraft {
         }
 
         return true;
+    }
+
+    @Override
+    public void registerModels() {
+        // Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelManager().
+
+        Item item = ItemBlock.getItemFromBlock(this);
+        ModelHelper.registerItemModel(item, 0, "normal");
     }
 }

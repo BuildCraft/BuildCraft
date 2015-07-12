@@ -6,12 +6,15 @@ package buildcraft.factory;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -49,6 +52,7 @@ import buildcraft.factory.block.BlockPlainPipe;
 import buildcraft.factory.block.BlockPump;
 import buildcraft.factory.block.BlockRefinery;
 import buildcraft.factory.block.BlockTank;
+import buildcraft.factory.render.ChuteRenderModel;
 import buildcraft.factory.schematics.SchematicAutoWorkbench;
 import buildcraft.factory.schematics.SchematicPump;
 import buildcraft.factory.schematics.SchematicRefinery;
@@ -166,7 +170,7 @@ public class BuildCraftFactory extends BuildCraftMod {
         CoreProxy.proxy.registerBlock(refineryBlock.setUnlocalizedName("refineryBlock"));
 
         chuteBlock = (BlockChute) CompatHooks.INSTANCE.getBlock(BlockChute.class);
-        CoreProxy.proxy.registerBlock(chuteBlock.setUnlocalizedName("blockChute"));
+        CoreProxy.proxy.registerBlock(chuteBlock.setUnlocalizedName("chuteBlock"));
 
         FactoryProxy.proxy.initializeEntityRenders();
 
@@ -255,7 +259,7 @@ public class BuildCraftFactory extends BuildCraftMod {
     @Mod.EventHandler
     public void remap(FMLMissingMappingsEvent event) {
         for (FMLMissingMappingsEvent.MissingMapping mapping : event.get()) {
-            if (mapping.name.equals("BuildCraft|Factory:machineBlock") || mapping.name.equals("BuildCraft|Factory:quarryBlock")) {
+            if (mapping.name.equalsIgnoreCase("BuildCraft|Factory:machineBlock") || mapping.name.equalsIgnoreCase("BuildCraft|Factory:quarryBlock")) {
                 if (Loader.isModLoaded("BuildCraft|Builders")) {
                     if (mapping.type == GameRegistry.Type.BLOCK) {
                         mapping.remap(Block.getBlockFromName("BuildCraft|Builders:quarryBlock"));
@@ -265,7 +269,7 @@ public class BuildCraftFactory extends BuildCraftMod {
                 } else {
                     mapping.warn();
                 }
-            } else if (mapping.name.equals("BuildCraft|Factory:frameBlock")) {
+            } else if (mapping.name.equalsIgnoreCase("BuildCraft|Factory:frameBlock")) {
                 if (Loader.isModLoaded("BuildCraft|Builders")) {
                     if (mapping.type == GameRegistry.Type.BLOCK) {
                         mapping.remap(Block.getBlockFromName("BuildCraft|Builders:frameBlock"));
@@ -275,7 +279,7 @@ public class BuildCraftFactory extends BuildCraftMod {
                 } else {
                     mapping.ignore();
                 }
-            } else if (mapping.name.equals("BuildCraft|Factory:hopperBlock")) {
+            } else if (mapping.name.equalsIgnoreCase("BuildCraft|Factory:hopperBlock")) {
                 mapping.remap(Block.getBlockFromName("BuildCraft|Factory:chuteBlock"));
             }
         }
@@ -286,5 +290,14 @@ public class BuildCraftFactory extends BuildCraftMod {
     public void loadTextures(TextureStitchEvent.Pre evt) {
         TextureMap terrainTextures = evt.map;
         FactoryProxyClient.pumpTexture = terrainTextures.registerSprite(new ResourceLocation("buildcraftfactory:blocks/pump/tube"));
+        ChuteRenderModel.sideTexture = terrainTextures.registerSprite(new ResourceLocation("buildcraftfactory:blocks/chute/side"));
+    }
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void registerModels(ModelBakeEvent event) {
+        ModelResourceLocation mrl = new ModelResourceLocation("buildcraftfactory:chuteBlock");
+        IBakedModel model = (IBakedModel) event.modelRegistry.getObject(mrl);
+        event.modelRegistry.putObject(mrl, ChuteRenderModel.create(model));
     }
 }

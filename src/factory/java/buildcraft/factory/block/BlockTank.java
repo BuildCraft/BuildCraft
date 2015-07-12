@@ -10,6 +10,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumFacing;
@@ -237,5 +238,10 @@ public class BlockTank extends BlockBuildCraft {
     @SideOnly(Side.CLIENT)
     public EnumWorldBlockLayer getBlockLayer() {
         return EnumWorldBlockLayer.CUTOUT;
+    }
+
+    @Override
+    public AxisAlignedBB getBox(IBlockAccess world, BlockPos pos, IBlockState state) {
+        return new AxisAlignedBB(0.1, 0, 0.1, 0.9, 1, 0.9);
     }
 }

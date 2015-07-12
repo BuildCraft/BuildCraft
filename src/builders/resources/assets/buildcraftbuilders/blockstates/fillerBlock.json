@@ -7,10 +7,10 @@
 	},
     "variants": {
         "facing": {
-        	"east":  { "submodel":"buildcraftbuilders:filler/main" },
-        	"south": { "submodel":"buildcraftbuilders:filler/main", "y": 90 },
-        	"west":  { "submodel":"buildcraftbuilders:filler/main", "y": 180 },
-        	"north": { "submodel":"buildcraftbuilders:filler/main", "y": 270 }
+        	"east":  { "model":"buildcraftbuilders:filler/main" },
+        	"south": { "model":"buildcraftbuilders:filler/main", "y": 90 },
+        	"west":  { "model":"buildcraftbuilders:filler/main", "y": 180 },
+        	"north": { "model":"buildcraftbuilders:filler/main", "y": 270 }
         },
         "led_done": {
         	"true":  { "submodel":"buildcraftbuilders:filler/led_active_on" },

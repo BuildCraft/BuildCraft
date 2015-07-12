@@ -60,7 +60,7 @@ public class BlockQuarry extends BlockBuildCraft {
             return state;
         }
         TileQuarry quarry = (TileQuarry) tile;
-        
+
         for (EnumFacing face : EnumFacing.VALUES) {
             TileEntity other = access.getTileEntity(pos.offset(face));
             boolean hasPipe = Utils.checkPipesConnections(quarry, other);

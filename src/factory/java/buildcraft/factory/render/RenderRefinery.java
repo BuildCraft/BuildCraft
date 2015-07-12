@@ -90,7 +90,10 @@ public class RenderRefinery extends TileEntitySpecialRenderer {
             IBlockState state = tile.getWorld().getBlockState(tile.getPos());
             EnumFacing face = BuildCraftProperties.BLOCK_FACING.getValue(state);
 
-            angle = (face.getIndex() - 2) * 90;
+            while (face != EnumFacing.EAST) {
+                face = face.rotateY();
+                angle += 90;
+            }
 
             if (tile.animationSpeed <= 1) {
                 theMagnet = magnet[0];
