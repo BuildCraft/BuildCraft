@@ -50,7 +50,6 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.blocks.IColorRemovable;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
-import buildcraft.api.events.PipePlacedEvent;
 import buildcraft.api.items.IMapLocation;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;

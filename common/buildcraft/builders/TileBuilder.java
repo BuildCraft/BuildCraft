@@ -262,7 +262,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 						// themselves from world like IAreaProviders.
 						if (tile instanceof TilePathMarker) {
 							for (BlockIndex b : path) {
-								BuildCraftBuilders.pathMarkerBlock.dropBlockAsItem(
+								BuildCraftCore.pathMarkerBlock.dropBlockAsItem(
 										worldObj, b.x, b.y, b.z,
 										0, 0);
 
