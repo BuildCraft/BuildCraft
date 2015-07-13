@@ -460,13 +460,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		new BptPipeRotatable(pipeItemsWood);
 		new BptPipeRotatable(pipeFluidsWood);
-		new BptPipeRotatable(pipePowerWood);
 		new BptPipeRotatable(pipeItemsIron);
 		new BptPipeRotatable(pipeFluidsIron);
-		new BptPipeRotatable(pipePowerIron);
 		new BptPipeRotatable(pipeItemsEmerald);
 		new BptPipeRotatable(pipeFluidsEmerald);
-		new BptPipeRotatable(pipePowerEmerald);
 
 		new BptPipeRotatable(pipeItemsDaizuli);
 		new BptPipeRotatable(pipeItemsEmzuli);
