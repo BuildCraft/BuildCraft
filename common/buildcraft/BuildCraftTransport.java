@@ -70,6 +70,7 @@ import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.FacadePluggable;
+import buildcraft.transport.IDiamondPipe;
 import buildcraft.transport.IMCHandlerTransport;
 import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemGateCopier;
@@ -142,9 +143,8 @@ import buildcraft.transport.pluggable.ItemPlug;
 import buildcraft.transport.pluggable.LensPluggable;
 import buildcraft.transport.pluggable.PlugPluggable;
 import buildcraft.transport.render.PipeRendererTESR;
-import buildcraft.transport.schematics.BptItemPipeFilters;
-import buildcraft.transport.schematics.BptPipeIron;
-import buildcraft.transport.schematics.BptPipeWooden;
+import buildcraft.transport.schematics.BptPipeFiltered;
+import buildcraft.transport.schematics.BptPipeRotatable;
 import buildcraft.transport.schematics.SchematicPipe;
 import buildcraft.transport.statements.ActionEnergyPulsar;
 import buildcraft.transport.statements.ActionExtractionPreset;
@@ -458,16 +458,26 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		BuilderAPI.schematicRegistry.registerSchematicBlock(genericPipeBlock, SchematicPipe.class);
 
-		new BptPipeIron(pipeItemsIron);
-		new BptPipeIron(pipeFluidsIron);
-		new BptPipeIron(pipePowerIron);
+		new BptPipeRotatable(pipeItemsWood);
+		new BptPipeRotatable(pipeFluidsWood);
+		new BptPipeRotatable(pipePowerWood);
+		new BptPipeRotatable(pipeItemsIron);
+		new BptPipeRotatable(pipeFluidsIron);
+		new BptPipeRotatable(pipePowerIron);
+		new BptPipeRotatable(pipeItemsEmerald);
+		new BptPipeRotatable(pipeFluidsEmerald);
+		new BptPipeRotatable(pipePowerEmerald);
 
-		new BptPipeWooden(pipeItemsWood);
-		new BptPipeWooden(pipeFluidsWood);
-		new BptPipeWooden(pipePowerWood);
-		new BptPipeWooden(pipeItemsEmerald);
+		new BptPipeRotatable(pipeItemsDaizuli);
+		new BptPipeRotatable(pipeItemsEmzuli);
 
-		new BptItemPipeFilters(pipeItemsDiamond);
+		for (Item itemPipe : BlockGenericPipe.pipes.keySet()) {
+			Class<? extends Pipe> klazz = BlockGenericPipe.pipes.get(itemPipe);
+
+			if (IDiamondPipe.class.isAssignableFrom(klazz)) {
+				new BptPipeFiltered(itemPipe);
+			}
+		}
 
 		BCCreativeTab.get("pipes").setIcon(new ItemStack(BuildCraftTransport.pipeItemsDiamond, 1));
 		BCCreativeTab.get("facades").setIcon(facadeItem.getFacadeForBlock(Blocks.brick_block, 0));
