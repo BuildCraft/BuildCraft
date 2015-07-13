@@ -1,12 +1,16 @@
 package buildcraft.transport;
 
+import java.util.Arrays;
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.EnumMultiset;
 import com.google.common.collect.Multiset;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -19,6 +23,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.utils.MathUtils;
@@ -37,7 +42,7 @@ import buildcraft.transport.pipes.PipeFluidsWood;
 import buildcraft.transport.pipes.events.PipeEventFluid;
 import buildcraft.transport.utils.FluidRenderData;
 
-public class PipeTransportFluids extends PipeTransport implements IFluidHandler {
+public class PipeTransportFluids extends PipeTransport implements IFluidHandler, IDebuggable {
 	public static final Map<Class<? extends Pipe<?>>, Integer> fluidCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
 
 	/**
@@ -647,6 +652,18 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 		}
 
 		return tile instanceof IPipeTile;
+	}
+
+	@Override
+	public void getDebugInfo(List<String> info, ForgeDirection side, ItemStack debugger, EntityPlayer player) {
+		int[] amount = new int[7];
+		for (int i = 0; i < 7; i++) {
+			if (sections[i] != null) {
+				amount[i] = sections[i].amount;
+			}
+		}
+		info.add(String.format("PipeTransportFluids (%s, %d mB, %d mB/t)", fluidType != null ? fluidType.getLocalizedName() : "Empty", capacity, flowRate));
+		info.add("- Stored: " + Arrays.toString(amount));
 	}
 
 	static {
