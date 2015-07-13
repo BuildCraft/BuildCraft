@@ -11,7 +11,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidEvent;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -24,6 +23,7 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.transport.network.PacketFluidUpdate;
+import buildcraft.transport.pipes.PipeFluidsClay;
 import buildcraft.transport.pipes.PipeFluidsCobblestone;
 import buildcraft.transport.pipes.PipeFluidsDiamond;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
@@ -44,7 +44,6 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	 * The amount of liquid contained by a pipe section. For simplicity, all
 	 * pipe sections are assumed to be of the same volume.
 	 */
-	public static int LIQUID_IN_PIPE = FluidContainerRegistry.BUCKET_VOLUME / 4;
 	public static int MAX_TRAVEL_DELAY = 12;
 	public static short INPUT_TTL = 60; // 100
 	public static short OUTPUT_TTL = 80; // 80
@@ -179,7 +178,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	}
 
 	public void initFromPipe(Class<? extends Pipe> pipeClass) {
-		capacity = LIQUID_IN_PIPE;
+		capacity = 25 * Math.min(1000, BuildCraftTransport.pipeFluidsBaseFlowRate);
 		flowRate = fluidCapacities.get(pipeClass);
 		travelDelay = MathUtils.clamp(Math.round(16F / (flowRate / 10)), 1, MAX_TRAVEL_DELAY);
 	}
@@ -410,7 +409,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 				outputTTL[dirI] = OUTPUT_TTL;
 				continue;
 			}
-			if (canReceiveCache[dirI] && outputOpen(direction)) {
+			if (canReceiveCache[dirI] && container.pipe.outputOpen(direction)) {
 				transferState[dirI] = TransferState.Output;
 				outputCount++;
 			}
@@ -651,6 +650,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	}
 
 	static {
+		fluidCapacities.put(PipeFluidsClay.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
 		fluidCapacities.put(PipeFluidsCobblestone.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
 		fluidCapacities.put(PipeFluidsDiamond.class, 8 * BuildCraftTransport.pipeFluidsBaseFlowRate);
 		fluidCapacities.put(PipeFluidsEmerald.class, 4 * BuildCraftTransport.pipeFluidsBaseFlowRate);
