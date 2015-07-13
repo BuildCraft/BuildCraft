@@ -112,7 +112,12 @@ public class TileStampingTable extends TileLaserTableBase implements IHasWork, I
                 NBTTagCompound tag = NBTUtils.getItemData(input);
                 for (int i = 0; i < 9; i++) {
                     if (tag.hasKey("item" + i)) {
-                        crafting.setInventorySlotContents(i, ItemStack.loadItemStackFromNBT(tag.getCompoundTag("item" + i)));
+                        ItemStack is = ItemStack.loadItemStackFromNBT(tag.getCompoundTag("item" + i));
+                        if (is != null) {
+                            crafting.setInventorySlotContents(i, is);
+                        } else {
+                            return;
+                        }
                     } else {
                         crafting.setInventorySlotContents(i, null);
                     }

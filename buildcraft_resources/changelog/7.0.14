@@ -1,0 +1,19 @@
+Improvements:
+
+* Quarries now dig through light fluids and stop on dense fluids. Behaviour might change later, so watch out! (asie)
+
+Bugs fixed:
+
+* [#2880] Try to fix fluid pipe bug (asie)
+* [#2878] Robot NPE for robots prior to 7.0.13 fix (asie)
+* [#2877] Survival blueprint crash (asie)
+* [#2841] Another crash with Oil in the Nether (asie)
+* [#2837] Massive lag with Construction Markers (hea3ven)
+* [#2831] Robots sinking through the ground (hea3ven)
+* [#2825, #2618, #1777] Quarry issues with just about every translucent block (asie)
+* Allow Builders to use arbitrary IPathProviders (asie)
+* Block breaking robots sleeping in mid air (hea3ven)
+* Error in robot AI loading (hea3ven)
+* Incorrect Request Needed Items action name (asie)
+* Packages crashing Minecraft if mods are removed (asie)
+* Robots ignoring gate config on their linked station when equipping items (hea3ven)

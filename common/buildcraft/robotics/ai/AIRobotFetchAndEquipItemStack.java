@@ -10,11 +10,10 @@ package buildcraft.robotics.ai;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.robots.AIRobot;
-import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.Transactor;
@@ -38,17 +37,23 @@ public class AIRobotFetchAndEquipItemStack extends AIRobot {
 	}
 
 	@Override
+	public void start() {
+		startDelegateAI(new AIRobotGotoStationToLoad(robot, filter, 1));
+	}
+
+	@Override
 	public void update() {
 		if (robot.getDockingStation() == null) {
-			startDelegateAI(new AIRobotGotoStationToLoad(robot, filter, 1));
-		} else {
-			if (delay++ > 40) {
-				if (equipItemStack()) {
-					terminate();
-				} else {
-					delay = 0;
-					startDelegateAI(new AIRobotGotoStationToLoad(robot, filter, 1));
-				}
+			setSuccess(false);
+			terminate();
+		}
+
+		if (delay++ > 40) {
+			if (equipItemStack()) {
+				terminate();
+			} else {
+				delay = 0;
+				startDelegateAI(new AIRobotGotoStationToLoad(robot, filter, 1));
 			}
 		}
 	}
@@ -71,31 +76,20 @@ public class AIRobotFetchAndEquipItemStack extends AIRobot {
 	}
 
 	private boolean equipItemStack() {
-		if (robot.getDockingStation() != null) {
-			DockingStation station = robot.getDockingStation();
-
-			ItemStack itemFound = null;
-
-			for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
-				TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX,
-						station.y() + dir.offsetY, station.z() + dir.offsetZ);
-
-				if (nearbyTile != null && nearbyTile instanceof IInventory) {
-					ITransactor trans = Transactor.getTransactorFor(nearbyTile);
-
-					itemFound = trans.remove(filter, dir.getOpposite(), true);
-
-					if (itemFound != null) {
-						break;
-					}
-				}
-			}
-
-			if (itemFound != null) {
-				robot.setItemInUse(itemFound);
-				return true;
-			}
+		IInventory tileInventory = robot.getDockingStation().getItemInput();
+		if (tileInventory == null) {
+			return false;
 		}
+
+		ITransactor trans = Transactor.getTransactorFor(tileInventory);
+
+		ItemStack itemFound = trans.remove(filter, ForgeDirection.UNKNOWN, true);
+
+		if (itemFound != null) {
+			robot.setItemInUse(itemFound);
+			return true;
+		}
+
 		return false;
 	}
 }

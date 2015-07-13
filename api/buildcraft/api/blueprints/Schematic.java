@@ -38,7 +38,7 @@ public abstract class Schematic {
 	 * Blocks are build in various stages, in order to make sure that a block
 	 * can indeed be placed, and that it's unlikely to disturb other blocks.
 	 */
-	public static enum BuildingStage {
+	public enum BuildingStage {
 		/**
 		 * Standalone blocks can be placed in the air, and they don't change
 		 * once placed.
