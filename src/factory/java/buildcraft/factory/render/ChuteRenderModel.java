@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
@@ -17,13 +18,25 @@ import buildcraft.core.lib.render.BuildCraftBakedModel;
 
 public class ChuteRenderModel extends BuildCraftBakedModel {
     public static TextureAtlasSprite sideTexture = null;
+    @SuppressWarnings("deprecation")
+    private final IBakedModel parent;
 
-    protected ChuteRenderModel(ImmutableList<BakedQuad> quads) {
+    @SuppressWarnings("deprecation")
+    protected ChuteRenderModel(ImmutableList<BakedQuad> quads, IBakedModel parent) {
         super(quads, null, DefaultVertexFormats.BLOCK);
+        this.parent = parent;
     }
 
     @SuppressWarnings({ "deprecation", "unchecked" })
     public static ChuteRenderModel create(IBakedModel parent) {
+        if (parent == null) {
+            /* The "chute.json" block model file contains the top and bottom boxes, so it will look strange if it
+             * doesn't exist. Just print out a warning to make sure they know that this is why. Print out a full stack
+             * trace because this really shouldn't happen, and it makes it much more obvious in the logfile where the
+             * error message is. */
+            new IllegalStateException("For some reason, the block model for the chute block was missing!"
+                + "\nThis is not meant to happen, you have a bad JAR file!").printStackTrace();
+        }
         List<BakedQuad> lst = Lists.newArrayList(parent.getGeneralQuads());
 
         Vector3f eastSouthUp__ = new Vector3f(15 / 16F, 9 / 16F, 15 / 16F);
@@ -52,8 +65,14 @@ public class ChuteRenderModel extends BuildCraftBakedModel {
         bakeQuad(lst, northVertexData, EnumFacing.NORTH);
 
         int[] southVertexData = getFrom(eastSouthDown, eastSouthUp__, westSouthUp__, westSouthDown, uvs);
-        bakeQuad(lst, southVertexData, EnumFacing.NORTH);
+        bakeQuad(lst, southVertexData, EnumFacing.SOUTH);
 
-        return new ChuteRenderModel(ImmutableList.copyOf(lst));
+        return new ChuteRenderModel(ImmutableList.copyOf(lst), parent);
+    }
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public ItemCameraTransforms getItemCameraTransforms() {
+        return parent.getItemCameraTransforms();
     }
 }

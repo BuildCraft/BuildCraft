@@ -33,5 +33,12 @@
 		"top_side":"buildcraftfactory:blocks/chute/top_side",
 		"bottom":"buildcraftfactory:blocks/chute/bottom",
 		"side":"buildcraftfactory:blocks/chute/side"
-	}
+	},
+    "display": {
+        "thirdperson": {
+            "rotation": [ 10, -45, 170 ],
+            "translation": [ 0, 1.5, -2.75 ],
+            "scale": [ 0.375, 0.375, 0.375 ]
+        }
+    }
 }

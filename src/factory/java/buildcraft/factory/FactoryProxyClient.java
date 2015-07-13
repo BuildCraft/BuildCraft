@@ -13,10 +13,8 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import buildcraft.api.core.BCLog;
 import buildcraft.core.lib.EntityResizableCuboid;
 import buildcraft.factory.gui.GuiAutoCrafting;
-import buildcraft.factory.render.RenderChute;
 import buildcraft.factory.render.RenderRefinery;
 import buildcraft.factory.render.RenderTank;
-import buildcraft.factory.tile.TileChute;
 import buildcraft.factory.tile.TileRefinery;
 import buildcraft.factory.tile.TileTank;
 
@@ -33,10 +31,6 @@ public class FactoryProxyClient extends FactoryProxy {
 
         if (BuildCraftFactory.refineryBlock != null) {
             ClientRegistry.bindTileEntitySpecialRenderer(TileRefinery.class, new RenderRefinery());
-        }
-
-        if (BuildCraftFactory.chuteBlock != null) {
-            ClientRegistry.bindTileEntitySpecialRenderer(TileChute.class, new RenderChute());
         }
     }
 
