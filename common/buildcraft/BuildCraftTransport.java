@@ -102,6 +102,7 @@ import buildcraft.transport.network.PacketPipeTransportItemStack;
 import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
 import buildcraft.transport.network.PacketPipeTransportTraveler;
 import buildcraft.transport.network.PacketPowerUpdate;
+import buildcraft.transport.pipes.PipeFluidsClay;
 import buildcraft.transport.pipes.PipeFluidsCobblestone;
 import buildcraft.transport.pipes.PipeFluidsDiamond;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
@@ -230,6 +231,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item pipeFluidsSandstone;
 	public static Item pipeFluidsEmerald;
 	public static Item pipeFluidsDiamond;
+	public static Item pipeFluidsClay;
 	public static Item pipePowerWood;
 	public static Item pipePowerCobblestone;
 	public static Item pipePowerStone;
@@ -355,6 +357,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipeFluidsDiamond = buildPipe(PipeFluidsDiamond.class, "Diamond Waterproof Pipe", BCCreativeTab.get("pipes"), pipeWaterproof, pipeItemsDiamond);
 			pipeFluidsSandstone = buildPipe(PipeFluidsSandstone.class, "Sandstone Waterproof Pipe", BCCreativeTab.get("pipes"), pipeWaterproof, pipeItemsSandstone);
 			pipeFluidsVoid = buildPipe(PipeFluidsVoid.class, "Void Waterproof Pipe", BCCreativeTab.get("pipes"), pipeWaterproof, pipeItemsVoid);
+			pipeFluidsClay = buildPipe(PipeFluidsClay.class, "Clay Waterproof Pipe", BCCreativeTab.get("pipes"), pipeWaterproof, pipeItemsClay);
 
 			pipePowerWood = buildPipe(PipePowerWood.class, "Wooden Kinesis Pipe", BCCreativeTab.get("pipes"), "dustRedstone", pipeItemsWood);
 			pipePowerCobblestone = buildPipe(PipePowerCobblestone.class, "Cobblestone Kinesis Pipe", BCCreativeTab.get("pipes"), "dustRedstone", pipeItemsCobblestone);
