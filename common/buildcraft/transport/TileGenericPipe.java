@@ -348,7 +348,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		scheduleRenderUpdate();
 		sendUpdateToClient();
 		if (pipe != null) {
-			BlockGenericPipe.updateNeighbourSignalState(pipe);
+			pipe.scheduleWireUpdate();
 		}
 	}
 
@@ -488,7 +488,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				renderState.wireMatrix.setWireConnected(color, direction, pipe.isWireConnectedTo(this.getTile(direction), color, direction));
 			}
 
-			boolean lit = pipe.signalStrength[color.ordinal()] > 0;
+			boolean lit = pipe.wireSignalStrength[color.ordinal()] > 0;
 
 			switch (color) {
 				case RED:

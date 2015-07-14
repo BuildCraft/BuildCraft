@@ -30,8 +30,6 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 
 public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergyHandler, ISerializable {
-	private static final int ENERGY_MULTIPLIER = 50;
-
 	public int liquidToExtract;
 
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeFluidsWood_Standard.ordinal();
@@ -127,6 +125,14 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 		return inserted;
 	}
 
+	protected int getEnergyMultiplier() {
+		return 5 * BuildCraftTransport.pipeFluidsBaseFlowRate;
+	}
+	
+	protected int getMaxExtractionFluid() {
+		return 100 * BuildCraftTransport.pipeFluidsBaseFlowRate;
+	}
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IIconProvider getIconProvider() {
@@ -167,10 +173,10 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 			return 0;
 		}
 
-		int maxToReceive = (1000 - liquidToExtract) / ENERGY_MULTIPLIER;
+		int maxToReceive = (getMaxExtractionFluid() - liquidToExtract) / getEnergyMultiplier();
 		int received = Math.min(maxReceive, maxToReceive);
 		if (!simulate) {
-			liquidToExtract += ENERGY_MULTIPLIER * received;
+			liquidToExtract += getEnergyMultiplier() * received;
 		}
 		return received;
 	}
@@ -188,7 +194,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 
 	@Override
 	public int getMaxEnergyStored(ForgeDirection from) {
-		return 1000 / ENERGY_MULTIPLIER;
+		return 1000 / getEnergyMultiplier();
 	}
 
 	@Override

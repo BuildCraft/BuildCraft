@@ -59,7 +59,6 @@ import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.CoreConstants;
-import buildcraft.core.lib.TileBuffer;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.core.lib.utils.Utils;
@@ -417,7 +416,13 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		}
 
 		pipeRemoved.put(new BlockIndex(x, y, z), pipe);
-		updateNeighbourSignalState(pipe);
+		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			TileEntity tile = world.getTileEntity(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
+			if (tile instanceof IPipeTile) {
+				Pipe<?> tpipe = (Pipe<?>) ((IPipeTile) tile).getPipe();
+				tpipe.scheduleWireUpdate();
+			}
+		}
 		world.removeTileEntity(x, y, z);
 	}
 
@@ -731,9 +736,10 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 	private boolean addWire(Pipe<?> pipe, PipeWire color) {
 		if (!pipe.wireSet[color.ordinal()]) {
 			pipe.wireSet[color.ordinal()] = true;
-			pipe.signalStrength[color.ordinal()] = 0;
+			pipe.wireSignalStrength[color.ordinal()] = 0;
 
 			pipe.updateSignalState();
+
 			pipe.container.scheduleRenderUpdate();
 			return true;
 		}
@@ -746,12 +752,10 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 				dropWire(color, pipe, player);
 			}
 
-			pipe.signalStrength[color.ordinal()] = 0;
+			pipe.wireSignalStrength[color.ordinal()] = 0;
 			pipe.wireSet[color.ordinal()] = false;
 
-			pipe.updateSignalState();
-
-			updateNeighbourSignalState(pipe);
+			pipe.propagateSignalState(color, 0);
 
 			if (isFullyDefined(pipe)) {
 				pipe.resolveActions();
@@ -1070,22 +1074,6 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		}
 
 		return false;
-	}
-
-	public static void updateNeighbourSignalState(Pipe<?> pipe) {
-		if (pipe != null && pipe.container != null) {
-			TileBuffer[] neighbours = pipe.container.getTileCache();
-
-			if (neighbours != null) {
-				for (int i = 0; i < 6; i++) {
-					if (neighbours[i] != null && neighbours[i].getTile() instanceof IPipeTile &&
-							!neighbours[i].getTile().isInvalid() &&
-							((IPipeTile) neighbours[i].getTile()).getPipe() instanceof Pipe<?>) {
-						((Pipe<?>) ((IPipeTile) neighbours[i].getTile()).getPipe()).updateSignalState();
-					}
-				}
-			}
-		}
 	}
 
 	@Override
