@@ -20,7 +20,9 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.LongHashMap;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSavedData;
+
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.world.ChunkEvent;
@@ -174,8 +176,6 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 
 			getResourcesTakenByRobot(robotId).add(resourceId);
 
-			resourceId.taken(robotId);
-
 			return true;
 		} else {
 			return false;
@@ -195,7 +195,6 @@ public class RobotRegistry extends WorldSavedData implements IRobotRegistry {
 
 			getResourcesTakenByRobot(robotId).remove(resourceId);
 			resourcesTaken.remove(resourceId);
-			resourceId.released(robotId);
 		}
 	}
 
