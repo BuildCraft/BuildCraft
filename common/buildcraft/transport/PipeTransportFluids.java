@@ -181,7 +181,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 	public void initFromPipe(Class<? extends Pipe> pipeClass) {
 		capacity = LIQUID_IN_PIPE;
 		flowRate = fluidCapacities.get(pipeClass);
-		travelDelay = MathUtils.clamp(Math.round(16F / (flowRate / 10)), 1, MAX_TRAVEL_DELAY);
+		travelDelay = MathUtils.clamp(Math.round(16F / (flowRate / BuildCraftTransport.pipeFluidsBaseFlowRate)), 1, MAX_TRAVEL_DELAY);
 	}
 
 	@Override
@@ -272,9 +272,10 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 					if (liquidToPush.amount > 0) {
 						int filled = ((IFluidHandler) target).fill(o.getOpposite(), liquidToPush, true);
-						section.drain(filled, true);
 						if (filled <= 0) {
 							outputTTL[o.ordinal()]--;
+						} else {
+							section.drain(filled, true);
 						}
 					}
 				}
@@ -362,12 +363,6 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
 			if (outputCooldown[i] > 0) {
 				outputCooldown[i]--;
-			} else {
-				if (outputTTL[i] > 0) {
-					outputTTL[i]--;
-				} else {
-					transferState[i] = TransferState.None;
-				}
 			}
 		}
 	}

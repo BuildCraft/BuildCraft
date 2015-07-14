@@ -89,7 +89,7 @@ public class AdvancedFacadeRecipe extends IntegrationRecipeBC {
 				additionalState = ItemFacade.FacadeState.createTransparent(wire);
 			} else {
 				additionalState = ItemFacade.getFacadeStates(facade)[0];
-				additionalState = ItemFacade.FacadeState.create(additionalState.block, additionalState.metadata, wire);
+				additionalState = new ItemFacade.FacadeState(additionalState.block, additionalState.metadata, wire, additionalState.hollow);
 			}
 
 			// if in states array exists state with the same wire just override it
