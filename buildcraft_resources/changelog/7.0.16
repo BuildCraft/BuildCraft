@@ -1,0 +1,6 @@
+Bugs fixed:
+
+* Fluid pipe behaviour regression (asie)
+* Integrated hollow facade becoming non-hollow (asie)
+* Rotating pipe orientation not working well in blueprints (asie)
+* Void fluid pipe having wrong colours (asie)
