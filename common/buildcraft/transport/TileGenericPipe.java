@@ -428,7 +428,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				for (Object o : world.playerEntities) {
 					EntityPlayerMP player = (EntityPlayerMP) o;
 
-					if (world.getPlayerManager().isPlayerWatchingChunk (player, xCoord >> 4, zCoord >> 4)) {
+					if (world.getPlayerManager().isPlayerWatchingChunk(player, xCoord >> 4, zCoord >> 4)) {
 						BuildCraftCore.instance.sendToPlayer(player, updatePacket);
 					}
 				}
