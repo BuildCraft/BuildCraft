@@ -22,6 +22,7 @@ import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.render.FluidRenderer;
 import buildcraft.core.lib.render.IInventoryRenderer;
 import buildcraft.core.lib.render.RenderUtils;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.TileRefinery;
 
 public class RenderRefinery extends TileEntitySpecialRenderer implements IInventoryRenderer {
@@ -68,7 +69,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer implements IInvent
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
 
-		render((TileRefinery) tileentity, x, y, z);
+		render((TileRefinery) CoreProxy.proxy.getServerTile(tileentity), x, y, z);
 	}
 
 	private void render(TileRefinery tile, double x, double y, double z) {

@@ -1,0 +1,14 @@
+Additions:
+
+* Clay fluid pipe! The power of insertion applied to liquids. (asie)
+* New blueprint library GUI, now featuring a scrollbar! (asie)
+* New Lists - sort by type, material, or both, and other improvements! (asie)
+
+Improvements:
+
+* Use integrated server data in singleplayer for certain tiles - back to the smoothness of 1.2.5! (asie)
+* Rewritten pipe wires - should now propagate more or less instantly. (asie)
+* Fluid pipe capacity and extraction rate now scales with the base flow multiplier. (asie)
+* Debugger support for fluid pipes (asie)
+* Add events for robot interaction and removal (asie)
+

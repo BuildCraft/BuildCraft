@@ -427,6 +427,18 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 		return outputCount;
 	}
 
+	public FluidRenderData createServerFluidRenderData() {
+		FluidRenderData rCache = new FluidRenderData();
+		rCache.fluidID = fluidType != null ? fluidType.getFluid().getID() : 0;
+		rCache.color = fluidType != null ? fluidType.getFluid().getColor(fluidType) : 0;
+		if (fluidType != null) {
+			for (int i = 0; i < 7; i++) {
+				rCache.amount[i] = sections[i].amount;
+			}
+		}
+		return rCache;
+	}
+
 	/**
 	 * Computes the PacketFluidUpdate packet for transmission to a client
 	 *
