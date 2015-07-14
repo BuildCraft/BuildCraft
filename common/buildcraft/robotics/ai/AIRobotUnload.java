@@ -9,6 +9,7 @@
 package buildcraft.robotics.ai;
 
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IInvSlot;
@@ -19,7 +20,7 @@ import buildcraft.api.transport.IInjectable;
 import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.core.lib.inventory.filters.ArrayStackOrListFilter;
 import buildcraft.robotics.statements.ActionRobotFilter;
-import buildcraft.robotics.statements.ActionStationInputItems;
+import buildcraft.robotics.statements.ActionStationAcceptItems;
 
 public class AIRobotUnload extends AIRobot {
 
@@ -65,7 +66,7 @@ public class AIRobotUnload extends AIRobot {
 
 			if (!ActionRobotFilter
 					.canInteractWithItem(station, new ArrayStackOrListFilter(robotSlot.getStackInSlot()),
-							ActionStationInputItems.class)) {
+							ActionStationAcceptItems.class)) {
 				return false;
 			}
 
