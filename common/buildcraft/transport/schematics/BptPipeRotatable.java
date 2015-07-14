@@ -14,9 +14,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
 
-public class BptPipeWooden extends BptPipeExtension {
+public class BptPipeRotatable extends BptPipeExtension {
 
-	public BptPipeWooden(Item i) {
+	public BptPipeRotatable(Item i) {
 		super (i);
 	}
 
