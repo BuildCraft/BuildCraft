@@ -5,3 +5,4 @@ Bugs fixed:
 * Rotating pipe orientation not working well in blueprints (asie)
 * Void fluid pipe having wrong colours (asie)
 * [2889] Fix robots movement desync when going through fluids (hea3ven)
+* Fix the work in area and load/unload area allowing non map locations items as parameters (hea3ven)
