@@ -176,7 +176,7 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 
 			if (inside == null || inside.stackSize <= 0) {
 				inv.setInventorySlotContents(slot, remaining);
-				remaining = null;
+				return;
 			} else if (StackHelper.canStacksMerge(inside, remaining)) {
 				remaining.stackSize -= StackHelper.mergeStacks(remaining, inside, true);
 			}

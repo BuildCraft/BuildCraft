@@ -137,12 +137,20 @@ public class TileStampingTable extends TileLaserTableBase implements IHasWork, I
 
             addEnergy(-getRequiredEnergy());
 
-            craftSlot.onPickupFromSlot(internalPlayer, result);
-            handleLeftoverItems(crafting);
-            handleLeftoverItems(internalPlayer.inventory);
+            if (result != null) {
+                craftSlot.onPickupFromSlot(internalPlayer, result);
+                handleLeftoverItems(crafting);
+                handleLeftoverItems(internalPlayer.inventory);
 
-            outputStack(result, this, 1, false);
-            decrStackSize(0, 1);
+                outputStack(result, this, 1, false);
+                decrStackSize(0, 1);
+            } else {
+                ItemStack outputSlot = getStackInSlot(1);
+                if (outputSlot == null) {
+                    setInventorySlotContents(1, getStackInSlot(0));
+                    setInventorySlotContents(0, null);
+                }
+            }
         }
     }
 

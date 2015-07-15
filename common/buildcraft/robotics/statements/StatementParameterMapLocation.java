@@ -15,7 +15,8 @@ public class StatementParameterMapLocation extends StatementParameterItemStack {
 	}
 
 	@Override
-	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stack, StatementMouseClick mouse) {
+	public void onClick(IStatementContainer source, IStatement stmt, ItemStack stackIn, StatementMouseClick mouse) {
+		ItemStack stack = stackIn;
 		if (stack != null && !(stack.getItem() instanceof IMapLocation)) {
 			stack = null;
 		}
