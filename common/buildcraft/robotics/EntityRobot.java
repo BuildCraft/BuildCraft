@@ -363,6 +363,11 @@ public class EntityRobot extends EntityRobotBase implements
 	protected void updateEntityActionState() {
 	}
 
+	@Override
+	public boolean handleWaterMovement() {
+		return false;
+	}
+
 	@SideOnly(Side.CLIENT)
 	private void updateEnergyFX() {
 		energyFX += energySpendPerCycle;
