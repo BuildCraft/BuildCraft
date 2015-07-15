@@ -8,26 +8,29 @@
  */
 package buildcraft.silicon;
 
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.power.ILaserTarget;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.inventory.SimpleInventory;
-import buildcraft.core.lib.utils.Average;
+import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.core.lib.utils.AverageInt;
+import buildcraft.core.lib.utils.Utils;
 
 public abstract class TileLaserTableBase extends TileBuildCraft implements ILaserTarget, IInventory, IHasWork {
-
 	public int clientRequiredEnergy = 0;
 	protected SimpleInventory inv = new SimpleInventory(getSizeInventory(), "inv", 64);
 	private int energy = 0;
 	private int recentEnergyAverage;
-	private Average recentEnergyAverageUtil = new Average(20);
+	private AverageInt recentEnergyAverageUtil = new AverageInt(20);
 
 	@Override
 	public void updateEntity() {
@@ -112,7 +115,7 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int slot) {
-		return null;
+		return inv.getStackInSlotOnClosing(slot);
 	}
 
 	@Override
@@ -150,6 +153,41 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 		super.readFromNBT(nbt);
 		inv.readFromNBT(nbt, "inv");
 		energy = nbt.getInteger("energy");
+	}
+
+	protected void outputStack(ItemStack remaining, boolean autoEject) {
+		outputStack(remaining, null, 0, autoEject);
+	}
+
+	protected void outputStack(ItemStack remaining, IInventory inv, int slot, boolean autoEject) {
+		if (autoEject) {
+			if (remaining != null && remaining.stackSize > 0) {
+				remaining.stackSize -= Utils
+						.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, remaining);
+			}
+
+			if (remaining != null && remaining.stackSize > 0) {
+				remaining.stackSize -= Utils.addToRandomInjectableAround(worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN, remaining);
+			}
+		}
+
+		if (inv != null && remaining != null && remaining.stackSize > 0) {
+			ItemStack inside = inv.getStackInSlot(slot);
+
+			if (inside == null || inside.stackSize <= 0) {
+				inv.setInventorySlotContents(slot, remaining);
+				remaining = null;
+			} else if (StackHelper.canStacksMerge(inside, remaining)) {
+				remaining.stackSize -= StackHelper.mergeStacks(remaining, inside, true);
+			}
+		}
+
+		if (remaining != null && remaining.stackSize > 0) {
+			EntityItem entityitem = new EntityItem(worldObj, xCoord + 0.5, yCoord + 0.7, zCoord + 0.5,
+					remaining);
+
+			worldObj.spawnEntityInWorld(entityitem);
+		}
 	}
 
 	public void getGUINetworkData(int id, int data) {

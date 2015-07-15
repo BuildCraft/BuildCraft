@@ -134,19 +134,6 @@ public class TileStampingTable extends TileLaserTableBase implements IHasWork, I
 
             IRecipe recipe = crafting.findRecipe();
             ItemStack result = recipe != null ? recipe.getCraftingResult(crafting).copy() : null;
-            ItemStack resultInto = this.getStackInSlot(1);
-
-            if (recipe == null || result == null || result.stackSize <= 0) {
-                if (resultInto == null || StackHelper.canStacksMerge(input, resultInto)) {
-                    this.setInventorySlotContents(0, null);
-                    this.setInventorySlotContents(1, input);
-                }
-                return;
-            } else if (resultInto != null &&
-                    (!StackHelper.canStacksMerge(result, resultInto) ||
-                    resultInto.stackSize + result.stackSize > result.getMaxStackSize())) {
-                return;
-            }
 
             addEnergy(-getRequiredEnergy());
 
@@ -154,12 +141,7 @@ public class TileStampingTable extends TileLaserTableBase implements IHasWork, I
             handleLeftoverItems(crafting);
             handleLeftoverItems(internalPlayer.inventory);
 
-            if (resultInto == null) {
-                setInventorySlotContents(1, result);
-            } else {
-                resultInto.stackSize += result.stackSize;
-            }
-
+            outputStack(result, this, 1, false);
             decrStackSize(0, 1);
         }
     }

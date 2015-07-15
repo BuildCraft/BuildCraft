@@ -33,6 +33,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.Position;
 import buildcraft.api.power.IEngine;
+import buildcraft.api.power.ILaserTarget;
 import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.api.transport.IInjectable;
 import buildcraft.api.transport.IPipeTile;
@@ -91,7 +92,7 @@ public final class Utils {
 
 			TileEntity tileInventory = BlockUtils.getTileEntity(world, (int) pos.x, (int) pos.y, (int) pos.z);
 			ITransactor transactor = Transactor.getTransactorFor(tileInventory);
-			if (transactor != null && !(tileInventory instanceof IEngine) && transactor.add(stack, orientation.getOpposite(), false).stackSize > 0) {
+			if (transactor != null && !(tileInventory instanceof IEngine) && !(tileInventory instanceof ILaserTarget) && transactor.add(stack, orientation.getOpposite(), false).stackSize > 0) {
 				return transactor.add(stack, orientation.getOpposite(), true).stackSize;
 			}
 		}
