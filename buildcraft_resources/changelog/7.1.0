@@ -1,3 +1,7 @@
+BREAKING CHANGES!
+
+* Quartz Fluid Pipes no longer connect to Cobblestone or Stone Fluid Pipes. This might break existing builds! (asie)
+
 Additions:
 
 * Clay fluid pipe! The power of insertion applied to liquids. (asie)

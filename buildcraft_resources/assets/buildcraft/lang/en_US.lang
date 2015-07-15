@@ -442,12 +442,13 @@ tip.gate.wires.diamond=Red, Blue, Green, Yellow
 tip.gate.wires.emerald=Red, Blue, Green, Yellow
 tip.gate.expansions=§9§oInstalled Expansions:
 
-tip.PipeFluidsCobblestone=Won't connect to Stone
+tip.PipeFluidsCobblestone=Won't connect to Stone or Quartz
 tip.PipeFluidsDiamond=Sorts fluids
 tip.PipeFluidsEmerald=Extraction pipe
 tip.PipeFluidsIron=Valve pipe
+tip.PipeFluidsQuartz=Won't connect to Cobblestone or Stone
 tip.PipeFluidsSandstone=Only connects to other pipes
-tip.PipeFluidsStone=Won't connect to Cobblestone
+tip.PipeFluidsStone=Won't connect to Cobblestone or Quartz
 tip.PipeFluidsVoid=Destroys fluids
 tip.PipeFluidsWood=Extraction pipe
 tip.PipeItemsClay=Insertion pipe
