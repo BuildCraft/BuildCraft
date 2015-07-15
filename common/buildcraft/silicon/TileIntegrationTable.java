@@ -13,24 +13,22 @@ import java.util.List;
 
 import io.netty.buffer.ByteBuf;
 
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.recipes.IIntegrationRecipe;
-import buildcraft.core.lib.inventory.ITransactor;
-import buildcraft.core.lib.inventory.InventoryMapper;
 import buildcraft.core.lib.inventory.StackHelper;
-import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.Utils;
 
-public class TileIntegrationTable extends TileLaserTableBase {
+public class TileIntegrationTable extends TileLaserTableBase implements ISidedInventory {
 	public static final int SLOT_OUTPUT = 9;
 	private static final int CYCLE_LENGTH = 16;
+	private static final int[] SLOTS = Utils.createSlotArray(0, 10);
 	private int tick = 0;
 	private IIntegrationRecipe activeRecipe;
 	private boolean activeRecipeValid = false;
-	private InventoryMapper mappedOutput = new InventoryMapper(this, SLOT_OUTPUT, 1, false);
 	private int maxExpCountClient;
 
 	@Override
@@ -72,9 +70,6 @@ public class TileIntegrationTable extends TileLaserTableBase {
 			output = activeRecipe.craft(getStackInSlot(0), getExpansions(), false);
 
 			if (output != null) {
-				ITransactor trans = Transactor.getTransactorFor(mappedOutput);
-				trans.add(output, ForgeDirection.UP, true);
-
 				ItemStack input = getStackInSlot(0);
 
 				if (input.stackSize > output.stackSize) {
@@ -82,6 +77,8 @@ public class TileIntegrationTable extends TileLaserTableBase {
 				} else {
 					setInventorySlotContents(0, null);
 				}
+
+				outputStack(output, this, 9, false);
 
 				for (int i = 1; i < 9; i++) {
 					if (getStackInSlot(i) != null && getStackInSlot(i).stackSize == 0) {
@@ -184,10 +181,9 @@ public class TileIntegrationTable extends TileLaserTableBase {
 		} else if (activeRecipe == null) {
 			return false;
 		} else if (slot < 9) {
-			if (activeRecipe.getMaximumExpansionCount(getStackInSlot(0)) > 0) {
-				if (slot > activeRecipe.getMaximumExpansionCount(getStackInSlot(0))) {
-					return false;
-				}
+			int expansionCount = activeRecipe.getMaximumExpansionCount(getStackInSlot(0));
+			if (expansionCount > 0 && slot > expansionCount) {
+				return false;
 			}
 			return activeRecipe.isValidExpansion(getStackInSlot(0), stack);
 		} else {
@@ -249,5 +245,32 @@ public class TileIntegrationTable extends TileLaserTableBase {
 
 	private void updateRecipe() {
 		setNewActiveRecipe();
+	}
+
+	@Override
+	public int[] getAccessibleSlotsFromSide(int side) {
+		return SLOTS;
+	}
+
+	@Override
+	public boolean canInsertItem(int slot, ItemStack stack, int side) {
+		if (slot == 0) {
+			return true;
+		} else if (activeRecipe == null) {
+			return false;
+		} else if (slot < 9) {
+			int expansionCount = activeRecipe.getMaximumExpansionCount(getStackInSlot(0));
+			if (expansionCount > 0 && slot > expansionCount) {
+				return false;
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public boolean canExtractItem(int slot, ItemStack stack, int side) {
+		return slot == 9;
 	}
 }

@@ -16,7 +16,6 @@ import buildcraft.api.items.IMapLocation;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
-import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.statements.BCStatement;
@@ -91,7 +90,7 @@ public class ActionRobotWorkInArea extends BCStatement implements IActionInterna
 
 	@Override
 	public IStatementParameter createParameter(int index) {
-		return new StatementParameterItemStack();
+		return new StatementParameterMapLocation();
 	}
 
 	@Override
