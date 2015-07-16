@@ -23,7 +23,7 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.Position;
-import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.lib.utils.LaserUtils;
 
 public class Box implements IBox, ISerializable {
 	public enum Kind {
@@ -239,7 +239,7 @@ public class Box implements IBox, ISerializable {
 
 	@Override
 	public void createLaserData() {
-		lasersData = Utils.createLaserDataBox(xMin, yMin, zMin, xMax, yMax, zMax);
+		lasersData = LaserUtils.createLaserDataBox(xMin, yMin, zMin, xMax, yMax, zMax);
 	}
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {
