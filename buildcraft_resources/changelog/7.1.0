@@ -1,5 +1,6 @@
 BREAKING CHANGES!
 
+* Cobblestone Structure Pipes have a new recipe. (asie)
 * Quartz Fluid Pipes no longer connect to Cobblestone or Stone Fluid Pipes. This might break existing builds! (asie)
 
 Additions:

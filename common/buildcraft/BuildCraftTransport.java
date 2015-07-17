@@ -370,7 +370,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipePowerEmerald = buildPipe(PipePowerEmerald.class, "dustRedstone", pipeItemsEmerald);
             pipePowerSandstone = buildPipe(PipePowerSandstone.class, "dustRedstone", pipeItemsSandstone);
 
-            pipeStructureCobblestone = buildPipe(PipeStructureCobblestone.class, Blocks.gravel, pipeItemsCobblestone);
+            pipeStructureCobblestone = buildPipe(PipeStructureCobblestone.class, Blocks.cobblestone, Blocks.gravel, Blocks.cobblestone);
 
 			pipeWire = new ItemPipeWire();
 			CoreProxy.proxy.registerItem(pipeWire);
@@ -664,6 +664,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		// Pipe Plug
 		GameRegistry.addShapelessRecipe(new ItemStack(plugItem, 4), new ItemStack(pipeStructureCobblestone));
+		GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(powerAdapterItem, 4), "scs", "sbs", "sas", 's', pipeStructureCobblestone, 'a', Items.redstone, 'b', "gearStone", 'c', "ingotGold"));
 
 		if (Loader.isModLoaded("BuildCraft|Silicon")) {
 			TransportSiliconRecipes.loadSiliconRecipes();
