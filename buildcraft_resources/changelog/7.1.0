@@ -17,6 +17,10 @@ Improvements:
 * Debugger support for fluid pipes (asie)
 * Add events for robot interaction and removal (asie)
 * Tweaked power beam rendering algorithm (asie)
+* Rewritten robots request system (hea3ven)
+  * Changed the IRequestProvider api to be independent of robots.
+  * Delivery robots can now carry more than an item at a time.
+  * Builders and requesters now request more than one item at a time.
 
 Bugs fixed:
 
