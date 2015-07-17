@@ -60,8 +60,8 @@ import buildcraft.transport.utils.FluidRenderData;
 public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	public static final PipeRendererTESR INSTANCE = new PipeRendererTESR();
 
-	public static final float DISPLAY_MULTIPLIER = 0.1f;
-	public static final int POWER_STAGES = 100;
+	public static final int POWER_STAGES = 256;
+	private static final float POWER_MAGIC = 0.7F; // Math.pow(displayPower, POWER_MAGIC)
 
 	private static final int LIQUID_STAGES = 40;
 	private static final int MAX_ITEMS_TO_RENDER = 10;
@@ -658,7 +658,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
 		GL11.glDisable(GL11.GL_LIGHTING);
-//		GL11.glEnable(GL11.GL_BLEND);
 
 		GL11.glTranslatef((float) x, (float) y, (float) z);
 
@@ -667,7 +666,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		int[] displayList = pow.overload > 0 ? displayPowerListOverload : displayPowerList;
 
 		for (int side = 0; side < 6; ++side) {
-			short stage = pow.displayPower[side];
+			int stage = (int) Math.ceil(Math.pow(pow.displayPower[side], POWER_MAGIC));
 			if (stage >= 1) {
 				if (!pipe.container.isPipeConnected(ForgeDirection.getOrientation(side))) {
 					continue;

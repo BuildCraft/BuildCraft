@@ -275,7 +275,9 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
-		BCLog.initLog();
+		BCLog.logger.info("Starting BuildCraft " + Version.getVersion());
+		BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2015");
+		BCLog.logger.info("http://www.mod-buildcraft.com");
 
 		new BCCreativeTab("main");
 

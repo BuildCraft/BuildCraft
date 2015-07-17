@@ -5,6 +5,7 @@ BREAKING CHANGES!
 Additions:
 
 * Clay fluid pipe! The power of insertion applied to liquids. (asie)
+* Power Adapters! Connect Kinesis Pipes to non-Kinesis pipes. (asie)
 * New blueprint library GUI, now featuring a scrollbar! (asie)
 * New Lists - sort by type, material, or both, and other improvements! (asie)
 
@@ -15,4 +16,8 @@ Improvements:
 * Fluid pipe capacity and extraction rate now scales with the base flow multiplier. (asie)
 * Debugger support for fluid pipes (asie)
 * Add events for robot interaction and removal (asie)
+* Tweaked power beam rendering algorithm (asie)
 
+Bugs fixed:
+
+* Make Docking Station items look like the real thing (asie)

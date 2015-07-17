@@ -377,6 +377,7 @@ item.FacadePhased.state_transparent=Transparent
 item.PipePlug.name=Pipe Plug
 item.Lens.name=Lens
 item.Filter.name=Filter
+item.PipePowerAdapter.name=Power Adapter
 item.debugger.name=Debugger
 item.debugger.warning=Use only for testing! Leaks secrets.
 item.package.name=Package
