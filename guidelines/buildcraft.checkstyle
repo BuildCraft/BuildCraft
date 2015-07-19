@@ -8,7 +8,7 @@
     Checkstyle-Configuration: BuildCraft
     Description: none
 -->
-<module name="Checker">	
+<module name="Checker"> 
   <property name="severity" value="error"/>
   <module name="SuppressionCommentFilter">
     <property name="offCommentFormat" value="CHECKSTYLE.OFF\: ([\w\|]+)"/>
@@ -83,5 +83,10 @@
     <module name="UpperEll"/>
     <module name="OuterTypeFilename"/>
     <module name="FileContentsHolder"/>
+    <module name="RegexpSinglelineJava">
+        <property name="format" value="System\.(out|err)\.print(ln|f){0,1}\(.*\)"/>
+        <property name="ignoreComments" value="true"/>
+        <property name="message" value="Standard output/error stream should not be used."/>
+    </module>
   </module>
 </module>
