@@ -27,8 +27,10 @@ import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.render.DynamicTextureBC;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.robotics.TileZonePlan;
+import buildcraft.robotics.map.MapWorld;
 
 public class ContainerZonePlan extends BuildCraftContainer implements ICommandReceiver {
+	private static final int MAX_PACKET_LENGTH = 30000;
 
 	public DynamicTextureBC mapTexture;
 	public ZonePlan currentAreaSelection;
@@ -92,9 +94,10 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
 				gui.refreshSelectedArea();
 			} else if ("receiveImage".equals(command)) {
 				int size = stream.readUnsignedMedium();
+				int pos = stream.readUnsignedMedium();
 
-				for (int i = 0; i < size; ++i) {
-					mapTexture.colorMap[i] = 0xFF000000 | MapColor.mapColorArray[stream.readUnsignedByte()].colorValue;
+				for (int i = 0; i < Math.min(size - pos, MAX_PACKET_LENGTH); ++i) {
+					mapTexture.colorMap[pos + i] = 0xFF000000 | MapColor.mapColorArray[stream.readUnsignedByte()].colorValue;
 				}
 			}
 		} else if (side.isServer()) {
@@ -123,28 +126,36 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
 	private void computeMap(int cx, int cz, int width, int height, int blocksPerPixel, EntityPlayer player) {
 		final byte[] textureData = new byte[width * height];
 
+		MapWorld w = BuildCraftRobotics.manager.getWorld(map.getWorldObj());
 		int startX = cx - width * blocksPerPixel / 2;
 		int startZ = cz - height * blocksPerPixel / 2;
+		int mapStartX = (map.chunkStartX << 4);
+		int mapStartZ = (map.chunkStartZ << 4);
 
 		for (int i = 0; i < width; ++i) {
 			for (int j = 0; j < height; ++j) {
 				int x = startX + i * blocksPerPixel;
 				int z = startZ + j * blocksPerPixel;
-				int ix = x - (map.chunkStartX << 4);
-				int iz = z - (map.chunkStartZ << 4);
+				int ix = x - mapStartX;
+				int iz = z - mapStartZ;
 
 				if (ix >= 0 && iz >= 0 && ix < TileZonePlan.RESOLUTION && iz < TileZonePlan.RESOLUTION) {
-					textureData[i + j * width] = (byte) BuildCraftRobotics.manager.getWorld(map.getWorldObj())
-							.getColor(x, z);
+					textureData[i + j * width] = (byte) w.getColor(x, z);
 				}
 			}
 		}
 
-		BuildCraftCore.instance.sendToPlayer(player, new PacketCommand(this, "receiveImage", new CommandWriter() {
-			public void write(ByteBuf data) {
-				data.writeMedium(textureData.length);
-				data.writeBytes(textureData);
-			}
-		}));
+		final int len = MAX_PACKET_LENGTH;
+
+		for (int i = 0; i < textureData.length; i += len) {
+			final int pos = i;
+			BuildCraftCore.instance.sendToPlayer(player, new PacketCommand(this, "receiveImage", new CommandWriter() {
+				public void write(ByteBuf data) {
+					data.writeMedium(textureData.length);
+					data.writeMedium(pos);
+					data.writeBytes(textureData, pos, Math.min(textureData.length - pos, len));
+				}
+			}));
+		}
 	}
 }
