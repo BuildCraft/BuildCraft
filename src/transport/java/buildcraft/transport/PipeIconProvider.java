@@ -5,12 +5,15 @@
 package buildcraft.transport;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.BuildCraftCore;
+import buildcraft.core.lib.render.IIconProvider;
 
-public class PipeIconProvider implements TextureAtlasSpriteProvider {
+public class PipeIconProvider implements IIconProvider {
 
     public enum TYPE {
 
@@ -154,12 +157,12 @@ public class PipeIconProvider implements TextureAtlasSpriteProvider {
             this(iconTag, iconTag);
         }
 
-        private void registerIcon(TextureAtlasSpriteRegister iconRegister) {
+        private void registerIcon(TextureMap iconRegister) {
             String name = BuildCraftCore.colorBlindMode ? iconTagColorBlind : iconTag;
             if (name.indexOf(":") < 0) {
                 name = "transport:pipes/" + name;
             }
-            icon = iconRegister.registerIcon("buildcraft" + name);
+            icon = iconRegister.registerSprite(new ResourceLocation("buildcraft" + name));
         }
 
         public TextureAtlasSprite getIcon() {
@@ -178,7 +181,7 @@ public class PipeIconProvider implements TextureAtlasSpriteProvider {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
+    public void registerIcons(TextureMap iconRegister) {
         for (TYPE type : TYPE.VALUES) {
             type.registerIcon(iconRegister);
         }

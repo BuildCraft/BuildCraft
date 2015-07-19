@@ -4,6 +4,8 @@
  * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.api.gates;
 
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.tileentity.TileEntity;
 
 public interface IGateExpansion {
@@ -14,11 +16,11 @@ public interface IGateExpansion {
 
     GateExpansionController makeController(TileEntity pipeTile);
 
-    // void registerBlockOverlay(TextureAtlasSpriteRegister iconRegister);
+    void registerBlockOverlay(TextureMap iconRegister);
 
-    // void registerItemOverlay(TextureAtlasSpriteRegister iconRegister);
+    void registerItemOverlay(TextureMap iconRegister);
 
-    // TextureAtlasSprite getOverlayBlock();
+    TextureAtlasSprite getOverlayBlock();
 
-    // TextureAtlasSprite getOverlayItem();
+    TextureAtlasSprite getOverlayItem();
 }

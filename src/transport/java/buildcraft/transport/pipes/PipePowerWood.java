@@ -69,7 +69,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 
         sources = 0;
 
-        for (EnumFacing o : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing o : EnumFacing.VALUES) {
             boolean oldPowerSource = powerSources[o.ordinal()];
 
             if (!container.isPipeConnected(o)) {
@@ -109,7 +109,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
             int energyMaxExtract = Math.min(battery.getMaxEnergyExtract(), battery.getMaxEnergyStored() - battery.getEnergyStored());
             energyMaxExtract /= sources;
 
-            for (EnumFacing o : EnumFacing.VALID_DIRECTIONS) {
+            for (EnumFacing o : EnumFacing.VALUES) {
                 if (!powerSources[o.ordinal()]) {
                     continue;
                 }
@@ -132,7 +132,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
         energyToRemove /= sources;
 
         if (battery.getEnergyStored() > 0) {
-            for (EnumFacing o : EnumFacing.VALID_DIRECTIONS) {
+            for (EnumFacing o : EnumFacing.VALUES) {
                 if (!powerSources[o.ordinal()]) {
                     continue;
                 }
@@ -154,7 +154,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
         battery.writeToNBT(batteryNBT);
         data.setTag("battery", batteryNBT);
 
-        for (int i = 0; i < EnumFacing.VALID_DIRECTIONS.length; i++) {
+        for (int i = 0; i < EnumFacing.VALUES.length; i++) {
             data.setBoolean("powerSources[" + i + "]", powerSources[i]);
         }
     }
@@ -164,7 +164,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
         super.readFromNBT(data);
         battery.readFromNBT(data.getCompoundTag("battery"));
 
-        for (int i = 0; i < EnumFacing.VALID_DIRECTIONS.length; i++) {
+        for (int i = 0; i < EnumFacing.VALUES.length; i++) {
             powerSources[i] = data.getBoolean("powerSources[" + i + "]");
         }
     }

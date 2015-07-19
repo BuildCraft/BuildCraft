@@ -5,10 +5,14 @@
 package buildcraft.transport;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class WireIconProvider implements TextureAtlasSpriteProvider {
+import buildcraft.core.lib.render.IIconProvider;
+
+public class WireIconProvider implements IIconProvider {
 
     public static final int Texture_Red_Dark = 0;
     public static final int Texture_Red_Lit = 1;
@@ -32,17 +36,17 @@ public class WireIconProvider implements TextureAtlasSpriteProvider {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
+    public void registerIcons(TextureMap iconRegister) {
         icons = new TextureAtlasSprite[MAX];
 
-        icons[WireIconProvider.Texture_Red_Dark] = iconRegister.registerIcon("buildcraftcore:misc/texture_red_dark");
-        icons[WireIconProvider.Texture_Red_Lit] = iconRegister.registerIcon("buildcraftcore:misc/texture_red_lit");
-        icons[WireIconProvider.Texture_Blue_Dark] = iconRegister.registerIcon("buildcraftcore:misc/texture_blue_dark");
-        icons[WireIconProvider.Texture_Blue_Lit] = iconRegister.registerIcon("buildcraftcore:misc/texture_blue_lit");
-        icons[WireIconProvider.Texture_Green_Dark] = iconRegister.registerIcon("buildcraftcore:misc/texture_green_dark");
-        icons[WireIconProvider.Texture_Green_Lit] = iconRegister.registerIcon("buildcraftcore:misc/texture_green_lit");
-        icons[WireIconProvider.Texture_Yellow_Dark] = iconRegister.registerIcon("buildcraftcore:misc/texture_yellow_dark");
-        icons[WireIconProvider.Texture_Yellow_Lit] = iconRegister.registerIcon("buildcraftcore:misc/texture_yellow_lit");
+        icons[WireIconProvider.Texture_Red_Dark] = iconRegister.registerSprite(new ResourceLocation("buildcraftcore:misc/texture_red_dark"));
+        icons[WireIconProvider.Texture_Red_Lit] = iconRegister.registerSprite(new ResourceLocation("buildcraftcore:misc/texture_red_lit"));
+        icons[WireIconProvider.Texture_Blue_Dark] = iconRegister.registerSprite(new ResourceLocation("buildcraftcore:misc/texture_blue_dark"));
+        icons[WireIconProvider.Texture_Blue_Lit] = iconRegister.registerSprite(new ResourceLocation("buildcraftcore:misc/texture_blue_lit"));
+        icons[WireIconProvider.Texture_Green_Dark] = iconRegister.registerSprite(new ResourceLocation("buildcraftcore:misc/texture_green_dark"));
+        icons[WireIconProvider.Texture_Green_Lit] = iconRegister.registerSprite(new ResourceLocation("buildcraftcore:misc/texture_green_lit"));
+        icons[WireIconProvider.Texture_Yellow_Dark] = iconRegister.registerSprite(new ResourceLocation("buildcraftcore:misc/texture_yellow_dark"));
+        icons[WireIconProvider.Texture_Yellow_Lit] = iconRegister.registerSprite(new ResourceLocation("buildcraftcore:misc/texture_yellow_lit"));
 
     }
 

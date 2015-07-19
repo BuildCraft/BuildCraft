@@ -96,7 +96,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
         // HUGE HACK! TODO - Remove in an API rewrite by adding
         // ways for actions to fix their state on removal.
         if (actions[position] instanceof ActionValve && pipe != null && pipe.transport != null) {
-            for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
+            for (EnumFacing side : EnumFacing.VALUES) {
                 pipe.transport.allowInput(side, true);
                 pipe.transport.allowOutput(side, true);
             }
@@ -301,8 +301,9 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
     // GUI
     public void openGui(EntityPlayer player) {
         if (!player.worldObj.isRemote) {
-            player.openGui(BuildCraftTransport.instance, GuiIds.GATES, pipe.container.getWorldObj(), pipe.container.xCoord, pipe.container.yCoord,
-                pipe.container.zCoord);
+            player.openGui(
+                    BuildCraftTransport.instance, GuiIds.GATES, pipe.container.getWorld(), pipe.container.x(), pipe.container.y(), pipe.container
+                            .z());
             ((ContainerGateInterface) player.openContainer).setGate(direction.ordinal());
         }
     }
@@ -450,7 +451,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
             if (action instanceof IActionInternal) {
                 ((IActionInternal) action).actionActivate(this, slot.parameters);
             } else if (action instanceof IActionExternal) {
-                for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
+                for (EnumFacing side : EnumFacing.VALUES) {
                     TileEntity tile = this.getPipe().getTile().getNeighborTile(side);
                     if (tile != null) {
                         ((IActionExternal) action).actionActivate(tile, side, this, slot.parameters);
@@ -465,7 +466,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
                 continue;
             }
 
-            for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
+            for (EnumFacing side : EnumFacing.VALUES) {
                 TileEntity tile = pipe.container.getTile(side);
                 if (tile instanceof IActionReceptor) {
                     IActionReceptor recept = (IActionReceptor) tile;
@@ -510,7 +511,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
                 return true;
             }
         } else if (trigger instanceof ITriggerExternal) {
-            for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
+            for (EnumFacing side : EnumFacing.VALUES) {
                 TileEntity tile = this.getPipe().getTile().getNeighborTile(side);
                 if (tile != null) {
                     if (tile instanceof ITriggerExternalOverride) {
@@ -557,7 +558,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
         ArrayList<IStatement> allTriggers = new ArrayList<IStatement>(64);
         allTriggers.addAll(StatementManager.getInternalTriggers(this));
 
-        for (EnumFacing o : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing o : EnumFacing.VALUES) {
             TileEntity tile = pipe.container.getTile(o);
             allTriggers.addAll(StatementManager.getExternalTriggers(o, tile));
         }
@@ -582,7 +583,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
         ArrayList<IStatement> allActions = new ArrayList<IStatement>(64);
         allActions.addAll(StatementManager.getInternalActions(this));
 
-        for (EnumFacing o : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing o : EnumFacing.VALUES) {
             TileEntity tile = pipe.container.getTile(o);
             allActions.addAll(StatementManager.getExternalActions(o, tile));
         }
@@ -607,10 +608,9 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
                     boolean sameParams = true;
 
                     for (int p = 0; p < MAX_PARAMETERS; ++p) {
-                        if ((actionParameters[i][p] != null && actionParameters[j][p] == null)
-                            || (actionParameters[i][p] == null && actionParameters[j][p] != null)
-                            || (actionParameters[i][p] != null && actionParameters[j][p] != null && !actionParameters[i][p]
-                                .equals(actionParameters[j][p]))) {
+                        if ((actionParameters[i][p] != null && actionParameters[j][p] == null) || (actionParameters[i][p] == null
+                            && actionParameters[j][p] != null) || (actionParameters[i][p] != null && actionParameters[j][p] != null
+                                && !actionParameters[i][p].equals(actionParameters[j][p]))) {
                             sameParams = false;
                             break;
                         }

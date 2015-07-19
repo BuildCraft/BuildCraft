@@ -4,11 +4,10 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.network;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.BitSet;
 
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
@@ -20,16 +19,18 @@ import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.utils.FluidRenderData;
 
+import io.netty.buffer.ByteBuf;
+
 public class PacketFluidUpdate extends PacketCoordinates {
     public FluidRenderData renderCache = new FluidRenderData();
     public BitSet delta;
 
-    public PacketFluidUpdate(int xCoord, int yCoord, int zCoord) {
-        super(PacketIds.PIPE_LIQUID, xCoord, yCoord, zCoord);
+    public PacketFluidUpdate(BlockPos pos) {
+        super(PacketIds.PIPE_LIQUID, pos);
     }
 
-    public PacketFluidUpdate(int xCoord, int yCoord, int zCoord, boolean chunkPacket) {
-        super(PacketIds.PIPE_LIQUID, xCoord, yCoord, zCoord);
+    public PacketFluidUpdate(BlockPos pos, boolean chunkPacket) {
+        super(PacketIds.PIPE_LIQUID, pos);
         this.isChunkDataPacket = chunkPacket;
     }
 
@@ -40,11 +41,11 @@ public class PacketFluidUpdate extends PacketCoordinates {
         super.readData(data);
 
         World world = CoreProxy.proxy.getClientWorld();
-        if (!world.blockExists(posX, posY, posZ)) {
+        if (world.isAirBlock(pos)) {
             return;
         }
 
-        TileEntity entity = world.getTileEntity(posX, posY, posZ);
+        TileEntity entity = world.getTileEntity(pos);
         if (!(entity instanceof TileGenericPipe)) {
             return;
         }

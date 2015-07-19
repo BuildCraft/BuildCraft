@@ -457,7 +457,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
     private void renderPluggables(TileGenericPipe pipe, double x, double y, double z) {
         TileEntityRendererDispatcher.instance.field_147553_e.bindTexture(TextureMap.locationBlocksTexture);
 
-        for (EnumFacing direction : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing direction : EnumFacing.VALUES) {
             PipePluggable pluggable = pipe.getPipePluggable(direction);
             if (pluggable != null && pluggable.getDynamicRenderer() != null) {
                 pluggable.getDynamicRenderer().renderPluggable(pipe.getPipe(), direction, pluggable, pos);
@@ -612,7 +612,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
         EnumFacing targetOrientation = null;
 
-        for (EnumFacing o : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing o : EnumFacing.VALUES) {
             if (state.pipeConnectionMatrix.isConnected(o)) {
 
                 connections++;
@@ -709,7 +709,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
         boolean sides = false, above = false;
 
-        for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing side : EnumFacing.VALUES) {
             int i = side.ordinal();
 
             FluidRenderData fluidRenderData = trans.renderCache;
@@ -733,7 +733,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
             GL11.glPushMatrix();
             int list = 0;
 
-            switch (EnumFacing.VALID_DIRECTIONS[i]) {
+            switch (EnumFacing.VALUES[i]) {
                 case UP:
                     above = true;
                     list = d.sideVertical[stage];

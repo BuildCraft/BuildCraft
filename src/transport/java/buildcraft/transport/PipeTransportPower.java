@@ -141,7 +141,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
     @Override
     public void onNeighborBlockChange(int blockId) {
         super.onNeighborBlockChange(blockId);
-        for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing side : EnumFacing.VALUES) {
             updateTile(side);
         }
     }
@@ -163,7 +163,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
     private void init() {
         if (needsInit) {
             needsInit = false;
-            for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
+            for (EnumFacing side : EnumFacing.VALUES) {
                 updateTile(side);
             }
         }
@@ -190,7 +190,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 
         init();
 
-        for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing side : EnumFacing.VALUES) {
             if (tiles[side.ordinal()] != null && tiles[side.ordinal()].isInvalid()) {
                 updateTile(side);
             }
@@ -221,22 +221,22 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
                             if (ep instanceof IPipeTile) {
                                 Pipe<?> nearbyPipe = (Pipe<?>) ((IPipeTile) ep).getPipe();
                                 PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyPipe.transport;
-                                watts = nearbyTransport.receiveEnergy(EnumFacing.VALID_DIRECTIONS[j].getOpposite(), watts);
+                                watts = nearbyTransport.receiveEnergy(EnumFacing.VALUES[j].getOpposite(), watts);
                                 internalPower[i] -= watts;
                                 dbgEnergyOutput[j] += watts;
                             } else {
                                 int iWatts = (int) watts;
                                 if (ep instanceof IEnergyHandler) {
                                     IEnergyHandler handler = (IEnergyHandler) ep;
-                                    if (handler.canConnectEnergy(EnumFacing.VALID_DIRECTIONS[j].getOpposite())) {
-                                        watts = handler.receiveEnergy(EnumFacing.VALID_DIRECTIONS[j].getOpposite(), iWatts, false);
+                                    if (handler.canConnectEnergy(EnumFacing.VALUES[j].getOpposite())) {
+                                        watts = handler.receiveEnergy(EnumFacing.VALUES[j].getOpposite(), iWatts, false);
                                     }
                                     internalPower[i] -= iWatts;
                                     dbgEnergyOutput[j] += iWatts;
                                 } else if (ep instanceof IEnergyReceiver) {
                                     IEnergyReceiver handler = (IEnergyReceiver) ep;
-                                    if (handler.canConnectEnergy(EnumFacing.VALID_DIRECTIONS[j].getOpposite())) {
-                                        watts = handler.receiveEnergy(EnumFacing.VALID_DIRECTIONS[j].getOpposite(), iWatts, false);
+                                    if (handler.canConnectEnergy(EnumFacing.VALUES[j].getOpposite())) {
+                                        watts = handler.receiveEnergy(EnumFacing.VALUES[j].getOpposite(), iWatts, false);
                                     }
                                     internalPower[i] -= iWatts;
                                     dbgEnergyOutput[j] += iWatts;
@@ -266,7 +266,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
         }
 
         // Compute the tiles requesting energy that are not power pipes
-        for (EnumFacing dir : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing dir : EnumFacing.VALUES) {
             if (!outputOpen(dir)) {
                 continue;
             }
@@ -320,7 +320,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
                         continue;
                     }
                     PipeTransportPower nearbyTransport = (PipeTransportPower) ((Pipe) nearbyTile.getPipe()).transport;
-                    nearbyTransport.requestEnergy(EnumFacing.VALID_DIRECTIONS[i].getOpposite(), transferQuery[i]);
+                    nearbyTransport.requestEnergy(EnumFacing.VALUES[i].getOpposite(), transferQuery[i]);
                 }
             }
         }

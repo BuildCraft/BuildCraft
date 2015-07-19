@@ -31,8 +31,8 @@ import buildcraft.transport.utils.FluidRenderData;
 public class PipeTransportFluids extends PipeTransport implements IFluidHandler {
     public static final Map<Class<? extends Pipe<?>>, Integer> fluidCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
 
-    /** The amount of liquid contained by a pipe section. For simplicity, all pipe sections are assumed to be of the same
-     * volume. */
+    /** The amount of liquid contained by a pipe section. For simplicity, all pipe sections are assumed to be of the
+     * same volume. */
     public static int LIQUID_IN_PIPE = FluidContainerRegistry.BUCKET_VOLUME / 4;
     public static int MAX_TRAVEL_DELAY = 12;
     public static short INPUT_TTL = 60; // 100
@@ -40,7 +40,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
     public static short OUTPUT_COOLDOWN = 30; // 30
 
     private static int NETWORK_SYNC_TICKS = BuildCraftCore.updateFactor / 2;
-    private static final EnumFacing[] directions = EnumFacing.VALID_DIRECTIONS;
+    private static final EnumFacing[] directions = EnumFacing.VALUES;
     private static final EnumFacing[] orientations = EnumFacing.values();
 
     public class PipeSection {
@@ -208,7 +208,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
 
     @Override
     public void updateEntity() {
-        if (container.getWorldObj().isRemote) {
+        if (container.getWorld().isRemote) {
             return;
         }
 
@@ -216,7 +216,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
             moveFluids();
         }
 
-        if (networkSyncTracker.markTimeIfDelay(container.getWorldObj())) {
+        if (networkSyncTracker.markTimeIfDelay(container.getWorld())) {
             boolean init = false;
             if (++clientSyncCounter > BuildCraftCore.longUpdateFactor) {
                 clientSyncCounter = 0;
@@ -225,14 +225,13 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
             PacketFluidUpdate packet = computeFluidUpdate(init, true);
 
             if (packet != null) {
-                BuildCraftTransport.instance.sendToPlayers(packet, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord,
-                    DefaultProps.PIPE_CONTENTS_RENDER_DIST);
+                BuildCraftTransport.instance.sendToPlayers(packet, container.getWorld(), container.getPos(), DefaultProps.PIPE_CONTENTS_RENDER_DIST);
             }
         }
     }
 
     private void moveFluids() {
-        short newTimeSlot = (short) (container.getWorldObj().getTotalWorldTime() % travelDelay);
+        short newTimeSlot = (short) (container.getWorld().getTotalWorldTime() % travelDelay);
         short outputCount = computeCurrentConnectionStatesAndTickFlows(newTimeSlot > 0 && newTimeSlot < travelDelay ? newTimeSlot : 0);
 
         moveFromPipe(outputCount);
@@ -298,8 +297,9 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
         }
 
         if (realDirections.size() > 0) {
-            container.pipe.eventBus.handleEvent(PipeEventFluid.FindDest.class, new PipeEventFluid.FindDest(container.pipe, new FluidStack(fluidType,
-                pushAmount), realDirections));
+            container.pipe.eventBus.handleEvent(
+                    PipeEventFluid.FindDest.class, new PipeEventFluid.FindDest(
+                            container.pipe, new FluidStack(fluidType, pushAmount), realDirections));
             float min = Math.min(flowRate * realDirections.size(), totalAvailable) / (float) flowRate / realDirections.size();
 
             for (EnumFacing direction : realDirections.elementSet()) {
@@ -437,7 +437,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
         }
 
         if (changed || initPacket) {
-            PacketFluidUpdate packet = new PacketFluidUpdate(container.xCoord, container.yCoord, container.zCoord, initPacket);
+            PacketFluidUpdate packet = new PacketFluidUpdate(container.getPos(), initPacket);
             packet.renderCache = renderCacheCopy;
             packet.delta = delta;
             return packet;
@@ -474,8 +474,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
                 totalAmount += sections[i].amount;
             }
             if (totalAmount > 0) {
-                FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(new FluidStack(fluidType, totalAmount), getWorld(), container.xCoord,
-                    container.yCoord, container.zCoord));
+                FluidEvent.fireEvent(new FluidEvent.FluidSpilledEvent(new FluidStack(fluidType, totalAmount), getWorld(), container.getPos()));
             }
         }
     }

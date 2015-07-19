@@ -24,7 +24,7 @@ public class PipePluggableState implements ISerializable {
     public void setPluggables(PipePluggable[] pluggables) {
         this.pluggables = pluggables;
         this.pluggableMatrix.clean();
-        for (EnumFacing dir : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing dir : EnumFacing.VALUES) {
             this.pluggableMatrix.setConnected(dir, pluggables[dir.ordinal()] != null);
         }
     }
@@ -43,7 +43,7 @@ public class PipePluggableState implements ISerializable {
     @Override
     public void readData(ByteBuf data) {
         this.pluggableMatrix.readData(data);
-        for (EnumFacing dir : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing dir : EnumFacing.VALUES) {
             if (this.pluggableMatrix.isConnected(dir)) {
                 try {
                     PipePluggable p = PipeManager.pipePluggables.get(data.readUnsignedShort()).newInstance();

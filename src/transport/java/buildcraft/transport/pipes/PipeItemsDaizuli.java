@@ -178,7 +178,7 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements ISeria
     public LinkedList<IActionInternal> getActions() {
         LinkedList<IActionInternal> action = super.getActions();
         action.addAll(Arrays.asList(BuildCraftTransport.actionPipeColor));
-        for (EnumFacing direction : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing direction : EnumFacing.VALUES) {
             if (container.isPipeConnected(direction)) {
                 action.add(BuildCraftTransport.actionPipeDirection[direction.ordinal()]);
             }

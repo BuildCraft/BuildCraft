@@ -2,7 +2,7 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.transport;
+package buildcraft.transport.item;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,7 +99,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 
         public void writeToNBT(NBTTagCompound nbt) {
             if (block != null) {
-                nbt.setString("block", Block.blockRegistry.getNameForObject(block));
+                nbt.setString("block", Utils.getNameForBlock(block));
             }
             nbt.setByte("metadata", (byte) metadata);
             if (wire != null) {
@@ -285,7 +285,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     }
 
     private static boolean isBlockBlacklisted(Block block) {
-        String blockName = Block.blockRegistry.getNameForObject(block);
+        String blockName = Utils.getNameForBlock(block);
 
         if (blockName == null) {
             return true;
@@ -431,7 +431,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
             return;
         }
 
-        String recipeId = "buildcraft:facade{" + Block.blockRegistry.getNameForObject(block) + "#" + itemStack.getItemDamage() + "}";
+        String recipeId = "buildcraft:facade{" + Utils.getNameForBlock(block) + "#" + itemStack.getItemDamage() + "}";
 
         ItemStack facade = getFacadeForBlock(block, itemStack.getItemDamage());
 

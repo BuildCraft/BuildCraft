@@ -21,11 +21,11 @@ public abstract class PipeTransport {
 
     public TileGenericPipe container;
 
-    protected boolean[] inputsOpen = new boolean[EnumFacing.VALID_DIRECTIONS.length];
-    protected boolean[] outputsOpen = new boolean[EnumFacing.VALID_DIRECTIONS.length];
+    protected boolean[] inputsOpen = new boolean[EnumFacing.VALUES.length];
+    protected boolean[] outputsOpen = new boolean[EnumFacing.VALUES.length];
 
     public PipeTransport() {
-        for (int b = 0; b < EnumFacing.VALID_DIRECTIONS.length; b++) {
+        for (int b = 0; b < EnumFacing.VALUES.length; b++) {
             inputsOpen[b] = true;
             outputsOpen[b] = true;
         }
@@ -34,7 +34,7 @@ public abstract class PipeTransport {
     public abstract IPipeTile.PipeType getPipeType();
 
     public World getWorld() {
-        return container.getWorldObj();
+        return container.getWorld();
     }
 
     public void readFromNBT(NBTTagCompound nbt) {
@@ -42,7 +42,7 @@ public abstract class PipeTransport {
             BitSet inputBuf = BitSetUtils.fromByteArray(new byte[] { nbt.getByte("inputOpen") });
             BitSet outputBuf = BitSetUtils.fromByteArray(new byte[] { nbt.getByte("outputOpen") });
 
-            for (int b = 0; b < EnumFacing.VALID_DIRECTIONS.length; b++) {
+            for (int b = 0; b < EnumFacing.VALUES.length; b++) {
                 inputsOpen[b] = inputBuf.get(b);
                 outputsOpen[b] = outputBuf.get(b);
             }
@@ -50,10 +50,10 @@ public abstract class PipeTransport {
     }
 
     public void writeToNBT(NBTTagCompound nbt) {
-        BitSet inputBuf = new BitSet(EnumFacing.VALID_DIRECTIONS.length);
-        BitSet outputBuf = new BitSet(EnumFacing.VALID_DIRECTIONS.length);
+        BitSet inputBuf = new BitSet(EnumFacing.VALUES.length);
+        BitSet outputBuf = new BitSet(EnumFacing.VALUES.length);
 
-        for (int b = 0; b < EnumFacing.VALID_DIRECTIONS.length; b++) {
+        for (int b = 0; b < EnumFacing.VALUES.length; b++) {
             if (inputsOpen[b]) {
                 inputBuf.set(b, true);
             } else {

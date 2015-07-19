@@ -9,12 +9,13 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.core.lib.render.IIconProvider;
 import buildcraft.transport.BuildCraftTransport;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 
-public class PipeItemsCobblestone extends Pipe {
+public class PipeItemsCobblestone extends Pipe<PipeTransportItems> {
 
     public PipeItemsCobblestone(Item item) {
         super(new PipeTransportItems(), item);
@@ -22,7 +23,7 @@ public class PipeItemsCobblestone extends Pipe {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSpriteProvider getIconProvider() {
+    public IIconProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 

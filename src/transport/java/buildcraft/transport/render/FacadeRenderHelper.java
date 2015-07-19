@@ -97,7 +97,7 @@ public final class FacadeRenderHelper {
             if (renderBlock.canRenderInPass(PipeRendererWorld.renderPass)) {
                 int renderMeta = pluggable.getCurrentMetadata();
 
-                for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
+                for (EnumFacing side : EnumFacing.VALUES) {
                     textures[side.ordinal()] = renderBlock.getIcon(facadeBlockAccess, tile.x(), tile.y(), tile.z(), side.ordinal());
                     if (textures[side.ordinal()] == null) {
                         textures[side.ordinal()] = renderBlock.getIcon(side.ordinal(), renderMeta);

@@ -15,6 +15,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.core.IMCHandler;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.item.ItemFacade;
 
 public class IMCHandlerTransport extends IMCHandler {
@@ -84,12 +85,12 @@ public class IMCHandlerTransport extends IMCHandler {
 
                 Block block = Block.getBlockFromItem(modItemStack.getItem());
                 if (block != null) {
-                    String blockName = Block.blockRegistry.getNameForObject(block);
+                    String blockName = Utils.getNameForBlock(block);
                     ItemFacade.blacklistFacade(blockName);
                 }
             } else {
                 BCLog.logger.info(String.format("Invalid blacklist-facade message from mod %s. Send an ItemStackMessage instead.", message
-                    .getSender()));
+                        .getSender()));
             }
         } catch (Throwable e) {}
     }

@@ -1,4 +1,4 @@
-package buildcraft.transport;
+package buildcraft.transport.item;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;

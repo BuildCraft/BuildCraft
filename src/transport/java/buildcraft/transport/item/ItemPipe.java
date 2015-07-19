@@ -2,7 +2,7 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.transport;
+package buildcraft.transport.item;
 
 import java.util.List;
 
@@ -27,6 +27,7 @@ import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.transport.BuildCraftTransport;
+import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeToolTipManager;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.block.BlockGenericPipe;
@@ -37,7 +38,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
     private TextureAtlasSpriteProvider iconProvider;
     private int pipeIconIndex;
 
-    protected ItemPipe(BCCreativeTab creativeTab) {
+    public ItemPipe(BCCreativeTab creativeTab) {
         super(creativeTab);
         this.setMaxDamage(0);
         this.setHasSubtypes(true);
@@ -57,8 +58,8 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
         if (worldBlock == Blocks.snow) {
             side = 1;
-        } else if (worldBlock != Blocks.vine && worldBlock != Blocks.tallgrass && worldBlock != Blocks.deadbush
-            && (worldBlock == null || !worldBlock.isReplaceable(world, pos))) {
+        } else if (worldBlock != Blocks.vine && worldBlock != Blocks.tallgrass && worldBlock != Blocks.deadbush && (worldBlock == null || !worldBlock
+                .isReplaceable(world, pos))) {
             if (side == 0) {
                 j--;
             }
@@ -99,8 +100,9 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
                     ((TileGenericPipe) tile).initializeFromItemMetadata(itemstack.getItemDamage());
                 }
 
-                world.playSoundEffect(i + 0.5F, j + 0.5F, k + 0.5F, block.stepSound.func_150496_b(), (block.stepSound.getVolume() + 1.0F) / 2.0F,
-                    block.stepSound.getPitch() * 0.8F);
+                world.playSoundEffect(
+                        i + 0.5F, j + 0.5F, k + 0.5F, block.stepSound.func_150496_b(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound
+                                .getPitch() * 0.8F);
 
                 itemstack.stackSize--;
             }

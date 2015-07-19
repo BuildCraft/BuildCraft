@@ -31,6 +31,7 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.internal.IDropControlInventory;
 import buildcraft.core.lib.inventory.InvUtils;
+import buildcraft.core.lib.render.IIconProvider;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.block.BlockGenericPipe;
 import buildcraft.transport.gates.GateFactory;
@@ -42,7 +43,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
     public final T transport;
     public final Item item;
     public boolean[] wireSet = new boolean[] { false, false, false, false };
-    public final Gate[] gates = new Gate[EnumFacing.VALID_DIRECTIONS.length];
+    public final Gate[] gates = new Gate[EnumFacing.VALUES.length];
     public PipeEventBus eventBus = new PipeEventBus();
 
     private boolean internalUpdateScheduled = false;
@@ -110,11 +111,11 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
         return getIconIndex(null);
     }
 
-    /** Should return the TextureAtlasSpriteProvider that provides icons for this pipe
+    /** Should return the IIconProvider that provides icons for this pipe
      *
      * @return An array of icons */
     @SideOnly(Side.CLIENT)
-    public abstract TextureAtlasSpriteProvider getIconProvider();
+    public abstract IIconProvider getIconProvider();
 
     /** Should return the index in the array returned by GetTextureIcons() for a specified direction
      *
@@ -134,7 +135,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
         actionStates.clear();
 
         // Update the gate if we have any
-        if (!container.getWorldObj().isRemote) {
+        if (!container.getWorld().isRemote) {
             for (Gate gate : gates) {
                 if (gate != null) {
                     gate.resolveActions();
@@ -152,7 +153,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
         transport.writeToNBT(data);
 
         // Save gate if any
-        for (int i = 0; i < EnumFacing.VALID_DIRECTIONS.length; i++) {
+        for (int i = 0; i < EnumFacing.VALUES.length; i++) {
             final String key = "Gate[" + i + "]";
             Gate gate = gates[i];
             if (gate != null) {
@@ -172,7 +173,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
     public void readFromNBT(NBTTagCompound data) {
         transport.readFromNBT(data);
 
-        for (int i = 0; i < EnumFacing.VALID_DIRECTIONS.length; i++) {
+        for (int i = 0; i < EnumFacing.VALUES.length; i++) {
             final String key = "Gate[" + i + "]";
             gates[i] = data.hasKey(key) ? GateFactory.makeGate(this, data.getCompoundTag(key)) : null;
         }
@@ -202,7 +203,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
     private void readNearbyPipesSignal(PipeWire color) {
         boolean foundBiggerSignal = false;
 
-        for (EnumFacing o : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing o : EnumFacing.VALUES) {
             TileEntity tile = container.getTile(o);
 
             if (tile instanceof IPipeTile) {
@@ -222,7 +223,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
             // worldObj.markBlockNeedsUpdate(container.xCoord, container.yCoord, zCoord);
             container.scheduleRenderUpdate();
 
-            for (EnumFacing o : EnumFacing.VALID_DIRECTIONS) {
+            for (EnumFacing o : EnumFacing.VALUES) {
                 TileEntity tile = container.getTile(o);
 
                 if (tile instanceof IPipeTile) {
@@ -265,7 +266,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
         // STEP 2: transmit signal in nearby blocks
 
         if (signalStrength[wire.ordinal()] > 1) {
-            for (EnumFacing o : EnumFacing.VALID_DIRECTIONS) {
+            for (EnumFacing o : EnumFacing.VALUES) {
                 TileEntity tile = container.getTile(o);
 
                 if (tile instanceof IPipeTile) {
@@ -283,7 +284,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
     }
 
     private boolean receiveSignal(int signal, PipeWire color) {
-        if (container.getWorldObj() == null) {
+        if (container.getWorld() == null) {
             return false;
         }
 
@@ -325,7 +326,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
     public int getMaxRedstoneOutput(EnumFacing dir) {
         int output = 0;
 
-        for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing side : EnumFacing.VALUES) {
             output = Math.max(output, getRedstoneOutput(side));
             if (side == dir) {
                 output = Math.max(output, getRedstoneOutputSide(side));
@@ -347,8 +348,8 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
         return gate != null ? gate.getSidedRedstoneOutput() : 0;
     }
 
-    public int isPoweringTo(int side) {
-        EnumFacing o = EnumFacing.getOrientation(side).getOpposite();
+    public int isPoweringTo(EnumFacing side) {
+        EnumFacing o = side.getOpposite();
 
         TileEntity tile = container.getTile(o);
 
@@ -359,7 +360,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
         }
     }
 
-    public int isIndirectlyPoweringTo(int l) {
+    public int isIndirectlyPoweringTo(EnumFacing l) {
         return isPoweringTo(l);
     }
 
@@ -377,7 +378,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
     @Deprecated
     public boolean hasGate() {
-        for (EnumFacing direction : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing direction : EnumFacing.VALUES) {
             if (hasGate(direction)) {
                 return true;
             }
@@ -390,22 +391,20 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
     }
 
     protected void notifyBlocksOfNeighborChange(EnumFacing side) {
-        container.getWorldObj().notifyBlocksOfNeighborChange(container.xCoord + side.offsetX, container.yCoord + side.offsetY,
-            container.zCoord + side.offsetZ, BuildCraftTransport.genericPipeBlock);
+        container.getWorld().notifyBlockOfStateChange(container.getPos().offset(side), BuildCraftTransport.genericPipeBlock);
     }
 
     protected void updateNeighbors(boolean needSelf) {
         if (needSelf) {
-            container.getWorldObj().notifyBlocksOfNeighborChange(container.xCoord, container.yCoord, container.zCoord,
-                BuildCraftTransport.genericPipeBlock);
+            container.getWorld().notifyNeighborsOfStateChange(container.getPos(), BuildCraftTransport.genericPipeBlock);
         }
-        for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing side : EnumFacing.VALUES) {
             notifyBlocksOfNeighborChange(side);
         }
     }
 
     public void dropItem(ItemStack stack) {
-        InvUtils.dropItems(container.getWorldObj(), stack, container.xCoord, container.yCoord, container.zCoord);
+        InvUtils.dropItems(container.getWorld(), stack, container.getPos());
     }
 
     public ArrayList<ItemStack> computeItemDrop() {
@@ -417,7 +416,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
             }
         }
 
-        for (EnumFacing direction : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing direction : EnumFacing.VALUES) {
             if (container.hasPipePluggable(direction)) {
                 for (ItemStack stack : container.getPipePluggable(direction).getDropItems(container)) {
                     result.add(stack);
@@ -476,8 +475,8 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
             return false;
         }
 
-        return pipe.transport instanceof PipeTransportStructure || transport instanceof PipeTransportStructure
-            || Utils.checkPipesConnections(container, tile);
+        return pipe.transport instanceof PipeTransportStructure || transport instanceof PipeTransportStructure || Utils.checkPipesConnections(
+                container, tile);
     }
 
     public void dropContents() {
@@ -494,7 +493,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
         EnumFacing targetOrientation = null;
 
-        for (EnumFacing o : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing o : EnumFacing.VALUES) {
             if (container.isPipeConnected(o)) {
 
                 connectionsNum++;
@@ -527,7 +526,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
     public void onChunkUnload() {}
 
     public World getWorld() {
-        return container.getWorldObj();
+        return container.getWorld();
     }
 
     @Override

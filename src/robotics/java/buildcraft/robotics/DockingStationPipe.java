@@ -142,7 +142,7 @@ public class DockingStationPipe extends DockingStation {
 
     @Override
     public IRequestProvider getRequestProvider() {
-        for (EnumFacing dir : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing dir : EnumFacing.VALUES) {
             TileEntity nearbyTile = getPipe().getWorld().getTileEntity(x() + dir.offsetX, y() + dir.offsetY, z() + dir.offsetZ);
             if (nearbyTile instanceof IRequestProvider) {
                 return (IRequestProvider) nearbyTile;

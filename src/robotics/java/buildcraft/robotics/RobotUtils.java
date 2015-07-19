@@ -23,7 +23,7 @@ public final class RobotUtils {
 
         if (tile instanceof IPipeTile) {
             IPipeTile pipeTile = (IPipeTile) tile;
-            for (EnumFacing d : EnumFacing.VALID_DIRECTIONS) {
+            for (EnumFacing d : EnumFacing.VALUES) {
                 if (pipeTile.getPipePluggable(d) instanceof IDockingStationProvider) {
                     IDockingStationProvider pluggable = (IDockingStationProvider) pipeTile.getPipePluggable(d);
                     stations.add(pluggable.getStation());

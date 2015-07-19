@@ -111,7 +111,7 @@ public class PipeFluidsIron extends Pipe<PipeTransportFluids> {
     @Override
     public LinkedList<IActionInternal> getActions() {
         LinkedList<IActionInternal> action = super.getActions();
-        for (EnumFacing direction : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing direction : EnumFacing.VALUES) {
             if (container.isPipeConnected(direction)) {
                 action.add(BuildCraftTransport.actionPipeDirection[direction.ordinal()]);
             }

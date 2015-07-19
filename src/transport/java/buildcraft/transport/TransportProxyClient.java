@@ -86,10 +86,6 @@ public class TransportProxyClient extends TransportProxy {
         MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.facadeItem, facadeItemRenderer);
         MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.plugItem, plugItemRenderer);
         MinecraftForgeClient.registerItemRenderer(BuildCraftTransport.pipeGate, gateItemRenderer);
-
-        TransportProxy.pipeModel = RenderingRegistry.getNextAvailableRenderId();
-
-        RenderingRegistry.registerBlockHandler(pipeWorldRenderer);
     }
 
     @Override

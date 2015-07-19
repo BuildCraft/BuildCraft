@@ -83,7 +83,7 @@ public class ActionValve extends BCStatement implements IActionInternal {
                     transport.allowOutput(side, state.outputOpen);
                 }
             } else {
-                for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
+                for (EnumFacing side : EnumFacing.VALUES) {
                     transport.allowInput(side, state.inputOpen);
                     transport.allowOutput(side, state.outputOpen);
                 }

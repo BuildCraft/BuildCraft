@@ -78,7 +78,7 @@ jar {
 // module section
 // --------------------
 
-ext.modules = [ "core", "builders", "energy", "factory"/*, "robotics", "silicon", "transport" */]
+ext.modules = [ "core", "builders", "energy", "factory", /*"robotics", "silicon", */"transport" ]
 ext.moduleDependencies = [  
 				                "core":[], 
                             	"builders":["core"],

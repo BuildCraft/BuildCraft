@@ -244,6 +244,7 @@ public abstract class BlockBuildCraftBase extends Block {
         }
     }
 
+    /** Override this to easily allow the collision boxes and selected bounding boxes to be calculated */
     public AxisAlignedBB getBox(IBlockAccess world, BlockPos pos, IBlockState state) {
         return new AxisAlignedBB(0, 0, 0, 1, 1, 1);
     }

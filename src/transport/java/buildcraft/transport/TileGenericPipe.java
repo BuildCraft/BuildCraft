@@ -4,11 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.List;
-
-import cofh.api.energy.IEnergyHandler;
 
 import org.apache.logging.log4j.Level;
 
@@ -31,6 +27,8 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.ISerializable;
@@ -61,6 +59,8 @@ import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.item.ItemFacade.FacadeState;
 import buildcraft.transport.pluggable.PlugPluggable;
 
+import io.netty.buffer.ByteBuf;
+
 public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeTile, ITileBufferHolder, IEnergyHandler, IDropControlInventory,
         ISyncedTile, ISolidSideTile, IGuiReturnHandler, IRedstoneEngineReceiver, IDebuggable {
 
@@ -72,7 +72,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
 
     public Pipe pipe;
     public int redstoneInput;
-    public int[] redstoneInputSide = new int[EnumFacing.VALID_DIRECTIONS.length];
+    public int[] redstoneInputSide = new int[EnumFacing.VALUES.length];
 
     protected boolean deletePipe = false;
     protected boolean sendClientUpdate = false;
@@ -101,10 +101,10 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     }
 
     public static class SideProperties {
-        PipePluggable[] pluggables = new PipePluggable[EnumFacing.VALID_DIRECTIONS.length];
+        PipePluggable[] pluggables = new PipePluggable[EnumFacing.VALUES.length];
 
         public void writeToNBT(NBTTagCompound nbt) {
-            for (int i = 0; i < EnumFacing.VALID_DIRECTIONS.length; i++) {
+            for (int i = 0; i < EnumFacing.VALUES.length; i++) {
                 PipePluggable pluggable = pluggables[i];
                 final String key = "pluggable[" + i + "]";
                 if (pluggable == null) {
@@ -119,7 +119,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         }
 
         public void readFromNBT(NBTTagCompound nbt) {
-            for (int i = 0; i < EnumFacing.VALID_DIRECTIONS.length; i++) {
+            for (int i = 0; i < EnumFacing.VALUES.length; i++) {
                 final String key = "pluggable[" + i + "]";
                 if (!nbt.hasKey(key)) {
                     continue;
@@ -157,7 +157,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
             }
 
             // Migration code
-            for (int i = 0; i < EnumFacing.VALID_DIRECTIONS.length; i++) {
+            for (int i = 0; i < EnumFacing.VALUES.length; i++) {
                 PipePluggable pluggable = null;
                 if (nbt.hasKey("facadeState[" + i + "]")) {
                     pluggable = new FacadePluggable(FacadeState.readArray(nbt.getTagList("facadeState[" + i + "]", Constants.NBT.TAG_COMPOUND)));
@@ -174,13 +174,13 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
                         }
                     } else if (nbt.hasKey("facadeBlocksStr[" + i + "][0]")) {
                         // 6.0.x
-                        FacadeState mainState =
-                            FacadeState.create((Block) Block.blockRegistry.getObject(nbt.getString("facadeBlocksStr[" + i + "][0]")), nbt
-                                .getInteger("facadeMeta[" + i + "][0]"));
+                        FacadeState mainState = FacadeState.create(
+                                (Block) Block.blockRegistry.getObject(nbt.getString("facadeBlocksStr[" + i + "][0]")), nbt.getInteger(
+                                        "facadeMeta[" + i + "][0]"));
                         if (nbt.hasKey("facadeBlocksStr[" + i + "][1]")) {
-                            FacadeState phasedState =
-                                FacadeState.create((Block) Block.blockRegistry.getObject(nbt.getString("facadeBlocksStr[" + i + "][1]")), nbt
-                                    .getInteger("facadeMeta[" + i + "][1]"), PipeWire.fromOrdinal(nbt.getInteger("facadeWires[" + i + "]")));
+                            FacadeState phasedState = FacadeState.create(
+                                    (Block) Block.blockRegistry.getObject(nbt.getString("facadeBlocksStr[" + i + "][1]")), nbt.getInteger(
+                                            "facadeMeta[" + i + "][1]"), PipeWire.fromOrdinal(nbt.getInteger("facadeWires[" + i + "]")));
                             pluggable = new FacadePluggable(new FacadeState[] { mainState, phasedState });
                         } else {
                             pluggable = new FacadePluggable(new FacadeState[] { mainState });
@@ -199,8 +199,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         }
 
         public void rotateLeft() {
-            PipePluggable[] newPluggables = new PipePluggable[EnumFacing.VALID_DIRECTIONS.length];
-            for (EnumFacing dir : EnumFacing.VALID_DIRECTIONS) {
+            PipePluggable[] newPluggables = new PipePluggable[EnumFacing.VALUES.length];
+            for (EnumFacing dir : EnumFacing.VALUES) {
                 newPluggables[dir.getRotation(EnumFacing.UP).ordinal()] = pluggables[dir.ordinal()];
             }
             pluggables = newPluggables;
@@ -233,7 +233,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         }
 
         public void validate(TileGenericPipe pipe) {
-            for (EnumFacing d : EnumFacing.VALID_DIRECTIONS) {
+            for (EnumFacing d : EnumFacing.VALUES) {
                 PipePluggable p = pluggables[d.ordinal()];
 
                 if (p != null) {
@@ -252,7 +252,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         if (glassColor >= 0) {
             nbt.setByte("stainedColor", (byte) glassColor);
         }
-        for (int i = 0; i < EnumFacing.VALID_DIRECTIONS.length; i++) {
+        for (int i = 0; i < EnumFacing.VALUES.length; i++) {
             final String key = "redstoneInputSide[" + i + "]";
             nbt.setByte(key, (byte) redstoneInputSide[i]);
         }
@@ -275,7 +275,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
 
         redstoneInput = 0;
 
-        for (int i = 0; i < EnumFacing.VALID_DIRECTIONS.length; i++) {
+        for (int i = 0; i < EnumFacing.VALUES.length; i++) {
             final String key = "redstoneInputSide[" + i + "]";
             if (nbt.hasKey(key)) {
                 redstoneInputSide[i] = nbt.getByte(key);
@@ -359,7 +359,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         if (attachPluggables) {
             attachPluggables = false;
             // Attach callback
-            for (int i = 0; i < EnumFacing.VALID_DIRECTIONS.length; i++) {
+            for (int i = 0; i < EnumFacing.VALUES.length; i++) {
                 if (sideProperties.pluggables[i] != null) {
                     pipe.eventBus.registerHandler(sideProperties.pluggables[i]);
                     sideProperties.pluggables[i].onAttachedPipe(this, EnumFacing.getOrientation(i));
@@ -374,7 +374,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
 
         pipe.updateEntity();
 
-        for (EnumFacing direction : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing direction : EnumFacing.VALUES) {
             PipePluggable p = getPipePluggable(direction);
             if (p != null) {
                 p.update(this, direction);
@@ -440,7 +440,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
             renderState.glassColorDirty = true;
             glassColor = color;
             notifyBlockChanged();
-            worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, blockType);
+            worldObj.notifyBlockOfStateChange(pos, blockType);
             return true;
         }
         return false;
@@ -451,7 +451,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         renderState.setGlassColor((byte) glassColor);
 
         // Pipe connections;
-        for (EnumFacing o : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing o : EnumFacing.VALUES) {
             renderState.pipeConnectionMatrix.setConnected(o, this.pipeConnectionsBuffer[o.ordinal()]);
         }
 
@@ -465,7 +465,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         for (PipeWire color : PipeWire.values()) {
             renderState.wireMatrix.setWire(color, pipe.wireSet[color.ordinal()]);
 
-            for (EnumFacing direction : EnumFacing.VALID_DIRECTIONS) {
+            for (EnumFacing direction : EnumFacing.VALUES) {
                 renderState.wireMatrix.setWireConnected(color, direction, pipe.isWireConnectedTo(this.getTile(direction), color, direction));
             }
 
@@ -491,7 +491,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         }
 
         // Facades
-        for (EnumFacing direction : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing direction : EnumFacing.VALUES) {
             PipePluggable pluggable = sideProperties.pluggables[direction.ordinal()];
             if (!(pluggable instanceof FacadePluggable)) {
                 continue;
@@ -539,7 +539,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
 
         this.pipe = pipe;
 
-        for (EnumFacing o : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing o : EnumFacing.VALUES) {
             TileEntity tile = getTile(o);
 
             if (tile instanceof ITileBufferHolder) {
@@ -620,17 +620,17 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
 
     @Override
     public int x() {
-        return xCoord;
+        return getPos().getX();
     }
 
     @Override
     public int y() {
-        return yCoord;
+        return getPos().getY();
     }
 
     @Override
     public int z() {
-        return zCoord;
+        return getPos().getZ();
     }
 
     /* SMP */
@@ -712,8 +712,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     protected boolean canPipeConnect_internal(TileEntity with, EnumFacing side) {
         if (!(pipe instanceof IPipeConnectionForced) || !((IPipeConnectionForced) pipe).ignoreConnectionOverrides(side)) {
             if (with instanceof IPipeConnection) {
-                IPipeConnection.ConnectOverride override =
-                    ((IPipeConnection) with).overridePipeConnection(pipe.transport.getPipeType(), side.getOpposite());
+                IPipeConnection.ConnectOverride override = ((IPipeConnection) with).overridePipeConnection(
+                        pipe.transport.getPipeType(), side.getOpposite());
                 if (override != IPipeConnection.ConnectOverride.DEFAULT) {
                     return override == IPipeConnection.ConnectOverride.CONNECT;
                 }
@@ -775,8 +775,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         if (pluggable instanceof IPipeConnection) {
             IPipe neighborPipe = getNeighborPipe(side);
             if (neighborPipe != null) {
-                IPipeConnection.ConnectOverride override =
-                    ((IPipeConnection) pluggable).overridePipeConnection(neighborPipe.getTile().getPipeType(), side);
+                IPipeConnection.ConnectOverride override = ((IPipeConnection) pluggable).overridePipeConnection(
+                        neighborPipe.getTile().getPipeType(), side);
                 if (override == IPipeConnection.ConnectOverride.CONNECT) {
                     return true;
                 } else if (override == IPipeConnection.ConnectOverride.DISCONNECT) {
@@ -793,7 +793,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
             return;
         }
 
-        for (EnumFacing side : EnumFacing.VALID_DIRECTIONS) {
+        for (EnumFacing side : EnumFacing.VALUES) {
             TileBuffer t = cache[side.ordinal()];
             // For blocks which are not loaded, keep the old connection value.
             if (t.exists() || !initialized) {
@@ -999,7 +999,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
                 PipePluggable[] newPluggables = pluggableState.getPluggables();
 
                 // mark for render update if necessary
-                for (int i = 0; i < EnumFacing.VALID_DIRECTIONS.length; i++) {
+                for (int i = 0; i < EnumFacing.VALUES.length; i++) {
                     PipePluggable old = sideProperties.pluggables[i];
                     PipePluggable newer = newPluggables[i];
                     if (old == null && newer == null) {
@@ -1017,14 +1017,14 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
                 }
                 sideProperties.pluggables = newPluggables.clone();
 
-                for (int i = 0; i < EnumFacing.VALID_DIRECTIONS.length; i++) {
+                for (int i = 0; i < EnumFacing.VALUES.length; i++) {
                     final PipePluggable pluggable = getPipePluggable(EnumFacing.getOrientation(i));
                     if (pluggable != null && pluggable instanceof GatePluggable) {
                         final GatePluggable gatePluggable = (GatePluggable) pluggable;
                         Gate gate = pipe.gates[i];
                         if (gate == null || gate.logic != gatePluggable.getLogic() || gate.material != gatePluggable.getMaterial()) {
-                            pipe.gates[i] =
-                                GateFactory.makeGate(pipe, gatePluggable.getMaterial(), gatePluggable.getLogic(), EnumFacing.getOrientation(i));
+                            pipe.gates[i] = GateFactory.makeGate(
+                                    pipe, gatePluggable.getMaterial(), gatePluggable.getLogic(), EnumFacing.getOrientation(i));
                         }
                     } else {
                         pipe.gates[i] = null;
@@ -1039,7 +1039,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
 
     private void syncGateExpansions() {
         resyncGateExpansions = false;
-        for (int i = 0; i < EnumFacing.VALID_DIRECTIONS.length; i++) {
+        for (int i = 0; i < EnumFacing.VALUES.length; i++) {
             Gate gate = pipe.gates[i];
             if (gate == null) {
                 continue;
