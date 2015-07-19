@@ -659,10 +659,13 @@ public class BuildCraftCore extends BuildCraftMod {
 			CoreProxy.proxy.addShapelessRecipe(outputStack, paintbrushItem, EnumColor.fromId(i).getDye());
 		}
 
+		// Convert old lists to new lists
+		CoreProxy.proxy.addShapelessRecipe(new ItemStack(listItem, 1, 1), new ItemStack(listItem, 1, 0));
+
 		if (Loader.isModLoaded("BuildCraft|Silicon")) {
 			CoreSiliconRecipes.loadSiliconRecipes();
 		} else {
-			CoreProxy.proxy.addCraftingRecipe(new ItemStack(listItem), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y',
+			CoreProxy.proxy.addCraftingRecipe(new ItemStack(listItem, 1, 1), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y',
 					"dyeGreen");
 		}
 	}
