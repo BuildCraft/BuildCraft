@@ -18,7 +18,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 import buildcraft.core.proxy.CoreProxy;
 
 public class TickHandlerCore {
-
 	private boolean nagged;
 
 	@SideOnly(Side.CLIENT)
@@ -30,22 +29,14 @@ public class TickHandlerCore {
 
 		EntityPlayer player = evt.player;
 
-		// if(!Config.disableVersionCheck) {
-
 		if (Version.needsUpdateNoticeAndMarkAsSeen()) {
 			player.addChatMessage(new ChatComponentTranslation("bc_update.new_version",
 							Version.getRecommendedVersion(),
 							CoreProxy.proxy.getMinecraftVersion()));
 			player.addChatMessage(new ChatComponentTranslation("bc_update.download"));
-
-			// TODO: This takes too much realstate. See how to improve
-			// Version.displayChangelog(player);
-
 			player.addChatMessage(new ChatComponentTranslation("bc_update.once"));
 			player.addChatMessage(new ChatComponentTranslation("bc_update.again"));
 		}
-
-		// }
 
 		nagged = true;
 	}
