@@ -20,14 +20,13 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S27PacketExplosion;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
-
 import cpw.mods.fml.common.FMLCommonHandler;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -301,5 +300,32 @@ public final class BlockUtils {
 					0.5F, 0.5F, 0.5F);
 		}
 		return done;
+	}
+
+	public static TileEntityChest getOtherDoubleChest(TileEntity inv) {
+		if (inv instanceof TileEntityChest) {
+			TileEntityChest chest = (TileEntityChest) inv;
+
+			TileEntityChest adjacent = null;
+
+			if (chest.adjacentChestXNeg != null) {
+				adjacent = chest.adjacentChestXNeg;
+			}
+
+			if (chest.adjacentChestXPos != null) {
+				adjacent = chest.adjacentChestXPos;
+			}
+
+			if (chest.adjacentChestZNeg != null) {
+				adjacent = chest.adjacentChestZNeg;
+			}
+
+			if (chest.adjacentChestZPos != null) {
+				adjacent = chest.adjacentChestZPos;
+			}
+
+			return adjacent;
+		}
+		return null;
 	}
 }

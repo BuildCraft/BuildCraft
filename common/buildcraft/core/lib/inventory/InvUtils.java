@@ -22,6 +22,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IInvSlot;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
+import buildcraft.core.lib.utils.BlockUtils;
 
 public final class InvUtils {
 
@@ -218,26 +219,7 @@ public final class InvUtils {
 	 */
 	public static IInventory getInventory(IInventory inv) {
 		if (inv instanceof TileEntityChest) {
-			TileEntityChest chest = (TileEntityChest) inv;
-
-			TileEntityChest adjacent = null;
-
-			if (chest.adjacentChestXNeg != null) {
-				adjacent = chest.adjacentChestXNeg;
-			}
-
-			if (chest.adjacentChestXPos != null) {
-				adjacent = chest.adjacentChestXPos;
-			}
-
-			if (chest.adjacentChestZNeg != null) {
-				adjacent = chest.adjacentChestZNeg;
-			}
-
-			if (chest.adjacentChestZPos != null) {
-				adjacent = chest.adjacentChestZPos;
-			}
-
+			TileEntityChest adjacent = BlockUtils.getOtherDoubleChest((TileEntityChest) inv);
 			if (adjacent != null) {
 				return new InventoryLargeChest("", inv, adjacent);
 			}
