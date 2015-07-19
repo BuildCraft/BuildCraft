@@ -133,6 +133,7 @@ import buildcraft.core.list.ListMatchHandlerClass;
 import buildcraft.core.list.ListMatchHandlerFluid;
 import buildcraft.core.list.ListMatchHandlerOreDictionary;
 import buildcraft.core.list.ListRegistry;
+import buildcraft.core.list.ListTooltipHandler;
 import buildcraft.core.network.PacketHandlerCore;
 import buildcraft.core.properties.WorldPropertyIsDirt;
 import buildcraft.core.properties.WorldPropertyIsFarmland;
@@ -382,6 +383,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		FMLCommonHandler.instance().bus().register(this);
 		MinecraftForge.EVENT_BUS.register(this);
 		MinecraftForge.EVENT_BUS.register(new BlockHighlightHandler());
+		MinecraftForge.EVENT_BUS.register(new ListTooltipHandler());
 	}
 
 	@Mod.EventHandler

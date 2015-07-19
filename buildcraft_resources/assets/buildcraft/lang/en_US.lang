@@ -477,6 +477,8 @@ tip.deprecated=Deprecated
 tip.filler.excavate.on=Excavate
 tip.filler.excavate.off=Do Not Excavate
 
+tip.list.matches=Matches
+
 tip.shift.PipeFluidsDiamond=GUI accepts any fluid containers
 tip.shift.PipeFluidsEmerald=GUI accepts any fluid container
 tip.shift.PipeItemsClay=Prioritizes machines and chests\nover neighbouring pipes.

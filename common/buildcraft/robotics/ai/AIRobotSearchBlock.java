@@ -28,6 +28,15 @@ public class AIRobotSearchBlock extends AIRobot {
 	private double maxDistanceToEnd;
 	private IZone zone;
 
+	public AIRobotSearchBlock(EntityRobotBase iRobot) {
+		super(iRobot);
+
+		zone = iRobot.getZoneToWork();
+		blockFound = null;
+		pathFound = null;
+		path = null;
+	}
+
 	public AIRobotSearchBlock(EntityRobotBase iRobot, boolean random, IBlockFilter iPathFound,
 			double iMaxDistanceToEnd) {
 		super(iRobot);
