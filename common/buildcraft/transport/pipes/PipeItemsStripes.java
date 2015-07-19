@@ -13,12 +13,14 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.IFluidBlock;
 
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
@@ -216,7 +218,11 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 			if (!BlockUtils.isUnbreakableBlock(getWorld(), (int) p.x, (int) p.y, (int) p.z)) {
 				Block block = getWorld().getBlock((int) p.x, (int) p.y, (int) p.z);
 				int metadata = getWorld().getBlockMetadata((int) p.x, (int) p.y, (int) p.z);
-				
+
+				if (block instanceof BlockLiquid || block instanceof IFluidBlock) {
+					return maxReceive;
+				}
+
 				ItemStack stack = new ItemStack(block, 1, metadata);
 				EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld(),
 						(int) p.x, (int) p.y, (int) p.z).get();
