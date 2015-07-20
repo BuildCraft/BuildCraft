@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.tile;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -20,6 +18,8 @@ import buildcraft.api.core.IPathProvider;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.LaserData;
 import buildcraft.core.lib.utils.Utils;
+
+import io.netty.buffer.ByteBuf;
 
 public class TilePathMarker extends TileMarker implements IPathProvider {
     // A list with the pathMarkers that aren't fully connected
@@ -78,8 +78,8 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
         double nearestDistance = 0, distance;
 
         for (TilePathMarker available : availableMarkers) {
-            if (available == this || available == this.links[0] || available == this.links[1]
-                || available.getWorld().provider.getDimensionId() != this.getWorld().provider.getDimensionId()) {
+            if (available == this || available == this.links[0] || available == this.links[1] || available.getWorld().provider
+                    .getDimensionId() != this.getWorld().provider.getDimensionId()) {
                 continue;
             }
 

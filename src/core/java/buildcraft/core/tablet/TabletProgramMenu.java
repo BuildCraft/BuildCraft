@@ -24,8 +24,7 @@ public class TabletProgramMenu extends TabletProgram {
         if (!init && t > 2 && tablet.getSide() == Side.CLIENT) {
             TabletBitmap bitmap = new TabletBitmap(244, 306);
             try {
-                TabletFont font =
-                    TabletFontManager.INSTANCE.register("DejaVu11", TabletProgramMenu.class.getClassLoader().getResourceAsStream(
+                TabletFont font = TabletFontManager.INSTANCE.register("DejaVu11", TabletProgramMenu.class.getClassLoader().getResourceAsStream(
                         "assets/buildcraftcore/tablet/11.pf2"));
                 String lorem =
                     "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque condimentum, nulla in tincidunt finibus, dolor enim condimentum felis, vitae vulputate lorem turpis nec purus. Nulla iaculis sed turpis in lacinia. Aliquam consectetur leo sit amet placerat blandit. Maecenas euismod magna eros, quis efficitur quam luctus mollis. Nulla facilisi. Quisque tempor turpis ipsum, ut auctor diam hendrerit dictum. Phasellus id viverra purus. Ut sagittis felis eu odio sagittis, vitae mollis felis feugiat. Morbi mi elit, varius id fringilla vel, vehicula ac risus. Curabitur aliquam orci at mollis posuere.";

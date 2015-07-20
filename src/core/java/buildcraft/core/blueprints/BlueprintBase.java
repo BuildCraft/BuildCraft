@@ -310,8 +310,8 @@ public abstract class BlueprintBase {
     }
 
     public BlueprintBase adjustToWorld(World world, BlockPos pos, EnumFacing o) {
-        if (buildingPermission == BuildingPermission.NONE
-            || (buildingPermission == BuildingPermission.CREATIVE_ONLY && world.getWorldInfo().getGameType() != GameType.CREATIVE)) {
+        if (buildingPermission == BuildingPermission.NONE || (buildingPermission == BuildingPermission.CREATIVE_ONLY && world.getWorldInfo()
+                .getGameType() != GameType.CREATIVE)) {
             return null;
         }
 

@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon.tile;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,6 +25,8 @@ import buildcraft.core.LaserData;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.BlockUtils;
+
+import io.netty.buffer.ByteBuf;
 
 public class TileLaser extends TileBuildCraft implements IHasWork, IControllable {
 
@@ -236,10 +236,8 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
         }
 
         Vec3 head = new Vec3(xCoord + 0.5 + px, yCoord + 0.5 + py, zCoord + 0.5 + pz);
-        Vec3 tail =
-            new Vec3(laserTarget.getXCoord() + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F, laserTarget.getYCoord() + 9F / 16F, laserTarget
-                .getZCoord()
-                + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F);
+        Vec3 tail = new Vec3(laserTarget.getXCoord() + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F, laserTarget.getYCoord() + 9F / 16F, laserTarget
+                .getZCoord() + 0.475 + (worldObj.rand.nextFloat() - 0.5) / 5F);
 
         laser.head = head;
         laser.tail = tail;

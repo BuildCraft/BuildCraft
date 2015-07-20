@@ -4,14 +4,14 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.network;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.entity.player.EntityPlayer;
 
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.network.PacketIds;
 import buildcraft.transport.BuildCraftTransport;
 import buildcraft.transport.TravelingItem;
+
+import io.netty.buffer.ByteBuf;
 
 public class PacketPipeTransportItemStackRequest extends Packet {
 

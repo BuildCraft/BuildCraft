@@ -29,7 +29,7 @@ public class BlockQuarry extends BlockBuildCraft {
     public BlockQuarry() {
         // Connected_Direction is used for the pipe connected model
         super(Material.iron, FACING_PROP, LED_DONE, LED_POWER, CONNECTED_UP, CONNECTED_DOWN, CONNECTED_EAST, CONNECTED_WEST, CONNECTED_NORTH,
-            CONNECTED_SOUTH);
+                CONNECTED_SOUTH);
 
         setHardness(10F);
         setResistance(10F);

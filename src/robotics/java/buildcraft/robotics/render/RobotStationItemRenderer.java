@@ -21,7 +21,7 @@ public class RobotStationItemRenderer implements IItemRenderer {
         Block block = BuildCraftTransport.genericPipeBlock;
         Tessellator tessellator = Tessellator.instance;
         TextureAtlasSprite textureID = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeRobotStation.ordinal()); // Structure
-                                                                                                                                   // pipe
+        // pipe
 
         block.setBlockBounds(0.25F, 0.25F, 0.25F, 0.75F, 0.375F, 0.75F);
         block.setBlockBoundsForItemRender();

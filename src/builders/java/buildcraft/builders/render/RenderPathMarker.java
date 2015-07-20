@@ -49,7 +49,7 @@ public class RenderPathMarker extends TileEntitySpecialRenderer {
             for (LaserData laser : marker.lasers) {
                 if (laser != null) {
                     RenderLaser.doRenderLaser(TileEntityRendererDispatcher.instance.worldObj, Minecraft.getMinecraft().renderEngine, laser,
-                        EntityLaser.LASER_BLUE);
+                            EntityLaser.LASER_BLUE);
                 }
             }
 

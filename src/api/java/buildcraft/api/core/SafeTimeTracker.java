@@ -23,10 +23,10 @@ public class SafeTimeTracker {
         internalDelay = delay;
     }
 
-    /** In many situations, it is a bad idea to have all objects of the same kind to be waiting for the exact same amount
-     * of time, as that can lead to some situation where they're all synchronized and got to work all at the same time.
-     * When created with a random range, the mark that is set when reaching the expect delay will be added with a random
-     * number between [0, range[, meaning that the event will take between 0 and range more tick to run. */
+    /** In many situations, it is a bad idea to have all objects of the same kind to be waiting for the exact same
+     * amount of time, as that can lead to some situation where they're all synchronized and got to work all at the same
+     * time. When created with a random range, the mark that is set when reaching the expect delay will be added with a
+     * random number between [0, range[, meaning that the event will take between 0 and range more tick to run. */
     public SafeTimeTracker(long delay, long random) {
         internalDelay = delay;
         randomRange = random;

@@ -390,8 +390,25 @@ public final class Utils {
     public static Vec3 multiply(Vec3 vec, double multiple) {
         return new Vec3(vec.xCoord * multiple, vec.yCoord * multiple, vec.zCoord * multiple);
     }
-    
+
     public static Vec3 clamp(Vec3 in, Vec3 lower, Vec3 upper) {
-        return in;
+        double x = MathUtils.clamp(in.xCoord, lower.xCoord, upper.xCoord);
+        double y = MathUtils.clamp(in.yCoord, lower.yCoord, upper.yCoord);
+        double z = MathUtils.clamp(in.zCoord, lower.zCoord, upper.zCoord);
+        return new Vec3(x, y, z);
+    }
+
+    public static Vec3 min(Vec3 one, Vec3 two) {
+        double x = Math.min(one.xCoord, two.xCoord);
+        double y = Math.min(one.yCoord, two.yCoord);
+        double z = Math.min(one.zCoord, two.zCoord);
+        return new Vec3(x, y, z);
+    }
+
+    public static Vec3 max(Vec3 one, Vec3 two) {
+        double x = Math.max(one.xCoord, two.xCoord);
+        double y = Math.max(one.yCoord, two.yCoord);
+        double z = Math.max(one.zCoord, two.zCoord);
+        return new Vec3(x, y, z);
     }
 }

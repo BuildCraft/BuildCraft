@@ -161,8 +161,7 @@ public class TileChute extends TileBuildCraft implements IInventory, IEnergyHand
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer entityPlayer) {
-        return worldObj.getTileEntity(pos) == this
-            && entityPlayer.getDistanceSq(pos) <= 64.0D;
+        return worldObj.getTileEntity(pos) == this && entityPlayer.getDistanceSq(pos) <= 64.0D;
     }
 
     @Override

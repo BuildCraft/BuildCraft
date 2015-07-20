@@ -6,8 +6,6 @@ package buildcraft.robotics;
 
 import java.util.List;
 
-import cofh.api.energy.IEnergyContainerItem;
-
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,6 +19,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import cofh.api.energy.IEnergyContainerItem;
 
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
@@ -89,10 +89,8 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
             } else if (energy == 0) {
                 enInfo = "No Charge";
             }
-            enInfo =
-                (pct >= 80 ? EnumChatFormatting.GREEN : (pct >= 50 ? EnumChatFormatting.YELLOW : (pct >= 30 ? EnumChatFormatting.GOLD : (pct >= 20
-                    ? EnumChatFormatting.RED : EnumChatFormatting.DARK_RED))))
-                    + enInfo;
+            enInfo = (pct >= 80 ? EnumChatFormatting.GREEN : (pct >= 50 ? EnumChatFormatting.YELLOW : (pct >= 30 ? EnumChatFormatting.GOLD
+                : (pct >= 20 ? EnumChatFormatting.RED : EnumChatFormatting.DARK_RED)))) + enInfo;
             list.add(enInfo);
         }
     }
@@ -168,8 +166,7 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
     }
 
     @Override
-    public boolean onItemUse(ItemStack currentItem, EntityPlayer player, World world, BlockPos pos, int side, float hitX, float hitY,
-            float hitZ) {
+    public boolean onItemUse(ItemStack currentItem, EntityPlayer player, World world, BlockPos pos, int side, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {
             Block b = world.getBlock(pos);
             if (!(b instanceof BlockGenericPipe)) {
@@ -184,8 +181,8 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
             BlockGenericPipe pipeBlock = (BlockGenericPipe) b;
             BlockGenericPipe.RaytraceResult rayTraceResult = pipeBlock.doRayTrace(world, pos, player);
 
-            if (rayTraceResult != null && rayTraceResult.hitPart == BlockGenericPipe.Part.Pluggable
-                && pipe.container.getPipePluggable(rayTraceResult.sideHit) instanceof RobotStationPluggable) {
+            if (rayTraceResult != null && rayTraceResult.hitPart == BlockGenericPipe.Part.Pluggable && pipe.container.getPipePluggable(
+                    rayTraceResult.sideHit) instanceof RobotStationPluggable) {
                 RobotStationPluggable pluggable = (RobotStationPluggable) pipe.container.getPipePluggable(rayTraceResult.sideHit);
                 DockingStation station = pluggable.getStation();
 

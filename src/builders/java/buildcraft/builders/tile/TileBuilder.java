@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.tile;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -71,15 +69,17 @@ import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
 
+import io.netty.buffer.ByteBuf;
+
 public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluidHandler, IRequestProvider, IControllable, IInventoryListener {
 
     private static int POWER_ACTIVATION = 500;
 
     public Box box = new Box();
     public PathIterator currentPathIterator;
-    public Tank[] fluidTanks = new Tank[] { new Tank("fluid1", FluidContainerRegistry.BUCKET_VOLUME * 8, this),
-        new Tank("fluid2", FluidContainerRegistry.BUCKET_VOLUME * 8, this), new Tank("fluid3", FluidContainerRegistry.BUCKET_VOLUME * 8, this),
-        new Tank("fluid4", FluidContainerRegistry.BUCKET_VOLUME * 8, this) };
+    public Tank[] fluidTanks = new Tank[] { new Tank("fluid1", FluidContainerRegistry.BUCKET_VOLUME * 8, this), new Tank("fluid2",
+            FluidContainerRegistry.BUCKET_VOLUME * 8, this), new Tank("fluid3", FluidContainerRegistry.BUCKET_VOLUME * 8, this), new Tank("fluid4",
+                    FluidContainerRegistry.BUCKET_VOLUME * 8, this) };
     public TankManager<Tank> fluidTank = new TankManager<Tank>(fluidTanks);
 
     private SimpleInventory inv = new SimpleInventory(28, "Builder", 64);

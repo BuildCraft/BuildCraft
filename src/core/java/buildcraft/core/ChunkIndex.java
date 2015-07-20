@@ -4,11 +4,11 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.core.ISerializable;
+
+import io.netty.buffer.ByteBuf;
 
 public class ChunkIndex implements ISerializable {
     public int x, z;

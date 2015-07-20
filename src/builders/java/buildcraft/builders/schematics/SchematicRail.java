@@ -19,62 +19,62 @@ import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.properties.BuildCraftProperties;
 
 public class SchematicRail extends SchematicBlock {
-	private static final IBlockState defaultDirection = Blocks.rail.getDefaultState().withProperty(BlockRail.SHAPE, EnumRailDirection.NORTH_SOUTH);
+    private static final IBlockState defaultDirection = Blocks.rail.getDefaultState().withProperty(BlockRail.SHAPE, EnumRailDirection.NORTH_SOUTH);
 
-	@Override
-	public void rotateLeft(IBuilderContext context) {
-		EnumRailDirection direction = (EnumRailDirection) state.getValue(BlockRail.SHAPE);
-		state = state.withProperty(BlockRail.SHAPE, getRotatedDirection(direction));
-	}
+    @Override
+    public void rotateLeft(IBuilderContext context) {
+        EnumRailDirection direction = (EnumRailDirection) state.getValue(BlockRail.SHAPE);
+        state = state.withProperty(BlockRail.SHAPE, getRotatedDirection(direction));
+    }
 
-	@Override
-	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
-		// If we set it to NORTH_SOUTH here (and don't update) then when we set it to the actual state in the post
-		// processing it just ignores the update because they are the same
-		if (state == defaultDirection)
-			context.world().setBlockState(pos, defaultDirection, BuildCraftProperties.MARK_BLOCK_FOR_UPDATE);
-		else
-			context.world().setBlockState(pos, defaultDirection, BuildCraftProperties.UPDATE_NONE);
-	}
+    @Override
+    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+        // If we set it to NORTH_SOUTH here (and don't update) then when we set it to the actual state in the post
+        // processing it just ignores the update because they are the same
+        if (state == defaultDirection)
+            context.world().setBlockState(pos, defaultDirection, BuildCraftProperties.MARK_BLOCK_FOR_UPDATE);
+        else
+            context.world().setBlockState(pos, defaultDirection, BuildCraftProperties.UPDATE_NONE);
+    }
 
-	@Override
-	public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
-		return state.getBlock() == context.world().getBlockState(pos).getBlock();
-	}
+    @Override
+    public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
+        return state.getBlock() == context.world().getBlockState(pos).getBlock();
+    }
 
-	@Override
-	public void postProcessing(IBuilderContext context, BlockPos pos) {
-		context.world().setBlockState(pos, state);
-	}
+    @Override
+    public void postProcessing(IBuilderContext context, BlockPos pos) {
+        context.world().setBlockState(pos, state);
+    }
 
-	public void setMetaData(BlockRailBase.EnumRailDirection newValue) {
-		state = state.withProperty(BlockRail.SHAPE, newValue);
-	}
+    public void setMetaData(BlockRailBase.EnumRailDirection newValue) {
+        state = state.withProperty(BlockRail.SHAPE, newValue);
+    }
 
-	private EnumRailDirection getRotatedDirection(EnumRailDirection old) {
-		switch (old) {
-			case ASCENDING_EAST:
-				return EnumRailDirection.ASCENDING_SOUTH;
-			case ASCENDING_NORTH:
-				return EnumRailDirection.ASCENDING_EAST;
-			case ASCENDING_SOUTH:
-				return EnumRailDirection.ASCENDING_WEST;
-			case ASCENDING_WEST:
-				return EnumRailDirection.ASCENDING_NORTH;
-			case EAST_WEST:
-				return EnumRailDirection.NORTH_SOUTH;
-			case NORTH_EAST:
-				return EnumRailDirection.SOUTH_EAST;
-			case NORTH_SOUTH:
-				return EnumRailDirection.EAST_WEST;
-			case NORTH_WEST:
-				return EnumRailDirection.NORTH_EAST;
-			case SOUTH_EAST:
-				return EnumRailDirection.SOUTH_WEST;
-			case SOUTH_WEST:
-				return EnumRailDirection.NORTH_WEST;
-			default:
-				return EnumRailDirection.NORTH_SOUTH;
-		}
-	}
+    private EnumRailDirection getRotatedDirection(EnumRailDirection old) {
+        switch (old) {
+            case ASCENDING_EAST:
+                return EnumRailDirection.ASCENDING_SOUTH;
+            case ASCENDING_NORTH:
+                return EnumRailDirection.ASCENDING_EAST;
+            case ASCENDING_SOUTH:
+                return EnumRailDirection.ASCENDING_WEST;
+            case ASCENDING_WEST:
+                return EnumRailDirection.ASCENDING_NORTH;
+            case EAST_WEST:
+                return EnumRailDirection.NORTH_SOUTH;
+            case NORTH_EAST:
+                return EnumRailDirection.SOUTH_EAST;
+            case NORTH_SOUTH:
+                return EnumRailDirection.EAST_WEST;
+            case NORTH_WEST:
+                return EnumRailDirection.NORTH_EAST;
+            case SOUTH_EAST:
+                return EnumRailDirection.SOUTH_WEST;
+            case SOUTH_WEST:
+                return EnumRailDirection.NORTH_WEST;
+            default:
+                return EnumRailDirection.NORTH_SOUTH;
+        }
+    }
 }

@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.tile;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -58,6 +56,8 @@ import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 
+import io.netty.buffer.ByteBuf;
+
 // TODO (PASS 2) Convert all int, int, int variables to BlockPos and double, double, double to Vec3
 public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedInventory, IDropControlInventory, IPipeConnection, IControllable {
 
@@ -100,8 +100,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
     public TileQuarry() {
         box.kind = Kind.STRIPES;
-        this.setBattery(new RFBattery((int) (2 * 64 * BuilderAPI.BREAK_ENERGY * BuildCraftCore.miningMultiplier),
-            (int) (1000 * BuildCraftCore.miningMultiplier), 0));
+        this.setBattery(new RFBattery((int) (2 * 64 * BuilderAPI.BREAK_ENERGY * BuildCraftCore.miningMultiplier), (int) (1000
+            * BuildCraftCore.miningMultiplier), 0));
     }
 
     public void createUtilsIfNeeded() {
@@ -135,7 +135,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
     private void createArm() {
         worldObj.spawnEntityInWorld(new EntityMechanicalArm(worldObj, box.xMin + CoreConstants.PIPE_MAX_POS, pos.getY() + box.sizeY() - 1
             + CoreConstants.PIPE_MIN_POS, box.zMin + CoreConstants.PIPE_MAX_POS, box.sizeX() - 2 + CoreConstants.PIPE_MIN_POS * 2, box.sizeZ() - 2
-            + CoreConstants.PIPE_MIN_POS * 2, this));
+                + CoreConstants.PIPE_MIN_POS * 2, this));
     }
 
     // Callback from the arm once it's created
@@ -306,7 +306,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
         int[] nextTarget = visitList.removeFirst();
 
         if (!columnVisitListIsUpdated) { // nextTarget may not be accurate, at least search the target column for
-                                         // changes
+            // changes
             for (int y = nextTarget[1] + 1; y < pos.getY() + 3; y++) {
                 BlockPos pos = new BlockPos(nextTarget[0], y, nextTarget[2]);
                 IBlockState state = worldObj.getBlockState(pos);
@@ -566,7 +566,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
             if (xSize < 3 || zSize < 3 || ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth()) {
                 if (placedBy != null) {
                     placedBy.addChatMessage(new ChatComponentText(String.format(
-                        "Quarry size is outside of chunkloading bounds or too small %d %d (%d)", xSize, zSize, chunkTicket.getMaxChunkListDepth())));
+                            "Quarry size is outside of chunkloading bounds or too small %d %d (%d)", xSize, zSize, chunkTicket
+                                    .getMaxChunkListDepth())));
                 }
 
                 a = new DefaultAreaProvider(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 10, pos.getY() + 4, pos.getZ() + 10);
@@ -859,7 +860,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
         if (placedBy != null && !(placedBy instanceof FakePlayer)) {
             placedBy.addChatMessage(new ChatComponentText(String.format("[BUILDCRAFT] The quarry at %d %d %d will keep %d chunks loaded", pos.getX(),
-                pos.getY(), pos.getZ(), chunks.size())));
+                    pos.getY(), pos.getZ(), chunks.size())));
         }
     }
 

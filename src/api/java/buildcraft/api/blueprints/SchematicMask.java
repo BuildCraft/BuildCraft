@@ -40,7 +40,7 @@ public class SchematicMask extends SchematicBlockBase {
                 context.world().setBlockToAir(pos);
 
                 stack.onItemUse(BuildCraftAPI.proxy.getBuildCraftPlayer((WorldServer) context.world()).get(), context.world(), pos, EnumFacing.UP,
-                    0.0f, 0.0f, 0.0f);
+                        0.0f, 0.0f, 0.0f);
             }
         } else {
             context.world().setBlockToAir(pos);

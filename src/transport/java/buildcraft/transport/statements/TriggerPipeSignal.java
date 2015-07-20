@@ -22,7 +22,7 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
 
     public TriggerPipeSignal(boolean active, PipeWire color) {
         super("buildcraft:pipe.wire.input." + color.name().toLowerCase(Locale.ENGLISH) + (active ? ".active" : ".inactive"),
-            "buildcraft.pipe.wire.input." + color.name().toLowerCase(Locale.ENGLISH) + (active ? ".active" : ".inactive"));
+                "buildcraft.pipe.wire.input." + color.name().toLowerCase(Locale.ENGLISH) + (active ? ".active" : ".inactive"));
 
         this.active = active;
         this.color = color;
@@ -35,8 +35,8 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
 
     @Override
     public String getDescription() {
-        return String.format(StringUtils.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")), StringUtils.localize("color."
-            + color.name().toLowerCase(Locale.ENGLISH)));
+        return String.format(StringUtils.localize("gate.trigger.pipe.wire." + (active ? "active" : "inactive")), StringUtils.localize("color." + color
+                .name().toLowerCase(Locale.ENGLISH)));
     }
 
     @Override
@@ -80,9 +80,8 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
 
     @Override
     public void registerIcons(TextureAtlasSpriteRegister register) {
-        icon =
-            register.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_" + color.name().toLowerCase() + "_"
-                + (active ? "active" : "inactive"));
+        icon = register.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_" + color.name().toLowerCase() + "_" + (active ? "active"
+            : "inactive"));
     }
 
     @Override

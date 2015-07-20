@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -23,6 +21,8 @@ import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.transport.BuildCraftTransport;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.block.BlockGenericPipe;
+
+import io.netty.buffer.ByteBuf;
 
 public class PipeFluidsEmerald extends PipeFluidsWood implements ISerializable {
     private SimpleInventory filters = new SimpleInventory(1, "Filters", 1);
@@ -72,9 +72,9 @@ public class PipeFluidsEmerald extends PipeFluidsWood implements ISerializable {
             return true;
         }
 
-        if (!container.getWorldObj().isRemote) {
-            entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_FLUID, container.getWorldObj(), container.xCoord,
-                container.yCoord, container.zCoord);
+        if (!container.getWorld().isRemote) {
+            entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_FLUID, container.getWorld(), container.x(), container.y(),
+                    container.z());
         }
 
         return true;

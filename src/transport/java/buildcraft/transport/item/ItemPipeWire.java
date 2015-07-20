@@ -6,11 +6,9 @@ package buildcraft.transport.item;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -19,7 +17,7 @@ import buildcraft.core.lib.items.ItemBuildCraft;
 
 public class ItemPipeWire extends ItemBuildCraft {
 
-    private TextureAtlasSprite[] icons;
+    // private TextureAtlasSprite[] icons;
 
     public ItemPipeWire() {
         super();
@@ -29,10 +27,10 @@ public class ItemPipeWire extends ItemBuildCraft {
         setUnlocalizedName("pipeWire");
     }
 
-    @Override
-    public TextureAtlasSprite getIconFromDamage(int damage) {
-        return icons[damage];
-    }
+    // @Override
+    // public TextureAtlasSprite getIconFromDamage(int damage) {
+    // return icons[damage];
+    // }
 
     @Override
     public String getUnlocalizedName(ItemStack stack) {
@@ -48,18 +46,20 @@ public class ItemPipeWire extends ItemBuildCraft {
         }
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureAtlasSpriteRegister par1IconRegister) {
-        icons = new TextureAtlasSprite[PipeWire.VALUES.length];
-        for (PipeWire pipeWire : PipeWire.VALUES) {
-            icons[pipeWire.ordinal()] = par1IconRegister.registerIcon("buildcrafttransport:pipeWire/" + pipeWire.getColor().toLowerCase());
-        }
-    }
+    // @Override
+    // @SideOnly(Side.CLIENT)
+    // public void registerIcons(TextureAtlasSpriteRegister par1IconRegister) {
+    // icons = new TextureAtlasSprite[PipeWire.VALUES.length];
+    // for (PipeWire pipeWire : PipeWire.VALUES) {
+    // icons[pipeWire.ordinal()] = par1IconRegister.registerIcon("buildcrafttransport:pipeWire/" +
+    // pipeWire.getColor().toLowerCase());
+    // }
+    // }
 
     public void registerItemStacks() {
         for (PipeWire pipeWire : PipeWire.VALUES) {
-            GameRegistry.registerCustomItemStack(pipeWire.getTag(), pipeWire.getStack());
+            // TODO: Find out whether custom item stacks are needed, and if they even exist anymore
+            // GameRegistry.registerCustomItemStack(pipeWire.getTag(), pipeWire.getStack());
         }
     }
 }

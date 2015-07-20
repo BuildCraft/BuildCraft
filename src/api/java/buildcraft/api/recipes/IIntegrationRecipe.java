@@ -43,8 +43,8 @@ public interface IIntegrationRecipe {
      * @return Whether the expansion can be fitted to a given input. */
     boolean isValidExpansion(ItemStack input, ItemStack expansion);
 
-    /** Craft the recipe. Keep in mind that you need to decrease the amount of expansions yourself - the amount of inputs
-     * is decreased for you.
+    /** Craft the recipe. Keep in mind that you need to decrease the amount of expansions yourself - the amount of
+     * inputs is decreased for you.
      * 
      * @param input The input.
      * @param expansions All inserted expansions.

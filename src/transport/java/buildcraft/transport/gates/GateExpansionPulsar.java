@@ -6,11 +6,10 @@ package buildcraft.transport.gates;
 
 import java.util.List;
 
-import cofh.api.energy.IEnergyHandler;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
+
+import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGate;

@@ -51,7 +51,7 @@ public class StripesHandlerPipes implements IStripesHandler {
             // Fluid/power pipe, place in front instead
 
             stack.getItem().onItemUse(stack, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world, (int) p.x, (int) p.y, (int) p.z).get(), world,
-                pos, 1, 0, 0, 0);
+                    pos, 1, 0, 0, 0);
         }
         return true;
     }

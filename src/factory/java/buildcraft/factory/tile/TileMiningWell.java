@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory.tile;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
@@ -23,6 +21,8 @@ import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.BlockMiner;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.factory.BuildCraftFactory;
+
+import io.netty.buffer.ByteBuf;
 
 public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeConnection, IControllable {
     private boolean isDigging = true;

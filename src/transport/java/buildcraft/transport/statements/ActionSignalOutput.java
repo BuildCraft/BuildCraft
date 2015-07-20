@@ -19,16 +19,16 @@ public class ActionSignalOutput extends BCStatement implements IActionInternal {
     public PipeWire color;
 
     public ActionSignalOutput(PipeWire color) {
-        super("buildcraft:pipe.wire.output." + color.name().toLowerCase(Locale.ENGLISH), "buildcraft.pipe.wire.output."
-            + color.name().toLowerCase(Locale.ENGLISH));
+        super("buildcraft:pipe.wire.output." + color.name().toLowerCase(Locale.ENGLISH), "buildcraft.pipe.wire.output." + color.name().toLowerCase(
+                Locale.ENGLISH));
 
         this.color = color;
     }
 
     @Override
     public String getDescription() {
-        return String
-            .format(StringUtils.localize("gate.action.pipe.wire"), StringUtils.localize("color." + color.name().toLowerCase(Locale.ENGLISH)));
+        return String.format(StringUtils.localize("gate.action.pipe.wire"), StringUtils.localize("color." + color.name().toLowerCase(
+                Locale.ENGLISH)));
     }
 
     @Override

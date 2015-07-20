@@ -34,6 +34,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.enums.EnumColor;
 import buildcraft.api.gates.IGateExpansion;
@@ -55,7 +56,6 @@ import buildcraft.core.lib.network.IGuiReturnHandler;
 import buildcraft.core.lib.network.ISyncedTile;
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.network.PacketTileState;
-import buildcraft.core.lib.render.IIconProvider;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.block.BlockGenericPipe;
 import buildcraft.transport.gates.GateFactory;
@@ -178,13 +178,12 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
                         }
                     } else if (nbt.hasKey("facadeBlocksStr[" + i + "][0]")) {
                         // 6.0.x
-                        FacadeState mainState = FacadeState.create(
-                                (Block) Block.blockRegistry.getObject(nbt.getString("facadeBlocksStr[" + i + "][0]")), nbt.getInteger(
-                                        "facadeMeta[" + i + "][0]"));
+                        FacadeState mainState = FacadeState.create((Block) Block.blockRegistry.getObject(nbt.getString("facadeBlocksStr[" + i
+                            + "][0]")), nbt.getInteger("facadeMeta[" + i + "][0]"));
                         if (nbt.hasKey("facadeBlocksStr[" + i + "][1]")) {
-                            FacadeState phasedState = FacadeState.create(
-                                    (Block) Block.blockRegistry.getObject(nbt.getString("facadeBlocksStr[" + i + "][1]")), nbt.getInteger(
-                                            "facadeMeta[" + i + "][1]"), PipeWire.fromOrdinal(nbt.getInteger("facadeWires[" + i + "]")));
+                            FacadeState phasedState = FacadeState.create((Block) Block.blockRegistry.getObject(nbt.getString("facadeBlocksStr[" + i
+                                + "][1]")), nbt.getInteger("facadeMeta[" + i + "][1]"), PipeWire.fromOrdinal(nbt.getInteger("facadeWires[" + i
+                                    + "]")));
                             pluggable = new FacadePluggable(new FacadeState[] { mainState, phasedState });
                         } else {
                             pluggable = new FacadePluggable(new FacadeState[] { mainState });
@@ -716,8 +715,8 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
     protected boolean canPipeConnect_internal(TileEntity with, EnumFacing side) {
         if (!(pipe instanceof IPipeConnectionForced) || !((IPipeConnectionForced) pipe).ignoreConnectionOverrides(side)) {
             if (with instanceof IPipeConnection) {
-                IPipeConnection.ConnectOverride override = ((IPipeConnection) with).overridePipeConnection(
-                        pipe.transport.getPipeType(), side.getOpposite());
+                IPipeConnection.ConnectOverride override = ((IPipeConnection) with).overridePipeConnection(pipe.transport.getPipeType(), side
+                        .getOpposite());
                 if (override != IPipeConnection.ConnectOverride.DEFAULT) {
                     return override == IPipeConnection.ConnectOverride.CONNECT;
                 }
@@ -779,8 +778,8 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
         if (pluggable instanceof IPipeConnection) {
             IPipe neighborPipe = getNeighborPipe(side);
             if (neighborPipe != null) {
-                IPipeConnection.ConnectOverride override = ((IPipeConnection) pluggable).overridePipeConnection(
-                        neighborPipe.getTile().getPipeType(), side);
+                IPipeConnection.ConnectOverride override = ((IPipeConnection) pluggable).overridePipeConnection(neighborPipe.getTile().getPipeType(),
+                        side);
                 if (override == IPipeConnection.ConnectOverride.CONNECT) {
                     return true;
                 } else if (override == IPipeConnection.ConnectOverride.DISCONNECT) {

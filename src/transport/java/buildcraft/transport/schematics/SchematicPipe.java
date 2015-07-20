@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 
 import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.blueprints.IBuilderContext;
@@ -74,7 +75,12 @@ public class SchematicPipe extends SchematicTile {
             }
 
             for (int i = 0; i < 6; ++i) {
-                int newI = EnumFacing.values()[i].getRotation(EnumFacing.UP).ordinal();
+                EnumFacing face = EnumFacing.VALUES[i];
+                if (face.getAxis() != Axis.Y) {
+                    face = face.rotateY();
+                }
+
+                int newI = face.ordinal();
 
                 if (gatesNBT[i] != null) {
                     rotateGateLeft(gatesNBT[i]);
@@ -126,17 +132,22 @@ public class SchematicPipe extends SchematicTile {
         }
 
         if (gateNBT.hasKey("direction")) {
-            gateNBT.setInteger("direction", EnumFacing.values()[gateNBT.getInteger("direction")].getRotation(EnumFacing.UP).ordinal());
+            EnumFacing face = EnumFacing.VALUES[gateNBT.getInteger("direction")];
+            if (face.getAxis() != Axis.Y) {
+                face = face.rotateY();
+            }
+
+            gateNBT.setInteger("direction", face.ordinal());
         }
     }
 
     @Override
     public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
-        tileNBT.setInteger("x", x);
-        tileNBT.setInteger("y", y);
-        tileNBT.setInteger("z", z);
+        tileNBT.setInteger("x", pos.getX());
+        tileNBT.setInteger("y", pos.getY());
+        tileNBT.setInteger("z", pos.getZ());
 
-        context.world().setBlock(pos, block, meta, 3);
+        context.world().setBlockState(pos, state, 3);
 
         TileEntity tile = context.world().getTileEntity(pos);
         tile.readFromNBT(tileNBT);

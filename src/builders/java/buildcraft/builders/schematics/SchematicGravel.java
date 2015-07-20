@@ -16,25 +16,25 @@ import buildcraft.api.blueprints.SchematicBlock;
 
 public class SchematicGravel extends SchematicBlock {
 
-	@Override
-	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(Blocks.gravel));
-	}
+    @Override
+    public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+        requirements.add(new ItemStack(Blocks.gravel));
+    }
 
-	@Override
-	public void storeRequirements(IBuilderContext context, BlockPos pos) {
-		// cancel requirements reading
-	}
+    @Override
+    public void storeRequirements(IBuilderContext context, BlockPos pos) {
+        // cancel requirements reading
+    }
 
-	@Override
-	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
-		context.world().setBlockState(pos, Blocks.gravel.getDefaultState());
-	}
+    @Override
+    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+        context.world().setBlockState(pos, Blocks.gravel.getDefaultState());
+    }
 
-	@Override
-	public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
-		Block block = context.world().getBlockState(pos).getBlock();
+    @Override
+    public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
+        Block block = context.world().getBlockState(pos).getBlock();
 
-		return block == Blocks.gravel;
-	}
+        return block == Blocks.gravel;
+    }
 }

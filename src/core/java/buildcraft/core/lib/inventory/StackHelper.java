@@ -93,8 +93,8 @@ public class StackHelper {
             if (idBase.length > 0) {
                 for (int id : idBase) {
                     for (ItemStack itemstack : OreDictionary.getOres(OreDictionary.getOreName(id))) {
-                        if (comparison.getItem() == itemstack.getItem()
-                            && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage())) {
+                        if (comparison.getItem() == itemstack.getItem() && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison
+                                .getItemDamage() == itemstack.getItemDamage())) {
                             return true;
                         }
                     }
@@ -109,8 +109,8 @@ public class StackHelper {
         if (oreIDs.length > 0) {
             for (int id : oreIDs) {
                 for (ItemStack itemstack : OreDictionary.getOres(OreDictionary.getOreName(id))) {
-                    if (comparison.getItem() == itemstack.getItem()
-                        && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison.getItemDamage() == itemstack.getItemDamage())) {
+                    if (comparison.getItem() == itemstack.getItem() && (itemstack.getItemDamage() == OreDictionary.WILDCARD_VALUE || comparison
+                            .getItemDamage() == itemstack.getItemDamage())) {
                         return true;
                     }
                 }

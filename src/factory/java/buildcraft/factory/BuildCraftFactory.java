@@ -114,15 +114,12 @@ public class BuildCraftFactory extends BuildCraftMod {
         BuilderAPI.schematicRegistry.registerSchematicBlock(chuteBlock, SchematicTile.class);
         BuilderAPI.schematicRegistry.registerSchematicBlock(plainPipeBlock, SchematicFree.class);
 
-        aLotOfCraftingAchievement =
-            BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.aLotOfCrafting", "aLotOfCraftingAchievement", 1, 2,
-                autoWorkbenchBlock, BuildCraftCore.woodenGearAchievement));
-        straightDownAchievement =
-            BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.straightDown", "straightDownAchievement", 5, 2,
-                miningWellBlock, BuildCraftCore.ironGearAchievement));
-        refineAndRedefineAchievement =
-            BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.refineAndRedefine", "refineAndRedefineAchievement",
-                10, 0, refineryBlock, BuildCraftCore.diamondGearAchievement));
+        aLotOfCraftingAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.aLotOfCrafting",
+                "aLotOfCraftingAchievement", 1, 2, autoWorkbenchBlock, BuildCraftCore.woodenGearAchievement));
+        straightDownAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.straightDown",
+                "straightDownAchievement", 5, 2, miningWellBlock, BuildCraftCore.ironGearAchievement));
+        refineAndRedefineAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.refineAndRedefine",
+                "refineAndRedefineAchievement", 10, 0, refineryBlock, BuildCraftCore.diamondGearAchievement));
 
         if (BuildCraftCore.loadDefaultRecipes) {
             loadRecipes();
@@ -133,18 +130,17 @@ public class BuildCraftFactory extends BuildCraftMod {
     public void initialize(FMLPreInitializationEvent evt) {
         channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-FACTORY", new ChannelHandler(), new PacketHandler());
 
-        String plc =
-            "Allows admins to whitelist or blacklist pumping of specific fluids in specific dimensions.\n"
-                + "Eg. \"-/-1/Lava\" will disable lava in the nether. \"-/*/Lava\" will disable lava in any dimension. \"+/0/*\" will enable any fluid in the overworld.\n"
-                + "Entries are comma seperated, banned fluids have precedence over allowed ones."
-                + "Default is \"+/*/*,+/-1/Lava\" - the second redundant entry (\"+/-1/lava\") is there to show the format.";
+        String plc = "Allows admins to whitelist or blacklist pumping of specific fluids in specific dimensions.\n"
+            + "Eg. \"-/-1/Lava\" will disable lava in the nether. \"-/*/Lava\" will disable lava in any dimension. \"+/0/*\" will enable any fluid in the overworld.\n"
+            + "Entries are comma seperated, banned fluids have precedence over allowed ones."
+            + "Default is \"+/*/*,+/-1/Lava\" - the second redundant entry (\"+/-1/lava\") is there to show the format.";
 
         BuildCraftCore.mainConfigManager.register("general.miningDepth", 256, "Should the mining well only be usable once after placing?",
-            ConfigManager.RestartRequirement.NONE);
+                ConfigManager.RestartRequirement.NONE);
 
         BuildCraftCore.mainConfigManager.get("general.miningDepth").setMinValue(2).setMaxValue(256);
         BuildCraftCore.mainConfigManager.register("general.pumpDimensionControl", DefaultProps.PUMP_DIMENSION_LIST, plc,
-            ConfigManager.RestartRequirement.NONE);
+                ConfigManager.RestartRequirement.NONE);
 
         reloadConfig(ConfigManager.RestartRequirement.GAME);
 
@@ -181,12 +177,12 @@ public class BuildCraftFactory extends BuildCraftMod {
     public static void loadRecipes() {
         if (miningWellBlock != null) {
             CoreProxy.proxy.addCraftingRecipe(new ItemStack(miningWellBlock, 1), "ipi", "igi", "iPi", 'p', "dustRedstone", 'i', "ingotIron", 'g',
-                "gearIron", 'P', Items.iron_pickaxe);
+                    "gearIron", 'P', Items.iron_pickaxe);
         }
 
         if (pumpBlock != null) {
             CoreProxy.proxy.addCraftingRecipe(new ItemStack(pumpBlock), "ipi", "igi", "TBT", 'p', "dustRedstone", 'i', "ingotIron", 'T', tankBlock,
-                'g', "gearIron", 'B', Items.bucket);
+                    'g', "gearIron", 'B', Items.bucket);
         }
 
         if (autoWorkbenchBlock != null) {
@@ -201,7 +197,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 
         if (refineryBlock != null) {
             CoreProxy.proxy.addCraftingRecipe(new ItemStack(refineryBlock), "RTR", "TGT", 'T', tankBlock != null ? tankBlock : "blockGlass", 'G',
-                "gearDiamond", 'R', Blocks.redstone_torch);
+                    "gearDiamond", 'R', Blocks.redstone_torch);
         }
 
         if (chuteBlock != null) {
@@ -211,8 +207,8 @@ public class BuildCraftFactory extends BuildCraftMod {
         }
 
         if (floodGateBlock != null) {
-            CoreProxy.proxy.addCraftingRecipe(new ItemStack(floodGateBlock), "IGI", "FTF", "IFI", 'I', "ingotIron", 'T', tankBlock != null
-                ? tankBlock : "blockGlass", 'G', "gearIron", 'F', new ItemStack(Blocks.iron_bars));
+            CoreProxy.proxy.addCraftingRecipe(new ItemStack(floodGateBlock), "IGI", "FTF", "IFI", 'I', "ingotIron", 'T', tankBlock != null ? tankBlock
+                : "blockGlass", 'G', "gearIron", 'F', new ItemStack(Blocks.iron_bars));
         }
     }
 

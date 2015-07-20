@@ -5,6 +5,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.IIconProvider;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.transport.BuildCraftTransport;
 import buildcraft.transport.PipeIconProvider;
@@ -24,7 +25,7 @@ public class PipePowerEmerald extends PipePowerWood {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSpriteProvider getIconProvider() {
+    public IIconProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 

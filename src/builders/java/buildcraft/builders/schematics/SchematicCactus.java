@@ -1,11 +1,7 @@
-/**
- * Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team
- * http://www.mod-buildcraft.com
+/** Copyright (c) 2011-2014, SpaceToad and the BuildCraft Team http://www.mod-buildcraft.com
  *
- * BuildCraft is distributed under the terms of the Minecraft Mod Public
- * License 1.0, or MMPL. Please check the contents of the license located in
- * http://www.mod-buildcraft.com/MMPL-1.0.txt
- */
+ * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
+ * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.schematics;
 
 import java.util.LinkedList;
@@ -19,23 +15,23 @@ import buildcraft.api.blueprints.SchematicBlock;
 
 public class SchematicCactus extends SchematicBlock {
 
-	@Override
-	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(Blocks.cactus));
-	}
+    @Override
+    public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+        requirements.add(new ItemStack(Blocks.cactus));
+    }
 
-	@Override
-	public void storeRequirements(IBuilderContext context, BlockPos pos) {
-		// cancel requirements reading
-	}
+    @Override
+    public void storeRequirements(IBuilderContext context, BlockPos pos) {
+        // cancel requirements reading
+    }
 
-	@Override
-	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
-		context.world().setBlockState(pos, Blocks.cactus.getDefaultState(), 3);
-	}
+    @Override
+    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+        context.world().setBlockState(pos, Blocks.cactus.getDefaultState(), 3);
+    }
 
-	@Override
-	public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
-		return context.world().getBlockState(pos).getBlock() == Blocks.cactus;
-	}
+    @Override
+    public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
+        return context.world().getBlockState(pos).getBlock() == Blocks.cactus;
+    }
 }

@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.energy.tile;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,6 +17,8 @@ import buildcraft.core.BuildCraftCore;
 import buildcraft.core.PowerMode;
 import buildcraft.core.lib.engines.TileEngineBase;
 import buildcraft.core.lib.utils.StringUtils;
+
+import io.netty.buffer.ByteBuf;
 
 public class TileEngineCreative extends TileEngineBase {
     private PowerMode powerMode = PowerMode.M2;
@@ -45,10 +45,10 @@ public class TileEngineCreative extends TileEngineBase {
                 if (!(player instanceof FakePlayer)) {
                     if (BuildCraftCore.hidePowerNumbers) {
                         player.addChatMessage(new ChatComponentText(String.format(StringUtils.localize("chat.pipe.power.iron.mode.numberless"),
-                            StringUtils.localize("chat.pipe.power.iron.level." + powerMode.maxPower))));
+                                StringUtils.localize("chat.pipe.power.iron.level." + powerMode.maxPower))));
                     } else {
                         player.addChatMessage(new ChatComponentText(String.format(StringUtils.localize("chat.pipe.power.iron.mode"),
-                            powerMode.maxPower)));
+                                powerMode.maxPower)));
                     }
                 }
 

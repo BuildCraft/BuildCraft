@@ -85,8 +85,8 @@ public class ActionParameterSignal implements IStatementParameter {
         if (color == null) {
             return null;
         }
-        return String
-            .format(StringUtils.localize("gate.action.pipe.wire"), StringUtils.localize("color." + color.name().toLowerCase(Locale.ENGLISH)));
+        return String.format(StringUtils.localize("gate.action.pipe.wire"), StringUtils.localize("color." + color.name().toLowerCase(
+                Locale.ENGLISH)));
     }
 
     @Override
@@ -96,11 +96,10 @@ public class ActionParameterSignal implements IStatementParameter {
 
     @Override
     public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        icons =
-            new TextureAtlasSprite[] { iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_red_active"),
-                iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_blue_active"),
-                iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_green_active"),
-                iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_yellow_active") };
+        icons = new TextureAtlasSprite[] { iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_red_active"), iconRegister
+                .registerIcon("buildcrafttransport:triggers/trigger_pipesignal_blue_active"), iconRegister.registerIcon(
+                        "buildcrafttransport:triggers/trigger_pipesignal_green_active"), iconRegister.registerIcon(
+                                "buildcrafttransport:triggers/trigger_pipesignal_yellow_active") };
 
     }
 

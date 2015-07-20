@@ -39,8 +39,8 @@ public class RenderBuilder extends RenderBoxProvider {
                 for (LaserData laser : builder.getPathLaser()) {
                     if (laser != null) {
                         GL11.glPushMatrix();
-                        RenderLaser.doRenderLaser(TileEntityRendererDispatcher.instance.worldObj, Minecraft.getMinecraft().getTextureManager(),
-                            laser, EntityLaser.LASER_STRIPES_YELLOW);
+                        RenderLaser.doRenderLaser(TileEntityRendererDispatcher.instance.worldObj, Minecraft.getMinecraft().getTextureManager(), laser,
+                                EntityLaser.LASER_STRIPES_YELLOW);
                         GL11.glPopMatrix();
                     }
                 }

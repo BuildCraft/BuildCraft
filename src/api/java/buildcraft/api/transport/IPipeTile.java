@@ -62,5 +62,5 @@ public interface IPipeTile extends IInjectable {
 
     @Deprecated
     // Now in IInjectable
-            int injectItem(ItemStack stack, boolean doAdd, EnumFacing from);
+    int injectItem(ItemStack stack, boolean doAdd, EnumFacing from);
 }

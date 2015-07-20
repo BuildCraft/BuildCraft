@@ -52,7 +52,7 @@ public class TransactorRoundRobin extends TransactorSimple {
 
             if (minSlot != null) {
                 added += addToSlot(minSlot, stack, stack.stackSize - 1, doAdd); // add 1 item n times, into the selected
-                                                                                // slot
+                // slot
             } else {
                 break;
             }

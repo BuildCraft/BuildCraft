@@ -33,10 +33,7 @@ public class GuiFiller extends GuiAdvancedInterface {
 
         @Override
         public IStatementParameter getParameter() {
-            if (slot >= instance.
-                    filler.
-                    patternParameters.
-                    length) {
+            if (slot >= instance.filler.patternParameters.length) {
                 return null;
             } else {
                 return instance.filler.patternParameters[slot];
@@ -107,8 +104,8 @@ public class GuiFiller extends GuiAdvancedInterface {
             int i = ((FillerParameterSlot) slot).slot;
             if (i < filler.patternParameters.length) {
                 if (filler.patternParameters[i] != null) {
-                    filler.patternParameters[i].onClick(filler, filler.currentPattern, mc.thePlayer.inventory.getItemStack(),
-                        new StatementMouseClick(k, isShiftKeyDown()));
+                    filler.patternParameters[i].onClick(filler, filler.currentPattern, mc.thePlayer.inventory.getItemStack(), new StatementMouseClick(
+                            k, isShiftKeyDown()));
                 } else {
                     filler.patternParameters[i] = filler.currentPattern.createParameter(i);
                 }

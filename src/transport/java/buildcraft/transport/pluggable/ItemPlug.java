@@ -9,8 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
@@ -31,18 +29,6 @@ public class ItemPlug extends ItemBuildCraft implements IPipePluggableItem {
     @Override
     public boolean doesSneakBypassUse(World world, BlockPos pos, EntityPlayer player) {
         return true;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureAtlasSpriteRegister par1IconRegister) {
-        // NOOP
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public int getSpriteNumber() {
-        return 0;
     }
 
     @Override

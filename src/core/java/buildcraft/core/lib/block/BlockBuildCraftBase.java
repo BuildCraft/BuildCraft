@@ -48,6 +48,8 @@ public abstract class BlockBuildCraftBase extends Block {
     public static final BuildCraftProperty<EnumFillerPattern> FILLER_PATTERN = BuildCraftProperties.FILLER_PATTERN;
     public static final BuildCraftProperty<EnumBlueprintType> BLUEPRINT_TYPE = BuildCraftProperties.BLUEPRINT_TYPE;
 
+    public static final BuildCraftProperty<Integer> GENERIC_PIPE_DATA = BuildCraftProperties.GENERIC_PIPE_DATA;
+
     public static final BuildCraftProperty<Boolean> JOINED_BELOW = BuildCraftProperties.JOINED_BELOW;
     public static final BuildCraftProperty<Boolean> MOVING = BuildCraftProperties.MOVING;
     public static final BuildCraftProperty<Integer> LED_POWER = BuildCraftProperties.LED_POWER;

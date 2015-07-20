@@ -10,7 +10,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.core.lib.render.IIconProvider;
+import buildcraft.api.core.IIconProvider;
 
 public class WireIconProvider implements IIconProvider {
 

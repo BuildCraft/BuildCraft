@@ -100,14 +100,14 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
         @Override
         public String toString() {
-            return String.format(
-                    "RayTraceResult: %s, %s", hitPart == null ? "null" : hitPart.name(), boundingBox == null ? "null" : boundingBox.toString());
+            return String.format("RayTraceResult: %s, %s", hitPart == null ? "null" : hitPart.name(), boundingBox == null ? "null" : boundingBox
+                    .toString());
         }
     }
 
     /* Defined subprograms ************************************************* */
     public BlockGenericPipe() {
-        super(Material.glass);
+        super(Material.glass, GENERIC_PIPE_DATA);
         setCreativeTab(null);
     }
 
@@ -744,8 +744,8 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         }
 
         if (player.isSneaking()) {
-            if (pipe.container.hasPipePluggable(side) && rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable && pluggable
-                    .getClass().isInstance(pipe.container.getPipePluggable(side))) {
+            if (pipe.container.hasPipePluggable(side) && rayTraceResult != null && rayTraceResult.hitPart == Part.Pluggable && pluggable.getClass()
+                    .isInstance(pipe.container.getPipePluggable(side))) {
                 return pipe.container.setPluggable(side, null, player);
             }
         }
@@ -1030,9 +1030,8 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
             px = target.hitVec.xCoord + block.getBlockBoundsMaxX() + b;
         }
 
-        EntityFX fx = effectRenderer.spawnEffectParticle(
-                EnumParticleTypes.BLOCK_CRACK.getParticleID(), px, py, pz, 0.0D, 0.0D, 0.0D, Block.getStateId(
-                        worldObj.getBlockState(target.getBlockPos())));
+        EntityFX fx = effectRenderer.spawnEffectParticle(EnumParticleTypes.BLOCK_CRACK.getParticleID(), px, py, pz, 0.0D, 0.0D, 0.0D, Block
+                .getStateId(worldObj.getBlockState(target.getBlockPos())));
         fx.setParticleIcon(icon);
         effectRenderer.addEffect(fx.multiplyVelocity(0.2F).multipleParticleScaleBy(0.6F));
         return true;
@@ -1066,9 +1065,8 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
                     double px = pos.getX() + (i + 0.5D) / its;
                     double py = pos.getY() + (j + 0.5D) / its;
                     double pz = pos.getZ() + (k + 0.5D) / its;
-                    EntityFX fx = effectRenderer.spawnEffectParticle(
-                            EnumParticleTypes.BLOCK_CRACK.getParticleID(), px, py, pz, px - pos.getX() - 0.5D, py - pos.getY() - 0.5D, pz - pos.getZ()
-                                - 0.5D, Block.getStateId(worldObj.getBlockState(pos)));
+                    EntityFX fx = effectRenderer.spawnEffectParticle(EnumParticleTypes.BLOCK_CRACK.getParticleID(), px, py, pz, px - pos.getX()
+                        - 0.5D, py - pos.getY() - 0.5D, pz - pos.getZ() - 0.5D, Block.getStateId(worldObj.getBlockState(pos)));
                     fx.setParticleIcon(icon);
                 }
             }

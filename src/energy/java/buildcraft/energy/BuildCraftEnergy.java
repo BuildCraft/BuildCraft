@@ -122,48 +122,40 @@ public class BuildCraftEnergy extends BuildCraftMod {
         BuildcraftFuelRegistry.coolant = CoolantManager.INSTANCE;
 
         // TODO: Reload configs without having to close the game
-        int oilDesertBiomeId =
-            BuildCraftCore.mainConfigManager.register("worldgen.biomes", "biomeOilDesert", DefaultProps.BIOME_OIL_DESERT,
+        int oilDesertBiomeId = BuildCraftCore.mainConfigManager.register("worldgen.biomes", "biomeOilDesert", DefaultProps.BIOME_OIL_DESERT,
                 "The id for the Oil Desert biome", RestartRequirement.GAME).getInt();
-        int oilOceanBiomeId =
-            BuildCraftCore.mainConfigManager.register("worldgen.biomes", "biomeOilOcean", DefaultProps.BIOME_OIL_OCEAN,
+        int oilOceanBiomeId = BuildCraftCore.mainConfigManager.register("worldgen.biomes", "biomeOilOcean", DefaultProps.BIOME_OIL_OCEAN,
                 "The id for the Oil Ocean biome", RestartRequirement.GAME).getInt();
 
         BuildCraftCore.mainConfigManager.register("worldgen.spawnOilSprings", true, "Should I spawn oil springs?",
-            ConfigManager.RestartRequirement.GAME);
+                ConfigManager.RestartRequirement.GAME);
         BuildCraftCore.mainConfigManager.register("worldgen.oilWellGenerationRate", 1.0D,
-            "How high should be the probability of an oil well generating?", ConfigManager.RestartRequirement.NONE);
+                "How high should be the probability of an oil well generating?", ConfigManager.RestartRequirement.NONE);
 
         setBiomeList(OilPopulate.INSTANCE.surfaceDepositBiomes, BuildCraftCore.mainConfigManager.register("worldgen.biomes", "increasedOilIDs",
-            new String[] { BiomeDictionary.Type.SANDY.toString(), BiomeGenBase.taiga.biomeName },
-            "IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have increased oil generation rates.", RestartRequirement.GAME));
+                new String[] { BiomeDictionary.Type.SANDY.toString(), BiomeGenBase.taiga.biomeName },
+                "IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have increased oil generation rates.", RestartRequirement.GAME));
 
         setBiomeList(OilPopulate.INSTANCE.excessiveBiomes, BuildCraftCore.mainConfigManager.register("worldgen.biomes", "excessiveOilIDs",
-            new String[] {}, "IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have GREATLY increased oil generation rates.",
-            RestartRequirement.GAME));
+                new String[] {}, "IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have GREATLY increased oil generation rates.",
+                RestartRequirement.GAME));
 
         setBiomeList(OilPopulate.INSTANCE.excludedBiomes, BuildCraftCore.mainConfigManager.register("worldgen.biomes", "excludeOilIDs", new String[] {
             BiomeGenBase.sky.biomeName, BiomeGenBase.hell.biomeName },
-            "IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that are excluded from generating oil.", RestartRequirement.GAME));
+                "IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that are excluded from generating oil.", RestartRequirement.GAME));
 
-        double fuelLavaMultiplier =
-            BuildCraftCore.mainConfigManager.register("general", "fuel.lava.combustion", 1.0F, "adjust energy value of Lava in Combustion Engines",
-                RestartRequirement.GAME).getDouble();
-        double fuelOilMultiplier =
-            BuildCraftCore.mainConfigManager.register("general", "fuel.oil.combustion", 1.0F, "adjust energy value of Oil in Combustion Engines",
-                RestartRequirement.GAME).getDouble();
-        double fuelFuelMultiplier =
-            BuildCraftCore.mainConfigManager.register("general", "fuel.fuel.combustion", 1.0F, "adjust energy value of Fuel in Combustion Engines",
-                RestartRequirement.GAME).getDouble();
+        double fuelLavaMultiplier = BuildCraftCore.mainConfigManager.register("general", "fuel.lava.combustion", 1.0F,
+                "adjust energy value of Lava in Combustion Engines", RestartRequirement.GAME).getDouble();
+        double fuelOilMultiplier = BuildCraftCore.mainConfigManager.register("general", "fuel.oil.combustion", 1.0F,
+                "adjust energy value of Oil in Combustion Engines", RestartRequirement.GAME).getDouble();
+        double fuelFuelMultiplier = BuildCraftCore.mainConfigManager.register("general", "fuel.fuel.combustion", 1.0F,
+                "adjust energy value of Fuel in Combustion Engines", RestartRequirement.GAME).getDouble();
 
-        int fuelLavaEnergyOutput =
-            BuildCraftCore.mainConfigManager.register("general", "fuel.lava.combustion.energyOutput", 20,
+        int fuelLavaEnergyOutput = BuildCraftCore.mainConfigManager.register("general", "fuel.lava.combustion.energyOutput", 20,
                 "adjust output energy by Lava in Combustion Engines", RestartRequirement.GAME).getInt();
-        int fuelOilEnergyOutput =
-            BuildCraftCore.mainConfigManager.register("general", "fuel.oil.combustion.energyOutput", 30,
+        int fuelOilEnergyOutput = BuildCraftCore.mainConfigManager.register("general", "fuel.oil.combustion.energyOutput", 30,
                 "adjust output energy by Oil in Combustion Engines", RestartRequirement.GAME).getInt();
-        int fuelFuelEnergyOutput =
-            BuildCraftCore.mainConfigManager.register("general", "fuel.fuel.combustion.energyOutput", 60,
+        int fuelFuelEnergyOutput = BuildCraftCore.mainConfigManager.register("general", "fuel.fuel.combustion.energyOutput", 60,
                 "adjust output energy by Fuel in Combustion Engines", RestartRequirement.GAME).getInt();
 
         BuildCraftCore.mainConfiguration.save();
@@ -192,8 +184,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
 
         // Oil and fuel
         if (!FluidRegistry.isFluidRegistered("oil")) {
-            buildcraftFluidOil =
-                new Fluid("oil", new ResourceLocation(fluidTextureBase + "oil_still"), new ResourceLocation(fluidTextureBase + "oil_flow"));
+            buildcraftFluidOil = new Fluid("oil", new ResourceLocation(fluidTextureBase + "oil_still"), new ResourceLocation(fluidTextureBase
+                + "oil_flow"));
             buildcraftFluidOil.setDensity(800).setViscosity(10000);
             FluidRegistry.registerFluid(buildcraftFluidOil);
         } else {
@@ -202,8 +194,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
         fluidOil = FluidRegistry.getFluid("oil");
 
         if (!FluidRegistry.isFluidRegistered("fuel")) {
-            buildcraftFluidFuel =
-                new Fluid("fuel", new ResourceLocation(fluidTextureBase + "fuel_still"), new ResourceLocation(fluidTextureBase + "fuel_flow"));
+            buildcraftFluidFuel = new Fluid("fuel", new ResourceLocation(fluidTextureBase + "fuel_still"), new ResourceLocation(fluidTextureBase
+                + "fuel_flow"));
             FluidRegistry.registerFluid(buildcraftFluidFuel);
         } else {
             BCLog.logger.warn("Not using BuildCraft fuel - issues might occur!");
@@ -211,9 +203,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
         fluidFuel = FluidRegistry.getFluid("fuel");
 
         if (!FluidRegistry.isFluidRegistered("redplasma")) {
-            buildcraftFluidRedPlasma =
-                new Fluid("redplasma", new ResourceLocation(fluidTextureBase + "redplasma_still"), new ResourceLocation(fluidTextureBase
-                    + "redplasma_flow"));
+            buildcraftFluidRedPlasma = new Fluid("redplasma", new ResourceLocation(fluidTextureBase + "redplasma_still"), new ResourceLocation(
+                    fluidTextureBase + "redplasma_flow"));
             buildcraftFluidRedPlasma.setDensity(10000).setViscosity(10000).setLuminosity(30);
             FluidRegistry.registerFluid(buildcraftFluidRedPlasma);
         } else {
@@ -229,9 +220,9 @@ public class BuildCraftEnergy extends BuildCraftMod {
             fluidOil.setBlock(blockOil);
 
             BuildCraftCore.mainConfigManager.register("general.oilCanBurn", true, "Should oil burn when lit on fire?",
-                ConfigManager.RestartRequirement.NONE);
+                    ConfigManager.RestartRequirement.NONE);
             BuildCraftCore.mainConfigManager.register("general.oilIsDense", true, "Should oil be dense and push enties up?",
-                ConfigManager.RestartRequirement.NONE);
+                    ConfigManager.RestartRequirement.NONE);
         } else {
             blockOil = fluidOil.getBlock();
         }
@@ -271,7 +262,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
             bucketOil.setUnlocalizedName("bucketOil").setContainerItem(Items.bucket);
             CoreProxy.proxy.registerItem(bucketOil);
             FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("oil", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(
-                bucketOil), new ItemStack(Items.bucket));
+                    bucketOil), new ItemStack(Items.bucket));
         }
 
         if (blockFuel != null) {
@@ -279,7 +270,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
             bucketFuel.setUnlocalizedName("bucketFuel").setContainerItem(Items.bucket);
             CoreProxy.proxy.registerItem(bucketFuel);
             FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("fuel", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(
-                bucketFuel), new ItemStack(Items.bucket));
+                    bucketFuel), new ItemStack(Items.bucket));
         }
 
         if (!BuildCraftCore.NONRELEASED_BLOCKS) {
@@ -288,7 +279,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
                 bucketRedPlasma.setUnlocalizedName("bucketRedPlasma").setContainerItem(Items.bucket);
                 CoreProxy.proxy.registerItem(bucketRedPlasma);
                 FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("redplasma", FluidContainerRegistry.BUCKET_VOLUME),
-                    new ItemStack(bucketRedPlasma), new ItemStack(Items.bucket));
+                        new ItemStack(bucketRedPlasma), new ItemStack(Items.bucket));
             }
         }
 
@@ -396,12 +387,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
         EnergyProxy.proxy.registerBlockRenderers();
         EnergyProxy.proxy.registerTileEntities();
 
-        engineAchievement2 =
-            BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.stirlingEngine", "engineAchievement2", 3, -2,
-                new ItemStack(BuildCraftCore.engineBlock, 1, 1), BuildCraftCore.engineRedstoneAchievement));
-        engineAchievement3 =
-            BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.combustionEngine", "engineAchievement3", 5, -2,
-                new ItemStack(BuildCraftCore.engineBlock, 1, 2), engineAchievement2));
+        engineAchievement2 = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.stirlingEngine", "engineAchievement2",
+                3, -2, new ItemStack(BuildCraftCore.engineBlock, 1, 1), BuildCraftCore.engineRedstoneAchievement));
+        engineAchievement3 = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.combustionEngine",
+                "engineAchievement3", 5, -2, new ItemStack(BuildCraftCore.engineBlock, 1, 2), engineAchievement2));
     }
 
     @Mod.EventHandler
@@ -413,10 +402,10 @@ public class BuildCraftEnergy extends BuildCraftMod {
     }
 
     public static void loadRecipes() {
-        CoreProxy.proxy.addCraftingRecipe(new ItemStack(BuildCraftCore.engineBlock, 1, 1), "www", " g ", "GpG", 'w', "cobblestone", 'g',
-            "blockGlass", 'G', "gearStone", 'p', Blocks.piston);
+        CoreProxy.proxy.addCraftingRecipe(new ItemStack(BuildCraftCore.engineBlock, 1, 1), "www", " g ", "GpG", 'w', "cobblestone", 'g', "blockGlass",
+                'G', "gearStone", 'p', Blocks.piston);
         CoreProxy.proxy.addCraftingRecipe(new ItemStack(BuildCraftCore.engineBlock, 1, 2), "www", " g ", "GpG", 'w', "ingotIron", 'g', "blockGlass",
-            'G', "gearIron", 'p', Blocks.piston);
+                'G', "gearIron", 'p', Blocks.piston);
     }
 
     private int findUnusedBiomeID(String biomeName) {

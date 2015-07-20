@@ -1,16 +1,14 @@
 package buildcraft.transport.item;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.items.ItemBuildCraft;
@@ -18,6 +16,7 @@ import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.transport.Gate;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.block.BlockGenericPipe;
+import buildcraft.transport.block.BlockGenericPipe.Part;
 import buildcraft.transport.block.BlockGenericPipe.RaytraceResult;
 import buildcraft.transport.gates.GateDefinition.GateMaterial;
 import buildcraft.transport.gates.GatePluggable;
@@ -29,22 +28,22 @@ public class ItemGateCopier extends ItemBuildCraft {
         setUnlocalizedName("gateCopier");
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public TextureAtlasSprite getIconIndex(ItemStack i) {
-        NBTTagCompound cpt = NBTUtils.getItemData(i);
-        this.itemIcon = cpt.hasKey("logic") ? icons[1] : icons[0];
-        return this.itemIcon;
-    }
+    // @Override
+    // @SideOnly(Side.CLIENT)
+    // public TextureAtlasSprite getIconIndex(ItemStack i) {
+    // NBTTagCompound cpt = NBTUtils.getItemData(i);
+    // this.itemIcon = cpt.hasKey("logic") ? icons[1] : icons[0];
+    // return this.itemIcon;
+    // }
 
     @Override
-    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, int side, float hitX, float hitY, float hitZ) {
+    public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (world.isRemote) {
             return true;
         }
 
         boolean isCopying = !player.isSneaking();
-        Block block = world.getBlock(pos);
+        Block block = world.getBlockState(pos).getBlock();
         TileEntity tile = world.getTileEntity(pos);
         NBTTagCompound data = NBTUtils.getItemData(stack);
         Gate gate = null;
@@ -111,7 +110,7 @@ public class ItemGateCopier extends ItemBuildCraft {
         return true;
     }
 
-    public String[] getIconNames() {
-        return new String[] { "gateCopier/empty", "gateCopier/full" };
-    }
+    // public String[] getIconNames() {
+    // return new String[] { "gateCopier/empty", "gateCopier/full" };
+    // }
 }

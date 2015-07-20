@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -71,6 +69,8 @@ import buildcraft.robotics.ai.AIRobotSleep;
 import buildcraft.robotics.item.ItemRobot;
 import buildcraft.robotics.statements.ActionRobotWorkInArea;
 import buildcraft.robotics.statements.ActionRobotWorkInArea.AreaType;
+
+import io.netty.buffer.ByteBuf;
 
 public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpawnData, IInventory, IFluidHandler, ICommandReceiver, IDebuggable {
 
@@ -298,9 +298,8 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         if (!worldObj.isRemote) {
             if (linkedDockingStation == null) {
                 if (linkedDockingStationIndex != null) {
-                    linkedDockingStation =
-                        getRegistry().getStation(linkedDockingStationIndex.x, linkedDockingStationIndex.y, linkedDockingStationIndex.z,
-                            linkedDockingStationSide);
+                    linkedDockingStation = getRegistry().getStation(linkedDockingStationIndex.x, linkedDockingStationIndex.y,
+                            linkedDockingStationIndex.z, linkedDockingStationSide);
                 }
 
                 if (linkedDockingStation == null) {
@@ -319,9 +318,8 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
             }
 
             if (currentDockingStationIndex != null && currentDockingStation == null) {
-                currentDockingStation =
-                    getRegistry().getStation(currentDockingStationIndex.x, currentDockingStationIndex.y, currentDockingStationIndex.z,
-                        currentDockingStationSide);
+                currentDockingStation = getRegistry().getStation(currentDockingStationIndex.x, currentDockingStationIndex.y,
+                        currentDockingStationIndex.z, currentDockingStationSide);
             }
 
             if (linkedDockingStation == null || linkedDockingStation.isInitialized()) {
@@ -714,9 +712,8 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     @Override
     public boolean isItemValidForSlot(int var1, ItemStack var2) {
-        return inv[var1] == null
-            || (inv[var1].isItemEqual(var2) && inv[var1].isStackable() && inv[var1].stackSize + var2.stackSize <= inv[var1].getItem()
-                .getItemStackLimit(inv[var1]));
+        return inv[var1] == null || (inv[var1].isItemEqual(var2) && inv[var1].isStackable() && inv[var1].stackSize + var2.stackSize <= inv[var1]
+                .getItem().getItemStackLimit(inv[var1]));
     }
 
     @Override
@@ -1046,8 +1043,8 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
                 player.swingItem();
             }
             return true;
-        } else if (wearables.size() < 8 && stack.getItem() instanceof IRobotOverlayItem
-            && ((IRobotOverlayItem) stack.getItem()).isValidRobotOverlay(stack)) {
+        } else if (wearables.size() < 8 && stack.getItem() instanceof IRobotOverlayItem && ((IRobotOverlayItem) stack.getItem()).isValidRobotOverlay(
+                stack)) {
             if (!worldObj.isRemote) {
                 wearables.add(stack.splitStack(1));
                 syncWearablesToClient();

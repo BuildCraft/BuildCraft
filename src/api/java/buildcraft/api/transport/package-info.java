@@ -6,4 +6,3 @@
 package buildcraft.api.transport;
 
 import net.minecraftforge.fml.common.API;
-

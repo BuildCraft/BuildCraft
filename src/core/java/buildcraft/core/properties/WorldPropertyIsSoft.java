@@ -16,7 +16,7 @@ public class WorldPropertyIsSoft extends WorldProperty {
     @Override
     public boolean get(IBlockAccess blockAccess, IBlockState state, BlockPos pos) {
         Block block = state.getBlock();
-        return block == null || block.isAir(blockAccess, pos) || BuildCraftAPI.softBlocks.contains(block)
-            || block.isReplaceable((World) blockAccess, pos);
+        return block == null || block.isAir(blockAccess, pos) || BuildCraftAPI.softBlocks.contains(block) || block.isReplaceable((World) blockAccess,
+                pos);
     }
 }

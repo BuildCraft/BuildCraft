@@ -217,6 +217,6 @@ public class RenderRefinery extends TileEntitySpecialRenderer {
 
     private int getDisplayListIndex(Tank tank) {
         return Math.min((int) ((float) tank.getFluidAmount() / (float) tank.getCapacity() * (FluidRenderer.DISPLAY_STAGES - 1)),
-            FluidRenderer.DISPLAY_STAGES - 1);
+                FluidRenderer.DISPLAY_STAGES - 1);
     }
 }

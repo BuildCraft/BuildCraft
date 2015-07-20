@@ -4,14 +4,14 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Vec3;
 
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
+
+import io.netty.buffer.ByteBuf;
 
 public class LaserData implements ISerializable {
     public Vec3 head = new Vec3(0, 0, 0);

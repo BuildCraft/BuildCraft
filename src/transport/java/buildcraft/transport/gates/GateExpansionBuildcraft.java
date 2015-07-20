@@ -5,6 +5,8 @@
 package buildcraft.transport.gates;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.core.lib.utils.StringUtils;
@@ -30,13 +32,13 @@ public abstract class GateExpansionBuildcraft implements IGateExpansion {
     }
 
     @Override
-    public void registerBlockOverlay(TextureAtlasSpriteRegister iconRegister) {
-        iconBlock = iconRegister.registerIcon("buildcrafttransport:gates/gate_expansion_" + tag);
+    public void registerBlockOverlay(TextureMap iconRegister) {
+        iconBlock = iconRegister.registerSprite(new ResourceLocation("buildcrafttransport:gates/gate_expansion_" + tag));
     }
 
     @Override
-    public void registerItemOverlay(TextureAtlasSpriteRegister iconRegister) {
-        iconItem = iconRegister.registerIcon("buildcrafttransport:gates/gate_expansion_" + tag);
+    public void registerItemOverlay(TextureMap iconRegister) {
+        iconItem = iconRegister.registerSprite(new ResourceLocation("buildcrafttransport:gates/gate_expansion_" + tag));
     }
 
     @Override

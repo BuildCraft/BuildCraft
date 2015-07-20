@@ -50,8 +50,8 @@ public final class BlockUtils {
         }
 
         List<ItemStack> dropsList = block.getDrops(world, pos, state, 0);
-        float dropChance =
-            ForgeEventFactory.fireBlockHarvesting(dropsList, world, pos, state, 0, 1.0F, false, CoreProxy.proxy.getBuildCraftPlayer(world).get());
+        float dropChance = ForgeEventFactory.fireBlockHarvesting(dropsList, world, pos, state, 0, 1.0F, false, CoreProxy.proxy.getBuildCraftPlayer(
+                world).get());
 
         ArrayList<ItemStack> returnList = new ArrayList<ItemStack>();
         for (ItemStack s : dropsList) {

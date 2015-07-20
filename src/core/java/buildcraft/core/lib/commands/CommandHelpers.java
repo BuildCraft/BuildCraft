@@ -86,12 +86,12 @@ public final class CommandHelpers {
         header.setColor(EnumChatFormatting.GRAY);
         header.setBold(true);
         sendLocalizedChatMessage(sender, header, "command.buildcraft." + command.getFullCommandString().replace(" ", ".") + ".format", command
-            .getFullCommandString());
+                .getFullCommandString());
         ChatStyle body = new ChatStyle();
         body.setColor(EnumChatFormatting.GRAY);
         if (command.getCommandAliases().size() > 0) {
             sendLocalizedChatMessage(sender, body, "command.buildcraft.aliases", command.getCommandAliases().toString().replace("[", "").replace("]",
-                ""));
+                    ""));
         }
         if (command.getRequiredPermissionLevel() > 0) {
             sendLocalizedChatMessage(sender, body, "command.buildcraft.permlevel", command.getRequiredPermissionLevel());
@@ -101,7 +101,7 @@ public final class CommandHelpers {
             sendLocalizedChatMessage(sender, "command.buildcraft.list");
             for (SubCommand child : command.getChildren()) {
                 sendLocalizedChatMessage(sender, "command.buildcraft." + child.getFullCommandString().replace(" ", ".") + ".desc", child
-                    .getCommandName());
+                        .getCommandName());
             }
         }
     }

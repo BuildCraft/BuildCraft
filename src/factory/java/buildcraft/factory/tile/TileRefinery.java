@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory.tile;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
@@ -34,6 +32,8 @@ import buildcraft.core.lib.fluids.TankManager;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.recipes.RefineryRecipeManager;
+
+import io.netty.buffer.ByteBuf;
 
 public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInventory, IHasWork, IFlexibleCrafter, ICommandReceiver {
 

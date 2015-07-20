@@ -29,11 +29,15 @@ public abstract class BCStatement implements IStatement {
      *
      * @param uniqueTag */
     public BCStatement(String... uniqueTag) {
+        this(new ResourceLocation("buildcraftcore:items/triggers/" + uniqueTag[0]), uniqueTag);
+    }
+
+    protected BCStatement(ResourceLocation loc, String... uniqueTag) {
         this.uniqueTag = uniqueTag[0];
         for (String tag : uniqueTag) {
             StatementManager.statements.put(tag, this);
         }
-        location = new ResourceLocation("buildcraftcore:items/triggers/" + this.uniqueTag);
+        location = loc;
         MinecraftForge.EVENT_BUS.register(this);
     }
 

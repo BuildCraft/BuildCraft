@@ -4,13 +4,13 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.network;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.util.BlockPos;
 
 import buildcraft.core.lib.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
 import buildcraft.transport.render.PipeRendererTESR;
+
+import io.netty.buffer.ByteBuf;
 
 public class PacketPowerUpdate extends PacketCoordinates {
 

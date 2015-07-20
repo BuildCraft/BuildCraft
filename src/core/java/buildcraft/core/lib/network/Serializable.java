@@ -1,8 +1,8 @@
 package buildcraft.core.lib.network;
 
-import io.netty.buffer.ByteBuf;
-
 import buildcraft.api.core.ISerializable;
+
+import io.netty.buffer.ByteBuf;
 
 public class Serializable implements ISerializable {
     @Override

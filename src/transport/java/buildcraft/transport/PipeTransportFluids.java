@@ -297,9 +297,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
         }
 
         if (realDirections.size() > 0) {
-            container.pipe.eventBus.handleEvent(
-                    PipeEventFluid.FindDest.class, new PipeEventFluid.FindDest(
-                            container.pipe, new FluidStack(fluidType, pushAmount), realDirections));
+            container.pipe.eventBus.handleEvent(PipeEventFluid.FindDest.class, new PipeEventFluid.FindDest(container.pipe, new FluidStack(fluidType,
+                    pushAmount), realDirections));
             float min = Math.min(flowRate * realDirections.size(), totalAvailable) / (float) flowRate / realDirections.size();
 
             for (EnumFacing direction : realDirections.elementSet()) {

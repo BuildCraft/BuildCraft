@@ -132,8 +132,8 @@ public class BlockBuildCraftFluid extends BlockFluidClassic implements ICustomSt
     public void randomDisplayTick(World world, BlockPos pos, IBlockState state, Random rand) {
         super.randomDisplayTick(world, pos, state, rand);
 
-        if (rand.nextInt(10) == 0 && World.doesBlockHaveSolidTopSurface(world, pos.down())
-            && !world.getBlockState(pos.down(2)).getBlock().getMaterial().blocksMovement()) {
+        if (rand.nextInt(10) == 0 && World.doesBlockHaveSolidTopSurface(world, pos.down()) && !world.getBlockState(pos.down(2)).getBlock()
+                .getMaterial().blocksMovement()) {
 
             double px = pos.getX() + rand.nextFloat();
             double py = pos.getY() - 1.05D;

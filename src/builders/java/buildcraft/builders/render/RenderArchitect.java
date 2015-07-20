@@ -39,7 +39,7 @@ public class RenderArchitect extends RenderBoxProvider {
                 if (laser != null) {
                     GL11.glPushMatrix();
                     RenderLaser.doRenderLaserWave(TileEntityRendererDispatcher.instance.worldObj, Minecraft.getMinecraft().renderEngine, laser,
-                        EntityLaser.LASER_BLUE);
+                            EntityLaser.LASER_BLUE);
 
                     GL11.glPopMatrix();
                 }

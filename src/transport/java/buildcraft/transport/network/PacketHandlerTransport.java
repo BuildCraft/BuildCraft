@@ -4,9 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.network;
 
-import io.netty.channel.ChannelHandler.Sharable;
-import io.netty.channel.ChannelHandlerContext;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraft.tileentity.TileEntity;
@@ -24,6 +21,9 @@ import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.pipes.PipeItemsDiamond;
 import buildcraft.transport.pipes.PipeItemsEmerald;
+
+import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.channel.ChannelHandlerContext;
 
 @Sharable
 public class PacketHandlerTransport extends PacketHandler {
@@ -54,7 +54,7 @@ public class PacketHandlerTransport extends PacketHandler {
                     break;
                 }
 
-                /** SERVER SIDE * */
+                    /** SERVER SIDE * */
                 case PacketIds.DIAMOND_PIPE_SELECT: {
                     onDiamondPipeSelect(player, (PacketSlotChange) packet);
                     break;
@@ -82,11 +82,11 @@ public class PacketHandlerTransport extends PacketHandler {
     private void onPipeTravelerUpdate(EntityPlayer player, PacketPipeTransportTraveler packet) {
         World world = player.worldObj;
 
-        if (!world.blockExists(packet.posX, packet.posY, packet.posZ)) {
+        if (world.isAirBlock(packet.pos)) {
             return;
         }
 
-        TileEntity entity = world.getTileEntity(packet.posX, packet.posY, packet.posZ);
+        TileEntity entity = world.getTileEntity(packet.pos);
         if (!(entity instanceof TileGenericPipe)) {
             return;
         }
@@ -108,11 +108,11 @@ public class PacketHandlerTransport extends PacketHandler {
      * @param packetPower */
     private void onPacketPower(EntityPlayer player, PacketPowerUpdate packetPower) {
         World world = player.worldObj;
-        if (!world.blockExists(packetPower.posX, packetPower.posY, packetPower.posZ)) {
+        if (world.isAirBlock(packetPower.pos)) {
             return;
         }
 
-        TileEntity entity = world.getTileEntity(packetPower.posX, packetPower.posY, packetPower.posZ);
+        TileEntity entity = world.getTileEntity(packetPower.pos);
         if (!(entity instanceof TileGenericPipe)) {
             return;
         }
@@ -137,7 +137,7 @@ public class PacketHandlerTransport extends PacketHandler {
      * @param y
      * @param z */
     private TileGenericPipe getPipe(World world, BlockPos pos) {
-        if (!world.blockExists(pos)) {
+        if (world.isAirBlock(pos)) {
             return null;
         }
 
@@ -154,7 +154,7 @@ public class PacketHandlerTransport extends PacketHandler {
      * @param player
      * @param packet */
     private void onDiamondPipeSelect(EntityPlayer player, PacketSlotChange packet) {
-        TileGenericPipe pipe = getPipe(player.worldObj, packet.posX, packet.posY, packet.posZ);
+        TileGenericPipe pipe = getPipe(player.worldObj, packet.pos);
         if (pipe == null) {
             return;
         }
@@ -171,7 +171,7 @@ public class PacketHandlerTransport extends PacketHandler {
      * @param player
      * @param packet */
     private void onEmeraldPipeSelect(EntityPlayer player, PacketSlotChange packet) {
-        TileGenericPipe pipe = getPipe(player.worldObj, packet.posX, packet.posY, packet.posZ);
+        TileGenericPipe pipe = getPipe(player.worldObj, packet.pos);
         if (pipe == null) {
             return;
         }

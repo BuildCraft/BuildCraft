@@ -1,8 +1,5 @@
 package buildcraft.silicon;
 
-import gnu.trove.map.hash.TObjectIntHashMap;
-import io.netty.buffer.ByteBuf;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +24,9 @@ import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.silicon.BuildCraftSilicon;
 import buildcraft.silicon.item.ItemPackage;
+
+import gnu.trove.map.hash.TObjectIntHashMap;
+import io.netty.buffer.ByteBuf;
 
 public class TilePackager extends TileBuildCraft implements ISidedInventory {
     private class Requirement {

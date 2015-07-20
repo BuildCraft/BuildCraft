@@ -6,6 +6,7 @@ package buildcraft.transport.schematics;
 
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
@@ -23,11 +24,15 @@ public class BptItemPipeFilters extends BptPipeExtension {
         SimpleInventory newInv = new SimpleInventory(54, "Filters", 1);
         inv.readFromNBT(slot.tileNBT);
 
-        for (int dir = 0; dir <= 5; ++dir) {
-            EnumFacing r = EnumFacing.values()[dir].getRotation(EnumFacing.UP);
+        for (EnumFacing face : EnumFacing.VALUES) {
+            int ordinalA = face.ordinal();
+            int ordinalB = ordinalA;
+            if (face.getAxis() != Axis.Y) {
+                ordinalB = face.rotateY().ordinal();
+            }
 
-            for (int s = 0; s < 9; ++s) {
-                newInv.setInventorySlotContents(r.ordinal() * 9 + s, inv.getStackInSlot(dir * 9 + s));
+            for (int s = 0; s < 9; s++) {
+                newInv.setInventorySlotContents(ordinalB * 9 + s, inv.getStackInSlot(ordinalA * 9 + s));
             }
         }
 

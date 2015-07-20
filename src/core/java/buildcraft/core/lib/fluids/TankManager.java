@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.fluids;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +20,9 @@ import net.minecraftforge.fluids.IFluidHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class TankManager<T extends Tank> extends ForwardingList<T> implements IFluidHandler, List<T> {
+import io.netty.buffer.ByteBuf;
+
+public class TankManager<T extends Tank> extends ForwardingList<T>implements IFluidHandler, List<T> {
 
     private List<T> tanks = new ArrayList<T>();
 

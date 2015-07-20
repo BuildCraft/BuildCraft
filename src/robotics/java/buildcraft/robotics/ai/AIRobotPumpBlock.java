@@ -5,7 +5,6 @@
 package buildcraft.robotics.ai;
 
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.robots.AIRobot;

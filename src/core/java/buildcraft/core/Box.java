@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -20,6 +18,8 @@ import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.lib.utils.Utils;
+
+import io.netty.buffer.ByteBuf;
 
 // TODO (PASS 2): Convert fields to BlockPos
 public class Box implements IBox, ISerializable {
@@ -95,9 +95,8 @@ public class Box implements IBox, ISerializable {
             this.zMax = zMin;
         }
 
-        initialized =
-            !(xMin == Integer.MAX_VALUE || yMin == Integer.MAX_VALUE || zMin == Integer.MAX_VALUE || xMax == Integer.MAX_VALUE
-                || yMax == Integer.MAX_VALUE || zMax == Integer.MAX_VALUE);
+        initialized = !(xMin == Integer.MAX_VALUE || yMin == Integer.MAX_VALUE || zMin == Integer.MAX_VALUE || xMax == Integer.MAX_VALUE
+            || yMax == Integer.MAX_VALUE || zMax == Integer.MAX_VALUE);
     }
 
     public void initialize(Box box) {
@@ -111,8 +110,8 @@ public class Box implements IBox, ISerializable {
     public void initialize(NBTTagCompound nbttagcompound) {
         kind = Kind.values()[nbttagcompound.getShort("kind")];
 
-        initialize(nbttagcompound.getInteger("xMin"), nbttagcompound.getInteger("yMin"), nbttagcompound.getInteger("zMin"), nbttagcompound
-            .getInteger("xMax"), nbttagcompound.getInteger("yMax"), nbttagcompound.getInteger("zMax"));
+        initialize(nbttagcompound.getInteger("xMin"), nbttagcompound.getInteger("yMin"), nbttagcompound.getInteger("zMin"), nbttagcompound.getInteger(
+                "xMax"), nbttagcompound.getInteger("yMax"), nbttagcompound.getInteger("zMax"));
     }
 
     public void initialize(int centerX, int centerY, int centerZ, int size) {

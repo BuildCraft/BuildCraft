@@ -10,6 +10,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.IIconProvider;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.transport.BuildCraftTransport;
 import buildcraft.transport.IPipeConnectionForced;
@@ -17,7 +18,7 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 
-public class PipePowerSandstone extends Pipe<PipeTransportPower> implements IPipeConnectionForced {
+public class PipePowerSandstone extends Pipe<PipeTransportPower>implements IPipeConnectionForced {
 
     public PipePowerSandstone(Item item) {
         super(new PipeTransportPower(), item);
@@ -26,7 +27,7 @@ public class PipePowerSandstone extends Pipe<PipeTransportPower> implements IPip
 
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSpriteProvider getIconProvider() {
+    public IIconProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 

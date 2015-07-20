@@ -4,12 +4,14 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.lib.TileBuffer;
 import buildcraft.transport.Pipe;
@@ -24,8 +26,7 @@ public abstract class PipeLogicIron {
     }
 
     public void switchOnRedstone() {
-        boolean currentPower =
-            pipe.container.getWorldObj().isBlockIndirectlyGettingPowered(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+        boolean currentPower = pipe.container.getWorld().isBlockIndirectlyGettingPowered(pipe.container.getPos()) > 0;
 
         if (currentPower != lastPower) {
             switchPosition();
@@ -50,6 +51,10 @@ public abstract class PipeLogicIron {
             return false;
         }
 
+        if (side == null) {
+            return true;
+        }
+
         TileBuffer[] tileBuffer = pipe.container.getTileCache();
 
         if (tileBuffer == null) {
@@ -69,18 +74,21 @@ public abstract class PipeLogicIron {
     protected abstract boolean isValidConnectingTile(TileEntity tile);
 
     public void initialize() {
-        lastPower = pipe.container.getWorldObj().isBlockIndirectlyGettingPowered(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+        lastPower = pipe.container.getWorld().isBlockIndirectlyGettingPowered(pipe.container.getPos()) > 0;
     }
 
     public void onBlockPlaced() {
-        pipe.container.getWorldObj().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord, 1, 3);
+        setFacing(null);
         switchPosition();
     }
 
     public boolean setFacing(EnumFacing facing) {
-        if (facing.ordinal() != pipe.container.getBlockMetadata() && isValidFacing(facing)) {
-            pipe.container.getWorldObj().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord,
-                facing.ordinal(), 3);
+        IBlockState state = pipe.container.getWorld().getBlockState(pipe.container.getPos());
+        int ordinal = facing == null ? 6 : facing.ordinal();
+        int oldOrdinal = BuildCraftProperties.GENERIC_PIPE_DATA.getValue(state);
+
+        if (ordinal != oldOrdinal && isValidFacing(facing)) {
+            pipe.container.getWorld().setBlockState(pipe.container.getPos(), state.withProperty(BuildCraftProperties.GENERIC_PIPE_DATA, ordinal));
             pipe.container.scheduleRenderUpdate();
             return true;
         }
@@ -89,11 +97,10 @@ public abstract class PipeLogicIron {
 
     public boolean blockActivated(EntityPlayer entityplayer) {
         Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-        if (equipped instanceof IToolWrench
-            && ((IToolWrench) equipped).canWrench(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord)) {
+        if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pipe.container.getPos())) {
             switchPosition();
             pipe.container.scheduleRenderUpdate();
-            ((IToolWrench) equipped).wrenchUsed(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+            ((IToolWrench) equipped).wrenchUsed(entityplayer, pipe.container.getPos());
 
             return true;
         }

@@ -6,9 +6,6 @@ package buildcraft.transport.pipes;
 
 import java.util.List;
 
-import cofh.api.energy.IEnergyHandler;
-import cofh.api.energy.IEnergyProvider;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -18,6 +15,10 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyProvider;
+
+import buildcraft.api.core.IIconProvider;
 import buildcraft.api.power.IRedstoneEngine;
 import buildcraft.api.power.IRedstoneEngineReceiver;
 import buildcraft.api.tiles.IDebuggable;
@@ -29,7 +30,7 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportPower;
 
-public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTransportPowerHook, IEnergyHandler, IRedstoneEngineReceiver, IDebuggable {
+public class PipePowerWood extends Pipe<PipeTransportPower>implements IPipeTransportPowerHook, IEnergyHandler, IRedstoneEngineReceiver, IDebuggable {
     public final boolean[] powerSources = new boolean[6];
 
     protected int standardIconIndex = PipeIconProvider.TYPE.PipePowerWood_Standard.ordinal();
@@ -50,7 +51,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSpriteProvider getIconProvider() {
+    public IIconProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 
@@ -87,7 +88,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
             }
         }
 
-        if (container.getWorldObj().isRemote) {
+        if (container.getWorld().isRemote) {
             // We only do the isRemote check now to get a list
             // of power sources for client-side rendering.
             return;
@@ -116,12 +117,12 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 
                 TileEntity source = container.getNeighborTile(o);
                 if (source instanceof IEnergyProvider) {
-                    int energyExtracted =
-                        battery.addEnergy(0, ((IEnergyProvider) source).extractEnergy(o.getOpposite(), energyMaxExtract, true), false);
+                    int energyExtracted = battery.addEnergy(0, ((IEnergyProvider) source).extractEnergy(o.getOpposite(), energyMaxExtract, true),
+                            false);
                     ((IEnergyProvider) source).extractEnergy(o.getOpposite(), energyExtracted, true);
                 } else if (source instanceof IEnergyHandler) {
-                    int energyExtracted =
-                        battery.addEnergy(0, ((IEnergyHandler) source).extractEnergy(o.getOpposite(), energyMaxExtract, true), false);
+                    int energyExtracted = battery.addEnergy(0, ((IEnergyHandler) source).extractEnergy(o.getOpposite(), energyMaxExtract, true),
+                            false);
                     ((IEnergyHandler) source).extractEnergy(o.getOpposite(), energyExtracted, true);
                 }
             }

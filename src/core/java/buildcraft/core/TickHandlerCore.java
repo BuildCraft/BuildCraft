@@ -30,7 +30,7 @@ public class TickHandlerCore {
 
         if (Version.needsUpdateNoticeAndMarkAsSeen()) {
             player.addChatMessage(new ChatComponentTranslation("bc_update.new_version", Version.getRecommendedVersion(), CoreProxy.proxy
-                .getMinecraftVersion()));
+                    .getMinecraftVersion()));
             player.addChatMessage(new ChatComponentTranslation("bc_update.download"));
 
             // TODO: This takes too much realstate. See how to improve

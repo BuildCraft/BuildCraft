@@ -98,8 +98,8 @@ public class EnergyStorage implements IEnergyStorage {
         }
     }
 
-    /** This function is included to allow the containing tile to directly and efficiently modify the energy contained in
-     * the EnergyStorage. Do not rely on this externally, as not all IEnergyHandlers are guaranteed to have it.
+    /** This function is included to allow the containing tile to directly and efficiently modify the energy contained
+     * in the EnergyStorage. Do not rely on this externally, as not all IEnergyHandlers are guaranteed to have it.
      * 
      * @param energy */
     public void modifyEnergyStored(int energy) {

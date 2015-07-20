@@ -60,7 +60,7 @@ public class AIRobotUseToolOnBlock extends AIRobot {
                 setSuccess(false);
                 if (!robot.getHeldItem().isItemStackDamageable()) {
                     BlockUtils.dropItem((WorldServer) robot.worldObj, MathHelper.floor_double(robot.posX), MathHelper.floor_double(robot.posY),
-                        MathHelper.floor_double(robot.posZ), 6000, stack);
+                            MathHelper.floor_double(robot.posZ), 6000, stack);
                     robot.setItemInUse(null);
                 }
             }

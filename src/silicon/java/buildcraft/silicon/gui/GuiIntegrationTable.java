@@ -58,7 +58,7 @@ public class GuiIntegrationTable extends GuiLaserTable {
         if (integrationTable.getMaxExpansionCount() > 0) {
             for (int i = 8; i > integrationTable.getMaxExpansionCount(); i--) {
                 drawTexturedModalRect(guiLeft + ContainerIntegrationTable.SLOT_X[i] - 1, guiTop + ContainerIntegrationTable.SLOT_Y[i] - 1, 180, 17,
-                    18, 18);
+                        18, 18);
             }
         }
     }

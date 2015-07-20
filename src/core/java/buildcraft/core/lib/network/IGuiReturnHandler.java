@@ -4,10 +4,10 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.network;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+
+import io.netty.buffer.ByteBuf;
 
 public abstract interface IGuiReturnHandler {
     World getWorld();

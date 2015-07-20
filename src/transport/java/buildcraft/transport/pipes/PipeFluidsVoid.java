@@ -10,13 +10,14 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.IIconProvider;
 import buildcraft.transport.BuildCraftTransport;
 import buildcraft.transport.IPipeTransportFluidsHook;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportFluids;
 
-public class PipeFluidsVoid extends Pipe<PipeTransportFluids> implements IPipeTransportFluidsHook {
+public class PipeFluidsVoid extends Pipe<PipeTransportFluids>implements IPipeTransportFluidsHook {
 
     public PipeFluidsVoid(Item item) {
         super(new PipeTransportFluids(), item);
@@ -26,7 +27,7 @@ public class PipeFluidsVoid extends Pipe<PipeTransportFluids> implements IPipeTr
 
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSpriteProvider getIconProvider() {
+    public IIconProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 

@@ -1,7 +1,5 @@
 package buildcraft.robotics.map;
 
-import gnu.trove.map.hash.TLongObjectHashMap;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -19,6 +17,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 import buildcraft.core.lib.utils.NBTUtils;
+
+import gnu.trove.map.hash.TLongObjectHashMap;
 
 public class MapWorld {
     private final World world;

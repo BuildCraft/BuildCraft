@@ -71,8 +71,8 @@ public final class InterModComms {
         } else {
             NBTTagCompound recipe = msg.getNBTValue();
             if (!recipe.hasKey("id") || !recipe.hasKey("input", 9) || !recipe.hasKey("output", 10) || !recipe.hasKey("energy", 3)) { // Ints
-                                                                                                                                     // -
-                                                                                                                                     // NBTBase#NBTTypes
+                // -
+                // NBTBase#NBTTypes
                 failed = true;
             } else {
                 NBTTagList list = (NBTTagList) recipe.getTag("input");
@@ -86,8 +86,8 @@ public final class InterModComms {
                 String id = recipe.getString("id");
                 ItemStack is = ItemStack.loadItemStackFromNBT(recipe.getCompoundTag("output"));
                 if (is != null && !input.isEmpty() && id.length() > 0) {
-                    AssemblyRecipeManager.INSTANCE.addRecipe(id, recipe.getInteger("energy"), is, (Object[]) input
-                        .toArray(new ItemStack[input.size()]));
+                    AssemblyRecipeManager.INSTANCE.addRecipe(id, recipe.getInteger("energy"), is, (Object[]) input.toArray(new ItemStack[input
+                            .size()]));
                 } else {
                     failed = true;
                 }
@@ -104,8 +104,8 @@ public final class InterModComms {
             failed = true;
         } else {
             NBTTagCompound recipe = msg.getNBTValue();
-            if (!recipe.hasKey("id") && !recipe.hasKey("input", 10) || !recipe.hasKey("output", 10) || !recipe.hasKey("energy", 3)
-                || !recipe.hasKey("delay", 3)) {
+            if (!recipe.hasKey("id") && !recipe.hasKey("input", 10) || !recipe.hasKey("output", 10) || !recipe.hasKey("energy", 3) || !recipe.hasKey(
+                    "delay", 3)) {
                 failed = true;
             } else {
                 FluidStack output = FluidStack.loadFluidStackFromNBT(recipe.getCompoundTag("output"));

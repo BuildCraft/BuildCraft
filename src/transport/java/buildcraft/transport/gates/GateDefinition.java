@@ -22,9 +22,8 @@ public final class GateDefinition {
         if (material == GateMaterial.REDSTONE) {
             return StringUtils.localize("gate.name.basic");
         } else {
-            return String.format(
-                    StringUtils.localize("gate.name"), StringUtils.localize("gate.material." + material.getTag()), StringUtils.localize(
-                            "gate.logic." + logic.getTag()));
+            return String.format(StringUtils.localize("gate.name"), StringUtils.localize("gate.material." + material.getTag()), StringUtils.localize(
+                    "gate.logic." + logic.getTag()));
         }
     }
 

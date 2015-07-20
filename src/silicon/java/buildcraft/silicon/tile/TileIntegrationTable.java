@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +17,8 @@ import buildcraft.core.lib.inventory.InventoryMapper;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.utils.StringUtils;
+
+import io.netty.buffer.ByteBuf;
 
 public class TileIntegrationTable extends TileLaserTableBase {
     public static final int SLOT_OUTPUT = 9;

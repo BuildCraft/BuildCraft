@@ -90,8 +90,8 @@ public class BuildingSlotBlock extends BuildingSlot {
                             }
                         }
                         if (!contains) {
-                            BCLog.logger
-                                .warn("Blueprint has MISMATCHING REQUIREMENTS! Potential corrupted/hacked blueprint! Removed mismatched block.");
+                            BCLog.logger.warn(
+                                    "Blueprint has MISMATCHING REQUIREMENTS! Potential corrupted/hacked blueprint! Removed mismatched block.");
                             BCLog.logger.warn("Location: " + pos + " - ItemStack: " + s.toString());
                             context.world().removeTileEntity(pos);
                             context.world().setBlockToAir(pos);

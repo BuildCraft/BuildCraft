@@ -152,13 +152,13 @@ public class BptBuilderTemplate extends BptBuilderBase {
                 break;
             }
 
-//            if (world.isAirBlock(slot.pos)) {
-//                continue;
-//            }
+            // if (world.isAirBlock(slot.pos)) {
+            // continue;
+            // }
 
             if (canDestroy(builder, context, slot)) {
-                if (BlockUtils.isUnbreakableBlock(world, slot.pos) || isBlockBreakCanceled(world, slot.pos)
-                    || BuildCraftAPI.isSoftBlock(world, slot.pos)) {
+                if (BlockUtils.isUnbreakableBlock(world, slot.pos) || isBlockBreakCanceled(world, slot.pos) || BuildCraftAPI.isSoftBlock(world,
+                        slot.pos)) {
                     iteratorClear.remove();
                     markLocationUsed(slot.pos);
                 } else {
@@ -192,8 +192,8 @@ public class BptBuilderTemplate extends BptBuilderBase {
                 break;
             }
 
-            if (BlockUtils.isUnbreakableBlock(world, slot.pos) || isBlockPlaceCanceled(world, slot.pos, slot.schematic)
-                || !BuildCraftAPI.isSoftBlock(world, slot.pos)) {
+            if (BlockUtils.isUnbreakableBlock(world, slot.pos) || isBlockPlaceCanceled(world, slot.pos, slot.schematic) || !BuildCraftAPI.isSoftBlock(
+                    world, slot.pos)) {
                 iteratorBuild.remove();
                 markLocationUsed(slot.pos);
             } else if (builder.consumeEnergy(BuilderAPI.BUILD_ENERGY)) {

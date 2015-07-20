@@ -4,15 +4,13 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pluggable;
 
-import cofh.api.energy.IEnergyHandler;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+
+import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
@@ -36,17 +34,11 @@ public class ItemPowerAdapter extends ItemBuildCraft implements IPipePluggableIt
         return true;
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureAtlasSpriteRegister par1IconRegister) {
-        this.itemIcon = par1IconRegister.registerIcon("buildcraft:pipePowerAdapter");
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public int getSpriteNumber() {
-        return 0;
-    }
+    // @Override
+    // @SideOnly(Side.CLIENT)
+    // public void registerIcons(TextureAtlasSpriteRegister par1IconRegister) {
+    // this.itemIcon = par1IconRegister.registerIcon("buildcraft:pipePowerAdapter");
+    // }
 
     @Override
     public PipePluggable createPipePluggable(IPipe pipe, EnumFacing side, ItemStack stack) {

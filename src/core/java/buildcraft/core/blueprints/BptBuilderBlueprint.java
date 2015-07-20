@@ -4,7 +4,15 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.blueprints;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map.Entry;
 
 import com.google.common.collect.HashMultiset;
@@ -313,9 +321,9 @@ public class BptBuilderBlueprint extends BptBuilderBase {
         BuildingSlotBlock slot;
 
         while ((slot = iterator.next()) != null) {
-//            if (world.isAirBlock(slot.pos)) {
-//                continue;
-//            }
+            // if (world.isAirBlock(slot.pos)) {
+            // continue;
+            // }
 
             boolean skipped = false;
 
@@ -495,8 +503,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
                 }
 
                 FluidStack fluidStack = fluid != null ? FluidContainerRegistry.getFluidForFilledItem(invStk) : null;
-                boolean compatibleContainer =
-                    fluidStack != null && fluidStack.getFluid() == fluid && fluidStack.amount >= FluidContainerRegistry.BUCKET_VOLUME;
+                boolean compatibleContainer = fluidStack != null && fluidStack.getFluid() == fluid
+                    && fluidStack.amount >= FluidContainerRegistry.BUCKET_VOLUME;
 
                 if (StackHelper.isMatchingItem(reqStk, invStk, true, true) || compatibleContainer) {
                     try {
@@ -560,8 +568,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
             boolean itemBlock = reqStk.getItem() instanceof ItemBlock;
             Fluid fluid = itemBlock ? FluidRegistry.lookupFluidForBlock(((ItemBlock) reqStk.getItem()).block) : null;
 
-            if (fluid != null && inv instanceof TileAbstractBuilder
-                && ((TileAbstractBuilder) inv).drainBuild(new FluidStack(fluid, FluidContainerRegistry.BUCKET_VOLUME), true)) {
+            if (fluid != null && inv instanceof TileAbstractBuilder && ((TileAbstractBuilder) inv).drainBuild(new FluidStack(fluid,
+                    FluidContainerRegistry.BUCKET_VOLUME), true)) {
                 continue;
             }
 
@@ -577,8 +585,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
                 }
 
                 FluidStack fluidStack = fluid != null ? FluidContainerRegistry.getFluidForFilledItem(invStk) : null;
-                boolean fluidFound =
-                    fluidStack != null && fluidStack.getFluid() == fluid && fluidStack.amount >= FluidContainerRegistry.BUCKET_VOLUME;
+                boolean fluidFound = fluidStack != null && fluidStack.getFluid() == fluid
+                    && fluidStack.amount >= FluidContainerRegistry.BUCKET_VOLUME;
 
                 if (fluidFound || StackHelper.isCraftingEquivalent(reqStk, invStk, true)) {
                     try {

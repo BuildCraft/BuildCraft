@@ -132,7 +132,8 @@ public class ContainerEmzuliPipe extends BuildCraftContainer {
             EnumColor color = colors.getCurrent();
             if (color != null) {
                 gui.bindTexture(TextureMap.locationItemsTexture);
-                gui.drawTexturedModelRectFromIcon(guiX + x + 2, guiY + y + 2, BuildCraftTransport.actionPipeColor[color.ordinal()].getIconProvider(), 16, 16);
+                gui.drawTexturedModelRectFromIcon(guiX + x + 2, guiY + y + 2, BuildCraftTransport.actionPipeColor[color.ordinal()].getIconProvider(),
+                        16, 16);
             } else {
                 gui.drawTexturedModalRect(guiX + x + 2, guiY + y + 2, u, v + h + h, 16, 16);
             }

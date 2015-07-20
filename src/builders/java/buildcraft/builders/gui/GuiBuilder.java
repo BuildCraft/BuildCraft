@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.gui;
 
-import io.netty.buffer.ByteBuf;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -25,6 +23,8 @@ import buildcraft.core.lib.gui.ItemSlot;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.StringUtils;
+
+import io.netty.buffer.ByteBuf;
 
 public class GuiBuilder extends GuiAdvancedInterface {
     private static final ResourceLocation REGULAR_TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/builder.png");

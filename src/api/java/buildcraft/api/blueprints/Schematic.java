@@ -14,9 +14,9 @@ import net.minecraft.util.Vec3;
 
 import buildcraft.api.core.IInvSlot;
 
-/** A schematic is a piece of a blueprint. It allows to stock blocks or entities to blueprints, and can have a state that
- * moves from a blueprint referential to a world referential. Although default schematic behavior will be OK for a lot
- * of objects, specific blocks and entities may be associated with a dedicated schematic class, which will be
+/** A schematic is a piece of a blueprint. It allows to stock blocks or entities to blueprints, and can have a state
+ * that moves from a blueprint referential to a world referential. Although default schematic behavior will be OK for a
+ * lot of objects, specific blocks and entities may be associated with a dedicated schematic class, which will be
  * instantiated automatically.
  *
  * Schematic perform "id translation" in case the block ids between a blueprint and the world installation are

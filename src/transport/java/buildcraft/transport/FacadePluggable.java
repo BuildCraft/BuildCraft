@@ -144,9 +144,8 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
             data.writeShort(Block.getIdFromBlock(activeState.block));
         }
 
-        data.writeByte(
-                (activeState != null && activeState.transparent ? 128 : 0) | (activeState != null && activeState.hollow ? 64 : 0)
-                    | (activeState == null ? 0 : activeState.metadata));
+        data.writeByte((activeState != null && activeState.transparent ? 128 : 0) | (activeState != null && activeState.hollow ? 64 : 0)
+            | (activeState == null ? 0 : activeState.metadata));
     }
 
     @Override

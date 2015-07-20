@@ -1,4 +1,4 @@
-package buildcraft.core.lib.render;
+package buildcraft.api.core;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;

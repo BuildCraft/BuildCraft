@@ -37,7 +37,7 @@ public final class FluidUtils {
     }
 
     public static boolean isFluidContainer(ItemStack stack) {
-        return stack != null && stack.getItem() != null
-            && (stack.getItem() instanceof IFluidContainerItem || FluidContainerRegistry.isFilledContainer(stack));
+        return stack != null && stack.getItem() != null && (stack.getItem() instanceof IFluidContainerItem || FluidContainerRegistry
+                .isFilledContainer(stack));
     }
 }

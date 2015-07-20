@@ -18,34 +18,34 @@ import buildcraft.api.blueprints.SchematicBlock;
 
 public class SchematicBed extends SchematicBlock {
 
-	@Override
-	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		if (state.getValue(BlockBed.PART) == BlockBed.EnumPartType.HEAD) {
-			requirements.add(new ItemStack(Items.bed));
-		}
-	}
+    @Override
+    public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+        if (state.getValue(BlockBed.PART) == BlockBed.EnumPartType.HEAD) {
+            requirements.add(new ItemStack(Items.bed));
+        }
+    }
 
-	@Override
-	public void storeRequirements(IBuilderContext context, BlockPos pos) {
-		// cancel requirements reading
-	}
+    @Override
+    public void storeRequirements(IBuilderContext context, BlockPos pos) {
+        // cancel requirements reading
+    }
 
-	@Override
-	public void rotateLeft(IBuilderContext context) {
-		IBlockState oldState = state;
-		EnumFacing oldFacing = (EnumFacing) oldState.getValue(BlockBed.FACING);
-		state = oldState.withProperty(BlockBed.FACING, oldFacing.rotateY());
-	}
+    @Override
+    public void rotateLeft(IBuilderContext context) {
+        IBlockState oldState = state;
+        EnumFacing oldFacing = (EnumFacing) oldState.getValue(BlockBed.FACING);
+        state = oldState.withProperty(BlockBed.FACING, oldFacing.rotateY());
+    }
 
-	@Override
-	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
-		context.world().setBlockState(pos, state.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD));
-		BlockPos feetPos = pos.offset(getFace(BlockBed.FACING), -1);
-		context.world().setBlockState(feetPos, state.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT));
-	}
+    @Override
+    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+        context.world().setBlockState(pos, state.withProperty(BlockBed.PART, BlockBed.EnumPartType.HEAD));
+        BlockPos feetPos = pos.offset(getFace(BlockBed.FACING), -1);
+        context.world().setBlockState(feetPos, state.withProperty(BlockBed.PART, BlockBed.EnumPartType.FOOT));
+    }
 
-	@Override
-	public boolean doNotBuild() {
-		return state.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT;
-	}
+    @Override
+    public boolean doNotBuild() {
+        return state.getValue(BlockBed.PART) == BlockBed.EnumPartType.FOOT;
+    }
 }

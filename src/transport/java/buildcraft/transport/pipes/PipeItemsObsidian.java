@@ -7,8 +7,6 @@ package buildcraft.transport.pipes;
 import java.util.Arrays;
 import java.util.List;
 
-import cofh.api.energy.IEnergyHandler;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecartChest;
@@ -22,10 +20,14 @@ import net.minecraft.util.Vec3;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import cofh.api.energy.IEnergyHandler;
+
+import buildcraft.api.core.IIconProvider;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.inventory.filters.StackFilter;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.BuildCraftTransport;
 import buildcraft.transport.Pipe;
@@ -36,7 +38,7 @@ import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
 
-public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEnergyHandler {
+public class PipeItemsObsidian extends Pipe<PipeTransportItems>implements IEnergyHandler {
     private RFBattery battery = new RFBattery(2560, 640, 0);
 
     private int[] entitiesDropped;
@@ -51,7 +53,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSpriteProvider getIconProvider() {
+    public IIconProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 
@@ -77,66 +79,60 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
         if (orientation == null) {
             return null;
         }
-        Vec3 p1 = new Vec3(container.xCoord, container.yCoord, container.zCoord, orientation);
-        Vec3 p2 = new Vec3(container.xCoord, container.yCoord, container.zCoord, orientation);
+        Vec3 p1 = Utils.convert(container.getPos());
+        Vec3 p2 = p1;
 
         switch (orientation) {
             case EAST:
-                p1.x += distance;
-                p2.x += 1 + distance;
+                p1 = p1.addVector(distance, 0, 0);
+                p2 = p2.addVector(distance + 1, 0, 0);
                 break;
             case WEST:
-                p1.x -= distance - 1;
-                p2.x -= distance;
+                p1 = p1.addVector(-distance - 1, 0, 0);
+                p2 = p2.addVector(-distance, 0, 0);
                 break;
             case UP:
             case DOWN:
-                p1.x += distance + 1;
-                p2.x -= distance;
-                p1.z += distance + 1;
-                p2.z -= distance;
+                p1 = p1.addVector(distance + 1, 0, distance + 1);
+                p2 = p2.addVector(-distance, 0, -distance);
                 break;
             case SOUTH:
-                p1.z += distance;
-                p2.z += distance + 1;
+                p1 = p1.addVector(0, 0, distance);
+                p2 = p2.addVector(0, 0, distance + 1);
                 break;
             case NORTH:
             default:
-                p1.z -= distance - 1;
-                p2.z -= distance;
+                p1 = p1.addVector(0, 0, -distance - 1);
+                p2 = p2.addVector(0, 0, -distance);
                 break;
         }
 
         switch (orientation) {
             case EAST:
             case WEST:
-                p1.y += distance + 1;
-                p2.y -= distance;
-                p1.z += distance + 1;
-                p2.z -= distance;
+                p1 = p1.addVector(0, distance + 1, distance + 1);
+                p2 = p2.addVector(0, -distance, -distance);
                 break;
             case UP:
-                p1.y += distance + 1;
-                p2.y += distance;
+                p1 = p1.addVector(0, distance + 1, 0);
+                p2 = p2.addVector(0, distance, 0);
                 break;
             case DOWN:
-                p1.y -= distance - 1;
-                p2.y -= distance;
+                p1 = p1.addVector(0, -distance - 1, 0);
+                p2 = p2.addVector(0, -distance, 0);
                 break;
             case SOUTH:
             case NORTH:
             default:
-                p1.y += distance + 1;
-                p2.y -= distance;
-                p1.x += distance + 1;
-                p2.x -= distance;
+                p1 = p1.addVector(distance + 1, distance + 1, 0);
+                p2 = p2.addVector(-distance, -distance, 0);
                 break;
         }
 
-        Vec3 min = p1.min(p2);
-        Vec3 max = p1.max(p2);
+        Vec3 min = Utils.min(p1, p2);
+        Vec3 max = Utils.max(p1, p2);
 
-        return new AxisAlignedBB(min.x, min.y, min.z, max.x, max.y, max.z);
+        return new AxisAlignedBB(min.xCoord, min.yCoord, min.zCoord, max.xCoord, max.yCoord, max.zCoord);
     }
 
     @Override
@@ -161,7 +157,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
             return false;
         }
 
-        List<Entity> discoveredEntities = container.getWorldObj().getEntitiesWithinAABB(Entity.class, box);
+        List<Entity> discoveredEntities = container.getWorld().getEntitiesWithinAABB(Entity.class, box);
 
         for (Entity entity : discoveredEntities) {
             if (canSuck(entity, distance)) {
@@ -178,9 +174,9 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 
                     if (stack != null && battery.useEnergy(10, 10, false) > 0) {
                         trans.remove(StackFilter.ALL, openOrientation, true);
-                        EntityItem entityitem = new EntityItem(container.getWorldObj(), cart.posX, cart.posY + 0.3F, cart.posZ, stack);
-                        entityitem.delayBeforeCanPickup = 10;
-                        container.getWorldObj().spawnEntityInWorld(entityitem);
+                        EntityItem entityitem = new EntityItem(container.getWorld(), cart.posX, cart.posY + 0.3F, cart.posZ, stack);
+                        entityitem.setDefaultPickupDelay();
+                        container.getWorld().spawnEntityInWorld(entityitem);
                         pullItemIntoPipe(entityitem, 1);
 
                         return true;
@@ -193,15 +189,15 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
     }
 
     public void pullItemIntoPipe(Entity entity, int distance) {
-        if (container.getWorldObj().isRemote) {
+        if (container.getWorld().isRemote) {
             return;
         }
 
         EnumFacing orientation = getOpenOrientation().getOpposite();
 
         if (orientation != null) {
-            container.getWorldObj().playSoundAtEntity(entity, "random.pop", 0.2F,
-                ((container.getWorldObj().rand.nextFloat() - container.getWorldObj().rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+            container.getWorld().playSoundAtEntity(entity, "random.pop", 0.2F, ((container.getWorld().rand.nextFloat() - container.getWorld().rand
+                    .nextFloat()) * 0.7F + 1.0F) * 2.0F);
 
             ItemStack stack = null;
 
@@ -215,7 +211,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
                     return;
                 }
 
-                TransportProxy.proxy.obsidianPipePickup(container.getWorldObj(), item, this.container);
+                TransportProxy.proxy.obsidianPipePickup(container.getWorld(), item, this.container);
 
                 int energyUsed = Math.min(10 * contained.stackSize * distance, battery.getEnergyStored());
 
@@ -243,8 +239,8 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
                 return;
             }
 
-            TravelingItem item =
-                TravelingItem.make(container.xCoord + 0.5, container.yCoord + TransportUtils.getPipeFloorOf(stack), container.zCoord + 0.5, stack);
+            TravelingItem item = TravelingItem.make(Utils.convert(container.getPos()).addVector(0.5, TransportUtils.getPipeFloorOf(stack), 0.5),
+                    stack);
 
             item.setSpeed((float) speed);
 

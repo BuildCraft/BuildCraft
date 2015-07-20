@@ -18,6 +18,6 @@ public class SubCommandVersion extends SubCommand {
         String colour = Version.isOutdated() ? "\u00A7c" : "\u00A7a";
 
         sender.addChatMessage(new ChatComponentText(String.format(colour + StatCollector.translateToLocal("command.buildcraft.version"), Version
-            .getVersion(), CoreProxy.proxy.getMinecraftVersion(), Version.getRecommendedVersion())));
+                .getVersion(), CoreProxy.proxy.getMinecraftVersion(), Version.getRecommendedVersion())));
     }
 }

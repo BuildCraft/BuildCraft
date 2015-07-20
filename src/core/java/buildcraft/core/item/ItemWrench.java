@@ -45,8 +45,8 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
     }
 
     @Override
-    public boolean
-            onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY,
+            float hitZ) {
         Block block = world.getBlockState(pos).getBlock();
 
         if (block == null) {

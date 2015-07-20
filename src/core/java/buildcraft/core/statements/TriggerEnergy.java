@@ -4,13 +4,13 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.statements;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumFacing;
+
 import cofh.api.energy.IEnergyConnection;
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyProvider;
 import cofh.api.energy.IEnergyReceiver;
-
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -70,8 +70,8 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
     }
 
     protected static boolean isTriggered(Object tile, EnumFacing side) {
-        return (tile instanceof IEnergyHandler || tile instanceof IEnergyProvider || tile instanceof IEnergyReceiver)
-            && (((IEnergyConnection) tile).canConnectEnergy(side.getOpposite()));
+        return (tile instanceof IEnergyHandler || tile instanceof IEnergyProvider || tile instanceof IEnergyReceiver) && (((IEnergyConnection) tile)
+                .canConnectEnergy(side.getOpposite()));
     }
 
     protected boolean isActive(Object tile, EnumFacing side) {

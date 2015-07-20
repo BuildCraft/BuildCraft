@@ -118,7 +118,7 @@ public final class NBTUtils {
                     return readBlockPos(nbt.getTag("pos"));
                 } else {
                     BCLog.logger.warn("Attempted to read a block positions from a compound tag without the correct sub-tags! (" + base + ")",
-                        new Throwable());
+                            new Throwable());
                 }
                 return pos;
             }

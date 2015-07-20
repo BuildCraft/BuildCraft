@@ -118,7 +118,7 @@ public class BlockTank extends BlockBuildCraft {
                                 entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils.consumeItem(current));
                             } else {
                                 entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, FluidContainerRegistry
-                                    .drainFluidContainer(current));
+                                        .drainFluidContainer(current));
                             }
                         }
 
@@ -139,12 +139,12 @@ public class BlockTank extends BlockBuildCraft {
                                         if (!entityplayer.inventory.addItemStackToInventory(filled)) {
                                             return false;
                                         } else {
-                                            entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils
-                                                .consumeItem(current));
+                                            entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils.consumeItem(
+                                                    current));
                                         }
                                     } else {
-                                        entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils
-                                            .consumeItem(current));
+                                        entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, InvUtils.consumeItem(
+                                                current));
                                         entityplayer.inventory.setInventorySlotContents(entityplayer.inventory.currentItem, filled);
                                     }
                                 }

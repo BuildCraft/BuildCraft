@@ -6,7 +6,6 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;

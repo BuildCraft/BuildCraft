@@ -15,37 +15,37 @@ import buildcraft.api.blueprints.SchematicBlock;
 
 public class SchematicDoor extends SchematicBlock {
 
-	final ItemStack stack;
+    final ItemStack stack;
 
-	public SchematicDoor(ItemStack stack) {
-		this.stack = stack;
-	}
+    public SchematicDoor(ItemStack stack) {
+        this.stack = stack;
+    }
 
-	@Override
-	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		if (state.getValue(BlockDoor.HALF) == BlockDoor.EnumDoorHalf.LOWER) {
-			requirements.add(stack.copy());
-		}
-	}
+    @Override
+    public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+        if (state.getValue(BlockDoor.HALF) == BlockDoor.EnumDoorHalf.LOWER) {
+            requirements.add(stack.copy());
+        }
+    }
 
-	@Override
-	public void storeRequirements(IBuilderContext context, BlockPos pos) {
-		// cancel requirements reading
-	}
+    @Override
+    public void storeRequirements(IBuilderContext context, BlockPos pos) {
+        // cancel requirements reading
+    }
 
-	@Override
-	public boolean doNotBuild() {
-		return state.getValue(BlockDoor.HALF) == BlockDoor.EnumDoorHalf.UPPER;
-	}
+    @Override
+    public boolean doNotBuild() {
+        return state.getValue(BlockDoor.HALF) == BlockDoor.EnumDoorHalf.UPPER;
+    }
 
-	@Override
-	public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
-		return state.getBlock() == context.world().getBlockState(pos).getBlock();
-	}
+    @Override
+    public boolean isAlreadyBuilt(IBuilderContext context, BlockPos pos) {
+        return state.getBlock() == context.world().getBlockState(pos).getBlock();
+    }
 
-	@Override
-	public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
-		context.world().setBlockState(pos, state);
-		context.world().setBlockState(pos.up(), state.withProperty(BlockDoor.HALF, BlockDoor.EnumDoorHalf.UPPER));
-	}
+    @Override
+    public void placeInWorld(IBuilderContext context, BlockPos pos, LinkedList<ItemStack> stacks) {
+        context.world().setBlockState(pos, state);
+        context.world().setBlockState(pos.up(), state.withProperty(BlockDoor.HALF, BlockDoor.EnumDoorHalf.UPPER));
+    }
 }

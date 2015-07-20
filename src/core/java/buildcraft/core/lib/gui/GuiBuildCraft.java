@@ -119,8 +119,8 @@ public abstract class GuiBuildCraft extends GuiContainer {
         TextureAtlasSprite icon = fluid.getFluid().getIcon(fluid);
 
         if (icon == null) {
-            icon =
-                ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
+            icon = ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite(
+                    "missingno");
         }
 
         mc.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
@@ -190,8 +190,8 @@ public abstract class GuiBuildCraft extends GuiContainer {
     }
 
     public void drawCenteredString(String string, int xCenter, int yCenter, int textColor) {
-        fontRendererObj
-            .drawString(string, xCenter - fontRendererObj.getStringWidth(string) / 2, yCenter - fontRendererObj.FONT_HEIGHT / 2, textColor);
+        fontRendererObj.drawString(string, xCenter - fontRendererObj.getStringWidth(string) / 2, yCenter - fontRendererObj.FONT_HEIGHT / 2,
+                textColor);
     }
 
     protected int getCenteredOffset(String string) {

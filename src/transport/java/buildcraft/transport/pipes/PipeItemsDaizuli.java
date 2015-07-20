@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -19,6 +17,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.enums.EnumColor;
 import buildcraft.api.statements.IActionInternal;
@@ -36,7 +35,9 @@ import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.statements.ActionPipeColor;
 import buildcraft.transport.statements.ActionPipeDirection;
 
-public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements ISerializable {
+import io.netty.buffer.ByteBuf;
+
+public class PipeItemsDaizuli extends Pipe<PipeTransportItems>implements ISerializable {
 
     private int standardIconIndex = PipeIconProvider.TYPE.PipeItemsDaizuli_Black.ordinal();
     private int solidIconIndex = PipeIconProvider.TYPE.PipeAllDaizuli_Solid.ordinal();
@@ -82,9 +83,9 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements ISeria
     public boolean blockActivated(EntityPlayer player) {
         if (player.isSneaking()) {
             Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
-            if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, container.xCoord, container.yCoord, container.zCoord)) {
+            if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, container.getPos())) {
                 setColor(getColor().getNext());
-                ((IToolWrench) equipped).wrenchUsed(player, container.xCoord, container.yCoord, container.zCoord);
+                ((IToolWrench) equipped).wrenchUsed(player, container.getPos());
                 return true;
             }
         }
@@ -123,7 +124,7 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements ISeria
 
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSpriteProvider getIconProvider() {
+    public IIconProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 

@@ -4,9 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.network;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +12,9 @@ import net.minecraft.util.BlockPos;
 
 import buildcraft.api.core.ISerializable;
 import buildcraft.core.network.PacketIds;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 public class PacketTileState extends PacketCoordinates {
 

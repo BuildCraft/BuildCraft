@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.gui;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -34,6 +32,8 @@ import buildcraft.transport.ActionActiveState;
 import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.gates.GateDefinition;
+
+import io.netty.buffer.ByteBuf;
 
 public class ContainerGateInterface extends BuildCraftContainer implements ICommandReceiver {
 
@@ -340,11 +340,11 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
                     BuildCraftCore.instance.sendToPlayer(player, getStatementPacket("setTrigger", position, trigger));
                     for (int p = 0; p < gate.material.numActionParameters; ++p) {
                         BuildCraftCore.instance.sendToPlayer(player, getStatementParameterPacket("setActionParameter", position, p, gate
-                            .getActionParameter(position, p)));
+                                .getActionParameter(position, p)));
                     }
                     for (int q = 0; q < gate.material.numTriggerParameters; ++q) {
                         BuildCraftCore.instance.sendToPlayer(player, getStatementParameterPacket("setTriggerParameter", position, q, gate
-                            .getTriggerParameter(position, q)));
+                                .getTriggerParameter(position, q)));
                     }
                 }
             }

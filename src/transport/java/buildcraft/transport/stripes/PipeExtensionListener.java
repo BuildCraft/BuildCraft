@@ -85,14 +85,13 @@ public class PipeExtensionListener {
 
                 // Step 2: If retracting, remove previous pipe; if extending, add new pipe
                 if (retract) {
-                    removedPipeStacks =
-                        w.getBlock((int) target.x, (int) target.y, (int) target.z).getDrops(w, (int) target.x, (int) target.y, (int) target.z,
-                            w.getBlockMetadata((int) target.x, (int) target.y, (int) target.z), 0);
+                    removedPipeStacks = w.getBlock((int) target.x, (int) target.y, (int) target.z).getDrops(w, (int) target.x, (int) target.y,
+                            (int) target.z, w.getBlockMetadata((int) target.x, (int) target.y, (int) target.z), 0);
 
                     w.setBlockToAir((int) target.x, (int) target.y, (int) target.z);
                 } else {
                     r.stack.getItem().onItemUse(r.stack, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) w, r.x, r.y, r.z).get(), w, r.x, r.y, r.z,
-                        1, 0, 0, 0);
+                            1, 0, 0, 0);
                 }
 
                 // Step 3: Place stripes pipe back
@@ -136,9 +135,8 @@ public class PipeExtensionListener {
     }
 
     private void sendItem(PipeTransportItems transport, ItemStack itemStack, EnumFacing direction) {
-        TravelingItem newItem =
-            TravelingItem.make(transport.container.xCoord + 0.5, transport.container.yCoord + TransportUtils.getPipeFloorOf(itemStack),
-                transport.container.zCoord + 0.5, itemStack);
+        TravelingItem newItem = TravelingItem.make(transport.container.xCoord + 0.5, transport.container.yCoord + TransportUtils.getPipeFloorOf(
+                itemStack), transport.container.zCoord + 0.5, itemStack);
         transport.injectItem(newItem, direction);
     }
 }

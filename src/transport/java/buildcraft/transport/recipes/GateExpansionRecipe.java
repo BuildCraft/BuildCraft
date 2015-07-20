@@ -97,8 +97,8 @@ public class GateExpansionRecipe extends IntegrationRecipeBC {
                 continue;
             }
             for (ItemStack expansion : recipes.values()) {
-                if (StackHelper.isMatchingItem(chipset, expansion, true, true)
-                    && !ItemGate.hasGateExpansion(output, recipes.inverse().get(expansion))) {
+                if (StackHelper.isMatchingItem(chipset, expansion, true, true) && !ItemGate.hasGateExpansion(output, recipes.inverse().get(
+                        expansion))) {
                     if (!preview) {
                         chipset.stackSize--;
                     }

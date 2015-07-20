@@ -165,8 +165,8 @@ public class MappingRegistry {
     }
 
     private boolean isStackLayout(NBTTagCompound nbt) {
-        return nbt.hasKey("id") && nbt.hasKey("Count") && nbt.hasKey("Damage") && nbt.getTag("id") instanceof NBTTagShort
-            && nbt.getTag("Count") instanceof NBTTagByte && nbt.getTag("Damage") instanceof NBTTagShort;
+        return nbt.hasKey("id") && nbt.hasKey("Count") && nbt.hasKey("Damage") && nbt.getTag("id") instanceof NBTTagShort && nbt.getTag(
+                "Count") instanceof NBTTagByte && nbt.getTag("Damage") instanceof NBTTagShort;
     }
 
     public void scanAndTranslateStacksToRegistry(NBTTagCompound nbt) {
@@ -302,8 +302,8 @@ public class MappingRegistry {
         String modName = name.split(":")[0];
         if (Loader.isModLoaded(modName)) {
             try {
-                FMLMissingMappingsEvent.MissingMapping mapping =
-                    new FMLMissingMappingsEvent.MissingMapping(isBlock ? GameRegistry.Type.BLOCK : GameRegistry.Type.ITEM, name, i);
+                FMLMissingMappingsEvent.MissingMapping mapping = new FMLMissingMappingsEvent.MissingMapping(isBlock ? GameRegistry.Type.BLOCK
+                    : GameRegistry.Type.ITEM, name, i);
                 ListMultimap<String, FMLMissingMappingsEvent.MissingMapping> missingMapping = ArrayListMultimap.create();
                 missingMapping.put(modName, mapping);
                 FMLMissingMappingsEvent event = new FMLMissingMappingsEvent(missingMapping);

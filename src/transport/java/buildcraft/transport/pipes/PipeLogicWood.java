@@ -4,11 +4,13 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.lib.TileBuffer;
 import buildcraft.transport.Pipe;
@@ -32,13 +34,17 @@ public abstract class PipeLogicWood {
                 break;
             }
         }
+        int ordinal = -1;
+
         if (newFacing == null) {
-            newFacing = null;
+            ordinal = 6;// The old ForgeDirection.UNKNOWN ordinal
+        } else {
+            ordinal = newFacing.ordinal();
         }
 
-        if (newFacing.ordinal() != meta) {
-            pipe.container.getWorldObj().setBlockMetadataWithNotify(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord,
-                newFacing.ordinal(), 3);
+        if (ordinal != meta) {
+            IBlockState state = pipe.container.getWorld().getBlockState(pipe.container.getPos());
+            pipe.container.getWorld().setBlockState(pipe.container.getPos(), state.withProperty(BuildCraftProperties.GENERIC_PIPE_DATA, ordinal));
             pipe.container.scheduleRenderUpdate();
         }
     }
@@ -77,17 +83,16 @@ public abstract class PipeLogicWood {
     protected abstract boolean isValidConnectingTile(TileEntity tile);
 
     public void initialize() {
-        if (!pipe.container.getWorldObj().isRemote) {
+        if (!pipe.container.getWorld().isRemote) {
             switchSourceIfNeeded();
         }
     }
 
     public boolean blockActivated(EntityPlayer entityplayer) {
         Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
-        if (equipped instanceof IToolWrench
-            && ((IToolWrench) equipped).canWrench(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord)) {
+        if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, pipe.container.getPos())) {
             switchSource();
-            ((IToolWrench) equipped).wrenchUsed(entityplayer, pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+            ((IToolWrench) equipped).wrenchUsed(entityplayer, pipe.container.getPos());
             return true;
         }
 
@@ -95,7 +100,7 @@ public abstract class PipeLogicWood {
     }
 
     public void onNeighborBlockChange(int blockId) {
-        if (!pipe.container.getWorldObj().isRemote) {
+        if (!pipe.container.getWorld().isRemote) {
             switchSourceIfNeeded();
         }
     }

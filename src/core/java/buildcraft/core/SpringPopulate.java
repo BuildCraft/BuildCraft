@@ -21,8 +21,7 @@ public class SpringPopulate {
     @SubscribeEvent
     public void populate(PopulateChunkEvent.Post event) {
 
-        boolean doGen =
-            TerrainGen.populate(event.chunkProvider, event.world, event.rand, event.chunkX, event.chunkZ, event.hasVillageGenerated,
+        boolean doGen = TerrainGen.populate(event.chunkProvider, event.world, event.rand, event.chunkX, event.chunkZ, event.hasVillageGenerated,
                 PopulateChunkEvent.Populate.EventType.CUSTOM);
 
         if (!doGen) {

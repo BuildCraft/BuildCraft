@@ -72,8 +72,7 @@ public class ContainerPackager extends BuildCraftContainer {
 
     @Override
     public void updateProgressBar(int id, int data) {
-        /*
-         * switch (id) { case 0: tile.progress = data; break; } */
+        /* switch (id) { case 0: tile.progress = data; break; } */
     }
 
     @Override

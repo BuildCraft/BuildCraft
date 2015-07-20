@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,6 +18,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.IIconProvider;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.inventory.SimpleInventory;
 import buildcraft.core.lib.utils.FluidUtils;
@@ -32,7 +31,9 @@ import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.block.BlockGenericPipe;
 import buildcraft.transport.pipes.events.PipeEventFluid;
 
-public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDiamondPipe {
+import io.netty.buffer.ByteBuf;
+
+public class PipeFluidsDiamond extends Pipe<PipeTransportFluids>implements IDiamondPipe {
 
     private class FilterInventory extends SimpleInventory {
         public boolean[] filteredDirections = new boolean[6];
@@ -78,15 +79,13 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
 
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSpriteProvider getIconProvider() {
+    public IIconProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 
     @Override
     public int getIconIndex(EnumFacing direction) {
         switch (direction) {
-            case UNKNOWN:
-                return PipeIconProvider.TYPE.PipeFluidsDiamond_Center.ordinal();
             case DOWN:
                 return PipeIconProvider.TYPE.PipeFluidsDiamond_Down.ordinal();
             case UP:
@@ -117,9 +116,9 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids> implements IDia
             }
         }
 
-        if (!container.getWorldObj().isRemote) {
-            entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.getWorldObj(), container.xCoord, container.yCoord,
-                container.zCoord);
+        if (!container.getWorld().isRemote) {
+            entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_DIAMOND, container.getWorld(), container.x(), container.y(), container
+                    .z());
         }
 
         return true;

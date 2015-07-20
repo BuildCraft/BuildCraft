@@ -68,7 +68,7 @@ public class RenderEngine extends TileEntitySpecialRenderer {
 
         if (engine != null) {
             render(engine.progress, engine.orientation, engine.getBaseTexture(), engine.getChamberTexture(), engine.getTrunkTexture(engine
-                .getEnergyStage()), x, y, z);
+                    .getEnergyStage()), x, y, z);
         }
     }
 

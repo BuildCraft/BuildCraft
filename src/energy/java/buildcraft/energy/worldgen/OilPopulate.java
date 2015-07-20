@@ -57,8 +57,8 @@ public final class OilPopulate {
 
     @SubscribeEvent
     public void populate(PopulateChunkEvent.Pre event) {
-        boolean doGen =
-            TerrainGen.populate(event.chunkProvider, event.world, event.rand, event.chunkX, event.chunkZ, event.hasVillageGenerated, EVENT_TYPE);
+        boolean doGen = TerrainGen.populate(event.chunkProvider, event.world, event.rand, event.chunkX, event.chunkZ, event.hasVillageGenerated,
+                EVENT_TYPE);
 
         if (!doGen) {
             event.setResult(Result.ALLOW);
@@ -168,9 +168,8 @@ public final class OilPopulate {
             }
             generateSurfaceDeposit(world, rand, biome, wellX, groundLevel, wellZ, lakeRadius);
 
-            boolean makeSpring =
-                type == GenType.LARGE && BuildCraftEnergy.spawnOilSprings && BuildCraftCore.springBlock != null
-                    && (BuildCraftCore.debugWorldgen || rand.nextDouble() <= 0.25);
+            boolean makeSpring = type == GenType.LARGE && BuildCraftEnergy.spawnOilSprings && BuildCraftCore.springBlock != null
+                && (BuildCraftCore.debugWorldgen || rand.nextDouble() <= 0.25);
 
             // Generate Spout
             int baseY;
@@ -263,8 +262,8 @@ public final class OilPopulate {
 
     private boolean isReplaceableFluid(World world, BlockPos pos) {
         Block block = world.getBlockState(pos).getBlock();
-        return (block instanceof BlockStaticLiquid || block instanceof BlockFluidBase || block instanceof IFluidBlock)
-            && block.getMaterial() != Material.lava;
+        return (block instanceof BlockStaticLiquid || block instanceof BlockFluidBase || block instanceof IFluidBlock) && block
+                .getMaterial() != Material.lava;
     }
 
     private boolean isOil(World world, int x, int y, int z) {

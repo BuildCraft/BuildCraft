@@ -6,9 +6,11 @@ package buildcraft.transport.schematics;
 
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
+import buildcraft.api.properties.BuildCraftProperties;
 
 public class BptPipeIron extends BptPipeExtension {
 
@@ -18,10 +20,18 @@ public class BptPipeIron extends BptPipeExtension {
 
     @Override
     public void rotateLeft(SchematicTile slot, IBuilderContext context) {
-        int orientation = slot.meta & 7;
-        int others = slot.meta - orientation;
+        int meta = BuildCraftProperties.GENERIC_PIPE_DATA.getValue(slot.state);
+        int orientation = meta & 7;
+        int others = meta - orientation;
 
-        slot.meta = EnumFacing.values()[orientation].getRotation(EnumFacing.UP).ordinal() + others;
+        EnumFacing face = EnumFacing.values()[orientation];
+
+        if (face.getAxis() != Axis.Y) {
+            face = face.rotateY();
+        }
+
+        meta = face.ordinal() + others;
+        slot.state = slot.state.withProperty(BuildCraftProperties.GENERIC_PIPE_DATA, meta);
     }
 
 }

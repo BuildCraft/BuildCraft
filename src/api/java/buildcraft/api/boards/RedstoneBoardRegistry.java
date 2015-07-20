@@ -19,11 +19,11 @@ public abstract class RedstoneBoardRegistry {
     public abstract void registerBoardType(RedstoneBoardNBT<?> redstoneBoardNBT, int energyCost);
 
     @Deprecated
-    /**
-     * Register a redstone board type. Deprecated, use registerBoardType now.
+    /** Register a redstone board type. Deprecated, use registerBoardType now.
+     * 
      * @param redstoneBoardNBT The RedstoneBoardNBT instance containing the board information.
-     * @param probability Since 6.4.x, this is used to calculate the RF price of the board in the Programming Table by doing (160000 / probability).
-     */
+     * @param probability Since 6.4.x, this is used to calculate the RF price of the board in the Programming Table by
+     *            doing (160000 / probability). */
     public abstract void registerBoardClass(RedstoneBoardNBT<?> redstoneBoardNBT, float probability);
 
     public abstract void setEmptyRobotBoard(RedstoneBoardRobotNBT redstoneBoardNBT);

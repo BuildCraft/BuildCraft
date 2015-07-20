@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -25,7 +24,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.statements.StatementManager;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
@@ -218,28 +216,28 @@ public class ItemGate extends ItemBuildCraft implements IPipePluggableItem {
         }
     }
 
-    @Override
-    public TextureAtlasSprite getIconIndex(ItemStack stack) {
-        return getLogic(stack).getIconItem();
-    }
+    // @Override
+    // public TextureAtlasSprite getIconIndex(ItemStack stack) {
+    // return getLogic(stack).getIconItem();
+    // }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        for (GateDefinition.GateMaterial material : GateDefinition.GateMaterial.VALUES) {
-            material.registerItemIcon(iconRegister);
-        }
-
-        for (GateDefinition.GateLogic logic : GateDefinition.GateLogic.VALUES) {
-            logic.registerItemIcon(iconRegister);
-        }
-
-        for (IGateExpansion expansion : GateExpansions.getExpansions()) {
-            expansion.registerItemOverlay(iconRegister);
-        }
-
-        StatementManager.registerIcons(iconRegister);
-    }
+    // @Override
+    // @SideOnly(Side.CLIENT)
+    // public void registerIcons(TextureMap iconRegister) {
+    // for (GateDefinition.GateMaterial material : GateDefinition.GateMaterial.VALUES) {
+    // material.registerItemIcon(iconRegister);
+    // }
+    //
+    // for (GateDefinition.GateLogic logic : GateDefinition.GateLogic.VALUES) {
+    // logic.registerItemIcon(iconRegister);
+    // }
+    //
+    // for (IGateExpansion expansion : GateExpansions.getExpansions()) {
+    // expansion.registerItemOverlay(iconRegister);
+    // }
+    //
+    // StatementManager.registerIcons(iconRegister);
+    // }
 
     @Override
     public PipePluggable createPipePluggable(IPipe pipe, EnumFacing side, ItemStack stack) {

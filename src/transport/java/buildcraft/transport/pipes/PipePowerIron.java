@@ -7,6 +7,7 @@ package buildcraft.transport.pipes;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.ChatComponentText;
@@ -15,6 +16,8 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.IIconProvider;
+import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.tools.IToolWrench;
@@ -45,7 +48,7 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
     @Override
     public boolean blockActivated(EntityPlayer player) {
         Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
-        if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, container.xCoord, container.yCoord, container.zCoord)) {
+        if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, container.getPos())) {
             if (player.isSneaking()) {
                 setMode(getMode().getPrevious());
             } else {
@@ -54,14 +57,14 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
             if (getWorld().isRemote && !(player instanceof FakePlayer)) {
                 if (BuildCraftCore.hidePowerNumbers) {
                     player.addChatMessage(new ChatComponentText(String.format(StringUtils.localize("chat.pipe.power.iron.mode.numberless"),
-                        StringUtils.localize("chat.pipe.power.iron.level." + getMode().maxPower))));
+                            StringUtils.localize("chat.pipe.power.iron.level." + getMode().maxPower))));
                 } else {
-                    player
-                        .addChatMessage(new ChatComponentText(String.format(StringUtils.localize("chat.pipe.power.iron.mode"), getMode().maxPower)));
+                    player.addChatMessage(new ChatComponentText(String.format(StringUtils.localize("chat.pipe.power.iron.mode"),
+                            getMode().maxPower)));
                 }
             }
 
-            ((IToolWrench) equipped).wrenchUsed(player, container.xCoord, container.yCoord, container.zCoord);
+            ((IToolWrench) equipped).wrenchUsed(player, container.getPos());
             return true;
         }
 
@@ -79,15 +82,16 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
     }
 
     public void setMode(PowerMode mode) {
-        if (mode.ordinal() != container.getBlockMetadata()) {
-            container.getWorldObj().setBlockMetadataWithNotify(container.xCoord, container.yCoord, container.zCoord, mode.ordinal(), 3);
+        IBlockState state = container.getWorld().getBlockState(container.getPos());
+        if (mode.ordinal() != BuildCraftProperties.GENERIC_PIPE_DATA.getValue(state).intValue()) {
+            container.getWorld().setBlockState(container.getPos(), state.withProperty(BuildCraftProperties.GENERIC_PIPE_DATA, mode.ordinal()));
             container.scheduleRenderUpdate();
         }
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSpriteProvider getIconProvider() {
+    public IIconProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 

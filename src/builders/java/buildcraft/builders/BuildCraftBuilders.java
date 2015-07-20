@@ -185,18 +185,18 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
         BuildCraftCore.mainConfigManager.register("blueprints.serverDatabaseDirectory", "\"$MINECRAFT" + File.separator + "config" + File.separator
             + "buildcraft" + File.separator + "blueprints" + File.separator + "server\"",
-            "Location for the server blueprint database (used by all blueprint items).", ConfigManager.RestartRequirement.WORLD);
+                "Location for the server blueprint database (used by all blueprint items).", ConfigManager.RestartRequirement.WORLD);
         BuildCraftCore.mainConfigManager.register("blueprints.clientDatabaseDirectory", "\"$MINECRAFT" + File.separator + "blueprints\"",
-            "Location for the client blueprint database (used by the Electronic Library).", ConfigManager.RestartRequirement.NONE);
+                "Location for the client blueprint database (used by the Electronic Library).", ConfigManager.RestartRequirement.NONE);
 
         BuildCraftCore.mainConfigManager.register("general.markerRange", 64, "Set the maximum marker range.", ConfigManager.RestartRequirement.NONE);
         BuildCraftCore.mainConfigManager.register("general.quarry.oneTimeUse", false, "Should the quarry only be usable once after placing?",
-            ConfigManager.RestartRequirement.NONE);
-        BuildCraftCore.mainConfigManager.register("general.quarry.doChunkLoading", true,
-            "Should the quarry keep the chunks it is working on loaded?", ConfigManager.RestartRequirement.NONE);
+                ConfigManager.RestartRequirement.NONE);
+        BuildCraftCore.mainConfigManager.register("general.quarry.doChunkLoading", true, "Should the quarry keep the chunks it is working on loaded?",
+                ConfigManager.RestartRequirement.NONE);
 
         BuildCraftCore.mainConfigManager.register("builders.dropBrokenBlocks", false, "Should the builder and filler drop the cleared blocks?",
-            ConfigManager.RestartRequirement.NONE);
+                ConfigManager.RestartRequirement.NONE);
 
         BuildCraftCore.mainConfigManager.get("blueprints.serverDatabaseDirectory").setShowInGui(false);
         BuildCraftCore.mainConfigManager.get("general.markerRange").setMinValue(8).setMaxValue(64);
@@ -501,24 +501,18 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
         BlueprintDeployer.instance = new RealBlueprintDeployer();
 
-        architectAchievement =
-            BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.architect", "architectAchievement", 11, 2,
-                BuildCraftBuilders.architectBlock, BuildCraftCore.goldGearAchievement));
-        builderAchievement =
-            BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.builder", "builderAchievement", 13, 2,
+        architectAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.architect", "architectAchievement",
+                11, 2, BuildCraftBuilders.architectBlock, BuildCraftCore.goldGearAchievement));
+        builderAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.builder", "builderAchievement", 13, 2,
                 BuildCraftBuilders.builderBlock, architectAchievement));
-        blueprintAchievement =
-            BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.blueprint", "blueprintAchievement", 11, 4,
-                BuildCraftBuilders.blueprintItem, architectAchievement));
-        templateAchievement =
-            BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.template", "templateAchievement", 13, 4,
-                BuildCraftBuilders.templateItem, blueprintAchievement));
-        libraryAchievement =
-            BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.blueprintLibrary", "blueprintLibraryAchievement", 15,
-                2, BuildCraftBuilders.libraryBlock, builderAchievement));
-        chunkDestroyerAchievement =
-            BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.chunkDestroyer", "chunkDestroyerAchievement", 9, 2,
-                quarryBlock, BuildCraftCore.diamondGearAchievement));
+        blueprintAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.blueprint", "blueprintAchievement",
+                11, 4, BuildCraftBuilders.blueprintItem, architectAchievement));
+        templateAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.template", "templateAchievement", 13,
+                4, BuildCraftBuilders.templateItem, blueprintAchievement));
+        libraryAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.blueprintLibrary",
+                "blueprintLibraryAchievement", 15, 2, BuildCraftBuilders.libraryBlock, builderAchievement));
+        chunkDestroyerAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.chunkDestroyer",
+                "chunkDestroyerAchievement", 9, 2, quarryBlock, BuildCraftCore.diamondGearAchievement));
 
         if (BuildCraftCore.loadDefaultRecipes) {
             loadRecipes();
@@ -579,9 +573,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
         CoreProxy.proxy.registerTileEntity(TileArchitect.class, "buildcraft.builders.Architect", "net.minecraft.src.builders.TileTemplate");
         CoreProxy.proxy.registerTileEntity(TilePathMarker.class, "buildcraft.builders.PathMarker", "net.minecraft.src.builders.TilePathMarker");
         CoreProxy.proxy.registerTileEntity(TileConstructionMarker.class, "buildcraft.builders.ConstructionMarker",
-            "net.minecraft.src.builders.TileConstructionMarker");
+                "net.minecraft.src.builders.TileConstructionMarker");
         CoreProxy.proxy.registerTileEntity(TileBlueprintLibrary.class, "buildcraft.builders.BlueprintLibrary",
-            "net.minecraft.src.builders.TileBlueprintLibrary");
+                "net.minecraft.src.builders.TileBlueprintLibrary");
 
         SchematicRegistry.INSTANCE.readConfiguration(BuildCraftCore.mainConfiguration);
 
@@ -619,13 +613,13 @@ public class BuildCraftBuilders extends BuildCraftMod {
     }
 
     public static void loadRecipes() {
-        CoreProxy.proxy.addCraftingRecipe(new ItemStack(quarryBlock), "ipi", "gig", "dDd", 'i', "gearIron", 'p', "dustRedstone", 'g', "gearGold",
-            'd', "gearDiamond", 'D', Items.diamond_pickaxe);
+        CoreProxy.proxy.addCraftingRecipe(new ItemStack(quarryBlock), "ipi", "gig", "dDd", 'i', "gearIron", 'p', "dustRedstone", 'g', "gearGold", 'd',
+                "gearDiamond", 'D', Items.diamond_pickaxe);
 
         CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem, 1), "ppp", "pip", "ppp", 'i', "dyeBlack", 'p', Items.paper);
 
-        CoreProxy.proxy
-            .addCraftingRecipe(new ItemStack(blueprintItem, 1), "ppp", "pip", "ppp", 'i', new ItemStack(Items.dye, 1, 4), 'p', Items.paper);
+        CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), "ppp", "pip", "ppp", 'i', new ItemStack(Items.dye, 1, 4), 'p',
+                Items.paper);
 
         CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), "l ", "r ", 'l', new ItemStack(Items.dye, 1, 4), 'r', Blocks.redstone_torch);
 
@@ -634,16 +628,16 @@ public class BuildCraftBuilders extends BuildCraftMod {
         CoreProxy.proxy.addCraftingRecipe(new ItemStack(constructionMarkerBlock, 1), "l ", "r ", 'l', "gearGold", 'r', Blocks.redstone_torch);
 
         CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock, 1), "btb", "ycy", "gCg", 'b', "dyeBlack", 't', markerBlock, 'y', "dyeYellow",
-            'c', Blocks.crafting_table, 'g', "gearGold", 'C', Blocks.chest);
+                'c', Blocks.crafting_table, 'g', "gearGold", 'C', Blocks.chest);
 
         CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), "btb", "ycy", "gCg", 'b', "dyeBlack", 't', markerBlock, 'y', "dyeYellow",
-            'c', Blocks.crafting_table, 'g', "gearDiamond", 'C', Blocks.chest);
+                'c', Blocks.crafting_table, 'g', "gearDiamond", 'C', Blocks.chest);
 
         CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), "btb", "ycy", "gCg", 'b', "dyeBlack", 't', markerBlock, 'y', "dyeYellow",
-            'c', Blocks.crafting_table, 'g', "gearDiamond", 'C', new ItemStack(blueprintItem, 1));
+                'c', Blocks.crafting_table, 'g', "gearDiamond", 'C', new ItemStack(blueprintItem, 1));
 
         CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), "bbb", "bBb", "bbb", 'b', new ItemStack(blueprintItem), 'B',
-            Blocks.bookshelf);
+                Blocks.bookshelf);
     }
 
     @Mod.EventHandler

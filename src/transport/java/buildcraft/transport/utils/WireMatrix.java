@@ -4,13 +4,13 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.utils;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.BitSet;
 
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.PipeWire;
+
+import io.netty.buffer.ByteBuf;
 
 public class WireMatrix {
 

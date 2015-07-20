@@ -1,10 +1,10 @@
 package buildcraft.robotics.map;
 
-import gnu.trove.map.hash.TIntObjectHashMap;
-
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.core.INBTStoreable;
+
+import gnu.trove.map.hash.TIntObjectHashMap;
 
 public class MapRegion implements INBTStoreable {
     private final TIntObjectHashMap<MapChunk> chunks = new TIntObjectHashMap<MapChunk>();

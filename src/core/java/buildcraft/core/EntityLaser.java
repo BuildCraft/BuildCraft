@@ -89,9 +89,9 @@ public class EntityLaser extends Entity {
 
         // TODO (1.8): Avoid Object Overflow
         // Err... what?
-        setEntityBoundingBox(new AxisAlignedBB(Math.min(data.head.xCoord, data.tail.xCoord), Math.min(data.head.yCoord, data.tail.yCoord) - 1.0D,
-            Math.min(data.head.zCoord, data.tail.zCoord) - 1.0D, Math.max(data.head.xCoord, data.tail.xCoord) + 1.0D, Math.max(data.head.yCoord,
-                data.tail.yCoord) + 1.0D, Math.max(data.head.zCoord, data.tail.zCoord) + 1.0D));
+        setEntityBoundingBox(new AxisAlignedBB(Math.min(data.head.xCoord, data.tail.xCoord), Math.min(data.head.yCoord, data.tail.yCoord) - 1.0D, Math
+                .min(data.head.zCoord, data.tail.zCoord) - 1.0D, Math.max(data.head.xCoord, data.tail.xCoord) + 1.0D, Math.max(data.head.yCoord,
+                        data.tail.yCoord) + 1.0D, Math.max(data.head.zCoord, data.tail.zCoord) + 1.0D));
 
         data.update();
     }

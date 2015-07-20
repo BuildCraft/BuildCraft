@@ -4,12 +4,12 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.network;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
-
 import net.minecraftforge.fml.common.network.FMLIndexedMessageToMessageCodec;
 
 import buildcraft.core.lib.network.command.PacketCommand;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandlerContext;
 
 public class ChannelHandler extends FMLIndexedMessageToMessageCodec<Packet> {
     private int maxDiscriminator;

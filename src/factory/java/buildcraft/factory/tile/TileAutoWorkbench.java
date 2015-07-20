@@ -134,8 +134,8 @@ public class TileAutoWorkbench extends TileBuildCraft implements ISidedInventory
             ItemStack result = getRecipeOutput();
             ItemStack resultInto = resultInv.getStackInSlot(0);
 
-            if (resultInto != null
-                && (!StackHelper.canStacksMerge(resultInto, result) || resultInto.stackSize + result.stackSize > resultInto.getMaxStackSize())) {
+            if (resultInto != null && (!StackHelper.canStacksMerge(resultInto, result) || resultInto.stackSize + result.stackSize > resultInto
+                    .getMaxStackSize())) {
                 isJammed = true;
             } else {
                 isJammed = false;

@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.gui;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.block.material.MapColor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -23,6 +21,8 @@ import buildcraft.core.lib.render.DynamicTextureBC;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.robotics.BuildCraftRobotics;
 import buildcraft.robotics.tile.TileZonePlan;
+
+import io.netty.buffer.ByteBuf;
 
 public class ContainerZonePlan extends BuildCraftContainer implements ICommandReceiver {
 
@@ -108,7 +108,7 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
                 map.setArea(index, plan);
             } else if ("computeMap".equals(command)) {
                 computeMap(stream.readInt(), stream.readInt(), stream.readUnsignedShort(), stream.readUnsignedShort(), stream.readUnsignedByte(),
-                    (EntityPlayer) sender);
+                        (EntityPlayer) sender);
             } else if ("setName".equals(command)) {
                 map.mapName = NetworkUtils.readUTF(stream);
             }

@@ -49,7 +49,7 @@ public class TileAdvancedCraftingTable extends TileLaserTableBase implements IIn
 
     private static final int[] SLOTS = Utils.createSlotArray(0, 24);
     private static final EnumSet<EnumFacing> SEARCH_SIDES = EnumSet.of(EnumFacing.DOWN, EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.EAST,
-        EnumFacing.WEST);
+            EnumFacing.WEST);
     private static final int REQUIRED_POWER = 5000;
     private final CraftingGrid craftingSlots;
     private final InventoryMapper invInput;

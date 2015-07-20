@@ -22,8 +22,8 @@ public class TriggerEngineHeat extends BCStatement implements ITriggerExternal {
     public EnumEnergyStage stage;
 
     public TriggerEngineHeat(EnumEnergyStage stage) {
-        super("buildcraft:engine.stage." + stage.name().toLowerCase(Locale.ENGLISH), "buildcraft.engine.stage."
-            + stage.name().toLowerCase(Locale.ENGLISH));
+        super("buildcraft:engine.stage." + stage.name().toLowerCase(Locale.ENGLISH), "buildcraft.engine.stage." + stage.name().toLowerCase(
+                Locale.ENGLISH));
 
         this.stage = stage;
     }

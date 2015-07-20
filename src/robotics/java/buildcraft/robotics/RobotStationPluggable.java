@@ -1,10 +1,6 @@
 package buildcraft.robotics;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.List;
-
-import cofh.api.energy.IEnergyReceiver;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -12,6 +8,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+
+import cofh.api.energy.IEnergyReceiver;
 
 import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.robots.DockingStation;
@@ -27,6 +25,8 @@ import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.BuildCraftTransport;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TileGenericPipe;
+
+import io.netty.buffer.ByteBuf;
 
 public class RobotStationPluggable extends PipePluggable implements IPipePluggableItem, IEnergyReceiver, IDebuggable, IDockingStationProvider {
     public class RobotStationPluggableRenderer implements IPipePluggableRenderer {
@@ -44,16 +44,16 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
             switch (state) {
                 case None:
                 case Available:
-                    blockStateMachine.getTextureState().setToStack(
-                        BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeRobotStation.ordinal()));
+                    blockStateMachine.getTextureState().setToStack(BuildCraftTransport.instance.pipeIconProvider.getIcon(
+                            PipeIconProvider.TYPE.PipeRobotStation.ordinal()));
                     break;
                 case Reserved:
-                    blockStateMachine.getTextureState().setToStack(
-                        BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeRobotStationReserved.ordinal()));
+                    blockStateMachine.getTextureState().setToStack(BuildCraftTransport.instance.pipeIconProvider.getIcon(
+                            PipeIconProvider.TYPE.PipeRobotStationReserved.ordinal()));
                     break;
                 case Linked:
-                    blockStateMachine.getTextureState().setToStack(
-                        BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeRobotStationLinked.ordinal()));
+                    blockStateMachine.getTextureState().setToStack(BuildCraftTransport.instance.pipeIconProvider.getIcon(
+                            PipeIconProvider.TYPE.PipeRobotStationLinked.ordinal()));
                     break;
             }
 
@@ -144,9 +144,8 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
     public void validate(IPipeTile pipe, EnumFacing direction) {
         TileGenericPipe gPipe = (TileGenericPipe) pipe;
         if (!isValid && !gPipe.getWorld().isRemote) {
-            station =
-                (DockingStationPipe) RobotManager.registryProvider.getRegistry(gPipe.getWorld()).getStation(gPipe.xCoord, gPipe.yCoord, gPipe.zCoord,
-                    direction);
+            station = (DockingStationPipe) RobotManager.registryProvider.getRegistry(gPipe.getWorld()).getStation(gPipe.xCoord, gPipe.yCoord,
+                    gPipe.zCoord, direction);
 
             if (station == null) {
                 station = new DockingStationPipe(gPipe, direction);
@@ -175,8 +174,8 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
     }
 
     private void refreshRenderState() {
-        this.renderState =
-            station.isTaken() ? (station.isMainStation() ? RobotStationState.Linked : RobotStationState.Reserved) : RobotStationState.Available;
+        this.renderState = station.isTaken() ? (station.isMainStation() ? RobotStationState.Linked : RobotStationState.Reserved)
+            : RobotStationState.Available;
     }
 
     public RobotStationState getRenderState() {
@@ -211,8 +210,8 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 
     @Override
     public int receiveEnergy(EnumFacing from, int maxReceive, boolean simulate) {
-        if (station != null && station.robotTaking() != null && station.robotTaking().getBattery() != null
-            && station.robotTaking().getDockingStation() == station) {
+        if (station != null && station.robotTaking() != null && station.robotTaking().getBattery() != null && station.robotTaking()
+                .getDockingStation() == station) {
             return ((EntityRobot) station.robotTaking()).receiveEnergy(maxReceive, simulate);
         }
         return 0;

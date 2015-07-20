@@ -51,7 +51,7 @@ public class EnergyGuiHandler implements IGuiHandler {
     @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 
-        BlockPos pos = new BlockPos(x,y,z);
+        BlockPos pos = new BlockPos(x, y, z);
         if (world.isAirBlock(pos)) {
             return null;
         }

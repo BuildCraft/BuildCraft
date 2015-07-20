@@ -74,7 +74,8 @@ public final class SchematicRegistry implements ISchematicRegistry {
                     }
                     Class<?> paramClass = params[i].getClass();
                     if (!(typesSignature[i].isAssignableFrom(paramClass) || (typesSignature[i] == int.class && paramClass == Integer.class)
-                        || (typesSignature[i] == double.class && paramClass == Double.class) || (typesSignature[i] == boolean.class && paramClass == Boolean.class))) {
+                        || (typesSignature[i] == double.class && paramClass == Double.class) || (typesSignature[i] == boolean.class
+                            && paramClass == Boolean.class))) {
                         // constructor has non assignable parameters skip constructor...
                         valid = false;
                         break;
@@ -181,12 +182,10 @@ public final class SchematicRegistry implements ISchematicRegistry {
     }
 
     public void readConfiguration(Configuration conf) {
-        Property excludedMods =
-            conf.get("blueprints", "excludedMods", new String[0], "mods that should be excluded from the builder.").setLanguageKey(
-                "config.blueprints.excludedMods").setRequiresMcRestart(true);
-        Property excludedBlocks =
-            conf.get("blueprints", "excludedBlocks", new String[0], "blocks that should be excluded from the builder.").setLanguageKey(
-                "config.blueprints.excludedBlocks").setRequiresMcRestart(true);
+        Property excludedMods = conf.get("blueprints", "excludedMods", new String[0], "mods that should be excluded from the builder.")
+                .setLanguageKey("config.blueprints.excludedMods").setRequiresMcRestart(true);
+        Property excludedBlocks = conf.get("blueprints", "excludedBlocks", new String[0], "blocks that should be excluded from the builder.")
+                .setLanguageKey("config.blueprints.excludedBlocks").setRequiresMcRestart(true);
 
         for (String id : excludedMods.getStringList()) {
             String strippedId = JavaTools.stripSurroundingQuotes(id.trim());

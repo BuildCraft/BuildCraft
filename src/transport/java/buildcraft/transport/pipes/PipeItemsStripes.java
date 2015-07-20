@@ -4,21 +4,23 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
-import cofh.api.energy.IEnergyHandler;
-
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.WorldServer;
 
+import cofh.api.energy.IEnergyHandler;
+
+import buildcraft.api.core.IIconProvider;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.transport.IStripesHandler;
@@ -27,6 +29,7 @@ import buildcraft.api.transport.IStripesPipe;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.BuildCraftTransport;
 import buildcraft.transport.Pipe;
@@ -38,7 +41,7 @@ import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.statements.ActionPipeDirection;
 import buildcraft.transport.utils.TransportUtils;
 
-public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnergyHandler, IStripesPipe {
+public class PipeItemsStripes extends Pipe<PipeTransportItems>implements IEnergyHandler, IStripesPipe {
     private EnumFacing actionDir = null;
 
     public PipeItemsStripes(Item item) {
@@ -49,13 +52,13 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
     public void updateEntity() {
         super.updateEntity();
 
-        if (container.getWorldObj().isRemote) {
+        if (container.getWorld().isRemote) {
             return;
         }
     }
 
     public void eventHandler(PipeEventItem.DropItem event) {
-        if (container.getWorldObj().isRemote) {
+        if (container.getWorld().isRemote) {
             return;
         }
 
@@ -64,11 +67,10 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
             direction = event.direction;
         }
 
-        Vec3 p = new Vec3(container.xCoord, container.yCoord, container.zCoord, direction);
-        p.moveForwards(1.0);
+        Vec3 p = Utils.convert(container.getPos()).add(Utils.convert(direction));
 
         ItemStack stack = event.entity.getEntityItem();
-        EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld(), (int) p.x, (int) p.y, (int) p.z).get();
+        EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld(), Utils.convertFloor(p)).get();
 
         switch (direction) {
             case DOWN:
@@ -95,14 +97,12 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
                 player.rotationPitch = 0;
                 player.rotationYaw = 270;
                 break;
-            case UNKNOWN:
-                break;
         }
 
         /** Check if there's a handler for this item type. */
         for (IStripesHandler handler : PipeManager.stripesHandlers) {
             if (handler.getType() == StripesHandlerType.ITEM_USE && handler.shouldHandle(stack)) {
-                if (handler.handle(getWorld(), (int) p.x, (int) p.y, (int) p.z, direction, stack, player, this)) {
+                if (handler.handle(getWorld(), Utils.convertFloor(p), direction, stack, player, this)) {
                     event.entity = null;
                     return;
                 }
@@ -112,10 +112,8 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 
     @Override
     public void dropItem(ItemStack itemStack, EnumFacing direction) {
-        Vec3 p = new Vec3(container.xCoord, container.yCoord, container.zCoord, direction);
-        p.moveForwards(1.0);
-
-        InvUtils.dropItems(getWorld(), itemStack, (int) p.x, (int) p.y, (int) p.z);
+        Vec3 p = Utils.convert(container.getPos()).add(Utils.convert(direction));
+        InvUtils.dropItems(getWorld(), itemStack, Utils.convertFloor(p));
     }
 
     @Override
@@ -145,16 +143,15 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 
     @Override
     public void sendItem(ItemStack itemStack, EnumFacing direction) {
-        Vec3 pos =
-            new Vec3(container.xCoord + 0.5, container.yCoord + TransportUtils.getPipeFloorOf(itemStack), container.zCoord + 0.5, direction);
-        pos.moveBackwards(0.25D);
+        Vec3 pos = new Vec3(container.x() + 0.5, container.y() + TransportUtils.getPipeFloorOf(itemStack), container.z() + 0.5);
+        pos = pos.add(Utils.convert(direction, 0.25));
 
-        TravelingItem newItem = TravelingItem.make(pos.x, pos.y, pos.z, itemStack);
+        TravelingItem newItem = TravelingItem.make(pos, itemStack);
         transport.injectItem(newItem, direction);
     }
 
     @Override
-    public TextureAtlasSpriteProvider getIconProvider() {
+    public IIconProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 
@@ -195,25 +192,26 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
         }
 
         if (o != null) {
-            Vec3 p = new Vec3(container.xCoord, container.yCoord, container.zCoord, o);
-            p.moveForwards(1.0);
+            Vec3 p = Utils.convert(container.getPos());
+            p = p.add(Utils.convert(o));
+            BlockPos pos = Utils.convertFloor(p);
 
-            if (!BlockUtils.isUnbreakableBlock(getWorld(), (int) p.x, (int) p.y, (int) p.z)) {
-                Block block = getWorld().getBlock((int) p.x, (int) p.y, (int) p.z);
-                int metadata = getWorld().getBlockMetadata((int) p.x, (int) p.y, (int) p.z);
+            if (!BlockUtils.isUnbreakableBlock(getWorld(), pos)) {
+                IBlockState state = getWorld().getBlockState(pos);
 
-                ItemStack stack = new ItemStack(block, 1, metadata);
-                EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld(), (int) p.x, (int) p.y, (int) p.z).get();
+                ItemStack stack = new ItemStack(state.getBlock(), 1, state.getBlock().getMetaFromState(state));
+
+                EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld(), pos).get();
 
                 for (IStripesHandler handler : PipeManager.stripesHandlers) {
                     if (handler.getType() == StripesHandlerType.BLOCK_BREAK && handler.shouldHandle(stack)) {
-                        if (handler.handle(getWorld(), (int) p.x, (int) p.y, (int) p.z, o, stack, player, this)) {
+                        if (handler.handle(getWorld(), pos, o, stack, player, this)) {
                             return maxReceive;
                         }
                     }
                 }
 
-                ArrayList<ItemStack> stacks = block.getDrops(getWorld(), (int) p.x, (int) p.y, (int) p.z, metadata, 0);
+                List<ItemStack> stacks = state.getBlock().getDrops(getWorld(), pos, state, 0);
 
                 if (stacks != null) {
                     for (ItemStack s : stacks) {
@@ -223,7 +221,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
                     }
                 }
 
-                getWorld().setBlockToAir((int) p.x, (int) p.y, (int) p.z);
+                getWorld().setBlockToAir(pos);
             }
         }
 

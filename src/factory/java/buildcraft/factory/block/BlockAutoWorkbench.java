@@ -25,7 +25,8 @@ public class BlockAutoWorkbench extends BlockBuildCraft {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing face, float par7, float par8, float par9) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing face, float par7, float par8,
+            float par9) {
         if (super.onBlockActivated(world, pos, state, entityplayer, face, par7, par8, par9)) {
             return true;
         }

@@ -109,8 +109,8 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
         TextureAtlasSprite base = block.getIcon(0, 0);
         renderCube(renderer, isInv, pos, 0, 0, 0, 16, 2, 16, 16, 21, base, 0x3f); // bottom
         renderCube(renderer, isInv, pos, 0.0625F, 0.125F, 0.0625F, 14, 1, 14, 18, 39, base, 0x3c); // middle (no
-                                                                                                       // top/bottom
-                                                                                                       // rendered)
+        // top/bottom
+        // rendered)
         renderCube(renderer, isInv, pos, 0, 0.1875F, 0, 16, 5, 16, 16, 0, base, 0x3f); // top
     }
 
@@ -135,7 +135,7 @@ public class RenderLaserTable implements ISimpleBlockRenderingHandler {
         TextureAtlasSprite base = block.getIcon(0, 4);
         if (block.getCurrentRenderPass() != 0) {
             renderCube(renderer, isInv, pos, 0.25F, 0.375F, 0.25F, 8, 2, 8, 8, 48, base, 0x02); // semitransparent
-                                                                                                    // view
+            // view
             if (!isInv) {
                 return;
             }

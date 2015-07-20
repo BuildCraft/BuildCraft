@@ -1,7 +1,5 @@
 package buildcraft.transport.gates;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.Set;
 
 import net.minecraft.item.ItemStack;
@@ -9,11 +7,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.transport.IPipe;
@@ -27,6 +23,8 @@ import buildcraft.transport.Gate;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.render.PipeRendererTESR;
 
+import io.netty.buffer.ByteBuf;
+
 public class GatePluggable extends PipePluggable {
     private static final class GatePluggableRenderer implements IPipePluggableRenderer, IPipePluggableDynamicRenderer {
         public static final GatePluggableRenderer INSTANCE = new GatePluggableRenderer();
@@ -37,16 +35,17 @@ public class GatePluggable extends PipePluggable {
 
         @Override
         public void renderPluggable(IPipe pipe, EnumFacing side, PipePluggable pipePluggable, double x, double y, double z) {
-            PipeRendererTESR.renderGate(pos, (GatePluggable) pipePluggable, side);
+            PipeRendererTESR.renderGate(x, y, z, (GatePluggable) pipePluggable, side);
         }
 
-        @Override
-        public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, EnumFacing side, PipePluggable pipePluggable,
-                ITextureStates blockStateMachine, int renderPass, BlockPos pos) {
-            if (renderPass == 0) {
-                PipeRendererTESR.renderGateStatic(renderblocks, side, (GatePluggable) pipePluggable, blockStateMachine, pos);
-            }
-        }
+        // @Override
+        // public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, EnumFacing side, PipePluggable
+        // pipePluggable,
+        // ITextureStates blockStateMachine, int renderPass, BlockPos pos) {
+        // if (renderPass == 0) {
+        // PipeRendererTESR.renderGateStatic(renderblocks, side, (GatePluggable) pipePluggable, blockStateMachine, pos);
+        // }
+        // }
     }
 
     public GateDefinition.GateMaterial material;

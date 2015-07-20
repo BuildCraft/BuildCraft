@@ -54,7 +54,7 @@ public class RenderConstructionMarker extends RenderBoxProvider {
             if (marker.laser != null) {
                 GL11.glPushMatrix();
                 RenderLaser.doRenderLaser(TileEntityRendererDispatcher.instance.worldObj, Minecraft.getMinecraft().renderEngine, marker.laser,
-                    EntityLaser.LASER_STRIPES_YELLOW);
+                        EntityLaser.LASER_STRIPES_YELLOW);
                 GL11.glPopMatrix();
             }
 

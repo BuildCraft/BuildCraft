@@ -101,7 +101,7 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 
         if (requirementsToLookFor.size() > 0) {
             startDelegateAI(new AIRobotGotoStationAndLoad(robot, new ArrayStackFilter(requirementsToLookFor.getFirst()), requirementsToLookFor
-                .getFirst().stackSize));
+                    .getFirst().stackSize));
             return;
         }
 
@@ -115,8 +115,8 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
             if (!hasEnoughEnergy()) {
                 startDelegateAI(new AIRobotRecharge(robot));
             } else {
-                startDelegateAI(new AIRobotGotoBlock(robot, (int) currentBuildingSlot.getDestination().x,
-                    (int) currentBuildingSlot.getDestination().y, (int) currentBuildingSlot.getDestination().z, 8));
+                startDelegateAI(new AIRobotGotoBlock(robot, (int) currentBuildingSlot.getDestination().x, (int) currentBuildingSlot
+                        .getDestination().y, (int) currentBuildingSlot.getDestination().z, 8));
             }
             // TODO: take into account cases where the robot can't reach the
             // destination - go to work on another block
@@ -145,7 +145,7 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
             robot.getBattery().extractEnergy(currentBuildingSlot.getEnergyRequirement(), false);
             launchingDelay = currentBuildingSlot.getStacksToDisplay().size() * BuildingItem.ITEMS_SPACE;
             markerToBuild.bluePrintBuilder.buildSlot(robot.worldObj, markerToBuild, currentBuildingSlot, robot.posX + 0.125F, robot.posY + 0.125F,
-                robot.posZ + 0.125F);
+                    robot.posZ + 0.125F);
             currentBuildingSlot = null;
             requirementsToLookFor = null;
         }

@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,6 +25,8 @@ import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.robotics.gui.ContainerZonePlan;
+
+import io.netty.buffer.ByteBuf;
 
 public class TileZonePlan extends TileBuildCraft implements IInventory {
 
@@ -145,8 +145,8 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
                 selectedAreas[currentSelectedArea] = (ZonePlan) zone;
 
                 for (EntityPlayer e : (List<EntityPlayer>) MinecraftServer.getServer().getConfigurationManager().playerEntityList) {
-                    if (e.openContainer != null && e.openContainer instanceof ContainerZonePlan
-                        && ((ContainerZonePlan) e.openContainer).getTile() == this) {
+                    if (e.openContainer != null && e.openContainer instanceof ContainerZonePlan && ((ContainerZonePlan) e.openContainer)
+                            .getTile() == this) {
                         Packet p = new PacketCommand(e.openContainer, "areaLoaded", new CommandWriter() {
                             public void write(ByteBuf data) {
                                 ((ZonePlan) zone).writeData(data);

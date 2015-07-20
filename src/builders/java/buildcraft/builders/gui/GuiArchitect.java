@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.gui;
 
-import io.netty.buffer.ByteBuf;
-
 import java.io.IOException;
 
 import org.lwjgl.input.Keyboard;
@@ -28,6 +26,8 @@ import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.StringUtils;
+
+import io.netty.buffer.ByteBuf;
 
 public class GuiArchitect extends GuiBuildCraft {
 
@@ -68,7 +68,7 @@ public class GuiArchitect extends GuiBuildCraft {
 
         optionAllowCreative = new GuiBetterButton(2, guiLeft + 5, guiTop + 80, 79, "");
         optionAllowCreative.setToolTip(new ToolTip(500, new ToolTipLine(StringUtils.localize("tile.architect.tooltip.allowCreative.1")),
-            new ToolTipLine(StringUtils.localize("tile.architect.tooltip.allowCreative.2"))));
+                new ToolTipLine(StringUtils.localize("tile.architect.tooltip.allowCreative.2"))));
         buttonList.add(optionAllowCreative);
 
         textField = new GuiTextField(0, this.fontRendererObj, TEXT_X, TEXT_Y, TEXT_WIDTH, TEXT_HEIGHT);

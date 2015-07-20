@@ -62,9 +62,8 @@ public class PathFindingSearch implements IIterableAlgorithm {
             }
 
             BlockPos delta = blockIter.next();
-            BlockPos block =
-                new BlockPos(start.getX() + delta.getX(), ((start.getY() + delta.getY()) > 0) ? start.getY() + delta.getY() : 0, start.getZ()
-                    + delta.getZ());
+            BlockPos block = new BlockPos(start.getX() + delta.getX(), ((start.getY() + delta.getY()) > 0) ? start.getY() + delta.getY() : 0, start
+                    .getZ() + delta.getZ());
             if (isLoadedChunk(block.getX(), block.getZ())) {
                 if (isTarget(block)) {
                     pathFinders.add(new PathFinding(world, start, block, maxDistanceToEnd, maxDistance));
@@ -92,9 +91,9 @@ public class PathFindingSearch implements IIterableAlgorithm {
                 }
             }
         }
-        if (!BuildCraftAPI.isSoftBlock(world, block.west()) && !BuildCraftAPI.isSoftBlock(world, block.east())
-            && !BuildCraftAPI.isSoftBlock(world, block.north()) && !BuildCraftAPI.isSoftBlock(world, block.south())
-            && !BuildCraftAPI.isSoftBlock(world, block.down()) && !BuildCraftAPI.isSoftBlock(world, block.up())) {
+        if (!BuildCraftAPI.isSoftBlock(world, block.west()) && !BuildCraftAPI.isSoftBlock(world, block.east()) && !BuildCraftAPI.isSoftBlock(world,
+                block.north()) && !BuildCraftAPI.isSoftBlock(world, block.south()) && !BuildCraftAPI.isSoftBlock(world, block.down())
+            && !BuildCraftAPI.isSoftBlock(world, block.up())) {
             return false;
         }
         return true;

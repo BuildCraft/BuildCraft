@@ -50,8 +50,8 @@ public class AIRobotHarvest extends AIRobot {
                 return;
             }
             for (ItemStack stack : drops) {
-                BlockUtils.dropItem((WorldServer) robot.worldObj, MathHelper.floor_double(robot.posX), MathHelper.floor_double(robot.posY),
-                    MathHelper.floor_double(robot.posZ), 6000, stack);
+                BlockUtils.dropItem((WorldServer) robot.worldObj, MathHelper.floor_double(robot.posX), MathHelper.floor_double(robot.posY), MathHelper
+                        .floor_double(robot.posZ), 6000, stack);
             }
         }
     }

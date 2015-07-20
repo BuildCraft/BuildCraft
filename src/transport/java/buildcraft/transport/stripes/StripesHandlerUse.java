@@ -35,7 +35,7 @@ public class StripesHandlerUse implements IStripesHandler {
         target.moveForwards(1.0D);
 
         if (BlockUtils.useItemOnBlock(world, player, stack, MathHelper.floor_double(target.x), MathHelper.floor_double(target.y), MathHelper
-            .floor_double(target.z), direction.getOpposite())) {
+                .floor_double(target.z), direction.getOpposite())) {
             if (stack.stackSize > 0) {
                 activator.sendItem(stack, direction.getOpposite());
             }

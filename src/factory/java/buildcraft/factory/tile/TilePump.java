@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory.tile;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -41,6 +39,8 @@ import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.factory.BuildCraftFactory;
 import buildcraft.factory.FactoryProxy;
+
+import io.netty.buffer.ByteBuf;
 
 public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler, IRedstoneEngineReceiver {
 
@@ -292,7 +292,8 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
     public void queueForPumping(BlockPos pos, Set<BlockPos> visitedBlocks, Deque<BlockPos> fluidsFound, Fluid pumpingFluid) {
         BlockPos index = new BlockPos(pos);
         if (visitedBlocks.add(index)) {
-            if ((pos.getX() - this.pos.getX()) * (pos.getX() - this.pos.getX()) + (pos.getZ() - this.pos.getZ()) * (pos.getZ() - this.pos.getZ()) > 64 * 64) {
+            if ((pos.getX() - this.pos.getX()) * (pos.getX() - this.pos.getX()) + (pos.getZ() - this.pos.getZ()) * (pos.getZ() - this.pos.getZ()) > 64
+                * 64) {
                 return;
             }
 
@@ -393,7 +394,6 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
         aimY = data.readShort();
         tubeY = data.readFloat();
         powered = data.readBoolean();
-        
 
         int newLedState = data.readUnsignedByte();
         if (newLedState != ledState) {

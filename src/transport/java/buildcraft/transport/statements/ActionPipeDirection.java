@@ -7,6 +7,7 @@ package buildcraft.transport.statements;
 import java.util.Locale;
 
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatement;
@@ -20,8 +21,8 @@ public class ActionPipeDirection extends BCStatement implements IActionInternal 
     public final EnumFacing direction;
 
     public ActionPipeDirection(EnumFacing direction) {
-        super("buildcraft:pipe.dir." + direction.name().toLowerCase(Locale.ENGLISH), "buildcraft.pipe.dir."
-            + direction.name().toLowerCase(Locale.ENGLISH));
+        super(new ResourceLocation("buildcraftcore:triggers/trigger_dir_" + direction.name().toLowerCase(Locale.ENGLISH)), "buildcraft:pipe.dir."
+            + direction.name().toLowerCase(Locale.ENGLISH), "buildcraft.pipe.dir." + direction.name().toLowerCase(Locale.ENGLISH));
 
         this.direction = direction;
     }
@@ -29,11 +30,6 @@ public class ActionPipeDirection extends BCStatement implements IActionInternal 
     @Override
     public String getDescription() {
         return direction.name().substring(0, 1) + direction.name().substring(1).toLowerCase(Locale.ENGLISH) + " Pipe Direction";
-    }
-
-    @Override
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        icon = iconRegister.registerIcon("buildcraftcore:triggers/trigger_dir_" + direction.name().toLowerCase(Locale.ENGLISH));
     }
 
     @Override

@@ -71,7 +71,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent evt) {
         BuildCraftCore.mainConfigManager.register("power.chipsetCostMultiplier", 1.0D, "The cost multiplier for Chipsets",
-            ConfigManager.RestartRequirement.GAME);
+                ConfigManager.RestartRequirement.GAME);
         BuildCraftCore.mainConfiguration.save();
         chipsetCostMultiplier = (float) BuildCraftCore.mainConfigManager.get("power.chipsetCostMultiplier").getDouble();
 
@@ -124,12 +124,10 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
         RobotManager.registerResourceId(ResourceIdAssemblyTable.class, "resourceIdAssemblyTable", "buildcraft.core.robots.ResourceIdAssemblyTable");
 
-        timeForSomeLogicAchievement =
-            BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.timeForSomeLogic", "timeForSomeLogicAchievement", 9,
-                -2, assemblyTableBlock, BuildCraftCore.diamondGearAchievement));
-        tinglyLaserAchievement =
-            BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.tinglyLaser", "tinglyLaserAchievement", 11, -2,
-                laserBlock, timeForSomeLogicAchievement));
+        timeForSomeLogicAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.timeForSomeLogic",
+                "timeForSomeLogicAchievement", 9, -2, assemblyTableBlock, BuildCraftCore.diamondGearAchievement));
+        tinglyLaserAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.tinglyLaser",
+                "tinglyLaserAchievement", 11, -2, laserBlock, timeForSomeLogicAchievement));
 
         if (BuildCraftCore.loadDefaultRecipes) {
             loadRecipes();
@@ -142,59 +140,60 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
         // TABLES
         CoreProxy.proxy.addCraftingRecipe(new ItemStack(laserBlock), "ORR", "DDR", "ORR", 'O', Blocks.obsidian, 'R', "dustRedstone", 'D',
-            "gemDiamond");
+                "gemDiamond");
 
         CoreProxy.proxy.addCraftingRecipe(new ItemStack(laserBlock), "RRO", "RDD", "RRO", 'O', Blocks.obsidian, 'R', "dustRedstone", 'D',
-            "gemDiamond");
+                "gemDiamond");
 
         CoreProxy.proxy.addCraftingRecipe(new ItemStack(laserBlock), "RRR", "RDR", "ODO", 'O', Blocks.obsidian, 'R', "dustRedstone", 'D',
-            "gemDiamond");
+                "gemDiamond");
 
         CoreProxy.proxy.addCraftingRecipe(new ItemStack(laserBlock), "ODO", "RDR", "RRR", 'O', Blocks.obsidian, 'R', "dustRedstone", 'D',
-            "gemDiamond");
+                "gemDiamond");
 
         CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 0), "ODO", "ORO", "OGO", 'O', Blocks.obsidian, 'R', "dustRedstone",
-            'D', "gemDiamond", 'G', "gearDiamond");
+                'D', "gemDiamond", 'G', "gearDiamond");
 
         /* CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 1), "OWO", "OCO", "ORO", 'O',
-         * Blocks.obsidian, 'W', Blocks.crafting_table, 'C', Blocks.chest, 'R', new ItemStack(redstoneChipset, 1, 0)); */
+         * Blocks.obsidian, 'W', Blocks.crafting_table, 'C', Blocks.chest, 'R', new ItemStack(redstoneChipset, 1,
+         * 0)); */
 
         CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 2), "OIO", "OCO", "OGO", 'O', Blocks.obsidian, 'I', "ingotGold", 'C',
-            new ItemStack(redstoneChipset, 1, 0), 'G', "gearDiamond");
+                new ItemStack(redstoneChipset, 1, 0), 'G', "gearDiamond");
 
         CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 3), "OIO", "OCO", "OGO", 'O', Blocks.obsidian, 'I', "dustRedstone",
-            'C', new ItemStack(redstoneChipset, 1, 0), 'G', "gearGold");
+                'C', new ItemStack(redstoneChipset, 1, 0), 'G', "gearGold");
 
         CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 4), "OCO", "ORO", "OGO", 'O', Blocks.obsidian, 'R', new ItemStack(
-            redstoneChipset, 1, 0), 'C', Items.emerald, 'G', "gearDiamond");
+                redstoneChipset, 1, 0), 'C', Items.emerald, 'G', "gearDiamond");
 
         CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 5), "OWO", "ORO", "OGO", 'O', Blocks.obsidian, 'W',
-            Blocks.crafting_table, 'G', "gearGold", 'R', new ItemStack(redstoneChipset, 1, 0));
+                Blocks.crafting_table, 'G', "gearGold", 'R', new ItemStack(redstoneChipset, 1, 0));
 
         CoreProxy.proxy.addCraftingRecipe(new ItemStack(packagerBlock, 1, 0), " I ", "ICI", " P ", 'I', "ingotIron", 'C', Blocks.crafting_table, 'P',
-            Blocks.piston);
+                Blocks.piston);
 
         // CHIPSETS
         BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redstoneChipset", Math.round(100000 * chipsetCostMultiplier), Chipset.RED
-            .getStack(), "dustRedstone");
+                .getStack(), "dustRedstone");
         BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:ironChipset", Math.round(200000 * chipsetCostMultiplier), Chipset.IRON
-            .getStack(), "dustRedstone", "ingotIron");
+                .getStack(), "dustRedstone", "ingotIron");
         BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:goldChipset", Math.round(400000 * chipsetCostMultiplier), Chipset.GOLD
-            .getStack(), "dustRedstone", "ingotGold");
+                .getStack(), "dustRedstone", "ingotGold");
         BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:diamondChipset", Math.round(800000 * chipsetCostMultiplier), Chipset.DIAMOND
-            .getStack(), "dustRedstone", "gemDiamond");
+                .getStack(), "dustRedstone", "gemDiamond");
         BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:emeraldChipset", Math.round(1200000 * chipsetCostMultiplier), Chipset.EMERALD
-            .getStack(), "dustRedstone", "gemEmerald");
+                .getStack(), "dustRedstone", "gemEmerald");
         BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:pulsatingChipset", Math.round(400000 * chipsetCostMultiplier), Chipset.PULSATING
-            .getStack(2), "dustRedstone", Items.ender_pearl);
+                .getStack(2), "dustRedstone", Items.ender_pearl);
         BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:quartzChipset", Math.round(600000 * chipsetCostMultiplier), Chipset.QUARTZ
-            .getStack(), "dustRedstone", "gemQuartz");
+                .getStack(), "dustRedstone", "gemQuartz");
         BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:compChipset", Math.round(600000 * chipsetCostMultiplier), Chipset.COMP
-            .getStack(), "dustRedstone", Items.comparator);
+                .getStack(), "dustRedstone", Items.comparator);
 
         // ROBOTS AND BOARDS
         BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redstoneCrystal", 10000000, new ItemStack(redstoneCrystal), new ItemStack(
-            Blocks.redstone_block));
+                Blocks.redstone_block));
     }
 
     @Mod.EventHandler

@@ -4,12 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.block;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.HashSet;
 import java.util.List;
-
-import cofh.api.energy.IEnergyHandler;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,6 +22,8 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 
+import cofh.api.energy.IEnergyHandler;
+
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IDebuggable;
@@ -36,6 +34,8 @@ import buildcraft.core.lib.TileBuffer;
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.network.PacketTileUpdate;
 import buildcraft.core.lib.utils.Utils;
+
+import io.netty.buffer.ByteBuf;
 
 /** For future maintainers: This class intentionally does not implement just every interface out there. For some of them
  * (such as IControllable), we expect the tiles supporting it to implement it - but TileBuildCraft provides all the
@@ -130,7 +130,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
         }
     }
 
-     public void writeData(ByteBuf stream) {
+    public void writeData(ByteBuf stream) {
         stream.writeByte(ledPower);
     }
 

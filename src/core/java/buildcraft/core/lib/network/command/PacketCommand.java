@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.network.command;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.ArrayList;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,6 +12,8 @@ import net.minecraftforge.fml.common.FMLCommonHandler;
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.network.PacketIds;
+
+import io.netty.buffer.ByteBuf;
 
 public class PacketCommand extends Packet {
     public static final ArrayList<CommandTarget> targets;

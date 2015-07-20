@@ -4,11 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.engines;
 
-import io.netty.buffer.ByteBuf;
-import cofh.api.energy.IEnergyConnection;
-import cofh.api.energy.IEnergyHandler;
-import cofh.api.energy.IEnergyReceiver;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
@@ -16,6 +11,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+
+import cofh.api.energy.IEnergyConnection;
+import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyReceiver;
 
 import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.power.IEngine;
@@ -29,6 +28,8 @@ import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.core.lib.utils.ResourceUtils;
 import buildcraft.core.lib.utils.Utils;
+
+import io.netty.buffer.ByteBuf;
 
 public abstract class TileEngineBase extends TileBuildCraft implements IPipeConnection, IEnergyHandler, IEngine, IHeatable {
     // TEMP
@@ -96,7 +97,8 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
     }
 
     public boolean onBlockActivated(EntityPlayer player, EnumFacing side) {
-        if (!player.worldObj.isRemote && player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem().getItem() instanceof IToolWrench) {
+        if (!player.worldObj.isRemote && player.getCurrentEquippedItem() != null && player.getCurrentEquippedItem()
+                .getItem() instanceof IToolWrench) {
             IToolWrench wrench = (IToolWrench) player.getCurrentEquippedItem().getItem();
             if (wrench.canWrench(player, pos)) {
                 if (getEnergyStage() == EnumEnergyStage.OVERHEAT && !Utils.isFakePlayer(player)) {

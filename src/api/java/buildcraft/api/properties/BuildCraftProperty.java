@@ -10,13 +10,13 @@ import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.property.IUnlistedProperty;
 
-/** This class exists primarily to allow for a property to be used as either a normal IProperty, or an IUnlistedProperty.
- * It also exists to give IProperty's generic types. */
+/** This class exists primarily to allow for a property to be used as either a normal IProperty, or an
+ * IUnlistedProperty. It also exists to give IProperty's generic types. */
 public class BuildCraftProperty<T extends Comparable<T>> implements IProperty, IUnlistedProperty<T> {
     private final String name;
     private final Class<T> clazz;
     private final List<T> values;
-    
+
     public BuildCraftProperty(String name, Class<T> clazz, T[] values) {
         this(name, clazz, Arrays.asList(values));
     }

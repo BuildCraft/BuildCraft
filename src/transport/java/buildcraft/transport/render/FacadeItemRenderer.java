@@ -166,11 +166,12 @@ public class FacadeItemRenderer implements IItemRenderer {
         // Render StructurePipe
         if (!hollow) {
             block = BuildCraftTransport.genericPipeBlock;
-            TextureAtlasSprite textureID = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal()); // Structure
-                                                                                                                                               // pipe
+            TextureAtlasSprite textureID = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone
+                    .ordinal()); // Structure
+            // pipe
 
             render.setRenderBounds(CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS,
-                CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS - 1F / 16F);
+                    CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS - 1F / 16F);
             GL11.glTranslatef(translateX, translateY, translateZ + 0.25F);
 
             tessellator.startDrawingQuads();

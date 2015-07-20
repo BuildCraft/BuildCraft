@@ -74,14 +74,14 @@ public final class StackKey {
             return false;
         }
         if (stack != null) {
-            if (stack.getItem() != k.stack.getItem() || stack.getHasSubtypes() && stack.getItemDamage() != k.stack.getItemDamage()
-                || !objectsEqual(stack.getTagCompound(), k.stack.getTagCompound())) {
+            if (stack.getItem() != k.stack.getItem() || stack.getHasSubtypes() && stack.getItemDamage() != k.stack.getItemDamage() || !objectsEqual(
+                    stack.getTagCompound(), k.stack.getTagCompound())) {
                 return false;
             }
         }
         if (fluidStack != null) {
-            if (fluidStack.getFluid().getID() != k.fluidStack.getFluid().getID() || fluidStack.amount != k.fluidStack.amount
-                || !objectsEqual(fluidStack.tag, k.fluidStack.tag)) {
+            if (fluidStack.getFluid().getID() != k.fluidStack.getFluid().getID() || fluidStack.amount != k.fluidStack.amount || !objectsEqual(
+                    fluidStack.tag, k.fluidStack.tag)) {
                 return false;
             }
         }

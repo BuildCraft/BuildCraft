@@ -53,8 +53,8 @@ public class BlockMiner {
             float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
             float f2 = world.rand.nextFloat() * 0.8F + 0.1F;
 
-            EntityItem entityitem =
-                new EntityItem(owner.getWorld(), owner.getPos().getX() + f, owner.getPos().getY() + f1 + 0.5F, owner.getPos().getZ() + f2, stack);
+            EntityItem entityitem = new EntityItem(owner.getWorld(), owner.getPos().getX() + f, owner.getPos().getY() + f1 + 0.5F, owner.getPos()
+                    .getZ() + f2, stack);
 
             entityitem.lifespan = BuildCraftCore.itemLifespan * 20;
             entityitem.setDefaultPickupDelay();
@@ -84,8 +84,8 @@ public class BlockMiner {
 
             IBlockState state = world.getBlockState(pos);
 
-            BlockEvent.BreakEvent breakEvent =
-                new BlockEvent.BreakEvent(world, pos, state, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world).get());
+            BlockEvent.BreakEvent breakEvent = new BlockEvent.BreakEvent(world, pos, state, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world)
+                    .get());
             MinecraftForge.EVENT_BUS.post(breakEvent);
 
             if (!breakEvent.isCanceled()) {

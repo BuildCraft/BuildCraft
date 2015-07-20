@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
-import cofh.api.energy.IEnergyHandler;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -17,17 +15,21 @@ import net.minecraft.util.Vec3;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import cofh.api.energy.IEnergyHandler;
+
+import buildcraft.api.core.IIconProvider;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.InventoryWrapper;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.BuildCraftTransport;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TravelingItem;
 
-public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHandler {
+public class PipeItemsWood extends Pipe<PipeTransportItems>implements IEnergyHandler {
     protected RFBattery battery = new RFBattery(2560, 80, 0);
 
     protected int standardIconIndex = PipeIconProvider.TYPE.PipeItemsWood_Standard.ordinal();
@@ -72,7 +74,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSpriteProvider getIconProvider() {
+    public IIconProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 
@@ -95,7 +97,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
     public void updateEntity() {
         super.updateEntity();
 
-        if (container.getWorldObj().isRemote) {
+        if (container.getWorld().isRemote) {
             return;
         }
 
@@ -171,18 +173,16 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
                     continue;
                 }
 
-                Vec3 entityPos = new Vec3(tile.xCoord + 0.5, tile.yCoord + 0.5, tile.zCoord + 0.5, side.getOpposite());
+                Vec3 entPos = Utils.convertMiddle(tile.getPos()).add(Utils.convert(side, -0.6));
 
-                entityPos.moveForwards(0.6);
-
-                TravelingItem entity = makeItem(entityPos.x, entityPos.y, entityPos.z, stack);
+                TravelingItem entity = makeItem(entPos, stack);
                 entity.setSpeed(entity.getSpeed() * speedMultiplier);
-                transport.injectItem(entity, entityPos.orientation);
+                transport.injectItem(entity, side.getOpposite());
             }
         }
     }
 
-    protected TravelingItem makeItem(double x, double y, double z, ItemStack stack) {
+    protected TravelingItem makeItem(Vec3 pos, ItemStack stack) {
         return TravelingItem.make(pos, stack);
     }
 
@@ -208,10 +208,10 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
             return null;
         }
 
-        for (int k : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
+        for (int k : inventory.getSlotsForFace(from)) {
             ItemStack slot = inventory.getStackInSlot(k);
 
-            if (slot != null && slot.stackSize > 0 && inventory.canExtractItem(k, slot, from.ordinal())) {
+            if (slot != null && slot.stackSize > 0 && inventory.canExtractItem(k, slot, from)) {
                 if (doRemove) {
                     int maxStackSize = slot.stackSize;
                     int stackSize = Math.min(maxStackSize, battery.getEnergyStored() / 10);

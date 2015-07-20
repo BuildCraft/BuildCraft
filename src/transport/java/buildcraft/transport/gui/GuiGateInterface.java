@@ -229,8 +229,8 @@ public class GuiGateInterface extends GuiAdvancedInterface {
                 if (container.actionsState[((TriggerSlot) slot).slot] != ActionActiveState.Deactivated) {
                     mc.renderEngine.bindTexture(texture);
 
-                    drawTexturedModalRect(guiLeft + slot.x + 17 + 18 * gate.material.numTriggerParameters, guiTop + slot.y + 6, 176, 18, halfWidth
-                        ? 9 : 18, 4);
+                    drawTexturedModalRect(guiLeft + slot.x + 17 + 18 * gate.material.numTriggerParameters, guiTop + slot.y + 6, 176, 18, halfWidth ? 9
+                        : 18, 4);
                 }
             } else if (slot instanceof StatementParameterSlot) {
                 StatementParameterSlot paramSlot = (StatementParameterSlot) slot;
@@ -359,8 +359,8 @@ public class GuiGateInterface extends GuiAdvancedInterface {
                 }
 
                 if (param != null) {
-                    param
-                        .onClick(gate, statement.getStatement(), mc.thePlayer.inventory.getItemStack(), new StatementMouseClick(k, isShiftKeyDown()));
+                    param.onClick(gate, statement.getStatement(), mc.thePlayer.inventory.getItemStack(), new StatementMouseClick(k,
+                            isShiftKeyDown()));
                     paramSlot.setParameter(param, true);
                 }
             }

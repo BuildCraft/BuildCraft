@@ -17,7 +17,8 @@ public interface ICropHandler {
      * @return true if the item can be planted. */
     boolean isSeed(ItemStack stack);
 
-    /** Check if the item can be planted. You can assume canSustainPlant() will only be called if isSeed() returned true.
+    /** Check if the item can be planted. You can assume canSustainPlant() will only be called if isSeed() returned
+     * true.
      *
      * @param world
      * @param seed

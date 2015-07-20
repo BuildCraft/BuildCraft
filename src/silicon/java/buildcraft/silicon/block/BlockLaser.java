@@ -29,14 +29,14 @@ import buildcraft.silicon.tile.TileLaser;
 
 public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 
-    private static final AxisAlignedBB[][] boxes = {
-        { new AxisAlignedBB(0.0, 0.75, 0.0, 1.0, 1.0, 1.0), new AxisAlignedBB(0.3125, 0.1875, 0.3125, 0.6875, 0.75, 0.6875) }, // -Y
-        { new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.25, 1.0), new AxisAlignedBB(0.3125, 0.25, 0.3125, 0.6875, 0.8125, 0.6875) }, // +Y
-        { new AxisAlignedBB(0.0, 0.0, 0.75, 1.0, 1.0, 1.0), new AxisAlignedBB(0.3125, 0.3125, 0.1875, 0.6875, 0.6875, 0.75) }, // -Z
-        { new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 0.25), new AxisAlignedBB(0.3125, 0.3125, 0.25, 0.6875, 0.6875, 0.8125) }, // +Z
-        { new AxisAlignedBB(0.75, 0.0, 0.0, 1.0, 1.0, 1.0), new AxisAlignedBB(0.1875, 0.3125, 0.3125, 0.75, 0.6875, 0.6875) }, // -X
+    private static final AxisAlignedBB[][] boxes = { { new AxisAlignedBB(0.0, 0.75, 0.0, 1.0, 1.0, 1.0), new AxisAlignedBB(0.3125, 0.1875, 0.3125,
+            0.6875, 0.75, 0.6875) },   // -Y
+        { new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.25, 1.0), new AxisAlignedBB(0.3125, 0.25, 0.3125, 0.6875, 0.8125, 0.6875) },   // +Y
+        { new AxisAlignedBB(0.0, 0.0, 0.75, 1.0, 1.0, 1.0), new AxisAlignedBB(0.3125, 0.3125, 0.1875, 0.6875, 0.6875, 0.75) },   // -Z
+        { new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 0.25), new AxisAlignedBB(0.3125, 0.3125, 0.25, 0.6875, 0.6875, 0.8125) },   // +Z
+        { new AxisAlignedBB(0.75, 0.0, 0.0, 1.0, 1.0, 1.0), new AxisAlignedBB(0.1875, 0.3125, 0.3125, 0.75, 0.6875, 0.6875) },   // -X
         { new AxisAlignedBB(0.0, 0.0, 0.0, 0.25, 1.0, 1.0), new AxisAlignedBB(0.25, 0.3125, 0.3125, 0.8125, 0.6875, 0.6875) } // +X
-        };
+    };
 
     public BlockLaser() {
         super(Material.iron);

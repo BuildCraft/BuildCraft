@@ -10,8 +10,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.IIconProvider;
 import buildcraft.core.BuildCraftCore;
-import buildcraft.core.lib.render.IIconProvider;
 
 public class PipeIconProvider implements IIconProvider {
 

@@ -21,8 +21,9 @@ public class PlugItemRenderer implements IItemRenderer {
         // Render StructurePipe
         Block block = BuildCraftTransport.genericPipeBlock;
         Tessellator tessellator = Tessellator.instance;
-        TextureAtlasSprite textureID = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal()); // Structure
-                                                                                                                                           // pipe
+        TextureAtlasSprite textureID = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone
+                .ordinal()); // Structure
+        // pipe
 
         block.setBlockBounds(0.25F, 0.25F, 0.25F, 0.75F, 0.375F, 0.75F);
         block.setBlockBoundsForItemRender();

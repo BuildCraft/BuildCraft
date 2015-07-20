@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.silicon;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -17,7 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -38,6 +35,8 @@ import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 import buildcraft.silicon.ResourceIdAssemblyTable;
+
+import io.netty.buffer.ByteBuf;
 
 public class TileAssemblyTable extends TileLaserTableBase implements IInventory, IFlexibleCrafter, ICommandReceiver {
     public String currentRecipeId = "";

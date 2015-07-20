@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.builders.tile;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,6 +22,8 @@ import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
+
+import io.netty.buffer.ByteBuf;
 
 public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
     public static class TileWrapper implements ISerializable {
@@ -139,7 +139,7 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
     private EntityLaser[] signals;
 
     private ByteBuf stream = null;
-    
+
     public void updateSignals() {
         if (!worldObj.isRemote) {
             showSignals = worldObj.isBlockIndirectlyGettingPowered(pos) > 0;
@@ -177,7 +177,7 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
             }
         }
     }
-    
+
     @Override
     public void update() {
         super.update();
@@ -521,7 +521,7 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
     public void readData(ByteBuf stream) {
         this.stream = stream;
     }
-    
+
     public void readDataDelayed() {
         if (stream == null) {
             return;
@@ -544,7 +544,7 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
         }
 
         createLasers();
-        
+
         stream = null;
     }
 
@@ -562,13 +562,13 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
             return false;
         }
 
-        if (pos.getX() < (xMin() - 1) || pos.getX() > (xMax() + 1) || pos.getY() < (yMin() - 1) || pos.getY() > (yMax() + 1)
-            || pos.getZ() < (zMin() - 1) || pos.getZ() > (zMax() + 1)) {
+        if (pos.getX() < (xMin() - 1) || pos.getX() > (xMax() + 1) || pos.getY() < (yMin() - 1) || pos.getY() > (yMax() + 1) || pos.getZ() < (zMin()
+            - 1) || pos.getZ() > (zMax() + 1)) {
             return false;
         }
 
-        if (pos.getX() >= xMin() && pos.getX() <= xMax() && pos.getY() >= yMin() && pos.getY() <= yMax() && pos.getZ() >= zMin()
-            && pos.getZ() <= zMax()) {
+        if (pos.getX() >= xMin() && pos.getX() <= xMax() && pos.getY() >= yMin() && pos.getY() <= yMax() && pos.getZ() >= zMin() && pos
+                .getZ() <= zMax()) {
             return false;
         }
 

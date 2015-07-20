@@ -209,40 +209,31 @@ public class BuildCraftTransport extends BuildCraftMod {
         }
 
         try {
-            BuildCraftCore.mainConfigManager.register(
-                    "experimental.kinesisPowerLossOnTravel", false, "Should kinesis pipes lose power over distance (think IC2 or BC pre-3.7)?",
-                    ConfigManager.RestartRequirement.WORLD);
+            BuildCraftCore.mainConfigManager.register("experimental.kinesisPowerLossOnTravel", false,
+                    "Should kinesis pipes lose power over distance (think IC2 or BC pre-3.7)?", ConfigManager.RestartRequirement.WORLD);
 
-            BuildCraftCore.mainConfigManager.register(
-                    "general.pipes.hardness", DefaultProps.PIPES_DURABILITY, "How hard to break should a pipe be?",
+            BuildCraftCore.mainConfigManager.register("general.pipes.hardness", DefaultProps.PIPES_DURABILITY, "How hard to break should a pipe be?",
                     ConfigManager.RestartRequirement.NONE);
-            BuildCraftCore.mainConfigManager
-                    .register(
-                            "general.pipes.baseFluidRate", DefaultProps.PIPES_FLUIDS_BASE_FLOW_RATE,
-                            "What should the base flow rate of a fluid pipe be?", ConfigManager.RestartRequirement.GAME).setMinValue(1).setMaxValue(
-                                    40);
-            BuildCraftCore.mainConfigManager.register(
-                    "debug.printFacadeList", false, "Print a list of all registered facades.", ConfigManager.RestartRequirement.GAME);
-            BuildCraftCore.mainConfigManager.register(
-                    "general.pipes.slimeballWaterproofRecipe", false, "Should I enable an alternate Waterproof recipe, based on slimeballs?",
+            BuildCraftCore.mainConfigManager.register("general.pipes.baseFluidRate", DefaultProps.PIPES_FLUIDS_BASE_FLOW_RATE,
+                    "What should the base flow rate of a fluid pipe be?", ConfigManager.RestartRequirement.GAME).setMinValue(1).setMaxValue(40);
+            BuildCraftCore.mainConfigManager.register("debug.printFacadeList", false, "Print a list of all registered facades.",
                     ConfigManager.RestartRequirement.GAME);
-            BuildCraftCore.mainConfigManager.register(
-                    "power.gateCostMultiplier", 1.0D, "What should be the multiplier of all gate power costs?",
+            BuildCraftCore.mainConfigManager.register("general.pipes.slimeballWaterproofRecipe", false,
+                    "Should I enable an alternate Waterproof recipe, based on slimeballs?", ConfigManager.RestartRequirement.GAME);
+            BuildCraftCore.mainConfigManager.register("power.gateCostMultiplier", 1.0D, "What should be the multiplier of all gate power costs?",
                     ConfigManager.RestartRequirement.GAME);
-            BuildCraftCore.mainConfigManager.register(
-                    "general.pipes.facadeBlacklist", new String[] { Utils.getNameForBlock(Blocks.bedrock), Utils.getNameForBlock(
-                            Blocks.command_block), Utils.getNameForBlock(Blocks.end_portal_frame), Utils.getNameForBlock(Blocks.grass), Utils
-                                    .getNameForBlock(Blocks.leaves), Utils.getNameForBlock(Blocks.leaves2), Utils.getNameForBlock(Blocks.lit_pumpkin),
-                        Utils.getNameForBlock(Blocks.lit_redstone_lamp), Utils.getNameForBlock(Blocks.mob_spawner), Utils.getNameForBlock(
-                                Blocks.monster_egg), Utils.getNameForBlock(Blocks.redstone_lamp), Utils.getNameForBlock(Blocks.double_stone_slab),
-                        Utils.getNameForBlock(Blocks.double_wooden_slab), Utils.getNameForBlock(Blocks.sponge) },
+            BuildCraftCore.mainConfigManager.register("general.pipes.facadeBlacklist", new String[] { Utils.getNameForBlock(Blocks.bedrock), Utils
+                    .getNameForBlock(Blocks.command_block), Utils.getNameForBlock(Blocks.end_portal_frame), Utils.getNameForBlock(Blocks.grass), Utils
+                            .getNameForBlock(Blocks.leaves), Utils.getNameForBlock(Blocks.leaves2), Utils.getNameForBlock(Blocks.lit_pumpkin), Utils
+                                    .getNameForBlock(Blocks.lit_redstone_lamp), Utils.getNameForBlock(Blocks.mob_spawner), Utils.getNameForBlock(
+                                            Blocks.monster_egg), Utils.getNameForBlock(Blocks.redstone_lamp), Utils.getNameForBlock(
+                                                    Blocks.double_stone_slab), Utils.getNameForBlock(Blocks.double_wooden_slab), Utils
+                                                            .getNameForBlock(Blocks.sponge) },
                     "What block types should be blacklisted from being a facade?", ConfigManager.RestartRequirement.GAME);
-            BuildCraftCore.mainConfigManager.register(
-                    "general.pipes.facadeBlacklistAsWhitelist", false, "Should the blacklist be treated as a whitelist instead?",
-                    ConfigManager.RestartRequirement.GAME);
-            BuildCraftCore.mainConfigManager.register(
-                    "general.pipes.facadeNoLaserRecipe", false, "Should non-laser (crafting table) facade recipes be forced?",
-                    ConfigManager.RestartRequirement.GAME);
+            BuildCraftCore.mainConfigManager.register("general.pipes.facadeBlacklistAsWhitelist", false,
+                    "Should the blacklist be treated as a whitelist instead?", ConfigManager.RestartRequirement.GAME);
+            BuildCraftCore.mainConfigManager.register("general.pipes.facadeNoLaserRecipe", false,
+                    "Should non-laser (crafting table) facade recipes be forced?", ConfigManager.RestartRequirement.GAME);
 
             reloadConfig(ConfigManager.RestartRequirement.GAME);
 
@@ -382,8 +373,8 @@ public class BuildCraftTransport extends BuildCraftMod {
         transportChannelHandler.registerPacketType(PacketPipeTransportTraveler.class);
         transportChannelHandler.registerPacketType(PacketPowerUpdate.class);
 
-        channels = NetworkRegistry.INSTANCE.newChannel(
-                DefaultProps.NET_CHANNEL_NAME + "-TRANSPORT", transportChannelHandler, new PacketHandlerTransport());
+        channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-TRANSPORT", transportChannelHandler,
+                new PacketHandlerTransport());
 
         TransportProxy.proxy.registerTileEntities();
 
@@ -462,8 +453,8 @@ public class BuildCraftTransport extends BuildCraftMod {
                 writer.println("*** REGISTERED FACADES ***");
                 for (ItemStack stack : ItemFacade.allFacades) {
                     if (facadeItem.getBlocksForFacade(stack).length > 0) {
-                        writer.println(
-                                Utils.getNameForBlock(facadeItem.getBlocksForFacade(stack)[0]) + ":" + facadeItem.getMetaValuesForFacade(stack)[0]);
+                        writer.println(Utils.getNameForBlock(facadeItem.getBlocksForFacade(stack)[0]) + ":" + facadeItem.getMetaValuesForFacade(
+                                stack)[0]);
                     }
                 }
                 writer.close();
@@ -564,9 +555,8 @@ public class BuildCraftTransport extends BuildCraftMod {
         GameRegistry.addRecipe(new PipeColoringRecipe());
         RecipeSorter.register("buildcraft:pipecoloring", PipeColoringRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
 
-        CoreProxy.proxy.addCraftingRecipe(
-                new ItemStack(filteredBufferBlock, 1), "wdw", "wcw", "wpw", 'w', "plankWood", 'd', BuildCraftTransport.pipeItemsDiamond, 'c',
-                Blocks.chest, 'p', Blocks.piston);
+        CoreProxy.proxy.addCraftingRecipe(new ItemStack(filteredBufferBlock, 1), "wdw", "wcw", "wpw", 'w', "plankWood", 'd',
+                BuildCraftTransport.pipeItemsDiamond, 'c', Blocks.chest, 'p', Blocks.piston);
 
         // Facade turning helper
         GameRegistry.addRecipe(facadeItem.new FacadeRecipe());
@@ -591,11 +581,10 @@ public class BuildCraftTransport extends BuildCraftMod {
             // Lenses, Filters
             for (int i = 0; i < 16; i++) {
                 String dye = ColorUtils.getOreDictionaryName(15 - i);
-                GameRegistry.addRecipe(
-                        new ShapedOreRecipe(new ItemStack(lensItem, 8, i), "OSO", "SGS", "OSO", 'O', "ingotIron", 'S', dye, 'G', "blockGlass"));
-                GameRegistry.addRecipe(
-                        new ShapedOreRecipe(
-                                new ItemStack(lensItem, 8, i + 16), "OSO", "SGS", "OSO", 'O', Blocks.iron_bars, 'S', dye, 'G', "blockGlass"));
+                GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(lensItem, 8, i), "OSO", "SGS", "OSO", 'O', "ingotIron", 'S', dye, 'G',
+                        "blockGlass"));
+                GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(lensItem, 8, i + 16), "OSO", "SGS", "OSO", 'O', Blocks.iron_bars, 'S', dye,
+                        'G', "blockGlass"));
             }
         }
     }

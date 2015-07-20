@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.gui;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,6 +33,8 @@ import buildcraft.core.lib.render.DynamicTextureBC;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.robotics.tile.TileZonePlan;
+
+import io.netty.buffer.ByteBuf;
 
 public class GuiZonePlan extends GuiAdvancedInterface {
 
@@ -240,9 +240,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
         int blockStartX = cx - mapWidth * zoomLevel / 2;
         int blockStartZ = cz - mapHeight * zoomLevel / 2;
 
-        boolean clickOnMap =
-            mouseX >= mapXMin && mouseX <= mapXMin + getContainer().mapTexture.width && mouseY >= mapYMin
-                && mouseY <= mapYMin + getContainer().mapTexture.height;
+        boolean clickOnMap = mouseX >= mapXMin && mouseX <= mapXMin + getContainer().mapTexture.width && mouseY >= mapYMin && mouseY <= mapYMin
+            + getContainer().mapTexture.height;
 
         if (clickOnMap) {
             if (mouseButton == 1) {
@@ -274,8 +273,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
     protected void mouseClickMove(int mouseX, int mouseY, int lastButtonBlicked, long time) {
         super.mouseClickMove(mouseX, mouseY, lastButtonBlicked, time);
 
-        if (inSelection && mouseX >= mapXMin && mouseX <= mapXMin + getContainer().mapTexture.width && mouseY >= mapYMin
-            && mouseY <= mapYMin + getContainer().mapTexture.height) {
+        if (inSelection && mouseX >= mapXMin && mouseX <= mapXMin + getContainer().mapTexture.width && mouseY >= mapYMin && mouseY <= mapYMin
+            + getContainer().mapTexture.height) {
 
             selX2 = mouseX;
             selY2 = mouseY;
@@ -448,8 +447,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
         int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;
         int mouseY = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
 
-        if (mouseX >= mapXMin && mouseX <= mapXMin + getContainer().mapTexture.width && mouseY >= mapYMin
-            && mouseY <= mapYMin + getContainer().mapTexture.height) {
+        if (mouseX >= mapXMin && mouseX <= mapXMin + getContainer().mapTexture.width && mouseY >= mapYMin && mouseY <= mapYMin
+            + getContainer().mapTexture.height) {
             int wheel = Mouse.getEventDWheel();
             if (wheel != 0) {
                 if (zoomLevel < 6 && wheel > 0) {

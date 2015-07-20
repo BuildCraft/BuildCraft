@@ -8,13 +8,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import buildcraft.api.core.IIconProvider;
 import buildcraft.api.enums.EnumColor;
+import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.tools.IToolWrench;
@@ -36,7 +39,7 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSpriteProvider getIconProvider() {
+    public IIconProvider getIconProvider() {
         return BuildCraftTransport.instance.pipeIconProvider;
     }
 
@@ -51,14 +54,14 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> {
     @Override
     public boolean blockActivated(EntityPlayer player) {
         Item equipped = player.getCurrentEquippedItem() != null ? player.getCurrentEquippedItem().getItem() : null;
-        if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, container.xCoord, container.yCoord, container.zCoord)) {
+        if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(player, container.getPos())) {
             if (player.isSneaking()) {
                 setColor(getColor().getPrevious());
             } else {
                 setColor(getColor().getNext());
             }
 
-            ((IToolWrench) equipped).wrenchUsed(player, container.xCoord, container.yCoord, container.zCoord);
+            ((IToolWrench) equipped).wrenchUsed(player, container.getPos());
             return true;
         } else {
             int color = ColorUtils.getColorIDFromDye(player.getCurrentEquippedItem());
@@ -75,8 +78,9 @@ public class PipeItemsLapis extends Pipe<PipeTransportItems> {
     }
 
     public void setColor(EnumColor color) {
-        if (color.ordinal() != container.getBlockMetadata()) {
-            container.getWorldObj().setBlockMetadataWithNotify(container.xCoord, container.yCoord, container.zCoord, color.ordinal(), 3);
+        IBlockState state = container.getWorld().getBlockState(container.getPos());
+        if (color.ordinal() != BuildCraftProperties.GENERIC_PIPE_DATA.getValue(state).intValue()) {
+            container.getWorld().setBlockState(container.getPos(), state.withProperty(BuildCraftProperties.GENERIC_PIPE_DATA, color.ordinal()));
             container.scheduleRenderUpdate();
         }
     }

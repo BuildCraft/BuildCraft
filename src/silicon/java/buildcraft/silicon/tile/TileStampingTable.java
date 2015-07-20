@@ -93,8 +93,8 @@ public class TileStampingTable extends TileLaserTableBase implements IHasWork, I
                     this.setInventorySlotContents(1, input);
                 }
                 return;
-            } else if (resultInto != null
-                && (!StackHelper.canStacksMerge(result, resultInto) || resultInto.stackSize + result.stackSize > result.getMaxStackSize())) {
+            } else if (resultInto != null && (!StackHelper.canStacksMerge(result, resultInto) || resultInto.stackSize + result.stackSize > result
+                    .getMaxStackSize())) {
                 return;
             }
 

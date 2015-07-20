@@ -79,8 +79,8 @@ public class ItemConstructionMarker extends ItemBlock {
     }
 
     @Override
-    public boolean
-            onItemUse(ItemStack marker, EntityPlayer player, World world, BlockPos pos, EnumFacing facing, float par8, float par9, float par10) {
+    public boolean onItemUse(ItemStack marker, EntityPlayer player, World world, BlockPos pos, EnumFacing facing, float par8, float par9,
+            float par10) {
 
         TileEntity tile = world.getTileEntity(pos);
         NBTTagCompound nbt = NBTUtils.getItemData(marker);

@@ -18,7 +18,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.enums.EnumBlueprintType;
 import buildcraft.builders.BuildCraftBuilders;
 import buildcraft.builders.item.ItemConstructionMarker;
 import buildcraft.builders.tile.TileBuilder;
@@ -93,7 +92,7 @@ public class BlockBuilder extends BlockBuildCraft {
     public int getLightValue(IBlockAccess world, BlockPos pos) {
         return 1;
     }
-    
+
     @SideOnly(Side.CLIENT)
     public EnumWorldBlockLayer getBlockLayer() {
         return EnumWorldBlockLayer.CUTOUT;

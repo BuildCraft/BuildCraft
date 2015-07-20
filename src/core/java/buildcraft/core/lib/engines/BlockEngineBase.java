@@ -28,14 +28,14 @@ import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.render.ICustomHighlight;
 
 public abstract class BlockEngineBase extends BlockBuildCraft implements ICustomHighlight {
-    private static final AxisAlignedBB[][] boxes = {
-        { new AxisAlignedBB(0.0, 0.5, 0.0, 1.0, 1.0, 1.0), new AxisAlignedBB(0.25, 0.0, 0.25, 0.75, 0.5, 0.75) }, // -Y
-        { new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0), new AxisAlignedBB(0.25, 0.5, 0.25, 0.75, 1.0, 0.75) }, // +Y
-        { new AxisAlignedBB(0.0, 0.0, 0.5, 1.0, 1.0, 1.0), new AxisAlignedBB(0.25, 0.25, 0.0, 0.75, 0.75, 0.5) }, // -Z
-        { new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 0.5), new AxisAlignedBB(0.25, 0.25, 0.5, 0.75, 0.75, 1.0) }, // +Z
-        { new AxisAlignedBB(0.5, 0.0, 0.0, 1.0, 1.0, 1.0), new AxisAlignedBB(0.0, 0.25, 0.25, 0.5, 0.75, 0.75) }, // -X
+    private static final AxisAlignedBB[][] boxes = { { new AxisAlignedBB(0.0, 0.5, 0.0, 1.0, 1.0, 1.0), new AxisAlignedBB(0.25, 0.0, 0.25, 0.75, 0.5,
+            0.75) },   // -Y
+        { new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0), new AxisAlignedBB(0.25, 0.5, 0.25, 0.75, 1.0, 0.75) },   // +Y
+        { new AxisAlignedBB(0.0, 0.0, 0.5, 1.0, 1.0, 1.0), new AxisAlignedBB(0.25, 0.25, 0.0, 0.75, 0.75, 0.5) },   // -Z
+        { new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 0.5), new AxisAlignedBB(0.25, 0.25, 0.5, 0.75, 0.75, 1.0) },   // +Z
+        { new AxisAlignedBB(0.5, 0.0, 0.0, 1.0, 1.0, 1.0), new AxisAlignedBB(0.0, 0.25, 0.25, 0.5, 0.75, 0.75) },   // -X
         { new AxisAlignedBB(0.0, 0.0, 0.0, 0.5, 1.0, 1.0), new AxisAlignedBB(0.5, 0.25, 0.25, 1.0, 0.75, 0.75) } // +X
-        };
+    };
 
     public BlockEngineBase() {
         super(Material.iron, ENGINE_TYPE);
@@ -135,8 +135,8 @@ public abstract class BlockEngineBase extends BlockBuildCraft implements ICustom
         if (((TileEngineBase) tile).getEnergyStage() == EnumEnergyStage.OVERHEAT) {
             for (int f = 0; f < 16; f++) {
                 world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, x + 0.4F + (random.nextFloat() * 0.2F), y + (random.nextFloat() * 0.5F), z + 0.4F
-                    + (random.nextFloat() * 0.2F), random.nextFloat() * 0.04F - 0.02F, random.nextFloat() * 0.05F + 0.02F,
-                    random.nextFloat() * 0.04F - 0.02F);
+                    + (random.nextFloat() * 0.2F), random.nextFloat() * 0.04F - 0.02F, random.nextFloat() * 0.05F + 0.02F, random.nextFloat() * 0.04F
+                        - 0.02F);
             }
         } else if (((TileEngineBase) tile).isBurning()) {
             float f = x + 0.5F;

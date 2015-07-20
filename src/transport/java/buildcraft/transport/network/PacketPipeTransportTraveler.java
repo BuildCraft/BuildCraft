@@ -4,12 +4,13 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.network;
 
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 
 import buildcraft.api.enums.EnumColor;
 import buildcraft.core.lib.network.Packet;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.network.PacketIds;
 import buildcraft.transport.TravelingItem;
 
@@ -17,9 +18,7 @@ import io.netty.buffer.ByteBuf;
 
 public class PacketPipeTransportTraveler extends Packet {
 
-    public int posX;
-    public int posY;
-    public int posZ;
+    public BlockPos pos;
 
     private TravelingItem item;
     private boolean forceStackRefresh;
@@ -28,8 +27,6 @@ public class PacketPipeTransportTraveler extends Packet {
     private EnumFacing output;
     private EnumColor color;
     private Vec3 itemPos;
-    @Deprecated
-    private float itemX, itemY, itemZ;
     private float speed;
 
     public PacketPipeTransportTraveler() {}
@@ -57,13 +54,9 @@ public class PacketPipeTransportTraveler extends Packet {
 
     @Override
     public void readData(ByteBuf data) {
-        this.itemX = data.readFloat();
-        this.itemY = data.readFloat();
-        this.itemZ = data.readFloat();
+        itemPos = new Vec3(data.readFloat(), data.readFloat(), data.readFloat());
 
-        posX = MathHelper.floor_float(itemX);
-        posY = MathHelper.floor_float(itemY);
-        posZ = MathHelper.floor_float(itemZ);
+        pos = Utils.convertFloor(itemPos);
 
         this.entityId = data.readShort();
 

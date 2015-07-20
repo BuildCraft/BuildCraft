@@ -93,7 +93,7 @@ public class Version implements Runnable {
 
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestProperty("User-Agent",
-                    "Mozilla/5.0 (Windows; U; Windows NT 6.0; ru; rv:1.9.0.11) Gecko/2009060215 Firefox/3.0.11 (.NET CLR 3.5.30729)");
+                        "Mozilla/5.0 (Windows; U; Windows NT 6.0; ru; rv:1.9.0.11) Gecko/2009060215 Firefox/3.0.11 (.NET CLR 3.5.30729)");
                 conn.connect();
                 location = conn.getHeaderField("Location");
             }
@@ -157,7 +157,7 @@ public class Version implements Runnable {
 
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestProperty("User-Agent",
-                    "Mozilla/5.0 (Windows; U; Windows NT 6.0; ru; rv:1.9.0.11) Gecko/2009060215 Firefox/3.0.11 (.NET CLR 3.5.30729)");
+                        "Mozilla/5.0 (Windows; U; Windows NT 6.0; ru; rv:1.9.0.11) Gecko/2009060215 Firefox/3.0.11 (.NET CLR 3.5.30729)");
                 conn.connect();
                 location = conn.getHeaderField("Location");
             }
@@ -241,8 +241,8 @@ public class Version implements Runnable {
     }
 
     public static void displayChangelog(ICommandSender sender) {
-        sender.addChatMessage(new ChatComponentText(EnumChatFormatting.GRAY + "" + EnumChatFormatting.BOLD
-            + StatCollector.translateToLocalFormatted("command.buildcraft.changelog_header", getRecommendedVersion())));
+        sender.addChatMessage(new ChatComponentText(EnumChatFormatting.GRAY + "" + EnumChatFormatting.BOLD + StatCollector.translateToLocalFormatted(
+                "command.buildcraft.changelog_header", getRecommendedVersion())));
         int nb = 0;
         for (String updateLine : Version.getChangelog()) {
             String colour = "\u00A79";

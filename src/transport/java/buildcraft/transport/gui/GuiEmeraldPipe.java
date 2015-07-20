@@ -56,13 +56,13 @@ public class GuiEmeraldPipe extends GuiBuildCraft implements IButtonClickEventLi
         this.whiteListButton.registerListener(this);
         this.buttonList.add(this.whiteListButton);
 
-        this.blackListButton =
-            new GuiImageButton(BLACK_LIST_BUTTON_ID, this.guiLeft + 7 + 18, this.guiTop + 41, GuiImageButton.ButtonImage.BLACK_LIST);
+        this.blackListButton = new GuiImageButton(BLACK_LIST_BUTTON_ID, this.guiLeft + 7 + 18, this.guiTop + 41,
+                GuiImageButton.ButtonImage.BLACK_LIST);
         this.blackListButton.registerListener(this);
         this.buttonList.add(this.blackListButton);
 
-        this.roundRobinButton =
-            new GuiImageButton(ROUND_ROBIN_BUTTON_ID, this.guiLeft + 7 + 36, this.guiTop + 41, GuiImageButton.ButtonImage.ROUND_ROBIN);
+        this.roundRobinButton = new GuiImageButton(ROUND_ROBIN_BUTTON_ID, this.guiLeft + 7 + 36, this.guiTop + 41,
+                GuiImageButton.ButtonImage.ROUND_ROBIN);
         this.roundRobinButton.registerListener(this);
         this.buttonList.add(this.roundRobinButton);
 

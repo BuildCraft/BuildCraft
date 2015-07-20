@@ -50,8 +50,8 @@ public class CropHandlerPlantable implements ICropHandler {
         } else {
             Block block = world.getBlockState(pos).getBlock();
             IPlantable plantable = (IPlantable) ((ItemBlock) seed.getItem()).block;
-            return block.canSustainPlant(world, pos, EnumFacing.UP, plantable) && block != ((ItemBlock) seed.getItem()).block
-                && world.isAirBlock(pos.up());
+            return block.canSustainPlant(world, pos, EnumFacing.UP, plantable) && block != ((ItemBlock) seed.getItem()).block && world.isAirBlock(pos
+                    .up());
         }
     }
 

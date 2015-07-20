@@ -120,8 +120,8 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
             }
 
             if (itemStackCount > MAX_PIPE_STACKS) {
-                BCLog.logger.log(Level.WARN, String.format(
-                        "Pipe exploded at %s because it had too many stacks: %d", container.getPos(), items.size()));
+                BCLog.logger.log(Level.WARN, String.format("Pipe exploded at %s because it had too many stacks: %d", container.getPos(), items
+                        .size()));
                 destroyPipe();
                 return;
             }
@@ -348,9 +348,8 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
         final EntityItem entity = event.entity;
         EnumFacing direction = item.input;
-        entity.setPosition(
-                entity.posX + direction.getFrontOffsetX() * 0.5d, entity.posY + direction.getFrontOffsetY() * 0.5d, entity.posZ + direction
-                        .getFrontOffsetZ() * 0.5d);
+        entity.setPosition(entity.posX + direction.getFrontOffsetX() * 0.5d, entity.posY + direction.getFrontOffsetY() * 0.5d, entity.posZ + direction
+                .getFrontOffsetZ() * 0.5d);
 
         entity.motionX = direction.getFrontOffsetX() * item.speed * 5 + getWorld().rand.nextGaussian() * 0.1d;
         entity.motionY = direction.getFrontOffsetY() * item.speed * 5 + getWorld().rand.nextGaussian() * 0.1d;

@@ -232,31 +232,31 @@ public class BuildCraftCore extends BuildCraftMod {
             mainConfigManager.getCat("vars").setShowInGui(false);
 
             mainConfigManager.register("general.updateCheck", true, "Should I check the BuildCraft version on startup?",
-                ConfigManager.RestartRequirement.NONE);
+                    ConfigManager.RestartRequirement.NONE);
             mainConfigManager.register("display.hidePowerValues", false, "Should all power values (RF, RF/t) be hidden?",
-                ConfigManager.RestartRequirement.NONE);
+                    ConfigManager.RestartRequirement.NONE);
             mainConfigManager.register("display.hideFluidValues", false, "Should all fluid values (mB, mB/t) be hidden?",
-                ConfigManager.RestartRequirement.NONE);
+                    ConfigManager.RestartRequirement.NONE);
             mainConfigManager.register("general.itemLifespan", 60,
-                "How long, in seconds, should items stay on the ground? (Vanilla = 300, default = 60)", ConfigManager.RestartRequirement.NONE)
-                .setMinValue(5);
+                    "How long, in seconds, should items stay on the ground? (Vanilla = 300, default = 60)", ConfigManager.RestartRequirement.NONE)
+                    .setMinValue(5);
             mainConfigManager.register("network.updateFactor", 10,
-                "How often, in ticks, should network update packets be sent? Increasing this might help network performance.",
-                ConfigManager.RestartRequirement.GAME).setMinValue(1);
+                    "How often, in ticks, should network update packets be sent? Increasing this might help network performance.",
+                    ConfigManager.RestartRequirement.GAME).setMinValue(1);
             mainConfigManager.register("network.longUpdateFactor", 40,
-                "How often, in ticks, should full network sync packets be sent? Increasing this might help network performance.",
-                ConfigManager.RestartRequirement.GAME).setMinValue(1);
+                    "How often, in ticks, should full network sync packets be sent? Increasing this might help network performance.",
+                    ConfigManager.RestartRequirement.GAME).setMinValue(1);
             mainConfigManager.register("general.canEnginesExplode", false, "Should engines explode upon overheat?",
-                ConfigManager.RestartRequirement.NONE);
+                    ConfigManager.RestartRequirement.NONE);
             mainConfigManager.register("worldgen.enable", true, "Should BuildCraft generate anything in the world?",
-                ConfigManager.RestartRequirement.GAME);
+                    ConfigManager.RestartRequirement.GAME);
             mainConfigManager.register("general.pumpsConsumeWater", false,
-                "Should pumps consume water? Enabling this might cause performance issues!", ConfigManager.RestartRequirement.NONE);
+                    "Should pumps consume water? Enabling this might cause performance issues!", ConfigManager.RestartRequirement.NONE);
             mainConfigManager.register("power.miningUsageMultiplier", 1.0D, "What should the multiplier of all mining-related power usage be?",
-                ConfigManager.RestartRequirement.NONE);
+                    ConfigManager.RestartRequirement.NONE);
             mainConfigManager.register("display.colorBlindMode", false, "Should I enable colorblind mode?", ConfigManager.RestartRequirement.GAME);
             mainConfigManager.register("worldgen.generateWaterSprings", true, "Should BuildCraft generate water springs?",
-                ConfigManager.RestartRequirement.GAME);
+                    ConfigManager.RestartRequirement.GAME);
 
             reloadConfig(ConfigManager.RestartRequirement.GAME);
 
@@ -316,9 +316,9 @@ public class BuildCraftCore extends BuildCraftMod {
             engineBlock = (BlockEngine) CompatHooks.INSTANCE.getBlock(BlockEngine.class);
             CoreProxy.proxy.registerBlock(engineBlock, ItemEngine.class);
             engineBlock.registerTile((Class<? extends TileEngineBase>) CompatHooks.INSTANCE.getTile(TileEngineWood.class),
-                "buildcraft.core.engine.wood");
+                    "buildcraft.core.engine.wood");
             CoreProxy.proxy.registerTileEntity(TileEngineWood.class, "buildcraft.core.engine.wood",
-                "net.minecraft.src.buildcraft.energy.TileEngineWood");
+                    "net.minecraft.src.buildcraft.energy.TileEngineWood");
 
             FMLCommonHandler.instance().bus().register(this);
             MinecraftForge.EVENT_BUS.register(this);
@@ -339,26 +339,20 @@ public class BuildCraftCore extends BuildCraftMod {
         achievementManager = new AchievementManager("BuildCraft");
         FMLCommonHandler.instance().bus().register(achievementManager);
 
-        woodenGearAchievement =
-            achievementManager.registerAchievement(new Achievement("achievement.woodenGear", "woodenGearAchievement", 0, 0, woodenGearItem, null));
-        stoneGearAchievement =
-            achievementManager.registerAchievement(new Achievement("achievement.stoneGear", "stoneGearAchievement", 2, 0, stoneGearItem,
-                woodenGearAchievement));
-        ironGearAchievement =
-            achievementManager.registerAchievement(new Achievement("achievement.ironGear", "ironGearAchievement", 4, 0, ironGearItem,
+        woodenGearAchievement = achievementManager.registerAchievement(new Achievement("achievement.woodenGear", "woodenGearAchievement", 0, 0,
+                woodenGearItem, null));
+        stoneGearAchievement = achievementManager.registerAchievement(new Achievement("achievement.stoneGear", "stoneGearAchievement", 2, 0,
+                stoneGearItem, woodenGearAchievement));
+        ironGearAchievement = achievementManager.registerAchievement(new Achievement("achievement.ironGear", "ironGearAchievement", 4, 0,
+                ironGearItem, stoneGearAchievement));
+        goldGearAchievement = achievementManager.registerAchievement(new Achievement("achievement.goldGear", "goldGearAchievement", 6, 0,
+                goldGearItem, ironGearAchievement));
+        diamondGearAchievement = achievementManager.registerAchievement(new Achievement("achievement.diamondGear", "diamondGearAchievement", 8, 0,
+                diamondGearItem, goldGearAchievement));
+        wrenchAchievement = achievementManager.registerAchievement(new Achievement("achievement.wrench", "wrenchAchievement", 3, 2, wrenchItem,
                 stoneGearAchievement));
-        goldGearAchievement =
-            achievementManager.registerAchievement(new Achievement("achievement.goldGear", "goldGearAchievement", 6, 0, goldGearItem,
-                ironGearAchievement));
-        diamondGearAchievement =
-            achievementManager.registerAchievement(new Achievement("achievement.diamondGear", "diamondGearAchievement", 8, 0, diamondGearItem,
-                goldGearAchievement));
-        wrenchAchievement =
-            achievementManager
-                .registerAchievement(new Achievement("achievement.wrench", "wrenchAchievement", 3, 2, wrenchItem, stoneGearAchievement));
-        engineRedstoneAchievement =
-            BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.redstoneEngine", "engineAchievement1", 1, -2,
-                new ItemStack(engineBlock, 1, 0), BuildCraftCore.woodenGearAchievement));
+        engineRedstoneAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.redstoneEngine",
+                "engineAchievement1", 1, -2, new ItemStack(engineBlock, 1, 0), BuildCraftCore.woodenGearAchievement));
 
         // BuildCraft 6.1.4 and below - migration only
         StatementManager.registerParameterClass("buildcraft:stackTrigger", StatementParameterItemStack.class);
@@ -525,11 +519,11 @@ public class BuildCraftCore extends BuildCraftMod {
         CoreProxy.proxy.addCraftingRecipe(new ItemStack(mapLocationItem), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y', "dyeYellow");
         CoreProxy.proxy.addCraftingRecipe(new ItemStack(listItem), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y', "dyeGreen");
 
-        CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 0), "www", " g ", "GpG", 'w', "plankWood", 'g', "blockGlass", 'G',
-            "gearWood", 'p', Blocks.piston);
+        CoreProxy.proxy.addCraftingRecipe(new ItemStack(engineBlock, 1, 0), "www", " g ", "GpG", 'w', "plankWood", 'g', "blockGlass", 'G', "gearWood",
+                'p', Blocks.piston);
 
         CoreProxy.proxy.addCraftingRecipe(new ItemStack(paintbrushItem), " iw", " gi", "s  ", 's', "stickWood", 'g', "gearWood", 'w', new ItemStack(
-            Blocks.wool, 1, 0), 'i', Items.string);
+                Blocks.wool, 1, 0), 'i', Items.string);
 
         for (int i = 0; i < 16; i++) {
             ItemStack outputStack = paintbrushItem.getItemStack(EnumColor.VALUES[i]);

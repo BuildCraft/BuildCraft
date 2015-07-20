@@ -6,7 +6,6 @@ package buildcraft.transport.pluggable;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -31,17 +30,17 @@ public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
         setHasSubtypes(true);
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public TextureAtlasSprite getIconFromDamageForRenderPass(int meta, int pass) {
-        return icons[meta >= 16 ? (1 + (pass & 1)) : (1 - (pass & 1))];
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public boolean requiresMultipleRenderPasses() {
-        return true;
-    }
+    // @Override
+    // @SideOnly(Side.CLIENT)
+    // public TextureAtlasSprite getIconFromDamageForRenderPass(int meta, int pass) {
+    // return icons[meta >= 16 ? (1 + (pass & 1)) : (1 - (pass & 1))];
+    // }
+    //
+    // @Override
+    // @SideOnly(Side.CLIENT)
+    // public boolean requiresMultipleRenderPasses() {
+    // return true;
+    // }
 
     public int getDye(ItemStack stack) {
         return 15 - (stack.getItemDamage() & 15);
@@ -55,8 +54,8 @@ public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
 
     @Override
     public String getItemStackDisplayName(ItemStack itemstack) {
-        return StringUtils.localize(itemstack.getItemDamage() >= 16 ? "item.Filter.name" : "item.Lens.name") + " ("
-            + StringUtils.localize("color." + ColorUtils.getName(getDye(itemstack))) + ")";
+        return StringUtils.localize(itemstack.getItemDamage() >= 16 ? "item.Filter.name" : "item.Lens.name") + " (" + StringUtils.localize("color."
+            + ColorUtils.getName(getDye(itemstack))) + ")";
     }
 
     @Override
@@ -64,10 +63,10 @@ public class ItemLens extends ItemBuildCraft implements IPipePluggableItem {
         return true;
     }
 
-    @Override
-    public String[] getIconNames() {
-        return new String[] { "lens/lensFrame", "lens/transparent", "lens/filterFrame" };
-    }
+    // @Override
+    // public String[] getIconNames() {
+    // return new String[] { "lens/lensFrame", "lens/transparent", "lens/filterFrame" };
+    // }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override

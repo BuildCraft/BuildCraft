@@ -1,6 +1,7 @@
 package buildcraft.transport.render;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
@@ -23,7 +24,7 @@ public class FacadeBlockAccess implements IBlockAccess {
     }
 
     @Override
-    public Block getBlock(BlockPos pos) {
+    public IBlockState getBlockState(BlockPos pos) {
         Block compatBlock = CompatHooks.INSTANCE.getVisualBlock(world, pos, side);
         if (compatBlock != null) {
             return compatBlock;

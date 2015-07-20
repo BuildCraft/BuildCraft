@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -17,6 +15,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 
 import buildcraft.api.enums.EnumColor;
 import buildcraft.api.statements.IActionInternal;
@@ -31,6 +30,8 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.block.BlockGenericPipe;
 import buildcraft.transport.statements.ActionExtractionPreset;
+
+import io.netty.buffer.ByteBuf;
 
 public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler {
 
@@ -59,16 +60,16 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
             return true;
         }
 
-        if (!container.getWorldObj().isRemote) {
-            entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_LOGEMERALD_ITEM, container.getWorldObj(), container.xCoord,
-                container.yCoord, container.zCoord);
+        if (!container.getWorld().isRemote) {
+            entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_LOGEMERALD_ITEM, container.getWorld(), container.x(), container.y(),
+                    container.z());
         }
 
         return true;
     }
 
     @Override
-    protected TravelingItem makeItem(double x, double y, double z, ItemStack stack) {
+    protected TravelingItem makeItem(Vec3 pos, ItemStack stack) {
         TravelingItem item = super.makeItem(pos, stack);
         int color = slotColors[currentFilter % filterCount];
         if (color > 0) {
@@ -104,7 +105,7 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
 
     @Override
     public ItemStack checkExtractGeneric(net.minecraft.inventory.ISidedInventory inventory, boolean doRemove, EnumFacing from) {
-        for (int i : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
+        for (int i : inventory.getSlotsForFace(from)) {
             ItemStack stack = inventory.getStackInSlot(i);
             if (stack != null && stack.stackSize > 0) {
                 ItemStack filter = getCurrentFilter();
@@ -114,7 +115,7 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
                 if (!StackHelper.isMatchingItemOrList(stack, filter)) {
                     continue;
                 }
-                if (!inventory.canExtractItem(i, stack, from.ordinal())) {
+                if (!inventory.canExtractItem(i, stack, from)) {
                     continue;
                 }
                 if (doRemove) {
@@ -211,7 +212,8 @@ public class PipeItemsEmzuli extends PipeItemsWood implements IGuiReturnHandler 
         int count = 0;
         currentFilter++;
 
-        while (!(filters.getStackInSlot(currentFilter % filterCount) != null && activeFlags.get(currentFilter % filterCount)) && count < filterCount) {
+        while (!(filters.getStackInSlot(currentFilter % filterCount) != null && activeFlags.get(currentFilter % filterCount))
+            && count < filterCount) {
             currentFilter++;
             count++;
         }

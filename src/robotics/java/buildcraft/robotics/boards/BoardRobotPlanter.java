@@ -48,7 +48,7 @@ public class BoardRobotPlanter extends RedstoneBoardRobot {
     public void update() {
         if (robot.getHeldItem() == null) {
             startDelegateAI(new AIRobotFetchAndEquipItemStack(robot, new AggregateFilter(filter, ActionRobotFilter.getGateFilter(robot
-                .getLinkedStation()))));
+                    .getLinkedStation()))));
         } else {
             final ItemStack itemStack = robot.getHeldItem();
             IBlockFilter blockFilter = new IBlockFilter() {

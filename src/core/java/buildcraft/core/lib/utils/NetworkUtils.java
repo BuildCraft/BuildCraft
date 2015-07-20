@@ -1,7 +1,5 @@
 package buildcraft.core.lib.utils;
 
-import io.netty.buffer.ByteBuf;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -12,6 +10,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Vec3;
+
+import io.netty.buffer.ByteBuf;
 
 public final class NetworkUtils {
     private NetworkUtils() {

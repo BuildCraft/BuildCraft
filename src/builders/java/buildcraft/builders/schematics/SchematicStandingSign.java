@@ -15,23 +15,23 @@ import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
 
 public class SchematicStandingSign extends SchematicTile {
-	@Override
-	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
-		requirements.add(new ItemStack(Items.sign));
-	}
+    @Override
+    public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {
+        requirements.add(new ItemStack(Items.sign));
+    }
 
-	@Override
-	public void storeRequirements(IBuilderContext context, BlockPos pos) {
-		// cancel requirements reading
-	}
+    @Override
+    public void storeRequirements(IBuilderContext context, BlockPos pos) {
+        // cancel requirements reading
+    }
 
-	@Override
-	public void rotateLeft(IBuilderContext context) {
-		int rotation = (Integer) state.getValue(BlockStandingSign.ROTATION);
-		rotation += 4;
-		if (rotation >= 16) {
-			rotation -= 16;
-		}
-		state = state.withProperty(BlockStandingSign.ROTATION, rotation);
-	}
+    @Override
+    public void rotateLeft(IBuilderContext context) {
+        int rotation = (Integer) state.getValue(BlockStandingSign.ROTATION);
+        rotation += 4;
+        if (rotation >= 16) {
+            rotation -= 16;
+        }
+        state = state.withProperty(BlockStandingSign.ROTATION, rotation);
+    }
 }

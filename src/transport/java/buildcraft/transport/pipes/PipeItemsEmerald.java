@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -26,6 +24,8 @@ import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.transport.BuildCraftTransport;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.block.BlockGenericPipe;
+
+import io.netty.buffer.ByteBuf;
 
 public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IGuiReturnHandler {
 
@@ -85,9 +85,9 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
             return true;
         }
 
-        if (!container.getWorldObj().isRemote) {
-            entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_ITEM, container.getWorldObj(), container.xCoord, container.yCoord,
-                container.zCoord);
+        if (!container.getWorld().isRemote) {
+            entityplayer.openGui(BuildCraftTransport.instance, GuiIds.PIPE_EMERALD_ITEM, container.getWorld(), container.x(), container.y(), container
+                    .z());
         }
 
         return true;
@@ -110,14 +110,14 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
     }
 
     private ItemStack[] checkExtractFiltered(ISidedInventory inventory, boolean doRemove, EnumFacing from) {
-        for (int k : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
+        for (int k : inventory.getSlotsForFace(from)) {
             ItemStack stack = inventory.getStackInSlot(k);
 
             if (stack == null || stack.stackSize <= 0) {
                 continue;
             }
 
-            if (!inventory.canExtractItem(k, stack, from.ordinal())) {
+            if (!inventory.canExtractItem(k, stack, from)) {
                 continue;
             }
 
@@ -145,7 +145,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
     }
 
     private ItemStack[] checkExtractRoundRobin(ISidedInventory inventory, boolean doRemove, EnumFacing from) {
-        for (int i : inventory.getAccessibleSlotsFromSide(from.ordinal())) {
+        for (int i : inventory.getSlotsForFace(from)) {
             ItemStack stack = inventory.getStackInSlot(i);
 
             if (stack != null && stack.stackSize > 0) {
@@ -159,7 +159,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
                     continue;
                 }
 
-                if (!inventory.canExtractItem(i, stack, from.ordinal())) {
+                if (!inventory.canExtractItem(i, stack, from)) {
                     continue;
                 }
 

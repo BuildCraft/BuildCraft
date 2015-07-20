@@ -4,8 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.builders;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.Date;
 import java.util.LinkedList;
 
@@ -28,6 +26,8 @@ import buildcraft.core.StackAtPosition;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
+
+import io.netty.buffer.ByteBuf;
 
 public class BuildingItem implements IBuildingItem, ISerializable {
 

@@ -285,8 +285,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
             renderFluids(pipe.pipe, pos);
         } else if (pipeType == IPipeTile.PipeType.POWER) {
             renderPower(pipe.pipe, pos);
-        } /*
-           * else if (pipeType == PipeType.STRUCTURE) { // no object to render in a structure pipe; } */
+        } /* else if (pipeType == PipeType.STRUCTURE) { // no object to render in a structure pipe; } */
     }
 
     private void renderGatesWires(TileGenericPipe pipe, double x, double y, double z) {
@@ -424,7 +423,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
         if (minZ != CoreConstants.PIPE_MIN_POS || maxZ != CoreConstants.PIPE_MAX_POS || !found) {
             renderBox.setBounds(cx == CoreConstants.PIPE_MIN_POS ? cx - 0.05F : cx, cy == CoreConstants.PIPE_MIN_POS ? cy - 0.05F : cy, minZ,
-                cx == CoreConstants.PIPE_MIN_POS ? cx : cx + 0.05F, cy == CoreConstants.PIPE_MIN_POS ? cy : cy + 0.05F, maxZ);
+                    cx == CoreConstants.PIPE_MIN_POS ? cx : cx + 0.05F, cy == CoreConstants.PIPE_MIN_POS ? cy : cy + 0.05F, maxZ);
             renderLitBox(renderBox, isLit);
         }
 
@@ -432,7 +431,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
         if (minX != CoreConstants.PIPE_MIN_POS || maxX != CoreConstants.PIPE_MAX_POS || !found) {
             renderBox.setBounds(minX, cy == CoreConstants.PIPE_MIN_POS ? cy - 0.05F : cy, cz == CoreConstants.PIPE_MIN_POS ? cz - 0.05F : cz, maxX,
-                cy == CoreConstants.PIPE_MIN_POS ? cy : cy + 0.05F, cz == CoreConstants.PIPE_MIN_POS ? cz : cz + 0.05F);
+                    cy == CoreConstants.PIPE_MIN_POS ? cy : cy + 0.05F, cz == CoreConstants.PIPE_MIN_POS ? cz : cz + 0.05F);
             renderLitBox(renderBox, isLit);
         }
 
@@ -440,14 +439,14 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
         if (minY != CoreConstants.PIPE_MIN_POS || maxY != CoreConstants.PIPE_MAX_POS || !found) {
             renderBox.setBounds(cx == CoreConstants.PIPE_MIN_POS ? cx - 0.05F : cx, minY, cz == CoreConstants.PIPE_MIN_POS ? cz - 0.05F : cz,
-                cx == CoreConstants.PIPE_MIN_POS ? cx : cx + 0.05F, maxY, cz == CoreConstants.PIPE_MIN_POS ? cz : cz + 0.05F);
+                    cx == CoreConstants.PIPE_MIN_POS ? cx : cx + 0.05F, maxY, cz == CoreConstants.PIPE_MIN_POS ? cz : cz + 0.05F);
             renderLitBox(renderBox, isLit);
         }
 
         if (center || !found) {
             renderBox.setBounds(cx == CoreConstants.PIPE_MIN_POS ? cx - 0.05F : cx, cy == CoreConstants.PIPE_MIN_POS ? cy - 0.05F : cy,
-                cz == CoreConstants.PIPE_MIN_POS ? cz - 0.05F : cz, cx == CoreConstants.PIPE_MIN_POS ? cx : cx + 0.05F,
-                cy == CoreConstants.PIPE_MIN_POS ? cy : cy + 0.05F, cz == CoreConstants.PIPE_MIN_POS ? cz : cz + 0.05F);
+                    cz == CoreConstants.PIPE_MIN_POS ? cz - 0.05F : cz, cx == CoreConstants.PIPE_MIN_POS ? cx : cx + 0.05F,
+                    cy == CoreConstants.PIPE_MIN_POS ? cy : cy + 0.05F, cz == CoreConstants.PIPE_MIN_POS ? cz : cz + 0.05F);
             renderLitBox(renderBox, isLit);
         }
 
@@ -539,8 +538,8 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
         GL11.glPopMatrix();
     }
 
-    private static void renderGate(TextureAtlasSprite icon, int layer, float trim, float translateCenter, float extraDepth, EnumFacing direction, boolean isLit,
-            int sideRenderingMode) {
+    private static void renderGate(TextureAtlasSprite icon, int layer, float trim, float translateCenter, float extraDepth, EnumFacing direction,
+            boolean isLit, int sideRenderingMode) {
         RenderInfo renderBox = new RenderInfo();
         renderBox.texture = icon;
 
@@ -802,8 +801,8 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
             Vec3 motion = new Vec3(0, 0, 0, item.toCenter ? item.input : item.output);
             motion.moveForwards(item.getSpeed() * f);
 
-            doRenderItem(item, x + item.xCoord - pipe.container.xCoord + motion.x, y + item.yCoord - pipe.container.yCoord + motion.y, z
-                + item.zCoord - pipe.container.zCoord + motion.z, light, item.color);
+            doRenderItem(item, x + item.xCoord - pipe.container.xCoord + motion.x, y + item.yCoord - pipe.container.yCoord + motion.y, z + item.zCoord
+                - pipe.container.zCoord + motion.z, light, item.color);
             count++;
         }
 

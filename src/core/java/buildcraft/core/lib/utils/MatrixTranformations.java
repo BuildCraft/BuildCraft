@@ -20,8 +20,8 @@ public final class MatrixTranformations {
         targetArray[1][1] = (temp - 0.5F) * -1F + 0.5F; // 0 -> -0.5F -> 0.5F -> 1F
     }
 
-    /** Shifts the coordinates around effectively rotating something. Zero state is DOWN then -&gt; NORTH -&gt; WEST Note
-     * - To obtain Position, do a mirrorY() before rotating
+    /** Shifts the coordinates around effectively rotating something. Zero state is DOWN then -&gt; NORTH -&gt; WEST
+     * Note - To obtain Position, do a mirrorY() before rotating
      *
      * @param targetArray the array that should be rotated */
     public static void rotate(float[][] targetArray) {

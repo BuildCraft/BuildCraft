@@ -45,8 +45,8 @@ public class AIRobotPlant extends AIRobot {
                 setSuccess(false);
             }
             if (robot.getHeldItem().stackSize > 0) {
-                BlockUtils.dropItem((WorldServer) robot.worldObj, MathHelper.floor_double(robot.posX), MathHelper.floor_double(robot.posY),
-                    MathHelper.floor_double(robot.posZ), 6000, robot.getHeldItem());
+                BlockUtils.dropItem((WorldServer) robot.worldObj, MathHelper.floor_double(robot.posX), MathHelper.floor_double(robot.posY), MathHelper
+                        .floor_double(robot.posZ), 6000, robot.getHeldItem());
             }
             robot.setItemInUse(null);
             terminate();

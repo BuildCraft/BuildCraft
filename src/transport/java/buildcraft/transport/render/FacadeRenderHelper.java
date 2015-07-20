@@ -78,9 +78,9 @@ public final class FacadeRenderHelper {
     }
 
     private static void setRenderBounds(RenderBlocks renderblocks, float[][] rotated, EnumFacing side) {
-        renderblocks.setRenderBounds(rotated[0][0] + xOffsets[side.ordinal()], rotated[1][0] + yOffsets[side.ordinal()], rotated[2][0]
-            + zOffsets[side.ordinal()], rotated[0][1] - xOffsets[side.ordinal()], rotated[1][1] - yOffsets[side.ordinal()], rotated[2][1]
-            - zOffsets[side.ordinal()]);
+        renderblocks.setRenderBounds(rotated[0][0] + xOffsets[side.ordinal()], rotated[1][0] + yOffsets[side.ordinal()], rotated[2][0] + zOffsets[side
+                .ordinal()], rotated[0][1] - xOffsets[side.ordinal()], rotated[1][1] - yOffsets[side.ordinal()], rotated[2][1] - zOffsets[side
+                        .ordinal()]);
     }
 
     public static void pipeFacadeRenderer(RenderBlocks renderblocks, ITextureStates blockStateMachine, IPipeTile tile, BlockPos pos,
@@ -185,9 +185,9 @@ public final class FacadeRenderHelper {
         ((TextureStateManager) textureManager.getTextureState()).pushArray();
         blockStateMachine.setRenderAllSides();
 
-        textureManager.getTextureState().setToStack(
-            BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal())); // Structure
-                                                                                                                              // Pipe
+        textureManager.getTextureState().setToStack(BuildCraftTransport.instance.pipeIconProvider.getIcon(
+                PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal())); // Structure
+        // Pipe
 
         // Always render connectors in pass 0
         if (PipeRendererWorld.renderPass == 0 && !pluggable.isHollow()) {

@@ -40,6 +40,7 @@ import buildcraft.core.BCCreativeTab;
 import buildcraft.core.block.BlockSpring;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.BuildCraftTransport;
 import buildcraft.transport.FacadePluggable;
@@ -260,7 +261,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
             try {
                 int i = stack.getItemDamage();
 
-                if (block.hasTileEntity(i)) {
+                if (block.hasTileEntity()) {
                     continue;
                 }
 
@@ -453,10 +454,10 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
             // 3 Structurepipes + this block makes 6 facades
             if (Loader.isModLoaded("BuildCraft|Silicon") && !BuildCraftTransport.facadeForceNonLaserRecipe) {
                 BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId, 8000, facade6, new ItemStack(BuildCraftTransport.pipeStructureCobblestone,
-                    3), itemStack);
+                        3), itemStack);
 
                 BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":hollow", 8000, facade6Hollow, new ItemStack(
-                    BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
+                        BuildCraftTransport.pipeStructureCobblestone, 3), itemStack);
 
                 BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":toHollow", 160, facadeHollow, facade);
                 BuildcraftRecipeRegistry.assemblyTable.addRecipe(recipeId + ":fromHollow", 160, facade, facadeHollow);

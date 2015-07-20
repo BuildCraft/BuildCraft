@@ -4,7 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.boards;
 
-import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.boards.RedstoneBoardRobot;

@@ -42,7 +42,7 @@ public class PipeItemRenderer implements IItemRenderer {
             int c = ColorUtils.getRGBColor(item.getItemDamage() - 1);
             GL11.glColor3ub((byte) (c >> 16), (byte) ((c >> 8) & 0xFF), (byte) (c & 0xFF));
             block.setBlockBounds(CoreConstants.PIPE_MIN_POS + zFightOffset, 0.0F + zFightOffset, CoreConstants.PIPE_MIN_POS + zFightOffset,
-                CoreConstants.PIPE_MAX_POS - zFightOffset, 1.0F - zFightOffset, CoreConstants.PIPE_MAX_POS - zFightOffset);
+                    CoreConstants.PIPE_MAX_POS - zFightOffset, 1.0F - zFightOffset, CoreConstants.PIPE_MAX_POS - zFightOffset);
             block.setBlockBoundsForItemRender();
             render.setRenderBoundsFromBlock(block);
 
@@ -57,12 +57,12 @@ public class PipeItemRenderer implements IItemRenderer {
         icon = item.getItem().getIconFromDamage(0);
 
         if (icon == null) {
-            icon =
-                ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
+            icon = ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite(
+                    "missingno");
         }
 
         block.setBlockBounds(CoreConstants.PIPE_MIN_POS, 0.0F, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, 1.0F,
-            CoreConstants.PIPE_MAX_POS);
+                CoreConstants.PIPE_MAX_POS);
         block.setBlockBoundsForItemRender();
         render.setRenderBoundsFromBlock(block);
 

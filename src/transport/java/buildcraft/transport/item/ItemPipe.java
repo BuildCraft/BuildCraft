@@ -16,15 +16,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.IIconProvider;
 import buildcraft.api.transport.IItemPipe;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBuildCraft;
-import buildcraft.core.lib.render.IIconProvider;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.transport.BuildCraftTransport;
@@ -46,64 +47,41 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
     }
 
     @Override
-    public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, BlockPos pos, int sideI, float par8, float par9,
+    public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, BlockPos pos, EnumFacing side, float par8, float par9,
             float par10) {
-        int side = sideI;
         Block block = BuildCraftTransport.genericPipeBlock;
 
-        int i = x;
-        int j = y;
-        int k = z;
-
-        Block worldBlock = world.getBlock(pos);
+        Block worldBlock = world.getBlockState(pos).getBlock();
 
         if (worldBlock == Blocks.snow) {
-            side = 1;
+            side = EnumFacing.UP;
         } else if (worldBlock != Blocks.vine && worldBlock != Blocks.tallgrass && worldBlock != Blocks.deadbush && (worldBlock == null || !worldBlock
                 .isReplaceable(world, pos))) {
-            if (side == 0) {
-                j--;
-            }
-            if (side == 1) {
-                j++;
-            }
-            if (side == 2) {
-                k--;
-            }
-            if (side == 3) {
-                k++;
-            }
-            if (side == 4) {
-                i--;
-            }
-            if (side == 5) {
-                i++;
-            }
+            pos = pos.offset(side);
         }
 
         if (itemstack.stackSize == 0) {
             return false;
         }
 
-        if (world.canPlaceEntityOnSide(block, pos, false, side, entityplayer, itemstack)) {
+        if (world.canBlockBePlaced(block, pos, false, side, entityplayer, itemstack)) {
             Pipe<?> pipe = BlockGenericPipe.createPipe(this);
 
             if (pipe == null) {
-                BCLog.logger.log(Level.WARN, "Pipe failed to create during placement at {0},{1},{2}", pos);
+                BCLog.logger.log(Level.WARN, "Pipe failed to create during placement at {0}", pos);
                 return true;
             }
 
-            if (BlockGenericPipe.placePipe(pipe, world, pos, block, 0, entityplayer)) {
-                block.onBlockPlacedBy(world, pos, entityplayer, itemstack);
+            if (BlockGenericPipe.placePipe(pipe, world, pos, block.getDefaultState(), entityplayer)) {
+                block.onBlockPlacedBy(world, pos, block.getDefaultState(), entityplayer, itemstack);
 
                 if (!world.isRemote) {
                     TileEntity tile = world.getTileEntity(pos);
                     ((TileGenericPipe) tile).initializeFromItemMetadata(itemstack.getItemDamage());
                 }
 
-                world.playSoundEffect(
-                        i + 0.5F, j + 0.5F, k + 0.5F, block.stepSound.func_150496_b(), (block.stepSound.getVolume() + 1.0F) / 2.0F, block.stepSound
-                                .getPitch() * 0.8F);
+                world.playSoundEffect(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F, block.stepSound.getPlaceSound(), (block.stepSound
+                        .getVolume() + 1.0F) / 2.0F, block.stepSound.getFrequency() * 0.8F);
 
                 itemstack.stackSize--;
             }
