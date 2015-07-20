@@ -11,7 +11,8 @@ import buildcraft.core.lib.utils.StringUtils;
 public class ListTooltipHandler {
 	@SubscribeEvent
 	public void itemTooltipEvent(ItemTooltipEvent event) {
-		if (event.entityPlayer.openContainer instanceof ContainerListNew) {
+		if (event.itemStack != null && event.entityPlayer != null && event.entityPlayer.openContainer != null
+				&& event.entityPlayer.openContainer instanceof ContainerListNew) {
 			ItemStack list = event.entityPlayer.getCurrentEquippedItem();
 			if (list != null && list.getItem() instanceof IList) {
 				if (((IList) list.getItem()).matches(list, event.itemStack)) {

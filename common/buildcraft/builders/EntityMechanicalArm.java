@@ -97,7 +97,7 @@ public class EntityMechanicalArm extends Entity {
 
 	private void findAndJoinQuarry() {
 		TileEntity te = worldObj.getTileEntity((int) posX, (int) posY, (int) posZ);
-		if (te != null && te instanceof TileQuarry) {
+		if (te instanceof TileQuarry) {
 			parent = (TileQuarry) te;
 			parent.setArm(this);
 		} else {
