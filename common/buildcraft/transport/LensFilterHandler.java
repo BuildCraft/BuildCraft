@@ -37,12 +37,13 @@ public class LensFilterHandler {
 				pluggable = otherContainer.getPipePluggable(dir.getOpposite());
 				if (pluggable != null && pluggable instanceof LensPluggable && ((LensPluggable) pluggable).isFilter) {
 					int otherColor = ((LensPluggable) pluggable).color;
-					// Check if colors conflict - if so, the side is unpassable
-					if (sideColor >= 0 && otherColor != sideColor) {
-						continue;
-					} else {
-						sideColor = otherColor;
+					// if we are colored and this side is different one
+					if (myColor >= 0 && myColor != otherColor) {
+						continue; // This side is no use
 					}
+					// Else just do nothing, as filer is on another pipe
+					// it should not get priority so it is just another 'uncolored' side.
+
 				}
 			}
 
