@@ -15,7 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
@@ -23,6 +22,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import buildcraft.api.enums.EnumColor;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.lib.inventory.StackHelper;
+import buildcraft.core.lib.utils.Utils;
 
 public class TravelingItem {
 
@@ -33,7 +33,9 @@ public class TravelingItem {
 
     public final EnumSet<EnumFacing> blacklist = EnumSet.noneOf(EnumFacing.class);
 
+    /** @deprecated Use {@link #pos} instead */
     public double xCoord, yCoord, zCoord;
+    public Vec3 pos;
     public final int id;
     public boolean toCenter = true;
     public EnumColor color;
@@ -65,11 +67,9 @@ public class TravelingItem {
         return make(maxId < Short.MAX_VALUE ? ++maxId : (maxId = Short.MIN_VALUE));
     }
 
-    public static TravelingItem make(double x, double y, double z, ItemStack stack) {
+    public static TravelingItem make(Vec3 pos, ItemStack stack) {
         TravelingItem item = make();
-        item.xCoord = x;
-        item.yCoord = y;
-        item.zCoord = z;
+        item.pos = pos;
         item.itemStack = stack.copy();
         return item;
     }
@@ -87,17 +87,8 @@ public class TravelingItem {
         return serverCache;
     }
 
-    /* GETTING & SETTING */
-    public void setPosition(double x, double y, double z) {
-        this.xCoord = x;
-        this.yCoord = y;
-        this.zCoord = z;
-    }
-
-    public void movePosition(double x, double y, double z) {
-        this.xCoord += x;
-        this.yCoord += y;
-        this.zCoord += z;
+    public void movePosition(Vec3 toAdd) {
+        pos = pos.add(toAdd);
     }
 
     public float getSpeed() {
@@ -163,14 +154,14 @@ public class TravelingItem {
 
     /* SAVING & LOADING */
     public void readFromNBT(NBTTagCompound data) {
-        setPosition(data.getDouble("x"), data.getDouble("y"), data.getDouble("z"));
+        pos = new Vec3(data.getDouble("x"), data.getDouble("y"), data.getDouble("z"));
 
         setSpeed(data.getFloat("speed"));
         setItemStack(ItemStack.loadItemStackFromNBT(data.getCompoundTag("Item")));
 
         toCenter = data.getBoolean("toCenter");
-        input = EnumFacing.getOrientation(data.getByte("input"));
-        output = EnumFacing.getOrientation(data.getByte("output"));
+        input = EnumFacing.getFront(data.getByte("input"));
+        output = EnumFacing.getFront(data.getByte("output"));
 
         byte c = data.getByte("color");
         if (c != -1) {
@@ -203,37 +194,41 @@ public class TravelingItem {
     }
 
     public EntityItem toEntityItem() {
-        if (container != null && !container.getWorldObj().isRemote) {
+        if (container != null && !container.getWorld().isRemote) {
             if (getItemStack().stackSize <= 0) {
                 return null;
             }
 
-            Vec3 motion = new Vec3(0, 0, 0, output);
-            motion.moveForwards(0.1 + getSpeed() * 2F);
+            Vec3 motion = Utils.convert(output, 0.1 + getSpeed() * 2D);
 
-            EntityItem entity = new EntityItem(container.getWorldObj(), xCoord, yCoord, zCoord, getItemStack());
+            EntityItem entity = new EntityItem(container.getWorld(), xCoord, yCoord, zCoord, getItemStack());
             entity.lifespan = BuildCraftCore.itemLifespan * 20;
-            entity.delayBeforeCanPickup = 10;
+            entity.setDefaultPickupDelay();
 
-            float f3 = 0.00F + container.getWorldObj().rand.nextFloat() * 0.04F - 0.02F;
-            entity.motionX = (float) container.getWorldObj().rand.nextGaussian() * f3 + motion.x;
-            entity.motionY = (float) container.getWorldObj().rand.nextGaussian() * f3 + motion.y;
-            entity.motionZ = (float) container.getWorldObj().rand.nextGaussian() * f3 + +motion.z;
+            float f3 = 0.00F + container.getWorld().rand.nextFloat() * 0.04F - 0.02F;
+            entity.motionX = (float) container.getWorld().rand.nextGaussian() * f3 + motion.xCoord;
+            entity.motionY = (float) container.getWorld().rand.nextGaussian() * f3 + motion.yCoord;
+            entity.motionZ = (float) container.getWorld().rand.nextGaussian() * f3 + +motion.zCoord;
             return entity;
         }
         return null;
     }
 
     public float getEntityBrightness(float f) {
-        int i = MathHelper.floor_double(xCoord);
-        int j = MathHelper.floor_double(zCoord);
-        if (container != null && container.getWorldObj().blockExists(i, 128 / 2, j)) {
-            double d = 0.66000000000000003D;
-            int k = MathHelper.floor_double(yCoord + d);
-            return container.getWorldObj().getLightBrightness(i, k, j);
-        } else {
-            return 0.0F;
-        }
+        // int i = MathHelper.floor_double(xCoord);
+        // int j = MathHelper.floor_double(zCoord);
+
+        // Ok... is this a nether checking thing?
+        // And why would you want this?
+        // Being removed unless testing requires it
+        // if (container != null && !container.getWorld().isAirBlock(new BlockPos(i, 64, j))) {
+
+        double d = 2 / 3D;
+        // int k = MathHelper.floor_double(pos.yCoord + d);
+        return container.getWorld().getLightBrightness(Utils.convertFloor(pos.addVector(0, d, 0)));
+        // } else {
+        // return 0.0F;
+        // }
     }
 
     public boolean isCorrupted() {

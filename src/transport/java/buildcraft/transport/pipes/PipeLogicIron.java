@@ -38,7 +38,7 @@ public abstract class PipeLogicIron {
         int meta = pipe.container.getBlockMetadata();
 
         for (int i = meta + 1; i <= meta + 6; ++i) {
-            EnumFacing facing = EnumFacing.getOrientation(i % 6);
+            EnumFacing facing = EnumFacing.getFront(i % 6);
             if (setFacing(facing)) {
                 return;
             }
@@ -102,7 +102,7 @@ public abstract class PipeLogicIron {
     }
 
     public EnumFacing getOutputDirection() {
-        return EnumFacing.getOrientation(pipe.container.getBlockMetadata());
+        return EnumFacing.getFront(pipe.container.getBlockMetadata());
     }
 
     public boolean outputOpen(EnumFacing to) {

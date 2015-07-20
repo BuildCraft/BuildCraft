@@ -4,9 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.utils;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -46,6 +43,9 @@ import buildcraft.core.lib.inventory.ITransactor;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.network.Packet;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 
 public final class Utils {
     public static final boolean CAULDRON_DETECTED;
@@ -359,6 +359,12 @@ public final class Utils {
         return new Vec3(vec3i.getX(), vec3i.getY(), vec3i.getZ());
     }
 
+    /** Convert an integer vector to an equal floating point vector, 0.5 added to all coordinates (so the middle of a
+     * block if this vector represents a block) */
+    public static Vec3 convertMiddle(Vec3i vec3i) {
+        return convert(vec3i).add(new Vec3(0.5, 0.5, 0.5));
+    }
+
     public static Vec3 convert(EnumFacing face) {
         return new Vec3(face.getFrontOffsetX(), face.getFrontOffsetY(), face.getFrontOffsetZ());
     }
@@ -373,7 +379,19 @@ public final class Utils {
         return new BlockPos(vec.xCoord, vec.yCoord, vec.zCoord);
     }
 
+    public static BlockPos convertFloor(EnumFacing face) {
+        return convertFloor(convert(face));
+    }
+
+    public static BlockPos convertFloor(EnumFacing face, int multiple) {
+        return convertFloor(convert(face, multiple));
+    }
+
     public static Vec3 multiply(Vec3 vec, double multiple) {
         return new Vec3(vec.xCoord * multiple, vec.yCoord * multiple, vec.zCoord * multiple);
+    }
+    
+    public static Vec3 clamp(Vec3 in, Vec3 lower, Vec3 upper) {
+        return in;
     }
 }

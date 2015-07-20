@@ -1,24 +1,20 @@
 package buildcraft.transport;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
 
-import buildcraft.api.core.render.ITextureStates;
-import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.item.ItemFacade;
-import buildcraft.transport.render.FacadeRenderHelper;
+
+import io.netty.buffer.ByteBuf;
 
 public class FacadePluggable extends PipePluggable implements IFacadePluggable {
     public static final class FacadePluggableRenderer implements IPipePluggableRenderer {
@@ -28,11 +24,15 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
 
         }
 
-        @Override
-        public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, EnumFacing side, PipePluggable pipePluggable,
-                ITextureStates blockStateMachine, int renderPass, BlockPos pos) {
-            FacadeRenderHelper.pipeFacadeRenderer(renderblocks, blockStateMachine, pipe.getTile(), pos, side, (IFacadePluggable) pipePluggable);
-        }
+        // TODO (PASS 0): Add a way to render IPipePluggableRenderer
+
+        // @Override
+        // public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, EnumFacing side, PipePluggable
+        // pipePluggable,
+        // ITextureStates blockStateMachine, int renderPass, BlockPos pos) {
+        // FacadeRenderHelper.pipeFacadeRenderer(renderblocks, blockStateMachine, pipe.getTile(), pos, side,
+        // (IFacadePluggable) pipePluggable);
+        // }
     }
 
     public ItemFacade.FacadeState[] states;
@@ -144,8 +144,9 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
             data.writeShort(Block.getIdFromBlock(activeState.block));
         }
 
-        data.writeByte((activeState != null && activeState.transparent ? 128 : 0) | (activeState != null && activeState.hollow ? 64 : 0)
-            | (activeState == null ? 0 : activeState.metadata));
+        data.writeByte(
+                (activeState != null && activeState.transparent ? 128 : 0) | (activeState != null && activeState.hollow ? 64 : 0)
+                    | (activeState == null ? 0 : activeState.metadata));
     }
 
     @Override

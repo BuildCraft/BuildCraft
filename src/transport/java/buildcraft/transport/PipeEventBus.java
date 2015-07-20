@@ -9,9 +9,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Maps;
+
 import buildcraft.transport.pipes.events.PipeEvent;
 import buildcraft.transport.pipes.events.PipeEventPriority;
 
+@Deprecated
 public class PipeEventBus {
     private class EventHandler {
         public Method method;
@@ -51,10 +54,8 @@ public class PipeEventBus {
     private static final HashSet<Object> globalHandlers = new HashSet<Object>();
 
     private final HashSet<Object> registeredHandlers = new HashSet<Object>();
-    private final HashMap<Object, Map<Method, Class<? extends PipeEvent>>> handlerMethods =
-        new HashMap<Object, Map<Method, Class<? extends PipeEvent>>>();
-    private final HashMap<Class<? extends PipeEvent>, List<EventHandler>> eventHandlers =
-        new HashMap<Class<? extends PipeEvent>, List<EventHandler>>();
+    private final HashMap<Object, Map<Method, Class<? extends PipeEvent>>> handlerMethods = Maps.newHashMap();
+    private final HashMap<Class<? extends PipeEvent>, List<EventHandler>> eventHandlers = Maps.newHashMap();
 
     public PipeEventBus() {
         for (Object o : globalHandlers) {

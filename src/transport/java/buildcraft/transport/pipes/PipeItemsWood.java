@@ -120,7 +120,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
             int meta = container.getBlockMetadata();
 
             if (meta <= 5) {
-                EnumFacing side = EnumFacing.getOrientation(meta);
+                EnumFacing side = EnumFacing.getFront(meta);
                 TileEntity tile = container.getTile(side);
 
                 if (tile instanceof IInventory) {
@@ -151,7 +151,7 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
             return;
         }
 
-        EnumFacing side = EnumFacing.getOrientation(meta);
+        EnumFacing side = EnumFacing.getFront(meta);
         TileEntity tile = container.getTile(side);
 
         if (tile instanceof IInventory) {

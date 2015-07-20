@@ -4,15 +4,16 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.network;
 
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 
 import buildcraft.api.enums.EnumColor;
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.network.PacketIds;
 import buildcraft.transport.TravelingItem;
+
+import io.netty.buffer.ByteBuf;
 
 public class PacketPipeTransportTraveler extends Packet {
 
@@ -26,9 +27,9 @@ public class PacketPipeTransportTraveler extends Packet {
     private EnumFacing input;
     private EnumFacing output;
     private EnumColor color;
-    private float itemX;
-    private float itemY;
-    private float itemZ;
+    private Vec3 itemPos;
+    @Deprecated
+    private float itemX, itemY, itemZ;
     private float speed;
 
     public PacketPipeTransportTraveler() {}
@@ -40,9 +41,9 @@ public class PacketPipeTransportTraveler extends Packet {
 
     @Override
     public void writeData(ByteBuf data) {
-        data.writeFloat((float) item.xCoord);
-        data.writeFloat((float) item.yCoord);
-        data.writeFloat((float) item.zCoord);
+        data.writeFloat((float) item.pos.xCoord);
+        data.writeFloat((float) item.pos.yCoord);
+        data.writeFloat((float) item.pos.zCoord);
 
         data.writeShort(item.id);
 
@@ -68,8 +69,8 @@ public class PacketPipeTransportTraveler extends Packet {
 
         int flags = data.readUnsignedByte();
 
-        this.input = EnumFacing.getOrientation((flags >> 3) & 7);
-        this.output = EnumFacing.getOrientation(flags & 7);
+        this.input = EnumFacing.getFront((flags >> 3) & 7);
+        this.output = EnumFacing.getFront(flags & 7);
 
         byte c = data.readByte();
         if (c != -1) {
@@ -97,16 +98,8 @@ public class PacketPipeTransportTraveler extends Packet {
         return color;
     }
 
-    public double getItemX() {
-        return itemX;
-    }
-
-    public double getItemY() {
-        return itemY;
-    }
-
-    public double getItemZ() {
-        return itemZ;
+    public Vec3 getItemPos() {
+        return itemPos;
     }
 
     public float getSpeed() {

@@ -9,15 +9,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import cofh.api.energy.IEnergyConnection;
-import cofh.api.energy.IEnergyHandler;
-import cofh.api.energy.IEnergyReceiver;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+
+import cofh.api.energy.IEnergyConnection;
+import cofh.api.energy.IEnergyHandler;
+import cofh.api.energy.IEnergyReceiver;
 
 import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.power.IEngine;
@@ -83,7 +83,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
         return IPipeTile.PipeType.POWER;
     }
 
-    public void initFromPipe(Class<? extends Pipe> pipeClass) {
+    public void initFromPipe(Class<? extends Pipe<?>> pipeClass) {
         if (BuildCraftTransport.usePipeLoss) {
             maxPower = 10240;
             powerResistance = powerResistances.get(pipeClass);
@@ -170,7 +170,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
     }
 
     private Object getEnergyProvider(int side) {
-        EnumFacing fs = EnumFacing.getOrientation(side);
+        EnumFacing fs = EnumFacing.getFront(side);
         if (container.hasPipePluggable(fs)) {
             Object pp = container.getPipePluggable(fs);
             if (pp instanceof IEnergyReceiver) {
@@ -182,7 +182,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 
     @Override
     public void updateEntity() {
-        if (container.getWorldObj().isRemote) {
+        if (container.getWorld().isRemote) {
             return;
         }
 
@@ -299,7 +299,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
         int[] transferQuery = new int[6];
         for (int i = 0; i < 6; ++i) {
             transferQuery[i] = 0;
-            if (!inputOpen(EnumFacing.getOrientation(i))) {
+            if (!inputOpen(EnumFacing.getFront(i))) {
                 continue;
             }
             for (int j = 0; j < 6; ++j) {
@@ -319,19 +319,18 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
                     if (nearbyTile.getPipe() == null) {
                         continue;
                     }
-                    PipeTransportPower nearbyTransport = (PipeTransportPower) ((Pipe) nearbyTile.getPipe()).transport;
+                    PipeTransportPower nearbyTransport = (PipeTransportPower) ((Pipe<?>) nearbyTile.getPipe()).transport;
                     nearbyTransport.requestEnergy(EnumFacing.VALUES[i].getOpposite(), transferQuery[i]);
                 }
             }
         }
 
-        if (tracker.markTimeIfDelay(container.getWorldObj())) {
-            PacketPowerUpdate packet = new PacketPowerUpdate(container.xCoord, container.yCoord, container.zCoord);
+        if (tracker.markTimeIfDelay(container.getWorld())) {
+            PacketPowerUpdate packet = new PacketPowerUpdate(container.getPos());
 
             packet.displayPower = displayPower;
             packet.overload = isOverloaded();
-            BuildCraftTransport.instance.sendToPlayers(packet, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord,
-                DefaultProps.PIPE_CONTENTS_RENDER_DIST);
+            BuildCraftTransport.instance.sendToPlayers(packet, container.getWorld(), container.getPos(), DefaultProps.PIPE_CONTENTS_RENDER_DIST);
         }
     }
 
@@ -340,8 +339,8 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
     }
 
     private void step() {
-        if (container != null && container.getWorldObj() != null && currentDate != container.getWorldObj().getTotalWorldTime()) {
-            currentDate = container.getWorldObj().getTotalWorldTime();
+        if (container != null && container.getWorld() != null && currentDate != container.getWorld().getTotalWorldTime()) {
+            currentDate = container.getWorld().getTotalWorldTime();
 
             Arrays.fill(dbgEnergyInput, 0);
             Arrays.fill(dbgEnergyOffered, 0);
@@ -357,7 +356,9 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
     }
 
     /** Do NOT ever call this from outside Buildcraft. It is NOT part of the API. All power input MUST go through
-     * designated input pipes, such as Wooden Power Pipes or a subclass thereof. */
+     * designated input pipes, such as Wooden Power Pipes or a subclass thereof.
+     * 
+     * Otherwise you will make us very sad :( */
     public double receiveEnergy(EnumFacing from, double tVal) {
         int side = from.ordinal();
         double val = tVal;
@@ -408,7 +409,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 
     @Override
     public void initialize() {
-        currentDate = container.getWorldObj().getTotalWorldTime();
+        currentDate = container.getWorld().getTotalWorldTime();
     }
 
     @Override

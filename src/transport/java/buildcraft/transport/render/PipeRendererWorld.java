@@ -96,7 +96,7 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 
                 // Render connecting block
                 if (Minecraft.getMinecraft().gameSettings.fancyGraphics) {
-                    EnumFacing side = EnumFacing.getOrientation(dir);
+                    EnumFacing side = EnumFacing.getFront(dir);
                     int px = x + side.offsetX;
                     int py = y + side.offsetY;
                     int pz = z + side.offsetZ;

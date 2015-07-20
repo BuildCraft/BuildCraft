@@ -5,6 +5,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.transport.item.ItemPipe;
@@ -15,7 +16,6 @@ public class PipeColoringRecipe implements IRecipe {
         ItemStack oneColorPipeStack = null;
         ItemStack pipeStack = null;
 
-        boolean hasDifferentColorPipes = false;
         boolean hasDifferentPipes = false;
 
         boolean isBleach = false;
@@ -36,11 +36,8 @@ public class PipeColoringRecipe implements IRecipe {
                         pipeStack.stackSize++;
                         if (oneColorPipeStack.getItemDamage() == oneColorPipeStack.getItemDamage()) {
                             oneColorPipeStack.stackSize++;
-                        } else {
-                            hasDifferentColorPipes = true;
                         }
                     } else {
-                        hasDifferentColorPipes = true;
                         hasDifferentPipes = true;
                     }
                 }
@@ -84,4 +81,17 @@ public class PipeColoringRecipe implements IRecipe {
         return null;
     }
 
+    // Basically the same as RecipeFireworks
+    // TODO (PASS 0): Check if this is right!
+    @Override
+    public ItemStack[] getRemainingItems(InventoryCrafting inv) {
+        ItemStack[] items = new ItemStack[inv.getSizeInventory()];
+
+        for (int i = 0; i < items.length; ++i) {
+            ItemStack itemstack = inv.getStackInSlot(i);
+            items[i] = ForgeHooks.getContainerItem(itemstack);
+        }
+
+        return items;
+    }
 }

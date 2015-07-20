@@ -232,9 +232,9 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
         Map<EnumFacing, IInventory> invs = new HashMap<EnumFacing, IInventory>();
         if (filteredReqsToFulfill > 0 || missingCount > 0) {
             for (int i = 2; i < 6; i++) {
-                TileEntity neighbor = getTile(EnumFacing.getOrientation(i));
+                TileEntity neighbor = getTile(EnumFacing.getFront(i));
                 if (neighbor instanceof IInventory) {
-                    invs.put(EnumFacing.getOrientation(i), (IInventory) neighbor);
+                    invs.put(EnumFacing.getFront(i), (IInventory) neighbor);
                 }
             }
         }

@@ -151,7 +151,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
         int maxY = yCoord + 5;
         int maxZ = zCoord + 5;
 
-        switch (EnumFacing.getOrientation(meta)) {
+        switch (EnumFacing.getFront(meta)) {
             case WEST:
                 maxX = xCoord;
                 break;
@@ -212,7 +212,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
         int meta = getBlockMetadata();
         double px = 0, py = 0, pz = 0;
 
-        switch (EnumFacing.getOrientation(meta)) {
+        switch (EnumFacing.getFront(meta)) {
 
             case WEST:
                 px = -LASER_OFFSET;

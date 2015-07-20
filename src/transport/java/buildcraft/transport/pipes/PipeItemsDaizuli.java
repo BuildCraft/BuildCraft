@@ -133,7 +133,7 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems> implements ISeria
     }
 
     public void eventHandler(PipeEventItem.FindDest event) {
-        EnumFacing output = EnumFacing.getOrientation(container.getBlockMetadata());
+        EnumFacing output = EnumFacing.getFront(container.getBlockMetadata());
         if (event.item.color == getColor() && event.destinations.contains(output)) {
             event.destinations.clear();
             event.destinations.add(output);

@@ -22,9 +22,10 @@ import buildcraft.transport.pipes.PipeItemsEmzuli;
 public class TransportGuiHandler implements IGuiHandler {
 
     @Override
-    public Object getServerGuiElement(int id, EntityPlayer player, World world, BlockPos pos) {
+    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+        BlockPos pos = new BlockPos(x, y, z);
         try {
-            if (!world.blockExists(pos)) {
+            if (world.isAirBlock(pos)) {
                 return null;
             }
 
@@ -71,9 +72,10 @@ public class TransportGuiHandler implements IGuiHandler {
     }
 
     @Override
-    public Object getClientGuiElement(int id, EntityPlayer player, World world, BlockPos pos) {
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+        BlockPos pos = new BlockPos(x, y, z);
         try {
-            if (!world.blockExists(pos)) {
+            if (world.isAirBlock(pos)) {
                 return null;
             }
 

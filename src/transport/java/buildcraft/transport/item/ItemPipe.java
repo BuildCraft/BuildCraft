@@ -24,6 +24,7 @@ import buildcraft.api.core.BCLog;
 import buildcraft.api.transport.IItemPipe;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBuildCraft;
+import buildcraft.core.lib.render.IIconProvider;
 import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.transport.BuildCraftTransport;
@@ -35,7 +36,7 @@ import buildcraft.transport.block.BlockGenericPipe;
 public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
     @SideOnly(Side.CLIENT)
-    private TextureAtlasSpriteProvider iconProvider;
+    private IIconProvider iconProvider;
     private int pipeIconIndex;
 
     public ItemPipe(BCCreativeTab creativeTab) {
@@ -114,7 +115,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
     }
 
     @SideOnly(Side.CLIENT)
-    public void setPipesIcons(TextureAtlasSpriteProvider iconProvider) {
+    public void setPipesIcons(IIconProvider iconProvider) {
         this.iconProvider = iconProvider;
     }
 
@@ -122,7 +123,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
         this.pipeIconIndex = index;
     }
 
-    @Override
+    // TODO (PASS 0): Re-implements this with an item-model baker
     @SideOnly(Side.CLIENT)
     public TextureAtlasSprite getIconFromDamage(int par1) {
         if (iconProvider != null) { // invalid pipes won't have this set
@@ -130,18 +131,6 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
         } else {
             return null;
         }
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureAtlasSpriteRegister par1IconRegister) {
-        // NOOP
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public int getSpriteNumber() {
-        return 0;
     }
 
     @Override

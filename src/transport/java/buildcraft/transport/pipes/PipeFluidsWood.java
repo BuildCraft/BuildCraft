@@ -71,7 +71,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
 
     private TileEntity getConnectingTile() {
         int meta = container.getBlockMetadata();
-        return meta >= 6 ? null : container.getTile(EnumFacing.getOrientation(meta));
+        return meta >= 6 ? null : container.getTile(EnumFacing.getFront(meta));
     }
 
     @Override
@@ -87,7 +87,7 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids> implements IEnergy
         if (tile == null || !(tile instanceof IFluidHandler)) {
             liquidToExtract = 0;
         } else {
-            extractFluid((IFluidHandler) tile, EnumFacing.getOrientation(container.getBlockMetadata()));
+            extractFluid((IFluidHandler) tile, EnumFacing.getFront(container.getBlockMetadata()));
 
             // We always subtract the flowRate to ensure that the buffer goes down reasonably quickly.
             liquidToExtract -= transport.getFlowRate();

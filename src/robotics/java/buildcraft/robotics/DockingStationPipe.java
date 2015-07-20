@@ -5,6 +5,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.api.enums.EnumColor;
@@ -15,6 +16,7 @@ import buildcraft.api.robots.RobotManager;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.transport.IInjectable;
 import buildcraft.api.transport.IPipeTile;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TravelingItem;
@@ -33,12 +35,10 @@ public class DockingStationPipe extends DockingStation {
         @Override
         public int injectItem(ItemStack stack, boolean doAdd, EnumFacing from, EnumColor color) {
             if (doAdd) {
-                float cx = x() + 0.5F + 0.2F * side().offsetX;
-                float cy = y() + 0.5F + 0.2F * side().offsetY;
-                float cz = z() + 0.5F + 0.2F * side().offsetZ;
-                TravelingItem item = TravelingItem.make(cx, cy, cz, stack);
+                Vec3 vec = Utils.convertMiddle(getPos()).add(Utils.convert(side, 0.2));
+                TravelingItem item = TravelingItem.make(vec, stack);
 
-                ((PipeTransportItems) ((Pipe) getPipe().getPipe()).transport).injectItem(item, from);
+                ((PipeTransportItems) ((Pipe<?>) getPipe().getPipe()).transport).injectItem(item, from);
             }
             return stack.stackSize;
         }
@@ -58,7 +58,7 @@ public class DockingStationPipe extends DockingStation {
 
     public IPipeTile getPipe() {
         if (pipe == null) {
-            pipe = (IPipeTile) world.getTileEntity(x(), y(), z());
+            pipe = (IPipeTile) world.getTileEntity(getPos());
         }
 
         if (pipe == null || ((TileEntity) pipe).isInvalid()) {
@@ -95,9 +95,9 @@ public class DockingStationPipe extends DockingStation {
         }
 
         int meta = ((TileEntity) getPipe()).getBlockMetadata();
-        EnumFacing dir = EnumFacing.getOrientation(meta);
+        EnumFacing dir = EnumFacing.getFront(meta);
 
-        TileEntity connectedTile = getPipe().getWorld().getTileEntity(x() + dir.offsetX, y() + dir.offsetY, z() + dir.offsetZ);
+        TileEntity connectedTile = getPipe().getWorld().getTileEntity(getPos().add(Utils.convertFloor(dir)));
         if (connectedTile instanceof IInventory) {
             return (IInventory) connectedTile;
         }
@@ -116,9 +116,9 @@ public class DockingStationPipe extends DockingStation {
         }
 
         int meta = ((TileEntity) getPipe()).getBlockMetadata();
-        EnumFacing dir = EnumFacing.getOrientation(meta);
+        EnumFacing dir = EnumFacing.getFront(meta);
 
-        TileEntity connectedTile = getPipe().getWorld().getTileEntity(x() + dir.offsetX, y() + dir.offsetY, z() + dir.offsetZ);
+        TileEntity connectedTile = getPipe().getWorld().getTileEntity(getPos().add(Utils.convertFloor(dir)));
         if (connectedTile instanceof IFluidHandler) {
             return (IFluidHandler) connectedTile;
         }
@@ -132,7 +132,7 @@ public class DockingStationPipe extends DockingStation {
             return null;
         }
 
-        return (IFluidHandler) ((Pipe) getPipe().getPipe()).transport;
+        return (IFluidHandler) ((Pipe<?>) getPipe().getPipe()).transport;
     }
 
     @Override
@@ -143,7 +143,7 @@ public class DockingStationPipe extends DockingStation {
     @Override
     public IRequestProvider getRequestProvider() {
         for (EnumFacing dir : EnumFacing.VALUES) {
-            TileEntity nearbyTile = getPipe().getWorld().getTileEntity(x() + dir.offsetX, y() + dir.offsetY, z() + dir.offsetZ);
+            TileEntity nearbyTile = getPipe().getWorld().getTileEntity(getPos().add(Utils.convertFloor(dir)));
             if (nearbyTile instanceof IRequestProvider) {
                 return (IRequestProvider) nearbyTile;
             }
@@ -156,7 +156,7 @@ public class DockingStationPipe extends DockingStation {
         if (getPipe() == null || getPipe().getPipe() == null) {
             return false;
         }
-        return ((Pipe) getPipe().getPipe()).isInitialized();
+        return ((Pipe<?>) getPipe().getPipe()).isInitialized();
     }
 
     @Override

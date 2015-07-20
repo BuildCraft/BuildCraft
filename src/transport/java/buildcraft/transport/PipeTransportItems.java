@@ -21,6 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.Constants;
 
@@ -30,7 +31,7 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.inventory.Transactor;
 import buildcraft.core.lib.utils.BlockUtils;
-import buildcraft.core.lib.utils.MathUtils;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.block.BlockGenericPipe;
 import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
 import buildcraft.transport.network.PacketPipeTransportTraveler;
@@ -72,15 +73,15 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
     }
 
     private void readjustPosition(TravelingItem item) {
-        double x = MathUtils.clamp(item.xCoord, container.xCoord + 0.01, container.xCoord + 0.99);
-        double y = MathUtils.clamp(item.yCoord, container.yCoord + 0.01, container.yCoord + 0.99);
-        double z = MathUtils.clamp(item.zCoord, container.zCoord + 0.01, container.zCoord + 0.99);
+        Vec3 middle = Utils.convertMiddle(container.getPos());
+        Vec3 littleBitBelow0Point5 = new Vec3(0.49, 0.49, 0.49);
+        Vec3 newPos = Utils.clamp(item.pos, middle.subtract(littleBitBelow0Point5), middle.add(littleBitBelow0Point5));
 
-        if (item.input != EnumFacing.UP && item.input != EnumFacing.DOWN) {
-            y = container.yCoord + TransportUtils.getPipeFloorOf(item.getItemStack());
+        if (item.input.getAxis() != Axis.Y) {
+            newPos = new Vec3(newPos.xCoord, container.y() + TransportUtils.getPipeFloorOf(item.getItemStack()), newPos.zCoord);
         }
 
-        item.setPosition(pos);
+        item.pos = newPos;
     }
 
     public void injectItem(TravelingItem item, EnumFacing inputOrientation) {
@@ -102,13 +103,13 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
             return;
         }
 
-        if (!container.getWorldObj().isRemote) {
+        if (!container.getWorld().isRemote) {
             item.output = resolveDestination(item);
         }
 
         items.add(item);
 
-        if (!container.getWorldObj().isRemote) {
+        if (!container.getWorld().isRemote) {
             sendTravelerPacket(item, false);
 
             int itemStackCount = getNumberOfStacks();
@@ -119,8 +120,8 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
             }
 
             if (itemStackCount > MAX_PIPE_STACKS) {
-                BCLog.logger.log(Level.WARN, String.format("Pipe exploded at %d,%d,%d because it had too many stacks: %d", container.xCoord,
-                    container.yCoord, container.zCoord, items.size()));
+                BCLog.logger.log(Level.WARN, String.format(
+                        "Pipe exploded at %s because it had too many stacks: %d", container.getPos(), items.size()));
                 destroyPipe();
                 return;
             }
@@ -128,16 +129,15 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
             int numItems = getNumberOfItems();
 
             if (numItems > MAX_PIPE_ITEMS) {
-                BCLog.logger.log(Level.WARN, String.format("Pipe exploded at %d,%d,%d because it had too many items: %d", container.xCoord,
-                    container.yCoord, container.zCoord, numItems));
+                BCLog.logger.log(Level.WARN, String.format("Pipe exploded at %s, because it had too many items: %d", container.getPos(), numItems));
                 destroyPipe();
             }
         }
     }
 
     private void destroyPipe() {
-        BlockUtils.explodeBlock(container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord);
-        container.getWorldObj().setBlockToAir(container.xCoord, container.yCoord, container.zCoord);
+        BlockUtils.explodeBlock(container.getWorld(), container.getPos());
+        container.getWorld().setBlockToAir(container.getPos());
     }
 
     /** Bounces the item back into the pipe without changing the items map.
@@ -162,13 +162,13 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
             return;
         }
 
-        if (!container.getWorldObj().isRemote) {
+        if (!container.getWorld().isRemote) {
             item.output = resolveDestination(item);
         }
 
         items.unscheduleRemoval(item);
 
-        if (!container.getWorldObj().isRemote) {
+        if (!container.getWorld().isRemote) {
             sendTravelerPacket(item, true);
         }
     }
@@ -183,7 +183,8 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         return validDestinations.get(0);
     }
 
-    /** Returns a list of all possible movements, that is to say adjacent implementers of IPipeEntry or TileEntityChest. */
+    /** Returns a list of all possible movements, that is to say adjacent implementers of IPipeEntry or
+     * TileEntityChest. */
     public List<EnumFacing> getPossibleMovements(TravelingItem item) {
         LinkedList<EnumFacing> result = new LinkedList<EnumFacing>();
 
@@ -257,26 +258,8 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
                 continue;
             }
 
-            switch (item.toCenter ? item.input : item.output) {
-                case DOWN:
-                    item.movePosition(0, -item.getSpeed(), 0);
-                    break;
-                case UP:
-                    item.movePosition(0, item.getSpeed(), 0);
-                    break;
-                case WEST:
-                    item.movePosition(-item.getSpeed(), 0, 0);
-                    break;
-                case EAST:
-                    item.movePosition(item.getSpeed(), 0, 0);
-                    break;
-                case NORTH:
-                    item.movePosition(0, 0, -item.getSpeed());
-                    break;
-                case SOUTH:
-                    item.movePosition(0, 0, item.getSpeed());
-                    break;
-            }
+            EnumFacing face = item.toCenter ? item.input : item.output;
+            item.movePosition(Utils.convert(face, item.getSpeed()));
 
             if ((item.toCenter && middleReached(item)) || outOfBounds(item)) {
                 if (item.isCorrupted()) {
@@ -287,8 +270,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
                 item.toCenter = false;
 
                 // Reajusting to the middle
-                item.setPosition(container.xCoord + 0.5, container.yCoord + TransportUtils.getPipeFloorOf(item.getItemStack()),
-                    container.zCoord + 0.5);
+                item.pos = Utils.convert(container.getPos()).add(new Vec3(0.5, TransportUtils.getPipeFloorOf(item.getItemStack()), 0.5));
 
                 if (item.output == null) {
                     if (items.scheduleRemoval(item)) {
@@ -337,7 +319,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         if (passToNextPipe(item, tile)) {
             // NOOP
         } else if (tile instanceof IInventory) {
-            if (!container.getWorldObj().isRemote) {
+            if (!container.getWorld().isRemote) {
                 if (item.getInsertionHandler().canInsertItem(item, (IInventory) tile)) {
                     ItemStack added = Transactor.getTransactorFor(tile).add(item.getItemStack(), item.output.getOpposite(), true);
                     item.getItemStack().stackSize -= added.stackSize;
@@ -353,7 +335,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
     }
 
     private void dropItem(TravelingItem item) {
-        if (container.getWorldObj().isRemote) {
+        if (container.getWorld().isRemote) {
             return;
         }
 
@@ -366,34 +348,39 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
         final EntityItem entity = event.entity;
         EnumFacing direction = item.input;
-        entity.setPosition(entity.posX + direction.offsetX * 0.5d, entity.posY + direction.offsetY * 0.5d, entity.posZ + direction.offsetZ * 0.5d);
+        entity.setPosition(
+                entity.posX + direction.getFrontOffsetX() * 0.5d, entity.posY + direction.getFrontOffsetY() * 0.5d, entity.posZ + direction
+                        .getFrontOffsetZ() * 0.5d);
 
-        entity.motionX = direction.offsetX * item.speed * 5 + getWorld().rand.nextGaussian() * 0.1d;
-        entity.motionY = direction.offsetY * item.speed * 5 + getWorld().rand.nextGaussian() * 0.1d;
-        entity.motionZ = direction.offsetZ * item.speed * 5 + getWorld().rand.nextGaussian() * 0.1d;
+        entity.motionX = direction.getFrontOffsetX() * item.speed * 5 + getWorld().rand.nextGaussian() * 0.1d;
+        entity.motionY = direction.getFrontOffsetY() * item.speed * 5 + getWorld().rand.nextGaussian() * 0.1d;
+        entity.motionZ = direction.getFrontOffsetZ() * item.speed * 5 + getWorld().rand.nextGaussian() * 0.1d;
 
-        container.getWorldObj().spawnEntityInWorld(entity);
+        container.getWorld().spawnEntityInWorld(entity);
     }
 
     protected boolean middleReached(TravelingItem item) {
         float middleLimit = item.getSpeed() * 1.01F;
-        return Math.abs(container.xCoord + 0.5 - item.xCoord) < middleLimit
-            && Math.abs(container.yCoord + TransportUtils.getPipeFloorOf(item.getItemStack()) - item.yCoord) < middleLimit
-            && Math.abs(container.zCoord + 0.5 - item.zCoord) < middleLimit;
+        return Utils.convertMiddle(container.getPos()).subtract(item.pos).lengthVector() < middleLimit;
     }
 
     protected boolean endReached(TravelingItem item) {
-        return item.xCoord > container.xCoord + 1 || item.xCoord < container.xCoord || item.yCoord > container.yCoord + 1
-            || item.yCoord < container.yCoord || item.zCoord > container.zCoord + 1 || item.zCoord < container.zCoord;
+        return item.pos.distanceTo(Utils.convertMiddle(container.getPos())) > 0.5;
+        // return item.xCoord > container.xCoord + 1 || item.xCoord < container.xCoord || item.yCoord > container.yCoord
+        // + 1
+        // || item.yCoord < container.yCoord || item.zCoord > container.zCoord + 1 || item.zCoord < container.zCoord;
     }
 
     protected boolean outOfBounds(TravelingItem item) {
-        return item.xCoord > container.xCoord + 2 || item.xCoord < container.xCoord - 1 || item.yCoord > container.yCoord + 2
-            || item.yCoord < container.yCoord - 1 || item.zCoord > container.zCoord + 2 || item.zCoord < container.zCoord - 1;
+        return item.pos.distanceTo(Utils.convertMiddle(container.getPos())) > 1;
+        // return item.xCoord > container.xCoord + 2 || item.xCoord < container.xCoord - 1 || item.yCoord >
+        // container.yCoord + 2
+        // || item.yCoord < container.yCoord - 1 || item.zCoord > container.zCoord + 2 || item.zCoord < container.zCoord
+        // - 1;
     }
 
     public Vec3 getPosition() {
-        return new Vec3(container.xCoord, container.yCoord, container.zCoord);
+        return Utils.convert(container.getPos());
     }
 
     @Override
@@ -455,7 +442,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
             BuildCraftTransport.instance.sendToServer(new PacketPipeTransportItemStackRequest(packet.getTravelingEntityId()));
         }
 
-        item.setPosition(packet.getItemX(), packet.getItemY(), packet.getItemZ());
+        item.pos = packet.getItemPos();
 
         item.setSpeed(packet.getSpeed());
 
@@ -467,8 +454,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
     private void sendTravelerPacket(TravelingItem data, boolean forceStackRefresh) {
         PacketPipeTransportTraveler packet = new PacketPipeTransportTraveler(data, forceStackRefresh);
-        BuildCraftTransport.instance.sendToPlayers(packet, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord,
-            DefaultProps.PIPE_CONTENTS_RENDER_DIST);
+        BuildCraftTransport.instance.sendToPlayers(packet, container.getWorld(), container.getPos(), DefaultProps.PIPE_CONTENTS_RENDER_DIST);
     }
 
     public int getNumberOfStacks() {
@@ -503,14 +489,15 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         }
 
         if (tile instanceof ISidedInventory) {
-            int[] slots = ((ISidedInventory) tile).getAccessibleSlotsFromSide(side.getOpposite().ordinal());
+            int[] slots = ((ISidedInventory) tile).getSlotsForFace(side.getOpposite());
             return slots != null && slots.length > 0;
         }
 
         return tile instanceof IPipeTile || (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0);
     }
 
-    /** Group all items that are similar, that is to say same dmg, same id, same nbt and no contribution controlling them */
+    /** Group all items that are similar, that is to say same dmg, same id, same nbt and no contribution controlling
+     * them */
     public void groupEntities() {
         for (TravelingItem item : items) {
             if (item.isCorrupted()) {

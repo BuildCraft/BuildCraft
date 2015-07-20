@@ -26,7 +26,7 @@ public abstract class PipeLogicWood {
         EnumFacing newFacing = null;
 
         for (int i = meta + 1; i <= meta + 6; ++i) {
-            EnumFacing facing = EnumFacing.getOrientation(i % 6);
+            EnumFacing facing = EnumFacing.getFront(i % 6);
             if (isValidFacing(facing)) {
                 newFacing = facing;
                 break;
@@ -49,7 +49,7 @@ public abstract class PipeLogicWood {
         if (meta > 5) {
             switchSource();
         } else {
-            EnumFacing facing = EnumFacing.getOrientation(meta);
+            EnumFacing facing = EnumFacing.getFront(meta);
             if (!isValidFacing(facing)) {
                 switchSource();
             }

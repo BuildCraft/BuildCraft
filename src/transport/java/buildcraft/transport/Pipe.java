@@ -10,6 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import com.google.common.eventbus.EventBus;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -44,6 +46,8 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
     public final Item item;
     public boolean[] wireSet = new boolean[] { false, false, false, false };
     public final Gate[] gates = new Gate[EnumFacing.VALUES.length];
+    // TODO: Remove PipeEventBus and replace it (completly) with google's event bus.
+    public final EventBus bus = new EventBus("buildcraft.transport.Pipe.eventBus");
     public PipeEventBus eventBus = new PipeEventBus();
 
     private boolean internalUpdateScheduled = false;

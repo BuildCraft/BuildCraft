@@ -9,14 +9,17 @@ import java.util.List;
 import org.apache.logging.log4j.Level;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.gui.IUpdatePlayerListBox;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -52,6 +55,7 @@ import buildcraft.core.lib.network.IGuiReturnHandler;
 import buildcraft.core.lib.network.ISyncedTile;
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.network.PacketTileState;
+import buildcraft.core.lib.render.IIconProvider;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.block.BlockGenericPipe;
 import buildcraft.transport.gates.GateFactory;
@@ -61,8 +65,8 @@ import buildcraft.transport.pluggable.PlugPluggable;
 
 import io.netty.buffer.ByteBuf;
 
-public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeTile, ITileBufferHolder, IEnergyHandler, IDropControlInventory,
-        ISyncedTile, ISolidSideTile, IGuiReturnHandler, IRedstoneEngineReceiver, IDebuggable {
+public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox, IFluidHandler, IPipeTile, ITileBufferHolder, IEnergyHandler,
+        IDropControlInventory, ISyncedTile, ISolidSideTile, IGuiReturnHandler, IRedstoneEngineReceiver, IDebuggable {
 
     public boolean initialized = false;
     public final PipeRenderState renderState = new PipeRenderState();
@@ -70,7 +74,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     public final CoreState coreState = new CoreState();
     public boolean[] pipeConnectionsBuffer = new boolean[6];
 
-    public Pipe pipe;
+    public Pipe<?> pipe;
     public int redstoneInput;
     public int[] redstoneInputSide = new int[EnumFacing.VALUES.length];
 
@@ -201,7 +205,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         public void rotateLeft() {
             PipePluggable[] newPluggables = new PipePluggable[EnumFacing.VALUES.length];
             for (EnumFacing dir : EnumFacing.VALUES) {
-                newPluggables[dir.getRotation(EnumFacing.UP).ordinal()] = pluggables[dir.ordinal()];
+                EnumFacing rotated = dir.getAxis() == Axis.Y ? dir : dir.rotateY();
+                newPluggables[rotated.ordinal()] = pluggables[dir.ordinal()];
             }
             pluggables = newPluggables;
         }
@@ -215,7 +220,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
                     ItemStack[] stacks = pluggable.getDropItems(pipe);
                     if (stacks != null) {
                         for (ItemStack stack : stacks) {
-                            Utils.dropTryIntoPlayerInventory(pipe.worldObj, pipe.xCoord, pipe.yCoord, pipe.zCoord, stack, player);
+                            Utils.dropTryIntoPlayerInventory(pipe.worldObj, pipe.pos, stack, player);
                         }
                     }
                 }
@@ -295,7 +300,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         if (pipe != null) {
             pipe.readFromNBT(nbt);
         } else {
-            BCLog.logger.log(Level.WARN, "Pipe failed to load from NBT at {0},{1},{2}", xCoord, yCoord, zCoord);
+            BCLog.logger.log(Level.WARN, "Pipe failed to load from NBT at {0}", getPos());
             deletePipe = true;
         }
 
@@ -332,7 +337,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     }
 
     protected void notifyBlockChanged() {
-        worldObj.notifyBlockOfNeighborChange(xCoord, yCoord, zCoord, getBlock());
+        worldObj.notifyBlockOfStateChange(getPos(), getBlock());
         scheduleRenderUpdate();
         sendUpdateToClient();
         if (pipe != null) {
@@ -341,10 +346,10 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     }
 
     @Override
-    public void updateEntity() {
+    public void update() {
         if (!worldObj.isRemote) {
             if (deletePipe) {
-                worldObj.setBlockToAir(xCoord, yCoord, zCoord);
+                worldObj.setBlockToAir(getPos());
             }
 
             if (pipe == null) {
@@ -362,7 +367,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
             for (int i = 0; i < EnumFacing.VALUES.length; i++) {
                 if (sideProperties.pluggables[i] != null) {
                     pipe.eventBus.registerHandler(sideProperties.pluggables[i]);
-                    sideProperties.pluggables[i].onAttachedPipe(this, EnumFacing.getOrientation(i));
+                    sideProperties.pluggables[i].onAttachedPipe(this, EnumFacing.getFront(i));
                 }
             }
             notifyBlockChanged();
@@ -411,7 +416,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
                 for (Object o : world.playerEntities) {
                     EntityPlayerMP player = (EntityPlayerMP) o;
 
-                    if (world.getPlayerManager().isPlayerWatchingChunk(player, xCoord >> 4, zCoord >> 4)) {
+                    if (world.getPlayerManager().isPlayerWatchingChunk(player, getPos().getX() >> 4, getPos().getX() >> 4)) {
                         BuildCraftCore.instance.sendToPlayer(player, updatePacket);
                     }
                 }
@@ -457,7 +462,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
 
         // Pipe Textures
         for (int i = 0; i < 7; i++) {
-            EnumFacing o = EnumFacing.getOrientation(i);
+            EnumFacing o = EnumFacing.getFront(i);
             renderState.textureMatrix.setIconIndex(o, pipe.getIconIndex(o));
         }
 
@@ -532,8 +537,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         this.blockType = getBlockType();
 
         if (pipe == null) {
-            BCLog.logger.log(Level.WARN, "Pipe failed to initialize at {0},{1},{2}, deleting", xCoord, yCoord, zCoord);
-            worldObj.setBlockToAir(xCoord, yCoord, zCoord);
+            BCLog.logger.log(Level.WARN, "Pipe failed to initialize at {0}, deleting", getPos());
+            worldObj.setBlockToAir(getPos());
             return;
         }
 
@@ -592,12 +597,11 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         if (BlockGenericPipe.isValid(pipe) && pipe.transport instanceof PipeTransportItems && isPipeConnected(from) && pipe.inputOpen(from)) {
 
             if (doAdd) {
-                Vec3 itemPos = new Vec3(xCoord + 0.5, yCoord + 0.5, zCoord + 0.5, from.getOpposite());
-                itemPos.moveBackwards(0.4);
+                Vec3 itemPos = Utils.convertMiddle(getPos()).add(Utils.convert(from, 0.4));
 
-                TravelingItem pipedItem = TravelingItem.make(itemPos.x, itemPos.y, itemPos.z, payload);
+                TravelingItem pipedItem = TravelingItem.make(itemPos, payload);
                 pipedItem.color = color;
-                ((PipeTransportItems) pipe.transport).injectItem(pipedItem, itemPos.orientation);
+                ((PipeTransportItems) pipe.transport).injectItem(pipedItem, from.getOpposite());
             }
             return payload.stackSize;
         }
@@ -639,7 +643,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
         bindPipe();
         updateCoreState();
 
-        PacketTileState packet = new PacketTileState(this.xCoord, this.yCoord, this.zCoord);
+        PacketTileState packet = new PacketTileState(getPos());
 
         if (pipe != null && pipe.transport != null) {
             pipe.transport.sendDescriptionPacket();
@@ -672,7 +676,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
 
     public TileBuffer[] getTileCache() {
         if (tileBuffer == null && pipe != null) {
-            tileBuffer = TileBuffer.makeBuffer(worldObj, xCoord, yCoord, zCoord, pipe.transport.delveIntoUnloadedChunks());
+            tileBuffer = TileBuffer.makeBuffer(worldObj, getPos(), pipe.transport.delveIntoUnloadedChunks());
         }
         return tileBuffer;
     }
@@ -681,7 +685,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     public void blockCreated(EnumFacing from, Block block, TileEntity tile) {
         TileBuffer[] cache = getTileCache();
         if (cache != null) {
-            cache[from.getOpposite().ordinal()].set(block, tile);
+            cache[from.getOpposite().ordinal()].set(block.getDefaultState(), tile);
         }
     }
 
@@ -689,7 +693,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     public Block getBlock(EnumFacing to) {
         TileBuffer[] cache = getTileCache();
         if (cache != null) {
-            return cache[to.ordinal()].getBlock();
+            return cache[to.ordinal()].getBlockState().getBlock();
         } else {
             return null;
         }
@@ -936,14 +940,14 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     // Legacy
     public void setGate(Gate gate, int direction) {
         if (sideProperties.pluggables[direction] == null) {
-            gate.setDirection(EnumFacing.getOrientation(direction));
+            gate.setDirection(EnumFacing.getFront(direction));
             pipe.gates[direction] = gate;
             sideProperties.pluggables[direction] = new GatePluggable(gate);
         }
     }
 
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSpriteProvider getPipeIcons() {
+    public IIconProvider getPipeIcons() {
         if (pipe == null) {
             return null;
         }
@@ -985,12 +989,12 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
                     break;
                 }
 
-                worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+                worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
                 break;
 
             case 1: {
                 if (renderState.needsRenderUpdate()) {
-                    worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+                    worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
                     renderState.clean();
                 }
                 break;
@@ -1006,25 +1010,24 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
                         continue;
                     } else if (old != null && newer != null && old.getClass() == newer.getClass()) {
                         if (newer.requiresRenderUpdate(old)) {
-                            worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+                            worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
                             break;
                         }
                     } else {
                         // one of them is null but not the other, so update
-                        worldObj.markBlockRangeForRenderUpdate(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+                        worldObj.markBlockRangeForRenderUpdate(getPos(), getPos());
                         break;
                     }
                 }
                 sideProperties.pluggables = newPluggables.clone();
 
                 for (int i = 0; i < EnumFacing.VALUES.length; i++) {
-                    final PipePluggable pluggable = getPipePluggable(EnumFacing.getOrientation(i));
+                    final PipePluggable pluggable = getPipePluggable(EnumFacing.getFront(i));
                     if (pluggable != null && pluggable instanceof GatePluggable) {
                         final GatePluggable gatePluggable = (GatePluggable) pluggable;
                         Gate gate = pipe.gates[i];
                         if (gate == null || gate.logic != gatePluggable.getLogic() || gate.material != gatePluggable.getMaterial()) {
-                            pipe.gates[i] = GateFactory.makeGate(
-                                    pipe, gatePluggable.getMaterial(), gatePluggable.getLogic(), EnumFacing.getOrientation(i));
+                            pipe.gates[i] = GateFactory.makeGate(pipe, gatePluggable.getMaterial(), gatePluggable.getLogic(), EnumFacing.getFront(i));
                         }
                     } else {
                         pipe.gates[i] = null;
@@ -1066,8 +1069,8 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     }
 
     @Override
-    public boolean shouldRefresh(Block oldBlock, Block newBlock, int oldMeta, int newMeta, World world, BlockPos pos) {
-        return oldBlock != newBlock;
+    public boolean shouldRefresh(World world, BlockPos pos, IBlockState oldState, IBlockState newState) {
+        return oldState.getBlock() != newState.getBlock();
     }
 
     @Override
@@ -1112,7 +1115,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler, IPipeT
     }
 
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
+        return worldObj.getTileEntity(getPos()) == this;
     }
 
     @Override

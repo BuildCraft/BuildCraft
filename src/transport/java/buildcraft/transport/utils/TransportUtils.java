@@ -14,6 +14,7 @@ public final class TransportUtils {
     private TransportUtils() {}
 
     /** Depending on the kind of item in the pipe, set the floor at a different level to optimize graphical aspect. */
+    // Right. Depending on the item in the pipe. Because this function somehow does that with a single line.
     public static float getPipeFloorOf(ItemStack item) {
         return CoreConstants.PIPE_MIN_POS;
     }

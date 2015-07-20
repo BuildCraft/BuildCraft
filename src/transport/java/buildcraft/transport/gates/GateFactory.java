@@ -87,7 +87,7 @@ public final class GateFactory {
             }
         }
         if (nbt.hasKey("direction")) {
-            direction = EnumFacing.getOrientation(nbt.getInteger("direction"));
+            direction = EnumFacing.getFront(nbt.getInteger("direction"));
         }
 
         Gate gate = makeGate(pipe, material, logic, direction);

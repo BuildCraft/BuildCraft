@@ -18,8 +18,8 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory {
     private final SimpleInventory inventoryStorage = new SimpleInventory(9, "FilteredBufferStorage", 64);
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
     }
 
     public IInventory getFilters() {
@@ -55,7 +55,7 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory {
 
     @Override
     public String getInventoryName() {
-        return inventoryStorage.getInventoryName();
+        return inventoryStorage.getCommandSenderName();
     }
 
     @Override
@@ -65,14 +65,14 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory {
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer entityPlayer) {
-        return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
+        return worldObj.getTileEntity(getPos()) == this;
     }
 
     @Override
-    public void openInventory() {}
+    public void openInventory(EntityPlayer player) {}
 
     @Override
-    public void closeInventory() {}
+    public void closeInventory(EntityPlayer player) {}
 
     @Override
     public boolean isItemValidForSlot(int i, ItemStack itemstack) {
@@ -120,10 +120,5 @@ public class TileFilteredBuffer extends TileBuildCraft implements IInventory {
         NBTTagCompound inventoryFiltersTag = new NBTTagCompound();
         inventoryFilters.writeToNBT(inventoryFiltersTag);
         nbtTagCompound.setTag("inventoryFilters", inventoryFiltersTag);
-    }
-
-    @Override
-    public boolean hasCustomInventoryName() {
-        return false;
     }
 }
