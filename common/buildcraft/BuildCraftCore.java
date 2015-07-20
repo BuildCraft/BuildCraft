@@ -133,6 +133,7 @@ import buildcraft.core.list.ListMatchHandlerClass;
 import buildcraft.core.list.ListMatchHandlerFluid;
 import buildcraft.core.list.ListMatchHandlerOreDictionary;
 import buildcraft.core.list.ListRegistry;
+import buildcraft.core.list.ListTooltipHandler;
 import buildcraft.core.network.PacketHandlerCore;
 import buildcraft.core.properties.WorldPropertyIsDirt;
 import buildcraft.core.properties.WorldPropertyIsFarmland;
@@ -275,7 +276,9 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
-		BCLog.initLog();
+		BCLog.logger.info("Starting BuildCraft " + Version.getVersion());
+		BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2015");
+		BCLog.logger.info("http://www.mod-buildcraft.com");
 
 		new BCCreativeTab("main");
 
@@ -380,6 +383,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		FMLCommonHandler.instance().bus().register(this);
 		MinecraftForge.EVENT_BUS.register(this);
 		MinecraftForge.EVENT_BUS.register(new BlockHighlightHandler());
+		MinecraftForge.EVENT_BUS.register(new ListTooltipHandler());
 	}
 
 	@Mod.EventHandler
@@ -489,7 +493,6 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildCraftAPI.softBlocks.add(Blocks.snow);
 		BuildCraftAPI.softBlocks.add(Blocks.vine);
 		BuildCraftAPI.softBlocks.add(Blocks.fire);
-		BuildCraftAPI.softBlocks.add(Blocks.air);
 
 		FMLCommonHandler.instance().bus().register(new TickHandlerCore());
 
@@ -650,16 +653,21 @@ public class BuildCraftCore extends BuildCraftMod {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(paintbrushItem), " iw", " gi", "s  ",
 				's', "stickWood", 'g', "gearWood", 'w', new ItemStack(Blocks.wool, 1, 0), 'i', Items.string);
 
+		ItemStack anyPaintbrush = new ItemStack(paintbrushItem, 1, OreDictionary.WILDCARD_VALUE);
+
 		for (int i = 0; i < 16; i++) {
 			ItemStack outputStack = new ItemStack(paintbrushItem);
 			NBTUtils.getItemData(outputStack).setByte("color", (byte) i);
-			CoreProxy.proxy.addShapelessRecipe(outputStack, paintbrushItem, EnumColor.fromId(i).getDye());
+			CoreProxy.proxy.addShapelessRecipe(outputStack, anyPaintbrush, EnumColor.fromId(i).getDye());
 		}
+
+		// Convert old lists to new lists
+		CoreProxy.proxy.addShapelessRecipe(new ItemStack(listItem, 1, 1), new ItemStack(listItem, 1, 0));
 
 		if (Loader.isModLoaded("BuildCraft|Silicon")) {
 			CoreSiliconRecipes.loadSiliconRecipes();
 		} else {
-			CoreProxy.proxy.addCraftingRecipe(new ItemStack(listItem), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y',
+			CoreProxy.proxy.addCraftingRecipe(new ItemStack(listItem, 1, 1), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y',
 					"dyeGreen");
 		}
 	}

@@ -66,7 +66,7 @@ import buildcraft.transport.pluggable.PlugPluggable;
 public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		IPipeTile, ITileBufferHolder, IEnergyHandler, IDropControlInventory,
 		ISyncedTile, ISolidSideTile, IGuiReturnHandler, IRedstoneEngineReceiver,
-		IDebuggable {
+		IDebuggable, IPipeConnection {
 
 	public boolean initialized = false;
 	public final PipeRenderState renderState = new PipeRenderState();
@@ -348,7 +348,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		scheduleRenderUpdate();
 		sendUpdateToClient();
 		if (pipe != null) {
-			BlockGenericPipe.updateNeighbourSignalState(pipe);
+			pipe.scheduleWireUpdate();
 		}
 	}
 
@@ -428,7 +428,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				for (Object o : world.playerEntities) {
 					EntityPlayerMP player = (EntityPlayerMP) o;
 
-					if (world.getPlayerManager().isPlayerWatchingChunk (player, xCoord >> 4, zCoord >> 4)) {
+					if (world.getPlayerManager().isPlayerWatchingChunk(player, xCoord >> 4, zCoord >> 4)) {
 						BuildCraftCore.instance.sendToPlayer(player, updatePacket);
 					}
 				}
@@ -488,7 +488,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 				renderState.wireMatrix.setWireConnected(color, direction, pipe.isWireConnectedTo(this.getTile(direction), color, direction));
 			}
 
-			boolean lit = pipe.signalStrength[color.ordinal()] > 0;
+			boolean lit = pipe.wireSignalStrength[color.ordinal()] > 0;
 
 			switch (color) {
 				case RED:
@@ -1279,5 +1279,13 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		if (getPipePluggable(side) != null && getPipePluggable(side) instanceof IDebuggable) {
 			((IDebuggable) getPipePluggable(side)).getDebugInfo(info, side, debugger, player);
 		}
+	}
+
+	@Override
+	public ConnectOverride overridePipeConnection(PipeType type, ForgeDirection with) {
+		if (type == PipeType.POWER && hasPipePluggable(with) && getPipePluggable(with) instanceof IEnergyHandler) {
+			return ConnectOverride.CONNECT;
+		}
+		return ConnectOverride.DEFAULT;
 	}
 }

@@ -13,6 +13,7 @@ import com.google.common.collect.SetMultimap;
 
 import buildcraft.transport.pipes.PipeFluidsCobblestone;
 import buildcraft.transport.pipes.PipeFluidsEmerald;
+import buildcraft.transport.pipes.PipeFluidsQuartz;
 import buildcraft.transport.pipes.PipeFluidsStone;
 import buildcraft.transport.pipes.PipeFluidsWood;
 import buildcraft.transport.pipes.PipeItemsCobblestone;
@@ -34,11 +35,10 @@ public final class PipeConnectionBans {
 
 	static {
 		// Fluid pipes
-		banConnection(PipeFluidsStone.class, PipeFluidsCobblestone.class);
+		banConnection(PipeFluidsStone.class, PipeFluidsCobblestone.class, PipeFluidsQuartz.class);
 		banConnection(PipeFluidsWood.class);
 		banConnection(PipeFluidsEmerald.class);
 		banConnection(PipeFluidsWood.class, PipeFluidsEmerald.class);
-		banConnection(PipeFluidsEmerald.class);
 
 		// Item Pipes
 		banConnection(PipeItemsStone.class, PipeItemsCobblestone.class, PipeItemsQuartz.class);
@@ -51,6 +51,7 @@ public final class PipeConnectionBans {
 		// Power Pipes
 		banConnection(PipePowerWood.class);
 		banConnection(PipePowerEmerald.class);
+		banConnection(PipePowerWood.class, PipePowerEmerald.class);
 	}
 
 	private PipeConnectionBans() {

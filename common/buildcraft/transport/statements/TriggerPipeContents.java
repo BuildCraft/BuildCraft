@@ -13,10 +13,8 @@ import java.util.Locale;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTankInfo;
 
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
@@ -95,46 +93,34 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
 		} else if (pipe.transport instanceof PipeTransportFluids) {
 			PipeTransportFluids transportFluids = (PipeTransportFluids) pipe.transport;
 
-			FluidStack searchedFluid = null;
-
-			if (parameter != null && parameter.getItemStack() != null) {
-				searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItemStack());
-			}
-
 			if (kind == PipeContents.empty) {
-				for (FluidTankInfo b : transportFluids.getTankInfo(ForgeDirection.UNKNOWN)) {
-					if (b.fluid != null && b.fluid.amount != 0) {
-						return false;
-					}
-				}
-
-				return true;
+				return transportFluids.fluidType == null;
 			} else {
-				for (FluidTankInfo b : transportFluids.getTankInfo(ForgeDirection.UNKNOWN)) {
-					if (b.fluid != null && b.fluid.amount != 0) {
-						if (searchedFluid == null || searchedFluid.isFluidEqual(b.fluid)) {
-							return true;
-						}
-					}
-				}
+				if (parameter != null && parameter.getItemStack() != null) {
+					FluidStack searchedFluid = FluidContainerRegistry.getFluidForFilledItem(parameter.getItemStack());
 
-				return false;
+					if (searchedFluid != null) {
+						return transportFluids.fluidType != null && searchedFluid.isFluidEqual(transportFluids.fluidType);
+					}
+				} else {
+					return transportFluids.fluidType != null;
+				}
 			}
 		} else if (pipe.transport instanceof PipeTransportPower) {
 			PipeTransportPower transportPower = (PipeTransportPower) pipe.transport;
 
 			switch (kind) {
 				case empty:
-					for (double s : transportPower.displayPower) {
-						if (s > 1e-4) {
+					for (short s : transportPower.displayPower) {
+						if (s > 0) {
 							return false;
 						}
 					}
 
 					return true;
 				case containsEnergy:
-					for (double s : transportPower.displayPower) {
-						if (s > 1e-4) {
+					for (short s : transportPower.displayPower) {
+						if (s > 0) {
 							return true;
 						}
 					}

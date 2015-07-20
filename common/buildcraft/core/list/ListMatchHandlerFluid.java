@@ -2,18 +2,18 @@ package buildcraft.core.list;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
+
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.FluidUtils;
 
 public class ListMatchHandlerFluid extends ListMatchHandler {
 	@Override
 	public boolean matches(Type type, ItemStack stack, ItemStack target, boolean precise) {
-		if (type == Type.MATERIAL) {
+		if (type == Type.TYPE) {
 			if (FluidContainerRegistry.isContainer(stack) && FluidContainerRegistry.isContainer(target)) {
 				ItemStack emptyContainerStack = FluidContainerRegistry.drainFluidContainer(stack);
 				ItemStack emptyContainerTarget = FluidContainerRegistry.drainFluidContainer(target);
@@ -21,7 +21,7 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
 					return true;
 				}
 			}
-		} else if (type == Type.TYPE) {
+		} else if (type == Type.MATERIAL) {
 			FluidStack fStack = FluidUtils.getFluidStackFromItemStack(stack);
 			FluidStack fTarget = FluidUtils.getFluidStackFromItemStack(target);
 			if (fStack != null && fTarget != null) {
@@ -33,7 +33,7 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
 
 	@Override
 	public List<ItemStack> getClientExamples(Type type, ItemStack stack) {
-		if (type == Type.TYPE) {
+		if (type == Type.MATERIAL) {
 			FluidStack fStack = FluidUtils.getFluidStackFromItemStack(stack);
 			if (fStack != null) {
 				List<ItemStack> examples = new ArrayList<ItemStack>();
@@ -44,7 +44,7 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
 				}
 				return examples;
 			}
-		} else if (type == Type.MATERIAL) {
+		} else if (type == Type.TYPE) {
 			if (FluidContainerRegistry.isContainer(stack)) {
 				List<ItemStack> examples = new ArrayList<ItemStack>();
 				ItemStack emptyContainerStack = FluidContainerRegistry.drainFluidContainer(stack);

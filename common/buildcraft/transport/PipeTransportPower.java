@@ -32,6 +32,7 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.utils.AverageInt;
 import buildcraft.transport.network.PacketPowerUpdate;
 import buildcraft.transport.pipes.PipePowerCobblestone;
 import buildcraft.transport.pipes.PipePowerDiamond;
@@ -46,8 +47,7 @@ import buildcraft.transport.pipes.PipePowerWood;
 public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	public static final Map<Class<? extends Pipe<?>>, Integer> powerCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
 	public static final Map<Class<? extends Pipe<?>>, Float> powerResistances = new HashMap<Class<? extends Pipe<?>>, Float>();
-	
-	private static final int DISPLAY_SMOOTHING = 10;
+
 	private static final int OVERLOAD_TICKS = 60;
 
 	public short[] displayPower = new short[6];
@@ -61,12 +61,11 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	public int[] dbgEnergyOutput = new int[6];
 	public int[] dbgEnergyOffered = new int[6];
 
+	private final AverageInt[] powerAverage = new AverageInt[6];
 	private final TileEntity[] tiles = new TileEntity[6];
 	private final Object[] providers = new Object[6];
 
 	private boolean needsInit = true;
-
-	private short[] prevDisplayPower = new short[6];
 
 	private int[] powerQuery = new int[6];
 
@@ -78,6 +77,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	public PipeTransportPower() {
 		for (int i = 0; i < 6; ++i) {
 			powerQuery[i] = 0;
+			powerAverage[i] = new AverageInt(10);
 		}
 	}
 
@@ -159,7 +159,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
             tiles[o] = null;
             internalPower[o] = 0;
             internalNextPower[o] = 0;
-            displayPower[o] = 0;
+			powerAverage[o].clear();
         }
 		providers[o] = getEnergyProvider(o);
     }
@@ -200,10 +200,6 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
             }
         }
 
-		// Send the power to nearby pipes who requested it
-		System.arraycopy(displayPower, 0, prevDisplayPower, 0, 6);
-		Arrays.fill(displayPower, (short) 0);
-
 		for (int i = 0; i < 6; ++i) {
 			if (internalPower[i] > 0) {
 				int totalPowerQuery = 0;
@@ -222,7 +218,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 							Object ep = providers[j];
 							double watts = Math.min(internalPower[i] * powerQuery[j] / totalPowerQuery, internalPower[i]);
 
-							if (ep instanceof IPipeTile) {
+							if (ep instanceof IPipeTile && ((IPipeTile) ep).getPipeType() == IPipeTile.PipeType.POWER) {
 								Pipe<?> nearbyPipe = (Pipe<?>) ((IPipeTile) ep).getPipe();
 								PipeTransportPower nearbyTransport = (PipeTransportPower) nearbyPipe.transport;
 								watts = nearbyTransport.receiveEnergy(
@@ -251,20 +247,22 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 								}
 							}
 
-							displayPower[j] += watts;
-							displayPower[i] += watts;
+							powerAverage[j].push((int) Math.ceil(watts));
+							powerAverage[i].push((int) Math.ceil(watts));
 						}
 					}
 				}
 			}
 		}
-		float highestPower = 0.0F;
+		short highestPower = 0;
 		for (int i = 0; i < 6; i++) {
-			displayPower[i] = (short) Math.floor((float) (prevDisplayPower[i] * (DISPLAY_SMOOTHING - 1) + displayPower[i]) / DISPLAY_SMOOTHING);
+			powerAverage[i].tick();
+			displayPower[i] = (short) Math.round(powerAverage[i].getAverage());
 			if (displayPower[i] > highestPower) {
 				highestPower = displayPower[i];
 			}
 		}
+
 		overload += highestPower > ((float) maxPower) * 0.95F ? 1 : -1;
 		if (overload < 0) {
 			overload = 0;
@@ -322,7 +320,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 		for (int i = 0; i < 6; ++i) {
 			if (transferQuery[i] != 0 && tiles[i] != null) {
 				TileEntity entity = tiles[i];
-				if (entity instanceof IPipeTile) {
+				if (entity instanceof IPipeTile && ((IPipeTile) entity).getPipeType() == IPipeTile.PipeType.POWER) {
 					IPipeTile nearbyTile = (IPipeTile) entity;
 					if (nearbyTile.getPipe() == null) {
 						continue;

@@ -234,10 +234,6 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-		super.mouseClicked(mouseX, mouseY, mouseButton);
-
-		textField.mouseClicked(mouseX - guiLeft, mouseY - guiTop, mouseButton);
-
 		int blocksX = (mouseX - mapXMin) * zoomLevel;
 		int blocksZ = (mouseY - mapYMin) * zoomLevel;
 
@@ -255,22 +251,27 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
 				uploadMap();
 				refreshSelectedArea();
+				return;
 			} else {
 				inSelection = true;
 				selX1 = mouseX;
 				selY1 = mouseY;
 				selX2 = 0;
 				selY2 = 0;
+				return;
 			}
-		} else {
-			AdvancedSlot slot = getSlotAtLocation(mouseX, mouseY);
+		}
 
-			if (slot instanceof AreaSlot) {
-				colorSelected = (AreaSlot) slot;
+		super.mouseClicked(mouseX, mouseY, mouseButton);
+		textField.mouseClicked(mouseX - guiLeft, mouseY - guiTop, mouseButton);
 
-				newSelection.setColor(0, 0, colorSelected.color.getDarkHex(), alpha);
-				getContainer().loadArea(colorSelected.color.ordinal());
-			}
+		AdvancedSlot slot = getSlotAtLocation(mouseX, mouseY);
+
+		if (slot instanceof AreaSlot) {
+			colorSelected = (AreaSlot) slot;
+
+			newSelection.setColor(0, 0, colorSelected.color.getDarkHex(), alpha);
+			getContainer().loadArea(colorSelected.color.ordinal());
 		}
 	}
 

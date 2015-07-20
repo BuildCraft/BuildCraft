@@ -50,12 +50,11 @@ public final class RenderEntityBlock extends Render {
 		public Block baseBlock = Blocks.sand;
 		public IIcon texture = null;
 		public IIcon[] textureArray = null;
-		public boolean[] renderSide = new boolean[6];
+		public boolean[] renderSide = new boolean[]{true, true, true, true, true, true};
 		public int light = -1;
 		public int brightness = -1;
 
 		public RenderInfo() {
-			setRenderAllSides();
 		}
 
 		public RenderInfo(Block template, IIcon[] texture) {

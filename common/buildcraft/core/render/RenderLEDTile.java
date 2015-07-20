@@ -1,6 +1,8 @@
 package buildcraft.core.render;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.lwjgl.opengl.GL11;
@@ -12,6 +14,7 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 
+import buildcraft.core.internal.ICustomLEDBlock;
 import buildcraft.core.internal.ILEDProvider;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.render.RenderEntityBlock;
@@ -29,12 +32,18 @@ public class RenderLEDTile extends TileEntitySpecialRenderer {
 
 	public static void registerBlockIcons(IIconRegister register) {
 		for (Block b : iconMap.keySet().toArray(new Block[iconMap.keySet().size()])) {
-			// TODO (7.1): The count of icons is hardcoded here. Consider adding a better way.
 			String base = ResourceUtils.getObjectPrefix(Block.blockRegistry.getNameForObject(b));
-			iconMap.put(b, new IIcon[] {
-					register.registerIcon(base + "/led_red"),
-					register.registerIcon(base + "/led_green")
-			});
+			List<IIcon> icons = new ArrayList<IIcon>();
+			if (b instanceof ICustomLEDBlock) {
+				for (String s : ((ICustomLEDBlock) b).getLEDSuffixes()) {
+					icons.add(register.registerIcon(base + "/" + s));
+				}
+			} else {
+				icons.add(register.registerIcon(base + "/led_red"));
+				icons.add(register.registerIcon(base + "/led_green"));
+			}
+
+			iconMap.put(b, icons.toArray(new IIcon[icons.size()]));
 		}
 	}
 
@@ -58,8 +67,10 @@ public class RenderLEDTile extends TileEntitySpecialRenderer {
 		GL11.glScalef(Z_OFFSET, Z_OFFSET, Z_OFFSET);
 		GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
-		for (int i = 0; i < 2; i++) {
-			renderBox.texture = iconMap.get(block)[i];
+		IIcon[] icons = iconMap.get(block);
+
+		for (int i = 0; i < icons.length; i++) {
+			renderBox.texture = icons[i];
 			if (((BlockBuildCraft) block).isRotatable()) {
 				renderBox.setRenderSingleSide(((BlockBuildCraft) block).getFrontSide(tile.getBlockMetadata()));
 			} else {
@@ -71,7 +82,9 @@ public class RenderLEDTile extends TileEntitySpecialRenderer {
 				renderBox.renderSide[5] = true;
 			}
 			renderBox.light = provider.getLEDLevel(i);
-			RenderEntityBlock.INSTANCE.renderBlock(renderBox);
+			if (renderBox.light > 0) {
+				RenderEntityBlock.INSTANCE.renderBlock(renderBox);
+			}
 		}
 
 		GL11.glPopAttrib();

@@ -1,17 +1,23 @@
 package buildcraft.robotics;
 
+import java.util.List;
+
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidHandler;
 
+import buildcraft.BuildCraftRobotics;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.EnumColor;
+import buildcraft.api.gates.IGate;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
 import buildcraft.api.robots.RobotManager;
+import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.transport.IInjectable;
 import buildcraft.api.transport.IPipeTile;
@@ -22,7 +28,7 @@ import buildcraft.transport.gates.ActionIterator;
 import buildcraft.transport.pipes.PipeFluidsWood;
 import buildcraft.transport.pipes.PipeItemsWood;
 
-public class DockingStationPipe extends DockingStation {
+public class DockingStationPipe extends DockingStation implements IRequestProvider {
 
 	private IInjectable injectablePipe = new IInjectable() {
 		@Override
@@ -62,7 +68,10 @@ public class DockingStationPipe extends DockingStation {
 
 	public IPipeTile getPipe() {
 		if (pipe == null) {
-			pipe = (IPipeTile) world.getTileEntity(x(), y(), z());
+			TileEntity tile = world.getTileEntity(x(), y(), z());
+			if (tile instanceof IPipeTile) {
+				pipe = (IPipeTile) tile;
+			}
 		}
 
 		if (pipe == null || ((TileEntity) pipe).isInvalid()) {
@@ -155,7 +164,7 @@ public class DockingStationPipe extends DockingStation {
 				return (IRequestProvider) nearbyTile;
 			}
 		}
-		return null;
+		return this;
 	}
 
 	@Override
@@ -195,5 +204,63 @@ public class DockingStationPipe extends DockingStation {
 	@Override
 	public void onChunkUnload() {
 		pipe = null;
+	}
+
+	@Override
+	public int getRequestsCount() {
+		return 127;
+	}
+
+	@Override
+	public ItemStack getRequest(int slot) {
+		ForgeDirection side = ForgeDirection.getOrientation((slot & 0x70) >> 4);
+		int action = (slot & 0xc) >> 2;
+		int param = slot & 0x3;
+		IGate gate = getPipe().getPipe().getGate(side);
+		if (gate == null) {
+			return null;
+		}
+
+		List<IStatement> actions = gate.getActions();
+		if (actions.size() <= action) {
+			return null;
+		}
+
+		if (actions.get(action) != BuildCraftRobotics.actionStationRequestItems) {
+			return null;
+		}
+
+		List<StatementSlot> activeActions = gate.getActiveActions();
+
+		StatementSlot slotStmt = null;
+		for (StatementSlot stmt : activeActions) {
+			if (stmt.statement == actions.get(action)) {
+				slotStmt = stmt;
+				break;
+			}
+		}
+		if (slotStmt == null) {
+			return null;
+		}
+		if (slotStmt.parameters.length <= param) {
+			return null;
+		}
+
+		if (slotStmt.parameters[param] == null) {
+			return null;
+		}
+
+		return slotStmt.parameters[param].getItemStack();
+	}
+
+	@Override
+	public ItemStack offerItem(int slot, ItemStack stack) {
+		int consumed = injectablePipe.injectItem(stack, true, side.getOpposite(), null);
+		if (stack.stackSize > consumed) {
+			ItemStack newStack = stack.copy();
+			newStack.stackSize -= consumed;
+			return newStack;
+		}
+		return null;
 	}
 }

@@ -377,6 +377,7 @@ item.FacadePhased.state_transparent=Transparent
 item.PipePlug.name=Pipe Plug
 item.Lens.name=Lens
 item.Filter.name=Filter
+item.PipePowerAdapter.name=Power Adapter
 item.debugger.name=Debugger
 item.debugger.warning=Use only for testing! Leaks secrets.
 item.package.name=Package
@@ -442,12 +443,13 @@ tip.gate.wires.diamond=Red, Blue, Green, Yellow
 tip.gate.wires.emerald=Red, Blue, Green, Yellow
 tip.gate.expansions=§9§oInstalled Expansions:
 
-tip.PipeFluidsCobblestone=Won't connect to Stone
+tip.PipeFluidsCobblestone=Won't connect to Stone or Quartz
 tip.PipeFluidsDiamond=Sorts fluids
 tip.PipeFluidsEmerald=Extraction pipe
 tip.PipeFluidsIron=Valve pipe
+tip.PipeFluidsQuartz=Won't connect to Cobblestone or Stone
 tip.PipeFluidsSandstone=Only connects to other pipes
-tip.PipeFluidsStone=Won't connect to Cobblestone
+tip.PipeFluidsStone=Won't connect to Cobblestone or Quartz
 tip.PipeFluidsVoid=Destroys fluids
 tip.PipeFluidsWood=Extraction pipe
 tip.PipeItemsClay=Insertion pipe
@@ -474,6 +476,8 @@ tip.deprecated=Deprecated
 
 tip.filler.excavate.on=Excavate
 tip.filler.excavate.off=Do Not Excavate
+
+tip.list.matches=Matches
 
 tip.shift.PipeFluidsDiamond=GUI accepts any fluid containers
 tip.shift.PipeFluidsEmerald=GUI accepts any fluid container

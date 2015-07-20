@@ -17,13 +17,14 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MathHelper;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
 import buildcraft.api.core.IBox;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.Position;
-import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.lib.utils.LaserUtils;
 
 public class Box implements IBox, ISerializable {
 	public enum Kind {
@@ -155,6 +156,10 @@ public class Box implements IBox, ISerializable {
 
 	@Override
 	public boolean contains(double x, double y, double z) {
+		return contains(MathHelper.floor_double(x), MathHelper.floor_double(y), MathHelper.floor_double(z));
+	}
+
+	public boolean contains(int x, int y, int z) {
 		return x >= xMin && x <= xMax && y >= yMin && y <= yMax && z >= zMin && z <= zMax;
 	}
 
@@ -239,7 +244,7 @@ public class Box implements IBox, ISerializable {
 
 	@Override
 	public void createLaserData() {
-		lasersData = Utils.createLaserDataBox(xMin, yMin, zMin, xMax, yMax, zMax);
+		lasersData = LaserUtils.createLaserDataBox(xMin, yMin, zMin, xMax, yMax, zMax);
 	}
 
 	public void writeToNBT(NBTTagCompound nbttagcompound) {

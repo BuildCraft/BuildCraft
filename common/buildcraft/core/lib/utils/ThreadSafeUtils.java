@@ -35,7 +35,7 @@ public final class ThreadSafeUtils {
 		}
 
 		IChunkProvider provider = world.getChunkProvider();
-		// These probably won't guarantee full thread safety, but it's our best bets.
+		// These probably won't guarantee full thread safety, but it's our best bet.
 		if (!Utils.CAULDRON_DETECTED && provider instanceof ChunkProviderServer) {
 			// Slight optimization
 			chunk = (Chunk) ((ChunkProviderServer) provider).loadedChunkHashMap.getValueByKey(ChunkCoordIntPair.chunkXZ2Int(x, z));

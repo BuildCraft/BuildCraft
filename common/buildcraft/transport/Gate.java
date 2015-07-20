@@ -10,7 +10,6 @@ package buildcraft.transport;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.List;
 
 import com.google.common.collect.BiMap;
@@ -69,8 +68,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 	public ActionActiveState[] actionsState = new ActionActiveState[MAX_STATEMENTS];
 	public ArrayList<StatementSlot> activeActions = new ArrayList<StatementSlot>();
 
-	public BitSet broadcastSignal = new BitSet(PipeWire.VALUES.length);
-	public BitSet prevBroadcastSignal = new BitSet(PipeWire.VALUES.length);
+	public byte broadcastSignal, prevBroadcastSignal;
 	public int redstoneOutput = 0;
 	public int redstoneOutputSide = 0;
 	
@@ -215,9 +213,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 
 		writeStatementsToNBT(data);
 
-		for (PipeWire wire : PipeWire.VALUES) {
-			data.setBoolean("wireState[" + wire.ordinal() + "]", broadcastSignal.get(wire.ordinal()));
-		}
+		data.setByte("wireState", broadcastSignal);
 
 		data.setByte("redstoneOutput", (byte) redstoneOutput);
 	}
@@ -311,8 +307,14 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 	public void readFromNBT(NBTTagCompound data) {
 		readStatementsFromNBT(data);
 
-		for (PipeWire wire : PipeWire.VALUES) {
-			broadcastSignal.set(wire.ordinal(), data.getBoolean("wireState[" + wire.ordinal() + "]"));
+		if (data.hasKey("wireState[0]")) {
+			for (PipeWire wire : PipeWire.VALUES) {
+				if (data.getBoolean("wireState[" + wire.ordinal() + "]")) {
+					broadcastSignal |= 1 << wire.ordinal();
+				}
+			}
+		} else {
+			broadcastSignal = data.getByte("wireState");
 		}
 
 		redstoneOutput = data.getByte("redstoneOutput");
@@ -393,10 +395,8 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 
 		boolean wasActive = activeActions.size() > 0;
 
-		BitSet temp = prevBroadcastSignal;
-		temp.clear();
 		prevBroadcastSignal = broadcastSignal;
-		broadcastSignal = temp;
+		broadcastSignal = 0;
 
 		// Tell the gate to prepare for resolving actions. (Disable pulser)
 		startResolution();
@@ -499,8 +499,8 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 			pipe.updateNeighbors(true);
 		}
 
-		if (!prevBroadcastSignal.equals(broadcastSignal)) {
-			pipe.updateSignalState();
+		if (prevBroadcastSignal != broadcastSignal) {
+			pipe.scheduleWireUpdate();
 		}
 
 		boolean isActive = activeActions.size() > 0;
@@ -646,7 +646,7 @@ public final class Gate implements IGate, ISidedStatementContainer, IRedstoneSta
 	}
 
 	public void broadcastSignal(PipeWire color) {
-		broadcastSignal.set(color.ordinal());
+		broadcastSignal |= 1 << color.ordinal();
 	}
 
 	public IPipe getPipe() {

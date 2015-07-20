@@ -53,11 +53,11 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
 		Pipe<?> pipe = (Pipe<?>) ((IGate) container).getPipe();
 
 		if (active) {
-			if (pipe.signalStrength[color.ordinal()] == 0) {
+			if (pipe.wireSignalStrength[color.ordinal()] == 0) {
 				return false;
 			}
 		} else {
-			if (pipe.signalStrength[color.ordinal()] > 0) {
+			if (pipe.wireSignalStrength[color.ordinal()] > 0) {
 				return false;
 			}
 		}
@@ -68,11 +68,11 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
 
 				if (signal.color != null) {
 					if (signal.active) {
-						if (pipe.signalStrength[signal.color.ordinal()] == 0) {
+						if (pipe.wireSignalStrength[signal.color.ordinal()] == 0) {
 							return false;
 						}
 					} else {
-						if (pipe.signalStrength[signal.color.ordinal()] > 0) {
+						if (pipe.wireSignalStrength[signal.color.ordinal()] > 0) {
 							return false;
 						}
 					}

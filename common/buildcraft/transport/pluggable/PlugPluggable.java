@@ -18,7 +18,7 @@ import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.PipeIconProvider;
 
 public class PlugPluggable extends PipePluggable {
-	private static final class PlugPluggableRenderer implements IPipePluggableRenderer {
+	protected static final class PlugPluggableRenderer implements IPipePluggableRenderer {
 		public static final IPipePluggableRenderer INSTANCE = new PlugPluggableRenderer();
 		private float zFightOffset = 1 / 4096.0F;
 

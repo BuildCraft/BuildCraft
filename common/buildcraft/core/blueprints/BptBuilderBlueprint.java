@@ -71,17 +71,19 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	}
 
 	@Override
-	protected void internalInit () {
+	protected void internalInit() {
 		for (int j = blueprint.sizeY - 1; j >= 0; --j) {
-			for (int i = 0; i < blueprint.sizeX; ++i) {
-				for (int k = 0; k < blueprint.sizeZ; ++k) {
-					int xCoord = i + x - blueprint.anchorX;
-					int yCoord = j + y - blueprint.anchorY;
-					int zCoord = k + z - blueprint.anchorZ;
+			int yCoord = j + y - blueprint.anchorY;
 
-					if (yCoord < 0 || yCoord >= context.world.getHeight()) {
-						continue;
-					}
+			if (yCoord < 0 || yCoord >= context.world.getHeight()) {
+				continue;
+			}
+
+			for (int i = 0; i < blueprint.sizeX; ++i) {
+				int xCoord = i + x - blueprint.anchorX;
+
+				for (int k = 0; k < blueprint.sizeZ; ++k) {
+					int zCoord = k + z - blueprint.anchorZ;
 
 					if (!isLocationUsed(xCoord, yCoord, zCoord)) {
 						SchematicBlock slot = (SchematicBlock) blueprint.get(i, j, k);
@@ -119,15 +121,21 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		LinkedList<BuildingSlotBlock> tmpExpanding = new LinkedList<BuildingSlotBlock>();
 
 		for (int j = 0; j < blueprint.sizeY; ++j) {
+			int yCoord = j + y - blueprint.anchorY;
+
+			if (yCoord < 0 || yCoord >= context.world.getHeight()) {
+				continue;
+			}
+
 			for (int i = 0; i < blueprint.sizeX; ++i) {
+				int xCoord = i + x - blueprint.anchorX;
+
 				for (int k = 0; k < blueprint.sizeZ; ++k) {
-					int xCoord = i + x - blueprint.anchorX;
-					int yCoord = j + y - blueprint.anchorY;
 					int zCoord = k + z - blueprint.anchorZ;
 
 					SchematicBlock slot = (SchematicBlock) blueprint.get(i, j, k);
 
-					if (slot == null || yCoord < 0 || yCoord >= context.world.getHeight()) {
+					if (slot == null) {
 						continue;
 					}
 
@@ -265,8 +273,10 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 	private int getBuildListCount() {
 		int out = 0;
-		for (int i = 0; i < buildStageOccurences.length; i++) {
-			out += buildStageOccurences[i];
+		if (buildStageOccurences != null) {
+			for (int i = 0; i < buildStageOccurences.length; i++) {
+				out += buildStageOccurences[i];
+			}
 		}
 		return out;
 	}

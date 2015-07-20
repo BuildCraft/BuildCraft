@@ -15,7 +15,9 @@ import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 
 import buildcraft.BuildCraftBuilders;
+import buildcraft.builders.render.RenderArchitect;
 import buildcraft.builders.render.RenderBuilderTile;
+import buildcraft.builders.render.RenderConstructionMarker;
 import buildcraft.builders.render.RenderFiller;
 import buildcraft.builders.urbanism.TileUrbanist;
 import buildcraft.core.lib.EntityBlock;

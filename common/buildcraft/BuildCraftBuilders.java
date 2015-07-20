@@ -34,6 +34,7 @@ import net.minecraft.stats.Achievement;
 import net.minecraft.world.World;
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -84,8 +85,6 @@ import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.builders.TileBuilder;
 import buildcraft.builders.TileConstructionMarker;
 import buildcraft.builders.TileFiller;
-import buildcraft.core.TileMarker;
-import buildcraft.core.TilePathMarker;
 import buildcraft.builders.TileQuarry;
 import buildcraft.builders.blueprints.RealBlueprintDeployer;
 import buildcraft.builders.schematics.SchematicAir;
@@ -125,6 +124,8 @@ import buildcraft.builders.urbanism.UrbanistToolsIconProvider;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
+import buildcraft.core.TileMarker;
+import buildcraft.core.TilePathMarker;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.builders.schematics.SchematicBlockCreative;
@@ -494,7 +495,9 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(architectBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 		schemes.registerSchematicBlock(builderBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 
-		schemes.registerSchematicBlock(constructionMarkerBlock, SchematicIgnore.class);
+		if (constructionMarkerBlock != null) {
+			schemes.registerSchematicBlock(constructionMarkerBlock, SchematicIgnore.class);
+		}
 		schemes.registerSchematicBlock(frameBlock, SchematicFree.class);
 
 		// Factories required to save entities in world
@@ -536,10 +539,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		quarryBlock = (BlockQuarry) CompatHooks.INSTANCE.getBlock(BlockQuarry.class);
 		CoreProxy.proxy.registerBlock(quarryBlock.setBlockName("machineBlock"));
 
-		constructionMarkerBlock = (BlockConstructionMarker) CompatHooks.INSTANCE.getBlock(BlockConstructionMarker.class);
-		CoreProxy.proxy.registerBlock(constructionMarkerBlock.setBlockName("constructionMarkerBlock"),
-				ItemConstructionMarker.class);
-
 		fillerBlock = (BlockFiller) CompatHooks.INSTANCE.getBlock(BlockFiller.class);
 		CoreProxy.proxy.registerBlock(fillerBlock.setBlockName("fillerBlock"));
 
@@ -567,8 +566,15 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		CoreProxy.proxy.registerTileEntity(TileBuilder.class, "net.minecraft.src.builders.TileBuilder");
 		CoreProxy.proxy.registerTileEntity(TileArchitect.class, "net.minecraft.src.builders.TileTemplate");
 		CoreProxy.proxy.registerTileEntity(TilePathMarker.class, "net.minecraft.src.builders.TilePathMarker");
-		CoreProxy.proxy.registerTileEntity(TileConstructionMarker.class, "net.minecraft.src.builders.TileConstructionMarker");
 		CoreProxy.proxy.registerTileEntity(TileBlueprintLibrary.class, "net.minecraft.src.builders.TileBlueprintLibrary");
+
+		if (Loader.isModLoaded("BuildCraft|Robotics")) {
+			constructionMarkerBlock = (BlockConstructionMarker) CompatHooks.INSTANCE.getBlock(BlockConstructionMarker.class);
+			CoreProxy.proxy.registerBlock(constructionMarkerBlock.setBlockName("constructionMarkerBlock"),
+					ItemConstructionMarker.class);
+
+			CoreProxy.proxy.registerTileEntity(TileConstructionMarker.class, "net.minecraft.src.builders.TileConstructionMarker");
+		}
 
 		SchematicRegistry.INSTANCE.readConfiguration(BuildCraftCore.mainConfiguration);
 
@@ -600,8 +606,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), "ppp", "pip", "ppp", 'i',
 			new ItemStack(Items.dye, 1, 4), 'p', Items.paper);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(constructionMarkerBlock, 1), "l ", "r ", 'l',
-				"gearGold", 'r', Blocks.redstone_torch);
+		if (constructionMarkerBlock != null) {
+			CoreProxy.proxy.addCraftingRecipe(new ItemStack(constructionMarkerBlock, 1), "l ", "r ", 'l',
+					"gearGold", 'r', Blocks.redstone_torch);
+		}
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock, 1), "btb", "ycy", "gCg", 'b',
 			"dyeBlack", 't', BuildCraftCore.markerBlock, 'y', "dyeYellow",

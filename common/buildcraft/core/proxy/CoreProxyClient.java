@@ -20,10 +20,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.common.DimensionManager;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.core.LaserKind;
@@ -141,5 +144,19 @@ public class CoreProxyClient extends CoreProxy {
 		} else {
 			return Minecraft.getMinecraft().thePlayer;
 		}
+	}
+
+	@Override
+	public TileEntity getServerTile(TileEntity source) {
+		if (source.getWorldObj().isRemote) {
+			WorldServer w = DimensionManager.getWorld(source.getWorldObj().provider.dimensionId);
+			if (w != null) {
+				TileEntity t = w.getTileEntity(source.xCoord, source.yCoord, source.zCoord);
+				if (t != null && t.getClass().equals(source.getClass())) {
+					return t;
+				}
+			}
+		}
+		return source;
 	}
 }

@@ -3,7 +3,6 @@ package buildcraft.core.lib.utils;
 import java.util.BitSet;
 
 public final class BitSetUtils {
-
 	private BitSetUtils() {
 		
 	}

@@ -45,7 +45,7 @@ public final class TransportSiliconRecipes {
 		// Lenses, Filters
 		for (int i = 0; i < 16; i++) {
 			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:lens:" + i, 10000, new ItemStack(BuildCraftTransport.lensItem, 2, i),
-					ColorUtils.getOreDictionaryName(15 - i), "blockGlass", "ingotIron");
+					ColorUtils.getOreDictionaryName(15 - i), "blockGlass");
 			BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:filter:" + i, 10000, new ItemStack(BuildCraftTransport.lensItem, 2, i + 16),
 					ColorUtils.getOreDictionaryName(15 - i), "blockGlass", Blocks.iron_bars);
 		}

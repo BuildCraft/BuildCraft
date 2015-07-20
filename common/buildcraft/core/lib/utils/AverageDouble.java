@@ -8,12 +8,12 @@
  */
 package buildcraft.core.lib.utils;
 
-public class Average {
+public class AverageDouble {
 	private double[] data;
 	private int pos, precise;
 	private double averageRaw, tickValue;
 
-	public Average(int precise) {
+	public AverageDouble(int precise) {
 		this.precise = precise;
 		this.data = new double[precise];
 		this.pos = 0;

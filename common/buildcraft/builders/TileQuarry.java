@@ -17,6 +17,7 @@ import com.google.common.collect.Sets;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ISidedInventory;
@@ -31,6 +32,7 @@ import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.IFluidBlock;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
@@ -222,6 +224,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 				}
 
 				moveHead(speed);
+			} else {
+				speed = 0;
 			}
 		}
 
@@ -248,21 +252,18 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 			// Collect any lost items laying around
 			double[] head = getHead();
 			AxisAlignedBB axis = AxisAlignedBB.getBoundingBox(head[0] - 2, head[1] - 2, head[2] - 2, head[0] + 3, head[1] + 3, head[2] + 3);
-			List result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
-			for (Object aResult : result) {
-				if (aResult instanceof EntityItem) {
-					EntityItem entity = (EntityItem) aResult;
-					if (entity.isDead) {
-						continue;
-					}
-
-					ItemStack mineable = entity.getEntityItem();
-					if (mineable.stackSize <= 0) {
-						continue;
-					}
-					CoreProxy.proxy.removeEntity(entity);
-					miner.mineStack(mineable);
+			List<EntityItem> result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
+			for (EntityItem entity : result) {
+				if (entity.isDead) {
+					continue;
 				}
+
+				ItemStack mineable = entity.getEntityItem();
+				if (mineable.stackSize <= 0) {
+					continue;
+				}
+				CoreProxy.proxy.removeEntity(entity);
+				miner.mineStack(mineable);
 			}
 
 			stage = Stage.IDLE;
@@ -313,9 +314,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 		if (!columnVisitListIsUpdated) { // nextTarget may not be accurate, at least search the target column for changes
 			for (int y = nextTarget[1] + 1; y < yCoord + 3; y++) {
-				Block block = worldObj.getBlock(nextTarget[0], y, nextTarget[2]);
-				if (BlockUtils.isAnObstructingBlock(block, worldObj, nextTarget[0], y, nextTarget[2])
-						|| !BuildCraftAPI.isSoftBlock(worldObj, nextTarget[0], y, nextTarget[2])) {
+				if (isQuarriableBlock(nextTarget[0], y, nextTarget[2])) {
 					createColumnVisitList();
 					columnVisitListIsUpdated = true;
 					nextTarget = null;
@@ -340,8 +339,6 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	 */
 	private void createColumnVisitList() {
 		visitList.clear();
-
-		Integer[][] columnHeights = new Integer[builder.blueprint.sizeX - 2][builder.blueprint.sizeZ - 2];
 		boolean[][] blockedColumns = new boolean[builder.blueprint.sizeX - 2][builder.blueprint.sizeZ - 2];
 
 		for (int searchY = yCoord + 3; searchY >= 1; --searchY) {
@@ -372,27 +369,14 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 				for (int searchZ = startZ; searchZ != endZ; searchZ += incZ) {
 					if (!blockedColumns[searchX][searchZ]) {
-						Integer height = columnHeights[searchX][searchZ];
 						int bx = box.xMin + searchX + 1, by = searchY, bz = box.zMin + searchZ + 1;
-
-						if (height == null) {
-							columnHeights[searchX][searchZ] = height = worldObj.getHeightValue(bx, bz);
-						}
-
-						if (height > 0 && height < by && worldObj.provider.dimensionId != -1) {
-							continue;
-						}
 
 						Block block = worldObj.getBlock(bx, by, bz);
 
 						if (!BlockUtils.canChangeBlock(block, worldObj, bx, by, bz)) {
 							blockedColumns[searchX][searchZ] = true;
-						} else if (!BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz)) {
+						} else if (!BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz) && !(block instanceof BlockLiquid) && !(block instanceof IFluidBlock)) {
 							visitList.add(new int[]{bx, by, bz});
-						}
-
-						if (height == 0 && !worldObj.isAirBlock(bx, by, bz)) {
-							columnHeights[searchX][searchZ] = by;
 						}
 
 						// Stop at two planes - generally any obstructions will have been found and will force a recompute prior to this
@@ -487,7 +471,8 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	private boolean isQuarriableBlock(int bx, int by, int bz) {
 		Block block = worldObj.getBlock(bx, by, bz);
 		return BlockUtils.canChangeBlock(block, worldObj, bx, by, bz)
-				&& !BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz);
+				&& !BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz)
+				&& !(block instanceof BlockLiquid) && !(block instanceof IFluidBlock);
 	}
 
 	@Override

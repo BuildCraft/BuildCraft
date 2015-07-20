@@ -20,14 +20,13 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.S27PacketExplosion;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
-
 import cpw.mods.fml.common.FMLCommonHandler;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.ForgeEventFactory;
@@ -119,6 +118,7 @@ public final class BlockUtils {
 		world.spawnEntityInWorld(entityitem);
 	}
 
+	@Deprecated
 	public static boolean isAnObstructingBlock(Block block, World world, int x, int y, int z) {
 		if (block == null || block.isAir(world, x, y, z)) {
 			return false;
@@ -139,13 +139,13 @@ public final class BlockUtils {
 			return false;
 		}
 
-		// TODO: Make this support all "heavy" liquids, not just oil/lava
-		if (block instanceof IFluidBlock && ((IFluidBlock) block).getFluid() != null && "oil".equals(((IFluidBlock) block).getFluid().getName())) {
-			return false;
-		}
-
 		if (block == Blocks.lava || block == Blocks.flowing_lava) {
 			return false;
+		} else if (block instanceof IFluidBlock && ((IFluidBlock) block).getFluid() != null) {
+			Fluid f = ((IFluidBlock) block).getFluid();
+			if (f.getDensity(world, x, y, z) >= 3000) {
+				return false;
+			}
 		}
 
 		return true;
@@ -300,5 +300,32 @@ public final class BlockUtils {
 					0.5F, 0.5F, 0.5F);
 		}
 		return done;
+	}
+
+	public static TileEntityChest getOtherDoubleChest(TileEntity inv) {
+		if (inv instanceof TileEntityChest) {
+			TileEntityChest chest = (TileEntityChest) inv;
+
+			TileEntityChest adjacent = null;
+
+			if (chest.adjacentChestXNeg != null) {
+				adjacent = chest.adjacentChestXNeg;
+			}
+
+			if (chest.adjacentChestXPos != null) {
+				adjacent = chest.adjacentChestXPos;
+			}
+
+			if (chest.adjacentChestZNeg != null) {
+				adjacent = chest.adjacentChestZNeg;
+			}
+
+			if (chest.adjacentChestZPos != null) {
+				adjacent = chest.adjacentChestZPos;
+			}
+
+			return adjacent;
+		}
+		return null;
 	}
 }

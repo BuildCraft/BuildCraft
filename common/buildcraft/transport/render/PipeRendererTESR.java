@@ -45,6 +45,7 @@ import buildcraft.core.lib.render.RenderEntityBlock;
 import buildcraft.core.lib.render.RenderEntityBlock.RenderInfo;
 import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.core.lib.utils.MatrixTranformations;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;
@@ -59,8 +60,8 @@ import buildcraft.transport.utils.FluidRenderData;
 public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	public static final PipeRendererTESR INSTANCE = new PipeRendererTESR();
 
-	public static final float DISPLAY_MULTIPLIER = 0.1f;
-	public static final int POWER_STAGES = 100;
+	public static final int POWER_STAGES = 256;
+	private static final float POWER_MAGIC = 0.7F; // Math.pow(displayPower, POWER_MAGIC)
 
 	private static final int LIQUID_STAGES = 40;
 	private static final int MAX_ITEMS_TO_RENDER = 10;
@@ -300,9 +301,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		if (pipeType == IPipeTile.PipeType.ITEM) {
 			renderSolids(pipe.pipe, x, y, z, f);
 		} else if (pipeType == IPipeTile.PipeType.FLUID) {
-			renderFluids(pipe.pipe, x, y, z);
+			renderFluids(((TileGenericPipe) CoreProxy.proxy.getServerTile(pipe)).pipe, x, y, z);
 		} else if (pipeType == IPipeTile.PipeType.POWER) {
-			renderPower(pipe.pipe, x, y, z);
+			renderPower(((TileGenericPipe) CoreProxy.proxy.getServerTile(pipe)).pipe, x, y, z);
 		} /* else if (pipeType == PipeType.STRUCTURE) {
 			// no object to render in a structure pipe;
 		} */
@@ -657,7 +658,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
 		GL11.glDisable(GL11.GL_LIGHTING);
-//		GL11.glEnable(GL11.GL_BLEND);
 
 		GL11.glTranslatef((float) x, (float) y, (float) z);
 
@@ -666,7 +666,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		int[] displayList = pow.overload > 0 ? displayPowerListOverload : displayPowerList;
 
 		for (int side = 0; side < 6; ++side) {
-			short stage = pow.displayPower[side];
+			int stage = (int) Math.ceil(Math.pow(pow.displayPower[side], POWER_MAGIC));
 			if (stage >= 1) {
 				if (!pipe.container.isPipeConnected(ForgeDirection.getOrientation(side))) {
 					continue;
@@ -723,7 +723,13 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		PipeTransportFluids trans = pipe.transport;
 
 		boolean needsRender = false;
-		FluidRenderData renderData = trans.renderCache;
+		FluidRenderData renderData;
+		if (!pipe.container.getWorldObj().isRemote) {
+			renderData = trans.createServerFluidRenderData();
+		} else {
+			renderData = trans.renderCache;
+		}
+
 		for (int i = 0; i < 7; ++i) {
 			if (renderData.amount[i] > 0) {
 				needsRender = true;
@@ -751,9 +757,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
 			int i = side.ordinal();
 
-			FluidRenderData fluidRenderData = trans.renderCache;
-
-			if (fluidRenderData.amount[i] <= 0) {
+			if (renderData.amount[i] <= 0) {
 				continue;
 			}
 
@@ -761,13 +765,13 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				continue;
 			}
 
-			DisplayFluidList d = getDisplayFluidLists(fluidRenderData.fluidID, pipe.container.getWorldObj());
+			DisplayFluidList d = getDisplayFluidLists(renderData.fluidID, pipe.container.getWorldObj());
 
 			if (d == null) {
 				continue;
 			}
 
-			int stage = (int) ((float) fluidRenderData.amount[i] / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
+			int stage = (int) ((float) renderData.amount[i] / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
 
 			GL11.glPushMatrix();
 			int list = 0;
@@ -796,21 +800,19 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				default:
 			}
 			bindTexture(TextureMap.locationBlocksTexture);
-			RenderUtils.setGLColorFromInt(fluidRenderData.color);
+			RenderUtils.setGLColorFromInt(renderData.color);
 			GL11.glCallList(list);
 			GL11.glPopMatrix();
 		}
-		// CENTER
-		FluidRenderData fluidRenderData = trans.renderCache;
 
-		if (fluidRenderData.amount[6] > 0) {
-			DisplayFluidList d = getDisplayFluidLists(fluidRenderData.fluidID, pipe.container.getWorldObj());
+		if (renderData.amount[6] > 0) {
+			DisplayFluidList d = getDisplayFluidLists(renderData.fluidID, pipe.container.getWorldObj());
 
 			if (d != null) {
-				int stage = (int) ((float) fluidRenderData.amount[6] / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
+				int stage = (int) ((float) renderData.amount[6] / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
 
 				bindTexture(TextureMap.locationBlocksTexture);
-				RenderUtils.setGLColorFromInt(fluidRenderData.color);
+				RenderUtils.setGLColorFromInt(renderData.color);
 
 				if (above) {
 					GL11.glCallList(d.centerVertical[stage]);

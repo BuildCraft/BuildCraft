@@ -15,9 +15,9 @@ import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicTile;
 import buildcraft.core.lib.inventory.SimpleInventory;
 
-public class BptItemPipeFilters extends BptPipeExtension {
+public class BptPipeFiltered extends BptPipeExtension {
 
-	public BptItemPipeFilters(Item i) {
+	public BptPipeFiltered(Item i) {
 		super (i);
 	}
 

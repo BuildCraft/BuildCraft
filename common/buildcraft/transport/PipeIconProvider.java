@@ -98,6 +98,7 @@ public class PipeIconProvider implements IIconProvider {
 		PipeFluidsSandstone("pipeFluidsSandstone"),
 		PipeFluidsStone("pipeFluidsStone"),
 		PipeFluidsVoid("pipeFluidsVoid"),
+		PipeFluidsClay("pipeFluidsClay"),
         //
         PipeFluidsDiamond_Item("pipeFluidsDiamond_item"),
         PipeFluidsDiamond_Center("pipeFluidsDiamond_center"),
@@ -142,9 +143,9 @@ public class PipeIconProvider implements IIconProvider {
 		TransparentFacade("transparent_facade"),
 		Transparent("core:misc/transparent"),
 		//
-		/* PipePowerAdapterTop("pipePowerAdapterTop"),
 		PipePowerAdapterSide("pipePowerAdapterSide"),
-		PipePowerAdapterBottom("pipePowerAdapterBottom"), */
+		PipePowerAdapterBottom("pipePowerAdapterBottom"),
+		PipePowerAdapterTop("pipePowerAdapterTop"),
 		//
 		ItemBox("itemBox");
 		public static final TYPE[] VALUES = values();
