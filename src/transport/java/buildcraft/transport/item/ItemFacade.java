@@ -21,6 +21,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Loader;
@@ -562,18 +563,18 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         public ItemStack getRecipeOutput() {
             return null;
         }
-    }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureAtlasSpriteRegister par1IconRegister) {
-        // NOOP
-    }
+        @Override
+        public ItemStack[] getRemainingItems(InventoryCrafting inv) {
+            ItemStack[] itemStack = new ItemStack[inv.getSizeInventory()];
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public int getSpriteNumber() {
-        return 0;
+            for (int i = 0; i < itemStack.length; ++i) {
+                ItemStack itemstack = inv.getStackInSlot(i);
+                itemStack[i] = ForgeHooks.getContainerItem(itemstack);
+            }
+
+            return itemStack;
+        }
     }
 
     @Override
