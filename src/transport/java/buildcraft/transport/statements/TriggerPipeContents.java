@@ -6,11 +6,10 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
@@ -41,7 +40,8 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
     private PipeContents kind;
 
     public TriggerPipeContents(PipeContents kind) {
-        super("buildcraft:pipe.contents." + kind.name().toLowerCase(Locale.ENGLISH), "buildcraft.pipe.contents." + kind.name());
+        super(new ResourceLocation("buildcrafttransport:triggers/trigger_pipecontents_" + kind.name().toLowerCase(Locale.ENGLISH)),
+                "buildcraft:pipe.contents." + kind.name().toLowerCase(Locale.ENGLISH), "buildcraft.pipe.contents." + kind.name());
         this.kind = kind;
         kind.trigger = this;
     }
@@ -148,11 +148,5 @@ public class TriggerPipeContents extends BCStatement implements ITriggerInternal
     @Override
     public IStatementParameter createParameter(int index) {
         return new StatementParameterItemStack();
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        icon = iconRegister.registerIcon("buildcrafttransport:triggers/trigger_pipecontents_" + kind.name().toLowerCase(Locale.ENGLISH));
     }
 }

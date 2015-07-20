@@ -6,6 +6,8 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
+import net.minecraft.util.ResourceLocation;
+
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -17,8 +19,9 @@ public class ActionPowerLimiter extends BCStatement implements IActionInternal {
     public final PowerMode limit;
 
     public ActionPowerLimiter(PowerMode limit) {
-        super("buildcraft:power.limiter." + limit.name().toLowerCase(Locale.ENGLISH), "buildcraft.power.limiter." + limit.name().toLowerCase(
-                Locale.ENGLISH));
+        super(new ResourceLocation("buildcrafttransport:triggers/trigger_limiter_" + limit.name().toLowerCase(Locale.ENGLISH)),
+                "buildcraft:power.limiter." + limit.name().toLowerCase(Locale.ENGLISH), "buildcraft.power.limiter." + limit.name().toLowerCase(
+                        Locale.ENGLISH));
 
         this.limit = limit;
     }
@@ -26,11 +29,6 @@ public class ActionPowerLimiter extends BCStatement implements IActionInternal {
     @Override
     public String getDescription() {
         return limit.maxPower + " RF/t Limit";
-    }
-
-    @Override
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        icon = iconRegister.registerIcon("buildcrafttransport:triggers/trigger_limiter_" + limit.name().toLowerCase(Locale.ENGLISH));
     }
 
     @Override

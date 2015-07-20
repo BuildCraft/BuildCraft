@@ -12,7 +12,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public interface IStatementParameter {
 
-    /** Every parameter needs a unique tag, it should be in the format of "&lt;modi&gt;:&lt;name&gt;".
+    /** Every parameter needs a unique tag, it should be in the format of "&lt;modid&gt;:&lt;name&gt;".
      *
      * @return the unique id */
     String getUniqueTag();

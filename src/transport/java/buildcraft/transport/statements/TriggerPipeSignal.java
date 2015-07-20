@@ -6,6 +6,8 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
+import net.minecraft.util.ResourceLocation;
+
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -21,7 +23,8 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
     PipeWire color;
 
     public TriggerPipeSignal(boolean active, PipeWire color) {
-        super("buildcraft:pipe.wire.input." + color.name().toLowerCase(Locale.ENGLISH) + (active ? ".active" : ".inactive"),
+        super(new ResourceLocation("buildcrafttransport:triggers/trigger_pipesignal_" + color.name().toLowerCase() + "_" + (active ? "active"
+            : "inactive")), "buildcraft:pipe.wire.input." + color.name().toLowerCase(Locale.ENGLISH) + (active ? ".active" : ".inactive"),
                 "buildcraft.pipe.wire.input." + color.name().toLowerCase(Locale.ENGLISH) + (active ? ".active" : ".inactive"));
 
         this.active = active;
@@ -76,12 +79,6 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
         }
 
         return true;
-    }
-
-    @Override
-    public void registerIcons(TextureAtlasSpriteRegister register) {
-        icon = register.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_" + color.name().toLowerCase() + "_" + (active ? "active"
-            : "inactive"));
     }
 
     @Override

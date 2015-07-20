@@ -15,7 +15,7 @@ import buildcraft.core.lib.utils.StringUtils;
 
 public class ActionRedstoneOutput extends BCStatement implements IActionInternal {
 
-    public ActionRedstoneOutput(String s) {
+    protected ActionRedstoneOutput(String s) {
         // Used by fader output
         super(s);
     }

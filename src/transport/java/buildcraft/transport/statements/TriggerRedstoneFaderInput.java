@@ -4,8 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.statements;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.gates.IGate;
 import buildcraft.api.statements.IStatementContainer;
@@ -21,7 +20,8 @@ public class TriggerRedstoneFaderInput extends BCStatement implements ITriggerIn
     public final int level;
 
     public TriggerRedstoneFaderInput(int level) {
-        super(String.format("buildcraft:redtone.input.%02d", level));
+        super(new ResourceLocation(String.format("buildcrafttransport:triggers/redstone_%02d", level)), String.format("buildcraft:redtone.input.%02d",
+                level));
 
         this.level = level;
     }
@@ -46,12 +46,6 @@ public class TriggerRedstoneFaderInput extends BCStatement implements ITriggerIn
         }
 
         return inputLevel == level;
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        icon = iconRegister.registerIcon(String.format("buildcrafttransport:triggers/redstone_%02d", level));
     }
 
     @Override

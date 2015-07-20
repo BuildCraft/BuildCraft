@@ -6,6 +6,8 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
+import net.minecraft.util.ResourceLocation;
+
 import buildcraft.api.enums.EnumColor;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
@@ -18,7 +20,8 @@ public class ActionExtractionPreset extends BCStatement implements IActionIntern
     public final EnumColor color;
 
     public ActionExtractionPreset(EnumColor color) {
-        super("buildcraft:extraction.preset." + color.getTag(), "buildcraft.extraction.preset." + color.getTag());
+        super(new ResourceLocation("buildcrafttransport:triggers/extraction_preset_" + color.name().toLowerCase(Locale.ENGLISH)),
+                "buildcraft:extraction.preset." + color.getTag(), "buildcraft.extraction.preset." + color.getTag());
 
         this.color = color;
     }
@@ -26,11 +29,6 @@ public class ActionExtractionPreset extends BCStatement implements IActionIntern
     @Override
     public String getDescription() {
         return String.format(StringUtils.localize("gate.action.extraction"), color.getName());
-    }
-
-    @Override
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        icon = iconRegister.registerIcon("buildcrafttransport:triggers/extraction_preset_" + color.name().toLowerCase(Locale.ENGLISH));
     }
 
     @Override

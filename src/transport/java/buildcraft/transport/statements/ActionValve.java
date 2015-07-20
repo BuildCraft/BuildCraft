@@ -7,6 +7,7 @@ package buildcraft.transport.statements;
 import java.util.Locale;
 
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
@@ -42,16 +43,12 @@ public class ActionValve extends BCStatement implements IActionInternal {
     public ActionValve(ValveState valveState) {
         super("buildcraft:pipe.valve." + valveState.name().toLowerCase(Locale.ENGLISH));
         state = valveState;
+        location = new ResourceLocation("buildcrafttransport:triggers/action_valve_" + state.name().toLowerCase(Locale.ENGLISH));
     }
 
     @Override
     public String getDescription() {
         return StringUtils.localize("gate.action.pipe.valve." + state.name().toLowerCase(Locale.ENGLISH));
-    }
-
-    @Override
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        icon = iconRegister.registerIcon("buildcrafttransport:triggers/action_valve_" + state.name().toLowerCase(Locale.ENGLISH));
     }
 
     @Override
@@ -74,7 +71,7 @@ public class ActionValve extends BCStatement implements IActionInternal {
         IPipe pipe = ((Gate) container).getPipe();
 
         if (pipe != null && pipe instanceof Pipe) {
-            PipeTransport transport = ((Pipe) pipe).transport;
+            PipeTransport transport = ((Pipe<?>) pipe).transport;
             if (parameters[0] != null && parameters[0] instanceof StatementParameterDirection) {
                 EnumFacing side = ((StatementParameterDirection) parameters[0]).direction;
 

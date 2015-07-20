@@ -4,6 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.statements;
 
+import net.minecraft.util.ResourceLocation;
+
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -14,16 +16,12 @@ public class ActionSingleEnergyPulse extends BCStatement implements IActionInter
 
     public ActionSingleEnergyPulse() {
         super("buildcraft:pulsar.single", "buildcraft.pulser.single");
+        location = new ResourceLocation("buildcrafttransport:triggers/action_single_pulsar");
     }
 
     @Override
     public String getDescription() {
         return StringUtils.localize("gate.action.pulsar.single");
-    }
-
-    @Override
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        icon = iconRegister.registerIcon("buildcrafttransport:triggers/action_single_pulsar");
     }
 
     @Override

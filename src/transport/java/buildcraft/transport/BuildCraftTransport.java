@@ -518,6 +518,9 @@ public class BuildCraftTransport extends BuildCraftMod {
         for (IGateExpansion expansion : GateExpansions.getExpansions()) {
             expansion.registerBlockOverlay(event.map);
         }
+
+        TriggerParameterSignal.registerIcons(event);
+        ActionParameterSignal.registerIcons(event);
     }
 
     @Mod.EventHandler

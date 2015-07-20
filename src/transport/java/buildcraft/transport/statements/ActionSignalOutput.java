@@ -6,6 +6,8 @@ package buildcraft.transport.statements;
 
 import java.util.Locale;
 
+import net.minecraft.util.ResourceLocation;
+
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatementContainer;
 import buildcraft.api.statements.IStatementParameter;
@@ -22,6 +24,7 @@ public class ActionSignalOutput extends BCStatement implements IActionInternal {
         super("buildcraft:pipe.wire.output." + color.name().toLowerCase(Locale.ENGLISH), "buildcraft.pipe.wire.output." + color.name().toLowerCase(
                 Locale.ENGLISH));
 
+        location = new ResourceLocation("buildcrafttransport:triggers/trigger_pipesignal_" + color.name().toLowerCase() + "_active");
         this.color = color;
     }
 
@@ -56,10 +59,5 @@ public class ActionSignalOutput extends BCStatement implements IActionInternal {
                 }
             }
         }
-    }
-
-    @Override
-    public void registerIcons(TextureAtlasSpriteRegister register) {
-        icon = register.registerIcon("buildcrafttransport:triggers/trigger_pipesignal_" + color.name().toLowerCase() + "_active");
     }
 }

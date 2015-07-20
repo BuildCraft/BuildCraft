@@ -7,6 +7,7 @@ package buildcraft.transport.statements;
 import java.util.Locale;
 
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.statements.IActionInternal;
@@ -34,7 +35,8 @@ public class ActionPipeDirection extends BCStatement implements IActionInternal 
 
     @Override
     public IStatement rotateLeft() {
-        return BuildCraftTransport.actionPipeDirection[direction.getRotation(EnumFacing.UP).ordinal()];
+        EnumFacing face = direction.getAxis() == Axis.Y ? direction : direction.rotateY();
+        return BuildCraftTransport.actionPipeDirection[face.ordinal()];
     }
 
     @Override
