@@ -67,7 +67,7 @@ public final class TileBuffer {
     public TileEntity getTile() {
         return getTile(false);
     }
-//This is severely broken :(
+//This is severely broken :( FIXME
     public TileEntity getTile(boolean forceUpdate) {
 //        if (!Utils.CAULDRON_DETECTED && tile != null && !tile.isInvalid()) {
 //            return tile;

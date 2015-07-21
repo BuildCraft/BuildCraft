@@ -175,7 +175,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
             boolean hasPipe = pipe.isPipeConnected(face);
             state = state.withProperty(CONNECTED_MAP.get(face), hasPipe);
         }
-        
+
         return state;
     }
 
@@ -426,10 +426,18 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         EnumFacing[] sideHit = new EnumFacing[31];
         Arrays.fill(sideHit, null);
 
-        // pipe
+        // Center bit of pipe
+        {
+            AxisAlignedBB bb = getPipeBoundingBox(null);
+            setBlockBounds(bb);
+            boxes[0] = bb;
+            hits[0] = super.collisionRayTrace(world, pos, origin, direction);
+            sideHit[0] = null;
+        }
 
+        // Connections
         for (EnumFacing side : DIR_VALUES) {
-            if (side == null || tileG.isPipeConnected(side)) {
+            if (tileG.isPipeConnected(side)) {
                 AxisAlignedBB bb = getPipeBoundingBox(side);
                 setBlockBounds(bb);
                 boxes[side.ordinal()] = bb;
