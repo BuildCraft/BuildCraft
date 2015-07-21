@@ -4,13 +4,13 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.gui;
 
+import java.io.IOException;
 import java.util.Iterator;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.inventory.IInventory;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 
 import buildcraft.api.statements.IStatement;
@@ -370,21 +370,21 @@ public class GuiGateInterface extends GuiAdvancedInterface {
     }
 
     @Override
-    protected void mouseClicked(BlockPos pos) {
+    protected void mouseClicked(int x, int y, int type) throws IOException {
         if (gate == null) {
             return;
         }
-        super.mouseClicked(pos);
+        super.mouseClicked(x, y, type);
 
-        AdvancedSlot slot = getSlotAtLocation(i, j);
+        AdvancedSlot slot = getSlotAtLocation(x, y);
 
         if (slot != null) {
-            doSlotClick(slot, k);
+            doSlotClick(slot, type);
         }
     }
 
     @Override
-    public void handleMouseInput() {
+    public void handleMouseInput() throws IOException {
         super.handleMouseInput();
 
         int wheel = Mouse.getEventDWheel();

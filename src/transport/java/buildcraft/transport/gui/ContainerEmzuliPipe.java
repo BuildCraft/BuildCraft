@@ -65,8 +65,8 @@ public class ContainerEmzuliPipe extends BuildCraftContainer {
     }
 
     @Override
-    public void addCraftingToCrafters(ICrafting player) {
-        super.addCraftingToCrafters(player);
+    public void onCraftGuiOpened(ICrafting player) {
+        super.onCraftGuiOpened(player);
         for (int slot = 0; slot < pipe.slotColors.length; slot++) {
             prevSlotColors[slot] = pipe.slotColors[slot];
             player.sendProgressBarUpdate(this, slot, pipe.slotColors[slot]);
@@ -131,9 +131,8 @@ public class ContainerEmzuliPipe extends BuildCraftContainer {
             super.draw(gui, guiX, guiY, mouseX, mouseY);
             EnumColor color = colors.getCurrent();
             if (color != null) {
-                gui.bindTexture(TextureMap.locationItemsTexture);
-                gui.drawTexturedModelRectFromIcon(guiX + x + 2, guiY + y + 2, BuildCraftTransport.actionPipeColor[color.ordinal()].getIconProvider(),
-                        16, 16);
+                gui.bindTexture(TextureMap.locationBlocksTexture);
+                gui.drawTexturedModalRect(guiX + x + 2, guiY + y + 2, BuildCraftTransport.actionPipeColor[color.ordinal()].getGuiSprite(), 16, 16);
             } else {
                 gui.drawTexturedModalRect(guiX + x + 2, guiY + y + 2, u, v + h + h, 16, 16);
             }
