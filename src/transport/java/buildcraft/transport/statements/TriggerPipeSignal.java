@@ -23,9 +23,11 @@ public class TriggerPipeSignal extends BCStatement implements ITriggerInternal {
     PipeWire color;
 
     public TriggerPipeSignal(boolean active, PipeWire color) {
-        super(new ResourceLocation("buildcrafttransport:triggers/trigger_pipesignal_" + color.name().toLowerCase() + "_" + (active ? "active"
-            : "inactive")), "buildcraft:pipe.wire.input." + color.name().toLowerCase(Locale.ENGLISH) + (active ? ".active" : ".inactive"),
+        super("buildcraft:pipe.wire.input." + color.name().toLowerCase(Locale.ENGLISH) + (active ? ".active" : ".inactive"),
                 "buildcraft.pipe.wire.input." + color.name().toLowerCase(Locale.ENGLISH) + (active ? ".active" : ".inactive"));
+
+        this.location = new ResourceLocation("buildcrafttransport:triggers/trigger_pipesignal_" + color.name().toLowerCase() + "_" + (active
+            ? "active" : "inactive"));
 
         this.active = active;
         this.color = color;

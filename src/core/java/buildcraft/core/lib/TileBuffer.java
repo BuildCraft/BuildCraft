@@ -35,15 +35,15 @@ public final class TileBuffer {
         tile = null;
         state = null;
 
-        if (!loadUnloaded && world.isAirBlock(pos)) {
-            return;
-        }
+//        if (!loadUnloaded && world.isAirBlock(pos)) {
+//            return;
+//        }
 
         state = world.getBlockState(pos);
 
-        if (state != null && state.getBlock().hasTileEntity(state)) {
+//        if (state != null && state.getBlock().hasTileEntity(state)) {
             tile = world.getTileEntity(pos);
-        }
+//        }
     }
 
     public void set(IBlockState state, TileEntity tile) {
@@ -53,9 +53,9 @@ public final class TileBuffer {
     }
 
     private void tryRefresh() {
-        if (Utils.CAULDRON_DETECTED || (tile != null && tile.isInvalid()) || (tile == null && tracker.markTimeIfDelay(world))) {
+//        if (Utils.CAULDRON_DETECTED || (tile != null && tile.isInvalid()) || (tile == null && tracker.markTimeIfDelay(world))) {
             refresh();
-        }
+//        }
     }
 
     public IBlockState getBlockState() {
@@ -67,27 +67,27 @@ public final class TileBuffer {
     public TileEntity getTile() {
         return getTile(false);
     }
-
+//This is severely broken :(
     public TileEntity getTile(boolean forceUpdate) {
-        if (!Utils.CAULDRON_DETECTED && tile != null && !tile.isInvalid()) {
-            return tile;
-        }
+//        if (!Utils.CAULDRON_DETECTED && tile != null && !tile.isInvalid()) {
+//            return tile;
+//        }
 
-        if (Utils.CAULDRON_DETECTED || (forceUpdate && tile != null && tile.isInvalid()) || tracker.markTimeIfDelay(world)) {
+//        if (Utils.CAULDRON_DETECTED || (forceUpdate && tile != null && tile.isInvalid()) || tracker.markTimeIfDelay(world)) {
             refresh();
 
-            if (tile != null && !tile.isInvalid()) {
+//            if (tile != null && !tile.isInvalid()) {
                 return tile;
-            }
-        }
+//            }
+//        }
 
-        return null;
+//        return null;
     }
 
     public boolean exists() {
-        if (tile != null && !Utils.CAULDRON_DETECTED && !tile.isInvalid()) {
-            return true;
-        }
+//        if (tile != null && !Utils.CAULDRON_DETECTED && !tile.isInvalid()) {
+//            return true;
+//        }
 
         return !world.isAirBlock(pos);
     }

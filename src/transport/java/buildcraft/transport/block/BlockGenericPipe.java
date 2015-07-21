@@ -34,6 +34,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
@@ -57,6 +58,7 @@ import buildcraft.core.BCCreativeTab;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.TileBuffer;
 import buildcraft.core.lib.block.BlockBuildCraft;
+import buildcraft.core.lib.render.ICustomHighlight;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.BuildCraftTransport;
@@ -71,7 +73,7 @@ import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.item.ItemGateCopier;
 import buildcraft.transport.item.ItemPipe;
 
-public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable {
+public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable, ICustomHighlight {
 
     public static Map<Item, Class<? extends Pipe<?>>> pipes = Maps.newHashMap();
     public static Map<BlockPos, Pipe<?>> pipeRemoved = Maps.newHashMap();
@@ -107,8 +109,9 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
     /* Defined subprograms ************************************************* */
     public BlockGenericPipe() {
-        super(Material.glass, GENERIC_PIPE_DATA);
+        super(Material.glass, GENERIC_PIPE_DATA, CONNECTED_UP, CONNECTED_DOWN, CONNECTED_EAST, CONNECTED_WEST, CONNECTED_NORTH, CONNECTED_SOUTH);
         setCreativeTab(null);
+        setLightOpacity(0);
     }
 
     @Override
@@ -120,6 +123,26 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     @Override
     public boolean isOpaqueCube() {
         return false;
+    }
+
+    @Override
+    public int getRenderType() {
+        return -1;// OMG TEMP SO TEMP! FIXME REMOVE THIS!
+    }
+
+    @SideOnly(Side.CLIENT)
+    public EnumWorldBlockLayer getBlockLayer() {
+        return EnumWorldBlockLayer.TRANSLUCENT;
+    }
+
+    @Override
+    public double getExpansion() {
+        return 0;
+    }
+
+    @Override
+    public double getBreathingCoefficent() {
+        return 0;
     }
 
     @Override
@@ -136,6 +159,24 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         }
 
         return false;
+    }
+
+    // F3 debug menu information
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess access, BlockPos pos) {
+        state = super.getActualState(state, access, pos);
+        TileEntity tile = access.getTileEntity(pos);
+        if (tile == null | !(tile instanceof TileGenericPipe)) {
+            return state;
+        }
+        TileGenericPipe pipe = (TileGenericPipe) tile;
+
+        for (EnumFacing face : EnumFacing.VALUES) {
+            boolean hasPipe = pipe.isPipeConnected(face);
+            state = state.withProperty(CONNECTED_MAP.get(face), hasPipe);
+        }
+        
+        return state;
     }
 
     @Override
@@ -170,7 +211,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
             }
 
             if (pipe.isPipeConnected(EnumFacing.SOUTH)) {
-                bbs.add(new AxisAlignedBB(max, min, min, 1, max, max));
+                bbs.add(new AxisAlignedBB(min, min, max, max, max, 1));
             }
 
             if (pipe.isPipeConnected(EnumFacing.DOWN)) {

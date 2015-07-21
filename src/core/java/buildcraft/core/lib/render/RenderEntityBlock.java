@@ -42,7 +42,6 @@ public final class RenderEntityBlock extends Render {
     }
 
     public static class RenderInfo {
-
         public double minX;
         public double minY;
         public double minZ;

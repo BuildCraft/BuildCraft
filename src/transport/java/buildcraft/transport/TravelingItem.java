@@ -33,8 +33,6 @@ public class TravelingItem {
 
     public final EnumSet<EnumFacing> blacklist = EnumSet.noneOf(EnumFacing.class);
 
-    /** @deprecated Use {@link #pos} instead */
-    public double xCoord, yCoord, zCoord;
     public Vec3 pos;
     public final int id;
     public boolean toCenter = true;
@@ -174,9 +172,9 @@ public class TravelingItem {
     }
 
     public void writeToNBT(NBTTagCompound data) {
-        data.setDouble("x", xCoord);
-        data.setDouble("y", yCoord);
-        data.setDouble("z", zCoord);
+        data.setDouble("x", pos.xCoord);
+        data.setDouble("y", pos.yCoord);
+        data.setDouble("z", pos.zCoord);
         data.setFloat("speed", getSpeed());
         NBTTagCompound itemStackTag = new NBTTagCompound();
         getItemStack().writeToNBT(itemStackTag);
@@ -201,7 +199,7 @@ public class TravelingItem {
 
             Vec3 motion = Utils.convert(output, 0.1 + getSpeed() * 2D);
 
-            EntityItem entity = new EntityItem(container.getWorld(), xCoord, yCoord, zCoord, getItemStack());
+            EntityItem entity = new EntityItem(container.getWorld(), pos.xCoord, pos.yCoord, pos.zCoord, getItemStack());
             entity.lifespan = BuildCraftCore.itemLifespan * 20;
             entity.setDefaultPickupDelay();
 

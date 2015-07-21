@@ -71,4 +71,9 @@ public class BlockEngine extends BlockEngineBase implements IModelRegister {
         ModelHelper.registerItemModel(item, 2, "iron");
         ModelHelper.registerItemModel(item, 3, "creative");
     }
+
+    @Override
+    public double getBreathingCoefficent() {
+        return 1;
+    }
 }

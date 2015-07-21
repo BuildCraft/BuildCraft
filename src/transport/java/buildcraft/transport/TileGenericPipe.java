@@ -799,11 +799,11 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
         for (EnumFacing side : EnumFacing.VALUES) {
             TileBuffer t = cache[side.ordinal()];
             // For blocks which are not loaded, keep the old connection value.
-            if (t.exists() || !initialized) {
-                t.refresh();
+//            if (t.exists() || !initialized) {
+//                t.refresh();
 
-                pipeConnectionsBuffer[side.ordinal()] = canPipeConnect(t.getTile(), side);
-            }
+                pipeConnectionsBuffer[side.ordinal()] = canPipeConnect(worldObj.getTileEntity(pos.offset(side))/*t.getTile()*/, side);
+//            }
         }
     }
 

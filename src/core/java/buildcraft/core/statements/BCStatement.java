@@ -36,7 +36,7 @@ public abstract class BCStatement implements IStatement {
     /** UniqueTag accepts multiple possible tags, use this feature to migrate to more standardized tags if needed,
      * otherwise just pass a single string. The first passed string will be the one used when saved to disk.
      * 
-     * The ResourceLocation is the location of the icon to be displayed for this statement
+     * @deprecated use the above one, and set the ResourceLocation seperately
      *
      * @param uniqueTag */
     protected BCStatement(ResourceLocation loc, String... uniqueTag) {

@@ -6,10 +6,10 @@ package buildcraft.transport.render;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.RenderEntityItem;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
@@ -25,7 +25,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
-import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.enums.EnumColor;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.items.IItemCustomPipeRender;
@@ -39,6 +38,7 @@ import buildcraft.core.lib.render.RenderEntityBlock;
 import buildcraft.core.lib.render.RenderEntityBlock.RenderInfo;
 import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.core.lib.utils.MatrixTranformations;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.BuildCraftTransport;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
@@ -66,7 +66,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
     private final int[] angleZ = { 90, 270, 0, 0, 0, 0 };
 
     private final EntityItem dummyEntityItem = new EntityItem(null);
-    private final RenderItem customRenderItem;
+    private final RenderEntityItem customRenderItem;
     private boolean initialized = false;
 
     private class DisplayFluidList {
@@ -78,7 +78,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
     }
 
     public PipeRendererTESR() {
-        customRenderItem = new RenderItem() {
+        customRenderItem = new RenderEntityItem(Minecraft.getMinecraft().getRenderManager(), Minecraft.getMinecraft().getRenderItem()) {
             @Override
             public boolean shouldBob() {
                 return false;
@@ -89,7 +89,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
                 return false;
             }
         };
-        customRenderItem.setRenderManager(RenderManager.instance);
     }
 
     private DisplayFluidList getDisplayFluidLists(int liquidId, World world) {
@@ -109,9 +108,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
         RenderInfo block = new RenderInfo();
 
         if (fluid.getBlock() != null) {
-            block.baseBlock = fluid.getBlock();
+            block.blockState = fluid.getBlock().getDefaultState();
         } else {
-            block.baseBlock = Blocks.water;
+            block.blockState = Blocks.water.getDefaultState();
         }
 
         block.texture = fluid.getStillIcon();
@@ -262,7 +261,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
     }
 
     @Override
-    public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
+    public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int argumentthatisalwaysminusone) {
         if (BuildCraftCore.render == RenderMode.NoDynamic) {
             return;
         }
@@ -273,18 +272,18 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
             return;
         }
 
-        renderGatesWires(pipe, pos);
-        renderPluggables(pipe, pos);
+        renderGatesWires(pipe, x, y, z);
+        renderPluggables(pipe, x, y, z);
 
         IPipeTile.PipeType pipeType = pipe.getPipeType();
 
         // do not use switch. we will be transitioning away from the enum
         if (pipeType == IPipeTile.PipeType.ITEM) {
-            renderSolids(pipe.pipe, pos, f);
+            renderSolids((Pipe<PipeTransportItems>) pipe.pipe, x, y, z, f);
         } else if (pipeType == IPipeTile.PipeType.FLUID) {
-            renderFluids(pipe.pipe, pos);
+            renderFluids((Pipe<PipeTransportFluids>) pipe.pipe, x, y, z);
         } else if (pipeType == IPipeTile.PipeType.POWER) {
-            renderPower(pipe.pipe, pos);
+            renderPower((Pipe<PipeTransportPower>) pipe.pipe, x, y, z);
         } /* else if (pipeType == PipeType.STRUCTURE) { // no object to render in a structure pipe; } */
     }
 
@@ -292,19 +291,19 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
         PipeRenderState state = pipe.renderState;
 
         if (state.wireMatrix.hasWire(PipeWire.RED)) {
-            pipeWireRender(pipe, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MIN_POS, PipeWire.RED, pos);
+            pipeWireRender(pipe, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MIN_POS, PipeWire.RED, x, y, z);
         }
 
         if (state.wireMatrix.hasWire(PipeWire.BLUE)) {
-            pipeWireRender(pipe, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, PipeWire.BLUE, pos);
+            pipeWireRender(pipe, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MAX_POS, PipeWire.BLUE, x, y, z);
         }
 
         if (state.wireMatrix.hasWire(PipeWire.GREEN)) {
-            pipeWireRender(pipe, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, PipeWire.GREEN, pos);
+            pipeWireRender(pipe, CoreConstants.PIPE_MAX_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, PipeWire.GREEN, x, y, z);
         }
 
         if (state.wireMatrix.hasWire(PipeWire.YELLOW)) {
-            pipeWireRender(pipe, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, PipeWire.YELLOW, pos);
+            pipeWireRender(pipe, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MIN_POS, CoreConstants.PIPE_MAX_POS, PipeWire.YELLOW, x, y, z);
         }
     }
 
@@ -454,43 +453,46 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
     }
 
     private void renderPluggables(TileGenericPipe pipe, double x, double y, double z) {
-        TileEntityRendererDispatcher.instance.field_147553_e.bindTexture(TextureMap.locationBlocksTexture);
+        TileEntityRendererDispatcher.instance.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 
         for (EnumFacing direction : EnumFacing.VALUES) {
             PipePluggable pluggable = pipe.getPipePluggable(direction);
             if (pluggable != null && pluggable.getDynamicRenderer() != null) {
-                pluggable.getDynamicRenderer().renderPluggable(pipe.getPipe(), direction, pluggable, pos);
+                pluggable.getDynamicRenderer().renderPluggable(pipe.getPipe(), direction, pluggable, x, y, z);
             }
         }
     }
 
-    public static void renderGateStatic(RenderBlocks renderblocks, EnumFacing direction, GatePluggable gate, ITextureStates blockStateMachine, int x,
-            int y, int z) {
-        blockStateMachine.getTextureState().setToStack(gate.getLogic().getGateIcon());
-
-        float trim = 0.1F;
-        float[][] zeroState = new float[3][2];
-        float min = CoreConstants.PIPE_MIN_POS + trim / 2F;
-        float max = CoreConstants.PIPE_MAX_POS - trim / 2F;
-
-        // X START - END
-        zeroState[0][0] = min;
-        zeroState[0][1] = max;
-        // Y START - END
-        zeroState[1][0] = CoreConstants.PIPE_MIN_POS - 0.10F;
-        zeroState[1][1] = CoreConstants.PIPE_MIN_POS + 0.001F;
-        // Z START - END
-        zeroState[2][0] = min;
-        zeroState[2][1] = max;
-
-        float[][] rotated = MatrixTranformations.deepClone(zeroState);
-        MatrixTranformations.transform(rotated, direction);
-
-        blockStateMachine.setRenderAllSides();
-        renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-        renderblocks.renderStandardBlock(blockStateMachine.getBlock(), pos);
-    }
-
+    //
+    // public static void renderGateStatic(RenderBlocks renderblocks, EnumFacing direction, GatePluggable gate,
+    // ITextureStates blockStateMachine, int x,
+    // int y, int z) {
+    // blockStateMachine.getTextureState().setToStack(gate.getLogic().getGateIcon());
+    //
+    // float trim = 0.1F;
+    // float[][] zeroState = new float[3][2];
+    // float min = CoreConstants.PIPE_MIN_POS + trim / 2F;
+    // float max = CoreConstants.PIPE_MAX_POS - trim / 2F;
+    //
+    // // X START - END
+    // zeroState[0][0] = min;
+    // zeroState[0][1] = max;
+    // // Y START - END
+    // zeroState[1][0] = CoreConstants.PIPE_MIN_POS - 0.10F;
+    // zeroState[1][1] = CoreConstants.PIPE_MIN_POS + 0.001F;
+    // // Z START - END
+    // zeroState[2][0] = min;
+    // zeroState[2][1] = max;
+    //
+    // float[][] rotated = MatrixTranformations.deepClone(zeroState);
+    // MatrixTranformations.transform(rotated, direction);
+    //
+    // blockStateMachine.setRenderAllSides();
+    // renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1],
+    // rotated[2][1]);
+    // renderblocks.renderStandardBlock(blockStateMachine.getBlock(), pos);
+    // }
+    //
     public static void renderGate(double x, double y, double z, GatePluggable gate, EnumFacing direction) {
         GL11.glPushMatrix();
         GL11.glColor3f(1, 1, 1);
@@ -559,7 +561,8 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
         if (translateCenter != 0) {
             GL11.glPushMatrix();
-            float xt = direction.offsetX * translateCenter, yt = direction.offsetY * translateCenter, zt = direction.offsetZ * translateCenter;
+            float xt = direction.getFrontOffsetX() * translateCenter, yt = direction.getFrontOffsetY() * translateCenter, zt = direction
+                    .getFrontOffsetZ() * translateCenter;
 
             GL11.glTranslatef(xt, yt, zt);
         }
@@ -630,7 +633,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
     }
 
     private void renderPower(Pipe<PipeTransportPower> pipe, double x, double y, double z) {
-        initializeDisplayPowerList(pipe.container.getWorldObj());
+        initializeDisplayPowerList(pipe.container.getWorld());
 
         PipeTransportPower pow = pipe.transport;
 
@@ -721,7 +724,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
                 continue;
             }
 
-            DisplayFluidList d = getDisplayFluidLists(fluidRenderData.fluidID, pipe.container.getWorldObj());
+            DisplayFluidList d = getDisplayFluidLists(fluidRenderData.fluidID, pipe.container.getWorld());
 
             if (d == null) {
                 continue;
@@ -764,7 +767,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
         FluidRenderData fluidRenderData = trans.renderCache;
 
         if (fluidRenderData.amount[6] > 0) {
-            DisplayFluidList d = getDisplayFluidLists(fluidRenderData.fluidID, pipe.container.getWorldObj());
+            DisplayFluidList d = getDisplayFluidLists(fluidRenderData.fluidID, pipe.container.getWorld());
 
             if (d != null) {
                 int stage = (int) ((float) fluidRenderData.amount[6] / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
@@ -790,7 +793,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
     private void renderSolids(Pipe<PipeTransportItems> pipe, double x, double y, double z, float f) {
         GL11.glPushMatrix();
 
-        float light = pipe.container.getWorldObj().getLightBrightness(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+        float light = pipe.container.getWorld().getLightBrightness(pipe.container.getPos());
 
         int count = 0;
         for (TravelingItem item : pipe.transport.items) {
@@ -798,11 +801,11 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
                 break;
             }
 
-            Vec3 motion = new Vec3(0, 0, 0, item.toCenter ? item.input : item.output);
-            motion.moveForwards(item.getSpeed() * f);
+            EnumFacing face = item.toCenter ? item.input : item.output;
+            Vec3 motion = Utils.convert(face, item.getSpeed() * f);
 
-            doRenderItem(item, x + item.xCoord - pipe.container.xCoord + motion.x, y + item.yCoord - pipe.container.yCoord + motion.y, z + item.zCoord
-                - pipe.container.zCoord + motion.z, light, item.color);
+            doRenderItem(item, x + item.pos.xCoord - pipe.container.x() + motion.xCoord, y + item.pos.yCoord - pipe.container.y() + motion.yCoord, z
+                + item.pos.zCoord - pipe.container.z() + motion.zCoord, light, item.color);
             count++;
         }
 
@@ -834,7 +837,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
                 GL11.glScalef(renderScale * itemScale, renderScale * itemScale, renderScale * itemScale);
                 itemScale = 1 / itemScale;
 
-                if (!render.renderItemInPipe(itemstack, pos)) {
+                if (!render.renderItemInPipe(itemstack, x, y, z)) {
                     dummyEntityItem.setEntityItemStack(itemstack);
                     customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
                 }

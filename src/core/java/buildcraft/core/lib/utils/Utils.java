@@ -366,7 +366,11 @@ public final class Utils {
     }
 
     public static Vec3 convert(EnumFacing face) {
+        if (face == null) {
+            return new Vec3(0, 0, 0);
+        }
         return new Vec3(face.getFrontOffsetX(), face.getFrontOffsetY(), face.getFrontOffsetZ());
+
     }
 
     public static Vec3 convert(EnumFacing face, double size) {

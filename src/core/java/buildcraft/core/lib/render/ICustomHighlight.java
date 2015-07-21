@@ -14,4 +14,6 @@ public interface ICustomHighlight {
     AxisAlignedBB[] getBoxes(IBlockAccess wrd, BlockPos pos, IBlockState state);
 
     double getExpansion();
+
+    double getBreathingCoefficent();
 }

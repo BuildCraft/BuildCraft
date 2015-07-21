@@ -44,7 +44,10 @@ public class PacketPipeTransportTraveler extends Packet {
 
         data.writeShort(item.id);
 
-        byte flags = (byte) ((item.output.ordinal() & 7) | ((item.input.ordinal() & 7) << 3) | (forceStackRefresh ? 64 : 0));
+        int out = item.output == null ? 6 : item.output.ordinal();
+        int in = item.input == null ? 6 : item.input.ordinal();
+
+        byte flags = (byte) ((out & 7) | ((in & 7) << 3) | (forceStackRefresh ? 64 : 0));
         data.writeByte(flags);
 
         data.writeByte(item.color != null ? item.color.ordinal() : -1);
@@ -62,8 +65,19 @@ public class PacketPipeTransportTraveler extends Packet {
 
         int flags = data.readUnsignedByte();
 
-        this.input = EnumFacing.getFront((flags >> 3) & 7);
-        this.output = EnumFacing.getFront(flags & 7);
+        int in = (flags >> 3) & 7;
+        if (in == 6) {
+            this.input = null;
+        } else {
+            this.input = EnumFacing.getFront(in);
+        }
+
+        int out = flags & 7;
+        if (out == 6) {
+            this.output = null;
+        } else {
+            this.output = EnumFacing.getFront(out);
+        }
 
         byte c = data.readByte();
         if (c != -1) {

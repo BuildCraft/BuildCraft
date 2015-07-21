@@ -5,20 +5,20 @@
 package buildcraft.transport;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import com.google.common.collect.ForwardingSet;
+import com.google.common.collect.Sets;
 
 public class TravelerSet extends ForwardingSet<TravelingItem> {
 
     public boolean iterating;
 
-    private final Set<TravelingItem> items = new HashSet<TravelingItem>();
-    private final Set<TravelingItem> toLoad = new HashSet<TravelingItem>();
-    private final Set<TravelingItem> toAdd = new HashSet<TravelingItem>();
-    private final Set<TravelingItem> toRemove = new HashSet<TravelingItem>();
+    private final Set<TravelingItem> items = Sets.newConcurrentHashSet();
+    private final Set<TravelingItem> toLoad = Sets.newConcurrentHashSet();
+    private final Set<TravelingItem> toAdd = Sets.newConcurrentHashSet();
+    private final Set<TravelingItem> toRemove = Sets.newConcurrentHashSet();
     private int delay = 0;
     private final PipeTransportItems transport;
 
