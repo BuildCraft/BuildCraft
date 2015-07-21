@@ -24,6 +24,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.property.ExtendedBlockState;
 
 import buildcraft.api.core.BCLog;
 import buildcraft.api.enums.EnumBlueprintType;
@@ -32,6 +33,7 @@ import buildcraft.api.enums.EnumEnergyStage;
 import buildcraft.api.enums.EnumEngineType;
 import buildcraft.api.enums.EnumFillerPattern;
 import buildcraft.api.enums.EnumSpring;
+import buildcraft.api.properties.BuildCraftExtendedProperty;
 import buildcraft.api.properties.BuildCraftProperties;
 import buildcraft.api.properties.BuildCraftProperty;
 import buildcraft.core.BCCreativeTab;
@@ -66,6 +68,10 @@ public abstract class BlockBuildCraftBase extends Block {
 
     protected final BuildCraftProperty<?>[] properties;
     protected final BuildCraftProperty<?>[] nonMetaProperties;
+    protected final BuildCraftExtendedProperty<?>[] extendedProperties;
+
+    protected final boolean hasExtendedProperties;
+
     protected final List<BuildCraftProperty<?>> propertyList;
     protected final Map<Integer, IBlockState> intToState = Maps.newHashMap();
     protected final Map<IBlockState, Integer> stateToInt = Maps.newHashMap();
@@ -77,26 +83,37 @@ public abstract class BlockBuildCraftBase extends Block {
     public final boolean allRotatable;
 
     protected BlockBuildCraftBase(Material material) {
-        this(material, BCCreativeTab.get("main"), new BuildCraftProperty<?>[0]);
+        this(material, BCCreativeTab.get("main"), false, new BuildCraftProperty<?>[0]);
     }
 
     protected BlockBuildCraftBase(Material material, BCCreativeTab creativeTab) {
-        this(material, creativeTab, new BuildCraftProperty<?>[0]);
+        this(material, creativeTab, false, new BuildCraftProperty<?>[0]);
     }
 
     protected BlockBuildCraftBase(Material material, BuildCraftProperty<?>... properties) {
-        this(material, BCCreativeTab.get("main"), properties);
+        this(material, BCCreativeTab.get("main"), false, properties);
     }
 
     protected BlockBuildCraftBase(Material material, BCCreativeTab bcCreativeTab, BuildCraftProperty<?>... properties) {
+        this(material, bcCreativeTab, false, properties);
+    }
+
+    protected BlockBuildCraftBase(Material material, BCCreativeTab bcCreativeTab, boolean hasExtendedProps, BuildCraftProperty<?>... properties) {
         super(material);
         setCreativeTab(bcCreativeTab);
         setHardness(5F);
         List<BuildCraftProperty<?>> metas = Lists.newArrayList();
         List<BuildCraftProperty<?>> nonMetas = Lists.newArrayList();
+        List<BuildCraftExtendedProperty<?>> infinites = Lists.newArrayList();
 
         int total = 1;
         for (BuildCraftProperty<?> prop : properties) {
+            if (prop instanceof BuildCraftExtendedProperty<?>) {
+                infinites.add((BuildCraftExtendedProperty<?>) prop);
+                hasExtendedProps = true;
+                continue;
+            }
+
             total *= prop.getAllowedValues().size();
 
             if (total > 16) {
@@ -108,6 +125,7 @@ public abstract class BlockBuildCraftBase extends Block {
 
         this.properties = metas.toArray(new BuildCraftProperty<?>[0]);
         this.nonMetaProperties = nonMetas.toArray(new BuildCraftProperty<?>[0]);
+        this.extendedProperties = infinites.toArray(new BuildCraftExtendedProperty<?>[0]);
 
         this.myBlockState = createBlockState();
 
@@ -119,6 +137,10 @@ public abstract class BlockBuildCraftBase extends Block {
         boolean canSixRotate = false;
 
         for (BuildCraftProperty<?> prop : properties) {
+            if (prop instanceof BuildCraftExtendedProperty<?>){
+                continue;
+            }
+            
             if (prop == FACING_PROP) {
                 canRotate = true;
             }
@@ -127,17 +149,17 @@ public abstract class BlockBuildCraftBase extends Block {
                 canSixRotate = true;
             }
 
-            Collection<? extends Comparable<?>> allowedValues = prop.getAllowedValues();
-            defaultState = defaultState.withProperty(prop, allowedValues.iterator().next());
+            Collection<?> allowedValues = prop.getAllowedValues();
+            defaultState = defaultState.withProperty(prop, (Comparable<?>) allowedValues.iterator().next());
 
             Map<IBlockState, Integer> newValidStates = Maps.newHashMap();
             int mul = metas.contains(prop) ? allowedValues.size() : 1;
             for (Entry<IBlockState, Integer> entry : tempValidStates.entrySet()) {
                 int index = 0;
                 Collections.sort((List) allowedValues);
-                for (Comparable<?> comp : allowedValues) {
+                for (Object comp : allowedValues) {
                     int pos = entry.getValue() * mul + index;
-                    newValidStates.put(entry.getKey().withProperty(prop, comp), pos);
+                    newValidStates.put(entry.getKey().withProperty(prop, (Comparable<?>) comp), pos);
                     if (mul > 1) {
                         index++;
                     }
@@ -148,6 +170,7 @@ public abstract class BlockBuildCraftBase extends Block {
 
         horizontallyRotatable = canRotate;
         allRotatable = canSixRotate;
+        this.hasExtendedProperties = hasExtendedProps;
 
         for (Entry<IBlockState, Integer> entry : tempValidStates.entrySet()) {
             int i = entry.getValue();
@@ -213,6 +236,9 @@ public abstract class BlockBuildCraftBase extends Block {
         }
         for (int i = 0; i < nonMetaProperties.length; i++) {
             props[properties.length + i] = nonMetaProperties[i];
+        }
+        if (hasExtendedProperties) {
+            return new ExtendedBlockState(this, props, extendedProperties);
         }
         return new BlockState(this, props);
     }

@@ -389,7 +389,7 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
             if (resyncGateExpansions) {
                 syncGateExpansions();
             }
-
+            
             return;
         }
 

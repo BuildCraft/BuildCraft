@@ -42,9 +42,13 @@ public abstract class BlockBuildCraft extends BlockBuildCraftBase implements ITi
     protected BlockBuildCraft(Material material, BuildCraftProperty<?>... properties) {
         this(material, BCCreativeTab.get("main"), properties);
     }
-
+    
     protected BlockBuildCraft(Material material, BCCreativeTab bcCreativeTab, BuildCraftProperty<?>... properties) {
-        super(material, bcCreativeTab, properties);
+        this(material, bcCreativeTab, false, properties);
+    }
+
+    protected BlockBuildCraft(Material material, BCCreativeTab bcCreativeTab, boolean hasExtended, BuildCraftProperty<?>... properties) {
+        super(material, bcCreativeTab, hasExtended, properties);
         hasPowerLed = propertyList.contains(LED_POWER);
     }
 

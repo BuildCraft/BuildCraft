@@ -2,20 +2,20 @@ package buildcraft.api.properties;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.MathHelper;
-import net.minecraftforge.common.property.IUnlistedProperty;
 
 /** This class exists primarily to allow for a property to be used as either a normal IProperty, or an
  * IUnlistedProperty. It also exists to give IProperty's generic types. */
-public class BuildCraftProperty<T extends Comparable<T>> implements IProperty, IUnlistedProperty<T> {
+public class BuildCraftProperty<T> implements IProperty {
     private final String name;
     private final Class<T> clazz;
-    private final List<T> values;
+    protected final List<T> values;
 
     public BuildCraftProperty(String name, Class<T> clazz, T[] values) {
         this(name, clazz, Arrays.asList(values));
@@ -23,8 +23,15 @@ public class BuildCraftProperty<T extends Comparable<T>> implements IProperty, I
 
     public BuildCraftProperty(String name, Class<T> clazz, List<T> values) {
         this.name = name;
-        this.values = values;
         this.clazz = clazz;
+        this.values = values;
+    }
+
+    /** Used for BuildCraftInifiniteProperty */
+    protected BuildCraftProperty(String name, Class<T> clazz) {
+        this.name = name;
+        this.clazz = clazz;
+        this.values = Collections.emptyList();
     }
 
     public static <E extends Enum<E>> BuildCraftProperty<E> create(String name, Class<E> enumeration) {
@@ -81,7 +88,7 @@ public class BuildCraftProperty<T extends Comparable<T>> implements IProperty, I
     }
 
     @Override
-    public Collection<? extends Comparable<T>> getAllowedValues() {
+    public Collection<T> getAllowedValues() {
         return values;
     }
 
@@ -95,22 +102,7 @@ public class BuildCraftProperty<T extends Comparable<T>> implements IProperty, I
         return valueName(value);
     }
 
-    @Override
-    public boolean isValid(T value) {
-        return values.contains(value);
-    }
-
-    @Override
-    public Class<T> getType() {
-        return clazz;
-    }
-
-    @Override
-    public String valueToString(T value) {
-        return valueName(value);
-    }
-
-    private String valueName(Object value) {
+    protected String valueName(Object value) {
         if (value == null) {
             return "null";
         } else if (value instanceof IStringSerializable) {
@@ -141,12 +133,7 @@ public class BuildCraftProperty<T extends Comparable<T>> implements IProperty, I
     }
 
     // Helper methods for arguments
-
     public IProperty asMetaProperty() {
-        return this;
-    }
-
-    public IUnlistedProperty<T> asUnlistedProperty() {
         return this;
     }
 }
