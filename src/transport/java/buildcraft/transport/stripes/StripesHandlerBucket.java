@@ -1,6 +1,7 @@
 package buildcraft.transport.stripes;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -41,11 +42,12 @@ public class StripesHandlerBucket implements IStripesHandler {
 
     @Override
     public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-        Block block = world.getBlock(pos);
+        IBlockState state = world.getBlockState(pos);
+        Block block = state.getBlock();
         if (block == Blocks.air) {
-            Block underblock = world.getBlock(x, y - 1, z);
+            IBlockState underblock = world.getBlockState(pos.down());
 
-            if (((ItemBucket) stack.getItem()).tryPlaceContainedLiquid(world, x, y - 1, z)) {
+            if (((ItemBucket) stack.getItem()).tryPlaceContainedLiquid(world, pos.down())) {
                 activator.sendItem(emptyBucket, direction.getOpposite());
                 stack.stackSize--;
                 if (stack.stackSize > 0) {
@@ -59,8 +61,8 @@ public class StripesHandlerBucket implements IStripesHandler {
                     return true;
                 }
 
-                FluidStack fluidStack = BlockUtils.drainBlock(underblock, world, x, y - 1, z, true);
-                ItemStack filledBucket = getFilledBucket(fluidStack, underblock);
+                FluidStack fluidStack = BlockUtils.drainBlock(underblock, world, pos.down(), true);
+                ItemStack filledBucket = getFilledBucket(fluidStack, underblock.getBlock());
 
                 if (fluidStack == null || filledBucket == null) {
                     activator.sendItem(stack, direction.getOpposite());

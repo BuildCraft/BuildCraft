@@ -23,8 +23,8 @@ public class StripesHandlerPlant implements IStripesHandler {
 
     @Override
     public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-        if (CropManager.canSustainPlant(world, stack, x, y - 1, z)) {
-            if (CropManager.plantCrop(world, player, stack, x, y - 1, z)) {
+        if (CropManager.canSustainPlant(world, stack, pos.down())) {
+            if (CropManager.plantCrop(world, player, stack, pos.down())) {
                 if (stack.stackSize > 0) {
                     activator.sendItem(stack, direction.getOpposite());
                 }

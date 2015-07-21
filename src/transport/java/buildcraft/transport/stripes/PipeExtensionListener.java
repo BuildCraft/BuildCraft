@@ -1,16 +1,17 @@
 package buildcraft.transport.stripes;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -18,6 +19,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import buildcraft.api.transport.IStripesActivator;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.BuildCraftTransport;
 import buildcraft.transport.PipeTransportItems;
@@ -29,7 +31,7 @@ import buildcraft.transport.utils.TransportUtils;
 public class PipeExtensionListener {
     private class PipeExtensionRequest {
         public ItemStack stack;
-        public int pos;
+        public BlockPos pos;
         public EnumFacing o;
         public IStripesActivator h;
     }
@@ -46,9 +48,7 @@ public class PipeExtensionListener {
         }
         PipeExtensionRequest r = new PipeExtensionRequest();
         r.stack = stack;
-        r.x = x;
-        r.y = y;
-        r.z = z;
+        r.pos = pos;
         r.o = o;
         r.h = h;
         requests.get(world).add(r);
@@ -60,54 +60,52 @@ public class PipeExtensionListener {
             HashSet<PipeExtensionRequest> rSet = requests.get(event.world);
             World w = event.world;
             for (PipeExtensionRequest r : rSet) {
-                Vec3 target = new Vec3(r.x, r.y, r.z);
-                target.orientation = r.o;
+                Vec3 target = Utils.convert(r.pos);
 
                 boolean retract = r.stack.getItem() == BuildCraftTransport.pipeItemsVoid;
-                ArrayList<ItemStack> removedPipeStacks = null;
+                List<ItemStack> removedPipeStacks = null;
 
                 if (retract) {
-                    target.moveBackwards(1.0D);
+                    target = target.add(Utils.convert(r.o, -1));
                 } else {
-                    target.moveForwards(1.0D);
-                    if (!w.isAirBlock((int) target.x, (int) target.y, (int) target.z)) {
+                    target = target.add(Utils.convert(r.o, 1));
+                    if (!w.isAirBlock(Utils.convertFloor(target))) {
                         r.h.sendItem(r.stack, r.o.getOpposite());
                         continue;
                     }
                 }
 
                 // Step 1: Copy over and remove existing pipe
-                Block oldBlock = w.getBlock(r.x, r.y, r.z);
-                int oldMeta = w.getBlockMetadata(r.x, r.y, r.z);
+                IBlockState oldState = w.getBlockState(r.pos);
                 NBTTagCompound nbt = new NBTTagCompound();
-                w.getTileEntity(r.x, r.y, r.z).writeToNBT(nbt);
-                w.setBlockToAir(r.x, r.y, r.z);
+                w.getTileEntity(r.pos).writeToNBT(nbt);
+                w.setBlockToAir(r.pos);
 
                 // Step 2: If retracting, remove previous pipe; if extending, add new pipe
+                BlockPos targetPos = Utils.convertFloor(target);
                 if (retract) {
-                    removedPipeStacks = w.getBlock((int) target.x, (int) target.y, (int) target.z).getDrops(w, (int) target.x, (int) target.y,
-                            (int) target.z, w.getBlockMetadata((int) target.x, (int) target.y, (int) target.z), 0);
+                    removedPipeStacks = w.getBlockState(targetPos).getBlock().getDrops(w, targetPos, w.getBlockState(targetPos), 0);
 
-                    w.setBlockToAir((int) target.x, (int) target.y, (int) target.z);
+                    w.setBlockToAir(targetPos);
                 } else {
-                    r.stack.getItem().onItemUse(r.stack, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) w, r.x, r.y, r.z).get(), w, r.x, r.y, r.z,
-                            1, 0, 0, 0);
+                    r.stack.getItem().onItemUse(r.stack, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) w, r.pos).get(), w, r.pos, EnumFacing.UP,
+                            0, 0, 0);
                 }
 
                 // Step 3: Place stripes pipe back
                 // - Correct NBT coordinates
-                nbt.setInteger("x", (int) target.x);
-                nbt.setInteger("y", (int) target.y);
-                nbt.setInteger("z", (int) target.z);
+                nbt.setInteger("x", MathHelper.floor_double(target.xCoord));
+                nbt.setInteger("y", MathHelper.floor_double(target.yCoord));
+                nbt.setInteger("z", MathHelper.floor_double(target.zCoord));
                 // - Create block and tile
                 TileGenericPipe pipeTile = (TileGenericPipe) TileEntity.createAndLoadEntity(nbt);
 
-                w.setBlock((int) target.x, (int) target.y, (int) target.z, oldBlock, oldMeta, 3);
-                w.setTileEntity((int) target.x, (int) target.y, (int) target.z, pipeTile);
+                w.setBlockState(targetPos, oldState, 3);
+                w.setTileEntity(targetPos, pipeTile);
 
                 pipeTile.setWorldObj(w);
                 pipeTile.validate();
-                pipeTile.updateEntity();
+                pipeTile.update();
 
                 // Step 4: Hope for the best, clean up.
                 PipeTransportItems items = (PipeTransportItems) pipeTile.pipe.transport;
@@ -125,8 +123,8 @@ public class PipeExtensionListener {
                 }
 
                 if (!retract) {
-                    TileGenericPipe newPipeTile = (TileGenericPipe) w.getTileEntity(r.x, r.y, r.z);
-                    newPipeTile.updateEntity();
+                    TileGenericPipe newPipeTile = (TileGenericPipe) w.getTileEntity(r.pos);
+                    newPipeTile.update();
                     pipeTile.scheduleNeighborChange();
                 }
             }
@@ -135,8 +133,9 @@ public class PipeExtensionListener {
     }
 
     private void sendItem(PipeTransportItems transport, ItemStack itemStack, EnumFacing direction) {
-        TravelingItem newItem = TravelingItem.make(transport.container.xCoord + 0.5, transport.container.yCoord + TransportUtils.getPipeFloorOf(
-                itemStack), transport.container.zCoord + 0.5, itemStack);
+        Vec3 pos = Utils.convert(transport.container.getPos());
+        pos = pos.addVector(0.5, TransportUtils.getPipeFloorOf(itemStack), 0.5);
+        TravelingItem newItem = TravelingItem.make(pos, itemStack);
         transport.injectItem(newItem, direction);
     }
 }

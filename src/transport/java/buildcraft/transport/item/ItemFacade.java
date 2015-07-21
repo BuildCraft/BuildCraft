@@ -169,6 +169,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         return "item.Facade";
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean debug) {
         for (FacadeState state : getFacadeStates(stack)) {
@@ -260,9 +261,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         }
         for (ItemStack stack : stacks) {
             try {
-                int i = stack.getItemDamage();
-
-                if (block.hasTileEntity()) {
+                if (block.hasTileEntity(block.getDefaultState())) {
                     continue;
                 }
 

@@ -10,6 +10,7 @@ import net.minecraft.world.World;
 
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.item.ItemPipeWire;
 
@@ -29,13 +30,12 @@ public class StripesHandlerPipeWires implements IStripesHandler {
         int pipesToTry = 8;
         int pipeWireColor = stack.getItemDamage();
 
-        Vec3 p = new Vec3(pos);
-        p.orientation = direction;
+        Vec3 p = Utils.convert(pos);
 
         while (pipesToTry > 0) {
-            p.moveBackwards(1.0);
+            p = p.add(Utils.convert(direction, -1));
 
-            TileEntity tile = world.getTileEntity((int) p.x, (int) p.y, (int) p.z);
+            TileEntity tile = world.getTileEntity(Utils.convertFloor(p));
             if (tile instanceof TileGenericPipe) {
                 TileGenericPipe pipeTile = (TileGenericPipe) tile;
 
@@ -45,7 +45,7 @@ public class StripesHandlerPipeWires implements IStripesHandler {
 
                     pipeTile.pipe.updateSignalState();
                     pipeTile.scheduleRenderUpdate();
-                    world.notifyBlocksOfNeighborChange(pipeTile.xCoord, pipeTile.yCoord, pipeTile.zCoord, pipeTile.getBlock());
+                    world.notifyNeighborsOfStateChange(pipeTile.getPos(), pipeTile.getBlock());
                     return true;
                 } else {
                     pipesToTry--;

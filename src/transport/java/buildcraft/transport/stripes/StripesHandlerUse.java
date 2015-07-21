@@ -8,13 +8,13 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
 import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.core.lib.utils.Utils;
 
 public class StripesHandlerUse implements IStripesHandler {
     public static final List<Item> items = new ArrayList<Item>();
@@ -31,11 +31,9 @@ public class StripesHandlerUse implements IStripesHandler {
 
     @Override
     public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-        Vec3 target = new Vec3(pos, direction);
-        target.moveForwards(1.0D);
+        Vec3 target = Utils.convert(pos).add(Utils.convert(direction));
 
-        if (BlockUtils.useItemOnBlock(world, player, stack, MathHelper.floor_double(target.x), MathHelper.floor_double(target.y), MathHelper
-                .floor_double(target.z), direction.getOpposite())) {
+        if (BlockUtils.useItemOnBlock(world, player, stack, Utils.convertFloor(target), direction.getOpposite())) {
             if (stack.stackSize > 0) {
                 activator.sendItem(stack, direction.getOpposite());
             }

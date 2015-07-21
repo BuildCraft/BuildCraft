@@ -14,6 +14,7 @@ import net.minecraft.world.World;
 
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
+import buildcraft.core.lib.utils.Utils;
 
 public class StripesHandlerPlaceBlock implements IStripesHandler {
 
@@ -29,13 +30,11 @@ public class StripesHandlerPlaceBlock implements IStripesHandler {
 
     @Override
     public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-        if (!world.isAirBlock(pos) && stack.tryPlaceItemIntoWorld(player, world, pos, 1, 0.0f, 0.0f, 0.0f)) {
+        if (!world.isAirBlock(pos) && stack.onItemUse(player, world, pos, EnumFacing.UP, 0.0f, 0.0f, 0.0f)) {
             return true;
         } else if (world.isAirBlock(pos)) {
-            Vec3 src = new Vec3(pos);
-            src.orientation = direction;
-            src.moveBackwards(1.0D);
-            if (stack.tryPlaceItemIntoWorld(player, world, (int) src.x, (int) src.y, (int) src.z, direction.ordinal(), 0.0f, 0.0f, 0.0f)) {
+            Vec3 src = Utils.convert(pos).add(Utils.convert(direction, -1));
+            if (stack.onItemUse(player, world, Utils.convertFloor(src), direction, 0.0f, 0.0f, 0.0f)) {
                 return true;
             }
         }

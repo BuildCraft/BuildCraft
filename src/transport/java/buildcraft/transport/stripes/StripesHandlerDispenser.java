@@ -1,8 +1,10 @@
 package buildcraft.transport.stripes;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.dispenser.IBehaviorDispenseItem;
 import net.minecraft.dispenser.IBlockSource;
@@ -17,51 +19,45 @@ import net.minecraft.world.World;
 
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
+import buildcraft.core.lib.utils.Utils;
 
 public class StripesHandlerDispenser implements IStripesHandler {
-    public static final List<Object> items = new ArrayList<Object>();
+    public static final List<Object> items = Lists.newArrayList();
 
     public class Source implements IBlockSource {
         private final World world;
-        private final int pos;
+        private final BlockPos pos;
         private final EnumFacing side;
 
         public Source(World world, BlockPos pos, EnumFacing side) {
             this.world = world;
-            this.x = x;
-            this.y = y;
-            this.z = z;
+            this.pos = pos;
             this.side = side;
         }
 
         @Override
         public double getX() {
-            return (double) x + 0.5D;
+            return (double) pos.getX() + 0.5D;
         }
 
         @Override
         public double getY() {
-            return (double) y + 0.5D;
+            return (double) pos.getY() + 0.5D;
         }
 
         @Override
         public double getZ() {
-            return (double) z + 0.5D;
+            return (double) pos.getZ() + 0.5D;
         }
 
         @Override
-        public int getXInt() {
-            return x;
+        public BlockPos getBlockPos() {
+            return pos;
         }
 
         @Override
-        public int getYInt() {
-            return y;
-        }
-
-        @Override
-        public int getZInt() {
-            return z;
+        public Block getBlock() {
+            return world.getBlockState(pos).getBlock();
         }
 
         @Override
@@ -91,7 +87,7 @@ public class StripesHandlerDispenser implements IStripesHandler {
             return true;
         }
 
-        Class c = stack.getItem().getClass();
+        Class<?> c = stack.getItem().getClass();
         while (c != Item.class) {
             if (items.contains(c)) {
                 return true;
@@ -103,10 +99,9 @@ public class StripesHandlerDispenser implements IStripesHandler {
 
     @Override
     public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-        Vec3 origin = new Vec3(pos, direction);
-        origin.moveBackwards(1.0D);
+        Vec3 origin = Utils.convert(pos).add(Utils.convert(direction, -1));
 
-        IBlockSource source = new Source(world, (int) origin.x, (int) origin.y, (int) origin.z, direction);
+        IBlockSource source = new Source(world, Utils.convertFloor(origin), direction);
         IBehaviorDispenseItem behaviour = (IBehaviorDispenseItem) BlockDispenser.dispenseBehaviorRegistry.getObject(stack.getItem());
         if (behaviour != null) {
             ItemStack output = behaviour.dispense(source, stack.copy());

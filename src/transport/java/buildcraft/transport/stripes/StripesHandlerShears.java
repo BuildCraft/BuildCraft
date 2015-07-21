@@ -3,6 +3,7 @@ package buildcraft.transport.stripes;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
@@ -30,12 +31,13 @@ public class StripesHandlerShears implements IStripesHandler {
 
     @Override
     public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-        Block block = world.getBlock(pos);
+        IBlockState state = world.getBlockState(pos);
+        Block block = state.getBlock();
 
         if (block instanceof IShearable) {
             IShearable shearableBlock = (IShearable) block;
             if (shearableBlock.isShearable(stack, world, pos)) {
-                world.playSoundEffect(pos, Block.soundTypeGrass.getBreakSound(), 1, 1);
+                world.playSoundEffect(pos.getX(), pos.getY(), pos.getZ(), Block.soundTypeGrass.getBreakSound(), 1, 1);
                 List<ItemStack> drops = shearableBlock.onSheared(stack, world, pos, EnchantmentHelper.getEnchantmentLevel(
                         Enchantment.fortune.effectId, stack));
                 world.setBlockToAir(pos);

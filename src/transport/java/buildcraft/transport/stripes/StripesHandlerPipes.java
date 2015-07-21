@@ -14,6 +14,7 @@ import net.minecraft.world.WorldServer;
 
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.api.transport.IStripesHandler;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.BuildCraftTransport;
 import buildcraft.transport.Pipe;
@@ -40,18 +41,17 @@ public class StripesHandlerPipes implements IStripesHandler {
             return false;
         }
 
-        Vec3 p = new Vec3(pos, direction);
-        p.moveBackwards(1.0D);
+        Vec3 p = Utils.convert(pos).add(Utils.convert(direction, -1));
 
         Pipe<?> pipe = BlockGenericPipe.createPipe(stack.getItem());
         if (pipe.transport instanceof PipeTransportItems) {
             // Checks done, request extension
-            BuildCraftTransport.pipeExtensionListener.requestPipeExtension(stack, world, (int) p.x, (int) p.y, (int) p.z, direction, activator);
+            BuildCraftTransport.pipeExtensionListener.requestPipeExtension(stack, world, Utils.convertFloor(p), direction, activator);
         } else {
             // Fluid/power pipe, place in front instead
 
-            stack.getItem().onItemUse(stack, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world, (int) p.x, (int) p.y, (int) p.z).get(), world,
-                    pos, 1, 0, 0, 0);
+            stack.getItem().onItemUse(stack, CoreProxy.proxy.getBuildCraftPlayer((WorldServer) world, Utils.convertFloor(p)).get(), world, Utils
+                    .convertFloor(p), EnumFacing.UP, 0, 0, 0);
         }
         return true;
     }

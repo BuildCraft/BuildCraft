@@ -28,7 +28,7 @@ public class StripesHandlerHoe implements IStripesHandler {
 
     @Override
     public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-        if (!world.isAirBlock(x, y - 1, z) && stack.tryPlaceItemIntoWorld(player, world, x, y - 1, z, 1, 0.0f, 0.0f, 0.0f)) {
+        if (!world.isAirBlock(pos.down()) && stack.onItemUse(player, world, pos.down(), EnumFacing.DOWN, 0.0f, 0.0f, 0.0f)) {
             if (stack.stackSize > 0) {
                 activator.sendItem(stack, direction.getOpposite());
             }

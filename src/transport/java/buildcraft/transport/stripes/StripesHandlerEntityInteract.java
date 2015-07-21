@@ -33,8 +33,7 @@ public class StripesHandlerEntityInteract implements IStripesHandler {
 
     @Override
     public boolean handle(World world, BlockPos pos, EnumFacing direction, ItemStack stack, EntityPlayer player, IStripesActivator activator) {
-
-        AxisAlignedBB box = new AxisAlignedBB(pos, x + 1, y + 1, z + 1);
+        AxisAlignedBB box = new AxisAlignedBB(pos, pos.add(1, 1, 1));
         List entities = world.getEntitiesWithinAABBExcludingEntity(null, box);
         if (entities.size() <= 0) {
             return false;
