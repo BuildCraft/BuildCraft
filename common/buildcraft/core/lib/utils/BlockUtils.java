@@ -302,6 +302,10 @@ public final class BlockUtils {
 		return done;
 	}
 
+	public static void onComparatorUpdate(World world, int x, int y, int z, Block block) {
+		world.func_147453_f(x, y, z, block);
+	}
+
 	public static TileEntityChest getOtherDoubleChest(TileEntity inv) {
 		if (inv instanceof TileEntityChest) {
 			TileEntityChest chest = (TileEntityChest) inv;

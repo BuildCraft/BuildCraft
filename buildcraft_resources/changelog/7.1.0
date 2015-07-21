@@ -20,19 +20,24 @@ Improvements:
   * Minor optimizations (asie, gamerForEA)
 * Builders:
   * New blueprint library GUI, now featuring a scrollbar! (asie)
+* Factory:
+  * Chutes now support the Comparator (asie)
+  * Less lag on Tank updating - new comparator update system (asie)
 * Robotics:
-  * Zone Planners now have a dynamic texture (asie)
-  * Add events for robot interaction and removal (asie)
   * Rewritten robots request system (hea3ven)
     * Changed the IRequestProvider api to be independent of robots.
     * Delivery robots can now carry more than an item at a time.
     * Builders and requesters now request more than one item at a time.
+  * Zone Planners now have a dynamic texture (asie)
+  * Requesters now support the Comparator (asie)
+  * Add events for robot interaction and removal (asie)
 * Transport:
+  * Filtered Buffers now support the Comparator (asie)
+  * Lenses do not require Iron Ingots anymore (asie)
   * New power beam display algorithm (asie)
   * Rewritten pipe wires - should now propagate more or less instantly. (asie)
-  * Fluid pipe capacity and extraction rate now scales with the base flow multiplier. (asie)
   * Debugger support for fluid pipes (asie)
-  * Lenses do not require Iron Ingots anymore (asie)
+  * Fluid pipe capacity and extraction rate now scales with the base flow multiplier. (asie)
 
 Bugs fixed:
 

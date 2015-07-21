@@ -15,9 +15,11 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -26,9 +28,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
+import buildcraft.api.core.IInvSlot;
 import buildcraft.api.events.BlockInteractionEvent;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.BCCreativeTab;
+import buildcraft.core.lib.inventory.InventoryIterator;
 import buildcraft.core.lib.utils.ResourceUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.lib.utils.XorShift128Random;
@@ -270,5 +274,33 @@ public abstract class BlockBuildCraft extends BlockContainer {
 			return -1;
 		}
 		return meta >= 2 && meta <= 5 ? meta : 3;
+	}
+
+	@Override
+	public boolean hasComparatorInputOverride() {
+		return this instanceof IComparatorInventory;
+	}
+
+	public int getComparatorInputOverride(World world, int x, int y, int z, int side) {
+		TileEntity tile = world.getTileEntity(x, y, z);
+		if (tile instanceof IInventory) {
+			int count = 0;
+			int countNonEmpty = 0;
+			float power = 0.0F;
+			for (IInvSlot slot : InventoryIterator.getIterable((IInventory) tile, ForgeDirection.getOrientation(side))) {
+				if (((IComparatorInventory) this).doesSlotCountComparator(tile, slot.getIndex(), slot.getStackInSlot())) {
+					count++;
+					if (slot.getStackInSlot() != null) {
+						countNonEmpty++;
+						power += (float) slot.getStackInSlot().stackSize / (float) Math.min(((IInventory) tile).getInventoryStackLimit(), slot.getStackInSlot().getMaxStackSize());
+					}
+				}
+			}
+
+			power /= count;
+			return MathHelper.floor_float(power * 14.0F) + (countNonEmpty > 0 ? 1 : 0);
+		}
+
+		return 0;
 	}
 }

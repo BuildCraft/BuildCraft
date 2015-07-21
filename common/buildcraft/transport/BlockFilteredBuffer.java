@@ -10,6 +10,7 @@ package buildcraft.transport;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
@@ -17,8 +18,9 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.transport.IItemPipe;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.block.BlockBuildCraft;
+import buildcraft.core.lib.block.IComparatorInventory;
 
-public class BlockFilteredBuffer extends BlockBuildCraft {
+public class BlockFilteredBuffer extends BlockBuildCraft implements IComparatorInventory {
 	public BlockFilteredBuffer() {
 		super(Material.iron);
 		setHardness(5F);
@@ -51,5 +53,10 @@ public class BlockFilteredBuffer extends BlockBuildCraft {
 		}
 
 		return true;
+	}
+
+	@Override
+	public boolean doesSlotCountComparator(TileEntity tile, int slot, ItemStack stack) {
+		return ((TileFilteredBuffer) tile).getFilters().getStackInSlot(slot) != null;
 	}
 }
