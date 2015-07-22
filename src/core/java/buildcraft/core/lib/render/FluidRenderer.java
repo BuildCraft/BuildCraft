@@ -4,7 +4,6 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.render;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -15,7 +14,7 @@ import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.world.World;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -25,8 +24,10 @@ import buildcraft.core.lib.EntityResizableCuboid;
 public final class FluidRenderer {
 
     public static final int DISPLAY_STAGES = 100;
-    private static Map<Fluid, int[]> flowingRenderCache = new HashMap<Fluid, int[]>();
-    private static Map<Fluid, int[]> stillRenderCache = new HashMap<Fluid, int[]>();
+    public static final Vec3 BLOCK_SIZE = new Vec3(0.98, 0.98, 0.98);
+
+    private static Map<Fluid, Map<Vec3, int[]>> flowingRenderCache = Maps.newHashMap();
+    private static Map<Fluid, Map<Vec3, int[]>> stillRenderCache = Maps.newHashMap();
 
     private static Map<Fluid, TextureAtlasSprite> stillTextureMap = Maps.newHashMap();
     private static Map<Fluid, TextureAtlasSprite> flowingTextureMap = Maps.newHashMap();
@@ -98,7 +99,12 @@ public final class FluidRenderer {
         RenderUtils.setGLColorFromInt(color);
     }
 
-    public static int[] getFluidDisplayLists(FluidStack fluidStack, World world, boolean flowing) {
+    /** @deprecated Use {@link #getFluidDisplayLists(FluidStack,boolean,double,double,double)} instead */
+    public static int[] getFluidDisplayLists(FluidStack fluidStack, boolean flowing) {
+        return getFluidDisplayLists(fluidStack, flowing, BLOCK_SIZE);
+    }
+
+    public static int[] getFluidDisplayLists(FluidStack fluidStack, boolean flowing, Vec3 size) {
         if (fluidStack == null) {
             return null;
         }
@@ -106,28 +112,35 @@ public final class FluidRenderer {
         if (fluid == null) {
             return null;
         }
-        Map<Fluid, int[]> cache = flowing ? flowingRenderCache : stillRenderCache;
-        int[] diplayLists = cache.get(fluid);
-        if (diplayLists != null) {
-            return diplayLists;
+        Map<Fluid, Map<Vec3, int[]>> cache = flowing ? flowingRenderCache : stillRenderCache;
+        Map<Vec3, int[]> displayLists = cache.get(fluid);
+        int[] displayList;
+        if (displayLists != null) {
+            displayList = displayLists.get(size);
+            if (displayList != null) {
+                return displayList;
+            }
+        } else {
+            displayLists = Maps.newHashMap();
+            cache.put(fluid, displayLists);
         }
 
-        diplayLists = new int[DISPLAY_STAGES];
+        displayList = new int[DISPLAY_STAGES];
 
-        cache.put(fluid, diplayLists);
+        cache.put(fluid, displayLists);
 
         GlStateManager.disableLighting();
         GlStateManager.disableBlend();
         GlStateManager.disableCull();
 
         for (int s = 0; s < DISPLAY_STAGES; ++s) {
-            diplayLists[s] = GLAllocation.generateDisplayLists(1);
-            GL11.glNewList(diplayLists[s], GL11.GL_COMPILE);
+            displayList[s] = GLAllocation.generateDisplayLists(1);
+            GL11.glNewList(displayList[s], GL11.GL_COMPILE);
 
             EntityResizableCuboid ent = new EntityResizableCuboid(null);
-            ent.iSize = 0.98;
-            ent.jSize = (Math.max(s, 1) / (float) DISPLAY_STAGES) * 0.98;
-            ent.kSize = 0.98;
+            ent.iSize = size.xCoord;
+            ent.jSize = (Math.max(s, 1) / (float) DISPLAY_STAGES) * size.yCoord;
+            ent.kSize = size.zCoord;
             ent.texture = getFluidTexture(fluidStack, flowing);
 
             GL11.glTranslated(0.01, 0.01, 0.01);
@@ -142,6 +155,8 @@ public final class FluidRenderer {
         GlStateManager.enableBlend();
         GlStateManager.enableCull();
 
-        return diplayLists;
+        displayLists.put(size, displayList);
+
+        return displayList;
     }
 }

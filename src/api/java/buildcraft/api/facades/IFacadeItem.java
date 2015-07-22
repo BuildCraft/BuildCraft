@@ -4,15 +4,13 @@
  * should be located as "LICENSE.API" in the BuildCraft source code distribution. */
 package buildcraft.api.facades;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 
 public interface IFacadeItem {
     FacadeType getFacadeType(ItemStack facade);
 
-    ItemStack getFacadeForBlock(Block block, int meta);
+    ItemStack getFacadeForBlock(IBlockState state);
 
-    Block[] getBlocksForFacade(ItemStack facade);
-
-    int[] getMetaValuesForFacade(ItemStack facade);
+    IBlockState[] getBlockStatesForFacade(ItemStack facade);
 }

@@ -1,8 +1,12 @@
 package buildcraft.api.transport.pluggable;
 
+import java.util.List;
+
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.util.EnumFacing;
+
+import buildcraft.transport.Pipe;
+
 public interface IPipePluggableRenderer {
-    // TODO: make this work... somehow
-    // void renderPluggable(RenderBlocks renderblocks, IPipe pipe, EnumFacing side,
-    // PipePluggable pipePluggable, ITextureStates blockStateMachine,
-    // int renderPass, BlockPos pos);
+    List<BakedQuad> renderPluggable(Pipe<?> pipe, PipePluggable pluggable, EnumFacing face);
 }

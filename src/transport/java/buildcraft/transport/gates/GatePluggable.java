@@ -1,7 +1,9 @@
 package buildcraft.transport.gates;
 
+import java.util.List;
 import java.util.Set;
 
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -20,6 +22,7 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.Gate;
+import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.render.PipeRendererTESR;
 
@@ -36,6 +39,11 @@ public class GatePluggable extends PipePluggable {
         @Override
         public void renderPluggable(IPipe pipe, EnumFacing side, PipePluggable pipePluggable, double x, double y, double z) {
             PipeRendererTESR.renderGate(x, y, z, (GatePluggable) pipePluggable, side);
+        }
+
+        @Override
+        public List<BakedQuad> renderPluggable(Pipe<?> pipe, PipePluggable pluggable, EnumFacing face) {
+            return null;
         }
 
         // @Override

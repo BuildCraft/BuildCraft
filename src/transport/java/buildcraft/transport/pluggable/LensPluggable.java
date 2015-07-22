@@ -1,5 +1,8 @@
 package buildcraft.transport.pluggable;
 
+import java.util.List;
+
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
@@ -11,6 +14,7 @@ import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.BuildCraftTransport;
+import buildcraft.transport.Pipe;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 
@@ -78,6 +82,11 @@ public class LensPluggable extends PipePluggable {
         //
         // ((FakeBlock) blockStateMachine).setColor(0xFFFFFF);
         // }
+
+        @Override
+        public List<BakedQuad> renderPluggable(Pipe<?> pipe, PipePluggable pluggable, EnumFacing face) {
+            return null;
+        }
     }
 
     public LensPluggable() {

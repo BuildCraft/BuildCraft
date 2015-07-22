@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformT
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraftforge.client.model.ItemLayerModel.BakedModel;
 import net.minecraftforge.client.model.TRSRTransformation;
 
@@ -66,7 +67,13 @@ public abstract class BuildCraftBakedModel extends BakedModel {
     public static int[][] getDoubleFrom(Vector3f p1, Vector3f p2, Vector3f p3, Vector3f p4, float[] uvs) {
         int[][] arr = new int[2][];
         arr[0] = getFrom(p1, p2, p3, p4, uvs);
-        arr[1] = getFrom(p4, p3, p2, p1, uvs);
+
+        float[] duvs = new float[4];
+        duvs[U_MIN] = uvs[U_MAX];
+        duvs[U_MAX] = uvs[U_MIN];
+        duvs[V_MIN] = uvs[V_MIN];
+        duvs[V_MAX] = uvs[V_MAX];
+        arr[1] = getFrom(p4, p3, p2, p1, duvs);
         return arr;
     }
 
@@ -82,6 +89,10 @@ public abstract class BuildCraftBakedModel extends BakedModel {
         int[] i3 = new int[] { asInt(p3.x), asInt(p3.y), asInt(p3.z), -1, asInt(uvs[U_MAX]), asInt(uvs[V_MAX]), 0 };
         int[] i4 = new int[] { asInt(p4.x), asInt(p4.y), asInt(p4.z), -1, asInt(uvs[U_MAX]), asInt(uvs[V_MIN]), 0 };
         return concat(i1, i2, i3, i4);
+    }
+
+    public static int[] getFrom(Vector3f[] array, float[] uvs) {
+        return getFrom(array[0], array[1], array[2], array[3], uvs);
     }
 
     private static int asInt(float f) {
@@ -104,5 +115,56 @@ public abstract class BuildCraftBakedModel extends BakedModel {
         for (int i = 0; i < lists.length; i++) {
             bakeQuad(quads, lists[i], sides[i]);
         }
+    }
+
+    public static Vector3f[] getPoints(Vector3f centerFace, Vector3f faceRadius) {
+        Vector3f[] array = new Vector3f[4];
+
+        array[0] = new Vector3f(centerFace);
+        array[1] = new Vector3f(centerFace);
+        array[2] = new Vector3f(centerFace);
+        array[3] = new Vector3f(centerFace);
+
+        array[0].add(addOrNegate(faceRadius, false, false));
+        array[1].add(addOrNegate(faceRadius, false, true));
+        array[2].add(addOrNegate(faceRadius, true, true));
+        array[3].add(addOrNegate(faceRadius, true, false));
+        return array;
+    }
+
+    public static Vector3f addOrNegate(Vector3f coord, boolean u, boolean v) {
+        boolean zisv = coord.x != 0 && coord.y == 0;
+        Vector3f neg = new Vector3f(coord.x * (u ? 1 : -1), coord.y * (v ? -1 : 1), coord.z * (zisv ? (v ? -1 : 1) : (u ? 1 : -1)));
+        return neg;
+    }
+
+    public static void bakeFace(List<BakedQuad> quads, EnumFacing face, Vector3f center, Vector3f radius, float[] uvs) {
+        Vector3f centerOfFace = new Vector3f(center);
+        Vector3f faceAdd = new Vector3f(face.getFrontOffsetX() * radius.x, face.getFrontOffsetY() * radius.y, face.getFrontOffsetZ() * radius.z);
+        centerOfFace.add(faceAdd);
+        Vector3f faceRadius = new Vector3f(radius);
+        if (face.getAxisDirection() == AxisDirection.POSITIVE) {
+            faceRadius.sub(faceAdd);
+        } else {
+            faceRadius.add(faceAdd);
+        }
+        Vector3f[] points = getPoints(centerOfFace, faceRadius);
+        int[] quadData = getFrom(points, uvs);
+        bakeQuad(quads, quadData, face);
+    }
+
+    public static void bakeDoubleFace(List<BakedQuad> quads, EnumFacing face, Vector3f center, Vector3f radius, float[] uvs) {
+        Vector3f centerOfFace = new Vector3f(center);
+        Vector3f faceAdd = new Vector3f(face.getFrontOffsetX() * radius.x, face.getFrontOffsetY() * radius.y, face.getFrontOffsetZ() * radius.z);
+        centerOfFace.add(faceAdd);
+        Vector3f faceRadius = new Vector3f(radius);
+        if (face.getAxisDirection() == AxisDirection.POSITIVE) {
+            faceRadius.sub(faceAdd);
+        } else {
+            faceRadius.add(faceAdd);
+        }
+        Vector3f[] points = getPoints(centerOfFace, faceRadius);
+        int[][] quadData = getDoubleFrom(points, uvs);
+        bakeQuads(quads, quadData, face.getOpposite(), face);
     }
 }

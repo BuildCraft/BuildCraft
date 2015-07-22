@@ -170,7 +170,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer {
             GL11.glScalef(0.5F, 1, 0.5F);
 
             if (liquid1 != null && liquid1.amount > 0) {
-                int[] list1 = FluidRenderer.getFluidDisplayLists(liquid1, tile.getWorld(), false);
+                int[] list1 = FluidRenderer.getFluidDisplayLists(liquid1, false);
 
                 if (list1 != null) {
                     bindTexture(TextureMap.locationBlocksTexture);
@@ -180,7 +180,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer {
             }
 
             if (liquid2 != null && liquid2.amount > 0) {
-                int[] list2 = FluidRenderer.getFluidDisplayLists(liquid2, tile.getWorld(), false);
+                int[] list2 = FluidRenderer.getFluidDisplayLists(liquid2, false);
 
                 if (list2 != null) {
                     GL11.glPushMatrix();
@@ -193,7 +193,7 @@ public class RenderRefinery extends TileEntitySpecialRenderer {
             }
 
             if (liquidResult != null && liquidResult.amount > 0) {
-                int[] list3 = FluidRenderer.getFluidDisplayLists(liquidResult, tile.getWorld(), false);
+                int[] list3 = FluidRenderer.getFluidDisplayLists(liquidResult, false);
 
                 if (list3 != null) {
                     GL11.glPushMatrix();

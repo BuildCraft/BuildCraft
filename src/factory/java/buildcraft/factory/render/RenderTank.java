@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.core.lib.render.FluidRenderer;
@@ -16,6 +17,7 @@ import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.factory.tile.TileTank;
 
 public class RenderTank extends TileEntitySpecialRenderer {
+    private static final Vec3 TANK_SIZE = new Vec3(0.75, 1, 0.75);
 
     @Override
     public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int minusOne) {
@@ -28,7 +30,7 @@ public class RenderTank extends TileEntitySpecialRenderer {
             return;
         }
 
-        int[] displayList = FluidRenderer.getFluidDisplayLists(liquid, tileentity.getWorld(), false);
+        int[] displayList = FluidRenderer.getFluidDisplayLists(liquid, false, TANK_SIZE);
         if (displayList == null) {
             return;
         }
@@ -43,9 +45,9 @@ public class RenderTank extends TileEntitySpecialRenderer {
         bindTexture(TextureMap.locationBlocksTexture);
         RenderUtils.setGLColorFromInt(color);
 
-        GL11.glTranslatef((float) x + 0.125F, (float) y + 0.5F, (float) z + 0.125F);
-        GL11.glScalef(0.75F, 0.999F, 0.75F);
-        GL11.glTranslatef(0, -0.5F, 0);
+        GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
+        GL11.glScalef(0.999F, 0.999F, 0.999F);
+        GL11.glTranslatef(-0.25F, -0.5F, -0.25F);
 
         GL11.glCallList(displayList[(int) ((float) liquid.amount / (float) (tank.tank.getCapacity()) * (FluidRenderer.DISPLAY_STAGES - 1))]);
 

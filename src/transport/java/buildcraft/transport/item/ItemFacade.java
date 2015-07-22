@@ -10,8 +10,10 @@ import java.util.List;
 import com.google.common.base.Strings;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -49,50 +51,47 @@ import buildcraft.transport.block.BlockGenericPipe;
 
 public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePluggableItem {
     public static class FacadeState {
-        public final Block block;
-        public final int metadata;
+        public final IBlockState state;
         public final boolean transparent;
         public final boolean hollow;
         public final PipeWire wire;
 
-        public FacadeState(Block block, int metadata, PipeWire wire) {
-            this.block = block;
-            this.metadata = metadata;
+        public FacadeState(IBlockState state, PipeWire wire) {
+            this.state = state;
             this.wire = wire;
             this.transparent = false;
             this.hollow = false;
         }
 
-        public FacadeState(Block block, int metadata, PipeWire wire, boolean hollow) {
-            this.block = block;
-            this.metadata = metadata;
+        public FacadeState(IBlockState state, PipeWire wire, boolean hollow) {
+            this.state = state;
             this.wire = wire;
             this.transparent = false;
             this.hollow = hollow;
         }
 
         public FacadeState(NBTTagCompound nbt) {
-            this.block = nbt.hasKey("block") ? (Block) Block.blockRegistry.getObject(nbt.getString("block")) : null;
-            this.metadata = nbt.getByte("metadata");
+            Block block = nbt.hasKey("block") ? (Block) Block.blockRegistry.getObject(nbt.getString("block")) : null;
+            int metadata = nbt.getByte("metadata");
+            state = block.getStateFromMeta(metadata);
             this.wire = nbt.hasKey("wire") ? PipeWire.fromOrdinal(nbt.getByte("wire")) : null;
             this.transparent = nbt.hasKey("transparent") && nbt.getBoolean("transparent");
             this.hollow = nbt.hasKey("hollow") && nbt.getBoolean("hollow");
         }
 
         private FacadeState(PipeWire wire) {
-            this.block = null;
-            this.metadata = 0;
+            state = Blocks.bedrock.getDefaultState();
             this.wire = wire;
             this.transparent = true;
             this.hollow = false;
         }
 
-        public static FacadeState create(Block block, int metadata) {
-            return create(block, metadata, null);
+        public static FacadeState create(IBlockState state) {
+            return create(state, null);
         }
 
-        public static FacadeState create(Block block, int metadata, PipeWire wire) {
-            return new FacadeState(block, metadata, wire);
+        public static FacadeState create(IBlockState state, PipeWire wire) {
+            return new FacadeState(state, wire);
         }
 
         public static FacadeState createTransparent(PipeWire wire) {
@@ -100,10 +99,10 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         }
 
         public void writeToNBT(NBTTagCompound nbt) {
-            if (block != null) {
-                nbt.setString("block", Utils.getNameForBlock(block));
+            if (state != null) {
+                nbt.setString("block", Utils.getNameForBlock(state.getBlock()));
+                nbt.setByte("metadata", (byte) state.getBlock().getMetaFromState(state));
             }
-            nbt.setByte("metadata", (byte) metadata);
             if (wire != null) {
                 nbt.setByte("wire", (byte) wire.ordinal());
             }
@@ -173,8 +172,9 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean debug) {
         for (FacadeState state : getFacadeStates(stack)) {
-            if (state != null && !state.transparent && state.block != null && Item.getItemFromBlock(state.block) != null) {
-                Item.getItemFromBlock(state.block).addInformation(new ItemStack(state.block, 1, state.metadata), player, list, debug);
+            if (state != null && !state.transparent && state.state != null && Item.getItemFromBlock(state.state.getBlock()) != null) {
+                Item.getItemFromBlock(state.state.getBlock()).addInformation(new ItemStack(state.state.getBlock(), 1, state.state.getBlock()
+                        .getMetaFromState(state.state)), player, list, debug);
             }
         }
         if (getFacadeType(stack) == FacadeType.Phased) {
@@ -194,16 +194,16 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     }
 
     public static String getFacadeStateDisplayName(FacadeState state) {
-        if (state.block == null) {
+        if (state.state == null) {
             return StringUtils.localize("item.FacadePhased.state_transparent");
         }
-        int meta = state.metadata;
-        if (state.block.getRenderType() == 31) {
-            meta &= 0x3;
-        } else if (state.block.getRenderType() == 39 && meta > 2) {
-            meta = 2;
-        }
-        String s = CoreProxy.proxy.getItemDisplayName(new ItemStack(state.block, 1, meta));
+        // if (state.state.getBlock().getRenderType() == 31) {
+        // TODO: Find out what render type is 31... and what this now means
+        // meta &= 0x3;
+        // } else if (state.block.getRenderType() == 39 && meta > 2) {
+        // meta = 2;
+        // }
+        String s = CoreProxy.proxy.getItemDisplayName(new ItemStack(state.state.getBlock(), 1, state.state.getBlock().getMetaFromState(state.state)));
         if (state.hollow) {
             s += " (" + StringUtils.localize("item.Facade.state_hollow") + ")";
         }
@@ -366,9 +366,9 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
         }
         if (block != null) {
             FacadeState[] states;
-            FacadeState mainState = FacadeState.create(block, metadata);
+            FacadeState mainState = FacadeState.create(block.getStateFromMeta(metadata));
             if (blockAlt != null && wire != null) {
-                FacadeState altState = FacadeState.create(blockAlt, metadataAlt, wire);
+                FacadeState altState = FacadeState.create(blockAlt.getStateFromMeta(metadataAlt), wire);
                 states = new FacadeState[] { mainState, altState };
             } else {
                 states = new FacadeState[] { mainState };
@@ -381,23 +381,13 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     }
 
     @Override
-    public Block[] getBlocksForFacade(ItemStack stack) {
+    public IBlockState[] getBlockStatesForFacade(ItemStack stack) {
         FacadeState[] states = getFacadeStates(stack);
-        Block[] blocks = new Block[states.length];
+        IBlockState[] blocks = new IBlockState[states.length];
         for (int i = 0; i < states.length; i++) {
-            blocks[i] = states[i].block;
+            blocks[i] = states[i].state;
         }
         return blocks;
-    }
-
-    @Override
-    public int[] getMetaValuesForFacade(ItemStack stack) {
-        FacadeState[] states = getFacadeStates(stack);
-        int[] meta = new int[states.length];
-        for (int i = 0; i < states.length; i++) {
-            meta[i] = states[i].metadata;
-        }
-        return meta;
     }
 
     // GETTERS FOR FACADE DATA
@@ -434,7 +424,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 
         String recipeId = "buildcraft:facade{" + Utils.getNameForBlock(block) + "#" + itemStack.getItemDamage() + "}";
 
-        ItemStack facade = getFacadeForBlock(block, itemStack.getItemDamage());
+        ItemStack facade = getFacadeForBlock(block.getStateFromMeta(itemStack.getItemDamage()));
 
         if (!allFacadeIDs.contains(recipeId)) {
             allFacadeIDs.add(recipeId);
@@ -444,7 +434,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
             facade6.stackSize = 6;
 
             FacadeState state = getFacadeStates(facade6)[0];
-            ItemStack facadeHollow = getFacade(new FacadeState(state.block, state.metadata, state.wire, true));
+            ItemStack facadeHollow = getFacade(new FacadeState(state.state, state.wire, true));
 
             allHollowFacades.add(facadeHollow);
 
@@ -490,7 +480,7 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
                 return null;
             }
 
-            Block block = ((Block[]) facade[0])[0];
+            IBlockState block = ((IBlockState[]) facade[0])[0];
             ItemStack originalFacade = (ItemStack) facade[1];
 
             if (block == null) {
@@ -519,38 +509,39 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
             }
 
             if (slotmatch != null && slotmatch != NO_MATCH) {
-                return new Object[] { getBlocksForFacade(slotmatch), slotmatch };
+                return new Object[] { getBlockStatesForFacade(slotmatch), slotmatch };
             }
 
             return null;
         }
 
-        private ItemStack getNextFacadeItemStack(Block block, ItemStack originalFacade) {
-            int blockMeta = getMetaValuesForFacade(originalFacade)[0];
-            int stackMeta = blockMeta;
+        private ItemStack getNextFacadeItemStack(IBlockState block, ItemStack originalFacade) {
+            // TODO (PASS 2): Find out what this did, and re-create it
+            // int blockMeta = getMetaValuesForFacade(originalFacade)[0];
+            // int stackMeta = blockMeta;
 
-            switch (block.getRenderType()) {
-                case 31:
-                    if ((blockMeta & 0xC) == 0) {
-                        // Meta | 4 = true
-                        stackMeta = (blockMeta & 0x3) | 4;
-                    } else if ((blockMeta & 0x8) == 0) {
-                        // Meta | 8 = true
-                        stackMeta = (blockMeta & 0x3) | 8;
-                    } else if ((blockMeta & 0x4) == 0) {
-                        stackMeta = blockMeta & 0x3;
-                    }
-                    break;
-                case 39:
-                    if (blockMeta >= 2 && blockMeta < 4) {
-                        stackMeta = blockMeta + 1;
-                    } else if (blockMeta == 4) {
-                        stackMeta = 2;
-                    }
-                    break;
-            }
+            // switch (block.getRenderType()) {
+            // case 31:
+            // if ((blockMeta & 0xC) == 0) {
+            // // Meta | 4 = true
+            // stackMeta = (blockMeta & 0x3) | 4;
+            // } else if ((blockMeta & 0x8) == 0) {
+            // // Meta | 8 = true
+            // stackMeta = (blockMeta & 0x3) | 8;
+            // } else if ((blockMeta & 0x4) == 0) {
+            // stackMeta = blockMeta & 0x3;
+            // }
+            // break;
+            // case 39:
+            // if (blockMeta >= 2 && blockMeta < 4) {
+            // stackMeta = blockMeta + 1;
+            // } else if (blockMeta == 4) {
+            // stackMeta = 2;
+            // }
+            // break;
+            // }
 
-            return getFacadeForBlock(block, stackMeta);
+            return getFacadeForBlock(block);
         }
 
         @Override
@@ -577,12 +568,12 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
     }
 
     @Override
-    public ItemStack getFacadeForBlock(Block block, int metadata) {
-        return getFacade(FacadeState.create(block, metadata));
+    public ItemStack getFacadeForBlock(IBlockState state) {
+        return getFacade(FacadeState.create(state));
     }
 
-    public static ItemStack getAdvancedFacade(PipeWire wire, Block block, int metadata, Block blockAlt, int metaDataAlt) {
-        return getFacade(FacadeState.create(block, metadata), FacadeState.create(blockAlt, metaDataAlt, wire));
+    public static ItemStack getAdvancedFacade(PipeWire wire, IBlockState state, IBlockState stateAlt) {
+        return getFacade(FacadeState.create(state), FacadeState.create(stateAlt, wire));
     }
 
     public static ItemStack getFacade(FacadeState... states) {

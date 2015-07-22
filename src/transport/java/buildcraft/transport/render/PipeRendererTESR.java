@@ -24,6 +24,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.enums.EnumColor;
 import buildcraft.api.gates.IGateExpansion;
@@ -34,6 +35,7 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.BuildCraftCore.RenderMode;
 import buildcraft.core.CoreConstants;
+import buildcraft.core.lib.render.FluidRenderer;
 import buildcraft.core.lib.render.RenderEntityBlock;
 import buildcraft.core.lib.render.RenderEntityBlock.RenderInfo;
 import buildcraft.core.lib.render.RenderUtils;
@@ -104,6 +106,8 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
         DisplayFluidList d = new DisplayFluidList();
         displayFluidLists.addKey(liquidId, d);
+
+//        int[] displayLists = FluidRenderer.getFluidDisplayLists(new FluidStack(FluidRegistry.getFluid(liquidId), 1), false, 0.98, 0.98, 0.98);
 
         RenderInfo block = new RenderInfo();
 
@@ -260,6 +264,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int argumentthatisalwaysminusone) {
         if (BuildCraftCore.render == RenderMode.NoDynamic) {

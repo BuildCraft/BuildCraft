@@ -1,11 +1,9 @@
 package buildcraft.api.transport.pluggable;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 
 public interface IFacadePluggable {
-    Block getCurrentBlock();
-
-    int getCurrentMetadata();
+    IBlockState getCurrentState();
 
     boolean isTransparent();
 

@@ -1,6 +1,16 @@
 package buildcraft.transport;
 
+import java.util.List;
+
+import javax.vecmath.Vector3f;
+
+import com.google.common.collect.Lists;
+
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
@@ -11,36 +21,51 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
+import buildcraft.core.lib.render.BuildCraftBakedModel;
 import buildcraft.core.lib.utils.MatrixTranformations;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.item.ItemFacade;
 
 import io.netty.buffer.ByteBuf;
 
 public class FacadePluggable extends PipePluggable implements IFacadePluggable {
-    public static final class FacadePluggableRenderer implements IPipePluggableRenderer {
+    public static final class FacadePluggableRenderer extends BuildCraftBakedModel implements IPipePluggableRenderer {
         public static final IPipePluggableRenderer INSTANCE = new FacadePluggableRenderer();
 
         private FacadePluggableRenderer() {
-
+            super(null, null, null);// We only extend BuildCraftBakedModel to get the model functions
         }
 
-        // TODO (PASS 0): Add a way to render IPipePluggableRenderer
+        @Override
+        public List<BakedQuad> renderPluggable(Pipe<?> pipe, PipePluggable pluggable, EnumFacing face) {
+            List<BakedQuad> quads = Lists.newArrayList();
+            IFacadePluggable facade = (IFacadePluggable) pluggable;
 
-        // @Override
-        // public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, EnumFacing side, PipePluggable
-        // pipePluggable,
-        // ITextureStates blockStateMachine, int renderPass, BlockPos pos) {
-        // FacadeRenderHelper.pipeFacadeRenderer(renderblocks, blockStateMachine, pipe.getTile(), pos, side,
-        // (IFacadePluggable) pipePluggable);
-        // }
+            // Use the particle texture for the block. Not ideal, but we have NO way of getting the actual
+            // texture of the block without hackery...
+            TextureAtlasSprite sprite = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(facade
+                    .getCurrentState());
+
+            float[] uvs = new float[4];
+            uvs[U_MIN] = sprite.getMinU();
+            uvs[U_MAX] = sprite.getMaxU();
+            uvs[V_MIN] = sprite.getMinV();
+            uvs[V_MAX] = sprite.getMaxV();
+
+            Vector3f outer = new Vector3f(0.5f, 0.5f, 0.5f);
+            Vector3f inner = Utils.convertFloat(Utils.convert(face, 1 / 16d).addVector(0.5, 0.5, 0.5));
+
+            bakeFace(quads, face, outer, new Vector3f(0.5f, 0.5f, 0.5f), uvs);
+            bakeFace(quads, face, inner, new Vector3f(0.5f, 0.5f, 0.5f), uvs);
+            return quads;
+        }
     }
 
     public ItemFacade.FacadeState[] states;
     private ItemFacade.FacadeState activeState;
 
     // Client sync
-    private Block block;
-    private int meta;
+    private IBlockState state;
     private boolean transparent, renderAsHollow;
 
     public FacadePluggable(ItemFacade.FacadeState[] states) {
@@ -53,7 +78,7 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
     @Override
     public boolean requiresRenderUpdate(PipePluggable o) {
         FacadePluggable other = (FacadePluggable) o;
-        return other.block != block || other.meta != meta || other.transparent != transparent || other.renderAsHollow != renderAsHollow;
+        return other.state != state || other.transparent != transparent || other.renderAsHollow != renderAsHollow;
     }
 
     @Override
@@ -75,7 +100,7 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
         if (states != null) {
             return new ItemStack[] { ItemFacade.getFacade(states) };
         } else {
-            return new ItemStack[] { ItemFacade.getFacade(new ItemFacade.FacadeState(getCurrentBlock(), getCurrentMetadata(), null, isHollow())) };
+            return new ItemStack[] { ItemFacade.getFacade(new ItemFacade.FacadeState(getCurrentState(), null, isHollow())) };
         }
     }
 
@@ -85,15 +110,9 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
     }
 
     @Override
-    public Block getCurrentBlock() {
+    public IBlockState getCurrentState() {
         prepareStates();
-        return activeState == null ? block : activeState.block;
-    }
-
-    @Override
-    public int getCurrentMetadata() {
-        prepareStates();
-        return activeState == null ? meta : activeState.metadata;
+        return activeState == null ? state : activeState.state;
     }
 
     @Override
@@ -138,19 +157,20 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
     public void writeData(ByteBuf data) {
         prepareStates();
 
-        if (activeState == null || activeState.block == null) {
+        if (activeState == null || activeState.state == null) {
             data.writeShort(0);
         } else {
-            data.writeShort(Block.getIdFromBlock(activeState.block));
+            data.writeShort(Block.getIdFromBlock(activeState.state.getBlock()));
         }
 
         data.writeByte((activeState != null && activeState.transparent ? 128 : 0) | (activeState != null && activeState.hollow ? 64 : 0)
-            | (activeState == null ? 0 : activeState.metadata));
+            | (activeState == null ? 0 : activeState.state.getBlock().getMetaFromState(activeState.state)));
     }
 
     @Override
     public void readData(ByteBuf data) {
         int blockId = data.readUnsignedShort();
+        Block block;
         if (blockId > 0) {
             block = Block.getBlockById(blockId);
         } else {
@@ -159,7 +179,8 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
 
         int flags = data.readUnsignedByte();
 
-        meta = flags & 0x0F;
+        int meta = flags & 0x0F;
+        state = block.getStateFromMeta(meta);
         transparent = (flags & 0x80) > 0;
         renderAsHollow = (flags & 0x40) > 0;
     }

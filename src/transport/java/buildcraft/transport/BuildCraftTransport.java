@@ -395,7 +395,7 @@ public class BuildCraftTransport extends BuildCraftMod {
         new BptItemPipeFilters(pipeItemsDiamond);
 
         BCCreativeTab.get("pipes").setIcon(new ItemStack(BuildCraftTransport.pipeItemsDiamond, 1));
-        BCCreativeTab.get("facades").setIcon(facadeItem.getFacadeForBlock(Blocks.brick_block, 0));
+        BCCreativeTab.get("facades").setIcon(facadeItem.getFacadeForBlock(Blocks.brick_block.getDefaultState()));
         if (Loader.isModLoaded("BuildCraft|Silicon")) {
             BCCreativeTab.get("gates").setIcon(ItemGate.makeGateItem(GateMaterial.DIAMOND, GateLogic.AND));
         }
@@ -455,9 +455,8 @@ public class BuildCraftTransport extends BuildCraftMod {
                 PrintWriter writer = new PrintWriter("FacadeDebug.txt", "UTF-8");
                 writer.println("*** REGISTERED FACADES ***");
                 for (ItemStack stack : ItemFacade.allFacades) {
-                    if (facadeItem.getBlocksForFacade(stack).length > 0) {
-                        writer.println(Utils.getNameForBlock(facadeItem.getBlocksForFacade(stack)[0]) + ":" + facadeItem.getMetaValuesForFacade(
-                                stack)[0]);
+                    if (facadeItem.getBlockStatesForFacade(stack).length > 0) {
+                        writer.println(facadeItem.getBlockStatesForFacade(stack)[0]);
                     }
                 }
                 writer.close();

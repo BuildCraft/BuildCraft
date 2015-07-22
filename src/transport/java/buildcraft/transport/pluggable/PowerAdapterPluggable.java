@@ -1,5 +1,8 @@
 package buildcraft.transport.pluggable;
 
+import java.util.List;
+
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
@@ -12,6 +15,7 @@ import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.BuildCraftTransport;
+import buildcraft.transport.Pipe;
 
 import io.netty.buffer.ByteBuf;
 
@@ -20,6 +24,12 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
 
     public class PowerAdapterPluggableRenderer implements IPipePluggableRenderer {
         private float zFightOffset = 1 / 4096.0F;
+
+        @Override
+        public List<BakedQuad> renderPluggable(Pipe<?> pipe, PipePluggable pluggable, EnumFacing face) {
+            // TODO Auto-generated method stub
+            return null;
+        }
 
         // TODO (PASS 0): Fix this!
         // @Override

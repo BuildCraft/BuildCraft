@@ -19,6 +19,8 @@ import net.minecraft.util.Vec3;
 import net.minecraftforge.client.model.ISmartBlockModel;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
+import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
+import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.render.BuildCraftBakedModel;
 import buildcraft.core.lib.utils.Utils;
@@ -130,16 +132,14 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
 
                         if (connect == EnumFacing.NORTH) {
                             vertical = face.getAxis() == Axis.Y;
-                            positive = face.getAxisDirection() == AxisDirection.NEGATIVE;
+                            positive = face.getAxis() == Axis.X;
                         } else if (connect == EnumFacing.SOUTH) {
                             vertical = face.getAxis() == Axis.Y;
-                            positive = face.getAxisDirection() == AxisDirection.POSITIVE;
+                            positive = face.getAxis() != Axis.X;
                         } else if (connect == EnumFacing.EAST) {
-                            vertical = face.getAxis() != Axis.Y;
-                            positive = face.getAxisDirection() == AxisDirection.POSITIVE;
+                            positive = false;
                         } else if (connect == EnumFacing.WEST) {
-                            vertical = face.getAxis() != Axis.Y;
-                            positive = face.getAxisDirection() == AxisDirection.NEGATIVE;
+                            positive = true;
                         }
 
                         if (vertical) {
@@ -180,44 +180,24 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
             }
         }
 
+        // Wires
+
+        // Pluggables
+        for (EnumFacing face : EnumFacing.VALUES) {
+            PipePluggable plug = pluggable.getPluggables()[face.ordinal()];
+            if (plug != null) {
+                IPipePluggableRenderer plugRender = plug.getRenderer();
+                if (plugRender != null) {
+                    List<BakedQuad> list = plugRender.renderPluggable(pipe, plug, face);
+                    if (list != null) {
+                        quads.addAll(list);
+                    }
+                }
+            }
+        }
+
         TextureAtlasSprite particle = pipe.getIconProvider().getIcon(pipe.getIconIndex(null));
 
         return new PipeBlockModel(ImmutableList.copyOf(quads), particle, DefaultVertexFormats.BLOCK);
-    }
-
-    public static Vector3f[] getPoints(Vector3f centerFace, Vector3f faceRadius) {
-        Vector3f[] array = new Vector3f[4];
-
-        array[0] = new Vector3f(centerFace);
-        array[1] = new Vector3f(centerFace);
-        array[2] = new Vector3f(centerFace);
-        array[3] = new Vector3f(centerFace);
-
-        array[0].add(addOrNegate(faceRadius, false, false));
-        array[1].add(addOrNegate(faceRadius, false, true));
-        array[2].add(addOrNegate(faceRadius, true, true));
-        array[3].add(addOrNegate(faceRadius, true, false));
-        return array;
-    }
-
-    private static Vector3f addOrNegate(Vector3f coord, boolean u, boolean v) {
-        boolean zisv = coord.x != 0 && coord.y == 0;
-        Vector3f neg = new Vector3f(coord.x * (u ? 1 : -1), coord.y * (v ? -1 : 1), coord.z * (zisv ? (v ? -1 : 1) : (u ? 1 : -1)));
-        return neg;
-    }
-
-    private static void bakeDoubleFace(List<BakedQuad> quads, EnumFacing face, Vector3f center, Vector3f radius, float[] uvs) {
-        Vector3f centerOfFace = new Vector3f(center);
-        Vector3f faceAdd = new Vector3f(face.getFrontOffsetX() * radius.x, face.getFrontOffsetY() * radius.y, face.getFrontOffsetZ() * radius.z);
-        centerOfFace.add(faceAdd);
-        Vector3f faceRadius = new Vector3f(radius);
-        if (face.getAxisDirection() == AxisDirection.POSITIVE) {
-            faceRadius.sub(faceAdd);
-        } else {
-            faceRadius.add(faceAdd);
-        }
-        Vector3f[] points = getPoints(centerOfFace, faceRadius);
-        int[][] quadData = getDoubleFrom(points, uvs);
-        bakeQuads(quads, quadData, face.getOpposite(), face);
     }
 }
