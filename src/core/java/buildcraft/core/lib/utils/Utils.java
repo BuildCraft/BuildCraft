@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.vecmath.Vector3f;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -389,6 +391,14 @@ public final class Utils {
 
     public static BlockPos convertFloor(EnumFacing face, int multiple) {
         return convertFloor(convert(face, multiple));
+    }
+
+    public static Vec3 convert(Vector3f vec) {
+        return new Vec3(vec.x, vec.y, vec.z);
+    }
+
+    public static Vector3f convertFloat(Vec3 vec) {
+        return new Vector3f((float) vec.xCoord, (float) vec.yCoord, (float) vec.zCoord);
     }
 
     public static Vec3 multiply(Vec3 vec, double multiple) {

@@ -92,7 +92,7 @@ import buildcraft.transport.pluggable.ItemLens;
 import buildcraft.transport.pluggable.ItemPlug;
 import buildcraft.transport.pluggable.LensPluggable;
 import buildcraft.transport.pluggable.PlugPluggable;
-import buildcraft.transport.render.PipeRenderModel;
+import buildcraft.transport.render.PipeBlockModel;
 import buildcraft.transport.schematics.BptItemPipeFilters;
 import buildcraft.transport.schematics.BptPipeIron;
 import buildcraft.transport.schematics.BptPipeWooden;
@@ -671,7 +671,7 @@ public class BuildCraftTransport extends BuildCraftMod {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void registerModels(ModelBakeEvent event) {
-        ModelResourceLocation mrl = new ModelResourceLocation("buildcrafttransport:genericPipe");
-        event.modelRegistry.putObject(mrl, new PipeRenderModel());
+        ModelResourceLocation mrl = new ModelResourceLocation("buildcrafttransport:pipeBlock");
+        event.modelRegistry.putObject(mrl, new PipeBlockModel());
     }
 }

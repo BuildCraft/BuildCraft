@@ -123,6 +123,11 @@ public abstract class BlockBuildCraftBase extends Block {
             }
         }
 
+        this.hasExtendedProperties = hasExtendedProps;
+        if (this.hasExtendedProperties) {
+            BCLog.logger.info("This block has extended properties!");
+        }
+
         this.properties = metas.toArray(new BuildCraftProperty<?>[0]);
         this.nonMetaProperties = nonMetas.toArray(new BuildCraftProperty<?>[0]);
         this.extendedProperties = infinites.toArray(new BuildCraftExtendedProperty<?>[0]);
@@ -137,10 +142,10 @@ public abstract class BlockBuildCraftBase extends Block {
         boolean canSixRotate = false;
 
         for (BuildCraftProperty<?> prop : properties) {
-            if (prop instanceof BuildCraftExtendedProperty<?>){
+            if (prop instanceof BuildCraftExtendedProperty<?>) {
                 continue;
             }
-            
+
             if (prop == FACING_PROP) {
                 canRotate = true;
             }
@@ -170,7 +175,6 @@ public abstract class BlockBuildCraftBase extends Block {
 
         horizontallyRotatable = canRotate;
         allRotatable = canSixRotate;
-        this.hasExtendedProperties = hasExtendedProps;
 
         for (Entry<IBlockState, Integer> entry : tempValidStates.entrySet()) {
             int i = entry.getValue();
@@ -238,6 +242,7 @@ public abstract class BlockBuildCraftBase extends Block {
             props[properties.length + i] = nonMetaProperties[i];
         }
         if (hasExtendedProperties) {
+            BCLog.logger.info("Creating extended block state!");
             return new ExtendedBlockState(this, props, extendedProperties);
         }
         return new BlockState(this, props);

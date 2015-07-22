@@ -89,7 +89,7 @@ public class PipeItemsDiamond extends Pipe<PipeTransportItems>implements IDiamon
             case EAST:
                 return PipeIconProvider.TYPE.PipeItemsDiamond_East.ordinal();
             default:
-                throw new IllegalArgumentException("direction out of bounds");
+                return PipeIconProvider.TYPE.PipeItemsDiamond_Center.ordinal();
         }
     }
 

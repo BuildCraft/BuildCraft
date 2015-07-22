@@ -70,6 +70,12 @@ public abstract class BuildCraftBakedModel extends BakedModel {
         return arr;
     }
 
+    /** Like {@link #getDoubleFrom(Vector3f, Vector3f, Vector3f, Vector3f, float[])}, but takes a size 4 vector array
+     * instead */
+    public static int[][] getDoubleFrom(Vector3f[] array, float[] uvs) {
+        return getDoubleFrom(array[0], array[1], array[2], array[3], uvs);
+    }
+
     public static int[] getFrom(Vector3f p1, Vector3f p2, Vector3f p3, Vector3f p4, float[] uvs) {
         int[] i1 = new int[] { asInt(p1.x), asInt(p1.y), asInt(p1.z), -1, asInt(uvs[U_MIN]), asInt(uvs[V_MIN]), 0 };
         int[] i2 = new int[] { asInt(p2.x), asInt(p2.y), asInt(p2.z), -1, asInt(uvs[U_MIN]), asInt(uvs[V_MAX]), 0 };
@@ -94,7 +100,7 @@ public abstract class BuildCraftBakedModel extends BakedModel {
         quads.add(new BakedQuad(list, 0, side));
     }
 
-    public static void bakeQuads(List<BakedQuad> quads, int[][] lists, EnumFacing[] sides) {
+    public static void bakeQuads(List<BakedQuad> quads, int[][] lists, EnumFacing... sides) {
         for (int i = 0; i < lists.length; i++) {
             bakeQuad(quads, lists[i], sides[i]);
         }

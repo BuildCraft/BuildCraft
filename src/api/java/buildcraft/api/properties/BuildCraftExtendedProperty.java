@@ -33,7 +33,7 @@ public class BuildCraftExtendedProperty<T> extends BuildCraftProperty<T>implemen
     /** This is useful if you want to use a particular class for this property, but don't care what the class contains
      * (it will never contain an incorrect value) */
     @SuppressWarnings("unchecked")
-    public static <T> BuildCraftExtendedProperty<T> create(String name, Class<T> clazz) {
+    public static <T> BuildCraftExtendedProperty<T> createExtended(String name, Class<T> clazz) {
         return new BuildCraftExtendedProperty<T>(name, clazz, (Predicate<T>) Predicates.alwaysTrue());
     }
 

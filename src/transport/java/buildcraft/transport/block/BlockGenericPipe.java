@@ -20,7 +20,9 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.particle.EntityFX;
+import net.minecraft.client.renderer.block.statemap.StateMapperBase;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,6 +41,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -61,6 +64,7 @@ import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.TileBuffer;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.render.ICustomHighlight;
+import buildcraft.core.lib.utils.ICustomStateMapper;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.*;
@@ -68,15 +72,17 @@ import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.item.ItemGateCopier;
 import buildcraft.transport.item.ItemPipe;
 
-public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable, ICustomHighlight {
-    public static final BuildCraftExtendedProperty<TileGenericPipe.CoreState> PIPE_CORE_STATE = BuildCraftExtendedProperty.create("core_state",
+public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable, ICustomHighlight, ICustomStateMapper {
+    public static final BuildCraftExtendedProperty<TileGenericPipe.CoreState> PIPE_CORE_STATE = BuildCraftExtendedProperty.createExtended("core_state",
             TileGenericPipe.CoreState.class);
 
-    public static final BuildCraftExtendedProperty<PipeRenderState> PIPE_RENDER_STATE = BuildCraftExtendedProperty.create("render_state",
+    public static final BuildCraftExtendedProperty<PipeRenderState> PIPE_RENDER_STATE = BuildCraftExtendedProperty.createExtended("render_state",
             PipeRenderState.class);
 
-    public static final BuildCraftExtendedProperty<PipePluggableState> PIPE_PLUGGABLE_STATE = BuildCraftExtendedProperty.create("pluggable_state",
+    public static final BuildCraftExtendedProperty<PipePluggableState> PIPE_PLUGGABLE_STATE = BuildCraftExtendedProperty.createExtended("pluggable_state",
             PipePluggableState.class);
+
+    public static final BuildCraftExtendedProperty<Pipe> PIPE_PIPE = BuildCraftExtendedProperty.createExtended("pipe_pipe", Pipe.class);
 
     public static Map<Item, Class<? extends Pipe<?>>> pipes = Maps.newHashMap();
     public static Map<BlockPos, Pipe<?>> pipeRemoved = Maps.newHashMap();
@@ -113,7 +119,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     /* Defined subprograms ************************************************* */
     public BlockGenericPipe() {
         super(Material.glass, (BCCreativeTab) null, true, GENERIC_PIPE_DATA, CONNECTED_UP, CONNECTED_DOWN, CONNECTED_EAST, CONNECTED_WEST,
-                CONNECTED_NORTH, CONNECTED_SOUTH, PIPE_CORE_STATE, PIPE_RENDER_STATE, PIPE_PLUGGABLE_STATE);
+                CONNECTED_NORTH, CONNECTED_SOUTH, PIPE_CORE_STATE, PIPE_RENDER_STATE, PIPE_PLUGGABLE_STATE, PIPE_PIPE);
         setCreativeTab(null);
         setLightOpacity(0);
     }
@@ -130,8 +136,8 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     }
 
     @Override
-    public int getRenderType() {
-        return -1;// OMG TEMP SO TEMP! FIXME REMOVE THIS!
+    public boolean isFullCube() {
+        return false;
     }
 
     @SideOnly(Side.CLIENT)
@@ -197,6 +203,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         extended = extended.withProperty(PIPE_CORE_STATE.asUnlistedProperty(), pipe.coreState);
         extended = extended.withProperty(PIPE_RENDER_STATE.asUnlistedProperty(), pipe.renderState);
         extended = extended.withProperty(PIPE_PLUGGABLE_STATE.asUnlistedProperty(), pipe.pluggableState);
+        extended = extended.withProperty(PIPE_PIPE.asUnlistedProperty(), pipe.pipe);
 
         return extended;
     }
@@ -1184,7 +1191,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     public TextureAtlasSprite getIcon(IBlockAccess world, BlockPos pos, int side) {
         TileEntity tile = world.getTileEntity(pos);
         if (tile instanceof TileGenericPipe) {
-            Pipe pipe = (Pipe) ((TileGenericPipe) tile).getPipe();
+            Pipe<?> pipe = (Pipe<?>) ((TileGenericPipe) tile).getPipe();
             return pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
         }
 
@@ -1194,5 +1201,17 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     // @Override
     public TextureAtlasSprite getIcon(int side, int meta) {
         return PipeIconProvider.TYPE.PipeItemsStone.getIcon();
+    }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void setCusomStateMappers() {
+        final ModelResourceLocation loc = new ModelResourceLocation(Utils.getNameForBlock(this).replace("|", ""));
+        ModelLoader.setCustomStateMapper(this, new StateMapperBase() {
+            @Override
+            protected ModelResourceLocation getModelResourceLocation(IBlockState state) {
+                return loc;
+            }
+        });
     }
 }
