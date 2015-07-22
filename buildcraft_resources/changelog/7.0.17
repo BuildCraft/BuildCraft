@@ -6,3 +6,4 @@ Bugs fixed:
 * Paintbrush not being re-dyeable if not fully used (asie)
 * Stripes Pipe "breaking" fluid blocks (asie)
 * Wrench failing to rotate double chests and beds (asie)
+* fix robots going to unreachable stations (hea3ven)
