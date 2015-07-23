@@ -1,9 +1,13 @@
+Improvements:
+
+* Packages can now be thrown via Dispensers and Stripes Pipes (asie)
+
 Bugs fixed:
 
 * [#2892] Disconnect on large-resolution Zone Planner fullscreen (asie)
 * [#2891] Boxes ignoring the south and east boundaries when rounding (hea3ven)
 * Accidentally setting an area in the Zone Planner GUI upon pressing fullscreen (asie)
 * Paintbrush not being re-dyeable if not fully used (asie)
+* Robots going to unreachable stations passing through walls (hea3ven)
 * Stripes Pipe "breaking" fluid blocks (asie)
 * Wrench failing to rotate double chests and beds (asie)
-* fix robots going to unreachable stations (hea3ven)
