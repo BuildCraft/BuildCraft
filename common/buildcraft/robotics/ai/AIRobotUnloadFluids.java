@@ -64,7 +64,7 @@ public class AIRobotUnloadFluids extends AIRobot {
 		}
 
 		drainable = drainable.copy();
-		int filled = fluidHandler.fill(station.side, drainable, doUnload);
+		int filled = fluidHandler.fill(station.getFluidOutputSide(), drainable, doUnload);
 
 		if (filled > 0 && doUnload) {
 			drainable.amount = filled;

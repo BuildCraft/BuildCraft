@@ -71,7 +71,9 @@ public class AIRobotLoadFluids extends AIRobot {
 			return 0;
 		}
 
-		FluidStack drainable = handler.drain(station.side, FluidContainerRegistry.BUCKET_VOLUME,
+		ForgeDirection side = station.getFluidInputSide();
+
+		FluidStack drainable = handler.drain(side, FluidContainerRegistry.BUCKET_VOLUME,
 				false);
 		if (drainable == null || !filter.matches(drainable.getFluid())) {
 			return 0;
@@ -82,7 +84,7 @@ public class AIRobotLoadFluids extends AIRobot {
 
 		if (filled > 0 && doLoad) {
 			drainable.amount = filled;
-			handler.drain(station.side, drainable, true);
+			handler.drain(side, drainable, true);
 		}
 		return filled;
 	}

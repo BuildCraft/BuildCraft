@@ -8,9 +8,10 @@
  */
 package buildcraft.api.robots;
 
-import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidHandler;
 
@@ -184,16 +185,32 @@ public abstract class DockingStation {
 		return null;
 	}
 
-	public IInventory getItemInput() {
+	public ForgeDirection getItemOutputSide() {
+		return ForgeDirection.UNKNOWN;
+	}
+
+	public ISidedInventory getItemInput() {
 		return null;
+	}
+
+	public ForgeDirection getItemInputSide() {
+		return ForgeDirection.UNKNOWN;
 	}
 
 	public IFluidHandler getFluidOutput() {
 		return null;
 	}
 
+	public ForgeDirection getFluidOutputSide() {
+		return ForgeDirection.UNKNOWN;
+	}
+
 	public IFluidHandler getFluidInput() {
 		return null;
+	}
+
+	public ForgeDirection getFluidInputSide() {
+		return ForgeDirection.UNKNOWN;
 	}
 
 	public boolean providesPower() {

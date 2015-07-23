@@ -11,8 +11,6 @@ package buildcraft.robotics.ai;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 
-import net.minecraftforge.common.util.ForgeDirection;
-
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.inventory.ITransactor;
@@ -83,7 +81,7 @@ public class AIRobotFetchAndEquipItemStack extends AIRobot {
 
 		ITransactor trans = Transactor.getTransactorFor(tileInventory);
 
-		ItemStack itemFound = trans.remove(filter, ForgeDirection.UNKNOWN, true);
+		ItemStack itemFound = trans.remove(filter, robot.getDockingStation().getItemInputSide(), true);
 
 		if (itemFound != null) {
 			robot.setItemInUse(itemFound);
