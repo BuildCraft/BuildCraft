@@ -75,7 +75,10 @@ public class ItemGateCopier extends ItemBuildCraft {
 				player.addChatMessage(new ChatComponentTranslation("chat.gateCopier.clear"));
 				return true;
 			}
-			
+
+			data = new NBTTagCompound();
+			stack.setTagCompound(data);
+
 			gate.writeStatementsToNBT(data);
 			data.setByte("material", (byte) gate.material.ordinal());
 			data.setByte("logic", (byte) gate.logic.ordinal());

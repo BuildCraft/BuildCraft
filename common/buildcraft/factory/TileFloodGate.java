@@ -261,23 +261,19 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 	public void readData(ByteBuf stream) {
 		for (int i = 0; i < 6; i++) {
 			blockedSides[i] = stream.readBoolean();
-			System.out.println("Rsides=" + i + "=" + blockedSides[i]);
 		}
 	}
 
 	@Override
 	public void writeData(ByteBuf stream) {
 		for (int i = 0; i < 6; i++) {
-			System.out.println("Wsides=" + i + "=" + blockedSides[i]);
 			stream.writeBoolean(blockedSides[i]);
 		}
 	}
 
 	public void switchSide(ForgeDirection side) {
-		System.out.println("Csides=" + side.ordinal() + "=" + blockedSides[side.ordinal()]);
 		if (side.ordinal() != 1) {
 			blockedSides[side.ordinal()] = !blockedSides[side.ordinal()];
-			System.out.println("Ssides=" + side.ordinal() + "=" + blockedSides[side.ordinal()]);
 
 			rebuildQueue();
 			sendNetworkUpdate();

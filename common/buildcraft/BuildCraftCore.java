@@ -609,10 +609,12 @@ public class BuildCraftCore extends BuildCraftMod {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(paintbrushItem), " iw", " gi", "s  ",
 				's', "stickWood", 'g', "gearWood", 'w', new ItemStack(Blocks.wool, 1, 0), 'i', Items.string);
 
+		ItemStack anyPaintbrush = new ItemStack(paintbrushItem, 1, OreDictionary.WILDCARD_VALUE);
+
 		for (int i = 0; i < 16; i++) {
 			ItemStack outputStack = new ItemStack(paintbrushItem);
 			NBTUtils.getItemData(outputStack).setByte("color", (byte) i);
-			CoreProxy.proxy.addShapelessRecipe(outputStack, paintbrushItem, EnumColor.fromId(i).getDye());
+			CoreProxy.proxy.addShapelessRecipe(outputStack, anyPaintbrush, EnumColor.fromId(i).getDye());
 		}
 
 		if (Loader.isModLoaded("BuildCraft|Silicon")) {
