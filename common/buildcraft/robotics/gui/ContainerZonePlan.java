@@ -129,8 +129,8 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
 		MapWorld w = BuildCraftRobotics.manager.getWorld(map.getWorldObj());
 		int startX = cx - width * blocksPerPixel / 2;
 		int startZ = cz - height * blocksPerPixel / 2;
-		int mapStartX = (map.chunkStartX << 4);
-		int mapStartZ = (map.chunkStartZ << 4);
+		int mapStartX = map.chunkStartX << 4;
+		int mapStartZ = map.chunkStartZ << 4;
 
 		for (int i = 0; i < width; ++i) {
 			for (int j = 0; j < height; ++j) {
