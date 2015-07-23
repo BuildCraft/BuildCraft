@@ -4,6 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory.tile;
 
+import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
@@ -23,6 +25,7 @@ import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.api.recipes.CraftingResult;
 import buildcraft.api.recipes.IFlexibleCrafter;
 import buildcraft.api.recipes.IFlexibleRecipe;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.lib.RFBattery;
@@ -35,7 +38,7 @@ import buildcraft.core.recipes.RefineryRecipeManager;
 
 import io.netty.buffer.ByteBuf;
 
-public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInventory, IHasWork, IFlexibleCrafter, ICommandReceiver {
+public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInventory, IHasWork, IFlexibleCrafter, ICommandReceiver, IDebuggable {
 
     public static int FLUID_PER_SLOT = FluidContainerRegistry.BUCKET_VOLUME * 4;
 
@@ -401,5 +404,19 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
         if (side == Side.SERVER && "setFilter".equals(command)) {
             setFilter(stream.readByte(), FluidRegistry.getFluid(stream.readShort()));
         }
+    }
+
+    @Override
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        left.add("");
+        left.add("Side Tank 1");
+        left.add(" -" + tanks[0].getFluidAmount() + "/" + tanks[0].getCapacity() + "mB");
+        left.add(" -" + tanks[0].getFluid() == null ? "empty" : tanks[0].getFluidType().getLocalizedName(tanks[0].getFluid()));
+        left.add("Side Tank 2");
+        left.add(" -" + tanks[1].getFluidAmount() + "/" + tanks[1].getCapacity() + "mB");
+        left.add(" -" + tanks[1].getFluid() == null ? "empty" : tanks[0].getFluidType().getLocalizedName(tanks[1].getFluid()));
+        left.add("Result");
+        left.add(" -" + result.getFluidAmount() + "/" + result.getCapacity() + "mB");
+        left.add(" -" + result.getFluid() == null ? "empty" : result.getFluidType().getLocalizedName(result.getFluid()));
     }
 }

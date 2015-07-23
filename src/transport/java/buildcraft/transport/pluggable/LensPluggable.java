@@ -9,12 +9,12 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.enums.EnumColor;
+import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.BuildCraftTransport;
-import buildcraft.transport.Pipe;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 
@@ -84,7 +84,7 @@ public class LensPluggable extends PipePluggable {
         // }
 
         @Override
-        public List<BakedQuad> renderPluggable(Pipe<?> pipe, PipePluggable pluggable, EnumFacing face) {
+        public List<BakedQuad> renderPluggable(IPipe pipe, PipePluggable pluggable, EnumFacing face) {
             return null;
         }
     }

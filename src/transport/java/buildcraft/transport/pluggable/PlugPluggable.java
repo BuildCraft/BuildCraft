@@ -8,12 +8,12 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.BuildCraftTransport;
-import buildcraft.transport.Pipe;
 
 import io.netty.buffer.ByteBuf;
 
@@ -21,8 +21,9 @@ public class PlugPluggable extends PipePluggable {
     private static final class PlugPluggableRenderer implements IPipePluggableRenderer {
         public static final IPipePluggableRenderer INSTANCE = new PlugPluggableRenderer();
         private float zFightOffset = 1 / 4096.0F;
+
         @Override
-        public List<BakedQuad> renderPluggable(Pipe<?> pipe, PipePluggable pluggable, EnumFacing face) {
+        public List<BakedQuad> renderPluggable(IPipe pipe, PipePluggable pluggable, EnumFacing face) {
             // TODO Auto-generated method stub
             return null;
         }

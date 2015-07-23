@@ -18,6 +18,7 @@ import org.lwjgl.util.glu.GLU;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
@@ -25,6 +26,11 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.MovingObjectPosition.MovingObjectType;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.IPlantable;
@@ -66,6 +72,7 @@ import buildcraft.api.statements.StatementManager;
 import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.tablet.TabletAPI;
 import buildcraft.api.tiles.IControllable;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.core.block.BlockBuildTool;
 import buildcraft.core.block.BlockEngine;
 import buildcraft.core.block.BlockSpring;
@@ -651,5 +658,26 @@ public class BuildCraftCore extends BuildCraftMod {
     @SideOnly(Side.CLIENT)
     public void loadTextures(TextureStitchEvent.Post evt) {
         FluidRenderer.initFluidTextures(evt.map);
+    }
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void renderOverlay(RenderGameOverlayEvent.Text event) {
+        if (Minecraft.getMinecraft().thePlayer.hasReducedDebug() || Minecraft.getMinecraft().gameSettings.reducedDebugInfo) {
+            return;
+        }
+        MovingObjectPosition object = Minecraft.getMinecraft().objectMouseOver;
+        MovingObjectType type = object.typeOfHit;
+
+        if (type == MovingObjectType.BLOCK && object.getBlockPos() != null) {
+            BlockPos pos = object.getBlockPos();
+            TileEntity tile = Minecraft.getMinecraft().theWorld.getTileEntity(pos);
+
+            if (tile instanceof IDebuggable && tile != null) {
+                ((IDebuggable) tile).getDebugInfo(event.left, event.right, object.sideHit);
+            }
+        } else if (type == MovingObjectType.ENTITY) {
+
+        }
     }
 }

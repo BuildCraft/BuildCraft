@@ -5,7 +5,6 @@
 package buildcraft.core.lib.block;
 
 import java.util.HashSet;
-import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,7 +25,6 @@ import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.tiles.IControllable;
-import buildcraft.api.tiles.IDebuggable;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.lib.RFBattery;
@@ -40,7 +38,7 @@ import io.netty.buffer.ByteBuf;
 /** For future maintainers: This class intentionally does not implement just every interface out there. For some of them
  * (such as IControllable), we expect the tiles supporting it to implement it - but TileBuildCraft provides all the
  * underlying functionality to stop code repetition. */
-public abstract class TileBuildCraft extends TileEntity implements IEnergyHandler, ISerializable, IUpdatePlayerListBox, IDebuggable {
+public abstract class TileBuildCraft extends TileEntity implements IEnergyHandler, ISerializable, IUpdatePlayerListBox {
     protected TileBuffer[] cache;
     protected HashSet<EntityPlayer> guiWatchers = new HashSet<EntityPlayer>();
     protected IControllable.Mode mode;
@@ -272,13 +270,6 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 
     public void setControlMode(IControllable.Mode mode) {
         this.mode = mode;
-    }
-
-    // Debug
-    public void getDebugInfo(List<String> info, EnumFacing side, ItemStack debugger, EntityPlayer player) {
-        // TODO (PASS 3): REMOVE THIS DEBUG METHOD!
-        info.add("Battery = " + battery);
-        info.add("LED power = " + ledPower);
     }
 
     // IInventory

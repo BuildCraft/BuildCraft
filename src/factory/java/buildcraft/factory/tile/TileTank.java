@@ -4,6 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.factory.tile;
 
+import java.util.List;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -17,6 +19,7 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.fluids.Tank;
@@ -24,7 +27,7 @@ import buildcraft.core.lib.fluids.TankManager;
 
 import io.netty.buffer.ByteBuf;
 
-public class TileTank extends TileBuildCraft implements IFluidHandler {
+public class TileTank extends TileBuildCraft implements IFluidHandler, IDebuggable {
     public final Tank tank = new Tank("tank", FluidContainerRegistry.BUCKET_VOLUME * 16, this);
     public final TankManager<Tank> tankManager = new TankManager<Tank>(tank);
     public boolean hasUpdate = false;
@@ -306,5 +309,12 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 
     public int getComparatorInputOverride() {
         return cachedComparatorOverride;
+    }
+
+    @Override
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        left.add("");
+        left.add(tank.getFluidAmount() + "/" + tank.getCapacity() + "mB");
+        left.add(tank.getFluid() == null ? "empty" : tank.getFluidType().getLocalizedName(tank.getFluid()));
     }
 }

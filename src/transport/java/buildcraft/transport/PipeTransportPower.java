@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -478,12 +476,13 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
     }
 
     @Override
-    public void getDebugInfo(List<String> info, EnumFacing side, ItemStack debugger, EntityPlayer player) {
-        info.add("PipeTransportPower (" + maxPower + " RF/t)");
-        info.add("- internalPower: " + Arrays.toString(internalPower) + " <- " + Arrays.toString(internalNextPower));
-        info.add("- powerQuery: " + Arrays.toString(powerQuery) + " <- " + Arrays.toString(nextPowerQuery));
-        info.add("- energy: IN " + Arrays.toString(dbgEnergyInput) + ", OUT " + Arrays.toString(dbgEnergyOutput));
-        info.add("- energy: OFFERED " + Arrays.toString(dbgEnergyOffered));
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        left.add("");
+        left.add("PipeTransportPower (" + maxPower + " RF/t)");
+        left.add("- internalPower: " + Arrays.toString(internalPower) + " <- " + Arrays.toString(internalNextPower));
+        left.add("- powerQuery: " + Arrays.toString(powerQuery) + " <- " + Arrays.toString(nextPowerQuery));
+        left.add("- energy: IN " + Arrays.toString(dbgEnergyInput) + ", OUT " + Arrays.toString(dbgEnergyOutput));
+        left.add("- energy: OFFERED " + Arrays.toString(dbgEnergyOffered));
 
         int[] totalPowerQuery = new int[6];
         for (int i = 0; i < 6; ++i) {
@@ -499,6 +498,6 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
             }
         }
 
-        info.add("- totalPowerQuery: " + Arrays.toString(totalPowerQuery));
+        left.add("- totalPowerQuery: " + Arrays.toString(totalPowerQuery));
     }
 }

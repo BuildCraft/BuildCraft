@@ -17,6 +17,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.Constants;
 
+import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
@@ -37,7 +38,7 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
         }
 
         @Override
-        public List<BakedQuad> renderPluggable(Pipe<?> pipe, PipePluggable pluggable, EnumFacing face) {
+        public List<BakedQuad> renderPluggable(IPipe pipe, PipePluggable pluggable, EnumFacing face) {
             List<BakedQuad> quads = Lists.newArrayList();
             IFacadePluggable facade = (IFacadePluggable) pluggable;
 

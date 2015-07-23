@@ -10,12 +10,12 @@ import net.minecraft.util.EnumFacing;
 
 import cofh.api.energy.IEnergyHandler;
 
+import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.BuildCraftTransport;
-import buildcraft.transport.Pipe;
 
 import io.netty.buffer.ByteBuf;
 
@@ -26,7 +26,7 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
         private float zFightOffset = 1 / 4096.0F;
 
         @Override
-        public List<BakedQuad> renderPluggable(Pipe<?> pipe, PipePluggable pluggable, EnumFacing face) {
+        public List<BakedQuad> renderPluggable(IPipe pipe, PipePluggable pluggable, EnumFacing face) {
             // TODO Auto-generated method stub
             return null;
         }

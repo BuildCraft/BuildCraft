@@ -6,9 +6,7 @@ package buildcraft.transport.pipes;
 
 import java.util.List;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -224,10 +222,11 @@ public class PipePowerWood extends Pipe<PipeTransportPower>implements IPipeTrans
     }
 
     @Override
-    public void getDebugInfo(List<String> info, EnumFacing side, ItemStack debugger, EntityPlayer player) {
-        info.add("Power Acceptor");
-        info.add("- requestedEnergy: " + requestedEnergy);
-        info.add("- lastRequestedEnergy: " + lastRequestedEnergy);
-        info.add("- stored: " + battery.getEnergyStored() + "/" + battery.getMaxEnergyStored() + " RF");
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing face) {
+        left.add("");
+        left.add("Power Acceptor");
+        left.add("- requestedEnergy: " + requestedEnergy);
+        left.add("- lastRequestedEnergy: " + lastRequestedEnergy);
+        left.add("- stored: " + battery.getEnergyStored() + "/" + battery.getMaxEnergyStored() + " RF");
     }
 }

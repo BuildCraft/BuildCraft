@@ -1236,15 +1236,15 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
     }
 
     @Override
-    public void getDebugInfo(List<String> info, EnumFacing side, ItemStack debugger, EntityPlayer player) {
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         if (pipe instanceof IDebuggable) {
-            ((IDebuggable) pipe).getDebugInfo(info, side, debugger, player);
+            ((IDebuggable) pipe).getDebugInfo(left, right, side);
         }
         if (pipe.transport instanceof IDebuggable) {
-            ((IDebuggable) pipe.transport).getDebugInfo(info, side, debugger, player);
+            ((IDebuggable) pipe.transport).getDebugInfo(left, right, side);
         }
         if (getPipePluggable(side) != null && getPipePluggable(side) instanceof IDebuggable) {
-            ((IDebuggable) getPipePluggable(side)).getDebugInfo(info, side, debugger, player);
+            ((IDebuggable) getPipePluggable(side)).getDebugInfo(left, right, side);
         }
     }
 }

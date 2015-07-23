@@ -42,7 +42,7 @@ public class GatePluggable extends PipePluggable {
         }
 
         @Override
-        public List<BakedQuad> renderPluggable(Pipe<?> pipe, PipePluggable pluggable, EnumFacing face) {
+        public List<BakedQuad> renderPluggable(IPipe pipe, PipePluggable pluggable, EnumFacing face) {
             return null;
         }
 

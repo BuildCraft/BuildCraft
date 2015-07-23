@@ -31,7 +31,7 @@ public class ItemDebugger extends ItemBuildCraft {
         if (tile instanceof IDebuggable) {
             ArrayList<String> info = new ArrayList<String>();
             String effSide = FMLCommonHandler.instance().getEffectiveSide().name().substring(0, 1) + ":";
-            ((IDebuggable) tile).getDebugInfo(info, side, stack, player);
+            ((IDebuggable) tile).getDebugInfo(info);
             for (String s : info) {
                 player.addChatComponentMessage(new ChatComponentText(effSide + s));
             }

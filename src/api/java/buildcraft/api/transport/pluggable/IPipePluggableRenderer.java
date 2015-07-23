@@ -5,8 +5,8 @@ import java.util.List;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.util.EnumFacing;
 
-import buildcraft.transport.Pipe;
+import buildcraft.api.transport.IPipe;
 
 public interface IPipePluggableRenderer {
-    List<BakedQuad> renderPluggable(Pipe<?> pipe, PipePluggable pluggable, EnumFacing face);
+    List<BakedQuad> renderPluggable(IPipe pipe, PipePluggable pluggable, EnumFacing face);
 }
