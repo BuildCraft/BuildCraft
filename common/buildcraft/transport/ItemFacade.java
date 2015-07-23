@@ -156,7 +156,9 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 	public String getItemStackDisplayName(ItemStack itemstack) {
 		switch (getFacadeType(itemstack)) {
 			case Basic:
-				return super.getItemStackDisplayName(itemstack) + ": " + getFacadeStateDisplayName(getFacadeStates(itemstack)[0]);
+				FacadeState[] states = getFacadeStates(itemstack);
+				String displayName = states.length > 0 ? getFacadeStateDisplayName(states[0]) : "CORRUPT";
+				return super.getItemStackDisplayName(itemstack) + ": " + displayName;
 			case Phased:
 				return StringUtils.localize("item.FacadePhased.name");
 			default:

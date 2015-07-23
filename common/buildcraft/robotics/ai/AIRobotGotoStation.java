@@ -65,10 +65,14 @@ public class AIRobotGotoStation extends AIRobot {
 		if (station == null) {
 			terminate();
 		} else if (ai instanceof AIRobotGotoBlock) {
-			startDelegateAI(new AIRobotStraightMoveTo(robot,
-					stationIndex.x + 0.5F + stationSide.offsetX * 0.5F,
-					stationIndex.y + 0.5F + stationSide.offsetY * 0.5F,
-					stationIndex.z + 0.5F + stationSide.offsetZ * 0.5F));
+			if (ai.success()) {
+				startDelegateAI(new AIRobotStraightMoveTo(robot,
+						stationIndex.x + 0.5F + stationSide.offsetX * 0.5F,
+						stationIndex.y + 0.5F + stationSide.offsetY * 0.5F,
+						stationIndex.z + 0.5F + stationSide.offsetZ * 0.5F));
+			} else {
+				terminate();
+			}
 		} else {
 			setSuccess(true);
 			if (stationSide.offsetY == 0) {
