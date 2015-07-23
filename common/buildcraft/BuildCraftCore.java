@@ -156,6 +156,7 @@ import buildcraft.core.statements.ActionRedstoneOutput;
 import buildcraft.core.statements.DefaultActionProvider;
 import buildcraft.core.statements.DefaultTriggerProvider;
 import buildcraft.core.statements.StatementParameterDirection;
+import buildcraft.core.statements.StatementParameterItemStackExact;
 import buildcraft.core.statements.StatementParameterRedstoneGateSideOnly;
 import buildcraft.core.statements.TriggerEnergy;
 import buildcraft.core.statements.TriggerFluidContainer;
@@ -412,6 +413,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		StatementManager.registerParameterClass("buildcraft:stackAction", StatementParameterItemStack.class);
 				
 		StatementManager.registerParameterClass(StatementParameterItemStack.class);
+		StatementManager.registerParameterClass(StatementParameterItemStackExact.class);
 		StatementManager.registerParameterClass(StatementParameterDirection.class);
 		StatementManager.registerParameterClass(StatementParameterRedstoneGateSideOnly.class);
 		StatementManager.registerTriggerProvider(new DefaultTriggerProvider());

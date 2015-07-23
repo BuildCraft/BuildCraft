@@ -54,13 +54,7 @@ public class AIRobotSearchStackRequest extends AIRobot {
 			if (!ai.success()) {
 				terminate();
 			} else {
-				// request =
-				// getOrderFromRequestingAction(((AIRobotSearchStation)
-				// ai).targetStation);
-				//
-				// if (request == null) {
 				request = getOrderFromRequestingStation(((AIRobotSearchStation) ai).targetStation, true);
-				// }
 
 				terminate();
 			}
