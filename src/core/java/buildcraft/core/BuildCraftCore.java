@@ -663,15 +663,18 @@ public class BuildCraftCore extends BuildCraftMod {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void renderOverlay(RenderGameOverlayEvent.Text event) {
-        if (Minecraft.getMinecraft().thePlayer.hasReducedDebug() || Minecraft.getMinecraft().gameSettings.reducedDebugInfo) {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (!mc.gameSettings.showDebugInfo)
+            return;
+        if (mc.thePlayer.hasReducedDebug() || mc.gameSettings.reducedDebugInfo) {
             return;
         }
-        MovingObjectPosition object = Minecraft.getMinecraft().objectMouseOver;
+        MovingObjectPosition object = mc.objectMouseOver;
         MovingObjectType type = object.typeOfHit;
 
         if (type == MovingObjectType.BLOCK && object.getBlockPos() != null) {
             BlockPos pos = object.getBlockPos();
-            TileEntity tile = Minecraft.getMinecraft().theWorld.getTileEntity(pos);
+            TileEntity tile = mc.theWorld.getTileEntity(pos);
 
             if (tile instanceof IDebuggable && tile != null) {
                 ((IDebuggable) tile).getDebugInfo(event.left, event.right, object.sideHit);
