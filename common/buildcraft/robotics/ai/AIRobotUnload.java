@@ -54,7 +54,7 @@ public class AIRobotUnload extends AIRobot {
 			return false;
 		}
 
-		ForgeDirection injectSide = station.side().getOpposite();
+		ForgeDirection injectSide = station.getItemOutputSide();
 		if (!output.canInjectItems(injectSide)) {
 			return false;
 		}
