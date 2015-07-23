@@ -143,9 +143,7 @@ public final class FluidRenderer {
             ent.kSize = size.zCoord;
             ent.texture = getFluidTexture(fluidStack, flowing);
 
-            GL11.glTranslated(0.01, 0.01, 0.01);
             RenderResizableCuboid.INSTANCE.renderCube(ent);
-            GL11.glTranslated(-0.01, -0.01, -0.01);
 
             GL11.glEndList();
         }

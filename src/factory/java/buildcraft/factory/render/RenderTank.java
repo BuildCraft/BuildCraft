@@ -47,7 +47,7 @@ public class RenderTank extends TileEntitySpecialRenderer {
 
         GL11.glTranslatef((float) x + 0.5F, (float) y + 0.5F, (float) z + 0.5F);
         GL11.glScalef(0.999F, 0.999F, 0.999F);
-        GL11.glTranslatef(-0.25F, -0.5F, -0.25F);
+        GL11.glTranslatef(-0.375F, -0.5F, -0.375F);
 
         GL11.glCallList(displayList[(int) ((float) liquid.amount / (float) (tank.tank.getCapacity()) * (FluidRenderer.DISPLAY_STAGES - 1))]);
 

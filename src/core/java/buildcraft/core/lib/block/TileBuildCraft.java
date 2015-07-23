@@ -43,7 +43,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
     protected HashSet<EntityPlayer> guiWatchers = new HashSet<EntityPlayer>();
     protected IControllable.Mode mode;
 
-    private boolean init = false;
+    private int init = 0;
     private String owner = "[BuildCraft]";
     private RFBattery battery;
 
@@ -71,9 +71,13 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 
     @Override
     public void update() {
-        if (!init && !isInvalid()) {
+        if (init != 2 && !isInvalid()) {
+            if (init < 2) {
+                init++;
+                return;
+            }
             initialize();
-            init = true;
+            init = 2;
         }
 
         if (battery != null) {
@@ -107,7 +111,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 
     @Override
     public void invalidate() {
-        init = false;
+        init = 0;
         super.invalidate();
         cache = null;
     }

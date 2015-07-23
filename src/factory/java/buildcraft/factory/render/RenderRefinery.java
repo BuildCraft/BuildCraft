@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.properties.BuildCraftProperties;
@@ -25,6 +26,7 @@ import buildcraft.factory.tile.TileRefinery;
 
 public class RenderRefinery extends TileEntitySpecialRenderer {
 
+    private static final Vec3 TANK_SIZE = new Vec3(0.5, 1, 0.5);
     private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftfactory:textures/blocks/refinery/refinery.png");
     private static final float pixel = (float) (1.0 / 16.0);
     private final ModelRenderer tank;
@@ -166,25 +168,29 @@ public class RenderRefinery extends TileEntitySpecialRenderer {
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-            GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
-            GL11.glScalef(0.5F, 1, 0.5F);
-
             if (liquid1 != null && liquid1.amount > 0) {
-                int[] list1 = FluidRenderer.getFluidDisplayLists(liquid1, false);
+                int[] list1 = FluidRenderer.getFluidDisplayLists(liquid1, false, TANK_SIZE);
 
                 if (list1 != null) {
                     bindTexture(TextureMap.locationBlocksTexture);
                     RenderUtils.setGLColorFromInt(color1);
+                    GL11.glPushMatrix();
+                    GL11.glTranslatef(-0.25f, 0, -0.25f);
+                    GL11.glScalef(0.99f, 0.99f, 0.99f);
+                    GL11.glTranslatef(-0.25f, -0.5f, -0.25f);
                     GL11.glCallList(list1[getDisplayListIndex(tile.tanks[0])]);
+                    GL11.glPopMatrix();
                 }
             }
 
             if (liquid2 != null && liquid2.amount > 0) {
-                int[] list2 = FluidRenderer.getFluidDisplayLists(liquid2, false);
+                int[] list2 = FluidRenderer.getFluidDisplayLists(liquid2, false, TANK_SIZE);
 
                 if (list2 != null) {
                     GL11.glPushMatrix();
-                    GL11.glTranslatef(0, 0, 1);
+                    GL11.glTranslatef(-0.25f, 0, 0.25f);
+                    GL11.glScalef(0.99f, 0.99f, 0.99f);
+                    GL11.glTranslatef(-0.25f, -0.5f, -0.25f);
                     bindTexture(TextureMap.locationBlocksTexture);
                     RenderUtils.setGLColorFromInt(color2);
                     GL11.glCallList(list2[getDisplayListIndex(tile.tanks[1])]);
@@ -193,11 +199,13 @@ public class RenderRefinery extends TileEntitySpecialRenderer {
             }
 
             if (liquidResult != null && liquidResult.amount > 0) {
-                int[] list3 = FluidRenderer.getFluidDisplayLists(liquidResult, false);
+                int[] list3 = FluidRenderer.getFluidDisplayLists(liquidResult, false, TANK_SIZE);
 
                 if (list3 != null) {
                     GL11.glPushMatrix();
-                    GL11.glTranslatef(1, 0, 0.5F);
+                    GL11.glTranslatef(0.25f, 0, 0);
+                    GL11.glScalef(0.99f, 0.99f, 0.99f);
+                    GL11.glTranslatef(-0.25f, -0.5f, -0.25f);
                     bindTexture(TextureMap.locationBlocksTexture);
                     RenderUtils.setGLColorFromInt(colorResult);
                     GL11.glCallList(list3[getDisplayListIndex(tile.result)]);

@@ -414,7 +414,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
         left.add(" " + (tanks[0].getFluid() == null ? "empty" : tanks[0].getFluidType().getLocalizedName(tanks[0].getFluid())));
         left.add("Side Tank 2");
         left.add(" " + tanks[1].getFluidAmount() + "/" + tanks[1].getCapacity() + "mB");
-        left.add(" " + (tanks[1].getFluid() == null ? "empty" : tanks[0].getFluidType().getLocalizedName(tanks[1].getFluid())));
+        left.add(" " + (tanks[1].getFluid() == null ? "empty" : tanks[1].getFluidType().getLocalizedName(tanks[1].getFluid())));
         left.add("Result");
         left.add(" " + result.getFluidAmount() + "/" + result.getCapacity() + "mB");
         left.add(" " + (result.getFluid() == null ? "empty" : result.getFluidType().getLocalizedName(result.getFluid())));
