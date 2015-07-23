@@ -286,9 +286,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
         if (pipeType == IPipeTile.PipeType.ITEM) {
             renderSolids((Pipe<PipeTransportItems>) pipe.pipe, x, y, z, f);
         } else if (pipeType == IPipeTile.PipeType.FLUID) {
-            renderFluids((Pipe<PipeTransportFluids>) pipe.pipe, x, y, z);
+//            renderFluids((Pipe<PipeTransportFluids>) pipe.pipe, x, y, z);
         } else if (pipeType == IPipeTile.PipeType.POWER) {
-            renderPower((Pipe<PipeTransportPower>) pipe.pipe, x, y, z);
+//            renderPower((Pipe<PipeTransportPower>) pipe.pipe, x, y, z);
         } /* else if (pipeType == PipeType.STRUCTURE) { // no object to render in a structure pipe; } */
     }
 

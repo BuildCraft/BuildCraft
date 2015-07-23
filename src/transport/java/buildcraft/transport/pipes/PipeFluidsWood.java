@@ -4,6 +4,8 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport.pipes;
 
+import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
@@ -18,6 +20,7 @@ import cofh.api.energy.IEnergyHandler;
 
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.core.ISerializable;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.transport.BuildCraftTransport;
 import buildcraft.transport.Pipe;
@@ -26,7 +29,7 @@ import buildcraft.transport.PipeTransportFluids;
 
 import io.netty.buffer.ByteBuf;
 
-public class PipeFluidsWood extends Pipe<PipeTransportFluids>implements IEnergyHandler, ISerializable {
+public class PipeFluidsWood extends Pipe<PipeTransportFluids>implements IEnergyHandler, ISerializable, IDebuggable {
     private static final int ENERGY_MULTIPLIER = 50;
 
     public int liquidToExtract;
@@ -193,5 +196,12 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids>implements IEnergyH
     @Override
     public void readData(ByteBuf data) {
         liquidToExtract = data.readShort();
+    }
+
+    @Override
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        left.add("");
+        left.add("PipeFluidsWood");
+        left.add(" FluidToExtract = " + liquidToExtract + "mB");
     }
 }

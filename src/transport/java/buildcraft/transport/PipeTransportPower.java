@@ -479,25 +479,29 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
         left.add("PipeTransportPower (" + maxPower + " RF/t)");
-        left.add("- internalPower: " + Arrays.toString(internalPower) + " <- " + Arrays.toString(internalNextPower));
-        left.add("- powerQuery: " + Arrays.toString(powerQuery) + " <- " + Arrays.toString(nextPowerQuery));
-        left.add("- energy: IN " + Arrays.toString(dbgEnergyInput) + ", OUT " + Arrays.toString(dbgEnergyOutput));
-        left.add("- energy: OFFERED " + Arrays.toString(dbgEnergyOffered));
-
-        int[] totalPowerQuery = new int[6];
-        for (int i = 0; i < 6; ++i) {
-            if (internalPower[i] > 0) {
-                for (int j = 0; j < 6; ++j) {
-                    if (j != i && powerQuery[j] > 0) {
-                        Object ep = providers[j];
-                        if (ep instanceof IPipeTile || ep instanceof IEnergyReceiver || ep instanceof IEnergyHandler) {
-                            totalPowerQuery[i] += powerQuery[j];
-                        }
-                    }
-                }
-            }
+        for (EnumFacing face : EnumFacing.VALUES) {
+            int ord = face.ordinal();
+            left.add(" - " + face.getName2() + " " + displayPower[ord] + "RF");
         }
+        // left.add("- internalPower: " + Arrays.toString(internalPower) + " <- " + Arrays.toString(internalNextPower));
+        // left.add("- powerQuery: " + Arrays.toString(powerQuery) + " <- " + Arrays.toString(nextPowerQuery));
+        // left.add("- energy: IN " + Arrays.toString(dbgEnergyInput) + ", OUT " + Arrays.toString(dbgEnergyOutput));
+        // left.add("- energy: OFFERED " + Arrays.toString(dbgEnergyOffered));
 
-        left.add("- totalPowerQuery: " + Arrays.toString(totalPowerQuery));
+        // int[] totalPowerQuery = new int[6];
+        // for (int i = 0; i < 6; ++i) {
+        // if (internalPower[i] > 0) {
+        // for (int j = 0; j < 6; ++j) {
+        // if (j != i && powerQuery[j] > 0) {
+        // Object ep = providers[j];
+        // if (ep instanceof IPipeTile || ep instanceof IEnergyReceiver || ep instanceof IEnergyHandler) {
+        // totalPowerQuery[i] += powerQuery[j];
+        // }
+        // }
+        // }
+        // }
+        // }
+        //
+        // left.add("- totalPowerQuery: " + Arrays.toString(totalPowerQuery));
     }
 }

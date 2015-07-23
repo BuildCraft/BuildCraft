@@ -2,6 +2,7 @@ package buildcraft.transport;
 
 import java.util.BitSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.common.collect.HashMultiset;
@@ -18,6 +19,7 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.api.core.SafeTimeTracker;
+import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.DefaultProps;
@@ -28,7 +30,7 @@ import buildcraft.transport.pipes.*;
 import buildcraft.transport.pipes.events.PipeEventFluid;
 import buildcraft.transport.utils.FluidRenderData;
 
-public class PipeTransportFluids extends PipeTransport implements IFluidHandler {
+public class PipeTransportFluids extends PipeTransport implements IFluidHandler, IDebuggable {
     public static final Map<Class<? extends Pipe<?>>, Integer> fluidCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
 
     /** The amount of liquid contained by a pipe section. For simplicity, all pipe sections are assumed to be of the
@@ -625,5 +627,20 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler 
         fluidCapacities.put(PipeFluidsStone.class, 2 * BuildCraftTransport.pipeFluidsBaseFlowRate);
         fluidCapacities.put(PipeFluidsVoid.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
         fluidCapacities.put(PipeFluidsWood.class, 1 * BuildCraftTransport.pipeFluidsBaseFlowRate);
+    }
+
+    @Override
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        left.add("");
+        left.add("PipeTransportFluids");
+        left.add(" - FluidType = " + (fluidType == null ? "empty" : fluidType.getLocalizedName()));
+        for (int section = 6; section >= 0; section--) {
+            String sectionName = section == 6 ? "Center" : EnumFacing.values()[section].getName2();
+            PipeSection pipe = sections[section];
+            if (pipe == null) {
+                continue;
+            }
+            left.add(" - " + sectionName + " = " + pipe.amount + "/" + LIQUID_IN_PIPE + "mB");
+        }
     }
 }
