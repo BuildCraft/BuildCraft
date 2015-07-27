@@ -22,6 +22,10 @@ public class ResourceIdRequest extends ResourceId {
 	private ForgeDirection side;
 	private int slot;
 
+	public ResourceIdRequest() {
+
+	}
+
 	public ResourceIdRequest(DockingStation station, int slot) {
 		index = station.index();
 		side = station.side();
