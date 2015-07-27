@@ -1,0 +1,4 @@
+Bugs fixed:
+
+* Restoring robot block breaking state could fail (hea3ven)
+* Stripes pipes placing extra blocks, and the behaviour of the stripes robot placing blocks (hea3ven)
