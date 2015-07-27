@@ -31,7 +31,8 @@ Improvements:
   * Zone Planners now have a dynamic texture (asie)
   * Requesters now support the Comparator (asie)
   * Add events for robot interaction and removal (asie)
-  * fix robots not using the correct sides when accessing inventories/tanks (hea3ven)
+  * Fix robots not using the correct sides when accessing inventories/tanks (hea3ven)
+  * Fix loading break ai from nbt (hea3ven)
 * Transport:
   * Filtered Buffers now support the Comparator (asie)
   * Lenses do not require Iron Ingots anymore (asie)
