@@ -141,6 +141,7 @@ import buildcraft.core.properties.WorldPropertyIsFluidSource;
 import buildcraft.core.properties.WorldPropertyIsHarvestable;
 import buildcraft.core.properties.WorldPropertyIsLeaf;
 import buildcraft.core.properties.WorldPropertyIsOre;
+import buildcraft.core.properties.WorldPropertyIsRock;
 import buildcraft.core.properties.WorldPropertyIsShoveled;
 import buildcraft.core.properties.WorldPropertyIsSoft;
 import buildcraft.core.properties.WorldPropertyIsWood;
@@ -510,6 +511,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildCraftAPI.registerWorldProperty("harvestable", new WorldPropertyIsHarvestable());
 		BuildCraftAPI.registerWorldProperty("farmland", new WorldPropertyIsFarmland());
 		BuildCraftAPI.registerWorldProperty("shoveled", new WorldPropertyIsShoveled());
+		BuildCraftAPI.registerWorldProperty("rock", new WorldPropertyIsRock());
 		BuildCraftAPI.registerWorldProperty("dirt", new WorldPropertyIsDirt());
 		BuildCraftAPI.registerWorldProperty("fluidSource", new WorldPropertyIsFluidSource());
 

@@ -48,6 +48,8 @@ public class BoardRobotDelivery extends RedstoneBoardRobot {
 			startDelegateAI(new AIRobotDisposeItems(robot));
 			return;
 		}
+//		if (robot != null)
+//			return;
 
 		if (currentRequest == null) {
 			startDelegateAI(new AIRobotSearchStackRequest(robot, ActionRobotFilter.getGateFilter(robot
