@@ -48,7 +48,7 @@ public class PipeFluidsEmerald extends PipeFluidsWood implements ISerializable {
         }
 
         int flowRate = transport.getFlowRate();
-        FluidStack toExtract = new FluidStack(targetFluidStack, liquidToExtract > flowRate ? flowRate : liquidToExtract);
+        FluidStack toExtract = new FluidStack(targetFluidStack, fluidToExtract > flowRate ? flowRate : fluidToExtract);
         FluidStack extracted = fluidHandler.drain(side.getOpposite(), toExtract, false);
 
         if (extracted != null) {

@@ -404,12 +404,12 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
             refreshRenderState = true;
         }
 
-        if (refreshRenderState) {
+        if (refreshRenderState || true) {//FIXME DEBUG CODE!
             refreshRenderState();
             refreshRenderState = false;
         }
 
-        if (sendClientUpdate) {
+        if (sendClientUpdate || true) {//FIXME DEBUG CODE!
             sendClientUpdate = false;
 
             if (worldObj instanceof WorldServer) {

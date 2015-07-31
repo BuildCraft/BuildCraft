@@ -32,7 +32,7 @@ import io.netty.buffer.ByteBuf;
 public class PipeFluidsWood extends Pipe<PipeTransportFluids>implements IEnergyHandler, ISerializable, IDebuggable {
     private static final int ENERGY_MULTIPLIER = 50;
 
-    public int liquidToExtract;
+    public int fluidToExtract;
 
     protected int standardIconIndex = PipeIconProvider.TYPE.PipeFluidsWood_Standard.ordinal();
     protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
@@ -83,28 +83,28 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids>implements IEnergyH
     public void updateEntity() {
         super.updateEntity();
 
-        if (liquidToExtract <= 0) {
+        if (fluidToExtract <= 0) {
             return;
         }
 
         TileEntity tile = getConnectingTile();
 
         if (tile == null || !(tile instanceof IFluidHandler)) {
-            liquidToExtract = 0;
+            fluidToExtract = 0;
         } else {
             extractFluid((IFluidHandler) tile, EnumFacing.getFront(container.getBlockMetadata()));
 
             // We always subtract the flowRate to ensure that the buffer goes down reasonably quickly.
-            liquidToExtract -= transport.getFlowRate();
+            fluidToExtract -= transport.getFlowRate();
 
-            if (liquidToExtract < 0) {
-                liquidToExtract = 0;
+            if (fluidToExtract < 0) {
+                fluidToExtract = 0;
             }
         }
     }
 
     public int extractFluid(IFluidHandler fluidHandler, EnumFacing side) {
-        int amount = liquidToExtract > transport.getFlowRate() ? transport.getFlowRate() : liquidToExtract;
+        int amount = fluidToExtract > transport.getFlowRate() ? transport.getFlowRate() : fluidToExtract;
         FluidTankInfo tankInfo = transport.getTankInfo(side)[0];
         FluidStack extracted;
 
@@ -165,10 +165,10 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids>implements IEnergyH
             return 0;
         }
 
-        int maxToReceive = (1000 - liquidToExtract) / ENERGY_MULTIPLIER;
+        int maxToReceive = (1000 - fluidToExtract) / ENERGY_MULTIPLIER;
         int received = Math.min(maxReceive, maxToReceive);
         if (!simulate) {
-            liquidToExtract += ENERGY_MULTIPLIER * received;
+            fluidToExtract += ENERGY_MULTIPLIER * received;
         }
         return received;
     }
@@ -190,18 +190,18 @@ public class PipeFluidsWood extends Pipe<PipeTransportFluids>implements IEnergyH
 
     @Override
     public void writeData(ByteBuf data) {
-        data.writeShort(liquidToExtract);
+        data.writeShort(fluidToExtract);
     }
 
     @Override
     public void readData(ByteBuf data) {
-        liquidToExtract = data.readShort();
+        fluidToExtract = data.readShort();
     }
 
     @Override
     public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         left.add("");
         left.add("PipeFluidsWood");
-        left.add(" FluidToExtract = " + liquidToExtract + "mB");
+        left.add(" Fluid Extraction Potential = " + fluidToExtract + "mB");
     }
 }

@@ -114,6 +114,7 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
                     Vec3 actualRadius = new Vec3(0.25, 0.25, 0.25).subtract(smallerFace);
                     Vector3f radius = Utils.convertFloat(actualRadius);
 
+                    // Essentially a lot of special casing direction-wise to make pipes all work properly
                     double umin = 0, umax = 0, vmin = 0, vmax = 0;
 
                     if (connect == EnumFacing.UP) {

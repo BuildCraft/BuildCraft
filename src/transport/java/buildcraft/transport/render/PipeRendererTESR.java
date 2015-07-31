@@ -24,7 +24,6 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.api.enums.EnumColor;
 import buildcraft.api.gates.IGateExpansion;
@@ -35,7 +34,6 @@ import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.BuildCraftCore.RenderMode;
 import buildcraft.core.CoreConstants;
-import buildcraft.core.lib.render.FluidRenderer;
 import buildcraft.core.lib.render.RenderEntityBlock;
 import buildcraft.core.lib.render.RenderEntityBlock.RenderInfo;
 import buildcraft.core.lib.render.RenderUtils;
@@ -59,6 +57,11 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
     private static final int LIQUID_STAGES = 40;
     private static final int MAX_ITEMS_TO_RENDER = 10;
+
+    private static final Vec3 CENTER_FLUID_SIZE = new Vec3(0, 0, 0);
+    private static final Vec3 X_FLUID_SIZE = new Vec3(0, 0, 0);
+    private static final Vec3 Y_FLUID_SIZE = new Vec3(0, 0, 0);
+    private static final Vec3 Z_FLUID_SIZE = new Vec3(0, 0, 0);
 
     public int[] displayPowerList = new int[POWER_STAGES];
     public int[] displayPowerListOverload = new int[POWER_STAGES];
@@ -107,7 +110,8 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
         DisplayFluidList d = new DisplayFluidList();
         displayFluidLists.addKey(liquidId, d);
 
-//        int[] displayLists = FluidRenderer.getFluidDisplayLists(new FluidStack(FluidRegistry.getFluid(liquidId), 1), false, 0.98, 0.98, 0.98);
+        // int[] displayLists = FluidRenderer.getFluidDisplayLists(new FluidStack(FluidRegistry.getFluid(liquidId), 1),
+        // false, 0.98, 0.98, 0.98);
 
         RenderInfo block = new RenderInfo();
 
@@ -282,13 +286,12 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
         IPipeTile.PipeType pipeType = pipe.getPipeType();
 
-        // do not use switch. we will be transitioning away from the enum
         if (pipeType == IPipeTile.PipeType.ITEM) {
             renderSolids((Pipe<PipeTransportItems>) pipe.pipe, x, y, z, f);
         } else if (pipeType == IPipeTile.PipeType.FLUID) {
-//            renderFluids((Pipe<PipeTransportFluids>) pipe.pipe, x, y, z);
+            renderFluids((Pipe<PipeTransportFluids>) pipe.pipe, x, y, z);
         } else if (pipeType == IPipeTile.PipeType.POWER) {
-//            renderPower((Pipe<PipeTransportPower>) pipe.pipe, x, y, z);
+            // renderPower((Pipe<PipeTransportPower>) pipe.pipe, x, y, z);
         } /* else if (pipeType == PipeType.STRUCTURE) { // no object to render in a structure pipe; } */
     }
 

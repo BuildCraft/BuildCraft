@@ -10,6 +10,7 @@ import com.google.common.collect.Multiset;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -43,7 +44,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 
     private static int NETWORK_SYNC_TICKS = BuildCraftCore.updateFactor / 2;
     private static final EnumFacing[] directions = EnumFacing.VALUES;
-    private static final EnumFacing[] orientations = EnumFacing.values();
+    private static final int[] orientations = new int[] { 0, 1, 2, 3, 4, 5, 6 };
 
     public class PipeSection {
         public int amount;
@@ -353,34 +354,39 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
     private short computeCurrentConnectionStatesAndTickFlows(short newTimeSlot) {
         short outputCount = 0;
 
-        // Processes all interna4al tanks
-        for (EnumFacing direction : orientations) {
-            sections[direction.ordinal()].setTime(newTimeSlot);
-            sections[direction.ordinal()].moveFluids();
-            // Input processing
-            if (transferState[direction.ordinal()] == TransferState.Input) {
-                inputTTL[direction.ordinal()]--;
-                if (inputTTL[direction.ordinal()] <= 0) {
-                    transferState[direction.ordinal()] = TransferState.None;
+        // Processes all internal tanks
+        for (int ordinal : orientations) {
+            sections[ordinal].setTime(newTimeSlot);
+            sections[ordinal].moveFluids();
+            if (ordinal == 6) {
+                continue;
+            }
+            EnumFacing direction = EnumFacing.VALUES[ordinal];
+            sections[ordinal].setTime(newTimeSlot);
+            sections[ordinal].moveFluids();
+            if (transferState[ordinal] == TransferState.Input) {
+                inputTTL[ordinal]--;
+                if (inputTTL[ordinal] <= 0) {
+                    transferState[ordinal] = TransferState.None;
                 }
                 continue;
             }
             if (!container.pipe.outputOpen(direction)) {
-                transferState[direction.ordinal()] = TransferState.None;
+                transferState[ordinal] = TransferState.None;
                 continue;
             }
-            if (outputCooldown[direction.ordinal()] > 0) {
-                outputCooldown[direction.ordinal()]--;
+            if (outputCooldown[ordinal] > 0) {
+                outputCooldown[ordinal]--;
                 continue;
             }
-            if (outputTTL[direction.ordinal()] <= 0) {
-                transferState[direction.ordinal()] = TransferState.None;
-                outputCooldown[direction.ordinal()] = OUTPUT_COOLDOWN;
-                outputTTL[direction.ordinal()] = OUTPUT_TTL;
+            if (outputTTL[ordinal] <= 0) {
+                transferState[ordinal] = TransferState.None;
+                outputCooldown[ordinal] = OUTPUT_COOLDOWN;
+                outputTTL[ordinal] = OUTPUT_TTL;
                 continue;
             }
-            if (canReceiveCache[direction.ordinal()] && outputOpen(direction)) {
-                transferState[direction.ordinal()] = TransferState.Output;
+            if (canReceiveCache[ordinal] && outputOpen(direction)) {
+                transferState[ordinal] = TransferState.Output;
                 outputCount++;
             }
         }
@@ -414,9 +420,9 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
             delta.set(0);
         }
 
-        for (EnumFacing dir : orientations) {
-            int pamount = renderCache.amount[dir.ordinal()];
-            int camount = sections[dir.ordinal()].amount;
+        for (int dir : orientations) {
+            int pamount = renderCache.amount[dir];
+            int camount = sections[dir].amount;
             int displayQty = (pamount * 4 + camount) / 5;
             if (displayQty == 0 && camount > 0 || initPacket) {
                 displayQty = camount;
@@ -425,8 +431,8 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 
             if (pamount != displayQty || initPacket) {
                 changed = true;
-                renderCache.amount[dir.ordinal()] = displayQty;
-                delta.set(dir.ordinal() + 1);
+                renderCache.amount[dir] = displayQty;
+                delta.set(dir + 1);
             }
         }
 
@@ -487,23 +493,23 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
             setFluidType(null);
         }
 
-        for (EnumFacing direction : orientations) {
-            if (nbttagcompound.hasKey("tank[" + direction.ordinal() + "]")) {
-                NBTTagCompound compound = nbttagcompound.getCompoundTag("tank[" + direction.ordinal() + "]");
+        for (int direction : orientations) {
+            if (nbttagcompound.hasKey("tank[" + direction + "]")) {
+                NBTTagCompound compound = nbttagcompound.getCompoundTag("tank[" + direction + "]");
                 if (compound.hasKey("FluidType")) {
                     FluidStack stack = FluidStack.loadFluidStackFromNBT(compound);
                     if (fluidType == null) {
                         setFluidType(stack);
                     }
                     if (stack.isFluidEqual(fluidType)) {
-                        sections[direction.ordinal()].readFromNBT(compound);
+                        sections[direction].readFromNBT(compound);
                     }
                 } else {
-                    sections[direction.ordinal()].readFromNBT(compound);
+                    sections[direction].readFromNBT(compound);
                 }
             }
-            if (direction != null) {
-                transferState[direction.ordinal()] = TransferState.values()[nbttagcompound.getShort("transferState[" + direction.ordinal() + "]")];
+            if (direction != 6) {
+                transferState[direction] = TransferState.values()[nbttagcompound.getShort("transferState[" + direction + "]")];
             }
         }
     }
@@ -517,12 +523,12 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
             fluidType.writeToNBT(fluidTag);
             nbttagcompound.setTag("fluid", fluidTag);
 
-            for (EnumFacing direction : orientations) {
+            for (int direction : orientations) {
                 NBTTagCompound subTag = new NBTTagCompound();
-                sections[direction.ordinal()].writeToNBT(subTag);
-                nbttagcompound.setTag("tank[" + direction.ordinal() + "]", subTag);
-                if (direction != null) {
-                    nbttagcompound.setShort("transferState[" + direction.ordinal() + "]", (short) transferState[direction.ordinal()].ordinal());
+                sections[direction].writeToNBT(subTag);
+                nbttagcompound.setTag("tank[" + direction + "]", subTag);
+                if (direction != 6) {
+                    nbttagcompound.setShort("transferState[" + direction + "]", (short) transferState[direction].ordinal());
                 }
             }
         }
@@ -640,7 +646,10 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
             if (pipe == null) {
                 continue;
             }
-            left.add(" - " + sectionName + " = " + pipe.amount + "/" + LIQUID_IN_PIPE + "mB");
+            String line = " - " + sectionName + " = ";
+            line += (pipe.amount > 0 ? EnumChatFormatting.GREEN : "");
+            line += pipe.amount + "" + EnumChatFormatting.RESET + "/" + LIQUID_IN_PIPE + "mB";
+            left.add(line);
         }
     }
 }
