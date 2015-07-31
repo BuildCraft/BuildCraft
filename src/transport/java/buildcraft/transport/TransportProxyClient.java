@@ -11,8 +11,8 @@ import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 import buildcraft.transport.item.ItemPipe;
-import buildcraft.transport.render.PipeRendererTESR;
 import buildcraft.transport.render.TileEntityPickupFX;
+import buildcraft.transport.render.tile.PipeRendererTESR;
 
 public class TransportProxyClient extends TransportProxy {
 

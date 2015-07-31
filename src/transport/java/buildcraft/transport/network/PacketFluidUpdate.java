@@ -74,9 +74,9 @@ public class PacketFluidUpdate extends PacketCoordinates {
             renderCache.color = renderCache.fluidID != 0 ? data.readInt() : 0xFFFFFF;
         }
 
-        for (EnumFacing dir : EnumFacing.values()) {
-            if (delta.get(dir.ordinal() + 1)) {
-                renderCache.amount[dir.ordinal()] = Math.min(transLiq.getCapacity(), data.readUnsignedByte());
+        for (int dir = 0; dir < 7; dir++) {
+            if (delta.get(dir + 1)) {
+                renderCache.amount[dir] = Math.min(transLiq.getCapacity(), data.readUnsignedByte());
             }
         }
     }
@@ -96,9 +96,9 @@ public class PacketFluidUpdate extends PacketCoordinates {
             }
         }
 
-        for (EnumFacing dir : EnumFacing.values()) {
-            if (delta.get(dir.ordinal() + 1)) {
-                data.writeByte(renderCache.amount[dir.ordinal()]);
+        for (int dir = 0; dir < 7; dir++) {
+            if (delta.get(dir + 1)) {
+                data.writeByte(renderCache.amount[dir]);
             }
         }
     }

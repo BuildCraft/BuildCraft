@@ -2,7 +2,7 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.transport.render;
+package buildcraft.transport.render.tile;
 
 import org.lwjgl.opengl.GL11;
 
@@ -15,15 +15,12 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IntHashMap;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 
 import buildcraft.api.enums.EnumColor;
 import buildcraft.api.gates.IGateExpansion;
@@ -49,7 +46,6 @@ import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.gates.GatePluggable;
-import buildcraft.transport.utils.FluidRenderData;
 
 public class PipeRendererTESR extends TileEntitySpecialRenderer {
     public static final float DISPLAY_MULTIPLIER = 0.1f;
@@ -58,10 +54,10 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
     private static final int LIQUID_STAGES = 40;
     private static final int MAX_ITEMS_TO_RENDER = 10;
 
-    private static final Vec3 CENTER_FLUID_SIZE = new Vec3(0, 0, 0);
-    private static final Vec3 X_FLUID_SIZE = new Vec3(0, 0, 0);
-    private static final Vec3 Y_FLUID_SIZE = new Vec3(0, 0, 0);
-    private static final Vec3 Z_FLUID_SIZE = new Vec3(0, 0, 0);
+    private static final Vec3 CENTER_FLUID_SIZE = new Vec3(0.5, 0.5, 0.5);
+    private static final Vec3 X_FLUID_SIZE = new Vec3(0.25, 0.5, 0.5);
+    private static final Vec3 Y_FLUID_SIZE = new Vec3(0.5, 0.25, 0.5);
+    // private static final Vec3 Z_FLUID_SIZE = new Vec3(0.5, 0.5, 0.25);
 
     public int[] displayPowerList = new int[POWER_STAGES];
     public int[] displayPowerListOverload = new int[POWER_STAGES];
@@ -73,14 +69,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
     private final EntityItem dummyEntityItem = new EntityItem(null);
     private final RenderEntityItem customRenderItem;
     private boolean initialized = false;
-
-    private class DisplayFluidList {
-
-        public int[] sideHorizontal = new int[LIQUID_STAGES];
-        public int[] sideVertical = new int[LIQUID_STAGES];
-        public int[] centerHorizontal = new int[LIQUID_STAGES];
-        public int[] centerVertical = new int[LIQUID_STAGES];
-    }
 
     public PipeRendererTESR() {
         customRenderItem = new RenderEntityItem(Minecraft.getMinecraft().getRenderManager(), Minecraft.getMinecraft().getRenderItem()) {
@@ -96,116 +84,68 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
         };
     }
 
-    private DisplayFluidList getDisplayFluidLists(int liquidId, World world) {
-        if (displayFluidLists.containsItem(liquidId)) {
-            return (DisplayFluidList) displayFluidLists.lookup(liquidId);
+    @SuppressWarnings("unchecked")
+    @Override
+    public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int argumentthatisalwaysminusone) {
+        if (BuildCraftCore.render == RenderMode.NoDynamic) {
+            return;
         }
 
-        Fluid fluid = FluidRegistry.getFluid(liquidId);
+        TileGenericPipe pipe = (TileGenericPipe) tileentity;
 
-        if (fluid == null) {
-            return null;
+        if (pipe.pipe == null) {
+            return;
         }
 
-        DisplayFluidList d = new DisplayFluidList();
-        displayFluidLists.addKey(liquidId, d);
+        renderGatesWires(pipe, x, y, z);
+        renderPluggables(pipe, x, y, z);
 
-        // int[] displayLists = FluidRenderer.getFluidDisplayLists(new FluidStack(FluidRegistry.getFluid(liquidId), 1),
-        // false, 0.98, 0.98, 0.98);
+        IPipeTile.PipeType pipeType = pipe.getPipeType();
 
-        RenderInfo block = new RenderInfo();
-
-        if (fluid.getBlock() != null) {
-            block.blockState = fluid.getBlock().getDefaultState();
-        } else {
-            block.blockState = Blocks.water.getDefaultState();
-        }
-
-        block.texture = fluid.getStillIcon();
-
-        float size = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
-
-        // render size
-
-        for (int s = 0; s < LIQUID_STAGES; ++s) {
-            float ratio = (float) s / (float) LIQUID_STAGES;
-
-            // SIDE HORIZONTAL
-
-            d.sideHorizontal[s] = GLAllocation.generateDisplayLists(1);
-            GL11.glNewList(d.sideHorizontal[s], GL11.GL_COMPILE);
-
-            block.minX = 0.0F;
-            block.minZ = CoreConstants.PIPE_MIN_POS + 0.01F;
-
-            block.maxX = block.minX + size / 2F + 0.01F;
-            block.maxZ = block.minZ + size - 0.02F;
-
-            block.minY = CoreConstants.PIPE_MIN_POS + 0.01F;
-            block.maxY = block.minY + (size - 0.02F) * ratio;
-
-            RenderEntityBlock.INSTANCE.renderBlock(block);
-
-            GL11.glEndList();
-
-            // SIDE VERTICAL
-
-            d.sideVertical[s] = GLAllocation.generateDisplayLists(1);
-            GL11.glNewList(d.sideVertical[s], GL11.GL_COMPILE);
-
-            block.minY = CoreConstants.PIPE_MAX_POS - 0.01;
-            block.maxY = 1;
-
-            block.minX = 0.5 - (size / 2 - 0.01) * ratio;
-            block.maxX = 0.5 + (size / 2 - 0.01) * ratio;
-
-            block.minZ = 0.5 - (size / 2 - 0.01) * ratio;
-            block.maxZ = 0.5 + (size / 2 - 0.01) * ratio;
-
-            RenderEntityBlock.INSTANCE.renderBlock(block);
-
-            GL11.glEndList();
-
-            // CENTER HORIZONTAL
-
-            d.centerHorizontal[s] = GLAllocation.generateDisplayLists(1);
-            GL11.glNewList(d.centerHorizontal[s], GL11.GL_COMPILE);
-
-            block.minX = CoreConstants.PIPE_MIN_POS + 0.01;
-            block.minZ = CoreConstants.PIPE_MIN_POS + 0.01;
-
-            block.maxX = block.minX + size - 0.02;
-            block.maxZ = block.minZ + size - 0.02;
-
-            block.minY = CoreConstants.PIPE_MIN_POS + 0.01;
-            block.maxY = block.minY + (size - 0.02F) * ratio;
-
-            RenderEntityBlock.INSTANCE.renderBlock(block);
-
-            GL11.glEndList();
-
-            // CENTER VERTICAL
-
-            d.centerVertical[s] = GLAllocation.generateDisplayLists(1);
-            GL11.glNewList(d.centerVertical[s], GL11.GL_COMPILE);
-
-            block.minY = CoreConstants.PIPE_MIN_POS + 0.01;
-            block.maxY = CoreConstants.PIPE_MAX_POS - 0.01;
-
-            block.minX = 0.5 - (size / 2 - 0.02) * ratio;
-            block.maxX = 0.5 + (size / 2 - 0.02) * ratio;
-
-            block.minZ = 0.5 - (size / 2 - 0.02) * ratio;
-            block.maxZ = 0.5 + (size / 2 - 0.02) * ratio;
-
-            RenderEntityBlock.INSTANCE.renderBlock(block);
-
-            GL11.glEndList();
-
-        }
-
-        return d;
+        if (pipeType == IPipeTile.PipeType.ITEM) {
+            renderSolids((Pipe<PipeTransportItems>) pipe.pipe, x, y, z, f);
+        } else if (pipeType == IPipeTile.PipeType.FLUID) {
+            PipeRendererFluids.renderFluidPipe((Pipe<PipeTransportFluids>) pipe.pipe, x, y, z);
+        } else if (pipeType == IPipeTile.PipeType.POWER) {
+            // renderPower((Pipe<PipeTransportPower>) pipe.pipe, x, y, z);
+        } /* else if (pipeType == PipeType.STRUCTURE) { // no object to render in a structure pipe; } */
     }
+
+    /* private DisplayFluidList getDisplayFluidLists(int liquidId, World world) { if
+     * (displayFluidLists.containsItem(liquidId)) { return (DisplayFluidList) displayFluidLists.lookup(liquidId); }
+     * Fluid fluid = FluidRegistry.getFluid(liquidId); if (fluid == null) { return null; } DisplayFluidList d = new
+     * DisplayFluidList(); displayFluidLists.addKey(liquidId, d); boolean[] hidden = new boolean[6]; Arrays.fill(hidden,
+     * true); hidden[0] = false; FluidStack fluidStack = new FluidStack(FluidRegistry.getFluid(liquidId), 1);
+     * d.sideHorizontal = FluidRenderer.getFluidDisplayListForSide(fluidStack, false, X_FLUID_SIZE, EnumFacing.EAST);
+     * d.sideVertical = FluidRenderer.getFluidDisplayListForSide(fluidStack, false, Y_FLUID_SIZE, EnumFacing.UP);
+     * d.centerHorizontal = FluidRenderer.getFluidDisplayListForSide(fluidStack, false, CENTER_FLUID_SIZE,
+     * EnumFacing.EAST); d.centerVertical = FluidRenderer.getFluidDisplayListForSide(fluidStack, false,
+     * CENTER_FLUID_SIZE, EnumFacing.UP); // int[] displayLists = FluidRenderer.getFluidDisplayLists(new
+     * FluidStack(FluidRegistry.getFluid(liquidId), 1), // false, 0.98, 0.98, 0.98); // // RenderInfo block = new
+     * RenderInfo(); // // if (fluid.getBlock() != null) { // block.blockState = fluid.getBlock().getDefaultState(); //
+     * } else { // block.blockState = Blocks.water.getDefaultState(); // } // // block.texture = fluid.getStillIcon();
+     * // // float size = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS; // // // render size // // for (int s
+     * = 0; s < LIQUID_STAGES; ++s) { // float ratio = (float) s / (float) LIQUID_STAGES; // // // SIDE HORIZONTAL // //
+     * d.sideHorizontal[s] = GLAllocation.generateDisplayLists(1); // GL11.glNewList(d.sideHorizontal[s],
+     * GL11.GL_COMPILE); // // block.minX = 0.0F; // block.minZ = CoreConstants.PIPE_MIN_POS + 0.01F; // // block.maxX =
+     * block.minX + size / 2F + 0.01F; // block.maxZ = block.minZ + size - 0.02F; // // block.minY =
+     * CoreConstants.PIPE_MIN_POS + 0.01F; // block.maxY = block.minY + (size - 0.02F) * ratio; // //
+     * RenderEntityBlock.INSTANCE.renderBlock(block); // // GL11.glEndList(); // // // SIDE VERTICAL // //
+     * d.sideVertical[s] = GLAllocation.generateDisplayLists(1); // GL11.glNewList(d.sideVertical[s], GL11.GL_COMPILE);
+     * // // block.minY = CoreConstants.PIPE_MAX_POS - 0.01; // block.maxY = 1; // // block.minX = 0.5 - (size / 2 -
+     * 0.01) * ratio; // block.maxX = 0.5 + (size / 2 - 0.01) * ratio; // // block.minZ = 0.5 - (size / 2 - 0.01) *
+     * ratio; // block.maxZ = 0.5 + (size / 2 - 0.01) * ratio; // // RenderEntityBlock.INSTANCE.renderBlock(block); //
+     * // GL11.glEndList(); // // // CENTER HORIZONTAL // // d.centerHorizontal[s] =
+     * GLAllocation.generateDisplayLists(1); // GL11.glNewList(d.centerHorizontal[s], GL11.GL_COMPILE); // // block.minX
+     * = CoreConstants.PIPE_MIN_POS + 0.01; // block.minZ = CoreConstants.PIPE_MIN_POS + 0.01; // // block.maxX =
+     * block.minX + size - 0.02; // block.maxZ = block.minZ + size - 0.02; // // block.minY = CoreConstants.PIPE_MIN_POS
+     * + 0.01; // block.maxY = block.minY + (size - 0.02F) * ratio; // // RenderEntityBlock.INSTANCE.renderBlock(block);
+     * // // GL11.glEndList(); // // // CENTER VERTICAL // // d.centerVertical[s] =
+     * GLAllocation.generateDisplayLists(1); // GL11.glNewList(d.centerVertical[s], GL11.GL_COMPILE); // // block.minY =
+     * CoreConstants.PIPE_MIN_POS + 0.01; // block.maxY = CoreConstants.PIPE_MAX_POS - 0.01; // // block.minX = 0.5 -
+     * (size / 2 - 0.02) * ratio; // block.maxX = 0.5 + (size / 2 - 0.02) * ratio; // // block.minZ = 0.5 - (size / 2 -
+     * 0.02) * ratio; // block.maxZ = 0.5 + (size / 2 - 0.02) * ratio; // //
+     * RenderEntityBlock.INSTANCE.renderBlock(block); // // GL11.glEndList(); // // } return d; } */
 
     private void initializeDisplayPowerList(World world) {
         if (initialized) {
@@ -266,33 +206,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
             GL11.glEndList();
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f, int argumentthatisalwaysminusone) {
-        if (BuildCraftCore.render == RenderMode.NoDynamic) {
-            return;
-        }
-
-        TileGenericPipe pipe = (TileGenericPipe) tileentity;
-
-        if (pipe.pipe == null) {
-            return;
-        }
-
-        renderGatesWires(pipe, x, y, z);
-        renderPluggables(pipe, x, y, z);
-
-        IPipeTile.PipeType pipeType = pipe.getPipeType();
-
-        if (pipeType == IPipeTile.PipeType.ITEM) {
-            renderSolids((Pipe<PipeTransportItems>) pipe.pipe, x, y, z, f);
-        } else if (pipeType == IPipeTile.PipeType.FLUID) {
-            renderFluids((Pipe<PipeTransportFluids>) pipe.pipe, x, y, z);
-        } else if (pipeType == IPipeTile.PipeType.POWER) {
-            // renderPower((Pipe<PipeTransportPower>) pipe.pipe, x, y, z);
-        } /* else if (pipeType == PipeType.STRUCTURE) { // no object to render in a structure pipe; } */
     }
 
     private void renderGatesWires(TileGenericPipe pipe, double x, double y, double z) {
@@ -690,113 +603,29 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
         GL11.glPopMatrix();
     }
 
-    private void renderFluids(Pipe<PipeTransportFluids> pipe, double x, double y, double z) {
-        PipeTransportFluids trans = pipe.transport;
-
-        boolean needsRender = false;
-        FluidRenderData renderData = trans.renderCache;
-        for (int i = 0; i < 7; ++i) {
-            if (renderData.amount[i] > 0) {
-                needsRender = true;
-                break;
-            }
-        }
-
-        if (!needsRender) {
-            return;
-        }
-
-        GL11.glPushMatrix();
-        GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-        GL11.glEnable(GL11.GL_CULL_FACE);
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-        GL11.glTranslatef((float) x, (float) y, (float) z);
-
-        // sides
-
-        boolean sides = false, above = false;
-
-        for (EnumFacing side : EnumFacing.VALUES) {
-            int i = side.ordinal();
-
-            FluidRenderData fluidRenderData = trans.renderCache;
-
-            if (fluidRenderData.amount[i] <= 0) {
-                continue;
-            }
-
-            if (!pipe.container.isPipeConnected(side)) {
-                continue;
-            }
-
-            DisplayFluidList d = getDisplayFluidLists(fluidRenderData.fluidID, pipe.container.getWorld());
-
-            if (d == null) {
-                continue;
-            }
-
-            int stage = (int) ((float) fluidRenderData.amount[i] / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
-
-            GL11.glPushMatrix();
-            int list = 0;
-
-            switch (EnumFacing.VALUES[i]) {
-                case UP:
-                    above = true;
-                    list = d.sideVertical[stage];
-                    break;
-                case DOWN:
-                    GL11.glTranslatef(0, -0.75F, 0);
-                    list = d.sideVertical[stage];
-                    break;
-                case EAST:
-                case WEST:
-                case SOUTH:
-                case NORTH:
-                    sides = true;
-                    // Yes, this is kind of ugly, but was easier than transform the coordinates above.
-                    GL11.glTranslatef(0.5F, 0.0F, 0.5F);
-                    GL11.glRotatef(angleY[i], 0, 1, 0);
-                    GL11.glRotatef(angleZ[i], 0, 0, 1);
-                    GL11.glTranslatef(-0.5F, 0.0F, -0.5F);
-                    list = d.sideHorizontal[stage];
-                    break;
-                default:
-            }
-            bindTexture(TextureMap.locationBlocksTexture);
-            RenderUtils.setGLColorFromInt(fluidRenderData.color);
-            GL11.glCallList(list);
-            GL11.glPopMatrix();
-        }
-        // CENTER
-        FluidRenderData fluidRenderData = trans.renderCache;
-
-        if (fluidRenderData.amount[6] > 0) {
-            DisplayFluidList d = getDisplayFluidLists(fluidRenderData.fluidID, pipe.container.getWorld());
-
-            if (d != null) {
-                int stage = (int) ((float) fluidRenderData.amount[6] / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
-
-                bindTexture(TextureMap.locationBlocksTexture);
-                RenderUtils.setGLColorFromInt(fluidRenderData.color);
-
-                if (above) {
-                    GL11.glCallList(d.centerVertical[stage]);
-                }
-
-                if (!above || sides) {
-                    GL11.glCallList(d.centerHorizontal[stage]);
-                }
-            }
-
-        }
-
-        GL11.glPopAttrib();
-        GL11.glPopMatrix();
-    }
+    /* private void renderFluids(Pipe<PipeTransportFluids> pipe, double x, double y, double z) { PipeTransportFluids
+     * trans = pipe.transport; boolean needsRender = false; FluidRenderData renderData = trans.renderCache; for (int i =
+     * 0; i < 7; ++i) { if (renderData.amount[i] > 0) { needsRender = true; break; } } if (!needsRender) { return; }
+     * GL11.glPushMatrix(); GL11.glPushAttrib(GL11. GL_ENABLE_BIT); GL11.glEnable(GL11. GL_CULL_FACE);
+     * GL11.glDisable(GL11. GL_LIGHTING); GL11.glEnable(GL11. GL_BLEND); GL11.glBlendFunc(GL11. GL_SRC_ALPHA, GL11.
+     * GL_ONE_MINUS_SRC_ALPHA); GL11.glTranslatef(( float) x, (float) y, (float) z); // sides boolean sides = false,
+     * above = false; for (EnumFacing side : EnumFacing.VALUES) { int i = side.ordinal(); FluidRenderData
+     * fluidRenderData = trans.renderCache; if (fluidRenderData.amount[ i] <= 0) { continue; } if (!pipe.container.
+     * isPipeConnected(side)) { continue; } DisplayFluidList d = getDisplayFluidLists( fluidRenderData.fluidID,
+     * pipe.container.getWorld( )); if (d == null) { continue; } int stage = (int) ((float) fluidRenderData.amount[ i] /
+     * (float) (trans.getCapacity()) * (LIQUID_STAGES - 1)); GL11.glPushMatrix(); int list = 0; switch
+     * (EnumFacing.VALUES[i]) { case UP: above = true; list = d.sideVertical[stage]; break; case DOWN:
+     * GL11.glTranslatef(0, -0.75F, 0); list = d.sideVertical[stage]; break; case EAST: case WEST: case SOUTH: case
+     * NORTH: sides = true; // Yes, this is kind of ugly, but was easier than transform the coordinates above.
+     * GL11.glTranslatef(0.5F, 0.0F, 0.5F); GL11.glRotatef(angleY[i] , 0, 1, 0); GL11.glRotatef(angleZ[i] , 0, 0, 1);
+     * GL11.glTranslatef(-0.5F, 0.0F, -0.5F); list = d.sideHorizontal[stage]; break; default: } bindTexture(TextureMap.
+     * locationBlocksTexture); RenderUtils. setGLColorFromInt( fluidRenderData.color); GL11.glCallList(list);
+     * GL11.glPopMatrix(); } // CENTER FluidRenderData fluidRenderData = trans.renderCache; if (fluidRenderData.amount[
+     * 6] > 0) { DisplayFluidList d = getDisplayFluidLists( fluidRenderData.fluidID, pipe.container.getWorld( )); if (d
+     * != null) { int stage = (int) ((float) fluidRenderData.amount[ 6] / (float) (trans.getCapacity()) * (LIQUID_STAGES
+     * - 1)); bindTexture(TextureMap. locationBlocksTexture); RenderUtils. setGLColorFromInt( fluidRenderData.color); if
+     * (above) { GL11.glCallList(d. centerVertical[stage]); } if (!above || sides) { GL11.glCallList(d.
+     * centerHorizontal[stage]) ; } } } GL11.glPopAttrib(); GL11.glPopMatrix(); } */
 
     private void renderSolids(Pipe<PipeTransportItems> pipe, double x, double y, double z, float f) {
         GL11.glPushMatrix();

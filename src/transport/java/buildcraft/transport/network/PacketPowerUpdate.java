@@ -8,7 +8,7 @@ import net.minecraft.util.BlockPos;
 
 import buildcraft.core.lib.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
-import buildcraft.transport.render.PipeRendererTESR;
+import buildcraft.transport.render.tile.PipeRendererTESR;
 
 import io.netty.buffer.ByteBuf;
 

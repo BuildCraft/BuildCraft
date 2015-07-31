@@ -24,7 +24,7 @@ import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.Gate;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.TileGenericPipe;
-import buildcraft.transport.render.PipeRendererTESR;
+import buildcraft.transport.render.tile.PipeRendererTESR;
 
 import io.netty.buffer.ByteBuf;
 

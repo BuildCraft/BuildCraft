@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.render;
 
+import java.util.Arrays;
 import java.util.Map;
 
 import com.google.common.collect.Maps;
@@ -14,6 +15,7 @@ import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -102,6 +104,48 @@ public final class FluidRenderer {
     /** @deprecated Use {@link #getFluidDisplayLists(FluidStack,boolean,double,double,double)} instead */
     public static int[] getFluidDisplayLists(FluidStack fluidStack, boolean flowing) {
         return getFluidDisplayLists(fluidStack, flowing, BLOCK_SIZE);
+    }
+
+    /** Note that this does NOT implement caching. */
+    public static int[] getFluidDisplayListForSide(FluidStack fluidStack, boolean flowing, Vec3 size, EnumFacing side) {
+        if (fluidStack == null) {
+            return null;
+        }
+        Fluid fluid = fluidStack.getFluid();
+        if (fluid == null) {
+            return null;
+        }
+
+        int[] lists = new int[DISPLAY_STAGES];
+
+        GlStateManager.disableLighting();
+        GlStateManager.disableBlend();
+        GlStateManager.disableCull();
+
+        for (int s = 0; s < DISPLAY_STAGES; ++s) {
+            lists[s] = GLAllocation.generateDisplayLists(1);
+            GL11.glNewList(lists[s], GL11.GL_COMPILE);
+
+            EntityResizableCuboid ent = new EntityResizableCuboid(null);
+            ent.iSize = size.xCoord;
+            ent.jSize = (Math.max(s, 1) / (float) DISPLAY_STAGES) * size.yCoord;
+            ent.kSize = size.zCoord;
+            ent.texture = getFluidTexture(fluidStack, flowing);
+            ent.makeClient();
+            Arrays.fill(ent.textures, null);
+            ent.textures[side.ordinal()] = ent.texture;
+
+            RenderResizableCuboid.INSTANCE.renderCube(ent);
+
+            GL11.glEndList();
+        }
+
+        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.enableLighting();
+        GlStateManager.enableBlend();
+        GlStateManager.enableCull();
+
+        return lists;
     }
 
     public static int[] getFluidDisplayLists(FluidStack fluidStack, boolean flowing, Vec3 size) {
