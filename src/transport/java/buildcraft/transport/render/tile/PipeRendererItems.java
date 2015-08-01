@@ -110,7 +110,6 @@ public class PipeRendererItems {
             GL11.glEndList();
         }
         GL11.glPopMatrix();
-        color = EnumColor.values()[travellingItem.id % 16];
         if (color != null) {// The box around an item that decides what colour lenses it can go through
             Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
 
