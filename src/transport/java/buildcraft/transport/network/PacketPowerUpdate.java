@@ -8,7 +8,7 @@ import net.minecraft.util.BlockPos;
 
 import buildcraft.core.lib.network.PacketCoordinates;
 import buildcraft.core.network.PacketIds;
-import buildcraft.transport.render.tile.PipeRendererTESR;
+import buildcraft.transport.render.tile.PipeRendererPower;
 
 import io.netty.buffer.ByteBuf;
 
@@ -38,7 +38,7 @@ public class PacketPowerUpdate extends PacketCoordinates {
         super.writeData(data);
         data.writeBoolean(overload);
         for (short element : displayPower) {
-            data.writeByte(Math.min(PipeRendererTESR.POWER_STAGES, (int) Math.ceil(element * PipeRendererTESR.DISPLAY_MULTIPLIER)));
+            data.writeByte(Math.min(PipeRendererPower.POWER_STAGES, (int) Math.ceil(element * PipeRendererPower.DISPLAY_MULTIPLIER)));
         }
     }
 }

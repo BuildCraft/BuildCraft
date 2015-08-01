@@ -22,6 +22,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.Vec3i;
 import net.minecraft.world.IBlockAccess;
@@ -377,6 +378,16 @@ public final class Utils {
 
     public static Vec3 convert(EnumFacing face, double size) {
         return multiply(convert(face), size);
+    }
+
+    public static EnumFacing convertPositive(EnumFacing face) {
+        if (face == null) {
+            return null;
+        }
+        if (face.getAxisDirection() == AxisDirection.NEGATIVE) {
+            return face.getOpposite();
+        }
+        return face;
     }
 
     // We always return BlockPos instead of Vec3i as it will be usable in all situations that Vec3i is, and all the ones

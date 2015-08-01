@@ -127,9 +127,9 @@ public final class FluidRenderer {
             GL11.glNewList(lists[s], GL11.GL_COMPILE);
 
             EntityResizableCuboid ent = new EntityResizableCuboid(null);
-            ent.iSize = size.xCoord;
-            ent.jSize = (Math.max(s, 1) / (float) DISPLAY_STAGES) * size.yCoord;
-            ent.kSize = size.zCoord;
+            ent.xSize = size.xCoord;
+            ent.ySize = (Math.max(s, 1) / (float) DISPLAY_STAGES) * size.yCoord;
+            ent.zSize = size.zCoord;
             ent.texture = getFluidTexture(fluidStack, flowing);
             ent.makeClient();
             Arrays.fill(ent.textures, null);
@@ -182,9 +182,9 @@ public final class FluidRenderer {
             GL11.glNewList(displayList[s], GL11.GL_COMPILE);
 
             EntityResizableCuboid ent = new EntityResizableCuboid(null);
-            ent.iSize = size.xCoord;
-            ent.jSize = (Math.max(s, 1) / (float) DISPLAY_STAGES) * size.yCoord;
-            ent.kSize = size.zCoord;
+            ent.xSize = size.xCoord;
+            ent.ySize = (Math.max(s, 1) / (float) DISPLAY_STAGES) * size.yCoord;
+            ent.zSize = size.zCoord;
             ent.texture = getFluidTexture(fluidStack, flowing);
 
             RenderResizableCuboid.INSTANCE.renderCube(ent);

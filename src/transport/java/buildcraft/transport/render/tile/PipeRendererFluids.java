@@ -177,9 +177,9 @@ public class PipeRendererFluids {
             GL11.glTranslated(-0.25, -0.25, -0.25);
 
             EntityResizableCuboid cuboid = new EntityResizableCuboid(null);
-            cuboid.iSize = 0.5;
-            cuboid.jSize = 0.5 * ((i + 1) / (float) (DISPLAY_STAGES));
-            cuboid.kSize = 0.5;
+            cuboid.xSize = 0.5;
+            cuboid.ySize = 0.5 * ((i + 1) / (float) (DISPLAY_STAGES));
+            cuboid.zSize = 0.5;
             cuboid.texture = sprite;
 
             RenderResizableCuboid.INSTANCE.renderCube(cuboid);
@@ -202,9 +202,9 @@ public class PipeRendererFluids {
             GL11.glTranslated(-0.25 * width, -0.25, -0.25 * width);
 
             EntityResizableCuboid cuboid = new EntityResizableCuboid(null);
-            cuboid.iSize = 0.5 * width;
-            cuboid.jSize = 0.5;
-            cuboid.kSize = 0.5 * width;
+            cuboid.xSize = 0.5 * width;
+            cuboid.ySize = 0.5;
+            cuboid.zSize = 0.5 * width;
             cuboid.texture = sprite;
 
             RenderResizableCuboid.INSTANCE.renderCube(cuboid);
@@ -245,9 +245,9 @@ public class PipeRendererFluids {
                 GL11.glTranslated(-size.xCoord / 2d, -size.yCoord / 2d, -size.zCoord / 2d);
 
                 EntityResizableCuboid cuboid = new EntityResizableCuboid(null);
-                cuboid.iSize = size.xCoord;
-                cuboid.jSize = height;
-                cuboid.kSize = size.zCoord;
+                cuboid.xSize = size.xCoord;
+                cuboid.ySize = height;
+                cuboid.zSize = size.zCoord;
                 cuboid.texture = sprite;
 
                 RenderResizableCuboid.INSTANCE.renderCube(cuboid);

@@ -406,9 +406,9 @@ public class TilePump extends TileBuildCraft implements IHasWork, IFluidHandler,
 
     private void setTubePosition() {
         if (tube != null) {
-            tube.iSize = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
-            tube.kSize = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
-            tube.jSize = pos.getY() - tube.posY;
+            tube.xSize = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
+            tube.zSize = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
+            tube.ySize = pos.getY() - tube.posY;
 
             tube.setPosition(pos.getX() + CoreConstants.PIPE_MIN_POS, tubeY, pos.getZ() + CoreConstants.PIPE_MIN_POS);
         }

@@ -6,24 +6,15 @@ package buildcraft.transport.render.tile;
 
 import org.lwjgl.opengl.GL11;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.entity.RenderEntityItem;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
 
-import buildcraft.api.enums.EnumColor;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.items.IItemCustomPipeRender;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.api.transport.pluggable.PipePluggable;
@@ -32,49 +23,18 @@ import buildcraft.core.BuildCraftCore.RenderMode;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.render.RenderEntityBlock;
 import buildcraft.core.lib.render.RenderEntityBlock.RenderInfo;
-import buildcraft.core.lib.render.RenderUtils;
 import buildcraft.core.lib.utils.MatrixTranformations;
-import buildcraft.core.lib.utils.Utils;
 import buildcraft.transport.BuildCraftTransport;
 import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.PipeTransportFluids;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
-import buildcraft.transport.TravelingItem;
 import buildcraft.transport.gates.GatePluggable;
 
 public class PipeRendererTESR extends TileEntitySpecialRenderer {
-    public static final float DISPLAY_MULTIPLIER = 0.1f;
-    public static final int POWER_STAGES = 100;
-
-    private static final int MAX_ITEMS_TO_RENDER = 10;
-
-    public int[] displayPowerList = new int[POWER_STAGES];
-    public int[] displayPowerListOverload = new int[POWER_STAGES];
-
-    private final int[] angleY = { 0, 0, 270, 90, 0, 180 };
-    private final int[] angleZ = { 90, 270, 0, 0, 0, 0 };
-
-    private final EntityItem dummyEntityItem = new EntityItem(null);
-    private final RenderEntityItem customRenderItem;
-    private boolean initialized = false;
-
-    public PipeRendererTESR() {
-        customRenderItem = new RenderEntityItem(Minecraft.getMinecraft().getRenderManager(), Minecraft.getMinecraft().getRenderItem()) {
-            @Override
-            public boolean shouldBob() {
-                return false;
-            }
-
-            @Override
-            public boolean shouldSpreadItems() {
-                return false;
-            }
-        };
-    }
+    public PipeRendererTESR() {}
 
     @SuppressWarnings("unchecked")
     @Override
@@ -100,69 +60,8 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
         } else if (pipeType == IPipeTile.PipeType.FLUID) {
             PipeRendererFluids.renderFluidPipe((Pipe<PipeTransportFluids>) pipe.pipe, x, y, z);
         } else if (pipeType == IPipeTile.PipeType.POWER) {
-            // renderPower((Pipe<PipeTransportPower>) pipe.pipe, x, y, z);
+            PipeRendererPower.renderPowerPipe((Pipe<PipeTransportPower>) pipe.pipe, x, y, z);
         } /* else if (pipeType == PipeType.STRUCTURE) { // no object to render in a structure pipe; } */
-    }
-
-    private void initializeDisplayPowerList(World world) {
-        if (initialized) {
-            return;
-        }
-
-        initialized = true;
-
-        RenderInfo block = new RenderInfo();
-        block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.Power_Normal.ordinal());
-
-        float size = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
-
-        for (int s = 0; s < POWER_STAGES; ++s) {
-            displayPowerList[s] = GLAllocation.generateDisplayLists(1);
-            GL11.glNewList(displayPowerList[s], GL11.GL_COMPILE);
-
-            float minSize = 0.005F;
-
-            float unit = (size - minSize) / 2F / POWER_STAGES;
-
-            block.minY = 0.5 - (minSize / 2F) - unit * s;
-            block.maxY = 0.5 + (minSize / 2F) + unit * s;
-
-            block.minZ = 0.5 - (minSize / 2F) - unit * s;
-            block.maxZ = 0.5 + (minSize / 2F) + unit * s;
-
-            block.minX = 0;
-            block.maxX = 0.5 + (minSize / 2F) + unit * s;
-
-            RenderEntityBlock.INSTANCE.renderBlock(block);
-
-            GL11.glEndList();
-        }
-
-        block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.Power_Overload.ordinal());
-
-        size = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
-
-        for (int s = 0; s < POWER_STAGES; ++s) {
-            displayPowerListOverload[s] = GLAllocation.generateDisplayLists(1);
-            GL11.glNewList(displayPowerListOverload[s], GL11.GL_COMPILE);
-
-            float minSize = 0.005F;
-
-            float unit = (size - minSize) / 2F / POWER_STAGES;
-
-            block.minY = 0.5 - (minSize / 2F) - unit * s;
-            block.maxY = 0.5 + (minSize / 2F) + unit * s;
-
-            block.minZ = 0.5 - (minSize / 2F) - unit * s;
-            block.maxZ = 0.5 + (minSize / 2F) + unit * s;
-
-            block.minX = 0;
-            block.maxX = 0.5 + (minSize / 2F) + unit * s;
-
-            RenderEntityBlock.INSTANCE.renderBlock(block);
-
-            GL11.glEndList();
-        }
     }
 
     private void renderGatesWires(TileGenericPipe pipe, double x, double y, double z) {
@@ -480,53 +379,4 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
         return targetOrientation.getOpposite() == direction;
     }
 
-    private void renderPower(Pipe<PipeTransportPower> pipe, double x, double y, double z) {
-        initializeDisplayPowerList(pipe.container.getWorld());
-
-        PipeTransportPower pow = pipe.transport;
-
-        GL11.glPushMatrix();
-        GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-        GL11.glDisable(GL11.GL_LIGHTING);
-        // GL11.glEnable(GL11.GL_BLEND);
-
-        GL11.glTranslatef((float) x, (float) y, (float) z);
-
-        bindTexture(TextureMap.locationBlocksTexture);
-
-        int[] displayList = pow.overload > 0 ? displayPowerListOverload : displayPowerList;
-
-        for (int side = 0; side < 6; ++side) {
-            GL11.glPushMatrix();
-
-            GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-            GL11.glRotatef(angleY[side], 0, 1, 0);
-            GL11.glRotatef(angleZ[side], 0, 0, 1);
-            float scale = 1.0F - side * 0.0001F;
-            GL11.glScalef(scale, scale, scale);
-            GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
-
-            short stage = pow.displayPower[side];
-            if (stage >= 1) {
-                if (stage < displayList.length) {
-                    GL11.glCallList(displayList[stage]);
-                } else {
-                    GL11.glCallList(displayList[displayList.length - 1]);
-                }
-            }
-
-            GL11.glPopMatrix();
-        }
-
-        /* bindTexture(STRIPES_TEXTURE); for (int side = 0; side < 6; side += 2) { if
-         * (pipe.container.isPipeConnected(EnumFacing.values()[side])) { GL11.glPushMatrix(); GL11.glTranslatef(0.5F,
-         * 0.5F, 0.5F); GL11.glRotatef(angleY[side], 0, 1, 0); GL11.glRotatef(angleZ[side], 0, 0, 1); float scale = 1.0F
-         * - side * 0.0001F; GL11.glScalef(scale, scale, scale); float movement = (0.50F) *
-         * pipe.transport.getPistonStage(side / 2); GL11.glTranslatef(-0.25F - 1F / 16F - movement, -0.5F, -0.5F); //
-         * float factor = (float) (1.0 / 256.0); float factor = (float) (1.0 / 16.0); box.render(factor);
-         * GL11.glPopMatrix(); } } */
-
-        GL11.glPopAttrib();
-        GL11.glPopMatrix();
-    }
 }

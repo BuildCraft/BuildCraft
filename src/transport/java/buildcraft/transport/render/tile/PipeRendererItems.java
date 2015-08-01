@@ -115,9 +115,9 @@ public class PipeRendererItems {
 
             EntityResizableCuboid erc = new EntityResizableCuboid(null);
             erc.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.ItemBox.ordinal());
-            erc.iSize = 1;
-            erc.jSize = 1;
-            erc.kSize = 1;
+            erc.xSize = 1;
+            erc.ySize = 1;
+            erc.zSize = 1;
 
             GL11.glPushMatrix();
             renderScale /= 2f;

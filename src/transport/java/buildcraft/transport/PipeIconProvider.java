@@ -126,8 +126,8 @@ public class PipeIconProvider implements IIconProvider {
         PipeRobotStationReserved("pipeRobotStationReserved"),
         PipeRobotStationLinked("pipeRobotStationLinked"),
         //
-        Power_Normal("core:misc/texture_cyan"),
-        Power_Overload("core:misc/texture_red_lit"),
+        Power_Normal("core:blocks/misc/texture_cyan"),
+        Power_Overload("core:blocks/misc/texture_red_lit"),
         Stripes("pipeStripes"),
         //
         PipeStainedOverlay("pipeStainedOverlay"),

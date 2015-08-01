@@ -12,6 +12,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -23,7 +24,7 @@ public class EntityResizableCuboid extends Entity {
     public float rotationX = 0;
     public float rotationY = 0;
     public float rotationZ = 0;
-    public double iSize, jSize, kSize;
+    public double xSize, ySize, zSize;
     private int brightness = -1;
     public ResourceLocation resource;
     public IBlockState blockState;
@@ -78,9 +79,9 @@ public class EntityResizableCuboid extends Entity {
 
     public EntityResizableCuboid(World world, double i, double j, double k, double iSize, double jSize, double kSize) {
         this(world);
-        this.iSize = iSize;
-        this.jSize = jSize;
-        this.kSize = kSize;
+        this.xSize = iSize;
+        this.ySize = jSize;
+        this.zSize = kSize;
         setPositionAndRotation(i, j, k, 0, 0);
         this.motionX = 0.0;
         this.motionY = 0.0;
@@ -102,12 +103,18 @@ public class EntityResizableCuboid extends Entity {
     @Override
     public void setPosition(double d, double d1, double d2) {
         super.setPosition(d, d1, d2);
-        this.setEntityBoundingBox(AxisAlignedBB.fromBounds(posX, posY, posZ, posX + iSize, posY + jSize, posZ + kSize));
+        this.setEntityBoundingBox(AxisAlignedBB.fromBounds(posX, posY, posZ, posX + xSize, posY + ySize, posZ + zSize));
     }
 
     @Override
     public void moveEntity(double d, double d1, double d2) {
         setPosition(posX + d, posY + d1, posZ + d2);
+    }
+
+    public void setSize(Vec3 size) {
+        xSize = size.xCoord;
+        ySize = size.yCoord;
+        zSize = size.zCoord;
     }
 
     public void setBrightness(int brightness) {
@@ -121,16 +128,16 @@ public class EntityResizableCuboid extends Entity {
 
     @Override
     protected void readEntityFromNBT(NBTTagCompound data) {
-        iSize = data.getDouble("iSize");
-        jSize = data.getDouble("jSize");
-        kSize = data.getDouble("kSize");
+        xSize = data.getDouble("iSize");
+        ySize = data.getDouble("jSize");
+        zSize = data.getDouble("kSize");
     }
 
     @Override
     protected void writeEntityToNBT(NBTTagCompound data) {
-        data.setDouble("iSize", iSize);
-        data.setDouble("jSize", jSize);
-        data.setDouble("kSize", kSize);
+        data.setDouble("iSize", xSize);
+        data.setDouble("jSize", ySize);
+        data.setDouble("kSize", zSize);
     }
 
     @Override

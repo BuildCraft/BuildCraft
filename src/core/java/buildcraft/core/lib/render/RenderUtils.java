@@ -4,7 +4,10 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.render;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.Vec3;
 
 public final class RenderUtils {
 
@@ -17,5 +20,9 @@ public final class RenderUtils {
         float blue = (color & 255) / 255.0F;
 
         GlStateManager.color(red, green, blue, 1.0F);
+    }
+
+    public static void translate(Vec3 vector) {
+        GL11.glTranslated(vector.xCoord, vector.yCoord, vector.zCoord);
     }
 }

@@ -45,6 +45,14 @@ public class RenderResizableCuboid extends Render {
         GL11.glPopMatrix();
     }
 
+    /** This will render a cuboid from its middle. */
+    public void renderCubeFromCentre(EntityResizableCuboid cuboid) {
+        GL11.glPushMatrix();
+        GL11.glTranslated(-cuboid.xSize / 2d, -cuboid.ySize / 2d, -cuboid.zSize / 2d);
+        renderCube(cuboid);
+        GL11.glPopMatrix();
+    }
+
     public void renderCube(EntityResizableCuboid cube) {
         TextureAtlasSprite[] sprites = cube.textures;
         if (sprites == null) {
@@ -75,9 +83,9 @@ public class RenderResizableCuboid extends Render {
         double textureOffsetY = cube.textureOffsetY / 16D;
         double textureOffsetZ = cube.textureOffsetZ / 16D;
 
-        double sizeX = cube.iSize;
-        double sizeY = cube.jSize;
-        double sizeZ = cube.kSize;
+        double sizeX = cube.xSize;
+        double sizeY = cube.ySize;
+        double sizeZ = cube.zSize;
 
         bindTexture(cube.resource == null ? TextureMap.locationBlocksTexture : cube.resource);
 

@@ -28,6 +28,7 @@ import net.minecraft.world.World;
 
 import buildcraft.core.lib.EntityResizableCuboid;
 
+// Deprecated in favour of RenderEntityCuboid
 @Deprecated
 public final class RenderEntityBlock extends Render {
     public static RenderEntityBlock INSTANCE = new RenderEntityBlock();
@@ -135,17 +136,17 @@ public final class RenderEntityBlock extends Render {
         if (entity.texture != null)
             util.texture = entity.texture;
 
-        for (int iBase = 0; iBase < entity.iSize; ++iBase) {
-            for (int jBase = 0; jBase < entity.jSize; ++jBase) {
-                for (int kBase = 0; kBase < entity.kSize; ++kBase) {
+        for (int iBase = 0; iBase < entity.xSize; ++iBase) {
+            for (int jBase = 0; jBase < entity.ySize; ++jBase) {
+                for (int kBase = 0; kBase < entity.zSize; ++kBase) {
 
                     util.minX = 0;
                     util.minY = 0;
                     util.minZ = 0;
 
-                    double remainX = entity.iSize - iBase;
-                    double remainY = entity.jSize - jBase;
-                    double remainZ = entity.kSize - kBase;
+                    double remainX = entity.xSize - iBase;
+                    double remainY = entity.ySize - jBase;
+                    double remainZ = entity.zSize - kBase;
 
                     util.maxX = remainX > 1.0 ? 1.0 : remainX;
                     util.maxY = remainY > 1.0 ? 1.0 : remainY;

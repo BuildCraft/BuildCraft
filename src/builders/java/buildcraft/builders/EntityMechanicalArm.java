@@ -58,9 +58,9 @@ public class EntityMechanicalArm extends Entity {
 
     private void setArmSize(double x, double z) {
         armSizeX = x;
-        xArm.iSize = x;
+        xArm.xSize = x;
         armSizeZ = z;
-        zArm.kSize = z;
+        zArm.zSize = z;
         updatePosition();
     }
 
@@ -128,7 +128,7 @@ public class EntityMechanicalArm extends Entity {
     public void updatePosition() {
         double[] headT = getHead();
         this.xArm.setPosition(xRoot, yRoot, headT[2] + 0.25);
-        this.yArm.jSize = yRoot - headT[1] - 1;
+        this.yArm.ySize = yRoot - headT[1] - 1;
         this.yArm.setPosition(headT[0] + 0.25, headT[1] + 1, headT[2] + 0.25);
         this.zArm.setPosition(headT[0] + 0.25, yRoot, zRoot);
         this.head.setPosition(headT[0] + 0.4, headT[1] - 0.01, headT[2] + 0.4);
