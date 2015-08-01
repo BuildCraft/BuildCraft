@@ -364,17 +364,17 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
     protected boolean endReached(TravelingItem item) {
         return item.pos.distanceTo(Utils.convertMiddle(container.getPos())) > 0.5;
-        // return item.xCoord > container.xCoord + 1 || item.xCoord < container.xCoord || item.yCoord > container.yCoord
-        // + 1
-        // || item.yCoord < container.yCoord || item.zCoord > container.zCoord + 1 || item.zCoord < container.zCoord;
+        // return item.pos.xCoord > container.getPos().getX() + 1 || item.pos.xCoord < container.x() || item.pos.yCoord
+        // > container.y() + 1
+        // || item.pos.yCoord < container.y() || item.pos.zCoord > container.z() + 1 || item.pos.zCoord < container.z();
     }
 
     protected boolean outOfBounds(TravelingItem item) {
         return item.pos.distanceTo(Utils.convertMiddle(container.getPos())) > 1;
-        // return item.xCoord > container.xCoord + 2 || item.xCoord < container.xCoord - 1 || item.yCoord >
-        // container.yCoord + 2
-        // || item.yCoord < container.yCoord - 1 || item.zCoord > container.zCoord + 2 || item.zCoord < container.zCoord
-        // - 1;
+        // return item.pos.xCoord > container.x() + 2 || item.pos.xCoord < container.x() - 1 || item.pos.yCoord >
+        // container.y() + 2
+        // || item.pos.yCoord < container.y() - 1 || item.pos.zCoord > container.z() + 2 || item.pos.zCoord <
+        // container.z() - 1;
     }
 
     public Vec3 getPosition() {
@@ -546,5 +546,13 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
         left.add("");
         left.add("PipeTransportItems");
         left.add("- Items: " + getNumberOfStacks() + "/" + MAX_PIPE_STACKS + " (" + getNumberOfItems() + "/" + MAX_PIPE_ITEMS + ")");
+        for (TravelingItem item : items) {
+            left.add("");
+            left.add("  - " + item.itemStack);
+            left.add("    - pos = " + item.pos);
+            left.add("    - middle = " + middleReached(item));
+            left.add("    - end = " + endReached(item));
+            left.add("    - out of boounds = " + outOfBounds(item));
+        }
     }
 }

@@ -4,7 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.core.lib.render;
 
-import org.lwjgl.opengl.GL11;
+import net.minecraft.client.renderer.GlStateManager;
 
 public final class RenderUtils {
 
@@ -15,6 +15,7 @@ public final class RenderUtils {
         float red = (color >> 16 & 255) / 255.0F;
         float green = (color >> 8 & 255) / 255.0F;
         float blue = (color & 255) / 255.0F;
-        GL11.glColor4f(red, green, blue, 1.0F);
+
+        GlStateManager.color(red, green, blue, 1.0F);
     }
 }

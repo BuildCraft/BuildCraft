@@ -18,7 +18,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IntHashMap;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
@@ -51,18 +50,11 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
     public static final float DISPLAY_MULTIPLIER = 0.1f;
     public static final int POWER_STAGES = 100;
 
-    private static final int LIQUID_STAGES = 40;
     private static final int MAX_ITEMS_TO_RENDER = 10;
-
-    private static final Vec3 CENTER_FLUID_SIZE = new Vec3(0.5, 0.5, 0.5);
-    private static final Vec3 X_FLUID_SIZE = new Vec3(0.25, 0.5, 0.5);
-    private static final Vec3 Y_FLUID_SIZE = new Vec3(0.5, 0.25, 0.5);
-    // private static final Vec3 Z_FLUID_SIZE = new Vec3(0.5, 0.5, 0.25);
 
     public int[] displayPowerList = new int[POWER_STAGES];
     public int[] displayPowerListOverload = new int[POWER_STAGES];
 
-    private final IntHashMap displayFluidLists = new IntHashMap();
     private final int[] angleY = { 0, 0, 270, 90, 0, 180 };
     private final int[] angleZ = { 90, 270, 0, 0, 0, 0 };
 
@@ -103,49 +95,14 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
         IPipeTile.PipeType pipeType = pipe.getPipeType();
 
         if (pipeType == IPipeTile.PipeType.ITEM) {
-            renderSolids((Pipe<PipeTransportItems>) pipe.pipe, x, y, z, f);
+            PipeRendererItems.renderSolids((Pipe<PipeTransportItems>) pipe.pipe, x, y, z, f);
+            // renderSolids((Pipe<PipeTransportItems>) pipe.pipe, x, y, z, f);
         } else if (pipeType == IPipeTile.PipeType.FLUID) {
             PipeRendererFluids.renderFluidPipe((Pipe<PipeTransportFluids>) pipe.pipe, x, y, z);
         } else if (pipeType == IPipeTile.PipeType.POWER) {
             // renderPower((Pipe<PipeTransportPower>) pipe.pipe, x, y, z);
         } /* else if (pipeType == PipeType.STRUCTURE) { // no object to render in a structure pipe; } */
     }
-
-    /* private DisplayFluidList getDisplayFluidLists(int liquidId, World world) { if
-     * (displayFluidLists.containsItem(liquidId)) { return (DisplayFluidList) displayFluidLists.lookup(liquidId); }
-     * Fluid fluid = FluidRegistry.getFluid(liquidId); if (fluid == null) { return null; } DisplayFluidList d = new
-     * DisplayFluidList(); displayFluidLists.addKey(liquidId, d); boolean[] hidden = new boolean[6]; Arrays.fill(hidden,
-     * true); hidden[0] = false; FluidStack fluidStack = new FluidStack(FluidRegistry.getFluid(liquidId), 1);
-     * d.sideHorizontal = FluidRenderer.getFluidDisplayListForSide(fluidStack, false, X_FLUID_SIZE, EnumFacing.EAST);
-     * d.sideVertical = FluidRenderer.getFluidDisplayListForSide(fluidStack, false, Y_FLUID_SIZE, EnumFacing.UP);
-     * d.centerHorizontal = FluidRenderer.getFluidDisplayListForSide(fluidStack, false, CENTER_FLUID_SIZE,
-     * EnumFacing.EAST); d.centerVertical = FluidRenderer.getFluidDisplayListForSide(fluidStack, false,
-     * CENTER_FLUID_SIZE, EnumFacing.UP); // int[] displayLists = FluidRenderer.getFluidDisplayLists(new
-     * FluidStack(FluidRegistry.getFluid(liquidId), 1), // false, 0.98, 0.98, 0.98); // // RenderInfo block = new
-     * RenderInfo(); // // if (fluid.getBlock() != null) { // block.blockState = fluid.getBlock().getDefaultState(); //
-     * } else { // block.blockState = Blocks.water.getDefaultState(); // } // // block.texture = fluid.getStillIcon();
-     * // // float size = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS; // // // render size // // for (int s
-     * = 0; s < LIQUID_STAGES; ++s) { // float ratio = (float) s / (float) LIQUID_STAGES; // // // SIDE HORIZONTAL // //
-     * d.sideHorizontal[s] = GLAllocation.generateDisplayLists(1); // GL11.glNewList(d.sideHorizontal[s],
-     * GL11.GL_COMPILE); // // block.minX = 0.0F; // block.minZ = CoreConstants.PIPE_MIN_POS + 0.01F; // // block.maxX =
-     * block.minX + size / 2F + 0.01F; // block.maxZ = block.minZ + size - 0.02F; // // block.minY =
-     * CoreConstants.PIPE_MIN_POS + 0.01F; // block.maxY = block.minY + (size - 0.02F) * ratio; // //
-     * RenderEntityBlock.INSTANCE.renderBlock(block); // // GL11.glEndList(); // // // SIDE VERTICAL // //
-     * d.sideVertical[s] = GLAllocation.generateDisplayLists(1); // GL11.glNewList(d.sideVertical[s], GL11.GL_COMPILE);
-     * // // block.minY = CoreConstants.PIPE_MAX_POS - 0.01; // block.maxY = 1; // // block.minX = 0.5 - (size / 2 -
-     * 0.01) * ratio; // block.maxX = 0.5 + (size / 2 - 0.01) * ratio; // // block.minZ = 0.5 - (size / 2 - 0.01) *
-     * ratio; // block.maxZ = 0.5 + (size / 2 - 0.01) * ratio; // // RenderEntityBlock.INSTANCE.renderBlock(block); //
-     * // GL11.glEndList(); // // // CENTER HORIZONTAL // // d.centerHorizontal[s] =
-     * GLAllocation.generateDisplayLists(1); // GL11.glNewList(d.centerHorizontal[s], GL11.GL_COMPILE); // // block.minX
-     * = CoreConstants.PIPE_MIN_POS + 0.01; // block.minZ = CoreConstants.PIPE_MIN_POS + 0.01; // // block.maxX =
-     * block.minX + size - 0.02; // block.maxZ = block.minZ + size - 0.02; // // block.minY = CoreConstants.PIPE_MIN_POS
-     * + 0.01; // block.maxY = block.minY + (size - 0.02F) * ratio; // // RenderEntityBlock.INSTANCE.renderBlock(block);
-     * // // GL11.glEndList(); // // // CENTER VERTICAL // // d.centerVertical[s] =
-     * GLAllocation.generateDisplayLists(1); // GL11.glNewList(d.centerVertical[s], GL11.GL_COMPILE); // // block.minY =
-     * CoreConstants.PIPE_MIN_POS + 0.01; // block.maxY = CoreConstants.PIPE_MAX_POS - 0.01; // // block.minX = 0.5 -
-     * (size / 2 - 0.02) * ratio; // block.maxX = 0.5 + (size / 2 - 0.02) * ratio; // // block.minZ = 0.5 - (size / 2 -
-     * 0.02) * ratio; // block.maxZ = 0.5 + (size / 2 - 0.02) * ratio; // //
-     * RenderEntityBlock.INSTANCE.renderBlock(block); // // GL11.glEndList(); // // } return d; } */
 
     private void initializeDisplayPowerList(World world) {
         if (initialized) {
@@ -384,36 +341,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
         }
     }
 
-    //
-    // public static void renderGateStatic(RenderBlocks renderblocks, EnumFacing direction, GatePluggable gate,
-    // ITextureStates blockStateMachine, int x,
-    // int y, int z) {
-    // blockStateMachine.getTextureState().setToStack(gate.getLogic().getGateIcon());
-    //
-    // float trim = 0.1F;
-    // float[][] zeroState = new float[3][2];
-    // float min = CoreConstants.PIPE_MIN_POS + trim / 2F;
-    // float max = CoreConstants.PIPE_MAX_POS - trim / 2F;
-    //
-    // // X START - END
-    // zeroState[0][0] = min;
-    // zeroState[0][1] = max;
-    // // Y START - END
-    // zeroState[1][0] = CoreConstants.PIPE_MIN_POS - 0.10F;
-    // zeroState[1][1] = CoreConstants.PIPE_MIN_POS + 0.001F;
-    // // Z START - END
-    // zeroState[2][0] = min;
-    // zeroState[2][1] = max;
-    //
-    // float[][] rotated = MatrixTranformations.deepClone(zeroState);
-    // MatrixTranformations.transform(rotated, direction);
-    //
-    // blockStateMachine.setRenderAllSides();
-    // renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1],
-    // rotated[2][1]);
-    // renderblocks.renderStandardBlock(blockStateMachine.getBlock(), pos);
-    // }
-    //
     public static void renderGate(double x, double y, double z, GatePluggable gate, EnumFacing direction) {
         GL11.glPushMatrix();
         GL11.glColor3f(1, 1, 1);
@@ -600,117 +527,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
          * GL11.glPopMatrix(); } } */
 
         GL11.glPopAttrib();
-        GL11.glPopMatrix();
-    }
-
-    /* private void renderFluids(Pipe<PipeTransportFluids> pipe, double x, double y, double z) { PipeTransportFluids
-     * trans = pipe.transport; boolean needsRender = false; FluidRenderData renderData = trans.renderCache; for (int i =
-     * 0; i < 7; ++i) { if (renderData.amount[i] > 0) { needsRender = true; break; } } if (!needsRender) { return; }
-     * GL11.glPushMatrix(); GL11.glPushAttrib(GL11. GL_ENABLE_BIT); GL11.glEnable(GL11. GL_CULL_FACE);
-     * GL11.glDisable(GL11. GL_LIGHTING); GL11.glEnable(GL11. GL_BLEND); GL11.glBlendFunc(GL11. GL_SRC_ALPHA, GL11.
-     * GL_ONE_MINUS_SRC_ALPHA); GL11.glTranslatef(( float) x, (float) y, (float) z); // sides boolean sides = false,
-     * above = false; for (EnumFacing side : EnumFacing.VALUES) { int i = side.ordinal(); FluidRenderData
-     * fluidRenderData = trans.renderCache; if (fluidRenderData.amount[ i] <= 0) { continue; } if (!pipe.container.
-     * isPipeConnected(side)) { continue; } DisplayFluidList d = getDisplayFluidLists( fluidRenderData.fluidID,
-     * pipe.container.getWorld( )); if (d == null) { continue; } int stage = (int) ((float) fluidRenderData.amount[ i] /
-     * (float) (trans.getCapacity()) * (LIQUID_STAGES - 1)); GL11.glPushMatrix(); int list = 0; switch
-     * (EnumFacing.VALUES[i]) { case UP: above = true; list = d.sideVertical[stage]; break; case DOWN:
-     * GL11.glTranslatef(0, -0.75F, 0); list = d.sideVertical[stage]; break; case EAST: case WEST: case SOUTH: case
-     * NORTH: sides = true; // Yes, this is kind of ugly, but was easier than transform the coordinates above.
-     * GL11.glTranslatef(0.5F, 0.0F, 0.5F); GL11.glRotatef(angleY[i] , 0, 1, 0); GL11.glRotatef(angleZ[i] , 0, 0, 1);
-     * GL11.glTranslatef(-0.5F, 0.0F, -0.5F); list = d.sideHorizontal[stage]; break; default: } bindTexture(TextureMap.
-     * locationBlocksTexture); RenderUtils. setGLColorFromInt( fluidRenderData.color); GL11.glCallList(list);
-     * GL11.glPopMatrix(); } // CENTER FluidRenderData fluidRenderData = trans.renderCache; if (fluidRenderData.amount[
-     * 6] > 0) { DisplayFluidList d = getDisplayFluidLists( fluidRenderData.fluidID, pipe.container.getWorld( )); if (d
-     * != null) { int stage = (int) ((float) fluidRenderData.amount[ 6] / (float) (trans.getCapacity()) * (LIQUID_STAGES
-     * - 1)); bindTexture(TextureMap. locationBlocksTexture); RenderUtils. setGLColorFromInt( fluidRenderData.color); if
-     * (above) { GL11.glCallList(d. centerVertical[stage]); } if (!above || sides) { GL11.glCallList(d.
-     * centerHorizontal[stage]) ; } } } GL11.glPopAttrib(); GL11.glPopMatrix(); } */
-
-    private void renderSolids(Pipe<PipeTransportItems> pipe, double x, double y, double z, float f) {
-        GL11.glPushMatrix();
-
-        float light = pipe.container.getWorld().getLightBrightness(pipe.container.getPos());
-
-        int count = 0;
-        for (TravelingItem item : pipe.transport.items) {
-            if (count >= MAX_ITEMS_TO_RENDER) {
-                break;
-            }
-
-            EnumFacing face = item.toCenter ? item.input : item.output;
-            Vec3 motion = Utils.convert(face, item.getSpeed() * f);
-
-            doRenderItem(item, x + item.pos.xCoord - pipe.container.x() + motion.xCoord, y + item.pos.yCoord - pipe.container.y() + motion.yCoord, z
-                + item.pos.zCoord - pipe.container.z() + motion.zCoord, light, item.color);
-            count++;
-        }
-
-        GL11.glPopMatrix();
-    }
-
-    public void doRenderItem(TravelingItem travellingItem, double x, double y, double z, float light, EnumColor color) {
-
-        if (travellingItem == null || travellingItem.getItemStack() == null) {
-            return;
-        }
-
-        float renderScale = 0.7f;
-        ItemStack itemstack = travellingItem.getItemStack();
-
-        GL11.glPushMatrix();
-        GL11.glTranslatef((float) x, (float) y + 0.25F, (float) z);
-
-        if (travellingItem.hasDisplayList) {
-            GL11.glCallList(travellingItem.displayList);
-        } else {
-            travellingItem.displayList = GLAllocation.generateDisplayLists(1);
-            travellingItem.hasDisplayList = true;
-
-            GL11.glNewList(travellingItem.displayList, GL11.GL_COMPILE_AND_EXECUTE);
-            if (itemstack.getItem() instanceof IItemCustomPipeRender) {
-                IItemCustomPipeRender render = (IItemCustomPipeRender) itemstack.getItem();
-                float itemScale = render.getPipeRenderScale(itemstack);
-                GL11.glScalef(renderScale * itemScale, renderScale * itemScale, renderScale * itemScale);
-                itemScale = 1 / itemScale;
-
-                if (!render.renderItemInPipe(itemstack, x, y, z)) {
-                    dummyEntityItem.setEntityItemStack(itemstack);
-                    customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
-                }
-
-                GL11.glScalef(itemScale, itemScale, itemScale);
-            } else {
-                GL11.glScalef(renderScale, renderScale, renderScale);
-                dummyEntityItem.setEntityItemStack(itemstack);
-                customRenderItem.doRender(dummyEntityItem, 0, 0, 0, 0, 0);
-            }
-            GL11.glEndList();
-        }
-
-        if (color != null) {
-            bindTexture(TextureMap.locationBlocksTexture);
-            RenderInfo block = new RenderInfo();
-
-            block.texture = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.ItemBox.ordinal());
-
-            float pix = 0.0625F;
-            float min = -4 * pix;
-            float max = 4 * pix;
-
-            block.minY = min;
-            block.maxY = max;
-
-            block.minZ = min;
-            block.maxZ = max;
-
-            block.minX = min;
-            block.maxX = max;
-
-            RenderUtils.setGLColorFromInt(color.getLightHex());
-            RenderEntityBlock.INSTANCE.renderBlock(block);
-        }
-
         GL11.glPopMatrix();
     }
 }
