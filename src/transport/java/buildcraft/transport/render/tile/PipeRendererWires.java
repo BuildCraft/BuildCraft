@@ -77,15 +77,18 @@ public class PipeRendererWires {
 
         Vec3 center = pos;
         Vec3 centerSize = new Vec3(WIRE_WIDTH, WIRE_WIDTH, WIRE_WIDTH);
-        boolean renderCenter = false;
         AxisDirection[] directions = wireDirectionMap.get(wire);
+        int numFaces = 0;
 
         for (EnumFacing face : EnumFacing.values()) {
             boolean positive = face.getAxisDirection() == AxisDirection.POSITIVE;
             Axis axis = face.getAxis();
             AxisDirection wireCenter = directions[axis.ordinal()];
             if (renderState.wireMatrix.isWireConnected(wire, face)) {
-                renderCenter |= wireCenter == face.getAxisDirection();
+                if (wireCenter == face.getAxisDirection()){
+                    numFaces++;
+                }
+                numFaces++;
                 Vec3 start = pos;
                 Vec3 end = pos.add(centerSize);
                 if (positive) {
@@ -122,7 +125,7 @@ public class PipeRendererWires {
                 }
             }
         }
-        if (renderCenter) {
+        if (numFaces != 1) {
             renderCuboid(quads, center, centerSize, sprite);
         }
     }

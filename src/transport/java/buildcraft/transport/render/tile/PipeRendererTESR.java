@@ -16,7 +16,6 @@ import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.api.transport.PipeWire;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.BuildCraftCore.RenderMode;
@@ -24,7 +23,6 @@ import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.render.RenderEntityBlock;
 import buildcraft.core.lib.render.RenderEntityBlock.RenderInfo;
 import buildcraft.core.lib.utils.MatrixTranformations;
-import buildcraft.transport.BuildCraftTransport;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.PipeTransportFluids;
@@ -49,9 +47,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
             return;
         }
 
-//        PipeRendererWires.renderPipeWires(pipe, x, y, z); 
-        //Wires are now fully rendered in the block model
-        // renderGatesWires(pipe, x, y, z);
         renderPluggables(pipe, x, y, z);
 
         IPipeTile.PipeType pipeType = pipe.getPipeType();
@@ -76,6 +71,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
         }
     }
 
+    @Deprecated
     public static void renderGate(double x, double y, double z, GatePluggable gate, EnumFacing direction) {
         GL11.glPushMatrix();
         GL11.glColor3f(1, 1, 1);
