@@ -507,7 +507,7 @@ public class BuildCraftTransport extends BuildCraftMod {
             }
         }
 
-        wireIconProvider.registerIcons(event.map);
+        WireIconProvider.registerIcons(event.map);
 
         for (GateDefinition.GateMaterial material : GateDefinition.GateMaterial.VALUES) {
             material.registerBlockIcon(event.map);

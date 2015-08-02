@@ -4,50 +4,53 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
+import java.util.Locale;
+import java.util.Map;
+
+import com.google.common.collect.Maps;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
-import buildcraft.api.core.IIconProvider;
+import buildcraft.api.transport.PipeWire;
 
-public class WireIconProvider implements IIconProvider {
+public class WireIconProvider {
 
-    public static final int Texture_Red_Dark = 0;
-    public static final int Texture_Red_Lit = 1;
-    public static final int Texture_Blue_Dark = 2;
-    public static final int Texture_Blue_Lit = 3;
-    public static final int Texture_Green_Dark = 4;
-    public static final int Texture_Green_Lit = 5;
-    public static final int Texture_Yellow_Dark = 6;
-    public static final int Texture_Yellow_Lit = 7;
+    public enum Type {
+        RED_DARK(PipeWire.RED, false),
+        RED_LIT(PipeWire.RED, true),
+        BLUE_DARK(PipeWire.BLUE, false),
+        BLUE_LIT(PipeWire.BLUE, true),
+        GREEN_DARK(PipeWire.GREEN, false),
+        GREEN_LIT(PipeWire.GREEN, true),
+        YELLOW_DARK(PipeWire.YELLOW, false),
+        YELLOW_LIT(PipeWire.YELLOW, true);
 
-    public static final int MAX = 8;
+        private final ResourceLocation location;
 
-    @SideOnly(Side.CLIENT)
-    private TextureAtlasSprite[] icons;
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public TextureAtlasSprite getIcon(int pipeIconIndex) {
-        return icons[pipeIconIndex];
+        Type(PipeWire type, boolean lit) {
+            if (lit) {
+                litMap.put(type, this);
+            } else {
+                darkMap.put(type, this);
+            }
+            location = new ResourceLocation("buildcraftcore:blocks/misc/texture_" + name().toLowerCase(Locale.ENGLISH));
+        }
     }
 
-    @Override
-    @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureMap iconRegister) {
-        icons = new TextureAtlasSprite[MAX];
+    private static final Map<PipeWire, Type> darkMap = Maps.newEnumMap(PipeWire.class);
+    private static final Map<PipeWire, Type> litMap = Maps.newEnumMap(PipeWire.class);
+    private static Map<Type, TextureAtlasSprite> icons = Maps.newEnumMap(Type.class);
 
-        icons[WireIconProvider.Texture_Red_Dark] = iconRegister.registerSprite(new ResourceLocation("buildcraftcore:misc/texture_red_dark"));
-        icons[WireIconProvider.Texture_Red_Lit] = iconRegister.registerSprite(new ResourceLocation("buildcraftcore:misc/texture_red_lit"));
-        icons[WireIconProvider.Texture_Blue_Dark] = iconRegister.registerSprite(new ResourceLocation("buildcraftcore:misc/texture_blue_dark"));
-        icons[WireIconProvider.Texture_Blue_Lit] = iconRegister.registerSprite(new ResourceLocation("buildcraftcore:misc/texture_blue_lit"));
-        icons[WireIconProvider.Texture_Green_Dark] = iconRegister.registerSprite(new ResourceLocation("buildcraftcore:misc/texture_green_dark"));
-        icons[WireIconProvider.Texture_Green_Lit] = iconRegister.registerSprite(new ResourceLocation("buildcraftcore:misc/texture_green_lit"));
-        icons[WireIconProvider.Texture_Yellow_Dark] = iconRegister.registerSprite(new ResourceLocation("buildcraftcore:misc/texture_yellow_dark"));
-        icons[WireIconProvider.Texture_Yellow_Lit] = iconRegister.registerSprite(new ResourceLocation("buildcraftcore:misc/texture_yellow_lit"));
+    public TextureAtlasSprite getIcon(PipeWire wire, boolean lit) {
+        return icons.get((lit ? litMap : darkMap).get(wire));
+    }
 
+    public static void registerIcons(TextureMap iconRegister) {
+        for (Type type : Type.values()) {
+            icons.put(type, iconRegister.registerSprite(type.location));
+        }
     }
 
 }

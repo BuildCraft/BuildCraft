@@ -44,7 +44,7 @@ public class PipeRendererItems {
         };
     }
 
-    static void renderSolids(Pipe<PipeTransportItems> pipe, double x, double y, double z, float f) {
+    static void renderItemPipe(Pipe<PipeTransportItems> pipe, double x, double y, double z, float f) {
         GL11.glPushMatrix();
 
         float light = pipe.container.getWorld().getLightBrightness(pipe.container.getPos());

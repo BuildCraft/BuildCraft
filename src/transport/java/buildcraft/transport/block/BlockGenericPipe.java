@@ -142,7 +142,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
     @SideOnly(Side.CLIENT)
     public EnumWorldBlockLayer getBlockLayer() {
-        return EnumWorldBlockLayer.TRANSLUCENT;
+        return EnumWorldBlockLayer.CUTOUT;
     }
 
     @Override
@@ -688,7 +688,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     }
 
     private int getRedstoneInputToPipe(World world, BlockPos pos, EnumFacing d) {
-        // TODO: TEST THIS!
+        // TODO (PASS 1): TEST THIS!
         return world.getRedstonePower(pos, d);
         // int i = d.ordinal();
         // int input = world.isBlockProvidingPowerTo(x + d.offsetX, y + d.offsetY, z + d.offsetZ, i);

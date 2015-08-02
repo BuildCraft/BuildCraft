@@ -49,14 +49,15 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
             return;
         }
 
-        renderGatesWires(pipe, x, y, z);
+//        PipeRendererWires.renderPipeWires(pipe, x, y, z); 
+        //Wires are now fully rendered in the block model
+        // renderGatesWires(pipe, x, y, z);
         renderPluggables(pipe, x, y, z);
 
         IPipeTile.PipeType pipeType = pipe.getPipeType();
 
         if (pipeType == IPipeTile.PipeType.ITEM) {
-            PipeRendererItems.renderSolids((Pipe<PipeTransportItems>) pipe.pipe, x, y, z, f);
-            // renderSolids((Pipe<PipeTransportItems>) pipe.pipe, x, y, z, f);
+            PipeRendererItems.renderItemPipe((Pipe<PipeTransportItems>) pipe.pipe, x, y, z, f);
         } else if (pipeType == IPipeTile.PipeType.FLUID) {
             PipeRendererFluids.renderFluidPipe((Pipe<PipeTransportFluids>) pipe.pipe, x, y, z);
         } else if (pipeType == IPipeTile.PipeType.POWER) {

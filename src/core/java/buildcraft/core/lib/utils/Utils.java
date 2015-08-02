@@ -22,6 +22,7 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraft.util.Vec3;
 import net.minecraft.util.Vec3i;
@@ -435,5 +436,29 @@ public final class Utils {
         double y = Math.max(one.yCoord, two.yCoord);
         double z = Math.max(one.zCoord, two.zCoord);
         return new Vec3(x, y, z);
+    }
+
+    public static Vec3 withValue(Vec3 vector, Axis axis, double value) {
+        if (axis == Axis.X) {
+            return new Vec3(value, vector.yCoord, vector.zCoord);
+        } else if (axis == Axis.Y) {
+            return new Vec3(vector.xCoord, value, vector.zCoord);
+        } else if (axis == Axis.Z) {
+            return new Vec3(vector.xCoord, vector.yCoord, value);
+        } else {
+            return vector;
+        }
+    }
+
+    public static double getValue(Vec3 vector, Axis axis) {
+        if (axis == Axis.X) {
+            return vector.xCoord;
+        } else if (axis == Axis.Y) {
+            return vector.yCoord;
+        } else if (axis == Axis.Z) {
+            return vector.zCoord;
+        } else {
+            throw new RuntimeException("Was given a null axis! That was probably not intentional, consider this a bug! (Vector = " + vector + ")");
+        }
     }
 }

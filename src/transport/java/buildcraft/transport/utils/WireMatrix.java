@@ -19,7 +19,7 @@ public class WireMatrix {
     private final BitSetCodec bitSetCodec = new BitSetCodec();
 
     private final ConnectionMatrix[] wires = new ConnectionMatrix[PipeWire.values().length];
-    private final int[] wireIconIndex = new int[PipeWire.values().length];
+    private final BitSet lit = new BitSet(PipeWire.values().length);
 
     private boolean dirty = false;
 
@@ -40,23 +40,23 @@ public class WireMatrix {
         }
     }
 
+    public boolean isWireLit(PipeWire wire) {
+        return lit.get(wire.ordinal());
+    }
+
+    public void setWireLit(PipeWire wire, boolean lit) {
+        if (this.lit.get(wire.ordinal()) != lit) {
+            this.lit.set(wire.ordinal(), lit);
+            dirty = true;
+        }
+    }
+
     public boolean isWireConnected(PipeWire color, EnumFacing direction) {
         return wires[color.ordinal()].isConnected(direction);
     }
 
     public void setWireConnected(PipeWire color, EnumFacing direction, boolean value) {
         wires[color.ordinal()].setConnected(direction, value);
-    }
-
-    public int getWireIconIndex(PipeWire color) {
-        return wireIconIndex[color.ordinal()];
-    }
-
-    public void setWireIndex(PipeWire color, int value) {
-        if (wireIconIndex[color.ordinal()] != value) {
-            wireIconIndex[color.ordinal()] = value;
-            dirty = true;
-        }
     }
 
     public boolean isDirty() {
@@ -79,18 +79,19 @@ public class WireMatrix {
 
     public void writeData(ByteBuf data) {
         data.writeByte(bitSetCodec.encode(hasWire));
+        data.writeByte(bitSetCodec.encode(lit));
 
         for (int i = 0; i < PipeWire.values().length; i++) {
             wires[i].writeData(data);
-            data.writeByte(wireIconIndex[i]);
         }
     }
 
     public void readData(ByteBuf data) {
         bitSetCodec.decode(data.readByte(), hasWire);
+        bitSetCodec.decode(data.readByte(), lit);
+
         for (int i = 0; i < PipeWire.values().length; i++) {
             wires[i].readData(data);
-            wireIconIndex[i] = data.readByte();
         }
     }
 }

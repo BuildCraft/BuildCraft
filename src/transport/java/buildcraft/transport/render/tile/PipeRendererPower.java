@@ -54,13 +54,6 @@ public class PipeRendererPower {
         for (int side = 0; side < 6; ++side) {
             GL11.glPushMatrix();
 
-            // GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-            // GL11.glRotatef(angleY[side], 0, 1, 0);
-            // GL11.glRotatef(angleZ[side], 0, 0, 1);
-            // float scale = 1.0F - side * 0.0001F;
-            // GL11.glScalef(scale, scale, scale);
-            // GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
-
             short stage = pow.displayPower[side];
             if (stage >= 1) {
                 if (stage < displayList.length) {
@@ -73,6 +66,8 @@ public class PipeRendererPower {
             GL11.glPopMatrix();
         }
 
+        // This was used for something, but no-one knows anymore...
+        // TODO (PASS 879): Look this up on github's history
         // bindTexture(STRIPES_TEXTURE);
         // for (int side = 0; side < 6; side += 2) {
         // if (pipe.container.isPipeConnected(EnumFacing.values()[side])) {
@@ -148,62 +143,9 @@ public class PipeRendererPower {
                 }
             }
         }
-        //
-        // RenderInfo block = new RenderInfo();
-        // block.texture = normal;
-        //
-        // float size = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
-        //
-        // for (int s = 0; s < POWER_STAGES; ++s) {
-        // displayPowerList[s] = GLAllocation.generateDisplayLists(1);
-        // GL11.glNewList(displayPowerList[s], GL11.GL_COMPILE);
-        //
-        // float minSize = 0.005F;
-        //
-        // float unit = (size - minSize) / 2F / POWER_STAGES;
-        //
-        // block.minY = 0.5 - (minSize / 2F) - unit * s;
-        // block.maxY = 0.5 + (minSize / 2F) + unit * s;
-        //
-        // block.minZ = 0.5 - (minSize / 2F) - unit * s;
-        // block.maxZ = 0.5 + (minSize / 2F) + unit * s;
-        //
-        // block.minX = 0;
-        // block.maxX = 0.5 + (minSize / 2F) + unit * s;
-        //
-        // RenderEntityBlock.INSTANCE.renderBlock(block);
-        //
-        // GL11.glEndList();
-        // }
-        //
-        // block.texture = overloaded;
-        //
-        // size = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
-        //
-        // for (int s = 0; s < POWER_STAGES; ++s) {
-        // displayPowerListOverload[s] = GLAllocation.generateDisplayLists(1);
-        // GL11.glNewList(displayPowerListOverload[s], GL11.GL_COMPILE);
-        //
-        // float minSize = 0.005F;
-        //
-        // float unit = (size - minSize) / 2F / POWER_STAGES;
-        //
-        // block.minY = 0.5 - (minSize / 2F) - unit * s;
-        // block.maxY = 0.5 + (minSize / 2F) + unit * s;
-        //
-        // block.minZ = 0.5 - (minSize / 2F) - unit * s;
-        // block.maxZ = 0.5 + (minSize / 2F) + unit * s;
-        //
-        // block.minX = 0;
-        // block.maxX = 0.5 + (minSize / 2F) + unit * s;
-        //
-        // RenderEntityBlock.INSTANCE.renderBlock(block);
-        //
-        // GL11.glEndList();
-        // }
     }
 
-    /** Called whenever a texture remap is done, to refresh the existing textures to new ones */
+    /** Called whenever a texture remap is done, to refresh the existing textures to new ones. */
     // TODO (PASS 1): Call this from a post texture remap event!
     public static void resetTextures() {
         if (!initialized) {

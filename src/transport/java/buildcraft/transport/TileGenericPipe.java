@@ -131,22 +131,22 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
                 try {
                     NBTTagCompound pluggableData = nbt.getCompoundTag(key);
                     Class<?> pluggableClass = null;
-                    // Migration support for 6.1.x/6.2.x
-                    if (pluggableData.hasKey("pluggableClass")) {
-                        String c = pluggableData.getString("pluggableClass");
-                        if ("buildcraft.transport.gates.ItemGate$GatePluggable".equals(c)) {
-                            pluggableClass = GatePluggable.class;
-                        } else if ("buildcraft.transport.ItemFacade$FacadePluggable".equals(c)) {
-                            pluggableClass = FacadePluggable.class;
-                        } else if ("buildcraft.transport.ItemPlug$PlugPluggable".equals(c)) {
-                            pluggableClass = PlugPluggable.class;
-                        } else if ("buildcraft.transport.gates.ItemRobotStation$RobotStationPluggable".equals(c)
-                            || "buildcraft.transport.ItemRobotStation$RobotStationPluggable".equals(c)) {
-                            pluggableClass = PipeManager.getPluggableByName("robotStation");
-                        }
-                    } else {
-                        pluggableClass = PipeManager.getPluggableByName(pluggableData.getString("pluggableName"));
-                    }
+                    // Migration support for 6.1.x/6.2.x // No Longer Required
+                    // if (pluggableData.hasKey("pluggableClass")) {
+                    // String c = pluggableData.getString("pluggableClass");
+                    // if ("buildcraft.transport.gates.ItemGate$GatePluggable".equals(c)) {
+                    // pluggableClass = GatePluggable.class;
+                    // } else if ("buildcraft.transport.ItemFacade$FacadePluggable".equals(c)) {
+                    // pluggableClass = FacadePluggable.class;
+                    // } else if ("buildcraft.transport.ItemPlug$PlugPluggable".equals(c)) {
+                    // pluggableClass = PlugPluggable.class;
+                    // } else if ("buildcraft.transport.gates.ItemRobotStation$RobotStationPluggable".equals(c)
+                    // || "buildcraft.transport.ItemRobotStation$RobotStationPluggable".equals(c)) {
+                    // pluggableClass = PipeManager.getPluggableByName("robotStation");
+                    // }
+                    // } else {
+                    pluggableClass = PipeManager.getPluggableByName(pluggableData.getString("pluggableName"));
+                    // }
                     if (!PipePluggable.class.isAssignableFrom(pluggableClass)) {
                         BCLog.logger.warn("Wrong pluggable class: " + pluggableClass);
                         continue;
@@ -404,12 +404,19 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
             refreshRenderState = true;
         }
 
-        if (refreshRenderState || true) {//FIXME DEBUG CODE!
-            refreshRenderState();
+        if (refreshRenderState) {
+            if (refreshRenderState()) {
+                for (EnumFacing face : EnumFacing.values()) {
+                    TileEntity tile = worldObj.getTileEntity(getPos().offset(face));
+                    if (tile != null && tile instanceof TileGenericPipe) {
+                        ((TileGenericPipe) tile).scheduleRenderUpdate();
+                    }
+                }
+            }
             refreshRenderState = false;
         }
 
-        if (sendClientUpdate || true) {//FIXME DEBUG CODE!
+        if (sendClientUpdate) {
             sendClientUpdate = false;
 
             if (worldObj instanceof WorldServer) {
@@ -454,8 +461,10 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
         return false;
     }
 
-    /** PRECONDITION: worldObj must not be null */
-    protected void refreshRenderState() {
+    /** PRECONDITION: worldObj must not be null
+     * 
+     * @return <code>True</code> if any part of the render state changed */
+    protected boolean refreshRenderState() {
         renderState.setGlassColor((byte) glassColor);
 
         // Pipe connections;
@@ -478,24 +487,7 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
             }
 
             boolean lit = pipe.signalStrength[color.ordinal()] > 0;
-
-            switch (color) {
-                case RED:
-                    renderState.wireMatrix.setWireIndex(color, lit ? WireIconProvider.Texture_Red_Lit : WireIconProvider.Texture_Red_Dark);
-                    break;
-                case BLUE:
-                    renderState.wireMatrix.setWireIndex(color, lit ? WireIconProvider.Texture_Blue_Lit : WireIconProvider.Texture_Blue_Dark);
-                    break;
-                case GREEN:
-                    renderState.wireMatrix.setWireIndex(color, lit ? WireIconProvider.Texture_Green_Lit : WireIconProvider.Texture_Green_Dark);
-                    break;
-                case YELLOW:
-                    renderState.wireMatrix.setWireIndex(color, lit ? WireIconProvider.Texture_Yellow_Lit : WireIconProvider.Texture_Yellow_Dark);
-                    break;
-                default:
-                    break;
-
-            }
+            renderState.wireMatrix.setWireLit(color, lit);
         }
 
         // Facades
@@ -530,10 +522,14 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
          * network bandwidth */
         pluggableState.setPluggables(sideProperties.pluggables);
 
+        boolean changed = renderState.isDirty();
+        // TODO (Pass 1): If the pluggable state has changed, also update it!
+
         if (renderState.isDirty()) {
             renderState.clean();
         }
         sendUpdateToClient();
+        return changed;
     }
 
     public void initialize(Pipe<?> pipe) {

@@ -29,6 +29,7 @@ import buildcraft.transport.PipePluggableState;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.TileGenericPipe.CoreState;
 import buildcraft.transport.block.BlockGenericPipe;
+import buildcraft.transport.render.tile.PipeRendererWires;
 
 public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockModel {
     // private static final Map<Integer, Pipe<?>> pipes = Maps.newHashMap();
@@ -60,14 +61,6 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
             return defaultModel();// Thats not good. Just return a cobblestone structure pipe center model
         }
 
-        // if (!pipes.containsKey(core.pipeId)) {
-        // pipes.put(core.pipeId, BlockGenericPipe.createPipe(Item.getItemById(core.pipeId)));
-        // }
-        // Pipe<?> pipe = pipes.get(core.pipeId);
-
-        // if (pipe == null) {
-        // return defaultModel();
-        // }
         List<BakedQuad> quads = Lists.newArrayList();
 
         float min = CoreConstants.PIPE_MIN_POS;
@@ -182,6 +175,7 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
         }
 
         // Wires
+        PipeRendererWires.renderPipeWires(quads, render);
 
         // Pluggables
         for (EnumFacing face : EnumFacing.VALUES) {
