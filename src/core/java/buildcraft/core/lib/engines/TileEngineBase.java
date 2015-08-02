@@ -52,7 +52,8 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 
     protected int progressPart = 0;
 
-    private boolean checkOrientation = false;
+    private boolean checkOrientation = true;
+    private boolean checkRedstonePower = true;
 
     private boolean isPumping = false; // Used for SMP synch
 
@@ -60,9 +61,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 
     @Override
     public void initialize() {
-        if (!worldObj.isRemote) {
-            checkRedstonePower();
-        }
+        checkRedstonePower = true;
     }
 
     public abstract String getResourcePrefix();
@@ -191,6 +190,10 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
     @Override
     public void update() {
         super.update();
+
+        if (checkRedstonePower) {
+            checkRedstonePower();
+        }
 
         if (worldObj.isRemote) {
             if (progressPart != 0) {
@@ -527,11 +530,12 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
     }
 
     public void checkRedstonePower() {
+        checkRedstonePower = false;
         isRedstonePowered = worldObj.isBlockIndirectlyGettingPowered(pos) > 0;
     }
 
     public void onNeighborUpdate() {
-        checkRedstonePower();
+        checkRedstonePower = true;
         checkOrientation = true;
     }
 
