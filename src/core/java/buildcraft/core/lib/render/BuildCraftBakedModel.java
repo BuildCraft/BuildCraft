@@ -10,10 +10,13 @@ import com.google.common.collect.ImmutableMap;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BakedQuad;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraftforge.client.model.ItemLayerModel.BakedModel;
@@ -53,14 +56,14 @@ public abstract class BuildCraftBakedModel extends BakedModel {
         ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
 
         // builder.put(TransformType.GUI, TRSRTransformation.identity());
-        float scale = 0.125f;
-        Vector3f translation = new Vector3f(0, 1.5F * scale, -2.75F * scale);
-        TRSRTransformation trsr = new TRSRTransformation(translation, null, new Vector3f(0.375F, 0.375F, 0.375F), new Quat4f(10, -45, 170, 1));
-        builder.put(TransformType.GUI, trsr);
+        ItemCameraTransforms ict = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelForState(Blocks.bookshelf
+                .getDefaultState()).getItemCameraTransforms();
+        System.out.println(ict.gui.rotation + ", " + ict.gui.scale + ", " + ict.gui.translation);
+        builder.put(TransformType.GUI, new TRSRTransformation(ict.gui));
 
-        scale = 0.0375f;
-        translation = new Vector3f(0, 1.5F * scale, -2.75F * scale);
-        trsr = new TRSRTransformation(translation, null, new Vector3f(0.375F, 0.375F, 0.375F), new Quat4f(10, -45, 170, 1));
+        float scale = 0.0375f;
+        Vector3f translation = new Vector3f(0, 1.5F * scale, -2.75F * scale);
+        TRSRTransformation trsr = new TRSRTransformation(translation, new Quat4f(10, -45, 170, 1), new Vector3f(0.375F, 0.375F, 0.375F), null);
         builder.put(TransformType.THIRD_PERSON, trsr);
 
         return builder.build();
