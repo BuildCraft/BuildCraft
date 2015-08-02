@@ -84,7 +84,11 @@ public class CoreProxy implements ICoreProxy {
     }
 
     public void registerItem(Item item) {
-        GameRegistry.registerItem(item, item.getUnlocalizedName().replace("item.", ""));
+        registerItem(item, item.getUnlocalizedName().replace("item.", ""));
+    }
+
+    public void registerItem(Item item, String overridingName) {
+        GameRegistry.registerItem(item, overridingName);
     }
 
     public void registerTileEntity(Class<? extends TileEntity> clas, String ident) {

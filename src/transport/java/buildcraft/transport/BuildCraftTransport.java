@@ -64,6 +64,7 @@ import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.utils.ColorUtils;
+import buildcraft.core.lib.utils.ModelHelper;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.block.BlockFilteredBuffer;
@@ -93,6 +94,7 @@ import buildcraft.transport.pluggable.ItemPlug;
 import buildcraft.transport.pluggable.LensPluggable;
 import buildcraft.transport.pluggable.PlugPluggable;
 import buildcraft.transport.render.PipeBlockModel;
+import buildcraft.transport.render.PipeItemModel;
 import buildcraft.transport.schematics.BptItemPipeFilters;
 import buildcraft.transport.schematics.BptPipeIron;
 import buildcraft.transport.schematics.BptPipeWooden;
@@ -500,7 +502,7 @@ public class BuildCraftTransport extends BuildCraftMod {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void textureHook(TextureStitchEvent.Pre event) {
-        for (Item i : BlockGenericPipe.pipes.keySet()) {
+        for (ItemPipe i : BlockGenericPipe.pipes.keySet()) {
             Pipe<?> dummyPipe = BlockGenericPipe.createPipe(i);
             if (dummyPipe != null) {
                 dummyPipe.getIconProvider().registerIcons(event.map);
@@ -672,5 +674,9 @@ public class BuildCraftTransport extends BuildCraftMod {
     public void registerModels(ModelBakeEvent event) {
         ModelResourceLocation mrl = new ModelResourceLocation("buildcrafttransport:pipeBlock");
         event.modelRegistry.putObject(mrl, new PipeBlockModel());
+        for (ItemPipe itemPipe : BlockGenericPipe.pipes.keySet()) {
+            mrl = ModelHelper.getItemResourceLocation(itemPipe, "");
+            event.modelRegistry.putObject(mrl, PipeItemModel.create(itemPipe));
+        }
     }
 }

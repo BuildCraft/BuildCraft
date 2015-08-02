@@ -53,10 +53,14 @@ public abstract class BuildCraftBakedModel extends BakedModel {
         ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
 
         // builder.put(TransformType.GUI, TRSRTransformation.identity());
-
-        float scale = 0.0375f;
+        float scale = 0.125f;
         Vector3f translation = new Vector3f(0, 1.5F * scale, -2.75F * scale);
         TRSRTransformation trsr = new TRSRTransformation(translation, null, new Vector3f(0.375F, 0.375F, 0.375F), new Quat4f(10, -45, 170, 1));
+        builder.put(TransformType.GUI, trsr);
+
+        scale = 0.0375f;
+        translation = new Vector3f(0, 1.5F * scale, -2.75F * scale);
+        trsr = new TRSRTransformation(translation, null, new Vector3f(0.375F, 0.375F, 0.375F), new Quat4f(10, -45, 170, 1));
         builder.put(TransformType.THIRD_PERSON, trsr);
 
         return builder.build();

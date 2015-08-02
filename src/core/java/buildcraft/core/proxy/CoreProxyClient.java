@@ -171,8 +171,8 @@ public class CoreProxyClient extends CoreProxy {
     }
 
     @Override
-    public void registerItem(Item item) {
-        super.registerItem(item);
+    public void registerItem(Item item, String overridingName) {
+        super.registerItem(item, overridingName);
         itemsToRegisterRenderersFor.add(item);
     }
 }

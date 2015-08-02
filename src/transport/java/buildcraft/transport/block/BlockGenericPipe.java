@@ -44,7 +44,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.property.IExtendedBlockState;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -67,24 +66,25 @@ import buildcraft.core.lib.render.ICustomHighlight;
 import buildcraft.core.lib.utils.ICustomStateMapper;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.*;
 import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.item.ItemGateCopier;
 import buildcraft.transport.item.ItemPipe;
 
 public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable, ICustomHighlight, ICustomStateMapper {
-    public static final BuildCraftExtendedProperty<TileGenericPipe.CoreState> PIPE_CORE_STATE = BuildCraftExtendedProperty.createExtended("core_state",
-            TileGenericPipe.CoreState.class);
+    public static final BuildCraftExtendedProperty<TileGenericPipe.CoreState> PIPE_CORE_STATE = BuildCraftExtendedProperty.createExtended(
+            "core_state", TileGenericPipe.CoreState.class);
 
     public static final BuildCraftExtendedProperty<PipeRenderState> PIPE_RENDER_STATE = BuildCraftExtendedProperty.createExtended("render_state",
             PipeRenderState.class);
 
-    public static final BuildCraftExtendedProperty<PipePluggableState> PIPE_PLUGGABLE_STATE = BuildCraftExtendedProperty.createExtended("pluggable_state",
-            PipePluggableState.class);
+    public static final BuildCraftExtendedProperty<PipePluggableState> PIPE_PLUGGABLE_STATE = BuildCraftExtendedProperty.createExtended(
+            "pluggable_state", PipePluggableState.class);
 
     public static final BuildCraftExtendedProperty<Pipe> PIPE_PIPE = BuildCraftExtendedProperty.createExtended("pipe_pipe", Pipe.class);
 
-    public static Map<Item, Class<? extends Pipe<?>>> pipes = Maps.newHashMap();
+    public static Map<ItemPipe, Class<? extends Pipe<?>>> pipes = Maps.newHashMap();
     public static Map<BlockPos, Pipe<?>> pipeRemoved = Maps.newHashMap();
 
     private static long lastRemovedDate = -1;
@@ -984,7 +984,8 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
     public static ItemPipe registerPipe(Class<? extends Pipe<?>> clas, BCCreativeTab creativeTab) {
         ItemPipe item = new ItemPipe(creativeTab);
         item.setUnlocalizedName("buildcraftPipe." + clas.getSimpleName().toLowerCase(Locale.ENGLISH));
-        GameRegistry.registerItem(item, item.getUnlocalizedName());
+
+        CoreProxy.proxy.registerItem(item, item.getUnlocalizedName());
 
         pipes.put(item, clas);
 
@@ -997,7 +998,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         return item;
     }
 
-    public static Pipe<?> createPipe(Item key) {
+    public static Pipe<?> createPipe(ItemPipe key) {
 
         try {
             Class<? extends Pipe<?>> pipe = pipes.get(key);

@@ -43,7 +43,7 @@ public class StripesHandlerPipes implements IStripesHandler {
 
         Vec3 p = Utils.convert(pos).add(Utils.convert(direction, -1));
 
-        Pipe<?> pipe = BlockGenericPipe.createPipe(stack.getItem());
+        Pipe<?> pipe = BlockGenericPipe.createPipe((ItemPipe) stack.getItem());
         if (pipe.transport instanceof PipeTransportItems) {
             // Checks done, request extension
             BuildCraftTransport.pipeExtensionListener.requestPipeExtension(stack, world, Utils.convertFloor(p), direction, activator);

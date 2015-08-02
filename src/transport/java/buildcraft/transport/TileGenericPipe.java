@@ -61,6 +61,7 @@ import buildcraft.transport.block.BlockGenericPipe;
 import buildcraft.transport.gates.GateFactory;
 import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.item.ItemFacade.FacadeState;
+import buildcraft.transport.item.ItemPipe;
 import buildcraft.transport.pluggable.PlugPluggable;
 
 import io.netty.buffer.ByteBuf;
@@ -297,7 +298,7 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
         }
 
         coreState.pipeId = nbt.getInteger("pipeId");
-        pipe = BlockGenericPipe.createPipe((Item) Item.getItemById(coreState.pipeId));
+        pipe = BlockGenericPipe.createPipe((ItemPipe) Item.getItemById(coreState.pipeId));
         bindPipe();
 
         if (pipe != null) {
@@ -982,7 +983,7 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
                 }
 
                 if (pipe == null && coreState.pipeId != 0) {
-                    initialize(BlockGenericPipe.createPipe((Item) Item.itemRegistry.getObjectById(coreState.pipeId)));
+                    initialize(BlockGenericPipe.createPipe((ItemPipe) Item.itemRegistry.getObjectById(coreState.pipeId)));
                 }
 
                 if (pipe == null) {
