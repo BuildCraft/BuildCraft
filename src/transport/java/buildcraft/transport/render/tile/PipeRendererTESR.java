@@ -71,7 +71,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
         for (EnumFacing direction : EnumFacing.VALUES) {
             PipePluggable pluggable = pipe.getPipePluggable(direction);
             if (pluggable != null && pluggable.getDynamicRenderer() != null) {
-                pluggable.getDynamicRenderer().renderPluggable(pipe.getPipe(), direction, pluggable, x, y, z);
+                pluggable.getDynamicRenderer().renderDynamicPluggable(pipe.getPipe(), direction, pluggable, x, y, z);
             }
         }
     }

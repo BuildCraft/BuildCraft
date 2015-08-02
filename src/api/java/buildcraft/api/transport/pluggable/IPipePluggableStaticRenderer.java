@@ -7,6 +7,6 @@ import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.transport.IPipe;
 
-public interface IPipePluggableRenderer {
-    List<BakedQuad> renderPluggable(IPipe pipe, PipePluggable pluggable, EnumFacing face);
+public interface IPipePluggableStaticRenderer {
+    List<BakedQuad> renderStaticPluggable(IPipe pipe, PipePluggable pluggable, EnumFacing face);
 }

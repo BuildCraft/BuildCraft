@@ -20,7 +20,7 @@ import net.minecraftforge.common.util.Constants;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
-import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
+import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.render.BuildCraftBakedModel;
 import buildcraft.core.lib.utils.MatrixTranformations;
@@ -30,15 +30,15 @@ import buildcraft.transport.item.ItemFacade;
 import io.netty.buffer.ByteBuf;
 
 public class FacadePluggable extends PipePluggable implements IFacadePluggable {
-    public static final class FacadePluggableRenderer extends BuildCraftBakedModel implements IPipePluggableRenderer {
-        public static final IPipePluggableRenderer INSTANCE = new FacadePluggableRenderer();
+    public static final class FacadePluggableRenderer extends BuildCraftBakedModel implements IPipePluggableStaticRenderer {
+        public static final IPipePluggableStaticRenderer INSTANCE = new FacadePluggableRenderer();
 
         private FacadePluggableRenderer() {
             super(null, null, null);// We only extend BuildCraftBakedModel to get the model functions
         }
 
         @Override
-        public List<BakedQuad> renderPluggable(IPipe pipe, PipePluggable pluggable, EnumFacing face) {
+        public List<BakedQuad> renderStaticPluggable(IPipe pipe, PipePluggable pluggable, EnumFacing face) {
             List<BakedQuad> quads = Lists.newArrayList();
             IFacadePluggable facade = (IFacadePluggable) pluggable;
 
@@ -150,7 +150,7 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
     }
 
     @Override
-    public IPipePluggableRenderer getRenderer() {
+    public IPipePluggableStaticRenderer getRenderer() {
         return FacadePluggableRenderer.INSTANCE;
     }
 

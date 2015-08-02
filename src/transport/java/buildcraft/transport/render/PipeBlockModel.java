@@ -19,7 +19,7 @@ import net.minecraft.util.Vec3;
 import net.minecraftforge.client.model.ISmartBlockModel;
 import net.minecraftforge.common.property.IExtendedBlockState;
 
-import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
+import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.render.BuildCraftBakedModel;
@@ -181,9 +181,9 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
         for (EnumFacing face : EnumFacing.VALUES) {
             PipePluggable plug = pluggable.getPluggables()[face.ordinal()];
             if (plug != null) {
-                IPipePluggableRenderer plugRender = plug.getRenderer();
+                IPipePluggableStaticRenderer plugRender = plug.getRenderer();
                 if (plugRender != null) {
-                    List<BakedQuad> list = plugRender.renderPluggable(pipe, plug, face);
+                    List<BakedQuad> list = plugRender.renderStaticPluggable(pipe, plug, face);
                     if (list != null) {
                         quads.addAll(list);
                     }

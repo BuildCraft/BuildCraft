@@ -17,7 +17,7 @@ import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableDynamicRenderer;
-import buildcraft.api.transport.pluggable.IPipePluggableRenderer;
+import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.lib.utils.MatrixTranformations;
@@ -29,7 +29,7 @@ import buildcraft.transport.render.tile.PipeRendererTESR;
 import io.netty.buffer.ByteBuf;
 
 public class GatePluggable extends PipePluggable {
-    private static final class GatePluggableRenderer implements IPipePluggableRenderer, IPipePluggableDynamicRenderer {
+    private static final class GatePluggableRenderer implements IPipePluggableStaticRenderer, IPipePluggableDynamicRenderer {
         public static final GatePluggableRenderer INSTANCE = new GatePluggableRenderer();
 
         private GatePluggableRenderer() {
@@ -37,12 +37,12 @@ public class GatePluggable extends PipePluggable {
         }
 
         @Override
-        public void renderPluggable(IPipe pipe, EnumFacing side, PipePluggable pipePluggable, double x, double y, double z) {
+        public void renderDynamicPluggable(IPipe pipe, EnumFacing side, PipePluggable pipePluggable, double x, double y, double z) {
             PipeRendererTESR.renderGate(x, y, z, (GatePluggable) pipePluggable, side);
         }
 
         @Override
-        public List<BakedQuad> renderPluggable(IPipe pipe, PipePluggable pluggable, EnumFacing face) {
+        public List<BakedQuad> renderStaticPluggable(IPipe pipe, PipePluggable pluggable, EnumFacing face) {
             return null;
         }
 
@@ -244,7 +244,7 @@ public class GatePluggable extends PipePluggable {
     }
 
     @Override
-    public IPipePluggableRenderer getRenderer() {
+    public IPipePluggableStaticRenderer getRenderer() {
         return GatePluggableRenderer.INSTANCE;
     }
 

@@ -47,7 +47,7 @@ public abstract class PipePluggable implements INBTStoreable, ISerializable {
     public abstract AxisAlignedBB getBoundingBox(EnumFacing side);
 
     @SideOnly(Side.CLIENT)
-    public abstract IPipePluggableRenderer getRenderer();
+    public abstract IPipePluggableStaticRenderer getRenderer();
 
     @SideOnly(Side.CLIENT)
     public IPipePluggableDynamicRenderer getDynamicRenderer() {
