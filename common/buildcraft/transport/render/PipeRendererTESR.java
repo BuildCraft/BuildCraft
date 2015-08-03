@@ -771,7 +771,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			}
 
 			DisplayFluidList d = getDisplayFluidLists(renderData.fluidID, skylight,
-					fluidRenderData.flags, pipe.container.getWorldObj());
+					renderData.flags, pipe.container.getWorldObj());
 
 			if (d == null) {
 				continue;
@@ -811,9 +811,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			GL11.glPopMatrix();
 		}
 
-		if (fluidRenderData.amount[6] > 0) {
+		if (renderData.amount[6] > 0) {
 			DisplayFluidList d = getDisplayFluidLists(renderData.fluidID, skylight,
-					fluidRenderData.flags, pipe.container.getWorldObj());
+					renderData.flags, pipe.container.getWorldObj());
 
 			if (d != null) {
 				int stage = (int) ((float) renderData.amount[6] / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
