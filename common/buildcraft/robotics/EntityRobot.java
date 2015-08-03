@@ -23,6 +23,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.IEntityMultiPart;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.boss.EntityDragonPart;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemArmor;
@@ -31,7 +34,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
+import net.minecraft.potion.Potion;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.stats.AchievementList;
+import net.minecraft.stats.StatList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
@@ -43,14 +49,17 @@ import net.minecraft.util.StatCollector;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -80,6 +89,7 @@ import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.robotics.ai.AIRobotMain;
 import buildcraft.robotics.ai.AIRobotShutdown;
 import buildcraft.robotics.ai.AIRobotSleep;
@@ -989,17 +999,50 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	public void attackTargetEntityWithCurrentItem(Entity par1Entity) {
+		if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(
+				CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, (int) posX, (int) posY, (int) posZ).get(),
+				par1Entity))) {
+			return;
+		}
 		if (par1Entity.canAttackWithItem()) {
 			if (!par1Entity.hitByEntity(this)) {
-				this.setLastAttacker(par1Entity);
-				boolean flag2 = par1Entity.attackEntityFrom(new EntityDamageSource("robot", this), 2.0F);
+				float attackDamage = (float)this.getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue();
+				int knockback = 0;
 
-				EnchantmentHelper.func_151385_b(this, par1Entity);
-				ItemStack itemstack = itemInUse;
-				Object object = par1Entity;
+				if (par1Entity instanceof EntityLivingBase) {
+					attackDamage += EnchantmentHelper.getEnchantmentModifierLiving(this, (EntityLivingBase) par1Entity);
+					knockback += EnchantmentHelper.getKnockbackModifier(this, (EntityLivingBase)par1Entity);
+				}
 
-				if (itemstack != null && object instanceof EntityLivingBase) {
-					itemstack.getItem().hitEntity(itemstack, (EntityLivingBase) object, this);
+				if (attackDamage > 0.0F) {
+					int fireAspect = EnchantmentHelper.getFireAspectModifier(this);
+
+					if (par1Entity instanceof EntityLivingBase && fireAspect > 0 && !par1Entity.isBurning()) {
+						par1Entity.setFire(fireAspect * 4);
+					}
+
+					if (par1Entity.attackEntityFrom(new EntityDamageSource("robot", this), attackDamage)) {
+						this.setLastAttacker(par1Entity);
+
+						if (knockback > 0) {
+							par1Entity.addVelocity((double) (-MathHelper.sin(this.rotationYaw * (float) Math.PI / 180.0F) * (float) knockback * 0.5F), 0.1D, (double) (MathHelper.cos(this.rotationYaw * (float) Math.PI / 180.0F) * (float) knockback * 0.5F));
+							this.motionX *= 0.6D;
+							this.motionZ *= 0.6D;
+							this.setSprinting(false);
+						}
+
+						if (par1Entity instanceof EntityLivingBase) {
+							EnchantmentHelper.func_151384_a((EntityLivingBase) par1Entity, this);
+						}
+
+						EnchantmentHelper.func_151385_b(this, par1Entity);
+
+						ItemStack itemstack = itemInUse;
+
+						if (itemstack != null && par1Entity instanceof EntityLivingBase) {
+							itemstack.getItem().hitEntity(itemstack, (EntityLivingBase) par1Entity, this);
+						}
+					}
 				}
 			}
 		}

@@ -71,7 +71,7 @@ public final class CraftingUtils {
             ingredients.add(item2);
 
 			return new ShapelessRecipes(new ItemStack(item1.getItem(), 1, newDamage), ingredients);
-		} else {
+		} else if (itemNum > 0) {
 			// End repair recipe handler
 
         	List recipes = CraftingManager.getInstance().getRecipeList();
@@ -82,6 +82,10 @@ public final class CraftingUtils {
                     return currentRecipe;
                 }
             }
+
+            return null;
+        } else {
+            // No items - no recipe!
 
             return null;
         }
