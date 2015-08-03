@@ -19,6 +19,6 @@ public class FluidRenderData {
 		if (s == null) {
 			return 0;
 		}
-		return s.getFluid().getLuminosity();
+		return s.getFluid().getLuminosity(s);
 	}
 }
