@@ -62,6 +62,7 @@ import buildcraft.core.lib.TileBuffer;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.render.PipeRendererWorld;
 
@@ -483,6 +484,17 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 	public Item getItemDropped(int meta, Random rand, int dmg) {
 		// Returns null to be safe - the id does not depend on the meta
 		return null;
+	}
+
+	@Override
+	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
+		// HACK: WAILA compatibility
+		EntityPlayer clientPlayer = CoreProxy.proxy.getClientPlayer();
+		if (clientPlayer != null) {
+			return getPickBlock(target, world, x, y, z, clientPlayer);
+		} else {
+			return new ItemStack(getPipe(world, x, y, z).item, 1, getPipe(world, x, y, z).container.getItemMetadata());
+		}
 	}
 
 	@Override

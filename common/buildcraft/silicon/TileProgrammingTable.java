@@ -158,7 +158,9 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
 			}
 		}
 
-		if ((oldId != null && !oldId.equals(currentRecipeId)) || (oldId == null && currentRecipeId != null)) {
+		if ((oldId != null && currentRecipeId != null &&  !oldId.equals(currentRecipeId))
+				|| (oldId == null && currentRecipeId != null)
+				|| (oldId != null && currentRecipeId == null)) {
 			optionId = -1;
 			updateRecipe();
 			queueNetworkUpdate();

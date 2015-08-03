@@ -967,4 +967,8 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		box.readData(stream);
 		fluidTank.readData(stream);
 	}
+
+	public Tank[] getFluidTanks() {
+		return fluidTanks;
+	}
 }
