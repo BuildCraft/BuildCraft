@@ -34,6 +34,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
+import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IInvSlot;
@@ -599,9 +600,8 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		iterateBpt(false);
 
 		if (mode != Mode.Off) {
-			if (getWorldObj().getWorldInfo().getGameType() == GameType.CREATIVE) {
-				build();
-			} else if (getBattery().getEnergyStored() > POWER_ACTIVATION) {
+			if (getWorldObj().getWorldInfo().getGameType() == GameType.CREATIVE
+					|| getBattery().getEnergyStored() > POWER_ACTIVATION) {
 				build();
 			}
 		}
