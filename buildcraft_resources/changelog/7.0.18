@@ -6,8 +6,10 @@ Improvements:
 Bugs fixed:
 
 * [#2935, attempted] Programming Table robot board mixups (asie)
+* [#2929] Builders unable to place liquid in survival mode (asie)
 * [#2914] Advanced Crafting Table excess tick times in certain circumstances (asie)
 * [#2898] Robot crash on chunk unload/reload (hea3ven)
+* Fluid tanks rendering incorrectly in Builder (asie)
 * Knight/Butcher not emitting Forge attack events (asie)
 * Restoring robot block breaking state could fail (hea3ven)
 * Stripes pipes placing extra blocks, and the behaviour of the stripes robot placing blocks (hea3ven)

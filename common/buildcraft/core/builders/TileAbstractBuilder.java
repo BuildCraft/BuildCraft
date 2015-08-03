@@ -28,6 +28,7 @@ import buildcraft.core.LaserData;
 import buildcraft.core.internal.IBoxProvider;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
@@ -188,5 +189,9 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 
 	public boolean drainBuild(FluidStack fluidStack, boolean realDrain) {
 		return false;
+	}
+
+	public Tank[] getFluidTanks() {
+		return new Tank[0];
 	}
 }

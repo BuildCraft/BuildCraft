@@ -26,6 +26,7 @@ import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
+import buildcraft.core.lib.render.FluidRenderer;
 import buildcraft.core.lib.utils.StringUtils;
 
 public class GuiBuilder extends GuiAdvancedInterface {
@@ -128,6 +129,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
 			for (int i = 0; i < builder.fluidTanks.length; i++) {
 				Tank tank = builder.fluidTanks[i];
 				if (tank.getFluid() != null && tank.getFluid().amount > 0) {
+					mc.renderEngine.bindTexture(FluidRenderer.getFluidSheet(tank.getFluid()));
 					drawFluid(tank.getFluid(), guiLeft + 179 + 18 * i, guiTop + 145, 16, 47, tank.getCapacity());
 					drawTexturedModalRect(guiLeft + 179 + 18 * i, guiTop + 145, 0, 54, 16, 47);
 				}
