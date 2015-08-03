@@ -172,4 +172,8 @@ public class CoreProxy implements ICoreProxy {
 	public TileEntity getServerTile(TileEntity source) {
 		return source;
 	}
+
+	public EntityPlayer getClientPlayer() {
+		return null;
+	}
 }

@@ -55,8 +55,21 @@ public class AIRobotBreak extends AIRobot {
 
 	@Override
 	public void update() {
-		if (block == null || block.isAir(robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z)) {
+		if (block == null) {
+			block = robot.worldObj.getBlock(blockToBreak.x, blockToBreak.y, blockToBreak.z);
+			if (block == null) {
+				setSuccess(false);
+				terminate();
+				return;
+			}
+			meta = robot.worldObj.getBlockMetadata(blockToBreak.x, blockToBreak.y, blockToBreak.z);
+			hardness = block.getBlockHardness(robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z);
+			speed = getBreakSpeed(robot, robot.getHeldItem(), block, meta);
+		}
+		if (block.isAir(robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z)) {
+			setSuccess(false);
 			terminate();
+			return;
 		}
 
 		if (hardness != 0) {

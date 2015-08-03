@@ -9,6 +9,7 @@
 package buildcraft;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDispenser;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -55,6 +56,7 @@ import buildcraft.silicon.TilePackager;
 import buildcraft.silicon.TileProgrammingTable;
 import buildcraft.silicon.TileStampingTable;
 import buildcraft.silicon.network.PacketHandlerSilicon;
+import buildcraft.transport.stripes.StripesHandlerDispenser;
 
 @Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftSilicon extends BuildCraftMod {
@@ -142,6 +144,9 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
 		}
+
+		BlockDispenser.dispenseBehaviorRegistry.putObject(packageItem, new ItemPackage.DispenseBehaviour());
+		StripesHandlerDispenser.items.add(packageItem);
 
 		SiliconProxy.proxy.registerRenderers();
 	}

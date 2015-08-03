@@ -14,7 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldSettings;
+import buildcraft.core.lib.fluids.Tank;
 
 public class BuildingSlotMapIterator {
 	private static final int MAX_PER_ITEM = 80;
@@ -39,7 +41,15 @@ public class BuildingSlotMapIterator {
 		if (builder != null) {
 			availablePairs.add(new BuilderItemMetaPair(null));
 			for (int i = 0; i < builder.getSizeInventory(); i++) {
-				availablePairs.add(new BuilderItemMetaPair(builder.getStackInSlot(i)));
+				ItemStack stack = builder.getStackInSlot(i);
+				if (stack != null) {
+					availablePairs.add(new BuilderItemMetaPair(stack));
+				}
+			}
+			for (Tank t : builder.getFluidTanks()) {
+				if (t.getFluid() != null && t.getFluid().getFluid().getBlock() != null) {
+					availablePairs.add(new BuilderItemMetaPair(new ItemStack(t.getFluid().getFluid().getBlock())));
+				}
 			}
 		}
 

@@ -40,9 +40,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
 	protected RFBattery battery;
 
-	private boolean full;
 	private int requestedEnergy, sources, lastRequestedEnergy;
-
 	private boolean allowExtraction = false;
 
 	public PipePowerWood(Item item) {

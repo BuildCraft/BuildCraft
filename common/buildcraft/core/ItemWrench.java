@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockButton;
 import net.minecraft.block.BlockChest;
 import net.minecraft.block.BlockLever;
@@ -22,10 +23,11 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.lib.items.ItemBuildCraft;
+import buildcraft.core.lib.utils.BlockUtils;
 
 public class ItemWrench extends ItemBuildCraft implements IToolWrench {
-
 	private final Set<Class<? extends Block>> shiftRotations = new HashSet<Class<? extends Block>>();
+	private final Set<Class<? extends Block>> blacklistedRotations = new HashSet<Class<? extends Block>>();
 
 	public ItemWrench() {
 		super();
@@ -35,11 +37,12 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 		shiftRotations.add(BlockLever.class);
 		shiftRotations.add(BlockButton.class);
 		shiftRotations.add(BlockChest.class);
+		blacklistedRotations.add(BlockBed.class);
 		setHarvestLevel("wrench", 0);
 	}
 
-	private boolean isShiftRotation(Class<? extends Block> cls) {
-		for (Class<? extends Block> shift : shiftRotations) {
+	private boolean isClass(Set<Class<? extends Block>> set, Class<? extends Block> cls) {
+		for (Class<? extends Block> shift : set) {
 			if (shift.isAssignableFrom(cls)) {
 				return true;
 			}
@@ -51,11 +54,16 @@ public class ItemWrench extends ItemBuildCraft implements IToolWrench {
 	public boolean onItemUseFirst(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		Block block = world.getBlock(x, y, z);
 
-		if (block == null) {
+		if (block == null || isClass(blacklistedRotations, block.getClass())) {
 			return false;
 		}
 
-		if (player.isSneaking() != isShiftRotation(block.getClass())) {
+		if (player.isSneaking() != isClass(shiftRotations, block.getClass())) {
+			return false;
+		}
+
+		// Double chests should NOT be rotated.
+		if (block instanceof BlockChest && BlockUtils.getOtherDoubleChest(world.getTileEntity(x, y, z)) != null) {
 			return false;
 		}
 

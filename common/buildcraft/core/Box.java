@@ -17,6 +17,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MathHelper;
 
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IAreaProvider;
@@ -155,6 +156,10 @@ public class Box implements IBox, ISerializable {
 
 	@Override
 	public boolean contains(double x, double y, double z) {
+		return contains(MathHelper.floor_double(x), MathHelper.floor_double(y), MathHelper.floor_double(z));
+	}
+
+	public boolean contains(int x, int y, int z) {
 		return x >= xMin && x <= xMax && y >= yMin && y <= yMax && z >= zMin && z <= zMax;
 	}
 

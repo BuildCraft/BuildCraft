@@ -80,6 +80,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
 		if (delta.get(0)) {
 			renderCache.fluidID = data.readShort();
 			renderCache.color = renderCache.fluidID != 0 ? data.readInt() : 0xFFFFFF;
+			renderCache.flags = renderCache.fluidID != 0 ? data.readUnsignedByte() : 0;
 		}
 
 		for (ForgeDirection dir : ForgeDirection.values()) {
@@ -101,6 +102,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
 			data.writeShort(renderCache.fluidID);
 			if (renderCache.fluidID != 0) {
 				data.writeInt(renderCache.color);
+				data.writeByte(renderCache.flags);
 			}
 		}
 

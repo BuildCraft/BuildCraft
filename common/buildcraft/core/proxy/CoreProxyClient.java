@@ -159,4 +159,8 @@ public class CoreProxyClient extends CoreProxy {
 		}
 		return source;
 	}
+
+	public EntityPlayer getClientPlayer() {
+		return Minecraft.getMinecraft().thePlayer;
+	}
 }

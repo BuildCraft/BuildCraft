@@ -43,31 +43,8 @@ public class StripesHandlerBucket implements IStripesHandler {
 			ForgeDirection direction, ItemStack stack, EntityPlayer player,
 			IStripesActivator activator) {
 		if (world.isAirBlock(x, y, z)) {
-			Block underblock = world.getBlock(x, y - 1, z);
-
-			if (((ItemBucket) stack.getItem()).tryPlaceContainedLiquid(world, x, y - 1, z)) {
+			if (((ItemBucket) stack.getItem()).tryPlaceContainedLiquid(world, x, direction.ordinal() < 2 ? y : (y - 1), z)) {
 				activator.sendItem(emptyBucket, direction.getOpposite());
-				stack.stackSize--;
-				if (stack.stackSize > 0) {
-					activator.sendItem(stack, direction.getOpposite());
-				}
-				
-				return true;
-			} else {
-				if (!FluidContainerRegistry.isEmptyContainer(stack)) {
-					activator.sendItem(stack, direction.getOpposite());
-					return true;
-				}
-
-				FluidStack fluidStack = BlockUtils.drainBlock(underblock, world, x, y - 1, z, true);
-				ItemStack filledBucket = getFilledBucket(fluidStack, underblock);
-
-				if (fluidStack == null || filledBucket == null) {
-					activator.sendItem(stack, direction.getOpposite());
-					return true;
-				}
-
-				activator.sendItem(filledBucket, direction.getOpposite());
 				stack.stackSize--;
 				if (stack.stackSize > 0) {
 					activator.sendItem(stack, direction.getOpposite());
@@ -76,7 +53,34 @@ public class StripesHandlerBucket implements IStripesHandler {
 				return true;
 			}
 		}
-		return false;
+
+		if (!FluidContainerRegistry.isEmptyContainer(stack)) {
+			activator.sendItem(stack, direction.getOpposite());
+			return true;
+		}
+
+		Block targetBlock = world.getBlock(x, y, z);
+		FluidStack fluidStack = BlockUtils.drainBlock(targetBlock, world, x, y, z, true);
+
+		if (fluidStack == null) {
+			targetBlock = world.getBlock(x, y - 1, z);
+			fluidStack = BlockUtils.drainBlock(targetBlock, world, x, y - 1, z, true);
+		}
+
+		ItemStack filledBucket = getFilledBucket(fluidStack, targetBlock);
+
+		if (fluidStack == null || filledBucket == null) {
+			activator.sendItem(stack, direction.getOpposite());
+			return true;
+		}
+
+		activator.sendItem(filledBucket, direction.getOpposite());
+		stack.stackSize--;
+		if (stack.stackSize > 0) {
+			activator.sendItem(stack, direction.getOpposite());
+		}
+
+		return true;
 	}
 
 }
