@@ -167,4 +167,8 @@ public class CoreProxy implements ICoreProxy {
 			return null;
 		}
 	}
+
+	public EntityPlayer getClientPlayer() {
+		return null;
+	}
 }

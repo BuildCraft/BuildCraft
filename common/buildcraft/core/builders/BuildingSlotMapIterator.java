@@ -14,14 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldSettings;
-import net.minecraftforge.fluids.FluidStack;
 import buildcraft.core.lib.fluids.Tank;
-import buildcraft.core.lib.utils.FluidUtils;
 
 public class BuildingSlotMapIterator {
 	private static final int MAX_PER_ITEM = 80;

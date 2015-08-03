@@ -11,6 +11,7 @@ Bugs fixed:
 * [#2921] Architect Table's defined area box not visible >64 blocks (ganymedes01)
 * [#2914] Advanced Crafting Table excess tick times in certain circumstances (asie)
 * [#2898] Robot crash on chunk unload/reload (hea3ven)
+* [#2862] Pipe name not displaying in WAILA (asie)
 * Fluid tanks rendering incorrectly in Builder (asie)
 * Knight/Butcher not emitting Forge attack events (asie)
 * Restoring robot block breaking state could fail (hea3ven)
