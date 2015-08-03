@@ -31,7 +31,6 @@ Improvements:
   * Zone Planners now have a dynamic texture (asie)
   * Requesters now support the Comparator (asie)
   * Add events for robot interaction and removal (asie)
-  * Add the Breaker robot that mines stone materials (hea3ven)
   * Fix robots not using the correct sides when accessing inventories/tanks (hea3ven)
   * Fix loading break ai from nbt (hea3ven)
 * Transport:

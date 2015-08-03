@@ -11,7 +11,7 @@ import net.minecraft.nbt.NBTTagList;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.NBTUtils;
 
-public class ListHandlerNew {
+public final class ListHandlerNew {
 	public static final int WIDTH = 9;
 	public static final int HEIGHT = 2;
 
@@ -28,7 +28,7 @@ public class ListHandlerNew {
 		}
 
 		public boolean getOption(int id) {
-			return (id == 0 ? precise : (id == 1 ? byType : byMaterial));
+			return id == 0 ? precise : (id == 1 ? byType : byMaterial);
 		}
 
 		public void toggleOption(int id) {
@@ -141,6 +141,10 @@ public class ListHandlerNew {
 			}
 			return stackList;
 		}
+	}
+
+	private ListHandlerNew() {
+
 	}
 
 	public static Line[] getLines(ItemStack item) {

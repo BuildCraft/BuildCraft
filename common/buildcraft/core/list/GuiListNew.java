@@ -79,6 +79,15 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
 		}
 	}
 
+	public GuiListNew(EntityPlayer iPlayer) {
+		super(new ContainerListNew(iPlayer), iPlayer.inventory, TEXTURE_BASE);
+
+		xSize = 176;
+		ySize = 192;
+
+		player = iPlayer;
+	}
+
 	private void clearExamplesCache(int lineId) {
 		Map<ListMatchHandler.Type, List<ItemStack>> exampleList = exampleCache.get(lineId);
 		if (exampleList != null) {
@@ -112,15 +121,6 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
 		return exampleList.get(type);
 	}
 
-	public GuiListNew(EntityPlayer iPlayer) {
-		super(new ContainerListNew(iPlayer), iPlayer.inventory, TEXTURE_BASE);
-
-		xSize = 176;
-		ySize = 192;
-
-		player = iPlayer;
-	}
-
 	@Override
 	public void initGui() {
 		super.initGui();
@@ -143,7 +143,7 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
 		}
 
 		for (Object o : buttonList) {
-			GuiImageButton b = ((GuiImageButton) o);
+			GuiImageButton b = (GuiImageButton) o;
 			int lineId = b.id / BUTTON_COUNT;
 			int buttonId = b.id % BUTTON_COUNT;
 			if (((ContainerListNew) getContainer()).lines[lineId].getOption(buttonId)) {

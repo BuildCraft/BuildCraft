@@ -14,8 +14,8 @@ import cpw.mods.fml.common.Loader;
 import net.minecraftforge.client.MinecraftForgeClient;
 
 import buildcraft.BuildCraftRobotics;
-import buildcraft.robotics.render.RenderZonePlan;
 import buildcraft.robotics.render.RenderRobot;
+import buildcraft.robotics.render.RenderZonePlan;
 import buildcraft.robotics.render.RobotStationItemRenderer;
 
 public class RoboticsProxyClient extends RoboticsProxy {

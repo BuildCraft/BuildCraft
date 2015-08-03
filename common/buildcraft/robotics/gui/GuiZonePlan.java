@@ -25,7 +25,6 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.EnumColor;
 import buildcraft.core.DefaultProps;
-import buildcraft.robotics.ZonePlan;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.gui.buttons.GuiBetterButton;
@@ -38,6 +37,7 @@ import buildcraft.core.lib.render.DynamicTextureBC;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.robotics.TileZonePlan;
+import buildcraft.robotics.ZonePlan;
 
 public class GuiZonePlan extends GuiAdvancedInterface {
 

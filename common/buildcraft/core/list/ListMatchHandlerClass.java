@@ -1,11 +1,8 @@
 package buildcraft.core.list;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Set;
 
 import net.minecraft.creativetab.CreativeTabs;

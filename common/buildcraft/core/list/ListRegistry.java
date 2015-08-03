@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ListRegistry {
+public final class ListRegistry {
 	private static final List<ListMatchHandler> handlers = new ArrayList<ListMatchHandler>();
+
+	private ListRegistry() {
+
+	}
 
 	public static void registerHandler(ListMatchHandler h) {
 		if (h != null) {

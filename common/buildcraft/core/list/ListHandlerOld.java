@@ -18,7 +18,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.NBTUtils;
 
-public class ListHandlerOld {
+public final class ListHandlerOld {
 	private static final WeakHashMap<ItemStack, StackLine[]> LINE_CACHE = new WeakHashMap<ItemStack, StackLine[]>();
 
 	public static class StackLine {
@@ -193,6 +193,10 @@ public class ListHandlerOld {
 				return false;
 			}
 		}
+	}
+
+	private ListHandlerOld() {
+
 	}
 
 	public static void saveLine(ItemStack stack, StackLine line, int index) {

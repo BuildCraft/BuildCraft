@@ -107,7 +107,6 @@ public class GuiTablet extends GuiScreen {
 			} else if (buttonState == 2) {
 				if (isButton(x, y)) {
 					buttonState = ENABLE_HIGHLIGHT ? 0 : 1;
-					System.out.println("PRESS");
 				} else {
 					buttonState = 1;
 				}

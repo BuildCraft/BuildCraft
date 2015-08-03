@@ -14,7 +14,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
-import buildcraft.BuildCraftBuilders;
 import buildcraft.api.library.LibraryAPI;
 import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.core.DefaultProps;
