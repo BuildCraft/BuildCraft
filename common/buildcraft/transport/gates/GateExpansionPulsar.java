@@ -16,11 +16,13 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import cofh.api.energy.IEnergyHandler;
 import buildcraft.BuildCraftTransport;
+import buildcraft.api.core.BCLog;
 import buildcraft.api.gates.GateExpansionController;
 import buildcraft.api.gates.IGate;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.IStatement;
+import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.transport.statements.ActionEnergyPulsar;
 import buildcraft.transport.statements.ActionSingleEnergyPulse;
 
@@ -38,7 +40,6 @@ public final class GateExpansionPulsar extends GateExpansionBuildcraft implement
 	}
 
 	private class GateExpansionControllerPulsar extends GateExpansionController {
-
 		private static final int PULSE_PERIOD = 10;
 		private boolean isActive;
 		private boolean singlePulse;
@@ -58,7 +59,7 @@ public final class GateExpansionPulsar extends GateExpansionBuildcraft implement
 
 		@Override
 		public void startResolution() {
-			if (isActive()) {
+			if (isActive) {
 				disablePulse();
 			}
 		}
@@ -84,46 +85,35 @@ public final class GateExpansionPulsar extends GateExpansionBuildcraft implement
 
 		@Override
 		public void tick(IGate gate) {
-			if (!isActive && hasPulsed) {
-				hasPulsed = false;
-			}
-
 			if (tick++ % PULSE_PERIOD != 0) {
 				// only do the treatement once every period
 				return;
 			}
 
-			if (!isActive) {
-				gate.setPulsing(false);
-				return;
-			}
+			gate.setPulsing(isActive);
 
-			if (pipeTile instanceof IEnergyHandler && (!singlePulse || !hasPulsed)) {
-				gate.setPulsing(true);
-				((IEnergyHandler) pipeTile).receiveEnergy(ForgeDirection.UNKNOWN, Math.min(1 << (count - 1), 64) * 10,
+			if (pipeTile instanceof IEnergyHandler && ((singlePulse && !hasPulsed) || (!singlePulse && isActive))) {
+				((IEnergyHandler) pipeTile).receiveEnergy(ForgeDirection.UNKNOWN, MathUtils.clamp(1 << (count - 1), 1, 64) * 10,
 						false);
 				hasPulsed = true;
-			} else {
-				gate.setPulsing(true);
 			}
 		}
 
 		private void enableSinglePulse(int count) {
-			singlePulse = true;
 			isActive = true;
+			singlePulse = true;
+			hasPulsed = false;
 			this.count = count;
 		}
 
 		private void enablePulse(int count) {
 			isActive = true;
+			hasPulsed = false;
 			singlePulse = false;
 			this.count = count;
 		}
 
 		private void disablePulse() {
-			if (!isActive) {
-				hasPulsed = false;
-			}
 			isActive = false;
 			this.count = 0;
 		}
