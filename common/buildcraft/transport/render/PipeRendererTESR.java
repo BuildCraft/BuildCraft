@@ -24,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.IntHashMap;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -110,9 +111,11 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		initialized = false;
 	}
 
-	private DisplayFluidList getDisplayFluidLists(int liquidId, World world) {
-		if (displayFluidLists.containsItem(liquidId)) {
-			return (DisplayFluidList) displayFluidLists.lookup(liquidId);
+	private DisplayFluidList getDisplayFluidLists(int liquidId, int skylight, int flags, World world) {
+		int listId = (liquidId & 0x3FFFF) << 13 | flags << 5 | (skylight & 31);
+
+		if (displayFluidLists.containsItem(listId)) {
+			return (DisplayFluidList) displayFluidLists.lookup(listId);
 		}
 
 		Fluid fluid = FluidRegistry.getFluid(liquidId);
@@ -122,7 +125,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		}
 
 		DisplayFluidList d = new DisplayFluidList();
-		displayFluidLists.addKey(liquidId, d);
+		displayFluidLists.addKey(listId, d);
 
 		RenderInfo block = new RenderInfo();
 
@@ -133,6 +136,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		}
 
 		block.texture = fluid.getStillIcon();
+		block.brightness = skylight << 16 | flags & 31;
 
 		float size = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
 
@@ -744,7 +748,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		GL11.glTranslatef((float) x, (float) y, (float) z);
 
-		// sides
+		int skylight = pipe.container.getWorld().getSkyBlockTypeBrightness(EnumSkyBlock.Sky, pipe.container.x(), pipe.container.y(), pipe.container.z());
 
 		boolean sides = false, above = false;
 
@@ -761,7 +765,8 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				continue;
 			}
 
-			DisplayFluidList d = getDisplayFluidLists(fluidRenderData.fluidID, pipe.container.getWorldObj());
+			DisplayFluidList d = getDisplayFluidLists(fluidRenderData.fluidID, skylight,
+					fluidRenderData.flags, pipe.container.getWorldObj());
 
 			if (d == null) {
 				continue;
@@ -804,7 +809,8 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		FluidRenderData fluidRenderData = trans.renderCache;
 
 		if (fluidRenderData.amount[6] > 0) {
-			DisplayFluidList d = getDisplayFluidLists(fluidRenderData.fluidID, pipe.container.getWorldObj());
+			DisplayFluidList d = getDisplayFluidLists(fluidRenderData.fluidID, skylight,
+					fluidRenderData.flags, pipe.container.getWorldObj());
 
 			if (d != null) {
 				int stage = (int) ((float) fluidRenderData.amount[6] / (float) (trans.getCapacity()) * (LIQUID_STAGES - 1));
