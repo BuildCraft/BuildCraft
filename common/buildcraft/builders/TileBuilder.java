@@ -23,7 +23,9 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.WorldSettings.GameType;
+
 import cpw.mods.fml.relauncher.Side;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -32,18 +34,13 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.IPathProvider;
 import buildcraft.api.core.Position;
-import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.IRequestProvider;
-import buildcraft.api.robots.ResourceIdRequest;
-import buildcraft.api.robots.RobotManager;
-import buildcraft.api.robots.StackRequest;
 import buildcraft.api.tiles.IControllable;
 import buildcraft.api.tiles.IHasWork;
 import buildcraft.builders.blueprints.RecursiveBlueprintBuilder;
@@ -839,7 +836,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	}
 
 	@Override
-	public int getNumberOfRequests() {
+	public int getRequestsCount() {
 		if (currentBuilder == null) {
 			return 0;
 		} else if (!(currentBuilder instanceof BptBuilderBlueprint)) {
@@ -852,7 +849,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	}
 
 	@Override
-	public StackRequest getAvailableRequest(int i) {
+	public ItemStack getRequest(int slot) {
 		if (currentBuilder == null) {
 			return null;
 		} else if (!(currentBuilder instanceof BptBuilderBlueprint)) {
@@ -860,41 +857,25 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		} else {
 			BptBuilderBlueprint bpt = (BptBuilderBlueprint) currentBuilder;
 
-			if (bpt.neededItems.size() <= i) {
+			if (bpt.neededItems.size() <= slot) {
 				return null;
 			}
 
-			RequirementItemStack requirement = bpt.neededItems.get(i);
+			RequirementItemStack requirement = bpt.neededItems.get(slot);
 
 			int qty = quantityMissing(requirement.stack, requirement.size);
 
 			if (qty <= 0) {
 				return null;
 			}
-
-			StackRequest request = new StackRequest();
-
-			request.index = i;
-			request.requester = this;
-			request.stack = requirement.stack;
-
-			return request;
+			ItemStack requestStack = requirement.stack.copy();
+			requestStack.stackSize = qty;
+			return requestStack;
 		}
 	}
 
 	@Override
-	public boolean takeRequest(int i, EntityRobotBase robot) {
-		if (currentBuilder == null) {
-			return false;
-		} else if (!(currentBuilder instanceof BptBuilderBlueprint)) {
-			return false;
-		} else {
-			return RobotManager.registryProvider.getRegistry(worldObj).take(new ResourceIdRequest(this, i), robot);
-		}
-	}
-
-	@Override
-	public ItemStack provideItemsForRequest(int i, ItemStack stack) {
+	public ItemStack offerItem(int slot, ItemStack stack) {
 		if (currentBuilder == null) {
 			return stack;
 		} else if (!(currentBuilder instanceof BptBuilderBlueprint)) {
@@ -902,11 +883,11 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		} else {
 			BptBuilderBlueprint bpt = (BptBuilderBlueprint) currentBuilder;
 
-			if (bpt.neededItems.size() <= i) {
+			if (bpt.neededItems.size() <= slot) {
 				return stack;
 			}
 
-			RequirementItemStack requirement = bpt.neededItems.get(i);
+			RequirementItemStack requirement = bpt.neededItems.get(slot);
 
 			int qty = quantityMissing(requirement.stack, requirement.size);
 

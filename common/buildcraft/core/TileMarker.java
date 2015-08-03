@@ -21,7 +21,7 @@ import buildcraft.api.core.Position;
 import buildcraft.api.tiles.ITileAreaProvider;
 import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.lib.block.TileBuildCraft;
-import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.lib.utils.LaserUtils;
 import buildcraft.core.proxy.CoreProxy;
 
 public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
@@ -152,23 +152,23 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
 		if (showSignals) {
 			signals = new EntityBlock[6];
 			if (!origin.isSet() || !origin.vect[0].isSet()) {
-				signals[0] = Utils.createLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord + DefaultProps.MARKER_RANGE - 1, yCoord, zCoord),
+				signals[0] = LaserUtils.createLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord + DefaultProps.MARKER_RANGE - 1, yCoord, zCoord),
 						LaserKind.Blue);
-				signals[1] = Utils.createLaser(worldObj, new Position(xCoord - DefaultProps.MARKER_RANGE + 1, yCoord, zCoord), new Position(xCoord, yCoord, zCoord),
+				signals[1] = LaserUtils.createLaser(worldObj, new Position(xCoord - DefaultProps.MARKER_RANGE + 1, yCoord, zCoord), new Position(xCoord, yCoord, zCoord),
 						LaserKind.Blue);
 			}
 
 			if (!origin.isSet() || !origin.vect[1].isSet()) {
-				signals[2] = Utils.createLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord, yCoord + DefaultProps.MARKER_RANGE - 1, zCoord),
+				signals[2] = LaserUtils.createLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord, yCoord + DefaultProps.MARKER_RANGE - 1, zCoord),
 						LaserKind.Blue);
-				signals[3] = Utils.createLaser(worldObj, new Position(xCoord, yCoord - DefaultProps.MARKER_RANGE + 1, zCoord), new Position(xCoord, yCoord, zCoord),
+				signals[3] = LaserUtils.createLaser(worldObj, new Position(xCoord, yCoord - DefaultProps.MARKER_RANGE + 1, zCoord), new Position(xCoord, yCoord, zCoord),
 						LaserKind.Blue);
 			}
 
 			if (!origin.isSet() || !origin.vect[2].isSet()) {
-				signals[4] = Utils.createLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord, yCoord, zCoord + DefaultProps.MARKER_RANGE - 1),
+				signals[4] = LaserUtils.createLaser(worldObj, new Position(xCoord, yCoord, zCoord), new Position(xCoord, yCoord, zCoord + DefaultProps.MARKER_RANGE - 1),
 						LaserKind.Blue);
-				signals[5] = Utils.createLaser(worldObj, new Position(xCoord, yCoord, zCoord - DefaultProps.MARKER_RANGE + 1), new Position(xCoord, yCoord, zCoord),
+				signals[5] = LaserUtils.createLaser(worldObj, new Position(xCoord, yCoord, zCoord - DefaultProps.MARKER_RANGE + 1), new Position(xCoord, yCoord, zCoord),
 						LaserKind.Blue);
 			}
 		}
@@ -320,7 +320,7 @@ public class TileMarker extends TileBuildCraft implements ITileAreaProvider {
 			o.zMax = origin.vect[2].z;
 		}
 
-		lasers = Utils.createLaserBox(worldObj, o.xMin, o.yMin, o.zMin, o.xMax, o.yMax, o.zMax, LaserKind.Red);
+		lasers = LaserUtils.createLaserBox(worldObj, o.xMin, o.yMin, o.zMin, o.xMax, o.yMax, o.zMax, LaserKind.Red);
 	}
 
 	@Override

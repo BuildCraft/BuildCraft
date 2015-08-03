@@ -10,14 +10,16 @@ package buildcraft.robotics;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import buildcraft.BuildCraftRobotics;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.block.BlockBuildCraft;
+import buildcraft.core.lib.block.IComparatorInventory;
 
-public class BlockRequester extends BlockBuildCraft {
+public class BlockRequester extends BlockBuildCraft implements IComparatorInventory {
 	public BlockRequester() {
 		super(Material.iron);
 		setRotatable(true);
@@ -41,5 +43,10 @@ public class BlockRequester extends BlockBuildCraft {
 		}
 
 		return true;
+	}
+
+	@Override
+	public boolean doesSlotCountComparator(TileEntity tile, int slot, ItemStack stack) {
+		return ((TileRequester) tile).getRequestTemplate(slot) != null;
 	}
 }

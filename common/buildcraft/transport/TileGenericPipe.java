@@ -66,7 +66,7 @@ import buildcraft.transport.pluggable.PlugPluggable;
 public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		IPipeTile, ITileBufferHolder, IEnergyHandler, IDropControlInventory,
 		ISyncedTile, ISolidSideTile, IGuiReturnHandler, IRedstoneEngineReceiver,
-		IDebuggable {
+		IDebuggable, IPipeConnection {
 
 	public boolean initialized = false;
 	public final PipeRenderState renderState = new PipeRenderState();
@@ -1279,5 +1279,13 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		if (getPipePluggable(side) != null && getPipePluggable(side) instanceof IDebuggable) {
 			((IDebuggable) getPipePluggable(side)).getDebugInfo(info, side, debugger, player);
 		}
+	}
+
+	@Override
+	public ConnectOverride overridePipeConnection(PipeType type, ForgeDirection with) {
+		if (type == PipeType.POWER && hasPipePluggable(with) && getPipePluggable(with) instanceof IEnergyHandler) {
+			return ConnectOverride.CONNECT;
+		}
+		return ConnectOverride.DEFAULT;
 	}
 }

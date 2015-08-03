@@ -70,7 +70,7 @@ public class ContainerRequester extends BuildCraftContainer implements ICommandR
 			final ItemStack[] stacks = new ItemStack[TileRequester.NB_ITEMS];
 
 			for (int i = 0; i < TileRequester.NB_ITEMS; ++i) {
-				stacks[i] = requester.getRequest(i);
+				stacks[i] = requester.getRequestTemplate(i);
 			}
 
 			BuildCraftCore.instance.sendToPlayer((EntityPlayer) sender, new PacketCommand(this, "receiveRequestList",

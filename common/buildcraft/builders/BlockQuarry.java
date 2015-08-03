@@ -50,51 +50,6 @@ public class BlockQuarry extends BlockHatched {
 		return new TileQuarry();
 	}
 
-	public void searchFrames(World world, int i, int j, int k) {
-		int width2 = 1;
-		if (!world.checkChunksExist(i - width2, j - width2, k - width2, i + width2, j + width2, k + width2)) {
-			return;
-		}
-
-		Block block = world.getBlock(i, j, k);
-
-		if (block != BuildCraftBuilders.frameBlock) {
-			return;
-		}
-
-		int meta = world.getBlockMetadata(i, j, k);
-
-		if ((meta & 8) == 0) {
-			world.setBlockMetadataWithNotify(i, j, k, meta | 8, 0);
-
-			ForgeDirection[] dirs = ForgeDirection.VALID_DIRECTIONS;
-
-			for (ForgeDirection dir : dirs) {
-				switch (dir) {
-				case UP:
-						searchFrames(world, i, j + 1, k);
-					break;
-				case DOWN:
-						searchFrames(world, i, j - 1, k);
-					break;
-				case SOUTH:
-						searchFrames(world, i, j, k + 1);
-					break;
-				case NORTH:
-						searchFrames(world, i, j, k - 1);
-					break;
-				case EAST:
-						searchFrames(world, i + 1, j, k);
-					break;
-				case WEST:
-					default:
-						searchFrames(world, i - 1, j, k);
-					break;
-				}
-			}
-		}
-	}
-
 	@Override
 	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
 		if (BuildCraftBuilders.quarryOneTimeUse) {

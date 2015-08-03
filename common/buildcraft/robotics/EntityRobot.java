@@ -16,7 +16,6 @@ import java.util.WeakHashMap;
 import com.google.common.collect.Iterables;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.client.Minecraft;
@@ -35,7 +34,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSource;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
@@ -48,7 +46,6 @@ import net.minecraft.world.WorldServer;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -1058,13 +1055,15 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	private IZone getZone(AreaType areaType) {
-		for (StatementSlot s : linkedDockingStation.getActiveActions()) {
-			if (s.statement instanceof ActionRobotWorkInArea
-					&& ((ActionRobotWorkInArea) s.statement).getAreaType() == areaType) {
-				IZone zone = ActionRobotWorkInArea.getArea(s);
+		if (linkedDockingStation != null) {
+			for (StatementSlot s : linkedDockingStation.getActiveActions()) {
+				if (s.statement instanceof ActionRobotWorkInArea
+						&& ((ActionRobotWorkInArea) s.statement).getAreaType() == areaType) {
+					IZone zone = ActionRobotWorkInArea.getArea(s);
 
-				if (zone != null) {
-					return zone;
+					if (zone != null) {
+						return zone;
+					}
 				}
 			}
 		}

@@ -111,6 +111,7 @@ import buildcraft.robotics.ai.AIRobotUnloadFluids;
 import buildcraft.robotics.ai.AIRobotUseToolOnBlock;
 import buildcraft.robotics.boards.BCBoardNBT;
 import buildcraft.robotics.boards.BoardRobotBomber;
+import buildcraft.robotics.boards.BoardRobotBreaker;
 import buildcraft.robotics.boards.BoardRobotBuilder;
 import buildcraft.robotics.boards.BoardRobotButcher;
 import buildcraft.robotics.boards.BoardRobotCarrier;
@@ -237,6 +238,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
 		RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:boardRobotButcher", "butcher", BoardRobotButcher.class, "blue"), 32000);
 		RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:shovelman", "shovelman", BoardRobotShovelman.class, "blue"), 32000);
 		RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:boardRobotPump", "pump", BoardRobotPump.class, "blue"), 32000);
+		RedstoneBoardRegistry.instance.registerBoardType(new BCBoardNBT("buildcraft:boardRobotBreaker", "breaker", BoardRobotBreaker.class, "blue"), 32000);
 
 		// Even more expensive
 		// These handle complex multi-step operations.
@@ -279,6 +281,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
 		RobotManager.registerAIRobot(AIRobotMain.class, "aiRobotMain", "buildcraft.core.robots.AIRobotMain");
 		RobotManager.registerAIRobot(BoardRobotEmpty.class, "boardRobotEmpty");
 		RobotManager.registerAIRobot(BoardRobotBomber.class, "boardRobotBomber", "buildcraft.core.robots.boards.BoardRobotBomber");
+		RobotManager.registerAIRobot(BoardRobotBreaker.class, "boardRobotBreaker");
 		if (Loader.isModLoaded("BuildCraft|Builders")) {
 			RobotManager.registerAIRobot(BoardRobotBuilder.class, "boardRobotBuilder", "buildcraft.core.robots.boards.BoardRobotBuilder");
 		}

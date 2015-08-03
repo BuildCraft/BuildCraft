@@ -45,6 +45,9 @@ public class AIRobotSearchStation extends AIRobot {
 		DockingStation potentialStation = null;
 
 		for (DockingStation station : robot.getRegistry().getStations()) {
+			if (!station.isInitialized()) {
+				continue;
+			}
 
 			if (station.isTaken() && station.robotIdTaking() != robot.getRobotId()) {
 				continue;

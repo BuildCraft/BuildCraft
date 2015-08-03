@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.core.lib.utils.StringUtils;
+import buildcraft.core.statements.StatementParameterItemStackExact;
 
 public class ActionStationRequestItems extends ActionStationInputItems {
 
@@ -42,6 +43,6 @@ public class ActionStationRequestItems extends ActionStationInputItems {
 
 	@Override
 	public IStatementParameter createParameter(int index) {
-		return new StatementParameterItemStack();
+		return new StatementParameterItemStackExact();
 	}
 }
