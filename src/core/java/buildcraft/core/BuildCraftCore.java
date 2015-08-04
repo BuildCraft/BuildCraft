@@ -94,7 +94,7 @@ import buildcraft.core.item.ItemMapLocation;
 import buildcraft.core.item.ItemPaintbrush;
 import buildcraft.core.item.ItemSpring;
 import buildcraft.core.item.ItemWrench;
-import buildcraft.core.lib.block.TileBuildCraft;
+import buildcraft.core.lib.block.IAdditionalDataTile;
 import buildcraft.core.lib.commands.RootCommand;
 import buildcraft.core.lib.engines.ItemEngine;
 import buildcraft.core.lib.engines.TileEngineBase;
@@ -126,7 +126,6 @@ import buildcraft.core.tablet.PacketTabletMessage;
 import buildcraft.core.tablet.TabletProgramMenuFactory;
 import buildcraft.core.tablet.manager.TabletManagerClient;
 import buildcraft.core.tablet.manager.TabletManagerServer;
-import buildcraft.transport.TileGenericPipe;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.8]",
         dependencies = "required-after:Forge@[11.14.3.1486]", guiFactory = "buildcraft.core.config.ConfigManager")
@@ -699,10 +698,8 @@ public class BuildCraftCore extends BuildCraftMod {
             worldsNeedingUpdate.remove(event.world);
             for (Object obj : event.world.loadedTileEntityList) {
                 TileEntity tile = (TileEntity) obj;
-                if (tile instanceof TileBuildCraft) {
-                    ((TileBuildCraft) tile).sendNetworkUpdate();
-                } else if (tile instanceof TileGenericPipe) {
-                    ((TileGenericPipe) tile).sendUpdateToClient();
+                if (tile instanceof IAdditionalDataTile) {
+                    ((IAdditionalDataTile) tile).sendNetworkUpdate();
                 }
             }
         }

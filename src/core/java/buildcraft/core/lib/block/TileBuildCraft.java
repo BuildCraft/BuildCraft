@@ -38,7 +38,7 @@ import io.netty.buffer.ByteBuf;
 /** For future maintainers: This class intentionally does not implement just every interface out there. For some of them
  * (such as IControllable), we expect the tiles supporting it to implement it - but TileBuildCraft provides all the
  * underlying functionality to stop code repetition. */
-public abstract class TileBuildCraft extends TileEntity implements IEnergyHandler, ISerializable, IUpdatePlayerListBox {
+public abstract class TileBuildCraft extends TileEntity implements IEnergyHandler, ISerializable, IUpdatePlayerListBox, IAdditionalDataTile {
     protected TileBuffer[] cache;
     protected HashSet<EntityPlayer> guiWatchers = new HashSet<EntityPlayer>();
     protected IControllable.Mode mode;
@@ -126,6 +126,7 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
         cache = null;
     }
 
+    @Override
     public void sendNetworkUpdate() {
         if (worldObj != null && !worldObj.isRemote) {
             BuildCraftCore.instance.sendToPlayers(getPacketUpdate(), worldObj, pos, DefaultProps.NETWORK_UPDATE_RANGE);

@@ -15,12 +15,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IFacadePluggable;
+import buildcraft.api.transport.pluggable.IPipePluggableState;
 import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
+import buildcraft.api.transport.pluggable.IPipeRenderState;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.render.BuildCraftBakedModel;
 import buildcraft.core.lib.utils.MatrixTranformations;
@@ -38,7 +41,8 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
         }
 
         @Override
-        public List<BakedQuad> renderStaticPluggable(IPipe pipe, PipePluggable pluggable, EnumFacing face) {
+        public List<BakedQuad> renderStaticPluggable(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
+                EnumFacing face) {
             List<BakedQuad> quads = Lists.newArrayList();
             IFacadePluggable facade = (IFacadePluggable) pluggable;
 
@@ -47,17 +51,64 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
             TextureAtlasSprite sprite = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getTexture(facade
                     .getCurrentState());
 
-            float[] uvs = new float[4];
-            uvs[U_MIN] = sprite.getMinU();
-            uvs[U_MAX] = sprite.getMaxU();
-            uvs[V_MIN] = sprite.getMinV();
-            uvs[V_MAX] = sprite.getMaxV();
+            // Render the actual facade
+            Vec3 center = new Vec3(0.5, 0.5, 0.5).add(Utils.convert(face, 7 / 16d));
+            Vec3 radius = new Vec3(0.5, 0.5, 0.5).subtract(Utils.convert(Utils.convertPositive(face), 14 / 32d));
 
-            Vector3f outer = new Vector3f(0.5f, 0.5f, 0.5f);
-            Vector3f inner = Utils.convertFloat(Utils.convert(face, 1 / 16d).addVector(0.5, 0.5, 0.5));
+            for (EnumFacing renderFace : EnumFacing.VALUES) {
+                if (face.getAxis() != renderFace.getAxis()) {
+                    PipePluggable onRenderFace = pluggableState.getPluggable(renderFace);
+                    if (onRenderFace != null && onRenderFace instanceof IFacadePluggable) {
+                        continue;
+                    }
+                }
 
-            bakeFace(quads, face, outer, new Vector3f(0.5f, 0.5f, 0.5f), uvs);
-            bakeFace(quads, face, inner, new Vector3f(0.5f, 0.5f, 0.5f), uvs);
+                double offset = -0.001 * (face.ordinal() + 1);
+                offset += 1;
+
+                Vector3f centerF = Utils.convertFloat(center);
+                Vector3f radiusF;
+                if (face.getAxis() == renderFace.getAxis()) {
+                    radiusF = Utils.convertFloat(radius);
+                } else {
+                    radiusF = Utils.convertFloat(Utils.withValue(radius, renderFace.getAxis(), Utils.getValue(radius, renderFace.getAxis())
+                        * offset));
+                }
+
+                int uSize = 16;
+                int vSize = 16;
+
+                float[] uvs = new float[4];
+                uvs[U_MIN] = sprite.getMinU();
+                uvs[U_MAX] = sprite.getInterpolatedU(uSize);
+                uvs[V_MIN] = sprite.getMinV();
+                uvs[V_MAX] = sprite.getInterpolatedV(vSize);
+
+                bakeDoubleFace(quads, renderFace, centerF, radiusF, uvs);
+            }
+
+            if (facade.isHollow()) {
+                return quads;
+            }
+
+            // Render the little box
+            center = new Vec3(0.5, 0.5, 0.5).add(Utils.convert(face, 5 / 16d));
+            radius = new Vec3(4 / 16d, 4 / 16d, 4 / 16d).subtract(Utils.convert(Utils.convertPositive(face), 3 / 16d));
+
+            sprite = PipeIconProvider.TYPE.PipeStructureCobblestone.getIcon();
+            for (EnumFacing renderFace : EnumFacing.VALUES) {
+                Vector3f centerF = Utils.convertFloat(center);
+                Vector3f radiusF = Utils.convertFloat(radius);
+
+                float[] uvs = new float[4];
+                uvs[U_MIN] = sprite.getInterpolatedU(4);
+                uvs[U_MAX] = sprite.getInterpolatedU(12);
+                uvs[V_MIN] = sprite.getInterpolatedV(4);
+                uvs[V_MAX] = sprite.getInterpolatedV(12);
+
+                bakeDoubleFace(quads, renderFace, centerF, radiusF, uvs);
+            }
+
             return quads;
         }
     }

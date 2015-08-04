@@ -4,13 +4,21 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.transport;
 
+import java.util.Map;
+
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.Maps;
+
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.api.core.IIconProvider;
+import buildcraft.api.enums.EnumColor;
 import buildcraft.core.BuildCraftCore;
 
 public class PipeIconProvider implements IIconProvider {
@@ -167,6 +175,28 @@ public class PipeIconProvider implements IIconProvider {
 
         public TextureAtlasSprite getIcon() {
             return icon;
+        }
+    }
+
+    public static final Map<EnumFacing, TYPE> diamondPipeItems, diamondPipeFluids;
+    public static final Map<EnumColor, TYPE> lapisPipe, dazuliPipe;
+
+    static {
+        diamondPipeItems = Maps.newHashMap();
+        diamondPipeFluids = Maps.newHashMap();
+        for (EnumFacing face : EnumFacing.VALUES) {
+            diamondPipeItems.put(face, TYPE.VALUES[TYPE.PipeItemsDiamond_Down.ordinal() + face.ordinal()]);
+            diamondPipeFluids.put(face, TYPE.VALUES[TYPE.PipeFluidsDiamond_Down.ordinal() + face.ordinal()]);
+        }
+        diamondPipeItems.put(null, TYPE.PipeItemsDiamond_Center);
+        diamondPipeFluids.put(null, TYPE.PipeFluidsDiamond_Center);
+        
+        lapisPipe = Maps.newHashMap();
+        dazuliPipe = Maps.newHashMap();
+
+        for (EnumColor face : EnumColor.VALUES) {
+            lapisPipe.put(face, TYPE.VALUES[TYPE.PipeItemsLapis_Black.ordinal() + face.ordinal()]);
+            dazuliPipe.put(face, TYPE.VALUES[TYPE.PipeItemsDaizuli_Black.ordinal() + face.ordinal()]);
         }
     }
 

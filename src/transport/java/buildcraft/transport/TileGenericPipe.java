@@ -52,6 +52,7 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.internal.IDropControlInventory;
 import buildcraft.core.lib.ITileBufferHolder;
 import buildcraft.core.lib.TileBuffer;
+import buildcraft.core.lib.block.IAdditionalDataTile;
 import buildcraft.core.lib.network.IGuiReturnHandler;
 import buildcraft.core.lib.network.ISyncedTile;
 import buildcraft.core.lib.network.Packet;
@@ -67,7 +68,7 @@ import buildcraft.transport.pluggable.PlugPluggable;
 import io.netty.buffer.ByteBuf;
 
 public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox, IFluidHandler, IPipeTile, ITileBufferHolder, IEnergyHandler,
-        IDropControlInventory, ISyncedTile, ISolidSideTile, IGuiReturnHandler, IRedstoneEngineReceiver, IDebuggable {
+        IDropControlInventory, ISyncedTile, ISolidSideTile, IGuiReturnHandler, IRedstoneEngineReceiver, IDebuggable, IAdditionalDataTile {
 
     public boolean initialized = false;
     public final PipeRenderState renderState = new PipeRenderState();
@@ -343,7 +344,7 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
     protected void notifyBlockChanged() {
         worldObj.notifyBlockOfStateChange(getPos(), getBlock());
         scheduleRenderUpdate();
-        sendUpdateToClient();
+        sendNetworkUpdate();
         if (pipe != null) {
             BlockGenericPipe.updateNeighbourSignalState(pipe);
         }
@@ -529,7 +530,7 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
         if (renderState.isDirty()) {
             renderState.clean();
         }
-        sendUpdateToClient();
+        sendNetworkUpdate();
         return changed;
     }
 
@@ -665,7 +666,8 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
         return Utils.toPacket(getBCDescriptionPacket(), 1);
     }
 
-    public void sendUpdateToClient() {
+    @Override
+    public void sendNetworkUpdate() {
         sendClientUpdate = true;
     }
 

@@ -183,7 +183,7 @@ public class PipeBlockModel extends BuildCraftBakedModel implements ISmartBlockM
             if (plug != null) {
                 IPipePluggableStaticRenderer plugRender = plug.getRenderer();
                 if (plugRender != null) {
-                    List<BakedQuad> list = plugRender.renderStaticPluggable(pipe, plug, face);
+                    List<BakedQuad> list = plugRender.renderStaticPluggable(render, pluggable, pipe, plug, face);
                     if (list != null) {
                         quads.addAll(list);
                     }

@@ -15,6 +15,8 @@ import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.BuildCraftTransport;
+import buildcraft.transport.PipePluggableState;
+import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 
@@ -84,7 +86,7 @@ public class LensPluggable extends PipePluggable {
         // }
 
         @Override
-        public List<BakedQuad> renderStaticPluggable(IPipe pipe, PipePluggable pluggable, EnumFacing face) {
+        public List<BakedQuad> renderStaticPluggable(PipeRenderState render, PipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable, EnumFacing face) {
             return null;
         }
     }

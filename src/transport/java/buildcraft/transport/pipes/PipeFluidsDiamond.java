@@ -85,22 +85,7 @@ public class PipeFluidsDiamond extends Pipe<PipeTransportFluids>implements IDiam
 
     @Override
     public int getIconIndex(EnumFacing direction) {
-        switch (direction) {
-            case DOWN:
-                return PipeIconProvider.TYPE.PipeFluidsDiamond_Down.ordinal();
-            case UP:
-                return PipeIconProvider.TYPE.PipeFluidsDiamond_Up.ordinal();
-            case NORTH:
-                return PipeIconProvider.TYPE.PipeFluidsDiamond_North.ordinal();
-            case SOUTH:
-                return PipeIconProvider.TYPE.PipeFluidsDiamond_South.ordinal();
-            case WEST:
-                return PipeIconProvider.TYPE.PipeFluidsDiamond_West.ordinal();
-            case EAST:
-                return PipeIconProvider.TYPE.PipeFluidsDiamond_East.ordinal();
-            default:
-                return PipeIconProvider.TYPE.PipeFluidsDiamond_Center.ordinal();
-        }
+        return PipeIconProvider.diamondPipeFluids.get(direction).ordinal();
     }
 
     @Override

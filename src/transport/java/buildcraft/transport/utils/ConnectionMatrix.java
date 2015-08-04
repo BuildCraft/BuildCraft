@@ -8,9 +8,11 @@ import java.util.Set;
 
 import net.minecraft.util.EnumFacing;
 
+import buildcraft.api.transport.pluggable.IConnectionMatrix;
+
 import io.netty.buffer.ByteBuf;
 
-public class ConnectionMatrix {
+public class ConnectionMatrix implements IConnectionMatrix {
     private int mask = 0;
     private boolean dirty = false;
 
@@ -24,6 +26,7 @@ public class ConnectionMatrix {
         return null;
     }
 
+    @Override
     public boolean isConnected(EnumFacing direction) {
         // test if the direction.ordinal()'th bit of mask is set
         return (mask & (1 << direction.ordinal())) != 0;

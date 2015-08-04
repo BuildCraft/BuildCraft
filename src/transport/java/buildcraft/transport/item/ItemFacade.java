@@ -47,7 +47,6 @@ import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.BuildCraftTransport;
 import buildcraft.transport.FacadePluggable;
-import buildcraft.transport.block.BlockGenericPipe;
 
 public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePluggableItem {
     public static class FacadeState {
@@ -311,15 +310,14 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 
     private static boolean isBlockValidForFacade(Block block) {
         try {
+            if (!block.isFullBlock() || !block.isFullCube() || block.hasTileEntity(block.getDefaultState())) {
+                return false;
+            }
             if (block.getBlockBoundsMinX() != 0.0 || block.getBlockBoundsMinY() != 0.0 || block.getBlockBoundsMinZ() != 0.0) {
                 return false;
             }
 
             if (block.getBlockBoundsMaxX() != 1.0 || block.getBlockBoundsMaxY() != 1.0 || block.getBlockBoundsMaxZ() != 1.0) {
-                return false;
-            }
-
-            if (block instanceof BlockSpring || block instanceof BlockGenericPipe) {
                 return false;
             }
 

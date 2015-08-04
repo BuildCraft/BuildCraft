@@ -5,13 +5,15 @@
 package buildcraft.transport;
 
 import buildcraft.api.core.ISerializable;
+import buildcraft.api.transport.pluggable.IConnectionMatrix;
+import buildcraft.api.transport.pluggable.IPipeRenderState;
 import buildcraft.transport.utils.ConnectionMatrix;
 import buildcraft.transport.utils.TextureMatrix;
 import buildcraft.transport.utils.WireMatrix;
 
 import io.netty.buffer.ByteBuf;
 
-public class PipeRenderState implements ISerializable {
+public class PipeRenderState implements ISerializable, IPipeRenderState {
 
     public final ConnectionMatrix pipeConnectionMatrix = new ConnectionMatrix();
     public final TextureMatrix textureMatrix = new TextureMatrix();
@@ -63,5 +65,10 @@ public class PipeRenderState implements ISerializable {
         pipeConnectionMatrix.readData(data);
         textureMatrix.readData(data);
         wireMatrix.readData(data);
+    }
+
+    @Override
+    public IConnectionMatrix getPipeConnectionMatrix() {
+        return pipeConnectionMatrix;
     }
 }

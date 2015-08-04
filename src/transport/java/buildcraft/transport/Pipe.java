@@ -390,6 +390,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
         return false;
     }
 
+    @Override
     public boolean hasGate(EnumFacing side) {
         return container.hasGate(side);
     }

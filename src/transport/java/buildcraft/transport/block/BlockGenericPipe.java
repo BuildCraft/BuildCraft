@@ -283,7 +283,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
             for (EnumFacing face : EnumFacing.VALUES) {
                 if (pipe.hasPipePluggable(face)) {
-                    bbs.add(pipe.getPipePluggable(EnumFacing.WEST).getBoundingBox(face));
+                    bbs.add(pipe.getPipePluggable(face).getBoundingBox(face));
                 }
             }
         }
@@ -1028,7 +1028,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
             if (tile instanceof TileGenericPipe) {
                 TileGenericPipe tilePipe = (TileGenericPipe) tile;
                 tilePipe.initialize(pipe);
-                tilePipe.sendUpdateToClient();
+                tilePipe.sendNetworkUpdate();
                 FMLCommonHandler.instance().bus().post(new PipePlacedEvent(player, pipe.item.getUnlocalizedName(), pos));
             }
         }

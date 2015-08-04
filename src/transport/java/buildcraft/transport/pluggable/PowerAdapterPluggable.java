@@ -16,6 +16,8 @@ import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.BuildCraftTransport;
+import buildcraft.transport.PipePluggableState;
+import buildcraft.transport.PipeRenderState;
 
 import io.netty.buffer.ByteBuf;
 
@@ -26,7 +28,7 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
         private float zFightOffset = 1 / 4096.0F;
 
         @Override
-        public List<BakedQuad> renderStaticPluggable(IPipe pipe, PipePluggable pluggable, EnumFacing face) {
+        public List<BakedQuad> renderStaticPluggable(PipeRenderState render, PipePluggableState pluggableState, IPipe pipe,PipePluggable pluggable, EnumFacing face) {
             // TODO Auto-generated method stub
             return null;
         }

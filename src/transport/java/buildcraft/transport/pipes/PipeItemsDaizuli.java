@@ -112,14 +112,19 @@ public class PipeItemsDaizuli extends Pipe<PipeTransportItems>implements ISerial
     }
 
     @Override
+    public int getIconIndexForItem() {
+        return PipeIconProvider.TYPE.PipeAllDaizuli_Solid.ordinal();
+    }
+
+    @Override
     public int getIconIndex(EnumFacing direction) {
         if (direction == null) {
-            return standardIconIndex + color;
+            return PipeIconProvider.dazuliPipe.get(getColor()).ordinal();
         }
         if (container != null && container.getBlockMetadata() == direction.ordinal()) {
-            return standardIconIndex + color;
+            return PipeIconProvider.dazuliPipe.get(getColor()).ordinal();
         }
-        return solidIconIndex;
+        return PipeIconProvider.TYPE.PipeAllDaizuli_Solid.ordinal();
     }
 
     @Override

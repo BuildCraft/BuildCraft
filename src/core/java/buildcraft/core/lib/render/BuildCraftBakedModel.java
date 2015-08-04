@@ -16,7 +16,9 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
+import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumFacing.AxisDirection;
 import net.minecraftforge.client.model.ItemLayerModel.BakedModel;
@@ -49,15 +51,16 @@ public abstract class BuildCraftBakedModel extends BakedModel {
     public BuildCraftBakedModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, VertexFormat format) {
         super(quads, particle, format);
     }
-
+    
     @SuppressWarnings("deprecation")
     /** Get the default transformations for inside inventories and third person */
     protected static ImmutableMap<TransformType, TRSRTransformation> getTransforms() {
         ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
 
         // builder.put(TransformType.GUI, TRSRTransformation.identity());
-        ItemCameraTransforms ict = Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelShapes().getModelForState(Blocks.bookshelf
-                .getDefaultState()).getItemCameraTransforms();
+        IBakedModel model = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getItemModel(new ItemStack(Blocks.stone));
+        System.out.println(model.getClass() + ", " + model.isBuiltInRenderer() + ", " + model.isGui3d());
+        ItemCameraTransforms ict = model.getItemCameraTransforms();
         System.out.println(ict.gui.rotation + ", " + ict.gui.scale + ", " + ict.gui.translation);
         builder.put(TransformType.GUI, new TRSRTransformation(ict.gui));
 
