@@ -19,7 +19,7 @@ import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTransportItems;
 
-public class PipeItemsCobblestone extends Pipe {
+public class PipeItemsCobblestone extends Pipe<PipeTransportItems> {
 
 	public PipeItemsCobblestone(Item item) {
 		super(new PipeTransportItems(), item);

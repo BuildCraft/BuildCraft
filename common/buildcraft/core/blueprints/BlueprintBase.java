@@ -133,8 +133,6 @@ public abstract class BlueprintBase {
 			sub.setInteger("x", (int) np.x);
 			sub.setInteger("z", (int) np.z);
 			sub.setByte("dir", (byte) dir.ordinal());
-
-			NBTTagCompound bpt = sub.getCompoundTag("bpt");
 		}
 
 		context.rotateLeft();

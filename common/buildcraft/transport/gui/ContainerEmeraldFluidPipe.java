@@ -19,13 +19,11 @@ import buildcraft.transport.pipes.PipeFluidsEmerald;
 public class ContainerEmeraldFluidPipe extends BuildCraftContainer {
 
 	private final PipeFluidsEmerald pipe;
-	private final IInventory playerInv;
 	private final IInventory filterInv;
 
 	public ContainerEmeraldFluidPipe(IInventory playerInventory, PipeFluidsEmerald pipe) {
 		super(pipe.getFilters().getSizeInventory());
 		this.pipe = pipe;
-		this.playerInv = playerInventory;
 		this.filterInv = pipe.getFilters();
 
 		addSlotToContainer(new SlotPhantom(filterInv, 0, 80, 18));

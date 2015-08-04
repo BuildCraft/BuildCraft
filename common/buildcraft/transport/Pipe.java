@@ -576,12 +576,4 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		
 		return gates[side.ordinal()];
 	}
-
-	private void pushActionState(ActionState state) {
-		actionStates.add(state);
-	}
-
-	private Collection<ActionState> getActionStates() {
-		return actionStates;
-	}
 }

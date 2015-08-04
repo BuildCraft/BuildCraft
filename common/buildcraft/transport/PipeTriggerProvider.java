@@ -34,10 +34,7 @@ public class PipeTriggerProvider implements ITriggerProvider {
 			return result;
 		}
 		
-		boolean containsGate = false;
-
 		if (container instanceof Gate) {
-			containsGate = true;
 			((Gate) container).addTriggers(result);
 		}
 

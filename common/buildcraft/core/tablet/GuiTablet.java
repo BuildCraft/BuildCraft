@@ -27,7 +27,6 @@ public class GuiTablet extends GuiScreen {
 	private static final int X_SIZE = 142;
 	private static final int Y_SIZE = 180;
 	private final DynamicTextureBC display;
-	private final EntityPlayer player;
 	private final TabletThread tabletThread;
 	private final TabletClient tablet;
 	private int guiLeft, guiTop;
@@ -41,7 +40,6 @@ public class GuiTablet extends GuiScreen {
 		this.tabletThread = TabletManagerClient.INSTANCE.get();
 		this.tablet = (TabletClient) tabletThread.getTablet();
 		this.lastDate = (new Date()).getTime();
-		this.player = player;
 		this.display = new DynamicTextureBC(tablet.getScreenWidth(), tablet.getScreenHeight());
 
 		tablet.updateGui(0.0F, this, true);
@@ -107,7 +105,6 @@ public class GuiTablet extends GuiScreen {
 			} else if (buttonState == 2) {
 				if (isButton(x, y)) {
 					buttonState = ENABLE_HIGHLIGHT ? 0 : 1;
-					System.out.println("PRESS");
 				} else {
 					buttonState = 1;
 				}

@@ -13,7 +13,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -21,7 +20,6 @@ import buildcraft.api.tools.IToolWrench;
 import buildcraft.core.lib.block.BlockBuildCraft;
 
 public class BlockPump extends BlockBuildCraft {
-	private IIcon[] led;
 
 	public BlockPump() {
 		super(Material.iron);

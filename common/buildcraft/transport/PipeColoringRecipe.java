@@ -14,7 +14,6 @@ public class PipeColoringRecipe implements IRecipe {
 		ItemStack oneColorPipeStack = null;
 		ItemStack pipeStack = null;
 		
-		boolean hasDifferentColorPipes = false;
 		boolean hasDifferentPipes = false;
 		
 		boolean isBleach = false;
@@ -35,11 +34,8 @@ public class PipeColoringRecipe implements IRecipe {
 						pipeStack.stackSize++;
 						if (oneColorPipeStack.getItemDamage() == oneColorPipeStack.getItemDamage()) {
 							oneColorPipeStack.stackSize++;
-						} else {
-							hasDifferentColorPipes = true;
 						}
 					} else {
-						hasDifferentColorPipes = true;
 						hasDifferentPipes = true;
 					}
 				}

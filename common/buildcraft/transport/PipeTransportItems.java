@@ -280,6 +280,8 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 				case SOUTH:
 					item.movePosition(0, 0, item.getSpeed());
 					break;
+				default:
+					break;
 			}
 
 			if ((item.toCenter && middleReached(item)) || outOfBounds(item)) {

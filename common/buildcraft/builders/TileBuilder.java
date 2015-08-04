@@ -34,7 +34,6 @@ import net.minecraftforge.fluids.IFluidHandler;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
-import buildcraft.api.blueprints.BuildingPermission;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IInvSlot;
