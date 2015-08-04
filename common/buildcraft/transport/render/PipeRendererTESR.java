@@ -111,8 +111,9 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		initialized = false;
 	}
 
-	private DisplayFluidList getDisplayFluidLists(int liquidId, int skylight, int flags, World world) {
-		int listId = (liquidId & 0x3FFFF) << 13 | flags << 5 | (skylight & 31);
+	private DisplayFluidList getDisplayFluidLists(int liquidId, int skylight, int blocklight, int flags, World world) {
+		int finalBlockLight = Math.max(flags & 31, blocklight);
+		int listId = (liquidId & 0x3FFFF) << 13 | (flags & 0xE0 | finalBlockLight) << 5 | (skylight & 31);
 
 		if (displayFluidLists.containsItem(listId)) {
 			return (DisplayFluidList) displayFluidLists.lookup(listId);
@@ -136,7 +137,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		}
 
 		block.texture = fluid.getStillIcon();
-		block.brightness = skylight << 16 | flags & 31;
+		block.brightness = skylight << 16 | finalBlockLight;
 
 		float size = CoreConstants.PIPE_MAX_POS - CoreConstants.PIPE_MIN_POS;
 
@@ -749,6 +750,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		GL11.glTranslatef((float) x, (float) y, (float) z);
 
 		int skylight = pipe.container.getWorld().getSkyBlockTypeBrightness(EnumSkyBlock.Sky, pipe.container.x(), pipe.container.y(), pipe.container.z());
+		int blocklight = pipe.container.getWorld().getSkyBlockTypeBrightness(EnumSkyBlock.Block, pipe.container.x(), pipe.container.y(), pipe.container.z());
 
 		boolean sides = false, above = false;
 
@@ -765,7 +767,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 				continue;
 			}
 
-			DisplayFluidList d = getDisplayFluidLists(fluidRenderData.fluidID, skylight,
+			DisplayFluidList d = getDisplayFluidLists(fluidRenderData.fluidID, skylight, blocklight,
 					fluidRenderData.flags, pipe.container.getWorldObj());
 
 			if (d == null) {
@@ -809,7 +811,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		FluidRenderData fluidRenderData = trans.renderCache;
 
 		if (fluidRenderData.amount[6] > 0) {
-			DisplayFluidList d = getDisplayFluidLists(fluidRenderData.fluidID, skylight,
+			DisplayFluidList d = getDisplayFluidLists(fluidRenderData.fluidID, skylight, blocklight,
 					fluidRenderData.flags, pipe.container.getWorldObj());
 
 			if (d != null) {
