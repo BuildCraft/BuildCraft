@@ -49,7 +49,7 @@ public class AssemblyRecipeManager implements IAssemblyRecipeManager {
 		return assemblyRecipes.values();
 	}
 
-	public IFlexibleRecipe getRecipe(String id) {
+	public IFlexibleRecipe<ItemStack> getRecipe(String id) {
 		return assemblyRecipes.get(id);
 	}
 

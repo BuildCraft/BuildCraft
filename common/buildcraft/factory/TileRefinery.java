@@ -152,31 +152,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 		}
 	}
 
-	private boolean containsInput(FluidStack ingredient) {
-		if (ingredient == null) {
-			return true;
-		}
-
-		return (tanks[0].getFluid() != null && tanks[0].getFluid().containsFluid(ingredient))
-				|| (tanks[1].getFluid() != null && tanks[1].getFluid().containsFluid(ingredient));
-	}
-
-	private boolean consumeInput(FluidStack liquid) {
-		if (liquid == null) {
-			return true;
-		}
-
-		if (tanks[0].getFluid() != null && tanks[0].getFluid().containsFluid(liquid)) {
-			tanks[0].drain(liquid.amount, true);
-			return true;
-		} else if (tanks[1].getFluid() != null && tanks[1].getFluid().containsFluid(liquid)) {
-			tanks[1].drain(liquid.amount, true);
-			return true;
-		}
-
-		return false;
-	}
-
 	@Override
 	public boolean hasWork() {
 		return isActive;
@@ -328,7 +303,7 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 		currentRecipe = null;
 		craftingResult = null;
 
-		for (IFlexibleRecipe recipe : RefineryRecipeManager.INSTANCE.getRecipes()) {
+		for (IFlexibleRecipe<FluidStack> recipe : RefineryRecipeManager.INSTANCE.getRecipes()) {
 			craftingResult = recipe.craft(this, true);
 
 			if (craftingResult != null) {

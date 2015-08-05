@@ -61,14 +61,12 @@ public class GuiFiller extends GuiAdvancedInterface {
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/filler.png");
 	private static final IButtonTextureSet EXCAVATE_OFF = new ButtonTextureSet(240, -16, 16, 16, TEXTURE);
 	private static final IButtonTextureSet EXCAVATE_ON = new ButtonTextureSet(224, -16, 16, 16, TEXTURE);
-	private final IInventory playerInventory;
 	private final TileFiller filler;
 	private final GuiFiller instance;
 	private final StatementSlot fakeStatementSlot;
 
 	public GuiFiller(IInventory playerInventory, TileFiller filler) {
 		super(new ContainerFiller(playerInventory, filler), filler, TEXTURE);
-		this.playerInventory = playerInventory;
 		this.filler = filler;
 		this.instance = this;
 		this.fakeStatementSlot = new StatementSlot(instance, -1, -1, 0) {

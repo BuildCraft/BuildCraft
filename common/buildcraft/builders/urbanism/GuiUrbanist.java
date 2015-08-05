@@ -29,7 +29,6 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 	public TileUrbanist urbanist;
 	public UrbanistTool[] tools = new UrbanistTool[10];
 
-	private IInventory playerInventory;
 	private int selectedTool = -1;
 
 	class ToolSlot extends AdvancedSlot {
@@ -60,7 +59,6 @@ public class GuiUrbanist extends GuiAdvancedInterface {
 		xSize = width;
 		ySize = height;
 
-		this.playerInventory = playerInventory;
 		this.urbanist = urbanist;
 
 		urbanist.createUrbanistEntity();

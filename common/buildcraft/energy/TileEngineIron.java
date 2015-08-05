@@ -300,7 +300,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 			// Fluid Fuel ID
 			case 15:
 				if (FluidRegistry.getFluid(value) != null) {
-					tankFuel.setFluid(new FluidStack(value, tankFuelAmountCache));
+					tankFuel.setFluid(new FluidStack(FluidRegistry.getFluid(value), tankFuelAmountCache));
 				} else {
 					tankFuel.setFluid(null);
 				}
@@ -308,7 +308,7 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 			// Fluid Coolant ID
 			case 16:
 				if (FluidRegistry.getFluid(value) != null) {
-					tankCoolant.setFluid(new FluidStack(value, tankCoolantAmountCache));
+					tankCoolant.setFluid(new FluidStack(FluidRegistry.getFluid(value), tankCoolantAmountCache));
 				} else {
 					tankCoolant.setFluid(null);
 				}

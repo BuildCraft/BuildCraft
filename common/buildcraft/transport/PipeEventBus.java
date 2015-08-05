@@ -81,7 +81,7 @@ public class PipeEventBus {
 
 		for (Method m: handler.getClass().getDeclaredMethods()) {
 			if ("eventHandler".equals(m.getName())) {
-				Class[] parameters = m.getParameterTypes();
+				Class<?>[] parameters = m.getParameterTypes();
 				if (parameters.length == 1 && PipeEvent.class.isAssignableFrom(parameters[0])) {
 					Class<? extends PipeEvent> eventType = (Class<? extends PipeEvent>) parameters[0];
 					List<EventHandler> eventHandlerList = getHandlerList(eventType);

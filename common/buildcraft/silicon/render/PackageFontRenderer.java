@@ -15,12 +15,10 @@ public class PackageFontRenderer extends FontRenderer {
 	private static final RenderItem itemRender = new RenderItem();
 	private static final Minecraft mc = Minecraft.getMinecraft();
 	private static final FontRenderer realRenderer = mc.fontRenderer;
-	private final ItemStack packageStack;
 	private final NBTTagCompound pkgTag;
 
 	public PackageFontRenderer(ItemStack packageStack) {
 		super(mc.gameSettings, new ResourceLocation("textures/font/ascii.png"), mc.getTextureManager(), mc.fontRenderer.getUnicodeFlag());
-		this.packageStack = packageStack;
 		this.pkgTag = NBTUtils.getItemData(packageStack);
 	}
 
@@ -57,8 +55,8 @@ public class PackageFontRenderer extends FontRenderer {
 						font = Minecraft.getMinecraft().fontRenderer;
 					}
 
-					itemRender.renderItemAndEffectIntoGUI(font, this.mc.getTextureManager(), slotStack, rx * 2, y * 2);
-					itemRender.renderItemOverlayIntoGUI(font, this.mc.getTextureManager(), slotStack, rx * 2, y * 2);
+					itemRender.renderItemAndEffectIntoGUI(font, mc.getTextureManager(), slotStack, rx * 2, y * 2);
+					itemRender.renderItemOverlayIntoGUI(font, mc.getTextureManager(), slotStack, rx * 2, y * 2);
 					itemRender.zLevel = 0.0F;
 				} else {
 					realRenderer.drawString("X", rx, y, 0xFF0000);

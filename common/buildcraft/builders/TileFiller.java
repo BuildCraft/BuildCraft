@@ -28,7 +28,6 @@ import buildcraft.api.tiles.IHasWork;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.blueprints.BptBuilderTemplate;
-import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.builders.TileAbstractBuilder;
 import buildcraft.core.builders.patterns.FillerPattern;
 import buildcraft.core.builders.patterns.PatternFill;
@@ -47,7 +46,6 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	public IStatementParameter[] patternParameters;
 
 	private BptBuilderTemplate currentTemplate;
-	private BptContext context;
 
 	private final Box box = new Box();
 	private boolean done = false;
@@ -97,7 +95,6 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	private void initTemplate() {
 		if (currentPattern != null && box.isInitialized()) {
 			currentTemplate = currentPattern.getTemplateBuilder(box, getWorldObj(), patternParameters);
-			context = currentTemplate.getContext();
 			currentTemplate.blueprint.excavate = excavate;
 		}
 	}
