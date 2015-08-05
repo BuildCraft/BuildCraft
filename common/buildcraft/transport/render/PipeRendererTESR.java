@@ -10,6 +10,7 @@ package buildcraft.transport.render;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -20,6 +21,7 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
@@ -838,7 +840,8 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	private void renderSolids(Pipe<PipeTransportItems> pipe, double x, double y, double z, float f) {
 		GL11.glPushMatrix();
 
-		float light = pipe.container.getWorldObj().getLightBrightness(pipe.container.xCoord, pipe.container.yCoord, pipe.container.zCoord);
+		int skylight = pipe.container.getWorld().getSkyBlockTypeBrightness(EnumSkyBlock.Sky, pipe.container.x(), pipe.container.y(), pipe.container.z());
+		int blocklight = pipe.container.getWorld().getSkyBlockTypeBrightness(EnumSkyBlock.Block, pipe.container.x(), pipe.container.y(), pipe.container.z());
 
 		int count = 0;
 		for (TravelingItem item : pipe.transport.items) {
@@ -849,15 +852,22 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			Position motion = new Position(0, 0, 0, item.toCenter ? item.input : item.output);
 			motion.moveForwards(item.getSpeed() * f);
 
-			doRenderItem(item, x + item.xCoord - pipe.container.xCoord + motion.x, y + item.yCoord - pipe.container.yCoord  + motion.y, z + item.zCoord - pipe.container.zCoord  + motion.z, light, item.color);
+			doRenderItem(item, x + item.xCoord - pipe.container.xCoord + motion.x, y + item.yCoord - pipe.container.yCoord  + motion.y, z + item.zCoord - pipe.container.zCoord  + motion.z, skylight, blocklight, item.color);
 			count++;
 		}
 
 		GL11.glPopMatrix();
 	}
 
-	public void doRenderItem(TravelingItem travellingItem, double x, double y, double z, float light, EnumColor color) {
+	private int getItemLightLevel(ItemStack stack) {
+		if (stack.getItem() instanceof ItemBlock) {
+			Block b = Block.getBlockFromItem(stack.getItem());
+			return b.getLightValue();
+		}
+		return 0;
+	}
 
+	public void doRenderItem(TravelingItem travellingItem, double x, double y, double z, int skylight, int blocklight, EnumColor color) {
 		if (travellingItem == null || travellingItem.getItemStack() == null) {
 			return;
 		}
@@ -867,6 +877,8 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 
 		GL11.glPushMatrix();
 		GL11.glTranslatef((float) x, (float) y + 0.25F, (float) z);
+
+		//OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, skylight << 4, Math.max(blocklight, getItemLightLevel(itemstack)) << 4);
 
 		if (travellingItem.hasDisplayList) {
 			GL11.glCallList(travellingItem.displayList);

@@ -19,7 +19,8 @@ public class PipePowerEmerald extends PipePowerWood {
 		
 		solidIconIndex = PipeIconProvider.TYPE.PipeAllEmerald_Solid.ordinal();
 		
-		battery = new RFBattery(2560 * 50, 2560, 0);
+		battery = new RFBattery(2560 * 50, 2560 * 50, 0);
+		receiveLimit = 2560;
 		
 		transport.initFromPipe(this.getClass());
 	}

@@ -94,8 +94,6 @@ public class BuildCraftFactory extends BuildCraftMod {
 	public void load(FMLInitializationEvent evt) {
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new FactoryGuiHandler());
 
-		// EntityRegistry.registerModEntity(EntityMechanicalArm.class, "bcMechanicalArm", EntityIds.MECHANICAL_ARM, instance, 50, 1, true);
-
 		CoreProxy.proxy.registerTileEntity(TileMiningWell.class, "MiningWell");
 		CoreProxy.proxy.registerTileEntity(TileAutoWorkbench.class, "AutoWorkbench");
 		CoreProxy.proxy.registerTileEntity(TilePump.class, "net.minecraft.src.buildcraft.factory.TilePump");

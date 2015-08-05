@@ -39,6 +39,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipePowerWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
 	protected RFBattery battery;
+	protected int receiveLimit;
 
 	private int requestedEnergy, sources, lastRequestedEnergy;
 	private boolean allowExtraction = false;
@@ -46,8 +47,9 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 	public PipePowerWood(Item item) {
 		super(new PipeTransportPower(), item);
 
-		battery = new RFBattery(320 * 50, 320, 0);
+		battery = new RFBattery(320 * 50, 320 * 50, 0);
 		transport.initFromPipe(getClass());
+		receiveLimit = 320;
 	}
 
 	@Override
@@ -104,7 +106,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 		if (allowExtraction) {
 			allowExtraction = false;
 
-			int energyMaxExtract = Math.min(battery.getMaxEnergyExtract(), battery.getMaxEnergyStored() - battery.getEnergyStored());
+			int energyMaxExtract = Math.min(receiveLimit, battery.getMaxEnergyStored() - battery.getEnergyStored());
 			energyMaxExtract /= sources;
 
 			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
@@ -197,7 +199,13 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 			return maxReceive;
 		}
 		if (from.ordinal() < 6 && powerSources[from.ordinal()]) {
-			return battery.receiveEnergy(simulate ? Math.min(maxReceive, lastRequestedEnergy) : maxReceive, simulate);
+			/* Non-simulate is technically supposed to cap to maxReceive, but Forestry and RailCraft have a bug which causes
+			   them to push energy and void it. Therefore, if a non-RF-compliant mod requests energy WITHOUT simulation, we just
+			   accept everything verbatim.
+
+			   This should be removed but probably won't. */
+			int maxEnergyReceive = simulate ? Math.min(receiveLimit, lastRequestedEnergy) : battery.getMaxEnergyStored();
+			return battery.receiveEnergy(maxEnergyReceive, simulate);
 		} else {
 			return 0;
 		}
