@@ -12,11 +12,11 @@ import com.google.common.collect.BiMap;
 
 import net.minecraft.item.ItemStack;
 
+import buildcraft.api.enums.EnumRedstoneChipset;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.recipes.IntegrationRecipeBC;
-import buildcraft.silicon.item.ItemRedstoneChipset;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.ItemGate;
 
@@ -34,7 +34,7 @@ public class GateExpansionRecipe extends IntegrationRecipeBC {
 
     @Override
     public boolean isValidExpansion(ItemStack input, ItemStack expansion) {
-        if (StackHelper.isMatchingItem(ItemRedstoneChipset.Chipset.RED.getStack(), expansion, true, true)) {
+        if (StackHelper.isMatchingItem(EnumRedstoneChipset.RED.getStack(), expansion, true, true)) {
             return true;
         }
         for (ItemStack s : recipes.values()) {
@@ -90,7 +90,7 @@ public class GateExpansionRecipe extends IntegrationRecipeBC {
         int expansionsAdded = 0;
 
         for (ItemStack chipset : expansions) {
-            if (StackHelper.isMatchingItem(ItemRedstoneChipset.Chipset.RED.getStack(), chipset, true, true)) {
+            if (StackHelper.isMatchingItem(EnumRedstoneChipset.RED.getStack(), chipset, true, true)) {
                 ItemGate.setLogic(output, ItemGate.getLogic(output) == GateDefinition.GateLogic.AND ? GateDefinition.GateLogic.OR
                     : GateDefinition.GateLogic.AND);
                 expansionsAdded++;

@@ -8,12 +8,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
+import buildcraft.api.enums.EnumRedstoneChipset;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.transport.PipeWire;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.lib.utils.ColorUtils;
-import buildcraft.silicon.item.ItemRedstoneChipset;
 import buildcraft.transport.gates.GateDefinition;
 import buildcraft.transport.gates.GateExpansionPulsar;
 import buildcraft.transport.gates.GateExpansionRedstoneFader;
@@ -30,7 +30,7 @@ public final class TransportSiliconRecipes {
     @Optional.Method(modid = "BuildCraft|Silicon")
     public static void loadSiliconRecipes() {
         GameRegistry.addShapelessRecipe(new ItemStack(BuildCraftTransport.gateCopier, 1), new ItemStack(BuildCraftCore.wrenchItem),
-                ItemRedstoneChipset.Chipset.RED.getStack(1));
+                EnumRedstoneChipset.RED.getStack(1));
 
         // PIPE WIRE
         BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:redWire", 5000, PipeWire.RED.getStack(8), "dyeRed", "dustRedstone", "ingotIron");
@@ -51,31 +51,31 @@ public final class TransportSiliconRecipes {
 
         // GATES
         BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:simpleGate", (int) Math.round(100000 * BuildCraftTransport.gateCostMultiplier),
-                ItemGate.makeGateItem(GateDefinition.GateMaterial.REDSTONE, GateDefinition.GateLogic.AND), ItemRedstoneChipset.Chipset.RED.getStack(),
+                ItemGate.makeGateItem(GateDefinition.GateMaterial.REDSTONE, GateDefinition.GateLogic.AND), EnumRedstoneChipset.RED.getStack(1),
                 PipeWire.RED.getStack());
 
         addGateRecipe("Iron", (int) Math.round(200000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.IRON,
-                ItemRedstoneChipset.Chipset.IRON, PipeWire.RED, PipeWire.BLUE);
+                EnumRedstoneChipset.IRON, PipeWire.RED, PipeWire.BLUE);
         addGateRecipe("Gold", (int) Math.round(400000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.GOLD,
-                ItemRedstoneChipset.Chipset.GOLD, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
+                EnumRedstoneChipset.GOLD, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
         addGateRecipe("Quartz", (int) Math.round(600000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.QUARTZ,
-                ItemRedstoneChipset.Chipset.QUARTZ, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
+                EnumRedstoneChipset.QUARTZ, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN);
         addGateRecipe("Diamond", (int) Math.round(800000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.DIAMOND,
-                ItemRedstoneChipset.Chipset.DIAMOND, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN, PipeWire.YELLOW);
+                EnumRedstoneChipset.DIAMOND, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN, PipeWire.YELLOW);
         addGateRecipe("Emerald", (int) Math.round(1200000 * BuildCraftTransport.gateCostMultiplier), GateDefinition.GateMaterial.EMERALD,
-                ItemRedstoneChipset.Chipset.EMERALD, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN, PipeWire.YELLOW);
+                EnumRedstoneChipset.EMERALD, PipeWire.RED, PipeWire.BLUE, PipeWire.GREEN, PipeWire.YELLOW);
 
         BuildcraftRecipeRegistry.integrationTable.addRecipe(new GateExpansionRecipe());
         BuildcraftRecipeRegistry.integrationTable.addRecipe(new AdvancedFacadeRecipe());
 
         // This will only add recipes to the gate expansions.
-        GateExpansions.registerExpansion(GateExpansionPulsar.INSTANCE, ItemRedstoneChipset.Chipset.PULSATING.getStack());
-        GateExpansions.registerExpansion(GateExpansionTimer.INSTANCE, ItemRedstoneChipset.Chipset.QUARTZ.getStack());
-        GateExpansions.registerExpansion(GateExpansionRedstoneFader.INSTANCE, ItemRedstoneChipset.Chipset.COMP.getStack());
+        GateExpansions.registerExpansion(GateExpansionPulsar.INSTANCE, EnumRedstoneChipset.PULSATING.getStack());
+        GateExpansions.registerExpansion(GateExpansionTimer.INSTANCE, EnumRedstoneChipset.QUARTZ.getStack());
+        GateExpansions.registerExpansion(GateExpansionRedstoneFader.INSTANCE, EnumRedstoneChipset.COMP.getStack());
     }
 
     @Optional.Method(modid = "BuildCraft|Silicon")
-    private static void addGateRecipe(String materialName, int energyCost, GateDefinition.GateMaterial material, ItemRedstoneChipset.Chipset chipset,
+    private static void addGateRecipe(String materialName, int energyCost, GateDefinition.GateMaterial material, EnumRedstoneChipset chipset,
             PipeWire... pipeWire) {
         List<ItemStack> temp = new ArrayList<ItemStack>();
         temp.add(chipset.getStack());
