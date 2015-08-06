@@ -249,7 +249,6 @@ public class Version implements Runnable {
 	public static void displayChangelog(ICommandSender sender) {
 		sender.addChatMessage(new ChatComponentText(EnumChatFormatting.GRAY + "" + EnumChatFormatting.BOLD
 				+ StatCollector.translateToLocalFormatted("command.buildcraft.changelog_header", getRecommendedVersion())));
-		int nb = 0;
 		for (String updateLine : Version.getChangelog()) {
 			String colour = "\u00A79";
 			if (updateLine.startsWith("*")) {

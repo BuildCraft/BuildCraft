@@ -120,8 +120,6 @@ public abstract class FillerPattern implements IFillerPattern {
 	 * Generates an empty in a given area
 	 */
 	public static void empty(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Template template) {
-		int lastX = Integer.MAX_VALUE, lastY = Integer.MAX_VALUE, lastZ = Integer.MAX_VALUE;
-
 		for (int y = yMax; y >= yMin; y--) {
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
@@ -137,8 +135,6 @@ public abstract class FillerPattern implements IFillerPattern {
 	 * Generates a flatten in a given area
 	 */
 	public static void flatten(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Template template) {
-		int lastX = Integer.MAX_VALUE, lastY = Integer.MAX_VALUE, lastZ = Integer.MAX_VALUE;
-
 		for (int x = xMin; x <= xMax; ++x) {
 			for (int z = zMin; z <= zMax; ++z) {
 				for (int y = yMax; y >= yMin; --y) {

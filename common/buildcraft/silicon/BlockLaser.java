@@ -78,7 +78,7 @@ public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void addCollisionBoxesToList(World wrd, int x, int y, int z, AxisAlignedBB mask, List list, Entity ent) {
 		AxisAlignedBB[] aabbs = boxes[wrd.getBlockMetadata(x, y, z)];
 		for (AxisAlignedBB aabb : aabbs) {

@@ -21,7 +21,6 @@ import net.minecraft.world.chunk.Chunk;
 import buildcraft.core.lib.utils.NBTUtils;
 
 public class MapWorld {
-	private final World world;
 	private final LongHashMap regionMap;
 	private final HashMap<Chunk, Integer> timeToUpdate = new HashMap<Chunk, Integer>();
 	private final TLongLongHashMap regionUpdateTime;
@@ -29,7 +28,6 @@ public class MapWorld {
 	private final File location;
 
 	public MapWorld(World world, File location) {
-		this.world = world;
 		regionMap = new LongHashMap();
 		regionUpdateTime = new TLongLongHashMap();
 		updatedChunks = new TLongHashSet();

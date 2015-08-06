@@ -43,7 +43,6 @@ public class RecursiveBlueprintReader {
 	private float computingTime = 0;
 
 	private boolean done = false;
-	private boolean saveInItem = false;
 
 	private BlueprintBase parentBlueprint;
 

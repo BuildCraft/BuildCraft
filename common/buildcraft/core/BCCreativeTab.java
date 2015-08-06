@@ -19,12 +19,10 @@ import net.minecraft.item.ItemStack;
 public class BCCreativeTab extends CreativeTabs {
 	private static final Map<String, BCCreativeTab> tabs = new HashMap<String, BCCreativeTab>();
 
-	private final String name;
 	private ItemStack icon;
 
 	public BCCreativeTab(String name) {
 		super("buildcraft." + name);
-		this.name = name;
 
 		tabs.put(name, this);
 	}
