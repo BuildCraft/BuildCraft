@@ -840,9 +840,6 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 	private void renderSolids(Pipe<PipeTransportItems> pipe, double x, double y, double z, float f) {
 		GL11.glPushMatrix();
 
-		int skylight = pipe.container.getWorld().getSkyBlockTypeBrightness(EnumSkyBlock.Sky, pipe.container.x(), pipe.container.y(), pipe.container.z());
-		int blocklight = pipe.container.getWorld().getSkyBlockTypeBrightness(EnumSkyBlock.Block, pipe.container.x(), pipe.container.y(), pipe.container.z());
-
 		int count = 0;
 		for (TravelingItem item : pipe.transport.items) {
 			if (count >= MAX_ITEMS_TO_RENDER) {
@@ -852,7 +849,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 			Position motion = new Position(0, 0, 0, item.toCenter ? item.input : item.output);
 			motion.moveForwards(item.getSpeed() * f);
 
-			doRenderItem(item, x + item.xCoord - pipe.container.xCoord + motion.x, y + item.yCoord - pipe.container.yCoord  + motion.y, z + item.zCoord - pipe.container.zCoord  + motion.z, skylight, blocklight, item.color);
+			doRenderItem(item, x + item.xCoord - pipe.container.xCoord + motion.x, y + item.yCoord - pipe.container.yCoord  + motion.y, z + item.zCoord - pipe.container.zCoord  + motion.z, 0.0F, item.color);
 			count++;
 		}
 
@@ -867,7 +864,7 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		return 0;
 	}
 
-	public void doRenderItem(TravelingItem travellingItem, double x, double y, double z, int skylight, int blocklight, EnumColor color) {
+	public void doRenderItem(TravelingItem travellingItem, double x, double y, double z, float light, EnumColor color) {
 		if (travellingItem == null || travellingItem.getItemStack() == null) {
 			return;
 		}

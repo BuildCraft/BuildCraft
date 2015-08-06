@@ -13,7 +13,6 @@ import java.util.Map;
 
 import com.google.common.collect.MapMaker;
 
-import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -309,11 +308,9 @@ public class TravelingItem {
 		return true;
 	}
 
-	@Override
-	public void finalize() {
-		// Nasty hack.
+	public void cleanup() {
 		if (hasDisplayList) {
-			GLAllocation.deleteDisplayLists(displayList);
+			TransportProxy.proxy.clearDisplayList(displayList);
 			hasDisplayList = false;
 		}
 	}
