@@ -84,7 +84,7 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
 		super(new ContainerListNew(iPlayer), iPlayer.inventory, TEXTURE_BASE);
 
 		xSize = 176;
-		ySize = 192;
+		ySize = 191;
 
 		player = iPlayer;
 	}
@@ -164,7 +164,13 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
 	protected void drawGuiContainerBackgroundLayer(float f, int x, int y) {
 		super.drawGuiContainerBackgroundLayer(f, x, y);
 
-		ContainerListNew container = (ContainerListNew) getContainer();
+		ContainerListNew containerL = (ContainerListNew) getContainer();
+		for (int i = 0; i < 2; i++) {
+			if (containerL.lines[i].isOneStackMode()) {
+				drawTexturedModalRect(guiLeft + 6, guiTop + 30 + i * 33, 0, ySize, 20, 20);
+			}
+		}
+
 		drawBackgroundSlots(x, y);
 	}
 

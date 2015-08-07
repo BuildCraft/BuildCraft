@@ -9,8 +9,6 @@ import net.minecraft.item.ItemStack;
 import buildcraft.api.lists.ListMatchHandler;
 
 public class ListMatchHandlerTools extends ListMatchHandler {
-	public static final Set<Class<? extends Item>> itemClasses = new HashSet<Class<? extends Item>>();
-
 	@Override
 	public boolean matches(Type type, ItemStack stack, ItemStack target, boolean precise) {
 		if (type == Type.TYPE) {

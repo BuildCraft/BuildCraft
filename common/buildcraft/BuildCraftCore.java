@@ -61,6 +61,7 @@ import buildcraft.api.core.IWorldProperty;
 import buildcraft.api.crops.CropManager;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
+import buildcraft.api.lists.ListRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
@@ -128,12 +129,12 @@ import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.lib.utils.XorShift128Random;
+import buildcraft.core.list.ListMatchHandlerArmor;
 import buildcraft.core.list.ListMatchHandlerClass;
 import buildcraft.core.list.ListMatchHandlerFluid;
 import buildcraft.core.list.ListMatchHandlerOreDictionary;
 import buildcraft.core.list.ListMatchHandlerTools;
 import buildcraft.core.list.ListOreDictionaryCache;
-import buildcraft.api.lists.ListRegistry;
 import buildcraft.core.list.ListTooltipHandler;
 import buildcraft.core.network.PacketHandlerCore;
 import buildcraft.core.properties.WorldPropertyIsDirt;
@@ -479,6 +480,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		ListRegistry.registerHandler(new ListMatchHandlerClass());
 		ListRegistry.registerHandler(new ListMatchHandlerFluid());
 		ListRegistry.registerHandler(new ListMatchHandlerTools());
+		ListRegistry.registerHandler(new ListMatchHandlerArmor());
 		ListRegistry.itemClassAsType.add(ItemFood.class);
 	}
 

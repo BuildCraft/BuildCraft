@@ -22,6 +22,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemArmor;
@@ -46,6 +47,7 @@ import net.minecraft.world.WorldServer;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -93,6 +95,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 	public static final ResourceLocation ROBOT_BASE = new ResourceLocation(
 			DefaultProps.TEXTURE_PATH_ROBOTS + "/robot_base.png");
+	public static final int MAX_WEARABLES = 8;
 
 	public LaserData laser = new LaserData();
 	public DockingStation linkedDockingStation;
@@ -853,8 +856,36 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-	public boolean attackEntityFrom(DamageSource par1, float par2) {
-		// deactivate being hit
+	public boolean attackEntityFrom(DamageSource source, float f) {
+		// Ignore hits from mobs or when docked.
+		Entity src = source.getSourceOfDamage();
+		if (!(src instanceof IMob) && currentDockingStation == null) {
+			if (ForgeHooks.onLivingAttack(this, source, f)) {
+				return false;
+			}
+
+			if (!worldObj.isRemote) {
+				hurtTime = maxHurtTime = 10;
+
+				int mul = 2600;
+				for (ItemStack s : wearables) {
+					if (s.getItem() instanceof ItemArmor) {
+						mul = mul * 2 / (2 + ((ItemArmor) s.getItem()).damageReduceAmount);
+					} else {
+						mul *= 0.7;
+					}
+				}
+
+				int energy = Math.round(f * mul);
+				if (battery.getEnergyStored() - energy > 0) {
+					battery.setEnergy(battery.getEnergyStored() - energy);
+					return true;
+				} else {
+					onRobotHit(true);
+				}
+			}
+			return true;
+		}
 		return false;
 	}
 
@@ -1095,6 +1126,21 @@ public class EntityRobot extends EntityRobotBase implements
 		return unreachableEntities.containsKey(entity);
 	}
 
+	protected void onRobotHit(boolean attacked) {
+		if (!worldObj.isRemote) {
+			if (attacked) {
+				convertToItems();
+			} else {
+				if (wearables.size() > 0) {
+					entityDropItem(wearables.remove(wearables.size() - 1), 0);
+					syncWearablesToClient();
+				} else {
+					convertToItems();
+				}
+			}
+		}
+	}
+
 	@Override
 	protected boolean interact(EntityPlayer player) {
 		ItemStack stack = player.getCurrentEquippedItem();
@@ -1115,18 +1161,13 @@ public class EntityRobot extends EntityRobotBase implements
 				return false;
 			}
 
-			if (!worldObj.isRemote) {
-				if (wearables.size() > 0) {
-					entityDropItem(wearables.remove(wearables.size() - 1), 0);
-					syncWearablesToClient();
-				} else {
-					convertToItems();
-				}
-			} else {
+			onRobotHit(false);
+
+			if (worldObj.isRemote) {
 				((ItemWrench) stack.getItem()).wrenchUsed(player, 0, 0, 0);
 			}
 			return true;
-		} else if (wearables.size() < 8 && stack.getItem() instanceof ItemArmor && ((ItemArmor) stack.getItem()).armorType == 0) {
+		} else if (wearables.size() < MAX_WEARABLES && stack.getItem().isValidArmor(stack, 0, this)) {
 			if (!worldObj.isRemote) {
 				wearables.add(stack.splitStack(1));
 				syncWearablesToClient();
@@ -1134,7 +1175,7 @@ public class EntityRobot extends EntityRobotBase implements
 				player.swingItem();
 			}
 			return true;
-		} else if (wearables.size() < 8 && stack.getItem() instanceof IRobotOverlayItem && ((IRobotOverlayItem) stack.getItem()).isValidRobotOverlay(stack)) {
+		} else if (wearables.size() < MAX_WEARABLES && stack.getItem() instanceof IRobotOverlayItem && ((IRobotOverlayItem) stack.getItem()).isValidRobotOverlay(stack)) {
 			if (!worldObj.isRemote) {
 				wearables.add(stack.splitStack(1));
 				syncWearablesToClient();
@@ -1142,7 +1183,7 @@ public class EntityRobot extends EntityRobotBase implements
 				player.swingItem();
 			}
 			return true;
-		} else if (wearables.size() < 8 && stack.getItem() instanceof ItemSkull) {
+		} else if (wearables.size() < MAX_WEARABLES && stack.getItem() instanceof ItemSkull) {
 			if (!worldObj.isRemote) {
 				ItemStack skullStack = stack.splitStack(1);
 				initSkullItem(skullStack);
