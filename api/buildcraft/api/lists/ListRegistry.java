@@ -1,10 +1,13 @@
-package buildcraft.core.list;
+package buildcraft.api.lists;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.minecraft.item.Item;
+
 public final class ListRegistry {
+	public static final List<Class<? extends Item>> itemClassAsType = new ArrayList<Class<? extends Item>>();
 	private static final List<ListMatchHandler> handlers = new ArrayList<ListMatchHandler>();
 
 	private ListRegistry() {

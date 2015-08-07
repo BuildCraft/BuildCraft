@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
+import buildcraft.api.lists.ListMatchHandler;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.FluidUtils;
 
@@ -27,6 +28,16 @@ public class ListMatchHandlerFluid extends ListMatchHandler {
 			if (fStack != null && fTarget != null) {
 				return fStack.isFluidEqual(fTarget);
 			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean isValidSource(Type type, ItemStack stack) {
+		if (type == Type.TYPE) {
+			return FluidContainerRegistry.isContainer(stack);
+		} else if (type == Type.MATERIAL) {
+			return FluidUtils.getFluidStackFromItemStack(stack) != null;
 		}
 		return false;
 	}

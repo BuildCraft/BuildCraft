@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
+import buildcraft.api.lists.ListMatchHandler;
+import buildcraft.api.lists.ListRegistry;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.NBTUtils;
 
@@ -130,13 +134,36 @@ public final class ListHandlerNew {
 			List<ItemStack> stackList = new ArrayList<ItemStack>();
 			if (stacks[0] != null) {
 				List<ListMatchHandler> handlers = ListRegistry.getHandlers();
+				List<ListMatchHandler> handlersCustom = new ArrayList<ListMatchHandler>();
 				ListMatchHandler.Type type = getSortingType();
 				for (ListMatchHandler h : handlers) {
-					List<ItemStack> examples = h.getClientExamples(type, stacks[0]);
-					if (examples != null) {
-						stackList.addAll(examples);
+					if (h.isValidSource(type, stacks[0])) {
+						List<ItemStack> examples = h.getClientExamples(type, stacks[0]);
+						if (examples != null) {
+							stackList.addAll(examples);
+						} else {
+							handlersCustom.add(h);
+						}
 					}
 				}
+				if (handlersCustom.size() > 0) {
+					for (Object o: Item.itemRegistry) {
+						if (o != null && o instanceof Item) {
+							Item i = (Item) o;
+							List<ItemStack> examples = new ArrayList<ItemStack>();
+							i.getSubItems(i, CreativeTabs.tabMisc, examples);
+							for (ItemStack s : examples) {
+								for (ListMatchHandler mh : handlersCustom) {
+									if (mh.matches(type, stacks[0], s, false)) {
+										stackList.add(s);
+										break;
+									}
+								}
+							}
+						}
+					}
+				}
+
 				Collections.shuffle(stackList);
 			}
 			return stackList;

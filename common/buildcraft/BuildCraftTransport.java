@@ -51,6 +51,7 @@ import buildcraft.api.core.IIconProvider;
 import buildcraft.api.facades.FacadeAPI;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
+import buildcraft.api.lists.ListRegistry;
 import buildcraft.api.statements.IActionInternal;
 import buildcraft.api.statements.ITriggerInternal;
 import buildcraft.api.statements.StatementManager;
@@ -66,7 +67,6 @@ import buildcraft.core.config.ConfigManager;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.utils.ColorUtils;
-import buildcraft.core.list.ListMatchHandlerClass;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.BlockFilteredBuffer;
 import buildcraft.transport.BlockGenericPipe;
@@ -552,10 +552,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 			}
 		}
 
-		ListMatchHandlerClass.itemClasses.add(ItemPipe.class);
-		ListMatchHandlerClass.itemClasses.add(ItemGate.class);
-		ListMatchHandlerClass.itemClasses.add(ItemFacade.class);
-		ListMatchHandlerClass.itemClasses.add(ItemPipeWire.class);
+		ListRegistry.itemClassAsType.add(ItemPipe.class);
+		ListRegistry.itemClassAsType.add(ItemGate.class);
+		ListRegistry.itemClassAsType.add(ItemFacade.class);
+		ListRegistry.itemClassAsType.add(ItemPipeWire.class);
 	}
 
 	public void reloadConfig(ConfigManager.RestartRequirement restartType) {

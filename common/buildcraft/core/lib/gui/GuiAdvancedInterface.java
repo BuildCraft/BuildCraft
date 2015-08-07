@@ -97,6 +97,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
 		if (slot != null) {
 			slot.drawTooltip(this, mouseX, mouseY);
+			RenderHelper.enableGUIStandardItemLighting();
 		}
 	}
 

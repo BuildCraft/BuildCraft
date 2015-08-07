@@ -131,8 +131,9 @@ import buildcraft.core.lib.utils.XorShift128Random;
 import buildcraft.core.list.ListMatchHandlerClass;
 import buildcraft.core.list.ListMatchHandlerFluid;
 import buildcraft.core.list.ListMatchHandlerOreDictionary;
+import buildcraft.core.list.ListMatchHandlerTools;
 import buildcraft.core.list.ListOreDictionaryCache;
-import buildcraft.core.list.ListRegistry;
+import buildcraft.api.lists.ListRegistry;
 import buildcraft.core.list.ListTooltipHandler;
 import buildcraft.core.network.PacketHandlerCore;
 import buildcraft.core.properties.WorldPropertyIsDirt;
@@ -466,7 +467,7 @@ public class BuildCraftCore extends BuildCraftMod {
 			FillerManager.registry.addPattern(new PatternCylinder());
 			FillerManager.registry.addPattern(new PatternFrame());
 		} catch (Error error) {
-			BCLog.logErrorAPI("Buildcraft", error, IFillerPattern.class);
+			BCLog.logErrorAPI(error, IFillerPattern.class);
 			throw error;
 		}
 
@@ -477,12 +478,12 @@ public class BuildCraftCore extends BuildCraftMod {
 
 		ListRegistry.registerHandler(new ListMatchHandlerClass());
 		ListRegistry.registerHandler(new ListMatchHandlerFluid());
-		ListMatchHandlerClass.itemClasses.add(ItemFood.class);
+		ListRegistry.registerHandler(new ListMatchHandlerTools());
+		ListRegistry.itemClassAsType.add(ItemFood.class);
 	}
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent event) {
-		OreDictionary.registerOre("dustTinyRedstone", Blocks.fence_gate);
 		BCLog.logger.info("BuildCraft's fake player: UUID = " + gameProfile.getId().toString() + ", name = '" + gameProfile.getName() + "'!");
 
 		for (Object o : Block.blockRegistry) {

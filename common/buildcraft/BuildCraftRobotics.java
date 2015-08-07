@@ -37,6 +37,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 
 import buildcraft.api.boards.RedstoneBoardRegistry;
+import buildcraft.api.lists.ListRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.robots.RobotManager;
 import buildcraft.api.statements.IActionInternal;
@@ -49,7 +50,6 @@ import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
 import buildcraft.core.Version;
 import buildcraft.core.config.ConfigManager;
-import buildcraft.core.list.ListMatchHandlerClass;
 import buildcraft.core.network.EntityIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.robotics.BlockRequester;
@@ -340,7 +340,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
 
 		RoboticsProxy.proxy.registerRenderers();
 
-		ListMatchHandlerClass.itemClasses.add(ItemRobot.class);
+		ListRegistry.itemClassAsType.add(ItemRobot.class);
 	}
 
 	public static void loadRecipes() {

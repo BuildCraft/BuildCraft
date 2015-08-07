@@ -7,6 +7,8 @@ import java.util.Set;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+
+import buildcraft.api.lists.ListMatchHandler;
 import buildcraft.core.lib.inventory.StackHelper;
 
 public class ListMatchHandlerOreDictionary extends ListMatchHandler {
@@ -63,6 +65,17 @@ public class ListMatchHandlerOreDictionary extends ListMatchHandler {
 			}
 		}
 
+		return false;
+	}
+
+	@Override
+	public boolean isValidSource(Type type, ItemStack stack) {
+		if (OreDictionary.getOreIDs(stack).length > 0) {
+			return true;
+		}
+		if (type == Type.TYPE && stack.getHasSubtypes()) {
+			return true;
+		}
 		return false;
 	}
 

@@ -19,6 +19,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import buildcraft.BuildCraftCore;
+import buildcraft.api.lists.ListMatchHandler;
 import buildcraft.core.ItemList;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
@@ -175,9 +176,9 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
 		drawTooltipForSlotAt(par1, par2);
 	}
 
-	private boolean isCarryingList() {
+	private boolean isCarryingNonEmptyList() {
 		ItemStack stack = mc.thePlayer.inventory.getItemStack();
-		return stack != null && stack.getItem() instanceof ItemList;
+		return stack != null && stack.getItem() instanceof ItemList && stack.getTagCompound() != null;
 	}
 
 	private boolean hasListEquipped() {
@@ -188,7 +189,7 @@ public class GuiListNew extends GuiAdvancedInterface implements IButtonClickEven
 	protected void mouseClicked(int x, int y, int b) {
 		super.mouseClicked(x, y, b);
 
-		if (isCarryingList() || !hasListEquipped()) {
+		if (isCarryingNonEmptyList() || !hasListEquipped()) {
 			return;
 		}
 
