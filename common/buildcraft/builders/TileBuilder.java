@@ -597,9 +597,8 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		iterateBpt(false);
 
 		if (mode != Mode.Off) {
-			if (getWorldObj().getWorldInfo().getGameType() == GameType.CREATIVE) {
-				build();
-			} else if (getBattery().getEnergyStored() > POWER_ACTIVATION) {
+			if (getWorldObj().getWorldInfo().getGameType() == GameType.CREATIVE
+					|| getBattery().getEnergyStored() > POWER_ACTIVATION) {
 				build();
 			}
 		}

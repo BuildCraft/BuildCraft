@@ -891,9 +891,6 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 	@Override
 	public ConnectOverride overridePipeConnection(IPipeTile.PipeType type, ForgeDirection with) {
-		if (with.ordinal() == worldObj.getBlockMetadata(xCoord, yCoord, zCoord)) {
-			return ConnectOverride.DISCONNECT;
-		}
 		return type == IPipeTile.PipeType.ITEM ? ConnectOverride.CONNECT : ConnectOverride.DEFAULT;
 	}
 

@@ -32,13 +32,11 @@ import buildcraft.core.lib.utils.StringUtils;
 public class GuiBuilder extends GuiAdvancedInterface {
 	private static final ResourceLocation REGULAR_TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/builder.png");
 	private static final ResourceLocation BLUEPRINT_TEXTURE = new ResourceLocation("buildcraftbuilders:textures/gui/builder_blueprint.png");
-	private IInventory playerInventory;
 	private TileBuilder builder;
 	private GuiButton selectedButton;
 
 	public GuiBuilder(IInventory playerInventory, TileBuilder builder) {
 		super(new ContainerBuilder(playerInventory, builder), builder, BLUEPRINT_TEXTURE);
-		this.playerInventory = playerInventory;
 		this.builder = builder;
 		xSize = 256;
 		ySize = 225;

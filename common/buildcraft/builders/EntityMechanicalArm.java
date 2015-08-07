@@ -25,8 +25,6 @@ public class EntityMechanicalArm extends Entity {
 	private double yRoot;
 	private double zRoot;
 
-	private boolean inProgressionXZ = false;
-	private boolean inProgressionY = false;
 	private int headX, headY, headZ;
 	private EntityBlock xArm, yArm, zArm, head;
 

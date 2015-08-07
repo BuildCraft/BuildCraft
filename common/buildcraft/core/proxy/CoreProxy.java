@@ -18,7 +18,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
@@ -102,13 +101,12 @@ public class CoreProxy implements ICoreProxy {
 		stack.onCrafting(world, player, stack.stackSize);
 	}
 
-	@SuppressWarnings("unchecked")
 	public void addCraftingRecipe(ItemStack result, Object... recipe) {
-		CraftingManager.getInstance().getRecipeList().add(new ShapedOreRecipe(result, recipe));
+		GameRegistry.addRecipe(new ShapedOreRecipe(result, recipe));
 	}
 
 	public void addShapelessRecipe(ItemStack result, Object... recipe) {
-		CraftingManager.getInstance().getRecipeList().add(new ShapelessOreRecipe(result, recipe));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(result, recipe));
 	}
 
 	public String playerName() {

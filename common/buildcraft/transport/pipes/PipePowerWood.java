@@ -40,13 +40,13 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
 	protected RFBattery battery;
 
-	private int requestedEnergy, sources, lastRequestedEnergy;
+	private int requestedEnergy, lastRequestedEnergy, sources;
 	private boolean allowExtraction = false;
 
 	public PipePowerWood(Item item) {
 		super(new PipeTransportPower(), item);
 
-		battery = new RFBattery(320 * 50, 320, 0);
+		battery = new RFBattery(40960, 40960, 0);
 		transport.initFromPipe(getClass());
 	}
 
@@ -104,7 +104,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 		if (allowExtraction) {
 			allowExtraction = false;
 
-			int energyMaxExtract = Math.min(battery.getMaxEnergyExtract(), battery.getMaxEnergyStored() - battery.getEnergyStored());
+			int energyMaxExtract = Math.min(transport.maxPower, battery.getMaxEnergyStored() - battery.getEnergyStored());
 			energyMaxExtract /= sources;
 
 			for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
@@ -197,7 +197,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 			return maxReceive;
 		}
 		if (from.ordinal() < 6 && powerSources[from.ordinal()]) {
-			return battery.receiveEnergy(simulate ? Math.min(maxReceive, lastRequestedEnergy) : maxReceive, simulate);
+			return battery.receiveEnergy(simulate ? Math.min(maxReceive, lastRequestedEnergy) : Math.min(maxReceive, battery.getMaxEnergyStored() - battery.getEnergyStored()), simulate);
 		} else {
 			return 0;
 		}

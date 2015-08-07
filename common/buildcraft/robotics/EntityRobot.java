@@ -414,14 +414,6 @@ public class EntityRobot extends EntityRobotBase implements
 		}
 	}
 
-	private void iterateBehaviorDocked() {
-		motionX = 0F;
-		motionY = 0F;
-		motionZ = 0F;
-
-		setNullBoundingBox();
-	}
-
 	@Override
 	public void writeSpawnData(ByteBuf data) {
 		data.writeByte(wearables.size());

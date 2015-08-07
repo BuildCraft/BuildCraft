@@ -70,7 +70,6 @@ public final class TabletFont {
 		}
 	}
 
-	private String family;
 	private boolean isBold;
 	private boolean isItalic;
 	private int pointSize, maxW, maxH, ascent, descent;
@@ -89,7 +88,7 @@ public final class TabletFont {
 			loaded += 8;
 
 			if ("FAMI".equals(section)) {
-				this.family = readString(stream, sectionLength);
+				readString(stream, sectionLength);
 			} else if ("WEIG".equals(section)) {
 				this.isBold = "bold".equals(readString(stream, sectionLength));
 			} else if ("SLAN".equals(section)) {

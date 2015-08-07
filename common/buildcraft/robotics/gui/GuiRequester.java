@@ -22,11 +22,8 @@ public class GuiRequester extends GuiAdvancedInterface {
 
 	private TileRequester requester;
 
-	private IInventory playerInventory;
-
 	private static class RequestSlot extends AdvancedSlot {
 
-		private ItemStack item;
 		private int index;
 
 		public RequestSlot(GuiAdvancedInterface gui, int iIndex, int x, int y) {
@@ -37,12 +34,6 @@ public class GuiRequester extends GuiAdvancedInterface {
 
 		public void setItem(ItemStack itemStack) {
 			TileRequester requester = ((GuiRequester) gui).requester;
-
-			if (itemStack != null) {
-				item = itemStack.copy();
-			} else {
-				item = null;
-			}
 
 			requester.setRequest(index, itemStack);
 			((GuiRequester) gui).getContainer().getRequestList();
@@ -66,7 +57,6 @@ public class GuiRequester extends GuiAdvancedInterface {
 		ySize = 181;
 
 		requester = iRequester;
-		playerInventory = iPlayerInventory;
 
 		for (int x = 0; x < 4; ++x) {
 			for (int y = 0; y < 5; ++y) {

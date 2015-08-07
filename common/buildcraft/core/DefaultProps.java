@@ -22,8 +22,6 @@ public final class DefaultProps {
 
 	public static String TEXTURE_PATH_ROBOTS = "buildcraftrobotics:textures/entities";
 
-	public static final String DEFAULT_LANGUAGE = "en_US";
-
 	public static String PUMP_DIMENSION_LIST = "+/*/*,+/-1/lava";
 
 	public static double PIPES_DURABILITY = 0.25D;

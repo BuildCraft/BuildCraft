@@ -8,6 +8,7 @@
  */
 package buildcraft.transport;
 
+import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
@@ -42,6 +43,11 @@ public class TransportProxyClient extends TransportProxy {
 	@Override
 	public void obsidianPipePickup(World world, EntityItem item, TileEntity tile) {
 		FMLClientHandler.instance().getClient().effectRenderer.addEffect(new TileEntityPickupFX(world, item, tile));
+	}
+
+	@Override
+	public void clearDisplayList(int displayList) {
+		GLAllocation.deleteDisplayLists(displayList);
 	}
 
 	@Override

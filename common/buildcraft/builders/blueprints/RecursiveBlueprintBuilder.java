@@ -47,7 +47,7 @@ public class RecursiveBlueprintBuilder {
 
 	public BptBuilderBase nextBuilder() {
 		if (!returnedThis) {
-			blueprint.adjustToWorld(world, x, y, z, dir);
+			blueprint = blueprint.adjustToWorld(world, x, y, z, dir);
 
 			returnedThis = true;
 

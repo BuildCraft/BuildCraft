@@ -24,7 +24,7 @@ import buildcraft.core.lib.utils.StringUtils;
 public class BCBoardNBT extends RedstoneBoardRobotNBT {
 	public static final Map<String, BCBoardNBT> REGISTRY = new HashMap<String, BCBoardNBT>();
 	private final ResourceLocation texture;
-	private final String id, name, upperName, boardType;
+	private final String id, upperName, boardType;
 	private final Constructor<? extends RedstoneBoardRobot> boardInit;
 
 	@SideOnly(Side.CLIENT)
@@ -32,7 +32,6 @@ public class BCBoardNBT extends RedstoneBoardRobotNBT {
 
 	public BCBoardNBT(String id, String name, Class<? extends RedstoneBoardRobot> board, String boardType) {
 		this.id = id;
-		this.name = name;
 		this.boardType = boardType;
 		this.upperName = name.substring(0, 1).toUpperCase() + name.substring(1);
 		this.texture = new ResourceLocation(
