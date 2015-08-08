@@ -30,7 +30,11 @@ public class ListMatchHandlerArmor extends ListMatchHandler {
 			int armorTypeIDSource = getArmorTypeID(stack);
 			if (armorTypeIDSource > 0) {
 				int armorTypeIDTarget = getArmorTypeID(target);
-				return (armorTypeIDSource & armorTypeIDTarget) != 0;
+				if (precise) {
+					return armorTypeIDSource == armorTypeIDTarget;
+				} else {
+					return (armorTypeIDSource & armorTypeIDTarget) != 0;
+				}
 			}
 		}
 		return false;

@@ -69,8 +69,11 @@ public final class ListHandlerNew {
 				}
 			} else {
 				for (ItemStack s : stacks) {
-					if (s != null && StackHelper.isMatchingItem(s, target, precise || target.getItem().getHasSubtypes(), precise)) {
-						return true;
+					if (s != null && StackHelper.isMatchingItem(s, target, true, precise)) {
+						// If precise, re-check damage
+						if (!precise || s.getItemDamage() == target.getItemDamage()) {
+							return true;
+						}
 					}
 				}
 			}

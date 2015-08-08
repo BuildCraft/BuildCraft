@@ -1,9 +1,7 @@
 package buildcraft.core.list;
 
-import java.util.HashSet;
 import java.util.Set;
 
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.lists.ListMatchHandler;
@@ -15,6 +13,11 @@ public class ListMatchHandlerTools extends ListMatchHandler {
 			Set<String> toolClassesSource = stack.getItem().getToolClasses(stack);
 			Set<String> toolClassesTarget = target.getItem().getToolClasses(stack);
 			if (toolClassesSource.size() > 0 && toolClassesTarget.size() > 0) {
+				if (precise) {
+					if (toolClassesSource.size() != toolClassesTarget.size()) {
+						return false;
+					}
+				}
 				for (String s : toolClassesSource) {
 					if (!toolClassesTarget.contains(s)) {
 						return false;

@@ -226,12 +226,15 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 										watts);
 								internalPower[i] -= watts;
 								dbgEnergyOutput[j] += watts;
+
+								powerAverage[j].push((int) Math.ceil(watts));
+								powerAverage[i].push((int) Math.ceil(watts));
 							} else {
 								int iWatts = (int) watts;
 								if (ep instanceof IEnergyHandler) {
 									IEnergyHandler handler = (IEnergyHandler) ep;
 									if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
-										watts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
+										iWatts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
 												iWatts, false);
 									}
 									internalPower[i] -= iWatts;
@@ -239,16 +242,16 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 								} else if (ep instanceof IEnergyReceiver) {
 									IEnergyReceiver handler = (IEnergyReceiver) ep;
 									if (handler.canConnectEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite())) {
-										watts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
+										iWatts = handler.receiveEnergy(ForgeDirection.VALID_DIRECTIONS[j].getOpposite(),
 												iWatts, false);
 									}
 									internalPower[i] -= iWatts;
 									dbgEnergyOutput[j] += iWatts;
 								}
-							}
 
-							powerAverage[j].push((int) Math.ceil(watts));
-							powerAverage[i].push((int) Math.ceil(watts));
+								powerAverage[j].push(iWatts);
+								powerAverage[i].push(iWatts);
+							}
 						}
 					}
 				}
@@ -263,7 +266,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 			}
 		}
 
-		overload += highestPower > ((float) maxPower) * 0.95F ? 1 : -1;
+		overload += highestPower > (maxPower * 0.95F) ? 1 : -1;
 		if (overload < 0) {
 			overload = 0;
 		}
