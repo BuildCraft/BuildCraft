@@ -39,18 +39,28 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 
 	public static final int RESOLUTION = 2048;
 	public static final int CRAFT_TIME = 120;
+	private static final int PREVIEW_BLOCKS_PER_PIXEL = 10;
 	private static int RESOLUTION_CHUNKS = RESOLUTION >> 4;
 
-	public final byte[] previewColors = new byte[80];
 	public int chunkStartX, chunkStartZ;
 	public short progress = 0;
 	public String mapName = "";
 
+	private final byte[] previewColors = new byte[80];
 	private final SimpleInventory inv = new SimpleInventory(3, "inv", 64);
 	private final SafeTimeTracker previewRecalcTimer = new SafeTimeTracker(100);
 
+	private boolean previewColorsPushed = false;
 	private ZonePlan[] selectedAreas = new ZonePlan[16];
 	private int currentSelectedArea = 0;
+
+	public byte[] getPreviewTexture(boolean force) {
+		if (!previewColorsPushed || force) {
+			previewColorsPushed = true;
+			return previewColors;
+		}
+		return null;
+	}
 
 	@Override
 	public void initialize() {
@@ -107,9 +117,9 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 
 		for (int y = 0; y < 8; y++) {
 			for (int x = 0; x < 10; x++) {
-				int tx = (x * 10) - 45;
-				int ty = (y * 10) - 35;
-				newPreviewColors[y * 10 + x] = (byte) mw.getColor(xCoord + tx, zCoord + ty);
+				int tx = (x * PREVIEW_BLOCKS_PER_PIXEL) - (5 * PREVIEW_BLOCKS_PER_PIXEL) + (PREVIEW_BLOCKS_PER_PIXEL / 2);
+				int ty = (y * PREVIEW_BLOCKS_PER_PIXEL) - (4 * PREVIEW_BLOCKS_PER_PIXEL) + (PREVIEW_BLOCKS_PER_PIXEL / 2);
+				newPreviewColors[y * 10 + x] = (byte) mw.getColor(xCoord - (xCoord % PREVIEW_BLOCKS_PER_PIXEL) + tx, zCoord - (zCoord % PREVIEW_BLOCKS_PER_PIXEL) + ty);
 			}
 		}
 
@@ -169,6 +179,7 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
 		progress = stream.readShort();
 		mapName = NetworkUtils.readUTF(stream);
 		stream.readBytes(previewColors, 0, 80);
+		previewColorsPushed = false;
 	}
 
 	private void importMap(ItemStack stack) {

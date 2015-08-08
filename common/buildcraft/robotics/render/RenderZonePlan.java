@@ -20,17 +20,31 @@ public class RenderZonePlan extends TileEntitySpecialRenderer {
 
 	@Override
 	public void renderTileEntityAt(TileEntity tile, double tx, double ty, double tz, float partialTicks) {
+		boolean rendered = true;
 		TileZonePlan zonePlan = (TileZonePlan) tile;
+
 		if (!TEXTURES.containsKey(zonePlan)) {
 			DynamicTextureBC textureBC = new DynamicTextureBC(16, 16);
 			TEXTURES.put(zonePlan, textureBC);
+			rendered = false;
 		}
 		DynamicTextureBC textureBC = TEXTURES.get(zonePlan);
 		FakeIcon fakeIcon = new FakeIcon(0, 1, 0, 1, 16, 16);
 
-		for (int y = 0; y < 8; y++) {
-			for (int x = 0; x < 10; x++) {
-				textureBC.setColor(x + 3, y + 3, 0xFF000000 | MapColor.mapColorArray[zonePlan.previewColors[y * 10 + x]].colorValue);
+		byte[] previewColors = zonePlan.getPreviewTexture(!rendered);
+
+		if (previewColors != null) {
+			for (int y = 0; y < 8; y++) {
+				for (int x = 0; x < 10; x++) {
+					int col = MapColor.mapColorArray[previewColors[y * 10 + x]].colorValue;
+					if ((x & 1) != (y & 1)) {
+						int ocol = col;
+						col = (ocol & 0xFF) * 15 / 16
+								| (((ocol & 0xFF00) >> 8) * 15 / 16) << 8
+								| (((ocol & 0xFF0000) >> 16) * 15 / 16) << 16;
+					}
+					textureBC.setColor(x + 3, y + 3, 0xFF000000 | col);
+				}
 			}
 		}
 

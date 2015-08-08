@@ -116,26 +116,26 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
 			} else if ("computeMap".equals(command)) {
 				computeMap(stream.readInt(), stream.readInt(),
 						stream.readUnsignedShort(), stream.readUnsignedShort(),
-						stream.readUnsignedByte(), (EntityPlayer) sender);
+						stream.readFloat(), (EntityPlayer) sender);
 			} else if ("setName".equals(command)) {
 				map.mapName = NetworkUtils.readUTF(stream);
 			}
 		}
 	}
 
-	private void computeMap(int cx, int cz, int width, int height, int blocksPerPixel, EntityPlayer player) {
+	private void computeMap(int cx, int cz, int width, int height, float blocksPerPixel, EntityPlayer player) {
 		final byte[] textureData = new byte[width * height];
 
 		MapWorld w = BuildCraftRobotics.manager.getWorld(map.getWorldObj());
-		int startX = cx - width * blocksPerPixel / 2;
-		int startZ = cz - height * blocksPerPixel / 2;
+		int startX = Math.round(cx - width * blocksPerPixel / 2);
+		int startZ = Math.round(cz - height * blocksPerPixel / 2);
 		int mapStartX = map.chunkStartX << 4;
 		int mapStartZ = map.chunkStartZ << 4;
 
 		for (int i = 0; i < width; ++i) {
 			for (int j = 0; j < height; ++j) {
-				int x = startX + i * blocksPerPixel;
-				int z = startZ + j * blocksPerPixel;
+				int x = Math.round(startX + i * blocksPerPixel);
+				int z = Math.round(startZ + j * blocksPerPixel);
 				int ix = x - mapStartX;
 				int iz = z - mapStartZ;
 
