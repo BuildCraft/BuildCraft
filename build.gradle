@@ -79,7 +79,7 @@ task deobfJar(type: Jar) {
 // module section
 // --------------------
 
-ext.modules = [ "api", "core", "builders", "energy", "factory", /*"robotics", "silicon", */"transport" ]
+ext.modules = [ "api", "core", "builders", "energy", "factory", "robotics", "silicon", "transport" ]
 ext.moduleDependencies = [  
 								"api":[],
 				                "core":["api"],
