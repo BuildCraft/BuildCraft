@@ -1,0 +1,6 @@
+Bugs fixed:
+
+* [#2939] Quarry makes server crash when used and chunkloading is off in some cases (asie)
+* Builder inconsistently respecting OreDict (knexer)
+* ClassCastException when trying to plant reeds (hea3ven)
+* Random minor crashes (asie)
