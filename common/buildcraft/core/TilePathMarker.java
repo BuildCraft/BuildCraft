@@ -11,6 +11,7 @@ package buildcraft.core;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 
 import io.netty.buffer.ByteBuf;
 
@@ -18,6 +19,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.IPathProvider;
 import buildcraft.api.core.Position;
@@ -324,6 +326,18 @@ public class TilePathMarker extends TileMarker implements IPathProvider {
 		}
 		if (lasers[1] != null) {
 			lasers[1].writeData(data);
+		}
+	}
+
+	@Override
+	public void removeFromWorld() {
+		List<BlockIndex> path = getPath();
+		for (BlockIndex b : path) {
+			BuildCraftCore.pathMarkerBlock.dropBlockAsItem(
+					worldObj, b.x, b.y, b.z,
+					0, 0);
+
+			worldObj.setBlockToAir(b.x, b.y, b.z);
 		}
 	}
 }

@@ -23,9 +23,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.WorldSettings.GameType;
-
 import cpw.mods.fml.relauncher.Side;
-
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -47,7 +45,6 @@ import buildcraft.builders.blueprints.RecursiveBlueprintBuilder;
 import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.LaserData;
-import buildcraft.core.TilePathMarker;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BlueprintBase;
 import buildcraft.core.blueprints.BptBuilderBase;
@@ -254,18 +251,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 					if (tile instanceof IPathProvider) {
 						path = ((IPathProvider) tile).getPath();
-
-						// TODO (7.1): Add API method for IPathProviders to remove
-						// themselves from world like IAreaProviders.
-						if (tile instanceof TilePathMarker) {
-							for (BlockIndex b : path) {
-								BuildCraftCore.pathMarkerBlock.dropBlockAsItem(
-										worldObj, b.x, b.y, b.z,
-										0, 0);
-
-								worldObj.setBlockToAir(b.x, b.y, b.z);
-							}
-						}
+						((IPathProvider) tile).removeFromWorld();
 
 						break;
 					}

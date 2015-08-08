@@ -230,10 +230,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		reloadConfig(ConfigManager.RestartRequirement.GAME);
 
-		// TODO
-		//Property dropBlock = BuildCraftCore.mainConfiguration.get("general", "builder.dropBrokenBlocks", false, "set to true to force the builder to drop broken blocks");
-		//dropBrokenBlocks = dropBlock.getBoolean(false);
-
 		Property printSchematicList = BuildCraftCore.mainConfiguration.get("debug", "printBlueprintSchematicList", false);
 		debugPrintSchematicList = printSchematicList.getBoolean();
 	}

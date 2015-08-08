@@ -96,7 +96,6 @@ public class CoreProxyClient extends CoreProxy {
 		RenderingRegistry.registerBlockHandler(BuildCraftCore.complexBlockModel, new RenderBlockComplex());
 		ClientRegistry.bindTileEntitySpecialRenderer(TilePathMarker.class, new RenderPathMarker());
 
-		//TODO Update me to grab differing trunk textures
 		ClientRegistry.bindTileEntitySpecialRenderer(TileEngineBase.class, new RenderEngine());
 		for (int i = 0; i < BuildCraftCore.engineBlock.getEngineCount(); i++) {
 			RenderingEntityBlocks.blockByEntityRenders.put(new RenderingEntityBlocks.EntityRenderIndex(BuildCraftCore.engineBlock, i), new RenderEngine((TileEngineBase) BuildCraftCore.engineBlock.createTileEntity(null, i)));

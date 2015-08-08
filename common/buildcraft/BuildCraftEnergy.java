@@ -123,7 +123,6 @@ public class BuildCraftEnergy extends BuildCraftMod {
 		BuildcraftFuelRegistry.fuel = FuelManager.INSTANCE;
 		BuildcraftFuelRegistry.coolant = CoolantManager.INSTANCE;
 
-		// TODO: Reload configs without having to close the game
 		int oilDesertBiomeId = BuildCraftCore.mainConfigManager.register("worldgen.biomes",
 				"biomeOilDesert", DefaultProps.BIOME_OIL_DESERT, "The id for the Oil Desert biome",
 				RestartRequirement.GAME).getInt();

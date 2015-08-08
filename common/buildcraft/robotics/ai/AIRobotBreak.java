@@ -66,6 +66,7 @@ public class AIRobotBreak extends AIRobot {
 			hardness = block.getBlockHardness(robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z);
 			speed = getBreakSpeed(robot, robot.getHeldItem(), block, meta);
 		}
+
 		if (block.isAir(robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z)) {
 			setSuccess(false);
 			terminate();

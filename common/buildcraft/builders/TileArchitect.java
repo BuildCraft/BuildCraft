@@ -44,6 +44,8 @@ import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.Utils;
 
 public class TileArchitect extends TileBuildCraft implements IInventory, IBoxProvider, ICommandReceiver, ILEDProvider {
+
+
 	public enum Mode {
 		EDIT, COPY
 	}
@@ -64,6 +66,11 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 	public TileArchitect() {
 		box.kind = Kind.BLUE_STRIPES;
+	}
+
+	public void storeBlueprintStack(ItemStack blueprintStack) {
+		setInventorySlotContents(1, blueprintStack);
+		decrStackSize(0, 1);
 	}
 
 	@Override

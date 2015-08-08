@@ -77,9 +77,11 @@ import buildcraft.transport.ItemFacade;
 import buildcraft.transport.ItemGateCopier;
 import buildcraft.transport.ItemPipe;
 import buildcraft.transport.ItemPipeWire;
+import buildcraft.transport.LensFilterHandler;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeActionProvider;
 import buildcraft.transport.PipeColoringRecipe;
+import buildcraft.transport.PipeEventBus;
 import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeTriggerProvider;
 import buildcraft.transport.TileFilteredBuffer;
@@ -479,6 +481,8 @@ public class BuildCraftTransport extends BuildCraftMod {
 				new BptPipeFiltered(itemPipe);
 			}
 		}
+
+		PipeEventBus.registerGlobalHandler(new LensFilterHandler());
 
 		BCCreativeTab.get("pipes").setIcon(new ItemStack(BuildCraftTransport.pipeItemsDiamond, 1));
 		BCCreativeTab.get("facades").setIcon(facadeItem.getFacadeForBlock(Blocks.brick_block, 0));
