@@ -431,6 +431,8 @@ public class BuildCraftRobotics extends BuildCraftMod {
 		managerThread = new Thread(manager);
 		managerThread.start();
 
+		BoardRobotPicker.onServerStart();
+
 		MinecraftForge.EVENT_BUS.register(manager);
 		FMLCommonHandler.instance().bus().register(manager);
 	}

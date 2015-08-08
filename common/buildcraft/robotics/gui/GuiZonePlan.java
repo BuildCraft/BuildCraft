@@ -324,7 +324,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 		if (blocksPerPixel > 4.0f) {
 			blocksPerPixel = 4.0f;
 		}
-		
+
 		mapWidth = this.mc.displayWidth;
 		mapHeight = this.mc.displayHeight;
 

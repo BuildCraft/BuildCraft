@@ -21,11 +21,14 @@ import buildcraft.robotics.ai.AIRobotGotoStationAndUnload;
 import buildcraft.robotics.statements.ActionRobotFilter;
 
 public class BoardRobotPicker extends RedstoneBoardRobot {
-	// TODO: Clean this when world unloaded
 	public static Set<Integer> targettedItems = new HashSet<Integer>();
 
 	public BoardRobotPicker(EntityRobotBase iRobot) {
 		super(iRobot);
+	}
+
+	public static void onServerStart() {
+		targettedItems.clear();
 	}
 
 	@Override
