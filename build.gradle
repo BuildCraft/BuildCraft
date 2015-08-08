@@ -43,14 +43,14 @@ minecraft {
 }
 
 sourceSets {
-	core {
-		resources {
-			def l10n = file("../BuildCraft-Localization")
+    core {
+        resources {
+            def l10n = file("../BuildCraft-Localization")
             if(l10n.exists())
-           	    srcDir l10n
+                   srcDir l10n
             exclude "**/.md" // exclude readme from localization repo
-		}
-	}
+        }
+    }
 }
 
 // --------------------
@@ -81,28 +81,28 @@ task deobfJar(type: Jar) {
 
 ext.modules = [ "api", "core", "builders", "energy", "factory", "robotics", "silicon", "transport" ]
 ext.moduleDependencies = [  
-								"api":[],
-				                "core":["api"],
-                            	"builders":["api", "core"],
-                            	"energy": ["api", "core"],
-                           	    "factory": ["api", "core"],
-				                "robotics": ["api", "core"],
-                              	"silicon": ["api", "core"],
-                            	"transport": ["api", "core"]
+                                "api":[],
+                                "core":["api"],
+                                "builders":["api", "core"],
+                                "energy": ["api", "core"],
+                                "factory": ["api", "core"],
+                                "robotics": ["api", "core"],
+                                "silicon": ["api", "core"],
+                                "transport": ["api", "core"]
                         ]
 
 println "modules:"
 modules.each { module ->
     println "  " + module
     if (sourceSets.findByName(module) == null) {
-   		sourceSets.create("${module}") {
-        	java {
-            	srcDir "src/${module}/java"
-        	}
-        	resources {
-            	srcDir "src/${module}/resources"
-        	}
-    	}
+           sourceSets.create("${module}") {
+            java {
+                srcDir "src/${module}/java"
+            }
+            resources {
+                srcDir "src/${module}/resources"
+            }
+        }
     }
     sourceSets[module].compileClasspath += sourceSets["api"].compileClasspath
     moduleDependencies[module].each { dependant ->
@@ -184,7 +184,7 @@ processResources {
 }
 
 //checkstyle {
-//	configFile = file('guidelines/buildcraft.checkstyle')
+//    configFile = file('guidelines/buildcraft.checkstyle')
 //}
 
 //checkstyleApi.exclude "cofh/**"
