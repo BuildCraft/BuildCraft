@@ -1,4 +1,4 @@
-package buildcraft.silicon;
+package buildcraft.silicon.tile;
 
 import java.util.HashMap;
 import java.util.Map;

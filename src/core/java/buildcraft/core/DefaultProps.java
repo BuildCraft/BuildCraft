@@ -8,7 +8,7 @@ public final class DefaultProps {
 
     public static final String MOD = "BuildCraft";
 
-    public static final String DEPENDENCY_CORE = "required-after:BuildCraft|Core";// @" + Version.VERSION;
+    public static final String DEPENDENCY_CORE = "required-after:BuildCraft|Core@" + Version.VERSION;
     public static final String DEPENDENCY_TRANSPORT = "required-after:BuildCraft|Transport@" + Version.VERSION;
     public static final String DEPENDENCY_SILICON = "required-after:BuildCraft|Silicon@" + Version.VERSION;
     public static final String DEPENDENCY_SILICON_TRANSPORT = DEPENDENCY_TRANSPORT + ";" + DEPENDENCY_SILICON;

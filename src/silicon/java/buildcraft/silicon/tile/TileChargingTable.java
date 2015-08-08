@@ -1,4 +1,4 @@
-package buildcraft.silicon;
+package buildcraft.silicon.tile;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.FMLCommonHandler;

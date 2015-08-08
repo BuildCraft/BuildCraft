@@ -1,4 +1,4 @@
-package buildcraft.silicon;
+package buildcraft.silicon.block;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;

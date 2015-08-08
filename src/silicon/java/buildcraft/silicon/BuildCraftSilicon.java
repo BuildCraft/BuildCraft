@@ -2,7 +2,7 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft;
+package buildcraft.silicon;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -20,7 +20,6 @@ import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 
-import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.robots.RobotManager;
 import buildcraft.core.BuildCraftCore;
@@ -50,7 +49,7 @@ import buildcraft.silicon.tile.TilePackager;
 import buildcraft.silicon.tile.TileProgrammingTable;
 import buildcraft.silicon.tile.TileStampingTable;
 
-// @Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraftSilicon",
+// @Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon",
 // dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftSilicon extends BuildCraftMod {
     @Mod.Instance("BuildCraft|Silicon")
@@ -111,16 +110,22 @@ public class BuildCraftSilicon extends BuildCraftMod {
         channels = NetworkRegistry.INSTANCE.newChannel(DefaultProps.NET_CHANNEL_NAME + "-SILICON", new ChannelHandler(), new PacketHandlerSilicon());
 
         NetworkRegistry.INSTANCE.registerGuiHandler(instance, new SiliconGuiHandler());
-        CoreProxy.proxy.registerTileEntity(TileLaser.class, "net.minecraft.src.buildcraft.factory.TileLaser");
-        CoreProxy.proxy.registerTileEntity(TileAssemblyTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyTable");
-        CoreProxy.proxy.registerTileEntity(TileAdvancedCraftingTable.class, "net.minecraft.src.buildcraft.factory.TileAssemblyAdvancedWorkbench");
-        CoreProxy.proxy.registerTileEntity(TileIntegrationTable.class, "net.minecraft.src.buildcraft.factory.TileIntegrationTable");
-        CoreProxy.proxy.registerTileEntity(TileChargingTable.class, "net.minecraft.src.buildcraft.factory.TileChargingTable");
-        CoreProxy.proxy.registerTileEntity(TileProgrammingTable.class, "net.minecraft.src.buildcraft.factory.TileProgrammingTable");
-        CoreProxy.proxy.registerTileEntity(TilePackager.class, "buildcraft.TilePackager");
-        CoreProxy.proxy.registerTileEntity(TileStampingTable.class, "buildcraft.TileStampingTable");
+        CoreProxy.proxy.registerTileEntity(TileLaser.class, "buildcraft.silicon.TileLaser", "net.minecraft.src.buildcraft.factory.TileLaser");
+        CoreProxy.proxy.registerTileEntity(TileAssemblyTable.class, "buildcraft.silicon.TileAssemblyTable",
+                "net.minecraft.src.buildcraft.factory.TileAssemblyTable");
+        CoreProxy.proxy.registerTileEntity(TileAdvancedCraftingTable.class, "buildcraft.silicon.TileAdvancedCraftingTable",
+                "net.minecraft.src.buildcraft.factory.TileAssemblyAdvancedWorkbench");
+        CoreProxy.proxy.registerTileEntity(TileIntegrationTable.class, "buildcraft.silicon.TileIntegrationTable",
+                "net.minecraft.src.buildcraft.factory.TileIntegrationTable");
+        CoreProxy.proxy.registerTileEntity(TileChargingTable.class, "buildcraft.silicon.TileChargingTable",
+                "net.minecraft.src.buildcraft.factory.TileChargingTable");
+        CoreProxy.proxy.registerTileEntity(TileProgrammingTable.class, "buildcraft.silicon.TileProgrammingTable",
+                "net.minecraft.src.buildcraft.factory.TileProgrammingTable");
+        CoreProxy.proxy.registerTileEntity(TilePackager.class, "buildcraft.silicon.TilePackager", "buildcraft.TilePackager");
+        CoreProxy.proxy.registerTileEntity(TileStampingTable.class, "buildcraft.silicon.TileStampingTable", "buildcraft.TileStampingTable");
 
-        BuilderAPI.schematicRegistry.registerSchematicBlock(laserBlock, SchematicRotateMeta.class, new int[] { 2, 5, 3, 4 }, true);
+        // BuilderAPI.schematicRegistry.registerSchematicBlock(laserBlock, SchematicRotateMeta.class, new int[] { 2, 5,
+        // 3, 4 }, true);
 
         RobotManager.registerResourceId(ResourceIdAssemblyTable.class, "resourceIdAssemblyTable", "buildcraft.core.robots.ResourceIdAssemblyTable");
 

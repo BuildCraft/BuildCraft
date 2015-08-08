@@ -128,7 +128,7 @@ import buildcraft.core.tablet.manager.TabletManagerClient;
 import buildcraft.core.tablet.manager.TabletManagerServer;
 
 @Mod(name = "BuildCraft", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Core", acceptedMinecraftVersions = "[1.8]",
-        dependencies = "required-after:Forge@[11.14.3.1486]", guiFactory = "buildcraft.core.config.ConfigManager")
+        dependencies = "required-after:Forge@[11.14.3.1502]", guiFactory = "buildcraft.core.config.ConfigManager")
 public class BuildCraftCore extends BuildCraftMod {
     @Mod.Instance("BuildCraft|Core")
     public static BuildCraftCore instance;
@@ -676,6 +676,9 @@ public class BuildCraftCore extends BuildCraftMod {
             return;
         }
         MovingObjectPosition object = mc.objectMouseOver;
+        if (object == null) {
+            return;
+        }
         MovingObjectType type = object.typeOfHit;
 
         if (type == MovingObjectType.BLOCK && object.getBlockPos() != null) {

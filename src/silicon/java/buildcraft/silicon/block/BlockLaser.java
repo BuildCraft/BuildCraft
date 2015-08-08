@@ -2,7 +2,7 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.silicon;
+package buildcraft.silicon.block;
 
 import java.util.List;
 
@@ -30,11 +30,11 @@ import buildcraft.silicon.tile.TileLaser;
 public class BlockLaser extends BlockBuildCraft implements ICustomHighlight {
 
     private static final AxisAlignedBB[][] boxes = { { new AxisAlignedBB(0.0, 0.75, 0.0, 1.0, 1.0, 1.0), new AxisAlignedBB(0.3125, 0.1875, 0.3125,
-            0.6875, 0.75, 0.6875) },   // -Y
-        { new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.25, 1.0), new AxisAlignedBB(0.3125, 0.25, 0.3125, 0.6875, 0.8125, 0.6875) },   // +Y
-        { new AxisAlignedBB(0.0, 0.0, 0.75, 1.0, 1.0, 1.0), new AxisAlignedBB(0.3125, 0.3125, 0.1875, 0.6875, 0.6875, 0.75) },   // -Z
-        { new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 0.25), new AxisAlignedBB(0.3125, 0.3125, 0.25, 0.6875, 0.6875, 0.8125) },   // +Z
-        { new AxisAlignedBB(0.75, 0.0, 0.0, 1.0, 1.0, 1.0), new AxisAlignedBB(0.1875, 0.3125, 0.3125, 0.75, 0.6875, 0.6875) },   // -X
+            0.6875, 0.75, 0.6875) },    // -Y
+        { new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 0.25, 1.0), new AxisAlignedBB(0.3125, 0.25, 0.3125, 0.6875, 0.8125, 0.6875) },    // +Y
+        { new AxisAlignedBB(0.0, 0.0, 0.75, 1.0, 1.0, 1.0), new AxisAlignedBB(0.3125, 0.3125, 0.1875, 0.6875, 0.6875, 0.75) },    // -Z
+        { new AxisAlignedBB(0.0, 0.0, 0.0, 1.0, 1.0, 0.25), new AxisAlignedBB(0.3125, 0.3125, 0.25, 0.6875, 0.6875, 0.8125) },    // +Z
+        { new AxisAlignedBB(0.75, 0.0, 0.0, 1.0, 1.0, 1.0), new AxisAlignedBB(0.1875, 0.3125, 0.3125, 0.75, 0.6875, 0.6875) },    // -X
         { new AxisAlignedBB(0.0, 0.0, 0.0, 0.25, 1.0, 1.0), new AxisAlignedBB(0.25, 0.3125, 0.3125, 0.8125, 0.6875, 0.6875) } // +X
     };
 
