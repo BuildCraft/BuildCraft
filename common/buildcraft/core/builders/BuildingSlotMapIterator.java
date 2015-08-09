@@ -67,7 +67,7 @@ public class BuildingSlotMapIterator {
 			pair = impIterator.next();
 			if (isCreative || availablePairs.contains(pair)) {
 				current = slots.get(pair);
-				position = pair.position;
+				position = pair.position - 1;
 				return;
 			}
 		}

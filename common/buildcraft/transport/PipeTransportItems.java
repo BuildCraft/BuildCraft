@@ -39,6 +39,8 @@ import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
 import buildcraft.transport.network.PacketPipeTransportTraveler;
 import buildcraft.transport.pipes.events.PipeEventItem;
+import buildcraft.transport.render.PipeTransportItemsRenderer;
+import buildcraft.transport.render.PipeTransportRenderer;
 import buildcraft.transport.utils.TransportUtils;
 
 public class PipeTransportItems extends PipeTransport implements IDebuggable {
@@ -51,6 +53,11 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 	@Override
 	public IPipeTile.PipeType getPipeType() {
 		return IPipeTile.PipeType.ITEM;
+	}
+
+	@Override
+	public PipeTransportRenderer createTransportRenderer() {
+		return new PipeTransportItemsRenderer();
 	}
 
 	public void readjustSpeed(TravelingItem item) {

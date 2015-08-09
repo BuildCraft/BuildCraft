@@ -93,12 +93,19 @@ public class SchematicBlock extends SchematicBlockBase {
 	}
 
 	@Override
-	public BuildingStage getBuildStage () {
+	public boolean canPlaceInWorld(IBuilderContext context, int x, int y, int z) {
 		if (block instanceof BlockFalling) {
-			return BuildingStage.SUPPORTED;
-		} else if (block instanceof BlockFluidBase || block instanceof BlockLiquid) {
+			return y > 0 && !context.world().isAirBlock(x, y - 1, z);
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public BuildingStage getBuildStage () {
+		if (block instanceof BlockFluidBase || block instanceof BlockLiquid) {
 			return BuildingStage.EXPANDING;
-		} else if (block.isOpaqueCube()) {
+		} else if (block.isOpaqueCube() || block instanceof BlockFalling) {
 			return BuildingStage.STANDALONE;
 		} else {
 			return BuildingStage.SUPPORTED;
