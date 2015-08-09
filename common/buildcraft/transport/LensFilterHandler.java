@@ -45,9 +45,13 @@ public class LensFilterHandler {
 					if (sideColor >= 0 && otherColor != sideColor) {
 						// Filter colors conflict - the side is unpassable
 						continue;
-					} else if (sideLensColor != -1 && sideColor != otherColor) {
-						// The closer lens color differs from the further away filter color - the side is unpassable
-						continue;
+					} else if (sideLensColor >= 0) {
+						// The closer lens color differs from the further away filter color - the side is unpassable OR treated as colorless
+						if (sideLensColor == otherColor) {
+							sideColor = -1;
+						} else {
+							continue;
+						}
 					} else {
 						sideColor = otherColor;
 					}

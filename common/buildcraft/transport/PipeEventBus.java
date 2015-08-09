@@ -56,6 +56,7 @@ public class PipeEventBus {
 
 	public PipeEventBus() {
 		for (Object o : globalHandlers) {
+			System.out.println("Registering " + o.getClass().getName());
 			registerHandler(o);
 		}
 	}
