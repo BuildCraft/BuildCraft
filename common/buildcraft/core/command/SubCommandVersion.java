@@ -1,8 +1,9 @@
 package buildcraft.core.command;
 
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.StatCollector;
+import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.ChatStyle;
+import net.minecraft.util.EnumChatFormatting;
 
 import buildcraft.core.Version;
 import buildcraft.core.lib.commands.SubCommand;
@@ -15,9 +16,8 @@ public class SubCommandVersion extends SubCommand {
 
     @Override
     public void processSubCommand(ICommandSender sender, String[] args) {
-        String colour = Version.isOutdated() ? "\u00A7c" : "\u00A7a";
-
-        sender.addChatMessage(new ChatComponentText(String.format(colour + StatCollector.translateToLocal("command.buildcraft.version"), Version.getVersion(),
-                CoreProxy.proxy.getMinecraftVersion(), Version.getRecommendedVersion())));
+        sender.addChatMessage(new ChatComponentTranslation("command.buildcraft.version", Version.getVersion(),
+                CoreProxy.proxy.getMinecraftVersion(), Version.getRecommendedVersion())
+                .setChatStyle(new ChatStyle().setColor(Version.isOutdated() ? EnumChatFormatting.RED : EnumChatFormatting.GREEN)));
     }
 }

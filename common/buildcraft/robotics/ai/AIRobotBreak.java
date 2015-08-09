@@ -8,6 +8,9 @@
  */
 package buildcraft.robotics.ai;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
@@ -23,7 +26,6 @@ import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.proxy.CoreProxy;
 
 public class AIRobotBreak extends AIRobot {
-
 	private BlockIndex blockToBreak;
 	private float blockDamage = 0;
 

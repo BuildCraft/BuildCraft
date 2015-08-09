@@ -14,9 +14,6 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.StringUtils;
 
-/**
- * Created by asie on 3/7/15.
- */
 public class ItemDebugger extends ItemBuildCraft {
 	public ItemDebugger() {
 		super();

@@ -10,7 +10,6 @@ package buildcraft.robotics;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.WeakHashMap;
 
@@ -1343,7 +1342,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public int fill(ForgeDirection from, FluidStack resource, boolean doFill) {
-		int result = 0;
+		int result;
 
 		if (tank != null && !tank.isFluidEqual(resource)) {
 			return 0;
@@ -1385,7 +1384,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public FluidStack drain(ForgeDirection from, int maxDrain, boolean doDrain) {
-		FluidStack result = null;
+		FluidStack result;
 
 		if (tank == null) {
 			result = null;

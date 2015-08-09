@@ -24,7 +24,7 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraftforge.common.ForgeChunkManager;
@@ -541,11 +541,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		if (chunkTicket != null) {
 			if (xSize < 3 || zSize < 3 || ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth()) {
 				if (placedBy != null) {
-					placedBy.addChatMessage(new ChatComponentText(
-							String.format(
-									"Quarry size is outside of chunkloading bounds or too small %d %d (%d)",
+					placedBy.addChatMessage(new ChatComponentTranslation("chat.buildcraft.quarry.tooSmall",
 									xSize, zSize,
-									chunkTicket.getMaxChunkListDepth())));
+									chunkTicket.getMaxChunkListDepth()));
 				}
 
 				a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
@@ -622,7 +620,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		stream.writeDouble(headPosY);
 		stream.writeDouble(headPosZ);
 		stream.writeFloat((float) speed);
-		stream.writeFloat((float) headTrajectory);
+		stream.writeFloat(headTrajectory);
 		int flags = stage.ordinal();
 		flags |= movingHorizontally ? 0x10 : 0;
 		flags |= movingVertically ? 0x20 : 0;
@@ -842,10 +840,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		}
 
 		if (placedBy != null && !(placedBy instanceof FakePlayer)) {
-			placedBy.addChatMessage(new ChatComponentText(
-					String.format(
-							"[BUILDCRAFT] The quarry at %d %d %d will keep %d chunks loaded",
-							xCoord, yCoord, zCoord, chunks.size())));
+			placedBy.addChatMessage(new ChatComponentTranslation(
+					"chat.buildcraft.quarry.chunkloadInfo",
+					xCoord, yCoord, zCoord, chunks.size()));
 		}
 	}
 
