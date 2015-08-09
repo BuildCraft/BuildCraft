@@ -164,7 +164,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 							tmpExpanding.add(b);
 							b.buildStage = 3;
 							break;
-
 						}
 					} else {
 						postProcessing.add(b);
@@ -421,7 +420,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 							return slot;
 						} else if (checkRequirements(builder, slot.schematic)) {
 							if (!BuildCraftAPI.isSoftBlock(world, slot.x, slot.y,
-									slot.z)) {
+									slot.z) || !slot.schematic.canPlaceInWorld(context, slot.x, slot.y, slot.z)) {
 								continue; // Can't build yet, wait (#2751)
 							} else if (isBlockPlaceCanceled(world, slot.x, slot.y, slot.z, slot.schematic)) {
 								// Forge does not allow us to place a block in

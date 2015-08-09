@@ -156,6 +156,15 @@ public abstract class Schematic {
 	}
 
 	/**
+	 * Can the block be placed in the world at these coordinates now?
+	 * This function is only used to *delay* block placement until other
+	 * prerequisites are met.
+	 */
+	public boolean canPlaceInWorld(IBuilderContext context, int x, int y, int z) {
+		return true;
+	}
+
+	/**
 	 * Places the block in the world, at the location specified in the slot,
 	 * using the stack in parameters
 	 */

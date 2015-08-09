@@ -24,7 +24,7 @@ public abstract class ResourceId {
 
 	public static ResourceId load(NBTTagCompound nbt) {
 		try {
-			Class cls = null;
+			Class cls;
 			if (nbt.hasKey("class")) {
 				// Migration support for 6.4.x
 				cls = RobotManager.getResourceIdByLegacyClassName(nbt.getString("class"));

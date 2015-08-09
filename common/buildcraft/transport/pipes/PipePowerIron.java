@@ -13,7 +13,6 @@ import java.util.LinkedList;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -59,7 +58,7 @@ public class PipePowerIron extends Pipe<PipeTransportPower> {
 			}
 			if (getWorld().isRemote && !(player instanceof FakePlayer)) {
 				if (BuildCraftCore.hidePowerNumbers) {
-					player.addChatMessage(new ChatComponentTranslation("chat.pipe.power.iron.mode.numberless"
+					player.addChatMessage(new ChatComponentTranslation("chat.pipe.power.iron.mode.numberless",
 							StringUtils.localize("chat.pipe.power.iron.level." + getMode().maxPower)));
 				} else {
 					player.addChatMessage(new ChatComponentTranslation("chat.pipe.power.iron.mode",
