@@ -11,7 +11,6 @@ package buildcraft.builders.schematics;
 import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
@@ -50,11 +49,6 @@ public class SchematicRail extends SchematicBlock {
 			meta = 6;
 			break;
 		}
-	}
-
-	@Override
-	public boolean canPlaceInWorld(IBuilderContext context, int x, int y, int z) {
-		return y > 0 && World.doesBlockHaveSolidTopSurface(context.world(), x, y - 1, z);
 	}
 
 	@Override

@@ -546,6 +546,9 @@ bc_update.download=§cDownload from http://www.mod-buildcraft.com/download
 bc_update.once=This message only displays once
 bc_update.again=Type '/buildcraft version' if you want to see it again
 
+chat.buildcraft.quarry.tooSmall=[BuildCraft] Quarry size is outside of chunkloading bounds or too small %d %d (%d)
+chat.buildcraft.quarry.chunkloadInfo=[BuildCraft] The quarry at %d %d %d will keep %d chunks loaded
+
 command.buildcraft.version=BuildCraft %s for Minecraft %s (Latest: %s).
 command.buildcraft.changelog_header=Changelog for BuildCraft %s:
 
