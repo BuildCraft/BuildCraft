@@ -11,6 +11,7 @@ import java.util.Random;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.core.ISerializable;
@@ -112,9 +113,9 @@ public class ZonePlan implements IZone, ISerializable {
     }
 
     @Override
-    public boolean contains(double x, double y, double z) {
-        int xBlock = (int) Math.floor(x);
-        int zBlock = (int) Math.floor(z);
+    public boolean contains(Vec3 point) {
+        int xBlock = (int) Math.floor(point.xCoord);
+        int zBlock = (int) Math.floor(point.zCoord);
 
         return get(xBlock, zBlock);
     }

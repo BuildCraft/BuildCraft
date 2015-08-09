@@ -12,6 +12,7 @@ import java.util.List;
 import javax.vecmath.Vector3f;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -460,5 +461,13 @@ public final class Utils {
         } else {
             throw new RuntimeException("Was given a null axis! That was probably not intentional, consider this a bug! (Vector = " + vector + ")");
         }
+    }
+
+    public static Vec3 getVec(Entity entity) {
+        return new Vec3(entity.posX, entity.posY, entity.posZ);
+    }
+
+    public static BlockPos getPos(Entity entity) {
+        return convertFloor(getVec(entity));
     }
 }

@@ -9,10 +9,11 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.robots.DockingStation;
+import buildcraft.core.lib.utils.NBTUtils;
 
 public class StationIndex {
 
-    public BlockPos index = new BlockPos();
+    public BlockPos index = new BlockPos(0, 0, 0);
     public EnumFacing side = null;
 
     protected StationIndex() {}
@@ -44,14 +45,12 @@ public class StationIndex {
     }
 
     public void writeToNBT(NBTTagCompound nbt) {
-        NBTTagCompound indexNBT = new NBTTagCompound();
-        index.writeTo(indexNBT);
-        nbt.setTag("index", indexNBT);
+        nbt.setTag("index", NBTUtils.writeBlockPos(index));// TODO: IS THIS RIGHT????
         nbt.setByte("side", (byte) side.ordinal());
     }
 
     protected void readFromNBT(NBTTagCompound nbt) {
-        index = new BlockPos(nbt.getCompoundTag("index"));
+        index = NBTUtils.readBlockPos(nbt.getTag("index"));
         side = EnumFacing.values()[nbt.getByte("side")];
     }
 }

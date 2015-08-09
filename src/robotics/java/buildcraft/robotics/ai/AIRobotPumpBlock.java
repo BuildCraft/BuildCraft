@@ -29,7 +29,7 @@ public class AIRobotPumpBlock extends AIRobot {
 
     @Override
     public void start() {
-        robot.aimItemAt(blockToPump.x, blockToPump.y, blockToPump.z);
+        robot.aimItemAt(blockToPump);
     }
 
     @Override
@@ -42,10 +42,10 @@ public class AIRobotPumpBlock extends AIRobot {
         if (waited < 40) {
             waited++;
         } else {
-            FluidStack fluidStack = BlockUtils.drainBlock(robot.worldObj, blockToPump.x, blockToPump.y, blockToPump.z, false);
+            FluidStack fluidStack = BlockUtils.drainBlock(robot.worldObj, blockToPump, false);
             if (fluidStack != null) {
                 if (robot.fill(null, fluidStack, true) > 0) {
-                    BlockUtils.drainBlock(robot.worldObj, blockToPump.x, blockToPump.y, blockToPump.z, true);
+                    BlockUtils.drainBlock(robot.worldObj, blockToPump, true);
                 }
             }
             terminate();

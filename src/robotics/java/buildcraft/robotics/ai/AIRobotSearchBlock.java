@@ -15,6 +15,7 @@ import buildcraft.core.lib.utils.BlockScannerRandom;
 import buildcraft.core.lib.utils.BlockScannerZoneRandom;
 import buildcraft.core.lib.utils.IBlockFilter;
 import buildcraft.core.lib.utils.IterableAlgorithmRunner;
+import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.PathFindingSearch;
 
 public class AIRobotSearchBlock extends AIRobot {
@@ -38,7 +39,7 @@ public class AIRobotSearchBlock extends AIRobot {
         } else {
             if (zone != null) {
                 BlockPos pos = new BlockPos(iRobot);
-                blockIter = new BlockScannerZoneRandom(pos.x, pos.y, pos.z, iRobot.worldObj.rand, zone).iterator();
+                blockIter = new BlockScannerZoneRandom(pos, iRobot.worldObj.rand, zone).iterator();
             } else {
                 blockIter = new BlockScannerRandom(iRobot.worldObj.rand, 64).iterator();
             }
@@ -95,9 +96,7 @@ public class AIRobotSearchBlock extends AIRobot {
         super.writeSelfToNBT(nbt);
 
         if (blockFound != null) {
-            NBTTagCompound sub = new NBTTagCompound();
-            blockFound.writeTo(sub);
-            nbt.setTag("blockFound", sub);
+            nbt.setTag("blockFound", NBTUtils.writeBlockPos(blockFound));
         }
     }
 
@@ -106,7 +105,7 @@ public class AIRobotSearchBlock extends AIRobot {
         super.loadSelfFromNBT(nbt);
 
         if (nbt.hasKey("blockFound")) {
-            blockFound = new BlockPos(nbt.getCompoundTag("blockFound"));
+            blockFound = NBTUtils.readBlockPos(nbt.getTag("blockFound"));
         }
     }
 

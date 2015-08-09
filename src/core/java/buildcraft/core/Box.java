@@ -149,11 +149,11 @@ public class Box implements IBox, ISerializable {
         return expand(-amount);
     }
 
-    @Override
     public boolean contains(double x, double y, double z) {
         return x >= xMin && x <= xMax && y >= yMin && y <= yMax && z >= zMin && z <= zMax;
     }
 
+    @Override
     public boolean contains(Vec3 p) {
         return contains((int) p.xCoord, (int) p.yCoord, (int) p.zCoord);
     }

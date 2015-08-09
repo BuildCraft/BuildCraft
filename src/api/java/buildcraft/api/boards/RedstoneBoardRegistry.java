@@ -6,6 +6,7 @@ package buildcraft.api.boards;
 
 import java.util.Collection;
 
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class RedstoneBoardRegistry {
@@ -30,11 +31,11 @@ public abstract class RedstoneBoardRegistry {
 
     public abstract RedstoneBoardRobotNBT getEmptyRobotBoard();
 
-    public abstract RedstoneBoardNBT getRedstoneBoard(NBTTagCompound nbt);
+    public abstract RedstoneBoardNBT<?> getRedstoneBoard(NBTTagCompound nbt);
 
     public abstract RedstoneBoardNBT<?> getRedstoneBoard(String id);
 
-    // public abstract void registerIcons(TextureAtlasSpriteRegister par1IconRegister);
+    public abstract void registerIcons(TextureMap textureMap);
 
     public abstract Collection<RedstoneBoardNBT<?>> getAllBoardNBTs();
 

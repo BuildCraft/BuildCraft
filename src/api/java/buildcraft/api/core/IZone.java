@@ -7,6 +7,7 @@ package buildcraft.api.core;
 import java.util.Random;
 
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 
 public interface IZone {
 
@@ -14,7 +15,7 @@ public interface IZone {
 
     double distanceToSquared(BlockPos index);
 
-    boolean contains(double x, double y, double z);
+    boolean contains(Vec3 point);
 
     BlockPos getRandomBlockPos(Random rand);
 

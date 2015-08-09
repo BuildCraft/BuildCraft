@@ -9,12 +9,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldServer;
 
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 
 public class AIRobotUseToolOnBlock extends AIRobot {
@@ -34,7 +35,7 @@ public class AIRobotUseToolOnBlock extends AIRobot {
 
     @Override
     public void start() {
-        robot.aimItemAt(useToBlock.x, useToBlock.y, useToBlock.z);
+        robot.aimItemAt(useToBlock);
         robot.setItemActive(true);
     }
 
@@ -46,7 +47,7 @@ public class AIRobotUseToolOnBlock extends AIRobot {
             ItemStack stack = robot.getHeldItem();
 
             EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj).get();
-            if (BlockUtils.useItemOnBlock(robot.worldObj, player, stack, useToBlock.x, useToBlock.y, useToBlock.z, EnumFacing.UP)) {
+            if (BlockUtils.useItemOnBlock(robot.worldObj, player, stack, useToBlock, EnumFacing.UP)) {
                 if (robot.getHeldItem().isItemStackDamageable()) {
                     robot.getHeldItem().damageItem(1, robot);
 
@@ -59,8 +60,7 @@ public class AIRobotUseToolOnBlock extends AIRobot {
             } else {
                 setSuccess(false);
                 if (!robot.getHeldItem().isItemStackDamageable()) {
-                    BlockUtils.dropItem((WorldServer) robot.worldObj, MathHelper.floor_double(robot.posX), MathHelper.floor_double(robot.posY),
-                            MathHelper.floor_double(robot.posZ), 6000, stack);
+                    BlockUtils.dropItem((WorldServer) robot.worldObj, Utils.getPos(robot), 6000, stack);
                     robot.setItemInUse(null);
                 }
             }
@@ -89,9 +89,7 @@ public class AIRobotUseToolOnBlock extends AIRobot {
         super.writeSelfToNBT(nbt);
 
         if (useToBlock != null) {
-            NBTTagCompound sub = new NBTTagCompound();
-            useToBlock.writeTo(sub);
-            nbt.setTag("blockFound", sub);
+            nbt.setTag("blockFound", NBTUtils.writeBlockPos(useToBlock));
         }
     }
 
@@ -100,7 +98,7 @@ public class AIRobotUseToolOnBlock extends AIRobot {
         super.loadSelfFromNBT(nbt);
 
         if (nbt.hasKey("blockFound")) {
-            useToBlock = new BlockPos(nbt.getCompoundTag("blockFound"));
+            useToBlock = NBTUtils.readBlockPos(nbt.getTag("blockFound"));
         }
     }
 }

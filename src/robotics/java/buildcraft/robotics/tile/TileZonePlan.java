@@ -2,7 +2,7 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.robotics;
+package buildcraft.robotics.tile;
 
 import java.util.List;
 
@@ -11,6 +11,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.IChatComponent;
 
 import buildcraft.api.core.IZone;
 import buildcraft.api.items.IMapLocation;
@@ -49,16 +50,16 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
     public void initialize() {
         super.initialize();
 
-        int cx = xCoord >> 4;
-        int cz = zCoord >> 4;
+        int chunkX = pos.getX() >> 4;
+        int chunkZ = pos.getZ() >> 4;
 
-        chunkStartX = cx - RESOLUTION_CHUNKS / 2;
-        chunkStartZ = cz - RESOLUTION_CHUNKS / 2;
+        chunkStartX = chunkX - RESOLUTION_CHUNKS / 2;
+        chunkStartZ = chunkZ - RESOLUTION_CHUNKS / 2;
     }
 
     @Override
-    public void updateEntity() {
-        super.updateEntity();
+    public void update() {
+        super.update();
 
         if (worldObj.isRemote) {
             return;
@@ -204,13 +205,13 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
     }
 
     @Override
-    public String getInventoryName() {
-        return inv.getInventoryName();
+    public IChatComponent getDisplayName() {
+        return inv.getDisplayName();
     }
 
     @Override
-    public boolean hasCustomInventoryName() {
-        return inv.hasCustomInventoryName();
+    public boolean hasCustomName() {
+        return inv.hasCustomName();
     }
 
     @Override
@@ -224,13 +225,13 @@ public class TileZonePlan extends TileBuildCraft implements IInventory {
     }
 
     @Override
-    public void openInventory() {
-        inv.openInventory();
+    public void openInventory(EntityPlayer player) {
+        inv.openInventory(player);
     }
 
     @Override
-    public void closeInventory() {
-        inv.closeInventory();
+    public void closeInventory(EntityPlayer player) {
+        inv.closeInventory(player);
     }
 
     @Override

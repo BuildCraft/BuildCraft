@@ -2,7 +2,7 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.robotics;
+package buildcraft.robotics.item;
 
 import java.util.List;
 
@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -95,11 +96,6 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
         }
     }
 
-    @Override
-    public void registerIcons(TextureAtlasSpriteRegister par1IconRegister) {
-        // cancels default BC icon registering
-    }
-
     public static ItemStack createRobotStack(RedstoneBoardRobotNBT board, int energy) {
         ItemStack robot = new ItemStack(BuildCraftRobotics.robotItem);
         NBTTagCompound boardCpt = new NBTTagCompound();
@@ -166,9 +162,10 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
     }
 
     @Override
-    public boolean onItemUse(ItemStack currentItem, EntityPlayer player, World world, BlockPos pos, int side, float hitX, float hitY, float hitZ) {
+    public boolean onItemUse(ItemStack currentItem, EntityPlayer player, World world, BlockPos pos, EnumFacing side, float hitX, float hitY,
+            float hitZ) {
         if (!world.isRemote) {
-            Block b = world.getBlock(pos);
+            Block b = world.getBlockState(pos).getBlock();
             if (!(b instanceof BlockGenericPipe)) {
                 return false;
             }
@@ -201,9 +198,9 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
                     if (robot != null && robot.getRegistry() != null) {
                         robot.setUniqueRobotId(robot.getRegistry().getNextRobotId());
 
-                        float px = x + 0.5F + rayTraceResult.sideHit.offsetX * 0.5F;
-                        float py = y + 0.5F + rayTraceResult.sideHit.offsetY * 0.5F;
-                        float pz = z + 0.5F + rayTraceResult.sideHit.offsetZ * 0.5F;
+                        float px = pos.getX() + 0.5F + rayTraceResult.sideHit.getFrontOffsetX() * 0.5F;
+                        float py = pos.getY() + 0.5F + rayTraceResult.sideHit.getFrontOffsetY() * 0.5F;
+                        float pz = pos.getZ() + 0.5F + rayTraceResult.sideHit.getFrontOffsetZ() * 0.5F;
 
                         robot.setPosition(px, py, pz);
                         station.takeAsMain(robot);

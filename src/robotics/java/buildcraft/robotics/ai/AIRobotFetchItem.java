@@ -12,6 +12,7 @@ import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.inventory.TransactorSimple;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.robotics.boards.BoardRobotPicker;
 
 public class AIRobotFetchItem extends AIRobot {
@@ -97,7 +98,7 @@ public class AIRobotFetchItem extends AIRobot {
             Entity e = (Entity) o;
 
             if (!e.isDead && e instanceof EntityItem && !BoardRobotPicker.targettedItems.contains(e.getEntityId()) && !robot.isKnownUnreachable(e)
-                && (zone == null || zone.contains(e.posX, e.posY, e.posZ))) {
+                && (zone == null || zone.contains(Utils.getVec(e)))) {
                 double dx = e.posX - robot.posX;
                 double dy = e.posY - robot.posY;
                 double dz = e.posZ - robot.posZ;
@@ -131,8 +132,7 @@ public class AIRobotFetchItem extends AIRobot {
             BoardRobotPicker.targettedItems.add(target.getEntityId());
             if (Math.floor(target.posX) != Math.floor(robot.posX) || Math.floor(target.posY) != Math.floor(robot.posY) || Math.floor(
                     target.posZ) != Math.floor(robot.posZ)) {
-                startDelegateAI(new AIRobotGotoBlock(robot, (int) Math.floor(target.posX), (int) Math.floor(target.posY), (int) Math.floor(
-                        target.posZ)));
+                startDelegateAI(new AIRobotGotoBlock(robot, Utils.getPos(target)));
             }
         } else {
             // No item was found, terminate this AI

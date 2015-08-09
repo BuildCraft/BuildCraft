@@ -4,24 +4,25 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.ai;
 
+import net.minecraft.util.Vec3;
+
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.core.lib.utils.Utils;
 
 public class AIRobotStraightMoveTo extends AIRobotGoto {
 
     private double prevDistance = Double.MAX_VALUE;
 
-    private float pos;
+    private Vec3 pos;
 
     public AIRobotStraightMoveTo(EntityRobotBase iRobot) {
         super(iRobot);
     }
 
-    public AIRobotStraightMoveTo(EntityRobotBase iRobot, float ix, float iy, float iz) {
+    public AIRobotStraightMoveTo(EntityRobotBase iRobot, Vec3 pos) {
         this(iRobot);
-        x = ix;
-        y = iy;
-        z = iz;
-        robot.aimItemAt((int) Math.floor(x), (int) Math.floor(y), (int) Math.floor(z));
+        this.pos = pos;
+        robot.aimItemAt(Utils.convertFloor(pos));
     }
 
     @Override
@@ -32,7 +33,7 @@ public class AIRobotStraightMoveTo extends AIRobotGoto {
 
     @Override
     public void update() {
-        double distance = robot.getDistance(nextX, nextY, nextZ);
+        double distance = Utils.getVec(robot).distanceTo(next);
 
         if (distance < prevDistance) {
             prevDistance = distance;
@@ -41,9 +42,9 @@ public class AIRobotStraightMoveTo extends AIRobotGoto {
             robot.motionY = 0;
             robot.motionZ = 0;
 
-            robot.posX = x;
-            robot.posY = y;
-            robot.posZ = z;
+            robot.posX = pos.xCoord;
+            robot.posY = pos.yCoord;
+            robot.posZ = pos.zCoord;
 
             terminate();
         }

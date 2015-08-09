@@ -11,9 +11,7 @@ public class BlockScannerZoneRandom implements Iterable<BlockPos> {
 
     private Random rand;
     private IZone zone;
-    private int x;
-    private int y;
-    private int z;
+    private BlockPos pos;
 
     class BlockIt implements Iterator<BlockPos> {
 
@@ -25,17 +23,15 @@ public class BlockScannerZoneRandom implements Iterable<BlockPos> {
         @Override
         public BlockPos next() {
             BlockPos pos = zone.getRandomBlockPos(rand);
-            return new BlockPos(pos.getX() - x, pos.getY() - y, pos.getZ() - z);
+            return pos.subtract(BlockScannerZoneRandom.this.pos);
         }
 
         @Override
         public void remove() {}
     }
 
-    public BlockScannerZoneRandom(int iX, int iY, int iZ, Random iRand, IZone iZone) {
-        x = iX;
-        y = iY;
-        z = iZ;
+    public BlockScannerZoneRandom(BlockPos pos, Random iRand, IZone iZone) {
+        this.pos = pos;
         rand = iRand;
         zone = iZone;
     }

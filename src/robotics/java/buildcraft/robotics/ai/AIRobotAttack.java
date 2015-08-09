@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
 import buildcraft.api.blueprints.BuilderAPI;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.robotics.EntityRobot;
 
 public class AIRobotAttack extends AIRobot {
@@ -47,7 +48,7 @@ public class AIRobotAttack extends AIRobot {
         }
 
         if (robot.getDistanceToEntity(target) > 2.0) {
-            startDelegateAI(new AIRobotGotoBlock(robot, (int) Math.floor(target.posX), (int) Math.floor(target.posY), (int) Math.floor(target.posZ)));
+            startDelegateAI(new AIRobotGotoBlock(robot, Utils.getPos(target)));
             robot.setItemActive(false);
 
             return;
@@ -58,7 +59,7 @@ public class AIRobotAttack extends AIRobot {
         if (delay > 20) {
             delay = 0;
             ((EntityRobot) robot).attackTargetEntityWithCurrentItem(target);
-            robot.aimItemAt((int) Math.floor(target.posX), (int) Math.floor(target.posY), (int) Math.floor(target.posZ));
+            robot.aimItemAt(Utils.getPos(target));
         }
     }
 

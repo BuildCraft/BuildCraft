@@ -2,16 +2,16 @@ package buildcraft.robotics;
 
 import java.util.List;
 
-import net.minecraft.entity.player.EntityPlayer;
+import com.google.common.collect.Lists;
+
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 
 import cofh.api.energy.IEnergyReceiver;
 
-import buildcraft.api.core.render.ITextureStates;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.IDockingStationProvider;
 import buildcraft.api.robots.RobotManager;
@@ -19,11 +19,11 @@ import buildcraft.api.tiles.IDebuggable;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
+import buildcraft.api.transport.pluggable.IPipePluggableState;
 import buildcraft.api.transport.pluggable.IPipePluggableStaticRenderer;
+import buildcraft.api.transport.pluggable.IPipeRenderState;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.utils.MatrixTranformations;
-import buildcraft.transport.BuildCraftTransport;
-import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.TileGenericPipe;
 
 import io.netty.buffer.ByteBuf;
@@ -33,73 +33,103 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
         private float zFightOffset = 1 / 4096.0F;
 
         @Override
-        public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, EnumFacing side, PipePluggable pipePluggable,
-                ITextureStates blockStateMachine, int renderPass, BlockPos pos) {
-            if (renderPass != 0) {
-                return;
-            }
-
-            RobotStationState state = ((RobotStationPluggable) pipePluggable).renderState;
+        public List<BakedQuad> renderStaticPluggable(IPipeRenderState render, IPipePluggableState pluggableState, IPipe pipe, PipePluggable pluggable,
+                EnumFacing face) {
+            List<BakedQuad> quads = Lists.newArrayList();
+            EnumRobotStationState state = ((RobotStationPluggable) pluggable).renderState;
+            // FIXME (RobotStationPluggable)
+            // TextureAtlasSprite sprite = BuildCraftTrans;
 
             switch (state) {
                 case None:
-                case Available:
-                    blockStateMachine.getTextureState().setToStack(BuildCraftTransport.instance.pipeIconProvider.getIcon(
-                            PipeIconProvider.TYPE.PipeRobotStation.ordinal()));
+                case Available: {
+                    // sprite =
+                    // BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeRobotStation.ordinal());
                     break;
-                case Reserved:
-                    blockStateMachine.getTextureState().setToStack(BuildCraftTransport.instance.pipeIconProvider.getIcon(
-                            PipeIconProvider.TYPE.PipeRobotStationReserved.ordinal()));
+                }
+                case Linked: {
+                    // sprite =
                     break;
-                case Linked:
-                    blockStateMachine.getTextureState().setToStack(BuildCraftTransport.instance.pipeIconProvider.getIcon(
-                            PipeIconProvider.TYPE.PipeRobotStationLinked.ordinal()));
+                }
+                case Reserved: {
                     break;
+                }
             }
 
-            float[][] zeroState = new float[3][2];
-            // X START - END
-            zeroState[0][0] = 0.4325F;
-            zeroState[0][1] = 0.5675F;
-            // Y START - END
-            zeroState[1][0] = 0F;
-            zeroState[1][1] = 0.1875F + zFightOffset;
-            // Z START - END
-            zeroState[2][0] = 0.4325F;
-            zeroState[2][1] = 0.5675F;
-
-            float[][] rotated = MatrixTranformations.deepClone(zeroState);
-            MatrixTranformations.transform(rotated, side);
-
-            renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-            renderblocks.renderStandardBlock(blockStateMachine.getBlock(), pos);
-
-            // X START - END
-            zeroState[0][0] = 0.25F;
-            zeroState[0][1] = 0.75F;
-            // Y START - END
-            zeroState[1][0] = 0.1875F;
-            zeroState[1][1] = 0.25F + zFightOffset;
-            // Z START - END
-            zeroState[2][0] = 0.25F;
-            zeroState[2][1] = 0.75F;
-
-            rotated = MatrixTranformations.deepClone(zeroState);
-            MatrixTranformations.transform(rotated, side);
-
-            renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1], rotated[2][1]);
-            renderblocks.renderStandardBlock(blockStateMachine.getBlock(), pos);
+            return quads;
         }
+
+        // @Override
+        // public void renderPluggable(RenderBlocks renderblocks, IPipe pipe, EnumFacing side, PipePluggable
+        // pipePluggable,
+        // ITextureStates blockStateMachine, int renderPass, BlockPos pos) {
+        // if (renderPass != 0) {
+        // return;
+        // }
+        //
+        // EnumRobotStationState state = ((RobotStationPluggable) pipePluggable).renderState;
+        //
+        // switch (state) {
+        // case None:
+        // case Available:
+        // blockStateMachine.getTextureState().setToStack(BuildCraftTransport.instance.pipeIconProvider.getIcon(
+        // PipeIconProvider.TYPE.PipeRobotStation.ordinal()));
+        // break;
+        // case Reserved:
+        // blockStateMachine.getTextureState().setToStack(BuildCraftTransport.instance.pipeIconProvider.getIcon(
+        // PipeIconProvider.TYPE.PipeRobotStationReserved.ordinal()));
+        // break;
+        // case Linked:
+        // blockStateMachine.getTextureState().setToStack(BuildCraftTransport.instance.pipeIconProvider.getIcon(
+        // PipeIconProvider.TYPE.PipeRobotStationLinked.ordinal()));
+        // break;
+        // }
+        //
+        // float[][] zeroState = new float[3][2];
+        // // X START - END
+        // zeroState[0][0] = 0.4325F;
+        // zeroState[0][1] = 0.5675F;
+        // // Y START - END
+        // zeroState[1][0] = 0F;
+        // zeroState[1][1] = 0.1875F + zFightOffset;
+        // // Z START - END
+        // zeroState[2][0] = 0.4325F;
+        // zeroState[2][1] = 0.5675F;
+        //
+        // float[][] rotated = MatrixTranformations.deepClone(zeroState);
+        // MatrixTranformations.transform(rotated, side);
+        //
+        // renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1],
+        // rotated[2][1]);
+        // renderblocks.renderStandardBlock(blockStateMachine.getBlock(), pos);
+        //
+        // // X START - END
+        // zeroState[0][0] = 0.25F;
+        // zeroState[0][1] = 0.75F;
+        // // Y START - END
+        // zeroState[1][0] = 0.1875F;
+        // zeroState[1][1] = 0.25F + zFightOffset;
+        // // Z START - END
+        // zeroState[2][0] = 0.25F;
+        // zeroState[2][1] = 0.75F;
+        //
+        // rotated = MatrixTranformations.deepClone(zeroState);
+        // MatrixTranformations.transform(rotated, side);
+        //
+        // renderblocks.setRenderBounds(rotated[0][0], rotated[1][0], rotated[2][0], rotated[0][1], rotated[1][1],
+        // rotated[2][1]);
+        // renderblocks.renderStandardBlock(blockStateMachine.getBlock(), pos);
+        // }
     }
 
-    public enum RobotStationState {
+    public enum EnumRobotStationState {
         None,
         Available,
         Reserved,
         Linked
     }
 
-    private RobotStationState renderState;
+    private EnumRobotStationState renderState;
     private DockingStationPipe station;
     private boolean isValid = false;
 
@@ -144,8 +174,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
     public void validate(IPipeTile pipe, EnumFacing direction) {
         TileGenericPipe gPipe = (TileGenericPipe) pipe;
         if (!isValid && !gPipe.getWorld().isRemote) {
-            station = (DockingStationPipe) RobotManager.registryProvider.getRegistry(gPipe.getWorld()).getStation(gPipe.xCoord, gPipe.yCoord,
-                    gPipe.zCoord, direction);
+            station = (DockingStationPipe) RobotManager.registryProvider.getRegistry(gPipe.getWorld()).getStation(gPipe.getPos(), direction);
 
             if (station == null) {
                 station = new DockingStationPipe(gPipe, direction);
@@ -174,11 +203,11 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
     }
 
     private void refreshRenderState() {
-        this.renderState = station.isTaken() ? (station.isMainStation() ? RobotStationState.Linked : RobotStationState.Reserved)
-            : RobotStationState.Available;
+        this.renderState = station.isTaken() ? (station.isMainStation() ? EnumRobotStationState.Linked : EnumRobotStationState.Reserved)
+            : EnumRobotStationState.Available;
     }
 
-    public RobotStationState getRenderState() {
+    public EnumRobotStationState getRenderState() {
         return renderState;
     }
 
@@ -200,7 +229,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 
     @Override
     public void readData(ByteBuf data) {
-        this.renderState = RobotStationState.values()[data.readUnsignedByte()];
+        this.renderState = EnumRobotStationState.values()[data.readUnsignedByte()];
     }
 
     @Override
@@ -233,14 +262,14 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
     }
 
     @Override
-    public void getDebugInfo(List<String> info, EnumFacing side, ItemStack debugger, EntityPlayer player) {
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
         if (station == null) {
-            info.add("RobotStationPluggable: No station found!");
+            left.add("RobotStationPluggable: No station found!");
         } else {
             refreshRenderState();
-            info.add("Docking Station (side " + side.name() + ", " + renderState.name() + ")");
+            left.add("Docking Station (side " + side.name() + ", " + renderState.name() + ")");
             if (station.robotTaking() != null && station.robotTaking() instanceof IDebuggable) {
-                ((IDebuggable) station.robotTaking()).getDebugInfo(info, null, debugger, player);
+                ((IDebuggable) station.robotTaking()).getDebugInfo(left, right, side);
             }
         }
     }

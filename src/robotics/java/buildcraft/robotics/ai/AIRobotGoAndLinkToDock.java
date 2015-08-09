@@ -7,6 +7,7 @@ package buildcraft.robotics.ai;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.core.lib.utils.Utils;
 
 public class AIRobotGoAndLinkToDock extends AIRobot {
 
@@ -28,8 +29,7 @@ public class AIRobotGoAndLinkToDock extends AIRobot {
             terminate();
         } else {
             if (station.takeAsMain(robot)) {
-                startDelegateAI(new AIRobotGotoBlock(robot, station.x() + station.side().offsetX * 2, station.y() + station.side().offsetY * 2,
-                        station.z() + station.side().offsetZ * 2));
+                startDelegateAI(new AIRobotGotoBlock(robot, station.getPos().offset(station.side(), 2)));
             } else {
                 setSuccess(false);
                 terminate();
@@ -41,8 +41,7 @@ public class AIRobotGoAndLinkToDock extends AIRobot {
     public void delegateAIEnded(AIRobot ai) {
         if (ai instanceof AIRobotGotoBlock) {
             if (ai.success()) {
-                startDelegateAI(new AIRobotStraightMoveTo(robot, station.x() + 0.5F + station.side().offsetX * 0.5F, station.y() + 0.5F + station
-                        .side().offsetY * 0.5F, station.z() + 0.5F + station.side().offsetZ * 0.5F));
+                startDelegateAI(new AIRobotStraightMoveTo(robot, Utils.convertMiddle(station.getPos()).add(Utils.convert(station.side(), 0.5))));
             } else {
                 terminate();
             }

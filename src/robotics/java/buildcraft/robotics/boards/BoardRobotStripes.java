@@ -16,6 +16,7 @@ import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.robots.ResourceIdBlock;
 import buildcraft.core.lib.inventory.filters.IStackFilter;
 import buildcraft.core.lib.utils.IBlockFilter;
+import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.robotics.ai.AIRobotFetchAndEquipItemStack;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
 import buildcraft.robotics.ai.AIRobotSearchAndGotoBlock;
@@ -47,7 +48,7 @@ public class BoardRobotStripes extends RedstoneBoardRobot {
             startDelegateAI(new AIRobotSearchAndGotoBlock(robot, true, new IBlockFilter() {
                 @Override
                 public boolean matches(World world, BlockPos pos) {
-                    return world.getBlock(pos).isAir(world, pos) && !robot.getRegistry().isTaken(new ResourceIdBlock(pos));
+                    return world.getBlockState(pos).getBlock().isAir(world, pos) && !robot.getRegistry().isTaken(new ResourceIdBlock(pos));
                 }
             }));
         }
@@ -90,9 +91,7 @@ public class BoardRobotStripes extends RedstoneBoardRobot {
         super.writeSelfToNBT(nbt);
 
         if (blockFound != null) {
-            NBTTagCompound sub = new NBTTagCompound();
-            blockFound.writeTo(sub);
-            nbt.setTag("blockFound", sub);
+            nbt.setTag("blockFound", NBTUtils.writeBlockPos(blockFound));
         }
     }
 
@@ -101,7 +100,7 @@ public class BoardRobotStripes extends RedstoneBoardRobot {
         super.loadSelfFromNBT(nbt);
 
         if (nbt.hasKey("blockFound")) {
-            blockFound = new BlockPos(nbt.getCompoundTag("blockFound"));
+            blockFound = NBTUtils.readBlockPos(nbt.getTag("blockFound"));
         }
     }
 }

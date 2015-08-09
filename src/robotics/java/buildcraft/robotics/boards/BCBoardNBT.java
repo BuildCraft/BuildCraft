@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -71,13 +72,13 @@ public class BCBoardNBT extends RedstoneBoardRobotNBT {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        icon = iconRegister.registerIcon("buildcraftrobotics:board/" + boardType);
+    public void registerSprites(TextureMap iconRegister) {
+        icon = iconRegister.registerSprite(new ResourceLocation("buildcraftrobotics:board/" + boardType));
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public TextureAtlasSprite getIcon(NBTTagCompound nbt) {
+    public TextureAtlasSprite getSprite(NBTTagCompound nbt) {
         return icon;
     }
 

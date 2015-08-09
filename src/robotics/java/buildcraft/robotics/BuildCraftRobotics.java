@@ -42,14 +42,15 @@ import buildcraft.core.BCCreativeTab;
 import buildcraft.core.BuildCraftCore;
 import buildcraft.core.BuildCraftMod;
 import buildcraft.core.CompatHooks;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
+import buildcraft.core.Version;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.network.EntityIds;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.robotics.ai.*;
 import buildcraft.robotics.block.BlockRequester;
 import buildcraft.robotics.block.BlockZonePlan;
-import buildcraft.robotics.block.BoardProgrammingRecipe;
 import buildcraft.robotics.boards.*;
 import buildcraft.robotics.item.ItemRedstoneBoard;
 import buildcraft.robotics.item.ItemRobot;
@@ -62,8 +63,8 @@ import buildcraft.robotics.tile.TileZonePlan;
 import buildcraft.silicon.BuildCraftSilicon;
 import buildcraft.silicon.item.ItemRedstoneChipset;
 
-// @Mod(name = "BuildCraft Robotics", version = Version.VERSION, useMetadata = false, modid = "BuildCraftRobotics",
-// dependencies = DefaultProps.DEPENDENCY_CORE)
+@Mod(name = "BuildCraft Robotics", version = Version.VERSION, useMetadata = false, modid = "BuildCraftRobotics",
+        dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftRobotics extends BuildCraftMod {
     @Mod.Instance("BuildCraft|Robotics")
     public static BuildCraftRobotics instance;
@@ -299,9 +300,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void textureHook(TextureStitchEvent.Pre event) {
-        if (event.map.getTextureType() == 1) {
-            RedstoneBoardRegistry.instance.registerIcons(event.map);
-        }
+        RedstoneBoardRegistry.instance.registerIcons(event.map);
     }
 
     @Mod.EventHandler

@@ -7,11 +7,14 @@ package buildcraft.robotics.ai;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.MathHelper;
 
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.Utils;
 
 public class AIRobotGotoStation extends AIRobot {
 
@@ -32,7 +35,7 @@ public class AIRobotGotoStation extends AIRobot {
 
     @Override
     public void start() {
-        DockingStation station = robot.getRegistry().getStation(stationIndex.x, stationIndex.y, stationIndex.z, stationSide);
+        DockingStation station = robot.getRegistry().getStation(stationIndex, stationSide);
 
         if (station == null) {
             terminate();
@@ -41,8 +44,7 @@ public class AIRobotGotoStation extends AIRobot {
             terminate();
         } else {
             if (station.take(robot)) {
-                startDelegateAI(new AIRobotGotoBlock(robot, station.x() + station.side().offsetX, station.y() + station.side().offsetY, station.z()
-                    + station.side().offsetZ));
+                startDelegateAI(new AIRobotGotoBlock(robot, station.getPos().offset(stationSide)));
             } else {
                 terminate();
             }
@@ -51,17 +53,16 @@ public class AIRobotGotoStation extends AIRobot {
 
     @Override
     public void delegateAIEnded(AIRobot ai) {
-        DockingStation station = robot.getRegistry().getStation(stationIndex.x, stationIndex.y, stationIndex.z, stationSide);
+        DockingStation station = robot.getRegistry().getStation(stationIndex, stationSide);
 
         if (station == null) {
             terminate();
         } else if (ai instanceof AIRobotGotoBlock) {
-            startDelegateAI(new AIRobotStraightMoveTo(robot, stationIndex.x + 0.5F + stationSide.offsetX * 0.5F, stationIndex.y + 0.5F
-                + stationSide.offsetY * 0.5F, stationIndex.z + 0.5F + stationSide.offsetZ * 0.5F));
+            startDelegateAI(new AIRobotStraightMoveTo(robot, Utils.convertMiddle(stationIndex).add(Utils.convert(stationSide, 0.5))));
         } else {
             setSuccess(true);
-            if (stationSide.offsetY == 0) {
-                robot.aimItemAt(stationIndex.x + 2 * stationSide.offsetX, stationIndex.y, stationIndex.z + 2 * stationSide.offsetZ);
+            if (stationSide.getAxis() != Axis.Y) {
+                robot.aimItemAt(stationIndex.offset(stationSide, 2));
             } else {
                 robot.aimItemAt(MathHelper.floor_float(robot.getAimYaw() / 90f) * 90f + 180f, robot.getAimPitch());
             }
@@ -77,15 +78,13 @@ public class AIRobotGotoStation extends AIRobot {
 
     @Override
     public void writeSelfToNBT(NBTTagCompound nbt) {
-        NBTTagCompound indexNBT = new NBTTagCompound();
-        stationIndex.writeTo(indexNBT);
-        nbt.setTag("stationIndex", indexNBT);
+        nbt.setTag("stationIndex", NBTUtils.writeBlockPos(stationIndex));
         nbt.setByte("stationSide", (byte) stationSide.ordinal());
     }
 
     @Override
     public void loadSelfFromNBT(NBTTagCompound nbt) {
-        stationIndex = new BlockPos(nbt.getCompoundTag("stationIndex"));
+        stationIndex = NBTUtils.readBlockPos(nbt.getTag("stationIndex"));
         stationSide = EnumFacing.values()[nbt.getByte("stationSide")];
     }
 }

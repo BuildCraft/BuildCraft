@@ -59,11 +59,12 @@ public class AIRobotSearchRandomGroundBlock extends AIRobot {
             z = (int) (MathHelper.sin(a) * r + Math.floor(robot.posZ));
         } else {
             BlockPos b = zone.getRandomBlockPos(robot.worldObj.rand);
-            x = b.x;
-            z = b.z;
+            x = b.getX();
+            z = b.getZ();
         }
 
-        for (int y = robot.worldObj.getHeight(); y >= 0; --y) {
+        BlockPos pos = new BlockPos(x, robot.worldObj.getHeight(), z);
+        for (; pos.getY() >= 0; pos = pos.down()) {
             if (filter.matches(robot.worldObj, pos)) {
                 blockFound = new BlockPos(pos);
                 terminate();

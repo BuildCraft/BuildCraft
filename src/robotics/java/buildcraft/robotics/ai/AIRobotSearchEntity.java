@@ -10,6 +10,7 @@ import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.IEntityFilter;
+import buildcraft.core.lib.utils.Utils;
 
 public class AIRobotSearchEntity extends AIRobot {
 
@@ -38,7 +39,7 @@ public class AIRobotSearchEntity extends AIRobot {
         for (Object o : robot.worldObj.loadedEntityList) {
             Entity e = (Entity) o;
 
-            if (!e.isDead && filter.matches(e) && (zone == null || zone.contains(e.posX, e.posY, e.posZ)) && (!robot.isKnownUnreachable(e))) {
+            if (!e.isDead && filter.matches(e) && (zone == null || zone.contains(Utils.getVec(e))) && (!robot.isKnownUnreachable(e))) {
                 double dx = e.posX - robot.posX;
                 double dy = e.posY - robot.posY;
                 double dz = e.posZ - robot.posZ;

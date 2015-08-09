@@ -8,7 +8,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.Vec3;
 import net.minecraft.world.WorldServer;
 
 import buildcraft.api.robots.AIRobot;
@@ -18,6 +17,7 @@ import buildcraft.api.transport.IStripesHandler;
 import buildcraft.api.transport.IStripesHandler.StripesHandlerType;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.lib.inventory.InvUtils;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.proxy.CoreProxy;
 
 public class AIRobotStripesHandler extends AIRobot implements IStripesActivator {
@@ -36,7 +36,7 @@ public class AIRobotStripesHandler extends AIRobot implements IStripesActivator 
 
     @Override
     public void start() {
-        robot.aimItemAt(useToBlock.x, useToBlock.y, useToBlock.z);
+        robot.aimItemAt(useToBlock);
         robot.setItemActive(true);
     }
 
@@ -49,15 +49,13 @@ public class AIRobotStripesHandler extends AIRobot implements IStripesActivator 
 
             EnumFacing direction = EnumFacing.NORTH;
 
-            Vec3 p = new Vec3(useToBlock.x, useToBlock.y, useToBlock.z);
-
-            EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj, (int) p.x, (int) p.y, (int) p.z).get();
+            EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj, useToBlock).get();
             player.rotationPitch = 0;
             player.rotationYaw = 180;
 
             for (IStripesHandler handler : PipeManager.stripesHandlers) {
                 if (handler.getType() == StripesHandlerType.ITEM_USE && handler.shouldHandle(stack)) {
-                    if (handler.handle(robot.worldObj, (int) p.x, (int) p.y, (int) p.z, direction, stack, player, this)) {
+                    if (handler.handle(robot.worldObj, useToBlock, direction, stack, player, this)) {
                         robot.setItemInUse(null);
                         terminate();
                         return;
@@ -80,7 +78,7 @@ public class AIRobotStripesHandler extends AIRobot implements IStripesActivator 
 
     @Override
     public void sendItem(ItemStack stack, EnumFacing direction) {
-        InvUtils.dropItems(robot.worldObj, stack, (int) Math.floor(robot.posX), (int) Math.floor(robot.posY), (int) Math.floor(robot.posZ));
+        InvUtils.dropItems(robot.worldObj, stack, Utils.getPos(robot));
     }
 
     @Override

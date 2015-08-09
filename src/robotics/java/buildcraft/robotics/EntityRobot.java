@@ -161,7 +161,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         preventEntitySpawning = false;
         noClip = true;
         isImmuneToFire = true;
-        this.func_110163_bv(); // persistenceRequired = true
+        this.enablePersistence();
 
         dataWatcher.addObject(12, Float.valueOf(0));
         dataWatcher.addObject(13, Float.valueOf(0));
@@ -176,9 +176,10 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     }
 
     protected void updateDataClient() {
-        laser.tail.x = dataWatcher.getWatchableObjectFloat(12);
-        laser.tail.y = dataWatcher.getWatchableObjectFloat(13);
-        laser.tail.z = dataWatcher.getWatchableObjectFloat(14);
+        float x = dataWatcher.getWatchableObjectFloat(12);
+        float y = dataWatcher.getWatchableObjectFloat(13);
+        float z = dataWatcher.getWatchableObjectFloat(14);
+        laser.tail = new Vec3(x, y, z);
         laser.isVisible = dataWatcher.getWatchableObjectByte(15) == 1;
 
         RedstoneBoardNBT<?> boardNBT = RedstoneBoardRegistry.instance.getRedstoneBoard(dataWatcher.getWatchableObjectString(16));
@@ -195,9 +196,9 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     }
 
     protected void updateDataServer() {
-        dataWatcher.updateObject(12, Float.valueOf((float) laser.tail.x));
-        dataWatcher.updateObject(13, Float.valueOf((float) laser.tail.y));
-        dataWatcher.updateObject(14, Float.valueOf((float) laser.tail.z));
+        dataWatcher.updateObject(12, Float.valueOf((float) laser.tail.xCoord));
+        dataWatcher.updateObject(13, Float.valueOf((float) laser.tail.yCoord));
+        dataWatcher.updateObject(14, Float.valueOf((float) laser.tail.zCoord));
         dataWatcher.updateObject(15, Byte.valueOf((byte) (laser.isVisible ? 1 : 0)));
         dataWatcher.updateObject(17, Float.valueOf(itemAngle1));
         dataWatcher.updateObject(18, Float.valueOf(itemAngle2));

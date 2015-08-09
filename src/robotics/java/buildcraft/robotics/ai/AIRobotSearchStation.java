@@ -8,6 +8,7 @@ import buildcraft.api.core.IZone;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.robotics.IStationFilter;
 import buildcraft.robotics.statements.ActionStationForbidRobot;
 
@@ -45,7 +46,7 @@ public class AIRobotSearchStation extends AIRobot {
                 continue;
             }
 
-            if (zone != null && !zone.contains(station.x(), station.y(), station.z())) {
+            if (zone != null && !zone.contains(Utils.convert(station.getPos()))) {
                 continue;
             }
 
@@ -54,10 +55,7 @@ public class AIRobotSearchStation extends AIRobot {
                     continue;
                 }
 
-                double dx = robot.posX - station.x();
-                double dy = robot.posY - station.y();
-                double dz = robot.posZ - station.z();
-                double distance = dx * dx + dy * dy + dz * dz;
+                double distance = Utils.getPos(robot).distanceSq(station.getPos());
 
                 if (potentialStation == null || distance < potentialStationDistance) {
                     potentialStation = station;

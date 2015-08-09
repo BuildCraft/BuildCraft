@@ -2,14 +2,16 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.robotics;
+package buildcraft.robotics.block;
 
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 import buildcraft.core.GuiIds;
@@ -20,8 +22,7 @@ import buildcraft.robotics.tile.TileZonePlan;
 
 public class BlockZonePlan extends BlockBuildCraft {
     public BlockZonePlan() {
-        super(Material.iron);
-        setRotatable(true);
+        super(Material.iron, FACING_PROP);
     }
 
     @Override
@@ -30,33 +31,35 @@ public class BlockZonePlan extends BlockBuildCraft {
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, EntityPlayer entityplayer, int par6, float par7, float par8, float par9) {
-        if (super.onBlockActivated(world, pos, entityplayer, par6, par7, par8, par9)) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer entityplayer, EnumFacing side, float hitX, float hitY,
+            float hitZ) {
+        if (super.onBlockActivated(world, pos, state, entityplayer, side, hitX, hitY, hitZ)) {
             return true;
         }
 
         if (!world.isRemote) {
-            entityplayer.openGui(BuildCraftRobotics.instance, GuiIds.MAP, world, pos);
+            entityplayer.openGui(BuildCraftRobotics.instance, GuiIds.MAP, world, pos.getX(), pos.getY(), pos.getZ());
         }
 
         return true;
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, EntityLivingBase entity, ItemStack stack) {
-        super.onBlockPlacedBy(world, pos, entity, stack);
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase entity, ItemStack stack) {
+        super.onBlockPlacedBy(world, pos, state, entity, stack);
 
         if (!world.isRemote) {
-            int r = TileZonePlan.RESOLUTION >> 4;
+            int radius = TileZonePlan.RESOLUTION >> 4;
 
-            int cox = x >> 4;
-            int coz = z >> 4;
-            MapWorld w = BuildCraftRobotics.manager.getWorld(world);
+            int chunkX = pos.getX() >> 4;
+            int chunkZ = pos.getZ() >> 4;
 
-            for (int cx = -r; cx < r; cx++) {
-                for (int cz = -r; cz < r; cz++) {
-                    int dist = cx * cx + cz * cz;
-                    w.queueChunkForUpdateIfEmpty(cox + cx, coz + cz, dist);
+            MapWorld map = BuildCraftRobotics.manager.getWorld(world);
+
+            for (int checkX = -radius; checkX < radius; checkX++) {
+                for (int checkZ = -radius; checkZ < radius; checkZ++) {
+                    int distance = checkX * checkX + checkZ * checkZ;
+                    map.queueChunkForUpdateIfEmpty(chunkX + checkX, chunkZ + checkZ, distance);
                 }
             }
         }

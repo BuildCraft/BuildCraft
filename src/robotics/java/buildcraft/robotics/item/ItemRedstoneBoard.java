@@ -2,11 +2,10 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.robotics;
+package buildcraft.robotics.item;
 
 import java.util.List;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -32,22 +31,11 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
         return getBoardNBT(stack) != RedstoneBoardRegistry.instance.getEmptyRobotBoard() ? 1 : 16;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
-        RedstoneBoardNBT board = getBoardNBT(stack);
+        RedstoneBoardNBT<?> board = getBoardNBT(stack);
         board.addInformation(stack, player, list, advanced);
-    }
-
-    @Override
-    public TextureAtlasSprite getIconIndex(ItemStack stack) {
-        NBTTagCompound cpt = getNBT(stack);
-        return getBoardNBT(cpt).getIcon(cpt);
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public String[] getIconNames() {
-        return new String[] { "board/clean" };
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -60,14 +48,14 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
         }
     }
 
-    public static ItemStack createStack(RedstoneBoardNBT boardNBT) {
+    public static ItemStack createStack(RedstoneBoardNBT<?> boardNBT) {
         ItemStack stack = new ItemStack(BuildCraftRobotics.redstoneBoard);
         NBTTagCompound nbtData = NBTUtils.getItemData(stack);
         boardNBT.createBoard(nbtData);
         return stack;
     }
 
-    public static RedstoneBoardNBT getBoardNBT(ItemStack stack) {
+    public static RedstoneBoardNBT<?> getBoardNBT(ItemStack stack) {
         return getBoardNBT(getNBT(stack));
     }
 
@@ -79,7 +67,7 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
         return cpt;
     }
 
-    private static RedstoneBoardNBT getBoardNBT(NBTTagCompound cpt) {
+    private static RedstoneBoardNBT<?> getBoardNBT(NBTTagCompound cpt) {
         return RedstoneBoardRegistry.instance.getRedstoneBoard(cpt);
     }
 }

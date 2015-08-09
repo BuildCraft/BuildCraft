@@ -104,7 +104,7 @@ public class BoardRobotPump extends RedstoneBoardRobot {
 
         Block block;
         synchronized (world) {
-            block = world.getBlock(pos);
+            block = world.getBlockState(pos).getBlock();
         }
 
         Fluid fluid = FluidRegistry.lookupFluidForBlock(block);

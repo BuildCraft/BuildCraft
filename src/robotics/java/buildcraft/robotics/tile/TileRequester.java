@@ -2,12 +2,13 @@
  *
  * BuildCraft is distributed under the terms of the Minecraft Mod Public License 1.0, or MMPL. Please check the contents
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
-package buildcraft.robotics;
+package buildcraft.robotics.tile;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.fml.relauncher.Side;
 
 import buildcraft.api.robots.EntityRobotBase;
@@ -86,13 +87,13 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
     }
 
     @Override
-    public String getInventoryName() {
-        return inv.getInventoryName();
+    public IChatComponent getDisplayName() {
+        return inv.getDisplayName();
     }
 
     @Override
-    public boolean hasCustomInventoryName() {
-        return inv.hasCustomInventoryName();
+    public boolean hasCustomName() {
+        return inv.hasCustomName();
     }
 
     @Override
@@ -106,13 +107,13 @@ public class TileRequester extends TileBuildCraft implements IInventory, IReques
     }
 
     @Override
-    public void openInventory() {
-        inv.openInventory();
+    public void openInventory(EntityPlayer player) {
+        inv.openInventory(player);
     }
 
     @Override
-    public void closeInventory() {
-        inv.closeInventory();
+    public void closeInventory(EntityPlayer player) {
+        inv.closeInventory(player);
     }
 
     @Override

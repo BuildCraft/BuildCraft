@@ -41,7 +41,7 @@ public class MapManager implements Runnable {
 
     @SubscribeEvent
     public void chunkLoaded(ChunkEvent.Load event) {
-        MapWorld world = getWorld(event.getChunk().worldObj);
+        MapWorld world = getWorld(event.getChunk().getWorld());
         if (world != null) {
             world.queueChunkForUpdateIfEmpty(event.getChunk().xPosition, event.getChunk().zPosition, 99999);
         }
@@ -49,7 +49,7 @@ public class MapManager implements Runnable {
 
     @SubscribeEvent
     public void blockPlaced(BlockEvent.PlaceEvent placeEvent) {
-        Chunk chunk = placeEvent.world.getChunkFromBlockCoords(placeEvent.x, placeEvent.z);
+        Chunk chunk = placeEvent.world.getChunkFromBlockCoords(placeEvent.pos);
         MapWorld world = getWorld(placeEvent.world);
         if (world != null) {
             world.queueChunkForUpdate(chunk.xPosition, chunk.zPosition, 512);
@@ -58,7 +58,7 @@ public class MapManager implements Runnable {
 
     @SubscribeEvent
     public void blockBroken(BlockEvent.BreakEvent placeEvent) {
-        Chunk chunk = placeEvent.world.getChunkFromBlockCoords(placeEvent.x, placeEvent.z);
+        Chunk chunk = placeEvent.world.getChunkFromBlockCoords(placeEvent.pos);
         MapWorld world = getWorld(placeEvent.world);
         if (world != null) {
             world.queueChunkForUpdate(chunk.xPosition, chunk.zPosition, 512);

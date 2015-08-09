@@ -20,8 +20,9 @@ import buildcraft.robotics.tile.TileZonePlan;
 
 public class RoboticsGuiHandler implements IGuiHandler {
     @Override
-    public Object getClientGuiElement(int id, EntityPlayer player, World world, BlockPos pos) {
-        if (!world.blockExists(pos)) {
+    public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+        BlockPos pos = new BlockPos(x, y, z);
+        if (world.isAirBlock(pos)) {
             return null;
         }
 
@@ -47,9 +48,9 @@ public class RoboticsGuiHandler implements IGuiHandler {
     }
 
     @Override
-    public Object getServerGuiElement(int id, EntityPlayer player, World world, BlockPos pos) {
-
-        if (!world.blockExists(pos)) {
+    public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+        BlockPos pos = new BlockPos(x, y, z);
+        if (world.isAirBlock(pos)) {
             return null;
         }
 

@@ -2,7 +2,7 @@ package buildcraft.robotics.boards;
 
 import java.util.ArrayList;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,6 +17,7 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.core.lib.utils.IBlockFilter;
+import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
 import buildcraft.robotics.ai.AIRobotSearchAndGotoBlock;
 import buildcraft.robotics.statements.ActionRobotFilter;
@@ -24,8 +25,7 @@ import buildcraft.robotics.statements.ActionRobotFilter;
 public abstract class BoardRobotGenericSearchBlock extends RedstoneBoardRobot {
 
     private BlockPos blockFound;
-    private ArrayList<Block> blockFilter = new ArrayList<Block>();
-    private ArrayList<Integer> metaFilter = new ArrayList<Integer>();
+    private ArrayList<IBlockState> blockFilter = new ArrayList<IBlockState>();
 
     public BoardRobotGenericSearchBlock(EntityRobotBase iRobot) {
         super(iRobot);
@@ -81,7 +81,6 @@ public abstract class BoardRobotGenericSearchBlock extends RedstoneBoardRobot {
 
     public final void updateFilter() {
         blockFilter.clear();
-        metaFilter.clear();
 
         for (StatementSlot slot : robot.getLinkedStation().getActiveActions()) {
             if (slot.statement instanceof ActionRobotFilter) {
@@ -91,8 +90,8 @@ public abstract class BoardRobotGenericSearchBlock extends RedstoneBoardRobot {
                         ItemStack stack = param.getItemStack();
 
                         if (stack != null && stack.getItem() instanceof ItemBlock) {
-                            blockFilter.add(((ItemBlock) stack.getItem()).field_150939_a);
-                            metaFilter.add(stack.getItemDamage());
+                            ItemBlock item = (ItemBlock) stack.getItem();
+                            blockFilter.add(item.block.getStateFromMeta(stack.getMetadata()));
                         }
                     }
                 }
@@ -105,15 +104,14 @@ public abstract class BoardRobotGenericSearchBlock extends RedstoneBoardRobot {
             return true;
         }
 
-        Block block;
+        IBlockState state;
         int meta;
         synchronized (world) {
-            block = world.getBlock(pos);
-            meta = world.getBlockMetadata(pos);
+            state = world.getBlockState(pos);
         }
 
-        for (int i = 0; i < blockFilter.size(); ++i) {
-            if (blockFilter.get(i) == block && metaFilter.get(i) == meta) {
+        for (IBlockState filter : blockFilter) {
+            if (filter == state) {
                 return true;
             }
         }
@@ -126,9 +124,7 @@ public abstract class BoardRobotGenericSearchBlock extends RedstoneBoardRobot {
         super.writeSelfToNBT(nbt);
 
         if (blockFound != null) {
-            NBTTagCompound sub = new NBTTagCompound();
-            blockFound.writeTo(sub);
-            nbt.setTag("indexStored", sub);
+            nbt.setTag("indexStored", NBTUtils.writeBlockPos(blockFound));
         }
     }
 
@@ -137,7 +133,7 @@ public abstract class BoardRobotGenericSearchBlock extends RedstoneBoardRobot {
         super.loadSelfFromNBT(nbt);
 
         if (nbt.hasKey("indexStored")) {
-            blockFound = new BlockPos(nbt.getCompoundTag("indexStored"));
+            blockFound = NBTUtils.readBlockPos(nbt.getTag("indexStored"));
         }
     }
 

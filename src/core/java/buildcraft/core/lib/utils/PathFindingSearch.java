@@ -77,7 +77,7 @@ public class PathFindingSearch implements IIterableAlgorithm {
     }
 
     private boolean isTarget(BlockPos block) {
-        if (zone != null && !zone.contains(block.getX(), block.getY(), block.getZ())) {
+        if (zone != null && !zone.contains(Utils.convert(block))) {
             return false;
         }
         if (!pathFound.matches(world, block)) {

@@ -133,7 +133,7 @@ public class Blueprint extends BlueprintBase {
         for (Object o : context.world().loadedEntityList) {
             Entity e = (Entity) o;
 
-            if (context.surroundingBox().contains(e.posX, e.posY, e.posZ)) {
+            if (context.surroundingBox().contains(new Vec3(e.posX, e.posY, e.posZ))) {
                 SchematicEntity s = SchematicRegistry.INSTANCE.createSchematicEntity(e.getClass());
 
                 if (s != null) {

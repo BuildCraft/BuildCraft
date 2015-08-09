@@ -56,7 +56,7 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
             startDelegateAI(new AIRobotSearchRandomGroundBlock(robot, 100, new IBlockFilter() {
                 @Override
                 public boolean matches(World world, BlockPos pos) {
-                    return y < world.getActualHeight() - flyingHeight && !world.isAirBlock(pos);
+                    return pos.getY() < world.getActualHeight() - flyingHeight && !world.isAirBlock(pos);
                 }
             }, robot.getZoneToWork()));
         }
@@ -72,7 +72,7 @@ public class BoardRobotBomber extends RedstoneBoardRobot {
             if (ai.success()) {
                 AIRobotSearchRandomGroundBlock aiFind = (AIRobotSearchRandomGroundBlock) ai;
 
-                startDelegateAI(new AIRobotGotoBlock(robot, aiFind.blockFound.x, aiFind.blockFound.y + flyingHeight, aiFind.blockFound.z));
+                startDelegateAI(new AIRobotGotoBlock(robot, aiFind.blockFound));
             } else {
                 startDelegateAI(new AIRobotGotoSleep(robot));
             }

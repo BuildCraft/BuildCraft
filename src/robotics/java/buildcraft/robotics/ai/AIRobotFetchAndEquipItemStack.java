@@ -73,7 +73,7 @@ public class AIRobotFetchAndEquipItemStack extends AIRobot {
             ItemStack itemFound = null;
 
             for (EnumFacing dir : EnumFacing.VALUES) {
-                TileEntity nearbyTile = robot.worldObj.getTileEntity(station.x() + dir.offsetX, station.y() + dir.offsetY, station.z() + dir.offsetZ);
+                TileEntity nearbyTile = robot.worldObj.getTileEntity(station.getPos().offset(dir));
 
                 if (nearbyTile != null && nearbyTile instanceof IInventory) {
                     ITransactor trans = Transactor.getTransactorFor(nearbyTile);

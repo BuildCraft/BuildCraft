@@ -45,6 +45,7 @@ public final class TextureStateManager implements ITextureStateManager {
         return textureArray != null;
     }
 
+    @Override
     public void set(TextureAtlasSprite icon) {
         currentTexture = icon;
     }

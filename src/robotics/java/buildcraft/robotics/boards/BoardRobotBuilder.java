@@ -18,6 +18,7 @@ import buildcraft.builders.tile.TileConstructionMarker;
 import buildcraft.core.builders.BuildingItem;
 import buildcraft.core.builders.BuildingSlot;
 import buildcraft.core.lib.inventory.filters.ArrayStackFilter;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.robotics.ai.AIRobotDisposeItems;
 import buildcraft.robotics.ai.AIRobotGotoBlock;
 import buildcraft.robotics.ai.AIRobotGotoSleep;
@@ -115,8 +116,7 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
             if (!hasEnoughEnergy()) {
                 startDelegateAI(new AIRobotRecharge(robot));
             } else {
-                startDelegateAI(new AIRobotGotoBlock(robot, (int) currentBuildingSlot.getDestination().x, (int) currentBuildingSlot
-                        .getDestination().y, (int) currentBuildingSlot.getDestination().z, 8));
+                startDelegateAI(new AIRobotGotoBlock(robot, Utils.convertFloor(currentBuildingSlot.getDestination()), 8));
             }
             // TODO: take into account cases where the robot can't reach the
             // destination - go to work on another block
@@ -172,19 +172,19 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
         IZone zone = robot.getZoneToWork();
 
         for (TileConstructionMarker marker : TileConstructionMarker.currentMarkers) {
-            if (marker.getWorldObj() != robot.worldObj) {
+            if (marker.getWorld() != robot.worldObj) {
                 continue;
             }
             if (!marker.needsToBuild()) {
                 continue;
             }
-            if (zone != null && !zone.contains(marker.xCoord, marker.yCoord, marker.zCoord)) {
+            if (zone != null && !zone.contains(Utils.convert(marker.getPos()))) {
                 continue;
             }
 
-            double dx = robot.posX - marker.xCoord;
-            double dy = robot.posY - marker.yCoord;
-            double dz = robot.posZ - marker.zCoord;
+            double dx = robot.posX - marker.getPos().getX();
+            double dy = robot.posY - marker.getPos().getY();
+            double dz = robot.posZ - marker.getPos().getZ();
             double distance = dx * dx + dy * dy + dz * dz;
 
             if (distance < minDistance) {

@@ -5,12 +5,13 @@
 package buildcraft.api.core.render;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 
 public interface ITextureStates extends ICullable {
 
     ITextureStateManager getTextureState();
 
-    // TextureAtlasSprite getIcon(int side, int meta);
+    TextureAtlasSprite getIcon(int side, int meta);
 
     Block getBlock();
 

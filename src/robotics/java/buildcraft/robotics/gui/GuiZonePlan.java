@@ -4,6 +4,7 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics.gui;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -110,8 +111,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
         getContainer().currentAreaSelection = new ZonePlan();
 
-        cx = zonePlan.xCoord;
-        cz = zonePlan.zCoord;
+        cx = zonePlan.chunkStartX;
+        cz = zonePlan.chunkStartZ;
 
         resetNullSlots(16);
 
@@ -145,7 +146,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 
         savedButtonList = buttonList;
 
-        textField = new GuiTextField(this.fontRendererObj, 28, 129, 156, 12);
+        textField = new GuiTextField(1, this.fontRendererObj, 28, 129, 156, 12);
         textField.setMaxStringLength(DefaultProps.MAX_NAME_SIZE);
         textField.setText(zonePlan.mapName);
         textField.setFocused(true);
@@ -229,7 +230,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
     }
 
     @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
 
         textField.mouseClicked(mouseX - guiLeft, mouseY - guiTop, mouseButton);
@@ -342,7 +343,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
     }
 
     @Override
-    protected void keyTyped(char carac, int val) {
+    protected void keyTyped(char carac, int val) throws IOException {
         if (!isFullscreen() && textField.isFocused()) {
             if (carac == 13 || carac == 27) {
                 textField.setFocused(false);
@@ -441,7 +442,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
     }
 
     @Override
-    public void handleMouseInput() {
+    public void handleMouseInput() throws IOException {
         super.handleMouseInput();
 
         int mouseX = Mouse.getEventX() * this.width / this.mc.displayWidth;

@@ -6,7 +6,6 @@ import java.util.List;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldServer;
 
 import buildcraft.api.core.BuildCraftAPI;
@@ -14,6 +13,8 @@ import buildcraft.api.crops.CropManager;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.lib.utils.BlockUtils;
+import buildcraft.core.lib.utils.NBTUtils;
+import buildcraft.core.lib.utils.Utils;
 
 public class AIRobotHarvest extends AIRobot {
 
@@ -38,20 +39,19 @@ public class AIRobotHarvest extends AIRobot {
         }
 
         if (delay++ > 20) {
-            if (!BuildCraftAPI.getWorldProperty("harvestable").get(robot.worldObj, blockFound.x, blockFound.y, blockFound.z)) {
+            if (!BuildCraftAPI.getWorldProperty("harvestable").get(robot.worldObj, blockFound)) {
                 setSuccess(false);
                 terminate();
                 return;
             }
             List<ItemStack> drops = new ArrayList<ItemStack>();
-            if (!CropManager.harvestCrop(robot.worldObj, blockFound.x, blockFound.y, blockFound.z, drops)) {
+            if (!CropManager.harvestCrop(robot.worldObj, blockFound, drops)) {
                 setSuccess(false);
                 terminate();
                 return;
             }
             for (ItemStack stack : drops) {
-                BlockUtils.dropItem((WorldServer) robot.worldObj, MathHelper.floor_double(robot.posX), MathHelper.floor_double(robot.posY), MathHelper
-                        .floor_double(robot.posZ), 6000, stack);
+                BlockUtils.dropItem((WorldServer) robot.worldObj, Utils.getPos(robot), 6000, stack);
             }
         }
     }
@@ -61,9 +61,7 @@ public class AIRobotHarvest extends AIRobot {
         super.writeSelfToNBT(nbt);
 
         if (blockFound != null) {
-            NBTTagCompound sub = new NBTTagCompound();
-            blockFound.writeTo(sub);
-            nbt.setTag("blockFound", sub);
+            nbt.setTag("blockFound", NBTUtils.writeBlockPos(blockFound));
         }
     }
 
@@ -72,7 +70,7 @@ public class AIRobotHarvest extends AIRobot {
         super.loadSelfFromNBT(nbt);
 
         if (nbt.hasKey("blockFound")) {
-            blockFound = new BlockPos(nbt.getCompoundTag("blockFound"));
+            blockFound = NBTUtils.readBlockPos(nbt.getTag("blockFound"));
         }
     }
 }
