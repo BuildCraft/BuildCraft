@@ -20,6 +20,7 @@ public class ActionStationRequestItems extends ActionStationInputItems {
 
     public ActionStationRequestItems() {
         super("buildcraft:station.request_items");
+        setLocation("buildcraftrobotics:triggers/action_station_request_items");
     }
 
     @Override
@@ -27,10 +28,10 @@ public class ActionStationRequestItems extends ActionStationInputItems {
         return StringUtils.localize("gate.action.station.request_items");
     }
 
-    @Override
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_station_request_items");
-    }
+    // @Override
+    // public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
+    // icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_station_request_items");
+    // }
 
     @Override
     public int maxParameters() {

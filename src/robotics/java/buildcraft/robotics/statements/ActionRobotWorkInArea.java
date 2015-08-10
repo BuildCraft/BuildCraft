@@ -36,17 +36,17 @@ public class ActionRobotWorkInArea extends BCStatement implements IActionInterna
             return "gate.action.robot." + name;
         }
 
-        public String getIcon() {
+        public String getSpriteLocation() {
             return "buildcraftrobotics:triggers/action_robot_" + name;
         }
     }
 
     private AreaType areaType;
 
-    public ActionRobotWorkInArea(AreaType iAreaType) {
-        super(iAreaType.getTag());
-
-        areaType = iAreaType;
+    public ActionRobotWorkInArea(AreaType areaType) {
+        super(areaType.getTag());
+        setLocation(areaType.getSpriteLocation());
+        this.areaType = areaType;
     }
 
     @Override
@@ -54,10 +54,10 @@ public class ActionRobotWorkInArea extends BCStatement implements IActionInterna
         return StringUtils.localize(areaType.getUnlocalizedName());
     }
 
-    @Override
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        icon = iconRegister.registerIcon(areaType.getIcon());
-    }
+    // @Override
+    // public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
+    // icon = iconRegister.registerIcon(areaType.getIcon());
+    // }
 
     public static IZone getArea(StatementSlot slot) {
         if (slot.parameters[0] == null) {

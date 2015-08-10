@@ -33,7 +33,7 @@ archivesBaseName = "buildcraft" // the name that all artifacts will use as a bas
 
 minecraft {
     mappings = "stable_16"
-    version = "1.8-11.14.3.1486" // McVersion-ForgeVersion     this variable is later changed to contain only the MC version, while the apiVersion variable is used for the forge version.  Yeah its stupid, and will be changed eventually.
+    version = "1.8-11.14.3.1502" // McVersion-ForgeVersion     this variable is later changed to contain only the MC version, while the apiVersion variable is used for the forge version.  Yeah its stupid, and will be changed eventually.
 
     runDir = "run" // the directory for ForgeGradle to run Minecraft in
 
@@ -79,16 +79,16 @@ task deobfJar(type: Jar) {
 // module section
 // --------------------
 
-ext.modules = [ "api", "core", "builders", "energy", "factory", "robotics", "silicon", "transport" ]
+ext.modules = [ "api", "core", "builders", "energy", "factory", "transport", "silicon", "robotics" ]
 ext.moduleDependencies = [  
                                 "api":[],
                                 "core":["api"],
                                 "builders":["api", "core"],
                                 "energy": ["api", "core"],
                                 "factory": ["api", "core"],
-                                "robotics": ["api", "core"],
+                                "transport": ["api", "core"],
                                 "silicon": ["api", "core"],
-                                "transport": ["api", "core"]
+                                "robotics": ["api", "core", "transport"]
                         ]
 
 println "modules:"

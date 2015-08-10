@@ -78,6 +78,10 @@ public abstract class BCStatement implements IStatement {
         return null;
     }
 
+    protected void setLocation(String newLocation) {
+        location = new ResourceLocation(newLocation);
+    }
+
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
     public void stitchTextures(TextureStitchEvent.Pre event) {

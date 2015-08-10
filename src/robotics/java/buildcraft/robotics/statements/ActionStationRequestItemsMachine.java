@@ -14,6 +14,7 @@ public class ActionStationRequestItemsMachine extends BCStatement implements IAc
 
     public ActionStationRequestItemsMachine() {
         super("buildcraft:station.provide_machine_request");
+        setLocation("buildcraftrobotics:triggers/action_station_machine_request");
     }
 
     @Override
@@ -21,10 +22,10 @@ public class ActionStationRequestItemsMachine extends BCStatement implements IAc
         return StringUtils.localize("gate.action.station.provide_machine_request");
     }
 
-    @Override
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_station_machine_request");
-    }
+    // @Override
+    // public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
+    // icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_station_machine_request");
+    // }
 
     @Override
     public void actionActivate(IStatementContainer source, IStatementParameter[] parameters) {

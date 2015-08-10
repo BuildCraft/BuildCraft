@@ -19,6 +19,7 @@ public class TriggerRobotSleep extends BCStatement implements ITriggerInternal {
 
     public TriggerRobotSleep() {
         super("buildcraft:robot.sleep");
+        setLocation("buildcraftrobotics:triggers/trigger_robot_sleep");
     }
 
     @Override
@@ -26,10 +27,10 @@ public class TriggerRobotSleep extends BCStatement implements ITriggerInternal {
         return StringUtils.localize("gate.trigger.robot.sleep");
     }
 
-    @Override
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        icon = iconRegister.registerIcon("buildcraftrobotics:triggers/trigger_robot_sleep");
-    }
+    // @Override
+    // public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
+    // icon = iconRegister.registerIcon("buildcraftrobotics:triggers/trigger_robot_sleep");
+    // }
 
     @Override
     public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {

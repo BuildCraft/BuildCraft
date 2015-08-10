@@ -129,7 +129,7 @@ public class ContainerZonePlan extends BuildCraftContainer implements ICommandRe
                 int iz = z - (map.chunkStartZ << 4);
 
                 if (ix >= 0 && iz >= 0 && ix < TileZonePlan.RESOLUTION && iz < TileZonePlan.RESOLUTION) {
-                    textureData[i + j * width] = (byte) BuildCraftRobotics.manager.getWorld(map.getWorldObj()).getColor(x, z);
+                    textureData[i + j * width] = (byte) BuildCraftRobotics.manager.getWorld(map.getWorld()).getColor(x, z);
                 }
             }
         }

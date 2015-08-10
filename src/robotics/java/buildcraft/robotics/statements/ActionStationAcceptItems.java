@@ -21,6 +21,7 @@ public class ActionStationAcceptItems extends ActionStationInputItems {
 
     public ActionStationAcceptItems() {
         super("buildcraft:station.accept_items");
+        setLocation("buildcraftrobotics:triggers/action_station_accept_items");
         StatementManager.statements.put("buildcraft:station.drop_in_pipe", this);
     }
 
@@ -29,10 +30,10 @@ public class ActionStationAcceptItems extends ActionStationInputItems {
         return StringUtils.localize("gate.action.station.accept_items");
     }
 
-    @Override
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_station_accept_items");
-    }
+    // @Override
+    // public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
+    // icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_station_accept_items");
+    // }
 
     @Override
     public int maxParameters() {

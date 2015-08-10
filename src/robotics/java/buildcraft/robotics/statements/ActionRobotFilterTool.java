@@ -25,6 +25,7 @@ public class ActionRobotFilterTool extends BCStatement implements IActionInterna
 
     public ActionRobotFilterTool() {
         super("buildcraft:robot.work_filter_tool");
+        setLocation("buildcraftrobotics:triggers/action_robot_filter_tool");
     }
 
     @Override
@@ -32,10 +33,10 @@ public class ActionRobotFilterTool extends BCStatement implements IActionInterna
         return StringUtils.localize("gate.action.robot.filter_tool");
     }
 
-    @Override
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_robot_filter_tool");
-    }
+    // @Override
+    // public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
+    // icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_robot_filter_tool");
+    // }
 
     @Override
     public int minParameters() {

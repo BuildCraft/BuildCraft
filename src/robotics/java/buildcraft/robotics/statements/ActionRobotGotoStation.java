@@ -29,6 +29,7 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 
     public ActionRobotGotoStation() {
         super("buildcraft:robot.goto_station");
+        setLocation("buildcraftrobotics:triggers/action_robot_goto_station");
     }
 
     @Override
@@ -36,14 +37,14 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
         return StringUtils.localize("gate.action.robot.goto_station");
     }
 
-    @Override
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_robot_goto_station");
-    }
+    // @Override
+    // public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
+    // icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_robot_goto_station");
+    // }
 
     @Override
     public void actionActivate(IStatementContainer container, IStatementParameter[] parameters) {
-        IRobotRegistry registry = RobotManager.registryProvider.getRegistry(container.getTile().getWorldObj());
+        IRobotRegistry registry = RobotManager.registryProvider.getRegistry(container.getTile().getWorld());
 
         List<DockingStation> stations = RobotUtils.getStations(container.getTile());
 
@@ -76,7 +77,7 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 
             if (index != null) {
                 EnumFacing side = map.getPointSide(item);
-                DockingStation paramStation = registry.getStation(index.x, index.y, index.z, side);
+                DockingStation paramStation = registry.getStation(index, side);
 
                 if (paramStation != null) {
                     return paramStation;

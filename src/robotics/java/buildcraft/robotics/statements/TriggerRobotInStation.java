@@ -19,6 +19,7 @@ public class TriggerRobotInStation extends BCStatement implements ITriggerIntern
 
     public TriggerRobotInStation() {
         super("buildcraft:robot.in.station");
+        setLocation("buildcraftrobotics:triggers/trigger_robot_in_station");
     }
 
     @Override
@@ -26,10 +27,10 @@ public class TriggerRobotInStation extends BCStatement implements ITriggerIntern
         return StringUtils.localize("gate.trigger.robot.in.station");
     }
 
-    @Override
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        icon = iconRegister.registerIcon("buildcraftrobotics:triggers/trigger_robot_in_station");
-    }
+    // @Override
+    // public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
+    // icon = iconRegister.registerIcon("buildcraftrobotics:triggers/trigger_robot_in_station");
+    // }
 
     @Override
     public boolean isTriggerActive(IStatementContainer container, IStatementParameter[] parameters) {

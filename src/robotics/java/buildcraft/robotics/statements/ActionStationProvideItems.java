@@ -15,6 +15,7 @@ public class ActionStationProvideItems extends BCStatement implements IActionInt
 
     public ActionStationProvideItems() {
         super("buildcraft:station.provide_items");
+        setLocation("buildcraftrobotics:triggers/action_station_provide_items");
     }
 
     @Override
@@ -22,10 +23,10 @@ public class ActionStationProvideItems extends BCStatement implements IActionInt
         return StringUtils.localize("gate.action.station.provide_items");
     }
 
-    @Override
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_station_provide_items");
-    }
+    // @Override
+    // public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
+    // icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_station_provide_items");
+    // }
 
     @Override
     public int maxParameters() {

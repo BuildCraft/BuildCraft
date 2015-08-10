@@ -14,6 +14,7 @@ public class ActionRobotWakeUp extends BCStatement implements IActionInternal {
 
     public ActionRobotWakeUp() {
         super("buildcraft:robot.wakeup");
+        setLocation("buildcraftrobotics:triggers/action_robot_wakeup");
     }
 
     @Override
@@ -21,10 +22,10 @@ public class ActionRobotWakeUp extends BCStatement implements IActionInternal {
         return StringUtils.localize("gate.action.robot.wakeup");
     }
 
-    @Override
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_robot_wakeup");
-    }
+    // @Override
+    // public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
+    // icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_robot_wakeup");
+    // }
 
     @Override
     public void actionActivate(IStatementContainer source, IStatementParameter[] parameters) {

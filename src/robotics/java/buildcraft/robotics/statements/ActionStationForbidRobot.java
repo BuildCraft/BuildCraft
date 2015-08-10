@@ -22,6 +22,7 @@ public class ActionStationForbidRobot extends BCStatement implements IActionInte
 
     public ActionStationForbidRobot(boolean invert) {
         super("buildcraft:station." + (invert ? "force" : "forbid") + "_robot");
+        setLocation("buildcraftrobotics:triggers/action_station_robot_" + (invert ? "mandatory" : "forbidden"));
         this.invert = invert;
     }
 
@@ -30,10 +31,11 @@ public class ActionStationForbidRobot extends BCStatement implements IActionInte
         return StringUtils.localize("gate.action.station." + (invert ? "force" : "forbid") + "_robot");
     }
 
-    @Override
-    public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
-        icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_station_robot_" + (invert ? "mandatory" : "forbidden"));
-    }
+    // @Override
+    // public void registerIcons(TextureAtlasSpriteRegister iconRegister) {
+    // icon = iconRegister.registerIcon("buildcraftrobotics:triggers/action_station_robot_" + (invert ? "mandatory" :
+    // "forbidden"));
+    // }
 
     @Override
     public int minParameters() {
