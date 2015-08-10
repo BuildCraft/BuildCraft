@@ -18,9 +18,6 @@ import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.engines.TileEngineBase;
 
 public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
-
-	private boolean hasSent = false;
-
 	@Override
 	public String getResourcePrefix() {
 		return "buildcraftcore:textures/blocks/engineWood";
@@ -126,18 +123,12 @@ public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
 
 	@Override
 	protected void sendPower() {
-		if (progressPart == 2 && !hasSent) {
-			hasSent = true;
-			
-			TileEntity tile = getTile(orientation);
+		TileEntity tile = getTile(orientation);
 
-			if (tile instanceof IRedstoneEngineReceiver && ((IRedstoneEngineReceiver) tile).canConnectRedstoneEngine(orientation.getOpposite())) {
-				super.sendPower();
-			} else {
-				this.energy = 0;
-			}
-		} else if (progressPart != 2) {
-			hasSent = false;
+		if (tile instanceof IRedstoneEngineReceiver && ((IRedstoneEngineReceiver) tile).canConnectRedstoneEngine(orientation.getOpposite())) {
+			super.sendPower();
+		} else {
+			this.energy = 0;
 		}
 	}
 }

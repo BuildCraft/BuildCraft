@@ -13,6 +13,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -32,13 +33,13 @@ import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TravelingItem;
 
 public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHandler {
-	protected RFBattery battery = new RFBattery(2560, 80, 0);
+	protected RFBattery battery = new RFBattery(2560, 640, 0);
 	
 	protected int standardIconIndex = PipeIconProvider.TYPE.PipeItemsWood_Standard.ordinal();
 	protected int solidIconIndex = PipeIconProvider.TYPE.PipeAllWood_Solid.ordinal();
 	protected float speedMultiplier = 1.0F;
 
-	private int ticksSincePull = 0;
+	private int cooldown = 0;
 	
 	private PipeLogicWood logic = new PipeLogicWood(this) {
 		@Override
@@ -103,49 +104,23 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 			return;
 		}
 
-		ticksSincePull++;
-		
+		if (cooldown > 0) {
+			cooldown--;
+		}
+
 		if (shouldTick()) {
 			if (transport.getNumberOfStacks() < PipeTransportItems.MAX_PIPE_STACKS) {
 				extractItems();
 			}
 
 			battery.setEnergy(0);
-			ticksSincePull = 0;
+			cooldown = 5;
 			speedMultiplier = 1.0F;
 		}
 	}
 	
 	private boolean shouldTick() {
-		if (ticksSincePull < 8) {
-			return false;
-		} else {
-			// Check if we have just enough energy for the next stack.
-			int meta = container.getBlockMetadata();
-
-			if (meta <= 5) {
-				ForgeDirection side = ForgeDirection.getOrientation(meta);
-				TileEntity tile = container.getTile(side);
-
-				if (tile instanceof IInventory) {
-					int stackSize = 0;
-					IInventory inventory = (IInventory) tile;
-					ItemStack[] extracted = checkExtract(inventory, false, side.getOpposite());
-					if (extracted != null) {
-						for (ItemStack s : extracted) {
-							stackSize += s.stackSize;
-						}
-					}
-
-					if (battery.getEnergyStored() >= stackSize * 10) {
-						return true;
-					}
-				}
-			}
-
-		}
-
-		return ticksSincePull >= 16 && battery.getEnergyStored() >= 10;
+		return cooldown == 0;
 	}
 
 	private void extractItems() {
@@ -262,5 +237,23 @@ public class PipeItemsWood extends Pipe<PipeTransportItems> implements IEnergyHa
 	@Override
 	public int getMaxEnergyStored(ForgeDirection from) {
 		return battery.getMaxEnergyStored();
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound nbt) {
+		super.writeToNBT(nbt);
+		if (cooldown > 0) {
+			nbt.setByte("cool", (byte) cooldown);
+		}
+	}
+
+	@Override
+	public void readFromNBT(NBTTagCompound nbt) {
+		super.readFromNBT(nbt);
+		if (nbt.hasKey("cool")) {
+			cooldown = nbt.getByte("cool");
+		} else {
+			cooldown = 0;
+		}
 	}
 }

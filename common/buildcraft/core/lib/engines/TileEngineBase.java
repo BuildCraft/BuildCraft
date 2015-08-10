@@ -239,6 +239,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 
 			if (progress > 0.5 && progressPart == 1) {
 				progressPart = 2;
+				sendPower(); // Comment out for constant power
 			} else if (progress >= 1) {
 				progress = 0;
 				progressPart = 0;
@@ -261,12 +262,13 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 		}
 
 		burn();
-		
-		if (!isRedstonePowered) {
-			currentOutput = 0;
-		} else if (isRedstonePowered && isActive()) {
-			sendPower();
-		}
+
+		// Uncomment for constant power
+		// if (!isRedstonePowered) {
+		//	currentOutput = 0;
+		// } else if (isRedstonePowered && isActive()) {
+		//	sendPower();
+		// }
 	}
 
 	public Object getEnergyProvider(ForgeDirection orientation) {
@@ -277,12 +279,12 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 		Object tile = getEnergyProvider(orientation);
 
         if (tile instanceof IEngine) {
-            IEngine engine = (IEngine) tile;
+			IEngine engine = (IEngine) tile;
 
-            int maxEnergy = engine.receiveEnergyFromEngine(
-                    orientation.getOpposite(),
-                    this.energy, true);
-            return extractEnergy(maxEnergy, false);
+			int maxEnergy = engine.receiveEnergyFromEngine(
+					orientation.getOpposite(),
+					this.energy, true);
+			return extractEnergy(maxEnergy, false);
         } else if (tile instanceof IEnergyHandler) {
 			IEnergyHandler handler = (IEnergyHandler) tile;
 

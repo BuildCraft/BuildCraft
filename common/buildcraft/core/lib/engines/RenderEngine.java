@@ -21,6 +21,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftCore.RenderMode;
 import buildcraft.core.lib.render.IInventoryRenderer;
+import buildcraft.core.proxy.CoreProxy;
 
 public class RenderEngine extends TileEntitySpecialRenderer implements IInventoryRenderer {
 
@@ -92,7 +93,7 @@ public class RenderEngine extends TileEntitySpecialRenderer implements IInventor
 
 	@Override
 	public void renderTileEntityAt(TileEntity tileentity, double x, double y, double z, float f) {
-		TileEngineBase engine = (TileEngineBase) tileentity;
+		TileEngineBase engine = (TileEngineBase) CoreProxy.proxy.getServerTile(tileentity);
 
 		if (engine != null) {
 			render(engine.progress, engine.orientation, engine.getBaseTexture(), engine.getChamberTexture(), engine.getTrunkTexture(engine.getEnergyStage()), x, y, z);
