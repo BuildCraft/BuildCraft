@@ -354,6 +354,7 @@ item.PipeFluidsQuartz.name=Quartz Fluid Pipe
 item.PipeFluidsGold.name=Golden Fluid Pipe
 item.PipeFluidsEmerald.name=Emerald Fluid Pipe
 item.PipeFluidsDiamond.name=Diamond Fluid Pipe
+item.PipeFluidsClay.name=Clay Fluid Pipe
 item.PipePowerWood.name=Wooden Kinesis Pipe
 item.PipePowerCobblestone.name=Cobblestone Kinesis Pipe
 item.PipePowerStone.name=Stone Kinesis Pipe
@@ -445,6 +446,7 @@ tip.gate.wires.diamond=Red, Blue, Green, Yellow
 tip.gate.wires.emerald=Red, Blue, Green, Yellow
 tip.gate.expansions=§9§oInstalled Expansions:
 
+tip.PipeFluidsClay=Fluid insertion pipe
 tip.PipeFluidsCobblestone=Won't connect to Stone or Quartz
 tip.PipeFluidsDiamond=Sorts fluids
 tip.PipeFluidsEmerald=Extraction pipe

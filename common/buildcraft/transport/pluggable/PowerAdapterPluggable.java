@@ -21,7 +21,7 @@ import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.transport.PipeIconProvider;
 
 public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandler {
-	private static final int MAX_POWER = 40;
+	private static final int MAX_POWER = 640;
 	private IPipeTile container;
 
 	protected static final class PowerAdapterPluggableRenderer implements IPipePluggableRenderer {
