@@ -769,6 +769,11 @@ public class TileGenericPipe extends TileEntity implements IUpdatePlayerListBox,
             return false;
         }
 
+        // This is called when the other pipe may not have a world yet, and so it crashes
+        if (!with.hasWorldObj() && hasWorldObj()) {
+            with.setWorldObj(worldObj);
+        }
+
         return canPipeConnect_internal(with, side);
     }
 

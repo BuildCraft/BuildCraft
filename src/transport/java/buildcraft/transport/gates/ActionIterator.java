@@ -5,12 +5,12 @@
 package buildcraft.transport.gates;
 
 import java.util.Iterator;
+import java.util.List;
 
 import net.minecraft.util.EnumFacing;
 
 import buildcraft.api.statements.StatementSlot;
 import buildcraft.api.transport.IPipe;
-import buildcraft.transport.Gate;
 
 public class ActionIterator implements Iterable<StatementSlot> {
     private IPipe pipe;
@@ -28,65 +28,41 @@ public class ActionIterator implements Iterable<StatementSlot> {
 
         private EnumFacing curDir = EnumFacing.values()[0];
         private int index = 0;
-        private StatementSlot next;
-
-        public It() {
-            while (!isValid()) {
-                if (curDir == null) {
-                    break;
-                } else if (pipe.getGate(curDir) == null || index >= pipe.getGate(curDir).getActiveActions().size() - 1) {
-                    index = 0;
-                    curDir = EnumFacing.values()[curDir.ordinal() + 1];
-                } else {
-                    index++;
-                }
-            }
-
-            if (isValid()) {
-                next = pipe.getGate(curDir).getActiveActions().get(index);
-            }
-        }
 
         @Override
         public boolean hasNext() {
-            return next != null;
+            return getNext(false) != null;
         }
 
         @Override
         public StatementSlot next() {
-            StatementSlot result = next;
+            return getNext(true);
+        }
 
+        private StatementSlot getNext(boolean advance) {
+            EnumFacing curDir = this.curDir;
+            int index = this.index;
             while (true) {
-                if (index < Gate.MAX_STATEMENTS - 1) {
-                    index++;
-                } else if (curDir != null) {
-                    index = 0;
+                List<StatementSlot> lst = pipe.hasGate(curDir) ? pipe.getGate(curDir).getActiveActions() : null;
+                if (lst == null || index >= lst.size()) {
+                    if (curDir.ordinal() == 5) {
+                        return null;
+                    }
                     curDir = EnumFacing.values()[curDir.ordinal() + 1];
                 } else {
-                    break;
-                }
-
-                if (isValid()) {
-                    break;
+                    index++;
+                    if (advance) {
+                        this.curDir = curDir;
+                        this.index = index;
+                    }
+                    return lst.get(index - 1);
                 }
             }
-
-            if (isValid()) {
-                next = pipe.getGate(curDir).getActiveActions().get(index);
-            } else {
-                next = null;
-            }
-
-            return result;
         }
 
         @Override
         public void remove() {
             throw new UnsupportedOperationException("Remove not supported.");
-        }
-
-        private boolean isValid() {
-            return curDir != null && pipe.getGate(curDir) != null && index < pipe.getGate(curDir).getActiveActions().size();
         }
     }
 }

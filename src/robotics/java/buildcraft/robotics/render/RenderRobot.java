@@ -8,14 +8,13 @@ import java.util.Date;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms.TransformType;
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.entity.RenderBiped;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.entity.RenderEntityItem;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -23,30 +22,29 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.IItemRenderer;
 
 import buildcraft.api.robots.IRobotOverlayItem;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.EntityLaser;
 import buildcraft.core.lib.render.RenderUtils;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.render.RenderLaser;
-import buildcraft.robotics.BuildCraftRobotics;
 import buildcraft.robotics.EntityRobot;
-import buildcraft.robotics.item.ItemRobot;
 
-public class RenderRobot extends Render implements IItemRenderer {
+public class RenderRobot extends Render {
     private static final ResourceLocation overlay_red = new ResourceLocation(DefaultProps.TEXTURE_PATH_ROBOTS + "/overlay_side.png");
     private static final ResourceLocation overlay_cyan = new ResourceLocation(DefaultProps.TEXTURE_PATH_ROBOTS + "/overlay_bottom.png");
 
     private final EntityItem dummyEntityItem = new EntityItem(null);
-    private final RenderItem customRenderItem;
+    private final RenderEntityItem customRenderItem;
 
     private ModelBase model = new ModelBase() {};
     private ModelBase modelHelmet = new ModelBase() {};
     private ModelRenderer box, helmetBox;
 
     public RenderRobot() {
-        customRenderItem = new RenderItem() {
+        super(Minecraft.getMinecraft().getRenderManager());
+        customRenderItem = new RenderEntityItem(Minecraft.getMinecraft().getRenderManager(), Minecraft.getMinecraft().getRenderItem()) {
             @Override
             public boolean shouldBob() {
                 return false;
@@ -57,7 +55,6 @@ public class RenderRobot extends Render implements IItemRenderer {
                 return false;
             }
         };
-        customRenderItem.setRenderManager(RenderManager.instance);
 
         box = new ModelRenderer(model, 0, 0);
         box.addBox(-4F, -4F, -4F, 8, 8, 8);
@@ -69,12 +66,12 @@ public class RenderRobot extends Render implements IItemRenderer {
 
     @Override
     public void doRender(Entity entity, double x, double y, double z, float f, float f1) {
-        doRender((EntityRobot) entity, pos, f1);
+        doRender((EntityRobot) entity, x, y, z, f1);
     }
 
     private void doRender(EntityRobot robot, double x, double y, double z, float partialTicks) {
         GL11.glPushMatrix();
-        GL11.glTranslated(pos);
+        GL11.glTranslated(x, y, z);
 
         float robotYaw = this.interpolateRotation(robot.prevRenderYawOffset, robot.renderYawOffset, partialTicks);
         GL11.glRotatef(-robotYaw, 0.0f, 1.0f, 0.0f);
@@ -129,26 +126,25 @@ public class RenderRobot extends Render implements IItemRenderer {
 
             ItemStack itemstack1 = robot.itemInUse;
 
-            if (itemstack1.getItem().requiresMultipleRenderPasses()) {
-                for (int k = 0; k < itemstack1.getItem().getRenderPasses(itemstack1.getItemDamage()); ++k) {
-                    RenderUtils.setGLColorFromInt(itemstack1.getItem().getColorFromItemStack(itemstack1, k));
-                    this.renderManager.itemRenderer.renderItem(robot, itemstack1, k);
-                }
-            } else {
-                RenderUtils.setGLColorFromInt(itemstack1.getItem().getColorFromItemStack(itemstack1, 0));
-                this.renderManager.itemRenderer.renderItem(robot, itemstack1, 0);
-            }
+            // if (itemstack1.getItem().requiresMultipleRenderPasses()) {
+            // for (int k = 0; k < itemstack1.getItem().getRenderPasses(itemstack1.getItemDamage()); ++k) {
+            // RenderUtils.setGLColorFromInt(itemstack1.getItem().getColorFromItemStack(itemstack1, k));
+            // this.renderManager.itemRenderer.renderItem(robot, itemstack1, k);
+            // }
+            // } else {
+            RenderUtils.setGLColorFromInt(itemstack1.getItem().getColorFromItemStack(itemstack1, 0));
+            // this.renderManager.itemRenderer.renderItem(robot, itemstack1, 0);
+            Minecraft.getMinecraft().getItemRenderer().renderItem(robot, itemstack1, TransformType.THIRD_PERSON);
+            // }
 
             GL11.glColor3f(1, 1, 1);
             GL11.glPopMatrix();
         }
 
         if (robot.laser.isVisible) {
-            robot.laser.head.x = robot.posX;
-            robot.laser.head.y = robot.posY;
-            robot.laser.head.z = robot.posZ;
+            robot.laser.head = Utils.getVec(robot);
 
-            RenderLaser.doRenderLaser(renderManager.renderEngine, robot.laser, EntityLaser.LASER_TEXTURES[1]);
+            RenderLaser.doRenderLaser(robot.worldObj, renderManager.renderEngine, robot.laser, EntityLaser.LASER_YELLOW);
         }
 
         if (robot.getTexture() != null) {
@@ -169,41 +165,31 @@ public class RenderRobot extends Render implements IItemRenderer {
         return ((EntityRobot) entity).getTexture();
     }
 
-    @Override
-    public boolean handleRenderType(ItemStack item, ItemRenderType type) {
-        return true;
-    }
-
-    @Override
-    public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item, ItemRendererHelper helper) {
-        return true;
-    }
-
-    @Override
-    public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
-        if (RenderManager.instance == null || RenderManager.instance.renderEngine == null) {
-            return;
-        }
-
-        GL11.glPushMatrix();
-
-        if (item.getItem() == BuildCraftRobotics.robotItem) {
-            ItemRobot robot = (ItemRobot) item.getItem();
-            RenderManager.instance.renderEngine.bindTexture(robot.getTextureRobot(item));
-        }
-
-        if (type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
-            GL11.glTranslated(0.0, 1.0, 0.7);
-        } else if (type == ItemRenderType.ENTITY) {
-            GL11.glScaled(0.6, 0.6, 0.6);
-        } else if (type == ItemRenderType.INVENTORY) {
-            GL11.glScaled(1.5, 1.5, 1.5);
-        }
-
-        doRenderRobot(1F / 16F, RenderManager.instance.renderEngine, 0.9F, false);
-
-        GL11.glPopMatrix();
-    }
+    // @Override
+    // public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
+    // if (RenderManager.instance == null || RenderManager.instance.renderEngine == null) {
+    // return;
+    // }
+    //
+    // GL11.glPushMatrix();
+    //
+    // if (item.getItem() == BuildCraftRobotics.robotItem) {
+    // ItemRobot robot = (ItemRobot) item.getItem();
+    // RenderManager.instance.renderEngine.bindTexture(robot.getTextureRobot(item));
+    // }
+    //
+    // if (type == ItemRenderType.EQUIPPED_FIRST_PERSON) {
+    // GL11.glTranslated(0.0, 1.0, 0.7);
+    // } else if (type == ItemRenderType.ENTITY) {
+    // GL11.glScaled(0.6, 0.6, 0.6);
+    // } else if (type == ItemRenderType.INVENTORY) {
+    // GL11.glScaled(1.5, 1.5, 1.5);
+    // }
+    //
+    // doRenderRobot(1F / 16F, RenderManager.instance.renderEngine, 0.9F, false);
+    //
+    // GL11.glPopMatrix();
+    // }
 
     private void doRenderItem(ItemStack stack) {
         float renderScale = 0.5f;
@@ -224,8 +210,8 @@ public class RenderRobot extends Render implements IItemRenderer {
             GL11.glScalef(1.0125F, 1.0125F, 1.0125F);
             GL11.glTranslatef(0.0f, -0.25f, 0.0f);
             GL11.glRotatef(180F, 0, 0, 1);
-            textureManager.bindTexture(RenderBiped.getArmorResource(entity, wearable, 0, null));
-            ModelBiped armorModel = ForgeHooksClient.getArmorModel(entity, wearable, 0, null);
+            textureManager.bindTexture(new ResourceLocation(ForgeHooksClient.getArmorTexture(entity, wearable, null, 0, null)));
+            ModelBase armorModel = ForgeHooksClient.getArmorModel(entity, wearable, 0, null);
             if (armorModel != null) {
                 armorModel.render(entity, 0, 0, 0, -90f, 0, 1 / 16F);
             } else {

@@ -9,6 +9,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.utils.IModelRegister;
@@ -37,6 +39,7 @@ public class ItemBuildCraft extends Item implements IModelRegister {
         return passSneakClick;
     }
 
+    @SideOnly(Side.CLIENT)
     public void registerModels() {
         ModelHelper.registerItemModel(this, 0, "");
     }

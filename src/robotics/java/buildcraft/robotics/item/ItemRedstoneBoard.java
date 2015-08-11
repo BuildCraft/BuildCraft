@@ -6,6 +6,9 @@ package buildcraft.robotics.item;
 
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.model.ModelBakery;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -31,6 +34,13 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
         return getBoardNBT(stack) != RedstoneBoardRegistry.instance.getEmptyRobotBoard() ? 1 : 16;
     }
 
+    @Override
+    public String getItemStackDisplayName(ItemStack stack) {
+        String start = super.getItemStackDisplayName(stack);
+        RedstoneBoardNBT<?> board = getBoardNBT(stack);
+        return start + " (" + board.getDisplayName() + ")";
+    }
+
     @SuppressWarnings("rawtypes")
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
@@ -43,7 +53,7 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
     @SideOnly(Side.CLIENT)
     public void getSubItems(Item item, CreativeTabs par2CreativeTabs, List itemList) {
         itemList.add(createStack(RedstoneBoardRegistry.instance.getEmptyRobotBoard()));
-        for (RedstoneBoardNBT boardNBT : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
+        for (RedstoneBoardNBT<?> boardNBT : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
             itemList.add(createStack(boardNBT));
         }
     }
@@ -69,5 +79,15 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
 
     private static RedstoneBoardNBT<?> getBoardNBT(NBTTagCompound cpt) {
         return RedstoneBoardRegistry.instance.getRedstoneBoard(cpt);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void registerModels() {
+        for (RedstoneBoardNBT<?> boardNBT : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
+            String type = boardNBT.getItemModelLocation();
+            Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(this, 1, new ModelResourceLocation(type, "inventory"));
+            ModelBakery.addVariantName(this, type);
+        }
     }
 }

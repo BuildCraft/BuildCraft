@@ -51,18 +51,14 @@ public abstract class BuildCraftBakedModel extends BakedModel {
     public BuildCraftBakedModel(ImmutableList<BakedQuad> quads, TextureAtlasSprite particle, VertexFormat format) {
         super(quads, particle, format);
     }
-    
+
     @SuppressWarnings("deprecation")
     /** Get the default transformations for inside inventories and third person */
     protected static ImmutableMap<TransformType, TRSRTransformation> getTransforms() {
         ImmutableMap.Builder<TransformType, TRSRTransformation> builder = ImmutableMap.builder();
 
         // builder.put(TransformType.GUI, TRSRTransformation.identity());
-        IBakedModel model = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getItemModel(new ItemStack(Blocks.stone));
-        System.out.println(model.getClass() + ", " + model.isBuiltInRenderer() + ", " + model.isGui3d());
-        ItemCameraTransforms ict = model.getItemCameraTransforms();
-        System.out.println(ict.gui.rotation + ", " + ict.gui.scale + ", " + ict.gui.translation);
-        builder.put(TransformType.GUI, new TRSRTransformation(ict.gui));
+//        builder.put(TransformType.GUI, new TRSRTransformation(ict.gui));
 
         float scale = 0.0375f;
         Vector3f translation = new Vector3f(0, 1.5F * scale, -2.75F * scale);

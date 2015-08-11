@@ -23,7 +23,7 @@ public abstract class BCStatement implements IStatement {
     protected ResourceLocation location;
 
     @SideOnly(Side.CLIENT)
-    private TextureAtlasSprite sprite = null;
+    private TextureAtlasSprite sprite;
 
     /** UniqueTag accepts multiple possible tags, use this feature to migrate to more standardized tags if needed,
      * otherwise just pass a single string. The first passed string will be the one used when saved to disk.

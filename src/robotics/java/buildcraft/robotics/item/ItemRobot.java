@@ -29,6 +29,7 @@ import buildcraft.api.boards.RedstoneBoardRobotNBT;
 import buildcraft.api.events.RobotPlacementEvent;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
+import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.NBTUtils;
@@ -175,13 +176,14 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
                 return false;
             }
 
-            BlockGenericPipe pipeBlock = (BlockGenericPipe) b;
-            BlockGenericPipe.RaytraceResult rayTraceResult = pipeBlock.doRayTrace(world, pos, player);
+            // BlockGenericPipe pipeBlock = (BlockGenericPipe) b;
+            // BlockGenericPipe.RaytraceResult rayTraceResult = pipeBlock.doRayTrace(world, pos, player);
 
-            if (rayTraceResult != null && rayTraceResult.hitPart == BlockGenericPipe.Part.Pluggable && pipe.container.getPipePluggable(
-                    rayTraceResult.sideHit) instanceof RobotStationPluggable) {
-                RobotStationPluggable pluggable = (RobotStationPluggable) pipe.container.getPipePluggable(rayTraceResult.sideHit);
-                DockingStation station = pluggable.getStation();
+            PipePluggable pluggable = pipe.container.getPipePluggable(side);
+
+            if (pluggable instanceof RobotStationPluggable) {
+                RobotStationPluggable robotPluggable = (RobotStationPluggable) pluggable;
+                DockingStation station = robotPluggable.getStation();
 
                 if (!station.isTaken()) {
                     RedstoneBoardRobotNBT robotNBT = ItemRobot.getRobotNBT(currentItem);
@@ -198,9 +200,9 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
                     if (robot != null && robot.getRegistry() != null) {
                         robot.setUniqueRobotId(robot.getRegistry().getNextRobotId());
 
-                        float px = pos.getX() + 0.5F + rayTraceResult.sideHit.getFrontOffsetX() * 0.5F;
-                        float py = pos.getY() + 0.5F + rayTraceResult.sideHit.getFrontOffsetY() * 0.5F;
-                        float pz = pos.getZ() + 0.5F + rayTraceResult.sideHit.getFrontOffsetZ() * 0.5F;
+                        float px = pos.getX() + 0.5F + side.getFrontOffsetX() * 0.5F;
+                        float py = pos.getY() + 0.5F + side.getFrontOffsetY() * 0.5F;
+                        float pz = pos.getZ() + 0.5F + side.getFrontOffsetZ() * 0.5F;
 
                         robot.setPosition(px, py, pz);
                         station.takeAsMain(robot);

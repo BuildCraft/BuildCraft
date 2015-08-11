@@ -9,12 +9,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
-import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -56,6 +57,7 @@ import buildcraft.robotics.item.ItemRedstoneBoard;
 import buildcraft.robotics.item.ItemRobot;
 import buildcraft.robotics.item.ItemRobotStation;
 import buildcraft.robotics.map.MapManager;
+import buildcraft.robotics.render.RobotItemModel;
 import buildcraft.robotics.statements.*;
 import buildcraft.robotics.statements.ActionRobotWorkInArea.AreaType;
 import buildcraft.robotics.tile.TileRequester;
@@ -63,8 +65,8 @@ import buildcraft.robotics.tile.TileZonePlan;
 import buildcraft.silicon.BuildCraftSilicon;
 import buildcraft.silicon.item.ItemRedstoneChipset;
 
-@Mod(name = "BuildCraft Robotics", version = Version.VERSION, useMetadata = false, modid = "BuildCraftRobotics",
-        dependencies = DefaultProps.DEPENDENCY_CORE)
+@Mod(name = "BuildCraft Robotics", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Robotics",
+        dependencies = DefaultProps.DEPENDENCY_TRANSPORT)
 public class BuildCraftRobotics extends BuildCraftMod {
     @Mod.Instance("BuildCraft|Robotics")
     public static BuildCraftRobotics instance;
@@ -297,12 +299,6 @@ public class BuildCraftRobotics extends BuildCraftMod {
         BuildcraftRecipeRegistry.integrationTable.addRecipe(new RobotIntegrationRecipe());
     }
 
-    @SubscribeEvent
-    @SideOnly(Side.CLIENT)
-    public void textureHook(TextureStitchEvent.Pre event) {
-        RedstoneBoardRegistry.instance.registerIcons(event.map);
-    }
-
     @Mod.EventHandler
     public void serverUnload(FMLServerStoppingEvent event) {
         if (managerThread != null) {
@@ -358,5 +354,12 @@ public class BuildCraftRobotics extends BuildCraftMod {
         if ("BuildCraft|Core".equals(event.modID)) {
             reloadConfig(event.isWorldRunning ? ConfigManager.RestartRequirement.NONE : ConfigManager.RestartRequirement.WORLD);
         }
+    }
+
+    @SubscribeEvent
+    @SideOnly(Side.CLIENT)
+    public void registerModels(ModelBakeEvent event) {
+        ModelResourceLocation mrl = new ModelResourceLocation("buildcraftrobotics:robot", "inventory");
+        event.modelRegistry.putObject(mrl, RobotItemModel.create());
     }
 }

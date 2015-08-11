@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
-import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.boards.RedstoneBoardNBT;
@@ -69,14 +69,6 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
     }
 
     @Override
-    public void registerIcons(TextureMap par1IconRegister) {
-        emptyRobotBoardNBT.registerSprites(par1IconRegister);
-        for (BoardFactory f : boards.values()) {
-            f.boardNBT.registerSprites(par1IconRegister);
-        }
-    }
-
-    @Override
     public Collection<RedstoneBoardNBT<?>> getAllBoardNBTs() {
         ArrayList<RedstoneBoardNBT<?>> result = new ArrayList<RedstoneBoardNBT<?>>();
 
@@ -91,5 +83,4 @@ public class ImplRedstoneBoardRegistry extends RedstoneBoardRegistry {
     public int getEnergyCost(RedstoneBoardNBT<?> board) {
         return boards.get(board.getID()).energyCost;
     }
-
 }

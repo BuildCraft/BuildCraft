@@ -436,7 +436,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         return doRayTrace(world, pos, origin, direction);
     }
 
-    private RaytraceResult doRayTrace(World world, BlockPos pos, Vec3 origin, Vec3 direction) {
+    public RaytraceResult doRayTrace(World world, BlockPos pos, Vec3 origin, Vec3 direction) {
         Pipe<?> pipe = getPipe(world, pos);
 
         if (!isValid(pipe)) {
@@ -459,9 +459,9 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
         {
             AxisAlignedBB bb = getPipeBoundingBox(null);
             setBlockBounds(bb);
-            boxes[0] = bb;
-            hits[0] = super.collisionRayTrace(world, pos, origin, direction);
-            sideHit[0] = null;
+            boxes[6] = bb;
+            hits[6] = super.collisionRayTrace(world, pos, origin, direction);
+            sideHit[6] = null;
         }
 
         // Connections

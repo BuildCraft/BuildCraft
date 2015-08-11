@@ -4,9 +4,10 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics;
 
+import net.minecraftforge.fml.common.SidedProxy;
+
 public class RoboticsProxy {
-    // @SidedProxy(clientSide = "buildcraft.robotics.RoboticsProxyClient", serverSide =
-    // "buildcraft.robotics.RoboticsProxy")
+    @SidedProxy(clientSide = "buildcraft.robotics.RoboticsProxyClient", serverSide = "buildcraft.robotics.RoboticsProxy")
     public static RoboticsProxy proxy;
 
     public void registerRenderers() {}

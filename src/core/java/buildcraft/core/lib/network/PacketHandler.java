@@ -89,6 +89,10 @@ public class PacketHandler extends SimpleChannelInboundHandler<Packet> {
                     TileEntity tile = world.getTileEntity(pkt.pos);
 
                     if (tile instanceof ISyncedTile) {
+                        if (!tile.hasWorldObj()) {
+                            // Because sometimes the tile hasn't been added to the world properly yet
+                            tile.setWorldObj(world);
+                        }
                         pkt.applyStates((ISyncedTile) tile);
                     }
 

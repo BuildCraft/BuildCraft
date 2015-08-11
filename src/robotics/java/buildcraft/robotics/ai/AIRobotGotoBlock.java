@@ -61,7 +61,7 @@ public class AIRobotGotoBlock extends AIRobotGoto {
 
             pathSearchJob = new IterableAlgorithmRunner(pathSearch, 100);
             pathSearchJob.start();
-        } else if (path != null) {
+        } else if (path != null && next != null) {
             double distance = robot.getDistance(next.xCoord, next.yCoord, next.zCoord);
 
             if (!robot.isMoving() || distance > prevDistance) {

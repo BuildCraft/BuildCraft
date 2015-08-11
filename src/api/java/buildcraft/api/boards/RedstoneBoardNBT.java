@@ -7,14 +7,10 @@ package buildcraft.api.boards;
 import java.util.List;
 import java.util.Random;
 
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public abstract class RedstoneBoardNBT<T> {
 
@@ -23,14 +19,12 @@ public abstract class RedstoneBoardNBT<T> {
     public abstract String getID();
 
     public abstract void addInformation(ItemStack stack, EntityPlayer player, List<?> list, boolean advanced);
+    
+    public abstract String getDisplayName();
 
     public abstract IRedstoneBoard<T> create(NBTTagCompound nbt, T object);
 
-    @SideOnly(Side.CLIENT)
-    public abstract void registerSprites(TextureMap textureMap);
-
-    @SideOnly(Side.CLIENT)
-    public abstract TextureAtlasSprite getSprite(NBTTagCompound nbt);
+    public abstract String getItemModelLocation();
 
     public void createBoard(NBTTagCompound nbt) {
         nbt.setString("id", getID());

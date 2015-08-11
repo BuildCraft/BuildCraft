@@ -4,17 +4,18 @@
  * of the license located in http://www.mod-buildcraft.com/MMPL-1.0.txt */
 package buildcraft.robotics;
 
-import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Loader;
 
+import buildcraft.robotics.render.RedstoneBoardMeshDefinition;
 import buildcraft.robotics.render.RenderRobot;
-import buildcraft.robotics.render.RobotStationItemRenderer;
 
 public class RoboticsProxyClient extends RoboticsProxy {
     public void registerRenderers() {
         RenderingRegistry.registerEntityRenderingHandler(EntityRobot.class, new RenderRobot());
-        MinecraftForgeClient.registerItemRenderer(BuildCraftRobotics.robotItem, new RenderRobot());
+        Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(BuildCraftRobotics.redstoneBoard, new RedstoneBoardMeshDefinition());
+        // MinecraftForgeClient.registerItemRenderer(BuildCraftRobotics.robotItem, new RenderRobot());
         // TODO: Move robot station textures locally
         if (Loader.isModLoaded("BuildCraft|Transport")) {
             loadBCTransport();
@@ -22,6 +23,7 @@ public class RoboticsProxyClient extends RoboticsProxy {
     }
 
     private void loadBCTransport() {
-        MinecraftForgeClient.registerItemRenderer(BuildCraftRobotics.robotStationItem, new RobotStationItemRenderer());
+        // MinecraftForgeClient.registerItemRenderer(BuildCraftRobotics.robotStationItem, new
+        // RobotStationItemRenderer());
     }
 }

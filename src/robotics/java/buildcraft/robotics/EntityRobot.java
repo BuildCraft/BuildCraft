@@ -9,8 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.WeakHashMap;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -21,15 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntityDamageSource;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.Fluid;
@@ -62,7 +54,9 @@ import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
+import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.core.lib.utils.Utils;
 import buildcraft.robotics.ai.AIRobotMain;
 import buildcraft.robotics.ai.AIRobotShutdown;
 import buildcraft.robotics.ai.AIRobotSleep;
@@ -121,9 +115,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     private int energySpendPerCycle = 0;
     private int ticksCharging = 0;
     private float energyFX = 0;
-    private int steamDx = 0;
-    private int steamDy = -1;
-    private int steamDz = 0;
+    private Vec3 steamDirection = new Vec3(0, -1, 0);
 
     public EntityRobot(World world, RedstoneBoardRobotNBT boardNBT) {
         this(world);
@@ -166,13 +158,14 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         dataWatcher.addObject(12, Float.valueOf(0));
         dataWatcher.addObject(13, Float.valueOf(0));
         dataWatcher.addObject(14, Float.valueOf(0));
-        dataWatcher.addObject(15, Byte.valueOf((byte) 0));
-        dataWatcher.addObject(16, "");
-        dataWatcher.addObject(17, Float.valueOf(0));
+        // 15 is used by superclass for Entity AI
+        dataWatcher.addObject(16, Byte.valueOf((byte) 0));
+        dataWatcher.addObject(17, "");
         dataWatcher.addObject(18, Float.valueOf(0));
-        dataWatcher.addObject(19, Integer.valueOf(0));
-        dataWatcher.addObject(20, Byte.valueOf((byte) 0));
-        dataWatcher.addObject(21, Integer.valueOf(0));
+        dataWatcher.addObject(19, Float.valueOf(0));
+        dataWatcher.addObject(20, Integer.valueOf(0));
+        dataWatcher.addObject(21, Byte.valueOf((byte) 0));
+        dataWatcher.addObject(22, Integer.valueOf(0));
     }
 
     protected void updateDataClient() {
@@ -180,28 +173,28 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         float y = dataWatcher.getWatchableObjectFloat(13);
         float z = dataWatcher.getWatchableObjectFloat(14);
         laser.tail = new Vec3(x, y, z);
-        laser.isVisible = dataWatcher.getWatchableObjectByte(15) == 1;
+        laser.isVisible = dataWatcher.getWatchableObjectByte(16) == 1;
 
-        RedstoneBoardNBT<?> boardNBT = RedstoneBoardRegistry.instance.getRedstoneBoard(dataWatcher.getWatchableObjectString(16));
+        RedstoneBoardNBT<?> boardNBT = RedstoneBoardRegistry.instance.getRedstoneBoard(dataWatcher.getWatchableObjectString(17));
 
         if (boardNBT != null) {
             texture = ((RedstoneBoardRobotNBT) boardNBT).getRobotTexture();
         }
 
-        itemAngle1 = dataWatcher.getWatchableObjectFloat(17);
-        itemAngle2 = dataWatcher.getWatchableObjectFloat(18);
-        energySpendPerCycle = dataWatcher.getWatchableObjectInt(19);
-        isActiveClient = dataWatcher.getWatchableObjectByte(20) == 1;
-        battery.setEnergy(dataWatcher.getWatchableObjectInt(21));
+        itemAngle1 = dataWatcher.getWatchableObjectFloat(18);
+        itemAngle2 = dataWatcher.getWatchableObjectFloat(19);
+        energySpendPerCycle = dataWatcher.getWatchableObjectInt(20);
+        isActiveClient = dataWatcher.getWatchableObjectByte(21) == 1;
+        battery.setEnergy(dataWatcher.getWatchableObjectInt(22));
     }
 
     protected void updateDataServer() {
         dataWatcher.updateObject(12, Float.valueOf((float) laser.tail.xCoord));
         dataWatcher.updateObject(13, Float.valueOf((float) laser.tail.yCoord));
         dataWatcher.updateObject(14, Float.valueOf((float) laser.tail.zCoord));
-        dataWatcher.updateObject(15, Byte.valueOf((byte) (laser.isVisible ? 1 : 0)));
-        dataWatcher.updateObject(17, Float.valueOf(itemAngle1));
-        dataWatcher.updateObject(18, Float.valueOf(itemAngle2));
+        dataWatcher.updateObject(16, Byte.valueOf((byte) (laser.isVisible ? 1 : 0)));
+        dataWatcher.updateObject(18, Float.valueOf(itemAngle1));
+        dataWatcher.updateObject(19, Float.valueOf(itemAngle2));
     }
 
     public boolean isActive() {
@@ -219,10 +212,8 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     }
 
     public void setLaserDestination(float x, float y, float z) {
-        if (x != laser.tail.x || y != laser.tail.y || z != laser.tail.z) {
-            laser.tail.x = x;
-            laser.tail.y = y;
-            laser.tail.z = z;
+        if (x != laser.tail.xCoord || y != laser.tail.yCoord || z != laser.tail.zCoord) {
+            laser.tail = new Vec3(x, y, z);
 
             needsUpdate = true;
         }
@@ -272,8 +263,8 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         if (!worldObj.isRemote) {
             // The client-side sleep indicator should also display if the robot is charging.
             // To not break gates and other things checking for sleep, this is done here.
-            dataWatcher.updateObject(20, Byte.valueOf((byte) ((isActive() && ticksCharging == 0) ? 1 : 0)));
-            dataWatcher.updateObject(21, getEnergy());
+            dataWatcher.updateObject(21, Byte.valueOf((byte) ((isActive() && ticksCharging == 0) ? 1 : 0)));
+            dataWatcher.updateObject(22, getEnergy());
 
             if (needsUpdate) {
                 updateDataServer();
@@ -291,16 +282,17 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
             motionX = 0;
             motionY = 0;
             motionZ = 0;
-            posX = currentDockingStation.x() + 0.5F + currentDockingStation.side().offsetX * 0.5F;
-            posY = currentDockingStation.y() + 0.5F + currentDockingStation.side().offsetY * 0.5F;
-            posZ = currentDockingStation.z() + 0.5F + currentDockingStation.side().offsetZ * 0.5F;
+
+            Vec3 pos = Utils.convertMiddle(currentDockingStation.getPos()).add(Utils.convert(currentDockingStation.side(), 0.5));
+            posX = pos.xCoord;
+            posY = pos.yCoord;
+            posZ = pos.zCoord;
         }
 
         if (!worldObj.isRemote) {
             if (linkedDockingStation == null) {
                 if (linkedDockingStationIndex != null) {
-                    linkedDockingStation = getRegistry().getStation(linkedDockingStationIndex.x, linkedDockingStationIndex.y,
-                            linkedDockingStationIndex.z, linkedDockingStationSide);
+                    linkedDockingStation = getRegistry().getStation(linkedDockingStationIndex, linkedDockingStationSide);
                 }
 
                 if (linkedDockingStation == null) {
@@ -319,8 +311,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
             }
 
             if (currentDockingStationIndex != null && currentDockingStation == null) {
-                currentDockingStation = getRegistry().getStation(currentDockingStationIndex.x, currentDockingStationIndex.y,
-                        currentDockingStationIndex.z, currentDockingStationSide);
+                currentDockingStation = getRegistry().getStation(currentDockingStationIndex, currentDockingStationSide);
             }
 
             if (linkedDockingStation == null || linkedDockingStation.isInitialized()) {
@@ -330,17 +321,18 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
                 if (energySpendPerCycle != mainAI.getActiveAI().getEnergyCost()) {
                     energySpendPerCycle = mainAI.getActiveAI().getEnergyCost();
-                    dataWatcher.updateObject(19, energySpendPerCycle);
+                    dataWatcher.updateObject(20, energySpendPerCycle);
                 }
             }
         }
 
-        super.onEntityUpdate();
+        // TODO (PASS 0): Is it ok to NOT call the entity update? (from EntityRobot)
+        // super.onEntityUpdate();
         this.worldObj.theProfiler.endSection();
     }
 
-    @Override
-    protected void updateEntityActionState() {}
+    // @Override
+    // protected void updateEntityActionState() {}
 
     @SideOnly(Side.CLIENT)
     private void updateEnergyFX() {
@@ -354,8 +346,9 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     @SideOnly(Side.CLIENT)
     private void spawnEnergyFX() {
-        Minecraft.getMinecraft().effectRenderer.addEffect(new EntityRobotEnergyParticle(worldObj, posX + steamDx * 0.25, posY + steamDy * 0.25, posZ
-            + steamDz * 0.25, steamDx * 0.05, steamDy * 0.05, steamDz * 0.05, energySpendPerCycle * 0.075F < 1 ? 1 : energySpendPerCycle * 0.075F));
+        Minecraft.getMinecraft().effectRenderer.addEffect(new EntityRobotEnergyParticle(worldObj, posX + steamDirection.xCoord * 0.25, posY
+            + steamDirection.yCoord * 0.25, posZ + steamDirection.zCoord * 0.25, steamDirection.xCoord * 0.05, steamDirection.yCoord * 0.05,
+                steamDirection.zCoord * 0.05, energySpendPerCycle * 0.075F < 1 ? 1 : energySpendPerCycle * 0.075F));
     }
 
     @Override
@@ -367,13 +360,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         width = 0F;
         height = 0F;
 
-        boundingBox.minX = posX;
-        boundingBox.minY = posY;
-        boundingBox.minZ = posZ;
-
-        boundingBox.maxX = posX;
-        boundingBox.maxY = posY;
-        boundingBox.maxZ = posZ;
+        setEntityBoundingBox(new AxisAlignedBB(posX, posY, posZ, posX, posY, posZ));
     }
 
     private void shutdown(String reason) {
@@ -418,15 +405,10 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     public void setCurrentItemOrArmor(int i, ItemStack itemstack) {}
 
     @Override
-    public ItemStack[] getLastActiveItems() {
-        return new ItemStack[0];
-    }
+    public void fall(float dist, float damageMultiplier) {}
 
     @Override
-    protected void fall(float par1) {}
-
-    @Override
-    protected void updateFallState(double par1, boolean par3) {}
+    protected void updateFallState(double y, boolean onGround, Block block, BlockPos pos) {}
 
     @Override
     public void moveEntityWithHeading(float par1, float par2) {
@@ -448,18 +430,14 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
         if (linkedDockingStationIndex != null) {
             NBTTagCompound linkedStationNBT = new NBTTagCompound();
-            NBTTagCompound linkedStationIndexNBT = new NBTTagCompound();
-            linkedDockingStationIndex.writeTo(linkedStationIndexNBT);
-            linkedStationNBT.setTag("index", linkedStationIndexNBT);
+            linkedStationNBT.setTag("index", NBTUtils.writeBlockPos(linkedDockingStationIndex));
             linkedStationNBT.setByte("side", (byte) linkedDockingStationSide.ordinal());
             nbt.setTag("linkedStation", linkedStationNBT);
         }
 
         if (currentDockingStationIndex != null) {
             NBTTagCompound currentStationNBT = new NBTTagCompound();
-            NBTTagCompound currentStationIndexNBT = new NBTTagCompound();
-            currentDockingStationIndex.writeTo(currentStationIndexNBT);
-            currentStationNBT.setTag("index", currentStationIndexNBT);
+            currentStationNBT.setTag("index", NBTUtils.writeBlockPos(currentDockingStationIndex));
             currentStationNBT.setByte("side", (byte) currentDockingStationSide.ordinal());
             nbt.setTag("currentStation", currentStationNBT);
         }
@@ -526,13 +504,13 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
         if (nbt.hasKey("linkedStation")) {
             NBTTagCompound linkedStationNBT = nbt.getCompoundTag("linkedStation");
-            linkedDockingStationIndex = new BlockPos(linkedStationNBT.getCompoundTag("index"));
+            linkedDockingStationIndex = NBTUtils.readBlockPos(linkedStationNBT.getTag("index"));
             linkedDockingStationSide = EnumFacing.values()[linkedStationNBT.getByte("side")];
         }
 
         if (nbt.hasKey("currentStation")) {
             NBTTagCompound currentStationNBT = nbt.getCompoundTag("currentStation");
-            currentDockingStationIndex = new BlockPos(currentStationNBT.getCompoundTag("index"));
+            currentDockingStationIndex = NBTUtils.readBlockPos(currentStationNBT.getTag("index"));
             currentDockingStationSide = EnumFacing.values()[currentStationNBT.getByte("side")];
 
         }
@@ -571,7 +549,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
             board = RedstoneBoardRegistry.instance.getEmptyRobotBoard().create(this);
         }
 
-        dataWatcher.updateObject(16, board.getNBTHandler().getID());
+        dataWatcher.updateObject(17, board.getNBTHandler().getID());
 
         stackRequestNBT = nbt.getTagList("stackRequests", Constants.NBT.TAG_COMPOUND);
 
@@ -586,14 +564,15 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         }
 
         // Restore robot persistence on pre-6.1.9 robotics
-        this.func_110163_bv();
+        this.enablePersistence();
+        // this.func_110163_bv(); TODO (PASS 1): Check to make sure this is really the correct method!
     }
 
     @Override
     public void dock(DockingStation station) {
         currentDockingStation = station;
 
-        setSteamDirection(currentDockingStation.side.offsetX, currentDockingStation.side.offsetY, currentDockingStation.side.offsetZ);
+        setSteamDirection(Utils.convert(currentDockingStation.side));
 
         currentDockingStationIndex = currentDockingStation.index();
         currentDockingStationSide = currentDockingStation.side();
@@ -605,7 +584,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
             currentDockingStation.release(this);
             currentDockingStation = null;
 
-            setSteamDirection(0, -1, 0);
+            setSteamDirection(new Vec3(0, -1, 0));
 
             currentDockingStationIndex = null;
             currentDockingStationSide = null;
@@ -674,12 +653,12 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     }
 
     @Override
-    public String getInventoryName() {
+    public IChatComponent getDisplayName() {
         return null;
     }
 
     @Override
-    public boolean hasCustomInventoryName() {
+    public boolean hasCustomName() {
         return false;
     }
 
@@ -706,10 +685,10 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     }
 
     @Override
-    public void openInventory() {}
+    public void openInventory(EntityPlayer player) {}
 
     @Override
-    public void closeInventory() {}
+    public void closeInventory(EntityPlayer player) {}
 
     @Override
     public boolean isItemValidForSlot(int var1, ItemStack var2) {
@@ -732,22 +711,17 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         }), this);
     }
 
-    private void setSteamDirection(final int x, final int y, final int z) {
+    private void setSteamDirection(final Vec3 direction) {
         if (!worldObj.isRemote) {
             BuildCraftCore.instance.sendToEntity(new PacketCommand(this, "setSteamDirection", new CommandWriter() {
                 public void write(ByteBuf data) {
-                    data.writeInt(x);
-                    data.writeShort(y);
-                    data.writeInt(z);
+                    data.writeDouble(direction.xCoord);
+                    data.writeDouble(direction.yCoord);
+                    data.writeDouble(direction.zCoord);
                 }
             }), this);
         } else {
-            Vec3 v = Vec3.createVectorHelper(pos);
-            v = v.normalize();
-
-            steamDx = (int) v.xCoord;
-            steamDy = (int) v.yCoord;
-            steamDz = (int) v.zCoord;
+            steamDirection = direction.normalize();
         }
     }
 
@@ -768,10 +742,10 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
                 lastUpdateTime = new Date().getTime();
 
                 if (!itemActive) {
-                    setSteamDirection(0, -1, 0);
+                    setSteamDirection(new Vec3(0, -1, 0));
                 }
             } else if ("setSteamDirection".equals(command)) {
-                setSteamDirection(stream.readInt(), stream.readShort(), stream.readInt());
+                setSteamDirection(new Vec3(stream.readDouble(), stream.readDouble(), stream.readDouble()));
             } else if ("syncWearables".equals(command)) {
                 wearables.clear();
 
@@ -802,9 +776,9 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
                 }
 
                 if (currentDockingStation != null) {
-                    setSteamDirection(currentDockingStation.side.offsetX, currentDockingStation.side.offsetY, currentDockingStation.side.offsetZ);
+                    setSteamDirection(Utils.convert(currentDockingStation.side()));
                 } else {
-                    setSteamDirection(0, -1, 0);
+                    setSteamDirection(new Vec3(0, -1, 0));
                 }
             }
         }
@@ -841,17 +815,15 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     @Override
     public void aimItemAt(BlockPos pos) {
-        int deltaX = x - (int) Math.floor(posX);
-        int deltaY = y - (int) Math.floor(posY);
-        int deltaZ = z - (int) Math.floor(posZ);
-
-        if (deltaX != 0 || deltaZ != 0) {
-            itemAngle1 = (float) (Math.atan2(deltaZ, deltaX) * 180f / Math.PI) + 180f;
+        Vec3 delta = Utils.convert(pos).subtract(Utils.getVec(this));
+        if (delta.xCoord != 0 || delta.zCoord != 0) {
+            itemAngle1 = (float) (Math.atan2(delta.xCoord, delta.zCoord) * 180f / Math.PI) + 180f;
         }
-        double d3 = MathHelper.sqrt_double(deltaX * deltaX + deltaZ * deltaZ);
-        itemAngle2 = (float) (-(Math.atan2(deltaY, d3) * 180.0D / Math.PI));
 
-        setSteamDirection(deltaX, deltaY, deltaZ);
+        double d3 = MathHelper.sqrt_double(delta.xCoord * delta.xCoord + delta.zCoord * delta.zCoord);
+        itemAngle2 = (float) (-(Math.atan2(delta.yCoord, d3) * 180.0D / Math.PI));
+
+        setSteamDirection(delta);
 
         updateDataServer();
     }
@@ -1033,7 +1005,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
             if (!worldObj.isRemote) {
                 convertToItems();
             } else {
-                ((ItemWrench) stack.getItem()).wrenchUsed(player, 0, 0, 0);
+                ((ItemWrench) stack.getItem()).wrenchUsed(player, new BlockPos(0, 0, 0));
             }
             return true;
         } else if (wearables.size() < 8 && stack.getItem() instanceof ItemArmor && ((ItemArmor) stack.getItem()).armorType == 0) {
@@ -1148,7 +1120,8 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     /** Tries to receive items in parameters, return items that are left after the operation. */
     @Override
     public ItemStack receiveItem(TileEntity tile, ItemStack stack) {
-        if (currentDockingStation != null && currentDockingStation.index().nextTo(new BlockPos(tile)) && mainAI != null) {
+        if (currentDockingStation != null && currentDockingStation.index().subtract(tile.getPos()).distanceSq(BlockPos.ORIGIN) == 1
+            && mainAI != null) {
 
             return mainAI.getActiveAI().receiveItem(stack);
         } else {
@@ -1241,27 +1214,27 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         return new FluidTankInfo[] { new FluidTankInfo(tank, maxFluid) };
     }
 
-    @SideOnly(Side.CLIENT)
-    public TextureAtlasSprite getItemIcon(ItemStack stack, int renderPass) {
-        TextureAtlasSprite iicon = super.getItemIcon(stack, renderPass);
-
-        if (iicon == null) {
-            iicon = stack.getItem().getIcon(stack, renderPass, null, itemInUse, 0);
-        }
-
-        return iicon;
-    }
+    // @SideOnly(Side.CLIENT)
+    // public TextureAtlasSprite getItemIcon(ItemStack stack, int renderPass) {
+    // TextureAtlasSprite iicon = super.getItemIcon(stack, renderPass);
+    //
+    // if (iicon == null) {
+    // iicon = stack.getItem().getIcon(stack, renderPass, null, itemInUse, 0);
+    // }
+    //
+    // return iicon;
+    // }
 
     @Override
-    public void getDebugInfo(List<String> info, EnumFacing side, ItemStack debugger, EntityPlayer player) {
-        info.add("Robot " + board.getNBTHandler().getID() + " (" + getBattery().getEnergyStored() + "/" + getBattery().getMaxEnergyStored() + " RF)");
-        info.add(String.format("Position: %.2f, %.2f, %.2f", posX, posY, posZ));
-        info.add("AI tree:");
+    public void getDebugInfo(List<String> left, List<String> right, EnumFacing side) {
+        left.add("Robot " + board.getNBTHandler().getID() + " (" + getBattery().getEnergyStored() + "/" + getBattery().getMaxEnergyStored() + " RF)");
+        left.add(String.format("Position: %.2f, %.2f, %.2f", posX, posY, posZ));
+        left.add("AI tree:");
         AIRobot aiRobot = mainAI;
         while (aiRobot != null) {
-            info.add("- " + RobotManager.getAIRobotName(aiRobot.getClass()) + " (" + aiRobot.getEnergyCost() + " RF/t)");
+            left.add("- " + RobotManager.getAIRobotName(aiRobot.getClass()) + " (" + aiRobot.getEnergyCost() + " RF/t)");
             if (aiRobot instanceof IDebuggable) {
-                ((IDebuggable) aiRobot).getDebugInfo(info, side, debugger, player);
+                ((IDebuggable) aiRobot).getDebugInfo(left, right, side);
             }
             aiRobot = aiRobot.getDelegateAI();
         }
@@ -1281,4 +1254,22 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     public List<ItemStack> getWearables() {
         return wearables;
     }
+
+    // Something to do with IInventory
+
+    @Override
+    public int getField(int id) {
+        return 0;
+    }
+
+    @Override
+    public void setField(int id, int value) {}
+
+    @Override
+    public int getFieldCount() {
+        return 0;
+    }
+
+    @Override
+    public void clear() {}
 }

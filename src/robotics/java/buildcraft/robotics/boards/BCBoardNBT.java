@@ -6,11 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -54,9 +51,9 @@ public class BCBoardNBT extends RedstoneBoardRobotNBT {
         return id;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advanced) {
-        list.add(EnumChatFormatting.BOLD + StringUtils.localize("buildcraft.boardRobot" + upperName));
         list.add(StringUtils.localize("buildcraft.boardRobot" + upperName + ".desc"));
     }
 
@@ -71,19 +68,17 @@ public class BCBoardNBT extends RedstoneBoardRobotNBT {
     }
 
     @Override
-    @SideOnly(Side.CLIENT)
-    public void registerSprites(TextureMap iconRegister) {
-        icon = iconRegister.registerSprite(new ResourceLocation("buildcraftrobotics:board/" + boardType));
-    }
-
-    @Override
-    @SideOnly(Side.CLIENT)
-    public TextureAtlasSprite getSprite(NBTTagCompound nbt) {
-        return icon;
-    }
-
-    @Override
     public ResourceLocation getRobotTexture() {
         return texture;
+    }
+
+    @Override
+    public String getItemModelLocation() {
+        return "buildcraftrobotics:board/" + boardType;
+    }
+
+    @Override
+    public String getDisplayName() {
+        return StringUtils.localize("buildcraft.boardRobot" + upperName);
     }
 }

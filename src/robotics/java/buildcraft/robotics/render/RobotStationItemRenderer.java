@@ -15,7 +15,7 @@ import net.minecraftforge.client.IItemRenderer;
 import buildcraft.transport.BuildCraftTransport;
 import buildcraft.transport.PipeIconProvider;
 
-public class RobotStationItemRenderer implements IItemRenderer {
+public class RobotStationItemRenderer {/*implements IItemRenderer {
     private void renderPlugItem(RenderBlocks render, ItemStack item, float translateX, float translateY, float translateZ) {
         // Render StructurePipe
         Block block = BuildCraftTransport.genericPipeBlock;
@@ -101,5 +101,5 @@ public class RobotStationItemRenderer implements IItemRenderer {
                 break;
             default:
         }
-    }
+    }*/
 }
