@@ -43,8 +43,6 @@ import buildcraft.transport.pipes.PipePowerQuartz;
 import buildcraft.transport.pipes.PipePowerSandstone;
 import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
-import buildcraft.transport.render.PipeTransportPowerRenderer;
-import buildcraft.transport.render.PipeTransportRenderer;
 
 public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	public static final Map<Class<? extends Pipe<?>>, Integer> powerCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
@@ -81,11 +79,6 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 			powerQuery[i] = 0;
 			powerAverage[i] = new AverageInt(10);
 		}
-	}
-
-	@Override
-	public PipeTransportRenderer createTransportRenderer() {
-		return new PipeTransportPowerRenderer();
 	}
 
 	@Override
@@ -134,7 +127,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	}
 
 	public boolean isPowerSource(TileEntity tile, ForgeDirection side) {
-		if (tile instanceof TileBuildCraft && !(tile instanceof IEngine)) {
+		if (tile instanceof TileBuildCraft && !(tile instanceof IEngine) && !(((TileBuildCraft) tile).emitsEnergy(side.getOpposite()))) {
 			// Disregard non-engine BC tiles.
 			// While this, of course, does nothing to work with other mods,
 			// it at least makes it work nicely with BC's built-in blocks while
@@ -479,12 +472,12 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	static {
 		powerCapacities.put(PipePowerCobblestone.class, 80);
 		powerCapacities.put(PipePowerStone.class, 160);
-		powerCapacities.put(PipePowerWood.class, 320);
+		powerCapacities.put(PipePowerWood.class, 10240);
         powerCapacities.put(PipePowerSandstone.class, 320);
 		powerCapacities.put(PipePowerQuartz.class, 640);
 		powerCapacities.put(PipePowerIron.class, 1280);
 		powerCapacities.put(PipePowerGold.class, 2560);
-		powerCapacities.put(PipePowerEmerald.class, 2560);
+		powerCapacities.put(PipePowerEmerald.class, 10240);
 		powerCapacities.put(PipePowerDiamond.class, 10240);
 
 		powerResistances.put(PipePowerCobblestone.class, 0.05F);

@@ -128,13 +128,14 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 		}
 
 		int maxEnergyToRemove;
-		if (battery.getEnergyStored() > 400) {
+		/*if (battery.getEnergyStored() > 400) {
 			maxEnergyToRemove = (battery.getEnergyStored() / 40) + 40;
 		} else if (battery.getEnergyStored() > 100) {
 			maxEnergyToRemove = (battery.getEnergyStored() / 10);
 		} else {
 			maxEnergyToRemove = Math.min(10, battery.getEnergyStored());
-		}
+		}*/
+		maxEnergyToRemove = battery.getEnergyStored();
 
 		int energyToRemove = Math.min(maxEnergyToRemove, requestedEnergy);
 

@@ -428,7 +428,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 				"www", " g ", "GpG", 'w', "ingotIron",
 				'g', "blockGlass", 'G', "gearIron", 'p', Blocks.piston);
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blockFlywheel),
-				"p", "g", "s", 'p', Blocks.heavy_weighted_pressure_plate, 's', Blocks.piston, 'g', "gearIron");
+				"p", "g", "s", 'p', Blocks.heavy_weighted_pressure_plate, 's', Blocks.piston, 'g', "gearStcone");
 	}
 
 	private int findUnusedBiomeID(String biomeName) {

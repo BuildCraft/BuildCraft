@@ -40,11 +40,11 @@ public class TileFlywheel extends TileBuildCraft implements IEnergyHandler {
 		return ForgeDirection.getOrientation(ROTATE_RIGHT[((BlockBuildCraft) getBlockType()).getFrontSide(getBlockMetadata()) & 7]);
 	}
 
-	private IEnergyReceiver getOutTile() {
+	private Object getOutTile() {
 		ForgeDirection rightDir = getRightSide();
 		TileEntity teRight = worldObj.getTileEntity(xCoord + rightDir.offsetX, yCoord + rightDir.offsetY, zCoord + rightDir.offsetZ);
-		if (teRight instanceof IEnergyReceiver) {
-			return (IEnergyReceiver) teRight;
+		if (teRight instanceof IEnergyReceiver || teRight instanceof IEnergyHandler) {
+			return teRight;
 		}
 		return null;
 	}
@@ -74,16 +74,18 @@ public class TileFlywheel extends TileBuildCraft implements IEnergyHandler {
 			return;
 		}
 
-		IEnergyReceiver rcv = getOutTile();
-		if (rcv != null) {
+		Object outTile = getOutTile();
+		if (outTile != null) {
 			float tickRate = tickInvDeltaAvg > 0.0f ? 1.0f / tickInvDeltaAvg : 200.0f;
 			int minPow = Math.max(Math.max(2, getBattery().getEnergyStored() / 200), (int) Math.round(tickPower.getAverage() / tickRate));
-			//System.out.println(String.format("TIDA %.2f TID %.2f TP %.2f MP %d TR %.2f BS %d", tickInvDeltaAvg, tickInvDelta, tickPower.getAverage(), minPow, tickRate, getBattery().getEnergyStored()));
 			int power = getBattery().extractEnergy(minPow, true);
-
-			power = rcv.receiveEnergy(getRightSide().getOpposite(), power, false);
-
-			getBattery().extractEnergy(power, false);
+			if (outTile instanceof IEnergyReceiver) {
+				power = ((IEnergyReceiver) outTile).receiveEnergy(getRightSide().getOpposite(), power, false);
+				getBattery().extractEnergy(power, false);
+			} else if (outTile instanceof IEnergyHandler) {
+				power = ((IEnergyHandler) outTile).receiveEnergy(getRightSide().getOpposite(), power, false);
+				getBattery().extractEnergy(power, false);
+			}
 		} else {
 			getBattery().useEnergy(0, Math.max(10, getBattery().getEnergyStored() / 200), false);
 		}
@@ -146,6 +148,11 @@ public class TileFlywheel extends TileBuildCraft implements IEnergyHandler {
 			}
 		}
 		return out;
+	}
+
+	@Override
+	public boolean emitsEnergy(ForgeDirection side) {
+		return side == getRightSide();
 	}
 
 	@Override

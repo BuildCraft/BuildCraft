@@ -63,8 +63,10 @@ public class PipeRendererTESR extends TileEntitySpecialRenderer {
 		renderGatesWires(pipe, x, y, z);
 		renderPluggables(pipe, x, y, z);
 
-		PipeTransportRenderer renderer = pipe.pipe.transport.renderer;
-		renderer.render(renderer.useServerTileIfPresent() ? (Pipe) (((IPipeTile) CoreProxy.proxy.getServerTile(pipe)).getPipe()) : pipe.pipe, x, y, z, f);
+		PipeTransportRenderer renderer = PipeTransportRenderer.RENDERER_MAP.get(pipe.pipe.transport.getClass());
+		if (renderer != null) {
+			renderer.render(renderer.useServerTileIfPresent() ? (Pipe) (((IPipeTile) CoreProxy.proxy.getServerTile(pipe)).getPipe()) : pipe.pipe, x, y, z, f);
+		}
 	}
 
 	private void renderGatesWires(TileGenericPipe pipe, double x, double y, double z) {

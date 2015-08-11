@@ -24,6 +24,10 @@ import buildcraft.transport.render.GateItemRenderer;
 import buildcraft.transport.render.PipeItemRenderer;
 import buildcraft.transport.render.PipeRendererTESR;
 import buildcraft.transport.render.PipeRendererWorld;
+import buildcraft.transport.render.PipeTransportFluidsRenderer;
+import buildcraft.transport.render.PipeTransportItemsRenderer;
+import buildcraft.transport.render.PipeTransportPowerRenderer;
+import buildcraft.transport.render.PipeTransportRenderer;
 import buildcraft.transport.render.PlugItemRenderer;
 import buildcraft.transport.render.TileEntityPickupFX;
 
@@ -63,6 +67,10 @@ public class TransportProxyClient extends TransportProxy {
 		TransportProxy.pipeModel = RenderingRegistry.getNextAvailableRenderId();
 
 		RenderingRegistry.registerBlockHandler(pipeWorldRenderer);
+
+		PipeTransportRenderer.RENDERER_MAP.put(PipeTransportItems.class, new PipeTransportItemsRenderer());
+		PipeTransportRenderer.RENDERER_MAP.put(PipeTransportFluids.class, new PipeTransportFluidsRenderer());
+		PipeTransportRenderer.RENDERER_MAP.put(PipeTransportPower.class, new PipeTransportPowerRenderer());
 	}
 
 	@Override

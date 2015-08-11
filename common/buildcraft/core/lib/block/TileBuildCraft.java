@@ -255,4 +255,8 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 	public void setControlMode(IControllable.Mode mode) {
 		this.mode = mode;
 	}
+
+	public boolean emitsEnergy(ForgeDirection side) {
+		return false;
+	}
 }

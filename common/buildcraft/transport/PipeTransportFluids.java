@@ -40,8 +40,6 @@ import buildcraft.transport.pipes.PipeFluidsStone;
 import buildcraft.transport.pipes.PipeFluidsVoid;
 import buildcraft.transport.pipes.PipeFluidsWood;
 import buildcraft.transport.pipes.events.PipeEventFluid;
-import buildcraft.transport.render.PipeTransportFluidsRenderer;
-import buildcraft.transport.render.PipeTransportRenderer;
 import buildcraft.transport.utils.FluidRenderData;
 
 public class PipeTransportFluids extends PipeTransport implements IFluidHandler, IDebuggable {
@@ -188,11 +186,6 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 		capacity = 25 * Math.min(1000, BuildCraftTransport.pipeFluidsBaseFlowRate);
 		flowRate = fluidCapacities.get(pipeClass);
 		travelDelay = MathUtils.clamp(Math.round(16F / (flowRate / BuildCraftTransport.pipeFluidsBaseFlowRate)), 1, MAX_TRAVEL_DELAY);
-	}
-
-	@Override
-	public PipeTransportRenderer createTransportRenderer() {
-		return new PipeTransportFluidsRenderer();
 	}
 
 	@Override
