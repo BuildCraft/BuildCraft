@@ -516,6 +516,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		if (BuildCraftBuilders.quarryLoadsChunks && chunkTicket == null) {
 			chunkTicket = ForgeChunkManager.requestTicket(BuildCraftBuilders.instance, worldObj, Type.NORMAL);
 		}
+
 		if (chunkTicket != null) {
 			chunkTicket.getModData().setInteger("quarryX", xCoord);
 			chunkTicket.getModData().setInteger("quarryY", yCoord);
@@ -538,17 +539,15 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		int xSize = a.xMax() - a.xMin() + 1;
 		int zSize = a.zMax() - a.zMin() + 1;
 
-		if (chunkTicket != null) {
-			if (xSize < 3 || zSize < 3 || ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth()) {
-				if (placedBy != null) {
+		if (xSize < 3 || zSize < 3 || (chunkTicket != null && ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth())) {
+			if (placedBy != null) {
 					placedBy.addChatMessage(new ChatComponentTranslation("chat.buildcraft.quarry.tooSmall",
-									xSize, zSize,
-									chunkTicket.getMaxChunkListDepth()));
-				}
-
-				a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
-				useDefault = true;
+							xSize, zSize,
+							chunkTicket != null ? chunkTicket.getMaxChunkListDepth() : 0));
 			}
+
+			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
+			useDefault = true;
 		}
 
 		xSize = a.xMax() - a.xMin() + 1;

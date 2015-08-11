@@ -93,7 +93,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	}
 
 	private void initTemplate() {
-		if (currentPattern != null && box.isInitialized()) {
+		if (currentPattern != null && box.isInitialized() && box.sizeX() > 0 && box.sizeY() > 0 && box.sizeZ() > 0) {
 			currentTemplate = currentPattern.getTemplateBuilder(box, getWorldObj(), patternParameters);
 			currentTemplate.blueprint.excavate = excavate;
 		}
