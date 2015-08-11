@@ -86,6 +86,8 @@ public class ItemRedstoneBoard extends ItemBuildCraft {
     public void registerModels() {
         for (RedstoneBoardNBT<?> boardNBT : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
             String type = boardNBT.getItemModelLocation();
+            /* Neat little trick: we have to register the models, but NEVER for meta 0 (because of the way minecraft
+             * gets its item models). So, provided this number is never 0 it will work */
             Minecraft.getMinecraft().getRenderItem().getItemModelMesher().register(this, 1, new ModelResourceLocation(type, "inventory"));
             ModelBakery.addVariantName(this, type);
         }

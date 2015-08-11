@@ -74,7 +74,7 @@ public class RenderRobot extends Render {
         GL11.glTranslated(x, y, z);
 
         float robotYaw = this.interpolateRotation(robot.prevRenderYawOffset, robot.renderYawOffset, partialTicks);
-        GL11.glRotatef(-robotYaw, 0.0f, 1.0f, 0.0f);
+//        GL11.glRotatef(-robotYaw, 0.0f, 1.0f, 0.0f);
 
         if (robot.getStackInSlot(0) != null) {
             GL11.glPushMatrix();
@@ -111,7 +111,7 @@ public class RenderRobot extends Render {
         if (robot.itemInUse != null) {
             GL11.glPushMatrix();
 
-            GL11.glRotatef(robot.itemAngle2, 0, 0, 1);
+            GL11.glRotatef(robot.itemAimPitch, 0, 0, 1);
 
             if (robot.itemActive) {
                 long newDate = new Date().getTime();

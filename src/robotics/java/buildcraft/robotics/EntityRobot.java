@@ -70,6 +70,18 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     public static final ResourceLocation ROBOT_BASE = new ResourceLocation(DefaultProps.TEXTURE_PATH_ROBOTS + "/robot_base.png");
 
+    private static final int DATA_LASER_TAIL_X = 12;
+    private static final int DATA_LASER_TAIL_Y = 13;
+    private static final int DATA_LASER_TAIL_Z = 14;
+    // 15 is used by entity living base to see if the AI is active or not
+    private static final int DATA_LASER_VISIBLE = 16;
+    private static final int DATA_BOARD_ID = 17;
+    private static final int DATA_ITEM_AIM_YAW = 18;
+    private static final int DATA_ITEM_AIM_PITCH = 19;
+    private static final int DATA_ENERGY_SPEND_PER_CYCLE = 20;
+    private static final int DATA_ACTIVE_CLIENT = 21;
+    private static final int DATA_BATTERY_ENERGY = 22;
+
     public LaserData laser = new LaserData();
     public DockingStation linkedDockingStation;
     public BlockPos linkedDockingStationIndex;
@@ -84,9 +96,9 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     public AIRobotMain mainAI;
 
     public ItemStack itemInUse;
-    public float itemAngle1 = 0;
-    public float renderItemAngle1 = 0;
-    public float itemAngle2 = 0;
+    public float itemAimYaw = 0;
+    public float renderItemAimYaw = 0;
+    public float itemAimPitch = 0;
     public boolean itemActive = false;
     public float itemActiveStage = 0;
     public long lastUpdateTime = 0;
@@ -121,7 +133,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         this(world);
 
         board = boardNBT.create(this);
-        dataWatcher.updateObject(16, board.getNBTHandler().getID());
+        dataWatcher.updateObject(DATA_BOARD_ID, board.getNBTHandler().getID());
 
         if (!world.isRemote) {
             mainAI = new AIRobotMain(this);
@@ -155,46 +167,45 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         isImmuneToFire = true;
         this.enablePersistence();
 
-        dataWatcher.addObject(12, Float.valueOf(0));
-        dataWatcher.addObject(13, Float.valueOf(0));
-        dataWatcher.addObject(14, Float.valueOf(0));
-        // 15 is used by superclass for Entity AI
-        dataWatcher.addObject(16, Byte.valueOf((byte) 0));
-        dataWatcher.addObject(17, "");
-        dataWatcher.addObject(18, Float.valueOf(0));
-        dataWatcher.addObject(19, Float.valueOf(0));
-        dataWatcher.addObject(20, Integer.valueOf(0));
-        dataWatcher.addObject(21, Byte.valueOf((byte) 0));
-        dataWatcher.addObject(22, Integer.valueOf(0));
+        dataWatcher.addObject(DATA_LASER_TAIL_X, Float.valueOf(0));
+        dataWatcher.addObject(DATA_LASER_TAIL_Y, Float.valueOf(0));
+        dataWatcher.addObject(DATA_LASER_TAIL_Z, Float.valueOf(0));
+        dataWatcher.addObject(DATA_LASER_VISIBLE, Byte.valueOf((byte) 0));
+        dataWatcher.addObject(DATA_BOARD_ID, "");
+        dataWatcher.addObject(DATA_ITEM_AIM_YAW, Float.valueOf(0));
+        dataWatcher.addObject(DATA_ITEM_AIM_PITCH, Float.valueOf(0));
+        dataWatcher.addObject(DATA_ENERGY_SPEND_PER_CYCLE, Integer.valueOf(0));
+        dataWatcher.addObject(DATA_ACTIVE_CLIENT, Byte.valueOf((byte) 0));
+        dataWatcher.addObject(DATA_BATTERY_ENERGY, Integer.valueOf(0));
     }
 
     protected void updateDataClient() {
-        float x = dataWatcher.getWatchableObjectFloat(12);
-        float y = dataWatcher.getWatchableObjectFloat(13);
-        float z = dataWatcher.getWatchableObjectFloat(14);
+        float x = dataWatcher.getWatchableObjectFloat(DATA_LASER_TAIL_X);
+        float y = dataWatcher.getWatchableObjectFloat(DATA_LASER_TAIL_Y);
+        float z = dataWatcher.getWatchableObjectFloat(DATA_LASER_TAIL_Z);
         laser.tail = new Vec3(x, y, z);
-        laser.isVisible = dataWatcher.getWatchableObjectByte(16) == 1;
+        laser.isVisible = dataWatcher.getWatchableObjectByte(DATA_LASER_VISIBLE) == 1;
 
-        RedstoneBoardNBT<?> boardNBT = RedstoneBoardRegistry.instance.getRedstoneBoard(dataWatcher.getWatchableObjectString(17));
+        RedstoneBoardNBT<?> boardNBT = RedstoneBoardRegistry.instance.getRedstoneBoard(dataWatcher.getWatchableObjectString(DATA_BOARD_ID));
 
         if (boardNBT != null) {
             texture = ((RedstoneBoardRobotNBT) boardNBT).getRobotTexture();
         }
 
-        itemAngle1 = dataWatcher.getWatchableObjectFloat(18);
-        itemAngle2 = dataWatcher.getWatchableObjectFloat(19);
-        energySpendPerCycle = dataWatcher.getWatchableObjectInt(20);
-        isActiveClient = dataWatcher.getWatchableObjectByte(21) == 1;
-        battery.setEnergy(dataWatcher.getWatchableObjectInt(22));
+        itemAimYaw = dataWatcher.getWatchableObjectFloat(DATA_ITEM_AIM_YAW);
+        itemAimPitch = dataWatcher.getWatchableObjectFloat(DATA_ITEM_AIM_PITCH);
+        energySpendPerCycle = dataWatcher.getWatchableObjectInt(DATA_ENERGY_SPEND_PER_CYCLE);
+        isActiveClient = dataWatcher.getWatchableObjectByte(DATA_ACTIVE_CLIENT) == 1;
+        battery.setEnergy(dataWatcher.getWatchableObjectInt(DATA_BATTERY_ENERGY));
     }
 
     protected void updateDataServer() {
-        dataWatcher.updateObject(12, Float.valueOf((float) laser.tail.xCoord));
-        dataWatcher.updateObject(13, Float.valueOf((float) laser.tail.yCoord));
-        dataWatcher.updateObject(14, Float.valueOf((float) laser.tail.zCoord));
-        dataWatcher.updateObject(16, Byte.valueOf((byte) (laser.isVisible ? 1 : 0)));
-        dataWatcher.updateObject(18, Float.valueOf(itemAngle1));
-        dataWatcher.updateObject(19, Float.valueOf(itemAngle2));
+        dataWatcher.updateObject(DATA_LASER_TAIL_X, Float.valueOf((float) laser.tail.xCoord));
+        dataWatcher.updateObject(DATA_LASER_TAIL_Y, Float.valueOf((float) laser.tail.yCoord));
+        dataWatcher.updateObject(DATA_LASER_TAIL_Z, Float.valueOf((float) laser.tail.zCoord));
+        dataWatcher.updateObject(DATA_LASER_VISIBLE, Byte.valueOf((byte) (laser.isVisible ? 1 : 0)));
+        dataWatcher.updateObject(DATA_ITEM_AIM_YAW, Float.valueOf(itemAimYaw));
+        dataWatcher.updateObject(DATA_ITEM_AIM_PITCH, Float.valueOf(itemAimPitch));
     }
 
     public boolean isActive() {
@@ -263,8 +274,8 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
         if (!worldObj.isRemote) {
             // The client-side sleep indicator should also display if the robot is charging.
             // To not break gates and other things checking for sleep, this is done here.
-            dataWatcher.updateObject(21, Byte.valueOf((byte) ((isActive() && ticksCharging == 0) ? 1 : 0)));
-            dataWatcher.updateObject(22, getEnergy());
+            dataWatcher.updateObject(DATA_ACTIVE_CLIENT, Byte.valueOf((byte) ((isActive() && ticksCharging == 0) ? 1 : 0)));
+            dataWatcher.updateObject(DATA_BATTERY_ENERGY, getEnergy());
 
             if (needsUpdate) {
                 updateDataServer();
@@ -321,7 +332,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
                 if (energySpendPerCycle != mainAI.getActiveAI().getEnergyCost()) {
                     energySpendPerCycle = mainAI.getActiveAI().getEnergyCost();
-                    dataWatcher.updateObject(20, energySpendPerCycle);
+                    dataWatcher.updateObject(DATA_ENERGY_SPEND_PER_CYCLE, energySpendPerCycle);
                 }
             }
         }
@@ -549,7 +560,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
             board = RedstoneBoardRegistry.instance.getEmptyRobotBoard().create(this);
         }
 
-        dataWatcher.updateObject(17, board.getNBTHandler().getID());
+        dataWatcher.updateObject(DATA_BOARD_ID, board.getNBTHandler().getID());
 
         stackRequestNBT = nbt.getTagList("stackRequests", Constants.NBT.TAG_COMPOUND);
 
@@ -797,18 +808,18 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
 
     @Override
     public float getAimYaw() {
-        return itemAngle1;
+        return itemAimYaw;
     }
 
     @Override
     public float getAimPitch() {
-        return itemAngle2;
+        return itemAimPitch;
     }
 
     @Override
     public void aimItemAt(float yaw, float pitch) {
-        itemAngle1 = yaw;
-        itemAngle2 = pitch;
+        itemAimYaw = yaw;
+        itemAimPitch = pitch;
 
         updateDataServer();
     }
@@ -817,11 +828,11 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     public void aimItemAt(BlockPos pos) {
         Vec3 delta = Utils.convert(pos).subtract(Utils.getVec(this));
         if (delta.xCoord != 0 || delta.zCoord != 0) {
-            itemAngle1 = (float) (Math.atan2(delta.xCoord, delta.zCoord) * 180f / Math.PI) + 180f;
+            itemAimYaw = (float) (Math.atan2(delta.xCoord, delta.zCoord) * 180f / Math.PI) + 180f;
         }
 
         double d3 = MathHelper.sqrt_double(delta.xCoord * delta.xCoord + delta.zCoord * delta.zCoord);
-        itemAngle2 = (float) (-(Math.atan2(delta.yCoord, d3) * 180.0D / Math.PI));
+        itemAimPitch = (float) (-(Math.atan2(delta.yCoord, d3) * 180.0D / Math.PI));
 
         setSteamDirection(delta);
 
@@ -829,7 +840,7 @@ public class EntityRobot extends EntityRobotBase implements IEntityAdditionalSpa
     }
 
     private void updateRotationYaw(float maxStep) {
-        float step = MathHelper.wrapAngleTo180_float(itemAngle1 - rotationYaw);
+        float step = MathHelper.wrapAngleTo180_float(itemAimYaw - rotationYaw);
 
         if (step > maxStep) {
             step = maxStep;

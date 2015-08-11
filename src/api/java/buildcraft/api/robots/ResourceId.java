@@ -30,12 +30,12 @@ public abstract class ResourceId {
 
     @Override
     public int hashCode() {
-        return (((pos != null ? pos.hashCode() : 0) * 37) + (side != null ? side.ordinal() : 0) * 37) + localId;
+        return (((pos != null ? pos.hashCode() : 0) * 37) + (side != null ? side.ordinal() : 6) * 37) + localId;
     }
 
     public void writeToNBT(NBTTagCompound nbt) {
         nbt.setIntArray("pos", new int[] { pos.getX(), pos.getY(), pos.getZ() });
-        nbt.setByte("side", (byte) side.ordinal());
+        nbt.setByte("side", (byte) (side == null ? 6 : side.ordinal()));
         nbt.setInteger("localId", localId);
         nbt.setString("resourceName", RobotManager.getResourceIdName(getClass()));
     }
@@ -58,7 +58,8 @@ public abstract class ResourceId {
                 BCLog.logger.warn("Did not find any integer positions! This is a bug!");
             }
         }
-        side = EnumFacing.values()[nbt.getByte("side")];
+        byte sid = nbt.getByte("side");
+        side = sid == 6 ? null : EnumFacing.values()[sid];
         localId = nbt.getInteger("localId");
     }
 
