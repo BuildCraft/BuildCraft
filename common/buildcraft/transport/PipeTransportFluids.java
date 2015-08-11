@@ -191,11 +191,6 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 	}
 
 	@Override
-	public PipeTransportRenderer createTransportRenderer() {
-		return new PipeTransportFluidsRenderer();
-	}
-
-	@Override
 	public void initialize() {
 		super.initialize();
 		

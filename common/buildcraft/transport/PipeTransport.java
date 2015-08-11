@@ -23,7 +23,6 @@ import buildcraft.core.lib.utils.BitSetUtils;
 import buildcraft.transport.render.PipeTransportRenderer;
 
 public abstract class PipeTransport {
-	public final PipeTransportRenderer renderer;
 	public TileGenericPipe container;
 
 	protected boolean[] inputsOpen = new boolean[ForgeDirection.VALID_DIRECTIONS.length];
@@ -34,11 +33,7 @@ public abstract class PipeTransport {
 			inputsOpen[b] = true;
 			outputsOpen[b] = true;
 		}
-
-		renderer = createTransportRenderer();
 	}
-
-	public abstract PipeTransportRenderer createTransportRenderer();
 
 	public abstract IPipeTile.PipeType getPipeType();
 

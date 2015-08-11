@@ -217,11 +217,9 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 	public void updateSignalState() {
 		for (PipeWire c : PipeWire.values()) {
-			if (!wireSet[c.ordinal()]) {
-				return;
+			if (wireSet[c.ordinal()]) {
+				updateSignalState(c);
 			}
-
-			updateSignalState(c);
 		}
 	}
 

@@ -55,11 +55,6 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 		return IPipeTile.PipeType.ITEM;
 	}
 
-	@Override
-	public PipeTransportRenderer createTransportRenderer() {
-		return new PipeTransportItemsRenderer();
-	}
-
 	public void readjustSpeed(TravelingItem item) {
 		PipeEventItem.AdjustSpeed event = new PipeEventItem.AdjustSpeed(container.pipe, item);
 		container.pipe.eventBus.handleEvent(PipeEventItem.AdjustSpeed.class, event);

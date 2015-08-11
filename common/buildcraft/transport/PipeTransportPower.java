@@ -84,11 +84,6 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	}
 
 	@Override
-	public PipeTransportRenderer createTransportRenderer() {
-		return new PipeTransportPowerRenderer();
-	}
-
-	@Override
 	public IPipeTile.PipeType getPipeType() {
 		return IPipeTile.PipeType.POWER;
 	}

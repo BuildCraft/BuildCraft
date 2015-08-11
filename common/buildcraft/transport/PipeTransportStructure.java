@@ -12,15 +12,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.transport.IPipeTile;
-import buildcraft.transport.render.PipeTransportRenderer;
-import buildcraft.transport.render.PipeTransportStructureRenderer;
 
 public class PipeTransportStructure extends PipeTransport {
-	@Override
-	public PipeTransportRenderer createTransportRenderer() {
-		return new PipeTransportStructureRenderer();
-	}
-
 	@Override
 	public IPipeTile.PipeType getPipeType() {
 		return IPipeTile.PipeType.STRUCTURE;
