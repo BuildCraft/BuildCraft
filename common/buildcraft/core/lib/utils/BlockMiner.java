@@ -16,16 +16,20 @@ import buildcraft.BuildCraftCore;
 import buildcraft.core.proxy.CoreProxy;
 
 public class BlockMiner {
+	public interface OverrideDrops {
+		void insertStack(ItemStack stack);
+	}
+
 	protected final World world;
-	protected final TileEntity owner;
+	protected final Object o;
 	protected final int x, y, z, minerId;
 
 	private boolean hasMined, hasFailed;
 	private int energyRequired, energyAccepted;
 
-	public BlockMiner(World world, TileEntity owner, int x, int y, int z) {
+	public BlockMiner(World world, Object o, int x, int y, int z) {
 		this.world = world;
-		this.owner = owner;
+		this.o = o;
 		this.x = x;
 		this.y = y;
 		this.z = z;
@@ -41,30 +45,36 @@ public class BlockMiner {
 	}
 
 	public void mineStack(ItemStack stack) {
-		// First, try to add to a nearby chest
-		stack.stackSize -= Utils.addToRandomInventoryAround(owner.getWorldObj(), owner.xCoord, owner.yCoord, owner.zCoord, stack);
+		if (o instanceof TileEntity) {
+			TileEntity owner = (TileEntity) o;
 
-		// Second, try to add to adjacent pipes
-		if (stack.stackSize > 0) {
-			stack.stackSize -= Utils.addToRandomInjectableAround(owner.getWorldObj(), owner.xCoord, owner.yCoord, owner.zCoord, ForgeDirection.UNKNOWN, stack);
-		}
+			// First, try to add to a nearby chest
+			stack.stackSize -= Utils.addToRandomInventoryAround(owner.getWorldObj(), owner.xCoord, owner.yCoord, owner.zCoord, stack);
 
-		// Lastly, throw the object away
-		if (stack.stackSize > 0) {
-			float f = world.rand.nextFloat() * 0.8F + 0.1F;
-			float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
-			float f2 = world.rand.nextFloat() * 0.8F + 0.1F;
+			// Second, try to add to adjacent pipes
+			if (stack.stackSize > 0) {
+				stack.stackSize -= Utils.addToRandomInjectableAround(owner.getWorldObj(), owner.xCoord, owner.yCoord, owner.zCoord, ForgeDirection.UNKNOWN, stack);
+			}
 
-			EntityItem entityitem = new EntityItem(owner.getWorldObj(), owner.xCoord + f, owner.yCoord + f1 + 0.5F, owner.zCoord + f2, stack);
+			// Lastly, throw the object away
+			if (stack.stackSize > 0) {
+				float f = world.rand.nextFloat() * 0.8F + 0.1F;
+				float f1 = world.rand.nextFloat() * 0.8F + 0.1F;
+				float f2 = world.rand.nextFloat() * 0.8F + 0.1F;
 
-			entityitem.lifespan = BuildCraftCore.itemLifespan * 20;
-			entityitem.delayBeforeCanPickup = 10;
+				EntityItem entityitem = new EntityItem(owner.getWorldObj(), owner.xCoord + f, owner.yCoord + f1 + 0.5F, owner.zCoord + f2, stack);
 
-			float f3 = 0.05F;
-			entityitem.motionX = (float) world.rand.nextGaussian() * f3;
-			entityitem.motionY = (float) world.rand.nextGaussian() * f3 + 1.0F;
-			entityitem.motionZ = (float) world.rand.nextGaussian() * f3;
-			owner.getWorldObj().spawnEntityInWorld(entityitem);
+				entityitem.lifespan = BuildCraftCore.itemLifespan * 20;
+				entityitem.delayBeforeCanPickup = 10;
+
+				float f3 = 0.05F;
+				entityitem.motionX = (float) world.rand.nextGaussian() * f3;
+				entityitem.motionY = (float) world.rand.nextGaussian() * f3 + 1.0F;
+				entityitem.motionZ = (float) world.rand.nextGaussian() * f3;
+				owner.getWorldObj().spawnEntityInWorld(entityitem);
+			}
+		} else if (o instanceof OverrideDrops) {
+			((OverrideDrops) o).insertStack(stack);
 		}
 	}
 
@@ -73,9 +83,18 @@ public class BlockMiner {
 	}
 
 	public int acceptEnergy(int offeredAmount) {
+		if (BlockUtils.isUnbreakableBlock(world, x, y, z) || world.isAirBlock(x, y, z)) {
+			hasFailed = true;
+		}
+
+		if (hasFailed) {
+			world.destroyBlockInWorldPartially(minerId, x, y, z, -1);
+			return 0;
+		}
+
 		energyRequired = BlockUtils.computeBlockBreakEnergy(world, x, y, z);
 
-		int usedAmount = MathUtils.clamp(offeredAmount, 0, Math.max(0, energyRequired - energyAccepted));
+		int usedAmount = MathUtils.clamp(offeredAmount, -energyAccepted, Math.max(0, energyRequired - energyAccepted));
 		energyAccepted += usedAmount;
 
 		if (energyAccepted >= energyRequired) {
@@ -117,5 +136,9 @@ public class BlockMiner {
 			world.destroyBlockInWorldPartially(minerId, x, y, z, MathUtils.clamp((int) Math.floor(energyAccepted * 10 / energyRequired), 0, 9));
 		}
 		return usedAmount;
+	}
+
+	public float getProgress() {
+		return (float) energyAccepted / energyRequired;
 	}
 }

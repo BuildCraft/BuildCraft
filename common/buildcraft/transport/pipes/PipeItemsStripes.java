@@ -8,7 +8,6 @@
  */
 package buildcraft.transport.pipes;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -35,6 +34,7 @@ import buildcraft.api.transport.IStripesPipe;
 import buildcraft.api.transport.PipeManager;
 import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.inventory.InvUtils;
+import buildcraft.core.lib.utils.BlockMiner;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.Pipe;
@@ -45,9 +45,11 @@ import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.statements.ActionPipeDirection;
 import buildcraft.transport.utils.TransportUtils;
 
-public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnergyHandler, IStripesPipe {
-	private RFBattery battery = new RFBattery(320 * 50, 640, 0);
+public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnergyHandler, IStripesPipe, BlockMiner.OverrideDrops {
+	private RFBattery battery = new RFBattery(320 * 50, 320 * 50, 0);
 	private ForgeDirection actionDir = ForgeDirection.UNKNOWN;
+	private ForgeDirection minerActionDir = ForgeDirection.UNKNOWN;
+	private BlockMiner miner;
 
 	public PipeItemsStripes(Item item) {
 		super(new PipeTransportItems(), item);
@@ -94,24 +96,33 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 						}
 					}
 
-					ArrayList<ItemStack> stacks = block.getDrops(
-							getWorld(), (int) p.x, (int) p.y, (int) p.z,
-							metadata, 0
-					);
-
-					if (stacks != null) {
-						for (ItemStack s : stacks) {
-							if (s != null) {
-								sendItem(s, o.getOpposite());
-							}
+					// Regular block breaker
+					if (miner == null || miner.hasMined() || miner.getProgress() == 0.0f || minerActionDir != actionDir) {
+						if (miner != null) {
+							miner.invalidate();
 						}
+						minerActionDir = actionDir;
+						miner = new BlockMiner(getWorld(), this, (int) p.x, (int) p.y, (int) p.z);
 					}
 
-					getWorld().setBlockToAir((int) p.x, (int) p.y, (int) p.z);
+					miner.acceptEnergy(2 * battery.useEnergy(10, Math.max(40, battery.getEnergyStored() / 20), false));
+
+					if (miner.hasFailed()) {
+						miner.invalidate();
+						miner = null;
+					}
 				}
 			}
-
-			return;
+		} else {
+			if (miner != null) {
+				miner.acceptEnergy(0);
+				if (miner.hasFailed()) {
+					miner.invalidate();
+					miner = null;
+				}
+			} else {
+				battery.useEnergy(0, 10, false);
+			}
 		}
 	}
 
@@ -271,5 +282,10 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 	@Override
 	public int getMaxEnergyStored(ForgeDirection from) {
 		return 10;
+	}
+
+	@Override
+	public void insertStack(ItemStack stack) {
+		sendItem(stack, actionDir.getOpposite());
 	}
 }
