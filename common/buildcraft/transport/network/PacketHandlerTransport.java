@@ -17,11 +17,13 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.network.NetworkRegistry;
 
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.network.Packet;
 import buildcraft.core.lib.network.PacketHandler;
 import buildcraft.core.lib.network.PacketSlotChange;
 import buildcraft.core.network.PacketIds;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.PipeTransportPower;
 import buildcraft.transport.TileGenericPipe;
@@ -98,20 +100,22 @@ public class PacketHandlerTransport extends PacketHandler {
 		}
 
 		TileEntity entity = world.getTileEntity(packet.posX, packet.posY, packet.posZ);
-		if (!(entity instanceof TileGenericPipe)) {
+		if (!(entity instanceof IPipeTile)) {
 			return;
 		}
 
-		TileGenericPipe pipe = (TileGenericPipe) entity;
-		if (pipe.pipe == null) {
+		IPipeTile pipe = (IPipeTile) entity;
+		if (!(pipe.getPipe() instanceof Pipe)) {
 			return;
 		}
 
-		if (!(pipe.pipe.transport instanceof PipeTransportItems)) {
+		Pipe p = (Pipe) pipe.getPipe();
+
+		if (!(p.transport instanceof PipeTransportItems)) {
 			return;
 		}
 
-		((PipeTransportItems) pipe.pipe.transport).handleTravelerPacket(packet);
+		((PipeTransportItems) p.transport).handleTravelerPacket(packet);
 	}
 
 	/**
@@ -126,20 +130,22 @@ public class PacketHandlerTransport extends PacketHandler {
 		}
 
 		TileEntity entity = world.getTileEntity(packetPower.posX, packetPower.posY, packetPower.posZ);
-		if (!(entity instanceof TileGenericPipe)) {
+		if (!(entity instanceof IPipeTile)) {
 			return;
 		}
 
-		TileGenericPipe pipe = (TileGenericPipe) entity;
-		if (pipe.pipe == null) {
+		IPipeTile pipe = (IPipeTile) entity;
+		if (!(pipe.getPipe() instanceof Pipe)) {
 			return;
 		}
 
-		if (!(pipe.pipe.transport instanceof PipeTransportPower)) {
+		Pipe p = (Pipe) pipe.getPipe();
+
+		if (!(p.transport instanceof PipeTransportPower)) {
 			return;
 		}
 
-		((PipeTransportPower) pipe.pipe.transport).handlePowerPacket(packetPower);
+		((PipeTransportPower) p.transport).handlePowerPacket(packetPower);
 
 	}
 

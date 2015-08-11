@@ -51,7 +51,7 @@ public class PacketPipeTransportTraveler extends Packet {
 
 		data.writeShort(item.id);
 
-		byte flags = (byte) ((item.output.ordinal() & 7) | ((item.input.ordinal() & 7) << 3) | (forceStackRefresh ? 64 : 0));
+		byte flags = (byte) ((item.output.ordinal() & 7) | ((item.input.ordinal() & 7) << 3) | (forceStackRefresh ? 0x40 : 0));
 		data.writeByte(flags);
 
 		data.writeByte(item.color != null ? item.color.ordinal() : -1);
@@ -83,7 +83,7 @@ public class PacketPipeTransportTraveler extends Packet {
 
 		this.speed = data.readFloat();
 
-		this.forceStackRefresh = (flags & 0x40) > 0;
+		this.forceStackRefresh = (flags & 0x40) != 0;
 	}
 
 	public int getTravelingEntityId() {
