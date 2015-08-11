@@ -8,6 +8,10 @@
  */
 package buildcraft.energy;
 
+import cpw.mods.fml.client.registry.ClientRegistry;
+
+import buildcraft.energy.render.RenderFlywheel;
+
 public class EnergyProxyClient extends EnergyProxy {
 
 	@Override
@@ -17,6 +21,6 @@ public class EnergyProxyClient extends EnergyProxy {
 
 	@Override
 	public void registerBlockRenderers() {
-
+		ClientRegistry.bindTileEntitySpecialRenderer(TileFlywheel.class, new RenderFlywheel());
 	}
 }

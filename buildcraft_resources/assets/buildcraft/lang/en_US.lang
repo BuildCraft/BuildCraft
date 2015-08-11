@@ -408,6 +408,7 @@ tile.engineWood.name=Redstone Engine
 tile.fillerBlock.name=Filler
 tile.filteredBufferBlock.name=Filtered Buffer
 tile.floodGateBlock.name=Flood Gate
+tile.flywheelBlock.name=Flywheel
 tile.frameBlock.name=Frame
 tile.integrationTableBlock.name=Integration Table
 tile.laserBlock.name=Laser
