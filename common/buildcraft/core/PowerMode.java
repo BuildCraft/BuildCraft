@@ -1,8 +1,15 @@
 package buildcraft.core;
 
+import buildcraft.BuildCraftCore;
 public enum PowerMode {
 
-	M2(20), M4(40), M8(80), M16(160), M32(320), M64(640), M128(1280);
+	M2(BuildCraftCore.mainConfigManager.get("power.cobblestoneKinesisPipe").getInt()),
+	M4(BuildCraftCore.mainConfigManager.get("power.stoneKinesisPipe").getInt()),
+	M8(BuildCraftCore.mainConfigManager.get("power.sandstoneKinesisPipe").getInt()),
+	M16(BuildCraftCore.mainConfigManager.get("power.quartzKinesisPipe").getInt()),
+	M32(BuildCraftCore.mainConfigManager.get("power.ironKinesisPipe").getInt()),
+	M64(BuildCraftCore.mainConfigManager.get("power.goldKinesisPipe").getInt()),
+	M128(BuildCraftCore.mainConfigManager.get("power.diamondKinesisPipe").getInt());
 	public static final PowerMode[] VALUES = values();
 	public final int maxPower;
 

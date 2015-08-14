@@ -470,15 +470,16 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	}
 
 	static {
-		powerCapacities.put(PipePowerCobblestone.class, 80);
-		powerCapacities.put(PipePowerStone.class, 160);
+		powerCapacities.put(PipePowerCobblestone.class, BuildCraftCore.mainConfigManager.get("power.cobblestoneKinesisPipe").getInt());
+		powerCapacities.put(PipePowerStone.class, BuildCraftCore.mainConfigManager.get("power.stoneKinesisPipe").getInt());
 		powerCapacities.put(PipePowerWood.class, 10240);
-        powerCapacities.put(PipePowerSandstone.class, 320);
-		powerCapacities.put(PipePowerQuartz.class, 640);
-		powerCapacities.put(PipePowerIron.class, 1280);
-		powerCapacities.put(PipePowerGold.class, 2560);
+        powerCapacities.put(PipePowerSandstone.class, BuildCraftCore.mainConfigManager.get("power.sandstoneKinesisPipe").getInt());
+		powerCapacities.put(PipePowerQuartz.class, BuildCraftCore.mainConfigManager.get("power.quartzKinesisPipe").getInt());
+		powerCapacities.put(PipePowerIron.class, BuildCraftCore.mainConfigManager.get("power.ironKinesisPipe").getInt());
+		powerCapacities.put(PipePowerGold.class, BuildCraftCore.mainConfigManager.get("power.goldKinesisPipe").getInt());
 		powerCapacities.put(PipePowerEmerald.class, 10240);
-		powerCapacities.put(PipePowerDiamond.class, 10240);
+		powerCapacities.put(PipePowerDiamond.class, BuildCraftCore.mainConfigManager.get("power.diamondKinesisPipe").getInt());
+
 
 		powerResistances.put(PipePowerCobblestone.class, 0.05F);
 		powerResistances.put(PipePowerStone.class, 0.025F);

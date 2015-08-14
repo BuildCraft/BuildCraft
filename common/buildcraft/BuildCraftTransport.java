@@ -297,7 +297,13 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		try {
 			BuildCraftCore.mainConfigManager.register("experimental.kinesisPowerLossOnTravel", false, "Should kinesis pipes lose power over distance (think IC2 or BC pre-3.7)?", ConfigManager.RestartRequirement.WORLD);
-
+			BuildCraftCore.mainConfigManager.register("power.cobblestoneKinesisPipe", 80, "Set the Cobblestone kinesis pipe throughput.", ConfigManager.RestartRequirement.GAME);
+			BuildCraftCore.mainConfigManager.register("power.stoneKinesisPipe", 160, "Set the Stone kinesis pipe throughput.", ConfigManager.RestartRequirement.GAME);
+			BuildCraftCore.mainConfigManager.register("power.sandstoneKinesisPipe", 320, "Set the Sandstone kinesis pipe throughput.", ConfigManager.RestartRequirement.GAME);
+			BuildCraftCore.mainConfigManager.register("power.quartzKinesisPipe", 640, "Set the Quartz kinesis pipe throughput.", ConfigManager.RestartRequirement.GAME);
+			BuildCraftCore.mainConfigManager.register("power.ironKinesisPipe", 1280, "Set the Iron kinesis pipe throughput.", ConfigManager.RestartRequirement.GAME);
+			BuildCraftCore.mainConfigManager.register("power.goldKinesisPipe", 2560, "Set the Gold kinesis pipe throughput.", ConfigManager.RestartRequirement.GAME);
+			BuildCraftCore.mainConfigManager.register("power.diamondKinesisPipe", 10240, "Set the Diamond kinesis pipe throughput.", ConfigManager.RestartRequirement.GAME);
 			BuildCraftCore.mainConfigManager.register("general.pipes.hardness", DefaultProps.PIPES_DURABILITY, "How hard to break should a pipe be?", ConfigManager.RestartRequirement.NONE);
 			BuildCraftCore.mainConfigManager.register("general.pipes.baseFluidRate", DefaultProps.PIPES_FLUIDS_BASE_FLOW_RATE, "What should the base flow rate of a fluid pipe be?", ConfigManager.RestartRequirement.GAME)
 					.setMinValue(1).setMaxValue(40);
