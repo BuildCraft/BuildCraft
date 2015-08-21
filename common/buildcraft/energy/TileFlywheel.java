@@ -137,7 +137,7 @@ public class TileFlywheel extends TileBuildCraft implements IEnergyHandler {
 
 			float oldDelta = tickInvDelta;
 			if (lastReceivedTick >= 0) {
-				int newDelta = (int) Math.min(200, (worldObj.getTotalWorldTime() - lastReceivedTick));
+				int newDelta = (int) Math.min(200, worldObj.getTotalWorldTime() - lastReceivedTick);
 				tickInvDelta = 1.0f / (float) newDelta;
 			} else {
 				tickInvDelta = 0.0f;
