@@ -9,7 +9,6 @@
 package buildcraft.builders;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import io.netty.buffer.ByteBuf;

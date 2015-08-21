@@ -24,7 +24,6 @@ import buildcraft.core.blueprints.RequirementItemStack;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
-import buildcraft.core.lib.gui.widgets.ScrollbarWidget;
 import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.render.FluidRenderer;
