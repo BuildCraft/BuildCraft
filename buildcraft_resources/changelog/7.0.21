@@ -1,0 +1,13 @@
+Backported from 7.1:
+
+* Blueprint Library GUI improvements (asie)
+* Clay fluid pipe (asie)
+* Fluid pipe capacity scaling with fluidMultiplier (asie)
+* Zone Planner improvements (dynamic texture, zooming in) (asie)
+
+Bugs fixed:
+
+* [#2939] Quarry makes server crash when used and chunkloading is off in some cases (asie)
+* Builder inconsistently respecting OreDict (knexer)
+* ClassCastException when trying to plant reeds (hea3ven)
+* Random minor crashes (asie)

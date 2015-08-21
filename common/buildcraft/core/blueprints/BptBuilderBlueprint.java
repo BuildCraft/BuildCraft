@@ -618,7 +618,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				FluidStack fluidStack = fluid != null ? FluidContainerRegistry.getFluidForFilledItem(invStk) : null;
 				boolean fluidFound = fluidStack != null && fluidStack.getFluid() == fluid && fluidStack.amount >= FluidContainerRegistry.BUCKET_VOLUME;
 
-				if (fluidFound || StackHelper.isCraftingEquivalent(reqStk, invStk, true)) {
+				if (fluidFound || StackHelper.isMatchingItem(reqStk, invStk, true, true)) {
 					try {
 						usedStack = slot.getSchematic().useItem(context, reqStk, slotInv);
 						slot.addStackConsumed (usedStack);
