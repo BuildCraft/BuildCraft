@@ -129,7 +129,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
 				continue;
 			}
 
-			if (doRemove) {
+			if (doRemove && battery.getEnergyStored() < 0) {
 				int maxStackSize = stack.stackSize;
 				int stackSize = Math.min(maxStackSize, battery.getEnergyStored() / 10);
 				speedMultiplier = Math.min(4.0F, battery.getEnergyStored() * 10 / stackSize);
