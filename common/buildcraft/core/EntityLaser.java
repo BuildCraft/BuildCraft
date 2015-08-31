@@ -53,14 +53,14 @@ public abstract class EntityLaser extends Entity {
 		noClip = true;
 		isImmuneToFire = true;
 
-		dataWatcher.addObject(8, Integer.valueOf(0));
-		dataWatcher.addObject(9, Integer.valueOf(0));
-		dataWatcher.addObject(10, Integer.valueOf(0));
-		dataWatcher.addObject(11, Integer.valueOf(0));
-		dataWatcher.addObject(12, Integer.valueOf(0));
-		dataWatcher.addObject(13, Integer.valueOf(0));
+		dataWatcher.addObject(8, 0);
+		dataWatcher.addObject(9, 0);
+		dataWatcher.addObject(10, 0);
+		dataWatcher.addObject(11, 0);
+		dataWatcher.addObject(12, 0);
+		dataWatcher.addObject(13, 0);
 
-		dataWatcher.addObject(14, Byte.valueOf((byte) 0));
+		dataWatcher.addObject(14, (byte) 0);
 	}
 
 	@Override
@@ -110,14 +110,14 @@ public abstract class EntityLaser extends Entity {
 	}
 
 	protected void updateDataServer() {
-		dataWatcher.updateObject(8, Integer.valueOf(encodeDouble(data.head.x)));
-		dataWatcher.updateObject(9, Integer.valueOf(encodeDouble(data.head.y)));
-		dataWatcher.updateObject(10, Integer.valueOf(encodeDouble(data.head.z)));
-		dataWatcher.updateObject(11, Integer.valueOf(encodeDouble(data.tail.x)));
-		dataWatcher.updateObject(12, Integer.valueOf(encodeDouble(data.tail.y)));
-		dataWatcher.updateObject(13, Integer.valueOf(encodeDouble(data.tail.z)));
+		dataWatcher.updateObject(8, encodeDouble(data.head.x));
+		dataWatcher.updateObject(9, encodeDouble(data.head.y));
+		dataWatcher.updateObject(10, encodeDouble(data.head.z));
+		dataWatcher.updateObject(11, encodeDouble(data.tail.x));
+		dataWatcher.updateObject(12, encodeDouble(data.tail.y));
+		dataWatcher.updateObject(13, encodeDouble(data.tail.z));
 
-		dataWatcher.updateObject(14, Byte.valueOf((byte) (data.isVisible ? 1 : 0)));
+		dataWatcher.updateObject(14, (byte) (data.isVisible ? 1 : 0));
 	}
 
 	public void setPositions(Position head, Position tail) {

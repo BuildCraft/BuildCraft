@@ -14,7 +14,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -383,7 +382,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 		for (int i = orientation.ordinal() + 1; i <= orientation.ordinal() + 6; ++i) {
 			ForgeDirection o = ForgeDirection.VALID_DIRECTIONS[i % 6];
 
-			TileEntity tile = getTile(o);
+			Object tile = getEnergyProvider(o);
 
 			if ((!pipesOnly || tile instanceof IPipeTile) && isPoweredTile(tile, o)) {
 				orientation = o;
@@ -446,14 +445,10 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 	public void getGUINetworkData(int id, int value) {
 		switch (id) {
 			case 0:
-				int iEnergy = Math.round(energy);
-				iEnergy = (iEnergy & 0xffff0000) | (value & 0xffff);
-				energy = iEnergy;
+				energy = (energy & 0xffff0000) | (value & 0xffff);
 				break;
 			case 1:
-				iEnergy = Math.round(energy);
-				iEnergy = (iEnergy & 0xffff) | ((value & 0xffff) << 16);
-				energy = iEnergy;
+				energy = (energy & 0xffff) | ((value & 0xffff) << 16);
 				break;
 			case 2:
 				currentOutput = value;
@@ -465,9 +460,9 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 	}
 
 	public void sendGUINetworkData(Container container, ICrafting iCrafting) {
-		iCrafting.sendProgressBarUpdate(container, 0, Math.round(energy) & 0xffff);
-		iCrafting.sendProgressBarUpdate(container, 1, (Math.round(energy) & 0xffff0000) >> 16);
-		iCrafting.sendProgressBarUpdate(container, 2, Math.round(currentOutput));
+		iCrafting.sendProgressBarUpdate(container, 0, energy & 0xffff);
+		iCrafting.sendProgressBarUpdate(container, 1, (energy & 0xffff0000) >> 16);
+		iCrafting.sendProgressBarUpdate(container, 2, currentOutput);
 		iCrafting.sendProgressBarUpdate(container, 3, Math.round(heat * 100));
 	}
 

@@ -15,18 +15,16 @@ public class PackageFontRenderer extends FontRenderer {
 	private static final RenderItem itemRender = new RenderItem();
 	private static final Minecraft mc = Minecraft.getMinecraft();
 	private static final FontRenderer realRenderer = mc.fontRenderer;
-	private final ItemStack packageStack;
 	private final NBTTagCompound pkgTag;
 
 	public PackageFontRenderer(ItemStack packageStack) {
 		super(mc.gameSettings, new ResourceLocation("textures/font/ascii.png"), mc.getTextureManager(), mc.fontRenderer.getUnicodeFlag());
-		this.packageStack = packageStack;
 		this.pkgTag = NBTUtils.getItemData(packageStack);
 	}
 
 	@Override
 	public int getStringWidth(String s) {
-		if (s.indexOf("SPECIAL:") < 0) {
+		if (!s.contains("SPECIAL:")) {
 			return realRenderer.getStringWidth(s);
 		}
 
@@ -35,7 +33,7 @@ public class PackageFontRenderer extends FontRenderer {
 
 	@Override
 	public int drawString(String s, int x, int y, int color, boolean shadow) {
-		if (s.indexOf("SPECIAL:") < 0) {
+		if (!s.contains("SPECIAL:")) {
 			return realRenderer.drawString(s, x, y, color, shadow);
 		}
 
@@ -47,18 +45,22 @@ public class PackageFontRenderer extends FontRenderer {
 
 			if (pkgTag.hasKey("item" + slotPos)) {
 				ItemStack slotStack = ItemStack.loadItemStackFromNBT(pkgTag.getCompoundTag("item" + slotPos));
-				GL11.glTranslatef(0.0F, 0.0F, 32.0F);
-				GL11.glScalef(0.5F, 0.5F, 0.5F);
-				FontRenderer font = slotStack.getItem().getFontRenderer(slotStack);
-				itemRender.zLevel = 200.0F;
+				if (slotStack != null) {
+					GL11.glTranslatef(0.0F, 0.0F, 32.0F);
+					GL11.glScalef(0.5F, 0.5F, 0.5F);
+					FontRenderer font = slotStack.getItem().getFontRenderer(slotStack);
+					itemRender.zLevel = 200.0F;
 
-				if (font == null || font instanceof PackageFontRenderer) {
-					font = Minecraft.getMinecraft().fontRenderer;
+					if (font == null || font instanceof PackageFontRenderer) {
+						font = Minecraft.getMinecraft().fontRenderer;
+					}
+
+					itemRender.renderItemAndEffectIntoGUI(font, mc.getTextureManager(), slotStack, rx * 2, y * 2);
+					itemRender.renderItemOverlayIntoGUI(font, mc.getTextureManager(), slotStack, rx * 2, y * 2);
+					itemRender.zLevel = 0.0F;
+				} else {
+					realRenderer.drawString("X", rx, y, 0xFF0000);
 				}
-
-				itemRender.renderItemAndEffectIntoGUI(font, this.mc.getTextureManager(), slotStack, rx * 2, y * 2);
-				itemRender.renderItemOverlayIntoGUI(font, this.mc.getTextureManager(), slotStack, rx * 2, y * 2);
-				itemRender.zLevel = 0.0F;
 			}
 
 			rx += 7;

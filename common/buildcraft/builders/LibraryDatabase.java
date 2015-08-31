@@ -15,6 +15,8 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
@@ -150,22 +152,26 @@ public class LibraryDatabase {
 				int sepIndex = fileName.lastIndexOf(LibraryId.BPT_SEP_CHARACTER);
 				int dotIndex = fileName.lastIndexOf('.');
 
-				String extension = fileName.substring(dotIndex + 1);
+				if (dotIndex > 0) {
+					String extension = fileName.substring(dotIndex + 1);
 
-				if (sepIndex > 0) {
-					String prefix = fileName.substring(0, sepIndex);
-					String suffix = fileName.substring(sepIndex + 1);
+					if (sepIndex > 0) {
+						String prefix = fileName.substring(0, sepIndex);
+						String suffix = fileName.substring(sepIndex + 1);
 
-					id.name = prefix;
-					id.uniqueId = LibraryId.toBytes(suffix.substring(0, suffix.length() - (extension.length() + 1)));
+						id.name = prefix;
+						id.uniqueId = LibraryId.toBytes(suffix.substring(0, suffix.length() - (extension.length() + 1)));
+					} else {
+						id.name = fileName.substring(0, dotIndex);
+						id.uniqueId = new byte[0];
+					}
+					id.extension = extension;
+
+					if (!blueprintIds.contains(id)) {
+						blueprintIds.add(id);
+					}
 				} else {
-					id.name = fileName.substring(0, dotIndex);
-					id.uniqueId = new byte[0];
-				}
-				id.extension = extension;
-
-				if (!blueprintIds.contains(id)) {
-					blueprintIds.add(id);
+					BCLog.logger.warn("Found incorrectly named (no extension) blueprint file: '%s'!", fileName);
 				}
 			}
 
@@ -205,25 +211,7 @@ public class LibraryDatabase {
 		return null;
 	}
 
-	public ArrayList<LibraryId> getPage (int pageId) {
-		ArrayList<LibraryId> result = new ArrayList<LibraryId>();
-
-		if (pageId < 0) {
-			return result;
-		}
-
-		for (int i = pageId * PAGE_SIZE; i < pageId * PAGE_SIZE + PAGE_SIZE; ++i) {
-			if (i < pages.length) {
-				result.add(pages [i]);
-			} else {
-				break;
-			}
-		}
-
-		return result;
-	}
-
-	public int getPageNumber () {
-		return (int) Math.ceil((float) blueprintIds.size() / (float) PAGE_SIZE);
+	public List<LibraryId> getBlueprintIds() {
+		return Collections.unmodifiableList(new ArrayList<LibraryId>(blueprintIds));
 	}
 }

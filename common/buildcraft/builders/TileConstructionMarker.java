@@ -100,11 +100,12 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 			BlueprintBase bpt = ItemBlueprint.loadBlueprint(itemBlueprint);
 			if (bpt != null && bpt instanceof Blueprint) {
 				bpt = bpt.adjustToWorld(worldObj, xCoord, yCoord, zCoord, direction);
-
-				bluePrintBuilder = new BptBuilderBlueprint((Blueprint) bpt, worldObj, xCoord, yCoord, zCoord);
-				bptContext = bluePrintBuilder.getContext();
-				box.initialize(bluePrintBuilder);
-				sendNetworkUpdate();
+				if (bpt != null) {
+					bluePrintBuilder = new BptBuilderBlueprint((Blueprint) bpt, worldObj, xCoord, yCoord, zCoord);
+					bptContext = bluePrintBuilder.getContext();
+					box.initialize(bluePrintBuilder);
+					sendNetworkUpdate();
+				}
 			} else {
 				return;
 			}
@@ -209,7 +210,6 @@ public class TileConstructionMarker extends TileBuildCraft implements IBuildingI
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
 		if (side.isServer() && "uploadBuildersInAction".equals(command)) {
-			BuildCraftCore.instance.sendToServer(new PacketCommand(this, "uploadBuildersInAction", null));
 			for (BuildingItem i : buildersInAction) {
 				BuildCraftCore.instance.sendToPlayer((EntityPlayer) sender, createLaunchItemPacket(i));
 			}

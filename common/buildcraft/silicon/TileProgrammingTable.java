@@ -18,7 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
@@ -28,7 +27,6 @@ import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.StringUtils;
-import buildcraft.core.lib.utils.Utils;
 
 public class TileProgrammingTable extends TileLaserTableBase implements IInventory, ISidedInventory, ICommandReceiver {
 	public static final int WIDTH = 6;
@@ -67,27 +65,13 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
 			return;
 		}
 
-		if (optionId >= 0 && this.getStackInSlot(1) == null && getEnergy() >= currentRecipe.getEnergyCost(options.get(optionId))) {
+		if (optionId >= 0 && getEnergy() >= currentRecipe.getEnergyCost(options.get(optionId))) {
 			if (currentRecipe.canCraft(this.getStackInSlot(0))) {
 				ItemStack remaining = currentRecipe.craft(this.getStackInSlot(0), options.get(optionId));
 				if (remaining != null && remaining.stackSize > 0) {
 					setEnergy(0);
-					this.decrStackSize(0, remaining.stackSize);
-
-					if (remaining.stackSize > 0) {
-						remaining.stackSize -= Utils
-								.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, remaining);
-					}
-
-					if (remaining.stackSize > 0) {
-						remaining.stackSize -= Utils.addToRandomInjectableAround(worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN, remaining);
-					}
-
-					if (remaining.stackSize > 0) {
-						this.setInventorySlotContents(1, remaining);
-					} else {
-						this.setInventorySlotContents(1, null);
-					}
+					decrStackSize(0, remaining.stackSize);
+					outputStack(remaining, this, 1, false);
 				}
 			}
 			findRecipe();
@@ -174,7 +158,9 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
 			}
 		}
 
-		if ((oldId != null && !oldId.equals(currentRecipeId)) || (oldId == null && currentRecipeId != null)) {
+		if ((oldId != null && currentRecipeId != null &&  !oldId.equals(currentRecipeId))
+				|| (oldId == null && currentRecipeId != null)
+				|| (oldId != null && currentRecipeId == null)) {
 			optionId = -1;
 			updateRecipe();
 			queueNetworkUpdate();

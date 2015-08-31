@@ -42,7 +42,6 @@ public class AIRobotSearchRandomGroundBlock extends AIRobot {
 	@Override
 	public void update() {
 		if (filter == null) {
-			// defensive code
 			terminate();
 		}
 
@@ -52,8 +51,7 @@ public class AIRobotSearchRandomGroundBlock extends AIRobot {
 			terminate();
 		}
 
-		int x = 0;
-		int z = 0;
+		int x, z;
 
 		if (zone == null) {
 			double r = robot.worldObj.rand.nextFloat() * range;

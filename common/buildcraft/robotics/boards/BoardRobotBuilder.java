@@ -12,6 +12,7 @@ import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.world.WorldSettings;
 
 import buildcraft.api.boards.RedstoneBoardRobot;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
@@ -88,8 +89,12 @@ public class BoardRobotBuilder extends RedstoneBoardRobot {
 				startDelegateAI(new AIRobotDisposeItems(robot));
 			}
 
-			requirementsToLookFor = currentBuildingSlot.getRequirements(markerToBuild
-					.getContext());
+			if (robot.worldObj.getWorldInfo().getGameType() != WorldSettings.GameType.CREATIVE) {
+				requirementsToLookFor = currentBuildingSlot.getRequirements(markerToBuild
+						.getContext());
+			} else {
+				requirementsToLookFor = new LinkedList<ItemStack>();
+			}
 
 			if (requirementsToLookFor == null) {
 				launchingDelay = 40;

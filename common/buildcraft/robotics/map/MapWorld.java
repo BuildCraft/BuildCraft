@@ -5,60 +5,32 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.Set;
 
-import gnu.trove.map.hash.TLongObjectHashMap;
+import gnu.trove.map.hash.TLongLongHashMap;
+import gnu.trove.set.hash.TLongHashSet;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.LongHashMap;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 
 import buildcraft.core.lib.utils.NBTUtils;
-import buildcraft.core.lib.utils.ThreadSafeUtils;
 
 public class MapWorld {
-	private final World world;
-	private final TLongObjectHashMap<MapRegion> regionMap;
-	private final Set<QueuedXZ> regionUpdateSet = new HashSet<QueuedXZ>();
-	private final Queue<QueuedXZ> queuedChunks;
+	private final LongHashMap regionMap;
+	private final HashMap<Chunk, Integer> timeToUpdate = new HashMap<Chunk, Integer>();
+	private final TLongLongHashMap regionUpdateTime;
+	private final TLongHashSet updatedChunks;
 	private final File location;
 
-	private class QueuedXZ {
-		int x, z, p;
-
-		QueuedXZ(int x, int z, int p) {
-			this.x = x;
-			this.z = z;
-			this.p = p;
-		}
-
-		@Override
-		public boolean equals(Object other) {
-			if (other == null || !(other instanceof QueuedXZ)) {
-				return false;
-			}
-			return ((QueuedXZ) other).x == x && ((QueuedXZ) other).z == z;
-		}
-
-		@Override
-		public int hashCode() {
-			return x * 31 + z;
-		}
-	}
-
 	public MapWorld(World world, File location) {
-		this.world = world;
-		regionMap = new TLongObjectHashMap<MapRegion>();
-		queuedChunks = new PriorityQueue<QueuedXZ>(11, new Comparator<QueuedXZ>() {
-			@Override
-			public int compare(QueuedXZ c1, QueuedXZ c2) {
-				return (c1 != null ? c1.p : 0) - (c2 != null ? c2.p : 0);
-			}
-		});
+		regionMap = new LongHashMap();
+		regionUpdateTime = new TLongLongHashMap();
+		updatedChunks = new TLongHashSet();
 
 		String saveFolder = world.provider.getSaveFolder();
 		if (saveFolder == null) {
@@ -72,13 +44,9 @@ public class MapWorld {
 		}
 	}
 
-	private long getXzId(int x, int z) {
-		return (x << 24) | z;
-	}
-
 	private MapRegion getRegion(int x, int z) {
-		long id = getXzId(x, z);
-		MapRegion region = regionMap.get(id);
+		long id = MapUtils.getIDFromCoords(x, z);
+		MapRegion region = (MapRegion) regionMap.getValueByKey(id);
 		if (region == null) {
 			region = new MapRegion(x, z);
 
@@ -99,7 +67,7 @@ public class MapWorld {
 				}
 			}
 
-			regionMap.put(id, region);
+			regionMap.add(id, region);
 		}
 		return region;
 	}
@@ -114,46 +82,15 @@ public class MapWorld {
 		return region.hasChunk(x & 15, z & 15);
 	}
 
-	public void queueChunkForUpdate(int x, int z, int priority) {
-		synchronized (queuedChunks) {
-			queuedChunks.add(new QueuedXZ(x, z, priority));
-		}
-	}
-
-	public void queueChunkForUpdateIfEmpty(int x, int z, int priority) {
-		if (!hasChunk(x, z)) {
-			queueChunkForUpdate(x, z, priority);
-		}
-	}
-
-	public void updateChunkInQueue() {
-		synchronized (queuedChunks) {
-			if (queuedChunks.size() == 0) {
-				return;
-			}
-
-			QueuedXZ q = queuedChunks.remove();
-			if (q == null) {
-				return;
-			}
-
-			if (world.getChunkProvider().chunkExists(q.x, q.z)) {
-				updateChunk(q.x, q.z);
-			}
-		}
-	}
-
 	public void save() {
-		Iterator<QueuedXZ> i = regionUpdateSet.iterator();
+		long[] chunkList;
+		synchronized (updatedChunks) {
+			chunkList = updatedChunks.toArray();
+			updatedChunks.clear();
+		}
 
-		while (i.hasNext()) {
-			QueuedXZ id = i.next();
-			i.remove();
-			if (id == null) {
-				continue;
-			}
-
-			MapRegion region = regionMap.get(getXzId(id.x, id.z));
+		for (long id : chunkList) {
+			MapRegion region = (MapRegion) regionMap.getValueByKey(id);
 			if (region == null) {
 				continue;
 			}
@@ -161,7 +98,7 @@ public class MapWorld {
 			NBTTagCompound output = new NBTTagCompound();
 			region.writeToNBT(output);
 			byte[] data = NBTUtils.save(output);
-			File file = new File(location, "r" + id.x + "," + id.z + ".nbt");
+			File file = new File(location, "r" + MapUtils.getXFromID(id) + "," + MapUtils.getZFromID(id) + ".nbt");
 
 			try {
 				FileOutputStream f = new FileOutputStream(file);
@@ -178,14 +115,42 @@ public class MapWorld {
 		return chunk.getColor(x & 15, z & 15);
 	}
 
-	private void updateChunk(int x, int z) {
-		MapChunk chunk = getChunk(x, z);
-		chunk.update(ThreadSafeUtils.getChunk(world, x, z));
-		regionUpdateSet.add(new QueuedXZ(x >> 4, z >> 4, 0));
+	public void tick() {
+		if (timeToUpdate.size() > 0) {
+			synchronized (timeToUpdate) {
+				Set<Chunk> chunks = new HashSet<Chunk>();
+				chunks.addAll(timeToUpdate.keySet());
+				for (Chunk c : chunks) {
+					int v = timeToUpdate.get(c);
+					if (v > 1) {
+						timeToUpdate.put(c, v - 1);
+					} else {
+						timeToUpdate.remove(c);
+						updateChunk(c);
+					}
+				}
+			}
+		}
+	}
 
-		// priority does not matter - see equals
-		synchronized (queuedChunks) {
-			queuedChunks.remove(new QueuedXZ(x, z, 0));
+	public void updateChunk(Chunk rchunk) {
+		long id = MapUtils.getIDFromCoords(rchunk.xPosition, rchunk.zPosition);
+		MapChunk chunk = getChunk(rchunk.xPosition, rchunk.zPosition);
+		chunk.update(rchunk);
+		updatedChunks.add(id);
+		synchronized (timeToUpdate) {
+			timeToUpdate.remove(rchunk);
+		}
+		regionUpdateTime.put(id, (new Date()).getTime());
+	}
+
+	public long getUpdateTime(int x, int z) {
+		return regionUpdateTime.get(MapUtils.getIDFromCoords(x, z));
+	}
+
+	public void updateChunkDelayed(Chunk chunk, byte time) {
+		synchronized (timeToUpdate) {
+			timeToUpdate.put(chunk, (int) time);
 		}
 	}
 }

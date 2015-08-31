@@ -62,6 +62,7 @@ import buildcraft.core.lib.TileBuffer;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.core.lib.utils.Utils;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.transport.gates.GatePluggable;
 import buildcraft.transport.render.PipeRendererWorld;
 
@@ -74,7 +75,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
 	private static final ForgeDirection[] DIR_VALUES = ForgeDirection.values();
 
-	public static enum Part {
+	public enum Part {
 		Pipe,
 		Pluggable
 	}
@@ -416,10 +417,8 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		}
 
 		pipeRemoved.put(new BlockIndex(x, y, z), pipe);
+		updateNeighbourSignalState(pipe);
 		world.removeTileEntity(x, y, z);
-		if (pipe != null) {
-			updateNeighbourSignalState(pipe);
-		}
 	}
 
 	@Override
@@ -487,10 +486,20 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		return null;
 	}
 
-	@SideOnly(Side.CLIENT)
 	@Override
 	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
-		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, Minecraft.getMinecraft().thePlayer);
+		// HACK: WAILA compatibility
+		EntityPlayer clientPlayer = CoreProxy.proxy.getClientPlayer();
+		if (clientPlayer != null) {
+			return getPickBlock(target, world, x, y, z, clientPlayer);
+		} else {
+			return new ItemStack(getPipe(world, x, y, z).item, 1, getPipe(world, x, y, z).container.getItemMetadata());
+		}
+	}
+
+	@Override
+	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z, EntityPlayer player) {
+		RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 
 		if (rayTraceResult != null && rayTraceResult.boundingBox != null) {
 			switch (rayTraceResult.hitPart) {
@@ -622,8 +631,12 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 				}
 
 				RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
-				ForgeDirection hitSide = rayTraceResult.hitPart == Part.Pipe ? rayTraceResult.sideHit : ForgeDirection.UNKNOWN;
-				return pipe.blockActivated(player, hitSide);
+				if (rayTraceResult != null) {
+					ForgeDirection hitSide = rayTraceResult.hitPart == Part.Pipe ? rayTraceResult.sideHit : ForgeDirection.UNKNOWN;
+					return pipe.blockActivated(player, hitSide);
+				} else {
+					return false;
+				}
 			} else if (currentItem.getItem() instanceof IMapLocation) {
 				// We want to be able to record pipe locations
 				return false;
@@ -671,8 +684,10 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 					return true;
 				}
 
-				ForgeDirection hitSide = rayTraceResult.hitPart == Part.Pipe ? rayTraceResult.sideHit : ForgeDirection.UNKNOWN;
-				return pipe.blockActivated(player, hitSide);
+				if (rayTraceResult != null) {
+					ForgeDirection hitSide = rayTraceResult.hitPart == Part.Pipe ? rayTraceResult.sideHit : ForgeDirection.UNKNOWN;
+					return pipe.blockActivated(player, hitSide);
+				}
 			}
 		}
 

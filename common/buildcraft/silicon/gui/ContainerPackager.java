@@ -10,7 +10,6 @@ package buildcraft.silicon.gui;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -21,7 +20,6 @@ import buildcraft.silicon.TilePackager;
 
 public class ContainerPackager extends BuildCraftContainer {
 	private final TilePackager tile;
-	// private int lastProgress;
 
 	public ContainerPackager(InventoryPlayer inventoryplayer, TilePackager t) {
 		super(t.getSizeInventory());
@@ -38,13 +36,12 @@ public class ContainerPackager extends BuildCraftContainer {
 
 		for (int y = 0; y < 3; y++) {
 			for (int x = 0; x < 3; x++) {
-				addSlotToContainer(new SlotPackager(tile, 12 + x + y * 3, 30 + x * 18, 17 + y * 18));
+				addSlotToContainer(new SlotPackager(tile.inventoryPattern, x + y * 3, 30 + x * 18, 17 + y * 18));
 			}
 		}
 
-		addSlotToContainer(new Slot(tile, 10, 108, 31));
+		// addSlotToContainer(new Slot(tile, 10, 108, 31));
 		addSlotToContainer(new SlotOutput(tile, 11, 123, 59));
-
 
 		for (int y = 0; y < 3; y++) {
 			for (int x = 0; x < 9; x++) {
@@ -60,47 +57,12 @@ public class ContainerPackager extends BuildCraftContainer {
 	}
 
 	@Override
-	public void addCraftingToCrafters(ICrafting icrafting) {
-		super.addCraftingToCrafters(icrafting);
-		//icrafting.sendProgressBarUpdate(this, 0, tile.progress);
-	}
-
-	@Override
-	public void detectAndSendChanges() {
-		super.detectAndSendChanges();
-		/*for (int i = 0; i < crafters.size(); i++) {
-			ICrafting icrafting = (ICrafting) crafters.get(i);
-
-			if (lastProgress != tile.progress) {
-				icrafting.sendProgressBarUpdate(this, 0, tile.progress);
-			}
-		}
-
-		ItemStack output = craftResult.getStackInSlot(0);
-		if (output != prevOutput) {
-			prevOutput = output;
-			onCraftMatrixChanged(tile.craftMatrix);
-		}
-
-		lastProgress = tile.progress;*/
-	}
-
-	@Override
-	public void updateProgressBar(int id, int data) {
-		/*switch (id) {
-			case 0:
-				tile.progress = data;
-				break;
-		}*/
-	}
-
-	@Override
 	public ItemStack slotClick(int slotNum, int mouseButton, int modifier, EntityPlayer player) {
-		ItemStack out = super.slotClick(slotNum, mouseButton, modifier, player);
 		Slot slot = slotNum < 0 ? null : (Slot) this.inventorySlots.get(slotNum);
+		ItemStack out = super.slotClick(slotNum, mouseButton, slot instanceof SlotPackager ? 0 : modifier, player);
 
 		if (slot instanceof SlotPackager) {
-			int idx = slot.getSlotIndex() - 12;
+			int idx = slot.getSlotIndex();
 			ItemStack stack = player != null && player.inventory != null ? player.inventory.getItemStack() : null;
 			if (stack == null) {
 				tile.setPatternSlot(idx, !tile.isPatternSlotSet(idx));

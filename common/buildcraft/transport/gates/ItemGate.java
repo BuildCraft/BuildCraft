@@ -31,7 +31,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.gates.GateExpansions;
 import buildcraft.api.gates.IGateExpansion;
-import buildcraft.api.statements.StatementManager;
 import buildcraft.api.transport.IPipe;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
@@ -244,8 +243,6 @@ public class ItemGate extends ItemBuildCraft implements IPipePluggableItem {
 		for (IGateExpansion expansion : GateExpansions.getExpansions()) {
 			expansion.registerItemOverlay(iconRegister);
 		}
-		
-		StatementManager.registerIcons(iconRegister);
 	}
 
 	@Override

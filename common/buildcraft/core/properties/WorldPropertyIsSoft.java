@@ -14,7 +14,6 @@ import net.minecraft.world.IBlockAccess;
 import buildcraft.api.core.BuildCraftAPI;
 
 public class WorldPropertyIsSoft extends WorldProperty {
-
 	@Override
 	public boolean get(IBlockAccess blockAccess, Block block, int meta, int x, int y, int z) {
 		return block == null

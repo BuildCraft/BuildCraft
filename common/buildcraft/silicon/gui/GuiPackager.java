@@ -46,9 +46,5 @@ public class GuiPackager extends GuiBuildCraft {
 				}
 			}
 		}
-		/*if (bench.progress > 0) {
-			int progress = bench.getProgressScaled(23);
-			drawTexturedModalRect(guiLeft + 89, guiTop + 45, 176, 0, progress + 1, 12);
-		}*/
 	}
 }

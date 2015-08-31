@@ -63,6 +63,9 @@ public final class SchematicRegistry implements ISchematicRegistry {
 			}
 
 			for (Constructor<?> c : clazz.getConstructors()) {
+				if (c == null) {
+					continue;
+				}
 				Class<?>[] typesSignature = c.getParameterTypes();
 				if (typesSignature.length != params.length) {
 					// non-matching constructor count arguments, skip
@@ -87,7 +90,7 @@ public final class SchematicRegistry implements ISchematicRegistry {
 				if (!valid) {
 					continue;
 				}
-				if (c != null && params.length == 0) {
+				if (params.length == 0) {
 					emptyConstructorMap.put(clazz, c);
 				}
 				return c;

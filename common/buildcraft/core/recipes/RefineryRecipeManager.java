@@ -23,16 +23,14 @@ public final class RefineryRecipeManager implements IRefineryRecipeManager {
 
 	public static final RefineryRecipeManager INSTANCE = new RefineryRecipeManager();
 	private HashMap<String, IFlexibleRecipe<FluidStack>> recipes = new HashMap<String, IFlexibleRecipe<FluidStack>>();
-	private ArrayList<FluidStack> validFluids1 = new ArrayList();
-	private ArrayList<FluidStack> validFluids2 = new ArrayList();
+	private ArrayList<FluidStack> validFluids1 = new ArrayList<FluidStack>();
+	private ArrayList<FluidStack> validFluids2 = new ArrayList<FluidStack>();
 
 	private RefineryRecipeManager() {
 	}
 
 	@Override
 	public void addRecipe(String id, FluidStack ingredient, FluidStack result, int energy, int delay) {
-		String name = result.getFluid().getName();
-
 		FlexibleRecipe<FluidStack> recipe = new FlexibleRecipe<FluidStack>(id, result, energy, delay, ingredient);
 		recipes.put(id, recipe);
 		validFluids1.add(ingredient);
@@ -42,7 +40,6 @@ public final class RefineryRecipeManager implements IRefineryRecipeManager {
 	@Override
 	public void addRecipe(String id, FluidStack ingredient1, FluidStack ingredient2, FluidStack result, int energy,
 			int delay) {
-		String name = result.getFluid().getName();
 
 		if (ingredient1 == null || ingredient2 == null || result == null) {
 			BCLog.logger.warn("Rejected refinery recipe " + id + " due to a null FluidStack!");

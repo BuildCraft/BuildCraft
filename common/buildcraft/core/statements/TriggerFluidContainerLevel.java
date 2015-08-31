@@ -32,7 +32,7 @@ public class TriggerFluidContainerLevel extends BCStatement implements ITriggerE
 
 		public final float level;
 
-		private TriggerType(float level) {
+		TriggerType(float level) {
 			this.level = level;
 		}
 	}

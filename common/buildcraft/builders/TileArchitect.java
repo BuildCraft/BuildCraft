@@ -21,6 +21,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.BuildCraftCore;
@@ -350,4 +351,10 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 	public int getLEDLevel(int led) {
 		return (led == 0 ? isProcessing : box != null && box.isInitialized()) ? 15 : 0;
 	}
+	
+	@Override
+	@SideOnly(Side.CLIENT)
+    public double getMaxRenderDistanceSquared() {
+        return Double.MAX_VALUE;
+    }
 }

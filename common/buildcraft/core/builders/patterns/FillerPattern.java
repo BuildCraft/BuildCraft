@@ -13,6 +13,7 @@ import java.util.TreeMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.Loader;
@@ -62,9 +63,14 @@ public abstract class FillerPattern implements IFillerPattern {
 
 	@Override
 	public void registerIcons(IIconRegister iconRegister) {
-		icon = iconRegister.registerIcon("buildcraftcore:fillerPatterns/" + tag);
+		if (!(iconRegister instanceof TextureMap) || ((TextureMap) iconRegister).getTextureType() == 1) {
+			icon = iconRegister.registerIcon("buildcraftcore:fillerPatterns/" + tag);
+		}
+
 		if (Loader.isModLoaded("BuildCraft|Builders")) {
-			blockIcon = iconRegister.registerIcon("buildcraftbuilders:fillerBlockIcons/" + tag);
+			if (!(iconRegister instanceof TextureMap) || ((TextureMap) iconRegister).getTextureType() == 0) {
+				blockIcon = iconRegister.registerIcon("buildcraftbuilders:fillerBlockIcons/" + tag);
+			}
 		}
 	}
 
@@ -103,7 +109,7 @@ public abstract class FillerPattern implements IFillerPattern {
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
 					if (isValid(x, y, z, template)) {
-						template.contents[x][y][z] = new SchematicMask(true);
+						template.put(x, y, z, new SchematicMask(true));
 					}
 				}
 			}
@@ -114,13 +120,11 @@ public abstract class FillerPattern implements IFillerPattern {
 	 * Generates an empty in a given area
 	 */
 	public static void empty(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Template template) {
-		int lastX = Integer.MAX_VALUE, lastY = Integer.MAX_VALUE, lastZ = Integer.MAX_VALUE;
-
 		for (int y = yMax; y >= yMin; y--) {
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
 					if (isValid(x, y, z, template)) {
-						template.contents[x][y][z] = null;
+						template.put(x, y, z, null);
 					}
 				}
 			}
@@ -131,13 +135,11 @@ public abstract class FillerPattern implements IFillerPattern {
 	 * Generates a flatten in a given area
 	 */
 	public static void flatten(int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, Template template) {
-		int lastX = Integer.MAX_VALUE, lastY = Integer.MAX_VALUE, lastZ = Integer.MAX_VALUE;
-
 		for (int x = xMin; x <= xMax; ++x) {
 			for (int z = zMin; z <= zMax; ++z) {
 				for (int y = yMax; y >= yMin; --y) {
 					if (isValid(x, y, z, template)) {
-						template.contents [x][y][z] = new SchematicMask(true);
+						template.put(x, y, z, new SchematicMask(true));
 					}
 				}
 			}
@@ -155,9 +157,9 @@ public abstract class FillerPattern implements IFillerPattern {
 			for (int x = 0; x < box.sizeX(); ++x) {
 				for (int y = 0; y < box.sizeY(); ++y) {
 					for (int z = 0; z < box.sizeZ(); ++z) {
-						if (tmpl.contents[x][y][z] != null) {
-							result.contents[x][y][z] = SchematicRegistry.INSTANCE
-									.createSchematicBlock(block, meta);
+						if (tmpl.get(x, y, z) != null) {
+							result.put(x, y, z, SchematicRegistry.INSTANCE
+									.createSchematicBlock(block, meta));
 						}
 
 					}

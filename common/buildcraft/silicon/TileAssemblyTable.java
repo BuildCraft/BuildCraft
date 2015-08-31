@@ -15,7 +15,6 @@ import java.util.List;
 
 import io.netty.buffer.ByteBuf;
 
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -24,7 +23,6 @@ import net.minecraft.nbt.NBTTagString;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidStack;
 
 import buildcraft.BuildCraftCore;
@@ -37,7 +35,6 @@ import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.StringUtils;
-import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.recipes.AssemblyRecipeManager;
 
 public class TileAssemblyTable extends TileLaserTableBase implements IInventory, IFlexibleCrafter, ICommandReceiver {
@@ -50,7 +47,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 	public List<CraftingResult<ItemStack>> getPotentialOutputs() {
 		List<CraftingResult<ItemStack>> result = new LinkedList<CraftingResult<ItemStack>>();
 
-		for (IFlexibleRecipe recipe : AssemblyRecipeManager.INSTANCE.getRecipes()) {
+		for (IFlexibleRecipe<ItemStack> recipe : AssemblyRecipeManager.INSTANCE.getRecipes()) {
 			CraftingResult<ItemStack> r = recipe.craft(this, true);
 
 			if (r != null) {
@@ -95,23 +92,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 			setEnergy(0);
 
 			if (currentRecipe.canBeCrafted(this)) {
-				ItemStack remaining = currentRecipe.craft(this, false).crafted.copy();
-
-				if (remaining != null && remaining.stackSize > 0) {
-					remaining.stackSize -= Utils
-							.addToRandomInventoryAround(worldObj, xCoord, yCoord, zCoord, remaining);
-				}
-
-				if (remaining != null && remaining.stackSize > 0) {
-					remaining.stackSize -= Utils.addToRandomInjectableAround(worldObj, xCoord, yCoord, zCoord, ForgeDirection.UNKNOWN, remaining);
-				}
-
-				if (remaining != null && remaining.stackSize > 0) {
-					EntityItem entityitem = new EntityItem(worldObj, xCoord + 0.5, yCoord + 0.7, zCoord + 0.5,
-							remaining);
-
-					worldObj.spawnEntityInWorld(entityitem);
-				}
+				outputStack(currentRecipe.craft(this, false).crafted.copy(), true);
 
 				setNextCurrentRecipe();
 			}
@@ -228,7 +209,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		}
 	}
 
-	public boolean isPlanned(IFlexibleRecipe recipe) {
+	public boolean isPlanned(IFlexibleRecipe<ItemStack> recipe) {
 		if (recipe == null) {
 			return false;
 		}
@@ -236,7 +217,7 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		return plannedOutput.contains(recipe.getId());
 	}
 
-	public boolean isAssembling(IFlexibleRecipe recipe) {
+	public boolean isAssembling(IFlexibleRecipe<ItemStack> recipe) {
 		return recipe != null && recipe == currentRecipe;
 	}
 

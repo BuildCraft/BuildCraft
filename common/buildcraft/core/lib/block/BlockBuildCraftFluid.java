@@ -16,7 +16,9 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import cpw.mods.fml.client.FMLClientHandler;
@@ -65,10 +67,25 @@ public class BlockBuildCraftFluid extends BlockFluidClassic {
 	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
 		super.onNeighborBlockChange(world, x, y, z, block);
 		if (flammable && world.provider.dimensionId == -1) {
-			world.setBlockToAir(x, y, z);
+			world.setBlock(x, y, z, Blocks.air, 0, 2); // Do not cause block updates!
 			world.newExplosion(null, x, y, z, 4F, true, true);
 		}
 	}
+
+	@Override
+	public void onBlockExploded(World world, int x, int y, int z, Explosion explosion) {
+		world.setBlock(x, y, z, Blocks.air, 0, 2); // Do not cause block updates!
+		for (ForgeDirection fd : ForgeDirection.VALID_DIRECTIONS) {
+			Block block = world.getBlock(x + fd.offsetX, y + fd.offsetY, z + fd.offsetZ);
+			if (block instanceof BlockBuildCraftFluid) {
+				world.scheduleBlockUpdate(x + fd.offsetX, y + fd.offsetY, z + fd.offsetZ, block, 2);
+			} else {
+				world.notifyBlockOfNeighborChange(x + fd.offsetX, y + fd.offsetY, z + fd.offsetZ, block);
+			}
+		}
+		onBlockDestroyedByExplosion(world, x, y, z, explosion);
+	}
+
 
 	@Override
 	public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
@@ -166,5 +183,10 @@ public class BlockBuildCraftFluid extends BlockFluidClassic {
 	@Override
 	public MapColor getMapColor(int meta) {
 		return mapColor;
+	}
+
+	@Override
+	public boolean canDropFromExplosion(Explosion explosion) {
+		return false;
 	}
 }

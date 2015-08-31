@@ -308,6 +308,13 @@ public class TravelingItem {
 		return true;
 	}
 
+	public void cleanup() {
+		if (hasDisplayList) {
+			TransportProxy.proxy.clearDisplayList(displayList);
+			hasDisplayList = false;
+		}
+	}
+
 	@Override
 	public String toString() {
 		return "TravelingItem: " + id;

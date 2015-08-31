@@ -1,0 +1,6 @@
+Bugs fixed:
+
+* Creative Only blueprints partially working in Survival worlds (asie)
+* Incorrect behaviour with Forestry/RailCraft engines (asie - workaround, actually bug on their side)
+* Logistics Pipes VerifyError crash (asie)
+* Overly dark water with non-sky lighting (asie)

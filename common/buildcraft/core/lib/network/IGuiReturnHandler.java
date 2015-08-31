@@ -13,7 +13,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
-public abstract interface IGuiReturnHandler {
+public interface IGuiReturnHandler {
 	World getWorld();
 
 	void writeGuiData(ByteBuf data);

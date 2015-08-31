@@ -9,6 +9,7 @@
 package buildcraft;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockDispenser;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -55,6 +56,7 @@ import buildcraft.silicon.TilePackager;
 import buildcraft.silicon.TileProgrammingTable;
 import buildcraft.silicon.TileStampingTable;
 import buildcraft.silicon.network.PacketHandlerSilicon;
+import buildcraft.transport.stripes.StripesHandlerDispenser;
 
 @Mod(name = "BuildCraft Silicon", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Silicon", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftSilicon extends BuildCraftMod {
@@ -134,7 +136,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		CoreProxy.proxy.registerTileEntity(TilePackager.class, "buildcraft.TilePackager");
 		CoreProxy.proxy.registerTileEntity(TileStampingTable.class, "buildcraft.TileStampingTable");
 
-		BuilderAPI.schematicRegistry.registerSchematicBlock(laserBlock, SchematicRotateMeta.class, new int[] {2, 5, 3, 4}, true);
+		BuilderAPI.schematicRegistry.registerSchematicBlock(laserBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 
 		timeForSomeLogicAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.timeForSomeLogic", "timeForSomeLogicAchievement", 9, -2, assemblyTableBlock, BuildCraftCore.diamondGearAchievement));
 		tinglyLaserAchievement = BuildCraftCore.achievementManager.registerAchievement(new Achievement("achievement.tinglyLaser", "tinglyLaserAchievement", 11, -2, laserBlock, timeForSomeLogicAchievement));
@@ -142,6 +144,9 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		if (BuildCraftCore.loadDefaultRecipes) {
 			loadRecipes();
 		}
+
+		BlockDispenser.dispenseBehaviorRegistry.putObject(packageItem, new ItemPackage.DispenseBehaviour());
+		StripesHandlerDispenser.items.add(packageItem);
 
 		SiliconProxy.proxy.registerRenderers();
 	}
@@ -253,7 +258,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:diamondChipset", Math.round(800000 * chipsetCostMultiplier),
 				Chipset.DIAMOND.getStack(), "dustRedstone", "gemDiamond");
         BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:emeraldChipset", Math.round(1200000 * chipsetCostMultiplier),
-                Chipset.EMERALD.getStack(), "dustRedstone", "gemEmerald");
+				Chipset.EMERALD.getStack(), "dustRedstone", "gemEmerald");
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:pulsatingChipset", Math.round(400000 * chipsetCostMultiplier),
 				Chipset.PULSATING.getStack(2), "dustRedstone", Items.ender_pearl);
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:quartzChipset", Math.round(600000 * chipsetCostMultiplier), Chipset.QUARTZ.getStack(),
@@ -268,7 +273,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	}
 
 	@Mod.EventHandler
-	public void processRequests(FMLInterModComms.IMCEvent event) {
+	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
 		InterModComms.processIMC(event);
 	}
 

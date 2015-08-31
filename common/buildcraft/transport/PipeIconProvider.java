@@ -98,6 +98,7 @@ public class PipeIconProvider implements IIconProvider {
 		PipeFluidsSandstone("pipeFluidsSandstone"),
 		PipeFluidsStone("pipeFluidsStone"),
 		PipeFluidsVoid("pipeFluidsVoid"),
+		PipeFluidsClay("pipeFluidsClay"),
         //
         PipeFluidsDiamond_Item("pipeFluidsDiamond_item"),
         PipeFluidsDiamond_Center("pipeFluidsDiamond_center"),
@@ -152,18 +153,18 @@ public class PipeIconProvider implements IIconProvider {
 		private final String iconTagColorBlind;
 		private IIcon icon;
 
-		private TYPE(String iconTag, String iconTagColorBlind) {
+		TYPE(String iconTag, String iconTagColorBlind) {
 			this.iconTag = iconTag;
 			this.iconTagColorBlind = iconTagColorBlind;
 		}
 
-		private TYPE(String iconTag) {
+		TYPE(String iconTag) {
 			this(iconTag, iconTag);
 		}
 
 		private void registerIcon(IIconRegister iconRegister) {
 			String name = BuildCraftCore.colorBlindMode ? iconTagColorBlind : iconTag;
-			if (name.indexOf(":") < 0) {
+			if (!name.contains(":")) {
 				name = "transport:pipes/" + name;
 			}
 			icon = iconRegister.registerIcon("buildcraft" + name);

@@ -8,6 +8,11 @@
  */
 package buildcraft.robotics.ai;
 
+import net.minecraft.nbt.NBTTagCompound;
+
+import net.minecraftforge.common.util.ForgeDirection;
+
+import buildcraft.api.core.BlockIndex;
 import buildcraft.api.robots.AIRobot;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
@@ -31,7 +36,7 @@ public class AIRobotGoAndLinkToDock extends AIRobot {
 		if (station == robot.getLinkedStation() && station == robot.getDockingStation()) {
 			terminate();
 		} else {
-			if (station.takeAsMain(robot)) {
+			if (station != null && station.takeAsMain(robot)) {
 				startDelegateAI(new AIRobotGotoBlock(robot,
 						station.x() + station.side().offsetX * 2,
 						station.y() + station.side().offsetY * 2,
@@ -47,10 +52,10 @@ public class AIRobotGoAndLinkToDock extends AIRobot {
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotGotoBlock) {
 			if (ai.success()) {
-			startDelegateAI(new AIRobotStraightMoveTo(robot,
-					station.x() + 0.5F + station.side().offsetX * 0.5F,
-					station.y() + 0.5F + station.side().offsetY * 0.5F,
-					station.z() + 0.5F + station.side().offsetZ * 0.5F));
+				startDelegateAI(new AIRobotStraightMoveTo(robot,
+						station.x() + 0.5F + station.side().offsetX * 0.5F,
+						station.y() + 0.5F + station.side().offsetY * 0.5F,
+						station.z() + 0.5F + station.side().offsetZ * 0.5F));
 			} else {
 				terminate();
 			}
@@ -59,6 +64,33 @@ public class AIRobotGoAndLinkToDock extends AIRobot {
 				robot.dock(station);
 			}
 			terminate();
+		}
+	}
+
+	@Override
+	public boolean canLoadFromNBT() {
+		return true;
+	}
+
+	@Override
+	public void writeSelfToNBT(NBTTagCompound nbt) {
+		super.writeSelfToNBT(nbt);
+
+		NBTTagCompound indexNBT = new NBTTagCompound();
+		station.index().writeTo(indexNBT);
+		nbt.setTag("stationIndex", indexNBT);
+		nbt.setByte("stationSide", (byte) station.side().ordinal());
+	}
+
+	@Override
+	public void loadSelfFromNBT(NBTTagCompound nbt) {
+		if (nbt.hasKey("stationIndex")) {
+			BlockIndex index = new BlockIndex(nbt.getCompoundTag("stationIndex"));
+			ForgeDirection side = ForgeDirection.values()[nbt.getByte("stationSide")];
+
+			station = robot.getRegistry().getStation(index.x, index.y, index.z, side);
+		} else {
+			station = robot.getLinkedStation();
 		}
 	}
 }

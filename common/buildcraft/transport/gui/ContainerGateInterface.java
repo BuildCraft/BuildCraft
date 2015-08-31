@@ -217,8 +217,8 @@ public class ContainerGateInterface extends BuildCraftContainer implements IComm
 		int state = calculateTriggerState();
 
 		if (state != lastTriggerState) {
-			for (int i = 0; i < this.crafters.size(); i++) {
-				ICrafting viewingPlayer = (ICrafting) this.crafters.get(i);
+			for (Object crafter : this.crafters) {
+				ICrafting viewingPlayer = (ICrafting) crafter;
 
 				viewingPlayer.sendProgressBarUpdate(this, 0 /* State update */, state);
 			}

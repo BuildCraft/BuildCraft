@@ -8,22 +8,22 @@
  */
 package buildcraft.core.lib.utils;
 
-public class Average {
-	private double[] data;
+public class AverageInt {
+	private int[] data;
 	private int pos, precise;
-	private double averageRaw, tickValue;
+	private int averageRaw, tickValue;
 
-	public Average(int precise) {
+	public AverageInt(int precise) {
 		this.precise = precise;
-		this.data = new double[precise];
+		this.data = new int[precise];
 		this.pos = 0;
 	}
 
 	public double getAverage() {
-		return averageRaw / precise;
+		return (double) averageRaw / precise;
 	}
 
-	public void tick(double value) {
+	public void tick(int value) {
 		internalTick(tickValue + value);
 		tickValue = 0;
 	}
@@ -33,13 +33,13 @@ public class Average {
 		tickValue = 0;
 	}
 
-	private void internalTick(double value) {
+	private void internalTick(int value) {
 		pos = ++pos % precise;
-		double oldValue = data[pos];
+		int oldValue = data[pos];
 		data[pos] = value;
 		if (pos == 0) {
 			averageRaw = 0;
-			for (double iValue : data) {
+			for (int iValue : data) {
 				averageRaw += iValue;
 			}
 		} else {
@@ -47,7 +47,7 @@ public class Average {
 		}
 	}
 
-	public void push(double value) {
+	public void push(int value) {
 		tickValue += value;
 	}
 }

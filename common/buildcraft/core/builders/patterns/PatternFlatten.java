@@ -37,7 +37,7 @@ public class PatternFlatten extends FillerPattern {
 		if (box.pMin().y > 0) {
 			for (int x = xMin; x <= xMax; ++x) {
 				for (int z = zMin; z <= zMax; ++z) {
-					bpt.contents[x - xMin][0][z - zMin] = new SchematicMask(true);
+					bpt.put(x - xMin, 0, z - zMin, new SchematicMask(true));
 				}
 			}
 		}

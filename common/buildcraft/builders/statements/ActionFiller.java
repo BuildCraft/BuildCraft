@@ -39,10 +39,26 @@ public class ActionFiller extends BCStatement implements IActionExternal {
 	}
 
 	@Override
+	public int minParameters() {
+		return pattern.minParameters();
+	}
+
+	@Override
+	public int maxParameters() {
+		return pattern.maxParameters();
+	}
+
+	@Override
+	public IStatementParameter createParameter(int index) {
+		return pattern.createParameter(index);
+	}
+
+	@Override
 	public void actionActivate(TileEntity target, ForgeDirection side,
 			IStatementContainer source, IStatementParameter[] parameters) {
 		if (target instanceof TileFiller) {
 			((TileFiller) target).setPattern(pattern);
+			((TileFiller) target).patternParameters = parameters;
 		}
 	}
 }

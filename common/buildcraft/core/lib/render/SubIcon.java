@@ -1,6 +1,5 @@
 package buildcraft.core.lib.render;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.IIcon;
 
 public class SubIcon implements IIcon {
@@ -10,17 +9,13 @@ public class SubIcon implements IIcon {
 	private float uScale, vScale;
 	private int iw, ih;
 
-	public SubIcon(IIcon icon, int u, int v) {
-		this(icon, u, v, 16, 16);
+	public SubIcon(IIcon icon, int u, int v, int size) {
+		this(icon, u, v, 16, 16, size);
 	}
 
-	public SubIcon(IIcon icon, int u, int v, int w, int h) {
-		iw = icon.getIconWidth();
-		ih = icon.getIconHeight();
-		if (Minecraft.getMinecraft().gameSettings.anisotropicFiltering > 1) {
-			iw -= 16;
-			ih -= 16;
-		}
+	public SubIcon(IIcon icon, int u, int v, int w, int h, int size) {
+		iw = size;
+		ih = size;
 		this.icon = icon;
 		this.uScale = icon.getMaxU() - icon.getMinU();
 		this.vScale = icon.getMaxV() - icon.getMinV();

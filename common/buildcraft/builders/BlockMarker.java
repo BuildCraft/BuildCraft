@@ -99,7 +99,7 @@ public class BlockMarker extends BlockBuildCraft {
 		}
 
 		TileEntity tile = world.getTileEntity(i, j, k);
-		if (tile instanceof TileMarker && !(tile instanceof TileConstructionMarker)) {
+		if (tile instanceof TileMarker) {
 			((TileMarker) tile).tryConnection();
 			return true;
 		}

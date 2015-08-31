@@ -230,9 +230,6 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
 		if (entity instanceof IPipeTile) {
 			Pipe<?> pipe = (Pipe<?>) ((IPipeTile) entity).getPipe();
-			if (pipe == null || pipe.transport == null) {
-				return false;
-			}
 
 			if (pipe == null || pipe.transport == null) {
 				return false;
@@ -283,6 +280,8 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 				case SOUTH:
 					item.movePosition(0, 0, item.getSpeed());
 					break;
+				default:
+					break;
 			}
 
 			if ((item.toCenter && middleReached(item)) || outOfBounds(item)) {
@@ -308,6 +307,13 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 			} else if (!item.toCenter && endReached(item)) {
 				if (item.isCorrupted()) {
 					items.remove(item);
+					continue;
+				}
+
+				if (item.output == ForgeDirection.UNKNOWN) {
+					// TODO: Figure out why this is actually happening.
+					items.scheduleRemoval(item);
+					BCLog.logger.warn("Glitched item [Output direction UNKNOWN] removed from world @ " + container.x() + ", " + container.y() + ", " + container.z() + "!");
 					continue;
 				}
 

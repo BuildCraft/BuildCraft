@@ -112,8 +112,11 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 				// Disregard engines for this.
 				return false;
 			}
-			if (tile instanceof IEnergyHandler || tile instanceof IEnergyReceiver) {
-				IEnergyConnection handler = (IEnergyConnection) tile;
+
+			Object provider = CompatHooks.INSTANCE.getEnergyProvider(tile);
+
+			if (provider instanceof IEnergyHandler || provider instanceof IEnergyReceiver) {
+				IEnergyConnection handler = (IEnergyConnection) provider;
 				if (handler.canConnectEnergy(side.getOpposite())) {
 					return true;
 				}
@@ -278,7 +281,9 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 
 			Object tile = providers[dir.ordinal()];
 
-			if (tile instanceof IPipeTile && ((Pipe<?>) ((IPipeTile) tile).getPipe()).transport instanceof PipeTransportPower) {
+			if (tile instanceof IPipeTile
+					&& ((IPipeTile) tile).getPipe() != null
+					&& ((Pipe<?>) ((IPipeTile) tile).getPipe()).transport instanceof PipeTransportPower) {
 				continue;
 			}
 			if (tile instanceof IEnergyHandler) {
@@ -321,7 +326,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 				TileEntity entity = tiles[i];
 				if (entity instanceof IPipeTile) {
 					IPipeTile nearbyTile = (IPipeTile) entity;
-					if (nearbyTile.getPipe() == null) {
+					if (nearbyTile.getPipe() == null || nearbyTile.getPipeType() != IPipeTile.PipeType.POWER) {
 						continue;
 					}
 					PipeTransportPower nearbyTransport = (PipeTransportPower) ((Pipe) nearbyTile.getPipe()).transport;

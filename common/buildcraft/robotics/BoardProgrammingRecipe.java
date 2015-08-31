@@ -23,7 +23,8 @@ public class BoardProgrammingRecipe implements IProgrammingRecipe {
 
 		@Override
 		public int compare(ItemStack o1, ItemStack o2) {
-			return recipe.getEnergyCost(o1) - recipe.getEnergyCost(o2);
+			int i = (recipe.getEnergyCost(o1) - recipe.getEnergyCost(o2)) * 200;
+			return i != 0 ? i : ItemRedstoneBoard.getBoardNBT(o1).getID().compareTo(ItemRedstoneBoard.getBoardNBT(o2).getID());
 		}
 	}
 

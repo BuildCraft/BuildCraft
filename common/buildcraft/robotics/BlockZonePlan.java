@@ -9,16 +9,13 @@
 package buildcraft.robotics;
 
 import net.minecraft.block.material.Material;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import buildcraft.BuildCraftRobotics;
 import buildcraft.core.GuiIds;
 import buildcraft.core.lib.block.BlockBuildCraft;
-import buildcraft.robotics.map.MapWorld;
 
 public class BlockZonePlan extends BlockBuildCraft {
 	public BlockZonePlan() {
@@ -44,24 +41,5 @@ public class BlockZonePlan extends BlockBuildCraft {
 		}
 
 		return true;
-	}
-	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack stack) {
-		super.onBlockPlacedBy(world, x, y, z, entity, stack);
-
-		if (!world.isRemote) {
-			int r = TileZonePlan.RESOLUTION >> 4;
-
-			int cox = x >> 4;
-			int coz = z >> 4;
-			MapWorld w = BuildCraftRobotics.manager.getWorld(world);
-
-			for (int cx = -r; cx < r; cx++) {
-				for (int cz = -r; cz < r; cz++) {
-					int dist = cx * cx + cz * cz;
-					w.queueChunkForUpdateIfEmpty(cox + cx, coz + cz, dist);
-				}
-			}
-		}
 	}
 }

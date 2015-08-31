@@ -11,7 +11,6 @@ package buildcraft.robotics;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.WeakHashMap;
 
 import com.google.common.collect.Iterables;
@@ -44,14 +43,17 @@ import net.minecraft.util.StatCollector;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -81,6 +83,7 @@ import buildcraft.core.lib.network.command.CommandWriter;
 import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.network.command.PacketCommand;
 import buildcraft.core.lib.utils.NetworkUtils;
+import buildcraft.core.proxy.CoreProxy;
 import buildcraft.robotics.ai.AIRobotMain;
 import buildcraft.robotics.ai.AIRobotShutdown;
 import buildcraft.robotics.ai.AIRobotSleep;
@@ -180,16 +183,16 @@ public class EntityRobot extends EntityRobotBase implements
 		isImmuneToFire = true;
 		this.func_110163_bv(); // persistenceRequired = true
 
-		dataWatcher.addObject(12, Float.valueOf(0));
-		dataWatcher.addObject(13, Float.valueOf(0));
-		dataWatcher.addObject(14, Float.valueOf(0));
-		dataWatcher.addObject(15, Byte.valueOf((byte) 0));
+		dataWatcher.addObject(12, (float) 0);
+		dataWatcher.addObject(13, (float) 0);
+		dataWatcher.addObject(14, (float) 0);
+		dataWatcher.addObject(15, (byte) 0);
 		dataWatcher.addObject(16, "");
-		dataWatcher.addObject(17, Float.valueOf(0));
-		dataWatcher.addObject(18, Float.valueOf(0));
-		dataWatcher.addObject(19, Integer.valueOf(0));
-		dataWatcher.addObject(20, Byte.valueOf((byte) 0));
-		dataWatcher.addObject(21, Integer.valueOf(0));
+		dataWatcher.addObject(17, (float) 0);
+		dataWatcher.addObject(18, (float) 0);
+		dataWatcher.addObject(19, 0);
+		dataWatcher.addObject(20, (byte) 0);
+		dataWatcher.addObject(21, 0);
 	}
 
 	protected void updateDataClient() {
@@ -213,12 +216,12 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	protected void updateDataServer() {
-		dataWatcher.updateObject(12, Float.valueOf((float) laser.tail.x));
-		dataWatcher.updateObject(13, Float.valueOf((float) laser.tail.y));
-		dataWatcher.updateObject(14, Float.valueOf((float) laser.tail.z));
-		dataWatcher.updateObject(15, Byte.valueOf((byte) (laser.isVisible ? 1 : 0)));
-		dataWatcher.updateObject(17, Float.valueOf(itemAngle1));
-		dataWatcher.updateObject(18, Float.valueOf(itemAngle2));
+		dataWatcher.updateObject(12, (float) laser.tail.x);
+		dataWatcher.updateObject(13, (float) laser.tail.y);
+		dataWatcher.updateObject(14, (float) laser.tail.z);
+		dataWatcher.updateObject(15, (byte) (laser.isVisible ? 1 : 0));
+		dataWatcher.updateObject(17, itemAngle1);
+		dataWatcher.updateObject(18, itemAngle2);
 	}
 
 	public boolean isActive() {
@@ -289,7 +292,7 @@ public class EntityRobot extends EntityRobotBase implements
 		if (!worldObj.isRemote) {
 			// The client-side sleep indicator should also display if the robot is charging.
 			// To not break gates and other things checking for sleep, this is done here.
-			dataWatcher.updateObject(20, Byte.valueOf((byte) ((isActive() && ticksCharging == 0) ? 1 : 0)));
+			dataWatcher.updateObject(20, (byte) ((isActive() && ticksCharging == 0) ? 1 : 0));
 			dataWatcher.updateObject(21, getEnergy());
 
 			if (needsUpdate) {
@@ -364,6 +367,11 @@ public class EntityRobot extends EntityRobotBase implements
 	protected void updateEntityActionState() {
 	}
 
+	@Override
+	public boolean handleWaterMovement() {
+		return false;
+	}
+
 	@SideOnly(Side.CLIENT)
 	private void updateEnergyFX() {
 		energyFX += energySpendPerCycle;
@@ -406,14 +414,6 @@ public class EntityRobot extends EntityRobotBase implements
 			BCLog.logger.info("Shutting down robot " + this.toString() + " - " + reason);
 			mainAI.startDelegateAI(new AIRobotShutdown(this));
 		}
-	}
-
-	private void iterateBehaviorDocked() {
-		motionX = 0F;
-		motionY = 0F;
-		motionZ = 0F;
-
-		setNullBoundingBox();
 	}
 
 	@Override
@@ -516,9 +516,9 @@ public class EntityRobot extends EntityRobotBase implements
 		if (wearables.size() > 0) {
 			NBTTagList wearableList = new NBTTagList();
 
-			for (int i = 0; i < wearables.size(); i++) {
+			for (ItemStack wearable : wearables) {
 				NBTTagCompound item = new NBTTagCompound();
-				wearables.get(i).writeToNBT(item);
+				wearable.writeToNBT(item);
 				wearableList.appendTag(item);
 			}
 
@@ -985,17 +985,50 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	public void attackTargetEntityWithCurrentItem(Entity par1Entity) {
+		if (MinecraftForge.EVENT_BUS.post(new AttackEntityEvent(
+				CoreProxy.proxy.getBuildCraftPlayer((WorldServer) worldObj, (int) posX, (int) posY, (int) posZ).get(),
+				par1Entity))) {
+			return;
+		}
 		if (par1Entity.canAttackWithItem()) {
 			if (!par1Entity.hitByEntity(this)) {
-				this.setLastAttacker(par1Entity);
-				boolean flag2 = par1Entity.attackEntityFrom(new EntityDamageSource("robot", this), 2.0F);
+				float attackDamage = 2.0F;
+				int knockback = 0;
 
-				EnchantmentHelper.func_151385_b(this, par1Entity);
-				ItemStack itemstack = itemInUse;
-				Object object = par1Entity;
+				if (par1Entity instanceof EntityLivingBase) {
+					attackDamage += EnchantmentHelper.getEnchantmentModifierLiving(this, (EntityLivingBase) par1Entity);
+					knockback += EnchantmentHelper.getKnockbackModifier(this, (EntityLivingBase) par1Entity);
+				}
 
-				if (itemstack != null && object instanceof EntityLivingBase) {
-					itemstack.getItem().hitEntity(itemstack, (EntityLivingBase) object, this);
+				if (attackDamage > 0.0F) {
+					int fireAspect = EnchantmentHelper.getFireAspectModifier(this);
+
+					if (par1Entity instanceof EntityLivingBase && fireAspect > 0 && !par1Entity.isBurning()) {
+						par1Entity.setFire(fireAspect * 4);
+					}
+
+					if (par1Entity.attackEntityFrom(new EntityDamageSource("robot", this), attackDamage)) {
+						this.setLastAttacker(par1Entity);
+
+						if (knockback > 0) {
+							par1Entity.addVelocity((double) (-MathHelper.sin(this.rotationYaw * (float) Math.PI / 180.0F) * (float) knockback * 0.5F), 0.1D, (double) (MathHelper.cos(this.rotationYaw * (float) Math.PI / 180.0F) * (float) knockback * 0.5F));
+							this.motionX *= 0.6D;
+							this.motionZ *= 0.6D;
+							this.setSprinting(false);
+						}
+
+						if (par1Entity instanceof EntityLivingBase) {
+							EnchantmentHelper.func_151384_a((EntityLivingBase) par1Entity, this);
+						}
+
+						EnchantmentHelper.func_151385_b(this, par1Entity);
+
+						ItemStack itemstack = itemInUse;
+
+						if (itemstack != null && par1Entity instanceof EntityLivingBase) {
+							itemstack.getItem().hitEntity(itemstack, (EntityLivingBase) par1Entity, this);
+						}
+					}
 				}
 			}
 		}
@@ -1121,9 +1154,9 @@ public class EntityRobot extends EntityRobotBase implements
 				gameProfile = NBTUtil.func_152459_a(nbttagcompound.getCompoundTag("SkullOwner"));
 			} else if (nbttagcompound.hasKey("SkullOwner", NBT.TAG_STRING)
 					&& !StringUtils.isNullOrEmpty(nbttagcompound.getString("SkullOwner"))) {
-				gameProfile = new GameProfile((UUID) null, nbttagcompound.getString("SkullOwner"));
+				gameProfile = new GameProfile(null, nbttagcompound.getString("SkullOwner"));
 			}
-			if (!StringUtils.isNullOrEmpty(gameProfile.getName())) {
+			if (gameProfile != null && !StringUtils.isNullOrEmpty(gameProfile.getName())) {
 				if (!gameProfile.isComplete()
 						|| !gameProfile.getProperties().containsKey("textures")) {
 					gameProfile = MinecraftServer.getServer().func_152358_ax()

@@ -197,20 +197,20 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
 	}
 
 	private void incrementFilter() {
-		currentFilter++;
+		currentFilter = (currentFilter + 1) % filters.getSizeInventory();
 		int count = 0;
-		while (filters.getStackInSlot(currentFilter % filters.getSizeInventory()) == null && count < filters.getSizeInventory()) {
-			currentFilter++;
+		while (filters.getStackInSlot(currentFilter) == null && count < filters.getSizeInventory()) {
+			currentFilter = (currentFilter + 1) % filters.getSizeInventory();
 			count++;
 		}
 	}
 
 	private ItemStack getCurrentFilter() {
-		ItemStack filter = filters.getStackInSlot(currentFilter % filters.getSizeInventory());
+		ItemStack filter = filters.getStackInSlot(currentFilter);
 		if (filter == null) {
 			incrementFilter();
 		}
-		return filters.getStackInSlot(currentFilter % filters.getSizeInventory());
+		return filters.getStackInSlot(currentFilter);
 	}
 
 	public IInventory getFilters() {
@@ -224,14 +224,18 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
 	@Override
 	public void writeData(ByteBuf data) {
 		NBTTagCompound nbt = new NBTTagCompound();
-		writeToNBT(nbt);
+		filters.writeToNBT(nbt);
+		settings.writeToNBT(nbt);
 		NetworkUtils.writeNBT(data, nbt);
+		data.writeByte(currentFilter);
 	}
 
 	@Override
 	public void readData(ByteBuf data) {
 		NBTTagCompound nbt = NetworkUtils.readNBT(data);
-		readFromNBT(nbt);
+		filters.readFromNBT(nbt);
+		settings.readFromNBT(nbt);
+		currentFilter = data.readUnsignedByte();
 	}
 
 	@Override
@@ -241,7 +245,7 @@ public class PipeItemsEmerald extends PipeItemsWood implements ISerializable, IG
 		filters.readFromNBT(nbt);
 		settings.readFromNBT(nbt);
 
-		currentFilter = nbt.getInteger("currentFilter");
+		currentFilter = nbt.getInteger("currentFilter") % filters.getSizeInventory();
 	}
 
 	@Override

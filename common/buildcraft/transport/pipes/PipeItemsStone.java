@@ -22,7 +22,7 @@ import buildcraft.transport.TransportConstants;
 import buildcraft.transport.TravelingItem;
 import buildcraft.transport.pipes.events.PipeEventItem;
 
-public class PipeItemsStone extends Pipe {
+public class PipeItemsStone extends Pipe<PipeTransportItems> {
 
 	public PipeItemsStone(Item item) {
 		super(new PipeTransportItems(), item);

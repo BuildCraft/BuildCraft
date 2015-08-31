@@ -13,7 +13,6 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.event.terraingen.PopulateChunkEvent;
@@ -40,14 +39,14 @@ public class SpringPopulate {
 	}
 
 	private void doPopulate(World world, Random random, int x, int z) {
-		// A spring will be generated every 40th chunk.
-		if (random.nextFloat() > 0.025f) {
+		int dimId = world.provider.dimensionId;
+		// No water springs will generate in the Nether or End.
+		if (dimId == -1 || dimId == 1) {
 			return;
 		}
 
-		// Do not generate water in the End or the Nether
-		BiomeGenBase biomegenbase = world.getWorldChunkManager().getBiomeGenAt(x, z);
-		if (biomegenbase.biomeID == BiomeGenBase.sky.biomeID || biomegenbase.biomeID == BiomeGenBase.hell.biomeID) {
+		// A spring will be generated every 40th chunk.
+		if (random.nextFloat() > 0.025f) {
 			return;
 		}
 
@@ -64,13 +63,10 @@ public class SpringPopulate {
 			// Handle flat bedrock maps
 			int y = i > 0 ? i : i - 1;
 
-			int toGround = 50 - random.nextInt(25);
-
 			world.setBlock(posX, y + 1, posZ, BuildCraftCore.springBlock);
 
-			for (int j = y + 2; j < toGround; j++) {
+			for (int j = y + 2; j < world.getActualHeight(); j++) {
 				if (world.isAirBlock(posX, j, posZ)) {
-					world.setBlock(posX, j, posZ, Blocks.water);
 					break;
 				} else {
 					world.setBlock(posX, j, posZ, Blocks.water);

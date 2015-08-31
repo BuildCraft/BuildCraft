@@ -109,10 +109,19 @@ public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
 		return 10;
 	}
 
-	// TODO: HACK
 	@Override
 	public boolean canConnectEnergy(ForgeDirection from) {
 		return false;
+	}
+
+	@Override
+	public int getEnergyStored(ForgeDirection side) {
+		return 0;
+	}
+
+	@Override
+	public int getMaxEnergyStored(ForgeDirection side) {
+		return 0;
 	}
 
 	@Override

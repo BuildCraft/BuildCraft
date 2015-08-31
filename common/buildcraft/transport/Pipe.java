@@ -10,6 +10,7 @@ package buildcraft.transport;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -440,9 +441,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
 			if (container.hasPipePluggable(direction)) {
-				for (ItemStack stack : container.getPipePluggable(direction).getDropItems(container)) {
-					result.add(stack);
-				}
+				Collections.addAll(result, container.getPipePluggable(direction).getDropItems(container));
 			}
 		}
 
@@ -576,13 +575,5 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		}
 		
 		return gates[side.ordinal()];
-	}
-
-	private void pushActionState(ActionState state) {
-		actionStates.add(state);
-	}
-
-	private Collection<ActionState> getActionStates() {
-		return actionStates;
 	}
 }

@@ -194,9 +194,9 @@ public class AIRobot {
 				if (aiRobotClass != null) {
 					delegateAI = (AIRobot) aiRobotClass.getConstructor(EntityRobotBase.class)
 							.newInstance(robot);
+					delegateAI.parentAI = this;
 
 					if (delegateAI.canLoadFromNBT()) {
-						delegateAI.parentAI = this;
 						delegateAI.loadFromNBT(sub);
 					}
 				}

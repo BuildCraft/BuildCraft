@@ -68,7 +68,9 @@ public class ActionRobotGotoStation extends BCStatement implements IActionIntern
 					newStation = getStation((StatementParameterItemStack) parameters[0], registry);
 				}
 
-				robot.overrideAI(new AIRobotGoAndLinkToDock(robot, newStation));
+				if (newStation != null) {
+					robot.overrideAI(new AIRobotGoAndLinkToDock(robot, newStation));
+				}
 			}
 		}
 	}

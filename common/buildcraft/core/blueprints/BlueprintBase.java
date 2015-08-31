@@ -35,7 +35,6 @@ public abstract class BlueprintBase {
 
 	public ArrayList<NBTTagCompound> subBlueprintsNBT = new ArrayList<NBTTagCompound>();
 
-	public SchematicBlockBase[][][] contents;
 	public int anchorX, anchorY, anchorZ;
 	public int sizeX, sizeY, sizeZ;
 	public LibraryId id = new LibraryId();
@@ -46,6 +45,7 @@ public abstract class BlueprintBase {
 	public boolean isComplete = true;
 
 	protected MappingRegistry mapping = new MappingRegistry();
+	protected SchematicBlockBase[] contents;
 
 	private ComputeDataThread computeData;
 	private byte [] data;
@@ -55,7 +55,7 @@ public abstract class BlueprintBase {
 	}
 
 	public BlueprintBase(int sizeX, int sizeY, int sizeZ) {
-		contents = new SchematicBlockBase[sizeX][sizeY][sizeZ];
+		contents = new SchematicBlockBase[sizeX * sizeY * sizeZ];
 
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
@@ -66,41 +66,46 @@ public abstract class BlueprintBase {
 		anchorZ = 0;
 	}
 
+	private int toArrayPos(int x, int y, int z) {
+		return (y * sizeZ + z) * sizeX + x;
+	}
+
+	public SchematicBlockBase get(int x, int y, int z) {
+		return contents[(y * sizeZ + z) * sizeX + x];
+	}
+
+	public void put(int x, int y, int z, SchematicBlockBase s) {
+		contents[(y * sizeZ + z) * sizeX + x] = s;
+	}
+
 	public void translateToBlueprint(Translation transform) {
-		for (int x = 0; x < sizeX; ++x) {
-			for (int y = 0; y < sizeY; ++y) {
-				for (int z = 0; z < sizeZ; ++z) {
-					if (contents [x][y][z] != null) {
-						contents[x][y][z].translateToBlueprint(transform);
-					}
-				}
+		for (SchematicBlockBase content : contents) {
+			if (content != null) {
+				content.translateToBlueprint(transform);
 			}
 		}
 	}
 
 	public void translateToWorld(Translation transform) {
-		for (int x = 0; x < sizeX; ++x) {
-			for (int y = 0; y < sizeY; ++y) {
-				for (int z = 0; z < sizeZ; ++z) {
-					if (contents [x][y][z] != null) {
-						contents[x][y][z].translateToWorld(transform);
-					}
-				}
+		for (SchematicBlockBase content : contents) {
+			if (content != null) {
+				content.translateToWorld(transform);
 			}
 		}
 	}
 
 	public void rotateLeft(BptContext context) {
-		SchematicBlockBase[][][] newContents = new SchematicBlockBase[sizeZ][sizeY][sizeX];
+		SchematicBlockBase[] newContents = new SchematicBlockBase[sizeZ * sizeY * sizeX];
 
 		for (int x = 0; x < sizeZ; ++x) {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeX; ++z) {
-					newContents[x][y][z] = contents[z][y][(sizeZ - 1) - x];
+					int pos = (y * sizeX + z) * sizeZ + x;
+					newContents[pos] = contents[toArrayPos(z, y, (sizeZ - 1) - x)];
 
-					if (newContents[x][y][z] != null) {
+					if (newContents[pos] != null) {
 						try {
-							newContents[x][y][z].rotateLeft(context);
+							newContents[pos].rotateLeft(context);
 						} catch (Throwable t) {
 							// Defensive code against errors in implementers
 							t.printStackTrace();
@@ -128,8 +133,6 @@ public abstract class BlueprintBase {
 			sub.setInteger("x", (int) np.x);
 			sub.setInteger("z", (int) np.z);
 			sub.setByte("dir", (byte) dir.ordinal());
-
-			NBTTagCompound bpt = sub.getCompoundTag("bpt");
 		}
 
 		context.rotateLeft();
@@ -217,7 +220,7 @@ public abstract class BlueprintBase {
 			excavate = true;
 		}
 
-		contents = new SchematicBlockBase[sizeX][sizeY][sizeZ];
+		contents = new SchematicBlockBase[sizeX * sizeY * sizeZ];
 
 		try {
 			loadContents(nbt);

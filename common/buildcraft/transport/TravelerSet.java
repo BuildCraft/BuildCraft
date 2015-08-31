@@ -99,7 +99,10 @@ public class TravelerSet extends ForwardingSet<TravelingItem> {
 	}
 
 	void removeScheduledItems() {
-		items.removeAll(toRemove);
+		for (TravelingItem i : toRemove) {
+			i.cleanup();
+			items.remove(i);
+		}
 		toRemove.clear();
 	}
 

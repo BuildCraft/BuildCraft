@@ -76,8 +76,8 @@ public class ContainerRefinery extends BuildCraftContainer {
 	@Override
 	public void detectAndSendChanges() {
 		super.detectAndSendChanges();
-		for (int i = 0; i < crafters.size(); i++) {
-			refinery.sendGUINetworkData(this, (ICrafting) crafters.get(i));
+		for (Object crafter : crafters) {
+			refinery.sendGUINetworkData(this, (ICrafting) crafter);
 		}
 	}
 }

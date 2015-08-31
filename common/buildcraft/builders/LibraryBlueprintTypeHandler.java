@@ -32,7 +32,8 @@ public class LibraryBlueprintTypeHandler extends LibraryTypeHandlerNBT {
 
 	@Override
 	public String getName(ItemStack stack) {
-		return ItemBlueprint.getId(stack).name;
+		LibraryId id = ItemBlueprint.getId(stack);
+		return id != null ? id.name : "<<CORRUPT>>";
 	}
 
 	@Override

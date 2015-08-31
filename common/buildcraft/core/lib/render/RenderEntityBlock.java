@@ -21,7 +21,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 
 import buildcraft.core.lib.EntityBlock;
 
@@ -50,12 +52,11 @@ public final class RenderEntityBlock extends Render {
 		public Block baseBlock = Blocks.sand;
 		public IIcon texture = null;
 		public IIcon[] textureArray = null;
-		public boolean[] renderSide = new boolean[6];
+		public boolean[] renderSide = new boolean[]{true, true, true, true, true, true};
 		public int light = -1;
 		public int brightness = -1;
 
 		public RenderInfo() {
-			setRenderAllSides();
 		}
 
 		public RenderInfo(Block template, IIcon[] texture) {
@@ -67,6 +68,10 @@ public final class RenderEntityBlock extends Render {
 		public RenderInfo(float minX, float minY, float minZ, float maxX, float maxY, float maxZ) {
 			this();
 			setBounds(minX, minY, minZ, maxX, maxY, maxZ);
+		}
+
+		public void setSkyBlockLight(World world, int x, int y, int z, int light) {
+			this.brightness = world.getSkyBlockTypeBrightness(EnumSkyBlock.Sky, x, y, z) << 16 | light;
 		}
 
 		public float getBlockBrightness(IBlockAccess iblockaccess, int i, int j, int k) {

@@ -26,7 +26,7 @@ public class TriggerClockTimer extends BCStatement implements ITriggerInternal {
 		public static final Time[] VALUES = values();
 		public final int delay;
 
-		private Time(int delay) {
+		Time(int delay) {
 			this.delay = delay;
 		}
 	}
