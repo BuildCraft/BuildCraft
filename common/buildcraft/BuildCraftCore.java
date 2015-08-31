@@ -12,8 +12,10 @@ import java.io.File;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.List;
 import java.util.UUID;
 
+import com.google.common.collect.Lists;
 import com.mojang.authlib.GameProfile;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -32,6 +34,7 @@ import net.minecraft.util.IIcon;
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.LoaderState;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -260,6 +263,9 @@ public class BuildCraftCore extends BuildCraftMod {
 	private static IntBuffer viewport;
 
 	private static FloatBuffer pos = ByteBuffer.allocateDirect(3 * 4).asFloatBuffer();
+	
+   /** Used by the quarry and the mining well to stop them from destroying some blocks. */
+	public static final List<Block> blacklistedBlocks = Lists.newArrayList();
 
 	@Mod.EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
@@ -300,6 +306,9 @@ public class BuildCraftCore extends BuildCraftMod {
 		mainConfigManager.register("power.miningUsageMultiplier", 1.0D, "What should the multiplier of all mining-related power usage be?", ConfigManager.RestartRequirement.NONE);
 		mainConfigManager.register("display.colorBlindMode", false, "Should I enable colorblind mode?", ConfigManager.RestartRequirement.GAME);
 		mainConfigManager.register("worldgen.generateWaterSprings", true, "Should BuildCraft generate water springs?", ConfigManager.RestartRequirement.GAME);
+		
+		mainConfigManager.register("general.quarry.nonMinableBlocks", new String[] { "minecraft:bedrock", "minecraft:lava" }, "Which blocks the quarry and mining well are not allowed to mine"
+		                       + " (bedrock and lava are examples)", ConfigManager.RestartRequirement.GAME);
 
 		reloadConfig(ConfigManager.RestartRequirement.GAME);
 
@@ -492,6 +501,9 @@ public class BuildCraftCore extends BuildCraftMod {
 				actionControl[mode.ordinal()] = new ActionMachineControl(mode);
 			}
 		}
+		
+       // Just reload the config to catch any registered blocks for blacklistedBlocks
+       reloadConfig(ConfigManager.RestartRequirement.NONE);
 	}
 
 	@Mod.EventHandler
@@ -565,6 +577,20 @@ public class BuildCraftCore extends BuildCraftMod {
 			canEnginesExplode = mainConfigManager.get("general.canEnginesExplode").getBoolean();
 			consumeWaterSources = mainConfigManager.get("general.pumpsConsumeWater").getBoolean();
 			miningMultiplier = (float) mainConfigManager.get("power.miningUsageMultiplier").getDouble();
+			
+            blacklistedBlocks.clear();
+            String[] blockList = mainConfigManager.get("general.quarry.nonMinableBlocks").getStringList();
+            for (String block : blockList) {
+                Block actualBlock = Block.getBlockFromName(block);
+                if (actualBlock == null) {
+                    if (Loader.instance().hasReachedState(LoaderState.INITIALIZATION)) {// Only warn if this is happening after pre-init
+                        BCLog.logger.warn("Tried and failed to get the block related to \"" + block + "\"");
+                    }
+                } else {
+                    blacklistedBlocks.add(actualBlock);
+                    BCLog.logger.info("Added \"" + block + "\" as a blacklisted block");
+                }
+            }
 
 			if (mainConfigManager.get("general.updateCheck").getBoolean(true)) {
 				Version.check();

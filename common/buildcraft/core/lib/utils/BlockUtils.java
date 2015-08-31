@@ -146,6 +146,8 @@ public final class BlockUtils {
 			if (f.getDensity(world, x, y, z) >= 3000) {
 				return false;
 			}
+		} else if (BuildCraftCore.blacklistedBlocks.contains(block)) {
+		    return false;
 		}
 
 		return true;
