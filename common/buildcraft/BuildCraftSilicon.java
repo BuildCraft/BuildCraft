@@ -15,7 +15,9 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
@@ -130,7 +132,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		CoreProxy.proxy.registerTileEntity(TileIntegrationTable.class,
 				"net.minecraft.src.buildcraft.factory.TileIntegrationTable");
         CoreProxy.proxy.registerTileEntity(TileChargingTable.class,
-                "net.minecraft.src.buildcraft.factory.TileChargingTable");
+				"net.minecraft.src.buildcraft.factory.TileChargingTable");
 		CoreProxy.proxy.registerTileEntity(TileProgrammingTable.class,
 				"net.minecraft.src.buildcraft.factory.TileProgrammingTable");
 		CoreProxy.proxy.registerTileEntity(TilePackager.class, "buildcraft.TilePackager");
@@ -146,9 +148,16 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		}
 
 		BlockDispenser.dispenseBehaviorRegistry.putObject(packageItem, new ItemPackage.DispenseBehaviour());
-		StripesHandlerDispenser.items.add(packageItem);
+		if (Loader.isModLoaded("BuildCraft|Transport")) {
+			initTransport();
+		}
 
 		SiliconProxy.proxy.registerRenderers();
+	}
+
+	@Optional.Method(modid = "BuildCraft|Transport")
+	private void initTransport() {
+		StripesHandlerDispenser.items.add(packageItem);
 	}
 
 	public static void loadRecipes() {

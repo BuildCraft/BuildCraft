@@ -87,7 +87,6 @@ public class BoardRobotDelivery extends RedstoneBoardRobot {
 	}
 
 	private class ReqFilter implements IStackFilter {
-
 		@Override
 		public boolean matches(ItemStack stack) {
 			if (currentRequest == null) {

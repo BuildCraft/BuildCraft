@@ -162,16 +162,18 @@ public class ItemList extends ItemBuildCraft implements IList {
 				Item item = (Item) o;
 				boolean classMatch = classMatch(baseItem, item);
 
-				List list = new LinkedList();
+				List<ItemStack> list = new ArrayList<ItemStack>();
 
-				for (CreativeTabs tab : item.getCreativeTabs()) {
-					item.getSubItems(item, tab, list);
+				try {
+					for (CreativeTabs tab : item.getCreativeTabs()) {
+						item.getSubItems(item, tab, list);
+					}
+				} catch (Exception e) {
+
 				}
 
 				if (list.size() > 0) {
-					for (Object ol : list) {
-						ItemStack stack = (ItemStack) ol;
-
+					for (ItemStack stack : list) {
 						if (classMatch && relatedItems.size() <= 7 && !StackHelper.isMatchingItemOrList(stacks[0], stack)) {
 							relatedItems.add(stack);
 						}
