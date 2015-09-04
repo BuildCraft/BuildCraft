@@ -85,7 +85,7 @@ public class BuildingSlotBlock extends BuildingSlot {
 					for (ItemStack s : sb.storedRequirements) {
 						boolean contains = false;
 						for (ItemStack ss : oldRequirements) {
-							if (StackHelper.isMatchingItem(s, ss)) {
+							if (StackHelper.isEqualItem(s, ss)) {
 								contains = true;
 								break;
 							}

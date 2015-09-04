@@ -74,6 +74,7 @@ public class AIRobotLoad extends AIRobot {
 
 			if (stack == null
 					|| !filter.matches(stack)
+					|| !ActionStationProvideItems.canExtractItem(station, stack)
 					|| !ActionRobotFilter.canInteractWithItem(station, filter,
 							ActionStationProvideItems.class)) {
 				continue;

@@ -133,7 +133,7 @@ public class StackHelper {
 		return false;
 	}
 
-	public static boolean isMatchingItemOrList(ItemStack a, ItemStack b) {
+	public static boolean isMatchingItemOrList(final ItemStack a, final ItemStack b) {
 		if (a == null || b == null) {
 			return false;
 		}
@@ -157,8 +157,19 @@ public class StackHelper {
 	 * @param comparison The stack to compare.
 	 * @return true if id, damage and NBT match.
 	 */
-	public static boolean isMatchingItem(ItemStack base, ItemStack comparison) {
+	public static boolean isMatchingItem(final ItemStack base, final ItemStack comparison) {
 		return isMatchingItem(base, comparison, true, true);
+	}
+
+	/**
+	 * This variant also checks damage for damaged items.
+	 */
+	public static boolean isEqualItem(final ItemStack a, final ItemStack b) {
+		if (isMatchingItem(a, b, false, true)) {
+			return isWildcard(a) || isWildcard(b) || a.getItemDamage() == b.getItemDamage();
+		} else {
+			return false;
+		}
 	}
 
 	/**
