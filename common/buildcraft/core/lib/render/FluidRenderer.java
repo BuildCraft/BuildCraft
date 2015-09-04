@@ -40,6 +40,22 @@ public final class FluidRenderer {
 
 	}
 
+	public static void onTextureReload() {
+		for (int[] ia : flowingRenderCache.values()) {
+			for (int i : ia) {
+				GL11.glDeleteLists(i, 1);
+			}
+		}
+		flowingRenderCache.clear();
+
+		for (int[] ia : stillRenderCache.values()) {
+			for (int i : ia) {
+				GL11.glDeleteLists(i, 1);
+			}
+		}
+		stillRenderCache.clear();
+	}
+
 	public static IIcon getFluidTexture(FluidStack fluidStack, boolean flowing) {
 		if (fluidStack == null) {
 			return null;

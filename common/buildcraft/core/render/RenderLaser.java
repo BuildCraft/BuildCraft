@@ -38,6 +38,10 @@ public class RenderLaser extends Render {
 	public RenderLaser() {
 	}
 
+	public static void onTextureReload() {
+		scaledBoxes = null;
+	}
+
 	private static ModelRenderer getBox(int index) {
 		if (box == null) {
 			box = new ModelRenderer[40];
