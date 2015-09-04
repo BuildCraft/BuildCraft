@@ -77,6 +77,9 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		}
 
 		if (currentRecipe == null) {
+			/* if (getEnergy() >= 50) {
+				setEnergy(Math.max(0, getEnergy() - 50));
+			} */
 			return;
 		}
 
@@ -89,10 +92,10 @@ public class TileAssemblyTable extends TileLaserTableBase implements IInventory,
 		}
 
 		if (getEnergy() >= currentRecipe.craft(this, true).energyCost) {
-			setEnergy(0);
-
 			if (currentRecipe.canBeCrafted(this)) {
-				outputStack(currentRecipe.craft(this, false).crafted.copy(), true);
+				CraftingResult<ItemStack> result = currentRecipe.craft(this, false);
+				setEnergy(Math.max(0, getEnergy() - result.energyCost));
+				outputStack(result.crafted.copy(), true);
 
 				setNextCurrentRecipe();
 			}

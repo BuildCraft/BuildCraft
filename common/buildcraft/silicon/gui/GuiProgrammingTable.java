@@ -168,7 +168,11 @@ public class GuiProgrammingTable extends GuiAdvancedInterface {
 				return;
 			}
 
-			table.rpcSelectOption(slot.id);
+			if (table.optionId == slot.id) {
+				table.rpcSelectOption(-1);
+			} else {
+				table.rpcSelectOption(slot.id);
+			}
 		}
 	}
 
