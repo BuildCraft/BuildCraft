@@ -648,7 +648,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(filteredBufferBlock, 1),
 				"wdw", "wcw", "wpw", 'w', "plankWood", 'd',
-				BuildCraftTransport.pipeItemsDiamond, 'c', Blocks.chest, 'p',
+				BuildCraftTransport.pipeItemsDiamond, 'c', "chestWood", 'p',
 				Blocks.piston);
 
 		//Facade turning helper

@@ -367,7 +367,7 @@ public class BuildCraftRobotics extends BuildCraftMod {
 				"IPI",
 				"GCG",
 				"IRI",
-				'C', Blocks.chest,
+				'C', "chestWood",
 				'R', "dustRedstone",
 				'P', Blocks.piston,
 				'G', "gearIron",
