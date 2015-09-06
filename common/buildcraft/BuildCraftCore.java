@@ -364,6 +364,9 @@ public class BuildCraftCore extends BuildCraftMod {
 		FMLCommonHandler.instance().bus().register(this);
 		MinecraftForge.EVENT_BUS.register(this);
 		MinecraftForge.EVENT_BUS.register(new BlockHighlightHandler());
+
+		OreDictionary.registerOre("chestWood", Blocks.chest);
+		OreDictionary.registerOre("craftingTableWood", Blocks.crafting_table);
 	}
 
 	@Mod.EventHandler

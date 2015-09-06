@@ -648,7 +648,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(filteredBufferBlock, 1),
 				"wdw", "wcw", "wpw", 'w', "plankWood", 'd',
-				BuildCraftTransport.pipeItemsDiamond, 'c', Blocks.chest, 'p',
+				BuildCraftTransport.pipeItemsDiamond, 'c', "chestWood", 'p',
 				Blocks.piston);
 
 		//Facade turning helper
@@ -676,11 +676,11 @@ public class BuildCraftTransport extends BuildCraftMod {
 				String dye = ColorUtils.getOreDictionaryName(15 - i);
 				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(lensItem, 8, i),
 						"OSO", "SGS", "OSO",
-						'O', "ingotIron", 'S', dye, 'G', "blockGlass"
+						'O', "ingotIron", 'S', "dye", 'G', "blockGlass"
 						));
 				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(lensItem, 8, i + 16),
 						"OSO", "SGS", "OSO",
-						'O', Blocks.iron_bars, 'S', dye, 'G', "blockGlass"
+						'O', Blocks.iron_bars, 'S', "dye", 'G', "blockGlass"
 				));
 			}
 		}
