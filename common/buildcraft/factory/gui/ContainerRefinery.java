@@ -26,7 +26,7 @@ public class ContainerRefinery extends BuildCraftContainer {
 	public TileRefinery refinery;
 
 	public ContainerRefinery(InventoryPlayer inventory, TileRefinery refinery) {
-		super(refinery.getSizeInventory());
+		super(0);
 
 		for (int l = 0; l < 3; l++) {
 			for (int k1 = 0; k1 < 9; k1++) {
@@ -43,7 +43,7 @@ public class ContainerRefinery extends BuildCraftContainer {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return refinery.isUseableByPlayer(entityplayer);
+		return entityplayer.worldObj.getTileEntity(refinery.xCoord, refinery.yCoord, refinery.zCoord) == refinery;
 	}
 
 	/* SETTING AND GETTING FILTERS */

@@ -420,16 +420,6 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 		}));
 	}
 
-	public int getIconGlowLevel(int renderPass) {
-		if (renderPass == 1) { // Red LED
-			return done ? 15 : 0;
-		} else if (renderPass == 2) { // Green LED
-			return 0;
-		} else {
-			return -1;
-		}
-	}
-
 	@Override
 	public int getLEDLevel(int led) {
 		return (led == 0 ? done : buildersInAction.size() > 0) ? 15 : 0;

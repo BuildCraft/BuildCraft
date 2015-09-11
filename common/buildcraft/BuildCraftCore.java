@@ -45,7 +45,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.BlockFluidBase;
@@ -131,6 +130,7 @@ import buildcraft.core.properties.WorldPropertyIsFluidSource;
 import buildcraft.core.properties.WorldPropertyIsHarvestable;
 import buildcraft.core.properties.WorldPropertyIsLeaf;
 import buildcraft.core.properties.WorldPropertyIsOre;
+import buildcraft.core.properties.WorldPropertyIsReplaceable;
 import buildcraft.core.properties.WorldPropertyIsShoveled;
 import buildcraft.core.properties.WorldPropertyIsSoft;
 import buildcraft.core.properties.WorldPropertyIsWood;
@@ -463,7 +463,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		for (Object o : Block.blockRegistry) {
 			Block block = (Block) o;
 
-			if (block instanceof BlockFluidBase || block instanceof BlockLiquid || block instanceof IPlantable) {
+			if (block instanceof BlockFluidBase || block instanceof BlockLiquid) {
 				BuildCraftAPI.softBlocks.add(block);
 			}
 		}
@@ -477,6 +477,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		CropManager.setDefaultHandler(new CropHandlerPlantable());
 		CropManager.registerHandler(new CropHandlerReeds());
 
+		BuildCraftAPI.registerWorldProperty("replaceable", new WorldPropertyIsReplaceable());
 		BuildCraftAPI.registerWorldProperty("soft", new WorldPropertyIsSoft());
 		BuildCraftAPI.registerWorldProperty("wood", new WorldPropertyIsWood());
 		BuildCraftAPI.registerWorldProperty("leaves", new WorldPropertyIsLeaf());

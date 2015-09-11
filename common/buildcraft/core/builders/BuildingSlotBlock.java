@@ -57,22 +57,28 @@ public class BuildingSlotBlock extends BuildingSlot {
 	}
 
 	@Override
-	public void writeToWorld(IBuilderContext context) {
+	public boolean writeToWorld(IBuilderContext context) {
 		if (mode == Mode.ClearIfInvalid) {
 			if (!getSchematic().isAlreadyBuilt(context, x, y, z)) {
 				if (BuildCraftBuilders.dropBrokenBlocks) {
-					BlockUtils.breakBlock((WorldServer) context.world(), x, y, z);
+					return BlockUtils.breakBlock((WorldServer) context.world(), x, y, z);
 				} else {
 					context.world().setBlockToAir(x, y, z);
+					return true;
 				}
 			}
 		} else {
 			try {
 				getSchematic().placeInWorld(context, x, y, z, stackConsumed);
 
-				// This is slightly hackish, but it's a very important way to verify
-				// the stored requirements.
+				// This is also slightly hackish, but that's what you get when
+				// you're unable to break an API too much.
+				if (!getSchematic().isAlreadyBuilt(context, x, y, z)) {
+					return false;
+				}
 
+				// This is slightly hackish, but it's a very important way to verify
+				// the stored requirements for anti-cheating purposes.
 				if (!context.world().isAirBlock(x, y, z) &&
 						getSchematic().getBuildingPermission() == BuildingPermission.ALL &&
 						getSchematic() instanceof SchematicBlock) {
@@ -95,7 +101,7 @@ public class BuildingSlotBlock extends BuildingSlot {
 							BCLog.logger.warn("Location: " + x + ", " + y + ", " + z + " - ItemStack: " + s.toString());
 							context.world().removeTileEntity(x, y, z);
 							context.world().setBlockToAir(x, y, z);
-							return;
+							return false;
 						}
 					}
 					// Restore the stored requirements.
@@ -114,11 +120,16 @@ public class BuildingSlotBlock extends BuildingSlot {
 				if (e != null) {
 					e.updateEntity();
 				}
+
+				return true;
 			} catch (Throwable t) {
 				t.printStackTrace();
 				context.world().setBlockToAir(x, y, z);
+				return false;
 			}
 		}
+
+		return false;
 	}
 
 	@Override

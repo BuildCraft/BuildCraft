@@ -39,7 +39,7 @@ import buildcraft.core.lib.network.command.ICommandReceiver;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.recipes.RefineryRecipeManager;
 
-public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInventory, IHasWork, IFlexibleCrafter, ICommandReceiver {
+public class TileRefinery extends TileBuildCraft implements IFluidHandler, IHasWork, IFlexibleCrafter, ICommandReceiver {
 
 	public static int LIQUID_PER_SLOT = FluidContainerRegistry.BUCKET_VOLUME * 4;
 
@@ -63,50 +63,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	public TileRefinery() {
 		super();
 		this.setBattery(new RFBattery(10000, 1500, 0));
-	}
-
-	@Override
-	public int getSizeInventory() {
-		return 0;
-	}
-
-	@Override
-	public ItemStack getStackInSlot(int i) {
-		return null;
-	}
-
-	@Override
-	public ItemStack decrStackSize(int i, int j) {
-		return null;
-	}
-
-	@Override
-	public void setInventorySlotContents(int i, ItemStack itemstack) {
-	}
-
-	@Override
-	public String getInventoryName() {
-		return null;
-	}
-
-	@Override
-	public int getInventoryStackLimit() {
-		return 0;
-	}
-
-	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack) {
-		return false;
-	}
-
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
-	}
-
-	@Override
-	public ItemStack getStackInSlotOnClosing(int var1) {
-		return null;
 	}
 
 	@Override
@@ -228,14 +184,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 		}
 	}
 
-	@Override
-	public void openInventory() {
-	}
-
-	@Override
-	public void closeInventory() {
-	}
-
 	public void resetFilters() {
 		for (SingleUseTank tank : tankManager) {
 			tank.setAcceptedFluid(null);
@@ -355,11 +303,6 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IInve
 	@Override
 	public boolean canDrain(ForgeDirection from, Fluid fluid) {
 		return true;
-	}
-
-	@Override
-	public boolean hasCustomInventoryName() {
-		return false;
 	}
 
 	@Override

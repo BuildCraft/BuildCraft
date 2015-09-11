@@ -1,3 +1,13 @@
+Improvements:
+
+* Architect Tables are less server-intensive now (asie)
+* More Ore Dictionary support for recipes (Adaptivity)
+
 Bugs fixed:
 
+* [#3008] Rare crash on strange Minecraft world in MapChunk (asie)
+* [#3007] "Energy Stored" trigger has incorrect behaviour (asie)
 * [#3001] NPE in RobotStationPluggableRenderer (asie)
+* [#2922, #2975] Composite blueprints not working (asie)
+* [#2565] Fillers not liking certain blocks (asie)
+* Fillers and Builders not dropping item on inability to place (asie)

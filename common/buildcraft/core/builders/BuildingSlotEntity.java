@@ -34,8 +34,9 @@ public class BuildingSlotEntity extends BuildingSlot {
 	public int sequenceNumber;
 
 	@Override
-	public void writeToWorld(IBuilderContext context) {
+	public boolean writeToWorld(IBuilderContext context) {
 		schematic.writeToWorld(context);
+		return true;
 	}
 
 	@Override

@@ -27,8 +27,8 @@ public abstract class BuildingSlot {
 
 	public boolean built = false;
 
-	public void writeToWorld(IBuilderContext context) {
-
+	public boolean writeToWorld(IBuilderContext context) {
+		return false;
 	}
 
 	public void writeCompleted (IBuilderContext context, double complete) {
