@@ -195,7 +195,7 @@ public class RecursiveBlueprintReader {
 					}
 				}
 			}
-		} else if (blockScanner != null && writingBlueprint.getData() != null) {
+		} else if (blockScanner != null) {
 			createBlueprint();
 
 			done = true;
