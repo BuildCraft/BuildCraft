@@ -65,7 +65,7 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
 		}
 
 		if (energyMaxStored > 0) {
-			float level = energyStored / energyMaxStored;
+			float level = (float) energyStored / (float) energyMaxStored;
 			if (high) {
 				return level > 0.95F;
 			} else {

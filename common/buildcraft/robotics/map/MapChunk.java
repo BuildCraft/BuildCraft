@@ -40,6 +40,10 @@ public class MapChunk {
 				int y = chunk.getHeightValue(bx, bz);
 				int color;
 
+				if (y < 0) {
+					y = 255;
+				}
+
 				while ((color = chunk.getBlock(bx, y, bz).getMapColor(0).colorIndex) == MapColor.airColor.colorIndex) {
 					y--;
 					if (y < 0) {
