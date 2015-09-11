@@ -53,7 +53,6 @@ import buildcraft.core.Version;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.network.EntityIds;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.core.statements.StatementParameterItemStackExact;
 import buildcraft.robotics.BlockRequester;
 import buildcraft.robotics.BlockZonePlan;
 import buildcraft.robotics.BoardProgrammingRecipe;

@@ -1,7 +1,12 @@
 Improvements:
 
+* Rewritten robots request system (hea3ven)
+  * Changed the IRequestProvider api to be independent of robots.
+  * Delivery robots can now carry more than an item at a time.
+  * Builders, requesters and docking stations can now request more than one item at a time.
 * Architect Tables are less server-intensive now (asie)
 * More Ore Dictionary support for recipes (Adaptivity)
+* Proper Docking Station renderer (asie)
 
 Bugs fixed:
 
@@ -11,3 +16,5 @@ Bugs fixed:
 * [#2922, #2975] Composite blueprints not working (asie)
 * [#2565] Fillers not liking certain blocks (asie)
 * Fillers and Builders not dropping item on inability to place (asie)
+* Quarry arm jitter on client side (asie)
+* Robots not using the correct sides when accessing inventories/tanks (hea3ven)

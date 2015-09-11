@@ -8,9 +8,8 @@
  */
 package buildcraft.robotics.ai;
 
-import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IInvSlot;
@@ -65,12 +64,12 @@ public class AIRobotLoad extends AIRobot {
 
 		int loaded = 0;
 
-		ISidedInventory tileInventory = station.getItemInput();
+		IInventory tileInventory = station.getItemInput();
 		if (tileInventory == null) {
 			return false;
 		}
 
-		for (IInvSlot slot : InventoryIterator.getIterable(tileInventory,  station.getItemInputSide())) {
+		for (IInvSlot slot : InventoryIterator.getIterable(tileInventory, station.getItemInputSide())) {
 			ItemStack stack = slot.getStackInSlot();
 
 			if (stack == null

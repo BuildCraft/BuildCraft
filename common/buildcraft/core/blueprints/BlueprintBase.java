@@ -253,18 +253,16 @@ public abstract class BlueprintBase {
 		return new BptContext(world, box, mapping);
 	}
 
-	public void addSubBlueprint(BlueprintBase bpt, int x, int y, int z, ForgeDirection dir) {
-		NBTTagCompound nbt = new NBTTagCompound();
+	public void addSubBlueprint(BlueprintBase subBpt, int x, int y, int z, ForgeDirection dir) {
+		NBTTagCompound subNBT = new NBTTagCompound();
 
-		nbt.setInteger("x", x);
-		nbt.setInteger("y", y);
-		nbt.setInteger("z", z);
-		nbt.setByte("dir", (byte) dir.ordinal());
+		subNBT.setInteger("x", x);
+		subNBT.setInteger("y", y);
+		subNBT.setInteger("z", z);
+		subNBT.setByte("dir", (byte) dir.ordinal());
+		subNBT.setTag("bpt", subBpt.getNBT());
 
-		NBTTagCompound bptNBT = bpt.getNBT();
-		nbt.setTag("bpt", bptNBT);
-
-		subBlueprintsNBT.add(nbt);
+		subBlueprintsNBT.add(subNBT);
 	}
 
 	public NBTTagCompound getNBT() {
