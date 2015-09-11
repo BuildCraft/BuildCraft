@@ -45,6 +45,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.BlockFluidBase;
@@ -463,7 +464,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		for (Object o : Block.blockRegistry) {
 			Block block = (Block) o;
 
-			if (block instanceof BlockFluidBase || block instanceof BlockLiquid) {
+			if (block instanceof BlockFluidBase || block instanceof BlockLiquid || block instanceof IPlantable) {
 				BuildCraftAPI.softBlocks.add(block);
 			}
 		}
