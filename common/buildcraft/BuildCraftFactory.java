@@ -198,14 +198,14 @@ public class BuildCraftFactory extends BuildCraftMod {
 		if (autoWorkbenchBlock != null) {
 			CoreProxy.proxy.addCraftingRecipe(new ItemStack(autoWorkbenchBlock),
 					"gwg",
-					'w', Blocks.crafting_table,
+					'w', "craftingTableWood",
 					'g', "gearStone");
 
 			CoreProxy.proxy.addCraftingRecipe(new ItemStack(autoWorkbenchBlock),
 					"g",
 					"w",
 					"g",
-					'w', Blocks.crafting_table,
+					'w', "craftingTableWood",
 					'g', "gearStone");
 		}
 
@@ -232,7 +232,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 					"ICI",
 					" G ",
 					'I', "ingotIron",
-					'C', Blocks.chest,
+					'C', "chestWood",
 					'G', "gearStone");
 
 			CoreProxy.proxy.addShapelessRecipe(new ItemStack(hopperBlock), Blocks.hopper, "gearStone");

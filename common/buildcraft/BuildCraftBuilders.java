@@ -616,10 +616,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 			"dyeBlack", 'p', Items.paper);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), "ppp", "pip", "ppp", 'i',
-			new ItemStack(Items.dye, 1, 4), 'p', Items.paper);
+			"gemLapis", 'p', Items.paper);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), "l ", "r ", 'l',
-			new ItemStack(Items.dye, 1, 4), 'r', Blocks.redstone_torch);
+			"gemLapis", 'r', Blocks.redstone_torch);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pathMarkerBlock, 1), "l ", "r ", 'l',
 			"dyeGreen", 'r', Blocks.redstone_torch);
@@ -629,15 +629,15 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock, 1), "btb", "ycy", "gCg", 'b',
 			"dyeBlack", 't', markerBlock, 'y', "dyeYellow",
-			'c', Blocks.crafting_table, 'g', "gearGold", 'C', Blocks.chest);
+			'c', "craftingTableWood", 'g', "gearGold", 'C', "chestWood");
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), "btb", "ycy", "gCg", 'b',
 			"dyeBlack", 't', markerBlock, 'y', "dyeYellow",
-			'c', Blocks.crafting_table, 'g', "gearDiamond", 'C', Blocks.chest);
+			'c', "craftingTableWood", 'g', "gearDiamond", 'C', "chestWood");
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), "btb", "ycy", "gCg", 'b',
 			"dyeBlack", 't', markerBlock, 'y', "dyeYellow",
-			'c', Blocks.crafting_table, 'g', "gearDiamond", 'C',
+			'c', "craftingTableWood", 'g', "gearDiamond", 'C',
 			new ItemStack(blueprintItem, 1));
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), "bbb", "bBb", "bbb", 'b',

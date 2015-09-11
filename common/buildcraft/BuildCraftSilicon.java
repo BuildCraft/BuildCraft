@@ -237,7 +237,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				"OGO",
 				'O', Blocks.obsidian,
 				'R', new ItemStack(redstoneChipset, 1, 0),
-				'C', Items.emerald,
+				'C', "gemEmerald",
 				'G', "gearDiamond");
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 5),
@@ -245,7 +245,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				"ORO",
 				"OGO",
 				'O', Blocks.obsidian,
-				'W', Blocks.crafting_table,
+				'W', "craftingTableWood",
 				'G', "gearGold",
 				'R', new ItemStack(redstoneChipset, 1, 0));
 
@@ -254,7 +254,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				"ICI",
 				" P ",
 				'I', "ingotIron",
-				'C', Blocks.crafting_table,
+				'C', "craftingTableWood",
 				'P', Blocks.piston);
 
 		// CHIPSETS
