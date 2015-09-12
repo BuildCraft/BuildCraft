@@ -48,7 +48,7 @@ modinfo "BuildCraft|Transport"
 ../../tools/kzip -r -y ../modules/buildcraft-$1-transport.jar assets/buildcrafttransport buildcraft/BuildCraftTransport* buildcraft/transport LICENSE mcmod.info
 
 # Move back mcmod.info
-mv mcmod.info.json mc.mod.info
+mv mcmod.info.json mcmod.info
 
 cd ..
 rm -rf tmp
