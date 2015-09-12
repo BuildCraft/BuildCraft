@@ -39,21 +39,13 @@ public abstract class Schematic {
 	 */
 	public enum BuildingStage {
 		/**
-		 * Standalone blocks can be placed in the air, and they don't change
-		 * once placed. This category also includes blocks which fall but can
-		 * support other blocks.
+		 * Standalone blocks do not change once placed.
 		 */
 		STANDALONE,
 
 		/**
-		 * Supported blocks may require to be placed on a standalone block,
-		 * e.g. a torch.
-		 */
-		SUPPORTED,
-
-		/**
 		 * Expanding blocks will grow and may disturb other block locations,
-		 * like e.g. water
+		 * like liquids.
 		 */
 		EXPANDING
 	}
@@ -158,18 +150,6 @@ public abstract class Schematic {
 	}
 
 	/**
-	 * Can the block be placed in the world at these coordinates now?
-	 * This function is only used to *delay* block placement until other
-	 * prerequisites are met.
-	 *
-	 * This should probably be used sparingly, in cases where the BuildStage
-	 * distinction is not enough.
-	 */
-	public boolean canPlaceInWorld(IBuilderContext context, int x, int y, int z) {
-		return true;
-	}
-
-	/**
 	 * Places the block in the world, at the location specified in the slot,
 	 * using the stack in parameters
 	 */
@@ -262,7 +242,7 @@ public abstract class Schematic {
 	 * Return the maximium building permission for blueprint containing this
 	 * schematic.
 	 */
-	public BuildingPermission getBuildingPermission () {
+	public BuildingPermission getBuildingPermission() {
 		return BuildingPermission.ALL;
 	}
 

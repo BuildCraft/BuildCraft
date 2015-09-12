@@ -306,8 +306,10 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 			}
 			buildStageOccurences[b.buildStage]++;
 
-			requirementMap.add(b, context);
-			b.internalRequirementRemovalListener = requirementMap;
+			if (b.mode == Mode.Build) {
+				requirementMap.add(b, context);
+				b.internalRequirementRemovalListener = requirementMap;
+			}
 		}
 	}
 
@@ -375,6 +377,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 			try {
 				if (slot.isAlreadyBuilt(context)) {
+					requirementMap.remove(slot);
+
 					if (slot.mode == Mode.Build) {
 						// Even slots that considered already built may need
 						// post processing calls. For example, flowing water
@@ -384,7 +388,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					}
 
 					iterator.remove();
-
 					continue;
 				}
 
@@ -392,6 +395,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					// if the block can't be broken, just forget this iterator
 					iterator.remove();
 					markLocationUsed(slot.x, slot.y, slot.z);
+					requirementMap.remove(slot);
 				} else {
 					if (slot.mode == Mode.ClearIfInvalid) {
 						if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y,
@@ -399,6 +403,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						|| isBlockBreakCanceled(world, slot.x, slot.y, slot.z)) {
 							iterator.remove();
 							markLocationUsed(slot.x, slot.y, slot.z);
+							requirementMap.remove(slot);
 						} else {
 							if (builder == null) {
 								createDestroyItems(slot);
@@ -409,6 +414,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 								iterator.remove();
 								markLocationUsed(slot.x, slot.y, slot.z);
+								requirementMap.remove(slot);
 								return slot;
 							}
 						}
@@ -423,6 +429,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 								// Forge does not allow us to place a block in
 								// this position.
 								iterator.remove();
+								requirementMap.remove(slot);
 								markLocationUsed(slot.x, slot.y, slot.z);
 								continue;
 							}
@@ -444,6 +451,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						// Even slots that don't need to be build may need
 						// post processing, see above for the argument.
 						postProcessing.add(slot);
+						requirementMap.remove(slot);
 						iterator.remove();
 					}
 				}

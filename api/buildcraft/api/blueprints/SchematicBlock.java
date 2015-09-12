@@ -10,7 +10,9 @@ package buildcraft.api.blueprints;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
@@ -19,9 +21,20 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
 
+import buildcraft.api.core.BlockIndex;
+
 public class SchematicBlock extends SchematicBlockBase {
+	public static final BlockIndex[] RELATIVE_INDEXES = new BlockIndex[] {
+			new BlockIndex(0, -1, 0),
+			new BlockIndex(0, 1, 0),
+			new BlockIndex(0, 0, -1),
+			new BlockIndex(0, 0, 1),
+			new BlockIndex(-1, 0, 0),
+			new BlockIndex(1, 0, 0),
+	};
 
 	public Block block = null;
 	public int meta = 0;
@@ -91,24 +104,24 @@ public class SchematicBlock extends SchematicBlockBase {
 			readRequirementsFromNBT(nbt, registry);
 		}
 	}
-
-	@Override
-	public boolean canPlaceInWorld(IBuilderContext context, int x, int y, int z) {
+	/**
+	 * Get a list of relative block coordinates which have to be built before
+	 * this block can be placed.
+	 */
+	public Set<BlockIndex> getPrerequisiteBlocks(IBuilderContext context) {
+		Set<BlockIndex> indexes = new HashSet<BlockIndex>();
 		if (block instanceof BlockFalling) {
-			return y > 0 && !context.world().isAirBlock(x, y - 1, z);
-		} else {
-			return true;
+			indexes.add(RELATIVE_INDEXES[ForgeDirection.DOWN.ordinal()]);
 		}
+		return indexes;
 	}
 
 	@Override
-	public BuildingStage getBuildStage () {
+	public BuildingStage getBuildStage() {
 		if (block instanceof BlockFluidBase || block instanceof BlockLiquid) {
 			return BuildingStage.EXPANDING;
-		} else if (block.isOpaqueCube() || block instanceof BlockFalling) {
-			return BuildingStage.STANDALONE;
 		} else {
-			return BuildingStage.SUPPORTED;
+			return BuildingStage.STANDALONE;
 		}
 	}
 

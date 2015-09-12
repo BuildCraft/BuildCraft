@@ -133,6 +133,7 @@ import buildcraft.core.builders.schematics.SchematicBlockFloored;
 import buildcraft.core.builders.schematics.SchematicFree;
 import buildcraft.core.builders.schematics.SchematicIgnore;
 import buildcraft.core.builders.schematics.SchematicRotateMeta;
+import buildcraft.core.builders.schematics.SchematicRotateMetaSupported;
 import buildcraft.core.builders.schematics.SchematicStandalone;
 import buildcraft.core.builders.schematics.SchematicTileCreative;
 import buildcraft.core.builders.schematics.SchematicWallSide;
@@ -375,7 +376,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		schemes.registerSchematicBlock(Blocks.skull, SchematicSkull.class);
 
-		schemes.registerSchematicBlock(Blocks.ladder, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+		schemes.registerSchematicBlock(Blocks.ladder, SchematicRotateMetaSupported.class, new int[]{2, 5, 3, 4}, true);
 		schemes.registerSchematicBlock(Blocks.fence_gate, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, true);
 		schemes.registerSchematicBlock(Blocks.log, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
 		schemes.registerSchematicBlock(Blocks.log2, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
@@ -489,13 +490,13 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicEntity(EntityItemFrame.class, SchematicHanging.class, Items.item_frame);
 
 		// BuildCraft blocks
-
 		schemes.registerSchematicBlock(architectBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 		schemes.registerSchematicBlock(builderBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 
 		if (constructionMarkerBlock != null) {
 			schemes.registerSchematicBlock(constructionMarkerBlock, SchematicIgnore.class);
 		}
+
 		schemes.registerSchematicBlock(frameBlock, SchematicFree.class);
 
 		// Factories required to save entities in world
