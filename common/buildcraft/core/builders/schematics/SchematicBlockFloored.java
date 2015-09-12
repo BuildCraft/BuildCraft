@@ -1,11 +1,18 @@
 package buildcraft.core.builders.schematics;
 
+import java.util.Set;
+
+import com.google.common.collect.Sets;
+
+import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.api.core.BlockIndex;
 
 public class SchematicBlockFloored extends SchematicBlock {
 	@Override
-	public boolean canPlaceInWorld(IBuilderContext context, int x, int y, int z) {
-		return y > 0 && !context.world().isAirBlock(x, y - 1, z);
+	public Set<BlockIndex> getPrerequisiteBlocks(IBuilderContext context) {
+		return Sets.newHashSet(RELATIVE_INDEXES[ForgeDirection.DOWN.ordinal()]);
 	}
 }

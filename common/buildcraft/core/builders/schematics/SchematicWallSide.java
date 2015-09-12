@@ -8,12 +8,19 @@
  */
 package buildcraft.core.builders.schematics;
 
+import java.util.Set;
+
+import com.google.common.collect.Sets;
+
+import net.minecraftforge.common.util.ForgeDirection;
+
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.api.core.BlockIndex;
 
 public class SchematicWallSide extends SchematicBlock {
 	@Override
-	public boolean canPlaceInWorld(IBuilderContext context, int x, int y, int z) {
+	public Set<BlockIndex> getPrerequisiteBlocks(IBuilderContext context) {
 		final int yPos = 0;
 		final int yNeg = 5;
 		final int xPos = 2;
@@ -23,19 +30,19 @@ public class SchematicWallSide extends SchematicBlock {
 
 		switch (meta & 7) {
 			case xPos:
-				return !context.world().isAirBlock(x + 1, y, z);
+				return Sets.newHashSet(RELATIVE_INDEXES[ForgeDirection.EAST.ordinal()]);
 			case xNeg:
-				return !context.world().isAirBlock(x - 1, y, z);
+				return Sets.newHashSet(RELATIVE_INDEXES[ForgeDirection.WEST.ordinal()]);
 			case yPos:
-				return !context.world().isAirBlock(x, y + 1, z);
+				return Sets.newHashSet(RELATIVE_INDEXES[ForgeDirection.UP.ordinal()]);
 			case yNeg:
-				return !context.world().isAirBlock(x, y - 1, z);
+				return Sets.newHashSet(RELATIVE_INDEXES[ForgeDirection.DOWN.ordinal()]);
 			case zPos:
-				return !context.world().isAirBlock(x, y, z + 1);
+				return Sets.newHashSet(RELATIVE_INDEXES[ForgeDirection.SOUTH.ordinal()]);
 			case zNeg:
-				return !context.world().isAirBlock(x, y, z - 1);
+				return Sets.newHashSet(RELATIVE_INDEXES[ForgeDirection.NORTH.ordinal()]);
 		}
-		return true;
+		return null;
 	}
 
 	@Override

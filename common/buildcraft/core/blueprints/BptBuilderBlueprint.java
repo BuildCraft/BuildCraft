@@ -38,6 +38,7 @@ import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.StackKey;
@@ -55,7 +56,6 @@ import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.BlockUtils;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
-
 	public ArrayList<RequirementItemStack> neededItems = new ArrayList<RequirementItemStack>();
 
 	protected HashSet<Integer> builtEntities = new HashSet<Integer>();
@@ -65,6 +65,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	private LinkedList<BuildingSlotEntity> entityList = new LinkedList<BuildingSlotEntity>();
 	private LinkedList<BuildingSlot> postProcessing = new LinkedList<BuildingSlot>();
 	private BuildingSlotMapIterator iterator;
+	private IndexRequirementMap requirementMap = new IndexRequirementMap();
 
 	public BptBuilderBlueprint(Blueprint bluePrint, World world, int x, int y, int z) {
 		super(bluePrint, world, x, y, z);
@@ -295,14 +296,18 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				buildList.put(imp, new ArrayList<BuildingSlotBlock>());
 			}
 			buildList.get(imp).add(b);
+
 			if (buildStageOccurences == null) {
-				buildStageOccurences = new int[Math.max(4, b.buildStage + 1)];
+				buildStageOccurences = new int[Math.max(3, b.buildStage + 1)];
 			} else if (buildStageOccurences.length <= b.buildStage) {
 				int[] newBSO = new int[b.buildStage + 1];
 				System.arraycopy(buildStageOccurences, 0, newBSO, 0, buildStageOccurences.length);
 				buildStageOccurences = newBSO;
 			}
 			buildStageOccurences[b.buildStage]++;
+
+			requirementMap.add(b, context);
+			b.internalRequirementRemovalListener = requirementMap;
 		}
 	}
 
@@ -412,7 +417,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 							return slot;
 						} else if (checkRequirements(builder, slot.schematic)) {
 							if (!BuildCraftAPI.isSoftBlock(world, slot.x, slot.y,
-									slot.z) || !slot.schematic.canPlaceInWorld(context, slot.x, slot.y, slot.z)) {
+									slot.z) || requirementMap.contains(new BlockIndex(slot.x, slot.y, slot.z))) {
 								continue; // Can't build yet, wait (#2751)
 							} else if (isBlockPlaceCanceled(world, slot.x, slot.y, slot.z, slot.schematic)) {
 								// Forge does not allow us to place a block in
@@ -447,6 +452,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				t.printStackTrace();
 				BCLog.logger.throwing(t);
 				iterator.remove();
+				requirementMap.remove(slot);
 			}
 		}
 

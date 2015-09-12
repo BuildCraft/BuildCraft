@@ -31,13 +31,16 @@ import buildcraft.api.blueprints.SchematicFactory;
 import buildcraft.api.blueprints.SchematicMask;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.Position;
+import buildcraft.core.blueprints.IndexRequirementMap;
 import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.BlockUtils;
 
 public class BuildingSlotBlock extends BuildingSlot {
-
 	public int x, y, z;
 	public SchematicBlockBase schematic;
+
+	// TODO: Remove this ugly hack
+	public IndexRequirementMap internalRequirementRemovalListener;
 
 	public enum Mode {
 		ClearIfInvalid, Build
@@ -58,6 +61,10 @@ public class BuildingSlotBlock extends BuildingSlot {
 
 	@Override
 	public boolean writeToWorld(IBuilderContext context) {
+		if (internalRequirementRemovalListener != null) {
+			internalRequirementRemovalListener.remove(this);
+		}
+
 		if (mode == Mode.ClearIfInvalid) {
 			if (!getSchematic().isAlreadyBuilt(context, x, y, z)) {
 				if (BuildCraftBuilders.dropBrokenBlocks) {
@@ -219,11 +226,11 @@ public class BuildingSlotBlock extends BuildingSlot {
 	}
 
 	@Override
-	public LinkedList<ItemStack> getStacksToDisplay() {
+	public List<ItemStack> getStacksToDisplay() {
 		if (mode == Mode.ClearIfInvalid) {
 			return stackConsumed;
 		} else {
-			return getSchematic ().getStacksToDisplay (stackConsumed);
+			return getSchematic ().getStacksToDisplay(stackConsumed);
 		}
 	}
 

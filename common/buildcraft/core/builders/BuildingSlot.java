@@ -9,6 +9,7 @@
 package buildcraft.core.builders;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -53,8 +54,8 @@ public abstract class BuildingSlot {
 		stackConsumed.add (stack);
 	}
 
-	public LinkedList<ItemStack> getStacksToDisplay() {
-		return getSchematic ().getStacksToDisplay (stackConsumed);
+	public List<ItemStack> getStacksToDisplay() {
+		return getSchematic().getStacksToDisplay(stackConsumed);
 	}
 
 	public abstract boolean isAlreadyBuilt (IBuilderContext context);
