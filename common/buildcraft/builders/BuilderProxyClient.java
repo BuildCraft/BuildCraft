@@ -19,11 +19,9 @@ import buildcraft.builders.render.RenderArchitect;
 import buildcraft.builders.render.RenderBuilderTile;
 import buildcraft.builders.render.RenderConstructionMarker;
 import buildcraft.builders.render.RenderFiller;
-import buildcraft.builders.urbanism.TileUrbanist;
 import buildcraft.core.lib.EntityBlock;
 import buildcraft.core.lib.render.RenderMultiTESR;
 import buildcraft.core.lib.render.RenderVoid;
-import buildcraft.core.render.RenderBoxProvider;
 import buildcraft.core.render.RenderBuilder;
 import buildcraft.core.render.RenderLEDTile;
 
@@ -40,7 +38,6 @@ public class BuilderProxyClient extends BuilderProxy {
 	public void registerBlockRenderers() {
 		super.registerBlockRenderers();
 
-		ClientRegistry.bindTileEntitySpecialRenderer(TileUrbanist.class, new RenderBoxProvider());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileBuilder.class, new RenderBuilderTile());
 		ClientRegistry.bindTileEntitySpecialRenderer(TileConstructionMarker.class, new RenderConstructionMarker());
 

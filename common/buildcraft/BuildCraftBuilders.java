@@ -118,9 +118,6 @@ import buildcraft.builders.schematics.SchematicStairs;
 import buildcraft.builders.schematics.SchematicStone;
 import buildcraft.builders.schematics.SchematicTripWireHook;
 import buildcraft.builders.statements.BuildersActionProvider;
-import buildcraft.builders.urbanism.BlockUrbanist;
-import buildcraft.builders.urbanism.TileUrbanist;
-import buildcraft.builders.urbanism.UrbanistToolsIconProvider;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
@@ -151,7 +148,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	public static BlockBuilder builderBlock;
 	public static BlockArchitect architectBlock;
 	public static BlockBlueprintLibrary libraryBlock;
-	public static BlockUrbanist urbanistBlock;
 	public static BlockQuarry quarryBlock;
 	public static BlockFrame frameBlock;
 	public static ItemBlueprintTemplate templateItem;
@@ -553,12 +549,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		libraryBlock = (BlockBlueprintLibrary) CompatHooks.INSTANCE.getBlock(BlockBlueprintLibrary.class);
 		CoreProxy.proxy.registerBlock(libraryBlock.setBlockName("libraryBlock"));
 
-		if (!BuildCraftCore.NONRELEASED_BLOCKS) {
-			urbanistBlock = new BlockUrbanist ();
-			CoreProxy.proxy.registerBlock(urbanistBlock.setBlockName("urbanistBlock"));
-			CoreProxy.proxy.registerTileEntity(TileUrbanist.class, "net.minecraft.src.builders.TileUrbanist");
-		}
-
 		CoreProxy.proxy.registerTileEntity(TileQuarry.class, "Machine");
 		CoreProxy.proxy.registerTileEntity(TileMarker.class, "Marker");
 		CoreProxy.proxy.registerTileEntity(TileFiller.class, "Filler");
@@ -644,8 +634,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 			TextureMap terrainTextures = evt.map;
 			BuilderProxyClient.drillTexture = terrainTextures.registerIcon("buildcraftbuilders:machineBlock/drill");
 			BuilderProxyClient.drillHeadTexture = terrainTextures.registerIcon("buildcraftbuilders:machineBlock/drill_head");
-		} else if (evt.map.getTextureType() == 1) {
-			UrbanistToolsIconProvider.INSTANCE.registerIcons(evt.map);
 		}
 	}
 

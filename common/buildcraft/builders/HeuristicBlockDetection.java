@@ -3,14 +3,17 @@ package buildcraft.builders;
 import java.util.Iterator;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockBush;
+import net.minecraft.block.IGrowable;
 import net.minecraft.init.Blocks;
+import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
 
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicFluid;
 import buildcraft.core.blueprints.SchematicRegistry;
-import buildcraft.core.builders.schematics.SchematicBlockCreative;
+import buildcraft.core.builders.schematics.SchematicBlockFloored;
 import buildcraft.core.builders.schematics.SchematicTileCreative;
 
 public final class HeuristicBlockDetection {
@@ -35,18 +38,16 @@ public final class HeuristicBlockDetection {
 							SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicTileCreative.class);
 							continue;
 						}
-						
-						boolean creativeOnly = false;
-						
+
 						try {
-							if (creativeOnly) {
-								SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlockCreative.class);
+							if (block instanceof IFluidBlock) {
+								IFluidBlock fblock = (IFluidBlock) block;
+								if (fblock.getFluid() != null) {
+									SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicFluid.class, new FluidStack(fblock.getFluid(), 1000));
+								}
 							} else {
-							    if (block instanceof IFluidBlock) {
-									IFluidBlock fblock = (IFluidBlock) block;
-									if (fblock.getFluid() != null) {
-										SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicFluid.class, new FluidStack(fblock.getFluid(), 1000));
-									}
+								if (block instanceof BlockBush || block instanceof IPlantable || block instanceof IGrowable) {
+									SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlockFloored.class);
 								} else {
 									SchematicRegistry.INSTANCE.registerSchematicBlock(block, meta, SchematicBlock.class);
 								}
