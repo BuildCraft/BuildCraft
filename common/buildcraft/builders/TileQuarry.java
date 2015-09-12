@@ -50,6 +50,7 @@ import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.DefaultAreaProvider;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
@@ -476,6 +477,11 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		return BlockUtils.canChangeBlock(block, worldObj, bx, by, bz)
 				&& !BuildCraftAPI.isSoftBlock(worldObj, bx, by, bz)
 				&& !(block instanceof BlockLiquid) && !(block instanceof IFluidBlock);
+	}
+
+	@Override
+	protected int getNetworkUpdateRange() {
+		return DefaultProps.NETWORK_UPDATE_RANGE + (int) Math.ceil(Math.sqrt(yCoord * yCoord + box.sizeX() * box.sizeX() + box.sizeZ() * box.sizeZ()));
 	}
 
 	@Override
