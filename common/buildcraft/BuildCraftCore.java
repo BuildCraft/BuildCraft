@@ -182,7 +182,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static BuildCraftCore instance;
 
 	public static final boolean NONRELEASED_BLOCKS = true;
-	public static final boolean TABLET_TESTING = false;
+	public static final boolean TABLET_TESTING = true;
 
 	public enum RenderMode {
 		Full, NoDynamic
@@ -270,15 +270,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static Achievement wrenchAchievement;
 	public static Achievement engineRedstoneAchievement;
 
-	public static float diffX, diffY, diffZ;
-
 	public static GameProfile gameProfile = new GameProfile(UUID.nameUUIDFromBytes("buildcraft.core".getBytes()), "[BuildCraft]");
-
-	private static FloatBuffer modelviewF;
-	private static FloatBuffer projectionF;
-	private static IntBuffer viewport;
-
-	private static FloatBuffer pos = ByteBuffer.allocateDirect(3 * 4).asFloatBuffer();
 
 	@Mod.EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
@@ -694,64 +686,6 @@ public class BuildCraftCore extends BuildCraftMod {
 	@Mod.EventHandler
 	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
 		InterModComms.processIMC(event);
-	}
-
-	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public void renderLast (RenderWorldLastEvent evt) {
-		// TODO: while the urbanist is deactivated, this code can be dormant.
-		// it happens to be very expensive at run time, so we need some way
-		// to operate it only when relevant (e.g. in the cycle following a
-		// click request).
-		if (NONRELEASED_BLOCKS) {
-			return;
-		}
-
-		/**
-		 * Note (SpaceToad): Why on earth this thing eventually worked out is a
-		 * mystery to me. In particular, all the examples I got computed y in
-		 * a different way. Anyone with further OpenGL understanding would be
-		 * welcome to explain.
-		 *
-		 * Anyway, the purpose of this code is to store the block position
-		 * pointed by the mouse at each frame, relative to the entity that has
-		 * the camera.
-		 *
-		 * It got heavily inspire from the two following sources:
-		 * http://nehe.gamedev.net/article/using_gluunproject/16013/
-		 * #ActiveRenderInfo.updateRenderInfo.
-		 *
-		 * See EntityUrbanist#rayTraceMouse for a usage example.
-		 */
-
-		if (modelviewF == null) {
-			modelviewF = GLAllocation.createDirectFloatBuffer(16);
-			projectionF = GLAllocation.createDirectFloatBuffer(16);
-			viewport = GLAllocation.createDirectIntBuffer(16);
-
-		}
-
-		GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, modelviewF);
-		GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projectionF);
-		GL11.glGetInteger(GL11.GL_VIEWPORT, viewport);
-		float f = (viewport.get(0) + viewport.get(2)) / 2;
-		float f1 = (viewport.get(1) + viewport.get(3)) / 2;
-
-		float x = Mouse.getX();
-		float y = Mouse.getY();
-
-		// TODO: Minecraft seems to instist to have this winZ re-created at
-		// each frame - looks like a memory leak to me but I couldn't use a
-		// static variable instead, as for the rest.
-		FloatBuffer winZ = GLAllocation.createDirectFloatBuffer(1);
-		GL11.glReadPixels((int) x, (int) y, 1, 1, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, winZ);
-
-		GLU.gluUnProject(x, y, winZ.get(), modelviewF, projectionF, viewport,
-				pos);
-
-		diffX = pos.get(0);
-		diffY = pos.get(1);
-		diffZ = pos.get(2);
 	}
 
 	@SubscribeEvent

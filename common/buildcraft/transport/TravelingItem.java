@@ -139,14 +139,6 @@ public class TravelingItem {
 		return extraData != null;
 	}
 
-	@Deprecated
-	public void setInsetionHandler(InsertionHandler handler) {
-		if (handler == null) {
-			return;
-		}
-		this.insertionHandler = handler;
-	}
-
 	public void setInsertionHandler(InsertionHandler handler) {
 		if (handler == null) {
 			return;
@@ -321,14 +313,12 @@ public class TravelingItem {
 	}
 
 	public static class InsertionHandler {
-
 		public boolean canInsertItem(TravelingItem item, IInventory inv) {
 			return true;
 		}
 	}
 
 	public static class TravelingItemCache {
-
 		private final Map<Integer, TravelingItem> itemCache = new MapMaker().weakValues().makeMap();
 
 		public void cache(TravelingItem item) {

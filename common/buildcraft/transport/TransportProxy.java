@@ -32,9 +32,6 @@ public class TransportProxy {
 	public void registerRenderers() {
 	}
 
-	public void initIconProviders(BuildCraftTransport instance){
-	}
-
 	public void setIconProviderFromPipe(ItemPipe item, Pipe<?> dummyPipe) {
 	}
 

@@ -445,7 +445,6 @@ public abstract class GuiBuildCraft extends GuiContainer {
 		public int currentShiftX = 0;
 		public int currentShiftY = 0;
 		protected int overlayColor = 0xffffff;
-		protected int limitWidth = 128;
 		protected int maxWidth = 124;
 		protected int minWidth = 24;
 		protected int currentWidth = minWidth;

@@ -13,6 +13,8 @@ import java.util.Random;
 import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraft.world.gen.layer.IntCache;
 
+import buildcraft.core.lib.utils.SimplexNoise;
+
 public abstract class GenLayerBiomeReplacer extends GenLayer {
 
 	public static final int OFFSET_RANGE = 500000;

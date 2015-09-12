@@ -29,8 +29,6 @@ import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.lib.utils.NBTUtils;
 
 public class LibraryDatabase {
-	private static final int PAGE_SIZE = 12;
-
 	protected Set<LibraryId> blueprintIds;
 	protected LibraryId[] pages = new LibraryId[0];
 

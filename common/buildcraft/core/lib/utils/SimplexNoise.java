@@ -6,7 +6,7 @@
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
  */
-package buildcraft.energy.worldgen;
+package buildcraft.core.lib.utils;
 
 /**
  * A speed-improved simplex noise algorithm for 2D, 3D and 4D in Java.

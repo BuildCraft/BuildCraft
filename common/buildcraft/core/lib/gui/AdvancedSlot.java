@@ -111,10 +111,6 @@ public abstract class AdvancedSlot {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 	}
 
-	public void selected () {
-
-	}
-
 	public boolean shouldDrawHighlight() {
 		return true;
 	}
