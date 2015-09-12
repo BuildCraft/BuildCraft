@@ -117,7 +117,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		LinkedList<BuildingSlotBlock> tmpStandalone = new LinkedList<BuildingSlotBlock>();
-		LinkedList<BuildingSlotBlock> tmpSupported = new LinkedList<BuildingSlotBlock>();
 		LinkedList<BuildingSlotBlock> tmpExpanding = new LinkedList<BuildingSlotBlock>();
 
 		for (int j = 0; j < blueprint.sizeY; ++j) {
@@ -156,13 +155,9 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 							tmpStandalone.add(b);
 							b.buildStage = 1;
 							break;
-						case SUPPORTED:
-							tmpSupported.add(b);
-							b.buildStage = 2;
-							break;
 						case EXPANDING:
 							tmpExpanding.add(b);
-							b.buildStage = 3;
+							b.buildStage = 2;
 							break;
 						}
 					} else {
@@ -173,9 +168,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		for (BuildingSlotBlock b : tmpStandalone) {
-			addToBuildList(b);
-		}
-		for (BuildingSlotBlock b : tmpSupported) {
 			addToBuildList(b);
 		}
 		for (BuildingSlotBlock b : tmpExpanding) {

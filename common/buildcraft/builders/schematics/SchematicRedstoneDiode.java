@@ -15,8 +15,9 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.core.builders.schematics.SchematicBlockFloored;
 
-public class SchematicRedstoneDiode extends SchematicBlock {
+public class SchematicRedstoneDiode extends SchematicBlockFloored {
 	private Item baseItem;
 
 	public SchematicRedstoneDiode(Item baseItem) {

@@ -14,9 +14,9 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.core.builders.schematics.SchematicBlockFloored;
 
-public class SchematicRail extends SchematicBlock {
-
+public class SchematicRail extends SchematicBlockFloored {
 	@Override
 	public void rotateLeft(IBuilderContext context) {
 		switch (meta) {

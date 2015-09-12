@@ -15,8 +15,9 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.core.builders.schematics.SchematicBlockFloored;
 
-public class SchematicCactus extends SchematicBlock {
+public class SchematicCactus extends SchematicBlockFloored {
 
 	@Override
 	public void getRequirementsForPlacement(IBuilderContext context, LinkedList<ItemStack> requirements) {

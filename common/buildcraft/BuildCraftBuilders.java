@@ -129,6 +129,7 @@ import buildcraft.core.TilePathMarker;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.builders.schematics.SchematicBlockCreative;
+import buildcraft.core.builders.schematics.SchematicBlockFloored;
 import buildcraft.core.builders.schematics.SchematicFree;
 import buildcraft.core.builders.schematics.SchematicIgnore;
 import buildcraft.core.builders.schematics.SchematicRotateMeta;
@@ -369,6 +370,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(Blocks.redstone_torch, SchematicWallSide.class);
 		schemes.registerSchematicBlock(Blocks.unlit_redstone_torch, SchematicWallSide.class);
 
+		schemes.registerSchematicBlock(Blocks.tripwire, SchematicBlockFloored.class);
 		schemes.registerSchematicBlock(Blocks.tripwire_hook, SchematicTripWireHook.class);
 
 		schemes.registerSchematicBlock(Blocks.skull, SchematicSkull.class);
