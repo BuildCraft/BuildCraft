@@ -93,7 +93,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	}
 
 	private void initTemplate() {
-		if (currentPattern != null && box.isInitialized()) {
+		if (currentPattern != null && box.isInitialized() && box.sizeX() > 0 && box.sizeY() > 0 && box.sizeZ() > 0) {
 			currentTemplate = currentPattern.getTemplateBuilder(box, getWorldObj(), patternParameters);
 			currentTemplate.blueprint.excavate = excavate;
 		}
@@ -418,16 +418,6 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 				NetworkUtils.writeNBT(data, parameterData);
 			}
 		}));
-	}
-
-	public int getIconGlowLevel(int renderPass) {
-		if (renderPass == 1) { // Red LED
-			return done ? 15 : 0;
-		} else if (renderPass == 2) { // Green LED
-			return 0;
-		} else {
-			return -1;
-		}
 	}
 
 	@Override

@@ -125,8 +125,11 @@ public class MapWorld {
 					if (v > 1) {
 						timeToUpdate.put(c, v - 1);
 					} else {
-						timeToUpdate.remove(c);
-						updateChunk(c);
+						try {
+							updateChunk(c);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}

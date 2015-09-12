@@ -108,7 +108,6 @@ public class BlockMiner {
 						Block.getIdFromBlock(block)
 								+ (meta << 12));
 
-				Utils.preDestroyBlock(world, x, y, z);
 				world.setBlockToAir(x, y, z);
 			} else {
 				hasFailed = true;

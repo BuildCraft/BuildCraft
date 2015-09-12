@@ -41,8 +41,10 @@ public class AIRobotMain extends AIRobot {
 					startDelegateAI(new AIRobotRecharge(robot));
 				}
 			}
-		} else if (overridingAI != null && ai != overridingAI) {
-			startDelegateAI(overridingAI);
+		} else if (!(ai instanceof AIRobotRecharge)) {
+			if (overridingAI != null && ai != overridingAI) {
+				startDelegateAI(overridingAI);
+			}
 		}
 	}
 

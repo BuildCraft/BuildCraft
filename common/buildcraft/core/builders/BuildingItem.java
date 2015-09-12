@@ -27,6 +27,7 @@ import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.Position;
 import buildcraft.core.StackAtPosition;
+import buildcraft.core.lib.inventory.InvUtils;
 
 public class BuildingItem implements IBuildingItem, ISerializable {
 
@@ -161,23 +162,27 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 
 	private void build() {
 		if (slotToBuild != null) {
-			int destX = (int) Math.floor(destination.x);
-			int destY = (int) Math.floor(destination.y);
-			int destZ = (int) Math.floor(destination.z);
-			Block block = context.world().getBlock(destX, destY, destZ);
-			int meta = context.world().getBlockMetadata(destX, destY, destZ);
-
-			context.world().playAuxSFXAtEntity(null, 2001,
-					destX, destY, destZ,
-					Block.getIdFromBlock(block) + (meta << 12));
-
 			/*if (BlockUtil.isToughBlock(context.world(), destX, destY, destZ)) {
 				BlockUtil.breakBlock(context.world(), destX, destY, destZ, BuildCraftBuilders.fillerLifespanTough);
 			} else {
 				BlockUtil.breakBlock(context.world(), destX, destY, destZ, BuildCraftBuilders.fillerLifespanNormal);
 			}*/
 
-			slotToBuild.writeToWorld(context);
+			int destX = (int) Math.floor(destination.x);
+			int destY = (int) Math.floor(destination.y);
+			int destZ = (int) Math.floor(destination.z);
+			Block oldBlock = context.world().getBlock(destX, destY, destZ);
+			int oldMeta = context.world().getBlockMetadata(destX, destY, destZ);
+
+			if (slotToBuild.writeToWorld(context)) {
+				context.world().playAuxSFXAtEntity(null, 2001,
+						destX, destY, destZ,
+						Block.getIdFromBlock(oldBlock) + (oldMeta << 12));
+			} else {
+				for (ItemStack s : slotToBuild.stackConsumed) {
+					InvUtils.dropItems(context.world(), s, destX, destY, destZ);
+				}
+			}
 		}
 	}
 

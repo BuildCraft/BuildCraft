@@ -102,7 +102,7 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
 	public void readData(ByteBuf stream) {
 		super.readData(stream);
 		currentRecipeId = NetworkUtils.readUTF(stream);
-		optionId = stream.readUnsignedByte();
+		optionId = stream.readByte();
 		updateRecipe();
 	}
 
@@ -158,7 +158,7 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
 			}
 		}
 
-		if ((oldId != null && currentRecipeId != null &&  !oldId.equals(currentRecipeId))
+		if ((oldId != null && currentRecipeId != null && !oldId.equals(currentRecipeId))
 				|| (oldId == null && currentRecipeId != null)
 				|| (oldId != null && currentRecipeId == null)) {
 			optionId = -1;
@@ -187,9 +187,11 @@ public class TileProgrammingTable extends TileLaserTableBase implements IInvento
 	@Override
 	public void receiveCommand(String command, Side side, Object sender, ByteBuf stream) {
 		if (side.isServer() && "select".equals(command)) {
-			optionId = stream.readUnsignedByte();
+			optionId = stream.readByte();
 			if (optionId >= options.size()) {
-				optionId = 0;
+				optionId = -1;
+			} else if (optionId < -1) {
+				optionId = -1;
 			}
 
 			queueNetworkUpdate();

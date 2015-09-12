@@ -8,8 +8,8 @@
  */
 package buildcraft.transport.pipes;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.WeakHashMap;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -42,16 +42,11 @@ import buildcraft.transport.pipes.events.PipeEventItem;
 import buildcraft.transport.utils.TransportUtils;
 
 public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEnergyHandler {
-	private RFBattery battery = new RFBattery(2560, 640, 0);
-
-	private int[] entitiesDropped;
-	private int entitiesDroppedIndex = 0;
+	private final RFBattery battery = new RFBattery(2560, 640, 0);
+	private final WeakHashMap<Entity, Long> entityDropTime = new WeakHashMap<Entity, Long>();
 	
 	public PipeItemsObsidian(Item item) {
 		super(new PipeTransportItems(), item);
-
-		entitiesDropped = new int[32];
-		Arrays.fill(entitiesDropped, -1);
 	}
 
 	@Override
@@ -257,12 +252,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 	}
 
 	public void eventHandler(PipeEventItem.DropItem event) {
-		if (entitiesDroppedIndex + 1 >= entitiesDropped.length) {
-			entitiesDroppedIndex = 0;
-		} else {
-			entitiesDroppedIndex++;
-		}
-		entitiesDropped[entitiesDroppedIndex] = event.entity.getEntityId();
+		entityDropTime.put(event.entity, event.entity.worldObj.getTotalWorldTime() + 200);
 	}
 
 	public boolean canSuck(Entity entity, int distance) {
@@ -276,10 +266,9 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 				return false;
 			}
 
-			for (int element : entitiesDropped) {
-				if (item.getEntityId() == element) {
-					return false;
-				}
+			long wt = entity.worldObj.getTotalWorldTime();
+			if (entityDropTime.containsKey(entity) && entityDropTime.get(entity) >= wt) {
+				return false;
 			}
 
 			return battery.getEnergyStored() >= distance * 10;

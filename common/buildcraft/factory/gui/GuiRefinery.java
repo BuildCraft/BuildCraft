@@ -28,7 +28,7 @@ public class GuiRefinery extends GuiAdvancedInterface {
 	private final ContainerRefinery container;
 
 	public GuiRefinery(InventoryPlayer inventory, TileRefinery refinery) {
-		super(new ContainerRefinery(inventory, refinery), refinery, TEXTURE);
+		super(new ContainerRefinery(inventory, refinery), null, TEXTURE);
 
 		xSize = 175;
 		ySize = 207;
@@ -83,12 +83,10 @@ public class GuiRefinery extends GuiAdvancedInterface {
 					container.refinery.tankManager.get(position).colorRenderCache = 0xFFFFFF;
 				}
 			} else {
-				TileRefinery ref = (TileRefinery) this.tile;
-
 				if (position == 0) {
-					container.setFilter(position, ref.tanks[0].getFluidType());
+					container.setFilter(position, container.refinery.tanks[0].getFluidType());
 				} else if (position == 1) {
-					container.setFilter(position, ref.tanks[1].getFluidType());
+					container.setFilter(position, container.refinery.tanks[1].getFluidType());
 				}
 			}
 		}

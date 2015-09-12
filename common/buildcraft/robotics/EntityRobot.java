@@ -696,7 +696,9 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public ItemStack getStackInSlotOnClosing(int var1) {
-		return inv[var1].splitStack(var1);
+		ItemStack stack = inv[var1];
+		inv[var1] = null;
+		return stack;
 	}
 
 	@Override

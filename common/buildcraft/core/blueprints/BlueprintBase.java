@@ -8,11 +8,9 @@
  */
 package buildcraft.core.blueprints;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -47,8 +45,7 @@ public abstract class BlueprintBase {
 	protected MappingRegistry mapping = new MappingRegistry();
 	protected SchematicBlockBase[] contents;
 
-	private ComputeDataThread computeData;
-	private byte [] data;
+	private NBTTagCompound nbt;
 	private ForgeDirection mainDir = ForgeDirection.EAST;
 
 	public BlueprintBase() {
@@ -256,59 +253,24 @@ public abstract class BlueprintBase {
 		return new BptContext(world, box, mapping);
 	}
 
-	public void addSubBlueprint(BlueprintBase bpt, int x, int y, int z, ForgeDirection dir) {
-		NBTTagCompound nbt = new NBTTagCompound();
+	public void addSubBlueprint(BlueprintBase subBpt, int x, int y, int z, ForgeDirection dir) {
+		NBTTagCompound subNBT = new NBTTagCompound();
 
-		nbt.setInteger("x", x);
-		nbt.setInteger("y", y);
-		nbt.setInteger("z", z);
-		nbt.setByte("dir", (byte) dir.ordinal());
+		subNBT.setInteger("x", x);
+		subNBT.setInteger("y", y);
+		subNBT.setInteger("z", z);
+		subNBT.setByte("dir", (byte) dir.ordinal());
+		subNBT.setTag("bpt", subBpt.getNBT());
 
-		NBTTagCompound bptNBT = getNBT();
-		nbt.setTag("bpt", bptNBT);
-
-		subBlueprintsNBT.add(nbt);
+		subBlueprintsNBT.add(subNBT);
 	}
 
-	class ComputeDataThread extends Thread {
-		public NBTTagCompound nbt;
-
-		@Override
-		public void run () {
-			try {
-				BlueprintBase.this.setData(CompressedStreamTools.compress(nbt));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+	public NBTTagCompound getNBT() {
+		if (nbt == null) {
+			nbt = new NBTTagCompound();
+			writeToNBTInternal(nbt);
 		}
-	}
-
-	/**
-	 * This function will return the binary data associated to this blueprint.
-	 * This data is computed asynchronously. If the data is not yet available,
-	 * null will be returned.
-	 */
-	public synchronized byte[] getData() {
-		if (data != null) {
-			return data;
-		} else if (computeData == null) {
-			computeData = new ComputeDataThread();
-			computeData.nbt = new NBTTagCompound();
-			writeToNBTInternal(computeData.nbt);
-			computeData.start();
-		}
-
-		return null;
-	}
-
-	public synchronized NBTTagCompound getNBT() {
-		if (computeData == null) {
-			computeData = new ComputeDataThread();
-			computeData.nbt = new NBTTagCompound();
-			writeToNBTInternal(computeData.nbt);
-			computeData.start();
-		}
-		return computeData.nbt;
+		return nbt;
 	}
 
 	public BlueprintBase adjustToWorld(World world, int x, int y, int z, ForgeDirection o) {
@@ -344,10 +306,6 @@ public abstract class BlueprintBase {
 		translateToWorld(transform);
 
 		return this;
-	}
-
-	public synchronized void setData(byte[] b) {
-		data = b;
 	}
 
 	public abstract void loadContents(NBTTagCompound nbt) throws BptError;

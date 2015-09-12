@@ -50,6 +50,7 @@ import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.DefaultAreaProvider;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
@@ -476,6 +477,11 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	}
 
 	@Override
+	protected int getNetworkUpdateRange() {
+		return DefaultProps.NETWORK_UPDATE_RANGE + (int) Math.ceil(Math.sqrt(yCoord * yCoord + box.sizeX() * box.sizeX() + box.sizeZ() * box.sizeZ()));
+	}
+
+	@Override
 	public void invalidate() {
 		if (chunkTicket != null) {
 			ForgeChunkManager.releaseTicket(chunkTicket);
@@ -516,6 +522,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		if (BuildCraftBuilders.quarryLoadsChunks && chunkTicket == null) {
 			chunkTicket = ForgeChunkManager.requestTicket(BuildCraftBuilders.instance, worldObj, Type.NORMAL);
 		}
+
 		if (chunkTicket != null) {
 			chunkTicket.getModData().setInteger("quarryX", xCoord);
 			chunkTicket.getModData().setInteger("quarryY", yCoord);

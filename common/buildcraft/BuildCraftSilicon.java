@@ -15,7 +15,9 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
@@ -130,7 +132,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		CoreProxy.proxy.registerTileEntity(TileIntegrationTable.class,
 				"net.minecraft.src.buildcraft.factory.TileIntegrationTable");
         CoreProxy.proxy.registerTileEntity(TileChargingTable.class,
-                "net.minecraft.src.buildcraft.factory.TileChargingTable");
+				"net.minecraft.src.buildcraft.factory.TileChargingTable");
 		CoreProxy.proxy.registerTileEntity(TileProgrammingTable.class,
 				"net.minecraft.src.buildcraft.factory.TileProgrammingTable");
 		CoreProxy.proxy.registerTileEntity(TilePackager.class, "buildcraft.TilePackager");
@@ -146,9 +148,16 @@ public class BuildCraftSilicon extends BuildCraftMod {
 		}
 
 		BlockDispenser.dispenseBehaviorRegistry.putObject(packageItem, new ItemPackage.DispenseBehaviour());
-		StripesHandlerDispenser.items.add(packageItem);
+		if (Loader.isModLoaded("BuildCraft|Transport")) {
+			initTransport();
+		}
 
 		SiliconProxy.proxy.registerRenderers();
+	}
+
+	@Optional.Method(modid = "BuildCraft|Transport")
+	private void initTransport() {
+		StripesHandlerDispenser.items.add(packageItem);
 	}
 
 	public static void loadRecipes() {
@@ -228,7 +237,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				"OGO",
 				'O', Blocks.obsidian,
 				'R', new ItemStack(redstoneChipset, 1, 0),
-				'C', Items.emerald,
+				'C', "gemEmerald",
 				'G', "gearDiamond");
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(assemblyTableBlock, 1, 5),
@@ -236,7 +245,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				"ORO",
 				"OGO",
 				'O', Blocks.obsidian,
-				'W', Blocks.crafting_table,
+				'W', "craftingTableWood",
 				'G', "gearGold",
 				'R', new ItemStack(redstoneChipset, 1, 0));
 
@@ -245,7 +254,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				"ICI",
 				" P ",
 				'I', "ingotIron",
-				'C', Blocks.crafting_table,
+				'C', "craftingTableWood",
 				'P', Blocks.piston);
 
 		// CHIPSETS

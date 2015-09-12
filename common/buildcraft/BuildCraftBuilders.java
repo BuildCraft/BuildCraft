@@ -600,7 +600,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 			"dyeBlack", 'p', Items.paper);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), "ppp", "pip", "ppp", 'i',
-			new ItemStack(Items.dye, 1, 4), 'p', Items.paper);
+			"gemLapis", 'p', Items.paper);
 
 		if (constructionMarkerBlock != null) {
 			CoreProxy.proxy.addCraftingRecipe(new ItemStack(constructionMarkerBlock, 1), "l ", "r ", 'l',

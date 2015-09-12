@@ -10,10 +10,13 @@ package buildcraft.api.blueprints;
 
 import java.util.LinkedList;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldServer;
+
+import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.BuildCraftAPI;
 
@@ -36,14 +39,19 @@ public class SchematicMask extends SchematicBlockBase {
 				return;
 			} else {
 				ItemStack stack = stacks.getFirst();
+				EntityPlayer player = BuildCraftAPI.proxy.getBuildCraftPlayer((WorldServer) context.world()).get();
 
 				// force the block to be air block, in case it's just a soft
 				// block which replacement is not straightforward
 				context.world().setBlock(x, y, z, Blocks.air, 0, 3);
 
-				stack.tryPlaceItemIntoWorld(
-						BuildCraftAPI.proxy.getBuildCraftPlayer((WorldServer) context.world()).get(),
-						context.world(), x, y, z, 1, 0.0f, 0.0f, 0.0f);
+				// Find nearest solid surface to place on
+				ForgeDirection dir = ForgeDirection.DOWN;
+				while (dir != ForgeDirection.UNKNOWN && BuildCraftAPI.isSoftBlock(context.world(), x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ)) {
+					dir = ForgeDirection.getOrientation(dir.ordinal() + 1);
+				}
+
+				stack.tryPlaceItemIntoWorld(player, context.world(), x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ, dir.getOpposite().ordinal(), 0.0f, 0.0f, 0.0f);
 			}
 		} else {
 			context.world().setBlock(x, y, z, Blocks.air, 0, 3);
@@ -53,9 +61,9 @@ public class SchematicMask extends SchematicBlockBase {
 	@Override
 	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
 		if (isConcrete) {
-			return !BuildCraftAPI.isSoftBlock(context.world(), x, y, z);
+			return !BuildCraftAPI.getWorldProperty("replaceable").get(context.world(), x, y, z);
 		} else {
-			return BuildCraftAPI.isSoftBlock(context.world(), x, y, z);
+			return BuildCraftAPI.getWorldProperty("replaceable").get(context.world(), x, y, z);
 		}
 	}
 

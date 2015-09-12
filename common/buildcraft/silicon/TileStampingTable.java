@@ -2,6 +2,7 @@ package buildcraft.silicon;
 
 import java.lang.ref.WeakReference;
 
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -142,7 +143,29 @@ public class TileStampingTable extends TileLaserTableBase implements IHasWork, I
                 handleLeftoverItems(crafting);
                 handleLeftoverItems(internalPlayer.inventory);
 
-                outputStack(result, this, 1, false);
+                for (int i = 1; i <= 4; i++) {
+                    ItemStack inside = inv.getStackInSlot(i);
+
+                    if (inside == null || inside.stackSize <= 0) {
+                        inv.setInventorySlotContents(i, result.copy());
+                        result.stackSize = 0;
+                        break;
+                    } else if (StackHelper.canStacksMerge(inside, result)) {
+                        result.stackSize -= StackHelper.mergeStacks(result, inside, true);
+
+                        if (result.stackSize == 0) {
+                            break;
+                        }
+                    }
+                }
+
+                if (result.stackSize > 0) {
+                    EntityItem entityitem = new EntityItem(worldObj, xCoord + 0.5, yCoord + 0.7, zCoord + 0.5,
+                           result.copy());
+
+                    worldObj.spawnEntityInWorld(entityitem);
+                    result.stackSize = 0;
+                }
                 decrStackSize(0, 1);
             } else {
                 ItemStack outputSlot = getStackInSlot(1);

@@ -51,13 +51,11 @@ public class AIRobotSearchStackRequest extends AIRobot {
 	@Override
 	public void delegateAIEnded(AIRobot ai) {
 		if (ai instanceof AIRobotSearchStation) {
-			if (!ai.success()) {
-				terminate();
-			} else {
+			if (ai.success()) {
 				request = getOrderFromRequestingStation(((AIRobotSearchStation) ai).targetStation, true);
-
-				terminate();
 			}
+
+			terminate();
 		}
 	}
 

@@ -38,7 +38,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 				return;
 			}
 
-			RobotStationState state = ((RobotStationPluggable) pipePluggable).renderState;
+			RobotStationState state = ((RobotStationPluggable) pipePluggable).getRenderState();
 
 			switch(state) {
 				case None:
@@ -188,6 +188,9 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 	}
 
 	public RobotStationState getRenderState() {
+		if (renderState == null) {
+			renderState = RobotStationState.None;
+		}
 		return renderState;
 	}
 
@@ -204,12 +207,16 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 
 	@Override
 	public boolean requiresRenderUpdate(PipePluggable o) {
-		return renderState != ((RobotStationPluggable) o).renderState;
+		return getRenderState() != ((RobotStationPluggable) o).getRenderState();
 	}
 
 	@Override
 	public void readData(ByteBuf data) {
-		this.renderState = RobotStationState.values()[data.readUnsignedByte()];
+		try {
+			this.renderState = RobotStationState.values()[data.readUnsignedByte()];
+		} catch (ArrayIndexOutOfBoundsException e) {
+			this.renderState = RobotStationState.None;
+		}
 	}
 
 	@Override
@@ -247,7 +254,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 			info.add("RobotStationPluggable: No station found!");
 		} else {
 			refreshRenderState();
-			info.add("Docking Station (side " + side.name() + ", " + renderState.name() + ")");
+			info.add("Docking Station (side " + side.name() + ", " + getRenderState().name() + ")");
 			if (station.robotTaking() != null && station.robotTaking() instanceof IDebuggable) {
 				((IDebuggable) station.robotTaking()).getDebugInfo(info, ForgeDirection.UNKNOWN, debugger, player);
 			}

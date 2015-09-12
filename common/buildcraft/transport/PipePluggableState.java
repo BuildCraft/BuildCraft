@@ -46,11 +46,16 @@ public class PipePluggableState implements ISerializable {
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 			if (this.pluggableMatrix.isConnected(dir)) {
 				try {
-					PipePluggable p = PipeManager.pipePluggables.get(data.readUnsignedShort()).newInstance();
-					p.readData(data);
-					pluggables[dir.ordinal()] = p;
+					Class<? extends PipePluggable> pc = PipeManager.pipePluggables.get(data.readUnsignedShort());
+					if (pluggables[dir.ordinal()] == null || pc != pluggables[dir.ordinal()].getClass()) {
+						PipePluggable p = pc.newInstance();
+						pluggables[dir.ordinal()] = p;
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
+				}
+				if (pluggables[dir.ordinal()] != null) {
+					pluggables[dir.ordinal()].readData(data);
 				}
 			} else {
 				pluggables[dir.ordinal()] = null;

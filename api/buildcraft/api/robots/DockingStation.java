@@ -8,7 +8,7 @@
  */
 package buildcraft.api.robots;
 
-import net.minecraft.inventory.ISidedInventory;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
@@ -189,7 +189,7 @@ public abstract class DockingStation {
 		return ForgeDirection.UNKNOWN;
 	}
 
-	public ISidedInventory getItemInput() {
+	public IInventory getItemInput() {
 		return null;
 	}
 

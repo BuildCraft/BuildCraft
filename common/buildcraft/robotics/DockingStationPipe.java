@@ -236,7 +236,7 @@ public class DockingStationPipe extends DockingStation implements IRequestProvid
 	@Override
 	public void unsafeRelease(EntityRobotBase robot) {
 		super.unsafeRelease(robot);
-		if (robotTaking() == null) {
+		if (robotTaking() == null && getPipe() != null) {
 			getPipe().scheduleRenderUpdate();
 		}
 	}
