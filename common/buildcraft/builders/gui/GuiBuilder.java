@@ -45,7 +45,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
 
 		for (int i = 0; i < 6; ++i) {
 			for (int j = 0; j < 4; ++j) {
-				slots.set(i * 4 + j, new BuilderRequirementSlot(this, 179 + j * 18, 18 + i * 18));
+				slots.set(i * 4 + j, new SlotBuilderRequirement(this, 179 + j * 18, 18 + i * 18));
 			}
 		}
 	}
@@ -97,9 +97,9 @@ public class GuiBuilder extends GuiAdvancedInterface {
 			for (int s = 0; s < slots.size(); s++) {
 				int ts = offset + s;
 				if (ts >= needs.size()) {
-					((BuilderRequirementSlot) slots.get(s)).stack = null;
+					((SlotBuilderRequirement) slots.get(s)).stack = null;
 				} else {
-					((BuilderRequirementSlot) slots.get(s)).stack = needs.get(ts);
+					((SlotBuilderRequirement) slots.get(s)).stack = needs.get(ts);
 				}
 			}
 
@@ -109,7 +109,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
 		} else {
 			getContainerBuilder().scrollbarWidget.hidden = true;
 			for (AdvancedSlot slot : slots) {
-				((BuilderRequirementSlot) slot).stack = null;
+				((SlotBuilderRequirement) slot).stack = null;
 			}
 			for (GuiButton b : (List<GuiButton>) buttonList) {
 				b.visible = false;
@@ -119,7 +119,7 @@ public class GuiBuilder extends GuiAdvancedInterface {
 		drawWidgets(x, y);
 
 		if (isBlueprint) {
-			drawBackgroundSlots();
+			drawBackgroundSlots(x, y);
 
 			for (int i = 0; i < builder.fluidTanks.length; i++) {
 				Tank tank = builder.fluidTanks[i];

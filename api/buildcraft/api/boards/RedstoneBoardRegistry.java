@@ -36,7 +36,7 @@ public abstract class RedstoneBoardRegistry {
 
 	public abstract RedstoneBoardRobotNBT getEmptyRobotBoard();
 
-	public abstract RedstoneBoardNBT getRedstoneBoard(NBTTagCompound nbt);
+	public abstract RedstoneBoardNBT<?> getRedstoneBoard(NBTTagCompound nbt);
 
 	public abstract RedstoneBoardNBT<?> getRedstoneBoard(String id);
 

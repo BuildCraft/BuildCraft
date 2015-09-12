@@ -66,7 +66,7 @@ public class ActionStationForbidRobot extends BCStatement implements IActionInte
 
 	public static boolean isForbidden(StatementSlot slot, EntityRobotBase robot) {
 		for (IStatementParameter p : slot.parameters) {
-			if (StatementParameterRobot.matches(p, robot)) {
+			if (p != null && StatementParameterRobot.matches(p, robot)) {
 				return true;
 			}
 		}

@@ -32,7 +32,6 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-import buildcraft.BuildCraftBuilders;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
@@ -252,18 +251,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 					if (tile instanceof IPathProvider) {
 						path = ((IPathProvider) tile).getPath();
-
-						// TODO (7.1): Add API method for IPathProviders to remove
-						// themselves from world like IAreaProviders.
-						if (tile instanceof TilePathMarker) {
-							for (BlockIndex b : path) {
-								BuildCraftBuilders.pathMarkerBlock.dropBlockAsItem(
-										worldObj, b.x, b.y, b.z,
-										0, 0);
-
-								worldObj.setBlockToAir(b.x, b.y, b.z);
-							}
-						}
+						((IPathProvider) tile).removeFromWorld();
 
 						break;
 					}

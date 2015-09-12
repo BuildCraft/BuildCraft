@@ -21,9 +21,6 @@ import buildcraft.builders.gui.GuiArchitect;
 import buildcraft.builders.gui.GuiBlueprintLibrary;
 import buildcraft.builders.gui.GuiBuilder;
 import buildcraft.builders.gui.GuiFiller;
-import buildcraft.builders.urbanism.ContainerUrbanist;
-import buildcraft.builders.urbanism.GuiUrbanist;
-import buildcraft.builders.urbanism.TileUrbanist;
 import buildcraft.core.GuiIds;
 
 public class BuildersGuiHandler implements IGuiHandler {
@@ -61,12 +58,6 @@ public class BuildersGuiHandler implements IGuiHandler {
 				return null;
 			}
 			return new GuiFiller(player.inventory, (TileFiller) tile);
-
-		case GuiIds.URBANIST:
-			if (!(tile instanceof TileUrbanist)) {
-				return null;
-			}
-			return new GuiUrbanist(player.inventory, (TileUrbanist) tile);
 
 		default:
 			return null;
@@ -108,13 +99,6 @@ public class BuildersGuiHandler implements IGuiHandler {
 				return null;
 			}
 			return new ContainerFiller(player.inventory, (TileFiller) tile);
-
-		case GuiIds.URBANIST:
-			if (!(tile instanceof TileUrbanist)) {
-				return null;
-			} else {
-				return new ContainerUrbanist(player.inventory, (TileUrbanist) tile);
-			}
 
 		default:
 			return null;

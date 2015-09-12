@@ -39,20 +39,13 @@ public abstract class Schematic {
 	 */
 	public enum BuildingStage {
 		/**
-		 * Standalone blocks can be placed in the air, and they don't change
-		 * once placed.
+		 * Standalone blocks do not change once placed.
 		 */
 		STANDALONE,
 
 		/**
-		 * Supported blocks may require to be placed on a standalone block,
-		 * e.g. a torch.
-		 */
-		SUPPORTED,
-
-		/**
 		 * Expanding blocks will grow and may disturb other block locations,
-		 * like e.g. water
+		 * like liquids.
 		 */
 		EXPANDING
 	}
@@ -249,7 +242,7 @@ public abstract class Schematic {
 	 * Return the maximium building permission for blueprint containing this
 	 * schematic.
 	 */
-	public BuildingPermission getBuildingPermission () {
+	public BuildingPermission getBuildingPermission() {
 		return BuildingPermission.ALL;
 	}
 

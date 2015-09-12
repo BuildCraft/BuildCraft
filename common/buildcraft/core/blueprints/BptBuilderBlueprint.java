@@ -38,6 +38,7 @@ import buildcraft.api.blueprints.Schematic;
 import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.api.blueprints.SchematicEntity;
 import buildcraft.api.core.BCLog;
+import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.BuildCraftAPI;
 import buildcraft.api.core.IInvSlot;
 import buildcraft.api.core.StackKey;
@@ -55,7 +56,6 @@ import buildcraft.core.lib.inventory.StackHelper;
 import buildcraft.core.lib.utils.BlockUtils;
 
 public class BptBuilderBlueprint extends BptBuilderBase {
-
 	public ArrayList<RequirementItemStack> neededItems = new ArrayList<RequirementItemStack>();
 
 	protected HashSet<Integer> builtEntities = new HashSet<Integer>();
@@ -65,23 +65,26 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	private LinkedList<BuildingSlotEntity> entityList = new LinkedList<BuildingSlotEntity>();
 	private LinkedList<BuildingSlot> postProcessing = new LinkedList<BuildingSlot>();
 	private BuildingSlotMapIterator iterator;
+	private IndexRequirementMap requirementMap = new IndexRequirementMap();
 
 	public BptBuilderBlueprint(Blueprint bluePrint, World world, int x, int y, int z) {
 		super(bluePrint, world, x, y, z);
 	}
 
 	@Override
-	protected void internalInit () {
+	protected void internalInit() {
 		for (int j = blueprint.sizeY - 1; j >= 0; --j) {
-			for (int i = 0; i < blueprint.sizeX; ++i) {
-				for (int k = 0; k < blueprint.sizeZ; ++k) {
-					int xCoord = i + x - blueprint.anchorX;
-					int yCoord = j + y - blueprint.anchorY;
-					int zCoord = k + z - blueprint.anchorZ;
+			int yCoord = j + y - blueprint.anchorY;
 
-					if (yCoord < 0 || yCoord >= context.world.getHeight()) {
-						continue;
-					}
+			if (yCoord < 0 || yCoord >= context.world.getHeight()) {
+				continue;
+			}
+
+			for (int i = 0; i < blueprint.sizeX; ++i) {
+				int xCoord = i + x - blueprint.anchorX;
+
+				for (int k = 0; k < blueprint.sizeZ; ++k) {
+					int zCoord = k + z - blueprint.anchorZ;
 
 					if (!isLocationUsed(xCoord, yCoord, zCoord)) {
 						SchematicBlock slot = (SchematicBlock) blueprint.get(i, j, k);
@@ -115,19 +118,24 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		LinkedList<BuildingSlotBlock> tmpStandalone = new LinkedList<BuildingSlotBlock>();
-		LinkedList<BuildingSlotBlock> tmpSupported = new LinkedList<BuildingSlotBlock>();
 		LinkedList<BuildingSlotBlock> tmpExpanding = new LinkedList<BuildingSlotBlock>();
 
 		for (int j = 0; j < blueprint.sizeY; ++j) {
+			int yCoord = j + y - blueprint.anchorY;
+
+			if (yCoord < 0 || yCoord >= context.world.getHeight()) {
+				continue;
+			}
+
 			for (int i = 0; i < blueprint.sizeX; ++i) {
+				int xCoord = i + x - blueprint.anchorX;
+
 				for (int k = 0; k < blueprint.sizeZ; ++k) {
-					int xCoord = i + x - blueprint.anchorX;
-					int yCoord = j + y - blueprint.anchorY;
 					int zCoord = k + z - blueprint.anchorZ;
 
 					SchematicBlock slot = (SchematicBlock) blueprint.get(i, j, k);
 
-					if (slot == null || yCoord < 0 || yCoord >= context.world.getHeight()) {
+					if (slot == null) {
 						continue;
 					}
 
@@ -148,15 +156,10 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 							tmpStandalone.add(b);
 							b.buildStage = 1;
 							break;
-						case SUPPORTED:
-							tmpSupported.add(b);
-							b.buildStage = 2;
-							break;
 						case EXPANDING:
 							tmpExpanding.add(b);
-							b.buildStage = 3;
+							b.buildStage = 2;
 							break;
-
 						}
 					} else {
 						postProcessing.add(b);
@@ -166,9 +169,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		}
 
 		for (BuildingSlotBlock b : tmpStandalone) {
-			addToBuildList(b);
-		}
-		for (BuildingSlotBlock b : tmpSupported) {
 			addToBuildList(b);
 		}
 		for (BuildingSlotBlock b : tmpExpanding) {
@@ -296,14 +296,20 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				buildList.put(imp, new ArrayList<BuildingSlotBlock>());
 			}
 			buildList.get(imp).add(b);
+
 			if (buildStageOccurences == null) {
-				buildStageOccurences = new int[Math.max(4, b.buildStage + 1)];
+				buildStageOccurences = new int[Math.max(3, b.buildStage + 1)];
 			} else if (buildStageOccurences.length <= b.buildStage) {
 				int[] newBSO = new int[b.buildStage + 1];
 				System.arraycopy(buildStageOccurences, 0, newBSO, 0, buildStageOccurences.length);
 				buildStageOccurences = newBSO;
 			}
 			buildStageOccurences[b.buildStage]++;
+
+			if (b.mode == Mode.Build) {
+				requirementMap.add(b, context);
+				b.internalRequirementRemovalListener = requirementMap;
+			}
 		}
 	}
 
@@ -371,6 +377,8 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 			try {
 				if (slot.isAlreadyBuilt(context)) {
+					requirementMap.remove(slot);
+
 					if (slot.mode == Mode.Build) {
 						// Even slots that considered already built may need
 						// post processing calls. For example, flowing water
@@ -380,7 +388,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					}
 
 					iterator.remove();
-
 					continue;
 				}
 
@@ -388,6 +395,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					// if the block can't be broken, just forget this iterator
 					iterator.remove();
 					markLocationUsed(slot.x, slot.y, slot.z);
+					requirementMap.remove(slot);
 				} else {
 					if (slot.mode == Mode.ClearIfInvalid) {
 						if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y,
@@ -395,6 +403,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						|| isBlockBreakCanceled(world, slot.x, slot.y, slot.z)) {
 							iterator.remove();
 							markLocationUsed(slot.x, slot.y, slot.z);
+							requirementMap.remove(slot);
 						} else {
 							if (builder == null) {
 								createDestroyItems(slot);
@@ -405,6 +414,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 								iterator.remove();
 								markLocationUsed(slot.x, slot.y, slot.z);
+								requirementMap.remove(slot);
 								return slot;
 							}
 						}
@@ -413,12 +423,13 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 							return slot;
 						} else if (checkRequirements(builder, slot.schematic)) {
 							if (!BuildCraftAPI.isSoftBlock(world, slot.x, slot.y,
-									slot.z)) {
+									slot.z) || requirementMap.contains(new BlockIndex(slot.x, slot.y, slot.z))) {
 								continue; // Can't build yet, wait (#2751)
 							} else if (isBlockPlaceCanceled(world, slot.x, slot.y, slot.z, slot.schematic)) {
 								// Forge does not allow us to place a block in
 								// this position.
 								iterator.remove();
+								requirementMap.remove(slot);
 								markLocationUsed(slot.x, slot.y, slot.z);
 								continue;
 							}
@@ -440,6 +451,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 						// Even slots that don't need to be build may need
 						// post processing, see above for the argument.
 						postProcessing.add(slot);
+						requirementMap.remove(slot);
 						iterator.remove();
 					}
 				}
@@ -448,6 +460,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				t.printStackTrace();
 				BCLog.logger.throwing(t);
 				iterator.remove();
+				requirementMap.remove(slot);
 			}
 		}
 

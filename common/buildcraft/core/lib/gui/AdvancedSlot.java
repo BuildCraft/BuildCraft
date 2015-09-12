@@ -114,4 +114,8 @@ public abstract class AdvancedSlot {
 	public void selected () {
 
 	}
+
+	public boolean shouldDrawHighlight() {
+		return true;
+	}
 }

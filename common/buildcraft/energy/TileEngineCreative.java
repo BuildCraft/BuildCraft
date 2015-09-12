@@ -13,7 +13,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -47,13 +47,11 @@ public class TileEngineCreative extends TileEngineBase {
 
 				if (!(player instanceof FakePlayer)) {
 					if (BuildCraftCore.hidePowerNumbers) {
-						player.addChatMessage(new ChatComponentText(String.format(
-								StringUtils.localize("chat.pipe.power.iron.mode.numberless"),
-								StringUtils.localize("chat.pipe.power.iron.level." + powerMode.maxPower))));
+						player.addChatMessage(new ChatComponentTranslation("chat.pipe.power.iron.mode.numberless",
+								StringUtils.localize("chat.pipe.power.iron.level." + powerMode.maxPower)));
 					} else {
-						player.addChatMessage(new ChatComponentText(String.format(
-								StringUtils.localize("chat.pipe.power.iron.mode"),
-								powerMode.maxPower)));
+						player.addChatMessage(new ChatComponentTranslation("chat.pipe.power.iron.mode",
+								powerMode.maxPower));
 					}
 				}
 

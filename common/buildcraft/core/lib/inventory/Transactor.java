@@ -25,7 +25,6 @@ public abstract class Transactor implements ITransactor {
 	public abstract int inject(ItemStack stack, ForgeDirection orientation, boolean doAdd);
 
 	public static ITransactor getTransactorFor(Object object) {
-
 		if (object instanceof ISidedInventory) {
 			return new TransactorSimple((ISidedInventory) object);
 		} else if (object instanceof IInventory) {

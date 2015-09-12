@@ -154,7 +154,7 @@ public class GuiProgrammingTable extends GuiAdvancedInterface {
 
 		drawTexturedModalRect(guiLeft + 164, guiTop + 36 + 70 - h, 176, 18, 4, h);
 
-		drawBackgroundSlots();
+		drawBackgroundSlots(x, y);
 	}
 
 	@Override

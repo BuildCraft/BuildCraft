@@ -59,7 +59,6 @@ public abstract class TabletBase implements ITablet {
 			return true;
 		} else {
 			if (compound.hasKey("programToLaunch")) {
-				System.out.println("received");
 				launchProgramInternal(compound.getString("programToLaunch"));
 				return true;
 			}

@@ -28,7 +28,7 @@ import buildcraft.transport.pipes.PipeItemsEmerald.FilterMode;
 public class GuiEmeraldPipe extends GuiBuildCraft implements IButtonClickEventListener {
 
 	private static final ResourceLocation TEXTURE = new ResourceLocation("buildcrafttransport:textures/gui/pipe_emerald.png");
-
+	private static final ResourceLocation TEXTURE_BUTTON = new ResourceLocation("buildcrafttransport:textures/gui/pipe_emerald_button.png");
 	private static final int WHITE_LIST_BUTTON_ID = 1;
 	private static final int BLACK_LIST_BUTTON_ID = 2;
 	private static final int ROUND_ROBIN_BUTTON_ID = 3;
@@ -54,17 +54,17 @@ public class GuiEmeraldPipe extends GuiBuildCraft implements IButtonClickEventLi
 
 		this.buttonList.clear();
 
-		this.whiteListButton = new GuiImageButton(WHITE_LIST_BUTTON_ID, this.guiLeft + 7, this.guiTop + 41, GuiImageButton.ButtonImage.WHITE_LIST);
+		this.whiteListButton = new GuiImageButton(WHITE_LIST_BUTTON_ID, this.guiLeft + 7, this.guiTop + 41, 18, TEXTURE_BUTTON, 19, 19);
 		this.whiteListButton.registerListener(this);
 		this.whiteListButton.setToolTip(new ToolTip(500, new ToolTipLine(StatCollector.translateToLocal("tip.PipeItemsEmerald.whitelist"))));
 		this.buttonList.add(this.whiteListButton);
 
-		this.blackListButton = new GuiImageButton(BLACK_LIST_BUTTON_ID, this.guiLeft + 7 + 18, this.guiTop + 41, GuiImageButton.ButtonImage.BLACK_LIST);
+		this.blackListButton = new GuiImageButton(BLACK_LIST_BUTTON_ID, this.guiLeft + 7 + 18, this.guiTop + 41, 18, TEXTURE_BUTTON, 37, 19);
 		this.blackListButton.registerListener(this);
 		this.blackListButton.setToolTip(new ToolTip(500, new ToolTipLine(StatCollector.translateToLocal("tip.PipeItemsEmerald.blacklist"))));
 		this.buttonList.add(this.blackListButton);
 
-		this.roundRobinButton = new GuiImageButton(ROUND_ROBIN_BUTTON_ID, this.guiLeft + 7 + 36, this.guiTop + 41, GuiImageButton.ButtonImage.ROUND_ROBIN);
+		this.roundRobinButton = new GuiImageButton(ROUND_ROBIN_BUTTON_ID, this.guiLeft + 7 + 36, this.guiTop + 41, 18, TEXTURE_BUTTON, 55, 19);
 		this.roundRobinButton.registerListener(this);
 		this.roundRobinButton.setToolTip(new ToolTip(500, new ToolTipLine(StatCollector.translateToLocal("tip.PipeItemsEmerald.roundrobin"))));
 		this.buttonList.add(this.roundRobinButton);

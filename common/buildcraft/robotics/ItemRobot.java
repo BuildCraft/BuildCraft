@@ -20,16 +20,16 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+import net.minecraftforge.common.MinecraftForge;
 import cofh.api.energy.IEnergyContainerItem;
 import buildcraft.BuildCraftRobotics;
 import buildcraft.api.boards.RedstoneBoardNBT;
 import buildcraft.api.boards.RedstoneBoardRegistry;
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
-import buildcraft.api.events.RobotPlacementEvent;
+import buildcraft.api.events.RobotEvent;
 import buildcraft.api.robots.DockingStation;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.core.BCCreativeTab;
@@ -204,13 +204,15 @@ public class ItemRobot extends ItemBuildCraft implements IEnergyContainerItem {
 					if (robotNBT == RedstoneBoardRegistry.instance.getEmptyRobotBoard()) {
 						return true;
 					}
-					RobotPlacementEvent robotEvent = new RobotPlacementEvent(player, robotNBT.getID());
-					FMLCommonHandler.instance().bus().post(robotEvent);
+
+					EntityRobot robot = ((ItemRobot) currentItem.getItem())
+							.createRobot(currentItem, world);
+
+					RobotEvent.Place robotEvent = new RobotEvent.Place(robot, player);
+					MinecraftForge.EVENT_BUS.post(robotEvent);
 					if (robotEvent.isCanceled()) {
 						return true;
 					}
-					EntityRobot robot = ((ItemRobot) currentItem.getItem())
-							.createRobot(currentItem, world);
 
 					if (robot != null && robot.getRegistry() != null) {
 						robot.setUniqueRobotId(robot.getRegistry().getNextRobotId());

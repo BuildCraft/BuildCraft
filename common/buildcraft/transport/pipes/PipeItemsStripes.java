@@ -33,6 +33,7 @@ import buildcraft.api.transport.IStripesHandler;
 import buildcraft.api.transport.IStripesHandler.StripesHandlerType;
 import buildcraft.api.transport.IStripesPipe;
 import buildcraft.api.transport.PipeManager;
+import buildcraft.core.lib.RFBattery;
 import buildcraft.core.lib.inventory.InvUtils;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.proxy.CoreProxy;
@@ -45,6 +46,7 @@ import buildcraft.transport.statements.ActionPipeDirection;
 import buildcraft.transport.utils.TransportUtils;
 
 public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnergyHandler, IStripesPipe {
+	private RFBattery battery = new RFBattery(320 * 50, 640, 0);
 	private ForgeDirection actionDir = ForgeDirection.UNKNOWN;
 
 	public PipeItemsStripes(Item item) {
@@ -56,6 +58,59 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 		super.updateEntity();
 
 		if (container.getWorldObj().isRemote) {
+			return;
+		}
+
+		if (battery.getEnergyStored() >= 10) {
+			ForgeDirection o = actionDir;
+			if (o == ForgeDirection.UNKNOWN) {
+				o = getOpenOrientation();
+			}
+
+			if (o != ForgeDirection.UNKNOWN) {
+				Position p = new Position(container.xCoord, container.yCoord,
+						container.zCoord, o);
+				p.moveForwards(1.0);
+
+				if (!BlockUtils.isUnbreakableBlock(getWorld(), (int) p.x, (int) p.y, (int) p.z)) {
+					Block block = getWorld().getBlock((int) p.x, (int) p.y, (int) p.z);
+					int metadata = getWorld().getBlockMetadata((int) p.x, (int) p.y, (int) p.z);
+
+					if (block instanceof BlockLiquid || block instanceof IFluidBlock) {
+						return;
+					}
+
+					ItemStack stack = new ItemStack(block, 1, metadata);
+					EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld(),
+							(int) p.x, (int) p.y, (int) p.z).get();
+
+					for (IStripesHandler handler : PipeManager.stripesHandlers) {
+						if (handler.getType() == StripesHandlerType.BLOCK_BREAK
+								&& handler.shouldHandle(stack)) {
+							if (handler.handle(getWorld(), (int) p.x, (int) p.y, (int) p.z,
+									o, stack, player, this)) {
+								return;
+							}
+						}
+					}
+
+					ArrayList<ItemStack> stacks = block.getDrops(
+							getWorld(), (int) p.x, (int) p.y, (int) p.z,
+							metadata, 0
+					);
+
+					if (stacks != null) {
+						for (ItemStack s : stacks) {
+							if (s != null) {
+								sendItem(s, o.getOpposite());
+							}
+						}
+					}
+
+					getWorld().setBlockToAir((int) p.x, (int) p.y, (int) p.z);
+				}
+			}
+
 			return;
 		}
 	}
@@ -199,62 +254,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive,
 			boolean simulate) {
-		if (maxReceive == 0) {
-			return 0;
-		} else if (simulate) {
-			return maxReceive;
-		}
-
-		ForgeDirection o = actionDir;
-		if (o == ForgeDirection.UNKNOWN) {
-			o = getOpenOrientation();
-		}
-
-		if (o != ForgeDirection.UNKNOWN) {
-			Position p = new Position(container.xCoord, container.yCoord,
-					container.zCoord, o);
-			p.moveForwards(1.0);
-
-			if (!BlockUtils.isUnbreakableBlock(getWorld(), (int) p.x, (int) p.y, (int) p.z)) {
-				Block block = getWorld().getBlock((int) p.x, (int) p.y, (int) p.z);
-				int metadata = getWorld().getBlockMetadata((int) p.x, (int) p.y, (int) p.z);
-
-				if (block instanceof BlockLiquid || block instanceof IFluidBlock) {
-					return maxReceive;
-				}
-
-				ItemStack stack = new ItemStack(block, 1, metadata);
-				EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld(),
-						(int) p.x, (int) p.y, (int) p.z).get();
-				
-				for (IStripesHandler handler : PipeManager.stripesHandlers) {
-					if (handler.getType() == StripesHandlerType.BLOCK_BREAK
-							&& handler.shouldHandle(stack)) {
-						if (handler.handle(getWorld(), (int) p.x, (int) p.y, (int) p.z,
-								o, stack, player, this)) {
-							return maxReceive;
-						}
-					}
-				}
-				
-				ArrayList<ItemStack> stacks = block.getDrops(
-						getWorld(), (int) p.x, (int) p.y, (int) p.z,
-						metadata, 0
-				);
-
-				if (stacks != null) {
-					for (ItemStack s : stacks) {
-						if (s != null) {
-							sendItem(s, o.getOpposite());
-						}
-					}
-				}
-
-				getWorld().setBlockToAir((int) p.x, (int) p.y, (int) p.z);
-			}
-		}
-
-		return maxReceive;
+		return battery.receiveEnergy(maxReceive, simulate);
 	}
 
 	@Override

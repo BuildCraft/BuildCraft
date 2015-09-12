@@ -38,17 +38,18 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.BlockSnapshot;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.world.BlockEvent;
 
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.blocks.IColorRemovable;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
-import buildcraft.api.events.PipePlacedEvent;
 import buildcraft.api.items.IMapLocation;
 import buildcraft.api.tools.IToolWrench;
 import buildcraft.api.transport.IPipe;
@@ -58,7 +59,6 @@ import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.CoreConstants;
-import buildcraft.core.lib.TileBuffer;
 import buildcraft.core.lib.block.BlockBuildCraft;
 import buildcraft.core.lib.utils.MatrixTranformations;
 import buildcraft.core.lib.utils.Utils;
@@ -68,7 +68,7 @@ import buildcraft.transport.render.PipeRendererWorld;
 
 public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable {
 
-	public static Map<Item, Class<? extends Pipe>> pipes = new HashMap<Item, Class<? extends Pipe>>();
+	public static Map<Item, Class<? extends Pipe<?>>> pipes = new HashMap<Item, Class<? extends Pipe<?>>>();
 	public static Map<BlockIndex, Pipe<?>> pipeRemoved = new HashMap<BlockIndex, Pipe<?>>();
 
 	private static long lastRemovedDate = -1;
@@ -417,7 +417,13 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		}
 
 		pipeRemoved.put(new BlockIndex(x, y, z), pipe);
-		updateNeighbourSignalState(pipe);
+		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
+			TileEntity tile = world.getTileEntity(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ);
+			if (tile instanceof IPipeTile) {
+				Pipe<?> tpipe = (Pipe<?>) ((IPipeTile) tile).getPipe();
+				tpipe.scheduleWireUpdate();
+			}
+		}
 		world.removeTileEntity(x, y, z);
 	}
 
@@ -626,7 +632,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 			} else if (currentItem.getItem() instanceof IToolWrench) {
 				// Only check the instance at this point. Call the IToolWrench
 				// interface callbacks for the individual pipe/logic calls
-				if (pipe.blockActivated(player)) {
+				if (pipe.blockActivated(player, ForgeDirection.getOrientation(side))) {
 					return true;
 				}
 
@@ -680,7 +686,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 				clickedGate.openGui(player);
 				return true;
 			} else {
-				if (pipe.blockActivated(player)) {
+				if (pipe.blockActivated(player, ForgeDirection.getOrientation(side))) {
 					return true;
 				}
 
@@ -742,9 +748,10 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 	private boolean addWire(Pipe<?> pipe, PipeWire color) {
 		if (!pipe.wireSet[color.ordinal()]) {
 			pipe.wireSet[color.ordinal()] = true;
-			pipe.signalStrength[color.ordinal()] = 0;
+			pipe.wireSignalStrength[color.ordinal()] = 0;
 
 			pipe.updateSignalState();
+
 			pipe.container.scheduleRenderUpdate();
 			return true;
 		}
@@ -757,12 +764,10 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 				dropWire(color, pipe, player);
 			}
 
-			pipe.signalStrength[color.ordinal()] = 0;
+			pipe.wireSignalStrength[color.ordinal()] = 0;
 			pipe.wireSet[color.ordinal()] = false;
 
-			pipe.updateSignalState();
-
-			updateNeighbourSignalState(pipe);
+			pipe.propagateSignalState(color, 0);
 
 			if (isFullyDefined(pipe)) {
 				pipe.resolveActions();
@@ -871,7 +876,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 	}
 
 	/* Registration ******************************************************** */
-	public static ItemPipe registerPipe(Class<? extends Pipe> clas, BCCreativeTab creativeTab) {
+	public static ItemPipe registerPipe(Class<? extends Pipe<?>> clas, BCCreativeTab creativeTab) {
 		ItemPipe item = new ItemPipe(creativeTab);
 		item.setUnlocalizedName("buildcraftPipe." + clas.getSimpleName().toLowerCase(Locale.ENGLISH));
 		GameRegistry.registerItem(item, item.getUnlocalizedName());
@@ -905,9 +910,18 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		return null;
 	}
 
-	public static boolean placePipe(Pipe<?> pipe, World world, int i, int j, int k, Block block, int meta, EntityPlayer player) {
+	public static boolean placePipe(Pipe<?> pipe, World world, int i, int j, int k, Block block, int meta, EntityPlayer player, ForgeDirection side) {
 		if (world.isRemote) {
 			return true;
+		}
+
+		Block placedAgainst = world.getBlock(i + side.getOpposite().offsetX, j + side.getOpposite().offsetY, k + side.getOpposite().offsetZ);
+		BlockEvent.PlaceEvent placeEvent = new BlockEvent.PlaceEvent(
+				new BlockSnapshot(world, i, j, k, block, meta), placedAgainst, player
+		);
+		MinecraftForge.EVENT_BUS.post(placeEvent);
+		if (placeEvent.isCanceled()) {
+			return false;
 		}
 
 		boolean placed = world.setBlock(i, j, k, block, meta, 3);
@@ -918,7 +932,6 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 				TileGenericPipe tilePipe = (TileGenericPipe) tile;
 				tilePipe.initialize(pipe);
 				tilePipe.sendUpdateToClient();
-				FMLCommonHandler.instance().bus().post(new PipePlacedEvent(player, pipe.item.getUnlocalizedName(), i, j, k));
 			}
 		}
 
@@ -1075,27 +1088,11 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		return false;
 	}
 
-	public static void updateNeighbourSignalState(Pipe<?> pipe) {
-		if (pipe != null && pipe.container != null) {
-			TileBuffer[] neighbours = pipe.container.getTileCache();
-
-			if (neighbours != null) {
-				for (int i = 0; i < 6; i++) {
-					if (neighbours[i] != null && neighbours[i].getTile() instanceof IPipeTile &&
-							!neighbours[i].getTile().isInvalid() &&
-							((IPipeTile) neighbours[i].getTile()).getPipe() instanceof Pipe<?>) {
-						((Pipe<?>) ((IPipeTile) neighbours[i].getTile()).getPipe()).updateSignalState();
-					}
-				}
-			}
-		}
-	}
-
 	@Override
 	public IIcon getIcon(IBlockAccess world, int i, int j, int k, int side) {
 		TileEntity tile = world.getTileEntity(i, j, k);
 		if (tile instanceof TileGenericPipe) {
-			Pipe pipe = (Pipe) ((TileGenericPipe) tile).getPipe();
+			Pipe<?> pipe = (Pipe<?>) ((TileGenericPipe) tile).getPipe();
 			return pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
 		}
 

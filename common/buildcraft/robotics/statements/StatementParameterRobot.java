@@ -3,6 +3,7 @@ package buildcraft.robotics.statements;
 import net.minecraft.item.ItemStack;
 
 import buildcraft.api.boards.RedstoneBoardRobotNBT;
+import buildcraft.api.items.IList;
 import buildcraft.api.robots.EntityRobotBase;
 import buildcraft.api.statements.IStatement;
 import buildcraft.api.statements.IStatementContainer;
@@ -39,7 +40,17 @@ public class StatementParameterRobot extends StatementParameterItemStack {
 	public static boolean matches(IStatementParameter param, EntityRobotBase robot) {
 		ItemStack stack = param.getItemStack();
 		if (stack != null) {
-			if (stack.getItem() instanceof ItemRobot) {
+			if (stack.getItem() instanceof IList) {
+				IList list = (IList) stack.getItem();
+				if (list.matches(stack, ItemRobot.createRobotStack(robot.getBoard().getNBTHandler(), robot.getEnergy()))) {
+					return true;
+				}
+				for (ItemStack target : ((EntityRobot) robot).getWearables()) {
+					if (target != null && list.matches(stack, target)) {
+						return true;
+					}
+				}
+			} else if (stack.getItem() instanceof ItemRobot) {
 				if (ItemRobot.getRobotNBT(stack) == robot.getBoard().getNBTHandler()) {
 					return true;
 				}

@@ -26,6 +26,7 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.IIcon;
@@ -60,6 +61,7 @@ import buildcraft.api.core.IWorldProperty;
 import buildcraft.api.crops.CropManager;
 import buildcraft.api.filler.FillerManager;
 import buildcraft.api.filler.IFillerPattern;
+import buildcraft.api.lists.ListRegistry;
 import buildcraft.api.recipes.BuildcraftRecipeRegistry;
 import buildcraft.api.statements.IActionExternal;
 import buildcraft.api.statements.IActionInternal;
@@ -74,6 +76,8 @@ import buildcraft.core.AchievementManager;
 import buildcraft.core.BCCreativeTab;
 import buildcraft.core.BlockBuildTool;
 import buildcraft.core.BlockEngine;
+import buildcraft.core.BlockMarker;
+import buildcraft.core.BlockPathMarker;
 import buildcraft.core.BlockSpring;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.CoreGuiHandler;
@@ -92,6 +96,7 @@ import buildcraft.core.SchematicEngine;
 import buildcraft.core.SpringPopulate;
 import buildcraft.core.TickHandlerCore;
 import buildcraft.core.TileEngineWood;
+import buildcraft.core.TilePathMarker;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.builders.patterns.FillerPattern;
@@ -109,6 +114,7 @@ import buildcraft.core.builders.patterns.PatternParameterXZDir;
 import buildcraft.core.builders.patterns.PatternParameterYDir;
 import buildcraft.core.builders.patterns.PatternPyramid;
 import buildcraft.core.builders.patterns.PatternStairs;
+import buildcraft.core.builders.schematics.SchematicIgnore;
 import buildcraft.core.command.SubCommandChangelog;
 import buildcraft.core.command.SubCommandVersion;
 import buildcraft.core.config.BuildCraftConfiguration;
@@ -124,6 +130,13 @@ import buildcraft.core.lib.utils.ColorUtils;
 import buildcraft.core.lib.utils.NBTUtils;
 import buildcraft.core.lib.utils.Utils;
 import buildcraft.core.lib.utils.XorShift128Random;
+import buildcraft.core.list.ListMatchHandlerArmor;
+import buildcraft.core.list.ListMatchHandlerClass;
+import buildcraft.core.list.ListMatchHandlerFluid;
+import buildcraft.core.list.ListMatchHandlerOreDictionary;
+import buildcraft.core.list.ListMatchHandlerTools;
+import buildcraft.core.list.ListOreDictionaryCache;
+import buildcraft.core.list.ListTooltipHandler;
 import buildcraft.core.network.PacketHandlerCore;
 import buildcraft.core.properties.WorldPropertyIsDirt;
 import buildcraft.core.properties.WorldPropertyIsFarmland;
@@ -191,6 +204,8 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static ConfigManager mainConfigManager;
 
 	public static BlockEngine engineBlock;
+	public static BlockMarker markerBlock;
+	public static BlockPathMarker pathMarkerBlock;
 	public static Block springBlock;
 	public static BlockBuildTool buildToolBlock;
 	public static Item woodenGearItem;
@@ -267,7 +282,9 @@ public class BuildCraftCore extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void loadConfiguration(FMLPreInitializationEvent evt) {
-		BCLog.initLog();
+		BCLog.logger.info("Starting BuildCraft " + Version.getVersion());
+		BCLog.logger.info("Copyright (c) the BuildCraft team, 2011-2015");
+		BCLog.logger.info("http://www.mod-buildcraft.com");
 
 		new BCCreativeTab("main");
 
@@ -281,7 +298,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildcraftRecipeRegistry.programmingTable = ProgrammingRecipeManager.INSTANCE;
 
 		BuilderAPI.schematicRegistry = SchematicRegistry.INSTANCE;
-		
+
 		mainConfiguration = new BuildCraftConfiguration(new File(evt.getModConfigurationDirectory(), "buildcraft/main.cfg"));
 		mainConfigManager = new ConfigManager(mainConfiguration);
 		mainConfiguration.load();
@@ -363,9 +380,16 @@ public class BuildCraftCore extends BuildCraftMod {
 		engineBlock.registerTile((Class<? extends TileEngineBase>) CompatHooks.INSTANCE.getTile(TileEngineWood.class), "tile.engineWood");
 		CoreProxy.proxy.registerTileEntity(TileEngineWood.class, "net.minecraft.src.buildcraft.energy.TileEngineWood");
 
+		markerBlock = (BlockMarker) CompatHooks.INSTANCE.getBlock(BlockMarker.class);
+		CoreProxy.proxy.registerBlock(markerBlock.setBlockName("markerBlock"));
+
+		pathMarkerBlock = (BlockPathMarker) CompatHooks.INSTANCE.getBlock(BlockPathMarker.class);
+		CoreProxy.proxy.registerBlock(pathMarkerBlock.setBlockName("pathMarkerBlock"));
+
 		FMLCommonHandler.instance().bus().register(this);
 		MinecraftForge.EVENT_BUS.register(this);
 		MinecraftForge.EVENT_BUS.register(new BlockHighlightHandler());
+		MinecraftForge.EVENT_BUS.register(new ListTooltipHandler());
 
 		OreDictionary.registerOre("chestWood", Blocks.chest);
 		OreDictionary.registerOre("craftingTableWood", Blocks.crafting_table);
@@ -395,7 +419,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		// BuildCraft 6.1.4 and below - migration only
 		StatementManager.registerParameterClass("buildcraft:stackTrigger", StatementParameterItemStack.class);
 		StatementManager.registerParameterClass("buildcraft:stackAction", StatementParameterItemStack.class);
-				
+
 		StatementManager.registerParameterClass(StatementParameterItemStack.class);
 		StatementManager.registerParameterClass(StatementParameterItemStackExact.class);
 		StatementManager.registerParameterClass(StatementParameterDirection.class);
@@ -449,7 +473,7 @@ public class BuildCraftCore extends BuildCraftMod {
 			FillerManager.registry.addPattern(new PatternCylinder());
 			FillerManager.registry.addPattern(new PatternFrame());
 		} catch (Error error) {
-			BCLog.logErrorAPI("Buildcraft", error, IFillerPattern.class);
+			BCLog.logErrorAPI(error, IFillerPattern.class);
 			throw error;
 		}
 
@@ -457,6 +481,12 @@ public class BuildCraftCore extends BuildCraftMod {
 		StatementManager.registerParameterClass(PatternParameterXZDir.class);
 		StatementManager.registerParameterClass(PatternParameterCenter.class);
 		StatementManager.registerParameterClass(PatternParameterHollow.class);
+
+		ListRegistry.registerHandler(new ListMatchHandlerClass());
+		ListRegistry.registerHandler(new ListMatchHandlerFluid());
+		ListRegistry.registerHandler(new ListMatchHandlerTools());
+		ListRegistry.registerHandler(new ListMatchHandlerArmor());
+		ListRegistry.itemClassAsType.add(ItemFood.class);
 	}
 
 	@Mod.EventHandler
@@ -492,7 +522,11 @@ public class BuildCraftCore extends BuildCraftMod {
 		BuildCraftAPI.registerWorldProperty("shoveled", new WorldPropertyIsShoveled());
 		BuildCraftAPI.registerWorldProperty("dirt", new WorldPropertyIsDirt());
 		BuildCraftAPI.registerWorldProperty("fluidSource", new WorldPropertyIsFluidSource());
-		
+
+		// Landmarks are often caught incorrectly, making building them counter-productive.
+		SchematicRegistry.INSTANCE.registerSchematicBlock(markerBlock, SchematicIgnore.class);
+		SchematicRegistry.INSTANCE.registerSchematicBlock(pathMarkerBlock, SchematicIgnore.class);
+
 		ColorUtils.initialize();
 		
 		actionControl = new IActionExternal[IControllable.Mode.values().length];
@@ -501,6 +535,13 @@ public class BuildCraftCore extends BuildCraftMod {
 				actionControl[mode.ordinal()] = new ActionMachineControl(mode);
 			}
 		}
+
+		MinecraftForge.EVENT_BUS.register(ListOreDictionaryCache.INSTANCE);
+		for (String s : OreDictionary.getOreNames()) {
+			ListOreDictionaryCache.INSTANCE.registerName(s);
+		}
+
+		ListRegistry.registerHandler(new ListMatchHandlerOreDictionary());
 	}
 
 	@Mod.EventHandler
@@ -622,6 +663,12 @@ public class BuildCraftCore extends BuildCraftMod {
 				"www", " g ", "GpG", 'w', "plankWood", 'g', "blockGlass", 'G',
 				"gearWood", 'p', Blocks.piston);
 
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), "l ", "r ", 'l',
+				new ItemStack(Items.dye, 1, 4), 'r', Blocks.redstone_torch);
+
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pathMarkerBlock, 1), "l ", "r ", 'l',
+				"dyeGreen", 'r', Blocks.redstone_torch);
+
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(paintbrushItem), " iw", " gi", "s  ",
 				's', "stickWood", 'g', "gearWood", 'w', new ItemStack(Blocks.wool, 1, 0), 'i', Items.string);
 
@@ -633,10 +680,13 @@ public class BuildCraftCore extends BuildCraftMod {
 			CoreProxy.proxy.addShapelessRecipe(outputStack, anyPaintbrush, EnumColor.fromId(i).getDye());
 		}
 
+		// Convert old lists to new lists
+		CoreProxy.proxy.addShapelessRecipe(new ItemStack(listItem, 1, 1), new ItemStack(listItem, 1, 0));
+
 		if (Loader.isModLoaded("BuildCraft|Silicon")) {
 			CoreSiliconRecipes.loadSiliconRecipes();
 		} else {
-			CoreProxy.proxy.addCraftingRecipe(new ItemStack(listItem), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y',
+			CoreProxy.proxy.addCraftingRecipe(new ItemStack(listItem, 1, 1), "ppp", "pYp", "ppp", 'p', Items.paper, 'Y',
 					"dyeGreen");
 		}
 	}
@@ -705,9 +755,12 @@ public class BuildCraftCore extends BuildCraftMod {
 	}
 
 	@SubscribeEvent
-	public void cleanRegistries(WorldEvent.Unload unload) {
+	public void cleanRegistries(WorldEvent.Unload event) {
 		for (IWorldProperty property : BuildCraftAPI.worldProperties.values()) {
 			property.clear();
+		}
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+			TilePathMarker.clearAvailableMarkersList(event.world);
 		}
 	}
 }

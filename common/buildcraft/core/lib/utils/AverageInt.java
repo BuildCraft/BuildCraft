@@ -15,6 +15,10 @@ public class AverageInt {
 
 	public AverageInt(int precise) {
 		this.precise = precise;
+		clear();
+	}
+
+	public void clear() {
 		this.data = new int[precise];
 		this.pos = 0;
 	}

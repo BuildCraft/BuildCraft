@@ -107,7 +107,6 @@ public class LibraryDatabase {
 		byte[] data = NBTUtils.save(compound);
 		base.generateUniqueId(data);
 		File blueprintFile = getBlueprintOutputFile(base);
-		System.out.println(blueprintFile.getName() + " - " + data.length);
 
 		if (!blueprintFile.exists()) {
 			try {

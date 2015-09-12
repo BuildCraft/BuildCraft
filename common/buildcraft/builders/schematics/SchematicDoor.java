@@ -16,8 +16,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.core.builders.schematics.SchematicBlockFloored;
 
-public class SchematicDoor extends SchematicBlock {
+public class SchematicDoor extends SchematicBlockFloored {
 
 	final ItemStack stack;
 

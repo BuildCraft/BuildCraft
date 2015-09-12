@@ -29,6 +29,7 @@ import buildcraft.transport.PipeIconProvider;
 import buildcraft.transport.PipeRenderState;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TransportProxy;
+import buildcraft.transport.pipes.PipeStructureCobblestone;
 
 public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 	
@@ -52,6 +53,12 @@ public class PipeRendererWorld implements ISimpleBlockRenderingHandler {
 			
 			if (renderPass == 1) {
 				fakeBlock.setColor(ColorUtils.getRGBColor(glassColor));
+			} else if (glassColor >= 0 && tile.getPipe() instanceof PipeStructureCobblestone) {
+				if (glassColor == 0) {
+					fakeBlock.setColor(0xDFDFDF);
+				} else {
+					fakeBlock.setColor(ColorUtils.getRGBColor(glassColor));
+				}
 			}
 	
 			// render the unconnected pipe faces of the center block (if any)

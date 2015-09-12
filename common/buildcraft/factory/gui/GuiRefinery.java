@@ -58,7 +58,7 @@ public class GuiRefinery extends GuiAdvancedInterface {
 		drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
 		updateSlots();
-		drawBackgroundSlots();
+		drawBackgroundSlots(x, y);
 	}
 
 	@Override

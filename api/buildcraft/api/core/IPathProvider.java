@@ -7,4 +7,9 @@ import java.util.List;
  */
 public interface IPathProvider {
 	List<BlockIndex> getPath();
+
+	/**
+	 * Remove from the world all objects used to define the path.
+	 */
+	void removeFromWorld();
 }

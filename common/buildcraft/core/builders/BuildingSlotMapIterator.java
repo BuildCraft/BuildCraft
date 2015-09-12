@@ -19,7 +19,7 @@ import net.minecraft.world.WorldSettings;
 import buildcraft.core.lib.fluids.Tank;
 
 public class BuildingSlotMapIterator {
-	private static final int MAX_PER_ITEM = 80;
+	private static final int MAX_PER_ITEM = 64;
 	private final Map<BuilderItemMetaPair, List<BuildingSlotBlock>> slots;
 	private final Set<BuilderItemMetaPair> availablePairs = new HashSet<BuilderItemMetaPair>();
 	private final int[] buildStageOccurences;
@@ -67,6 +67,7 @@ public class BuildingSlotMapIterator {
 			pair = impIterator.next();
 			if (isCreative || availablePairs.contains(pair)) {
 				current = slots.get(pair);
+				position = pair.position - 1;
 				return;
 			}
 		}
@@ -83,6 +84,11 @@ public class BuildingSlotMapIterator {
 					return b;
 				}
 				position++;
+			}
+			if (returnsThisCurrent >= MAX_PER_ITEM) {
+				pair.position = position;
+			} else if (position >= current.size()) {
+				pair.position = 0;
 			}
 			findNewCurrent();
 		}

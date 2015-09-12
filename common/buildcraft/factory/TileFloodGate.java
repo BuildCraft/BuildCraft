@@ -256,19 +256,23 @@ public class TileFloodGate extends TileBuildCraft implements IFluidHandler {
 		}
 	}
 
-	// TODO: fit in single byte
 	@Override
 	public void readData(ByteBuf stream) {
+		byte flags = stream.readByte();
 		for (int i = 0; i < 6; i++) {
-			blockedSides[i] = stream.readBoolean();
+			blockedSides[i] = (flags & (1 << i)) != 0;
 		}
 	}
 
 	@Override
 	public void writeData(ByteBuf stream) {
+		byte flags = 0;
 		for (int i = 0; i < 6; i++) {
-			stream.writeBoolean(blockedSides[i]);
+			if (blockedSides[i]) {
+				flags |= 1 << i;
+			}
 		}
+		stream.writeByte(flags);
 	}
 
 	public void switchSide(ForgeDirection side) {

@@ -23,7 +23,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
+import net.minecraftforge.common.util.ForgeDirection;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.BCLog;
 import buildcraft.api.core.IIconProvider;
@@ -93,7 +93,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 				return true;
 			}
 			
-			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, block, 0, entityplayer)) {
+			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, block, 0, entityplayer, ForgeDirection.getOrientation(sideI))) {
 				block.onBlockPlacedBy(world, i, j, k, entityplayer, itemstack);
 
 				if (!world.isRemote) {
@@ -154,7 +154,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 			int color = (stack.getItemDamage() - 1) & 15;
 			list.add(ColorUtils.getFormattingTooltip(color) + EnumChatFormatting.ITALIC + StringUtils.localize("color." + ColorUtils.getName(color)));
 		}
-		Class<? extends Pipe> pipe = BlockGenericPipe.pipes.get(this);
+		Class<? extends Pipe<?>> pipe = BlockGenericPipe.pipes.get(this);
 		List<String> toolTip = PipeToolTipManager.getToolTip(pipe, advanced);
 		list.addAll(toolTip);
 	}

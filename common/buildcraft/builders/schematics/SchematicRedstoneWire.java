@@ -14,9 +14,9 @@ import net.minecraft.item.ItemStack;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
+import buildcraft.core.builders.schematics.SchematicBlockFloored;
 
-public class SchematicRedstoneWire extends SchematicBlock {
-
+public class SchematicRedstoneWire extends SchematicBlockFloored {
 	final ItemStack customStack;
 
 	public SchematicRedstoneWire(ItemStack customStack) {
@@ -42,5 +42,4 @@ public class SchematicRedstoneWire extends SchematicBlock {
 	public boolean isAlreadyBuilt(IBuilderContext context, int x, int y, int z) {
 		return block == context.world().getBlock(x, y, z);
 	}
-
 }

@@ -24,7 +24,7 @@ import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraftforge.common.ForgeChunkManager;
@@ -50,6 +50,7 @@ import buildcraft.core.Box;
 import buildcraft.core.Box.Kind;
 import buildcraft.core.CoreConstants;
 import buildcraft.core.DefaultAreaProvider;
+import buildcraft.core.DefaultProps;
 import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BptBuilderBase;
 import buildcraft.core.blueprints.BptBuilderBlueprint;
@@ -252,21 +253,18 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 			// Collect any lost items laying around
 			double[] head = getHead();
 			AxisAlignedBB axis = AxisAlignedBB.getBoundingBox(head[0] - 2, head[1] - 2, head[2] - 2, head[0] + 3, head[1] + 3, head[2] + 3);
-			List result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
-			for (Object aResult : result) {
-				if (aResult instanceof EntityItem) {
-					EntityItem entity = (EntityItem) aResult;
-					if (entity.isDead) {
-						continue;
-					}
-
-					ItemStack mineable = entity.getEntityItem();
-					if (mineable.stackSize <= 0) {
-						continue;
-					}
-					CoreProxy.proxy.removeEntity(entity);
-					miner.mineStack(mineable);
+			List<EntityItem> result = worldObj.getEntitiesWithinAABB(EntityItem.class, axis);
+			for (EntityItem entity : result) {
+				if (entity.isDead) {
+					continue;
 				}
+
+				ItemStack mineable = entity.getEntityItem();
+				if (mineable.stackSize <= 0) {
+					continue;
+				}
+				CoreProxy.proxy.removeEntity(entity);
+				miner.mineStack(mineable);
 			}
 
 			stage = Stage.IDLE;
@@ -479,6 +477,11 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	}
 
 	@Override
+	protected int getNetworkUpdateRange() {
+		return DefaultProps.NETWORK_UPDATE_RANGE + (int) Math.ceil(Math.sqrt(yCoord * yCoord + box.sizeX() * box.sizeX() + box.sizeZ() * box.sizeZ()));
+	}
+
+	@Override
 	public void invalidate() {
 		if (chunkTicket != null) {
 			ForgeChunkManager.releaseTicket(chunkTicket);
@@ -544,11 +547,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 		if (xSize < 3 || zSize < 3 || (chunkTicket != null && ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth())) {
 			if (placedBy != null) {
-				placedBy.addChatMessage(new ChatComponentText(
-						String.format(
-								"Quarry size is outside of chunkloading bounds or too small %d %d (%d)",
-								xSize, zSize,
-								chunkTicket != null ? chunkTicket.getMaxChunkListDepth() : 0)));
+					placedBy.addChatMessage(new ChatComponentTranslation("chat.buildcraft.quarry.tooSmall",
+							xSize, zSize,
+							chunkTicket != null ? chunkTicket.getMaxChunkListDepth() : 0));
 			}
 
 			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
@@ -624,7 +625,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		stream.writeDouble(headPosY);
 		stream.writeDouble(headPosZ);
 		stream.writeFloat((float) speed);
-		stream.writeFloat((float) headTrajectory);
+		stream.writeFloat(headTrajectory);
 		int flags = stage.ordinal();
 		flags |= movingHorizontally ? 0x10 : 0;
 		flags |= movingVertically ? 0x20 : 0;
@@ -844,10 +845,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 		}
 
 		if (placedBy != null && !(placedBy instanceof FakePlayer)) {
-			placedBy.addChatMessage(new ChatComponentText(
-					String.format(
-							"[BUILDCRAFT] The quarry at %d %d %d will keep %d chunks loaded",
-							xCoord, yCoord, zCoord, chunks.size())));
+			placedBy.addChatMessage(new ChatComponentTranslation(
+					"chat.buildcraft.quarry.chunkloadInfo",
+					xCoord, yCoord, zCoord, chunks.size()));
 		}
 	}
 

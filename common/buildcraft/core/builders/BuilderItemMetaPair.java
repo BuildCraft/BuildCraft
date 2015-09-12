@@ -11,6 +11,7 @@ import buildcraft.api.blueprints.IBuilderContext;
 public class BuilderItemMetaPair {
 	public Item item;
 	public int meta;
+	public int position = 0;
 
 	public BuilderItemMetaPair(ItemStack stack) {
 		if (stack != null) {

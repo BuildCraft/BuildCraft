@@ -40,7 +40,7 @@ public class StripesHandlerPipeWires implements IStripesHandler {
 
 				if (!pipeTile.pipe.wireSet[pipeWireColor]) {
 					pipeTile.pipe.wireSet[pipeWireColor] = true;
-					pipeTile.pipe.signalStrength[pipeWireColor] = 0;
+					pipeTile.pipe.wireSignalStrength[pipeWireColor] = 0;
 
 					pipeTile.pipe.updateSignalState();
 					pipeTile.scheduleRenderUpdate();

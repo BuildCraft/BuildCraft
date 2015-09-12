@@ -18,6 +18,7 @@ buildcraft.boardRobotCrafter=Crafter
 buildcraft.boardRobotDelivery=Delivery
 buildcraft.boardRobotPump=Pump
 buildcraft.boardRobotStripes=Stripes
+buildcraft.boardRobotBreaker=Breaker
 
 buildcraft.boardRobotPicker.desc=Picks up items
 buildcraft.boardRobotLumberjack.desc=Breaks logs
@@ -37,6 +38,7 @@ buildcraft.boardRobotCrafter.desc=Crafts items
 buildcraft.boardRobotDelivery.desc=Delivers items upon request
 buildcraft.boardRobotPump.desc=Pumps out liquids
 buildcraft.boardRobotStripes.desc=Uhh... Stripes!
+buildcraft.boardRobotStripes.desc=Mines stone
 
 chat.gateCopier.clear=Gate information cleared.
 chat.gateCopier.gateCopied=Copied gate information to copier.
@@ -378,6 +380,7 @@ item.FacadePhased.state_transparent=Transparent
 item.PipePlug.name=Pipe Plug
 item.Lens.name=Lens
 item.Filter.name=Filter
+item.PipePowerAdapter.name=Power Adapter
 item.debugger.name=Debugger
 item.debugger.warning=Use only for testing! Leaks secrets.
 item.package.name=Package
@@ -443,12 +446,13 @@ tip.gate.wires.diamond=Red, Blue, Green, Yellow
 tip.gate.wires.emerald=Red, Blue, Green, Yellow
 tip.gate.expansions=§9§oInstalled Expansions:
 
-tip.PipeFluidsCobblestone=Won't connect to Stone
+tip.PipeFluidsCobblestone=Won't connect to Stone or Quartz
 tip.PipeFluidsDiamond=Sorts fluids
 tip.PipeFluidsEmerald=Extraction pipe
 tip.PipeFluidsIron=Valve pipe
+tip.PipeFluidsQuartz=Won't connect to Cobblestone or Stone
 tip.PipeFluidsSandstone=Only connects to other pipes
-tip.PipeFluidsStone=Won't connect to Cobblestone
+tip.PipeFluidsStone=Won't connect to Cobblestone or Quartz
 tip.PipeFluidsVoid=Destroys fluids
 tip.PipeFluidsWood=Extraction pipe
 tip.PipeItemsClay=Insertion pipe
@@ -475,6 +479,8 @@ tip.deprecated=Deprecated
 
 tip.filler.excavate.on=Excavate
 tip.filler.excavate.off=Do Not Excavate
+
+tip.list.matches=Matches
 
 tip.shift.PipeFluidsDiamond=GUI accepts any fluid containers
 tip.shift.PipeFluidsEmerald=GUI accepts any fluid container
@@ -540,6 +546,10 @@ bc_update.new_version=§cNew version of BuildCraft available: %s for Minecraft %
 bc_update.download=§cDownload from http://www.mod-buildcraft.com/download
 bc_update.once=This message only displays once
 bc_update.again=Type '/buildcraft version' if you want to see it again
+bc_update.changelog=Type '/buildcraft changelog' to see the changelog
+
+chat.buildcraft.quarry.tooSmall=[BuildCraft] Quarry size is outside of chunkloading bounds or too small %d %d (%d)
+chat.buildcraft.quarry.chunkloadInfo=[BuildCraft] The quarry at %d %d %d will keep %d chunks loaded
 
 command.buildcraft.version=BuildCraft %s for Minecraft %s (Latest: %s).
 command.buildcraft.changelog_header=Changelog for BuildCraft %s:

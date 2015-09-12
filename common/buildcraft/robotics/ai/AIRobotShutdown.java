@@ -38,7 +38,7 @@ public class AIRobotShutdown extends AIRobot {
 	@Override
 	public void update() {
 		if (skip == 0) {
-			List boxes = robot.worldObj.getCollidingBoundingBoxes(robot,
+			List<?> boxes = robot.worldObj.getCollidingBoundingBoxes(robot,
 					getRobotBox().addCoord(robot.motionX, -0.075f, robot.motionZ));
 			if (boxes.size() == 0) {
 				robot.motionY = -0.075f;

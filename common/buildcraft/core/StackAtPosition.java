@@ -21,7 +21,7 @@ public class StackAtPosition implements ISerializable {
 	public Position pos;
 	public boolean display;
 
-	// Rendering
+	// Rendering only!
 	public boolean generatedListId;
 	public int glListId;
 
@@ -33,5 +33,19 @@ public class StackAtPosition implements ISerializable {
 	@Override
 	public void writeData(ByteBuf stream) {
 		NetworkUtils.writeStack(stream, stack);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o == null || !(o instanceof StackAtPosition)) {
+			return false;
+		}
+		StackAtPosition other = (StackAtPosition) o;
+		return other.stack.equals(stack) && other.pos.equals(pos) && other.display == display;
+	}
+
+	@Override
+	public int hashCode() {
+		return stack.hashCode() * 17 + pos.hashCode();
 	}
 }

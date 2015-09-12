@@ -18,10 +18,10 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftBuilders;
 import buildcraft.core.GuiIds;
+import buildcraft.core.internal.ICustomLEDBlock;
 import buildcraft.core.lib.block.BlockBuildCraft;
 
-public class BlockArchitect extends BlockBuildCraft {
-
+public class BlockArchitect extends BlockBuildCraft implements ICustomLEDBlock {
 	public BlockArchitect() {
 		super(Material.iron);
 		setRotatable(true);
@@ -65,5 +65,10 @@ public class BlockArchitect extends BlockBuildCraft {
 	@Override
 	public int getLightValue(IBlockAccess world, int x, int y, int z) {
 		return 1;
+	}
+
+	@Override
+	public String[] getLEDSuffixes() {
+		return new String[] { "led_red", "led_mode_copy", "led_mode_edit" };
 	}
 }

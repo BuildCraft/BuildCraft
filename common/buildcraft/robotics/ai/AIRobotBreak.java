@@ -23,7 +23,6 @@ import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.proxy.CoreProxy;
 
 public class AIRobotBreak extends AIRobot {
-
 	private BlockIndex blockToBreak;
 	private float blockDamage = 0;
 
@@ -66,6 +65,7 @@ public class AIRobotBreak extends AIRobot {
 			hardness = block.getBlockHardness(robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z);
 			speed = getBreakSpeed(robot, robot.getHeldItem(), block, meta);
 		}
+
 		if (block.isAir(robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z)) {
 			setSuccess(false);
 			terminate();

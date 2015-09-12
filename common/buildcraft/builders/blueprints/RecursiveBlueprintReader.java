@@ -213,10 +213,7 @@ public class RecursiveBlueprintReader {
 		BuildCraftBuilders.serverDB.add(writingBlueprint.id, nbt);
 
 		if (parentBlueprint == null) {
-			// TODO: This is hacky, should probably be done in the architect
-			// itself.
-			architect.setInventorySlotContents(1, writingBlueprint.getStack());
-			architect.setInventorySlotContents(0, null);
+			architect.storeBlueprintStack(writingBlueprint.getStack());
 		}
 	}
 

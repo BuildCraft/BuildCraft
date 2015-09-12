@@ -25,7 +25,6 @@ import net.minecraft.util.ResourceLocation;
 import buildcraft.BuildCraftCore;
 import buildcraft.api.core.EnumColor;
 import buildcraft.core.DefaultProps;
-import buildcraft.core.ZonePlan;
 import buildcraft.core.lib.gui.AdvancedSlot;
 import buildcraft.core.lib.gui.GuiAdvancedInterface;
 import buildcraft.core.lib.gui.buttons.GuiBetterButton;
@@ -38,6 +37,7 @@ import buildcraft.core.lib.render.DynamicTextureBC;
 import buildcraft.core.lib.utils.NetworkUtils;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.robotics.TileZonePlan;
+import buildcraft.robotics.ZonePlan;
 
 public class GuiZonePlan extends GuiAdvancedInterface {
 
@@ -72,7 +72,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	private GuiBetterButton tool, fsButton;
 
 	private List inventorySlots;
-	private List savedButtonList;
+	private List<GuiBetterButton> savedButtonList;
 
 	private GuiTextField textField;
 
@@ -213,7 +213,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 		}
 
 		if (!isFullscreen()) {
-			drawBackgroundSlots();
+			drawBackgroundSlots(x, y);
 
 			bindTexture(texture);
 
@@ -324,7 +324,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 		if (blocksPerPixel > 4.0f) {
 			blocksPerPixel = 4.0f;
 		}
-		
+
 		mapWidth = this.mc.displayWidth;
 		mapHeight = this.mc.displayHeight;
 
@@ -334,8 +334,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 		uploadMap();
 		refreshSelectedArea();
 
-		container.inventorySlots = new LinkedList();
-		buttonList = new LinkedList();
+		container.inventorySlots = new LinkedList<Object>();
+		buttonList = new LinkedList<GuiBetterButton>();
 	}
 
 	private void toWindowed() {

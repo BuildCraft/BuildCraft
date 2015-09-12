@@ -27,6 +27,7 @@ import buildcraft.api.core.SafeTimeTracker;
 import buildcraft.core.lib.block.TileBuildCraft;
 import buildcraft.core.lib.fluids.Tank;
 import buildcraft.core.lib.fluids.TankManager;
+import buildcraft.core.lib.utils.BlockUtils;
 
 public class TileTank extends TileBuildCraft implements IFluidHandler {
 	public final Tank tank = new Tank("tank", FluidContainerRegistry.BUCKET_VOLUME * 16, this);
@@ -82,7 +83,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 		}
 
 		if (hasUpdate) {
-			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
+			BlockUtils.onComparatorUpdate(worldObj, xCoord, yCoord, zCoord, getBlockType());
 			hasUpdate = false;
 		}
 

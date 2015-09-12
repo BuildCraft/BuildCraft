@@ -34,6 +34,7 @@ import net.minecraft.stats.Achievement;
 import net.minecraft.world.World;
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -67,14 +68,11 @@ import buildcraft.builders.BlockBuilder;
 import buildcraft.builders.BlockConstructionMarker;
 import buildcraft.builders.BlockFiller;
 import buildcraft.builders.BlockFrame;
-import buildcraft.builders.BlockMarker;
-import buildcraft.builders.BlockPathMarker;
 import buildcraft.builders.BlockQuarry;
 import buildcraft.builders.BlueprintServerDatabase;
 import buildcraft.builders.BuilderProxy;
 import buildcraft.builders.BuilderProxyClient;
 import buildcraft.builders.BuildersGuiHandler;
-import buildcraft.builders.EventHandlerBuilders;
 import buildcraft.builders.HeuristicBlockDetection;
 import buildcraft.builders.ItemBlueprintStandard;
 import buildcraft.builders.ItemBlueprintTemplate;
@@ -87,8 +85,6 @@ import buildcraft.builders.TileBlueprintLibrary;
 import buildcraft.builders.TileBuilder;
 import buildcraft.builders.TileConstructionMarker;
 import buildcraft.builders.TileFiller;
-import buildcraft.builders.TileMarker;
-import buildcraft.builders.TilePathMarker;
 import buildcraft.builders.TileQuarry;
 import buildcraft.builders.blueprints.RealBlueprintDeployer;
 import buildcraft.builders.schematics.SchematicAir;
@@ -122,18 +118,19 @@ import buildcraft.builders.schematics.SchematicStairs;
 import buildcraft.builders.schematics.SchematicStone;
 import buildcraft.builders.schematics.SchematicTripWireHook;
 import buildcraft.builders.statements.BuildersActionProvider;
-import buildcraft.builders.urbanism.BlockUrbanist;
-import buildcraft.builders.urbanism.TileUrbanist;
-import buildcraft.builders.urbanism.UrbanistToolsIconProvider;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
 import buildcraft.core.InterModComms;
+import buildcraft.core.TileMarker;
+import buildcraft.core.TilePathMarker;
 import buildcraft.core.Version;
 import buildcraft.core.blueprints.SchematicRegistry;
 import buildcraft.core.builders.schematics.SchematicBlockCreative;
+import buildcraft.core.builders.schematics.SchematicBlockFloored;
 import buildcraft.core.builders.schematics.SchematicFree;
 import buildcraft.core.builders.schematics.SchematicIgnore;
 import buildcraft.core.builders.schematics.SchematicRotateMeta;
+import buildcraft.core.builders.schematics.SchematicRotateMetaSupported;
 import buildcraft.core.builders.schematics.SchematicStandalone;
 import buildcraft.core.builders.schematics.SchematicTileCreative;
 import buildcraft.core.builders.schematics.SchematicWallSide;
@@ -146,14 +143,11 @@ public class BuildCraftBuilders extends BuildCraftMod {
 	@Mod.Instance("BuildCraft|Builders")
 	public static BuildCraftBuilders instance;
 
-	public static BlockMarker markerBlock;
-	public static BlockPathMarker pathMarkerBlock;
 	public static BlockConstructionMarker constructionMarkerBlock;
 	public static BlockFiller fillerBlock;
 	public static BlockBuilder builderBlock;
 	public static BlockArchitect architectBlock;
 	public static BlockBlueprintLibrary libraryBlock;
-	public static BlockUrbanist urbanistBlock;
 	public static BlockQuarry quarryBlock;
 	public static BlockFrame frameBlock;
 	public static ItemBlueprintTemplate templateItem;
@@ -233,10 +227,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		clientDB = new LibraryDatabase();
 
 		reloadConfig(ConfigManager.RestartRequirement.GAME);
-
-		// TODO
-		//Property dropBlock = BuildCraftCore.mainConfiguration.get("general", "builder.dropBrokenBlocks", false, "set to true to force the builder to drop broken blocks");
-		//dropBrokenBlocks = dropBlock.getBoolean(false);
 
 		Property printSchematicList = BuildCraftCore.mainConfiguration.get("debug", "printBlueprintSchematicList", false);
 		debugPrintSchematicList = printSchematicList.getBoolean();
@@ -350,11 +340,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
-		// Register gui handler
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new BuildersGuiHandler());
-
-		// Register save handler
-		MinecraftForge.EVENT_BUS.register(new EventHandlerBuilders());
 
 		// Standard blocks
 		ISchematicRegistry schemes = BuilderAPI.schematicRegistry;
@@ -381,11 +367,12 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(Blocks.redstone_torch, SchematicWallSide.class);
 		schemes.registerSchematicBlock(Blocks.unlit_redstone_torch, SchematicWallSide.class);
 
+		schemes.registerSchematicBlock(Blocks.tripwire, SchematicBlockFloored.class);
 		schemes.registerSchematicBlock(Blocks.tripwire_hook, SchematicTripWireHook.class);
 
 		schemes.registerSchematicBlock(Blocks.skull, SchematicSkull.class);
 
-		schemes.registerSchematicBlock(Blocks.ladder, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
+		schemes.registerSchematicBlock(Blocks.ladder, SchematicRotateMetaSupported.class, new int[]{2, 5, 3, 4}, true);
 		schemes.registerSchematicBlock(Blocks.fence_gate, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, true);
 		schemes.registerSchematicBlock(Blocks.log, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
 		schemes.registerSchematicBlock(Blocks.log2, SchematicRotateMeta.class, new int[]{8, 4, 8, 4}, true);
@@ -499,14 +486,13 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicEntity(EntityItemFrame.class, SchematicHanging.class, Items.item_frame);
 
 		// BuildCraft blocks
-
 		schemes.registerSchematicBlock(architectBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 		schemes.registerSchematicBlock(builderBlock, SchematicRotateMeta.class, new int[]{2, 5, 3, 4}, true);
 
-		// Landmarks are often caught incorrectly, making building them counter-productive.
-		schemes.registerSchematicBlock(markerBlock, SchematicIgnore.class);
-		schemes.registerSchematicBlock(pathMarkerBlock, SchematicIgnore.class);
-		schemes.registerSchematicBlock(constructionMarkerBlock, SchematicIgnore.class);
+		if (constructionMarkerBlock != null) {
+			schemes.registerSchematicBlock(constructionMarkerBlock, SchematicIgnore.class);
+		}
+
 		schemes.registerSchematicBlock(frameBlock, SchematicFree.class);
 
 		// Factories required to save entities in world
@@ -548,16 +534,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		quarryBlock = (BlockQuarry) CompatHooks.INSTANCE.getBlock(BlockQuarry.class);
 		CoreProxy.proxy.registerBlock(quarryBlock.setBlockName("machineBlock"));
 
-		markerBlock = (BlockMarker) CompatHooks.INSTANCE.getBlock(BlockMarker.class);
-		CoreProxy.proxy.registerBlock(markerBlock.setBlockName("markerBlock"));
-
-		pathMarkerBlock = (BlockPathMarker) CompatHooks.INSTANCE.getBlock(BlockPathMarker.class);
-		CoreProxy.proxy.registerBlock(pathMarkerBlock.setBlockName("pathMarkerBlock"));
-
-		constructionMarkerBlock = (BlockConstructionMarker) CompatHooks.INSTANCE.getBlock(BlockConstructionMarker.class);
-		CoreProxy.proxy.registerBlock(constructionMarkerBlock.setBlockName("constructionMarkerBlock"),
-				ItemConstructionMarker.class);
-
 		fillerBlock = (BlockFiller) CompatHooks.INSTANCE.getBlock(BlockFiller.class);
 		CoreProxy.proxy.registerBlock(fillerBlock.setBlockName("fillerBlock"));
 
@@ -573,20 +549,21 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		libraryBlock = (BlockBlueprintLibrary) CompatHooks.INSTANCE.getBlock(BlockBlueprintLibrary.class);
 		CoreProxy.proxy.registerBlock(libraryBlock.setBlockName("libraryBlock"));
 
-		if (!BuildCraftCore.NONRELEASED_BLOCKS) {
-			urbanistBlock = new BlockUrbanist ();
-			CoreProxy.proxy.registerBlock(urbanistBlock.setBlockName("urbanistBlock"));
-			CoreProxy.proxy.registerTileEntity(TileUrbanist.class, "net.minecraft.src.builders.TileUrbanist");
-		}
-
 		CoreProxy.proxy.registerTileEntity(TileQuarry.class, "Machine");
 		CoreProxy.proxy.registerTileEntity(TileMarker.class, "Marker");
 		CoreProxy.proxy.registerTileEntity(TileFiller.class, "Filler");
 		CoreProxy.proxy.registerTileEntity(TileBuilder.class, "net.minecraft.src.builders.TileBuilder");
 		CoreProxy.proxy.registerTileEntity(TileArchitect.class, "net.minecraft.src.builders.TileTemplate");
 		CoreProxy.proxy.registerTileEntity(TilePathMarker.class, "net.minecraft.src.builders.TilePathMarker");
-		CoreProxy.proxy.registerTileEntity(TileConstructionMarker.class, "net.minecraft.src.builders.TileConstructionMarker");
 		CoreProxy.proxy.registerTileEntity(TileBlueprintLibrary.class, "net.minecraft.src.builders.TileBlueprintLibrary");
+
+		if (Loader.isModLoaded("BuildCraft|Robotics")) {
+			constructionMarkerBlock = (BlockConstructionMarker) CompatHooks.INSTANCE.getBlock(BlockConstructionMarker.class);
+			CoreProxy.proxy.registerBlock(constructionMarkerBlock.setBlockName("constructionMarkerBlock"),
+					ItemConstructionMarker.class);
+
+			CoreProxy.proxy.registerTileEntity(TileConstructionMarker.class, "net.minecraft.src.builders.TileConstructionMarker");
+		}
 
 		SchematicRegistry.INSTANCE.readConfiguration(BuildCraftCore.mainConfiguration);
 
@@ -618,26 +595,22 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), "ppp", "pip", "ppp", 'i',
 			"gemLapis", 'p', Items.paper);
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(markerBlock, 1), "l ", "r ", 'l',
-			"gemLapis", 'r', Blocks.redstone_torch);
-
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(pathMarkerBlock, 1), "l ", "r ", 'l',
-			"dyeGreen", 'r', Blocks.redstone_torch);
-
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(constructionMarkerBlock, 1), "l ", "r ", 'l',
-				"gearGold", 'r', Blocks.redstone_torch);
+		if (constructionMarkerBlock != null) {
+			CoreProxy.proxy.addCraftingRecipe(new ItemStack(constructionMarkerBlock, 1), "l ", "r ", 'l',
+					"gearGold", 'r', Blocks.redstone_torch);
+		}
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock, 1), "btb", "ycy", "gCg", 'b',
-			"dyeBlack", 't', markerBlock, 'y', "dyeYellow",
-			'c', "craftingTableWood", 'g', "gearGold", 'C', "chestWood");
+			"dyeBlack", 't', BuildCraftCore.markerBlock, 'y', "dyeYellow",
+			'c', Blocks.crafting_table, 'g', "gearGold", 'C', Blocks.chest);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), "btb", "ycy", "gCg", 'b',
-			"dyeBlack", 't', markerBlock, 'y', "dyeYellow",
-			'c', "craftingTableWood", 'g', "gearDiamond", 'C', "chestWood");
+			"dyeBlack", 't', BuildCraftCore.markerBlock, 'y', "dyeYellow",
+			'c', Blocks.crafting_table, 'g', "gearDiamond", 'C', Blocks.chest);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), "btb", "ycy", "gCg", 'b',
-			"dyeBlack", 't', markerBlock, 'y', "dyeYellow",
-			'c', "craftingTableWood", 'g', "gearDiamond", 'C',
+			"dyeBlack", 't', BuildCraftCore.markerBlock, 'y', "dyeYellow",
+			'c', Blocks.crafting_table, 'g', "gearDiamond", 'C',
 			new ItemStack(blueprintItem, 1));
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), "bbb", "bBb", "bbb", 'b',
@@ -661,23 +634,11 @@ public class BuildCraftBuilders extends BuildCraftMod {
 			TextureMap terrainTextures = evt.map;
 			BuilderProxyClient.drillTexture = terrainTextures.registerIcon("buildcraftbuilders:machineBlock/drill");
 			BuilderProxyClient.drillHeadTexture = terrainTextures.registerIcon("buildcraftbuilders:machineBlock/drill_head");
-		} else if (evt.map.getTextureType() == 1) {
-			UrbanistToolsIconProvider.INSTANCE.registerIcons(evt.map);
 		}
 	}
 
 	@Mod.EventHandler
 	public void whiteListAppliedEnergetics(FMLInitializationEvent event) {
-		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
-		//		TileMarker.class.getCanonicalName());
-		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
-		//		TileFiller.class.getCanonicalName());
-		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
-		//		TileBuilder.class.getCanonicalName());
-		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
-		//		TileArchitect.class.getCanonicalName());
-		//FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
-		//		TilePathMarker.class.getCanonicalName());
 		FMLInterModComms.sendMessage("appliedenergistics2", "whitelist-spatial",
 				TileBlueprintLibrary.class.getCanonicalName());
 	}
@@ -691,6 +652,18 @@ public class BuildCraftBuilders extends BuildCraftMod {
 					mapping.remap(Item.getItemFromBlock(BuildCraftCore.buildToolBlock));
 				} else {
 					mapping.remap(BuildCraftCore.buildToolBlock);
+				}
+			} else if (mapping.name.equals("BuildCraft|Builders:markerBlock")) {
+				if (mapping.type == GameRegistry.Type.ITEM) {
+					mapping.remap(Item.getItemFromBlock(BuildCraftCore.markerBlock));
+				} else {
+					mapping.remap(BuildCraftCore.markerBlock);
+				}
+			} else if (mapping.name.equals("BuildCraft|Builders:pathMarkerBlock")) {
+				if (mapping.type == GameRegistry.Type.ITEM) {
+					mapping.remap(Item.getItemFromBlock(BuildCraftCore.pathMarkerBlock));
+				} else {
+					mapping.remap(BuildCraftCore.pathMarkerBlock);
 				}
 			}
 		}

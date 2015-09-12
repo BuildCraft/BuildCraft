@@ -73,7 +73,7 @@ public abstract class SubCommand implements IModCommand {
     }
 
     @Override
-    public List addTabCompletionOptions(ICommandSender sender, String[] text) {
+    public List<?> addTabCompletionOptions(ICommandSender sender, String[] text) {
         return null;
     }
 

@@ -114,6 +114,7 @@ public class TileHopper extends TileBuildCraft implements IInventory, IEnergyHan
 
     @Override
 	public void markDirty() {
+		super.markDirty();
 		isEmpty = true;
 		
 		for (int internalSlot = 0; internalSlot < inventory.getSizeInventory(); internalSlot++) {

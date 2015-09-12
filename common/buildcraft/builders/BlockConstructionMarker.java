@@ -18,6 +18,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
 import buildcraft.api.tools.IToolWrench;
+import buildcraft.core.BlockMarker;
 import buildcraft.core.lib.utils.BlockUtils;
 import buildcraft.core.lib.utils.Utils;
 

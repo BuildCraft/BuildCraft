@@ -55,7 +55,6 @@ public class BlockFloodGate extends BlockBuildCraft {
 			// Restart the flood gate if it's a wrench
 			Item equipped = entityplayer.getCurrentEquippedItem() != null ? entityplayer.getCurrentEquippedItem().getItem() : null;
 			if (equipped instanceof IToolWrench && ((IToolWrench) equipped).canWrench(entityplayer, i, j, k)) {
-				System.out.println("pre=" + side);
 				if (side == 1) {
 					floodGate.rebuildQueue();
 				} else {

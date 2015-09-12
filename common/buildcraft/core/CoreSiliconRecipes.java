@@ -15,7 +15,7 @@ public final class CoreSiliconRecipes {
 	@Optional.Method(modid = "BuildCraft|Silicon")
 	public static void loadSiliconRecipes() {
 		// Lists
-		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:list", 20000, new ItemStack(BuildCraftCore.listItem),
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:list", 20000, new ItemStack(BuildCraftCore.listItem, 1, 1),
 				"dyeGreen", "dustRedstone", new ItemStack(Items.paper, 8));
 	}
 }

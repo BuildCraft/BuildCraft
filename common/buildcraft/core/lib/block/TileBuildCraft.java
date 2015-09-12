@@ -108,8 +108,12 @@ public abstract class TileBuildCraft extends TileEntity implements IEnergyHandle
 	public void sendNetworkUpdate() {
 		if (worldObj != null && !worldObj.isRemote) {
 			BuildCraftCore.instance.sendToPlayers(getPacketUpdate(), worldObj,
-					xCoord, yCoord, zCoord, DefaultProps.NETWORK_UPDATE_RANGE);
+					xCoord, yCoord, zCoord, getNetworkUpdateRange());
 		}
+	}
+
+	protected int getNetworkUpdateRange() {
+		return DefaultProps.NETWORK_UPDATE_RANGE;
 	}
 
 	public void writeData(ByteBuf stream) {

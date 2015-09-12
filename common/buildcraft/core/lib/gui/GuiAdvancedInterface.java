@@ -52,7 +52,25 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 		}
 	}
 
-	protected void drawBackgroundSlots() {
+	private boolean isMouseOverSlot(AdvancedSlot slot, int mouseX, int mouseY) {
+		int realMouseX = mouseX - this.guiLeft;
+		int realMouseY = mouseY - this.guiTop;
+		return realMouseX >= slot.x - 1 && realMouseX < slot.x + 16 + 1 && realMouseY >= slot.y - 1 && realMouseY < slot.y + 16 + 1;
+	}
+
+	protected void drawSlotHighlight(AdvancedSlot slot, int mouseX, int mouseY) {
+		if (this.isMouseOverSlot(slot, mouseX, mouseY) && slot.shouldDrawHighlight()) {
+			GL11.glDisable(GL11.GL_LIGHTING);
+			GL11.glDisable(GL11.GL_DEPTH_TEST);
+			GL11.glColorMask(true, true, true, false);
+			this.drawGradientRect(guiLeft + slot.x, guiTop + slot.y, guiLeft + slot.x + 16, guiTop + slot.y + 16, -2130706433, -2130706433);
+			GL11.glColorMask(true, true, true, true);
+			GL11.glEnable(GL11.GL_LIGHTING);
+			GL11.glEnable(GL11.GL_DEPTH_TEST);
+		}
+	}
+
+	protected void drawBackgroundSlots(int mouseX, int mouseY) {
 		RenderHelper.enableGUIStandardItemLighting();
 		GL11.glPushMatrix();
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -66,6 +84,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 			for (AdvancedSlot slot : slots) {
 				if (slot != null) {
 					slot.drawSprite(guiLeft, guiTop);
+					drawSlotHighlight(slot, mouseX, mouseY);
 				}
 			}
 		}
@@ -78,6 +97,7 @@ public abstract class GuiAdvancedInterface extends GuiBuildCraft {
 
 		if (slot != null) {
 			slot.drawTooltip(this, mouseX, mouseY);
+			RenderHelper.enableGUIStandardItemLighting();
 		}
 	}
 

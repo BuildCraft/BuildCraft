@@ -80,7 +80,7 @@ public class ActionValve extends BCStatement implements IActionInternal {
 	    IPipe pipe = ((Gate) container).getPipe();
 		
 	    if (pipe != null && pipe instanceof Pipe) {
-			PipeTransport transport = ((Pipe) pipe).transport;
+			PipeTransport transport = ((Pipe<?>) pipe).transport;
 			if (parameters[0] != null && parameters[0] instanceof StatementParameterDirection) {
 				ForgeDirection side = ((StatementParameterDirection) parameters[0]).direction;
 		

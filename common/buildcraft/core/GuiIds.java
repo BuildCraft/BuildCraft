@@ -14,11 +14,11 @@ public final class GuiIds {
 	public static final int BUILDER = 11;
 	public static final int FILLER = 12;
 	public static final int BLUEPRINT_LIBRARY = 13;
-	public static final int URBANIST = 14;
 	public static final int MAP = 15;
 	public static final int REQUESTER = 16;
-	public static final int LIST = 17;
+	public static final int LIST_OLD = 17;
 	public static final int TABLET = 18;
+	public static final int LIST_NEW = 19;
 
 	public static final int ENGINE_IRON = 20;
 	public static final int ENGINE_STONE = 21;
@@ -26,8 +26,6 @@ public final class GuiIds {
 	public static final int AUTO_CRAFTING_TABLE = 30;
 	public static final int REFINERY = 31;
 	public static final int HOPPER = 32;
-
-	public static final int ASSEMBLY_TABLE = 40;
 
 	public static final int PIPE_DIAMOND = 50;
 	public static final int GATES = 51;

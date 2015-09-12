@@ -10,6 +10,7 @@ package buildcraft.core.builders;
 
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 
 import io.netty.buffer.ByteBuf;
 
@@ -277,7 +278,7 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 		slotToBuild.readFromNBT(nbt.getCompoundTag("slotToBuild"), registry);
 	}
 
-	public void setStacksToDisplay(LinkedList<ItemStack> stacks) {
+	public void setStacksToDisplay(List<ItemStack> stacks) {
 		if (stacks != null) {
 			for (ItemStack s : stacks) {
 				for (int i = 0; i < s.stackSize; ++i) {

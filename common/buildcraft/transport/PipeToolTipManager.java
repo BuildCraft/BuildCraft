@@ -59,7 +59,7 @@ public final class PipeToolTipManager {
 		toolTips.put(pipe, toolTip);
 	}
 
-	public static List<String> getToolTip(Class<? extends Pipe> pipe, boolean advanced) {
+	public static List<String> getToolTip(Class<? extends Pipe<?>> pipe, boolean advanced) {
 		List<String> tips = new ArrayList<String>();
 		addTipToList("tip." + pipe.getSimpleName(), tips);
 
