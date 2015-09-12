@@ -184,7 +184,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 		return flowRate;
 	}
 
-	public void initFromPipe(Class<? extends Pipe> pipeClass) {
+	public void initFromPipe(Class<? extends Pipe<?>> pipeClass) {
 		capacity = 25 * Math.min(1000, BuildCraftTransport.pipeFluidsBaseFlowRate);
 		flowRate = fluidCapacities.get(pipeClass);
 		travelDelay = MathUtils.clamp(Math.round(16F / (flowRate / BuildCraftTransport.pipeFluidsBaseFlowRate)), 1, MAX_TRAVEL_DELAY);

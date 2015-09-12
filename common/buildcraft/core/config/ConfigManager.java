@@ -22,7 +22,7 @@ public class ConfigManager implements IModGuiFactory {
 
 			for (String s : config.getCategoryNames()) {
 				if (!s.contains(".")) {
-					configElements.add(new BCConfigElement(config.getCategory(s)));
+					configElements.add(new BCConfigElement<Object>(config.getCategory(s)));
 				}
 			}
 		}

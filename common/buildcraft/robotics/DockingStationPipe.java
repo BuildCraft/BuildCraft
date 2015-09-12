@@ -49,7 +49,7 @@ public class DockingStationPipe extends DockingStation implements IRequestProvid
 					return 0;
 				}
 
-				((PipeTransportItems) ((Pipe) getPipe().getPipe()).transport)
+				((PipeTransportItems) ((Pipe<?>) getPipe().getPipe()).transport)
 						.injectItem(item, from);
 			}
 			return stack.stackSize;
@@ -182,7 +182,7 @@ public class DockingStationPipe extends DockingStation implements IRequestProvid
 			return null;
 		}
 
-		return (IFluidHandler) ((Pipe) getPipe().getPipe()).transport;
+		return (IFluidHandler) ((Pipe<?>) getPipe().getPipe()).transport;
 	}
 
 	@Override
@@ -212,7 +212,7 @@ public class DockingStationPipe extends DockingStation implements IRequestProvid
 		if (getPipe() == null || getPipe().getPipe() == null) {
 			return false;
 		}
-		return ((Pipe) getPipe().getPipe()).isInitialized();
+		return ((Pipe<?>) getPipe().getPipe()).isInitialized();
 	}
 
 	@Override

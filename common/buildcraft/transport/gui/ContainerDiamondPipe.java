@@ -46,6 +46,6 @@ public class ContainerDiamondPipe extends BuildCraftContainer {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer entityplayer) {
-		return ((Pipe) pipe).container.isUseableByPlayer(entityplayer);
+		return ((Pipe<?>) pipe).container.isUseableByPlayer(entityplayer);
 	}
 }
