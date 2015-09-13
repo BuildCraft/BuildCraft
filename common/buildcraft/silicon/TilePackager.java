@@ -243,7 +243,7 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
 					break;
 				}
 				IInventory inv = invs.get(dir);
-				Iterable<IInvSlot> iterator = InventoryIterator.getIterable(inv, dir);
+				Iterable<IInvSlot> iterator = InventoryIterator.getIterable(inv, dir.getOpposite());
 				for (IInvSlot slot : iterator) {
 					if (filteredReqsToFulfill == 0) {
 						break;
@@ -305,7 +305,7 @@ public class TilePackager extends TileBuildCraft implements ISidedInventory {
 					break;
 				}
 				IInventory inv = invs.get(dir);
-				Iterable<IInvSlot> iterator = InventoryIterator.getIterable(inv, dir);
+				Iterable<IInvSlot> iterator = InventoryIterator.getIterable(inv, dir.getOpposite());
 				for (IInvSlot slot : iterator) {
 					if (foundMissing) {
 						break;
