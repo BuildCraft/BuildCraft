@@ -26,6 +26,10 @@ version = "7.2.0"
 group= "com.mod-buildcraft"
 archivesBaseName = "buildcraft" // the name that all artifacts will use as a base. artifacts names follow this pattern: [baseName]-[appendix]-[version]-[classifier].[extension]
 
+ext.mcModInfo = new groovy.json.JsonSlurper().parse(file("buildcraft_resources/mcmod.info"))
+ext.priv = parseConfig(file('private.properties'))
+
+
 minecraft {
     version = "1.7.10-10.13.4.1490-1.7.10" // McVersion-ForgeVersion     this variable is later changed to contain only the MC version, while the apiVersion variable is used for the forge version.  Yeah its stupid, and will be changed eentually.
 
@@ -61,6 +65,12 @@ sourceSets {
     }
 }
 
+// Obfuscated Jar location
+ext.jarFile = zipTree(jar.archivePath)
+
+// Add API dir to the IDEA module
+idea.module.sourceDirs += sourceSets.api.java.srcDirs
+
 processResources
 {
     // replace stuff in mcmod.info, nothing else
@@ -81,6 +91,30 @@ processResources
 // --------------------
 // extra jar section
 // -------------------
+
+
+
+def createMCModInfo(def id, def taskName)
+{
+    File temp = new File("build/processing/" + taskName + "/mcmod.info")
+    temp.parentFile.mkdirs()
+    if (temp.exists())
+        temp.delete()
+    temp.createNewFile()
+    temp.write(groovy.json.JsonOutput.toJson([ext.mcModInfo[id]]))
+    temp.deleteOnExit()
+    return temp
+}
+
+def parseConfig(File config) {
+    if (!config.exists())
+        return null;
+    config.withReader {
+        def prop = new Properties()
+        prop.load(it)
+        return (new ConfigSlurper().parse(prop))
+    }
+}
 
 // add a source jar
 task sourceJar(type: Jar) {
@@ -112,6 +146,98 @@ task apiJar(type: Jar) {
     classifier = 'api'
 }
 
+task coreJar(type: Jar, dependsOn: reobf) {
+
+    destinationDir = file("modules")
+    classifier = 'core'
+
+    doFirst {
+        from(createMCModInfo(0, name).parentFile)
+        from(project.ext.jarFile) {
+            includes.addAll(["assets/buildcraft/**", "assets/buildcraftcore/**", "buildcraft/BuildCraftCore**", "buildcraft/BuildCraftMod**", "buildcraft/core/**", "buildcraft/api/**", "cofh/**", "changelog/**", "LICENSE**", "versions.txt"])
+        }
+    }
+}
+
+task buildersJar(type: Jar, dependsOn: reobf) {
+
+    destinationDir = file("modules")
+    classifier = 'builders'
+
+    doFirst {
+        from(createMCModInfo(1, name).parentFile)
+        from(project.ext.jarFile) {
+            includes.addAll(["assets/buildcraftbuilders/**", "buildcraft/builders/**", "buildcraft/BuildCraftBuilders**", "LICENSE"])
+        }
+    }
+}
+
+task energyJar(type: Jar, dependsOn: reobf) {
+
+    destinationDir = file("modules")
+    classifier = 'energy'
+
+    doFirst {
+        from(createMCModInfo(2, name).parentFile)
+        from(project.ext.jarFile) {
+            includes.addAll(["assets/buildcraftenergy/**", "buildcraft/energy/**", "buildcraft/BuildCraftEnergy**", "LICENSE"])
+        }
+    }
+}
+
+task factoryJar(type: Jar, dependsOn: reobf) {
+
+    destinationDir = file("modules")
+    classifier = 'factory'
+
+    doFirst {
+        from(createMCModInfo(3, name).parentFile)
+        from(project.ext.jarFile) {
+            includes.addAll(["assets/buildcraftfactory/**", "buildcraft/factory/**", "buildcraft/BuildCraftFactory**", "LICENSE"])
+        }
+    }
+}
+
+task siliconJar(type: Jar, dependsOn: reobf) {
+
+    destinationDir = file("modules")
+    classifier = 'silicon'
+
+    doFirst {
+        from(createMCModInfo(4, name).parentFile)
+        from(project.ext.jarFile) {
+            includes.addAll(["assets/buildcraftsilicon/**", "buildcraft/silicon/**", "buildcraft/BuildCraftSilicon**", "LICENSE"])
+        }
+    }
+}
+
+task transportJar(type: Jar, dependsOn: reobf) {
+
+    destinationDir = file("modules")
+    classifier = 'transport'
+
+    doFirst {
+        from(createMCModInfo(5, name).parentFile)
+        from(project.ext.jarFile) {
+            includes.addAll(["assets/buildcrafttransport/**", "buildcraft/transport/**", "buildcraft/BuildCraftTransport**", "LICENSE"])
+        }
+    }
+}
+
+task roboticsJar(type: Jar, dependsOn: reobf) {
+
+    destinationDir = file("modules")
+    classifier = 'robotics'
+
+    doFirst {
+        from(createMCModInfo(6, name).parentFile)
+        from(project.ext.jarFile) {
+            includes.addAll(["assets/buildcraftrobotics/**", "buildcraft/robotics/**", "buildcraft/BuildCraftRobotics**", "LICENSE"])
+        }
+    }
+}
+
+
 // add api classes to main package
 jar {
 	from sourceSets.api.output
@@ -133,11 +259,17 @@ build.dependsOn sourceJar, javadocJar, deobfJar, apiJar
 // create the deployerJars dependency configuration
 configurations {
     deployerJars
+    sshAntTask
 }
 
 dependencies {
     // dependency in deployerJars, for maven deployment. see definition in mavenDeployer{} below
     deployerJars "org.apache.maven.wagon:wagon-ssh:2.2"
+    sshAntTask 'org.apache.ant:ant-jsch:1.9.6', 'com.jcraft:jsch:0.1.53'
+}
+
+clean{
+    delete "modules"
 }
 
 // specify artifacts to be uploaded
@@ -147,7 +279,51 @@ artifacts {
     archives javadocJar
     archives deobfJar
     archives apiJar
+
+    // Modules
+    archives coreJar
+    archives buildersJar
+    archives energyJar
+    archives factoryJar
+    archives siliconJar
+    archives transportJar
+    archives roboticsJar
 }
+
+def sftp(String subPath, Closure antFileset = {}) {
+    ant {
+        taskdef(name: 'scp', classname: 'org.apache.tools.ant.taskdefs.optional.ssh.Scp',
+                classpath: configurations.sshAntTask.asPath)
+        Map sftpArgs = [
+                               verbose : 'yes',
+                               todir : priv.username + "@" + priv.host + ":" + priv.remotedir + version + "/" + subPath,
+                               port: priv.port,
+                               password: priv.password,
+                               sftp: true,
+                               trust: 'yes'
+        ]
+        delegate.scp(sftpArgs) {
+            antFileset.delegate = delegate
+            antFileset()
+        }
+    }
+}
+
+task upload(dependsOn: build) {
+    description = 'Update files on remote server.'
+    doFirst {
+        sftp("") {
+            fileset(dir: libsDir)
+        }
+        sftp("modules") {
+            fileset(dir: 'modules')
+        }
+    }
+}
+
+
+if (ext.priv == null)
+    upload.enabled = false;
 
 uploadArchives {
     // make sure this happens after reobfuscation
