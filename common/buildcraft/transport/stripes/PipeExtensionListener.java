@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -19,6 +20,8 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.core.proxy.CoreProxy;
+import buildcraft.transport.BlockGenericPipe;
+import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
 import buildcraft.transport.TravelingItem;
@@ -84,6 +87,8 @@ public class PipeExtensionListener {
 				w.getTileEntity(r.x, r.y, r.z).writeToNBT(nbt);
 				w.setBlockToAir(r.x, r.y, r.z);
 
+				boolean failedPlacement = false;
+
 				// Step 2: If retracting, remove previous pipe; if extending, add new pipe
 				if (retract) {
 					removedPipeStacks = w.getBlock((int) target.x, (int) target.y, (int) target.z).getDrops(w, (int) target.x, (int) target.y, (int) target.z,
@@ -91,9 +96,12 @@ public class PipeExtensionListener {
 
 					w.setBlockToAir((int) target.x, (int) target.y, (int) target.z);
 				} else {
-					r.stack.getItem().onItemUse(r.stack,
+					if (!r.stack.getItem().onItemUse(r.stack,
 							CoreProxy.proxy.getBuildCraftPlayer((WorldServer) w, r.x, r.y, r.z).get(),
-							w, r.x, r.y, r.z, 1, 0, 0, 0);
+							w, r.x, r.y, r.z, 1, 0, 0, 0)) {
+						failedPlacement = true;
+						target.moveBackwards(1.0D);
+					}
 				}
 
 				// Step 3: Place stripes pipe back
@@ -113,7 +121,7 @@ public class PipeExtensionListener {
 
 				// Step 4: Hope for the best, clean up.
 				PipeTransportItems items = (PipeTransportItems) pipeTile.pipe.transport;
-				if (!retract) {
+				if (!retract && !failedPlacement) {
 					r.stack.stackSize--;
 				}
 
@@ -126,10 +134,11 @@ public class PipeExtensionListener {
 					}
 				}
 
-				if (!retract) {
+				if (!retract && !failedPlacement) {
 					TileGenericPipe newPipeTile = (TileGenericPipe) w.getTileEntity(r.x, r.y, r.z);
 					newPipeTile.updateEntity();
 					pipeTile.scheduleNeighborChange();
+					pipeTile.scheduleWireChange();
 				}
 			}
 			rSet.clear();

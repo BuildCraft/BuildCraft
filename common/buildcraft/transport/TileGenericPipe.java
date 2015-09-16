@@ -606,6 +606,12 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 		blockNeighborChangedSides |= direction == ForgeDirection.UNKNOWN ? 0x3F : (1 << direction.ordinal());
 	}
 
+	public void scheduleWireChange() {
+		if (pipe != null) {
+			pipe.scheduleInternalUpdate();
+		}
+	}
+
 	@Override
 	public boolean canInjectItems(ForgeDirection from) {
 		if (getPipeType() != IPipeTile.PipeType.ITEM) {

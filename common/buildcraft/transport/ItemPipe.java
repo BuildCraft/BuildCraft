@@ -90,7 +90,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 
 			if (pipe == null) {
 				BCLog.logger.log(Level.WARN, "Pipe failed to create during placement at {0},{1},{2}", i, j, k);
-				return true;
+				return false;
 			}
 			
 			if (BlockGenericPipe.placePipe(pipe, world, i, j, k, block, 0, entityplayer)) {
@@ -107,9 +107,11 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 						block.stepSound.getPitch() * 0.8F);
 
 				itemstack.stackSize--;
-			}
 
-			return true;
+				return true;
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}

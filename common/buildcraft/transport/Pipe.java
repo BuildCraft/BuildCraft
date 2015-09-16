@@ -259,6 +259,10 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		}
 	}
 
+	protected void scheduleInternalUpdate() {
+		internalUpdateScheduled = true;
+	}
+
 	public void updateSignalState() {
 		for (PipeWire c : PipeWire.values()) {
 			updateSignalStateForColor(c);
