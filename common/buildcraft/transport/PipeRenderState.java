@@ -16,11 +16,10 @@ import buildcraft.transport.utils.TextureMatrix;
 import buildcraft.transport.utils.WireMatrix;
 
 public class PipeRenderState implements ISerializable {
-
 	public final ConnectionMatrix pipeConnectionMatrix = new ConnectionMatrix();
 	public final TextureMatrix textureMatrix = new TextureMatrix();
 	public final WireMatrix wireMatrix = new WireMatrix();
-	protected boolean glassColorDirty = false;
+	private boolean glassColorDirty = false;
 	private byte glassColor = -127;
 	
 	private boolean dirty = true;
@@ -38,7 +37,10 @@ public class PipeRenderState implements ISerializable {
 	}
 
 	public void setGlassColor(byte color) {
-		this.glassColor = color;
+        if (this.glassColor != color) {
+            this.glassColor = color;
+            this.glassColorDirty = true;
+        }
 	}
 
 	public boolean isDirty() {

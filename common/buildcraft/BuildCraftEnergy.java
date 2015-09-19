@@ -261,7 +261,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 			FluidContainerRegistry.registerFluidContainer(FluidRegistry.getFluidStack("fuel", FluidContainerRegistry.BUCKET_VOLUME), new ItemStack(bucketFuel), new ItemStack(Items.bucket));
 		}
 
-		if (!BuildCraftCore.NONRELEASED_BLOCKS) {
+		if (BuildCraftCore.DEVELOPER_MODE) {
 			if (blockRedPlasma != null) {
 				bucketRedPlasma = new ItemBucketBuildcraft(blockRedPlasma);
 				bucketRedPlasma.setUnlocalizedName("bucketRedPlasma").setContainerItem(Items.bucket);

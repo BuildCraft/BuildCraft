@@ -181,8 +181,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	@Mod.Instance("BuildCraft|Core")
 	public static BuildCraftCore instance;
 
-	public static final boolean NONRELEASED_BLOCKS = true;
-	public static final boolean TABLET_TESTING = true;
+	public static final boolean DEVELOPER_MODE = false;
 
 	public enum RenderMode {
 		Full, NoDynamic
@@ -357,7 +356,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		paintbrushItem = (new ItemPaintbrush()).setUnlocalizedName("paintbrush");
 		CoreProxy.proxy.registerItem(paintbrushItem);
 
-		if (TABLET_TESTING) {
+		if (DEVELOPER_MODE) {
 			tabletItem = new ItemTablet();
 			tabletItem.setUnlocalizedName("tablet");
 			CoreProxy.proxy.registerItem(tabletItem);

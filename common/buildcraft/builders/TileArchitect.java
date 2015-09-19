@@ -47,11 +47,11 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 
 	public enum Mode {
-		EDIT, COPY
+		NONE, EDIT, COPY
 	}
 
 	public String currentAuthorName = "";
-	public Mode mode = Mode.EDIT;
+	public Mode mode = Mode.NONE;
 
 	public Box box = new Box();
 	public String name = "";
@@ -105,7 +105,11 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 					sendNetworkUpdate();
 					return;
 				} else {
-					mode = Mode.EDIT;
+                    if (BuildCraftCore.DEVELOPER_MODE) {
+                        mode = Mode.EDIT;
+                    } else {
+                        mode = Mode.NONE;
+                    }
 				}
 			} else {
 				mode = Mode.COPY;
@@ -162,7 +166,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 
 	@Override
 	public boolean isUseableByPlayer(EntityPlayer entityplayer) {
-		return worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
+		return mode != Mode.NONE && worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 
 	@Override

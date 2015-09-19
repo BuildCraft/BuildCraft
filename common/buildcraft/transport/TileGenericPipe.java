@@ -454,7 +454,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	public boolean setPipeColor(int color) {
 		if (!worldObj.isRemote && color >= -1 && color < 16 && glassColor != color) {
-			renderState.glassColorDirty = true;
 			glassColor = color;
 			notifyBlockChanged();
 			worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, blockType);
@@ -507,34 +506,6 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 					break;
 
 			}
-		}
-
-		// Facades
-		for (ForgeDirection direction : ForgeDirection.VALID_DIRECTIONS) {
-			PipePluggable pluggable = sideProperties.pluggables[direction.ordinal()];
-			if (!(pluggable instanceof FacadePluggable)) {
-				continue;
-			}
-
-			FacadeState[] states = ((FacadePluggable) pluggable).states;
-			// Iterate over all states and activate first proper
-			int defaultState = -1;
-			int activeState = -1;
-			for (int i = 0; i < states.length; i++) {
-				FacadeState state = states[i];
-				if (state.wire == null) {
-					defaultState = i;
-					continue;
-				}
-				if (pipe != null && pipe.isWireActive(state.wire)) {
-					activeState = i;
-					break;
-				}
-			}
-			if (activeState < 0) {
-				activeState = defaultState;
-			}
-			((FacadePluggable) pluggable).setActiveState(activeState);
 		}
 
 		/* TODO: Rewrite the requiresRenderUpdate API to run on the
