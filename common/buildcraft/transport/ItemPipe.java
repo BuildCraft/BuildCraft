@@ -156,7 +156,7 @@ public class ItemPipe extends ItemBuildCraft implements IItemPipe {
 			int color = (stack.getItemDamage() - 1) & 15;
 			list.add(ColorUtils.getFormattingTooltip(color) + EnumChatFormatting.ITALIC + StringUtils.localize("color." + ColorUtils.getName(color)));
 		}
-		Class<? extends Pipe> pipe = BlockGenericPipe.pipes.get(this);
+		Class<? extends Pipe<?>> pipe = BlockGenericPipe.pipes.get(this);
 		List<String> toolTip = PipeToolTipManager.getToolTip(pipe, advanced);
 		list.addAll(toolTip);
 	}

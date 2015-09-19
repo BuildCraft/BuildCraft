@@ -40,7 +40,7 @@ public class StripesHandlerMinecartDestroy implements IStripesHandler {
 			ForgeDirection direction, ItemStack stack, EntityPlayer player,
 			IStripesActivator activator) {
 		AxisAlignedBB box = AxisAlignedBB.getBoundingBox(x, y, z, x + 1, y + 1,	z + 1);
-		List entities = world.getEntitiesWithinAABBExcludingEntity(null, box);
+		List<?> entities = world.getEntitiesWithinAABBExcludingEntity(null, box);
 		if (entities.size() <= 0) {
 			return false;
 		}

@@ -62,7 +62,7 @@ public class PacketFluidUpdate extends PacketCoordinates {
 			return;
 		}
 
-		Pipe pipe = (Pipe) pipeTile.getPipe();
+		Pipe<?> pipe = (Pipe<?>) pipeTile.getPipe();
 
 		if (!(pipe.transport instanceof PipeTransportFluids)) {
 			return;

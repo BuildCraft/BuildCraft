@@ -36,6 +36,7 @@ public class TickHandlerCore {
 			player.addChatMessage(new ChatComponentTranslation("bc_update.download"));
 			player.addChatMessage(new ChatComponentTranslation("bc_update.once"));
 			player.addChatMessage(new ChatComponentTranslation("bc_update.again"));
+			player.addChatMessage(new ChatComponentTranslation("bc_update.changelog"));
 		}
 
 		nagged = true;

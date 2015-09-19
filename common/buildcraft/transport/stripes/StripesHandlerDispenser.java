@@ -90,7 +90,7 @@ public class StripesHandlerDispenser implements IStripesHandler {
 			return true;
 		}
 
-		Class c = stack.getItem().getClass();
+		Class<?> c = stack.getItem().getClass();
 		while (c != Item.class) {
 			if (items.contains(c)) {
 				return true;

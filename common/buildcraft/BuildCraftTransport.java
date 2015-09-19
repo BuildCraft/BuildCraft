@@ -475,7 +475,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 		new BptPipeRotatable(pipeItemsEmzuli);
 
 		for (Item itemPipe : BlockGenericPipe.pipes.keySet()) {
-			Class<? extends Pipe> klazz = BlockGenericPipe.pipes.get(itemPipe);
+			Class<? extends Pipe<?>> klazz = BlockGenericPipe.pipes.get(itemPipe);
 
 			if (IDiamondPipe.class.isAssignableFrom(klazz)) {
 				new BptPipeFiltered(itemPipe);
@@ -700,18 +700,18 @@ public class BuildCraftTransport extends BuildCraftMod {
 		InterModComms.processIMC(event);
 	}
 
-	public static Item buildPipe(Class<? extends Pipe> clas, Object... ingredients) {
+	public static Item buildPipe(Class<? extends Pipe<?>> clas, Object... ingredients) {
 		return buildPipe(clas, BCCreativeTab.get("pipes"), ingredients);
 	}
 
 	@Deprecated
-	public static Item buildPipe(Class<? extends Pipe> clas,
+	public static Item buildPipe(Class<? extends Pipe<?>> clas,
 								 String descr, BCCreativeTab creativeTab,
 								 Object... ingredients) {
 		return buildPipe(clas, creativeTab, ingredients);
 	}
 
-	public static Item buildPipe(Class<? extends Pipe> clas, BCCreativeTab creativeTab,
+	public static Item buildPipe(Class<? extends Pipe<?>> clas, BCCreativeTab creativeTab,
 			Object... ingredients) {
 		ItemPipe res = BlockGenericPipe.registerPipe(clas, creativeTab);
 		res.setUnlocalizedName(clas.getSimpleName());

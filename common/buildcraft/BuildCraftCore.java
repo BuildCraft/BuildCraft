@@ -411,7 +411,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		// BuildCraft 6.1.4 and below - migration only
 		StatementManager.registerParameterClass("buildcraft:stackTrigger", StatementParameterItemStack.class);
 		StatementManager.registerParameterClass("buildcraft:stackAction", StatementParameterItemStack.class);
-				
+
 		StatementManager.registerParameterClass(StatementParameterItemStack.class);
 		StatementManager.registerParameterClass(StatementParameterItemStackExact.class);
 		StatementManager.registerParameterClass(StatementParameterDirection.class);

@@ -57,7 +57,7 @@ public final class RobotUtils {
 				boards = Lists.reverse((List<RedstoneBoardNBT<?>>) boards);
 			}
 			boolean found = false;
-			for (RedstoneBoardNBT boardNBT : boards) {
+			for (RedstoneBoardNBT<?> boardNBT : boards) {
 				if (found) {
 					return (RedstoneBoardRobotNBT) boardNBT;
 				} else if (ItemRobot.getRobotNBT(stack) == boardNBT) {

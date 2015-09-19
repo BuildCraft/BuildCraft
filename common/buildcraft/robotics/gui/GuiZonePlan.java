@@ -72,7 +72,7 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 	private GuiBetterButton tool, fsButton;
 
 	private List inventorySlots;
-	private List savedButtonList;
+	private List<GuiBetterButton> savedButtonList;
 
 	private GuiTextField textField;
 
@@ -334,8 +334,8 @@ public class GuiZonePlan extends GuiAdvancedInterface {
 		uploadMap();
 		refreshSelectedArea();
 
-		container.inventorySlots = new LinkedList();
-		buttonList = new LinkedList();
+		container.inventorySlots = new LinkedList<Object>();
+		buttonList = new LinkedList<GuiBetterButton>();
 	}
 
 	private void toWindowed() {

@@ -19,5 +19,13 @@ public class SubCommandVersion extends SubCommand {
         sender.addChatMessage(new ChatComponentTranslation("command.buildcraft.version", Version.getVersion(),
                 CoreProxy.proxy.getMinecraftVersion(), Version.getRecommendedVersion())
                 .setChatStyle(new ChatStyle().setColor(Version.isOutdated() ? EnumChatFormatting.RED : EnumChatFormatting.GREEN)));
+		
+        if (Version.needsUpdateNoticeAndMarkAsSeen()) {
+        	sender.addChatMessage(new ChatComponentTranslation("bc_update.new_version",
+    				Version.getRecommendedVersion(),
+    				CoreProxy.proxy.getMinecraftVersion()));
+            sender.addChatMessage(new ChatComponentTranslation("bc_update.download"));
+            sender.addChatMessage(new ChatComponentTranslation("bc_update.changelog"));
+        }
     }
 }
