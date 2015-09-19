@@ -32,16 +32,6 @@ public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
 	}
 
 	@Override
-	public int minEnergyReceived() {
-		return 0;
-	}
-
-	@Override
-	public int maxEnergyReceived() {
-		return 500;
-	}
-
-	@Override
 	protected EnergyStage computeEnergyStage() {
 		double energyLevel = getEnergyLevel();
 		if (energyLevel < 0.33f) {
@@ -100,14 +90,14 @@ public class TileEngineWood extends TileEngineBase implements IRedstoneEngine {
 	}
 
 	@Override
-	public int calculateCurrentOutput() {
+	public int getIdealOutput() {
 		return 10;
 	}
 
-	@Override
-	public int maxEnergyExtracted() {
-		return 10;
-	}
+    @Override
+    public int calculateCurrentOutput() {
+        return 10;
+    }
 
 	@Override
 	public boolean canConnectEnergy(ForgeDirection from) {

@@ -114,6 +114,11 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 		}
 	}
 
+    @Override
+    public float getOutputMultiplier() {
+        return 4.0f;
+    }
+
 	private float getBiomeTempScalar() {
 		if (biomeCache == null) {
 			biomeCache = worldObj.getBiomeGenForCoords(xCoord, zCoord);
@@ -427,22 +432,12 @@ public class TileEngineIron extends TileEngineWithInventory implements IFluidHan
 	}
 
 	@Override
-	public int maxEnergyReceived() {
-		return 20000;
-	}
-
-	@Override
-	public int maxEnergyExtracted() {
-		return 5000;
-	}
-
-	@Override
 	public int getMaxEnergy() {
 		return 100000;
 	}
 
 	@Override
-	public int calculateCurrentOutput() {
+	public int getIdealOutput() {
 		if (currentFuel == null) {
 			return 0;
 		} else {

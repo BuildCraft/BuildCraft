@@ -72,7 +72,7 @@ public class TileEngineStone extends TileEngineWithInventory {
 		if (burnTime > 0) {
 			burnTime--;
 			if (isRedstonePowered) {
-				currentOutput = calculateCurrentOutput();
+				currentOutput = getIdealOutput();
 				addEnergy(currentOutput);
 			}
 		} else {
@@ -139,22 +139,12 @@ public class TileEngineStone extends TileEngineWithInventory {
 	}
 
 	@Override
-	public int maxEnergyReceived() {
-		return 2000;
-	}
-
-	@Override
-	public int maxEnergyExtracted() {
-		return 1000;
-	}
-
-	@Override
 	public int getMaxEnergy() {
 		return 10000;
 	}
 
 	@Override
-	public int calculateCurrentOutput() {
+	public int getIdealOutput() {
         if (burnItem != null && burnItem.getItem() == Items.paper) {
             return 1;
         }

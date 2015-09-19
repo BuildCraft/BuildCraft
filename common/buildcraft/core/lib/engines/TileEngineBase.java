@@ -482,7 +482,7 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 	}
 
 	public int extractEnergy(int energyMax, boolean doExtract) {
-		int max = Math.min(energyMax, maxEnergyExtracted());
+		int max = Math.min(energyMax, calculateCurrentOutput());
 
 		int extracted;
 
@@ -517,19 +517,19 @@ public abstract class TileEngineBase extends TileBuildCraft implements IPipeConn
 
 	public abstract int getMaxEnergy();
 
-	public int minEnergyReceived() {
-		return 20;
-	}
-
-	public abstract int maxEnergyReceived();
-
-	public abstract int maxEnergyExtracted();
-
 	public int getEnergyStored() {
 		return energy;
 	}
 
-	public abstract int calculateCurrentOutput();
+	public abstract int getIdealOutput();
+
+    public float getOutputMultiplier() {
+        return heat / IDEAL_HEAT;
+    }
+
+    public int calculateCurrentOutput() {
+        return (int) Math.floor((float) getIdealOutput() * getOutputMultiplier());
+    };
 
 	@Override
 	public ConnectOverride overridePipeConnection(IPipeTile.PipeType type, ForgeDirection with) {
