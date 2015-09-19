@@ -22,6 +22,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -861,7 +862,7 @@ public class EntityRobot extends EntityRobotBase implements
 	public boolean attackEntityFrom(DamageSource source, float f) {
 		// Ignore hits from mobs or when docked.
 		Entity src = source.getSourceOfDamage();
-		if (!(src instanceof IMob) && currentDockingStation == null) {
+		if (src != null && !(src instanceof EntityFallingBlock) && !(src instanceof IMob) && currentDockingStation == null) {
 			if (ForgeHooks.onLivingAttack(this, source, f)) {
 				return false;
 			}
