@@ -88,7 +88,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 		return IPipeTile.PipeType.POWER;
 	}
 
-	public void initFromPipe(Class<? extends Pipe> pipeClass) {
+	public void initFromPipe(Class<? extends Pipe<?>> pipeClass) {
 		if (BuildCraftTransport.usePipeLoss) {
 			maxPower = 10240;
 			powerResistance = powerResistances.get(pipeClass);
@@ -332,7 +332,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 					if (nearbyTile.getPipe() == null || nearbyTile.getPipeType() != IPipeTile.PipeType.POWER) {
 						continue;
 					}
-					PipeTransportPower nearbyTransport = (PipeTransportPower) ((Pipe) nearbyTile.getPipe()).transport;
+					PipeTransportPower nearbyTransport = (PipeTransportPower) ((Pipe<?>) nearbyTile.getPipe()).transport;
 					nearbyTransport.requestEnergy(ForgeDirection.VALID_DIRECTIONS[i].getOpposite(), transferQuery[i]);
 				}
 			}

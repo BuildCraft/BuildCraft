@@ -16,7 +16,7 @@ import net.minecraft.world.World;
 
 public class CommandTargetTile extends CommandTarget {
 	@Override
-	public Class getHandledClass() {
+	public Class<?> getHandledClass() {
 		return TileEntity.class;
 	}
 

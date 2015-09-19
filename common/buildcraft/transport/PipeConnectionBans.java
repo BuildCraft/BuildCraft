@@ -31,7 +31,7 @@ import buildcraft.transport.pipes.PipePowerWood;
  */
 public final class PipeConnectionBans {
 
-	private static final SetMultimap<Class<? extends Pipe>, Class<? extends Pipe>> connectionBans = HashMultimap.create();
+	private static final SetMultimap<Class<? extends Pipe<?>>, Class<? extends Pipe<?>>> connectionBans = HashMultimap.create();
 
 	static {
 		// Fluid pipes
@@ -65,7 +65,7 @@ public final class PipeConnectionBans {
 	 *
 	 * @param types
 	 */
-	public static void banConnection(Class<? extends Pipe>... types) {
+	public static void banConnection(Class<? extends Pipe<?>>... types) {
 		if (types.length == 0) {
 			return;
 		}

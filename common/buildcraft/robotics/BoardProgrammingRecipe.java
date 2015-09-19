@@ -36,7 +36,7 @@ public class BoardProgrammingRecipe implements IProgrammingRecipe {
 	@Override
 	public List<ItemStack> getOptions(int width, int height) {
 		List<ItemStack> options = new ArrayList<ItemStack>(width * height);
-		for (RedstoneBoardNBT nbt : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
+		for (RedstoneBoardNBT<?> nbt : RedstoneBoardRegistry.instance.getAllBoardNBTs()) {
 			ItemStack stack = new ItemStack(BuildCraftRobotics.redstoneBoard);
 			nbt.createBoard(NBTUtils.getItemData(stack));
 			options.add(stack);

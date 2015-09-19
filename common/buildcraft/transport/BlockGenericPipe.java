@@ -68,7 +68,7 @@ import buildcraft.transport.render.PipeRendererWorld;
 
 public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable {
 
-	public static Map<Item, Class<? extends Pipe>> pipes = new HashMap<Item, Class<? extends Pipe>>();
+	public static Map<Item, Class<? extends Pipe<?>>> pipes = new HashMap<Item, Class<? extends Pipe<?>>>();
 	public static Map<BlockIndex, Pipe<?>> pipeRemoved = new HashMap<BlockIndex, Pipe<?>>();
 
 	private static long lastRemovedDate = -1;
@@ -632,7 +632,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 			} else if (currentItem.getItem() instanceof IToolWrench) {
 				// Only check the instance at this point. Call the IToolWrench
 				// interface callbacks for the individual pipe/logic calls
-				if (pipe.blockActivated(player)) {
+				if (pipe.blockActivated(player, ForgeDirection.getOrientation(side))) {
 					return true;
 				}
 
@@ -686,7 +686,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 				clickedGate.openGui(player);
 				return true;
 			} else {
-				if (pipe.blockActivated(player)) {
+				if (pipe.blockActivated(player, ForgeDirection.getOrientation(side))) {
 					return true;
 				}
 
@@ -876,7 +876,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 	}
 
 	/* Registration ******************************************************** */
-	public static ItemPipe registerPipe(Class<? extends Pipe> clas, BCCreativeTab creativeTab) {
+	public static ItemPipe registerPipe(Class<? extends Pipe<?>> clas, BCCreativeTab creativeTab) {
 		ItemPipe item = new ItemPipe(creativeTab);
 		item.setUnlocalizedName("buildcraftPipe." + clas.getSimpleName().toLowerCase(Locale.ENGLISH));
 		GameRegistry.registerItem(item, item.getUnlocalizedName());
@@ -1092,7 +1092,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 	public IIcon getIcon(IBlockAccess world, int i, int j, int k, int side) {
 		TileEntity tile = world.getTileEntity(i, j, k);
 		if (tile instanceof TileGenericPipe) {
-			Pipe pipe = (Pipe) ((TileGenericPipe) tile).getPipe();
+			Pipe<?> pipe = (Pipe<?>) ((TileGenericPipe) tile).getPipe();
 			return pipe.getIconProvider().getIcon(pipe.getIconIndexForItem());
 		}
 
