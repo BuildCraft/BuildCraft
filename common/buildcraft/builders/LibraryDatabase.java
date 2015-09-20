@@ -33,7 +33,7 @@ public class LibraryDatabase {
 	protected LibraryId[] pages = new LibraryId[0];
 
 	private File outputDir;
-	private File[] inputDirs;
+	private List<File> inputDirs;
 
 	/**
 	 * Initialize the blueprint database.
@@ -47,10 +47,13 @@ public class LibraryDatabase {
 			outputDir.mkdirs();
 		}
 
-		inputDirs = new File[inputPaths.length];
+		inputDirs = new ArrayList<File>();
 
-		for (int i = 0; i < inputDirs.length; ++i) {
-			inputDirs[i] = new File(inputPaths[i]);
+		for (int i = 0; i < inputPaths.length; ++i) {
+            File inputDir = new File(inputPaths[i]);
+            if (inputDir.exists()) {
+                inputDirs.add(inputDir);
+            }
 		}
 
 		refresh();
@@ -58,7 +61,9 @@ public class LibraryDatabase {
 
 	public void refresh() {
 		blueprintIds = new TreeSet<LibraryId>();
-		loadIndex(inputDirs);
+		for (File f : inputDirs) {
+            loadIndex(f);
+        }
 	}
 
 	public void deleteBlueprint (LibraryId id) {
@@ -113,14 +118,6 @@ public class LibraryDatabase {
 				f.close();
 			} catch (IOException ex) {
 				BCLog.logger.error(String.format("Failed to save library file: %s %s", blueprintFile.getName(), ex.getMessage()));
-			}
-		}
-	}
-
-	private void loadIndex(File[] dirs) {
-		for (File dir : dirs) {
-			if (dir != null) {
-				loadIndex(dir);
 			}
 		}
 	}
