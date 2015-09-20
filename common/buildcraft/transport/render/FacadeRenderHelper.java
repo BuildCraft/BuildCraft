@@ -201,7 +201,7 @@ public final class FacadeRenderHelper {
 		textureManager.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal())); // Structure Pipe
 
 		// Always render connectors in pass 0
-		if (renderPass == 0 && !pluggable.isHollow()) {
+		if (renderPass == 0 && !pluggable.isHollow() && renderBlock.getMaterial().isOpaque()) {
 			float[][] rotated = MatrixTranformations.deepClone(zeroStateSupport);
 			MatrixTranformations.transform(rotated, direction);
 

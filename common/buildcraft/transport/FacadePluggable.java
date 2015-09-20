@@ -178,7 +178,7 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
 	}
 
 	private void prepareStates() {
-		if (states.length > 1) {
+		if (states != null && states.length > 1) {
 			if (pipe == null || pipe.getPipe() == null) {
 				activeState = states[0];
 				return;
@@ -203,13 +203,6 @@ public class FacadePluggable extends PipePluggable implements IFacadePluggable {
 			activeState = activeStateId < 0 ? (defaultStateId < 0 ? states[0] : states[defaultStateId]) : states[activeStateId];
 		} else if (activeState == null) {
 			activeState = states != null && states.length > 0 ? states[0] : null;
-		}
-	}
-
-	@Override
-	public void update(IPipeTile pipe, ForgeDirection direction) {
-		if (states.length > 1) {
-			// Iterate over all states and activate first proper
 		}
 	}
 }

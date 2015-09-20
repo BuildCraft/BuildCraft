@@ -170,7 +170,7 @@ public class FacadeItemRenderer implements IItemRenderer {
 		RenderUtils.setGLColorFromInt(0xFFFFFF);
 
 		// Render StructurePipe
-		if (!hollow) {
+		if (!hollow && block.getMaterial().isOpaque()) {
 			block = BuildCraftTransport.genericPipeBlock;
 			IIcon textureID = BuildCraftTransport.instance.pipeIconProvider.getIcon(PipeIconProvider.TYPE.PipeStructureCobblestone.ordinal()); // Structure pipe
 
