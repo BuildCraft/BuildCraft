@@ -20,7 +20,8 @@ import buildcraft.core.lib.block.BlockBuildCraft;
 
 public class BlockBlueprintLibrary extends BlockBuildCraft {
     public BlockBlueprintLibrary() {
-		super(Material.wood, BCCreativeTab.get("main"));
+		super(Material.iron, BCCreativeTab.get("main"));
+		setHardness(5F);
 		setRotatable(true);
 	}
 

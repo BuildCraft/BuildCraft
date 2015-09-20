@@ -614,8 +614,8 @@ public class BuildCraftBuilders extends BuildCraftMod {
 			'c', Blocks.crafting_table, 'g', "gearDiamond", 'C',
 			new ItemStack(blueprintItem, 1));
 
-		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), "bbb", "bBb", "bbb", 'b',
-				new ItemStack(blueprintItem), 'B', Blocks.bookshelf);
+		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), "igi", "bBb", "iri", 'B',
+				new ItemStack(blueprintItem), 'b', Blocks.bookshelf, 'i', "ingotIron", 'g', "gearIron", 'r', Items.redstone);
 	}
 
 	@Mod.EventHandler

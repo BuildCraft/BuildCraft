@@ -31,9 +31,8 @@ public class BlockBuilder extends BlockBuildCraft {
 	public IIcon blockTopOn;
 
 	public BlockBuilder() {
-		super(Material.iron);
+		super(Material.iron, BCCreativeTab.get("main"));
 		setHardness(5F);
-		setCreativeTab(BCCreativeTab.get("main"));
 		setRotatable(true);
 	}
 
