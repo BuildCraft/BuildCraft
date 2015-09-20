@@ -7,7 +7,6 @@ import com.google.common.collect.Multimap;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
-import buildcraft.api.core.BCLog;
 import buildcraft.api.core.BlockIndex;
 import buildcraft.api.core.Position;
 import buildcraft.core.builders.BuildingSlotBlock;

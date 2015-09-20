@@ -55,7 +55,6 @@ public final class ThreadSafeUtils {
 	/**
 	 * This function assumes that you're using BC's ChannelHandler system, which only has one
 	 * channel handler. This might get very messy otherwise.
-	 * <p/>
 	 * TODO: HACK - Can we rewrite this for BC 7.1 along with the whole network system to be somewhat more sane? Please?
 	 *
 	 * @param packet
