@@ -105,7 +105,6 @@ import buildcraft.builders.schematics.SchematicFire;
 import buildcraft.builders.schematics.SchematicGlassPane;
 import buildcraft.builders.schematics.SchematicGravel;
 import buildcraft.builders.schematics.SchematicHanging;
-import buildcraft.builders.schematics.SchematicLever;
 import buildcraft.builders.schematics.SchematicMinecart;
 import buildcraft.builders.schematics.SchematicPiston;
 import buildcraft.builders.schematics.SchematicPortal;
@@ -119,6 +118,7 @@ import buildcraft.builders.schematics.SchematicSign;
 import buildcraft.builders.schematics.SchematicSkull;
 import buildcraft.builders.schematics.SchematicStairs;
 import buildcraft.builders.schematics.SchematicStone;
+import buildcraft.builders.schematics.SchematicSilverfish;
 import buildcraft.builders.schematics.SchematicTripWireHook;
 import buildcraft.builders.statements.BuildersActionProvider;
 import buildcraft.core.CompatHooks;
@@ -134,9 +134,7 @@ import buildcraft.core.builders.schematics.SchematicFree;
 import buildcraft.core.builders.schematics.SchematicIgnore;
 import buildcraft.core.builders.schematics.SchematicRotateMeta;
 import buildcraft.core.builders.schematics.SchematicRotateMetaSupported;
-import buildcraft.core.builders.schematics.SchematicStandalone;
 import buildcraft.core.builders.schematics.SchematicTileCreative;
-import buildcraft.core.builders.schematics.SchematicWallSide;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.proxy.CoreProxy;
 
@@ -365,10 +363,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(Blocks.melon_stem, SchematicSeeds.class, Items.melon_seeds);
 		schemes.registerSchematicBlock(Blocks.nether_wart, SchematicSeeds.class, Items.nether_wart);
 
-		schemes.registerSchematicBlock(Blocks.torch, SchematicWallSide.class);
-		schemes.registerSchematicBlock(Blocks.redstone_torch, SchematicWallSide.class);
-		schemes.registerSchematicBlock(Blocks.unlit_redstone_torch, SchematicWallSide.class);
-
 		schemes.registerSchematicBlock(Blocks.tripwire, SchematicBlockFloored.class);
 		schemes.registerSchematicBlock(Blocks.tripwire_hook, SchematicTripWireHook.class);
 
@@ -395,19 +389,15 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(Blocks.vine, SchematicRotateMeta.class, new int[]{1, 4, 8, 2}, false);
 		schemes.registerSchematicBlock(Blocks.trapdoor, SchematicRotateMeta.class, new int[]{0, 1, 2, 3}, false);
 
-		schemes.registerSchematicBlock(Blocks.wooden_button, SchematicLever.class);
-		schemes.registerSchematicBlock(Blocks.stone_button, SchematicLever.class);
-		schemes.registerSchematicBlock(Blocks.lever, SchematicLever.class);
-
 		schemes.registerSchematicBlock(Blocks.stone, SchematicStone.class);
-		schemes.registerSchematicBlock(Blocks.gold_ore, SchematicStone.class);
-		schemes.registerSchematicBlock(Blocks.iron_ore, SchematicStone.class);
 		schemes.registerSchematicBlock(Blocks.coal_ore, SchematicStone.class);
 		schemes.registerSchematicBlock(Blocks.lapis_ore, SchematicStone.class);
 		schemes.registerSchematicBlock(Blocks.diamond_ore, SchematicStone.class);
 		schemes.registerSchematicBlock(Blocks.redstone_ore, SchematicStone.class);
 		schemes.registerSchematicBlock(Blocks.lit_redstone_ore, SchematicStone.class);
 		schemes.registerSchematicBlock(Blocks.emerald_ore, SchematicStone.class);
+
+		schemes.registerSchematicBlock(Blocks.monster_egg, SchematicSilverfish.class);
 
 		schemes.registerSchematicBlock(Blocks.gravel, SchematicGravel.class);
 
@@ -432,19 +422,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 		schemes.registerSchematicBlock(Blocks.lit_pumpkin, SchematicPumpkin.class);
 
-		schemes.registerSchematicBlock(Blocks.oak_stairs, SchematicStairs.class);
-		schemes.registerSchematicBlock(Blocks.stone_stairs, SchematicStairs.class);
-		schemes.registerSchematicBlock(Blocks.brick_stairs, SchematicStairs.class);
-		schemes.registerSchematicBlock(Blocks.stone_brick_stairs, SchematicStairs.class);
-		schemes.registerSchematicBlock(Blocks.nether_brick_stairs, SchematicStairs.class);
-		schemes.registerSchematicBlock(Blocks.sandstone_stairs, SchematicStairs.class);
-		schemes.registerSchematicBlock(Blocks.spruce_stairs, SchematicStairs.class);
-		schemes.registerSchematicBlock(Blocks.birch_stairs, SchematicStairs.class);
-		schemes.registerSchematicBlock(Blocks.jungle_stairs, SchematicStairs.class);
-		schemes.registerSchematicBlock(Blocks.quartz_stairs, SchematicStairs.class);
-		schemes.registerSchematicBlock(Blocks.acacia_stairs, SchematicStairs.class);
-		schemes.registerSchematicBlock(Blocks.dark_oak_stairs, SchematicStairs.class);
-
 		schemes.registerSchematicBlock(Blocks.wooden_door, SchematicDoor.class, new ItemStack(Items.wooden_door));
 		schemes.registerSchematicBlock(Blocks.iron_door, SchematicDoor.class, new ItemStack(Items.iron_door));
 
@@ -465,16 +442,6 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		schemes.registerSchematicBlock(Blocks.bedrock, SchematicBlockCreative.class);
 
 		schemes.registerSchematicBlock(Blocks.mob_spawner, SchematicTileCreative.class);
-
-		schemes.registerSchematicBlock(Blocks.glass, SchematicStandalone.class);
-		schemes.registerSchematicBlock(Blocks.stone_slab, SchematicStandalone.class);
-		schemes.registerSchematicBlock(Blocks.double_stone_slab, SchematicStandalone.class);
-		schemes.registerSchematicBlock(Blocks.wooden_slab, SchematicStandalone.class);
-		schemes.registerSchematicBlock(Blocks.double_wooden_slab, SchematicStandalone.class);
-		schemes.registerSchematicBlock(Blocks.stained_glass, SchematicStandalone.class);
-		schemes.registerSchematicBlock(Blocks.fence, SchematicStandalone.class);
-		schemes.registerSchematicBlock(Blocks.daylight_detector, SchematicStandalone.class);
-		schemes.registerSchematicBlock(Blocks.iron_bars, SchematicStandalone.class);
 
 		// Standard entities
 

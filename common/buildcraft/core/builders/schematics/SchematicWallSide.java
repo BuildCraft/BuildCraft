@@ -34,8 +34,10 @@ public class SchematicWallSide extends SchematicBlock {
 			case xNeg:
 				return Sets.newHashSet(RELATIVE_INDEXES[ForgeDirection.WEST.ordinal()]);
 			case yPos:
+			case 7:
 				return Sets.newHashSet(RELATIVE_INDEXES[ForgeDirection.UP.ordinal()]);
 			case yNeg:
+			case 6:
 				return Sets.newHashSet(RELATIVE_INDEXES[ForgeDirection.DOWN.ordinal()]);
 			case zPos:
 				return Sets.newHashSet(RELATIVE_INDEXES[ForgeDirection.SOUTH.ordinal()]);
@@ -52,18 +54,18 @@ public class SchematicWallSide extends SchematicBlock {
 		final int zPos = 4;
 		final int zNeg = 3;
 
-		switch (meta) {
+		switch (meta & 7) {
 			case xPos:
-				meta = zPos;
+				meta = (meta & 8) | zPos;
 				break;
 			case zNeg:
-				meta = xPos;
+				meta = (meta & 8) | xPos;
 				break;
 			case xNeg:
-				meta = zNeg;
+				meta = (meta & 8) | zNeg;
 				break;
 			case zPos:
-				meta = xNeg;
+				meta = (meta & 8) | xNeg;
 				break;
 		}
 	}

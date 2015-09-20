@@ -152,7 +152,7 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive, boolean simulate) {
 		int maxR = Math.min(MAX_POWER, maxReceive);
-		if (container.getPipe() instanceof IEnergyHandler) {
+		if (container != null && container.getPipe() instanceof IEnergyHandler) {
 			int energyCanReceive = ((IEnergyHandler) container.getPipe()).receiveEnergy(from, maxR, true);
 			if (!simulate) {
 				return ((IEnergyHandler) container.getPipe()).receiveEnergy(from, energyCanReceive, false);

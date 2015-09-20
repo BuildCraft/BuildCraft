@@ -378,9 +378,9 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 			try {
 				if (slot.isAlreadyBuilt(context)) {
-					requirementMap.remove(slot);
-
 					if (slot.mode == Mode.Build) {
+						requirementMap.remove(slot);
+
 						// Even slots that considered already built may need
 						// post processing calls. For example, flowing water
 						// may need to be adjusted, engines may need to be
@@ -404,7 +404,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 								|| isBlockBreakCanceled(world, slot.x, slot.y, slot.z)) {
 							iterator.remove();
 							markLocationUsed(slot.x, slot.y, slot.z);
-							requirementMap.remove(slot);
 						} else {
 							if (builder == null) {
 								createDestroyItems(slot);
@@ -415,7 +414,6 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 								iterator.remove();
 								markLocationUsed(slot.x, slot.y, slot.z);
-								requirementMap.remove(slot);
 								return slot;
 							}
 						}
