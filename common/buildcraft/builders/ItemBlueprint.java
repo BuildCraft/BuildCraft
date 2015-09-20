@@ -10,6 +10,8 @@ package buildcraft.builders;
 
 import java.util.List;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -103,6 +105,9 @@ public abstract class ItemBlueprint extends ItemBuildCraft implements IBlueprint
 		return itemIcon;
 	}
 
+	public static boolean isContentReadable(ItemStack stack) {
+		return getId(stack) != null;
+	}
 
 	public static LibraryId getId(ItemStack stack) {
 		NBTTagCompound nbt = NBTUtils.getItemData(stack);

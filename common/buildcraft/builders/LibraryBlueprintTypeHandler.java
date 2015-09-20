@@ -19,9 +19,9 @@ public class LibraryBlueprintTypeHandler extends LibraryTypeHandlerNBT {
 	@Override
 	public boolean isHandler(ItemStack stack, HandlerType type) {
 		if (isBlueprint) {
-			return stack.getItem() instanceof ItemBlueprintStandard;
+			return stack.getItem() instanceof ItemBlueprintStandard && ItemBlueprint.isContentReadable(stack);
 		} else {
-			return stack.getItem() instanceof ItemBlueprintTemplate;
+			return stack.getItem() instanceof ItemBlueprintTemplate && ItemBlueprint.isContentReadable(stack);
 		}
 	}
 
