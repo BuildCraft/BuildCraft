@@ -2,8 +2,10 @@ package buildcraft.transport.render;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 

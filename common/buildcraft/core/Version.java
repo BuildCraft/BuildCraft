@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -20,6 +20,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.EnumChatFormatting;
+
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import net.minecraftforge.common.config.Property;
@@ -249,7 +250,7 @@ public class Version implements Runnable {
 
 	public static void displayChangelog(ICommandSender sender) {
 		sender.addChatMessage(new ChatComponentTranslation("command.buildcraft.changelog_header", getRecommendedVersion())
-			.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GRAY).setBold(true)));
+				.setChatStyle(new ChatStyle().setColor(EnumChatFormatting.GRAY).setBold(true)));
 		for (String updateLine : Version.getChangelog()) {
 			EnumChatFormatting format = EnumChatFormatting.BLUE;
 			if (updateLine.startsWith("*")) {

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -17,6 +17,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import cofh.api.energy.IEnergyConnection;
@@ -43,8 +44,6 @@ import buildcraft.transport.pipes.PipePowerQuartz;
 import buildcraft.transport.pipes.PipePowerSandstone;
 import buildcraft.transport.pipes.PipePowerStone;
 import buildcraft.transport.pipes.PipePowerWood;
-import buildcraft.transport.render.PipeTransportPowerRenderer;
-import buildcraft.transport.render.PipeTransportRenderer;
 
 public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	public static final Map<Class<? extends Pipe<?>>, Integer> powerCapacities = new HashMap<Class<? extends Pipe<?>>, Integer>();
@@ -152,26 +151,26 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 		updateTile(side);
 	}
 
-    private void updateTile(ForgeDirection side) {
+	private void updateTile(ForgeDirection side) {
 		int o = side.ordinal();
-        TileEntity tile = container.getTile(side);
-        if (tile != null && container.isPipeConnected(side)) {
-            tiles[o] = tile;
-        } else {
-            tiles[o] = null;
-            internalPower[o] = 0;
-            internalNextPower[o] = 0;
+		TileEntity tile = container.getTile(side);
+		if (tile != null && container.isPipeConnected(side)) {
+			tiles[o] = tile;
+		} else {
+			tiles[o] = null;
+			internalPower[o] = 0;
+			internalNextPower[o] = 0;
 			powerAverage[o].clear();
-        }
+		}
 		providers[o] = getEnergyProvider(o);
-    }
+	}
 
 	private void init() {
 		if (needsInit) {
 			needsInit = false;
-            for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-                updateTile(side);
-            }
+			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+				updateTile(side);
+			}
 		}
 	}
 
@@ -196,11 +195,11 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 
 		init();
 
-        for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-            if (tiles[side.ordinal()] != null && tiles[side.ordinal()].isInvalid()) {
-                updateTile(side);
-            }
-        }
+		for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+			if (tiles[side.ordinal()] != null && tiles[side.ordinal()].isInvalid()) {
+				updateTile(side);
+			}
+		}
 
 		for (int i = 0; i < 6; ++i) {
 			if (internalPower[i] > 0) {
@@ -415,11 +414,11 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 
 	public void requestEnergy(ForgeDirection from, int amount) {
 		step();
-		
+
 		if (this.container.pipe instanceof IPipeTransportPowerHook) {
-		    nextPowerQuery[from.ordinal()] += ((IPipeTransportPowerHook) this.container.pipe).requestEnergy(from, amount);
+			nextPowerQuery[from.ordinal()] += ((IPipeTransportPowerHook) this.container.pipe).requestEnergy(from, amount);
 		} else {
-		    nextPowerQuery[from.ordinal()] += amount;
+			nextPowerQuery[from.ordinal()] += amount;
 		}
 	}
 
@@ -477,7 +476,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 		powerCapacities.put(PipePowerCobblestone.class, 80);
 		powerCapacities.put(PipePowerStone.class, 160);
 		powerCapacities.put(PipePowerWood.class, 320);
-        powerCapacities.put(PipePowerSandstone.class, 320);
+		powerCapacities.put(PipePowerSandstone.class, 320);
 		powerCapacities.put(PipePowerQuartz.class, 640);
 		powerCapacities.put(PipePowerIron.class, 1280);
 		powerCapacities.put(PipePowerGold.class, 2560);

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -27,6 +27,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCoordIntPair;
+
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeChunkManager.Ticket;
 import net.minecraftforge.common.ForgeChunkManager.Type;
@@ -102,7 +103,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 	private int ledState;
 
-	public TileQuarry () {
+	public TileQuarry() {
 		box.kind = Kind.STRIPES;
 		this.setBattery(new RFBattery((int) (2 * 64 * BuilderAPI.BREAK_ENERGY * BuildCraftCore.miningMultiplier), (int) (1000 * BuildCraftCore.miningMultiplier), 0));
 	}
@@ -163,6 +164,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 				&& worldObj.blockExists(box.xMin, box.yMax, box.zMax)
 				&& worldObj.blockExists(box.xMax, box.yMax, box.zMax);
 	}
+
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
@@ -271,6 +273,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 			miner = null;
 		}
 	}
+
 	protected void idling() {
 		if (!findTarget(true)) {
 			// I believe the issue is box going null becuase of bad chunkloader positioning
@@ -547,9 +550,9 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 		if (xSize < 3 || zSize < 3 || (chunkTicket != null && ((xSize * zSize) >> 8) >= chunkTicket.getMaxChunkListDepth())) {
 			if (placedBy != null) {
-					placedBy.addChatMessage(new ChatComponentTranslation("chat.buildcraft.quarry.tooSmall",
-							xSize, zSize,
-							chunkTicket != null ? chunkTicket.getMaxChunkListDepth() : 0));
+				placedBy.addChatMessage(new ChatComponentTranslation("chat.buildcraft.quarry.tooSmall",
+						xSize, zSize,
+						chunkTicket != null ? chunkTicket.getMaxChunkListDepth() : 0));
 			}
 
 			a = new DefaultAreaProvider(xCoord, yCoord, zCoord, xCoord + 10, yCoord + 4, zCoord + 10);
@@ -574,23 +577,23 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 			ForgeDirection o = ForgeDirection.getOrientation(dir > 6 ? 6 : dir).getOpposite();
 
 			switch (o) {
-			case EAST:
-				xMin = xCoord + 1;
-				zMin = zCoord - 4 - 1;
-				break;
-			case WEST:
-				xMin = xCoord - 9 - 2;
-				zMin = zCoord - 4 - 1;
-				break;
-			case SOUTH:
-				xMin = xCoord - 4 - 1;
-				zMin = zCoord + 1;
-				break;
-			case NORTH:
-			default:
-				xMin = xCoord - 4 - 1;
-				zMin = zCoord - 9 - 2;
-				break;
+				case EAST:
+					xMin = xCoord + 1;
+					zMin = zCoord - 4 - 1;
+					break;
+				case WEST:
+					xMin = xCoord - 9 - 2;
+					zMin = zCoord - 4 - 1;
+					break;
+				case SOUTH:
+					xMin = xCoord - 4 - 1;
+					zMin = zCoord + 1;
+					break;
+				case NORTH:
+				default:
+					xMin = xCoord - 4 - 1;
+					zMin = zCoord - 9 - 2;
+					break;
 			}
 
 			box.initialize(xMin, yCoord, zMin, xMin + xSize - 1, yCoord + ySize - 1, zMin + zSize - 1);
@@ -753,7 +756,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 	public boolean isBuildingMaterialSlot(int i) {
 		return true;
 	}
-	
+
 	public void moveHead(double instantSpeed) {
 		int[] target = getTarget();
 		double[] head = getHead();
@@ -858,7 +861,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
-		return new Box (this).extendToEncompass(box).expand(50).getBoundingBox();
+		return new Box(this).extendToEncompass(box).expand(50).getBoundingBox();
 	}
 
 	@Override
@@ -868,7 +871,7 @@ public class TileQuarry extends TileAbstractBuilder implements IHasWork, ISidedI
 
 	@Override
 	public int[] getAccessibleSlotsFromSide(int side) {
-		return new int[] {};
+		return new int[]{};
 	}
 
 	@Override

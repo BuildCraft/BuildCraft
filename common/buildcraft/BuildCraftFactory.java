@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -15,6 +15,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
+
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
@@ -169,7 +170,7 @@ public class BuildCraftFactory extends BuildCraftMod {
 		FMLCommonHandler.instance().bus().register(this);
 		MinecraftForge.EVENT_BUS.register(this);
 	}
-	
+
 	public static void loadRecipes() {
 		if (miningWellBlock != null) {
 			CoreProxy.proxy.addCraftingRecipe(new ItemStack(miningWellBlock, 1),
@@ -274,9 +275,9 @@ public class BuildCraftFactory extends BuildCraftMod {
 	}
 
 	@Mod.EventHandler
-    public void processIMCRequests(FMLInterModComms.IMCEvent event) {
-        InterModComms.processIMC(event);
-    }
+	public void processIMCRequests(FMLInterModComms.IMCEvent event) {
+		InterModComms.processIMC(event);
+	}
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)

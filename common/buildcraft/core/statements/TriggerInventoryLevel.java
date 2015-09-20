@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IInvSlot;
@@ -101,7 +102,7 @@ public class TriggerInventoryLevel extends BCStatement implements ITriggerExtern
 	public void registerIcons(IIconRegister register) {
 		icon = register.registerIcon("buildcraftcore:triggers/trigger_inventory_" + type.name().toLowerCase());
 	}
-	
+
 	@Override
 	public IStatementParameter createParameter(int index) {
 		return new StatementParameterItemStack();

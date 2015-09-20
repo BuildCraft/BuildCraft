@@ -13,6 +13,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidEvent;
@@ -40,8 +41,6 @@ import buildcraft.transport.pipes.PipeFluidsStone;
 import buildcraft.transport.pipes.PipeFluidsVoid;
 import buildcraft.transport.pipes.PipeFluidsWood;
 import buildcraft.transport.pipes.events.PipeEventFluid;
-import buildcraft.transport.render.PipeTransportFluidsRenderer;
-import buildcraft.transport.render.PipeTransportRenderer;
 import buildcraft.transport.utils.FluidRenderData;
 
 public class PipeTransportFluids extends PipeTransport implements IFluidHandler, IDebuggable {
@@ -113,6 +112,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 		/**
 		 * Get the amount of fluid available to move. This nicely takes care
 		 * of the travel delay mechanic.
+		 *
 		 * @return
 		 */
 		public int getAvailable() {
@@ -174,6 +174,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 
 	/**
 	 * This value has to be the same on client and server!
+	 *
 	 * @return
 	 */
 	public int getCapacity() {
@@ -193,7 +194,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 	@Override
 	public void initialize() {
 		super.initialize();
-		
+
 		for (ForgeDirection d : directions) {
 			canReceiveCache[d.ordinal()] = canReceiveFluid(d);
 		}
@@ -439,7 +440,7 @@ public class PipeTransportFluids extends PipeTransport implements IFluidHandler,
 	/**
 	 * Computes the PacketFluidUpdate packet for transmission to a client
 	 *
-	 * @param initPacket everything is sent, no delta stuff ( first packet )
+	 * @param initPacket    everything is sent, no delta stuff ( first packet )
 	 * @param persistChange The render cache change is persisted
 	 * @return PacketFluidUpdate liquid update packet
 	 */

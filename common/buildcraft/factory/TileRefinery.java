@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -14,6 +14,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
 import cpw.mods.fml.relauncher.Side;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -224,12 +225,12 @@ public class TileRefinery extends TileBuildCraft implements IFluidHandler, IHasW
 		FluidStack resourceUsing = resource.copy();
 
 		if (RefineryRecipeManager.INSTANCE.getValidFluidStacks1().contains(resource)) {
-		    used += tanks[0].fill(resourceUsing, doFill);
-		    resourceUsing.amount -= used;
+			used += tanks[0].fill(resourceUsing, doFill);
+			resourceUsing.amount -= used;
 		}
 		if (RefineryRecipeManager.INSTANCE.getValidFluidStacks2().contains(resource)) {
-		    used += tanks[1].fill(resourceUsing, doFill);
-		    resourceUsing.amount -= used;
+			used += tanks[1].fill(resourceUsing, doFill);
+			resourceUsing.amount -= used;
 		}
 		updateRecipe();
 

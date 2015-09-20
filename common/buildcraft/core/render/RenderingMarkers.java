@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
+
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 import buildcraft.BuildCraftCore;
@@ -76,7 +77,7 @@ public class RenderingMarkers implements ISimpleBlockRenderingHandler {
 		metaToOld[4] = 2;
 		metaToOld[5] = 1;
 
-		double[][] frontXBase = { {-0.0625, -0.0625, -0.0625, -0.0625}, {1, 0, 0, 1}, {-0.5, -0.5, 0.5, 0.5}};
+		double[][] frontXBase = {{-0.0625, -0.0625, -0.0625, -0.0625}, {1, 0, 0, 1}, {-0.5, -0.5, 0.5, 0.5}};
 
 		frontX[3] = safeClone(frontXBase);
 		rotateFace(frontX[3]);

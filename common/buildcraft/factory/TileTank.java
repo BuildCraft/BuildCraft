@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -13,6 +13,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.EnumSkyBlock;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -96,8 +97,8 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	/* NETWORK */
 	@Override
 	public void writeData(ByteBuf data) {
-				tankManager.writeData(data);
-			}
+		tankManager.writeData(data);
+	}
 
 	@Override
 	public void readData(ByteBuf stream) {
@@ -118,6 +119,7 @@ public class TileTank extends TileBuildCraft implements IFluidHandler {
 	}
 
 	/* HELPER FUNCTIONS */
+
 	/**
 	 * @return Last tank block below this one or this one if it is the last.
 	 */

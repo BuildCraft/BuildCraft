@@ -159,7 +159,6 @@ public final class TabletFont {
 	}
 
 
-
 	public int getStringWidth(String s) {
 		int width = 0;
 		for (int i = 0; i < s.length(); i++) {

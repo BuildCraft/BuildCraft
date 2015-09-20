@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.api.blueprints.BuildingPermission;
@@ -33,7 +34,7 @@ public class Blueprint extends BlueprintBase {
 	public LinkedList<SchematicEntity> entities = new LinkedList<SchematicEntity>();
 
 	public Blueprint() {
-		super ();
+		super();
 
 		id.extension = "bpt";
 	}
@@ -76,7 +77,7 @@ public class Blueprint extends BlueprintBase {
 		BptContext bptContext = (BptContext) context;
 		Block block = anchorTile.getWorldObj().getBlock(x, y, z);
 		int meta = anchorTile.getWorldObj().getBlockMetadata(x, y, z);
-		
+
 		if (context.world().isAirBlock(x, y, z)) {
 			// Although no schematic will be returned for the block "air" by
 			// the registry, there can be other blocks considered as air. This
@@ -202,13 +203,13 @@ public class Blueprint extends BlueprintBase {
 		nbt.setTag("entities", entitiesNBT);
 
 		NBTTagCompound contextNBT = new NBTTagCompound();
-		mapping.write (contextNBT);
+		mapping.write(contextNBT);
 		nbt.setTag("idMapping", contextNBT);
 	}
 
 	@Override
 	public void loadContents(NBTTagCompound nbt) throws BptError {
-		mapping.read (nbt.getCompoundTag("idMapping"));
+		mapping.read(nbt.getCompoundTag("idMapping"));
 
 		NBTTagList nbtContents = nbt.getTagList("contents",
 				Constants.NBT.TAG_COMPOUND);
@@ -236,21 +237,21 @@ public class Blueprint extends BlueprintBase {
 							SchematicBlockBase schematic = SchematicRegistry.INSTANCE.createSchematicBlock(block, meta);
 							if (schematic != null) {
 								schematic.readSchematicFromNBT(cpt, mapping);
-	
+
 								if (!schematic.doNotUse()) {
 									schematic.idsToWorld(mapping);
-	
+
 									switch (schematic.getBuildingPermission()) {
-									case ALL:
-										break;
-									case CREATIVE_ONLY:
-										if (buildingPermission == BuildingPermission.ALL) {
-											buildingPermission = BuildingPermission.CREATIVE_ONLY;
-										}
-										break;
-									case NONE:
-										buildingPermission = BuildingPermission.NONE;
-										break;
+										case ALL:
+											break;
+										case CREATIVE_ONLY:
+											if (buildingPermission == BuildingPermission.ALL) {
+												buildingPermission = BuildingPermission.CREATIVE_ONLY;
+											}
+											break;
+										case NONE:
+											buildingPermission = BuildingPermission.NONE;
+											break;
 									}
 								} else {
 									schematic = null;
@@ -298,14 +299,14 @@ public class Blueprint extends BlueprintBase {
 	}
 
 	@Override
-	public ItemStack getStack () {
+	public ItemStack getStack() {
 		Item item = (Item) Item.itemRegistry.getObject("BuildCraft|Builders:blueprintItem");
 		ItemStack stack = new ItemStack(item, 1);
 		NBTTagCompound nbt = NBTUtils.getItemData(stack);
-		id.write (nbt);
+		id.write(nbt);
 		nbt.setString("author", author);
 		nbt.setString("name", id.name);
-		nbt.setByte ("permission", (byte) buildingPermission.ordinal());
+		nbt.setByte("permission", (byte) buildingPermission.ordinal());
 		nbt.setBoolean("isComplete", isComplete);
 
 		return stack;

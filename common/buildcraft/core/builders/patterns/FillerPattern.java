@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -16,6 +16,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+
 import cpw.mods.fml.common.Loader;
 
 import buildcraft.api.blueprints.SchematicMask;
@@ -103,7 +104,7 @@ public abstract class FillerPattern implements IFillerPattern {
 	 * Generates a filling in a given area
 	 */
 	public static void fill(int xMin, int yMin, int zMin, int xMax, int yMax,
-			int zMax, Template template) {
+							int zMax, Template template) {
 
 		for (int y = yMin; y <= yMax; ++y) {
 			for (int x = xMin; x <= xMax; ++x) {
@@ -146,10 +147,10 @@ public abstract class FillerPattern implements IFillerPattern {
 		}
 	}
 
-	public abstract Template getTemplate (Box box, World world, IStatementParameter[] parameters);
+	public abstract Template getTemplate(Box box, World world, IStatementParameter[] parameters);
 
-	public Blueprint getBlueprint (Box box, World world, IStatementParameter[] parameters, Block block, int meta) {
-		Blueprint result = new Blueprint (box.sizeX(), box.sizeY(), box.sizeZ());
+	public Blueprint getBlueprint(Box box, World world, IStatementParameter[] parameters, Block block, int meta) {
+		Blueprint result = new Blueprint(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		try {
 			Template tmpl = getTemplate(box, world, parameters);
@@ -173,11 +174,11 @@ public abstract class FillerPattern implements IFillerPattern {
 		return result;
 	}
 
-	public BptBuilderTemplate getTemplateBuilder (Box box, World world, IStatementParameter[] parameters) {
+	public BptBuilderTemplate getTemplateBuilder(Box box, World world, IStatementParameter[] parameters) {
 		return new BptBuilderTemplate(getTemplate(box, world, parameters), world, box.xMin, box.yMin, box.zMin);
 	}
 
-	private static boolean isValid (int x, int y, int z, BlueprintBase bpt) {
+	private static boolean isValid(int x, int y, int z, BlueprintBase bpt) {
 		return x >= 0 && y >= 0 && z >= 0 && x < bpt.sizeX && y < bpt.sizeY && z < bpt.sizeZ;
 	}
 }

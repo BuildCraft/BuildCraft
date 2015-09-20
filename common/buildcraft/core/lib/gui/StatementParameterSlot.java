@@ -7,8 +7,8 @@ import buildcraft.api.statements.IStatementParameter;
 import buildcraft.api.statements.StatementParameterItemStack;
 
 /**
-* Created by asie on 1/24/15.
-*/
+ * Created by asie on 1/24/15.
+ */
 public abstract class StatementParameterSlot extends AdvancedSlot {
 	public int slot;
 	public StatementSlot statementSlot;

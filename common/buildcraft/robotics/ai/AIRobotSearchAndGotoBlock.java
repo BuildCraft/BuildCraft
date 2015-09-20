@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -34,12 +34,12 @@ public class AIRobotSearchAndGotoBlock extends AIRobot {
 	}
 
 	public AIRobotSearchAndGotoBlock(EntityRobotBase iRobot, boolean iRandom,
-			IBlockFilter iPathFound) {
+									 IBlockFilter iPathFound) {
 		this(iRobot, iRandom, iPathFound, 0);
 	}
 
 	public AIRobotSearchAndGotoBlock(EntityRobotBase iRobot, boolean iRandom,
-			IBlockFilter iPathFound, double iMaxDistanceToEnd) {
+									 IBlockFilter iPathFound, double iMaxDistanceToEnd) {
 		this(iRobot);
 
 		random = iRandom;
@@ -111,7 +111,7 @@ public class AIRobotSearchAndGotoBlock extends AIRobot {
 		super.loadSelfFromNBT(nbt);
 
 		if (nbt.hasKey("indexStored")) {
-			blockFound = new BlockIndex (nbt.getCompoundTag("indexStored"));
+			blockFound = new BlockIndex(nbt.getCompoundTag("indexStored"));
 		}
 	}
 }

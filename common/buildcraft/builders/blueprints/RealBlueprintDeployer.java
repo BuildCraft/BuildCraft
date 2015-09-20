@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -11,6 +11,7 @@ package buildcraft.builders.blueprints;
 import java.io.File;
 
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.blueprints.BlueprintDeployer;
@@ -27,14 +28,14 @@ public class RealBlueprintDeployer extends BlueprintDeployer {
 
 	@Override
 	public void deployBlueprint(World world, int x, int y, int z,
-			ForgeDirection dir, File file) {
+								ForgeDirection dir, File file) {
 
 		deployBlueprint(world, x, y, z, dir, (Blueprint) BlueprintBase.loadBluePrint(LibraryDatabase.load(file)));
 	}
 
 	@Override
 	public void deployBlueprintFromFileStream(World world, int x, int y, int z,
-			ForgeDirection dir, byte [] data) {
+											  ForgeDirection dir, byte[] data) {
 
 		deployBlueprint(world, x, y, z, dir, (Blueprint) BlueprintBase.loadBluePrint(NBTUtils.load(data)));
 	}

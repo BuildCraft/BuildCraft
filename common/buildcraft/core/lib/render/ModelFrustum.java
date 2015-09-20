@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -43,8 +43,8 @@ public class ModelFrustum {
 	private TexturedQuad[] quadList;
 
 	public ModelFrustum(ModelRenderer par1ModelRenderer, int textureOffsetX, int textureOffsetY, float originXI,
-			float originYI, float originZI, int bottomWidth,
-			int bottomDepth, int topWidth, int topDepth, int height, float scaleFactor) {
+						float originYI, float originZI, int bottomWidth,
+						int bottomDepth, int topWidth, int topDepth, int height, float scaleFactor) {
 
 		float originX = originXI;
 		float originY = originYI;
@@ -105,28 +105,28 @@ public class ModelFrustum {
 		int depth = Math.max(bottomDepth, topDepth);
 		int width = Math.max(bottomWidth, topWidth);
 
-		this.quadList[0] = new TexturedQuad(new PositionTextureVertex[] {
-				var19, var15, var16, var20 }, textureOffsetX + depth + width,
+		this.quadList[0] = new TexturedQuad(new PositionTextureVertex[]{
+				var19, var15, var16, var20}, textureOffsetX + depth + width,
 				textureOffsetY + depth,
 				textureOffsetX + depth + width + depth, textureOffsetY + depth + height, par1ModelRenderer.textureWidth, par1ModelRenderer.textureHeight);
-		this.quadList[1] = new TexturedQuad(new PositionTextureVertex[] {
-				var23, var18, var21, var17 }, textureOffsetX, textureOffsetY
+		this.quadList[1] = new TexturedQuad(new PositionTextureVertex[]{
+				var23, var18, var21, var17}, textureOffsetX, textureOffsetY
 				+ depth, textureOffsetX
 				+ depth, textureOffsetY + depth + height, par1ModelRenderer.textureWidth, par1ModelRenderer.textureHeight);
-		this.quadList[2] = new TexturedQuad(new PositionTextureVertex[] {
-				var19, var18, var23, var15 }, textureOffsetX + depth,
+		this.quadList[2] = new TexturedQuad(new PositionTextureVertex[]{
+				var19, var18, var23, var15}, textureOffsetX + depth,
 				textureOffsetY, textureOffsetX
 				+ depth + width, textureOffsetY + depth, par1ModelRenderer.textureWidth, par1ModelRenderer.textureHeight);
-		this.quadList[3] = new TexturedQuad(new PositionTextureVertex[] {
-				var16, var17, var21, var20 }, textureOffsetX + depth + width,
+		this.quadList[3] = new TexturedQuad(new PositionTextureVertex[]{
+				var16, var17, var21, var20}, textureOffsetX + depth + width,
 				textureOffsetY + depth,
 				textureOffsetX + depth + width + width, textureOffsetY, par1ModelRenderer.textureWidth, par1ModelRenderer.textureHeight);
-		this.quadList[4] = new TexturedQuad(new PositionTextureVertex[] {
-				var15, var23, var17, var16 }, textureOffsetX + depth,
+		this.quadList[4] = new TexturedQuad(new PositionTextureVertex[]{
+				var15, var23, var17, var16}, textureOffsetX + depth,
 				textureOffsetY + depth,
 				textureOffsetX + depth + width, textureOffsetY + depth + height, par1ModelRenderer.textureWidth, par1ModelRenderer.textureHeight);
-		this.quadList[5] = new TexturedQuad(new PositionTextureVertex[] {
-				var18, var19, var20, var21 }, textureOffsetX + depth + width
+		this.quadList[5] = new TexturedQuad(new PositionTextureVertex[]{
+				var18, var19, var20, var21}, textureOffsetX + depth + width
 				+ depth, textureOffsetY
 				+ depth, textureOffsetX + depth + width + depth + width, textureOffsetY + depth + height, par1ModelRenderer.textureWidth,
 				par1ModelRenderer.textureHeight);

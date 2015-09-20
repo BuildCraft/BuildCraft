@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+
 import net.minecraftforge.client.IItemRenderer;
 
 import buildcraft.BuildCraftTransport;
@@ -28,7 +29,7 @@ import buildcraft.transport.PipeIconProvider;
 
 public class PipeItemRenderer implements IItemRenderer {
 	private static final float zFightOffset = 1 / 4096.0F;
-	
+
 	private void renderPipeItem(RenderBlocks render, ItemStack item, float translateX, float translateY, float translateZ) {
 		GL11.glPushAttrib(GL11.GL_COLOR_BUFFER_BIT); //don't break other mods' guis when holding a pipe
 		//force transparency
@@ -40,10 +41,10 @@ public class PipeItemRenderer implements IItemRenderer {
 
 		Block block = FakeBlock.INSTANCE;
 		IIcon icon = PipeIconProvider.TYPE.PipeStainedOverlay.getIcon();
-				
+
 		if (item.getItemDamage() >= 1) {
 			GL11.glPushMatrix();
-			
+
 			int c = ColorUtils.getRGBColor(item.getItemDamage() - 1);
 			GL11.glColor3ub((byte) (c >> 16), (byte) ((c >> 8) & 0xFF), (byte) (c & 0xFF));
 			block.setBlockBounds(CoreConstants.PIPE_MIN_POS + zFightOffset, 0.0F + zFightOffset, CoreConstants.PIPE_MIN_POS + zFightOffset, CoreConstants.PIPE_MAX_POS - zFightOffset, 1.0F - zFightOffset, CoreConstants.PIPE_MAX_POS - zFightOffset);
@@ -54,9 +55,9 @@ public class PipeItemRenderer implements IItemRenderer {
 			RenderUtils.drawBlockItem(render, tessellator, block, icon);
 			block.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 			GL11.glColor3ub((byte) 255, (byte) 255, (byte) 255);
-			GL11.glPopMatrix();	
+			GL11.glPopMatrix();
 		}
-		
+
 		block = BuildCraftTransport.genericPipeBlock;
 		icon = item.getItem().getIconFromDamage(0);
 

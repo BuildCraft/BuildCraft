@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -16,11 +16,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.transport.IPipeTile;
 import buildcraft.core.lib.utils.BitSetUtils;
-import buildcraft.transport.render.PipeTransportRenderer;
 
 public abstract class PipeTransport {
 	public TileGenericPipe container;
@@ -42,22 +42,22 @@ public abstract class PipeTransport {
 	}
 
 	public void readFromNBT(NBTTagCompound nbt) {
-	    if (nbt.hasKey("inputOpen") && nbt.hasKey("outputOpen")) {
-			BitSet inputBuf = BitSetUtils.fromByteArray(new byte[] {nbt.getByte("inputOpen")});
-			BitSet outputBuf = BitSetUtils.fromByteArray(new byte[] {nbt.getByte("outputOpen")});
+		if (nbt.hasKey("inputOpen") && nbt.hasKey("outputOpen")) {
+			BitSet inputBuf = BitSetUtils.fromByteArray(new byte[]{nbt.getByte("inputOpen")});
+			BitSet outputBuf = BitSetUtils.fromByteArray(new byte[]{nbt.getByte("outputOpen")});
 
 			for (int b = 0; b < ForgeDirection.VALID_DIRECTIONS.length; b++) {
 				inputsOpen[b] = inputBuf.get(b);
 				outputsOpen[b] = outputBuf.get(b);
 			}
-	    }
+		}
 	}
 
 	public void writeToNBT(NBTTagCompound nbt) {
 		BitSet inputBuf = new BitSet(ForgeDirection.VALID_DIRECTIONS.length);
 		BitSet outputBuf = new BitSet(ForgeDirection.VALID_DIRECTIONS.length);
 
-	    for (int b = 0; b < ForgeDirection.VALID_DIRECTIONS.length; b++) {
+		for (int b = 0; b < ForgeDirection.VALID_DIRECTIONS.length; b++) {
 			if (inputsOpen[b]) {
 				inputBuf.set(b, true);
 			} else {
@@ -69,7 +69,7 @@ public abstract class PipeTransport {
 			} else {
 				outputBuf.set(b, false);
 			}
-	    }
+		}
 
 		nbt.setByte("inputOpen", BitSetUtils.toByteArray(inputBuf)[0]);
 		nbt.setByte("outputOpen", BitSetUtils.toByteArray(outputBuf)[0]);
@@ -79,11 +79,11 @@ public abstract class PipeTransport {
 	}
 
 	public void setTile(TileGenericPipe tile) {
-	    this.container = tile;
+		this.container = tile;
 	}
 
 	public boolean canPipeConnect(TileEntity tile, ForgeDirection side) {
-	    return true;
+		return true;
 	}
 
 	public void onNeighborChange(ForgeDirection direction) {
@@ -96,11 +96,11 @@ public abstract class PipeTransport {
 	}
 
 	public boolean inputOpen(ForgeDirection from) {
-	    return inputsOpen[from.ordinal()];
+		return inputsOpen[from.ordinal()];
 	}
 
 	public boolean outputOpen(ForgeDirection to) {
-	    return outputsOpen[to.ordinal()];
+		return outputsOpen[to.ordinal()];
 	}
 
 	public void allowInput(ForgeDirection from, boolean allow) {
@@ -117,7 +117,7 @@ public abstract class PipeTransport {
 
 	public void dropContents() {
 	}
-	
+
 	public List<ItemStack> getDroppedItems() {
 		return new ArrayList<ItemStack>();
 	}

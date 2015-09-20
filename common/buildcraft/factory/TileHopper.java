@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -13,6 +13,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import cofh.api.energy.IEnergyHandler;
@@ -30,11 +31,11 @@ public class TileHopper extends TileBuildCraft implements IInventory, IEnergyHan
 	private final SimpleInventory inventory = new SimpleInventory(4, "Hopper", 64);
 	private boolean isEmpty;
 
-    @Override
-    public void initialize() {
+	@Override
+	public void initialize() {
 		this.setBattery(new RFBattery(10, 10, 0));
 		inventory.addListener(this);
-    }
+	}
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbtTagCompound) {
@@ -69,7 +70,7 @@ public class TileHopper extends TileBuildCraft implements IInventory, IEnergyHan
 		TileEntity outputTile = getTile(ForgeDirection.DOWN);
 
 		ITransactor transactor = Transactor.getTransactorFor(outputTile);
-		
+
 		if (transactor == null) {
 			if (outputTile instanceof IInjectable && getBattery().getEnergyStored() >= 10) {
 				ItemStack stackToOutput = null;
@@ -97,13 +98,13 @@ public class TileHopper extends TileBuildCraft implements IInventory, IEnergyHan
 
 			return;
 		}
-		
+
 		for (int internalSlot = 0; internalSlot < inventory.getSizeInventory(); internalSlot++) {
 			ItemStack stackInSlot = inventory.getStackInSlot(internalSlot);
 			if (stackInSlot == null || stackInSlot.stackSize == 0) {
 				continue;
 			}
-			
+
 			ItemStack clonedStack = stackInSlot.copy().splitStack(1);
 			if (transactor.add(clonedStack, ForgeDirection.UP, true).stackSize > 0) {
 				inventory.decrStackSize(internalSlot, 1);
@@ -112,11 +113,11 @@ public class TileHopper extends TileBuildCraft implements IInventory, IEnergyHan
 		}
 	}
 
-    @Override
+	@Override
 	public void markDirty() {
 		super.markDirty();
 		isEmpty = true;
-		
+
 		for (int internalSlot = 0; internalSlot < inventory.getSizeInventory(); internalSlot++) {
 			ItemStack stackInSlot = inventory.getStackInSlot(internalSlot);
 			if (stackInSlot != null && stackInSlot.stackSize > 0) {
@@ -125,7 +126,7 @@ public class TileHopper extends TileBuildCraft implements IInventory, IEnergyHan
 			}
 		}
 	}
-	
+
 	/**
 	 * IInventory Implementation *
 	 */

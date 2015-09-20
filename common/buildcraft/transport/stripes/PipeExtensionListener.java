@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -12,6 +11,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -20,7 +20,6 @@ import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.Position;
 import buildcraft.api.transport.IStripesActivator;
 import buildcraft.core.proxy.CoreProxy;
-import buildcraft.transport.BlockGenericPipe;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransportItems;
 import buildcraft.transport.TileGenericPipe;
@@ -138,9 +137,9 @@ public class PipeExtensionListener {
 					TileGenericPipe newPipeTile = (TileGenericPipe) w.getTileEntity(r.x, r.y, r.z);
 					newPipeTile.updateEntity();
 					pipeTile.scheduleNeighborChange();
-                    if (pipeTile.getPipe() != null) {
-                        ((Pipe) pipeTile.getPipe()).scheduleWireUpdate();
-                    }
+					if (pipeTile.getPipe() != null) {
+						((Pipe) pipeTile.getPipe()).scheduleWireUpdate();
+					}
 				}
 			}
 			rSet.clear();

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -45,6 +45,7 @@ import net.minecraft.util.StringUtils;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -240,7 +241,7 @@ public class EntityRobot extends EntityRobotBase implements
 		}
 	}
 
-	public void setLaserDestination (float x, float y, float z) {
+	public void setLaserDestination(float x, float y, float z) {
 		if (x != laser.tail.x || y != laser.tail.y || z != laser.tail.z) {
 			laser.tail.x = x;
 			laser.tail.y = y;
@@ -386,7 +387,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@SideOnly(Side.CLIENT)
 	private void spawnEnergyFX() {
-	    Minecraft.getMinecraft().effectRenderer.addEffect(new EntityRobotEnergyParticle(
+		Minecraft.getMinecraft().effectRenderer.addEffect(new EntityRobotEnergyParticle(
 				worldObj,
 				posX + steamDx * 0.25, posY + steamDy * 0.25, posZ + steamDz * 0.25,
 				steamDx * 0.05, steamDy * 0.05, steamDz * 0.05,
@@ -447,14 +448,16 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public ItemStack[] getLastActiveItems() {
-		return new ItemStack [0];
+		return new ItemStack[0];
 	}
 
 	@Override
-    protected void fall(float par1) {}
+	protected void fall(float par1) {
+	}
 
 	@Override
-    protected void updateFallState(double par1, boolean par3) {}
+	protected void updateFallState(double par1, boolean par3) {
+	}
 
 	@Override
 	public void moveEntityWithHeading(float par1, float par2) {
@@ -462,16 +465,16 @@ public class EntityRobot extends EntityRobotBase implements
 	}
 
 	@Override
-    public boolean isOnLadder() {
-        return false;
-    }
+	public boolean isOnLadder() {
+		return false;
+	}
 
 	public ResourceLocation getTexture() {
 		return texture;
 	}
 
 	@Override
-    public void writeEntityToNBT(NBTTagCompound nbt) {
+	public void writeEntityToNBT(NBTTagCompound nbt) {
 		super.writeEntityToNBT(nbt);
 
 		if (linkedDockingStationIndex != null) {
@@ -546,7 +549,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 			nbt.setTag("tank", tankNBT);
 		}
-    }
+	}
 
 	@Override
 	public void readEntityFromNBT(NBTTagCompound nbt) {
@@ -618,7 +621,7 @@ public class EntityRobot extends EntityRobotBase implements
 
 		// Restore robot persistence on pre-6.1.9 robotics
 		this.func_110163_bv();
-    }
+	}
 
 	@Override
 	public void dock(DockingStation station) {
@@ -754,7 +757,7 @@ public class EntityRobot extends EntityRobotBase implements
 	public boolean isItemValidForSlot(int var1, ItemStack var2) {
 		return inv[var1] == null
 				|| (inv[var1].isItemEqual(var2) && inv[var1].isStackable() && inv[var1].stackSize
-						+ var2.stackSize <= inv[var1].getItem().getItemStackLimit(inv[var1]));
+				+ var2.stackSize <= inv[var1].getItem().getItemStackLimit(inv[var1]));
 	}
 
 	@Override
@@ -944,23 +947,23 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	protected float func_110146_f(float targetYaw, float dist) {
 		if (worldObj.isRemote) {
-	        float f2 = MathHelper.wrapAngleTo180_float(this.rotationYaw - this.renderYawOffset);
-	        this.renderYawOffset += f2 * 0.5F;
-	        float f3 = MathHelper.wrapAngleTo180_float(this.rotationYaw - this.renderYawOffset);
-	        boolean flag = f3 < -90.0F || f3 >= 90.0F;
+			float f2 = MathHelper.wrapAngleTo180_float(this.rotationYaw - this.renderYawOffset);
+			this.renderYawOffset += f2 * 0.5F;
+			float f3 = MathHelper.wrapAngleTo180_float(this.rotationYaw - this.renderYawOffset);
+			boolean flag = f3 < -90.0F || f3 >= 90.0F;
 
-	        this.renderYawOffset = this.rotationYaw - f3;
+			this.renderYawOffset = this.rotationYaw - f3;
 
-	        if (f3 * f3 > 2500.0F) {
-	            this.renderYawOffset += f3 * 0.2F;
-	        }
+			if (f3 * f3 > 2500.0F) {
+				this.renderYawOffset += f3 * 0.2F;
+			}
 
-	        float newDist = dist;
-	        if (flag) {
-	            newDist *= -1.0F;
-	        }
+			float newDist = dist;
+			if (flag) {
+				newDist *= -1.0F;
+			}
 
-	        return newDist;
+			return newDist;
 		}
 		return 0;
 	}
@@ -991,7 +994,7 @@ public class EntityRobot extends EntityRobotBase implements
 	@Override
 	public boolean isInRangeToRenderDist(double par1) {
 		return true;
-    }
+	}
 
 	@Override
 	public int getEnergy() {
@@ -1430,19 +1433,19 @@ public class EntityRobot extends EntityRobotBase implements
 
 	@Override
 	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
-		return new FluidTankInfo[] {new FluidTankInfo(tank, maxFluid)};
+		return new FluidTankInfo[]{new FluidTankInfo(tank, maxFluid)};
 	}
 
-    @SideOnly(Side.CLIENT)
-    public IIcon getItemIcon(ItemStack stack, int renderPass) {
-        IIcon iicon = super.getItemIcon(stack, renderPass);
+	@SideOnly(Side.CLIENT)
+	public IIcon getItemIcon(ItemStack stack, int renderPass) {
+		IIcon iicon = super.getItemIcon(stack, renderPass);
 
-        if (iicon == null) {
-            iicon = stack.getItem().getIcon(stack, renderPass, null, itemInUse, 0);
-        }
+		if (iicon == null) {
+			iicon = stack.getItem().getIcon(stack, renderPass, null, itemInUse, 0);
+		}
 
-        return iicon;
-    }
+		return iicon;
+	}
 
 	@Override
 	public void getDebugInfo(List<String> info, ForgeDirection side, ItemStack debugger, EntityPlayer player) {

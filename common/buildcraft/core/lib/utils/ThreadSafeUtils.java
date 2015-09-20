@@ -2,14 +2,17 @@ package buildcraft.core.lib.utils;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderServer;
+
 import cpw.mods.fml.common.network.FMLEmbeddedChannel;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.internal.FMLProxyPacket;
+
 import buildcraft.core.lib.network.ChannelHandler;
 import buildcraft.core.lib.network.Packet;
 
@@ -52,8 +55,9 @@ public final class ThreadSafeUtils {
 	/**
 	 * This function assumes that you're using BC's ChannelHandler system, which only has one
 	 * channel handler. This might get very messy otherwise.
-	 *
+	 * <p/>
 	 * TODO: HACK - Can we rewrite this for BC 7.1 along with the whole network system to be somewhat more sane? Please?
+	 *
 	 * @param packet
 	 * @param channel
 	 * @return

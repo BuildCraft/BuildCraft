@@ -150,7 +150,7 @@ public final class ListHandlerNew {
 					}
 				}
 				if (handlersCustom.size() > 0) {
-					for (Object o: Item.itemRegistry) {
+					for (Object o : Item.itemRegistry) {
 						if (o != null && o instanceof Item) {
 							Item i = (Item) o;
 							List<ItemStack> examples = new ArrayList<ItemStack>();

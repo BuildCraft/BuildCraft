@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -50,10 +50,10 @@ public class LibraryDatabase {
 		inputDirs = new ArrayList<File>();
 
 		for (int i = 0; i < inputPaths.length; ++i) {
-            File inputDir = new File(inputPaths[i]);
-            if (inputDir.exists()) {
-                inputDirs.add(inputDir);
-            }
+			File inputDir = new File(inputPaths[i]);
+			if (inputDir.exists()) {
+				inputDirs.add(inputDir);
+			}
 		}
 
 		refresh();
@@ -62,11 +62,11 @@ public class LibraryDatabase {
 	public void refresh() {
 		blueprintIds = new TreeSet<LibraryId>();
 		for (File f : inputDirs) {
-            loadIndex(f);
-        }
+			loadIndex(f);
+		}
 	}
 
-	public void deleteBlueprint (LibraryId id) {
+	public void deleteBlueprint(LibraryId id) {
 		File blueprintFile = getBlueprintFile(id);
 
 		if (blueprintFile != null) {
@@ -173,7 +173,7 @@ public class LibraryDatabase {
 		}
 	}
 
-	public boolean exists (LibraryId id) {
+	public boolean exists(LibraryId id) {
 		return blueprintIds.contains(id);
 	}
 
@@ -186,12 +186,12 @@ public class LibraryDatabase {
 		return compound;
 	}
 
-	public static NBTTagCompound load (File blueprintFile) {
+	public static NBTTagCompound load(File blueprintFile) {
 		if (blueprintFile != null && blueprintFile.exists()) {
 			try {
 				FileInputStream f = new FileInputStream(blueprintFile);
-				byte [] data = new byte [(int) blueprintFile.length()];
-				f.read (data);
+				byte[] data = new byte[(int) blueprintFile.length()];
+				f.read(data);
 				f.close();
 
 				return NBTUtils.load(data);

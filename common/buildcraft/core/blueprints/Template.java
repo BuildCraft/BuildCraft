@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -50,13 +50,13 @@ public class Template extends BlueprintBase {
 		// per mask entry, not a byte. However, this is fine, as compression
 		// will fix it.
 
-		byte [] data = new byte[sizeX * sizeY * sizeZ];
+		byte[] data = new byte[sizeX * sizeY * sizeZ];
 		int ind = 0;
 
 		for (int x = 0; x < sizeX; ++x) {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
-					data [ind] = (byte) ((get(x, y, z) == null) ? 0 : 1);
+					data[ind] = (byte) ((get(x, y, z) == null) ? 0 : 1);
 					ind++;
 				}
 			}
@@ -67,13 +67,13 @@ public class Template extends BlueprintBase {
 
 	@Override
 	public void loadContents(NBTTagCompound nbt) throws BptError {
-		byte [] data = nbt.getByteArray("mask");
+		byte[] data = nbt.getByteArray("mask");
 		int ind = 0;
 
 		for (int x = 0; x < sizeX; ++x) {
 			for (int y = 0; y < sizeY; ++y) {
 				for (int z = 0; z < sizeZ; ++z) {
-					if (data [ind] == 1) {
+					if (data[ind] == 1) {
 						put(x, y, z, new SchematicMask(true));
 					}
 
@@ -84,11 +84,11 @@ public class Template extends BlueprintBase {
 	}
 
 	@Override
-	public ItemStack getStack () {
+	public ItemStack getStack() {
 		Item item = (Item) Item.itemRegistry.getObject("BuildCraft|Builders:templateItem");
 		ItemStack stack = new ItemStack(item, 1);
 		NBTTagCompound nbt = NBTUtils.getItemData(stack);
-		id.write (nbt);
+		id.write(nbt);
 		nbt.setString("author", author);
 		nbt.setString("name", id.name);
 

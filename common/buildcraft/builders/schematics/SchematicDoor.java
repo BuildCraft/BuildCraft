@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -15,7 +15,6 @@ import net.minecraft.nbt.NBTTagCompound;
 
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.MappingRegistry;
-import buildcraft.api.blueprints.SchematicBlock;
 import buildcraft.core.builders.schematics.SchematicBlockFloored;
 
 public class SchematicDoor extends SchematicBlockFloored {
@@ -45,19 +44,19 @@ public class SchematicDoor extends SchematicBlockFloored {
 		meta = rotateMeta(meta);
 	}
 
-	private int rotateMeta (int meta) {
+	private int rotateMeta(int meta) {
 		int orientation = meta & 3;
 		int others = meta - orientation;
 
 		switch (orientation) {
-		case 0:
-			return 1 + others;
-		case 1:
-			return 2 + others;
-		case 2:
-			return 3 + others;
-		case 3:
-			return 0 + others;
+			case 0:
+				return 1 + others;
+			case 1:
+				return 2 + others;
+			case 2:
+				return 3 + others;
+			case 3:
+				return 0 + others;
 		}
 
 		return 0;
@@ -99,7 +98,7 @@ public class SchematicDoor extends SchematicBlockFloored {
 	}
 
 	@Override
-	public void readSchematicFromNBT(NBTTagCompound nbt,	MappingRegistry registry) {
+	public void readSchematicFromNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		super.readSchematicFromNBT(nbt, registry);
 
 		upperMeta = nbt.getByte("upperMeta");

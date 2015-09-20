@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -19,6 +19,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemMinecart;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.WorldServer;
+
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
@@ -192,9 +193,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static BuildCraftTransport instance;
 
 	public static float pipeDurability;
-    public static int pipeFluidsBaseFlowRate;
-    public static boolean facadeTreatBlacklistAsWhitelist;
-    public static boolean additionalWaterproofingRecipe;
+	public static int pipeFluidsBaseFlowRate;
+	public static boolean facadeTreatBlacklistAsWhitelist;
+	public static boolean additionalWaterproofingRecipe;
 	public static boolean facadeForceNonLaserRecipe;
 
 	public static BlockGenericPipe genericPipeBlock;
@@ -225,7 +226,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item pipeItemsSandstone;
 	public static Item pipeItemsEmzuli;
 	public static Item pipeItemsStripes;
-    public static Item pipeItemsClay;
+	public static Item pipeItemsClay;
 	public static Item pipeFluidsWood;
 	public static Item pipeFluidsCobblestone;
 	public static Item pipeFluidsStone;
@@ -245,7 +246,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static Item pipePowerGold;
 	public static Item pipePowerDiamond;
 	public static Item pipePowerEmerald;
-    public static Item pipePowerSandstone;
+	public static Item pipePowerSandstone;
 
 	public static String[] facadeBlacklist;
 
@@ -266,9 +267,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static IActionInternal actionExtractionPresetBlue = new ActionExtractionPreset(EnumColor.BLUE);
 	public static IActionInternal actionExtractionPresetGreen = new ActionExtractionPreset(EnumColor.GREEN);
 	public static IActionInternal actionExtractionPresetYellow = new ActionExtractionPreset(EnumColor.YELLOW);
-    public static IActionInternal[] actionValve = new IActionInternal[4];
+	public static IActionInternal[] actionValve = new IActionInternal[4];
 
-    public static boolean debugPrintFacadeList = false;
+	public static boolean debugPrintFacadeList = false;
 	public static boolean usePipeLoss = false;
 
 	public static float gateCostMultiplier = 1.0F;
@@ -304,7 +305,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			BuildCraftCore.mainConfigManager.register("debug.printFacadeList", false, "Print a list of all registered facades.", ConfigManager.RestartRequirement.GAME);
 			BuildCraftCore.mainConfigManager.register("general.pipes.slimeballWaterproofRecipe", false, "Should I enable an alternate Waterproof recipe, based on slimeballs?", ConfigManager.RestartRequirement.GAME);
 			BuildCraftCore.mainConfigManager.register("power.gateCostMultiplier", 1.0D, "What should be the multiplier of all gate power costs?", ConfigManager.RestartRequirement.GAME);
-			BuildCraftCore.mainConfigManager.register("general.pipes.facadeBlacklist", new String[] {
+			BuildCraftCore.mainConfigManager.register("general.pipes.facadeBlacklist", new String[]{
 					Block.blockRegistry.getNameForObject(Blocks.end_portal_frame),
 					Block.blockRegistry.getNameForObject(Blocks.grass),
 					Block.blockRegistry.getNameForObject(Blocks.leaves),
@@ -348,7 +349,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipeItemsVoid = buildPipe(PipeItemsVoid.class, "dyeBlack", "blockGlassColorless", "dustRedstone");
 			pipeItemsEmzuli = buildPipe(PipeItemsEmzuli.class, "blockLapis", "blockGlassColorless", "gemEmerald");
 			pipeItemsStripes = buildPipe(PipeItemsStripes.class, "gearGold", "blockGlassColorless", "gearGold");
-            pipeItemsClay = buildPipe(PipeItemsClay.class, Blocks.clay, "blockGlassColorless", Blocks.clay);
+			pipeItemsClay = buildPipe(PipeItemsClay.class, Blocks.clay, "blockGlassColorless", Blocks.clay);
 
 			pipeFluidsWood = buildPipe(PipeFluidsWood.class, pipeWaterproof, pipeItemsWood);
 			pipeFluidsCobblestone = buildPipe(PipeFluidsCobblestone.class, pipeWaterproof, pipeItemsCobblestone);
@@ -370,9 +371,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 			pipePowerGold = buildPipe(PipePowerGold.class, "dustRedstone", pipeItemsGold);
 			pipePowerDiamond = buildPipe(PipePowerDiamond.class, "dustRedstone", pipeItemsDiamond);
 			pipePowerEmerald = buildPipe(PipePowerEmerald.class, "dustRedstone", pipeItemsEmerald);
-            pipePowerSandstone = buildPipe(PipePowerSandstone.class, "dustRedstone", pipeItemsSandstone);
+			pipePowerSandstone = buildPipe(PipePowerSandstone.class, "dustRedstone", pipeItemsSandstone);
 
-            pipeStructureCobblestone = buildPipe(PipeStructureCobblestone.class, Blocks.cobblestone, Blocks.gravel, Blocks.cobblestone);
+			pipeStructureCobblestone = buildPipe(PipeStructureCobblestone.class, Blocks.cobblestone, Blocks.gravel, Blocks.cobblestone);
 
 			pipeWire = new ItemPipeWire();
 			CoreProxy.proxy.registerItem(pipeWire);
@@ -430,7 +431,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			}
 
 			for (ValveState state : ValveState.VALUES) {
-			    actionValve[state.ordinal()] = new ActionValve(state);
+				actionValve[state.ordinal()] = new ActionValve(state);
 			}
 
 			for (PowerMode limit : PowerMode.VALUES) {
@@ -656,7 +657,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 
 		GameRegistry.addRecipe(new PipeColoringRecipe());
 		RecipeSorter.register("buildcraft:pipecoloring", PipeColoringRecipe.class, RecipeSorter.Category.SHAPELESS, "after:minecraft:shapeless");
-		
+
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(filteredBufferBlock, 1),
 				"wdw", "wcw", "wpw", 'w', "plankWood", 'd',
 				BuildCraftTransport.pipeItemsDiamond, 'c', "chestWood", 'p',
@@ -686,7 +687,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(lensItem, 8, i),
 						"OSO", "SGS", "OSO",
 						'O', "ingotIron", 'S', dye, 'G', "blockGlass"
-						));
+				));
 				GameRegistry.addRecipe(new ShapedOreRecipe(new ItemStack(lensItem, 8, i + 16),
 						"OSO", "SGS", "OSO",
 						'O', Blocks.iron_bars, 'S', dye, 'G', "blockGlass"
@@ -712,7 +713,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	}
 
 	public static Item buildPipe(Class<? extends Pipe<?>> clas, BCCreativeTab creativeTab,
-			Object... ingredients) {
+								 Object... ingredients) {
 		ItemPipe res = BlockGenericPipe.registerPipe(clas, creativeTab);
 		res.setUnlocalizedName(clas.getSimpleName());
 

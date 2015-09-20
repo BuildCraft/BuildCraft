@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -15,6 +15,7 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityFurnace;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftEnergy;
@@ -33,7 +34,7 @@ public class TileEngineStone extends TileEngineWithInventory {
 	final double eLimit = (MAX_OUTPUT - MIN_OUTPUT) / ki;
 	int burnTime = 0;
 	int totalBurnTime = 0;
-    ItemStack burnItem;
+	ItemStack burnItem;
 	double esum = 0;
 
 	public TileEngineStone() {
@@ -83,7 +84,7 @@ public class TileEngineStone extends TileEngineWithInventory {
 			burnTime = totalBurnTime = getItemBurnTime(getStackInSlot(0));
 
 			if (burnTime > 0) {
-                burnItem = getStackInSlot(0);
+				burnItem = getStackInSlot(0);
 				setInventorySlotContents(0, InvUtils.consumeItem(getStackInSlot(0)));
 			}
 		}
@@ -97,10 +98,10 @@ public class TileEngineStone extends TileEngineWithInventory {
 		if (itemstack == null) {
 			return 0;
 		} else if (itemstack.getItem() == Items.paper) {
-            return 400;
-        } else {
-            return TileEntityFurnace.getItemBurnTime(itemstack);
-        }
+			return 400;
+		} else {
+			return TileEntityFurnace.getItemBurnTime(itemstack);
+		}
 	}
 
 	/* SAVING & LOADING */
@@ -145,9 +146,9 @@ public class TileEngineStone extends TileEngineWithInventory {
 
 	@Override
 	public int getIdealOutput() {
-        if (burnItem != null && burnItem.getItem() == Items.paper) {
-            return 1;
-        }
+		if (burnItem != null && burnItem.getItem() == Items.paper) {
+			return 1;
+		}
 
 		double e = TARGET_OUTPUT * getMaxEnergy() - energy;
 		esum = MathUtils.clamp(esum + e, -eLimit, eLimit);

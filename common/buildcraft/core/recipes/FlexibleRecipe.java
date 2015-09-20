@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -15,6 +15,7 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -74,6 +75,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 			return crafter.getCraftingFluidStackSize();
 		}
 	}
+
 	public int energyCost = 0;
 	public long craftingTime = 0;
 	public String id;
@@ -232,7 +234,7 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 	}
 
 	private int consumeItems(IFlexibleCrafter crafter, CraftingResult<T> result, IStackFilter filter,
-			int amount) {
+							 int amount) {
 		int expected = amount;
 
 		for (int slotid = 0; slotid < crafter.getCraftingItemStackSize(); ++slotid) {
@@ -285,11 +287,11 @@ public class FlexibleRecipe<T> implements IFlexibleRecipe<T>, IFlexibleRecipeVie
 	@Override
 	public Collection<Object> getInputs() {
 		ArrayList<Object> inputs = new ArrayList<Object>();
-		
+
 		inputs.addAll(inputItems);
 		inputs.addAll(inputItemsWithAlternatives);
 		inputs.addAll(inputFluids);
-		
+
 		return inputs;
 	}
 

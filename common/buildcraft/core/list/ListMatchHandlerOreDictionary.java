@@ -6,6 +6,7 @@ import java.util.Set;
 
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.oredict.OreDictionary;
 
 import buildcraft.api.lists.ListMatchHandler;

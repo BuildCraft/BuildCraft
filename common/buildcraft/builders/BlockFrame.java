@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -24,6 +24,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
@@ -75,7 +76,7 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
 		return new ArrayList<ItemStack>();
 	}
-	
+
 	@Override
 	public int getRenderType() {
 		return BuildCraftCore.legacyPipeModel;
@@ -113,7 +114,7 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 	}
 
 	@Override
-	@SuppressWarnings({ "all" })
+	@SuppressWarnings({"all"})
 	// @Override (client only)
 	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int i, int j, int k) {
 		return getCollisionBoundingBoxFromPool(world, i, j, k);
@@ -200,7 +201,7 @@ public class BlockFrame extends Block implements IFramePipeConnection {
 		return blockAccess.getBlock(x2, y2, z2) == this;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Override
 	public void getSubBlocks(Item item, CreativeTabs tab, List list) {
 		list.add(new ItemStack(this));

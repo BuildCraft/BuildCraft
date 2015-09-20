@@ -4,7 +4,7 @@ import java.util.Random;
 
 /**
  * Based on http://xorshift.di.unimi.it/xorshift128plus.c
- *
+ * <p/>
  * TODO: This thing ought to have tests!
  */
 public class XorShift128Random {

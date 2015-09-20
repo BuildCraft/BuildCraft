@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -19,6 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
+
 import cpw.mods.fml.relauncher.Side;
 
 import buildcraft.BuildCraftBuilders;
@@ -255,12 +256,12 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 			if (uploadingPlayer != null) {
 				BuildCraftCore.instance.sendToPlayer(uploadingPlayer, new PacketCommand(this, "downloadBlueprintToClient",
 						new CommandWriter() {
-					public void write(ByteBuf data) {
-						id.generateUniqueId(dataOut);
-						id.writeData(data);
-						NetworkUtils.writeByteArray(data, dataOut);
-					}
-				}));
+							public void write(ByteBuf data) {
+								id.generateUniqueId(dataOut);
+								id.writeData(data);
+								NetworkUtils.writeByteArray(data, dataOut);
+							}
+						}));
 				uploadingPlayer = null;
 			}
 		}
@@ -384,7 +385,7 @@ public class TileBlueprintLibrary extends TileBuildCraft implements IInventory, 
 		}
 	}
 
-	public void selectBlueprint (int index) {
+	public void selectBlueprint(int index) {
 		selected = index;
 		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "selectBlueprint", new CommandWriter() {
 			@Override

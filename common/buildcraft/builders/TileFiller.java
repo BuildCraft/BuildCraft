@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+
 import cpw.mods.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
@@ -241,7 +242,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 	}
 
 	@Override
-		public int getInventoryStackLimit() {
+	public int getInventoryStackLimit() {
 		return inv.getInventoryStackLimit();
 	}
 
@@ -390,7 +391,7 @@ public class TileFiller extends TileAbstractBuilder implements IHasWork, IContro
 
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
-		return new Box (this).extendToEncompass(box).expand(50).getBoundingBox();
+		return new Box(this).extendToEncompass(box).expand(50).getBoundingBox();
 	}
 
 	@Override

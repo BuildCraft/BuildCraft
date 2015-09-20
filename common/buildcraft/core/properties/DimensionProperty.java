@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -54,18 +54,18 @@ public class DimensionProperty implements IWorldAccess {
 
 	private void load(Chunk chunk, ChunkProperty property) {
 		synchronized (world) {
-            for (int x = 0; x < 16; ++x) {
-                for (int y = 0; y < worldHeight; ++y) {
-                    for (int z = 0; z < 16; ++z) {
-                        Block block = chunk.getBlock(x, y, z);
-                        int meta = chunk.getBlockMetadata(x, y, z);
+			for (int x = 0; x < 16; ++x) {
+				for (int y = 0; y < worldHeight; ++y) {
+					for (int z = 0; z < 16; ++z) {
+						Block block = chunk.getBlock(x, y, z);
+						int meta = chunk.getBlockMetadata(x, y, z);
 
-                        boolean prop = worldProperty.
-                                get(world, block, meta, chunk.xPosition * 16 + x, y, chunk.zPosition * 16 + z);
-                        property.set(x, y, z, prop);
-                    }
-                }
-            }
+						boolean prop = worldProperty.
+								get(world, block, meta, chunk.xPosition * 16 + x, y, chunk.zPosition * 16 + z);
+						property.set(x, y, z, prop);
+					}
+				}
+			}
 		}
 	}
 
@@ -102,12 +102,12 @@ public class DimensionProperty implements IWorldAccess {
 
 	@Override
 	public void playSoundToNearExcept(EntityPlayer var1, String var2, double var3, double var5, double var7,
-			float var9, float var10) {
+									  float var9, float var10) {
 	}
 
 	@Override
 	public void spawnParticle(String var1, double var2, double var4, double var6, double var8, double var10,
-			double var12) {
+							  double var12) {
 	}
 
 	@Override

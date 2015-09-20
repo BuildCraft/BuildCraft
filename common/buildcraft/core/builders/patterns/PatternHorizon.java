@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -23,7 +23,7 @@ public class PatternHorizon extends FillerPattern {
 	}
 
 	@Override
-	public Template getTemplate (Box box, World world, IStatementParameter[] parameters) {
+	public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
 		int xMin = (int) box.pMin().x;
 		int yMin = box.pMin().y > 0 ? (int) box.pMin().y - 1 : 0;
 		int zMin = (int) box.pMin().z;
@@ -46,7 +46,7 @@ public class PatternHorizon extends FillerPattern {
 	}
 
 	@Override
-	public BptBuilderTemplate getTemplateBuilder (Box box, World world, IStatementParameter[] parameters) {
+	public BptBuilderTemplate getTemplateBuilder(Box box, World world, IStatementParameter[] parameters) {
 		int yMin = box.pMin().y > 0 ? (int) box.pMin().y - 1 : 0;
 
 		return new BptBuilderTemplate(getTemplate(box, world, parameters), world, box.xMin, yMin, box.zMin);

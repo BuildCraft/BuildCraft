@@ -20,7 +20,7 @@ public class LensFilterHandler {
 		boolean encounteredColor = false;
 		int myColor = event.item.color == null ? -1 : event.item.color.ordinal();
 
-		for (ForgeDirection dir: event.destinations) {
+		for (ForgeDirection dir : event.destinations) {
 			int sideColor = -1;
 			int sideLensColor = -1;
 

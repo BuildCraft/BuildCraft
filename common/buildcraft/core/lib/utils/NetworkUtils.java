@@ -16,37 +16,37 @@ public final class NetworkUtils {
 
 	}
 
-	public static void writeUTF (ByteBuf data, String str) {
+	public static void writeUTF(ByteBuf data, String str) {
 		try {
 			if (str == null) {
 				data.writeInt(0);
 				return;
 			}
-			byte [] b = str.getBytes("UTF-8");
-			data.writeInt (b.length);
+			byte[] b = str.getBytes("UTF-8");
+			data.writeInt(b.length);
 			data.writeBytes(b);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
-			data.writeInt (0);
+			data.writeInt(0);
 		}
 	}
 
-	public static String readUTF (ByteBuf data) {
+	public static String readUTF(ByteBuf data) {
 		try {
 			int len = data.readInt();
 			if (len == 0) {
 				return "";
 			}
-			byte [] b = new byte [len];
+			byte[] b = new byte[len];
 			data.readBytes(b);
-			return new String (b, "UTF-8");
+			return new String(b, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
-	public static void writeNBT (ByteBuf data, NBTTagCompound nbt) {
+	public static void writeNBT(ByteBuf data, NBTTagCompound nbt) {
 		try {
 			byte[] compressed = CompressedStreamTools.compress(nbt);
 			data.writeInt(compressed.length);
@@ -68,7 +68,7 @@ public final class NetworkUtils {
 		}
 	}
 
-	public static void writeStack (ByteBuf data, ItemStack stack) {
+	public static void writeStack(ByteBuf data, ItemStack stack) {
 		if (stack == null || stack.getItem() == null || stack.stackSize < 0) {
 			data.writeByte(0);
 		} else {

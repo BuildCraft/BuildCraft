@@ -8,6 +8,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import net.minecraft.item.ItemStack;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.boards.RedstoneBoardNBT;
@@ -41,7 +42,6 @@ public final class RobotUtils {
 
 		return stations;
 	}
-
 
 
 	public static RedstoneBoardRobotNBT getNextBoard(ItemStack stack, boolean reverse) {

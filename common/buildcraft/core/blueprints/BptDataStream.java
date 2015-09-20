@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -107,11 +107,11 @@ public class BptDataStream implements DataInput, DataOutput {
 			char c = (char) i;
 
 			switch (c) {
-			case ',':
-				exit = true;
-				break;
-			default:
-				builder.append(c);
+				case ',':
+					exit = true;
+					break;
+				default:
+					builder.append(c);
 			}
 		}
 
@@ -138,11 +138,11 @@ public class BptDataStream implements DataInput, DataOutput {
 			char c = (char) i;
 
 			switch (c) {
-			case ',':
-				exit = true;
-				break;
-			default:
-				builder.append(c);
+				case ',':
+					exit = true;
+					break;
+				default:
+					builder.append(c);
 			}
 		}
 
@@ -170,30 +170,30 @@ public class BptDataStream implements DataInput, DataOutput {
 			c = (char) reader.read();
 
 			switch (c) {
-			case '\\':
-				c = (char) reader.read();
-
-				switch (c) {
-				case 'n':
-					builder.append('\n');
-					break;
-				case 'r':
-					builder.append('\r');
-					break;
 				case '\\':
-					builder.append('\\');
-					break;
-				case '\"':
-					builder.append('\"');
-					break;
-				}
+					c = (char) reader.read();
 
-				break;
-			case '"':
-				exit = true;
-				break;
-			default:
-				builder.append(c);
+					switch (c) {
+						case 'n':
+							builder.append('\n');
+							break;
+						case 'r':
+							builder.append('\r');
+							break;
+						case '\\':
+							builder.append('\\');
+							break;
+						case '\"':
+							builder.append('\"');
+							break;
+					}
+
+					break;
+				case '"':
+					exit = true;
+					break;
+				default:
+					builder.append(c);
 			}
 		}
 
@@ -289,21 +289,21 @@ public class BptDataStream implements DataInput, DataOutput {
 
 		for (char c : s.toCharArray()) {
 			switch (c) {
-			case '\n':
-				writer.write("\\n");
-				break;
-			case '\r':
-				writer.write("\\r");
-				break;
-			case '\"':
-				writer.write("\\\"");
-				break;
-			case '\\':
-				writer.write("\\\\");
-				break;
-			default:
-				writer.write(c);
-				break;
+				case '\n':
+					writer.write("\\n");
+					break;
+				case '\r':
+					writer.write("\\r");
+					break;
+				case '\"':
+					writer.write("\\\"");
+					break;
+				case '\\':
+					writer.write("\\\\");
+					break;
+				default:
+					writer.write(c);
+					break;
 			}
 		}
 

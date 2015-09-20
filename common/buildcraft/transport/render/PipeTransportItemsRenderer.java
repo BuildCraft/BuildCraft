@@ -129,7 +129,7 @@ public class PipeTransportItemsRenderer extends PipeTransportRenderer<PipeTransp
 			Position motion = new Position(0, 0, 0, item.toCenter ? item.input : item.output);
 			motion.moveForwards(item.getSpeed() * f);
 
-			doRenderItem(item, x + item.xCoord - pipe.container.xCoord + motion.x, y + item.yCoord - pipe.container.yCoord  + motion.y, z + item.zCoord - pipe.container.zCoord  + motion.z, 0.0F, item.color);
+			doRenderItem(item, x + item.xCoord - pipe.container.xCoord + motion.x, y + item.yCoord - pipe.container.yCoord + motion.y, z + item.zCoord - pipe.container.zCoord + motion.z, 0.0F, item.color);
 			count++;
 		}
 

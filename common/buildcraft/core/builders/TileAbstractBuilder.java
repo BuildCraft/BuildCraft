@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -18,6 +18,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
+
 import cpw.mods.fml.relauncher.Side;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -37,7 +38,7 @@ import buildcraft.core.lib.network.command.PacketCommand;
 public abstract class TileAbstractBuilder extends TileBuildCraft implements ITileBuilder, IInventory, IBoxProvider,
 		IBuildingItemsProvider, ICommandReceiver {
 
-	public LinkedList<LaserData> pathLasers = new LinkedList<LaserData> ();
+	public LinkedList<LaserData> pathLasers = new LinkedList<LaserData>();
 
 	public HashSet<BuildingItem> buildersInAction = new HashSet<BuildingItem>();
 
@@ -52,8 +53,9 @@ public abstract class TileAbstractBuilder extends TileBuildCraft implements ITil
 		 */
 		this.setBattery(new RFBattery(2 * 64 * BuilderAPI.BUILD_ENERGY, 1000, 0));
 	}
+
 	@Override
-	public void initialize () {
+	public void initialize() {
 		super.initialize();
 
 		if (worldObj.isRemote) {

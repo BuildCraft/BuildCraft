@@ -8,9 +8,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.transport.IPipeTile;
@@ -28,7 +28,7 @@ public class ItemGateCopier extends ItemBuildCraft {
 		setMaxStackSize(1);
 		setUnlocalizedName("gateCopier");
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
 	public IIcon getIconIndex(ItemStack i) {
@@ -42,13 +42,13 @@ public class ItemGateCopier extends ItemBuildCraft {
 		if (world.isRemote) {
 			return true;
 		}
-		
+
 		boolean isCopying = !player.isSneaking();
 		TileEntity tile = world.getTileEntity(x, y, z);
 		NBTTagCompound data = NBTUtils.getItemData(stack);
 		PipePluggable pluggable = null;
 		Gate gate = null;
-		
+
 		if (tile == null || !(tile instanceof IPipeTile)) {
 			isCopying = true;
 		} else {
@@ -68,7 +68,7 @@ public class ItemGateCopier extends ItemBuildCraft {
 		if (pluggable instanceof GatePluggable) {
 			gate = ((GatePluggable) pluggable).realGate;
 		}
-		
+
 		if (isCopying) {
 			if (gate == null) {
 				stack.setTagCompound(new NBTTagCompound());
@@ -91,10 +91,10 @@ public class ItemGateCopier extends ItemBuildCraft {
 				player.addChatMessage(new ChatComponentTranslation("chat.gateCopier.noGate"));
 				return true;
 			}
-			
+
 			GateMaterial dataMaterial = GateMaterial.fromOrdinal(data.getByte("material"));
 			GateMaterial gateMaterial = gate.material;
-			
+
 			if (gateMaterial.numSlots < dataMaterial.numSlots) {
 				player.addChatMessage(new ChatComponentTranslation("chat.gateCopier.warning.slots"));
 			}
@@ -107,7 +107,7 @@ public class ItemGateCopier extends ItemBuildCraft {
 			if (data.getByte("logic") != gate.logic.ordinal()) {
 				player.addChatMessage(new ChatComponentTranslation("chat.gateCopier.warning.logic"));
 			}
-			
+
 			gate.readStatementsFromNBT(data);
 			if (!gate.verifyGateStatements()) {
 				player.addChatMessage(new ChatComponentTranslation("chat.gateCopier.warning.load"));
@@ -116,7 +116,7 @@ public class ItemGateCopier extends ItemBuildCraft {
 			if (tile instanceof TileGenericPipe) {
 				((TileGenericPipe) tile).sendUpdateToClient();
 			}
-			player.addChatMessage(new ChatComponentTranslation("chat.gateCopier.gatePasted"));	
+			player.addChatMessage(new ChatComponentTranslation("chat.gateCopier.gatePasted"));
 			return true;
 		}
 

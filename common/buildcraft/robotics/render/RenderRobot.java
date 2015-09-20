@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.mojang.authlib.GameProfile;
-
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.model.ModelBase;
@@ -53,7 +52,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 			DefaultProps.TEXTURE_PATH_ROBOTS + "/overlay_side.png");
 	private static final ResourceLocation overlay_cyan = new ResourceLocation(
 			DefaultProps.TEXTURE_PATH_ROBOTS + "/overlay_bottom.png");
-	
+
 	private final EntityItem dummyEntityItem = new EntityItem(null);
 	private final RenderItem customRenderItem;
 
@@ -189,7 +188,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 		for (ItemStack s : robot.getWearables()) {
 			doRenderWearable(robot, renderManager.renderEngine, s);
 		}
-		
+
 		GL11.glPopMatrix();
 	}
 
@@ -228,9 +227,9 @@ public class RenderRobot extends Render implements IItemRenderer {
 		} else if (type == ItemRenderType.INVENTORY) {
 			GL11.glScaled(1.5, 1.5, 1.5);
 		}
-		
+
 		doRenderRobot(1F / 16F, RenderManager.instance.renderEngine, 0.9F, false);
-		
+
 		GL11.glPopMatrix();
 	}
 
@@ -330,7 +329,7 @@ public class RenderRobot extends Render implements IItemRenderer {
 			box.render(factor);
 
 			GL11.glDisable(GL11.GL_BLEND);
-			
+
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			texManager.bindTexture(overlay_cyan);
 			box.render(factor);

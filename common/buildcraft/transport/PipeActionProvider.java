@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.gates.IGate;
@@ -29,9 +30,9 @@ public class PipeActionProvider implements IActionProvider {
 		if (pipe == null) {
 			return result;
 		}
-		
+
 		result.addAll(pipe.getActions());
-		
+
 		return result;
 	}
 

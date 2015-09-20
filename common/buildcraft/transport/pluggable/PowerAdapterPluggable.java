@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import cofh.api.energy.IEnergyHandler;
@@ -108,7 +109,7 @@ public class PowerAdapterPluggable extends PipePluggable implements IEnergyHandl
 
 	@Override
 	public ItemStack[] getDropItems(IPipeTile pipe) {
-		return new ItemStack[] { new ItemStack(BuildCraftTransport.powerAdapterItem) };
+		return new ItemStack[]{new ItemStack(BuildCraftTransport.powerAdapterItem)};
 	}
 
 	@Override

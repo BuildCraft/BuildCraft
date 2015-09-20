@@ -4,9 +4,9 @@ import java.util.BitSet;
 
 public final class BitSetUtils {
 	private BitSetUtils() {
-		
+
 	}
-	
+
 	public static BitSet fromByteArray(byte[] bytes) {
 		BitSet bits = new BitSet(bytes.length * 8);
 		for (int i = 0; i < bytes.length * 8; i++) {
@@ -16,7 +16,7 @@ public final class BitSetUtils {
 		}
 		return bits;
 	}
-	
+
 	public static byte[] toByteArray(BitSet bits) {
 		return toByteArray(bits, (bits.size() + 7) >> 3);
 	}

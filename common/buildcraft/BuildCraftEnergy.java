@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -35,7 +35,6 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.MinecraftForge;
@@ -137,14 +136,14 @@ public class BuildCraftEnergy extends BuildCraftMod {
 				OilPopulate.INSTANCE.surfaceDepositBiomes,
 				BuildCraftCore.mainConfigManager
 						.register("worldgen.biomes", "increasedOilIDs",
-								new String[] {BiomeDictionary.Type.SANDY.toString(), BiomeGenBase.taiga.biomeName},
+								new String[]{BiomeDictionary.Type.SANDY.toString(), BiomeGenBase.taiga.biomeName},
 								"IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have increased oil generation rates.", RestartRequirement.GAME));
 
 		setBiomeList(
 				OilPopulate.INSTANCE.excessiveBiomes,
 				BuildCraftCore.mainConfigManager
 						.register("worldgen.biomes", "excessiveOilIDs",
-								new String[] {},
+								new String[]{},
 								"IDs or Biome Types (e.g. SANDY,OCEAN) of biomes that should have GREATLY increased oil generation rates.", RestartRequirement.GAME));
 
 		setBiomeList(OilPopulate.INSTANCE.excludedBiomes,
@@ -338,7 +337,7 @@ public class BuildCraftEnergy extends BuildCraftMod {
 						BCLog.logger.log
 								(Level.WARN,
 										configuration.getName() + ": Could not find biome id: "
-								+ strippedId + " ; Skipping!");
+												+ strippedId + " ; Skipping!");
 					}
 				} else {
 					boolean found = false;
@@ -360,8 +359,8 @@ public class BuildCraftEnergy extends BuildCraftMod {
 					if (!found) {
 						BCLog.logger.log
 								(Level.WARN,
-									 configuration.getName() + ": Could not find biome id: "
-								+ strippedId + " ; Skipping!");
+										configuration.getName() + ": Could not find biome id: "
+												+ strippedId + " ; Skipping!");
 					}
 				}
 			}

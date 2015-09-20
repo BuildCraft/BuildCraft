@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -12,6 +12,7 @@ import java.util.LinkedList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.blueprints.BuilderAPI;
@@ -37,7 +38,7 @@ public class BptBuilderTemplate extends BptBuilderBase {
 	}
 
 	@Override
-	protected void internalInit () {
+	protected void internalInit() {
 		if (blueprint.excavate) {
 			for (int j = blueprint.sizeY - 1; j >= 0; --j) {
 				int yCoord = j + y - blueprint.anchorY;

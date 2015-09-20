@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -11,6 +11,7 @@ package buildcraft.factory;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftCore;
@@ -45,7 +46,7 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 	 * bedrock, lava or goes below 0, it's considered done.
 	 */
 	@Override
-	public void updateEntity () {
+	public void updateEntity() {
 		super.updateEntity();
 
 		if (worldObj.isRemote) {
@@ -148,7 +149,7 @@ public class TileMiningWell extends TileBuildCraft implements IHasWork, IPipeCon
 
 	@Override
 	public ConnectOverride overridePipeConnection(IPipeTile.PipeType type,
-			ForgeDirection with) {
+												  ForgeDirection with) {
 		return type == IPipeTile.PipeType.ITEM ? ConnectOverride.CONNECT : ConnectOverride.DEFAULT;
 	}
 

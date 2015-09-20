@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -31,11 +31,11 @@ public class LaserData implements ISerializable {
 	// Size of the wave, from 0 to 1
 	public float waveSize = 1F;
 
-	public LaserData () {
+	public LaserData() {
 
 	}
 
-	public LaserData (Position tail, Position head) {
+	public LaserData(Position tail, Position head) {
 		this.tail.x = tail.x;
 		this.tail.y = tail.y;
 		this.tail.z = tail.z;
@@ -45,7 +45,7 @@ public class LaserData implements ISerializable {
 		this.head.z = head.z;
 	}
 
-	public void update () {
+	public void update() {
 		double dx = head.x - tail.x;
 		double dy = head.y - tail.y;
 		double dz = head.z - tail.z;
@@ -56,21 +56,21 @@ public class LaserData implements ISerializable {
 		angleY = -Math.atan2(dy, dx) * 180.0 / Math.PI;
 	}
 
-	public void iterateTexture () {
+	public void iterateTexture() {
 		laserTexAnimation = (laserTexAnimation + 1) % 40;
 	}
 
-    public void writeToNBT(NBTTagCompound nbt) {
-    	NBTTagCompound headNbt = new NBTTagCompound();
-    	head.writeToNBT(headNbt);
-    	nbt.setTag("head", headNbt);
+	public void writeToNBT(NBTTagCompound nbt) {
+		NBTTagCompound headNbt = new NBTTagCompound();
+		head.writeToNBT(headNbt);
+		nbt.setTag("head", headNbt);
 
-    	NBTTagCompound tailNbt = new NBTTagCompound();
-    	tail.writeToNBT(tailNbt);
-    	nbt.setTag("tail", tailNbt);
+		NBTTagCompound tailNbt = new NBTTagCompound();
+		tail.writeToNBT(tailNbt);
+		nbt.setTag("tail", tailNbt);
 
-    	nbt.setBoolean("isVisible", isVisible);
-    }
+		nbt.setBoolean("isVisible", isVisible);
+	}
 
 	public void readFromNBT(NBTTagCompound nbt) {
 		head.readFromNBT(nbt.getCompoundTag("head"));

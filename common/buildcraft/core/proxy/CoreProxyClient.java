@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -23,6 +23,7 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.client.registry.ClientRegistry;
 import cpw.mods.fml.client.registry.RenderingRegistry;
@@ -114,20 +115,20 @@ public class CoreProxyClient extends CoreProxy {
 	}
 
 	@Override
-	public EntityBlock newEntityBlock(World world, double i, double j,	double k, double iSize, double jSize, double kSize, LaserKind laserKind) {
+	public EntityBlock newEntityBlock(World world, double i, double j, double k, double iSize, double jSize, double kSize, LaserKind laserKind) {
 		EntityBlock eb = super.newEntityBlock(world, i, j, k, iSize, jSize, kSize, laserKind);
 		switch (laserKind) {
-		case Blue:
-			eb.texture = BuildCraftCore.blueLaserTexture;
-			break;
+			case Blue:
+				eb.texture = BuildCraftCore.blueLaserTexture;
+				break;
 
-		case Red:
-			eb.texture = BuildCraftCore.redLaserTexture;
-			break;
+			case Red:
+				eb.texture = BuildCraftCore.redLaserTexture;
+				break;
 
-		case Stripes:
-			eb.texture = BuildCraftCore.stripesLaserTexture;
-			break;
+			case Stripes:
+				eb.texture = BuildCraftCore.stripesLaserTexture;
+				break;
 		}
 		return eb;
 	}
@@ -137,7 +138,7 @@ public class CoreProxyClient extends CoreProxy {
 	 * server, or directly from the minecraft instance if it's the client.
 	 */
 	@Override
-	public EntityPlayer getPlayerFromNetHandler (INetHandler handler) {
+	public EntityPlayer getPlayerFromNetHandler(INetHandler handler) {
 		if (handler instanceof NetHandlerPlayServer) {
 			return ((NetHandlerPlayServer) handler).playerEntity;
 		} else {

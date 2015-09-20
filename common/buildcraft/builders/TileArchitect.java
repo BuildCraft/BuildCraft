@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -19,6 +19,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.Constants;
@@ -105,11 +106,11 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 					sendNetworkUpdate();
 					return;
 				} else {
-                    if (BuildCraftCore.DEVELOPER_MODE) {
-                        mode = Mode.EDIT;
-                    } else {
-                        mode = Mode.NONE;
-                    }
+					if (BuildCraftCore.DEVELOPER_MODE) {
+						mode = Mode.EDIT;
+					} else {
+						mode = Mode.NONE;
+					}
 				}
 			} else {
 				mode = Mode.COPY;
@@ -240,7 +241,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		if (mode == Mode.COPY) {
 			readConfiguration.writeData(stream);
 			stream.writeShort(subLasers.size());
-			for (LaserData ld: subLasers) {
+			for (LaserData ld : subLasers) {
 				ld.writeData(stream);
 			}
 		}
@@ -264,6 +265,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 			}
 		}
 	}
+
 	@Override
 	public void invalidate() {
 		super.invalidate();
@@ -346,7 +348,7 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		}
 	}
 
-	public void rpcSetConfiguration (BlueprintReadConfiguration conf) {
+	public void rpcSetConfiguration(BlueprintReadConfiguration conf) {
 		readConfiguration = conf;
 
 		BuildCraftCore.instance.sendToServer(new PacketCommand(this, "setReadConfiguration", new CommandWriter() {
@@ -395,10 +397,10 @@ public class TileArchitect extends TileBuildCraft implements IInventory, IBoxPro
 		}
 		return condition ? 15 : 0;
 	}
-	
+
 	@Override
 	@SideOnly(Side.CLIENT)
-    public double getMaxRenderDistanceSquared() {
-        return Double.MAX_VALUE;
-    }
+	public double getMaxRenderDistanceSquared() {
+		return Double.MAX_VALUE;
+	}
 }

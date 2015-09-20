@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -23,7 +23,7 @@ public class SchematicMinecart extends SchematicEntity {
 
 	private Item baseItem;
 
-	public SchematicMinecart (Item baseItem) {
+	public SchematicMinecart(Item baseItem) {
 		this.baseItem = baseItem;
 	}
 
@@ -56,8 +56,8 @@ public class SchematicMinecart extends SchematicEntity {
 	public void readFromWorld(IBuilderContext context, Entity entity) {
 		super.readFromWorld(context, entity);
 
-		storedRequirements = new ItemStack [1];
-		storedRequirements [0] = new ItemStack(baseItem);
+		storedRequirements = new ItemStack[1];
+		storedRequirements[0] = new ItemStack(baseItem);
 	}
 
 	@Override

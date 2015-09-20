@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -48,7 +48,7 @@ public class PatternStairs extends FillerPattern {
 		int sizeX = xMax - xMin + 1;
 		int sizeZ = zMax - zMin + 1;
 
-		Template template = new Template (box.sizeX(), box.sizeY(), box.sizeZ());
+		Template template = new Template(box.sizeX(), box.sizeY(), box.sizeZ());
 
 		int height, heightStep;
 
@@ -65,7 +65,7 @@ public class PatternStairs extends FillerPattern {
 			param2 = ((PatternParameterXZDir) parameters[1]).getDirection();
 		}
 
-		int[] steps = new int[] {0, 0, 0, 0};
+		int[] steps = new int[]{0, 0, 0, 0};
 
 		if (param2 == 0) {
 			steps[0] = 1;

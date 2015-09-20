@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * The BuildCraft API is distributed under the terms of the MIT License.
  * Please check the contents of the license, which should be located
  * as "LICENSE.API" in the BuildCraft source code distribution.
@@ -12,6 +12,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.transport.IStripesActivator;
@@ -23,7 +24,7 @@ public class StripesHandlerPlaceBlock implements IStripesHandler {
 	public StripesHandlerType getType() {
 		return StripesHandlerType.ITEM_USE;
 	}
-	
+
 	@Override
 	public boolean shouldHandle(ItemStack stack) {
 		return stack.getItem() instanceof ItemBlock;
@@ -31,8 +32,8 @@ public class StripesHandlerPlaceBlock implements IStripesHandler {
 
 	@Override
 	public boolean handle(World world, int x, int y, int z,
-			ForgeDirection direction, ItemStack stack, EntityPlayer player,
-			IStripesActivator activator) {
+						  ForgeDirection direction, ItemStack stack, EntityPlayer player,
+						  IStripesActivator activator) {
 		if (!world.isAirBlock(x, y, z)) {
 			return false;
 		}

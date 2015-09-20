@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -23,6 +23,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.WorldSettings.GameType;
+
 import cpw.mods.fml.relauncher.Side;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -71,7 +72,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 	public Box box = new Box();
 	public PathIterator currentPathIterator;
-	public Tank[] fluidTanks = new Tank[] {
+	public Tank[] fluidTanks = new Tank[]{
 			new Tank("fluid1", FluidContainerRegistry.BUCKET_VOLUME * 8, this),
 			new Tank("fluid2", FluidContainerRegistry.BUCKET_VOLUME * 8, this),
 			new Tank("fluid3", FluidContainerRegistry.BUCKET_VOLUME * 8, this),
@@ -301,9 +302,9 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 	@Deprecated
 	public BptBuilderBase instanciateBluePrintBuilder(int x, int y, int z, ForgeDirection o) {
 		BlueprintBase bpt = instanciateBlueprint();
-        if (bpt == null) {
-            return null;
-        }
+		if (bpt == null) {
+			return null;
+		}
 
 		bpt = bpt.adjustToWorld(worldObj, x, y, z, o);
 
@@ -543,7 +544,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			new BlockIndex((int) currentPathIterator.ix,
 					(int) currentPathIterator.iy, (int) currentPathIterator.iz)
 					.writeTo(iteratorNBT);
-			bptNBT.setTag ("iterator", iteratorNBT);
+			bptNBT.setTag("iterator", iteratorNBT);
 		}
 
 		nbttagcompound.setTag("bptBuilder", bptNBT);
@@ -702,7 +703,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 
 	@Override
 	public AxisAlignedBB getRenderBoundingBox() {
-		Box renderBox = new Box (this).extendToEncompass(box);
+		Box renderBox = new Box(this).extendToEncompass(box);
 
 		for (LaserData l : pathLasers) {
 			renderBox = renderBox.extendToEncompass(l.head);
@@ -712,7 +713,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		return renderBox.expand(50).getBoundingBox();
 	}
 
-	public void build () {
+	public void build() {
 		if (currentBuilder != null) {
 			if (currentBuilder.buildNextSlot(worldObj, this, xCoord, yCoord, zCoord)) {
 				updateRequirements();
@@ -731,7 +732,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 			BuildCraftCore.instance.sendToPlayer(p, getItemRequirementsPacket(reqCopy));
 		}
 	}
-	
+
 	public void updateRequirements(EntityPlayer caller) {
 		List<RequirementItemStack> reqCopy = null;
 		if (currentBuilder instanceof BptBuilderBlueprint) {
@@ -742,7 +743,7 @@ public class TileBuilder extends TileAbstractBuilder implements IHasWork, IFluid
 		BuildCraftCore.instance.sendToPlayer(caller, getItemRequirementsPacket(reqCopy));
 	}
 
-	public BptBuilderBase getBlueprint () {
+	public BptBuilderBase getBlueprint() {
 		if (currentBuilder != null) {
 			return currentBuilder;
 		} else {

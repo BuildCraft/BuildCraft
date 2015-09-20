@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -15,6 +15,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -73,22 +74,22 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 
 		for (ForgeDirection o : ForgeDirection.VALID_DIRECTIONS) {
 			boolean oldPowerSource = powerSources[o.ordinal()];
-					
+
 			if (!container.isPipeConnected(o)) {
 				powerSources[o.ordinal()] = false;
 			} else {
 				TileEntity tile = container.getTile(o);
-			
+
 				if (powerSources[o.ordinal()] = transport.isPowerSource(tile, o)) {
 					sources++;
 				}
 			}
-			
+
 			if (oldPowerSource != powerSources[o.ordinal()]) {
 				container.scheduleRenderUpdate();
 			}
 		}
-		
+
 		if (container.getWorldObj().isRemote) {
 			// We only do the isRemote check now to get a list
 			// of power sources for client-side rendering.
@@ -191,7 +192,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive,
-			boolean simulate) {
+							 boolean simulate) {
 		if (from.ordinal() < 6 && container.getNeighborTile(from) instanceof IRedstoneEngine) {
 			allowExtraction = true;
 			return maxReceive;
@@ -205,7 +206,7 @@ public class PipePowerWood extends Pipe<PipeTransportPower> implements IPipeTran
 
 	@Override
 	public int extractEnergy(ForgeDirection from, int maxExtract,
-			boolean simulate) {
+							 boolean simulate) {
 		return 0;
 	}
 

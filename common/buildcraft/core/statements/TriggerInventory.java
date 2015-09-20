@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.IInvSlot;
@@ -75,7 +76,7 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
 						|| (StackHelper.canStacksOrListsMerge(stack, searchedStack) && stack.stackSize < stack
 						.getMaxStackSize()))
 						&& (searchedStack == null || searchedStack.getItem() instanceof ItemList || slot
-								.canPutStackInSlot(searchedStack));
+						.canPutStackInSlot(searchedStack));
 				// On the test above, we deactivate item list as inventories
 				// typically don't check for lists possibility. This is a
 				// heuristic which is more desirable than expensive computation
@@ -106,7 +107,7 @@ public class TriggerInventory extends BCStatement implements ITriggerExternal {
 	public void registerIcons(IIconRegister register) {
 		icon = register.registerIcon("buildcraftcore:triggers/trigger_inventory_" + state.name().toLowerCase());
 	}
-	
+
 	@Override
 	public IStatementParameter createParameter(int index) {
 		return new StatementParameterItemStack();

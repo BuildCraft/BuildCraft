@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -14,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+
 import cpw.mods.fml.relauncher.Side;
 
 import buildcraft.BuildCraftCore;
@@ -75,12 +76,12 @@ public class ContainerRequester extends BuildCraftContainer implements ICommandR
 
 			BuildCraftCore.instance.sendToPlayer((EntityPlayer) sender, new PacketCommand(this, "receiveRequestList",
 					new CommandWriter() {
-				public void write(ByteBuf data) {
-					for (ItemStack s : stacks) {
-						NetworkUtils.writeStack(data, s);
-					}
-				}
-			}));
+						public void write(ByteBuf data) {
+							for (ItemStack s : stacks) {
+								NetworkUtils.writeStack(data, s);
+							}
+						}
+					}));
 		} else if (side.isClient() && "receiveRequestList".equals(command)) {
 			requests = new ItemStack[TileRequester.NB_ITEMS];
 			for (int i = 0; i < TileRequester.NB_ITEMS; i++) {

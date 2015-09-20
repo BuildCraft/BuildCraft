@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -9,19 +9,12 @@
 package buildcraft;
 
 import java.io.File;
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.glu.GLU;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
-import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.entity.EntityList;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -30,6 +23,7 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
 import net.minecraft.util.IIcon;
+
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
@@ -44,7 +38,6 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
@@ -254,7 +247,7 @@ public class BuildCraftCore extends BuildCraftMod {
 	public static ITriggerExternal triggerFluidContainerBelow75 = new TriggerFluidContainerLevel(TriggerFluidContainerLevel.TriggerType.BELOW75);
 	public static IActionInternal actionRedstone = new ActionRedstoneOutput();
 	public static IActionExternal[] actionControl;
-	
+
 	public static boolean loadDefaultRecipes = true;
 	public static boolean consumeWaterSources = false;
 	public static float miningMultiplier;
@@ -301,11 +294,11 @@ public class BuildCraftCore extends BuildCraftMod {
 		mainConfigManager.register("display.hidePowerValues", false, "Should all power values (RF, RF/t) be hidden?", ConfigManager.RestartRequirement.NONE);
 		mainConfigManager.register("display.hideFluidValues", false, "Should all fluid values (mB, mB/t) be hidden?", ConfigManager.RestartRequirement.NONE);
 		mainConfigManager.register("general.itemLifespan", 60, "How long, in seconds, should items stay on the ground? (Vanilla = 300, default = 60)", ConfigManager.RestartRequirement.NONE)
-			.setMinValue(5);
+				.setMinValue(5);
 		mainConfigManager.register("network.updateFactor", 10, "How often, in ticks, should network update packets be sent? Increasing this might help network performance.", ConfigManager.RestartRequirement.GAME)
-			.setMinValue(1);
+				.setMinValue(1);
 		mainConfigManager.register("network.longUpdateFactor", 40, "How often, in ticks, should full network sync packets be sent? Increasing this might help network performance.", ConfigManager.RestartRequirement.GAME)
-			.setMinValue(1);
+				.setMinValue(1);
 		mainConfigManager.register("general.canEnginesExplode", false, "Should engines explode upon overheat?", ConfigManager.RestartRequirement.NONE);
 		mainConfigManager.register("worldgen.enable", true, "Should BuildCraft generate anything in the world?", ConfigManager.RestartRequirement.GAME);
 		mainConfigManager.register("general.pumpsConsumeWater", false, "Should pumps consume water? Enabling this might cause performance issues!", ConfigManager.RestartRequirement.NONE);
@@ -519,7 +512,7 @@ public class BuildCraftCore extends BuildCraftMod {
 		SchematicRegistry.INSTANCE.registerSchematicBlock(pathMarkerBlock, SchematicIgnore.class);
 
 		ColorUtils.initialize();
-		
+
 		actionControl = new IActionExternal[IControllable.Mode.values().length];
 		for (IControllable.Mode mode : IControllable.Mode.values()) {
 			if (mode != IControllable.Mode.Unknown && mode != IControllable.Mode.Mode) {

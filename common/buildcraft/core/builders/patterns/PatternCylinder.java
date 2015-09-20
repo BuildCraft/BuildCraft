@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -37,7 +37,7 @@ public class PatternCylinder extends FillerPattern {
 
 	@Override
 	public Template getTemplate(Box box, World world, IStatementParameter[] parameters) {
-		Template result = new Template (box.sizeX(), box.sizeY(), box.sizeZ());
+		Template result = new Template(box.sizeX(), box.sizeY(), box.sizeZ());
 		boolean filled = parameters.length > 0 && ((PatternParameterHollow) parameters[0]).filled;
 
 		int xMin = 0;
@@ -125,7 +125,7 @@ public class PatternCylinder extends FillerPattern {
 	}
 
 	private boolean fillSquare(int xCenter, int zCenter, int dx, int dz,
-									int xFix, int zFix, int yMin, int yMax, Template template) {
+							   int xFix, int zFix, int yMin, int yMax, Template template) {
 		int x1, x2, z1, z2;
 
 		x1 = xCenter + dx + xFix;
@@ -155,7 +155,7 @@ public class PatternCylinder extends FillerPattern {
 	}
 
 	private boolean fillFourColumns(int xCenter, int zCenter, int dx, int dz,
-			int xFix, int zFix, int yMin, int yMax, Template template) {
+									int xFix, int zFix, int yMin, int yMax, Template template) {
 		int x, z;
 
 		x = xCenter + dx + xFix;

@@ -6,6 +6,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockBush;
 import net.minecraft.block.IGrowable;
 import net.minecraft.init.Blocks;
+
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -18,9 +19,9 @@ import buildcraft.core.builders.schematics.SchematicTileCreative;
 
 public final class HeuristicBlockDetection {
 	private HeuristicBlockDetection() {
-		
+
 	}
-	
+
 	public static void start() {
 		Iterator i = Block.blockRegistry.iterator();
 		while (i.hasNext()) {
@@ -28,7 +29,7 @@ public final class HeuristicBlockDetection {
 			if (block == null || block == Blocks.air) {
 				continue;
 			}
-			
+
 			for (int meta = 0; meta < 16; meta++) {
 				if (!SchematicRegistry.INSTANCE.isSupported(block, meta)) {
 					try {
@@ -56,7 +57,7 @@ public final class HeuristicBlockDetection {
 							e.printStackTrace();
 						}
 					} catch (Exception e) {
-						
+
 					}
 				}
 			}

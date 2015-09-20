@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -13,6 +13,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.common.ForgeHooks;
 
 import buildcraft.api.blueprints.BuilderAPI;
@@ -81,24 +82,24 @@ public class AIRobotBreak extends AIRobot {
 
 		if (blockDamage > 1.0F) {
 			robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), blockToBreak.x,
-				blockToBreak.y, blockToBreak.z, -1);
+					blockToBreak.y, blockToBreak.z, -1);
 			blockDamage = 0;
 
 			if (robot.getHeldItem() != null) {
 				robot.getHeldItem().getItem()
-					.onBlockStartBreak(robot.getHeldItem(), blockToBreak.x, blockToBreak.y, blockToBreak.z,
-						CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj).get());
+						.onBlockStartBreak(robot.getHeldItem(), blockToBreak.x, blockToBreak.y, blockToBreak.z,
+								CoreProxy.proxy.getBuildCraftPlayer((WorldServer) robot.worldObj).get());
 			}
 
 			if (BlockUtils.breakBlock((WorldServer) robot.worldObj, blockToBreak.x, blockToBreak.y, blockToBreak.z, 6000)) {
 				robot.worldObj.playAuxSFXAtEntity(null, 2001,
-					blockToBreak.x, blockToBreak.y, blockToBreak.z,
-					Block.getIdFromBlock(block) + (meta << 12));
+						blockToBreak.x, blockToBreak.y, blockToBreak.z,
+						Block.getIdFromBlock(block) + (meta << 12));
 
 				if (robot.getHeldItem() != null) {
 					robot.getHeldItem().getItem()
-						.onBlockDestroyed(robot.getHeldItem(), robot.worldObj, block, blockToBreak.x,
-							blockToBreak.y, blockToBreak.z, robot);
+							.onBlockDestroyed(robot.getHeldItem(), robot.worldObj, block, blockToBreak.x,
+									blockToBreak.y, blockToBreak.z, robot);
 
 					if (robot.getHeldItem().getItemDamage() >= robot.getHeldItem().getMaxDamage()) {
 						robot.setItemInUse(null);
@@ -111,7 +112,7 @@ public class AIRobotBreak extends AIRobot {
 			terminate();
 		} else {
 			robot.worldObj.destroyBlockInWorldPartially(robot.getEntityId(), blockToBreak.x,
-				blockToBreak.y, blockToBreak.z, (int) (blockDamage * 10.0F) - 1);
+					blockToBreak.y, blockToBreak.z, (int) (blockDamage * 10.0F) - 1);
 		}
 	}
 

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.minecraft.client.gui.GuiScreen;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -34,9 +35,9 @@ public final class PipeToolTipManager {
 		}
 
 		if (!BuildCraftCore.hideFluidNumbers) {
-	        for (Map.Entry<Class<? extends Pipe<?>>, Integer> pipe : PipeTransportFluids.fluidCapacities.entrySet()) {
-	            PipeToolTipManager.addToolTip(pipe.getKey(), String.format("%d mB/t", pipe.getValue()));
-	        }
+			for (Map.Entry<Class<? extends Pipe<?>>, Integer> pipe : PipeTransportFluids.fluidCapacities.entrySet()) {
+				PipeToolTipManager.addToolTip(pipe.getKey(), String.format("%d mB/t", pipe.getValue()));
+			}
 		}
 	}
 
@@ -55,6 +56,7 @@ public final class PipeToolTipManager {
 			}
 		}
 	}
+
 	public static void addToolTip(Class<? extends Pipe<?>> pipe, String toolTip) {
 		toolTips.put(pipe, toolTip);
 	}

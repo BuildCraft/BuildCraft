@@ -13,18 +13,18 @@ public class PipeColoringRecipe implements IRecipe {
 	private ItemStack getResult(InventoryCrafting crafting) {
 		ItemStack oneColorPipeStack = null;
 		ItemStack pipeStack = null;
-		
+
 		boolean hasDifferentPipes = false;
-		
+
 		boolean isBleach = false;
 		ItemStack dye = null;
-		
+
 		for (int i = 0; i < 9; i++) {
 			ItemStack stack = crafting.getStackInSlot(i);
 			if (stack == null || stack.getItem() == null || stack.stackSize == 0) {
 				continue;
 			}
-			
+
 			if (stack.getItem() instanceof ItemPipe) {
 				if (pipeStack == null) {
 					pipeStack = new ItemStack(stack.getItem(), 1, 0);
@@ -45,7 +45,7 @@ public class PipeColoringRecipe implements IRecipe {
 				dye = stack;
 			}
 		}
-		
+
 		if (isBleach && dye != null) {
 			return null;
 		} else if (pipeStack != null && (isBleach || (dye != null && pipeStack.stackSize == 8)) && !hasDifferentPipes) {
@@ -55,10 +55,10 @@ public class PipeColoringRecipe implements IRecipe {
 			}
 			return result;
 		}
-		
+
 		return null;
 	}
-	
+
 	@Override
 	public boolean matches(InventoryCrafting crafting, World world) {
 		return getResult(crafting) != null;

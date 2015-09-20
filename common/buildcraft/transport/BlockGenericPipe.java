@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -38,6 +38,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -289,9 +290,9 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		if (!isValid(pipe)) {
 			return null;
 		}
-		
+
 		TileGenericPipe tileG = pipe.container;
-		
+
 		if (tileG == null) {
 			return null;
 		}
@@ -446,7 +447,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		if (pipe == null) {
 			pipe = pipeRemoved.get(new BlockIndex(x, y, z));
 		}
-		
+
 		if (pipe != null) {
 			if (pipe.item != null) {
 				list.add(new ItemStack(pipe.item, 1, pipe.container.getItemMetadata()));
@@ -478,7 +479,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 
 			if (k1 != null) {
 				pipe.dropContents();
-				for (ItemStack is: pipe.computeItemDrop()) {
+				for (ItemStack is : pipe.computeItemDrop()) {
 					dropBlockAsItem(world, i, j, k, is);
 				}
 				dropBlockAsItem(world, i, j, k, new ItemStack(k1, 1, pipe.container.getItemMetadata()));
@@ -534,7 +535,7 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 		if (isValid(pipe)) {
 			pipe.container.scheduleNeighborChange();
 			pipe.container.redstoneInput = 0;
-			
+
 			for (int i = 0; i < ForgeDirection.VALID_DIRECTIONS.length; i++) {
 				ForgeDirection d = ForgeDirection.getOrientation(i);
 				pipe.container.redstoneInputSide[i] = getRedstoneInputToPipe(world, x, y, z, d);
@@ -562,9 +563,9 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 			}
 		}
 	}
-	
+
 	private int getRedstoneInputToPipe(World world, int x, int y, int z,
-			ForgeDirection d) {
+									   ForgeDirection d) {
 		int i = d.ordinal();
 		int input = world.isBlockProvidingPowerTo(x + d.offsetX, y + d.offsetY, z + d.offsetZ, i);
 		if (input == 0) {

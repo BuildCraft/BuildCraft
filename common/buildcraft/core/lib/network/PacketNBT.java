@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -43,7 +43,7 @@ public class PacketNBT extends PacketCoordinates {
 			data.writeBytes(compressed);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}		
+		}
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class PacketNBT extends PacketCoordinates {
 		int length = data.readUnsignedShort();
 		byte[] compressed = new byte[length];
 		data.readBytes(compressed);
-		
+
 		try {
 			this.nbttagcompound = CompressedStreamTools.func_152457_a(compressed, NBTSizeTracker.field_152451_a);
 		} catch (IOException e) {

@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.BuildCraftTransport;
@@ -102,7 +103,7 @@ public class LensPluggable extends PipePluggable {
 
 	@Override
 	public ItemStack[] getDropItems(IPipeTile pipe) {
-		return new ItemStack[]{ new ItemStack(BuildCraftTransport.lensItem, 1, color | (isFilter ? 16 : 0)) };
+		return new ItemStack[]{new ItemStack(BuildCraftTransport.lensItem, 1, color | (isFilter ? 16 : 0))};
 	}
 
 	@Override

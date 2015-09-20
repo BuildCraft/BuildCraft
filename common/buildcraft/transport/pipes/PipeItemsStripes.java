@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -19,6 +19,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.WorldServer;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidBlock;
 
@@ -124,7 +125,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 		if (direction == ForgeDirection.UNKNOWN) {
 			direction = event.direction;
 		}
-		
+
 		Position p = new Position(container.xCoord, container.yCoord,
 				container.zCoord, direction);
 		p.moveForwards(1.0);
@@ -132,7 +133,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 		ItemStack stack = event.entity.getEntityItem();
 		EntityPlayer player = CoreProxy.proxy.getBuildCraftPlayer((WorldServer) getWorld(),
 				(int) p.x, (int) p.y, (int) p.z).get();
-		
+
 		switch (direction) {
 			case DOWN:
 				player.rotationPitch = 90;
@@ -161,7 +162,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 			case UNKNOWN:
 				break;
 		}
-		
+
 		/**
 		 * Check if there's a handler for this item type.
 		 */
@@ -176,7 +177,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 			}
 		}
 	}
-	
+
 	@Override
 	public void dropItem(ItemStack itemStack, ForgeDirection direction) {
 		Position p = new Position(container.xCoord, container.yCoord,
@@ -210,7 +211,7 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 			}
 		}
 	}
-	
+
 	@Override
 	public void sendItem(ItemStack itemStack, ForgeDirection direction) {
 		Position pos = new Position(container.xCoord + 0.5,
@@ -253,13 +254,13 @@ public class PipeItemsStripes extends Pipe<PipeTransportItems> implements IEnerg
 
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive,
-			boolean simulate) {
+							 boolean simulate) {
 		return battery.receiveEnergy(maxReceive, simulate);
 	}
 
 	@Override
 	public int extractEnergy(ForgeDirection from, int maxExtract,
-			boolean simulate) {
+							 boolean simulate) {
 		return 0;
 	}
 

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -23,6 +23,7 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -159,7 +160,7 @@ public class CoreProxy implements ICoreProxy {
 	 * This function returns either the player from the handler if it's on the
 	 * server, or directly from the minecraft instance if it's the client.
 	 */
-	public EntityPlayer getPlayerFromNetHandler (INetHandler handler) {
+	public EntityPlayer getPlayerFromNetHandler(INetHandler handler) {
 		if (handler instanceof NetHandlerPlayServer) {
 			return ((NetHandlerPlayServer) handler).playerEntity;
 		} else {

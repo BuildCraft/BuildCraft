@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -10,13 +10,13 @@ package buildcraft.core.lib.network;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
+
 import org.apache.logging.log4j.Level;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageCodec;
 import io.netty.util.AttributeKey;
-
 import gnu.trove.map.hash.TByteObjectHashMap;
 import gnu.trove.map.hash.TObjectByteHashMap;
 
@@ -37,7 +37,7 @@ public final class ChannelHandler extends MessageToMessageCodec<FMLProxyPacket, 
 	private TObjectByteHashMap<Class<? extends Packet>> types = new TObjectByteHashMap<Class<? extends Packet>>();
 	private int maxDiscriminator;
 
-    public ChannelHandler() {
+	public ChannelHandler() {
 		// Packets common to buildcraft.core.network
 		addDiscriminator(0, PacketTileUpdate.class);
 		addDiscriminator(1, PacketTileState.class);
@@ -49,7 +49,7 @@ public final class ChannelHandler extends MessageToMessageCodec<FMLProxyPacket, 
 		addDiscriminator(7, PacketCommand.class);
 		addDiscriminator(8, PacketEntityUpdate.class);
 		maxDiscriminator = 9;
-    }
+	}
 
 	public byte getDiscriminator(Class<? extends Packet> clazz) {
 		return types.get(clazz);

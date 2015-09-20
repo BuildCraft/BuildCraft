@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -26,6 +26,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -278,6 +279,7 @@ public final class BlockUtils {
 		return getBlockMetadata(world, x, y, z, false);
 
 	}
+
 	public static int getBlockMetadata(World world, int x, int y, int z, boolean force) {
 		if (!force) {
 			if (y < 0 || y > 255) {
@@ -291,7 +293,7 @@ public final class BlockUtils {
 	}
 
 	public static boolean useItemOnBlock(World world, EntityPlayer player, ItemStack stack, int x,
-			int y, int z, ForgeDirection direction) {
+										 int y, int z, ForgeDirection direction) {
 		boolean done = stack.getItem().onItemUseFirst(stack, player, world, x, y, z,
 				direction.ordinal(), 0.5F, 0.5F, 0.5F);
 

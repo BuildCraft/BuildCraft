@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -19,6 +19,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.Constants;
@@ -58,40 +59,40 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 
 		if (cpt.hasKey("kind")) {
 			switch (cpt.getByte("kind")) {
-			case 0: {
-				int x = cpt.getInteger("x");
-				int y = cpt.getInteger("y");
-				int z = cpt.getInteger("z");
-				ForgeDirection side = ForgeDirection.values()[cpt.getByte("side")];
+				case 0: {
+					int x = cpt.getInteger("x");
+					int y = cpt.getInteger("y");
+					int z = cpt.getInteger("z");
+					ForgeDirection side = ForgeDirection.values()[cpt.getByte("side")];
 
-				list.add(StringUtils.localize("{" + x + ", " + y + ", " + z + ", " + side + "}"));
-				break;
-			}
-			case 1: {
-				int x = cpt.getInteger("xMin");
-				int y = cpt.getInteger("yMin");
-				int z = cpt.getInteger("zMin");
-				int xLength = cpt.getInteger("xMax") - x + 1;
-				int yLength = cpt.getInteger("yMax") - y + 1;
-				int zLength = cpt.getInteger("zMax") - z + 1;
+					list.add(StringUtils.localize("{" + x + ", " + y + ", " + z + ", " + side + "}"));
+					break;
+				}
+				case 1: {
+					int x = cpt.getInteger("xMin");
+					int y = cpt.getInteger("yMin");
+					int z = cpt.getInteger("zMin");
+					int xLength = cpt.getInteger("xMax") - x + 1;
+					int yLength = cpt.getInteger("yMax") - y + 1;
+					int zLength = cpt.getInteger("zMax") - z + 1;
 
-				list.add(StringUtils.localize("{" + x + ", " + y + ", " + z + "} + {" + xLength + " x " + yLength + " x " + zLength + "}"));
-				break;
-			}
-			case 2: {
-				NBTTagList pathNBT = cpt.getTagList("path", Constants.NBT.TAG_COMPOUND);
-				BlockIndex first = new BlockIndex(pathNBT.getCompoundTagAt(0));
+					list.add(StringUtils.localize("{" + x + ", " + y + ", " + z + "} + {" + xLength + " x " + yLength + " x " + zLength + "}"));
+					break;
+				}
+				case 2: {
+					NBTTagList pathNBT = cpt.getTagList("path", Constants.NBT.TAG_COMPOUND);
+					BlockIndex first = new BlockIndex(pathNBT.getCompoundTagAt(0));
 
-				int x = first.x;
-				int y = first.y;
-				int z = first.z;
+					int x = first.x;
+					int y = first.y;
+					int z = first.z;
 
-				list.add(StringUtils.localize("{" + x + ", " + y + ", " + z + "} + " + pathNBT.tagCount() + " elements"));
-				break;
-			}
-			case 3: {
-				break;
-			}
+					list.add(StringUtils.localize("{" + x + ", " + y + ", " + z + "} + " + pathNBT.tagCount() + " elements"));
+					break;
+				}
+				case 3: {
+					break;
+				}
 			}
 		}
 	}
@@ -109,7 +110,7 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 
 	@Override
 	public String[] getIconNames() {
-		return new String[]{ "mapLocation/clean", "mapLocation/spot", "mapLocation/area", "mapLocation/path", "mapLocation/zone" };
+		return new String[]{"mapLocation/clean", "mapLocation/spot", "mapLocation/area", "mapLocation/path", "mapLocation/zone"};
 	}
 
 
@@ -121,7 +122,7 @@ public class ItemMapLocation extends ItemBuildCraft implements IMapLocation {
 
 	@Override
 	public boolean onItemUse(ItemStack stack, EntityPlayer par2EntityPlayer, World world, int x,
-			int y, int z, int side, float par8, float par9, float par10) {
+							 int y, int z, int side, float par8, float par9, float par10) {
 		TileEntity tile = world.getTileEntity(x, y, z);
 		NBTTagCompound cpt = NBTUtils.getItemData(stack);
 

@@ -33,7 +33,7 @@ public class AIRobotSearchBlock extends AIRobot {
 	}
 
 	public AIRobotSearchBlock(EntityRobotBase iRobot, boolean random, IBlockFilter iPathFound,
-			double iMaxDistanceToEnd) {
+							  double iMaxDistanceToEnd) {
 		super(iRobot);
 
 		pathFound = iPathFound;

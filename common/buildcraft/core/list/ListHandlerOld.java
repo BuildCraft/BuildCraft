@@ -11,6 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraftforge.oredict.OreDictionary;
@@ -137,7 +138,7 @@ public final class ListHandlerOld {
 		}
 
 		private void setClientPreviewLists() {
-			Item baseItem = stacks [0].getItem();
+			Item baseItem = stacks[0].getItem();
 
 			int[] oreIds = OreDictionary.getOreIDs(stacks[0]);
 

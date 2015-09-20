@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -10,6 +10,7 @@ package buildcraft.core.statements;
 
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.tileentity.TileEntity;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -77,12 +78,12 @@ public class TriggerEnergy extends BCStatement implements ITriggerInternal {
 
 	protected static boolean isTriggered(Object tile, ForgeDirection side) {
 		return (tile instanceof IEnergyHandler || tile instanceof IEnergyProvider || tile instanceof IEnergyReceiver)
-			&& (((IEnergyConnection) tile).canConnectEnergy(side.getOpposite()));
+				&& (((IEnergyConnection) tile).canConnectEnergy(side.getOpposite()));
 	}
 
 	protected boolean isActive(Object tile, ForgeDirection side) {
 		if (isTriggered(tile, side)) {
-				return isTriggeredEnergyHandler((IEnergyConnection) tile, side.getOpposite());
+			return isTriggeredEnergyHandler((IEnergyConnection) tile, side.getOpposite());
 		}
 
 		return false;

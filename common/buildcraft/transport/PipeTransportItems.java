@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -24,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -39,8 +40,6 @@ import buildcraft.core.lib.utils.MathUtils;
 import buildcraft.transport.network.PacketPipeTransportItemStackRequest;
 import buildcraft.transport.network.PacketPipeTransportTraveler;
 import buildcraft.transport.pipes.events.PipeEventItem;
-import buildcraft.transport.render.PipeTransportItemsRenderer;
-import buildcraft.transport.render.PipeTransportRenderer;
 import buildcraft.transport.utils.TransportUtils;
 
 public class PipeTransportItems extends PipeTransport implements IDebuggable {
@@ -398,7 +397,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 		return Math.abs(container.xCoord + 0.5 - item.xCoord) < middleLimit
 				&& Math.abs(container.yCoord + TransportUtils.getPipeFloorOf(item.getItemStack()) - item.yCoord) < middleLimit
 				&& Math
-						.abs(container.zCoord + 0.5 - item.zCoord) < middleLimit;
+				.abs(container.zCoord + 0.5 - item.zCoord) < middleLimit;
 	}
 
 	protected boolean endReached(TravelingItem item) {
@@ -529,7 +528,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
 		return tile instanceof IPipeTile || (tile instanceof IInventory && ((IInventory) tile).getSizeInventory() > 0);
 	}
-	
+
 	/**
 	 * Group all items that are similar, that is to say same dmg, same id, same
 	 * nbt and no contribution controlling them
@@ -559,7 +558,7 @@ public class PipeTransportItems extends PipeTransport implements IDebuggable {
 
 		items.clear();
 	}
-	
+
 	public List<ItemStack> getDroppedItems() {
 		groupEntities();
 

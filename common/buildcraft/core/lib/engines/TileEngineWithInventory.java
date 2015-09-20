@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -20,12 +20,12 @@ import buildcraft.core.lib.utils.Utils;
 public abstract class TileEngineWithInventory extends TileEngineBase implements IInventory, ISidedInventory {
 
 	private final SimpleInventory inv;
-    private final int[] defaultSlotArray;
+	private final int[] defaultSlotArray;
 
 	public TileEngineWithInventory(int invSize) {
 		inv = new SimpleInventory(invSize, "Engine", 64);
-        defaultSlotArray = Utils.createSlotArray(0, invSize);
-    }
+		defaultSlotArray = Utils.createSlotArray(0, invSize);
+	}
 
 	/* IINVENTORY IMPLEMENTATION */
 	@Override
@@ -93,24 +93,24 @@ public abstract class TileEngineWithInventory extends TileEngineBase implements 
 		inv.writeToNBT(data);
 	}
 
-    // ISidedInventory
+	// ISidedInventory
 
-    @Override
-    public int[] getAccessibleSlotsFromSide(int side) {
-        if (side == orientation.ordinal()) {
-            return new int[0];
-        } else {
-            return defaultSlotArray;
-        }
-    }
+	@Override
+	public int[] getAccessibleSlotsFromSide(int side) {
+		if (side == orientation.ordinal()) {
+			return new int[0];
+		} else {
+			return defaultSlotArray;
+		}
+	}
 
-    @Override
-    public boolean canInsertItem(int slot, ItemStack stack, int side) {
-        return side != orientation.ordinal();
-    }
+	@Override
+	public boolean canInsertItem(int slot, ItemStack stack, int side) {
+		return side != orientation.ordinal();
+	}
 
-    @Override
-    public boolean canExtractItem(int slot, ItemStack stack, int side) {
-        return side != orientation.ordinal();
-    }
+	@Override
+	public boolean canExtractItem(int slot, ItemStack stack, int side) {
+		return side != orientation.ordinal();
+	}
 }

@@ -10,6 +10,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.AxisAlignedBB;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -47,6 +48,7 @@ public class GatePluggable extends PipePluggable {
 			}
 		}
 	}
+
 	public GateDefinition.GateMaterial material;
 	public GateDefinition.GateLogic logic;
 	public IGateExpansion[] expansions;
@@ -136,7 +138,7 @@ public class GatePluggable extends PipePluggable {
 		for (IGateExpansion expansion : expansions) {
 			ItemGate.addGateExpansion(gate, expansion);
 		}
-		return new ItemStack[] { gate };
+		return new ItemStack[]{gate};
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -32,6 +32,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.stats.Achievement;
 import net.minecraft.world.World;
+
 import cpw.mods.fml.client.event.ConfigChangedEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
@@ -41,6 +42,7 @@ import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLMissingMappingsEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -48,6 +50,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Property;
@@ -87,7 +90,36 @@ import buildcraft.builders.TileConstructionMarker;
 import buildcraft.builders.TileFiller;
 import buildcraft.builders.TileQuarry;
 import buildcraft.builders.blueprints.RealBlueprintDeployer;
-import buildcraft.builders.schematics.*;
+import buildcraft.builders.schematics.SchematicAir;
+import buildcraft.builders.schematics.SchematicBed;
+import buildcraft.builders.schematics.SchematicCactus;
+import buildcraft.builders.schematics.SchematicCustomStack;
+import buildcraft.builders.schematics.SchematicDirt;
+import buildcraft.builders.schematics.SchematicDoor;
+import buildcraft.builders.schematics.SchematicEnderChest;
+import buildcraft.builders.schematics.SchematicFactoryBlock;
+import buildcraft.builders.schematics.SchematicFactoryEntity;
+import buildcraft.builders.schematics.SchematicFactoryMask;
+import buildcraft.builders.schematics.SchematicFarmland;
+import buildcraft.builders.schematics.SchematicFire;
+import buildcraft.builders.schematics.SchematicGlassPane;
+import buildcraft.builders.schematics.SchematicGravel;
+import buildcraft.builders.schematics.SchematicHanging;
+import buildcraft.builders.schematics.SchematicLever;
+import buildcraft.builders.schematics.SchematicMinecart;
+import buildcraft.builders.schematics.SchematicPiston;
+import buildcraft.builders.schematics.SchematicPortal;
+import buildcraft.builders.schematics.SchematicPumpkin;
+import buildcraft.builders.schematics.SchematicRail;
+import buildcraft.builders.schematics.SchematicRedstoneDiode;
+import buildcraft.builders.schematics.SchematicRedstoneLamp;
+import buildcraft.builders.schematics.SchematicRedstoneWire;
+import buildcraft.builders.schematics.SchematicSeeds;
+import buildcraft.builders.schematics.SchematicSign;
+import buildcraft.builders.schematics.SchematicSkull;
+import buildcraft.builders.schematics.SchematicStairs;
+import buildcraft.builders.schematics.SchematicStone;
+import buildcraft.builders.schematics.SchematicTripWireHook;
 import buildcraft.builders.statements.BuildersActionProvider;
 import buildcraft.core.CompatHooks;
 import buildcraft.core.DefaultProps;
@@ -107,37 +139,6 @@ import buildcraft.core.builders.schematics.SchematicTileCreative;
 import buildcraft.core.builders.schematics.SchematicWallSide;
 import buildcraft.core.config.ConfigManager;
 import buildcraft.core.proxy.CoreProxy;
-import com.google.common.collect.Lists;
-import cpw.mods.fml.client.event.ConfigChangedEvent;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.event.*;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.entity.item.*;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.launchwrapper.Launch;
-import net.minecraft.stats.Achievement;
-import net.minecraft.world.World;
-import net.minecraftforge.client.event.TextureStitchEvent;
-import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.ForgeChunkManager;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Property;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.util.List;
 
 @Mod(name = "BuildCraft Builders", version = Version.VERSION, useMetadata = false, modid = "BuildCraft|Builders", dependencies = DefaultProps.DEPENDENCY_CORE)
 public class BuildCraftBuilders extends BuildCraftMod {
@@ -248,7 +249,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 			blueprintClientDir = BuildCraftCore.mainConfigManager.get("blueprints.clientDatabaseDirectory").getString();
 			blueprintClientDir = JavaTools.stripSurroundingQuotes(replacePathVariables(blueprintClientDir));
-			clientDB.init(new String[] {
+			clientDB.init(new String[]{
 					blueprintClientDir,
 					getDownloadsDir()
 			}, blueprintClientDir);
@@ -278,7 +279,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 			// According XDG specification every user-specified folder can be localized
 			// or even moved to any destination, so we obtain real path with xdg-user-dir
 			try {
-				Process process = Runtime.getRuntime().exec(new String[] {"xdg-user-dir", "DOWNLOAD"});
+				Process process = Runtime.getRuntime().exec(new String[]{"xdg-user-dir", "DOWNLOAD"});
 				BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream(), "utf-8"));
 				process.waitFor();
 				String line = reader.readLine().trim();
@@ -311,10 +312,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		} else {
 			result = result.replaceAll("/", "\\\\");
 		}
-		
+
 		return result;
 	}
-	
+
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		HeuristicBlockDetection.start();
@@ -335,7 +336,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		}
 
 		// Refresh the client database once all the library type handlers are registered
-        // The server database is refreshed later
+		// The server database is refreshed later
 		clientDB.refresh();
 	}
 
@@ -591,10 +592,10 @@ public class BuildCraftBuilders extends BuildCraftMod {
 				'D', Items.diamond_pickaxe);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(templateItem, 1), "ppp", "pip", "ppp", 'i',
-			"dyeBlack", 'p', Items.paper);
+				"dyeBlack", 'p', Items.paper);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(blueprintItem, 1), "ppp", "pip", "ppp", 'i',
-			"gemLapis", 'p', Items.paper);
+				"gemLapis", 'p', Items.paper);
 
 		if (constructionMarkerBlock != null) {
 			CoreProxy.proxy.addCraftingRecipe(new ItemStack(constructionMarkerBlock, 1), "l ", "r ", 'l',
@@ -602,17 +603,17 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		}
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(fillerBlock, 1), "btb", "ycy", "gCg", 'b',
-			"dyeBlack", 't', BuildCraftCore.markerBlock, 'y', "dyeYellow",
-			'c', Blocks.crafting_table, 'g', "gearGold", 'C', Blocks.chest);
+				"dyeBlack", 't', BuildCraftCore.markerBlock, 'y', "dyeYellow",
+				'c', Blocks.crafting_table, 'g', "gearGold", 'C', Blocks.chest);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(builderBlock, 1), "btb", "ycy", "gCg", 'b',
-			"dyeBlack", 't', BuildCraftCore.markerBlock, 'y', "dyeYellow",
-			'c', Blocks.crafting_table, 'g', "gearDiamond", 'C', Blocks.chest);
+				"dyeBlack", 't', BuildCraftCore.markerBlock, 'y', "dyeYellow",
+				'c', Blocks.crafting_table, 'g', "gearDiamond", 'C', Blocks.chest);
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(architectBlock, 1), "btb", "ycy", "gCg", 'b',
-			"dyeBlack", 't', BuildCraftCore.markerBlock, 'y', "dyeYellow",
-			'c', Blocks.crafting_table, 'g', "gearDiamond", 'C',
-			new ItemStack(blueprintItem, 1));
+				"dyeBlack", 't', BuildCraftCore.markerBlock, 'y', "dyeYellow",
+				'c', Blocks.crafting_table, 'g', "gearDiamond", 'C',
+				new ItemStack(blueprintItem, 1));
 
 		CoreProxy.proxy.addCraftingRecipe(new ItemStack(libraryBlock, 1), "igi", "bBb", "iri", 'B',
 				new ItemStack(blueprintItem), 'b', Blocks.bookshelf, 'i', "ingotIron", 'g', "gearIron", 'r', Items.redstone);
@@ -628,11 +629,11 @@ public class BuildCraftBuilders extends BuildCraftMod {
 		TilePathMarker.clearAvailableMarkersList();
 	}
 
-    @Mod.EventHandler
-    public void serverAboutToStart(FMLServerAboutToStartEvent event) {
-        String blueprintPath = new File(DimensionManager.getCurrentSaveRootDirectory(), "buildcraft" + File.separator + "blueprints").getPath();
-        serverDB.init(new String[]{oldBlueprintServerDir, blueprintPath}, blueprintPath);
-    }
+	@Mod.EventHandler
+	public void serverAboutToStart(FMLServerAboutToStartEvent event) {
+		String blueprintPath = new File(DimensionManager.getCurrentSaveRootDirectory(), "buildcraft" + File.separator + "blueprints").getPath();
+		serverDB.init(new String[]{oldBlueprintServerDir, blueprintPath}, blueprintPath);
+	}
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
@@ -652,7 +653,7 @@ public class BuildCraftBuilders extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void remap(FMLMissingMappingsEvent event) {
-		for (FMLMissingMappingsEvent.MissingMapping mapping: event.get()) {
+		for (FMLMissingMappingsEvent.MissingMapping mapping : event.get()) {
 			if (mapping.name.equals("BuildCraft|Builders:buildToolBlock")
 					|| mapping.name.equals("BuildCraft|Builders:null")) {
 				if (mapping.type == GameRegistry.Type.ITEM) {

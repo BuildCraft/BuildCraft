@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -15,6 +15,7 @@ import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.power.ILaserTarget;
@@ -195,28 +196,28 @@ public abstract class TileLaserTableBase extends TileBuildCraft implements ILase
 		int requiredEnergy = clientRequiredEnergy;
 
 		switch (id) {
-		case 0:
-			requiredEnergy = (requiredEnergy & 0xFFFF0000) | (data & 0xFFFF);
-			clientRequiredEnergy = requiredEnergy;
-			break;
-		case 1:
-			currentStored = (currentStored & 0xFFFF0000) | (data & 0xFFFF);
-			energy = currentStored;
-			break;
-		case 2:
-			requiredEnergy = (requiredEnergy & 0xFFFF) | ((data & 0xFFFF) << 16);
-			clientRequiredEnergy = requiredEnergy;
-			break;
-		case 3:
-			currentStored = (currentStored & 0xFFFF) | ((data & 0xFFFF) << 16);
-			energy = currentStored;
-			break;
-		case 4:
-			recentEnergyAverage = recentEnergyAverage & 0xFFFF0000 | (data & 0xFFFF);
-			break;
-		case 5:
-			recentEnergyAverage = (recentEnergyAverage & 0xFFFF) | ((data & 0xFFFF) << 16);
-			break;
+			case 0:
+				requiredEnergy = (requiredEnergy & 0xFFFF0000) | (data & 0xFFFF);
+				clientRequiredEnergy = requiredEnergy;
+				break;
+			case 1:
+				currentStored = (currentStored & 0xFFFF0000) | (data & 0xFFFF);
+				energy = currentStored;
+				break;
+			case 2:
+				requiredEnergy = (requiredEnergy & 0xFFFF) | ((data & 0xFFFF) << 16);
+				clientRequiredEnergy = requiredEnergy;
+				break;
+			case 3:
+				currentStored = (currentStored & 0xFFFF) | ((data & 0xFFFF) << 16);
+				energy = currentStored;
+				break;
+			case 4:
+				recentEnergyAverage = recentEnergyAverage & 0xFFFF0000 | (data & 0xFFFF);
+				break;
+			case 5:
+				recentEnergyAverage = (recentEnergyAverage & 0xFFFF) | ((data & 0xFFFF) << 16);
+				break;
 		}
 	}
 

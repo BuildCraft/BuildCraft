@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -19,6 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.MathHelper;
+
 import net.minecraftforge.common.util.Constants;
 
 import buildcraft.BuildCraftCore;
@@ -50,7 +51,7 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 	private double maxHeight;
 	private float lifetime = 0;
 
-	public void initialize () {
+	public void initialize() {
 		if (!initialized) {
 			double dx = destination.x - origin.x;
 			double dy = destination.y - origin.y;
@@ -73,17 +74,17 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 			middle.y = (destination.y + origin.y) / 2;
 			middle.z = (destination.z + origin.z) / 2;
 
-			Position top = new Position ();
+			Position top = new Position();
 			top.x = middle.x;
 			top.y = middle.y + maxHeight;
 			top.z = middle.z;
 
-			Position originToTop = new Position ();
+			Position originToTop = new Position();
 			originToTop.x = top.x - origin.x;
 			originToTop.y = top.y - origin.y;
 			originToTop.z = top.z - origin.z;
 
-			Position destinationToTop = new Position ();
+			Position destinationToTop = new Position();
 			destinationToTop.x = destination.x - origin.x;
 			destinationToTop.y = destination.y - origin.y;
 			destinationToTop.z = destination.z - origin.z;
@@ -113,8 +114,8 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 		}
 	}
 
-	public Position getDisplayPosition (float time) {
-		Position result = new Position ();
+	public Position getDisplayPosition(float time) {
+		Position result = new Position();
 
 		result.x = origin.x + vx * time;
 		result.y = origin.y + vy * time + MathHelper.sin(time / maxLifetime * (float) Math.PI) * maxHeight;
@@ -123,7 +124,7 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 		return result;
 	}
 
-	public void update () {
+	public void update() {
 		if (isDone) {
 			return;
 		}
@@ -138,7 +139,7 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 		}
 
 		lifetimeDisplay = lifetime;
-		previousUpdate = new Date ().getTime();
+		previousUpdate = new Date().getTime();
 
 		if (slotToBuild != null && lifetime > maxLifetime) {
 			slotToBuild.writeCompleted(context, (lifetime - maxLifetime)
@@ -146,11 +147,11 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 		}
 	}
 
-	public void displayUpdate () {
+	public void displayUpdate() {
 		initialize();
 
 		float tickDuration = 50.0F; // miliseconds
-		long currentUpdate = new Date ().getTime();
+		long currentUpdate = new Date().getTime();
 		float timeSpan = currentUpdate - previousUpdate;
 		previousUpdate = currentUpdate;
 
@@ -211,14 +212,14 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 		return isDone;
 	}
 
-	public void writeToNBT (NBTTagCompound nbt) {
+	public void writeToNBT(NBTTagCompound nbt) {
 		NBTTagCompound originNBT = new NBTTagCompound();
 		origin.writeToNBT(originNBT);
-		nbt.setTag ("origin", originNBT);
+		nbt.setTag("origin", originNBT);
 
 		NBTTagCompound destinationNBT = new NBTTagCompound();
 		destination.writeToNBT(destinationNBT);
-		nbt.setTag ("destination", destinationNBT);
+		nbt.setTag("destination", destinationNBT);
 
 		nbt.setFloat("lifetime", lifetime);
 
@@ -243,9 +244,9 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 		nbt.setTag("registry", registryNBT);
 
 		if (slotToBuild instanceof BuildingSlotBlock) {
-			nbt.setByte ("slotKind", (byte) 0);
+			nbt.setByte("slotKind", (byte) 0);
 		} else {
-			nbt.setByte ("slotKind", (byte) 1);
+			nbt.setByte("slotKind", (byte) 1);
 		}
 
 		nbt.setTag("slotToBuild", slotNBT);
@@ -253,7 +254,7 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 
 	public void readFromNBT(NBTTagCompound nbt) throws MappingNotFoundException {
 		origin = new Position(nbt.getCompoundTag("origin"));
-		destination = new Position (nbt.getCompoundTag("destination"));
+		destination = new Position(nbt.getCompoundTag("destination"));
 		lifetime = nbt.getFloat("lifetime");
 
 		NBTTagList items = nbt.getTagList("items",
@@ -313,7 +314,7 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 		destination.writeData(stream);
 		stream.writeFloat(lifetime);
 		stream.writeShort(stacksToDisplay.size());
-		for (StackAtPosition s: stacksToDisplay) {
+		for (StackAtPosition s : stacksToDisplay) {
 			s.writeData(stream);
 		}
 	}

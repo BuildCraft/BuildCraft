@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -20,6 +20,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -44,7 +45,7 @@ import buildcraft.transport.utils.TransportUtils;
 public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEnergyHandler {
 	private final RFBattery battery = new RFBattery(2560, 640, 0);
 	private final WeakHashMap<Entity, Long> entityDropTime = new WeakHashMap<Entity, Long>();
-	
+
 	public PipeItemsObsidian(Item item) {
 		super(new PipeTransportItems(), item);
 	}
@@ -86,7 +87,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 				p2.x += 1 + distance;
 				break;
 			case WEST:
-			p1.x -= distance - 1;
+				p1.x -= distance - 1;
 				p2.x -= distance;
 				break;
 			case UP:
@@ -102,7 +103,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 				break;
 			case NORTH:
 			default:
-			p1.z -= distance - 1;
+				p1.z -= distance - 1;
 				p2.z -= distance;
 				break;
 		}
@@ -120,7 +121,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 				p2.y += distance;
 				break;
 			case DOWN:
-			p1.y -= distance - 1;
+				p1.y -= distance - 1;
 				p2.y -= distance;
 				break;
 			case SOUTH:
@@ -212,7 +213,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 				if (contained == null) {
 					return;
 				}
-				
+
 				TransportProxy.proxy.obsidianPipePickup(container.getWorldObj(), item, this.container);
 
 				int energyUsed = Math.min(10 * contained.stackSize * distance, battery.getEnergyStored());
@@ -242,7 +243,7 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 			if (stack == null) {
 				return;
 			}
-			
+
 			TravelingItem item = TravelingItem.make(container.xCoord + 0.5, container.yCoord + TransportUtils.getPipeFloorOf(stack), container.zCoord + 0.5, stack);
 
 			item.setSpeed((float) speed);
@@ -286,13 +287,13 @@ public class PipeItemsObsidian extends Pipe<PipeTransportItems> implements IEner
 
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive,
-			boolean simulate) {
+							 boolean simulate) {
 		return battery.receiveEnergy(maxReceive, simulate);
 	}
 
 	@Override
 	public int extractEnergy(ForgeDirection from, int maxExtract,
-			boolean simulate) {
+							 boolean simulate) {
 		return 0;
 	}
 

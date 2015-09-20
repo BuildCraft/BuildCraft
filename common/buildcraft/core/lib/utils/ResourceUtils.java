@@ -40,8 +40,10 @@ public final class ResourceUtils {
 			return name;
 		}
 	}
+
 	/**
 	 * Turns a block/item name into a prefix for finding textures.
+	 *
 	 * @param objectName
 	 * @return
 	 */

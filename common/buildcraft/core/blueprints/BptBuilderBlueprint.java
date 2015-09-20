@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -27,6 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -152,14 +153,14 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 					if (!isLocationUsed(xCoord, yCoord, zCoord)) {
 						switch (slot.getBuildStage()) {
-						case STANDALONE:
-							tmpStandalone.add(b);
-							b.buildStage = 1;
-							break;
-						case EXPANDING:
-							tmpExpanding.add(b);
-							b.buildStage = 2;
-							break;
+							case STANDALONE:
+								tmpStandalone.add(b);
+								b.buildStage = 1;
+								break;
+							case EXPANDING:
+								tmpExpanding.add(b);
+								b.buildStage = 2;
+								break;
 						}
 					} else {
 						postProcessing.add(b);
@@ -195,7 +196,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 		recomputeNeededItems();
 	}
 
-	public void deploy () {
+	public void deploy() {
 		initialize();
 
 		for (List<BuildingSlotBlock> lb : buildList.values()) {
@@ -400,7 +401,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 					if (slot.mode == Mode.ClearIfInvalid) {
 						if (BuildCraftAPI.isSoftBlock(world, slot.x, slot.y,
 								slot.z)
-						|| isBlockBreakCanceled(world, slot.x, slot.y, slot.z)) {
+								|| isBlockBreakCanceled(world, slot.x, slot.y, slot.z)) {
 							iterator.remove();
 							markLocationUsed(slot.x, slot.y, slot.z);
 							requirementMap.remove(slot);
@@ -585,7 +586,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 
 		}
 
-		if (context.world ().getWorldInfo().getGameType() == GameType.CREATIVE) {
+		if (context.world().getWorldInfo().getGameType() == GameType.CREATIVE) {
 			for (ItemStack s : tmpReq) {
 				slot.addStackConsumed(s);
 			}
@@ -627,7 +628,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 				if (fluidFound || StackHelper.isEqualItem(reqStk, invStk)) {
 					try {
 						usedStack = slot.getSchematic().useItem(context, reqStk, slotInv);
-						slot.addStackConsumed (usedStack);
+						slot.addStackConsumed(usedStack);
 					} catch (Throwable t) {
 						// Defensive code against errors in implementers
 						t.printStackTrace();
@@ -765,12 +766,12 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	public void saveBuildStateToNBT(NBTTagCompound nbt, IBuildingItemsProvider builder) {
 		super.saveBuildStateToNBT(nbt, builder);
 
-		int [] entitiesBuiltArr = new int [builtEntities.size()];
+		int[] entitiesBuiltArr = new int[builtEntities.size()];
 
 		int id = 0;
 
 		for (Integer i : builtEntities) {
-			entitiesBuiltArr [id] = i;
+			entitiesBuiltArr[id] = i;
 			id++;
 		}
 
@@ -781,7 +782,7 @@ public class BptBuilderBlueprint extends BptBuilderBase {
 	public void loadBuildStateToNBT(NBTTagCompound nbt, IBuildingItemsProvider builder) {
 		super.loadBuildStateToNBT(nbt, builder);
 
-		int [] entitiesBuiltArr = nbt.getIntArray("builtEntities");
+		int[] entitiesBuiltArr = nbt.getIntArray("builtEntities");
 
 		for (int i = 0; i < entitiesBuiltArr.length; ++i) {
 			builtEntities.add(i);

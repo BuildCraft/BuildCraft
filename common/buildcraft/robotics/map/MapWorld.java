@@ -55,7 +55,7 @@ public class MapWorld {
 			if (target.exists()) {
 				try {
 					FileInputStream f = new FileInputStream(target);
-					byte [] data = new byte [(int) target.length()];
+					byte[] data = new byte[(int) target.length()];
 					f.read(data);
 					f.close();
 

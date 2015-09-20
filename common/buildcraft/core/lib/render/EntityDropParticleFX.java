@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -13,6 +13,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -93,7 +94,7 @@ public class EntityDropParticleFX extends EntityFX {
 		int y = MathHelper.floor_double(this.posY);
 		int z = MathHelper.floor_double(this.posZ);
 		Block block = worldObj.getBlock(x, y, z);
-		
+
 		Material material = block.getMaterial();
 
 		if ((material.isLiquid() || material.isSolid()) && block instanceof IFluidBlock) {

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -39,7 +39,7 @@ public final class RefineryRecipeManager implements IRefineryRecipeManager {
 
 	@Override
 	public void addRecipe(String id, FluidStack ingredient1, FluidStack ingredient2, FluidStack result, int energy,
-			int delay) {
+						  int delay) {
 
 		if (ingredient1 == null || ingredient2 == null || result == null) {
 			BCLog.logger.warn("Rejected refinery recipe " + id + " due to a null FluidStack!");

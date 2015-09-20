@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -22,6 +22,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -39,7 +40,7 @@ import buildcraft.core.lib.utils.XorShift128Random;
 
 public abstract class BlockBuildCraft extends BlockContainer {
 	protected static boolean keepInventory = false;
-	private static final int[][] SIDE_TEXTURING_LOCATIONS = new int[][] {
+	private static final int[][] SIDE_TEXTURING_LOCATIONS = new int[][]{
 			{2, 3, 5, 4},
 			{3, 2, 4, 5},
 			{4, 5, 2, 3},
@@ -67,7 +68,9 @@ public abstract class BlockBuildCraft extends BlockContainer {
 		setHardness(5F);
 	}
 
-	public boolean hasAlphaPass() { return alphaPass; }
+	public boolean hasAlphaPass() {
+		return alphaPass;
+	}
 
 	public boolean isRotatable() {
 		return rotatable;
@@ -77,7 +80,9 @@ public abstract class BlockBuildCraft extends BlockContainer {
 		this.rotatable = rotatable;
 	}
 
-	public void setAlphaPass(boolean alphaPass) { this.alphaPass = alphaPass; }
+	public void setAlphaPass(boolean alphaPass) {
+		this.alphaPass = alphaPass;
+	}
 
 	public void setPassCount(int maxPasses) {
 		this.maxPasses = maxPasses;
@@ -202,29 +207,29 @@ public abstract class BlockBuildCraft extends BlockContainer {
 	protected void registerIconsForMeta(int meta, String blockName, IIconRegister register) {
 		icons[meta] = new IIcon[6];
 		String name = ResourceUtils.getObjectPrefix(blockName);
-		icons[meta][0] = ResourceUtils.getIconPriority(register, name, new String[] {
+		icons[meta][0] = ResourceUtils.getIconPriority(register, name, new String[]{
 				"bottom", "topbottom", "default"
 		});
-		icons[meta][1] = ResourceUtils.getIconPriority(register, name, new String[] {
+		icons[meta][1] = ResourceUtils.getIconPriority(register, name, new String[]{
 				"top", "topbottom", "default"
 		});
-		icons[meta][2] = ResourceUtils.getIconPriority(register, name, new String[] {
+		icons[meta][2] = ResourceUtils.getIconPriority(register, name, new String[]{
 				"front", "frontback", "side", "default"
 		});
-		icons[meta][3] = ResourceUtils.getIconPriority(register, name, new String[] {
+		icons[meta][3] = ResourceUtils.getIconPriority(register, name, new String[]{
 				"back", "frontback", "side", "default"
 		});
-		icons[meta][4] = ResourceUtils.getIconPriority(register, name, new String[] {
+		icons[meta][4] = ResourceUtils.getIconPriority(register, name, new String[]{
 				"left", "leftright", "side", "default"
 		});
-		icons[meta][5] = ResourceUtils.getIconPriority(register, name, new String[] {
+		icons[meta][5] = ResourceUtils.getIconPriority(register, name, new String[]{
 				"right", "leftright", "side", "default"
 		});
 	}
 
 	@SideOnly(Side.CLIENT)
 	public String[] getIconBlockNames() {
-		return new String[] {Block.blockRegistry.getNameForObject(this)};
+		return new String[]{Block.blockRegistry.getNameForObject(this)};
 	}
 
 	@Override

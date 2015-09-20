@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -74,7 +74,7 @@ public class GuiArchitect extends GuiBuildCraft {
 				new ToolTipLine(StringUtils.localize("tile.architect.tooltip.allowCreative.2"))
 		));
 		buttonList.add(optionAllowCreative);
-		
+
 		textField = new GuiTextField(this.fontRendererObj, TEXT_X, TEXT_Y, TEXT_WIDTH, TEXT_HEIGHT);
 		textField.setMaxStringLength(DefaultProps.MAX_NAME_SIZE);
 		textField.setText(architect.name);
@@ -105,25 +105,25 @@ public class GuiArchitect extends GuiBuildCraft {
 		updateButtons();
 	}
 
-	private void updateButtons () {
+	private void updateButtons() {
 		BlueprintReadConfiguration conf = architect.readConfiguration;
 
 		if (conf.rotate) {
 			optionRotate.displayString = StringUtils.localize("tile.architect.rotate");
 		} else {
-			optionRotate.displayString =  StringUtils.localize("tile.architect.norotate");
+			optionRotate.displayString = StringUtils.localize("tile.architect.norotate");
 		}
 
 		if (conf.excavate) {
 			optionExcavate.displayString = StringUtils.localize("tile.architect.excavate");
 		} else {
-			optionExcavate.displayString =  StringUtils.localize("tile.architect.noexcavate");
+			optionExcavate.displayString = StringUtils.localize("tile.architect.noexcavate");
 		}
 
 		if (conf.allowCreative) {
 			optionAllowCreative.displayString = StringUtils.localize("tile.architect.allowCreative");
 		} else {
-			optionAllowCreative.displayString =  StringUtils.localize("tile.architect.noallowCreative");
+			optionAllowCreative.displayString = StringUtils.localize("tile.architect.noallowCreative");
 		}
 	}
 

@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -51,6 +51,7 @@ public final class SimplexNoise { // Simplex noise in 2D, 3D and 4D
 	// To remove the need for index wrapping, double the permutation table length
 	private static short[] perm = new short[512];
 	private static short[] permMod12 = new short[512];
+
 	static {
 		for (int i = 0; i < 512; i++) {
 			perm[i] = p[i & 255];

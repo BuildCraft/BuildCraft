@@ -83,7 +83,7 @@ public class AIRobotPlant extends AIRobot {
 		super.loadSelfFromNBT(nbt);
 
 		if (nbt.hasKey("blockFound")) {
-			blockFound = new BlockIndex (nbt.getCompoundTag("blockFound"));
+			blockFound = new BlockIndex(nbt.getCompoundTag("blockFound"));
 		}
 	}
 }

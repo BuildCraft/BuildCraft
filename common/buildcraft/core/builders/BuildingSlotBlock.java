@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -51,7 +51,7 @@ public class BuildingSlotBlock extends BuildingSlot {
 	public int buildStage = 0;
 
 	@Override
-	public SchematicBlockBase getSchematic () {
+	public SchematicBlockBase getSchematic() {
 		if (schematic == null) {
 			return new SchematicMask(false);
 		} else {
@@ -140,12 +140,12 @@ public class BuildingSlotBlock extends BuildingSlot {
 	}
 
 	@Override
-	public void postProcessing (IBuilderContext context) {
+	public void postProcessing(IBuilderContext context) {
 		getSchematic().postProcessing(context, x, y, z);
 	}
 
 	@Override
-	public LinkedList<ItemStack> getRequirements (IBuilderContext context) {
+	public LinkedList<ItemStack> getRequirements(IBuilderContext context) {
 		if (mode == Mode.ClearIfInvalid) {
 			return new LinkedList<ItemStack>();
 		} else {
@@ -158,12 +158,12 @@ public class BuildingSlotBlock extends BuildingSlot {
 	}
 
 	@Override
-	public Position getDestination () {
-		return new Position (x + 0.5, y + 0.5, z + 0.5);
+	public Position getDestination() {
+		return new Position(x + 0.5, y + 0.5, z + 0.5);
 	}
 
 	@Override
-	public void writeCompleted (IBuilderContext context, double complete) {
+	public void writeCompleted(IBuilderContext context, double complete) {
 		if (mode == Mode.ClearIfInvalid) {
 			context.world().destroyBlockInWorldPartially(0, x, y, z,
 					(int) (complete * 10.0F) - 1);
@@ -176,7 +176,7 @@ public class BuildingSlotBlock extends BuildingSlot {
 	}
 
 	@Override
-	public void writeToNBT (NBTTagCompound nbt, MappingRegistry registry) {
+	public void writeToNBT(NBTTagCompound nbt, MappingRegistry registry) {
 		nbt.setByte("mode", (byte) mode.ordinal());
 		nbt.setInteger("x", x);
 		nbt.setInteger("y", y);
@@ -189,7 +189,7 @@ public class BuildingSlotBlock extends BuildingSlot {
 			nbt.setTag("schematic", schematicNBT);
 		}
 
-		NBTTagList nbtStacks = new NBTTagList ();
+		NBTTagList nbtStacks = new NBTTagList();
 
 		if (stackConsumed != null) {
 			for (ItemStack stack : stackConsumed) {
@@ -204,14 +204,14 @@ public class BuildingSlotBlock extends BuildingSlot {
 
 	@Override
 	public void readFromNBT(NBTTagCompound nbt, MappingRegistry registry) throws MappingNotFoundException {
-		mode = Mode.values() [nbt.getByte("mode")];
+		mode = Mode.values()[nbt.getByte("mode")];
 		x = nbt.getInteger("x");
 		y = nbt.getInteger("y");
 		z = nbt.getInteger("z");
 
 		if (nbt.hasKey("schematic")) {
 			schematic = (SchematicBlockBase) SchematicFactory
-				.createSchematicFromWorldNBT(nbt.getCompoundTag("schematic"), registry);
+					.createSchematicFromWorldNBT(nbt.getCompoundTag("schematic"), registry);
 		}
 
 		stackConsumed = new LinkedList<ItemStack>();
@@ -230,7 +230,7 @@ public class BuildingSlotBlock extends BuildingSlot {
 		if (mode == Mode.ClearIfInvalid) {
 			return stackConsumed;
 		} else {
-			return getSchematic ().getStacksToDisplay(stackConsumed);
+			return getSchematic().getStacksToDisplay(stackConsumed);
 		}
 	}
 

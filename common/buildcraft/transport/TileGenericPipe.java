@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -22,6 +22,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.Constants;
@@ -1165,7 +1166,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	@Override
 	public int receiveEnergy(ForgeDirection from, int maxReceive,
-			boolean simulate) {
+							 boolean simulate) {
 		IEnergyHandler handler = internalGetEnergyHandler(from);
 		if (handler != null) {
 			return handler.receiveEnergy(from, maxReceive, simulate);
@@ -1176,7 +1177,7 @@ public class TileGenericPipe extends TileEntity implements IFluidHandler,
 
 	@Override
 	public int extractEnergy(ForgeDirection from, int maxExtract,
-			boolean simulate) {
+							 boolean simulate) {
 		IEnergyHandler handler = internalGetEnergyHandler(from);
 		if (handler != null) {
 			return handler.extractEnergy(from, maxExtract, simulate);

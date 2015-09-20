@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -17,6 +17,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -26,7 +27,7 @@ import buildcraft.core.BCCreativeTab;
 import buildcraft.core.lib.block.BlockBuildCraft;
 
 public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBlock {
-    protected static final int TABLE_MAX = 6;
+	protected static final int TABLE_MAX = 6;
 
 	public BlockLaserTable() {
 		super(Material.iron);
@@ -80,8 +81,8 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
 				return new TileAdvancedCraftingTable();
 			case 2:
 				return new TileIntegrationTable();
-            case 3:
-                return new TileChargingTable();
+			case 3:
+				return new TileChargingTable();
 			case 4:
 				return new TileProgrammingTable();
 			case 5:
@@ -104,15 +105,15 @@ public class BlockLaserTable extends BlockBuildCraft implements ILaserTargetBloc
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubBlocks(Item item, CreativeTabs par2CreativeTabs, List par3List) {
-        for (int i = 0; i < TABLE_MAX; i++) {
-            par3List.add(new ItemStack(this, 1, i));
-        }
+		for (int i = 0; i < TABLE_MAX; i++) {
+			par3List.add(new ItemStack(this, 1, i));
+		}
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public String[] getIconBlockNames() {
-		return new String[] {
+		return new String[]{
 				"BuildCraft|Silicon:assemblyTable",
 				"BuildCraft|Silicon:advancedCraftingTable",
 				"BuildCraft|Silicon:integrationTable",

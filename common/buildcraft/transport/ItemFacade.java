@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -24,6 +24,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -268,16 +269,16 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 					continue;
 				}
 
-                // Check if all of these functions work correctly.
-                // If an exception is filed, or null is returned, this generally means that
-                // this block is invalid.
-                try {
-                    if (stack.getDisplayName() == null || Strings.isNullOrEmpty(stack.getUnlocalizedName())) {
-                        continue;
-                    }
-                } catch (Throwable t) {
-                    continue;
-                }
+				// Check if all of these functions work correctly.
+				// If an exception is filed, or null is returned, this generally means that
+				// this block is invalid.
+				try {
+					if (stack.getDisplayName() == null || Strings.isNullOrEmpty(stack.getUnlocalizedName())) {
+						continue;
+					}
+				} catch (Throwable t) {
+					continue;
+				}
 
 				addFacade(stack);
 			} catch (IndexOutOfBoundsException e) {
@@ -295,19 +296,19 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 			return true;
 		}
 
-        // Blocks blacklisted by mods should always be treated as blacklisted
+		// Blocks blacklisted by mods should always be treated as blacklisted
 		for (String blacklistedBlock : blacklistedFacades) {
 			if (blockName.equals(blacklistedBlock)) {
 				return true;
 			}
 		}
 
-        // Blocks blacklisted by config should depend on the config settings
-        for (String blacklistedBlock : BuildCraftTransport.facadeBlacklist) {
-            if (blockName.equals(JavaTools.stripSurroundingQuotes(blacklistedBlock))) {
-                return true ^ BuildCraftTransport.facadeTreatBlacklistAsWhitelist;
-            }
-        }
+		// Blocks blacklisted by config should depend on the config settings
+		for (String blacklistedBlock : BuildCraftTransport.facadeBlacklist) {
+			if (blockName.equals(JavaTools.stripSurroundingQuotes(blacklistedBlock))) {
+				return true ^ BuildCraftTransport.facadeTreatBlacklistAsWhitelist;
+			}
+		}
 
 		return false ^ BuildCraftTransport.facadeTreatBlacklistAsWhitelist;
 	}

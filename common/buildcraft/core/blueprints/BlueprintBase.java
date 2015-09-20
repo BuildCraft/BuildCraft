@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -16,6 +16,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings.GameType;
+
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -195,7 +196,7 @@ public abstract class BlueprintBase {
 		return bpt;
 	}
 
-	public void readFromNBT (NBTTagCompound nbt) {
+	public void readFromNBT(NBTTagCompound nbt) {
 		sizeX = nbt.getInteger("sizeX");
 		sizeY = nbt.getInteger("sizeY");
 		sizeZ = nbt.getInteger("sizeZ");
@@ -276,7 +277,7 @@ public abstract class BlueprintBase {
 	public BlueprintBase adjustToWorld(World world, int x, int y, int z, ForgeDirection o) {
 		if (buildingPermission == BuildingPermission.NONE
 				|| (buildingPermission == BuildingPermission.CREATIVE_ONLY && world
-						.getWorldInfo().getGameType() != GameType.CREATIVE)) {
+				.getWorldInfo().getGameType() != GameType.CREATIVE)) {
 			return null;
 		}
 

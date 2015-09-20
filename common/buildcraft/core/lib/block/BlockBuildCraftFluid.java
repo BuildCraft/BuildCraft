@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -21,6 +21,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -59,7 +60,7 @@ public class BlockBuildCraftFluid extends BlockFluidClassic {
 	public void registerBlockIcons(IIconRegister iconRegister) {
 		String prefix = ResourceUtils.getObjectPrefix(Block.blockRegistry.getNameForObject(this));
 		prefix = prefix.substring(0, prefix.indexOf(":") + 1) + "fluids/";
-		this.theIcon = new IIcon[] {iconRegister.registerIcon(prefix + fluidName + "_still"),
+		this.theIcon = new IIcon[]{iconRegister.registerIcon(prefix + fluidName + "_still"),
 				iconRegister.registerIcon(prefix + fluidName + "_flow")};
 	}
 

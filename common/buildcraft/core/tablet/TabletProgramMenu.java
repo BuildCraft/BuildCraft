@@ -45,7 +45,7 @@ public class TabletProgramMenu extends TabletProgram {
 						justifyValue = (w - widthNoSpaces) / (float) (words.length - 1);
 					}
 					float x = xo;
-					for (String s: words) {
+					for (String s : words) {
 						x += font.draw(bitmap, s, (int) x, y, 7);
 						x += justifyValue;
 					}

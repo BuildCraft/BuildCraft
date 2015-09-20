@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -17,6 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.core.Position;
@@ -38,7 +39,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 	private static final short POWER_AVERAGING = 100;
 
 	public LaserData laser = new LaserData();
-	
+
 	private final SafeTimeTracker laserTickTracker = new SafeTimeTracker(10);
 	private final SafeTimeTracker searchTracker = new SafeTimeTracker(100, 100);
 	private final SafeTimeTracker networkTracker = new SafeTimeTracker(20, 3);
@@ -52,6 +53,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 		super();
 		this.setBattery(new RFBattery(10000, 250, 0));
 	}
+
 	@Override
 	public void initialize() {
 		super.initialize();
@@ -59,7 +61,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 		if (laser == null) {
 			laser = new LaserData();
 		}
-		
+
 		laser.isVisible = false;
 		laser.head = new Position(xCoord, yCoord, zCoord);
 		laser.tail = new Position(xCoord, yCoord, zCoord);
@@ -194,10 +196,10 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 				for (int z = minZ; z <= maxZ; ++z) {
 					if (BlockUtils.getBlock(worldObj, x, y, z) instanceof ILaserTargetBlock) {
 						TileEntity tile = BlockUtils.getTileEntity(worldObj, x, y, z);
-						
+
 						if (tile instanceof ILaserTarget) {
 							ILaserTarget table = (ILaserTarget) tile;
-							
+
 							if (table.requiresLaserEnergy()) {
 								targets.add(table);
 							}
@@ -336,7 +338,7 @@ public class TileLaser extends TileBuildCraft implements IHasWork, IControllable
 	public AxisAlignedBB getRenderBoundingBox() {
 		return new Box(this).extendToEncompass(laser.tail).getBoundingBox();
 	}
-	
+
 	@Override
 	public boolean acceptsControlMode(Mode mode) {
 		return mode == IControllable.Mode.On ||

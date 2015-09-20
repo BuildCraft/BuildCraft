@@ -15,13 +15,13 @@ public class StatementParameterRedstoneGateSideOnly implements
 		IStatementParameter {
 
 	private static IIcon icon;
-	
+
 	public boolean isOn = false;
-	
+
 	public StatementParameterRedstoneGateSideOnly() {
-		
+
 	}
-	
+
 	@Override
 	public ItemStack getItemStack() {
 		return null;

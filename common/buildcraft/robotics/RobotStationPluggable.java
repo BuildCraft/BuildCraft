@@ -9,6 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+
 import net.minecraftforge.common.util.ForgeDirection;
 
 import cofh.api.energy.IEnergyReceiver;
@@ -40,7 +41,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 
 			RobotStationState state = ((RobotStationPluggable) pipePluggable).getRenderState();
 
-			switch(state) {
+			switch (state) {
 				case None:
 				case Available:
 					blockStateMachine.getTextureState().set(BuildCraftTransport.instance.pipeIconProvider
@@ -95,6 +96,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 			renderblocks.renderStandardBlock(blockStateMachine.getBlock(), x, y, z);
 		}
 	}
+
 	public enum RobotStationState {
 		None,
 		Available,
@@ -122,7 +124,7 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 
 	@Override
 	public ItemStack[] getDropItems(IPipeTile pipe) {
-		return new ItemStack[] { new ItemStack(BuildCraftRobotics.robotStationItem) };
+		return new ItemStack[]{new ItemStack(BuildCraftRobotics.robotStationItem)};
 	}
 
 	@Override
@@ -150,10 +152,10 @@ public class RobotStationPluggable extends PipePluggable implements IPipePluggab
 		if (!isValid && !pipe.getWorld().isRemote) {
 			station = (DockingStationPipe)
 					RobotManager.registryProvider.getRegistry(pipe.getWorld()).getStation(
-					pipe.x(),
-					pipe.y(),
-					pipe.z(),
-					direction);
+							pipe.x(),
+							pipe.y(),
+							pipe.z(),
+							direction);
 
 			if (station == null) {
 				station = new DockingStationPipe(pipe, direction);

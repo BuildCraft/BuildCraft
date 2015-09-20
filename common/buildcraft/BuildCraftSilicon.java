@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2011-2015, SpaceToad and the BuildCraft Team
  * http://www.mod-buildcraft.com
- *
+ * <p/>
  * BuildCraft is distributed under the terms of the Minecraft Mod Public
  * License 1.0, or MMPL. Please check the contents of the license located in
  * http://www.mod-buildcraft.com/MMPL-1.0.txt
@@ -15,6 +15,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.stats.Achievement;
+
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Optional;
@@ -121,7 +122,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 	public void init(FMLInitializationEvent evt) {
 		channels = NetworkRegistry.INSTANCE
 				.newChannel
-				(DefaultProps.NET_CHANNEL_NAME + "-SILICON", new ChannelHandler(), new PacketHandlerSilicon());
+						(DefaultProps.NET_CHANNEL_NAME + "-SILICON", new ChannelHandler(), new PacketHandlerSilicon());
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new SiliconGuiHandler());
 		CoreProxy.proxy.registerTileEntity(TileLaser.class, "net.minecraft.src.buildcraft.factory.TileLaser");
@@ -131,7 +132,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				"net.minecraft.src.buildcraft.factory.TileAssemblyAdvancedWorkbench");
 		CoreProxy.proxy.registerTileEntity(TileIntegrationTable.class,
 				"net.minecraft.src.buildcraft.factory.TileIntegrationTable");
-        CoreProxy.proxy.registerTileEntity(TileChargingTable.class,
+		CoreProxy.proxy.registerTileEntity(TileChargingTable.class,
 				"net.minecraft.src.buildcraft.factory.TileChargingTable");
 		CoreProxy.proxy.registerTileEntity(TileProgrammingTable.class,
 				"net.minecraft.src.buildcraft.factory.TileProgrammingTable");
@@ -266,7 +267,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 				"dustRedstone", "ingotGold");
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:diamondChipset", Math.round(800000 * chipsetCostMultiplier),
 				Chipset.DIAMOND.getStack(), "dustRedstone", "gemDiamond");
-        BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:emeraldChipset", Math.round(1200000 * chipsetCostMultiplier),
+		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:emeraldChipset", Math.round(1200000 * chipsetCostMultiplier),
 				Chipset.EMERALD.getStack(), "dustRedstone", "gemEmerald");
 		BuildcraftRecipeRegistry.assemblyTable.addRecipe("buildcraft:pulsatingChipset", Math.round(400000 * chipsetCostMultiplier),
 				Chipset.PULSATING.getStack(2), "dustRedstone", Items.ender_pearl);
@@ -300,7 +301,7 @@ public class BuildCraftSilicon extends BuildCraftMod {
 
 	@Mod.EventHandler
 	public void remap(FMLMissingMappingsEvent event) {
-		for (FMLMissingMappingsEvent.MissingMapping mapping: event.get()) {
+		for (FMLMissingMappingsEvent.MissingMapping mapping : event.get()) {
 			if (mapping.name.equals("BuildCraft|Silicon:null")) {
 				if (mapping.type == GameRegistry.Type.ITEM) {
 					mapping.remap(Item.getItemFromBlock(assemblyTableBlock));
