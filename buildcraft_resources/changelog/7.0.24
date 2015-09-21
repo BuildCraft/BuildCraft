@@ -1,0 +1,9 @@
+Bugs fixed:
+
+* [#3027] AIRobotSearchBlock exception spam (asie)
+* [#3026] Fillers dropping strange blocks (asie)
+* [#3017] Crash if unable to extend stripes pipe (asie)
+* [#3015] Packager pulls from input only slots from adjacent machines (asie)
+* [#3010] Pipe wire does not activate when connecting by building through striped pipe (asie)
+* [#2956] PipePluggable leaking state on the client (asie)
+* [#2951] Obsidian Pipes not picking up certain items correctly (asie)

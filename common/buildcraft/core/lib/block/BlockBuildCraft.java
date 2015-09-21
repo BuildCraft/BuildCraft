@@ -64,7 +64,9 @@ public abstract class BlockBuildCraft extends BlockContainer {
 		setHardness(5F);
 	}
 
-	public boolean hasAlphaPass() { return alphaPass; }
+	public boolean hasAlphaPass() {
+		return alphaPass;
+	}
 
 	public boolean isRotatable() {
 		return rotatable;
@@ -74,7 +76,9 @@ public abstract class BlockBuildCraft extends BlockContainer {
 		this.rotatable = rotatable;
 	}
 
-	public void setAlphaPass(boolean alphaPass) { this.alphaPass = alphaPass; }
+	public void setAlphaPass(boolean alphaPass) {
+		this.alphaPass = alphaPass;
+	}
 
 	public void setPassCount(int maxPasses) {
 		this.maxPasses = maxPasses;
