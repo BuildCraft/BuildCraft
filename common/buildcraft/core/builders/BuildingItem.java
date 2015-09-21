@@ -15,6 +15,8 @@ import java.util.List;
 import io.netty.buffer.ByteBuf;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -28,6 +30,7 @@ import buildcraft.api.blueprints.MappingNotFoundException;
 import buildcraft.api.blueprints.MappingRegistry;
 import buildcraft.api.core.ISerializable;
 import buildcraft.api.core.Position;
+import buildcraft.core.BlockBuildTool;
 import buildcraft.core.StackAtPosition;
 import buildcraft.core.lib.inventory.InvUtils;
 
@@ -182,7 +185,9 @@ public class BuildingItem implements IBuildingItem, ISerializable {
 						Block.getIdFromBlock(oldBlock) + (oldMeta << 12));
 			} else {
 				for (ItemStack s : slotToBuild.stackConsumed) {
-					InvUtils.dropItems(context.world(), s, destX, destY, destZ);
+					if (s != null && !(s.getItem() instanceof ItemBlock && Block.getBlockFromItem(s.getItem()) instanceof BlockBuildTool)) {
+						InvUtils.dropItems(context.world(), s, destX, destY, destZ);
+					}
 				}
 			}
 		}
