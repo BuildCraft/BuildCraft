@@ -633,16 +633,12 @@ public class BlockGenericPipe extends BlockBuildCraft implements IColorRemovable
 			} else if (currentItem.getItem() instanceof IToolWrench) {
 				// Only check the instance at this point. Call the IToolWrench
 				// interface callbacks for the individual pipe/logic calls
-				if (pipe.blockActivated(player, ForgeDirection.getOrientation(side))) {
-					return true;
-				}
-
 				RaytraceResult rayTraceResult = doRayTrace(world, x, y, z, player);
 				if (rayTraceResult != null) {
 					ForgeDirection hitSide = rayTraceResult.hitPart == Part.Pipe ? rayTraceResult.sideHit : ForgeDirection.UNKNOWN;
 					return pipe.blockActivated(player, hitSide);
 				} else {
-					return false;
+					return pipe.blockActivated(player, ForgeDirection.UNKNOWN);
 				}
 			} else if (currentItem.getItem() instanceof IMapLocation) {
 				// We want to be able to record pipe locations

@@ -82,11 +82,6 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 		return false;
 	}
 
-	@Deprecated
-	public boolean blockActivated(EntityPlayer entityplayer) {
-		return false;
-	}
-
 	public void onBlockPlaced() {
 		transport.onBlockPlaced();
 	}
