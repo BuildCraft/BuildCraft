@@ -1,0 +1,4 @@
+Bugs fixed:
+
+* [#3029] Cannot create pipe plugs if mods load in a strange order - rare! (asie)
+* mcmod.info not split correctly between modules (QORTEC)
