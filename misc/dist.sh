@@ -18,7 +18,9 @@ for i in `find -name *.png`; do ../../tools/pngout "$i"; done
 
 # Function to extract modules mcmod.info data
 modinfo(){
-	../../tools/jq ".[] | select( .modid == \"$1\" )" mcmod.info.json > mcmod.info
+	modinfo=$(../../tools/jq ".[] | select( .modid == \"$1\" )" mcmod.info.json)
+	echo "[$modinfo]" > mcmod.info
+	clear modinfo
 }
 
 # Move mcmod.info for safe keeping
