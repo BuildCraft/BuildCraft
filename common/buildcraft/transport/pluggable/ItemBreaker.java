@@ -15,6 +15,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import buildcraft.api.transport.IPipe;
+import buildcraft.api.transport.IPipeTile;
 import buildcraft.api.transport.pluggable.IPipePluggableItem;
 import buildcraft.api.transport.pluggable.PipePluggable;
 import buildcraft.core.lib.items.ItemBuildCraft;
@@ -36,7 +37,11 @@ public class ItemBreaker extends ItemBuildCraft implements IPipePluggableItem {
 
 	@Override
 	public PipePluggable createPipePluggable(IPipe pipe, ForgeDirection side, ItemStack stack) {
-		return new BreakerPluggable();
+		if (pipe.getTile().getPipeType() == IPipeTile.PipeType.POWER) {
+			return new BreakerPluggable();
+		} else {
+			return null;
+		}
 	}
 
 }
