@@ -28,6 +28,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.IIconProvider;
 import buildcraft.api.gates.IGate;
@@ -53,6 +54,7 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 	public final Gate[] gates = new Gate[ForgeDirection.VALID_DIRECTIONS.length];
 	public PipeEventBus eventBus = new PipeEventBus();
 
+	private int overloadTicks;
 	private boolean initialized = false;
 	private boolean scheduleWireUpdate;
 
@@ -142,6 +144,21 @@ public abstract class Pipe<T extends PipeTransport> implements IDropControlInven
 
 	public void updateEntity() {
 		transport.updateEntity();
+
+		// Overload calculation
+		if (overloadTicks > 0 || transport.isOverloaded()) {
+			overloadTicks += transport.isOverloaded() ? 1 : -1;
+			if (overloadTicks > 15 * 20 && BuildCraftCore.random.nextInt(8) == 5) {
+				getWorld().createExplosion(null, container.xCoord, container.yCoord, container.zCoord, 3, true);
+				getWorld().setBlockToAir(container.xCoord, container.yCoord, container.zCoord);
+			}
+			getWorld().spawnParticle("smoke", container.xCoord + 0.4F + (BuildCraftCore.random.nextFloat() * 0.2F),
+					container.yCoord + 0.25F + (BuildCraftCore.random.nextFloat() * 0.5F),
+					container.zCoord + 0.4F + (BuildCraftCore.random.nextFloat() * 0.2F),
+					BuildCraftCore.random.nextFloat() * 0.04F - 0.02F,
+					BuildCraftCore.random.nextFloat() * 0.05F + 0.02F,
+					BuildCraftCore.random.nextFloat() * 0.04F - 0.02F);
+		}
 
 		actionStates.clear();
 

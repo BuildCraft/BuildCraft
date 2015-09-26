@@ -50,13 +50,11 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	public static final Map<Class<? extends Pipe<?>>, Float> powerResistances = new HashMap<Class<? extends Pipe<?>>, Float>();
 	public static final Map<Class<? extends Pipe<?>>, Integer> powerTaxation = new HashMap<Class<? extends Pipe<?>>, Integer>();
 
-	private static final int OVERLOAD_TICKS = 60;
-
 	public short[] displayPower = new short[6];
 	public int[] nextPowerQuery = new int[6];
 	public double[] internalNextPower = new double[6];
-	public int overload;
 	public int maxPower = 80;
+	public int maxOverloadPower = 80;
 	public float powerResistance;
 	public int powerUsageTax;
 
@@ -72,6 +70,8 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 
 	private int[] powerQuery = new int[6];
 
+	private int highestPower;
+	private boolean overloadClient;
 	private long currentDate;
 	private double[] internalPower = new double[6];
 
@@ -92,12 +92,19 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	public void initFromPipe(Class<? extends Pipe<?>> pipeClass) {
 		if (BuildCraftTransport.usePipeLossOverDistance) {
 			maxPower = 10240;
+			maxOverloadPower = 10240;
 			powerResistance = powerResistances.get(pipeClass);
 			powerUsageTax = 0;
 		} else {
 			maxPower = powerCapacities.get(pipeClass);
+			maxOverloadPower = PipePowerWood.class.isAssignableFrom(pipeClass) ? maxPower : Math.round(maxPower * 1.5F);
 			powerUsageTax = BuildCraftTransport.pipeKinesisPowerTax * (powerTaxation.containsKey(pipeClass) ? powerTaxation.get(pipeClass) : 1);
 		}
+	}
+
+	@Override
+	public boolean isOverloaded() {
+		return getWorld().isRemote ? overloadClient : highestPower > maxPower;
 	}
 
 	@Override
@@ -263,21 +270,14 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 				}
 			}
 		}
-		short highestPower = 0;
+
+		highestPower = 0;
 		for (int i = 0; i < 6; i++) {
 			powerAverage[i].tick();
 			displayPower[i] = (short) Math.round(powerAverage[i].getAverage());
 			if (displayPower[i] > highestPower) {
 				highestPower = displayPower[i];
 			}
-		}
-
-		overload += highestPower > (maxPower * 0.95F) ? 1 : -1;
-		if (overload < 0) {
-			overload = 0;
-		}
-		if (overload > OVERLOAD_TICKS) {
-			overload = OVERLOAD_TICKS;
 		}
 
 		// Compute the tiles requesting energy that are not power pipes
@@ -296,7 +296,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 			if (tile instanceof IEnergyHandler) {
 				IEnergyHandler handler = (IEnergyHandler) tile;
 				if (handler.canConnectEnergy(dir.getOpposite())) {
-					int request = handler.receiveEnergy(dir.getOpposite(), this.maxPower, true) + powerUsageTax;
+					int request = handler.receiveEnergy(dir.getOpposite(), this.maxPower - powerUsageTax, true) + powerUsageTax;
 					if (request > 0) {
 						requestEnergy(dir, request);
 					}
@@ -304,7 +304,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 			} else if (tile instanceof IEnergyReceiver) {
 				IEnergyReceiver handler = (IEnergyReceiver) tile;
 				if (handler.canConnectEnergy(dir.getOpposite())) {
-					int request = handler.receiveEnergy(dir.getOpposite(), this.maxPower, true) + powerUsageTax;
+					int request = handler.receiveEnergy(dir.getOpposite(), this.maxPower - powerUsageTax, true) + powerUsageTax;
 					if (request > 0) {
 						requestEnergy(dir, request);
 					}
@@ -324,7 +324,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 					transferQuery[i] += powerQuery[j];
 				}
 			}
-			transferQuery[i] = Math.min(transferQuery[i], maxPower);
+			transferQuery[i] = Math.min(transferQuery[i], maxPower); // change to maxOverloadPower for explosions
 		}
 
 		// Transfer the requested energy to nearby pipes
@@ -350,10 +350,6 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 			packet.overload = isOverloaded();
 			BuildCraftTransport.instance.sendToPlayers(packet, container.getWorldObj(), container.xCoord, container.yCoord, container.zCoord, DefaultProps.PIPE_CONTENTS_RENDER_DIST);
 		}
-	}
-
-	public boolean isOverloaded() {
-		return overload >= OVERLOAD_TICKS;
 	}
 
 	private void step() {
@@ -394,7 +390,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 			}
 		}
 
-		if (internalNextPower[side] > maxPower) {
+		if (internalNextPower[side] > maxOverloadPower) {
 			return 0;
 		}
 
@@ -404,9 +400,9 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 			internalNextPower[side] += val;
 		}
 
-		if (internalNextPower[side] > maxPower) {
-			val -= internalNextPower[side] - maxPower;
-			internalNextPower[side] = maxPower;
+		if (internalNextPower[side] > maxOverloadPower) {
+			val -= internalNextPower[side] - maxOverloadPower;
+			internalNextPower[side] = maxOverloadPower;
 			if (val < 0) {
 				val = 0;
 			}
@@ -464,7 +460,7 @@ public class PipeTransportPower extends PipeTransport implements IDebuggable {
 	 */
 	public void handlePowerPacket(PacketPowerUpdate packetPower) {
 		displayPower = packetPower.displayPower;
-		overload = packetPower.overload ? OVERLOAD_TICKS : 0;
+		overloadClient = packetPower.overload;
 	}
 
 	public boolean isQueryingPower() {

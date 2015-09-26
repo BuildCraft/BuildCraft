@@ -41,4 +41,9 @@ public class XorShift128Random {
 	public double nextDouble() {
 		return (double) (long) (nextLong() & 0x1FFFFFFFFFFFFFL) * DOUBLE_UNIT;
 	}
+
+	public float nextFloat() {
+		// TODO: HACK
+		return (float) nextDouble();
+	}
 }

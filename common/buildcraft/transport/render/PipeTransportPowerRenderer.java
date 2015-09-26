@@ -115,7 +115,7 @@ public class PipeTransportPowerRenderer extends PipeTransportRenderer<PipeTransp
 
 		bindTexture(TextureMap.locationBlocksTexture);
 
-		int[] displayList = pow.overload > 0 ? displayPowerListOverload : displayPowerList;
+		int[] displayList = pow.isOverloaded() ? displayPowerListOverload : displayPowerList;
 
 		for (int side = 0; side < 6; ++side) {
 			int stage = (int) Math.ceil(Math.pow(pow.displayPower[side], POWER_MAGIC));

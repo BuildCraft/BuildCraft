@@ -95,6 +95,10 @@ public abstract class PipeTransport {
 	public void initialize() {
 	}
 
+	public boolean isOverloaded() {
+		return false;
+	}
+
 	public boolean inputOpen(ForgeDirection from) {
 		return inputsOpen[from.ordinal()];
 	}
