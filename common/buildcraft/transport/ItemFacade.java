@@ -17,6 +17,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -33,6 +34,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import buildcraft.BuildCraftCore;
 import buildcraft.BuildCraftTransport;
 import buildcraft.api.core.JavaTools;
 import buildcraft.api.facades.FacadeType;
@@ -47,6 +49,8 @@ import buildcraft.core.BlockSpring;
 import buildcraft.core.lib.items.ItemBuildCraft;
 import buildcraft.core.lib.utils.StringUtils;
 import buildcraft.core.proxy.CoreProxy;
+
+import scala.collection.mutable.Builder$class;
 
 public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePluggableItem {
 	public static class FacadeState {
@@ -146,8 +150,13 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 	private static final Block NULL_BLOCK = null;
 	private static final ItemStack NO_MATCH = new ItemStack(NULL_BLOCK, 0, 0);
 
+	private static final Block[] PREVIEW_FACADES = new Block[]{
+			Blocks.planks, Blocks.stonebrick, Blocks.glass
+	};
+	private static int RANDOM_FACADE_ID = -1;
+
 	public ItemFacade() {
-		super(BCCreativeTab.get("facades"));
+		super(BuildCraftTransport.showAllFacadesCreative ? BCCreativeTab.get("facades") : BCCreativeTab.get("main"));
 
 		setHasSubtypes(true);
 		setMaxDamage(0);
@@ -216,11 +225,29 @@ public class ItemFacade extends ItemBuildCraft implements IFacadeItem, IPipePlug
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void getSubItems(Item item, CreativeTabs par2CreativeTabs, List itemList) {
-		for (ItemStack stack : allFacades) {
-			itemList.add(stack);
-		}
-		for (ItemStack stack : allHollowFacades) {
-			itemList.add(stack);
+		if (BuildCraftTransport.showAllFacadesCreative) {
+			for (ItemStack stack : allFacades) {
+				itemList.add(stack);
+			}
+			for (ItemStack stack : allHollowFacades) {
+				itemList.add(stack);
+			}
+		} else {
+			List<ItemStack> hollowFacades = new ArrayList<ItemStack>();
+			for (Block b : PREVIEW_FACADES) {
+				if (isBlockValidForFacade(b) && !isBlockBlacklisted(b)) {
+					ItemStack facade = getFacadeForBlock(b, 0);
+					itemList.add(facade);
+					FacadeState state = getFacadeStates(facade)[0];
+					hollowFacades.add(getFacade(new FacadeState(state.block, state.metadata, state.wire, true)));
+				}
+			}
+			if (RANDOM_FACADE_ID < 0) {
+				RANDOM_FACADE_ID = BuildCraftCore.random.nextInt(allFacades.size());
+			}
+			itemList.add(allFacades.get(RANDOM_FACADE_ID));
+			itemList.addAll(hollowFacades);
+			itemList.add(allHollowFacades.get(RANDOM_FACADE_ID));
 		}
 	}
 

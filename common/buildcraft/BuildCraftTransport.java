@@ -197,6 +197,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 	public static boolean facadeTreatBlacklistAsWhitelist;
 	public static boolean additionalWaterproofingRecipe;
 	public static boolean facadeForceNonLaserRecipe;
+	public static boolean showAllFacadesCreative;
 
 	public static BlockGenericPipe genericPipeBlock;
 	public static BlockFilteredBuffer filteredBufferBlock;
@@ -291,7 +292,6 @@ public class BuildCraftTransport extends BuildCraftMod {
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
 		new BCCreativeTab("pipes");
-		new BCCreativeTab("facades");
 		if (Loader.isModLoaded("BuildCraft|Silicon")) {
 			new BCCreativeTab("gates");
 		}
@@ -303,6 +303,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			BuildCraftCore.mainConfigManager.register("general.pipes.baseFluidRate", DefaultProps.PIPES_FLUIDS_BASE_FLOW_RATE, "What should the base flow rate of a fluid pipe be?", ConfigManager.RestartRequirement.GAME)
 					.setMinValue(1).setMaxValue(40);
 			BuildCraftCore.mainConfigManager.register("debug.printFacadeList", false, "Print a list of all registered facades.", ConfigManager.RestartRequirement.GAME);
+			BuildCraftCore.mainConfigManager.register("general.pipes.facadeShowAllInCreative", true, "Should all BC facades be shown in Creative/NEI, or just a few carefully chosen ones?", ConfigManager.RestartRequirement.GAME);
 			BuildCraftCore.mainConfigManager.register("general.pipes.slimeballWaterproofRecipe", false, "Should I enable an alternate Waterproof recipe, based on slimeballs?", ConfigManager.RestartRequirement.GAME);
 			BuildCraftCore.mainConfigManager.register("power.gateCostMultiplier", 1.0D, "What should be the multiplier of all gate power costs?", ConfigManager.RestartRequirement.GAME);
 			BuildCraftCore.mainConfigManager.register("general.pipes.facadeBlacklist", new String[]{
@@ -323,6 +324,10 @@ public class BuildCraftTransport extends BuildCraftMod {
 			BuildCraftCore.mainConfigManager.register("general.pipes.facadeNoLaserRecipe", false, "Should non-laser (crafting table) facade recipes be forced?", ConfigManager.RestartRequirement.GAME);
 
 			reloadConfig(ConfigManager.RestartRequirement.GAME);
+
+			if (showAllFacadesCreative) {
+				new BCCreativeTab("facades");
+			}
 
 			filteredBufferBlock = new BlockFilteredBuffer();
 			CoreProxy.proxy.registerBlock(filteredBufferBlock.setBlockName("filteredBufferBlock"));
@@ -486,7 +491,9 @@ public class BuildCraftTransport extends BuildCraftMod {
 		PipeEventBus.registerGlobalHandler(new LensFilterHandler());
 
 		BCCreativeTab.get("pipes").setIcon(new ItemStack(BuildCraftTransport.pipeItemsDiamond, 1));
-		BCCreativeTab.get("facades").setIcon(facadeItem.getFacadeForBlock(Blocks.brick_block, 0));
+		if (showAllFacadesCreative) {
+			BCCreativeTab.get("facades").setIcon(facadeItem.getFacadeForBlock(Blocks.brick_block, 0));
+		}
 		if (Loader.isModLoaded("BuildCraft|Silicon")) {
 			BCCreativeTab.get("gates").setIcon(ItemGate.makeGateItem(GateMaterial.DIAMOND, GateLogic.AND));
 		}
@@ -572,6 +579,7 @@ public class BuildCraftTransport extends BuildCraftMod {
 			debugPrintFacadeList = BuildCraftCore.mainConfigManager.get("debug.printFacadeList").getBoolean();
 			pipeFluidsBaseFlowRate = BuildCraftCore.mainConfigManager.get("general.pipes.baseFluidRate").getInt();
 			facadeForceNonLaserRecipe = BuildCraftCore.mainConfigManager.get("general.pipes.facadeNoLaserRecipe").getBoolean();
+			showAllFacadesCreative = BuildCraftCore.mainConfigManager.get("general.pipes.facadeShowAllInCreative").getBoolean();
 
 			reloadConfig(ConfigManager.RestartRequirement.WORLD);
 		} else if (restartType == ConfigManager.RestartRequirement.WORLD) {
